@@ -12,6 +12,8 @@ using System.Threading.Tasks;
 
 namespace BExIS.Dlm.Tests.Services.Party
 {
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Reliability", "CA2000:Objekte verwerfen, bevor Bereich verloren geht", Justification = "<Ausstehend>")]
+
     public class PartyManagerTests
     {
         private TestSetupHelper helper = null;

@@ -234,57 +234,59 @@ namespace BExIS.Modules.Rpm.UI.Helpers.SeedData
 
             if (File.Exists(filePath + "\\attributes.csv") && File.Exists(filePath + "\\datatypes.csv") && File.Exists(filePath + "\\units.csv"))
             {
-                StreamReader reader = new StreamReader(filePath + "\\attributes.csv");
-                string line = "";
-                //jump over the first row
-                line = reader.ReadLine();
-
-                UnitManager unitManager = null;
-                DataTypeManager dataTypeManager = null;
-                try
+                using (StreamReader reader = new StreamReader(filePath + "\\attributes.csv"))
                 {
-                    unitManager = new UnitManager();
-                    dataTypeManager = new DataTypeManager();
+                    string line = "";
+                    //jump over the first row
+                    line = reader.ReadLine();
 
-                    while ((line = reader.ReadLine()) != null)
+                    UnitManager unitManager = null;
+                    DataTypeManager dataTypeManager = null;
+                    try
                     {
-                        // (char)59 = ';'
-                        string[] vars = line.Split((char)59);
+                        unitManager = new UnitManager();
+                        dataTypeManager = new DataTypeManager();
 
-                        System.Data.DataRow newRow = mappedAttributes.NewRow();
-                        newRow["Name"] = vars[0];
-                        newRow["ShortName"] = vars[1];
-                        newRow["Description"] = vars[2];
-                        newRow["IsMultipleValue"] = vars[3];
-                        newRow["IsBuiltIn"] = vars[4];
-                        newRow["Owner"] = vars[5];
-                        newRow["ContainerType"] = vars[6];
-                        newRow["MeasurementScale"] = vars[7];
-                        newRow["EntitySelectionPredicate"] = vars[8];
-                        newRow["Self"] = vars[9];
-                        string DataType = vars[10];
-                        newRow["DataType"] = DataType;
-                        string UnitAbbreviation = vars[11];
-                        newRow["Unit"] = UnitAbbreviation;
-                        newRow["Methodology"] = vars[12];
-                        newRow["Constraints"] = vars[13];
-                        newRow["ExtendedProperties"] = vars[14];
-                        newRow["GlobalizationInfos"] = vars[15];
-                        newRow["AggregateFunctions"] = vars[16];
-                        // add DataTypesId and UnitId to the mappedAttributes Table
-                        newRow["DataTypeId"] = dataTypeManager.Repo.Get().Where(dt => dt.Name.ToLower().Equals(DataType.ToLower())).FirstOrDefault().Id;
-                        Unit unit = unitManager.Repo.Get().Where(u => u.Abbreviation.Equals(UnitAbbreviation)).FirstOrDefault();
-                        if (unit != null)
-                            newRow["UnitId"] = unitManager.Repo.Get().Where(u => u.Abbreviation.Equals(UnitAbbreviation)).FirstOrDefault().Id;
-                        else
-                            newRow["UnitId"] = 1;
-                        mappedAttributes.Rows.Add(newRow);
+                        while ((line = reader.ReadLine()) != null)
+                        {
+                            // (char)59 = ';'
+                            string[] vars = line.Split((char)59);
+
+                            System.Data.DataRow newRow = mappedAttributes.NewRow();
+                            newRow["Name"] = vars[0];
+                            newRow["ShortName"] = vars[1];
+                            newRow["Description"] = vars[2];
+                            newRow["IsMultipleValue"] = vars[3];
+                            newRow["IsBuiltIn"] = vars[4];
+                            newRow["Owner"] = vars[5];
+                            newRow["ContainerType"] = vars[6];
+                            newRow["MeasurementScale"] = vars[7];
+                            newRow["EntitySelectionPredicate"] = vars[8];
+                            newRow["Self"] = vars[9];
+                            string DataType = vars[10];
+                            newRow["DataType"] = DataType;
+                            string UnitAbbreviation = vars[11];
+                            newRow["Unit"] = UnitAbbreviation;
+                            newRow["Methodology"] = vars[12];
+                            newRow["Constraints"] = vars[13];
+                            newRow["ExtendedProperties"] = vars[14];
+                            newRow["GlobalizationInfos"] = vars[15];
+                            newRow["AggregateFunctions"] = vars[16];
+                            // add DataTypesId and UnitId to the mappedAttributes Table
+                            newRow["DataTypeId"] = dataTypeManager.Repo.Get().Where(dt => dt.Name.ToLower().Equals(DataType.ToLower())).FirstOrDefault().Id;
+                            Unit unit = unitManager.Repo.Get().Where(u => u.Abbreviation.Equals(UnitAbbreviation)).FirstOrDefault();
+                            if (unit != null)
+                                newRow["UnitId"] = unitManager.Repo.Get().Where(u => u.Abbreviation.Equals(UnitAbbreviation)).FirstOrDefault().Id;
+                            else
+                                newRow["UnitId"] = 1;
+                            mappedAttributes.Rows.Add(newRow);
+                        }
                     }
-                }
-                finally
-                {
-                    unitManager.Dispose();
-                    dataTypeManager.Dispose();
+                    finally
+                    {
+                        unitManager.Dispose();
+                        dataTypeManager.Dispose();
+                    }
                 }
             }
             return mappedAttributes;      
@@ -313,41 +315,42 @@ namespace BExIS.Modules.Rpm.UI.Helpers.SeedData
 
             if (File.Exists(filePath + "\\units.csv") && File.Exists(filePath + "\\dimensions.csv"))
             {
-                StreamReader reader = new StreamReader(filePath + "\\units.csv");
-
-                UnitManager unitmanager = null;
-                try
+                using (StreamReader reader = new StreamReader(filePath + "\\units.csv"))
                 {
-                    unitmanager = new UnitManager();
-                    string line = "";
-                    //jump over the first row
-                    line = reader.ReadLine();
-                    Dimension dim = new Dimension();
-
-                    while ((line = reader.ReadLine()) != null)
+                    UnitManager unitmanager = null;
+                    try
                     {
-                        // (char)59 = ';'
-                        string[] vars = line.Split((char)59);
+                        unitmanager = new UnitManager();
+                        string line = "";
+                        //jump over the first row
+                        line = reader.ReadLine();
+                        Dimension dim = new Dimension();
 
-                        System.Data.DataRow newRow = mappedUnits.NewRow();
-                        newRow["Name"] = vars[0];
-                        newRow["Abbreviation"] = vars[1];
-                        newRow["Description"] = vars[2];
-                        string DimensionName = vars[3];
-                        newRow["DimensionName"] = DimensionName;
-                        newRow["MeasurementSystem"] = vars[4];
-                        newRow["DataTypes"] = vars[5];
-                        dim = unitmanager.DimensionRepo.Get().Where(d => d.Name.ToLower().Equals(DimensionName.ToLower())).FirstOrDefault();
-                        if (dim != null)
-                            newRow["DimensionId"] = dim.Id;
-                        else
-                            newRow["DimensionId"] = 1;
-                        mappedUnits.Rows.Add(newRow);
+                        while ((line = reader.ReadLine()) != null)
+                        {
+                            // (char)59 = ';'
+                            string[] vars = line.Split((char)59);
+
+                            System.Data.DataRow newRow = mappedUnits.NewRow();
+                            newRow["Name"] = vars[0];
+                            newRow["Abbreviation"] = vars[1];
+                            newRow["Description"] = vars[2];
+                            string DimensionName = vars[3];
+                            newRow["DimensionName"] = DimensionName;
+                            newRow["MeasurementSystem"] = vars[4];
+                            newRow["DataTypes"] = vars[5];
+                            dim = unitmanager.DimensionRepo.Get().Where(d => d.Name.ToLower().Equals(DimensionName.ToLower())).FirstOrDefault();
+                            if (dim != null)
+                                newRow["DimensionId"] = dim.Id;
+                            else
+                                newRow["DimensionId"] = 1;
+                            mappedUnits.Rows.Add(newRow);
+                        }
                     }
-                }
-                finally
-                {
-                    unitmanager.Dispose();
+                    finally
+                    {
+                        unitmanager.Dispose();
+                    }
                 }
             }
             return mappedUnits;
@@ -372,22 +375,24 @@ namespace BExIS.Modules.Rpm.UI.Helpers.SeedData
 
             if (File.Exists(filePath + "\\dimensions.csv"))
             {
-                StreamReader reader = new StreamReader(filePath + "\\dimensions.csv");
-                string line = "";
-                //jump over the first row
-                line = reader.ReadLine();
-
-                while ((line = reader.ReadLine()) != null)
+                using (StreamReader reader = new StreamReader(filePath + "\\dimensions.csv"))
                 {
-                    // (char)59 = ';'
-                    string[] vars = line.Split((char)59);
+                    string line = "";
+                    //jump over the first row
+                    line = reader.ReadLine();
 
-                    System.Data.DataRow newRow = mappedDimensions.NewRow();
-                    newRow["Id"] = vars[0];
-                    newRow["Name"] = vars[1];
-                    newRow["Syntax"] = vars[2];
-                    newRow["Description"] = vars[3];
-                    mappedDimensions.Rows.Add(newRow);
+                    while ((line = reader.ReadLine()) != null)
+                    {
+                        // (char)59 = ';'
+                        string[] vars = line.Split((char)59);
+
+                        System.Data.DataRow newRow = mappedDimensions.NewRow();
+                        newRow["Id"] = vars[0];
+                        newRow["Name"] = vars[1];
+                        newRow["Syntax"] = vars[2];
+                        newRow["Description"] = vars[3];
+                        mappedDimensions.Rows.Add(newRow);
+                    }
                 }
             }
 
@@ -414,27 +419,28 @@ namespace BExIS.Modules.Rpm.UI.Helpers.SeedData
             if (File.Exists(filePath + "\\datatypes.csv"))
             {
 
-                StreamReader reader = new StreamReader(filePath + "\\datatypes.csv");
-
-                string line = "";
-                //jump over the first row
-                line = reader.ReadLine();
-
-                while ((line = reader.ReadLine()) != null)
+                using (StreamReader reader = new StreamReader(filePath + "\\datatypes.csv"))
                 {
-                    // (char)59 = ';'
-                    string[] vars = line.Split((char)59);
+                    string line = "";
+                    //jump over the first row
+                    line = reader.ReadLine();
 
-                    System.Data.DataRow newRow = mappedDataTypes.NewRow();
-                    newRow["Name"] = vars[0];
-                    newRow["Description"] = vars[1];
-                    newRow["SystemType"] = vars[2];
-                    newRow["DisplayPattern"] = vars[3];
-                    mappedDataTypes.Rows.Add(newRow);
+                    while ((line = reader.ReadLine()) != null)
+                    {
+                        // (char)59 = ';'
+                        string[] vars = line.Split((char)59);
+
+                        System.Data.DataRow newRow = mappedDataTypes.NewRow();
+                        newRow["Name"] = vars[0];
+                        newRow["Description"] = vars[1];
+                        newRow["SystemType"] = vars[2];
+                        newRow["DisplayPattern"] = vars[3];
+                        mappedDataTypes.Rows.Add(newRow);
+                    }
                 }
             }
-            
-          return mappedDataTypes;
+
+            return mappedDataTypes;
         }
 
 

@@ -40,45 +40,47 @@ namespace BExIS.Modules.Rpm.UI.Models
 
         public Structure(long datasetId) : this()
         {
-            DatasetManager datasetManager = new DatasetManager();
-            var dataset = datasetManager.DatasetRepo.Get(datasetId);
-            if (dataset != null && dataset.DataStructure.Id != 0)
+            using (DatasetManager datasetManager = new DatasetManager())
             {
-                DataStructureResultStruct dataStructureResultStruct = new DataStructureResultStruct(this.Id);
-                this.Id = dataStructureResultStruct.Id;
-                this.Title = dataStructureResultStruct.Title;
-                this.Description = dataStructureResultStruct.Description;
-                this.inUse = dataStructureResultStruct.inUse;
-                this.Structured = dataStructureResultStruct.Structured;
-                this.Variables = new DataTable("Variables");
-
-                this.Variables.Columns.Add("Id");
-                this.Variables.Columns.Add("Label");
-                this.Variables.Columns.Add("Description");
-                this.Variables.Columns.Add("isOptional");
-                this.Variables.Columns.Add("Unit");
-                this.Variables.Columns.Add("DataType");
-                this.Variables.Columns.Add("SystemType");
-
-                if (this.Structured == true)
+                var dataset = datasetManager.DatasetRepo.Get(datasetId);
+                if (dataset != null && dataset.DataStructure.Id != 0)
                 {
-                    StructuredDataStructurePreviewModel structuredDataStructurePreviewModel = new StructuredDataStructurePreviewModel(this.Id);
-                    DataRow dataRow;
-                    foreach (VariablePreview vs in structuredDataStructurePreviewModel.VariablePreviews)
+                    DataStructureResultStruct dataStructureResultStruct = new DataStructureResultStruct(this.Id);
+                    this.Id = dataStructureResultStruct.Id;
+                    this.Title = dataStructureResultStruct.Title;
+                    this.Description = dataStructureResultStruct.Description;
+                    this.inUse = dataStructureResultStruct.inUse;
+                    this.Structured = dataStructureResultStruct.Structured;
+                    this.Variables = new DataTable("Variables");
+
+                    this.Variables.Columns.Add("Id");
+                    this.Variables.Columns.Add("Label");
+                    this.Variables.Columns.Add("Description");
+                    this.Variables.Columns.Add("isOptional");
+                    this.Variables.Columns.Add("Unit");
+                    this.Variables.Columns.Add("DataType");
+                    this.Variables.Columns.Add("SystemType");
+
+                    if (this.Structured == true)
                     {
-                        dataRow = this.Variables.NewRow();
-                        dataRow["Id"] = vs.Id;
-                        dataRow["Label"] = vs.Label;
-                        dataRow["Description"] = vs.Description;
-                        dataRow["isOptional"] = vs.isOptional;
-                        dataRow["Unit"] = vs.Unit;
-                        dataRow["DataType"] = vs.DataType;
-                        dataRow["SystemType"] = vs.SystemType;
-                        this.Variables.Rows.Add(dataRow);
+                        StructuredDataStructurePreviewModel structuredDataStructurePreviewModel = new StructuredDataStructurePreviewModel(this.Id);
+                        DataRow dataRow;
+                        foreach (VariablePreview vs in structuredDataStructurePreviewModel.VariablePreviews)
+                        {
+                            dataRow = this.Variables.NewRow();
+                            dataRow["Id"] = vs.Id;
+                            dataRow["Label"] = vs.Label;
+                            dataRow["Description"] = vs.Description;
+                            dataRow["isOptional"] = vs.isOptional;
+                            dataRow["Unit"] = vs.Unit;
+                            dataRow["DataType"] = vs.DataType;
+                            dataRow["SystemType"] = vs.SystemType;
+                            this.Variables.Rows.Add(dataRow);
+                        }
                     }
                 }
             }
-        }       
+        }
     }
 }
     

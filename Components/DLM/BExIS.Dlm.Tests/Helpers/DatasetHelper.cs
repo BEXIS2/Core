@@ -185,22 +185,20 @@ namespace BExIS.Dlm.Tests.Helpers
             }
         }
 
-        public Dataset UpdateOneTupleForDataset(Dataset dataset, StructuredDataStructure dataStructure, long id, int value)
+        public Dataset UpdateOneTupleForDataset(Dataset dataset, StructuredDataStructure dataStructure, long id, int value, DatasetManager datasetManager)
         {
             dataset.Status.Should().Be(DatasetStatus.CheckedIn);
             dataset.Should().NotBeNull();
 
-            DatasetManager dm = new DatasetManager();
-           
             try
             {
-                if (dm.IsDatasetCheckedOutFor(dataset.Id, "David") || dm.CheckOutDataset(dataset.Id, "David"))
+                if (datasetManager.IsDatasetCheckedOutFor(dataset.Id, "David") || datasetManager.CheckOutDataset(dataset.Id, "David"))
                 {
                     dataset.Status.Should().Be(DatasetStatus.CheckedOut, "Dataset must be in Checkedout status.");
 
-                    DatasetVersion workingCopy = dm.GetDatasetWorkingCopy(dataset.Id);
+                    DatasetVersion workingCopy = datasetManager.GetDatasetWorkingCopy(dataset.Id);
 
-                    DataTuple oldDt = dm.DataTupleRepo.Get(id);
+                    DataTuple oldDt = datasetManager.DataTupleRepo.Get(id);
 
                     DataTuple dt = new DataTuple();
                     dt.VariableValues.Add(new VariableValue() { VariableId = dataStructure.Variables.First().Id, Value = value });
@@ -223,8 +221,8 @@ namespace BExIS.Dlm.Tests.Helpers
                     newDt.Materialize();
                     newDt.OrderNo = oldDt.OrderNo;
                     tuples.Add(newDt);
-                    
-                    dm.EditDatasetVersion(workingCopy, null, tuples, null);
+
+                    datasetManager.EditDatasetVersion(workingCopy, null, tuples, null);
                     dataset.Status.Should().Be(DatasetStatus.CheckedOut, "Dataset must be in Checkedout status.");
                 }
                 return dataset;
@@ -233,29 +231,25 @@ namespace BExIS.Dlm.Tests.Helpers
             {
                 return null;
             }
-            finally
-            {
-                dm.Dispose();
-            }
+
         }
 
-        public Dataset UpdateAnyTupleForDataset(Dataset dataset, StructuredDataStructure dataStructure)
+        public Dataset UpdateAnyTupleForDataset(Dataset dataset, StructuredDataStructure dataStructure, DatasetManager datasetManager)
         {
             dataset.Status.Should().Be(DatasetStatus.CheckedIn);
             dataset.Should().NotBeNull();
 
-            DatasetManager dm = new DatasetManager();
             try
             {
-                DatasetVersion dsv = dm.GetDatasetLatestVersion(dataset.Id);
-                var datatuples = dm.GetDataTuples(dsv.Id);
+                DatasetVersion dsv = datasetManager.GetDatasetLatestVersion(dataset.Id);
+                var datatuples = datasetManager.GetDataTuples(dsv.Id);
 
 
-                if (dm.IsDatasetCheckedOutFor(dataset.Id, "David") || dm.CheckOutDataset(dataset.Id, "David"))
+                if (datasetManager.IsDatasetCheckedOutFor(dataset.Id, "David") || datasetManager.CheckOutDataset(dataset.Id, "David"))
                 {
                     dataset.Status.Should().Be(DatasetStatus.CheckedOut, "Dataset must be in Checkedout status.");
 
-                    DatasetVersion workingCopy = dm.GetDatasetWorkingCopy(dataset.Id);
+                    DatasetVersion workingCopy = datasetManager.GetDatasetWorkingCopy(dataset.Id);
 
                     List<DataTuple> editedTuples = new List<DataTuple>();
 
@@ -272,7 +266,7 @@ namespace BExIS.Dlm.Tests.Helpers
                         editedTuples.Add((DataTuple)dataTuple);
                     }
 
-                    dm.EditDatasetVersion(workingCopy, null, editedTuples, null);
+                    datasetManager.EditDatasetVersion(workingCopy, null, editedTuples, null);
                     dataset.Status.Should().Be(DatasetStatus.CheckedOut, "Dataset must be in Checkedout status.");
                 }
 
@@ -282,10 +276,7 @@ namespace BExIS.Dlm.Tests.Helpers
             {
                 return null;
             }
-            finally
-            {
-                dm.Dispose();
-            }
+
         }
 
         public ResearchPlan CreateResearchPlan()

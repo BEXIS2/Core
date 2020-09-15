@@ -212,76 +212,76 @@ namespace BExIS.Modules.Dim.UI.Controllers
             string metadataValidMessage = "";
             bool exist = false;
 
-            //get broker
-            PublicationManager publicationManager = new PublicationManager();
-
-            // datasetversion
-            DatasetManager dm = new DatasetManager();
-            long version = dm.GetDatasetLatestVersion(datasetid).Id;
-
-            if (publicationManager.BrokerRepo.Get().Any(d => d.Name.ToLower().Equals(datarepo.ToLower())))
+            using (PublicationManager publicationManager = new PublicationManager())
+            using (DatasetManager dm = new DatasetManager())
             {
-                Broker broker =
-                   publicationManager.BrokerRepo.Get().Where(d => d.Name.ToLower().Equals(datarepo.ToLower())).FirstOrDefault();
+                // datasetversion
+                long version = dm.GetDatasetLatestVersion(datasetid).Id;
 
-                Publication publication =
-                    publicationManager.PublicationRepo.Get()
-                        .Where(p => p.Broker != null && p.Broker.Id.Equals(broker.Id) && p.DatasetVersion != null && p.DatasetVersion.Id.Equals(version))
-                        .FirstOrDefault();
-
-                if (publication != null && !String.IsNullOrEmpty(publication.FilePath)
-                    && FileHelper.FileExist(Path.Combine(AppConfiguration.DataPath, publication.FilePath)))
+                if (publicationManager.BrokerRepo.Get().Any(d => d.Name.ToLower().Equals(datarepo.ToLower())))
                 {
-                    //model.Exist = true;
-                    exist = true;
-                }
-                else
-                {
-                    #region metadata
+                    Broker broker =
+                       publicationManager.BrokerRepo.Get().Where(d => d.Name.ToLower().Equals(datarepo.ToLower())).FirstOrDefault();
 
-                    // if no conversion is needed
-                    if (String.IsNullOrEmpty(broker.MetadataFormat))
+                    Publication publication =
+                        publicationManager.PublicationRepo.Get()
+                            .Where(p => p.Broker != null && p.Broker.Id.Equals(broker.Id) && p.DatasetVersion != null && p.DatasetVersion.Id.Equals(version))
+                            .FirstOrDefault();
+
+                    if (publication != null && !String.IsNullOrEmpty(publication.FilePath)
+                        && FileHelper.FileExist(Path.Combine(AppConfiguration.DataPath, publication.FilePath)))
                     {
-                        //model.IsMetadataConvertable = true;
-                        isMetadataConvertable = true;
-
-                        // Validate
-                        metadataValidMessage = OutputMetadataManager.IsValideAgainstSchema(datasetid,
-                            TransmissionType.mappingFileExport, datarepo);
+                        //model.Exist = true;
+                        exist = true;
                     }
                     else
                     {
-                        //if convertion check ist needed
-                        //get all export attr from metadata structure
-                        List<string> exportNames =
-                            xmlDatasetHelper.GetAllTransmissionInformation(datasetid,
-                                TransmissionType.mappingFileExport, AttributeNames.name).ToList();
-                        if (exportNames.Contains(broker.MetadataFormat))
+                        #region metadata
+
+                        // if no conversion is needed
+                        if (String.IsNullOrEmpty(broker.MetadataFormat))
+                        {
+                            //model.IsMetadataConvertable = true;
                             isMetadataConvertable = true;
 
-                        metadataValidMessage = OutputMetadataManager.IsValideAgainstSchema(datasetid,
-                            TransmissionType.mappingFileExport, datarepo);
+                            // Validate
+                            metadataValidMessage = OutputMetadataManager.IsValideAgainstSchema(datasetid,
+                                TransmissionType.mappingFileExport, datarepo);
+                        }
+                        else
+                        {
+                            //if convertion check ist needed
+                            //get all export attr from metadata structure
+                            List<string> exportNames =
+                                xmlDatasetHelper.GetAllTransmissionInformation(datasetid,
+                                    TransmissionType.mappingFileExport, AttributeNames.name).ToList();
+                            if (exportNames.Contains(broker.MetadataFormat))
+                                isMetadataConvertable = true;
+
+                            metadataValidMessage = OutputMetadataManager.IsValideAgainstSchema(datasetid,
+                                TransmissionType.mappingFileExport, datarepo);
+                        }
+
+                        #endregion metadata
+
+                        #region primary Data
+
+                        //todo need a check if the primary data is structured or not, if its unstructured also export should be possible
+
+                        if (broker.PrimaryDataFormat.ToLower().Contains("text/plain") ||
+                            broker.PrimaryDataFormat.ToLower().Contains("text/csv") ||
+                            broker.PrimaryDataFormat.ToLower().Contains("application/excel") ||
+                            String.IsNullOrEmpty(broker.PrimaryDataFormat))
+                        {
+                            isDataConvertable = true;
+                        }
+
+                        #endregion primary Data
                     }
 
-                    #endregion metadata
-
-                    #region primary Data
-
-                    //todo need a check if the primary data is structured or not, if its unstructured also export should be possible
-
-                    if (broker.PrimaryDataFormat.ToLower().Contains("text/plain") ||
-                        broker.PrimaryDataFormat.ToLower().Contains("text/csv") ||
-                        broker.PrimaryDataFormat.ToLower().Contains("application/excel") ||
-                        String.IsNullOrEmpty(broker.PrimaryDataFormat))
-                    {
-                        isDataConvertable = true;
-                    }
-
-                    #endregion primary Data
+                    //check if reporequirements are fit
+                    //e.g. GFBIO
                 }
-
-                //check if reporequirements are fit
-                //e.g. GFBIO
             }
 
             return Json(new { isMetadataConvertable = isMetadataConvertable, isDataConvertable = isDataConvertable, metadataValidMessage = metadataValidMessage, Exist = exist });
@@ -316,39 +316,42 @@ namespace BExIS.Modules.Dim.UI.Controllers
             Tuple<string, string> tmp;
             try
             {
-                PublicationManager publicPublicationManager = new PublicationManager();
-                Repository repository =
-                    publicPublicationManager.RepositoryRepo
-                        .Query().FirstOrDefault(p => p.Name.ToLower().Equals(datarepo.ToLower()) &&
-                                    p.Broker.Name.ToLower().Equals(broker.ToLower()));
-
-                switch (datarepo.ToLower())
+                using (PublicationManager publicPublicationManager = new PublicationManager())
                 {
-                    case "pangaea":
-                        {
-                            PangaeaDataRepoConverter dataRepoConverter = new PangaeaDataRepoConverter(repository);
+                    Repository repository =
+                        publicPublicationManager.RepositoryRepo
+                            .Query().FirstOrDefault(p => p.Name.ToLower().Equals(datarepo.ToLower()) &&
+                                        p.Broker.Name.ToLower().Equals(broker.ToLower()));
 
-                            tmp = new Tuple<string, string>(dataRepoConverter.Convert(datasetVersionId), "text/txt");
-                            return tmp;
-                        }
-                    case "collections":
-                        {
-                            GenericDataRepoConverter dataRepoConverter = new GenericDataRepoConverter(repository);
-                            tmp = new Tuple<string, string>(dataRepoConverter.Convert(datasetVersionId), "application/zip");
-                            return tmp;
-                        }
-                    case "pensoft":
-                        {
-                            PensoftDataRepoConverter dataRepoConverter = new PensoftDataRepoConverter(repository);
-                            tmp = new Tuple<string, string>(dataRepoConverter.Convert(datasetVersionId), "text/xml");
-                            return tmp;
-                        }
-                    default:
-                        {
-                            GenericDataRepoConverter dataRepoConverter = new GenericDataRepoConverter(repository);
-                            tmp = new Tuple<string, string>(dataRepoConverter.Convert(datasetVersionId), "application/zip");
-                            return tmp;
-                        }
+                    switch (datarepo.ToLower())
+                    {
+                        case "pangaea":
+                            {
+                                PangaeaDataRepoConverter dataRepoConverter = new PangaeaDataRepoConverter(repository);
+
+                                tmp = new Tuple<string, string>(dataRepoConverter.Convert(datasetVersionId), "text/txt");
+                                return tmp;
+                            }
+                        case "collections":
+                            {
+                                GenericDataRepoConverter dataRepoConverter = new GenericDataRepoConverter(repository);
+                                tmp = new Tuple<string, string>(dataRepoConverter.Convert(datasetVersionId), "application/zip");
+                                return tmp;
+                            }
+                        case "pensoft":
+                            {
+                                PensoftDataRepoConverter dataRepoConverter = new PensoftDataRepoConverter(repository);
+                                tmp = new Tuple<string, string>(dataRepoConverter.Convert(datasetVersionId), "text/xml");
+                                return tmp;
+                            }
+                        default:
+                            {
+                                //default
+                                GenericDataRepoConverter dataRepoConverter = new GenericDataRepoConverter(repository);
+                                tmp = new Tuple<string, string>(dataRepoConverter.Convert(datasetVersionId), "application/zip");
+                                return tmp;
+                            }
+                    }
                 }
             }
             catch (Exception ex)

@@ -88,41 +88,43 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             if (TaskManager.Bus.ContainsKey(ImportMetadataStructureTaskManager.SCHEMA_NAME))
             {
                 string schemaName = TaskManager.Bus[ImportMetadataStructureTaskManager.SCHEMA_NAME].ToString();
-                MetadataStructureManager msm = new MetadataStructureManager();
-
-                if (msm.Repo.Query(m => m.Name.Equals(schemaName)).Any())
+                using (MetadataStructureManager msm = new MetadataStructureManager())
                 {
-                    MetadataStructure ms = msm.Repo.Query(m => m.Name.Equals(schemaName)).FirstOrDefault();
-                    var deleted = msm.Delete(ms);
 
-                    if (deleted)
+                    if (msm.Repo.Query(m => m.Name.Equals(schemaName)).Any())
                     {
-                        //delete xsds
+                        MetadataStructure ms = msm.Repo.Query(m => m.Name.Equals(schemaName)).FirstOrDefault();
+                        var deleted = msm.Delete(ms);
 
-                        if (TaskManager.Bus.ContainsKey(ImportMetadataStructureTaskManager.SCHEMA_NAME))
+                        if (deleted)
                         {
-                            schemaName = RegExHelper.GetCleanedFilename(schemaName);
-                            string directoryPath = Path.Combine(AppConfiguration.GetModuleWorkspacePath("Dcm"), "Metadata", schemaName);
+                            //delete xsds
 
-                            if (Directory.Exists(directoryPath)) Directory.Delete(directoryPath, true);
-                        }
-
-                        //delete mappingfiles
-                        if (TaskManager.Bus.ContainsKey(ImportMetadataStructureTaskManager.MAPPING_FILE_NAME_IMPORT))
-                        {
-                            string filepath = Path.Combine(AppConfiguration.GetModuleWorkspacePath("Dim"), TaskManager.Bus[ImportMetadataStructureTaskManager.MAPPING_FILE_NAME_IMPORT].ToString());
-                            if (FileHelper.FileExist(filepath))
+                            if (TaskManager.Bus.ContainsKey(ImportMetadataStructureTaskManager.SCHEMA_NAME))
                             {
-                                FileHelper.Delete(filepath);
+                                schemaName = RegExHelper.GetCleanedFilename(schemaName);
+                                string directoryPath = Path.Combine(AppConfiguration.GetModuleWorkspacePath("Dcm"), "Metadata", schemaName);
+
+                                if (Directory.Exists(directoryPath)) Directory.Delete(directoryPath, true);
                             }
-                        }
 
-                        if (TaskManager.Bus.ContainsKey(ImportMetadataStructureTaskManager.MAPPING_FILE_NAME_EXPORT))
-                        {
-                            string filepath = Path.Combine(AppConfiguration.GetModuleWorkspacePath("Dim"), TaskManager.Bus[ImportMetadataStructureTaskManager.MAPPING_FILE_NAME_EXPORT].ToString());
-                            if (FileHelper.FileExist(filepath))
+                            //delete mappingfiles
+                            if (TaskManager.Bus.ContainsKey(ImportMetadataStructureTaskManager.MAPPING_FILE_NAME_IMPORT))
                             {
-                                FileHelper.Delete(filepath);
+                                string filepath = Path.Combine(AppConfiguration.GetModuleWorkspacePath("Dim"), TaskManager.Bus[ImportMetadataStructureTaskManager.MAPPING_FILE_NAME_IMPORT].ToString());
+                                if (FileHelper.FileExist(filepath))
+                                {
+                                    FileHelper.Delete(filepath);
+                                }
+                            }
+
+                            if (TaskManager.Bus.ContainsKey(ImportMetadataStructureTaskManager.MAPPING_FILE_NAME_EXPORT))
+                            {
+                                string filepath = Path.Combine(AppConfiguration.GetModuleWorkspacePath("Dim"), TaskManager.Bus[ImportMetadataStructureTaskManager.MAPPING_FILE_NAME_EXPORT].ToString());
+                                if (FileHelper.FileExist(filepath))
+                                {
+                                    FileHelper.Delete(filepath);
+                                }
                             }
                         }
                     }

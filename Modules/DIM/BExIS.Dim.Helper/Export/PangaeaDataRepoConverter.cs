@@ -112,28 +112,30 @@ namespace BExIS.Dim.Helpers.Export
         {
             try
             {
-                DatasetManager datasetManager = new DatasetManager();
-                DatasetVersion datasetVersion = datasetManager.GetDatasetVersion(datasetVersionId);
-
-                if (datasetVersion.Dataset.DataStructure.Self is StructuredDataStructure)
+                using (DatasetManager datasetManager = new DatasetManager())
                 {
-                    OutputDataManager outputDataManager = new OutputDataManager();
-                    SubmissionManager submissionManager = new SubmissionManager();
+                    DatasetVersion datasetVersion = datasetManager.GetDatasetVersion(datasetVersionId);
 
-                    long datasetId = datasetVersion.Dataset.Id;
-                    int versionNr = datasetManager.GetDatasetVersionNr(datasetVersion);
+                    if (datasetVersion.Dataset.DataStructure.Self is StructuredDataStructure)
+                    {
+                        OutputDataManager outputDataManager = new OutputDataManager();
+                        SubmissionManager submissionManager = new SubmissionManager();
 
-                    string fileName = submissionManager.GetFileNameForDataRepo(datasetId, versionNr,
-                        _dataRepo.Name,
-                        "csv");
+                        long datasetId = datasetVersion.Dataset.Id;
+                        int versionNr = datasetManager.GetDatasetVersionNr(datasetVersion);
 
-                    string filepath = outputDataManager.GenerateAsciiFile(
-                        datasetId,
-                        datasetVersionId,
-                        "text/txt",
-                        false);
+                        string fileName = submissionManager.GetFileNameForDataRepo(datasetId, versionNr,
+                            _dataRepo.Name,
+                            "csv");
 
-                    return filepath;
+                        string filepath = outputDataManager.GenerateAsciiFile(
+                            datasetId,
+                            datasetVersionId,
+                            "text/txt",
+                            false);
+
+                        return filepath;
+                    }
                 }
             }
             catch (Exception)

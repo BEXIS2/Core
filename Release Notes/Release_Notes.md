@@ -1,19 +1,13 @@
-# BEXIS 2.14.1 Release Notes
-
-### Enhancements
-- Performance improvement of the database update script from version 2.13-2.14 ([#614](https://github.com/BEXIS2/Core/issues/614))
-- Refactor unstrucured data files name handling ([#611](https://github.com/BEXIS2/Core/issues/611))
+# BEXIS 2.14.2 Release Notes
 
 ### Bugs
-- Fix occurred errors with requests ([#615](https://github.com/BEXIS2/Core/issues/615)) and links ([#617](https://github.com/BEXIS2/Core/issues/617)) when datasets were deleted/purged. 
-- Fix error while downloading a dataset of type unstrutcured ([#613](https://github.com/BEXIS2/Core/issues/613))
-- Fix Decrease default batch size to max allowed parameters for a single statement (PostgreSQL) ([#609](https://github.com/BEXIS2/Core/issues/609))
-- Fix selected data types were selected when the Create Unit form was opened again ([#603](https://github.com/BEXIS2/Core/issues/603))
+- fix database connection handling (not exceeding max. number of connections anymore - system stability) ([#628](https://github.com/BEXIS2/Core/issues/628))
+
 
 ## I. Software Information
 
 -	Name: BEXIS
--	Version: 2.14.0
+-	Version: 2.14.2
 -	Application Type: Web Application
 -	Platform: Windows
 

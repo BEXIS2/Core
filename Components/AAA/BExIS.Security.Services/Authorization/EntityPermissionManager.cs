@@ -222,64 +222,162 @@ namespace BExIS.Security.Services.Authorization
                 return (GetEffectiveRights(subjectId, new List<long>(){entityId}, key));
             }
         }
-
-        public int GetEffectiveRights(long? subjectId, List<long> entityIds, long key)
+        /// <summary>
+        /// get effective rights of subjects(incoming as ids) on a entity,
+        /// return a dictionary with subjectid , right
+        /// </summary>
+        /// <param name="subjectIds"></param>
+        /// <param name="entityId"></param>
+        /// <param name="key"></param>
+        /// <returns>Dictionary<long, int> == subjectId and rights</returns>
+        public Dictionary<long, int> GetEffectiveRights(IEnumerable<long> subjectIds, long entityId, long key)
         {
+            Dictionary<long, int> tmp = new Dictionary<long, int>();
+
             using (var uow = this.GetUnitOfWork())
             {
                 var subjectRepository = uow.GetReadOnlyRepository<Subject>();
                 var entityRepository = uow.GetReadOnlyRepository<Entity>();
                 var entityPermissionRepository = uow.GetReadOnlyRepository<EntityPermission>();
+                var partyUserRepository = uow.GetReadOnlyRepository<PartyUser>();
+                var partyRepository = uow.GetReadOnlyRepository<Party>();
+                var partyRelationshipRepository = uow.GetReadOnlyRepository<PartyRelationship>();
 
-                var subject = subjectId == null ? null : subjectRepository.Query(s => s.Id == subjectId).FirstOrDefault();
-                var entities = entityRepository.Query(e => entityIds.Contains(e.Id)).ToList();
-                if (entities.Count == 0)
-                    return 0;
+                var entity = entityRepository.Get(entityId);
 
-                var rights = new List<int>
+
+                foreach (var subjectId in subjectIds)
                 {
-                    entityPermissionRepository.Get(m => m.Subject == null && entityIds.Contains(m.Entity.Id) && m.Key == key).FirstOrDefault()?.Rights ?? 0
+                    var subject = subjectRepository.Get(subjectId);
+
+                    int effectiveRights = getEffectiveRights(subject, new List<Entity>() { entity }, key, entityPermissionRepository, partyUserRepository, partyRepository, partyRelationshipRepository);
+
+                    tmp.Add(subjectId, effectiveRights);
+                }
+
+            }
+
+            return tmp;
+
+        }
+
+        /// <summary>
+        /// get effective rights of subjects on a entity,
+        /// return a dictionary with subjectid , right
+        /// </summary>
+        /// <param name="subjects"></param>
+        /// <param name="entityId"></param>
+        /// <param name="key"></param>
+        /// <returns>Dictionary<long, int> == subjectId and rights</returns>
+        public Dictionary<long, int> GetEffectiveRights(IEnumerable<Subject> subjects, long entityId, long key)
+        {
+            Dictionary<long, int> tmp = new Dictionary<long, int>();
+
+            using (var uow = this.GetUnitOfWork())
+            {
+                var subjectRepository = uow.GetReadOnlyRepository<Subject>();
+                var entityRepository = uow.GetReadOnlyRepository<Entity>();
+                var entityPermissionRepository = uow.GetReadOnlyRepository<EntityPermission>();
+                var partyUserRepository = uow.GetReadOnlyRepository<PartyUser>();
+                var partyRepository = uow.GetReadOnlyRepository<Party>();
+                var partyRelationshipRepository = uow.GetReadOnlyRepository<PartyRelationship>();
+
+                var entity = entityRepository.Get(entityId);
+
+                foreach (var subject in subjects)
+                {
+                    int effectiveRights = getEffectiveRights(subject, new List<Entity>() { entity }, key, entityPermissionRepository, partyUserRepository, partyRepository, partyRelationshipRepository);
+
+                    tmp.Add(subject.Id, effectiveRights);
+                }
+
+            }
+
+            return tmp;
+
+        }
+
+        public int GetEffectiveRights(long? subjectId, List<long> entityIds, long key)
+        {
+            if (subjectId == null) return 0;
+
+            long id = Convert.ToInt64(subjectId);
+
+            using (var uow = this.GetUnitOfWork())
+            {
+                var subjectRepository = uow.GetReadOnlyRepository<Subject>();
+                var entityRepository = uow.GetReadOnlyRepository<Entity>();
+                var entityPermissionRepository = uow.GetReadOnlyRepository<EntityPermission>();
+                var partyUserRepository = uow.GetReadOnlyRepository<PartyUser>();
+                var partyRepository = uow.GetReadOnlyRepository<Party>();
+                var partyRelationshipRepository = uow.GetReadOnlyRepository<PartyRelationship>();
+
+                var subject = subjectRepository.Get(id);
+                List<Entity> entities = new List<Entity>();
+
+                foreach (var i in entityIds)
+                {
+                    entities.Add(entityRepository.Get(i));
+                }
+
+                return getEffectiveRights(subject, entities, key, entityPermissionRepository, partyUserRepository, partyRepository, partyRelationshipRepository);
+            }
+        }
+
+        private int getEffectiveRights(Subject subject, List<Entity> entities, long key,
+            IReadOnlyRepository<EntityPermission> entityPermissionRepository, 
+            IReadOnlyRepository<PartyUser> partyUserRepository,
+            IReadOnlyRepository<Party> partyRepository,
+            IReadOnlyRepository<PartyRelationship> partyRelationshipRepository)
+        {
+            //var subject = subject.Id == null ? null : subjectRepository.Query(s => s.Id == subjectId).FirstOrDefault();
+            if (entities.Count == 0)
+                return 0;
+
+            var eids = entities.Select(e => e.Id);
+
+            var rights = new List<int>
+                {
+                    entityPermissionRepository.Get(m => m.Subject == null && eids.Contains(m.Entity.Id) && m.Key == key).FirstOrDefault()?.Rights ?? 0
                 };
 
-                if (subject is User)
+            if (subject is User)
+            {
+                
+
+                var partyUser = partyUserRepository.Query(m => m.UserId == subject.Id).FirstOrDefault();
+
+                if (partyUser != null)
                 {
-                    var partyUserRepository = uow.GetReadOnlyRepository<PartyUser>();
+                    var userParty = partyRepository.Get(partyUser.PartyId);
 
-                    var partyUser = partyUserRepository.Query(m => m.UserId == subject.Id).FirstOrDefault();
+                    var entityNames = entities.Select(m => m.Name);
 
-                    if (partyUser != null)
+                    var entityParty = partyRepository
+                        .Query(m => entityNames.Contains(m.PartyType.Title) && m.Name == key.ToString())
+                        .FirstOrDefault();
+
+                    if (userParty != null && entityParty != null)
                     {
-                        var partyRepository = uow.GetReadOnlyRepository<Party>();
-                        var userParty = partyRepository.Get(partyUser.PartyId);
+                       
+                        var partyRelationships = partyRelationshipRepository.Query(m => m.SourceParty.Id == userParty.Id && m.TargetParty.Id == entityParty.Id);
 
-                        var entityNames = entityRepository.Query(m => entityIds.Contains(m.Id)).Select(m => m.Name);
-
-                        var entityParty = partyRepository
-                            .Query(m => entityNames.Contains(m.PartyType.Title) && m.Name == key.ToString())
-                            .FirstOrDefault();
-
-                        if (userParty != null && entityParty != null)
-                        {
-                            var partyRelationshipRepository = uow.GetReadOnlyRepository<PartyRelationship>();
-                            var partyRelationships = partyRelationshipRepository.Query(m => m.SourceParty.Id == userParty.Id && m.TargetParty.Id == entityParty.Id);
-
-                            rights.AddRange(partyRelationships.Select(m => m.Permission));
-                        }
+                        rights.AddRange(partyRelationships.Select(m => m.Permission));
                     }
-
-                    var user = subject as User;
-                    var subjectIds = new List<long>() { user.Id };
-                    subjectIds.AddRange(user.Groups.Select(g => g.Id).ToList());
-                    rights.AddRange(entityPermissionRepository.Get(m => subjectIds.Contains(m.Subject.Id) && entityIds.Contains(m.Entity.Id) && m.Key == key).Select(e => e.Rights).ToList());
                 }
 
-                if (subject is Group)
-                {
-                    rights.Add(entityPermissionRepository.Get(m => m.Subject.Id == subject.Id && entityIds.Contains(m.Entity.Id) && m.Key == key).FirstOrDefault()?.Rights ?? 0);
-                }
-
-                return rights.Aggregate(0, (left, right) => left | right);
+                var user = subject as User;
+                var subjectIds = new List<long>() { user.Id };
+                subjectIds.AddRange(user.Groups.Select(g => g.Id).ToList());
+                rights.AddRange(entityPermissionRepository.Get(m => subjectIds.Contains(m.Subject.Id) && eids.Contains(m.Entity.Id) && m.Key == key).Select(e => e.Rights).ToList());
             }
+
+            if (subject is Group)
+            {
+                rights.Add(entityPermissionRepository.Get(m => m.Subject.Id == subject.Id && eids.Contains(m.Entity.Id) && m.Key == key).FirstOrDefault()?.Rights ?? 0);
+            }
+
+            return rights.Aggregate(0, (left, right) => left | right);
         }
 
         public IEnumerable<long> GetKeys<T>(string name, string v, Type type, RightType delete)
@@ -360,14 +458,19 @@ namespace BExIS.Security.Services.Authorization
             {
                 var entityPermissionRepository = uow.GetReadOnlyRepository<EntityPermission>();
 
-                if (subject == null)
-                {
-                    return entityPermissionRepository.Get(m => m.Subject == null && m.Entity.Id == entity.Id && m.Key == key).FirstOrDefault()?.Rights ?? 0;
-                }
-                if (entity == null)
-                    return 0;
-                return entityPermissionRepository.Get(m => m.Subject.Id == subject.Id && m.Entity.Id == entity.Id && m.Key == key).FirstOrDefault()?.Rights ?? 0;
+                return getRights(subject, entity, key, entityPermissionRepository);
             }
+        }
+
+        private int getRights(Subject subject, Entity entity, long key, IReadOnlyRepository<EntityPermission> entityPermissionRepository)
+        {
+            if (subject == null)
+            {
+                return entityPermissionRepository.Get(m => m.Subject == null && m.Entity.Id == entity.Id && m.Key == key).FirstOrDefault()?.Rights ?? 0;
+            }
+            if (entity == null)
+                return 0;
+            return entityPermissionRepository.Get(m => m.Subject.Id == subject.Id && m.Entity.Id == entity.Id && m.Key == key).FirstOrDefault()?.Rights ?? 0;
         }
 
         public int GetRights(long? subjectId, long entityId, long key)
@@ -381,6 +484,53 @@ namespace BExIS.Security.Services.Authorization
                 var entity = entityRepository.Get(entityId);
                 return GetRights(subject, entity, key);
             }
+        }
+
+        public Dictionary<long,int> GetRights(IEnumerable<long> subjectIds, long entityId, long key)
+        {
+            Dictionary<long, int> tmp = new Dictionary<long, int>();
+
+            using (var uow = this.GetUnitOfWork())
+            {
+                var subjectRepository = uow.GetReadOnlyRepository<Subject>();
+                var entityRepository = uow.GetReadOnlyRepository<Entity>();
+                var entityPermissionRepository = uow.GetReadOnlyRepository<EntityPermission>();
+                var entity = entityRepository.Get(entityId);
+
+                foreach (var subjectId in subjectIds)
+                {
+                    var subject = subjectId == null ? null : subjectRepository.Query(s => s.Id == subjectId).FirstOrDefault();
+                    
+                    int rights = getRights(subject, entity, key, entityPermissionRepository);
+
+                    tmp.Add(subjectId, rights);
+                }
+            }
+
+            return tmp;
+        }
+
+        public Dictionary<long, int> GetRights(IEnumerable<Subject> subjects, long entityId, long key)
+        {
+            Dictionary<long, int> tmp = new Dictionary<long, int>();
+
+            using (var uow = this.GetUnitOfWork())
+            {
+                var subjectRepository = uow.GetReadOnlyRepository<Subject>();
+                var entityRepository = uow.GetReadOnlyRepository<Entity>();
+                var entityPermissionRepository = uow.GetReadOnlyRepository<EntityPermission>();
+
+                var entity = entityRepository.Get(entityId);
+
+                foreach (var subject in subjects)
+                {
+                    int rights = getRights(subject, entity, key, entityPermissionRepository);
+
+                    tmp.Add(subject.Id, rights);
+                }
+            }
+
+            return tmp;
         }
 
         public bool HasEffectiveRight(Subject subject, List<Entity> entities, long key, RightType rightType)

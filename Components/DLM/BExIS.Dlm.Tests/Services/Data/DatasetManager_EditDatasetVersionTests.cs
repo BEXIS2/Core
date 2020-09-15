@@ -17,6 +17,8 @@ using Vaiona.Persistence.Api;
 
 namespace BExIS.Dlm.Tests.Services.Data
 {
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Reliability", "CA2000:Objekte verwerfen, bevor Bereich verloren geht", Justification = "<Ausstehend>")]
+
     [TestFixture()]
     public class DatasetManager_EditDatasetVersionTests
     {
@@ -126,64 +128,64 @@ namespace BExIS.Dlm.Tests.Services.Data
             }
         }
 
-        
-    
+
+
         [Test()]
         public void EditDatasetVersion_DeleteADataTupleAfterUpdate_ReturnUpdatedVersion()
         {
-            DatasetManager datasetManager = new DatasetManager();
-
-            try
+            Dataset dataset;
+            DatasetVersion latest;
+            using (DatasetManager datasetManager = new DatasetManager())
             {
                 //Arrange
-                Dataset dataset = datasetManager.GetDataset(datasetId);
-                DatasetVersion latest = datasetManager.GetDatasetLatestVersion(datasetId);
+                dataset = datasetManager.GetDataset(datasetId);
+                latest = datasetManager.GetDatasetLatestVersion(datasetId);
 
                 //update the dataset
-                dsHelper.UpdateAnyTupleForDataset(dataset, dataset.DataStructure as StructuredDataStructure);
+                dataset = dsHelper.UpdateAnyTupleForDataset(dataset, dataset.DataStructure as StructuredDataStructure, datasetManager);
                 datasetManager.CheckInDataset(datasetId, "for testing  update all datatuple", username, ViewCreationBehavior.None);
+            }
 
-
-                latest = datasetManager.GetDatasetLatestVersion(datasetId);
-
-                int before = datasetManager.GetDataTuplesCount(latest.Id);
-                var tuple = datasetManager.GetDataTuples(latest.Id).LastOrDefault();
-
-                //Act
-                if (datasetManager.IsDatasetCheckedOutFor(datasetId, "David") || datasetManager.CheckOutDataset(datasetId, "David"))
+            using (DatasetManager datasetManager = new DatasetManager())
+            {
+                try
                 {
-                    DatasetVersion workingCopy = datasetManager.GetDatasetWorkingCopy(datasetId);
+
+                    latest = datasetManager.GetDatasetLatestVersion(datasetId);
+
+                    int before = datasetManager.GetDataTuplesCount(latest.Id);
+                    var tuple = datasetManager.GetDataTuples(latest.Id).LastOrDefault();
+
+                    //Act
+                    if (datasetManager.IsDatasetCheckedOutFor(datasetId, "David") || datasetManager.CheckOutDataset(datasetId, "David"))
+                    {
+                        DatasetVersion workingCopy = datasetManager.GetDatasetWorkingCopy(datasetId);
 
 
-                    List<AbstractTuple> deleteTuples = new List<AbstractTuple>();
-                    deleteTuples.Add(tuple);
+                        List<AbstractTuple> deleteTuples = new List<AbstractTuple>();
+                        deleteTuples.Add(tuple);
 
-                    workingCopy = datasetManager.EditDatasetVersion(workingCopy, null, null, deleteTuples.Select(d => d.Id).ToList());
+                        workingCopy = datasetManager.EditDatasetVersion(workingCopy, null, null, deleteTuples.Select(d => d.Id).ToList());
 
-                    datasetManager.CheckInDataset(datasetId, "delete one datatuple for testing", username, ViewCreationBehavior.None);
+                        datasetManager.CheckInDataset(datasetId, "delete one datatuple for testing", username, ViewCreationBehavior.None);
+
+                    }
+
+                    latest = datasetManager.GetDatasetLatestVersion(datasetId);
+
+                    int after = datasetManager.GetDataTuplesCount(latest.Id);
+
+
+                    //Assert
+                    Assert.That(before, Is.GreaterThan(after));
+
 
                 }
-
-                latest = datasetManager.GetDatasetLatestVersion(datasetId);
-
-                int after = datasetManager.GetDataTuplesCount(latest.Id);
-
-
-                //Assert
-                Assert.That(before, Is.GreaterThan(after));
-
-
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
-            finally
-            {
-                datasetManager.Dispose();
+                catch (Exception ex)
+                {
+                    throw ex;
+                }
             }
         }
-
-
     }
 }

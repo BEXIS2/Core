@@ -60,69 +60,69 @@ namespace BExIS.IO.Transform.Output
 
         public static XmlDocument GetConvertedMetadata(long datasetId, TransmissionType type, string mappingName, bool storing = true)
         {
-            XmlDocument newXml;
-            DatasetManager datasetManager = new DatasetManager();
-
-            try
+            using (DatasetManager datasetManager = new DatasetManager())
             {
-                DatasetVersion datasetVersion = datasetManager.GetDatasetLatestVersion(datasetId);
-                XmlDatasetHelper xmlDatasetHelper = new XmlDatasetHelper();
+                XmlDocument newXml;
 
-                string mappingFileName = xmlDatasetHelper.GetTransmissionInformation(datasetVersion.Id, type, mappingName);
-                // no mapping files with mappingName exist
-                if (string.IsNullOrEmpty(mappingFileName)) return null;
-
-                string pathMappingFile = Path.Combine(AppConfiguration.GetModuleWorkspacePath("DIM"), mappingFileName);
-
-                XmlMapperManager xmlMapperManager = new XmlMapperManager(TransactionDirection.InternToExtern);
-                xmlMapperManager.Load(pathMappingFile, "exporttest");
-
-                newXml = xmlMapperManager.Export(datasetVersion.Metadata, datasetVersion.Id, mappingName, true);
-
-                string title = datasetVersion.Title;
-
-                // store in content descriptor
-                if (storing)
+                try
                 {
-                    if (String.IsNullOrEmpty(mappingName) || mappingName.ToLower() == "generic")
-                        storeGeneratedFilePathToContentDiscriptor(datasetId, datasetVersion, "metadata", ".xml");
-                    else
-                        storeGeneratedFilePathToContentDiscriptor(datasetId, datasetVersion, "metadata_" + mappingName, ".xml");
+                    DatasetVersion datasetVersion = datasetManager.GetDatasetLatestVersion(datasetId);
+                    XmlDatasetHelper xmlDatasetHelper = new XmlDatasetHelper();
+
+                    string mappingFileName = xmlDatasetHelper.GetTransmissionInformation(datasetVersion.Id, type, mappingName);
+                    // no mapping files with mappingName exist
+                    if (string.IsNullOrEmpty(mappingFileName)) return null;
+
+                    string pathMappingFile = Path.Combine(AppConfiguration.GetModuleWorkspacePath("DIM"), mappingFileName);
+
+                    XmlMapperManager xmlMapperManager = new XmlMapperManager(TransactionDirection.InternToExtern);
+                    xmlMapperManager.Load(pathMappingFile, "exporttest");
+
+                    newXml = xmlMapperManager.Export(datasetVersion.Metadata, datasetVersion.Id, mappingName, true);
+
+                    string title = datasetVersion.Title;
+
+                    // store in content descriptor
+                    if (storing)
+                    {
+                        if (String.IsNullOrEmpty(mappingName) || mappingName.ToLower() == "generic")
+                            storeGeneratedFilePathToContentDiscriptor(datasetId, datasetVersion, "metadata", ".xml");
+                        else
+                            storeGeneratedFilePathToContentDiscriptor(datasetId, datasetVersion, "metadata_" + mappingName, ".xml");
+                    }
                 }
-            }
-            catch (Exception ex)
-            {
-                throw ex;
+                catch (Exception ex)
+                {
+                    throw ex;
+                }
+
+                return newXml;
             }
 
-            return newXml;
+            
         }
 
         public static string GetSchemaDirectoryPath(long datasetId)
         {
-            DatasetManager datasetManager = new DatasetManager();
-
-            try
+            using (DatasetManager datasetManager = new DatasetManager())
+            using (MetadataStructureManager metadataStructureManager = new MetadataStructureManager())
             {
-                DatasetVersion datasetVersion = datasetManager.GetDatasetLatestVersion(datasetId);
+                try
+                {
+                    DatasetVersion datasetVersion = datasetManager.GetDatasetLatestVersion(datasetId);
 
-                MetadataStructureManager metadataStructureManager = new MetadataStructureManager();
-                MetadataStructure metadataStructure =
-                    metadataStructureManager.Repo.Get(datasetVersion.Dataset.MetadataStructure.Id);
+                    MetadataStructure metadataStructure = metadataStructureManager.Repo.Get(datasetVersion.Dataset.MetadataStructure.Id);
 
-                string path = Path.Combine(AppConfiguration.GetModuleWorkspacePath("DCM"), "Metadata",
-                    metadataStructure.Name);
+                    string path = Path.Combine(AppConfiguration.GetModuleWorkspacePath("DCM"), "Metadata",
+                        metadataStructure.Name);
 
-                if (!String.IsNullOrEmpty(path) && Directory.Exists(path))
-                    return path;
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
-            finally
-            {
-                datasetManager.Dispose();
+                    if (!String.IsNullOrEmpty(path) && Directory.Exists(path))
+                        return path;
+                }
+                catch (Exception ex)
+                {
+                    throw ex;
+                }
             }
 
             return String.Empty;
@@ -156,20 +156,23 @@ namespace BExIS.IO.Transform.Output
         /// <returns></returns>
         public static string GetMetadataPath(ICollection<ContentDescriptor> contentDescriptors)
         {
-            string path = "";
 
-            DatasetManager datasetManager = new DatasetManager();
-            ContentDescriptor contentDescriptor = contentDescriptors.ToList().FirstOrDefault(c => c.Name.Equals("metadata"));
-
-            if (contentDescriptor != null)
+            using (DatasetManager datasetManager = new DatasetManager())
             {
-                path = Path.Combine(AppConfiguration.DataPath, contentDescriptor.URI);
+                string path = "";
 
-                if (FileHelper.FileExist(path))
-                    return path;
+                ContentDescriptor contentDescriptor = contentDescriptors.ToList().FirstOrDefault(c => c.Name.Equals("metadata"));
+
+                if (contentDescriptor != null)
+                {
+                    path = Path.Combine(AppConfiguration.DataPath, contentDescriptor.URI);
+
+                    if (FileHelper.FileExist(path))
+                        return path;
+                }
+
+                return "";
             }
-
-            return "";
         }
 
         public static string CreateConvertedMetadata(long datasetId, TransmissionType type)
