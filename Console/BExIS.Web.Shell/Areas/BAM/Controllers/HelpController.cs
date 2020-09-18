@@ -9,6 +9,7 @@ using System.IO;
 using System.Xml.Linq;
 using BExIS.Xml.Helpers;
 using Vaiona.Utils.Cfg;
+using BExIS.Dlm.Services.Data;
 
 namespace BExIS.Modules.Bam.UI.Controllers
 {

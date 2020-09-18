@@ -14,28 +14,30 @@ namespace BExIS.Xml.Helpers
 
         public static string GetMappingFileName(long id, TransmissionType transmissionType, string name)
         {
-            MetadataStructureManager msm = new MetadataStructureManager();
-            MetadataStructure metadataStructure = msm.Repo.Get(id);
+            using (MetadataStructureManager msm = new MetadataStructureManager())
+            {
+                MetadataStructure metadataStructure = msm.Repo.Get(id);
 
-            // get MetadataStructure 
-            XDocument xDoc = XmlUtility.ToXDocument((XmlDocument)metadataStructure.Extra);
+                // get MetadataStructure 
+                XDocument xDoc = XmlUtility.ToXDocument((XmlDocument)metadataStructure.Extra);
 
 
 
-            List<XElement> tmpList =
-                XmlUtility.GetXElementsByAttribute(nodeNames.convertRef.ToString(), new Dictionary<string, string>()
-                {
+                List<XElement> tmpList =
+                    XmlUtility.GetXElementsByAttribute(nodeNames.convertRef.ToString(), new Dictionary<string, string>()
+                    {
                     {AttributeNames.name.ToString(), name},
                     {AttributeNames.type.ToString(), transmissionType.ToString()}
 
-                }, xDoc).ToList();
+                    }, xDoc).ToList();
 
-            if (tmpList.Count >= 1)
-            {
-                return tmpList.FirstOrDefault().Attribute("value").Value.ToString();
+                if (tmpList.Count >= 1)
+                {
+                    return tmpList.FirstOrDefault().Attribute("value").Value.ToString();
+                }
+
+                return null;
             }
-
-            return null;
         }
 
         #region update new xml metadata with a base template

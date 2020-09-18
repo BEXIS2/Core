@@ -161,16 +161,14 @@ namespace BExIS.Modules.Dim.UI.Helpers
 
         private void createMetadataStructureRepoMaps()
         {
-            PublicationManager publicationManager = new PublicationManager();
-
-            try
+            using (PublicationManager publicationManager = new PublicationManager())
+            using (MetadataStructureManager metadataStructureManager = new MetadataStructureManager())
             {
                 //set MetadataStructureToRepository for gbif and pensoft
                 long metadataStrutcureId = 0;
                 long repositoryId = 0;
 
                 //get id of metadatstructure
-                MetadataStructureManager metadataStructureManager = new MetadataStructureManager();
                 string metadatStrutcureName = "gbif";
                 if (metadataStructureManager.Repo.Get().Any(m => m.Name.ToLower().Equals(metadatStrutcureName)))
                 {
@@ -200,11 +198,8 @@ namespace BExIS.Modules.Dim.UI.Helpers
                     publicationManager.CreateMetadataStructureToRepository(metadataStrutcureId, repositoryId);
                 }
             }
-            finally
-            {
-                publicationManager.Dispose();
-            }
         }
+
 
         private void createMappings()
         {
@@ -226,125 +221,128 @@ namespace BExIS.Modules.Dim.UI.Helpers
             object tmp = "";
             List<MetadataStructure> metadataStructures =
                 tmp.GetUnitOfWork().GetReadOnlyRepository<MetadataStructure>().Get().ToList();
-            MappingManager mappingManager = new MappingManager();
-            XmlMetadataWriter xmlMetadataWriter = new XmlMetadataWriter(XmlNodeMode.xPath);
 
-            //#region ABCD BASIC
-            if (metadataStructures.Any(m => m.Name.ToLower().Equals("basic abcd") || m.Name.ToLower().Equals("full abcd")))
+            using (MappingManager mappingManager = new MappingManager())
             {
-                MetadataStructure metadataStructure =
-                    metadataStructures.FirstOrDefault(m => m.Name.ToLower().Equals("basic abcd"));
+                XmlMetadataWriter xmlMetadataWriter = new XmlMetadataWriter(XmlNodeMode.xPath);
 
-                XDocument metadataRef = xmlMetadataWriter.CreateMetadataXml(metadataStructure.Id);
-
-                //create root mapping
-                LinkElement abcdRoot = createLinkELementIfNotExist(mappingManager, metadataStructure.Id, metadataStructure.Name, LinkElementType.MetadataStructure, LinkElementComplexity.None);
-
-                //create system mapping
-                LinkElement system = createLinkELementIfNotExist(mappingManager, 0, "System", LinkElementType.System, LinkElementComplexity.None);
-
-                #region mapping ABCD BASIC to System Keys
-
-                Debug.WriteLine("abcd to root");
-                Mapping rootTo = MappingHelper.CreateIfNotExistMapping(abcdRoot, system, 0, null, null, mappingManager);
-                Debug.WriteLine("root to abcd");
-                Mapping rootFrom = MappingHelper.CreateIfNotExistMapping(system, abcdRoot, 0, null, null, mappingManager);
-                Debug.WriteLine("Title");
-
-                if (Exist("Title", LinkElementType.MetadataNestedAttributeUsage))
+                //#region ABCD BASIC
+                if (metadataStructures.Any(m => m.Name.ToLower().Equals("basic abcd") || m.Name.ToLower().Equals("full abcd")))
                 {
-                    createToKeyMapping("Title", LinkElementType.MetadataNestedAttributeUsage, "Title", LinkElementType.MetadataNestedAttributeUsage, Key.Title, rootTo, metadataRef, mappingManager);
-                    createFromKeyMapping("Title", LinkElementType.MetadataNestedAttributeUsage, "Title", LinkElementType.MetadataNestedAttributeUsage, Key.Title, rootFrom, metadataRef, mappingManager);
+                    MetadataStructure metadataStructure =
+                        metadataStructures.FirstOrDefault(m => m.Name.ToLower().Equals("basic abcd"));
+
+                    XDocument metadataRef = xmlMetadataWriter.CreateMetadataXml(metadataStructure.Id);
+
+                    //create root mapping
+                    LinkElement abcdRoot = createLinkELementIfNotExist(mappingManager, metadataStructure.Id, metadataStructure.Name, LinkElementType.MetadataStructure, LinkElementComplexity.None);
+
+                    //create system mapping
+                    LinkElement system = createLinkELementIfNotExist(mappingManager, 0, "System", LinkElementType.System, LinkElementComplexity.None);
+
+                    #region mapping ABCD BASIC to System Keys
+
+                    Debug.WriteLine("abcd to root");
+                    Mapping rootTo = MappingHelper.CreateIfNotExistMapping(abcdRoot, system, 0, null, null, mappingManager);
+                    Debug.WriteLine("root to abcd");
+                    Mapping rootFrom = MappingHelper.CreateIfNotExistMapping(system, abcdRoot, 0, null, null, mappingManager);
+                    Debug.WriteLine("Title");
+
+                    if (Exist("Title", LinkElementType.MetadataNestedAttributeUsage))
+                    {
+                        createToKeyMapping("Title", LinkElementType.MetadataNestedAttributeUsage, "Title", LinkElementType.MetadataNestedAttributeUsage, Key.Title, rootTo, metadataRef, mappingManager);
+                        createFromKeyMapping("Title", LinkElementType.MetadataNestedAttributeUsage, "Title", LinkElementType.MetadataNestedAttributeUsage, Key.Title, rootFrom, metadataRef, mappingManager);
+                    }
+
+                    if (Exist("Details", LinkElementType.MetadataNestedAttributeUsage) &&
+                        Exist("MetadataDescriptionRepr", LinkElementType.ComplexMetadataAttribute))
+                    {
+                        Debug.WriteLine("Details");
+                        createToKeyMapping("Details", LinkElementType.MetadataNestedAttributeUsage, "MetadataDescriptionRepr", LinkElementType.ComplexMetadataAttribute, Key.Description, rootTo, metadataRef, mappingManager);
+                        createFromKeyMapping("Details", LinkElementType.MetadataNestedAttributeUsage, "MetadataDescriptionRepr", LinkElementType.ComplexMetadataAttribute, Key.Description, rootFrom, metadataRef, mappingManager);
+                    }
+
+                    if (Exist("FullName", LinkElementType.MetadataNestedAttributeUsage) &&
+                        Exist("PersonName", LinkElementType.ComplexMetadataAttribute))
+                    {
+                        Debug.WriteLine("FullName");
+                        createToKeyMapping("FullName", LinkElementType.MetadataNestedAttributeUsage, "PersonName", LinkElementType.ComplexMetadataAttribute, Key.Author, rootTo, metadataRef, mappingManager);
+                        createFromKeyMapping("FullName", LinkElementType.MetadataNestedAttributeUsage, "PersonName", LinkElementType.ComplexMetadataAttribute, Key.Author, rootFrom, metadataRef, mappingManager);
+                    }
+
+                    if (Exist("Text", LinkElementType.MetadataNestedAttributeUsage) &&
+                        Exist("License", LinkElementType.MetadataNestedAttributeUsage))
+                    {
+                        Debug.WriteLine("Text");
+                        createToKeyMapping("Text", LinkElementType.MetadataNestedAttributeUsage, "License", LinkElementType.MetadataNestedAttributeUsage, Key.License, rootTo, metadataRef, mappingManager);
+                        createFromKeyMapping("Text", LinkElementType.MetadataNestedAttributeUsage, "License", LinkElementType.MetadataNestedAttributeUsage, Key.License, rootFrom, metadataRef, mappingManager);
+                    }
+
+                    #endregion mapping ABCD BASIC to System Keys
                 }
 
-                if (Exist("Details", LinkElementType.MetadataNestedAttributeUsage) &&
-                    Exist("MetadataDescriptionRepr", LinkElementType.ComplexMetadataAttribute))
-                {
-                    Debug.WriteLine("Details");
-                    createToKeyMapping("Details", LinkElementType.MetadataNestedAttributeUsage, "MetadataDescriptionRepr", LinkElementType.ComplexMetadataAttribute, Key.Description, rootTo, metadataRef, mappingManager);
-                    createFromKeyMapping("Details", LinkElementType.MetadataNestedAttributeUsage, "MetadataDescriptionRepr", LinkElementType.ComplexMetadataAttribute, Key.Description, rootFrom, metadataRef, mappingManager);
-                }
-
-                if (Exist("FullName", LinkElementType.MetadataNestedAttributeUsage) &&
-                    Exist("PersonName", LinkElementType.ComplexMetadataAttribute))
-                {
-                    Debug.WriteLine("FullName");
-                    createToKeyMapping("FullName", LinkElementType.MetadataNestedAttributeUsage, "PersonName", LinkElementType.ComplexMetadataAttribute, Key.Author, rootTo, metadataRef, mappingManager);
-                    createFromKeyMapping("FullName", LinkElementType.MetadataNestedAttributeUsage, "PersonName", LinkElementType.ComplexMetadataAttribute, Key.Author, rootFrom, metadataRef, mappingManager);
-                }
-
-                if (Exist("Text", LinkElementType.MetadataNestedAttributeUsage) &&
-                    Exist("License", LinkElementType.MetadataNestedAttributeUsage))
-                {
-                    Debug.WriteLine("Text");
-                    createToKeyMapping("Text", LinkElementType.MetadataNestedAttributeUsage, "License", LinkElementType.MetadataNestedAttributeUsage, Key.License, rootTo, metadataRef, mappingManager);
-                    createFromKeyMapping("Text", LinkElementType.MetadataNestedAttributeUsage, "License", LinkElementType.MetadataNestedAttributeUsage, Key.License, rootFrom, metadataRef, mappingManager);
-                }
-
-                #endregion mapping ABCD BASIC to System Keys
-            }
-
-            //#endregion
-
-            #region mapping GBIF to System Keys
-
-            if (metadataStructures.Any(m => m.Name.ToLower().Equals("gbif")))
-            {
-                MetadataStructure metadataStructure =
-                    metadataStructures.FirstOrDefault(m => m.Name.ToLower().Equals("gbif"));
-
-                XDocument metadataRef = xmlMetadataWriter.CreateMetadataXml(metadataStructure.Id);
-
-                //create root mapping
-                LinkElement gbifRoot = createLinkELementIfNotExist(mappingManager, metadataStructure.Id, metadataStructure.Name, LinkElementType.MetadataStructure, LinkElementComplexity.None);
-
-                //create system mapping
-                LinkElement system = createLinkELementIfNotExist(mappingManager, 0, "System", LinkElementType.System, LinkElementComplexity.None);
+                //#endregion
 
                 #region mapping GBIF to System Keys
 
-                Mapping rootTo = mappingManager.CreateMapping(gbifRoot, system, 0, null, null);
-                Mapping rootFrom = mappingManager.CreateMapping(system, gbifRoot, 0, null, null);
-
-                if (Exist("title", LinkElementType.MetadataNestedAttributeUsage) &&
-                    Exist("Basic", LinkElementType.MetadataPackageUsage))
+                if (metadataStructures.Any(m => m.Name.ToLower().Equals("gbif")))
                 {
-                    createToKeyMapping("title", LinkElementType.MetadataNestedAttributeUsage, "Basic", LinkElementType.MetadataPackageUsage, Key.Title, rootTo, metadataRef, mappingManager);
-                    createFromKeyMapping("title", LinkElementType.MetadataNestedAttributeUsage, "Basic", LinkElementType.MetadataPackageUsage, Key.Title, rootFrom, metadataRef, mappingManager);
-                }
+                    MetadataStructure metadataStructure =
+                        metadataStructures.FirstOrDefault(m => m.Name.ToLower().Equals("gbif"));
 
-                if (Exist("para", LinkElementType.MetadataNestedAttributeUsage) &&
-                    Exist("abstract", LinkElementType.MetadataPackageUsage))
-                {
-                    createToKeyMapping("para", LinkElementType.MetadataNestedAttributeUsage, "abstract", LinkElementType.MetadataPackageUsage, Key.Description, rootTo, metadataRef, mappingManager);
-                    createFromKeyMapping("para", LinkElementType.MetadataNestedAttributeUsage, "abstract", LinkElementType.MetadataPackageUsage, Key.Description, rootFrom, metadataRef, mappingManager);
-                }
+                    XDocument metadataRef = xmlMetadataWriter.CreateMetadataXml(metadataStructure.Id);
 
-                if (Exist("givenName", LinkElementType.MetadataNestedAttributeUsage) &&
-                    Exist("individualName", LinkElementType.MetadataAttributeUsage))
-                {
-                    createToKeyMapping("givenName", LinkElementType.MetadataNestedAttributeUsage, "Metadata/creator/creatorType/individualName", LinkElementType.MetadataAttributeUsage, Key.Author, rootTo, metadataRef, mappingManager, mappingManager.CreateTransformationRule("", "givenName[0] surName[0]"));
-                    createToKeyMapping("givenName", LinkElementType.MetadataNestedAttributeUsage, "Metadata/creator/creatorType/individualName", LinkElementType.MetadataAttributeUsage, Key.Author, rootFrom, metadataRef, mappingManager, mappingManager.CreateTransformationRule(@"\w+", "Author[0]"));
-                }
+                    //create root mapping
+                    LinkElement gbifRoot = createLinkELementIfNotExist(mappingManager, metadataStructure.Id, metadataStructure.Name, LinkElementType.MetadataStructure, LinkElementComplexity.None);
 
-                if (Exist("surName", LinkElementType.MetadataNestedAttributeUsage) &&
-                    Exist("individualName", LinkElementType.MetadataAttributeUsage))
-                {
-                    createToKeyMapping("surName", LinkElementType.MetadataNestedAttributeUsage, "Metadata/creator/creatorType/individualName", LinkElementType.MetadataAttributeUsage, Key.Author, rootTo, metadataRef, mappingManager, mappingManager.CreateTransformationRule("", "givenName[0] surName[0]"));
-                    createToKeyMapping("surName", LinkElementType.MetadataNestedAttributeUsage, "Metadata/creator/creatorType/individualName", LinkElementType.MetadataAttributeUsage, Key.Author, rootFrom, metadataRef, mappingManager, mappingManager.CreateTransformationRule(@"\w+", "Author[1]"));
-                }
+                    //create system mapping
+                    LinkElement system = createLinkELementIfNotExist(mappingManager, 0, "System", LinkElementType.System, LinkElementComplexity.None);
 
-                if (Exist("title", LinkElementType.MetadataNestedAttributeUsage) &&
-                    Exist("project", LinkElementType.MetadataPackageUsage))
-                {
-                    createToKeyMapping("title", LinkElementType.MetadataNestedAttributeUsage, "project", LinkElementType.MetadataPackageUsage, Key.ProjectTitle, rootTo, metadataRef, mappingManager);
-                    createFromKeyMapping("title", LinkElementType.MetadataNestedAttributeUsage, "project", LinkElementType.MetadataPackageUsage, Key.ProjectTitle, rootFrom, metadataRef, mappingManager);
+                    #region mapping GBIF to System Keys
+
+                    Mapping rootTo = mappingManager.CreateMapping(gbifRoot, system, 0, null, null);
+                    Mapping rootFrom = mappingManager.CreateMapping(system, gbifRoot, 0, null, null);
+
+                    if (Exist("title", LinkElementType.MetadataNestedAttributeUsage) &&
+                        Exist("Basic", LinkElementType.MetadataPackageUsage))
+                    {
+                        createToKeyMapping("title", LinkElementType.MetadataNestedAttributeUsage, "Basic", LinkElementType.MetadataPackageUsage, Key.Title, rootTo, metadataRef, mappingManager);
+                        createFromKeyMapping("title", LinkElementType.MetadataNestedAttributeUsage, "Basic", LinkElementType.MetadataPackageUsage, Key.Title, rootFrom, metadataRef, mappingManager);
+                    }
+
+                    if (Exist("para", LinkElementType.MetadataNestedAttributeUsage) &&
+                        Exist("abstract", LinkElementType.MetadataPackageUsage))
+                    {
+                        createToKeyMapping("para", LinkElementType.MetadataNestedAttributeUsage, "abstract", LinkElementType.MetadataPackageUsage, Key.Description, rootTo, metadataRef, mappingManager);
+                        createFromKeyMapping("para", LinkElementType.MetadataNestedAttributeUsage, "abstract", LinkElementType.MetadataPackageUsage, Key.Description, rootFrom, metadataRef, mappingManager);
+                    }
+
+                    if (Exist("givenName", LinkElementType.MetadataNestedAttributeUsage) &&
+                        Exist("individualName", LinkElementType.MetadataAttributeUsage))
+                    {
+                        createToKeyMapping("givenName", LinkElementType.MetadataNestedAttributeUsage, "Metadata/creator/creatorType/individualName", LinkElementType.MetadataAttributeUsage, Key.Author, rootTo, metadataRef, mappingManager, mappingManager.CreateTransformationRule("", "givenName[0] surName[0]"));
+                        createToKeyMapping("givenName", LinkElementType.MetadataNestedAttributeUsage, "Metadata/creator/creatorType/individualName", LinkElementType.MetadataAttributeUsage, Key.Author, rootFrom, metadataRef, mappingManager, mappingManager.CreateTransformationRule(@"\w+", "Author[0]"));
+                    }
+
+                    if (Exist("surName", LinkElementType.MetadataNestedAttributeUsage) &&
+                        Exist("individualName", LinkElementType.MetadataAttributeUsage))
+                    {
+                        createToKeyMapping("surName", LinkElementType.MetadataNestedAttributeUsage, "Metadata/creator/creatorType/individualName", LinkElementType.MetadataAttributeUsage, Key.Author, rootTo, metadataRef, mappingManager, mappingManager.CreateTransformationRule("", "givenName[0] surName[0]"));
+                        createToKeyMapping("surName", LinkElementType.MetadataNestedAttributeUsage, "Metadata/creator/creatorType/individualName", LinkElementType.MetadataAttributeUsage, Key.Author, rootFrom, metadataRef, mappingManager, mappingManager.CreateTransformationRule(@"\w+", "Author[1]"));
+                    }
+
+                    if (Exist("title", LinkElementType.MetadataNestedAttributeUsage) &&
+                        Exist("project", LinkElementType.MetadataPackageUsage))
+                    {
+                        createToKeyMapping("title", LinkElementType.MetadataNestedAttributeUsage, "project", LinkElementType.MetadataPackageUsage, Key.ProjectTitle, rootTo, metadataRef, mappingManager);
+                        createFromKeyMapping("title", LinkElementType.MetadataNestedAttributeUsage, "project", LinkElementType.MetadataPackageUsage, Key.ProjectTitle, rootFrom, metadataRef, mappingManager);
+                    }
+
+                    #endregion mapping GBIF to System Keys
                 }
 
                 #endregion mapping GBIF to System Keys
             }
-
-            #endregion mapping GBIF to System Keys
         }
 
         /// <summary>

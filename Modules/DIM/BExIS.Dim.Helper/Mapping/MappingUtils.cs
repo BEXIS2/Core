@@ -549,13 +549,10 @@ namespace BExIS.Dim.Helpers.Mapping
         /// <returns></returns>
         private static List<MappingPartyResultElemenet> getAllValuesFromSystem(IEnumerable<Entities.Mapping.Mapping> mappings, string value)
         {
-            MappingManager _mappingManager = new MappingManager();
-            PartyTypeManager partyTypeManager = new PartyTypeManager();
-            PartyManager partyManager = new PartyManager();
-
-            try
+            using (MappingManager _mappingManager = new MappingManager())
+            using (PartyTypeManager partyTypeManager = new PartyTypeManager())
+            using (PartyManager partyManager = new PartyManager())
             {
-
                 List<MappingPartyResultElemenet> tmp = new List<MappingPartyResultElemenet>();
 
                 IEnumerable<long> parentIds = mappings.Where(m => m.Parent != null).Select(m => m.Parent.Id).Distinct();
@@ -630,11 +627,6 @@ namespace BExIS.Dim.Helpers.Mapping
                 }
 
                 return tmp;
-            }
-            finally {
-                partyTypeManager.Dispose();
-                partyManager.Dispose();
-                _mappingManager.Dispose();
             }
         }
 

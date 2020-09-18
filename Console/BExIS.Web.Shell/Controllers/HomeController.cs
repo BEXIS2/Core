@@ -75,26 +75,28 @@ namespace BExIS.Web.Shell.Controllers
             var site = ConfigurationManager.AppSettings["ApplicationVersion"];
 
             // Database
-            var versionManager = new VersionManager();
-            var database = versionManager.GetLatestVersion().Value;
-
-            // Workspace
-            string filePath = Path.Combine(AppConfiguration.WorkspaceGeneralRoot, "General.Settings.xml");
-            XDocument settings = XDocument.Load(filePath);
-            XElement entry = XmlUtility.GetXElementByAttribute("entry", "key", "version", settings);
-            var workspace = entry.Attribute("value")?.Value;
-
-
-            var model = new VersionModel()
+            using (var versionManager = new VersionManager())
             {
-                Site = site,
-                Database = database,
-                Workspace = workspace
-            };
+                var database = versionManager.GetLatestVersion().Value;
 
-            ViewBag.Title = PresentationModel.GetViewTitleForTenant("Session Timeout", this.Session.GetTenant());
+                // Workspace
+                string filePath = Path.Combine(AppConfiguration.WorkspaceGeneralRoot, "General.Settings.xml");
+                XDocument settings = XDocument.Load(filePath);
+                XElement entry = XmlUtility.GetXElementByAttribute("entry", "key", "version", settings);
+                var workspace = entry.Attribute("value")?.Value;
 
-            return View(model);
+
+                var model = new VersionModel()
+                {
+                    Site = site,
+                    Database = database,
+                    Workspace = workspace
+                };
+
+                ViewBag.Title = PresentationModel.GetViewTitleForTenant("Session Timeout", this.Session.GetTenant());
+
+                return View(model);
+            }
         }
     }
 }

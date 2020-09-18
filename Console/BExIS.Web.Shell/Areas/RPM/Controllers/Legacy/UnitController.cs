@@ -248,14 +248,11 @@ namespace BExIS.Modules.Rpm.UI.Controllers
 
         public ActionResult openUnitWindow(long id)
         {
-            UnitManager unitManager = null;
-            DataTypeManager dataTypeManager = null;
-            UnitManagerModel Model;
-
-            try
+            using (UnitManager unitManager = new UnitManager())
+            using (DataTypeManager dataTypeManager = new DataTypeManager())
             {
-                unitManager = new UnitManager();
-                dataTypeManager = new DataTypeManager();
+                UnitManagerModel Model;
+
                 if (id != 0)
                 {
                     Model = new UnitManagerModel(id);
@@ -285,13 +282,9 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                     Session["dimensionSpecificationMsg"] = null;
                     Session["checked"] = null;
                 }
+                
+                return View("UnitManager", Model);
             }
-            finally
-            {
-                unitManager.Dispose();
-                dataTypeManager.Dispose();
-            }
-            return View("UnitManager", Model);
         }
 
         public JsonResult setChecked(long[] checkedIDs)

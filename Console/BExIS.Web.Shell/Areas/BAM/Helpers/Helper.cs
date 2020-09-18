@@ -2,14 +2,11 @@
 using BExIS.Dlm.Services.Party;
 using System;
 using System.Linq;
-using System.Text.RegularExpressions;
 using BExIS.Modules.Bam.UI.Models;
 using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Data;
 using BExIS.Security.Entities.Authorization;
-using System.Diagnostics.Contracts;
-using BExIS.Security.Services.Subjects;
 
 namespace BExIS.Modules.Bam.UI.Helpers
 {
@@ -57,26 +54,21 @@ namespace BExIS.Modules.Bam.UI.Helpers
     {
         public static int CountRelations(long sourcePartyId, PartyRelationshipType partyRelationshipType)
         {
-            PartyManager partyManager = null;
-            try
+            using (PartyManager partyManager = new PartyManager())
             {
-                partyManager = new PartyManager();
                 var cnt = partyManager.PartyRelationshipRepository.Query(item => (item.PartyRelationshipType != null && item.PartyRelationshipType.Id == partyRelationshipType.Id)
-                                          && (item.SourceParty != null && (item.SourceParty.Id == sourcePartyId) || (item.TargetParty.Id == sourcePartyId))
-                                           && (item.EndDate >= DateTime.Now)).Count();
+                                            && (item.SourceParty != null && (item.SourceParty.Id == sourcePartyId) || (item.TargetParty.Id == sourcePartyId))
+                                            && (item.EndDate >= DateTime.Now)).Count();
                 return cnt;
             }
-            finally { partyManager?.Dispose(); }
         }
 
         internal static DataTable getPartyDataTable(PartyType partyType, List<Party> parties)
         {
-            PartyRelationshipTypeManager partyRelationshipTypeManager = null;
-            PartyManager partyManager = null;
-            try
+            using (PartyRelationshipTypeManager partyRelationshipTypeManager = new PartyRelationshipTypeManager())
+            using (PartyManager partyManager = new PartyManager())
             {
-                partyRelationshipTypeManager = new PartyRelationshipTypeManager();
-                partyManager = new PartyManager();
+
                 DataTable table = new DataTable();
                 table.Columns.Add("PartyId");
                 table.Columns.Add("PartyName");
@@ -122,11 +114,7 @@ namespace BExIS.Modules.Bam.UI.Helpers
                 }
                 return table;
             }
-            finally
-            {
-                partyManager.Dispose();
-                partyRelationshipTypeManager.Dispose();
-            }
+
         }
 
         public static string GetDisplayName(Dlm.Entities.Party.PartyRelationshipType partyRelatinshipType)
@@ -136,29 +124,28 @@ namespace BExIS.Modules.Bam.UI.Helpers
 
         public static String ValidateRelationships(long partyId)
         {
-            var partyManager = new PartyManager();
-            var validations = partyManager.ValidateRelationships(partyId);
-            string messages = "";
-            foreach (var validation in validations)
+            using (var partyManager = new PartyManager())
             {
-                messages += (String.Format("<br/>{0} relationship type '{1}'.", validation.Value, validation.Key.DisplayName));
+                var validations = partyManager.ValidateRelationships(partyId);
+                string messages = "";
+                foreach (var validation in validations)
+                {
+                    messages += (String.Format("<br/>{0} relationship type '{1}'.", validation.Value, validation.Key.DisplayName));
+                }
+                if (!string.IsNullOrEmpty(messages))
+                    messages = "These relationship types are required : " + messages;
+                return messages;
             }
-            if (!string.IsNullOrEmpty(messages))
-                messages = "These relationship types are required : " + messages;
-            return messages;
         }
 
         internal static Party EditParty(PartyModel partyModel, Dictionary<string, string> partyCustomAttributeValues, IList<PartyRelationship> systemPartyRelationships)
         {
-            PartyTypeManager partyTypeManager = null;
-            PartyManager partyManager = null;
-            PartyRelationshipTypeManager partyRelationshipTypeManager = null;
-            var party = new Party();
-            try
+            using (PartyTypeManager partyTypeManager = new PartyTypeManager())
+            using (PartyManager partyManager = new PartyManager())
+            using (PartyRelationshipTypeManager partyRelationshipTypeManager = new PartyRelationshipTypeManager())
             {
-                partyTypeManager = new PartyTypeManager();
-                partyManager = new PartyManager();
-                partyRelationshipTypeManager = new PartyRelationshipTypeManager();
+                var party = new Party();
+
                 var newAddPartyCustomAttrValues = new Dictionary<PartyCustomAttribute, string>();
                 party = partyManager.Find(partyModel.Id);
                 //Update some fields
@@ -173,33 +160,9 @@ namespace BExIS.Modules.Bam.UI.Helpers
                     newAddPartyCustomAttrValues.Add(partyCustomAttribute, value);
                 }
                 party.CustomAttributeValues = partyManager.AddPartyCustomAttributeValues(party, partyCustomAttributeValues.ToDictionary(cc => long.Parse(cc.Key), cc => cc.Value)).ToList();
-                //if (systemPartyRelationships != null)
-                //{
-                //    foreach (var systemPartyRel in systemPartyRelationships.Where(item => item.Id != long.MaxValue))
-                //    {
-                //        var SourceParty = partyManager.PartyRepository.Reload(party);
-                //        var TargetParty = partyManager.PartyRepository.Get(systemPartyRel.TargetParty.Id);
-                //        var partyTypePair = partyRelationshipTypeManager.PartyTypePairRepository.Get(systemPartyRel.PartyTypePair.Id);
-                //        //update
-                //        if (systemPartyRel.Id > 0)
-                //            partyManager.UpdatePartyRelationship(systemPartyRel.Id, permission: systemPartyRel.Permission);
-                //        else if (systemPartyRel.Id == 0)
-                //            partyManager.AddPartyRelationship(SourceParty, TargetParty, "system", "", partyTypePair, permission: systemPartyRel.Permission);
-                //        else {
-                //            PartyRelationship partyRelationship = partyManager.PartyRelationshipRepository.Get(-1 * systemPartyRel.Id);
-                //            //remove if id is negative
-                //            partyManager.RemovePartyRelationship(partyRelationship);
-                //        }
-                //    }
-                //}
+
+                return party;
             }
-            finally
-            {
-                partyTypeManager?.Dispose();
-                partyManager?.Dispose();
-                partyRelationshipTypeManager?.Dispose();
-            }
-            return party;
         }
 
         internal static Party CreateParty(PartyModel partyModel, Dictionary<string, string> partyCustomAttributeValues)
@@ -218,19 +181,15 @@ namespace BExIS.Modules.Bam.UI.Helpers
         /// <returns></returns>
         internal static Party CreateParty(DateTime? startDate, DateTime? endDate, string description, long partyTypeId, Dictionary<string, string> partyCustomAttributeValuesDict)
         {
-            PartyTypeManager partyTypeManager = new PartyTypeManager();
-            PartyManager partyManager = new PartyManager();
-            PartyRelationshipTypeManager partyRelationshipTypeManager = null;
-            var newParty = new Party();
-            try
+            using (PartyTypeManager partyTypeManager = new PartyTypeManager())
+            using (PartyManager partyManager = new PartyManager())
+            using (PartyRelationshipTypeManager partyRelationshipTypeManager = new PartyRelationshipTypeManager())
             {
-                partyTypeManager = new PartyTypeManager();
-                partyManager = new PartyManager();
-                partyRelationshipTypeManager = new PartyRelationshipTypeManager();
+                var newParty = new Party();
                 PartyType partyType = partyTypeManager.PartyTypeRepository.Get(partyTypeId);
                 var partyStatusType = partyTypeManager.GetStatusType(partyType, "Created");
                 // save party as temp if the reationships are required
-                var requiredPartyRelationTypes = new PartyRelationshipTypeManager().GetAllPartyRelationshipTypes(partyType.Id).Where(cc => cc.MinCardinality > 0);
+                var requiredPartyRelationTypes = partyRelationshipTypeManager.GetAllPartyRelationshipTypes(partyType.Id).Where(cc => cc.MinCardinality > 0);
                 //Create party
                 newParty = partyManager.Create(partyType, "", description, startDate, endDate, partyStatusType, requiredPartyRelationTypes.Any());
                 partyManager.AddPartyCustomAttributeValues(newParty, toPartyCustomAttributeValues(partyCustomAttributeValuesDict, partyTypeId));
@@ -245,20 +204,15 @@ namespace BExIS.Modules.Bam.UI.Helpers
                 //        partyManager.AddPartyRelationship(partyManager.PartyRepository.Reload(newParty), targetParty,  "system", "", systemPartyTypePair, permission: systemPartyTypePair.PermissionTemplate);
                 //    }
                 //}
+
+                return newParty;
             }
-            finally
-            {
-                partyTypeManager?.Dispose();
-                partyManager?.Dispose();
-            }
-            return newParty;
         }
 
         internal static Dictionary<PartyCustomAttribute, string> toPartyCustomAttributeValues(Dictionary<string, string> partyCustomAttributeValuesDict, long partyTypeId = 0)
         {
             var partyCustomAttributeValues = new Dictionary<PartyCustomAttribute, string>();
-            PartyTypeManager partyTypeManager = new PartyTypeManager();
-            try
+            using (PartyTypeManager partyTypeManager = new PartyTypeManager())
             {
                 foreach (var partyCustomAttributeValueDict in partyCustomAttributeValuesDict)
                 {
@@ -280,7 +234,6 @@ namespace BExIS.Modules.Bam.UI.Helpers
                 }
                 return partyCustomAttributeValues;
             }
-            finally { partyTypeManager?.Dispose(); }
         }
 
         /// <summary>

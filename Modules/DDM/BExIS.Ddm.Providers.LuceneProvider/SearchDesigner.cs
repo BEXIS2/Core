@@ -122,19 +122,21 @@ namespace BExIS.Ddm.Providers.LuceneProvider
             else
             {
 
-                MetadataStructureManager metadataStructureManager = new MetadataStructureManager();
-                List<long> ids = new List<long>();
-
-                ids = metadataStructureManager.Repo.Query().Select(p => p.Id).ToList();
-
-                foreach (long id in ids)
+                using (MetadataStructureManager metadataStructureManager = new MetadataStructureManager())
                 {
-                    _metadataNodes.AddRange(GetAllXPathsOfSimpleAttributes(id));
-                }
+                    List<long> ids = new List<long>();
 
-                _metadataNodes = _metadataNodes.Distinct().ToList();
-                _metadataNodes.Sort((x, y) => String.Compare(x.DisplayName, y.DisplayName));
-                return _metadataNodes;
+                    ids = metadataStructureManager.Repo.Query().Select(p => p.Id).ToList();
+
+                    foreach (long id in ids)
+                    {
+                        _metadataNodes.AddRange(GetAllXPathsOfSimpleAttributes(id));
+                    }
+
+                    _metadataNodes = _metadataNodes.Distinct().ToList();
+                    _metadataNodes.Sort((x, y) => String.Compare(x.DisplayName, y.DisplayName));
+                    return _metadataNodes;
+                }
             }
 
         }
@@ -232,7 +234,14 @@ namespace BExIS.Ddm.Providers.LuceneProvider
 
         public void Reload()
         {
-            bexisIndexer.ReIndex();
+            try
+            {
+                bexisIndexer.ReIndex();
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
         }
 
         public void Dispose()

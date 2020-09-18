@@ -55,6 +55,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         public ActionResult DownloadSchema(long id)
         {
             MetadataStructureManager metadataStructureManager = new MetadataStructureManager();
+            ZipFile zip = new ZipFile();
 
             try
             {
@@ -63,7 +64,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
                 string path = OutputMetadataManager.GetSchemaDirectoryPathFromMetadataStructure(id, metadataStructureManager);
 
-                ZipFile zip = new ZipFile();
+               
                 if (Directory.Exists(path))
                     zip.AddDirectory(path);
 
@@ -78,6 +79,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             finally
             {
                 metadataStructureManager.Dispose();
+                zip.Dispose();
             }
         }
 
@@ -128,24 +130,28 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
                     // get all datasetIds which using the metadata structure
                     var datasetIds = datasetManager.DatasetRepo.Query().Where(d => d.MetadataStructure.Id.Equals(metadataStructure.Id)).Select(d=>d.Id);
-                    //gell all datasetversions of the dataset ids 
-                    var datasetVersionIds = datasetManager.DatasetVersionRepo.Query().Where(dsv => datasetIds.Contains(dsv.Dataset.Id)).Select(dsv=>dsv.Id).ToList();
 
-                    //load all titles & descriptions from versions
-                    var allTitles =xmlDatasetHelper.GetInformationFromVersions(datasetVersionIds, metadataStructure.Id, NameAttributeValues.title);
-                    var allDescriptions = xmlDatasetHelper.GetInformationFromVersions(datasetVersionIds, metadataStructure.Id, NameAttributeValues.description);
-
-
-                    // update each datasetversion
-                    foreach (var datasetVersionId in datasetVersionIds)
+                    if (datasetIds.Any())
                     {
-                        // load dataset version
-                        var datasetVersion = datasetManager.GetDatasetVersion(datasetVersionId);
+                        //get all datasetversions of the dataset ids 
+                        var datasetVersionIds = datasetManager.DatasetVersionRepo.Query().Where(dsv => datasetIds.Contains(dsv.Dataset.Id)).Select(dsv => dsv.Id).ToList();
 
-                        datasetVersion.Title = allTitles.ContainsKey(datasetVersion.Id)?allTitles[datasetVersion.Id]:string.Empty;
-                        datasetVersion.Description = allDescriptions.ContainsKey(datasetVersion.Id)?allDescriptions[datasetVersion.Id]:string.Empty;
+                        //load all titles & descriptions from versions
+                        var allTitles = xmlDatasetHelper.GetInformationFromVersions(datasetVersionIds, metadataStructure.Id, NameAttributeValues.title);
+                        var allDescriptions = xmlDatasetHelper.GetInformationFromVersions(datasetVersionIds, metadataStructure.Id, NameAttributeValues.description);
 
-                        datasetManager.UpdateDatasetVersion(datasetVersion);
+
+                        // update each datasetversion
+                        foreach (var datasetVersionId in datasetVersionIds)
+                        {
+                            // load dataset version
+                            var datasetVersion = datasetManager.GetDatasetVersion(datasetVersionId);
+
+                            datasetVersion.Title = allTitles.ContainsKey(datasetVersion.Id) ? allTitles[datasetVersion.Id] : string.Empty;
+                            datasetVersion.Description = allDescriptions.ContainsKey(datasetVersion.Id) ? allDescriptions[datasetVersion.Id] : string.Empty;
+
+                            datasetManager.UpdateDatasetVersion(datasetVersion);
+                        }
                     }
 
                     return Json(true);
@@ -268,15 +274,16 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         // Improvement: [Sven] Vereinfachung der Abfrage, ggfs. muss alte Version wiederhergestellt werden, falls es nicht korrekt funktioniert.
         private List<EntityModel> GetEntityModelList()
         {
-            EntityManager entityManager = new EntityManager();
-
-            return entityManager.Entities.Where(e => e.UseMetadata).ToList().Select(e =>
-                      new EntityModel()
-                      {
-                          Name = e.Name,
-                          ClassPath = e.EntityType.FullName
-                      }
-                  ).ToList();
+            using (EntityManager entityManager = new EntityManager())
+            {
+                return entityManager.Entities.Where(e => e.UseMetadata).ToList().Select(e =>
+                          new EntityModel()
+                          {
+                              Name = e.Name,
+                              ClassPath = e.EntityType.FullName
+                          }
+                      ).ToList();
+            }
         }
 
         private MetadataStructure updateMetadataStructure(MetadataStructure metadataStructure,

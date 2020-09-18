@@ -25,61 +25,59 @@ namespace BExIS.Modules.Sam.UI.Controllers
     {
         public ActionResult Decisions(long entityId, string status = "")
         {
-            var entityManager = new EntityManager();
-            var entityPermissionManager = new EntityPermissionManager();
-            var entityStore = (IEntityStore)Activator.CreateInstance(entityManager.FindById(entityId).EntityStoreType);
-
-            var decisionManager = new DecisionManager();
-            IQueryable<Decision> decisions = null;
-
-            if (status == "Open")
+            using (var entityManager = new EntityManager())
+            using (var entityPermissionManager = new EntityPermissionManager())
+            using (var decisionManager = new DecisionManager())
             {
-                ViewData["status"] = "Open";
-                decisions = decisionManager.Decisions.Where(d => d.Request.Entity.Id == entityId && d.Request.Status == 0);
-            }
-            else
-            {
-                decisions = decisionManager.Decisions.Where(d => d.Request.Entity.Id == entityId);
-            }
-           
+                var entityStore = (IEntityStore)Activator.CreateInstance(entityManager.FindById(entityId).EntityStoreType);
 
-            List<DecisionGridRowModel> model = new List<DecisionGridRowModel>();
+                IQueryable<Decision> decisions = null;
 
-            foreach (var m in decisions)
-            {
-                //check if the entity exist otherwise set a default text for the user;
-                string title = entityStore.Exist(m.Request.Key)?entityStore.GetTitleById(m.Request.Key): "Dataset currently / no longer accessible";
-                bool exist = entityStore.Exist(m.Request.Key);
+                if (status == "Open")
+                {
+                    ViewData["status"] = "Open";
+                    decisions = decisionManager.Decisions.Where(d => d.Request.Entity.Id == entityId && d.Request.Status == 0);
+                }
+                else
+                {
+                    decisions = decisionManager.Decisions.Where(d => d.Request.Entity.Id == entityId);
+                }
 
-                model.Add(
-                    new DecisionGridRowModel()
-                    {
-                        Id = m.Id,
-                        RequestId = m.Request.Id,
-                        Rights = string.Join(", ", entityPermissionManager.GetRights(m.Request.Rights)), //string.Join(",", Enum.GetNames(typeof(RightType)).Select(n => n).Where(n => (m.Request.Rights & (short)Enum.Parse(typeof(RightType), n)) > 0)),
+                List<DecisionGridRowModel> model = new List<DecisionGridRowModel>();
+
+                foreach (var m in decisions)
+                {
+                    //check if the entity exist otherwise set a default text for the user;
+                    string title = entityStore.Exist(m.Request.Key) ? entityStore.GetTitleById(m.Request.Key) : "Dataset currently / no longer accessible";
+                    bool exist = entityStore.Exist(m.Request.Key);
+
+                    model.Add(
+                        new DecisionGridRowModel()
+                        {
+                            Id = m.Id,
+                            RequestId = m.Request.Id,
+                            Rights = string.Join(", ", entityPermissionManager.GetRights(m.Request.Rights)), //string.Join(",", Enum.GetNames(typeof(RightType)).Select(n => n).Where(n => (m.Request.Rights & (short)Enum.Parse(typeof(RightType), n)) > 0)),
                         Status = m.Status,
-                        StatusAsText = Enum.GetName(typeof(DecisionStatus), m.Status),
-                        InstanceId = m.Request.Key,
-                        Title = title,
-                        Applicant = getPartyName(m.Request.Applicant),
-                        DecisionMaker = getPartyName(m.DecisionMaker),
-                        Intention = m.Request.Intention,
-                        RequestDate = m.Request.RequestDate,
-                        EntityExist = exist
-                    });
+                            StatusAsText = Enum.GetName(typeof(DecisionStatus), m.Status),
+                            InstanceId = m.Request.Key,
+                            Title = title,
+                            Applicant = getPartyName(m.Request.Applicant),
+                            DecisionMaker = getPartyName(m.DecisionMaker),
+                            Intention = m.Request.Intention,
+                            RequestDate = m.Request.RequestDate,
+                            EntityExist = exist
+                        });
+                }
 
+                ViewData["entityID"] = entityId;
 
+                return PartialView("_DecisionsAdmin", model.OrderBy(x => x.Status).ThenBy(n => n.Id));
             }
-            ViewData["entityID"] = entityId;
-
-            return PartialView("_DecisionsAdmin", model.OrderBy(x=>x.Status).ThenBy(n => n.Id));
         }
 
         public ActionResult Index()
         {
-            var entityManager = new EntityManager();
-
-            try
+            using (var entityManager = new EntityManager())
             {
                 ViewBag.Title = PresentationModel.GetViewTitleForTenant("Manage Entity Requests and Decisions",
                     Session.GetTenant());
@@ -94,26 +92,18 @@ namespace BExIS.Modules.Sam.UI.Controllers
 
                 return View(entities.AsEnumerable());
             }
-            finally
-            {
-                entityManager.Dispose();
-            }
         }
 
         [HttpPost]
         public void Accept(long decisionId)
         {
-            var decisionManager = new DecisionManager();
-
-            try
+            using (var decisionManager = new DecisionManager())
+            using (var entityManager = new EntityManager())
+            using (var uow = this.GetUnitOfWork())
             {
-                decisionManager.Accept(decisionId, "");
+                    decisionManager.Accept(decisionId, "");
 
-                var es = new EmailService();
-                var entityManager = new EntityManager();
-
-                using (var uow = this.GetUnitOfWork())
-                {
+                    var es = new EmailService();
                     var requestRepository = uow.GetRepository<Request>();
                     var request = requestRepository.Get(decisionId);
 
@@ -125,36 +115,25 @@ namespace BExIS.Modules.Sam.UI.Controllers
 
                         es.Send(MessageHelper.GetAcceptRequestHeader(request.Key, applicant),
                             MessageHelper.GetAcceptRequestMessage(request.Key, "title"),
-                            new List<string> { request.Applicant.Email }, null, new List<string> { ConfigurationManager.AppSettings["SystemEmail"] , emailDescionMaker }
+                            new List<string> { request.Applicant.Email }, null, new List<string> { ConfigurationManager.AppSettings["SystemEmail"], emailDescionMaker }
                         );
                     }
-                }
-
-            }
-            catch (Exception e)
-            {
-                throw e;
-            }
-            finally
-            {
-                decisionManager.Dispose();
             }
         }
 
         [HttpPost]
         public void Reject(long requestId)
         {
-            var decisionManager = new DecisionManager();
-
-            try
+            using (var decisionManager = new DecisionManager())
+            using (var entityManager = new EntityManager())
+            using (var uow = this.GetUnitOfWork())
             {
-                decisionManager.Reject(requestId, "");
-
-                var es = new EmailService();
-                var entityManager = new EntityManager();
-
-                using (var uow = this.GetUnitOfWork())
+                try
                 {
+
+                    decisionManager.Reject(requestId, "");
+
+                    var es = new EmailService();
                     var requestRepository = uow.GetRepository<Request>();
                     var request = requestRepository.Get(requestId);
 
@@ -166,35 +145,32 @@ namespace BExIS.Modules.Sam.UI.Controllers
 
                         es.Send(MessageHelper.GetRejectedRequestHeader(request.Key, applicant),
                         MessageHelper.GetRejectedRequestMessage(request.Key, entityStore.GetTitleById(request.Key)),
-                        new List<string> { request.Applicant.Email }, null, new List<string> { ConfigurationManager.AppSettings["SystemEmail"] , emailDescionMaker }
+                        new List<string> { request.Applicant.Email }, null, new List<string> { ConfigurationManager.AppSettings["SystemEmail"], emailDescionMaker }
                         );
                     }
+
                 }
-            }
-            catch (Exception e)
-            {
-                throw e;
-            }
-            finally
-            {
-                decisionManager.Dispose();
+                catch (Exception e)
+                {
+                    throw e;
+                }
+
             }
         }
 
         [HttpPost]
         public void Withdraw(long requestId)
         {
-            var decisionManager = new DecisionManager();
-
-            try
+            using (var decisionManager = new DecisionManager())
+            using (var entityManager = new EntityManager())
+            using (var uow = this.GetUnitOfWork())
             {
-                decisionManager.Withdraw(requestId);
-
-                var es = new EmailService();
-                var entityManager = new EntityManager();
-
-                using (var uow = this.GetUnitOfWork())
+                try
                 {
+
+                    decisionManager.Withdraw(requestId);
+
+                    var es = new EmailService();
                     var requestRepository = uow.GetRepository<Request>();
                     var request = requestRepository.Get(requestId);
 
@@ -210,15 +186,12 @@ namespace BExIS.Modules.Sam.UI.Controllers
                         new List<string> { emailDescionMaker }, null, new List<string> { ConfigurationManager.AppSettings["SystemEmail"], request.Applicant.Email }
                         );
                     }
+
                 }
-            }
-            catch (Exception e)
-            {
-                throw e;
-            }
-            finally
-            {
-                decisionManager.Dispose();
+                catch (Exception e)
+                {
+                    throw e;
+                }
             }
         }
 

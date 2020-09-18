@@ -43,6 +43,7 @@ using Vaiona.Web.Mvc.Modularity;
 using System.Text;
 using BExIS.Security.Entities.Objects;
 using BExIS.Security.Entities.Subjects;
+using BExIS.Dlm.Services.MetadataStructure;
 
 namespace BExIS.Modules.Ddm.UI.Controllers
 
@@ -78,12 +79,13 @@ namespace BExIS.Modules.Ddm.UI.Controllers
 
         public JsonResult IsDatasetCheckedIn(long id)
         {
-            DatasetManager dm = new DatasetManager();
-
-            if (id != -1 && dm.IsDatasetCheckedIn(id))
-                return Json(true);
-            else
-                return Json(false);
+            using (DatasetManager dm = new DatasetManager())
+            {
+                if (id != -1 && dm.IsDatasetCheckedIn(id))
+                    return Json(true);
+                else
+                    return Json(false);
+            }
         }
 
         public ActionResult Show(long id, long version = 0)
@@ -92,38 +94,42 @@ namespace BExIS.Modules.Ddm.UI.Controllers
             Dataset researcobject = this.GetUnitOfWork().GetReadOnlyRepository<Dataset>().Get(id);
             long metadataStrutcureId = researcobject.MetadataStructure.Id;
 
-            string entityName = xmlDatasetHelper.GetEntityNameFromMetadatStructure(metadataStrutcureId, new Dlm.Services.MetadataStructure.MetadataStructureManager());
-            string entityType = xmlDatasetHelper.GetEntityTypeFromMetadatStructure(metadataStrutcureId, new Dlm.Services.MetadataStructure.MetadataStructureManager());
-
-            //ToDo in the entity table there must be the information
-            EntityManager entityManager = new EntityManager();
-
-            var entity = entityManager.Entities.Where(e => e.Name.Equals(entityName)).FirstOrDefault();
-
-            string moduleId = "";
-            Tuple<string, string, string> action = null;
-            string defaultAction = "ShowData";
-
-            if (entity != null && entity.Extra != null)
+            using (MetadataStructureManager metadataStructureManager = new MetadataStructureManager())
             {
-                var node = entity.Extra.SelectSingleNode("extra/modules/module");
+                string entityName = xmlDatasetHelper.GetEntityNameFromMetadatStructure(metadataStrutcureId, metadataStructureManager);
+                string entityType = xmlDatasetHelper.GetEntityTypeFromMetadatStructure(metadataStrutcureId, metadataStructureManager);
 
-                if (node != null) moduleId = node.Attributes["value"].Value;
+                //ToDo in the entity table there must be the information
+                using (EntityManager entityManager = new EntityManager())
+                {
+                    var entity = entityManager.Entities.Where(e => e.Name.Equals(entityName)).FirstOrDefault();
 
-                string modus = "show";
+                    string moduleId = "";
+                    Tuple<string, string, string> action = null;
+                    string defaultAction = "ShowData";
 
-                action = EntityViewerHelper.GetEntityViewAction(entityName, moduleId, modus);
-            }
-            if (action == null) RedirectToAction(defaultAction, new { id, version });
+                    if (entity != null && entity.Extra != null)
+                    {
+                        var node = entity.Extra.SelectSingleNode("extra/modules/module");
 
-            try
-            {
-                if (version == 0) return RedirectToAction(action.Item3, action.Item2, new { area = action.Item1, id });
-                else return RedirectToAction(action.Item3, action.Item2, new { area = action.Item1, id, version });
-            }
-            catch
-            {
-                return RedirectToAction(defaultAction, new { id, version });
+                        if (node != null) moduleId = node.Attributes["value"].Value;
+
+                        string modus = "show";
+
+                        action = EntityViewerHelper.GetEntityViewAction(entityName, moduleId, modus);
+                    }
+                    if (action == null) RedirectToAction(defaultAction, new { id, version });
+
+                    try
+                    {
+                        if (version == 0) return RedirectToAction(action.Item3, action.Item2, new { area = action.Item1, id });
+                        else return RedirectToAction(action.Item3, action.Item2, new { area = action.Item1, id, version });
+                    }
+                    catch
+                    {
+                        return RedirectToAction(defaultAction, new { id, version });
+                    }
+                }
             }
         }
 
@@ -742,6 +748,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
         [BExISEntityAuthorize(typeof(Dataset), "id", RightType.Read)]
         public ActionResult DownloadAscii(long id, string ext, long versionid, bool latest, bool withUnits, bool download = false)
         {
+
             if (hasUserRights(id, RightType.Read))
             {
                 DatasetManager datasetManager = new DatasetManager();
@@ -1279,17 +1286,19 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                         }
                     }
 
-                    ZipFile zip = new ZipFile();
-
-                    foreach (ContentDescriptor cd in datasetVersion.ContentDescriptors)
+                    using (ZipFile zip = new ZipFile())
                     {
-                        string path = Path.Combine(AppConfiguration.DataPath, cd.URI);
-                        string name = cd.URI.Split('\\').Last();
 
-                        zip.AddFile(path, "");
+                        foreach (ContentDescriptor cd in datasetVersion.ContentDescriptors)
+                        {
+                            string path = Path.Combine(AppConfiguration.DataPath, cd.URI);
+                            string name = cd.URI.Split('\\').Last();
+
+                            zip.AddFile(path, "");
+                        }
+
+                        zip.Save(zipPath);
                     }
-
-                    zip.Save(zipPath);
 
                     string message = string.Format("all files from dataset {0} version {1} was downloaded.", datasetVersion.Dataset.Id,
                             datasetVersion.Id);
@@ -1388,19 +1397,13 @@ namespace BExIS.Modules.Ddm.UI.Controllers
 
         public ActionResult ShowPreviewDataStructure(long datasetID, string entityType = "Dataset")
         {
-            DatasetManager dm = new DatasetManager();
-            DataStructureManager dsm = new DataStructureManager();
-            EntityPermissionManager entityPermissionManager = null;
-            OperationManager operationManager = null;
-            FeaturePermissionManager featurePermissionManager = null;
-            SubjectManager subjectManager = null;
-
-            try
+            using (DatasetManager dm = new DatasetManager())
+            using (DataStructureManager dsm = new DataStructureManager())
+            using (EntityPermissionManager entityPermissionManager = new EntityPermissionManager())
+            using (OperationManager operationManager = new OperationManager())
+            using (FeaturePermissionManager featurePermissionManager = new FeaturePermissionManager())
+            using (SubjectManager subjectManager = new SubjectManager())
             {
-                entityPermissionManager = new EntityPermissionManager();
-                operationManager = new OperationManager();
-                featurePermissionManager = new FeaturePermissionManager();
-                subjectManager = new SubjectManager();
 
                 using (var uow = this.GetUnitOfWork())
                 {
@@ -1429,8 +1432,8 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                                 if (featurePermissionManager.HasAccess(subject.Id, feature.Id))
                                     DSlink = "/RPM/DataStructureEdit/?dataStructureId=" + dataStructure.Id;
                             }
-                            }
                         }
+                    }
                     else
                     {
                         dataStructure = uow.GetReadOnlyRepository<DataStructure>().Get(ds.Dataset.DataStructure.Id);
@@ -1444,17 +1447,6 @@ namespace BExIS.Modules.Ddm.UI.Controllers
 
                     return PartialView("_previewDatastructure", m);
                 }
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
-            finally
-            {
-                entityPermissionManager.Dispose();
-                operationManager.Dispose();
-                subjectManager.Dispose();
-                featurePermissionManager.Dispose();
             }
         }
 
@@ -1529,22 +1521,26 @@ namespace BExIS.Modules.Ddm.UI.Controllers
             Dataset researcobject = this.GetUnitOfWork().GetReadOnlyRepository<Dataset>().Get(id);
             long metadataStrutcureId = researcobject.MetadataStructure.Id;
 
-            string entityName = xmlDatasetHelper.GetEntityNameFromMetadatStructure(metadataStrutcureId, new Dlm.Services.MetadataStructure.MetadataStructureManager());
-            string entityType = xmlDatasetHelper.GetEntityTypeFromMetadatStructure(metadataStrutcureId, new Dlm.Services.MetadataStructure.MetadataStructureManager());
-
-            //ToDo in the entity table there must be the information
-            EntityManager entityManager = new EntityManager();
-
-            var entity = entityManager.Entities.Where(e => e.Name.Equals(entityName)).FirstOrDefault();
-
-            var view = this.Render("DCM", "EntityReference", "Show", new RouteValueDictionary()
+            using (MetadataStructureManager metadataStructureManager = new MetadataStructureManager())
             {
-                { "sourceId", id },
-                { "sourceTypeId", entity.Id },
-                { "sourceVersion", version }
-            });
+                string entityName = xmlDatasetHelper.GetEntityNameFromMetadatStructure(metadataStrutcureId, metadataStructureManager);
+                string entityType = xmlDatasetHelper.GetEntityTypeFromMetadatStructure(metadataStrutcureId, metadataStructureManager);
 
-            return Content(view.ToHtmlString(), "text/html");
+                //ToDo in the entity table there must be the information
+                using (EntityManager entityManager = new EntityManager())
+                {
+                    var entity = entityManager.Entities.Where(e => e.Name.Equals(entityName)).FirstOrDefault();
+
+                    var view = this.Render("DCM", "EntityReference", "Show", new RouteValueDictionary()
+                {
+                    { "sourceId", id },
+                    { "sourceTypeId", entity.Id },
+                    { "sourceVersion", version }
+                });
+
+                    return Content(view.ToHtmlString(), "text/html");
+                }
+            }
         }
 
         #endregion entity references
@@ -1614,8 +1610,8 @@ namespace BExIS.Modules.Ddm.UI.Controllers
         private string createEditedBy(string performer)
         {
             using (PartyManager partyManager = new PartyManager())
+            using (var identityUserService = new IdentityUserService())
             {
-                var identityUserService = new IdentityUserService();
                 var user_performer = identityUserService.FindByNameAsync(performer);
 
                 // Replace account name by party name if exists
@@ -1843,20 +1839,18 @@ namespace BExIS.Modules.Ddm.UI.Controllers
         {
             #region security permissions and authorisations check
 
-            EntityPermissionManager entityPermissionManager = new EntityPermissionManager();
-            return entityPermissionManager.HasEffectiveRight(GetUsernameOrDefault(), typeof(Dataset), entityId, rightType);
+            using (EntityPermissionManager entityPermissionManager = new EntityPermissionManager())
+                return entityPermissionManager.HasEffectiveRight(GetUsernameOrDefault(), typeof(Dataset), entityId, rightType);
 
             #endregion security permissions and authorisations check
         }
 
         private bool HasOpenRequest(long datasetId)
         {
-            RequestManager requestManager = new RequestManager();
-            DecisionManager decisionManager = new DecisionManager();
-            SubjectManager subjectManager = new SubjectManager();
-            EntityManager entityManager = new EntityManager();
-
-            try
+            using (RequestManager requestManager = new RequestManager())
+            using (DecisionManager decisionManager = new DecisionManager())
+            using (SubjectManager subjectManager = new SubjectManager())
+            using (EntityManager entityManager = new EntityManager())
             {
                 if (HttpContext.User != null && HttpContext.User.Identity != null && !string.IsNullOrEmpty(HttpContext.User.Identity.Name))
                 {
@@ -1874,48 +1868,39 @@ namespace BExIS.Modules.Ddm.UI.Controllers
 
                 return false;
             }
-            finally
-            {
-                subjectManager.Dispose();
-                requestManager.Dispose();
-                entityManager.Dispose();
-            }
+    
         }
 
         private bool HasRequestMapping(long datasetId)
         {
-            EntityManager entityManager = new EntityManager();
-            PartyManager partyManager = new PartyManager();
-            PartyTypeManager partyTypeManager = new PartyTypeManager();
-            PartyRelationshipTypeManager partyRelationshipTypeManager = new PartyRelationshipTypeManager();
-
-            try
+            using (EntityManager entityManager = new EntityManager())
+            using (PartyManager partyManager = new PartyManager())
+            using (PartyTypeManager partyTypeManager = new PartyTypeManager())
+            using (PartyRelationshipTypeManager partyRelationshipTypeManager = new PartyRelationshipTypeManager())
             {
-                var datasetPartyType = partyTypeManager.PartyTypes.Where(pt => pt.DisplayName.ToLower().Equals("dataset")).FirstOrDefault();
+                try { 
 
-                long partyId = partyManager.Parties.Where(p => p.PartyType.Id.Equals(datasetPartyType.Id) && p.Name.Equals(datasetId.ToString())).FirstOrDefault().Id;
+                    var datasetPartyType = partyTypeManager.PartyTypes.Where(pt => pt.DisplayName.ToLower().Equals("dataset")).FirstOrDefault();
 
-                var ownerPartyRelationshipType = partyRelationshipTypeManager.PartyRelationshipTypes.Where(pt => pt.Title.Equals(ConfigurationManager.AppSettings["OwnerPartyRelationshipType"])).FirstOrDefault();
-                if (ownerPartyRelationshipType == null) return false;
+                    long partyId = partyManager.Parties.Where(p => p.PartyType.Id.Equals(datasetPartyType.Id) && p.Name.Equals(datasetId.ToString())).FirstOrDefault().Id;
 
-                var ownerRelationships = partyManager.PartyRelationships.Where(p =>
-                p.TargetParty.Id.Equals(partyId) &&
-                p.PartyRelationshipType.Id.Equals(ownerPartyRelationshipType.Id));
+                    var ownerPartyRelationshipType = partyRelationshipTypeManager.PartyRelationshipTypes.Where(pt => pt.Title.Equals(ConfigurationManager.AppSettings["OwnerPartyRelationshipType"])).FirstOrDefault();
+                    if (ownerPartyRelationshipType == null) return false;
 
-                if (ownerRelationships == null) return false;
+                    var ownerRelationships = partyManager.PartyRelationships.Where(p =>
+                    p.TargetParty.Id.Equals(partyId) &&
+                    p.PartyRelationshipType.Id.Equals(ownerPartyRelationshipType.Id));
 
-                var exist = ownerRelationships.Count() > 0 ? true : false;
-                return exist;
-            }
-            catch(Exception ex)
-            {
-                LoggerFactory.LogCustom(ex.Message);
-                return false;
-            }
-            finally
-            {
-                partyManager.Dispose();
-                entityManager.Dispose();
+                    if (ownerRelationships == null) return false;
+
+                    var exist = ownerRelationships.Count() > 0 ? true : false;
+                    return exist;
+                }
+                catch (Exception ex)
+                {
+                    LoggerFactory.LogCustom(ex.Message);
+                    return false;
+                }
             }
         }
 
