@@ -170,7 +170,7 @@ namespace BExIS.Modules.Sam.UI.Controllers
                 }
 
                 // Public Permission
-                var publicRights = entityPermissionManager.GetRights(subjectId: null, entityId, instanceId);
+                var publicRights = entityPermissionManager.GetRights(subjectId: null, entityId:entityId, key:instanceId);
                 if (publicRights > 0)
                 {
                     entityPermissions.Add(ReferredEntityPermissionGridRowModel.Convert("Public Dataset", "", publicRights));

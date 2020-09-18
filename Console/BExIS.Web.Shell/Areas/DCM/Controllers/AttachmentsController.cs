@@ -97,7 +97,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 var user = userTask.Result;
                 int rights = 0;
                 if (user == null)
-                    rights = entityPermissionManager.GetEffectiveRights(subjectId:null, entity.Id, datasetVersion.Dataset.Id);
+                    rights = entityPermissionManager.GetEffectiveRights(subjectId:null, entityId:entity.Id, key:datasetVersion.Dataset.Id);
                 else
                     rights = entityPermissionManager.GetEffectiveRights(user.Id, entity.Id, datasetVersion.Dataset.Id);
                 model.UploadAccess = (((rights & (int)RightType.Write) > 0) || ((rights & (int)RightType.Grant) > 0));
