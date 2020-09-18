@@ -30,7 +30,7 @@ namespace BExIS.Dlm.Orm.NH.Utils
         public DataTable Retrieve(long datasetId)
         {
             StringBuilder mvBuilder = new StringBuilder();
-            mvBuilder.AppendLine(string.Format("SELECT * FROM {0};", this.BuildName(datasetId).ToLower()));
+            mvBuilder.AppendLine(string.Format("SELECT * FROM {0} Order by OrderNo, Id;", this.BuildName(datasetId).ToLower()));
             // execute the statement
             return retrieve(mvBuilder.ToString(), datasetId);
         }
