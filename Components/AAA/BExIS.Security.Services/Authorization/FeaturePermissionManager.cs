@@ -191,6 +191,30 @@ namespace BExIS.Security.Services.Authorization
             }
         }
 
+        public Dictionary<long,int> GetPermissionType(IEnumerable<long> subjectIds, long featureId)
+        {
+            Dictionary<long, int> tmp = new Dictionary<long, int>();
+
+            using (var uow = this.GetUnitOfWork())
+            {
+                foreach (var subjectId in subjectIds)
+                {
+                    var featurePermissionRepository = uow.GetReadOnlyRepository<FeaturePermission>();
+                    var featurePermission = subjectId == null ? featurePermissionRepository.Query(f => f.Subject == null && f.Feature.Id == featureId).FirstOrDefault() : featurePermissionRepository.Query(f => f.Feature.Id == featureId && f.Subject.Id == subjectId).FirstOrDefault();
+
+                    if (featurePermission != null)
+                    {
+                        tmp.Add(subjectId, (int)featurePermission.PermissionType);
+                    }
+                    else
+                    { 
+                        tmp.Add(subjectId,2);
+                    }
+                }
+            }
+
+            return tmp;
+        }
         public bool HasAccess(long? subjectId, long featureId)
         {
             using (var uow = this.GetUnitOfWork())
@@ -247,6 +271,74 @@ namespace BExIS.Security.Services.Authorization
                 }
 
                 return false;
+            }
+        }
+        public Dictionary<long,bool> HasAccess(IEnumerable<Subject> subjects, long featureId)
+        {
+            Dictionary<long, bool> tmp = new Dictionary<long, bool>();
+
+            using (var uow = this.GetUnitOfWork())
+            {
+                var featureRepository = uow.GetReadOnlyRepository<Feature>();
+                var subjectRepository = uow.GetReadOnlyRepository<Subject>();
+
+                var feature = featureRepository.Get(featureId);
+
+                foreach (var subject in subjects)
+                {
+  
+                    bool hasAccess = false;
+
+                    // Anonymous
+                    if (subject == null)
+                    {
+                        while (feature != null)
+                        {
+                            if (Exists(null, feature.Id, PermissionType.Grant))
+                                hasAccess =  true;
+
+                            feature = feature.Parent;
+                        }
+
+                        hasAccess = true;
+                    }
+
+                    // Non-Anonymous
+                    while (feature != null)
+                    {
+                        if (Exists(null, feature.Id, PermissionType.Grant))
+                            hasAccess = true;
+                        else
+                        if (Exists(subject.Id, feature.Id, PermissionType.Deny))
+                            hasAccess = false;
+                        else
+                        if (Exists(subject.Id, feature.Id, PermissionType.Grant))
+                            hasAccess = true;
+                        
+
+                        if (subject is User)
+                        {
+                            var user = subject as User;
+                            var groupIds = user.Groups.Select(g => g.Id).ToList();
+
+                            if (Exists(groupIds, new[] { feature.Id }, PermissionType.Deny))
+                            {
+                                hasAccess = false;
+                            }
+                            else
+                            if (Exists(groupIds, new[] { feature.Id }, PermissionType.Grant))
+                            {
+                                hasAccess = true;
+                            }
+                        }
+
+                        feature = feature.Parent;
+                    }
+
+                    tmp.Add(subject.Id, hasAccess);
+                }
+
+                return tmp;
             }
         }
 

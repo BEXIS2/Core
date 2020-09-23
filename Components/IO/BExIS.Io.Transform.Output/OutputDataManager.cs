@@ -125,6 +125,7 @@ namespace BExIS.IO.Transform.Output
             finally
             {
                 datasetManager.Dispose();
+                datasetStructureManager.Dispose();
             }
         }
 
@@ -562,28 +563,29 @@ namespace BExIS.IO.Transform.Output
 
         private string[] getUnits(long datastuctureId, string[] columns)
         {
-            DataStructureManager datasetStructureManager = new DataStructureManager();
-
-            List<string> units = new List<string>();
-
-            try
+            using (DataStructureManager datasetStructureManager = new DataStructureManager())
             {
-                var sds = datasetStructureManager.StructuredDataStructureRepo.Get(datastuctureId);
+                List<string> units = new List<string>();
 
-                if (sds != null)
+                try
                 {
-                    var varList = sds.Variables.ToList();
-                    if (columns != null && columns.Count() > 0)
-                        varList = varList.Where(v => columns.Contains(v.Label)).ToList();
+                    var sds = datasetStructureManager.StructuredDataStructureRepo.Get(datastuctureId);
 
-                    varList.ForEach(v => units.Add(v.Unit.Abbreviation));
+                    if (sds != null)
+                    {
+                        var varList = sds.Variables.ToList();
+                        if (columns != null && columns.Count() > 0)
+                            varList = varList.Where(v => columns.Contains(v.Label)).ToList();
+
+                        varList.ForEach(v => units.Add(v.Unit.Abbreviation));
+                    }
+
+                    return units.ToArray();
                 }
-
-                return units.ToArray();
-            }
-            finally
-            {
-                datasetStructureManager.Dispose();
+                finally
+                {
+                    datasetStructureManager.Dispose();
+                }
             }
         }
 

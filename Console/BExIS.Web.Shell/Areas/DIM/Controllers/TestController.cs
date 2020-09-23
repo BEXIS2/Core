@@ -74,79 +74,82 @@ namespace BExIS.Modules.Dim.UI.Controllers
 
         public async Task<ActionResult> GetStatus(long id)
         {
-            PublicationManager publicationManager = new PublicationManager();
-
-            Broker broker =
-                                       publicationManager.GetBroker()
-                                           .Where(b => b.Name.ToLower().Equals("gfbio dev1"))
-                                           .FirstOrDefault();
-
-            if (broker != null)
+            using (PublicationManager publicationManager = new PublicationManager())
             {
-                //create a gfbio api webservice manager
-                GFBIOWebserviceManager gfbioWebserviceManager = new GFBIOWebserviceManager(broker);
 
-                string roStatusJsonResult = await gfbioWebserviceManager.GetStatusByResearchObjectById(id);
+                Broker broker = publicationManager.GetBroker()
+                                               .Where(b => b.Name.ToLower().Equals("gfbio dev1"))
+                                               .FirstOrDefault();
 
-                //get status and store ro
-                List<GFBIOResearchObjectStatus> gfbioRoStatusList =
-                    new JavaScriptSerializer().Deserialize<List<GFBIOResearchObjectStatus>>(
-                        roStatusJsonResult);
-                GFBIOResearchObjectStatus gfbioRoStatus = gfbioRoStatusList.LastOrDefault();
-                return Content(gfbioRoStatus.status);
+                if (broker != null)
+                {
+                    //create a gfbio api webservice manager
+                    GFBIOWebserviceManager gfbioWebserviceManager = new GFBIOWebserviceManager(broker);
+
+                    string roStatusJsonResult = await gfbioWebserviceManager.GetStatusByResearchObjectById(id);
+
+                    //get status and store ro
+                    List<GFBIOResearchObjectStatus> gfbioRoStatusList =
+                        new JavaScriptSerializer().Deserialize<List<GFBIOResearchObjectStatus>>(
+                            roStatusJsonResult);
+                    GFBIOResearchObjectStatus gfbioRoStatus = gfbioRoStatusList.LastOrDefault();
+                    return Content(gfbioRoStatus.status);
+                }
+
+                return Content("no status");
             }
-
-            return Content("no status");
         }
 
         private void CreatePartys()
         {
             #region CREATE PARTYS
 
-            PartyManager partyManager = new PartyManager();
-            PartyTypeManager partyTypeManager = new PartyTypeManager();
-
-            PartyType partyType = partyTypeManager.PartyTypeRepository.Get().Where(p => p.Title.Equals("Person")).FirstOrDefault();
-
-            if (partyType != null)
+            using (PartyManager partyManager = new PartyManager())
+            using (PartyTypeManager partyTypeManager = new PartyTypeManager())
             {
-                PartyStatusType partyStatusType = partyTypeManager.AddStatusType(partyType, "just created",
-                    "this is for test data", 0);
 
-                var p = partyManager.Create(partyType, "David Blaa", "desc", null, null, partyStatusType);
-                // add value
-                var pAttr = partyTypeManager.PartyCustomAttributeRepository.Get().Where(a => a.Name.Equals("FirstName")).FirstOrDefault();
-                partyManager.AddPartyCustomAttributeValue(p, pAttr, "David");
+                PartyType partyType = partyTypeManager.PartyTypeRepository.Get().Where(p => p.Title.Equals("Person")).FirstOrDefault();
 
-                pAttr = partyTypeManager.PartyCustomAttributeRepository.Get().Where(a => a.Name.Equals("LastName")).FirstOrDefault();
-                partyManager.AddPartyCustomAttributeValue(p, pAttr, "Schöne");
+                if (partyType != null)
+                {
+                    PartyStatusType partyStatusType = partyTypeManager.AddStatusType(partyType, "just created",
+                        "this is for test data", 0);
 
-                pAttr = partyTypeManager.PartyCustomAttributeRepository.Get().Where(a => a.Name.Equals("Email")).FirstOrDefault();
-                partyManager.AddPartyCustomAttributeValue(p, pAttr, "ds@test.de");
+                    var p = partyManager.Create(partyType, "David Blaa", "desc", null, null, partyStatusType);
+                    // add value
+                    var pAttr = partyTypeManager.PartyCustomAttributeRepository.Get().Where(a => a.Name.Equals("FirstName")).FirstOrDefault();
+                    partyManager.AddPartyCustomAttributeValue(p, pAttr, "David");
 
-                /***********************************/
-                p = partyManager.Create(partyType, "Sven Thiel", "desc", null, null, partyStatusType);
-                // add value
-                pAttr = partyTypeManager.PartyCustomAttributeRepository.Get().Where(a => a.Name.Equals("FirstName")).FirstOrDefault();
-                partyManager.AddPartyCustomAttributeValue(p, pAttr, "Sven");
+                    pAttr = partyTypeManager.PartyCustomAttributeRepository.Get().Where(a => a.Name.Equals("LastName")).FirstOrDefault();
+                    partyManager.AddPartyCustomAttributeValue(p, pAttr, "Schöne");
 
-                pAttr = partyTypeManager.PartyCustomAttributeRepository.Get().Where(a => a.Name.Equals("LastName")).FirstOrDefault();
-                partyManager.AddPartyCustomAttributeValue(p, pAttr, "Thiel");
+                    pAttr = partyTypeManager.PartyCustomAttributeRepository.Get().Where(a => a.Name.Equals("Email")).FirstOrDefault();
+                    partyManager.AddPartyCustomAttributeValue(p, pAttr, "ds@test.de");
 
-                pAttr = partyTypeManager.PartyCustomAttributeRepository.Get().Where(a => a.Name.Equals("Email")).FirstOrDefault();
-                partyManager.AddPartyCustomAttributeValue(p, pAttr, "st@test.de");
+                    /***********************************/
+                    p = partyManager.Create(partyType, "Sven Thiel", "desc", null, null, partyStatusType);
+                    // add value
+                    pAttr = partyTypeManager.PartyCustomAttributeRepository.Get().Where(a => a.Name.Equals("FirstName")).FirstOrDefault();
+                    partyManager.AddPartyCustomAttributeValue(p, pAttr, "Sven");
 
-                /***********************************/
-                p = partyManager.Create(partyType, "Martin Hohmuth", "desc", null, null, partyStatusType);
-                // add value
-                pAttr = partyTypeManager.PartyCustomAttributeRepository.Get().Where(a => a.Name.Equals("FirstName")).FirstOrDefault();
-                partyManager.AddPartyCustomAttributeValue(p, pAttr, "Martin");
+                    pAttr = partyTypeManager.PartyCustomAttributeRepository.Get().Where(a => a.Name.Equals("LastName")).FirstOrDefault();
+                    partyManager.AddPartyCustomAttributeValue(p, pAttr, "Thiel");
 
-                pAttr = partyTypeManager.PartyCustomAttributeRepository.Get().Where(a => a.Name.Equals("LastName")).FirstOrDefault();
-                partyManager.AddPartyCustomAttributeValue(p, pAttr, "Hohmuth");
+                    pAttr = partyTypeManager.PartyCustomAttributeRepository.Get().Where(a => a.Name.Equals("Email")).FirstOrDefault();
+                    partyManager.AddPartyCustomAttributeValue(p, pAttr, "st@test.de");
 
-                pAttr = partyTypeManager.PartyCustomAttributeRepository.Get().Where(a => a.Name.Equals("Email")).FirstOrDefault();
-                partyManager.AddPartyCustomAttributeValue(p, pAttr, "mh@test.de");
+                    /***********************************/
+                    p = partyManager.Create(partyType, "Martin Hohmuth", "desc", null, null, partyStatusType);
+                    // add value
+                    pAttr = partyTypeManager.PartyCustomAttributeRepository.Get().Where(a => a.Name.Equals("FirstName")).FirstOrDefault();
+                    partyManager.AddPartyCustomAttributeValue(p, pAttr, "Martin");
+
+                    pAttr = partyTypeManager.PartyCustomAttributeRepository.Get().Where(a => a.Name.Equals("LastName")).FirstOrDefault();
+                    partyManager.AddPartyCustomAttributeValue(p, pAttr, "Hohmuth");
+
+                    pAttr = partyTypeManager.PartyCustomAttributeRepository.Get().Where(a => a.Name.Equals("Email")).FirstOrDefault();
+                    partyManager.AddPartyCustomAttributeValue(p, pAttr, "mh@test.de");
+                }
             }
 
             #endregion CREATE PARTYS

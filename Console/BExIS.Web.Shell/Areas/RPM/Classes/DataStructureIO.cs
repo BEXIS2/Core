@@ -18,37 +18,39 @@ namespace BExIS.Modules.Rpm.UI.Classes
 
         private static XmlDocument createOderNode(StructuredDataStructure structuredDataStructure)
         {
-            DataStructureManager dsm = new DataStructureManager();
-            XmlDocument doc = (XmlDocument)structuredDataStructure.Extra;
-            XmlNode order;
-
-            if (doc == null)
+            using (DataStructureManager dsm = new DataStructureManager())
             {
-                doc = new XmlDocument();
-                XmlNode root = doc.CreateNode(XmlNodeType.Element, "extra", null);
-                doc.AppendChild(root);
-            }
-            if (doc.GetElementsByTagName("order").Count == 0)
-            {
+                XmlDocument doc = (XmlDocument)structuredDataStructure.Extra;
+                XmlNode order;
 
-                if (structuredDataStructure.Variables.Count > 0)
+                if (doc == null)
                 {
-                    order = doc.CreateNode(XmlNodeType.Element, "order", null);
-
-                    foreach (Variable v in structuredDataStructure.Variables)
-                    {
-
-                        XmlNode variable = doc.CreateNode(XmlNodeType.Element, "variable", null);
-                        variable.InnerText = v.Id.ToString();
-                        order.AppendChild(variable);
-                    }
-
-                    doc.FirstChild.AppendChild(order);
-                    structuredDataStructure.Extra = doc;
-                    dsm.UpdateStructuredDataStructure(structuredDataStructure);
+                    doc = new XmlDocument();
+                    XmlNode root = doc.CreateNode(XmlNodeType.Element, "extra", null);
+                    doc.AppendChild(root);
                 }
+                if (doc.GetElementsByTagName("order").Count == 0)
+                {
+
+                    if (structuredDataStructure.Variables.Count > 0)
+                    {
+                        order = doc.CreateNode(XmlNodeType.Element, "order", null);
+
+                        foreach (Variable v in structuredDataStructure.Variables)
+                        {
+
+                            XmlNode variable = doc.CreateNode(XmlNodeType.Element, "variable", null);
+                            variable.InnerText = v.Id.ToString();
+                            order.AppendChild(variable);
+                        }
+
+                        doc.FirstChild.AppendChild(order);
+                        structuredDataStructure.Extra = doc;
+                        dsm.UpdateStructuredDataStructure(structuredDataStructure);
+                    }
+                }
+                return doc;
             }
-            return doc;
         }
         public static List<Variable> getOrderedVariables(StructuredDataStructure structuredDataStructure)
         {

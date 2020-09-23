@@ -94,7 +94,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                         //dataset exist?
                         if (d == null) return Request.CreateErrorResponse(HttpStatusCode.InternalServerError, "the dataset with the id (" + id + ") does not exist.");
                         //user has the right to write?
-                        if (!entityPermissionManager.HasEffectiveRight(user.Name, typeof(Dataset), id, RightType.Write)) Request.CreateErrorResponse(HttpStatusCode.Unauthorized, "The token is not authorized to write into the dataset.");
+                        if (!entityPermissionManager.HasEffectiveRight(user.Name, typeof(Dataset), id, RightType.Write)) return Request.CreateErrorResponse(HttpStatusCode.Unauthorized, "The token is not authorized to write into the dataset.");
                     }
 
                     #endregion security
@@ -121,6 +121,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                     datasetManager.Dispose();
                     entityPermissionManager.Dispose();
                     userManager.Dispose();
+                    request.Dispose();
                 }
             }
             else

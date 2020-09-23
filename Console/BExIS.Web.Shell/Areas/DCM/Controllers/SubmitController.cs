@@ -250,17 +250,19 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
         public List<ListViewItem> LoadResearchPlanViewList()
         {
-            ResearchPlanManager rpm = new ResearchPlanManager();
-            List<ListViewItem> temp = new List<ListViewItem>();
-
-            foreach (ResearchPlan researchPlan in rpm.Repo.Get())
+            using (ResearchPlanManager rpm = new ResearchPlanManager())
             {
-                string title = researchPlan.Title;
+                List<ListViewItem> temp = new List<ListViewItem>();
 
-                temp.Add(new ListViewItem(researchPlan.Id, title));
+                foreach (ResearchPlan researchPlan in rpm.Repo.Get())
+                {
+                    string title = researchPlan.Title;
+
+                    temp.Add(new ListViewItem(researchPlan.Id, title));
+                }
+
+                return temp.OrderBy(p => p.Title).ToList();
             }
-
-            return temp.OrderBy(p => p.Title).ToList();
         }
 
         private void SetParametersToTaskmanager(long datasetId)
@@ -280,16 +282,18 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                     TaskManager.AddToBus(TaskManager.DATASET_ID, datasetid);
 
                     // get title
-                    DatasetManager dm = new DatasetManager();
-                    string title = "";
-                    // is checkedIn?
-                    if (dm.IsDatasetCheckedIn(datasetid))
+                    using (DatasetManager dm = new DatasetManager())
                     {
-                        var dsv = dm.GetDatasetLatestVersion(datasetid);
-                        title = dsv.Title;
-                    }
+                        string title = "";
+                        // is checkedIn?
+                        if (dm.IsDatasetCheckedIn(datasetid))
+                        {
+                            var dsv = dm.GetDatasetLatestVersion(datasetid);
+                            title = dsv.Title;
+                        }
 
-                    TaskManager.AddToBus(TaskManager.DATASET_TITLE, title);
+                        TaskManager.AddToBus(TaskManager.DATASET_TITLE, title);
+                    }
                 }
                 catch (Exception ex)
                 {

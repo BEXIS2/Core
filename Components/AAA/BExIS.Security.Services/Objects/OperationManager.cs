@@ -1,10 +1,11 @@
 ﻿using BExIS.Security.Entities.Objects;
+using System;
 using System.Linq;
 using Vaiona.Persistence.Api;
 
 namespace BExIS.Security.Services.Objects
 {
-    public class OperationManager
+    public class OperationManager: IDisposable
     {
         private readonly IUnitOfWork _guow;
         private bool _isDisposed;

@@ -292,60 +292,66 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Searcher
         /// <returns></returns>
         public static IEnumerable<TextValue> doTextSearch(Query origQuery, String queryFilter, String searchtext)
         {
-            String filter = queryFilter;
-            BooleanQuery query = new BooleanQuery();
-            query.Add(origQuery, Occur.MUST);
-            if (!filter.ToLower().StartsWith("ng_"))
-            {
-                filter = "ng_" + filter;
-            }
-            if (filter.ToLower().Equals("ng_all"))
-            {
-                filter = "ng_all";
-                queryFilter = "ng_all";
-            }
-            HashSet<string> uniqueText = new HashSet<string>();
-            searchtext = searchtext.ToLower();
-            QueryParser parser = new QueryParser(Lucene.Net.Util.Version.LUCENE_30, filter, new KeywordAnalyzer());
-            parser.DefaultOperator = QueryParser.Operator.AND;
-            Query X1 = parser.Parse(searchtext);
-            query.Add(X1, Occur.MUST);
-            // Query query = parser.Parse("tree data");
-            TopDocs tds = searcher.Search(query, 50);
-            QueryScorer scorer = new QueryScorer(query, searchtext);
-            Analyzer analyzer = new NGramAnalyzer();
-            List<TextValue> autoCompleteTextList = new List<TextValue>();
-            foreach (ScoreDoc sd in tds.ScoreDocs)
-            {
-                Document doc = searcher.Doc(sd.Doc);
-                String docId = doc.GetField("doc_id").StringValue;
-                TermQuery q1 = new TermQuery(new Term("id", docId.ToLower()));
-                TermQuery q0 = new TermQuery(new Term("field", queryFilter.ToLower()));
-                QueryParser parser1 = new QueryParser(Lucene.Net.Util.Version.LUCENE_30, "value", new KeywordAnalyzer());
-                parser1.DefaultOperator = QueryParser.Operator.AND;
-                Query q2 = parser1.Parse(searchtext);
-                BooleanQuery q3 = new BooleanQuery();
-                q3.Add(q1, Occur.MUST);
-                q3.Add(q2, Occur.MUST);
-                q3.Add(q0, Occur.MUST);
-                TopDocs tdAutoComp = autoCompleteSearcher.Search(q3, 100);
-                foreach (ScoreDoc sdAutoComp in tdAutoComp.ScoreDocs)
-                {
-                    Document docAutoComp = autoCompleteSearcher.Doc(sdAutoComp.Doc);
-                    String toAdd = docAutoComp.GetField("value").StringValue;
-                    if (!uniqueText.Contains(toAdd))
-                    {
-                        TextValue tv = new TextValue();
-                        tv.Name = toAdd;
-                        tv.Value = toAdd;
-                        autoCompleteTextList.Add(tv);
-                        uniqueText.Add(toAdd);
-                    }
-                }
 
-                if (autoCompleteTextList.Count > 7) break;
+            using (Analyzer analyzer = new NGramAnalyzer())
+            using (KeywordAnalyzer ka = new KeywordAnalyzer())
+            {
+
+                String filter = queryFilter;
+                BooleanQuery query = new BooleanQuery();
+                query.Add(origQuery, Occur.MUST);
+                if (!filter.ToLower().StartsWith("ng_"))
+                {
+                    filter = "ng_" + filter;
+                }
+                if (filter.ToLower().Equals("ng_all"))
+                {
+                    filter = "ng_all";
+                    queryFilter = "ng_all";
+                }
+                HashSet<string> uniqueText = new HashSet<string>();
+                searchtext = searchtext.ToLower();
+                QueryParser parser = new QueryParser(Lucene.Net.Util.Version.LUCENE_30, filter, ka);
+                parser.DefaultOperator = QueryParser.Operator.AND;
+                Query X1 = parser.Parse(searchtext);
+                query.Add(X1, Occur.MUST);
+                // Query query = parser.Parse("tree data");
+                TopDocs tds = searcher.Search(query, 50);
+                QueryScorer scorer = new QueryScorer(query, searchtext);
+
+                List<TextValue> autoCompleteTextList = new List<TextValue>();
+                foreach (ScoreDoc sd in tds.ScoreDocs)
+                {
+                    Document doc = searcher.Doc(sd.Doc);
+                    String docId = doc.GetField("doc_id").StringValue;
+                    TermQuery q1 = new TermQuery(new Term("id", docId.ToLower()));
+                    TermQuery q0 = new TermQuery(new Term("field", queryFilter.ToLower()));
+                    QueryParser parser1 = new QueryParser(Lucene.Net.Util.Version.LUCENE_30, "value", ka);
+                    parser1.DefaultOperator = QueryParser.Operator.AND;
+                    Query q2 = parser1.Parse(searchtext);
+                    BooleanQuery q3 = new BooleanQuery();
+                    q3.Add(q1, Occur.MUST);
+                    q3.Add(q2, Occur.MUST);
+                    q3.Add(q0, Occur.MUST);
+                    TopDocs tdAutoComp = autoCompleteSearcher.Search(q3, 100);
+                    foreach (ScoreDoc sdAutoComp in tdAutoComp.ScoreDocs)
+                    {
+                        Document docAutoComp = autoCompleteSearcher.Doc(sdAutoComp.Doc);
+                        String toAdd = docAutoComp.GetField("value").StringValue;
+                        if (!uniqueText.Contains(toAdd))
+                        {
+                            TextValue tv = new TextValue();
+                            tv.Name = toAdd;
+                            tv.Value = toAdd;
+                            autoCompleteTextList.Add(tv);
+                            uniqueText.Add(toAdd);
+                        }
+                    }
+
+                    if (autoCompleteTextList.Count > 7) break;
+                }
+                return autoCompleteTextList;
             }
-            return autoCompleteTextList;
         }
 
         /// <summary>
@@ -367,24 +373,26 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Searcher
                 c.Value = f.Value;
                 c.DisplayName = f.DisplayName;
                 c.Childrens = new List<Facet>();
-                SimpleFacetedSearch sfs = new SimpleFacetedSearch(_Reader, new string[] { "facet_" + f.Name });
-                SimpleFacetedSearch.Hits hits = sfs.Search(query);
-                int cCount = 0;
-                foreach (SimpleFacetedSearch.HitsPerFacet hpg in hits.HitsPerFacet)
+                using (SimpleFacetedSearch sfs = new SimpleFacetedSearch(_Reader, new string[] { "facet_" + f.Name }))
                 {
-                    if (!hpg.Name.ToString().Equals(""))
+                    SimpleFacetedSearch.Hits hits = sfs.Search(query);
+                    int cCount = 0;
+                    foreach (SimpleFacetedSearch.HitsPerFacet hpg in hits.HitsPerFacet)
                     {
-                        Facet cc = new Facet();
-                        cc.Name = hpg.Name.ToString();
-                        cc.Text = hpg.Name.ToString();
-                        cc.Value = hpg.Name.ToString();
-                        cc.Count = (int)hpg.HitCount;
-                        if (cc.Count > 0) cCount++;
-                        c.Childrens.Add(cc);
+                        if (!hpg.Name.ToString().Equals(""))
+                        {
+                            Facet cc = new Facet();
+                            cc.Name = hpg.Name.ToString();
+                            cc.Text = hpg.Name.ToString();
+                            cc.Value = hpg.Name.ToString();
+                            cc.Count = (int)hpg.HitCount;
+                            if (cc.Count > 0) cCount++;
+                            c.Childrens.Add(cc);
+                        }
                     }
+                    c.Count = cCount;
+                    l.Add(c);
                 }
-                c.Count = cCount;
-                l.Add(c);
             }
             return l;
         }
@@ -401,22 +409,24 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Searcher
         {
             foreach (Property p in properties)
             {
-                SimpleFacetedSearch sfs = new SimpleFacetedSearch(_Reader, new string[] { "property_" + p.Name });
-                SimpleFacetedSearch.Hits hits = sfs.Search(query);
-                int cCount = 0;
-
-                List<string> tmp = new List<string>();
-
-                foreach (SimpleFacetedSearch.HitsPerFacet hpg in hits.HitsPerFacet)
+                using (SimpleFacetedSearch sfs = new SimpleFacetedSearch(_Reader, new string[] { "property_" + p.Name }))
                 {
-                    if (!String.IsNullOrEmpty(hpg.Name.ToString()))
-                    {
-                        if ((int)hpg.HitCount > 0)
-                            tmp.Add(hpg.Name.ToString());
-                    }
-                }
+                    SimpleFacetedSearch.Hits hits = sfs.Search(query);
+                    int cCount = 0;
 
-                p.Values = tmp;
+                    List<string> tmp = new List<string>();
+
+                    foreach (SimpleFacetedSearch.HitsPerFacet hpg in hits.HitsPerFacet)
+                    {
+                        if (!String.IsNullOrEmpty(hpg.Name.ToString()))
+                        {
+                            if ((int)hpg.HitCount > 0)
+                                tmp.Add(hpg.Name.ToString());
+                        }
+                    }
+
+                    p.Values = tmp;
+                }
 
             }
             return properties;

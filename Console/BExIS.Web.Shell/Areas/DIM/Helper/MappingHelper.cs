@@ -245,12 +245,9 @@ namespace BExIS.Modules.Dim.UI.Helper
         public static LinkElementRootModel LoadfromSystem(LinkElementPostion rootModelType, MappingManager mappingManager)
         {
             //get all parties - complex
-            PartyTypeManager partyTypeManager = new PartyTypeManager();
-            PartyRelationshipTypeManager partyRelationshipTypeManager = new PartyRelationshipTypeManager();
-
-            EntityManager entityManager = new EntityManager();
-
-            try
+            using (PartyTypeManager partyTypeManager = new PartyTypeManager())
+            using (PartyRelationshipTypeManager partyRelationshipTypeManager = new PartyRelationshipTypeManager())
+            using (EntityManager entityManager = new EntityManager())
             {
                 LinkElementRootModel model = new LinkElementRootModel(LinkElementType.System, 0, "System", rootModelType);
 
@@ -364,11 +361,7 @@ namespace BExIS.Modules.Dim.UI.Helper
 
                 return model;
             }
-            finally
-            {
-                partyTypeManager.Dispose();
-                entityManager.Dispose();
-            }
+
         }
 
         private static LinkElementModel createLinkElementModelType(
