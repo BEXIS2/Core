@@ -246,6 +246,19 @@ namespace BExIS.Modules.Dcm.UI.Helpers
                 //if (!metadataStructureManager.Repo.Get().Any(m => m.Name.Equals("Basic Eml")))
                 //    ImportSchema("Basic Eml", "eml-dataset.xsd", entity.Name, entity.Name, entity.EntityType.FullName);
 
+
+                if (!metadataStructureManager.Repo.Get().Any(m => m.Name.Equals("New-BE-MetadataSchema")))
+                {
+                    string titleXPath =
+                        "Metadata/general/generalType/title/titleType";
+                    string descriptionXpath =
+                        "Metadata/general/generalType/abstract/abstractType";
+
+                    ImportSchema("New-BE-MetadataSchema", "schema_explos_bexis2.xml", "metaProfile", entity.Name, entity.EntityType.FullName,
+                        titleXPath, descriptionXpath);
+                }
+
+
                 #endregion Add Metadata
             }
             catch (Exception ex)
@@ -267,6 +280,7 @@ namespace BExIS.Modules.Dcm.UI.Helpers
         #region METADATA
 
         private void ImportSchema(string name, string filename, string root, string entity, string entityFullName, string titlePath, string descriptionPath)
+        
         {
             long metadataStructureid = 0;
             string schemaName = name;

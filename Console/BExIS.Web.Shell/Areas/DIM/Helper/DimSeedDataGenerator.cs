@@ -205,12 +205,368 @@ namespace BExIS.Modules.Dim.UI.Helpers
         {
             try
             {
-                createSystemKeyMappings();
-                createPartyTypeMappings();
+                //createSystemKeyMappings();
+                //createPartyTypeMappings();
+
+                createBexisMapping();
             }
             catch (Exception exception)
             {
                 throw exception;
+            }
+        }
+
+        private void createBexisMapping()
+        {
+            object tmp = "";
+            List<MetadataStructure> metadataStructures =
+                tmp.GetUnitOfWork().GetReadOnlyRepository<MetadataStructure>().Get().ToList();
+
+            using ( MappingManager mappingManager = new MappingManager())
+            {
+                XmlMetadataWriter xmlMetadataWriter = new XmlMetadataWriter(XmlNodeMode.xPath);
+
+                #region mapping New-BE-MetadataSchema to System Keys
+
+                string n = "New-BE-MetadataSchema";
+
+                if (metadataStructures.Any(m => m.Name.ToLower().Equals(n.ToLower())))
+                {
+                    MetadataStructure metadataStructure =
+                        metadataStructures.FirstOrDefault(m => m.Name.ToLower().Equals(n.ToLower()));
+
+                    XDocument metadataRef = xmlMetadataWriter.CreateMetadataXml(metadataStructure.Id);
+
+                    //create root mapping
+                    LinkElement bexisRoot = createLinkELementIfNotExist(mappingManager, metadataStructure.Id, metadataStructure.Name, LinkElementType.MetadataStructure, LinkElementComplexity.None);
+
+                    //create system mapping
+                    LinkElement system = createLinkELementIfNotExist(mappingManager, 0, "System", LinkElementType.System, LinkElementComplexity.None);
+
+
+
+                    Mapping rootTo = mappingManager.CreateMapping(bexisRoot, system, 0, null, null);
+                    Mapping rootFrom = mappingManager.CreateMapping(system, bexisRoot, 0, null, null);
+
+                    // Title
+
+                    if (Exist("title", LinkElementType.MetadataAttributeUsage))
+                    {
+                        createToKeyMapping("title", LinkElementType.MetadataAttributeUsage, "title", LinkElementType.MetadataAttributeUsage, Key.Title, rootTo, metadataRef, mappingManager);
+                        createFromKeyMapping("title", LinkElementType.MetadataAttributeUsage, "title", LinkElementType.MetadataAttributeUsage, Key.Title, rootFrom, metadataRef, mappingManager);
+                    }
+
+                    // metadataCreationDate
+
+                    if (Exist("metadataCreationDate", LinkElementType.MetadataAttributeUsage))
+                    {
+                        string path = "Metadata/general/generalType/metadataCreationDate/metadataCreationDateType";
+
+                        createToKeyMapping(path, LinkElementType.MetadataAttributeUsage, path, LinkElementType.MetadataAttributeUsage, Key.MetadataCreationDate, rootTo, metadataRef, mappingManager);
+                        createFromKeyMapping(path, LinkElementType.MetadataAttributeUsage, path, LinkElementType.MetadataAttributeUsage, Key.MetadataCreationDate, rootFrom, metadataRef, mappingManager);
+                    }
+
+                    //metadataLastModificationDate
+                    if (Exist("metadataLastModificationDate", LinkElementType.MetadataAttributeUsage))
+                    {
+                        string path = "Metadata/general/generalType/metadataLastModificationDate/metadataLastModificationDateType";
+
+                        createToKeyMapping(path, LinkElementType.MetadataAttributeUsage, path, LinkElementType.MetadataAttributeUsage, Key.MetadataLastModfied, rootTo, metadataRef, mappingManager);
+                        createFromKeyMapping(path, LinkElementType.MetadataAttributeUsage, path, LinkElementType.MetadataAttributeUsage, Key.MetadataLastModfied, rootFrom, metadataRef, mappingManager);
+                    }
+
+                    //id
+                    if (Exist("id", LinkElementType.MetadataAttributeUsage))
+                    {
+                        string path = "Metadata/general/generalType/id/idType";
+
+                        createToKeyMapping(path, LinkElementType.MetadataAttributeUsage, path, LinkElementType.MetadataAttributeUsage, Key.Id, rootTo, metadataRef, mappingManager);
+                        createFromKeyMapping(path, LinkElementType.MetadataAttributeUsage, path, LinkElementType.MetadataAttributeUsage, Key.Id, rootFrom, metadataRef, mappingManager);
+                    }
+
+                    //version
+                    if (Exist("version", LinkElementType.MetadataAttributeUsage))
+                    {
+                        string path = "Metadata/general/generalType/version/versionType";
+
+                        createToKeyMapping(path, LinkElementType.MetadataAttributeUsage, path, LinkElementType.MetadataAttributeUsage, Key.Version, rootTo, metadataRef, mappingManager);
+                        createFromKeyMapping(path, LinkElementType.MetadataAttributeUsage, path, LinkElementType.MetadataAttributeUsage, Key.Version, rootFrom, metadataRef, mappingManager);
+                    }
+
+                    // missing Consortium
+
+
+                    //if (Exist("para", LinkElementType.MetadataNestedAttributeUsage) &&
+                    //    Exist("abstract", LinkElementType.MetadataPackageUsage))
+                    //{
+                    //    createToKeyMapping("para", LinkElementType.MetadataNestedAttributeUsage, "abstract", LinkElementType.MetadataPackageUsage, Key.Description, rootTo, metadataRef, mappingManager);
+                    //    createFromKeyMapping("para", LinkElementType.MetadataNestedAttributeUsage, "abstract", LinkElementType.MetadataPackageUsage, Key.Description, rootFrom, metadataRef, mappingManager);
+                    //}
+
+                    //if (Exist("givenName", LinkElementType.MetadataNestedAttributeUsage) &&
+                    //    Exist("individualName", LinkElementType.MetadataAttributeUsage))
+                    //{
+                    //    createToKeyMapping("givenName", LinkElementType.MetadataNestedAttributeUsage, "Metadata/creator/creatorType/individualName", LinkElementType.MetadataAttributeUsage, Key.Author, rootTo, metadataRef, mappingManager, mappingManager.CreateTransformationRule("", "givenName[0] surName[0]"));
+                    //    createToKeyMapping("givenName", LinkElementType.MetadataNestedAttributeUsage, "Metadata/creator/creatorType/individualName", LinkElementType.MetadataAttributeUsage, Key.Author, rootFrom, metadataRef, mappingManager, mappingManager.CreateTransformationRule(@"\w+", "Author[0]"));
+                    //}
+
+                    //if (Exist("surName", LinkElementType.MetadataNestedAttributeUsage) &&
+                    //    Exist("individualName", LinkElementType.MetadataAttributeUsage))
+                    //{
+                    //    createToKeyMapping("surName", LinkElementType.MetadataNestedAttributeUsage, "Metadata/creator/creatorType/individualName", LinkElementType.MetadataAttributeUsage, Key.Author, rootTo, metadataRef, mappingManager, mappingManager.CreateTransformationRule("", "givenName[0] surName[0]"));
+                    //    createToKeyMapping("surName", LinkElementType.MetadataNestedAttributeUsage, "Metadata/creator/creatorType/individualName", LinkElementType.MetadataAttributeUsage, Key.Author, rootFrom, metadataRef, mappingManager, mappingManager.CreateTransformationRule(@"\w+", "Author[1]"));
+                    //}
+
+                    //if (Exist("title", LinkElementType.MetadataNestedAttributeUsage) &&
+                    //    Exist("project", LinkElementType.MetadataPackageUsage))
+                    //{
+                    //    createToKeyMapping("title", LinkElementType.MetadataNestedAttributeUsage, "project", LinkElementType.MetadataPackageUsage, Key.ProjectTitle, rootTo, metadataRef, mappingManager);
+                    //    createFromKeyMapping("title", LinkElementType.MetadataNestedAttributeUsage, "project", LinkElementType.MetadataPackageUsage, Key.ProjectTitle, rootFrom, metadataRef, mappingManager);
+                    //}
+
+
+
+
+                    #endregion mapping New-BE-MetadataSchema to System Keys
+
+                    #region mapping New-BE-MetadataSchema to Party
+
+                    List<PartyType> partyTypes =
+                        tmp.GetUnitOfWork().GetReadOnlyRepository<PartyType>().Get().ToList();
+                    List<PartyCustomAttribute> partyCustomAttrs =
+                        tmp.GetUnitOfWork().GetReadOnlyRepository<PartyCustomAttribute>().Get().ToList();
+
+                    List<PartyRelationshipType> partyReleationships =
+                        tmp.GetUnitOfWork().GetReadOnlyRepository<PartyRelationshipType>().Get().ToList();
+
+                    ////project
+
+                    //if (Exist("projectName", LinkElementType.MetadataNestedAttributeUsage) &&
+                    //    Exist("general", LinkElementType.MetadataPackageUsage))
+                    //{
+                    //    createToKeyMapping("projectName", LinkElementType.MetadataNestedAttributeUsage, "general", LinkElementType.MetadataPackageUsage, Key.ProjectTitle, rootTo, metadataRef, mappingManager);
+                    //    createFromKeyMapping("projectName", LinkElementType.MetadataNestedAttributeUsage, "general", LinkElementType.MetadataPackageUsage, Key.ProjectTitle, rootFrom, metadataRef, mappingManager);
+                    //}
+
+                    // consortia
+
+                    //if (Exist("consortia", LinkElementType.MetadataNestedAttributeUsage) &&
+                    //    Exist("general", LinkElementType.MetadataPackageUsage))
+                    //{
+                    //    createToKeyMapping("consortia", LinkElementType.MetadataNestedAttributeUsage, "general", LinkElementType.MetadataPackageUsage, Key.Consortia, rootTo, metadataRef, mappingManager);
+                    //    createFromKeyMapping("consortia", LinkElementType.MetadataNestedAttributeUsage, "general", LinkElementType.MetadataPackageUsage, Key.Consortia, rootFrom, metadataRef, mappingManager);
+                    //}
+
+                    #region person
+
+                    if (partyTypes.Any(p => p.Title.Equals("Person")))
+                    {
+                        PartyType partyType = partyTypes.FirstOrDefault(p => p.Title.Equals("Person"));
+                        string complexAttrName = "";
+                        string simpleAttrName = "";
+                        //create party first and last name mapping to a single flied
+
+                        List<string> fields = new List<string>();
+                        fields.Add("metadataCreator");
+                        fields.Add("dataCreator");
+                        fields.Add("dataCollector");
+                        fields.Add("projectLeader");
+
+                        foreach (var f in fields)
+                        {
+                            complexAttrName = f;
+                            simpleAttrName = f;
+
+                            if (partyCustomAttrs.Any(
+                                pAttr => pAttr.Name.Equals("FirstName") && pAttr.PartyType.Id.Equals(partyType.Id)))
+                            {
+                                PartyCustomAttribute partyCustomAttribute = partyCustomAttrs.FirstOrDefault(
+                                    pAttr => pAttr.Name.Equals("FirstName") && pAttr.PartyType.Id.Equals(partyType.Id));
+
+                                createToPartyTypeMapping(
+                                    simpleAttrName, LinkElementType.MetadataAttributeUsage,
+                                    complexAttrName, LinkElementType.MetadataAttributeUsage,
+                                    partyCustomAttribute, partyType, rootTo, metadataRef,
+                                    mappingManager,
+                                    new TransformationRule(@"\w+", f+"[0]"));
+
+                                createFromPartyTypeMapping(
+                                    simpleAttrName, LinkElementType.MetadataAttributeUsage,
+                                    complexAttrName, LinkElementType.MetadataAttributeUsage,
+                                    partyCustomAttribute, partyType, rootFrom, metadataRef,
+                                    mappingManager,
+                                    new TransformationRule(@"\w+", "FirstName[0] LastName[0]"));
+                            }
+
+                            if (partyCustomAttrs.Any(
+                                pAttr => pAttr.Name.Equals("LastName") && pAttr.PartyType.Id.Equals(partyType.Id)))
+                            {
+                                PartyCustomAttribute partyCustomAttribute = partyCustomAttrs.FirstOrDefault(
+                                    pAttr => pAttr.Name.Equals("LastName") && pAttr.PartyType.Id.Equals(partyType.Id));
+
+                                createToPartyTypeMapping(
+                                    simpleAttrName, LinkElementType.MetadataAttributeUsage,
+                                    complexAttrName, LinkElementType.MetadataAttributeUsage,
+                                    partyCustomAttribute, partyType, rootTo, metadataRef,
+                                    mappingManager,
+                                    new TransformationRule(@"\w+", f+"[1]"));
+
+                                createFromPartyTypeMapping(
+                                    simpleAttrName, LinkElementType.MetadataAttributeUsage,
+                                    complexAttrName, LinkElementType.MetadataAttributeUsage,
+                                    partyCustomAttribute, partyType, rootFrom, metadataRef,
+                                    mappingManager,
+                                    new TransformationRule(@"\w+", "FirstName[0] LastName[0]"));
+                            }
+
+                        }
+
+                        #region contact person
+                        //contactPerson (all)
+                        complexAttrName = "contactType";
+
+                        if (partyCustomAttrs.Any(
+                            pAttr => pAttr.Name.Equals("FirstName") && pAttr.PartyType.Id.Equals(partyType.Id)))
+                        {
+                            PartyCustomAttribute partyCustomAttribute = partyCustomAttrs.FirstOrDefault(
+                                pAttr => pAttr.Name.Equals("FirstName") && pAttr.PartyType.Id.Equals(partyType.Id));
+
+                            createToPartyTypeMapping(
+                                "name", LinkElementType.MetadataNestedAttributeUsage,
+                                complexAttrName, LinkElementType.ComplexMetadataAttribute,
+                                partyCustomAttribute, partyType, rootTo, metadataRef,
+                                mappingManager,
+                                new TransformationRule(@"\w+", "Name[0]"));
+
+                            createFromPartyTypeMapping(
+                                "name", LinkElementType.MetadataNestedAttributeUsage,
+                                complexAttrName, LinkElementType.ComplexMetadataAttribute,
+                                partyCustomAttribute, partyType, rootFrom, metadataRef,
+                                mappingManager,
+                                new TransformationRule(@"\w+", "FirstName[0] LastName[0]"));
+                        }
+
+                        if (partyCustomAttrs.Any(
+                            pAttr => pAttr.Name.Equals("LastName") && pAttr.PartyType.Id.Equals(partyType.Id)))
+                        {
+                            PartyCustomAttribute partyCustomAttribute = partyCustomAttrs.FirstOrDefault(
+                                pAttr => pAttr.Name.Equals("LastName") && pAttr.PartyType.Id.Equals(partyType.Id));
+
+                            createToPartyTypeMapping(
+                                "name", LinkElementType.MetadataNestedAttributeUsage,
+                                complexAttrName, LinkElementType.ComplexMetadataAttribute,
+                                partyCustomAttribute, partyType, rootTo, metadataRef,
+                                mappingManager,
+                                new TransformationRule(@"\w+", "name[1]"));
+
+                            createFromPartyTypeMapping(
+                                "name", LinkElementType.MetadataNestedAttributeUsage,
+                                complexAttrName, LinkElementType.ComplexMetadataAttribute,
+                                partyCustomAttribute, partyType, rootFrom, metadataRef,
+                                mappingManager,
+                                new TransformationRule(@"\w+", "FirstName[0] LastName[0]"));
+                        }
+
+                        if (partyCustomAttrs.Any(
+                            pAttr => pAttr.Name.Equals("Email") && pAttr.PartyType.Id.Equals(partyType.Id)))
+                        {
+                            PartyCustomAttribute partyCustomAttribute = partyCustomAttrs.FirstOrDefault(
+                                pAttr => pAttr.Name.Equals("Email") && pAttr.PartyType.Id.Equals(partyType.Id));
+
+                            createToPartyTypeMapping(
+                                "email", LinkElementType.MetadataNestedAttributeUsage,
+                                complexAttrName, LinkElementType.ComplexMetadataAttribute,
+                                partyCustomAttribute, partyType, rootTo, metadataRef,
+                                mappingManager,
+                                new TransformationRule());
+
+                            createFromPartyTypeMapping(
+                                "email", LinkElementType.MetadataNestedAttributeUsage,
+                                complexAttrName, LinkElementType.ComplexMetadataAttribute,
+                                partyCustomAttribute, partyType, rootFrom, metadataRef,
+                                mappingManager,
+                                new TransformationRule());
+                        }
+
+
+                        // usw .. for the contactPerson
+
+                        #endregion contactperson
+
+
+                        #region releationship
+
+                        string personUsage = "Person";
+
+                        // add releationship type mapping
+                        // simple elements
+
+                        Dictionary<string, string> releationships = new Dictionary<string, string>();
+                        //keyvaluepair : key = attr : value = releationship
+                        //releationships.Add("dataCreator", "dataCreator");
+                        //releationships.Add("metadataCreator", "metadataCreator");
+                        //releationships.Add("dataCollector", "dataCollector");
+                        releationships.Add("projectLeader", "PI");
+
+                        foreach (var kvp in releationships)
+                        {
+                            PartyRelationshipType partyRelationshipType = partyReleationships.FirstOrDefault(p => p.Title.ToLower().Equals(kvp.Value.ToLower()));
+
+                            complexAttrName = kvp.Key;
+                            simpleAttrName = kvp.Key;
+
+                            if (partyRelationshipType != null)
+                            {
+                                createToPartyReleationMapping(
+                                    simpleAttrName, LinkElementType.MetadataAttributeUsage,
+                                    complexAttrName, LinkElementType.MetadataAttributeUsage,
+                                    partyRelationshipType, rootTo, metadataRef,
+                                    mappingManager,
+                                    new TransformationRule());
+
+                                createFromPartyReleationMapping(
+                                    simpleAttrName, LinkElementType.MetadataAttributeUsage,
+                                    complexAttrName, LinkElementType.MetadataAttributeUsage,
+                                    partyRelationshipType, rootFrom, metadataRef,
+                                    mappingManager,
+                                    new TransformationRule());
+                            }
+                        }
+
+                        //contactperson releationship
+                        //example
+                        PartyRelationshipType prt = partyReleationships.FirstOrDefault(p => p.Title.ToLower().Equals("pi")); // change it to contactPerson
+
+                        complexAttrName = "contactPerson";
+                        simpleAttrName = "name";
+
+                        if (prt != null)
+                        {
+                            createToPartyReleationMapping(
+                                simpleAttrName, LinkElementType.MetadataNestedAttributeUsage,
+                                complexAttrName, LinkElementType.MetadataAttributeUsage,
+                                prt, rootTo, metadataRef,
+                                mappingManager,
+                                new TransformationRule());
+
+                            createFromPartyReleationMapping(
+                                simpleAttrName, LinkElementType.MetadataNestedAttributeUsage,
+                                complexAttrName, LinkElementType.MetadataAttributeUsage,
+                                prt, rootFrom, metadataRef,
+                                mappingManager,
+                                new TransformationRule());
+                        }
+
+
+                        #endregion releationship
+                    }
+
+                    #endregion person
+
+
+                    #endregion mapping New-BE-MetadataSchema  to Party
+
+                }
             }
         }
 
@@ -342,6 +698,7 @@ namespace BExIS.Modules.Dim.UI.Helpers
                 }
 
                 #endregion mapping GBIF to System Keys
+
             }
         }
 
@@ -372,13 +729,21 @@ namespace BExIS.Modules.Dim.UI.Helpers
             if (simpleNodeName.Equals(complexNodeName))
             {
                 List<XElement> elements = getXElements(simpleNodeName, metadataRef);
-
+                string sId = "";
                 foreach (XElement xElement in elements)
                 {
-                    string sId = xElement.Attribute("id").Value;
+                    sId = xElement.Attribute("id").Value;
+                    try
+                    {
+                        sId = xElement.Attribute("roleId").Value;
+                    }
+                    catch
+                    {
+
+                    }
                     string name = xElement.Attribute("name").Value;
                     LinkElement tmp = createLinkELementIfNotExist(mappingManager, Convert.ToInt64(sId), name,
-                        simpleType, LinkElementComplexity.Simple);
+                        simpleType, LinkElementComplexity.Simple, simpleNodeName);
 
                     Mapping tmpMapping = MappingHelper.CreateIfNotExistMapping(tmp, le, 1, new TransformationRule(), root, mappingManager);
                     MappingHelper.CreateIfNotExistMapping(tmp, le, 2, transformationRule, tmpMapping, mappingManager);
@@ -395,16 +760,19 @@ namespace BExIS.Modules.Dim.UI.Helpers
                     LinkElement tmpComplexElement = createLinkELementIfNotExist(mappingManager, Convert.ToInt64(sIdComplex), nameComplex,
                         complexType, LinkElementComplexity.Complex);
 
+                    string simpleName = simpleNodeName;
+                    if (simpleNodeName.Contains("/")) simpleName = simpleNodeName.Split('/').ToList().Last();
+
                     Mapping complexMapping = MappingHelper.CreateIfNotExistMapping(tmpComplexElement, le, 1, new TransformationRule(), root, mappingManager);
 
-                    IEnumerable<XElement> simpleElements = XmlUtility.GetAllChildren(complex).Where(s => s.Name.LocalName.Equals(simpleNodeName));
+                    IEnumerable<XElement> simpleElements = XmlUtility.GetAllChildren(complex).Where(s => s.Name.LocalName.Equals(simpleName));
 
                     foreach (XElement xElement in simpleElements)
                     {
                         string sId = xElement.Attribute("id").Value;
                         string name = xElement.Attribute("name").Value;
                         LinkElement tmp = createLinkELementIfNotExist(mappingManager, Convert.ToInt64(sId), name,
-                            simpleType, LinkElementComplexity.Simple);
+                            simpleType, LinkElementComplexity.Simple, simpleNodeName);
 
                         MappingHelper.CreateIfNotExistMapping(tmp, le, 2, transformationRule, complexMapping, mappingManager);
                     }
@@ -437,13 +805,21 @@ namespace BExIS.Modules.Dim.UI.Helpers
             if (simpleNodeName.Equals(complexNodeName))
             {
                 IEnumerable<XElement> elements = getXElements(simpleNodeName, metadataRef);
-
+                string sId = "";
                 foreach (XElement xElement in elements)
                 {
-                    string sId = xElement.Attribute("id").Value;
+                    sId = xElement.Attribute("id").Value;
+                    try
+                    {
+                        sId = xElement.Attribute("roleId").Value;
+                    }
+                    catch
+                    {
+
+                    }
                     string name = xElement.Attribute("name").Value;
                     LinkElement tmp = createLinkELementIfNotExist(mappingManager, Convert.ToInt64(sId), name,
-                        simpleType, LinkElementComplexity.Simple);
+                        simpleType, LinkElementComplexity.Simple, simpleNodeName);
 
                     Mapping tmpMapping = MappingHelper.CreateIfNotExistMapping(le, tmp, 1, null, root, mappingManager);
                     MappingHelper.CreateIfNotExistMapping(le, tmp, 2, null, tmpMapping, mappingManager);
@@ -462,14 +838,17 @@ namespace BExIS.Modules.Dim.UI.Helpers
 
                     Mapping complexMapping = MappingHelper.CreateIfNotExistMapping(le, tmpComplexElement, 1, null, root, mappingManager);
 
-                    IEnumerable<XElement> simpleElements = XmlUtility.GetAllChildren(complex).Where(s => s.Name.LocalName.Equals(simpleNodeName));
+                    string simpleName = simpleNodeName;
+                    if (simpleNodeName.Contains("/")) simpleName = simpleNodeName.Split('/').ToList().Last();
+
+                    IEnumerable<XElement> simpleElements = XmlUtility.GetAllChildren(complex).Where(s => s.Name.LocalName.Equals(simpleName));
 
                     foreach (XElement xElement in simpleElements)
                     {
                         string sId = xElement.Attribute("id").Value;
                         string name = xElement.Attribute("name").Value;
                         LinkElement tmp = createLinkELementIfNotExist(mappingManager, Convert.ToInt64(sId), name,
-                            simpleType, LinkElementComplexity.Simple);
+                            simpleType, LinkElementComplexity.Simple, simpleNodeName);
 
                         MappingHelper.CreateIfNotExistMapping(le, tmp, 2, null, complexMapping, mappingManager);
                     }
@@ -970,31 +1349,53 @@ namespace BExIS.Modules.Dim.UI.Helpers
         {
             if (transformationRule == null) transformationRule = new TransformationRule();
 
-            LinkElement le = createLinkELementIfNotExist(mappingManager, Convert.ToInt64(partyType.Id),
+            LinkElement partyComplex = createLinkELementIfNotExist(mappingManager, Convert.ToInt64(partyType.Id),
                     partyType.Title, LinkElementType.PartyType, LinkElementComplexity.Complex);
 
-            XElement complex = getXElements(complexNodeName, metadataRef).FirstOrDefault();
+            LinkElement partySimple = createLinkELementIfNotExist(mappingManager, Convert.ToInt64(partyCustomAttr.Id),
+               partyCustomAttr.Name, LinkElementType.PartyCustomType, LinkElementComplexity.Simple);
 
-            string sIdComplex = complex.Attribute("id").Value;
-            string nameComplex = complex.Attribute("name").Value;
-            LinkElement tmpComplexElement = createLinkELementIfNotExist(mappingManager, Convert.ToInt64(sIdComplex), nameComplex,
-                complexType, LinkElementComplexity.Complex);
-
-            Mapping complexMapping = MappingHelper.CreateIfNotExistMapping(tmpComplexElement, le, 1, new TransformationRule(), root, mappingManager);
-
-            IEnumerable<XElement> simpleElements = XmlUtility.GetAllChildren(complex).Where(s => s.Name.LocalName.Equals(simpleNodeName));
-
-            LinkElement simpleLe = createLinkELementIfNotExist(mappingManager, Convert.ToInt64(partyCustomAttr.Id),
-            partyCustomAttr.Name, LinkElementType.PartyCustomType, LinkElementComplexity.Simple);
-
-            foreach (XElement xElement in simpleElements)
+            if (simpleNodeName.Equals(complexNodeName))
             {
-                string sId = xElement.Attribute("id").Value;
-                string name = xElement.Attribute("name").Value;
-                LinkElement tmp = createLinkELementIfNotExist(mappingManager, Convert.ToInt64(sId), name,
-                    simpleType, LinkElementComplexity.Simple);
+                IEnumerable<XElement> elements = getXElements(simpleNodeName, metadataRef);
 
-                MappingHelper.CreateIfNotExistMapping(tmp, simpleLe, 2, transformationRule, complexMapping, mappingManager);
+                foreach (XElement xElement in elements)
+                {
+                    string sId = xElement.Attribute("id").Value;
+                    string name = xElement.Attribute("name").Value;
+                    LinkElement tmp = createLinkELementIfNotExist(mappingManager, Convert.ToInt64(sId), name,
+                        simpleType, LinkElementComplexity.Simple);
+
+                    Mapping tmpMapping = MappingHelper.CreateIfNotExistMapping(tmp, partyComplex, 1, null, root, mappingManager);
+                    MappingHelper.CreateIfNotExistMapping(tmp, partySimple, 2, transformationRule, tmpMapping, mappingManager);
+                }
+            }
+            else
+            {
+
+                XElement complex = getXElements(complexNodeName, metadataRef).FirstOrDefault();
+
+                string sIdComplex = complex.Attribute("id").Value;
+                string nameComplex = complex.Attribute("name").Value;
+                LinkElement tmpComplexElement = createLinkELementIfNotExist(mappingManager, Convert.ToInt64(sIdComplex), nameComplex,
+                    complexType, LinkElementComplexity.Complex);
+
+                Mapping complexMapping = MappingHelper.CreateIfNotExistMapping(tmpComplexElement, partyComplex, 1, new TransformationRule(), root, mappingManager);
+
+
+                IEnumerable<XElement> simpleElements = XmlUtility.GetAllChildren(complex).Where(s => s.Name.LocalName.Equals(simpleNodeName));
+
+               
+
+                foreach (XElement xElement in simpleElements)
+                {
+                    string sId = xElement.Attribute("id").Value;
+                    string name = xElement.Attribute("name").Value;
+                    LinkElement tmp = createLinkELementIfNotExist(mappingManager, Convert.ToInt64(sId), name,
+                        simpleType, LinkElementComplexity.Simple);
+
+                    MappingHelper.CreateIfNotExistMapping(tmp, partySimple, 2, transformationRule, complexMapping, mappingManager);
+                }
             }
         }
 
@@ -1009,31 +1410,50 @@ namespace BExIS.Modules.Dim.UI.Helpers
         {
             if (transformationRule == null) transformationRule = new TransformationRule();
 
-            LinkElement le = createLinkELementIfNotExist(mappingManager, Convert.ToInt64(partyType.Id),
+            LinkElement partyComplex = createLinkELementIfNotExist(mappingManager, Convert.ToInt64(partyType.Id),
                     partyType.Title, LinkElementType.PartyType, LinkElementComplexity.Complex);
 
-            XElement complex = getXElements(complexNodeName, metadataRef).FirstOrDefault();
+            LinkElement partySimple = createLinkELementIfNotExist(mappingManager, Convert.ToInt64(partyCustomAttr.Id),
+               partyCustomAttr.Name, LinkElementType.PartyCustomType, LinkElementComplexity.Simple);
 
-            string sIdComplex = complex.Attribute("id").Value;
-            string nameComplex = complex.Attribute("name").Value;
-            LinkElement tmpComplexElement = createLinkELementIfNotExist(mappingManager, Convert.ToInt64(sIdComplex), nameComplex,
-                complexType, LinkElementComplexity.Complex);
-
-            Mapping complexMapping = MappingHelper.CreateIfNotExistMapping(le, tmpComplexElement, 1, new TransformationRule(), root, mappingManager);
-
-            IEnumerable<XElement> simpleElements = XmlUtility.GetAllChildren(complex).Where(s => s.Name.LocalName.Equals(simpleNodeName));
-
-            LinkElement simpleLe = createLinkELementIfNotExist(mappingManager, Convert.ToInt64(partyCustomAttr.Id),
-            partyCustomAttr.Name, LinkElementType.PartyCustomType, LinkElementComplexity.Simple);
-
-            foreach (XElement xElement in simpleElements)
+            if (simpleNodeName.Equals(complexNodeName))
             {
-                string sId = xElement.Attribute("id").Value;
-                string name = xElement.Attribute("name").Value;
-                LinkElement tmp = createLinkELementIfNotExist(mappingManager, Convert.ToInt64(sId), name,
-                    simpleType, LinkElementComplexity.Simple);
+                IEnumerable<XElement> elements = getXElements(simpleNodeName, metadataRef);
 
-                MappingHelper.CreateIfNotExistMapping(simpleLe, tmp, 2, transformationRule, complexMapping, mappingManager);
+                foreach (XElement xElement in elements)
+                {
+                    string sId = xElement.Attribute("id").Value;
+                    string name = xElement.Attribute("name").Value;
+                    LinkElement tmp = createLinkELementIfNotExist(mappingManager, Convert.ToInt64(sId), name,
+                        simpleType, LinkElementComplexity.Simple);
+
+                    Mapping tmpMapping = MappingHelper.CreateIfNotExistMapping(partyComplex, tmp, 1, null, root, mappingManager);
+                    MappingHelper.CreateIfNotExistMapping(partySimple, tmp, 2, transformationRule, tmpMapping, mappingManager);
+                }
+            }
+            else
+            {
+
+                XElement complex = getXElements(complexNodeName, metadataRef).FirstOrDefault();
+
+                string sIdComplex = complex.Attribute("id").Value;
+                string nameComplex = complex.Attribute("name").Value;
+                LinkElement tmpComplexElement = createLinkELementIfNotExist(mappingManager, Convert.ToInt64(sIdComplex), nameComplex,
+                    complexType, LinkElementComplexity.Complex);
+
+                Mapping complexMapping = MappingHelper.CreateIfNotExistMapping(partyComplex, tmpComplexElement, 1, new TransformationRule(), root, mappingManager);
+
+                IEnumerable<XElement> simpleElements = XmlUtility.GetAllChildren(complex).Where(s => s.Name.LocalName.Equals(simpleNodeName));
+
+                foreach (XElement xElement in simpleElements)
+                {
+                    string sId = xElement.Attribute("id").Value;
+                    string name = xElement.Attribute("name").Value;
+                    LinkElement tmp = createLinkELementIfNotExist(mappingManager, Convert.ToInt64(sId), name,
+                        simpleType, LinkElementComplexity.Simple);
+
+                    MappingHelper.CreateIfNotExistMapping(partySimple, tmp, 2, transformationRule, complexMapping, mappingManager);
+                }
             }
         }
 
@@ -1050,27 +1470,46 @@ namespace BExIS.Modules.Dim.UI.Helpers
             LinkElement le = createLinkELementIfNotExist(mappingManager, Convert.ToInt64(partyReleationType.Id),
                     partyReleationType.Title, LinkElementType.PartyRelationshipType, LinkElementComplexity.Simple);
 
-            XElement complex = getXElements(complexNodeName, metadataRef).FirstOrDefault();
-
-            string sIdComplex = complex.Attribute("id").Value;
-            string nameComplex = complex.Attribute("name").Value;
-            LinkElement tmpComplexElement = createLinkELementIfNotExist(mappingManager, Convert.ToInt64(sIdComplex), nameComplex,
-                complexType, LinkElementComplexity.Complex);
-
-            Mapping complexMapping = MappingHelper.CreateIfNotExistMapping(tmpComplexElement, le, 1, new TransformationRule(), root, mappingManager);
-
-            IEnumerable<XElement> simpleElements = XmlUtility.GetAllChildren(complex).Where(s => s.Name.LocalName.Equals(simpleNodeName));
-
-            LinkElement simpleLe = le;
-
-            foreach (XElement xElement in simpleElements)
+            if (simpleNodeName.Equals(complexNodeName))
             {
-                string sId = xElement.Attribute("id").Value;
-                string name = xElement.Attribute("name").Value;
-                LinkElement tmp = createLinkELementIfNotExist(mappingManager, Convert.ToInt64(sId), name,
-                    simpleType, LinkElementComplexity.Simple);
+                IEnumerable<XElement> elements = getXElements(simpleNodeName, metadataRef);
 
-                MappingHelper.CreateIfNotExistMapping(tmp, simpleLe, 2, transformationRule, complexMapping, mappingManager);
+                foreach (XElement xElement in elements)
+                {
+                    string sId = xElement.Attribute("id").Value;
+                    string name = xElement.Attribute("name").Value;
+                    LinkElement tmp = createLinkELementIfNotExist(mappingManager, Convert.ToInt64(sId), name,
+                        simpleType, LinkElementComplexity.Simple);
+
+                    Mapping tmpMapping = MappingHelper.CreateIfNotExistMapping(tmp, le, 1, null, root, mappingManager);
+                    MappingHelper.CreateIfNotExistMapping(tmp, le, 2, transformationRule, tmpMapping, mappingManager);
+                }
+            }
+            else
+            {
+
+                XElement complex = getXElements(complexNodeName, metadataRef).FirstOrDefault();
+
+                string sIdComplex = complex.Attribute("id").Value;
+                string nameComplex = complex.Attribute("name").Value;
+                LinkElement tmpComplexElement = createLinkELementIfNotExist(mappingManager, Convert.ToInt64(sIdComplex), nameComplex,
+                    complexType, LinkElementComplexity.Complex);
+
+                Mapping complexMapping = MappingHelper.CreateIfNotExistMapping(tmpComplexElement, le, 1, new TransformationRule(), root, mappingManager);
+
+                IEnumerable<XElement> simpleElements = XmlUtility.GetAllChildren(complex).Where(s => s.Name.LocalName.Equals(simpleNodeName));
+
+                LinkElement simpleLe = le;
+
+                foreach (XElement xElement in simpleElements)
+                {
+                    string sId = xElement.Attribute("id").Value;
+                    string name = xElement.Attribute("name").Value;
+                    LinkElement tmp = createLinkELementIfNotExist(mappingManager, Convert.ToInt64(sId), name,
+                        simpleType, LinkElementComplexity.Simple);
+
+                    MappingHelper.CreateIfNotExistMapping(tmp, simpleLe, 2, transformationRule, complexMapping, mappingManager);
+                }
             }
         }
 
@@ -1089,30 +1528,49 @@ namespace BExIS.Modules.Dim.UI.Helpers
             LinkElement le = createLinkELementIfNotExist(mappingManager, Convert.ToInt64(partyReleationType.Id),
                     partyReleationType.Title, LinkElementType.PartyRelationshipType, LinkElementComplexity.Simple);
 
-            XElement complex = getXElements(complexNodeName, metadataRef).FirstOrDefault();
-
-            string sIdComplex = complex.Attribute("id").Value;
-            string nameComplex = complex.Attribute("name").Value;
-            LinkElement tmpComplexElement = createLinkELementIfNotExist(mappingManager, Convert.ToInt64(sIdComplex), nameComplex,
-                complexType, LinkElementComplexity.Complex);
-
-            //map complex
-            Mapping complexMapping = MappingHelper.CreateIfNotExistMapping(le, tmpComplexElement, 1, new TransformationRule(), root, mappingManager);
-
-            IEnumerable<XElement> simpleElements = XmlUtility.GetAllChildren(complex).Where(s => s.Name.LocalName.Equals(simpleNodeName));
-
-            LinkElement simpleLe = le;
-
-            foreach (XElement xElement in simpleElements)
+            if (simpleNodeName.Equals(complexNodeName))
             {
-                string sId = xElement.Attribute("id").Value;
-                string name = xElement.Attribute("name").Value;
-                LinkElement tmp = createLinkELementIfNotExist(mappingManager, Convert.ToInt64(sId), name,
-                    simpleType, LinkElementComplexity.Simple);
+                IEnumerable<XElement> elements = getXElements(simpleNodeName, metadataRef);
 
-                MappingHelper.CreateIfNotExistMapping(simpleLe, tmp, 2, transformationRule, complexMapping, mappingManager);
+                foreach (XElement xElement in elements)
+                {
+                    string sId = xElement.Attribute("id").Value;
+                    string name = xElement.Attribute("name").Value;
+                    LinkElement tmp = createLinkELementIfNotExist(mappingManager, Convert.ToInt64(sId), name,
+                        simpleType, LinkElementComplexity.Simple);
+
+                    Mapping tmpMapping = MappingHelper.CreateIfNotExistMapping(le, tmp, 1, null, root, mappingManager);
+                    MappingHelper.CreateIfNotExistMapping(le, tmp, 2, null, tmpMapping, mappingManager);
+                }
+            }
+            else
+            {
+                XElement complex = getXElements(complexNodeName, metadataRef).FirstOrDefault();
+
+                string sIdComplex = complex.Attribute("id").Value;
+                string nameComplex = complex.Attribute("name").Value;
+                LinkElement tmpComplexElement = createLinkELementIfNotExist(mappingManager, Convert.ToInt64(sIdComplex), nameComplex,
+                    complexType, LinkElementComplexity.Complex);
+
+                //map complex
+                Mapping complexMapping = MappingHelper.CreateIfNotExistMapping(le, tmpComplexElement, 1, new TransformationRule(), root, mappingManager);
+
+                IEnumerable<XElement> simpleElements = XmlUtility.GetAllChildren(complex).Where(s => s.Name.LocalName.Equals(simpleNodeName));
+
+                LinkElement simpleLe = le;
+
+                foreach (XElement xElement in simpleElements)
+                {
+                    string sId = xElement.Attribute("id").Value;
+                    string name = xElement.Attribute("name").Value;
+                    LinkElement tmp = createLinkELementIfNotExist(mappingManager, Convert.ToInt64(sId), name,
+                        simpleType, LinkElementComplexity.Simple);
+
+                    MappingHelper.CreateIfNotExistMapping(simpleLe, tmp, 2, transformationRule, complexMapping, mappingManager);
+                }
             }
         }
+
 
         #endregion createPartyTypeMappings
 
@@ -1121,7 +1579,8 @@ namespace BExIS.Modules.Dim.UI.Helpers
             long id,
             string name,
             LinkElementType type,
-            LinkElementComplexity complexity)
+            LinkElementComplexity complexity,
+            string xpath="")
         {
             LinkElement element = mappingManager.GetLinkElement(id, name, type);
 
@@ -1132,7 +1591,7 @@ namespace BExIS.Modules.Dim.UI.Helpers
                     type,
                     complexity,
                     name,
-                    ""
+                    xpath
                     );
             }
 
