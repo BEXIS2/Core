@@ -106,7 +106,6 @@ namespace BExIS.Modules.Bam.UI.Controllers
             using (UserManager userManager = new UserManager())
             using (PartyRelationshipTypeManager partyRelationshipTypeManager = new PartyRelationshipTypeManager())
             {
-                partyRelationshipManager = new PartyRelationshipTypeManager();
                 var partyType = partyTypeManager.PartyTypeRepository.Get(party.PartyType.Id);
                 var partyStatusType = partyTypeManager.GetStatusType(partyType, "Created");
 
@@ -119,9 +118,6 @@ namespace BExIS.Modules.Bam.UI.Controllers
                 var partyuser = partyManager.GetPartyByUser(user.Id);
                 if (partyuser == null)
                 {
-
-                    var partyType = partyTypeManager.PartyTypeRepository.Get(party.PartyType.Id);
-                    var partyStatusType = partyTypeManager.GetStatusType(partyType, "Created");
                     //Create party
                     party = partyManager.Create(partyType, party.Description, null, null, partyCustomAttributeValues.ToDictionary(cc => long.Parse(cc.Key), cc => cc.Value));
                     if (partyRelationships != null)
@@ -134,20 +130,23 @@ namespace BExIS.Modules.Bam.UI.Controllers
                             partyManager.AddPartyRelationship(party, TargetParty, partyRelationship.Title, partyRelationship.Description, partyTypePair, DateTime.Now, TargetParty.EndDate, partyRelationship.Scope);
                         }
 
-                partyManager.AddPartyUser(party, user.Id);
+                    partyManager.AddPartyUser(party, user.Id);
+                    partyManager.AddPartyUser(party, user.Id);
 
-                //set FullName in user
-                var p = partyManager.GetParty(party.Id);
-                string displayName = String.Join(" ",
-                    p.CustomAttributeValues.
-                    Where(ca => ca.CustomAttribute.IsMain.Equals(true)).
-                    OrderBy(ca => ca.CustomAttribute.Id).
-                    Select(ca => ca.Value).ToArray());
+                    //set FullName in user
+                    var p = partyManager.GetParty(party.Id);
+                    string displayName = String.Join(" ",
+                        p.CustomAttributeValues.
+                        Where(ca => ca.CustomAttribute.IsMain.Equals(true)).
+                        OrderBy(ca => ca.CustomAttribute.Id).
+                        Select(ca => ca.Value).ToArray());
 
-                user.DisplayName = displayName;
-                userManager.UpdateAsync(user);
+                    user.DisplayName = displayName;
+                    userManager.UpdateAsync(user);
 
 
+
+                }
                 return RedirectToAction("Index");
             }
         }
@@ -204,8 +203,8 @@ namespace BExIS.Modules.Bam.UI.Controllers
             using (PartyManager partyManager = new PartyManager())
             using (PartyTypeManager partyTypeManager = new PartyTypeManager())
             using (UserManager userManager = new UserManager())
-            { 
-    
+            {
+
                 if (!HttpContext.User.Identity.IsAuthenticated)
                     return RedirectToAction("Index", "Home");
 
@@ -234,19 +233,19 @@ namespace BExIS.Modules.Bam.UI.Controllers
                     {
                         var nameProp = partyTypeManager.PartyCustomAttributeRepository.Get(attr => (attr.PartyType == party.PartyType) && (attr.Name == ConfigurationManager.AppSettings["PersonEmailAttributeName"])).FirstOrDefault();
                         if (nameProp != null)
-                        {               
+                        {
                             var entity = party.CustomAttributeValues.FirstOrDefault(item => item.CustomAttribute.Id == nameProp.Id);
                             user.Email = entity.Value;
                         }
                     }
-                    
+
 
                     userManager.UpdateAsync(user);
 
                 }
                 return RedirectToAction("Index", "Home", new { area = "" });
             }
-            
+
         }
 
         /// <summary>
@@ -269,7 +268,7 @@ namespace BExIS.Modules.Bam.UI.Controllers
                 if (long.TryParse(partyIdStr, out partyId) && partyId != 0)
                 {
                     ViewBag.customAttrValues = partyManager.PartyRepository.Get(partyId).CustomAttributeValues.ToList();
-                    
+
                     var userId = partyManager.GetUserIdByParty(partyId);
                     var userTask = userManager.FindByIdAsync(userId);
                     userTask.Wait();
@@ -281,8 +280,9 @@ namespace BExIS.Modules.Bam.UI.Controllers
 
                 }
                 // if no user is linked assume it is the user registration
-                else { 
-                    
+                else
+                {
+
                     var userName = HttpContext.User.Identity.Name;
                     var userTask = userManager.FindByNameAsync(userName);
                     userTask.Wait();
@@ -292,14 +292,14 @@ namespace BExIS.Modules.Bam.UI.Controllers
                 }
 
                 var customAttrList = new List<PartyCustomAttribute>();
-                
+
                 IEnumerable<PartyType> partyType = partyTypeManager.PartyTypeRepository.Get(item => item.Id == id);
                 if (partyType != null)
                     customAttrList = partyType.First().CustomAttributes.ToList();
 
                 return PartialView("_customAttributesPartial", customAttrList);
             }
-  
+
         }
 
         [HttpGet]
