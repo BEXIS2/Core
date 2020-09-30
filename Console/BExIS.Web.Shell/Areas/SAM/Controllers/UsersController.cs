@@ -7,6 +7,7 @@ using BExIS.Utils.NH.Querying;
 using Microsoft.AspNet.Identity;
 using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
@@ -197,10 +198,16 @@ namespace BExIS.Modules.Sam.UI.Controllers
                 user.Email = model.Email;
 
                 // Update email in party
-                var party = partyManager.GetPartyByUser(user.Id);
-                
-                var nameProp = partyTypeManager.PartyCustomAttributeRepository.Get(attr => (attr.PartyType == party.PartyType) && (attr.Name == "Email")).FirstOrDefault();
-                partyManager.AddPartyCustomAttributeValue(party, nameProp, user.Email);
+                if (ConfigurationManager.AppSettings["usePersonEmailAttributeName"] == "true")
+                {
+                    var party = partyManager.GetPartyByUser(user.Id);
+
+                    var nameProp = partyTypeManager.PartyCustomAttributeRepository.Get(attr => (attr.PartyType == party.PartyType) && (attr.Name == ConfigurationManager.AppSettings["PersonEmailAttributeName"])).FirstOrDefault();
+                    if (nameProp != null)
+                    {
+                        partyManager.AddPartyCustomAttributeValue(party, nameProp, user.Email);
+                    }
+                }
 
                 userManager.UpdateAsync(user);
                 return Json(new { success = true });

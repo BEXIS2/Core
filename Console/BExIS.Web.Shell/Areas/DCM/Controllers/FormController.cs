@@ -3273,10 +3273,6 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
             EntityPermissionManager entityPermissionManager = new EntityPermissionManager();
 
-            //get the researchobject (cuurently called dataset) to get the id of a metadata structure
-            Dataset researcobject = this.GetUnitOfWork().GetReadOnlyRepository<Dataset>().Get(entityId);
-            long metadataStrutcureId = researcobject.MetadataStructure.Id;
-
             try
             {
                 return entityPermissionManager.HasEffectiveRight(GetUsernameOrDefault(), typeof(Dataset), entityId, RightType.Write);

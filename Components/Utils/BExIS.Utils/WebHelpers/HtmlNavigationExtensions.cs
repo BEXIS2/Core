@@ -9,7 +9,6 @@ using System.Web.Mvc;
 using System.Xml.Linq;
 using Vaiona.Web.Mvc.Modularity;
 
-
 namespace BExIS.Utils.WebHelpers
 {
     public static class HtmlNavigationExtensions

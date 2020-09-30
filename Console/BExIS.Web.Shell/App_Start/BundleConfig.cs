@@ -1,5 +1,4 @@
 ﻿using System.Web.Optimization;
-using Microsoft.Web.Helpers;
 
 namespace BExIS.Web.Shell
 {
@@ -64,7 +63,6 @@ namespace BExIS.Web.Shell
                 "~/Content/handsontable/handsontable.full.css",
                 "~/Content/DataTables/media/css/jquery.dataTables.css",
                 "~/Content/Site.css"));
-   
 
             bundles.Add(new StyleBundle("~/bundles/general_bexis").Include(
 
