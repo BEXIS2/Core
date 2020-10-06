@@ -12,6 +12,7 @@
 @{
     long id = 0;
     bool edit = false;
+    string entity_type = "";
 
     if (ViewData["id"] != null)
     {
@@ -21,6 +22,11 @@
     if (ViewData["edit"] != null)
     {
         edit = Convert.ToBoolean(ViewData["edit"]);
+    }
+
+    if (ViewData["entity_type"] != null)
+    {
+        entity_type = Convert.ToString(ViewData["entity_type"]);
     }
 
     string imgList = "";
@@ -36,7 +42,14 @@
         <div class="col-md-1 col-xs-1">
             @if (edit && id > 0)
             {
-                @Html.ActionLink("Upload", "UploadWizard", "Submit", new { area = "DCM", type = DataStructureType.Unstructured, datasetid = @id }, new { @class = "bx-button function" })
+                if (entity_type == "Publication")
+                {
+                    @Html.ActionLink("Upload", "Index", "UploadPublication", new { area = "PUB", entityId = @id }, new { @class = "bx-button function" });
+                }
+                else
+                {
+                    @Html.ActionLink("Upload", "UploadWizard", "Submit", new { area = "DCM", type = DataStructureType.Unstructured, datasetid = @id }, new { @class = "bx-button function" })
+                }
             }
         </div>
     </div>
