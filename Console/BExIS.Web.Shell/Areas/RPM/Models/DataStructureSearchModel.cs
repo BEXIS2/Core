@@ -11,6 +11,7 @@ using BExIS.Dlm.Services.Data;
 using BExIS.Dlm.Entities.Data;
 using Vaiona.Persistence.Api;
 
+
 namespace BExIS.Modules.Rpm.UI.Models
 {
     public class VariablePreview
@@ -251,7 +252,7 @@ namespace BExIS.Modules.Rpm.UI.Models
             DataStructureManager dataStructureManager = null;
             DatasetManager datasetManager = null;
 
-            try
+                try
             {
                 dataStructureManager = new DataStructureManager();
                 datasetManager = new DatasetManager();
