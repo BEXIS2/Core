@@ -5,7 +5,7 @@
   <entry key="key3" value="21" type="Int16"/>
   <missingValues>
     <missingValue>
-      <placeholder>na</placeholder>
+      <placeholder>NA</placeholder>
       <description>not available</description>
     </missingValue>
   </missingValues>
