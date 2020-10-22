@@ -738,8 +738,8 @@ namespace BExIS.Utils.Upload
                 datatuple.Materialize();
                 object v = datatuple.VariableValues.Where(p => p.VariableId.Equals(t)).First().Value;
                 if (v != null)
-                    //if (!String.IsNullOrEmpty(v.ToString()))
-                    if (!String.IsNullOrEmpty((string)v))
+                    if (!String.IsNullOrEmpty(v.ToString()))
+                    //if (!String.IsNullOrEmpty((string)v))
                         value += ";" + v;
                     else
                         return "";

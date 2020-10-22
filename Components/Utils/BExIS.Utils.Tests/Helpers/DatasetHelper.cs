@@ -14,7 +14,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BExIS.Dlm.Tests.Helpers
+namespace BExIS.Utils.Tests.Data.Helpers
 {
     public class DatasetHelper
     {
