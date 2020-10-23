@@ -377,6 +377,86 @@ namespace BExIS.Dlm.Tests.Helpers
 
         }
 
+        /// <summary>
+        /// get a updated datatuple on a specific value.
+        /// based on the created test datastructure
+        /// index:
+        /// 0 = int
+        /// 1 = text
+        /// 2 = double
+        /// 3 = bool 
+        /// 4 = datetime
+        /// </summary>
+        /// <param name="source"></param>
+        /// <param name="updateVarIndex"></param>
+        /// <param name="datasetManager"></param>
+        /// <returns></returns>
+        public DataTuple  GetUpdatedDatatuple(DataTuple source, int updateVarIndex)
+        {
+
+                if (source == null) return null;
+
+                source.Materialize();
+
+                var vv = source.VariableValues[updateVarIndex];
+                if (vv != null)
+                {
+                    switch (updateVarIndex)
+                    {
+
+                    case 0://int
+                        {
+                            vv.Value = new Random().Next();
+
+                            break;
+                        }
+                    case 1://text
+                        {
+                            var chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+                            var stringChars = new char[8];
+                            var random = new Random();
+
+                            for (int i = 0; i < stringChars.Length; i++)
+                            {
+                                stringChars[i] = chars[random.Next(chars.Length)];
+                            }
+           
+                            vv.Value = new String(stringChars);
+
+                            break;
+                        }
+                    case 2://double
+                        {
+                            vv.Value = new Random().NextDouble();
+
+                            break;
+                        }
+                    case 3://bool
+                        {
+                            vv.Value = false;
+
+                            break;
+                        }
+                    case 4: 
+                        { 
+                            vv.Value = DateTime.Now.ToString(new CultureInfo("en-US"));
+
+                            break; 
+                        }
+
+                        //default:
+                    }
+
+
+                }
+                source.Dematerialize();
+                source.Should().NotBeNull();
+
+                return source;
+        }
+
+
+
         public ResearchPlan CreateResearchPlan()
         {
             ResearchPlanManager researchPlanManager = new ResearchPlanManager();

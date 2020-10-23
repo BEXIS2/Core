@@ -27,7 +27,7 @@ namespace BExIS.Utils.Data.Tests
         private long datasetId = 0;
         private long latestDataTupleId = 0;
         private string username = "David";
-        private long numberOfTuples = 10;
+        private long numberOfTuples = 65000;
         private DatasetHelper dsHelper;
 
         [OneTimeSetUp]
@@ -106,8 +106,6 @@ namespace BExIS.Utils.Data.Tests
                 expectedCount = incoming.Count;
             }
 
-            using (DatasetManager datasetManager = new DatasetManager())
-            {
                 try
                 {
                         List<long> primaryKeys = new List<long>();
@@ -140,8 +138,60 @@ namespace BExIS.Utils.Data.Tests
                 {
                     throw ex;
                 }
+            
+        }
+
+        [Test]
+        public void GetSplitDatatuples_CombinedPrimaryKeyOneUpdatedDataTuple_ExpectedNumberOfEditDatatuples()
+        {
+            Dataset dataset;
+            DatasetVersion latest;
+            List<DataTuple> incoming = new List<DataTuple>();
+            int count = 0;
+            int expectedCount = 0;
+            List<long> datatupleFromDatabaseIds = new List<long>();
+
+            //setup the primary key conbination
+            List<int> primaryKeysIndex = new List<int> { 0, 2 };
+            List<long> primaryKeyIds = new List<long>();
+
+            using (DatasetManager datasetManager = new DatasetManager())
+            {
+                //Arrange
+                dataset = datasetManager.GetDataset(datasetId);
+                latest = datasetManager.GetDatasetLatestVersion(datasetId);
+                datatupleFromDatabaseIds = datasetManager.GetDatasetVersionEffectiveTupleIds(latest);
+
+                foreach (var dtid in datatupleFromDatabaseIds)
+                {
+                    var datatuple = datasetManager.DataTupleRepo.Get(dtid);
+                    datatuple.Materialize();
+                    incoming.Add(datatuple);
+                }
+
+                //updated last datatuple in text 
+                dsHelper.GetUpdatedDatatuple(incoming.Last(),1);
+
+                //get varids of primary key combination
+                List<long> allVarIds = ((StructuredDataStructure)dataset.DataStructure).Variables.Select(v => v.Id).ToList();
+
+                foreach (int pkIndex in primaryKeysIndex)
+                {
+                    primaryKeyIds.Add(allVarIds.ElementAt(pkIndex));
+                }
+
+                //Act
+                Dictionary<string, List<DataTuple>> splittedDatatuples = new Dictionary<string, List<DataTuple>>();
+                UploadHelper uploadhelper = new UploadHelper();
+                splittedDatatuples = uploadhelper.GetSplitDatatuples(incoming, primaryKeyIds, null, ref datatupleFromDatabaseIds);
+
+                //Assert
+                Assert.That(splittedDatatuples["new"].Count, Is.EqualTo(0));
+                Assert.That(splittedDatatuples["edit"].Count, Is.EqualTo(1));
+
             }
         }
+
 
 
     }
