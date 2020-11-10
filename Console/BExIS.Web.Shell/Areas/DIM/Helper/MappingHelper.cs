@@ -689,7 +689,7 @@ namespace BExIS.Modules.Dim.UI.Helper
                     //    ? LinkElementType.SimpleMetadataAttribute
                     //    : LinkElementType.ComplexMetadataAttribute;
 
-                    type = LinkElementType.MetadataNestedAttributeUsage;
+                    type = LinkElementType.MetadataAttributeUsage;
 
                     tmp.Add(
                             new LinkElementModel(

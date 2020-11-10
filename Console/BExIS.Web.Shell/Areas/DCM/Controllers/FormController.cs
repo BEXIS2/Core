@@ -1390,10 +1390,24 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                         attrModel.Value,
                         stepModelHelper.XPath);
                     }
+                    else if (MappingUtils.ExistMappingWithParty(attrModel.Id, LinkElementType.MetadataAttributeUsage))
+                    {
+                        attrModel.Value = MappingUtils.GetValueFromSystem(partyId, attrModel.Id, LinkElementType.MetadataAttributeUsage);
+                        attrModel.Locked = !MappingUtils.PartyAttrIsMain(attrModel.Id, LinkElementType.MetadataAttributeUsage);
+
+                        UpdateAttribute(
+                        usage,
+                        number,
+                        metadataAttributeUsage,
+                        Convert.ToInt32(attrModel.Number),
+                        attrModel.Value,
+                        stepModelHelper.XPath);
+                    }
                 }
                 else
                 {
-                    if (MappingUtils.ExistMappingWithParty(attrModel.Id, LinkElementType.MetadataNestedAttributeUsage))
+                    if (MappingUtils.ExistMappingWithParty(attrModel.Id, LinkElementType.MetadataAttributeUsage) ||
+                        MappingUtils.ExistMappingWithParty(attrModel.Id, LinkElementType.MetadataNestedAttributeUsage))
                     {
                         attrModel.Value = "";
                         attrModel.Locked = false;
