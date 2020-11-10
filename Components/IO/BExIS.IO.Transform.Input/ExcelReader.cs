@@ -176,7 +176,7 @@ namespace BExIS.IO.Transform.Input
 
             // get workbookpart
             WorkbookPart workbookPart = spreadsheetDocument.WorkbookPart;
-
+            
             // get all the defined area
             List<DefinedNameVal> namesTable = BuildDefinedNamesTable(workbookPart);
 
@@ -865,13 +865,14 @@ namespace BExIS.IO.Transform.Input
                                 int sharedStringIndex = int.Parse(c.CellValue.Text, CultureInfo.InvariantCulture);
                                 SharedStringItem sharedStringItem = _sharedStrings[sharedStringIndex];
                                 value = sharedStringItem.InnerText;
-                                Debug.WriteLine(value);
+                                //Debug.WriteLine(value);
                             }
                             // not a text
                             else if (c.StyleIndex != null && c.StyleIndex.HasValue)
                             {
                                 uint styleIndex = c.StyleIndex.Value;
                                 CellFormat cellFormat = _stylesheet.CellFormats.ChildElements[(int)styleIndex] as CellFormat;
+                                
                                 if (cellFormat.ApplyNumberFormat != null && cellFormat.ApplyNumberFormat.HasValue && cellFormat.ApplyNumberFormat.Value && cellFormat.NumberFormatId != null && cellFormat.NumberFormatId.HasValue)
                                 {
                                     uint numberFormatId = cellFormat.NumberFormatId.Value;
@@ -900,6 +901,13 @@ namespace BExIS.IO.Transform.Input
                                                 }
                                                 else
                                                 {
+                                                    // check format code and round the value based on the decimal place
+
+                                                    // contains e.g. #.## & 0.00 
+
+                                                    // contains e.g. 1,23E+02 
+                                                    // 1234567890,43759 = 1,23E+09
+
                                                     value = c.CellValue.Text;
                                                 }
                                             }
