@@ -1,18 +1,16 @@
 @using Vaiona.Web.Mvc;
 
 <style>
-    img.desaturate 
-    {
+    img.desaturate {
         filter: gray; /* IE6-9 */
         filter: grayscale(1); /* Microsoft Edge and Firefox 35+ */
         -webkit-filter: grayscale(1); /* Google Chrome, Safari 6+ & Opera 15+ */
     }
 
-    img.desaturate:hover 
-    {
-        filter: none;
-        -webkit-filter: grayscale(0);
-    }
+        img.desaturate:hover {
+            filter: none;
+            -webkit-filter: grayscale(0);
+        }
 </style>
 
 <div id="footer">
@@ -25,19 +23,19 @@
 
         <br /><br />
         @if (!string.IsNullOrEmpty(Html.GetTenant().PolicyFileNamePath))
-    {
-        @Html.ActionLink("Privacy Policy", "policy", "footer", new { area = "" }, null)
-}
+        {
+            @Html.ActionLink("Privacy Policy", "policy", "footer", new { area = "" }, null)
+        }
 
         @if (!string.IsNullOrEmpty(Html.GetTenant().ContactUsFileNamePath))
-    {
-        @Html.ActionLink("Contact Us", "contactus", "footer", new { area = "" }, null)
-}
+        {
+            @Html.ActionLink("Contact Us", "contactus", "footer", new { area = "" }, null)
+        }
 
         @if (!string.IsNullOrEmpty(Html.GetTenant().ImprintFileNamePath))
-    {
-        @Html.ActionLink("Imprint", "imprint", "footer", new { area = "" }, null)
-}
+        {
+            @Html.ActionLink("Imprint", "imprint", "footer", new { area = "" }, null)
+        }
         <br />
         <br />
         <a href="https://www.bgc-jena.mpg.de/index.php/Main/HomePage?userlang=en" target="_blank">
@@ -56,7 +54,7 @@
             <img src="~/Content/Images/BMBF_gefoerdert_2017_en.jpg" style="width: 7.5%; margin-right: 0.5%; margin-bottom: 0.5em;" title="Federal Ministry of Education and Research" />
         </a>
         <a href="http://www.mctic.gov.br/portal" target="_blank">
-            <img src="~/Content/Images/template-300x300-ministerio-1.png" style="width: 5.5%; margin-right: 2%; margin-bottom: 0.5em;" title="Ministério da Ciência, Tecnologia e Inovação" />
+            <img src="~/Content/Images/template-300x300-ministerio-1.png" style="width: 8.5%; margin-right: 5%; margin-bottom: 0.5em;" title="Ministério da Ciência, Tecnologia e Inovação" />
         </a>
         <a href="http://www.finep.gov.br/" target="_blank">
             <img src="~/Content/Images/finep_marca.jpg" style="width: 5.5%; margin-right: 2%; margin-bottom: 0.5em;" title="Finep" />
@@ -65,7 +63,7 @@
             <img src="~/Content/Images/fapeam-408x440.jpg" style="width: 5.5%; margin-right: 2%; margin-bottom: 0.5em;" title="FAPEAM" />
         </a>
         <a href="http://www.fundacaoeliseualves.org.br/site/" target="_blank">
-            <img src="~/Content/Images/logoInstituicao_FEA.jpg" style="width: 7.5%; margin-right: 2%; margin-bottom: 0.5em;" title="Fundação Eliseu Alves"/>
+            <img src="~/Content/Images/logoInstituicao_FEA.jpg" style="width: 7.5%; margin-right: 2%; margin-bottom: 0.5em;" title="Fundação Eliseu Alves" />
         </a>
     </footer>
 </div>
