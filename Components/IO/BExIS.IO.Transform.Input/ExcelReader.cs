@@ -788,7 +788,10 @@ namespace BExIS.IO.Transform.Input
                                 SharedStringItem sharedStringItem = _sharedStrings[sharedStringIndex];
                                 value = sharedStringItem.InnerText;
                             }
-                            else { value = c.CellValue.Text; }
+                            else {
+
+                                value = c.CellValue.Text;
+                            }
 
                             // define index based on cell refernce - offset
                             int index = cellReferencAsInterger - offset - 1;
@@ -884,7 +887,7 @@ namespace BExIS.IO.Transform.Input
                                         if (double.TryParse(c.CellValue.Text, out tmp)) value = ExcelHelper.FromExcelSerialDate(tmp).ToString();
                                         else value = c.CellValue.Text;
                                     }
-                                    else
+                                    else // not a date
                                     {
                                         if (_stylesheet.NumberingFormats != null && _stylesheet.NumberingFormats.Any(numFormat => ((NumberingFormat)numFormat).NumberFormatId.Value == numberFormatId))
                                         {
@@ -902,25 +905,23 @@ namespace BExIS.IO.Transform.Input
                                                 else
                                                 {
                                                     // check format code and round the value based on the decimal place
-
                                                     // contains e.g. #.## & 0.00 
-
                                                     // contains e.g. 1,23E+02 
                                                     // 1234567890,43759 = 1,23E+09
 
-                                                    value = c.CellValue.Text;
+                                                    value = ExcelHelper.ConvertWithFormat(c.CellValue.Text, formatCode);
                                                 }
                                             }
-                                            else
+                                            else //formatCode = null
                                             {
-                                                value = c.CellValue.Text;
+                                                value = ExcelHelper.ConvertWithFormat(c.CellValue.Text, "");
                                             }
                                         }
-                                        else
+                                        else //numberformat = null
                                         {
-                                            value = c.CellValue.Text;
+                                            value = ExcelHelper.ConvertWithFormat(c.CellValue.Text, "");
                                         }
-                                    }
+                                    }//numbers end
                                 }
                                 else
                                 {

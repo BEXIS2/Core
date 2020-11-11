@@ -67,7 +67,6 @@ namespace BExIS.IO.Transform.Input
             int maxcharlength = 11;
    
             if (string.IsNullOrEmpty(cellValue)) return "0";
-            //if (string.IsNullOrEmpty(formatCode)) return "0";
 
             if (double.TryParse(cellValue, out output))
             {
@@ -81,8 +80,11 @@ namespace BExIS.IO.Transform.Input
                     output = Math.Round(output, roundTo);
                     return output.ToString();
                 }
-                else
+                else //formt is not empty
                 {
+                    //if its scientific data then return the cell value
+                    if (formatCode.ToLower().Contains("e")) return cellValue;
+
                     return output.ToString(formatCode);
                 }
             }
