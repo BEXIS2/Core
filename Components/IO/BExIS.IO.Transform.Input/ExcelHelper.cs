@@ -54,17 +54,37 @@ namespace BExIS.IO.Transform.Input
             return "0";
         }
 
+        /// <summary>
+        /// return a value that is converted by the formatcode from excel
+        /// when the formatode is empty the max lenght of 11 chars change the value maybe 
+        /// </summary>
+        /// <param name="cellValue"></param>
+        /// <param name="formatCode"></param>
+        /// <returns></returns>
         public static string ConvertWithFormat(string cellValue, string formatCode)
         {
             double output = 0;
-
+            int maxcharlength = 11;
+   
             if (string.IsNullOrEmpty(cellValue)) return "0";
             //if (string.IsNullOrEmpty(formatCode)) return "0";
 
             if (double.TryParse(cellValue, out output))
             {
+                // round if formatcode is empty
+                if (string.IsNullOrEmpty(formatCode))
+                {
+                    long tmp = System.Convert.ToInt64(output);
+                    int charLenght = tmp.ToString().Length;
+                    int roundTo = maxcharlength - charLenght - 1; //max 11 - integer - 1 decimal char
 
-                return output.ToString(formatCode);
+                    output = Math.Round(output, roundTo);
+                    return output.ToString();
+                }
+                else
+                {
+                    return output.ToString(formatCode);
+                }
             }
 
             return "0";
