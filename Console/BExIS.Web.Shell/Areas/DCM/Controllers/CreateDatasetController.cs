@@ -1061,6 +1061,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
                                 LinkElementType sourceType = LinkElementType.MetadataNestedAttributeUsage;
                                 if (type.Equals("MetadataPackageUsage")) sourceType = LinkElementType.MetadataPackageUsage;
+                                if (type.Equals("MetadataPackage")) sourceType = LinkElementType.MetadataPackageUsage;
 
                                 foreach (var relationship in relationshipTypes)
                                 {
