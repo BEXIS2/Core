@@ -212,6 +212,7 @@ namespace BExIS.Dlm.Services.DataStructure
                             while (placeholders.Contains(temp.ToString(format)))
                             {
                                 temp = temp.AddHours(-1);
+                                temp = temp.AddYears(-1); //Reduce also by 1 year to be able to distinguish placeholder also after application of display pattern e.g. YYYY-MM-DD
                             }                            
                             return temp.ToString(format);
                         }
