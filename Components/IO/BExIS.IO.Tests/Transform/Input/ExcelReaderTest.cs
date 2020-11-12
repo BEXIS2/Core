@@ -103,7 +103,7 @@ namespace BExIS.IO.Tests.Transform.Input
                 //Assert
                 Assert.That(output, Is.Not.EqualTo(0));
                 //Assert.That(outputDisplay, Is.EqualTo(expectedValue));
-                Assert.That(outputDisplayWithFormatCode, Is.EqualTo(cellValue));
+                Assert.That(outputDisplayWithFormatCode, Is.EqualTo(displayValue));
             }
             catch (Exception ex)
             {

@@ -10,6 +10,45 @@ namespace BExIS.IO.Transform.Input
     public class ExcelHelper
     {
 
+        public static Dictionary<uint, string> FormatCodesDic = new Dictionary<uint, string>()
+        {
+            {0, ""},
+            {1, "0"},
+            {2, "0.00"},
+            {3, "#,##0"},
+            {4, "#,##0.00"},
+            {9, "0%"},
+            {10, "0.00%"},
+            {11, "0.00E+00"},
+            {12, "# ?/?"},
+            {13, "# ??/??"},
+            {14, "d/m/yyyy"},
+            {15, "d-mmm-yy"},
+            {16, "d-mmm"},
+            {17, "mmm-yy"},
+            {18, "h:mm tt"},
+            {19, "h:mm:ss tt"},
+            {20, "H:mm"},
+            {21, "H:mm:ss"},
+            {22, "m/d/yyyy H:mm"},
+            {37, "#,##0;(#,##0)"},
+            {38, "#,##0;[Red](#,##0)"},
+            {39, "#,##0;(#,##0)"},
+            {40, "#,##0.00;[Red](#,##0.00)"},
+            {45, "mm:ss"},
+            {46, "[h]:mm:ss"},
+            {47, "mmss.0"},
+            {48, "##0.0E+0"},
+            {49, "@"}
+        };
+
+        public ExcelHelper()
+        { 
+            
+            
+        }
+
+
         public static double FromExcelSerialDate(double SerialDate)
         {
             if (SerialDate > 59) SerialDate -= 1; //Excel/Lotus 2/29/1900 bug   
@@ -73,23 +112,67 @@ namespace BExIS.IO.Transform.Input
                 // round if formatcode is empty
                 if (string.IsNullOrEmpty(formatCode))
                 {
+                    if (output.ToString().ToLower().Contains("e")) return output.ToString();
+
                     long tmp = System.Convert.ToInt64(output);
                     int charLenght = tmp.ToString().Length;
                     int roundTo = maxcharlength - charLenght - 1; //max 11 - integer - 1 decimal char
 
-                    output = Math.Round(output, roundTo);
+                    if(roundTo>0)output = Math.Round(output, roundTo);
+
                     return output.ToString();
                 }
                 else //formt is not empty
                 {
                     //if its scientific data then return the cell value
-                    if (formatCode.ToLower().Contains("e")) return cellValue;
+                    //if (formatCode.ToLower().Contains("e")) return cellValue;
 
                     return output.ToString(formatCode);
                 }
             }
 
             return "0";
+        }
+
+        /*
+         ID  Format Code
+        0   General
+        1   0
+        2   0.00
+        3   #,##0
+        4   #,##0.00
+        9   0%
+        10  0.00%
+        11  0.00E+00
+        12  # ?/?
+        13  # ??/??
+        14  d/m/yyyy
+        15  d-mmm-yy
+        16  d-mmm
+        17  mmm-yy
+        18  h:mm tt
+        19  h:mm:ss tt
+        20  H:mm
+        21  H:mm:ss
+        22  m/d/yyyy H:mm
+        37  #,##0 ;(#,##0)
+        38  #,##0 ;[Red](#,##0)
+        39  #,##0.00;(#,##0.00)
+        40  #,##0.00;[Red](#,##0.00)
+        45  mm:ss
+        46  [h]:mm:ss
+        47  mmss.0
+        48  ##0.0E+0
+        49  @
+         */
+        public static string GetFormatCode(uint id)
+        {
+            if (FormatCodesDic.ContainsKey(id))
+            {
+                return FormatCodesDic[id];
+            }
+
+            return "";
         }
 
     }

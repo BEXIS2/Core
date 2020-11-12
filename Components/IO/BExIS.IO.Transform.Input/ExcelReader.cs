@@ -747,6 +747,77 @@ namespace BExIS.IO.Transform.Input
 
         #region helper methods
 
+        ///// <summary>
+        ///// Convert a excel row to a list of strings
+        ///// Every cell is one value
+        ///// </summary>
+        ///// <remarks></remarks>
+        ///// <seealso cref=""/>
+        ///// <param name="r"> row from a excel file</param>
+        ///// <returns>list of string for each cell in the row</returns>
+        //private List<string> RowToList(Row r)
+        //{
+        //    string[] rowAsStringArray = new string[numOfColumns];
+
+        //    // create a new cell
+        //    Cell c = new Cell();
+
+        //    for (int i = 0; i < r.ChildElements.Count(); i++)
+        //    {
+        //        // get current cell at i
+        //        c = r.Elements<Cell>().ElementAt(i);
+
+        //        string value = "";
+
+        //        if (c != null)
+        //        {
+        //            int cellReferencAsInterger = GetColumnNumber(GetColumnName(c.CellReference));
+
+        //            if (c.CellValue != null)
+        //            {
+        //                // if cell reference in range of the area
+        //                int start = startColumn;//GetColumnNumber(this._areaOfData.StartColumn);
+        //                int end = endColumn;//GetColumnNumber(this._areaOfData.EndColumn);
+
+        //                if (cellReferencAsInterger >= start && cellReferencAsInterger <= end)
+        //                {
+        //                    // shared string
+        //                    if (c.DataType != null && c.DataType.HasValue && c.DataType.Value == CellValues.SharedString)
+        //                    {
+        //                        int sharedStringIndex = int.Parse(c.CellValue.Text, CultureInfo.InvariantCulture);
+        //                        SharedStringItem sharedStringItem = _sharedStrings[sharedStringIndex];
+        //                        value = sharedStringItem.InnerText;
+        //                    }
+        //                    else {
+
+        //                        value = c.CellValue.Text;
+        //                    }
+
+        //                    // define index based on cell refernce - offset
+        //                    int index = cellReferencAsInterger - offset - 1;
+        //                    rowAsStringArray[index] = value;
+        //                }
+        //            }//end if cell value
+        //            else
+        //            {
+        //                if (cellReferencAsInterger >= startColumn && cellReferencAsInterger <= endColumn)
+        //                {
+        //                    int index = cellReferencAsInterger - offset - 1;
+        //                    rowAsStringArray[index] = "";
+        //                }
+        //            }
+        //        }//end if cell null
+        //    }//for
+
+        //    // replace all null values with "";
+        //    for (int i = 0; i < rowAsStringArray.Length; i++)
+        //    {
+        //        if (rowAsStringArray[i] == null) rowAsStringArray[i] = "";
+        //    }
+
+        //    return rowAsStringArray.ToList();
+        //}
+
         /// <summary>
         /// Convert a excel row to a list of strings
         /// Every cell is one value
@@ -754,10 +825,27 @@ namespace BExIS.IO.Transform.Input
         /// <remarks></remarks>
         /// <seealso cref=""/>
         /// <param name="r"> row from a excel file</param>
+        /// <param name="varIds">if null all columns will return otherwhise only the columns with the varids returned</param>
         /// <returns>list of string for each cell in the row</returns>
-        private List<string> RowToList(Row r)
+        private List<string> RowToList(Row r, List<long> varIds = null)
         {
-            string[] rowAsStringArray = new string[numOfColumns];
+            List<int> columns = null;
+            int currentNumOfCloumns = numOfColumns;
+            //get a subset of a row
+            if (varIds != null)
+            {
+                columns = new List<int>();
+                foreach (long id in varIds)
+                {
+                    //get the index of the variableintifier where id euqls id from varids
+                    int columnPosition = GetColumnNumber(this._areaOfData.StartColumn) + this.SubmitedVariableIdentifiers.IndexOf(this.SubmitedVariableIdentifiers.Where(p => p.id.Equals(id)).FirstOrDefault());
+                    columns.Add(columnPosition);
+                }
+
+                currentNumOfCloumns = columns.Count;
+            }
+
+            string[] rowAsStringArray = new string[currentNumOfCloumns];
 
             // create a new cell
             Cell c = new Cell();
@@ -772,87 +860,7 @@ namespace BExIS.IO.Transform.Input
                 if (c != null)
                 {
                     int cellReferencAsInterger = GetColumnNumber(GetColumnName(c.CellReference));
-
-                    if (c.CellValue != null)
-                    {
-                        // if cell reference in range of the area
-                        int start = startColumn;//GetColumnNumber(this._areaOfData.StartColumn);
-                        int end = endColumn;//GetColumnNumber(this._areaOfData.EndColumn);
-
-                        if (cellReferencAsInterger >= start && cellReferencAsInterger <= end)
-                        {
-                            // shared string
-                            if (c.DataType != null && c.DataType.HasValue && c.DataType.Value == CellValues.SharedString)
-                            {
-                                int sharedStringIndex = int.Parse(c.CellValue.Text, CultureInfo.InvariantCulture);
-                                SharedStringItem sharedStringItem = _sharedStrings[sharedStringIndex];
-                                value = sharedStringItem.InnerText;
-                            }
-                            else {
-
-                                value = c.CellValue.Text;
-                            }
-
-                            // define index based on cell refernce - offset
-                            int index = cellReferencAsInterger - offset - 1;
-                            rowAsStringArray[index] = value;
-                        }
-                    }//end if cell value
-                    else
-                    {
-                        if (cellReferencAsInterger >= startColumn && cellReferencAsInterger <= endColumn)
-                        {
-                            int index = cellReferencAsInterger - offset - 1;
-                            rowAsStringArray[index] = "";
-                        }
-                    }
-                }//end if cell null
-            }//for
-
-            // replace all null values with "";
-            for (int i = 0; i < rowAsStringArray.Length; i++)
-            {
-                if (rowAsStringArray[i] == null) rowAsStringArray[i] = "";
-            }
-
-            return rowAsStringArray.ToList();
-        }
-
-        /// <summary>
-        /// Convert a excel row to a list of strings
-        /// Every cell is one value
-        /// </summary>
-        /// <remarks></remarks>
-        /// <seealso cref=""/>
-        /// <param name="r"> row from a excel file</param>
-        /// <returns>list of string for each cell in the row</returns>
-        private List<string> RowToList(Row r, List<long> varIds)
-        {
-            List<int> columns = new List<int>();
-            foreach (long id in varIds)
-            {
-                //get the index of the variableintifier where id euqls id from varids
-
-                int columnPosition = GetColumnNumber(this._areaOfData.StartColumn) + this.SubmitedVariableIdentifiers.IndexOf(this.SubmitedVariableIdentifiers.Where(p => p.id.Equals(id)).FirstOrDefault());
-
-                columns.Add(columnPosition);
-            }
-
-            List<string> rowAsStringArray = new List<string>();
-
-            // create a new cell
-            Cell c = new Cell();
-
-            for (int i = 0; i < r.ChildElements.Count(); i++)
-            {
-                // get current cell at i
-                c = r.Elements<Cell>().ElementAt(i);
-
-                string value = "";
-
-                if (c != null)
-                {
-                    int cellReferencAsInterger = GetColumnNumber(GetColumnName(c.CellReference));
+                    int index = cellReferencAsInterger - offset - 1;
 
                     if (c.CellValue != null)
                     {
@@ -860,7 +868,8 @@ namespace BExIS.IO.Transform.Input
                         int start = GetColumnNumber(this._areaOfData.StartColumn);
                         int end = GetColumnNumber(this._areaOfData.EndColumn);
 
-                        if (columns.Contains(cellReferencAsInterger))
+                        //if columns is not null means the function returns a subset of all columns based on the incoming varids
+                        if (columns == null || columns.Contains(cellReferencAsInterger))
                         {
                             // if Value a text
                             if (c.DataType != null && c.DataType.HasValue && c.DataType.Value == CellValues.SharedString)
@@ -875,7 +884,7 @@ namespace BExIS.IO.Transform.Input
                             {
                                 uint styleIndex = c.StyleIndex.Value;
                                 CellFormat cellFormat = _stylesheet.CellFormats.ChildElements[(int)styleIndex] as CellFormat;
-                                
+
                                 if (cellFormat.ApplyNumberFormat != null && cellFormat.ApplyNumberFormat.HasValue && cellFormat.ApplyNumberFormat.Value && cellFormat.NumberFormatId != null && cellFormat.NumberFormatId.HasValue)
                                 {
                                     uint numberFormatId = cellFormat.NumberFormatId.Value;
@@ -917,9 +926,11 @@ namespace BExIS.IO.Transform.Input
                                                 value = ExcelHelper.ConvertWithFormat(c.CellValue.Text, "");
                                             }
                                         }
-                                        else //numberformat = null
+                                        else //numberformat not exist in the stylesheet but may numberformatid exist 
                                         {
-                                            value = ExcelHelper.ConvertWithFormat(c.CellValue.Text, "");
+                                            string formatcode = ExcelHelper.GetFormatCode(numberFormatId);
+
+                                            value = ExcelHelper.ConvertWithFormat(c.CellValue.Text, formatcode);
                                         }
                                     }//numbers end
                                 }
@@ -928,26 +939,36 @@ namespace BExIS.IO.Transform.Input
                                     value = c.CellValue.Text;
                                 }
                             }
+                            else //standard
+                            {
+                                value = ExcelHelper.ConvertWithFormat(c.CellValue.Text, "");
+                            }
 
                             // define index based on cell refernce - offset
                             //int index = cellReferencAsInterger - offset - 1;
-                            if (columns.Contains(cellReferencAsInterger))
+                            if (columns == null || columns.Contains(cellReferencAsInterger))
                             {
-                                rowAsStringArray.Add(value);
+                                rowAsStringArray[index]= value;
                             }
                         }
                     }//end if cell value
                     else
                     {
-                        if (columns.Contains(cellReferencAsInterger))
+                        if (columns == null || columns.Contains(cellReferencAsInterger))
                         {
-                            rowAsStringArray.Add(value);
+                            rowAsStringArray[index] = value;
                         }
                     }
                 }//end if cell null
             }//for
 
-            return rowAsStringArray;
+            // replace all null values with "";
+            for (int i = 0; i < rowAsStringArray.Length; i++)
+            {
+                if (rowAsStringArray[i] == null) rowAsStringArray[i] = "";
+            }
+
+            return rowAsStringArray.ToList();
         }
 
         /// <summary>
