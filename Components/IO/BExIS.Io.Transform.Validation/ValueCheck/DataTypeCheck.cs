@@ -136,11 +136,17 @@ namespace BExIS.IO.Transform.Validation.ValueCheck
                             {
                                 if (decimalCharacter.Equals(DecimalCharacter.point))
                                 {
+                                    // when point is a decimal character then it should only exist once or non
                                     string[] temp = value.Split('.');
                                     if (temp.Length <= 2)
                                     {
+                                        // check if comma exist as a seperator
                                         if (!temp[temp.Length - 1].Contains(','))
                                         {
+                                            //check lenght of the string and compare to the max storage of the datatype
+                                            if (value.Length > 15)
+                                                return new Error(ErrorType.Value, "The value of the number is outside the value range of double. Change it do decimal.", new object[] { name, value, row, dataType });
+
                                             return Convert.ToDouble(value, new CultureInfo("en-US"));
                                         }
                                         else
@@ -161,7 +167,12 @@ namespace BExIS.IO.Transform.Validation.ValueCheck
                                     {
                                         if (!temp[temp.Length - 1].Contains('.'))
                                         {
+                                            //chek lenght of the string and compare to the max storage of the datatype
+                                            if(value.Length>15)
+                                                return new Error(ErrorType.Value, "the value of the number is outside the value range of double. Change it do decimal.", new object[] { name, value, row, dataType });
+
                                             return Convert.ToDouble(value, new CultureInfo("de-DE"));
+
                                         }
                                         else
                                         {
@@ -173,6 +184,7 @@ namespace BExIS.IO.Transform.Validation.ValueCheck
                                         return new Error(ErrorType.Value, "Can not convert to.", new object[] { name, value, row, dataType });
                                     }
                                 }
+
                                 return Convert.ToDouble(value);
                             }
                             catch (Exception ex)
@@ -202,7 +214,14 @@ namespace BExIS.IO.Transform.Validation.ValueCheck
                                     {
                                         if (!temp[temp.Length - 1].Contains(','))
                                         {
+                                            //chek lenght of the string and compare to the max storage of the datatype
+                                            if (value.Length > 28)
+                                                return new Error(ErrorType.Value, "the value of the number is outside the value range of decimal.", new object[] { name, value, row, dataType });
+
+                                            //convert to decimal and compare both string lenghts
                                             return Decimal.Parse(value, NumberStyles.AllowExponent | NumberStyles.AllowDecimalPoint, new CultureInfo("en-US"));
+                                            
+
                                         }
                                         else
                                         {
@@ -222,6 +241,12 @@ namespace BExIS.IO.Transform.Validation.ValueCheck
                                     {
                                         if (!temp[temp.Length - 1].Contains('.'))
                                         {
+
+                                            //chek lenght of the string and compare to the max storage of the datatype
+                                            if (value.Length > 28)
+                                                return new Error(ErrorType.Value, "the value of the number is outside the value range of decimal.", new object[] { name, value, row, dataType });
+
+                                            //convert to decimal and compare both string lenghts
                                             return Decimal.Parse(value, NumberStyles.AllowExponent | NumberStyles.AllowDecimalPoint, new CultureInfo("de-DE"));
                                         }
                                         else

@@ -110,7 +110,7 @@ namespace BExIS.Utils.Upload
         }
 
         //temporary solution: norman :GetSplitDatatuples2
-        public Dictionary<string, List<DataTuple>> GetSplitDatatuples(List<DataTuple> incomingDatatuples, List<long> primaryKeys, DatasetVersion workingCopy, ref List<long> datatuplesFromDatabaseIds)
+        public Dictionary<string, List<DataTuple>> GetSplitDatatuplesOld(List<DataTuple> incomingDatatuples, List<long> primaryKeys, DatasetVersion workingCopy, ref List<long> datatuplesFromDatabaseIds)
         {
             using (DatasetManager datasetManager = new DatasetManager())
             {
@@ -179,6 +179,77 @@ namespace BExIS.Utils.Upload
 
                 // the rest of the incoming datatuples are in the new datatuples, all existing datatuples will be removed from that list
                 data.Add("new", incomingDatatuples);
+                data.Add("edit", editDtList.Values.ToList());
+                return data;
+            }
+        }
+
+        public Dictionary<string, List<DataTuple>> GetSplitDatatuples(List<DataTuple> incomingDatatuples, List<long> primaryKeys, DatasetVersion workingCopy, ref List<long> datatuplesFromDatabaseIds)
+        {
+            using (DatasetManager datasetManager = new DatasetManager())
+            {
+
+                Dictionary<string, List<DataTuple>> data = new Dictionary<string, List<DataTuple>>();
+                Dictionary<string, DataTuple> newDtList = new Dictionary<string, DataTuple>();
+                Dictionary<string, DataTuple> editDtList = new Dictionary<string, DataTuple>();
+                List<DataTuple> deleteDtList = new List<DataTuple>();
+
+
+                Dictionary<string, DataTuple> newDTDic = new Dictionary<string, DataTuple>();
+
+                //iterating over incoming datatuples to gerenate the primary key and add it to a dictionary
+                for (int counter = 0; counter < incomingDatatuples.Count(); counter++)
+                {
+                    DataTuple incomingTuple = incomingDatatuples[counter];
+                    if (!IsEmpty(incomingTuple))
+                    {
+                        string keysValueNewDataTuple = getPrimaryKeysAsString(incomingTuple, primaryKeys);
+                        newDTDic.Add(keysValueNewDataTuple, incomingTuple);
+                    }
+                }
+
+
+                DataTupleIterator tupleIterator = new DataTupleIterator(datatuplesFromDatabaseIds, datasetManager, false);
+                // Keep the DB loop outer to reduce the number of DB queries
+                foreach (var existingTuple in tupleIterator)
+                {
+                    if (existingTuple == null || existingTuple.Id < 0) // it is unlikely to happen, but just to reinforce it.
+                        continue;
+
+
+                    string keysValueSourceDatatuple = getPrimaryKeysAsString(existingTuple, primaryKeys);
+
+                    // check if a datatuple exist in the incoming dictionary 
+                    try
+                    {
+                        DataTuple incomingTuple = newDTDic[keysValueSourceDatatuple];
+
+
+                        // a incoming datatuple with this key exist, check if there are equal
+                        if (!Equal(incomingTuple, existingTuple)) // the incoming tuple is a changed version of an existing one
+                        {
+                            
+                            if (!editDtList.ContainsKey(keysValueSourceDatatuple))
+                            {
+                                // apply the changes to the exisiting one and register is an edited tuple
+                                editDtList.Add(keysValueSourceDatatuple, Merge(incomingTuple, (DataTuple)existingTuple));
+                                // remove the current incoming item to shorten the list for the next round
+                            }
+                        }
+
+                        // the incoming tuple is found in the DB and brings some changes, therefore not NEW!
+                        // so remove it from the dictionary
+                        newDTDic.Remove(keysValueSourceDatatuple);
+                    }
+                    catch//if
+                    { 
+                        //there is no datatuple incoming theat matches the db datatuple
+                    }
+
+                }
+
+                // the rest of the incoming datatuples are in the new datatuples, all existing datatuples will be removed from that list
+                data.Add("new", newDTDic.Values.ToList());
                 data.Add("edit", editDtList.Values.ToList());
                 return data;
             }
@@ -474,7 +545,7 @@ namespace BExIS.Utils.Upload
                                 {
                                     hashtable.Add(Utility.ComputeKey(pKey), pKey);
                                 }
-                                catch
+                                catch(Exception ex)
                                 {
                                     stream.Close();
                                     return false;
@@ -738,8 +809,8 @@ namespace BExIS.Utils.Upload
                 datatuple.Materialize();
                 object v = datatuple.VariableValues.Where(p => p.VariableId.Equals(t)).First().Value;
                 if (v != null)
-                    //if (!String.IsNullOrEmpty(v.ToString()))
-                    if (!String.IsNullOrEmpty((string)v))
+                    if (!String.IsNullOrEmpty(v.ToString()))
+                    //if (!String.IsNullOrEmpty((string)v))
                         value += ";" + v;
                     else
                         return "";
