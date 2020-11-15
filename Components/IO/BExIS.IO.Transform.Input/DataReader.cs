@@ -231,6 +231,7 @@ namespace BExIS.IO.Transform.Input
                             this.StructuredDataStructure.Variables.Where(p => p.Id.Equals(variableId)).FirstOrDefault().DataAttribute.DataType.SystemType.Equals("Decimal") ||
                             this.StructuredDataStructure.Variables.Where(p => p.Id.Equals(variableId)).FirstOrDefault().DataAttribute.DataType.SystemType.Equals("Float"))
                         {
+                            var datatype = this.StructuredDataStructure.Variables.Where(p => p.Id.Equals(variableId)).FirstOrDefault().DataAttribute.DataType.SystemType;
                             value = row[i];
 
                             if (Info.Decimal.Equals(DecimalCharacter.comma))
@@ -243,6 +244,31 @@ namespace BExIS.IO.Transform.Input
                             {
                                 if (value.Contains(",")) value = value.Remove(',');
                             }
+
+                            switch (datatype)
+                            {
+                                case "Double": {
+                                        double tmp = 0;
+                                        if(double.TryParse(value, out tmp))
+                                            value = tmp.ToString("G16");
+                                        break; }
+
+                                case "Decimal":
+                                    {
+                                        decimal tmp = 0;
+                                        if(decimal.TryParse(value, out tmp))
+                                            value = ""+tmp.ToString("G29");
+                                        break;
+                                    }
+                                case "Float":
+                                    {
+                                        float tmp = 0;
+                                        if (float.TryParse(value, out tmp))
+                                            value = ""+tmp.ToString("G7");
+                                        break;
+                                    }
+                            }
+
                         }
                         else
                         {

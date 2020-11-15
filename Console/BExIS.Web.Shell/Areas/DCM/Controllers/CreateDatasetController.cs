@@ -1096,7 +1096,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                                                 r =>
                                                 r.SourceParty != null && r.SourceParty.Id.Equals(person.Id) &&
                                                 r.PartyTypePair != null && r.PartyTypePair.Id.Equals(partyTpePair.Id) &&
-                                                r.TargetParty.Id.Equals(datasetid)
+                                                r.TargetParty.Id.Equals(datasetParty.Id)
                                             ))
                                             {
                                                 partyManager.AddPartyRelationship(
