@@ -112,7 +112,10 @@ namespace BExIS.IO.Transform.Input
                 // round if formatcode is empty
                 if (string.IsNullOrEmpty(formatCode))
                 {
-                    if (output.ToString().ToLower().Contains("e")) return output.ToString();
+                    if (output.ToString().ToLower().Contains("e"))
+                    {
+                        return output.ToString("0.00E+00");
+                    }
 
                     long tmp = System.Convert.ToInt64(output);
                     int charLenght = tmp.ToString().Length;

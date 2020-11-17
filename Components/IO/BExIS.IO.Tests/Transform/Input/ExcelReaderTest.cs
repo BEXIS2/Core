@@ -81,6 +81,7 @@ namespace BExIS.IO.Tests.Transform.Input
 
         [TestCase("1234567890,43759", "1,23E+09", "0.00E+00")]
         [TestCase("0,00000000123", "1,23E-09", "0.00E+00")]
+        [TestCase("1,81655819999999E-20", "1,82E-20", "")]
         public void InputConvertionToDoubleScientificFormat_ValueInToDataType_ReturnSameAsImported(string cellValue, string displayValue, string formatCode)
         {
             //Arrange
