@@ -113,7 +113,7 @@ namespace BExIS.Modules.Sam.UI.Controllers
                         string applicant = getPartyName(request.Applicant);
 
                         es.Send(MessageHelper.GetAcceptRequestHeader(request.Key, applicant),
-                            MessageHelper.GetAcceptRequestMessage(request.Key, "title"),
+                            MessageHelper.GetAcceptRequestMessage(request.Key, entityStore.GetTitleById(request.Key)),
                             new List<string> { request.Applicant.Email }, null, new List<string> { ConfigurationManager.AppSettings["SystemEmail"] }
                         );
                     }

@@ -510,7 +510,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             try
             {
                 // create and submit Dataset
-                long datasetId = SubmitDataset(valid);
+                long datasetId = SubmitDataset(valid, "Dataset");
 
                 return Json(new { result = "redirect", url = Url.Action("Show", "Data", new { area = "DDM", id = datasetId }) }, JsonRequestBehavior.AllowGet);
             }
@@ -524,7 +524,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         /// Submit a Dataset based on the imformations
         /// in the CreateTaskManager
         /// </summary>
-        public long SubmitDataset(bool valid)
+        public long SubmitDataset(bool valid, string entityname)
         {
             #region create dataset
 

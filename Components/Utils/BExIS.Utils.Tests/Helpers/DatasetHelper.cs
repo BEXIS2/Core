@@ -14,7 +14,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BExIS.Dlm.Tests.Helpers
+namespace BExIS.Utils.Tests.Data.Helpers
 {
     public class DatasetHelper
     {
@@ -391,18 +391,18 @@ namespace BExIS.Dlm.Tests.Helpers
         /// <param name="updateVarIndex"></param>
         /// <param name="datasetManager"></param>
         /// <returns></returns>
-        public DataTuple  GetUpdatedDatatuple(DataTuple source, int updateVarIndex)
+        public DataTuple GetUpdatedDatatuple(DataTuple source, int updateVarIndex)
         {
 
-                if (source == null) return null;
+            if (source == null) return null;
 
-                source.Materialize();
+            source.Materialize();
 
-                var vv = source.VariableValues[updateVarIndex];
-                if (vv != null)
+            var vv = source.VariableValues[updateVarIndex];
+            if (vv != null)
+            {
+                switch (updateVarIndex)
                 {
-                    switch (updateVarIndex)
-                    {
 
                     case 0://int
                         {
@@ -420,7 +420,7 @@ namespace BExIS.Dlm.Tests.Helpers
                             {
                                 stringChars[i] = chars[random.Next(chars.Length)];
                             }
-           
+
                             vv.Value = new String(stringChars);
 
                             break;
@@ -437,25 +437,23 @@ namespace BExIS.Dlm.Tests.Helpers
 
                             break;
                         }
-                    case 4: 
-                        { 
+                    case 4:
+                        {
                             vv.Value = DateTime.Now.ToString(new CultureInfo("en-US"));
 
-                            break; 
+                            break;
                         }
 
                         //default:
-                    }
-
-
                 }
-                source.Dematerialize();
-                source.Should().NotBeNull();
 
-                return source;
+
+            }
+            source.Dematerialize();
+            source.Should().NotBeNull();
+
+            return source;
         }
-
-
 
         public ResearchPlan CreateResearchPlan()
         {
