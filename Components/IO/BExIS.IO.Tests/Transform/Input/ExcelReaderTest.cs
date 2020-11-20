@@ -50,6 +50,7 @@ namespace BExIS.IO.Tests.Transform.Input
 
 
         // 11 zeichen max lenght
+        [TestCase("278.89999999999998", "278,9", "")] // roundungsfehler in Excel 
         [TestCase("278,89999999999998", "278,9", "")] // roundungsfehler in Excel 
         [TestCase("123,456789", "123,456789", "")] // wird nicht gerundet
         [TestCase("123,451789", "123,451789", "")] // wird nicht gerundet
