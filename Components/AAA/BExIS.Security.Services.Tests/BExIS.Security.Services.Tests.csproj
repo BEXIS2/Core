@@ -157,6 +157,7 @@
     <Compile Include="Authorization\EntityPermissionManagerTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Subjects\GroupManagerTests.cs" />
+    <Compile Include="Utilities\EmailServiceTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config">
