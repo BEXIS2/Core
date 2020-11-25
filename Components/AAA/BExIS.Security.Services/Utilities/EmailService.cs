@@ -21,7 +21,7 @@ namespace BExIS.Security.Services.Utilities
             using (var client = new SmtpClient())
             {
                 client.Connect(ConfigurationManager.AppSettings["Email_Host_Name"], int.Parse(ConfigurationManager.AppSettings["Email_Host_Port"]), MailKit.Security.SecureSocketOptions.Auto);
-                client.Authenticate(ConfigurationManager.AppSettings["Email_User_Name"], ConfigurationManager.AppSettings["Email_User_Password"]);
+                client.Authenticate(ConfigurationManager.AppSettings["Email_Account_Name"], ConfigurationManager.AppSettings["Email_Account_Password"]);
 
                 client.Send(message);
 

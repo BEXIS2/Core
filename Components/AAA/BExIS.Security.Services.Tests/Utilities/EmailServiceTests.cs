@@ -17,8 +17,8 @@ namespace BExIS.Security.Services.Tests.Utilities
         {
             ConfigurationManager.AppSettings["Email_Host_Name"] = "#";
             ConfigurationManager.AppSettings["Email_Host_Port"] = "#";
-            ConfigurationManager.AppSettings["Email_User_Name"] = "#";
-            ConfigurationManager.AppSettings["Email_User_Password"] = "#";
+            ConfigurationManager.AppSettings["Email_Account_Name"] = "#";
+            ConfigurationManager.AppSettings["Email_Account_Password"] = "#";
             ConfigurationManager.AppSettings["Email_From_Name"] = "Max Mustermann";
             ConfigurationManager.AppSettings["Email_From_Address"] = "max.mustermann@bexis.bexis";
         }
@@ -39,7 +39,7 @@ namespace BExIS.Security.Services.Tests.Utilities
         }
 
         [Test]
-        public void Test()
+        public void Send()
         {
             EmailService emailService = new EmailService();
 
