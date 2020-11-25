@@ -869,7 +869,7 @@ namespace BExIS.IO.Transform.Input
                         int end = GetColumnNumber(this._areaOfData.EndColumn);
 
                         //if columns is not null means the function returns a subset of all columns based on the incoming varids
-                        if (columns == null || columns.Contains(cellReferencAsInterger))
+                        if ((columns == null || columns.Contains(cellReferencAsInterger)) && index >= 0)
                         {
                             // if Value a text
                             if (c.DataType != null && c.DataType.HasValue && c.DataType.Value == CellValues.SharedString)
@@ -946,7 +946,7 @@ namespace BExIS.IO.Transform.Input
 
                             // define index based on cell refernce - offset
                             //int index = cellReferencAsInterger - offset - 1;
-                            if (columns == null || columns.Contains(cellReferencAsInterger))
+                            if ((columns == null || columns.Contains(cellReferencAsInterger)) && index>=0)
                             {
                                 rowAsStringArray[index]= value;
                             }

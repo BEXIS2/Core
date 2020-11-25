@@ -217,62 +217,183 @@ namespace BExIS.IO.Transform.Output
             return row;
         }
 
+        ///// <summary>
+        ///// Convert a VariableValue to Cell
+        ///// </summary>
+        ///// <remarks></remarks>
+        ///// <seealso cref=""/>
+        ///// <param name="variableValue"></param>
+        ///// <param name="rowIndex"></param>
+        ///// <param name="columnIndex"></param>
+        ///// <returns></returns>
+        //protected Cell VariableValueToCell(VariableValue variableValue, int rowIndex, int columnIndex)
+        //{
+        //    using (var uow = this.GetUnitOfWork())
+        //    {
+        //        DataAttribute dataAttribute = uow.GetReadOnlyRepository<Variable>().Query(p => p.Id == variableValue.VariableId).Select(p => p.DataAttribute).FirstOrDefault();
+
+        //        string message = "row :" + rowIndex + "column:" + columnIndex;
+        //        Debug.WriteLine(message);
+
+        //        string cellRef = getColumnIndex(columnIndex) + rowIndex;
+
+        //        Cell cell = new Cell();
+        //        cell.CellReference = cellRef;
+        //        cell.StyleIndex = ExcelHelper.GetExcelStyleIndex(dataAttribute.DataType, styleIndex);
+        //        //cell.DataType = new EnumValue<CellValues>(getExcelType(dataAttribute.DataType.SystemType));
+        //        //cell.CellValue = new CellValue(variableValue.Value.ToString());
+
+        //        CellValues cellValueType = getExcelType(dataAttribute.DataType.SystemType);
+        //        object value = variableValue.Value;
+
+        //        //missing value
+        //        // check if the value is a missing value and should be replaced
+        //        if (variableValue.Variable.MissingValues.Any(mv => mv.Placeholder.Equals(value.ToString())))
+        //        {
+        //            value = variableValue.Variable.MissingValues.FirstOrDefault(mv => mv.Placeholder.Equals(value.ToString())).DisplayName;
+        //            cell.DataType = new EnumValue<CellValues>(CellValues.String);
+        //            cell.CellValue = new CellValue(value.ToString());
+
+        //            return cell;
+        //        }
+
+        //        // number
+        //        if (value != null && !(value is DBNull) && cellValueType == CellValues.Number)
+        //        {
+        //            cell.DataType = new EnumValue<CellValues>(CellValues.Number);
+
+        //            try
+        //            {
+        //                if (value.ToString() != "")
+        //                {
+        //                    double d = Convert.ToDouble(value, System.Globalization.CultureInfo.InvariantCulture);
+        //                    cell.CellValue = new CellValue(d.ToString(System.Globalization.CultureInfo.InvariantCulture));
+        //                }
+        //            }
+        //            catch (Exception ex)
+        //            {
+        //                throw new Exception(ex.Message + "\n|" + message);
+        //            }
+
+        //            return cell;
+        //        }
+
+        //        // Date
+        //        if (value != null && !(value is DBNull) && cellValueType == CellValues.Date)
+        //        {
+        //            cell.DataType = new EnumValue<CellValues>(CellValues.Number);
+        //            //CultureInfo provider = CultureInfo.InvariantCulture;
+        //            try
+        //            {
+        //                if (value.ToString() != "")
+        //                {
+        //                    DateTime dt;
+        //                    if (dataAttribute.DataType != null && dataAttribute.DataType.Extra != null)
+        //                    {
+        //                        DataTypeDisplayPattern pattern = DataTypeDisplayPattern.Materialize(dataAttribute.DataType.Extra);
+        //                        if (!string.IsNullOrEmpty(pattern.StringPattern))
+        //                        {
+        //                            IOUtility.ExportDateTimeString(value.ToString(), pattern.StringPattern, out dt);
+        //                            cell.CellValue = new CellValue(dt.ToOADate().ToString());
+        //                        }
+        //                        else
+        //                        {
+        //                            if (IOUtility.IsDate(value.ToString(), out dt))
+        //                                cell.CellValue = new CellValue(dt.ToOADate().ToString());
+        //                        }
+        //                    }
+        //                    else
+        //                    {
+        //                        if (IOUtility.IsDate(value.ToString(), out dt))
+        //                            cell.CellValue = new CellValue(dt.ToOADate().ToString());
+        //                    }
+        //                }
+
+        //                return cell;
+        //            }
+        //            catch (Exception ex)
+        //            {
+        //                throw new Exception(ex.Message + "|" + message);
+        //            }
+        //        }
+
+        //        // String
+        //        cell.DataType = new EnumValue<CellValues>(CellValues.String);
+        //        if (value == null)
+        //            cell.CellValue = new CellValue("");
+        //        else
+        //            cell.CellValue = new CellValue(value.ToString());
+
+        //        return cell;
+        //    }
+        //}
+
         /// <summary>
-        /// Convert a VariableValue to Cell
+        /// convert any given value to a Cell or Convert a VariableValue to Cell
         /// </summary>
-        /// <remarks></remarks>
-        /// <seealso cref=""/>
-        /// <param name="variableValue"></param>
+        /// <param name="value">values as object as Variable Value </param>
         /// <param name="rowIndex"></param>
         /// <param name="columnIndex"></param>
         /// <returns></returns>
-        protected Cell VariableValueToCell(VariableValue variableValue, int rowIndex, int columnIndex)
+        protected Cell VariableValueToCell(object value, int rowIndex, int columnIndex)
         {
             using (var uow = this.GetUnitOfWork())
             {
-                DataAttribute dataAttribute = uow.GetReadOnlyRepository<Variable>().Query(p => p.Id == variableValue.VariableId).Select(p => p.DataAttribute).FirstOrDefault();
-
                 string message = "row :" + rowIndex + "column:" + columnIndex;
-                Debug.WriteLine(message);
 
+                // define Cell
                 string cellRef = getColumnIndex(columnIndex) + rowIndex;
-
+                string type = "";
                 Cell cell = new Cell();
                 cell.CellReference = cellRef;
-                cell.StyleIndex = ExcelHelper.GetExcelStyleIndex(dataAttribute.DataType, styleIndex);
-                //cell.DataType = new EnumValue<CellValues>(getExcelType(dataAttribute.DataType.SystemType));
-                //cell.CellValue = new CellValue(variableValue.Value.ToString());
+                DataAttribute dataAttribute = null;
 
-                CellValues cellValueType = getExcelType(dataAttribute.DataType.SystemType);
-                object value = variableValue.Value;
+                // get Variable
+                var variable = new Variable();
 
-                //missing value
-                // check if the value is a missing value and should be replaced
-                if (variableValue.Variable.MissingValues.Any(mv => mv.Placeholder.Equals(value.ToString())))
+                if (value is VariableValue)
                 {
-                    value = variableValue.Variable.MissingValues.FirstOrDefault(mv => mv.Placeholder.Equals(value.ToString())).DisplayName;
+                    var id = ((VariableValue)value).VariableId;
+                    variable = ((VariableValue)value).Variable;
+                    dataAttribute = uow.GetReadOnlyRepository<Variable>().Query(p => p.Id == id).Select(p => p.DataAttribute).FirstOrDefault();
+                    type = dataAttribute.DataType.SystemType;
+                }
+                else
+                {
+                    variable = dataStructure.Variables.ElementAt(columnIndex - offset);
+                    dataAttribute = variable.DataAttribute;
+                    type = value.GetType().Name;
+                }
+
+                // set stylindex baed on type and index
+                cell.StyleIndex = ExcelHelper.GetExcelStyleIndex(type, styleIndex);
+
+                // set cell value type
+                CellValues cellValueType = getExcelType(type);
+
+
+                // missing value
+                // check if the value is a missing value and should be replaced
+
+                if (variable.MissingValues.Any(mv => mv.Placeholder.Equals(value.ToString())))
+                {
+                    value = variable.MissingValues.FirstOrDefault(mv => mv.Placeholder.Equals(value.ToString())).DisplayName;
                     cell.DataType = new EnumValue<CellValues>(CellValues.String);
+
                     cell.CellValue = new CellValue(value.ToString());
 
                     return cell;
                 }
 
-                // number
+                // Number
                 if (value != null && !(value is DBNull) && cellValueType == CellValues.Number)
                 {
                     cell.DataType = new EnumValue<CellValues>(CellValues.Number);
 
-                    try
+                    if (value.ToString() != "")
                     {
-                        if (value.ToString() != "")
-                        {
-                            double d = Convert.ToDouble(value, System.Globalization.CultureInfo.InvariantCulture);
-                            cell.CellValue = new CellValue(d.ToString(System.Globalization.CultureInfo.InvariantCulture));
-                        }
-                    }
-                    catch (Exception ex)
-                    {
-                        throw new Exception(ex.Message + "\n|" + message);
+                        double d = Convert.ToDouble(value, System.Globalization.CultureInfo.InvariantCulture);
+                        cell.CellValue = new CellValue(d.ToString(System.Globalization.CultureInfo.InvariantCulture));
                     }
 
                     return cell;
@@ -326,79 +447,6 @@ namespace BExIS.IO.Transform.Output
 
                 return cell;
             }
-        }
-
-        /// <summary>
-        /// convert any given value to a Cell
-        /// </summary>
-        /// <param name="value"></param>
-        /// <param name="rowIndex"></param>
-        /// <param name="columnIndex"></param>
-        /// <returns></returns>
-        protected Cell VariableValueToCell(object value, int rowIndex, int columnIndex)
-        {
-            string cellRef = getColumnIndex(columnIndex) + rowIndex;
-            string type = value.GetType().Name;
-
-            Cell cell = new Cell();
-            cell.CellReference = cellRef;
-            cell.StyleIndex = ExcelHelper.GetExcelStyleIndex(type, styleIndex);
-
-            CellValues cellValueType = getExcelType(type);
-
-            // missing value
-            // check if the value is a missing value and should be replaced
-            var variable = dataStructure.Variables.ElementAt(columnIndex - offset);
-            if (variable.MissingValues.Any(mv => mv.Placeholder.Equals(value.ToString())))
-            {
-                value = variable.MissingValues.FirstOrDefault(mv => mv.Placeholder.Equals(value.ToString())).DisplayName;
-                cell.DataType = new EnumValue<CellValues>(CellValues.String);
-
-                cell.CellValue = new CellValue(value.ToString());
-
-                return cell;
-            }
-
-            // Number
-            if (value != null && !(value is DBNull) && cellValueType == CellValues.Number)
-            {
-                cell.DataType = new EnumValue<CellValues>(CellValues.Number);
-
-                if (value.ToString() != "")
-                {
-                    double d = Convert.ToDouble(value, System.Globalization.CultureInfo.InvariantCulture);
-                    cell.CellValue = new CellValue(d.ToString(System.Globalization.CultureInfo.InvariantCulture));
-                }
-
-                return cell;
-            }
-
-            // Date
-            if (value != null && !(value is DBNull) && cellValueType == CellValues.Date)
-            {
-                cell.DataType = new EnumValue<CellValues>(CellValues.Number);
-                //CultureInfo provider = CultureInfo.InvariantCulture;
-
-                if (value.ToString() != "")
-                {
-                    DateTime dt;
-                    if (IOUtility.IsDate(value.ToString(), out dt))
-                    {
-                        cell.CellValue = new CellValue(dt.ToOADate().ToString());
-                    }
-                }
-
-                return cell;
-            }
-
-            //String
-            cell.DataType = new EnumValue<CellValues>(CellValues.String);
-            if (value == null)
-                cell.CellValue = new CellValue("");
-            else
-                cell.CellValue = new CellValue(value.ToString());
-
-            return cell;
         }
 
         /// <summary>
@@ -587,6 +635,11 @@ namespace BExIS.IO.Transform.Output
                 {
                     OpenXmlPart newPart = dataFile.AddPart<OpenXmlPart>(part);
                 }
+
+
+                //uint iExcelIndex = 164;
+                //List<StyleIndexStruct> styleIndex = new List<StyleIndexStruct>();
+                ExcelHelper.UpdateStylesheet(dataFile.WorkbookPart.WorkbookStylesPart.Stylesheet, out styleIndex);
 
                 dataFile.WorkbookPart.Workbook.Save();
                 emptyTemplate.Dispose();
