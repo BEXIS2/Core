@@ -45,5 +45,9 @@ namespace BExIS.Security.Services.Tests.Utilities
 
             emailService.Send("subject_test", "Hallo again!? Emails are working now!", "david.schoene@uni-jena.de");
         }
+
+        /*
+         * Further test methods
+         */
     }
 }
