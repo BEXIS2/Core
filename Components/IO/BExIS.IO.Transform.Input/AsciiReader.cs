@@ -23,17 +23,21 @@ namespace BExIS.IO.Transform.Input
     public class AsciiReader : DataReader
     {
         private Encoding encoding = Encoding.Default;
+        private AsciiFileReaderInfo fileReaderInfo;
 
         public AsciiReader(StructuredDataStructure structuredDatastructure, AsciiFileReaderInfo fileReaderInfo) : base(structuredDatastructure, fileReaderInfo)
         {
+            fileReaderInfo = (AsciiFileReaderInfo)this.Info;
         }
 
         public AsciiReader(StructuredDataStructure structuredDatastructure, AsciiFileReaderInfo fileReaderInfo, IOUtility iOUtility) : base(structuredDatastructure, fileReaderInfo, iOUtility)
         {
+            fileReaderInfo = (AsciiFileReaderInfo)this.Info;
         }
 
         public AsciiReader(StructuredDataStructure structuredDatastructure, AsciiFileReaderInfo fileReaderInfo, IOUtility iOUtility, DatasetManager datasetManager) : base(structuredDatastructure, fileReaderInfo, iOUtility, datasetManager)
         {
+            fileReaderInfo = (AsciiFileReaderInfo)this.Info;
         }
 
         /// <summary>
@@ -471,7 +475,9 @@ namespace BExIS.IO.Transform.Input
 
                         if (dsdIsOk && index >= this.Info.Data && !string.IsNullOrEmpty(line) && !isEmpty(line,seperator))
                         {
-                            this.ErrorMessages = this.ErrorMessages.Union(ValidateRow(rowToList(line, seperator), index)).ToList();
+                            var r = rowToList(line, seperator);
+                            var e = ValidateRow(r, index);
+                            this.ErrorMessages = this.ErrorMessages.Union(e).ToList();
                         }
 
                         index++;
@@ -561,6 +567,7 @@ namespace BExIS.IO.Transform.Input
 
         #region helper methods
 
+        List<string> tempRow = new List<string>();
         /// <summary>
         /// Convert a row as a string to a list of strings
         /// </summary>
@@ -573,12 +580,13 @@ namespace BExIS.IO.Transform.Input
         {
             if (this.Info != null)
             {
-                AsciiFileReaderInfo fileReaderInfo = (AsciiFileReaderInfo)this.Info;
+                if (fileReaderInfo == null) fileReaderInfo = (AsciiFileReaderInfo)this.Info;
+
                 if (fileReaderInfo != null)
                 {
-                    List<string> temp = new List<string>();
-                    temp = TextMarkerHandling(line, seperator, AsciiFileReaderInfo.GetTextMarker(fileReaderInfo.TextMarker));
-                    return temp;
+                    tempRow = new List<string>();
+                    tempRow = TextMarkerHandling(line, seperator, AsciiFileReaderInfo.GetTextMarker(fileReaderInfo.TextMarker));
+                    return tempRow;
                 }
                 else return line.Split(seperator).ToList();
             }
@@ -586,6 +594,9 @@ namespace BExIS.IO.Transform.Input
             return line.Split(seperator).ToList();
         }
 
+
+        List<string> values;
+        List<string> temp;
         /// <summary>
         /// If a seperator is present in a text which is highlighted with highlighter (bsp quotes),
         /// which is a special case which is treated in this function
@@ -599,7 +610,7 @@ namespace BExIS.IO.Transform.Input
         /// <returns>List of values as a string list</returns>
         public List<string> TextMarkerHandling(string row, char separator, char textmarker)
         {
-            List<string> values = row.Split(separator).ToList();
+            values = row.Split(separator).ToList();
 
             /// <summary>
             /// check if the row contains a textmarker
@@ -610,7 +621,7 @@ namespace BExIS.IO.Transform.Input
                 string tempValue = "";
                 bool startText = false;
 
-                List<string> temp = new List<string>();
+                temp = new List<string>();
 
                 foreach (string v in values)
                 {

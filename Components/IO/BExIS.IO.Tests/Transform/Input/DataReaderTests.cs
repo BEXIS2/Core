@@ -16,6 +16,8 @@ using System.Linq;
 using BExIS.IO.Transform.Validation.Exceptions;
 using System;
 using BExIS.Dlm.Services.Data;
+using BExIS.IO.Tests.Helper;
+using System.Text;
 
 namespace BExIS.IO.Tests.Transform.Input
 {
@@ -381,6 +383,78 @@ namespace BExIS.IO.Tests.Transform.Input
             errors.Should().NotBeNull();
             errors.Count.Should().Equals(1);
         }
+
+        [Test]
+        public void ValidateRow_runValid_noErrors()
+        {
+
+            //Arrange
+
+            DataGeneratorHelper dgh = new DataGeneratorHelper();
+            var errors = new List<Error>();
+            var testData = dgh.GenerateRowsWithRandomValuesBasedOnDatastructure(dataStructure,",", 1000, true);
+
+            //generate file to read
+            Encoding encoding = Encoding.Default;
+            string path = Path.Combine(AppConfiguration.DataPath, "testdataforvalidation.txt");
+            if (File.Exists(path))
+            {
+                File.Delete(path);
+            }
+
+            using (StreamWriter sw = new StreamWriter(path))
+            {
+                foreach (var r in testData)
+                {
+                    sw.WriteLine(r);
+                }
+            }
+
+            //Mock IOUtility
+            var ioUtilityMock = new Mock<IOUtility>();
+            ioUtilityMock.Setup(i => i.ConvertDateToCulture("2018")).Returns("2018");
+            try
+            {
+                AsciiFileReaderInfo afr = new AsciiFileReaderInfo();
+                afr.TextMarker = TextMarker.doubleQuotes;
+                afr.Seperator = TextSeperator.comma;
+
+                DataReader reader = new AsciiReader(dataStructure, new AsciiFileReaderInfo(), ioUtilityMock.Object);
+                IEnumerable<string> vairableNames = dataStructure.Variables.Select(v => v.Label);
+                List<VariableIdentifier> variableIdentifiers = reader.SetSubmitedVariableIdentifiers(vairableNames.ToList());
+                reader.ValidateComparisonWithDatatsructure(variableIdentifiers);
+
+
+                var asciireader = (AsciiReader)reader;
+                //Act
+                var row = new List<string>();
+
+                using (StreamReader streamReader = new StreamReader(path, encoding))
+                {
+                    string line;
+                    int index = 1;
+                    char seperator = AsciiFileReaderInfo.GetSeperator(afr.Seperator);
+
+                    while ((line = streamReader.ReadLine()) != null)
+                    {
+                        row = asciireader.rowToList(line, ',');
+                        errors = asciireader.ValidateRow(row, index);
+
+                        index++;
+                    }
+
+                }
+
+
+                //Assert
+                Assert.That(errors.Count, Is.EqualTo(0));
+            }
+            catch(Exception ex)
+            {
+                throw ex;
+            }
+        }
+
 
         #endregion Validate Row
     }
