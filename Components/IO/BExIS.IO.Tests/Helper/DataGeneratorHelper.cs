@@ -80,5 +80,41 @@ namespace BExIS.IO.Tests.Helper
                 return null;
             }
         }
+
+        public List<string> GenerateRowsWithRandomValuesBasedOnDatastructureWithErrors(StructuredDataStructure dataStructure, string seperator, long numberOfTuples, bool withQuotes)
+        {
+            List<string> rows = new List<string>();
+
+
+            numberOfTuples.Should().BeGreaterThan(0);
+
+            var r = new Random();
+
+            try
+            {
+                for (int i = 0; i < numberOfTuples; i++)
+                {
+                    string row = r.Next().ToString();
+
+
+                    if (withQuotes) row += seperator.ToString() + "\"Test\"";
+                    else row += seperator.ToString() + "Test";
+
+                    row += seperator.ToString() + "abc";//Convert.ToDouble(r.Next()).ToString();
+                    row += seperator.ToString() + true.ToString();
+                    row += seperator.ToString() + DateTime.Now.ToString();
+
+
+                    rows.Add(row);
+                }
+
+                return rows;
+
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
+        }
     }
 }

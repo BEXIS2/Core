@@ -478,6 +478,8 @@ namespace BExIS.IO.Transform.Input
                             var r = rowToList(line, seperator);
                             var e = ValidateRow(r, index);
                             this.ErrorMessages = this.ErrorMessages.Union(e).ToList();
+
+                            if (this.ErrorMessages.Count >= 1000) break;
                         }
 
                         index++;
