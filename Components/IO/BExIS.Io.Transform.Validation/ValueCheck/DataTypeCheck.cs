@@ -95,17 +95,6 @@ namespace BExIS.IO.Transform.Validation.ValueCheck
                             { 
                                 return new Error(ErrorType.Value, "Can not convert to", new object[] { name, value, row, dataType });
                             }
-
-                            //try
-                            //{
-                            //    if (!String.IsNullOrEmpty(value)) Convert.ToInt16(value);
-                            //}
-                            //catch (Exception ex)
-                            //{
-                            //    return new Error(ErrorType.Value, "Can not convert to", new object[] { name, value, row, dataType });
-                            //}
-
-                            //return Convert.ToInt16(value);
                         }
 
                     case "Int32":
@@ -141,10 +130,7 @@ namespace BExIS.IO.Transform.Validation.ValueCheck
 
                     case "Double":
                         {
-                            //double convertedValue = 0;
 
-                            //if(double.TryParse(value,NumberStyles.Number,CultureInfo.InvariantCulture, out convertedValue))
-                            //{
                             //Try to figure out the structure and then parse as double - return Error if structure doesn't fit or parsing fails
                             try
                             {
@@ -259,20 +245,23 @@ namespace BExIS.IO.Transform.Validation.ValueCheck
                                             //chek lenght of the string and compare to the max storage of the datatype
                                             if (value.Length > 28)
                                                 return new Error(ErrorType.Value, "the value of the number is outside the value range of decimal.", new object[] { name, value, row, dataType });
-
+                                            decimal d = 0;
                                             //convert to decimal and compare both string lenghts
-                                            return Decimal.Parse(value, NumberStyles.AllowExponent | NumberStyles.AllowDecimalPoint, new CultureInfo("de-DE"));
+                                            if (Decimal.TryParse(value, NumberStyles.AllowExponent | NumberStyles.AllowDecimalPoint, new CultureInfo("de-DE"), out d))
+                                            {
+                                                return d;
+                                            }
+                        
                                         }
                                         else
                                         {
                                             return new Error(ErrorType.Value, "False decimal character.", new object[] { name, value, row, dataType });
                                         }
                                     }
-                                    else
-                                    {
-                                        return new Error(ErrorType.Value, "Can not convert to.", new object[] { name, value, row, dataType });
-                                    }
+
+                                    return new Error(ErrorType.Value, "Can not convert to.", new object[] { name, value, row, dataType });
                                 }
+
                                 return Decimal.Parse(value, NumberStyles.AllowExponent | NumberStyles.AllowDecimalPoint);
                             }
                             catch (Exception ex)
