@@ -90,7 +90,7 @@ namespace BExIS.IO.Tests.Transform.Input
 
         [TestCase("1|test|2.2|true|02.02.2018")]
         [Repeat(4)]
-        public void ReadRowTest(string rowString)
+        public void ReadRow_ValidRowTest_DataTupleIsValid(string rowString)
         {
             //preperation
             List<string> row = new List<string>(rowString.Split('|'));
@@ -172,7 +172,7 @@ namespace BExIS.IO.Tests.Transform.Input
 
         [Test]
         [Repeat(4)]
-        public void ReadRowNullTest()
+        public void ReadRow_RowIsNullTest_DataTupleIsNull()
         {
             //Mock IOUtility
             var ioUtilityMock = new Mock<IOUtility>();
@@ -192,7 +192,7 @@ namespace BExIS.IO.Tests.Transform.Input
 
         [TestCase("")]
         [Repeat(4)]
-        public void ReadRowEmptyTest(string rowString)
+        public void ReadRow_EmptyRowTest_DataTupleIsNull(string rowString)
         {
             //preperation
             List<string> row = new List<string>(rowString.Split('|'));
@@ -213,6 +213,59 @@ namespace BExIS.IO.Tests.Transform.Input
             dt.Should().BeNull();
         }
 
+        [TestCase(" 1 | test | 2.2 | true | 02.02.2018")]
+        [Repeat(4)]
+        public void ReadRow_textWithWhitspaceAtBeginningandEnd_WithspaceRemoved(string rowString)
+        {
+            //preperation
+            List<string> row = new List<string>(rowString.Split('|'));
+
+            //Mock IOUtility -> ConvertDateToCulture
+            var ioUtilityMock = new Mock<IOUtility>();
+            ioUtilityMock.Setup(i => i.ConvertDateToCulture("2018")).Returns("2018");
+
+            //Mock datasetManager -> CreateVariableValue
+            var datasetManagerMock = new Mock<DatasetManager>();
+            datasetManagerMock.Setup(d => d.CreateVariableValue("", "", DateTime.Now, DateTime.Now, new ObtainingMethod(), 1, new List<ParameterValue>())).Returns(
+                new VariableValue()
+                {
+                    Value = "",
+                    Note = "",
+                    SamplingTime = DateTime.Now,
+                    ResultTime = DateTime.Now,
+                    ObtainingMethod = new ObtainingMethod(),
+                    VariableId = 1,
+                    ParameterValues = new List<ParameterValue>()
+                }
+            );
+
+            //prepare the variables
+            DataReader reader = new AsciiReader(dataStructure, new AsciiFileReaderInfo(), ioUtilityMock.Object);
+            IEnumerable<string> vairableNames = dataStructure.Variables.Select(v => v.Label);
+            List<VariableIdentifier> variableIdentifiers = reader.SetSubmitedVariableIdentifiers(vairableNames.ToList());
+
+            List<Error> errors = reader.ValidateComparisonWithDatatsructure(variableIdentifiers);
+
+            errors.Should().BeNull();
+
+            //test
+            DataTuple dt = reader.ReadRow(new List<string>(row), 1);
+
+
+            var v1 = dt.VariableValues[0].Value.ToString();
+            var v2 = dt.VariableValues[1].Value.ToString();
+            var v3 = dt.VariableValues[2].Value.ToString();
+            var v4 = dt.VariableValues[3].Value.ToString();
+      
+
+            Assert.That(v1, Is.EqualTo("1"));
+            Assert.That(v2, Is.EqualTo("test"));
+            Assert.That(v3, Is.EqualTo("2.2"));
+            Assert.That(v4, Is.EqualTo("true"));
+
+            //Assert.Throws<Exception>(() => reader.ReadRow(new List<string>(row), 1));
+        }
+
         #endregion Read Row
 
         #region Validate Row
@@ -220,7 +273,7 @@ namespace BExIS.IO.Tests.Transform.Input
         //ToDo check for Mocks in the ValidateRow Function
         [TestCase("1|test|2.2|true|02.02.2018")]
         [Repeat(4)]
-        public void ValidateRowTest(string rowString)
+        public void ValidateRow_ValidRowTest_NoErrors(string rowString)
         {
             //preperation
             List<string> row = new List<string>(rowString.Split('|'));

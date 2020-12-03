@@ -272,7 +272,7 @@ namespace BExIS.IO.Transform.Input
                         }
                         else
                         {
-                            value = row[i];
+                            value = row[i].Trim();
                         }
                     }
                 }
