@@ -429,15 +429,24 @@ namespace BExIS.Modules.Dcm.UI.Helpers
                                     SaveFileInContentDiscriptor(workingCopy);
                                 }
 
-                                //set modification
-                                workingCopy.ModificationInfo = new EntityAuditInfo()
+                                if(Bus.ContainsKey(TaskManager.DATASET_STATUS))
                                 {
-                                    Performer = User.Name,
-                                    Comment = "File",
-                                    ActionType = AuditActionType.Create
-                                };
+                                    bool newdataset = Bus[TaskManager.DATASET_STATUS].ToString().Equals("new");
+                                    int v = 1;
+                                    if (workingCopy.Dataset.Versions != null && workingCopy.Dataset.Versions.Count > 1) v = workingCopy.Dataset.Versions.Count();
 
-                                dm.EditDatasetVersion(workingCopy, null, null, null);
+                                    //set modification
+                                    workingCopy.ModificationInfo = new EntityAuditInfo()
+                                    {
+                                        Performer = User.Name,
+                                        Comment = "File",
+                                        ActionType = AuditActionType.Create
+                                    };
+
+                                    setSystemValuesToMetadata(id, v, workingCopy.Dataset.MetadataStructure.Id, workingCopy.Metadata, newdataset);
+
+                                    dm.EditDatasetVersion(workingCopy, null, null, null);
+                                }
 
                                 //filename
                                 string filename = "";
