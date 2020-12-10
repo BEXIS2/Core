@@ -811,7 +811,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                             LoggerFactory.LogCustom(message);
 
                             var es = new EmailService();
-                            es.Send(MessageHelper.GetDownloadDatasetHeader(),
+                            es.Send(MessageHelper.GetDownloadDatasetHeader(id),
                             MessageHelper.GetDownloadDatasetMessage(id, title, getPartyNameOrDefault()),
                                 ConfigurationManager.AppSettings["SystemEmail"]
                                 );
@@ -966,7 +966,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                         LoggerFactory.LogCustom(message);
 
                         var es = new EmailService();
-                        es.Send(MessageHelper.GetDownloadDatasetHeader(),
+                        es.Send(MessageHelper.GetDownloadDatasetHeader(id),
                             MessageHelper.GetDownloadDatasetMessage(id, title, getPartyNameOrDefault()),
                             ConfigurationManager.AppSettings["SystemEmail"]
                             );
@@ -1125,7 +1125,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                         LoggerFactory.LogCustom(message);
 
                         var es = new EmailService();
-                        es.Send(MessageHelper.GetDownloadDatasetHeader(),
+                        es.Send(MessageHelper.GetDownloadDatasetHeader(id),
                             MessageHelper.GetDownloadDatasetMessage(id, title, getPartyNameOrDefault()),
                             ConfigurationManager.AppSettings["SystemEmail"]
                             );
@@ -1318,7 +1318,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                     LoggerFactory.LogCustom(message);
 
                     var es = new EmailService();
-                    es.Send(MessageHelper.GetDownloadDatasetHeader(),
+                    es.Send(MessageHelper.GetDownloadDatasetHeader(id),
                         MessageHelper.GetDownloadDatasetMessage(id, title, getPartyNameOrDefault()),
                         ConfigurationManager.AppSettings["SystemEmail"]
                         );
@@ -1354,7 +1354,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                 LoggerFactory.LogCustom(message);
 
                 var es = new EmailService();
-                es.Send(MessageHelper.GetDownloadDatasetHeader(),
+                es.Send(MessageHelper.GetDownloadDatasetHeader(id),
                     MessageHelper.GetDownloadDatasetMessage(id, title, getPartyNameOrDefault()),
                     ConfigurationManager.AppSettings["SystemEmail"]
                     );
