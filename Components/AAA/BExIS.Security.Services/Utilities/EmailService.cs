@@ -43,7 +43,7 @@ namespace BExIS.Security.Services.Utilities
             if (replyTos != null)
                 mimeMessage.ReplyTo.AddRange(replyTos.Select(r => new MailboxAddress(r, r)));
             mimeMessage.Subject = AppConfiguration.ApplicationName + " - " + subject;
-            mimeMessage.Body = new TextPart("plain") { Text = body };
+            mimeMessage.Body = new TextPart(MimeKit.Text.TextFormat.Html) { Text = body };
 
             Send(mimeMessage);
         }
