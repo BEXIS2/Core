@@ -60,7 +60,7 @@ namespace BExIS.Security.Services.Utilities
             mimeMessage.From.Add(new MailboxAddress(ConfigurationManager.AppSettings["Email_From_Name"], ConfigurationManager.AppSettings["Email_From_Address"]));
             mimeMessage.To.Add(new MailboxAddress(message.Destination, message.Destination));
             mimeMessage.Subject = AppConfiguration.ApplicationName + " - " + message.Subject;
-            mimeMessage.Body = new TextPart("plain") { Text = message.Body };
+            mimeMessage.Body = new TextPart(MimeKit.Text.TextFormat.Html) { Text = message.Body };
 
             Send(mimeMessage);
         }
@@ -72,7 +72,7 @@ namespace BExIS.Security.Services.Utilities
             mimeMessage.From.Add(new MailboxAddress(ConfigurationManager.AppSettings["Email_From_Name"], ConfigurationManager.AppSettings["Email_From_Address"]));
             mimeMessage.To.Add(new MailboxAddress(message.Destination, message.Destination));
             mimeMessage.Subject = AppConfiguration.ApplicationName + " - " + message.Subject;
-            mimeMessage.Body = new TextPart("plain") { Text = message.Body };
+            mimeMessage.Body = new TextPart(MimeKit.Text.TextFormat.Html) { Text = message.Body };
 
             Send(mimeMessage);
 
