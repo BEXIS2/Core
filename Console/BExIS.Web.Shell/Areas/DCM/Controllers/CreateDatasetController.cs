@@ -640,7 +640,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                             if (newDataset)
                             {
                                 var es = new EmailService();
-                                es.Send(MessageHelper.GetCreateDatasetHeader(),
+                                es.Send(MessageHelper.GetCreateDatasetHeader(datasetId),
                                     MessageHelper.GetCreateDatasetMessage(datasetId, title, GetUsernameOrDefault()),
                                     ConfigurationManager.AppSettings["SystemEmail"]
                                     );
@@ -648,7 +648,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                             else
                             {
                                 var es = new EmailService();
-                                es.Send(MessageHelper.GetUpdateDatasetHeader(),
+                                es.Send(MessageHelper.GetUpdateDatasetHeader(datasetId),
                                     MessageHelper.GetUpdateDatasetMessage(datasetId, title, GetUsernameOrDefault()),
                                     ConfigurationManager.AppSettings["SystemEmail"]
                                     );
@@ -661,7 +661,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 catch (Exception ex)
                 {
                     var es = new EmailService();
-                    es.Send(MessageHelper.GetUpdateDatasetHeader(),
+                    es.Send(MessageHelper.GetUpdateDatasetHeader(datasetId),
                         ex.Message,
                         ConfigurationManager.AppSettings["SystemEmail"]
                         );
@@ -1067,12 +1067,18 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                                     // when mapping in both directions are exist
                                     if ((MappingUtils.ExistMappings(id, sourceType, relationship.Id, LinkElementType.PartyRelationshipType) &&
                                         MappingUtils.ExistMappings(relationship.Id, LinkElementType.PartyRelationshipType, id, sourceType)) ||
+
                                         (MappingUtils.ExistMappings(sourceId, LinkElementType.MetadataAttributeUsage, relationship.Id, LinkElementType.PartyRelationshipType) &&
                                         MappingUtils.ExistMappings(relationship.Id, LinkElementType.PartyRelationshipType, sourceId, LinkElementType.MetadataAttributeUsage)) ||
+
                                         (MappingUtils.ExistMappings(sourceId, LinkElementType.ComplexMetadataAttribute, relationship.Id, LinkElementType.PartyRelationshipType) &&
                                         MappingUtils.ExistMappings(relationship.Id, LinkElementType.PartyRelationshipType, sourceId, LinkElementType.ComplexMetadataAttribute)) ||
+
                                         (MappingUtils.ExistMappings(sourceId, LinkElementType.MetadataNestedAttributeUsage, relationship.Id, LinkElementType.PartyRelationshipType) &&
-                                        MappingUtils.ExistMappings(relationship.Id, LinkElementType.PartyRelationshipType, sourceId, LinkElementType.MetadataNestedAttributeUsage)))
+                                        MappingUtils.ExistMappings(relationship.Id, LinkElementType.PartyRelationshipType, sourceId, LinkElementType.MetadataNestedAttributeUsage)) ||
+
+                                        (MappingUtils.ExistMappings(sourceId, LinkElementType.MetadataPackageUsage, relationship.Id, LinkElementType.PartyRelationshipType) &&
+                                        MappingUtils.ExistMappings(relationship.Id, LinkElementType.PartyRelationshipType, sourceId, LinkElementType.MetadataPackageUsage)))
                                     {
                                         // create releationship
 

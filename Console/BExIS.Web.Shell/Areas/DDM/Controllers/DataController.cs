@@ -92,164 +92,177 @@ namespace BExIS.Modules.Ddm.UI.Controllers
         {
             //get the researchobject (cuurently called dataset) to get the id of a metadata structure
             Dataset researcobject = this.GetUnitOfWork().GetReadOnlyRepository<Dataset>().Get(id);
-            long metadataStrutcureId = researcobject.MetadataStructure.Id;
 
-            using (MetadataStructureManager metadataStructureManager = new MetadataStructureManager())
+            if (researcobject != null)
             {
-                string entityName = xmlDatasetHelper.GetEntityNameFromMetadatStructure(metadataStrutcureId, metadataStructureManager);
-                string entityType = xmlDatasetHelper.GetEntityTypeFromMetadatStructure(metadataStrutcureId, metadataStructureManager);
+                long metadataStrutcureId = researcobject.MetadataStructure.Id;
 
-                //ToDo in the entity table there must be the information
-                using (EntityManager entityManager = new EntityManager())
+                using (MetadataStructureManager metadataStructureManager = new MetadataStructureManager())
                 {
-                    var entity = entityManager.Entities.Where(e => e.Name.Equals(entityName)).FirstOrDefault();
+                    string entityName = xmlDatasetHelper.GetEntityNameFromMetadatStructure(metadataStrutcureId, metadataStructureManager);
+                    string entityType = xmlDatasetHelper.GetEntityTypeFromMetadatStructure(metadataStrutcureId, metadataStructureManager);
 
-                    string moduleId = "";
-                    Tuple<string, string, string> action = null;
-                    string defaultAction = "ShowData";
-
-                    if (entity != null && entity.Extra != null)
+                    //ToDo in the entity table there must be the information
+                    using (EntityManager entityManager = new EntityManager())
                     {
-                        var node = entity.Extra.SelectSingleNode("extra/modules/module");
+                        var entity = entityManager.Entities.Where(e => e.Name.Equals(entityName)).FirstOrDefault();
 
-                        if (node != null) moduleId = node.Attributes["value"].Value;
+                        string moduleId = "";
+                        Tuple<string, string, string> action = null;
+                        string defaultAction = "ShowData";
 
-                        string modus = "show";
+                        if (entity != null && entity.Extra != null)
+                        {
+                            var node = entity.Extra.SelectSingleNode("extra/modules/module");
 
-                        action = EntityViewerHelper.GetEntityViewAction(entityName, moduleId, modus);
-                    }
-                    if (action == null) RedirectToAction(defaultAction, new { id, version });
+                            if (node != null) moduleId = node.Attributes["value"].Value;
 
-                    try
-                    {
-                        if (version == 0) return RedirectToAction(action.Item3, action.Item2, new { area = action.Item1, id });
-                        else return RedirectToAction(action.Item3, action.Item2, new { area = action.Item1, id, version });
-                    }
-                    catch
-                    {
-                        return RedirectToAction(defaultAction, new { id, version });
+                            string modus = "show";
+
+                            action = EntityViewerHelper.GetEntityViewAction(entityName, moduleId, modus);
+                        }
+                        if (action == null) RedirectToAction(defaultAction, new { id, version });
+
+                        try
+                        {
+                            if (version == 0) return RedirectToAction(action.Item3, action.Item2, new { area = action.Item1, id });
+                            else return RedirectToAction(action.Item3, action.Item2, new { area = action.Item1, id, version });
+                        }
+                        catch
+                        {
+                            return RedirectToAction(defaultAction, new { id, version });
+                        }
                     }
                 }
             }
+
+            ModelState.AddModelError("", string.Format("The object with the id {0} does not exist",id));
+
+            return View("Show");
         }
 
         public ActionResult ShowData(long id, int version = 0)
         {
-            DatasetManager dm = new DatasetManager();
-            EntityPermissionManager entityPermissionManager = new EntityPermissionManager();
-
-            try
+            using (DatasetManager dm = new DatasetManager())
+            using(EntityPermissionManager entityPermissionManager = new EntityPermissionManager())
             {
-                DatasetVersion dsv;
-                ShowDataModel model = new ShowDataModel();
+                Dataset researcobject = dm.GetDataset(id);
 
-                string title = "";
-                long metadataStructureId = -1;
-                long dataStructureId = -1;
-                long researchPlanId = 1;
-                long versionId = 0;
-                string dataStructureType = DataStructureType.Structured.ToString();
-                bool downloadAccess = false;
-                bool requestExist = false;
-                bool requestAble = false;
-                bool latestVersion = false;
-                string isValid = "no";
-
-                XmlDocument metadata = new XmlDocument();
-
-                if (dm.IsDatasetCheckedIn(id))
+                if (researcobject != null)
                 {
-                    //get latest version
-                    if (version == 0)
-                    {
-                        versionId = dm.GetDatasetLatestVersionId(id); // check for zero value
-                        //get current version number
-                        version = dm.GetDatasetVersions(id).OrderBy(d => d.Timestamp).Count();
 
-                        latestVersion = true;
+                    DatasetVersion dsv;
+                    ShowDataModel model = new ShowDataModel();
+
+                    string title = "";
+                    long metadataStructureId = -1;
+                    long dataStructureId = -1;
+                    long researchPlanId = 1;
+                    long versionId = 0;
+                    string dataStructureType = DataStructureType.Structured.ToString();
+                    bool downloadAccess = false;
+                    bool requestExist = false;
+                    bool requestAble = false;
+                    bool latestVersion = false;
+                    string isValid = "no";
+
+                    XmlDocument metadata = new XmlDocument();
+
+                    if (dm.IsDatasetCheckedIn(id))
+                    {
+                        //get latest version
+                        if (version == 0)
+                        {
+                            versionId = dm.GetDatasetLatestVersionId(id); // check for zero value
+                                                                            //get current version number
+                            version = dm.GetDatasetVersions(id).OrderBy(d => d.Timestamp).Count();
+
+                            latestVersion = true;
+                        }
+                        // get specific version
+                        else
+                        {
+                            versionId = dm.GetDatasetVersions(id).OrderBy(d => d.Timestamp).Skip(version - 1).Take(1).Select(d => d.Id).FirstOrDefault();
+                            latestVersion = versionId == dm.GetDatasetLatestVersionId(id);
+                        }
+
+                        dsv = dm.DatasetVersionRepo.Get(versionId); // this is needed to allow dsv to access to an open session that is available via the repo
+
+                        if (dsv.StateInfo != null)
+                        {
+                            isValid = DatasetStateInfo.Valid.ToString().Equals(dsv.StateInfo.State) ? "yes" : "no";
+                        }
+
+                        metadataStructureId = dsv.Dataset.MetadataStructure.Id;
+
+                        //MetadataStructureManager msm = new MetadataStructureManager();
+                        //dsv.Dataset.MetadataStructure = msm.Repo.Get(dsv.Dataset.MetadataStructure.Id);
+
+                        title = dsv.Title; // this function only needs metadata and extra fields, there is no need to pass the version to it.
+                        dataStructureId = dsv.Dataset.DataStructure.Id;
+                        researchPlanId = dsv.Dataset.ResearchPlan.Id;
+                        metadata = dsv.Metadata;
+
+                        // check if the user has download rights
+                        downloadAccess = entityPermissionManager.HasEffectiveRight(HttpContext.User.Identity.Name, typeof(Dataset), id, RightType.Read);
+
+                        // check if a reuqest of this dataset exist
+                        if (!downloadAccess)
+                        {
+                            requestExist = HasOpenRequest(id);
+
+                            if (UserExist() && HasRequestMapping(id)) requestAble = true;
+                        }
+
+                        if (dsv.Dataset.DataStructure.Self.GetType().Equals(typeof(StructuredDataStructure)))
+                        {
+                            dataStructureType = DataStructureType.Structured.ToString();
+                        }
+                        else
+                        {
+                            dataStructureType = DataStructureType.Unstructured.ToString();
+                        }
+
+                        ViewBag.Title = PresentationModel.GetViewTitleForTenant("Show Data : " + title, this.Session.GetTenant());
                     }
-                    // get specific version
                     else
                     {
-                        versionId = dm.GetDatasetVersions(id).OrderBy(d => d.Timestamp).Skip(version - 1).Take(1).Select(d => d.Id).FirstOrDefault();
-                        latestVersion = versionId == dm.GetDatasetLatestVersionId(id);
+                        ModelState.AddModelError(string.Empty, "Dataset is just in processing.");
                     }
 
-                    dsv = dm.DatasetVersionRepo.Get(versionId); // this is needed to allow dsv to access to an open session that is available via the repo
-
-                    if (dsv.StateInfo != null)
+                    model = new ShowDataModel()
                     {
-                        isValid = DatasetStateInfo.Valid.ToString().Equals(dsv.StateInfo.State) ? "yes" : "no";
-                    }
+                        Id = id,
+                        Version = version,
+                        VersionSelect = version,
+                        VersionId = versionId,
+                        LatestVersion = latestVersion,
+                        Title = title,
+                        MetadataStructureId = metadataStructureId,
+                        DataStructureId = dataStructureId,
+                        ResearchPlanId = researchPlanId,
+                        ViewAccess = entityPermissionManager.HasEffectiveRight(HttpContext.User.Identity.Name, typeof(Dataset), id, RightType.Read),
+                        GrantAccess = entityPermissionManager.HasEffectiveRight(HttpContext.User.Identity.Name, typeof(Dataset), id, RightType.Grant),
+                        DataStructureType = dataStructureType,
+                        DownloadAccess = downloadAccess,
+                        RequestExist = requestExist,
+                        RequestAble = requestAble
+                    };
 
-                    metadataStructureId = dsv.Dataset.MetadataStructure.Id;
+                    //set metadata in session
+                    Session["ShowDataMetadata"] = metadata;
+                    ViewData["VersionSelect"] = getVersionsSelectList(id, dm);
+                    ViewData["isValid"] = isValid;
+                    ViewData["show_tabs"] = getSettingsTabList();
 
-                    //MetadataStructureManager msm = new MetadataStructureManager();
-                    //dsv.Dataset.MetadataStructure = msm.Repo.Get(dsv.Dataset.MetadataStructure.Id);
+                    return View(model);
+                    
 
-                    title = dsv.Title; // this function only needs metadata and extra fields, there is no need to pass the version to it.
-                    dataStructureId = dsv.Dataset.DataStructure.Id;
-                    researchPlanId = dsv.Dataset.ResearchPlan.Id;
-                    metadata = dsv.Metadata;
-
-                    // check if the user has download rights
-                    downloadAccess = entityPermissionManager.HasEffectiveRight(HttpContext.User.Identity.Name, typeof(Dataset), id, RightType.Read);
-
-                    // check if a reuqest of this dataset exist
-                    if (!downloadAccess)
-                    {
-                        requestExist = HasOpenRequest(id);
-
-                        if (UserExist() && HasRequestMapping(id)) requestAble = true;
-                    }
-
-                    if (dsv.Dataset.DataStructure.Self.GetType().Equals(typeof(StructuredDataStructure)))
-                    {
-                        dataStructureType = DataStructureType.Structured.ToString();
-                    }
-                    else
-                    {
-                        dataStructureType = DataStructureType.Unstructured.ToString();
-                    }
-
-                    ViewBag.Title = PresentationModel.GetViewTitleForTenant("Show Data : " + title, this.Session.GetTenant());
-                }
-                else
-                {
-                    ModelState.AddModelError(string.Empty, "Dataset is just in processing.");
                 }
 
-                model = new ShowDataModel()
-                {
-                    Id = id,
-                    Version = version,
-                    VersionSelect = version,
-                    VersionId = versionId,
-                    LatestVersion = latestVersion,
-                    Title = title,
-                    MetadataStructureId = metadataStructureId,
-                    DataStructureId = dataStructureId,
-                    ResearchPlanId = researchPlanId,
-                    ViewAccess = entityPermissionManager.HasEffectiveRight(HttpContext.User.Identity.Name, typeof(Dataset), id, RightType.Read),
-                    GrantAccess = entityPermissionManager.HasEffectiveRight(HttpContext.User.Identity.Name, typeof(Dataset), id, RightType.Grant),
-                    DataStructureType = dataStructureType,
-                    DownloadAccess = downloadAccess,
-                    RequestExist = requestExist,
-                    RequestAble = requestAble
-                };
+                ModelState.AddModelError("", string.Format("The dataset with the id {0} does not exist", id));
 
-                //set metadata in session
-                Session["ShowDataMetadata"] = metadata;
-                ViewData["VersionSelect"] = getVersionsSelectList(id, dm);
-                ViewData["isValid"] = isValid;
-                ViewData["show_tabs"] = getSettingsTabList();
-
-                return View(model);
-            }
-            finally
-            {
-                dm.Dispose();
-                entityPermissionManager.Dispose();
+                return View();
             }
         }
 
@@ -800,7 +813,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                             LoggerFactory.LogCustom(message);
 
                             var es = new EmailService();
-                            es.Send(MessageHelper.GetDownloadDatasetHeader(),
+                            es.Send(MessageHelper.GetDownloadDatasetHeader(id),
                             MessageHelper.GetDownloadDatasetMessage(id, title, getPartyNameOrDefault()),
                                 ConfigurationManager.AppSettings["SystemEmail"]
                                 );
@@ -813,7 +826,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                 catch (Exception ex)
                 {
                     var es = new EmailService();
-                    es.Send(MessageHelper.GetUpdateDatasetHeader(),
+                    es.Send(MessageHelper.GetUpdateDatasetHeader(id),
                         ex.Message,
                         ConfigurationManager.AppSettings["SystemEmail"]
                         );
@@ -955,7 +968,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                         LoggerFactory.LogCustom(message);
 
                         var es = new EmailService();
-                        es.Send(MessageHelper.GetDownloadDatasetHeader(),
+                        es.Send(MessageHelper.GetDownloadDatasetHeader(id),
                             MessageHelper.GetDownloadDatasetMessage(id, title, getPartyNameOrDefault()),
                             ConfigurationManager.AppSettings["SystemEmail"]
                             );
@@ -966,7 +979,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                 catch (Exception ex)
                 {
                     var es = new EmailService();
-                    es.Send(MessageHelper.GetUpdateDatasetHeader(),
+                    es.Send(MessageHelper.GetUpdateDatasetHeader(id),
                         ex.Message,
                         ConfigurationManager.AppSettings["SystemEmail"]
                         );
@@ -1114,7 +1127,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                         LoggerFactory.LogCustom(message);
 
                         var es = new EmailService();
-                        es.Send(MessageHelper.GetDownloadDatasetHeader(),
+                        es.Send(MessageHelper.GetDownloadDatasetHeader(id),
                             MessageHelper.GetDownloadDatasetMessage(id, title, getPartyNameOrDefault()),
                             ConfigurationManager.AppSettings["SystemEmail"]
                             );
@@ -1125,7 +1138,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                 catch (Exception ex)
                 {
                     var es = new EmailService();
-                    es.Send(MessageHelper.GetUpdateDatasetHeader(),
+                    es.Send(MessageHelper.GetUpdateDatasetHeader(id),
                         ex.Message,
                         ConfigurationManager.AppSettings["SystemEmail"]
                         );
@@ -1307,7 +1320,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                     LoggerFactory.LogCustom(message);
 
                     var es = new EmailService();
-                    es.Send(MessageHelper.GetDownloadDatasetHeader(),
+                    es.Send(MessageHelper.GetDownloadDatasetHeader(id),
                         MessageHelper.GetDownloadDatasetMessage(id, title, getPartyNameOrDefault()),
                         ConfigurationManager.AppSettings["SystemEmail"]
                         );
@@ -1317,7 +1330,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                 catch (Exception ex)
                 {
                     var es = new EmailService();
-                    es.Send(MessageHelper.GetUpdateDatasetHeader(),
+                    es.Send(MessageHelper.GetUpdateDatasetHeader(id),
                         ex.Message,
                         ConfigurationManager.AppSettings["SystemEmail"]
                         );
@@ -1343,7 +1356,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                 LoggerFactory.LogCustom(message);
 
                 var es = new EmailService();
-                es.Send(MessageHelper.GetDownloadDatasetHeader(),
+                es.Send(MessageHelper.GetDownloadDatasetHeader(id),
                     MessageHelper.GetDownloadDatasetMessage(id, title, getPartyNameOrDefault()),
                     ConfigurationManager.AppSettings["SystemEmail"]
                     );

@@ -104,15 +104,26 @@ namespace BExIS.IO.Transform.Input
         {
             double output = 0;
             int maxcharlength = 11;
-   
+            CultureInfo ci = CultureInfo.InvariantCulture;
+
             if (string.IsNullOrEmpty(cellValue)) return "0";
 
-            if (double.TryParse(cellValue, out output))
+            //get culture information
+            // because we take the cell values from excel, 
+            // there will be no 1000 place chars, so you can check directly for the decimal char
+            if (cellValue.Contains('.')) ci = new CultureInfo("en-US");
+            else if (cellValue.Contains(',')) ci = new CultureInfo("de-DE");
+
+
+            if (double.TryParse(cellValue,NumberStyles.Any, ci, out output))
             {
                 // round if formatcode is empty
                 if (string.IsNullOrEmpty(formatCode))
                 {
-                    if (output.ToString().ToLower().Contains("e")) return output.ToString();
+                    if (output.ToString().ToLower().Contains("e"))
+                    {
+                        return output.ToString("0.00E+00");
+                    }
 
                     long tmp = System.Convert.ToInt64(output);
                     int charLenght = tmp.ToString().Length;

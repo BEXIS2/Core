@@ -25,6 +25,8 @@ using BExIS.Security.Entities.Authorization;
 using Vaiona.Persistence.Api;
 using Vaiona.Entities.Common;
 using BExIS.Utils.Data.Upload;
+using BExIS.Dim.Entities.Mapping;
+using BExIS.Modules.Mmm.UI.Helpers;
 
 namespace IDIV.Modules.Mmm.UI.Controllers
 {
@@ -263,6 +265,11 @@ namespace IDIV.Modules.Mmm.UI.Controllers
                                     Comment = "File",
                                     ActionType = AuditActionType.Delete
                                 };
+
+                                // set system key values
+                                int v = 1;
+                                if (workingCopy.Dataset.Versions != null && workingCopy.Dataset.Versions.Count > 1) v = workingCopy.Dataset.Versions.Count();
+                                workingCopy.Metadata = setSystemValuesToMetadata(v, workingCopy.Dataset.MetadataStructure.Id, workingCopy.Metadata);
 
                                 datasetManager.EditDatasetVersion(workingCopy, null, null, null);
 
@@ -949,6 +956,20 @@ namespace IDIV.Modules.Mmm.UI.Controllers
                     getParent(m.Children, parentId);
             }
             return new Measurement();
+        }
+
+        private XmlDocument setSystemValuesToMetadata(long version, long metadataStructureId, XmlDocument metadata)
+        {
+            SystemMetadataHelper SystemMetadataHelper = new SystemMetadataHelper();
+
+            Key[] myObjArray = { };
+
+            myObjArray = new Key[] { Key.Id, Key.Version, Key.DateOfVersion, Key.DataLastModified };
+
+
+            metadata = SystemMetadataHelper.SetSystemValuesToMetadata(metadataStructureId, version, metadataStructureId, metadata, myObjArray);
+
+            return metadata;
         }
     }
 }

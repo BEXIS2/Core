@@ -85,7 +85,7 @@ namespace BExIS.Security.Services.Authentication
                 using (var ldap = new LdapConnection(new LdapDirectoryIdentifier(host, port)))
                 {
                     ldap.SessionOptions.ProtocolVersion = protocolVersion;
-                    ldap.AuthType = AuthType.Anonymous;
+                    ldap.AuthType = AuthType.Basic;
                     ldap.SessionOptions.SecureSocketLayer = secureSocket;
                     ldap.Bind();
 
@@ -135,7 +135,7 @@ namespace BExIS.Security.Services.Authentication
                     ldap.AuthType = AuthType.Basic;
                     var searchRequest = new SearchRequest(
                         baseDn,
-                        string.Format(CultureInfo.InvariantCulture, "{0}={1}", authUid, username),
+                        string.Format(CultureInfo.InvariantCulture, "{0}={1},ou=users,dc=unijena,dc=de", authUid, username),
                         SearchScope.Subtree
                     );
 
