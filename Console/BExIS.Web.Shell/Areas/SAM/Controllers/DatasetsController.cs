@@ -69,7 +69,7 @@ namespace BExIS.Modules.Sam.UI.Controllers
 
                                 //send email
                                 var es = new EmailService();
-                                es.Send(MessageHelper.GetDeleteDatasetHeader(),
+                                es.Send(MessageHelper.GetDeleteDatasetHeader(id),
                                     MessageHelper.GetDeleteDatasetMessage(id, user.Name),
                                     ConfigurationManager.AppSettings["SystemEmail"]
                                     );
@@ -87,7 +87,7 @@ namespace BExIS.Modules.Sam.UI.Controllers
                             ViewData.ModelState.AddModelError("", $@"You do not have the permission to delete the record.");
 
                             var es = new EmailService();
-                            es.Send(MessageHelper.GetTryToDeleteDatasetHeader(),
+                            es.Send(MessageHelper.GetTryToDeleteDatasetHeader(id),
                                 MessageHelper.GetTryToDeleteDatasetMessage(id, GetUsernameOrDefault()),
                                 ConfigurationManager.AppSettings["SystemEmail"]
                                 );
@@ -98,7 +98,7 @@ namespace BExIS.Modules.Sam.UI.Controllers
                         ViewData.ModelState.AddModelError("", $@"This function can only be executed with a logged-in user.");
 
                         var es = new EmailService();
-                        es.Send(MessageHelper.GetTryToDeleteDatasetHeader(),
+                        es.Send(MessageHelper.GetTryToDeleteDatasetHeader(id),
                             MessageHelper.GetTryToDeleteDatasetMessage(id, userName),
                             ConfigurationManager.AppSettings["SystemEmail"]
                             );
@@ -226,7 +226,7 @@ namespace BExIS.Modules.Sam.UI.Controllers
                                 entityPermissionManager.Delete(typeof(Dataset), id);
 
                                 var es = new EmailService();
-                                es.Send(MessageHelper.GetPurgeDatasetHeader(),
+                                es.Send(MessageHelper.GetPurgeDatasetHeader(id),
                                     MessageHelper.GetPurgeDatasetMessage(id, user.Name),
                                     ConfigurationManager.AppSettings["SystemEmail"]
                                     );
@@ -244,7 +244,7 @@ namespace BExIS.Modules.Sam.UI.Controllers
                             ViewData.ModelState.AddModelError("", $@"You do not have the permission to purge the record.");
 
                             var es = new EmailService();
-                            es.Send(MessageHelper.GetTryToPurgeDatasetHeader(),
+                            es.Send(MessageHelper.GetTryToPurgeDatasetHeader(id),
                                 MessageHelper.GetTryToPurgeDatasetMessage(id, user.Name),
                                 ConfigurationManager.AppSettings["SystemEmail"]
                                 );
@@ -254,7 +254,7 @@ namespace BExIS.Modules.Sam.UI.Controllers
                     {
                         ViewData.ModelState.AddModelError("", $@"This function can only be executed with a logged-in user.");
                         var es = new EmailService();
-                        es.Send(MessageHelper.GetTryToPurgeDatasetHeader(),
+                        es.Send(MessageHelper.GetTryToPurgeDatasetHeader(id),
                             MessageHelper.GetTryToPurgeDatasetMessage(id, userName),
                             ConfigurationManager.AppSettings["SystemEmail"]
                             );

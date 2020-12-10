@@ -640,7 +640,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                             if (newDataset)
                             {
                                 var es = new EmailService();
-                                es.Send(MessageHelper.GetCreateDatasetHeader(),
+                                es.Send(MessageHelper.GetCreateDatasetHeader(datasetId),
                                     MessageHelper.GetCreateDatasetMessage(datasetId, title, GetUsernameOrDefault()),
                                     ConfigurationManager.AppSettings["SystemEmail"]
                                     );
@@ -648,7 +648,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                             else
                             {
                                 var es = new EmailService();
-                                es.Send(MessageHelper.GetUpdateDatasetHeader(),
+                                es.Send(MessageHelper.GetUpdateDatasetHeader(datasetId),
                                     MessageHelper.GetUpdateDatasetMessage(datasetId, title, GetUsernameOrDefault()),
                                     ConfigurationManager.AppSettings["SystemEmail"]
                                     );
@@ -661,7 +661,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 catch (Exception ex)
                 {
                     var es = new EmailService();
-                    es.Send(MessageHelper.GetUpdateDatasetHeader(),
+                    es.Send(MessageHelper.GetUpdateDatasetHeader(datasetId),
                         ex.Message,
                         ConfigurationManager.AppSettings["SystemEmail"]
                         );
