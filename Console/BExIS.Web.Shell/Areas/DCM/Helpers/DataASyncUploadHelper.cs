@@ -372,7 +372,7 @@ namespace BExIS.Modules.Dcm.UI.Helpers
 
                             //send email
                             var es = new EmailService();
-                            es.Send(MessageHelper.GetUpdateDatasetHeader(),
+                            es.Send(MessageHelper.GetUpdateDatasetHeader(datasetid),
                                 MessageHelper.GetUpdateDatasetMessage(datasetid, title, User.Name),
                                 ConfigurationManager.AppSettings["SystemEmail"]
                                 );
