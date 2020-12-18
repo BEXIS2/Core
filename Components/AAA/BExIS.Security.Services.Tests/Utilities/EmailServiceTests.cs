@@ -41,9 +41,9 @@ namespace BExIS.Security.Services.Tests.Utilities
         [Test]
         public void Send()
         {
-            EmailService emailService = new EmailService();
+            //EmailService emailService = new EmailService();
 
-            emailService.Send("subject_test", "Hallo again!? Emails are working now!", "david.schoene@uni-jena.de");
+            //emailService.Send("subject_test", "Hallo again!? Emails are working now!", "david.schoene@uni-jena.de");
         }
 
         /*
