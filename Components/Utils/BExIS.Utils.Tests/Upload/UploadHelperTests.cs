@@ -27,7 +27,7 @@ namespace BExIS.Utils.Data.Tests
         private long datasetId = 0;
         private long latestDataTupleId = 0;
         private string username = "David";
-        private long numberOfTuples = 65000;
+        private long numberOfTuples = 100;
         private DatasetHelper dsHelper;
 
         [OneTimeSetUp]
