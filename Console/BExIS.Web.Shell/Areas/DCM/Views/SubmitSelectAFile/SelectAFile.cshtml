@@ -251,7 +251,15 @@
     function SelectFileProcess_OnSuccess(e) {
 
         $('.uploadWizardStep_Error').empty();
-        $('#fileNameDiv').html(e.files[0].name +"<p><b>An Excel file was selected.<br/> The formatted, displayed values are used for further processing.</b></p>");
+
+        if (e.files[0].name.indexOf("xls") != -1) {
+            $('#fileNameDiv').html(e.files[0].name + "<p><b>An Excel file was selected.<br/> The formatted, displayed values are used for further processing.</b></p>");
+        }
+        else {
+            $('#fileNameDiv').html(e.files[0].name);
+        }
+
+
         $('#fileNameDivHelp').text("Selected file.");
     }
 
