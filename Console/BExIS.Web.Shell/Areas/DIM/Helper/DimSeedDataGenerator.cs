@@ -114,6 +114,8 @@ namespace BExIS.Modules.Dim.UI.Helpers
                 if (!operationManager.Exists("api", "MetadataOut", "*")) operationManager.Create("API", "MetadataOut", "*", API);
                 if (!operationManager.Exists("api", "DataOut", "*")) operationManager.Create("api", "DataOut", "*", API);
                 if (!operationManager.Exists("api", "DatasetOut", "*")) operationManager.Create("api", "DatasetOut", "*", API);
+                if (!operationManager.Exists("api", "DataStatisticOut", "*")) operationManager.Create("api", "DataStatisticOut", "*", API);
+                if (!operationManager.Exists("api", "DataQualityOut", "*")) operationManager.Create("api", "DataQualityOut", "*", API);
                 if (!operationManager.Exists("api", "AttachmentOut", "*")) operationManager.Create("api", "AttachmentOut", "*", API);
 
                 if (!operationManager.Exists("api", "Metadata", "*")) operationManager.Create("API", "Metadata", "*", API);
