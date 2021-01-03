@@ -48,7 +48,7 @@
             extends="." />
     
     <!--FAQ-->
-    <Export tag="lunchbar" id="helpDdm" order="1"
+    <Export tag="lunchbar" id="helpDdm" order="9"
             title="FAQ" description="Link to the faq page" icon=""
             controller="help" action="faq"
             extends="./lunchbarRoot/help" />

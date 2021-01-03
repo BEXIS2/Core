@@ -20,7 +20,7 @@
             controller="admin" action="index"
             extends="./settingsRoot"
             />
-    <Export tag="lunchbar" id="helpDim" order="1"
+    <Export tag="lunchbar" id="helpDim" order="5"
             title="Data Dissemination" description="Data Dissemination Help Manual" icon=""
             controller="Help" action="index"
             extends="./lunchbarRoot/help"
