@@ -89,12 +89,14 @@
                     }
                     else
                     {
+
                         <ul>
                             @foreach (BExIS.IO.Transform.Validation.Exceptions.Error s in @Model.ErrorList)
                             {
                                 <li>@s.ToString()</li>
                             }
                         </ul>
+          
                     }
 
                 }
@@ -116,7 +118,8 @@
             $.post('@Url.Action("ValidateFile", @Model.StepInfo.PostActionInfo.ControllerName, new RouteValueDictionary { { "area", "DCM" } })', function (response) {
 
                 $('.uploadWizardStep_Error').empty();
-                $('.uploadWizardStep').html(response);
+                $('.uploadWizardStep').replaceWith(response);
+
 
             });
         });
