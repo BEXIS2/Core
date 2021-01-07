@@ -270,7 +270,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
                             var user = identityUserService.FindByNameAsync(username);
 
-                            var name = "New data structure_" + DateTime.Now.ToString("dd_mm_yyyy_HH_mm");
+                            var name = "New data structure_" + DateTime.Now.ToString("dd_MM_yyyy_HH_mm");
 
                             // Replace account name by party name if exists
                             if (user != null)
@@ -278,7 +278,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                                 Party party = partyManager.GetPartyByUser(user.Result.Id);
                                 if (party != null)
                                 {
-                                    name = "New created for " + party.Name + "_" + DateTime.Now.ToString("dd_mm_yyyy_HH_mm");
+                                    name = "New created for " + party.Name + "_" + DateTime.Now.ToString("dd_MM_yyyy_HH_mm");
                                 }
                             }
 
