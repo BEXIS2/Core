@@ -191,10 +191,13 @@ namespace BExIS.IO.Transform.Validation
             MissingValueCheck = new MissingValueCheck(name, dataType, missingValues);
             Constraints = constraints;
 
-            //load contraints
-            foreach (var c in constraints)
+            if (Constraints != null)
             {
-                c.Materialize();
+                //load contraints
+                foreach (var c in Constraints)
+                {
+                    c.Materialize();
+                }
             }
         }
     }
