@@ -1231,7 +1231,8 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                                         xTypeId,
                                         xVersion,
                                         xpath,
-                                        DefaultEntitiyReferenceType.MetadataLink.GetDisplayName()
+                                        DefaultEntitiyReferenceType.MetadataLink.GetDisplayName(),
+                                        DateTime.Now
                                     ));
                             }
                         }
