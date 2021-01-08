@@ -176,6 +176,7 @@ namespace BExIS.Modules.Dcm.UI.Helpers
             tmp.TargetVersion = model.TargetVersion;
             tmp.Context = model.Context;
             tmp.ReferenceType = model.ReferenceType;
+            tmp.CreationDate = DateTime.Now;
 
             return tmp;
         }
