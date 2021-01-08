@@ -341,7 +341,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
             for(var i = dt.Rows.Count - 1; i > 0; i--)
             {
                 DataRow[] found = missingValues.Select("placeholder = '" + dt.Rows[i][0] + "'");
-                if (found.Length == 0)
+                if (found.Length == 0 && dt.Rows[i][0] != "")
                 {
                     return dt.Rows[i][0].ToString();
                 }
