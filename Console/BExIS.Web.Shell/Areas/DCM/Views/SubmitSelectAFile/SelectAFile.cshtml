@@ -253,7 +253,7 @@
         $('.uploadWizardStep_Error').empty();
 
         if (e.files[0].name.indexOf("xls") != -1) {
-            $('#fileNameDiv').html(e.files[0].name + "<p><b>An Excel file was selected.<br/> The formatted, displayed values are used for further processing.</b></p>");
+            $('#fileNameDiv').html(e.files[0].name + "<p><b>Please notice: Data will be imported as displayed in Excel.</b></p>");
         }
         else {
             $('#fileNameDiv').html(e.files[0].name);
