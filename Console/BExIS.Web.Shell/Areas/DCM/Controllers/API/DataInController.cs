@@ -235,7 +235,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
                             //send email
                             es.Send(MessageHelper.GetUpdateDatasetHeader(dataset.Id),
-                                MessageHelper.GetUpdateDatasetMessage(dataset.Id, title, user.UserName),
+                                MessageHelper.GetUpdateDatasetMessage(dataset.Id, title, user.DisplayName),
                                 new List<string>() { user.Email },
                                        new List<string>() { ConfigurationManager.AppSettings["SystemEmail"] }
                                 );
@@ -500,7 +500,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
                             //send email
                             es.Send(MessageHelper.GetUpdateDatasetHeader(dataset.Id),
-                                MessageHelper.GetUpdateDatasetMessage(dataset.Id, title, user.UserName),
+                                MessageHelper.GetUpdateDatasetMessage(dataset.Id, title, user.DisplayName),
                                 new List<string>() { user.Email },
                                        new List<string>() { ConfigurationManager.AppSettings["SystemEmail"] }
                                 );
