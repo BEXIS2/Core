@@ -146,6 +146,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             ViewBag.Title = PresentationModel.GetViewTitleForTenant("Create Dataset", this.Session.GetTenant());
             ViewData["Locked"] = locked;
             ViewData["ShowOptional"] = false;
+            ViewData["EntityId"] = entityId;
 
             TaskManager = (CreateTaskmanager)Session["CreateDatasetTaskmanager"];
             if (TaskManager == null || resetTaskManager)
@@ -407,6 +408,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 ViewBag.Title = PresentationModel.GetViewTitleForTenant("Create Dataset", this.Session.GetTenant()); ;
                 ViewData["Locked"] = true;
                 ViewData["ShowOptional"] = false;
+                ViewData["EntityId"] = entityId;
 
                 TaskManager = (CreateTaskmanager)Session["CreateDatasetTaskmanager"];
                 if (TaskManager == null || resetTaskManager)
@@ -538,6 +540,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         {
             ViewData["Locked"] = locked;
             ViewData["ShowOptional"] = show;
+            ViewData["EntityId"] = entityId;
 
             ViewBag.Title = PresentationModel.GetViewTitleForTenant("Create Dataset", this.Session.GetTenant());
             TaskManager = (CreateTaskmanager)Session["CreateDatasetTaskmanager"];
@@ -645,6 +648,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         {
             ViewBag.Title = PresentationModel.GetViewTitleForTenant("Create Dataset", this.Session.GetTenant());
             ViewData["ShowOptional"] = true;
+            ViewData["EntityId"] = -1;
 
             var Model = new MetadataEditorModel();
 
@@ -907,6 +911,15 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 if (pStepModelHelper != null)
                     pStepModelHelper.Activated = active;
             }
+
+            // Set entity id
+            if (TaskManager.Bus.ContainsKey(CreateTaskmanager.ENTITY_ID))
+            {
+                if (TaskManager.Bus[CreateTaskmanager.ENTITY_ID] != null)
+                    ViewData["EntityId"] = TaskManager.Bus[CreateTaskmanager.ENTITY_ID];
+            }
+            else
+                ViewData["EntityId"] = -1;
 
             return PartialView("_metadataCompoundAttributeUsageView", stepModelHelper);
         }
