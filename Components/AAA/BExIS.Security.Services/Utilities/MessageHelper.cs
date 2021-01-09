@@ -213,6 +213,17 @@ namespace BExIS.Security.Services.Utilities
             return $"User <b>\"{userName}\"</b>(Id: {userId}) has updated his/her profile.";
         }
 
+        public static string GetUpdateEmailHeader()
+        {
+            return $"User has changed email";
+        }
+
+        public static string GetUpdaterEmailMessage(string userName, string emailOld, string emailNew)
+        {
+            return $"User <b>{userName} has updated his/her email. Old: {emailOld} New: {emailNew}";
+        }
+
+
         #region upload api
 
         public static string GetPushApiStoreHeader(long datasetid, string title)

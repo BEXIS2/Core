@@ -2,6 +2,7 @@
 using BExIS.Dlm.Services.Party;
 using BExIS.Modules.Bam.UI.Models;
 using BExIS.Security.Services.Subjects;
+using BExIS.Security.Services.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
@@ -235,7 +236,16 @@ namespace BExIS.Modules.Bam.UI.Controllers
                         if (nameProp != null)
                         {               
                             var entity = party.CustomAttributeValues.FirstOrDefault(item => item.CustomAttribute.Id == nameProp.Id);
-                            user.Email = entity.Value;
+                            if (user.Email != entity.Value)
+                            {
+                                var es = new EmailService();
+                                es.Send(MessageHelper.GetUpdateEmailHeader(),
+                                    MessageHelper.GetUpdaterEmailMessage(user.DisplayName, user.Email, entity.Value),
+                                    ConfigurationManager.AppSettings["SystemEmail"]
+                                    );
+                            }
+                                user.Email = entity.Value;
+                            
                         }
                     }
                     
