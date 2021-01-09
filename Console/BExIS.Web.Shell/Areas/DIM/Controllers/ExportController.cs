@@ -5,15 +5,20 @@ using BExIS.Dim.Services;
 using BExIS.Dlm.Entities.Data;
 using BExIS.Dlm.Entities.DataStructure;
 using BExIS.Dlm.Entities.MetadataStructure;
+using BExIS.Dlm.Entities.Party;
 using BExIS.Dlm.Services.Data;
 using BExIS.Dlm.Services.DataStructure;
+using BExIS.Dlm.Services.Party;
 using BExIS.IO;
 using BExIS.IO.Transform.Output;
 using BExIS.Modules.Dim.UI.Models.Export;
+using BExIS.Security.Entities.Subjects;
+using BExIS.Security.Services.Utilities;
 using BExIS.Utils.Extensions;
 using BExIS.Xml.Helpers;
 using Ionic.Zip;
 using System;
+using System.Configuration;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -342,6 +347,19 @@ namespace BExIS.Modules.Dim.UI.Controllers
 
                         LoggerFactory.LogCustom("Return");
 
+                        string title = datasetVersion.Title;
+                        title = String.IsNullOrEmpty(title) ? "unknown" : title;
+
+                        string message = string.Format("dataset {0} version {1} was downloaded as zip - {2}.", id,
+                        versionNr, format);
+                        LoggerFactory.LogCustom(message);
+
+                        var es = new EmailService();
+                        es.Send(MessageHelper.GetDownloadDatasetHeader(id, versionNr),
+                            MessageHelper.GetDownloadDatasetMessage(id, title, getPartyNameOrDefault(), "zip - " + format, versionNr),
+                            ConfigurationManager.AppSettings["SystemEmail"]
+                            );
+
                         return File(zipFilePath, "application/zip", Path.GetFileName(zipFilePath));
                     }
                 }
@@ -467,5 +485,40 @@ namespace BExIS.Modules.Dim.UI.Controllers
 
             AsciiWriter.AllTextToFile(metadataFilePath, view.ToString());
         }
+
+        private string getPartyNameOrDefault()
+        {
+
+            var userName = string.Empty;
+            try
+            {
+                userName = HttpContext.User.Identity.Name;
+            }
+            catch { }
+
+            if (userName != null)
+            {
+
+                using (var uow = this.GetUnitOfWork())
+                using (var partyManager = new PartyManager())
+                {
+
+                    var userRepository = uow.GetReadOnlyRepository<User>();
+                    var user = userRepository.Query(s => s.Name.ToUpperInvariant() == userName.ToUpperInvariant()).FirstOrDefault();
+
+                    if (user != null)
+                    {
+                        Party party = partyManager.GetPartyByUser(user.Id);
+                        if (party != null)
+                        {
+                            return party.Name;
+                        }
+                    }
+
+                }
+            }
+            return !string.IsNullOrWhiteSpace(userName) ? userName : "DEFAULT";
+        }
+
     }
 }

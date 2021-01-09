@@ -775,8 +775,9 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                     OutputDataManager ioOutputDataManager = new OutputDataManager();
                     string title = getTitle(writer.GetTitle(id));
                     string path = "";
+                    long versionNr = datasetManager.GetDatasetVersionNr(datasetVersion);
                     string message = string.Format("dataset {0} version {1} was downloaded as {2}.", id,
-                        datasetVersion.Id, ext);
+                        versionNr, ext);
 
                     //create a history dátaset
                     if (!latest)
@@ -811,8 +812,8 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                             LoggerFactory.LogCustom(message);
 
                             var es = new EmailService();
-                            es.Send(MessageHelper.GetDownloadDatasetHeader(id),
-                            MessageHelper.GetDownloadDatasetMessage(id, title, getPartyNameOrDefault()),
+                            es.Send(MessageHelper.GetDownloadDatasetHeader(id, versionNr),
+                            MessageHelper.GetDownloadDatasetMessage(id, title, getPartyNameOrDefault(), ext, versionNr),
                                 ConfigurationManager.AppSettings["SystemEmail"]
                                 );
 
@@ -861,8 +862,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
 
                     string path = "";
 
-                    string message = string.Format("dataset {0} version {1} was downloaded as excel.", id,
-                        datasetVersion.Id);
+                    //string message = string.Format("dataset {0} version {1} was downloaded as excel.", id, datasetVersion.Id);
 
                     OutputDataManager outputDataManager = new OutputDataManager();
 
@@ -881,7 +881,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                         DataTable datatable = getFilteredData(id);
                         path = outputDataManager.GenerateExcelFile("temp", datatable, title + "_filtered", datasetVersion.Dataset.DataStructure.Id, ext, withUnits);
 
-                        LoggerFactory.LogCustom(message);
+                        //LoggerFactory.LogCustom(message);
 
                         #endregion generate a subset of a dataset
                     }
@@ -889,7 +889,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                     else
                     {
                         path = outputDataManager.GenerateExcelFile(id, versionid, false, null, withUnits);
-                        LoggerFactory.LogCustom(message);
+                        //LoggerFactory.LogCustom(message);
                     }
 
                     return Json(true, JsonRequestBehavior.AllowGet);
@@ -928,9 +928,9 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                     string title = getTitle(writer.GetTitle(id));
 
                     string path = "";
-
+                    long versionNr = datasetManager.GetDatasetVersionNr(datasetVersion);
                     string message = string.Format("dataset {0} version {1} was downloaded as excel.", id,
-                        datasetVersion.Id);
+                        versionNr);
 
                     OutputDataManager outputDataManager = new OutputDataManager();
 
@@ -965,9 +965,10 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                         path = outputDataManager.GenerateExcelFile(id, versionid, false, null, withUnits);
                         LoggerFactory.LogCustom(message);
 
+                        
                         var es = new EmailService();
-                        es.Send(MessageHelper.GetDownloadDatasetHeader(id),
-                            MessageHelper.GetDownloadDatasetMessage(id, title, getPartyNameOrDefault()),
+                        es.Send(MessageHelper.GetDownloadDatasetHeader(id, versionNr),
+                            MessageHelper.GetDownloadDatasetMessage(id, title, getPartyNameOrDefault(), ext, versionNr),
                             ConfigurationManager.AppSettings["SystemEmail"]
                             );
 
@@ -1087,9 +1088,9 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                     string title = getTitle(writer.GetTitle(id));
 
                     string path = "";
-
+                    long versionNr = datasetManager.GetDatasetVersionNr(datasetVersion);
                     string message = string.Format("dataset {0} version {1} was downloaded as excel.", id,
-                        datasetVersion.Id);
+                        versionNr);
 
                     OutputDataManager outputDataManager = new OutputDataManager();
                     string mimitype = MimeMapping.GetMimeMapping(ext);
@@ -1111,7 +1112,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                         DataTable datatable = getFilteredData(id);
                         path = outputDataManager.GenerateExcelFile(id, versionid, true, datatable);
 
-                        LoggerFactory.LogCustom(message);
+                        //LoggerFactory.LogCustom(message);
 
                         return File(path, mimitype, title + ext);
 
@@ -1125,8 +1126,8 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                         LoggerFactory.LogCustom(message);
 
                         var es = new EmailService();
-                        es.Send(MessageHelper.GetDownloadDatasetHeader(id),
-                            MessageHelper.GetDownloadDatasetMessage(id, title, getPartyNameOrDefault()),
+                        es.Send(MessageHelper.GetDownloadDatasetHeader(id, versionNr),
+                            MessageHelper.GetDownloadDatasetMessage(id, title, getPartyNameOrDefault(), ext, versionNr),
                             ConfigurationManager.AppSettings["SystemEmail"]
                             );
 
@@ -1313,13 +1314,15 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                         zip.Save(zipPath);
                     }
 
-                    string message = string.Format("all files from dataset {0} version {1} was downloaded.", datasetVersion.Dataset.Id,
-                            datasetVersion.Id);
+                    long versionNr = datasetManager.GetDatasetVersionNr(datasetVersion);
+                    string message = string.Format("all files from dataset {0} version {1} was downloaded as zip.", datasetVersion.Dataset.Id,
+                            versionNr);
                     LoggerFactory.LogCustom(message);
 
+                    
                     var es = new EmailService();
-                    es.Send(MessageHelper.GetDownloadDatasetHeader(id),
-                        MessageHelper.GetDownloadDatasetMessage(id, title, getPartyNameOrDefault()),
+                    es.Send(MessageHelper.GetDownloadDatasetHeader(id, versionNr),
+                        MessageHelper.GetDownloadDatasetMessage(id, title, getPartyNameOrDefault(), "zip", versionNr),
                         ConfigurationManager.AppSettings["SystemEmail"]
                         );
 
@@ -1347,19 +1350,23 @@ namespace BExIS.Modules.Ddm.UI.Controllers
         [BExISEntityAuthorize(typeof(Dataset), "id", RightType.Read)]
         public ActionResult DownloadFile(long id,long version, string path, string mimeType)
         {
-            if (hasUserRights(id, RightType.Read))
-            {
-                string title = id+"_"+version+"_"+path.Split('\\').Last();
-                string message = string.Format("file was downloaded");
-                LoggerFactory.LogCustom(message);
+            using (DatasetManager datasetManager = new DatasetManager()){
+                if (hasUserRights(id, RightType.Read))
+                {
+                    string title = id + "_" + version + "_" + path.Split('\\').Last();
+                    long versionNr = datasetManager.GetDatasetVersionNr(version);
+                    string message = string.Format("dataset {0} version {1} was downloaded as excel.", id, versionNr);
+                    LoggerFactory.LogCustom(message);
 
-                var es = new EmailService();
-                es.Send(MessageHelper.GetDownloadDatasetHeader(id),
-                    MessageHelper.GetDownloadDatasetMessage(id, title, getPartyNameOrDefault()),
-                    ConfigurationManager.AppSettings["SystemEmail"]
-                    );
+                    
+                    var es = new EmailService();
+                    es.Send(MessageHelper.GetDownloadDatasetHeader(id, versionNr),
+                        MessageHelper.GetDownloadDatasetMessage(id, title, getPartyNameOrDefault(), mimeType, versionNr),
+                        ConfigurationManager.AppSettings["SystemEmail"]
+                        );
 
-                return File(Path.Combine(AppConfiguration.DataPath, path), mimeType, title);
+                    return File(Path.Combine(AppConfiguration.DataPath, path), mimeType, title);
+                }
             }
 
             return Content("User has no rights.");
