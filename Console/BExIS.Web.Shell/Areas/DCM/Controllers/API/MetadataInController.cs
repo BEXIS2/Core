@@ -184,7 +184,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
 
                     var es = new EmailService();
                     es.Send(MessageHelper.GetUpdateDatasetHeader(id),
-                        MessageHelper.GetUpdateDatasetMessage(id, title, user.UserName),
+                        MessageHelper.GetUpdateDatasetMessage(id, title, user.DisplayName),
                         ConfigurationManager.AppSettings["SystemEmail"]
                         );
                 }

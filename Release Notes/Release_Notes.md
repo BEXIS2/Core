@@ -1,7 +1,15 @@
-# BEXIS 2.14.2 Release Notes
+# BEXIS 2.14.3 Release Notes
+### Features
+- Extent API: Data statistics and data quality ([#655](https://github.com/BEXIS2/Core/issues/655))
 
+### Enhancements
+- Send email on changed email address (by user or admin)
+- Add DisplayName to admin user view closes ([#688](https://github.com/BEXIS2/Core/issues/688))
+- Add email and log to dataset download ([#473](https://github.com/BEXIS2/Core/issues/473))
+- Add creation date for entity reference creation 
+- Change Help order and names closes ([#683](https://github.com/BEXIS2/Core/issues/683))
+- Add dataset id to all system messages ([#680](https://github.com/BEXIS2/Core/issues/680))
 ### Bugs
-- fix database connection handling (not exceeding max. number of connections anymore - system stability) ([#628](https://github.com/BEXIS2/Core/issues/628))
 
 
 ## I. Software Information

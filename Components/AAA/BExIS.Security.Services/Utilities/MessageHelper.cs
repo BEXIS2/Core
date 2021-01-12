@@ -86,14 +86,14 @@ namespace BExIS.Security.Services.Utilities
             return message + ".";
         }
 
-        public static string GetDownloadDatasetHeader(long datasetid)
+        public static string GetDownloadDatasetHeader(long datasetid, long version)
         {
-            return $"Dataset was downloaded (Id: {datasetid})";
+            return $"Dataset was downloaded (Id: {datasetid}, Version: {version})";
         }
 
-        public static string GetDownloadDatasetMessage(long datasetid, string title, string userName)
+        public static string GetDownloadDatasetMessage(long datasetid, string title, string userName, string format, long version)
         {
-            string message = $"Dataset <b>\"{title}\"</b> with id <b>({datasetid})</b> was downloaded";
+            string message = $"Dataset <b>\"{title}\"</b> with id <b>({datasetid})</b> version <b>({version})</b> was downloaded as <b>{format}</b>";
 
             if (!string.IsNullOrEmpty(userName))
 
@@ -212,6 +212,17 @@ namespace BExIS.Security.Services.Utilities
         {
             return $"User <b>\"{userName}\"</b>(Id: {userId}) has updated his/her profile.";
         }
+
+        public static string GetUpdateEmailHeader()
+        {
+            return $"User has changed email";
+        }
+
+        public static string GetUpdaterEmailMessage(string userName, string emailOld, string emailNew)
+        {
+            return $"User <b>{userName} has updated his/her email. Old: {emailOld} New: {emailNew}";
+        }
+
 
         #region upload api
 
