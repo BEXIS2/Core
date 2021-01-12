@@ -141,6 +141,7 @@
   <ItemGroup>
     <Compile Include="Controllers\ShowMultimediaDataController.cs" />
     <Compile Include="Converter\Converter.cs" />
+    <Compile Include="Helpers\SystemMetadataHelper.cs" />
     <Compile Include="Install\MMMSeedDataGenerator.cs" />
     <Compile Include="Models\BundleModel.cs" />
     <Compile Include="Models\DatasetInfoModel.cs" />
@@ -245,6 +246,14 @@
     <ProjectReference Include="..\..\..\..\Components\XML\BExIS.Xml.Helpers\BExIS.Xml.Helpers.csproj">
       <Project>{252f7872-a69c-43a6-84b4-4d2abdbdd9ab}</Project>
       <Name>BExIS.Xml.Helpers</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\..\Modules\DIM\BExIS.Dim.Entities\BExIS.Dim.Entities.csproj">
+      <Project>{34cad2a2-6928-458b-b8dc-af71d55f20cc}</Project>
+      <Name>BExIS.Dim.Entities</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\..\Modules\DIM\BExIS.Dim.Helper\BExIS.Dim.Helpers.csproj">
+      <Project>{81ef18e8-dced-4980-96f9-e99124075b82}</Project>
+      <Name>BExIS.Dim.Helpers</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

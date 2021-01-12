@@ -41,8 +41,8 @@
             controller="Push" action="index"
             extends="./menubarRoot/collect" />
 
-    <Export tag="lunchbar" id="helpDcm" order="1"
-            title="Data Collection" description="Data Collection Help Manual" icon=""
+    <Export tag="lunchbar" id="helpDcm" order="3"
+            title=" Metadata and Data" description="Data Collection Help Manual" icon=""
             controller="help" action="index"
             extends="./lunchbarRoot/help" />
 

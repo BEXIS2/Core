@@ -299,7 +299,7 @@ namespace BExIS.Security.Services.Authorization
 
         public int GetEffectiveRights(long? subjectId, List<long> entityIds, long key)
         {
-            if (subjectId == null) return 0;
+            //if (subjectId == null) return 0;
 
             long id = Convert.ToInt64(subjectId);
 

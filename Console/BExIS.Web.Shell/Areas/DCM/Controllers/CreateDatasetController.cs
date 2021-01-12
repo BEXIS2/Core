@@ -270,7 +270,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
                             var user = identityUserService.FindByNameAsync(username);
 
-                            var name = "New data structure_" + DateTime.Now.ToString("dd_mm_yyyy_HH_mm");
+                            var name = "New data structure_" + DateTime.Now.ToString("dd_MM_yyyy_HH_mm");
 
                             // Replace account name by party name if exists
                             if (user != null)
@@ -278,7 +278,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                                 Party party = partyManager.GetPartyByUser(user.Result.Id);
                                 if (party != null)
                                 {
-                                    name = "New created for " + party.Name + "_" + DateTime.Now.ToString("dd_mm_yyyy_HH_mm");
+                                    name = "New created for " + party.Name + "_" + DateTime.Now.ToString("dd_MM_yyyy_HH_mm");
                                 }
                             }
 
@@ -512,7 +512,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             try
             {
                 // create and submit Dataset
-                long datasetId = SubmitDataset(valid);
+                long datasetId = SubmitDataset(valid, "Dataset");
 
                 return Json(new { result = "redirect", url = Url.Action("Show", "Data", new { area = "DDM", id = datasetId }) }, JsonRequestBehavior.AllowGet);
             }
@@ -526,7 +526,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         /// Submit a Dataset based on the imformations
         /// in the CreateTaskManager
         /// </summary>
-        public long SubmitDataset(bool valid)
+        public long SubmitDataset(bool valid, string entityname)
         {
             #region create dataset
 
@@ -570,7 +570,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                             // add security
                             if (GetUsernameOrDefault() != "DEFAULT")
                             {
-                                entityPermissionManager.Create<User>(GetUsernameOrDefault(), "Dataset", typeof(Dataset), ds.Id, Enum.GetValues(typeof(RightType)).Cast<RightType>().ToList());
+                                entityPermissionManager.Create<User>(GetUsernameOrDefault(), entityname, typeof(Dataset), ds.Id, Enum.GetValues(typeof(RightType)).Cast<RightType>().ToList());
                             }
                         }
                         else
@@ -640,7 +640,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                             if (newDataset)
                             {
                                 var es = new EmailService();
-                                es.Send(MessageHelper.GetCreateDatasetHeader(),
+                                es.Send(MessageHelper.GetCreateDatasetHeader(datasetId),
                                     MessageHelper.GetCreateDatasetMessage(datasetId, title, GetUsernameOrDefault()),
                                     ConfigurationManager.AppSettings["SystemEmail"]
                                     );
@@ -648,7 +648,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                             else
                             {
                                 var es = new EmailService();
-                                es.Send(MessageHelper.GetUpdateDatasetHeader(),
+                                es.Send(MessageHelper.GetUpdateDatasetHeader(datasetId),
                                     MessageHelper.GetUpdateDatasetMessage(datasetId, title, GetUsernameOrDefault()),
                                     ConfigurationManager.AppSettings["SystemEmail"]
                                     );
@@ -661,7 +661,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 catch (Exception ex)
                 {
                     var es = new EmailService();
-                    es.Send(MessageHelper.GetUpdateDatasetHeader(),
+                    es.Send(MessageHelper.GetUpdateDatasetHeader(datasetId),
                         ex.Message,
                         ConfigurationManager.AppSettings["SystemEmail"]
                         );
@@ -1067,12 +1067,18 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                                     // when mapping in both directions are exist
                                     if ((MappingUtils.ExistMappings(id, sourceType, relationship.Id, LinkElementType.PartyRelationshipType) &&
                                         MappingUtils.ExistMappings(relationship.Id, LinkElementType.PartyRelationshipType, id, sourceType)) ||
+
                                         (MappingUtils.ExistMappings(sourceId, LinkElementType.MetadataAttributeUsage, relationship.Id, LinkElementType.PartyRelationshipType) &&
                                         MappingUtils.ExistMappings(relationship.Id, LinkElementType.PartyRelationshipType, sourceId, LinkElementType.MetadataAttributeUsage)) ||
+
                                         (MappingUtils.ExistMappings(sourceId, LinkElementType.ComplexMetadataAttribute, relationship.Id, LinkElementType.PartyRelationshipType) &&
                                         MappingUtils.ExistMappings(relationship.Id, LinkElementType.PartyRelationshipType, sourceId, LinkElementType.ComplexMetadataAttribute)) ||
+
                                         (MappingUtils.ExistMappings(sourceId, LinkElementType.MetadataNestedAttributeUsage, relationship.Id, LinkElementType.PartyRelationshipType) &&
-                                        MappingUtils.ExistMappings(relationship.Id, LinkElementType.PartyRelationshipType, sourceId, LinkElementType.MetadataNestedAttributeUsage)))
+                                        MappingUtils.ExistMappings(relationship.Id, LinkElementType.PartyRelationshipType, sourceId, LinkElementType.MetadataNestedAttributeUsage)) ||
+
+                                        (MappingUtils.ExistMappings(sourceId, LinkElementType.MetadataPackageUsage, relationship.Id, LinkElementType.PartyRelationshipType) &&
+                                        MappingUtils.ExistMappings(relationship.Id, LinkElementType.PartyRelationshipType, sourceId, LinkElementType.MetadataPackageUsage)))
                                     {
                                         // create releationship
 
@@ -1096,7 +1102,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                                                 r =>
                                                 r.SourceParty != null && r.SourceParty.Id.Equals(person.Id) &&
                                                 r.PartyTypePair != null && r.PartyTypePair.Id.Equals(partyTpePair.Id) &&
-                                                r.TargetParty.Id.Equals(datasetid)
+                                                r.TargetParty.Id.Equals(datasetParty.Id)
                                             ))
                                             {
                                                 partyManager.AddPartyRelationship(
@@ -1225,7 +1231,8 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                                         xTypeId,
                                         xVersion,
                                         xpath,
-                                        DefaultEntitiyReferenceType.MetadataLink.GetDisplayName()
+                                        DefaultEntitiyReferenceType.MetadataLink.GetDisplayName(),
+                                        DateTime.Now
                                     ));
                             }
                         }

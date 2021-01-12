@@ -231,6 +231,7 @@ namespace BExIS.IO.Transform.Input
                             this.StructuredDataStructure.Variables.Where(p => p.Id.Equals(variableId)).FirstOrDefault().DataAttribute.DataType.SystemType.Equals("Decimal") ||
                             this.StructuredDataStructure.Variables.Where(p => p.Id.Equals(variableId)).FirstOrDefault().DataAttribute.DataType.SystemType.Equals("Float"))
                         {
+                            var datatype = this.StructuredDataStructure.Variables.Where(p => p.Id.Equals(variableId)).FirstOrDefault().DataAttribute.DataType.SystemType;
                             value = row[i];
 
                             if (Info.Decimal.Equals(DecimalCharacter.comma))
@@ -243,10 +244,35 @@ namespace BExIS.IO.Transform.Input
                             {
                                 if (value.Contains(",")) value = value.Remove(',');
                             }
+
+                            switch (datatype)
+                            {
+                                case "Double": {
+                                        double tmp = 0;
+                                        if(double.TryParse(value, NumberStyles.Any, new CultureInfo("en-US"), out tmp))
+                                            value = tmp.ToString("G16", new CultureInfo("en-US"));
+                                        break; }
+
+                                case "Decimal":
+                                    {
+                                        decimal tmp = 0;
+                                        if(decimal.TryParse(value, NumberStyles.Any, new CultureInfo("en-US"), out tmp))
+                                            value = ""+tmp.ToString("G29", new CultureInfo("en-US"));
+                                        break;
+                                    }
+                                case "Float":
+                                    {
+                                        float tmp = 0;
+                                        if (float.TryParse(value, NumberStyles.Any, new CultureInfo("en-US"), out tmp))
+                                            value = ""+tmp.ToString("G7", new CultureInfo("en-US"));
+                                        break;
+                                    }
+                            }
+
                         }
                         else
                         {
-                            value = row[i];
+                            value = row[i].Trim();
                         }
                     }
                 }
@@ -312,6 +338,19 @@ namespace BExIS.IO.Transform.Input
 
         #region validation
 
+        private void setValidationInformation()
+        { 
+        
+        }
+
+        VariableIdentifier hv = new VariableIdentifier();
+        ValueValidationManager validationManager;
+        List<Error> temp = new List<Error>();
+        List<Error> temp2 = new List<Error>();
+        List<Error> errors = new List<Error>();
+        Variable var = null;
+        string v;
+        object value;
         /// <summary>
         /// Validate a row
         /// </summary>
@@ -321,8 +360,8 @@ namespace BExIS.IO.Transform.Input
         /// <returns>List of errors or null</returns>
         public List<Error> ValidateRow(List<string> row, int indexOfRow)
         {
-            
-            List<Error> errors = new List<Error>();
+            errors = new List<Error>();
+
 
             // number of variables in datastructure
             int numOfVariables = this.StructuredDataStructure.Variables.Count();
@@ -334,48 +373,36 @@ namespace BExIS.IO.Transform.Input
             if (numOfVariables.Equals(rowCount))
             {
                 int valuePosition = 0;
-                foreach (string v in row)
+                for (int i = 0; i < row.Count; i++)
                 {
+                    v = row[i];
                     try
                     {
-                        VariableIdentifier hv = SubmitedVariableIdentifiers.ElementAt(row.IndexOf(v));
-                        Variable sdvu = getVariableUsage(hv);
+                        hv = SubmitedVariableIdentifiers.ElementAt(i);
+                        var = getVariableUsage(hv);
+                        validationManager = ValueValidationManagerDic[var.Id];
 
-                        ValueValidationManager validationManager = ValueValidationManagerDic[sdvu.Id];
-
-                        List<Error> temp = new List<Error>();
-
-                        // returns the checked value and update the error list if error appears
-                        object value = validationManager.CheckValue(v, indexOfRow, ref temp);
-
-                        if (temp.Count == 0)
+                        //check if the value is a missing value
+                        if (!validationManager.ValueIsMissingValue(v, indexOfRow))
                         {
-                            temp = validationManager.ValidateValue(v, indexOfRow);
+                            // returns the checked value and update the error list if error appears
+                            value = validationManager.CheckValue(v, indexOfRow, ref temp);
 
-                            // check Constraints
-                            foreach (Constraint constraint in sdvu.DataAttribute.Constraints)
+                            if (temp.Count == 0)
                             {
-                                //new Error(ErrorType.Value, "Not in Range", new object[] { name, value, row, dataType });
-                                if (!constraint.IsSatisfied(value))
-                                    temp.Add(new Error(ErrorType.Value, constraint.ErrorMessage, new object[] { sdvu.Label, value, indexOfRow, sdvu.DataAttribute.DataType.Name }));
+                                temp = validationManager.ValidateValue(v, indexOfRow);
+                                temp2 = validationManager.ValidateConstraints(v, indexOfRow);
+                                temp = temp.Union(temp2).ToList();
                             }
-                        }
 
-                        if (temp != null)
-                        {
-                            //check if the not valide valus is a missing value
-                            if (!validationManager.ValueIsMissingValue(v, indexOfRow))
-                                errors = errors.Union(temp).ToList();
+                            if(temp.Any()) errors = errors.Union(temp).ToList();
                         }
-
                         valuePosition++;
                     }
-                    catch
+                    catch(Exception ex)
                     {
-                        //test
-                        if (true)
-                        {
-                        }
+                        Error e = new Error(ErrorType.Other, "Error : "+ex.Message);
+                        errors.Add(e);
                     }
                 }
             }
@@ -477,13 +504,18 @@ namespace BExIS.IO.Transform.Input
             string pattern = "";
             DataAttribute dataAttribute = variable.DataAttribute;
 
+            if (string.IsNullOrEmpty(varName))
+            {
+                varName = variable.Label;
+            }
+
             if (dataAttribute != null && dataAttribute.DataType != null && dataAttribute.DataType.Extra != null)
             {
                 DataTypeDisplayPattern displayPattern = DataTypeDisplayPattern.Materialize(dataAttribute.DataType.Extra);
                 if (displayPattern != null) pattern = displayPattern.StringPattern;
             }
 
-            ValueValidationManager vvm = new ValueValidationManager(varName, dataType, optional, Info.Decimal, pattern, variable.MissingValues, CultureInfo.CurrentCulture);
+            ValueValidationManager vvm = new ValueValidationManager(varName, dataType, optional, Info.Decimal, pattern, variable.MissingValues, CultureInfo.CurrentCulture, variable.DataAttribute.Constraints);
 
             return vvm;
         }

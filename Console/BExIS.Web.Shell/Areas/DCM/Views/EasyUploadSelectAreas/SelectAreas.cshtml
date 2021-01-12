@@ -5,45 +5,45 @@
 
 
 <style>
-    .selectAreasButton{
+    .selectAreasButton {
         padding: 5px 10px;
     }
 
-    #setSelectedHeaderArea{
+    #setSelectedHeaderArea {
         background-color: rgba(102, 7, 5, 1) !important;
     }
 
-    #setSelectDataArea{
+    #setSelectDataArea {
         background-color: rgba(56, 5, 102, 1) !important;
     }
 
-    #expandSelection{
+    #expandSelection {
         background-color: rgba(56, 5, 102, 1) !important;
     }
 
-    .headerMarking{
+    .headerMarking {
         background-color: rgba(102, 7, 5, 0.5) !important;
     }
 
-    .dataMarking{
+    .dataMarking {
         background-color: rgba(56, 5, 102, 0.5) !important;
     }
 
-    #tableControlRight{
+    #tableControlRight {
         float: right;
     }
 
-        #tableControlRight select{
+        #tableControlRight select {
             max-width: 150px;
             text-overflow: ellipsis;
         }
 
     /*Overwriting the css of the wizard*/
-    #Step4 .uploadWizardStep_Main{
+    #Step4 .uploadWizardStep_Main {
         width: 90%
     }
 
-    #Step4 .uploadWizardStep_Content{
+    #Step4 .uploadWizardStep_Content {
         height: auto;
     }
 
@@ -62,6 +62,10 @@
     }
 </style>
 
+<script src="@Url.Content("~/Scripts/handsontable/handsontable.full.js")" type="text/javascript"></script>
+}
+
+
 <div id="Step4" class="uploadWizardStep">
 
     <div class="uploadWizardStep_Main">
@@ -74,7 +78,7 @@
         </div>
 
         <!--<button id="showKnownErrorsButton" onclick="showKnownDisplayErrors()">
-            Why is my data not displayed correctly? 
+            Why is my data not displayed correctly?
             <i class="fa fa-caret-square-o-down" aria-hidden="true"></i>
         </button>
         <div id="knownDisplayErrors">
@@ -144,7 +148,7 @@
             {
                 <ul>
                     @foreach (BExIS.IO.Transform.Validation.Exceptions.Error s in @Model.ErrorList)
-                {
+                    {
                         <li>@s.ToString()</li>
                     }
                 </ul>

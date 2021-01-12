@@ -90,7 +90,7 @@ namespace BExIS.Security.Services.Objects
 
         public EntityReference Create(long sourceId, long sourceEntityId, int sourceEntityVersion, long targetId, long targetEntityId, int targetEntityVersion, string context, string type)
         {
-            EntityReference entityReference = new EntityReference(sourceId, sourceEntityId, sourceEntityVersion, targetId, targetEntityId, targetEntityVersion, context, type);
+            EntityReference entityReference = new EntityReference(sourceId, sourceEntityId, sourceEntityVersion, targetId, targetEntityId, targetEntityVersion, context, type, DateTime.Now);
 
             using (var uow = this.GetUnitOfWork())
             {

@@ -1,7 +1,7 @@
 ﻿@model BExIS.Modules.Rpm.UI.Models.MissingValueStruct
 
 <tr class="bx-rpm-missing-value-item">
-    <td class="mvname" width="20%">
+    <td class="mvname" width="20%" style="width: 100px;">
         <div class="hidden" id="mvid">@Model.Id</div>
         <div class="bx-rpm-label">Placeholder</div>
         <div class="bx-rpm-text">@Html.TextBox("DisplayName", Model.DisplayName, new { @id = "mvlabel" })</div>

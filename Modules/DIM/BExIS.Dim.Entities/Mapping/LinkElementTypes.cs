@@ -9,6 +9,7 @@
         License = 2,
         ProjectTitle = 3,
         Title = 4,
+        Email = 5,
 
         //Automatic System Keys starts at 100
         Id = 100,

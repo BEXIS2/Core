@@ -12,7 +12,6 @@ namespace BExIS.Security.Entities.Versions
         public virtual long Id { get; set; }
         public virtual string Module { get; set; }
         public virtual string Value { get; set; }
-
         public virtual DateTime Date { get; set; }
     }
 }

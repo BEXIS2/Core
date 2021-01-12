@@ -2,6 +2,7 @@
 using BExIS.Modules.Sam.UI.Models;
 using BExIS.Security.Entities.Subjects;
 using BExIS.Security.Services.Subjects;
+using BExIS.Security.Services.Utilities;
 using BExIS.UI.Helpers;
 using BExIS.Utils.NH.Querying;
 using Microsoft.AspNet.Identity;
@@ -193,8 +194,13 @@ namespace BExIS.Modules.Sam.UI.Controllers
                     var duplicateUser = userManager.FindByEmailAsync(model.Email).Result;
                     if (duplicateUser != null) ModelState.AddModelError("Email", "The email address exists already.");
                     if (!ModelState.IsValid) return PartialView("_Update", model);
-                }
 
+                    var es = new EmailService();
+                    es.Send(MessageHelper.GetUpdateEmailHeader(),
+                        MessageHelper.GetUpdaterEmailMessage(user.DisplayName, user.Email, model.Email),
+                        ConfigurationManager.AppSettings["SystemEmail"]
+                        );
+                }
                 user.Email = model.Email;
 
                 // Update email in party

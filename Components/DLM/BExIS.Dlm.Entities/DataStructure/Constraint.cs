@@ -202,7 +202,8 @@ namespace BExIS.Dlm.Entities.DataStructure
         /// <param name="auxiliary"></param>
         public override bool IsSatisfied(object data, object auxiliary = null)
         {
-            this.Materialize(); // test it
+            if(Items == null && !Items.Any())this.Materialize(); // test it
+
             // Domain items are stored as string, so instead of converting them to the containers data type, it is easier and faster to convert the input data to string
             // it computes the XOR between the positive clause of the constraint and the "Negated" Boolean,
             // meaning if Negated is true the function returns false for inputs that are in the domain
