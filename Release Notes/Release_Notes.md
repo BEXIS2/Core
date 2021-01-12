@@ -9,7 +9,20 @@
 - Add creation date for entity reference creation 
 - Change Help order and names closes ([#683](https://github.com/BEXIS2/Core/issues/683))
 - Add dataset id to all system messages ([#680](https://github.com/BEXIS2/Core/issues/680))
+- Adding info during excel upload that the values are uploaded from the formatted cells ([#678](https://github.com/BEXIS2/Core/issues/678))
+- Performance improvement in validation during the upload ([#676](https://github.com/BEXIS2/Core/issues/676) , [#648](https://github.com/BEXIS2/Core/issues/648))
+- STATTLS is now also supported for the configuration of SMTP ([#650](https://github.com/BEXIS2/Core/issues/650))
+- Data validation extension to include the length of floating point numbers. ([#645](https://github.com/BEXIS2/Core/issues/645))
+- Change of the error message if a dataset does not exist. ([#631](https://github.com/BEXIS2/Core/issues/631))
+  
 ### Bugs
+
+- Fix incorrect display of effective rights ([#679](https://github.com/BEXIS2/Core/issues/679))
+- Fix incorrect type selection when selecting type on the top level ([#662](https://github.com/BEXIS2/Core/issues/662))
+- Fix incorrect datetime download in excel ([#658](https://github.com/BEXIS2/Core/issues/658))
+- Fix error when uploading data from different source files ([#657](https://github.com/BEXIS2/Core/issues/657))
+- Fix Dataset Title is not displayed in the request and respond email ([#652](https://github.com/BEXIS2/Core/issues/652))
+- Fix Metadata is not updated after deleting unstructured data  ([#643](https://github.com/BEXIS2/Core/issues/643))
 
 
 ## I. Software Information
