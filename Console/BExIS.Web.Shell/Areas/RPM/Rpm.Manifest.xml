@@ -19,8 +19,8 @@
             controller="Unit" action="" argument=""
             extends="./menubarRoot/Plan"/>
     
-    <Export tag="lunchbar" id="helpRpm" order="1"
-        title="Data Planning" description="Data Planning Help Manual" icon=""
+    <Export tag="lunchbar" id="helpRpm" order="4"
+        title="Data Structure" description="Data Planning Help Manual" icon=""
         controller="Help" action="index"
         extends="./lunchbarRoot/help"
             />

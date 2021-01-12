@@ -30,7 +30,7 @@ namespace BExIS.Dlm.Orm.NH.Utils
         public DataTable Retrieve(long datasetId)
         {
             StringBuilder mvBuilder = new StringBuilder();
-            mvBuilder.AppendLine(string.Format("SELECT * FROM {0} Order by OrderNo, Id;", this.BuildName(datasetId).ToLower()));
+            mvBuilder.AppendLine(string.Format("SELECT * FROM {0} Order by Id;", this.BuildName(datasetId).ToLower()));
             // execute the statement
             return retrieve(mvBuilder.ToString(), datasetId);
         }
@@ -38,7 +38,7 @@ namespace BExIS.Dlm.Orm.NH.Utils
         public DataTable Retrieve(long datasetId, int pageNumber, int pageSize)
         {
             StringBuilder mvBuilder = new StringBuilder();
-            mvBuilder.AppendLine(string.Format("SELECT * FROM {0} Order by OrderNo, Id OFFSET {1} LIMIT {2};", this.BuildName(datasetId).ToLower(), pageNumber * pageSize, pageSize));
+            mvBuilder.AppendLine(string.Format("SELECT * FROM {0} Order by Id OFFSET {1} LIMIT {2};", this.BuildName(datasetId).ToLower(), pageNumber * pageSize, pageSize));
             // execute the statement
             return retrieve(mvBuilder.ToString(), datasetId);
         }
@@ -63,7 +63,7 @@ namespace BExIS.Dlm.Orm.NH.Utils
                 .Append(string.IsNullOrWhiteSpace(projectionClause) ? "*" : projectionClause).Append(" ") // projection
                 .Append("FROM ").Append(this.BuildName(datasetId).ToLower()).Append(" ") // source mat. view
                 .Append(string.IsNullOrWhiteSpace(whereClause) ? "" : "WHERE (" + whereClause + ")").Append(" ") // where
-                .Append(string.IsNullOrWhiteSpace(orderbyClause) ? "Order By OrderNo, Id" : "Order By " + orderbyClause).Append(" ") //order by
+                .Append(string.IsNullOrWhiteSpace(orderbyClause) ? "Order by Id" : "Order By " + orderbyClause).Append(" ") //order by
                 .Append(pageNumber <= 0 ? "" : "OFFSET " + pageNumber * pageSize).Append(" ") //offset
                 .Append(pageSize <= 0 ? "LIMIT 10" : "LIMIT " + pageSize) // limit, default page size is 10
                 .AppendLine()
@@ -130,13 +130,14 @@ namespace BExIS.Dlm.Orm.NH.Utils
         public void Create(long datasetId, List<Tuple<string, string, int, long>> columnDefinitionList)
         {
             StringBuilder mvBuilder = new StringBuilder();
+            StringBuilder indexBuilder = new StringBuilder();
             // build MV's name
             mvBuilder.AppendLine(string.Format("CREATE MATERIALIZED VIEW {0} AS", this.BuildName(datasetId)));
             // build MV's SELECT statement
             StringBuilder selectBuilder = new StringBuilder("SELECT").AppendLine(); // all the strings come form the tamplates
             selectBuilder
                 .AppendLine(string.Format("{0},", "t.id AS Id"))
-                .AppendLine(string.Format("{0},", "t.orderno AS OrderNo"))
+                //.AppendLine(string.Format("{0},", "t.orderno AS OrderNo"))
                 .AppendLine(string.Format("{0},", "t.timestamp AS Timestamp"))
                 .AppendLine(string.Format("{0},", "t.datasetversionref AS VersionId"))
                 ;
@@ -162,11 +163,18 @@ namespace BExIS.Dlm.Orm.NH.Utils
                                         //.Append("WITH DATA") //marks the view as queryable even if there is no data at creation time.
                 ;
 
+            // create index on id
+            string indexName = this.BuildName(datasetId) + "Index";
+            indexBuilder.AppendLine(string.Format("CREATE UNIQUE INDEX {1} ON {0}(Id)", this.BuildName(datasetId), indexName).ToString());
+
             // build the satetment
             mvBuilder
                 //.Append(" ")
                 .Append(selectBuilder)
                 .AppendLine(";")
+                .Append(indexBuilder)
+                .AppendLine(";")
+
                 ;
             // execute the statement
             try

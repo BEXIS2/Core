@@ -319,8 +319,8 @@ namespace BExIS.Modules.Rpm.UI.Controllers
             if (str != "" && str != null)
             {
                 str = str.Trim();
-                if (str.Length > 255)
-                    str = str.Substring(0, 255);
+                //if (str.Length > 255)
+                    //str = str.Substring(0, 255);
             }
             return (str);
         }

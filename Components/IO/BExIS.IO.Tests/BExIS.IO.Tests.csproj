@@ -201,6 +201,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="FileHelperTests.cs" />
+    <Compile Include="Helper\DataGeneratorHelper.cs" />
     <Compile Include="IOHelperTests.cs" />
     <Compile Include="IOUtilityTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

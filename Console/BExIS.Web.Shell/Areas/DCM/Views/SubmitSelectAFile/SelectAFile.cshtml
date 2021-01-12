@@ -102,7 +102,14 @@
                         <div class="uploadWizardStep_Success stepper">
                             <div id="fileNameDiv">
                                 @if (Model.SelectedFileName != "")
-                                {@Model.SelectedFileName}
+                                {
+                                    @Model.SelectedFileName
+
+                                    if (Model.SelectedFileName.Contains("xls"))
+                                    {
+                                        <br /><br /><p><b>An Excel file was selected.<br /> The formatted, displayed values are used for further processing.</b></p>
+                                    }
+                                }
                             </div>
                         </div>
                     </td>
@@ -244,7 +251,15 @@
     function SelectFileProcess_OnSuccess(e) {
 
         $('.uploadWizardStep_Error').empty();
-        $('#fileNameDiv').text(e.files[0].name);
+
+        if (e.files[0].name.indexOf("xls") != -1) {
+            $('#fileNameDiv').html(e.files[0].name + "<p><b>Please notice: Data will be imported as displayed in Excel.</b></p>");
+        }
+        else {
+            $('#fileNameDiv').html(e.files[0].name);
+        }
+
+
         $('#fileNameDivHelp').text("Selected file.");
     }
 
@@ -252,7 +267,6 @@
     {
 
         var value = $(this).val();
-
 
         $.post('@Url.Action("SelectFileFromServerProcess", @Model.StepInfo.PostActionInfo.ControllerName , new RouteValueDictionary { { "area", "DCM" } })',
                 { fileName: value },
