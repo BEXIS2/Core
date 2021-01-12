@@ -1,4 +1,7 @@
 # BEXIS 2.14.3 Release Notes
+
+> Attention ! changes have been made in SMTP credentials and web.config. If an update is made, please use the new files and adapt them.
+
 ### Features
 - Extent API: Data statistics and data quality ([#655](https://github.com/BEXIS2/Core/issues/655))
 
@@ -24,11 +27,10 @@
 - Fix Dataset Title is not displayed in the request and respond email ([#652](https://github.com/BEXIS2/Core/issues/652))
 - Fix Metadata is not updated after deleting unstructured data  ([#643](https://github.com/BEXIS2/Core/issues/643))
 
-
 ## I. Software Information
 
 -	Name: BEXIS
--	Version: 2.14.2
+-	Version: 2.14.3
 -	Application Type: Web Application
 -	Platform: Windows
 
@@ -38,10 +40,9 @@
 
 ## III. System Requirements
 
-- Operating System: Windows Server 2008 or 2012. For personal or small installations, the software is able to run on Windows 7, too
+- Operating System: Windows Server 2008 or upper. For personal or small installations, the software is able to run on Windows 10, too
 - Application Server: IIS 7.0 +. For IIS settings see the installation manual
 - DBMS:
-	- IBM DB2 Express C 10 (version 10.1.2) 32 or 64 bits. BEXIS has not been tested on other versions!
 	- PostgreSQL: (version 9 - 10) 32 or 64 bits. BEXIS has not been tested on other versions!
 - Dependencies
 	- Microsoft.NET Framework 4.5.2
