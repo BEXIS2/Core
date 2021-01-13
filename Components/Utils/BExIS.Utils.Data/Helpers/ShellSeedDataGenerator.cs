@@ -28,9 +28,9 @@ namespace BExIS.Utils.Data.Helpers
                 var o7 = operationManager.Find("Shell", "Ldap", "*") ?? operationManager.Create("Shell", "Ldap", "*");
                 var o8 = operationManager.Find("Shell", "Help", "*") ?? operationManager.Create("Shell", "Help", "*");
 
-                if (!versionManager.Exists("Shell", "2.14.0"))
+                if (!versionManager.Exists("Shell", "2.14.3"))
                 {
-                    versionManager.Create("Shell", "2.14.0");
+                    versionManager.Create("Shell", "2.14.3");
                 }
             }
         }
