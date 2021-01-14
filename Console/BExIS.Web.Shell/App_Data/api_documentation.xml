@@ -619,6 +619,41 @@
         logical operators, nesting, precedence, and SOME functions should be supported.
       </remarks>
     </member>
+    <member name="T:BExIS.Modules.Dim.UI.Controllers.DataStatisticOutController">
+      <summary>
+        This class is designed as a Web API to allow various client tools request datasets or a view on data sets and get the result in
+        either of XML, JSON, or CSV formats.
+      </summary>
+      <remarks>
+        This class is designed as a Web API to allow various client tools request datasets or a view on data sets and get the result in
+        either of XML, JSON, or CSV formats.
+        The design follows the RESTFull pattern mentioned in http://www.asp.net/web-api/overview/older-versions/creating-a-web-api-that-supports-crud-operations
+        CSV formatter is implemented in the DataTupleCsvFormatter class in the Models folder.
+        The formatter is registered in the WebApiConfig as an automatic formatter, so if the clinet sets the request's Mime type to text/csv, this formatter will be automatically engaged.
+        text/xml and text/json return XML and JSON content accordingly.
+      </remarks>
+    </member>
+    <member name="M:BExIS.Modules.Dim.UI.Controllers.DataStatisticOutController.Get">
+      <summary>
+        Get a list of all structured dataset ids
+      </summary>
+      <returns>List of ids</returns>
+    </member>
+    <member name="M:BExIS.Modules.Dim.UI.Controllers.DataStatisticOutController.Get(System.Int32)">
+      <summary>
+        Get unique values, max and min values, and max and min length for all variables
+      </summary>
+      <param name="id">Dataset Id</param>
+      <returns>unique values, max, min, length</returns>
+    </member>
+    <member name="M:BExIS.Modules.Dim.UI.Controllers.DataStatisticOutController.Get(System.Int64,System.Int32)">
+      <summary>
+        Get unique values, max and min values, and max and min length for one variable
+      </summary>
+      <param name="id">Dataset Id</param>
+      <param name="variableId">Varibale Id</param>
+      <returns>unique values, max, min, length</returns>
+    </member>
     <member name="M:BExIS.Modules.Dim.UI.Controllers.ExportGFBIOController.Get">
       <summary>
         Show all Datasetids with export functions

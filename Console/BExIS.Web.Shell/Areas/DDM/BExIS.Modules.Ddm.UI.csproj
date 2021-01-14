@@ -446,6 +446,7 @@
     <Content Include="Views\Dashboard\_myDatasetsView.cshtml" />
     <Content Include="Views\Dashboard\_myDatasetsViewHeader.cshtml" />
     <Content Include="Views\Shared\Error.cshtml" />
+    <Content Include="Views\Data\Show.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

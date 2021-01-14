@@ -161,7 +161,7 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Config
                         }
                         catch
                         {
-                            throw;
+                            
                         }
                     }
 

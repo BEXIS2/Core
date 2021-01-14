@@ -128,6 +128,18 @@ namespace BExIS.IO.Transform.Validation.Exceptions
         /// <seealso cref=""/>
         /// <param>NA</param>
         /// <returns></returns>
+        public ErrorType GetType()
+        {
+            return _errorType;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>
+        /// <param>NA</param>
+        /// <returns></returns>
         public override string ToString()
         {
             switch(_errorType)

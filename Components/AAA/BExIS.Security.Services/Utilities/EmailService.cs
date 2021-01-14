@@ -1,162 +1,82 @@
 ﻿using Microsoft.AspNet.Identity;
-using System;
+using MimeKit;
 using System.Collections.Generic;
 using System.Configuration;
-using System.Diagnostics;
-using System.Net;
-using System.Net.Mail;
+using System.Linq.Dynamic;
 using System.Threading.Tasks;
 using Vaiona.Utils.Cfg;
+using System.Linq;
+using MailKit.Net.Smtp;
 
 namespace BExIS.Security.Services.Utilities
 {
     public class EmailService : IIdentityMessageService
     {
-        private readonly SmtpClient _smtp;
-        private string AppId = "";
-
         public EmailService()
         {
-            _smtp = new SmtpClient()
-            {
-                Host = ConfigurationManager.AppSettings["Email_Host"],
-                Port = int.Parse(ConfigurationManager.AppSettings["Email_Port"]),
-                EnableSsl = bool.Parse(ConfigurationManager.AppSettings["Email_Ssl"])
-            };
-
-            if (bool.Parse(ConfigurationManager.AppSettings["Email_Anonymous"]))
-            {
-                _smtp.UseDefaultCredentials = false;
-            }
-            else
-            {
-                _smtp.Credentials = new NetworkCredential(ConfigurationManager.AppSettings["Email_Account"],
-                    ConfigurationManager.AppSettings["Email_Password"]);
-            }
-
-            if (!string.IsNullOrEmpty(AppConfiguration.ApplicationName))
-            {
-                AppId = AppConfiguration.ApplicationName + " - ";
-            }
-
         }
 
-        public void Send(string subject, string body, List<string> destinations, List<string> ccs = null, List<string> bccs = null, List<string> replyToLists = null)
+        public void Send(MimeMessage message)
         {
-
-            using (var mail = new MailMessage())
+            using (var client = new SmtpClient())
             {
+                client.Connect(ConfigurationManager.AppSettings["Email_Host_Name"], int.Parse(ConfigurationManager.AppSettings["Email_Host_Port"]), MailKit.Security.SecureSocketOptions.Auto);
+                client.Authenticate(ConfigurationManager.AppSettings["Email_Account_Name"], ConfigurationManager.AppSettings["Email_Account_Password"]);
 
-                mail.From = new MailAddress(ConfigurationManager.AppSettings["Email_From"]);
-                mail.To.Add(string.Join(",", destinations));
+                client.Send(message);
 
-                ccs = getValidEmails(ccs);
-                if (ccs != null) mail.CC.Add(string.Join(",", ccs));
-
-                bccs = getValidEmails(bccs);
-                if (bccs != null) mail.Bcc.Add(string.Join(",", bccs));
-
-                replyToLists = getValidEmails(replyToLists);
-                if (replyToLists != null) mail.ReplyToList.Add(string.Join(",", replyToLists));
-
-                mail.Subject = AppId + subject;
-                mail.Body = body;
-                mail.IsBodyHtml = true;
-
-
-
-                try
-                {
-                    _smtp.Send(mail);
-                }
-                catch (Exception ex)
-                {
-                    Trace.TraceError(ex.Message + " smtp service is probably not configured correctly.");
-                }
+                client.Disconnect(true);
             }
+        }
+
+        public void Send(string subject, string body, List<string> destinations, List<string> ccs = null, List<string> bccs = null, List<string> replyTos = null)
+        {
+            var mimeMessage = new MimeMessage();
+
+            mimeMessage.From.Add(new MailboxAddress(ConfigurationManager.AppSettings["Email_From_Name"], ConfigurationManager.AppSettings["Email_From_Address"]));
+            if (destinations != null)
+                mimeMessage.To.AddRange(destinations.Select(d => new MailboxAddress(d, d)));
+            if (ccs != null)
+                mimeMessage.Cc.AddRange(ccs.Select(c => new MailboxAddress(c, c)));
+            if (bccs != null)
+                mimeMessage.Bcc.AddRange(bccs.Select(b => new MailboxAddress(b, b)));
+            if (replyTos != null)
+                mimeMessage.ReplyTo.AddRange(replyTos.Select(r => new MailboxAddress(r, r)));
+            mimeMessage.Subject = AppConfiguration.ApplicationName + " - " + subject;
+            mimeMessage.Body = new TextPart(MimeKit.Text.TextFormat.Html) { Text = body };
+
+            Send(mimeMessage);
         }
 
         public void Send(string subject, string body, string destination)
         {
-            if (IsValidEmail(destination))
-            {
-                IdentityMessage message = new IdentityMessage()
-                {
-                    Subject = AppId + subject,
-                    Body = body,
-                    Destination = destination
-                };
-
-                var from = new MailAddress(ConfigurationManager.AppSettings["Email_From"]);
-
-                var to = new MailAddress(message.Destination);
-
-                using (var mail = new MailMessage(from, to))
-                {
-                    mail.Body = message.Body;
-                    mail.IsBodyHtml = true;
-                    mail.Subject = message.Subject;
-
-                    try
-                    {
-                        _smtp.Send(mail);
-                    }
-                    catch (Exception ex)
-                    {
-                        Trace.TraceError(ex.Message + " smtp service is probably not configured correctly.");
-                    }
-                }
-            }
+            Send(subject, body, new List<string>() { destination }, null, null, null);
         }
 
         public void Send(IdentityMessage message)
         {
-            var from = new MailAddress(ConfigurationManager.AppSettings["Email_From"]);
+            var mimeMessage = new MimeMessage();
 
-            var to = new MailAddress(message.Destination);
-            using (var mail = new MailMessage(from, to))
-            {
+            mimeMessage.From.Add(new MailboxAddress(ConfigurationManager.AppSettings["Email_From_Name"], ConfigurationManager.AppSettings["Email_From_Address"]));
+            mimeMessage.To.Add(new MailboxAddress(message.Destination, message.Destination));
+            mimeMessage.Subject = AppConfiguration.ApplicationName + " - " + message.Subject;
+            mimeMessage.Body = new TextPart(MimeKit.Text.TextFormat.Html) { Text = message.Body };
 
-                mail.Body = message.Body;
-                mail.IsBodyHtml = true;
-                mail.Subject = AppId + message.Subject;
-
-                try
-                {
-                    _smtp.Send(mail);
-                }
-                catch (Exception ex)
-                {
-                    Trace.TraceError(ex.Message + " smtp service is probably not configured correctly.");
-                }
-            }
-        }
-
-        public void Send(string v1, string v2, object p)
-        {
-            throw new NotImplementedException();
+            Send(mimeMessage);
         }
 
         public async Task SendAsync(IdentityMessage message)
         {
-            var from = new MailAddress(ConfigurationManager.AppSettings["Email_From"]);
+            var mimeMessage = new MimeMessage();
 
-            var to = new MailAddress(message.Destination);
-            using (var mail = new MailMessage(from, to))
-            {
-                mail.Body = message.Body;
-                mail.IsBodyHtml = true;
-                mail.Subject = AppId + message.Subject;
+            mimeMessage.From.Add(new MailboxAddress(ConfigurationManager.AppSettings["Email_From_Name"], ConfigurationManager.AppSettings["Email_From_Address"]));
+            mimeMessage.To.Add(new MailboxAddress(message.Destination, message.Destination));
+            mimeMessage.Subject = AppConfiguration.ApplicationName + " - " + message.Subject;
+            mimeMessage.Body = new TextPart(MimeKit.Text.TextFormat.Html) { Text = message.Body };
 
-                try
-                {
-                    await _smtp.SendMailAsync(mail);
-                }
-                catch (Exception ex)
-                {
-                    Trace.TraceError(ex.Message + " smtp service is probably not configured correctly.");
-                }
-            }
+            Send(mimeMessage);
+
+            await Task.FromResult(0);
         }
 
         private bool IsValidEmail(string email)
@@ -181,7 +101,7 @@ namespace BExIS.Security.Services.Utilities
                 if (!IsValidEmail(emails[i])) emails.RemoveAt(i);
             }
 
-            return emails.Count > 0 ? emails : null ;
+            return emails.Count > 0 ? emails : null;
         }
     }
 }

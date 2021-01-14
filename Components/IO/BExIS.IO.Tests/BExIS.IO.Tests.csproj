@@ -201,10 +201,12 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="FileHelperTests.cs" />
+    <Compile Include="Helper\DataGeneratorHelper.cs" />
     <Compile Include="IOHelperTests.cs" />
     <Compile Include="IOUtilityTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Transform\Input\AsciiReaderEncodingTest.cs" />
+    <Compile Include="Transform\Input\ExcelReaderTest.cs" />
     <Compile Include="Transform\Input\AsciiReaderTest.cs" />
     <Compile Include="Transform\Input\DataReaderTests.cs" />
   </ItemGroup>

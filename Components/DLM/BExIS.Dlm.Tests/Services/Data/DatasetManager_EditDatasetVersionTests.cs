@@ -6,6 +6,7 @@ using BExIS.Dlm.Services.Data;
 using BExIS.Dlm.Services.MetadataStructure;
 using BExIS.Dlm.Tests.Helpers;
 using BExIS.Utils.Config;
+using BExIS.Utils.Upload;
 using FluentAssertions;
 using NUnit.Framework;
 using System;
@@ -58,7 +59,7 @@ namespace BExIS.Dlm.Tests.Services.Data
                 datasetId = dataset.Id;
 
                 // add datatuples
-                dataset = dsHelper.GenerateTuplesForDataset(dataset, dataStructure, numberOfTuples, username);
+                dataset = dsHelper.GenerateTuplesWithRandomValuesForDataset(dataset, dataStructure, numberOfTuples, username);
                 dm.CheckInDataset(dataset.Id, "for testing  datatuples with versions", username, ViewCreationBehavior.None);
 
                 dm.SyncView(dataset.Id, ViewCreationBehavior.Create | ViewCreationBehavior.Refresh);
@@ -187,5 +188,75 @@ namespace BExIS.Dlm.Tests.Services.Data
                 }
             }
         }
+
+        [TestCase(0)]// primary key as int
+        [TestCase(2)]// primary key as double
+        public void EditDatasetVersion_UpdateAllDataTuples_SameNumberOfDatatuples(int primaryKeyIndex)
+        {
+            Dataset dataset;
+            DatasetVersion latest;
+            List<DataTuple> incoming = new List<DataTuple>();
+            int count = 0;
+            int expectedCount = 0;
+            List<long> datatupleFromDatabaseIds = new List<long>();
+
+            using (DatasetManager datasetManager = new DatasetManager())
+            {
+                //Arrange
+                dataset = datasetManager.GetDataset(datasetId);
+                latest = datasetManager.GetDatasetLatestVersion(datasetId);
+                datatupleFromDatabaseIds = datasetManager.GetDatasetVersionEffectiveTupleIds(latest);
+
+                //get updated tuples as incoming datatuples
+                incoming = dsHelper.GetUpdatedDatatuples(latest, dataset.DataStructure as StructuredDataStructure, datasetManager);
+
+                //because of updateing all datatuples the incoming number is should be equal then the existing one
+                expectedCount = incoming.Count;
+            }
+
+            using (DatasetManager datasetManager = new DatasetManager())
+            {
+                try
+                {
+
+
+                    if (datasetManager.IsDatasetCheckedOutFor(datasetId, "David") || datasetManager.CheckOutDataset(datasetId, "David"))
+                    {
+                        DatasetVersion workingCopy = datasetManager.GetDatasetWorkingCopy(datasetId);
+                        List<long> primaryKeys = new List<long>();
+
+                        //get primarykey ids
+                        // var 1 = int = 1
+                        // var 2 = string = 2
+                        // var 3 = double = 3
+                        // var 4 = boolean = 4
+                        // var 5 = datetime = 5
+                        List<long> varIds = ((StructuredDataStructure)workingCopy.Dataset.DataStructure).Variables.Select(v=>v.Id).ToList();
+
+                        primaryKeys.Add(varIds.ElementAt(primaryKeyIndex));
+
+                        //Act
+                        Dictionary<string, List<DataTuple>> splittedDatatuples = new Dictionary<string, List<DataTuple>>();
+                        UploadHelper uploadhelper = new UploadHelper();
+                        splittedDatatuples = uploadhelper.GetSplitDatatuples(incoming, primaryKeys, workingCopy, ref datatupleFromDatabaseIds);
+                        datasetManager.EditDatasetVersion(workingCopy, splittedDatatuples["new"], splittedDatatuples["edit"], null);
+                        datasetManager.CheckInDataset(datasetId, count + " rows", "David");
+
+
+                        //Assert
+                        long c = datasetManager.GetDatasetVersionEffectiveTupleCount(workingCopy);
+                        Assert.That(c, Is.EqualTo(expectedCount));
+
+                    }
+
+                }
+                catch (Exception ex)
+                {
+                    throw ex;
+                }
+            }
+        }
+
+
     }
 }
