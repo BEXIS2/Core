@@ -349,7 +349,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
 
                         LoggerFactory.LogCustom("Return");
 
-                        string title = datasetVersion.Title;
+                        title = datasetVersion.Title;
                         title = String.IsNullOrEmpty(title) ? "unknown" : title;
 
                         string message = string.Format("dataset {0} version {1} was downloaded as zip - {2}.", id,
