@@ -234,8 +234,8 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                             datasetManager.CheckInDataset(dataset.Id, data.Data.Length + " rows via api.", user.UserName);
 
                             //send email
-                            es.Send(MessageHelper.GetUpdateDatasetHeader(),
-                                MessageHelper.GetUpdateDatasetMessage(dataset.Id, title, user.UserName),
+                            es.Send(MessageHelper.GetUpdateDatasetHeader(dataset.Id),
+                                MessageHelper.GetUpdateDatasetMessage(dataset.Id, title, user.DisplayName),
                                 new List<string>() { user.Email },
                                        new List<string>() { ConfigurationManager.AppSettings["SystemEmail"] }
                                 );
@@ -499,8 +499,8 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                             datasetManager.CheckInDataset(dataset.Id, data.Data.Length + " rows via api.", user.UserName);
 
                             //send email
-                            es.Send(MessageHelper.GetUpdateDatasetHeader(),
-                                MessageHelper.GetUpdateDatasetMessage(dataset.Id, title, user.UserName),
+                            es.Send(MessageHelper.GetUpdateDatasetHeader(dataset.Id),
+                                MessageHelper.GetUpdateDatasetMessage(dataset.Id, title, user.DisplayName),
                                 new List<string>() { user.Email },
                                        new List<string>() { ConfigurationManager.AppSettings["SystemEmail"] }
                                 );

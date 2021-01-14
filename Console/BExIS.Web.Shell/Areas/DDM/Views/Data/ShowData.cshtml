@@ -32,7 +32,8 @@
 {
     This is a detailed view on all parts of a dataset. Depending on your
     permissions your are able to view, edit, or download either the
-    metadata, the primary data or the data structure.<br />
+    metadata, the primary data or the data structure.
+    <br />
     You may also set permissions for this particular dataset
     <p>
         <a href="~/ddm/Help/Index/#_overview" class="bx-informationLink" title="go to help" target="_blank">More</a>
@@ -49,94 +50,97 @@
 <link href="@Url.Content("~/Areas/Dcm/Content/bexis-metadata.css")" rel="stylesheet" type="text/css" />
 <link href="@Url.Content("~/Areas/DDM/Content/ddm.css")" rel="stylesheet" type="text/css" />
 
-<div id="showData">
+@if (Model != null)
+{
+
     <div id="showData">
-        <h1>@Model.Title</h1>
+        <div id="showData">
+            <h1>@Model.Title</h1>
 
-        @if (!Model.LatestVersion)
-        {
-            <div id="view-warning-container">
+            @if (!Model.LatestVersion)
+            {
+                <div id="view-warning-container">
 
-                <div id="view-warning" class="alert alert-info" role="alert" style="width: 100%;">
-                    <span id="view-warning-icon" class=" fa fa-exclamation-triangle"></span>
-                    Attention, this is not the latest version. Click <span class="btn-link" style="cursor: pointer;" onclick="selectVersion(@Model.Id, @Model.LatestVersion)"><b>here</b></span> to change to the latest version.
+                    <div id="view-warning" class="alert alert-info" role="alert" style="width: 100%;">
+                        <span id="view-warning-icon" class=" fa fa-exclamation-triangle"></span>
+                        Attention, this is not the latest version. Click <span class="btn-link" style="cursor: pointer;" onclick="selectVersion(@Model.Id, @Model.LatestVersion)"><b>here</b></span> to change to the latest version.
+                    </div>
                 </div>
-            </div>
-        }
+            }
 
-        <div id="view-header" class="row">
-            <div id="view-header-dataset-details" class="col-xs-6 col-md-6 col-lg-6 ">
-                <div class="row">
-                    <div class="col-md-6" style="white-space: nowrap;display: flex;">
-                        <div>
-                            <b>Dataset id:</b> @Model.Id
-                            <b style="padding-left: 5px;">Version:</b>
-                            @Html.DropDownListFor(m => m.VersionSelect, null, new { @class = "bx-dropdown", @style = "border:none;" })
+            <div id="view-header" class="row">
+                <div id="view-header-dataset-details" class="col-xs-6 col-md-6 col-lg-6 ">
+                    <div class="row">
+                        <div class="col-md-6" style="white-space: nowrap;display: flex;">
+                            <div>
+                                <b>Dataset id:</b> @Model.Id
+                                <b style="padding-left: 5px;">Version:</b>
+                                @Html.DropDownListFor(m => m.VersionSelect, null, new { @class = "bx-dropdown", @style = "border:none;" })
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
-            <div class="col-xs-2 col-md-2 col-lg-2">
-                <div id="preloaderContainer"></div>
-            </div>
+                <div class="col-xs-2 col-md-2 col-lg-2">
+                    <div id="preloaderContainer"></div>
+                </div>
 
-            <div id="view-header-dataset-options" class="col-xs-4 col-md-4 col-lg-4 pull-right text-right">
+                <div id="view-header-dataset-options" class="col-xs-4 col-md-4 col-lg-4 pull-right text-right">
 
-                @if (Model.DownloadAccess)
-                {
-
-                    if (Model.DataStructureType.ToLower().Equals("structured"))
-                    {
-                        <span class="dropdown">
-                            <button class="bx-button function" type="button" id="dropdownMenu1" data-toggle="dropdown" title="Download dataset with a selected dataformat for the primary data" aria-haspopup="true" aria-expanded="true">
-                                Download Data Package
-                                <span class="caret"></span>
-                            </button>
-                            <ul class="dropdown-menu" aria-labelledby="dropdownMenu1" style="z-index:100000; margin-top:10px;">
-                                <li><a href="@Url.Action("DownloadZip", "Data", new { id = @Model.Id, format = "application/xlsm", version = Model.VersionId  })">... with Template</a></li>
-                                <li><a href="@Url.Action("DownloadZip", "Data", new { id = @Model.Id, format = "application/xlsx", version = Model.VersionId })">... with Excel</a></li>
-                                <li><a href="@Url.Action("DownloadZip", "Data", new { id = @Model.Id, format = "text/csv", version = Model.VersionId })">... with CSV</a></li>
-                                <li><a href="@Url.Action("DownloadZip", "Data", new { id = @Model.Id, format = "text/tsv", version = Model.VersionId })">... with TSV</a></li>
-                                <li><a href="@Url.Action("DownloadZip", "Data", new { id = @Model.Id, format = "text/plain", version = Model.VersionId })">... with TXT</a></li>
-                            </ul>
-                        </span>
-                    }
-                    else
-                    {
-                        <a class="bx-button function" href="@Url.Action("DownloadZip", "Data", new { id = @Model.Id,version = Model.VersionId, format = "" })">Download Data Package</a>
-                    }
-                }
-                else
-                {
-                    if (Model.RequestAble)
+                    @if (Model.DownloadAccess)
                     {
 
-                        if (Model.RequestExist)
+                        if (Model.DataStructureType.ToLower().Equals("structured"))
                         {
-                            <button id="sendRequestBt" class="bx-button function bx-disabled" title="Send request to the owner of the dataset for the rights to see and download the primary data." disabled="disabled">Request Pending</button>
+                            <span class="dropdown">
+                                <button class="bx-button function" type="button" id="dropdownMenu1" data-toggle="dropdown" title="Download dataset with a selected dataformat for the primary data" aria-haspopup="true" aria-expanded="true">
+                                    Download Dataset
+                                    <span class="caret"></span>
+                                </button>
+                                <ul class="dropdown-menu" aria-labelledby="dropdownMenu1" style="z-index:100000; margin-top:10px;">
+                                    <li><a href="@Url.Action("DownloadZip", "Data", new { id = @Model.Id, format = "application/xlsm", version = Model.VersionId })">... with Template</a></li>
+                                    <li><a href="@Url.Action("DownloadZip", "Data", new { id = @Model.Id, format = "application/xlsx", version = Model.VersionId })">... with Excel</a></li>
+                                    <li><a href="@Url.Action("DownloadZip", "Data", new { id = @Model.Id, format = "text/csv", version = Model.VersionId })">... with CSV</a></li>
+                                    <li><a href="@Url.Action("DownloadZip", "Data", new { id = @Model.Id, format = "text/tsv", version = Model.VersionId })">... with TSV</a></li>
+                                    <li><a href="@Url.Action("DownloadZip", "Data", new { id = @Model.Id, format = "text/plain", version = Model.VersionId })">... with TXT</a></li>
+                                </ul>
+                            </span>
                         }
                         else
                         {
-                            @Html.TextArea("intention", new { @class = "bx-input", placeholder = "describe your intention " });
-                            <button id="sendRequestBt" datasetId="@Model.Id" class="bx-button function" title="Send request to the owner of the dataset for the rights to see and download the primary data.">Request Access</button>
+                            <a class="bx-button function" href="@Url.Action("DownloadZip", "Data", new { id = @Model.Id, version = Model.VersionId, format = "" })">Download</a>
                         }
                     }
                     else
                     {
-                        if (show_tabs["show_tabs_deactivated"] == "true")
+                        if (Model.RequestAble)
                         {
-                            <button id="sendRequestBt" class="bx-button function bx-disabled" title="Send request to the owner of the dataset for the rights to see and download the primary data. If the function is not available, please contact the administrator." disabled="disabled">Currently not available</button>
+
+                            if (Model.RequestExist)
+                            {
+                                <button id="sendRequestBt" class="bx-button function bx-disabled" title="Send request to the owner of the dataset for the rights to see and download the primary data." disabled="disabled">Request Pending</button>
+                            }
+                            else
+                            {
+                                @Html.TextArea("intention", new { @class = "bx-input", placeholder = "describe your intention " });
+                                <button id="sendRequestBt" datasetId="@Model.Id" class="bx-button function" title="Send request to the owner of the dataset for the rights to see and download the primary data.">Request Access</button>
+                            }
+                        }
+                        else
+                        {
+                            if (show_tabs["show_tabs_deactivated"] == "true")
+                            {
+                                <button id="sendRequestBt" class="bx-button function bx-disabled" title="Send request to the owner of the dataset for the rights to see and download the primary data. If the function is not available, please contact the administrator." disabled="disabled">Currently not available</button>
+                            }
                         }
                     }
-                }
+                </div>
             </div>
-        </div>
-        @if (@Model != null)
-        {
-            if (ViewData.ModelState.IsValid)
+            @if (@Model != null)
             {
+                if (ViewData.ModelState.IsValid)
+                {
 
-                @(Html.Telerik().TabStrip()
+                    @(Html.Telerik().TabStrip()
                                       .Name("ShowDataTabStrip")
                                       .SelectedIndex(tabIndex)
                                       .Items(tabs =>
@@ -178,7 +182,7 @@
                                                 .LoadContentFrom("ShowReferences", "Data", new { area = "ddm", id = @Model.Id, version = Model.Version })
                                                 .HtmlAttributes(new { id = "showreferences" })
                                                 .Enabled(false);
-                                                
+
                                           }
 
                                           if (show_tabs["show_permission_tab"] == "true" && !(show_tabs["show_tabs_deactivated"] == "false" && @Model.GrantAccess == false))
@@ -214,13 +218,13 @@
                                           }
                                       })
                                       .ClientEvents(e => e.OnSelect("OnSelectShowDataTabStrip")))
+                }
+                else
+                {
+                    @Html.ValidationSummary(true);
+                }
             }
-            else
-            {
-                @Html.ValidationSummary(true);
-            }
-        }
-        <script type="text/javascript">
+            <script type="text/javascript">
 
 	function grid_subjects_onDataBound() {
 		addTooltips();
@@ -228,7 +232,7 @@
 
 		$("#grid_subjects tbody input:checkbox").click(function () {
 			if ($(this).is(':checked')) {
-				$.post('@Url.Action("AddRightToEntityPermission", "UserPermissions", new { area = "sam"})',
+				$.post('@Url.Action("AddRightToEntityPermission", "UserPermissions", new { area = "sam" })',
 					{ SubjectId: $(this).data('subjectid'), EntityId: $(this).data('entityid'), InstanceId: $(this).data('instanceid'), RightType: $(this).data('righttype') },
 					function () {
 						$("#grid_subjects .t-refresh").trigger('click');
@@ -260,7 +264,7 @@
             $('#showData').empty();
 
             //$("#preloaderContainer").preloader(20, "Reloading...");
-            $.get('@Url.Action("Reload","Data", new { id= @Model.Id})', function (data) {
+            $.get('@Url.Action("Reload", "Data", new { id = @Model.Id })', function (data) {
 
                 $('#showData').replaceWith(data);
             })
@@ -354,7 +358,7 @@
 
 		$("#preloaderContainer").preloader(20, "Preparing zip file...");
 
-		window.location = '@Url.Action("DownloadZip", "Data", new { id = @Model.Id})';
+		window.location = '@Url.Action("DownloadZip", "Data", new { id = @Model.Id })';
 
 		$("#preloaderContainer").removePreloader();
 
@@ -393,8 +397,16 @@
     });
 
    function selectVersion(datasetId, versionNumber) {
-        var redirectURL = '@Url.Action("Show","Data")';
+        var redirectURL = '@Url.Action("Show", "Data")';
         window.location.href = redirectURL + "/" + datasetId + "?version=" + versionNumber;
    }
-        </script>
+            </script>
+        </div>
     </div>
+}
+else
+{
+
+    @Html.ValidationSummary(true);
+}
+

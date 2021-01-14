@@ -5,8 +5,11 @@ using BExIS.Dlm.Services.Administration;
 using BExIS.Dlm.Services.Data;
 using BExIS.Dlm.Services.DataStructure;
 using FluentAssertions;
+using NHibernate.Id.Insert;
 using System;
+using System.CodeDom;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -151,7 +154,7 @@ namespace BExIS.Dlm.Tests.Helpers
                     DataTuple dt = new DataTuple();
                     dt.VariableValues.Add(new VariableValue() { VariableId = dataStructure.Variables.First().Id, Value = r.Next()});
                     dt.VariableValues.Add(new VariableValue() { VariableId = dataStructure.Variables.Skip(1).First().Id, Value = "Test" });
-                    dt.VariableValues.Add(new VariableValue() { VariableId = dataStructure.Variables.Skip(2).First().Id, Value = r.Next() });
+                    dt.VariableValues.Add(new VariableValue() { VariableId = dataStructure.Variables.Skip(2).First().Id, Value = Convert.ToDouble(r.Next()) });
                     dt.VariableValues.Add(new VariableValue() { VariableId = dataStructure.Variables.Skip(3).First().Id, Value =  true});
                     dt.VariableValues.Add(new VariableValue() { VariableId = dataStructure.Variables.Skip(4).First().Id, Value = "01.01.2017" });
                     dt.Dematerialize();
@@ -185,6 +188,63 @@ namespace BExIS.Dlm.Tests.Helpers
             }
         }
 
+        public Dataset GenerateTuplesWithRandomValuesForDataset(Dataset dataset, StructuredDataStructure dataStructure, long numberOfTuples, string username)
+        {
+            dataset.Status.Should().Be(DatasetStatus.CheckedIn);
+            dataset.Should().NotBeNull();
+            numberOfTuples.Should().BeGreaterThan(0);
+
+            var r = new Random();
+
+            DatasetManager dm = new DatasetManager();
+            try
+            {
+                if (dm.IsDatasetCheckedOutFor(dataset.Id, username) || dm.CheckOutDataset(dataset.Id, username))
+                {
+                    dataset.Status.Should().Be(DatasetStatus.CheckedOut, "Dataset must be in Checkedout status.");
+
+                    DatasetVersion workingCopy = dm.GetDatasetWorkingCopy(dataset.Id);
+
+                    
+
+                    List<DataTuple> tuples = new List<DataTuple>();
+
+                    for (int i = 0; i < numberOfTuples; i++)
+                    {
+                        DataTuple dt = new DataTuple();
+                        dt.VariableValues.Add(new VariableValue() { VariableId = dataStructure.Variables.First().Id, Value = r.Next() });
+                        dt.VariableValues.Add(new VariableValue() { VariableId = dataStructure.Variables.Skip(1).First().Id, Value = "Test" });
+                        dt.VariableValues.Add(new VariableValue() { VariableId = dataStructure.Variables.Skip(2).First().Id, Value = Convert.ToDouble(r.Next()) });
+                        dt.VariableValues.Add(new VariableValue() { VariableId = dataStructure.Variables.Skip(3).First().Id, Value = true });
+                        dt.VariableValues.Add(new VariableValue() { VariableId = dataStructure.Variables.Skip(4).First().Id, Value = "01.01.2017" });
+                        dt.Dematerialize();
+
+                        dt.Should().NotBeNull();
+                        //dt.XmlVariableValues.Should().NotBeNull();
+
+                        DataTuple newDt = new DataTuple();
+                        newDt.XmlAmendments = dt.XmlAmendments;
+                        //newDt.XmlVariableValues = dt.XmlVariableValues;
+                        newDt.JsonVariableValues = dt.JsonVariableValues;
+                        newDt.Materialize();
+                        newDt.OrderNo = i;
+                        tuples.Add(newDt);
+                    }
+                    dm.EditDatasetVersion(workingCopy, tuples, null, null);
+                    dataset.Status.Should().Be(DatasetStatus.CheckedOut, "Dataset must be in Checkedout status.");
+                }
+                return dataset;
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
+            finally
+            {
+                dm.Dispose();
+            }
+        }
+
         public Dataset UpdateOneTupleForDataset(Dataset dataset, StructuredDataStructure dataStructure, long id, int value, DatasetManager datasetManager)
         {
             dataset.Status.Should().Be(DatasetStatus.CheckedIn);
@@ -205,7 +265,7 @@ namespace BExIS.Dlm.Tests.Helpers
                     dt.VariableValues.Add(new VariableValue() { VariableId = dataStructure.Variables.Skip(1).First().Id, Value = "Test" });
                     dt.VariableValues.Add(new VariableValue() { VariableId = dataStructure.Variables.Skip(2).First().Id, Value = 5 });
                     dt.VariableValues.Add(new VariableValue() { VariableId = dataStructure.Variables.Skip(3).First().Id, Value = true });
-                    dt.VariableValues.Add(new VariableValue() { VariableId = dataStructure.Variables.Skip(4).First().Id, Value = DateTime.Now.ToString() });
+                    dt.VariableValues.Add(new VariableValue() { VariableId = dataStructure.Variables.Skip(4).First().Id, Value = DateTime.Now.ToString(new CultureInfo("en-US")) });
                     dt.Dematerialize();
 
                     dt.Should().NotBeNull();
@@ -256,7 +316,7 @@ namespace BExIS.Dlm.Tests.Helpers
                     foreach (var dataTuple in datatuples)
                     {
                         var vv = dataTuple.VariableValues.Where(v => v.VariableId.Equals(dataStructure.Variables.Skip(4).First().Id)).FirstOrDefault();
-                        if (vv != null) vv.Value = DateTime.Now.ToString();
+                        if (vv != null) vv.Value = DateTime.Now.ToString(new CultureInfo("en-US"));
 
                         dataTuple.Dematerialize();
                         dataTuple.Should().NotBeNull();
@@ -278,6 +338,124 @@ namespace BExIS.Dlm.Tests.Helpers
             }
 
         }
+
+        public List<DataTuple> GetUpdatedDatatuples(DatasetVersion datasetVersion, StructuredDataStructure dataStructure, DatasetManager datasetManager)
+        {
+            datasetVersion.Should().NotBeNull();
+            var dataset = datasetVersion.Dataset;
+            dataset.Status.Should().Be(DatasetStatus.CheckedIn);
+            dataset.Should().NotBeNull();
+
+            try
+            {
+                var datatuples = datasetManager.GetDataTuples(datasetVersion.Id);
+                List<DataTuple> editedTuples = new List<DataTuple>();
+
+
+                foreach (var dataTuple in datatuples)
+                {
+                    dataTuple.Materialize();
+
+                    var vv = dataTuple.VariableValues.Where(v => v.VariableId.Equals(dataStructure.Variables.Skip(4).First().Id)).FirstOrDefault();
+                    if (vv != null) vv.Value = DateTime.Now.ToString(new CultureInfo("en-US"));
+
+                    dataTuple.Dematerialize();
+                    dataTuple.Should().NotBeNull();
+                    //dataTuple.XmlVariableValues.Should().NotBeNull();
+
+                    editedTuples.Add((DataTuple)dataTuple);
+                }
+
+             
+
+                return editedTuples;
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
+
+        }
+
+        /// <summary>
+        /// get a updated datatuple on a specific value.
+        /// based on the created test datastructure
+        /// index:
+        /// 0 = int
+        /// 1 = text
+        /// 2 = double
+        /// 3 = bool 
+        /// 4 = datetime
+        /// </summary>
+        /// <param name="source"></param>
+        /// <param name="updateVarIndex"></param>
+        /// <param name="datasetManager"></param>
+        /// <returns></returns>
+        public DataTuple  GetUpdatedDatatuple(DataTuple source, int updateVarIndex)
+        {
+
+                if (source == null) return null;
+
+                source.Materialize();
+
+                var vv = source.VariableValues[updateVarIndex];
+                if (vv != null)
+                {
+                    switch (updateVarIndex)
+                    {
+
+                    case 0://int
+                        {
+                            vv.Value = new Random().Next();
+
+                            break;
+                        }
+                    case 1://text
+                        {
+                            var chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+                            var stringChars = new char[8];
+                            var random = new Random();
+
+                            for (int i = 0; i < stringChars.Length; i++)
+                            {
+                                stringChars[i] = chars[random.Next(chars.Length)];
+                            }
+           
+                            vv.Value = new String(stringChars);
+
+                            break;
+                        }
+                    case 2://double
+                        {
+                            vv.Value = new Random().NextDouble();
+
+                            break;
+                        }
+                    case 3://bool
+                        {
+                            vv.Value = false;
+
+                            break;
+                        }
+                    case 4: 
+                        { 
+                            vv.Value = DateTime.Now.ToString(new CultureInfo("en-US"));
+
+                            break; 
+                        }
+
+                        //default:
+                    }
+
+
+                }
+                source.Dematerialize();
+                source.Should().NotBeNull();
+
+                return source;
+        }
+
+
 
         public ResearchPlan CreateResearchPlan()
         {

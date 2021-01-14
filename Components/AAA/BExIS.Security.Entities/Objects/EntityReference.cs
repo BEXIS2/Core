@@ -31,6 +31,7 @@ namespace BExIS.Security.Entities.Objects
         public virtual int TargetVersion { get; set; }
         public virtual string Context { get; set; }
         public virtual string ReferenceType { get; set; }
+        public virtual DateTime CreationDate { get; set; }
 
         public EntityReference()
         {
@@ -42,7 +43,7 @@ namespace BExIS.Security.Entities.Objects
             ReferenceType = "";
         }
 
-        public EntityReference(long sourceId, long sourceEntityId, int sourceVersion, long targetId, long targetEntityId, int targetVersion, string context, string type)
+        public EntityReference(long sourceId, long sourceEntityId, int sourceVersion, long targetId, long targetEntityId, int targetVersion, string context, string type, DateTime creationDate)
         {
             SourceId = sourceId;
             SourceEntityId = sourceEntityId;
@@ -52,6 +53,7 @@ namespace BExIS.Security.Entities.Objects
             TargetVersion = targetVersion;
             Context = context;
             ReferenceType = type;
+            CreationDate = creationDate;
         }
     }
 }

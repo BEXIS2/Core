@@ -27,8 +27,8 @@
 				title="Get partyTypes for account" description="Get partyTypes for account which are defined in setting.xml" icon=""
 				controller="PartyService" action="GetPartyTypesForAccount"
 				extends="" />
-		<Export tag="lunchbar" id="helpBam" order="1"
-						title="Parties" description="Parties Help Manual" icon=""
+		<Export tag="lunchbar" id="helpBam" order="2"
+						title="Account / Parties" description="Parties Help Manual" icon=""
 						controller="Help" action="index"
 						extends="./lunchbarRoot/help"
 						/>

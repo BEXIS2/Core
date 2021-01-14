@@ -13,9 +13,9 @@
       <column name="Extra" not-null="false" sql-type="xml" />
     </property>
 
-    <many-to-one name="Entity" column="EntityRef" class="BExIS.Security.Entities.Objects.Entity, BExIS.Security.Entities" />
-    <property name="Key" type="Int64" />
-    <property name="Rights" type="Int32" />
-    <many-to-one name="Subject" column="SubjectRef" class="BExIS.Security.Entities.Subjects.Subject, BExIS.Security.Entities" not-null="false" />
+    <many-to-one name="Entity" column="EntityRef" class="BExIS.Security.Entities.Objects.Entity, BExIS.Security.Entities" index="idx_EntityPermissions_EntityRef"/>
+    <property name="Key" type="Int64" index="idx_EntityPermissions_Key"/>
+    <property name="Rights" type="Int32" index="idx_EntityPermissions_Rights"/>
+    <many-to-one name="Subject" column="SubjectRef" class="BExIS.Security.Entities.Subjects.Subject, BExIS.Security.Entities" not-null="false" index="idx_EntityPermissions_SubjectRef" />
   </class>
 </hibernate-mapping>

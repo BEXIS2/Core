@@ -127,13 +127,13 @@ namespace BExIS.Modules.Ddm.UI.Models
                             DateTime dateTime;
                             if (DateTime.TryParse(missingValue.Placeholder, new CultureInfo("en-US", false), DateTimeStyles.NoCurrentDateDefault, out dateTime))
                             {
-                                sb.Append(missingValue.DisplayName + "|" + dateTime.ToString(ddp.StringPattern) + "#"); ;
+                                sb.Append(missingValue.DisplayName + "|" + dateTime.ToString(ddp.StringPattern) + "#%#"); ;
                             }
 
                         }
                         else
                         {
-                            sb.Append(missingValue.DisplayName + "|" + missingValue.Placeholder + "#");
+                            sb.Append(missingValue.DisplayName + "|" + missingValue.Placeholder + "#%#");
                         }
                     }
 

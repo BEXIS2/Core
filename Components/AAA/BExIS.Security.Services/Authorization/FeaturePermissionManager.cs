@@ -306,15 +306,28 @@ namespace BExIS.Security.Services.Authorization
                     // Non-Anonymous
                     while (feature != null)
                     {
+                       
+
                         if (Exists(null, feature.Id, PermissionType.Grant))
+                        {
                             hasAccess = true;
+                            break;
+                        }
                         else
                         if (Exists(subject.Id, feature.Id, PermissionType.Deny))
+                        {
                             hasAccess = false;
+                            break;
+
+                        }
                         else
                         if (Exists(subject.Id, feature.Id, PermissionType.Grant))
+                        {
                             hasAccess = true;
-                        
+                            break;
+
+                        }
+
 
                         if (subject is User)
                         {
@@ -324,11 +337,15 @@ namespace BExIS.Security.Services.Authorization
                             if (Exists(groupIds, new[] { feature.Id }, PermissionType.Deny))
                             {
                                 hasAccess = false;
+                                break;
+
                             }
                             else
                             if (Exists(groupIds, new[] { feature.Id }, PermissionType.Grant))
                             {
                                 hasAccess = true;
+                                break;
+
                             }
                         }
 

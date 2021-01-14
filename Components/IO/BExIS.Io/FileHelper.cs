@@ -15,17 +15,32 @@ namespace BExIS.IO
 
         public static bool MoveFile(string tempFile, string destinationPath)
         {
-            if (File.Exists(tempFile))
+            try
             {
-                File.Move(tempFile, destinationPath);
 
-                if (File.Exists(destinationPath))
+                if (File.Exists(tempFile))
                 {
-                    return true;
+                    // check if directoy exist otherwhise create
+                    string directory = Path.GetDirectoryName(destinationPath);
+                    if (!Directory.Exists(directory))
+                    {
+                        Directory.CreateDirectory(directory);
+                    }
+
+                    File.Move(tempFile, destinationPath);
+
+                    if (File.Exists(destinationPath))
+                    {
+                        return true;
+                    }
+                    else return false;
                 }
                 else return false;
             }
-            else return false;
+            catch
+            {
+                return false;
+            }
         }
 
         public static FileStream Create(string filepath)
