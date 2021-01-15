@@ -236,6 +236,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             ViewData["Locked"] = true;
             ViewData["ShowOptional"] = false;
             ViewData["isValid"] = isValid;
+            ViewData["EntityId"] = entityId;
 
             TaskManager = (CreateTaskmanager)Session["CreateDatasetTaskmanager"];
             if (TaskManager == null || resetTaskManager)
@@ -648,7 +649,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         {
             ViewBag.Title = PresentationModel.GetViewTitleForTenant("Create Dataset", this.Session.GetTenant());
             ViewData["ShowOptional"] = true;
-            ViewData["EntityId"] = -1;
+            ViewData["EntityId"] = (long)-1;
 
             var Model = new MetadataEditorModel();
 
@@ -916,10 +917,10 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             if (TaskManager.Bus.ContainsKey(CreateTaskmanager.ENTITY_ID))
             {
                 if (TaskManager.Bus[CreateTaskmanager.ENTITY_ID] != null)
-                    ViewData["EntityId"] = TaskManager.Bus[CreateTaskmanager.ENTITY_ID];
+                    ViewData["EntityId"] = (long)TaskManager.Bus[CreateTaskmanager.ENTITY_ID];
             }
             else
-                ViewData["EntityId"] = -1;
+                ViewData["EntityId"] = (long)-1;
 
             return PartialView("_metadataCompoundAttributeUsageView", stepModelHelper);
         }
