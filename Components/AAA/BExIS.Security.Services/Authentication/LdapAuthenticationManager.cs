@@ -1,9 +1,8 @@
-﻿using BExIS.Security.Entities.Subjects;
+﻿using BExIS.Security.Entities.Authentication;
+using BExIS.Security.Entities.Subjects;
 using Microsoft.AspNet.Identity.Owin;
 using System;
 using System.DirectoryServices.Protocols;
-using System.Globalization;
-using System.Linq;
 using System.Net;
 using Vaiona.Persistence.Api;
 
@@ -14,62 +13,18 @@ namespace BExIS.Security.Services.Authentication
         private readonly IUnitOfWork _guow;
         private bool _isDisposed;
 
-        public LdapAuthenticationManager(string connectionString)
+        private readonly LdapConfiguration _ldapConfiguration;
+
+        public LdapAuthenticationManager()
         {
             _guow = this.GetIsolatedUnitOfWork();
-            UserRepository = _guow.GetReadOnlyRepository<User>();
-
-            var parameters = connectionString
-                .Split(';')
-                .Select(x => x.Split(':'))
-                .ToDictionary(x => x[0], x => x[1]);
-
-            foreach (var entry in parameters)
-            {
-                switch (entry.Key)
-                {
-                    case "ldapBaseDn":
-                        baseDn = entry.Value;
-                        break;
-
-                    case "ldapHost":
-                        host = entry.Value;
-                        break;
-
-                    case "ldapPort":
-                        port = Convert.ToInt32(entry.Value);
-                        break;
-
-                    case "ldapSecure":
-                        secureSocket = Convert.ToBoolean(entry.Value);
-                        break;
-
-                    case "ldapAuthUid":
-                        authUid = entry.Value;
-                        break;
-
-                    case "ldapProtocolVersion":
-                        protocolVersion = Convert.ToInt32(entry.Value);
-                        break;
-
-                    default:
-                        break;
-                }
-            }
+            _ldapConfiguration = new LdapConfiguration();
         }
 
         ~LdapAuthenticationManager()
         {
             Dispose(true);
         }
-
-        private string authUid { get; }
-        private string baseDn { get; }
-        private string host { get; }
-        private int port { get; }
-        private int protocolVersion { get; }
-        private bool secureSocket { get; }
-        private IReadOnlyRepository<User> UserRepository { get; }
 
         public void Dispose()
         {
@@ -78,33 +33,32 @@ namespace BExIS.Security.Services.Authentication
 
         public User GetUser(string username, string password)
         {
-            var ldapUser = new User();
+            User ldapUser = null;
 
             try
             {
-                using (var ldap = new LdapConnection(new LdapDirectoryIdentifier(host, port)))
+                using (var ldap = new LdapConnection(new LdapDirectoryIdentifier(_ldapConfiguration.HostName, _ldapConfiguration.HostPort)))
                 {
-                    ldap.SessionOptions.ProtocolVersion = protocolVersion;
-                    ldap.AuthType = AuthType.Basic;
-                    ldap.SessionOptions.SecureSocketLayer = secureSocket;
+                    ldap.SessionOptions.ProtocolVersion = _ldapConfiguration.HostVersion;
+                    ldap.AuthType = (AuthType)_ldapConfiguration.HostAuthType;
+                    ldap.SessionOptions.SecureSocketLayer = _ldapConfiguration.HostSsl;
+                    ldap.Credential = new NetworkCredential($"{_ldapConfiguration.UserIdentifier}={username},{_ldapConfiguration.HostBaseDn}", password);
                     ldap.Bind();
 
-                    ldap.AuthType = AuthType.Basic;
-                    var searchRequest = new SearchRequest(
-                        baseDn,
-                        string.Format(CultureInfo.InvariantCulture, "{0}={1}", authUid, username),
-                        SearchScope.Subtree
-                    );
+                    var searchResponse = (SearchResponse)ldap.SendRequest(new SearchRequest($"{_ldapConfiguration.UserIdentifier}={username},{_ldapConfiguration.HostBaseDn}", "objectClass=*", (SearchScope)_ldapConfiguration.HostScope));
 
-                    var searchResponse = (SearchResponse)ldap.SendRequest(searchRequest);
-                    if (1 == searchResponse.Entries.Count)
+                    if (searchResponse.Entries.Count == 1)
                     {
-                        ldap.Bind(new NetworkCredential(searchResponse.Entries[0].DistinguishedName, password));
-
                         var attributes = searchResponse.Entries[0].Attributes;
 
-                        ldapUser.Name = Convert.ToString(((DirectoryAttribute)attributes["cn"])[0]);
-                        ldapUser.Email = Convert.ToString(((DirectoryAttribute)attributes["mail"])[0]);
+                        ldapUser = new User()
+                        {
+                            Email = (attributes["mail"][0]).ToString(),
+                            UserName = (attributes[$"{_ldapConfiguration.UserIdentifier}"][0]).ToString(),
+                            IsEmailConfirmed = true,
+                            //HasPrivacyPolicyAccepted = true,
+                            //HasTermsAndConditionsAccepted = true
+                        };
                     }
                     else
                     {
@@ -115,7 +69,6 @@ namespace BExIS.Security.Services.Authentication
             catch (Exception e)
             {
                 //Todo: Pass error to logging framework instead of console!
-                Console.WriteLine(e.Message);
                 ldapUser = null;
             }
             return ldapUser;
@@ -123,40 +76,12 @@ namespace BExIS.Security.Services.Authentication
 
         public SignInStatus ValidateUser(string username, string password)
         {
-            try
-            {
-                using (var ldap = new LdapConnection(new LdapDirectoryIdentifier(host, port)))
-                {
-                    ldap.SessionOptions.ProtocolVersion = protocolVersion;
-                    ldap.AuthType = AuthType.Anonymous;
-                    ldap.SessionOptions.SecureSocketLayer = secureSocket;
-                    ldap.Bind();
+            var ldapuser = GetUser(username, password);
 
-                    ldap.AuthType = AuthType.Basic;
-                    var searchRequest = new SearchRequest(
-                        baseDn,
-                        string.Format(CultureInfo.InvariantCulture, "{0}={1},ou=users,dc=unijena,dc=de", authUid, username),
-                        SearchScope.Subtree
-                    );
+            if (ldapuser != null)
+                return SignInStatus.Success;
 
-                    var searchResponse = (SearchResponse)ldap.SendRequest(searchRequest);
-                    if (1 == searchResponse.Entries.Count)
-                    {
-                        ldap.Bind(new NetworkCredential(searchResponse.Entries[0].DistinguishedName, password));
-                    }
-                    else
-                    {
-                        throw new Exception("Login failed.");
-                    }
-                }
-            }
-            catch (Exception e)
-            {
-                //Todo: Pass error to logging framework instead of console!
-                Console.WriteLine(e.Message);
-                return SignInStatus.Failure;
-            }
-            return SignInStatus.Success;
+            return SignInStatus.Failure;
         }
 
         protected virtual void Dispose(bool disposing)
