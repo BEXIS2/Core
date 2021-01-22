@@ -53,6 +53,8 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             // if dataset id is set it possible to check the entity
             //get the researchobject (cuurently called dataset) to get the id of a metadata structure
             Dataset researcobject = this.GetUnitOfWork().GetReadOnlyRepository<Dataset>().Get(datasetid);
+            string defaultAction = "Upload";
+            long entityId = datasetid;
             if (researcobject != null)
             {
                 long metadataStrutcureId = researcobject.MetadataStructure.Id;
@@ -69,7 +71,6 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
                         string moduleId = "";
                         Tuple<string, string, string> action = null;
-                        string defaultAction = "uploadWizard";
 
                         if (entity != null && entity.Extra != null)
                         {
@@ -81,26 +82,25 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
                             action = EntityViewerHelper.GetEntityViewAction(entityName, moduleId, modus);
                         }
-                        if (action == null) RedirectToAction(defaultAction, new { type, datasetid });
+                        if (action == null) RedirectToAction(defaultAction, new { type, entityId });
 
                         try
                         {
-                            return RedirectToAction(action.Item3, action.Item2, new { area = action.Item1, type, datasetid });
+
+                            return RedirectToAction(action.Item3, action.Item2, new { area = action.Item1, type, entityId });
                         }
                         catch
                         {
-                            return RedirectToAction(defaultAction, new { type, datasetid });
+                            return RedirectToAction(defaultAction, new { type, entityId });
                         }
                     }
                 }
             }
 
-            ModelState.AddModelError("", string.Format("The object with the id {0} does not exist", datasetid));
-
-            return View((TaskManager)Session["TaskManager"]);
+            return RedirectToAction(defaultAction, new { type, entityId });
         }
 
-        public ActionResult Upload(DataStructureType type, long datasetid = 0)
+        public ActionResult Upload(DataStructureType type, long entityId = 0)
         {
             ViewBag.Title = PresentationModel.GetViewTitleForTenant("Upload Data", Session.GetTenant());
 
@@ -128,7 +128,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                     TaskManager = (TaskManager)Session["TaskManager"];
                     TaskManager.AddToBus(TaskManager.DATASTRUCTURE_TYPE, type);
 
-                    if(datasetid>0) TaskManager.AddToBus(TaskManager.DATASET_ID, datasetid);
+                    if(entityId > 0) TaskManager.AddToBus(TaskManager.DATASET_ID, entityId);
 
                     Session["TaskManager"] = TaskManager;
                 }
@@ -147,7 +147,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 Session["ResearchPlanViewList"] = LoadResearchPlanViewList();
 
                 // setparameters
-                SetParametersToTaskmanager(datasetid);
+                SetParametersToTaskmanager(entityId);
             }
 
             return View("UploadWizard",(TaskManager)Session["TaskManager"]);
