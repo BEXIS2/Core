@@ -20,18 +20,21 @@
 {
     @foreach (var item in Model.Entities)
     {
-
-        <h3>@item.Value</h3>
-        <ul>
-
-            <li><a class="show" entity="@item.Value.ToLower()">My @{@item.Value}s</a></li>
-            @*<li><a entityid="@item.Key" class="request">My Requests</a></li>
-            <li><a entityid="@item.Key" class="decision">Decisions</a></li>*@
-        </ul>
         
-    }
+            <h3>@item.Value</h3>
+            <ul>
 
-}
+                <li><a class="show" entity="@item.Value.ToLower()">My @{@item.Value}s</a></li>
+                @if (@item.Value == "Dataset")
+                {
+                    <li><a entityid="@item.Key" class="request">My Requests</a></li>
+                    <li><a entityid="@item.Key" class="decision">Decisions</a></li>
+                }
+            </ul>
+
+
+    }
+    }
 
 <div id="dashboard_content">
 
