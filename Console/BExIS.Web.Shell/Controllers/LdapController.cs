@@ -27,7 +27,7 @@ namespace BExIS.Web.Shell.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Login(LoginViewModel model, string returnUrl)
         {
-            var ldapAuthenticationManager = new LdapAuthenticationManager(ConfigurationManager.AppSettings["Ldap_ConnectionString"]);
+            var ldapAuthenticationManager = new LdapAuthenticationManager();
             var userManager = new UserManager();
             var signInManager = new SignInManager(AuthenticationManager);
             var identityUserService = new IdentityUserService();

@@ -7,6 +7,10 @@ using System.Threading.Tasks;
 using Vaiona.Utils.Cfg;
 using System.Linq;
 using MailKit.Net.Smtp;
+using System.Security.Authentication;
+using MailKit;
+using System;
+using MailKit.Security;
 
 namespace BExIS.Security.Services.Utilities
 {
@@ -20,7 +24,10 @@ namespace BExIS.Security.Services.Utilities
         {
             using (var client = new SmtpClient())
             {
-                client.Connect(ConfigurationManager.AppSettings["Email_Host_Name"], int.Parse(ConfigurationManager.AppSettings["Email_Host_Port"]), MailKit.Security.SecureSocketOptions.Auto);
+                // @2020-01-18 by Sven
+                // With this line, the service should accept every certificate.
+                client.ServerCertificateValidationCallback = (s, c, h, e) => true;
+                client.Connect(ConfigurationManager.AppSettings["Email_Host_Name"], int.Parse(ConfigurationManager.AppSettings["Email_Host_Port"]), SecureSocketOptions.Auto);
                 client.Authenticate(ConfigurationManager.AppSettings["Email_Account_Name"], ConfigurationManager.AppSettings["Email_Account_Password"]);
 
                 client.Send(message);
