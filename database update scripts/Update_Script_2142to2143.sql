@@ -20,4 +20,8 @@ VALUES(1, NULL, 'API', 'DataQualityOut', '*', (
 Select id from features where name = 'API' AND parentref = (
 Select id from features where name = 'Data Dissemination')));
 
+INSERT INTO public.versions(
+	versionno, extra, module, value, date)
+	VALUES (1, null, 'Shell', '2.14.3',NOW());
+
 COMMIT;
