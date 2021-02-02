@@ -21,7 +21,15 @@ namespace BExIS.Security.Services.Tests.Authentication
         public void OneTimeSetUp()
         {
             helper = new TestSetupHelper(WebApiConfig.Register, false);
-            ConfigurationManager.AppSettings["Ldap_ConnectionString"] = "ldapHost:ldap1.uni-jena.de;ldapPort:636;ldapBaseDn:ou=users,dc=uni-jena,dc=de;ldapSecure:true;ldapAuthUid:uid;ldapProtocolVersion:3";
+
+            ConfigurationManager.AppSettings["Ldap_Host_Name"] = "ldap1.uni-jena.de";
+            ConfigurationManager.AppSettings["Ldap_Host_Port"] = "636";
+            ConfigurationManager.AppSettings["Ldap_Host_Version"] = "3";
+            ConfigurationManager.AppSettings["Ldap_Host_Ssl"] = "true";
+            ConfigurationManager.AppSettings["Ldap_Host_AuthType"] = "1";
+            ConfigurationManager.AppSettings["Ldap_Host_Scope"] = "0";
+            ConfigurationManager.AppSettings["Ldap_Host_BaseDn"] = "ou=users,dc=uni-jena,dc=de";
+            ConfigurationManager.AppSettings["Ldap_User_Identifier"] = "uid";
         }
 
         [SetUp]
@@ -42,9 +50,9 @@ namespace BExIS.Security.Services.Tests.Authentication
         [Test]
         public void Test()
         {
-            LdapAuthenticationManager ldapAuthenticationManager = new LdapAuthenticationManager(ConfigurationManager.AppSettings["Ldap_ConnectionString"]);
+            LdapAuthenticationManager ldapAuthenticationManager = new LdapAuthenticationManager();
 
-            var x = ldapAuthenticationManager.ValidateUser("", "");
+            var x = ldapAuthenticationManager.ValidateUser("username", "password");
 
             Console.WriteLine(x.ToString());
         }
