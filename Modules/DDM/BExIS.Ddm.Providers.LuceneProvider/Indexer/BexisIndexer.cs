@@ -608,12 +608,15 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Indexer
                     XmlNodeList elemList = metadataDoc.SelectNodes(metadataElementName);
                     for (int i = 0; i < elemList.Count; i++)
                     {
-                        Field a = new Field(lucene_name, elemList[i].InnerText, toStore, toAnalyse);
-                        a.Boost = boosting;
-                        dataset.Add(a);
-                        dataset.Add(new Field("ng_all", elemList[i].InnerText, Lucene.Net.Documents.Field.Store.NO, Field.Index.ANALYZED));
-                        writeAutoCompleteIndex(docId, lucene_name, elemList[i].InnerText);
-                        writeAutoCompleteIndex(docId, "ng_all", elemList[i].InnerText);
+                        if (!elemList[i].InnerText.Trim().Equals(""))
+                        {
+                            Field a = new Field(lucene_name, elemList[i].InnerText, toStore, toAnalyse);
+                            a.Boost = boosting;
+                            dataset.Add(a);
+                            dataset.Add(new Field("ng_all", elemList[i].InnerText, Lucene.Net.Documents.Field.Store.NO, Field.Index.ANALYZED));
+                            writeAutoCompleteIndex(docId, lucene_name, elemList[i].InnerText);
+                            writeAutoCompleteIndex(docId, "ng_all", elemList[i].InnerText);
+                        }
                     }
                 }
 
