@@ -178,10 +178,11 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Indexer
             {
                 
                 IList<long> ids = dm.GetDatasetLatestIds();
+                IList<long> ids_rev = ids.Reverse().ToList();
 
                 //ToDo only enitities from type dataset should be indexed in this index
 
-                foreach (var id in ids)
+                foreach (var id in ids_rev)
                 {
                     try
                     {
