@@ -2481,7 +2481,9 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                     }
             }
 
-            var list = x.Select(e => new SelectListItem() { Text = e.Value + " (" + e.PartyId + ")" });
+            // Create text for autocomplete list; order by name; delete dublicates; 
+            var list = x.Select(e => new SelectListItem() { Text = e.Value + " (" + e.PartyId + ")" }).OrderBy(y => y.Text).GroupBy(i => i.Text).Select(i => i.FirstOrDefault()).ToList();
+
 
             // BUG: invalid call to ddm method
             // TODO: mODULARITY ->Call DDM Reindex
