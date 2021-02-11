@@ -97,5 +97,10 @@ namespace BExIS.Web.Shell.Controllers
                 return View(model);
             }
         }
+
+        public ActionResult Demo()
+        {
+
+            return View();        }
     }
 }

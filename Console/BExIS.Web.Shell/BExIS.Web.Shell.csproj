@@ -725,7 +725,9 @@
     <Content Include="Scripts\DataTables\extensions\ColReorder\Readme.md" />
     <Content Include="Scripts\DataTables\extensions\Buttons\Readme.md" />
     <Content Include="Scripts\DataTables\extensions\AutoFill\Readme.md" />
+    <None Include="Properties\PublishProfiles\BexisServer_demo.pubxml" />
     <None Include="Properties\PublishProfiles\FolderProfile.pubxml" />
+    <None Include="Properties\PublishProfiles\BexisServer_test.pubxml" />
     <None Include="Properties\PublishProfiles\TestServer_release.pubxml" />
     <None Include="Properties\PublishProfiles\TestServer_dev.pubxml" />
     <None Include="Properties\PublishProfiles\TestServer.pubxml" />
@@ -1126,6 +1128,7 @@
     <Content Include="Views\Error\NotFound.cshtml" />
     <Content Include="Views\Shared\SessionTimeout.cshtml" />
     <Content Include="Views\Home\Version.cshtml" />
+    <Content Include="Views\Home\Demo.cshtml" />
     <None Include="Web.TestServerRelease.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
