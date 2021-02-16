@@ -865,8 +865,8 @@ namespace BExIS.IO.Transform.Input
                     if (c.CellValue != null)
                     {
                         // if cell reference in range of the area
-                        int start = GetColumnNumber(this._areaOfData.StartColumn);
-                        int end = GetColumnNumber(this._areaOfData.EndColumn);
+                        int start = startColumn; //GetColumnNumber(this._areaOfData.StartColumn);
+                        int end = endColumn;//GetColumnNumber(this._areaOfData.EndColumn);
 
                         //if columns is not null means the function returns a subset of all columns based on the incoming varids
                         if ((columns == null || columns.Contains(cellReferencAsInterger)) && index >= 0)
@@ -936,7 +936,7 @@ namespace BExIS.IO.Transform.Input
                                 }
                                 else
                                 {
-                                    value = c.CellValue.Text;
+                                    value = ExcelHelper.ConvertWithFormat(c.CellValue.Text, "");
                                 }
                             }
                             else //standard

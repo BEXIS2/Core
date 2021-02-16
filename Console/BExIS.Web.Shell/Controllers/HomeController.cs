@@ -48,13 +48,12 @@ namespace BExIS.Web.Shell.Controllers
                 landingPage = this.Session.GetTenant().LandingPageTuple;
             }
 
+
             //if the landingPage not null and the action is accessable
             if (landingPage == null || !this.IsAccessible(landingPage.Item1, landingPage.Item2, landingPage.Item3))
-                return View();
+                return View("Demo");
 
             var result = this.Render(landingPage.Item1, landingPage.Item2, landingPage.Item3);
-
-
 
             return Content(result.ToHtmlString(), "text/html");
         }

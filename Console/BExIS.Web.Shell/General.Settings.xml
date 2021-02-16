@@ -6,12 +6,12 @@
     The designated action must be set to public in the feature permission mgmt, otherwise the request will be redirected to the login page.
     The 'type' attribute must be compatible with the System.TypeCode case-sensitive.
   -->
-  <entry key="landingPage" value="ddm, PublicSearch, index" type="String" />
+  <entry key="landingPage" value="shell , Home, index" type="String" />
   <!-- user is not logging in -> app goes to-->
   <entry key="landingPageForUsers" value="ddm, Home, index" type="String" />
   <!-- landing page for users , when they logged in successfuly -->
   <entry key="faq" value="https://github.com/BEXIS2/Core/wiki/FAQ" type="string" />
 
-  <entry key="version" value="2.14.2" type="string" />
+  <entry key="version" value="2.14.3" type="string" />
 
 </settings>
