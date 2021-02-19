@@ -2861,7 +2861,10 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 ValidateModels(stepInfoModelHelpers.Where(s => s.Activated && s.IsParentActive()).ToList());
             }
 
-            return RedirectToAction("ReloadMetadataEditor", "Form");
+            return RedirectToAction("ReloadMetadataEditor", new
+            {
+                fromEditMode = true,
+            });
         }
 
         //XX number of index des values nötig
