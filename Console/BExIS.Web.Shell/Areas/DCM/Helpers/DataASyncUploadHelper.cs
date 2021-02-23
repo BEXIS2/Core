@@ -511,6 +511,15 @@ namespace BExIS.Modules.Dcm.UI.Helpers
                     }
                 }
 
+                if (Bus.ContainsKey(TaskManager.FILENAME))
+                {
+                    var user = User;
+                    var es = new EmailService();
+                    es.Send(MessageHelper.GeFileUpdatHeader(id),
+                        MessageHelper.GetFileUploaddMessage(id, user.Name, Bus[TaskManager.FILENAME]?.ToString()),
+                        new List<string> { user.Email }, null, new List<string> { ConfigurationManager.AppSettings["SystemEmail"] });
+                }
+
                 dm.Dispose();
                 dsm.Dispose();
             }

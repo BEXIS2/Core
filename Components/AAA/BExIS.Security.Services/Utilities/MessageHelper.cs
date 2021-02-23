@@ -88,6 +88,11 @@ namespace BExIS.Security.Services.Utilities
 
         public static string GetDownloadDatasetHeader(long datasetid, long version)
         {
+            return $"File was downloaded (Id: {datasetid}, Version: {version})";
+        }
+
+        public static string GetFileDatasetHeader(long datasetid, long version, string v)
+        {
             return $"Dataset was downloaded (Id: {datasetid}, Version: {version})";
         }
 
@@ -187,9 +192,34 @@ namespace BExIS.Security.Services.Utilities
             return $"User <b>\"{userName}\"</b>(Id: {userId}) with email <b>({email})</b> tries to register.";
         }
 
+        public static string GetMetadataUpdatHeader(long datasetid)
+        {
+            return $"Dataset was updated (Id: {datasetid})";
+        }
+
+        public static string GeFileUpdatHeader(long datasetid)
+        {
+            return $"File was uploaded (Id: {datasetid})";
+        }
+
+        public static string GetFileUploaddMessage(long userId, string userName, string filename)
+        {
+            return $"User <b>\"{userName}\"</b>(Id: {userId}) has uploaded a file: <b>{filename}</b>.";
+        }
+
+        public static string GetFileDownloadHeader(long datasetid, long version)
+        {
+            return $"File was downloaded (Id: {datasetid}, Version: {version})";
+        }
+
+        public static string GetFileDownloadMessage(string userName, long id, string filename)
+        {
+            return $"User <b>\"{userName}\"</b> has downloaded a file: <b>{filename}</b> (Id: {id}).";
+        }
+
         public static string GetUpdateDatasetHeader(long datasetid)
         {
-            return $"Dataset was updated (Id:{datasetid})";
+            return $"Data uploaded (Id: {datasetid})";
         }
 
         public static string GetUpdateDatasetMessage(long datasetid, string title, string userName)
