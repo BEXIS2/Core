@@ -68,9 +68,9 @@
             <tr id="help_ref_type" style="display:none;">
                 <td></td>
                 <td>
-                    @foreach (var item in ViewData["ReferenceType"] as SelectList)
+                    @foreach (var item in ViewData["ReferenceTypeHelp"] as SelectList)
                     {
-                        <div class="help" style="display: block;width:372px">- <b>@item.Text</b>: @item.Value</div>
+                        <div class="help" style="display: block">- <b>@item.Value</b>: @item.Text</div>
                     }
                 </td>
             </tr>

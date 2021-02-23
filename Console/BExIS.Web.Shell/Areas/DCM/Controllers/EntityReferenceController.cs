@@ -7,6 +7,7 @@ using BExIS.Security.Entities.Objects;
 using BExIS.Security.Services.Authorization;
 using BExIS.Security.Services.Objects;
 using BExIS.Security.Services.Subjects;
+using NHibernate.Util;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -81,7 +82,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             List<SelectListItem> tmp = new List<SelectListItem>();
 
             if (id > 0)
-                helper.GetEntities(id).ForEach(e => tmp.Add(new SelectListItem() { Text = e.Title + " (" + e.Id + ")", Value = e.Id.ToString() }));
+                helper.GetEntities(id).OrderByDescending(s => s.Id).ForEach(e => tmp.Add(new SelectListItem() { Text = e.Id + ": " + e.Title, Value = e.Id.ToString() }));
 
             return Json(tmp, JsonRequestBehavior.AllowGet);
         }
@@ -182,6 +183,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             ViewData["Target"] = new SelectList(new List<SelectListItem>(), "Text", "Value");
             ViewData["TargetVersion"] = new SelectList(new List<SelectListItem>(), "Text", "Value");
             ViewData["ReferenceType"] = helper.GetReferencesTypes();
+            ViewData["ReferenceTypeHelp"] = helper.GetReferencesHelpTypes();
             //"This references is saved."
             if (isSuccess) ViewData["Success"] = "This references is saved.";
 

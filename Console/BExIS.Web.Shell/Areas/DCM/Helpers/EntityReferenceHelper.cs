@@ -360,6 +360,31 @@ namespace BExIS.Modules.Dcm.UI.Helpers
             }
         }
 
+        public SelectList GetReferencesHelpTypes()
+        {
+            string filepath = Path.Combine(AppConfiguration.GetModuleWorkspacePath("DCM"), "EntityReferenceConfig.xml");
+            string dir = Path.GetDirectoryName(filepath);
+
+            if (Directory.Exists(dir) && File.Exists(filepath))
+            {
+                XDocument xdoc = XDocument.Load(filepath);
+
+                var types = xdoc.Root.Descendants("referenceType").Select(e => new SelectListItem()
+                {
+                    Text = String.IsNullOrEmpty(e.Attribute("description").Value) ? e.Value : e.Attribute("description").Value,
+                    Value = e.Value,
+                }).ToList();
+
+                return new SelectList(types, "Value", "Text");
+            }
+            else
+            {
+                throw new FileNotFoundException("File EntityReferenceConfig.xml not found in :" + dir, "EntityReferenceConfig.xml");
+            }
+        }
+
+
+
         #endregion Entity Reference Config
 
         #region Entity Config
