@@ -146,7 +146,6 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             return View("Index");
         }
 
-        
     }
 
 }
