@@ -158,6 +158,18 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 TaskManager = new CreateTaskmanager();
                 loadFromExternal = true;
             }
+            else
+            {
+                if (!TaskManager.Bus.Any())
+                { 
+                    var view = (CreateTaskmanager)Session["ViewDatasetTaskmanager"];
+                    if (view != null)
+                    {
+                        TaskManager = view;
+                        Session["CreateDatasetTaskmanager"] = view;
+                    }
+                }
+            }
 
             var stepInfoModelHelpers = new List<StepModelHelper>();
             var Model = new MetadataEditorModel();
