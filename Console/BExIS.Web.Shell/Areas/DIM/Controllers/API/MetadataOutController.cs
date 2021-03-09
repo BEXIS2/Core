@@ -64,6 +64,69 @@ namespace BExIS.Modules.Dim.UI.Controllers
             }
         }
 
+        // GET:api/MetadataBySchema/GBIF
+        /// <summary>
+        /// With the Get function you get all metadata based on the given metadata schema name
+        /// </summary>
+        /// <returns>XML with all metadata of the metadata schema</returns>
+        [BExISApiAuthorize]
+        [GetRoute("api/MetadataBySchema/{name}")]
+        public HttpResponseMessage GetBySchema(string name)
+        {
+            using (DatasetManager dm = new DatasetManager())
+            {
+                var datasetIds = dm.GetDatasetLatestIds();
+
+                List<MetadataViewObject> tmp = new List<MetadataViewObject>();
+                // create final XML document
+                XmlDocument newXmlDoc = new XmlDocument();
+
+                // create root element
+                XmlElement elem = newXmlDoc.CreateElement("root");
+
+                foreach (var id in datasetIds)
+                {
+                    MetadataViewObject mvo = new MetadataViewObject();
+                    mvo.DatasetId = id;
+
+                    // get metadata schema name
+                    List<string> t = xmlDatasetHelper.GetAllTransmissionInformation(id, TransmissionType.mappingFileExport, AttributeNames.name).ToList();
+                    mvo.Format = t.ToArray();
+
+                    // filter by metadata schema name
+                    if (mvo.Format.FirstOrDefault() == name)
+                    {
+                        // get latest version of dataset
+                        DatasetVersion dsv = dm.GetDatasetLatestVersion(id);
+
+                        // get metadata content
+                        XmlDocument xmldoc = dsv.Metadata;
+                        XmlElement element = xmldoc.DocumentElement;
+
+                        // cerate root element for the dataset
+                        XmlElement elemDataset = newXmlDoc.CreateElement("Dataset");
+
+                        // add id attribute to root element (<Dataset id="12"></Datatset>)
+                        XmlAttribute attr = newXmlDoc.CreateAttribute("id");
+                        attr.Value = id.ToString();
+                        elemDataset.SetAttributeNode(attr);
+
+                        // append metadata to dataset element
+                        elemDataset.AppendChild(newXmlDoc.ImportNode(element, true));
+
+                        // append dataset element to root
+                        elem.AppendChild(elemDataset);
+                    }
+                }
+                // add root element to xml document
+                newXmlDoc.AppendChild(elem);
+
+                // return xml document as XML
+                HttpResponseMessage response = new HttpResponseMessage { Content = new StringContent(newXmlDoc.InnerXml, Encoding.UTF8, "application/xml") };
+                return response;
+            }
+        }
+
         // GET: api/Metadata/5
         // HttpResponseMessage response = new HttpResponseMessage { Content = new StringContent(doc.innerXml, Encoding.UTF8,"application/xml") };
 
