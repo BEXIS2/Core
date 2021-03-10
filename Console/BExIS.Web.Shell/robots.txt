@@ -1,10 +1,6 @@
-﻿###
-# ROBOTS.TXT
-#
-# Originally, this file was created by the biodiversity exploratories
-# project (https://www.bexis.uni-jena.de/) to prevent bots from indexing all pages.
-###
-
-User-agent: *
+﻿User-Agent: *
 Allow: /footer/imprint
+Allow: /footer/contactus
+Allow: /footer/policy
+Allow: /ddm/home/index
 Disallow: /
