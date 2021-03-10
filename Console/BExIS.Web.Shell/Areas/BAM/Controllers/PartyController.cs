@@ -2,8 +2,11 @@
 using BExIS.Dlm.Services.Party;
 using BExIS.Modules.Bam.UI.Helpers;
 using BExIS.Modules.Bam.UI.Models;
+using BExIS.Security.Services.Subjects;
+using BExIS.Security.Services.Utilities;
 using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Data;
 using System.Linq;
 using System.Web.Mvc;
@@ -147,30 +150,64 @@ namespace BExIS.Modules.Bam.UI.Controllers
             }
         }
 
+        // Create or Edit a party
         [HttpPost]
-        public ActionResult CreateEdit(PartyModel partyModel, Dictionary<string, string> partyCustomAttributeValues,IList<PartyRelationship> systemPartyRelationships)
+        public ActionResult CreateEdit(PartyModel partyModel, Dictionary<string, string> partyCustomAttributeValues, IList<PartyRelationship> systemPartyRelationships)
         {
-            PartyManager partyManager = null;
-            PartyRelationshipTypeManager partyRelationshipTypeManager = null;
-            try
+            using (PartyManager partyManager = new PartyManager())
+            using (PartyRelationshipTypeManager partyRelationshipTypeManager = new PartyRelationshipTypeManager())
+            using (PartyTypeManager partyTypeManager = new PartyTypeManager())
+            using (UserManager userManager = new UserManager())
             {
-                
-                partyManager = new PartyManager();
                 var party = new Party();
+                // Create a new party
                 if (partyModel.Id == 0)
+                {
                     party = Helper.CreateParty(partyModel, partyCustomAttributeValues);
+                }
+                // Edit existing party
                 else
-                    party = Helper.EditParty(partyModel, partyCustomAttributeValues,systemPartyRelationships);
-                
+                {
+                    // update custom attributes
+                    party = Helper.EditParty(partyModel, partyCustomAttributeValues, systemPartyRelationships);
+
+                    // check if an email is configured
+                    if (ConfigurationManager.AppSettings["usePersonEmailAttributeName"] == "true")
+                    {
+                        // get property name of custom attribute which holds the email
+                        var nameProp = partyTypeManager.PartyCustomAttributeRepository.Get(attr => (attr.PartyType == party.PartyType) && (attr.Name == ConfigurationManager.AppSettings["PersonEmailAttributeName"])).FirstOrDefault();
+                        if (nameProp != null)
+                        {
+                            // get value from custom attribute
+                            var entity = party.CustomAttributeValues.FirstOrDefault(item => item.CustomAttribute.Id == nameProp.Id);
+                            
+                            // get user based on party 
+                            var userid = partyManager.GetUserIdByParty(party.Id);
+                            var userTask = userManager.FindByIdAsync(userid);
+                            userTask.Wait();
+                            var user = userTask.Result;
+
+                            // compare user and party email
+                            if (user.Email != entity.Value)
+                            {
+                                var es = new EmailService();
+                                es.Send(MessageHelper.GetUpdateEmailHeader(),
+                                    MessageHelper.GetUpdaterEmailMessage(user.DisplayName, user.Email, entity.Value),
+                                    ConfigurationManager.AppSettings["SystemEmail"]
+                                    );
+
+                                // Update user email
+                                user.Email = entity.Value;
+                                userManager.UpdateAsync(user);
+                            }      
+                        }
+                    }
+                }
+
                 if (party.IsTemp)
                     return RedirectToAction("CreateEdit", new { id = party.Id, relationTabAsDefault = true });
                 else
                     return RedirectToAction("Index");
-            }
-            finally
-            {
-                partyManager?.Dispose();
-                partyRelationshipTypeManager?.Dispose();
             }
         }
 
