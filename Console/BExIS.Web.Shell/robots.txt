@@ -1,3 +1,10 @@
-﻿User-agent: *
-Disallow: 
-Disallow: /cgi-bin/
+﻿###
+# ROBOTS.TXT
+#
+# Originally, this file was created by the biodiversity exploratories
+# project (https://www.bexis.uni-jena.de/) to prevent bots from indexing all pages.
+###
+
+User-agent: *
+Allow: /footer/imprint
+Disallow: /
