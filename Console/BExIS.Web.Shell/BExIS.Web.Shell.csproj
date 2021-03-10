@@ -1059,6 +1059,7 @@
     <Content Include="Themes\Windows7\Styles\Windows7\sprite-vertical.png" />
     <Content Include="Themes\Windows7\Styles\Windows7\sprite.png" />
     <Content Include="Global.asax" />
+    <None Include="Views\Home\NoPermission.cshtml" />
     <Content Include="Web.config">
       <SubType>Designer</SubType>
     </Content>

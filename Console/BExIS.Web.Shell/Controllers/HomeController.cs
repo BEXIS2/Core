@@ -27,9 +27,10 @@ namespace BExIS.Web.Shell.Controllers
         {
             ViewBag.Title = PresentationModel.GetViewTitleForTenant("Home", this.Session.GetTenant());
 
-            // here there are 2 cases to consider.
-            // 1.no user->landingpage
-            // 2.user logged into landingpage for users
+            // here there are 3 cases to consider.
+            // 1. no user->landingpage
+            // 2. user logged into landingpage for users
+            // 3. user logged in -> no permission landing page for user -> forward to extra site "noPermission" or to defined page
             Tuple<string, string, string> landingPage = null;
             //check if user exist
             if (!string.IsNullOrEmpty(HttpContext.User?.Identity?.Name)) //user
@@ -45,41 +46,46 @@ namespace BExIS.Web.Shell.Controllers
                         landingPageForUsers.Split(',')[1].Trim(), //controller
                         landingPageForUsers.Split(',')[2].Trim());//action
                 }
+
+
+                //if the landingPage not null and the action is accessable
+                if (landingPage == null || !this.IsAccessible(landingPage.Item1, landingPage.Item2, landingPage.Item3) || !checkPermission(landingPage))
+                {
+                    landingPageForUsers = generalSettings.GetEntryValue("landingPageForUsersNoPermission").ToString();
+
+                    if (landingPageForUsers.Split(',').Length == 3)//check wheter 3 values exist for teh action
+                    {
+                        landingPage = new Tuple<string, string, string>(
+                            landingPageForUsers.Split(',')[0].Trim(), //module id
+                            landingPageForUsers.Split(',')[1].Trim(), //controller
+                            landingPageForUsers.Split(',')[2].Trim());//action
+                    }
+
+                    // fallback if not exists
+                    // this.IsAccessible not possible for shell
+                    if (checkPermission(landingPage) == false)
+                    {
+                        landingPage = this.Session.GetTenant().LandingPageTuple;
+                    }
+
+                    // Default forward, if no other path given for no permission page
+                    if (landingPage.Item1.ToLower() == "shell" && landingPage.Item2.ToLower() == "home")
+                    {
+                        return View(landingPage.Item3);
+                    }
+                }
             }
+            // use defined landing page without login
             else
             {
                 landingPage = this.Session.GetTenant().LandingPageTuple;
             }
 
-            //if the landingPage not null and the action is accessable
-            if (landingPage == null || !this.IsAccessible(landingPage.Item1, landingPage.Item2, landingPage.Item3) || !checkPermission(landingPage))
-            {
-                GeneralSettings generalSettings = IoCFactory.Container.Resolve<GeneralSettings>();
-                var landingPageForUsers = generalSettings.GetEntryValue("landingPageForUsersNoPermission").ToString();
+            //if the landingPage is null and the action is not accessible forward to shell/home/index
+            if (landingPage == null || !this.IsAccessible(landingPage.Item1, landingPage.Item2, landingPage.Item3))
+                return View(); // open shell/home/index
 
-                if (landingPageForUsers.Split(',').Length == 3)//check wheter 3 values exist for teh action
-                {
-                    landingPage = new Tuple<string, string, string>(
-                        landingPageForUsers.Split(',')[0].Trim(), //module id
-                        landingPageForUsers.Split(',')[1].Trim(), //controller
-                        landingPageForUsers.Split(',')[2].Trim());//action
-                }
-
-                // fallback if not exists
-                // this.IsAccessible not possible for shell
-                if (checkPermission(landingPage) == false)
-                {
-                    landingPage = this.Session.GetTenant().LandingPageTuple;
-                }
-
-                // Default forward, if no other path given for no permission page
-                if (landingPage.Item1 == "shell")
-                {
-                    return View("NoPermission");
-                }
-
-            }
-           
+            // return result of defined landing page
             var result = this.Render(landingPage.Item1, landingPage.Item2, landingPage.Item3);  
             return Content(result.ToHtmlString(), "text/html");
         }
