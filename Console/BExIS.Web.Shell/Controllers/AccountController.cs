@@ -317,6 +317,8 @@ namespace BExIS.Web.Shell.Controllers
             {
                 if (!ModelState.IsValid) return View(model);
 
+                if(!string.IsNullOrEmpty(model.Extra))
+                    return View(model);
 
                 var user = new User { UserName = model.UserName,FullName = model.UserName, Email = model.Email };
 
