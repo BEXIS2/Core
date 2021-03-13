@@ -399,3 +399,7 @@ table.bx-table-form tr td {
         content: none
     }
 }
+
+.extra {
+    display: none;
+}

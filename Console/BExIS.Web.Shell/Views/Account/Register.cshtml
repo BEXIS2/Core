@@ -11,7 +11,7 @@
 @using (Html.BeginForm("Register", "Account", FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
 {
     @Html.AntiForgeryToken()
-    @Html.HiddenFor(m => m.Extra);
+    @Html.TextBoxFor(m => m.Extra, new { @class = "extra" });
     <h4>Create a new account.</h4>
     <hr />
     @Html.ValidationSummary("", new { @class = "text-danger" })
