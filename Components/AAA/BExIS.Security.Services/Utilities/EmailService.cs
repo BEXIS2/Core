@@ -24,6 +24,10 @@ namespace BExIS.Security.Services.Utilities
         {
             using (var client = new SmtpClient())
             {
+                // 2021-03-16 by Sven
+                // Because of trouble for specific server certificates, the system rejects handshakes.
+                client.CheckCertificateRevocation = bool.Parse(ConfigurationManager.AppSettings["Email_Host_CertificateRevocation"]);
+
                 // @2020-01-18 by Sven
                 // With this line, the service should accept every certificate.
                 client.ServerCertificateValidationCallback = (s, c, h, e) => true;
