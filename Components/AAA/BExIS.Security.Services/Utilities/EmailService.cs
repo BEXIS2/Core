@@ -30,8 +30,9 @@ namespace BExIS.Security.Services.Utilities
 
                 // @2020-01-18 by Sven
                 // With this line, the service should accept every certificate.
-                client.ServerCertificateValidationCallback = (s, c, h, e) => true;
-                client.Connect(ConfigurationManager.AppSettings["Email_Host_Name"], int.Parse(ConfigurationManager.AppSettings["Email_Host_Port"]), SecureSocketOptions.Auto);
+                client.ServerCertificateValidationCallback = (s, c, h, e) => { return true; };
+
+                client.Connect(ConfigurationManager.AppSettings["Email_Host_Name"], int.Parse(ConfigurationManager.AppSettings["Email_Host_Port"]), (SecureSocketOptions)int.Parse(ConfigurationManager.AppSettings["Email_Host_SecureSocketOptions"]));
                 client.Authenticate(ConfigurationManager.AppSettings["Email_Account_Name"], ConfigurationManager.AppSettings["Email_Account_Password"]);
 
                 client.Send(message);
