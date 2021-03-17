@@ -11,6 +11,6 @@
   
   <entry key="show_tabs_deactivated" value="true" type="String"/>
 
-  <entry key="check_public_metadata" value="true" type="String" description="Set true to enable to only show metadata for not-loggedin users, if public."/>
+  <entry key="check_public_metadata" value="false" type="String" description="Set true to enable to only show metadata for not-loggedin users, if public."/>
     
 </settings>
