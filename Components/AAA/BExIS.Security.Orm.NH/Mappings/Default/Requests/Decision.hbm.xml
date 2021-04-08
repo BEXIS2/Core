@@ -22,8 +22,6 @@
       <column name="Reason" sql-type="text" />
     </property>
 
-    <property name="Reason" type="string" />
-
     <property name="Status" type="BExIS.Security.Entities.Requests.DecisionStatus, BExIS.Security.Entities">
       <column name="Status" />
     </property>
