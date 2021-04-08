@@ -2915,6 +2915,25 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 selectedMetadatAttributeModel.Value = model.Value;
                 selectedMetadatAttributeModel.Errors = validateAttribute(selectedMetadatAttributeModel);
 
+                // read temp metadata XML
+                var metadata = getMetadata(); // new getMetadata(TaskManager)
+                // get xpath for element at position x (number)
+                var xpath = stepModelHelper.GetXPathFromSimpleAttribute(selectedMetadatAttributeModel.Id, number);
+                // get simple element based on xpath
+                var simpleElement = XmlUtility.GetXElementByXPath(xpath, metadata);
+
+                // if this simple attr is linked to a party, add partyid to Model
+                if (simpleElement.Attributes().Any(a => a.Name.LocalName.ToLowerInvariant().Equals("partyid")))
+                {
+                    long partyid = 0;
+                    string partyidAsString = simpleElement.Attributes().FirstOrDefault(a => a.Name.LocalName.ToLowerInvariant().Equals("partyid"))?.Value;
+
+                    if (Int64.TryParse(partyidAsString, out partyid))
+                    {
+                        selectedMetadatAttributeModel.PartyId = partyid;
+                    }
+                }
+
                 Session["CreateDatasetTaskmanager"] = TaskManager;
 
                 return PartialView("_metadataAttributeView", selectedMetadatAttributeModel);
@@ -3223,6 +3242,12 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
                     if (i == 1)
                     {
+                        // lock all attributs in a complex mapping except the main attribute
+                        if (simpleMetadataAttributeModel.PartyMappingExist && simpleMetadataAttributeModel.PartyComplexMappingExist)
+                        {
+                            simpleMetadataAttributeModel.Locked = !MappingUtils.PartyAttrIsMain(simpleMetadataAttributeModel.Id, LinkElementType.MetadataNestedAttributeUsage);
+                        }
+
                         if (simpleElement != null && !String.IsNullOrEmpty(simpleElement.Value))
                         {
                             simpleMetadataAttributeModel.Value = simpleElement.Value;
@@ -3247,6 +3272,18 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                                 }
                             }
 
+                            // if this simple attr is linked to a party, add partyid to Model
+                            if (simpleElement.Attributes().Any(a => a.Name.LocalName.ToLowerInvariant().Equals("partyid")))
+                            {
+                                long partyid = 0;
+                                string partyidAsString = simpleElement.Attributes().FirstOrDefault(a => a.Name.LocalName.ToLowerInvariant().Equals("partyid"))?.Value;
+
+                                if (Int64.TryParse(partyidAsString, out partyid))
+                                {
+                                    simpleMetadataAttributeModel.PartyId = partyid;
+                                }
+                            }
+
                             #endregion entity mapping
 
                             // if at least on item has a value, the parent should be activated
@@ -3255,8 +3292,21 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                     }
                     else
                     {
-                        var newMetadataAttributeModel = simpleMetadataAttributeModel.Kopie(i, numberOfSMM);
+                        var newMetadataAttributeModel = simpleMetadataAttributeModel.Copy(i, numberOfSMM);
                         newMetadataAttributeModel.Value = simpleElement.Value;
+
+                        // if this simple attr is linked to a party, add partyid to Model
+                        if (simpleElement.Attributes().Any(a => a.Name.LocalName.ToLowerInvariant().Equals("partyid")))
+                        {
+                            long partyid = 0;
+                            string partyidAsString = simpleElement.Attributes().FirstOrDefault(a => a.Name.LocalName.ToLowerInvariant().Equals("partyid"))?.Value;
+
+                            if (Int64.TryParse(partyidAsString, out partyid))
+                            {
+                                newMetadataAttributeModel.PartyId = partyid;
+                            }
+                        }
+
                         if (i == numberOfSMM) newMetadataAttributeModel.last = true;
                         additionalyMetadataAttributeModel.Add(newMetadataAttributeModel);
                     }

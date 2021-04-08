@@ -45,6 +45,8 @@ namespace BExIS.Modules.Dcm.UI.Models.Metadata
         //url to the show view of the entity
         public string EntityUrl { get; set; }
 
+        public long PartyId { get; set; }
+
         #endregion Mapping Variables
 
         public string ConstraintDescription { get; set; }
@@ -71,7 +73,7 @@ namespace BExIS.Modules.Dcm.UI.Models.Metadata
             return this.GetUnitOfWork().GetReadOnlyRepository<MetadataAttribute>().Get(MetadataAttributeId);
         }
 
-        public MetadataAttributeModel Kopie(long number, int numberOfSourceInPackage)
+        public MetadataAttributeModel Copy(long number, int numberOfSourceInPackage)
         {
             return new MetadataAttributeModel
             {
@@ -96,11 +98,14 @@ namespace BExIS.Modules.Dcm.UI.Models.Metadata
                 ParentStepId = this.ParentStepId,
                 Errors = null,
                 Locked = false,
-                PartyMappingExist = this.PartyMappingExist,
                 EntityMappingExist = this.EntityMappingExist,
+                PartyMappingExist = this.PartyMappingExist,
+                PartySimpleMappingExist = this.PartySimpleMappingExist,
+                PartyComplexMappingExist = this.PartyComplexMappingExist,
                 EntityUrl = "",
                 UpperBoundary = this.UpperBoundary,
-                LowerBoundary = this.LowerBoundary
+                LowerBoundary = this.LowerBoundary,
+                PartyId = 0
             };
         }
     }

@@ -788,6 +788,9 @@ function UpdateWithParty(componentId, number, partyid) {
             $("#" + componentId).replaceWith(response);
             // update party id to component
             $("#" + componentId).attr("partyid", partyid);
+            // update linked icon 
+            $("#" + componentId + "_notLinked").hide();
+            $("#" + componentId + "_linked").show();
             //alert("test");
             autosize($('textarea'));
         })
@@ -812,6 +815,9 @@ function UpdateSimpleMappingWithParty(componentId, xpath, partyid, value)
                 $("#" + componentId).attr("partyid", partyid);
                 $("#" + componentId).val(value);
                 $("#" + componentId).attr("value", value);
+                // update linked icon
+                $("#" + componentId + "_notLinked").hide();
+                $("#" + componentId + "_linked").show();
             }
         });
 }
