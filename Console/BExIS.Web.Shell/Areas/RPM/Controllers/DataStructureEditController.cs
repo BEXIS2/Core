@@ -230,6 +230,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
             DataContainerManager dataContainerManager = null;
             MissingValueManager missingValueManager = null;
             UnitManager um = null;
+            StructuredDataStructure dataStructure = null;
 
             try
             {
@@ -237,9 +238,8 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                 missingValueManager = new MissingValueManager();
                 dataContainerManager = new DataContainerManager();
                 um = new UnitManager();
-                var structureRepo = dataStructureManager.GetUnitOfWork().GetReadOnlyRepository<StructuredDataStructure>();
 
-                StructuredDataStructure dataStructure = structureRepo.Get(Id);
+                dataStructure = dataStructureManager.GetUnitOfWork().GetReadOnlyRepository<StructuredDataStructure>().Get(Id);
                 MessageModel returnObject = new MessageModel();
                 MessageModel messageModel = MessageModel.validateDataStructureInUse(dataStructure.Id, dataStructure);
                 if (messageModel.hasMessage)
@@ -249,7 +249,6 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                         if (variables.Select(svs => svs.Id).ToList().Contains(v.Id))
                         {
                             v.Description = variables.Where(svs => svs.Id == v.Id).FirstOrDefault().Description;
-                            dataStructure = dataStructureManager.UpdateStructuredDataStructure(dataStructure);
                         }
                     }
                     return PartialView("_messageWindow", messageModel);
@@ -268,8 +267,10 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                             foreach (MissingValue mv in missingValues)
                             {
                                 missingValueManager.Delete(mv);
-                            }
+                            }                           
                             dataStructureManager.RemoveVariableUsage(v);
+                            dataStructure.Variables.Remove(v);
+
                         }
                     }
 
@@ -307,7 +308,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                         }
                     }
 
-                    //dataStructure = structureRepo.Get(Id); // Javad: why it is needed?
+                    //dataStructure = dataStructureManager.GetUnitOfWork().GetReadOnlyRepository<StructuredDataStructure>().Get(Id); // Javad: why it is needed?
 
                     variables = variables.Where(v => v.Id != 0).ToArray();
                     MissingValue missingValue = new MissingValue();
@@ -360,9 +361,6 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                             }
                         }
                     }
-
-                    dataStructure = dataStructureManager.UpdateStructuredDataStructure(dataStructure);
-                    DataStructureIO.setVariableOrder(dataStructure, variables.Select(svs => svs.Id).ToList());
                 }
                 else
                 {
@@ -374,8 +372,11 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                             missingValueManager.Delete(mv);
                         }
                         dataStructureManager.RemoveVariableUsage(v);
-                    }
+                    }                    
                 }
+                dataStructure = DataStructureIO.setVariableOrder(dataStructure, variables.Select(svs => svs.Id).ToList());
+                dataStructure = dataStructureManager.UpdateStructuredDataStructure(dataStructure);
+
                 LoggerFactory.LogCustom("Variables for Data Structure " + Id + " stored.");
                 return Json(returnObject, JsonRequestBehavior.AllowGet);
             }
@@ -384,7 +385,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                 dataStructureManager.Dispose();
                 dataContainerManager.Dispose();
                 um.Dispose();
-                missingValueManager.Dispose();
+                missingValueManager.Dispose();     
             }
         }
 
