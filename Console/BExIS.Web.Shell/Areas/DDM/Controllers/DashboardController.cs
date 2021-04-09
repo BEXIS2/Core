@@ -358,6 +358,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
             }
             else
             {
+                ViewBag.entityname = entityname;
                 return PartialView("_myDatasetsViewHeader", model);
             }
 
