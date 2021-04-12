@@ -88,6 +88,8 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Config
         /// <seealso cref=""/>        
         private static void Load()
         {
+            
+
             configXML = new XmlDocument();
 
             configXML.Load(FileHelper.ConfigFilePath);
@@ -132,31 +134,34 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Config
                         List<Facet> lcDefault = new List<Facet>();
                         try
                         {
+                            _Reader = BexisIndexSearcher.getIndexReader();
                             Query query = new QueryParser(Lucene.Net.Util.Version.LUCENE_30, "id", new StandardAnalyzer(Lucene.Net.Util.Version.LUCENE_30)).Parse("*:*");
-                            SimpleFacetedSearch sfs = new SimpleFacetedSearch(_Reader, new string[] { "facet_" + fieldName });
-                            SimpleFacetedSearch.Hits hits = sfs.Search(query);
-
-                            int cCount = 0;
-                            foreach (SimpleFacetedSearch.HitsPerFacet hpg in hits.HitsPerFacet)
+                            using (SimpleFacetedSearch sfs = new SimpleFacetedSearch(_Reader, new string[] { "facet_" + fieldName }))
                             {
-                                if (!hpg.Name.ToString().Equals(""))
+                                SimpleFacetedSearch.Hits hits = sfs.Search(query);
+
+                                int cCount = 0;
+                                foreach (SimpleFacetedSearch.HitsPerFacet hpg in hits.HitsPerFacet)
                                 {
-                                    Facet ccDefault = new Facet();
-                                    ccDefault.Name = hpg.Name.ToString();
-                                    ccDefault.Text = hpg.Name.ToString();
-                                    ccDefault.Value = hpg.Name.ToString();
-                                    ccDefault.Count = (int)hpg.HitCount;
-                                    if (ccDefault.Count > 0) cCount++;
-                                    cDefault.Childrens.Add(ccDefault);
+                                    if (!hpg.Name.ToString().Equals(""))
+                                    {
+                                        Facet ccDefault = new Facet();
+                                        ccDefault.Name = hpg.Name.ToString();
+                                        ccDefault.Text = hpg.Name.ToString();
+                                        ccDefault.Value = hpg.Name.ToString();
+                                        ccDefault.Count = (int)hpg.HitCount;
+                                        if (ccDefault.Count > 0) cCount++;
+                                        cDefault.Childrens.Add(ccDefault);
+                                    }
                                 }
+                                cDefault.Count = cCount;
+                                AllFacetsDefault.Add(cDefault);
                             }
-                            cDefault.Count = cCount;
-                            AllFacetsDefault.Add(cDefault);
 
                         }
                         catch
                         {
-
+                            
                         }
                     }
 
@@ -191,23 +196,28 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Config
                         Query query = new QueryParser(Lucene.Net.Util.Version.LUCENE_30, "id", new StandardAnalyzer(Lucene.Net.Util.Version.LUCENE_29)).Parse("*:*");
                         try
                         {
-                            SimpleFacetedSearch sfs = new SimpleFacetedSearch(_Reader, new string[] { "property_" + fieldName });
-                            SimpleFacetedSearch.Hits hits = sfs.Search(query);
-                            List<string> laDefault = new List<string>();
-                            foreach (SimpleFacetedSearch.HitsPerFacet hpg in hits.HitsPerFacet)
-                            {
-                                if(!string.IsNullOrEmpty(hpg?.Name?.ToString()))
-                                    laDefault.Add(hpg.Name.ToString());
-                            }
+                            _Reader = BexisIndexSearcher.getIndexReader();
 
-                            //if (!cDefault.UIComponent.ToLower().Equals("range")) { laDefault.Add("All"); };
-                            laDefault.Sort();
-                            cDefault.Values = laDefault;
-                            AllPropertiesDefault.Add(cDefault);
+
+                            using (SimpleFacetedSearch sfs = new SimpleFacetedSearch(_Reader, new string[] { "property_" + fieldName }))
+                            {
+                                SimpleFacetedSearch.Hits hits = sfs.Search(query);
+                                List<string> laDefault = new List<string>();
+                                foreach (SimpleFacetedSearch.HitsPerFacet hpg in hits.HitsPerFacet)
+                                {
+                                    if (!string.IsNullOrEmpty(hpg?.Name?.ToString()))
+                                        laDefault.Add(hpg.Name.ToString());
+                                }
+
+                                //if (!cDefault.UIComponent.ToLower().Equals("range")) { laDefault.Add("All"); };
+                                laDefault.Sort();
+                                cDefault.Values = laDefault;
+                                AllPropertiesDefault.Add(cDefault);
+                            }
                         }
                         catch
                         {
-
+                            throw;
                         }
                     }
                     else if (fieldType.ToLower().Equals("category_field"))

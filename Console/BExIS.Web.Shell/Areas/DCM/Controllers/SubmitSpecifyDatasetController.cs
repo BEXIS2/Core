@@ -192,11 +192,9 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
         private void addSelectedDatasetToBus(long datasetId)
         {
-            DatasetManager datasetManager = new DatasetManager();
-
-            try
-            {
-
+            using (DatasetManager datasetManager = new DatasetManager())
+            using (ResearchPlanManager rpm = new ResearchPlanManager())
+            { 
                 TaskManager = (TaskManager)Session["TaskManager"];
 
                 if (datasetManager.GetDatasetVersionEffectiveTupleCount(datasetManager.GetDatasetLatestVersion(datasetId)) > 0)
@@ -214,16 +212,10 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 //TITLE
                 TaskManager.AddToBus(TaskManager.DATASET_TITLE, datasetVersion.Title);
 
-                ResearchPlanManager rpm = new ResearchPlanManager();
                 ResearchPlan rp = rpm.Repo.Get(datasetVersion.Dataset.ResearchPlan.Id);
                 TaskManager.AddToBus(TaskManager.RESEARCHPLAN_ID, rp.Id);
                 TaskManager.AddToBus(TaskManager.RESEARCHPLAN_TITLE, rp.Title);
             }
-            finally
-            {
-                datasetManager.Dispose();
-            }
-
         }
 
         #endregion

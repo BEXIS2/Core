@@ -310,8 +310,8 @@ namespace BExIS.Modules.Dcm.UI.Helper.API
                     string title = workingCopy.Title;
 
                     //send email
-                    es.Send(MessageHelper.GetUpdateDatasetHeader(),
-                        MessageHelper.GetUpdateDatasetMessage(id, title, userName),
+                    es.Send(MessageHelper.GetUpdateDatasetHeader(id),
+                        MessageHelper.GetUpdateDatasetMessage(id, title, _user.DisplayName),
                         new List<string>() { _user.Email },
                                new List<string>() { ConfigurationManager.AppSettings["SystemEmail"] }
                         );

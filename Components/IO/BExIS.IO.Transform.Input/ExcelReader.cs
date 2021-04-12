@@ -176,7 +176,7 @@ namespace BExIS.IO.Transform.Input
 
             // get workbookpart
             WorkbookPart workbookPart = spreadsheetDocument.WorkbookPart;
-
+            
             // get all the defined area
             List<DefinedNameVal> namesTable = BuildDefinedNamesTable(workbookPart);
 
@@ -467,43 +467,45 @@ namespace BExIS.IO.Transform.Input
         {
             List<List<string>> temp = new List<List<string>>();
 
-            OpenXmlReader reader = OpenXmlReader.Create(worksheetPart);
-            int count = 0;
-            int rowNum = 0;
-
-            while (reader.Read())
+            using (OpenXmlReader reader = OpenXmlReader.Create(worksheetPart))
             {
-                if (reader.ElementType == typeof(Row))
+                int count = 0;
+                int rowNum = 0;
+
+                while (reader.Read())
                 {
-                    do
+                    if (reader.ElementType == typeof(Row))
                     {
-                        if (reader.HasAttributes)
-                            rowNum = Convert.ToInt32(reader.Attributes.First(a => a.LocalName == "r").Value);
-
-                        if (endRow == 0)
+                        do
                         {
-                            if (rowNum >= startRow)
+                            if (reader.HasAttributes)
+                                rowNum = Convert.ToInt32(reader.Attributes.First(a => a.LocalName == "r").Value);
+
+                            if (endRow == 0)
                             {
-                                Row row = (Row)reader.LoadCurrentElement();
+                                if (rowNum >= startRow)
+                                {
+                                    Row row = (Row)reader.LoadCurrentElement();
 
-                                temp.Add(RowToList(row, variableList));
+                                    temp.Add(RowToList(row, variableList));
 
-                                count++;
+                                    count++;
+                                }
                             }
-                        }
-                        else
-                        {
-                            if (rowNum >= startRow && rowNum <= endRow)
+                            else
                             {
-                                Row row = (Row)reader.LoadCurrentElement();
+                                if (rowNum >= startRow && rowNum <= endRow)
+                                {
+                                    Row row = (Row)reader.LoadCurrentElement();
 
-                                temp.Add(RowToList(row, variableList));
-                                count++;
+                                    temp.Add(RowToList(row, variableList));
+                                    count++;
+                                }
                             }
-                        }
-                    } while (reader.ReadNextSibling()); // Skip to the next row
+                        } while (reader.ReadNextSibling()); // Skip to the next row
 
-                    break;
+                        break;
+                    }
                 }
             }
 
@@ -520,39 +522,41 @@ namespace BExIS.IO.Transform.Input
         /// <param name="endRow">end row</param>
         protected void ReadRows(WorksheetPart worksheetPart, int startRow, int endRow)
         {
-            OpenXmlReader reader = OpenXmlReader.Create(worksheetPart);
-            int count = 0;
-            int rowNum = 0;
-
-            while (reader.Read())
+            using (OpenXmlReader reader = OpenXmlReader.Create(worksheetPart))
             {
-                if (reader.ElementType == typeof(Row))
+                int count = 0;
+                int rowNum = 0;
+
+                while (reader.Read())
                 {
-                    do
+                    if (reader.ElementType == typeof(Row))
                     {
-                        if (reader.HasAttributes)
-                            rowNum = Convert.ToInt32(reader.Attributes.First(a => a.LocalName == "r").Value);
-
-                        if (rowNum >= startRow && ((rowNum <= endRow)||(endRow == 0)))
+                        do
                         {
-                            Row row = (Row)reader.LoadCurrentElement();
+                            if (reader.HasAttributes)
+                                rowNum = Convert.ToInt32(reader.Attributes.First(a => a.LocalName == "r").Value);
 
-                            if (!IsEmpty(row))
+                            if (rowNum >= startRow && ((rowNum <= endRow) || (endRow == 0)))
                             {
-                                this.DataTuples.Add(ReadRow(RowToList(row), Convert.ToInt32(row.RowIndex.ToString())));
-                                count++;
-                            }
-                        }
-                        
-                    } while (reader.ReadNextSibling()); // Skip to the next row
+                                Row row = (Row)reader.LoadCurrentElement();
 
-                    break;
+                                if (!IsEmpty(row))
+                                {
+                                    this.DataTuples.Add(ReadRow(RowToList(row), Convert.ToInt32(row.RowIndex.ToString())));
+                                    count++;
+                                }
+                            }
+
+                        } while (reader.ReadNextSibling()); // Skip to the next row
+
+                        break;
+                    }
                 }
+                // (12 - 2) - 10 = 0
+                NumberOSkippedfRows += ((endRow + 1) - startRow) - count;
+                Debug.WriteLine("NumberOSkippedfRows += ((endRow+1) - startRow) - count");
+                Debug.WriteLine(NumberOSkippedfRows + " += (" + endRow + 1 + " - " + startRow + ") - " + count + ");");
             }
-            // (12 - 2) - 10 = 0
-            NumberOSkippedfRows += ((endRow+1) - startRow) - count;
-            Debug.WriteLine("NumberOSkippedfRows += ((endRow+1) - startRow) - count");
-            Debug.WriteLine(NumberOSkippedfRows + " += (" + endRow + 1 + " - " + startRow + ") - " + count + ");");
         }
 
         #endregion read file
@@ -710,29 +714,31 @@ namespace BExIS.IO.Transform.Input
         {
             //NEW OPENXMLREADER
 
-            OpenXmlReader reader = OpenXmlReader.Create(worksheetPart);
-            int count = 0;
-            int rowNum = 0;
-
-            while (reader.Read())
+            using (OpenXmlReader reader = OpenXmlReader.Create(worksheetPart))
             {
-                if (reader.ElementType == typeof(Row))
+                int count = 0;
+                int rowNum = 0;
+
+                while (reader.Read())
                 {
-                    do
+                    if (reader.ElementType == typeof(Row))
                     {
-                        if (reader.HasAttributes)
-                            rowNum = Convert.ToInt32(reader.Attributes.First(a => a.LocalName == "r").Value);
-
-                        if (rowNum >= startRow && rowNum <= endRow)
+                        do
                         {
-                            Row row = (Row)reader.LoadCurrentElement();
+                            if (reader.HasAttributes)
+                                rowNum = Convert.ToInt32(reader.Attributes.First(a => a.LocalName == "r").Value);
 
-                            this.ErrorMessages = this.ErrorMessages.Union(ValidateRow(RowToList(row), rowNum)).ToList();
-                            count++;
-                        }
-                    } while (reader.ReadNextSibling()); // Skip to the next row
+                            if (rowNum >= startRow && rowNum <= endRow)
+                            {
+                                Row row = (Row)reader.LoadCurrentElement();
 
-                    break;
+                                this.ErrorMessages = this.ErrorMessages.Union(ValidateRow(RowToList(row), rowNum)).ToList();
+                                count++;
+                            }
+                        } while (reader.ReadNextSibling()); // Skip to the next row
+
+                        break;
+                    }
                 }
             }
         }
@@ -741,6 +747,77 @@ namespace BExIS.IO.Transform.Input
 
         #region helper methods
 
+        ///// <summary>
+        ///// Convert a excel row to a list of strings
+        ///// Every cell is one value
+        ///// </summary>
+        ///// <remarks></remarks>
+        ///// <seealso cref=""/>
+        ///// <param name="r"> row from a excel file</param>
+        ///// <returns>list of string for each cell in the row</returns>
+        //private List<string> RowToList(Row r)
+        //{
+        //    string[] rowAsStringArray = new string[numOfColumns];
+
+        //    // create a new cell
+        //    Cell c = new Cell();
+
+        //    for (int i = 0; i < r.ChildElements.Count(); i++)
+        //    {
+        //        // get current cell at i
+        //        c = r.Elements<Cell>().ElementAt(i);
+
+        //        string value = "";
+
+        //        if (c != null)
+        //        {
+        //            int cellReferencAsInterger = GetColumnNumber(GetColumnName(c.CellReference));
+
+        //            if (c.CellValue != null)
+        //            {
+        //                // if cell reference in range of the area
+        //                int start = startColumn;//GetColumnNumber(this._areaOfData.StartColumn);
+        //                int end = endColumn;//GetColumnNumber(this._areaOfData.EndColumn);
+
+        //                if (cellReferencAsInterger >= start && cellReferencAsInterger <= end)
+        //                {
+        //                    // shared string
+        //                    if (c.DataType != null && c.DataType.HasValue && c.DataType.Value == CellValues.SharedString)
+        //                    {
+        //                        int sharedStringIndex = int.Parse(c.CellValue.Text, CultureInfo.InvariantCulture);
+        //                        SharedStringItem sharedStringItem = _sharedStrings[sharedStringIndex];
+        //                        value = sharedStringItem.InnerText;
+        //                    }
+        //                    else {
+
+        //                        value = c.CellValue.Text;
+        //                    }
+
+        //                    // define index based on cell refernce - offset
+        //                    int index = cellReferencAsInterger - offset - 1;
+        //                    rowAsStringArray[index] = value;
+        //                }
+        //            }//end if cell value
+        //            else
+        //            {
+        //                if (cellReferencAsInterger >= startColumn && cellReferencAsInterger <= endColumn)
+        //                {
+        //                    int index = cellReferencAsInterger - offset - 1;
+        //                    rowAsStringArray[index] = "";
+        //                }
+        //            }
+        //        }//end if cell null
+        //    }//for
+
+        //    // replace all null values with "";
+        //    for (int i = 0; i < rowAsStringArray.Length; i++)
+        //    {
+        //        if (rowAsStringArray[i] == null) rowAsStringArray[i] = "";
+        //    }
+
+        //    return rowAsStringArray.ToList();
+        //}
+
         /// <summary>
         /// Convert a excel row to a list of strings
         /// Every cell is one value
@@ -748,10 +825,27 @@ namespace BExIS.IO.Transform.Input
         /// <remarks></remarks>
         /// <seealso cref=""/>
         /// <param name="r"> row from a excel file</param>
+        /// <param name="varIds">if null all columns will return otherwhise only the columns with the varids returned</param>
         /// <returns>list of string for each cell in the row</returns>
-        private List<string> RowToList(Row r)
+        private List<string> RowToList(Row r, List<long> varIds = null)
         {
-            string[] rowAsStringArray = new string[numOfColumns];
+            List<int> columns = null;
+            int currentNumOfCloumns = numOfColumns;
+            //get a subset of a row
+            if (varIds != null)
+            {
+                columns = new List<int>();
+                foreach (long id in varIds)
+                {
+                    //get the index of the variableintifier where id euqls id from varids
+                    int columnPosition = GetColumnNumber(this._areaOfData.StartColumn) + this.SubmitedVariableIdentifiers.IndexOf(this.SubmitedVariableIdentifiers.Where(p => p.id.Equals(id)).FirstOrDefault());
+                    columns.Add(columnPosition);
+                }
+
+                currentNumOfCloumns = columns.Count;
+            }
+
+            string[] rowAsStringArray = new string[currentNumOfCloumns];
 
             // create a new cell
             Cell c = new Cell();
@@ -766,84 +860,7 @@ namespace BExIS.IO.Transform.Input
                 if (c != null)
                 {
                     int cellReferencAsInterger = GetColumnNumber(GetColumnName(c.CellReference));
-
-                    if (c.CellValue != null)
-                    {
-                        // if cell reference in range of the area
-                        int start = startColumn;//GetColumnNumber(this._areaOfData.StartColumn);
-                        int end = endColumn;//GetColumnNumber(this._areaOfData.EndColumn);
-
-                        if (cellReferencAsInterger >= start && cellReferencAsInterger <= end)
-                        {
-                            // shared string
-                            if (c.DataType != null && c.DataType.HasValue && c.DataType.Value == CellValues.SharedString)
-                            {
-                                int sharedStringIndex = int.Parse(c.CellValue.Text, CultureInfo.InvariantCulture);
-                                SharedStringItem sharedStringItem = _sharedStrings[sharedStringIndex];
-                                value = sharedStringItem.InnerText;
-                            }
-                            else { value = c.CellValue.Text; }
-
-                            // define index based on cell refernce - offset
-                            int index = cellReferencAsInterger - offset - 1;
-                            rowAsStringArray[index] = value;
-                        }
-                    }//end if cell value
-                    else
-                    {
-                        if (cellReferencAsInterger >= startColumn && cellReferencAsInterger <= endColumn)
-                        {
-                            int index = cellReferencAsInterger - offset - 1;
-                            rowAsStringArray[index] = "";
-                        }
-                    }
-                }//end if cell null
-            }//for
-
-            // replace all null values with "";
-            for (int i = 0; i < rowAsStringArray.Length; i++)
-            {
-                if (rowAsStringArray[i] == null) rowAsStringArray[i] = "";
-            }
-
-            return rowAsStringArray.ToList();
-        }
-
-        /// <summary>
-        /// Convert a excel row to a list of strings
-        /// Every cell is one value
-        /// </summary>
-        /// <remarks></remarks>
-        /// <seealso cref=""/>
-        /// <param name="r"> row from a excel file</param>
-        /// <returns>list of string for each cell in the row</returns>
-        private List<string> RowToList(Row r, List<long> varIds)
-        {
-            List<int> columns = new List<int>();
-            foreach (long id in varIds)
-            {
-                //get the index of the variableintifier where id euqls id from varids
-
-                int columnPosition = GetColumnNumber(this._areaOfData.StartColumn) + this.SubmitedVariableIdentifiers.IndexOf(this.SubmitedVariableIdentifiers.Where(p => p.id.Equals(id)).FirstOrDefault());
-
-                columns.Add(columnPosition);
-            }
-
-            List<string> rowAsStringArray = new List<string>();
-
-            // create a new cell
-            Cell c = new Cell();
-
-            for (int i = 0; i < r.ChildElements.Count(); i++)
-            {
-                // get current cell at i
-                c = r.Elements<Cell>().ElementAt(i);
-
-                string value = "";
-
-                if (c != null)
-                {
-                    int cellReferencAsInterger = GetColumnNumber(GetColumnName(c.CellReference));
+                    int index = cellReferencAsInterger - offset - 1;
 
                     if (c.CellValue != null)
                     {
@@ -851,7 +868,8 @@ namespace BExIS.IO.Transform.Input
                         int start = GetColumnNumber(this._areaOfData.StartColumn);
                         int end = GetColumnNumber(this._areaOfData.EndColumn);
 
-                        if (columns.Contains(cellReferencAsInterger))
+                        //if columns is not null means the function returns a subset of all columns based on the incoming varids
+                        if ((columns == null || columns.Contains(cellReferencAsInterger)) && index >= 0)
                         {
                             // if Value a text
                             if (c.DataType != null && c.DataType.HasValue && c.DataType.Value == CellValues.SharedString)
@@ -859,13 +877,14 @@ namespace BExIS.IO.Transform.Input
                                 int sharedStringIndex = int.Parse(c.CellValue.Text, CultureInfo.InvariantCulture);
                                 SharedStringItem sharedStringItem = _sharedStrings[sharedStringIndex];
                                 value = sharedStringItem.InnerText;
-                                Debug.WriteLine(value);
+                                //Debug.WriteLine(value);
                             }
                             // not a text
                             else if (c.StyleIndex != null && c.StyleIndex.HasValue)
                             {
                                 uint styleIndex = c.StyleIndex.Value;
                                 CellFormat cellFormat = _stylesheet.CellFormats.ChildElements[(int)styleIndex] as CellFormat;
+
                                 if (cellFormat.ApplyNumberFormat != null && cellFormat.ApplyNumberFormat.HasValue && cellFormat.ApplyNumberFormat.Value && cellFormat.NumberFormatId != null && cellFormat.NumberFormatId.HasValue)
                                 {
                                     uint numberFormatId = cellFormat.NumberFormatId.Value;
@@ -877,7 +896,7 @@ namespace BExIS.IO.Transform.Input
                                         if (double.TryParse(c.CellValue.Text, out tmp)) value = ExcelHelper.FromExcelSerialDate(tmp).ToString();
                                         else value = c.CellValue.Text;
                                     }
-                                    else
+                                    else // not a date
                                     {
                                         if (_stylesheet.NumberingFormats != null && _stylesheet.NumberingFormats.Any(numFormat => ((NumberingFormat)numFormat).NumberFormatId.Value == numberFormatId))
                                         {
@@ -894,45 +913,62 @@ namespace BExIS.IO.Transform.Input
                                                 }
                                                 else
                                                 {
-                                                    value = c.CellValue.Text;
+                                                    // check format code and round the value based on the decimal place
+                                                    // contains e.g. #.## & 0.00 
+                                                    // contains e.g. 1,23E+02 
+                                                    // 1234567890,43759 = 1,23E+09
+
+                                                    value = ExcelHelper.ConvertWithFormat(c.CellValue.Text, formatCode);
                                                 }
                                             }
-                                            else
+                                            else //formatCode = null
                                             {
-                                                value = c.CellValue.Text;
+                                                value = ExcelHelper.ConvertWithFormat(c.CellValue.Text, "");
                                             }
                                         }
-                                        else
+                                        else //numberformat not exist in the stylesheet but may numberformatid exist 
                                         {
-                                            value = c.CellValue.Text;
+                                            string formatcode = ExcelHelper.GetFormatCode(numberFormatId);
+
+                                            value = ExcelHelper.ConvertWithFormat(c.CellValue.Text, formatcode);
                                         }
-                                    }
+                                    }//numbers end
                                 }
                                 else
                                 {
                                     value = c.CellValue.Text;
                                 }
                             }
+                            else //standard
+                            {
+                                value = ExcelHelper.ConvertWithFormat(c.CellValue.Text, "");
+                            }
 
                             // define index based on cell refernce - offset
                             //int index = cellReferencAsInterger - offset - 1;
-                            if (columns.Contains(cellReferencAsInterger))
+                            if ((columns == null || columns.Contains(cellReferencAsInterger)) && index>=0)
                             {
-                                rowAsStringArray.Add(value);
+                                rowAsStringArray[index]= value;
                             }
                         }
                     }//end if cell value
                     else
                     {
-                        if (columns.Contains(cellReferencAsInterger))
+                        if (columns == null || columns.Contains(cellReferencAsInterger))
                         {
-                            rowAsStringArray.Add(value);
+                            rowAsStringArray[index] = value;
                         }
                     }
                 }//end if cell null
             }//for
 
-            return rowAsStringArray;
+            // replace all null values with "";
+            for (int i = 0; i < rowAsStringArray.Length; i++)
+            {
+                if (rowAsStringArray[i] == null) rowAsStringArray[i] = "";
+            }
+
+            return rowAsStringArray.ToList();
         }
 
         /// <summary>
@@ -949,57 +985,59 @@ namespace BExIS.IO.Transform.Input
             //NEW OPENXMLREADER
             if (this.SubmitedVariableIdentifiers == null || this.SubmitedVariableIdentifiers.Count == 0)
             {
-                OpenXmlReader reader = OpenXmlReader.Create(worksheetPart);
-                int rowNum = 0;
-
-                // read variable rows to get name and id from area variable
-                while (reader.Read())
+                using (OpenXmlReader reader = OpenXmlReader.Create(worksheetPart))
                 {
-                    if (reader.ElementType == typeof(Row))
+                    int rowNum = 0;
+
+                    // read variable rows to get name and id from area variable
+                    while (reader.Read())
                     {
-                        do
+                        if (reader.ElementType == typeof(Row))
                         {
-                            if (reader.HasAttributes)
-                                rowNum = Convert.ToInt32(reader.Attributes.First(a => a.LocalName == "r").Value);
-
-                            if (rowNum >= startRow && rowNum <= endRow)
+                            do
                             {
-                                Row row = (Row)reader.LoadCurrentElement();
+                                if (reader.HasAttributes)
+                                    rowNum = Convert.ToInt32(reader.Attributes.First(a => a.LocalName == "r").Value);
 
-                                if (row.Hidden == null) VariableIdentifierRows.Add(RowToList(row));
-                                else if (row.Hidden != true) VariableIdentifierRows.Add(RowToList(row));
-                            }
-                        } while (reader.ReadNextSibling() && rowNum < endRow); // Skip to the next row
-                        break;
-                    }
-                }
-
-                // convert variable rows to VariableIdentifiers
-                if (VariableIdentifierRows != null)
-                {
-                    foreach (List<string> l in VariableIdentifierRows)
-                    {
-                        //create headerVariables
-                        if (SubmitedVariableIdentifiers.Count == 0)
-                        {
-                            foreach (string s in l)
-                            {
-                                VariableIdentifier hv = new VariableIdentifier();
-                                hv.name = s;
-                                SubmitedVariableIdentifiers.Add(hv);
-                            }
-                        }
-                        else
-                        {
-                            foreach (string s in l)
-                            {
-                                if (!string.IsNullOrEmpty(s))
+                                if (rowNum >= startRow && rowNum <= endRow)
                                 {
-                                    int id = 0;
-                                    if (int.TryParse(s, out id))
+                                    Row row = (Row)reader.LoadCurrentElement();
+
+                                    if (row.Hidden == null) VariableIdentifierRows.Add(RowToList(row));
+                                    else if (row.Hidden != true) VariableIdentifierRows.Add(RowToList(row));
+                                }
+                            } while (reader.ReadNextSibling() && rowNum < endRow); // Skip to the next row
+                            break;
+                        }
+                    }
+
+                    // convert variable rows to VariableIdentifiers
+                    if (VariableIdentifierRows != null)
+                    {
+                        foreach (List<string> l in VariableIdentifierRows)
+                        {
+                            //create headerVariables
+                            if (SubmitedVariableIdentifiers.Count == 0)
+                            {
+                                foreach (string s in l)
+                                {
+                                    VariableIdentifier hv = new VariableIdentifier();
+                                    hv.name = s;
+                                    SubmitedVariableIdentifiers.Add(hv);
+                                }
+                            }
+                            else
+                            {
+                                foreach (string s in l)
+                                {
+                                    if (!string.IsNullOrEmpty(s))
                                     {
-                                        int index = l.IndexOf(s);
-                                        SubmitedVariableIdentifiers.ElementAt(index).id = id;
+                                        int id = 0;
+                                        if (int.TryParse(s, out id))
+                                        {
+                                            int index = l.IndexOf(s);
+                                            SubmitedVariableIdentifiers.ElementAt(index).id = id;
+                                        }
                                     }
                                 }
                             }

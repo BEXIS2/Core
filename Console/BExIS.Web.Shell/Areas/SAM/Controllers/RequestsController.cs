@@ -25,42 +25,44 @@ namespace BExIS.Modules.Sam.UI.Controllers
     {
         public ActionResult Decisions(long entityId)
         {
-            var entityManager = new EntityManager();
-            var entityPermissionManager = new EntityPermissionManager();
-            var entityStore = (IEntityStore)Activator.CreateInstance(entityManager.FindById(entityId).EntityStoreType);
-
-            var decisionManager = new DecisionManager();
-
-            // Source + Transformation - Data
-            var decisions = decisionManager.Decisions.Where(d => d.Request.Entity.Id == entityId && d.DecisionMaker.Name == HttpContext.User.Identity.Name);
-
-            List<DecisionGridRowModel> model = new List<DecisionGridRowModel>();
-
-            foreach (var m in decisions)
+            using (var entityManager = new EntityManager())
+            using (var entityPermissionManager = new EntityPermissionManager())
+            using (var decisionManager = new DecisionManager())
             {
-                // add the descicion to the model if the entity exist in the database
-                // exclude when enity was deleted
-                if (entityStore.Exist(m.Request.Key))
+
+                var entityStore = (IEntityStore)Activator.CreateInstance(entityManager.FindById(entityId).EntityStoreType);
+
+                // Source + Transformation - Data
+                var decisions = decisionManager.Decisions.Where(d => d.Request.Entity.Id == entityId && d.DecisionMaker.Name == HttpContext.User.Identity.Name);
+
+                List<DecisionGridRowModel> model = new List<DecisionGridRowModel>();
+
+                foreach (var m in decisions)
                 {
-                    model.Add(
-                        new DecisionGridRowModel()
-                        {
-                            Id = m.Id,
-                            RequestId = m.Request.Id,
-                            Rights = string.Join(", ", entityPermissionManager.GetRights(m.Request.Rights)), //string.Join(",", Enum.GetNames(typeof(RightType)).Select(n => n).Where(n => (m.Request.Rights & (short)Enum.Parse(typeof(RightType), n)) > 0)),
-                        Status = m.Status,
-                            StatusAsText = Enum.GetName(typeof(DecisionStatus), m.Status),
-                            InstanceId = m.Request.Key,
-                            Title = entityStore.GetTitleById(m.Request.Key),
-                            Applicant = getPartyName(m.Request.Applicant),
-                            Intention = m.Request.Intention,
-                            RequestDate = m.Request.RequestDate
-                        });
+                    // add the descicion to the model if the entity exist in the database
+                    // exclude when enity was deleted
+                    if (entityStore.Exist(m.Request.Key))
+                    {
+                        model.Add(
+                            new DecisionGridRowModel()
+                            {
+                                Id = m.Id,
+                                RequestId = m.Request.Id,
+                                Rights = string.Join(", ", entityPermissionManager.GetRights(m.Request.Rights)), //string.Join(",", Enum.GetNames(typeof(RightType)).Select(n => n).Where(n => (m.Request.Rights & (short)Enum.Parse(typeof(RightType), n)) > 0)),
+                            Status = m.Status,
+                                StatusAsText = Enum.GetName(typeof(DecisionStatus), m.Status),
+                                InstanceId = m.Request.Key,
+                                Title = entityStore.GetTitleById(m.Request.Key),
+                                Applicant = getPartyName(m.Request.Applicant),
+                                Intention = m.Request.Intention,
+                                RequestDate = m.Request.RequestDate
+                            });
+                    }
+
+
                 }
-
-
+                return PartialView("_Decisions", model.OrderBy(x => x.Status).ThenBy(n => n.Id));
             }
-            return PartialView("_Decisions", model.OrderBy(x=>x.Status).ThenBy(n => n.Id));
         }
 
         public ActionResult Index()
@@ -91,17 +93,17 @@ namespace BExIS.Modules.Sam.UI.Controllers
         [HttpPost]
         public void Accept(long decisionId)
         {
-            var decisionManager = new DecisionManager();
-
-            try
+            using (var entityManager = new EntityManager())
+            using (var entityPermissionManager = new EntityPermissionManager())
+            using (var decisionManager = new DecisionManager())
+            using (var uow = this.GetUnitOfWork())
             {
-                decisionManager.Accept(decisionId, "");
 
-                var es = new EmailService();
-                var entityManager = new EntityManager();
-
-                using (var uow = this.GetUnitOfWork())
+                try
                 {
+                    decisionManager.Accept(decisionId, "");
+
+                    var es = new EmailService();
                     var requestRepository = uow.GetRepository<Request>();
                     var request = requestRepository.Get(decisionId);
 
@@ -111,38 +113,33 @@ namespace BExIS.Modules.Sam.UI.Controllers
                         string applicant = getPartyName(request.Applicant);
 
                         es.Send(MessageHelper.GetAcceptRequestHeader(request.Key, applicant),
-                            MessageHelper.GetAcceptRequestMessage(request.Key, "title"),
+                            MessageHelper.GetAcceptRequestMessage(request.Key, entityStore.GetTitleById(request.Key)),
                             new List<string> { request.Applicant.Email }, null, new List<string> { ConfigurationManager.AppSettings["SystemEmail"] }
                         );
                     }
+
+                }
+                catch (Exception e)
+                {
+                    throw e;
                 }
 
-
-            }
-            catch (Exception e)
-            {
-                throw e;
-            }
-            finally
-            {
-                decisionManager.Dispose();
             }
         }
 
         [HttpPost]
         public void Reject(long requestId)
         {
-            var decisionManager = new DecisionManager();
-
-            try
+            using (var entityManager = new EntityManager())
+            using (var entityPermissionManager = new EntityPermissionManager())
+            using (var decisionManager = new DecisionManager())
+            using (var uow = this.GetUnitOfWork())
             {
-                decisionManager.Reject(requestId, "");
-
-                var es = new EmailService();
-                var entityManager = new EntityManager();
-
-                using (var uow = this.GetUnitOfWork())
+                try
                 {
+                    decisionManager.Reject(requestId, "");
+
+                    var es = new EmailService();
                     var requestRepository = uow.GetRepository<Request>();
                     var request = requestRepository.Get(requestId);
 
@@ -157,31 +154,29 @@ namespace BExIS.Modules.Sam.UI.Controllers
                         );
                     }
                 }
-            }
-            catch (Exception e)
-            {
-                throw e;
-            }
-            finally
-            {
-                decisionManager.Dispose();
+                catch (Exception e)
+                {
+                    throw e;
+                }
+                finally
+                {
+                    decisionManager.Dispose();
+                }
             }
         }
 
         [HttpPost]
         public void Withdraw(long requestId)
         {
-            var decisionManager = new DecisionManager();
-
-            try
+            using (var decisionManager = new DecisionManager())
+            using (var entityManager = new EntityManager())
+            using (var uow = this.GetUnitOfWork())
             {
-                decisionManager.Withdraw(requestId);
-
-                var es = new EmailService();
-                var entityManager = new EntityManager();
-
-                using (var uow = this.GetUnitOfWork())
+                try
                 {
+                    decisionManager.Withdraw(requestId);
+
+                    var es = new EmailService();
                     var requestRepository = uow.GetRepository<Request>();
                     var request = requestRepository.Get(requestId);
 
@@ -198,15 +193,12 @@ namespace BExIS.Modules.Sam.UI.Controllers
                         );
                     }
                 }
+                catch (Exception e)
+                {
+                    throw e;
+                }
             }
-            catch (Exception e)
-            {
-                throw e;
-            }
-            finally
-            {
-                decisionManager.Dispose();
-            }
+
         }
 
         public ActionResult Requests_And_Decisions(long entityId)
@@ -216,42 +208,43 @@ namespace BExIS.Modules.Sam.UI.Controllers
 
         public ActionResult Requests(long entityId)
         {
-            var entityManager = new EntityManager();
-            var entityPermissionManager = new EntityPermissionManager();
-
-            var entityStore = (IEntityStore)Activator.CreateInstance(entityManager.FindById(entityId).EntityStoreType);
-
-            var requestManager = new RequestManager();
-
-            // Source + Transformation - Data
-            var requests = requestManager.Requests.Where(r => r.Entity.Id == entityId && r.Applicant.Name == HttpContext.User.Identity.Name);
-
-            List<RequestGridRowModel> model = new List<RequestGridRowModel>();
-
-            foreach (var m in requests)
+            using (var entityManager = new EntityManager())
+            using (var entityPermissionManager = new EntityPermissionManager())
+            using (var requestManager = new RequestManager())
             {
-                // add the descicion to the model if the entity exist in the database
-                // exclude when enity was deleted
-                if (entityStore.Exist(m.Key))
+
+                var entityStore = (IEntityStore)Activator.CreateInstance(entityManager.FindById(entityId).EntityStoreType);
+
+                // Source + Transformation - Data
+                var requests = requestManager.Requests.Where(r => r.Entity.Id == entityId && r.Applicant.Name == HttpContext.User.Identity.Name);
+
+                List<RequestGridRowModel> model = new List<RequestGridRowModel>();
+
+                foreach (var m in requests)
                 {
+                    // add the descicion to the model if the entity exist in the database
+                    // exclude when enity was deleted
+                    if (entityStore.Exist(m.Key))
+                    {
 
-                    model.Add(
-                        new RequestGridRowModel()
-                        {
-                            Id = m.Id,
-                            InstanceId = m.Key,
-                            Title = entityStore.GetTitleById(m.Key),
-                            Rights = string.Join(", ", entityPermissionManager.GetRights(m.Rights)), //string.Join(",", Enum.GetNames(typeof(RightType)).Select(n => n).Where(n => (m.Request.Rights & (short)Enum.Parse(typeof(RightType), n)) > 0)),
-                        RequestStatus = Enum.GetName(typeof(RequestStatus), m.Status),
-                            Intention = m.Intention,
-                            RequestDate = m.RequestDate
-                        }
-                        );
+                        model.Add(
+                            new RequestGridRowModel()
+                            {
+                                Id = m.Id,
+                                InstanceId = m.Key,
+                                Title = entityStore.GetTitleById(m.Key),
+                                Rights = string.Join(", ", entityPermissionManager.GetRights(m.Rights)), //string.Join(",", Enum.GetNames(typeof(RightType)).Select(n => n).Where(n => (m.Request.Rights & (short)Enum.Parse(typeof(RightType), n)) > 0)),
+                                RequestStatus = Enum.GetName(typeof(RequestStatus), m.Status),
+                                Intention = m.Intention,
+                                RequestDate = m.RequestDate
+                            }
+                            );
+                    }
                 }
+
+
+                return PartialView("_Requests", model);
             }
-
-
-            return PartialView("_Requests", model);
         }
 
         private string getPartyName(User user)

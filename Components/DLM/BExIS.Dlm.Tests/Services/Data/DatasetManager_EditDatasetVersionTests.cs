@@ -6,6 +6,7 @@ using BExIS.Dlm.Services.Data;
 using BExIS.Dlm.Services.MetadataStructure;
 using BExIS.Dlm.Tests.Helpers;
 using BExIS.Utils.Config;
+using BExIS.Utils.Upload;
 using FluentAssertions;
 using NUnit.Framework;
 using System;
@@ -17,6 +18,8 @@ using Vaiona.Persistence.Api;
 
 namespace BExIS.Dlm.Tests.Services.Data
 {
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Reliability", "CA2000:Objekte verwerfen, bevor Bereich verloren geht", Justification = "<Ausstehend>")]
+
     [TestFixture()]
     public class DatasetManager_EditDatasetVersionTests
     {
@@ -56,7 +59,7 @@ namespace BExIS.Dlm.Tests.Services.Data
                 datasetId = dataset.Id;
 
                 // add datatuples
-                dataset = dsHelper.GenerateTuplesForDataset(dataset, dataStructure, numberOfTuples, username);
+                dataset = dsHelper.GenerateTuplesWithRandomValuesForDataset(dataset, dataStructure, numberOfTuples, username);
                 dm.CheckInDataset(dataset.Id, "for testing  datatuples with versions", username, ViewCreationBehavior.None);
 
                 dm.SyncView(dataset.Id, ViewCreationBehavior.Create | ViewCreationBehavior.Refresh);
@@ -126,61 +129,131 @@ namespace BExIS.Dlm.Tests.Services.Data
             }
         }
 
-        
-    
+
+
         [Test()]
         public void EditDatasetVersion_DeleteADataTupleAfterUpdate_ReturnUpdatedVersion()
         {
-            DatasetManager datasetManager = new DatasetManager();
-
-            try
+            Dataset dataset;
+            DatasetVersion latest;
+            using (DatasetManager datasetManager = new DatasetManager())
             {
                 //Arrange
-                Dataset dataset = datasetManager.GetDataset(datasetId);
-                DatasetVersion latest = datasetManager.GetDatasetLatestVersion(datasetId);
+                dataset = datasetManager.GetDataset(datasetId);
+                latest = datasetManager.GetDatasetLatestVersion(datasetId);
 
                 //update the dataset
-                dsHelper.UpdateAnyTupleForDataset(dataset, dataset.DataStructure as StructuredDataStructure);
+                dataset = dsHelper.UpdateAnyTupleForDataset(dataset, dataset.DataStructure as StructuredDataStructure, datasetManager);
                 datasetManager.CheckInDataset(datasetId, "for testing  update all datatuple", username, ViewCreationBehavior.None);
+            }
 
-
-                latest = datasetManager.GetDatasetLatestVersion(datasetId);
-
-                int before = datasetManager.GetDataTuplesCount(latest.Id);
-                var tuple = datasetManager.GetDataTuples(latest.Id).LastOrDefault();
-
-                //Act
-                if (datasetManager.IsDatasetCheckedOutFor(datasetId, "David") || datasetManager.CheckOutDataset(datasetId, "David"))
+            using (DatasetManager datasetManager = new DatasetManager())
+            {
+                try
                 {
-                    DatasetVersion workingCopy = datasetManager.GetDatasetWorkingCopy(datasetId);
+
+                    latest = datasetManager.GetDatasetLatestVersion(datasetId);
+
+                    int before = datasetManager.GetDataTuplesCount(latest.Id);
+                    var tuple = datasetManager.GetDataTuples(latest.Id).LastOrDefault();
+
+                    //Act
+                    if (datasetManager.IsDatasetCheckedOutFor(datasetId, "David") || datasetManager.CheckOutDataset(datasetId, "David"))
+                    {
+                        DatasetVersion workingCopy = datasetManager.GetDatasetWorkingCopy(datasetId);
 
 
-                    List<AbstractTuple> deleteTuples = new List<AbstractTuple>();
-                    deleteTuples.Add(tuple);
+                        List<AbstractTuple> deleteTuples = new List<AbstractTuple>();
+                        deleteTuples.Add(tuple);
 
-                    workingCopy = datasetManager.EditDatasetVersion(workingCopy, null, null, deleteTuples.Select(d => d.Id).ToList());
+                        workingCopy = datasetManager.EditDatasetVersion(workingCopy, null, null, deleteTuples.Select(d => d.Id).ToList());
 
-                    datasetManager.CheckInDataset(datasetId, "delete one datatuple for testing", username, ViewCreationBehavior.None);
+                        datasetManager.CheckInDataset(datasetId, "delete one datatuple for testing", username, ViewCreationBehavior.None);
+
+                    }
+
+                    latest = datasetManager.GetDatasetLatestVersion(datasetId);
+
+                    int after = datasetManager.GetDataTuplesCount(latest.Id);
+
+
+                    //Assert
+                    Assert.That(before, Is.GreaterThan(after));
+
 
                 }
+                catch (Exception ex)
+                {
+                    throw ex;
+                }
+            }
+        }
 
+        [TestCase(0)]// primary key as int
+        [TestCase(2)]// primary key as double
+        public void EditDatasetVersion_UpdateAllDataTuples_SameNumberOfDatatuples(int primaryKeyIndex)
+        {
+            Dataset dataset;
+            DatasetVersion latest;
+            List<DataTuple> incoming = new List<DataTuple>();
+            int count = 0;
+            int expectedCount = 0;
+            List<long> datatupleFromDatabaseIds = new List<long>();
+
+            using (DatasetManager datasetManager = new DatasetManager())
+            {
+                //Arrange
+                dataset = datasetManager.GetDataset(datasetId);
                 latest = datasetManager.GetDatasetLatestVersion(datasetId);
+                datatupleFromDatabaseIds = datasetManager.GetDatasetVersionEffectiveTupleIds(latest);
 
-                int after = datasetManager.GetDataTuplesCount(latest.Id);
+                //get updated tuples as incoming datatuples
+                incoming = dsHelper.GetUpdatedDatatuples(latest, dataset.DataStructure as StructuredDataStructure, datasetManager);
 
-
-                //Assert
-                Assert.That(before, Is.GreaterThan(after));
-
-
+                //because of updateing all datatuples the incoming number is should be equal then the existing one
+                expectedCount = incoming.Count;
             }
-            catch (Exception ex)
+
+            using (DatasetManager datasetManager = new DatasetManager())
             {
-                throw ex;
-            }
-            finally
-            {
-                datasetManager.Dispose();
+                try
+                {
+
+
+                    if (datasetManager.IsDatasetCheckedOutFor(datasetId, "David") || datasetManager.CheckOutDataset(datasetId, "David"))
+                    {
+                        DatasetVersion workingCopy = datasetManager.GetDatasetWorkingCopy(datasetId);
+                        List<long> primaryKeys = new List<long>();
+
+                        //get primarykey ids
+                        // var 1 = int = 1
+                        // var 2 = string = 2
+                        // var 3 = double = 3
+                        // var 4 = boolean = 4
+                        // var 5 = datetime = 5
+                        List<long> varIds = ((StructuredDataStructure)workingCopy.Dataset.DataStructure).Variables.Select(v=>v.Id).ToList();
+
+                        primaryKeys.Add(varIds.ElementAt(primaryKeyIndex));
+
+                        //Act
+                        Dictionary<string, List<DataTuple>> splittedDatatuples = new Dictionary<string, List<DataTuple>>();
+                        UploadHelper uploadhelper = new UploadHelper();
+                        splittedDatatuples = uploadhelper.GetSplitDatatuples(incoming, primaryKeys, workingCopy, ref datatupleFromDatabaseIds);
+                        datasetManager.EditDatasetVersion(workingCopy, splittedDatatuples["new"], splittedDatatuples["edit"], null);
+                        datasetManager.CheckInDataset(datasetId, count + " rows", "David");
+
+
+                        //Assert
+                        long c = datasetManager.GetDatasetVersionEffectiveTupleCount(workingCopy);
+                        Assert.That(c, Is.EqualTo(expectedCount));
+
+                    }
+
+                }
+                catch (Exception ex)
+                {
+                    throw ex;
+                }
             }
         }
 

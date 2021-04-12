@@ -2,9 +2,11 @@
 using BExIS.Modules.Sam.UI.Models;
 using BExIS.Security.Entities.Subjects;
 using BExIS.Security.Services.Subjects;
+using BExIS.Security.Services.Utilities;
 using BExIS.UI.Helpers;
 using BExIS.Utils.NH.Querying;
 using Microsoft.AspNet.Identity;
+using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Globalization;
@@ -84,12 +86,17 @@ namespace BExIS.Modules.Sam.UI.Controllers
             {
                 var user = userManager.FindByIdAsync(userId).Result;
 
-                foreach (var @group in user.Groups)
+                for(int i=0; i<user.Groups.Count;i++)
                 {
-                    await RemoveUserFromGroup(user.Id, @group.Name);
+                    var @group = user.Groups.ElementAt(i);
+                    await removeUserFromGroup(user.Id, @group.Name);
                 }
 
                 await userManager.DeleteAsync(user);
+            }
+            catch (Exception ex)
+            {
+                throw;
             }
             finally
             {
@@ -132,6 +139,11 @@ namespace BExIS.Modules.Sam.UI.Controllers
         [HttpPost]
         public async Task<bool> RemoveUserFromGroup(long userId, string groupName)
         {
+            return await removeUserFromGroup(userId, groupName);
+        }
+
+        private async Task<bool> removeUserFromGroup(long userId, string groupName)
+        {
             var identityUserService = new IdentityUserService();
 
             try
@@ -163,11 +175,11 @@ namespace BExIS.Modules.Sam.UI.Controllers
         [HttpPost]
         public ActionResult Update(UpdateUserModel model)
         {
-            var userManager = new UserManager();
-            var partyManager = new PartyManager();
-            var partyTypeManager = new PartyTypeManager();
-            try
+            using (var userManager = new UserManager())
+            using (var partyManager = new PartyManager())
+            using (var partyTypeManager = new PartyTypeManager())
             {
+    
                 // check wheter model is valid or not
                 if (!ModelState.IsValid) return PartialView("_Update", model);
 
@@ -182,8 +194,13 @@ namespace BExIS.Modules.Sam.UI.Controllers
                     var duplicateUser = userManager.FindByEmailAsync(model.Email).Result;
                     if (duplicateUser != null) ModelState.AddModelError("Email", "The email address exists already.");
                     if (!ModelState.IsValid) return PartialView("_Update", model);
-                }
 
+                    var es = new EmailService();
+                    es.Send(MessageHelper.GetUpdateEmailHeader(),
+                        MessageHelper.GetUpdaterEmailMessage(user.DisplayName, user.Email, model.Email),
+                        ConfigurationManager.AppSettings["SystemEmail"]
+                        );
+                }
                 user.Email = model.Email;
 
                 // Update email in party
@@ -200,10 +217,7 @@ namespace BExIS.Modules.Sam.UI.Controllers
 
                 userManager.UpdateAsync(user);
                 return Json(new { success = true });
-            }
-            finally
-            {
-                userManager.Dispose();
+
             }
         }
 

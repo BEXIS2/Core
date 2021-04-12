@@ -116,9 +116,8 @@ namespace BExIS.Web.Shell.Controllers
         public async Task<ActionResult> ExternalLoginConfirmation(ExternalLoginConfirmationViewModel model,
             string returnUrl)
         {
-            var identityUserService = new IdentityUserService();
-
-            try
+            using (var identityUserService = new IdentityUserService())
+            using (var signInManager = new SignInManager(AuthenticationManager))
             {
                 if (User.Identity.IsAuthenticated)
                 {
@@ -141,7 +140,7 @@ namespace BExIS.Web.Shell.Controllers
                         result = await identityUserService.AddLoginAsync(user.Id, info.Login);
                         if (result.Succeeded)
                         {
-                            var signInManager = new SignInManager(AuthenticationManager);
+
                             await signInManager.SignInAsync(user, false, false);
                             return RedirectToLocal(returnUrl);
                         }
@@ -152,12 +151,6 @@ namespace BExIS.Web.Shell.Controllers
                 ViewBag.ReturnUrl = returnUrl;
                 return View(model);
             }
-            finally
-            {
-                identityUserService.Dispose();
-            }
-
-
         }
 
         //
@@ -235,16 +228,18 @@ namespace BExIS.Web.Shell.Controllers
         [ValidateInput(false)]
         public async Task<ActionResult> Login(LoginViewModel model, string returnUrl)
         {
-            var identityUserService = new IdentityUserService();
-
-            try
-            {
+            // This doesn't count login failures towards account lockout
+            // To enable password failures to trigger account lockout, change to shouldLockout: true
+            using (var signInManager = new SignInManager(AuthenticationManager))
+            using (var identityUserService = new IdentityUserService())
+            { 
+   
                 if (!ModelState.IsValid)
                 {
                     return View(model);
                 }
 
-                
+
 
                 // Search for user by email, if not found search by user name
                 var user = await identityUserService.FindByEmailAsync(model.UserName);
@@ -254,10 +249,10 @@ namespace BExIS.Web.Shell.Controllers
                     model.UserName = user.UserName;
                 }
                 else
-                { 
+                {
                     user = await identityUserService.FindByNameAsync(model.UserName);
                 }
-                
+
                 // Require the user to have a confirmed email before they can log on.
                 if (user != null)
                 {
@@ -268,9 +263,7 @@ namespace BExIS.Web.Shell.Controllers
                     }
                 }
 
-                // This doesn't count login failures towards account lockout
-                // To enable password failures to trigger account lockout, change to shouldLockout: true
-                var signInManager = new SignInManager(AuthenticationManager);
+
 
                 var result =
                     await signInManager.PasswordSignInAsync(model.UserName, model.Password, model.RememberMe, false);
@@ -287,10 +280,7 @@ namespace BExIS.Web.Shell.Controllers
                         return View(model);
                 }
             }
-            finally
-            {
-                identityUserService.Dispose();
-            }
+  
         }
 
         //

@@ -25,86 +25,88 @@ namespace BExIS.Modules.Vim.UI.Controllers
             List<string> helpCountActivity = new List<string>();
 
             //--------
-            
-            DatasetManager dm = new DatasetManager();
-            var entityPermissionManager = new EntityPermissionManager();
 
-            List<Dataset> datasets = dm.DatasetRepo.Query().OrderBy(p => p.Id).ToList();
-            List<long> datasetIds = datasets.Select(p => p.Id).ToList();
-
-            foreach (var id in datasetIds)
+            using (DatasetManager dm = new DatasetManager())
+            using (EntityPermissionManager entityPermissionManager = new EntityPermissionManager())
             {
-                Dataset dataset = dm.GetDataset(id);
 
-                List<DatasetVersion> versions = dm.DatasetVersionRepo.Query(p => p.Dataset.Id == id).OrderBy(p => p.Id).ToList();
+                List<Dataset> datasets = dm.DatasetRepo.Query().OrderBy(p => p.Id).ToList();
+                List<long> datasetIds = datasets.Select(p => p.Id).ToList();
 
-                List<long> datasetVersionId = versions.Select(p => p.Id).ToList();
-
-                //extract the timestamp of version id = 1. This is the time of the creation of a dataset.
-                var createTime = versions.First().Timestamp.Month + "/" + versions.First().Timestamp.Year;
-                helpCountCreated.Add(createTime);
-
-                //extract the timestamp of the last version. This is the time of the deletion of a dataset.
-                // if(dataset.Status == DatasetStatus.Deleted) -- BY DAVID
-                if (dataset.Status == DatasetStatus.Deleted)
+                foreach (var id in datasetIds)
                 {
-                    var deleteTime = versions.Last().Timestamp.Month + "/" + versions.Last().Timestamp.Year;
-                    helpCountDeleted.Add(deleteTime);
+                    Dataset dataset = dm.GetDataset(id);
+
+                    List<DatasetVersion> versions = dm.DatasetVersionRepo.Query(p => p.Dataset.Id == id).OrderBy(p => p.Id).ToList();
+
+                    List<long> datasetVersionId = versions.Select(p => p.Id).ToList();
+
+                    //extract the timestamp of version id = 1. This is the time of the creation of a dataset.
+                    var createTime = versions.First().Timestamp.Month + "/" + versions.First().Timestamp.Year;
+                    helpCountCreated.Add(createTime);
+
+                    //extract the timestamp of the last version. This is the time of the deletion of a dataset.
+                    // if(dataset.Status == DatasetStatus.Deleted) -- BY DAVID
+                    if (dataset.Status == DatasetStatus.Deleted)
+                    {
+                        var deleteTime = versions.Last().Timestamp.Month + "/" + versions.Last().Timestamp.Year;
+                        helpCountDeleted.Add(deleteTime);
+                    }
+
+                    foreach (var version in versions)
+                    {
+                        var activityTime = version.Timestamp.Month + "/" + version.Timestamp.Year;
+                        helpCountActivity.Add(activityTime);
+
+                    }
+
                 }
 
-                foreach (var version in versions)
+                ///Create the list of created datasets
+                var createdItems = from tt in helpCountCreated
+                                   group tt by tt into g
+                                   let count = g.Count()
+                                   orderby count ascending
+                                   select new { Value = g.Key, Count = count };
+
+                foreach (var t in createdItems)
                 {
-                    var activityTime = version.Timestamp.Month + "/" + version.Timestamp.Year;
-                    helpCountActivity.Add(activityTime);
-                    
+                    createdDatasets.Add(t.Value, t.Count);
                 }
 
+                //createdDatasets.OrderBy(order => order.Value).ToList();
+
+                ///Create the list of deleted datasets
+                var deletedItems = from tt in helpCountDeleted
+                                   group tt by tt into g
+                                   let count = g.Count()
+                                   orderby count ascending
+                                   select new { Value = g.Key, Count = count };
+
+                foreach (var t in deletedItems)
+                {
+                    deletedDatasets.Add(t.Value, t.Count);
+                }
+
+                ///Create the list of all activities includes create, update and delete
+                var activityItems = from tt in helpCountActivity
+                                    group tt by tt into g
+                                    let count = g.Count()
+                                    orderby count ascending
+                                    select new { Value = g.Key, Count = count };
+
+                foreach (var t in activityItems)
+                {
+                    allActivities.Add(t.Value, t.Count);
+                }
+
+                visModel.allActivities = allActivities;
+                visModel.allDatasets = allActivities;
+                visModel.createdDatasets = createdDatasets;
+                visModel.deletedDatasets = deletedDatasets;
+
+                return View(visModel);
             }
-
-            ///Create the list of created datasets
-            var createdItems = from tt in helpCountCreated
-                               group tt by tt into g
-                               let count = g.Count()
-                               orderby count ascending
-                               select new { Value = g.Key, Count = count };
-
-            foreach (var t in createdItems)
-            {
-                createdDatasets.Add(t.Value, t.Count);
-            }
-
-            //createdDatasets.OrderBy(order => order.Value).ToList();
-
-            ///Create the list of deleted datasets
-            var deletedItems = from tt in helpCountDeleted
-                               group tt by tt into g
-                               let count = g.Count()
-                               orderby count ascending
-                               select new { Value = g.Key, Count = count };
-
-            foreach (var t in deletedItems)
-            {
-                deletedDatasets.Add(t.Value, t.Count);
-            }
-
-            ///Create the list of all activities includes create, update and delete
-            var activityItems = from tt in helpCountActivity
-                                group tt by tt into g
-                                let count = g.Count()
-                                orderby count ascending
-                                select new { Value = g.Key, Count = count };
-
-            foreach (var t in activityItems)
-            {
-                allActivities.Add(t.Value, t.Count);
-            }
-
-            visModel.allActivities = allActivities;
-            visModel.allDatasets = allActivities;
-            visModel.createdDatasets = createdDatasets;
-            visModel.deletedDatasets = deletedDatasets;
-            
-            return View(visModel);
         }
     }
 }

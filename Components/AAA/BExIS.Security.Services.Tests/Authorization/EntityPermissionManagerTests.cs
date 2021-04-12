@@ -1,17 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using BExIS.App.Testing;
-using BExIS.Security.Entities.Authorization;
+﻿using BExIS.App.Testing;
 using BExIS.Security.Services.Authorization;
-using BExIS.Security.Services.Subjects;
 using BExIS.Utils.Config;
 using NUnit.Framework;
 
 namespace BExIS.Security.Services.Tests.Authorization
 {
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Reliability", "CA2000:Objekte verwerfen, bevor Bereich verloren geht", Justification = "<Ausstehend>")]
     [TestFixture]
     public class EntityPermissionManagerTests
     {
@@ -41,7 +35,6 @@ namespace BExIS.Security.Services.Tests.Authorization
         [TestCase(1, new[] { "Read" })]
         [TestCase(4, new[] { "Write" })]
         [TestCase(5, new[] { "Read", "Write" })]
-
         public void CreateAsync_GroupIsNull_ReturnZero(short rights, string[] result)
         {
             //Arrange

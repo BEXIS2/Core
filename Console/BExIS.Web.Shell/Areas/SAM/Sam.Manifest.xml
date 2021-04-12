@@ -59,7 +59,7 @@
       controller="Files" action="FileList" argument="Files list"
       extends="./settingsRoot" />
     
-    <Export tag="lunchbar" id="helpSam" order="1"
+    <Export tag="lunchbar" id="helpSam" order="7"
             title="Administration" description="Administration Help Manual" icon=""
             controller="help" action="index"
             extends="./lunchbarRoot/help" />

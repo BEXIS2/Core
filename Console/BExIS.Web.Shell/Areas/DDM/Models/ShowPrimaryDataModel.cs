@@ -11,6 +11,8 @@ using BExIS.IO;
 using BExIS.IO.DataType.DisplayPattern;
 using BExIS.Dlm.Services.DataStructure;
 using System.Text;
+using BExIS.Dlm.Services.TypeSystem;
+using System.Globalization;
 
 namespace BExIS.Modules.Ddm.UI.Models
 {
@@ -118,7 +120,21 @@ namespace BExIS.Modules.Ddm.UI.Models
                     StringBuilder sb = new StringBuilder();
                     foreach (var missingValue in variable.MissingValues)
                     {
-                        sb.Append(missingValue.DisplayName + "|" + missingValue.Placeholder + "#");
+
+                        if (DataTypeUtility.GetTypeCode(variable.DataAttribute.DataType.SystemType) == DataTypeCode.DateTime && DataTypeDisplayPattern.Materialize(variable.DataAttribute.DataType.Extra) != null)
+                        {
+                            DataTypeDisplayPattern ddp = DataTypeDisplayPattern.Materialize(variable.DataAttribute.DataType.Extra);
+                            DateTime dateTime;
+                            if (DateTime.TryParse(missingValue.Placeholder, new CultureInfo("en-US", false), DateTimeStyles.NoCurrentDateDefault, out dateTime))
+                            {
+                                sb.Append(missingValue.DisplayName + "|" + dateTime.ToString(ddp.StringPattern) + "#%#"); ;
+                            }
+
+                        }
+                        else
+                        {
+                            sb.Append(missingValue.DisplayName + "|" + missingValue.Placeholder + "#%#");
+                        }
                     }
 
                     //add also the case of the optional field

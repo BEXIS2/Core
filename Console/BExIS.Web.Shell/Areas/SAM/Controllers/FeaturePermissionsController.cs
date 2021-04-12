@@ -185,13 +185,28 @@ namespace BExIS.Modules.Sam.UI.Controllers
                 }
 
 
-                foreach (var subject in subjects)
+                //foreach (var subject in subjects)
+                //{
+                //    var rightType = featurePermissionManager.GetPermissionType(subject.Id, feature.Id);
+                //    var hasAccess = featurePermissionManager.HasAccess(subject.Id, feature.Id);
+
+                //    featurePermissions.Add(FeaturePermissionGridRowModel.Convert(subject, featureId, rightType, hasAccess));
+                //}
+
+                var subjectIds = subjects.Select(s => s.Id);
+                var userPermissionDic = featurePermissionManager.GetPermissionType(subjectIds, feature.Id);
+                var userHasAccessDic = featurePermissionManager.HasAccess(subjects, feature.Id);
+
+                foreach (var item in userPermissionDic)
                 {
-                    var rightType = featurePermissionManager.GetPermissionType(subject.Id, feature.Id);
-                    var hasAccess = featurePermissionManager.HasAccess(subject.Id, feature.Id);
+                    var subject = subjects.Where(s=>s.Id.Equals(item.Key)).FirstOrDefault();
+                    var rightType = item.Value;
+                    var hasAccess = userHasAccessDic[item.Key];
 
                     featurePermissions.Add(FeaturePermissionGridRowModel.Convert(subject, featureId, rightType, hasAccess));
+
                 }
+
 
                 return View(new GridModel<FeaturePermissionGridRowModel> { Data = featurePermissions, Total = count });
             }

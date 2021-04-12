@@ -5,15 +5,20 @@ using BExIS.Dim.Services;
 using BExIS.Dlm.Entities.Data;
 using BExIS.Dlm.Entities.DataStructure;
 using BExIS.Dlm.Entities.MetadataStructure;
+using BExIS.Dlm.Entities.Party;
 using BExIS.Dlm.Services.Data;
 using BExIS.Dlm.Services.DataStructure;
+using BExIS.Dlm.Services.Party;
 using BExIS.IO;
 using BExIS.IO.Transform.Output;
 using BExIS.Modules.Dim.UI.Models.Export;
+using BExIS.Security.Entities.Subjects;
+using BExIS.Security.Services.Utilities;
 using BExIS.Utils.Extensions;
 using BExIS.Xml.Helpers;
 using Ionic.Zip;
 using System;
+using System.Configuration;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -187,7 +192,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
                 {
                     LoggerFactory.LogCustom("Generate Zip Start");
                     long dsvId = versionid;
-                    if(dsvId <= 0)dsvId = dm.GetDatasetLatestVersion(id).Id;
+                    if (dsvId <= 0) dsvId = dm.GetDatasetLatestVersion(id).Id;
                     DatasetVersion datasetVersion = uow.GetUnitOfWork().GetReadOnlyRepository<DatasetVersion>().Get(dsvId);
                     int versionNr = dm.GetDatasetVersionNr(datasetVersion);
 
@@ -215,7 +220,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
                         // apply selection and projection
 
                         //check wheter title is empty or not
-                        string title = String.IsNullOrEmpty(datasetVersion.Title)?"no title available":datasetVersion.Title;
+                        string title = String.IsNullOrEmpty(datasetVersion.Title) ? "no title available" : datasetVersion.Title;
 
                         switch (format)
                         {
@@ -275,15 +280,9 @@ namespace BExIS.Modules.Dim.UI.Controllers
                             string json = OutputDataStructureManager.GetVariableListAsJson(dataStructureId);
 
                             AsciiWriter.AllTextToFile(datastructureFilePath, json);
-                        }
-                        catch (Exception ex)
-                        {
-                            throw ex;
-                        }
 
-                        //generate datastructure as html
-                        try
-                        {
+
+                            //generate datastructure as html
                             DatasetVersion ds = uow.GetUnitOfWork().GetReadOnlyRepository<DatasetVersion>().Get(dsvId);
                             generateDataStructureHtml(ds);
                         }
@@ -297,57 +296,72 @@ namespace BExIS.Modules.Dim.UI.Controllers
 
                     LoggerFactory.LogCustom("Zip Start");
 
-                    ZipFile zip = new ZipFile();
-
-                    foreach (ContentDescriptor cd in datasetVersion.ContentDescriptors)
+                    using (ZipFile zip = new ZipFile())
                     {
-                        bool addFile = true;
 
-                        if (cd.Name.ToLower().Contains("generated"))
+                        foreach (ContentDescriptor cd in datasetVersion.ContentDescriptors)
                         {
-                            if (!cd.MimeType.ToLower().Equals(format)) addFile = false;
-                        }
+                            bool addFile = true;
 
-                        if (addFile)
-                        {
-                            string path = Path.Combine(AppConfiguration.DataPath, cd.URI);
-                            string name = cd.URI.Split('\\').Last();
-
-                            if (FileHelper.FileExist(path))
+                            if (cd.Name.ToLower().Contains("generated"))
                             {
-                                zip.AddFile(path, "");
+                                if (!cd.MimeType.ToLower().Equals(format)) addFile = false;
+                            }
+
+                            if (addFile)
+                            {
+                                string path = Path.Combine(AppConfiguration.DataPath, cd.URI);
+                                string name = cd.URI.Split('\\').Last();
+
+                                if (FileHelper.FileExist(path))
+                                {
+                                    zip.AddFile(path, "");
+                                }
                             }
                         }
+
+                        // add xsd of the metadata schema
+                        LoggerFactory.LogCustom("Schema Start");
+
+                        string xsdDirectoryPath = OutputMetadataManager.GetSchemaDirectoryPath(id);
+                        if (Directory.Exists(xsdDirectoryPath))
+                            zip.AddDirectory(xsdDirectoryPath, "Schema");
+
+                        LoggerFactory.LogCustom("Manifest Start");
+
+                        XmlDocument manifest = OutputDatasetManager.GenerateManifest(id, datasetVersion.Id);
+
+                        if (manifest != null)
+                        {
+                            string dynamicManifestFilePath = OutputDatasetManager.GetDynamicDatasetStorePath(id,
+                                versionNr, "manifest", ".xml");
+                            string fullFilePath = Path.Combine(AppConfiguration.DataPath, dynamicManifestFilePath);
+
+                            manifest.Save(fullFilePath);
+                            zip.AddFile(fullFilePath, "");
+                        }
+
+                        LoggerFactory.LogCustom("Save zip Start");
+
+                        zip.Save(zipFilePath);
+
+                        LoggerFactory.LogCustom("Return");
+
+                        string title = datasetVersion.Title;
+                        title = String.IsNullOrEmpty(title) ? "unknown" : title;
+
+                        string message = string.Format("dataset {0} version {1} was downloaded as zip - {2}.", id,
+                        versionNr, format);
+                        LoggerFactory.LogCustom(message);
+
+                        var es = new EmailService();
+                        es.Send(MessageHelper.GetDownloadDatasetHeader(id, versionNr),
+                            MessageHelper.GetDownloadDatasetMessage(id, title, getPartyNameOrDefault(), "zip - " + format, versionNr),
+                            ConfigurationManager.AppSettings["SystemEmail"]
+                            );
+
+                        return File(zipFilePath, "application/zip", Path.GetFileName(zipFilePath));
                     }
-
-                    // add xsd of the metadata schema
-                    LoggerFactory.LogCustom("Schema Start");
-
-                    string xsdDirectoryPath = OutputMetadataManager.GetSchemaDirectoryPath(id);
-                    if (Directory.Exists(xsdDirectoryPath))
-                        zip.AddDirectory(xsdDirectoryPath, "Schema");
-
-                    LoggerFactory.LogCustom("Manifest Start");
-
-                    XmlDocument manifest = OutputDatasetManager.GenerateManifest(id, datasetVersion.Id);
-
-                    if (manifest != null)
-                    {
-                        string dynamicManifestFilePath = OutputDatasetManager.GetDynamicDatasetStorePath(id,
-                            versionNr, "manifest", ".xml");
-                        string fullFilePath = Path.Combine(AppConfiguration.DataPath, dynamicManifestFilePath);
-
-                        manifest.Save(fullFilePath);
-                        zip.AddFile(fullFilePath, "");
-                    }
-
-                    LoggerFactory.LogCustom("Save zip Start");
-
-                    zip.Save(zipFilePath);
-
-                    LoggerFactory.LogCustom("Return");
-
-                    return File(zipFilePath, "application/zip", Path.GetFileName(zipFilePath));
                 }
             }
             catch (Exception ex)
@@ -380,43 +394,47 @@ namespace BExIS.Modules.Dim.UI.Controllers
                 name = title;
                 mimeType = "application/html";
             }
-            DatasetManager dm = new DatasetManager();
-            int versionNr = dm.GetDatasetVersionNr(datasetVersion);
 
-            // create the generated FileStream and determine its location
-            string dynamicPath = OutputDatasetManager.GetDynamicDatasetStorePath(datasetId, versionNr, title,
-                ext);
-            //Register the generated data FileStream as a resource of the current dataset version
-            //ContentDescriptor generatedDescriptor = new ContentDescriptor()
-            //{
-            //    OrderNo = 1,
-            //    Name = name,
-            //    MimeType = mimeType,
-            //    URI = dynamicPath,
-            //    DatasetVersion = datasetVersion,
-            //};
-
-            if (datasetVersion.ContentDescriptors.Count(p => p.Name.Equals(name)) > 0)
+            using (DatasetManager dm = new DatasetManager())
             {
-                // remove the one contentdesciptor
-                foreach (ContentDescriptor cd in datasetVersion.ContentDescriptors)
+                int versionNr = dm.GetDatasetVersionNr(datasetVersion);
+
+                // create the generated FileStream and determine its location
+                string dynamicPath = OutputDatasetManager.GetDynamicDatasetStorePath(datasetId, versionNr, title,
+                    ext);
+                //Register the generated data FileStream as a resource of the current dataset version
+                //ContentDescriptor generatedDescriptor = new ContentDescriptor()
+                //{
+                //    OrderNo = 1,
+                //    Name = name,
+                //    MimeType = mimeType,
+                //    URI = dynamicPath,
+                //    DatasetVersion = datasetVersion,
+                //};
+
+                if (datasetVersion.ContentDescriptors.Count(p => p.Name.Equals(name)) > 0)
                 {
-                    if (cd.Name == name)
+                    // remove the one contentdesciptor
+                    foreach (ContentDescriptor cd in datasetVersion.ContentDescriptors)
                     {
-                        cd.URI = dynamicPath;
-                        dm.UpdateContentDescriptor(cd);
+                        if (cd.Name == name)
+                        {
+                            cd.URI = dynamicPath;
+                            dm.UpdateContentDescriptor(cd);
+                        }
                     }
                 }
-            }
-            else
-            {
-                // add current contentdesciptor to list
-                //datasetVersion.ContentDescriptors.Add(generatedDescriptor);
-                dm.CreateContentDescriptor(name, mimeType, dynamicPath, 1, datasetVersion);
-            }
+                else
+                {
+                    // add current contentdesciptor to list
+                    //datasetVersion.ContentDescriptors.Add(generatedDescriptor);
+                    dm.CreateContentDescriptor(name, mimeType, dynamicPath, 1, datasetVersion);
+                }
 
-            //dm.EditDatasetVersion(datasetVersion, null, null, null);
-            return dynamicPath;
+                //dm.EditDatasetVersion(datasetVersion, null, null, null);
+                return dynamicPath;
+            }
+           
         }
 
         private void generateMetadataHtml(DatasetVersion dsv)
@@ -467,5 +485,40 @@ namespace BExIS.Modules.Dim.UI.Controllers
 
             AsciiWriter.AllTextToFile(metadataFilePath, view.ToString());
         }
+
+        private string getPartyNameOrDefault()
+        {
+
+            var userName = string.Empty;
+            try
+            {
+                userName = HttpContext.User.Identity.Name;
+            }
+            catch { }
+
+            if (userName != null)
+            {
+
+                using (var uow = this.GetUnitOfWork())
+                using (var partyManager = new PartyManager())
+                {
+
+                    var userRepository = uow.GetReadOnlyRepository<User>();
+                    var user = userRepository.Query(s => s.Name.ToUpperInvariant() == userName.ToUpperInvariant()).FirstOrDefault();
+
+                    if (user != null)
+                    {
+                        Party party = partyManager.GetPartyByUser(user.Id);
+                        if (party != null)
+                        {
+                            return party.Name;
+                        }
+                    }
+
+                }
+            }
+            return !string.IsNullOrWhiteSpace(userName) ? userName : "DEFAULT";
+        }
+
     }
 }

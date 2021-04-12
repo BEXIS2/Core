@@ -6,9 +6,9 @@ namespace BExIS.Security.Services.Utilities
 {
     public class MessageHelper
     {
-        public static string GetCreateDatasetHeader()
+        public static string GetCreateDatasetHeader(long datasetid)
         {
-            return $"Dataset was created";
+            return $"Dataset was created (Id: {datasetid})";
         }
 
         public static string GetCreateDatasetMessage(long datasetid, string title, string userName)
@@ -22,9 +22,9 @@ namespace BExIS.Security.Services.Utilities
             return message + ".";
         }
 
-        public static string GetDeleteDatasetHeader()
+        public static string GetDeleteDatasetHeader(long datasetid)
         {
-            return $"Dataset was deleted";
+            return $"Dataset was deleted (Id: {datasetid})";
         }
 
         public static string GetDeleteDatasetMessage(long datasetid, string userName)
@@ -38,9 +38,9 @@ namespace BExIS.Security.Services.Utilities
             return message + ".";
         }
 
-        public static string GetTryToDeleteDatasetHeader()
+        public static string GetTryToDeleteDatasetHeader(long datasetid)
         {
-            return $"Someone tried to delete a dataset";
+            return $"Someone tried to delete a dataset (Id: {datasetid})";
         }
 
         public static string GetTryToDeleteDatasetMessage(long datasetid, string userName)
@@ -54,9 +54,9 @@ namespace BExIS.Security.Services.Utilities
             return message + ".";
         }
 
-        public static string GetPurgeDatasetHeader()
+        public static string GetPurgeDatasetHeader(long datasetid)
         {
-            return $"Dataset was purged";
+            return $"Dataset was purged (Id: {datasetid})";
         }
 
         public static string GetPurgeDatasetMessage(long datasetid, string userName)
@@ -70,9 +70,9 @@ namespace BExIS.Security.Services.Utilities
             return message + ".";
         }
 
-        public static string GetTryToPurgeDatasetHeader()
+        public static string GetTryToPurgeDatasetHeader(long datasetid)
         {
-            return $"Someone tried to purge a dataset";
+            return $"Someone tried to purge a dataset (Id: {datasetid})";
         }
 
         public static string GetTryToPurgeDatasetMessage(long datasetid, string userName)
@@ -86,14 +86,14 @@ namespace BExIS.Security.Services.Utilities
             return message + ".";
         }
 
-        public static string GetDownloadDatasetHeader()
+        public static string GetDownloadDatasetHeader(long datasetid, long version)
         {
-            return $"Dataset was downloaded";
+            return $"Dataset was downloaded (Id: {datasetid}, Version: {version})";
         }
 
-        public static string GetDownloadDatasetMessage(long datasetid, string title, string userName)
+        public static string GetDownloadDatasetMessage(long datasetid, string title, string userName, string format, long version)
         {
-            string message = $"Dataset <b>\"{title}\"</b> with id <b>({datasetid})</b> was downloaded";
+            string message = $"Dataset <b>\"{title}\"</b> with id <b>({datasetid})</b> version <b>({version})</b> was downloaded as <b>{format}</b>";
 
             if (!string.IsNullOrEmpty(userName))
 
@@ -187,9 +187,9 @@ namespace BExIS.Security.Services.Utilities
             return $"User <b>\"{userName}\"</b>(Id: {userId}) with email <b>({email})</b> tries to register.";
         }
 
-        public static string GetUpdateDatasetHeader()
+        public static string GetUpdateDatasetHeader(long datasetid)
         {
-            return $"Dataset was updated";
+            return $"Dataset was updated (Id:{datasetid})";
         }
 
         public static string GetUpdateDatasetMessage(long datasetid, string title, string userName)
@@ -212,6 +212,17 @@ namespace BExIS.Security.Services.Utilities
         {
             return $"User <b>\"{userName}\"</b>(Id: {userId}) has updated his/her profile.";
         }
+
+        public static string GetUpdateEmailHeader()
+        {
+            return $"User has changed email";
+        }
+
+        public static string GetUpdaterEmailMessage(string userName, string emailOld, string emailNew)
+        {
+            return $"User <b>{userName} has updated his/her email. Old: {emailOld} New: {emailNew}";
+        }
+
 
         #region upload api
 
@@ -316,7 +327,7 @@ namespace BExIS.Security.Services.Utilities
 
         public static string GetASyncStartUploadHeader(long datasetid, string title)
         {
-            return $"Data upload started";
+            return $"Data upload started (Id: {datasetid})";
         }
 
         public static string GetASyncStartUploadMessage(long datasetid, string title, int numberOfRows)
@@ -330,7 +341,7 @@ namespace BExIS.Security.Services.Utilities
 
         public static string GetASyncFinishUploadHeader(long datasetid, string title)
         {
-            return $"Data upload completed";
+            return $"Data upload completed (Id: {datasetid})";
         }
 
         public static string GetASyncFinishUploadMessage(long datasetid, string title, int numberOfRows, int numberOfSkippedRows)

@@ -95,6 +95,7 @@ namespace BExIS.Web.Shell.Controllers
                 ldapAuthenticationManager.Dispose();
                 userManager.Dispose();
                 signInManager.Dispose();
+                identityUserService.Dispose();
             }
         }
 
@@ -142,6 +143,7 @@ namespace BExIS.Web.Shell.Controllers
             finally
             {
                 userManager.Dispose();
+                identityUserService.Dispose();
             }
         }
 

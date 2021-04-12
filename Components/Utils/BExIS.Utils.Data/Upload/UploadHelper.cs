@@ -110,76 +110,149 @@ namespace BExIS.Utils.Upload
         }
 
         //temporary solution: norman :GetSplitDatatuples2
+        public Dictionary<string, List<DataTuple>> GetSplitDatatuplesOld(List<DataTuple> incomingDatatuples, List<long> primaryKeys, DatasetVersion workingCopy, ref List<long> datatuplesFromDatabaseIds)
+        {
+            using (DatasetManager datasetManager = new DatasetManager())
+            {
+
+                Dictionary<string, List<DataTuple>> data = new Dictionary<string, List<DataTuple>>();
+                Dictionary<string, DataTuple> newDtList = new Dictionary<string, DataTuple>();
+                Dictionary<string, DataTuple> editDtList = new Dictionary<string, DataTuple>();
+                List<DataTuple> deleteDtList = new List<DataTuple>();
+
+
+
+                DataTupleIterator tupleIterator = new DataTupleIterator(datatuplesFromDatabaseIds, datasetManager, false);
+                // Keep the DB loop outer to reduce the number of DB queries
+                foreach (var existingTuple in tupleIterator)
+                {
+                    if (existingTuple == null || existingTuple.Id < 0) // it is unlikely to happen, but just to reinforce it.
+                        continue;
+
+
+                    // iterating over the in-memory newDataTuples is faster
+                    for (int counter = 0; counter < incomingDatatuples.Count(); counter++)
+                    //foreach (var incomingTuple in newDatatuples)
+                    {
+                        DataTuple incomingTuple = incomingDatatuples[counter];
+                        if (!IsEmpty(incomingTuple))
+                        {
+                            // we first assume that any incoming tuple is new, and then try to check if it is not.
+                            // this reduces the iterations of the inner loop.
+                            // because the search takes the DB tuple and lloks for it in the coming tuples, it is posssible for an incoming tuple to be added more than once.
+                            // So they are added to a dictionary to avoid duplicates
+                            string keysValueNewDataTuple = getPrimaryKeysAsString(incomingTuple, primaryKeys);
+                            if (!newDtList.ContainsKey(keysValueNewDataTuple))
+                            {
+                                newDtList.Add(keysValueNewDataTuple, incomingTuple); // by default, assume that the incoming tuple is new (not in the DB)
+                            }
+                            string keysValueSourceDatatuple = getPrimaryKeysAsString(existingTuple, primaryKeys);
+                            if (keysValueNewDataTuple.Equals(keysValueSourceDatatuple)) // the incoming tuple exists in the DB
+                            {
+                                if (!Equal(incomingTuple, existingTuple)) // the incoming tuple is a changed version of an existing one
+                                {
+                                    // the incoming tuple is found in the DB and brings some changes, therefore not NEW!
+                                    newDtList.Remove(keysValueNewDataTuple);
+                                    if (!editDtList.ContainsKey(keysValueNewDataTuple))
+                                    {
+                                        // apply the changes to the exisiting one and register is an edited tuple
+                                        editDtList.Add(keysValueNewDataTuple, Merge(incomingTuple, (DataTuple)existingTuple));
+                                        // remove the current incoming item to shorten the list for the next round
+                                        incomingDatatuples.RemoveAt(counter);
+                                    }
+                                    // the decision is made, hence break the inner loop
+                                    break;
+                                }
+                                else // the incoming tuple is found in the BD, but introduces no change., hence no action is needed.
+                                {
+                                    // remove the incoming tuple from the list and from the new ones.
+                                    newDtList.Remove(keysValueNewDataTuple);
+                                    incomingDatatuples.RemoveAt(counter);
+                                }
+                            }
+                            else // the incoming tuple does not match the PK, so it should be a new tuple, which is already added to the list.
+                            { // DO NOTHING
+                            }
+                        }
+                    }
+                }
+
+                // the rest of the incoming datatuples are in the new datatuples, all existing datatuples will be removed from that list
+                data.Add("new", incomingDatatuples);
+                data.Add("edit", editDtList.Values.ToList());
+                return data;
+            }
+        }
+
         public Dictionary<string, List<DataTuple>> GetSplitDatatuples(List<DataTuple> incomingDatatuples, List<long> primaryKeys, DatasetVersion workingCopy, ref List<long> datatuplesFromDatabaseIds)
         {
-            DatasetManager datasetManager = new DatasetManager();
-
-            Dictionary<string, List<DataTuple>> data = new Dictionary<string, List<DataTuple>>();
-            Dictionary<string, DataTuple> newDtList = new Dictionary<string, DataTuple>();
-            Dictionary<string, DataTuple> editDtList = new Dictionary<string, DataTuple>();
-            List<DataTuple> deleteDtList = new List<DataTuple>();
-
-
-
-            DataTupleIterator tupleIterator = new DataTupleIterator(datatuplesFromDatabaseIds, datasetManager, false);
-            // Keep the DB loop outer to reduce the number of DB queries
-            foreach (var existingTuple in tupleIterator)
+            using (DatasetManager datasetManager = new DatasetManager())
             {
-                if (existingTuple == null || existingTuple.Id < 0) // it is unlikely to happen, but just to reinforce it.
-                    continue;
+
+                Dictionary<string, List<DataTuple>> data = new Dictionary<string, List<DataTuple>>();
+                Dictionary<string, DataTuple> newDtList = new Dictionary<string, DataTuple>();
+                Dictionary<string, DataTuple> editDtList = new Dictionary<string, DataTuple>();
+                List<DataTuple> deleteDtList = new List<DataTuple>();
 
 
-                // iterating over the in-memory newDataTuples is faster
+                Dictionary<string, DataTuple> newDTDic = new Dictionary<string, DataTuple>();
+
+                //iterating over incoming datatuples to gerenate the primary key and add it to a dictionary
                 for (int counter = 0; counter < incomingDatatuples.Count(); counter++)
-                //foreach (var incomingTuple in newDatatuples)
                 {
                     DataTuple incomingTuple = incomingDatatuples[counter];
                     if (!IsEmpty(incomingTuple))
                     {
-                        // we first assume that any incoming tuple is new, and then try to check if it is not.
-                        // this reduces the iterations of the inner loop.
-                        // because the search takes the DB tuple and lloks for it in the coming tuples, it is posssible for an incoming tuple to be added more than once.
-                        // So they are added to a dictionary to avoid duplicates
                         string keysValueNewDataTuple = getPrimaryKeysAsString(incomingTuple, primaryKeys);
-                        if (!newDtList.ContainsKey(keysValueNewDataTuple))
-                        {
-                            newDtList.Add(keysValueNewDataTuple, incomingTuple); // by default, assume that the incoming tuple is new (not in the DB)
-                        }
-                        string keysValueSourceDatatuple = getPrimaryKeysAsString(existingTuple, primaryKeys);
-                        if (keysValueNewDataTuple.Equals(keysValueSourceDatatuple)) // the incoming tuple exists in the DB
-                        {
-                            if (!Equal(incomingTuple, existingTuple)) // the incoming tuple is a changed version of an existing one
-                            {
-                                // the incoming tuple is found in the DB and brings some changes, therefore not NEW!
-                                newDtList.Remove(keysValueNewDataTuple);
-                                if (!editDtList.ContainsKey(keysValueNewDataTuple))
-                                {
-                                    // apply the changes to the exisiting one and register is an edited tuple
-                                    editDtList.Add(keysValueNewDataTuple, Merge(incomingTuple, (DataTuple)existingTuple));
-                                    // remove the current incoming item to shorten the list for the next round
-                                    incomingDatatuples.RemoveAt(counter);
-                                }
-                                // the decision is made, hence break the inner loop
-                                break;
-                            }
-                            else // the incoming tuple is found in the BD, but introduces no change., hence no action is needed.
-                            {
-                                // remove the incoming tuple from the list and from the new ones.
-                                newDtList.Remove(keysValueNewDataTuple);
-                                incomingDatatuples.RemoveAt(counter);
-                            }
-                        }
-                        else // the incoming tuple does not match the PK, so it should be a new tuple, which is already added to the list.
-                        { // DO NOTHING
-                        }
+                        newDTDic.Add(keysValueNewDataTuple, incomingTuple);
                     }
                 }
-            }
 
-            // the rest of the incoming datatuples are in the new datatuples, all existing datatuples will be removed from that list
-            data.Add("new", incomingDatatuples);
-            data.Add("edit", editDtList.Values.ToList());
-            return data;
+
+                DataTupleIterator tupleIterator = new DataTupleIterator(datatuplesFromDatabaseIds, datasetManager, false);
+                // Keep the DB loop outer to reduce the number of DB queries
+                foreach (var existingTuple in tupleIterator)
+                {
+                    if (existingTuple == null || existingTuple.Id < 0) // it is unlikely to happen, but just to reinforce it.
+                        continue;
+
+
+                    string keysValueSourceDatatuple = getPrimaryKeysAsString(existingTuple, primaryKeys);
+
+                    // check if a datatuple exist in the incoming dictionary 
+                    try
+                    {
+                        DataTuple incomingTuple = newDTDic[keysValueSourceDatatuple];
+
+
+                        // a incoming datatuple with this key exist, check if there are equal
+                        if (!Equal(incomingTuple, existingTuple)) // the incoming tuple is a changed version of an existing one
+                        {
+                            
+                            if (!editDtList.ContainsKey(keysValueSourceDatatuple))
+                            {
+                                // apply the changes to the exisiting one and register is an edited tuple
+                                editDtList.Add(keysValueSourceDatatuple, Merge(incomingTuple, (DataTuple)existingTuple));
+                                // remove the current incoming item to shorten the list for the next round
+                            }
+                        }
+
+                        // the incoming tuple is found in the DB and brings some changes, therefore not NEW!
+                        // so remove it from the dictionary
+                        newDTDic.Remove(keysValueSourceDatatuple);
+                    }
+                    catch//if
+                    { 
+                        //there is no datatuple incoming theat matches the db datatuple
+                    }
+
+                }
+
+                // the rest of the incoming datatuples are in the new datatuples, all existing datatuples will be removed from that list
+                data.Add("new", newDTDic.Values.ToList());
+                data.Add("edit", editDtList.Values.ToList());
+                return data;
+            }
         }
 
         /// <summary>
@@ -364,58 +437,60 @@ namespace BExIS.Utils.Upload
                 {
                     primaryValuesAsOneString = new List<string>();
 
-                    DataStructureManager datastructureManager = new DataStructureManager();
-                    StructuredDataStructure sds = datastructureManager.StructuredDataStructureRepo.Get(datastructureId);
-                    AsciiFileReaderInfo afri = (AsciiFileReaderInfo)info;
-
-                    AsciiReader reader = new AsciiReader(sds, afri, new IOUtility());
-                    reader.Position = position;
-                    Stream stream = reader.Open(filepath);
-
-
-
-
-                    // get a list of values for each row
-                    // e.g.
-                    // primarky keys id, name
-                    // 1 [1][David]
-                    // 2 [2][Javad]
-                    List<List<string>> tempList = reader.ReadValuesFromFile(stream, filename, datasetId, primaryKeys, packageSize);
-
-                    // convert List of Lists to list of strings
-                    // 1 [1][David] = 1David
-                    // 2 [2][Javad] = 2Javad
-                    foreach (List<string> l in tempList)
+                    using (DataStructureManager datastructureManager = new DataStructureManager())
                     {
-                        string tempString = "";
-                        foreach (string s in l)
-                        {
-                            tempString += s;
-                        }
-                        if (!String.IsNullOrEmpty(tempString)) primaryValuesAsOneString.Add(tempString);
-                    }
+                        StructuredDataStructure sds = datastructureManager.StructuredDataStructureRepo.Get(datastructureId);
+                        AsciiFileReaderInfo afri = (AsciiFileReaderInfo)info;
 
-                    // add all primary keys pair into the hasttable
-                    foreach (string pKey in primaryValuesAsOneString)
-                    {
-                        if (pKey != "")
-                        {
+                        AsciiReader reader = new AsciiReader(sds, afri, new IOUtility());
+                        reader.Position = position;
+                        Stream stream = reader.Open(filepath);
 
-                            try
+
+
+
+                        // get a list of values for each row
+                        // e.g.
+                        // primarky keys id, name
+                        // 1 [1][David]
+                        // 2 [2][Javad]
+                        List<List<string>> tempList = reader.ReadValuesFromFile(stream, filename, datasetId, primaryKeys, packageSize);
+
+                        // convert List of Lists to list of strings
+                        // 1 [1][David] = 1David
+                        // 2 [2][Javad] = 2Javad
+                        foreach (List<string> l in tempList)
+                        {
+                            string tempString = "";
+                            foreach (string s in l)
                             {
-                                hashtable.Add(Utility.ComputeKey(pKey), "pKey");
+                                tempString += s;
                             }
-                            catch
-                            {
-                                return false;
-                            }
+                            if (!String.IsNullOrEmpty(tempString)) primaryValuesAsOneString.Add(tempString);
                         }
 
+                        // add all primary keys pair into the hasttable
+                        foreach (string pKey in primaryValuesAsOneString)
+                        {
+                            if (pKey != "")
+                            {
+
+                                try
+                                {
+                                    hashtable.Add(Utility.ComputeKey(pKey), "pKey");
+                                }
+                                catch
+                                {
+                                    return false;
+                                }
+                            }
+
+                        }
+
+
+                        position = reader.Position + 1;
+                        stream.Close();
                     }
-
-
-                    position = reader.Position + 1;
-                    stream.Close();
 
                 } while (primaryValuesAsOneString.Count > 0);
 
@@ -432,58 +507,60 @@ namespace BExIS.Utils.Upload
                     //reset
                     primaryValuesAsOneString = new List<string>();
 
-                    DataStructureManager datastructureManager = new DataStructureManager();
-                    StructuredDataStructure sds = datastructureManager.StructuredDataStructureRepo.Get(datastructureId);
-
-                    ExcelReader reader = new ExcelReader(sds, new ExcelFileReaderInfo());
-                    reader.Position = position;
-                    Stream stream = reader.Open(filepath);
-
-                    // get a list of values for each row
-                    // e.g.
-                    // primarky keys id, name
-                    // 1 [1][David]
-                    // 2 [2][Javad]
-                    List<List<string>> tempList = reader.ReadValuesFromFile(stream, filename, datasetId, primaryKeys, packageSize);
-
-                    // convert List of Lists to list of strings
-                    // 1 [1][David] = 1David
-                    // 2 [2][Javad] = 2Javad
-                    foreach (List<string> l in tempList)
+                    using (DataStructureManager datastructureManager = new DataStructureManager())
                     {
-                        string tempString = "";
-                        foreach (string s in l)
-                        {
-                            tempString += s;
-                        }
-                        if (!String.IsNullOrEmpty(tempString)) primaryValuesAsOneString.Add(tempString);
-                    }
+                        StructuredDataStructure sds = datastructureManager.StructuredDataStructureRepo.Get(datastructureId);
 
-                    // add all primary keys pair into the hasttable
-                    foreach (string pKey in primaryValuesAsOneString)
-                    {
-                        if (pKey != "")
-                        {
+                        ExcelReader reader = new ExcelReader(sds, new ExcelFileReaderInfo());
+                        reader.Position = position;
+                        Stream stream = reader.Open(filepath);
 
-                            try
+                        // get a list of values for each row
+                        // e.g.
+                        // primarky keys id, name
+                        // 1 [1][David]
+                        // 2 [2][Javad]
+                        List<List<string>> tempList = reader.ReadValuesFromFile(stream, filename, datasetId, primaryKeys, packageSize);
+
+                        // convert List of Lists to list of strings
+                        // 1 [1][David] = 1David
+                        // 2 [2][Javad] = 2Javad
+                        foreach (List<string> l in tempList)
+                        {
+                            string tempString = "";
+                            foreach (string s in l)
                             {
-                                hashtable.Add(Utility.ComputeKey(pKey), pKey);
+                                tempString += s;
                             }
-                            catch
-                            {
-                                stream.Close();
-                                return false;
-                            }
+                            if (!String.IsNullOrEmpty(tempString)) primaryValuesAsOneString.Add(tempString);
                         }
 
+                        // add all primary keys pair into the hasttable
+                        foreach (string pKey in primaryValuesAsOneString)
+                        {
+                            if (pKey != "")
+                            {
+
+                                try
+                                {
+                                    hashtable.Add(Utility.ComputeKey(pKey), pKey);
+                                }
+                                catch(Exception ex)
+                                {
+                                    stream.Close();
+                                    return false;
+                                }
+                            }
+
+                        }
+
+
+                        position = reader.Position + 1;
+                        stream.Close();
                     }
 
-
-                    position = reader.Position + 1;
-                    stream.Close();
-
-                } while (primaryValuesAsOneString.Count > 0);
-
+                } while (primaryValuesAsOneString.Count > 0) ;
+                
 
                 #endregion
             }
@@ -641,9 +718,7 @@ namespace BExIS.Utils.Upload
         ////[MeasurePerformance]
         public Boolean IsUnique2(long datasetId, List<long> primaryKeys)
         {
-            DatasetManager datasetManager = new DatasetManager();
-
-            try
+            using (DatasetManager datasetManager = new DatasetManager())
             {
                 Hashtable hashtable = new Hashtable();
 
@@ -710,10 +785,6 @@ namespace BExIS.Utils.Upload
 
                 return true;
             }
-            finally
-            {
-                datasetManager.Dispose();
-            }
         }
 
 
@@ -738,8 +809,8 @@ namespace BExIS.Utils.Upload
                 datatuple.Materialize();
                 object v = datatuple.VariableValues.Where(p => p.VariableId.Equals(t)).First().Value;
                 if (v != null)
-                    //if (!String.IsNullOrEmpty(v.ToString()))
-                    if (!String.IsNullOrEmpty((string)v))
+                    if (!String.IsNullOrEmpty(v.ToString()))
+                    //if (!String.IsNullOrEmpty((string)v))
                         value += ";" + v;
                     else
                         return "";

@@ -1,5 +1,4 @@
-﻿using BExIS.Security.Entities.Subjects;
-using BExIS.Security.Services.Subjects;
+﻿using BExIS.Security.Services.Subjects;
 using NUnit.Framework;
 
 namespace BExIS.Security.Services.Tests.Subjects
@@ -30,13 +29,14 @@ namespace BExIS.Security.Services.Tests.Subjects
         public void CreateAsync_GroupIsNull_ReturnZero()
         {
             //Arrange
-            var a = new GroupManager();
+            using (var a = new GroupManager())
+            {
+                //Act
+                var result = a.CreateAsync(null);
 
-            //Act
-            var result = a.CreateAsync(null);
-
-            //Assert
-            Assert.That(result, Is.EqualTo(0));
+                //Assert
+                Assert.That(result, Is.EqualTo(0));
+            }
         }
     }
 }

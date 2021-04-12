@@ -54,6 +54,10 @@ namespace BExIS.IO.Transform.Validation
         public DataTypeCheck DataTypeCheck;
         public MissingValueCheck MissingValueCheck;
 
+        public ICollection<Constraint> Constraints { get; set; }
+
+        List<Error> errors = new List<Error>();
+        Error e;
         /// <summary>
         ///
         /// </summary>
@@ -133,11 +137,36 @@ namespace BExIS.IO.Transform.Validation
         /// <returns></returns>
         public List<Error> ValidateValue(object value, int row)
         {
-            List<Error> errors = new List<Error>();
+           
             foreach (IValueValidation vv in ValidationList)
             {
-                Error e = vv.Execute(value, row);
+                e = vv.Execute(value, row);
                 if (e != null) errors.Add(e);
+            }
+
+            return errors;
+        }
+
+        /// <summary>
+        ///
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>
+        /// <param name="value"></param>
+        /// <param name="row"></param>
+        /// <returns></returns>
+        public List<Error> ValidateConstraints(object value, int index)
+        {
+            errors = new List<Error>();
+            if (Constraints != null)
+            {
+                // check Constraints
+                foreach (Constraint constraint in Constraints)
+                {
+                    //new Error(ErrorType.Value, "Not in Range", new object[] { name, value, row, dataType });
+                    if (!constraint.IsSatisfied(value))
+                        errors.Add(new Error(ErrorType.Value, constraint.ErrorMessage, new object[] { _name, value, index, _dataType }));
+                }
             }
 
             return errors;
@@ -151,7 +180,7 @@ namespace BExIS.IO.Transform.Validation
         /// <param name="optional"></param>
         /// <param name="decimalCharacter"></param>
         /// <param name="pattern"></param>
-        public ValueValidationManager(string name, string dataType, bool optional, DecimalCharacter decimalCharacter, string pattern = "", IEnumerable<MissingValue> missingValues = null, CultureInfo cultureInfo = null)
+        public ValueValidationManager(string name, string dataType, bool optional, DecimalCharacter decimalCharacter, string pattern = "", IEnumerable<MissingValue> missingValues = null, CultureInfo cultureInfo = null, ICollection<Constraint> constraints = null )
         {
             _name = name;
             _dataType = dataType;
@@ -160,6 +189,16 @@ namespace BExIS.IO.Transform.Validation
             NullOrOptionalCheck = new OptionalCheck(name, dataType, optional);
             DataTypeCheck = new DataTypeCheck(name, dataType, decimalCharacter, pattern, cultureInfo);
             MissingValueCheck = new MissingValueCheck(name, dataType, missingValues);
+            Constraints = constraints;
+
+            if (Constraints != null)
+            {
+                //load contraints
+                foreach (var c in Constraints)
+                {
+                    c.Materialize();
+                }
+            }
         }
     }
 }

@@ -82,32 +82,34 @@ namespace BExIS.Security.Services.Authentication
 
             try
             {
-                var ldap = new LdapConnection(new LdapDirectoryIdentifier(host, port));
-                ldap.SessionOptions.ProtocolVersion = protocolVersion;
-                ldap.AuthType = AuthType.Anonymous;
-                ldap.SessionOptions.SecureSocketLayer = secureSocket;
-                ldap.Bind();
-
-                ldap.AuthType = AuthType.Basic;
-                var searchRequest = new SearchRequest(
-                    baseDn,
-                    string.Format(CultureInfo.InvariantCulture, "{0}={1}", authUid, username),
-                    SearchScope.Subtree
-                );
-
-                var searchResponse = (SearchResponse)ldap.SendRequest(searchRequest);
-                if (1 == searchResponse.Entries.Count)
+                using (var ldap = new LdapConnection(new LdapDirectoryIdentifier(host, port)))
                 {
-                    ldap.Bind(new NetworkCredential(searchResponse.Entries[0].DistinguishedName, password));
+                    ldap.SessionOptions.ProtocolVersion = protocolVersion;
+                    ldap.AuthType = AuthType.Basic;
+                    ldap.SessionOptions.SecureSocketLayer = secureSocket;
+                    ldap.Bind();
 
-                    var attributes = searchResponse.Entries[0].Attributes;
+                    ldap.AuthType = AuthType.Basic;
+                    var searchRequest = new SearchRequest(
+                        baseDn,
+                        string.Format(CultureInfo.InvariantCulture, "{0}={1}", authUid, username),
+                        SearchScope.Subtree
+                    );
 
-                    ldapUser.Name = Convert.ToString(((DirectoryAttribute)attributes["cn"])[0]);
-                    ldapUser.Email = Convert.ToString(((DirectoryAttribute)attributes["mail"])[0]);
-                }
-                else
-                {
-                    throw new Exception("User not found");
+                    var searchResponse = (SearchResponse)ldap.SendRequest(searchRequest);
+                    if (1 == searchResponse.Entries.Count)
+                    {
+                        ldap.Bind(new NetworkCredential(searchResponse.Entries[0].DistinguishedName, password));
+
+                        var attributes = searchResponse.Entries[0].Attributes;
+
+                        ldapUser.Name = Convert.ToString(((DirectoryAttribute)attributes["cn"])[0]);
+                        ldapUser.Email = Convert.ToString(((DirectoryAttribute)attributes["mail"])[0]);
+                    }
+                    else
+                    {
+                        throw new Exception("User not found");
+                    }
                 }
             }
             catch (Exception e)
@@ -123,27 +125,29 @@ namespace BExIS.Security.Services.Authentication
         {
             try
             {
-                var ldap = new LdapConnection(new LdapDirectoryIdentifier(host, port));
-                ldap.SessionOptions.ProtocolVersion = protocolVersion;
-                ldap.AuthType = AuthType.Anonymous;
-                ldap.SessionOptions.SecureSocketLayer = secureSocket;
-                ldap.Bind();
-
-                ldap.AuthType = AuthType.Basic;
-                var searchRequest = new SearchRequest(
-                    baseDn,
-                    string.Format(CultureInfo.InvariantCulture, "{0}={1}", authUid, username),
-                    SearchScope.Subtree
-                );
-
-                var searchResponse = (SearchResponse)ldap.SendRequest(searchRequest);
-                if (1 == searchResponse.Entries.Count)
+                using (var ldap = new LdapConnection(new LdapDirectoryIdentifier(host, port)))
                 {
-                    ldap.Bind(new NetworkCredential(searchResponse.Entries[0].DistinguishedName, password));
-                }
-                else
-                {
-                    throw new Exception("Login failed.");
+                    ldap.SessionOptions.ProtocolVersion = protocolVersion;
+                    ldap.AuthType = AuthType.Anonymous;
+                    ldap.SessionOptions.SecureSocketLayer = secureSocket;
+                    ldap.Bind();
+
+                    ldap.AuthType = AuthType.Basic;
+                    var searchRequest = new SearchRequest(
+                        baseDn,
+                        string.Format(CultureInfo.InvariantCulture, "{0}={1},ou=users,dc=unijena,dc=de", authUid, username),
+                        SearchScope.Subtree
+                    );
+
+                    var searchResponse = (SearchResponse)ldap.SendRequest(searchRequest);
+                    if (1 == searchResponse.Entries.Count)
+                    {
+                        ldap.Bind(new NetworkCredential(searchResponse.Entries[0].DistinguishedName, password));
+                    }
+                    else
+                    {
+                        throw new Exception("Login failed.");
+                    }
                 }
             }
             catch (Exception e)
