@@ -1526,6 +1526,12 @@ namespace BExIS.Modules.Ddm.UI.Controllers
             catch (Exception e)
             {
                 Json(e.Message, JsonRequestBehavior.AllowGet);
+               
+                // send mail with error to sys admin
+                var es = new EmailService();
+                es.Send(MessageHelper.GetSendRequestHeader(id, getPartyNameOrDefault()),
+                    MessageHelper.GetSendRequestMessage(id,"unknown", "unkown", e.Message + intention , "unknown"), new List<string> { ConfigurationManager.AppSettings["SystemEmail"] }
+                    );
             }
             finally
             {
