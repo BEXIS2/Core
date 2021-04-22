@@ -54,10 +54,10 @@
           controller="Files" action="index" argument="Manage Documents"
           extends="./settingsRoot" />-->
 
-    <Export tag="settings" id="datasets" order="9"
+    <!--<Export tag="settings" id="datasets" order="9"
       title="Files List" description="Files List" icon=""
       controller="Files" action="FileList" argument="Files list"
-      extends="./settingsRoot" />
+      extends="./settingsRoot" />-->
     
     <Export tag="lunchbar" id="helpSam" order="7"
             title="Administration" description="Administration Help Manual" icon=""
