@@ -725,10 +725,9 @@
     <Content Include="Scripts\DataTables\extensions\ColReorder\Readme.md" />
     <Content Include="Scripts\DataTables\extensions\Buttons\Readme.md" />
     <Content Include="Scripts\DataTables\extensions\AutoFill\Readme.md" />
+    <None Include="Properties\PublishProfiles\BexisServer_demo.pubxml" />
+    <None Include="Properties\PublishProfiles\BexisServer_test.pubxml" />
     <None Include="Properties\PublishProfiles\FolderProfile.pubxml" />
-    <None Include="Properties\PublishProfiles\TestServer_release.pubxml" />
-    <None Include="Properties\PublishProfiles\TestServer_dev.pubxml" />
-    <None Include="Properties\PublishProfiles\TestServer.pubxml" />
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
     <EmbeddedResource Include="Scripts\custom-swagger.js" />
     <Content Include="Scripts\bootstrap.js" />
