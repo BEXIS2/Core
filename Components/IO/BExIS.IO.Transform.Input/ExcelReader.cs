@@ -860,12 +860,13 @@ namespace BExIS.IO.Transform.Input
                 if (c != null)
                 {
                     int cellReferencAsInterger = GetColumnNumber(GetColumnName(c.CellReference));
+
+                    // create the index for the position in the rowAsStringArray
                     int index = cellReferencAsInterger - offset - 1;
 
-                    // if cell reference in range of the area
-                    int start = startColumn - 1; //GetColumnNumber(this._areaOfData.StartColumn);
-                    int end = endColumn - 1; //GetColumnNumber(this._areaOfData.EndColumn);
-                    if (index >= start && index <= end)
+                    // the columnPosition of the cell must be in the startColumn and endColumn range 
+                    // otherwise jump over it
+                    if (cellReferencAsInterger >= startColumn && cellReferencAsInterger <= endColumn)
                     {
                         if (c.CellValue != null)
                         {
