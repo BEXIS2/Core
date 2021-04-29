@@ -965,7 +965,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         public ActionResult AddComplexUsage(int parentStepId, int number)
         {
             TaskManager = (CreateTaskmanager)Session["CreateDatasetTaskmanager"];
-
+            ViewData["ShowOptional"] = true;
             //TaskManager.SetCurrent(TaskManager.Get(parentStepId));
 
             var metadataStructureId = Convert.ToInt64(TaskManager.Bus[CreateTaskmanager.METADATASTRUCTURE_ID]);
@@ -1184,20 +1184,39 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         {
             TaskManager = (CreateTaskmanager)Session["CreateDatasetTaskmanager"];
 
+            // if you are able to remove a complex usage from the ui you are in the edit mode
+            // in the edit mode all optional fields should be visible
+            ViewData["ShowOptional"] = true;
+
+            // Set Current Step of the Taskmanger
+            // maybee its not needed anymore but the base idea was that the taskmanager knows where we are 
             TaskManager.SetCurrent(TaskManager.Get(parentStepId));
 
+            // Each step has a stepModelHelp with basic informations in the Taskmanager
+            // load the parent Model helper based on the parentstep id to remove the child with the number that comes in
             var stepModelHelper = GetStepModelhelper(parentStepId);
+
+            // remove the Complex Usage from the XML
             RemoveFromXml(stepModelHelper.XPath + "//" + stepModelHelper.UsageAttrName.Replace(" ", string.Empty) + "[" + number + "]");
 
+            // Create the parent model for the ui
             stepModelHelper.Model = createModel(TaskManager.Current().Id, true, stepModelHelper.UsageType);
+            // Remove the child with the given number from the list
             stepModelHelper.Childrens.RemoveAt(number - 1);
 
-            //add stepModel to parentStepModel
+            //Update the position and the xpath from all other childrens
             for (var i = 0; i < stepModelHelper.Childrens.Count; i++)
             {
-                stepModelHelper.Childrens.ElementAt(i).Number = i + 1;
+                var child = stepModelHelper.Childrens.ElementAt(i);
+                // update new position in the stepmodel helper and in dthe view model
+                child.Number = i + 1;
+                child.Model.Number = child.Number;
+                // update the xpath path 
+                var newXPath = stepModelHelper.XPath + "//" + stepModelHelper.UsageAttrName.Replace(" ", string.Empty) + "[" + child.Number + "]";
+                child.XPath = newXPath;
             }
 
+            // remove the stepinfo of the removed complex usage
             TaskManager.Remove(TaskManager.Current(), number - 1);
 
             return PartialView("_metadataCompoundAttributeView", stepModelHelper);
@@ -1379,8 +1398,11 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             TaskManager = (CreateTaskmanager)Session["CreateDatasetTaskmanager"];
             TaskManager.SetCurrent(TaskManager.Get(stepId));
 
+            //
             var stepModelHelper = GetStepModelhelper(stepId);
             stepModelHelper.Model = createModel(stepId, true, stepModelHelper.UsageType);
+            stepModelHelper.Model.PartyId = partyId;
+
             var usage = loadUsage(stepModelHelper.UsageId, stepModelHelper.UsageType);
 
             metadataStructureUsageHelper = new MetadataStructureUsageHelper();
@@ -1391,43 +1413,46 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
                 if (partyId > 0)
                 {
+                    LinkElementType let;
                     if (MappingUtils.ExistMappingWithParty(attrModel.Id, LinkElementType.MetadataNestedAttributeUsage))
-                    {
-                        attrModel.Value = MappingUtils.GetValueFromSystem(partyId, attrModel.Id, LinkElementType.MetadataNestedAttributeUsage);
-                        attrModel.Locked = !MappingUtils.PartyAttrIsMain(attrModel.Id, LinkElementType.MetadataNestedAttributeUsage);
+                        let = LinkElementType.MetadataNestedAttributeUsage;
+                    else
+                        let = LinkElementType.MetadataAttributeUsage;
 
-                        UpdateAttribute(
-                        usage,
-                        number,
-                        metadataAttributeUsage,
-                        Convert.ToInt32(attrModel.Number),
-                        attrModel.Value,
-                        stepModelHelper.XPath);
-                    }
-                    else if (MappingUtils.ExistMappingWithParty(attrModel.Id, LinkElementType.MetadataAttributeUsage))
-                    {
-                        attrModel.Value = MappingUtils.GetValueFromSystem(partyId, attrModel.Id, LinkElementType.MetadataAttributeUsage);
-                        attrModel.Locked = !MappingUtils.PartyAttrIsMain(attrModel.Id, LinkElementType.MetadataAttributeUsage);
+                    attrModel.Value = MappingUtils.GetValueFromSystem(partyId, attrModel.Id, let);
+                    attrModel.MappingSelectionField = MappingUtils.PartyAttrIsMain(attrModel.Id, let);
+                    attrModel.ParentPartyId = partyId;
 
-                        UpdateAttribute(
-                        usage,
-                        number,
-                        metadataAttributeUsage,
-                        Convert.ToInt32(attrModel.Number),
-                        attrModel.Value,
-                        stepModelHelper.XPath);
+                    // in case the parent was mapped as a complex object, 
+                    // you have to check which of the simple fields is the selection field. 
+                    // If it is not and there is a mapping for the field, it must be blocked.
+                    // OR if its allready locked because of a system mapping then let it locked.
+                    if (attrModel.Locked == false && (!attrModel.MappingSelectionField && attrModel.PartyComplexMappingExist && !attrModel.PartySimpleMappingExist))
+                    {
+                        attrModel.Locked = true;
                     }
+
+                    UpdateAttribute(
+                    usage,
+                    number,
+                    metadataAttributeUsage,
+                    Convert.ToInt32(attrModel.Number),
+                    attrModel.Value,
+                    stepModelHelper.XPath);
+
                 }
                 else
                 {
                     if (MappingUtils.ExistMappingWithParty(attrModel.Id, LinkElementType.MetadataAttributeUsage) ||
                         MappingUtils.ExistMappingWithParty(attrModel.Id, LinkElementType.MetadataNestedAttributeUsage))
                     {
-                        attrModel.Value = "";
+
+                        if(attrModel.MappingSelectionField!=true) attrModel.Value = "";
                         attrModel.Locked = false;
                     }
 
                     attrModel.Locked = false;
+                    attrModel.ParentPartyId = 0;
                 }
 
                 AddXmlAttribute(stepModelHelper.XPath, "partyid", partyId.ToString());
@@ -3214,16 +3239,42 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             }
         }
 
+        /// <summary>
+        /// load for the complex model all simple attribute models from the global set metadata xml 
+        /// 
+        /// </summary>
+        /// <param name="stepModelHelper"></param>
+        /// <returns></returns>
         private AbstractMetadataStepModel LoadSimpleAttributesForModelFromXml(StepModelHelper stepModelHelper)
         {
             TaskManager = (CreateTaskmanager)Session["CreateDatasetTaskmanager"];
             var metadata = getMetadata();
 
+            // load complex xml element from the metadata xml based on the xpath of the stepmodelhelper
+            // the stepmodel helper has the model for the view part as also the path to the xml where it belongs to
             var complexElement = XmlUtility.GetXElementByXPath(stepModelHelper.XPath, metadata);
+
             var additionalyMetadataAttributeModel = new List<MetadataAttributeModel>();
 
+            // if the complex xml element has a partyid its mapped and all dependend simmple attributes must set
+            bool complexIsMapped = false;
+            if (complexElement.Attributes().Any(a => a.Name.LocalName.ToLowerInvariant().Equals("partyid")))
+            {
+                complexIsMapped = true;
+                long partyid = 0;
+                string partyidAsString = complexElement.Attributes().FirstOrDefault(a => a.Name.LocalName.ToLowerInvariant().Equals("partyid"))?.Value;
+
+                if (Int64.TryParse(partyidAsString, out partyid))
+                {
+                    stepModelHelper.Model.PartyId = partyid;
+                }
+            }
+
+            // go throw each metadata attribute from the complex type and load them
             foreach (var simpleMetadataAttributeModel in stepModelHelper.Model.MetadataAttributeModels)
             {
+                // in one complex object there is a chance that simple attributes can exist more then ones
+                // get the count (numberOfSMM) to go throw all of them
                 var numberOfSMM = 1;
                 if (complexElement != null)
                 {
@@ -3235,24 +3286,32 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                         numberOfSMM = childs.First().Elements().Count();
                 }
 
+                // go throw each count of one simple attribute
                 for (var i = 1; i <= numberOfSMM; i++)
                 {
+                    // get the xpath of a simple attribute with index i
                     var xpath = stepModelHelper.GetXPathFromSimpleAttribute(simpleMetadataAttributeModel.Id, i);
+                    //load the simple element based on the given xpath to fill the metadata attribute model
                     var simpleElement = XmlUtility.GetXElementByXPath(xpath, metadata);
 
+                    // the first simple element model exist as default by loading the structure, if there are more in the xml
+                    // they can be copied from the frist and replace the values
                     if (i == 1)
                     {
                         // lock all attributs in a complex mapping except the main attribute
                         if (simpleMetadataAttributeModel.PartyMappingExist && simpleMetadataAttributeModel.PartyComplexMappingExist)
                         {
-                            simpleMetadataAttributeModel.Locked = !MappingUtils.PartyAttrIsMain(simpleMetadataAttributeModel.Id, LinkElementType.MetadataNestedAttributeUsage);
+                            simpleMetadataAttributeModel.MappingSelectionField = MappingUtils.PartyAttrIsMain(simpleMetadataAttributeModel.Id, LinkElementType.MetadataNestedAttributeUsage);
+
+                            if(complexIsMapped && !simpleMetadataAttributeModel.Locked)
+                                simpleMetadataAttributeModel.Locked = !simpleMetadataAttributeModel.MappingSelectionField;
                         }
 
                         if (simpleElement != null && !String.IsNullOrEmpty(simpleElement.Value))
                         {
                             simpleMetadataAttributeModel.Value = simpleElement.Value;
 
-                            #region entity mapping
+                            #region entity & Party mapping
 
                             // if this simple attr is linked to a enity, some attr need to get from the xelement and create a url for the model
                             if (simpleElement.Attributes().Any(a => a.Name.LocalName.ToLowerInvariant().Equals("entityid")))
