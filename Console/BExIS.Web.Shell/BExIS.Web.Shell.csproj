@@ -1058,7 +1058,6 @@
     <Content Include="Themes\Windows7\Styles\Windows7\sprite-vertical.png" />
     <Content Include="Themes\Windows7\Styles\Windows7\sprite.png" />
     <Content Include="Global.asax" />
-    <None Include="Views\Home\NoPermission.cshtml" />
     <Content Include="Web.config">
       <SubType>Designer</SubType>
     </Content>
@@ -1126,6 +1125,7 @@
     <Content Include="Views\Error\NotFound.cshtml" />
     <Content Include="Views\Shared\SessionTimeout.cshtml" />
     <Content Include="Views\Home\Version.cshtml" />
+    <Content Include="Views\Home\NoPermission.cshtml" />
     <None Include="Web.TestServerRelease.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
