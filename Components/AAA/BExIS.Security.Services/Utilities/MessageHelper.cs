@@ -233,6 +233,38 @@ namespace BExIS.Security.Services.Utilities
             return message + ".";
         }
 
+        public static string GetAttachmentUploadHeader(long datasetid, string entityname)
+        {
+            return $"{entityname}: Attachment uploaded (Id: {datasetid})";
+        }
+
+        public static string GetAttachmentUploadMessage(long datasetid, string fileNames, string userName)
+        {
+            string message = $"Attachments <b>\"{fileNames}\"</b> uploaded at id <b>({datasetid})</b>";
+
+            if (!string.IsNullOrEmpty(userName))
+
+                return message += $" by <b>{userName}</b>";
+
+            return message + ".";
+        }
+
+        public static string GetAttachmentDeleteHeader(long datasetid, string entityname)
+        {
+            return $"{entityname}: Attachment deleted (Id: {datasetid})";
+        }
+
+        public static string GetAttachmentDeleteMessage(long datasetid, string fileName, string userName)
+        {
+            string message = $"Attachments <b>\"{fileName}\"</b> deleted at id <b>({datasetid})</b>";
+
+            if (!string.IsNullOrEmpty(userName))
+
+                return message += $" by <b>{userName}</b>";
+
+            return message + ".";
+        }
+
         public static string GetUpdateProfileHeader()
         {
             return $"User has modified profile";
