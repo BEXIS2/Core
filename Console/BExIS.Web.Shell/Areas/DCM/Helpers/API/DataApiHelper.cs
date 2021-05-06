@@ -311,7 +311,7 @@ namespace BExIS.Modules.Dcm.UI.Helper.API
 
                     //send email
                     es.Send(MessageHelper.GetUpdateDatasetHeader(id),
-                        MessageHelper.GetUpdateDatasetMessage(id, title, _user.DisplayName),
+                        MessageHelper.GetUpdateDatasetMessage(id, title, _user.DisplayName, typeof(Dataset).Name),
                         new List<string>() { _user.Email },
                                new List<string>() { ConfigurationManager.AppSettings["SystemEmail"] }
                         );

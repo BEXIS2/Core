@@ -183,8 +183,8 @@ namespace BExIS.Modules.Dim.UI.Controllers
                     LoggerFactory.LogData(id.ToString(), typeof(Dataset).Name, Vaiona.Entities.Logging.CrudState.Created);
 
                     var es = new EmailService();
-                    es.Send(MessageHelper.GetMetadataUpdatHeader(id),
-                        MessageHelper.GetUpdateDatasetMessage(id, title, user.DisplayName),
+                    es.Send(MessageHelper.GetMetadataUpdatHeader(id, typeof(Dataset).Name),
+                        MessageHelper.GetUpdateDatasetMessage(id, title, user.DisplayName, typeof(Dataset).Name),
                         ConfigurationManager.AppSettings["SystemEmail"]
                         );
                 }

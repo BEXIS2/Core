@@ -6,14 +6,14 @@ namespace BExIS.Security.Services.Utilities
 {
     public class MessageHelper
     {
-        public static string GetCreateDatasetHeader(long datasetid)
+        public static string GetCreateDatasetHeader(long datasetid, string entityname)
         {
-            return $"Dataset was created (Id: {datasetid})";
+            return $"{entityname} was created (Id: {datasetid})";
         }
 
-        public static string GetCreateDatasetMessage(long datasetid, string title, string userName)
+        public static string GetCreateDatasetMessage(long datasetid, string title, string userName, string entityname)
         {
-            string message = $"Dataset <b>\"{title}\"</b> with id <b>({datasetid})</b> was created";
+            string message = $"{entityname} <b>\"{title}\"</b> with id <b>({datasetid})</b> was created";
 
             if (!string.IsNullOrEmpty(userName))
 
@@ -192,9 +192,9 @@ namespace BExIS.Security.Services.Utilities
             return $"User <b>\"{userName}\"</b>(Id: {userId}) with email <b>({email})</b> tries to register.";
         }
 
-        public static string GetMetadataUpdatHeader(long datasetid)
+        public static string GetMetadataUpdatHeader(long datasetid, string entityname)
         {
-            return $"Dataset was updated (Id: {datasetid})";
+            return $"{entityname} was updated (Id: {datasetid})";
         }
 
         public static string GeFileUpdatHeader(long datasetid)
@@ -222,9 +222,9 @@ namespace BExIS.Security.Services.Utilities
             return $"Data uploaded (Id: {datasetid})";
         }
 
-        public static string GetUpdateDatasetMessage(long datasetid, string title, string userName)
+        public static string GetUpdateDatasetMessage(long datasetid, string title, string userName, string entityname)
         {
-            string message = $"Dataset <b>\"{title}\"</b> with id <b>({datasetid})</b> was updated";
+            string message = $"{entityname} <b>\"{title}\"</b> with id <b>({datasetid})</b> was updated";
 
             if (!string.IsNullOrEmpty(userName))
 

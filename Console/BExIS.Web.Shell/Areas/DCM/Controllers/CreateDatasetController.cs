@@ -512,6 +512,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             try
             {
                 // create and submit Dataset
+
                 long datasetId = SubmitDataset(valid, "Dataset");
 
                 return Json(new { result = "redirect", url = Url.Action("Show", "Data", new { area = "DDM", id = datasetId }) }, JsonRequestBehavior.AllowGet);
@@ -643,16 +644,16 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                             if (newDataset)
                             {
                                 var es = new EmailService();
-                                es.Send(MessageHelper.GetCreateDatasetHeader(datasetId),
-                                    MessageHelper.GetCreateDatasetMessage(datasetId, title, GetUsernameOrDefault()),
+                                es.Send(MessageHelper.GetCreateDatasetHeader(datasetId, entityname),
+                                    MessageHelper.GetCreateDatasetMessage(datasetId, title, GetUsernameOrDefault(), entityname),
                                     ConfigurationManager.AppSettings["SystemEmail"]
                                     );
                             }
                             else
                             {
                                 var es = new EmailService();
-                                es.Send(MessageHelper.GetMetadataUpdatHeader(datasetId),
-                                    MessageHelper.GetUpdateDatasetMessage(datasetId, title, GetUsernameOrDefault()),
+                                es.Send(MessageHelper.GetMetadataUpdatHeader(datasetId, entityname),
+                                    MessageHelper.GetUpdateDatasetMessage(datasetId, title, GetUsernameOrDefault(), entityname),
                                     ConfigurationManager.AppSettings["SystemEmail"]
                                     );
                             }
@@ -664,7 +665,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 catch (Exception ex)
                 {
                     var es = new EmailService();
-                    es.Send(MessageHelper.GetMetadataUpdatHeader(datasetId),
+                    es.Send(MessageHelper.GetMetadataUpdatHeader(datasetId, entityname),
                         ex.Message,
                         ConfigurationManager.AppSettings["SystemEmail"]
                         );
