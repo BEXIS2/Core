@@ -295,7 +295,7 @@ namespace BExIS.Modules.Sam.UI.Controllers
         {
             using (var datasetManager = new DatasetManager())
             {
-                var datasetIds = datasetManager.GetDatasetLatestIds();
+                var datasetIds = datasetManager.GetDatasetIds();
                 try
                 {
                     datasetManager.SyncView(datasetIds, ViewCreationBehavior.Create | ViewCreationBehavior.Refresh);

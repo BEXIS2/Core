@@ -40,20 +40,29 @@ namespace BExIS.Modules.Dim.UI.Controllers
 
             try
             {
-                var datasetIds = dm.GetDatasetLatestIds();
+                var datasetIds = dm.GetDatasetIds();
 
                 List<MetadataViewObject> tmp = new List<MetadataViewObject>();
 
                 foreach (var id in datasetIds)
                 {
-                    MetadataViewObject mvo = new MetadataViewObject();
-                    mvo.DatasetId = id;
+                    // add only datasets to the list where the status is checked in otherwise
+                    // the system is not able to load metadat data informations
+                    if (dm.IsDatasetCheckedIn(id))
+                    {
+                        MetadataViewObject mvo = new MetadataViewObject();
+                        mvo.DatasetId = id;
 
-                    List<string> t = xmlDatasetHelper.GetAllTransmissionInformation(id, TransmissionType.mappingFileExport, AttributeNames.name).ToList();
+                        // load all metadata export options 
+                        // in the metadata extra field there are stored the import and export mapping files
+                        // this funktion loads all transformations based on one direction
+                        // AttributeNames.name means the destination metadata name
+                        List<string> t = xmlDatasetHelper.GetAllTransmissionInformation(id, TransmissionType.mappingFileExport, AttributeNames.name).ToList();
 
-                    mvo.Format = t.ToArray();
+                        mvo.Format = t.ToArray();
 
-                    tmp.Add(mvo);
+                        tmp.Add(mvo);
+                    }
                 }
 
                 return tmp;
@@ -75,7 +84,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
         {
             using (DatasetManager dm = new DatasetManager())
             {
-                var datasetIds = dm.GetDatasetLatestIds();
+                var datasetIds = dm.GetDatasetIds();
 
                 List<MetadataViewObject> tmp = new List<MetadataViewObject>();
                 // create final XML document

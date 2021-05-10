@@ -209,6 +209,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Services\DataStructure\UnitManagerTests.cs" />
     <Compile Include="Services\Data\DatasetManagerTests.cs" />
+    <Compile Include="Services\Data\DatasetManager_GetDatasetIdsTests.cs" />
     <Compile Include="Services\Data\DatasetManager_EditDatasetVersionTests.cs" />
     <Compile Include="Services\Data\DataTupleTests.cs" />
     <Compile Include="Services\Data\DatasetManager_GetDatasetVersionEffectiveDataTuplesTest.cs" />
