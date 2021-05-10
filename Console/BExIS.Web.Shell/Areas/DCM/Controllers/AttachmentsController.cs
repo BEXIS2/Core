@@ -7,15 +7,18 @@ using BExIS.Security.Entities.Authorization;
 using BExIS.Security.Services.Authorization;
 using BExIS.Security.Services.Objects;
 using BExIS.Security.Services.Subjects;
+using BExIS.Security.Services.Utilities;
 using BExIS.Xml.Helpers;
 using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.IO;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using System.Xml;
 using Vaiona.Entities.Common;
+using Vaiona.Logging;
 using Vaiona.Utils.Cfg;
 using Vaiona.Web.Extensions;
 using Vaiona.Web.Mvc.Models;
@@ -69,8 +72,16 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
                 dm.EditDatasetVersion(datasetVersion, null, null, null);
                 dm.CheckInDataset(dataset.Id, fileName, GetUsernameOrDefault(), ViewCreationBehavior.None);
+
+                var es = new EmailService();
+
+                es.Send(MessageHelper.GetAttachmentDeleteHeader(datasetId, typeof(Dataset).Name),
+                MessageHelper.GetAttachmentDeleteMessage(datasetId, fileName, GetUsernameOrDefault()),
+                ConfigurationManager.AppSettings["SystemEmail"]
+                );
+
             }
-            
+
             return RedirectToAction("showdata", "data", new { area = "ddm", id = datasetId });
         }
 
@@ -139,15 +150,39 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         [BExISEntityAuthorize(typeof(Dataset), "datasetId", RightType.Write)]
         public ActionResult ProcessSubmit(IEnumerable<HttpPostedFileBase> attachments, long datasetId, String description)
         {
-            ViewBag.Title = PresentationModel.GetViewTitleForTenant("Attach file to dataset", this.Session.GetTenant());
-            // The Name of the Upload component is "attachments"
-            if (attachments != null)
+            using (UserManager userManager = new UserManager())
             {
-                Session["FileInfos"] = attachments;
-                uploadFiles(attachments, datasetId, description);
+                ViewBag.Title = PresentationModel.GetViewTitleForTenant("Attach file to dataset", this.Session.GetTenant());
+                // The Name of the Upload component is "attachments"
+                if (attachments != null)
+                {
+                    Session["FileInfos"] = attachments;
+                    uploadFiles(attachments, datasetId, description);
+
+                   
+
+                    var es = new EmailService();
+                    var filemNames = "";
+
+                    var userTask = userManager.FindByNameAsync(HttpContext.User.Identity.Name);
+                    userTask.Wait();
+                    var user = userTask.Result;
+
+                    foreach (var file in attachments)
+                    {
+                        var fileName = Path.GetFileName(file.FileName);
+                        filemNames += fileName.ToString() + ",";
+
+                    }
+                    es.Send(MessageHelper.GetAttachmentUploadHeader(datasetId, typeof(Dataset).Name),
+                    MessageHelper.GetAttachmentUploadMessage(datasetId, filemNames, user.DisplayName),
+                    ConfigurationManager.AppSettings["SystemEmail"]
+                    );
+                }
+
+                // Redirect to a view showing the result of the form submission.
+                return RedirectToAction("showdata", "data", new { area = "ddm", id = datasetId });
             }
-            // Redirect to a view showing the result of the form submission.
-            return RedirectToAction("showdata", "data", new { area = "ddm", id = datasetId });
         }
 
         [BExISEntityAuthorize(typeof(Dataset), "datasetId", RightType.Write)]
