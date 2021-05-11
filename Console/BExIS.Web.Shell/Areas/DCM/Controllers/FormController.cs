@@ -3255,18 +3255,18 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             var complexElement = XmlUtility.GetXElementByXPath(stepModelHelper.XPath, metadata);
 
             var additionalyMetadataAttributeModel = new List<MetadataAttributeModel>();
-
+            long parentPartyId = 0;
             // if the complex xml element has a partyid its mapped and all dependend simmple attributes must set
             bool complexIsMapped = false;
             if (complexElement.Attributes().Any(a => a.Name.LocalName.ToLowerInvariant().Equals("partyid")))
             {
                 complexIsMapped = true;
-                long partyid = 0;
+                
                 string partyidAsString = complexElement.Attributes().FirstOrDefault(a => a.Name.LocalName.ToLowerInvariant().Equals("partyid"))?.Value;
 
-                if (Int64.TryParse(partyidAsString, out partyid))
+                if (Int64.TryParse(partyidAsString, out parentPartyId))
                 {
-                    stepModelHelper.Model.PartyId = partyid;
+                    stepModelHelper.Model.PartyId = parentPartyId;
                 }
             }
 
@@ -3343,6 +3343,12 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                                 }
                             }
 
+                            // if parent is mapped and has a party id, set it to the simple metadata model
+                            if (complexIsMapped)
+                            {
+                                simpleMetadataAttributeModel.ParentPartyId = parentPartyId;
+                            }
+
                             #endregion entity mapping
 
                             // if at least on item has a value, the parent should be activated
@@ -3364,6 +3370,12 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                             {
                                 newMetadataAttributeModel.PartyId = partyid;
                             }
+                        }
+
+                        // if parent has a party id, set it to the simple attr
+                        if (complexIsMapped)
+                        {
+                            simpleMetadataAttributeModel.ParentPartyId = parentPartyId;
                         }
 
                         if (i == numberOfSMM) newMetadataAttributeModel.last = true;
