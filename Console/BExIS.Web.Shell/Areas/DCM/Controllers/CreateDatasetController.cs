@@ -659,6 +659,8 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                             }
                         }
 
+                        Session["CreateDatasetTaskManager"] = null;
+
                         return datasetId;
                     }
                 }
