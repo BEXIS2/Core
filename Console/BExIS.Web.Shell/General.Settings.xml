@@ -14,6 +14,6 @@
   <!-- landing page for users , when they logged in successfuly -->
   <entry key="faq" value="https://github.com/BEXIS2/Core/wiki/FAQ" type="string" />
 
-  <entry key="version" value="2.14.3" type="string" />
+  <entry key="version" value="2.14.4" type="string" />
 
 </settings>
