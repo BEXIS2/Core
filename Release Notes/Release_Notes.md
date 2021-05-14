@@ -4,33 +4,33 @@
 
 ### Features
 - New API to retieve all metadata by schema name (api/MetadataBySchema/{Schema name}) #733 
-- Add new Landing page option to allow on "no permission" forward to public landing page for logged in user #719
+- Add new Landing page option to allow on "no permission" forward to a public landing page for logged-in user #719
 
 
 
 ### Enhancements
-- Metadata Edit: Show, if a linked metadata field is linked or filled with free text #607
-- Metadata Edit: Sort autocomplete list (party: e.g. persons, projects) alphabetic and hide duplicates in list ([#697](https://github.com/BEXIS2/Core/issues/697))
+- Metadata Edit: Show, if a linked metadata field is connected or filled with free text #607
+- Metadata Edit: Sort autocomplete list (party: e.g. persons, projects) alphabetic and hide duplicates in the list ([#697](https://github.com/BEXIS2/Core/issues/697))
 - Metadata Edit: Mark autocomplete fields for user #608
 - Metadata Edit - Data structure: make edit link more visible #722
-- Metadata Edit - Create Links: truncate dataset title and srot decending (newst first) #703 #714
+- Metadata Edit - Create Links: truncate dataset title and sort descending (newest first) #703 #714
 - Dashboard: Show full title and do not truncate #718
-- Dashboard: Add other dataset types (e.g. Publication) #663
-- Dashboard/Search: Change default order for from ASC to DESC;  #693 
+- Dashboard: Add other dataset types (e.g., Publication) #663
+- Dashboard/Search: Change default order from ASC to DESC;  #693 
 - View parties: Increase Paging options and default value to 100 instead of 10 #731
 - Registration form: prevent to fill out by bots #622 
-- Data Upload: Increase size of "changedescription" field in datasetversions #698
+- Data Upload: Increase the size of "changedescription" field in datasetversions #698
 - Manage Datasets: Show title in list #712
 - Manage Requests Admin: Add Dataset ID to table #751
-- Requests: Increase size of Intention field #736
+- Requests: Increase the size of Intention field #736
 - API: Extend data statistic API by variable information #749
   
 ### Bugs
 - Fix Edit - View - Edit not possible: CreateTaskmanager not able to handle multiple tabs #720
 - Fix validation for Excel files fails (wrong start & end column calculation) #701 
 - Fix existing relationships are not shown in user's view #708
-- Fix Cancel button disappears after click on Validate during metadata edit #711
-- Fix Add IF EXISTS to DROP mv during Pruge of datasets #732
+- Fix Cancel button disappears after a click on Validate during metadata edit #711
+- Fix Add IF EXISTS to DROP mv during Purge of datasets #732
 - Fix Change email address in Party by Admin does not update user email #72
 - Fix Conversion from JSON to DataTable converts NULL values to max.value instead #739 
 - Fix Order number should never have gaps during data structure save  #745 
