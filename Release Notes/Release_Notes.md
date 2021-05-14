@@ -43,7 +43,7 @@
 - Operating System: Windows Server 2008 or upper. For personal or small installations, the software is able to run on Windows 10, too
 - Application Server: IIS 7.0 +. For IIS settings see the installation manual
 - DBMS:
-	- PostgreSQL: (version 9 - 10) 32 or 64 bits. BEXIS has not been tested on other versions!
+	- PostgreSQL: (version 10- 13) 32 or 64 bits. BEXIS has not been tested on other versions!
 - Dependencies
 	- Microsoft.NET Framework 4.5.2
 	- Microsoft.ASP.NET.MVC 5.2.3
@@ -67,7 +67,7 @@
 	- MediaInfoDotNet.0.7.79.40925
 	- Swashbuckle.5.6.0
 - Disk Space:
-	- The Software: 30-40 MB
+	- The Software: ~300 MB
 	- The Workspace: 10 MB and more, based on the number of modules and the amount of data
 
 
