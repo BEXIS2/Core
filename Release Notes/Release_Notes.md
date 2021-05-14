@@ -1,36 +1,21 @@
-# BEXIS 2.14.3 Release Notes
+# BEXIS 2.14.4 Release Notes
 
 > Attention ! changes have been made in SMTP credentials and web.config. If an update is made, please use the new files and adapt them.
 
 ### Features
-- Extent API: Data statistics and data quality ([#655](https://github.com/BEXIS2/Core/issues/655))
+
 
 ### Enhancements
-- Send email on changed email address (by user or admin)
-- Add DisplayName to admin user view closes ([#688](https://github.com/BEXIS2/Core/issues/688))
-- Add email and log to dataset download ([#473](https://github.com/BEXIS2/Core/issues/473))
-- Add creation date for entity reference creation 
-- Change Help order and names closes ([#683](https://github.com/BEXIS2/Core/issues/683))
-- Add dataset id to all system messages ([#680](https://github.com/BEXIS2/Core/issues/680))
-- Adding info during excel upload that the values are uploaded from the formatted cells ([#678](https://github.com/BEXIS2/Core/issues/678))
-- Performance improvement in validation during the upload ([#676](https://github.com/BEXIS2/Core/issues/676) , [#648](https://github.com/BEXIS2/Core/issues/648))
-- STATTLS is now also supported for the configuration of SMTP ([#650](https://github.com/BEXIS2/Core/issues/650))
-- Data validation extension to include the length of floating point numbers. ([#645](https://github.com/BEXIS2/Core/issues/645))
-- Change of the error message if a dataset does not exist. ([#631](https://github.com/BEXIS2/Core/issues/631))
+
   
 ### Bugs
 
-- Fix incorrect display of effective rights ([#679](https://github.com/BEXIS2/Core/issues/679))
-- Fix incorrect type selection when selecting type on the top level ([#662](https://github.com/BEXIS2/Core/issues/662))
-- Fix incorrect datetime download in excel ([#658](https://github.com/BEXIS2/Core/issues/658))
-- Fix error when uploading data from different source files ([#657](https://github.com/BEXIS2/Core/issues/657))
-- Fix Dataset Title is not displayed in the request and respond email ([#652](https://github.com/BEXIS2/Core/issues/652))
-- Fix Metadata is not updated after deleting unstructured data  ([#643](https://github.com/BEXIS2/Core/issues/643))
+
 
 ## I. Software Information
 
 -	Name: BEXIS
--	Version: 2.14.3
+-	Version: 2.14.4
 -	Application Type: Web Application
 -	Platform: Windows
 
@@ -43,7 +28,7 @@
 - Operating System: Windows Server 2008 or upper. For personal or small installations, the software is able to run on Windows 10, too
 - Application Server: IIS 7.0 +. For IIS settings see the installation manual
 - DBMS:
-	- PostgreSQL: (version 9 - 10) 32 or 64 bits. BEXIS has not been tested on other versions!
+	- PostgreSQL: (version 10 - 13) 32 or 64 bits. BEXIS has not been tested on other versions!
 - Dependencies
 	- Microsoft.NET Framework 4.5.2
 	- Microsoft.ASP.NET.MVC 5.2.3
@@ -67,7 +52,7 @@
 	- MediaInfoDotNet.0.7.79.40925
 	- Swashbuckle.5.6.0
 - Disk Space:
-	- The Software: 30-40 MB
+	- The Software: ~300 MB
 	- The Workspace: 10 MB and more, based on the number of modules and the amount of data
 
 
