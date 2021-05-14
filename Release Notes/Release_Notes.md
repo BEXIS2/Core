@@ -1,36 +1,51 @@
-# BEXIS 2.14.3 Release Notes
+# BEXIS 2.14.4 Release Notes
 
 > Attention ! changes have been made in SMTP credentials and web.config. If an update is made, please use the new files and adapt them.
 
 ### Features
-- Extent API: Data statistics and data quality ([#655](https://github.com/BEXIS2/Core/issues/655))
+- New API to retieve all metadata by schema name (api/MetadataBySchema/{Schema name}) ([#733](https://github.com/BEXIS2/Core/issues/733))
+- Add new Landing page option to allow on "no permission" forward to a public landing page for logged-in user ([#719](https://github.com/BEXIS2/Core/issues/719))
+
+
 
 ### Enhancements
-- Send email on changed email address (by user or admin)
-- Add DisplayName to admin user view closes ([#688](https://github.com/BEXIS2/Core/issues/688))
-- Add email and log to dataset download ([#473](https://github.com/BEXIS2/Core/issues/473))
-- Add creation date for entity reference creation 
-- Change Help order and names closes ([#683](https://github.com/BEXIS2/Core/issues/683))
-- Add dataset id to all system messages ([#680](https://github.com/BEXIS2/Core/issues/680))
-- Adding info during excel upload that the values are uploaded from the formatted cells ([#678](https://github.com/BEXIS2/Core/issues/678))
-- Performance improvement in validation during the upload ([#676](https://github.com/BEXIS2/Core/issues/676) , [#648](https://github.com/BEXIS2/Core/issues/648))
-- STATTLS is now also supported for the configuration of SMTP ([#650](https://github.com/BEXIS2/Core/issues/650))
-- Data validation extension to include the length of floating point numbers. ([#645](https://github.com/BEXIS2/Core/issues/645))
-- Change of the error message if a dataset does not exist. ([#631](https://github.com/BEXIS2/Core/issues/631))
+- Metadata Edit: Show, if a linked metadata field is connected or filled with free text ([#607](https://github.com/BEXIS2/Core/issues/607))
+- Metadata Edit: Sort autocomplete list (party: e.g. persons, projects) alphabetic and hide duplicates in the list ([#697](https://github.com/BEXIS2/Core/issues/697))
+- Metadata Edit: Mark autocomplete fields for user ([#608](https://github.com/BEXIS2/Core/issues/608))
+- Metadata Edit - Data structure: make edit link more visible ([#722](https://github.com/BEXIS2/Core/issues/722))
+- Metadata Edit - Create Links: truncate dataset title and sort descending (newest first) ([#703](https://github.com/BEXIS2/Core/issues/703)) ([#714](https://github.com/BEXIS2/Core/issues/714))
+- Dashboard: Show full title and do not truncate ([#718](https://github.com/BEXIS2/Core/issues/718))
+- Dashboard: Add other dataset types (e.g., Publication) ([#663](https://github.com/BEXIS2/Core/issues/663))
+- Dashboard/Search: Change default order from ASC to DESC; ([#693](https://github.com/BEXIS2/Core/issues/693))
+- View parties: Increase Paging options and default value to 100 instead of 10 ([#731](https://github.com/BEXIS2/Core/issues/731))
+- Registration form: prevent to fill out by bots ([#622](https://github.com/BEXIS2/Core/issues/622))
+- Data Upload: Increase the size of "changedescription" field in datasetversions ([#698](https://github.com/BEXIS2/Core/issues/698))
+- Manage Datasets: Show title in list ([#712](https://github.com/BEXIS2/Core/issues/712))
+- Manage Requests Admin: Add Dataset ID to table ([#751](https://github.com/BEXIS2/Core/issues/751))
+- Requests: Increase the size of Intention field ([#736](https://github.com/BEXIS2/Core/issues/736))
+- API: Extend data statistic API by variable information ([#749](https://github.com/BEXIS2/Core/issues/749))
   
 ### Bugs
+- Fix Edit - View - Edit not possible: CreateTaskmanager not able to handle multiple tabs ([#720](https://github.com/BEXIS2/Core/issues/720))
+- Fix validation for Excel files fails (wrong start & end column calculation) ([#701](https://github.com/BEXIS2/Core/issues/701)) 
+- Fix existing relationships are not shown in user's view ([#708](https://github.com/BEXIS2/Core/issues/708))
+- Fix Cancel button disappears after a click on Validate during metadata edit ([#711](https://github.com/BEXIS2/Core/issues/711))
+- Fix Add IF EXISTS to DROP mv during Purge of datasets ([#732](https://github.com/BEXIS2/Core/issues/732))
+- Fix Change email address in Party by Admin does not update user email ([#729](https://github.com/BEXIS2/Core/issues/729))
+- Fix Conversion from JSON to DataTable converts NULL values to max.value instead ([#739](https://github.com/BEXIS2/Core/issues/739))
+- Fix Order number should never have gaps during data structure save  ([#745](https://github.com/BEXIS2/Core/issues/745))
+- Fix setRelationships() (called during Create Dataset) does not allow multiple entity types (only "Dataset") ([#748](https://github.com/BEXIS2/Core/issues/748))
+- Fix ActionInfo -> IsComplete() checks 3 times the same  ([#721](https://github.com/BEXIS2/Core/issues/721))
+- Fix Data structure template validation error ([#740](https://github.com/BEXIS2/Core/issues/740))
+- Fix Effective rights not shown correctly ([#679](https://github.com/BEXIS2/Core/issues/679))
+- Fix API: MetadataOut can not handle CheckedOut datasets ([#734](https://github.com/BEXIS2/Core/issues/734))
+- Fix Metadata edit/creation: Entries from 2nd complex block onward saved incomplete ([#758](https://github.com/BEXIS2/Core/issues/758))
 
-- Fix incorrect display of effective rights ([#679](https://github.com/BEXIS2/Core/issues/679))
-- Fix incorrect type selection when selecting type on the top level ([#662](https://github.com/BEXIS2/Core/issues/662))
-- Fix incorrect datetime download in excel ([#658](https://github.com/BEXIS2/Core/issues/658))
-- Fix error when uploading data from different source files ([#657](https://github.com/BEXIS2/Core/issues/657))
-- Fix Dataset Title is not displayed in the request and respond email ([#652](https://github.com/BEXIS2/Core/issues/652))
-- Fix Metadata is not updated after deleting unstructured data  ([#643](https://github.com/BEXIS2/Core/issues/643))
 
 ## I. Software Information
 
 -	Name: BEXIS
--	Version: 2.14.3
+-	Version: 2.14.4
 -	Application Type: Web Application
 -	Platform: Windows
 
@@ -43,7 +58,7 @@
 - Operating System: Windows Server 2008 or upper. For personal or small installations, the software is able to run on Windows 10, too
 - Application Server: IIS 7.0 +. For IIS settings see the installation manual
 - DBMS:
-	- PostgreSQL: (version 9 - 10) 32 or 64 bits. BEXIS has not been tested on other versions!
+	- PostgreSQL: (version 10 - 13) 32 or 64 bits. BEXIS has not been tested on other versions!
 - Dependencies
 	- Microsoft.NET Framework 4.5.2
 	- Microsoft.ASP.NET.MVC 5.2.3
@@ -67,7 +82,7 @@
 	- MediaInfoDotNet.0.7.79.40925
 	- Swashbuckle.5.6.0
 - Disk Space:
-	- The Software: 30-40 MB
+	- The Software: ~300 MB
 	- The Workspace: 10 MB and more, based on the number of modules and the amount of data
 
 
