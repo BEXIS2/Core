@@ -14,6 +14,7 @@
 - Metadata Edit: Mark autocomplete fields for user ([#608](https://github.com/BEXIS2/Core/issues/608))
 - Metadata Edit - Data structure: make edit link more visible ([#722](https://github.com/BEXIS2/Core/issues/722))
 - Metadata Edit - Create Links: truncate dataset title and sort descending (newest first) ([#703](https://github.com/BEXIS2/Core/issues/703)) ([#714](https://github.com/BEXIS2/Core/issues/714))
+- Data structure list: Show linked datasets for each data structure ([#765](https://github.com/BEXIS2/Core/issues/765))
 - Dashboard: Show full title and do not truncate ([#718](https://github.com/BEXIS2/Core/issues/718))
 - Dashboard: Add other dataset types (e.g., Publication) ([#663](https://github.com/BEXIS2/Core/issues/663))
 - Dashboard/Search: Change default order from ASC to DESC; ([#693](https://github.com/BEXIS2/Core/issues/693))
