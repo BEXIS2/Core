@@ -13,6 +13,7 @@
 - Metadata Edit: Sort autocomplete list (party: e.g. persons, projects) alphabetic and hide duplicates in the list ([#697](https://github.com/BEXIS2/Core/issues/697))
 - Metadata Edit: Mark autocomplete fields for user ([#608](https://github.com/BEXIS2/Core/issues/608))
 - Metadata Edit - Data structure: make edit link more visible ([#722](https://github.com/BEXIS2/Core/issues/722))
+- Metadata Edit - Data structure: Show "Create Variable Template" button based on permission and settings ([#723](https://github.com/BEXIS2/Core/issues/723))
 - Metadata Edit - Create Links: truncate dataset title and sort descending (newest first) ([#703](https://github.com/BEXIS2/Core/issues/703)) ([#714](https://github.com/BEXIS2/Core/issues/714))
 - Data structure list: Show linked datasets for each data structure ([#765](https://github.com/BEXIS2/Core/issues/765))
 - Dashboard: Show full title and do not truncate ([#718](https://github.com/BEXIS2/Core/issues/718))
