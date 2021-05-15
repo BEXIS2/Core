@@ -10,4 +10,5 @@
     </missingValue>
   </missingValues>
   <optionalDefault>true</optionalDefault>
+  <showCreateVariableTemplate description="Show -Create Variable Template- on data structure edit">true</showCreateVariableTemplate>
 </settings>
