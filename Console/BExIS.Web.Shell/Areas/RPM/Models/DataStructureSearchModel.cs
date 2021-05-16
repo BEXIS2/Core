@@ -310,8 +310,15 @@ namespace BExIS.Modules.Rpm.UI.Models
                         dataStructureResult.Id = ds.Id;
                         dataStructureResult.Title = ds.Name;
                         dataStructureResult.Description = ds.Description;
+                        dataStructureResult.LinkedToDatasets = new List<string>();
+                        
+                        foreach (Dataset d in ds.Datasets)
+                        {
+                            dataStructureResult.LinkedToDatasets.Add(d.Id.ToString());
+                        }
 
-                        if (ds.Datasets.Count > 1) // Allow to edit, if only one file is linked to it
+
+                            if (ds.Datasets.Count > 1) // Allow to edit, if only one file is linked to it
                             dataStructureResult.inUse = true;
 
                         if (previewIds != null && previewIds.Contains(ds.Id))
