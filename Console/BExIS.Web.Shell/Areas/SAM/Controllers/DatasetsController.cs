@@ -188,7 +188,12 @@ namespace BExIS.Modules.Sam.UI.Controllers
                         synced = ds.StateInfo?.Timestamp >= ds.LastCheckIOTimestamp;
 
                     DatasetVersion datasetversion = dm.GetDatasetLatestVersion(ds.Id);
-                    datasetStat.Add(new DatasetStatModel { Id = ds.Id, Status = ds.Status, NoOfRows = noRows, NoOfCols = noColumns, IsSynced = synced , Title = datasetversion.Title });
+                    var title = "";
+                    if (datasetversion != null)
+                    {
+                        title = datasetversion.Title;
+                    }
+                    datasetStat.Add(new DatasetStatModel { Id = ds.Id, Status = ds.Status, NoOfRows = noRows, NoOfCols = noColumns, IsSynced = synced, Title = title });
                 }
                 ViewData["DatasetIds"] = datasetIds;
                 return View(datasetStat);
