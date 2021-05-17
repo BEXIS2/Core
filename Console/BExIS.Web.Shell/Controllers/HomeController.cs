@@ -83,7 +83,7 @@ namespace BExIS.Web.Shell.Controllers
 
             //if the landingPage is null and the action is not accessible forward to shell/home/index
             if (landingPage == null || !this.IsAccessible(landingPage.Item1, landingPage.Item2, landingPage.Item3))
-                return View(); // open shell/home/index
+                return View("Demo"); // open shell/home/index
 
             // return result of defined landing page
             var result = this.Render(landingPage.Item1, landingPage.Item2, landingPage.Item3);
@@ -136,6 +136,14 @@ namespace BExIS.Web.Shell.Controllers
                 return View(model);
             }
         }
+
+        [DoesNotNeedDataAccess]
+        public ActionResult Demo()
+        {
+
+            return View();
+        }
+    
 
         protected bool checkPermission(Tuple<string, string, string> LandingPage)
         {
