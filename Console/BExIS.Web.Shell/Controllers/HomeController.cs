@@ -14,6 +14,9 @@ using BExIS.Security.Services.Versions;
 using BExIS.Web.Shell.Models;
 using BExIS.Xml.Helpers;
 using Vaiona.Utils.Cfg;
+using BExIS.Security.Services.Authorization;
+using BExIS.Security.Services.Objects;
+using BExIS.Security.Services.Subjects;
 
 namespace BExIS.Web.Shell.Controllers
 {
@@ -24,9 +27,10 @@ namespace BExIS.Web.Shell.Controllers
         {
             ViewBag.Title = PresentationModel.GetViewTitleForTenant("Home", this.Session.GetTenant());
 
-            // here there are 2 cases to consider.
-            // 1.no user->landingpage
-            // 2.user logged into landingpage for users
+            // here there are 3 cases to consider.
+            // 1. no user->landingpage
+            // 2. user logged into landingpage for users
+            // 3. user logged in -> no permission landing page for user -> forward to extra site "noPermission" or to defined page
             Tuple<string, string, string> landingPage = null;
             //check if user exist
             if (!string.IsNullOrEmpty(HttpContext.User?.Identity?.Name)) //user
@@ -42,22 +46,56 @@ namespace BExIS.Web.Shell.Controllers
                         landingPageForUsers.Split(',')[1].Trim(), //controller
                         landingPageForUsers.Split(',')[2].Trim());//action
                 }
+
+
+                //if the landingPage not null and the action is accessable
+                if (landingPage == null || !this.IsAccessible(landingPage.Item1, landingPage.Item2, landingPage.Item3) || !checkPermission(landingPage))
+                {
+                    landingPageForUsers = generalSettings.GetEntryValue("landingPageForUsersNoPermission").ToString();
+
+                    if (landingPageForUsers.Split(',').Length == 3)//check wheter 3 values exist for teh action
+                    {
+                        landingPage = new Tuple<string, string, string>(
+                            landingPageForUsers.Split(',')[0].Trim(), //module id
+                            landingPageForUsers.Split(',')[1].Trim(), //controller
+                            landingPageForUsers.Split(',')[2].Trim());//action
+                    }
+
+                    // fallback if not exists
+                    // this.IsAccessible not possible for shell
+                    if (checkPermission(landingPage) == false)
+                    {
+                        landingPage = this.Session.GetTenant().LandingPageTuple;
+                    }
+
+                    // Default forward, if no other path given for no permission page
+                    if (landingPage.Item1.ToLower() == "shell" && landingPage.Item2.ToLower() == "home")
+                    {
+                        return View(landingPage.Item3);
+                    }
+                }
             }
+            // use defined landing page without login
             else
             {
                 landingPage = this.Session.GetTenant().LandingPageTuple;
             }
 
-            //if the landingPage not null and the action is accessable
+            //if the landingPage is null and the action is not accessible forward to shell/home/index
             if (landingPage == null || !this.IsAccessible(landingPage.Item1, landingPage.Item2, landingPage.Item3))
-                return View();
+                return View(); // open shell/home/index
 
-            var result = this.Render(landingPage.Item1, landingPage.Item2, landingPage.Item3);
-
-
-
+            // return result of defined landing page
+            var result = this.Render(landingPage.Item1, landingPage.Item2, landingPage.Item3);  
             return Content(result.ToHtmlString(), "text/html");
         }
+        
+        [DoesNotNeedDataAccess]
+        public ActionResult Nopermission() {
+
+            return View("NoPermission");
+        }
+
 
         [DoesNotNeedDataAccess]
         public ActionResult SessionTimeout()
@@ -95,6 +133,48 @@ namespace BExIS.Web.Shell.Controllers
                 ViewBag.Title = PresentationModel.GetViewTitleForTenant("Session Timeout", this.Session.GetTenant());
 
                 return View(model);
+            }
+        }
+
+        protected bool checkPermission(Tuple<string, string, string> LandingPage)
+        {
+            var featurePermissionManager = new FeaturePermissionManager();
+            var operationManager = new OperationManager();
+            var userManager = new UserManager();
+
+            try
+            {
+
+                var areaName = LandingPage.Item1;
+                if (areaName == "")
+                {
+                    areaName = "shell";
+                }
+                var controllerName = LandingPage.Item2;
+                var actionName = LandingPage.Item3;
+
+                var userName = HttpContext.User?.Identity?.Name;
+                var operation = operationManager.Find(areaName, controllerName, "*");
+                
+                var feature = operation.Feature;
+                if (feature == null) return true;
+
+                var result = userManager.FindByNameAsync(userName);
+
+
+                if (featurePermissionManager.HasAccess(result.Result?.Id, feature.Id))
+                {
+                    return true;
+                }
+                else { 
+                    return false; 
+                }
+            }
+            finally
+            {
+                featurePermissionManager.Dispose();
+                operationManager.Dispose();
+                userManager.Dispose();
             }
         }
     }

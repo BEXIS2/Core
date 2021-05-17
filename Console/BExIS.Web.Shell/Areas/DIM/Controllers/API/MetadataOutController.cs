@@ -40,20 +40,29 @@ namespace BExIS.Modules.Dim.UI.Controllers
 
             try
             {
-                var datasetIds = dm.GetDatasetLatestIds();
+                var datasetIds = dm.GetDatasetIds();
 
                 List<MetadataViewObject> tmp = new List<MetadataViewObject>();
 
                 foreach (var id in datasetIds)
                 {
-                    MetadataViewObject mvo = new MetadataViewObject();
-                    mvo.DatasetId = id;
+                    // add only datasets to the list where the status is checked in otherwise
+                    // the system is not able to load metadat data informations
+                    if (dm.IsDatasetCheckedIn(id))
+                    {
+                        MetadataViewObject mvo = new MetadataViewObject();
+                        mvo.DatasetId = id;
 
-                    List<string> t = xmlDatasetHelper.GetAllTransmissionInformation(id, TransmissionType.mappingFileExport, AttributeNames.name).ToList();
+                        // load all metadata export options 
+                        // in the metadata extra field there are stored the import and export mapping files
+                        // this funktion loads all transformations based on one direction
+                        // AttributeNames.name means the destination metadata name
+                        List<string> t = xmlDatasetHelper.GetAllTransmissionInformation(id, TransmissionType.mappingFileExport, AttributeNames.name).ToList();
 
-                    mvo.Format = t.ToArray();
+                        mvo.Format = t.ToArray();
 
-                    tmp.Add(mvo);
+                        tmp.Add(mvo);
+                    }
                 }
 
                 return tmp;
@@ -61,6 +70,69 @@ namespace BExIS.Modules.Dim.UI.Controllers
             finally
             {
                 dm.Dispose();
+            }
+        }
+
+        // GET:api/MetadataBySchema/GBIF
+        /// <summary>
+        /// With the Get function you get all metadata based on the given metadata schema name
+        /// </summary>
+        /// <returns>XML with all metadata of the metadata schema</returns>
+        [BExISApiAuthorize]
+        [GetRoute("api/MetadataBySchema/{name}")]
+        public HttpResponseMessage GetBySchema(string name)
+        {
+            using (DatasetManager dm = new DatasetManager())
+            {
+                var datasetIds = dm.GetDatasetIds();
+
+                List<MetadataViewObject> tmp = new List<MetadataViewObject>();
+                // create final XML document
+                XmlDocument newXmlDoc = new XmlDocument();
+
+                // create root element
+                XmlElement elem = newXmlDoc.CreateElement("root");
+
+                foreach (var id in datasetIds)
+                {
+                    MetadataViewObject mvo = new MetadataViewObject();
+                    mvo.DatasetId = id;
+
+                    // get metadata schema name
+                    List<string> t = xmlDatasetHelper.GetAllTransmissionInformation(id, TransmissionType.mappingFileExport, AttributeNames.name).ToList();
+                    mvo.Format = t.ToArray();
+
+                    // filter by metadata schema name
+                    if (mvo.Format.FirstOrDefault() == name)
+                    {
+                        // get latest version of dataset
+                        DatasetVersion dsv = dm.GetDatasetLatestVersion(id);
+
+                        // get metadata content
+                        XmlDocument xmldoc = dsv.Metadata;
+                        XmlElement element = xmldoc.DocumentElement;
+
+                        // cerate root element for the dataset
+                        XmlElement elemDataset = newXmlDoc.CreateElement("Dataset");
+
+                        // add id attribute to root element (<Dataset id="12"></Datatset>)
+                        XmlAttribute attr = newXmlDoc.CreateAttribute("id");
+                        attr.Value = id.ToString();
+                        elemDataset.SetAttributeNode(attr);
+
+                        // append metadata to dataset element
+                        elemDataset.AppendChild(newXmlDoc.ImportNode(element, true));
+
+                        // append dataset element to root
+                        elem.AppendChild(elemDataset);
+                    }
+                }
+                // add root element to xml document
+                newXmlDoc.AppendChild(elem);
+
+                // return xml document as XML
+                HttpResponseMessage response = new HttpResponseMessage { Content = new StringContent(newXmlDoc.InnerXml, Encoding.UTF8, "application/xml") };
+                return response;
             }
         }
 

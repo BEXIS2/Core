@@ -512,6 +512,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             try
             {
                 // create and submit Dataset
+
                 long datasetId = SubmitDataset(valid, "Dataset");
 
                 return Json(new { result = "redirect", url = Url.Action("Show", "Data", new { area = "DDM", id = datasetId }) }, JsonRequestBehavior.AllowGet);
@@ -529,6 +530,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         public long SubmitDataset(bool valid, string entityname)
         {
             #region create dataset
+            // the entityname can be wrong due to the mixed use from different modules. If its an update its set explicite again in #setEntitynNameNew
 
             using (DatasetManager dm = new DatasetManager())
             using (DataStructureManager dsm = new DataStructureManager())
@@ -573,9 +575,11 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                                 entityPermissionManager.Create<User>(GetUsernameOrDefault(), entityname, typeof(Dataset), ds.Id, Enum.GetValues(typeof(RightType)).Cast<RightType>().ToList());
                             }
                         }
+                        // update existing dataset
                         else
                         {
                             datasetId = Convert.ToInt64(TaskManager.Bus[CreateTaskmanager.ENTITY_ID]);
+                            entityname = xmlDatasetHelper.GetEntityName(datasetId); // ensure the correct entityname is used #setEntitynNameNew
                             newDataset = false;
                         }
 
@@ -618,7 +622,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
                             //todo check if dim is active
                             // todo call to  a function in dim
-                            setRelationships(datasetId, workingCopy.Dataset.MetadataStructure.Id, workingCopy.Metadata);
+                            setRelationships(datasetId, workingCopy.Dataset.MetadataStructure.Id, workingCopy.Metadata, entityname);
 
                             // references
 
@@ -640,20 +644,22 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                             if (newDataset)
                             {
                                 var es = new EmailService();
-                                es.Send(MessageHelper.GetCreateDatasetHeader(datasetId),
-                                    MessageHelper.GetCreateDatasetMessage(datasetId, title, GetUsernameOrDefault()),
+                                es.Send(MessageHelper.GetCreateDatasetHeader(datasetId, entityname),
+                                    MessageHelper.GetCreateDatasetMessage(datasetId, title, GetUsernameOrDefault(), entityname),
                                     ConfigurationManager.AppSettings["SystemEmail"]
                                     );
                             }
                             else
                             {
                                 var es = new EmailService();
-                                es.Send(MessageHelper.GetUpdateDatasetHeader(datasetId),
-                                    MessageHelper.GetUpdateDatasetMessage(datasetId, title, GetUsernameOrDefault()),
+                                es.Send(MessageHelper.GetMetadataUpdatHeader(datasetId, entityname),
+                                    MessageHelper.GetUpdateDatasetMessage(datasetId, title, GetUsernameOrDefault(), entityname),
                                     ConfigurationManager.AppSettings["SystemEmail"]
                                     );
                             }
                         }
+
+                        Session["CreateDatasetTaskManager"] = null;
 
                         return datasetId;
                     }
@@ -661,7 +667,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 catch (Exception ex)
                 {
                     var es = new EmailService();
-                    es.Send(MessageHelper.GetUpdateDatasetHeader(datasetId),
+                    es.Send(MessageHelper.GetMetadataUpdatHeader(datasetId, entityname),
                         ex.Message,
                         ConfigurationManager.AppSettings["SystemEmail"]
                         );
@@ -987,7 +993,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         /// <param name="datasetid"></param>
         /// <param name="metadataStructureId"></param>
         /// <param name="metadata"></param>
-        private void setRelationships(long datasetid, long metadataStructureId, XmlDocument metadata)
+        private void setRelationships(long datasetid, long metadataStructureId, XmlDocument metadata, string entityname)
         {
             using (PartyManager partyManager = new PartyManager())
             using (PartyTypeManager partyTypeManager = new PartyTypeManager())
@@ -1001,47 +1007,52 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                         // get all party mapped nodes
                         IEnumerable<XElement> complexElements = XmlUtility.GetXElementsByAttribute("partyid", XmlUtility.ToXDocument(metadata));
 
-                        // get releaionship type id for owner
+                        // get all relationshipTypes where entityname is involved
                         var relationshipTypes = uow.GetReadOnlyRepository<PartyRelationshipType>().Get().Where(
                             p => p.AssociatedPairs.Any(
-                                ap => ap.SourcePartyType.Title.ToLower().Equals("dataset") || ap.TargetPartyType.Title.ToLower().Equals("dataset")
+                                ap => ap.SourcePartyType.Title.ToLower().Equals(entityname.ToLower()) || ap.TargetPartyType.Title.ToLower().Equals(entityname.ToLower())
                                 ));
 
                         #region delete relationships
-
+                        
                         foreach (var relationshipType in relationshipTypes)
                         {
-                            bool exist = false;
-                            var partyTpePair = relationshipType.AssociatedPairs.FirstOrDefault();
-
-                            if (partyTpePair.SourcePartyType.Title.ToLower().Equals("dataset"))
+                            // go through each associated realtionship type pair (e.g. Person - Dataset, Person - Publication)
+                            foreach (var partyTpePair in relationshipType.AssociatedPairs)
                             {
-                                IEnumerable<PartyRelationship> relationships = uow.GetReadOnlyRepository<PartyRelationship>().Get().Where(
-                                        r =>
-                                        r.SourceParty != null && r.SourceParty.Name.Equals(datasetid.ToString()) &&
-                                        r.PartyTypePair != null && r.PartyTypePair.Id.Equals(partyTpePair.Id)
-                                    );
-
-                                IEnumerable<long> partyids = complexElements.Select(i => Convert.ToInt64(i.Attribute("partyid").Value));
-
-                                foreach (PartyRelationship pr in relationships)
+                                // check if entityname is source or target and delete all found party realationships
+                                if (partyTpePair.SourcePartyType.Title.ToLower().Equals(entityname.ToLower()))
                                 {
-                                    if (!partyids.Contains(pr.TargetParty.Id)) partyManager.RemovePartyRelationship(pr);
+                                    IEnumerable<PartyRelationship> relationships = uow.GetReadOnlyRepository<PartyRelationship>().Get().Where(
+                                            r =>
+                                            r.SourceParty != null && r.SourceParty.Name.Equals(datasetid.ToString()) &&
+                                            r.PartyTypePair != null && r.PartyTypePair.Id.Equals(partyTpePair.Id)
+                                        );
+
+                                    IEnumerable<long> partyids = complexElements.Select(i => Convert.ToInt64(i.Attribute("partyid").Value));
+
+
+                                    foreach (PartyRelationship pr in relationships)
+                                    {
+                                        if (!partyids.Contains(pr.TargetParty.Id)) partyManager.RemovePartyRelationship(pr);
+                                    }
+
                                 }
-                            }
-                            else
-                            {
-                                IEnumerable<PartyRelationship> relationships = uow.GetReadOnlyRepository<PartyRelationship>().Get().Where(
-                                        r =>
-                                        r.TargetParty != null && r.TargetParty.Name.Equals(datasetid.ToString()) &&
-                                        r.PartyTypePair != null && r.PartyTypePair.Id.Equals(partyTpePair.Id)
-                                    );
-
-                                IEnumerable<long> partyids = complexElements.Select(i => Convert.ToInt64(i.Attribute("partyid").Value));
-
-                                foreach (PartyRelationship pr in relationships)
+                                else if (partyTpePair.TargetPartyType.Title.ToLower().Equals(entityname.ToLower()))
                                 {
-                                    if (!partyids.Contains(pr.SourceParty.Id)) partyManager.RemovePartyRelationship(pr);
+                                    IEnumerable<PartyRelationship> relationships = uow.GetReadOnlyRepository<PartyRelationship>().Get().Where(
+                                            r =>
+                                            r.TargetParty != null && r.TargetParty.Name.Equals(datasetid.ToString()) &&
+                                            r.PartyTypePair != null && r.PartyTypePair.Id.Equals(partyTpePair.Id)
+                                        );
+
+                                    IEnumerable<long> partyids = complexElements.Select(i => Convert.ToInt64(i.Attribute("partyid").Value));
+
+
+                                    foreach (PartyRelationship pr in relationships)
+                                    {
+                                        if (!partyids.Contains(pr.SourceParty.Id)) partyManager.RemovePartyRelationship(pr);
+                                    }
                                 }
                             }
                         }
@@ -1087,32 +1098,38 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                                         customAttributes.Add("Name", datasetid.ToString());
                                         customAttributes.Add("Id", datasetid.ToString());
 
-                                        // get or create datasetParty
-                                        Party datasetParty = partyManager.GetPartyByCustomAttributeValues(partyTypeManager.PartyTypeRepository.Get(cc => cc.Title == "Dataset").First(), customAttributes).FirstOrDefault();
-                                        if (datasetParty == null) datasetParty = partyManager.Create(partyTypeManager.PartyTypeRepository.Get(cc => cc.Title == "Dataset").First(), "[description]", null, null, customAttributes);
+                                        // get or create datasetParty if not exists
+                                        Party datasetParty = partyManager.GetPartyByCustomAttributeValues(partyTypeManager.PartyTypeRepository.Get(cc => cc.Title == entityname).First(), customAttributes).FirstOrDefault();
+                                        if (datasetParty == null) datasetParty = partyManager.Create(partyTypeManager.PartyTypeRepository.Get(cc => cc.Title == entityname).First(), "[description]", null, null, customAttributes);
 
-                                        // Get user party
+                                        // get user party
                                         var person = partyManager.GetParty(partyid);
 
-                                        var partyTpePair = relationship.AssociatedPairs.FirstOrDefault();
-
-                                        if (partyTpePair != null && person != null && datasetParty != null)
+                                        // add party relationships
+                                        foreach (var partyTpePair in relationship.AssociatedPairs)
                                         {
-                                            if (!uow.GetReadOnlyRepository<PartyRelationship>().Get().Any(
-                                                r =>
-                                                r.SourceParty != null && r.SourceParty.Id.Equals(person.Id) &&
-                                                r.PartyTypePair != null && r.PartyTypePair.Id.Equals(partyTpePair.Id) &&
-                                                r.TargetParty.Id.Equals(datasetParty.Id)
-                                            ))
+                                            if (partyTpePair.SourcePartyType.Title.ToLower().Equals(entityname.ToLower()) || partyTpePair.TargetPartyType.Title.ToLower().Equals(entityname.ToLower()))
                                             {
-                                                partyManager.AddPartyRelationship(
-                                                    person.Id,
-                                                    datasetParty.Id,
-                                                    relationship.Title,
-                                                    "",
-                                                    partyTpePair.Id
 
-                                                    );
+                                                if (partyTpePair != null && person != null && datasetParty != null)
+                                                {
+                                                    if (!uow.GetReadOnlyRepository<PartyRelationship>().Get().Any(
+                                                        r =>
+                                                        r.SourceParty != null && r.SourceParty.Id.Equals(person.Id) &&
+                                                        r.PartyTypePair != null && r.PartyTypePair.Id.Equals(partyTpePair.Id) &&
+                                                        r.TargetParty.Id.Equals(datasetParty.Id)
+                                                    ))
+                                                    {
+                                                        partyManager.AddPartyRelationship(
+                                                            person.Id,
+                                                            datasetParty.Id,
+                                                            relationship.Title,
+                                                            "",
+                                                            partyTpePair.Id
+
+                                                            );
+                                                    }
+                                                }
                                             }
                                         }
                                     }

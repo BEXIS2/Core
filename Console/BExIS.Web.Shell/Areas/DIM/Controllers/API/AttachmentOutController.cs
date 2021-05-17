@@ -50,7 +50,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
             List<ApiDatasetAttachmentsModel> tmp = new List<ApiDatasetAttachmentsModel>();
             try
             {
-                var datasetIds = dm.GetDatasetLatestIds();
+                var datasetIds = dm.GetDatasetIds();
 
                 foreach (long id in datasetIds)
                 {

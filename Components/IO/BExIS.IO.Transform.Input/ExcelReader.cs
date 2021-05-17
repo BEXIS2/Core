@@ -860,106 +860,121 @@ namespace BExIS.IO.Transform.Input
                 if (c != null)
                 {
                     int cellReferencAsInterger = GetColumnNumber(GetColumnName(c.CellReference));
+
+                    // create the index for the position in the rowAsStringArray
                     int index = cellReferencAsInterger - offset - 1;
 
-                    if (c.CellValue != null)
+                    // the columnPosition of the cell must be in the startColumn and endColumn range 
+                    // otherwise jump over it
+                    if (cellReferencAsInterger >= startColumn && cellReferencAsInterger <= endColumn)
                     {
-                        // if cell reference in range of the area
-                        int start = GetColumnNumber(this._areaOfData.StartColumn);
-                        int end = GetColumnNumber(this._areaOfData.EndColumn);
-
-                        //if columns is not null means the function returns a subset of all columns based on the incoming varids
-                        if ((columns == null || columns.Contains(cellReferencAsInterger)) && index >= 0)
+                        if (c.CellValue != null)
                         {
-                            // if Value a text
-                            if (c.DataType != null && c.DataType.HasValue && c.DataType.Value == CellValues.SharedString)
+                           
+                            //if columns is not null means the function returns a subset of all columns based on the incoming varids
+                            if ((columns == null || columns.Contains(cellReferencAsInterger)) && index >= 0)
                             {
-                                int sharedStringIndex = int.Parse(c.CellValue.Text, CultureInfo.InvariantCulture);
-                                SharedStringItem sharedStringItem = _sharedStrings[sharedStringIndex];
-                                value = sharedStringItem.InnerText;
-                                //Debug.WriteLine(value);
-                            }
-                            // not a text
-                            else if (c.StyleIndex != null && c.StyleIndex.HasValue)
-                            {
-                                uint styleIndex = c.StyleIndex.Value;
-                                CellFormat cellFormat = _stylesheet.CellFormats.ChildElements[(int)styleIndex] as CellFormat;
-
-                                if (cellFormat.ApplyNumberFormat != null && cellFormat.ApplyNumberFormat.HasValue && cellFormat.ApplyNumberFormat.Value && cellFormat.NumberFormatId != null && cellFormat.NumberFormatId.HasValue)
+                                // if Value a text
+                                if (c.DataType != null && c.DataType.HasValue && 
+                                   (c.DataType.Value == CellValues.SharedString || c.DataType.Value == CellValues.String || c.DataType.Value == CellValues.InlineString))
                                 {
-                                    uint numberFormatId = cellFormat.NumberFormatId.Value;
-
-                                    // Number format 14-22 and 45-47 are built-in date and/or time formats
-                                    if ((numberFormatId >= 14 && numberFormatId <= 22) || (numberFormatId >= 45 && numberFormatId <= 47))
+                                    // if the datatype is a shared string, then the value comes from a shared string table and the value inside is a
+                                    // id for the shared string table
+                                    if (c.DataType.Value == CellValues.SharedString)
                                     {
-                                        double tmp = 0;
-                                        if (double.TryParse(c.CellValue.Text, out tmp)) value = ExcelHelper.FromExcelSerialDate(tmp).ToString();
-                                        else value = c.CellValue.Text;
+                                        int sharedStringIndex = int.Parse(c.CellValue.Text, CultureInfo.InvariantCulture);
+                                        SharedStringItem sharedStringItem = _sharedStrings[sharedStringIndex];
+                                        value = sharedStringItem.InnerText;
                                     }
-                                    else // not a date
+                                    // if the excel cell datatype a CellValues.String or CellValues.Inline 
+                                    // then set the value by the value from the cell direct without some extra work
+                                    else
                                     {
-                                        if (_stylesheet.NumberingFormats != null && _stylesheet.NumberingFormats.Any(numFormat => ((NumberingFormat)numFormat).NumberFormatId.Value == numberFormatId))
-                                        {
-                                            NumberingFormat numberFormat = _stylesheet.NumberingFormats.First(numFormat => ((NumberingFormat)numFormat).NumberFormatId.Value == numberFormatId) as NumberingFormat;
-
-                                            if (numberFormat != null && numberFormat.FormatCode != null && numberFormat.FormatCode.HasValue)
-                                            {
-                                                string formatCode = numberFormat.FormatCode.Value;
-                                                if ((formatCode.Contains("h") && formatCode.Contains("m")) || (formatCode.Contains("m") && formatCode.Contains("d")))
-                                                {
-                                                    double tmp = 0;
-                                                    if (double.TryParse(c.CellValue.Text, out tmp)) value = ExcelHelper.FromExcelSerialDate(tmp).ToString();
-                                                    else value = c.CellValue.Text;
-                                                }
-                                                else
-                                                {
-                                                    // check format code and round the value based on the decimal place
-                                                    // contains e.g. #.## & 0.00 
-                                                    // contains e.g. 1,23E+02 
-                                                    // 1234567890,43759 = 1,23E+09
-
-                                                    value = ExcelHelper.ConvertWithFormat(c.CellValue.Text, formatCode);
-                                                }
-                                            }
-                                            else //formatCode = null
-                                            {
-                                                value = ExcelHelper.ConvertWithFormat(c.CellValue.Text, "");
-                                            }
-                                        }
-                                        else //numberformat not exist in the stylesheet but may numberformatid exist 
-                                        {
-                                            string formatcode = ExcelHelper.GetFormatCode(numberFormatId);
-
-                                            value = ExcelHelper.ConvertWithFormat(c.CellValue.Text, formatcode);
-                                        }
-                                    }//numbers end
+                                        value = c.CellValue.Text;
+                                    }
                                 }
-                                else
+                                // not a text
+                                else if (c.StyleIndex != null && c.StyleIndex.HasValue)
                                 {
-                                    value = c.CellValue.Text;
+                                    uint styleIndex = c.StyleIndex.Value;
+                                    CellFormat cellFormat = _stylesheet.CellFormats.ChildElements[(int)styleIndex] as CellFormat;
+
+                                    if (cellFormat.ApplyNumberFormat != null && cellFormat.ApplyNumberFormat.HasValue && cellFormat.ApplyNumberFormat.Value && cellFormat.NumberFormatId != null && cellFormat.NumberFormatId.HasValue)
+                                    {
+                                        uint numberFormatId = cellFormat.NumberFormatId.Value;
+
+                                        // Number format 14-22 and 45-47 are built-in date and/or time formats
+                                        if ((numberFormatId >= 14 && numberFormatId <= 22) || (numberFormatId >= 45 && numberFormatId <= 47))
+                                        {
+                                            double tmp = 0;
+                                            if (double.TryParse(c.CellValue.Text, out tmp)) value = ExcelHelper.FromExcelSerialDate(tmp).ToString();
+                                            else value = c.CellValue.Text;
+                                        }
+                                        else // not a date
+                                        {
+                                            if (_stylesheet.NumberingFormats != null && _stylesheet.NumberingFormats.Any(numFormat => ((NumberingFormat)numFormat).NumberFormatId.Value == numberFormatId))
+                                            {
+                                                NumberingFormat numberFormat = _stylesheet.NumberingFormats.First(numFormat => ((NumberingFormat)numFormat).NumberFormatId.Value == numberFormatId) as NumberingFormat;
+
+                                                if (numberFormat != null && numberFormat.FormatCode != null && numberFormat.FormatCode.HasValue)
+                                                {
+                                                    string formatCode = numberFormat.FormatCode.Value;
+                                                    if ((formatCode.Contains("h") && formatCode.Contains("m")) || (formatCode.Contains("m") && formatCode.Contains("d")))
+                                                    {
+                                                        double tmp = 0;
+                                                        if (double.TryParse(c.CellValue.Text, out tmp)) value = ExcelHelper.FromExcelSerialDate(tmp).ToString();
+                                                        else value = c.CellValue.Text;
+                                                    }
+                                                    else
+                                                    {
+                                                        // check format code and round the value based on the decimal place
+                                                        // contains e.g. #.## & 0.00 
+                                                        // contains e.g. 1,23E+02 
+                                                        // 1234567890,43759 = 1,23E+09
+
+                                                        value = ExcelHelper.ConvertWithFormat(c.CellValue.Text, formatCode);
+                                                    }
+                                                }
+                                                else //formatCode = null
+                                                {
+                                                    value = ExcelHelper.ConvertWithFormat(c.CellValue.Text, "");
+                                                }
+                                            }
+                                            else //numberformat not exist in the stylesheet but may numberformatid exist 
+                                            {
+                                                string formatcode = ExcelHelper.GetFormatCode(numberFormatId);
+
+                                                value = ExcelHelper.ConvertWithFormat(c.CellValue.Text, formatcode);
+                                            }
+                                        }//numbers end
+                                    }
+                                    else
+                                    {
+                                        value = ExcelHelper.ConvertWithFormat(c.CellValue.Text, "");
+                                    }
+                                }
+                                else //standard
+                                {
+                                    value = ExcelHelper.ConvertWithFormat(c.CellValue.Text, "");
+                                }
+
+                                // define index based on cell refernce - offset
+                                //int index = cellReferencAsInterger - offset - 1;
+                                if ((columns == null || columns.Contains(cellReferencAsInterger)) && index >= 0)
+                                {
+                                    rowAsStringArray[index] = value;
                                 }
                             }
-                            else //standard
-                            {
-                                value = ExcelHelper.ConvertWithFormat(c.CellValue.Text, "");
-                            }
-
-                            // define index based on cell refernce - offset
-                            //int index = cellReferencAsInterger - offset - 1;
-                            if ((columns == null || columns.Contains(cellReferencAsInterger)) && index>=0)
-                            {
-                                rowAsStringArray[index]= value;
-                            }
-                        }
-                    }//end if cell value
-                    else
-                    {
-                        if (columns == null || columns.Contains(cellReferencAsInterger))
+                        }//end if cell value
+                        else
                         {
-                            rowAsStringArray[index] = value;
-                        }
+                            if (columns == null || columns.Contains(cellReferencAsInterger))
+                            {
+                                rowAsStringArray[index] = value;
+                            }
+                        }//end if cell null
                     }
-                }//end if cell null
+                }
             }//for
 
             // replace all null values with "";
