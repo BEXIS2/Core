@@ -75,8 +75,8 @@
       <column name="Description" sql-type="varchar"/>
     </property>
     
-    <property name="ChangeDescription" type="string">
-      <column name="ChangeDescription" />
+    <property name="ChangeDescription" type="StringClob">
+      <column name="ChangeDescription"  sql-type="text" />
     </property>
 
     <property name="Timestamp" type="Timestamp">

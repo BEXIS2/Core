@@ -32,6 +32,7 @@
 <table>
     <tr>
         <th>ID</th>
+        <th>Title</th>
         <th>Status</th>
         <th>Rows</th>
         <th>Variables</th>
@@ -39,57 +40,59 @@
     </tr>
     @foreach (var entity in Model)
     {
-        <tr id="@entity.Id">
-            <td>@(entity.Id)</td>
-            @if (DatasetIds.Contains(entity.Id))
-            {
-                if (entity.Status == DatasetStatus.CheckedIn)
-                {
-                    <td style="color: darkgreen">@(entity.Status.ToString())</td>
-                    <td class="number-of-rows">@(entity.NoOfRows)</td>
-                    <td>@(entity.NoOfCols)</td>
-                    <td>
-                        @Html.ActionLink("Sync", "Sync", new { id = entity.Id, area = "Sam" }, new { @style = entity.IsSynced ? "color:darkgreen;" : "color:black;" }) |
-                        @Html.ActionLink("Versions", "Versions", new { id = entity.Id, area = "Sam" }) |
-                        @Html.ActionLink("Delete", "Delete", new { id = entity.Id, area = "Sam" }) |
-                        @Html.ActionLink("Purge", "Purge", new { id = entity.Id, area = "Sam" }) |
-                        <a entityid="@entity.Id" class="number-of-rows-bt">Count</a>
-                    </td>
-                }
-                else if (entity.Status == DatasetStatus.CheckedOut)
-                {
-                    <td style="color: darkblue">@(entity.Status.ToString())</td>
-                    <td class="number-of-rows">@(entity.NoOfRows)</td>
-                    <td>@(entity.NoOfCols)</td>
-                    <td>
-                        @Html.ActionLink("Sync", "Sync", new { id = entity.Id, area = "Sam" }, new { @style = entity.IsSynced ? "color:darkgreen;" : "color:black;" }) |
-                        @Html.ActionLink("Versions", "Versions", new { id = entity.Id, area = "Sam" }) |
-                        @Html.ActionLink("Purge", "Purge", new { id = entity.Id })|
-                        <a entityid="@entity.Id" class="number-of-rows-bt">Count</a>
-                    </td>
-                }
-                else if (entity.Status == DatasetStatus.Deleted)
-                {
-                    <td style="color: red">@(entity.Status.ToString())</td>
-                    <td class="number-of-rows">@(entity.NoOfRows)</td>
-                    <td>@(entity.NoOfCols)</td>                    
-                    <td>
-                        @Html.ActionLink("Sync", "Sync", new { id = entity.Id, area = "Sam" }, new { @style = entity.IsSynced ? "color:darkgreen;" : "color:black;" }) |
-                        @Html.ActionLink("Versions", "Versions", new { id = entity.Id, area = "Sam" }) |
-                        @Html.ActionLink("Purge", "Purge", new { id = entity.Id, area = "Sam" }) |
-                        <a entityid="@entity.Id" class="number-of-rows-bt">Count</a>
-                    </td>
-                }
-            }
-            else
-            {
-                <td style="color: red">@(entity.Status.ToString())</td>
-                <td>@(entity.NoOfRows)</td>
-                <td>@(entity.NoOfCols)</td>
-                <td>
-                    No Permissions!
-                </td>
-            }
-        </tr>
+<tr id="@entity.Id">
+    <td>@(entity.Id)</td>
+    <td>@(entity.Title)</td>
+    @if (DatasetIds.Contains(entity.Id))
+    {
+        if (entity.Status == DatasetStatus.CheckedIn)
+        {
+            <td style="color: darkgreen">@(entity.Status.ToString())</td>
+            <td class="number-of-rows">@(entity.NoOfRows)</td>
+            <td>@(entity.NoOfCols)</td>
+            <td>
+                @Html.ActionLink("Sync", "Sync", new { id = entity.Id, area = "Sam" }, new { @style = entity.IsSynced ? "color:darkgreen;" : "color:black;" }) |
+                @Html.ActionLink("Versions", "Versions", new { id = entity.Id, area = "Sam" }) |
+                @Html.ActionLink("Delete", "Delete", new { id = entity.Id, area = "Sam" }) |
+                @Html.ActionLink("Purge", "Purge", new { id = entity.Id, area = "Sam" }) |
+                <a entityid="@entity.Id" class="number-of-rows-bt">Count</a>
+            </td>
+        }
+        else if (entity.Status == DatasetStatus.CheckedOut)
+        {
+            <td style="color: darkblue">@(entity.Status.ToString())</td>
+            <td class="number-of-rows">@(entity.NoOfRows)</td>
+            <td>@(entity.NoOfCols)</td>
+            <td>
+                @Html.ActionLink("Sync", "Sync", new { id = entity.Id, area = "Sam" }, new { @style = entity.IsSynced ? "color:darkgreen;" : "color:black;" }) |
+                @Html.ActionLink("Versions", "Versions", new { id = entity.Id, area = "Sam" }) |
+                @Html.ActionLink("Purge", "Purge", new { id = entity.Id })|
+                <a entityid="@entity.Id" class="number-of-rows-bt">Count</a>
+            </td>
+        }
+        else if (entity.Status == DatasetStatus.Deleted)
+        {
+            <td style="color: red">@(entity.Status.ToString())</td>
+            <td class="number-of-rows">@(entity.NoOfRows)</td>
+            <td>@(entity.NoOfCols)</td>
+
+            <td>
+                @Html.ActionLink("Sync", "Sync", new { id = entity.Id, area = "Sam" }, new { @style = entity.IsSynced ? "color:darkgreen;" : "color:black;" }) |
+                @Html.ActionLink("Versions", "Versions", new { id = entity.Id, area = "Sam" }) |
+                @Html.ActionLink("Purge", "Purge", new { id = entity.Id, area = "Sam" }) |
+                <a entityid="@entity.Id" class="number-of-rows-bt">Count</a>
+            </td>
+        }
+    }
+    else
+    {
+        <td style="color: red">@(entity.Status.ToString())</td>
+        <td>@(entity.NoOfRows)</td>
+        <td>@(entity.NoOfCols)</td>
+        <td>
+            No Permissions!
+        </td>
+    }
+</tr>
     }
 </table>

@@ -1,3 +1,6 @@
-﻿User-agent: *
-Disallow: 
-Disallow: /cgi-bin/
+﻿User-Agent: *
+Allow: /footer/imprint
+Allow: /footer/contactus
+Allow: /footer/policy
+Allow: /ddm/home/index
+Disallow: /

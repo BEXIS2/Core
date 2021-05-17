@@ -3,6 +3,7 @@ using BExIS.Dlm.Services.DataStructure;
 using BExIS.IO.Transform.Output;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Xml;
 
@@ -55,24 +56,28 @@ namespace BExIS.Modules.Rpm.UI.Classes
         public static List<Variable> getOrderedVariables(StructuredDataStructure structuredDataStructure)
         {
             return structuredDataStructure.Variables.OrderBy(v => v.OrderNo).ToList();
+            
         }
-        public static StructuredDataStructure setVariableOrder(StructuredDataStructure structuredDataStructure, List<long> orderList)
+        public static StructuredDataStructure setVariableOrder(StructuredDataStructure dataStructure, List<long> orderList)
         {
             DataStructureManager dsm = null;
             try
             {
                 dsm = new DataStructureManager();
-                foreach (Variable v in structuredDataStructure.Variables)
+                if(orderList != null && orderList.Count > 0)
                 {
-                    v.OrderNo = orderList.IndexOf(v.Id) + 1;
+                    foreach (Variable v in dataStructure.Variables)
+                    {
+                        v.OrderNo = orderList.IndexOf(v.Id) + 1;
+                        Debug.WriteLine(v.Id + "|" + v.OrderNo);
+                    }
                 }
-                structuredDataStructure = dsm.UpdateStructuredDataStructure(structuredDataStructure);
+                return dsm.UpdateStructuredDataStructure(dataStructure);
             }
             finally
             {
                 dsm.Dispose();
-            }
-            return structuredDataStructure;
+            }          
         }
 
         public static void convertOrder(StructuredDataStructure structuredDataStructure)

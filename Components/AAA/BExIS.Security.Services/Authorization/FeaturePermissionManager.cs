@@ -191,7 +191,7 @@ namespace BExIS.Security.Services.Authorization
             }
         }
 
-        public Dictionary<long,int> GetPermissionType(IEnumerable<long> subjectIds, long featureId)
+        public Dictionary<long, int> GetPermissionType(IEnumerable<long> subjectIds, long featureId)
         {
             Dictionary<long, int> tmp = new Dictionary<long, int>();
 
@@ -207,14 +207,15 @@ namespace BExIS.Security.Services.Authorization
                         tmp.Add(subjectId, (int)featurePermission.PermissionType);
                     }
                     else
-                    { 
-                        tmp.Add(subjectId,2);
+                    {
+                        tmp.Add(subjectId, 2);
                     }
                 }
             }
 
             return tmp;
         }
+
         public bool HasAccess(long? subjectId, long featureId)
         {
             using (var uow = this.GetUnitOfWork())
@@ -273,147 +274,19 @@ namespace BExIS.Security.Services.Authorization
                 return false;
             }
         }
-        public Dictionary<long,bool> HasAccess(IEnumerable<Subject> subjects, long featureId)
+
+        public Dictionary<long, bool> HasAccess(IEnumerable<Subject> subjects, long featureId)
         {
-            Dictionary<long, bool> tmp = new Dictionary<long, bool>();
+            Dictionary<long, bool> accessDictionary = new Dictionary<long, bool>();
 
-            using (var uow = this.GetUnitOfWork())
+            foreach (var subject in subjects)
             {
-                var featureRepository = uow.GetReadOnlyRepository<Feature>();
-                var subjectRepository = uow.GetReadOnlyRepository<Subject>();
-
-                var feature = featureRepository.Get(featureId);
-
-                foreach (var subject in subjects)
-                {
-  
-                    bool hasAccess = false;
-
-                    // Anonymous
-                    if (subject == null)
-                    {
-                        while (feature != null)
-                        {
-                            if (Exists(null, feature.Id, PermissionType.Grant))
-                                hasAccess =  true;
-
-                            feature = feature.Parent;
-                        }
-
-                        hasAccess = true;
-                    }
-
-                    // Non-Anonymous
-                    while (feature != null)
-                    {
-                       
-
-                        if (Exists(null, feature.Id, PermissionType.Grant))
-                        {
-                            hasAccess = true;
-                            break;
-                        }
-                        else
-                        if (Exists(subject.Id, feature.Id, PermissionType.Deny))
-                        {
-                            hasAccess = false;
-                            break;
-
-                        }
-                        else
-                        if (Exists(subject.Id, feature.Id, PermissionType.Grant))
-                        {
-                            hasAccess = true;
-                            break;
-
-                        }
-
-
-                        if (subject is User)
-                        {
-                            var user = subject as User;
-                            var groupIds = user.Groups.Select(g => g.Id).ToList();
-
-                            if (Exists(groupIds, new[] { feature.Id }, PermissionType.Deny))
-                            {
-                                hasAccess = false;
-                                break;
-
-                            }
-                            else
-                            if (Exists(groupIds, new[] { feature.Id }, PermissionType.Grant))
-                            {
-                                hasAccess = true;
-                                break;
-
-                            }
-                        }
-
-                        feature = feature.Parent;
-                    }
-
-                    tmp.Add(subject.Id, hasAccess);
-                }
-
-                return tmp;
+                if (subject != null)
+                    accessDictionary.Add(subject.Id, HasAccess(subject.Id, featureId));
             }
+
+            return accessDictionary;
         }
-
-        //public bool HasAccess(Subject subject, Feature feature)
-        //{
-        //    using (var uow = this.GetUnitOfWork())
-        //    {
-        //        var featureRepository = uow.GetReadOnlyRepository<Feature>();
-        //        var subjectRepository = uow.GetReadOnlyRepository<Subject>();
-
-        //        // Anonymous
-        //        if (subject == null)
-        //        {
-        //            while (feature != null)
-        //            {
-        //                if (Exists(null, feature.Id, PermissionType.Grant))
-        //                    return true;
-
-        //                feature = feature.Parent;
-        //            }
-
-        //            return false;
-        //        }
-
-        //        // Non-Anonymous
-        //        while (feature != null)
-        //        {
-        //            if (Exists(null, feature.Id, PermissionType.Grant))
-        //                return true;
-
-        //            if (Exists(subject.Id, feature.Id, PermissionType.Deny))
-        //                return false;
-
-        //            if (Exists(subject.Id, feature.Id, PermissionType.Grant))
-        //                return true;
-
-        //            if (subject is User)
-        //            {
-        //                var user = subject as User;
-        //                var groupIds = user.Groups.Select(g => g.Id).ToList();
-
-        //                if (Exists(groupIds, new[] { feature.Id }, PermissionType.Deny))
-        //                {
-        //                    return false;
-        //                }
-
-        //                if (Exists(groupIds, new[] { feature.Id }, PermissionType.Grant))
-        //                {
-        //                    return true;
-        //                }
-        //            }
-
-        //            feature = feature.Parent;
-        //        }
-
-        //        return false;
-        //    }
-        //}
 
         public bool HasAccess<T>(string subjectName, string module, string controller, string action) where T : Subject
         {

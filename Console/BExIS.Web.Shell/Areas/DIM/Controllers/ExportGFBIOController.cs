@@ -20,7 +20,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
             DatasetManager dm = new DatasetManager();
             try
             {
-                var datasetIds = dm.GetDatasetLatestIds();
+                var datasetIds = dm.GetDatasetIds();
 
                 return datasetIds;
             }

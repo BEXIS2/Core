@@ -12,6 +12,7 @@ namespace BExIS.Modules.Dcm.UI.Models.Metadata
         public BaseUsage Source { get; set; }
         public int Number { get; set; }
         public long Id { get; set; }
+        public long PartyId { get; set; }
 
         public String DisplayName { get; set; }
         public String Discription { get; set; }

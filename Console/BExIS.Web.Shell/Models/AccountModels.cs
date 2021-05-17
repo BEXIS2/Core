@@ -125,6 +125,8 @@ namespace BExIS.Web.Shell.Models
         [Display(Name = "Privacy Policy")]
         [MustBeTrue(ErrorMessage = "You must agree to the Privacy Policy before register.")]
         public bool PrivacyPolicy { get; set; }
+
+        public string Extra { get; set; }
     }
 
     public class ResetPasswordViewModel

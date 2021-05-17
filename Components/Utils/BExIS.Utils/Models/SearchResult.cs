@@ -201,13 +201,12 @@ namespace BExIS.Utils.Models
             DataTable searchResults = new DataTable();
             if (Header != null && Rows != null)
             {
-                //check for duplicates
+                // check for duplicates in header name; add "( no.)" to make names unique
                 foreach (HeaderItem hi in Header)
                 {
                     if (Header.Where(p => p.Name.Equals(hi.Name)).Count() > 1)
                     {
                         List<HeaderItem> list = Header.Where(p => p.Name.Equals(hi.Name)).ToList();
-
                         for (int i = 0; i < list.Count(); i++)
                         {
                             if (i > 0)
@@ -218,31 +217,31 @@ namespace BExIS.Utils.Models
                         }
                     }
                 }
-
                 foreach (var colum in Header)
                 {
                     if (!searchResults.Columns.Contains(colum.Name)) // when the search provider is reloaded, it contains duplicate items
                     {
                         DataColumn col = searchResults.Columns.Add(colum.Name);  // or DisplayName also
-
                         if (colum.DisplayName == "")
                             col.Caption = colum.Name;
                         else
                             col.Caption = colum.DisplayName;
-
                         if (colum.Name.Equals(Id.Name))
                         {
                             col.DataType = System.Type.GetType("System.Int64");
                         }
                     }
                 }
-
                 foreach (var row in Rows)
                 {
                     searchResults.Rows.Add(row.Values.ToArray());
                 }
             }
-            return searchResults;
+
+            // sort search result by ID (descending) as datasets from the index returned in the order of last edit (last re-index followed by new created or updated datasets)
+            var l = Id.DisplayName;
+            searchResults.DefaultView.Sort = l + " Desc";
+            return searchResults.DefaultView.ToTable();
         }
     }
 }

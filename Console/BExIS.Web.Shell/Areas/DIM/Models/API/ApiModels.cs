@@ -63,6 +63,12 @@ namespace BExIS.Modules.Dim.UI.Models.Api
     public class ApiDataStatisticModel
     {
         public long VariableId { get; set; }
+        public string VariableName { get; set; }
+        public string VariableDescription { get; set; }
+        public string DataTypeName { get; set; }
+        public string DataTypeSystemType { get; set; }
+        public string DataTypeDisplayPattern { get; set; }
+        public string Unit { get; set; }
         public DataTable uniqueValues { get; set; }
         public string count { get; set; }
         public string max { get; set; }

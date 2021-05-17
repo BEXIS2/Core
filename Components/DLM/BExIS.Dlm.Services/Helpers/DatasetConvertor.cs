@@ -176,7 +176,7 @@ namespace BExIS.Dlm.Services.Helpers
                 if (vv.VariableId > 0)
                 {
                     string valueAsString = "";
-                    if (vv.Value == null)
+                    if (vv.Value == "") // check for NULL values
                     {
                         dr[columnName] = DBNull.Value;
                     }

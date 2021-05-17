@@ -145,6 +145,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
         {
             using (DatasetManager dm = new DatasetManager())
             using(EntityPermissionManager entityPermissionManager = new EntityPermissionManager())
+            using (EntityManager entityManager = new EntityManager())
             {
                 Dataset researcobject = dm.GetDataset(id);
 
@@ -165,6 +166,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                     bool requestAble = false;
                     bool latestVersion = false;
                     string isValid = "no";
+                    bool isPublic = false;
 
                     XmlDocument metadata = new XmlDocument();
 
@@ -214,6 +216,13 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                             if (UserExist() && HasRequestMapping(id)) requestAble = true;
                         }
 
+                        // check is public
+                        long? entityTypeId = entityManager.FindByName(typeof(Dataset).Name)?.Id;
+                        entityTypeId = entityTypeId.HasValue ? entityTypeId.Value : -1;
+
+                        isPublic = entityPermissionManager.Exists(null, entityTypeId.Value, id);
+
+                        // get data structure type
                         if (dsv.Dataset.DataStructure.Self.GetType().Equals(typeof(StructuredDataStructure)))
                         {
                             dataStructureType = DataStructureType.Structured.ToString();
@@ -246,14 +255,15 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                         DataStructureType = dataStructureType,
                         DownloadAccess = downloadAccess,
                         RequestExist = requestExist,
-                        RequestAble = requestAble
+                        RequestAble = requestAble,
+                        IsPublic = isPublic,
                     };
 
                     //set metadata in session
                     Session["ShowDataMetadata"] = metadata;
                     ViewData["VersionSelect"] = getVersionsSelectList(id, dm);
                     ViewData["isValid"] = isValid;
-                    ViewData["show_tabs"] = getSettingsTabList();
+                    ViewData["datasetSettings"] = getSettingsDataset();
 
                     return View(model);
                     
@@ -375,7 +385,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                 Session["ShowDataMetadata"] = metadata;
                 ViewData["VersionSelect"] = getVersionsSelectList(id, dm);
                 ViewData["isValid"] = isValid;
-                ViewData["show_tabs"] = getSettingsTabList();
+                ViewData["datasetSettings"] = getSettingsDataset();
 
                 return PartialView("ShowData", model);
             }
@@ -453,10 +463,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
         /// <returns>model</returns>
         public ActionResult ShowMetaData(long entityId, string title, long metadatastructureId, long datastructureId, long researchplanId, string sessionKeyForMetadata, bool latest, string isValid = "yes")
         {
-            var result = this.Run("DCM", "Form", "SetAdditionalFunctions", new RouteValueDictionary() { { "actionName", "Copy" }, { "controllerName", "CreateDataset" }, { "area", "DCM" }, { "type", "copy" } });
-            result = this.Run("DCM", "Form", "SetAdditionalFunctions", new RouteValueDictionary() { { "actionName", "Reset" }, { "controllerName", "Form" }, { "area", "Form" }, { "type", "reset" } });
-            result = this.Run("DCM", "Form", "SetAdditionalFunctions", new RouteValueDictionary() { { "actionName", "Cancel" }, { "controllerName", "Form" }, { "area", "DCM" }, { "type", "cancel" } });
-            result = this.Run("DCM", "Form", "SetAdditionalFunctions", new RouteValueDictionary() { { "actionName", "Submit" }, { "controllerName", "CreateDataset" }, { "area", "DCM" }, { "type", "submit" } });
+            var result = this.Run("DCM", "Form", "SetCopyFunctionForView", new RouteValueDictionary() { { "actionName", "Copy" }, { "controllerName", "CreateDataset" }, { "area", "DCM" }, { "type", "copy" } });
 
             var view = this.Render("DCM", "Form", "LoadMetadataFromExternal", new RouteValueDictionary()
             {
@@ -1516,6 +1523,12 @@ namespace BExIS.Modules.Ddm.UI.Controllers
             catch (Exception e)
             {
                 Json(e.Message, JsonRequestBehavior.AllowGet);
+               
+                // send mail with error to sys admin
+                var es = new EmailService();
+                es.Send(MessageHelper.GetSendRequestHeader(id, getPartyNameOrDefault()),
+                    MessageHelper.GetSendRequestMessage(id,"unknown", "unkown", e.Message + intention , "unknown"), new List<string> { ConfigurationManager.AppSettings["SystemEmail"] }
+                    );
             }
             finally
             {
@@ -1924,27 +1937,28 @@ namespace BExIS.Modules.Ddm.UI.Controllers
             }
         }
 
-        private Dictionary<string, string> getSettingsTabList()
+        private Dictionary<string, string> getSettingsDataset()
         {
-            if (Session["SettingsTabList"] != null)
+            if (Session["SettingsDataset"] != null)
             {
-                return (Dictionary<string, string>)Session["SettingsTabList"];
+                return (Dictionary<string, string>)Session["SettingsDataset"];
             }
 
-            var show_tab_list = new Dictionary<string, string>();
-            show_tab_list.Add("show_primary_data_tab", "true");
-            show_tab_list.Add("show_data_structure_tab", "true");
-            show_tab_list.Add("show_link_tab", "true");
-            show_tab_list.Add("show_permission_tab", "true");
-            show_tab_list.Add("show_publish_tab", "true");
-            show_tab_list.Add("show_attachments_tab", "true");
+            var dataset_settings_list = new Dictionary<string, string>();
+            dataset_settings_list.Add("show_primary_data_tab", "true");
+            dataset_settings_list.Add("show_data_structure_tab", "true");
+            dataset_settings_list.Add("show_link_tab", "true");
+            dataset_settings_list.Add("show_permission_tab", "true");
+            dataset_settings_list.Add("show_publish_tab", "true");
+            dataset_settings_list.Add("show_attachments_tab", "true");
 
-            show_tab_list.Add("show_tabs_deactivated", "true");
+            dataset_settings_list.Add("show_tabs_deactivated", "true");
+            dataset_settings_list.Add("check_public_metadata", "false");
 
             string filePath = Path.Combine(AppConfiguration.GetModuleWorkspacePath("DDM"), "Ddm.Settings.xml");
             XDocument settings = XDocument.Load(filePath);
 
-            foreach (var item in show_tab_list.ToList())
+            foreach (var item in dataset_settings_list.ToList())
             {
                 try
                 {
@@ -1952,7 +1966,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
 
                     if (value != null)
                     {
-                        show_tab_list[item.Key] = value;
+                        dataset_settings_list[item.Key] = value;
                     }
                 }
                 catch (Exception e)
@@ -1961,8 +1975,8 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                 }
             }
 
-            Session["SettingsTabList"] = show_tab_list;
-            return show_tab_list;
+            Session["SettingsDataset"] = dataset_settings_list;
+            return dataset_settings_list;
         }
 
         #endregion helper

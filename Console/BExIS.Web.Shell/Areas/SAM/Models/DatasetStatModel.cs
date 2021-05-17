@@ -9,5 +9,6 @@ namespace BExIS.Modules.Sam.UI.Models
         public long NoOfCols { get; set; }
         public long NoOfRows { get; set; }
         public DatasetStatus Status { get; set; }
+        public string Title { get; set; }
     }
 }

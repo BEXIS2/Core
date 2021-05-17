@@ -60,10 +60,10 @@ namespace BExIS.Dcm.Wizard
         /// <returns></returns>
         public bool IsComplete()
         {
-            if (String.IsNullOrEmpty(ActionName))
-                return false;
+            //if (String.IsNullOrEmpty(AreaName))
+            //    return false;
 
-            if (String.IsNullOrEmpty(ActionName))
+            if (String.IsNullOrEmpty(ControllerName))
                 return false;
 
             if (String.IsNullOrEmpty(ActionName))

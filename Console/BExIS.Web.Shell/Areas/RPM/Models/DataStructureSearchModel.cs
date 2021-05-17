@@ -94,6 +94,7 @@ namespace BExIS.Modules.Rpm.UI.Models
         public bool inUse { get; set; }
         public bool Structured { get; set; }
         public bool Preview { get; set; }
+        public List<string> LinkedToDatasets { get; set; }
 
         public DataStructureResultStruct()
         {
@@ -103,6 +104,7 @@ namespace BExIS.Modules.Rpm.UI.Models
             this.inUse = false;
             this.Structured = false;
             this.Preview = false;
+
         }
 
         public DataStructureResultStruct(long dataStructureId)
@@ -266,9 +268,11 @@ namespace BExIS.Modules.Rpm.UI.Models
                             dataStructureResult.Id = ds.Id;
                             dataStructureResult.Title = ds.Name;
                             dataStructureResult.Description = ds.Description;
-
+                            dataStructureResult.LinkedToDatasets = new List<string>();
                             foreach (Dataset d in ds.Datasets)
                             {
+
+                                dataStructureResult.LinkedToDatasets.Add(d.Id.ToString());
                                 if (datasetManager.RowAny(d.Id, uow))
                                 {
                                     dataStructureResult.inUse = true;
@@ -306,8 +310,15 @@ namespace BExIS.Modules.Rpm.UI.Models
                         dataStructureResult.Id = ds.Id;
                         dataStructureResult.Title = ds.Name;
                         dataStructureResult.Description = ds.Description;
+                        dataStructureResult.LinkedToDatasets = new List<string>();
+                        
+                        foreach (Dataset d in ds.Datasets)
+                        {
+                            dataStructureResult.LinkedToDatasets.Add(d.Id.ToString());
+                        }
 
-                        if (ds.Datasets.Count > 1) // Allow to edit, if only one file is linked to it
+
+                            if (ds.Datasets.Count > 1) // Allow to edit, if only one file is linked to it
                             dataStructureResult.inUse = true;
 
                         if (previewIds != null && previewIds.Contains(ds.Id))

@@ -92,7 +92,7 @@
             var oTable = $("#resources_table").DataTable({
                 "autoWidth": false,
                 ordering: true,
-                //  order: [[6, "desc"]], // order by startDate
+                order: [[0, "desc"]], // order by Id
                 paging: false,
                 responsive: true,
 
@@ -103,11 +103,12 @@
                 },
 
 
-                columnDefs: [
+              /*  columnDefs: [
                     {
                         targets: 1,
                         render: $.fn.dataTable.render.ellipsis(60, true)
                     }]
+                    */
             });
 
 ;

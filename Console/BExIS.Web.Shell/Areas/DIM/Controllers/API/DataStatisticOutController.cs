@@ -3,6 +3,7 @@ using BExIS.Dlm.Entities.Data;
 using BExIS.Dlm.Entities.DataStructure;
 using BExIS.Dlm.Services.Data;
 using BExIS.Dlm.Services.DataStructure;
+using BExIS.IO.DataType.DisplayPattern;
 using BExIS.IO.Transform.Output;
 using BExIS.Modules.Dim.UI.Models;
 using BExIS.Modules.Dim.UI.Models.Api;
@@ -47,7 +48,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
             DatasetManager dm = new DatasetManager();
             try
             {
-                var datasetIds = dm.GetDatasetLatestIds();
+                var datasetIds = dm.GetDatasetIds();
 
                 foreach (int id in datasetIds)
                 {
@@ -158,6 +159,18 @@ namespace BExIS.Modules.Dim.UI.Controllers
                                     ApiDataStatisticModel dataStatisticModel = new ApiDataStatisticModel();
                                     dt = GetUniqueValues(id, vs.Id);
                                     dataStatisticModel.VariableId = vs.Id;
+                                    dataStatisticModel.VariableName = vs.Label;
+                                    dataStatisticModel.VariableDescription = vs.Description;
+                                    dataStatisticModel.DataTypeName = vs.DataAttribute.DataType.Name;
+                                    dataStatisticModel.DataTypeSystemType = vs.DataAttribute.DataType.SystemType;
+
+                                    DataTypeDisplayPattern dtdp = DataTypeDisplayPattern.Materialize(vs.DataAttribute.DataType.Extra);
+                                    string displayPattern = "";
+                                    if (dtdp != null) displayPattern = dtdp.StringPattern;
+
+                                    dataStatisticModel.DataTypeDisplayPattern = displayPattern;
+                                    dataStatisticModel.Unit = vs.DataAttribute.Unit.Name;
+
                                     dataStatisticModel.uniqueValues = dt;
                                     dataStatisticModel.minLength = dt.Compute("Min(length)", string.Empty).ToString();
                                     dataStatisticModel.maxLength = dt.Compute("Max(length)", string.Empty).ToString();
