@@ -83,15 +83,16 @@ namespace BExIS.Web.Shell.Controllers
 
             //if the landingPage is null and the action is not accessible forward to shell/home/index
             if (landingPage == null || !this.IsAccessible(landingPage.Item1, landingPage.Item2, landingPage.Item3))
-                return View("Demo"); // open shell/home/index
+                return View(); // open shell/home/index
 
             // return result of defined landing page
-            var result = this.Render(landingPage.Item1, landingPage.Item2, landingPage.Item3);  
+            var result = this.Render(landingPage.Item1, landingPage.Item2, landingPage.Item3);
             return Content(result.ToHtmlString(), "text/html");
         }
-        
+
         [DoesNotNeedDataAccess]
-        public ActionResult Nopermission() {
+        public ActionResult Nopermission()
+        {
 
             return View("NoPermission");
         }
@@ -133,6 +134,49 @@ namespace BExIS.Web.Shell.Controllers
                 ViewBag.Title = PresentationModel.GetViewTitleForTenant("Session Timeout", this.Session.GetTenant());
 
                 return View(model);
+            }
+        }
+
+        protected bool checkPermission(Tuple<string, string, string> LandingPage)
+        {
+            var featurePermissionManager = new FeaturePermissionManager();
+            var operationManager = new OperationManager();
+            var userManager = new UserManager();
+
+            try
+            {
+
+                var areaName = LandingPage.Item1;
+                if (areaName == "")
+                {
+                    areaName = "shell";
+                }
+                var controllerName = LandingPage.Item2;
+                var actionName = LandingPage.Item3;
+
+                var userName = HttpContext.User?.Identity?.Name;
+                var operation = operationManager.Find(areaName, controllerName, "*");
+
+                var feature = operation.Feature;
+                if (feature == null) return true;
+
+                var result = userManager.FindByNameAsync(userName);
+
+
+                if (featurePermissionManager.HasAccess(result.Result?.Id, feature.Id))
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+            finally
+            {
+                featurePermissionManager.Dispose();
+                operationManager.Dispose();
+                userManager.Dispose();
             }
         }
     }
