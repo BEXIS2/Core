@@ -187,12 +187,22 @@ namespace BExIS.Modules.Sam.UI.Controllers
                             && ds.StateInfo?.Timestamp < DateTime.MaxValue)
                         synced = ds.StateInfo?.Timestamp >= ds.LastCheckIOTimestamp;
 
-                    DatasetVersion datasetversion = dm.GetDatasetLatestVersion(ds.Id);
+
+                    // Add title to list
                     var title = "";
+
+                    // GetDatasetLatestVersion() does not return an result for Deleted or CheckedOut datasets, only CheckedIn works
+                    DatasetVersion datasetversion = null;
+                    if (ds.Status == DatasetStatus.CheckedIn)
+                    {
+                        datasetversion = dm.GetDatasetLatestVersion(ds.Id);
+                    }
+                    // in very seldom cases datasets exists without a any dataset version -> check for null
                     if (datasetversion != null)
                     {
-                        title = datasetversion.Title;
+                        title = datasetversion.Title; // set title
                     }
+
                     datasetStat.Add(new DatasetStatModel { Id = ds.Id, Status = ds.Status, NoOfRows = noRows, NoOfCols = noColumns, IsSynced = synced, Title = title });
                 }
                 ViewData["DatasetIds"] = datasetIds;
