@@ -2705,7 +2705,7 @@ namespace BExIS.Dlm.Services.Data
                         {
                             dsNewVersion.Title = previousCheckedInVersion.Title;
                             dsNewVersion.Description = previousCheckedInVersion.Description;
-                            dsNewVersion.Metadata = (XmlDocument)previousCheckedInVersion.Metadata.Clone();
+                            dsNewVersion.Metadata = (XmlDocument)previousCheckedInVersion.Metadata?.Clone();
                             dsNewVersion.ExtendedPropertyValues = previousCheckedInVersion.ExtendedPropertyValues;
                             foreach (var item in previousCheckedInVersion.ContentDescriptors)
                             {
