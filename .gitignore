@@ -274,3 +274,4 @@ paket-files/
 /Console/BExIS.Web.Shell/Web.TestServerRelease.config
 /Console/BExIS.Web.Shell/Web.Debug.config
 /Console/BExIS.Web.Shell/samples/Credentials.config.sample
+/Console/BExIS.Web.Shell/web.config
