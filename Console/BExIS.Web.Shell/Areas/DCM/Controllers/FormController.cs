@@ -387,7 +387,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 ViewData["ShowOptional"] = false;
                 ViewData["EntityId"] = entityId;
 
-                TaskManager = (CreateTaskmanager)Session["CreateDatasetTaskmanager"];
+                TaskManager = (CreateTaskmanager)Session["ViewDatasetTaskmanager"];
                 if (TaskManager == null || resetTaskManager)
                 {
                     TaskManager = new CreateTaskmanager();
@@ -400,7 +400,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 {
                     var entityClassPath = "";
                     //TaskManager = new CreateTaskmanager();
-                    Session["CreateDatasetTaskmanager"] = TaskManager;
+                    Session["DownloadDatasetTaskmanager"] = TaskManager;
                     TaskManager.AddToBus(CreateTaskmanager.ENTITY_ID, entityId);
 
                     if (TaskManager.Bus.ContainsKey(CreateTaskmanager.ENTITY_CLASS_PATH))
@@ -3695,7 +3695,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
         public ActionResult DownloadAsHtml()
         {
-            if (TaskManager == null) TaskManager = (CreateTaskmanager)Session["CreateDatasetTaskmanager"];
+            if (TaskManager == null) TaskManager = (CreateTaskmanager)Session["ViewDatasetTaskmanager"];
 
             if (TaskManager != null)
             {
@@ -3742,7 +3742,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
             try
             {
-                if (TaskManager == null) TaskManager = (CreateTaskmanager)Session["CreateDatasetTaskmanager"];
+                if (TaskManager == null) TaskManager = (CreateTaskmanager)Session["ViewDatasetTaskmanager"];
 
                 if (TaskManager != null)
                 {
