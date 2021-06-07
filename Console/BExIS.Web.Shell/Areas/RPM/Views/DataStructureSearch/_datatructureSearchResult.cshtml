@@ -4,29 +4,30 @@
 @model string
 
 @{Html.Telerik().Grid<DataStructureResultStruct>()
-    .Name("bx-rpm-dataStructureResultGrid")
-    .HtmlAttributes(new { @class = "bx-rpm-resultGrid" })
-    .DataBinding(dataBinding => dataBinding
-        .Ajax()
-        .Select("_dataStructureResultGridBinding", "DataStructureSearch", new { area = "RPM", searchTerms = Model })
-    )
-    .ClientEvents(e =>
-    {
-        e.OnDataBinding("dataStructureResultGrid_onDataBinding");
-        e.OnDataBound("dataStructureResultGrid_onDataBound");
-    })
-    .Sortable(sorting => sorting.OrderBy(sortOrder => sortOrder.Add(c => c.Title)))
-    .Columns(columns =>
-    {
-        columns.Bound(c => c.Id)
-    .Width(100);
-        columns.Bound(c => c.Title);
-        columns.Bound(c => c.Description);
-        columns.Bound(c => c.Structured)
-        .Filterable(false)
-        .Title("Tabular")
-        .HeaderHtmlAttributes(new { @class = "bx-rpm-gridfunction" });
-        columns.Template(
+      .Name("bx-rpm-dataStructureResultGrid")
+      .HtmlAttributes(new { @class = "bx-rpm-resultGrid" })
+      .DataBinding(dataBinding => dataBinding
+          .Ajax()
+          .Select("_dataStructureResultGridBinding", "DataStructureSearch", new { area = "RPM", searchTerms = Model })
+      )
+      .ClientEvents(e =>
+      {
+          e.OnDataBinding("dataStructureResultGrid_onDataBinding");
+          e.OnDataBound("dataStructureResultGrid_onDataBound");
+      })
+      .Sortable(sorting => sorting.OrderBy(sortOrder => sortOrder.Add(c => c.Title)))
+      .Columns(columns =>
+      {
+          columns.Bound(c => c.Id)
+      .Width(100);
+          columns.Bound(c => c.Title);
+          columns.Bound(c => c.Description);
+          columns.Bound(c => c.LinkedToDatasets).Title("Linked to").Width("10%");
+          columns.Bound(c => c.Structured)
+          .Filterable(false)
+          .Title("Tabular")
+          .HeaderHtmlAttributes(new { @class = "bx-rpm-gridfunction" });
+          columns.Template(
         @<text>
         </text>)
     .HeaderHtmlAttributes(new { @class = "bx-rpm-gridfunction" });
@@ -37,6 +38,7 @@
         "<td class='bx-rpm-result id'><#= Id #></td>" +
         "<td class='bx-rpm-result'><span class='bx-rpm-title clickable' id='<#= Id #>_title' onclick='javascript:clickDatastructure(<#= Id #>)'><#= Title #><span id='<#= Id #>_collapse' class='bx bx-angle-double-down'></span></span></td>" +
         "<td class='bx-rpm-result bx-rpm-description'><#= Description #></td>" +
+        "<td class='bx-rpm-result bx-rpm-description'><#= LinkedToDatasets #></td>" +
         "<td class='bx-rpm-result bx-rpm-structured'><span class='bx' id='<#= Id #>_structured'></span></td>" +
         "<td class='bx-rpm-result bx-rpm-gridfunction'>" +
             "<a id='<#= Id #>_edit' title='Edit Data Structure' class='bx bx-grid-function bx-edit' href='/RPM/DataStructureEdit/?dataStructureId=<#= Id #>'></a>" +

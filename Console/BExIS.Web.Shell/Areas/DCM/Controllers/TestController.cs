@@ -24,8 +24,8 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             var es = new EmailService();
             var datasetId = 1;
             var title = "my cool dataset";
-            es.Send(MessageHelper.GetCreateDatasetHeader(datasetId),
-                MessageHelper.GetCreateDatasetMessage(datasetId, title, "David Schöne"),
+            es.Send(MessageHelper.GetCreateDatasetHeader(datasetId, "Dataset"),
+                MessageHelper.GetCreateDatasetMessage(datasetId, title, "David Schöne", "Dataset"),
                 ConfigurationManager.AppSettings["SystemEmail"]
                 );
 

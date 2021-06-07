@@ -448,7 +448,16 @@ namespace BExIS.Xml.Helpers
                 MetadataAttributeUsage metadataAttributeUsage = (MetadataAttributeUsage)attributeUsage;
                 typeName = metadataAttributeUsage.MetadataAttribute.Name;
                 id = metadataAttributeUsage.MetadataAttribute.Id.ToString();
-                roleId = metadataAttributeUsage.MetadataAttribute.Id.ToString();
+
+                // changed by Sven & David @ 2021-04-28
+                // roleId = metadataAttributeUsage.MetadataAttribute.Id.ToString();
+                roleId = metadataAttributeUsage.Id.ToString();
+
+                if (metadataAttributeUsage.MetadataAttribute.Self is MetadataCompoundAttribute)
+                {
+                    MetadataCompoundAttribute mca = (MetadataCompoundAttribute)metadataAttributeUsage.MetadataAttribute.Self;
+                    children = mca.MetadataNestedAttributeUsages.ToList();
+                }
             }
             else
             {

@@ -214,10 +214,9 @@
     <Content Include="Content\bootstrap.css.map" />
     <Content Include="Content\bootstrap-theme.min.css.map" />
     <Content Include="Content\bootstrap-theme.css.map" />
+    <None Include="Properties\PublishProfiles\BexisServer_demo.pubxml" />
+    <None Include="Properties\PublishProfiles\BexisServer_test.pubxml" />
     <None Include="Properties\PublishProfiles\FolderProfile.pubxml" />
-    <None Include="Properties\PublishProfiles\TestServer_release.pubxml" />
-    <None Include="Properties\PublishProfiles\TestServer_dev.pubxml" />
-    <None Include="Properties\PublishProfiles\TestServer.pubxml" />
     <None Include="web.Debug.config">
       <DependentUpon>web.config</DependentUpon>
     </None>

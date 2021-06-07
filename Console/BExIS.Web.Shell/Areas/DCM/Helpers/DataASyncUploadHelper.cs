@@ -360,7 +360,7 @@ namespace BExIS.Modules.Dcm.UI.Helpers
                                     ActionType = newdataset ? AuditActionType.Create : AuditActionType.Edit
                                 };
 
-                                setSystemValuesToMetadata(id, v, workingCopy.Dataset.MetadataStructure.Id, workingCopy.Metadata, newdataset);
+                                workingCopy.Metadata= setSystemValuesToMetadata(id, v, workingCopy.Dataset.MetadataStructure.Id, workingCopy.Metadata, newdataset);
                                 dm.EditDatasetVersion(workingCopy, null, null, null);
                             }
 
@@ -373,7 +373,7 @@ namespace BExIS.Modules.Dcm.UI.Helpers
                             //send email
                             var es = new EmailService();
                             es.Send(MessageHelper.GetUpdateDatasetHeader(datasetid),
-                                MessageHelper.GetUpdateDatasetMessage(datasetid, title, User.DisplayName),
+                                MessageHelper.GetUpdateDatasetMessage(datasetid, title, User.DisplayName, typeof(Dataset).Name),
                                 ConfigurationManager.AppSettings["SystemEmail"]
                                 );
                         }
@@ -443,7 +443,7 @@ namespace BExIS.Modules.Dcm.UI.Helpers
                                         ActionType = AuditActionType.Create
                                     };
 
-                                    setSystemValuesToMetadata(id, v, workingCopy.Dataset.MetadataStructure.Id, workingCopy.Metadata, newdataset);
+                                    workingCopy.Metadata = setSystemValuesToMetadata(id, v, workingCopy.Dataset.MetadataStructure.Id, workingCopy.Metadata, newdataset);
 
                                     dm.EditDatasetVersion(workingCopy, null, null, null);
                                 }
@@ -648,9 +648,9 @@ namespace BExIS.Modules.Dcm.UI.Helpers
             else myObjArray = new Key[] { Key.Id, Key.Version, Key.DateOfVersion, Key.DataLastModified };
 
 
-            metadata = SystemMetadataHelper.SetSystemValuesToMetadata(datasetid, version, metadataStructureId, metadata, myObjArray);
+            var metadata_new = SystemMetadataHelper.SetSystemValuesToMetadata(datasetid, version, metadataStructureId, metadata, myObjArray);
 
-            return metadata;
+            return metadata_new;
         }
 
     }

@@ -860,12 +860,13 @@ namespace BExIS.IO.Transform.Input
                 if (c != null)
                 {
                     int cellReferencAsInterger = GetColumnNumber(GetColumnName(c.CellReference));
+
+                    // create the index for the position in the rowAsStringArray
                     int index = cellReferencAsInterger - offset - 1;
 
-                    // if cell reference in range of the area
-                    int start = startColumn - 1; //GetColumnNumber(this._areaOfData.StartColumn);
-                    int end = endColumn - 1; //GetColumnNumber(this._areaOfData.EndColumn);
-                    if (index >= start && index <= end)
+                    // the columnPosition of the cell must be in the startColumn and endColumn range 
+                    // otherwise jump over it
+                    if (cellReferencAsInterger >= startColumn && cellReferencAsInterger <= endColumn)
                     {
                         if (c.CellValue != null)
                         {
@@ -874,12 +875,23 @@ namespace BExIS.IO.Transform.Input
                             if ((columns == null || columns.Contains(cellReferencAsInterger)) && index >= 0)
                             {
                                 // if Value a text
-                                if (c.DataType != null && c.DataType.HasValue && c.DataType.Value == CellValues.SharedString)
+                                if (c.DataType != null && c.DataType.HasValue && 
+                                   (c.DataType.Value == CellValues.SharedString || c.DataType.Value == CellValues.String || c.DataType.Value == CellValues.InlineString))
                                 {
-                                    int sharedStringIndex = int.Parse(c.CellValue.Text, CultureInfo.InvariantCulture);
-                                    SharedStringItem sharedStringItem = _sharedStrings[sharedStringIndex];
-                                    value = sharedStringItem.InnerText;
-                                    //Debug.WriteLine(value);
+                                    // if the datatype is a shared string, then the value comes from a shared string table and the value inside is a
+                                    // id for the shared string table
+                                    if (c.DataType.Value == CellValues.SharedString)
+                                    {
+                                        int sharedStringIndex = int.Parse(c.CellValue.Text, CultureInfo.InvariantCulture);
+                                        SharedStringItem sharedStringItem = _sharedStrings[sharedStringIndex];
+                                        value = sharedStringItem.InnerText;
+                                    }
+                                    // if the excel cell datatype a CellValues.String or CellValues.Inline 
+                                    // then set the value by the value from the cell direct without some extra work
+                                    else
+                                    {
+                                        value = c.CellValue.Text;
+                                    }
                                 }
                                 // not a text
                                 else if (c.StyleIndex != null && c.StyleIndex.HasValue)

@@ -1353,6 +1353,32 @@ namespace BExIS.Dlm.Services.Data
         }
 
         /// <summary>
+        /// This function returns a list of dataset ids.
+        /// Datasets and versions can have different states in the system and depending on the situation it is good to get a list of dataset ids.
+        /// The state for version and dataset is specified in the parameters.
+        /// As default both (dataset and version status) are set to checkedin =
+        /// Return only datasetIds where dataset and version are checked in and nothing is currenltly in process
+        /// </summary>
+        /// <param name="datasetStatus">Status of a dataset,may can be checkedIn,checkedOut, deleted</param>
+        /// <param name="versionStatus">Status of a dataset version,may can be checkedIn,checkedOut, deleted</param>
+        /// <returns>Return List of dataset ids based on the parameters</returns>
+        public List<Int64> GetDatasetIds(DatasetStatus datasetStatus = DatasetStatus.CheckedIn, DatasetVersionStatus versionStatus = DatasetVersionStatus.CheckedIn)
+        {
+            using (IUnitOfWork uow = this.GetUnitOfWork())
+            {
+                var datasetVersionRepo = uow.GetReadOnlyRepository<DatasetVersion>();
+
+                    var q1 = datasetVersionRepo.Query(p =>
+                            p.Dataset.Status == datasetStatus && p.Status == versionStatus
+                        )
+                        .Select(p => p.Dataset.Id)
+                        .OrderBy(p => p)
+                        .Distinct();
+                    return (q1.ToList());
+                }
+        }
+
+        /// <summary>
         /// Returns the list of identifiers of all the matching datasets.
         /// If <paramref name="includeCheckouts"/> is false, just the datasets having the latest version checked-in are included
         /// , otherwise the datasets with versions either checked-in or checked-out will be included.
@@ -2679,7 +2705,7 @@ namespace BExIS.Dlm.Services.Data
                         {
                             dsNewVersion.Title = previousCheckedInVersion.Title;
                             dsNewVersion.Description = previousCheckedInVersion.Description;
-                            dsNewVersion.Metadata = previousCheckedInVersion.Metadata;
+                            dsNewVersion.Metadata = (XmlDocument)previousCheckedInVersion.Metadata?.Clone();
                             dsNewVersion.ExtendedPropertyValues = previousCheckedInVersion.ExtendedPropertyValues;
                             foreach (var item in previousCheckedInVersion.ContentDescriptors)
                             {

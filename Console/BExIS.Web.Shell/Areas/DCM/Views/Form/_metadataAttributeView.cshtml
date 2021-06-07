@@ -7,7 +7,7 @@
 @{
     string id = Model.Id + "_" + Model.Parent.Id + "_" + Model.Number + "_" + Model.ParentModelNumber + "_" + Model.NumberOfSourceInPackage + "_" + Model.ParentStepId;
     string idByXpath = ((string)ViewData["Xpath"]).Replace("//", "_").Replace('[', '_').Replace(']', '_') + Model.DisplayName + "_" + Model.NumberOfSourceInPackage;  // Replace special character by underscore
-    string xpath = ((string)ViewData["Xpath"]) + "//"+Model.DisplayName+"[1]//" +Model.MetadataAttributeName+"[" + Model.NumberOfSourceInPackage +"]";
+    string xpath = ((string)ViewData["Xpath"]) + "//" + Model.DisplayName + "[1]//" + Model.MetadataAttributeName + "[" + Model.NumberOfSourceInPackage + "]";
     string idInput = id + "_Input";
     string idAdd = id + "_Add";
     string idRemove = id + "_Remove";
@@ -32,6 +32,14 @@
     if (Model.PartyId != 0)
     {
         partyid = Model.PartyId.ToString();
+    }
+    else
+    {
+        if (Model.ParentPartyId != 0)
+        {
+            partyid = Model.ParentPartyId.ToString();
+
+        }
     }
 
 
@@ -184,7 +192,8 @@
                                 else
                                 {
                                     //Attention: leave the below code in one line to avoid a leading emtpy line
-                                    <div class="bx-metadataForm-textArea-display">@if (Model.Value != null){@Html.DisplayWithLinksFor(m => m.Value)}</div>
+                                    <div class="bx-metadataForm-textArea-display">@if (Model.Value != null)
+                                    {@Html.DisplayWithLinksFor(m => m.Value)}</div>
                                 }
                             }
 
@@ -207,11 +216,12 @@
                                     }
 
                                     // show info text on top (simple is optional / complex mandatory)
-                                    if ((@hasSimpleMapping) && Model.PartyMappingExist)
+                                    if ((@hasSimpleMapping) && Model.PartyMappingExist && Model.MappingSelectionField)
                                     {
                                         <div style="color: gray">If possible, use an entry from autocomplete list.</div>
                                     }
-                                    if ((hasComplexMapping) && Model.PartyMappingExist)
+
+                                    if ((hasComplexMapping) && Model.PartyMappingExist && Model.MappingSelectionField)
                                     {
                                         <div style="color: gray">Use an entry from autocomplete list.</div>
                                     }
@@ -225,13 +235,12 @@
                                     <span id="@linkedID" style="display: none; font-size: 1em; color: green;" title="Entry is linked."><i class="fa fa-check-circle"></i></span>
 
                                     // show not linked, when on any content, but not linked
-                                    if ((@hasSimpleMapping) && Model.PartyMappingExist && partyid == "" && Model.Value != null)
+                                    if ((@hasSimpleMapping || hasComplexMapping) && Model.MappingSelectionField && Model.PartyMappingExist && partyid == "" && Model.Value != null)
                                     {
-
                                         <script type="text/javascript">$("#@notLinkedID").show()</script>
                                     }
                                     // show linked, when a party id is selected
-                                    else if ((@hasSimpleMapping) && Model.PartyMappingExist && partyid != "" && Model.Value != null)
+                                    else if ((@hasSimpleMapping || hasComplexMapping) && Model.MappingSelectionField && Model.PartyMappingExist && partyid != "" && Model.Value != null)
                                     {
                                         <script type="text/javascript">$("#@linkedID").show()</script>
                                     }

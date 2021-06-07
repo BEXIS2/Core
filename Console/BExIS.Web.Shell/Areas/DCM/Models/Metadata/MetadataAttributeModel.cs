@@ -13,6 +13,7 @@ namespace BExIS.Modules.Dcm.UI.Models.Metadata
         public long Number { get; set; }
         public long ParentModelNumber { get; set; }
         public long ParentStepId { get; set; }
+        public long ParentPartyId { get; set; }
         public long MetadataStructureId { get; set; }
         public BaseUsage Source { get; set; }
         public BaseUsage Parent { get; set; }
@@ -29,11 +30,13 @@ namespace BExIS.Modules.Dcm.UI.Models.Metadata
         public List<object> DomainList { get; set; }
         public List<Error> Errors { get; set; }
         public bool Locked { get; set; }
+        
         public double LowerBoundary { get; set; }
         public double UpperBoundary { get; set; }
 
         #region Mapping Variables
 
+        public bool MappingSelectionField { get; set; }
         public bool PartyMappingExist { get; set; }
 
         public bool PartyComplexMappingExist { get; set; }
@@ -82,6 +85,7 @@ namespace BExIS.Modules.Dcm.UI.Models.Metadata
                 ParentModelNumber = this.ParentModelNumber,
                 MetadataStructureId = this.MetadataStructureId,
                 Parent = this.Parent,
+                ParentPartyId = 0,
                 Source = this.Source,
                 DisplayName = this.DisplayName,
                 Discription = this.Discription,
@@ -105,7 +109,8 @@ namespace BExIS.Modules.Dcm.UI.Models.Metadata
                 EntityUrl = "",
                 UpperBoundary = this.UpperBoundary,
                 LowerBoundary = this.LowerBoundary,
-                PartyId = 0
+                PartyId = 0,
+                MappingSelectionField = false
             };
         }
     }
