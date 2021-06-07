@@ -232,7 +232,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                             dataStructureType = DataStructureType.Unstructured.ToString();
                         }
 
-                        ViewBag.Title = PresentationModel.GetViewTitleForTenant("Show Data : " + title, this.Session.GetTenant());
+                        ViewBag.Title = PresentationModel.GetViewTitleForTenant("Show " + typeof(Dataset) .Name + ": " + title, this.Session.GetTenant());
                     }
                     else
                     {
@@ -355,7 +355,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                         dataStructureType = DataStructureType.Unstructured.ToString();
                     }
 
-                    ViewBag.Title = PresentationModel.GetViewTitleForTenant("Show Data : " + title, this.Session.GetTenant());
+                    ViewBag.Title = PresentationModel.GetViewTitleForTenant("Show " + typeof(Dataset).Name + ": " + title, this.Session.GetTenant());
                 }
                 else
                 {
