@@ -1066,13 +1066,6 @@
     <Content Include="Web.config">
       <SubType>Designer</SubType>
     </Content>
-    <Content Include="Web.Debug.config">
-      <DependentUpon>Web.config</DependentUpon>
-    </Content>
-    <Content Include="Web.Release.config">
-      <DependentUpon>Web.config</DependentUpon>
-      <SubType>Designer</SubType>
-    </Content>
     <Content Include="Content\Site_old.css" />
     <Content Include="Scripts\jquery-1.4.4.js" />
     <Content Include="Scripts\jquery-1.4.4.min.js" />
@@ -1131,6 +1124,7 @@
     <Content Include="Views\Shared\SessionTimeout.cshtml" />
     <Content Include="Views\Home\Version.cshtml" />
     <Content Include="Views\Home\NoPermission.cshtml" />
+    <Content Include="Web.config.sample" />
     <Content Include="Views\Home\Demo.cshtml" />
     <None Include="Web.TestServerRelease.config">
       <DependentUpon>Web.config</DependentUpon>
