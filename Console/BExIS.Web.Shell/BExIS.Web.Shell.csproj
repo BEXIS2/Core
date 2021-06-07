@@ -1063,9 +1063,6 @@
     <Content Include="Themes\Windows7\Styles\Windows7\sprite-vertical.png" />
     <Content Include="Themes\Windows7\Styles\Windows7\sprite.png" />
     <Content Include="Global.asax" />
-    <Content Include="Web.config">
-      <SubType>Designer</SubType>
-    </Content>
     <Content Include="Content\Site_old.css" />
     <Content Include="Scripts\jquery-1.4.4.js" />
     <Content Include="Scripts\jquery-1.4.4.min.js" />
@@ -1126,9 +1123,6 @@
     <Content Include="Views\Home\NoPermission.cshtml" />
     <Content Include="Web.config.sample" />
     <Content Include="Views\Home\Demo.cshtml" />
-    <None Include="Web.TestServerRelease.config">
-      <DependentUpon>Web.config</DependentUpon>
-    </None>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Areas\" />
