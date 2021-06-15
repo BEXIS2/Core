@@ -188,22 +188,57 @@ namespace BExIS.Modules.Sam.UI.Controllers
                         synced = ds.StateInfo?.Timestamp >= ds.LastCheckIOTimestamp;
 
 
-                    // Add title to list
+                    // Add title, metadata, creation and modification info to list
                     var title = "";
+                    var vaildState = "";
+                    var creationDate = "";
+                    var lastChange = "";
+                    var lastChangeType = "";
+                    var lastChangeDescription = "";
+                    var lastChangeAccount = "";
+                    var lastMetadatChange = "";
+                    var lastDataChange = "";
+
 
                     // GetDatasetLatestVersion() does not return an result for Deleted or CheckedOut datasets, only CheckedIn works
                     DatasetVersion datasetversion = null;
+                    List<DatasetVersion> listDatasetversion = null;
                     if (ds.Status == DatasetStatus.CheckedIn)
                     {
                         datasetversion = dm.GetDatasetLatestVersion(ds.Id);
+                        listDatasetversion = dm.GetDatasetVersions(ds.Id).OrderBy(d => d.Id).ToList();
                     }
                     // in very seldom cases datasets exists without a any dataset version -> check for null
                     if (datasetversion != null)
                     {
                         title = datasetversion.Title; // set title
+                        vaildState = DatasetStateInfo.Valid.ToString().Equals(datasetversion.StateInfo.State) ? "yes" : "no"; 
+                        lastChange = datasetversion.Timestamp.ToString("dd.MM.yyyy");
+                        lastChangeType = datasetversion.ModificationInfo.ActionType.ToString();
+                        lastChangeDescription = datasetversion.ModificationInfo.Comment;
+                        lastChangeAccount = datasetversion.ModificationInfo.Performer;
                     }
 
-                    datasetStat.Add(new DatasetStatModel { Id = ds.Id, Status = ds.Status, NoOfRows = noRows, NoOfCols = noColumns, IsSynced = synced, Title = title });
+                    // loop though all versions and catch the last change realted to Metadata and Data
+                    if (listDatasetversion != null)
+                    {
+                        foreach (DatasetVersion dv in listDatasetversion)
+                        {
+                            if (dv.ModificationInfo.Comment == "Metadata")
+                            {
+                                lastMetadatChange = dv.Timestamp.ToString("dd.MM.yyyy");
+                            }
+                            if (dv.ModificationInfo.Comment == "Data")
+                            {
+                                lastDataChange = dv.Timestamp.ToString("dd.MM.yyyy");
+                            }
+                        }
+
+                        // the first item contains the first version and its creation date
+                        creationDate = listDatasetversion[0].Timestamp.ToString("dd.MM.yyyy");
+                    }
+
+                    datasetStat.Add(new DatasetStatModel { Id = ds.Id, Status = ds.Status, NoOfRows = noRows, NoOfCols = noColumns, IsSynced = synced, Title = title ,ValidState = vaildState, LastChange = lastChange, LastChangeAccount = lastChangeAccount, LastChangeDescription = lastChangeDescription, LastChangeType = lastChangeType, LastDataChange = lastDataChange, LastMetadataChange = lastMetadatChange, CreationDate = creationDate });
                 }
                 ViewData["DatasetIds"] = datasetIds;
                 return View(datasetStat);
