@@ -6,6 +6,8 @@
 @section scripts
 {
     <script src="@Url.Content("~/Areas/Sam/Scripts/sam-datasets.js")" type="text/javascript"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/luxon/1.27.0/luxon.min.js" type="text/javascript"></script>
+    <script src="//cdn.datatables.net/plug-ins/1.10.25/sorting/datetime-luxon.js" type="text/javascript"></script>
 }
 
 @section Information
@@ -47,97 +49,97 @@
             <th>Variables</th>
             <th>Actions</th>
         </tr>
-        </thead>
-        @foreach (var entity in Model)
-        {
-<tr id="@entity.Id">
-    <td>@(entity.Id)</td>
-    <td>@(entity.Title)</td>
-    @if (DatasetIds.Contains(entity.Id))
+    </thead>
+    @foreach (var entity in Model)
     {
-        if (entity.Status == DatasetStatus.CheckedIn)
-        {
-            <td style="color: darkgreen">@(entity.Status.ToString())</td>
-            <td>@(entity.ValidState)</td>
-            <td>@(entity.CreationDate)</td>
-            <td>@(entity.LastMetadataChange)</td>
-            <td>@(entity.LastDataChange)</td>
-            <td>@(entity.LastChange)</td>
-            <td>@(entity.LastChangeType)</td>
-            <td>@(entity.LastChangeDescription)</td>
-            <td>@(entity.LastChangeAccount)</td>
+        <tr id="@entity.Id">
+            <td>@(entity.Id)</td>
+            <td>@(entity.Title)</td>
+            @if (DatasetIds.Contains(entity.Id))
+            {
+                if (entity.Status == DatasetStatus.CheckedIn)
+                {
+                    <td style="color: darkgreen">@(entity.Status.ToString())</td>
+                    <td>@(entity.ValidState)</td>
+                    <td>@(entity.CreationDate)</td>
+                    <td>@(entity.LastMetadataChange)</td>
+                    <td>@(entity.LastDataChange)</td>
+                    <td>@(entity.LastChange)</td>
+                    <td>@(entity.LastChangeType)</td>
+                    <td>@(entity.LastChangeDescription)</td>
+                    <td>@(entity.LastChangeAccount)</td>
 
-            <td class="number-of-rows">@(entity.NoOfRows)</td>
-            <td>@(entity.NoOfCols)</td>
-            <td>
-                @Html.ActionLink("Sync", "Sync", new { id = entity.Id, area = "Sam" }, new { @style = entity.IsSynced ? "color:darkgreen;" : "color:black;" }) |
-                @Html.ActionLink("Versions", "Versions", new { id = entity.Id, area = "Sam" }) |
-                @Html.ActionLink("Delete", "Delete", new { id = entity.Id, area = "Sam" }) |
-                @Html.ActionLink("Purge", "Purge", new { id = entity.Id, area = "Sam" }) |
-                <a entityid="@entity.Id" class="number-of-rows-bt">Count</a>
-            </td>
-        }
-        else if (entity.Status == DatasetStatus.CheckedOut)
-        {
-            <td style="color: darkblue">@(entity.Status.ToString())</td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td class="number-of-rows">@(entity.NoOfRows)</td>
-            <td>@(entity.NoOfCols)</td>
-            <td>
-                @Html.ActionLink("Sync", "Sync", new { id = entity.Id, area = "Sam" }, new { @style = entity.IsSynced ? "color:darkgreen;" : "color:black;" }) |
-                @Html.ActionLink("Versions", "Versions", new { id = entity.Id, area = "Sam" }) |
-                @Html.ActionLink("Purge", "Purge", new { id = entity.Id })|
-                <a entityid="@entity.Id" class="number-of-rows-bt">Count</a>
-            </td>
-        }
-        else if (entity.Status == DatasetStatus.Deleted)
-        {
-            <td style="color: red">@(entity.Status.ToString())</td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td class="number-of-rows">@(entity.NoOfRows)</td>
-            <td>@(entity.NoOfCols)</td>
+                    <td class="number-of-rows">@(entity.NoOfRows)</td>
+                    <td>@(entity.NoOfCols)</td>
+                    <td>
+                        @Html.ActionLink("Sync", "Sync", new { id = entity.Id, area = "Sam" }, new { @style = entity.IsSynced ? "color:darkgreen;" : "color:black;" }) |
+                        @Html.ActionLink("Versions", "Versions", new { id = entity.Id, area = "Sam" }) |
+                        @Html.ActionLink("Delete", "Delete", new { id = entity.Id, area = "Sam" }) |
+                        @Html.ActionLink("Purge", "Purge", new { id = entity.Id, area = "Sam" }) |
+                        <a entityid="@entity.Id" class="number-of-rows-bt">Count</a>
+                    </td>
+                }
+                else if (entity.Status == DatasetStatus.CheckedOut)
+                {
+                    <td style="color: darkblue">@(entity.Status.ToString())</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td class="number-of-rows">@(entity.NoOfRows)</td>
+                    <td>@(entity.NoOfCols)</td>
+                    <td>
+                        @Html.ActionLink("Sync", "Sync", new { id = entity.Id, area = "Sam" }, new { @style = entity.IsSynced ? "color:darkgreen;" : "color:black;" }) |
+                        @Html.ActionLink("Versions", "Versions", new { id = entity.Id, area = "Sam" }) |
+                        @Html.ActionLink("Purge", "Purge", new { id = entity.Id })|
+                        <a entityid="@entity.Id" class="number-of-rows-bt">Count</a>
+                    </td>
+                }
+                else if (entity.Status == DatasetStatus.Deleted)
+                {
+                    <td style="color: red">@(entity.Status.ToString())</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td class="number-of-rows">@(entity.NoOfRows)</td>
+                    <td>@(entity.NoOfCols)</td>
 
-            <td>
-                @Html.ActionLink("Sync", "Sync", new { id = entity.Id, area = "Sam" }, new { @style = entity.IsSynced ? "color:darkgreen;" : "color:black;" }) |
-                @Html.ActionLink("Versions", "Versions", new { id = entity.Id, area = "Sam" }) |
-                @Html.ActionLink("Purge", "Purge", new { id = entity.Id, area = "Sam" }) |
-                <a entityid="@entity.Id" class="number-of-rows-bt">Count</a>
-            </td>
-        }
+                    <td>
+                        @Html.ActionLink("Sync", "Sync", new { id = entity.Id, area = "Sam" }, new { @style = entity.IsSynced ? "color:darkgreen;" : "color:black;" }) |
+                        @Html.ActionLink("Versions", "Versions", new { id = entity.Id, area = "Sam" }) |
+                        @Html.ActionLink("Purge", "Purge", new { id = entity.Id, area = "Sam" }) |
+                        <a entityid="@entity.Id" class="number-of-rows-bt">Count</a>
+                    </td>
+                }
+            }
+            else
+            {
+                <td style="color: red">@(entity.Status.ToString())</td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td>@(entity.NoOfRows)</td>
+                <td>@(entity.NoOfCols)</td>
+                <td>
+                    No Permissions!
+                </td>
+            }
+        </tr>
     }
-    else
-    {
-        <td style="color: red">@(entity.Status.ToString())</td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td>@(entity.NoOfRows)</td>
-        <td>@(entity.NoOfCols)</td>
-        <td>
-            No Permissions!
-        </td>
-    }
-</tr>
-        }
 </table>
 
 <script type="text/javascript">
@@ -185,6 +187,8 @@
                 return '<span class="ellipsis" title="' + esc(d) + '">' + shortened + '&#8230;</span>';
             };
         };
+
+        jQuery.fn.dataTable.luxon('dd.MM.yyyy');
 
         var oTable = $("#dataset_table").DataTable({
             "autoWidth": false,
