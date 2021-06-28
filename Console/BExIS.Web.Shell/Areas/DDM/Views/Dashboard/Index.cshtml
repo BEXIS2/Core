@@ -9,10 +9,10 @@
 @section Information
 {
     In this page you can see all datasets, created by you as a current logged on user or owned by you or you sent a request to have access on it. You are also able to manage the requests of other users, who wants to have access to your datasets.
-    
+
     By right clicking on the header, you can manage the visibility of columns. You can also use filtering or grouping to see the more operative informations.
-    
-    To view more details of a dataset, click the View details button available in each row.    
+
+    To view more details of a dataset, click the View details button available in each row.
 }
 
 
@@ -20,21 +20,21 @@
 {
     @foreach (var item in Model.Entities)
     {
-        
-            <h3>@item.Value</h3>
-            <ul>
 
-                <li><a class="show" entity="@item.Value.ToLower()">My @{@item.Value}s</a></li>
-                @if (@item.Value == "Dataset")
-                {
-                    <li><a entityid="@item.Key" class="request">My Requests</a></li>
-                    <li><a entityid="@item.Key" class="decision">Decisions</a></li>
-                }
-            </ul>
+        <h3>@item.Value</h3>
+        <ul>
+
+            <li><a class="show" entity="@item.Value.ToLower()">My @{@item.Value}s</a></li>
+            @if (@item.Value == "Dataset")
+            {
+                <li><a entityid="@item.Key" class="request">My Requests</a></li>
+                <li><a entityid="@item.Key" class="decision">Decisions</a></li>
+            }
+        </ul>
 
 
     }
-    }
+}
 
 <div id="dashboard_content">
 
@@ -44,6 +44,8 @@
 
 @section Scripts
 {
+    <script src="//cdnjs.cloudflare.com/ajax/libs/luxon/1.27.0/luxon.min.js" type="text/javascript"></script>
+    <script src="//cdn.datatables.net/plug-ins/1.10.25/sorting/datetime-luxon.js" type="text/javascript"></script>
     <script type="text/javascript">
 
         /****Requests & Decisions*****/
@@ -126,7 +128,7 @@
             $("#dashboard_content").preloader("..loading datasets");
 
             $.get("/ddm/dashboard/ShowMyDatasets",
-                {entityname, rightType },
+                { entityname, rightType },
                 function (data, textStatus, jqXHR) {
                     $("#dashboard_content").html(data);
                 }

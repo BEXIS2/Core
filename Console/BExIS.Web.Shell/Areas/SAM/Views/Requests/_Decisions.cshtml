@@ -89,6 +89,9 @@
             };
         };
 
+        // add sort by date
+        jQuery.fn.dataTable.luxon('dd.MM.yyyy');
+
         var oTable = $("#resources_table").DataTable({
             "autoWidth": false,
             ordering: true,
