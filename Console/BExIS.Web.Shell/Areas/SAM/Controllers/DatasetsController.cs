@@ -212,7 +212,10 @@ namespace BExIS.Modules.Sam.UI.Controllers
                     if (datasetversion != null)
                     {
                         title = datasetversion.Title; // set title
-                        vaildState = DatasetStateInfo.Valid.ToString().Equals(datasetversion.StateInfo.State) ? "yes" : "no"; 
+                        if (datasetversion.StateInfo != null)
+                        {
+                            vaildState = DatasetStateInfo.Valid.ToString().Equals(datasetversion.StateInfo.State) ? "yes" : "no";
+                        }
                         lastChange = datasetversion.Timestamp.ToString("dd.MM.yyyy");
                         lastChangeType = datasetversion.ModificationInfo.ActionType.ToString();
                         lastChangeDescription = datasetversion.ModificationInfo.Comment;
@@ -235,7 +238,10 @@ namespace BExIS.Modules.Sam.UI.Controllers
                         }
 
                         // the first item contains the first version and its creation date
-                        creationDate = listDatasetversion[0].Timestamp.ToString("dd.MM.yyyy");
+                        if (listDatasetversion.Count() > 0)
+                        {
+                            creationDate = listDatasetversion[0].Timestamp.ToString("dd.MM.yyyy");
+                        }
                     }
 
                     datasetStat.Add(new DatasetStatModel { Id = ds.Id, Status = ds.Status, NoOfRows = noRows, NoOfCols = noColumns, IsSynced = synced, Title = title ,ValidState = vaildState, LastChange = lastChange, LastChangeAccount = lastChangeAccount, LastChangeDescription = lastChangeDescription, LastChangeType = lastChangeType, LastDataChange = lastDataChange, LastMetadataChange = lastMetadatChange, CreationDate = creationDate });
