@@ -132,7 +132,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             {
                 ServerFileList = GetServerFileList(),
                 SupportedFileExtentions = UploadHelper.GetExtentionList(DataStructureType.Unstructured, this.Session.GetTenant()),
-                FileSize = this.Session.GetTenant().MaximumUploadSize
+                // FileSize = this.Session.GetTenant().MaximumUploadSize
             };
 
             return model;
