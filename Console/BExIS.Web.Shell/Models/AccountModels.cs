@@ -125,6 +125,8 @@ namespace BExIS.Web.Shell.Models
         [MustBeTrue(ErrorMessage = "You must agree to the Privacy Policy before register.")]
         public bool PrivacyPolicy { get; set; }
 
+        public string Extra { get; set; }
+
         [Display(Name = "Inform")]
         [MustBeTrue(ErrorMessage = ".......")]
         public bool Inform { get; set; }

@@ -118,6 +118,8 @@ function metadataAttributeOnLoad(e, hasErrors) {
         $('#' + e.id + "_input").AddClass("bx-input-error");
 }
 
+// check wheter input field is to small for the incoming input
+// if its to small change to text area
 function OnKeyUpTextInput(e) {
     //console.log("OnKeyDownTextInput");
     //console.log(e.id);
@@ -289,6 +291,8 @@ function OnChangeTextInput(e, ui) {
 
                     var partyidConverted = TryParseInt(partyid, null);
                     //console.log("tryparse:" + partyidConverted)
+                    //console.log("partyid" + partyid);
+                    //console.log("partyidConverted" + partyidConverted);
 
                     //delete party informations when a party was selected before
                     if (partyidConverted !== null && partyidConverted > 0 && afterClosed === false) {
@@ -788,6 +792,9 @@ function UpdateWithParty(componentId, number, partyid) {
             $("#" + componentId).replaceWith(response);
             // update party id to component
             $("#" + componentId).attr("partyid", partyid);
+            // update linked icon 
+            $("#" + componentId + "_notLinked").hide();
+            $("#" + componentId + "_linked").show();
             //alert("test");
             autosize($('textarea'));
         })
@@ -812,6 +819,9 @@ function UpdateSimpleMappingWithParty(componentId, xpath, partyid, value)
                 $("#" + componentId).attr("partyid", partyid);
                 $("#" + componentId).val(value);
                 $("#" + componentId).attr("value", value);
+                // update linked icon
+                $("#" + componentId + "_notLinked").hide();
+                $("#" + componentId + "_linked").show();
             }
         });
 }

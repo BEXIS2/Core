@@ -347,7 +347,7 @@ namespace BExIS.Dlm.Orm.NH.Utils
         public void Drop(long datasetId)
         {
             StringBuilder mvBuilder = new StringBuilder();
-            mvBuilder.AppendLine(string.Format("DROP MATERIALIZED VIEW {0};", this.BuildName(datasetId).ToLower()));
+            mvBuilder.AppendLine(string.Format("DROP MATERIALIZED VIEW IF EXISTS {0};", this.BuildName(datasetId).ToLower()));
             // execute the statement
             try
             {

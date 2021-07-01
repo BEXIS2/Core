@@ -682,6 +682,15 @@
       <param name="id">Dataset Id</param>
       <returns>Xml Document</returns>
     </member>
+    <member name="T:BExIS.Modules.Dim.UI.Controllers.MetadataOutController.GetBySchema(System.String)">
+      <summary>
+        With the Get function you get all metadata based on the given metadata schema name
+      </summary>
+      <remarks>
+      </remarks>
+      <param name="name">Metadata schema</param>
+      <returns>Xml Document</returns>
+    </member>
     <member name="M:BExIS.Modules.Dim.UI.Controllers.SubmissionController.publishData(System.Int64,System.Int64)">
       <summary>
         ToDo Refactor submission Commented by Javad due to modularity issues.

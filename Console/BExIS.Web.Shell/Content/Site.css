@@ -393,6 +393,16 @@ table.bx-table-form tr td {
     text-overflow: ellipsis;
 }
 
+/* Don't print link hrefs */
+@media print {
+    a [href]:after {
+        content: none
+    }
+}
+
+.extra {
+    display: none;
+}
 /*----------------------------------------------------------*/
 /* The sidebar menu */
 .sidenav {

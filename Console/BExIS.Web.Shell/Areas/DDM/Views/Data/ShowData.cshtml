@@ -9,10 +9,12 @@
     }
 
     var show_tabs = new Dictionary<string, string>();
+    string check_public_metadata = "false";
 
-    if (ViewData["show_tabs"] != null)
+    if (ViewData["datasetSettings"] != null)
     {
-        show_tabs = (Dictionary<string, string>)ViewData["show_tabs"];
+        show_tabs = (Dictionary<string, string>)ViewData["datasetSettings"];
+        check_public_metadata = show_tabs["check_public_metadata"];
     }
     else
     {
@@ -50,7 +52,7 @@
 <link href="@Url.Content("~/Areas/Dcm/Content/bexis-metadata.css")" rel="stylesheet" type="text/css" />
 <link href="@Url.Content("~/Areas/DDM/Content/ddm.css")" rel="stylesheet" type="text/css" />
 
-@if (Model != null)
+@if (Model != null && ((Model.IsPublic == true || User.Identity.Name != "") || check_public_metadata == "false"))
 {
 
     <div id="showData">
@@ -403,6 +405,10 @@
             </script>
         </div>
     </div>
+}
+else if (Model.IsPublic == false)
+{
+    <div> <h2>Dataset is not public.</h2></div>
 }
 else
 {

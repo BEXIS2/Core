@@ -73,6 +73,8 @@ namespace BExIS.IO.Transform.Output
                         this.Variables.Columns.Add("Unit");
                         this.Variables.Columns.Add("DataType");
                         this.Variables.Columns.Add("SystemType");
+                        this.Variables.Columns.Add("AttributeName");
+                        this.Variables.Columns.Add("AttributeDescription");
 
                         StructuredDataStructure structuredDataStructure = dataStructureManager.StructuredDataStructureRepo.Get(id);
                         this.Structured = true;
@@ -87,6 +89,8 @@ namespace BExIS.IO.Transform.Output
                             dataRow["Unit"] = vs.Unit.Name;
                             dataRow["DataType"] = vs.DataAttribute.DataType.Name;
                             dataRow["SystemType"] = vs.DataAttribute.DataType.SystemType;
+                            dataRow["AttributeName"] = vs.DataAttribute.Name;
+                            dataRow["AttributeDescription"] = vs.DataAttribute.Description;
                             this.Variables.Rows.Add(dataRow);
                         }
                     }

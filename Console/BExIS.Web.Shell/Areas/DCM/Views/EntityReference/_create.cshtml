@@ -50,10 +50,10 @@
                     </div>
                 </td>
                 <td>
-                    
-                    @Html.DropDownListFor(m => m.Target, null, "Select a entity", new { @class = "bx-dropdown", disabled = "true" })
+
+                    @Html.DropDownListFor(m => m.Target, null, "Select a entity", new { @disabled = "true" })
                     @Html.ValidationMessageFor(m => m.Target)
-                 
+
                 </td>
             </tr>
             <tr>
@@ -68,9 +68,9 @@
             <tr id="help_ref_type" style="display:none;">
                 <td></td>
                 <td>
-                    @foreach (var item in ViewData["ReferenceType"] as SelectList)
+                    @foreach (var item in ViewData["ReferenceTypeHelp"] as SelectList)
                     {
-                        <div class="help" style="display: block;width:372px">- <b>@item.Text</b>: @item.Value</div>
+                        <div class="help" style="display: block">- <b>@item.Value</b>: @item.Text</div>
                     }
                 </td>
             </tr>
@@ -82,7 +82,7 @@
                     @Html.DropDownListFor(m => m.ReferenceType, null, "Select a reference type", new { @class = "bx-dropdown" })
                     @Html.ValidationMessageFor(m => m.ReferenceType)
                 </td>
-                 <td>
+                <td>
                     <button type="button" title="" class="bx-function bx-disabled bx-info fa fa-info" onclick="show_hide_help();"></button>
                 </td>
             </tr>
@@ -107,4 +107,26 @@
         </div>
     }
 </div>
+
+<!-- truncate dataset title in select box; line break in option fields not possible. This would require bigger refactoring -->
+<script>
+    $(document).ready(function () {
+        $('select').on('change', function () {
+            $(this).find('option').removeClass('selected');
+            $(this).find('option:selected').addClass('selected');
+        });
+    });
+
+</script>
+<style>
+    select,
+    option.selected {
+        width: 60%;
+        height: 36px;
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+    }
+</style>
+
 

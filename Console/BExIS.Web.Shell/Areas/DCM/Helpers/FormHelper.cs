@@ -61,6 +61,7 @@ namespace BExIS.Modules.Dcm.UI.Helpers
             bool locked = false;
             bool entityMappingExist = false;
             bool partyMappingExist = false;
+            bool mappingSelectionField = false;
 
             string metadataAttributeName = "";
 
@@ -113,7 +114,6 @@ namespace BExIS.Modules.Dcm.UI.Helpers
 
             //ToDO/Check if dim is active
             //check if its linked with a system field
-            //
             locked = MappingUtils.ExistSystemFieldMappings(current.Id, type);
 
             // check if a mapping for parties exits
@@ -127,6 +127,18 @@ namespace BExIS.Modules.Dcm.UI.Helpers
             // e.g. DataCreator Name in Contacts as list of contacts
             partySimpleMappingExist = hasSimpleMapping(current.Id, type);
             partyComplexMappingExist = hasComplexMapping(current.Id, type);
+
+            // set the flag tru if the attribute is one where the complex object will be fill from
+            // e.g. User: name -> name is a main attribute, so its possible so select user by name
+            mappingSelectionField = MappingUtils.PartyAttrIsMain(current.Id, type);
+
+            // in case the parent was mapped as a complex object, 
+            // you have to check which of the simple fields is the selection field. 
+            // If it is not and there is a mapping for the field, it must be blocked.
+            // OR if its allready locked because of a system mapping then let it locked.
+            if (locked == false && (!mappingSelectionField && partyComplexMappingExist && !partySimpleMappingExist)) { 
+                locked = false;
+            }
 
             // check if a mapping for entites exits
             entityMappingExist = MappingUtils.ExistMappingWithEntity(current.Id, type);
@@ -162,6 +174,7 @@ namespace BExIS.Modules.Dcm.UI.Helpers
                 PartyComplexMappingExist = partyComplexMappingExist,
                 LowerBoundary = lowerBoundary,
                 UpperBoundary = upperBoundary,
+                MappingSelectionField = mappingSelectionField
             };
         }
 

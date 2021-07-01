@@ -57,7 +57,9 @@
     </div>
 </div>
 <div class="bx-rpm-attribute-functions bx-footer left">
+    @if ((bool)ViewData["showCreateVariableTemplate"] == true) { 
     <button class="bx-button action" id="createAttribute" onclick="javascript:openAttrWindow(0)">Create Variable Template</button>
+    }
     <button class="hidden" id="addAttribute" value="0">Add Variable Template to List</button>
     <button class="hidden" id="removeattribute" value="0">remove Variable Template from List</button>
 </div>
