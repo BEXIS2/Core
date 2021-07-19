@@ -216,6 +216,14 @@
                                               //.Enabled(@Model.ViewAccess);
                                               .Enabled(false);
                                           }
+
+
+                                          tabs.Add()
+                                              .Text("GeoReference")
+                                              .LoadContentFrom("IndexPartial", "Home", new { area = "vat", id = @Model.Id})
+                                              .HtmlAttributes(new { id = "georef" })
+                                              .Enabled(@Model.ViewAccess);
+
                                       })
                                       .ClientEvents(e => e.OnSelect("OnSelectShowDataTabStrip")))
                 }
