@@ -1,3 +1,6 @@
 [submodule "Console/Workspace"]
 	path = Console/Workspace
 	url = https://github.com/BEXIS2/Workspace.git
+[submodule "Console/BExIS.Web.Shell/Areas/VAT"]
+	path = Console/BExIS.Web.Shell/Areas/VAT
+	url = https://github.com/BEXIS2/VAT-Module.git
