@@ -96,7 +96,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 var model = new DatasetFilesModel
                 {
                     ServerFileList = GetDatasetFileList(datasetVersion),
-                    FileSize = this.Session.GetTenant().MaximumUploadSize
+                    // FileSize = this.Session.GetTenant().MaximumUploadSize
                 };
 
                 //Parse user right

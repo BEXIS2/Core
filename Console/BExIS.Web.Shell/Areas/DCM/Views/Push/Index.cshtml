@@ -12,7 +12,9 @@
 @model BExIS.Modules.Dcm.UI.Models.Push.SendBigFilesToServerModel
 
 @{
-    int mbMax = Model.FileSize;
+    HttpRuntimeSection section = System.Configuration.ConfigurationManager.GetSection("system.web/httpRuntime") as HttpRuntimeSection;
+    int int_MaxRequestLength = section.MaxRequestLength;
+    int mbMax = int_MaxRequestLength / 1024;
 
     string fileExtListAsString = "";
 
