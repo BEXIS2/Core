@@ -99,6 +99,7 @@ namespace BExIS.Web.Shell.Models
     {
         [Required]
         [Display(Name = "Username")]
+        [RegularExpression(@"^\S+(?:\s+\S+)*$", ErrorMessage = "There is a problem with your user name.")]
         public string UserName { get; set; }
 
         [Required]
