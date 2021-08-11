@@ -102,6 +102,7 @@
     <Compile Include="Helpers\ErrorHelper.cs" />
     <Compile Include="Helpers\TelerikGridHelper.cs" />
     <Compile Include="Helpers\JsonTableGenerator.cs" />
+    <Compile Include="Models\DataTable.cs" />
     <Compile Include="Models\Treeview.cs" />
     <Compile Include="Wizard\AbstractTaskManager.cs" />
     <Compile Include="Wizard\ActionInfo.cs" />
