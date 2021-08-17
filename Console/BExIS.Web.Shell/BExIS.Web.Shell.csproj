@@ -413,6 +413,7 @@
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\JSController.cs" />
     <Compile Include="Controllers\LdapController.cs" />
+    <Compile Include="Controllers\MenuController.cs" />
     <Compile Include="Controllers\PrivacyPolicyController.cs" />
     <Compile Include="Controllers\TermsAndConditionsController.cs" />
     <Compile Include="Controllers\TestController.cs" />
@@ -424,6 +425,7 @@
     <Compile Include="Helpers\BExISDataHelper.cs" />
     <Compile Include="Helpers\BexisModelManager.cs" />
     <Compile Include="Helpers\CustomViewEngine.cs" />
+    <Compile Include="Helpers\MenuHelper.cs" />
     <Compile Include="Models\AccountModels.cs" />
     <Compile Include="Models\EntitySelectorModel.cs" />
     <Compile Include="Models\ManageModels.cs" />
@@ -776,6 +778,10 @@
     <Content Include="Scripts\respond.matchmedia.addListener.min.js" />
     <Content Include="Scripts\respond.min.js" />
     <Content Include="Scripts\session.warning.js" />
+    <Content Include="Scripts\svelte\menu.css" />
+    <Content Include="Scripts\svelte\menu.js" />
+    <Content Include="Scripts\svelte\shell.js" />
+    <Content Include="Scripts\svelte\uitest.js" />
     <Content Include="Shell.Manifest.xml" />
     <Content Include="Themes\Black\Styles\awesome\css\font-awesome.css" />
     <Content Include="Themes\Black\Styles\awesome\css\font-awesome.min.css" />
@@ -1126,10 +1132,14 @@
     <Content Include="Views\Home\Version.cshtml" />
     <Content Include="Views\Home\NoPermission.cshtml" />
     <Content Include="Web.config.sample" />
+    <Content Include="Scripts\svelte\shell.js.map" />
+    <Content Include="Themes\Default\Layouts\_svelteLayout.cshtml" />
+    <Content Include="Scripts\svelte\menu.js.map" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Areas\" />
     <Folder Include="Views\Help\" />
+    <Folder Include="Views\Menu\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\Home\About.cshtml" />

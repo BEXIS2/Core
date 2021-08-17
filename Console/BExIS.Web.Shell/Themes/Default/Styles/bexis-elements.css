@@ -484,7 +484,7 @@ ul.bx-list-multi
     color: var(--information-text-color);
     position: fixed;
     width: 100%;
-    z-index: 1336;
+    z-index: 1000;
 }
 
 .bx-selection-grid tr:hover {

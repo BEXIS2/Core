@@ -1,17 +1,14 @@
 ﻿
 @{
     ViewBag.Title = "Index";
+    Layout = "~/Themes/Default/Layouts/_svelteLayout.cshtml";
+
 }
-
-
-<style href="@Url.Content("~/Scripts/svelte/shell.css")" type="text/css"></style>
-
 
 @section scripts
 {
-    <script src="@Url.Content("~/Scripts/svelte/shell.js")" type="text/javascript"></script>
+    <script src="~/Scripts/svelte/uitest.js" ></script>
 
 }
 
-
-<div id="shell"> </div>
+<div id="uitest"> </div>

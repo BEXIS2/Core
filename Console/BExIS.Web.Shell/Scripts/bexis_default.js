@@ -1,25 +1,30 @@
 ﻿
 $(document).ready(function ()
 {
-	resetAllTelerikIconTitles();
-	truncateTitle();
-	//console.log("on document ready");
-	//Bootstrat tooltip
-	$('[data-toggle="tooltip"]').tooltip();
+	
+		resetAllTelerikIconTitles();
+		truncateTitle();
+		//console.log("on document ready");
+		//Bootstrat tooltip
+		$('[data-toggle="tooltip"]').tooltip();
 
-	//get height of the menu and add this to the margin of the content
-	var h = $(".navbar").height();
-	console.log("h = " + h);
-	$("#information-container").css("top", h);
-	$(".main-content").css("margin-top", h);
-
-	$(window).resize(function () {
-
+	setTimeout(function () {
+		//get height of the menu and add this to the margin of the content
 		var h = $(".navbar").height();
 		console.log("h = " + h);
 		$("#information-container").css("top", h);
 		$(".main-content").css("margin-top", h);
-	});
+
+		$(window).resize(function () {
+
+			var h = $(".navbar").height();
+			console.log("h = " + h);
+			$("#information-container").css("top", h);
+			$(".main-content").css("margin-top", h);
+		});
+    }, 1000);
+
+	
 });
 
 function resetAllTelerikIconTitles()
