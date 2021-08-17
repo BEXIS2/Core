@@ -74,6 +74,26 @@ namespace BExIS.Web.Shell
                  "~/Themes/Default/Styles/bexis-telerik.css"
                 ));
 
+
+            #region sveltelayout
+
+            bundles.Add(new ScriptBundle("~/bundles/svelte_jquery").Include(
+                "~/Scripts/jquery-2.1.4.min.js",
+                "~/Scripts/jquery-migrate-1.2.1.min.js"));
+
+            bundles.Add(new StyleBundle("~/bundles/svelte_general_bexis").Include(
+
+                 "~/Themes/Default/Styles/bexis-custom-style.css",
+                 "~/Themes/Default/Styles/bexis-jquery-ui.css",
+                 "~/Themes/Default/Styles/bexis-elements.css"
+                ));
+
+            bundles.Add(new StyleBundle("~/Content/svelte_css").Include(
+                "~/Content/Site.css"));
+
+            #endregion
+
+
             BundleTable.EnableOptimizations = true;
         }
     }

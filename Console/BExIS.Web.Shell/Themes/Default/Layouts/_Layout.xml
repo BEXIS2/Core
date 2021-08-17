@@ -68,6 +68,7 @@
       </ContentProvider>
     </ContentProviders>
   </MapItem>
+
   
   <!--
   It is possible to create mapping nodes to point to action of controllers of desired areas. Also it possible to point to partial views in the "Partials" folders of themes.
