@@ -100,6 +100,7 @@
     <Compile Include="EntityViewerHelper.cs" />
     <Compile Include="Helpers\BexisUIHelper.cs" />
     <Compile Include="Helpers\ErrorHelper.cs" />
+    <Compile Include="Helpers\SettingsHelper.cs" />
     <Compile Include="Helpers\TelerikGridHelper.cs" />
     <Compile Include="Helpers\JsonTableGenerator.cs" />
     <Compile Include="Models\DataTable.cs" />
