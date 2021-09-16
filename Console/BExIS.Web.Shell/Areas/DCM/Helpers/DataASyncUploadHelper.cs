@@ -404,7 +404,6 @@ namespace BExIS.Modules.Dcm.UI.Helpers
                         // checkout the dataset, apply the changes, and check it in.
                         if (dm.IsDatasetCheckedOutFor(id, User.Name) || dm.CheckOutDataset(id, User.Name))
                         {
-                            throw new Exception();
 
                             try
                             {
