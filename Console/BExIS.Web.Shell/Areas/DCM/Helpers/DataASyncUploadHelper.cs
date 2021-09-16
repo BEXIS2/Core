@@ -400,9 +400,12 @@ namespace BExIS.Modules.Dcm.UI.Helpers
 
                     if (Bus.ContainsKey(TaskManager.DATASTRUCTURE_TYPE) && Bus[TaskManager.DATASTRUCTURE_TYPE].Equals(DataStructureType.Unstructured))
                     {
+
                         // checkout the dataset, apply the changes, and check it in.
                         if (dm.IsDatasetCheckedOutFor(id, User.Name) || dm.CheckOutDataset(id, User.Name))
                         {
+                            throw new Exception();
+
                             try
                             {
                                 workingCopy = dm.GetDatasetWorkingCopy(id);
@@ -486,7 +489,13 @@ namespace BExIS.Modules.Dcm.UI.Helpers
             {
                 temp.Add(new Error(ErrorType.Dataset, ex.Message));
 
-                dm.CheckInDataset(id, "no update on data tuples", User.Name, ViewCreationBehavior.None);
+                //When a exception is happen, may the dataset is checkedout
+                // 
+                if (!dm.IsDatasetCheckedIn(id))
+                {
+                    // revert last changed and checkin without a new version
+                    dm.UndoCheckoutDataset(id, User.Name, ViewCreationBehavior.None);
+                }
             }
             finally
             {
