@@ -277,6 +277,10 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                             v.Description = variables.Where(svs => svs.Id == v.Id).FirstOrDefault().Description;
                         }
                     }
+
+                    dataStructure = dataStructureManager.UpdateStructuredDataStructure(dataStructure);
+
+
                     return PartialView("_messageWindow", messageModel);
                 }
 
