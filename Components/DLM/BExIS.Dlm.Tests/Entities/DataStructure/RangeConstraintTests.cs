@@ -129,5 +129,60 @@ namespace BExIS.Dlm.Tests.Entities.DataStructure
             Assert.AreEqual(result, false);
         }
 
+        [Test]
+        public void IsSatisfied_BoundInlcude_ValuesValid()
+        {
+            //Arrange
+            RangeConstraint rangeConstraint = new RangeConstraint(
+                ConstraintProviderSource.Internal,
+                "",
+                "en-us",
+                "unit test",
+                false,
+                null,
+                null,
+                null,
+                0,
+                true,
+                1,
+                true
+                );
+
+            //Act
+            bool minBoundIsValid = rangeConstraint.IsSatisfied(0);
+            bool maxBoundIsValid = rangeConstraint.IsSatisfied(1);
+
+            //Assert
+            Assert.AreEqual(minBoundIsValid, true,"0 is min and should be valid");
+            Assert.AreEqual(maxBoundIsValid, true, "1 is max and should be valid");
+        }
+
+        [Test]
+        public void IsSatisfied_BoundExclude_ValuesNotValid()
+        {
+            //Arrange
+            RangeConstraint rangeConstraint = new RangeConstraint(
+                ConstraintProviderSource.Internal,
+                "",
+                "en-us",
+                "unit test",
+                false,
+                null,
+                null,
+                null,
+                0,
+                false,
+                1,
+                false
+                );
+
+            //Act
+            bool minBoundIsValid = rangeConstraint.IsSatisfied(0);
+            bool maxBoundIsValid = rangeConstraint.IsSatisfied(1);
+
+            //Assert
+            Assert.AreEqual(minBoundIsValid, false);
+            Assert.AreEqual(maxBoundIsValid, false);
+        }
     }
 }
