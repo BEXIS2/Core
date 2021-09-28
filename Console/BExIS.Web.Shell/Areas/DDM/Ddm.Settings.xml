@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<settings>
+<settings id="ddd" name="data discovery" description="...">
   <entry key="help" value="https://github.com/BEXIS2/Documents/blob/2.14.4/Manuals/DDM/DataDiscovery_Manual.md" type="String" description="URL to manual"/>
 
   <entry key="show_primary_data_tab" value="true" type="Boolean" description="Show primary data"/>
@@ -10,7 +10,6 @@
   <entry key="show_attachments_tab" value="true" type="Boolean" description="Show attachments"/>
   
   <entry key="show_tabs_deactivated" value="true" type="Boolean" description="Show deactivated (tabs without permision) tabs"/>
-
   <entry key="check_public_metadata" value="false" type="Boolean" description="Set true to enable to only show metadata for not-loggedin users, if the dataset is public."/>
     
 </settings>

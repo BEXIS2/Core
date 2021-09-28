@@ -13,6 +13,7 @@ using BExIS.Modules.Dcm.UI.Models;
 using BExIS.Security.Entities.Subjects;
 using BExIS.Security.Services.Subjects;
 using BExIS.Security.Services.Utilities;
+using BExIS.UI.Helpers;
 using BExIS.Utils.Data.Upload;
 using BExIS.Utils.Upload;
 using BExIS.Xml.Helpers;
@@ -233,7 +234,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             int cellLimit = 0;
 
             //get cellLimt from settings
-            SettingsHelper settingsHelper = new SettingsHelper();
+            SettingsHelper settingsHelper = new SettingsHelper("DCM");
             if (settingsHelper.KeyExist("celllimit"))
             {
                 Int32.TryParse(settingsHelper.GetValue("celllimit"), out cellLimit);

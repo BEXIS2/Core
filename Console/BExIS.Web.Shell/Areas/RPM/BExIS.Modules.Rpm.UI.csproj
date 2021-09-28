@@ -314,6 +314,10 @@
       <Project>{455ec826-9a92-40ff-bd3b-388c288955ce}</Project>
       <Name>BExIS.IO.Transform.Output</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\..\..\Components\UI\BExIS.UI\BExIS.UI.csproj">
+      <Project>{DE0AD99C-C559-422F-8132-CC4D7C46FF83}</Project>
+      <Name>BExIS.UI</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\..\..\Components\Utils\BExIS.Utils.NH\BExIS.Utils.NH.csproj">
       <Project>{0F1EC13E-D685-4F4D-A438-52797B0E53A0}</Project>
       <Name>BExIS.Utils.NH</Name>

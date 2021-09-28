@@ -5,6 +5,7 @@ using Vaiona.Utils.Cfg;
 using System.IO;
 using System.Xml.Linq;
 using BExIS.Xml.Helpers;
+using BExIS.UI.Helpers;
 
 namespace BExIS.Modules.Rpm.UI.Controllers
 {
@@ -15,14 +16,11 @@ namespace BExIS.Modules.Rpm.UI.Controllers
 
         public ActionResult Index()
         {
-            string filePath = Path.Combine(AppConfiguration.GetModuleWorkspacePath("RPM"), "Rpm.Settings.xml");
-            XDocument settings = XDocument.Load(filePath);
-            XElement help = XmlUtility.GetXElementByAttribute("entry", "key", "help", settings);
-
-            string helpurl = help.Attribute("value")?.Value;
-
+            SettingsHelper settingsHelper = new SettingsHelper("RPM");
+            string helpurl = settingsHelper.GetValue("help");
 
             return Redirect(helpurl);
+
 
         }
     }

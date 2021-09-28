@@ -17,6 +17,7 @@ using Vaiona.Utils.Cfg;
 using BExIS.Security.Services.Authorization;
 using BExIS.Security.Services.Objects;
 using BExIS.Security.Services.Subjects;
+using BExIS.UI.Helpers;
 
 namespace BExIS.Web.Shell.Controllers
 {
@@ -116,12 +117,9 @@ namespace BExIS.Web.Shell.Controllers
             {
                 var database = versionManager.GetLatestVersion().Value;
 
-                // Workspace
-                string filePath = Path.Combine(AppConfiguration.WorkspaceGeneralRoot, "General.Settings.xml");
-                XDocument settings = XDocument.Load(filePath);
-                XElement entry = XmlUtility.GetXElementByAttribute("entry", "key", "version", settings);
-                var workspace = entry.Attribute("value")?.Value;
-
+                // load version from workspace in settings file of general
+                SettingsHelper settingsHelper = new SettingsHelper("shell");
+                string workspace = settingsHelper.GetValue("version");
 
                 var model = new VersionModel()
                 {

@@ -227,7 +227,6 @@
     <Compile Include="Helpers\EasyUploadSuggestion.cs" />
     <Compile Include="Helpers\EntityReferenceHelper.cs" />
     <Compile Include="Helpers\FormHelper.cs" />
-    <Compile Include="Helpers\SettingsHelper.cs" />
     <Compile Include="Helpers\SystemMetadataHelper.cs" />
     <Compile Include="Helpers\UploadUIHelper.cs" />
     <Compile Include="Models\AbstractStepModel.cs" />

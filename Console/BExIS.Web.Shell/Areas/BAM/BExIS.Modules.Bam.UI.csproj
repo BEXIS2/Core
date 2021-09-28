@@ -283,6 +283,10 @@
       <Project>{c8a05313-b960-406e-92ec-c1e5b3f47fcd}</Project>
       <Name>BExIS.IO.Transform.Validation</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\..\..\Components\UI\BExIS.UI\BExIS.UI.csproj">
+      <Project>{DE0AD99C-C559-422F-8132-CC4D7C46FF83}</Project>
+      <Name>BExIS.UI</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\..\..\Components\XML\BExIS.Xml.Helpers\BExIS.Xml.Helpers.csproj">
       <Project>{252F7872-A69C-43A6-84B4-4D2ABDBDD9AB}</Project>
       <Name>BExIS.Xml.Helpers</Name>

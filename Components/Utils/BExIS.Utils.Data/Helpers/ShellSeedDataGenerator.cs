@@ -15,10 +15,9 @@ namespace BExIS.Utils.Data.Helpers
             using (var versionManager = new VersionManager())
             {
                 var bexisFeature = featureManager.FindByName("BExIS") ?? featureManager.Create("BExIS", "This is the root!");
+                var settings = featureManager.FindByName("Settings") ?? featureManager.Create("Settings", "This is the settings page!", bexisFeature);
 
                 // Operations
-
-
                 var o1 = operationManager.Find("Shell", "Account", "*") ?? operationManager.Create("Shell", "Account", "*");
                 var o2 = operationManager.Find("Shell", "Home", "*") ?? operationManager.Create("Shell", "Home", "*");
                 var o3 = operationManager.Find("Shell", "Error", "*") ?? operationManager.Create("Shell", "Error", "*");
@@ -27,6 +26,8 @@ namespace BExIS.Utils.Data.Helpers
                 var o6 = operationManager.Find("Shell", "Footer", "*") ?? operationManager.Create("Shell", "Footer", "*");
                 var o7 = operationManager.Find("Shell", "Ldap", "*") ?? operationManager.Create("Shell", "Ldap", "*");
                 var o8 = operationManager.Find("Shell", "Help", "*") ?? operationManager.Create("Shell", "Help", "*");
+
+                var o9 = operationManager.Find("Shell", "Settings", "*") ?? operationManager.Create("Shell", "Settings", "*", settings);
 
                 if (!versionManager.Exists("Shell", "2.14.3"))
                 {

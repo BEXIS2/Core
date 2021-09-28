@@ -1,4 +1,5 @@
 ﻿using BExIS.Modules.Dcm.UI.Helpers;
+using BExIS.UI.Helpers;
 using BExIS.Xml.Helpers;
 using System.IO;
 using System.Web.Mvc;
@@ -16,7 +17,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
         public ActionResult Index()
         {
-            SettingsHelper helper = new SettingsHelper();
+            SettingsHelper helper = new SettingsHelper("DCM");
             string helpurl = helper.GetValue("help");
 
             return Redirect(helpurl);
