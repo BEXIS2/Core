@@ -18,7 +18,7 @@ namespace BExIS.Web.Shell.Controllers
     public class SettingsController : Controller
     {
         [HttpGet]
-        public JsonResult Get(string id)
+        public JsonResult Get()
         {
             List<string> ids = new List<string>();
 
