@@ -12,6 +12,8 @@ using System.Web;
 using System.Web.Mvc;
 using System.Web.SessionState;
 using Vaiona.Utils.Cfg;
+using Vaiona.Web.Extensions;
+using Vaiona.Web.Mvc.Models;
 using Vaiona.Web.Mvc.Modularity;
 
 namespace BExIS.Web.Shell.Controllers
@@ -210,6 +212,7 @@ namespace BExIS.Web.Shell.Controllers
         // GET: /Account/Login
         public ActionResult Login(string returnUrl)
         {
+            ViewBag.Title = PresentationModel.GetViewTitleForTenant("Log In", this.Session.GetTenant());
             ViewBag.ReturnUrl = returnUrl;
             return View();
         }
