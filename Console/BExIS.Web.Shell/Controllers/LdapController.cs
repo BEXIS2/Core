@@ -118,7 +118,7 @@ namespace BExIS.Web.Shell.Controllers
                 {
                     if (user.Logins.Any(l => l.LoginProvider == "Ldap"))
                     {
-                        user.HasPrivacyPolicyAccepted = model.PrivacyPolicy;
+                        //user.HasPrivacyPolicyAccepted = model.PrivacyPolicy;
                         user.HasTermsAndConditionsAccepted = model.TermsAndConditions;
                         user.Email = model.Email;
 
