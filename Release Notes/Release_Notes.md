@@ -1,53 +1,32 @@
-# BEXIS 2.14.4 Release Notes
+# BEXIS 2.14.5 Release Notes
 
-> Attention ! changes have been made in SMTP credentials and web.config. If an update is made, please use the new files and adapt them.
+Attention: Changes were mad in the web.config in line: 72 (see [#803](https://github.com/BEXIS2/Core/issues/803))
 
 ### Features
-- New API to retieve all metadata by schema name (api/MetadataBySchema/{Schema name}) ([#733](https://github.com/BEXIS2/Core/issues/733))
-- Add new Landing page option to allow on "no permission" forward to a public landing page for logged-in user ([#719](https://github.com/BEXIS2/Core/issues/719))
-
 
 
 ### Enhancements
-- Metadata Edit: Show, if a linked metadata field is connected or filled with free text ([#607](https://github.com/BEXIS2/Core/issues/607))
-- Metadata Edit: Sort autocomplete list (party: e.g. persons, projects) alphabetic and hide duplicates in the list ([#697](https://github.com/BEXIS2/Core/issues/697))
-- Metadata Edit: Mark autocomplete fields for user ([#608](https://github.com/BEXIS2/Core/issues/608))
-- Metadata Edit - Data structure: make edit link more visible ([#722](https://github.com/BEXIS2/Core/issues/722))
-- Metadata Edit - Data structure: Show "Create Variable Template" button based on permission and settings ([#723](https://github.com/BEXIS2/Core/issues/723))
-- Metadata Edit - Create Links: truncate dataset title and sort descending (newest first) ([#703](https://github.com/BEXIS2/Core/issues/703)) ([#714](https://github.com/BEXIS2/Core/issues/714))
-- Data structure list: Show linked datasets for each data structure ([#765](https://github.com/BEXIS2/Core/issues/765))
-- Dashboard: Show full title and do not truncate ([#718](https://github.com/BEXIS2/Core/issues/718))
-- Dashboard: Add other dataset types (e.g., Publication) ([#663](https://github.com/BEXIS2/Core/issues/663))
-- Dashboard/Search: Change default order from ASC to DESC; ([#693](https://github.com/BEXIS2/Core/issues/693))
-- View parties: Increase Paging options and default value to 100 instead of 10 ([#731](https://github.com/BEXIS2/Core/issues/731))
-- Registration form: prevent to fill out by bots ([#622](https://github.com/BEXIS2/Core/issues/622))
-- Data Upload: Increase the size of "changedescription" field in datasetversions ([#698](https://github.com/BEXIS2/Core/issues/698))
-- Manage Datasets: Show title in list ([#712](https://github.com/BEXIS2/Core/issues/712))
-- Manage Requests Admin: Add Dataset ID to table ([#751](https://github.com/BEXIS2/Core/issues/751))
-- Requests: Increase the size of Intention field ([#736](https://github.com/BEXIS2/Core/issues/736))
-- API: Extend data statistic API by variable information ([#749](https://github.com/BEXIS2/Core/issues/749))
+- Data policy checkbox removed from registration (does not need to be agreed on) ([#784](https://github.com/BEXIS2/Core/issues/784))
+- Requests and Decissions: Date column sortable ([#781](https://github.com/BEXIS2/Core/issues/781))
+- Replace "Show Data/Dataset" by the current entity name (e.g. Publication) ([#769](https://github.com/BEXIS2/Core/issues/769))
   
 ### Bugs
-- Fix Edit - View - Edit not possible: CreateTaskmanager not able to handle multiple tabs ([#720](https://github.com/BEXIS2/Core/issues/720))
-- Fix validation for Excel files fails (wrong start & end column calculation) ([#701](https://github.com/BEXIS2/Core/issues/701)) 
-- Fix existing relationships are not shown in user's view ([#708](https://github.com/BEXIS2/Core/issues/708))
-- Fix Cancel button disappears after a click on Validate during metadata edit ([#711](https://github.com/BEXIS2/Core/issues/711))
-- Fix Add IF EXISTS to DROP mv during Purge of datasets ([#732](https://github.com/BEXIS2/Core/issues/732))
-- Fix Change email address in Party by Admin does not update user email ([#729](https://github.com/BEXIS2/Core/issues/729))
-- Fix Conversion from JSON to DataTable converts NULL values to max.value instead ([#739](https://github.com/BEXIS2/Core/issues/739))
-- Fix Order number should never have gaps during data structure save  ([#745](https://github.com/BEXIS2/Core/issues/745))
-- Fix setRelationships() (called during Create Dataset) does not allow multiple entity types (only "Dataset") ([#748](https://github.com/BEXIS2/Core/issues/748))
-- Fix ActionInfo -> IsComplete() checks 3 times the same  ([#721](https://github.com/BEXIS2/Core/issues/721))
-- Fix Data structure template validation error ([#740](https://github.com/BEXIS2/Core/issues/740))
-- Fix Effective rights not shown correctly ([#679](https://github.com/BEXIS2/Core/issues/679))
-- Fix API: MetadataOut can not handle CheckedOut datasets ([#734](https://github.com/BEXIS2/Core/issues/734))
-- Fix Metadata edit/creation: Entries from 2nd complex block onward saved incomplete ([#758](https://github.com/BEXIS2/Core/issues/758))
-
+- Fix only a maximum of 100 variables possible inside a data structure (max size of JSON objects too small) ([#803](https://github.com/BEXIS2/Core/issues/803))
+- Fix files with longer file names not possible for upload (URI field to short for contentdescriptor) ([#800](https://github.com/BEXIS2/Core/issues/800))
+- Fix appliaction name missing in header on Log In page ([#786](https://github.com/BEXIS2/Core/issues/786))
+- Fix user names during registration should not allow ending spaces ([#786](https://github.com/BEXIS2/Core/issues/786))
+- Fix missing white space on primary data page ([#780](https://github.com/BEXIS2/Core/issues/780))
+- Fix missing "Terms and Conditions" link in footer ([#785](https://github.com/BEXIS2/Core/issues/785))
+- Fix error during data validation (constraints not checked correctly) ([#792](https://github.com/BEXIS2/Core/issues/792))([#804](https://github.com/BEXIS2/Core/issues/804))
+- Fix data structure was not anymore editable after import ([#791](https://github.com/BEXIS2/Core/issues/791))
+- Fix missing checkedIn after rollback during data upload ([#805](https://github.com/BEXIS2/Core/issues/805))
+- Fix missing values sometimes disappaer after save ([#774](https://github.com/BEXIS2/Core/issues/774))
+- Fix download metadata only returned latest version ([#771](https://github.com/BEXIS2/Core/issues/771))
 
 ## I. Software Information
 
 -	Name: BEXIS
--	Version: 2.14.4
+-	Version: 2.14.5
 -	Application Type: Web Application
 -	Platform: Windows
 
