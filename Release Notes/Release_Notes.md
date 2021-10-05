@@ -9,6 +9,8 @@ Attention: Changes were mad in the web.config in line: 72 (see [#803](https://gi
 - Data policy checkbox removed from registration (does not need to be agreed on) ([#784](https://github.com/BEXIS2/Core/issues/784))
 - Requests and Decissions: Date column sortable ([#781](https://github.com/BEXIS2/Core/issues/781))
 - Replace "Show Data/Dataset" by the current entity name (e.g. Publication) ([#769](https://github.com/BEXIS2/Core/issues/769))
+- Sort users descending by id (manage parties)([#806](https://github.com/BEXIS2/Core/issues/806))
+- Sort data structures descending by id ([#807](https://github.com/BEXIS2/Core/issues/807))
   
 ### Bugs
 - Fix only a maximum of 100 variables possible inside a data structure (max size of JSON objects too small) ([#803](https://github.com/BEXIS2/Core/issues/803))
