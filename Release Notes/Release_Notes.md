@@ -26,6 +26,7 @@ Attention: Changes were mad in the web.config in line: 72 (see [#803](https://gi
 - Fix download metadata only returned latest version ([#771](https://github.com/BEXIS2/Core/issues/771))
 - Fix image view can not be closed (unstructured data) ([#797](https://github.com/BEXIS2/Core/issues/797))
 - Fix primary data of unstructured datasets are not visible without rights in public data view ([#799](https://github.com/BEXIS2/Core/issues/799))
+- Fix download notification are send on image preview ([#767](https://github.com/BEXIS2/Core/issues/767))
 
 ## I. Software Information
 
