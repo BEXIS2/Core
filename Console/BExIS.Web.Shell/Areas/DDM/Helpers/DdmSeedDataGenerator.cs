@@ -83,7 +83,7 @@ namespace BExIS.Modules.Ddm.UI.Helpers
                 // place for dashboard!?
                 operationManager.Create("DDM", "PublicSearch", "*");
                 operationManager.Create("DDM", "Home", "*", SearchFeature);
-                operationManager.Create("DDM", "Data", "*", SearchFeature);
+                operationManager.Create("DDM", "Data", "*");
 
 
 
