@@ -1,0 +1,100 @@
+﻿@model BExIS.Modules.DQM.UI.Models.ExternalLink
+
+@{
+    ViewBag.Title = "Dataset list";
+}
+<p><b>Dataset list</b></p>
+
+@section Information
+{
+    You can find a list of datasets that the user is involved in creating or editing on this page.
+}
+
+
+
+@section LeftPane
+{
+    <p id="name"></p>
+}
+
+@{
+    var datasetsInfos = Model.datasetInfos;
+}
+
+
+<table class="display" style="width:100%">
+    <thead>
+        <tr>
+            <th><b>Id</b></th>
+            <th><b>Title</b></th>
+            <th><b></b></th>
+        </tr>
+    </thead>
+    <tbody id="datasetInfos">
+    </tbody>
+</table>
+
+
+
+<script type="text/javascript">
+
+    $(document).ready(function () {
+        //read url
+        var queryString = decodeURIComponent(window.location.search);
+        queryString = queryString.substring(1);
+        var queries = queryString.split("&");
+
+        //decode name
+        var name = queries[0].split("=");
+        document.getElementById("name").innerHTML = "<b>"+name[0]+"</b>";
+
+        //decode ids
+        var idList = queries[1].split("=");
+        var ids = idList[0].split(",");
+        var ids0 = ids[0].split(";")
+        ids[0] = ids0[1];
+
+        //read model.datasetInfos
+        var datasets = @Html.Raw(Json.Encode(Model.datasetInfos));
+
+        //add datasets one by one into the table
+        for (var i = 0; i < datasets.length; ++i) {
+            //var dataset = datasets[i];
+            var dataset = datasets[i];
+
+            var id = dataset.Id;
+            if (ids.indexOf(id.toString()) !== -1) {
+                var table = document.getElementById("datasetInfos");
+                var row = table.insertRow();
+                var cell1 = row.insertCell(0);
+                var cell2 = row.insertCell(1);
+                var cell3 = row.insertCell(2);
+                cell1.innerHTML = dataset.Id;
+                cell2.innerHTML = dataset.title;
+                //cell1.setAttribute("style", "cursor: pointer;");
+                var func = "OpenIds('" + dataset.Id + "')";
+                cell1.setAttribute("onClick", func);
+                cell3.setAttribute("class", "bx bx-grid-function bx-show");
+                cell3.setAttribute("style", "text-align: center;");
+                cell3.setAttribute("title", "Show dataset");
+                cell3.setAttribute("onClick", func);
+            }
+        }
+
+    });
+
+    //open a dataset detail view
+    function OpenIds(id) {
+        var url = '@Url.Action("Showdata", "data", new { area = "ddm" })'+"/"+id;;
+        console.log("url:", url);
+        window.open(url, '_blank');
+    }
+
+</script>
+
+<style>
+    table.hover tbody tr:hover, table.display tbody tr:hover {
+        background-color: #f6f6f6;
+    }
+</style>
+

@@ -1,0 +1,161 @@
+﻿
+@model BExIS.Modules.DQM.UI.Models.ManageDQ
+
+
+@{
+    ViewBag.Title = "Manage dataset quality";
+}
+
+@{
+    // var matrixId = Model.matrixId;
+    //var datasets = Model.datasets;
+}
+
+@section scripts
+{
+    @*<script src="@Url.Content("~/Areas/Sam/Scripts/sam-datasets.js")" type="text/javascript"></script>*@
+}
+
+@section Information
+{
+    This maintenance tool is meant for administrators only. All datasets are
+    listed with their internal ID, status, and the option to create quality indices.
+    @*<p>
+            <a href="/SAM/Help/Index/#_Toc451422053" class="bx-informationLink" title="go to help" target="_blank">More</a>
+        </p>*@
+}
+
+<h2>The dataset quality management functions from here provide quality indices.</h2>
+<p style="width:100%; text-align: right;">@Html.ActionLink("Create quality indices", "dqSync", new { area = "dqm" }, new { @class = "bx-button function" })</p>
+
+@*<h3>Datasets</h3>*@
+@*<p style="width:100%; text-align: right;">
+        @Html.ActionLink("Create all quality indices", "createAllQualityIndices", new { area = "dqm" }, new { @class = "bx-button function" })
+    </p>*@
+
+<table class="display" style="width:100%">
+    <thead>
+        <tr>
+            <th width="10%"><b>Id</b></th>
+            @*<th width="10%"><b>Version Id</b></th>*@
+            <th width="50%"><b>Title</b></th>
+            <th width="20%"><b>Actions</b></th>
+        </tr>
+    </thead>
+    <tbody id="datasetIds">
+        @if (Model.datasets.Count > 0)
+        {
+            foreach (var dataset in Model.datasets)
+            {
+                <tr class="default">
+                    <td width="10%">@dataset.Id</td>
+                    @*<td width="10%"><span class="arrow">arrow</span></td>*@
+                    <td width="50%">@dataset.title</td>
+                    <td width="20%"></td>
+                </tr>
+
+                <!--This is for adding version ids-->
+                <!--<tr class="toggle-row">
+                    <td colspan="4">
+                        <table class="sub-table-wrap">
+                            @@foreach (var versionId in dataset.versionIds)
+                            {
+                            <tr>
+                                <td width="10%"></td>
+                                <td width="10%">@@versionId</td>
+                                <td width="50%"></td>
+                                <td width="20%" onclick="syncDQ(@@versionId)">Sync</td>--> @*/DQM/ManageDQ/Test/621*@
+                                <!--</tr>
+                                            }
+                                        </table>
+                                    </td>
+                                </tr>-->
+                            }
+                        }
+    </tbody>
+</table>
+
+
+
+<script type="text/javascript">
+
+    $(document).ready(function () {
+
+        //$('.default').click(function () {
+        //    $('.default').not($(this)).removeClass('active');
+        //    $(this).toggleClass('active').next().find('.sub-table-wrap').slideToggle();
+        //    $(".toggle-row").not($(this).next()).find('.sub-table-wrap').slideUp('fast');
+        //});
+
+    });
+
+        function syncDQ(id) {
+            var url = '@Url.Action("Index", "ManageDQ", new { area = "dqm", versionId = "id" })';
+            url = url.replace('id', id);
+            //window.open(url, '_blank');
+        }
+
+</script>
+
+<style>
+    table.hover tbody tr:hover, table.display tbody tr:hover {
+        background-color: #f6f6f6;
+    }
+
+    /*.arrow {
+            border-bottom: 2px solid #333;
+            border-right: 2px solid #333;
+            cursor: pointer;
+            float: right;
+            height: 8px;
+            margin: 0 auto;
+            text-indent: -9999px;
+            transform: rotate(45deg);
+            -webkit-transform: rotate(45deg);
+            width: 8px;
+        }
+
+        .active .arrow {
+            transform: rotate(225deg);
+        }
+
+        .info-wrapper {
+            display: inline-block;
+        }
+
+        .sub-table-wrap {
+            display: none;
+            background: #fff;
+        }*/
+</style>
+
+
+
+
+
+<!--
+model BExIS.Modules.DQM.UI.Models.ManageDQ
+
+    ViewBag.Title = "Manage dataset quality";
+
+<p><b>Manage dataset quality</b></p>
+
+section Information
+
+    You can find a list of datasets and can create dataset quality indices in this page.
+
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>ManageDQ</title>
+</head>
+<body>
+    <div>
+        ffffffffffffffffffffffffffffffffffffffffff
+    </div>
+</body>
+</html>
+-->

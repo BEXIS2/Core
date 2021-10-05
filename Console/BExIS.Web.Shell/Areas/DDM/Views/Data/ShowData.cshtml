@@ -22,6 +22,7 @@
         show_tabs.Add("show_permission_tab", "true");
         show_tabs.Add("show_publish_tab", "true");
         show_tabs.Add("show_attachments_tab", "true");
+        show_tabs.Add("show_dq_tab", "true");
 
         show_tabs.Add("show_tabs_deactivated", "true"); // "false" = also hide request button, if not available in addition to deactivated tabs
     }
@@ -154,6 +155,11 @@
                                              .Text("Metadata")
                                              .LoadContentFrom("ShowMetadata", "Data", new { area = "ddm", entityId = @Model.Id, title = @Model.Title, metadatastructureId = @Model.MetadataStructureId, datastructureId = @Model.DataStructureId, researchplanId = @Model.ResearchPlanId, sessionKeyForMetadata = "ShowDataMetadata", latest = Model.LatestVersion, isValid = ViewBag.isValid })
                                              .HtmlAttributes(new { id = "metadata" });
+
+                                          tabs.Add()
+                                            .Text("Dataset Quality")
+                                            .LoadContentFrom("ShowDQ", "DQ", new { area = "dqm", datasetID = @Model.Id, versionId = Model.VersionId })
+                                            .HtmlAttributes(new { id = "dq" });
 
                                           if (show_tabs["show_primary_data_tab"] == "true" && !(show_tabs["show_tabs_deactivated"] == "false" && @Model.ViewAccess == false))
                                           {

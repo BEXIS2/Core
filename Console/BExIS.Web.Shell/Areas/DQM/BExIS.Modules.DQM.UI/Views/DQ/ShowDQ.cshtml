@@ -1,0 +1,1044 @@
+﻿@model BExIS.Modules.DQM.UI.Models.DQModels
+
+
+@using BExIS.Modules.DQM.UI.Controllers;
+@using Telerik.Web.Mvc.UI;
+@using BExIS.Modules.DQM.UI;
+
+
+@{
+    ViewBag.Title = "Data Quality";
+}
+
+@section Information
+{
+    You can find a dataset quality overview on this page.
+    On the top is the metadata quality overview.
+    Select a dataset from the drop-down list to see its quality overview to compare.
+    The data quality overview will be found on the bottom side.
+}
+
+@{ //get all information from the model DQModel
+    int allDatasets = Model.allDatasets;
+    int fileDatasets = Model.fileDatasets;
+    int tabularDatasets = Model.tabularDatasets;
+    int publicDatasets = Model.publicDatasets;
+    int restrictedDataset = Model.restrictedDataset;
+    int minDescriptionLength = Model.datasetDescriptionLength.minDescriptionLength;
+    int descriptionLength = Model.datasetDescriptionLength.currentDescriptionLength;
+    int maxDescriptionLength = Model.datasetDescriptionLength.maxDescriptionLength;
+    double medianDescriptionLength = Model.datasetDescriptionLength.medianDescriptionLength;
+    int minDataStrDescriptionLength = Model.dataStrDescriptionLength.minDescriptionLength;
+    int currentDataStrDescriptionLength = Model.dataStrDescriptionLength.currentDescriptionLength;
+    int maxDataStrDescriptionLength = Model.dataStrDescriptionLength.maxDescriptionLength;
+    double medianDataStrDescriptionLength = Model.dataStrDescriptionLength.medianDescriptionLength;
+    int minDataStrUsage = Model.dataStrUsage.minDataStrUsage;
+    int currentDataStrUsage = Model.dataStrUsage.currentDataStrUsage;
+    int maxDataStrUsage = Model.dataStrUsage.maxDataStrUsage;
+    double medianDataStrUsage = Model.dataStrUsage.medianDataStrUsage;
+    int minSizeTabular = Model.datasetTotalSize.minSizeTabular;
+    int maxSizeTabular = Model.datasetTotalSize.maxSizeTabular;
+    double medianSizeTabular = Model.datasetTotalSize.medianSizeTabular;
+    int minColNumber = Model.datasetColNumber.minColNumber;
+    int maxColNumber = Model.datasetColNumber.maxColNumber;
+    double medianColNumber = Model.datasetColNumber.medianColNumber;
+    int minRowNumber = Model.datasetRowNumber.minRowNumber;
+    int maxRowNumber = Model.datasetRowNumber.maxRowNumber;
+    double medianRowNumber = Model.datasetRowNumber.medianRowNumber;
+    double minSizeFile = Model.datasetTotalSize.minSizeFile;
+    double maxSizeFile = Model.datasetTotalSize.maxSizeFile;
+    double medianSizeFile = Model.datasetTotalSize.medianSizeFile;
+    int minFileNumber = Model.datasetFileNumber.minFileNumber;
+    int maxFileNumber = Model.datasetFileNumber.maxFileNumber;
+    double medianFileNumber = Model.datasetFileNumber.medianFileNumber;
+    double currentTotalSize = Model.datasetTotalSize.currentTotalSize;
+    var columnNumber = Model.columnNumber;
+    var rowNumber = Model.rowNumber;
+    var fileNumber = Model.fileNumber;
+    var filesInformation = Model.filesInformation;
+    string type = Model.type;
+    var isPublic = Model.isPublic;
+    var readable = Model.readable; //1:yes; 0:no.
+    var allReadables = Model.allReadables;
+    var isValid = Model.isValid;
+    var allValidMetadas = Model.allValids;
+    var performers = Model.performers;
+    string p_names = "";
+    string p_ids = "";
+    string p_rates = "";
+    for (int i = 0; i < performers.Count; ++i)
+    {
+        p_names += performers[i].performerName + "/";
+        p_rates += performers[i].performerRate.ToString() + "/";
+        for (int j = 0; j < performers[i].DatasetIds.Count; ++j)
+        {
+            p_ids += performers[i].DatasetIds[j].ToString() + ",";
+        }
+        p_ids += "/";
+    }
+    int minPerformersActivity = Model.performersActivity.minActivity;
+    int maxPerformersActivity = Model.performersActivity.maxActivity;
+    double medianPerformersActivity = Model.performersActivity.medianActivity;
+    var varVariables = Model.varVariables;
+    int metadataTotalCompletion = Model.metadataComplition.totalFields;
+    int metadataRequiredCompletion = Model.metadataComplition.requiredFields;
+    int metadataMinRate = Model.metadataComplition.minRate;
+    int metadataMaxRate = Model.metadataComplition.maxRate;
+    double metadaMedianRate = Model.metadataComplition.medianRate;
+    var datasetsInformation = Model.datasetsInformation;
+}
+
+<table id="generalInfo">
+    <tr>
+        <td>
+            @* **************************************** *@
+            @* ********** General Information ********* *@
+            @* **************************************** *@
+            <table id="left" class="left">
+                <tr>
+                    <td></td>
+                    <td></td>
+                    <td>
+                        <b>Versus all</b> &nbsp;&nbsp; <b class="info" id="openLegend" title="Legend" onclick="openLegend()">&#128712; @*&#8505; &#9432;*@</b>
+                        <!-- The Modal -->
+                        <div id="myModal" class="modal">
+                            <img class="modal-content" id="modal-content" src="~/Areas/DQM/Content/drawing5.png" alt="Legend" />
+                            <span class="close" id="close" title="Close">&times;</span>
+                        </div>
+                    </td>
+                    <td>
+                        <div>
+                            @if (datasetsInformation.Count > 0)
+                            {
+                                <!--Drop Down List to select a dataset-->
+                                <select id="datasetSelector" onchange="dqDetail()" style="width:200px;">
+
+                                    <option value="all" label="Select a dataset" selected></option>
+                                    @foreach (var dataset in Model.datasetsInformation)
+                                    {
+                                        string ps = "";
+                                        foreach (var p in dataset.performerNames)
+                                        {
+                                            ps += "," + p.ToString();
+                                        }
+                                        string ds = @dataset.type.ToString() + ","
+                                            + @dataset.metadataComplition.ToString() + ","
+                                            + @dataset.descriptionLength.ToString() + ","
+                                            + @dataset.structureDescriptionLength.ToString() + ","
+                                            + @dataset.structureUsage.ToString() + ","
+                                            + @dataset.datasetSizeFile.ToString() + ","
+                                            + @dataset.columnNumber.ToString() + ","
+                                            + @dataset.rowNumber.ToString() + ","
+                                            + @dataset.fileNumber.ToString() + ","
+                                            + "0" /*@dataset.isPublic*/ + ","
+                                            + @dataset.readable + ","
+                                            + @dataset.metadataValidation + "," + @ps;
+
+                                        <option value="@ds" label="@dataset.title (@dataset.datasetId)"></option>
+
+                                    }
+                                </select>
+                            }
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    @*** FILE FORMAT *****************************************@
+                    <td>Dataset format</td>
+                    <td><h class="green">@type</h></td>
+                    <td id="datasetFormat"></td>
+                    <td id="DSFileFormat" />
+                </tr>
+                <!--<tr>-->
+                <!--This part is needed, but entityPermissionManager.GetRights(null, 1, Id) inside controller does not work-->
+                @*** IS PUBLIC *****************************************@
+                <!--<td>Access</td>
+
+        @@if (@@isPublic == 0) //is restricted
+        {
+            <td>
+                <h class="green">restricted</h>
+            </td>
+        }
+        else
+        {
+            <td>
+                <h class="green">public</h>
+            </td>
+        }
+        <td id="isPublic" />
+        <td id="DSisPublic" />
+    </tr>-->
+                <tr>
+                    @*** READ PERMISSION *****************************************@
+                    <td>Readable</td>
+
+                    @if (@readable == 1) //has read permission
+                    {
+                        <td>
+                            <h class="green">yes</h>
+                        </td>
+                    }
+                    else
+                    {
+                        <td>
+                            <h class="red">no</h>
+                        </td>
+                    }
+                    <td id="rPermission" />
+                    <td id="DSrPermission" />
+                </tr>
+                <tr>
+                    @*** METADATA VALIDATION *****************************************@
+                    <td>Valid metadata</td>
+
+                    @if (isValid == 1) //valid metadata
+                    {
+                        <td>
+                            <h class="green">yes</h>
+                        </td>
+                    }
+                    else
+                    {
+                        <td>
+                            <h class="red">no</h>
+                        </td>
+                    }
+                    <td id="isValid" />
+                    <td id="DSisValid" />
+                </tr>
+                <tr>
+                    @*** METADATA COMPLITION **********************************@
+                    <td>Metadata completion</td>
+                    <td>
+                        @if (@metadataTotalCompletion >= 50)
+                        {
+                            <h class="green">@metadataTotalCompletion%</h><h> of all fields</h>
+                        }
+                        else if (@metadataTotalCompletion < 50 && @metadataTotalCompletion >= 10)
+                        {
+                            <h class="orange">@metadataTotalCompletion%</h><h> of all fields</h>
+                        }
+                        else
+                        {
+                            <h class="red">@metadataTotalCompletion%</h><h> of all fields</h>
+                        }
+                    </td>
+                    <td id="metadataTotalComplition" />
+                    <td id="DSmetadataTotalComplition" />
+                </tr>
+                <tr>
+                    @*** DATA COLUMNS/FILES **********************************@
+                    <td>
+                        @if (@type == "tabular")
+                        {<h>Number of variables</h>}
+                        @if (@type == "file")
+                        {<h>Number of files</h>}
+                    </td>
+                    <td>
+                        @if (@type == "tabular")
+                        {
+                            if (columnNumber > 0)
+                            {
+                                <h class="green"> &#10004; @columnNumber</h><h> variables</h>
+                            }
+                            else
+                            {
+                                <h class="red"> &#10008; @columnNumber</h><h> variables</h>
+                            }
+                        }
+                        @if (@type == "file")
+                        {
+                            if (@filesInformation.Count > 0)
+                            {
+                                <h class="green">&#10004; @filesInformation.Count</h><h> files</h>
+                            }
+                            else
+                            {
+                                <h class="red">&#10008; @filesInformation.Count</h><h> files</h>
+                            }
+                        }
+                    </td>
+                    <td id="datasetColNumns" />
+                    <td id="DSdatasetColNumns"></td>
+                </tr>
+                <tr>
+                    @*** DATA ROWS/FILE SIZE **********************************@
+                    <td>
+                        @if (@type == "tabular")
+                        {<h>Number of rows</h>}
+                        @if (@type == "file")
+                        {<h>Size of files</h>}
+                    </td>
+                    <td>
+                        @if (@type == "tabular")
+                        {
+                            if (@rowNumber > 1000)
+                            {
+                                double r = rowNumber / 1000;
+                                <h class="green">&#10004; @Math.Round(r)K</h><h> rows</h>;
+                            }
+                            else if (@rowNumber > 0)
+                            {
+                                <h class="green">&#10004; @rowNumber</h><h> rows</h>;
+                            }
+                            else if (@rowNumber == 0)
+                            {
+                                <h class="red">&#10008; 0</h><h></h>;
+                            }
+                            else
+                            {
+                                <h class="gray">No data!</h>;
+                            }
+                        }
+                        @if (@type == "file")
+                        {
+                            if (currentTotalSize >= 1073741824)
+                            {
+                                double s = currentTotalSize / 1073741824;
+                                <h class="green">&#10004; @Math.Round(s)GB</h>
+                            }
+                            else if (currentTotalSize > 1048576)
+                            {
+                                double s = currentTotalSize / 1048576;
+                                <h class="green">&#10004; @Math.Round(s)MB</h>
+                            }
+                            else if (currentTotalSize > 1024)
+                            {
+                                double s = currentTotalSize / 1024;
+                                <h class="green">&#10004; @Math.Round(s)KB</h>
+                            }
+                            else if (@currentTotalSize > 0)
+                            {
+                                <h class="green">&#10004; @currentTotalSize</h>
+                            }
+                            else if (@currentTotalSize <= 0)
+                            {
+                                <h class="red">&#10008; 0</h>
+                            }
+                            else
+                            {
+                                <h class="gray">No data!</h>
+                            }
+                        }
+                    </td>
+                    <td id="datasetRowNumns" />
+                    <td id="DSdatasetRowNumns" />
+                </tr>
+                <tr>
+                    @*** DATASET DESCRIPTION **********************************@
+                    <td>Dataset description</td>
+                    <td>
+                        @if (@descriptionLength > 0)
+                        {<h class="green">&#10004; @descriptionLength</h> <h> characters</h>}
+                    else
+                    { <h class="red">&#10008; No description!</h>}
+                    </td>
+                    <td id="descriptionRates" />
+                    <td id="DSdescriptionRates" />
+                </tr>
+                <tr>
+                    @*** DATA STRUCTURE DESCRIPTION **********************************@
+                    <td>Data structure description</td>
+                    <td>
+                        @if (currentDataStrDescriptionLength > 0)
+                        {<h class="green">&#10004; @currentDataStrDescriptionLength </h> <h>characters</h>}
+                    else
+                    {<h class="red">&#10008; No description!</h>}
+                    </td>
+                    <td id="strDescriptionRates" />
+                    <td id="DSStrDescriptionRates" />
+                </tr>
+                <tr>
+                    @*** DATA STRUCTURE USAGE **********************************@
+                    <td>Shared data structure</td>
+                    <td>
+                        @if (currentDataStrUsage > 1)
+                        {<h class="green">&#10004; @currentDataStrUsage</h><h> times in other datasets</h>}
+                    else
+                    {<h class="red">&#10008; Not shared!</h>}
+                    </td>
+                    <td id="dataStrUsage" />
+                    <td id="DSdataStrUsage" />
+                </tr>
+
+                @*** PERFORMERS **********************************@
+                <tr id="performerRate">
+                    <td><b>Contributor name </b></td>
+                    <td><b>Contributes to datasets</b></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                @*<tr id="performerRate"></tr>*@
+
+            </table>
+        </td>
+    </tr>
+</table>
+<table>
+    <tr>
+        <td>
+            @* ********************************************* *@
+            @* ************* FILE DATA DETAILS ************* *@
+            @* ********************************************* *@
+            @if (@type == "file")
+            {
+                <table>
+                    <tr>
+                        <td><b>Extension</b></td>
+                        <td><b>File name</b></td>
+                        <td><b>Size</b></td>
+                    </tr>
+                    @for (int i = 0; i < filesInformation.Count; ++i)
+                    {
+                        <tr>
+                            <td>@filesInformation[i].fileFormat</td>
+                            <td>@filesInformation[i].fileName</td>
+
+                            @if (filesInformation[i].fileSize >= 1073741824)
+                            {
+                                double s = filesInformation[i].fileSize / 1073741824;
+                                <td><h class="green">&#10004; @Math.Round(s)GB</h></td>
+                            }
+                            else if (filesInformation[i].fileSize > 1048576)
+                            {
+                                double s = filesInformation[i].fileSize / 1048576;
+                                <td><h class="green">&#10004; @Math.Round(s)MB</h></td>
+                            }
+                            else if (filesInformation[i].fileSize > 1024)
+                            {
+                                double s = filesInformation[i].fileSize / 1024;
+                                <td><h class="green">&#10004; @Math.Round(s)KB</h></td>
+                            }
+                            else if (filesInformation[i].fileSize > 0)
+                            {
+                                <td><h class="green">&#10004; filesInformation[i].fileSize</h></td>
+                            }
+                            else
+                            {
+                                <td><h class="gray">No data!</h></td>
+                            }
+                        </tr>
+
+                    }
+                </table>
+            }
+
+            @* ********************************************* *@
+            @* ************* Tabular DATA DETAILS ********** *@
+            @* ********************************************* *@
+            @if (@type == "tabular" && varVariables.Count > 0)
+            {
+                <table>
+                    <tr>
+                        <td><b>Data type</b></td>
+                        <td><b>Variable name</b></td>
+                        <td><b>Description length</b></td>
+                        <td><b>Shared variable</b></td>
+                        <td><b>Data completion</b></td>
+                        <td></td>@*<td><b>Data distribution</b></td>*@
+                        
+                    </tr>
+                    <tr>
+                        <td><b></b></td>
+                        <td><b></b></td>
+                        <td>[characters]</td>
+                        <td><h>[in other structures]</h></td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+
+
+                    @for (int i = 0; i < varVariables.Count; ++i)
+                    {
+                        <tr>
+                            <td class="dataType">
+                                @if (@varVariables[i].varType == "String")
+                                {<p>Abc</p>}
+                                else if (@varVariables[i].varType == "DateTime")
+                                {<p>01/01</p>}
+                                else if (@varVariables[i].varType == "Boolean")
+                                {<p>T|F</p>}
+                                else
+                                {<p>123</p>}
+                            </td>
+                            <td>@varVariables[i].varLabel</td>
+                            <td>
+                                @if (@varVariables[i].varDescription.Length > 0)
+                                {<h class="green">&#10004; @varVariables[i].varDescription</h>}
+                            else
+                            {<h class="red">&#10008; </h>}
+                            </td>
+                            <td>
+                                @if (@varVariables[i].varUsage > 0)
+                                {<h class="green">&#10004; @varVariables[i].varUsage</h><h> x</h>}
+                            else
+                            {<h class="red">&#10008; </h>}
+                            </td>
+                            <td>
+                                <svg width="110"
+                                     height="15">
+                                    <rect x="0" y="2" width="100" height="15" style="fill: gray; opacity: 0.3;" />
+                                    <rect x="0" y="2" width="@varVariables[i].missing" height="15" style="fill: #14bb1aff; opacity: 0.7;" />
+                                    <text x="0" y="14" text-anchor="start" style="font-size:small; fill:black;">@varVariables[i].missing%</text>
+                                    Sorry, your browser does not support inline SVG.
+                                </svg>
+                            </td>
+                            <td>
+                                @*@if (rowNumber > 0)
+                                {
+                                    if (@varVariables[i].varType != "String" && @varVariables[i].varType != "DateTime" && @varVariables[i].varType != "Boolean")
+                                    {
+                                        <h>@varVariables[i].min - @varVariables[i].max</h>
+                                    }
+                                    else
+                                    {
+                                        if (@varVariables[i].uniqueValue == true)
+                                        {
+                                            <h>@varVariables[i].uniqueValueNumber<b style="color: #14bb1aff;"> Unique values</b></h>
+                                        }
+                                        else
+                                        {
+                                            <h>@varVariables[i].mostFrequent<b style="color: #14bb1aff;"> Most frequent</b></h>
+                                        }
+                                    }
+                                }
+                                else
+                                {
+                                    <h class="gray">No data!</h>
+                                }*@
+                                </td>
+                        </tr>
+                    }
+                </table>
+            }
+        </td>
+    </tr>
+</table>
+
+
+
+<link rel="stylesheet" href="https://code.jquery.com/ui/1.9.2/themes/base/jquery-ui.css">
+<script src="https://code.jquery.com/jquery-1.9.1.js"></script>
+<script type="text/javascript">
+
+    $(document).ready(function () {
+        var actual = "actual" //if information of actual dataset
+        //Dataset format
+        document
+            .getElementById("datasetFormat")
+            .appendChild(nonIndicator(@fileDatasets, @tabularDatasets, "file" , "tabular"));
+
+        //Public/Restricted
+        //document
+        //    .getElementById("isPublic")
+        //    .appendChild(nonIndicator(@restrictedDataset, @publicDatasets, "restricted", "public"));
+
+        //Read permission
+        var fReadPermission = @allDatasets - @allReadables;
+        document
+            .getElementById("rPermission")
+            .appendChild(nonIndicator(fReadPermission, @allReadables, "unreadable", "readable"));
+
+        //Valid metadata
+        var inValid = @allDatasets - @allValidMetadas;
+        document
+            .getElementById("isValid")
+            .appendChild(nonIndicator(inValid, @allValidMetadas, "invalid", "valid"));
+
+        //Metadata rating
+        document
+            .getElementById("metadataTotalComplition")
+            .appendChild(indicators(@metadataMinRate, @metadataMaxRate, @metadataTotalCompletion, @metadaMedianRate, actual));
+
+        //Dataset description rating
+        document
+            .getElementById("descriptionRates")
+            .appendChild(indicators(@minDescriptionLength, @maxDescriptionLength, @descriptionLength, @medianDescriptionLength, actual));
+
+        //Dataset size rating
+        if ('@type' == "tabular") {
+            if (@columnNumber >= 0) {
+                document
+                    .getElementById("datasetColNumns")
+                    .appendChild(indicators(@minColNumber, @maxColNumber, @columnNumber, @medianColNumber, actual));
+            }
+            else { //if colNumber == -1
+                document
+                    .getElementById("datasetColNumns")
+                    .innerHTML = "No data!";
+                document
+                    .getElementById("datasetColNumns")
+                    .style.color = "gray";
+            }
+            if (@rowNumber>= 0) {
+                document
+                    .getElementById("datasetRowNumns")
+                    .appendChild(indicators(@minRowNumber, @maxRowNumber, @rowNumber, @medianRowNumber, actual));
+            }
+            else { //if rowNumber == -1
+                document
+                    .getElementById("datasetRowNumns")
+                    .innerHTML = "No data!";
+                document
+                    .getElementById("datasetRowNumns")
+                    .style.color = "gray";
+            }
+        }
+        else { //if type == file
+            if (@fileNumber>= 0) { //file number indicator
+                document
+                    .getElementById("datasetColNumns") //file number
+                    .appendChild(indicators(@minFileNumber, @maxFileNumber, @fileNumber, @medianFileNumber, actual));
+            }
+            else {
+                document
+                    .getElementById("datasetColNumns") //file format dataset total size
+                    .innerHTML = "No data!";
+                document
+                    .getElementById("datasetColNumns")
+                    .style.color = "gray";
+            }
+            if (@currentTotalSize >= 0) { //file size indicator
+                document
+                    .getElementById("datasetRowNumns") //file size
+                    .appendChild(fileSizeIndicators(@minSizeFile, @maxSizeFile, @currentTotalSize, @medianSizeFile, actual));
+            }
+            else {
+                document
+                    .getElementById("datasetRowNumns") //file format dataset total size
+                    .innerHTML = "No data!";
+                document
+                    .getElementById("datasetRowNumns")
+                    .style.color = "gray";
+            }
+        }
+        //Data structure description rating
+        document
+            .getElementById("strDescriptionRates")
+            .appendChild(indicators(@minDataStrDescriptionLength, @maxDataStrDescriptionLength, @currentDataStrDescriptionLength, @medianDataStrDescriptionLength, actual));
+        //Data structure usage
+        document
+            .getElementById("dataStrUsage")
+            .appendChild(indicators(@minDataStrUsage, @maxDataStrUsage, @currentDataStrUsage, @medianDataStrUsage, actual));
+        //Performers
+        var names = '@p_names'.split("/");
+        var rates = '@p_rates'.split("/");
+        var ids = '@p_ids'.split("/");
+        for (var i = 0; i < names.length - 1; i++) { //the last item is null
+            var idsL = ids[i].split(",");
+            idsL.pop(); // last item is null
+            addPerformer(names[i], rates[i], idsL);
+        }
+
+
+        // Get the modal
+        var modal = document.getElementById("myModal");
+        var btn = document.getElementById("openLegend");
+        btn.onclick = function () {
+            modal.style.display = "block";
+        }
+        window.onclick = function (event) { //Click anywhere outside of the modal, close it
+            if (event.target == modal) {
+                modal.style.display = "none";
+            }
+        }
+
+    });
+
+    //Add a Dashboard like view to see the list of datasets.
+    function OpenIds(performerName, performerDatasets) {
+        var pd = performerDatasets;
+        var url = '@Url.Action("showDatasetList", "DQ", new { area = "dqm", Name = "performerName", Datasets = "ids" })';
+        url = url.replace('Name', performerName);
+        url = url.replace('Datasets', pd);
+        window.open(url, '_blank');
+    }
+
+    //Add performers one by one at the end of the general quality table
+    function addPerformer(name, rate, ids) {
+        var table = document.getElementById("left");
+        var row = table.insertRow();
+        var cell1 = row.insertCell(0);
+        var cell2 = row.insertCell(1);
+        var cell3 = row.insertCell(2);
+        cell1.innerHTML = name;
+        cell2.innerHTML = "<h class=\"green\">" + rate + "</h><h> times  </h><h class=\"fa fa-external-link\"></h>";  //&#129133;
+        var func = "OpenIds('" + name + "','" + ids + "')";
+        cell2.setAttribute("onClick", func);
+        cell3.appendChild(indicators(@minPerformersActivity, @maxPerformersActivity, rate, @medianPerformersActivity, "actual"));
+        var cell4 = row.insertCell(3);
+        cell4.setAttribute("id", name);
+    }
+
+    //Draw an indicator bar
+    function indicators(min, max, current, median, actual){
+        const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+        var d = 5; //deviation from the x=0
+        svg.setAttribute("width", 200);
+        svg.setAttribute("height", 35);
+        var minIndex = (100 * min) / max;
+        svg.appendChild(addRect(d, 7, minIndex, 18, "fill:#ccccccff")); //left rect
+        var endRight = 100 - minIndex;
+        svg.appendChild(addRect(minIndex + d, 7, endRight, 18, "fill:#999999ff;")); //main rect
+        var medianIndex = Math.round((100 * median) / max);
+        svg.appendChild(addRect(medianIndex+d, 6, 2, 20, "fill:black;")); //median indicator
+        var currentIndex = Math.round((100 * current) / max);
+        svg.appendChild(addPolygon(currentIndex+d, 7, actual)); //Triangle
+        const tooltip = document.createElementNS("http://www.w3.org/2000/svg", "title");
+        tooltip.innerHTML = "Min: " + min + "&#013;Median: " + median + "&#013;Max: " + max + "&#013;Actual value: " + current;
+        svg.appendChild(tooltip);
+        svg.appendChild(addText(d, 35, "start", "0"));
+        if (max > 1000) { //add abreviation K for 1000
+            var m = (Math.round(max / 1000));
+            var tx = m + "K";
+            svg.appendChild(addText(100 + d, 35, "end", tx));
+        }
+        else {
+            svg.appendChild(addText(100 + d, 35, "end", max));
+        }
+        return svg;
+    }
+
+    //add an indicator bar without the current and median indices
+    function nonIndicator(val1, val2, text1, text2) { //val1:restricted; val2:public;
+        const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+        var d = 5; //deviation from the x=0
+        svg.setAttribute("width", 200);
+        svg.setAttribute("height", 35);
+        var minIndex = Math.round((val1 / (val1 + val2)) * 100);
+        var maxIndex = Math.round((val2 / (val1 + val2)) * 100);
+        svg.appendChild(addRect(d, 7, minIndex, 18, "fill:#ccccccff")); //left rect
+        var endRight = 100 - minIndex;
+        svg.appendChild(addRect(minIndex + d, 7, endRight, 18, "fill:#999999ff;")); //main rect
+        const tooltip = document.createElementNS("http://www.w3.org/2000/svg", "title");
+        tooltip.innerHTML = text1 + ": " + minIndex + "% &#013;" + text2 + ": " + maxIndex + "%";
+        svg.appendChild(tooltip);
+        svg.appendChild(addText(d, 35, "start", "0"));
+        var val = val1 + val2;
+        if (val > 1000) { //add abreviation K for 1000
+            var m = (Math.round(val / 1000));
+            var tx = m + "K";
+            svg.appendChild(addText(100 + d, 35, "end", tx));
+        }
+        else {
+            svg.appendChild(addText(100 + d, 35, "end", val));
+        }
+        return svg;
+    }
+
+    //add indicator bar especially for the file size
+    function fileSizeIndicators(min, max, current, median, actual) {
+        const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+        var d = 5; //deviation from the x=0
+        svg.setAttribute("width", 200);
+        svg.setAttribute("height", 35);
+        var minIndex = (100 * min) / max;
+        svg.appendChild(addRect(d, 7, minIndex, 18, "fill:#ccccccff")); //left rect
+        var endRight = 100 - minIndex;
+        svg.appendChild(addRect(minIndex + d, 7, endRight, 18, "fill:#999999ff;")); //main rect
+        var medianIndex = Math.round((100 * median) / max);
+        svg.appendChild(addRect(medianIndex + d, 6, 2, 20, "fill:black;")); //median indicator
+        var currentIndex = Math.round((100 * current) / max);
+        svg.appendChild(addPolygon(currentIndex + d, 7, actual)); //Triangle
+        const tooltip = document.createElementNS("http://www.w3.org/2000/svg", "title");
+
+        var txMin = sizeTransform(min);
+        var txMedian = sizeTransform(median);
+        var txMax = sizeTransform(max);
+        var txCurrent = sizeTransform(current);
+        tooltip.innerHTML = "Min: " + txMin + "&#013;Median: " + txMedian + "&#013;Max: " + txMax + "&#013;Actual value: " + txCurrent;
+        svg.appendChild(tooltip);
+        svg.appendChild(addText(d, 35, "start", "0"));
+        svg.appendChild(addText(100 + d, 35, "end", txMax));
+
+        return svg;
+    }
+
+    //add a triangle to point to the actual dataset
+    function addPolygon(x,y, actual) {
+        const polygon = document.createElementNS("http://www.w3.org/2000/svg", "polygon");
+        var points = x + "," + y + " " + (x - 5) + "," + (y - 7) + " " + (x + 5) + "," + (y - 7);
+        polygon.setAttribute("points", points);
+        if (actual == "actual") { polygon.setAttribute("style", "fill: #14bb1aff;"); } //green for the actual dataset
+        if (actual == "other") { polygon.setAttribute("style", "fill: #4E94CF;"); } //blue for the comparred dataset
+        return polygon;
+
+    }
+
+    //add a rectangle
+    function addRect(x,y,w,h,style) {
+        const rect = document.createElementNS("http://www.w3.org/2000/svg", "rect");
+        rect.setAttribute("x", x);
+        rect.setAttribute("y", y);
+        rect.setAttribute("width", w);
+        rect.setAttribute("height", h);
+        rect.setAttribute("style", style);
+        return rect;
+    }
+
+    //add a text to the indicator bar
+    function addText(x, y, anchor, t) {
+        const text = document.createElementNS("http://www.w3.org/2000/svg", "text");
+        text.setAttribute("x", x);
+        text.setAttribute("y", y);
+        text.setAttribute("text-anchor", anchor);
+        text.setAttribute("style", "font-size:x-small");
+        text.textContent = t;
+        return text;
+    }
+
+    ////add abreviation KB, MB, and GB for the file size
+    function sizeTransform(fileSize) {
+        if (fileSize > 1073741824) {
+            var m = (Math.round(fileSize / 1073741824));
+            var tx = m + "GB";
+        }
+        else if (fileSize > 1048576) {
+            var m = (Math.round(fileSize / 1048576));
+            var tx = m + "MB";
+        }
+        else if (fileSize > 1024) {
+            var m = (Math.round(fileSize / 1024));
+            var tx = m + "KB";
+        }
+        else {
+            var m = fileSize;
+            var tx = m + "B";
+        }
+        return tx;
+    }
+    function dqDetail() {
+        var doc = document.getElementById('datasetSelector');
+        //doc.value = [0]type, [1]metadataComplition, [2]descriptionLength, [3]structureDescriptionLength,
+        // [4]structureUsage, [5]datasetSize, [6]columnNumber, [7]rowNumber, [8]fileNumber, [9]isPublic, [10]readable,
+        // [11] validation, [12]performers;
+
+        var dsInf = doc.value.split(",");
+        var actual = "other" //if information of other dataset
+        var type = dsInf[0];
+        var names = '@p_names'.split("/");
+        var newNames = [];
+        for (var i = 12; i < dsInf.length; ++i) { //performer names start from dsInf[12]
+            newNames[newNames.length] = dsInf[i];
+        }
+
+        if (doc.value == "all") { //if no dataset is selected from the drop-down list, no information is shown
+            document.getElementById("DSFileFormat").innerHTML = '';
+            document.getElementById("DSmetadataTotalComplition").innerHTML = '';
+            document.getElementById("DSdescriptionRates").innerHTML = '';
+            document.getElementById("DSStrDescriptionRates").innerHTML = '';
+            document.getElementById("DSdataStrUsage").innerHTML = '';
+            document.getElementById("DSdatasetColNumns").innerHTML = '';
+            document.getElementById("DSdatasetRowNumns").innerHTML = '';
+            //document.getElementById("DSisPublic").innerHTML = '';
+            document.getElementById("DSrPermission").innerHTML = '';
+            document.getElementById("DSisValid").innerHTML = '';
+            for (var i = 0; i < names.length - 1; i++) {
+                document.getElementById(names[i]).innerHTML = '';
+            }
+        }
+        else { //if a dataset is selected from the drop-down list
+            document.getElementById("DSFileFormat").innerHTML = type;
+            document.getElementById("DSFileFormat").style.color = '#4E94CF';
+            document.getElementById("DSmetadataTotalComplition").innerHTML = '';
+            document.getElementById("DSdescriptionRates").innerHTML = '';
+            document.getElementById("DSStrDescriptionRates").innerHTML = '';
+            document.getElementById("DSdataStrUsage").innerHTML = '';
+            document.getElementById("DSdatasetColNumns").innerHTML = '';
+            document.getElementById("DSdatasetRowNumns").innerHTML = '';
+            document.getElementById("DSrPermission").innerHTML = '';
+            document.getElementById("DSisValid").innerHTML = '';
+            for (var i = 0; i < names.length - 1; i++) {
+                if (newNames.indexOf(names[i]) >= 0) { //if the same contributor
+                    document.getElementById(names[i]).innerHTML = '&#10004;';
+                    document.getElementById(names[i]).style.color = '#4E94CF';
+                }
+                else { //if s/he is not the contributor
+                    document.getElementById(names[i]).innerHTML = '&#10008;';
+                    document.getElementById(names[i]).style.color = 'gray';
+                }
+            }
+
+            //if (dsInf[9] == 0) { //is public
+            //    document.getElementById("DSisPublic").innerHTML = 'public';
+            //    document.getElementById("DSisPublic").style.color = '#4E94CF';
+            //}
+            //else if (dsInf[9] == 1) { //non-public
+            //    document.getElementById("DSisPublic").innerHTML = 'restricted';
+            //    document.getElementById("DSisPublic").style.color = '#4E94CF';
+            //}
+
+            if (dsInf[10] == 1) { //is readable
+                document.getElementById("DSrPermission").innerHTML = 'yes';
+                document.getElementById("DSrPermission").style.color = '#4E94CF';
+            }
+            else if (dsInf[10] == 0) { //is inreadable
+                document.getElementById("DSrPermission").innerHTML = 'no';
+                document.getElementById("DSrPermission").style.color = '#BB1475';
+            }
+
+            if (dsInf[11] == 1) { //is valid
+                document.getElementById("DSisValid").innerHTML = 'yes';
+                document.getElementById("DSisValid").style.color = '#4E94CF';
+            }
+            else if (dsInf[11] == 0) { //is invalid
+                document.getElementById("DSisValid").innerHTML = 'no';
+                document.getElementById("DSisValid").style.color = '#BB1475';
+            }
+
+            //metadata completion
+            document
+                .getElementById("DSmetadataTotalComplition")
+                .appendChild(indicators(@metadataMinRate, @metadataMaxRate, dsInf[1], @metadaMedianRate, actual));
+
+            //dataset description
+            document.getElementById("DSdescriptionRates")
+                .appendChild(indicators(@minDescriptionLength, @maxDescriptionLength, dsInf[2], @medianDescriptionLength, actual));
+
+            //data structure description
+            document.getElementById("DSStrDescriptionRates")
+                .appendChild(indicators(@minDataStrDescriptionLength, @maxDataStrDescriptionLength, dsInf[3], @medianDataStrDescriptionLength, actual));
+
+            //data structure usage
+            document.getElementById("DSdataStrUsage")
+                .appendChild(indicators(@minDataStrUsage, @maxDataStrUsage, dsInf[4], @medianDataStrUsage, actual));
+
+
+            if ('@type' == type) {
+                if (type == "tabular") {
+                    if (dsInf[6] >= 0) { //column number
+                        document.getElementById("DSdatasetColNumns")
+                            .appendChild(indicators(@minColNumber, @maxColNumber, dsInf[6], @medianColNumber, actual));
+                    }
+                    else if (dsInf[6] < 0) {
+                        document.getElementById("DSdatasetColNumns").innerHTML = "No data!";
+                        document.getElementById("DSdatasetColNumns").style.color = "gray";
+                    }
+                    if (dsInf[7] >= 0) { //row number
+                        document.getElementById("DSdatasetRowNumns").appendChild(indicators(@minRowNumber, @maxRowNumber, dsInf[7], @medianRowNumber, actual));
+                    }
+                    else { //rowNumber == -1
+                        document.getElementById("DSdatasetRowNumns").innerHTML = "No data!";
+                        document.getElementById("DSdatasetRowNumns").style.color = "gray";
+                    }
+                }
+                if (type == "file") {
+                    if (dsInf[8] >= 0) { //file number
+                        document.getElementById("DSdatasetColNumns") //file number
+                            .appendChild(indicators(@minFileNumber, @maxFileNumber, dsInf[8], @medianFileNumber, actual));
+                    }
+                    else {
+                        document.getElementById("DSdatasetColNumns").innerHTML = "No data!";
+                        document.getElementById("DSdatasetColNumns").style.color = "gray";
+                    }
+                    if (dsInf[5] >= 0) { //file dataset size
+                        document.getElementById("DSdatasetRowNumns").appendChild(fileSizeIndicators(@minSizeFile, @maxSizeFile, dsInf[5], @medianSizeFile, actual));
+                    }
+                    else {
+                        document.getElementById("DSdatasetRowNumns").innerHTML = "No data!";
+                        document.getElementById("DSdatasetRowNumns").style.color = "gray";
+                    }
+                }
+            }
+            else { //if types of the current and selected datasets are different
+                if (type == "tabular") { //current is tabular, selected is file
+                    document.getElementById("DSdatasetColNumns").innerHTML = "<h class=\"blue\">1</h><h> file</h>";
+                    document.getElementById("DSdatasetColNumns").style.color = "#4E94CF";
+                    document.getElementById("DSdatasetRowNumns").innerHTML = 'N/A';
+                    document.getElementById("DSdatasetRowNumns").style.color = "gray";
+                }
+                if (type == "file") { //current is file, selected is tabular
+                    document.getElementById("DSdatasetColNumns").innerHTML = 'N/A';
+                    document.getElementById("DSdatasetColNumns").style.color = "gray";
+                    document.getElementById("DSdatasetRowNumns").innerHTML = 'N/A';
+                    document.getElementById("DSdatasetRowNumns").style.color = "gray";
+                }
+            }
+
+        }
+    }
+
+</script>
+
+
+<style>
+    div {
+        text-align: initial;
+    }
+
+    .red {
+        color: red;
+    }
+
+    .orange {
+        color: #BB6614;
+    }
+
+    .green {
+        color: #14bb1aff;
+    }
+
+    .blue {
+        color: #1472BB;
+    }
+
+    .redblue {
+        color: indianred;
+    }
+
+    .gray {
+        color: gray;
+    }
+
+    .clickable {
+        cursor: pointer;
+    }
+
+    .fa fa-external-link {
+        cursor: pointer;
+    }
+
+    /* the external link icon */
+    .externalLink {
+        font-family: 'FontAwesome';
+        content: " \f08e";
+    }
+
+    .dataType {
+        font-family: Brush Script MT;
+        font-style: oblique;
+    }
+
+    /* the modal window background */
+    .modal {
+        display: none; /* Hidden by default */
+        position: fixed; /* Stay in place */
+        z-index: 1; /* Sit on top */
+        padding-top: 100px; /* Location of the box */
+        left: 0;
+        top: 0;
+        width: 100%; /* Full width */
+        height: 100%; /* Full height */
+        overflow: auto; /* Enable scroll if needed */
+        background-color: rgb(0,0,0); /* Fallback color */
+        background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+    }
+
+    /* the modal window content */
+    .modal-content {
+        background-color: #fefefe;
+        margin: auto;
+        left: 33%;
+        padding: 10px;
+        border: 1px solid #888;
+        width: 30%;
+    }
+
+    /* the info icon */
+    .info {
+        cursor: pointer;
+        font-size: large;
+    }
+</style>
+
