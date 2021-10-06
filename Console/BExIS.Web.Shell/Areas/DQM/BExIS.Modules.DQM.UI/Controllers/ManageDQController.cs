@@ -79,9 +79,6 @@ namespace BExIS.Modules.DQM.UI.Controllers
                     //datasetManager.SyncView(datasetIds, ViewCreationBehavior.Create | ViewCreationBehavior.Refresh);
                     // if the viewData has a model error, the redirect forgets about it.
                     string pathPerformers = @"C:\Data\DatasetQualities\Performers.csv"; 
-                    StreamWriter writerPerformers1 = new StreamWriter(@"C:\Users\navabpou\Desktop\p.csv");
-                    writerPerformers1.WriteLine("Hallo");
-                    writerPerformers1.Close();
                     StreamWriter writerPerformers = new StreamWriter(pathPerformers);
                     string pathPerformerDataset = @"C:\Data\DatasetQualities\PerformerDataset.csv";
                     StreamWriter writerPerformerDataset = new StreamWriter(pathPerformerDataset);
@@ -312,35 +309,42 @@ namespace BExIS.Modules.DQM.UI.Controllers
                             fileDatasets += 1;
                             List<ContentDescriptor> contentDescriptors = datasetLatestVersion.ContentDescriptors.ToList();
                             fileNumber = contentDescriptors.Count;
-                            datasetFileNumber.Add(fileNumber);
-                            sizeFile.Add(fileNumber);
+                            //datasetFileNumber.Add(fileNumber);
+                            //sizeFile.Add(fileNumber);
+                            int fileNum = 0;
                             double totalSize = 0;
+
                             if (contentDescriptors.Count > 0)
                             {
                                 foreach (ContentDescriptor cd in contentDescriptors)
                                 {
                                     if (cd.Name.ToLower().Equals("unstructureddata"))
                                     {
-                                        string uri = cd.URI;
-                                        String path = Server.UrlDecode(uri);
-                                        path = Path.Combine(AppConfiguration.DataPath, path);
-                                        Stream fileStream = System.IO.File.OpenRead(path);
-
-                                        if (fileStream != null)
+                                        fileNum += 1;
+                                        
+                                            string uri = cd.URI;
+                                            String path = Server.UrlDecode(uri);
+                                            path = Path.Combine(AppConfiguration.DataPath, path);
+                                        try
                                         {
-                                            FileStream fs = fileStream as FileStream;
-                                            if (fs != null)
-                                            {
-                                                FileInformation fileInfo = new FileInformation(fs.Name.Split('\\').LastOrDefault(), MimeMapping.GetMimeMapping(fs.Name), (uint)fs.Length, uri);
-                                                datasetSizeFiles.Add(fileInfo.Size);
-                                                totalSize += fileInfo.Size;
-                                            }
+                                            Stream fileStream = System.IO.File.OpenRead(path);
+                                                FileStream fs = fileStream as FileStream;
+                                                if (fs != null)
+                                                {
+                                                    FileInformation fileInfo = new FileInformation(fs.Name.Split('\\').LastOrDefault(), MimeMapping.GetMimeMapping(fs.Name), (uint)fs.Length, uri);
+                                                    datasetSizeFiles.Add(fileInfo.Size); //file size
+                                                    totalSize += fileInfo.Size;
+                                                }
                                         }
-
+                                        catch
+                                        {
+                                            datasetSizeFiles.Add(0); //file size                                            
+                                        }
                                     }
                                 }
 
                                 datasetTotalSize.Add(totalSize);
+                                sizeFile.Add(fileNum);
                                 sizeFile.Add(totalSize);
 
                             }

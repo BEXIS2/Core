@@ -19,6 +19,7 @@ namespace BExIS.Modules.DQM.UI.Helpers
                     if (DQ == null)
                         DQ = featureManager.Create("Dataset Quality", "Dataset Quality");
                     if (!operationManager.Exists("dqm", "ManageDQ", "*")) operationManager.Create("DQM", "ManageDQ", "*", DQ);
+                    if (!operationManager.Exists("dqm", "DQ", "*")) operationManager.Create("DQM", "DQ", "*", DQ);
 
                     //operationManager.Create("VIM", "Help", "*");
 

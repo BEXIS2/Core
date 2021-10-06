@@ -167,7 +167,7 @@ namespace BExIS.Modules.DQM.UI.Controllers
             // data quality files
             try
             {                
-                string pathPerformerDataset = @"..\Data\DatasetQualities\PerformerDataset.csv";
+                string pathPerformerDataset = @"C:\Data\DatasetQualities\PerformerDataset.csv";
                 StreamReader readerPerformerDataset = new StreamReader(pathPerformerDataset);
 
             }
@@ -189,9 +189,9 @@ namespace BExIS.Modules.DQM.UI.Controllers
             #region dataset's performers
             try
             {
-                string pathPerformerDataset = @"..\Data\DatasetQualities\PerformerDataset.csv";
+                string pathPerformerDataset = @"C:\Data\DatasetQualities\PerformerDataset.csv";
                 StreamReader readerPerformerDataset = new StreamReader(pathPerformerDataset);
-                string pathPerformers = @"..\Data\DatasetQualities\Performers.csv";
+                string pathPerformers = @"C:\Data\DatasetQualities\Performers.csv";
                 StreamReader readerPerformers = new StreamReader(pathPerformers);
                 string performerLine;
                 List<string> pfs = new List<string>();
@@ -289,7 +289,7 @@ namespace BExIS.Modules.DQM.UI.Controllers
             }
             dqModel.allReadables = rpTrue;
 
-            string pathDatasetInfo = @"..\Data\DatasetQualities\datasetInfo.csv";
+            string pathDatasetInfo = @"C:\Data\DatasetQualities\datasetInfo.csv";
             StreamReader readerDatasetInfo = new StreamReader(pathDatasetInfo);
             List<datasetInformation> datasetsInformation = new List<datasetInformation>();
             try
@@ -347,7 +347,7 @@ namespace BExIS.Modules.DQM.UI.Controllers
             #region comparision
             try
             {
-                string pathComparison = @"..\Data\DatasetQualities\Comparison.csv";
+                string pathComparison = @"C:\Data\DatasetQualities\Comparison.csv";
                 StreamReader readerComparison = new StreamReader(pathComparison);
                 string infoline;
                 List<int> infos = new List<int>();
@@ -436,7 +436,7 @@ namespace BExIS.Modules.DQM.UI.Controllers
             //If it is a tabular format dataset
             if (currentDatasetType == "tabular")
             {
-                string pathVariables = @"..\Data\DatasetQualities\Variables.csv";
+                string pathVariables = @"C:\Data\DatasetQualities\Variables.csv";
                 StreamReader readerVariables = new StreamReader(pathVariables);
 
                 string varLine;
@@ -653,28 +653,29 @@ namespace BExIS.Modules.DQM.UI.Controllers
                                 string uri = cd.URI;
 
                                 //get the file path
-                                String path = Server.UrlDecode(uri);
-                                path = Path.Combine(AppConfiguration.DataPath, path);
-                                Stream fileStream = System.IO.File.OpenRead(path);
-
-                                if (fileStream != null)
+                                try
                                 {
-                                    FileStream fs = fileStream as FileStream;
-                                    if (fs != null)
+                                    String path = Server.UrlDecode(uri);
+                                    path = Path.Combine(AppConfiguration.DataPath, path);
+                                    Stream fileStream = System.IO.File.OpenRead(path);
+
+                                    if (fileStream != null)
                                     {
-                                        //get file information
-                                        FileInformation fileInfo = new FileInformation(fs.Name.Split('\\').LastOrDefault(), MimeMapping.GetMimeMapping(fs.Name), (uint)fs.Length, uri);
-                                        fileInformation.fileName = fileInfo.Name.Split('.')[0]; //file name
-                                        fileInformation.fileFormat = fileInfo.Name.Split('.')[1].ToLower(); //file extension
-                                        fileInformation.fileSize = fileInfo.Size; //file size
-                                        totalSize += fileInfo.Size;
+                                        FileStream fs = fileStream as FileStream;
+                                        if (fs != null)
+                                        {
+                                            //get file information
+                                            FileInformation fileInfo = new FileInformation(fs.Name.Split('\\').LastOrDefault(), MimeMapping.GetMimeMapping(fs.Name), (uint)fs.Length, uri);
+                                            fileInformation.fileName = fileInfo.Name.Split('.')[0]; //file name
+                                            fileInformation.fileFormat = fileInfo.Name.Split('.')[1].ToLower(); //file extension
+                                            fileInformation.fileSize = fileInfo.Size; //file size
+                                            totalSize += fileInfo.Size;
+                                        }
                                     }
                                 }
-                                else
+                                catch
                                 {
-                                    //fileInformation.fileName = null;
-                                    //fileInformation.fileFormat = null;
-                                    //fileInformation.fileSize = -1;
+
                                 }
                                 filesInformation.Add(fileInformation);
                             }
