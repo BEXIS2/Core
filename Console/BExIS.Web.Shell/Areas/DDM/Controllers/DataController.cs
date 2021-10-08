@@ -261,6 +261,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                         DownloadAccess = downloadAccess,
                         RequestExist = requestExist,
                         RequestAble = requestAble,
+                        HasRequestRight = hasRequestRight,
                         IsPublic = isPublic,
                     };
 
@@ -1826,11 +1827,18 @@ namespace BExIS.Modules.Ddm.UI.Controllers
             using (var featurePermissionManager = new FeaturePermissionManager())
             using (var operationManager = new OperationManager())
             {
-                var operation = operationManager.Find("DDM", "Request", "*");
-                var feature = operation.Feature;
-                var result = userManager.FindByNameAsync(GetUsernameOrDefault());
+                var operation = operationManager.Find("DDM", "Requests", "*");
+                if (operation != null)
+                {
+                    var feature = operation.Feature;
 
-                if (featurePermissionManager.HasAccess(result.Result?.Id, feature.Id)) return true;
+                    if (feature != null)
+                    {
+                        var result = userManager.FindByNameAsync(GetUsernameOrDefault());
+
+                        if (featurePermissionManager.HasAccess(result.Result?.Id, feature.Id)) return true;
+                    }
+                }
             }
 
             return false;

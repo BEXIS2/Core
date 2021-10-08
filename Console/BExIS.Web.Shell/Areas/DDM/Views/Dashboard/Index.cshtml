@@ -85,8 +85,8 @@
         /****Dashboard*****/
 
         $(".request").click(function () {
-            var id = $(this).attr("entityid");
-            console.log(id);
+            var entityId = $(this).attr("entityid");
+            console.log(entityId);
 
             $(".bold-option").removeClass("bold-option");
             $(this).addClass("bold-option");
@@ -94,7 +94,7 @@
             $("#dashboard_content").preloader("..loading requests");
 
             $.get("/ddm/requests/requests",
-                { id },
+                { entityId },
                 function (data, textStatus, jqXHR) {
                     $("#dashboard_content").html(data);
                 }
@@ -102,8 +102,8 @@
         });
 
         $(".decision").click(function () {
-            var id = $(this).attr("entityid");
-            console.log(id);
+            var entityId = $(this).attr("entityid");
+            console.log(entityId);
 
             $(".bold-option").removeClass("bold-option");
             $(this).addClass("bold-option");
@@ -111,7 +111,7 @@
             $("#dashboard_content").preloader("..loading decisions");
 
             $.get("/ddm/requests/decisions",
-                { id },
+                { entityId },
                 function (data, textStatus, jqXHR) {
                     $("#dashboard_content").html(data);
                 }

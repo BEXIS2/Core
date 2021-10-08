@@ -450,6 +450,11 @@
     <Content Include="Views\Dashboard\_myDatasetsViewHeader.cshtml" />
     <Content Include="Views\Shared\Error.cshtml" />
     <Content Include="Views\Data\Show.cshtml" />
+    <Content Include="Views\Requests\_Decisions.cshtml" />
+    <Content Include="Views\Requests\_Entities.cshtml" />
+    <Content Include="Views\Requests\_Requests.cshtml" />
+    <Content Include="Views\Requests\_Requests_And_Decisions.cshtml" />
+    <Content Include="Views\Requests\Index.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -462,7 +467,6 @@
     <Folder Include="Views\Export\" />
     <Folder Include="Views\Home\" />
     <Folder Include="Views\PublicSearch\" />
-    <Folder Include="Views\Request\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
