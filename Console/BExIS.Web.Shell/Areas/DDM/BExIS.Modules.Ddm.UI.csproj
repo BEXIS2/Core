@@ -163,6 +163,7 @@
     <Compile Include="Controllers\HelpController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\PublicSearchController.cs" />
+    <Compile Include="Controllers\RequestsController.cs" />
     <Compile Include="Controllers\SearchIndexController.cs" />
     <Compile Include="Controllers\TestController.cs" />
     <Compile Include="DdmModule.cs" />
@@ -172,6 +173,9 @@
     <Compile Include="Helpers\SearchUIHelper.cs" />
     <Compile Include="Models\DashboardModel.cs" />
     <Compile Include="Models\DatasetPermissionModels.cs" />
+    <Compile Include="Models\DecisionModels.cs" />
+    <Compile Include="Models\EntityModels.cs" />
+    <Compile Include="Models\RequestModels.cs" />
     <Compile Include="Models\SearchAttributeViewModel.cs" />
     <Compile Include="Models\ShowDataModel.cs" />
     <Compile Include="Models\ShowMetadataModel.cs" />
@@ -458,6 +462,7 @@
     <Folder Include="Views\Export\" />
     <Folder Include="Views\Home\" />
     <Folder Include="Views\PublicSearch\" />
+    <Folder Include="Views\Request\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

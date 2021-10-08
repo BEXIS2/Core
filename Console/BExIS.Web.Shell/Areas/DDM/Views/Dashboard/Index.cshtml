@@ -93,7 +93,7 @@
 
             $("#dashboard_content").preloader("..loading requests");
 
-            $.get("/ddm/dashboard/requests",
+            $.get("/ddm/requests/requests",
                 { id },
                 function (data, textStatus, jqXHR) {
                     $("#dashboard_content").html(data);
@@ -110,7 +110,7 @@
 
             $("#dashboard_content").preloader("..loading decisions");
 
-            $.get("/ddm/dashboard/decisions",
+            $.get("/ddm/requests/decisions",
                 { id },
                 function (data, textStatus, jqXHR) {
                     $("#dashboard_content").html(data);

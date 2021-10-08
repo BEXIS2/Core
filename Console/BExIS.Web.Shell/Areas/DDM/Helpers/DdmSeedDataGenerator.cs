@@ -50,6 +50,12 @@ namespace BExIS.Modules.Ddm.UI.Helpers
                 if (Dashboard == null) Dashboard = featureManager.Create("Dashboard", "Dashboard", DataDiscovery);
 
 
+                Feature Requests = features.FirstOrDefault(f =>
+                    f.Name.Equals("Requests") &&
+                    f.Parent != null &&
+                    f.Parent.Id.Equals(DataDiscovery.Id));
+
+                if (Requests == null) Requests = featureManager.Create("Requests", "Requests", DataDiscovery);
 
                 //worklfows -> create dataset ->
                 //WorkflowManager workflowManager = new WorkflowManager();
@@ -105,8 +111,13 @@ namespace BExIS.Modules.Ddm.UI.Helpers
 
                 #endregion
 
+                #region Requests
+                operationManager.Create("DDM", "Requests", "*", Requests);
+
                 #endregion
-                
+
+                #endregion
+
 
             }
 

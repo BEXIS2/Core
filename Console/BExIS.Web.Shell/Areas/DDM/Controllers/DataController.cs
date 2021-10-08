@@ -164,6 +164,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                     bool downloadAccess = false;
                     bool requestExist = false;
                     bool requestAble = false;
+                    bool hasRequestRight = false;
                     bool latestVersion = false;
                     string isValid = "no";
                     bool isPublic = false;
@@ -213,7 +214,11 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                         {
                             requestExist = HasOpenRequest(id);
 
-                            if (UserExist() && HasRequestMapping(id)) requestAble = true;
+                            if (UserExist() && HasRequestMapping(id))
+                            {
+                                requestAble = true;
+                                hasRequestRight = hasUserRequestRight();
+                            }
                         }
 
                         // check is public
@@ -1479,69 +1484,6 @@ namespace BExIS.Modules.Ddm.UI.Controllers
 
         #endregion datastructure
 
-        #region request
-
-        public JsonResult SendRequest(long id, string intention)
-        {
-            RequestManager requestManager = new RequestManager();
-            SubjectManager subjectManager = new SubjectManager();
-            EntityManager entityManager = new EntityManager();
-            DatasetManager datasetManager = new DatasetManager();
-
-            try
-            {
-                long userId = subjectManager.Subjects.Where(s => s.Name.Equals(HttpContext.User.Identity.Name)).Select(s => s.Id).First();
-                long entityId = entityManager.Entities.Where(e => e.Name.ToLower().Equals("dataset")).First().Id;
-
-                if (!requestManager.Exists(userId, entityId, id) ||
-                    !(requestManager.Exists(userId, entityId, id, Security.Entities.Requests.RequestStatus.Open)))
-                {
-                    var request = requestManager.Create(userId, entityId, id, 3, intention);
-
-                    if (request != null)
-                    {
-                        //reload request
-                        long requestId = request.Id;
-                        request = requestManager.FindById(requestId);
-
-                        var datasetVersion = datasetManager.GetDatasetLatestVersion(id);
-                        string title = datasetVersion.Title;
-                        if (string.IsNullOrEmpty(title)) title = "No Title available.";
-
-                        string emailDescionMaker = request.Decisions.FirstOrDefault().DecisionMaker.Email;
-                        string applicant = getPartyNameOrDefault();
-
-                        //ToDo send emails to owner & requester
-                        var es = new EmailService();
-                        es.Send(MessageHelper.GetSendRequestHeader(id, applicant),
-                            MessageHelper.GetSendRequestMessage(id, title, applicant, intention, request.Applicant.Email),
-                            new List<string> { emailDescionMaker }, new List<string> { ConfigurationManager.AppSettings["SystemEmail"], request.Applicant.Email }, null, new List<string> { request.Applicant.Email }
-                            );
-                    }
-                }
-            }
-            catch (Exception e)
-            {
-                Json(e.Message, JsonRequestBehavior.AllowGet);
-               
-                // send mail with error to sys admin
-                var es = new EmailService();
-                es.Send(MessageHelper.GetSendRequestHeader(id, getPartyNameOrDefault()),
-                    MessageHelper.GetSendRequestMessage(id,"unknown", "unkown", e.Message + intention , "unknown"), new List<string> { ConfigurationManager.AppSettings["SystemEmail"] }
-                    );
-            }
-            finally
-            {
-                subjectManager.Dispose();
-                requestManager.Dispose();
-                entityManager.Dispose();
-                datasetManager.Dispose();
-            }
-
-            return Json(true, JsonRequestBehavior.AllowGet);
-        }
-
-        #endregion request
 
         #region entity references
 
@@ -1876,6 +1818,22 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                 return entityPermissionManager.HasEffectiveRight(GetUsernameOrDefault(), typeof(Dataset), entityId, rightType);
 
             #endregion security permissions and authorisations check
+        }
+
+        private bool hasUserRequestRight()
+        {
+            using (var userManager = new UserManager())
+            using (var featurePermissionManager = new FeaturePermissionManager())
+            using (var operationManager = new OperationManager())
+            {
+                var operation = operationManager.Find("DDM", "Request", "*");
+                var feature = operation.Feature;
+                var result = userManager.FindByNameAsync(GetUsernameOrDefault());
+
+                if (featurePermissionManager.HasAccess(result.Result?.Id, feature.Id)) return true;
+            }
+
+            return false;
         }
 
         private bool HasOpenRequest(long datasetId)
