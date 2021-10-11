@@ -22,6 +22,7 @@
 
         public bool RequestExist { get; set; }
         public bool RequestAble { get; set; }
+        public bool HasRequestRight { get; set; }
 
         public bool IsPublic { get; set; }
     }

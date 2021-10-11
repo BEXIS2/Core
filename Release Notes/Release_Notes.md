@@ -9,6 +9,8 @@ Attention: Changes were mad in the web.config in line: 72 (see [#803](https://gi
 - Data policy checkbox removed from registration (does not need to be agreed on) ([#784](https://github.com/BEXIS2/Core/issues/784))
 - Requests and Decissions: Date column sortable ([#781](https://github.com/BEXIS2/Core/issues/781))
 - Replace "Show Data/Dataset" by the current entity name (e.g. Publication) ([#769](https://github.com/BEXIS2/Core/issues/769))
+- Sort users descending by id (manage parties)([#806](https://github.com/BEXIS2/Core/issues/806))
+- Sort data structures descending by id ([#807](https://github.com/BEXIS2/Core/issues/807))
   
 ### Bugs
 - Fix only a maximum of 100 variables possible inside a data structure (max size of JSON objects too small) ([#803](https://github.com/BEXIS2/Core/issues/803))
@@ -22,6 +24,9 @@ Attention: Changes were mad in the web.config in line: 72 (see [#803](https://gi
 - Fix missing checkedIn after rollback during data upload ([#805](https://github.com/BEXIS2/Core/issues/805))
 - Fix missing values sometimes disappaer after save ([#774](https://github.com/BEXIS2/Core/issues/774))
 - Fix download metadata only returned latest version ([#771](https://github.com/BEXIS2/Core/issues/771))
+- Fix image view can not be closed (unstructured data) ([#797](https://github.com/BEXIS2/Core/issues/797))
+- Fix primary data of unstructured datasets are not visible without rights in public data view ([#799](https://github.com/BEXIS2/Core/issues/799))
+- Fix download notification are send on image preview ([#767](https://github.com/BEXIS2/Core/issues/767))
 
 ## I. Software Information
 

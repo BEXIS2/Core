@@ -160,7 +160,6 @@
     <Compile Include="Controllers\EntitiesController.cs" />
     <Compile Include="Controllers\EntityPermissionsController.cs" />
     <Compile Include="Controllers\RequestsAdminController.cs" />
-    <Compile Include="Controllers\RequestsController.cs" />
     <Compile Include="Controllers\FeaturePermissionsController.cs" />
     <Compile Include="Controllers\GroupsController.cs" />
     <Compile Include="Controllers\HelpController.cs" />
@@ -245,10 +244,6 @@
     <Content Include="Web.config" />
     <Content Include="Views\Entities\Index.cshtml" />
     <Content Include="Views\Entities\Create.cshtml" />
-    <Content Include="Views\Requests\_Entities.cshtml" />
-    <Content Include="Views\Requests\Index.cshtml" />
-    <Content Include="Views\Requests\_Requests.cshtml" />
-    <Content Include="Views\Requests\_Decisions.cshtml" />
     <Content Include="Views\Datasets\Delete.cshtml" />
     <Content Include="Views\Datasets\Index.cshtml" />
     <Content Include="Views\Datasets\Purge.cshtml" />
@@ -268,7 +263,6 @@
     <Content Include="Views\EntityPermissions\_Subjects.cshtml" />
     <Content Include="Views\UserPermissions\_Subjects.cshtml" />
     <Content Include="Views\Datasets\Sync.cshtml" />
-    <Content Include="Views\Requests\_Requests_And_Decisions.cshtml" />
     <Content Include="Views\EntityPermissions\_Permissions.cshtml" />
     <Content Include="Views\RequestsAdmin\_DecisionsAdmin.cshtml" />
     <Content Include="Views\RequestsAdmin\Index.cshtml" />

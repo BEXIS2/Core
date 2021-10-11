@@ -114,27 +114,38 @@
                     }
                     else
                     {
-                        if (Model.RequestAble)
+                        if (Model.HasRequestRight)
                         {
-
-                            if (Model.RequestExist)
+                            if (Model.RequestAble)
                             {
-                                <button id="sendRequestBt" class="bx-button function bx-disabled" title="Send request to the owner of the dataset for the rights to see and download the primary data." disabled="disabled">Request Pending</button>
+
+                                if (Model.RequestExist)
+                                {
+                                    <button id="sendRequestBt" class="bx-button function bx-disabled" title="Send request to the owner of the dataset for the rights to see and download the primary data." disabled="disabled">Request Pending</button>
+                                }
+                                else
+                                {
+                                    @Html.TextArea("intention", new { @class = "bx-input", placeholder = "describe your intention " });
+                                    <button id="sendRequestBt" datasetId="@Model.Id" class="bx-button function" title="Send request to the owner of the dataset for the rights to see and download the primary data.">Request Access</button>
+                                }
                             }
                             else
                             {
-                                @Html.TextArea("intention", new { @class = "bx-input", placeholder = "describe your intention " });
-                                <button id="sendRequestBt" datasetId="@Model.Id" class="bx-button function" title="Send request to the owner of the dataset for the rights to see and download the primary data.">Request Access</button>
+                                if (show_tabs["show_tabs_deactivated"] == "true")
+                                {
+                                    <button id="sendRequestBt" class="bx-button function bx-disabled" title="Send request to the owner of the dataset for the rights to see and download the primary data. If the function is not available, please contact the administrator." disabled="disabled">Currently not available</button>
+                                }
                             }
                         }
                         else
                         {
                             if (show_tabs["show_tabs_deactivated"] == "true")
                             {
-                                <button id="sendRequestBt" class="bx-button function bx-disabled" title="Send request to the owner of the dataset for the rights to see and download the primary data. If the function is not available, please contact the administrator." disabled="disabled">Currently not available</button>
+                                <button id="sendRequestBt" class="bx-button function bx-disabled" title="You have no right to make requests." disabled="disabled">Currently not available</button>
                             }
                         }
                     }
+                 
                 </div>
             </div>
             @if (@Model != null)
@@ -372,7 +383,7 @@
 
         var intention = $("#intention").val();
 
-	    $.post("/DDM/Data/SendRequest", { id, intention }, function(data) {
+	    $.post("/DDM/Request/Send", { id, intention }, function(data) {
 	        if (data === true) {
 	            $("#sendRequestBt").prop("disabled", "disabled");
 	            $("#sendRequestBt").addClass("bx-disabled", "bx-disabled");
