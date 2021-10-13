@@ -88,6 +88,8 @@ namespace BExIS.Modules.DQM.UI.Controllers
                     StreamWriter writerDatasets = new StreamWriter(pathDatasets);
                     string pathVariable = @"C:\Data\DatasetQualities\Variables.csv";
                     StreamWriter writerVariable = new StreamWriter(pathVariable);
+                    string pathFiles = @"C:\Data\DatasetQualities\Files.csv";
+                    StreamWriter writerFiles = new StreamWriter(pathFiles);
 
                     string variableHeader = "datasetId,VarLabel,varType,varDescription,varUse,varMissing";
                     writerVariable.WriteLine(variableHeader);
@@ -112,7 +114,7 @@ namespace BExIS.Modules.DQM.UI.Controllers
                     List<int> sizeTabular = new List<int>(); //collect size, column number, and row number for one dataset
                     int fileNumber = 0;
                     List<double> datasetTotalSize = new List<double>(); //total file size of each dataset
-                    List<double> sizeFile = new List<double>();
+                    List<double> sizeFile = new List<double>();///////////////////////////
 
 
                     foreach (long datasetId in datasetIds)
@@ -210,7 +212,18 @@ namespace BExIS.Modules.DQM.UI.Controllers
                         //if (publicRights == 1) { publicDatasets += 1; }
                         //if (publicRights == 0) { restrictedDatasets += 1; }
 
-                        dsDescLength.Add(datasetLatestVersion.Description.Length); //get dataset description length
+                        ///issue here is that when a dataset has an empty dataset description field, the datasetLatestVersion.Description has the "not available" as value.
+                        int datasetLatestVersionDescriptionLength = 0;
+                        if (datasetLatestVersion.Description == "not available")
+                        {
+                            dsDescLength.Add(0);
+                        }
+                        else
+                        {
+                            dsDescLength.Add(datasetLatestVersion.Description.Length); //get dataset description length
+                            datasetLatestVersionDescriptionLength = datasetLatestVersion.Description.Length;
+                        }
+
                         dstrDescLength.Add(datasetLatestVersion.Dataset.DataStructure.Description.Length); //get data structure description length
                         dstrUsage.Add(dataStr.Datasets.Count() - 1); //data structure is used in how many other datasets (doesn't contain the current one)
 
@@ -313,7 +326,7 @@ namespace BExIS.Modules.DQM.UI.Controllers
                             //sizeFile.Add(fileNumber);
                             int fileNum = 0;
                             double totalSize = 0;
-
+                            string fileInDataset = "";
                             if (contentDescriptors.Count > 0)
                             {
                                 foreach (ContentDescriptor cd in contentDescriptors)
@@ -322,19 +335,20 @@ namespace BExIS.Modules.DQM.UI.Controllers
                                     {
                                         fileNum += 1;
                                         
-                                            string uri = cd.URI;
-                                            String path = Server.UrlDecode(uri);
-                                            path = Path.Combine(AppConfiguration.DataPath, path);
+                                        string uri = cd.URI;
+                                        String path = Server.UrlDecode(uri);
+                                        path = Path.Combine(AppConfiguration.DataPath, path);
                                         try
                                         {
                                             Stream fileStream = System.IO.File.OpenRead(path);
-                                                FileStream fs = fileStream as FileStream;
-                                                if (fs != null)
-                                                {
-                                                    FileInformation fileInfo = new FileInformation(fs.Name.Split('\\').LastOrDefault(), MimeMapping.GetMimeMapping(fs.Name), (uint)fs.Length, uri);
-                                                    datasetSizeFiles.Add(fileInfo.Size); //file size
-                                                    totalSize += fileInfo.Size;
-                                                }
+                                            FileStream fs = fileStream as FileStream;
+                                            if (fs != null)
+                                            {
+                                                FileInformation fileInfo = new FileInformation(fs.Name.Split('\\').LastOrDefault(), MimeMapping.GetMimeMapping(fs.Name), (uint)fs.Length, uri);
+                                                totalSize += fileInfo.Size;
+                                                fileInDataset = datasetId + "," + fileInfo.Name.Split('.')[0] + "," + fileInfo.Name.Split('.')[1].ToLower() + ","+ fileInfo.Size; //datasetId,file name,file extension,file size
+                                                writerFiles.WriteLine(fileInDataset);
+                                            }
                                         }
                                         catch
                                         {
@@ -343,22 +357,24 @@ namespace BExIS.Modules.DQM.UI.Controllers
                                     }
                                 }
 
+                                datasetFileNumber.Add(fileNum);
                                 datasetTotalSize.Add(totalSize);
-                                sizeFile.Add(fileNum);
-                                sizeFile.Add(totalSize);
-
                             }
-
-
+                            else
+                            {
+                                datasetFileNumber.Add(0);
+                                datasetTotalSize.Add(0);
+                            }
                         }
+                        
                         #endregion
 
                         //[0]datasetId, [1]dataType, [2]IsValid, [3]metadataComplitionRate, 
                         //[4]datasetDescLength, [5]dataStrDescrLength, [6]DataStrUsage, 
                         //[7]columns, [8]rows, [9]file numbers, [10]file sizes, [11]performers
-                        
+
                         string datasetInfo = datasetId + ";" + type + ";" + validMetadata + ";" + rate + ";"
-                            + datasetLatestVersion.Description.Length + ";"
+                            + datasetLatestVersionDescriptionLength + ";"
                             + datasetLatestVersion.Dataset.DataStructure.Description.Length + ";"
                             + (dataStr.Datasets.Count() - 1);
                         if (type == "tabular")
@@ -370,8 +386,8 @@ namespace BExIS.Modules.DQM.UI.Controllers
                         if (type == "file")
                         {
                             datasetInfo = datasetInfo + ";0;0"    //column and row number
-                                + ";" + sizeFile[0]             //file number
-                                + ";" + sizeFile[1];            //total size
+                                + ";" + datasetFileNumber.Last() //sizeFile[0]             //file number
+                                + ";" + datasetTotalSize.Last(); //sizeFile[1];            //total size
                         }
                         string prfmrs = "";
                         foreach (string p in pers)
@@ -383,6 +399,7 @@ namespace BExIS.Modules.DQM.UI.Controllers
                         writerDatasets.WriteLine(datasetInfo);
                     }
                     writerDatasets.Close();
+
                     #region performersInFile                    
                     //write a list of 'performer,activity' in Performers.csv
                     foreach (string p in performerCount.Keys)
@@ -434,19 +451,19 @@ namespace BExIS.Modules.DQM.UI.Controllers
                     string fileNums = "";
                     string fileSizes = "";
                     string totalFileSize = "";
-                    if (datasetFileNumber.Count > 0)
-                    {
+                    //if (datasetFileNumber.Count > 0)
+                    //{
                         fileNums = "datasetFileNumber," + datasetFileNumber.Min() + "," + medianCalc(datasetFileNumber) + "," + datasetFileNumber.Max();
-                        fileSizes = "datasetSizeFiles," + datasetSizeFiles.Min() + "," + medianCalc(datasetSizeFiles) + "," + datasetSizeFiles.Max();
+                        //fileSizes = "datasetSizeFiles," + datasetSizeFiles.Min() + "," + medianCalc(datasetSizeFiles) + "," + datasetSizeFiles.Max();
                         totalFileSize = "datasetTotalSizeFiles," + datasetTotalSize.Min() + "," + medianCalc(datasetTotalSize) + "," + datasetTotalSize.Max();
-                    }
-                    else
-                    {
-                        fileNums = "datasetFileNumber," + 0 + "," + 0 + "," + 0;
-                        fileSizes = "datasetSizeFiles," + 0 + "," + 0 + "," + 0;
-                        totalFileSize = "datasetTotalSizeFiles," + 0 + "," + 0 + "," + 0;
+                    //}
+                    //else
+                    //{
+                    //    fileNums = "datasetFileNumber," + 0 + "," + 0 + "," + 0;
+                    //    //fileSizes = "datasetSizeFiles," + 0 + "," + 0 + "," + 0;
+                    //    totalFileSize = "datasetTotalSizeFiles," + 0 + "," + 0 + "," + 0;
 
-                    }
+                    //}
                     writerComparison.WriteLine(cols);
                     writerComparison.WriteLine(rows);
                     writerComparison.WriteLine(fileNums);
@@ -458,6 +475,7 @@ namespace BExIS.Modules.DQM.UI.Controllers
                     writerComparison.Close();
                     //writerDatasets.Close();
                     writerVariable.Close();
+                    writerFiles.Close();
                     return View(); 
                     //return RedirectToAction("Index", new { area = "dqm" });
 

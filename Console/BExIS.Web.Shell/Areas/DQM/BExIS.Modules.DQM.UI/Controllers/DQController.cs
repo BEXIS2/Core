@@ -309,11 +309,11 @@ namespace BExIS.Modules.DQM.UI.Controllers
                     if(rPermission == true) { datasetInformation.readable = 1;  }
                     if (rPermission == false) { datasetInformation.readable = 0; }
                     datasetInformation.type = dsInf[1];
-                    datasetInformation.metadataValidation = int.Parse(dsInf[2]);
-                    datasetInformation.metadataComplition = int.Parse(dsInf[3]);
-                    datasetInformation.descriptionLength = int.Parse(dsInf[4]);
-                    datasetInformation.structureDescriptionLength = int.Parse(dsInf[5]);
-                    datasetInformation.structureUsage = int.Parse(dsInf[6]);
+                    datasetInformation.metadataValidation = int.Parse(dsInf[2]);                     
+                    datasetInformation.metadataComplition = int.Parse(dsInf[3]);                   
+                    datasetInformation.descriptionLength = int.Parse(dsInf[4]);                     
+                    datasetInformation.structureDescriptionLength = int.Parse(dsInf[5]);                     
+                    datasetInformation.structureUsage = int.Parse(dsInf[6]);                     
                     datasetInformation.columnNumber = int.Parse(dsInf[7]);
                     datasetInformation.rowNumber = int.Parse(dsInf[8]);
                     datasetInformation.fileNumber = int.Parse(dsInf[9]);
@@ -327,6 +327,20 @@ namespace BExIS.Modules.DQM.UI.Controllers
                     datasetInformation.performerNames = performerNames;
 
                     datasetsInformation.Add(datasetInformation);
+
+                    if (datasetId == id)
+                    {
+                        dqModel.metadataComplition.requiredFields = int.Parse(dsInf[2]);
+                        dqModel.metadataComplition.totalFields = int.Parse(dsInf[3]);
+                        dqModel.datasetDescriptionLength.currentDescriptionLength = int.Parse(dsInf[4]);
+                        dqModel.dataStrDescriptionLength.currentDescriptionLength = int.Parse(dsInf[5]);
+                        dqModel.dataStrUsage.currentDataStrUsage = int.Parse(dsInf[6]);
+
+                        dqModel.columnNumber = datasetInformation.columnNumber;
+                        dqModel.rowNumber = datasetInformation.rowNumber;
+                        dqModel.fileNumber = datasetInformation.fileNumber;
+                        dqModel.datasetTotalSize.currentTotalSize = datasetInformation.datasetSizeFile;
+                    }
                 }
             }
             catch
@@ -338,11 +352,11 @@ namespace BExIS.Modules.DQM.UI.Controllers
             readerDatasetInfo.Close();
 
             //CURRENT DATASET VERSION
-            dqModel.metadataComplition.totalFields = GetMetadataRate(currentDatasetVersion); //current dataset version: metadata rate
-            dqModel.metadataComplition.requiredFields = 100; //Need to calculate: metadataStructureId = dsv.Dataset.MetadataStructure.Id;
-            dqModel.datasetDescriptionLength.currentDescriptionLength = currentDatasetVersion.Description.Length; // Current dataset vesion: dataset description length
-            dqModel.dataStrDescriptionLength.currentDescriptionLength = currentDatasetVersion.Dataset.DataStructure.Description.Length; // Current dataset version: data structure description length
-            dqModel.dataStrUsage.currentDataStrUsage = currentDataStr.Datasets.Count() - 1; // Current dataset version: how many times the data structure is used in other datasets
+            //dqModel.metadataComplition.totalFields = GetMetadataRate(currentDatasetVersion); //current dataset version: metadata rate
+            //dqModel.metadataComplition.requiredFields = 100; //Need to calculate: metadataStructureId = dsv.Dataset.MetadataStructure.Id;
+            //dqModel.datasetDescriptionLength.currentDescriptionLength = currentDatasetVersion.Description.Length; // Current dataset vesion: dataset description length
+            //dqModel.dataStrDescriptionLength.currentDescriptionLength = currentDatasetVersion.Dataset.DataStructure.Description.Length; // Current dataset version: data structure description length
+            //dqModel.dataStrUsage.currentDataStrUsage = currentDataStr.Datasets.Count() - 1; // Current dataset version: how many times the data structure is used in other datasets
 
             #region comparision
             try
@@ -456,9 +470,9 @@ namespace BExIS.Modules.DQM.UI.Controllers
                     }
 
                 }
-
                 dqModel.varVariables = varVariables;
-
+                readerVariables.Close();
+            }
 
                 //    string serverName = "http://localhost:5412";
 
@@ -489,8 +503,8 @@ namespace BExIS.Modules.DQM.UI.Controllers
                 //{
 
                 //}
-                StructuredDataStructure sds = dsm.StructuredDataStructureRepo.Get(currentDatasetVersion.Dataset.DataStructure.Id); //get data structure
-                var variables = sds.Variables; //get variables
+                //StructuredDataStructure sds = dsm.StructuredDataStructureRepo.Get(currentDatasetVersion.Dataset.DataStructure.Id); //get data structure
+                //var variables = sds.Variables; //get variables
                 //dqModel.columnNumber = variables.Count();
 
                 //    //// Specify the URL to receive the request.
@@ -535,160 +549,189 @@ namespace BExIS.Modules.DQM.UI.Controllers
                 //    //}
 
                 //    int columnNumber = -1; //First four columns are added from system.
-                if (variables.Count() > 0)
-                {
-                    //        foreach (var variable in variables)
-                    //        {                       
-                    //            columnNumber += 1;
-                    //            //string missingValue = variable.MissingValue; //MISSING VALUE
-                    //            List<string> missingValues = new List<string>(); //creat a list contains missing values
-                    //            DataTable missTable = new DataTable();
-                    //            foreach (var missValue in variable.MissingValues) //if data is equal missing value
-                    //            {
-                    //                missingValues.Add(missValue.Placeholder);
+                //if (variables.Count() > 0)
+                //{
+                //        foreach (var variable in variables)
+                //        {                       
+                //            columnNumber += 1;
+                //            //string missingValue = variable.MissingValue; //MISSING VALUE
+                //            List<string> missingValues = new List<string>(); //creat a list contains missing values
+                //            DataTable missTable = new DataTable();
+                //            foreach (var missValue in variable.MissingValues) //if data is equal missing value
+                //            {
+                //                missingValues.Add(missValue.Placeholder);
 
-                    //            }
-                    //            //List<string> missingValues = variable.MissingValues;
-                    //            varVariable varV = new varVariable();
-                    //            varV.varLabel = variable.Label; // variable name
-                    //            varV.varDescription = variable.Description; //variable description
-                    //            varV.varUsage = variable.DataAttribute.UsagesAsVariable.Count() - 1; //How many other data structures are using the same variable template (except current one)
-                    //            varV.varType = variable.DataAttribute.DataType.SystemType; // What is the system type?
-                    //            varV.missing = 100; //suppose 100% is completed
-                    try
-                    {
-                        DataTable table = dm.GetLatestDatasetVersionTuples(datasetId, true); //data tuples
-                        DataColumnCollection columns = table.Columns;
-                        DataRowCollection rows = table.Rows;
+                //            }
+                //            //List<string> missingValues = variable.MissingValues;
+                //            varVariable varV = new varVariable();
+                //            varV.varLabel = variable.Label; // variable name
+                //            varV.varDescription = variable.Description; //variable description
+                //            varV.varUsage = variable.DataAttribute.UsagesAsVariable.Count() - 1; //How many other data structures are using the same variable template (except current one)
+                //            varV.varType = variable.DataAttribute.DataType.SystemType; // What is the system type?
+                //            varV.missing = 100; //suppose 100% is completed
+                //try
+                //{
+                //    DataTable table = dm.GetLatestDatasetVersionTuples(datasetId, true); //data tuples
+                //    DataColumnCollection columns = table.Columns;
+                //    DataRowCollection rows = table.Rows;
 
-                        //                dqModel.datasetTotalSize.currentTotalSize = columns.Count * rows.Count;
-                        dqModel.rowNumber = rows.Count;
-                        dqModel.columnNumber = columns.Count - 4;
-                        //                double min = 0;
-                        //                double max = 0;
-                        //                int missing = rows.Count;
-                        //                bool b = true; //first value
-                        //                Dictionary<string, int> frequency = new Dictionary<string, int>();
-                        //                foreach (DataRow row in rows)
-                        //                {
-                        //                    var value = row.ItemArray[columnNumber];//.ToString();
-                        //                    if (value == null || missingValues.Contains(value.ToString())) //check if cell is emty or contains a missing value
-                        //                    {
-                        //                        missing -= 1;
-                        //                    }
+                //                dqModel.datasetTotalSize.currentTotalSize = columns.Count * rows.Count;
+                //dqModel.rowNumber = rows.Count;
+                //dqModel.columnNumber = columns.Count - 4;
+                //                double min = 0;
+                //                double max = 0;
+                //                int missing = rows.Count;
+                //                bool b = true; //first value
+                //                Dictionary<string, int> frequency = new Dictionary<string, int>();
+                //                foreach (DataRow row in rows)
+                //                {
+                //                    var value = row.ItemArray[columnNumber];//.ToString();
+                //                    if (value == null || missingValues.Contains(value.ToString())) //check if cell is emty or contains a missing value
+                //                    {
+                //                        missing -= 1;
+                //                    }
 
-                        //                    //if value is numeric and it is in the first row
-                        //                    else if (varV.varType != "String" && varV.varType != "DateTime" && varV.varType != "Boolean") //&& varV.varType != "DateTime"
-                        //                    {
-                        //                        if (b == true)
-                        //                        {
-                        //                            min = Convert.ToDouble(value);
-                        //                            max = Convert.ToDouble(value);
-                        //                            b = false;
-                        //                        }
-                        //                        else
-                        //                        {
-                        //                            if (Convert.ToDouble(value) < min) { min = Convert.ToDouble(value); }
-                        //                            if (Convert.ToDouble(value) > max) { max = Convert.ToDouble(value); }
-                        //                        }
-                        //                    }
+                //                    //if value is numeric and it is in the first row
+                //                    else if (varV.varType != "String" && varV.varType != "DateTime" && varV.varType != "Boolean") //&& varV.varType != "DateTime"
+                //                    {
+                //                        if (b == true)
+                //                        {
+                //                            min = Convert.ToDouble(value);
+                //                            max = Convert.ToDouble(value);
+                //                            b = false;
+                //                        }
+                //                        else
+                //                        {
+                //                            if (Convert.ToDouble(value) < min) { min = Convert.ToDouble(value); }
+                //                            if (Convert.ToDouble(value) > max) { max = Convert.ToDouble(value); }
+                //                        }
+                //                    }
 
-                        //                    else //if data type is string or date or bool
-                        //                    {
-                        //                        if (frequency.ContainsKey(value.ToString()))
-                        //                        {
-                        //                            frequency[value.ToString()] += 1;
-                        //                        }
-                        //                        else
-                        //                        {
-                        //                            frequency[value.ToString()] = 1;
-                        //                        }
-                        //                    }
-                        //                }
-                        //                varV.min = min;
-                        //                varV.max = max;
-                        //                if (rows.Count > 0) { varV.missing = 100 * missing / rows.Count; } //% of existing values
-                        //                if (frequency.Count() > 0)
-                        //                {
-                        //                    var sortedDict = from entry in frequency orderby entry.Value ascending select entry;
-                        //                    if (sortedDict.First().Value == 1)
-                        //                    {
-                        //                        varV.uniqueValue = true;
-                        //                        varV.uniqueValueNumber = sortedDict.Count();
-                        //                    }
-                        //                    else
-                        //                    {
-                        //                        varV.uniqueValue = false;
-                        //                        varV.uniqueValueNumber = 0;
-                        //                        varV.mostFrequent = sortedDict.First().Key;
-                        //                    }
-                        //                }
-                        //                varVariables.Add(varV);
-                    }
-                    catch
-                    {
-                        dqModel.datasetTotalSize.currentTotalSize = -1;
-                    }
-                }
-            }
+                //                    else //if data type is string or date or bool
+                //                    {
+                //                        if (frequency.ContainsKey(value.ToString()))
+                //                        {
+                //                            frequency[value.ToString()] += 1;
+                //                        }
+                //                        else
+                //                        {
+                //                            frequency[value.ToString()] = 1;
+                //                        }
+                //                    }
+                //                }
+                //                varV.min = min;
+                //                varV.max = max;
+                //                if (rows.Count > 0) { varV.missing = 100 * missing / rows.Count; } //% of existing values
+                //                if (frequency.Count() > 0)
+                //                {
+                //                    var sortedDict = from entry in frequency orderby entry.Value ascending select entry;
+                //                    if (sortedDict.First().Value == 1)
+                //                    {
+                //                        varV.uniqueValue = true;
+                //                        varV.uniqueValueNumber = sortedDict.Count();
+                //                    }
+                //                    else
+                //                    {
+                //                        varV.uniqueValue = false;
+                //                        varV.uniqueValueNumber = 0;
+                //                        varV.mostFrequent = sortedDict.First().Key;
+                //                    }
+                //                }
+                //                varVariables.Add(varV);
+            //}
+            //        catch
+            //        {
+            //            //dqModel.datasetTotalSize.currentTotalSize = -1;
+            //        }
+            //    }
+            //}
 
             #endregion
 
             #region file format dataset
             // If it is a file format dataset
             else
-            {            
-                List<fileInformation> filesInformation = new List<fileInformation>();
-                if (currentDatasetVersion != null)
+            {
+                List<fileInformation> filesInformations = new List<fileInformation>();
+                string fileLine;
+                fileInformation fileInformation = new fileInformation();
+                string pathFiles = @"C:\Data\DatasetQualities\Files.csv";
+                try
                 {
-                    List<ContentDescriptor> contentDescriptors = currentDatasetVersion.ContentDescriptors.ToList();
-                    double totalSize = 0;
-                    if (contentDescriptors.Count > 0)
+                    StreamReader readerFiles = new StreamReader(pathFiles);
+                    while ((fileLine = readerFiles.ReadLine()) != null)
                     {
-                        foreach (ContentDescriptor cd in contentDescriptors)
+                        string[] fileDetail = fileLine.Split(',');
+                        if (fileDetail[0] == datasetId.ToString())
                         {
-                            if (cd.Name.ToLower().Equals("unstructureddata"))
-                            {
-                                fileInformation fileInformation = new fileInformation();
-                                string uri = cd.URI;
-
-                                //get the file path
-                                try
-                                {
-                                    String path = Server.UrlDecode(uri);
-                                    path = Path.Combine(AppConfiguration.DataPath, path);
-                                    Stream fileStream = System.IO.File.OpenRead(path);
-
-                                    if (fileStream != null)
-                                    {
-                                        FileStream fs = fileStream as FileStream;
-                                        if (fs != null)
-                                        {
-                                            //get file information
-                                            FileInformation fileInfo = new FileInformation(fs.Name.Split('\\').LastOrDefault(), MimeMapping.GetMimeMapping(fs.Name), (uint)fs.Length, uri);
-                                            fileInformation.fileName = fileInfo.Name.Split('.')[0]; //file name
-                                            fileInformation.fileFormat = fileInfo.Name.Split('.')[1].ToLower(); //file extension
-                                            fileInformation.fileSize = fileInfo.Size; //file size
-                                            totalSize += fileInfo.Size;
-                                        }
-                                    }
-                                }
-                                catch
-                                {
-
-                                }
-                                filesInformation.Add(fileInformation);
-                            }
-
+                            fileInformation f = new fileInformation();
+                            f.fileName = fileDetail[1];
+                            f.fileFormat = fileDetail[2];
+                            double d = Convert.ToDouble(fileDetail[3]);
+                            f.fileSize = d;
+                            filesInformations.Add(f);
                         }
                     }
-                    dqModel.fileNumber = contentDescriptors.Count;
-                    dqModel.datasetTotalSize.currentTotalSize = totalSize;
+                    readerFiles.Close();
                 }
-                dqModel.filesInformation = filesInformation;
-            }
+                catch
+                {
+
+                }
+                dqModel.filesInformation = filesInformations;                
+            } 
+
+                //if (currentDatasetVersion != null)
+                //{
+                //    List<ContentDescriptor> contentDescriptors = currentDatasetVersion.ContentDescriptors.ToList();
+                //    double totalSize = 0;
+                //    if (contentDescriptors.Count > 0)
+                //    {
+                //        foreach (ContentDescriptor cd in contentDescriptors)
+                //        {
+                //            if (cd.Name.ToLower().Equals("unstructureddata"))
+                //            {
+                //                fileInformation fileInformation = new fileInformation();
+                //                string uri = cd.URI;
+
+                //                //get the file path
+                //                try
+                //                {
+                //                    String path = Server.UrlDecode(uri);
+                //                    path = Path.Combine(AppConfiguration.DataPath, path);
+                //                    Stream fileStream = System.IO.File.OpenRead(path);
+
+                //                    if (fileStream != null)
+                //                    {
+                //                        FileStream fs = fileStream as FileStream;
+                //                        if (fs != null)
+                //                        {
+                //                            //get file information
+                //                            FileInformation fileInfo = new FileInformation(fs.Name.Split('\\').LastOrDefault(), MimeMapping.GetMimeMapping(fs.Name), (uint)fs.Length, uri);
+                //                            fileInformation.fileName = fileInfo.Name.Split('.')[0]; //file name
+                //                            fileInformation.fileFormat = fileInfo.Name.Split('.')[1].ToLower(); //file extension
+                //                            fileInformation.fileSize = fileInfo.Size; //file size
+                //                            totalSize += fileInfo.Size;
+                //                        }
+                //                    }
+                //                }
+                //                catch
+                //                {
+
+                //                }
+                        //        filesInformation.Add(fileInformation);
+                        //    }
+
+                        //}
+                    //}
+                    //dqModel.fileNumber = contentDescriptors.Count;
+                    //dqModel.datasetTotalSize.currentTotalSize = totalSize;
+                //}
+                //dqModel.filesInformation = filesInformation;
+            //}
             #endregion
 
+            
             return PartialView(dqModel);
         }
 
