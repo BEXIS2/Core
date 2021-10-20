@@ -18,6 +18,7 @@ namespace BExIS.Modules.Dcm.UI.Models
         public String SelectedServerFileName = "";
         public Stream fileStream;
         public DataStructureType DataStructureType;
+        public int MaxFileLength = 256;
 
         public List<string> SupportedFileExtentions = new List<string>();
 

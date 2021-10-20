@@ -38,6 +38,15 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         {
             ViewBag.datasetId = datasetId;
             ViewBag.versionId = versionId;
+
+            //get max file name length
+            // get max file lenght
+            var dataPath = AppConfiguration.DataPath; //Path.Combine(AppConfiguration.WorkspaceRootPath, "Data");
+            var storepath = Path.Combine(dataPath, "Temp", GetUsernameOrDefault());
+
+            ViewBag.maxFileNameLength = 260 - storepath.Length - 2;
+
+
             return PartialView("_datasetAttachements", LoadDatasetModel(versionId));
         }
 

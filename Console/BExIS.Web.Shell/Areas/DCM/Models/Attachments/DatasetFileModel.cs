@@ -18,8 +18,7 @@ namespace BExIS.Modules.Dcm.UI.Models.Attachments
         public bool DeleteAccess { get; set; }
         //only read and download the files, RughtType.Download
         public bool DownloadAccess { get; set; }
-
-
+ 
     }
    
     
