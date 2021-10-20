@@ -581,8 +581,11 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                         //DataTable table = SearchUIHelper.ConvertPrimaryDataToDatatable(dsv, dataTuples);
 
                         DataTable table = null;
+                        // Count "Data" changes between current and latest version   
+                        int numberNewerDataVersions = dm.GetDatasetVersions(datasetID).Where(x => x.Id > versionId).Count(x => x.ModificationInfo.Comment.Contains("Data"));
 
-                        if (latestVersion)
+                        // use MV for latest version and all older versions, if no data has been changed (only metadata)
+                        if (latestVersion || numberNewerDataVersions == 0)
                         {
                             try
                             {
