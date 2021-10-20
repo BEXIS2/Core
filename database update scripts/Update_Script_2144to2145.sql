@@ -2,6 +2,21 @@ BEGIN TRANSACTION;
 
 -- ROLLBACK TRANSACTION;
 
+-- Delete SAM Request Controller --
+Delete from public.operations where module = 'SAM' and Controller = 'Requests';
+
+-- Create Request Fetaure --
+INSERT INTO public.features(
+	versionno, extra, description, name, parentref)
+	VALUES (1, null, '', 'Requests', (Select id from features where name = 'Data Discovery'));
+
+-- Add Request Controller to Request Fetaure --
+INSERT INTO public.operations
+(versionno, extra, "module", controller, "action", featureref)
+VALUES(1, NULL, 'DDM', 'Requests', '*', (
+Select id from features where name = 'Requests' AND parentref = (
+Select id from features where name = 'Data Discovery')));
+
 -- change datatype of Content descriptor uri field to text
 alter table ContentDescriptors alter column URI TYPE text;
 
