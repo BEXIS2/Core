@@ -3,6 +3,7 @@ using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -17,10 +18,13 @@ namespace BExIS.Security.Services.Tests.Utilities
         {
             ConfigurationManager.AppSettings["Email_Host_Name"] = "#";
             ConfigurationManager.AppSettings["Email_Host_Port"] = "#";
+            ConfigurationManager.AppSettings["Email_Host_Anonymous"] = "#";
+            ConfigurationManager.AppSettings["Email_Host_SecureSocketOptions"] = "#";
+            ConfigurationManager.AppSettings["Email_Host_CertificateRevocation"] = "#";
             ConfigurationManager.AppSettings["Email_Account_Name"] = "#";
             ConfigurationManager.AppSettings["Email_Account_Password"] = "#";
-            ConfigurationManager.AppSettings["Email_From_Name"] = "Max Mustermann";
-            ConfigurationManager.AppSettings["Email_From_Address"] = "max.mustermann@bexis.bexis";
+            ConfigurationManager.AppSettings["Email_From_Name"] = "#";
+            ConfigurationManager.AppSettings["Email_From_Address"] = "#";
         }
 
         [SetUp]
@@ -41,9 +45,14 @@ namespace BExIS.Security.Services.Tests.Utilities
         [Test]
         public void Send()
         {
-            //EmailService emailService = new EmailService();
+            var file = new FileInfo("c:\\complete\\path\\to\\file.extension");
 
-            //emailService.Send("subject_test", "Hallo again!? Emails are working now!", "david.schoene@uni-jena.de");
+            var files = new List<FileInfo>();
+            files.Add(file);
+
+            EmailService emailService = new EmailService();
+
+            emailService.Send("subject_test", "Hallo again!? Emails are working now!", new List<string>(){ "m6thsv2@googlemail.com"} , null, null, null, files);
         }
 
         /*
