@@ -34,4 +34,16 @@ INSERT INTO public.versions(
 	versionno, extra, module, value, date)
 	VALUES (1, null, 'Shell', '2.14.5',NOW());
 
+-- set m_comment for datasetversions 
+-- if a datasetversion is linked with datatuples, this means the version change belongs data
+UPDATE public.datasetversions
+	SET m_comment='Data'
+	WHERE id in (SELECT dsv.id
+FROM public.datasetversions as dsv 
+where 
+m_comment IS NULL 
+and
+(Select count(id) from public.datatuples where datasetversionref = dsv.id) > 0);
+
+
 COMMIT;
