@@ -1,6 +1,6 @@
 # BEXIS 2.14.5 Release Notes
 
-Attention: Changes were mad in the web.config in line: 72 (see [#803](https://github.com/BEXIS2/Core/issues/803))
+Attention: Changes were made in the web.config in line: 72 (see [#803](https://github.com/BEXIS2/Core/issues/803))
 
 ### Features
 
@@ -11,6 +11,10 @@ Attention: Changes were mad in the web.config in line: 72 (see [#803](https://gi
 - Replace "Show Data/Dataset" by the current entity name (e.g. Publication) ([#769](https://github.com/BEXIS2/Core/issues/769))
 - Sort users descending by id (manage parties)([#806](https://github.com/BEXIS2/Core/issues/806))
 - Sort data structures descending by id ([#807](https://github.com/BEXIS2/Core/issues/807))
+- Sort users descending by id ([#826](https://github.com/BEXIS2/Core/issues/826))
+- Permission Requests: User without request features rights should not be able to send requests ([#809](https://github.com/BEXIS2/Core/issues/809))
+- Prevent newer metadata versions do not use materialized view, although data has not changed ([#823](https://github.com/BEXIS2/Core/issues/823))
+- EmailService allows optional attachments [#814](https://github.com/BEXIS2/Core/issues/814))
   
 ### Bugs
 - Fix only a maximum of 100 variables possible inside a data structure (max size of JSON objects too small) ([#803](https://github.com/BEXIS2/Core/issues/803))
@@ -27,6 +31,8 @@ Attention: Changes were mad in the web.config in line: 72 (see [#803](https://gi
 - Fix image view can not be closed (unstructured data) ([#797](https://github.com/BEXIS2/Core/issues/797))
 - Fix primary data of unstructured datasets are not visible without rights in public data view ([#799](https://github.com/BEXIS2/Core/issues/799))
 - Fix download notification are send on image preview ([#767](https://github.com/BEXIS2/Core/issues/767))
+- Fix dataset download as Excel for > 1 Mio for Datasets should not be allowed ([#825](https://github.com/BEXIS2/Core/issues/825))
+- Fix default execution time for SQL statements by default only 60 seconds (now 3 minutes) ([#816](https://github.com/BEXIS2/Core/issues/816))
 
 ## I. Software Information
 
