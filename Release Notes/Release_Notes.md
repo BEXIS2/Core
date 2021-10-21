@@ -11,6 +11,7 @@ Attention: Changes were made in the web.config in line: 72 (see [#803](https://g
 - Replace "Show Data/Dataset" by the current entity name (e.g. Publication) ([#769](https://github.com/BEXIS2/Core/issues/769))
 - Sort users descending by id (manage parties)([#806](https://github.com/BEXIS2/Core/issues/806))
 - Sort data structures descending by id ([#807](https://github.com/BEXIS2/Core/issues/807))
+- Sort users descending by id ([#826](https://github.com/BEXIS2/Core/issues/826))
 - Permission Requests: User without request features rights should not be able to send requests ([#809](https://github.com/BEXIS2/Core/issues/809))
 - Prevent newer metadata versions do not use materialized view, although data has not changed ([#823](https://github.com/BEXIS2/Core/issues/823))
 - EmailService allows optional attachments [#814](https://github.com/BEXIS2/Core/issues/814))
