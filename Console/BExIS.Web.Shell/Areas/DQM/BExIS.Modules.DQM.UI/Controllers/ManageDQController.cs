@@ -270,31 +270,35 @@ namespace BExIS.Modules.DQM.UI.Controllers
 
                                         int varMissing = 100; //suppose 100% is completed
                                         try
-                                        {                                            
-                                            int missing = rowss.Count;
-                                            foreach (DataRow row in rowss)
+                                        {
+                                            if (rowss.Count > 0)
                                             {
-                                                var value = row.ItemArray[columnNumber];//.ToString();
-                                                if (value == null || missingValues.Contains(value.ToString())) //check if cell is emty or contains a missing value
+                                                int missing = rowss.Count;
+                                                foreach (DataRow row in rowss)
                                                 {
-                                                    missing -= 1;
-                                                }                                                
-                                            }
-                                            if (rowss.Count > 0) 
-                                            { 
+                                                    var value = row.ItemArray[columnNumber];//.ToString();
+                                                    if (value == null || missingValues.Contains(value.ToString())) //check if cell is emty or contains a missing value
+                                                    {
+                                                        missing -= 1;
+                                                    }                                                
+                                                }
                                                 varMissing = 100 * missing / rowss.Count; //% of existing values  
-                                            }                                           
+                                            }
+                                            else
+                                            {
+                                                varMissing = 0;
+                                            }
                                         }
                                         catch
                                         {
-                                            
+                                            varMissing = 0;
                                         }
                                         string variableLine = datasetId + ","               //0: dataset Id
                                             + variable.Label + ","                          //1: variable name
                                             + varType + ","                                 //2: data type
                                             + variable.Description.Count() + ","            //3: variable description length
                                             + varUse + ","                                  //4: variable usage                                            
-                                            + varMissing;                                   //5: missing values
+                                            + varMissing;                                   //5: % completed
                                         writerVariable.WriteLine(variableLine);
                                     }
                                 }
