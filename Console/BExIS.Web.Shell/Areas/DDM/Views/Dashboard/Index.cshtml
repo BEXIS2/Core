@@ -85,16 +85,16 @@
         /****Dashboard*****/
 
         $(".request").click(function () {
-            var id = $(this).attr("entityid");
-            console.log(id);
+            var entityId = $(this).attr("entityid");
+            console.log(entityId);
 
             $(".bold-option").removeClass("bold-option");
             $(this).addClass("bold-option");
 
             $("#dashboard_content").preloader("..loading requests");
 
-            $.get("/ddm/dashboard/requests",
-                { id },
+            $.get("/ddm/requests/requests",
+                { entityId },
                 function (data, textStatus, jqXHR) {
                     $("#dashboard_content").html(data);
                 }
@@ -102,16 +102,16 @@
         });
 
         $(".decision").click(function () {
-            var id = $(this).attr("entityid");
-            console.log(id);
+            var entityId = $(this).attr("entityid");
+            console.log(entityId);
 
             $(".bold-option").removeClass("bold-option");
             $(this).addClass("bold-option");
 
             $("#dashboard_content").preloader("..loading decisions");
 
-            $.get("/ddm/dashboard/decisions",
-                { id },
+            $.get("/ddm/requests/decisions",
+                { entityId },
                 function (data, textStatus, jqXHR) {
                     $("#dashboard_content").html(data);
                 }

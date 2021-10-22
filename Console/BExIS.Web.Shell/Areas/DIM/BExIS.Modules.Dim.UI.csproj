@@ -352,7 +352,6 @@
     <Compile Include="Models\Api\ApiModels.cs" />
     <Compile Include="Models\DatasetModel.cs" />
     <Compile Include="Models\DatasetVersionModel.cs" />
-    <Compile Include="Models\DataTupleCsvFormatter.cs" />
     <Compile Include="Models\Export\SimpleDataStructureModel.cs" />
     <Compile Include="Models\Mapping\LinkElementModels.cs" />
     <Compile Include="Models\Mapping\MappingModel.cs" />

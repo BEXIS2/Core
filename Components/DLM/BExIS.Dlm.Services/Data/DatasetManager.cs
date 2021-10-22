@@ -3010,11 +3010,11 @@ namespace BExIS.Dlm.Services.Data
                         ds.Versions.Remove(dsv);
                     }
 
-                    //// take the dataset back to the checked in status
-                    //ds.Status = DatasetStatus.CheckedIn;
-                    ////var previous = ds.Versions.OrderByDescending(t => t.Timestamp).FirstOrDefault(p => p.Status == DatasetVersionStatus.CheckedIn);
-                    //ds.LastCheckIOTimestamp = timestamp;
-                    //ds.CheckOutUser = string.Empty;
+                    // take the dataset back to the checked in status
+                    ds.Status = DatasetStatus.CheckedIn;
+                    //var previous = ds.Versions.OrderByDescending(t => t.Timestamp).FirstOrDefault(p => p.Status == DatasetVersionStatus.CheckedIn);
+                    ds.LastCheckIOTimestamp = timestamp;
+                    ds.CheckOutUser = string.Empty;
 
                     if (commit)
                     {

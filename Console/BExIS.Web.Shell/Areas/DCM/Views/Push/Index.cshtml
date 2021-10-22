@@ -29,6 +29,8 @@
             fileExtListAsString = s;
         }
     }
+
+    int maxFileNameLength = (int)(ViewBag.maxFileNameLength);
 }
 
 <div id="push">
@@ -82,20 +84,25 @@
 
         var maxsize = '@mbMax';
 
-        if (e.files.length == 0) {
-            $('#push_submitBt').addClass("bx-disabled");
-            $('#push_submitBt').attr("disabled", "disabled");
-        } else {
-            $('#push_submitBt').removeClass("bx-disabled");
-            $('#push_submitBt').removeAttr("disabled");
-        }
+      
 
         for (var i = 0; i < e.files.length; i = i + 1) {
 
             var file = e.files[i];
+
+            // check file name lenght
+            var filenamelength = '@maxFileNameLength';
+
+            if (file.name.length >= filenamelength) {
+
+                alert("The filename is too long.\nThe maximum allowed file name length is " + filenamelength + ". The name of your file is currently " + file.name.length +" long.\nPlease change your file name and try it again." )
+                e.preventDefault();
+                return false;
+            }
+
             //console.log(file.extension);
             if (!IsExtentionValid(file.extension)) {
-                
+
                 alert("File : " + file.name + ";\n" + "Only " + '@fileExtListAsString' + "/n files can be uploaded")
                 e.preventDefault();
                 return false;
@@ -115,6 +122,14 @@
                     return false;
                 }
             }
+        }
+
+        if (e.files.length == 0) {
+            $('#push_submitBt').addClass("bx-disabled");
+            $('#push_submitBt').attr("disabled", "disabled");
+        } else {
+            $('#push_submitBt').removeClass("bx-disabled");
+            $('#push_submitBt').removeAttr("disabled");
         }
     }
 

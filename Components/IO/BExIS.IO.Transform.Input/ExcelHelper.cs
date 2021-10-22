@@ -122,7 +122,7 @@ namespace BExIS.IO.Transform.Input
                 {
                     if (output.ToString().ToLower().Contains("e"))
                     {
-                        return output.ToString("0.00E+00");
+                        return output.ToString("0.00E+00", ci);
                     }
 
                     long tmp = System.Convert.ToInt64(output);
@@ -138,7 +138,7 @@ namespace BExIS.IO.Transform.Input
                     //if its scientific data then return the cell value
                     //if (formatCode.ToLower().Contains("e")) return cellValue;
 
-                    return output.ToString(formatCode);
+                    return output.ToString(formatCode,ci);
                 }
             }
 

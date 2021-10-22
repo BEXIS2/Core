@@ -52,10 +52,6 @@ namespace BExIS.Dlm.Tests.Entities.DataStructure
             constraint.IsSatisfied("ab123").Should().Be(false, "should be false because : value = ab123 & regex= " + matchingPhrase + " is not matching.");
             constraint.IsSatisfied("Abc").Should().Be(false, "should be false because : value = Abc & regex= " + matchingPhrase + " is not matching.");
 
-
-
         }
-
-
     }
 }

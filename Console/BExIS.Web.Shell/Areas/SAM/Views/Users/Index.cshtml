@@ -59,8 +59,8 @@
 })
 .Sortable(sortable => sortable
    .OrderBy(orderby => orderby
-       .Add(m => m.Name)
-       .Ascending()
+       .Add(m => m.Id)
+       .Descending()
    )
 )
 )

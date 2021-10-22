@@ -11,6 +11,7 @@ using System.Security.Authentication;
 using MailKit;
 using System;
 using MailKit.Security;
+using System.IO;
 
 namespace BExIS.Security.Services.Utilities
 {
@@ -45,7 +46,7 @@ namespace BExIS.Security.Services.Utilities
             }
         }
 
-        public void Send(string subject, string body, List<string> destinations, List<string> ccs = null, List<string> bccs = null, List<string> replyTos = null)
+        public void Send(string subject, string body, List<string> destinations, List<string> ccs = null, List<string> bccs = null, List<string> replyTos = null, List<FileInfo> attachments = null)
         {
             var mimeMessage = new MimeMessage();
 
@@ -59,14 +60,30 @@ namespace BExIS.Security.Services.Utilities
             if (replyTos != null)
                 mimeMessage.ReplyTo.AddRange(replyTos.Select(r => new MailboxAddress(r, r)));
             mimeMessage.Subject = AppConfiguration.ApplicationName + " - " + subject;
-            mimeMessage.Body = new TextPart(MimeKit.Text.TextFormat.Html) { Text = body };
+
+            var builder = new BodyBuilder();
+            builder.HtmlBody = body;
+
+            if(attachments != null)
+            {
+                foreach (var attachment in attachments)
+                {
+                    if (attachment.Length > 0)
+                    {
+                        string fileName = Path.GetFileName(attachment.Name);
+                        builder.Attachments.Add(fileName, attachment.OpenRead());
+                    }
+                }
+            }
+
+            mimeMessage.Body = builder.ToMessageBody();
 
             Send(mimeMessage);
         }
 
         public void Send(string subject, string body, string destination)
         {
-            Send(subject, body, new List<string>() { destination }, null, null, null);
+            Send(subject, body, new List<string>() { destination }, null, null, null, null);
         }
 
         public void Send(IdentityMessage message)

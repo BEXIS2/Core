@@ -157,7 +157,7 @@ namespace IDIV.Modules.Mmm.UI.Controllers
             }
         }
 
-        public FileResult getFile(string path)
+        public FileResult getFile(string path, string send_mail = "true")
         {
             path = Server.UrlDecode(path);
             if (FileHelper.FileExist(Path.Combine(AppConfiguration.DataPath, path)))
@@ -184,16 +184,18 @@ namespace IDIV.Modules.Mmm.UI.Controllers
                         // by download only the files, the user need to know th edataset id and the version number
                         int versionNr = datasetManager.GetDatasetVersionNr(datasetInfo.DatasetVersionId);
                         string filename = datasetInfo.DatasetId + "_" + versionNr + "_" + fileInfo.Name;
-                        
+
                         string message = string.Format("File from {0} version {1} was downloaded: {2}.", datasetID, versionNr, filename);
                         LoggerFactory.LogCustom(message);
 
                         var es = new EmailService();
-                        es.Send(MessageHelper.GetFileDownloadHeader(datasetID, versionNr),
-                            MessageHelper.GetFileDownloadMessage(GetUsernameOrDefault(), datasetID, fileInfo.Name),
-                            ConfigurationManager.AppSettings["SystemEmail"]
-                            );
-
+                        if (send_mail == "true")
+                        {
+                            es.Send(MessageHelper.GetFileDownloadHeader(datasetID, versionNr),
+                                MessageHelper.GetFileDownloadMessage(GetUsernameOrDefault(), datasetID, fileInfo.Name),
+                                ConfigurationManager.AppSettings["SystemEmail"]
+                                );
+                        }
                         return File(path, MimeMapping.GetMimeMapping(fileInfo.Name), filename);
                     }
                     else

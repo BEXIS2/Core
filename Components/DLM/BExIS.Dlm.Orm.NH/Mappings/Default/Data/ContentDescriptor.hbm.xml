@@ -29,8 +29,8 @@
       <column name="Name" index="idx_ContentDescriptors_id"/>
     </property>
 
-    <property name="URI" type="String">
-      <column name="URI" />
+    <property name="URI" type="StringClob">
+      <column name="URI"  sql-type="text"/>
     </property>
 
     <many-to-one class="DatasetVersion" name="DatasetVersion" column="DatasetVersionRef" not-null="true">      

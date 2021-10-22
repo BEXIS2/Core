@@ -52,13 +52,13 @@
                     {<b>(*@s) </b>} }
             </p>
             <p>Maximum file size: @mbMax MB</p>
+            <p>Maximum file name length: @Model.MaxFileLength</p>
         </div>
 
         <div class="uploadWizardStep_Content stepper">
 
             <table>
                 <tr>
-
                     <td>
                         @(Html.Telerik().Upload()
                                             .Name("SelectFileUploader")
@@ -163,7 +163,16 @@
         var structuredType = '@DataStructureType.Structured';
         var unStructuredType = '@DataStructureType.Unstructured';
 
-        if( type == structuredType)
+        var file = e.files[0];
+        var filenamelength = '@Model.MaxFileLength';
+
+        if (file.name.length >= filenamelength) {
+
+            alert("The filename is too long.\nThe maximum allowed file name length is " + filenamelength + ". The name of your file is currently " + file.name.length +" long.\nPlease change your file name and try it again." )
+            return false;
+        }
+
+        if (type == structuredType)
         {
             structuredDataSet(e)
         }
