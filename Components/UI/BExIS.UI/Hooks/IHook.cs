@@ -13,6 +13,6 @@ namespace BExIS.UI.Hooks
         /// This function checks if the existing information about an entity changes the 
         /// hookStatus or the start action of the hook. 
         /// </summary>
-        void Check();
+        void Check(long datasetId, string username);
     }
 }

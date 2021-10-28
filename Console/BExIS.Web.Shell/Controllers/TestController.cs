@@ -1215,13 +1215,11 @@ namespace BExIS.Web.Shell.Controllers
             //Arrange
             HookManager hookManager = new HookManager();
 
-            Assembly[] assemblies = AppDomain.CurrentDomain.GetAssemblies();
+            var l = hookManager.GetHooksFor("dataset", "details", HookMode.edit);
+            var metadataHook = l.FirstOrDefault();
+            metadataHook.Check(1, "david");
 
-            var x = Assembly.Load("BExIS.Modules.Dcm.UI");
 
-
-            //Act
-            var l = hookManager.GetHooksFor("dataset", "details",HookMode.edit);
             return View();
         }
     }

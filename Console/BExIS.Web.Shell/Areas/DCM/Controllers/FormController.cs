@@ -49,6 +49,11 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         private MetadataStructureUsageHelper metadataStructureUsageHelper = new MetadataStructureUsageHelper();
         private XmlDatasetHelper xmlDatasetHelper = new XmlDatasetHelper();
 
+        public ActionResult Start(long id)
+        { 
+            return RedirectToAction("EditMetadata", "Form", new { entityId = id, locked = false, created = false});
+        }
+
         #region Load Metadata formular actions
 
         [BExISEntityAuthorize(typeof(Dataset), "datasetId", RightType.Write)]

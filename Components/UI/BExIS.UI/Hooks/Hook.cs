@@ -1,4 +1,10 @@
-﻿using System;
+﻿using BExIS.Dlm.Entities.Data;
+using BExIS.Security.Entities.Authorization;
+using BExIS.Security.Entities.Subjects;
+using BExIS.Security.Services.Authorization;
+using BExIS.Security.Services.Objects;
+using BExIS.Security.Services.Subjects;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -13,7 +19,6 @@ namespace BExIS.UI.Hooks
         /// the name of the hook
         /// </summary>
         public string Name { get; set; }
-
 
         /// <summary>
         /// the Status selected from teh HookStatus Enum
@@ -43,13 +48,42 @@ namespace BExIS.UI.Hooks
         /// <returns></returns>
         public string Place { get; set; }
 
-        public virtual void Check()
-        {
-            // check status
-            // set entrypoint
+        /// <summary>
+        /// Start action where the workflow behind begins
+        /// </summary>
+        /// <returns></returns>
+        public string Start { get; set; }
 
+        public virtual void Check(long datasetId, string username)
+        {
             throw new NotImplementedException();
         }
+
+        protected bool hasUserAccessRights(string username)
+        {
+            using (FeaturePermissionManager featurePermissionManager = new FeaturePermissionManager())
+            {
+                return featurePermissionManager.HasAccess<User>(username, Start.Split('/')[0], Start.Split('/')[1], "*");
+            }
+        }
+
+
+        /// <summary>
+        /// return true if user has edit rights
+        /// </summary>
+        /// <returns></returns>
+        protected bool hasUserEntityRights(long entityId,string userName, RightType rightType)
+        {
+            #region security permissions and authorisations check
+
+            using (EntityPermissionManager entityPermissionManager = new EntityPermissionManager())
+            {
+                return entityPermissionManager.HasEffectiveRight(userName, typeof(Dataset), entityId, rightType);
+            }
+
+            #endregion security permissions and authorisations check
+        }
+
 
         public Hook() {
             Name = "";
@@ -57,6 +91,7 @@ namespace BExIS.UI.Hooks
             Entity = "";
             Module = "";
             Place = "";
+            Start = "";
         }
 
 }
