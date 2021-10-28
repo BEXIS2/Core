@@ -10,10 +10,12 @@ using BExIS.Security.Entities.Subjects;
 using BExIS.Security.Services.Authorization;
 using BExIS.Security.Services.Requests;
 using BExIS.Security.Services.Subjects;
+using BExIS.UI.Hooks;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using System.Reflection;
 using System.Web.Mvc;
 using Vaiona.Persistence.Api;
 using Vaiona.Web.Mvc;
@@ -1205,6 +1207,22 @@ namespace BExIS.Web.Shell.Controllers
         private void unit_BeforeCommit(object sender, EventArgs e)
         {
             //throw new NotImplementedException();
+        }
+
+
+        public ActionResult CheckActivator()
+        {
+            //Arrange
+            HookManager hookManager = new HookManager();
+
+            Assembly[] assemblies = AppDomain.CurrentDomain.GetAssemblies();
+
+            var x = Assembly.Load("BExIS.Modules.Dcm.UI");
+
+
+            //Act
+            var l = hookManager.GetHooksFor("dataset", "details",HookMode.edit);
+            return View();
         }
     }
 }
