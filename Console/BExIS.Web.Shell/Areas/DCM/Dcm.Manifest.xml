@@ -81,4 +81,15 @@
                 controller="EntityReference" action="Show"
                 extends="" />
   </Exports>
+	
+  <!-- fill out alle the hook aatributes otherwise there will not be loaded -->
+  <Hooks>
+	  <Hook 
+		  name="metadata" 
+		  mode="edit" 
+		  entity="dataset" 
+		  place="details"
+		  module="dcm"
+		  type="BExIS.Modules.Dcm.UI.Hooks.MetadataEditHook, BExIS.Modules.DCM.UI, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" />
+  </Hooks>
 </Manifest>
