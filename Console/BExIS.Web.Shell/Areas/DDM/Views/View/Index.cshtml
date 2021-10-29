@@ -1,0 +1,11 @@
+﻿@model List<BExIS.UI.Hooks.Hook>
+
+
+@foreach (var h in @Model)
+{
+    var area = h.Start.Split('/')[0];
+    var controller = h.Start.Split('/')[1];
+    var action = h.Start.Split('/')[2];
+
+    @Html.ActionLink(h.Name, action, controller, new { area = area, id = 2 }, null)
+}
