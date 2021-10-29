@@ -193,6 +193,7 @@
     <Compile Include="Controllers\API\DataInController.cs" />
     <Compile Include="Controllers\API\DatasetInController.cs" />
     <Compile Include="Controllers\API\MetadataInController.cs" />
+    <Compile Include="Controllers\EditController.cs" />
     <Compile Include="Controllers\Legacy\AttachmentsController.cs" />
     <Compile Include="Controllers\Legacy\CreateDatasetController.cs" />
     <Compile Include="Controllers\Legacy\EasyUploadController.cs" />
@@ -230,7 +231,7 @@
     <Compile Include="Helpers\SettingsHelper.cs" />
     <Compile Include="Helpers\SystemMetadataHelper.cs" />
     <Compile Include="Helpers\UploadUIHelper.cs" />
-    <Compile Include="Hooks\MetadataEditHook.cs" />
+    <Compile Include="Hooks\MetadataHook.cs" />
     <Compile Include="Models\AbstractStepModel.cs" />
     <Compile Include="Models\API\ApiModels.cs" />
     <Compile Include="Models\Attachments\DatasetFileModel.cs" />
@@ -572,6 +573,7 @@
     <None Include="Properties\PublishProfiles\BexisServer_demo.pubxml" />
     <None Include="Properties\PublishProfiles\BexisServer_test.pubxml" />
     <None Include="Properties\PublishProfiles\FolderProfile.pubxml" />
+    <Content Include="Views\Edit\Index.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

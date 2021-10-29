@@ -49,9 +49,10 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         private MetadataStructureUsageHelper metadataStructureUsageHelper = new MetadataStructureUsageHelper();
         private XmlDatasetHelper xmlDatasetHelper = new XmlDatasetHelper();
 
+        [BExISEntityAuthorize(typeof(Dataset), "id", RightType.Write)]
         public ActionResult Start(long id)
         { 
-            return RedirectToAction("EditMetadata", "Form", new { entityId = id, locked = false, created = false});
+            return RedirectToAction("LoadMetadata", "Form", new { entityId = id, locked = false, created = false, fromEditMode = true });
         }
 
         #region Load Metadata formular actions
@@ -253,7 +254,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
             #endregion
 
-            return PartialView("MetadataEditor", Model);
+            return View("MetadataEditor", Model);
         }
 
         public ActionResult LoadMetadataFromExternal(long entityId, string title, long metadatastructureId, long datastructureId = -1, long researchplanId = -1, string sessionKeyForMetadata = "", bool resetTaskManager = false, bool latest = true, string isValid = "yes")

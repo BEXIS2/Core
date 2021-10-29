@@ -7,9 +7,9 @@ using System.Web;
 
 namespace BExIS.Modules.Dcm.UI.Hooks
 {
-    public class MetadataEditHook : Hook
+    public class MetadataHook : Hook
     {
-        public MetadataEditHook()
+        public MetadataHook()
         {
             Start = "dcm/form/start";
         }
@@ -25,9 +25,11 @@ namespace BExIS.Modules.Dcm.UI.Hooks
         {
             // check if the user has access rights to the entrypoint - set in Start
             bool hasAccess = hasUserAccessRights(username);
-            // user rights
+
+            // user rights to the dataset
             bool hasRights = hasUserEntityRights(datasetId,username,RightType.Write);
 
+            // if one fail then access is denied
             if(hasAccess == false || hasRights == false) Status = HookStatus.AccessDenied;
         }
 
