@@ -1,5 +1,20 @@
 ﻿@model List<BExIS.UI.Hooks.Hook>
 
+@{
+    long id = 0;
+    long version = 0;
+
+    if (ViewBag.id != null)
+    {
+        id = (long)ViewBag.id;
+    }
+
+    if (ViewBag.version != null)
+    {
+        version = (long)ViewBag.version;
+    }
+
+}
 
 @foreach (var h in @Model)
 {
@@ -7,5 +22,5 @@
     var controller = h.Start.Split('/')[1];
     var action = h.Start.Split('/')[2];
 
-    @Html.ActionLink(h.Name,action,controller,new { area=area, id=2 }, null)
+    <p>@Html.ActionLink(h.Name, action, controller, new { area, id, version }, null)  - <b>@h.Status.ToString()</b></p>
 }

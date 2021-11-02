@@ -145,10 +145,13 @@ namespace BExIS.Modules.Dcm.UI.Helpers
 
                 operationManager.Create("DCM", "CreateDataset", "*", DatasetCreationFeature);
                 operationManager.Create("DCM", "Form", "*");
+
                 operationManager.Create("Api", "DatasetIn", "*", DatasetCreationFeature);
                 operationManager.Create("Api", "Dataset", "*", DatasetCreationFeature);
                 operationManager.Create("Api", "MetadataIn", "*", DatasetCreationFeature);
                 operationManager.Create("Api", "Metadata", "*", DatasetCreationFeature);
+
+                operationManager.Create("DCM", "Edit", "*");
 
                 #endregion Create Dataset Workflow
 
@@ -161,6 +164,7 @@ namespace BExIS.Modules.Dcm.UI.Helpers
                 operationManager.Create("DCM", "SubmitSpecifyDataset", "*", DatasetUploadFeature);
                 operationManager.Create("DCM", "SubmitSummary", "*", DatasetUploadFeature);
                 operationManager.Create("DCM", "SubmitValidation", "*", DatasetUploadFeature);
+                
 
                 //Load files to server
                 operationManager.Create("DCM", "Push", "*", DatasetUploadFeature);
@@ -169,6 +173,10 @@ namespace BExIS.Modules.Dcm.UI.Helpers
                 operationManager.Create("Api", "Data", "*", DatasetUploadFeature);
                 operationManager.Create("Api", "AttachmentIn", "*", DatasetUploadFeature);
                 operationManager.Create("Api", "Attachment", "*", DatasetUploadFeature);
+
+
+                // for hooks
+                operationManager.Create("DCM", "FileUpload", "*", DatasetUploadFeature);
 
                 #endregion Update Dataset Workflow
 

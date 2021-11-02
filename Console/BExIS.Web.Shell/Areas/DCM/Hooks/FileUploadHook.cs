@@ -7,11 +7,11 @@ using System.Web;
 
 namespace BExIS.Modules.Dcm.UI.Hooks
 {
-    public class MetadataHook : Hook
+    public class FileUploadHook : Hook
     {
-        public MetadataHook()
+        public FileUploadHook()
         {
-            Start = "dcm/form/start";
+            Start = "dcm/fileupload/start";
         }
 
         public override void Check(long id, string username)

@@ -194,6 +194,7 @@
     <Compile Include="Controllers\API\DatasetInController.cs" />
     <Compile Include="Controllers\API\MetadataInController.cs" />
     <Compile Include="Controllers\EditController.cs" />
+    <Compile Include="Controllers\FileUploadController.cs" />
     <Compile Include="Controllers\Legacy\AttachmentsController.cs" />
     <Compile Include="Controllers\Legacy\CreateDatasetController.cs" />
     <Compile Include="Controllers\Legacy\EasyUploadController.cs" />
@@ -231,6 +232,7 @@
     <Compile Include="Helpers\SettingsHelper.cs" />
     <Compile Include="Helpers\SystemMetadataHelper.cs" />
     <Compile Include="Helpers\UploadUIHelper.cs" />
+    <Compile Include="Hooks\FileUploadHook.cs" />
     <Compile Include="Hooks\MetadataHook.cs" />
     <Compile Include="Models\AbstractStepModel.cs" />
     <Compile Include="Models\API\ApiModels.cs" />
@@ -584,6 +586,7 @@
   <ItemGroup>
     <Folder Include="Content\Images\" />
     <Folder Include="Views\DcmAdmin\" />
+    <Folder Include="Views\FileUpload\" />
     <Folder Include="Views\Home\" />
   </ItemGroup>
   <ItemGroup>

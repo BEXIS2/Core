@@ -54,7 +54,7 @@ namespace BExIS.UI.Hooks
         /// <returns></returns>
         public string Start { get; set; }
 
-        public virtual void Check(long datasetId, string username)
+        public virtual void Check(long id, string username)
         {
             throw new NotImplementedException();
         }

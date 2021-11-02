@@ -50,7 +50,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         private XmlDatasetHelper xmlDatasetHelper = new XmlDatasetHelper();
 
         [BExISEntityAuthorize(typeof(Dataset), "id", RightType.Write)]
-        public ActionResult Start(long id)
+        public ActionResult Start(long id, int version)
         { 
             return RedirectToAction("LoadMetadata", "Form", new { entityId = id, locked = false, created = false, fromEditMode = true });
         }

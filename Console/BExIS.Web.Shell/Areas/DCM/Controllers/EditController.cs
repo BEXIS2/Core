@@ -10,10 +10,14 @@ namespace BExIS.Modules.Dcm.UI.Controllers
     public class EditController : Controller
     {
         // GET: Edit
-        public ActionResult Index()
+        public ActionResult Index(long id, int version = 0)
         {
+            ViewBag.id = id;
+            ViewBag.version = version;
+
             HookManager hooksManager = new HookManager();
             var hooks = hooksManager.GetHooksFor("dataset", "details", HookMode.edit);
+
 
             return View(hooks);
         }
