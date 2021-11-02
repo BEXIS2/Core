@@ -1,4 +1,5 @@
 ﻿using BExIS.UI.Helpers;
+using BExIS.Web.Shell.Models;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
@@ -20,11 +21,27 @@ namespace BExIS.Web.Shell.Controllers
         [HttpGet]
         public JsonResult Get()
         {
-            List<string> ids = new List<string>();
+            List<object> modules = new List<object>();
 
-            ids = ModuleManager.ModuleInfos.Where(m => ModuleManager.IsActive(m.Id)).Select(m => m.Id).ToList();
+            foreach (var m in ModuleManager.ModuleInfos.Where(m => ModuleManager.IsActive(m.Id)))
+            {
+                ModulModel module = new ModulModel();
+                module.Id = m.Id;
 
-            return Json(ids, JsonRequestBehavior.AllowGet);
+                // get displayname from manifest file root node
+                var xmldoc = m.Manifest.ManifestDoc;
+
+                if (xmldoc.Attribute("displayName") != null) 
+                    module.Title = xmldoc.Attribute("displayName").Value;
+                else 
+                    module.Title = m.Id;
+
+                module.Description = m.Manifest.Description;
+
+                modules.Add(module);
+            }
+
+            return Json(modules, JsonRequestBehavior.AllowGet);
 
         }
 
