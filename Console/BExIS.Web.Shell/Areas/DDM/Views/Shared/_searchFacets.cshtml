@@ -151,7 +151,7 @@
             var detailWindow = $("#MoreWindow").data("tWindow");
 
 
-            $.post('@Url.Action("ShowMoreWindow", "Home")',
+            $.post('@Url.Action("ShowMoreWindow", @controller)',
                 { parent: parent },
                 function(response) {
                     $("#search_more").html(response);
