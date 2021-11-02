@@ -7,11 +7,11 @@ using System.Web;
 
 namespace BExIS.Modules.Ddm.UI.Hooks
 {
-    public class MetadataHook : Hook
+    public class DataHook : Hook
     {
-        public MetadataHook()
+        public DataHook()
         {
-            Start = "ddm/view/start";
+            Start = "ddm/view/startData";
         }
 
         public override void Check(long id, string username)

@@ -93,5 +93,12 @@
 		    place="details"
 		    module="ddm"
 		    type="BExIS.Modules.Ddm.UI.Hooks.MetadataHook, BExIS.Modules.DDM.UI, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" />
+		<Hook
+		    name="data"
+		    mode="view"
+		    entity="dataset"
+		    place="details"
+		    module="ddm"
+		    type="BExIS.Modules.Ddm.UI.Hooks.DataHook, BExIS.Modules.DDM.UI, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" />
     </Hooks>
 </Manifest>
