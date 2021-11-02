@@ -4,16 +4,25 @@
 	<entry key="optionalDefault" value="true" type="Boolean" description="..."/>
 	<entry key="showCreateVariableTemplate" value="true" type="Boolean" description="Show -Create Variable Template- on data structure edit"/>
 	
-	<list key="name" value="missingvalues">
-		<item key="placeholder" value="na" type="String" description="not available"></item>
-	</list>
-	
-  <missingValues>
-    <missingValue>
-      <placeholder>na</placeholder>
-      <description>not available</description>
-    </missingValue>
-  </missingValues>
-  <optionalDefault>true</optionalDefault>
-  <showCreateVariableTemplate description="Show -Create Variable Template- on data structure edit">true</showCreateVariableTemplate>
+	<entry key="name" value="missingvalues" type="list" description="placeholder... description...">
+		<item>
+			<attribute key="placeholder" value="na" type="String" />
+			<attribute key="description" value="not available" type="String"/>
+		</item>
+		<item>
+			<attribute key="placeholder" value="NM" type="String"  />
+			<attribute key="description" value="not measured" type="String" />
+		</item>
+	</entry>
+
+	<!-- old settings, remove when settings module is in bexis 2-->
+	<missingValues>
+		<missingValue>
+			<placeholder>na</placeholder>
+			<description>not available</description>
+		</missingValue>
+	</missingValues>
+	<optionalDefault>true</optionalDefault>
+	<showCreateVariableTemplate description="Show -Create Variable Template- on data structure edit">true</showCreateVariableTemplate>
+
 </settings>
