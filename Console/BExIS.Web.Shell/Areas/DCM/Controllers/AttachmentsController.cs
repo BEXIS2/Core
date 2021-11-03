@@ -33,6 +33,19 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             return View();
         }
 
+        /// <summary>
+        /// Entrypoint for Attachment Hook
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="version"></param>
+        /// <returns></returns>
+        [BExISEntityAuthorize(typeof(Dataset), "id", RightType.Read)]
+        public ActionResult Start(long id, int version = 0)
+        {
+            return RedirectToAction("DatasetAttachements", "Attachments", new { datasetId = id, versionId = version });
+        }
+
+
         [BExISEntityAuthorize(typeof(Dataset), "datasetId", RightType.Read)]
         public ActionResult DatasetAttachements(long datasetId, long versionId)
         {

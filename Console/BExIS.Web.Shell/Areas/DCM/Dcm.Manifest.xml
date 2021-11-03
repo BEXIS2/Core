@@ -91,6 +91,7 @@
 		  place="details"
 		  module="dcm"
 		  type="BExIS.Modules.Dcm.UI.Hooks.MetadataHook, BExIS.Modules.DCM.UI, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" />
+	  
 	  <Hook
 		  name="file upload"
 		  mode="edit"
@@ -98,5 +99,29 @@
 		  place="details"
 		  module="dcm"
 		  type="BExIS.Modules.Dcm.UI.Hooks.FileUploadHook, BExIS.Modules.DCM.UI, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" />
+	  
+	  <Hook
+		  name="validation"
+		  mode="edit"
+		  entity="dataset"
+		  place="details"
+		  module="dcm"
+		  type="BExIS.Modules.Dcm.UI.Hooks.ValidationHook, BExIS.Modules.DCM.UI, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" />
+	  
+	  <Hook
+		  name="link"
+		  mode="edit"
+		  entity="dataset"
+		  place="details"
+		  module="dcm"
+		  type="BExIS.Modules.Dcm.UI.Hooks.LinkHook, BExIS.Modules.DCM.UI, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" />
+	  <Hook
+		  name="attachments"
+		  mode="edit"
+		  entity="dataset"
+		  place="details"
+		  module="dcm"
+		  type="BExIS.Modules.Dcm.UI.Hooks.AttachmentHook, BExIS.Modules.DCM.UI, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" />
+	  
   </Hooks>
 </Manifest>

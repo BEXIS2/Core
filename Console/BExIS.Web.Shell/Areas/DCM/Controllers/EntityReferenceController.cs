@@ -1,5 +1,6 @@
 ﻿using BExIS.App.Bootstrap.Attributes;
 using BExIS.Dlm.Entities.Data;
+using BExIS.Dlm.Services.MetadataStructure;
 using BExIS.Modules.Dcm.UI.Helpers;
 using BExIS.Modules.Dcm.UI.Models.EntityReference;
 using BExIS.Security.Entities.Authorization;
@@ -7,22 +8,50 @@ using BExIS.Security.Entities.Objects;
 using BExIS.Security.Services.Authorization;
 using BExIS.Security.Services.Objects;
 using BExIS.Security.Services.Subjects;
+using BExIS.Xml.Helpers;
 using NHibernate.Util;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
+using Vaiona.Persistence.Api;
 
 namespace BExIS.Modules.Dcm.UI.Controllers
 {
     public class EntityReferenceController : Controller
     {
+        private XmlDatasetHelper xmlDatasetHelper = new XmlDatasetHelper();
+
         // GET: EntityReference
         public ActionResult Index()
         {
             return View();
         }
+
+        [BExISEntityAuthorize(typeof(Dataset), "id", RightType.Write)]
+        public ActionResult Start(long id, int version)
+        {
+            var sourceTypeId = 0;
+
+            //get the researchobject (cuurently called dataset) to get the id of a metadata structure
+            Dataset researcobject = this.GetUnitOfWork().GetReadOnlyRepository<Dataset>().Get(id);
+            long metadataStrutcureId = researcobject.MetadataStructure.Id;
+
+            using (MetadataStructureManager metadataStructureManager = new MetadataStructureManager())
+            {
+                string entityName = xmlDatasetHelper.GetEntityNameFromMetadatStructure(metadataStrutcureId, metadataStructureManager);
+                string entityType = xmlDatasetHelper.GetEntityTypeFromMetadatStructure(metadataStrutcureId, metadataStructureManager);
+
+                //ToDo in the entity table there must be the information
+                using (EntityManager entityManager = new EntityManager())
+                {
+                    var entity = entityManager.Entities.Where(e => e.Name.Equals(entityName)).FirstOrDefault();
+                    return RedirectToAction("Show", "EntityReference", new { sourceId = id, sourceTypeId = entity.Id, sourceVersion = version});
+                }
+            }
+        }
+
 
         public ActionResult Create(long sourceId, long sourceTypeId)
         {

@@ -7,11 +7,11 @@ using System.Web;
 
 namespace BExIS.Modules.Dcm.UI.Hooks
 {
-    public class MetadataHook : Hook
+    public class AttachmentHook : Hook
     {
-        public MetadataHook()
+        public AttachmentHook()
         {
-            Start = "dcm/metadata/start";
+            Start = "dcm/attachments/start";
         }
 
         public override void Check(long id, string username)

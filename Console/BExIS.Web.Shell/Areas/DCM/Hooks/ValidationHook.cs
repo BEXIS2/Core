@@ -7,17 +7,22 @@ using System.Web;
 
 namespace BExIS.Modules.Dcm.UI.Hooks
 {
-    public class MetadataHook : Hook
+    public class ValidationHook : Hook
     {
-        public MetadataHook()
+        public ValidationHook()
         {
-            Start = "dcm/metadata/start";
+            Start = "dcm/validation/start";
         }
 
         public override void Check(long id, string username)
         {
             // check status
             checkStatus(id, username);
+
+            // check if file exist
+
+            // check if data strutcure exist
+
 
         }
 

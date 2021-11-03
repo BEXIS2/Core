@@ -7,11 +7,11 @@ using System.Web;
 
 namespace BExIS.Modules.Dcm.UI.Hooks
 {
-    public class MetadataHook : Hook
+    public class LinkHook : Hook
     {
-        public MetadataHook()
+        public LinkHook()
         {
-            Start = "dcm/metadata/start";
+            Start = "dcm/entityreference/start";
         }
 
         public override void Check(long id, string username)
