@@ -98,4 +98,16 @@
             controller="tenants" action="index"
             extends="./apiRoot" />
   </Exports>
+
+	<!-- fill out alle the hook aatributes otherwise there will not be loaded -->
+	<Hooks>
+		<Hook
+			name="Dataset Permissions"
+			mode="edit"
+			entity="dataset"
+			place="details"
+			module="sam"
+			type="BExIS.Modules.Sam.UI.Hooks.UserPermissionsHook, BExIS.Modules.SAM.UI, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" />
+
+	</Hooks>
 </Manifest>
