@@ -341,6 +341,7 @@
     <Compile Include="Controllers\HelpController.cs" />
     <Compile Include="Controllers\MappingController.cs" />
     <Compile Include="Controllers\API\MetadataOutController.cs" />
+    <Compile Include="Controllers\PublishController.cs" />
     <Compile Include="Controllers\SubmissionController.cs" />
     <Compile Include="Controllers\TestController.cs" />
     <Compile Include="DimModule.cs" />
@@ -348,6 +349,7 @@
     <Compile Include="Helper\Helper.cs" />
     <Compile Include="Helper\MappingHelper.cs" />
     <Compile Include="Helper\ReleationshipHelper.cs" />
+    <Compile Include="Hooks\PublishHook.cs" />
     <Compile Include="Models\AdminModel.cs" />
     <Compile Include="Models\Api\ApiModels.cs" />
     <Compile Include="Models\DatasetModel.cs" />
@@ -671,6 +673,7 @@
     <Folder Include="Content\Images\" />
     <Folder Include="Scripts\Models\Mapping\" />
     <Folder Include="Views\Api\" />
+    <Folder Include="Views\Publish\" />
     <Folder Include="Views\Shared\" />
   </ItemGroup>
   <ItemGroup>
@@ -721,6 +724,10 @@
     <ProjectReference Include="..\..\..\..\Components\IO\BExIS.IO\BExIS.IO.csproj">
       <Project>{e4795f06-20c2-4c4c-a720-9a79896384df}</Project>
       <Name>BExIS.IO</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\..\Components\UI\BExIS.UI\BExIS.UI.csproj">
+      <Project>{DE0AD99C-C559-422F-8132-CC4D7C46FF83}</Project>
+      <Name>BExIS.UI</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\..\..\Components\Utils\BExIS.Utils.Data\BExIS.Utils.Data.csproj">
       <Project>{a7fbcc13-7e29-4710-82a1-bd6d6f811fda}</Project>
