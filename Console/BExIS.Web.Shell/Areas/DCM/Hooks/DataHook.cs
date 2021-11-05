@@ -7,11 +7,11 @@ using System.Web;
 
 namespace BExIS.Modules.Dcm.UI.Hooks
 {
-    public class MetadataHook : Hook
+    public class DataHook : Hook
     {
-        public MetadataHook()
+        public DataHook()
         {
-            Start = "dcm/metadata/start";
+            Start = "dcm/view/startData";
         }
 
         public override void Check(long id, string username)
@@ -27,7 +27,7 @@ namespace BExIS.Modules.Dcm.UI.Hooks
             bool hasAccess = hasUserAccessRights(username);
 
             // user rights to the dataset
-            bool hasRights = hasUserEntityRights(id, username,RightType.Write);
+            bool hasRights = hasUserEntityRights(id, username,RightType.Read);
 
             // if one fail then access is denied
             if(hasAccess == false || hasRights == false) Status = HookStatus.AccessDenied;

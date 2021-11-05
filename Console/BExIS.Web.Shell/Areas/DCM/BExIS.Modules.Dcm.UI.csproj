@@ -224,6 +224,7 @@
     <Compile Include="Controllers\MetadataController.cs" />
     <Compile Include="Controllers\TestController.cs" />
     <Compile Include="Controllers\ValidationController.cs" />
+    <Compile Include="Controllers\ViewController.cs" />
     <Compile Include="DcmModule.cs" />
     <Compile Include="Helpers\API\DataApiHelper.cs" />
     <Compile Include="Helpers\DataASyncUploadHelper.cs" />
@@ -234,12 +235,14 @@
     <Compile Include="Helpers\SettingsHelper.cs" />
     <Compile Include="Helpers\SystemMetadataHelper.cs" />
     <Compile Include="Helpers\UploadUIHelper.cs" />
+    <Compile Include="Hooks\DataHook.cs" />
     <Compile Include="Hooks\LinkHook.cs" />
     <Compile Include="Hooks\AttachmentHook.cs" />
+    <Compile Include="Hooks\MetadataViewHook.cs" />
     <Compile Include="Hooks\SubmitHook.cs" />
     <Compile Include="Hooks\ValidationHook.cs" />
     <Compile Include="Hooks\FileUploadHook.cs" />
-    <Compile Include="Hooks\MetadataHook.cs" />
+    <Compile Include="Hooks\MetadataEditHook.cs" />
     <Compile Include="Models\AbstractStepModel.cs" />
     <Compile Include="Models\API\ApiModels.cs" />
     <Compile Include="Models\Attachments\DatasetFileModel.cs" />
@@ -249,6 +252,7 @@
     <Compile Include="Models\CreateDataset\SetupModel.cs" />
     <Compile Include="Models\CreateDataset\StepModelHelper.cs" />
     <Compile Include="Models\EasyUploadSummaryModel.cs" />
+    <Compile Include="Models\Edit\EditModel.cs" />
     <Compile Include="Models\EntityReference\ReferenceModels.cs" />
     <Compile Include="Models\FileInfoModel.cs" />
     <Compile Include="Models\FinishUploadModel.cs" />
@@ -503,6 +507,7 @@
     <Content Include="Scripts\modernizr-2.8.3.js" />
     <Content Include="Scripts\respond.matchmedia.addListener.js" />
     <Content Include="Scripts\respond.matchmedia.addListener.min.js" />
+    <Content Include="Scripts\svelte\edit.js" />
     <Content Include="Views\Help\Informations.xml" />
     <Content Include="Views\Web.config" />
     <Content Include="Views\_ViewStart.cshtml" />
@@ -582,6 +587,8 @@
     <None Include="Properties\PublishProfiles\BexisServer_test.pubxml" />
     <None Include="Properties\PublishProfiles\FolderProfile.pubxml" />
     <Content Include="Views\Edit\Index.cshtml" />
+    <Content Include="Scripts\svelte\edit.js.map" />
+    <Content Include="Views\View\Index.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

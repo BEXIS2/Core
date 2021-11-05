@@ -84,13 +84,30 @@
 	
   <!-- fill out alle the hook aatributes otherwise there will not be loaded -->
   <Hooks>
+	  <!-- VIEW-->
+	  <Hook
+		    name="metadata"
+		    mode="view"
+		    entity="dataset"
+		    place="details"
+		    module="ddm"
+		    type="BExIS.Modules.Dcm.UI.Hooks.MetadataViewHook, BExIS.Modules.DCM.UI, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" />
+	  <Hook
+		  name="data"
+		  mode="view"
+		  entity="dataset"
+		  place="details"
+		  module="ddm"
+		  type="BExIS.Modules.Dcm.UI.Hooks.DataHook, BExIS.Modules.DCM.UI, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" />
+	  
+	  <!--EDIT-->
 	  <Hook 
 		  name="metadata" 
 		  mode="edit" 
 		  entity="dataset" 
 		  place="details"
 		  module="dcm"
-		  type="BExIS.Modules.Dcm.UI.Hooks.MetadataHook, BExIS.Modules.DCM.UI, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" />
+		  type="BExIS.Modules.Dcm.UI.Hooks.MetadataEditHook, BExIS.Modules.DCM.UI, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" />
 	  
 	  <Hook
 		  name="file upload"

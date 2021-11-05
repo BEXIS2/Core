@@ -8,7 +8,7 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 
-namespace BExIS.Modules.Ddm.UI.Controllers
+namespace BExIS.Modules.Dcm.UI.Controllers
 {
     public class ViewController : Controller
     {

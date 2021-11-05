@@ -166,14 +166,11 @@
     <Compile Include="Controllers\RequestsController.cs" />
     <Compile Include="Controllers\SearchIndexController.cs" />
     <Compile Include="Controllers\TestController.cs" />
-    <Compile Include="Controllers\ViewController.cs" />
     <Compile Include="DdmModule.cs" />
     <Compile Include="Helpers\DdmSeedDataGenerator.cs" />
     <Compile Include="Helpers\GridHelper.cs" />
     <Compile Include="Helpers\HtmlPrefixScopeExtentions.cs" />
     <Compile Include="Helpers\SearchUIHelper.cs" />
-    <Compile Include="Hooks\DataHook.cs" />
-    <Compile Include="Hooks\MetadataHook.cs" />
     <Compile Include="Models\DashboardModel.cs" />
     <Compile Include="Models\DatasetPermissionModels.cs" />
     <Compile Include="Models\DecisionModels.cs" />
@@ -458,7 +455,6 @@
     <Content Include="Views\Requests\_Requests.cshtml" />
     <Content Include="Views\Requests\_Requests_And_Decisions.cshtml" />
     <Content Include="Views\Requests\Index.cshtml" />
-    <Content Include="Views\View\Index.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -468,6 +464,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Content\Images\" />
+    <Folder Include="Hooks\" />
     <Folder Include="Views\Export\" />
     <Folder Include="Views\Home\" />
     <Folder Include="Views\PublicSearch\" />

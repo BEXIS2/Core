@@ -5,13 +5,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 
-namespace BExIS.Modules.Ddm.UI.Hooks
+namespace BExIS.Modules.Dcm.UI.Hooks
 {
-    public class DataHook : Hook
+    public class MetadataEditHook : Hook
     {
-        public DataHook()
+        public MetadataEditHook()
         {
-            Start = "ddm/view/startData";
+            Start = "dcm/metadata/start";
         }
 
         public override void Check(long id, string username)
@@ -27,10 +27,18 @@ namespace BExIS.Modules.Ddm.UI.Hooks
             bool hasAccess = hasUserAccessRights(username);
 
             // user rights to the dataset
-            bool hasRights = hasUserEntityRights(id, username,RightType.Read);
+            bool hasRights = hasUserEntityRights(id, username,RightType.Write);
 
             // if one fail then access is denied
-            if(hasAccess == false || hasRights == false) Status = HookStatus.AccessDenied;
+            if (hasAccess == false || hasRights == false)
+            {
+                Status = HookStatus.AccessDenied; return;
+            }
+            else
+            {
+                Status = HookStatus.Open;
+            }
+
         }
 
     }
