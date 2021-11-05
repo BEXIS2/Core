@@ -1,4 +1,14 @@
-﻿@model List<BExIS.UI.Hooks.Hook>
+﻿@{
+    ViewBag.Title = "Edit";
+    Layout = "~/Themes/Default/Layouts/_svelteLayout.cshtml";
+
+}
+
+@section scripts
+{
+    <script src="~/Areas/Dcm/Scripts/svelte/edit.js"></script>
+
+}
 
 @{
     long id = 0;
@@ -16,11 +26,4 @@
 
 }
 
-@foreach (var h in @Model)
-{
-    var area = h.Start.Split('/')[0];
-    var controller = h.Start.Split('/')[1];
-    var action = h.Start.Split('/')[2];
-
-    <p>@Html.ActionLink(h.Name, action, controller, new { area, id, version }, null)  - <b>@h.Status.ToString()</b></p>
-}
+<div id="edit" dataset="@id" version="@version"> </div>
