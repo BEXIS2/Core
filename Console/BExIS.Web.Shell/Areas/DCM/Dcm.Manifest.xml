@@ -90,14 +90,14 @@
 		    mode="view"
 		    entity="dataset"
 		    place="details"
-		    module="ddm"
+		    module="dcm"
 		    type="BExIS.Modules.Dcm.UI.Hooks.MetadataViewHook, BExIS.Modules.DCM.UI, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" />
 	  <Hook
 		  name="data"
 		  mode="view"
 		  entity="dataset"
 		  place="details"
-		  module="ddm"
+		  module="dcm"
 		  type="BExIS.Modules.Dcm.UI.Hooks.DataHook, BExIS.Modules.DCM.UI, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" />
 	  
 	  <!--EDIT-->
@@ -139,6 +139,14 @@
 		  place="details"
 		  module="dcm"
 		  type="BExIS.Modules.Dcm.UI.Hooks.AttachmentHook, BExIS.Modules.DCM.UI, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" />
+	  
+	  <Hook
+		  name="submit"
+		  mode="edit"
+		  entity="dataset"
+		  place="details"
+		  module="dcm"
+		  type="BExIS.Modules.Dcm.UI.Hooks.SubmitHook, BExIS.Modules.DCM.UI, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" />
 	  
   </Hooks>
 </Manifest>
