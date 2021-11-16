@@ -48,4 +48,15 @@
             controller="Structures" action="Get"
             extends="./apiRoot" />
   </Exports>
+	<!-- fill out alle the hook aatributes otherwise there will not be loaded -->
+	<Hooks>
+		<!-- VIEW-->
+		<Hook
+			  name="data description"
+			  mode="edit"
+			  entity="dataset"
+			  place="details"
+			  module="rpm"
+			  type="BExIS.Modules.Rpm.UI.Hooks.DataStructureEditHook, BExIS.Modules.Rpm.UI, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" />
+	</Hooks>
 </Manifest>
