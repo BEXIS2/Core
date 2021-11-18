@@ -21,6 +21,11 @@ namespace BExIS.UI.Hooks
         public string Name { get; set; }
 
         /// <summary>
+        /// the name of the hook
+        /// </summary>
+        public string DisplayName { get; set; }
+
+        /// <summary>
         /// the Status selected from teh HookStatus Enum
         /// </summary>
         public HookStatus Status { get; set; }

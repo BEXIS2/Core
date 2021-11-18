@@ -44,7 +44,10 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 // if version number = 0 load latest version
                 DatasetVersion datasetVersion = null;
                 if (version == 0) // get latest
+                {
                     datasetVersion = datasetManager.GetDatasetLatestVersion(id);
+                    model.Version =  datasetManager.GetDatasetVersionCount(id); // get number of the latest version
+                }
                 else // get specific
                 {
                     model.VersionId = datasetManager.GetDatasetVersionId(id, version); // get version id
