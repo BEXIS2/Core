@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 
-namespace BExIS.Modules.Ddm.UI.Hooks
+namespace BExIS.Modules.Dcm.UI.Hooks
 {
     public class MetadataViewHook : Hook
     {
