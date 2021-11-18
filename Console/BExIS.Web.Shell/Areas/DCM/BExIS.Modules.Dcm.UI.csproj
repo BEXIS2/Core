@@ -278,6 +278,7 @@
     <Compile Include="Models\TestModel.cs" />
     <Compile Include="Models\UploadWizardParameters.cs" />
     <Compile Include="Models\ValidationModel.cs" />
+    <Compile Include="Models\View\ViewModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -590,6 +591,7 @@
     <Content Include="Views\Edit\Index.cshtml" />
     <Content Include="Scripts\svelte\edit.js.map" />
     <Content Include="Views\View\Index.cshtml" />
+    <Content Include="Views\View\_test.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

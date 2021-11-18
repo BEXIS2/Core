@@ -250,7 +250,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
             #endregion
 
-            return View("MetadataEditor", Model);
+            return PartialView("MetadataEditor", Model);
         }
 
         public ActionResult LoadMetadataFromExternal(long entityId, string title, long metadatastructureId, long datastructureId = -1, long researchplanId = -1, string sessionKeyForMetadata = "", bool resetTaskManager = false, bool latest = true, string isValid = "yes")
