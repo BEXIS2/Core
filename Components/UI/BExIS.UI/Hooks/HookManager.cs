@@ -47,6 +47,9 @@ namespace BExIS.UI.Hooks
                     XAttribute attrName = xHook.Attribute("name");
                     if (attrName == null || string.IsNullOrEmpty(attrName.Value)) isValid = false;
 
+                    XAttribute attrDisplayName = xHook.Attribute("displayName");
+                    if (attrDisplayName == null || string.IsNullOrEmpty(attrDisplayName.Value)) isValid = false;
+
                     //mode
                     XAttribute attrMode = xHook.Attribute("mode");
                     if (attrMode == null || string.IsNullOrEmpty(attrMode.Value)) isValid = false;
@@ -79,6 +82,7 @@ namespace BExIS.UI.Hooks
                             if (hook != null) // stop if hook is null
                             {
                                 hook.Name = attrName.Value;
+                                hook.DisplayName = attrDisplayName.Value;
                                 hook.Mode = (HookMode)Enum.Parse(typeof(HookMode), attrMode.Value);
                                 hook.Entity = attrEntity.Value;
                                 hook.Place = attrPlace.Value;
