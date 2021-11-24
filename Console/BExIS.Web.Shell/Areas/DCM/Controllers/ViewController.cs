@@ -1,9 +1,12 @@
 ﻿using BExIS.App.Bootstrap.Attributes;
 using BExIS.Dlm.Entities.Data;
 using BExIS.Dlm.Services.Data;
+using BExIS.Dlm.Services.MetadataStructure;
 using BExIS.Modules.Dcm.UI.Models.View;
 using BExIS.Security.Entities.Authorization;
+using BExIS.Security.Services.Objects;
 using BExIS.UI.Hooks;
+using BExIS.Xml.Helpers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -101,10 +104,45 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         [BExISEntityAuthorize(typeof(Dataset), "id", RightType.Read)]
         public ActionResult StartData(long id, int version)
         {
+            using (var datasetManager = new DatasetManager())
+            {
+                long versionId = 0;
+
+                // load dataset version
+                // if version number = 0 load latest version
+                DatasetVersion datasetVersion = null;
+                if (version == 0) // get latest
+                {
+                    datasetVersion = datasetManager.GetDatasetLatestVersion(id);
+                }
+                else // get specific
+                {
+                    versionId = datasetManager.GetDatasetVersionId(id, version); // load datasetversion id by dataset id and version number
+                }
+
+                if (versionId < 1)
+                {
+                    throw new Exception("version of entity with id:" + id + " not exist.");
+                }
+
+                return RedirectToAction("ShowPrimaryData", "Data", new { area = "DDM", datasetID = id, versionId });
+            }
+        }
+
+        /// <summary>
+        /// Start from DataSrtucturePreview Hook - view
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="version"></param>
+        /// <returns></returns>
+        [BExISEntityAuthorize(typeof(Dataset), "id", RightType.Read)]
+        public ActionResult StartDataStructure(long id, int version)
+        {
             //throw new NotImplementedException();
 
-            return RedirectToAction("ShowPrimaryData", "Data", new { area = "DDM", datasetID = id, versionId = version});
+            return RedirectToAction("ShowPreviewDataStructure", "Data", new { area = "DDM", datasetID = id});
         }
+
 
         public ActionResult Test()
         {

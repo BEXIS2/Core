@@ -87,6 +87,7 @@
 	  <!-- VIEW-->
 	  <Hook
 		    name="metadata"
+			displayName ="Metadata"
 		    mode="view"
 		    entity="dataset"
 		    place="details"
@@ -94,15 +95,44 @@
 		    type="BExIS.Modules.Dcm.UI.Hooks.MetadataViewHook, BExIS.Modules.DCM.UI, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" />
 	  <Hook
 		  name="data"
+		  displayName ="Data"
 		  mode="view"
 		  entity="dataset"
 		  place="details"
 		  module="dcm"
 		  type="BExIS.Modules.Dcm.UI.Hooks.DataHook, BExIS.Modules.DCM.UI, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" />
+
+	  <Hook
+		  name="datadescription"
+		  displayName ="Data Description"
+		  mode="view"
+		  entity="dataset"
+		  place="details"
+		  module="dcm"
+		  type="BExIS.Modules.Dcm.UI.Hooks.DataStructurePreviewHook, BExIS.Modules.DCM.UI, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" />
 	  
+	  <Hook
+		  name="link"
+		  displayName="Link"
+		  mode="view"
+		  entity="dataset"
+		  place="details"
+		  module="dcm"
+		  type="BExIS.Modules.Dcm.UI.Hooks.LinkViewHook, BExIS.Modules.DCM.UI, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" />
+
+	  <Hook
+		  name="attachments"
+		  displayName="Attachments"
+		  mode="edit"
+		  entity="dataset"
+		  place="details"
+		  module="dcm"
+		  type="BExIS.Modules.Dcm.UI.Hooks.AttachmentViewHook, BExIS.Modules.DCM.UI, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" />
+
 	  <!--EDIT-->
 	  <Hook 
 		  name="metadata" 
+		  displayName="Metadata" 
 		  mode="edit" 
 		  entity="dataset" 
 		  place="details"
@@ -110,7 +140,8 @@
 		  type="BExIS.Modules.Dcm.UI.Hooks.MetadataEditHook, BExIS.Modules.DCM.UI, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" />
 	  
 	  <Hook
-		  name="file upload"
+		  name="fileupload"
+		  displayname="File Upload"
 		  mode="edit"
 		  entity="dataset"
 		  place="details"
@@ -119,6 +150,7 @@
 	  
 	  <Hook
 		  name="validation"
+		  displayName="Validation"
 		  mode="edit"
 		  entity="dataset"
 		  place="details"
@@ -127,21 +159,24 @@
 	  
 	  <Hook
 		  name="link"
+		  displayName="Link"
 		  mode="edit"
 		  entity="dataset"
 		  place="details"
 		  module="dcm"
-		  type="BExIS.Modules.Dcm.UI.Hooks.LinkHook, BExIS.Modules.DCM.UI, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" />
+		  type="BExIS.Modules.Dcm.UI.Hooks.LinkEditHook, BExIS.Modules.DCM.UI, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" />
 	  <Hook
 		  name="attachments"
+		  displayName="Attachments"
 		  mode="edit"
 		  entity="dataset"
 		  place="details"
 		  module="dcm"
-		  type="BExIS.Modules.Dcm.UI.Hooks.AttachmentHook, BExIS.Modules.DCM.UI, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" />
+		  type="BExIS.Modules.Dcm.UI.Hooks.AttachmentEditHook, BExIS.Modules.DCM.UI, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" />
 	  
 	  <Hook
 		  name="submit"
+		  displayName="Submit"
 		  mode="edit"
 		  entity="dataset"
 		  place="details"

@@ -7,9 +7,9 @@ using System.Web;
 
 namespace BExIS.Modules.Dcm.UI.Hooks
 {
-    public class AttachmentHook : Hook
+    public class AttachmentEditHook : Hook
     {
-        public AttachmentHook()
+        public AttachmentEditHook()
         {
             Start = "dcm/attachments/start";
         }

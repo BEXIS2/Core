@@ -52,6 +52,29 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             }
         }
 
+        [BExISEntityAuthorize(typeof(Dataset), "id", RightType.Read)]
+        public ActionResult StartView(long id, int version)
+        {
+            var sourceTypeId = 0;
+
+            //get the researchobject (cuurently called dataset) to get the id of a metadata structure
+            Dataset researcobject = this.GetUnitOfWork().GetReadOnlyRepository<Dataset>().Get(id);
+            long metadataStrutcureId = researcobject.MetadataStructure.Id;
+
+            using (MetadataStructureManager metadataStructureManager = new MetadataStructureManager())
+            {
+                string entityName = xmlDatasetHelper.GetEntityNameFromMetadatStructure(metadataStrutcureId, metadataStructureManager);
+                string entityType = xmlDatasetHelper.GetEntityTypeFromMetadatStructure(metadataStrutcureId, metadataStructureManager);
+
+                //ToDo in the entity table there must be the information
+                using (EntityManager entityManager = new EntityManager())
+                {
+                    var entity = entityManager.Entities.Where(e => e.Name.Equals(entityName)).FirstOrDefault();
+                    return RedirectToAction("Show", "EntityReference", new { sourceId = id, sourceTypeId = entity.Id, sourceVersion = version });
+                }
+            }
+        }
+
 
         public ActionResult Create(long sourceId, long sourceTypeId)
         {

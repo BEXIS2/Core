@@ -235,9 +235,12 @@
     <Compile Include="Helpers\SettingsHelper.cs" />
     <Compile Include="Helpers\SystemMetadataHelper.cs" />
     <Compile Include="Helpers\UploadUIHelper.cs" />
+    <Compile Include="Hooks\AttachmentViewHook.cs" />
+    <Compile Include="Hooks\DataStructurePreviewHook.cs" />
     <Compile Include="Hooks\DataHook.cs" />
-    <Compile Include="Hooks\LinkHook.cs" />
-    <Compile Include="Hooks\AttachmentHook.cs" />
+    <Compile Include="Hooks\LinkViewHook.cs" />
+    <Compile Include="Hooks\LinkEditHook.cs" />
+    <Compile Include="Hooks\AttachmentEditHook.cs" />
     <Compile Include="Hooks\MetadataViewHook.cs" />
     <Compile Include="Hooks\SubmitHook.cs" />
     <Compile Include="Hooks\ValidationHook.cs" />
