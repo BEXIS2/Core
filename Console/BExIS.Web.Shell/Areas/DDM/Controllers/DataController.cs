@@ -44,6 +44,7 @@ using System.Text;
 using BExIS.Security.Entities.Objects;
 using BExIS.Security.Entities.Subjects;
 using BExIS.Dlm.Services.MetadataStructure;
+using BExIS.UI.Hooks;
 
 namespace BExIS.Modules.Ddm.UI.Controllers
 
@@ -141,7 +142,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
             return View("Show");
         }
 
-        public ActionResult ShowData(long id, int version = 0)
+        public ActionResult ShowData(long id, int version = 0, bool asPartial = false)
         {
             using (DatasetManager dm = new DatasetManager())
             using(EntityPermissionManager entityPermissionManager = new EntityPermissionManager())
@@ -262,7 +263,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                         RequestExist = requestExist,
                         RequestAble = requestAble,
                         HasRequestRight = hasRequestRight,
-                        IsPublic = isPublic,
+                        IsPublic = isPublic
                     };
 
                     //set metadata in session
@@ -270,6 +271,13 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                     ViewData["VersionSelect"] = getVersionsSelectList(id, dm);
                     ViewData["isValid"] = isValid;
                     ViewData["datasetSettings"] = getSettingsDataset();
+
+
+                    // load all hooks for the edit view
+                    HookManager hooksManager = new HookManager();
+                    model.Hooks = hooksManager.GetHooksFor("dataset", "details", HookMode.view);
+
+                    if (asPartial) return PartialView(model);
 
                     return View(model);
                     
@@ -284,122 +292,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
 
         public ActionResult Reload(long id, int version = 0)
         {
-            DatasetManager dm = new DatasetManager();
-            EntityPermissionManager entityPermissionManager = new EntityPermissionManager();
-
-            try
-            {
-                DatasetVersion dsv;
-                ShowDataModel model = new ShowDataModel();
-
-                string title = "";
-                long metadataStructureId = -1;
-                long dataStructureId = -1;
-                long researchPlanId = 1;
-                long versionId = 0;
-                string dataStructureType = DataStructureType.Structured.ToString();
-                bool downloadAccess = false;
-                bool requestExist = false;
-                bool requestAble = false;
-                bool latestVersion = false;
-                string isValid = "no";
-
-                XmlDocument metadata = new XmlDocument();
-
-                if (dm.IsDatasetCheckedIn(id))
-                {
-                    //get latest version
-                    if (version == 0)
-                    {
-                        versionId = dm.GetDatasetLatestVersionId(id); // check for zero value
-                        //get current version number
-                        version = dm.GetDatasetVersions(id).OrderBy(d => d.Timestamp).Count();
-
-                        latestVersion = true;
-                    }
-                    // get specific version
-                    else
-                    {
-                        versionId = dm.GetDatasetVersions(id).OrderBy(d => d.Timestamp).Skip(version - 1).Take(1).Select(d => d.Id).FirstOrDefault();
-                        latestVersion = versionId == dm.GetDatasetLatestVersionId(id);
-                    }
-
-                    dsv = dm.DatasetVersionRepo.Get(versionId); // this is needed to allow dsv to access to an open session that is available via the repo
-
-                    metadataStructureId = dsv.Dataset.MetadataStructure.Id;
-
-                    //MetadataStructureManager msm = new MetadataStructureManager();
-                    //dsv.Dataset.MetadataStructure = msm.Repo.Get(dsv.Dataset.MetadataStructure.Id);
-
-                    title = dsv.Title; // this function only needs metadata and extra fields, there is no need to pass the version to it.
-                    dataStructureId = dsv.Dataset.DataStructure.Id;
-                    researchPlanId = dsv.Dataset.ResearchPlan.Id;
-                    metadata = dsv.Metadata;
-
-                    if (dsv.StateInfo != null)
-                    {
-                        isValid = DatasetStateInfo.Valid.ToString().Equals(dsv.StateInfo.State) ? "yes" : "no";
-                    }
-
-                    // check if the user has download rights
-                    downloadAccess = entityPermissionManager.HasEffectiveRight(HttpContext.User.Identity.Name, typeof(Dataset), id, RightType.Read);
-
-                    // check if a reuqest of this dataset exist
-                    if (!downloadAccess)
-                    {
-                        requestExist = HasOpenRequest(id);
-
-                        if (UserExist() && HasRequestMapping(id)) requestAble = true;
-                    }
-
-                    if (dsv.Dataset.DataStructure.Self.GetType().Equals(typeof(StructuredDataStructure)))
-                    {
-                        dataStructureType = DataStructureType.Structured.ToString();
-                    }
-                    else
-                    {
-                        dataStructureType = DataStructureType.Unstructured.ToString();
-                    }
-
-                    ViewBag.Title = PresentationModel.GetViewTitleForTenant("Show " + typeof(Dataset).Name + ": " + title, this.Session.GetTenant());
-                }
-                else
-                {
-                    ModelState.AddModelError(string.Empty, "Dataset is just in processing.");
-                }
-
-                model = new ShowDataModel()
-                {
-                    Id = id,
-                    Version = version,
-                    VersionSelect = version,
-                    VersionId = versionId,
-                    LatestVersion = latestVersion,
-                    Title = title,
-                    MetadataStructureId = metadataStructureId,
-                    DataStructureId = dataStructureId,
-                    ResearchPlanId = researchPlanId,
-                    ViewAccess = entityPermissionManager.HasEffectiveRight(HttpContext.User.Identity.Name, typeof(Dataset), id, RightType.Read),
-                    GrantAccess = entityPermissionManager.HasEffectiveRight(HttpContext.User.Identity.Name, typeof(Dataset), id, RightType.Grant),
-                    DataStructureType = dataStructureType,
-                    DownloadAccess = downloadAccess,
-                    RequestExist = requestExist,
-                    RequestAble = requestAble
-                };
-
-                //set metadata in session
-                Session["ShowDataMetadata"] = metadata;
-                ViewData["VersionSelect"] = getVersionsSelectList(id, dm);
-                ViewData["isValid"] = isValid;
-                ViewData["datasetSettings"] = getSettingsDataset();
-
-                return PartialView("ShowData", model);
-            }
-            finally
-            {
-                dm.Dispose();
-                entityPermissionManager.Dispose();
-            }
+            return RedirectToAction("ShowData", "Data", new { id, version, isPartial = true });
         }
 
         [BExISEntityAuthorize(typeof(Dataset), "id", RightType.Read)]
@@ -1487,7 +1380,6 @@ namespace BExIS.Modules.Ddm.UI.Controllers
         }
 
         #endregion datastructure
-
 
         #region entity references
 

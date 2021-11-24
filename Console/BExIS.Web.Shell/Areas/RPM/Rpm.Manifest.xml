@@ -52,7 +52,8 @@
 	<Hooks>
 		<!-- VIEW-->
 		<Hook
-			  name="data description"
+			  name="datadescription"
+			  displayName="Data Description"
 			  mode="edit"
 			  entity="dataset"
 			  place="details"

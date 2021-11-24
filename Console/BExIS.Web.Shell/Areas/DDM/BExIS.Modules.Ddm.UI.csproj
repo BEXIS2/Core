@@ -455,6 +455,7 @@
     <Content Include="Views\Requests\_Requests.cshtml" />
     <Content Include="Views\Requests\_Requests_And_Decisions.cshtml" />
     <Content Include="Views\Requests\Index.cshtml" />
+    <Content Include="Views\Data\ShowDataBackup.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -464,7 +465,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Content\Images\" />
-    <Folder Include="Hooks\" />
     <Folder Include="Views\Export\" />
     <Folder Include="Views\Home\" />
     <Folder Include="Views\PublicSearch\" />
