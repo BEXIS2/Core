@@ -8,8 +8,8 @@
   <entry key="show_permission_tab" value="true" type="Boolean" description="Show permissions"/>
   <entry key="show_publish_tab" value="true" type="Boolean" description="Show publish"/>
   <entry key="show_attachments_tab" value="true" type="Boolean" description="Show attachments"/>
-  
-  <entry key="show_tabs_deactivated" value="true" type="Boolean" description="Show deactivated (tabs without permision) tabs"/>
+	
+  <entry key="show_tabs_deactivated" value="true" type="Boolean" description="Show deactivated (tabs without permision) tabs"/> // kann weg
 
   <entry key="check_public_metadata" value="false" type="Boolean" description="Set true to enable to only show metadata for not-loggedin users, if the dataset is public."/>
     

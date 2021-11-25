@@ -1,4 +1,5 @@
 ﻿@model BExIS.Modules.Ddm.UI.Models.ShowDataModel
+@using BExIS.UI.Hooks;
 
 @{
     int tabIndex = 0;
@@ -18,8 +19,8 @@
     }
     else
     {
-        show_tabs.Add("show_primary_data_tab", "true");
-        show_tabs.Add("show_data_structure_tab", "true");
+        show_tabs.Add("show_data_tab", "true");
+        show_tabs.Add("show_datadescription_tab", "true");
         show_tabs.Add("show_link_tab", "true");
         show_tabs.Add("show_permission_tab", "true");
         show_tabs.Add("show_publish_tab", "true");
@@ -34,6 +35,68 @@
         total = Convert.ToInt32(Session["gridTotal"]); //  (int)Session["gridTotal"];
     }
 
+
+
+    Hook metadataHook = null;
+    Hook dataHook = null;
+    Hook dataDescriptionHook = null;
+
+
+    // set active Hook
+    Hook activeHook = null;
+    // if 
+    string activeHookName="metadata";
+
+
+    // set order of the tabs
+    var datasetHooks = new List<Hook>();
+    var additionalHooks = new List<Hook>();
+
+    // separate dataset hooks and additional hooks
+    foreach (var hook in Model.Hooks)
+    {
+        if (hook != null)
+        {
+            //set active hook based one nam in session
+            if (hook.Name.Equals(activeHookName))
+            {
+                activeHook = hook;
+            }
+
+            if (hook.Name == "metadata")
+            {
+                metadataHook = hook;
+            }
+            else if (hook.Name == "data")
+            {
+                dataHook = hook;
+            }
+            else if (hook.Name == "datadescription")
+            {
+                dataDescriptionHook = hook;
+            }
+            else
+            {
+                additionalHooks.Add(hook);
+            }
+        }
+    }
+
+    // add hook to dataset hooks list
+    if (metadataHook != null)
+    {
+        datasetHooks.Add(metadataHook);
+    }
+
+    if (dataHook != null)
+    {
+        datasetHooks.Add(dataHook);
+    }
+
+    if (dataDescriptionHook != null)
+    {
+        datasetHooks.Add(dataDescriptionHook);
+    }
 
 }
 
@@ -63,143 +126,186 @@
 @if (Model != null && ((Model.IsPublic == true || User.Identity.Name != "") || check_public_metadata == "false"))
 {
 
+
     <div id="showData">
-        <div id="showData">
-            <h1>@Model.Title</h1>
+        <h1>@Model.Title</h1>
 
-            @if (!Model.LatestVersion)
-            {
-                <div id="view-warning-container">
+        @if (!Model.LatestVersion)
+        {
+            <div id="view-warning-container">
 
-                    <div id="view-warning" class="alert alert-info" role="alert" style="width: 100%;">
-                        <span id="view-warning-icon" class=" fa fa-exclamation-triangle"></span>
-                        Attention, this is not the latest version. Click <span class="btn-link" style="cursor: pointer;" onclick="selectVersion(@Model.Id, @Model.LatestVersion)"><b>here</b></span> to change to the latest version.
-                    </div>
+                <div id="view-warning" class="alert alert-info" role="alert" style="width: 100%;">
+                    <span id="view-warning-icon" class=" fa fa-exclamation-triangle"></span>
+                    Attention, this is not the latest version. Click <span class="btn-link" style="cursor: pointer;" onclick="selectVersion(@Model.Id, @Model.LatestVersion)"><b>here</b></span> to change to the latest version.
                 </div>
-            }
+            </div>
+        }
 
-            <div id="view-header" class="row">
-                <div id="view-header-dataset-details" class="col-xs-6 col-md-6 col-lg-6 ">
-                    <div class="row">
-                        <div class="col-md-6" style="white-space: nowrap;display: flex;">
-                            <div>
-                                <b>Dataset id:</b> @Model.Id
-                                <b style="padding-left: 5px;">Version:</b>
-                                @Html.DropDownListFor(m => m.VersionSelect, null, new { @class = "bx-dropdown", @style = "border:none;" })
-                            </div>
+        <div id="view-header" class="row">
+            <div id="view-header-dataset-details" class="col-xs-6 col-md-6 col-lg-6 ">
+                <div class="row">
+                    <div class="col-md-6" style="white-space: nowrap;display: flex;">
+                        <div>
+                            <b>Dataset id:</b> @Model.Id
+                            <b style="padding-left: 5px;">Version:</b>
+                            @Html.DropDownListFor(m => m.VersionSelect, null, new { @class = "bx-dropdown", @style = "border:none;" })
                         </div>
                     </div>
                 </div>
-                <div class="col-xs-2 col-md-2 col-lg-2">
-                    <div id="preloaderContainer"></div>
-                </div>
+            </div>
+            <div class="col-xs-2 col-md-2 col-lg-2">
+                <div id="preloaderContainer"></div>
+            </div>
 
-                <div id="view-header-dataset-options" class="col-xs-4 col-md-4 col-lg-4 pull-right text-right">
+            <div id="view-header-dataset-options" class="col-xs-4 col-md-4 col-lg-4 pull-right text-right">
 
-                    @if (Model.DownloadAccess)
+                @if (Model.DownloadAccess)
+                {
+
+                    if (Model.DataStructureType.ToLower().Equals("structured"))
                     {
-
-                        if (Model.DataStructureType.ToLower().Equals("structured"))
-                        {
-                            <span class="dropdown">
-                                <button class="bx-button function" type="button" id="dropdownMenu1" data-toggle="dropdown" title="Download dataset with a selected dataformat for the primary data" aria-haspopup="true" aria-expanded="true">
-                                    Download Dataset
-                                    <span class="caret"></span>
-                                </button>
-                                <ul class="dropdown-menu" aria-labelledby="dropdownMenu1" style="z-index:100000; margin-top:10px;">
-                                    <li><a href="@Url.Action("DownloadZip", "Data", new { id = @Model.Id, format = "application/xlsm", version = Model.VersionId })">... with Template</a></li>
-                                    @if (@total < 1048576) // hide Excel download for bigger datasets, which exceed the max number of rows in excel
-                                    {
-                                        <li><a href="@Url.Action("DownloadZip", "Data", new { id = @Model.Id, format = "application/xlsx", version = Model.VersionId })">... with Excel</a></li>
-                                    }
-                                    <li><a href="@Url.Action("DownloadZip", "Data", new { id = @Model.Id, format = "text/csv", version = Model.VersionId })">... with CSV</a></li>
-                                    <li><a href="@Url.Action("DownloadZip", "Data", new { id = @Model.Id, format = "text/tsv", version = Model.VersionId })">... with TSV</a></li>
-                                    <li><a href="@Url.Action("DownloadZip", "Data", new { id = @Model.Id, format = "text/plain", version = Model.VersionId })">... with TXT</a></li>
-                                </ul>
-                            </span>
-                        }
-                        else
-                        {
-                            <a class="bx-button function" href="@Url.Action("DownloadZip", "Data", new { id = @Model.Id, version = Model.VersionId, format = "" })">Download</a>
-                        }
+                        <span class="dropdown">
+                            <button class="bx-button function" type="button" id="dropdownMenu1" data-toggle="dropdown" title="Download dataset with a selected dataformat for the primary data" aria-haspopup="true" aria-expanded="true">
+                                Download Dataset
+                                <span class="caret"></span>
+                            </button>
+                            <ul class="dropdown-menu" aria-labelledby="dropdownMenu1" style="z-index:100000; margin-top:10px;">
+                                <li><a href="@Url.Action("DownloadZip", "Data", new { id = @Model.Id, format = "application/xlsm", version = Model.VersionId })">... with Template</a></li>
+                                @if (@total < 1048576) // hide Excel download for bigger datasets, which exceed the max number of rows in excel
+                                {
+                                    <li><a href="@Url.Action("DownloadZip", "Data", new { id = @Model.Id, format = "application/xlsx", version = Model.VersionId })">... with Excel</a></li>
+                                }
+                                <li><a href="@Url.Action("DownloadZip", "Data", new { id = @Model.Id, format = "text/csv", version = Model.VersionId })">... with CSV</a></li>
+                                <li><a href="@Url.Action("DownloadZip", "Data", new { id = @Model.Id, format = "text/tsv", version = Model.VersionId })">... with TSV</a></li>
+                                <li><a href="@Url.Action("DownloadZip", "Data", new { id = @Model.Id, format = "text/plain", version = Model.VersionId })">... with TXT</a></li>
+                            </ul>
+                        </span>
                     }
                     else
                     {
-                        if (Model.HasRequestRight)
+                        <a class="bx-button function" href="@Url.Action("DownloadZip", "Data", new { id = @Model.Id, version = Model.VersionId, format = "" })">Download</a>
+                    }
+                }
+                else
+                {
+                    if (Model.HasRequestRight)
+                    {
+                        if (Model.RequestAble)
                         {
-                            if (Model.RequestAble)
-                            {
 
-                                if (Model.RequestExist)
-                                {
-                                    <button id="sendRequestBt" class="bx-button function bx-disabled" title="Send request to the owner of the dataset for the rights to see and download the primary data." disabled="disabled">Request Pending</button>
-                                }
-                                else
-                                {
-                                    @Html.TextArea("intention", new { @class = "bx-input", placeholder = "describe your intention " });
-                                    <button id="sendRequestBt" datasetId="@Model.Id" class="bx-button function" title="Send request to the owner of the dataset for the rights to see and download the primary data.">Request Access</button>
-                                }
+                            if (Model.RequestExist)
+                            {
+                                <button id="sendRequestBt" class="bx-button function bx-disabled" title="Send request to the owner of the dataset for the rights to see and download the primary data." disabled="disabled">Request Pending</button>
                             }
                             else
                             {
-                                if (show_tabs["show_tabs_deactivated"] == "true")
-                                {
-                                    <button id="sendRequestBt" class="bx-button function bx-disabled" title="Send request to the owner of the dataset for the rights to see and download the primary data. If the function is not available, please contact the administrator." disabled="disabled">Currently not available</button>
-                                }
+                                @Html.TextArea("intention", new { @class = "bx-input", placeholder = "describe your intention " });
+                                <button id="sendRequestBt" datasetId="@Model.Id" class="bx-button function" title="Send request to the owner of the dataset for the rights to see and download the primary data.">Request Access</button>
                             }
                         }
                         else
                         {
                             if (show_tabs["show_tabs_deactivated"] == "true")
                             {
-                                <button id="sendRequestBt" class="bx-button function bx-disabled" title="You have no right to make requests." disabled="disabled">Currently not available</button>
+                                <button id="sendRequestBt" class="bx-button function bx-disabled" title="Send request to the owner of the dataset for the rights to see and download the primary data. If the function is not available, please contact the administrator." disabled="disabled">Currently not available</button>
                             }
                         }
                     }
-
-                </div>
-            </div>
-
-
-
-            @if (@Model != null)
-            {
-                if (ViewData.ModelState.IsValid)
-                {
-                    <!--load hooks in tab header-->
-                    <ul class="nav nav-tabs" role="tablist">
-                        @foreach (var hook in Model.Hooks)
+                    else
+                    {
+                        if (show_tabs["show_tabs_deactivated"] == "true")
                         {
+                            <button id="sendRequestBt" class="bx-button function bx-disabled" title="You have no right to make requests." disabled="disabled">Currently not available</button>
+                        }
+                    }
+                }
+
+            </div>
+        </div>
+
+
+
+        @if (@Model != null)
+        {
+            if (ViewData.ModelState.IsValid)
+            {
+                <ul class="nav nav-tabs" role="tablist">
+
+                    <!--load hooks in tab header-->
+                    <!--dataset hooks-->
+                    @foreach (var hook in datasetHooks)
+                    {
+                        if (hook.Status != BExIS.UI.Hooks.HookStatus.AccessDenied &&
+                            hook.Status != BExIS.UI.Hooks.HookStatus.Disabled)
+                        {
+
                             var baseid = @hook.Name.ToLower();
                             <!--set first element to active-->
-                            var active = Model.Hooks.First().Equals(hook) ? "active" : "";
+                            var active = hook.Name.Equals(activeHook.Name) ? "active" : "";
+                            var disabled = hook.Status.Equals(BExIS.UI.Hooks.HookStatus.Disabled) ? "disabled" : "";
 
-                            <li role="presentation" class="@active">
-                                <a href="#@baseid" aria-controls="@baseid" role="tab" data-toggle="tab" onclick="selectTab('@hook.Name.ToLower()')" onmouseover="prefetch('@hook.Name.ToLower()', '@hook.Start', @Model.Id, @Model.Version)"> @hook.DisplayName.ToUpper()</a>
+                            <li role="presentation" class="@active @disabled">
+                                <a href="#@baseid" aria-controls="@baseid" role="tab" data-toggle="tab" onclick="selectTab('@hook.Name.ToLower()')" onmouseover="prefetch('@hook.Name.ToLower()', '@hook.Start', @Model.Id, @Model.Version)">@hook.DisplayName.ToUpper()</a>
                             </li>
 
                         }
-                    </ul>
-                    <!--load hooks in tab content-->
-                    <div class="tab-content">
-                        @foreach (var hook in Model.Hooks)
+                    }
+
+                    <!--additional hooks-->
+
+                    @foreach (var hook in additionalHooks)
+                    {
+                        if (hook.Status != BExIS.UI.Hooks.HookStatus.AccessDenied &&
+                            hook.Status != BExIS.UI.Hooks.HookStatus.Disabled)
                         {
+
                             var baseid = @hook.Name.ToLower();
+                            var active = hook.Name.Equals(activeHook.Name) ? "active" : "";
+
                             <!--set first element to active-->
-                            var active = Model.Hooks.First().Equals(hook) ? "active" : "";
+                            var disabled = hook.Status.Equals(BExIS.UI.Hooks.HookStatus.Disabled) ? "disabled" : "";
 
-                            <div role="tabpanel" class="tab-pane @active" id="@baseid" >@hook.DisplayName</div>
+                            <li role="presentation" class="@active @disabled">
+                                <a href="#@baseid" aria-controls="@baseid" role="tab" data-toggle="tab" onclick="selectTab('@hook.Name.ToLower()')" onmouseover="prefetch('@hook.Name.ToLower()', '@hook.Start', @Model.Id, @Model.Version)">@hook.DisplayName.ToUpper()</a>
+                            </li>
+
                         }
-                    </div>
+                    }
+                </ul>
 
-                }
-                else
-                {
-                    @Html.ValidationSummary(true);
-                }
+                <!--load hooks in tab content-->
+                <!--dataset hooks-->
+
+                <div class="tab-content">
+                    @foreach (var hook in datasetHooks)
+                    {
+                        var baseid = @hook.Name.ToLower();
+                        <!--set first element to active-->
+                        var active = hook.Name.Equals(activeHook.Name) ? "active" : "";
+
+
+                        <div role="tabpanel" class="tab-pane @active" id="@baseid">@hook.DisplayName</div>
+                    }
+
+                    <!--additional hooks-->
+                    @foreach (var hook in additionalHooks)
+                    {
+                        var baseid = @hook.Name.ToLower();
+                        <!--set first element to active-->
+                        var active = hook.Name.Equals(activeHook.Name) ? "active" : "";
+
+                        <div role="tabpanel" class="tab-pane @active" id="@baseid">@hook.DisplayName</div>
+                    }
+                </div>
+
             }
+            else
+            {
+                @Html.ValidationSummary(true);
+            }
+        }
 
- <script type="text/javascript">
+    <script type="text/javascript">
 
 	function grid_subjects_onDataBound() {
 		addTooltips();
@@ -227,7 +333,8 @@
 	$(document).ready(function () {
 
 		$("#preloaderContainer").preloader(20, "Loading...");
-
+        //load active hook
+        prefetch('@activeHook.Name', '@activeHook.Start',@Model.Id,@Model.Version)
 
 		$("#preloaderContainer").removePreloader();
 
@@ -243,17 +350,17 @@
 	}
 
     //tab strip
-     function prefetch(hook,action,id,version)
+    function prefetch(hook,action,id,version)
     {
         var url = "/" + action;
 
-        console.log(hook);
-        console.log(url);
-        console.log(id);
-        console.log(version);
+        //console.log(hook);
+        //console.log(url);
+        //console.log(id);
+        //console.log(version);
 
         var loaded = $("#" + hook).attr("loaded");
-  
+
         console.log(loaded);
 
         if (loaded == undefined) {
@@ -264,12 +371,10 @@
 
             $.get(url, { id, version }, function (data) {
 
-                console.log(data);
-                console.log(hook);
                 $("#" + hook).html(data)
                 // remove preloader
                 $("#" + hook).attr("loaded", "true");
-            }); 
+            });
         }
 
      }
@@ -277,7 +382,7 @@
 
 
     // calls this function to check if metadata tab is active.
-    // if true = active minimap if not remove minimap 
+    // if true = active minimap if not remove minimap
      function selectTab(hook) {
 
         // special case for metadata, load minimap if hook is active
@@ -300,7 +405,8 @@
             $(".minimap").remove();
 
             $(window).off('resize');
-        }
+         }
+
     }
 
 
@@ -341,10 +447,12 @@
    function selectVersion(datasetId, versionNumber) {
         var redirectURL = '@Url.Action("Show", "Data")';
         window.location.href = redirectURL + "/" + datasetId + "?version=" + versionNumber;
-   }
-            </script>
-        </div>
+    }
+
+    </script>
+
     </div>
+
 }
 else if (Model.IsPublic == false)
 {
@@ -352,7 +460,6 @@ else if (Model.IsPublic == false)
 }
 else
 {
-
     @Html.ValidationSummary(true);
 }
 

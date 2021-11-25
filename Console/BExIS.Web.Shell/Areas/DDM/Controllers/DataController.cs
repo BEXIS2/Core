@@ -152,7 +152,6 @@ namespace BExIS.Modules.Ddm.UI.Controllers
 
                 if (researcobject != null)
                 {
-
                     DatasetVersion dsv;
                     ShowDataModel model = new ShowDataModel();
 
@@ -276,6 +275,13 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                     // load all hooks for the edit view
                     HookManager hooksManager = new HookManager();
                     model.Hooks = hooksManager.GetHooksFor("dataset", "details", HookMode.view);
+
+                    // run all checks
+                    string userName = "";
+                    if (HttpContext.User.Identity.IsAuthenticated)
+                        userName = HttpContext.User.Identity.Name;
+
+                    model.Hooks.ForEach(h => h.Check(id, userName));
 
                     if (asPartial) return PartialView(model);
 
