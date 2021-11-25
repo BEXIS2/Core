@@ -40,9 +40,9 @@ namespace BExIS.Web.Shell.Models
         [MustBeTrue(ErrorMessage = "You must agree to the Terms and Conditions before register.")]
         public bool TermsAndConditions { get; set; }
 
-        [Display(Name = "Privacy Policy")]
-        [MustBeTrue(ErrorMessage = "You must agree to the Privacy Policy before register.")]
-        public bool PrivacyPolicy { get; set; }
+        //[Display(Name = "Privacy Policy")]
+        //[MustBeTrue(ErrorMessage = "You must agree to the Privacy Policy before register.")]
+        //public bool PrivacyPolicy { get; set; }
 
         public static LoginConfirmModel Convert(User user)
         {
@@ -51,7 +51,7 @@ namespace BExIS.Web.Shell.Models
                 Id = user.Id,
                 Email = user.Email,
                 TermsAndConditions = user.HasTermsAndConditionsAccepted,
-                PrivacyPolicy = user.HasPrivacyPolicyAccepted
+                //PrivacyPolicy = user.HasPrivacyPolicyAccepted
             };
         }
     }
@@ -98,6 +98,7 @@ namespace BExIS.Web.Shell.Models
     {
         [Required]
         [Display(Name = "Username")]
+        [RegularExpression(@"^\S+(?:\s+\S+)*$", ErrorMessage = "Sorry, not a valid username. Please check there are no trailing spaces.")]
         public string UserName { get; set; }
 
         [Required]
@@ -121,9 +122,9 @@ namespace BExIS.Web.Shell.Models
         [MustBeTrue(ErrorMessage = "You must agree to the Terms and Conditions before register.")]
         public bool TermsAndConditions { get; set; }
 
-        [Display(Name = "Privacy Policy")]
-        [MustBeTrue(ErrorMessage = "You must agree to the Privacy Policy before register.")]
-        public bool PrivacyPolicy { get; set; }
+        //[Display(Name = "Privacy Policy")]
+        //[MustBeTrue(ErrorMessage = "You must agree to the Privacy Policy before register.")]
+        //public bool PrivacyPolicy { get; set; }
 
         public string Extra { get; set; }
 

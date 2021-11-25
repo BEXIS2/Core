@@ -175,9 +175,9 @@ namespace BExIS.Dlm.Services.DataStructure
                     case TypeCode.Decimal:
                         try
                         {
-                            List<decimal> placeholders = repo.Query().Where(mv => mv.Variable.Id.Equals(variableId)).Select(mv => Convert.ToDecimal(mv.Placeholder)).ToList();
+                            List<string> placeholders = repo.Query().Where(mv => mv.Variable.Id.Equals(variableId)).Select(mv => mv.Placeholder).ToList();
                             decimal temp = decimal.MaxValue - (decimal)1.0;
-                            while (placeholders.Contains(temp) && temp > decimal.MinValue + (decimal)1.0)
+                            while (placeholders.Contains(temp.ToString(format)) && temp > decimal.MinValue + (decimal)1.0)
                             {
                                 temp -= (decimal)1.0;
                             }

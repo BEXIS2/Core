@@ -90,7 +90,7 @@ namespace BExIS.IO.Tests
                 if (dt.ItMatch)
                 {
                     result.ToString(new CultureInfo("en-US", false)).Should().NotBeNull("can´t convert : " + dt.InputDateTimeString + " with pattern:" + dt.Pattern);
-                    result.ToString(new CultureInfo("en-US", false)).Should().Match(dt.OutputDateTimeString, "not match :" + result + " - " + dt.OutputDateTimeString);
+                    result.ToString(new CultureInfo("en-US", false)).Should().Match(dt.OutputDateTimeString, "not match :" + result.ToString(new CultureInfo("en-US", false)) + " - " + dt.OutputDateTimeString);
                     //checkresult.Should(typeof(DateTime))
                     //Assert.IsInstanceOf<DateTime>(checkresult, "xyz");
                     checkresult.Should().BeOfType<DateTime>();
@@ -127,6 +127,9 @@ namespace BExIS.IO.Tests
         private List<DateTimeHelperUTObject> generateDateTimeCases()
         {
             List<DateTimeHelperUTObject> cases = new List<DateTimeHelperUTObject>();
+
+            cases.Add(new DateTimeHelperUTObject("3/2/2019 7:31", "M/d/yyyy h:m", "3/2/2019 7:31:00 AM", true));
+            cases.Add(new DateTimeHelperUTObject("03/02/2019 7:31", "MM/dd/yyyy h:m", "3/2/2019 7:31:00 AM", true));
 
             cases.Add(new DateTimeHelperUTObject("2017-10-24T11:00:00", "yyyy-MM-ddThh:mm:ss", "10/24/2017 11:00:00 AM", true));
             cases.Add(new DateTimeHelperUTObject("2017-10-24T13:00:00", "yyyy-MM-ddTHH:mm:ss", "10/24/2017 1:00:00 PM", true));

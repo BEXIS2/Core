@@ -61,6 +61,7 @@ namespace BExIS.IO.Tests.Transform.Input
         [TestCase("278,89999999999998", "278,9", "0.0")] //definierter Roundungsbereich 
         [TestCase("278,89999999999998", "278,90", "#,##0.00")] //definierter Roundungsbereich 
         [TestCase("123,456789", "123,46", "#,##0.00")] //definierter Roundungsbereich 
+        [TestCase("4.9000001", "4.9", "0.0")] //definierter Roundungsbereich 
         public void InputConvertionToDouble_ValueInToDataType_ReturnSameAsImported(string cellValue,string displayValue, string formatCode)
         {
             //Arrange

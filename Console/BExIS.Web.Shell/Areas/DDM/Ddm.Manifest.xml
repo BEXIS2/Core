@@ -84,4 +84,5 @@
     <EntityAction id="showDataset" entity="dataset" controller="data" action="Showdata" area="DDM" modus="show" />
     <EntityAction id="uploadDataset" entity="dataset" controller="Submit" action="Upload" area="DCM" modus="upload" />
   </EntityActions>
+	
 </Manifest>
