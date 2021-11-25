@@ -1,9 +1,0 @@
-﻿<?xml version="1.0" encoding="utf-8" ?>
-
-<version name="VersionNo" type="Int32">
-  <column name="VersionNo" />
-</version>
-
-<!--<property name="TimeStamp" type="DateTime">
-  <column name="TimeStamp" />
-</property>-->
