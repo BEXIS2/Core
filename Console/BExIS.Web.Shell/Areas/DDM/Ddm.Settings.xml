@@ -2,8 +2,8 @@
 <settings>
   <entry key="help" value="https://github.com/BEXIS2/Documents/blob/2.14.4/Manuals/DDM/DataDiscovery_Manual.md" type="String" description="URL to manual"/>
 
-  <entry key="show_primary_data_tab" value="true" type="Boolean" description="Show primary data"/>
-  <entry key="show_data_structure_tab" value="true" type="Boolean" description="Show data structure"/>  
+  <entry key="show_data_tab" value="true" type="Boolean" description="Show primary data"/>
+  <entry key="show_datadescription_tab" value="true" type="Boolean" description="Show data structure"/>  
   <entry key="show_link_tab" value="true" type="Boolean" description="Show links"/>
   <entry key="show_permission_tab" value="true" type="Boolean" description="Show permissions"/>
   <entry key="show_publish_tab" value="true" type="Boolean" description="Show publish"/>

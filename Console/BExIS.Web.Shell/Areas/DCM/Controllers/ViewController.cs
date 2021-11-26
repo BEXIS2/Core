@@ -87,7 +87,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         /// <param name="id"></param>
         /// <param name="version"></param>
         /// <returns></returns>
-        [BExISEntityAuthorize(typeof(Dataset), "id", RightType.Read)]
+        //[BExISEntityAuthorize(typeof(Dataset), "id", RightType.Read)]
         public ActionResult Start(long id, int version)
         {
             //throw new NotImplementedException();

@@ -32,6 +32,7 @@ namespace BExIS.Modules.Rpm.UI.Hooks
 
             // if one fail then access is denied
             if (hasAccess == false || hasRights == false) Status = HookStatus.AccessDenied;
+            else Status = HookStatus.Open;
         }
 
     }

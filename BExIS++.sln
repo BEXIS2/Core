@@ -1,6 +1,6 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.29609.76
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Console", "Console", "{A24A6801-2ECC-4F47-8284-8C93277D3030}"
 EndProject
@@ -153,6 +153,12 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BExIS.Utils.Data.Tests", "Components\Utils\BExIS.Utils.Tests\BExIS.Utils.Data.Tests.csproj", "{738E6ADD-20CB-4AF1-B42D-C6C2C76D782D}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BExIS.UI.Tests", "Components\UI\BExIS.UI.Tests\BExIS.UI.Tests.csproj", "{F376AB1B-A650-4DAA-9583-2F26204CB3A5}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "_example", "_example", "{C4C8434D-34CD-489F-AB89-AA7D348F7734}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BExIS.Example", "Components\_example\BExIS.Example\BExIS.Example.csproj", "{AA377739-1190-4925-AF46-62C09498FB5C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BExIS.Example.UnitTest", "Components\_example\BExIS.Example.UnitTest\BExIS.Example.UnitTest.csproj", "{D3DD742B-3868-4C86-A99C-080325D596DA}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -1052,6 +1058,42 @@ Global
 		{F376AB1B-A650-4DAA-9583-2F26204CB3A5}.TestServerRelease|Mixed Platforms.Build.0 = TestServerRelease|Any CPU
 		{F376AB1B-A650-4DAA-9583-2F26204CB3A5}.TestServerRelease|x86.ActiveCfg = TestServerRelease|Any CPU
 		{F376AB1B-A650-4DAA-9583-2F26204CB3A5}.TestServerRelease|x86.Build.0 = TestServerRelease|Any CPU
+		{AA377739-1190-4925-AF46-62C09498FB5C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AA377739-1190-4925-AF46-62C09498FB5C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AA377739-1190-4925-AF46-62C09498FB5C}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{AA377739-1190-4925-AF46-62C09498FB5C}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{AA377739-1190-4925-AF46-62C09498FB5C}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{AA377739-1190-4925-AF46-62C09498FB5C}.Debug|x86.Build.0 = Debug|Any CPU
+		{AA377739-1190-4925-AF46-62C09498FB5C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AA377739-1190-4925-AF46-62C09498FB5C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AA377739-1190-4925-AF46-62C09498FB5C}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{AA377739-1190-4925-AF46-62C09498FB5C}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{AA377739-1190-4925-AF46-62C09498FB5C}.Release|x86.ActiveCfg = Release|Any CPU
+		{AA377739-1190-4925-AF46-62C09498FB5C}.Release|x86.Build.0 = Release|Any CPU
+		{AA377739-1190-4925-AF46-62C09498FB5C}.TestServerRelease|Any CPU.ActiveCfg = Release|Any CPU
+		{AA377739-1190-4925-AF46-62C09498FB5C}.TestServerRelease|Any CPU.Build.0 = Release|Any CPU
+		{AA377739-1190-4925-AF46-62C09498FB5C}.TestServerRelease|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{AA377739-1190-4925-AF46-62C09498FB5C}.TestServerRelease|Mixed Platforms.Build.0 = Release|Any CPU
+		{AA377739-1190-4925-AF46-62C09498FB5C}.TestServerRelease|x86.ActiveCfg = Release|Any CPU
+		{AA377739-1190-4925-AF46-62C09498FB5C}.TestServerRelease|x86.Build.0 = Release|Any CPU
+		{D3DD742B-3868-4C86-A99C-080325D596DA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D3DD742B-3868-4C86-A99C-080325D596DA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D3DD742B-3868-4C86-A99C-080325D596DA}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{D3DD742B-3868-4C86-A99C-080325D596DA}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{D3DD742B-3868-4C86-A99C-080325D596DA}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{D3DD742B-3868-4C86-A99C-080325D596DA}.Debug|x86.Build.0 = Debug|Any CPU
+		{D3DD742B-3868-4C86-A99C-080325D596DA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D3DD742B-3868-4C86-A99C-080325D596DA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D3DD742B-3868-4C86-A99C-080325D596DA}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{D3DD742B-3868-4C86-A99C-080325D596DA}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{D3DD742B-3868-4C86-A99C-080325D596DA}.Release|x86.ActiveCfg = Release|Any CPU
+		{D3DD742B-3868-4C86-A99C-080325D596DA}.Release|x86.Build.0 = Release|Any CPU
+		{D3DD742B-3868-4C86-A99C-080325D596DA}.TestServerRelease|Any CPU.ActiveCfg = Release|Any CPU
+		{D3DD742B-3868-4C86-A99C-080325D596DA}.TestServerRelease|Any CPU.Build.0 = Release|Any CPU
+		{D3DD742B-3868-4C86-A99C-080325D596DA}.TestServerRelease|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{D3DD742B-3868-4C86-A99C-080325D596DA}.TestServerRelease|Mixed Platforms.Build.0 = Release|Any CPU
+		{D3DD742B-3868-4C86-A99C-080325D596DA}.TestServerRelease|x86.ActiveCfg = Release|Any CPU
+		{D3DD742B-3868-4C86-A99C-080325D596DA}.TestServerRelease|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -1124,10 +1166,13 @@ Global
 		{F6638B42-1D60-4925-AE87-FDB80C03DBAC} = {946EB891-B5C8-4E03-B953-69583E886E57}
 		{738E6ADD-20CB-4AF1-B42D-C6C2C76D782D} = {8ACF0B65-BAFD-49FD-A840-D04C4DCDE993}
 		{F376AB1B-A650-4DAA-9583-2F26204CB3A5} = {100BBAAA-7D22-4ACD-A677-8752D099DB5D}
+		{C4C8434D-34CD-489F-AB89-AA7D348F7734} = {A753DD30-104E-48DB-A9D8-73C0DDE973E6}
+		{AA377739-1190-4925-AF46-62C09498FB5C} = {C4C8434D-34CD-489F-AB89-AA7D348F7734}
+		{D3DD742B-3868-4C86-A99C-080325D596DA} = {C4C8434D-34CD-489F-AB89-AA7D348F7734}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
-		EnterpriseLibraryConfigurationToolBinariesPath = packages\Unity.2.1.505.0\lib\NET35;packages\Unity.2.1.505.2\lib\NET35
 		SolutionGuid = {9B6E4921-8EBA-487D-A098-3E473A0EAC64}
+		EnterpriseLibraryConfigurationToolBinariesPath = packages\Unity.2.1.505.0\lib\NET35;packages\Unity.2.1.505.2\lib\NET35
 	EndGlobalSection
 	GlobalSection(SubversionScc) = preSolution
 		Svn-Managed = True

@@ -30,7 +30,15 @@ namespace BExIS.Modules.Dcm.UI.Hooks
             bool hasRights = hasUserEntityRights(id, username,RightType.Read);
 
             // if one fail then access is denied
-            if(hasAccess == false || hasRights == false) Status = HookStatus.AccessDenied;
+            if (hasAccess == false || hasRights == false)
+            {
+                Status = HookStatus.AccessDenied;
+            }
+            else
+            {
+                Status = HookStatus.Open;
+            }
+
         }
 
     }

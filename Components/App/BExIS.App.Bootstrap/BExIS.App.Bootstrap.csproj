@@ -117,6 +117,7 @@
     <Compile Include="Attributes\BExISApiAuthorizeAttribute.cs" />
     <Compile Include="Attributes\BExISAuthorizeAttribute.cs" />
     <Compile Include="Attributes\BExISEntityAuthorizeAttribute.cs" />
+    <Compile Include="Attributes\JsonNetFilterAttribute.cs" />
     <Compile Include="GeneralSettings.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

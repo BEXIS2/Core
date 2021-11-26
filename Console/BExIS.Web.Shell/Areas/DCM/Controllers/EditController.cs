@@ -4,6 +4,7 @@ using BExIS.Dlm.Services.Data;
 using BExIS.Modules.Dcm.UI.Models.Edit;
 using BExIS.Security.Entities.Authorization;
 using BExIS.UI.Hooks;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -32,6 +33,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         /// <param name="version">version number of the dataset</param>
         /// <returns></returns>
         [BExISEntityAuthorize(typeof(Dataset), "id", RightType.Write)]
+        [JsonNetFilter]
         public JsonResult Load(long id, int version = 0)
         {
             EditModel model = new EditModel();

@@ -113,10 +113,6 @@ namespace BExIS.IO.Tests.Transform.Input
 
                 throw ex;
             }
-
-
         }
-
-
     }
 }

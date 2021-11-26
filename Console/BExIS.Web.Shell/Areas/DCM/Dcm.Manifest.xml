@@ -123,7 +123,7 @@
 	  <Hook
 		  name="attachments"
 		  displayName="Attachments"
-		  mode="edit"
+		  mode="view"
 		  entity="dataset"
 		  place="details"
 		  module="dcm"
@@ -141,7 +141,7 @@
 	  
 	  <Hook
 		  name="fileupload"
-		  displayname="File Upload"
+		  displayName="File Upload"
 		  mode="edit"
 		  entity="dataset"
 		  place="details"
