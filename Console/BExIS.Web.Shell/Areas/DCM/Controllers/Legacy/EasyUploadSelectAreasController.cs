@@ -171,38 +171,40 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                     string filePath = TaskManager.Bus[EasyUploadTaskManager.FILEPATH].ToString();
                     FileStream fis = null;
                     string jsonTable = "{}";
-                    fis = new FileStream(filePath, FileMode.Open, FileAccess.Read);
-
-                    //Generate the Sheet-List and grab the active worksheet
-                    JsonTableGenerator EUEReader = new JsonTableGenerator(fis);
-                    //If the active worksheet was never changed, we default to the first one
-                    string activeWorksheet;
-                    if (!TaskManager.Bus.ContainsKey(EasyUploadTaskManager.ACTIVE_WOKSHEET_URI))
+                    using (fis = new FileStream(filePath, FileMode.Open, FileAccess.Read))
                     {
-                        activeWorksheet = EUEReader.GetFirstWorksheetUri().ToString();
-                        TaskManager.AddToBus(EasyUploadTaskManager.ACTIVE_WOKSHEET_URI, activeWorksheet);
+
+                        //Generate the Sheet-List and grab the active worksheet
+                        JsonTableGenerator EUEReader = new JsonTableGenerator(fis);
+                        //If the active worksheet was never changed, we default to the first one
+                        string activeWorksheet;
+                        if (!TaskManager.Bus.ContainsKey(EasyUploadTaskManager.ACTIVE_WOKSHEET_URI))
+                        {
+                            activeWorksheet = EUEReader.GetFirstWorksheetUri().ToString();
+                            TaskManager.AddToBus(EasyUploadTaskManager.ACTIVE_WOKSHEET_URI, activeWorksheet);
+                        }
+                        else
+                        {
+                            activeWorksheet = TaskManager.Bus[EasyUploadTaskManager.ACTIVE_WOKSHEET_URI].ToString();
+                        }
+                        //Generate the table for the active worksheet
+                        jsonTable = EUEReader.GenerateJsonTable(CurrentSheetFormat, activeWorksheet);
+
+                        //Save the worksheet uris to the model
+                        model.SheetUriDictionary = EUEReader.GetWorksheetUris();
+
+                        if (!String.IsNullOrEmpty(jsonTable))
+                        {
+                            TaskManager.AddToBus(EasyUploadTaskManager.SHEET_JSON_DATA, jsonTable);
+                        }
+
+                        //Add uri of the active sheet to the model to be able to preselect the correct option in the dropdown
+                        model.activeSheetUri = activeWorksheet;
+
+                        #endregion Generate sheet-list and table for active sheet
+
+                        model.StepInfo = TaskManager.Current();
                     }
-                    else
-                    {
-                        activeWorksheet = TaskManager.Bus[EasyUploadTaskManager.ACTIVE_WOKSHEET_URI].ToString();
-                    }
-                    //Generate the table for the active worksheet
-                    jsonTable = EUEReader.GenerateJsonTable(CurrentSheetFormat, activeWorksheet);
-
-                    //Save the worksheet uris to the model
-                    model.SheetUriDictionary = EUEReader.GetWorksheetUris();
-
-                    if (!String.IsNullOrEmpty(jsonTable))
-                    {
-                        TaskManager.AddToBus(EasyUploadTaskManager.SHEET_JSON_DATA, jsonTable);
-                    }
-
-                    //Add uri of the active sheet to the model to be able to preselect the correct option in the dropdown
-                    model.activeSheetUri = activeWorksheet;
-
-                    #endregion Generate sheet-list and table for active sheet
-
-                    model.StepInfo = TaskManager.Current();
                 }
             }
 
