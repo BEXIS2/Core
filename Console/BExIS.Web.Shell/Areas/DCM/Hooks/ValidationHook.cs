@@ -19,11 +19,15 @@ namespace BExIS.Modules.Dcm.UI.Hooks
             // check status
             checkStatus(id, username);
 
-            // check if file exist
+            // after the security check this hook needs to check 
+            // wheter incoming data, and datastructure exist
+            if (Status == HookStatus.AccessDenied)
+            {
+                // check if file exist
 
-            // check if data strutcure exist
+                // check if data strutcure exist
 
-
+            }
         }
 
         private void checkStatus(long id, string username)
@@ -36,6 +40,7 @@ namespace BExIS.Modules.Dcm.UI.Hooks
 
             // if one fail then access is denied
             if(hasAccess == false || hasRights == false) Status = HookStatus.AccessDenied;
+            else Status = HookStatus.Inactive;
         }
 
     }

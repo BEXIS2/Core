@@ -7596,13 +7596,13 @@ var app = (function () {
     			div = element("div");
     			b = element("b");
     			t = text(t_value);
-    			add_location(b, file$4, 37, 2, 941);
+    			add_location(b, file$4, 37, 2, 942);
     			attr_dev(div, "class", div_class_value = "mb-3 hook-status-" + /*status*/ ctx[0] + " hook" + " svelte-roqrqj");
-    			add_location(div, file$4, 36, 1, 893);
+    			add_location(div, file$4, 36, 1, 894);
     			attr_dev(a, "href", /*url*/ ctx[3]);
     			set_style(a, "text-decoration", "none");
     			attr_dev(a, "class", "svelte-roqrqj");
-    			add_location(a, file$4, 35, 0, 845);
+    			add_location(a, file$4, 35, 0, 846);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, a, anchor);
@@ -7673,7 +7673,7 @@ var app = (function () {
 
     function setEnable(status) {
     	if (status == 0 || status == 1) {
-    		return false; // disabled || acces denied
+    		return false; // disabled || access denied
     	}
 
     	return true; // every other status enable the hook
