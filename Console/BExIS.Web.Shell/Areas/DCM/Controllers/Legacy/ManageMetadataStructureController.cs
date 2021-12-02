@@ -64,7 +64,6 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
                 string path = OutputMetadataManager.GetSchemaDirectoryPathFromMetadataStructure(id, metadataStructureManager);
 
-               
                 if (Directory.Exists(path))
                     zip.AddDirectory(path);
 
@@ -118,7 +117,6 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             {
                 if (ModelState.IsValid)
                 {
-
                     MetadataStructure metadataStructure = metadataStructureManager.Repo.Get(metadataStructureModel.Id);
 
                     metadataStructure = updateMetadataStructure(metadataStructure, metadataStructureModel);
@@ -129,17 +127,16 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                     // update datasetversion
 
                     // get all datasetIds which using the metadata structure
-                    var datasetIds = datasetManager.DatasetRepo.Query().Where(d => d.MetadataStructure.Id.Equals(metadataStructure.Id)).Select(d=>d.Id);
+                    var datasetIds = datasetManager.DatasetRepo.Query().Where(d => d.MetadataStructure.Id.Equals(metadataStructure.Id)).Select(d => d.Id);
 
                     if (datasetIds.Any())
                     {
-                        //get all datasetversions of the dataset ids 
+                        //get all datasetversions of the dataset ids
                         var datasetVersionIds = datasetManager.DatasetVersionRepo.Query().Where(dsv => datasetIds.Contains(dsv.Dataset.Id)).Select(dsv => dsv.Id).ToList();
 
                         //load all titles & descriptions from versions
                         var allTitles = xmlDatasetHelper.GetInformationFromVersions(datasetVersionIds, metadataStructure.Id, NameAttributeValues.title);
                         var allDescriptions = xmlDatasetHelper.GetInformationFromVersions(datasetVersionIds, metadataStructure.Id, NameAttributeValues.description);
-
 
                         // update each datasetversion
                         foreach (var datasetVersionId in datasetVersionIds)

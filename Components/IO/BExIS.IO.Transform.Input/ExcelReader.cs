@@ -61,7 +61,6 @@ namespace BExIS.IO.Transform.Input
         {
             NumberOfRows = 0;
             NumberOSkippedfRows = 0;
-
         }
 
         public ExcelReader(StructuredDataStructure structuredDatastructure, ExcelFileReaderInfo fileReaderInfo, IOUtility iOUtility) : base(structuredDatastructure, fileReaderInfo, iOUtility)
@@ -74,7 +73,6 @@ namespace BExIS.IO.Transform.Input
         {
             NumberOfRows = 0;
             NumberOSkippedfRows = 0;
-
         }
 
         public override FileStream Open(string fileName)
@@ -176,7 +174,7 @@ namespace BExIS.IO.Transform.Input
 
             // get workbookpart
             WorkbookPart workbookPart = spreadsheetDocument.WorkbookPart;
-            
+
             // get all the defined area
             List<DefinedNameVal> namesTable = BuildDefinedNamesTable(workbookPart);
 
@@ -276,7 +274,7 @@ namespace BExIS.IO.Transform.Input
                 Position = this._areaOfData.StartRow;
             }
 
-            int endPosition = (Position + packageSize)-1;
+            int endPosition = (Position + packageSize) - 1;
 
             if (endPosition > this._areaOfData.EndRow)
                 endPosition = this._areaOfData.EndRow;
@@ -446,7 +444,7 @@ namespace BExIS.IO.Transform.Input
 
             if (GetSubmitedVariableIdentifier(worksheetPart, this._areaOfVariables.StartRow, this._areaOfVariables.EndRow) != null)
             {
-                listOfSelectedvalues = GetValuesFromRows(worksheetPart, variableList, Position, (Position + packageSize)-1);
+                listOfSelectedvalues = GetValuesFromRows(worksheetPart, variableList, Position, (Position + packageSize) - 1);
                 Position += packageSize;
             }
 
@@ -546,7 +544,6 @@ namespace BExIS.IO.Transform.Input
                                     count++;
                                 }
                             }
-
                         } while (reader.ReadNextSibling()); // Skip to the next row
 
                         break;
@@ -789,7 +786,6 @@ namespace BExIS.IO.Transform.Input
         //                        value = sharedStringItem.InnerText;
         //                    }
         //                    else {
-
         //                        value = c.CellValue.Text;
         //                    }
 
@@ -864,18 +860,17 @@ namespace BExIS.IO.Transform.Input
                     // create the index for the position in the rowAsStringArray
                     int index = cellReferencAsInterger - offset - 1;
 
-                    // the columnPosition of the cell must be in the startColumn and endColumn range 
+                    // the columnPosition of the cell must be in the startColumn and endColumn range
                     // otherwise jump over it
                     if (cellReferencAsInterger >= startColumn && cellReferencAsInterger <= endColumn)
                     {
                         if (c.CellValue != null)
                         {
-                           
                             //if columns is not null means the function returns a subset of all columns based on the incoming varids
                             if ((columns == null || columns.Contains(cellReferencAsInterger)) && index >= 0)
                             {
                                 // if Value a text
-                                if (c.DataType != null && c.DataType.HasValue && 
+                                if (c.DataType != null && c.DataType.HasValue &&
                                    (c.DataType.Value == CellValues.SharedString || c.DataType.Value == CellValues.String || c.DataType.Value == CellValues.InlineString))
                                 {
                                     // if the datatype is a shared string, then the value comes from a shared string table and the value inside is a
@@ -886,7 +881,7 @@ namespace BExIS.IO.Transform.Input
                                         SharedStringItem sharedStringItem = _sharedStrings[sharedStringIndex];
                                         value = sharedStringItem.InnerText;
                                     }
-                                    // if the excel cell datatype a CellValues.String or CellValues.Inline 
+                                    // if the excel cell datatype a CellValues.String or CellValues.Inline
                                     // then set the value by the value from the cell direct without some extra work
                                     else
                                     {
@@ -928,8 +923,8 @@ namespace BExIS.IO.Transform.Input
                                                     else
                                                     {
                                                         // check format code and round the value based on the decimal place
-                                                        // contains e.g. #.## & 0.00 
-                                                        // contains e.g. 1,23E+02 
+                                                        // contains e.g. #.## & 0.00
+                                                        // contains e.g. 1,23E+02
                                                         // 1234567890,43759 = 1,23E+09
 
                                                         value = ExcelHelper.ConvertWithFormat(c.CellValue.Text, formatCode);
@@ -940,7 +935,7 @@ namespace BExIS.IO.Transform.Input
                                                     value = ExcelHelper.ConvertWithFormat(c.CellValue.Text, "");
                                                 }
                                             }
-                                            else //numberformat not exist in the stylesheet but may numberformatid exist 
+                                            else //numberformat not exist in the stylesheet but may numberformatid exist
                                             {
                                                 string formatcode = ExcelHelper.GetFormatCode(numberFormatId);
 
