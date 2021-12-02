@@ -1,16 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <settings>
-  <entry key="help" value="https://github.com/BEXIS2/Documents/blob/2.14.4/Manuals/DDM/DataDiscovery_Manual.md" type="String" description="URL to manual"/>
+	<entry key="help" value="https://github.com/BEXIS2/Documents/blob/2.14.4/Manuals/DDM/DataDiscovery_Manual.md" type="String" description="URL to manual" />
 
-  <entry key="show_data_tab" value="true" type="Boolean" description="Show primary data"/>
-  <entry key="show_datadescription_tab" value="true" type="Boolean" description="Show data structure"/>  
-  <entry key="show_link_tab" value="true" type="Boolean" description="Show links"/>
-  <entry key="show_permission_tab" value="true" type="Boolean" description="Show permissions"/>
-  <entry key="show_publish_tab" value="true" type="Boolean" description="Show publish"/>
-  <entry key="show_attachments_tab" value="true" type="Boolean" description="Show attachments"/>
-	
-  <entry key="show_tabs_deactivated" value="true" type="Boolean" description="Show deactivated (tabs without permision) tabs"/> // kann weg
+	<entry key="show_data_tab" value="true" type="Boolean" description="Show primary data" />
+	<entry key="show_datadescription_tab" value="true" type="Boolean" description="Show data structure" />
+	<entry key="show_link_tab" value="true" type="Boolean" description="Show links" />
+	<entry key="show_permission_tab" value="true" type="Boolean" description="Show permissions" />
+	<entry key="show_publish_tab" value="true" type="Boolean" description="Show publish" />
+	<entry key="show_attachments_tab" value="true" type="Boolean" description="Show attachments" />
 
-  <entry key="check_public_metadata" value="false" type="Boolean" description="Set true to enable to only show metadata for not-loggedin users, if the dataset is public."/>
-    
+	<entry key="show_tabs_deactivated" value="true" type="Boolean" description="Show deactivated (tabs without permision) tabs" /> // kann weg
+
+	<entry key="check_public_metadata" value="false" type="Boolean" description="Set true to enable to only show metadata for not-loggedin users, if the dataset is public." />
 </settings>

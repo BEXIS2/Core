@@ -55,7 +55,16 @@
     // separate dataset hooks and additional hooks
     foreach (var hook in Model.Hooks)
     {
-        if (hook != null)
+        // check if the hook is blocked by settings
+        string key = "show_" + hook.Name.ToLower() + "_tab";
+        bool isNotBlocked = true;
+
+        if (show_tabs.ContainsKey(key))
+        {
+            bool.TryParse(show_tabs[key], out isNotBlocked);
+        }
+
+        if (hook != null && isNotBlocked)
         {
             //set active hook based one nam in session
             if (hook.Name.Equals(activeHookName))
