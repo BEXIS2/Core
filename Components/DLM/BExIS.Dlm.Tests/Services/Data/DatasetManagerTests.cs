@@ -17,6 +17,8 @@ using System.Collections.Generic;
 using System.Linq;
 using BExIS.Dlm.Entities.Administration;
 using BExIS.Utils.NH.Querying;
+using System.Web;
+using System.Security.Principal;
 
 namespace BExIS.Dlm.Tests.Services.Data
 {
@@ -28,6 +30,7 @@ namespace BExIS.Dlm.Tests.Services.Data
         public void OneTimeSetUp()
         {
             helper = new TestSetupHelper(WebApiConfig.Register, false);
+
             var dsHelper = new DatasetHelper();
             dsHelper.PurgeAllDatasets();
             dsHelper.PurgeAllDataStructures();

@@ -426,7 +426,7 @@
 
         var intention = $("#intention").val();
 
-	    $.post("/DDM/Request/Send", { id, intention }, function(data) {
+	    $.post("/DDM/Requests/Send", { id, intention }, function(data) {
 	        if (data === true) {
 	            $("#sendRequestBt").prop("disabled", "disabled");
 	            $("#sendRequestBt").addClass("bx-disabled", "bx-disabled");

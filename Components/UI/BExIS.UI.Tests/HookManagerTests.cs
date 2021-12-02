@@ -46,7 +46,7 @@ namespace BExIS.UI.Tests
         {
         }
 
-        [Test()]
+        //[Test()]
         public void Construtor_New_ReturnNewHookManager()
         {
             //Arrange
@@ -57,7 +57,7 @@ namespace BExIS.UI.Tests
             Assert.IsNotNull(hookManager);
         }
 
-        [Test()]
+        //[Test()]
         public void GetHooksFor_WithoutErrors_ReturnHooksAsList()
         {
             //Arrange

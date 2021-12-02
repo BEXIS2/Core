@@ -120,7 +120,7 @@
                 var result = confirm('Are you sure you want to accept this request (Id:' + $(this).attr("value") + ')?');
 
                 if (result) {
-                    $.post("/sam/requests/accept", { DecisionId: $(this).attr("value") }, function (e) {
+                    $.post("/ddm/requests/accept", { DecisionId: $(this).attr("value") }, function (e) {
                         $(".decision").trigger('click');
                     });
                 }
@@ -130,7 +130,7 @@
                 var result = confirm('Are you sure you want to reject this request (Id:' + $(this).attr("value") + ')?');
 
                 if (result) {
-                    $.post('/sam/requests/reject', { RequestId: $(this).attr("value") }, function (e) {
+                    $.post('/ddm/requests/reject', { RequestId: $(this).attr("value") }, function (e) {
                         $(".request").trigger('click');
                     });
                 }
