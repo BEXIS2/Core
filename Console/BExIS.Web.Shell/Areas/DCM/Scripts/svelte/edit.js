@@ -7596,13 +7596,13 @@ var app = (function () {
     			div = element("div");
     			b = element("b");
     			t = text(t_value);
-    			add_location(b, file$4, 37, 2, 942);
+    			add_location(b, file$4, 37, 2, 954);
     			attr_dev(div, "class", div_class_value = "mb-3 hook-status-" + /*status*/ ctx[0] + " hook" + " svelte-roqrqj");
-    			add_location(div, file$4, 36, 1, 894);
+    			add_location(div, file$4, 36, 1, 906);
     			attr_dev(a, "href", /*url*/ ctx[3]);
     			set_style(a, "text-decoration", "none");
     			attr_dev(a, "class", "svelte-roqrqj");
-    			add_location(a, file$4, 35, 0, 846);
+    			add_location(a, file$4, 35, 0, 858);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, a, anchor);
@@ -7682,11 +7682,11 @@ var app = (function () {
     function instance$4($$self, $$props, $$invalidate) {
     	let { $$slots: slots = {}, $$scope } = $$props;
     	validate_slots('Hook', slots, []);
-    	let { id } = $$props;
-    	let { version } = $$props;
-    	let { status } = $$props;
-    	let { displayName } = $$props;
-    	let { start } = $$props;
+    	let { id = 0 } = $$props;
+    	let { version = 1 } = $$props;
+    	let { status = 0 } = $$props;
+    	let { displayName = "" } = $$props;
+    	let { start = "" } = $$props;
     	let isEnabled = setEnable(status);
     	let url = hosturl + start + "?id=" + id + "&version=" + version;
     	const writable_props = ['id', 'version', 'status', 'displayName', 'start'];
@@ -7750,29 +7750,6 @@ var app = (function () {
     			options,
     			id: create_fragment$4.name
     		});
-
-    		const { ctx } = this.$$;
-    		const props = options.props || {};
-
-    		if (/*id*/ ctx[4] === undefined && !('id' in props)) {
-    			console.warn("<Hook> was created without expected prop 'id'");
-    		}
-
-    		if (/*version*/ ctx[5] === undefined && !('version' in props)) {
-    			console.warn("<Hook> was created without expected prop 'version'");
-    		}
-
-    		if (/*status*/ ctx[0] === undefined && !('status' in props)) {
-    			console.warn("<Hook> was created without expected prop 'status'");
-    		}
-
-    		if (/*displayName*/ ctx[1] === undefined && !('displayName' in props)) {
-    			console.warn("<Hook> was created without expected prop 'displayName'");
-    		}
-
-    		if (/*start*/ ctx[6] === undefined && !('start' in props)) {
-    			console.warn("<Hook> was created without expected prop 'start'");
-    		}
     	}
 
     	get id() {
@@ -8251,7 +8228,7 @@ var app = (function () {
     		c: function create() {
     			h2 = element("h2");
     			h2.textContent = "Data";
-    			add_location(h2, file$3, 89, 4, 1494);
+    			add_location(h2, file$3, 89, 4, 1495);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, h2, anchor);
@@ -8871,7 +8848,7 @@ var app = (function () {
     			t0 = space();
     			b = element("b");
     			b.textContent = "test";
-    			add_location(b, file$2, 25, 4, 577);
+    			add_location(b, file$2, 25, 4, 580);
     		},
     		m: function mount(target, anchor) {
     			mount_component(spinner, target, anchor);
@@ -8967,15 +8944,14 @@ var app = (function () {
     	let hook;
     	let t;
     	let current;
+    	const hook_spread_levels = [{ id: /*id*/ ctx[0] }, { version: /*version*/ ctx[1] }, /*hook*/ ctx[3]];
+    	let hook_props = {};
 
-    	hook = new Hook({
-    			props: {
-    				id: /*id*/ ctx[0],
-    				version: /*version*/ ctx[1],
-    				hook: /*hook*/ ctx[3]
-    			},
-    			$$inline: true
-    		});
+    	for (let i = 0; i < hook_spread_levels.length; i += 1) {
+    		hook_props = assign(hook_props, hook_spread_levels[i]);
+    	}
+
+    	hook = new Hook({ props: hook_props, $$inline: true });
 
     	const block = {
     		c: function create() {
@@ -8988,10 +8964,14 @@ var app = (function () {
     			current = true;
     		},
     		p: function update(ctx, dirty) {
-    			const hook_changes = {};
-    			if (dirty & /*id*/ 1) hook_changes.id = /*id*/ ctx[0];
-    			if (dirty & /*version*/ 2) hook_changes.version = /*version*/ ctx[1];
-    			if (dirty & /*hooks*/ 4) hook_changes.hook = /*hook*/ ctx[3];
+    			const hook_changes = (dirty & /*id, version, hooks*/ 7)
+    			? get_spread_update(hook_spread_levels, [
+    					dirty & /*id*/ 1 && { id: /*id*/ ctx[0] },
+    					dirty & /*version*/ 2 && { version: /*version*/ ctx[1] },
+    					dirty & /*hooks*/ 4 && get_spread_object(/*hook*/ ctx[3])
+    				])
+    			: {};
+
     			hook.$set(hook_changes);
     		},
     		i: function intro(local) {
@@ -9668,11 +9648,11 @@ var app = (function () {
     	let data;
     	let updating_hooks;
     	let t1;
-    	let b;
-    	let t3;
+    	let hr;
+    	let t2;
     	let hooks_1;
     	let updating_hooks_1;
-    	let t4;
+    	let t3;
     	let debug_1;
     	let current;
 
@@ -9729,13 +9709,12 @@ var app = (function () {
     			div = element("div");
     			create_component(data.$$.fragment);
     			t1 = space();
-    			b = element("b");
-    			b.textContent = "additonal hooks";
-    			t3 = space();
+    			hr = element("hr");
+    			t2 = space();
     			create_component(hooks_1.$$.fragment);
-    			t4 = space();
+    			t3 = space();
     			create_component(debug_1.$$.fragment);
-    			add_location(b, file, 92, 0, 1874);
+    			add_location(hr, file, 92, 0, 1874);
     			attr_dev(div, "class", "content svelte-15uvspp");
     			add_location(div, file, 85, 0, 1726);
     		},
@@ -9745,10 +9724,10 @@ var app = (function () {
     			insert_dev(target, div, anchor);
     			mount_component(data, div, null);
     			append_dev(div, t1);
-    			append_dev(div, b);
-    			append_dev(div, t3);
+    			append_dev(div, hr);
+    			append_dev(div, t2);
     			mount_component(hooks_1, div, null);
-    			insert_dev(target, t4, anchor);
+    			insert_dev(target, t3, anchor);
     			mount_component(debug_1, target, anchor);
     			current = true;
     		},
@@ -9802,7 +9781,7 @@ var app = (function () {
     			if (detaching) detach_dev(div);
     			destroy_component(data);
     			destroy_component(hooks_1);
-    			if (detaching) detach_dev(t4);
+    			if (detaching) detach_dev(t3);
     			destroy_component(debug_1, detaching);
     		}
     	};
