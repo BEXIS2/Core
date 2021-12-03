@@ -152,6 +152,8 @@ namespace BExIS.Modules.Dcm.UI.Helpers
                 operationManager.Create("Api", "Metadata", "*", DatasetCreationFeature);
 
                 operationManager.Create("DCM", "Edit", "*");
+                operationManager.Create("DCM", "View", "*");
+                operationManager.Create("DCM", "Metadata", "*", DatasetCreationFeature);
 
                 #endregion Create Dataset Workflow
 

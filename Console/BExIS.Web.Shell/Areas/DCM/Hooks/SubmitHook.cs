@@ -31,6 +31,7 @@ namespace BExIS.Modules.Dcm.UI.Hooks
 
             // if one fail then access is denied
             if(hasAccess == false || hasRights == false) Status = HookStatus.AccessDenied;
+            else Status = HookStatus.Inactive;
         }
 
     }

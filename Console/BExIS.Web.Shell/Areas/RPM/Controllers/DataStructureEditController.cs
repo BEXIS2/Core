@@ -21,11 +21,28 @@ using BExIS.Security.Services.Objects;
 using BExIS.Security.Services.Subjects;
 using System.Xml;
 using System.IO;
+using BExIS.Dlm.Services.Data;
 
 namespace BExIS.Modules.Rpm.UI.Controllers
 {
     public class DataStructureEditController : BaseController
     {
+        public ActionResult Start(long id, int version = 0)
+        {
+            using (var datasetManager = new DatasetManager())
+            { 
+                var dataset = datasetManager.GetDataset(id);
+                if (dataset != null)
+                {
+                    return RedirectToAction("Index", new { DataStructureId = dataset.DataStructure.Id });
+                }
+                else
+                {
+                    throw new NullReferenceException("Dataset with id " + id + " does not exist.");
+                }
+            }
+        }
+
         public ActionResult Index(long DataStructureId = 0)
         {
             ViewBag.Title = PresentationModel.GetViewTitleForTenant("Data Structure Edit", this.Session.GetTenant());

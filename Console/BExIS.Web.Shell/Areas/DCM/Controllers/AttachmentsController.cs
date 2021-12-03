@@ -42,9 +42,25 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         [BExISEntityAuthorize(typeof(Dataset), "id", RightType.Read)]
         public ActionResult Start(long id, int version = 0)
         {
-            return RedirectToAction("DatasetAttachements", "Attachments", new { datasetId = id, versionId = version });
-        }
+            long versionId = 0;
+            using (var datasetManager = new DatasetManager())
+            {
+                // load dataset version
+                // if version number = 0 load latest version
+                DatasetVersion datasetVersion = null;
+                if (version == 0) // get latest
+                {
+                    datasetVersion = datasetManager.GetDatasetLatestVersion(id);
+                    versionId = datasetManager.GetDatasetVersionCount(id); // get number of the latest version
+                }
+                else // get specific
+                {
+                    versionId = datasetManager.GetDatasetVersionId(id, version); // get version id
+                }
+            }
 
+            return RedirectToAction("DatasetAttachements", "Attachments", new { datasetId = id, versionId });
+        }
 
         [BExISEntityAuthorize(typeof(Dataset), "datasetId", RightType.Read)]
         public ActionResult DatasetAttachements(long datasetId, long versionId)
@@ -58,7 +74,6 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             var storepath = Path.Combine(dataPath, "Temp", GetUsernameOrDefault());
 
             ViewBag.maxFileNameLength = 260 - storepath.Length - 2;
-
 
             return PartialView("_datasetAttachements", LoadDatasetModel(versionId));
         }
@@ -101,7 +116,6 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 MessageHelper.GetAttachmentDeleteMessage(datasetId, fileName, GetUsernameOrDefault()),
                 ConfigurationManager.AppSettings["SystemEmail"]
                 );
-
             }
 
             return RedirectToAction("showdata", "data", new { area = "ddm", id = datasetId });
@@ -130,14 +144,13 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 var user = userTask.Result;
                 int rights = 0;
                 if (user == null)
-                    rights = entityPermissionManager.GetEffectiveRights(subjectId:null, entity.Id, datasetVersion.Dataset.Id);
+                    rights = entityPermissionManager.GetEffectiveRights(subjectId: null, entity.Id, datasetVersion.Dataset.Id);
                 else
                     rights = entityPermissionManager.GetEffectiveRights(user.Id, entity.Id, datasetVersion.Dataset.Id);
                 model.UploadAccess = (((rights & (int)RightType.Write) > 0) || ((rights & (int)RightType.Grant) > 0));
                 model.DeleteAccess = (((rights & (int)RightType.Delete) > 0) || ((rights & (int)RightType.Grant) > 0));
                 model.DownloadAccess = ((rights & (int)RightType.Read) > 0 || ((rights & (int)RightType.Grant) > 0));
                 model.ViewAccess = ((rights & (int)RightType.Read) > 0 || ((rights & (int)RightType.Grant) > 0));
-
 
                 return model;
             }
@@ -181,8 +194,6 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                     Session["FileInfos"] = attachments;
                     uploadFiles(attachments, datasetId, description);
 
-                   
-
                     var es = new EmailService();
                     var filemNames = "";
 
@@ -194,7 +205,6 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                     {
                         var fileName = Path.GetFileName(file.FileName);
                         filemNames += fileName.ToString() + ",";
-
                     }
                     es.Send(MessageHelper.GetAttachmentUploadHeader(datasetId, typeof(Dataset).Name),
                     MessageHelper.GetAttachmentUploadMessage(datasetId, filemNames, user.DisplayName),
@@ -236,7 +246,6 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                     {
                         datasetVersion.StateInfo.State = status;
                     }
-
 
                     foreach (var file in attachments)
                     {

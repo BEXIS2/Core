@@ -3,8 +3,9 @@ BEGIN TRANSACTION;
 -- ROLLBACK TRANSACTION;
 
 
--- Add Controller to dcm --
-
+-- Add Controllers to operation
+-- shell/uitest
+-- shell/menu
 -- dcm/Metadata
 -- dcm/Validation
 -- dcm/FileUpload

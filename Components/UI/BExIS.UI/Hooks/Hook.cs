@@ -4,6 +4,7 @@ using BExIS.Security.Entities.Subjects;
 using BExIS.Security.Services.Authorization;
 using BExIS.Security.Services.Objects;
 using BExIS.Security.Services.Subjects;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,7 +19,13 @@ namespace BExIS.UI.Hooks
         /// <summary>
         /// the name of the hook
         /// </summary>
+        [JsonProperty("name")]
         public string Name { get; set; }
+
+        /// <summary>
+        /// the name of the hook
+        /// </summary>
+        public string DisplayName { get; set; }
 
         /// <summary>
         /// the Status selected from teh HookStatus Enum
@@ -51,7 +58,7 @@ namespace BExIS.UI.Hooks
         /// <summary>
         /// Start action where the workflow behind begins
         /// </summary>
-        /// <returns></returns>
+        /// <returns></returns>#
         public string Start { get; set; }
 
         public virtual void Check(long id, string username)
