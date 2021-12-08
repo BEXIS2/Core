@@ -1,11 +1,14 @@
 ﻿using BExIS.Xml.Helpers;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
+using Vaiona.Utils.Cfg;
 using Vaiona.Web.Mvc.Modularity;
 
 namespace BExIS.UI.Hooks
@@ -97,5 +100,54 @@ namespace BExIS.UI.Hooks
         }
 
         // load cache
+        public T LoadCache<T>(string _entity, string _place, HookMode _mode, long id) where T : new()
+        {
+            //check incoming values
+            if (string.IsNullOrEmpty(_entity)) throw new ArgumentNullException(nameof(_entity));
+            if (string.IsNullOrEmpty(_place)) throw new ArgumentNullException(nameof(_place));
+            if (id <= 0) throw new ArgumentOutOfRangeException(nameof(id));
+
+            T cache = new T();
+
+            // load json if exist
+            // generate filename based on mode,entity and place
+            string filename = _mode.ToString().ToLower() + _entity.ToLower() + _place.ToLower() + "cache.json";
+
+            // combine datapath + path + filename
+            string filepath = Path.Combine(AppConfiguration.DataPath, _entity + "s", id.ToString(), filename);
+
+            if (File.Exists(filepath)) // check if file exist
+            {
+                // convert json to object
+                cache = JsonConvert.DeserializeObject<T>(File.ReadAllText(filepath));
+            }
+
+            return cache;
+        }
+
+        public bool SaveCache<T>(T _cache, string _entity, string _place, HookMode _mode, long id)
+        {
+            //check incoming values
+            if (_cache == null) throw new ArgumentNullException(nameof(_cache));
+            if (string.IsNullOrEmpty(_entity)) throw new ArgumentNullException(nameof(_entity));
+            if (string.IsNullOrEmpty(_place)) throw new ArgumentNullException(nameof(_place));
+            if (id <= 0) throw new ArgumentOutOfRangeException(nameof(id));
+
+            // load json if exist
+            // generate filename based on mode,entity and place
+            string filename = _mode.ToString().ToLower() + _entity.ToLower() + _place.ToLower() + "cache.json";
+
+            // combine datapath + path + filename
+            string filepath = Path.Combine(AppConfiguration.DataPath, _entity + "s", id.ToString(), filename);
+
+            if (File.Exists(filepath)) // check if file exist, delete maybe?
+            {
+                // convert json to object
+            }
+
+            File.WriteAllText(filepath, JsonConvert.SerializeObject(_cache));
+
+            return true;
+        }
     }
 }

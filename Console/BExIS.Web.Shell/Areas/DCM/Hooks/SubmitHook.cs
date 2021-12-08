@@ -41,6 +41,8 @@ namespace BExIS.Modules.Dcm.UI.Hooks
             // load cache
 
             // Update cache
+
+            return false;
         }
     }
 }

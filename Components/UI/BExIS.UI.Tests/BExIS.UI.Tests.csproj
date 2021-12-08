@@ -135,6 +135,10 @@
       <Project>{0FCF7DE1-E8F2-484C-8638-EF759B11D8A2}</Project>
       <Name>BExIS.App.Testing</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\IO\BExIS.IO.Transform.Input\BExIS.IO.Transform.Input.csproj">
+      <Project>{5C4C8570-A53B-4191-A414-DE028AAAF36A}</Project>
+      <Name>BExIS.IO.Transform.Input</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\Vaiona\Vaiona.Core\Vaiona.Core.csproj">
       <Project>{b446c14f-9df1-4c3c-a634-e3addd05c48a}</Project>
       <Name>Vaiona.Core</Name>
