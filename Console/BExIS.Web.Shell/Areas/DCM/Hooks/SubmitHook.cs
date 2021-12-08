@@ -19,6 +19,8 @@ namespace BExIS.Modules.Dcm.UI.Hooks
             // check status
             checkStatus(id, username);
 
+            // check - chache
+            // if data is valid
         }
 
         private void checkStatus(long id, string username)
@@ -27,12 +29,18 @@ namespace BExIS.Modules.Dcm.UI.Hooks
             bool hasAccess = hasUserAccessRights(username);
 
             // user rights to the dataset
-            bool hasRights = hasUserEntityRights(id, username,RightType.Write);
+            bool hasRights = hasUserEntityRights(id, username, RightType.Write);
 
             // if one fail then access is denied
-            if(hasAccess == false || hasRights == false) Status = HookStatus.AccessDenied;
+            if (hasAccess == false || hasRights == false) Status = HookStatus.AccessDenied;
             else Status = HookStatus.Inactive;
         }
 
+        public bool UpdateCache()
+        {
+            // load cache
+
+            // Update cache
+        }
     }
 }

@@ -13,9 +13,8 @@ using System.Threading.Tasks;
 
 namespace BExIS.UI.Hooks
 {
-    public abstract class Hook: IHook
+    public abstract class Hook : IHook
     {
-
         /// <summary>
         /// the name of the hook
         /// </summary>
@@ -35,7 +34,7 @@ namespace BExIS.UI.Hooks
         /// <summary>
         /// the mode of the hook
         /// </summary>
-        public HookMode Mode { get; set; } 
+        public HookMode Mode { get; set; }
 
         /// <summary>
         /// return the name of the Enitiy
@@ -66,6 +65,11 @@ namespace BExIS.UI.Hooks
             throw new NotImplementedException();
         }
 
+        public virtual bool UpdateCache(params object[] arguments)
+        {
+            throw new NotImplementedException();
+        }
+
         protected bool hasUserAccessRights(string username)
         {
             using (FeaturePermissionManager featurePermissionManager = new FeaturePermissionManager())
@@ -74,12 +78,11 @@ namespace BExIS.UI.Hooks
             }
         }
 
-
         /// <summary>
         /// return true if user has edit rights
         /// </summary>
         /// <returns></returns>
-        protected bool hasUserEntityRights(long entityId,string userName, RightType rightType)
+        protected bool hasUserEntityRights(long entityId, string userName, RightType rightType)
         {
             #region security permissions and authorisations check
 
@@ -91,8 +94,8 @@ namespace BExIS.UI.Hooks
             #endregion security permissions and authorisations check
         }
 
-
-        public Hook() {
+        public Hook()
+        {
             Name = "";
             Mode = HookMode.view;
             Entity = "";
@@ -100,6 +103,5 @@ namespace BExIS.UI.Hooks
             Place = "";
             Start = "";
         }
-
-}
+    }
 }

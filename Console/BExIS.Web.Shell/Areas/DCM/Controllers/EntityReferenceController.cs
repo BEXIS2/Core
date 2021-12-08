@@ -47,7 +47,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 using (EntityManager entityManager = new EntityManager())
                 {
                     var entity = entityManager.Entities.Where(e => e.Name.Equals(entityName)).FirstOrDefault();
-                    return RedirectToAction("Show", "EntityReference", new { sourceId = id, sourceTypeId = entity.Id, sourceVersion = version});
+                    return RedirectToAction("Show", "EntityReference", new { sourceId = id, sourceTypeId = entity.Id, sourceVersion = version });
                 }
             }
         }
@@ -74,7 +74,6 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 }
             }
         }
-
 
         public ActionResult Create(long sourceId, long sourceTypeId)
         {

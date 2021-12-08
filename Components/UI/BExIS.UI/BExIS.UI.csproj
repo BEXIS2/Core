@@ -90,10 +90,13 @@
     <Compile Include="Helpers\SettingsHelper.cs" />
     <Compile Include="Helpers\TelerikGridHelper.cs" />
     <Compile Include="Helpers\JsonTableGenerator.cs" />
+    <Compile Include="Hooks\CacheEnums.cs" />
+    <Compile Include="Hooks\Caches\EditDatasetDetailsCache.cs" />
     <Compile Include="Hooks\Hook.cs" />
     <Compile Include="Hooks\HookEnums.cs" />
     <Compile Include="Hooks\HookManager.cs" />
     <Compile Include="Hooks\IHook.cs" />
+    <Compile Include="Hooks\ResultMessage.cs" />
     <Compile Include="Models\DataTable.cs" />
     <Compile Include="Models\Menu.cs" />
     <Compile Include="Models\Treeview.cs" />
@@ -122,6 +125,10 @@
     <ProjectReference Include="..\..\IO\BExIS.IO.DataType.DisplayPattern\BExIS.IO.DataType.DisplayPattern.csproj">
       <Project>{8B2EC2B0-6870-456B-BE2D-B0FB4EA68D83}</Project>
       <Name>BExIS.IO.DataType.DisplayPattern</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\IO\BExIS.IO.Transform.Input\BExIS.IO.Transform.Input.csproj">
+      <Project>{5C4C8570-A53B-4191-A414-DE028AAAF36A}</Project>
+      <Name>BExIS.IO.Transform.Input</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\Utils\BExIS.Utils.NH\BExIS.Utils.NH.csproj">
       <Project>{0f1ec13e-d685-4f4d-a438-52797b0e53a0}</Project>

@@ -5,40 +5,50 @@ using System.Xml;
 
 /// <summary>
 ///
-/// </summary>        
+/// </summary>
 namespace BExIS.Dcm.UploadWizard
 {
     /// <summary>
     ///
     /// </summary>
-    /// <remarks></remarks>        
+    /// <remarks></remarks>
     public class TaskManager : AbstractTaskManager
     {
-
         public static string FILENAME = "FileName";
         public static string FILEPATH = "FilePath";
         public static string EXTENTION = "Extention";
 
         public static string FILE_READER_INFO = "FileReaderInfo";
         public static string IS_TEMPLATE = "IsTemplate";
-        //Dataset 
+
+        //Dataset
         public static string DATASET_ID = "DatasetId";
+
         public static string DATASET_TITLE = "DatasetTitle";
+
         // value = "new"
         public static string DATASET_STATUS = "DatasetStatus";
+
         // Datastructure
         public static string DATASTRUCTURE_ID = "DataStructureId";
+
         public static string DATASTRUCTURE_TITLE = "DataStructureTitle";
         public static string DATASTRUCTURE_TYPE = "DataStructureType";
+
         //ResearchPlan
         public static string RESEARCHPLAN_ID = "ResearchPlanId";
+
         public static string RESEARCHPLAN_TITLE = "ResearchPlanTitle";
+
         //Data
         public static string PRIMARY_KEYS = "PrimaryKeys";
+
         public static string PRIMARY_KEYS_UNIQUE = "PrimaryKeysUnique";
         public static string VALID = "Valid";
+
         //metadata
         public static string TITLE = "Title";
+
         public static string AUTHOR = "Author";
         public static string OWNER = "Owner";
         public static string PROJECTNAME = "ProjectName";
@@ -49,6 +59,7 @@ namespace BExIS.Dcm.UploadWizard
 
         //Easy Upload Sheet Area Selection
         public static string SHEET_HEADER_AREA = "SheetHeaderArea";
+
         public static string SHEET_DATA_AREA = "SheetDataArea";
         public static string SHEET_JSON_DATA = "SheetJsonData";
         public static string ACTIVE_WOKSHEET_URI = "ActiveWorksheetUri";
@@ -60,7 +71,7 @@ namespace BExIS.Dcm.UploadWizard
         public static string CURRENTPACKAGESIZE = "CURRENTPACKAGE";
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <remarks></remarks>
         /// <seealso cref=""/>
@@ -68,7 +79,6 @@ namespace BExIS.Dcm.UploadWizard
         /// <returns></returns>
         public static TaskManager Bind(XmlDocument xmlDocument)
         {
-
             XmlNodeList xmlStepInfos = xmlDocument.GetElementsByTagName("stepInfo");
 
             TaskManager tm = new TaskManager();
@@ -76,7 +86,6 @@ namespace BExIS.Dcm.UploadWizard
 
             foreach (XmlNode xmlStepInfo in xmlStepInfos)
             {
-
                 StepInfo si = new StepInfo(xmlStepInfo.Attributes.GetNamedItem("title").Value)
                 {
                     GetActionInfo = new ActionInfo
@@ -101,11 +110,10 @@ namespace BExIS.Dcm.UploadWizard
 
             return tm;
         }
-
     }
 
     ///// <summary>
-    ///// 
+    /////
     ///// </summary>
     //public enum DataStructureType
     //{
@@ -118,5 +126,4 @@ namespace BExIS.Dcm.UploadWizard
     //    Append,
     //    Update
     //}
-
 }

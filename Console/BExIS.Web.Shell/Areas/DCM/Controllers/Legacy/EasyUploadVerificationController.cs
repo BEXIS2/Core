@@ -30,7 +30,6 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         [HttpGet]
         public ActionResult Verification(int index)
         {
-
             TaskManager = (EasyUploadTaskManager)Session["TaskManager"];
 
             List<Dlm.Entities.DataStructure.Unit> tempUnitList = new List<Dlm.Entities.DataStructure.Unit>();
@@ -39,7 +38,6 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
             using (IUnitOfWork unitOfWork = this.GetUnitOfWork())
             {
-
                 //set current stepinfo based on index
                 if (TaskManager != null)
                 {
@@ -56,11 +54,9 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 List<EasyUploadSuggestion> suggestions = new List<EasyUploadSuggestion>();
                 List<string> headers = new List<string>();
 
-
                 tempUnitList = unitOfWork.GetReadOnlyRepository<Dlm.Entities.DataStructure.Unit>().Get().ToList();
                 allDataypes = unitOfWork.GetReadOnlyRepository<DataType>().Get().ToList();
                 allDataAttributes = unitOfWork.GetReadOnlyRepository<DataAttribute>().Get().ToList();
-
 
                 //Important for jumping back to this step
                 if (TaskManager.Bus.ContainsKey(EasyUploadTaskManager.ROWS))
@@ -122,19 +118,15 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                     return String.Compare(u1.Name, u2.Name, StringComparison.InvariantCultureIgnoreCase);
                 });
 
-
                 TaskManager.AddToBus(EasyUploadTaskManager.VERIFICATION_AVAILABLEUNITS, unitInfos);
 
-                // all datatypesinfos 
+                // all datatypesinfos
                 dataTypeInfos = unitInfos.SelectMany(u => u.DataTypeInfos).GroupBy(d => d.DataTypeId).Select(g => g.Last()).ToList();
                 TaskManager.AddToBus(EasyUploadTaskManager.ALL_DATATYPES, dataTypeInfos);
-
 
                 //Setall Data AttrInfos to Session -> default
                 allDataAttributes.ForEach(d => dataAttributeInfos.Add(new DataAttrInfo(d.Id, d.Unit.Id, d.DataType.Id, d.Description, d.Name, d.Unit.Dimension.Id)));
                 Session["DataAttributes"] = dataAttributeInfos;
-
-
 
                 string filePath = TaskManager.Bus[EasyUploadTaskManager.FILEPATH].ToString();
                 string selectedHeaderAreaJson = TaskManager.Bus[EasyUploadTaskManager.SHEET_HEADER_AREA].ToString();
@@ -161,7 +153,6 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
                     if (!model.Rows.Any())
                     {
-
                         foreach (string varName in headers)
                         {
                             #region suggestions
@@ -169,7 +160,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                             //Add a variable to the suggestions if the names are similar
                             suggestions = getSuggestions(varName, dataAttributeInfos);
 
-                            #endregion
+                            #endregion suggestions
 
                             //set rowmodel
                             RowModel row = new RowModel(
@@ -254,7 +245,6 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 }
             }
 
-
             return PartialView(model);
         }
 
@@ -264,16 +254,14 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             /**
              * if selectedAttribute == -1 == Unknown
                   selectedAttribute == -2 ==  Not found
-             * 
+             *
              */
-
 
             List<DataTypeInfo> dataTypeInfos = new List<DataTypeInfo>();
             List<UnitInfo> unitInfos = new List<UnitInfo>();
             List<DataAttrInfo> dataAttributeInfos = new List<DataAttrInfo>();
             List<EasyUploadSuggestion> suggestions = new List<EasyUploadSuggestion>();
             List<string> headers = new List<string>();
-
 
             EasyUploadTaskManager TaskManager = (EasyUploadTaskManager)Session["TaskManager"];
 
@@ -296,8 +284,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
             dataTypeInfos = (List<DataTypeInfo>)TaskManager.Bus[EasyUploadTaskManager.ALL_DATATYPES];
 
-            #endregion
-
+            #endregion load all lists
 
             #region load current seleted items
 
@@ -309,11 +296,9 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             if (selectedAttribute == -1) currentDataAttrInfo = new DataAttrInfo(-1, 0, 0, "Unknown", "Unknow", 1);
             if (selectedAttribute == -2) currentDataAttrInfo = new DataAttrInfo(-2, 0, 0, "Not found", "Not found", 1); ;
 
-            #endregion
+            #endregion load current seleted items
 
             #region filtering
-
-
 
             if (currentUnit != null)
             {
@@ -339,7 +324,6 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 else unitInfos.Where(u => u.UnitId.Equals(currentUnit.UnitId) || u.DimensionId.Equals(currentUnit.DimensionId)).ToList();
             }
 
-
             if (currentDataAttrInfo != null)
             {
                 // is the seletced currentDataAttrInfo a suggestion then overrigth all selected items
@@ -358,11 +342,9 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                             currentUnit = unitInfos.FirstOrDefault(u => u.UnitId.Equals(dataAttributeInfos.First().UnitId));
                             currentDataTypeInfo = dataTypeInfos.FirstOrDefault(d => d.DataTypeId.Equals(dataAttributeInfos.First().DataTypeId));
                         }
-
                     }
                     else
                     {
-
                         dataAttributeInfos = dataAttributeInfos.Where(d => d.Id.Equals(currentDataAttrInfo.Id)).ToList();
 
                         //filtering units when data attr is selected, if id or dimension is the same
@@ -378,7 +360,6 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                             dataTypeInfos = unitInfos.SelectMany(u => u.DataTypeInfos).GroupBy(d => d.DataTypeId).Select(g => g.Last()).ToList();
 
                             currentDataTypeInfo = dataTypeInfos.FirstOrDefault(d => d.DataTypeId.Equals(currentDataAttrInfo.DataTypeId));
-
                         }
                         else dataTypeInfos = dataTypeInfos.Where(dt => dt.DataTypeId.Equals(currentDataTypeInfo.DataTypeId)).ToList();
                     }
@@ -397,10 +378,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 }
             }
 
-
-
-            #endregion
-
+            #endregion filtering
 
             RowModel model = new RowModel(
                     index,
@@ -418,13 +396,12 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             UpdateRowInBus(model);
 
             return PartialView("Row", model);
-
         }
 
         #region excel stuff
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="excelWorksheet"></param>
         /// <param name="sheetFormat"></param>
@@ -443,19 +420,21 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
             SheetArea selectedArea = new SheetArea(areaValues[1], areaValues[3], areaValues[0], areaValues[2]);
 
-
             switch (sheetFormat)
             {
                 case SheetFormat.TopDown:
                     headerValues = GetExcelHeaderFieldsTopDown(excelWorksheet, selectedArea);
                     break;
+
                 case SheetFormat.LeftRight:
                     headerValues = GetExcelHeaderFieldsLeftRight(excelWorksheet, selectedArea);
                     break;
+
                 case SheetFormat.Matrix:
                     headerValues.AddRange(GetExcelHeaderFieldsTopDown(excelWorksheet, selectedArea));
                     headerValues.AddRange(GetExcelHeaderFieldsLeftRight(excelWorksheet, selectedArea));
                     break;
+
                 default:
                     break;
             }
@@ -505,11 +484,12 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             return headerValues;
         }
 
-        #endregion
+        #endregion excel stuff
 
         /*
          * Validates each Data row and returns a JSON-Object with the errors (if there are any)
          * */
+
         [HttpPost]
         public ActionResult ValidateSelection()
         {
@@ -548,7 +528,6 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 List<RowModel> Rows = (List<RowModel>)TaskManager.Bus[EasyUploadTaskManager.ROWS];
                 RowModel[] MappedRowsArray = Rows.ToArray();
 
-
                 List<string> DataArea = (List<string>)TaskManager.Bus[EasyUploadTaskManager.SHEET_DATA_AREA];
                 List<int[]> IntDataAreaList = new List<int[]>();
                 foreach (string area in DataArea)
@@ -578,6 +557,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                                 string datatypeName = datatype.SystemType;
 
                                 #region DataTypeCheck
+
                                 DataTypeCheck dtc;
                                 double DummyValue = 0;
                                 if (Double.TryParse(vv, out DummyValue))
@@ -595,7 +575,8 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                                 {
                                     dtc = new DataTypeCheck(mappedHeader.SelectedDataAttribute.Name, datatypeName, DecimalCharacter.point);
                                 }
-                                #endregion
+
+                                #endregion DataTypeCheck
 
                                 var ValidationResult = dtc.Execute(vv, y);
                                 if (ValidationResult is Error)
@@ -633,7 +614,6 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         ///// Explanation: https://en.wikipedia.org/wiki/Levenshtein_distance
         //private Int32 levenshtein(String a, String b)
         //{
-
         //    if (string.IsNullOrEmpty(a))
         //    {
         //        if (!string.IsNullOrEmpty(b))
@@ -763,6 +743,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         private List<EasyUploadSuggestion> getSuggestions(string varName, List<DataAttrInfo> allDataAttributes)
         {
             #region suggestions
+
             //Add a variable to the suggestions if the names are similar
             List<EasyUploadSuggestion> suggestions = new List<EasyUploadSuggestion>();
 
@@ -786,7 +767,8 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
             //Each Name-Unit-Datatype-Tuple should be unique
             suggestions = suggestions.Distinct().ToList<EasyUploadSuggestion>();
-            #endregion
+
+            #endregion suggestions
 
             return suggestions;
         }
@@ -836,7 +818,6 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
                 TaskManager.AddToBus(EasyUploadTaskManager.ROWS, rows);
             }
-
         }
 
         private List<string> makeHeaderUnique(List<string> header)
@@ -865,6 +846,6 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             return (temp);
         }
 
-        #endregion
+        #endregion private methods
     }
 }

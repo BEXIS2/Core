@@ -12,7 +12,6 @@ namespace BExIS.UI.Hooks
 {
     public class HookManager
     {
-
         public List<Hook> GetHooksFor(string _entity, string _place, HookMode _mode)
         {
             List<Hook> hooks = new List<Hook>();
@@ -74,9 +73,9 @@ namespace BExIS.UI.Hooks
                     if (isValid)
                     {
                         Type type = Type.GetType(attrType.Value);
-                        
+
                         if (type != null) //type transform works - go forward
-                        { 
+                        {
                             Hook hook = (Hook)Activator.CreateInstance(type); //instance creation based on the type
 
                             if (hook != null) // stop if hook is null
@@ -90,7 +89,6 @@ namespace BExIS.UI.Hooks
                                 hooks.Add(hook);
                             }
                         }
-                        
                     }
                 }
             }
@@ -98,5 +96,6 @@ namespace BExIS.UI.Hooks
             return hooks;
         }
 
+        // load cache
     }
 }
