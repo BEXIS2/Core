@@ -17,7 +17,17 @@ namespace BExIS.UI.Hooks
     {
         public List<Hook> GetHooksFor(string _entity, string _place, HookMode _mode)
         {
-            List<Hook> hooks = new List<Hook>();
+            return get<Hook>(_entity, _place, _mode);
+        }
+
+        public List<View> GetViewsFor(string _entity, string _place, HookMode _mode)
+        {
+            return get<View>(_entity, _place, _mode);
+        }
+
+        private List<T> get<T>(string _entity, string _place, HookMode _mode) where T : Hook
+        {
+            List<T> hooks = new List<T>();
 
             // check active modules
             var activeModules = ModuleManager.ModuleInfos.Where(m => ModuleManager.IsActive(m.Id));
@@ -35,7 +45,7 @@ namespace BExIS.UI.Hooks
                 attrs.Add("place", _place);
 
                 // get xHooks based on the attrs
-                List<XElement> xHooks = XmlUtility.GetXElementsByAttribute("Hook", attrs, manifestDoc).ToList();
+                List<XElement> xHooks = XmlUtility.GetXElementsByAttribute(typeof(T).Name, attrs, manifestDoc).ToList();
 
                 foreach (var xHook in xHooks)
                 {
@@ -79,7 +89,7 @@ namespace BExIS.UI.Hooks
 
                         if (type != null) //type transform works - go forward
                         {
-                            Hook hook = (Hook)Activator.CreateInstance(type); //instance creation based on the type
+                            var hook = (T)Activator.CreateInstance(type); //instance creation based on the type
 
                             if (hook != null) // stop if hook is null
                             {

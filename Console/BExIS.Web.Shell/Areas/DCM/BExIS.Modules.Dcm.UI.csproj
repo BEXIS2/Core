@@ -215,6 +215,7 @@
     <Compile Include="Hooks\AttachmentEditHook.cs" />
     <Compile Include="Hooks\MetadataViewHook.cs" />
     <Compile Include="Hooks\SubmitHook.cs" />
+    <Compile Include="Hooks\Views\ResultMessageView.cs" />
     <Compile Include="Hooks\ValidationHook.cs" />
     <Compile Include="Hooks\FileUploadHook.cs" />
     <Compile Include="Hooks\MetadataEditHook.cs" />
@@ -485,6 +486,10 @@
     <Content Include="Scripts\respond.matchmedia.addListener.min.js" />
     <Content Include="Scripts\svelte\edit.css" />
     <Content Include="Scripts\svelte\edit.js" />
+    <Content Include="Scripts\svelte\messages.css" />
+    <Content Include="Scripts\svelte\messages.js" />
+    <Content Include="Scripts\svelte\view.css" />
+    <Content Include="Scripts\svelte\view.js" />
     <Content Include="Views\Help\Informations.xml" />
     <Content Include="Views\Web.config" />
     <Content Include="Views\_ViewStart.cshtml" />
@@ -567,6 +572,7 @@
     <Content Include="Scripts\svelte\edit.js.map" />
     <Content Include="Views\View\Index.cshtml" />
     <Content Include="Views\View\_test.cshtml" />
+    <Content Include="Views\Edit\_resultMessages.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

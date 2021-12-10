@@ -36,11 +36,19 @@ namespace BExIS.Modules.Dcm.UI.Hooks
             else Status = HookStatus.Inactive;
         }
 
-        public bool UpdateCache()
+        /// <summary>
+        /// Update cache means means if the submit finsihed sucessfully
+        /// the cache file should go to the version folder and clean up the temp folder for the
+        /// next round
+        /// </summary>
+        /// <returns></returns>
+        public override bool UpdateCache(params object[] arguments)
         {
             // load cache
 
             // Update cache
+
+            // copy cache the real place
 
             return false;
         }

@@ -92,6 +92,7 @@
     <Compile Include="Helpers\JsonTableGenerator.cs" />
     <Compile Include="Hooks\CacheEnums.cs" />
     <Compile Include="Hooks\Caches\EditDatasetDetailsCache.cs" />
+    <Compile Include="Hooks\View.cs" />
     <Compile Include="Hooks\Hook.cs" />
     <Compile Include="Hooks\HookEnums.cs" />
     <Compile Include="Hooks\HookManager.cs" />

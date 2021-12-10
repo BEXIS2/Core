@@ -13,6 +13,7 @@ namespace BExIS.Modules.Dcm.UI.Models.Edit
         public int Version { get; set; }
         public string Title { get; set; }
         public List<Hook> Hooks { get; set; }
+        public List<BExIS.UI.Hooks.View> Views { get; set; }
 
         public EditModel()
         {
@@ -21,6 +22,7 @@ namespace BExIS.Modules.Dcm.UI.Models.Edit
             VersionId = 0;
             Title = "";
             Hooks = new List<Hook>();
+            Views = new List<BExIS.UI.Hooks.View>();
         }
     }
 }

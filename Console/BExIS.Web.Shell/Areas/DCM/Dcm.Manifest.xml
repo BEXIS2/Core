@@ -1,187 +1,196 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <Manifest moduleId="dcm" displayName="Data Collection Module" version="1.0.0" builtin="true">
-  <Description>
-    <!--add proper description-->
-    DCM provides functions to create, edit uploading of datasets and metadata strutcures
-  </Description>
-  <Assemblies>
-    <Assembly fullName="BExIS.Dcm.Wizard" role="" />
-    <Assembly fullName="BExIS.Dcm.CreateDatasetWizard" role="" />
-    <Assembly fullName="BExIS.Dcm.ImportMetadataStructureWizard" role="" />
-    <Assembly fullName="BExIS.Dcm.UploadWizard" role="" />
-  </Assemblies>
-  <Dependencies>
-    <Dependency moduleId="dcm" version="*.*.*" />
-  </Dependencies>
-  <Exports>
-    <!--add proper menu items-->
-    <Export tag="settings" id="manageMetadata" order="1"
-            title="Manage Metadata Structure" description="Edit or Importa new Metadata Structure" icon=""
-            controller="ManageMetadataStructure" action="Index" argument=""
-            extends="./settingsRoot" />
+	<Description>
+		<!--add proper description-->
+		DCM provides functions to create, edit uploading of datasets and metadata strutcures
+	</Description>
+	<Assemblies>
+		<Assembly fullName="BExIS.Dcm.Wizard" role="" />
+		<Assembly fullName="BExIS.Dcm.CreateDatasetWizard" role="" />
+		<Assembly fullName="BExIS.Dcm.ImportMetadataStructureWizard" role="" />
+		<Assembly fullName="BExIS.Dcm.UploadWizard" role="" />
+	</Assemblies>
+	<Dependencies>
+		<Dependency moduleId="dcm" version="*.*.*" />
+	</Dependencies>
+	<Exports>
+		<!--add proper menu items-->
+		<Export tag="settings" id="manageMetadata" order="1"
+				title="Manage Metadata Structure" description="Edit or Importa new Metadata Structure" icon=""
+				controller="ManageMetadataStructure" action="Index" argument=""
+				extends="./settingsRoot" />
 
-    <Export tag="menubar" id="collect" order="1"
-            title="Collect" description="Quick access to Data Collection Area" icon=""
-            controller="" action=""
-            extends="./menubarRoot" />
-    <Export tag="menubar" id="createDataset" order="1"
-            title="Create Dataset" description="Create new Dataset" icon=""
-            controller="CreateDataset" action="index"
-            extends="./menubarRoot/collect" />
-    <Export tag="menubar" id="uploaddata" order="2"
-            title="Upload Data" description="Upload data to a dataset" icon=""
-            controller="Submit" action="index"
-            extends="./menubarRoot/collect" />
-    <Export tag="menubar" id="importdata" order="3"
-            title="Import Data" description="Import datastructure and data from an excel file" icon=""
-            controller="EasyUpload" action="index"
-            extends="./menubarRoot/collect" />
-    <Export tag="menubar" id="createDataset" order="4"
-            title="Push Big File" description="Push big file to the server to use it later" icon=""
-            controller="Push" action="index"
-            extends="./menubarRoot/collect" />
+		<Export tag="menubar" id="collect" order="1"
+				title="Collect" description="Quick access to Data Collection Area" icon=""
+				controller="" action=""
+				extends="./menubarRoot" />
+		<Export tag="menubar" id="createDataset" order="1"
+				title="Create Dataset" description="Create new Dataset" icon=""
+				controller="CreateDataset" action="index"
+				extends="./menubarRoot/collect" />
+		<Export tag="menubar" id="uploaddata" order="2"
+				title="Upload Data" description="Upload data to a dataset" icon=""
+				controller="Submit" action="index"
+				extends="./menubarRoot/collect" />
+		<Export tag="menubar" id="importdata" order="3"
+				title="Import Data" description="Import datastructure and data from an excel file" icon=""
+				controller="EasyUpload" action="index"
+				extends="./menubarRoot/collect" />
+		<Export tag="menubar" id="createDataset" order="4"
+				title="Push Big File" description="Push big file to the server to use it later" icon=""
+				controller="Push" action="index"
+				extends="./menubarRoot/collect" />
 
-    <Export tag="lunchbar" id="helpDcm" order="3"
-            title=" Metadata and Data" description="Data Collection Help Manual" icon=""
-            controller="help" action="index"
-            extends="./lunchbarRoot/help" />
+		<Export tag="lunchbar" id="helpDcm" order="3"
+				title=" Metadata and Data" description="Data Collection Help Manual" icon=""
+				controller="help" action="index"
+				extends="./lunchbarRoot/help" />
 
-    <Export tag="api" id="tntList"
-            title="No thing" description="Change me!" icon=""
-            controller="home" action="index"
-            extends="./apiRoot" />
+		<Export tag="api" id="tntList"
+				title="No thing" description="Change me!" icon=""
+				controller="home" action="index"
+				extends="./apiRoot" />
 
-    <!-- INTERNAL-->
+		<!-- INTERNAL-->
 
-    <Export tag="internalApi" id="loadFromFromExternal"
-            title="load Metadata Form" description="load Metadata Form" icon=""
-            controller="Form" action="LoadMetadataFromExternal"
-            extends="" />
-    <Export tag="internalApi" id="loadMetadataOfflineVersion"
-            title="load Metadata Form" description="load Metadata Form" icon=""
-            controller="Form" action="LoadMetadataOfflineVersion"
-            extends="" />
+		<Export tag="internalApi" id="loadFromFromExternal"
+				title="load Metadata Form" description="load Metadata Form" icon=""
+				controller="Form" action="LoadMetadataFromExternal"
+				extends="" />
+		<Export tag="internalApi" id="loadMetadataOfflineVersion"
+				title="load Metadata Form" description="load Metadata Form" icon=""
+				controller="Form" action="LoadMetadataOfflineVersion"
+				extends="" />
 
-    <Export tag="internalApi" id="SetAdditionalFunctionsToCreateDatasetTaskmanager"
-            title="Set additional functions To Create Dataset Taskmanager" description="set functions to the buttons in the form" icon=""
-            controller="Form" action="SetAdditionalFunctions"
-            extends="" />
-	<Export tag="internalApi" id="SetCopyFunctionView"
-            title="Set Copy function To Create Dataset Taskmanager" description="set functions to the buttons in the form" icon=""
-            controller="Form" action="SetCopyFunctionForView"
-            extends="" />
+		<Export tag="internalApi" id="SetAdditionalFunctionsToCreateDatasetTaskmanager"
+				title="Set additional functions To Create Dataset Taskmanager" description="set functions to the buttons in the form" icon=""
+				controller="Form" action="SetAdditionalFunctions"
+				extends="" />
+		<Export tag="internalApi" id="SetCopyFunctionView"
+				title="Set Copy function To Create Dataset Taskmanager" description="set functions to the buttons in the form" icon=""
+				controller="Form" action="SetCopyFunctionForView"
+				extends="" />
 
-    <Export tag="internalApi" id="StartMetadataEditor"
-                title="load Metadata Form" description="load Metadata Form" icon=""
-                controller="Form" action="StartMetadataEditor"
-                extends="" />
+		<Export tag="internalApi" id="StartMetadataEditor"
+					title="load Metadata Form" description="load Metadata Form" icon=""
+					controller="Form" action="StartMetadataEditor"
+					extends="" />
 
-    <Export tag="internalApi" id="ShowReferences"
-                title="Show references of a entity" description="Show references of a entity" icon=""
-                controller="EntityReference" action="Show"
-                extends="" />
-  </Exports>
-	
-  <!-- fill out alle the hook aatributes otherwise there will not be loaded -->
-  <Hooks>
-	  <!-- VIEW-->
-	  <Hook
-		    name="metadata"
-			displayName ="Metadata"
-		    mode="view"
+		<Export tag="internalApi" id="ShowReferences"
+					title="Show references of a entity" description="Show references of a entity" icon=""
+					controller="EntityReference" action="Show"
+					extends="" />
+	</Exports>
+
+	<!-- fill out alle the hook aatributes otherwise there will not be loaded -->
+	<Hooks>
+		<!-- VIEW-->
+		<Hook
+			  name="metadata"
+			  displayName ="Metadata"
+			  mode="view"
+			  entity="dataset"
+			  place="details"
+			  module="dcm"
+			  type="BExIS.Modules.Dcm.UI.Hooks.MetadataViewHook, BExIS.Modules.DCM.UI, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" />
+		<Hook
+			name="data"
+			displayName ="Data"
+			mode="view"
+			entity="dataset"
+			place="details"
+			module="dcm"
+			type="BExIS.Modules.Dcm.UI.Hooks.DataHook, BExIS.Modules.DCM.UI, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" />
+
+		<Hook
+			name="datadescription"
+			displayName ="Data Description"
+			mode="view"
+			entity="dataset"
+			place="details"
+			module="dcm"
+			type="BExIS.Modules.Dcm.UI.Hooks.DataStructurePreviewHook, BExIS.Modules.DCM.UI, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" />
+
+		<Hook
+			name="link"
+			displayName="Link"
+			mode="view"
+			entity="dataset"
+			place="details"
+			module="dcm"
+			type="BExIS.Modules.Dcm.UI.Hooks.LinkViewHook, BExIS.Modules.DCM.UI, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" />
+
+		<Hook
+			name="attachments"
+			displayName="Attachments"
+			mode="view"
+			entity="dataset"
+			place="details"
+			module="dcm"
+			type="BExIS.Modules.Dcm.UI.Hooks.AttachmentViewHook, BExIS.Modules.DCM.UI, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" />
+
+		<!--EDIT-->
+		<Hook
+			name="metadata"
+			displayName="Metadata"
+			mode="edit"
+			entity="dataset"
+			place="details"
+			module="dcm"
+			type="BExIS.Modules.Dcm.UI.Hooks.MetadataEditHook, BExIS.Modules.DCM.UI, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" />
+
+		<Hook
+			name="fileupload"
+			displayName="File Upload"
+			mode="edit"
+			entity="dataset"
+			place="details"
+			module="dcm"
+			type="BExIS.Modules.Dcm.UI.Hooks.FileUploadHook, BExIS.Modules.DCM.UI, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" />
+
+		<Hook
+			name="validation"
+			displayName="Validation"
+			mode="edit"
+			entity="dataset"
+			place="details"
+			module="dcm"
+			type="BExIS.Modules.Dcm.UI.Hooks.ValidationHook, BExIS.Modules.DCM.UI, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" />
+
+		<Hook
+			name="link"
+			displayName="Link"
+			mode="edit"
+			entity="dataset"
+			place="details"
+			module="dcm"
+			type="BExIS.Modules.Dcm.UI.Hooks.LinkEditHook, BExIS.Modules.DCM.UI, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" />
+		<Hook
+			name="attachments"
+			displayName="Attachments"
+			mode="edit"
+			entity="dataset"
+			place="details"
+			module="dcm"
+			type="BExIS.Modules.Dcm.UI.Hooks.AttachmentEditHook, BExIS.Modules.DCM.UI, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" />
+
+		<Hook
+			name="submit"
+			displayName="Submit"
+			mode="edit"
+			entity="dataset"
+			place="details"
+			module="dcm"
+			type="BExIS.Modules.Dcm.UI.Hooks.SubmitHook, BExIS.Modules.DCM.UI, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" />
+	</Hooks>
+	<Views>
+		<View
+		    name="resultmessage"
+			displayName ="Result Message"
+		    mode="edit"
 		    entity="dataset"
 		    place="details"
 		    module="dcm"
-		    type="BExIS.Modules.Dcm.UI.Hooks.MetadataViewHook, BExIS.Modules.DCM.UI, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" />
-	  <Hook
-		  name="data"
-		  displayName ="Data"
-		  mode="view"
-		  entity="dataset"
-		  place="details"
-		  module="dcm"
-		  type="BExIS.Modules.Dcm.UI.Hooks.DataHook, BExIS.Modules.DCM.UI, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" />
-
-	  <Hook
-		  name="datadescription"
-		  displayName ="Data Description"
-		  mode="view"
-		  entity="dataset"
-		  place="details"
-		  module="dcm"
-		  type="BExIS.Modules.Dcm.UI.Hooks.DataStructurePreviewHook, BExIS.Modules.DCM.UI, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" />
-	  
-	  <Hook
-		  name="link"
-		  displayName="Link"
-		  mode="view"
-		  entity="dataset"
-		  place="details"
-		  module="dcm"
-		  type="BExIS.Modules.Dcm.UI.Hooks.LinkViewHook, BExIS.Modules.DCM.UI, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" />
-
-	  <Hook
-		  name="attachments"
-		  displayName="Attachments"
-		  mode="view"
-		  entity="dataset"
-		  place="details"
-		  module="dcm"
-		  type="BExIS.Modules.Dcm.UI.Hooks.AttachmentViewHook, BExIS.Modules.DCM.UI, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" />
-
-	  <!--EDIT-->
-	  <Hook 
-		  name="metadata" 
-		  displayName="Metadata" 
-		  mode="edit" 
-		  entity="dataset" 
-		  place="details"
-		  module="dcm"
-		  type="BExIS.Modules.Dcm.UI.Hooks.MetadataEditHook, BExIS.Modules.DCM.UI, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" />
-	  
-	  <Hook
-		  name="fileupload"
-		  displayName="File Upload"
-		  mode="edit"
-		  entity="dataset"
-		  place="details"
-		  module="dcm"
-		  type="BExIS.Modules.Dcm.UI.Hooks.FileUploadHook, BExIS.Modules.DCM.UI, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" />
-	  
-	  <Hook
-		  name="validation"
-		  displayName="Validation"
-		  mode="edit"
-		  entity="dataset"
-		  place="details"
-		  module="dcm"
-		  type="BExIS.Modules.Dcm.UI.Hooks.ValidationHook, BExIS.Modules.DCM.UI, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" />
-	  
-	  <Hook
-		  name="link"
-		  displayName="Link"
-		  mode="edit"
-		  entity="dataset"
-		  place="details"
-		  module="dcm"
-		  type="BExIS.Modules.Dcm.UI.Hooks.LinkEditHook, BExIS.Modules.DCM.UI, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" />
-	  <Hook
-		  name="attachments"
-		  displayName="Attachments"
-		  mode="edit"
-		  entity="dataset"
-		  place="details"
-		  module="dcm"
-		  type="BExIS.Modules.Dcm.UI.Hooks.AttachmentEditHook, BExIS.Modules.DCM.UI, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" />
-	  
-	  <Hook
-		  name="submit"
-		  displayName="Submit"
-		  mode="edit"
-		  entity="dataset"
-		  place="details"
-		  module="dcm"
-		  type="BExIS.Modules.Dcm.UI.Hooks.SubmitHook, BExIS.Modules.DCM.UI, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" />
-	  
-  </Hooks>
+		    type="BExIS.Modules.Dcm.UI.Hooks.Views.ResultMessageView, BExIS.Modules.DCM.UI, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" />
+	</Views>
 </Manifest>

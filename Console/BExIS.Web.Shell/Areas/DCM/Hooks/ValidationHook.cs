@@ -19,14 +19,13 @@ namespace BExIS.Modules.Dcm.UI.Hooks
             // check status
             checkStatus(id, username);
 
-            // after the security check this hook needs to check 
+            // after the security check this hook needs to check
             // wheter incoming data, and datastructure exist
             if (Status == HookStatus.AccessDenied)
             {
                 // check if file exist
 
                 // check if data strutcure exist
-
             }
         }
 
@@ -36,12 +35,27 @@ namespace BExIS.Modules.Dcm.UI.Hooks
             bool hasAccess = hasUserAccessRights(username);
 
             // user rights to the dataset
-            bool hasRights = hasUserEntityRights(id, username,RightType.Write);
+            bool hasRights = hasUserEntityRights(id, username, RightType.Write);
 
             // if one fail then access is denied
-            if(hasAccess == false || hasRights == false) Status = HookStatus.AccessDenied;
+            if (hasAccess == false || hasRights == false) Status = HookStatus.AccessDenied;
             else Status = HookStatus.Inactive;
         }
 
+        /// <summary>
+        /// after a validation run, the result should be stored
+        /// the result is
+        /// 1. data is valid
+        /// 2. list of Errors
+        /// </summary>
+        /// <returns></returns>
+        public override bool UpdateCache(params object[] arguments)
+        {
+            // load cache
+
+            // Update cache
+
+            return false;
+        }
     }
 }
