@@ -166,8 +166,8 @@
     <Compile Include="Controllers\API\DatasetInController.cs" />
     <Compile Include="Controllers\API\MetadataInController.cs" />
     <Compile Include="Controllers\EditController.cs" />
-    <Compile Include="Controllers\FileUploadController.cs" />
-    <Compile Include="Controllers\AttachmentsController.cs" />
+    <Compile Include="Controllers\Hooks\FileUploadController.cs" />
+    <Compile Include="Controllers\Hooks\AttachmentsController.cs" />
     <Compile Include="Controllers\Legacy\CreateDatasetController.cs" />
     <Compile Include="Controllers\Legacy\EasyUploadController.cs" />
     <Compile Include="Controllers\Legacy\EasyUploadSelectAFileController.cs" />
@@ -176,7 +176,7 @@
     <Compile Include="Controllers\Legacy\EasyUploadSheetSelectMetaDataController.cs" />
     <Compile Include="Controllers\Legacy\EasyUploadSummaryController.cs" />
     <Compile Include="Controllers\Legacy\EasyUploadVerificationController.cs" />
-    <Compile Include="Controllers\EntityReferenceController.cs" />
+    <Compile Include="Controllers\Hooks\EntityReferenceController.cs" />
     <Compile Include="Controllers\FormController.cs" />
     <Compile Include="Controllers\Legacy\HelpController.cs" />
     <Compile Include="Controllers\Legacy\ImportMetadataStructureController.cs" />
@@ -193,9 +193,10 @@
     <Compile Include="Controllers\Legacy\SubmitSpecifyDatasetController.cs" />
     <Compile Include="Controllers\Legacy\SubmitSummaryController.cs" />
     <Compile Include="Controllers\Legacy\SubmitValidationController.cs" />
-    <Compile Include="Controllers\MetadataController.cs" />
+    <Compile Include="Controllers\Hooks\MetadataController.cs" />
+    <Compile Include="Controllers\Views\MessagesController.cs" />
     <Compile Include="Controllers\TestController.cs" />
-    <Compile Include="Controllers\ValidationController.cs" />
+    <Compile Include="Controllers\Hooks\ValidationController.cs" />
     <Compile Include="Controllers\ViewController.cs" />
     <Compile Include="DcmModule.cs" />
     <Compile Include="Helpers\API\DataApiHelper.cs" />
@@ -215,7 +216,7 @@
     <Compile Include="Hooks\AttachmentEditHook.cs" />
     <Compile Include="Hooks\MetadataViewHook.cs" />
     <Compile Include="Hooks\SubmitHook.cs" />
-    <Compile Include="Hooks\Views\ResultMessageView.cs" />
+    <Compile Include="Hooks\Views\MessageView.cs" />
     <Compile Include="Hooks\ValidationHook.cs" />
     <Compile Include="Hooks\FileUploadHook.cs" />
     <Compile Include="Hooks\MetadataEditHook.cs" />
@@ -572,7 +573,7 @@
     <Content Include="Scripts\svelte\edit.js.map" />
     <Content Include="Views\View\Index.cshtml" />
     <Content Include="Views\View\_test.cshtml" />
-    <Content Include="Views\Edit\_resultMessages.cshtml" />
+    <Content Include="Views\Messages\Index.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -585,7 +586,6 @@
     <Folder Include="Views\DcmAdmin\" />
     <Folder Include="Views\FileUpload\" />
     <Folder Include="Views\Home\" />
-    <Folder Include="Views\Metadat\" />
     <Folder Include="Views\Validation\" />
   </ItemGroup>
   <ItemGroup>

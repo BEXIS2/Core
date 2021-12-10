@@ -7,12 +7,11 @@ using System.Web;
 
 namespace BExIS.Modules.Dcm.UI.Hooks.Views
 {
-    public class ResultMessageView : View
+    public class MessageView : View
     {
-        public ResultMessageView()
+        public MessageView()
         {
-            Start = "dcm/edit/StartResultMessages";
-            StartScript = "dcm/edit/LoadViewScript";
+            Start = "dcm/messages/Start";
         }
 
         public override void Check(long id, string username)
@@ -27,7 +26,7 @@ namespace BExIS.Modules.Dcm.UI.Hooks.Views
             bool hasAccess = hasUserAccessRights(username);
 
             // user rights to the dataset
-            bool hasRights = hasUserEntityRights(id, username, RightType.Read);
+            bool hasRights = hasUserEntityRights(id, username, RightType.Write);
 
             // if one fail then access is denied
             if (hasAccess == false || hasRights == false) Status = HookStatus.AccessDenied;

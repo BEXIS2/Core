@@ -77,58 +77,5 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 return Json(model, JsonRequestBehavior.AllowGet);
             }
         }
-
-        #region ResultMessages
-
-        /// <summary>
-        /// load the patial view of the resultmessages for svelte
-        /// </summary>
-        /// <param name="id"></param>
-        /// <param name="version"></param>
-        /// <returns></returns>
-        [BExISEntityAuthorize(typeof(Dataset), "id", RightType.Write)]
-        public ActionResult StartResultMessages(long id, int version = 0)
-        {
-            ViewBag.id = id;
-            ViewBag.version = version;
-
-            return PartialView("_resultMessages");
-        }
-
-        /// <summary>
-        /// load the needed svelte builded script for the resultmessages view
-        /// </summary>
-        /// <returns></returns>
-        [BExISEntityAuthorize(typeof(Dataset), "id", RightType.Write)]
-        public ActionResult LoadViewScript(long id, int version = 0)
-        {
-            string filepath = Path.Combine(AppConfiguration.AppRoot, "Areas/DCM/Scripts/svelte/messages.js");
-            return File(filepath, "application/javascript");
-        }
-
-        /// <summary>
-        /// load ResultMessages from the cuirrent EditDatasetDetailsCache
-        /// </summary>
-        /// <param name="id"></param>
-        /// <param name="version"></param>
-        /// <returns></returns>
-        [BExISEntityAuthorize(typeof(Dataset), "id", RightType.Write)]
-        [JsonNetFilter]
-        public JsonResult LoadResultMessages(long id, int version = 0)
-        {
-            List<ResultMessage> messages = new List<ResultMessage>();
-
-            var hookManager = new HookManager();
-            var cache = hookManager.LoadCache<EditDatasetDetailsCache>("dataset", "details", HookMode.edit, id);
-
-            if (cache != null && cache.Messages.Any())
-            {
-                messages = cache.Messages.ToList();
-            }
-
-            return Json(messages, JsonRequestBehavior.AllowGet);
-        }
-
-        #endregion ResultMessages
     }
 }

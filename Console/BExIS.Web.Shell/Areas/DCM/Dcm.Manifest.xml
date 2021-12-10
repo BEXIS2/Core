@@ -185,12 +185,12 @@
 	</Hooks>
 	<Views>
 		<View
-		    name="resultmessage"
-			displayName ="Result Message"
+		    name="messages"
+			displayName ="Messages"
 		    mode="edit"
 		    entity="dataset"
 		    place="details"
 		    module="dcm"
-		    type="BExIS.Modules.Dcm.UI.Hooks.Views.ResultMessageView, BExIS.Modules.DCM.UI, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" />
+		    type="BExIS.Modules.Dcm.UI.Hooks.Views.MessageView, BExIS.Modules.DCM.UI, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" />
 	</Views>
 </Manifest>

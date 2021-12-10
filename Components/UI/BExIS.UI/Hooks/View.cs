@@ -15,6 +15,5 @@ namespace BExIS.UI.Hooks
 {
     public abstract class View : Hook
     {
-        public string StartScript { get; set; }
     }
 }

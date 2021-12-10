@@ -6,10 +6,15 @@ BEGIN TRANSACTION;
 -- Add Controllers to operation
 -- shell/uitest
 -- shell/menu
--- dcm/Metadata
--- dcm/Validation
--- dcm/FileUpload
--- dcm/Edit
+-- dcm/Metadata - DatasetCreationFeature
+-- dcm/Edit - DatasetCreationFeature
+
+
+-- dcm/Validation - DatasetUploadFeature
+-- dcm/FileUpload - DatasetUploadFeature
+-- dcm/messages - DatasetUploadFeature
+
+
 -- ddm/view
 -- dim/publish 
 -- sam/userpermissions

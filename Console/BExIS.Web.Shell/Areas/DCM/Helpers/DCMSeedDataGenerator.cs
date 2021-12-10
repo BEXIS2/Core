@@ -177,10 +177,11 @@ namespace BExIS.Modules.Dcm.UI.Helpers
                 operationManager.Create("Api", "Attachment", "*", DatasetUploadFeature);
 
 
-                // for hooks
+                // for hooks and views
                 operationManager.Create("DCM", "FileUpload", "*", DatasetUploadFeature);
                 operationManager.Create("DCM", "Validation", "*", DatasetUploadFeature);
                 operationManager.Create("DCM", "Metadata", "*", DatasetUploadFeature);
+                operationManager.Create("DCM", "Messages", "*", DatasetUploadFeature);
 
                 #endregion Update Dataset Workflow
 

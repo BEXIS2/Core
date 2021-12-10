@@ -60,6 +60,12 @@ namespace BExIS.UI.Hooks
         /// <returns></returns>#
         public string Start { get; set; }
 
+        /// <summary>
+        /// Description of the workflow behind the hook
+        /// </summary>
+        /// <returns></returns>#
+        public string Description { get; set; }
+
         public virtual void Check(long id, string username)
         {
             throw new NotImplementedException();
@@ -102,6 +108,7 @@ namespace BExIS.UI.Hooks
             Module = "";
             Place = "";
             Start = "";
+            Description = "no description available";
         }
     }
 }
