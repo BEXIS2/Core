@@ -20,7 +20,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         [BExISEntityAuthorize(typeof(Dataset), "id", RightType.Write)]
         public ActionResult Start(long id, int version)
         {
-            return RedirectToAction("LoadMetadata", "Form", new { entityId = id, locked = false, created = false, fromEditMode = true });
+            return RedirectToAction("LoadMetadata", "Form", new { entityId = id, locked = false, created = false, fromEditMode = true, asPartial = false }) ;
         }
     }
 }

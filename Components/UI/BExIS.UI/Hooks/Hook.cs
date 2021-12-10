@@ -66,6 +66,12 @@ namespace BExIS.UI.Hooks
         /// <returns></returns>#
         public string Description { get; set; }
 
+        /// <summary>
+        /// Should the Content target in a modal window or open a new page
+        /// </summary>
+        /// <returns></returns>#
+        public bool IsModal { get; set; }
+
         public virtual void Check(long id, string username)
         {
             throw new NotImplementedException();
@@ -109,6 +115,7 @@ namespace BExIS.UI.Hooks
             Place = "";
             Start = "";
             Description = "no description available";
+            IsModal = false;
         }
     }
 }

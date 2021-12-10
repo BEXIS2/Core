@@ -12,6 +12,7 @@ namespace BExIS.Modules.Dcm.UI.Hooks
         public ValidationHook()
         {
             Start = "dcm/validation/start";
+            IsModal = true;
         }
 
         public override void Check(long id, string username)

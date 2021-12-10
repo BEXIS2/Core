@@ -140,7 +140,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             return PartialView("MetadataEditor", Model);
         }
 
-        public ActionResult LoadMetadata(long entityId, bool locked = false, bool created = false, bool fromEditMode = false, bool resetTaskManager = false, XmlDocument newMetadata = null)
+        public ActionResult LoadMetadata(long entityId, bool locked = false, bool created = false, bool fromEditMode = false, bool resetTaskManager = false, XmlDocument newMetadata = null, bool asPartial = true)
         {
 
             var loadFromExternal = resetTaskManager;
@@ -250,7 +250,9 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
             #endregion
 
-            return PartialView("MetadataEditor", Model);
+            if(asPartial) return PartialView("MetadataEditor", Model);
+
+            return View("MetadataEditor", Model);
         }
 
         public ActionResult LoadMetadataFromExternal(long entityId, string title, long metadatastructureId, long datastructureId = -1, long researchplanId = -1, string sessionKeyForMetadata = "", bool resetTaskManager = false, bool latest = true, string isValid = "yes")
