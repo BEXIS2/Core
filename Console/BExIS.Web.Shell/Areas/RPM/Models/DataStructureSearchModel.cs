@@ -276,7 +276,7 @@ namespace BExIS.Modules.Rpm.UI.Models
                                 if (datasetManager.RowAny(d.Id, uow))
                                 {
                                     dataStructureResult.inUse = true;
-                                    break;
+                                    //break;
                                 }
 
                                 // currently not working
