@@ -329,7 +329,7 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Indexer
             {
                 tmp.Add(variable.DataAttribute.Name);
                 tmp.Add(variable.Label);
-                if (!string.IsNullOrEmpty(variable.DataAttribute.Description))
+                if (!string.IsNullOrEmpty(variable.DataAttribute.Description) && variable.DataAttribute.Description != "Unknown")
                     tmp.Add(variable.DataAttribute.Description);
             }
 
