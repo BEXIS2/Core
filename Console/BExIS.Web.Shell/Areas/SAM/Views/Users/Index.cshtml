@@ -37,8 +37,8 @@
                 <button type="button" class="bx bx-grid-function bx-trash"></button>
         </text>)
        .ClientTemplate(
-           "<button type=\"button\" class=\"bx bx-grid-function bx-edit\" value=\"<#= Id #>\" title=\"Edit User\"></button>" +
-           "<button type=\"button\" class=\"bx bx-grid-function bx-group\" value=\"<#= Id #>\" title=\"Edit Membership(s)\"></button>" +
+           "<button type=\"button\" class=\"bx bx-grid-function bx-edit\" value=\"<#= Id #>\" title=\"Edit User: <#= DisplayName #>\"></button>" +
+           "<button type=\"button\" class=\"bx bx-grid-function bx-group\" value=\"<#= Id #>\" title=\"Edit Membership(s): <#= DisplayName #> \"></button>" +
            "<button type=\"button\" class=\"bx bx-grid-function bx-trash\" value=\"<#= Id #>\" title=\"Delete User\"></button>")
        .Width(110);
 })
@@ -132,6 +132,7 @@
 
             $('.bx-edit')
                 .click(function () {
+                    var title = $(this).attr("title");
                     $.ajax({
                         type: 'GET',
                         url: '@Url.Action("Update", "Users")',
@@ -139,7 +140,7 @@
                         dataType: 'html',
                         success: function (htmlData) {
                             var windowElement = $.telerik.window.create({
-                                title: "Update User",
+                                title: title,
                                 html: "<div id='content_updateUser' class='bx-window'>" + htmlData + "</div>",
                                 contentUrl: "",
                                 actions: ["Close"],
@@ -166,6 +167,8 @@
 
             $('.bx-group')
                 .click(function () {
+                    console.log($(this), $(this).attr("title"))
+                    var title = $(this).attr("title");
                     $.ajax({
                         type: 'GET',
                         url: '@Url.Action("Groups", "Users")',
@@ -173,7 +176,7 @@
                         dataType: 'html',
                         success: function (htmlData) {
                             var windowElement = $.telerik.window.create({
-                                title: "Update Membership(s)",
+                                title: title,
                                 html: "<div id='content_groups' class='bx-window'>" + htmlData + "</div>",
                                 contentUrl: "",
                                 actions: ["Close"],

@@ -125,6 +125,7 @@
         }
 
         function grid_subjects_onRowSelect(e) {
+            console.log(e.row);
             $.ajax({
                 type: 'GET',
                 url: '@Url.Action("Permissions", "EntityPermissions")',
@@ -132,7 +133,7 @@
                 dataType: 'html',
                 success: function(htmlData) {
                     var windowElement = $.telerik.window.create({
-                        title: "Permissions",
+                        title: "Permissions: " + $("input", e.row).data('title'),
                         html: "<div id='content_permissions' class='bx-window'>" + htmlData + "</div>",
                         contentUrl: "",
                         actions: ["Close"],
