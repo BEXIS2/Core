@@ -166,7 +166,6 @@ namespace BExIS.Modules.Dcm.UI.Helpers
                 operationManager.Create("DCM", "SubmitSpecifyDataset", "*", DatasetUploadFeature);
                 operationManager.Create("DCM", "SubmitSummary", "*", DatasetUploadFeature);
                 operationManager.Create("DCM", "SubmitValidation", "*", DatasetUploadFeature);
-                
 
                 //Load files to server
                 operationManager.Create("DCM", "Push", "*", DatasetUploadFeature);
@@ -175,7 +174,7 @@ namespace BExIS.Modules.Dcm.UI.Helpers
                 operationManager.Create("Api", "Data", "*", DatasetUploadFeature);
                 operationManager.Create("Api", "AttachmentIn", "*", DatasetUploadFeature);
                 operationManager.Create("Api", "Attachment", "*", DatasetUploadFeature);
-
+                operationManager.Create("Api", "File", "*", DatasetUploadFeature);
 
                 // for hooks and views
                 operationManager.Create("DCM", "FileUpload", "*", DatasetUploadFeature);
@@ -223,7 +222,6 @@ namespace BExIS.Modules.Dcm.UI.Helpers
                 #endregion SECURITY
 
                 #region Add Metadata
-
 
                 if (!metadataStructureManager.Repo.Get().Any(m => m.Name.Equals("Basic ABCD")))
                 {

@@ -12,7 +12,6 @@ namespace BExIS.Modules.Dcm.UI.Hooks
         public FileUploadHook()
         {
             Start = "dcm/fileupload/start";
-            IsModal = true;
         }
 
         public override void Check(long id, string username)

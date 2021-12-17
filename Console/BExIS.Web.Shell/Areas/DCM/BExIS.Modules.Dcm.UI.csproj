@@ -161,6 +161,7 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Controllers\API\FileController.cs" />
     <Compile Include="Controllers\API\AttachmentInController.cs" />
     <Compile Include="Controllers\API\DataInController.cs" />
     <Compile Include="Controllers\API\DatasetInController.cs" />
@@ -232,6 +233,7 @@
     <Compile Include="Models\Edit\EditModel.cs" />
     <Compile Include="Models\EntityReference\ReferenceModels.cs" />
     <Compile Include="Models\FileInfoModel.cs" />
+    <Compile Include="Models\Edit\FileUploadModel.cs" />
     <Compile Include="Models\FinishUploadModel.cs" />
     <Compile Include="Models\GetFileInformationModel.cs" />
     <Compile Include="Models\ImportMetadata\ParametersModel.cs" />
@@ -255,6 +257,7 @@
     <Compile Include="Models\TestModel.cs" />
     <Compile Include="Models\UploadWizardParameters.cs" />
     <Compile Include="Models\ValidationModel.cs" />
+    <Compile Include="Models\Edit\ValidationModel.cs" />
     <Compile Include="Models\View\ViewModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -489,8 +492,6 @@
     <Content Include="Scripts\svelte\edit.js" />
     <Content Include="Scripts\svelte\messages.css" />
     <Content Include="Scripts\svelte\messages.js" />
-    <Content Include="Scripts\svelte\validation.css" />
-    <Content Include="Scripts\svelte\validation.js" />
     <Content Include="Scripts\svelte\view.css" />
     <Content Include="Scripts\svelte\view.js" />
     <Content Include="Views\Help\Informations.xml" />
@@ -576,8 +577,6 @@
     <Content Include="Views\View\Index.cshtml" />
     <Content Include="Views\View\_test.cshtml" />
     <Content Include="Views\Messages\Index.cshtml" />
-    <Content Include="Views\Validation\Index.cshtml" />
-    <Content Include="Scripts\svelte\validation.js.map" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -590,6 +589,7 @@
     <Folder Include="Views\DcmAdmin\" />
     <Folder Include="Views\FileUpload\" />
     <Folder Include="Views\Home\" />
+    <Folder Include="Views\Validation\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config">

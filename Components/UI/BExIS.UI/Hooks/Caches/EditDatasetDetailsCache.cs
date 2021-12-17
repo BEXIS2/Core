@@ -20,16 +20,26 @@ namespace BExIS.UI.Hooks.Caches
         public bool IsDataValid { get; set; }
 
         /// <summary>
-        /// after a validation runs a hash will be genereated
-        /// it combines the file and data description
+        /// after a successful validation runs a hash will be genereated
+        /// it combines the file-names, changedates and data description
         /// check the hash before you go on to be sure that nothings changed
         /// </summary>
         public byte[] ValidationHash { get; set; }
 
         /// <summary>
-        /// contains all reader needed informations about the incoming file
+        /// contains all reader needed informations about the incoming file from type excel
         /// </summary>
-        public FileReaderInfo FileReaderInfo { get; set; }
+        public ExcelFileReaderInfo ExcelFileReaderInfo { get; set; }
+
+        /// <summary>
+        /// contains all reader needed informations about the incoming file from type ascii
+        /// </summary>
+        public AsciiFileReaderInfo AsciiFileReaderInfo { get; set; }
+
+        /// <summary>
+        /// contains all filename that sould be imported
+        /// </summary>
+        public List<FileInfo> Files { get; set; }
 
         /// <summary>
         /// if something is done or any result from a hook should generate a Message to show the user the result of the hook
@@ -46,6 +56,11 @@ namespace BExIS.UI.Hooks.Caches
         /// contains update informations like method, rows count, variable count
         /// </summary>
         public UpdateSetup UpdateSetup { get; set; }
+
+        public EditDatasetDetailsCache()
+        {
+            Messages = new List<ResultMessage>();
+        }
     }
 
     public class ExcelSetup
@@ -83,5 +98,22 @@ namespace BExIS.UI.Hooks.Caches
         public int VariablesCount { get; set; }
         public int CurrentPackage { get; set; }
         public int CurrentPackageSize { get; set; }
+    }
+
+    public class FileInfo
+    {
+        public string Name { get; set; }
+        public string Type { get; set; }
+        public int Lenght { get; set; }
+
+        public FileInfo()
+        { }
+
+        public FileInfo(string name, string type, int length)
+        {
+            Name = name;
+            Type = type;
+            Lenght = length;
+        }
     }
 }
