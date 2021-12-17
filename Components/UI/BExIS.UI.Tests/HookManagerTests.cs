@@ -133,7 +133,7 @@ namespace BExIS.UI.Tests
             // pepare cache
             EditDatasetDetailsCache cache = new EditDatasetDetailsCache();
             cache.IsMetadataValid = true;
-            cache.FileReaderInfo = new ExcelFileReaderInfo();
+            cache.ExcelFileReaderInfo = new ExcelFileReaderInfo();
             cache.UpdateSetup = new UpdateSetup() { RowsCount = 1000, VariablesCount = 10 };
 
             var list = new System.Collections.Generic.List<ResultMessage>();
@@ -149,6 +149,68 @@ namespace BExIS.UI.Tests
 
             //Assert
             Assert.IsTrue(result);
+        }
+
+        [Test]
+        public void LoadCache_LoadExcelReaderInfo_ReturnExcelReaderInfo()
+        {
+            //Arrange
+            HookManager hookManager = new HookManager();
+
+            // pepare cache
+            EditDatasetDetailsCache cache = new EditDatasetDetailsCache();
+            cache.IsMetadataValid = true;
+            cache.ExcelFileReaderInfo = new ExcelFileReaderInfo();
+            cache.UpdateSetup = new UpdateSetup() { RowsCount = 1000, VariablesCount = 10 };
+
+            var list = new System.Collections.Generic.List<ResultMessage>();
+            //for (int i = 0; i < 10; i++)
+            //{
+            //    list.Add(new ResultMessage() { Messages = new List<string>() { i.ToString() + "_test" }, Timestamp = DateTime.Now }); ;
+            //}
+
+            cache.Messages = list;
+
+            //Act
+            bool result = hookManager.SaveCache<EditDatasetDetailsCache>(cache, "dataset", "details", HookMode.edit, 7);
+
+            cache = hookManager.LoadCache<EditDatasetDetailsCache>("dataset", "details", HookMode.edit, 1);
+
+            var excelFileReader = cache.ExcelFileReaderInfo as ExcelFileReaderInfo;
+
+            //Assert
+            Assert.NotNull(excelFileReader);
+        }
+
+        [Test]
+        public void LoadCache_LoadAsciiReaderInfo_ReturnAsciiReaderInfo()
+        {
+            //Arrange
+            HookManager hookManager = new HookManager();
+
+            // pepare cache
+            EditDatasetDetailsCache cache = new EditDatasetDetailsCache();
+            cache.IsMetadataValid = true;
+            cache.AsciiFileReaderInfo = new AsciiFileReaderInfo();
+            cache.UpdateSetup = new UpdateSetup() { RowsCount = 1000, VariablesCount = 10 };
+
+            var list = new System.Collections.Generic.List<ResultMessage>();
+            //for (int i = 0; i < 10; i++)
+            //{
+            //    list.Add(new ResultMessage() { Messages = new List<string>() { i.ToString() + "_test" }, Timestamp = DateTime.Now }); ;
+            //}
+
+            cache.Messages = list;
+
+            //Act
+            bool result = hookManager.SaveCache<EditDatasetDetailsCache>(cache, "dataset", "details", HookMode.edit, 7);
+
+            cache = hookManager.LoadCache<EditDatasetDetailsCache>("dataset", "details", HookMode.edit, 1);
+
+            var excelFileReader = cache.ExcelFileReaderInfo as ExcelFileReaderInfo;
+
+            //Assert
+            Assert.NotNull(excelFileReader);
         }
     }
 }

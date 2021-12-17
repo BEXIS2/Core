@@ -1,5 +1,7 @@
-﻿using BExIS.Security.Entities.Authorization;
+﻿using BExIS.Dlm.Services.Data;
+using BExIS.Security.Entities.Authorization;
 using BExIS.UI.Hooks;
+using BExIS.UI.Hooks.Caches;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,7 +14,6 @@ namespace BExIS.Modules.Dcm.UI.Hooks
         public ValidationHook()
         {
             Start = "dcm/validation/start";
-            IsModal = true;
         }
 
         public override void Check(long id, string username)
@@ -22,11 +23,26 @@ namespace BExIS.Modules.Dcm.UI.Hooks
 
             // after the security check this hook needs to check
             // wheter incoming data, and datastructure exist
-            if (Status == HookStatus.AccessDenied)
+            if (Status != HookStatus.AccessDenied)
             {
-                // check if file exist
+                HookManager hookManager = new HookManager();
+                EditDatasetDetailsCache cache = hookManager.LoadCache<EditDatasetDetailsCache>("dataset", "details", HookMode.edit, id);
 
                 // check if data strutcure exist
+                using (var datasetManager = new DatasetManager())
+                {
+                    var dataset = datasetManager.GetDataset(id);
+                    if (dataset == null && dataset.DataStructure == null) { Status = HookStatus.Disabled; return; }
+                }
+
+                // check if file not exist
+                if (cache.Files == null || cache.Files.Any() == false) { Status = HookStatus.Inactive; return; }
+
+                // if file reader information exist
+                if (cache.ExcelFileReaderInfo == null && cache.AsciiFileReaderInfo == null) { Status = HookStatus.Inactive; return; }
+
+                // if everthing exist
+                Status = HookStatus.Open;
             }
         }
 

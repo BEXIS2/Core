@@ -43,7 +43,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
             if (cache != null && cache.Messages.Any())
             {
-                messages = cache.Messages.ToList();
+                messages = cache.Messages.ToList().OrderByDescending(m=>m.Timestamp).ToList();
             }
 
             return Json(messages, JsonRequestBehavior.AllowGet);
