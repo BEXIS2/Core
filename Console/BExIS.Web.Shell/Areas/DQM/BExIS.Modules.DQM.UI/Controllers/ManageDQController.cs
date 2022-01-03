@@ -109,9 +109,11 @@ namespace BExIS.Modules.DQM.UI.Controllers
                     List<int> datasetCols = new List<int>();
                     List<double> datasetSizeFiles = new List<double>(); //all files in all datasets
                     List<int> datasetFileNumber = new List<int>();
+                    List<int> sizeTabular = new List<int>(); //collect size, column number, and row number for one dataset
+
                     int fileDatasets = 0;
                     int tabularDatasets = 0;
-                    List<int> sizeTabular = new List<int>(); //collect size, column number, and row number for one dataset
+                    
                     int fileNumber = 0;
                     List<double> datasetTotalSize = new List<double>(); //total file size of each dataset
                     List<double> sizeFile = new List<double>();///////////////////////////
@@ -229,7 +231,8 @@ namespace BExIS.Modules.DQM.UI.Controllers
 
                         string type = "file";
                         if (dataStr.Self.GetType() == typeof(StructuredDataStructure)) { type = "tabular"; } //get dataset type
-
+                        int colNum = 0;
+                        int rowNum = 0;
                         #region tabular dataset
                         if (type == "tabular")
                         {                            
@@ -239,18 +242,20 @@ namespace BExIS.Modules.DQM.UI.Controllers
                                 DataTable table = dm.GetLatestDatasetVersionTuples(datasetId, true);
                                 DataRowCollection rowss = table.Rows;
                                 DataColumnCollection columns = table.Columns;
-                                sizeTabular[1] = columns.Count - 4;
-                                if (sizeTabular[1] < 0) //if data structure has not been designed.
-                                {
-                                    sizeTabular[1] = 0;
-                                }
-                                sizeTabular[2] = rowss.Count;
-                                sizeTabular[0] = sizeTabular[1] * sizeTabular[2];
-
                                 StructuredDataStructure sds = dsm.StructuredDataStructureRepo.Get(datasetLatestVersion.Dataset.DataStructure.Id); //get data structure
-
-                                #region variables
                                 var variables = sds.Variables; //get variables
+                                //sizeTabular[1] = variables.Count; //columns.Count - 4;
+                                //if (sizeTabular[1] < 0) //if data structure has not been designed.
+                                //{
+                                //    sizeTabular[1] = 0;
+                                //}
+                                //sizeTabular[2] = rowss.Count;
+                                //sizeTabular[0] = sizeTabular[1] * sizeTabular[2];
+                                colNum = variables.Count;
+                                rowNum = rowss.Count;
+                                
+                                #region variables
+                                
                                 int columnNumber = -1; //First four columns are added from system.
                                 if (variables.Count() > 0)
                                 {
@@ -306,16 +311,18 @@ namespace BExIS.Modules.DQM.UI.Controllers
                             }
                             catch
                             {
-                                sizeTabular.Add(0);
-                                sizeTabular.Add(0);
-                                sizeTabular.Add(0);
+                                colNum = 0;
+                                rowNum = 0;
+                                //sizeTabular.Add(0);
+                                //sizeTabular.Add(0);
+                                //sizeTabular.Add(0);
                             }
 
 
 
-                            datasetSizeTabular.Add(sizeTabular[0]);
-                            datasetCols.Add(sizeTabular[1]); //column number
-                            datasetRows.Add(sizeTabular[2]); //row number                              
+                            datasetSizeTabular.Add(colNum * rowNum); //sizeTabular[0]);
+                            datasetCols.Add(colNum);// sizeTabular[1]); //column number
+                            datasetRows.Add(rowNum);// sizeTabular[2]); //row number                              
                         }
 
                         #endregion
@@ -383,8 +390,8 @@ namespace BExIS.Modules.DQM.UI.Controllers
                             + (dataStr.Datasets.Count() - 1);
                         if (type == "tabular")
                         {
-                            datasetInfo = datasetInfo + ";" + sizeTabular[1]    //column number
-                                + ";" + sizeTabular[2]                          //row number
+                            datasetInfo = datasetInfo + ";" + datasetCols.Last()    //column number
+                                + ";" + datasetRows.Last()                          //row number
                                 + ";0;0";                                         //file number and size
                         }
                         if (type == "file")
