@@ -1,5 +1,5 @@
 
-(function(l, r) { if (!l || l.getElementById('livereloadscript')) return; r = l.createElement('script'); r.async = 1; r.src = '//' + (self.location.host || 'localhost').split(':')[0] + ':35735/livereload.js?snipver=1'; r.id = 'livereloadscript'; l.getElementsByTagName('head')[0].appendChild(r) })(self.document);
+(function(l, r) { if (!l || l.getElementById('livereloadscript')) return; r = l.createElement('script'); r.async = 1; r.src = '//' + (self.location.host || 'localhost').split(':')[0] + ':35731/livereload.js?snipver=1'; r.id = 'livereloadscript'; l.getElementsByTagName('head')[0].appendChild(r) })(self.document);
 var app = (function () {
     'use strict';
 
@@ -2512,7 +2512,7 @@ var app = (function () {
     	return child_ctx;
     }
 
-    // (27:0) <Button on:click={loadMessages}>
+    // (26:0) <Button on:click={loadMessages}>
     function create_default_slot_2(ctx) {
     	let t;
 
@@ -2532,14 +2532,14 @@ var app = (function () {
     		block,
     		id: create_default_slot_2.name,
     		type: "slot",
-    		source: "(27:0) <Button on:click={loadMessages}>",
+    		source: "(26:0) <Button on:click={loadMessages}>",
     		ctx
     	});
 
     	return block;
     }
 
-    // (49:0) {:else}
+    // (48:0) {:else}
     function create_else_block(ctx) {
     	let spinner;
     	let current;
@@ -2581,14 +2581,14 @@ var app = (function () {
     		block,
     		id: create_else_block.name,
     		type: "else",
-    		source: "(49:0) {:else}",
+    		source: "(48:0) {:else}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (29:0) {#if messages}
+    // (28:0) {#if messages}
     function create_if_block(ctx) {
     	let listgroup;
     	let current;
@@ -2637,14 +2637,14 @@ var app = (function () {
     		block,
     		id: create_if_block.name,
     		type: "if",
-    		source: "(29:0) {#if messages}",
+    		source: "(28:0) {#if messages}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (38:6) {#each message.messages as messagepart}
+    // (37:6) {#each message.messages as messagepart}
     function create_each_block_1(ctx) {
     	let t0_value = /*messagepart*/ ctx[7] + "";
     	let t0;
@@ -2656,7 +2656,7 @@ var app = (function () {
     			t0 = text(t0_value);
     			t1 = space();
     			br = element("br");
-    			add_location(br, file, 38, 23, 872);
+    			add_location(br, file, 37, 23, 867);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, t0, anchor);
@@ -2677,14 +2677,14 @@ var app = (function () {
     		block,
     		id: create_each_block_1.name,
     		type: "each",
-    		source: "(38:6) {#each message.messages as messagepart}",
+    		source: "(37:6) {#each message.messages as messagepart}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (35:3) <ListGroupItem>
+    // (34:3) <ListGroupItem>
     function create_default_slot_1(ctx) {
     	let b;
     	let t0_value = /*message*/ ctx[4].timestamp + "";
@@ -2714,8 +2714,8 @@ var app = (function () {
     			}
 
     			t3 = space();
-    			add_location(b, file, 35, 6, 766);
-    			add_location(br, file, 35, 33, 793);
+    			add_location(b, file, 34, 6, 761);
+    			add_location(br, file, 34, 33, 788);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, b, anchor);
@@ -2771,14 +2771,14 @@ var app = (function () {
     		block,
     		id: create_default_slot_1.name,
     		type: "slot",
-    		source: "(35:3) <ListGroupItem>",
+    		source: "(34:3) <ListGroupItem>",
     		ctx
     	});
 
     	return block;
     }
 
-    // (33:3) {#each messages as message}
+    // (32:3) {#each messages as message}
     function create_each_block(ctx) {
     	let listgroupitem;
     	let current;
@@ -2826,14 +2826,14 @@ var app = (function () {
     		block,
     		id: create_each_block.name,
     		type: "each",
-    		source: "(33:3) {#each messages as message}",
+    		source: "(32:3) {#each messages as message}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (31:0) <ListGroup flush>
+    // (30:0) <ListGroup flush>
     function create_default_slot(ctx) {
     	let each_1_anchor;
     	let current;
@@ -2922,7 +2922,7 @@ var app = (function () {
     		block,
     		id: create_default_slot.name,
     		type: "slot",
-    		source: "(31:0) <ListGroup flush>",
+    		source: "(30:0) <ListGroup flush>",
     		ctx
     	});
 
