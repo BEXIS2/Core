@@ -2716,7 +2716,9 @@ namespace BExIS.Dlm.Services.Data
                                     OrderNo = item.OrderNo,
                                     URI = item.URI,
                                     DatasetVersion = dsNewVersion,
-                                    Extra = item.Extra
+                                    Extra = item.Extra,
+                                    Description = item.Description,
+                                    FileSize = item.FileSize,
                                 };
                                 dsNewVersion.ContentDescriptors.Add(cd);
                             }
