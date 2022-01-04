@@ -2707,6 +2707,11 @@ namespace BExIS.Dlm.Services.Data
                             dsNewVersion.Description = previousCheckedInVersion.Description;
                             dsNewVersion.Metadata = (XmlDocument)previousCheckedInVersion.Metadata?.Clone();
                             dsNewVersion.ExtendedPropertyValues = previousCheckedInVersion.ExtendedPropertyValues;
+                            dsNewVersion.VersionDescription = previousCheckedInVersion.VersionDescription;
+                            dsNewVersion.VersionType = previousCheckedInVersion.VersionType;
+                            dsNewVersion.VersionName = previousCheckedInVersion.VersionName;
+                            dsNewVersion.PublicAccess = previousCheckedInVersion.PublicAccess; //@Todo Copy or set to NULL?
+
                             foreach (var item in previousCheckedInVersion.ContentDescriptors)
                             {
                                 ContentDescriptor cd = new ContentDescriptor()
