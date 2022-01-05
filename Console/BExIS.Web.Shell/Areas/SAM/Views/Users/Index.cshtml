@@ -27,11 +27,13 @@
 @(Html.Telerik().Grid<UserGridRowModel>().Name("grid_users")
       .Columns(columns =>
       {
-          columns.Bound(u => u.Id);
-          columns.Bound(u => u.Name);
-          columns.Bound(u => u.DisplayName);
-          columns.Bound(u => u.Email);
-          columns.Template(@<text>
+      columns.Bound(u => u.Id);
+      columns.Bound(u => u.Name);
+      columns.Bound(u => u.DisplayName);
+      columns.Bound(u => u.Email);
+      columns.Bound(u => u.IsEmailConfirmed);
+      columns.Bound(u => u.RegistrationDate).Format("{0:yyyy-MM-dd}");
+      columns.Template(@<text>
                 <button type="button" class="bx bx-grid-function bx-edit"></button>
                 <button type="button" class="bx bx-grid-function bx-group"></button>
                 <button type="button" class="bx bx-grid-function bx-trash"></button>
