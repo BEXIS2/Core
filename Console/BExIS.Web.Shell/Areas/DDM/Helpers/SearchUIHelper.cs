@@ -431,7 +431,7 @@ namespace BExIS.Modules.Ddm.UI.Helpers
                             dr["Description"] = "n/a";
 
                         if (sdvu.Unit != null)
-                            dr["Unit"] = sdvu.Unit.Name;
+                            dr["Unit"] = sdvu.Unit.Abbreviation;
                         else
                             dr["Unit"] = "n/a";
 
