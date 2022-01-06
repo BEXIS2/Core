@@ -95,7 +95,7 @@ namespace BExIS.Dlm.Entities.Data
         /// </summary>
         /// <remarks></remarks>
         /// <seealso cref=""/>        
-        public virtual string PublicAccess { get; set; }
+        public virtual bool PublicAccess { get; set; }
         #endregion
 
         #region Associations

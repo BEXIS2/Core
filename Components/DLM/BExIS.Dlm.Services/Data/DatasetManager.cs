@@ -1262,6 +1262,66 @@ namespace BExIS.Dlm.Services.Data
             }
         }
 
+        /// <summary>
+        /// Returns a list of allowed versions of a dataset. Explicit "public access" has the highest priority, 
+        /// 2nd the versions type major/minor. If no version is tagged with a version type or as public access, all versions are returned.
+        /// </summary>
+        /// <param name="datasetId">The identifier of the dataset</param>
+        /// <param name="major">Include version type "major".Default is true.</param>
+        /// <param name="minor">Include version type "minor". Default is false.</param>
+        /// <param name="datasetVersions">List of all dataset versions.</param>
+        /// <returns>The list of allowed versions.</returns>
+        /// <remarks></remarks>
+        public List<DatasetVersion> GetDatasetVersionsAllowed(Int64 datasetId, bool major = true, bool minor = false, List<DatasetVersion> datasetVersions = null)
+        {
+            List<DatasetVersion> allowedVersionList = new List<DatasetVersion>();
+
+            // Get list od dataset versions, if not provided
+            if (datasetVersions == null)
+            {
+                datasetVersions = new List<DatasetVersion>();
+                datasetVersions = GetDatasetVersions(datasetId);
+            }
+            
+            // 1. Select explicit dataset versions with a "public access" flag.This will have the higeth priority
+            List<DatasetVersion> versionIdPublicList = datasetVersions.OrderBy(d => d.Timestamp).Where(d => d.PublicAccess).ToList();
+            
+            // 2. Check for major dataset versions
+            List<DatasetVersion> versionIdMajorList = new List<DatasetVersion>();
+            if (major)
+            {
+                versionIdMajorList = datasetVersions.OrderBy(d => d.Timestamp).Where(d => d.VersionType == "major").ToList();
+            }
+
+            // 3. Check for major and minor dataset versions
+            List<DatasetVersion> versionIdMajorMinorList = new List<DatasetVersion>();
+            if (minor)
+            {
+                versionIdMajorMinorList = datasetVersions.OrderBy(d => d.Timestamp).Where(d => d.VersionType == "major" || d.VersionType == "minor").ToList();
+            }
+
+            // Select result set based on found restriction accross all dataset versions
+            if (versionIdPublicList.Count > 0)
+            {
+                allowedVersionList = versionIdPublicList;
+            }
+            else if (versionIdMajorList.Count > 0)
+            {
+                allowedVersionList = versionIdMajorList;
+            }
+            else if (versionIdMajorMinorList.Count > 0)
+            {
+                allowedVersionList = versionIdMajorMinorList;
+            }
+            else // if no restirctions found, return full list
+            {
+                allowedVersionList = datasetVersions;
+            }
+
+            // rerturn list of allowed versions
+            return allowedVersionList;
+        }
+
         public DataTable ConvertToDataTable(DatasetVersion dsVersion)
         {
             return this.convertDataTuplesToDataTable(dsVersion);
