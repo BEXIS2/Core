@@ -38,7 +38,7 @@
         foreach (var rightType in Enum.GetValues(typeof(RightType)).Cast<RightType>())
         {
             columns.Bound(m => m.EffectiveRights)
-                        .ClientTemplate("<input type='checkbox' data-subjectid='<#= Id #>' data-entityid='" + Model.EntityId + "' data-instanceid='" + Model.InstanceId + "' data-righttype='" + (int)rightType + "' <#= (Rights &" + (int)rightType + ") > 0 ? checked='checked' : '' #> /> <input type='checkbox' data-subjectid='<#= Id #>' data-entityid='" + Model.EntityId + "' data-instanceid='" + Model.InstanceId + "' data-righttype='" + (int)rightType + "' <#= (EffectiveRights &" + (int)rightType + ") > 0 ? checked='checked' : '' #> disabled />")
+                        .ClientTemplate("<input type='checkbox' data-subjectid='<#= Id #>' data-title='<#= DisplayName #>' data-entityid='" + Model.EntityId + "' data-instanceid='" + Model.InstanceId + "' data-righttype='" + (int)rightType + "' <#= (Rights &" + (int)rightType + ") > 0 ? checked='checked' : '' #> /> <input type='checkbox' data-subjectid='<#= Id #>' data-entityid='" + Model.EntityId + "' data-instanceid='" + Model.InstanceId + "' data-righttype='" + (int)rightType + "' <#= (EffectiveRights &" + (int)rightType + ") > 0 ? checked='checked' : '' #> disabled />")
                                .Title(rightType.ToString())
                                .Width("11%")
                                .Filterable(false)

@@ -175,7 +175,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                     //    contentDescriptor.URI = "delete";
                     //else
                     fileLength = new FileInfo(filepath).Length;
-                    fileList.Add(new BasicFileInfo(contentDescriptorName, contentDescriptor.URI, contentDescriptor.MimeType, "", fileLength), GetDescription(contentDescriptor.Extra));
+                    fileList.Add(new BasicFileInfo(contentDescriptorName, contentDescriptor.URI, contentDescriptor.MimeType, "", fileLength), contentDescriptor.Description);
                 }
             }
             return fileList;
@@ -300,15 +300,16 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                     if (cd.Name == originalDescriptor.Name)
                     {
                         cd.URI = originalDescriptor.URI;
-                        cd.Extra = SetDescription(cd.Extra, description);
+                        // cd.Extra = SetDescription(cd.Extra, description);
+                        cd.Description = originalDescriptor.Description;
                     }
                 }
             }
             else
             {
                 // add file description Node
-                XmlDocument doc = SetDescription(originalDescriptor.Extra, description);
-                originalDescriptor.Extra = doc;
+                //XmlDocument doc = SetDescription(originalDescriptor.Extra, description);
+                originalDescriptor.Description = description;
                 //Add current contentdesciptor to list
                 datasetVersion.ContentDescriptors.Add(originalDescriptor);
             }
@@ -316,6 +317,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             return storePath;
         }
 
+        /*
         private XmlDocument SetDescription(XmlNode extraField, string description)
         {
             XmlNode newExtra;
@@ -353,7 +355,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 }
             }
             return "";
-        }
+        }*/
 
         public string GetUsernameOrDefault()
         {
