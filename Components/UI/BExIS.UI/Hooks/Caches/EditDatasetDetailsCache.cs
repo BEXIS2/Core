@@ -106,14 +106,17 @@ namespace BExIS.UI.Hooks.Caches
         public string Type { get; set; }
         public int Lenght { get; set; }
 
+        public string Description { get; set; }
+
         public FileInfo()
         { }
 
-        public FileInfo(string name, string type, int length)
+        public FileInfo(string name, string type, int length, string description)
         {
             Name = name;
             Type = type;
             Lenght = length;
+            Description = description;
         }
     }
 }
