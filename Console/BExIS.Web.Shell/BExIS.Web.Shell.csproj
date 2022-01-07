@@ -365,6 +365,7 @@
     <Compile Include="Controllers\LdapController.cs" />
     <Compile Include="Controllers\MenuController.cs" />
     <Compile Include="Controllers\PrivacyPolicyController.cs" />
+    <Compile Include="Controllers\SettingsController.cs" />
     <Compile Include="Controllers\TermsAndConditionsController.cs" />
     <Compile Include="Controllers\TestController.cs" />
     <Compile Include="Controllers\UiTestController.cs" />
@@ -379,6 +380,7 @@
     <Compile Include="Models\AccountModels.cs" />
     <Compile Include="Models\EntitySelectorModel.cs" />
     <Compile Include="Models\ManageModels.cs" />
+    <Compile Include="Models\SettingsModels.cs" />
     <Compile Include="Models\UiTestModel.cs" />
     <Compile Include="Models\VersionModels.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -898,6 +900,7 @@
     <Folder Include="Areas\" />
     <Folder Include="Views\Help\" />
     <Folder Include="Views\Menu\" />
+    <Folder Include="Views\Settings\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\Home\About.cshtml" />

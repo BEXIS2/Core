@@ -1,4 +1,5 @@
-﻿using BExIS.Xml.Helpers;
+﻿using BExIS.UI.Helpers;
+using BExIS.Xml.Helpers;
 using System.IO;
 using System.Web.Mvc;
 using System.Xml.Linq;
@@ -12,14 +13,11 @@ namespace BExIS.Modules.Sam.UI.Controllers
     {
         public ActionResult Index()
         {
-            string filePath = Path.Combine(AppConfiguration.GetModuleWorkspacePath("SAM"), "Sam.Settings.xml");
-            XDocument settings = XDocument.Load(filePath);
-            XElement help = XmlUtility.GetXElementByAttribute("entry", "key", "help", settings);
-
-            string helpurl = help.Attribute("value")?.Value;
-
+            SettingsHelper settingsHelper = new SettingsHelper("SAM");
+            string helpurl = settingsHelper.GetValue("help");
 
             return Redirect(helpurl);
+
 
         }
     }

@@ -1,4 +1,5 @@
-﻿using BExIS.Xml.Helpers;
+﻿using BExIS.UI.Helpers;
+using BExIS.Xml.Helpers;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -15,11 +16,15 @@ namespace BExIS.Web.Shell.Controllers
         // GET: Help
         public ActionResult FAQ()
         {
-            string filePath = Path.Combine(AppConfiguration.WorkspaceGeneralRoot, "General.Settings.xml");
-            XDocument settings = XDocument.Load(filePath);
-            XElement help = XmlUtility.GetXElementByAttribute("entry", "key", "faq", settings);
+            //string filePath = Path.Combine(AppConfiguration.WorkspaceGeneralRoot, "General.Settings.xml");
+            //XDocument settings = XDocument.Load(filePath);
+            //XElement help = XmlUtility.GetXElementByAttribute("entry", "key", "faq", settings);
 
-            string helpurl = help.Attribute("value")?.Value;
+            //string helpurl = help.Attribute("value")?.Value;
+
+            SettingsHelper settingsHelper = new SettingsHelper("shell");
+            string helpurl = settingsHelper.GetValue("faq");
+
 
             return Redirect(helpurl);
         }

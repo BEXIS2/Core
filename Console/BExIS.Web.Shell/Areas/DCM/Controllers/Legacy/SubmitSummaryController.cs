@@ -13,6 +13,7 @@ using BExIS.Modules.Dcm.UI.Models;
 using BExIS.Security.Entities.Subjects;
 using BExIS.Security.Services.Subjects;
 using BExIS.Security.Services.Utilities;
+using BExIS.UI.Helpers;
 using BExIS.Utils.Data.Upload;
 using BExIS.Utils.Upload;
 using BExIS.Xml.Helpers;
@@ -45,9 +46,6 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
         private Dictionary<string, object> _bus = new Dictionary<string, object>();
 
-        
-
-
         // GET: /DCM/Summary/
 
         private User _user;
@@ -76,7 +74,6 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             {
                 model.DatasetTitle = TaskManager.Bus[TaskManager.DATASET_TITLE].ToString();
             }
-
 
             return PartialView(model);
         }
@@ -110,11 +107,8 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 numberOfRows = Convert.ToInt32(TaskManager.Bus[TaskManager.NUMBERSOFROWS]);
             }
 
-
-
             if (asyncUploadHelper.RunningASync) //async
             {
-
                 Task.Run(() => asyncUploadHelper.FinishUpload());
 
                 // send email after starting the upload
@@ -123,24 +117,19 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
                 es.Send(MessageHelper.GetASyncStartUploadHeader(id, model.DatasetTitle),
                     MessageHelper.GetASyncStartUploadMessage(id, model.DatasetTitle,numberOfRows),
-                    new List<string>() { user.Email },null, 
+                    new List<string>() { user.Email },null,
                     new List<string>() { ConfigurationManager.AppSettings["SystemEmail"] }
                     );
 
-                
-
                 model.AsyncUpload = true;
                 model.AsyncUploadMessage = "All upload information has been entered and the upload will start now. After completion an email will be sent.";
-
             }
             else
             {
-
-
                 List<Error> errors = asyncUploadHelper.FinishUpload().Result;
                 if (errors.Count == 0)
                 {
-                    return null; 
+                    return null;
                 }
                 else
                 {
@@ -150,8 +139,9 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                     }
                 }
             }
-            
+
             // set model for the page
+
             #region set summary
 
             model = updateModel(model);
@@ -161,13 +151,10 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             return PartialView(model);
         }
 
-
-
         private User GetUser()
         {
             if (_user == null)
             {
-
                 string username = string.Empty;
 
                 try
@@ -187,7 +174,6 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
         private SummaryModel updateModel(SummaryModel model)
         {
-
             TaskManager = (TaskManager)Session["TaskManager"];
 
             //dataset
@@ -205,7 +191,6 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             if (_bus.ContainsKey(TaskManager.UPLOAD_METHOD))
             {
                 model.UploadMethod = _bus[TaskManager.UPLOAD_METHOD].ToString();
-
             }
             else model.UploadMethod = "Append";
 
@@ -224,7 +209,6 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             if (_bus.ContainsKey(TaskManager.FILEPATH)) model.Filepath = _bus[TaskManager.FILEPATH].ToString();
             if (_bus.ContainsKey(TaskManager.EXTENTION)) model.Extention = _bus[TaskManager.EXTENTION].ToString();
 
-
             return model;
         }
 
@@ -233,7 +217,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             int cellLimit = 0;
 
             //get cellLimt from settings
-            SettingsHelper settingsHelper = new SettingsHelper();
+            SettingsHelper settingsHelper = new SettingsHelper("DCM");
             if (settingsHelper.KeyExist("celllimit"))
             {
                 Int32.TryParse(settingsHelper.GetValue("celllimit"), out cellLimit);
@@ -258,5 +242,4 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             return false;
         }
     }
-
 }
