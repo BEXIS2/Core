@@ -233,7 +233,6 @@
     <Compile Include="Models\Edit\EditModel.cs" />
     <Compile Include="Models\EntityReference\ReferenceModels.cs" />
     <Compile Include="Models\FileInfoModel.cs" />
-    <Compile Include="Models\Edit\FileUploadModel.cs" />
     <Compile Include="Models\FinishUploadModel.cs" />
     <Compile Include="Models\GetFileInformationModel.cs" />
     <Compile Include="Models\ImportMetadata\ParametersModel.cs" />

@@ -1,13 +1,13 @@
 ﻿namespace BExIS.Utils.Data.Upload
 {
-
     /// <summary>
-    /// 
+    ///
     /// </summary>
     public enum DataStructureType
     {
         Structured,
-        Unstructured
+        Unstructured,
+        None
     }
 
     public enum UploadMethod
@@ -18,6 +18,5 @@
 
     public class Enums
     {
-
     }
 }

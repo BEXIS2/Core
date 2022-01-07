@@ -16,20 +16,19 @@ using Vaiona.Persistence.Api;
 
 /// <summary>
 ///
-/// </summary>        
+/// </summary>
 namespace BExIS.Utils.Upload
 {
     /// <summary>
     ///
     /// </summary>
-    /// <remarks></remarks>        
+    /// <remarks></remarks>
     public class UploadHelper
     {
-
         #region datatuples
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <remarks></remarks>
         /// <seealso cref=""/>
@@ -40,15 +39,12 @@ namespace BExIS.Utils.Upload
         /// //original version
         public Dictionary<string, List<DataTuple>> GetSplitDatatuples2(List<DataTuple> newDatatuples, List<long> primaryKeys, DatasetVersion workingCopy, ref List<AbstractTuple> datatuplesFromDatabase)
         {
-
             using (IUnitOfWork unitOfWork = this.GetIsolatedUnitOfWork())
             {
-
                 Dictionary<string, List<DataTuple>> data = new Dictionary<string, List<DataTuple>>();
                 List<DataTuple> newDtList = new List<DataTuple>();
                 List<DataTuple> editDtList = new List<DataTuple>();
                 List<DataTuple> deleteDtList = new List<DataTuple>();
-
 
                 DataTuple sourceDt;
                 Dictionary<long, string> PkValues;
@@ -80,7 +76,6 @@ namespace BExIS.Utils.Upload
                                 {
                                     //sourceDt.Materialize();
                                     editDtList.Add(Merge(newDt, sourceDt));
-
                                 }
 
                                 if (datatuplesFromDatabase.Count > 0)
@@ -90,12 +85,10 @@ namespace BExIS.Utils.Upload
 
                                 break;
                             }
-
                         }
 
                         if (!exist)
                             newDtList.Add(newDt);
-
                     }
                 }
                 //}
@@ -103,10 +96,8 @@ namespace BExIS.Utils.Upload
                 data.Add("new", newDtList);
                 data.Add("edit", editDtList);
 
-
                 return data;
             }
-
         }
 
         //temporary solution: norman :GetSplitDatatuples2
@@ -114,13 +105,10 @@ namespace BExIS.Utils.Upload
         {
             using (DatasetManager datasetManager = new DatasetManager())
             {
-
                 Dictionary<string, List<DataTuple>> data = new Dictionary<string, List<DataTuple>>();
                 Dictionary<string, DataTuple> newDtList = new Dictionary<string, DataTuple>();
                 Dictionary<string, DataTuple> editDtList = new Dictionary<string, DataTuple>();
                 List<DataTuple> deleteDtList = new List<DataTuple>();
-
-
 
                 DataTupleIterator tupleIterator = new DataTupleIterator(datatuplesFromDatabaseIds, datasetManager, false);
                 // Keep the DB loop outer to reduce the number of DB queries
@@ -128,7 +116,6 @@ namespace BExIS.Utils.Upload
                 {
                     if (existingTuple == null || existingTuple.Id < 0) // it is unlikely to happen, but just to reinforce it.
                         continue;
-
 
                     // iterating over the in-memory newDataTuples is faster
                     for (int counter = 0; counter < incomingDatatuples.Count(); counter++)
@@ -188,12 +175,10 @@ namespace BExIS.Utils.Upload
         {
             using (DatasetManager datasetManager = new DatasetManager())
             {
-
                 Dictionary<string, List<DataTuple>> data = new Dictionary<string, List<DataTuple>>();
                 Dictionary<string, DataTuple> newDtList = new Dictionary<string, DataTuple>();
                 Dictionary<string, DataTuple> editDtList = new Dictionary<string, DataTuple>();
                 List<DataTuple> deleteDtList = new List<DataTuple>();
-
 
                 Dictionary<string, DataTuple> newDTDic = new Dictionary<string, DataTuple>();
 
@@ -208,7 +193,6 @@ namespace BExIS.Utils.Upload
                     }
                 }
 
-
                 DataTupleIterator tupleIterator = new DataTupleIterator(datatuplesFromDatabaseIds, datasetManager, false);
                 // Keep the DB loop outer to reduce the number of DB queries
                 foreach (var existingTuple in tupleIterator)
@@ -216,19 +200,16 @@ namespace BExIS.Utils.Upload
                     if (existingTuple == null || existingTuple.Id < 0) // it is unlikely to happen, but just to reinforce it.
                         continue;
 
-
                     string keysValueSourceDatatuple = getPrimaryKeysAsString(existingTuple, primaryKeys);
 
-                    // check if a datatuple exist in the incoming dictionary 
+                    // check if a datatuple exist in the incoming dictionary
                     try
                     {
                         DataTuple incomingTuple = newDTDic[keysValueSourceDatatuple];
 
-
                         // a incoming datatuple with this key exist, check if there are equal
                         if (!Equal(incomingTuple, existingTuple)) // the incoming tuple is a changed version of an existing one
                         {
-                            
                             if (!editDtList.ContainsKey(keysValueSourceDatatuple))
                             {
                                 // apply the changes to the exisiting one and register is an edited tuple
@@ -242,10 +223,9 @@ namespace BExIS.Utils.Upload
                         newDTDic.Remove(keysValueSourceDatatuple);
                     }
                     catch//if
-                    { 
+                    {
                         //there is no datatuple incoming theat matches the db datatuple
                     }
-
                 }
 
                 // the rest of the incoming datatuples are in the new datatuples, all existing datatuples will be removed from that list
@@ -256,7 +236,7 @@ namespace BExIS.Utils.Upload
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <remarks></remarks>
         /// <seealso cref=""/>
@@ -273,7 +253,7 @@ namespace BExIS.Utils.Upload
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <remarks></remarks>
         /// <seealso cref=""/>
@@ -288,7 +268,7 @@ namespace BExIS.Utils.Upload
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <remarks></remarks>
         /// <seealso cref=""/>
@@ -310,12 +290,10 @@ namespace BExIS.Utils.Upload
             }
 
             return newDatatuple.JsonVariableValues.Equals(sourceDatatuple.JsonVariableValues);
-
         }
 
         private bool Equal2(DataTuple newDatatuple, DataTuple sourceDatatuple)
         {
-
             foreach (VariableValue newVariableValue in newDatatuple.VariableValues)
             {
                 foreach (VariableValue sourceVariableValue in sourceDatatuple.VariableValues)
@@ -329,14 +307,11 @@ namespace BExIS.Utils.Upload
                 }
             }
 
-
             return true;
         }
 
-
-
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <remarks></remarks>
         /// <seealso cref=""/>
@@ -360,7 +335,7 @@ namespace BExIS.Utils.Upload
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <remarks></remarks>
         /// <seealso cref=""/>
@@ -385,7 +360,7 @@ namespace BExIS.Utils.Upload
                             IsSame = false; break;
                         }
                     }
-                    // if value is null means not equal to a not null value and 
+                    // if value is null means not equal to a not null value and
                     // v1 = null != v2 = null
                     else
                     {
@@ -396,14 +371,12 @@ namespace BExIS.Utils.Upload
                 {
                     IsSame = false; break;
                 }
-
             }
 
             return IsSame;
         }
 
-
-        #endregion
+        #endregion datatuples
 
         #region identifier
 
@@ -420,7 +393,6 @@ namespace BExIS.Utils.Upload
         /// <returns></returns>
         public bool IsUnique(long datasetId, List<long> primaryKeys, string ext, string filename, string filepath, FileReaderInfo info, long datastructureId)
         {
-
             Hashtable hashtable = new Hashtable();
             Hashtable test = new Hashtable();
             List<string> testString = new List<string>();
@@ -433,6 +405,7 @@ namespace BExIS.Utils.Upload
             if (ext.Equals(".txt") || ext.Equals(".csv") || ext.Equals(".tsv"))
             {
                 #region csv
+
                 do
                 {
                     primaryValuesAsOneString = new List<string>();
@@ -445,9 +418,6 @@ namespace BExIS.Utils.Upload
                         AsciiReader reader = new AsciiReader(sds, afri, new IOUtility());
                         reader.Position = position;
                         Stream stream = reader.Open(filepath);
-
-
-
 
                         // get a list of values for each row
                         // e.g.
@@ -474,7 +444,6 @@ namespace BExIS.Utils.Upload
                         {
                             if (pKey != "")
                             {
-
                                 try
                                 {
                                     hashtable.Add(Utility.ComputeKey(pKey), "pKey");
@@ -484,19 +453,15 @@ namespace BExIS.Utils.Upload
                                     return false;
                                 }
                             }
-
                         }
-
 
                         position = reader.Position + 1;
                         stream.Close();
                     }
-
                 } while (primaryValuesAsOneString.Count > 0);
 
-                #endregion
+                #endregion csv
             }
-
 
             if (ext.Equals(".xlsm"))
             {
@@ -540,29 +505,24 @@ namespace BExIS.Utils.Upload
                         {
                             if (pKey != "")
                             {
-
                                 try
                                 {
                                     hashtable.Add(Utility.ComputeKey(pKey), pKey);
                                 }
-                                catch(Exception ex)
+                                catch (Exception ex)
                                 {
                                     stream.Close();
                                     return false;
                                 }
                             }
-
                         }
-
 
                         position = reader.Position + 1;
                         stream.Close();
                     }
+                } while (primaryValuesAsOneString.Count > 0);
 
-                } while (primaryValuesAsOneString.Count > 0) ;
-                
-
-                #endregion
+                #endregion excel template
             }
 
             return true;
@@ -578,10 +538,8 @@ namespace BExIS.Utils.Upload
         /// <returns></returns>
         public bool IsUnique(int[] primaryIndex, string[][] data)
         {
-
             Hashtable hashtable = new Hashtable();
             List<string> primaryValuesAsOneString = new List<string>();
-
 
             primaryValuesAsOneString = new List<string>();
 
@@ -596,13 +554,11 @@ namespace BExIS.Utils.Upload
                 primaryValuesAsOneString.Add(k);
             }
 
-
             // add all primary keys pair into the hasttable
             foreach (string pKey in primaryValuesAsOneString)
             {
                 if (pKey != "")
                 {
-
                     try
                     {
                         hashtable.Add(Utility.ComputeKey(pKey), "pKey");
@@ -612,10 +568,7 @@ namespace BExIS.Utils.Upload
                         return false;
                     }
                 }
-
             }
-
-
 
             return true;
         }
@@ -634,15 +587,12 @@ namespace BExIS.Utils.Upload
             DatasetManager datasetManager = new DatasetManager();
             try
             {
-
-
                 Hashtable hashtable = new Hashtable();
 
                 // load data
 
                 Dataset dataset = datasetManager.GetDataset(datasetId);
                 DatasetVersion datasetVersion;
-
 
                 List<long> dataTupleIds = new List<long>();
 
@@ -656,7 +606,6 @@ namespace BExIS.Utils.Upload
                     int counter = 0;
                     IEnumerable<AbstractTuple> dataTuples;
 
-
                     do
                     {
                         dataTuples = datasetManager.GetDatasetVersionEffectiveTuples(datasetVersion, counter, size);
@@ -668,10 +617,8 @@ namespace BExIS.Utils.Upload
                             //pKey = getPrimaryKeysAsByteArray(dt, primaryKeys);
                             pKey = getPrimaryKeysAsString(dt, primaryKeys);
 
-
                             if (pKey.Count() > 0)
                             {
-
                                 try
                                 {
                                     //Debug.WriteLine(pKey +"   : " +Utility.ComputeKey(pKey));
@@ -689,10 +636,7 @@ namespace BExIS.Utils.Upload
                     }
                     while (dataTuples.Count() >= (size * counter));
 
-
-
-                    #endregion
-
+                    #endregion load all datatuples first
                 }
                 else
                 {
@@ -755,7 +699,6 @@ namespace BExIS.Utils.Upload
 
                             if (pKey.Count() > 0)
                             {
-
                                 try
                                 {
                                     //Debug.WriteLine(pKey +"   : " +Utility.ComputeKey(pKey));
@@ -773,10 +716,7 @@ namespace BExIS.Utils.Upload
                     }
                     while (currentIds.Count() >= (size * counter));
 
-
-
-                    #endregion
-
+                    #endregion load all datatuples first
                 }
                 else
                 {
@@ -786,7 +726,6 @@ namespace BExIS.Utils.Upload
                 return true;
             }
         }
-
 
         /// <summary>
         ///  convert primary keys to string
@@ -810,7 +749,7 @@ namespace BExIS.Utils.Upload
                 object v = datatuple.VariableValues.Where(p => p.VariableId.Equals(t)).First().Value;
                 if (v != null)
                     if (!String.IsNullOrEmpty(v.ToString()))
-                    //if (!String.IsNullOrEmpty((string)v))
+                        //if (!String.IsNullOrEmpty((string)v))
                         value += ";" + v;
                     else
                         return "";
@@ -820,9 +759,8 @@ namespace BExIS.Utils.Upload
             return value;
         }
 
-
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <remarks></remarks>
         /// <seealso cref=""/>
@@ -830,7 +768,6 @@ namespace BExIS.Utils.Upload
         /// <returns></returns>
         public static List<string> GetExtentionList(DataStructureType type, Tenant tenant = null)
         {
-
             if (type.Equals(DataStructureType.Structured))
             {
                 return new List<string>()
@@ -843,7 +780,7 @@ namespace BExIS.Utils.Upload
                     };
             }
 
-            if (type.Equals(DataStructureType.Unstructured))
+            if (type.Equals(DataStructureType.None) == null || type.Equals(DataStructureType.Unstructured))
             {
                 if (tenant != null) return tenant.AllowedFileExtensions;
 
@@ -879,8 +816,6 @@ namespace BExIS.Utils.Upload
             return new List<string>();
         }
 
-
-        #endregion
-
+        #endregion identifier
     }
 }

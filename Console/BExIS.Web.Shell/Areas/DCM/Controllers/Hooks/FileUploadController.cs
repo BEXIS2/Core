@@ -1,6 +1,10 @@
-﻿using BExIS.Modules.Dcm.UI.Models.Edit;
+﻿using BExIS.Dlm.Services.Data;
+using BExIS.Modules.Dcm.UI.Models.Edit;
 using BExIS.UI.Hooks;
 using BExIS.UI.Hooks.Caches;
+using BExIS.UI.Models;
+using BExIS.Utils.Data.Upload;
+using BExIS.Utils.Upload;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -9,6 +13,7 @@ using System.Net.Http;
 using System.Web;
 using System.Web.Mvc;
 using Vaiona.Utils.Cfg;
+using Vaiona.Web.Extensions;
 
 namespace BExIS.Modules.Dcm.UI.Controllers
 {
@@ -27,7 +32,15 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         // GET: FileUpload
         public JsonResult Load(long id, int version)
         {
-            FileUploadModel model = new FileUploadModel();
+            // check incoming variables
+            if (id <= 0) throw new ArgumentException("id must be greater than 0");
+
+            FileUploader model = new FileUploader();
+            model.Context = "File Upload";
+            model.MaxSize = 0;
+            model.Multiple = true;
+            model.DescriptionType = DescriptionType.active;
+
             HookManager hookManager = new HookManager();
 
             // load cache to check existing files
@@ -43,6 +56,15 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                     model.ExistingFiles.Add(file); // if exist  add to model
                 else
                     cache.Files.RemoveAt(i); // if not remove from cache
+            }
+
+            // get accepted file extentions
+            using (var datasetManager = new DatasetManager())
+            {
+                var dataset = datasetManager.GetDataset(id);
+                DataStructureType datastructureType = DataStructureType.None;
+                if (dataset.DataStructure != null) datastructureType = DataStructureType.Structured;
+                model.Accept = UploadHelper.GetExtentionList(datastructureType, this.Session.GetTenant());
             }
 
             hookManager.SaveCache(cache, "dataset", "details", HookMode.edit, id);
@@ -96,7 +118,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
                         file.SaveAs(path);
 
-                        cache.Files.Add(new BExIS.UI.Hooks.Caches.FileInfo(fname, file.ContentType, file.ContentLength));
+                        cache.Files.Add(new BExIS.UI.Hooks.Caches.FileInfo(fname, file.ContentType, file.ContentLength, ""));
                         filesNames.Add(fname);
                     }
                     // Returns message that successfully uploaded
@@ -119,6 +141,46 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             {
                 return Json("No files selected.");
             }
+        }
+
+        [HttpPost]
+        public JsonResult RemoveFile(long id, string file)
+        {
+            // remove file from server
+            string path = Path.Combine(AppConfiguration.DataPath, "datasets", id.ToString(), "Temp", file);
+            if (System.IO.File.Exists(path)) System.IO.File.Delete(path);
+
+            // remove file from cache
+            HookManager hookManager = new HookManager();
+            EditDatasetDetailsCache cache = hookManager.LoadCache<EditDatasetDetailsCache>("dataset", "details", HookMode.edit, id);
+
+            if (cache.Files.Any(f => f.Name == file))
+            {
+                var f = cache.Files.Where(x => x.Name == file).FirstOrDefault();
+                if (f != null) cache.Files.Remove(f);
+            }
+
+            hookManager.SaveCache(cache, "dataset", "details", HookMode.edit, id);
+
+            return Json(true);
+        }
+
+        [HttpPost]
+        public JsonResult SaveFileDescription(long id, string file, string description)
+        {
+            // remove file from cache
+            HookManager hookManager = new HookManager();
+            EditDatasetDetailsCache cache = hookManager.LoadCache<EditDatasetDetailsCache>("dataset", "details", HookMode.edit, id);
+
+            if (cache.Files.Any(f => f.Name == file))
+            {
+                var f = cache.Files.Where(x => x.Name == file).FirstOrDefault();
+                if (f != null) f.Description = description;
+            }
+
+            hookManager.SaveCache(cache, "dataset", "details", HookMode.edit, id);
+
+            return Json(true);
         }
     }
 }
