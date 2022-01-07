@@ -131,7 +131,8 @@
     <Compile Include="Controllers\HelpController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\PublicSearchController.cs" />
-    <Compile Include="Controllers\RequestsController.cs" />
+    <Compile Include="Controllers\RequestsManageController.cs" />
+    <Compile Include="Controllers\RequestsSendController.cs" />
     <Compile Include="Controllers\SearchIndexController.cs" />
     <Compile Include="Controllers\TestController.cs" />
     <Compile Include="DdmModule.cs" />
@@ -418,11 +419,11 @@
     <Content Include="Views\Dashboard\_myDatasetsViewHeader.cshtml" />
     <Content Include="Views\Shared\Error.cshtml" />
     <Content Include="Views\Data\Show.cshtml" />
-    <Content Include="Views\Requests\_Decisions.cshtml" />
-    <Content Include="Views\Requests\_Entities.cshtml" />
-    <Content Include="Views\Requests\_Requests.cshtml" />
-    <Content Include="Views\Requests\_Requests_And_Decisions.cshtml" />
-    <Content Include="Views\Requests\Index.cshtml" />
+    <Content Include="Views\RequestsManage\Index.cshtml" />
+    <Content Include="Views\RequestsManage\_Decisions.cshtml" />
+    <Content Include="Views\RequestsManage\_Entities.cshtml" />
+    <Content Include="Views\RequestsManage\_Requests.cshtml" />
+    <Content Include="Views\RequestsManage\_Requests_And_Decisions.cshtml" />
     <Content Include="Views\Data\ShowDataBackup.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
