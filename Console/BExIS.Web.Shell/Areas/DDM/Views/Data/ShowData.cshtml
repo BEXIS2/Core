@@ -244,7 +244,7 @@
 
 
 
-        @if (@Model != null)
+        if (Model != null)
         {
             if (ViewData.ModelState.IsValid)
             {
@@ -470,7 +470,7 @@
 
     </script>
 
-    </div>
+
 
 }
 else if (Model.IsPublic == false)
