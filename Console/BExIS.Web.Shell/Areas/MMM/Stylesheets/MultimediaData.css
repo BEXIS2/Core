@@ -136,6 +136,7 @@
 .modal {
     align-content: center !important;
     padding: 0 !important;
+    z-index: 1700;
 }
     .modal .modal-body {
         position: fixed;

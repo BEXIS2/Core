@@ -1,7 +1,11 @@
+using BExIS.App.Bootstrap.Attributes;
+using BExIS.Dlm.Entities.Data;
 using BExIS.Dlm.Entities.Party;
 using BExIS.Dlm.Services.Party;
 using BExIS.Modules.Sam.UI.Models;
+using BExIS.Security.Entities.Authorization;
 using BExIS.Security.Services.Authorization;
+using BExIS.Security.Services.Objects;
 using BExIS.Security.Services.Subjects;
 using System.Collections.Generic;
 using System.Web.Mvc;
@@ -11,6 +15,15 @@ namespace BExIS.Modules.Sam.UI.Controllers
 {
     public class UserPermissionsController : Controller
     {
+        [BExISEntityAuthorize(typeof(Dataset), "id", RightType.Grant)]
+        public ActionResult Start(long id, int version=0)
+        {
+            using (var entityManager = new EntityManager())
+            {
+                return RedirectToAction("Subjects", "UserPermissions", new { EntityId = entityManager.FindByName("Dataset").Id, InstanceId = id });
+            }
+        }
+
         public void AddRightToEntityPermission(long subjectId, long entityId, long instanceId, int rightType)
         {
             var entityPermissionManager = new EntityPermissionManager();

@@ -42,8 +42,23 @@ namespace BExIS.Dlm.Entities.Data
         /// <seealso cref=""/>        
         public virtual string URI { get; set; }
 
+        /// <summary>
+        ///
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>        
+        public virtual string Description { get; set; }
+
+        /// <summary>
+        ///
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>        
+        public virtual int FileSize { get; set; }
+
+
         #endregion
-        
+
         #region Associations
 
         /// <summary>

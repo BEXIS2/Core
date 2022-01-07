@@ -1,0 +1,141 @@
+﻿@model IOrderedEnumerable<DecisionGridRowModel>
+@using BExIS.Modules.DDM.UI.Models
+@using Telerik.Web.Mvc.UI
+
+    <table id="resources_table" class="display" style="width:100%">
+        <thead>
+            <tr>
+                <th title="Id">Id</th>
+                <th title="Title">Title</th>
+                <th title="Applicant">Applicant</th>
+                <th title="Intention">Intention</th>
+                <!--  <th title="Rights">Rights</th>-->
+                <th title="Request Date">Request Date</th>
+                <th title="Status">Status</th>
+                <th></th>
+
+
+            </tr>
+        </thead>
+        <tbody>
+
+            @if (Model != null)
+            {
+
+                foreach (var m in Model)
+                {
+                    <tr>
+                        <td>@m.InstanceId</td>
+                        <td>@m.Title</td>
+                        <td>@m.Applicant</td>
+                        <td>@m.Intention</td>
+                        <!--  <td>@m.Rights</td>-->
+                        <td>@m.RequestDate.ToString("dd.MM.yyyy")</td>
+                        <td>@m.StatusAsText</td>
+                        <td>
+                            @if (m.Status == 0)
+                            {
+                                <button type="button" class="bx bx-grid-function bx-check" value="@m.Id"></button>
+                                <button type="button" class="bx bx-grid-function bx-delete" value="@m.Id"></button>
+                            }
+                        </td>
+                    </tr>
+                }
+            }
+        </tbody>
+    </table>
+
+
+    <script type="text/javascript">
+
+        $('document').ready(function () {
+            jQuery.fn.dataTable.render.ellipsis = function (cutoff, wordbreak, escapeHtml) {
+                var esc = function (t) {
+                    return t
+                        .replace(/&/g, '&amp;')
+                        .replace(/</g, '&lt;')
+                        .replace(/>/g, '&gt;')
+                        .replace(/"/g, '&quot;');
+                };
+
+                return function (d, type, row) {
+                    // Order, search and type get the original data
+                    if (type !== 'display') {
+                        return d;
+                    }
+
+                    if (typeof d !== 'number' && typeof d !== 'string') {
+                        return d;
+                    }
+
+                    d = d.toString(); // cast numbers
+
+                    if (d.length <= cutoff) {
+                        return d;
+                    }
+
+                    var shortened = d.substr(0, cutoff - 1);
+
+                    // Find the last white space character in the string
+                    if (wordbreak) {
+                        shortened = shortened.replace(/\s([^\s]*)$/, '');
+                    }
+
+                    // Protect against uncontrolled HTML input
+                    if (escapeHtml) {
+                        shortened = esc(shortened);
+                    }
+
+                    return '<span class="ellipsis" title="' + esc(d) + '">' + shortened + '&#8230;</span>';
+                };
+            };
+
+            // add sort by date
+            jQuery.fn.dataTable.luxon('dd.MM.yyyy');
+
+            var oTable = $("#resources_table").DataTable({
+                "autoWidth": false,
+                ordering: true,
+                //  order: [[6, "desc"]], // order by startDate
+                paging: false,
+                responsive: true,
+
+                createdRow: function (row, data, dataIndex) {
+                    if (data[3] == "no") {
+                        $(row).addClass('error');
+                    }
+                },
+
+
+                columnDefs: [
+                    {
+                        targets: 1,
+                        render: $.fn.dataTable.render.ellipsis(60, true)
+                    }]
+            });
+
+            ;
+
+            $('.bx-check').click(function () {
+                var result = confirm('Are you sure you want to accept this request (Id:' + $(this).attr("value") + ')?');
+
+                if (result) {
+                    $.post("/ddm/requestsmanage/accept", { DecisionId: $(this).attr("value") }, function (e) {
+                        $(".decision").trigger('click');
+                    });
+                }
+            });
+
+            $('.bx-delete').click(function () {
+                var result = confirm('Are you sure you want to reject this request (Id:' + $(this).attr("value") + ')?');
+
+                if (result) {
+                    $.post('/ddm/requestsmanage/reject', { RequestId: $(this).attr("value") }, function (e) {
+                        $(".request").trigger('click');
+                    });
+                }
+            });
+
+        })
+
+    </script>

@@ -1,6 +1,7 @@
 ﻿using BExIS.Security.Services.Authorization;
 using BExIS.Security.Services.Objects;
 using BExIS.Security.Services.Subjects;
+using Newtonsoft.Json;
 using System.Web.Mvc;
 using System.Web.Routing;
 
@@ -63,12 +64,25 @@ namespace BExIS.App.Bootstrap.Attributes
                 }
                 else
                 {
-                    filterContext.Result = new RedirectToRouteResult(new
+                    var returnType = ((ReflectedActionDescriptor)filterContext.ActionDescriptor).MethodInfo.ReturnType;
+                    if (returnType == typeof(JsonResult))  // if the action work with json result a json object should be returned
+                    {
+
+                        ContentResult content = new ContentResult();
+                        content.ContentType = "application/json";
+                        content.Content = JsonConvert.SerializeObject(false);
+                        filterContext.Result = content;
+
+                    }
+                    else // redirect to access denied page
+                    {
+                        filterContext.Result = new RedirectToRouteResult(new
                         RouteValueDictionary{
                            { "action", "AccessDenied" },
                            { "controller", "Error" },
                            { "Area", string.Empty }
                        });
+                    }
                 }
             }
             finally

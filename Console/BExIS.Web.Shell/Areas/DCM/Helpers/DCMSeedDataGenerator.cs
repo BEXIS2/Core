@@ -100,7 +100,7 @@ namespace BExIS.Modules.Dcm.UI.Helpers
                 {
                     XmlDocument xmlDoc = new XmlDocument();
 
-                    if (entity.Extra != null) xmlDoc.AppendChild(entity.Extra);
+                    if (entity.Extra != null) xmlDoc.LoadXml(entity.Extra.InnerXml);
 
                     //update to Extra
                     XmlDatasetHelper xmlDatasetHelper = new XmlDatasetHelper();
@@ -145,10 +145,15 @@ namespace BExIS.Modules.Dcm.UI.Helpers
 
                 operationManager.Create("DCM", "CreateDataset", "*", DatasetCreationFeature);
                 operationManager.Create("DCM", "Form", "*");
+
                 operationManager.Create("Api", "DatasetIn", "*", DatasetCreationFeature);
                 operationManager.Create("Api", "Dataset", "*", DatasetCreationFeature);
                 operationManager.Create("Api", "MetadataIn", "*", DatasetCreationFeature);
                 operationManager.Create("Api", "Metadata", "*", DatasetCreationFeature);
+
+                operationManager.Create("DCM", "Edit", "*");
+                operationManager.Create("DCM", "View", "*");
+                operationManager.Create("DCM", "Metadata", "*", DatasetCreationFeature);
 
                 #endregion Create Dataset Workflow
 
@@ -169,6 +174,13 @@ namespace BExIS.Modules.Dcm.UI.Helpers
                 operationManager.Create("Api", "Data", "*", DatasetUploadFeature);
                 operationManager.Create("Api", "AttachmentIn", "*", DatasetUploadFeature);
                 operationManager.Create("Api", "Attachment", "*", DatasetUploadFeature);
+                operationManager.Create("Api", "File", "*", DatasetUploadFeature);
+
+                // for hooks and views
+                operationManager.Create("DCM", "FileUpload", "*", DatasetUploadFeature);
+                operationManager.Create("DCM", "Validation", "*", DatasetUploadFeature);
+                operationManager.Create("DCM", "Metadata", "*", DatasetUploadFeature);
+                operationManager.Create("DCM", "Messages", "*", DatasetUploadFeature);
 
                 #endregion Update Dataset Workflow
 
@@ -210,7 +222,6 @@ namespace BExIS.Modules.Dcm.UI.Helpers
                 #endregion SECURITY
 
                 #region Add Metadata
-
 
                 if (!metadataStructureManager.Repo.Get().Any(m => m.Name.Equals("Basic ABCD")))
                 {

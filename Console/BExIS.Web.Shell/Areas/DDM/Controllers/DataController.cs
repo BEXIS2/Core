@@ -44,6 +44,7 @@ using System.Text;
 using BExIS.Security.Entities.Objects;
 using BExIS.Security.Entities.Subjects;
 using BExIS.Dlm.Services.MetadataStructure;
+using BExIS.UI.Hooks;
 
 namespace BExIS.Modules.Ddm.UI.Controllers
 
@@ -141,17 +142,17 @@ namespace BExIS.Modules.Ddm.UI.Controllers
             return View("Show");
         }
 
-        public ActionResult ShowData(long id, int version = 0)
+
+        public ActionResult ShowData(long id, int version = 0, bool asPartial = false, string versionName = "")
         {
             using (DatasetManager dm = new DatasetManager())
-            using(EntityPermissionManager entityPermissionManager = new EntityPermissionManager())
+            using (EntityPermissionManager entityPermissionManager = new EntityPermissionManager())
             using (EntityManager entityManager = new EntityManager())
             {
                 Dataset researcobject = dm.GetDataset(id);
 
                 if (researcobject != null)
                 {
-
                     DatasetVersion dsv;
                     ShowDataModel model = new ShowDataModel();
 
@@ -160,10 +161,12 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                     long dataStructureId = -1;
                     long researchPlanId = 1;
                     long versionId = 0;
+                    
                     string dataStructureType = DataStructureType.Structured.ToString();
                     bool downloadAccess = false;
                     bool requestExist = false;
                     bool requestAble = false;
+                    bool hasRequestRight = false;
                     bool latestVersion = false;
                     string isValid = "no";
                     bool isPublic = false;
@@ -172,67 +175,79 @@ namespace BExIS.Modules.Ddm.UI.Controllers
 
                     if (dm.IsDatasetCheckedIn(id))
                     {
-                        //get latest version
-                        if (version == 0)
-                        {
-                            versionId = dm.GetDatasetLatestVersionId(id); // check for zero value
-                                                                            //get current version number
-                            version = dm.GetDatasetVersions(id).OrderBy(d => d.Timestamp).Count();
+                        List<DatasetVersion> datasetVersions = dm.GetDatasetVersions(id);
+                        List<DatasetVersion> datasetVersionsAllowed = new List<DatasetVersion>();
 
-                            latestVersion = true;
-                        }
-                        // get specific version
-                        else
-                        {
-                            versionId = dm.GetDatasetVersions(id).OrderBy(d => d.Timestamp).Skip(version - 1).Take(1).Select(d => d.Id).FirstOrDefault();
-                            latestVersion = versionId == dm.GetDatasetLatestVersionId(id);
-                        }
+                        // Get version id based on public or internal access. Version name has a higher priority as version.
+                        // Public access has higher priority as makor/minor versions
+                        versionId = getVersionId(id, version, versionName, datasetVersions);
 
-                        dsv = dm.DatasetVersionRepo.Get(versionId); // this is needed to allow dsv to access to an open session that is available via the repo
+                        // Set if the latest version is selected. Compare current version id against unfiltered max id
+                        latestVersion = (versionId == datasetVersions.OrderByDescending(d => d.Timestamp).Select(d => d.Id).FirstOrDefault());
 
-                        if (dsv.StateInfo != null)
+                        // Get version number based on version id
+                        if (versionId != 0)
                         {
-                            isValid = DatasetStateInfo.Valid.ToString().Equals(dsv.StateInfo.State) ? "yes" : "no";
+                            version = dm.GetDatasetVersionNr(versionId);
                         }
 
-                        metadataStructureId = dsv.Dataset.MetadataStructure.Id;
-
-                        //MetadataStructureManager msm = new MetadataStructureManager();
-                        //dsv.Dataset.MetadataStructure = msm.Repo.Get(dsv.Dataset.MetadataStructure.Id);
-
-                        title = dsv.Title; // this function only needs metadata and extra fields, there is no need to pass the version to it.
-                        dataStructureId = dsv.Dataset.DataStructure.Id;
-                        researchPlanId = dsv.Dataset.ResearchPlan.Id;
-                        metadata = dsv.Metadata;
-
-                        // check if the user has download rights
-                        downloadAccess = entityPermissionManager.HasEffectiveRight(HttpContext.User.Identity.Name, typeof(Dataset), id, RightType.Read);
-
-                        // check if a reuqest of this dataset exist
-                        if (!downloadAccess)
+                        // Throw error if no version id was found. 
+                        if (versionId == 0)
                         {
-                            requestExist = HasOpenRequest(id);
-
-                            if (UserExist() && HasRequestMapping(id)) requestAble = true;
-                        }
-
-                        // check is public
-                        long? entityTypeId = entityManager.FindByName(typeof(Dataset).Name)?.Id;
-                        entityTypeId = entityTypeId.HasValue ? entityTypeId.Value : -1;
-
-                        isPublic = entityPermissionManager.Exists(null, entityTypeId.Value, id);
-
-                        // get data structure type
-                        if (dsv.Dataset.DataStructure.Self.GetType().Equals(typeof(StructuredDataStructure)))
-                        {
-                            dataStructureType = DataStructureType.Structured.ToString();
+                            ModelState.AddModelError("", string.Format("The version with the requested name {1} or id {0} does not exist or is not publicly accessible", version, versionName));
                         }
                         else
                         {
-                            dataStructureType = DataStructureType.Unstructured.ToString();
-                        }
+                            dsv = dm.DatasetVersionRepo.Get(versionId); // this is needed to allow dsv to access to an open session that is available via the repo
 
-                        ViewBag.Title = PresentationModel.GetViewTitleForTenant("Show " + typeof(Dataset) .Name + ": " + title, this.Session.GetTenant());
+                            if (dsv != null && dsv.StateInfo != null)
+                            {
+                                isValid = DatasetStateInfo.Valid.ToString().Equals(dsv.StateInfo.State) ? "yes" : "no";
+                            }
+
+                            metadataStructureId = dsv.Dataset.MetadataStructure.Id;
+
+                            //MetadataStructureManager msm = new MetadataStructureManager();
+                            //dsv.Dataset.MetadataStructure = msm.Repo.Get(dsv.Dataset.MetadataStructure.Id);
+
+                            title = dsv.Title; // this function only needs metadata and extra fields, there is no need to pass the version to it.
+                            dataStructureId = dsv.Dataset.DataStructure.Id;
+                            researchPlanId = dsv.Dataset.ResearchPlan.Id;
+                            metadata = dsv.Metadata;
+
+                            // check if the user has download rights
+                            downloadAccess = entityPermissionManager.HasEffectiveRight(HttpContext.User.Identity.Name, typeof(Dataset), id, RightType.Read);
+
+                            // check if a reuqest of this dataset exist
+                            if (!downloadAccess)
+                            {
+                                requestExist = HasOpenRequest(id);
+
+                                if (UserExist() && HasRequestMapping(id))
+                                {
+                                    requestAble = true;
+                                    hasRequestRight = hasUserRequestRight();
+                                }
+                            }
+
+                            // check is public
+                            long? entityTypeId = entityManager.FindByName(typeof(Dataset).Name)?.Id;
+                            entityTypeId = entityTypeId.HasValue ? entityTypeId.Value : -1;
+
+                            isPublic = entityPermissionManager.Exists(null, entityTypeId.Value, id);
+
+                            // get data structure type
+                            if (dsv.Dataset.DataStructure.Self.GetType().Equals(typeof(StructuredDataStructure)))
+                            {
+                                dataStructureType = DataStructureType.Structured.ToString();
+                            }
+                            else
+                            {
+                                dataStructureType = DataStructureType.Unstructured.ToString();
+                            }
+
+                            ViewBag.Title = PresentationModel.GetViewTitleForTenant("Show " + typeof(Dataset).Name + ": " + title, this.Session.GetTenant());
+                        }
                     }
                     else
                     {
@@ -256,7 +271,8 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                         DownloadAccess = downloadAccess,
                         RequestExist = requestExist,
                         RequestAble = requestAble,
-                        IsPublic = isPublic,
+                        HasRequestRight = hasRequestRight,
+                        IsPublic = isPublic
                     };
 
                     //set metadata in session
@@ -264,6 +280,20 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                     ViewData["VersionSelect"] = getVersionsSelectList(id, dm);
                     ViewData["isValid"] = isValid;
                     ViewData["datasetSettings"] = getSettingsDataset();
+
+
+                    // load all hooks for the edit view
+                    HookManager hooksManager = new HookManager();
+                    model.Hooks = hooksManager.GetHooksFor("dataset", "details", HookMode.view);
+
+                    // run all checks
+                    string userName = "";
+                    if (HttpContext.User.Identity.IsAuthenticated)
+                        userName = HttpContext.User.Identity.Name;
+
+                    model.Hooks.ForEach(h => h.Check(id, userName));
+
+                    if (asPartial) return PartialView(model);
 
                     return View(model);
                     
@@ -278,122 +308,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
 
         public ActionResult Reload(long id, int version = 0)
         {
-            DatasetManager dm = new DatasetManager();
-            EntityPermissionManager entityPermissionManager = new EntityPermissionManager();
-
-            try
-            {
-                DatasetVersion dsv;
-                ShowDataModel model = new ShowDataModel();
-
-                string title = "";
-                long metadataStructureId = -1;
-                long dataStructureId = -1;
-                long researchPlanId = 1;
-                long versionId = 0;
-                string dataStructureType = DataStructureType.Structured.ToString();
-                bool downloadAccess = false;
-                bool requestExist = false;
-                bool requestAble = false;
-                bool latestVersion = false;
-                string isValid = "no";
-
-                XmlDocument metadata = new XmlDocument();
-
-                if (dm.IsDatasetCheckedIn(id))
-                {
-                    //get latest version
-                    if (version == 0)
-                    {
-                        versionId = dm.GetDatasetLatestVersionId(id); // check for zero value
-                        //get current version number
-                        version = dm.GetDatasetVersions(id).OrderBy(d => d.Timestamp).Count();
-
-                        latestVersion = true;
-                    }
-                    // get specific version
-                    else
-                    {
-                        versionId = dm.GetDatasetVersions(id).OrderBy(d => d.Timestamp).Skip(version - 1).Take(1).Select(d => d.Id).FirstOrDefault();
-                        latestVersion = versionId == dm.GetDatasetLatestVersionId(id);
-                    }
-
-                    dsv = dm.DatasetVersionRepo.Get(versionId); // this is needed to allow dsv to access to an open session that is available via the repo
-
-                    metadataStructureId = dsv.Dataset.MetadataStructure.Id;
-
-                    //MetadataStructureManager msm = new MetadataStructureManager();
-                    //dsv.Dataset.MetadataStructure = msm.Repo.Get(dsv.Dataset.MetadataStructure.Id);
-
-                    title = dsv.Title; // this function only needs metadata and extra fields, there is no need to pass the version to it.
-                    dataStructureId = dsv.Dataset.DataStructure.Id;
-                    researchPlanId = dsv.Dataset.ResearchPlan.Id;
-                    metadata = dsv.Metadata;
-
-                    if (dsv.StateInfo != null)
-                    {
-                        isValid = DatasetStateInfo.Valid.ToString().Equals(dsv.StateInfo.State) ? "yes" : "no";
-                    }
-
-                    // check if the user has download rights
-                    downloadAccess = entityPermissionManager.HasEffectiveRight(HttpContext.User.Identity.Name, typeof(Dataset), id, RightType.Read);
-
-                    // check if a reuqest of this dataset exist
-                    if (!downloadAccess)
-                    {
-                        requestExist = HasOpenRequest(id);
-
-                        if (UserExist() && HasRequestMapping(id)) requestAble = true;
-                    }
-
-                    if (dsv.Dataset.DataStructure.Self.GetType().Equals(typeof(StructuredDataStructure)))
-                    {
-                        dataStructureType = DataStructureType.Structured.ToString();
-                    }
-                    else
-                    {
-                        dataStructureType = DataStructureType.Unstructured.ToString();
-                    }
-
-                    ViewBag.Title = PresentationModel.GetViewTitleForTenant("Show " + typeof(Dataset).Name + ": " + title, this.Session.GetTenant());
-                }
-                else
-                {
-                    ModelState.AddModelError(string.Empty, "Dataset is just in processing.");
-                }
-
-                model = new ShowDataModel()
-                {
-                    Id = id,
-                    Version = version,
-                    VersionSelect = version,
-                    VersionId = versionId,
-                    LatestVersion = latestVersion,
-                    Title = title,
-                    MetadataStructureId = metadataStructureId,
-                    DataStructureId = dataStructureId,
-                    ResearchPlanId = researchPlanId,
-                    ViewAccess = entityPermissionManager.HasEffectiveRight(HttpContext.User.Identity.Name, typeof(Dataset), id, RightType.Read),
-                    GrantAccess = entityPermissionManager.HasEffectiveRight(HttpContext.User.Identity.Name, typeof(Dataset), id, RightType.Grant),
-                    DataStructureType = dataStructureType,
-                    DownloadAccess = downloadAccess,
-                    RequestExist = requestExist,
-                    RequestAble = requestAble
-                };
-
-                //set metadata in session
-                Session["ShowDataMetadata"] = metadata;
-                ViewData["VersionSelect"] = getVersionsSelectList(id, dm);
-                ViewData["isValid"] = isValid;
-                ViewData["datasetSettings"] = getSettingsDataset();
-
-                return PartialView("ShowData", model);
-            }
-            finally
-            {
-                dm.Dispose();
-                entityPermissionManager.Dispose();
-            }
+            return RedirectToAction("ShowData", "Data", new { id, version, isPartial = true });
         }
 
         [BExISEntityAuthorize(typeof(Dataset), "id", RightType.Read)]
@@ -575,8 +490,11 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                         //DataTable table = SearchUIHelper.ConvertPrimaryDataToDatatable(dsv, dataTuples);
 
                         DataTable table = null;
+                        // Count "Data" changes between current and latest version   
+                        int numberNewerDataVersions = dm.GetDatasetVersions(datasetID).Where(x => x.Id > versionId).Count(x => x.ModificationInfo.Comment.Contains("Data"));
 
-                        if (latestVersion)
+                        // use MV for latest version and all older versions, if no data has been changed (only metadata)
+                        if (latestVersion || numberNewerDataVersions == 0)
                         {
                             try
                             {
@@ -1479,70 +1397,6 @@ namespace BExIS.Modules.Ddm.UI.Controllers
 
         #endregion datastructure
 
-        #region request
-
-        public JsonResult SendRequest(long id, string intention)
-        {
-            RequestManager requestManager = new RequestManager();
-            SubjectManager subjectManager = new SubjectManager();
-            EntityManager entityManager = new EntityManager();
-            DatasetManager datasetManager = new DatasetManager();
-
-            try
-            {
-                long userId = subjectManager.Subjects.Where(s => s.Name.Equals(HttpContext.User.Identity.Name)).Select(s => s.Id).First();
-                long entityId = entityManager.Entities.Where(e => e.Name.ToLower().Equals("dataset")).First().Id;
-
-                if (!requestManager.Exists(userId, entityId, id) ||
-                    !(requestManager.Exists(userId, entityId, id, Security.Entities.Requests.RequestStatus.Open)))
-                {
-                    var request = requestManager.Create(userId, entityId, id, 3, intention);
-
-                    if (request != null)
-                    {
-                        //reload request
-                        long requestId = request.Id;
-                        request = requestManager.FindById(requestId);
-
-                        var datasetVersion = datasetManager.GetDatasetLatestVersion(id);
-                        string title = datasetVersion.Title;
-                        if (string.IsNullOrEmpty(title)) title = "No Title available.";
-
-                        string emailDescionMaker = request.Decisions.FirstOrDefault().DecisionMaker.Email;
-                        string applicant = getPartyNameOrDefault();
-
-                        //ToDo send emails to owner & requester
-                        var es = new EmailService();
-                        es.Send(MessageHelper.GetSendRequestHeader(id, applicant),
-                            MessageHelper.GetSendRequestMessage(id, title, applicant, intention, request.Applicant.Email),
-                            new List<string> { emailDescionMaker }, new List<string> { ConfigurationManager.AppSettings["SystemEmail"], request.Applicant.Email }, null, new List<string> { request.Applicant.Email }
-                            );
-                    }
-                }
-            }
-            catch (Exception e)
-            {
-                Json(e.Message, JsonRequestBehavior.AllowGet);
-               
-                // send mail with error to sys admin
-                var es = new EmailService();
-                es.Send(MessageHelper.GetSendRequestHeader(id, getPartyNameOrDefault()),
-                    MessageHelper.GetSendRequestMessage(id,"unknown", "unkown", e.Message + intention , "unknown"), new List<string> { ConfigurationManager.AppSettings["SystemEmail"] }
-                    );
-            }
-            finally
-            {
-                subjectManager.Dispose();
-                requestManager.Dispose();
-                entityManager.Dispose();
-                datasetManager.Dispose();
-            }
-
-            return Json(true, JsonRequestBehavior.AllowGet);
-        }
-
-        #endregion request
-
         #region entity references
 
         //[BExISEntityAuthorize(typeof(Dataset), "id", RightType.Read)]
@@ -1626,18 +1480,41 @@ namespace BExIS.Modules.Ddm.UI.Controllers
         private SelectList getVersionsSelectList(long id, DatasetManager datasetManager)
         {
             List<SelectListItem> tmp = new List<SelectListItem>();
+            List<DatasetVersion> datasetVersionsAllowed = new List<DatasetVersion>();
+            List<DatasetVersion> datasetVersions = datasetManager.GetDatasetVersions(id).OrderByDescending(d => d.Id).ToList();
 
-            List<DatasetVersion> dsvs = datasetManager.GetDatasetVersions(id).OrderByDescending(d => d.Id).ToList();
+            // Check, if user is logged in
+            if (GetUsernameOrDefault() == "DEFAULT") // not logged in
+            {
+                datasetVersionsAllowed = datasetManager.GetDatasetVersionsAllowed(id, true, false, datasetVersions).OrderByDescending(d => d.Id).ToList();
+            }
+            else // logged in
+            {
+                datasetVersionsAllowed = datasetVersions;
+            }
 
-            dsvs.ForEach(d => tmp.Add(
+            // use reduced/full list, but allways create version number from full list.
+            datasetVersionsAllowed.ForEach(d => tmp.Add(
                 new SelectListItem()
                 {
-                    Text = (dsvs.Count - dsvs.IndexOf(d)) + " " + getVersionInfo(d),
-                    Value = "" + (dsvs.Count - dsvs.IndexOf(d))
+                    Text = CreateVersionNumber(d, datasetVersions) + " " + getVersionInfo(d),
+                    Value = "" + (datasetVersions.Count - datasetVersions.IndexOf(d))
                 }
                 ));
 
             return new SelectList(tmp, "Value", "Text");
+        }
+
+        private static string CreateVersionNumber(DatasetVersion d, List<DatasetVersion> dsvs)
+        {
+            if (d.VersionType != null) // add version name, if version type is given and show version nummer in ()
+            {
+                return d.VersionName.ToString() + " (" + (dsvs.Count - dsvs.IndexOf(d)).ToString() + ")";
+            }
+            else
+            {
+                return (dsvs.Count - dsvs.IndexOf(d)).ToString();
+            }
         }
 
         private string createEditedBy(string performer)
@@ -1805,7 +1682,75 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                 }
             }
             return !string.IsNullOrWhiteSpace(userName) ? userName : "DEFAULT";
-        } 
+        }
+
+        private long getVersionId(long datasetId, int version ,string versionName, List<DatasetVersion> datasetVersions)
+        {
+            long versionId = 0;
+
+
+            using (DatasetManager dm = new DatasetManager())
+            {
+            
+
+                // User is not logged in
+                if (GetUsernameOrDefault() == "DEFAULT")
+                {
+
+                    List<DatasetVersion> datasetVersionsAllowed = dm.GetDatasetVersionsAllowed(datasetId, true, false, datasetVersions);
+
+                    // No version or version name -> use latest allowed version
+                    if (version == 0 && versionName.Length == 0)
+                    {
+                        if (datasetVersionsAllowed.Count > 0)
+                        {
+                            versionId = datasetVersionsAllowed.OrderByDescending(d => d.Timestamp).Select(d => d.Id).FirstOrDefault();
+                        }
+                    }
+                    // Version name -> check if requested version is allowed 
+                    else if (versionName.Length > 0)
+                    {
+                        if (datasetVersionsAllowed.Where(d => d.VersionName == versionName).Count() == 1)
+                        {
+                            versionId = datasetVersionsAllowed.OrderByDescending(d => d.Timestamp).Where(d => d.VersionName == versionName).Select(d => d.Id).FirstOrDefault();
+                        }
+                    }
+                    // Version number -> check if requested version is allowed
+                    else if (version != 0)
+                    {
+                        var idTemp = datasetVersions.OrderBy(d => d.Timestamp).Skip(version - 1).Take(1).Select(d => d.Id).FirstOrDefault();
+
+                        if (idTemp > 0 && datasetVersionsAllowed.Where(d => d.Id == idTemp).Count() == 1)
+                        {
+                            versionId = idTemp;
+                        }
+                    }
+
+                }
+                // User is logged in
+                else
+                {
+                    // Get version by version name
+                    if (versionName.Length > 0 && datasetVersions.Where(d => d.VersionName == versionName).Select(d => d.Id).FirstOrDefault() > 0)
+                    {
+                        versionId = datasetVersions.Where(d => d.VersionName == versionName).Select(d => d.Id).FirstOrDefault();
+                    }
+                    // Get latest version
+                    else if (version == 0)
+                    {
+                        versionId = dm.GetDatasetLatestVersionId(datasetId); // check for zero value
+                    }
+                    // Get specific version number
+                    else
+                    {
+                        versionId = dm.GetDatasetVersions(datasetId).OrderBy(d => d.Timestamp).Skip(version - 1).Take(1).Select(d => d.Id).FirstOrDefault();
+                    }
+                }
+            }
+
+            return versionId;
+        }
+
 
         public bool UserExist()
         {
@@ -1876,6 +1821,29 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                 return entityPermissionManager.HasEffectiveRight(GetUsernameOrDefault(), typeof(Dataset), entityId, rightType);
 
             #endregion security permissions and authorisations check
+        }
+
+        private bool hasUserRequestRight()
+        {
+            using (var userManager = new UserManager())
+            using (var featurePermissionManager = new FeaturePermissionManager())
+            using (var operationManager = new OperationManager())
+            {
+                var operation = operationManager.Find("DDM", "Requests", "*");
+                if (operation != null)
+                {
+                    var feature = operation.Feature;
+
+                    if (feature != null)
+                    {
+                        var result = userManager.FindByNameAsync(GetUsernameOrDefault());
+
+                        if (featurePermissionManager.HasAccess(result.Result?.Id, feature.Id)) return true;
+                    }
+                }
+            }
+
+            return false;
         }
 
         private bool HasOpenRequest(long datasetId)

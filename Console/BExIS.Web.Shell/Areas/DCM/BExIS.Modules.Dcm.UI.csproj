@@ -18,7 +18,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>BExIS.Modules.Dcm.UI</RootNamespace>
     <AssemblyName>BExIS.Modules.Dcm.UI</AssemblyName>
-    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
     <MvcBuildViews>true</MvcBuildViews>
     <UseIISExpress>true</UseIISExpress>
     <IISExpressSSLPort />
@@ -29,6 +29,7 @@
     <NuGetPackageImportStamp>
     </NuGetPackageImportStamp>
     <DontImportPostSharp>True</DontImportPostSharp>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -50,8 +51,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Antlr3.Runtime, Version=3.5.0.2, Culture=neutral, PublicKeyToken=eb42632606e9261f, processorArchitecture=MSIL">
-      <HintPath>..\..\..\..\packages\Antlr.3.5.0.2\lib\Antlr3.Runtime.dll</HintPath>
-      <Private>True</Private>
+      <HintPath>..\..\..\..\packages\Antlr3.Runtime.3.5.1\lib\net40-client\Antlr3.Runtime.dll</HintPath>
     </Reference>
     <Reference Include="DocumentFormat.OpenXml, Version=2.0.5022.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -64,8 +64,8 @@
     <Reference Include="F23.StringSimilarity, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\..\..\packages\F23.StringSimilarity.3.0.0\lib\netstandard1.0\F23.StringSimilarity.dll</HintPath>
     </Reference>
-    <Reference Include="Iesi.Collections, Version=4.0.0.0, Culture=neutral, PublicKeyToken=aa95f207798dfdb4, processorArchitecture=MSIL">
-      <HintPath>..\..\..\..\packages\Iesi.Collections.4.0.1.4000\lib\net40\Iesi.Collections.dll</HintPath>
+    <Reference Include="Iesi.Collections, Version=4.0.0.4000, Culture=neutral, PublicKeyToken=aa95f207798dfdb4, processorArchitecture=MSIL">
+      <HintPath>..\..\..\..\packages\Iesi.Collections.4.0.4\lib\net461\Iesi.Collections.dll</HintPath>
     </Reference>
     <Reference Include="Ionic.Zip">
       <HintPath>..\..\..\..\Libraries\Ionic.Zip.dll</HintPath>
@@ -81,18 +81,23 @@
     <Reference Include="Newtonsoft.Json, Version=11.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\..\..\..\packages\Newtonsoft.Json.11.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
-    <Reference Include="NHibernate, Version=4.1.0.4000, Culture=neutral, PublicKeyToken=aa95f207798dfdb4, processorArchitecture=MSIL">
-      <HintPath>..\..\..\..\packages\NHibernate.4.1.1.4000\lib\net40\NHibernate.dll</HintPath>
+    <Reference Include="NHibernate, Version=5.3.0.0, Culture=neutral, PublicKeyToken=aa95f207798dfdb4, processorArchitecture=MSIL">
+      <HintPath>..\..\..\..\packages\NHibernate.5.3.10\lib\net461\NHibernate.dll</HintPath>
     </Reference>
     <Reference Include="PostSharp, Version=4.3.19.0, Culture=neutral, PublicKeyToken=b13fd38b8f9c99d7, processorArchitecture=MSIL">
       <HintPath>..\..\..\..\packages\PostSharp.4.3.19\lib\net35-client\PostSharp.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="Remotion.Linq, Version=2.2.0.0, Culture=neutral, PublicKeyToken=fee00910d6e5f53b, processorArchitecture=MSIL">
+      <HintPath>..\..\..\..\packages\Remotion.Linq.2.2.0\lib\net45\Remotion.Linq.dll</HintPath>
+    </Reference>
+    <Reference Include="Remotion.Linq.EagerFetching, Version=2.2.0.0, Culture=neutral, PublicKeyToken=fee00910d6e5f53b, processorArchitecture=MSIL">
+      <HintPath>..\..\..\..\packages\Remotion.Linq.EagerFetching.2.2.0\lib\net45\Remotion.Linq.EagerFetching.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.Composition" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Configuration" />
-    <Reference Include="System.Core" />
     <Reference Include="System.Data" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="System.IO" />
@@ -105,7 +110,12 @@
     <Reference Include="System.Runtime.InteropServices.RuntimeInformation, Version=4.0.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>..\..\..\..\packages\System.Runtime.InteropServices.RuntimeInformation.4.3.0\lib\net45\System.Runtime.InteropServices.RuntimeInformation.dll</HintPath>
     </Reference>
+    <Reference Include="System.ServiceModel" />
+    <Reference Include="System.Transactions" />
     <Reference Include="System.Web" />
+    <Reference Include="System.Web.ApplicationServices" />
+    <Reference Include="System.Web.DynamicData" />
+    <Reference Include="System.Web.Entity" />
     <Reference Include="System.Web.Extensions" />
     <Reference Include="System.Web.Http, Version=5.2.3.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\..\..\..\packages\Microsoft.AspNet.WebApi.Core.5.2.3\lib\net45\System.Web.Http.dll</HintPath>
@@ -113,7 +123,6 @@
     <Reference Include="System.Web.Http.WebHost, Version=5.2.3.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\..\..\..\packages\Microsoft.AspNet.WebApi.WebHost.5.2.3\lib\net45\System.Web.Http.WebHost.dll</HintPath>
     </Reference>
-    <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Web.Routing" />
     <Reference Include="System.Xml" />
     <Reference Include="System.Web.Services" />
@@ -145,81 +154,51 @@
       <Private>True</Private>
       <HintPath>..\..\..\..\packages\Microsoft.AspNet.WebPages.3.2.3\lib\net45\System.Web.WebPages.Razor.dll</HintPath>
     </Reference>
+    <Reference Include="System.Xml.Linq" />
     <Reference Include="Telerik.Web.Mvc">
       <HintPath>..\..\..\..\packages\TelerikMvcExtensions.2013.2.611\lib\net40\Telerik.Web.Mvc.dll</HintPath>
-    </Reference>
-    <Reference Include="Vaiona.Entities">
-      <HintPath>..\..\..\..\Libraries\Vaiona\Vaiona.Entities.dll</HintPath>
-    </Reference>
-    <Reference Include="Vaiona.IoC, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\Libraries\Vaiona\Vaiona.IoC.dll</HintPath>
-    </Reference>
-    <Reference Include="Vaiona.Logging, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\Libraries\Vaiona\Vaiona.Logging.dll</HintPath>
-    </Reference>
-    <Reference Include="Vaiona.Model">
-      <HintPath>..\..\..\..\Libraries\Vaiona\Vaiona.Model.dll</HintPath>
-    </Reference>
-    <Reference Include="Vaiona.MultiTenancy.Api">
-      <HintPath>..\..\..\..\Libraries\Vaiona\Vaiona.MultiTenancy.Api.dll</HintPath>
-    </Reference>
-    <Reference Include="Vaiona.MultiTenancy.Services">
-      <HintPath>..\..\..\..\Libraries\Vaiona\Vaiona.MultiTenancy.Services.dll</HintPath>
-    </Reference>
-    <Reference Include="Vaiona.Persistence.Api, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\Libraries\Vaiona\Vaiona.Persistence.Api.dll</HintPath>
-    </Reference>
-    <Reference Include="Vaiona.Utils, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\Libraries\Vaiona\Vaiona.Utils.dll</HintPath>
-    </Reference>
-    <Reference Include="Vaiona.Web">
-      <HintPath>..\..\..\..\Libraries\Vaiona\Vaiona.Web.dll</HintPath>
-    </Reference>
-    <Reference Include="Vaiona.Web.Mvc">
-      <HintPath>..\..\..\..\Libraries\Vaiona\Vaiona.Web.Mvc.dll</HintPath>
-    </Reference>
-    <Reference Include="Vaiona.Web.Mvc.Modularity, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\Libraries\Vaiona\Vaiona.Web.Mvc.Modularity.dll</HintPath>
     </Reference>
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Controllers\API\FileController.cs" />
     <Compile Include="Controllers\API\AttachmentInController.cs" />
     <Compile Include="Controllers\API\DataInController.cs" />
     <Compile Include="Controllers\API\DatasetInController.cs" />
     <Compile Include="Controllers\API\MetadataInController.cs" />
-    <Compile Include="Controllers\AttachmentsController.cs" />
-    <Compile Include="Controllers\CreateDatasetController.cs" />
-    <Compile Include="Controllers\EasyUploadController.cs" />
-    <Compile Include="Controllers\EasyUploadSelectAFileController.cs" />
-    <Compile Include="Controllers\EasyUploadSelectAreasController.cs" />
-    <Compile Include="Controllers\EasyUploadSheetDataStructureController.cs" />
-    <Compile Include="Controllers\EasyUploadSheetSelectMetaDataController.cs" />
-    <Compile Include="Controllers\EasyUploadSummaryController.cs" />
-    <Compile Include="Controllers\EasyUploadVerificationController.cs" />
-    <Compile Include="Controllers\EntityReferenceController.cs" />
+    <Compile Include="Controllers\EditController.cs" />
+    <Compile Include="Controllers\Hooks\FileUploadController.cs" />
+    <Compile Include="Controllers\Hooks\AttachmentsController.cs" />
+    <Compile Include="Controllers\Legacy\CreateDatasetController.cs" />
+    <Compile Include="Controllers\Legacy\EasyUploadController.cs" />
+    <Compile Include="Controllers\Legacy\EasyUploadSelectAFileController.cs" />
+    <Compile Include="Controllers\Legacy\EasyUploadSelectAreasController.cs" />
+    <Compile Include="Controllers\Legacy\EasyUploadSheetDataStructureController.cs" />
+    <Compile Include="Controllers\Legacy\EasyUploadSheetSelectMetaDataController.cs" />
+    <Compile Include="Controllers\Legacy\EasyUploadSummaryController.cs" />
+    <Compile Include="Controllers\Legacy\EasyUploadVerificationController.cs" />
+    <Compile Include="Controllers\Hooks\EntityReferenceController.cs" />
     <Compile Include="Controllers\FormController.cs" />
-    <Compile Include="Controllers\HelpController.cs" />
-    <Compile Include="Controllers\ImportMetadataStructureController.cs" />
-    <Compile Include="Controllers\ImportMetadataStructureReadSourceController.cs" />
-    <Compile Include="Controllers\ImportMetadataStructureSelectAFileController.cs" />
-    <Compile Include="Controllers\ImportMetadataStructureSetParametersController.cs" />
-    <Compile Include="Controllers\ImportMetadataStructureSummaryController.cs" />
-    <Compile Include="Controllers\ManageMetadataStructureController.cs" />
-    <Compile Include="Controllers\PushController.cs" />
-    <Compile Include="Controllers\SubmitController.cs" />
-    <Compile Include="Controllers\SubmitChooseUpdateMethodController.cs" />
-    <Compile Include="Controllers\SubmitGetFileInformationController.cs" />
-    <Compile Include="Controllers\SubmitSelectAFileController.cs" />
-    <Compile Include="Controllers\SubmitSpecifyDatasetController.cs" />
-    <Compile Include="Controllers\SubmitSummaryController.cs" />
-    <Compile Include="Controllers\SubmitValidationController.cs" />
+    <Compile Include="Controllers\Legacy\HelpController.cs" />
+    <Compile Include="Controllers\Legacy\ImportMetadataStructureController.cs" />
+    <Compile Include="Controllers\Legacy\ImportMetadataStructureReadSourceController.cs" />
+    <Compile Include="Controllers\Legacy\ImportMetadataStructureSelectAFileController.cs" />
+    <Compile Include="Controllers\Legacy\ImportMetadataStructureSetParametersController.cs" />
+    <Compile Include="Controllers\Legacy\ImportMetadataStructureSummaryController.cs" />
+    <Compile Include="Controllers\Legacy\ManageMetadataStructureController.cs" />
+    <Compile Include="Controllers\Legacy\PushController.cs" />
+    <Compile Include="Controllers\Legacy\SubmitController.cs" />
+    <Compile Include="Controllers\Legacy\SubmitChooseUpdateMethodController.cs" />
+    <Compile Include="Controllers\Legacy\SubmitGetFileInformationController.cs" />
+    <Compile Include="Controllers\Legacy\SubmitSelectAFileController.cs" />
+    <Compile Include="Controllers\Legacy\SubmitSpecifyDatasetController.cs" />
+    <Compile Include="Controllers\Legacy\SubmitSummaryController.cs" />
+    <Compile Include="Controllers\Legacy\SubmitValidationController.cs" />
+    <Compile Include="Controllers\Hooks\MetadataController.cs" />
+    <Compile Include="Controllers\Views\MessagesController.cs" />
     <Compile Include="Controllers\TestController.cs" />
+    <Compile Include="Controllers\Hooks\ValidationController.cs" />
+    <Compile Include="Controllers\ViewController.cs" />
     <Compile Include="DcmModule.cs" />
     <Compile Include="Helpers\API\DataApiHelper.cs" />
     <Compile Include="Helpers\DataASyncUploadHelper.cs" />
@@ -229,6 +208,18 @@
     <Compile Include="Helpers\FormHelper.cs" />
     <Compile Include="Helpers\SystemMetadataHelper.cs" />
     <Compile Include="Helpers\UploadUIHelper.cs" />
+    <Compile Include="Hooks\AttachmentViewHook.cs" />
+    <Compile Include="Hooks\DataStructurePreviewHook.cs" />
+    <Compile Include="Hooks\DataHook.cs" />
+    <Compile Include="Hooks\LinkViewHook.cs" />
+    <Compile Include="Hooks\LinkEditHook.cs" />
+    <Compile Include="Hooks\AttachmentEditHook.cs" />
+    <Compile Include="Hooks\MetadataViewHook.cs" />
+    <Compile Include="Hooks\SubmitHook.cs" />
+    <Compile Include="Hooks\Views\MessageView.cs" />
+    <Compile Include="Hooks\ValidationHook.cs" />
+    <Compile Include="Hooks\FileUploadHook.cs" />
+    <Compile Include="Hooks\MetadataEditHook.cs" />
     <Compile Include="Models\AbstractStepModel.cs" />
     <Compile Include="Models\API\ApiModels.cs" />
     <Compile Include="Models\Attachments\DatasetFileModel.cs" />
@@ -238,8 +229,10 @@
     <Compile Include="Models\CreateDataset\SetupModel.cs" />
     <Compile Include="Models\CreateDataset\StepModelHelper.cs" />
     <Compile Include="Models\EasyUploadSummaryModel.cs" />
+    <Compile Include="Models\Edit\EditModel.cs" />
     <Compile Include="Models\EntityReference\ReferenceModels.cs" />
     <Compile Include="Models\FileInfoModel.cs" />
+    <Compile Include="Models\Edit\FileUploadModel.cs" />
     <Compile Include="Models\FinishUploadModel.cs" />
     <Compile Include="Models\GetFileInformationModel.cs" />
     <Compile Include="Models\ImportMetadata\ParametersModel.cs" />
@@ -263,6 +256,8 @@
     <Compile Include="Models\TestModel.cs" />
     <Compile Include="Models\UploadWizardParameters.cs" />
     <Compile Include="Models\ValidationModel.cs" />
+    <Compile Include="Models\Edit\ValidationModel.cs" />
+    <Compile Include="Models\View\ViewModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -492,6 +487,12 @@
     <Content Include="Scripts\modernizr-2.8.3.js" />
     <Content Include="Scripts\respond.matchmedia.addListener.js" />
     <Content Include="Scripts\respond.matchmedia.addListener.min.js" />
+    <Content Include="Scripts\svelte\edit.css" />
+    <Content Include="Scripts\svelte\edit.js" />
+    <Content Include="Scripts\svelte\messages.css" />
+    <Content Include="Scripts\svelte\messages.js" />
+    <Content Include="Scripts\svelte\view.css" />
+    <Content Include="Scripts\svelte\view.js" />
     <Content Include="Views\Help\Informations.xml" />
     <Content Include="Views\Web.config" />
     <Content Include="Views\_ViewStart.cshtml" />
@@ -570,6 +571,11 @@
     <None Include="Properties\PublishProfiles\BexisServer_demo.pubxml" />
     <None Include="Properties\PublishProfiles\BexisServer_test.pubxml" />
     <None Include="Properties\PublishProfiles\FolderProfile.pubxml" />
+    <Content Include="Views\Edit\Index.cshtml" />
+    <Content Include="Scripts\svelte\edit.js.map" />
+    <Content Include="Views\View\Index.cshtml" />
+    <Content Include="Views\View\_test.cshtml" />
+    <Content Include="Views\Messages\Index.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -580,7 +586,9 @@
   <ItemGroup>
     <Folder Include="Content\Images\" />
     <Folder Include="Views\DcmAdmin\" />
+    <Folder Include="Views\FileUpload\" />
     <Folder Include="Views\Home\" />
+    <Folder Include="Views\Validation\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config">
@@ -647,6 +655,38 @@
     <ProjectReference Include="..\..\..\..\Components\Utils\BExIS.Utils\BExIS.Utils.csproj">
       <Project>{782b71c1-707f-4ab1-80e9-90d2880635b4}</Project>
       <Name>BExIS.Utils</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\..\Components\Vaiona\Vaiona.Entities\Vaiona.Entities.csproj">
+      <Project>{0815d220-3625-4e23-bbbc-8152345637fe}</Project>
+      <Name>Vaiona.Entities</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\..\Components\Vaiona\Vaiona.Logging\Vaiona.Logging.csproj">
+      <Project>{e8b37581-1cac-463d-903b-b4bee8b2b0e3}</Project>
+      <Name>Vaiona.Logging</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\..\Components\Vaiona\Vaiona.Model\Vaiona.Model.csproj">
+      <Project>{a60ac05f-8c9a-4efd-9826-452e6049da4d}</Project>
+      <Name>Vaiona.Model</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\..\Components\Vaiona\Vaiona.Persistence.Api\Vaiona.Persistence.Api.csproj">
+      <Project>{640bf81d-354a-4bf0-85fc-f0ad587cf8a2}</Project>
+      <Name>Vaiona.Persistence.Api</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\..\Components\Vaiona\Vaiona.Utils\Vaiona.Utils.csproj">
+      <Project>{63fcacaa-9534-4fdd-a082-78dcc06baf28}</Project>
+      <Name>Vaiona.Utils</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\..\Components\Vaiona\Vaiona.Web.Mvc.Modularity\Vaiona.Web.Mvc.Modularity.csproj">
+      <Project>{705f8751-e58a-453e-a7fd-0c310fd3cae8}</Project>
+      <Name>Vaiona.Web.Mvc.Modularity</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\..\Components\Vaiona\Vaiona.Web.Mvc\Vaiona.Web.Mvc.csproj">
+      <Project>{5f5d22e8-8c05-49cd-854e-8fe8eff1aa6c}</Project>
+      <Name>Vaiona.Web.Mvc</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\..\Components\Vaiona\Vaiona.Web\Vaiona.Web.csproj">
+      <Project>{5b48b5a8-eae8-4ef8-8f2c-7fedb1b095d3}</Project>
+      <Name>Vaiona.Web</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\..\..\Components\XML\BExIS.Xml.Helpers\BExIS.Xml.Helpers.csproj">
       <Project>{252F7872-A69C-43A6-84B4-4D2ABDBDD9AB}</Project>

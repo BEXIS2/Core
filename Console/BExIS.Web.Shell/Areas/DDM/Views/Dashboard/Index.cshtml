@@ -64,7 +64,7 @@
                 var result = confirm('Are you sure you want to accept this request (Id:' + $(this).attr("value") + ')?');
 
                 if (result) {
-                    $.post("/sam/requests/accept", { DecisionId: $(this).attr("value") }, function (e) {
+                    $.post("/ddm/requestsmanage/accept", { DecisionId: $(this).attr("value") }, function (e) {
                         $("#grid_decisions .t-refresh").trigger('click');
                     });
                 }
@@ -74,7 +74,7 @@
                 var result = confirm('Are you sure you want to reject this request (Id:' + $(this).attr("value") + ')?');
 
                 if (result) {
-                    $.post('/sam/requests/reject', { RequestId: $(this).attr("value") }, function (e) {
+                    $.post('/ddm/requestsmanage/reject', { RequestId: $(this).attr("value") }, function (e) {
                         $("#grid_decisions .t-refresh").trigger('click');
                     });
                 }
@@ -85,16 +85,16 @@
         /****Dashboard*****/
 
         $(".request").click(function () {
-            var id = $(this).attr("entityid");
-            console.log(id);
+            var entityId = $(this).attr("entityid");
+            console.log(entityId);
 
             $(".bold-option").removeClass("bold-option");
             $(this).addClass("bold-option");
 
             $("#dashboard_content").preloader("..loading requests");
 
-            $.get("/ddm/dashboard/requests",
-                { id },
+            $.get("/ddm/requestsmanage/requests",
+                { entityId },
                 function (data, textStatus, jqXHR) {
                     $("#dashboard_content").html(data);
                 }
@@ -102,16 +102,16 @@
         });
 
         $(".decision").click(function () {
-            var id = $(this).attr("entityid");
-            console.log(id);
+            var entityId = $(this).attr("entityid");
+            console.log(entityId);
 
             $(".bold-option").removeClass("bold-option");
             $(this).addClass("bold-option");
 
             $("#dashboard_content").preloader("..loading decisions");
 
-            $.get("/ddm/dashboard/decisions",
-                { id },
+            $.get("/ddm/requestsmanage/decisions",
+                { entityId },
                 function (data, textStatus, jqXHR) {
                     $("#dashboard_content").html(data);
                 }

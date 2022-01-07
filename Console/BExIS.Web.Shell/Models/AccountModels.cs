@@ -99,7 +99,7 @@ namespace BExIS.Web.Shell.Models
     {
         [Required]
         [Display(Name = "Username")]
-        [RegularExpression(@"^\S+(?:\s+\S+)*$", ErrorMessage = "There is a problem with your user name.")]
+        [RegularExpression(@"^\S+(?:\s+\S+)*$", ErrorMessage = "Sorry, not a valid username. Please check there are no trailing spaces.")]
         public string UserName { get; set; }
 
         [Required]

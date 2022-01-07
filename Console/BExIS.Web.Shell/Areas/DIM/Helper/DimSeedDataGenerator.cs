@@ -128,6 +128,7 @@ namespace BExIS.Modules.Dim.UI.Helpers
                 #region public available
 
                 if (!operationManager.Exists("dim", "submission", "*")) operationManager.Create("DIM", "Submission", "*");
+                if (!operationManager.Exists("dim", "Publish", "*")) operationManager.Create("DIM", "Publish", "*");
 
                 #endregion public available
 

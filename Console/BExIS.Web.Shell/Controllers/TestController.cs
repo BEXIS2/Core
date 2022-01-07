@@ -10,10 +10,12 @@ using BExIS.Security.Entities.Subjects;
 using BExIS.Security.Services.Authorization;
 using BExIS.Security.Services.Requests;
 using BExIS.Security.Services.Subjects;
+using BExIS.UI.Hooks;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using System.Reflection;
 using System.Web.Mvc;
 using Vaiona.Persistence.Api;
 using Vaiona.Web.Mvc;
@@ -23,7 +25,6 @@ using Vaiona.Web.Mvc.Models;
 namespace BExIS.Web.Shell.Controllers
 {
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Reliability", "CA2000:Objekte verwerfen, bevor Bereich verloren geht", Justification = "<Ausstehend>")]
-
     public class TestController : BaseController
     {
         public ActionResult About()
@@ -106,7 +107,6 @@ namespace BExIS.Web.Shell.Controllers
             //expected.Tuples.ForEach(p => p.Amendments.Clear());
             //expected.Tuples.ForEach(p => p.Materialize());
         }
-
 
         //[RecordCall]
         //[LogExceptions]
@@ -225,7 +225,6 @@ namespace BExIS.Web.Shell.Controllers
         }
 
         [DoesNotNeedDataAccess]
-        // tells the persistence manager to not create an ambient session context for this action, which saves a considerable resources and reduces the execution time
         public ActionResult Index2()
         {
             testNHibernateSession();
@@ -1205,6 +1204,18 @@ namespace BExIS.Web.Shell.Controllers
         private void unit_BeforeCommit(object sender, EventArgs e)
         {
             //throw new NotImplementedException();
+        }
+
+        public ActionResult CheckActivator()
+        {
+            //Arrange
+            HookManager hookManager = new HookManager();
+
+            var l = hookManager.GetHooksFor("dataset", "details", HookMode.edit);
+            var metadataHook = l.FirstOrDefault();
+            metadataHook.Check(1, "david");
+
+            return View();
         }
     }
 }

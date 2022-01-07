@@ -1,0 +1,32 @@
+﻿@{
+    ViewBag.Title = "Edit";
+    Layout = "~/Themes/Default/Layouts/_svelteLayout.cshtml";
+
+}
+
+<link href="~/Areas/Dcm/Scripts/svelte/edit.css" rel="stylesheet">
+
+
+@section scripts
+{
+    <script src="~/Areas/Dcm/Scripts/svelte/edit.js"></script>
+
+}
+
+@{
+    long id = 0;
+    long version = 0;
+
+    if (ViewBag.id != null)
+    {
+        id = (long)ViewBag.id;
+    }
+
+    if (ViewBag.version != null)
+    {
+        version = (long)ViewBag.version;
+    }
+
+}
+
+<div id="edit" dataset="@id" version="@version"> </div>

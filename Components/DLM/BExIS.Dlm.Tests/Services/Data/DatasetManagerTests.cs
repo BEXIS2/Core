@@ -17,6 +17,8 @@ using System.Collections.Generic;
 using System.Linq;
 using BExIS.Dlm.Entities.Administration;
 using BExIS.Utils.NH.Querying;
+using System.Web;
+using System.Security.Principal;
 
 namespace BExIS.Dlm.Tests.Services.Data
 {
@@ -28,6 +30,7 @@ namespace BExIS.Dlm.Tests.Services.Data
         public void OneTimeSetUp()
         {
             helper = new TestSetupHelper(WebApiConfig.Register, false);
+
             var dsHelper = new DatasetHelper();
             dsHelper.PurgeAllDatasets();
             dsHelper.PurgeAllDataStructures();
@@ -330,6 +333,146 @@ namespace BExIS.Dlm.Tests.Services.Data
                 dm.Dispose();
                 rsm.Dispose();
                 mdm.Dispose();
+            }
+        }
+
+        [Test()]
+        public void CheckedIn_NoErrors_StatusShouldCheckInAfterUpdate()
+        {
+            using (var dm = new DatasetManager())
+            using (var rsm = new ResearchPlanManager())
+            using (var mdm = new MetadataStructureManager())
+            {
+                //Arrange
+                var dsHelper = new DatasetHelper();
+                StructuredDataStructure dataStructure = dsHelper.CreateADataStructure();
+                dataStructure.Should().NotBeNull("Failed to meet a precondition: a data strcuture is required.");
+
+                var rp = dsHelper.CreateResearchPlan();
+                rp.Should().NotBeNull("Failed to meet a precondition: a research plan is required.");
+
+                var mds = mdm.Repo.Query().First();
+                mds.Should().NotBeNull("Failed to meet a precondition: a metadata strcuture is required.");
+
+                Dataset dataset = dm.CreateEmptyDataset(dataStructure, rp, mds);
+
+                // Act
+                if (dm.IsDatasetCheckedOutFor(dataset.Id, "David") || dm.CheckOutDataset(dataset.Id, "David"))
+                {
+                    var workingCopy = dm.GetDatasetWorkingCopy(dataset.Id);
+                    dm.EditDatasetVersion(workingCopy, null, null, null);
+
+                    dm.CheckInDataset(dataset.Id, "no update on data tuples", "David", ViewCreationBehavior.None);
+                }
+
+                
+
+                // Assert
+                dataset.Status.Should().Be(DatasetStatus.CheckedIn, "Dataset must be in CheckedIn status.");
+
+                dm.PurgeDataset(dataset.Id);
+                dsHelper.PurgeAllDataStructures();
+            }
+        }
+
+        [Test()]
+        public void CheckedOut_NoErrors_StatusShouldCheckOutAfterUpdate()
+        {
+            using (var dm = new DatasetManager())
+            using (var rsm = new ResearchPlanManager())
+            using (var mdm = new MetadataStructureManager())
+            {
+                //Arrange
+                var dsHelper = new DatasetHelper();
+                StructuredDataStructure dataStructure = dsHelper.CreateADataStructure();
+                dataStructure.Should().NotBeNull("Failed to meet a precondition: a data strcuture is required.");
+
+                var rp = dsHelper.CreateResearchPlan();
+                rp.Should().NotBeNull("Failed to meet a precondition: a research plan is required.");
+
+                var mds = mdm.Repo.Query().First();
+                mds.Should().NotBeNull("Failed to meet a precondition: a metadata strcuture is required.");
+
+                Dataset dataset = dm.CreateEmptyDataset(dataStructure, rp, mds);
+
+                // Act
+                if (dm.IsDatasetCheckedOutFor(dataset.Id, "David") || dm.CheckOutDataset(dataset.Id, "David"))
+                {
+                    // Assert
+                    dataset.Status.Should().Be(DatasetStatus.CheckedOut, "Dataset must be in CheckedOut status.");
+                }
+
+
+
+               
+
+                dm.PurgeDataset(dataset.Id);
+                dsHelper.PurgeAllDataStructures();
+            }
+        }
+
+        [Test()]
+        public void UndoCheckout_NoErrors_StatusShouldCheckIn()
+        {
+            using (var dm = new DatasetManager())
+            using (var rsm = new ResearchPlanManager())
+            using (var mdm = new MetadataStructureManager())
+            {
+                try
+                {
+
+                    //Arrange
+                    var dsHelper = new DatasetHelper();
+                    StructuredDataStructure dataStructure = dsHelper.CreateADataStructure();
+                    dataStructure.Should().NotBeNull("Failed to meet a precondition: a data strcuture is required.");
+
+                    var rp = dsHelper.CreateResearchPlan();
+                    rp.Should().NotBeNull("Failed to meet a precondition: a research plan is required.");
+
+                    var mds = mdm.Repo.Query().First();
+                    mds.Should().NotBeNull("Failed to meet a precondition: a metadata strcuture is required.");
+
+                    Dataset dataset = dm.CreateEmptyDataset(dataStructure, rp, mds);
+
+                
+                    // Act
+                    if (dm.IsDatasetCheckedOutFor(dataset.Id, "David") || dm.CheckOutDataset(dataset.Id, "David"))
+                    {
+                        var workingCopy = dm.GetDatasetWorkingCopy(dataset.Id);
+                        dm.EditDatasetVersion(workingCopy, null, null, null);
+
+                        dm.CheckInDataset(dataset.Id, "no update on data tuples", "David", ViewCreationBehavior.None);
+                    }
+
+                    long count = dm.GetDatasetVersionCount(dataset.Id);
+
+                    // Act
+                    if (dm.IsDatasetCheckedOutFor(dataset.Id, "David") || dm.CheckOutDataset(dataset.Id, "David"))
+                    {
+                        var workingCopy = dm.GetDatasetWorkingCopy(dataset.Id);
+                        dm.EditDatasetVersion(workingCopy, null, null, null);
+                        //dm.CheckInDataset(dataset.Id, "no update on data tuples", "David", ViewCreationBehavior.None);
+
+                        dm.UndoCheckoutDataset(dataset.Id, "David", ViewCreationBehavior.None);
+                    }
+
+                    long countAfterUndo = dm.GetDatasetVersionCount(dataset.Id);
+                    var lastestVersion = dm.GetDatasetLatestVersion(dataset.Id);
+
+                    // Assert
+                    dataset.Status.Should().Be(DatasetStatus.CheckedIn, "Dataset must be in CheckedIn status.");
+                    lastestVersion.Status.Should().Be(DatasetVersionStatus.CheckedIn, "Dataset version must be in CheckedIn status.");
+                    Assert.That(count, Is.EqualTo(countAfterUndo));
+
+                    dm.PurgeDataset(dataset.Id);
+                    dsHelper.PurgeAllDataStructures();
+
+                }
+                catch (Exception ex)
+                {
+                    throw ex;
+                }
+
             }
         }
     }

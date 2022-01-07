@@ -26,9 +26,8 @@
     --t-windows-titlebar-color: var(--highlight-color);
     --t-animation-container-hover-selected: var(--highlight-color);
     --bg-color-bx-selected-mousover: var(--highlight-color);
-
     --nav-hover: var(--highlight-color);
     --nav-text-color: #777;
-
     --bs-primary: var(--button-action);
+    --bg-tab: #f9f9f9;
 }

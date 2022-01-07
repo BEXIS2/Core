@@ -69,6 +69,8 @@
     <!-- Allow to use the user email within the party person; change party email on changed user email -->
     <add key="usePersonEmailAttributeName" value="false" />
     <add key="PersonEmailAttributeName" value="Email" />
+
+	<add key="aspnet:MaxJsonDeserializerMembers" value="120000" />
   </appSettings>
   <system.web>
     <globalization uiCulture="en-US" culture="en-US" />
@@ -203,7 +205,7 @@
       </dependentAssembly>
       <dependentAssembly>
         <assemblyIdentity name="NHibernate" publicKeyToken="aa95f207798dfdb4" culture="neutral" />
-        <bindingRedirect oldVersion="0.0.0.0-4.1.0.4000" newVersion="4.1.0.4000" />
+        <bindingRedirect oldVersion="0.0.0.0-5.3.0.0" newVersion="5.3.0.0" />
       </dependentAssembly>
       <dependentAssembly>
         <assemblyIdentity name="WebGrease" publicKeyToken="31bf3856ad364e35" culture="neutral" />
