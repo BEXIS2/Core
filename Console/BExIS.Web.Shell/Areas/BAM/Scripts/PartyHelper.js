@@ -14,10 +14,10 @@
             //TODO: more than one element is radio list but it might be different in future
             if (element.length > 1)
                 elementVal = $("[AttributeName='" + m[1].toLowerCase() + "']:checked").val();
-            else if (element2.length > 1)
+            else if (typeof element2 !== 'undefined' && element2.length > 1)
                 elementVal = element2;
 
-            newCondition = newCondition.replace(m[0], "'" + element2 + "'");
+            newCondition = newCondition.replace(m[0], "'" + elementVal + "'");
         }
     } while (m)
     return newCondition;
