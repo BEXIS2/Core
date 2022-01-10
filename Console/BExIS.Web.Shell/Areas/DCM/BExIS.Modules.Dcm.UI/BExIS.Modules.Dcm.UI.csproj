@@ -1,624 +1,769 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-	<Import Project="..\..\..\..\packages\Microsoft.CodeAnalysis.FxCopAnalyzers.3.3.0\build\Microsoft.CodeAnalysis.FxCopAnalyzers.props" Condition="Exists('..\..\..\..\packages\Microsoft.CodeAnalysis.FxCopAnalyzers.3.3.0\build\Microsoft.CodeAnalysis.FxCopAnalyzers.props')" />
-	<Import Project="..\..\..\..\packages\Microsoft.NetFramework.Analyzers.3.3.0\build\Microsoft.NetFramework.Analyzers.props" Condition="Exists('..\..\..\..\packages\Microsoft.NetFramework.Analyzers.3.3.0\build\Microsoft.NetFramework.Analyzers.props')" />
-	<Import Project="..\..\..\..\packages\Microsoft.NetCore.Analyzers.3.3.0\build\Microsoft.NetCore.Analyzers.props" Condition="Exists('..\..\..\..\packages\Microsoft.NetCore.Analyzers.3.3.0\build\Microsoft.NetCore.Analyzers.props')" />
-	<Import Project="..\..\..\..\packages\Microsoft.CodeQuality.Analyzers.3.3.0\build\Microsoft.CodeQuality.Analyzers.props" Condition="Exists('..\..\..\..\packages\Microsoft.CodeQuality.Analyzers.3.3.0\build\Microsoft.CodeQuality.Analyzers.props')" />
-	<Import Project="..\..\..\..\packages\Microsoft.CodeAnalysis.VersionCheckAnalyzer.3.3.0\build\Microsoft.CodeAnalysis.VersionCheckAnalyzer.props" Condition="Exists('..\..\..\..\packages\Microsoft.CodeAnalysis.VersionCheckAnalyzer.3.3.0\build\Microsoft.CodeAnalysis.VersionCheckAnalyzer.props')" />
-	<Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
-	<PropertyGroup>
-		<Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-		<Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-		<ProductVersion>
-		</ProductVersion>
-		<SchemaVersion>2.0</SchemaVersion>
-		<ProjectGuid>{44DD2A5E-0D2F-4FAB-B297-4211441030B7}</ProjectGuid>
-		<ProjectTypeGuids>{349c5851-65df-11da-9384-00065b846f21};{fae04ec0-301f-11d3-bf4b-00c04f79efbc}</ProjectTypeGuids>
-		<OutputType>Library</OutputType>
-		<AppDesignerFolder>Properties</AppDesignerFolder>
-		<RootNamespace>BExIS.Modules.Dcm.UI</RootNamespace>
-		<AssemblyName>BExIS.Modules.Dcm.UI</AssemblyName>
-		<TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
-		<MvcBuildViews>true</MvcBuildViews>
-		<UseIISExpress>true</UseIISExpress>
-		<IISExpressSSLPort />
-		<IISExpressAnonymousAuthentication />
-		<IISExpressWindowsAuthentication />
-		<IISExpressUseClassicPipelineMode />
-		<UseGlobalApplicationHostFile />
-		<NuGetPackageImportStamp>
-		</NuGetPackageImportStamp>
-		<DontImportPostSharp>True</DontImportPostSharp>
-		<TargetFrameworkProfile />
-	</PropertyGroup>
-	<PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-		<DebugSymbols>true</DebugSymbols>
-		<DebugType>full</DebugType>
-		<Optimize>false</Optimize>
-		<OutputPath>bin\</OutputPath>
-		<DefineConstants>DEBUG;TRACE</DefineConstants>
-		<ErrorReport>prompt</ErrorReport>
-		<WarningLevel>4</WarningLevel>
-		<DocumentationFile>bin\BExIS.Modules.Dcm.UI.xml</DocumentationFile>
-	</PropertyGroup>
-	<PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-		<DebugType>pdbonly</DebugType>
-		<Optimize>true</Optimize>
-		<OutputPath>bin\</OutputPath>
-		<DefineConstants>TRACE</DefineConstants>
-		<ErrorReport>prompt</ErrorReport>
-		<WarningLevel>4</WarningLevel>
-	</PropertyGroup>
-	<ItemGroup>
-		<Reference Include="Antlr3.Runtime, Version=3.5.0.2, Culture=neutral, PublicKeyToken=eb42632606e9261f, processorArchitecture=MSIL">
-			<HintPath>..\..\..\..\packages\Antlr3.Runtime.3.5.1\lib\net40-client\Antlr3.Runtime.dll</HintPath>
-		</Reference>
-		<Reference Include="DocumentFormat.OpenXml, Version=2.0.5022.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-			<SpecificVersion>False</SpecificVersion>
-			<HintPath>..\..\..\..\Libraries\DocumentFormat.OpenXml.dll</HintPath>
-		</Reference>
-		<Reference Include="EPPlus, Version=4.1.0.0, Culture=neutral, PublicKeyToken=ea159fdaa78159a1, processorArchitecture=MSIL">
-			<HintPath>..\..\..\..\packages\EPPlus.4.1.0\lib\net40\EPPlus.dll</HintPath>
-			<Private>True</Private>
-		</Reference>
-		<Reference Include="F23.StringSimilarity, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-			<HintPath>..\..\..\..\packages\F23.StringSimilarity.3.0.0\lib\netstandard1.0\F23.StringSimilarity.dll</HintPath>
-		</Reference>
-		<Reference Include="Iesi.Collections, Version=4.0.0.4000, Culture=neutral, PublicKeyToken=aa95f207798dfdb4, processorArchitecture=MSIL">
-			<HintPath>..\..\..\..\packages\Iesi.Collections.4.0.4\lib\net461\Iesi.Collections.dll</HintPath>
-		</Reference>
-		<Reference Include="Ionic.Zip">
-			<HintPath>..\..\..\..\Libraries\Ionic.Zip.dll</HintPath>
-		</Reference>
-		<Reference Include="Microsoft.AspNet.Identity.Core, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-			<HintPath>..\..\..\..\packages\Microsoft.AspNet.Identity.Core.2.2.1\lib\net45\Microsoft.AspNet.Identity.Core.dll</HintPath>
-			<Private>True</Private>
-		</Reference>
-		<Reference Include="Microsoft.CSharp" />
-		<Reference Include="Microsoft.Web.Helpers">
-			<HintPath>..\..\..\..\packages\Microsoft.AspNet.WebHelpers.3.2.3\lib\net45\Microsoft.Web.Helpers.dll</HintPath>
-		</Reference>
-		<Reference Include="Newtonsoft.Json, Version=11.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-			<HintPath>..\..\..\..\packages\Newtonsoft.Json.11.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
-		</Reference>
-		<Reference Include="NHibernate, Version=5.3.0.0, Culture=neutral, PublicKeyToken=aa95f207798dfdb4, processorArchitecture=MSIL">
-			<HintPath>..\..\..\..\packages\NHibernate.5.3.10\lib\net461\NHibernate.dll</HintPath>
-		</Reference>
-		<Reference Include="PostSharp, Version=4.3.19.0, Culture=neutral, PublicKeyToken=b13fd38b8f9c99d7, processorArchitecture=MSIL">
-			<HintPath>..\..\..\..\packages\PostSharp.4.3.19\lib\net35-client\PostSharp.dll</HintPath>
-			<Private>True</Private>
-		</Reference>
-		<Reference Include="Remotion.Linq, Version=2.2.0.0, Culture=neutral, PublicKeyToken=fee00910d6e5f53b, processorArchitecture=MSIL">
-			<HintPath>..\..\..\..\packages\Remotion.Linq.2.2.0\lib\net45\Remotion.Linq.dll</HintPath>
-		</Reference>
-		<Reference Include="Remotion.Linq.EagerFetching, Version=2.2.0.0, Culture=neutral, PublicKeyToken=fee00910d6e5f53b, processorArchitecture=MSIL">
-			<HintPath>..\..\..\..\packages\Remotion.Linq.EagerFetching.2.2.0\lib\net45\Remotion.Linq.EagerFetching.dll</HintPath>
-		</Reference>
-		<Reference Include="System" />
-		<Reference Include="System.ComponentModel.Composition" />
-		<Reference Include="System.ComponentModel.DataAnnotations" />
-		<Reference Include="System.Configuration" />
-		<Reference Include="System.Data" />
-		<Reference Include="System.Data.DataSetExtensions" />
-		<Reference Include="System.IO" />
-		<Reference Include="System.IO.Compression" />
-		<Reference Include="System.Net.Http" />
-		<Reference Include="System.Net.Http.Formatting, Version=5.2.3.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-			<HintPath>..\..\..\..\packages\Microsoft.AspNet.WebApi.Client.5.2.3\lib\net45\System.Net.Http.Formatting.dll</HintPath>
-		</Reference>
-		<Reference Include="System.Numerics" />
-		<Reference Include="System.Runtime.InteropServices.RuntimeInformation, Version=4.0.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-			<HintPath>..\..\..\..\packages\System.Runtime.InteropServices.RuntimeInformation.4.3.0\lib\net45\System.Runtime.InteropServices.RuntimeInformation.dll</HintPath>
-		</Reference>
-		<Reference Include="System.ServiceModel" />
-		<Reference Include="System.Transactions" />
-		<Reference Include="System.Web" />
-		<Reference Include="System.Web.ApplicationServices" />
-		<Reference Include="System.Web.DynamicData" />
-		<Reference Include="System.Web.Entity" />
-		<Reference Include="System.Web.Extensions" />
-		<Reference Include="System.Web.Http, Version=5.2.3.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-			<HintPath>..\..\..\..\packages\Microsoft.AspNet.WebApi.Core.5.2.3\lib\net45\System.Web.Http.dll</HintPath>
-		</Reference>
-		<Reference Include="System.Web.Http.WebHost, Version=5.2.3.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-			<HintPath>..\..\..\..\packages\Microsoft.AspNet.WebApi.WebHost.5.2.3\lib\net45\System.Web.Http.WebHost.dll</HintPath>
-		</Reference>
-		<Reference Include="System.Web.Routing" />
-		<Reference Include="System.Xml" />
-		<Reference Include="System.Web.Services" />
-		<Reference Include="Microsoft.Web.Infrastructure, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-			<Private>True</Private>
-			<HintPath>..\..\..\..\packages\Microsoft.Web.Infrastructure.1.0.0.0\lib\net40\Microsoft.Web.Infrastructure.dll</HintPath>
-		</Reference>
-		<Reference Include="System.Web.Helpers, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-			<Private>True</Private>
-			<HintPath>..\..\..\..\packages\Microsoft.AspNet.WebPages.3.2.3\lib\net45\System.Web.Helpers.dll</HintPath>
-		</Reference>
-		<Reference Include="System.Web.Mvc, Version=5.2.3.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-			<Private>True</Private>
-			<HintPath>..\..\..\..\packages\Microsoft.AspNet.Mvc.5.2.3\lib\net45\System.Web.Mvc.dll</HintPath>
-		</Reference>
-		<Reference Include="System.Web.Razor, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-			<Private>True</Private>
-			<HintPath>..\..\..\..\packages\Microsoft.AspNet.Razor.3.2.3\lib\net45\System.Web.Razor.dll</HintPath>
-		</Reference>
-		<Reference Include="System.Web.WebPages, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-			<Private>True</Private>
-			<HintPath>..\..\..\..\packages\Microsoft.AspNet.WebPages.3.2.3\lib\net45\System.Web.WebPages.dll</HintPath>
-		</Reference>
-		<Reference Include="System.Web.WebPages.Deployment, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-			<Private>True</Private>
-			<HintPath>..\..\..\..\packages\Microsoft.AspNet.WebPages.3.2.3\lib\net45\System.Web.WebPages.Deployment.dll</HintPath>
-		</Reference>
-		<Reference Include="System.Web.WebPages.Razor, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-			<Private>True</Private>
-			<HintPath>..\..\..\..\packages\Microsoft.AspNet.WebPages.3.2.3\lib\net45\System.Web.WebPages.Razor.dll</HintPath>
-		</Reference>
-		<Reference Include="System.Xml.Linq" />
-		<Reference Include="Telerik.Web.Mvc">
-			<HintPath>..\..\..\..\packages\TelerikMvcExtensions.2013.2.611\lib\net40\Telerik.Web.Mvc.dll</HintPath>
-		</Reference>
-		<Reference Include="WindowsBase" />
-	</ItemGroup>
-	<ItemGroup>
-		<Compile Include="Controllers\API\FileController.cs" />
-		<Compile Include="Controllers\API\AttachmentInController.cs" />
-		<Compile Include="Controllers\API\DataInController.cs" />
-		<Compile Include="Controllers\API\DatasetInController.cs" />
-		<Compile Include="Controllers\API\MetadataInController.cs" />
-		<Compile Include="Controllers\EditController.cs" />
-		<Compile Include="Controllers\Hooks\FileUploadController.cs" />
-		<Compile Include="Controllers\Hooks\AttachmentsController.cs" />
-		<Compile Include="Controllers\Legacy\CreateDatasetController.cs" />
-		<Compile Include="Controllers\Legacy\EasyUploadController.cs" />
-		<Compile Include="Controllers\Legacy\EasyUploadSelectAFileController.cs" />
-		<Compile Include="Controllers\Legacy\EasyUploadSelectAreasController.cs" />
-		<Compile Include="Controllers\Legacy\EasyUploadSheetDataStructureController.cs" />
-		<Compile Include="Controllers\Legacy\EasyUploadSheetSelectMetaDataController.cs" />
-		<Compile Include="Controllers\Legacy\EasyUploadSummaryController.cs" />
-		<Compile Include="Controllers\Legacy\EasyUploadVerificationController.cs" />
-		<Compile Include="Controllers\Hooks\EntityReferenceController.cs" />
-		<Compile Include="Controllers\FormController.cs" />
-		<Compile Include="Controllers\Legacy\HelpController.cs" />
-		<Compile Include="Controllers\Legacy\ImportMetadataStructureController.cs" />
-		<Compile Include="Controllers\Legacy\ImportMetadataStructureReadSourceController.cs" />
-		<Compile Include="Controllers\Legacy\ImportMetadataStructureSelectAFileController.cs" />
-		<Compile Include="Controllers\Legacy\ImportMetadataStructureSetParametersController.cs" />
-		<Compile Include="Controllers\Legacy\ImportMetadataStructureSummaryController.cs" />
-		<Compile Include="Controllers\Legacy\ManageMetadataStructureController.cs" />
-		<Compile Include="Controllers\Legacy\PushController.cs" />
-		<Compile Include="Controllers\Legacy\SubmitController.cs" />
-		<Compile Include="Controllers\Legacy\SubmitChooseUpdateMethodController.cs" />
-		<Compile Include="Controllers\Legacy\SubmitGetFileInformationController.cs" />
-		<Compile Include="Controllers\Legacy\SubmitSelectAFileController.cs" />
-		<Compile Include="Controllers\Legacy\SubmitSpecifyDatasetController.cs" />
-		<Compile Include="Controllers\Legacy\SubmitSummaryController.cs" />
-		<Compile Include="Controllers\Legacy\SubmitValidationController.cs" />
-		<Compile Include="Controllers\Hooks\MetadataController.cs" />
-		<Compile Include="Controllers\Views\MessagesController.cs" />
-		<Compile Include="Controllers\TestController.cs" />
-		<Compile Include="Controllers\Hooks\ValidationController.cs" />
-		<Compile Include="Controllers\ViewController.cs" />
-		<Compile Include="DcmModule.cs" />
-		<Compile Include="Helpers\API\DataApiHelper.cs" />
-		<Compile Include="Helpers\DataASyncUploadHelper.cs" />
-		<Compile Include="Helpers\DcmSeedDataGenerator.cs" />
-		<Compile Include="Helpers\EasyUploadSuggestion.cs" />
-		<Compile Include="Helpers\EntityReferenceHelper.cs" />
-		<Compile Include="Helpers\FormHelper.cs" />
-		<Compile Include="Helpers\SystemMetadataHelper.cs" />
-		<Compile Include="Helpers\UploadUIHelper.cs" />
-		<Compile Include="Hooks\AttachmentViewHook.cs" />
-		<Compile Include="Hooks\DataStructurePreviewHook.cs" />
-		<Compile Include="Hooks\DataHook.cs" />
-		<Compile Include="Hooks\LinkViewHook.cs" />
-		<Compile Include="Hooks\LinkEditHook.cs" />
-		<Compile Include="Hooks\AttachmentEditHook.cs" />
-		<Compile Include="Hooks\MetadataViewHook.cs" />
-		<Compile Include="Hooks\SubmitHook.cs" />
-		<Compile Include="Hooks\Views\MessageView.cs" />
-		<Compile Include="Hooks\ValidationHook.cs" />
-		<Compile Include="Hooks\FileUploadHook.cs" />
-		<Compile Include="Hooks\MetadataEditHook.cs" />
-		<Compile Include="Models\AbstractStepModel.cs" />
-		<Compile Include="Models\API\ApiModels.cs" />
-		<Compile Include="Models\Attachments\DatasetFileModel.cs" />
-		<Compile Include="Models\ChooseDatasetViewModel.cs" />
-		<Compile Include="Models\CreateDatasetViewModel.cs" />
-		<Compile Include="Models\CreateDataset\MetadataEditorModel.cs" />
-		<Compile Include="Models\CreateDataset\SetupModel.cs" />
-		<Compile Include="Models\CreateDataset\StepModelHelper.cs" />
-		<Compile Include="Models\EasyUploadSummaryModel.cs" />
-		<Compile Include="Models\Edit\EditModel.cs" />
-		<Compile Include="Models\EntityReference\ReferenceModels.cs" />
-		<Compile Include="Models\FileInfoModel.cs" />
-		<Compile Include="Models\FinishUploadModel.cs" />
-		<Compile Include="Models\GetFileInformationModel.cs" />
-		<Compile Include="Models\ImportMetadata\ParametersModel.cs" />
-		<Compile Include="Models\ImportMetadata\ReadSourceModel.cs" />
-		<Compile Include="Models\ImportMetadata\SummaryModel.cs" />
-		<Compile Include="Models\ListViewItem.cs" />
-		<Compile Include="Models\MetadataStructureManagerModel.cs" />
-		<Compile Include="Models\Metadata\AbstractMetadataStepModel.cs" />
-		<Compile Include="Models\Metadata\MetadataAttributeModel.cs" />
-		<Compile Include="Models\Metadata\MetadataCompoundAttributeModel.cs" />
-		<Compile Include="Models\Metadata\MetadataInstanceModel.cs" />
-		<Compile Include="Models\Metadata\MetadataPackageModel.cs" />
-		<Compile Include="Models\PrimaryKeyViewModel.cs" />
-		<Compile Include="Models\Push\SendBigFilesToServerModel.cs" />
-		<Compile Include="Models\SelectAreasModel.cs" />
-		<Compile Include="Models\SelectFileViewModel.cs" />
-		<Compile Include="Models\SelectMetaDataModel.cs" />
-		<Compile Include="Models\SelectSheetFormatModel.cs" />
-		<Compile Include="Models\SelectVerificationModel.cs" />
-		<Compile Include="Models\SummaryModel.cs" />
-		<Compile Include="Models\TestModel.cs" />
-		<Compile Include="Models\UploadWizardParameters.cs" />
-		<Compile Include="Models\ValidationModel.cs" />
-		<Compile Include="Models\Edit\ValidationModel.cs" />
-		<Compile Include="Models\View\ViewModel.cs" />
-		<Compile Include="Properties\AssemblyInfo.cs" />
-	</ItemGroup>
-	<ItemGroup>
-		<Content Include="Content\2013.2.611\Default\editor.png" />
-		<Content Include="Content\2013.2.611\Default\imagebrowser.png" />
-		<Content Include="Content\2013.2.611\Default\loading.gif" />
-		<Content Include="Content\2013.2.611\Default\slider-h.gif" />
-		<Content Include="Content\2013.2.611\Default\slider-v.gif" />
-		<Content Include="Content\2013.2.611\Default\sprite-vertical.png" />
-		<Content Include="Content\2013.2.611\Default\sprite.png" />
-		<Content Include="Content\2013.2.611\Default\treeview-line.png" />
-		<Content Include="Content\2013.2.611\Default\treeview-nodes-rtl.png" />
-		<Content Include="Content\2013.2.611\Default\treeview-nodes.png" />
-		<Content Include="Content\2013.2.611\telerik.black.min.css" />
-		<Content Include="Content\2013.2.611\telerik.common.min.css" />
-		<Content Include="Content\2013.2.611\telerik.default.min.css" />
-		<Content Include="Content\2013.2.611\telerik.forest.min.css" />
-		<Content Include="Content\2013.2.611\telerik.hay.min.css" />
-		<Content Include="Content\2013.2.611\telerik.metro.min.css" />
-		<Content Include="Content\2013.2.611\telerik.office2007.min.css" />
-		<Content Include="Content\2013.2.611\telerik.office2010black.min.css" />
-		<Content Include="Content\2013.2.611\telerik.office2010blue.min.css" />
-		<Content Include="Content\2013.2.611\telerik.office2010silver.min.css" />
-		<Content Include="Content\2013.2.611\telerik.outlook.min.css" />
-		<Content Include="Content\2013.2.611\telerik.rtl.min.css" />
-		<Content Include="Content\2013.2.611\telerik.simple.min.css" />
-		<Content Include="Content\2013.2.611\telerik.sitefinity.min.css" />
-		<Content Include="Content\2013.2.611\telerik.sunset.min.css" />
-		<Content Include="Content\2013.2.611\telerik.telerik.min.css" />
-		<Content Include="Content\2013.2.611\telerik.transparent.min.css" />
-		<Content Include="Content\2013.2.611\telerik.vista.min.css" />
-		<Content Include="Content\2013.2.611\telerik.web20.min.css" />
-		<Content Include="Content\2013.2.611\telerik.webblue.min.css" />
-		<Content Include="Content\2013.2.611\telerik.windows7.min.css" />
-		<Content Include="Content\bexis-metadata.css" />
-		<Content Include="Content\bootstrap-theme.css" />
-		<Content Include="Content\bootstrap-theme.min.css" />
-		<Content Include="Content\bootstrap.css" />
-		<Content Include="Content\bootstrap.min.css" />
-		<Content Include="Dcm.Manifest.xml">
-			<SubType>Designer</SubType>
-		</Content>
-		<Content Include="Dcm.Settings.xml">
-			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
-		</Content>
-		<Content Include="fonts\glyphicons-halflings-regular.svg" />
-		<Content Include="Images\DCM_SelectFileStructure\left-right.png" />
-		<Content Include="Images\DCM_SelectFileStructure\matrix.png" />
-		<Content Include="Images\DCM_SelectFileStructure\top-down.png" />
-		<Content Include="Images\ui-anim_basic_16x16.gif" />
-		<Content Include="Scripts\bootstrap.js" />
-		<Content Include="Scripts\bootstrap.min.js" />
-		<Content Include="Scripts\entity.reference.js" />
-		<Content Include="Scripts\Form.js" />
-		<Content Include="Scripts\minimap\minimap.js" />
-		<Content Include="Scripts\minimap\minimap.min.css" />
-		<Content Include="Scripts\minimap\minimap.min.js" />
-		<Content Include="Scripts\modernizr-2.8.3.js" />
-		<Content Include="Scripts\respond.matchmedia.addListener.js" />
-		<Content Include="Scripts\respond.matchmedia.addListener.min.js" />
-		<Content Include="Scripts\svelte\edit.css" />
-		<Content Include="Scripts\svelte\edit.js" />
-		<Content Include="Scripts\svelte\messages.css" />
-		<Content Include="Scripts\svelte\messages.js" />
-		<Content Include="Scripts\svelte\view.css" />
-		<Content Include="Scripts\svelte\view.js" />
-		<Content Include="Views\Help\Informations.xml" />
-		<Content Include="Views\Web.config" />
-		<Content Include="Views\_ViewStart.cshtml" />
-		<Content Include="Web.config">
-			<SubType>Designer</SubType>
-		</Content>
-		<Content Include="Views\Shared\_errorMessages.cshtml" />
-		<Content Include="Views\Shared\_summaryErrorMessages.cshtml" />
-		<Content Include="Views\CreateDataset\Index.cshtml" />
-		<Content Include="Views\Form\MetadataEditor.cshtml" />
-		<Content Include="Views\Form\_metadataAttributeView.cshtml" />
-		<Content Include="Views\Form\_metadataCompoundAttributeUsageView.cshtml" />
-		<Content Include="Views\Form\_metadataCompoundAttributeView.cshtml" />
-		<Content Include="Views\Help\Index.cshtml" />
-		<Content Include="Views\ImportMetadataStructure\ImportMetadataStructureWizard.cshtml" />
-		<Content Include="Views\ImportMetadataStructure\Index.cshtml" />
-		<Content Include="Views\ImportMetadataStructure\_taskListView.cshtml" />
-		<Content Include="Views\ImportMetadataStructure\_wizardNav.cshtml" />
-		<Content Include="Views\ImportMetadataStructureReadSource\ReadSource.cshtml" />
-		<Content Include="Views\ImportMetadataStructureSelectAFile\SelectAFile.cshtml" />
-		<Content Include="Views\ImportMetadataStructureSetParameters\SetParameters.cshtml" />
-		<Content Include="Views\ImportMetadataStructureSummary\Summary.cshtml" />
-		<Content Include="Views\ManageMetadataStructure\Index.cshtml" />
-		<Content Include="Views\ManageMetadataStructure\_editMetadataStructureView.cshtml" />
-		<Content Include="Views\Push\Index.cshtml" />
-		<Content Include="Views\Push\_fileListView.cshtml" />
-		<Content Include="Views\Submit\FinishUpload.cshtml" />
-		<Content Include="Views\Submit\Index.cshtml" />
-		<Content Include="Views\Submit\Test.cshtml" />
-		<Content Include="Views\Submit\UploadWizard.cshtml" />
-		<Content Include="Views\Submit\_defaultDatatypFomularView.cshtml" />
-		<Content Include="Views\Submit\_selectDataStructureId.cshtml" />
-		<Content Include="Views\Submit\_taskListView.cshtml" />
-		<Content Include="Views\Submit\_uploadWizardNav.cshtml" />
-		<Content Include="Views\Submit\_useTemplateView.cshtml" />
-		<Content Include="Views\SubmitChooseUpdateMethod\ChooseUpdateMethod.cshtml" />
-		<Content Include="Views\SubmitGetFileInformation\GetFileInformation.cshtml" />
-		<Content Include="Views\SubmitGetFileInformation\_txtFormularView.cshtml" />
-		<Content Include="Views\SubmitGetFileInformation\_xlsFormularView.cshtml" />
-		<Content Include="Views\SubmitSpecifyDataset\SpecifyDataset.cshtml" />
-		<Content Include="Views\SubmitSpecifyDataset\_selectADatasetId.cshtml" />
-		<Content Include="Views\SubmitSummary\Summary.cshtml" />
-		<Content Include="Views\SubmitUnstructuredData\UnstructuredData.cshtml" />
-		<Content Include="Views\SubmitValidation\Validation.cshtml" />
-		<Content Include="Views\Shared\_EntitySelectorInWindowView.cshtml" />
-		<Content Include="Views\Shared\_EntitySelectorView.cshtml" />
-		<Content Include="Views\SubmitSelectAFile\SelectAFile.cshtml" />
-		<Content Include="Views\EasyUploadSelectAFile\SelectAFile.cshtml" />
-		<Content Include="Views\EasyUploadSheetDataStructure\SheetDataStructure.cshtml" />
-		<Content Include="Views\EasyUploadSheetSelectMetaData\SheetSelectMetaData.cshtml" />
-		<Content Include="Views\EasyUploadSummary\EasyUploadSummary.cshtml" />
-		<Content Include="Views\EasyUploadVerification\Verification.cshtml" />
-		<Content Include="Views\EasyUpload\UploadWizard.cshtml" />
-		<Content Include="Views\EasyUpload\_taskListView.cshtml" />
-		<Content Include="Views\EasyUpload\_uploadWizardNav.cshtml" />
-		<Content Include="Views\EasyUploadSelectAreas\SelectAreas.cshtml" />
-		<Content Include="Views\Test\Index.cshtml" />
-		<Content Include="Views\Form\MetadataEditorOffline.cshtml" />
-		<Content Include="Views\Form\_metadataCompoundAttributeViewOffline.cshtml" />
-		<Content Include="Views\Form\_metadataCompoundAttributeUsageViewOffline.cshtml" />
-		<Content Include="Views\Form\_metadataAttributeViewOffline.cshtml" />
-		<Content Include="Views\Attachments\Index.cshtml" />
-		<Content Include="Views\Attachments\_datasetAttachements.cshtml" />
-		<Content Include="Views\EasyUploadVerification\Row.cshtml" />
-		<Content Include="Views\EntityReference\Index.cshtml" />
-		<Content Include="Views\EntityReference\_create.cshtml" />
-		<Content Include="Views\EntityReference\Show.cshtml" />
-		<Content Include="fonts\glyphicons-halflings-regular.woff2" />
-		<Content Include="fonts\glyphicons-halflings-regular.woff" />
-		<Content Include="fonts\glyphicons-halflings-regular.ttf" />
-		<Content Include="fonts\glyphicons-halflings-regular.eot" />
-		<Content Include="Content\bootstrap.min.css.map" />
-		<Content Include="Content\bootstrap.css.map" />
-		<Content Include="Content\bootstrap-theme.min.css.map" />
-		<Content Include="Content\bootstrap-theme.css.map" />
-		<None Include="Properties\PublishProfiles\BexisServer_demo.pubxml" />
-		<None Include="Properties\PublishProfiles\BexisServer_test.pubxml" />
-		<None Include="Properties\PublishProfiles\FolderProfile.pubxml" />
-		<Content Include="Views\Edit\Index.cshtml" />
-		<Content Include="Scripts\svelte\edit.js.map" />
-		<Content Include="Views\View\Index.cshtml" />
-		<Content Include="Views\View\_test.cshtml" />
-		<Content Include="Views\Messages\Index.cshtml" />
-		<None Include="Web.Debug.config">
-			<DependentUpon>Web.config</DependentUpon>
-		</None>
-		<None Include="Web.Release.config">
-			<DependentUpon>Web.config</DependentUpon>
-		</None>
-	</ItemGroup>
-	<ItemGroup>
-		<Folder Include="Content\Images\" />
-		<Folder Include="Views\DcmAdmin\" />
-		<Folder Include="Views\FileUpload\" />
-		<Folder Include="Views\Home\" />
-		<Folder Include="Views\Validation\" />
-	</ItemGroup>
-	<ItemGroup>
-		<None Include="packages.config">
-			<SubType>Designer</SubType>
-		</None>
-	</ItemGroup>
-	<ItemGroup>
-		<ProjectReference Include="..\..\..\..\Components\AAA\BExIS.Security.Entities\BExIS.Security.Entities.csproj">
-			<Project>{C230693B-D780-438B-B26C-82257642DD5C}</Project>
-			<Name>BExIS.Security.Entities</Name>
-		</ProjectReference>
-		<ProjectReference Include="..\..\..\..\Components\AAA\BExIS.Security.Services\BExIS.Security.Services.csproj">
-			<Project>{681C8BC4-55F0-4F43-A685-90E246A88CB1}</Project>
-			<Name>BExIS.Security.Services</Name>
-		</ProjectReference>
-		<ProjectReference Include="..\..\..\..\Components\App\BExIS.App.Bootstrap\BExIS.App.Bootstrap.csproj">
-			<Project>{7D7FBF8E-37D7-4A4C-B40E-3F267E9B9760}</Project>
-			<Name>BExIS.App.Bootstrap</Name>
-		</ProjectReference>
-		<ProjectReference Include="..\..\..\..\Components\DLM\BExIS.Dlm.Entities\BExIS.Dlm.Entities.csproj">
-			<Project>{B4E7B1BF-01B4-40AF-8D19-B8F362167261}</Project>
-			<Name>BExIS.Dlm.Entities</Name>
-		</ProjectReference>
-		<ProjectReference Include="..\..\..\..\Components\DLM\BExIS.Dlm.Orm.NH\BExIS.Dlm.Orm.NH.csproj">
-			<Project>{E234118C-1B89-493C-B17A-6990F6B98A9F}</Project>
-			<Name>BExIS.Dlm.Orm.NH</Name>
-		</ProjectReference>
-		<ProjectReference Include="..\..\..\..\Components\DLM\BExIS.Dlm.Services\BExIS.Dlm.Services.csproj">
-			<Project>{C4CA0A99-0AF3-4372-A9B7-B9073599BD8B}</Project>
-			<Name>BExIS.Dlm.Services</Name>
-		</ProjectReference>
-		<ProjectReference Include="..\..\..\..\Components\EXT\BExIS.Ext.Services\BExIS.Ext.Services.csproj">
-			<Project>{B906A66A-4A09-4207-B590-655EE111CCF1}</Project>
-			<Name>BExIS.Ext.Services</Name>
-		</ProjectReference>
-		<ProjectReference Include="..\..\..\..\Components\IO\BExIS.IO.DataType.DisplayPattern\BExIS.IO.DataType.DisplayPattern.csproj">
-			<Project>{8B2EC2B0-6870-456B-BE2D-B0FB4EA68D83}</Project>
-			<Name>BExIS.IO.DataType.DisplayPattern</Name>
-		</ProjectReference>
-		<ProjectReference Include="..\..\..\..\Components\IO\BExIS.IO.Transform.Input\BExIS.IO.Transform.Input.csproj">
-			<Project>{5C4C8570-A53B-4191-A414-DE028AAAF36A}</Project>
-			<Name>BExIS.IO.Transform.Input</Name>
-		</ProjectReference>
-		<ProjectReference Include="..\..\..\..\Components\IO\BExIS.IO.Transform.Output\BExIS.IO.Transform.Output.csproj">
-			<Project>{455ec826-9a92-40ff-bd3b-388c288955ce}</Project>
-			<Name>BExIS.IO.Transform.Output</Name>
-		</ProjectReference>
-		<ProjectReference Include="..\..\..\..\Components\IO\BExIS.IO.Transform.Validation\BExIS.IO.Transform.Validation.csproj">
-			<Project>{C8A05313-B960-406E-92EC-C1E5B3F47FCD}</Project>
-			<Name>BExIS.IO.Transform.Validation</Name>
-		</ProjectReference>
-		<ProjectReference Include="..\..\..\..\Components\IO\BExIS.IO\BExIS.IO.csproj">
-			<Project>{E4795F06-20C2-4C4C-A720-9A79896384DF}</Project>
-			<Name>BExIS.IO</Name>
-		</ProjectReference>
-		<ProjectReference Include="..\..\..\..\Components\UI\BExIS.UI\BExIS.UI.csproj">
-			<Project>{DE0AD99C-C559-422F-8132-CC4D7C46FF83}</Project>
-			<Name>BExIS.UI</Name>
-		</ProjectReference>
-		<ProjectReference Include="..\..\..\..\Components\Utils\BExIS.Utils.Data\BExIS.Utils.Data.csproj">
-			<Project>{a7fbcc13-7e29-4710-82a1-bd6d6f811fda}</Project>
-			<Name>BExIS.Utils.Data</Name>
-		</ProjectReference>
-		<ProjectReference Include="..\..\..\..\Components\Utils\BExIS.Utils\BExIS.Utils.csproj">
-			<Project>{782b71c1-707f-4ab1-80e9-90d2880635b4}</Project>
-			<Name>BExIS.Utils</Name>
-		</ProjectReference>
-		<ProjectReference Include="..\..\..\..\Components\Vaiona\Vaiona.Entities\Vaiona.Entities.csproj">
-			<Project>{0815d220-3625-4e23-bbbc-8152345637fe}</Project>
-			<Name>Vaiona.Entities</Name>
-		</ProjectReference>
-		<ProjectReference Include="..\..\..\..\Components\Vaiona\Vaiona.Logging\Vaiona.Logging.csproj">
-			<Project>{e8b37581-1cac-463d-903b-b4bee8b2b0e3}</Project>
-			<Name>Vaiona.Logging</Name>
-		</ProjectReference>
-		<ProjectReference Include="..\..\..\..\Components\Vaiona\Vaiona.Model\Vaiona.Model.csproj">
-			<Project>{a60ac05f-8c9a-4efd-9826-452e6049da4d}</Project>
-			<Name>Vaiona.Model</Name>
-		</ProjectReference>
-		<ProjectReference Include="..\..\..\..\Components\Vaiona\Vaiona.Persistence.Api\Vaiona.Persistence.Api.csproj">
-			<Project>{640bf81d-354a-4bf0-85fc-f0ad587cf8a2}</Project>
-			<Name>Vaiona.Persistence.Api</Name>
-		</ProjectReference>
-		<ProjectReference Include="..\..\..\..\Components\Vaiona\Vaiona.Utils\Vaiona.Utils.csproj">
-			<Project>{63fcacaa-9534-4fdd-a082-78dcc06baf28}</Project>
-			<Name>Vaiona.Utils</Name>
-		</ProjectReference>
-		<ProjectReference Include="..\..\..\..\Components\Vaiona\Vaiona.Web.Mvc.Modularity\Vaiona.Web.Mvc.Modularity.csproj">
-			<Project>{705f8751-e58a-453e-a7fd-0c310fd3cae8}</Project>
-			<Name>Vaiona.Web.Mvc.Modularity</Name>
-		</ProjectReference>
-		<ProjectReference Include="..\..\..\..\Components\Vaiona\Vaiona.Web.Mvc\Vaiona.Web.Mvc.csproj">
-			<Project>{5f5d22e8-8c05-49cd-854e-8fe8eff1aa6c}</Project>
-			<Name>Vaiona.Web.Mvc</Name>
-		</ProjectReference>
-		<ProjectReference Include="..\..\..\..\Components\Vaiona\Vaiona.Web\Vaiona.Web.csproj">
-			<Project>{5b48b5a8-eae8-4ef8-8f2c-7fedb1b095d3}</Project>
-			<Name>Vaiona.Web</Name>
-		</ProjectReference>
-		<ProjectReference Include="..\..\..\..\Components\XML\BExIS.Xml.Helpers\BExIS.Xml.Helpers.csproj">
-			<Project>{252F7872-A69C-43A6-84B4-4D2ABDBDD9AB}</Project>
-			<Name>BExIS.Xml.Helpers</Name>
-		</ProjectReference>
-		<ProjectReference Include="..\..\..\..\Components\XML\BExIS.Xml.Models\BExIS.Xml.Models.csproj">
-			<Project>{C0C9F0F2-9E65-448D-8000-D311DB326460}</Project>
-			<Name>BExIS.Xml.Models</Name>
-		</ProjectReference>
-		<ProjectReference Include="..\..\..\..\Modules\DCM\BExIS.Dcm.CreateDatasetWizard\BExIS.Dcm.CreateDatasetWizard.csproj">
-			<Project>{93eeeda5-6d79-41a1-947b-0a3fc9e46abc}</Project>
-			<Name>BExIS.Dcm.CreateDatasetWizard</Name>
-		</ProjectReference>
-		<ProjectReference Include="..\..\..\..\Modules\DCM\BExIS.Dcm.ImportMetadataStructure\BExIS.Dcm.ImportMetadataStructureWizard.csproj">
-			<Project>{99b0aa63-9ca5-4d42-9cf6-5e8896cd5d25}</Project>
-			<Name>BExIS.Dcm.ImportMetadataStructureWizard</Name>
-		</ProjectReference>
-		<ProjectReference Include="..\..\..\..\Modules\DCM\BExIS.Dcm.UploadWizard\BExIS.Dcm.UploadWizard.csproj">
-			<Project>{2c846721-a221-4ae5-a671-4b86de4d3805}</Project>
-			<Name>BExIS.Dcm.UploadWizard</Name>
-		</ProjectReference>
-		<ProjectReference Include="..\..\..\..\Modules\DCM\BExIS.Dcm.Wizard\BExIS.Dcm.Wizard.csproj">
-			<Project>{d17cdd9d-b87b-441b-9248-5c54e92ffc81}</Project>
-			<Name>BExIS.Dcm.Wizard</Name>
-		</ProjectReference>
-		<ProjectReference Include="..\..\..\..\Modules\DIM\BExIS.Dim.Entities\BExIS.Dim.Entities.csproj">
-			<Project>{34CAD2A2-6928-458B-B8DC-AF71D55F20CC}</Project>
-			<Name>BExIS.Dim.Entities</Name>
-		</ProjectReference>
-		<ProjectReference Include="..\..\..\..\Modules\DIM\BExIS.Dim.Helper\BExIS.Dim.Helpers.csproj">
-			<Project>{81ef18e8-dced-4980-96f9-e99124075b82}</Project>
-			<Name>BExIS.Dim.Helpers</Name>
-		</ProjectReference>
-		<ProjectReference Include="..\..\BExIS.Web.Shell.csproj">
-			<Project>{e5128814-4541-45c8-a9e6-6c91a7e3d1e2}</Project>
-			<Name>BExIS.Web.Shell</Name>
-		</ProjectReference>
-		<ProjectReference Include="..\DIM\BExIS.Modules.Dim.UI.csproj">
-			<Project>{9bfffd11-03c6-47df-9cc9-f458a9a49377}</Project>
-			<Name>BExIS.Modules.Dim.UI</Name>
-		</ProjectReference>
-	</ItemGroup>
-	<ItemGroup>
-		<Analyzer Include="..\..\..\..\packages\Microsoft.CodeAnalysis.VersionCheckAnalyzer.3.3.0\analyzers\dotnet\cs\Microsoft.CodeAnalysis.VersionCheckAnalyzer.resources.dll" />
-		<Analyzer Include="..\..\..\..\packages\Microsoft.CodeAnalysis.VersionCheckAnalyzer.3.3.0\analyzers\dotnet\Microsoft.CodeAnalysis.VersionCheckAnalyzer.dll" />
-		<Analyzer Include="..\..\..\..\packages\Microsoft.CodeQuality.Analyzers.3.3.0\analyzers\dotnet\cs\Humanizer.dll" />
-		<Analyzer Include="..\..\..\..\packages\Microsoft.CodeQuality.Analyzers.3.3.0\analyzers\dotnet\cs\Microsoft.CodeQuality.Analyzers.dll" />
-		<Analyzer Include="..\..\..\..\packages\Microsoft.CodeQuality.Analyzers.3.3.0\analyzers\dotnet\cs\Microsoft.CodeQuality.CSharp.Analyzers.dll" />
-		<Analyzer Include="..\..\..\..\packages\Microsoft.NetCore.Analyzers.3.3.0\analyzers\dotnet\cs\Microsoft.NetCore.Analyzers.dll" />
-		<Analyzer Include="..\..\..\..\packages\Microsoft.NetCore.Analyzers.3.3.0\analyzers\dotnet\cs\Microsoft.NetCore.CSharp.Analyzers.dll" />
-		<Analyzer Include="..\..\..\..\packages\Microsoft.NetFramework.Analyzers.3.3.0\analyzers\dotnet\cs\Microsoft.NetFramework.Analyzers.dll" />
-		<Analyzer Include="..\..\..\..\packages\Microsoft.NetFramework.Analyzers.3.3.0\analyzers\dotnet\cs\Microsoft.NetFramework.CSharp.Analyzers.dll" />
-	</ItemGroup>
-	<PropertyGroup>
-		<VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
-		<VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
-	</PropertyGroup>
-	<PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'TestServerRelease|AnyCPU'">
-		<OutputPath>bin\</OutputPath>
-		<DefineConstants>TRACE</DefineConstants>
-		<Optimize>true</Optimize>
-		<DebugType>pdbonly</DebugType>
-		<PlatformTarget>AnyCPU</PlatformTarget>
-		<ErrorReport>prompt</ErrorReport>
-	</PropertyGroup>
-	<Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
-	<Import Project="$(VSToolsPath)\WebApplications\Microsoft.WebApplication.targets" Condition="'$(VSToolsPath)' != ''" />
-	<Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v10.0\WebApplications\Microsoft.WebApplication.targets" Condition="false" />
-	<Target Name="MvcBuildViews" AfterTargets="AfterBuild" Condition="'$(MvcBuildViews)'=='true'">
-		<AspNetCompiler VirtualPath="temp" PhysicalPath="$(WebProjectOutputDir)" />
-	</Target>
-	<ProjectExtensions>
-		<VisualStudio>
-			<FlavorProperties GUID="{349c5851-65df-11da-9384-00065b846f21}">
-				<WebProjectProperties>
-					<SaveServerSettingsInUserFile>True</SaveServerSettingsInUserFile>
-				</WebProjectProperties>
-			</FlavorProperties>
-		</VisualStudio>
-	</ProjectExtensions>
-	<Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
-		<PropertyGroup>
-			<ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
-		</PropertyGroup>
-		<Error Condition="!Exists('..\..\..\..\packages\Microsoft.CodeAnalysis.VersionCheckAnalyzer.3.3.0\build\Microsoft.CodeAnalysis.VersionCheckAnalyzer.props')" Text="$([System.String]::Format('$(ErrorText)', '..\..\..\..\packages\Microsoft.CodeAnalysis.VersionCheckAnalyzer.3.3.0\build\Microsoft.CodeAnalysis.VersionCheckAnalyzer.props'))" />
-		<Error Condition="!Exists('..\..\..\..\packages\Microsoft.CodeQuality.Analyzers.3.3.0\build\Microsoft.CodeQuality.Analyzers.props')" Text="$([System.String]::Format('$(ErrorText)', '..\..\..\..\packages\Microsoft.CodeQuality.Analyzers.3.3.0\build\Microsoft.CodeQuality.Analyzers.props'))" />
-		<Error Condition="!Exists('..\..\..\..\packages\Microsoft.NetCore.Analyzers.3.3.0\build\Microsoft.NetCore.Analyzers.props')" Text="$([System.String]::Format('$(ErrorText)', '..\..\..\..\packages\Microsoft.NetCore.Analyzers.3.3.0\build\Microsoft.NetCore.Analyzers.props'))" />
-		<Error Condition="!Exists('..\..\..\..\packages\Microsoft.NetFramework.Analyzers.3.3.0\build\Microsoft.NetFramework.Analyzers.props')" Text="$([System.String]::Format('$(ErrorText)', '..\..\..\..\packages\Microsoft.NetFramework.Analyzers.3.3.0\build\Microsoft.NetFramework.Analyzers.props'))" />
-		<Error Condition="!Exists('..\..\..\..\packages\Microsoft.CodeAnalysis.FxCopAnalyzers.3.3.0\build\Microsoft.CodeAnalysis.FxCopAnalyzers.props')" Text="$([System.String]::Format('$(ErrorText)', '..\..\..\..\packages\Microsoft.CodeAnalysis.FxCopAnalyzers.3.3.0\build\Microsoft.CodeAnalysis.FxCopAnalyzers.props'))" />
-	</Target>
-	<Import Project="..\..\..\..\packages\PostSharp.4.3.19\tools\PostSharp.targets" Condition="Exists('..\..\..\..\packages\PostSharp.4.3.19\tools\PostSharp.targets')" />
-	<Target Name="EnsurePostSharpImported" BeforeTargets="BeforeBuild" Condition="'$(PostSharp30Imported)' == ''">
-		<Error Condition="!Exists('..\..\..\..\packages\PostSharp.4.3.19\tools\PostSharp.targets')" Text="This project references NuGet package(s) that are missing on this computer. Enable NuGet Package Restore to download them.  For more information, see http://www.postsharp.net/links/nuget-restore." />
-		<Error Condition="Exists('..\..\..\..\packages\PostSharp.4.3.19\tools\PostSharp.targets')" Text="The build restored NuGet packages. Build the project again to include these packages in the build. For more information, see http://www.postsharp.net/links/nuget-restore." />
-	</Target>
-	<PropertyGroup>
-		<PostBuildEvent>
+  <Import Project="..\..\..\..\..\packages\Microsoft.CodeAnalysis.FxCopAnalyzers.3.3.0\build\Microsoft.CodeAnalysis.FxCopAnalyzers.props" Condition="Exists('..\..\..\..\..\packages\Microsoft.CodeAnalysis.FxCopAnalyzers.3.3.0\build\Microsoft.CodeAnalysis.FxCopAnalyzers.props')" />
+  <Import Project="..\..\..\..\..\packages\Microsoft.NetFramework.Analyzers.3.3.0\build\Microsoft.NetFramework.Analyzers.props" Condition="Exists('..\..\..\..\..\packages\Microsoft.NetFramework.Analyzers.3.3.0\build\Microsoft.NetFramework.Analyzers.props')" />
+  <Import Project="..\..\..\..\..\packages\Microsoft.NetCore.Analyzers.3.3.0\build\Microsoft.NetCore.Analyzers.props" Condition="Exists('..\..\..\..\..\packages\Microsoft.NetCore.Analyzers.3.3.0\build\Microsoft.NetCore.Analyzers.props')" />
+  <Import Project="..\..\..\..\..\packages\Microsoft.CodeQuality.Analyzers.3.3.0\build\Microsoft.CodeQuality.Analyzers.props" Condition="Exists('..\..\..\..\..\packages\Microsoft.CodeQuality.Analyzers.3.3.0\build\Microsoft.CodeQuality.Analyzers.props')" />
+  <Import Project="..\..\..\..\..\packages\Microsoft.CodeAnalysis.VersionCheckAnalyzer.3.3.0\build\Microsoft.CodeAnalysis.VersionCheckAnalyzer.props" Condition="Exists('..\..\..\..\..\packages\Microsoft.CodeAnalysis.VersionCheckAnalyzer.3.3.0\build\Microsoft.CodeAnalysis.VersionCheckAnalyzer.props')" />
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>
+    </ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{44DD2A5E-0D2F-4FAB-B297-4211441030B7}</ProjectGuid>
+    <ProjectTypeGuids>{349c5851-65df-11da-9384-00065b846f21};{fae04ec0-301f-11d3-bf4b-00c04f79efbc}</ProjectTypeGuids>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>BExIS.Modules.Dcm.UI</RootNamespace>
+    <AssemblyName>BExIS.Modules.Dcm.UI</AssemblyName>
+    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
+    <MvcBuildViews>true</MvcBuildViews>
+    <UseIISExpress>true</UseIISExpress>
+    <IISExpressSSLPort />
+    <IISExpressAnonymousAuthentication />
+    <IISExpressWindowsAuthentication />
+    <IISExpressUseClassicPipelineMode />
+    <UseGlobalApplicationHostFile />
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
+    <TargetFrameworkProfile />
+    <DontImportPostSharp>True</DontImportPostSharp>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <DocumentationFile>bin\BExIS.Modules.Dcm.UI.xml</DocumentationFile>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="Controllers\API\FileController.cs" />
+    <Compile Include="Controllers\API\AttachmentInController.cs" />
+    <Compile Include="Controllers\API\DataInController.cs" />
+    <Compile Include="Controllers\API\DatasetInController.cs" />
+    <Compile Include="Controllers\API\MetadataInController.cs" />
+    <Compile Include="Controllers\EditController.cs" />
+    <Compile Include="Controllers\Hooks\FileUploadController.cs" />
+    <Compile Include="Controllers\Hooks\AttachmentsController.cs" />
+    <Compile Include="Controllers\Legacy\CreateDatasetController.cs" />
+    <Compile Include="Controllers\Legacy\EasyUploadController.cs" />
+    <Compile Include="Controllers\Legacy\EasyUploadSelectAFileController.cs" />
+    <Compile Include="Controllers\Legacy\EasyUploadSelectAreasController.cs" />
+    <Compile Include="Controllers\Legacy\EasyUploadSheetDataStructureController.cs" />
+    <Compile Include="Controllers\Legacy\EasyUploadSheetSelectMetaDataController.cs" />
+    <Compile Include="Controllers\Legacy\EasyUploadSummaryController.cs" />
+    <Compile Include="Controllers\Legacy\EasyUploadVerificationController.cs" />
+    <Compile Include="Controllers\Hooks\EntityReferenceController.cs" />
+    <Compile Include="Controllers\FormController.cs" />
+    <Compile Include="Controllers\Legacy\HelpController.cs" />
+    <Compile Include="Controllers\Legacy\ImportMetadataStructureController.cs" />
+    <Compile Include="Controllers\Legacy\ImportMetadataStructureReadSourceController.cs" />
+    <Compile Include="Controllers\Legacy\ImportMetadataStructureSelectAFileController.cs" />
+    <Compile Include="Controllers\Legacy\ImportMetadataStructureSetParametersController.cs" />
+    <Compile Include="Controllers\Legacy\ImportMetadataStructureSummaryController.cs" />
+    <Compile Include="Controllers\Legacy\ManageMetadataStructureController.cs" />
+    <Compile Include="Controllers\Legacy\PushController.cs" />
+    <Compile Include="Controllers\Legacy\SubmitController.cs" />
+    <Compile Include="Controllers\Legacy\SubmitChooseUpdateMethodController.cs" />
+    <Compile Include="Controllers\Legacy\SubmitGetFileInformationController.cs" />
+    <Compile Include="Controllers\Legacy\SubmitSelectAFileController.cs" />
+    <Compile Include="Controllers\Legacy\SubmitSpecifyDatasetController.cs" />
+    <Compile Include="Controllers\Legacy\SubmitSummaryController.cs" />
+    <Compile Include="Controllers\Legacy\SubmitValidationController.cs" />
+    <Compile Include="Controllers\Hooks\MetadataController.cs" />
+    <Compile Include="Controllers\Views\MessagesController.cs" />
+    <Compile Include="Controllers\TestController.cs" />
+    <Compile Include="Controllers\Hooks\ValidationController.cs" />
+    <Compile Include="Controllers\ViewController.cs" />
+    <Compile Include="DcmModule.cs" />
+    <Compile Include="Helpers\API\DataApiHelper.cs" />
+    <Compile Include="Helpers\DataASyncUploadHelper.cs" />
+    <Compile Include="Helpers\DcmSeedDataGenerator.cs" />
+    <Compile Include="Helpers\EasyUploadSuggestion.cs" />
+    <Compile Include="Helpers\EntityReferenceHelper.cs" />
+    <Compile Include="Helpers\FormHelper.cs" />
+    <Compile Include="Helpers\SystemMetadataHelper.cs" />
+    <Compile Include="Helpers\UploadUIHelper.cs" />
+    <Compile Include="Hooks\AttachmentViewHook.cs" />
+    <Compile Include="Hooks\DataStructurePreviewHook.cs" />
+    <Compile Include="Hooks\DataHook.cs" />
+    <Compile Include="Hooks\LinkViewHook.cs" />
+    <Compile Include="Hooks\LinkEditHook.cs" />
+    <Compile Include="Hooks\AttachmentEditHook.cs" />
+    <Compile Include="Hooks\MetadataViewHook.cs" />
+    <Compile Include="Hooks\SubmitHook.cs" />
+    <Compile Include="Hooks\Views\MessageView.cs" />
+    <Compile Include="Hooks\ValidationHook.cs" />
+    <Compile Include="Hooks\FileUploadHook.cs" />
+    <Compile Include="Hooks\MetadataEditHook.cs" />
+    <Compile Include="Models\AbstractStepModel.cs" />
+    <Compile Include="Models\API\ApiModels.cs" />
+    <Compile Include="Models\Attachments\DatasetFileModel.cs" />
+    <Compile Include="Models\ChooseDatasetViewModel.cs" />
+    <Compile Include="Models\CreateDatasetViewModel.cs" />
+    <Compile Include="Models\CreateDataset\MetadataEditorModel.cs" />
+    <Compile Include="Models\CreateDataset\SetupModel.cs" />
+    <Compile Include="Models\CreateDataset\StepModelHelper.cs" />
+    <Compile Include="Models\EasyUploadSummaryModel.cs" />
+    <Compile Include="Models\Edit\EditModel.cs" />
+    <Compile Include="Models\EntityReference\ReferenceModels.cs" />
+    <Compile Include="Models\FileInfoModel.cs" />
+    <Compile Include="Models\FinishUploadModel.cs" />
+    <Compile Include="Models\GetFileInformationModel.cs" />
+    <Compile Include="Models\ImportMetadata\ParametersModel.cs" />
+    <Compile Include="Models\ImportMetadata\ReadSourceModel.cs" />
+    <Compile Include="Models\ImportMetadata\SummaryModel.cs" />
+    <Compile Include="Models\ListViewItem.cs" />
+    <Compile Include="Models\MetadataStructureManagerModel.cs" />
+    <Compile Include="Models\Metadata\AbstractMetadataStepModel.cs" />
+    <Compile Include="Models\Metadata\MetadataAttributeModel.cs" />
+    <Compile Include="Models\Metadata\MetadataCompoundAttributeModel.cs" />
+    <Compile Include="Models\Metadata\MetadataInstanceModel.cs" />
+    <Compile Include="Models\Metadata\MetadataPackageModel.cs" />
+    <Compile Include="Models\PrimaryKeyViewModel.cs" />
+    <Compile Include="Models\Push\SendBigFilesToServerModel.cs" />
+    <Compile Include="Models\SelectAreasModel.cs" />
+    <Compile Include="Models\SelectFileViewModel.cs" />
+    <Compile Include="Models\SelectMetaDataModel.cs" />
+    <Compile Include="Models\SelectSheetFormatModel.cs" />
+    <Compile Include="Models\SelectVerificationModel.cs" />
+    <Compile Include="Models\SummaryModel.cs" />
+    <Compile Include="Models\TestModel.cs" />
+    <Compile Include="Models\UploadWizardParameters.cs" />
+    <Compile Include="Models\ValidationModel.cs" />
+    <Compile Include="Models\Edit\ValidationModel.cs" />
+    <Compile Include="Models\View\ViewModel.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Content\2013.2.611\Default\editor.png" />
+    <Content Include="Content\2013.2.611\Default\imagebrowser.png" />
+    <Content Include="Content\2013.2.611\Default\loading.gif" />
+    <Content Include="Content\2013.2.611\Default\slider-h.gif" />
+    <Content Include="Content\2013.2.611\Default\slider-v.gif" />
+    <Content Include="Content\2013.2.611\Default\sprite-vertical.png" />
+    <Content Include="Content\2013.2.611\Default\sprite.png" />
+    <Content Include="Content\2013.2.611\Default\treeview-line.png" />
+    <Content Include="Content\2013.2.611\Default\treeview-nodes-rtl.png" />
+    <Content Include="Content\2013.2.611\Default\treeview-nodes.png" />
+    <Content Include="Content\2013.2.611\telerik.default.min.css" />
+    <Content Include="Content\bexis-metadata.css" />
+    <Content Include="Content\bootstrap-theme.css" />
+    <Content Include="Content\bootstrap-theme.min.css" />
+    <Content Include="Content\bootstrap.css" />
+    <Content Include="Content\bootstrap.min.css" />
+    <Content Include="Dcm.Manifest.xml">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Dcm.Settings.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="fonts\glyphicons-halflings-regular.svg" />
+    <Content Include="Scripts\2013.2.611\jquery-1.7.1.min.js" />
+    <Content Include="Scripts\2013.2.611\jquery.validate.min.js" />
+    <Content Include="Scripts\2013.2.611\telerik.all.min.js" />
+    <Content Include="Scripts\2013.2.611\telerik.autocomplete.min.js" />
+    <Content Include="Scripts\2013.2.611\telerik.calendar.min.js" />
+    <Content Include="Scripts\2013.2.611\telerik.chart.min.js" />
+    <Content Include="Scripts\2013.2.611\telerik.combobox.min.js" />
+    <Content Include="Scripts\2013.2.611\telerik.common.min.js" />
+    <Content Include="Scripts\2013.2.611\telerik.datepicker.min.js" />
+    <Content Include="Scripts\2013.2.611\telerik.datetimepicker.min.js" />
+    <Content Include="Scripts\2013.2.611\telerik.draganddrop.min.js" />
+    <Content Include="Scripts\2013.2.611\telerik.editor.min.js" />
+    <Content Include="Scripts\2013.2.611\telerik.grid.editing.min.js" />
+    <Content Include="Scripts\2013.2.611\telerik.grid.filtering.min.js" />
+    <Content Include="Scripts\2013.2.611\telerik.grid.grouping.min.js" />
+    <Content Include="Scripts\2013.2.611\telerik.grid.min.js" />
+    <Content Include="Scripts\2013.2.611\telerik.grid.reordering.min.js" />
+    <Content Include="Scripts\2013.2.611\telerik.grid.resizing.min.js" />
+    <Content Include="Scripts\2013.2.611\telerik.imagebrowser.min.js" />
+    <Content Include="Scripts\2013.2.611\telerik.list.min.js" />
+    <Content Include="Scripts\2013.2.611\telerik.menu.min.js" />
+    <Content Include="Scripts\2013.2.611\telerik.panelbar.min.js" />
+    <Content Include="Scripts\2013.2.611\telerik.slider.min.js" />
+    <Content Include="Scripts\2013.2.611\telerik.splitter.min.js" />
+    <Content Include="Scripts\2013.2.611\telerik.tabstrip.min.js" />
+    <Content Include="Scripts\2013.2.611\telerik.textbox.min.js" />
+    <Content Include="Scripts\2013.2.611\telerik.timepicker.min.js" />
+    <Content Include="Scripts\2013.2.611\telerik.treeview.min.js" />
+    <Content Include="Scripts\2013.2.611\telerik.upload.min.js" />
+    <Content Include="Scripts\2013.2.611\telerik.window.min.js" />
+    <Content Include="Scripts\bootstrap.js" />
+    <Content Include="Scripts\bootstrap.min.js" />
+    <Content Include="Scripts\entity.reference.js" />
+    <Content Include="Scripts\Form.js" />
+    <Content Include="fonts\glyphicons-halflings-regular.woff2" />
+    <Content Include="fonts\glyphicons-halflings-regular.woff" />
+    <Content Include="fonts\glyphicons-halflings-regular.ttf" />
+    <Content Include="fonts\glyphicons-halflings-regular.eot" />
+    <Content Include="Content\bootstrap.min.css.map" />
+    <Content Include="Content\bootstrap.css.map" />
+    <Content Include="Content\bootstrap-theme.min.css.map" />
+    <Content Include="Content\bootstrap-theme.css.map" />
+    <Content Include="libman.json" />
+    <None Include="Scripts\jquery-2.1.4.intellisense.js" />
+    <Content Include="Scripts\jquery-2.1.4.js" />
+    <Content Include="Scripts\jquery-2.1.4.min.js" />
+    <Content Include="Scripts\jquery-migrate-1.2.1.js" />
+    <Content Include="Scripts\jquery-migrate-1.2.1.min.js" />
+    <None Include="Scripts\jquery.validate-vsdoc.js" />
+    <Content Include="Scripts\jquery.validate.js" />
+    <Content Include="Scripts\jquery.validate.min.js" />
+    <Content Include="Scripts\jquery.validate.unobtrusive.js" />
+    <Content Include="Scripts\jquery.validate.unobtrusive.min.js" />
+    <Content Include="Scripts\minimap\minimap.js" />
+    <Content Include="Scripts\minimap\minimap.min.css" />
+    <Content Include="Scripts\minimap\minimap.min.js" />
+    <Content Include="Scripts\modernizr-2.8.3.js" />
+    <Content Include="Scripts\respond.js" />
+    <Content Include="Scripts\respond.matchmedia.addListener.js" />
+    <Content Include="Scripts\respond.matchmedia.addListener.min.js" />
+    <Content Include="Scripts\respond.min.js" />
+    <Content Include="Scripts\svelte\edit.css" />
+    <Content Include="Scripts\svelte\edit.js" />
+    <Content Include="Scripts\svelte\messages.css" />
+    <Content Include="Scripts\svelte\messages.js" />
+    <Content Include="Scripts\svelte\view.css" />
+    <Content Include="Scripts\svelte\view.js" />
+    <Content Include="Views\Help\Informations.xml" />
+    <Content Include="Views\Web.config" />
+    <Content Include="Views\_ViewStart.cshtml" />
+    <Content Include="Web.config">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Views\Shared\_errorMessages.cshtml" />
+    <Content Include="Views\Shared\_summaryErrorMessages.cshtml" />
+    <Content Include="Views\CreateDataset\Index.cshtml" />
+    <Content Include="Views\Form\MetadataEditor.cshtml" />
+    <Content Include="Views\Form\_metadataAttributeView.cshtml" />
+    <Content Include="Views\Form\_metadataCompoundAttributeUsageView.cshtml" />
+    <Content Include="Views\Form\_metadataCompoundAttributeView.cshtml" />
+    <Content Include="Views\Help\Index.cshtml" />
+    <Content Include="Views\ImportMetadataStructure\ImportMetadataStructureWizard.cshtml" />
+    <Content Include="Views\ImportMetadataStructure\Index.cshtml" />
+    <Content Include="Views\ImportMetadataStructure\_taskListView.cshtml" />
+    <Content Include="Views\ImportMetadataStructure\_wizardNav.cshtml" />
+    <Content Include="Views\ImportMetadataStructureReadSource\ReadSource.cshtml" />
+    <Content Include="Views\ImportMetadataStructureSelectAFile\SelectAFile.cshtml" />
+    <Content Include="Views\ImportMetadataStructureSetParameters\SetParameters.cshtml" />
+    <Content Include="Views\ImportMetadataStructureSummary\Summary.cshtml" />
+    <Content Include="Views\ManageMetadataStructure\Index.cshtml" />
+    <Content Include="Views\ManageMetadataStructure\_editMetadataStructureView.cshtml" />
+    <Content Include="Views\Push\Index.cshtml" />
+    <Content Include="Views\Push\_fileListView.cshtml" />
+    <Content Include="Views\Submit\FinishUpload.cshtml" />
+    <Content Include="Views\Submit\Index.cshtml" />
+    <Content Include="Views\Submit\Test.cshtml" />
+    <Content Include="Views\Submit\UploadWizard.cshtml" />
+    <Content Include="Views\Submit\_defaultDatatypFomularView.cshtml" />
+    <Content Include="Views\Submit\_selectDataStructureId.cshtml" />
+    <Content Include="Views\Submit\_taskListView.cshtml" />
+    <Content Include="Views\Submit\_uploadWizardNav.cshtml" />
+    <Content Include="Views\Submit\_useTemplateView.cshtml" />
+    <Content Include="Views\SubmitChooseUpdateMethod\ChooseUpdateMethod.cshtml" />
+    <Content Include="Views\SubmitGetFileInformation\GetFileInformation.cshtml" />
+    <Content Include="Views\SubmitGetFileInformation\_txtFormularView.cshtml" />
+    <Content Include="Views\SubmitGetFileInformation\_xlsFormularView.cshtml" />
+    <Content Include="Views\SubmitSpecifyDataset\SpecifyDataset.cshtml" />
+    <Content Include="Views\SubmitSpecifyDataset\_selectADatasetId.cshtml" />
+    <Content Include="Views\SubmitSummary\Summary.cshtml" />
+    <Content Include="Views\SubmitUnstructuredData\UnstructuredData.cshtml" />
+    <Content Include="Views\SubmitValidation\Validation.cshtml" />
+    <Content Include="Views\Shared\_EntitySelectorInWindowView.cshtml" />
+    <Content Include="Views\Shared\_EntitySelectorView.cshtml" />
+    <Content Include="Views\SubmitSelectAFile\SelectAFile.cshtml" />
+    <Content Include="Views\EasyUploadSelectAFile\SelectAFile.cshtml" />
+    <Content Include="Views\EasyUploadSheetDataStructure\SheetDataStructure.cshtml" />
+    <Content Include="Views\EasyUploadSheetSelectMetaData\SheetSelectMetaData.cshtml" />
+    <Content Include="Views\EasyUploadSummary\EasyUploadSummary.cshtml" />
+    <Content Include="Views\EasyUploadVerification\Verification.cshtml" />
+    <Content Include="Views\EasyUpload\UploadWizard.cshtml" />
+    <Content Include="Views\EasyUpload\_taskListView.cshtml" />
+    <Content Include="Views\EasyUpload\_uploadWizardNav.cshtml" />
+    <Content Include="Views\EasyUploadSelectAreas\SelectAreas.cshtml" />
+    <Content Include="Views\Test\Index.cshtml" />
+    <Content Include="Views\Form\MetadataEditorOffline.cshtml" />
+    <Content Include="Views\Form\_metadataCompoundAttributeViewOffline.cshtml" />
+    <Content Include="Views\Form\_metadataCompoundAttributeUsageViewOffline.cshtml" />
+    <Content Include="Views\Form\_metadataAttributeViewOffline.cshtml" />
+    <Content Include="Views\Attachments\Index.cshtml" />
+    <Content Include="Views\Attachments\_datasetAttachements.cshtml" />
+    <Content Include="Views\EasyUploadVerification\Row.cshtml" />
+    <Content Include="Views\EntityReference\Index.cshtml" />
+    <Content Include="Views\EntityReference\_create.cshtml" />
+    <Content Include="Views\EntityReference\Show.cshtml" />
+    <None Include="packages.config" />
+    <None Include="Properties\PublishProfiles\BexisServer_demo.pubxml" />
+    <None Include="Properties\PublishProfiles\BexisServer_test.pubxml" />
+    <None Include="Properties\PublishProfiles\FolderProfile.pubxml" />
+    <Content Include="Views\Edit\Index.cshtml" />
+    <Content Include="Scripts\svelte\edit.js.map" />
+    <Content Include="Views\View\Index.cshtml" />
+    <Content Include="Views\View\_test.cshtml" />
+    <Content Include="Views\Messages\Index.cshtml" />
+    <Content Include="Scripts\jquery-2.1.4.min.map" />
+    <None Include="Web.Debug.config">
+      <DependentUpon>Web.config</DependentUpon>
+    </None>
+    <None Include="Web.Release.config">
+      <DependentUpon>Web.config</DependentUpon>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Content\Images\" />
+    <Folder Include="Views\DcmAdmin\" />
+    <Folder Include="Views\FileUpload\" />
+    <Folder Include="Views\Home\" />
+    <Folder Include="Views\Validation\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Analyzer Include="..\..\..\..\..\packages\Microsoft.CodeAnalysis.VersionCheckAnalyzer.3.3.0\analyzers\dotnet\cs\Microsoft.CodeAnalysis.VersionCheckAnalyzer.resources.dll" />
+    <Analyzer Include="..\..\..\..\..\packages\Microsoft.CodeAnalysis.VersionCheckAnalyzer.3.3.0\analyzers\dotnet\Microsoft.CodeAnalysis.VersionCheckAnalyzer.dll" />
+    <Analyzer Include="..\..\..\..\..\packages\Microsoft.CodeQuality.Analyzers.3.3.0\analyzers\dotnet\cs\Humanizer.dll" />
+    <Analyzer Include="..\..\..\..\..\packages\Microsoft.CodeQuality.Analyzers.3.3.0\analyzers\dotnet\cs\Microsoft.CodeQuality.Analyzers.dll" />
+    <Analyzer Include="..\..\..\..\..\packages\Microsoft.CodeQuality.Analyzers.3.3.0\analyzers\dotnet\cs\Microsoft.CodeQuality.CSharp.Analyzers.dll" />
+    <Analyzer Include="..\..\..\..\..\packages\Microsoft.NetCore.Analyzers.3.3.0\analyzers\dotnet\cs\Microsoft.NetCore.Analyzers.dll" />
+    <Analyzer Include="..\..\..\..\..\packages\Microsoft.NetCore.Analyzers.3.3.0\analyzers\dotnet\cs\Microsoft.NetCore.CSharp.Analyzers.dll" />
+    <Analyzer Include="..\..\..\..\..\packages\Microsoft.NetFramework.Analyzers.3.3.0\analyzers\dotnet\cs\Microsoft.NetFramework.Analyzers.dll" />
+    <Analyzer Include="..\..\..\..\..\packages\Microsoft.NetFramework.Analyzers.3.3.0\analyzers\dotnet\cs\Microsoft.NetFramework.CSharp.Analyzers.dll" />
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="Antlr3.Runtime, Version=3.5.0.2, Culture=neutral, PublicKeyToken=eb42632606e9261f, processorArchitecture=MSIL">
+      <HintPath>..\..\..\..\..\packages\Antlr3.Runtime.3.5.1\lib\net40-client\Antlr3.Runtime.dll</HintPath>
+    </Reference>
+    <Reference Include="DocumentFormat.OpenXml, Version=2.15.0.0, Culture=neutral, PublicKeyToken=8fb06cb64d019a17, processorArchitecture=MSIL">
+      <HintPath>..\..\..\..\..\packages\DocumentFormat.OpenXml.2.15.0\lib\net46\DocumentFormat.OpenXml.dll</HintPath>
+    </Reference>
+    <Reference Include="DotNetZip, Version=1.16.0.0, Culture=neutral, PublicKeyToken=6583c7c814667745, processorArchitecture=MSIL">
+      <HintPath>..\..\..\..\..\packages\DotNetZip.1.16.0\lib\net40\DotNetZip.dll</HintPath>
+    </Reference>
+    <Reference Include="EPPlus, Version=4.1.0.0, Culture=neutral, PublicKeyToken=ea159fdaa78159a1, processorArchitecture=MSIL">
+      <HintPath>..\..\..\..\..\packages\EPPlus.4.1.0\lib\net40\EPPlus.dll</HintPath>
+    </Reference>
+    <Reference Include="F23.StringSimilarity, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\..\..\..\packages\F23.StringSimilarity.3.0.0\lib\netstandard1.0\F23.StringSimilarity.dll</HintPath>
+    </Reference>
+    <Reference Include="Iesi.Collections, Version=4.0.0.4000, Culture=neutral, PublicKeyToken=aa95f207798dfdb4, processorArchitecture=MSIL">
+      <HintPath>..\..\..\..\..\packages\Iesi.Collections.4.0.4\lib\net461\Iesi.Collections.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.AspNet.Identity.Core, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\..\..\..\..\packages\Microsoft.AspNet.Identity.Core.2.2.1\lib\net45\Microsoft.AspNet.Identity.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="Microsoft.Web.Helpers, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\..\..\..\..\packages\Microsoft.AspNet.WebHelpers.3.2.3\lib\net45\Microsoft.Web.Helpers.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Web.Infrastructure, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\..\..\..\..\packages\Microsoft.Web.Infrastructure.1.0.0.0\lib\net40\Microsoft.Web.Infrastructure.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Win32.Primitives, Version=4.0.2.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\..\..\..\..\packages\Microsoft.Win32.Primitives.4.3.0\lib\net46\Microsoft.Win32.Primitives.dll</HintPath>
+      <Private>True</Private>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Newtonsoft.Json, Version=11.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\..\..\..\..\packages\Newtonsoft.Json.11.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="NHibernate, Version=5.3.0.0, Culture=neutral, PublicKeyToken=aa95f207798dfdb4, processorArchitecture=MSIL">
+      <HintPath>..\..\..\..\..\packages\NHibernate.5.3.10\lib\net461\NHibernate.dll</HintPath>
+    </Reference>
+    <Reference Include="PostSharp, Version=4.3.19.0, Culture=neutral, PublicKeyToken=b13fd38b8f9c99d7, processorArchitecture=MSIL">
+      <HintPath>..\..\..\..\..\packages\PostSharp.4.3.19\lib\net35-client\PostSharp.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Remotion.Linq, Version=2.2.0.0, Culture=neutral, PublicKeyToken=fee00910d6e5f53b, processorArchitecture=MSIL">
+      <HintPath>..\..\..\..\..\packages\Remotion.Linq.2.2.0\lib\net45\Remotion.Linq.dll</HintPath>
+    </Reference>
+    <Reference Include="Remotion.Linq.EagerFetching, Version=2.2.0.0, Culture=neutral, PublicKeyToken=fee00910d6e5f53b, processorArchitecture=MSIL">
+      <HintPath>..\..\..\..\..\packages\Remotion.Linq.EagerFetching.2.2.0\lib\net45\Remotion.Linq.EagerFetching.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.AppContext, Version=4.1.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\..\..\..\..\packages\System.AppContext.4.3.0\lib\net463\System.AppContext.dll</HintPath>
+      <Private>True</Private>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.ComponentModel.Annotations, Version=4.2.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\..\..\..\..\packages\System.ComponentModel.Annotations.5.0.0\lib\net461\System.ComponentModel.Annotations.dll</HintPath>
+    </Reference>
+    <Reference Include="System.ComponentModel.Composition" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="System.Configuration" />
+    <Reference Include="System.Console, Version=4.0.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\..\..\..\..\packages\System.Console.4.3.0\lib\net46\System.Console.dll</HintPath>
+      <Private>True</Private>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Data" />
+    <Reference Include="System.Diagnostics.DiagnosticSource, Version=4.0.1.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\..\..\..\..\packages\System.Diagnostics.DiagnosticSource.4.3.0\lib\net46\System.Diagnostics.DiagnosticSource.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Diagnostics.Tracing, Version=4.1.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\..\..\..\..\packages\System.Diagnostics.Tracing.4.3.0\lib\net462\System.Diagnostics.Tracing.dll</HintPath>
+      <Private>True</Private>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Globalization.Calendars, Version=4.0.2.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\..\..\..\..\packages\System.Globalization.Calendars.4.3.0\lib\net46\System.Globalization.Calendars.dll</HintPath>
+      <Private>True</Private>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.IO, Version=4.1.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\..\..\..\..\packages\System.IO.4.3.0\lib\net462\System.IO.dll</HintPath>
+      <Private>True</Private>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.IO.Compression, Version=4.1.2.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <HintPath>..\..\..\..\..\packages\System.IO.Compression.4.3.0\lib\net46\System.IO.Compression.dll</HintPath>
+      <Private>True</Private>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.IO.Compression.FileSystem" />
+    <Reference Include="System.IO.Compression.ZipFile, Version=4.0.2.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <HintPath>..\..\..\..\..\packages\System.IO.Compression.ZipFile.4.3.0\lib\net46\System.IO.Compression.ZipFile.dll</HintPath>
+      <Private>True</Private>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.IO.FileSystem, Version=4.0.2.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\..\..\..\..\packages\System.IO.FileSystem.4.3.0\lib\net46\System.IO.FileSystem.dll</HintPath>
+      <Private>True</Private>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.IO.FileSystem.Primitives, Version=4.0.2.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\..\..\..\..\packages\System.IO.FileSystem.Primitives.4.3.0\lib\net46\System.IO.FileSystem.Primitives.dll</HintPath>
+      <Private>True</Private>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Linq, Version=4.1.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\..\..\..\..\packages\System.Linq.4.3.0\lib\net463\System.Linq.dll</HintPath>
+      <Private>True</Private>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Linq.Expressions, Version=4.1.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\..\..\..\..\packages\System.Linq.Expressions.4.3.0\lib\net463\System.Linq.Expressions.dll</HintPath>
+      <Private>True</Private>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Net.Http, Version=4.1.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\..\..\..\..\packages\System.Net.Http.4.3.0\lib\net46\System.Net.Http.dll</HintPath>
+      <Private>True</Private>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Net.Http.Formatting, Version=5.2.3.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\..\..\..\..\packages\Microsoft.AspNet.WebApi.Client.5.2.3\lib\net45\System.Net.Http.Formatting.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Net.Sockets, Version=4.1.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\..\..\..\..\packages\System.Net.Sockets.4.3.0\lib\net46\System.Net.Sockets.dll</HintPath>
+      <Private>True</Private>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Numerics" />
+    <Reference Include="System.Reflection, Version=4.1.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\..\..\..\..\packages\System.Reflection.4.3.0\lib\net462\System.Reflection.dll</HintPath>
+      <Private>True</Private>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Runtime, Version=4.1.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\..\..\..\..\packages\System.Runtime.4.3.0\lib\net462\System.Runtime.dll</HintPath>
+      <Private>True</Private>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Runtime.Extensions, Version=4.1.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\..\..\..\..\packages\System.Runtime.Extensions.4.3.0\lib\net462\System.Runtime.Extensions.dll</HintPath>
+      <Private>True</Private>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Runtime.InteropServices, Version=4.1.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\..\..\..\..\packages\System.Runtime.InteropServices.4.3.0\lib\net463\System.Runtime.InteropServices.dll</HintPath>
+      <Private>True</Private>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Runtime.InteropServices.RuntimeInformation, Version=4.0.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\..\..\..\..\packages\System.Runtime.InteropServices.RuntimeInformation.4.3.0\lib\net45\System.Runtime.InteropServices.RuntimeInformation.dll</HintPath>
+      <Private>True</Private>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Security.Cryptography.Algorithms, Version=4.2.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\..\..\..\..\packages\System.Security.Cryptography.Algorithms.4.3.0\lib\net463\System.Security.Cryptography.Algorithms.dll</HintPath>
+      <Private>True</Private>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Security.Cryptography.Encoding, Version=4.0.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\..\..\..\..\packages\System.Security.Cryptography.Encoding.4.3.0\lib\net46\System.Security.Cryptography.Encoding.dll</HintPath>
+      <Private>True</Private>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Security.Cryptography.Primitives, Version=4.0.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\..\..\..\..\packages\System.Security.Cryptography.Primitives.4.3.0\lib\net46\System.Security.Cryptography.Primitives.dll</HintPath>
+      <Private>True</Private>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Security.Cryptography.X509Certificates, Version=4.1.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\..\..\..\..\packages\System.Security.Cryptography.X509Certificates.4.3.0\lib\net461\System.Security.Cryptography.X509Certificates.dll</HintPath>
+      <Private>True</Private>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.ServiceModel" />
+    <Reference Include="System.Text.RegularExpressions, Version=4.1.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\..\..\..\..\packages\System.Text.RegularExpressions.4.3.0\lib\net463\System.Text.RegularExpressions.dll</HintPath>
+      <Private>True</Private>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Transactions" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Web.Helpers, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\..\..\..\..\packages\Microsoft.AspNet.WebPages.3.2.3\lib\net45\System.Web.Helpers.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Http, Version=5.2.3.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\..\..\..\..\packages\Microsoft.AspNet.WebApi.Core.5.2.3\lib\net45\System.Web.Http.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Http.WebHost, Version=5.2.3.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\..\..\..\..\packages\Microsoft.AspNet.WebApi.WebHost.5.2.3\lib\net45\System.Web.Http.WebHost.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Mvc, Version=5.2.3.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\..\..\..\..\packages\Microsoft.AspNet.Mvc.5.2.3\lib\net45\System.Web.Mvc.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Razor, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\..\..\..\..\packages\Microsoft.AspNet.Razor.3.2.3\lib\net45\System.Web.Razor.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.WebPages, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\..\..\..\..\packages\Microsoft.AspNet.WebPages.3.2.3\lib\net45\System.Web.WebPages.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.WebPages.Deployment, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\..\..\..\..\packages\Microsoft.AspNet.WebPages.3.2.3\lib\net45\System.Web.WebPages.Deployment.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.WebPages.Razor, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\..\..\..\..\packages\Microsoft.AspNet.WebPages.3.2.3\lib\net45\System.Web.WebPages.Razor.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Xml">
+      <HintPath>..\..\..\..\..\..\..\..\..\..\..\..\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.8\System.Xml.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Xml.Linq">
+      <HintPath>..\..\..\..\..\..\..\..\..\..\..\..\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.8\System.Xml.Linq.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Xml.ReaderWriter, Version=4.1.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\..\..\..\..\packages\System.Xml.ReaderWriter.4.3.0\lib\net46\System.Xml.ReaderWriter.dll</HintPath>
+      <Private>True</Private>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Telerik.Web.Mvc, Version=2013.2.611.340, Culture=neutral, PublicKeyToken=29ac1a93ec063d92, processorArchitecture=MSIL">
+      <HintPath>..\..\..\..\..\packages\TelerikMvcExtensions.2013.2.611\lib\net40\Telerik.Web.Mvc.dll</HintPath>
+    </Reference>
+    <Reference Include="WebActivator, Version=1.2.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\..\..\..\packages\WebActivator.1.2.0.0\lib\NETFramework40\WebActivator.dll</HintPath>
+    </Reference>
+    <Reference Include="WebMatrix.Data, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\..\..\..\..\packages\Microsoft.AspNet.WebPages.Data.3.2.3\lib\net45\WebMatrix.Data.dll</HintPath>
+    </Reference>
+    <Reference Include="WebMatrix.WebData, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\..\..\..\..\packages\Microsoft.AspNet.WebPages.WebData.3.2.3\lib\net45\WebMatrix.WebData.dll</HintPath>
+    </Reference>
+    <Reference Include="WindowsBase" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\..\..\Components\AAA\BExIS.Security.Entities\BExIS.Security.Entities.csproj">
+      <Project>{c230693b-d780-438b-b26c-82257642dd5c}</Project>
+      <Name>BExIS.Security.Entities</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\..\..\Components\AAA\BExIS.Security.Services\BExIS.Security.Services.csproj">
+      <Project>{681c8bc4-55f0-4f43-a685-90e246a88cb1}</Project>
+      <Name>BExIS.Security.Services</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\..\..\Components\App\BExIS.App.Bootstrap\BExIS.App.Bootstrap.csproj">
+      <Project>{7d7fbf8e-37d7-4a4c-b40e-3f267e9b9760}</Project>
+      <Name>BExIS.App.Bootstrap</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\..\..\Components\DLM\BExIS.Dlm.Entities\BExIS.Dlm.Entities.csproj">
+      <Project>{b4e7b1bf-01b4-40af-8d19-b8f362167261}</Project>
+      <Name>BExIS.Dlm.Entities</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\..\..\Components\DLM\BExIS.Dlm.Services\BExIS.Dlm.Services.csproj">
+      <Project>{c4ca0a99-0af3-4372-a9b7-b9073599bd8b}</Project>
+      <Name>BExIS.Dlm.Services</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\..\..\Components\IO\BExIS.IO.DataType.DisplayPattern\BExIS.IO.DataType.DisplayPattern.csproj">
+      <Project>{8b2ec2b0-6870-456b-be2d-b0fb4ea68d83}</Project>
+      <Name>BExIS.IO.DataType.DisplayPattern</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\..\..\Components\IO\BExIS.IO.Transform.Input\BExIS.IO.Transform.Input.csproj">
+      <Project>{5c4c8570-a53b-4191-a414-de028aaaf36a}</Project>
+      <Name>BExIS.IO.Transform.Input</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\..\..\Components\IO\BExIS.IO.Transform.Output\BExIS.IO.Transform.Output.csproj">
+      <Project>{455ec826-9a92-40ff-bd3b-388c288955ce}</Project>
+      <Name>BExIS.IO.Transform.Output</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\..\..\Components\IO\BExIS.IO.Transform.Validation\BExIS.IO.Transform.Validation.csproj">
+      <Project>{c8a05313-b960-406e-92ec-c1e5b3f47fcd}</Project>
+      <Name>BExIS.IO.Transform.Validation</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\..\..\Components\IO\BExIS.IO\BExIS.IO.csproj">
+      <Project>{e4795f06-20c2-4c4c-a720-9a79896384df}</Project>
+      <Name>BExIS.IO</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\..\..\Components\UI\BExIS.UI\BExIS.UI.csproj">
+      <Project>{de0ad99c-c559-422f-8132-cc4d7c46ff83}</Project>
+      <Name>BExIS.UI</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\..\..\Components\Utils\BExIS.Utils.Data\BExIS.Utils.Data.csproj">
+      <Project>{a7fbcc13-7e29-4710-82a1-bd6d6f811fda}</Project>
+      <Name>BExIS.Utils.Data</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\..\..\Components\Utils\BExIS.Utils\BExIS.Utils.csproj">
+      <Project>{782b71c1-707f-4ab1-80e9-90d2880635b4}</Project>
+      <Name>BExIS.Utils</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\..\..\Components\Vaiona\Vaiona.Entities\Vaiona.Entities.csproj">
+      <Project>{0815d220-3625-4e23-bbbc-8152345637fe}</Project>
+      <Name>Vaiona.Entities</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\..\..\Components\Vaiona\Vaiona.Logging\Vaiona.Logging.csproj">
+      <Project>{e8b37581-1cac-463d-903b-b4bee8b2b0e3}</Project>
+      <Name>Vaiona.Logging</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\..\..\Components\Vaiona\Vaiona.Model\Vaiona.Model.csproj">
+      <Project>{a60ac05f-8c9a-4efd-9826-452e6049da4d}</Project>
+      <Name>Vaiona.Model</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\..\..\Components\Vaiona\Vaiona.MultiTenancy.Api\Vaiona.MultiTenancy.Api.csproj">
+      <Project>{bccd3d7b-8a50-4fa2-b9d3-2cb31bea60b3}</Project>
+      <Name>Vaiona.MultiTenancy.Api</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\..\..\Components\Vaiona\Vaiona.Persistence.Api\Vaiona.Persistence.Api.csproj">
+      <Project>{640bf81d-354a-4bf0-85fc-f0ad587cf8a2}</Project>
+      <Name>Vaiona.Persistence.Api</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\..\..\Components\Vaiona\Vaiona.Persistence.NH\Vaiona.Persistence.NH.csproj">
+      <Project>{8c5c0209-69a3-4579-9f9b-4d5f084a3b85}</Project>
+      <Name>Vaiona.Persistence.NH</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\..\..\Components\Vaiona\Vaiona.PersistenceProviders.NH\Vaiona.PersistenceProviders.NH.csproj">
+      <Project>{2fb8def8-5749-4eae-8588-8a5aaed251a5}</Project>
+      <Name>Vaiona.PersistenceProviders.NH</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\..\..\Components\Vaiona\Vaiona.Utils\Vaiona.Utils.csproj">
+      <Project>{63fcacaa-9534-4fdd-a082-78dcc06baf28}</Project>
+      <Name>Vaiona.Utils</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\..\..\Components\Vaiona\Vaiona.Web.Mvc.Modularity\Vaiona.Web.Mvc.Modularity.csproj">
+      <Project>{705f8751-e58a-453e-a7fd-0c310fd3cae8}</Project>
+      <Name>Vaiona.Web.Mvc.Modularity</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\..\..\Components\Vaiona\Vaiona.Web.Mvc\Vaiona.Web.Mvc.csproj">
+      <Project>{5f5d22e8-8c05-49cd-854e-8fe8eff1aa6c}</Project>
+      <Name>Vaiona.Web.Mvc</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\..\..\Components\Vaiona\Vaiona.Web\Vaiona.Web.csproj">
+      <Project>{5b48b5a8-eae8-4ef8-8f2c-7fedb1b095d3}</Project>
+      <Name>Vaiona.Web</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\..\..\Components\XML\BExIS.Xml.Helpers\BExIS.Xml.Helpers.csproj">
+      <Project>{252f7872-a69c-43a6-84b4-4d2abdbdd9ab}</Project>
+      <Name>BExIS.Xml.Helpers</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\..\..\Components\XML\BExIS.Xml.Models\BExIS.Xml.Models.csproj">
+      <Project>{C0C9F0F2-9E65-448D-8000-D311DB326460}</Project>
+      <Name>BExIS.Xml.Models</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\..\..\Modules\DCM\BExIS.Dcm.CreateDatasetWizard\BExIS.Dcm.CreateDatasetWizard.csproj">
+      <Project>{93eeeda5-6d79-41a1-947b-0a3fc9e46abc}</Project>
+      <Name>BExIS.Dcm.CreateDatasetWizard</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\..\..\Modules\DCM\BExIS.Dcm.ImportMetadataStructure\BExIS.Dcm.ImportMetadataStructureWizard.csproj">
+      <Project>{99b0aa63-9ca5-4d42-9cf6-5e8896cd5d25}</Project>
+      <Name>BExIS.Dcm.ImportMetadataStructureWizard</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\..\..\Modules\DCM\BExIS.Dcm.UploadWizard\BExIS.Dcm.UploadWizard.csproj">
+      <Project>{2c846721-a221-4ae5-a671-4b86de4d3805}</Project>
+      <Name>BExIS.Dcm.UploadWizard</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\..\..\Modules\DCM\BExIS.Dcm.Wizard\BExIS.Dcm.Wizard.csproj">
+      <Project>{d17cdd9d-b87b-441b-9248-5c54e92ffc81}</Project>
+      <Name>BExIS.Dcm.Wizard</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\..\..\Modules\DIM\BExIS.Dim.Entities\BExIS.Dim.Entities.csproj">
+      <Project>{34cad2a2-6928-458b-b8dc-af71d55f20cc}</Project>
+      <Name>BExIS.Dim.Entities</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\..\..\Modules\DIM\BExIS.Dim.Helper\BExIS.Dim.Helpers.csproj">
+      <Project>{81ef18e8-dced-4980-96f9-e99124075b82}</Project>
+      <Name>BExIS.Dim.Helpers</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\..\..\Modules\DIM\BExIS.Dim.Services\BExIS.Dim.Services.csproj">
+      <Project>{cac933a2-6849-4c61-82b4-cbf4052210cc}</Project>
+      <Name>BExIS.Dim.Services</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\BExIS.Web.Shell.csproj">
+      <Project>{e5128814-4541-45c8-a9e6-6c91a7e3d1e2}</Project>
+      <Name>BExIS.Web.Shell</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <WCFMetadata Include="Connected Services\" />
+  </ItemGroup>
+  <PropertyGroup>
+    <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
+    <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'TestServerRelease|AnyCPU'">
+    <OutputPath>bin\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+  </PropertyGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <Import Project="$(VSToolsPath)\WebApplications\Microsoft.WebApplication.targets" Condition="'$(VSToolsPath)' != ''" />
+  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v10.0\WebApplications\Microsoft.WebApplication.targets" Condition="false" />
+  <Target Name="MvcBuildViews" AfterTargets="AfterBuild" Condition="'$(MvcBuildViews)'=='true'">
+    <AspNetCompiler VirtualPath="temp" PhysicalPath="$(WebProjectOutputDir)" />
+  </Target>
+  <ProjectExtensions>
+    <VisualStudio>
+      <FlavorProperties GUID="{349c5851-65df-11da-9384-00065b846f21}">
+        <WebProjectProperties>
+          <SaveServerSettingsInUserFile>True</SaveServerSettingsInUserFile>
+        </WebProjectProperties>
+      </FlavorProperties>
+    </VisualStudio>
+  </ProjectExtensions>
+  <PropertyGroup>
+    <PostBuildEvent>
 			mkdir "$(SolutionDir)Console\Workspace\Modules\DCM"
 			C:\Windows\System32\xcopy "$(ProjectDir)Dcm.Settings.xml" "$(SolutionDir)Console\Workspace\Modules\DCM" /C /Y /I
 		</PostBuildEvent>
-	</PropertyGroup>
-	<!-- To modify your build process, add your task inside one of the targets below and uncomment it.
+  </PropertyGroup>
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>Dieses Projekt verweist auf mindestens ein NuGet-Paket, das auf diesem Computer fehlt. Verwenden Sie die Wiederherstellung von NuGet-Paketen, um die fehlenden Dateien herunterzuladen. Weitere Informationen finden Sie unter "http://go.microsoft.com/fwlink/?LinkID=322105". Die fehlende Datei ist "{0}".</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('..\..\..\..\..\packages\Microsoft.CodeAnalysis.VersionCheckAnalyzer.3.3.0\build\Microsoft.CodeAnalysis.VersionCheckAnalyzer.props')" Text="$([System.String]::Format('$(ErrorText)', '..\..\..\..\..\packages\Microsoft.CodeAnalysis.VersionCheckAnalyzer.3.3.0\build\Microsoft.CodeAnalysis.VersionCheckAnalyzer.props'))" />
+    <Error Condition="!Exists('..\..\..\..\..\packages\Microsoft.CodeQuality.Analyzers.3.3.0\build\Microsoft.CodeQuality.Analyzers.props')" Text="$([System.String]::Format('$(ErrorText)', '..\..\..\..\..\packages\Microsoft.CodeQuality.Analyzers.3.3.0\build\Microsoft.CodeQuality.Analyzers.props'))" />
+    <Error Condition="!Exists('..\..\..\..\..\packages\Microsoft.NetCore.Analyzers.3.3.0\build\Microsoft.NetCore.Analyzers.props')" Text="$([System.String]::Format('$(ErrorText)', '..\..\..\..\..\packages\Microsoft.NetCore.Analyzers.3.3.0\build\Microsoft.NetCore.Analyzers.props'))" />
+    <Error Condition="!Exists('..\..\..\..\..\packages\Microsoft.NetFramework.Analyzers.3.3.0\build\Microsoft.NetFramework.Analyzers.props')" Text="$([System.String]::Format('$(ErrorText)', '..\..\..\..\..\packages\Microsoft.NetFramework.Analyzers.3.3.0\build\Microsoft.NetFramework.Analyzers.props'))" />
+    <Error Condition="!Exists('..\..\..\..\..\packages\Microsoft.CodeAnalysis.FxCopAnalyzers.3.3.0\build\Microsoft.CodeAnalysis.FxCopAnalyzers.props')" Text="$([System.String]::Format('$(ErrorText)', '..\..\..\..\..\packages\Microsoft.CodeAnalysis.FxCopAnalyzers.3.3.0\build\Microsoft.CodeAnalysis.FxCopAnalyzers.props'))" />
+  </Target>
+  <Import Project="..\..\..\..\..\packages\PostSharp.4.3.19\tools\PostSharp.targets" Condition="Exists('..\..\..\..\..\packages\PostSharp.4.3.19\tools\PostSharp.targets')" />
+  <Target Name="EnsurePostSharpImported" BeforeTargets="BeforeBuild" Condition="'$(PostSharp30Imported)' == ''">
+    <Error Condition="!Exists('..\..\..\..\..\packages\PostSharp.4.3.19\tools\PostSharp.targets')" Text="This project references NuGet package(s) that are missing on this computer. Enable NuGet Package Restore to download them.  For more information, see http://www.postsharp.net/links/nuget-restore." />
+    <Error Condition="Exists('..\..\..\..\..\packages\PostSharp.4.3.19\tools\PostSharp.targets')" Text="The build restored NuGet packages. Build the project again to include these packages in the build. For more information, see http://www.postsharp.net/links/nuget-restore." />
+  </Target>
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
   </Target>
