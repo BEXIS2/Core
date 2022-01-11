@@ -10802,7 +10802,7 @@ var app = (function () {
     	return block;
     }
 
-    // (68:8) {:else}
+    // (67:8) {:else}
     function create_else_block(ctx) {
     	let spinner;
     	let current;
@@ -10844,14 +10844,14 @@ var app = (function () {
     		block,
     		id: create_else_block.name,
     		type: "else",
-    		source: "(68:8) {:else}",
+    		source: "(67:8) {:else}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (38:6) {#if menu}
+    // (37:6) {#if menu}
     function create_if_block(ctx) {
     	let nav0;
     	let t;
@@ -10927,14 +10927,14 @@ var app = (function () {
     		block,
     		id: create_if_block.name,
     		type: "if",
-    		source: "(38:6) {#if menu}",
+    		source: "(37:6) {#if menu}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (40:10) {#if menu.MenuBar}
+    // (39:10) {#if menu.MenuBar}
     function create_if_block_5(ctx) {
     	let menubar;
     	let current;
@@ -10975,14 +10975,14 @@ var app = (function () {
     		block,
     		id: create_if_block_5.name,
     		type: "if",
-    		source: "(40:10) {#if menu.MenuBar}",
+    		source: "(39:10) {#if menu.MenuBar}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (39:8) <Nav navbar>
+    // (38:8) <Nav navbar>
     function create_default_slot_3(ctx) {
     	let if_block_anchor;
     	let current;
@@ -11041,14 +11041,14 @@ var app = (function () {
     		block,
     		id: create_default_slot_3.name,
     		type: "slot",
-    		source: "(39:8) <Nav navbar>",
+    		source: "(38:8) <Nav navbar>",
     		ctx
     	});
 
     	return block;
     }
 
-    // (47:10) {#if menu.AccountBar}
+    // (46:10) {#if menu.AccountBar}
     function create_if_block_4(ctx) {
     	let menubar;
     	let current;
@@ -11092,14 +11092,14 @@ var app = (function () {
     		block,
     		id: create_if_block_4.name,
     		type: "if",
-    		source: "(47:10) {#if menu.AccountBar}",
+    		source: "(46:10) {#if menu.AccountBar}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (52:10) {#if menu.LaunchBar}
+    // (51:10) {#if menu.LaunchBar}
     function create_if_block_3(ctx) {
     	let menubar;
     	let current;
@@ -11143,14 +11143,14 @@ var app = (function () {
     		block,
     		id: create_if_block_3.name,
     		type: "if",
-    		source: "(52:10) {#if menu.LaunchBar}",
+    		source: "(51:10) {#if menu.LaunchBar}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (57:10) {#if menu.Extended}
+    // (56:10) {#if menu.Extended}
     function create_if_block_2(ctx) {
     	let menubar;
     	let current;
@@ -11194,14 +11194,14 @@ var app = (function () {
     		block,
     		id: create_if_block_2.name,
     		type: "if",
-    		source: "(57:10) {#if menu.Extended}",
+    		source: "(56:10) {#if menu.Extended}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (62:10) {#if menu.Settings}
+    // (61:10) {#if menu.Settings}
     function create_if_block_1(ctx) {
     	let settingsbar;
     	let current;
@@ -11245,14 +11245,14 @@ var app = (function () {
     		block,
     		id: create_if_block_1.name,
     		type: "if",
-    		source: "(62:10) {#if menu.Settings}",
+    		source: "(61:10) {#if menu.Settings}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (45:8) <Nav navbar class="ms-auto">
+    // (44:8) <Nav navbar class="ms-auto">
     function create_default_slot_2(ctx) {
     	let t0;
     	let t1;
@@ -11410,14 +11410,14 @@ var app = (function () {
     		block,
     		id: create_default_slot_2.name,
     		type: "slot",
-    		source: "(45:8) <Nav navbar class=\\\"ms-auto\\\">",
+    		source: "(44:8) <Nav navbar class=\\\"ms-auto\\\">",
     		ctx
     	});
 
     	return block;
     }
 
-    // (37:2) <Collapse navbar {isOpen} expand="md" >
+    // (36:2) <Collapse navbar {isOpen} expand="md" >
     function create_default_slot_1(ctx) {
     	let current_block_type_index;
     	let if_block;
@@ -11490,7 +11490,7 @@ var app = (function () {
     		block,
     		id: create_default_slot_1.name,
     		type: "slot",
-    		source: "(37:2) <Collapse navbar {isOpen} expand=\\\"md\\\" >",
+    		source: "(36:2) <Collapse navbar {isOpen} expand=\\\"md\\\" >",
     		ctx
     	});
 
