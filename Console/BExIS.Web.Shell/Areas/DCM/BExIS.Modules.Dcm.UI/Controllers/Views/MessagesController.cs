@@ -22,7 +22,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         [BExISEntityAuthorize(typeof(Dataset), "id", RightType.Write)]
         public ActionResult Start(long id, int version = 0)
         {
-            string filepath = Path.Combine(AppConfiguration.AppRoot, "Areas/DCM/Scripts/svelte/messages.js");
+            string filepath = Path.Combine(AppConfiguration.AppRoot, "Areas/DCM/BExIS.Modules.Dcm.UI/Scripts/svelte/messages.js");
             return File(filepath, "application/javascript");
         }
 
