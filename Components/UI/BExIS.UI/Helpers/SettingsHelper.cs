@@ -1,9 +1,11 @@
 ﻿using BExIS.Xml.Helpers;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Web;
 using System.Xml.Linq;
 using Vaiona.Utils.Cfg;
@@ -12,15 +14,15 @@ namespace BExIS.UI.Helpers
 {
     public class SettingsHelper
     {
-        string _filePath = "";
-        string _moduleId = "";
+        private string _filePath = "";
+        private string _moduleId = "";
 
         public SettingsHelper(string moduleId)
         {
             if (moduleId.ToLower() == "shell")
                 _filePath = Path.Combine(AppConfiguration.WorkspaceGeneralRoot, "General.Settings.xml");
             else
-                _filePath = Path.Combine(AppConfiguration.GetModuleWorkspacePath(moduleId), moduleId+".Settings.xml");
+                _filePath = Path.Combine(AppConfiguration.GetModuleWorkspacePath(moduleId), moduleId + ".Settings.xml");
         }
 
         public bool KeyExist(string key)
@@ -28,7 +30,7 @@ namespace BExIS.UI.Helpers
             XDocument settings = XDocument.Load(_filePath);
             XElement element = XmlUtility.GetXElementByAttribute("entry", "key", key, settings);
 
-            return element != null?true:false;
+            return element != null ? true : false;
         }
 
         public string GetValue(string key)
@@ -37,12 +39,12 @@ namespace BExIS.UI.Helpers
             XElement element = XmlUtility.GetXElementByAttribute("entry", "key", key, settings);
 
             string value = "";
-            value =  element.Attribute("value")?.Value;
+            value = element.Attribute("value")?.Value;
 
             return value;
         }
 
-        public List<KeyValuePair<string,string>> GetList(string value)
+        public List<KeyValuePair<string, string>> GetList(string value)
         {
             XDocument settings = XDocument.Load(_filePath);
             XElement element = XmlUtility.GetXElementByAttribute("list", "value", value, settings);
@@ -56,7 +58,7 @@ namespace BExIS.UI.Helpers
                     string k = item.Attribute("key").Value;
                     string v = item.Attribute("value").Value;
 
-                    KeyValuePair<string, string> kvp = new KeyValuePair<string, string>(k,v);
+                    KeyValuePair<string, string> kvp = new KeyValuePair<string, string>(k, v);
                     tmp.Add(kvp);
                 }
             }
@@ -83,19 +85,22 @@ namespace BExIS.UI.Helpers
             return null;
         }
 
-        public string AsJson()
+        public JObject AsJson()
         {
             try
             {
                 if (File.Exists(_filePath))
                 {
                     XDocument modulsettings = Load();
-                    return JsonConvert.SerializeXNode(modulsettings);
+                    var str = JsonConvert.SerializeXNode(modulsettings);
+                    JObject json = JObject.Parse(str);
+
+                    return json;
                 }
             }
             catch (Exception ex)
             {
-                throw new Exception("settings convertion of Module (" + _moduleId + ") failed", ex);
+                throw new Exception("settings convertion of Module(" + _moduleId + ") failed", ex);
             }
 
             return null;
@@ -118,6 +123,6 @@ namespace BExIS.UI.Helpers
             return false;
         }
 
-        #endregion
+        #endregion looad and update
     }
 }
