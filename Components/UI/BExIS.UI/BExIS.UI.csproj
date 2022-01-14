@@ -101,6 +101,7 @@
     <Compile Include="Models\DataTable.cs" />
     <Compile Include="Models\FileUploader.cs" />
     <Compile Include="Models\Menu.cs" />
+    <Compile Include="Models\ModuleSettings.cs" />
     <Compile Include="Models\Treeview.cs" />
     <Compile Include="Wizard\AbstractTaskManager.cs" />
     <Compile Include="Wizard\ActionInfo.cs" />

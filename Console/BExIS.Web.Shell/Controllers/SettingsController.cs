@@ -1,4 +1,6 @@
-﻿using BExIS.UI.Helpers;
+﻿using BExIS.App.Bootstrap.Attributes;
+using BExIS.UI.Helpers;
+using BExIS.UI.Models;
 using BExIS.Web.Shell.Models;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -51,6 +53,7 @@ namespace BExIS.Web.Shell.Controllers
 
         // GET: Settings
         [HttpGet]
+        [JsonNetFilter]
         public JsonResult Load(string id)
         {
             List<string> settings = new List<string>();
@@ -58,19 +61,34 @@ namespace BExIS.Web.Shell.Controllers
             if (ModuleManager.IsActive(id))
             {
                 SettingsHelper settingsHelper = new SettingsHelper(id);
-                return Json(settingsHelper.AsJson().ToString(Newtonsoft.Json.Formatting.None), JsonRequestBehavior.AllowGet);
+                return Json(settingsHelper.LoadSettings(), JsonRequestBehavior.AllowGet);
             }
 
             return Json(false, JsonRequestBehavior.AllowGet);
         }
 
         [HttpPost]
-        public JsonResult Save(string id, string json)
+        [JsonNetFilter]
+        public JsonResult Save(UI.Models.ModuleSettings settings)
         {
-            SettingsHelper settingsHelper = new SettingsHelper(id);
-            settingsHelper.Update(json);
+            //check incoming values
+            if (settings == null) throw new ArgumentNullException("settings");
+            if (string.IsNullOrEmpty(settings.Id)) throw new ArgumentNullException("id");
+            if (string.IsNullOrEmpty(settings.Description)) throw new ArgumentNullException("Description");
+            if (settings.Entry == null) throw new ArgumentNullException("entry");
 
-            return Json(true, JsonRequestBehavior.AllowGet);
+            try
+            {
+                SettingsHelper settingsHelper = new SettingsHelper(settings.Id);
+                //update settings in json
+                settingsHelper.Update(settings);
+
+                return Json(true);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
         }
     }
 }

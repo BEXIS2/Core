@@ -1,4 +1,5 @@
-﻿using BExIS.Xml.Helpers;
+﻿using BExIS.UI.Models;
+using BExIS.Xml.Helpers;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
@@ -15,14 +16,38 @@ namespace BExIS.UI.Helpers
     public class SettingsHelper
     {
         private string _filePath = "";
+
+        private string _filePathJson = "";
         private string _moduleId = "";
 
         public SettingsHelper(string moduleId)
         {
+            _moduleId = moduleId;
             if (moduleId.ToLower() == "shell")
                 _filePath = Path.Combine(AppConfiguration.WorkspaceGeneralRoot, "General.Settings.xml");
             else
                 _filePath = Path.Combine(AppConfiguration.GetModuleWorkspacePath(moduleId), moduleId + ".Settings.xml");
+
+            if (moduleId.ToLower() == "shell")
+                _filePathJson = Path.Combine(AppConfiguration.WorkspaceGeneralRoot, "General.Settings.json");
+            else
+                _filePathJson = Path.Combine(AppConfiguration.GetModuleWorkspacePath(moduleId), moduleId + ".Settings.json");
+        }
+
+        public ModuleSettings LoadSettings()
+        {
+            if (File.Exists(_filePathJson))
+            {
+                using (StreamReader file = File.OpenText(_filePathJson))
+                {
+                    JsonSerializer serializer = new JsonSerializer();
+                    ModuleSettings settings = (ModuleSettings)serializer.Deserialize(file, typeof(ModuleSettings));
+
+                    return settings;
+                }
+            }
+
+            return null;
         }
 
         public bool KeyExist(string key)
@@ -85,33 +110,26 @@ namespace BExIS.UI.Helpers
             return null;
         }
 
-        public JObject AsJson()
+        /// <summary>
+        /// Convert settings model to json and store it in the worskapce based on id
+        /// </summary>
+        /// <param name="settings"></param>
+        /// <returns></returns>
+        /// <exception cref="Exception"></exception>
+        public bool Update(ModuleSettings settings)
         {
             try
             {
-                if (File.Exists(_filePath))
+                // if file exist, delete before
+                if (File.Exists(_filePathJson)) File.Delete(_filePathJson);
+
+                // create file and open it into a stream writer
+                using (StreamWriter file = File.CreateText(_filePathJson))
                 {
-                    XDocument modulsettings = Load();
-                    var str = JsonConvert.SerializeXNode(modulsettings);
-                    JObject json = JObject.Parse(str);
-
-                    return json;
+                    JsonSerializer serializer = new JsonSerializer();
+                    //serialize object directly into file stream
+                    serializer.Serialize(file, settings);
                 }
-            }
-            catch (Exception ex)
-            {
-                throw new Exception("settings convertion of Module(" + _moduleId + ") failed", ex);
-            }
-
-            return null;
-        }
-
-        public bool Update(string json)
-        {
-            try
-            {
-                XDocument modulesettings = JsonConvert.DeserializeXNode(json);
-                modulesettings.Save(_filePath);
 
                 return true;
             }

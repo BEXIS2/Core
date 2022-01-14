@@ -152,7 +152,7 @@ namespace BExIS.UI.Hooks
 
             if (File.Exists(filepath)) // check if file exist, delete maybe?
             {
-                // convert json to object
+                File.Delete(filepath);
             }
 
             File.WriteAllText(filepath, JsonConvert.SerializeObject(_cache));
