@@ -24,7 +24,7 @@ namespace BExIS.UI.Models
         public string Type { get; set; }
         public string Description { get; set; }
 
-        public Item Item { get; set; }
+        public Item[] Item { get; set; }
     }
 
     public class Item

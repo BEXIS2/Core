@@ -11981,7 +11981,7 @@
     	return block;
     }
 
-    // (35:72) <Button class="stringlistdelete" style="float:right" id={attr.key} on:click={deleteValueOfList} color="danger">
+    // (35:83) <Button class="stringlistdelete" style="float:right" id={attr.key} on:click={deleteValueOfList} color="danger">
     function create_default_slot$6(ctx) {
     	let t;
 
@@ -12001,7 +12001,7 @@
     		block,
     		id: create_default_slot$6.name,
     		type: "slot",
-    		source: "(35:72) <Button class=\\\"stringlistdelete\\\" style=\\\"float:right\\\" id={attr.key} on:click={deleteValueOfList} color=\\\"danger\\\">",
+    		source: "(35:83) <Button class=\\\"stringlistdelete\\\" style=\\\"float:right\\\" id={attr.key} on:click={deleteValueOfList} color=\\\"danger\\\">",
     		ctx
     	});
 
@@ -12012,11 +12012,14 @@
     function create_each_block_1(ctx) {
     	let ul;
     	let li;
-    	let t0_value = /*attr*/ ctx[9].value + "";
+    	let t0_value = /*attr*/ ctx[9].key + "";
     	let t0;
+    	let t1;
+    	let t2_value = /*attr*/ ctx[9].value + "";
+    	let t2;
     	let button;
     	let li_id_value;
-    	let t1;
+    	let t3;
     	let current;
 
     	button = new Button({
@@ -12038,8 +12041,10 @@
     			ul = element("ul");
     			li = element("li");
     			t0 = text(t0_value);
-    			create_component(button.$$.fragment);
     			t1 = space();
+    			t2 = text(t2_value);
+    			create_component(button.$$.fragment);
+    			t3 = space();
     			set_style(li, "padding", "5px");
     			attr_dev(li, "id", li_id_value = /*attr*/ ctx[9].key);
     			add_location(li, file$4, 34, 20, 1184);
@@ -12049,12 +12054,15 @@
     			insert_dev(target, ul, anchor);
     			append_dev(ul, li);
     			append_dev(li, t0);
+    			append_dev(li, t1);
+    			append_dev(li, t2);
     			mount_component(button, li, null);
-    			append_dev(ul, t1);
+    			append_dev(ul, t3);
     			current = true;
     		},
     		p: function update(ctx, dirty) {
-    			if ((!current || dirty & /*value*/ 1) && t0_value !== (t0_value = /*attr*/ ctx[9].value + "")) set_data_dev(t0, t0_value);
+    			if ((!current || dirty & /*value*/ 1) && t0_value !== (t0_value = /*attr*/ ctx[9].key + "")) set_data_dev(t0, t0_value);
+    			if ((!current || dirty & /*value*/ 1) && t2_value !== (t2_value = /*attr*/ ctx[9].value + "")) set_data_dev(t2, t2_value);
     			const button_changes = {};
     			if (dirty & /*value*/ 1) button_changes.id = /*attr*/ ctx[9].key;
 

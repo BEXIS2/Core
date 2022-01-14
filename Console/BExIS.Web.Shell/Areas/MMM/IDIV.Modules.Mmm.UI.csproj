@@ -184,6 +184,7 @@
     <Content Include="MediaInfoDotNet.dll.config">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="Mmm.Settings.json" />
     <None Include="packages.config" />
     <Content Include="Stylesheets\MultimediaData.css" />
     <Content Include="Views\Web.config">
@@ -336,7 +337,7 @@
   </ProjectExtensions>
   <PropertyGroup>
     <PostBuildEvent>mkdir "$(SolutionDir)Console\Workspace\Modules\MMM"
-C:\Windows\System32\xcopy "$(ProjectDir)Mmm.Settings.xml" "$(SolutionDir)Console\Workspace\Modules\MMM" /C /Y /I</PostBuildEvent>
+C:\Windows\System32\xcopy "$(ProjectDir)Mmm.Settings.json" "$(SolutionDir)Console\Workspace\Modules\MMM" /C /Y /I</PostBuildEvent>
   </PropertyGroup>
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>
