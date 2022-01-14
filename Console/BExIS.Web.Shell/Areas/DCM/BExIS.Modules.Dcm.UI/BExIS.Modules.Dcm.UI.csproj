@@ -357,6 +357,9 @@
     <Content Include="Dcm.Manifest.xml">
       <SubType>Designer</SubType>
     </Content>
+    <None Include="Dcm.Settings.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <Content Include="Dcm.Settings.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -928,9 +931,11 @@
     </VisualStudio>
   </ProjectExtensions>
   <PropertyGroup>
-    <PostBuildEvent>
-			mkdir "$(SolutionDir)Console\Workspace\Modules\DCM"
-			C:\Windows\System32\xcopy "$(ProjectDir)Dcm.Settings.xml" "$(SolutionDir)Console\Workspace\Modules\DCM" /C /Y /I
+    <PostBuildEvent>mkdir "$(SolutionDir)Console\Workspace\Modules\DCM"
+C:\Windows\System32\xcopy "$(ProjectDir)Dcm.Settings.xml" "$(SolutionDir)Console\Workspace\Modules\DCM" /C /Y /I
+		
+mkdir "$(SolutionDir)Console\Workspace\Modules\DCM"
+C:\Windows\System32\xcopy "$(ProjectDir)Dcm.Settings.json" "$(SolutionDir)Console\Workspace\Modules\DCM" /C /Y /I
 		</PostBuildEvent>
   </PropertyGroup>
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

@@ -74,7 +74,6 @@ namespace BExIS.Web.Shell
                  "~/Themes/Default/Styles/bexis-telerik.css"
                 ));
 
-
             #region sveltelayout
 
             bundles.Add(new ScriptBundle("~/bundles/svelte_jquery").Include(
@@ -91,8 +90,7 @@ namespace BExIS.Web.Shell
             bundles.Add(new StyleBundle("~/Content/svelte_css").Include(
                 "~/Content/Site.css"));
 
-            #endregion
-
+            #endregion sveltelayout
 
             BundleTable.EnableOptimizations = true;
         }
