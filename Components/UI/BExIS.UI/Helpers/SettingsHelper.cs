@@ -52,21 +52,36 @@ namespace BExIS.UI.Helpers
 
         public bool KeyExist(string key)
         {
-            XDocument settings = XDocument.Load(_filePath);
-            XElement element = XmlUtility.GetXElementByAttribute("entry", "key", key, settings);
+            // variable input check
+            if (string.IsNullOrEmpty(key)) return false;
 
-            return element != null ? true : false;
+            // load settings
+            ModuleSettings settings = LoadSettings();
+            
+            // return true if key exist in entry list
+            if (settings.Entry.Any(e => e.Key.Equals(key))) return true;
+
+            return false; // no netry with key exist
+           
         }
 
         public string GetValue(string key)
         {
-            XDocument settings = XDocument.Load(_filePath);
-            XElement element = XmlUtility.GetXElementByAttribute("entry", "key", key, settings);
+            // variable input check
+            if (string.IsNullOrEmpty(key)) return "";
 
-            string value = "";
-            value = element.Attribute("value")?.Value;
+            // load settings
+            ModuleSettings settings = LoadSettings();
 
-            return value;
+            // return value if key exist in entry list
+            if (settings.Entry.Any(e => e.Key.Equals(key)))
+            {
+                var entry = settings.Entry.Where(e => e.Key.Equals(key)).FirstOrDefault();
+                return entry != null ? entry.Value : "";
+            }
+
+            return ""; // no netry with key exist
+
         }
 
         public List<KeyValuePair<string, string>> GetList(string value)
@@ -91,24 +106,7 @@ namespace BExIS.UI.Helpers
             return tmp;
         }
 
-        #region looad and update
-
-        public XDocument Load()
-        {
-            try
-            {
-                if (File.Exists(_filePath))
-                {
-                    return XDocument.Load(_filePath);
-                }
-            }
-            catch (Exception ex)
-            {
-                throw new Exception("settings file of Module (" + _moduleId + ") does not exist", ex);
-            }
-
-            return null;
-        }
+        #region update
 
         /// <summary>
         /// Convert settings model to json and store it in the worskapce based on id

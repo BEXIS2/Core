@@ -30,9 +30,16 @@ namespace BExIS.Web.Shell.Controllers
         {
             List<object> modules = new List<object>();
 
+            // add shell
+            ModulModel module = new ModulModel();
+            module.Id = "shell";
+            module.Title = "Website";
+            module.Description = "Website";
+            modules.Add(module);
+
             foreach (var m in ModuleManager.ModuleInfos.Where(m => ModuleManager.IsActive(m.Id)))
             {
-                ModulModel module = new ModulModel();
+                module = new ModulModel();
                 module.Id = m.Id;
 
                 // get displayname from manifest file root node
@@ -58,7 +65,7 @@ namespace BExIS.Web.Shell.Controllers
         {
             List<string> settings = new List<string>();
 
-            if (ModuleManager.IsActive(id))
+            if (id.Equals("shell") || ModuleManager.IsActive(id))
             {
                 SettingsHelper settingsHelper = new SettingsHelper(id);
                 return Json(settingsHelper.LoadSettings(), JsonRequestBehavior.AllowGet);
