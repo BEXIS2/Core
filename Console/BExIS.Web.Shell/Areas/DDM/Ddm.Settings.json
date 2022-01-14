@@ -1,0 +1,55 @@
+{
+  "id": "ddm",
+  "name": "data discovery",
+  "description": "...",
+  "entry": [
+    {
+      "key": "help",
+      "value": "https://github.com/BEXIS2/Documents/blob/2.14.5/Manuals/DDM/DataDiscovery_Manual.md",
+      "type": "String",
+      "description": "URL to manual"
+    },
+    {
+      "key": "show_primary_data_tab",
+      "value": "true",
+      "type": "Boolean",
+      "description": "Show primary data"
+    },
+    {
+      "key": "show_data_structure_tab",
+      "value": "true",
+      "type": "Boolean",
+      "description": "Show data structure"
+    },
+    {
+      "key": "show_link_tab",
+      "value": "true",
+      "type": "Boolean",
+      "description": "Show links"
+    },
+    {
+      "key": "show_permission_tab",
+      "value": "true",
+      "type": "Boolean",
+      "description": "Show permissions"
+    },
+    {
+      "key": "show_publish_tab",
+      "value": "true",
+      "type": "Boolean",
+      "description": "Show publish"
+    },
+    {
+      "key": "show_attachments_tab",
+      "value": "true",
+      "type": "Boolean",
+      "description": "Show attachments"
+    },
+    {
+      "key": "check_public_metadata",
+      "value": "false",
+      "type": "Boolean",
+      "description": "Set true to enable to only show metadata for not-loggedin users, if the dataset is public."
+    }
+  ]
+}

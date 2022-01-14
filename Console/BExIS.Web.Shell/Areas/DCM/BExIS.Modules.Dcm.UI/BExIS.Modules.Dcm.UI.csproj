@@ -932,9 +932,6 @@
   </ProjectExtensions>
   <PropertyGroup>
     <PostBuildEvent>mkdir "$(SolutionDir)Console\Workspace\Modules\DCM"
-C:\Windows\System32\xcopy "$(ProjectDir)Dcm.Settings.xml" "$(SolutionDir)Console\Workspace\Modules\DCM" /C /Y /I
-		
-mkdir "$(SolutionDir)Console\Workspace\Modules\DCM"
 C:\Windows\System32\xcopy "$(ProjectDir)Dcm.Settings.json" "$(SolutionDir)Console\Workspace\Modules\DCM" /C /Y /I
 		</PostBuildEvent>
   </PropertyGroup>

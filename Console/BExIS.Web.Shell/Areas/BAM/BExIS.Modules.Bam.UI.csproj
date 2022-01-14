@@ -154,6 +154,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Bam.Settings.json" />
     <Content Include="Bam.Settings.xml" />
     <Content Include="Content\bootstrap-theme.css" />
     <Content Include="Content\bootstrap-theme.min.css" />
@@ -347,7 +348,7 @@
   </ProjectExtensions>
   <PropertyGroup>
     <PostBuildEvent>mkdir "$(SolutionDir)Console\Workspace\Modules\BAM"
-C:\Windows\System32\xcopy "$(ProjectDir)Bam.Settings.xml" "$(SolutionDir)Console\Workspace\Modules\BAM" /C /Y /I</PostBuildEvent>
+C:\Windows\System32\xcopy "$(ProjectDir)Bam.Settings.json" "$(SolutionDir)Console\Workspace\Modules\BAM" /C /Y /I</PostBuildEvent>
   </PropertyGroup>
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>

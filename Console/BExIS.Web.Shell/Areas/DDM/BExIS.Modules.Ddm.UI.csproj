@@ -374,6 +374,7 @@
     <Content Include="Content\bootstrap.css.map" />
     <Content Include="Content\bootstrap-theme.min.css.map" />
     <Content Include="Content\bootstrap-theme.css.map" />
+    <Content Include="Ddm.Settings.json" />
     <None Include="packages.config" />
     <Content Include="Scripts\modernizr-2.8.3.js" />
     <Content Include="Scripts\respond.matchmedia.addListener.js" />
@@ -598,7 +599,7 @@
   </ProjectExtensions>
   <PropertyGroup>
     <PostBuildEvent>mkdir "$(SolutionDir)Console\Workspace\Modules\DDM"
-C:\Windows\System32\xcopy "$(ProjectDir)Ddm.Settings.xml" "$(SolutionDir)Console\Workspace\Modules\DDM" /C /Y /I</PostBuildEvent>
+C:\Windows\System32\xcopy "$(ProjectDir)Ddm.Settings.json" "$(SolutionDir)Console\Workspace\Modules\DDM" /C /Y /I</PostBuildEvent>
   </PropertyGroup>
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>
