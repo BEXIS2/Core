@@ -30,7 +30,7 @@
     <SccLocalPath>SAK</SccLocalPath>
     <SccAuxPath>SAK</SccAuxPath>
     <SccProvider>SAK</SccProvider>
-    <IISExpressSSLPort>44345</IISExpressSSLPort>
+    <IISExpressSSLPort>44380</IISExpressSSLPort>
     <IISExpressAnonymousAuthentication>
     </IISExpressAnonymousAuthentication>
     <IISExpressWindowsAuthentication>
@@ -407,6 +407,7 @@
     <Compile Include="App_Start\SwaggerConfig.cs" />
     <Compile Include="Attributes\BExISAuthorizeAttribute.cs" />
     <Compile Include="Controllers\AccountController.cs" />
+    <Compile Include="Controllers\API\TokenController.cs" />
     <Compile Include="Controllers\ErrorController.cs" />
     <Compile Include="Controllers\FooterController.cs" />
     <Compile Include="Controllers\HelpController.cs" />
