@@ -47,7 +47,7 @@
     <Use64BitIISExpress />
     <PostSharpHostConfigurationFile>web.config</PostSharpHostConfigurationFile>
     <DontImportPostSharp>True</DontImportPostSharp>
-    <TypeScriptCompileBlocked>true</TypeScriptCompileBlocked>
+    <TypeScriptCompileBlocked>True</TypeScriptCompileBlocked>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -334,9 +334,9 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>UploadLocalization.zh-CN.resx</DependentUpon>
     </Compile>
-    <Compile Include="App_GlobalResources\App_Start\BundleConfig.cs" />
-    <Compile Include="App_GlobalResources\App_Start\RegisterClientValidationExtensions.cs" />
-    <Compile Include="App_GlobalResources\App_Start\SwaggerConfig.cs" />
+    <Compile Include="App_Start\BundleConfig.cs" />
+    <Compile Include="App_Start\RegisterClientValidationExtensions.cs" />
+    <Compile Include="App_Start\SwaggerConfig.cs" />
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\ErrorController.cs" />
     <Compile Include="Controllers\FooterController.cs" />
