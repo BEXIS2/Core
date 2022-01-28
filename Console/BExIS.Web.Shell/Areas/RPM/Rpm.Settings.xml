@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <settings id="rpm" name="research plan" description="...">
-	<entry key="help" value="https://github.com/BEXIS2/Documents/blob/2.14.4/Manuals/RPM/Manual.md" type="String" description="URL to manual"/>
-	<entry key="optionalDefault" value="true" type="Boolean" description="..."/>
-	<entry key="showCreateVariableTemplate" value="true" type="Boolean" description="Show -Create Variable Template- on data structure edit"/>
-	
+	<entry key="help" value="https://github.com/BEXIS2/Documents/blob/2.14.5/Manuals/RPM/Manual.md" type="String" description="URL to manual" />
+	<entry key="optionalDefault" value="true" type="Boolean" description="..." />
+	<entry key="showCreateVariableTemplate" value="true" type="Boolean" description="Show -Create Variable Template- on data structure edit" />
+
 	<entry key="name" value="missingvalues" type="list" description="placeholder... description...">
 		<item>
 			<attribute key="placeholder" value="na" type="String" />
-			<attribute key="description" value="not available" type="String"/>
+			<attribute key="description" value="not available" type="String" />
 		</item>
 		<item>
-			<attribute key="placeholder" value="NM" type="String"  />
+			<attribute key="placeholder" value="NM" type="String" />
 			<attribute key="description" value="not measured" type="String" />
 		</item>
 	</entry>
@@ -24,5 +24,4 @@
 	</missingValues>
 	<optionalDefault>true</optionalDefault>
 	<showCreateVariableTemplate description="Show -Create Variable Template- on data structure edit">true</showCreateVariableTemplate>
-
 </settings>

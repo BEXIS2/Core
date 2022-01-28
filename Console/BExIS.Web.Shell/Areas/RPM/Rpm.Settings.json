@@ -5,7 +5,7 @@
   "entry": [
     {
       "key": "help",
-      "value": "https://github.com/BEXIS2/Documents/blob/2.14.4/Manuals/RPM/Manual.md",
+      "value": "https://github.com/BEXIS2/Documents/blob/2.14.5/Manuals/RPM/Manual.md",
       "type": "String",
       "description": "URL to manual"
     },
@@ -42,7 +42,6 @@
           ]
         },
         {
-
           "attribute": [
             {
               "key": "placeholder",
