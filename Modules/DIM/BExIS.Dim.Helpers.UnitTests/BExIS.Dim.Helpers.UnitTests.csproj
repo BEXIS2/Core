@@ -1,0 +1,52 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net452</TargetFramework>
+
+    <IsPackable>false</IsPackable>
+
+    <UserSecretsId>24eb1839-6113-4ece-a0e3-7fb9d78cd7fd</UserSecretsId>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Cquential.Microsoft.Practices.Unity" Version="2.0.414" />
+    <PackageReference Include="Microsoft.AspNet.WebApi.Core" Version="5.2.3" />
+    <PackageReference Include="Newtonsoft.Json" Version="11.0.1" />
+    <PackageReference Include="NHibernate" Version="4.1.1.4000" />
+    <PackageReference Include="Npgsql" Version="4.0.0" />
+    <PackageReference Include="NUnit" Version="3.12.0" />
+    <PackageReference Include="NUnit3TestAdapter" Version="3.16.1" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.5.0" />
+    <PackageReference Include="Unity" Version="4.0.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\Components\App\BExIS.App.Testing\BExIS.App.Testing.csproj" />
+    <ProjectReference Include="..\..\..\Components\DLM\BExIS.Dlm.Tests\BExIS.Dlm.Tests.csproj" />
+    <ProjectReference Include="..\BExIS.Dim.Helper\BExIS.Dim.Helpers.csproj" />
+    <ProjectReference Include="..\BExIS.Dim.NH.ORM\BExIS.Dim.Orm.NH.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="System.Web" />
+    <Reference Include="Vaiona.Persistence.Api">
+      <HintPath>..\..\..\Libraries\Vaiona\Vaiona.Persistence.Api.dll</HintPath>
+    </Reference>
+    <Reference Include="Vaiona.PersistenceProviders.NH">
+      <HintPath>..\..\..\Libraries\Vaiona\Vaiona.PersistenceProviders.NH.dll</HintPath>
+    </Reference>
+    <Reference Include="Vaiona.Web.Mvc.Modularity">
+      <HintPath>..\..\..\Libraries\Vaiona\Vaiona.Web.Mvc.Modularity.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="app.config">
+      <SubType>Designer</SubType>
+    </None>
+    <None Update="Data\GetValuesFromMetadata_MultiMappingsOnDifferentKomplexTypes_ListOfValues.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+</Project>
