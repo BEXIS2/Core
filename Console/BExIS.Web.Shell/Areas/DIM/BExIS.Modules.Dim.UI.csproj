@@ -754,6 +754,10 @@
       <Project>{81ef18e8-dced-4980-96f9-e99124075b82}</Project>
       <Name>BExIS.Dim.Helpers</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\..\..\Modules\DIM\BExIS.Dim.NH.ORM\BExIS.Dim.Orm.NH.csproj">
+      <Project>{224e53ec-9b13-4627-8ca9-edeabc7987d6}</Project>
+      <Name>BExIS.Dim.Orm.NH</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\..\..\Modules\DIM\BExIS.Dim.Services\BExIS.Dim.Services.csproj">
       <Project>{cac933a2-6849-4c61-82b4-cbf4052210cc}</Project>
       <Name>BExIS.Dim.Services</Name>
