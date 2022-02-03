@@ -150,10 +150,6 @@
     <Content Include="Rpm.Manifest.xml">
       <SubType>Designer</SubType>
     </Content>
-    <Content Include="Rpm.Settings.xml">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-      <SubType>Designer</SubType>
-    </Content>
     <Content Include="Scripts\2013.2.611\jquery-1.7.1.min.js" />
     <Content Include="Scripts\2013.2.611\jquery.validate.min.js" />
     <Content Include="Scripts\2013.2.611\telerik.all.min.js" />

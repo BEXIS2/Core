@@ -355,9 +355,6 @@
     <Content Include="Sam.Manifest.xml">
       <SubType>Designer</SubType>
     </Content>
-    <Content Include="Sam.Settings.xml">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
     <Content Include="Scripts\ai.0.22.19-build00125.js" />
     <Content Include="Scripts\ai.0.22.19-build00125.min.js" />
     <Content Include="fonts\glyphicons-halflings-regular.woff2" />

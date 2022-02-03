@@ -155,7 +155,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Bam.Settings.json" />
-    <Content Include="Bam.Settings.xml" />
     <Content Include="Content\bootstrap-theme.css" />
     <Content Include="Content\bootstrap-theme.min.css" />
     <Content Include="Content\bootstrap.css" />

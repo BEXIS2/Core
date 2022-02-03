@@ -361,9 +361,6 @@
     <Content Include="Ddm.Manifest.xml">
       <SubType>Designer</SubType>
     </Content>
-    <Content Include="Ddm.Settings.xml">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
     <Content Include="Scripts\ddm.js" />
     <Content Include="fonts\glyphicons-halflings-regular.woff2" />
