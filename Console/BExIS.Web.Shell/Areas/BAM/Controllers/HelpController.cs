@@ -11,6 +11,7 @@ using BExIS.Xml.Helpers;
 using Vaiona.Utils.Cfg;
 using BExIS.Dlm.Services.Data;
 using BExIS.UI.Helpers;
+using Vaiona.Web.Mvc.Modularity;
 
 namespace BExIS.Modules.Bam.UI.Controllers
 {
@@ -19,11 +20,10 @@ namespace BExIS.Modules.Bam.UI.Controllers
         // GET: Help
         public ActionResult Index()
         {
-            SettingsHelper settingsHelper = new SettingsHelper("BAM");
-            string helpurl = settingsHelper.GetValue("help");
+            var moduleInfo = ModuleManager.GetModuleInfo("BAM");
+            string helpurl = moduleInfo.Plugin.Settings.GetEntryValue("help").ToString();
 
             return Redirect(helpurl);
-
         }
     }
 }

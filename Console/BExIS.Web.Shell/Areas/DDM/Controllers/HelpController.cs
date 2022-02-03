@@ -9,6 +9,7 @@ using System.Xml.Linq;
 using System.Net;
 using System.Web;
 using BExIS.UI.Helpers;
+using Vaiona.Web.Mvc.Modularity;
 
 namespace BExIS.Modules.Ddm.UI.Controllers
 {
@@ -19,11 +20,10 @@ namespace BExIS.Modules.Ddm.UI.Controllers
 
         public ActionResult Index()
         {
-            SettingsHelper settingsHelper = new SettingsHelper("DDM");
-            string helpurl = settingsHelper.GetValue("help");
+            var moduleInfo = ModuleManager.GetModuleInfo("DDM");
+            string helpurl = moduleInfo.Plugin.Settings.GetEntryValue("help").ToString();
 
             return Redirect(helpurl);
-
         }
     }
 }

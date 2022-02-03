@@ -19,7 +19,7 @@ namespace BExIS.App.Bootstrap
 
         public GeneralSettings() : 
             base("Shell",
-                Path.Combine(AppConfiguration.WorkspaceGeneralRoot, "General.Settings.xml"))
+                Path.Combine(AppConfiguration.WorkspaceGeneralRoot, "General.Settings.json"))
         {
             // Nothing should be needed for now!
         }

@@ -1,4 +1,5 @@
-﻿using BExIS.App.Bootstrap.Attributes;
+﻿using BExIS.App.Bootstrap;
+using BExIS.App.Bootstrap.Attributes;
 using BExIS.UI.Helpers;
 using BExIS.UI.Models;
 using BExIS.Web.Shell.Models;
@@ -13,6 +14,7 @@ using System.Web;
 using System.Web.Mvc;
 using System.Xml;
 using System.Xml.Linq;
+using Vaiona.IoC;
 using Vaiona.Utils.Cfg;
 using Vaiona.Web.Mvc.Modularity;
 
@@ -63,12 +65,18 @@ namespace BExIS.Web.Shell.Controllers
         [JsonNetFilter]
         public JsonResult Load(string id)
         {
-            List<string> settings = new List<string>();
-
-            if (id.Equals("shell") || ModuleManager.IsActive(id))
+            if (id == "shell")
             {
-                SettingsHelper settingsHelper = new SettingsHelper(id);
-                return Json(settingsHelper.LoadSettings(), JsonRequestBehavior.AllowGet);
+                GeneralSettings generalSettings = IoCFactory.Container.Resolve<GeneralSettings>();
+                generalSettings.Get();
+                return Json(generalSettings.Get(), JsonRequestBehavior.AllowGet);
+            }
+
+            if (ModuleManager.IsActive(id))
+            {
+                var moduleInfo = ModuleManager.GetModuleInfo(id);
+
+                return Json(moduleInfo.Plugin.Settings.Get(), JsonRequestBehavior.AllowGet);
             }
 
             return Json(false, JsonRequestBehavior.AllowGet);
@@ -76,7 +84,7 @@ namespace BExIS.Web.Shell.Controllers
 
         [HttpPost]
         [JsonNetFilter]
-        public JsonResult Save(UI.Models.ModuleSettings settings)
+        public JsonResult Save(JsonSettings settings)
         {
             //check incoming values
             if (settings == null) throw new ArgumentNullException("settings");
@@ -86,9 +94,17 @@ namespace BExIS.Web.Shell.Controllers
 
             try
             {
-                SettingsHelper settingsHelper = new SettingsHelper(settings.Id);
-                //update settings in json
-                settingsHelper.Update(settings);
+                if (settings.Id == "shell")
+                {
+                    GeneralSettings generalSettings = IoCFactory.Container.Resolve<GeneralSettings>();
+                    generalSettings.Update(settings);
+                }
+
+                if (ModuleManager.IsActive(settings.Id))
+                {
+                    var moduleInfo = ModuleManager.GetModuleInfo(settings.Id);
+                    moduleInfo.Plugin.Settings.Update(settings);
+                }
 
                 return Json(true);
             }

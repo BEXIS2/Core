@@ -48,7 +48,6 @@ namespace BExIS.Web.Shell.Controllers
                         landingPageForUsers.Split(',')[2].Trim());//action
                 }
 
-
                 //if the landingPage not null and the action is accessable
                 if (landingPage == null || !this.IsAccessible(landingPage.Item1, landingPage.Item2, landingPage.Item3) || !checkPermission(landingPage))
                 {
@@ -87,16 +86,15 @@ namespace BExIS.Web.Shell.Controllers
                 return View(); // open shell/home/index
 
             // return result of defined landing page
-            var result = this.Render(landingPage.Item1, landingPage.Item2, landingPage.Item3);  
+            var result = this.Render(landingPage.Item1, landingPage.Item2, landingPage.Item3);
             return Content(result.ToHtmlString(), "text/html");
         }
-        
-        [DoesNotNeedDataAccess]
-        public ActionResult Nopermission() {
 
+        [DoesNotNeedDataAccess]
+        public ActionResult Nopermission()
+        {
             return View("NoPermission");
         }
-
 
         [DoesNotNeedDataAccess]
         public ActionResult SessionTimeout()
@@ -118,8 +116,8 @@ namespace BExIS.Web.Shell.Controllers
                 var database = versionManager.GetLatestVersion().Value;
 
                 // load version from workspace in settings file of general
-                SettingsHelper settingsHelper = new SettingsHelper("shell");
-                string workspace = settingsHelper.GetValue("version");
+                GeneralSettings generalSettings = IoCFactory.Container.Resolve<GeneralSettings>();
+                string workspace = generalSettings.GetEntryValue("version").ToString();
 
                 var model = new VersionModel()
                 {
@@ -142,7 +140,6 @@ namespace BExIS.Web.Shell.Controllers
 
             try
             {
-
                 var areaName = LandingPage.Item1;
                 if (areaName == "")
                 {
@@ -153,19 +150,19 @@ namespace BExIS.Web.Shell.Controllers
 
                 var userName = HttpContext.User?.Identity?.Name;
                 var operation = operationManager.Find(areaName, controllerName, "*");
-                
+
                 var feature = operation.Feature;
                 if (feature == null) return true;
 
                 var result = userManager.FindByNameAsync(userName);
 
-
                 if (featurePermissionManager.HasAccess(result.Result?.Id, feature.Id))
                 {
                     return true;
                 }
-                else { 
-                    return false; 
+                else
+                {
+                    return false;
                 }
             }
             finally

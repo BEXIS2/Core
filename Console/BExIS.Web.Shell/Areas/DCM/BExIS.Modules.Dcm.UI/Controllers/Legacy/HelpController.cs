@@ -1,5 +1,6 @@
 ﻿using BExIS.UI.Helpers;
 using System.Web.Mvc;
+using Vaiona.Web.Mvc.Modularity;
 
 namespace BExIS.Modules.Dcm.UI.Controllers
 {
@@ -11,8 +12,8 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         public ActionResult Index()
         {
             // commentar
-            SettingsHelper helper = new SettingsHelper("DCM");
-            string helpurl = helper.GetValue("help");
+            var moduleInfo = ModuleManager.GetModuleInfo("DCM");
+            string helpurl = moduleInfo.Plugin.Settings.GetEntryValue("help").ToString();
 
             return Redirect(helpurl);
         }

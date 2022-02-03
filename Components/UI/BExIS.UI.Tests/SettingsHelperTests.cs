@@ -38,7 +38,6 @@ namespace BExIS.UI.Tests
             string moduleId = "Dcm";
 
             string path = @"C:\Users\admin\source\repos\Bexis2\BEXIS2 - Core - Workspace\Core\Console\Workspace\Modules\DCM\Dcm.Settings.json";
-            SettingsHelper settingsHelper = new SettingsHelper(moduleId);
 
             //Act
 

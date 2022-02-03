@@ -32,6 +32,7 @@ using Vaiona.Entities.Common;
 using Vaiona.Logging.Aspects;
 using Vaiona.Persistence.Api;
 using Vaiona.Web.Mvc;
+using Vaiona.Web.Mvc.Modularity;
 
 namespace BExIS.Modules.Dcm.UI.Controllers
 {
@@ -70,7 +71,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
             model = updateModel(model);
 
-            if (TaskManager.Bus.ContainsKey(TaskManager.DATASET_TITLE) && TaskManager.Bus[TaskManager.DATASET_TITLE]  != null)
+            if (TaskManager.Bus.ContainsKey(TaskManager.DATASET_TITLE) && TaskManager.Bus[TaskManager.DATASET_TITLE] != null)
             {
                 model.DatasetTitle = TaskManager.Bus[TaskManager.DATASET_TITLE].ToString();
             }
@@ -116,8 +117,8 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 var user = GetUser();
 
                 es.Send(MessageHelper.GetASyncStartUploadHeader(id, model.DatasetTitle),
-                    MessageHelper.GetASyncStartUploadMessage(id, model.DatasetTitle,numberOfRows),
-                    new List<string>() { user.Email },null,
+                    MessageHelper.GetASyncStartUploadMessage(id, model.DatasetTitle, numberOfRows),
+                    new List<string>() { user.Email }, null,
                     new List<string>() { ConfigurationManager.AppSettings["SystemEmail"] }
                     );
 
@@ -135,7 +136,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 {
                     foreach (var error in errors)
                     {
-                        ModelState.AddModelError("",error.ToHtmlString());
+                        ModelState.AddModelError("", error.ToHtmlString());
                     }
                 }
             }
@@ -178,13 +179,13 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
             //dataset
             if (_bus.ContainsKey(TaskManager.DATASET_ID)) model.DatasetId = Convert.ToInt32(_bus[TaskManager.DATASET_ID]);
-            if (_bus.ContainsKey(TaskManager.DATASET_TITLE))model.DatasetTitle = _bus[TaskManager.DATASET_TITLE].ToString();
-            if (_bus.ContainsKey(TaskManager.DATASET_STATUS))model.DatasetStatus = _bus[TaskManager.DATASET_STATUS].ToString();
+            if (_bus.ContainsKey(TaskManager.DATASET_TITLE)) model.DatasetTitle = _bus[TaskManager.DATASET_TITLE].ToString();
+            if (_bus.ContainsKey(TaskManager.DATASET_STATUS)) model.DatasetStatus = _bus[TaskManager.DATASET_STATUS].ToString();
 
             //datastructure
-            if (_bus.ContainsKey(TaskManager.DATASTRUCTURE_ID))model.DataStructureId = Convert.ToInt32(_bus[TaskManager.DATASTRUCTURE_ID]);
-            if (_bus.ContainsKey(TaskManager.DATASTRUCTURE_TITLE))model.DataStructureTitle = _bus[TaskManager.DATASTRUCTURE_TITLE].ToString();
-            if (_bus.ContainsKey(TaskManager.DATASTRUCTURE_TYPE))model.DataStructureType = _bus[TaskManager.DATASTRUCTURE_TYPE].ToString();
+            if (_bus.ContainsKey(TaskManager.DATASTRUCTURE_ID)) model.DataStructureId = Convert.ToInt32(_bus[TaskManager.DATASTRUCTURE_ID]);
+            if (_bus.ContainsKey(TaskManager.DATASTRUCTURE_TITLE)) model.DataStructureTitle = _bus[TaskManager.DATASTRUCTURE_TITLE].ToString();
+            if (_bus.ContainsKey(TaskManager.DATASTRUCTURE_TYPE)) model.DataStructureType = _bus[TaskManager.DATASTRUCTURE_TYPE].ToString();
 
             //upload
 
@@ -200,7 +201,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             {
                 List<long> keys = (List<long>)_bus[TaskManager.PRIMARY_KEYS];
                 if (keys.Count() == 0) model.PrimaryKeys = "N/A";
-                else model.PrimaryKeys = string.Join(",",keys);
+                else model.PrimaryKeys = string.Join(",", keys);
             }
             else model.PrimaryKeys = "N/A";
 
@@ -217,10 +218,11 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             int cellLimit = 0;
 
             //get cellLimt from settings
-            SettingsHelper settingsHelper = new SettingsHelper("DCM");
-            if (settingsHelper.KeyExist("celllimit"))
+            var moduleInfo = ModuleManager.GetModuleInfo("SAM");
+            var settings = moduleInfo.Plugin.Settings;
+
+            if (Int32.TryParse(settings.GetEntryValue("celllimit").ToString(), out cellLimit))
             {
-                Int32.TryParse(settingsHelper.GetValue("celllimit"), out cellLimit);
                 if (cellLimit == 0) cellLimit = 100000;
             }
 
