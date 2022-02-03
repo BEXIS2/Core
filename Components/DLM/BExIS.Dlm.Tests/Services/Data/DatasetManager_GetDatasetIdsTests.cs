@@ -5,6 +5,7 @@ using BExIS.Dlm.Services.Administration;
 using BExIS.Dlm.Services.Data;
 using BExIS.Dlm.Services.MetadataStructure;
 using BExIS.Dlm.Tests.Helpers;
+using BExIS.Utils;
 using BExIS.Utils.Config;
 using BExIS.Utils.Upload;
 using FluentAssertions;
@@ -19,7 +20,6 @@ using Vaiona.Persistence.Api;
 namespace BExIS.Dlm.Tests.Services.Data
 {
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Reliability", "CA2000:Objekte verwerfen, bevor Bereich verloren geht", Justification = "<Ausstehend>")]
-
     [TestFixture()]
     public class DatasetManager_GetDatasetIdsTests
     {
@@ -63,7 +63,6 @@ namespace BExIS.Dlm.Tests.Services.Data
                 dm.CheckInDataset(dataset.Id, "for testing purposes 2", "David", ViewCreationBehavior.None);
                 dm.SyncView(dataset.Id, ViewCreationBehavior.Create | ViewCreationBehavior.Refresh);
             }
-
         }
 
         [OneTimeTearDown]
@@ -94,7 +93,6 @@ namespace BExIS.Dlm.Tests.Services.Data
                 //Assert
                 Assert.That(checkedInCount, Is.EqualTo(count));
                 Assert.That(checkedInCount, Is.EqualTo(10));
-
             }
             catch (Exception ex)
             {
@@ -105,6 +103,5 @@ namespace BExIS.Dlm.Tests.Services.Data
                 datasetManager.Dispose();
             }
         }
-
     }
 }

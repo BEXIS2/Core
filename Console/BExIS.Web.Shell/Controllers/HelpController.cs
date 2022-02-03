@@ -1,5 +1,7 @@
 ﻿using BExIS.App.Bootstrap;
 using BExIS.UI.Helpers;
+using BExIS.Utils;
+using BExIS.Utils.Config;
 using BExIS.Xml.Helpers;
 using System;
 using System.Collections.Generic;

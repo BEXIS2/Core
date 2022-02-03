@@ -6,7 +6,7 @@ using BExIS.Dlm.Services.Data;
 using BExIS.Dlm.Services.DataStructure;
 using BExIS.Dlm.Services.MetadataStructure;
 using BExIS.Dlm.Tests.Helpers;
-using BExIS.Utils.Config;
+using BExIS.Utils;
 using BExIS.Utils.Data.Helpers;
 using BExIS.Web.Shell;
 using BExIS.Web.Shell.Helpers;
@@ -19,6 +19,7 @@ using BExIS.Dlm.Entities.Administration;
 using BExIS.Utils.NH.Querying;
 using System.Web;
 using System.Security.Principal;
+using BExIS.Utils.Config;
 
 namespace BExIS.Dlm.Tests.Services.Data
 {
@@ -143,7 +144,7 @@ namespace BExIS.Dlm.Tests.Services.Data
                 mds.Should().NotBeNull("Failed to meet a precondition: a metadata strcuture is required.");
 
                 Dataset dataset = dm.CreateEmptyDataset(dataStructure, rp, mds);
-                dataset = dsHelper.GenerateTuplesForDataset(dataset, dataStructure, numberOfTuples,"Javad");
+                dataset = dsHelper.GenerateTuplesForDataset(dataset, dataStructure, numberOfTuples, "Javad");
                 dataset.Should().NotBeNull("The dataset tuple generation has failed!");
 
                 dm.CheckInDataset(dataset.Id, "for testing purposes 2", "Javad", ViewCreationBehavior.None);
@@ -300,7 +301,7 @@ namespace BExIS.Dlm.Tests.Services.Data
                 mds.Should().NotBeNull("Failed to meet a precondition: a metadata strcuture is required.");
 
                 Dataset dataset = dm.CreateEmptyDataset(dataStructure, rp, mds);
-                dataset = dsHelper.GenerateTuplesForDataset(dataset, dataStructure, numberOfTuples,"Javad");
+                dataset = dsHelper.GenerateTuplesForDataset(dataset, dataStructure, numberOfTuples, "Javad");
                 dataset.Should().NotBeNull("The dataset tuple generation has failed!");
 
                 dm.CheckInDataset(dataset.Id, "for testing purposes 2", "Javad", ViewCreationBehavior.None);
@@ -365,8 +366,6 @@ namespace BExIS.Dlm.Tests.Services.Data
                     dm.CheckInDataset(dataset.Id, "no update on data tuples", "David", ViewCreationBehavior.None);
                 }
 
-                
-
                 // Assert
                 dataset.Status.Should().Be(DatasetStatus.CheckedIn, "Dataset must be in CheckedIn status.");
 
@@ -402,10 +401,6 @@ namespace BExIS.Dlm.Tests.Services.Data
                     dataset.Status.Should().Be(DatasetStatus.CheckedOut, "Dataset must be in CheckedOut status.");
                 }
 
-
-
-               
-
                 dm.PurgeDataset(dataset.Id);
                 dsHelper.PurgeAllDataStructures();
             }
@@ -420,7 +415,6 @@ namespace BExIS.Dlm.Tests.Services.Data
             {
                 try
                 {
-
                     //Arrange
                     var dsHelper = new DatasetHelper();
                     StructuredDataStructure dataStructure = dsHelper.CreateADataStructure();
@@ -434,7 +428,6 @@ namespace BExIS.Dlm.Tests.Services.Data
 
                     Dataset dataset = dm.CreateEmptyDataset(dataStructure, rp, mds);
 
-                
                     // Act
                     if (dm.IsDatasetCheckedOutFor(dataset.Id, "David") || dm.CheckOutDataset(dataset.Id, "David"))
                     {
@@ -466,13 +459,11 @@ namespace BExIS.Dlm.Tests.Services.Data
 
                     dm.PurgeDataset(dataset.Id);
                     dsHelper.PurgeAllDataStructures();
-
                 }
                 catch (Exception ex)
                 {
                     throw ex;
                 }
-
             }
         }
     }

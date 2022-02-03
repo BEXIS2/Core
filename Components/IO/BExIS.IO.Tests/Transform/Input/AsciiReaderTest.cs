@@ -5,6 +5,7 @@ using BExIS.IO.Tests.Helper;
 using BExIS.IO.Transform.Input;
 using BExIS.IO.Transform.Validation.DSValidation;
 using BExIS.IO.Transform.Validation.Exceptions;
+using BExIS.Utils;
 using BExIS.Utils.Config;
 using Moq;
 using NUnit.Framework;
@@ -26,9 +27,6 @@ namespace BExIS.IO.Tests.Transform.Input
         private StructuredDataStructure dataStructure;
 
         [OneTimeSetUp]
-        /// It is called once prior to executing any of the tests in a fixture.
-        /// Multiple methods can be marked. Order is not preserved.
-        /// Inheritance is supported, call sequence form the parents
         public void OneTimeSetUp()
         {
             // because these tests are working on in-memory objects (datasets) only, there is no need to do the test app setup
@@ -41,22 +39,16 @@ namespace BExIS.IO.Tests.Transform.Input
         }
 
         [SetUp]
-        /// performs the initial setup for the tests. This runs once per test, NOT per class!
         protected void SetUp()
         {
         }
 
         [TearDown]
-        /// performs the cleanup after each test
         public void TearDown()
         {
         }
 
         [OneTimeTearDown]
-        /// It is called once after executing all the tests in a fixture.
-        /// Multiple methods can be marked. Order is not preserved.
-        /// Inheritance is supported, call sequence form the children
-        /// Executes only if: counterpart OneTimeSetUp exists and executed successfully.
         public void OneTimeTearDown()
         {
         }
@@ -135,7 +127,6 @@ namespace BExIS.IO.Tests.Transform.Input
         [Test]
         public void ValidateRow_runNotValid_LimitErrors()
         {
-
             //Arrange
 
             DataGeneratorHelper dgh = new DataGeneratorHelper();
@@ -180,7 +171,6 @@ namespace BExIS.IO.Tests.Transform.Input
                 {
                     asciireader.ValidateFile(stream, "", 1);
                 }
-
 
                 //Assert
                 Assert.That(asciireader.ErrorMessages.Count, Is.EqualTo(1000));

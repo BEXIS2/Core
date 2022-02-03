@@ -6,7 +6,7 @@ using FluentAssertions;
 using Moq;
 using BExIS.App.Testing;
 using BExIS.Dlm.Tests.Helpers;
-using BExIS.Utils.Config;
+using BExIS.Utils;
 using BExIS.Dlm.Entities.DataStructure;
 using System.Collections.Generic;
 using BExIS.IO.Transform.Input;
@@ -18,6 +18,7 @@ using System;
 using BExIS.Dlm.Services.Data;
 using BExIS.IO.Tests.Helper;
 using System.Text;
+using BExIS.Utils.Config;
 
 namespace BExIS.IO.Tests.Transform.Input
 {
@@ -31,9 +32,6 @@ namespace BExIS.IO.Tests.Transform.Input
         private static int repeat = 0;
 
         [OneTimeSetUp]
-        /// It is called once prior to executing any of the tests in a fixture.
-        /// Multiple methods can be marked. Order is not preserved.
-        /// Inheritance is supported, call sequence form the parents
         public void OneTimeSetUp()
         {
             // set repeat
@@ -60,22 +58,16 @@ namespace BExIS.IO.Tests.Transform.Input
         }
 
         [SetUp]
-        /// performs the initial setup for the tests. This runs once per test, NOT per class!
         protected void SetUp()
         {
         }
 
         [TearDown]
-        /// performs the cleanup after each test
         public void TearDown()
         {
         }
 
         [OneTimeTearDown]
-        /// It is called once after executing all the tests in a fixture.
-        /// Multiple methods can be marked. Order is not preserved.
-        /// Inheritance is supported, call sequence form the children
-        /// Executes only if: counterpart OneTimeSetUp exists and executed successfully.
         public void OneTimeTearDown()
         {
             var dsHelper = new DatasetHelper();
@@ -251,12 +243,10 @@ namespace BExIS.IO.Tests.Transform.Input
             //test
             DataTuple dt = reader.ReadRow(new List<string>(row), 1);
 
-
             var v1 = dt.VariableValues[0].Value.ToString();
             var v2 = dt.VariableValues[1].Value.ToString();
             var v3 = dt.VariableValues[2].Value.ToString();
             var v4 = dt.VariableValues[3].Value.ToString();
-      
 
             Assert.That(v1, Is.EqualTo("1"));
             Assert.That(v2, Is.EqualTo("test"));
@@ -440,12 +430,11 @@ namespace BExIS.IO.Tests.Transform.Input
         [Test]
         public void ValidateRow_runValid_noErrors()
         {
-
             //Arrange
 
             DataGeneratorHelper dgh = new DataGeneratorHelper();
             var errors = new List<Error>();
-            var testData = dgh.GenerateRowsWithRandomValuesBasedOnDatastructure(dataStructure,",", 1000, true);
+            var testData = dgh.GenerateRowsWithRandomValuesBasedOnDatastructure(dataStructure, ",", 1000, true);
 
             //generate file to read
             Encoding encoding = Encoding.Default;
@@ -477,7 +466,6 @@ namespace BExIS.IO.Tests.Transform.Input
                 List<VariableIdentifier> variableIdentifiers = reader.SetSubmitedVariableIdentifiers(vairableNames.ToList());
                 reader.ValidateComparisonWithDatatsructure(variableIdentifiers);
 
-
                 var asciireader = (AsciiReader)reader;
                 //Act
                 var row = new List<string>();
@@ -495,21 +483,16 @@ namespace BExIS.IO.Tests.Transform.Input
 
                         index++;
                     }
-
                 }
-
 
                 //Assert
                 Assert.That(errors.Count, Is.EqualTo(0));
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 throw ex;
             }
         }
-
-        
-
 
         #endregion Validate Row
     }

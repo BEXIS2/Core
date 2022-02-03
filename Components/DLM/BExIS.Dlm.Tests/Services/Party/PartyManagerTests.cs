@@ -1,6 +1,7 @@
 ﻿using BExIS.App.Testing;
 using BExIS.Dlm.Entities.Party;
 using BExIS.Dlm.Services.Party;
+using BExIS.Utils;
 using BExIS.Utils.Config;
 using FluentAssertions;
 using NUnit.Framework;
@@ -13,10 +14,10 @@ using System.Threading.Tasks;
 namespace BExIS.Dlm.Tests.Services.Party
 {
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Reliability", "CA2000:Objekte verwerfen, bevor Bereich verloren geht", Justification = "<Ausstehend>")]
-
     public class PartyManagerTests
     {
         private TestSetupHelper helper = null;
+
         [OneTimeSetUp]
         public void OneTimeSetUp()
         {
@@ -32,15 +33,15 @@ namespace BExIS.Dlm.Tests.Services.Party
         [Test()]
         public void CreatePartyTest()
         {
-            //Scenario: create, create with CustomAttributeValues<Id,value>, create with CustomAttributeValues<Name,value>, 
+            //Scenario: create, create with CustomAttributeValues<Id,value>, create with CustomAttributeValues<Name,value>,
             PartyManager partyManager = new PartyManager();
             PartyTypeManager partyTypeManager = new PartyTypeManager();
             var partyStatusTypes = new List<PartyStatusType>();
             partyStatusTypes.Add(new PartyStatusType() { Name = "Created", Description = "" });
 
-            var partyTypeTest =partyTypeManager.Create("partyTypeTitle", "", "", partyStatusTypes);
+            var partyTypeTest = partyTypeManager.Create("partyTypeTitle", "", "", partyStatusTypes);
             var partyStatusType = partyTypeManager.GetStatusType(partyTypeTest, "Created");
-            var party1=partyManager.Create(partyTypeTest,"alias", "description test", DateTime.Now.AddMonths(-1), DateTime.Now.AddMonths(1), partyStatusType);
+            var party1 = partyManager.Create(partyTypeTest, "alias", "description test", DateTime.Now.AddMonths(-1), DateTime.Now.AddMonths(1), partyStatusType);
             party1.Should().NotBeNull();
             party1.Id.Should().BeGreaterThan(0);
             var party1Id = party1.Id;
@@ -57,12 +58,12 @@ namespace BExIS.Dlm.Tests.Services.Party
             var partyAfterDelete = partyManager.PartyRepository.Get(cc => cc.Id == party1Id).FirstOrDefault();
             partyAfterDelete.Should().BeNull();
             //create cstom attributes
-            var partyCustomAttribute1 = partyTypeManager.CreatePartyCustomAttribute(partyTypeTest, "String", "FirstName", "", "", "",isMain:true);
+            var partyCustomAttribute1 = partyTypeManager.CreatePartyCustomAttribute(partyTypeTest, "String", "FirstName", "", "", "", isMain: true);
             var partyCustomAttribute2 = partyTypeManager.CreatePartyCustomAttribute(partyTypeTest, "String", "LastName", "", "", "", isMain: true);
             var partyCustomAttribute3 = partyTypeManager.CreatePartyCustomAttribute(partyTypeTest, "Int", "Age", "", "", "");
             //create with CustomAttributeValues<Id,value>
             Dictionary<long, String> customAttributeValues = new Dictionary<long, string>();
-            customAttributeValues.Add(partyCustomAttribute1.Id,"Masoud");
+            customAttributeValues.Add(partyCustomAttribute1.Id, "Masoud");
             customAttributeValues.Add(partyCustomAttribute2.Id, "Allahyari");
             customAttributeValues.Add(partyCustomAttribute3.Id, "31");
             var party2 = partyManager.Create(partyTypeTest, "", null, null, customAttributeValues);
@@ -79,13 +80,13 @@ namespace BExIS.Dlm.Tests.Services.Party
             var fethedCustomAttributeValues = fetchedParty2.CustomAttributeValues;
             fethedCustomAttributeValues.Count().Should().Be(customAttributeValues.Count());
 
-            fethedCustomAttributeValues.Any(cc => cc.Value == "Masoud" && cc.CustomAttribute.Id== partyCustomAttribute1.Id).Should().Be(true);
+            fethedCustomAttributeValues.Any(cc => cc.Value == "Masoud" && cc.CustomAttribute.Id == partyCustomAttribute1.Id).Should().Be(true);
             fethedCustomAttributeValues.Any(cc => cc.Value == "Allahyari" && cc.CustomAttribute.Id == partyCustomAttribute2.Id).Should().Be(true);
             fethedCustomAttributeValues.Any(cc => cc.Value == "31" && cc.CustomAttribute.Id == partyCustomAttribute3.Id).Should().Be(true);
             fethedCustomAttributeValues.Any(cc => cc.Value == "30" && cc.CustomAttribute.Id == partyCustomAttribute3.Id).Should().Be(false);
             //Cleanup DB
             partyManager.Delete(party2);
-            //custom Attribute values should have benn deleted 
+            //custom Attribute values should have benn deleted
             var customAttrValues = partyManager.PartyCustomAttributeValueRepository.Get(cc => cc.Party.Id == party2Id);
             customAttrValues.Count().Should().Be(0);
             //create with CustomAttributeValues<Name,value>
@@ -98,7 +99,7 @@ namespace BExIS.Dlm.Tests.Services.Party
             var fetchedParty3 = partyManager.PartyRepository.Get(party3Id);
             party3.Name.Should().BeEquivalentTo("Alex Abedini");
             party3.Alias.Should().BeEquivalentTo(fetchedParty3.Alias);
-            party3.Description.Should().BeEquivalentTo(fetchedParty3.Description);           
+            party3.Description.Should().BeEquivalentTo(fetchedParty3.Description);
             party3.EndDate.ToShortDateString().Should().BeEquivalentTo(fetchedParty3.EndDate.ToShortDateString());
             party3.PartyType.Id.Should().Be(fetchedParty3.PartyType.Id);
             party3.StartDate.ToShortDateString().Should().BeEquivalentTo(fetchedParty3.StartDate.ToShortDateString());
@@ -136,8 +137,8 @@ namespace BExIS.Dlm.Tests.Services.Party
             party1AfterDelete.Should().BeNull();
             party2AfterDelete.Should().BeNull();
             partyTypeManager.Delete(partyTypeTest);
-            
         }
+
         [Test()]
         public void UpdatePartyTest()
         {
@@ -157,7 +158,7 @@ namespace BExIS.Dlm.Tests.Services.Party
             customAttributeValues.Add(partyCustomAttribute1.Id, "Masoud");
             customAttributeValues.Add(partyCustomAttribute2.Id, "Allahyari");
             customAttributeValues.Add(partyCustomAttribute3.Id, "31");
-            var party = partyManager.Create(partyTypeTest,  "description test",DateTime.Now.AddDays(-10),DateTime.Now.AddDays(10), customAttributeValues);
+            var party = partyManager.Create(partyTypeTest, "description test", DateTime.Now.AddDays(-10), DateTime.Now.AddDays(10), customAttributeValues);
             var updatedParty = partyManager.PartyRepository.Get(party.Id);
             updatedParty.Alias = "alias2";
             updatedParty.Description = "desc";
@@ -173,13 +174,13 @@ namespace BExIS.Dlm.Tests.Services.Party
             party.PartyType.Id.Should().Be(fetchedParty.PartyType.Id);
             party.StartDate.ToShortDateString().Should().Be(fetchedParty.StartDate.ToShortDateString());
             party.Id.Should().Be(fetchedParty.Id);
-         
+
             partyManager.Delete(party);
             partyTypeManager.Delete(partyTypeTest);
         }
-       
 
-        public void TempPartyToPermanentTest() {
+        public void TempPartyToPermanentTest()
+        {
             PartyManager partyManager = new PartyManager();
             PartyTypeManager partyTypeManager = new PartyTypeManager();
             var partyStatusTypes = new List<PartyStatusType>();
@@ -198,14 +199,14 @@ namespace BExIS.Dlm.Tests.Services.Party
             var party = partyManager.Create(partyTypeTest, "description test", DateTime.Now.AddDays(-10), DateTime.Now.AddDays(10), customAttributeValues);
             party.IsTemp.Should().Be(true);
             partyManager.TempPartyToPermanent(party.Id);
-            var party_=partyManager.GetParty(party.Id);
+            var party_ = partyManager.GetParty(party.Id);
             party_.IsTemp.Should().Be(false);
             partyManager.Delete(party);
             partyTypeManager.Delete(partyTypeTest);
-
         }
 
-        public void AddPartyRelationshipTest() {
+        public void AddPartyRelationshipTest()
+        {
             PartyManager partyManager = new PartyManager();
             PartyTypeManager partyTypeManager = new PartyTypeManager();
             var partyStatusTypes = new List<PartyStatusType>();
@@ -229,13 +230,13 @@ namespace BExIS.Dlm.Tests.Services.Party
             customAttributeValues.Add(partyCustomAttribute2.Id, "Wandern");
             customAttributeValues.Add(partyCustomAttribute3.Id, "37");
             var party2 = partyManager.Create(partyTypeTest, "description test", DateTime.Now.AddDays(-10), DateTime.Now.AddDays(10), customAttributeValues);
-           
+
             //party type pair
             var prtManager = new PartyRelationshipTypeManager();
             prtManager.Create("relationship test", "", "", true, 10, 0, true, partyTypeTest, partyTypeTest2, "type pair test", "", "", "", 0);
-            
-           // partyManager.AddPartyRelationship(party,party2,"relation test","",)
-            //add relationship 
+
+            // partyManager.AddPartyRelationship(party,party2,"relation test","",)
+            //add relationship
 
             //test maximun and minimum cardinality
         }
@@ -248,13 +249,16 @@ namespace BExIS.Dlm.Tests.Services.Party
         {// alone and list
         }
 
-        public void AddPartyCustomAttributeValueTest() {
+        public void AddPartyCustomAttributeValueTest()
+        {
             //test one, test dict<id,value>, test dict<object,value>
         }
+
         public void UpdatePartyCustomAttributeValueTest()
         {
             //test one, test list
         }
+
         public void RemovePartyCustomAttributeValueTest()
         {
             //test one, test list
@@ -264,6 +268,7 @@ namespace BExIS.Dlm.Tests.Services.Party
         {
             //Scenario: add 3 parties having very similar custom attributes but different in one, get one of them calling this method
         }
+
         public void AddPartyUserTest()
         {
             //add a user to party and check the existance
@@ -278,18 +283,23 @@ namespace BExIS.Dlm.Tests.Services.Party
 
         public void GetUserIdByPartyTest()
         {
-
         }
 
-        public void UpdateOrAddPartyGridCustomColumnTest() { }
+        public void UpdateOrAddPartyGridCustomColumnTest()
+        { }
+
         public void CheckUniquenessTest()
         {
             //3 methods
         }
+
         public void ValidateRelationshipsTest()
         { }
-        public void CheckConditionTest() { }
-        public void GetPartyCustomGridColumnsTest() { }
 
+        public void CheckConditionTest()
+        { }
+
+        public void GetPartyCustomGridColumnsTest()
+        { }
     }
 }

@@ -5,6 +5,7 @@ using BExIS.Dlm.Services.Administration;
 using BExIS.Dlm.Services.Data;
 using BExIS.Dlm.Services.MetadataStructure;
 using BExIS.Dlm.Tests.Helpers;
+using BExIS.Utils;
 using BExIS.Utils.Config;
 using FluentAssertions;
 using NUnit.Framework;
@@ -21,7 +22,6 @@ using Vaiona.Persistence.Api;
 namespace BExIS.Dlm.Tests.Services.Data
 {
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Reliability", "CA2000:Objekte verwerfen, bevor Bereich verloren geht", Justification = "<Ausstehend>")]
-
     [TestFixture()]
     public class DataTupleTests
     {
@@ -33,11 +33,9 @@ namespace BExIS.Dlm.Tests.Services.Data
         private DatasetHelper dsHelper;
         private long numberOfTuples = 10;
 
-
         [OneTimeSetUp]
         public void OneTimeSetUp()
         {
-
             helper = new TestSetupHelper(WebApiConfig.Register, false);
 
             var dm = new DatasetManager();
@@ -45,15 +43,11 @@ namespace BExIS.Dlm.Tests.Services.Data
             var mdm = new MetadataStructureManager();
             dsHelper = new DatasetHelper();
 
-
             try
             {
-
-
                 dsHelper.PurgeAllDatasets();
                 dsHelper.PurgeAllDataStructures();
                 dsHelper.PurgeAllResearchPlans();
-
 
                 // generate Data
                 numberOfTuples = 50000;
@@ -70,14 +64,9 @@ namespace BExIS.Dlm.Tests.Services.Data
                 Dataset dataset = dm.CreateEmptyDataset(dataStructure, rp, mds);
                 datasetId = dataset.Id;
 
-
-
                 // add datatuples
                 dataset = dsHelper.GenerateTuplesForDataset(dataset, dataStructure, numberOfTuples, username);
                 dm.CheckInDataset(dataset.Id, "for testing  datatuples with versions", username);
-
-       
-
             }
             finally
             {
@@ -99,7 +88,6 @@ namespace BExIS.Dlm.Tests.Services.Data
         [Test()]
         public void TransformDatatupleToJson()
         {
-
             //Arrange
             DatasetManager datasetManager = new DatasetManager();
 
@@ -123,9 +111,7 @@ namespace BExIS.Dlm.Tests.Services.Data
                     //dt.Materialize2();
 
                     //dt.Dematerialize2(); // convert variablevalues 1 to json
-
                 }
-
 
                 //Assert
                 Assert.That(result.Count(), Is.EqualTo(numberOfTuples));
@@ -158,8 +144,6 @@ namespace BExIS.Dlm.Tests.Services.Data
             {
                 datasetManager.Dispose();
             }
-
         }
-
     }
 }

@@ -1,6 +1,6 @@
 ﻿using System;
 using BExIS.App.Testing;
-using BExIS.Utils.Config;
+using BExIS.Utils;
 using NUnit.Framework;
 using BExIS.Dlm.Services.Party;
 using FluentAssertions;
