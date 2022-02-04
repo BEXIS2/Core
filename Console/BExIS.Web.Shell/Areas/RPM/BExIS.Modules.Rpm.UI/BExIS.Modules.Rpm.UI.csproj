@@ -116,14 +116,14 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Classes\DataStructureIO.cs" />
-    <Compile Include="Controllers\DataStructureEditController.cs" />
-    <Compile Include="Controllers\DataStructureIOController.cs" />
-    <Compile Include="Controllers\DataStructureSearchController.cs" />
-    <Compile Include="Controllers\HelpController.cs" />
+    <Compile Include="Controllers\Legacy2\DataStructureEditController.cs" />
+    <Compile Include="Controllers\Legacy2\DataStructureIOController.cs" />
+    <Compile Include="Controllers\Legacy2\DataStructureSearchController.cs" />
+    <Compile Include="Controllers\Legacy2\HelpController.cs" />
+    <Compile Include="Controllers\Legacy2\StructuresController.cs" />
     <Compile Include="Controllers\Legacy\DataAttributeController.cs" />
     <Compile Include="Controllers\Legacy\HomeController.cs" />
     <Compile Include="Controllers\Legacy\UnitController.cs" />
-    <Compile Include="Controllers\StructuresController.cs" />
     <Compile Include="Helpers\HtmlPrefixScopeExtentions.cs" />
     <Compile Include="Helpers\RPMSeedDataGenerator.cs" />
     <Compile Include="Helpers\SeedData\AttributeCreator.cs" />
