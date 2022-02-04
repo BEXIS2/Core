@@ -4,29 +4,24 @@
 
 }
 
-<link href="~/Areas/Dcm/BExIS.Modules.DCM.UI/Scripts/svelte/edit.css" rel="stylesheet">
+<link href="~/Areas/Rpm/BExIS.Modules.RPM.UI/Scripts/svelte/edit.css" rel="stylesheet">
 
 
 @section scripts
 {
-    <script src="~/Areas/Dcm/BExIS.Modules.DCM.UI/Scripts/svelte/edit.js"></script>
+    <script src="~/Areas/Rpm/BExIS.Modules.RPM.UI/Scripts/svelte/edit.js"></script>
 
 }
 
 @{
     long id = 0;
-    long version = 0;
 
     if (ViewBag.id != null)
     {
         id = (long)ViewBag.id;
     }
 
-    if (ViewBag.version != null)
-    {
-        version = (long)ViewBag.version;
-    }
 
 }
 
-<div id="edit" dataset="@id" version="@version"> </div>
+<div id="datastructure" datastructure="@id" > </div>
