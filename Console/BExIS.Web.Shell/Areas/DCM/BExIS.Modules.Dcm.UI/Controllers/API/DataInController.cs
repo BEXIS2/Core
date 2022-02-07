@@ -33,6 +33,8 @@ using System.Web.Http;
 using System.Web.Http.Description;
 using BExIS.Utils.Route;
 using Vaiona.Entities.Common;
+using BExIS.Utils.Config;
+using Vaiona.IoC;
 
 namespace BExIS.Modules.Dcm.UI.Controllers
 {
@@ -51,6 +53,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
     public class DataInController : ApiController
     {
         private XmlDatasetHelper xmlDatasetHelper = new XmlDatasetHelper();
+        private GeneralSettings generalSettings = IoCFactory.Container.Resolve<GeneralSettings>();
 
         // POST: api/data
         /// <summary>
@@ -59,7 +62,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         /// <param name="data"></param>
         [BExISApiAuthorize]
         [PostRoute("api/Data")]
-        public async Task<HttpResponseMessage> Post([FromBody]PushDataApiModel data)
+        public async Task<HttpResponseMessage> Post([FromBody] PushDataApiModel data)
         {
             var request = Request.CreateResponse();
             User user = null;
@@ -73,6 +76,8 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
             DatasetVersion workingCopy = new DatasetVersion();
             List<DataTuple> rows = new List<DataTuple>();
+
+            GeneralSettings generalSettings = IoCFactory.Container.Resolve<GeneralSettings>();
 
             //load from apiConfig
             int cellLimit = 100000;
@@ -237,7 +242,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                             es.Send(MessageHelper.GetUpdateDatasetHeader(dataset.Id),
                                 MessageHelper.GetUpdateDatasetMessage(dataset.Id, title, user.DisplayName, typeof(Dataset).Name),
                                 new List<string>() { user.Email },
-                                       new List<string>() { ConfigurationManager.AppSettings["SystemEmail"] }
+                                       new List<string>() { generalSettings.SystemEmail }
                                 );
                         }
 
@@ -249,7 +254,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                         es.Send(MessageHelper.GetPushApiUploadFailHeader(dataset.Id, title),
                                    MessageHelper.GetPushApiUploadFailMessage(dataset.Id, user.UserName, new string[] { "Upload failed: " + ex.Message }),
                                    new List<string>() { user.Email },
-                                   new List<string>() { ConfigurationManager.AppSettings["SystemEmail"] }
+                                   new List<string>() { generalSettings.SystemEmail }
                                    );
 
                         return Request.CreateResponse(HttpStatusCode.InternalServerError, ex.Message);
@@ -274,7 +279,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         /// </summary>
         [BExISApiAuthorize]
         [PutRoute("api/Data")]
-        public async Task<HttpResponseMessage> Put([FromBody]PutDataApiModel data)
+        public async Task<HttpResponseMessage> Put([FromBody] PutDataApiModel data)
         {
             var request = Request.CreateResponse();
             User user = null;
@@ -502,7 +507,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                             es.Send(MessageHelper.GetUpdateDatasetHeader(dataset.Id),
                                 MessageHelper.GetUpdateDatasetMessage(dataset.Id, title, user.DisplayName, typeof(Dataset).Name),
                                 new List<string>() { user.Email },
-                                       new List<string>() { ConfigurationManager.AppSettings["SystemEmail"] }
+                                       new List<string>() { generalSettings.SystemEmail }
                                 );
                         }
 
@@ -516,7 +521,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                         es.Send(MessageHelper.GetPushApiUploadFailHeader(dataset.Id, title),
                                    MessageHelper.GetPushApiUploadFailMessage(dataset.Id, user.UserName, new string[] { "Upload failed: " + ex.Message }),
                                    new List<string>() { user.Email },
-                                   new List<string>() { ConfigurationManager.AppSettings["SystemEmail"] }
+                                   new List<string>() { generalSettings.SystemEmail }
                                    );
 
                         return Request.CreateResponse(HttpStatusCode.InternalServerError, ex.Message);

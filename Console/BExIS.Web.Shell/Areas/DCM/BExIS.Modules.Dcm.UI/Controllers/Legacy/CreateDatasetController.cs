@@ -24,6 +24,7 @@ using BExIS.Security.Services.Authorization;
 using BExIS.Security.Services.Objects;
 using BExIS.Security.Services.Subjects;
 using BExIS.Security.Services.Utilities;
+using BExIS.Utils.Config;
 using BExIS.Utils.Data.Upload;
 using BExIS.Utils.Extensions;
 using BExIS.Web.Shell.Helpers;
@@ -39,6 +40,7 @@ using System.Xml;
 using System.Xml.Linq;
 using Vaiona.Entities.Common;
 using Vaiona.Entities.Logging;
+using Vaiona.IoC;
 using Vaiona.Logging;
 using Vaiona.Persistence.Api;
 using Vaiona.Web.Extensions;
@@ -52,6 +54,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
     {
         private CreateTaskmanager TaskManager;
         private XmlDatasetHelper xmlDatasetHelper = new XmlDatasetHelper();
+        private GeneralSettings generalSettings = IoCFactory.Container.Resolve<GeneralSettings>();
 
         #region Create a Dataset Setup Page
 
@@ -237,7 +240,6 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             using (DataStructureManager dataStructureManager = new DataStructureManager())
             using (ResearchPlanManager rpm = new ResearchPlanManager())
             {
-
                 XmlDatasetHelper xmlDatasetHelper = new XmlDatasetHelper();
                 string username = GetUsernameOrDefault();
 
@@ -259,15 +261,12 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
                 if (ModelState.IsValid)
                 {
-
                     // create new structure if its not exist
                     if (model.DataStructureOptions != DataStructureOptions.Existing_structured && model.DataStructureOptions != DataStructureOptions.Existing_unstructured)
                     {
-
                         using (PartyManager partyManager = new PartyManager())
                         using (var identityUserService = new IdentityUserService())
                         {
-
                             var user = identityUserService.FindByNameAsync(username);
 
                             var name = "New data structure_" + DateTime.Now.ToString("dd_MM_yyyy_HH_mm");
@@ -336,7 +335,6 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                     }
                     else
                     {
-                        
                         TaskManager.AddToBus(CreateTaskmanager.RESEARCHPLAN_ID, rpm.Repo.Get().First().Id);
                     }
 
@@ -530,6 +528,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         public long SubmitDataset(bool valid, string entityname)
         {
             #region create dataset
+
             // the entityname can be wrong due to the mixed use from different modules. If its an update its set explicite again in #setEntitynNameNew
 
             using (DatasetManager dm = new DatasetManager())
@@ -537,7 +536,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             using (ResearchPlanManager rpm = new ResearchPlanManager())
             using (EntityPermissionManager entityPermissionManager = new EntityPermissionManager())
             using (MetadataStructureManager msm = new MetadataStructureManager())
-            { 
+            {
                 XmlDatasetHelper xmlDatasetHelper = new XmlDatasetHelper();
                 string title = "";
                 long datasetId = 0;
@@ -646,7 +645,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                                 var es = new EmailService();
                                 es.Send(MessageHelper.GetCreateDatasetHeader(datasetId, entityname),
                                     MessageHelper.GetCreateDatasetMessage(datasetId, title, GetUsernameOrDefault(), entityname),
-                                    ConfigurationManager.AppSettings["SystemEmail"]
+                                    generalSettings.SystemEmail
                                     );
                             }
                             else
@@ -654,7 +653,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                                 var es = new EmailService();
                                 es.Send(MessageHelper.GetMetadataUpdatHeader(datasetId, entityname),
                                     MessageHelper.GetUpdateDatasetMessage(datasetId, title, GetUsernameOrDefault(), entityname),
-                                    ConfigurationManager.AppSettings["SystemEmail"]
+                                    generalSettings.SystemEmail
                                     );
                             }
                         }
@@ -669,13 +668,14 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                     var es = new EmailService();
                     es.Send(MessageHelper.GetMetadataUpdatHeader(datasetId, entityname),
                         ex.Message,
-                        ConfigurationManager.AppSettings["SystemEmail"]
+                        generalSettings.SystemEmail
                         );
 
                     string message = String.Format("error appears by create/update dataset with id: {0} , error: {1} ", datasetId.ToString(), ex.Message);
                     LoggerFactory.LogCustom(message);
                 }
             }
+
             #endregion create dataset
 
             return -1;
@@ -760,7 +760,6 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                     }
 
                     return RedirectToAction("LoadMetadata", "Form", new { area = "Dcm", entityId = datasetid, locked = false, created = created, fromEditMode = editmode, resetTaskManager = resetTaskManager, newMetadata = metadata });
-
                 }
             }
 
@@ -842,14 +841,12 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                     typeof(Dataset), RightType.Write);
 
                 List<DatasetVersion> datasetVersions = datasetManager.GetDatasetLatestVersions(datasetIds, false);
-                    foreach (var dsv in datasetVersions)
+                foreach (var dsv in datasetVersions)
                 {
-                    
                     string title = dsv.Title;
                     string description = dsv.Description;
 
-                        temp.Add(new ListViewItem(dsv.Dataset.Id, title, description));
-                    
+                    temp.Add(new ListViewItem(dsv.Dataset.Id, title, description));
                 }
 
                 return temp.OrderBy(p => p.Title).ToList();
@@ -893,11 +890,6 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 dsm.Dispose();
             }
         }
-
-
-
-
-
 
         public List<ListViewItem> LoadMetadataStructureViewList()
         {
@@ -1014,7 +1006,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                                 ));
 
                         #region delete relationships
-                        
+
                         foreach (var relationshipType in relationshipTypes)
                         {
                             // go through each associated realtionship type pair (e.g. Person - Dataset, Person - Publication)
@@ -1031,12 +1023,10 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
                                     IEnumerable<long> partyids = complexElements.Select(i => Convert.ToInt64(i.Attribute("partyid").Value));
 
-
                                     foreach (PartyRelationship pr in relationships)
                                     {
                                         if (!partyids.Contains(pr.TargetParty.Id)) partyManager.RemovePartyRelationship(pr);
                                     }
-
                                 }
                                 else if (partyTpePair.TargetPartyType.Title.ToLower().Equals(entityname.ToLower()))
                                 {
@@ -1047,7 +1037,6 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                                         );
 
                                     IEnumerable<long> partyids = complexElements.Select(i => Convert.ToInt64(i.Attribute("partyid").Value));
-
 
                                     foreach (PartyRelationship pr in relationships)
                                     {
@@ -1110,7 +1099,6 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                                         {
                                             if (partyTpePair.SourcePartyType.Title.ToLower().Equals(entityname.ToLower()) || partyTpePair.TargetPartyType.Title.ToLower().Equals(entityname.ToLower()))
                                             {
-
                                                 if (partyTpePair != null && person != null && datasetParty != null)
                                                 {
                                                     if (!uow.GetReadOnlyRepository<PartyRelationship>().Get().Any(
@@ -1166,10 +1154,8 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             using (EntityReferenceManager entityReferenceManager = new EntityReferenceManager())
             using (EntityManager entityManager = new EntityManager())
             {
-
                 EntityReferenceHelper helper = new EntityReferenceHelper();
                 XmlDatasetHelper xmlDatasetHelper = new XmlDatasetHelper();
-
 
                 if (datasetVersion != null)
                 {
@@ -1182,7 +1168,6 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                     }
                 }
             }
-
         }
 
         private List<EntityReference> getAllMetadataReferences(DatasetVersion datasetVersion)
@@ -1195,7 +1180,6 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 EntityReferenceHelper helper = new EntityReferenceHelper();
                 MappingUtils mappingUtils = new MappingUtils();
                 XmlDatasetHelper xmlDatasetHelper = new XmlDatasetHelper();
-
 
                 long id = 0;
                 long typeid = 0;
@@ -1258,7 +1242,6 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
                 return tmp;
             }
-
         }
 
         private DatasetVersion setStateInfo(DatasetVersion workingCopy, bool valid)

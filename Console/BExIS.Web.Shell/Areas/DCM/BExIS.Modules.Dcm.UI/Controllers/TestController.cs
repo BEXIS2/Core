@@ -5,19 +5,22 @@ using BExIS.Dlm.Services.DataStructure;
 using BExIS.Dlm.Services.MetadataStructure;
 using BExIS.Security.Services.Objects;
 using BExIS.Security.Services.Utilities;
+using BExIS.Utils.Config;
 using BExIS.Utils.Helpers;
 using BExIS.Xml.Helpers;
 using System;
 using System.Configuration;
 using System.Diagnostics;
 using System.Web.Mvc;
+using Vaiona.IoC;
 
 namespace BExIS.Modules.Dcm.UI.Controllers
 {
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Reliability", "CA2000:Objekte verwerfen, bevor Bereich verloren geht", Justification = "<Ausstehend>")]
-
     public class TestController : Controller
     {
+        private GeneralSettings generalSettings = IoCFactory.Container.Resolve<GeneralSettings>();
+
         // GET: Test
         public ActionResult Index()
         {
@@ -26,7 +29,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             var title = "my cool dataset";
             es.Send(MessageHelper.GetCreateDatasetHeader(datasetId, "Dataset"),
                 MessageHelper.GetCreateDatasetMessage(datasetId, title, "David Schöne", "Dataset"),
-                ConfigurationManager.AppSettings["SystemEmail"]
+                generalSettings.SystemEmail
                 );
 
             string name = "test";
@@ -91,7 +94,6 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             MetadataStructureManager metadataStructureManager = new MetadataStructureManager();
             ResearchPlanManager researchPlanManager = new ResearchPlanManager();
 
-
             try
             {
                 var structure = dataStructureManager.UnStructuredDataStructureRepo.Get(1);
@@ -104,8 +106,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
                 for (int i = 0; i < n; i++)
                 {
-                   var dataset =  datasetManager.CreateEmptyDataset(structure, researchplan, metadatastructure);
-
+                    var dataset = datasetManager.CreateEmptyDataset(structure, researchplan, metadatastructure);
 
                     if (datasetManager.IsDatasetCheckedOutFor(dataset.Id, "test") || datasetManager.CheckOutDataset(dataset.Id, "test"))
                     {
@@ -114,7 +115,6 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                         datasetManager.EditDatasetVersion(workingCopy, null, null, null);
                         datasetManager.CheckInDataset(dataset.Id, "", "test", ViewCreationBehavior.None);
 
-                      
                         workingCopy.Metadata = Xml.Helpers.XmlWriter.ToXmlDocument(metadataXml);
 
                         string xpath = xmlDatasetHelper.GetInformationPath(metadatastructure.Id, NameAttributeValues.title);
@@ -126,12 +126,9 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                         datasetManager.CheckInDataset(dataset.Id, "", "test", ViewCreationBehavior.None);
                     }
                 }
-
-
             }
             catch (Exception ex)
             {
-
                 throw ex;
             }
             finally
@@ -142,11 +139,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 researchPlanManager.Dispose();
             }
 
-
             return View("Index");
         }
-
-        
     }
-
 }

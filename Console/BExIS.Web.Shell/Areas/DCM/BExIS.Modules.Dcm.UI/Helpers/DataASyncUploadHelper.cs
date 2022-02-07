@@ -10,6 +10,7 @@ using BExIS.IO.Transform.Output;
 using BExIS.IO.Transform.Validation.Exceptions;
 using BExIS.Security.Entities.Subjects;
 using BExIS.Security.Services.Utilities;
+using BExIS.Utils.Config;
 using BExIS.Utils.Data.Upload;
 using BExIS.Utils.Models;
 using BExIS.Utils.Upload;
@@ -24,6 +25,7 @@ using System.Threading.Tasks;
 using System.Web;
 using System.Xml;
 using Vaiona.Entities.Common;
+using Vaiona.IoC;
 using Vaiona.Logging.Aspects;
 using Vaiona.Persistence.Api;
 using Vaiona.Utils.Cfg;
@@ -32,7 +34,7 @@ namespace BExIS.Modules.Dcm.UI.Helpers
 {
     public class DataASyncUploadHelper
     {
-        public Dictionary<string,object> Bus { get; set; }
+        public Dictionary<string, object> Bus { get; set; }
         public bool RunningASync { get; set; }
         public User User { get; set; }
 
@@ -40,8 +42,7 @@ namespace BExIS.Modules.Dcm.UI.Helpers
 
         private UploadHelper uploadWizardHelper = new UploadHelper();
 
-
-
+        private GeneralSettings generalSettings = IoCFactory.Container.Resolve<GeneralSettings>();
 
         //temporary solution: norman :FinishUpload2
         public async Task<List<Error>> FinishUpload()
@@ -57,7 +58,6 @@ namespace BExIS.Modules.Dcm.UI.Helpers
 
             try
             {
-
                 DatasetVersion workingCopy = new DatasetVersion();
                 //datatuple list
                 List<DataTuple> rows = new List<DataTuple>();
@@ -104,8 +104,6 @@ namespace BExIS.Modules.Dcm.UI.Helpers
                     {
                         long datasetid = id;
                         XmlDatasetHelper xmlDatasetHelper = new XmlDatasetHelper();
-
-                        
 
                         try
                         {
@@ -163,7 +161,7 @@ namespace BExIS.Modules.Dcm.UI.Helpers
                                     //open stream
                                     Stream = reader.Open(Bus[TaskManager.FILEPATH].ToString());
                                     rows = new List<DataTuple>();
-                                    
+
                                     if (iOUtility.IsSupportedExcelFile(Bus[TaskManager.EXTENTION].ToString()))
                                     {
                                         if (reader.Position < excelFileReaderInfo.DataEndRow)
@@ -301,11 +299,9 @@ namespace BExIS.Modules.Dcm.UI.Helpers
 
                                         //count rows
                                         numberOfRows += rows.Count();
-
                                     } while ((rows.Count() > 0 && rows.Count() <= packageSize) || inputWasAltered == true);
 
                                     numberOfSkippedRows = reader.NumberOSkippedfRows;
-
                                 }
 
                                 //Stream.Close();
@@ -360,7 +356,7 @@ namespace BExIS.Modules.Dcm.UI.Helpers
                                     ActionType = newdataset ? AuditActionType.Create : AuditActionType.Edit
                                 };
 
-                                workingCopy.Metadata= setSystemValuesToMetadata(id, v, workingCopy.Dataset.MetadataStructure.Id, workingCopy.Metadata, newdataset);
+                                workingCopy.Metadata = setSystemValuesToMetadata(id, v, workingCopy.Dataset.MetadataStructure.Id, workingCopy.Metadata, newdataset);
                                 dm.EditDatasetVersion(workingCopy, null, null, null);
                             }
 
@@ -374,7 +370,7 @@ namespace BExIS.Modules.Dcm.UI.Helpers
                             var es = new EmailService();
                             es.Send(MessageHelper.GetUpdateDatasetHeader(datasetid),
                                 MessageHelper.GetUpdateDatasetMessage(datasetid, title, User.DisplayName, typeof(Dataset).Name),
-                                ConfigurationManager.AppSettings["SystemEmail"]
+                                generalSettings.SystemEmail
                                 );
                         }
                         catch (Exception e)
@@ -383,14 +379,11 @@ namespace BExIS.Modules.Dcm.UI.Helpers
                             var es = new EmailService();
                             es.Send(MessageHelper.GetErrorHeader(),
                                 "Can not upload. : " + e.Message,
-                                ConfigurationManager.AppSettings["SystemEmail"]
+                                generalSettings.SystemEmail
                                 );
-
-                            
                         }
                         finally
                         {
-
                         }
                     }
 
@@ -400,11 +393,9 @@ namespace BExIS.Modules.Dcm.UI.Helpers
 
                     if (Bus.ContainsKey(TaskManager.DATASTRUCTURE_TYPE) && Bus[TaskManager.DATASTRUCTURE_TYPE].Equals(DataStructureType.Unstructured))
                     {
-
                         // checkout the dataset, apply the changes, and check it in.
                         if (dm.IsDatasetCheckedOutFor(id, User.Name) || dm.CheckOutDataset(id, User.Name))
                         {
-
                             try
                             {
                                 workingCopy = dm.GetDatasetWorkingCopy(id);
@@ -431,7 +422,7 @@ namespace BExIS.Modules.Dcm.UI.Helpers
                                     SaveFileInContentDiscriptor(workingCopy);
                                 }
 
-                                if(Bus.ContainsKey(TaskManager.DATASET_STATUS))
+                                if (Bus.ContainsKey(TaskManager.DATASET_STATUS))
                                 {
                                     bool newdataset = Bus[TaskManager.DATASET_STATUS].ToString().Equals("new");
                                     int v = 1;
@@ -482,14 +473,13 @@ namespace BExIS.Modules.Dcm.UI.Helpers
                 {
                     dm.UndoCheckoutDataset(id, User.Name);
                 }
-
             }
             catch (Exception ex)
             {
                 temp.Add(new Error(ErrorType.Dataset, ex.Message));
 
                 //When a exception is happen, may the dataset is checkedout
-                // 
+                //
                 if (!dm.IsDatasetCheckedIn(id))
                 {
                     // revert last changed and checkin without a new version
@@ -507,15 +497,14 @@ namespace BExIS.Modules.Dcm.UI.Helpers
                         var es = new EmailService();
                         es.Send(MessageHelper.GetPushApiUploadFailHeader(id, title),
                             MessageHelper.GetPushApiUploadFailMessage(id, user.Name, temp.Select(e => e.ToString()).ToArray()),
-                            new List<string> { user.Email }, null, new List<string> { ConfigurationManager.AppSettings["SystemEmail"] });
-
+                            new List<string> { user.Email }, null, new List<string> { generalSettings.SystemEmail });
                     }
                     else
                     {
                         var es = new EmailService();
                         es.Send(MessageHelper.GetASyncFinishUploadHeader(id, title),
-                            MessageHelper.GetASyncFinishUploadMessage(id, title, numberOfRows,numberOfSkippedRows),
-                            new List<string> { user.Email }, null, new List<string> { ConfigurationManager.AppSettings["SystemEmail"] });
+                            MessageHelper.GetASyncFinishUploadMessage(id, title, numberOfRows, numberOfSkippedRows),
+                            new List<string> { user.Email }, null, new List<string> { generalSettings.SystemEmail });
                     }
                 }
 
@@ -525,7 +514,7 @@ namespace BExIS.Modules.Dcm.UI.Helpers
                     var es = new EmailService();
                     es.Send(MessageHelper.GeFileUpdatHeader(id),
                         MessageHelper.GetFileUploaddMessage(id, user.Name, Bus[TaskManager.FILENAME]?.ToString()),
-                        new List<string> { user.Email }, null, new List<string> { ConfigurationManager.AppSettings["SystemEmail"] });
+                        new List<string> { user.Email }, null, new List<string> { generalSettings.SystemEmail });
                 }
 
                 dm.Dispose();
@@ -598,7 +587,6 @@ namespace BExIS.Modules.Dcm.UI.Helpers
         [MeasurePerformance]
         private string MoveAndSaveOriginalFileInContentDiscriptor(DatasetVersion datasetVersion)
         {
- 
             //dataset id and data structure id are available via datasetVersion properties,why you are passing them via the BUS? Javad
             long datasetId = Convert.ToInt64(Bus[TaskManager.DATASET_ID]);
             long dataStructureId = Convert.ToInt64(Bus[TaskManager.DATASTRUCTURE_ID]);
@@ -655,11 +643,9 @@ namespace BExIS.Modules.Dcm.UI.Helpers
             if (newDataset) myObjArray = new Key[] { Key.Id, Key.Version, Key.DateOfVersion, Key.DataCreationDate, Key.DataLastModified };
             else myObjArray = new Key[] { Key.Id, Key.Version, Key.DateOfVersion, Key.DataLastModified };
 
-
             var metadata_new = SystemMetadataHelper.SetSystemValuesToMetadata(datasetid, version, metadataStructureId, metadata, myObjArray);
 
             return metadata_new;
         }
-
     }
 }

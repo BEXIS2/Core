@@ -4,6 +4,7 @@ using BExIS.Security.Entities.Subjects;
 using BExIS.Security.Services.Subjects;
 using BExIS.Security.Services.Utilities;
 using BExIS.UI.Helpers;
+using BExIS.Utils.Config;
 using BExIS.Utils.NH.Querying;
 using Microsoft.AspNet.Identity;
 using System;
@@ -15,6 +16,7 @@ using System.Threading.Tasks;
 using System.Web.Mvc;
 using Telerik.Web.Mvc;
 using Telerik.Web.Mvc.Extensions;
+using Vaiona.IoC;
 using Vaiona.Web.Mvc;
 
 namespace BExIS.Modules.Sam.UI.Controllers
@@ -52,7 +54,7 @@ namespace BExIS.Modules.Sam.UI.Controllers
             {
                 if (!ModelState.IsValid) return PartialView("_Create", model);
 
-                var user = new User { UserName = model.UserName,FullName = model.UserName, Email = model.Email };
+                var user = new User { UserName = model.UserName, FullName = model.UserName, Email = model.Email };
 
                 var result = await identityUserService.CreateAsync(user);
                 if (result.Succeeded)
@@ -86,7 +88,7 @@ namespace BExIS.Modules.Sam.UI.Controllers
             {
                 var user = userManager.FindByIdAsync(userId).Result;
 
-                for(int i=0; i<user.Groups.Count;i++)
+                for (int i = 0; i < user.Groups.Count; i++)
                 {
                     var @group = user.Groups.ElementAt(i);
                     await removeUserFromGroup(user.Id, @group.Name);
@@ -179,7 +181,8 @@ namespace BExIS.Modules.Sam.UI.Controllers
             using (var partyManager = new PartyManager())
             using (var partyTypeManager = new PartyTypeManager())
             {
-    
+                GeneralSettings generalSettings = IoCFactory.Container.Resolve<GeneralSettings>();
+
                 // check wheter model is valid or not
                 if (!ModelState.IsValid) return PartialView("_Update", model);
 
@@ -198,7 +201,7 @@ namespace BExIS.Modules.Sam.UI.Controllers
                     var es = new EmailService();
                     es.Send(MessageHelper.GetUpdateEmailHeader(),
                         MessageHelper.GetUpdaterEmailMessage(user.DisplayName, user.Email, model.Email),
-                        ConfigurationManager.AppSettings["SystemEmail"]
+                        generalSettings.SystemEmail
                         );
                 }
                 user.Email = model.Email;
@@ -217,7 +220,6 @@ namespace BExIS.Modules.Sam.UI.Controllers
 
                 userManager.UpdateAsync(user);
                 return Json(new { success = true });
-
             }
         }
 

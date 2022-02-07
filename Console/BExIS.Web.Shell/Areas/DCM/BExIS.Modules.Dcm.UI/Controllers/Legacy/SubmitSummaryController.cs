@@ -14,6 +14,7 @@ using BExIS.Security.Entities.Subjects;
 using BExIS.Security.Services.Subjects;
 using BExIS.Security.Services.Utilities;
 using BExIS.UI.Helpers;
+using BExIS.Utils.Config;
 using BExIS.Utils.Data.Upload;
 using BExIS.Utils.Upload;
 using BExIS.Xml.Helpers;
@@ -29,6 +30,7 @@ using System.Web.Mvc;
 using System.Web.Routing;
 using System.Xml;
 using Vaiona.Entities.Common;
+using Vaiona.IoC;
 using Vaiona.Logging.Aspects;
 using Vaiona.Persistence.Api;
 using Vaiona.Web.Mvc;
@@ -46,6 +48,8 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         private UploadHelper uploadWizardHelper = new UploadHelper();
 
         private Dictionary<string, object> _bus = new Dictionary<string, object>();
+
+        private GeneralSettings generalSettings = IoCFactory.Container.Resolve<GeneralSettings>();
 
         // GET: /DCM/Summary/
 
@@ -119,7 +123,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 es.Send(MessageHelper.GetASyncStartUploadHeader(id, model.DatasetTitle),
                     MessageHelper.GetASyncStartUploadMessage(id, model.DatasetTitle, numberOfRows),
                     new List<string>() { user.Email }, null,
-                    new List<string>() { ConfigurationManager.AppSettings["SystemEmail"] }
+                    new List<string>() { generalSettings.SystemEmail }
                     );
 
                 model.AsyncUpload = true;

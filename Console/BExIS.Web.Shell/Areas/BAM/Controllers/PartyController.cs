@@ -4,12 +4,14 @@ using BExIS.Modules.Bam.UI.Helpers;
 using BExIS.Modules.Bam.UI.Models;
 using BExIS.Security.Services.Subjects;
 using BExIS.Security.Services.Utilities;
+using BExIS.Utils.Config;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Data;
 using System.Linq;
 using System.Web.Mvc;
+using Vaiona.IoC;
 using Vaiona.Web.Mvc.Models;
 
 namespace BExIS.Modules.Bam.UI.Controllers
@@ -190,10 +192,14 @@ namespace BExIS.Modules.Bam.UI.Controllers
                             // compare user and party email
                             if (user.Email != entity.Value)
                             {
+
+                                GeneralSettings generalSettings = IoCFactory.Container.Resolve<GeneralSettings>();
+
+
                                 var es = new EmailService();
                                 es.Send(MessageHelper.GetUpdateEmailHeader(),
                                     MessageHelper.GetUpdaterEmailMessage(user.DisplayName, user.Email, entity.Value),
-                                    ConfigurationManager.AppSettings["SystemEmail"]
+                                    generalSettings.SystemEmail
                                     );
 
                                 // Update user email

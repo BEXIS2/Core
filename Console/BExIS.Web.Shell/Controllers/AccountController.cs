@@ -23,6 +23,8 @@ namespace BExIS.Web.Shell.Controllers
 {
     public class AccountController : Controller
     {
+        private GeneralSettings generalSettings = IoCFactory.Container.Resolve<GeneralSettings>();
+
         //
         // GET: /Account/ConfirmEmail
         public async Task<ActionResult> ConfirmEmail(long userId, string code)
@@ -45,7 +47,7 @@ namespace BExIS.Web.Shell.Controllers
                 var es = new EmailService();
                 es.Send(MessageHelper.GetRegisterUserHeader(),
                     MessageHelper.GetRegisterUserMessage(user.Id, user.Name, user.Email),
-                    ConfigurationManager.AppSettings["SystemEmail"]
+                    generalSettings.SystemEmail
                     );
 
                 return this.IsAccessible("bam", "PartyService", "UserRegistration")
@@ -333,7 +335,7 @@ namespace BExIS.Web.Shell.Controllers
                     var es = new EmailService();
                     es.Send(MessageHelper.GetTryToRegisterUserHeader(),
                         MessageHelper.GetTryToRegisterUserMessage(user.Id, user.Name, user.Email),
-                        ConfigurationManager.AppSettings["SystemEmail"]
+                        generalSettings.SystemEmail
                         );
 
                     ViewBag.Message = "Before you can log in to complete your registration, please check your email and verify your email address. If you did not receive an email, please also check your spam folder.";

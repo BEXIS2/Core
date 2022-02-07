@@ -30,6 +30,8 @@ using BExIS.Modules.Mmm.UI.Helpers;
 using BExIS.Security.Services.Utilities;
 using System.Configuration;
 using Vaiona.Logging;
+using BExIS.Utils.Config;
+using Vaiona.IoC;
 
 namespace IDIV.Modules.Mmm.UI.Controllers
 {
@@ -51,8 +53,7 @@ namespace IDIV.Modules.Mmm.UI.Controllers
 
                 if (access)
                 {
-                    
-                    return View(getFilesByDatasetId(datasetID , entityType));
+                    return View(getFilesByDatasetId(datasetID, entityType));
                 }
                 else
                 {
@@ -78,7 +79,6 @@ namespace IDIV.Modules.Mmm.UI.Controllers
             {
                 try
                 {
-
                     bool isLatestVersion = false;
                     if (versionId == datasetManager.GetDatasetLatestVersion(datasetID).Id)
                         isLatestVersion = true;
@@ -191,10 +191,12 @@ namespace IDIV.Modules.Mmm.UI.Controllers
                         var es = new EmailService();
                         if (send_mail == "true")
                         {
+                            GeneralSettings generalSettings = IoCFactory.Container.Resolve<GeneralSettings>();
+
                             es.Send(MessageHelper.GetFileDownloadHeader(datasetID, versionNr),
-                                MessageHelper.GetFileDownloadMessage(GetUsernameOrDefault(), datasetID, fileInfo.Name),
-                                ConfigurationManager.AppSettings["SystemEmail"]
-                                );
+                                                    MessageHelper.GetFileDownloadMessage(GetUsernameOrDefault(), datasetID, fileInfo.Name),
+                                                    generalSettings.SystemEmail
+                                                    );
                         }
                         return File(path, MimeMapping.GetMimeMapping(fileInfo.Name), filename);
                     }
@@ -204,7 +206,7 @@ namespace IDIV.Modules.Mmm.UI.Controllers
                         return null;
                     }
                 }
-                catch(Exception ex)
+                catch (Exception ex)
                 {
                     return null;
                 }
@@ -324,7 +326,7 @@ namespace IDIV.Modules.Mmm.UI.Controllers
                     }
                 }
             }
-               
+
             return null;
         }
 
@@ -465,7 +467,6 @@ namespace IDIV.Modules.Mmm.UI.Controllers
                 {
                     return exif;
                 }
-                
             }
             catch
             {
@@ -510,7 +511,6 @@ namespace IDIV.Modules.Mmm.UI.Controllers
 
         public FileInformation getFileInfo(ContentDescriptor contentDescriptor)
         {
-            
             try
             {
                 if (contentDescriptor.Name.ToLower().Equals("unstructureddata"))
@@ -666,7 +666,7 @@ namespace IDIV.Modules.Mmm.UI.Controllers
             }
         }
 
-        public List<FileInformation> getFilesByDataset(Dataset dataset, DatasetManager datasetManager,string entityType, long versionId = 0)
+        public List<FileInformation> getFilesByDataset(Dataset dataset, DatasetManager datasetManager, string entityType, long versionId = 0)
         {
             EntityPermissionManager entityPermissionManager = null;
             try
@@ -977,7 +977,6 @@ namespace IDIV.Modules.Mmm.UI.Controllers
             Key[] myObjArray = { };
 
             myObjArray = new Key[] { Key.Id, Key.Version, Key.DateOfVersion, Key.DataLastModified };
-
 
             metadata = SystemMetadataHelper.SetSystemValuesToMetadata(metadataStructureId, version, metadataStructureId, metadata, myObjArray);
 

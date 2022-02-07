@@ -14,6 +14,7 @@ using BExIS.IO.Transform.Output;
 using BExIS.Modules.Dim.UI.Models.Export;
 using BExIS.Security.Entities.Subjects;
 using BExIS.Security.Services.Utilities;
+using BExIS.Utils.Config;
 using BExIS.Utils.Extensions;
 using BExIS.Xml.Helpers;
 using Ionic.Zip;
@@ -25,6 +26,7 @@ using System.Text;
 using System.Web.Mvc;
 using System.Web.Routing;
 using System.Xml;
+using Vaiona.IoC;
 using Vaiona.Logging;
 using Vaiona.Persistence.Api;
 using Vaiona.Utils.Cfg;
@@ -34,6 +36,8 @@ namespace BExIS.Modules.Dim.UI.Controllers
 {
     public class ExportController : Controller
     {
+        private GeneralSettings generalSettings = IoCFactory.Container.Resolve<GeneralSettings>();
+
         // GET: Export
         /// <summary>
         ///
@@ -176,7 +180,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
             }
         }
 
-        public ActionResult GenerateZip(long id,long versionid, string format)
+        public ActionResult GenerateZip(long id, long versionid, string format)
         {
             XmlDatasetHelper xmlDatasetHelper = new XmlDatasetHelper();
             DatasetManager dm = new DatasetManager();
@@ -281,7 +285,6 @@ namespace BExIS.Modules.Dim.UI.Controllers
 
                             AsciiWriter.AllTextToFile(datastructureFilePath, json);
 
-
                             //generate datastructure as html
                             DatasetVersion ds = uow.GetUnitOfWork().GetReadOnlyRepository<DatasetVersion>().Get(dsvId);
                             generateDataStructureHtml(ds);
@@ -298,7 +301,6 @@ namespace BExIS.Modules.Dim.UI.Controllers
 
                     using (ZipFile zip = new ZipFile())
                     {
-
                         foreach (ContentDescriptor cd in datasetVersion.ContentDescriptors)
                         {
                             bool addFile = true;
@@ -357,7 +359,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
                         var es = new EmailService();
                         es.Send(MessageHelper.GetDownloadDatasetHeader(id, versionNr),
                             MessageHelper.GetDownloadDatasetMessage(id, title, getPartyNameOrDefault(), "zip - " + format, versionNr),
-                            ConfigurationManager.AppSettings["SystemEmail"]
+                            generalSettings.SystemEmail
                             );
 
                         return File(zipFilePath, "application/zip", Path.GetFileName(zipFilePath));
@@ -434,7 +436,6 @@ namespace BExIS.Modules.Dim.UI.Controllers
                 //dm.EditDatasetVersion(datasetVersion, null, null, null);
                 return dynamicPath;
             }
-           
         }
 
         private void generateMetadataHtml(DatasetVersion dsv)
@@ -488,7 +489,6 @@ namespace BExIS.Modules.Dim.UI.Controllers
 
         private string getPartyNameOrDefault()
         {
-
             var userName = string.Empty;
             try
             {
@@ -498,11 +498,9 @@ namespace BExIS.Modules.Dim.UI.Controllers
 
             if (userName != null)
             {
-
                 using (var uow = this.GetUnitOfWork())
                 using (var partyManager = new PartyManager())
                 {
-
                     var userRepository = uow.GetReadOnlyRepository<User>();
                     var user = userRepository.Query(s => s.Name.ToUpperInvariant() == userName.ToUpperInvariant()).FirstOrDefault();
 
@@ -514,11 +512,9 @@ namespace BExIS.Modules.Dim.UI.Controllers
                             return party.Name;
                         }
                     }
-
                 }
             }
             return !string.IsNullOrWhiteSpace(userName) ? userName : "DEFAULT";
         }
-
     }
 }
