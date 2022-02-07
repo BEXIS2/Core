@@ -41,13 +41,13 @@
     },
     {
       "key": "sendExceptions",
-      "value": "true",
+      "value": true,
       "type": "Boolean",
       "description": "If this flag is set to true, all exceptions will be forwarded to SystemEmail."
     },
     {
       "key": "useMultimediaModule",
-      "value": "true",
+      "value": true,
       "type": "Boolean",
       "description": "This flag truns on/off the Multimedia Module."
     },
@@ -65,7 +65,7 @@
     },
     {
       "key": "usePersonEmailAttributeName",
-      "value": "false",
+      "value": false,
       "type": "Boolean",
       "description": ""
     },

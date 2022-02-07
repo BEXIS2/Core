@@ -85,7 +85,6 @@ namespace BExIS.Web.Shell.Controllers
         }
 
         [HttpPost]
-        [JsonNetFilter]
         public JsonResult Save(JsonSettings settings)
         {
             //check incoming values
