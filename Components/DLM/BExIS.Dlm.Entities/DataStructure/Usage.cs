@@ -77,6 +77,26 @@ namespace BExIS.Dlm.Entities.DataStructure
         /// <remarks>If the variable's unit is going to be changed, the compatibility to the data container's unit's dimension should be preserved.</remarks>
         public virtual Unit Unit { get; set; } // 0..1
 
+        /// <summary>
+        /// 
+        /// </summary>
+        public virtual DataType DataType { get; set; }
+
+        public virtual string DatePattern { get; set; }
+
+        public virtual Variable VariableTemplate { get; set; }
         public virtual ICollection<MissingValue> MissingValues { get; set; } // 0..1
+
+        public virtual int VarTemplate { get; set; }
+
+        public virtual ICollection<Constraint> VariableConstraints { get; set; }
+    }
+
+    public class VariableInstance : Variable
+    {
+    }
+
+    public class VariableTemplate : Variable
+    {
     }
 }

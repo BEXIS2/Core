@@ -1,0 +1,7 @@
+<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2" assembly="BExIS.Dlm.Entities" namespace="BExIS.Dlm.Entities.DataStructure">
+  <subclass name="VariableTemplate" extends="Variable" discriminator-value="VAR_TEMPL" dynamic-update="true">
+
+
+  </subclass>
+  
+</hibernate-mapping>

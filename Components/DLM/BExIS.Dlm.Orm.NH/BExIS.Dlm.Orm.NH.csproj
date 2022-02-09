@@ -176,6 +176,8 @@
     <Content Include="Mappings\Default\DataStructure\Variable.hbm.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="Mappings\Default\DataStructure\Variable.VariableInstance.hbm.xml" />
+    <Content Include="Mappings\Default\DataStructure\Variable.VarTemplate.hbm.xml" />
     <Content Include="Mappings\Default\Data\ContentDescriptor.hbm.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

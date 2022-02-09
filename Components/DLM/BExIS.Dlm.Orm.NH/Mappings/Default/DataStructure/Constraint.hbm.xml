@@ -55,6 +55,12 @@
     <many-to-one name="DataContainer" class="DataContainer" not-null="true" column="DataContainerRef"/>
     <!--Intentionally commented; Two FK to two different entities that make them null-able! also I am not sure whether they are really needed. 22.02.12 Javad-->
     <!--<many-to-one name="ExtendedPropery" class="ExtendedPropery" not-null="false" column="ExtendedProperyRef"/>-->
+
+  <set name="VariableConstraints" inverse="true" table="Variable_Constraints" lazy="true" cascade="save-update">
+      <key column="ConstraintRef"/>
+      <many-to-many column="VariableRef" class="Variable"/>
+    </set>
+    
     
   </class>
 

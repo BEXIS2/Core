@@ -69,9 +69,11 @@ namespace BExIS.Dlm.Entities.DataStructure
         /// </summary>
         public virtual DataContainer DataContainer { get; set; }
 
+        public virtual ICollection<Variable> VariableConstraints { get; set; }
+
         #endregion
 
-        #region Mathods
+        #region Methods
         /// <summary>
         /// The method checks whether the input <paramref name="data"/> satisfies the constraint. To be implemented by concrete sub-classes.
         /// </summary>
