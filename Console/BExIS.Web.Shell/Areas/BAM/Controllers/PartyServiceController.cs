@@ -233,7 +233,7 @@ namespace BExIS.Modules.Bam.UI.Controllers
 
                     user.DisplayName = displayName;
 
-                    if (ConfigurationManager.AppSettings["usePersonEmailAttributeName"] == "true")
+                    if (generalSettings.GetEntryValue("usePersonEmailAttributeName") == "true")
                     {
                         var nameProp = partyTypeManager.PartyCustomAttributeRepository.Get(attr => (attr.PartyType == party.PartyType) && (attr.Name == ConfigurationManager.AppSettings["PersonEmailAttributeName"])).FirstOrDefault();
                         if (nameProp != null)
@@ -298,7 +298,7 @@ namespace BExIS.Modules.Bam.UI.Controllers
                 }
 
                 // Add attribute name for email
-                if (ConfigurationManager.AppSettings["usePersonEmailAttributeName"] == "true")
+                if (generalSettings.GetEntryValue("usePersonEmailAttributeName") == "true")
                 {
                     ViewBag.PersonEmailAttributeName = ConfigurationManager.AppSettings["PersonEmailAttributeName"];
                 }

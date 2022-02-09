@@ -207,7 +207,7 @@ namespace BExIS.Modules.Sam.UI.Controllers
                 user.Email = model.Email;
 
                 // Update email in party
-                if (ConfigurationManager.AppSettings["usePersonEmailAttributeName"] == "true")
+                if (generalSettings.GetEntryValue("usePersonEmailAttributeName") == "true")
                 {
                     var party = partyManager.GetPartyByUser(user.Id);
 
