@@ -35,6 +35,7 @@ using BExIS.Utils.Route;
 using Vaiona.Entities.Common;
 using BExIS.Utils.Config;
 using Vaiona.IoC;
+using Vaiona.Web.Mvc.Modularity;
 
 namespace BExIS.Modules.Dcm.UI.Controllers
 {
@@ -64,6 +65,8 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         [PostRoute("api/Data")]
         public async Task<HttpResponseMessage> Post([FromBody] PushDataApiModel data)
         {
+            var settings = ModuleManager.GetModuleInfo("Dcm")?.Plugin?.Settings;
+
             var request = Request.CreateResponse();
             User user = null;
             string error = "";
@@ -72,19 +75,13 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             UserManager userManager = new UserManager();
             EntityPermissionManager entityPermissionManager = new EntityPermissionManager();
             DataStructureManager dataStructureManager = new DataStructureManager();
-            ApiConfigurator apiHelper = new ApiConfigurator();
 
             DatasetVersion workingCopy = new DatasetVersion();
             List<DataTuple> rows = new List<DataTuple>();
 
-            GeneralSettings generalSettings = IoCFactory.Container.Resolve<GeneralSettings>();
-
             //load from apiConfig
             int cellLimit = 100000;
-            if (apiHelper != null && apiHelper.Settings.ContainsKey(ApiConfigurator.CELLS))
-            {
-                Int32.TryParse(apiHelper.Settings[ApiConfigurator.CELLS], out cellLimit);
-            }
+            Int32.TryParse(settings.GetEntryValue("celllimit").ToString(), out cellLimit);
 
             try
             {
@@ -281,6 +278,8 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         [PutRoute("api/Data")]
         public async Task<HttpResponseMessage> Put([FromBody] PutDataApiModel data)
         {
+            var settings = ModuleManager.GetModuleInfo("Dcm")?.Plugin?.Settings;
+
             var request = Request.CreateResponse();
             User user = null;
             string error = "";
@@ -289,17 +288,13 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             UserManager userManager = new UserManager();
             EntityPermissionManager entityPermissionManager = new EntityPermissionManager();
             DataStructureManager dataStructureManager = new DataStructureManager();
-            ApiConfigurator apiHelper = new ApiConfigurator();
 
             DatasetVersion workingCopy = new DatasetVersion();
             List<DataTuple> rows = new List<DataTuple>();
 
             //load from apiConfig
-            int cellLimit = 10000;
-            if (apiHelper != null && apiHelper.Settings.ContainsKey(ApiConfigurator.CELLS))
-            {
-                Int32.TryParse(apiHelper.Settings[ApiConfigurator.CELLS], out cellLimit);
-            }
+            int cellLimit = 100000;
+            Int32.TryParse(settings.GetEntryValue("celllimit").ToString(), out cellLimit);
 
             try
             {

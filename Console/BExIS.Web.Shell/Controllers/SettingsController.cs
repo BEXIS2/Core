@@ -77,7 +77,7 @@ namespace BExIS.Web.Shell.Controllers
             if (ModuleManager.IsActive(id))
             {
                 var moduleInfo = ModuleManager.GetModuleInfo(id);
-
+                
                 return Json(moduleInfo.Plugin.Settings.Get(), JsonRequestBehavior.AllowGet);
             }
 

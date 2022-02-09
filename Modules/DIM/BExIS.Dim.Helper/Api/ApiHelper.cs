@@ -27,7 +27,6 @@ namespace BExIS.Dim.Helpers.API
         {
             try
             {
-
                 string filepath = Path.Combine(AppConfiguration.GetModuleWorkspacePath("DIM"), sourceFile);
 
                 if (FileHelper.FileExist(filepath))
@@ -73,6 +72,5 @@ namespace BExIS.Dim.Helpers.API
             {
             }
         }
-
     }
 }

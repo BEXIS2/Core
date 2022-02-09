@@ -83,8 +83,7 @@ namespace BExIS.Modules.Sam.UI.Controllers
         {
             using (var entityManager = new EntityManager())
             {
-                ViewBag.Title = PresentationModel.GetViewTitleForTenant("Manage Entity Requests and Decisions",
-                    Session.GetTenant());
+                ViewBag.Title = PresentationModel.GetViewTitleForTenant("Manage Entity Requests and Decisions", Session.GetTenant());
 
                 var entities =
                     entityManager.Entities.Select(e => EntityTreeViewItemModel.Convert(e, e.Parent.Id)).ToList();
