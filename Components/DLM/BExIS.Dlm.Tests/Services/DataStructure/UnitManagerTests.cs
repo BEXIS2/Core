@@ -1,14 +1,7 @@
 ﻿using BExIS.App.Testing;
-using BExIS.Dlm.Entities.Data;
 using BExIS.Dlm.Entities.DataStructure;
-using BExIS.Dlm.Services.Administration;
-using BExIS.Dlm.Services.Data;
 using BExIS.Dlm.Services.DataStructure;
-using BExIS.Dlm.Services.MetadataStructure;
 using BExIS.Utils.Config;
-using BExIS.Utils.Data.Helpers;
-using BExIS.Web.Shell;
-using BExIS.Web.Shell.Helpers;
 using FluentAssertions;
 using NUnit.Framework;
 using System;
@@ -16,10 +9,11 @@ using System.Collections.Generic;
 using System.Linq;
 
 namespace BExIS.Dlm.Tests.Services.DataStructure
-{    
+{
     public class UnitManagerTests
     {
         private TestSetupHelper helper = null;
+
         [OneTimeSetUp]
         public void OneTimeSetUp()
         {
@@ -81,8 +75,6 @@ namespace BExIS.Dlm.Tests.Services.DataStructure
             {
                 um.Dispose();
             }
-
         }
     }
-
 }

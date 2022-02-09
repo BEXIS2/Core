@@ -10,7 +10,6 @@ namespace BExIS.Modules.Dim.UI.Helper
 {
     public class UIHelper
     {
-
         public DataTable ConvertStructuredDataStructureToDataTable(StructuredDataStructure sds)
         {
             DataTable dt = new DataTable();

@@ -5,6 +5,7 @@ using BExIS.Dlm.Services.Administration;
 using BExIS.Dlm.Services.Data;
 using BExIS.Dlm.Services.MetadataStructure;
 using BExIS.Dlm.Tests.Helpers;
+using BExIS.Utils;
 using BExIS.Utils.Config;
 using FluentAssertions;
 using NUnit.Framework;
@@ -18,7 +19,6 @@ using Vaiona.Persistence.Api;
 namespace BExIS.Dlm.Tests.Services.Data
 {
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Reliability", "CA2000:Objekte verwerfen, bevor Bereich verloren geht", Justification = "<Ausstehend>")]
-
     [TestFixture()]
     public class DatasetManager_GetDatasetVersionEffectiveDataTuplesTest
     {
@@ -181,7 +181,7 @@ namespace BExIS.Dlm.Tests.Services.Data
                 using (var uow = this.GetUnitOfWork())
                 {
                     var latestDataTuple = uow.GetReadOnlyRepository<DataTuple>().Get().LastOrDefault();
-                    var firstDataTuple = uow.GetReadOnlyRepository<DataTuple>().Get().Where(dt=>dt.DatasetVersion.Id.Equals(latestDatasetVersionId)).FirstOrDefault();
+                    var firstDataTuple = uow.GetReadOnlyRepository<DataTuple>().Get().Where(dt => dt.DatasetVersion.Id.Equals(latestDatasetVersionId)).FirstOrDefault();
                     if (latestDataTuple != null) latestDataTupleId = latestDataTuple.Id;
                     if (firstDataTuple != null) firstDataTupleId = firstDataTuple.Id;
                 }
@@ -194,12 +194,10 @@ namespace BExIS.Dlm.Tests.Services.Data
                 dataset = dsHelper.UpdateOneTupleForDataset(dataset, (StructuredDataStructure)dataset.DataStructure, latestDataTupleId, 2, datasetManager);
                 datasetManager.CheckInDataset(dataset.Id, "for testing  datatuples with versions", username, ViewCreationBehavior.None);
 
-
                 //Act
                 List<DatasetVersion> datasetversions = datasetManager.GetDatasetVersions(datasetId).OrderBy(d => d.Timestamp).ToList();
                 var resultAll = datasetManager.GetDatasetVersionEffectiveTuples(datasetversions.ElementAt(datasetversions.Count - 2));
-                List<long> comapreIds = resultAll.OrderBy(dt=>dt.OrderNo).Skip(pageNumber * pageSize).Take(pageSize).Select(dt=>dt.Id).ToList();
-
+                List<long> comapreIds = resultAll.OrderBy(dt => dt.OrderNo).Skip(pageNumber * pageSize).Take(pageSize).Select(dt => dt.Id).ToList();
 
                 var result = datasetManager.GetDatasetVersionEffectiveTuples(datasetversions.ElementAt(datasetversions.Count - 2), pageNumber, pageSize); // get datatuples from the one before the latest
                 var resultIds = result.Select(dt => dt.Id).ToList();
@@ -212,8 +210,6 @@ namespace BExIS.Dlm.Tests.Services.Data
                 datasetManager.Dispose();
             }
         }
-
-
 
         //[Test()]
         //public void GetDatasetVersionEffectiveDataTuples_PageOfDataTuplesFromLatestVersion_ReturnListOfAbstractTuplesWithNumberOfPagesize()

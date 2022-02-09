@@ -1,5 +1,6 @@
 ﻿using BExIS.App.Testing;
 using BExIS.Security.Services.Authorization;
+using BExIS.Utils;
 using BExIS.Utils.Config;
 using NUnit.Framework;
 

@@ -47,6 +47,7 @@
     <Use64BitIISExpress />
     <PostSharpHostConfigurationFile>web.config</PostSharpHostConfigurationFile>
     <DontImportPostSharp>True</DontImportPostSharp>
+    <TypeScriptCompileBlocked>True</TypeScriptCompileBlocked>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -907,9 +908,6 @@
     <Content Include="css\font-awesome.min.css" />
     <Content Include="fonts\fontawesome-webfont.svg" />
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
-    <Content Include="General.Settings.xml">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
     <Content Include="robots.txt" />
     <Content Include="Scripts\2013.2.611\jquery-1.7.1.min.js" />
     <Content Include="Scripts\2013.2.611\jquery.validate.min.js" />
@@ -1114,6 +1112,7 @@
     <Content Include="Content\DataTables-1.10.12\extensions\RowReorder\css\semanticui.scss" />
     <Content Include="Content\DataTables-1.10.12\extensions\Buttons\css\mixins.scss" />
     <Content Include="Content\DataTables-1.10.12\extensions\Buttons\css\common.scss" />
+    <Content Include="General.Settings.json" />
     <None Include="packages.config" />
     <None Include="Properties\PublishProfiles\BexisServer_demo.pubxml" />
     <None Include="Properties\PublishProfiles\BexisServer_test.pubxml" />
@@ -1366,12 +1365,12 @@
     <Content Include="Themes\Default\Layouts\_svelteLayout.cshtml" />
     <Content Include="Themes\Default\Layouts\_svelte_telerikLayout.cshtml" />
     <Content Include="Scripts\jquery-2.1.4.min.map" />
+    <Content Include="Views\Settings\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Areas\" />
     <Folder Include="Views\Help\" />
     <Folder Include="Views\Menu\" />
-    <Folder Include="Views\Settings\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\Home\About.cshtml" />
@@ -1496,6 +1495,10 @@
     <ProjectReference Include="..\..\Components\UI\BExIS.UI\BExIS.UI.csproj">
       <Project>{de0ad99c-c559-422f-8132-cc4d7c46ff83}</Project>
       <Name>BExIS.UI</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Components\Utils\BExIS.Utils.Config\BExIS.Utils.Config.csproj">
+      <Project>{6EAD7D02-02F7-42FF-85E4-90BB892D3846}</Project>
+      <Name>BExIS.Utils.Config</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\Components\Utils\BExIS.Utils.Data\BExIS.Utils.Data.csproj">
       <Project>{a7fbcc13-7e29-4710-82a1-bd6d6f811fda}</Project>
@@ -1648,7 +1651,7 @@
     <PostBuildEvent>
 			rmdir /S /Q  "$(SolutionDir)Console\Workspace\General\Db\Settings"
 			C:\Windows\System32\xcopy "$(ProjectDir)Db\Settings" "$(SolutionDir)Console\Workspace\General\Db\Settings" /E /C /Y /I
-			C:\Windows\System32\xcopy "$(ProjectDir)General.Settings.xml" "$(SolutionDir)Console\Workspace\General" /C /Y /I
+			C:\Windows\System32\xcopy "$(ProjectDir)General.Settings.json" "$(SolutionDir)Console\Workspace\General" /C /Y /I
 			rmdir /S /Q  "$(SolutionDir)Console\Workspace\Components\Vaiona"
 			C:\Windows\System32\xcopy "$(SolutionDir)Libraries\Vaiona\Workspace\Components\Vaiona" "$(SolutionDir)Console\Workspace\Components\Vaiona\" /E /C /Y /I
 		</PostBuildEvent>

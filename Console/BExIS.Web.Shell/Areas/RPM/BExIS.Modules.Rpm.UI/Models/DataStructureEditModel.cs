@@ -13,6 +13,7 @@ using System.Linq;
 using System.Xml;
 using Vaiona.Persistence.Api;
 using Vaiona.Utils.Cfg;
+using Vaiona.Web.Mvc.Modularity;
 
 namespace BExIS.Modules.Rpm.UI.Models
 {
@@ -254,25 +255,16 @@ namespace BExIS.Modules.Rpm.UI.Models
         {
             DataContainerManager dataAttributeManager = null;
 
-            XmlDocument settings = new XmlDocument();
-            bool optional = true;
+            var settings = ModuleManager.GetModuleSettings("Rpm");
 
-            try
-            {
-                string filePath = Path.Combine(AppConfiguration.GetModuleWorkspacePath("RPM"), "Rpm.Settings.xml");
-                settings.Load(filePath);
-            }
-            catch
-            {
-                settings = null;
-            }
+            bool optional = true;
 
             if (settings != null)
             {
                 try
                 {
-                    XmlNode optionalDefault = settings.GetElementsByTagName("optionalDefault")[0];
-                    optional = Convert.ToBoolean(optionalDefault.InnerText);
+                    var optionalDefault = settings.GetEntryValue("optionalDefault");
+                    optional = Convert.ToBoolean(optionalDefault);
                 }
                 catch
                 {
@@ -281,18 +273,17 @@ namespace BExIS.Modules.Rpm.UI.Models
 
                 try
                 {
-                    XmlNodeList missingValues = settings.GetElementsByTagName("missingValues")[0].ChildNodes;
+                    var missingValues = settings.GetList("missingValues");
 
-                    foreach (XmlNode xn in missingValues)
+                    foreach (Item item in missingValues)
                     {
                         this.MissingValues.Add(new MissingValueStruct()
                         {
                             Id = 0,
-                            DisplayName = xn["placeholder"].InnerText,
-                            Description = xn["description"].InnerText
+                            DisplayName = item.GetAttribute("placeholder").Value.ToString(),
+                            Description = item.GetAttribute("description").Value.ToString(),
                         });
                     }
-
                 }
                 catch
                 {

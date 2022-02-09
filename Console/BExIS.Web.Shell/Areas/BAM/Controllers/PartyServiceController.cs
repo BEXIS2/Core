@@ -3,18 +3,22 @@ using BExIS.Dlm.Services.Party;
 using BExIS.Modules.Bam.UI.Models;
 using BExIS.Security.Services.Subjects;
 using BExIS.Security.Services.Utilities;
+using BExIS.Utils.Config;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
+using Vaiona.IoC;
 using Vaiona.Web.Mvc.Models;
+using Vaiona.Web.Mvc.Modularity;
 
 namespace BExIS.Modules.Bam.UI.Controllers
 {
     public class PartyServiceController : Controller
     {
+
         // GET: PartyService
         public ActionResult Index()
         {
@@ -57,7 +61,7 @@ namespace BExIS.Modules.Bam.UI.Controllers
                             partyRelationshipType.AssociatedPairs = partyRelationshipType.AssociatedPairs.Where(item => partyType.Id == item.SourcePartyType.Id && item.TargetPartyType.Parties.Any()).ToList();
                             //try to find first type pair which has PartyRelationShipTypeDefault otherwise the first one
                             var defaultPartyTypePair = partyRelationshipType.AssociatedPairs.FirstOrDefault(item => item.PartyRelationShipTypeDefault);
-                            
+
                             if (defaultPartyTypePair == null)
                                 defaultPartyTypePair = partyRelationshipType.AssociatedPairs.FirstOrDefault();
                             if (defaultPartyTypePair != null)
@@ -108,8 +112,7 @@ namespace BExIS.Modules.Bam.UI.Controllers
             using (UserManager userManager = new UserManager())
             using (PartyRelationshipTypeManager partyRelationshipTypeManager = new PartyRelationshipTypeManager())
             {
-
-                // check if 
+                // check if
                 var userTask = userManager.FindByNameAsync(HttpContext.User.Identity.Name);
                 userTask.Wait();
                 var user = userTask.Result;
@@ -119,7 +122,6 @@ namespace BExIS.Modules.Bam.UI.Controllers
                 var partyuser = partyManager.GetPartyByUser(user.Id);
                 if (partyuser == null)
                 {
-
                     var partyType = partyTypeManager.PartyTypeRepository.Get(party.PartyType.Id);
                     var partyStatusType = partyTypeManager.GetStatusType(partyType, "Created");
                     //Create party
@@ -205,8 +207,7 @@ namespace BExIS.Modules.Bam.UI.Controllers
             using (PartyManager partyManager = new PartyManager())
             using (PartyTypeManager partyTypeManager = new PartyTypeManager())
             using (UserManager userManager = new UserManager())
-            { 
-    
+            {
                 if (!HttpContext.User.Identity.IsAuthenticated)
                     return RedirectToAction("Index", "Home");
 
@@ -227,36 +228,32 @@ namespace BExIS.Modules.Bam.UI.Controllers
                         p.CustomAttributeValues.
                         Where(ca => ca.CustomAttribute.IsMain.Equals(true)).
                         OrderBy(ca => ca.CustomAttribute.Id).
-                        Select(ca=>ca.Value).ToArray());
+                        Select(ca => ca.Value).ToArray());
 
                     user.DisplayName = displayName;
 
-                    if (ConfigurationManager.AppSettings["usePersonEmailAttributeName"] == "true")
+                    if (GeneralSettings.UsePersonEmailAttributeName)
                     {
-                        var nameProp = partyTypeManager.PartyCustomAttributeRepository.Get(attr => (attr.PartyType == party.PartyType) && (attr.Name == ConfigurationManager.AppSettings["PersonEmailAttributeName"])).FirstOrDefault();
+                        var nameProp = partyTypeManager.PartyCustomAttributeRepository.Get(attr => (attr.PartyType == party.PartyType) && (attr.Name == GeneralSettings.PersonEmailAttributeName)).FirstOrDefault();
                         if (nameProp != null)
-                        {               
+                        {
                             var entity = party.CustomAttributeValues.FirstOrDefault(item => item.CustomAttribute.Id == nameProp.Id);
                             if (user.Email != entity.Value)
                             {
                                 var es = new EmailService();
                                 es.Send(MessageHelper.GetUpdateEmailHeader(),
                                     MessageHelper.GetUpdaterEmailMessage(user.DisplayName, user.Email, entity.Value),
-                                    ConfigurationManager.AppSettings["SystemEmail"]
+                                    GeneralSettings.SystemEmail
                                     );
                             }
-                                user.Email = entity.Value;
-                            
+                            user.Email = entity.Value;
                         }
                     }
-                    
 
                     userManager.UpdateAsync(user);
-
                 }
                 return RedirectToAction("Index", "Home", new { area = "" });
             }
-            
         }
 
         /// <summary>
@@ -270,7 +267,6 @@ namespace BExIS.Modules.Bam.UI.Controllers
             using (UserManager userManager = new UserManager())
             using (PartyTypeManager partyTypeManager = new PartyTypeManager())
             {
-
                 long partyId = 0;
                 var partyIdStr = HttpContext.Request.Params["partyId"];
 
@@ -288,12 +284,10 @@ namespace BExIS.Modules.Bam.UI.Controllers
                     {
                         ViewBag.email = user.Email;
                     }
-
                 }
                 // if no user is linked assume it is the user registration
                 else
                 {
-
                     var userName = HttpContext.User.Identity.Name;
                     var userTask = userManager.FindByNameAsync(userName);
                     userTask.Wait();
@@ -303,19 +297,18 @@ namespace BExIS.Modules.Bam.UI.Controllers
                 }
 
                 // Add attribute name for email
-                if (ConfigurationManager.AppSettings["usePersonEmailAttributeName"] == "true")
+                if (GeneralSettings.UsePersonEmailAttributeName)
                 {
-                    ViewBag.PersonEmailAttributeName = ConfigurationManager.AppSettings["PersonEmailAttributeName"];
+                    ViewBag.PersonEmailAttributeName = GeneralSettings.PersonEmailAttributeName;
                 }
 
                 var customAttrList = new List<PartyCustomAttribute>();
-                
+
                 IEnumerable<PartyType> partyType = partyTypeManager.PartyTypeRepository.Get(item => item.Id == id);
                 if (partyType != null)
                     customAttrList = partyType.First().CustomAttributes.ToList();
                 return PartialView("_customAttributesPartial", customAttrList);
             }
-  
         }
 
         [HttpGet]
@@ -332,8 +325,12 @@ namespace BExIS.Modules.Bam.UI.Controllers
 
         public Dictionary<string, string[]> GetPartyTypesForAccount()
         {
+            // load settings 
+            ModuleInfo moduleInfo = ModuleManager.GetModuleInfo("Bam");
+            var settings = moduleInfo.Plugin.Settings;
+
             var result = new Dictionary<string, string[]>();
-            var accountPartyTypesStr = Helpers.Settings.get("AccountPartyTypes");
+            var accountPartyTypesStr = settings.GetEntryValue("AccountPartyTypes");
             if (accountPartyTypesStr == null || string.IsNullOrEmpty(accountPartyTypesStr.ToString()))
             {
                 return null;
@@ -390,7 +387,5 @@ namespace BExIS.Modules.Bam.UI.Controllers
                 return temp;
             }
         }
-
-
     }
 }

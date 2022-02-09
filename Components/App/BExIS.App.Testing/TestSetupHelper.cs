@@ -1,4 +1,9 @@
 ﻿using BExIS.App.Bootstrap;
+using BExIS.Utils;
+
+using BExIS.Utils;
+
+using BExIS.Utils.Config;
 using Moq;
 using System;
 using System.IO;
@@ -18,7 +23,8 @@ namespace BExIS.App.Testing
     {
         protected Application app = null;
 
-        public Application AppContext { get { return app; } }
+        public Application AppContext
+        { get { return app; } }
 
         public TestSetupHelper(Action<HttpConfiguration> configurationCallback, bool configureModules)
         {
@@ -26,7 +32,6 @@ namespace BExIS.App.Testing
             app.Start(configurationCallback, configureModules);
 
             HttpContext.Current = FakeHttpContext();
-            
         }
 
         public ControllerContext BuildHttpContext()
@@ -50,8 +55,8 @@ namespace BExIS.App.Testing
             var tenant = tenantResolver.DefaultTenant;
 
             // setting the landing page for the current session
-            GeneralSettings generalSettings = IoCFactory.Container.Resolve<GeneralSettings>();
-            var landingPage = generalSettings.GetEntryValue("landingPage").ToString();
+            
+            var landingPage = GeneralSettings.LandingPage;
             tenant.LandingPage = landingPage; // checks and sets
 
             var httpSessionMock = new Mock<HttpSessionStateBase>();

@@ -1,4 +1,9 @@
-﻿using BExIS.UI.Helpers;
+﻿using BExIS.App.Bootstrap;
+using BExIS.App.Bootstrap.Attributes;
+using BExIS.UI.Helpers;
+using BExIS.UI.Models;
+using BExIS.Utils;
+using BExIS.Utils.Config;
 using BExIS.Web.Shell.Models;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -11,6 +16,7 @@ using System.Web;
 using System.Web.Mvc;
 using System.Xml;
 using System.Xml.Linq;
+using Vaiona.IoC;
 using Vaiona.Utils.Cfg;
 using Vaiona.Web.Mvc.Modularity;
 
@@ -18,22 +24,35 @@ namespace BExIS.Web.Shell.Controllers
 {
     public class SettingsController : Controller
     {
+        public ActionResult Index()
+        {
+
+            return View();
+        }
+
         [HttpGet]
         public JsonResult Get()
         {
             List<object> modules = new List<object>();
 
+            // add shell
+            ModulModel module = new ModulModel();
+            module.Id = "shell";
+            module.Title = "Website";
+            module.Description = "Website";
+            modules.Add(module);
+
             foreach (var m in ModuleManager.ModuleInfos.Where(m => ModuleManager.IsActive(m.Id)))
             {
-                ModulModel module = new ModulModel();
+                module = new ModulModel();
                 module.Id = m.Id;
 
                 // get displayname from manifest file root node
                 var xmldoc = m.Manifest.ManifestDoc;
 
-                if (xmldoc.Attribute("displayName") != null) 
+                if (xmldoc.Attribute("displayName") != null)
                     module.Title = xmldoc.Attribute("displayName").Value;
-                else 
+                else
                     module.Title = m.Id;
 
                 module.Description = m.Manifest.Description;
@@ -42,33 +61,57 @@ namespace BExIS.Web.Shell.Controllers
             }
 
             return Json(modules, JsonRequestBehavior.AllowGet);
-
         }
 
         // GET: Settings
         [HttpGet]
+        [JsonNetFilter]
         public JsonResult Load(string id)
         {
-            List<string> settings = new List<string>();
-
+            if (id == "shell")
+            { 
+                return Json(GeneralSettings.Get().GetAsJsonModel(), JsonRequestBehavior.AllowGet);
+            }
 
             if (ModuleManager.IsActive(id))
             {
-                SettingsHelper settingsHelper = new SettingsHelper(id);
-                return Json(settingsHelper.AsJson(), JsonRequestBehavior.AllowGet);
+                var moduleSettings = ModuleManager.GetModuleSettings(id);
+                
+                return Json(moduleSettings.GetAsJsonModel(), JsonRequestBehavior.AllowGet);
             }
 
             return Json(false, JsonRequestBehavior.AllowGet);
         }
 
         [HttpPost]
-        public JsonResult Save(string id, string json)
+        public JsonResult Save(JsonSettings settings)
         {
+            //check incoming values
+            if (settings == null) throw new ArgumentNullException("settings");
+            if (string.IsNullOrEmpty(settings.Id)) throw new ArgumentNullException("id");
+            if (string.IsNullOrEmpty(settings.Description)) throw new ArgumentNullException("Description");
+            if (settings.Entry == null) throw new ArgumentNullException("entry");
 
-            SettingsHelper settingsHelper = new SettingsHelper(id);
-            settingsHelper.Update(json);
+            try
+            {
+                if (settings.Id == "shell")
+                {
 
-            return Json(true, JsonRequestBehavior.AllowGet);
+                    GeneralSettings.Get().Update(settings);
+                }
+
+                if (ModuleManager.IsActive(settings.Id))
+                {
+                    var moduleSettings = ModuleManager.GetModuleSettings(settings.Id);
+                    moduleSettings.Update(settings);
+                }
+
+                return Json(true);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
         }
     }
 }

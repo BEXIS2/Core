@@ -1,5 +1,6 @@
 ﻿using BExIS.App.Bootstrap.Attributes;
 using BExIS.Ext.Services;
+using BExIS.Utils;
 using BExIS.Utils.Config;
 using System;
 using System.Collections.Generic;
@@ -52,7 +53,8 @@ namespace BExIS.App.Bootstrap
         private RunStage runStage = RunStage.Production;
         private bool started = false;
 
-        public bool Started { get { return started; } }
+        public bool Started
+        { get { return started; } }
 
         public void Start(Action<HttpConfiguration> configurationCallback, bool configureModules)
         {
@@ -128,6 +130,7 @@ namespace BExIS.App.Bootstrap
             AppDomain.CurrentDomain.AssemblyResolve += ModuleManager.ResolveCurrentDomainAssembly;
             initIoC();
             GlobalConfiguration.Configure(configurationCallback);
+
             // This method initializes the registered modules. It MUST be before initializing the persistence!
             initModules();
             // The persistnce service starts up the ORM, binds the mapping files to the database and the entities and depndeing on the modules' statuses upgrades the database schema.
@@ -142,6 +145,9 @@ namespace BExIS.App.Bootstrap
             // At application start, each modules obtains a chance to perform some initialization and warmup tasks. They are coded in each module's Start method.
             // This call starts them.
             ModuleManager.StartModules();
+
+            // generate settings
+            
         }
 
         private void initTenancy()

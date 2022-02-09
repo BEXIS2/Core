@@ -5,6 +5,7 @@ using BExIS.Dlm.Services.Administration;
 using BExIS.Dlm.Services.Data;
 using BExIS.Dlm.Services.MetadataStructure;
 using BExIS.Dlm.Tests.Helpers;
+using BExIS.Utils;
 using BExIS.Utils.Config;
 using FluentAssertions;
 using NUnit.Framework;
@@ -18,7 +19,6 @@ using Vaiona.Persistence.Api;
 namespace BExIS.Dlm.Tests.Services.Data
 {
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Reliability", "CA2000:Objekte verwerfen, bevor Bereich verloren geht", Justification = "<Ausstehend>")]
-
     [TestFixture()]
     public class DatasetManager_GetDataTuplesTest
     {
@@ -126,16 +126,13 @@ namespace BExIS.Dlm.Tests.Services.Data
         [Test()]
         public void GetDataTuples_CallOlderVersionAfterTwoUpdates_ReturnIQueryable()
         {
-            
-            
             List<long> datatupleIds;
-            
+
             try
             {
                 //Arrange
                 using (var datasetManager = new DatasetManager())
                 {
-
                     var dataset = datasetManager.GetDataset(datasetId);
                     var datasetVersion = datasetManager.GetDatasetLatestVersion(datasetId);
 
@@ -154,7 +151,6 @@ namespace BExIS.Dlm.Tests.Services.Data
                     dataset = dsHelper.UpdateOneTupleForDataset(dataset, (StructuredDataStructure)dataset.DataStructure, datatupleIds[1], 2000, datasetManager);
                     datasetManager.CheckInDataset(dataset.Id, "for testing  datatuples with versions", username, ViewCreationBehavior.None);
                 }
-
 
                 //Act
                 using (var datasetManager = new DatasetManager())
@@ -177,7 +173,6 @@ namespace BExIS.Dlm.Tests.Services.Data
             {
                 throw ex;
             }
-
         }
 
         [Test()]

@@ -6,6 +6,7 @@ using System.IO;
 using System.Xml.Linq;
 using BExIS.Xml.Helpers;
 using BExIS.UI.Helpers;
+using Vaiona.Web.Mvc.Modularity;
 
 namespace BExIS.Modules.Rpm.UI.Controllers
 {
@@ -16,12 +17,9 @@ namespace BExIS.Modules.Rpm.UI.Controllers
 
         public ActionResult Index()
         {
-            SettingsHelper settingsHelper = new SettingsHelper("RPM");
-            string helpurl = settingsHelper.GetValue("help");
+            string helpurl = ModuleManager.GetModuleSettings("RPM").GetEntryValue("help").ToString();
 
             return Redirect(helpurl);
-
-
         }
     }
 }

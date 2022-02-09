@@ -12,6 +12,9 @@ using MailKit;
 using System;
 using MailKit.Security;
 using System.IO;
+using Vaiona.IoC;
+using BExIS.Utils;
+using BExIS.Utils.Config;
 
 namespace BExIS.Security.Services.Utilities
 {
@@ -34,8 +37,8 @@ namespace BExIS.Security.Services.Utilities
                 client.ServerCertificateValidationCallback = (s, c, h, e) => { return true; };
 
                 client.Connect(ConfigurationManager.AppSettings["Email_Host_Name"], int.Parse(ConfigurationManager.AppSettings["Email_Host_Port"]), (SecureSocketOptions)int.Parse(ConfigurationManager.AppSettings["Email_Host_SecureSocketOptions"]));
-                
-                if(!bool.Parse(ConfigurationManager.AppSettings["Email_Host_Anonymous"]))
+
+                if (!bool.Parse(ConfigurationManager.AppSettings["Email_Host_Anonymous"]))
                 {
                     client.Authenticate(ConfigurationManager.AppSettings["Email_Account_Name"], ConfigurationManager.AppSettings["Email_Account_Password"]);
                 }
@@ -50,6 +53,8 @@ namespace BExIS.Security.Services.Utilities
         {
             var mimeMessage = new MimeMessage();
 
+            
+
             mimeMessage.From.Add(new MailboxAddress(ConfigurationManager.AppSettings["Email_From_Name"], ConfigurationManager.AppSettings["Email_From_Address"]));
             if (destinations != null)
                 mimeMessage.To.AddRange(destinations.Select(d => new MailboxAddress(d, d)));
@@ -59,12 +64,12 @@ namespace BExIS.Security.Services.Utilities
                 mimeMessage.Bcc.AddRange(bccs.Select(b => new MailboxAddress(b, b)));
             if (replyTos != null)
                 mimeMessage.ReplyTo.AddRange(replyTos.Select(r => new MailboxAddress(r, r)));
-            mimeMessage.Subject = AppConfiguration.ApplicationName + " - " + subject;
+            mimeMessage.Subject = GeneralSettings.ApplicationName + " - " + subject;
 
             var builder = new BodyBuilder();
             builder.HtmlBody = body;
 
-            if(attachments != null)
+            if (attachments != null)
             {
                 foreach (var attachment in attachments)
                 {
@@ -92,10 +97,11 @@ namespace BExIS.Security.Services.Utilities
         public void Send(IdentityMessage message)
         {
             var mimeMessage = new MimeMessage();
+            
 
             mimeMessage.From.Add(new MailboxAddress(ConfigurationManager.AppSettings["Email_From_Name"], ConfigurationManager.AppSettings["Email_From_Address"]));
             mimeMessage.To.Add(new MailboxAddress(message.Destination, message.Destination));
-            mimeMessage.Subject = AppConfiguration.ApplicationName + " - " + message.Subject;
+            mimeMessage.Subject = GeneralSettings.ApplicationName + " - " + message.Subject;
             mimeMessage.Body = new TextPart(MimeKit.Text.TextFormat.Html) { Text = message.Body };
 
             Send(mimeMessage);
@@ -104,10 +110,11 @@ namespace BExIS.Security.Services.Utilities
         public async Task SendAsync(IdentityMessage message)
         {
             var mimeMessage = new MimeMessage();
+            
 
             mimeMessage.From.Add(new MailboxAddress(ConfigurationManager.AppSettings["Email_From_Name"], ConfigurationManager.AppSettings["Email_From_Address"]));
             mimeMessage.To.Add(new MailboxAddress(message.Destination, message.Destination));
-            mimeMessage.Subject = AppConfiguration.ApplicationName + " - " + message.Subject;
+            mimeMessage.Subject = GeneralSettings.ApplicationName + " - " + message.Subject;
             mimeMessage.Body = new TextPart(MimeKit.Text.TextFormat.Html) { Text = message.Body };
 
             Send(mimeMessage);

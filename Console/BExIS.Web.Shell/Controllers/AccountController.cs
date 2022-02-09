@@ -1,7 +1,10 @@
-﻿using BExIS.Security.Entities.Subjects;
+﻿using BExIS.App.Bootstrap;
+using BExIS.Security.Entities.Subjects;
 using BExIS.Security.Services.Authentication;
 using BExIS.Security.Services.Subjects;
 using BExIS.Security.Services.Utilities;
+using BExIS.Utils;
+using BExIS.Utils.Config;
 using BExIS.Web.Shell.Models;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
@@ -10,6 +13,7 @@ using System.Configuration;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
+using Vaiona.IoC;
 using Vaiona.Utils.Cfg;
 using Vaiona.Web.Extensions;
 using Vaiona.Web.Mvc.Models;
@@ -41,7 +45,7 @@ namespace BExIS.Web.Shell.Controllers
                 var es = new EmailService();
                 es.Send(MessageHelper.GetRegisterUserHeader(),
                     MessageHelper.GetRegisterUserMessage(user.Id, user.Name, user.Email),
-                    ConfigurationManager.AppSettings["SystemEmail"]
+                    GeneralSettings.SystemEmail
                     );
 
                 return this.IsAccessible("bam", "PartyService", "UserRegistration")
@@ -329,7 +333,7 @@ namespace BExIS.Web.Shell.Controllers
                     var es = new EmailService();
                     es.Send(MessageHelper.GetTryToRegisterUserHeader(),
                         MessageHelper.GetTryToRegisterUserMessage(user.Id, user.Name, user.Email),
-                        ConfigurationManager.AppSettings["SystemEmail"]
+                        GeneralSettings.SystemEmail
                         );
 
                     ViewBag.Message = "Before you can log in to complete your registration, please check your email and verify your email address. If you did not receive an email, please also check your spam folder.";
@@ -413,7 +417,8 @@ namespace BExIS.Web.Shell.Controllers
                 var policyUrl = Url.Action("Index", "PrivacyPolicy", null, Request.Url.Scheme);
                 var termsUrl = Url.Action("Index", "TermsAndConditions", null, Request.Url.Scheme);
 
-                var applicationName = AppConfiguration.ApplicationName;
+                
+                var applicationName = GeneralSettings.ApplicationName;
 
                 await identityUserService.SendEmailAsync(userId, subject,
                     $"<p>Dear user,</p>" +

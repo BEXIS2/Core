@@ -1,4 +1,39 @@
-﻿using BExIS.App.Testing; using BExIS.Dlm.Entities.Party; using BExIS.Dlm.Services.Party; using BExIS.Utils.Config; using FluentAssertions; using NUnit.Framework; using System; using System.Collections.Generic; using System.Linq; using System.Text; using System.Threading.Tasks;  namespace BExIS.Dlm.Tests.Services.Party {     public class PartyTypeManagerTests     {         private TestSetupHelper helper = null;         [OneTimeSetUp]         public void OneTimeSetUp()         {             helper = new TestSetupHelper(WebApiConfig.Register, false);         }          [OneTimeTearDown]         public void OneTimeTearDown()         {             helper.Dispose();         }          [Test()]         public void CreatePartyTypeTest()         {             PartyTypeManager partyTypeManager = new PartyTypeManager();             try
+﻿using BExIS.App.Testing;
+using BExIS.Dlm.Entities.Party;
+using BExIS.Dlm.Services.Party;
+using BExIS.Utils;
+using BExIS.Utils.Config;
+using FluentAssertions;
+using NUnit.Framework;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace BExIS.Dlm.Tests.Services.Party
+{
+    public class PartyTypeManagerTests
+    {
+        private TestSetupHelper helper = null;
+
+        [OneTimeSetUp]
+        public void OneTimeSetUp()
+        {
+            helper = new TestSetupHelper(WebApiConfig.Register, false);
+        }
+
+        [OneTimeTearDown]
+        public void OneTimeTearDown()
+        {
+            helper.Dispose();
+        }
+
+        [Test()]
+        public void CreatePartyTypeTest()
+        {
+            PartyTypeManager partyTypeManager = new PartyTypeManager();
+            try
             {
                 var partyStatusTypes = new List<PartyStatusType>();
                 partyStatusTypes.Add(new PartyStatusType() { Name = "Created", Description = "" });
@@ -10,11 +45,21 @@
                 partyType.Title.Should().BeEquivalentTo(fetchedPartyType.Title);
                 partyType.DisplayName.Should().BeEquivalentTo(fetchedPartyType.DisplayName);
                 partyType.Description.Should().BeEquivalentTo(fetchedPartyType.Description);
-                partyTypeManager.Delete(partyType);// cleanup the DB                 var partyTypeAfterDelete = partyTypeManager.PartyTypeRepository.Get(cc => cc.Id == partyTypeId).FirstOrDefault();
+                partyTypeManager.Delete(partyType);// cleanup the DB
+                var partyTypeAfterDelete = partyTypeManager.PartyTypeRepository.Get(cc => cc.Id == partyTypeId).FirstOrDefault();
                 partyTypeAfterDelete.Should().BeNull();
-            }             finally             {
+            }
+            finally
+            {
                 partyTypeManager.Dispose();
-            }         }          [Test()]         public void CreateCustomAttributeTest()         {             PartyTypeManager partyTypeManager = new PartyTypeManager();             try
+            }
+        }
+
+        [Test()]
+        public void CreateCustomAttributeTest()
+        {
+            PartyTypeManager partyTypeManager = new PartyTypeManager();
+            try
             {
                 var partyStatusTypes = new List<PartyStatusType>();
                 partyStatusTypes.Add(new PartyStatusType() { Name = "Created", Description = "" });
@@ -34,7 +79,8 @@
                 partyCustomAttribute.IsMain.Should().Equals(fetchedPartyCustomAttribute.IsMain);
                 partyCustomAttribute.IsUnique.Should().Equals(fetchedPartyCustomAttribute.IsUnique);
                 partyCustomAttribute.DisplayOrder.Should().Equals(fetchedPartyCustomAttribute.DisplayOrder);
-                partyTypeManager.DeletePartyCustomAttribute(partyCustomAttribute);// cleanup the DB                 var partyCustomAttributeAfterDelete = partyTypeManager.PartyCustomAttributeRepository.Get(cc => cc.Id == partyCustomAttributeId).FirstOrDefault();
+                partyTypeManager.DeletePartyCustomAttribute(partyCustomAttribute);// cleanup the DB
+                var partyCustomAttributeAfterDelete = partyTypeManager.PartyCustomAttributeRepository.Get(cc => cc.Id == partyCustomAttributeId).FirstOrDefault();
                 partyCustomAttributeAfterDelete.Should().BeNull();
                 var objPartyCustomAttribute = new PartyCustomAttribute()
                 {
@@ -61,11 +107,22 @@
                 partyCustomAttributeFromObject.IsMain.Should().Equals(fetchedPartyCustomAttributeFromObject.IsMain);
                 partyCustomAttributeFromObject.IsUnique.Should().Equals(fetchedPartyCustomAttributeFromObject.IsUnique);
                 partyCustomAttributeFromObject.DisplayOrder.Should().Equals(fetchedPartyCustomAttributeFromObject.DisplayOrder);
-                partyTypeManager.DeletePartyCustomAttribute(partyCustomAttributeFromObject);// cleanup the DB                 partyTypeManager.Delete(partyType);//                  var partyTypeAfterDelete = partyTypeManager.PartyTypeRepository.Get(cc => cc.Id == partyTypeId).FirstOrDefault();
+                partyTypeManager.DeletePartyCustomAttribute(partyCustomAttributeFromObject);// cleanup the DB
+                partyTypeManager.Delete(partyType);//
+                var partyTypeAfterDelete = partyTypeManager.PartyTypeRepository.Get(cc => cc.Id == partyTypeId).FirstOrDefault();
                 partyTypeAfterDelete.Should().BeNull();
-            }             finally             {
+            }
+            finally
+            {
                 partyTypeManager.Dispose();
-            }         }          [Test()]         public void DeleteListOfPartyTypeTest()         {             PartyTypeManager partyTypeManager = new PartyTypeManager();             try
+            }
+        }
+
+        [Test()]
+        public void DeleteListOfPartyTypeTest()
+        {
+            PartyTypeManager partyTypeManager = new PartyTypeManager();
+            try
             {
                 var partyStatusTypes = new List<PartyStatusType>();
                 partyStatusTypes.Add(new PartyStatusType() { Name = "Created", Description = "" });
@@ -81,10 +138,18 @@
                 var partyType2AfterDelete = partyTypeManager.PartyTypeRepository.Get(cc => cc.Id == partyType2Id).FirstOrDefault();
                 partyType1AfterDelete.Should().BeNull();
                 partyType2AfterDelete.Should().BeNull();
-            }             finally             {
+            }
+            finally
+            {
                 partyTypeManager.Dispose();
-            }         }
-        [Test()]         public void DeleteListOfPartyCustomAttributeTest()         {             PartyTypeManager partyTypeManager = new PartyTypeManager();             try
+            }
+        }
+
+        [Test()]
+        public void DeleteListOfPartyCustomAttributeTest()
+        {
+            PartyTypeManager partyTypeManager = new PartyTypeManager();
+            try
             {
                 var partyStatusTypes = new List<PartyStatusType>();
                 partyStatusTypes.Add(new PartyStatusType() { Name = "Created", Description = "" });
@@ -107,10 +172,17 @@
                 var partyCustomAttr2AfterDelete = partyTypeManager.PartyTypeRepository.Query(cc => cc.Id == partyCustomAttr2Id).FirstOrDefault();
                 partyCustomAttr1AfterDelete.Should().BeNull();
                 partyCustomAttr2AfterDelete.Should().BeNull();
-            }             finally             {
+            }
+            finally
+            {
                 partyTypeManager.Dispose();
-            }         }          [Test()]
-        public void UpdateCustomAttributeTest()         {             PartyTypeManager partyTypeManager = new PartyTypeManager();
+            }
+        }
+
+        [Test()]
+        public void UpdateCustomAttributeTest()
+        {
+            PartyTypeManager partyTypeManager = new PartyTypeManager();
             try
             {
                 var partyStatusTypes = new List<PartyStatusType>();
@@ -145,4 +217,6 @@
             {
                 partyTypeManager.Dispose();
             }
-        }          }  } 
+        }
+    }
+}

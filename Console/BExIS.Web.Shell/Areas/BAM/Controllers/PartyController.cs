@@ -4,19 +4,21 @@ using BExIS.Modules.Bam.UI.Helpers;
 using BExIS.Modules.Bam.UI.Models;
 using BExIS.Security.Services.Subjects;
 using BExIS.Security.Services.Utilities;
+using BExIS.Utils.Config;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Data;
 using System.Linq;
 using System.Web.Mvc;
+using Vaiona.IoC;
 using Vaiona.Web.Mvc.Models;
 
 namespace BExIS.Modules.Bam.UI.Controllers
 {
     public class PartyController : Controller
     {
-
+        
         public ActionResult Index()
         {
             using (var partyTypeManager = new PartyTypeManager())
@@ -172,10 +174,10 @@ namespace BExIS.Modules.Bam.UI.Controllers
                     party = Helper.EditParty(partyModel, partyCustomAttributeValues, systemPartyRelationships);
 
                     // check if an email is configured
-                    if (ConfigurationManager.AppSettings["usePersonEmailAttributeName"] == "true")
+                    if (GeneralSettings.UsePersonEmailAttributeName)
                     {
                         // get property name of custom attribute which holds the email
-                        var nameProp = partyTypeManager.PartyCustomAttributeRepository.Get(attr => (attr.PartyType == party.PartyType) && (attr.Name == ConfigurationManager.AppSettings["PersonEmailAttributeName"])).FirstOrDefault();
+                        var nameProp = partyTypeManager.PartyCustomAttributeRepository.Get(attr => (attr.PartyType == party.PartyType) && (attr.Name == GeneralSettings.PersonEmailAttributeName)).FirstOrDefault();
                         if (nameProp != null)
                         {
                             // get value from custom attribute
@@ -190,10 +192,14 @@ namespace BExIS.Modules.Bam.UI.Controllers
                             // compare user and party email
                             if (user.Email != entity.Value)
                             {
+
+                                
+
+
                                 var es = new EmailService();
                                 es.Send(MessageHelper.GetUpdateEmailHeader(),
                                     MessageHelper.GetUpdaterEmailMessage(user.DisplayName, user.Email, entity.Value),
-                                    ConfigurationManager.AppSettings["SystemEmail"]
+                                    GeneralSettings.SystemEmail
                                     );
 
                                 // Update user email

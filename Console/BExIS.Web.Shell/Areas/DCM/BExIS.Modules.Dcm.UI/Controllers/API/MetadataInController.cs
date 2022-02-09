@@ -7,6 +7,7 @@ using BExIS.Security.Entities.Subjects;
 using BExIS.Security.Services.Authorization;
 using BExIS.Security.Services.Subjects;
 using BExIS.Security.Services.Utilities;
+using BExIS.Utils.Config;
 using BExIS.Utils.Route;
 using BExIS.Xml.Helpers;
 using BExIS.Xml.Helpers.Mapping;
@@ -20,6 +21,7 @@ using System.Threading.Tasks;
 using System.Web.Http;
 using System.Web.Http.Description;
 using System.Xml;
+using Vaiona.IoC;
 using Vaiona.Logging;
 using Vaiona.Persistence.Api;
 using Vaiona.Utils.Cfg;
@@ -31,13 +33,14 @@ namespace BExIS.Modules.Dim.UI.Controllers
     /// </summary>
     public class MetadataInController : ApiController
     {
+
         private XmlDatasetHelper xmlDatasetHelper = new XmlDatasetHelper();
 
         // POST: api/Metadata
         [BExISApiAuthorize]
         [PostRoute("api/Metadata")]
         [ApiExplorerSettings(IgnoreApi = true)]
-        public void Post([FromBody]string value)
+        public void Post([FromBody] string value)
         {
         }
 
@@ -185,7 +188,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
                     var es = new EmailService();
                     es.Send(MessageHelper.GetMetadataUpdatHeader(id, typeof(Dataset).Name),
                         MessageHelper.GetUpdateDatasetMessage(id, title, user.DisplayName, typeof(Dataset).Name),
-                        ConfigurationManager.AppSettings["SystemEmail"]
+                        GeneralSettings.SystemEmail
                         );
                 }
 

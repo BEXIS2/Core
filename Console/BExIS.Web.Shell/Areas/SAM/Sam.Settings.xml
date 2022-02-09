@@ -1,4 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<settings id="sam" name="system administration" description="...">
-  <entry key="help" value="https://github.com/BEXIS2/Documents/blob/2.14.4/Manuals/SAM/Manual.md" type="String" description="URL to manual"/>
-</settings>

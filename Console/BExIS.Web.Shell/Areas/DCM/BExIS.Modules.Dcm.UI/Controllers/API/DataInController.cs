@@ -33,6 +33,9 @@ using System.Web.Http;
 using System.Web.Http.Description;
 using BExIS.Utils.Route;
 using Vaiona.Entities.Common;
+using BExIS.Utils.Config;
+using Vaiona.IoC;
+using Vaiona.Web.Mvc.Modularity;
 
 namespace BExIS.Modules.Dcm.UI.Controllers
 {
@@ -59,8 +62,10 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         /// <param name="data"></param>
         [BExISApiAuthorize]
         [PostRoute("api/Data")]
-        public async Task<HttpResponseMessage> Post([FromBody]PushDataApiModel data)
+        public async Task<HttpResponseMessage> Post([FromBody] PushDataApiModel data)
         {
+            var settings = ModuleManager.GetModuleSettings("Dcm");
+
             var request = Request.CreateResponse();
             User user = null;
             string error = "";
@@ -69,17 +74,13 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             UserManager userManager = new UserManager();
             EntityPermissionManager entityPermissionManager = new EntityPermissionManager();
             DataStructureManager dataStructureManager = new DataStructureManager();
-            ApiConfigurator apiHelper = new ApiConfigurator();
 
             DatasetVersion workingCopy = new DatasetVersion();
             List<DataTuple> rows = new List<DataTuple>();
 
             //load from apiConfig
             int cellLimit = 100000;
-            if (apiHelper != null && apiHelper.Settings.ContainsKey(ApiConfigurator.CELLS))
-            {
-                Int32.TryParse(apiHelper.Settings[ApiConfigurator.CELLS], out cellLimit);
-            }
+            Int32.TryParse(settings.GetEntryValue("celllimit").ToString(), out cellLimit);
 
             try
             {
@@ -237,7 +238,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                             es.Send(MessageHelper.GetUpdateDatasetHeader(dataset.Id),
                                 MessageHelper.GetUpdateDatasetMessage(dataset.Id, title, user.DisplayName, typeof(Dataset).Name),
                                 new List<string>() { user.Email },
-                                       new List<string>() { ConfigurationManager.AppSettings["SystemEmail"] }
+                                       new List<string>() { GeneralSettings.SystemEmail }
                                 );
                         }
 
@@ -249,7 +250,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                         es.Send(MessageHelper.GetPushApiUploadFailHeader(dataset.Id, title),
                                    MessageHelper.GetPushApiUploadFailMessage(dataset.Id, user.UserName, new string[] { "Upload failed: " + ex.Message }),
                                    new List<string>() { user.Email },
-                                   new List<string>() { ConfigurationManager.AppSettings["SystemEmail"] }
+                                   new List<string>() { GeneralSettings.SystemEmail }
                                    );
 
                         return Request.CreateResponse(HttpStatusCode.InternalServerError, ex.Message);
@@ -274,8 +275,10 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         /// </summary>
         [BExISApiAuthorize]
         [PutRoute("api/Data")]
-        public async Task<HttpResponseMessage> Put([FromBody]PutDataApiModel data)
+        public async Task<HttpResponseMessage> Put([FromBody] PutDataApiModel data)
         {
+            var settings = ModuleManager.GetModuleSettings("Dcm");
+
             var request = Request.CreateResponse();
             User user = null;
             string error = "";
@@ -284,17 +287,13 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             UserManager userManager = new UserManager();
             EntityPermissionManager entityPermissionManager = new EntityPermissionManager();
             DataStructureManager dataStructureManager = new DataStructureManager();
-            ApiConfigurator apiHelper = new ApiConfigurator();
 
             DatasetVersion workingCopy = new DatasetVersion();
             List<DataTuple> rows = new List<DataTuple>();
 
             //load from apiConfig
-            int cellLimit = 10000;
-            if (apiHelper != null && apiHelper.Settings.ContainsKey(ApiConfigurator.CELLS))
-            {
-                Int32.TryParse(apiHelper.Settings[ApiConfigurator.CELLS], out cellLimit);
-            }
+            int cellLimit = 100000;
+            Int32.TryParse(settings.GetEntryValue("celllimit").ToString(), out cellLimit);
 
             try
             {
@@ -502,7 +501,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                             es.Send(MessageHelper.GetUpdateDatasetHeader(dataset.Id),
                                 MessageHelper.GetUpdateDatasetMessage(dataset.Id, title, user.DisplayName, typeof(Dataset).Name),
                                 new List<string>() { user.Email },
-                                       new List<string>() { ConfigurationManager.AppSettings["SystemEmail"] }
+                                       new List<string>() { GeneralSettings.SystemEmail }
                                 );
                         }
 
@@ -516,7 +515,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                         es.Send(MessageHelper.GetPushApiUploadFailHeader(dataset.Id, title),
                                    MessageHelper.GetPushApiUploadFailMessage(dataset.Id, user.UserName, new string[] { "Upload failed: " + ex.Message }),
                                    new List<string>() { user.Email },
-                                   new List<string>() { ConfigurationManager.AppSettings["SystemEmail"] }
+                                   new List<string>() { GeneralSettings.SystemEmail }
                                    );
 
                         return Request.CreateResponse(HttpStatusCode.InternalServerError, ex.Message);

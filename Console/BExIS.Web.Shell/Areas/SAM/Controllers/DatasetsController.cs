@@ -6,6 +6,7 @@ using BExIS.Security.Services.Authorization;
 using BExIS.Security.Services.Objects;
 using BExIS.Security.Services.Subjects;
 using BExIS.Security.Services.Utilities;
+using BExIS.Utils.Config;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
@@ -13,6 +14,7 @@ using System.Globalization;
 using System.Linq;
 using System.Web.Mvc;
 using System.Web.Routing;
+using Vaiona.IoC;
 using Vaiona.Logging.Aspects;
 using Vaiona.Web.Extensions;
 using Vaiona.Web.Mvc;
@@ -54,10 +56,12 @@ namespace BExIS.Modules.Sam.UI.Controllers
             {
                 try
                 {
+                    
+
                     var userName = GetUsernameOrDefault();
                     var user = userManager.Users.Where(u => u.Name.Equals(userName)).FirstOrDefault();
 
-                    // check if a user is logged in 
+                    // check if a user is logged in
                     if (user != null)
                     {
                         // is the user allowed to delete this dataset
@@ -66,12 +70,11 @@ namespace BExIS.Modules.Sam.UI.Controllers
                             //try delete the dataset
                             if (datasetManager.DeleteDataset(id, ControllerContext.HttpContext.User.Identity.Name, true))
                             {
-
                                 //send email
                                 var es = new EmailService();
                                 es.Send(MessageHelper.GetDeleteDatasetHeader(id),
                                     MessageHelper.GetDeleteDatasetMessage(id, user.Name),
-                                    ConfigurationManager.AppSettings["SystemEmail"]
+                                    GeneralSettings.SystemEmail
                                     );
 
                                 //entityPermissionManager.Delete(typeof(Dataset), id); // This is not needed here.
@@ -89,7 +92,7 @@ namespace BExIS.Modules.Sam.UI.Controllers
                             var es = new EmailService();
                             es.Send(MessageHelper.GetTryToDeleteDatasetHeader(id),
                                 MessageHelper.GetTryToDeleteDatasetMessage(id, GetUsernameOrDefault()),
-                                ConfigurationManager.AppSettings["SystemEmail"]
+                                GeneralSettings.SystemEmail
                                 );
                         }
                     }
@@ -100,7 +103,7 @@ namespace BExIS.Modules.Sam.UI.Controllers
                         var es = new EmailService();
                         es.Send(MessageHelper.GetTryToDeleteDatasetHeader(id),
                             MessageHelper.GetTryToDeleteDatasetMessage(id, userName),
-                            ConfigurationManager.AppSettings["SystemEmail"]
+                            GeneralSettings.SystemEmail
                             );
                     }
                 }
@@ -187,7 +190,6 @@ namespace BExIS.Modules.Sam.UI.Controllers
                             && ds.StateInfo?.Timestamp < DateTime.MaxValue)
                         synced = ds.StateInfo?.Timestamp >= ds.LastCheckIOTimestamp;
 
-
                     // Add title, metadata, creation and modification info to list
                     var title = "";
                     var vaildState = "";
@@ -198,7 +200,6 @@ namespace BExIS.Modules.Sam.UI.Controllers
                     var lastChangeAccount = "";
                     var lastMetadatChange = "";
                     var lastDataChange = "";
-
 
                     // GetDatasetLatestVersion() does not return an result for Deleted or CheckedOut datasets, only CheckedIn works
                     DatasetVersion datasetversion = null;
@@ -244,7 +245,7 @@ namespace BExIS.Modules.Sam.UI.Controllers
                         }
                     }
 
-                    datasetStat.Add(new DatasetStatModel { Id = ds.Id, Status = ds.Status, NoOfRows = noRows, NoOfCols = noColumns, IsSynced = synced, Title = title ,ValidState = vaildState, LastChange = lastChange, LastChangeAccount = lastChangeAccount, LastChangeDescription = lastChangeDescription, LastChangeType = lastChangeType, LastDataChange = lastDataChange, LastMetadataChange = lastMetadatChange, CreationDate = creationDate });
+                    datasetStat.Add(new DatasetStatModel { Id = ds.Id, Status = ds.Status, NoOfRows = noRows, NoOfCols = noColumns, IsSynced = synced, Title = title, ValidState = vaildState, LastChange = lastChange, LastChangeAccount = lastChangeAccount, LastChangeDescription = lastChangeDescription, LastChangeType = lastChangeType, LastDataChange = lastDataChange, LastMetadataChange = lastMetadatChange, CreationDate = creationDate });
                 }
                 ViewData["DatasetIds"] = datasetIds;
                 return View(datasetStat);
@@ -270,10 +271,12 @@ namespace BExIS.Modules.Sam.UI.Controllers
             {
                 try
                 {
+                    
+
                     var userName = GetUsernameOrDefault();
                     var user = userManager.Users.Where(u => u.Name.Equals(userName)).FirstOrDefault();
 
-                    // check if a user is logged in 
+                    // check if a user is logged in
                     if (user != null)
                     {
                         // is the user allowed to delete this dataset
@@ -286,16 +289,14 @@ namespace BExIS.Modules.Sam.UI.Controllers
                                 var es = new EmailService();
                                 es.Send(MessageHelper.GetPurgeDatasetHeader(id),
                                     MessageHelper.GetPurgeDatasetMessage(id, user.Name),
-                                    ConfigurationManager.AppSettings["SystemEmail"]
+                                    GeneralSettings.SystemEmail
                                     );
-
 
                                 if (this.IsAccessible("DDM", "SearchIndex", "ReIndexUpdateSingle"))
                                 {
                                     var x = this.Run("DDM", "SearchIndex", "ReIndexUpdateSingle", new RouteValueDictionary() { { "id", id }, { "actionType", "DELETE" } });
                                 }
                             }
-
                         }
                         else // user is not allowed
                         {
@@ -304,7 +305,7 @@ namespace BExIS.Modules.Sam.UI.Controllers
                             var es = new EmailService();
                             es.Send(MessageHelper.GetTryToPurgeDatasetHeader(id),
                                 MessageHelper.GetTryToPurgeDatasetMessage(id, user.Name),
-                                ConfigurationManager.AppSettings["SystemEmail"]
+                                GeneralSettings.SystemEmail
                                 );
                         }
                     }
@@ -314,7 +315,7 @@ namespace BExIS.Modules.Sam.UI.Controllers
                         var es = new EmailService();
                         es.Send(MessageHelper.GetTryToPurgeDatasetHeader(id),
                             MessageHelper.GetTryToPurgeDatasetMessage(id, userName),
-                            ConfigurationManager.AppSettings["SystemEmail"]
+                            GeneralSettings.SystemEmail
                             );
                     }
                 }
@@ -374,7 +375,6 @@ namespace BExIS.Modules.Sam.UI.Controllers
 
             using (DatasetManager dm = new DatasetManager())
             {
-
                 try
                 {
                     if (id > 0)
@@ -384,14 +384,12 @@ namespace BExIS.Modules.Sam.UI.Controllers
                     }
 
                     return Json(number, JsonRequestBehavior.AllowGet);
-
                 }
                 finally
                 {
                     dm.Dispose();
                 }
             }
-
         }
 
         /// <summary>
@@ -463,7 +461,6 @@ namespace BExIS.Modules.Sam.UI.Controllers
             return dateTime;
         }
 
-
         public string GetUsernameOrDefault()
         {
             var username = string.Empty;
@@ -475,6 +472,5 @@ namespace BExIS.Modules.Sam.UI.Controllers
 
             return !string.IsNullOrWhiteSpace(username) ? username : "DEFAULT";
         }
-
     }
 }

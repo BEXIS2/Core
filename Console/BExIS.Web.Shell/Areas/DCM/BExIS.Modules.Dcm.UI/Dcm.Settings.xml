@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<settings id="dcm" name="data collection" description="...">
-  <entry key="help" value="https://github.com/BEXIS2/Documents/blob/2.14.4/Manuals/DCM/Manual.md" type="String" description="URL to manual"/>
-  <!-- This number determines the selection whether an upload of structured data should be executed directly or async. 
-      - c < direct
-      - c > async 
-      -->
-  <entry key="celllimit" value="100000" type="Int32" description="This number of cells determines the selection whether an upload of structured data should be executed directly or async. " />
-</settings>

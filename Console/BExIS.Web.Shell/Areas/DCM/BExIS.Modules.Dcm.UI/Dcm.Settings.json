@@ -1,0 +1,19 @@
+{
+  "id": "dcm",
+  "name": "data collection",
+  "description": "...",
+  "entry": [
+    {
+      "key": "help",
+      "value": "https://github.com/BEXIS2/Documents/blob/2.14.5/Manuals/DCM/Manual.md",
+      "type": "String",
+      "description": "URL to manual"
+    },
+    {
+      "key": "celllimit",
+      "value": 100000,
+      "type": "Int32",
+      "description": "This number of cells determines the selection whether an upload of structured data should be executed directly or async. "
+    }
+  ]
+}

@@ -8,6 +8,7 @@ using BExIS.Security.Services.Authorization;
 using BExIS.Security.Services.Objects;
 using BExIS.Security.Services.Subjects;
 using BExIS.Security.Services.Utilities;
+using BExIS.Utils.Config;
 using BExIS.Xml.Helpers;
 using System;
 using System.Collections.Generic;
@@ -18,6 +19,7 @@ using System.Web;
 using System.Web.Mvc;
 using System.Xml;
 using Vaiona.Entities.Common;
+using Vaiona.IoC;
 using Vaiona.Logging;
 using Vaiona.Utils.Cfg;
 using Vaiona.Web.Extensions;
@@ -114,7 +116,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
                 es.Send(MessageHelper.GetAttachmentDeleteHeader(datasetId, typeof(Dataset).Name),
                 MessageHelper.GetAttachmentDeleteMessage(datasetId, fileName, GetUsernameOrDefault()),
-                ConfigurationManager.AppSettings["SystemEmail"]
+                GeneralSettings.SystemEmail
                 );
             }
 
@@ -208,7 +210,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                     }
                     es.Send(MessageHelper.GetAttachmentUploadHeader(datasetId, typeof(Dataset).Name),
                     MessageHelper.GetAttachmentUploadMessage(datasetId, filemNames, user.DisplayName),
-                    ConfigurationManager.AppSettings["SystemEmail"]
+                    GeneralSettings.SystemEmail
                     );
                 }
 

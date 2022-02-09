@@ -6,6 +6,7 @@ using System.IO;
 using BExIS.Xml.Helpers;
 using Vaiona.Utils.Cfg;
 using BExIS.UI.Helpers;
+using Vaiona.Web.Mvc.Modularity;
 
 namespace BExIS.Modules.Vim.UI.Controllers
 {
@@ -16,12 +17,9 @@ namespace BExIS.Modules.Vim.UI.Controllers
 
         public ActionResult Index()
         {
-            SettingsHelper settingsHelper = new SettingsHelper("VIM");
-            string helpurl = settingsHelper.GetValue("help");
+            string helpurl = ModuleManager.GetModuleSettings("VIM").GetEntryValue("help").ToString();
 
             return Redirect(helpurl);
-
-
         }
     }
 }

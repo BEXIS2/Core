@@ -5,11 +5,13 @@ using BExIS.Security.Services.Authorization;
 using BExIS.Security.Services.Objects;
 using BExIS.Security.Services.Requests;
 using BExIS.Security.Services.Utilities;
+using BExIS.Utils.Config;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Linq;
 using System.Web.Mvc;
+using Vaiona.IoC;
 using Vaiona.Persistence.Api;
 using Vaiona.Web.Extensions;
 using Vaiona.Web.Mvc.Models;
@@ -18,14 +20,12 @@ namespace BExIS.Modules.Ddm.UI.Controllers
 {
     public class RequestsManageController : Controller
     {
-
         public ActionResult Decisions(long entityId)
         {
             using (var entityManager = new EntityManager())
             using (var entityPermissionManager = new EntityPermissionManager())
             using (var decisionManager = new DecisionManager())
             {
-
                 var entityStore = (IEntityStore)Activator.CreateInstance(entityManager.FindById(entityId).EntityStoreType);
 
                 // Source + Transformation - Data
@@ -54,8 +54,6 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                                 RequestDate = m.Request.RequestDate
                             });
                     }
-
-
                 }
                 return PartialView("_Decisions", model.OrderBy(x => x.Status).ThenBy(n => n.Id));
             }
@@ -94,7 +92,6 @@ namespace BExIS.Modules.Ddm.UI.Controllers
             using (var decisionManager = new DecisionManager())
             using (var uow = this.GetUnitOfWork())
             {
-
                 try
                 {
                     decisionManager.Accept(decisionId, "");
@@ -110,16 +107,14 @@ namespace BExIS.Modules.Ddm.UI.Controllers
 
                         es.Send(MessageHelper.GetAcceptRequestHeader(request.Key, applicant),
                             MessageHelper.GetAcceptRequestMessage(request.Key, entityStore.GetTitleById(request.Key)),
-                            new List<string> { request.Applicant.Email }, null, new List<string> { ConfigurationManager.AppSettings["SystemEmail"] }
+                            new List<string> { request.Applicant.Email }, null, new List<string> { GeneralSettings.SystemEmail }
                         );
                     }
-
                 }
                 catch (Exception e)
                 {
                     throw e;
                 }
-
             }
         }
 
@@ -146,7 +141,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
 
                         es.Send(MessageHelper.GetRejectedRequestHeader(request.Key, applicant),
                         MessageHelper.GetRejectedRequestMessage(request.Key, entityStore.GetTitleById(request.Key)),
-                        new List<string> { request.Applicant.Email }, null, new List<string> { ConfigurationManager.AppSettings["SystemEmail"] }
+                        new List<string> { request.Applicant.Email }, null, new List<string> { GeneralSettings.SystemEmail }
                         );
                     }
                 }
@@ -185,7 +180,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
 
                         es.Send(MessageHelper.GetWithdrawRequestHeader(request.Key, applicant),
                         MessageHelper.GetWithdrawRequestMessage(request.Key, entityStore.GetTitleById(request.Key), applicant),
-                        new List<string> { emailDescionMaker }, null, new List<string> { ConfigurationManager.AppSettings["SystemEmail"] }
+                        new List<string> { emailDescionMaker }, null, new List<string> { GeneralSettings.SystemEmail }
                         );
                     }
                 }
@@ -194,7 +189,6 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                     throw e;
                 }
             }
-
         }
 
         public ActionResult Requests_And_Decisions(long entityId)
@@ -208,7 +202,6 @@ namespace BExIS.Modules.Ddm.UI.Controllers
             using (var entityPermissionManager = new EntityPermissionManager())
             using (var requestManager = new RequestManager())
             {
-
                 var entityStore = (IEntityStore)Activator.CreateInstance(entityManager.FindById(entityId).EntityStoreType);
 
                 // Source + Transformation - Data
@@ -222,7 +215,6 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                     // exclude when enity was deleted
                     if (entityStore.Exist(m.Key))
                     {
-
                         model.Add(
                             new RequestGridRowModel()
                             {
@@ -237,7 +229,6 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                             );
                     }
                 }
-
 
                 return PartialView("_Requests", model);
             }

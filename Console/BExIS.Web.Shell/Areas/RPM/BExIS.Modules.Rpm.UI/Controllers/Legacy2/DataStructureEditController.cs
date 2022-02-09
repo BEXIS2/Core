@@ -22,6 +22,7 @@ using BExIS.Security.Services.Subjects;
 using System.Xml;
 using System.IO;
 using BExIS.Dlm.Services.Data;
+using Vaiona.Web.Mvc.Modularity;
 
 namespace BExIS.Modules.Rpm.UI.Controllers
 {
@@ -66,17 +67,15 @@ namespace BExIS.Modules.Rpm.UI.Controllers
         public ActionResult _attributeResultBinding()
         {
             ViewData["showCreateVariableTemplate"] = false;
-            
-            XmlDocument settings = new XmlDocument();
-            string filePath = Path.Combine(AppConfiguration.GetModuleWorkspacePath("RPM"), "Rpm.Settings.xml");
-            settings.Load(filePath);
-            XmlNode show = settings.GetElementsByTagName("showCreateVariableTemplate")[0];
+
+            var moduleSettings = ModuleManager.GetModuleSettings("Ddm");
+            var show = moduleSettings.GetEntryValue("showCreateVariableTemplate");
             var showButton = true;
-            
+
             // check for settings
             if (show != null)
             {
-                showButton = Convert.ToBoolean(show.InnerText);
+                showButton = Convert.ToBoolean(show);
             }
 
             // show "Create Variable Template" button if settings true or not set and permission are true

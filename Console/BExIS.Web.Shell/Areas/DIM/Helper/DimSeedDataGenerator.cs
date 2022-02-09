@@ -9,6 +9,7 @@ using BExIS.Modules.Dim.UI.Helper;
 using BExIS.Security.Entities.Objects;
 using BExIS.Security.Services.Authorization;
 using BExIS.Security.Services.Objects;
+using BExIS.Utils.Config;
 using BExIS.Xml.Helpers;
 using System;
 using System.Collections.Generic;
@@ -17,13 +18,19 @@ using System.Diagnostics;
 using System.Linq;
 using System.Xml.Linq;
 using System.Xml.XPath;
+using Vaiona.IoC;
 using Vaiona.Persistence.Api;
 using Vaiona.Web.Mvc.Modularity;
 
 namespace BExIS.Modules.Dim.UI.Helpers
 {
+
+    
+
     public class DimSeedDataGenerator : IModuleSeedDataGenerator
     {
+        
+
         public void GenerateSeedData()
         {
             SubmissionManager submissionManager = new SubmissionManager();
@@ -753,8 +760,7 @@ namespace BExIS.Modules.Dim.UI.Helpers
                         }
 
                         // add releationship type mapping
-
-                        PartyRelationshipType partyRelationshipType = partyReleationships.FirstOrDefault(p => p.Title.Equals(ConfigurationManager.AppSettings["OwnerPartyRelationshipType"]));
+                        PartyRelationshipType partyRelationshipType = partyReleationships.FirstOrDefault(p => p.Title.Equals(GeneralSettings.OwnerPartyRelationshipType));
                         if (partyRelationshipType != null)
                         {
                             createToPartyReleationMapping(
@@ -892,7 +898,7 @@ namespace BExIS.Modules.Dim.UI.Helpers
                         #region owner relationship
 
                         //Metadata/creator/creatorType/individualName
-                        PartyRelationshipType partyRelationshipType = partyReleationships.FirstOrDefault(p => p.Title.Equals(ConfigurationManager.AppSettings["OwnerPartyRelationshipType"]));
+                        PartyRelationshipType partyRelationshipType = partyReleationships.FirstOrDefault(p => p.Title.Equals(GeneralSettings.OwnerPartyRelationshipType));
                         if (partyRelationshipType != null)
                         {
                             createToPartyReleationMapping(

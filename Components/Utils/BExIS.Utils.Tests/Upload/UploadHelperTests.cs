@@ -4,6 +4,7 @@ using BExIS.Dlm.Entities.DataStructure;
 using BExIS.Dlm.Services.Administration;
 using BExIS.Dlm.Services.Data;
 using BExIS.Dlm.Services.MetadataStructure;
+using BExIS.Utils;
 using BExIS.Utils.Config;
 using BExIS.Utils.Tests.Data.Helpers;
 using BExIS.Utils.Upload;
@@ -19,7 +20,6 @@ using Vaiona.Persistence.Api;
 namespace BExIS.Utils.Data.Tests
 {
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Reliability", "CA2000:Objekte verwerfen, bevor Bereich verloren geht", Justification = "<Ausstehend>")]
-
     [TestFixture()]
     public class UploadHelperTests
     {
@@ -106,39 +106,36 @@ namespace BExIS.Utils.Data.Tests
                 expectedCount = incoming.Count;
             }
 
-                try
-                {
-                        List<long> primaryKeys = new List<long>();
+            try
+            {
+                List<long> primaryKeys = new List<long>();
 
-                        //get primarykey ids
-                        // var 1 = int = 1
-                        // var 2 = string = 2
-                        // var 3 = double = 3
-                        // var 4 = boolean = 4
-                        // var 5 = datetime = 5
-                        List<long> varIds = ((StructuredDataStructure)dataset.DataStructure).Variables.Select(v=>v.Id).ToList();
+                //get primarykey ids
+                // var 1 = int = 1
+                // var 2 = string = 2
+                // var 3 = double = 3
+                // var 4 = boolean = 4
+                // var 5 = datetime = 5
+                List<long> varIds = ((StructuredDataStructure)dataset.DataStructure).Variables.Select(v => v.Id).ToList();
 
-                        primaryKeys.Add(varIds.ElementAt(primaryKeyIndex));
+                primaryKeys.Add(varIds.ElementAt(primaryKeyIndex));
 
-                        //Act
-                        Dictionary<string, List<DataTuple>> splittedDatatuples = new Dictionary<string, List<DataTuple>>();
-                        UploadHelper uploadhelper = new UploadHelper();
-                        splittedDatatuples = uploadhelper.GetSplitDatatuples(incoming, primaryKeys, null, ref datatupleFromDatabaseIds);
+                //Act
+                Dictionary<string, List<DataTuple>> splittedDatatuples = new Dictionary<string, List<DataTuple>>();
+                UploadHelper uploadhelper = new UploadHelper();
+                splittedDatatuples = uploadhelper.GetSplitDatatuples(incoming, primaryKeys, null, ref datatupleFromDatabaseIds);
 
+                //Assert
+                int newCount = splittedDatatuples["new"].Count;
+                int editCount = splittedDatatuples["edit"].Count;
 
-                    //Assert
-                    int newCount = splittedDatatuples["new"].Count;
-                    int editCount = splittedDatatuples["edit"].Count;
-
-                    Assert.That(newCount, Is.EqualTo(0));
-                    Assert.That(editCount, Is.EqualTo(expectedCount));
-
-                }
-                catch (Exception ex)
-                {
-                    throw ex;
-                }
-            
+                Assert.That(newCount, Is.EqualTo(0));
+                Assert.That(editCount, Is.EqualTo(expectedCount));
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
         }
 
         [Test]
@@ -169,8 +166,8 @@ namespace BExIS.Utils.Data.Tests
                     incoming.Add(datatuple);
                 }
 
-                //updated last datatuple in text 
-                dsHelper.GetUpdatedDatatuple(incoming.Last(),1);
+                //updated last datatuple in text
+                dsHelper.GetUpdatedDatatuple(incoming.Last(), 1);
 
                 //get varids of primary key combination
                 List<long> allVarIds = ((StructuredDataStructure)dataset.DataStructure).Variables.Select(v => v.Id).ToList();
@@ -188,11 +185,7 @@ namespace BExIS.Utils.Data.Tests
                 //Assert
                 Assert.That(splittedDatatuples["new"].Count, Is.EqualTo(0));
                 Assert.That(splittedDatatuples["edit"].Count, Is.EqualTo(1));
-
             }
         }
-
-
-
     }
 }

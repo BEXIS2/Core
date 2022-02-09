@@ -6,6 +6,7 @@ using System.Xml.Linq;
 using System.IO;
 using BExIS.Xml.Helpers;
 using BExIS.UI.Helpers;
+using Vaiona.Web.Mvc.Modularity;
 
 namespace BExIS.Modules.Dim.UI.Controllers
 {
@@ -16,12 +17,9 @@ namespace BExIS.Modules.Dim.UI.Controllers
 
         public ActionResult Index()
         {
-            SettingsHelper settingsHelper = new SettingsHelper("DIM");
-            string helpurl = settingsHelper.GetValue("help");
+            string helpurl = ModuleManager.GetModuleSettings("DIM").GetEntryValue("help").ToString();
 
             return Redirect(helpurl);
-
-
         }
     }
 }

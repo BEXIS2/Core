@@ -1,0 +1,13 @@
+{
+  "id": "vim",
+  "name": "visualisation modul",
+  "description": "stats about datasets",
+  "entry": [
+    {
+      "key": "help",
+      "value": "https://github.com/BEXIS2/Documents/blob/2.14.5/Manuals/DIM/Manual.md",
+      "type": "String",
+      "description": "URL to manual"
+    }
+  ]
+}

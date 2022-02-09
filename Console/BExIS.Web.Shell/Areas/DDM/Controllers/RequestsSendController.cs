@@ -4,11 +4,13 @@ using BExIS.Security.Services.Objects;
 using BExIS.Security.Services.Requests;
 using BExIS.Security.Services.Subjects;
 using BExIS.Security.Services.Utilities;
+using BExIS.Utils.Config;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Linq;
 using System.Web.Mvc;
+using Vaiona.IoC;
 using Vaiona.Persistence.Api;
 
 namespace BExIS.Modules.Ddm.UI.Controllers
@@ -50,7 +52,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                         var es = new EmailService();
                         es.Send(MessageHelper.GetSendRequestHeader(id, applicant),
                             MessageHelper.GetSendRequestMessage(id, title, applicant, intention, request.Applicant.Email),
-                            new List<string> { emailDescionMaker }, new List<string> { ConfigurationManager.AppSettings["SystemEmail"], request.Applicant.Email }, null, new List<string> { request.Applicant.Email }
+                            new List<string> { emailDescionMaker }, new List<string> { GeneralSettings.SystemEmail, request.Applicant.Email }, null, new List<string> { request.Applicant.Email }
                             );
                     }
                 }
@@ -62,7 +64,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                 // send mail with error to sys admin
                 var es = new EmailService();
                 es.Send(MessageHelper.GetSendRequestHeader(id, getPartyNameOrDefault()),
-                    MessageHelper.GetSendRequestMessage(id, "unknown", "unkown", e.Message + intention, "unknown"), new List<string> { ConfigurationManager.AppSettings["SystemEmail"] }
+                    MessageHelper.GetSendRequestMessage(id, "unknown", "unkown", e.Message + intention, "unknown"), new List<string> { GeneralSettings.SystemEmail }
                     );
             }
             finally

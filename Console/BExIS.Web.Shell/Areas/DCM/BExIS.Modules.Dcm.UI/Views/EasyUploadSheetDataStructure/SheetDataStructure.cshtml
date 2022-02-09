@@ -27,7 +27,6 @@
             $("input:radio[name=sheetFormat]" + selectedValue).attr('checked', true);
         }
     });
-
 </script>
 <style>
     div.sheetSelect label > img {
@@ -91,16 +90,15 @@
     <div class="uploadWizardStep_Error stepper">
         @if (Model != null && Model.ErrorList != null && Model.ErrorList.Count != 0)
         {
-            <ul>
-                @foreach (BExIS.IO.Transform.Validation.Exceptions.Error s in @Model.ErrorList)
+        <ul>
+            @foreach (BExIS.IO.Transform.Validation.Exceptions.Error s in @Model.ErrorList)
                 {
-                    <li>@s.ToString()</li>
+            <li>@s.ToString()</li>
                 }
-            </ul>
+        </ul>
         }
     </div>
 </div>
-
 
 <script type="text/javascript">
 
@@ -116,5 +114,4 @@
             }
         })
     });
-
 </script>
