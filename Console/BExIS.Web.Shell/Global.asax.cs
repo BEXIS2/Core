@@ -124,8 +124,11 @@ namespace BExIS.Web.Shell
 
         protected void Application_Error(object sender, EventArgs e)
         {
+
+            GeneralSettings generalSettings = IoCFactory.Container.Resolve<GeneralSettings>();
+
             bool sendExceptions = false;
-            bool.TryParse(ConfigurationManager.AppSettings["SendExceptions"], out sendExceptions);
+            bool.TryParse(generalSettings.GetEntryValue("sendExceptions").ToString(), out sendExceptions);
 
             var error = Server.GetLastError();
             var code = (error is HttpException) ? (error as HttpException).GetHttpCode() : 500;
