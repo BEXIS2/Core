@@ -144,7 +144,6 @@
     <Compile Include="Controllers\PartyServiceController.cs" />
     <Compile Include="Helpers\BAMSeedDataGenerator.cs" />
     <Compile Include="Helpers\Helper.cs" />
-    <Compile Include="Helpers\Settings.cs" />
     <Compile Include="Models\AddRelationshipModel.cs" />
     <Compile Include="Models\PartyCustomAttributeValueModel.cs" />
     <Compile Include="Models\PartyGridViewModel.cs" />

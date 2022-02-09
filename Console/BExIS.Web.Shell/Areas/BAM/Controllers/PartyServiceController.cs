@@ -12,6 +12,7 @@ using System.Web;
 using System.Web.Mvc;
 using Vaiona.IoC;
 using Vaiona.Web.Mvc.Models;
+using Vaiona.Web.Mvc.Modularity;
 
 namespace BExIS.Modules.Bam.UI.Controllers
 {
@@ -325,8 +326,12 @@ namespace BExIS.Modules.Bam.UI.Controllers
 
         public Dictionary<string, string[]> GetPartyTypesForAccount()
         {
+            // load settings 
+            ModuleInfo moduleInfo = ModuleManager.GetModuleInfo("Bam");
+            var settings = moduleInfo.Plugin.Settings;
+
             var result = new Dictionary<string, string[]>();
-            var accountPartyTypesStr = Helpers.Settings.get("AccountPartyTypes");
+            var accountPartyTypesStr = settings.GetEntryValue("AccountPartyTypes");
             if (accountPartyTypesStr == null || string.IsNullOrEmpty(accountPartyTypesStr.ToString()))
             {
                 return null;
