@@ -1,0 +1,27 @@
+﻿@{
+    ViewBag.Title = "Edit";
+    Layout = "~/Themes/Default/Layouts/_svelteLayout.cshtml";
+
+}
+
+<link href="~/Areas/Rpm/BExIS.Modules.RPM.UI/Scripts/svelte/edit.css" rel="stylesheet">
+
+
+@section scripts
+{
+    <script src="~/Areas/Rpm/BExIS.Modules.RPM.UI/Scripts/svelte/edit.js"></script>
+
+}
+
+@{
+    long id = 0;
+
+    if (ViewBag.id != null)
+    {
+        id = (long)ViewBag.id;
+    }
+
+
+}
+
+<div id="datastructure" datastructure="@id" > </div>

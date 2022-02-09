@@ -131,7 +131,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "UI", "UI", "{100BBAAA-7D22-
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BExIS.UI", "Components\UI\BExIS.UI\BExIS.UI.csproj", "{DE0AD99C-C559-422F-8132-CC4D7C46FF83}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BExIS.Modules.Rpm.UI", "Console\BExIS.Web.Shell\Areas\RPM\BExIS.Modules.Rpm.UI.csproj", "{76702A4F-D6E5-416F-BD81-58447514AF05}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BExIS.Modules.Rpm.UI", "Console\BExIS.Web.Shell\Areas\RPM\BExIS.Modules.Rpm.UI\BExIS.Modules.Rpm.UI.csproj", "{76702A4F-D6E5-416F-BD81-58447514AF05}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BExIS.Utils.Data", "Components\Utils\BExIS.Utils.Data\BExIS.Utils.Data.csproj", "{A7FBCC13-7E29-4710-82A1-BD6D6F811FDA}"
 EndProject
