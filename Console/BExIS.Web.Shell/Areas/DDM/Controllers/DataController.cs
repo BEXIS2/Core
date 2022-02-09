@@ -1865,7 +1865,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
 
                     long partyId = partyManager.Parties.Where(p => p.PartyType.Id.Equals(datasetPartyType.Id) && p.Name.Equals(datasetId.ToString())).FirstOrDefault().Id;
 
-                    var ownerPartyRelationshipType = partyRelationshipTypeManager.PartyRelationshipTypes.Where(pt => pt.Title.Equals(ConfigurationManager.AppSettings["OwnerPartyRelationshipType"])).FirstOrDefault();
+                    var ownerPartyRelationshipType = partyRelationshipTypeManager.PartyRelationshipTypes.Where(pt => pt.Title.Equals(generalSettings.GetEntryValue("OwnerPartyRelationshipType"))).FirstOrDefault();
                     if (ownerPartyRelationshipType == null) return false;
 
                     var ownerRelationships = partyManager.PartyRelationships.Where(p =>
