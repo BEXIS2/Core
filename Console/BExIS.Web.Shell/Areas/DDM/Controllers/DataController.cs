@@ -1904,8 +1904,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
             dataset_settings_list.Add("check_public_metadata", "false");
 
 
-            var moduleInfo = ModuleManager.GetModuleInfo("Ddm");
-            var moduleSettings = moduleInfo.Plugin.Settings;
+            var moduleSettings = ModuleManager.GetModuleSettings("Ddm");
 
             foreach (var item in dataset_settings_list.ToList())
             {

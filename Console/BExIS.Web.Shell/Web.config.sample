@@ -18,8 +18,8 @@
 		<add key="UnobtrusiveJavaScriptEnabled" value="true" />
 		<add key="UseSchemaInDatabaseGeneration" value="False" />
 		<add key="ThrowErrorWhenParialContentNotFound" value="False" />
-		<add key="ApplicationName" value="{APPLICATIONNAME}" />
-		<add key="ApplicationVersion" value="2.14.4" />
+
+		<add key="ApplicationVersion" value="2.14.5" />
 		<add key="SessionWarningDelaySecond" value="30" />
 		<!-- Keep it as false, there are some test data in the database-->
 		<add key="CreateDatabase" value="false" />
@@ -43,15 +43,7 @@
 		<add key="ThemesPath" value="~/Themes/" />
 		<add key="DefaultThemeName" value="default" />
 		<add key="ActiveLayoutName" value="_Layout" />
-		<add key="SystemEmail" value="{SYSTEM_EMAIL}" />
-		<!--
-      If this flag is set to true, all exceptions will be forwarded to SystemEmail.
-    -->
-		<add key="SendExceptions" value="true" />
-		<!--
-      This flag truns on/off the Multimedia Module.
-    -->
-		<add key="useMultimediaModule" value="true" />
+
 		<add key="loginUrl" value="Account/Login" />
 		<add key="IsLoggingEnable" value="true" />
 		<add key="IsCallLoggingEnable" value="true" />
@@ -60,15 +52,6 @@
 		<add key="IsExceptionLoggingEnable" value="true" />
 		<add key="microsoft.visualstudio.teamsystems.aspnetdevserver:/" value="1204;True;6700;1;-8587979243650517162" />
 		<add key="microsoft.visualstudio.teamsystems.backupinfo" value="1;web.config.backup" />
-		<!-- Example: PartyType1:PartyRelationshipTypeTitle1-PartyRelationshipTypeTitle2,PartyType2,PartyType3:PartyRelationshipTypeTitle1
-          Define the allow party type for account registeration and their relationship type. each party type could have zero or multi allowed relationship( they should be available in the database)
-          if the relationship type has one 'partytypepair' -> load the allowed target of this 'partytypepair'
-          if  the relationship type has more than one 'partytypepair' -> load the allowed target of the 'partytypepair' which has "partyrelationshiptypedefault==true" -->
-		<add key="AccountPartyTypes" value="personMember:organizationEmployment-projectMember-consortiaMember,personGuest" />
-		<add key="OwnerPartyRelationshipType" value="Owner" />
-		<!-- Allow to use the user email within the party person; change party email on changed user email -->
-		<add key="usePersonEmailAttributeName" value="false" />
-		<add key="PersonEmailAttributeName" value="Email" />
 
 		<add key="aspnet:MaxJsonDeserializerMembers" value="120000" />
 	</appSettings>

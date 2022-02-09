@@ -255,8 +255,7 @@ namespace BExIS.Modules.Rpm.UI.Models
         {
             DataContainerManager dataAttributeManager = null;
 
-            var moduleInfo = ModuleManager.GetModuleInfo("Rpm");
-            var settings = moduleInfo.Plugin.Settings;
+            var settings = ModuleManager.GetModuleSettings("Rpm");
 
             bool optional = true;
 

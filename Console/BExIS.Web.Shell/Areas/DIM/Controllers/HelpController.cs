@@ -17,8 +17,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
 
         public ActionResult Index()
         {
-            var moduleInfo = ModuleManager.GetModuleInfo("DIM");
-            string helpurl = moduleInfo.Plugin.Settings.GetEntryValue("help").ToString();
+            string helpurl = ModuleManager.GetModuleSettings("DIM").GetEntryValue("help").ToString();
 
             return Redirect(helpurl);
         }

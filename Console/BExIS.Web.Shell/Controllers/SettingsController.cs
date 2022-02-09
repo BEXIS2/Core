@@ -75,9 +75,9 @@ namespace BExIS.Web.Shell.Controllers
 
             if (ModuleManager.IsActive(id))
             {
-                var moduleInfo = ModuleManager.GetModuleInfo(id);
+                var moduleSettings = ModuleManager.GetModuleSettings(id);
                 
-                return Json(moduleInfo.Plugin.Settings.GetAsJsonModel(), JsonRequestBehavior.AllowGet);
+                return Json(moduleSettings.GetAsJsonModel(), JsonRequestBehavior.AllowGet);
             }
 
             return Json(false, JsonRequestBehavior.AllowGet);
@@ -102,8 +102,8 @@ namespace BExIS.Web.Shell.Controllers
 
                 if (ModuleManager.IsActive(settings.Id))
                 {
-                    var moduleInfo = ModuleManager.GetModuleInfo(settings.Id);
-                    moduleInfo.Plugin.Settings.Update(settings);
+                    var moduleSettings = ModuleManager.GetModuleSettings(settings.Id);
+                    moduleSettings.Update(settings);
                 }
 
                 return Json(true);

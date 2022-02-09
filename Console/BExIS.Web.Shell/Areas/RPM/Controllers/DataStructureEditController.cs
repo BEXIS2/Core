@@ -68,8 +68,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
         {
             ViewData["showCreateVariableTemplate"] = false;
 
-            var moduleInfo = ModuleManager.GetModuleInfo("Ddm");
-            var moduleSettings = moduleInfo.Plugin.Settings;
+            var moduleSettings = ModuleManager.GetModuleSettings("Ddm");
             var show = moduleSettings.GetEntryValue("showCreateVariableTemplate");
             var showButton = true;
 

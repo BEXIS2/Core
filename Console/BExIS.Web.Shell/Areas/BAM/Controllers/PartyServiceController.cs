@@ -234,7 +234,7 @@ namespace BExIS.Modules.Bam.UI.Controllers
 
                     if (GeneralSettings.UsePersonEmailAttributeName)
                     {
-                        var nameProp = partyTypeManager.PartyCustomAttributeRepository.Get(attr => (attr.PartyType == party.PartyType) && (attr.Name == GeneralSettings.PersonalEmailAttributeName)).FirstOrDefault();
+                        var nameProp = partyTypeManager.PartyCustomAttributeRepository.Get(attr => (attr.PartyType == party.PartyType) && (attr.Name == GeneralSettings.PersonEmailAttributeName)).FirstOrDefault();
                         if (nameProp != null)
                         {
                             var entity = party.CustomAttributeValues.FirstOrDefault(item => item.CustomAttribute.Id == nameProp.Id);

@@ -20,8 +20,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
 
         public ActionResult Index()
         {
-            var moduleInfo = ModuleManager.GetModuleInfo("DDM");
-            string helpurl = moduleInfo.Plugin.Settings.GetEntryValue("help").ToString();
+            string helpurl = ModuleManager.GetModuleSettings("DDM").GetEntryValue("help").ToString();
 
             return Redirect(helpurl);
         }

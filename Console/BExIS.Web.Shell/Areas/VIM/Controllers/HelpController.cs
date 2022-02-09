@@ -17,8 +17,7 @@ namespace BExIS.Modules.Vim.UI.Controllers
 
         public ActionResult Index()
         {
-            var moduleInfo = ModuleManager.GetModuleInfo("VIM");
-            string helpurl = moduleInfo.Plugin.Settings.GetEntryValue("help").ToString();
+            string helpurl = ModuleManager.GetModuleSettings("VIM").GetEntryValue("help").ToString();
 
             return Redirect(helpurl);
         }

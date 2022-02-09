@@ -17,8 +17,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
 
         public ActionResult Index()
         {
-            var moduleInfo = ModuleManager.GetModuleInfo("RPM");
-            string helpurl = moduleInfo.Plugin.Settings.GetEntryValue("help").ToString();
+            string helpurl = ModuleManager.GetModuleSettings("RPM").GetEntryValue("help").ToString();
 
             return Redirect(helpurl);
         }

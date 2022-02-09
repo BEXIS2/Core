@@ -220,8 +220,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             int cellLimit = 0;
 
             //get cellLimt from settings
-            var moduleInfo = ModuleManager.GetModuleInfo("DCM");
-            var settings = moduleInfo.Plugin.Settings;
+            var settings = ModuleManager.GetModuleSettings("DCM");
 
             if (Int32.TryParse(settings.GetEntryValue("celllimit").ToString(), out cellLimit))
             {

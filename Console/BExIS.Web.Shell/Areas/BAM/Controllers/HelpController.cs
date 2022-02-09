@@ -20,8 +20,7 @@ namespace BExIS.Modules.Bam.UI.Controllers
         // GET: Help
         public ActionResult Index()
         {
-            var moduleInfo = ModuleManager.GetModuleInfo("BAM");
-            string helpurl = moduleInfo.Plugin.Settings.GetEntryValue("help").ToString();
+            string helpurl = ModuleManager.GetModuleSettings("BAM").GetEntryValue("help").ToString();
 
             return Redirect(helpurl);
         }

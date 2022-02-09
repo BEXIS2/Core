@@ -15,7 +15,7 @@ namespace BExIS.Modules.Sam.UI.Controllers
         public ActionResult Index()
         {
             var moduleInfo = ModuleManager.GetModuleInfo("SAM");
-            string helpurl = moduleInfo.Plugin.Settings.GetEntryValue("help").ToString();
+            string helpurl = ModuleManager.GetModuleSettings("SAM").GetEntryValue("help").ToString();
 
             return Redirect(helpurl);
         }

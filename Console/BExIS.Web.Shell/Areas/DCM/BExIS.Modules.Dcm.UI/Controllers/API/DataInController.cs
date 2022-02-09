@@ -64,7 +64,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         [PostRoute("api/Data")]
         public async Task<HttpResponseMessage> Post([FromBody] PushDataApiModel data)
         {
-            var settings = ModuleManager.GetModuleInfo("Dcm")?.Plugin?.Settings;
+            var settings = ModuleManager.GetModuleSettings("Dcm");
 
             var request = Request.CreateResponse();
             User user = null;
@@ -277,7 +277,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         [PutRoute("api/Data")]
         public async Task<HttpResponseMessage> Put([FromBody] PutDataApiModel data)
         {
-            var settings = ModuleManager.GetModuleInfo("Dcm")?.Plugin?.Settings;
+            var settings = ModuleManager.GetModuleSettings("Dcm");
 
             var request = Request.CreateResponse();
             User user = null;
