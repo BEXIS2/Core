@@ -211,7 +211,7 @@ namespace BExIS.Modules.Sam.UI.Controllers
                 {
                     var party = partyManager.GetPartyByUser(user.Id);
 
-                    var nameProp = partyTypeManager.PartyCustomAttributeRepository.Get(attr => (attr.PartyType == party.PartyType) && (attr.Name == ConfigurationManager.AppSettings["PersonEmailAttributeName"])).FirstOrDefault();
+                    var nameProp = partyTypeManager.PartyCustomAttributeRepository.Get(attr => (attr.PartyType == party.PartyType) && (attr.Name == generalSettings.GetEntryValue("PersonEmailAttributeName"))).FirstOrDefault();
                     if (nameProp != null)
                     {
                         partyManager.AddPartyCustomAttributeValue(party, nameProp, user.Email);

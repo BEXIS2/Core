@@ -235,7 +235,7 @@ namespace BExIS.Modules.Bam.UI.Controllers
 
                     if (generalSettings.GetEntryValue("usePersonEmailAttributeName") == "true")
                     {
-                        var nameProp = partyTypeManager.PartyCustomAttributeRepository.Get(attr => (attr.PartyType == party.PartyType) && (attr.Name == ConfigurationManager.AppSettings["PersonEmailAttributeName"])).FirstOrDefault();
+                        var nameProp = partyTypeManager.PartyCustomAttributeRepository.Get(attr => (attr.PartyType == party.PartyType) && (attr.Name == generalSettings.GetEntryValue("PersonEmailAttributeName"))).FirstOrDefault();
                         if (nameProp != null)
                         {
                             var entity = party.CustomAttributeValues.FirstOrDefault(item => item.CustomAttribute.Id == nameProp.Id);
@@ -300,7 +300,7 @@ namespace BExIS.Modules.Bam.UI.Controllers
                 // Add attribute name for email
                 if (generalSettings.GetEntryValue("usePersonEmailAttributeName") == "true")
                 {
-                    ViewBag.PersonEmailAttributeName = ConfigurationManager.AppSettings["PersonEmailAttributeName"];
+                    ViewBag.PersonEmailAttributeName = generalSettings.GetEntryValue("PersonEmailAttributeName");
                 }
 
                 var customAttrList = new List<PartyCustomAttribute>();

@@ -177,7 +177,7 @@ namespace BExIS.Modules.Bam.UI.Controllers
                     if (generalSettings.GetEntryValue("usePersonEmailAttributeName") == "true")
                     {
                         // get property name of custom attribute which holds the email
-                        var nameProp = partyTypeManager.PartyCustomAttributeRepository.Get(attr => (attr.PartyType == party.PartyType) && (attr.Name == ConfigurationManager.AppSettings["PersonEmailAttributeName"])).FirstOrDefault();
+                        var nameProp = partyTypeManager.PartyCustomAttributeRepository.Get(attr => (attr.PartyType == party.PartyType) && (attr.Name == generalSettings.GetEntryValue("PersonEmailAttributeName"))).FirstOrDefault();
                         if (nameProp != null)
                         {
                             // get value from custom attribute
