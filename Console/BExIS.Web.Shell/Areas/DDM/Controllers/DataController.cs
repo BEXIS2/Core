@@ -530,7 +530,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
 
                     if (ds.Self.GetType() == typeof(UnStructuredDataStructure))
                     {
-                        if (this.IsAccessible("MMM", "ShowMultimediaData", "multimediaData") && ConfigurationManager.AppSettings["useMultimediaModule"].ToLower().Equals("true"))
+                        if (this.IsAccessible("MMM", "ShowMultimediaData", "multimediaData") && (bool)generalSettings.GetEntryValue("useMultimediaModule"))
                             return RedirectToAction("multimediaData", "ShowMultimediaData", new RouteValueDictionary { { "area", "MMM" }, { "datasetID", datasetID }, { "versionId", versionId } });
                         else
                             return
@@ -1903,18 +1903,19 @@ namespace BExIS.Modules.Ddm.UI.Controllers
             dataset_settings_list.Add("show_tabs_deactivated", "true");
             dataset_settings_list.Add("check_public_metadata", "false");
 
-            string filePath = Path.Combine(AppConfiguration.GetModuleWorkspacePath("DDM"), "Ddm.Settings.xml");
-            XDocument settings = XDocument.Load(filePath);
+
+            var moduleInfo = ModuleManager.GetModuleInfo("Ddm");
+            var moduleSettings = moduleInfo.Plugin.Settings;
 
             foreach (var item in dataset_settings_list.ToList())
             {
                 try
                 {
-                    var value = XmlUtility.GetXElementByAttribute("entry", "key", item.Key, settings).Attribute("value")?.Value;
+                    var value = moduleSettings.GetEntryValue(item.Key);
 
                     if (value != null)
                     {
-                        dataset_settings_list[item.Key] = value;
+                        dataset_settings_list[item.Key] = value.ToString();
                     }
                 }
                 catch (Exception e)
