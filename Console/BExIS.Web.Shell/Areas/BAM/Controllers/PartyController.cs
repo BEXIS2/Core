@@ -18,7 +18,7 @@ namespace BExIS.Modules.Bam.UI.Controllers
 {
     public class PartyController : Controller
     {
-        GeneralSettings generalSettings = IoCFactory.Container.Resolve<GeneralSettings>();
+        
         public ActionResult Index()
         {
             using (var partyTypeManager = new PartyTypeManager())
@@ -174,10 +174,10 @@ namespace BExIS.Modules.Bam.UI.Controllers
                     party = Helper.EditParty(partyModel, partyCustomAttributeValues, systemPartyRelationships);
 
                     // check if an email is configured
-                    if (generalSettings.GetEntryValue("usePersonEmailAttributeName") == "true")
+                    if (GeneralSettings.UsePersonEmailAttributeName)
                     {
                         // get property name of custom attribute which holds the email
-                        var nameProp = partyTypeManager.PartyCustomAttributeRepository.Get(attr => (attr.PartyType == party.PartyType) && (attr.Name == generalSettings.GetEntryValue("PersonEmailAttributeName"))).FirstOrDefault();
+                        var nameProp = partyTypeManager.PartyCustomAttributeRepository.Get(attr => (attr.PartyType == party.PartyType) && (attr.Name == GeneralSettings.PersonalEmailAttributeName)).FirstOrDefault();
                         if (nameProp != null)
                         {
                             // get value from custom attribute
@@ -199,7 +199,7 @@ namespace BExIS.Modules.Bam.UI.Controllers
                                 var es = new EmailService();
                                 es.Send(MessageHelper.GetUpdateEmailHeader(),
                                     MessageHelper.GetUpdaterEmailMessage(user.DisplayName, user.Email, entity.Value),
-                                    generalSettings.SystemEmail
+                                    GeneralSettings.SystemEmail
                                     );
 
                                 // Update user email

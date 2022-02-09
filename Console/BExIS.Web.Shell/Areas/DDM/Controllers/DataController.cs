@@ -54,7 +54,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
     public class DataController : BaseController
     {
         private XmlDatasetHelper xmlDatasetHelper = new XmlDatasetHelper();
-        private GeneralSettings generalSettings = IoCFactory.Container.Resolve<GeneralSettings>();
+         
 
         [BExISEntityAuthorize(typeof(Dataset), "datasetId", RightType.Grant)]
         public ActionResult DatasetPermissions(long datasetId)
@@ -530,7 +530,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
 
                     if (ds.Self.GetType() == typeof(UnStructuredDataStructure))
                     {
-                        if (this.IsAccessible("MMM", "ShowMultimediaData", "multimediaData") && (bool)generalSettings.GetEntryValue("useMultimediaModule"))
+                        if (this.IsAccessible("MMM", "ShowMultimediaData", "multimediaData") && GeneralSettings.UseMultiMediaModule)
                             return RedirectToAction("multimediaData", "ShowMultimediaData", new RouteValueDictionary { { "area", "MMM" }, { "datasetID", datasetID }, { "versionId", versionId } });
                         else
                             return
@@ -735,7 +735,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                             var es = new EmailService();
                             es.Send(MessageHelper.GetDownloadDatasetHeader(id, versionNr),
                             MessageHelper.GetDownloadDatasetMessage(id, title, getPartyNameOrDefault(), ext, versionNr),
-                                generalSettings.SystemEmail
+                                GeneralSettings.SystemEmail
                                 );
                         }
 
@@ -747,7 +747,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                     var es = new EmailService();
                     es.Send(MessageHelper.GetUpdateDatasetHeader(id),
                         ex.Message,
-                        generalSettings.SystemEmail
+                        GeneralSettings.SystemEmail
                         );
 
                     throw ex;
@@ -888,7 +888,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                         var es = new EmailService();
                         es.Send(MessageHelper.GetDownloadDatasetHeader(id, versionNr),
                             MessageHelper.GetDownloadDatasetMessage(id, title, getPartyNameOrDefault(), ext, versionNr),
-                            generalSettings.SystemEmail
+                            GeneralSettings.SystemEmail
                             );
 
                         return File(Path.Combine(AppConfiguration.DataPath, path), mimetype, title + ext);
@@ -899,7 +899,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                     var es = new EmailService();
                     es.Send(MessageHelper.GetUpdateDatasetHeader(id),
                         ex.Message,
-                        generalSettings.SystemEmail
+                        GeneralSettings.SystemEmail
                         );
 
                     throw ex;
@@ -1046,7 +1046,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                         var es = new EmailService();
                         es.Send(MessageHelper.GetDownloadDatasetHeader(id, versionNr),
                             MessageHelper.GetDownloadDatasetMessage(id, title, getPartyNameOrDefault(), ext, versionNr),
-                            generalSettings.SystemEmail
+                            GeneralSettings.SystemEmail
                             );
 
                         return File(Path.Combine(AppConfiguration.DataPath, path), mimitype, title + ext);
@@ -1057,7 +1057,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                     var es = new EmailService();
                     es.Send(MessageHelper.GetUpdateDatasetHeader(id),
                         ex.Message,
-                        generalSettings.SystemEmail
+                        GeneralSettings.SystemEmail
                         );
 
                     throw ex;
@@ -1198,7 +1198,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
         {
             if (hasUserRights(id, RightType.Read))
             {
-                GeneralSettings generalSettings = IoCFactory.Container.Resolve<GeneralSettings>();
+                
                 DatasetManager datasetManager = new DatasetManager();
                 string title = "";
                 try
@@ -1240,7 +1240,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                     var es = new EmailService();
                     es.Send(MessageHelper.GetDownloadDatasetHeader(id, versionNr),
                         MessageHelper.GetDownloadDatasetMessage(id, title, getPartyNameOrDefault(), "zip", versionNr),
-                        generalSettings.SystemEmail
+                        GeneralSettings.SystemEmail
                         );
 
                     return File(zipPath, "application/zip", title + ".zip");
@@ -1250,7 +1250,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                     var es = new EmailService();
                     es.Send(MessageHelper.GetUpdateDatasetHeader(id),
                         ex.Message,
-                        generalSettings.SystemEmail
+                        GeneralSettings.SystemEmail
                         );
 
                     throw ex;
@@ -1279,7 +1279,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                     var es = new EmailService();
                     es.Send(MessageHelper.GetDownloadDatasetHeader(id, versionNr),
                         MessageHelper.GetDownloadDatasetMessage(id, title, getPartyNameOrDefault(), mimeType, versionNr),
-                        generalSettings.SystemEmail
+                        GeneralSettings.SystemEmail
                         );
 
                     return File(Path.Combine(AppConfiguration.DataPath, path), mimeType, title);
@@ -1865,7 +1865,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
 
                     long partyId = partyManager.Parties.Where(p => p.PartyType.Id.Equals(datasetPartyType.Id) && p.Name.Equals(datasetId.ToString())).FirstOrDefault().Id;
 
-                    var ownerPartyRelationshipType = partyRelationshipTypeManager.PartyRelationshipTypes.Where(pt => pt.Title.Equals(generalSettings.GetEntryValue("OwnerPartyRelationshipType"))).FirstOrDefault();
+                    var ownerPartyRelationshipType = partyRelationshipTypeManager.PartyRelationshipTypes.Where(pt => pt.Title.Equals(GeneralSettings.OwnerPartyRelationshipType)).FirstOrDefault();
                     if (ownerPartyRelationshipType == null) return false;
 
                     var ownerRelationships = partyManager.PartyRelationships.Where(p =>

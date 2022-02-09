@@ -55,8 +55,8 @@ namespace BExIS.App.Testing
             var tenant = tenantResolver.DefaultTenant;
 
             // setting the landing page for the current session
-            GeneralSettings generalSettings = IoCFactory.Container.Resolve<GeneralSettings>();
-            var landingPage = generalSettings.GetEntryValue("landingPage").ToString();
+            
+            var landingPage = GeneralSettings.LandingPage;
             tenant.LandingPage = landingPage; // checks and sets
 
             var httpSessionMock = new Mock<HttpSessionStateBase>();

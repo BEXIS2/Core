@@ -54,7 +54,6 @@ namespace BExIS.Modules.Dcm.UI.Controllers
     public class DataInController : ApiController
     {
         private XmlDatasetHelper xmlDatasetHelper = new XmlDatasetHelper();
-        private GeneralSettings generalSettings = IoCFactory.Container.Resolve<GeneralSettings>();
 
         // POST: api/data
         /// <summary>
@@ -239,7 +238,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                             es.Send(MessageHelper.GetUpdateDatasetHeader(dataset.Id),
                                 MessageHelper.GetUpdateDatasetMessage(dataset.Id, title, user.DisplayName, typeof(Dataset).Name),
                                 new List<string>() { user.Email },
-                                       new List<string>() { generalSettings.SystemEmail }
+                                       new List<string>() { GeneralSettings.SystemEmail }
                                 );
                         }
 
@@ -251,7 +250,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                         es.Send(MessageHelper.GetPushApiUploadFailHeader(dataset.Id, title),
                                    MessageHelper.GetPushApiUploadFailMessage(dataset.Id, user.UserName, new string[] { "Upload failed: " + ex.Message }),
                                    new List<string>() { user.Email },
-                                   new List<string>() { generalSettings.SystemEmail }
+                                   new List<string>() { GeneralSettings.SystemEmail }
                                    );
 
                         return Request.CreateResponse(HttpStatusCode.InternalServerError, ex.Message);
@@ -502,7 +501,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                             es.Send(MessageHelper.GetUpdateDatasetHeader(dataset.Id),
                                 MessageHelper.GetUpdateDatasetMessage(dataset.Id, title, user.DisplayName, typeof(Dataset).Name),
                                 new List<string>() { user.Email },
-                                       new List<string>() { generalSettings.SystemEmail }
+                                       new List<string>() { GeneralSettings.SystemEmail }
                                 );
                         }
 
@@ -516,7 +515,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                         es.Send(MessageHelper.GetPushApiUploadFailHeader(dataset.Id, title),
                                    MessageHelper.GetPushApiUploadFailMessage(dataset.Id, user.UserName, new string[] { "Upload failed: " + ex.Message }),
                                    new List<string>() { user.Email },
-                                   new List<string>() { generalSettings.SystemEmail }
+                                   new List<string>() { GeneralSettings.SystemEmail }
                                    );
 
                         return Request.CreateResponse(HttpStatusCode.InternalServerError, ex.Message);

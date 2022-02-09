@@ -49,8 +49,6 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
         private Dictionary<string, object> _bus = new Dictionary<string, object>();
 
-        private GeneralSettings generalSettings = IoCFactory.Container.Resolve<GeneralSettings>();
-
         // GET: /DCM/Summary/
 
         private User _user;
@@ -123,7 +121,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 es.Send(MessageHelper.GetASyncStartUploadHeader(id, model.DatasetTitle),
                     MessageHelper.GetASyncStartUploadMessage(id, model.DatasetTitle, numberOfRows),
                     new List<string>() { user.Email }, null,
-                    new List<string>() { generalSettings.SystemEmail }
+                    new List<string>() { GeneralSettings.SystemEmail }
                     );
 
                 model.AsyncUpload = true;

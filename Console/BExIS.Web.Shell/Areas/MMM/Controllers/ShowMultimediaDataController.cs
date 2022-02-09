@@ -191,11 +191,11 @@ namespace IDIV.Modules.Mmm.UI.Controllers
                         var es = new EmailService();
                         if (send_mail == "true")
                         {
-                            GeneralSettings generalSettings = IoCFactory.Container.Resolve<GeneralSettings>();
+                            
 
                             es.Send(MessageHelper.GetFileDownloadHeader(datasetID, versionNr),
                                                     MessageHelper.GetFileDownloadMessage(GetUsernameOrDefault(), datasetID, fileInfo.Name),
-                                                    generalSettings.SystemEmail
+                                                    GeneralSettings.SystemEmail
                                                     );
                         }
                         return File(path, MimeMapping.GetMimeMapping(fileInfo.Name), filename);

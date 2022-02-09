@@ -35,9 +35,7 @@ using Vaiona.Web.Mvc.Modularity;
 namespace BExIS.Modules.Dim.UI.Controllers
 {
     public class ExportController : Controller
-    {
-        private GeneralSettings generalSettings = IoCFactory.Container.Resolve<GeneralSettings>();
-
+    { 
         // GET: Export
         /// <summary>
         ///
@@ -359,7 +357,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
                         var es = new EmailService();
                         es.Send(MessageHelper.GetDownloadDatasetHeader(id, versionNr),
                             MessageHelper.GetDownloadDatasetMessage(id, title, getPartyNameOrDefault(), "zip - " + format, versionNr),
-                            generalSettings.SystemEmail
+                            GeneralSettings.SystemEmail
                             );
 
                         return File(zipFilePath, "application/zip", Path.GetFileName(zipFilePath));

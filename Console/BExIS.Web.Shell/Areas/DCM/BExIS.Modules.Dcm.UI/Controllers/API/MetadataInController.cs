@@ -33,7 +33,6 @@ namespace BExIS.Modules.Dim.UI.Controllers
     /// </summary>
     public class MetadataInController : ApiController
     {
-        private GeneralSettings generalSettings = IoCFactory.Container.Resolve<GeneralSettings>();
 
         private XmlDatasetHelper xmlDatasetHelper = new XmlDatasetHelper();
 
@@ -189,7 +188,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
                     var es = new EmailService();
                     es.Send(MessageHelper.GetMetadataUpdatHeader(id, typeof(Dataset).Name),
                         MessageHelper.GetUpdateDatasetMessage(id, title, user.DisplayName, typeof(Dataset).Name),
-                        generalSettings.SystemEmail
+                        GeneralSettings.SystemEmail
                         );
                 }
 

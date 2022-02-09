@@ -16,7 +16,7 @@ namespace BExIS.Security.Services.Requests
         private readonly IUnitOfWork _guow;
         private bool _isDisposed;
 
-        GeneralSettings generalSettings = IoCFactory.Container.Resolve<GeneralSettings>();
+        
 
         public RequestManager()
         {
@@ -76,7 +76,7 @@ namespace BExIS.Security.Services.Requests
                     {
                         var partyRelationship =
                             partyRelationshipRepository.Query(
-                                    m => m.PartyRelationshipType.Title == generalSettings.GetEntryValue("OwnerPartyRelationshipType")  && m.TargetParty.Id == dataset_party.Id)
+                                    m => m.PartyRelationshipType.Title == GeneralSettings.OwnerReleationshipType && m.TargetParty.Id == dataset_party.Id)
                                 .FirstOrDefault();
 
                         if (partyRelationship != null)

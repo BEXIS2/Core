@@ -19,8 +19,6 @@ namespace BExIS.Modules.Dcm.UI.Controllers
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Reliability", "CA2000:Objekte verwerfen, bevor Bereich verloren geht", Justification = "<Ausstehend>")]
     public class TestController : Controller
     {
-        private GeneralSettings generalSettings = IoCFactory.Container.Resolve<GeneralSettings>();
-
         // GET: Test
         public ActionResult Index()
         {
@@ -29,7 +27,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             var title = "my cool dataset";
             es.Send(MessageHelper.GetCreateDatasetHeader(datasetId, "Dataset"),
                 MessageHelper.GetCreateDatasetMessage(datasetId, title, "David Schöne", "Dataset"),
-                generalSettings.SystemEmail
+                GeneralSettings.SystemEmail
                 );
 
             string name = "test";

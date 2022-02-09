@@ -81,8 +81,8 @@ namespace BExIS.Web.Shell
             Tenant tenant = tenantResolver.Resolve(this.Request);
 
             // if the tenant has no landing page, set the application's default landing page for it.
-            GeneralSettings generalSettings = IoCFactory.Container.Resolve<GeneralSettings>();
-            var landingPage = generalSettings.GetEntryValue("landingPage").ToString();
+            
+            var landingPage = GeneralSettings.LandingPage;
             tenant.LandingPage = landingPage; // checks and sets
 
             this.Session.SetTenant(tenant);
@@ -125,10 +125,9 @@ namespace BExIS.Web.Shell
         protected void Application_Error(object sender, EventArgs e)
         {
 
-            GeneralSettings generalSettings = IoCFactory.Container.Resolve<GeneralSettings>();
+            
 
-            bool sendExceptions = false;
-            bool.TryParse(generalSettings.GetEntryValue("sendExceptions").ToString(), out sendExceptions);
+            bool sendExceptions = GeneralSettings.SendExceptions;
 
             var error = Server.GetLastError();
             var code = (error is HttpException) ? (error as HttpException).GetHttpCode() : 500;

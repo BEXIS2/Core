@@ -20,8 +20,8 @@ namespace BExIS.Web.Shell.Controllers
         // GET: Help
         public ActionResult FAQ()
         {
-            GeneralSettings generalSettings = IoCFactory.Container.Resolve<GeneralSettings>();
-            string helpurl = generalSettings.GetEntryValue("faq").ToString();
+            
+            string helpurl = GeneralSettings.FAQ.ToString();
 
             return Redirect(helpurl);
         }

@@ -49,8 +49,6 @@ namespace BExIS.Modules.Dcm.UI.Helper.API
         private List<long> variableIds = new List<long>();
         private UploadMethod _uploadMethod;
 
-        private GeneralSettings generalSettings = IoCFactory.Container.Resolve<GeneralSettings>();
-
         public DataApiHelper(Dataset dataset, User user, DataApiModel data, string title, UploadMethod uploadMethod)
         {
             datasetManager = new DatasetManager();
@@ -99,7 +97,7 @@ namespace BExIS.Modules.Dcm.UI.Helper.API
                 es.Send(MessageHelper.GetPushApiStoreHeader(_dataset.Id, _title),
                     MessageHelper.GetPushApiStoreMessage(_dataset.Id, _user.UserName),
                     new List<string>() { _user.Email },
-                    new List<string>() { generalSettings.SystemEmail }
+                    new List<string>() { GeneralSettings.SystemEmail }
                     );
             }
             catch (Exception ex)
@@ -109,7 +107,7 @@ namespace BExIS.Modules.Dcm.UI.Helper.API
                 es.Send(MessageHelper.GetPushApiStoreHeader(_data.DatasetId, _title),
                     MessageHelper.GetPushApiStoreMessage(_dataset.Id, _user.UserName, new string[] { ex.Message }),
                     new List<string>() { _user.Email },
-                    new List<string>() { generalSettings.SystemEmail }
+                    new List<string>() { GeneralSettings.SystemEmail }
                     );
 
                 return false;
@@ -173,7 +171,7 @@ namespace BExIS.Modules.Dcm.UI.Helper.API
                 es.Send(MessageHelper.GetPushApiPKCheckHeader(_dataset.Id, _title),
                     MessageHelper.GetPushApiPKCheckMessage(_dataset.Id, _user.UserName, errors.ToArray()),
                     new List<string>() { _user.Email },
-                    new List<string>() { generalSettings.SystemEmail }
+                    new List<string>() { GeneralSettings.SystemEmail }
                     );
             }
         }
@@ -210,7 +208,7 @@ namespace BExIS.Modules.Dcm.UI.Helper.API
                 es.Send(MessageHelper.GetPushApiValidateHeader(_dataset.Id, _title),
                     MessageHelper.GetPushApiValidateMessage(_dataset.Id, _user.UserName, errorArray.ToArray()),
                     new List<string>() { _user.Email },
-                    new List<string>() { generalSettings.SystemEmail }
+                    new List<string>() { GeneralSettings.SystemEmail }
                     );
 
                 return false;
@@ -221,7 +219,7 @@ namespace BExIS.Modules.Dcm.UI.Helper.API
                 es.Send(MessageHelper.GetPushApiValidateHeader(_dataset.Id, _title),
                     MessageHelper.GetPushApiValidateMessage(_dataset.Id, _user.UserName),
                     new List<string>() { _user.Email },
-                    new List<string>() { generalSettings.SystemEmail }
+                    new List<string>() { GeneralSettings.SystemEmail }
                     );
             }
             Debug.WriteLine("end validate data");
@@ -283,7 +281,7 @@ namespace BExIS.Modules.Dcm.UI.Helper.API
                             es.Send(MessageHelper.GetPushApiUploadFailHeader(_dataset.Id, _title),
                                 MessageHelper.GetPushApiUploadFailMessage(_dataset.Id, _user.UserName, errorArray.ToArray()),
                                 new List<string>() { _user.Email },
-                                new List<string>() { generalSettings.SystemEmail }
+                                new List<string>() { GeneralSettings.SystemEmail }
                                 );
 
                             return false;
@@ -317,7 +315,7 @@ namespace BExIS.Modules.Dcm.UI.Helper.API
                     es.Send(MessageHelper.GetUpdateDatasetHeader(id),
                         MessageHelper.GetUpdateDatasetMessage(id, title, _user.DisplayName, typeof(Dataset).Name),
                         new List<string>() { _user.Email },
-                               new List<string>() { generalSettings.SystemEmail }
+                               new List<string>() { GeneralSettings.SystemEmail }
                         );
                 }
                 else
@@ -326,7 +324,7 @@ namespace BExIS.Modules.Dcm.UI.Helper.API
                     es.Send(MessageHelper.GetPushApiUploadFailHeader(_dataset.Id, _title),
                                MessageHelper.GetPushApiUploadFailMessage(_dataset.Id, _user.UserName, new string[] { "The temporarily stored data could not be read or the dataset is already in checkout status." }),
                                new List<string>() { _user.Email },
-                               new List<string>() { generalSettings.SystemEmail }
+                               new List<string>() { GeneralSettings.SystemEmail }
                                );
                 }
 
@@ -341,7 +339,7 @@ namespace BExIS.Modules.Dcm.UI.Helper.API
                 es.Send(MessageHelper.GetPushApiUploadFailHeader(_dataset.Id, _title),
                                 MessageHelper.GetPushApiUploadFailMessage(_dataset.Id, _user.UserName, new string[] { ex.Message }),
                                 new List<string>() { _user.Email },
-                                new List<string>() { generalSettings.SystemEmail }
+                                new List<string>() { GeneralSettings.SystemEmail }
                                 );
 
                 return false;

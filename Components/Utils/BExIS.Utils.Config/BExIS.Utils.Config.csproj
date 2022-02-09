@@ -57,6 +57,10 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\Vaiona\Vaiona.IoC\Vaiona.IoC.csproj">
+      <Project>{29A7BE0F-A17C-4AE8-8CA1-15FE4DD74129}</Project>
+      <Name>Vaiona.IoC</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\Vaiona\Vaiona.Utils\Vaiona.Utils.csproj">
       <Project>{63fcacaa-9534-4fdd-a082-78dcc06baf28}</Project>
       <Name>Vaiona.Utils</Name>

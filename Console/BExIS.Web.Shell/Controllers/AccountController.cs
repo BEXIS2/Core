@@ -23,8 +23,6 @@ namespace BExIS.Web.Shell.Controllers
 {
     public class AccountController : Controller
     {
-        private GeneralSettings generalSettings = IoCFactory.Container.Resolve<GeneralSettings>();
-
         //
         // GET: /Account/ConfirmEmail
         public async Task<ActionResult> ConfirmEmail(long userId, string code)
@@ -47,7 +45,7 @@ namespace BExIS.Web.Shell.Controllers
                 var es = new EmailService();
                 es.Send(MessageHelper.GetRegisterUserHeader(),
                     MessageHelper.GetRegisterUserMessage(user.Id, user.Name, user.Email),
-                    generalSettings.SystemEmail
+                    GeneralSettings.SystemEmail
                     );
 
                 return this.IsAccessible("bam", "PartyService", "UserRegistration")
@@ -335,7 +333,7 @@ namespace BExIS.Web.Shell.Controllers
                     var es = new EmailService();
                     es.Send(MessageHelper.GetTryToRegisterUserHeader(),
                         MessageHelper.GetTryToRegisterUserMessage(user.Id, user.Name, user.Email),
-                        generalSettings.SystemEmail
+                        GeneralSettings.SystemEmail
                         );
 
                     ViewBag.Message = "Before you can log in to complete your registration, please check your email and verify your email address. If you did not receive an email, please also check your spam folder.";
@@ -419,8 +417,8 @@ namespace BExIS.Web.Shell.Controllers
                 var policyUrl = Url.Action("Index", "PrivacyPolicy", null, Request.Url.Scheme);
                 var termsUrl = Url.Action("Index", "TermsAndConditions", null, Request.Url.Scheme);
 
-                GeneralSettings generalSettings = IoCFactory.Container.Resolve<GeneralSettings>();
-                var applicationName = generalSettings.ApplicationName;
+                
+                var applicationName = GeneralSettings.ApplicationName;
 
                 await identityUserService.SendEmailAsync(userId, subject,
                     $"<p>Dear user,</p>" +

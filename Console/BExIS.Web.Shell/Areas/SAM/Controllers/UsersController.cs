@@ -181,7 +181,7 @@ namespace BExIS.Modules.Sam.UI.Controllers
             using (var partyManager = new PartyManager())
             using (var partyTypeManager = new PartyTypeManager())
             {
-                GeneralSettings generalSettings = IoCFactory.Container.Resolve<GeneralSettings>();
+                
 
                 // check wheter model is valid or not
                 if (!ModelState.IsValid) return PartialView("_Update", model);
@@ -201,17 +201,17 @@ namespace BExIS.Modules.Sam.UI.Controllers
                     var es = new EmailService();
                     es.Send(MessageHelper.GetUpdateEmailHeader(),
                         MessageHelper.GetUpdaterEmailMessage(user.DisplayName, user.Email, model.Email),
-                        generalSettings.SystemEmail
+                        GeneralSettings.SystemEmail
                         );
                 }
                 user.Email = model.Email;
 
                 // Update email in party
-                if (generalSettings.GetEntryValue("usePersonEmailAttributeName") == "true")
+                if (GeneralSettings.UsePersonEmailAttributeName)
                 {
                     var party = partyManager.GetPartyByUser(user.Id);
 
-                    var nameProp = partyTypeManager.PartyCustomAttributeRepository.Get(attr => (attr.PartyType == party.PartyType) && (attr.Name == generalSettings.GetEntryValue("PersonEmailAttributeName"))).FirstOrDefault();
+                    var nameProp = partyTypeManager.PartyCustomAttributeRepository.Get(attr => (attr.PartyType == party.PartyType) && (attr.Name == GeneralSettings.PersonEmailAttributeName)).FirstOrDefault();
                     if (nameProp != null)
                     {
                         partyManager.AddPartyCustomAttributeValue(party, nameProp, user.Email);

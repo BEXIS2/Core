@@ -18,7 +18,6 @@ namespace BExIS.Modules.Bam.UI.Controllers
 {
     public class PartyServiceController : Controller
     {
-        private GeneralSettings generalSettings = IoCFactory.Container.Resolve<GeneralSettings>();
 
         // GET: PartyService
         public ActionResult Index()
@@ -233,9 +232,9 @@ namespace BExIS.Modules.Bam.UI.Controllers
 
                     user.DisplayName = displayName;
 
-                    if (generalSettings.GetEntryValue("usePersonEmailAttributeName") == "true")
+                    if (GeneralSettings.UsePersonEmailAttributeName)
                     {
-                        var nameProp = partyTypeManager.PartyCustomAttributeRepository.Get(attr => (attr.PartyType == party.PartyType) && (attr.Name == generalSettings.GetEntryValue("PersonEmailAttributeName"))).FirstOrDefault();
+                        var nameProp = partyTypeManager.PartyCustomAttributeRepository.Get(attr => (attr.PartyType == party.PartyType) && (attr.Name == GeneralSettings.PersonalEmailAttributeName)).FirstOrDefault();
                         if (nameProp != null)
                         {
                             var entity = party.CustomAttributeValues.FirstOrDefault(item => item.CustomAttribute.Id == nameProp.Id);
@@ -244,7 +243,7 @@ namespace BExIS.Modules.Bam.UI.Controllers
                                 var es = new EmailService();
                                 es.Send(MessageHelper.GetUpdateEmailHeader(),
                                     MessageHelper.GetUpdaterEmailMessage(user.DisplayName, user.Email, entity.Value),
-                                    generalSettings.SystemEmail
+                                    GeneralSettings.SystemEmail
                                     );
                             }
                             user.Email = entity.Value;
@@ -298,9 +297,9 @@ namespace BExIS.Modules.Bam.UI.Controllers
                 }
 
                 // Add attribute name for email
-                if (generalSettings.GetEntryValue("usePersonEmailAttributeName") == "true")
+                if (GeneralSettings.UsePersonEmailAttributeName)
                 {
-                    ViewBag.PersonEmailAttributeName = generalSettings.GetEntryValue("PersonEmailAttributeName");
+                    ViewBag.PersonEmailAttributeName = GeneralSettings.PersonEmailAttributeName;
                 }
 
                 var customAttrList = new List<PartyCustomAttribute>();

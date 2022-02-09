@@ -26,6 +26,7 @@ namespace BExIS.Web.Shell.Controllers
     {
         public ActionResult Index()
         {
+
             return View();
         }
 
@@ -68,17 +69,15 @@ namespace BExIS.Web.Shell.Controllers
         public JsonResult Load(string id)
         {
             if (id == "shell")
-            {
-                GeneralSettings generalSettings = IoCFactory.Container.Resolve<GeneralSettings>();
-                generalSettings.Get();
-                return Json(generalSettings.Get(), JsonRequestBehavior.AllowGet);
+            { 
+                return Json(GeneralSettings.Get().GetAsJsonModel(), JsonRequestBehavior.AllowGet);
             }
 
             if (ModuleManager.IsActive(id))
             {
                 var moduleInfo = ModuleManager.GetModuleInfo(id);
                 
-                return Json(moduleInfo.Plugin.Settings.Get(), JsonRequestBehavior.AllowGet);
+                return Json(moduleInfo.Plugin.Settings.GetAsJsonModel(), JsonRequestBehavior.AllowGet);
             }
 
             return Json(false, JsonRequestBehavior.AllowGet);
@@ -97,8 +96,8 @@ namespace BExIS.Web.Shell.Controllers
             {
                 if (settings.Id == "shell")
                 {
-                    GeneralSettings generalSettings = IoCFactory.Container.Resolve<GeneralSettings>();
-                    generalSettings.Update(settings);
+
+                    GeneralSettings.Get().Update(settings);
                 }
 
                 if (ModuleManager.IsActive(settings.Id))

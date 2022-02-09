@@ -42,7 +42,6 @@ namespace BExIS.Modules.Dcm.UI.Helpers
 
         private UploadHelper uploadWizardHelper = new UploadHelper();
 
-        private GeneralSettings generalSettings = IoCFactory.Container.Resolve<GeneralSettings>();
 
         //temporary solution: norman :FinishUpload2
         public async Task<List<Error>> FinishUpload()
@@ -370,7 +369,7 @@ namespace BExIS.Modules.Dcm.UI.Helpers
                             var es = new EmailService();
                             es.Send(MessageHelper.GetUpdateDatasetHeader(datasetid),
                                 MessageHelper.GetUpdateDatasetMessage(datasetid, title, User.DisplayName, typeof(Dataset).Name),
-                                generalSettings.SystemEmail
+                                GeneralSettings.SystemEmail
                                 );
                         }
                         catch (Exception e)
@@ -379,7 +378,7 @@ namespace BExIS.Modules.Dcm.UI.Helpers
                             var es = new EmailService();
                             es.Send(MessageHelper.GetErrorHeader(),
                                 "Can not upload. : " + e.Message,
-                                generalSettings.SystemEmail
+                                GeneralSettings.SystemEmail
                                 );
                         }
                         finally
@@ -497,14 +496,14 @@ namespace BExIS.Modules.Dcm.UI.Helpers
                         var es = new EmailService();
                         es.Send(MessageHelper.GetPushApiUploadFailHeader(id, title),
                             MessageHelper.GetPushApiUploadFailMessage(id, user.Name, temp.Select(e => e.ToString()).ToArray()),
-                            new List<string> { user.Email }, null, new List<string> { generalSettings.SystemEmail });
+                            new List<string> { user.Email }, null, new List<string> { GeneralSettings.SystemEmail });
                     }
                     else
                     {
                         var es = new EmailService();
                         es.Send(MessageHelper.GetASyncFinishUploadHeader(id, title),
                             MessageHelper.GetASyncFinishUploadMessage(id, title, numberOfRows, numberOfSkippedRows),
-                            new List<string> { user.Email }, null, new List<string> { generalSettings.SystemEmail });
+                            new List<string> { user.Email }, null, new List<string> { GeneralSettings.SystemEmail });
                     }
                 }
 
@@ -514,7 +513,7 @@ namespace BExIS.Modules.Dcm.UI.Helpers
                     var es = new EmailService();
                     es.Send(MessageHelper.GeFileUpdatHeader(id),
                         MessageHelper.GetFileUploaddMessage(id, user.Name, Bus[TaskManager.FILENAME]?.ToString()),
-                        new List<string> { user.Email }, null, new List<string> { generalSettings.SystemEmail });
+                        new List<string> { user.Email }, null, new List<string> { GeneralSettings.SystemEmail });
                 }
 
                 dm.Dispose();

@@ -29,8 +29,6 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 {
     public class AttachmentsController : Controller
     {
-        private GeneralSettings generalSettings = IoCFactory.Container.Resolve<GeneralSettings>();
-
         // GET: Attachments
         public ActionResult Index()
         {
@@ -118,7 +116,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
                 es.Send(MessageHelper.GetAttachmentDeleteHeader(datasetId, typeof(Dataset).Name),
                 MessageHelper.GetAttachmentDeleteMessage(datasetId, fileName, GetUsernameOrDefault()),
-                generalSettings.SystemEmail
+                GeneralSettings.SystemEmail
                 );
             }
 
@@ -212,7 +210,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                     }
                     es.Send(MessageHelper.GetAttachmentUploadHeader(datasetId, typeof(Dataset).Name),
                     MessageHelper.GetAttachmentUploadMessage(datasetId, filemNames, user.DisplayName),
-                    generalSettings.SystemEmail
+                    GeneralSettings.SystemEmail
                     );
                 }
 

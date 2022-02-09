@@ -39,8 +39,8 @@ namespace BExIS.Web.Shell.Controllers
             if (!string.IsNullOrEmpty(HttpContext.User?.Identity?.Name)) //user
             {
                 // User exist : load ladingpage for users
-                GeneralSettings generalSettings = IoCFactory.Container.Resolve<GeneralSettings>();
-                var landingPageForUsers = generalSettings.GetEntryValue("landingPageForUsers").ToString();
+                
+                var landingPageForUsers = GeneralSettings.LandingPageForUsers;
 
                 if (landingPageForUsers.Split(',').Length == 3)//check wheter 3 values exist for teh action
                 {
@@ -53,7 +53,7 @@ namespace BExIS.Web.Shell.Controllers
                 //if the landingPage not null and the action is accessable
                 if (landingPage == null || !this.IsAccessible(landingPage.Item1, landingPage.Item2, landingPage.Item3) || !checkPermission(landingPage))
                 {
-                    landingPageForUsers = generalSettings.GetEntryValue("landingPageForUsersNoPermission").ToString();
+                    landingPageForUsers = GeneralSettings.LandingPageForUsersNoPermission;
 
                     if (landingPageForUsers.Split(',').Length == 3)//check wheter 3 values exist for teh action
                     {
@@ -118,8 +118,8 @@ namespace BExIS.Web.Shell.Controllers
                 var database = versionManager.GetLatestVersion().Value;
 
                 // load version from workspace in settings file of general
-                GeneralSettings generalSettings = IoCFactory.Container.Resolve<GeneralSettings>();
-                string workspace = generalSettings.GetEntryValue("version").ToString();
+                
+                string workspace = GeneralSettings.ApplicationVersion;
 
                 var model = new VersionModel()
                 {

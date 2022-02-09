@@ -29,7 +29,7 @@ namespace BExIS.Modules.Dim.UI.Helpers
 
     public class DimSeedDataGenerator : IModuleSeedDataGenerator
     {
-        GeneralSettings generalSettings = IoCFactory.Container.Resolve<GeneralSettings>();
+        
 
         public void GenerateSeedData()
         {
@@ -760,7 +760,7 @@ namespace BExIS.Modules.Dim.UI.Helpers
                         }
 
                         // add releationship type mapping
-                        PartyRelationshipType partyRelationshipType = partyReleationships.FirstOrDefault(p => p.Title.Equals(generalSettings.GetEntryValue("OwnerPartyRelationshipType")));
+                        PartyRelationshipType partyRelationshipType = partyReleationships.FirstOrDefault(p => p.Title.Equals(GeneralSettings.OwnerPartyRelationshipType));
                         if (partyRelationshipType != null)
                         {
                             createToPartyReleationMapping(
@@ -898,7 +898,7 @@ namespace BExIS.Modules.Dim.UI.Helpers
                         #region owner relationship
 
                         //Metadata/creator/creatorType/individualName
-                        PartyRelationshipType partyRelationshipType = partyReleationships.FirstOrDefault(p => p.Title.Equals(generalSettings.GetEntryValue("OwnerPartyRelationshipType")));
+                        PartyRelationshipType partyRelationshipType = partyReleationships.FirstOrDefault(p => p.Title.Equals(GeneralSettings.OwnerPartyRelationshipType));
                         if (partyRelationshipType != null)
                         {
                             createToPartyReleationMapping(

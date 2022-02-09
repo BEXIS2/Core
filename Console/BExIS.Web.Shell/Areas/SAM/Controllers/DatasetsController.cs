@@ -56,7 +56,7 @@ namespace BExIS.Modules.Sam.UI.Controllers
             {
                 try
                 {
-                    GeneralSettings generalSettings = IoCFactory.Container.Resolve<GeneralSettings>();
+                    
 
                     var userName = GetUsernameOrDefault();
                     var user = userManager.Users.Where(u => u.Name.Equals(userName)).FirstOrDefault();
@@ -74,7 +74,7 @@ namespace BExIS.Modules.Sam.UI.Controllers
                                 var es = new EmailService();
                                 es.Send(MessageHelper.GetDeleteDatasetHeader(id),
                                     MessageHelper.GetDeleteDatasetMessage(id, user.Name),
-                                    generalSettings.SystemEmail
+                                    GeneralSettings.SystemEmail
                                     );
 
                                 //entityPermissionManager.Delete(typeof(Dataset), id); // This is not needed here.
@@ -92,7 +92,7 @@ namespace BExIS.Modules.Sam.UI.Controllers
                             var es = new EmailService();
                             es.Send(MessageHelper.GetTryToDeleteDatasetHeader(id),
                                 MessageHelper.GetTryToDeleteDatasetMessage(id, GetUsernameOrDefault()),
-                                generalSettings.SystemEmail
+                                GeneralSettings.SystemEmail
                                 );
                         }
                     }
@@ -103,7 +103,7 @@ namespace BExIS.Modules.Sam.UI.Controllers
                         var es = new EmailService();
                         es.Send(MessageHelper.GetTryToDeleteDatasetHeader(id),
                             MessageHelper.GetTryToDeleteDatasetMessage(id, userName),
-                            generalSettings.SystemEmail
+                            GeneralSettings.SystemEmail
                             );
                     }
                 }
@@ -271,7 +271,7 @@ namespace BExIS.Modules.Sam.UI.Controllers
             {
                 try
                 {
-                    GeneralSettings generalSettings = IoCFactory.Container.Resolve<GeneralSettings>();
+                    
 
                     var userName = GetUsernameOrDefault();
                     var user = userManager.Users.Where(u => u.Name.Equals(userName)).FirstOrDefault();
@@ -289,7 +289,7 @@ namespace BExIS.Modules.Sam.UI.Controllers
                                 var es = new EmailService();
                                 es.Send(MessageHelper.GetPurgeDatasetHeader(id),
                                     MessageHelper.GetPurgeDatasetMessage(id, user.Name),
-                                    generalSettings.SystemEmail
+                                    GeneralSettings.SystemEmail
                                     );
 
                                 if (this.IsAccessible("DDM", "SearchIndex", "ReIndexUpdateSingle"))
@@ -305,7 +305,7 @@ namespace BExIS.Modules.Sam.UI.Controllers
                             var es = new EmailService();
                             es.Send(MessageHelper.GetTryToPurgeDatasetHeader(id),
                                 MessageHelper.GetTryToPurgeDatasetMessage(id, user.Name),
-                                generalSettings.SystemEmail
+                                GeneralSettings.SystemEmail
                                 );
                         }
                     }
@@ -315,7 +315,7 @@ namespace BExIS.Modules.Sam.UI.Controllers
                         var es = new EmailService();
                         es.Send(MessageHelper.GetTryToPurgeDatasetHeader(id),
                             MessageHelper.GetTryToPurgeDatasetMessage(id, userName),
-                            generalSettings.SystemEmail
+                            GeneralSettings.SystemEmail
                             );
                     }
                 }

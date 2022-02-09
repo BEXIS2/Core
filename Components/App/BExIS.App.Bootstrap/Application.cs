@@ -145,6 +145,9 @@ namespace BExIS.App.Bootstrap
             // At application start, each modules obtains a chance to perform some initialization and warmup tasks. They are coded in each module's Start method.
             // This call starts them.
             ModuleManager.StartModules();
+
+            // generate settings
+            
         }
 
         private void initTenancy()

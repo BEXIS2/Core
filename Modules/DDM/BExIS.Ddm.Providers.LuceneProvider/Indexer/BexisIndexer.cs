@@ -219,12 +219,12 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Indexer
                 dm.Dispose();
                 GC.Collect();
 
-                GeneralSettings generalSettings = IoCFactory.Container.Resolve<GeneralSettings>();
+                
 
                 var es = new EmailService();
                 es.Send(MessageHelper.GetSearchReIndexHeader(),
                     MessageHelper.GetSearchReIndexMessage(errors),
-                    generalSettings.SystemEmail);
+                    GeneralSettings.SystemEmail);
 
             }
         }

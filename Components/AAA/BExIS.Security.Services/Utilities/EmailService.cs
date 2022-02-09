@@ -53,7 +53,7 @@ namespace BExIS.Security.Services.Utilities
         {
             var mimeMessage = new MimeMessage();
 
-            GeneralSettings generalSettings = IoCFactory.Container.Resolve<GeneralSettings>();
+            
 
             mimeMessage.From.Add(new MailboxAddress(ConfigurationManager.AppSettings["Email_From_Name"], ConfigurationManager.AppSettings["Email_From_Address"]));
             if (destinations != null)
@@ -64,7 +64,7 @@ namespace BExIS.Security.Services.Utilities
                 mimeMessage.Bcc.AddRange(bccs.Select(b => new MailboxAddress(b, b)));
             if (replyTos != null)
                 mimeMessage.ReplyTo.AddRange(replyTos.Select(r => new MailboxAddress(r, r)));
-            mimeMessage.Subject = generalSettings.ApplicationName + " - " + subject;
+            mimeMessage.Subject = GeneralSettings.ApplicationName + " - " + subject;
 
             var builder = new BodyBuilder();
             builder.HtmlBody = body;
@@ -97,11 +97,11 @@ namespace BExIS.Security.Services.Utilities
         public void Send(IdentityMessage message)
         {
             var mimeMessage = new MimeMessage();
-            GeneralSettings generalSettings = IoCFactory.Container.Resolve<GeneralSettings>();
+            
 
             mimeMessage.From.Add(new MailboxAddress(ConfigurationManager.AppSettings["Email_From_Name"], ConfigurationManager.AppSettings["Email_From_Address"]));
             mimeMessage.To.Add(new MailboxAddress(message.Destination, message.Destination));
-            mimeMessage.Subject = generalSettings.ApplicationName + " - " + message.Subject;
+            mimeMessage.Subject = GeneralSettings.ApplicationName + " - " + message.Subject;
             mimeMessage.Body = new TextPart(MimeKit.Text.TextFormat.Html) { Text = message.Body };
 
             Send(mimeMessage);
@@ -110,11 +110,11 @@ namespace BExIS.Security.Services.Utilities
         public async Task SendAsync(IdentityMessage message)
         {
             var mimeMessage = new MimeMessage();
-            GeneralSettings generalSettings = IoCFactory.Container.Resolve<GeneralSettings>();
+            
 
             mimeMessage.From.Add(new MailboxAddress(ConfigurationManager.AppSettings["Email_From_Name"], ConfigurationManager.AppSettings["Email_From_Address"]));
             mimeMessage.To.Add(new MailboxAddress(message.Destination, message.Destination));
-            mimeMessage.Subject = generalSettings.ApplicationName + " - " + message.Subject;
+            mimeMessage.Subject = GeneralSettings.ApplicationName + " - " + message.Subject;
             mimeMessage.Body = new TextPart(MimeKit.Text.TextFormat.Html) { Text = message.Body };
 
             Send(mimeMessage);

@@ -54,7 +54,6 @@ namespace BExIS.Modules.Dcm.UI.Controllers
     {
         private CreateTaskmanager TaskManager;
         private XmlDatasetHelper xmlDatasetHelper = new XmlDatasetHelper();
-        private GeneralSettings generalSettings = IoCFactory.Container.Resolve<GeneralSettings>();
 
         #region Create a Dataset Setup Page
 
@@ -645,7 +644,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                                 var es = new EmailService();
                                 es.Send(MessageHelper.GetCreateDatasetHeader(datasetId, entityname),
                                     MessageHelper.GetCreateDatasetMessage(datasetId, title, GetUsernameOrDefault(), entityname),
-                                    generalSettings.SystemEmail
+                                    GeneralSettings.SystemEmail
                                     );
                             }
                             else
@@ -653,7 +652,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                                 var es = new EmailService();
                                 es.Send(MessageHelper.GetMetadataUpdatHeader(datasetId, entityname),
                                     MessageHelper.GetUpdateDatasetMessage(datasetId, title, GetUsernameOrDefault(), entityname),
-                                    generalSettings.SystemEmail
+                                    GeneralSettings.SystemEmail
                                     );
                             }
                         }
@@ -668,7 +667,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                     var es = new EmailService();
                     es.Send(MessageHelper.GetMetadataUpdatHeader(datasetId, entityname),
                         ex.Message,
-                        generalSettings.SystemEmail
+                        GeneralSettings.SystemEmail
                         );
 
                     string message = String.Format("error appears by create/update dataset with id: {0} , error: {1} ", datasetId.ToString(), ex.Message);

@@ -20,8 +20,6 @@ namespace BExIS.Modules.Ddm.UI.Controllers
 {
     public class RequestsManageController : Controller
     {
-        private GeneralSettings generalSettings = IoCFactory.Container.Resolve<GeneralSettings>();
-
         public ActionResult Decisions(long entityId)
         {
             using (var entityManager = new EntityManager())
@@ -109,7 +107,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
 
                         es.Send(MessageHelper.GetAcceptRequestHeader(request.Key, applicant),
                             MessageHelper.GetAcceptRequestMessage(request.Key, entityStore.GetTitleById(request.Key)),
-                            new List<string> { request.Applicant.Email }, null, new List<string> { generalSettings.SystemEmail }
+                            new List<string> { request.Applicant.Email }, null, new List<string> { GeneralSettings.SystemEmail }
                         );
                     }
                 }
@@ -143,7 +141,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
 
                         es.Send(MessageHelper.GetRejectedRequestHeader(request.Key, applicant),
                         MessageHelper.GetRejectedRequestMessage(request.Key, entityStore.GetTitleById(request.Key)),
-                        new List<string> { request.Applicant.Email }, null, new List<string> { generalSettings.SystemEmail }
+                        new List<string> { request.Applicant.Email }, null, new List<string> { GeneralSettings.SystemEmail }
                         );
                     }
                 }
@@ -182,7 +180,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
 
                         es.Send(MessageHelper.GetWithdrawRequestHeader(request.Key, applicant),
                         MessageHelper.GetWithdrawRequestMessage(request.Key, entityStore.GetTitleById(request.Key), applicant),
-                        new List<string> { emailDescionMaker }, null, new List<string> { generalSettings.SystemEmail }
+                        new List<string> { emailDescionMaker }, null, new List<string> { GeneralSettings.SystemEmail }
                         );
                     }
                 }

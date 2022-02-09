@@ -15,11 +15,11 @@ namespace BExIS.UI.Helpers
                 var es = new EmailService();
                 var subject = "Error in system";
 
-                GeneralSettings generalSettings = IoCFactory.Container.Resolve<GeneralSettings>();
+                
 
                 es.Send(subject,
                     result,
-                    generalSettings.SystemEmail
+                    GeneralSettings.SystemEmail
                     );
             }
             catch (System.Web.HttpException ehttp)
