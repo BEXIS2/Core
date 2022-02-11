@@ -11572,6 +11572,9 @@
     }
 
     // import { readable, writable, derived } from 'svelte/store';
+    var username = "davidschoene";
+    var password = "123456";
+
     var Helper = {
 
         capitalize:function  (s) {
@@ -11592,8 +11595,19 @@
         //Get list of setting IDs
         settingsGet:async function (hosturl){
 
+          let headers = new Headers();
+
+          headers.append('Authorization', 'Basic ' + btoa(username + ":" + password));
+          headers.append('Content-Type', 'application/json');
+          
+          const options = {
+                   method: "Get",
+                   headers: headers,
+                   };
+          
+
           const url = hosturl+'settings/get';
-          const res = await fetch(url);
+          const res = await fetch(url, options);
           let json = await res.json();
 
           return json;
@@ -11602,8 +11616,19 @@
         //Get list of setting IDs
         settingLoad:async function (hosturl, id){
           
+          let headers = new Headers();
+
+          headers.append('Authorization', 'Basic ' + btoa(username + ":" + password));
+          headers.append('Content-Type', 'application/json');
+          
+          const options = {
+                   method: "Get",
+                   headers: headers,
+                   };
+          
+
           const url = hosturl+'settings/load?id='+id;
-          const res = await fetch(url);
+          const res = await fetch(url, options);
           let json = await res.json();
           console.log(id);
           console.log(url);
@@ -11614,7 +11639,6 @@
         //Get Specific setting
         saveSetting:async function (hosturl,id,json){
           console.log("Save:"+id+" "+json);
-          
           try {
              //Save data code
              let data = {
@@ -11623,10 +11647,14 @@
               console.log(data);	
               console.log(JSON.stringify(data));	
 
+             let headers = new Headers();
+             headers.append('Authorization', 'Basic ' + btoa(username + ":" + password));
+             headers.append('Content-Type', 'application/json');
+
              const options = {
              method: "POST",
                 body: JSON.stringify(data),
-                headers: {"Content-Type": "application/json"},
+                headers: headers,
              };
 
              const res = await fetch(hosturl+"settings/save",options);

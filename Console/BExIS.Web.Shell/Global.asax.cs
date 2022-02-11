@@ -101,6 +101,14 @@ namespace BExIS.Web.Shell
 
         protected virtual void Application_BeginRequest()
         {
+            HttpContext.Current.Response.AddHeader("Access-Control-Allow-Origin", "*");
+            HttpContext.Current.Response.AddHeader("Access-Control-Allow-Methods", "POST, GET, OPTIONS, DELETE, PUT");
+            HttpContext.Current.Response.AddHeader("Access-Control-Allow-Headers", "content-type, append,delete,entries,foreach,get,has,keys,set,values,Authorization");
+
+            if (Request.HttpMethod == "OPTIONS")
+            {
+                Response.End();
+            }
         }
 
         /// <summary>

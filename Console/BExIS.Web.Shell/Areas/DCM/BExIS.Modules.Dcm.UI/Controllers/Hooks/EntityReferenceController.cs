@@ -29,6 +29,21 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             return View();
         }
 
+        public JsonResult jsontestcall(long id, int type,int version )
+        {
+ 
+            ReferencesModel model = new ReferencesModel();
+            EntityReferenceHelper helper = new EntityReferenceHelper();
+
+            model.Selected = helper.GetSimpleReferenceModel(id, type, version);
+            model.TargetReferences = helper.GetTargetReferences(id, type, version);
+            model.SourceReferences = helper.GetSourceReferences(id, type, version);
+            model.HasEditRights = hasUserRights(id, RightType.Write);
+
+            return Json(model, JsonRequestBehavior.AllowGet);
+        }
+
+
         [BExISEntityAuthorize(typeof(Dataset), "id", RightType.Write)]
         public ActionResult Start(long id, int version)
         {
