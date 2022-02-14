@@ -11571,12 +11571,12 @@
     	}
     }
 
-    const hosturl = 'https://localhost:44345/';
+    const hosturl = window.location.origin;
+    //export const hosturl = 'http://bx2test.inf-bb.uni-jena.de:2002/';
+    //export const hosturl = 'http://localhost:43345/';
+
     const username = "davidschoene";
     const password = "123456";
-
-
-    // export let activeTab = writable("");
 
     var Helper = {
 
@@ -11609,7 +11609,7 @@
                    };
           
 
-          const url = hosturl+'settings/get';
+          const url = hosturl+'/settings/get';
           const res = await fetch(url, options);
           let json = await res.json();
 
@@ -11630,7 +11630,7 @@
                    };
           
 
-          const url = hosturl+'settings/load?id='+id;
+          const url = hosturl+'/settings/load?id='+id;
           const res = await fetch(url, options);
           let json = await res.json();
           console.log(id);
@@ -11660,7 +11660,7 @@
                 headers: headers,
              };
 
-             const res = await fetch(hosturl+"settings/save",options);
+             const res = await fetch(hosturl+"/settings/save",options);
 
              if(res.status == 200)
              {
@@ -15296,13 +15296,13 @@
     			create_component(notification.$$.fragment);
     			t2 = space();
     			create_component(accordion.$$.fragment);
-    			add_location(h2, file, 71, 4, 1465);
+    			add_location(h2, file, 71, 4, 1460);
     			attr_dev(div0, "class", "col-md-5");
-    			add_location(div0, file, 70, 3, 1437);
+    			add_location(div0, file, 70, 3, 1432);
     			attr_dev(div1, "class", "row");
-    			add_location(div1, file, 69, 2, 1415);
+    			add_location(div1, file, 69, 2, 1410);
     			attr_dev(div2, "class", "border p-2");
-    			add_location(div2, file, 68, 1, 1387);
+    			add_location(div2, file, 68, 1, 1382);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div2, anchor);
@@ -15751,7 +15751,7 @@
     		c: function create() {
     			main = element("main");
     			if_block.c();
-    			add_location(main, file, 65, 0, 1332);
+    			add_location(main, file, 65, 0, 1327);
     		},
     		l: function claim(nodes) {
     			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
@@ -15832,6 +15832,7 @@
     	onMount(async () => {
     		$$invalidate(3, settingList = await Helper.settingsGet());
     		console.log(settingList);
+    		console.log(window.location.href);
     	});
 
     	//Event call every time that a data point is updated correcty in the entry components
@@ -15902,7 +15903,6 @@
     		Notification,
     		Warning,
     		Helper,
-    		hosturl,
     		onMount,
     		Spinner,
     		AccordionItem,

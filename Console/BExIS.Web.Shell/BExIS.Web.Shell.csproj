@@ -30,7 +30,7 @@
     <SccLocalPath>SAK</SccLocalPath>
     <SccAuxPath>SAK</SccAuxPath>
     <SccProvider>SAK</SccProvider>
-    <IISExpressSSLPort>44380</IISExpressSSLPort>
+    <IISExpressSSLPort>44345</IISExpressSSLPort>
     <IISExpressAnonymousAuthentication>
     </IISExpressAnonymousAuthentication>
     <IISExpressWindowsAuthentication>
@@ -1229,6 +1229,8 @@
     <Content Include="Scripts\session.warning.js" />
     <Content Include="Scripts\svelte\menu.css" />
     <Content Include="Scripts\svelte\menu.js" />
+    <Content Include="Scripts\svelte\settings.css" />
+    <Content Include="Scripts\svelte\settings.js" />
     <Content Include="Scripts\svelte\shell.js" />
     <Content Include="Scripts\svelte\uitest.js" />
     <Content Include="Shell.Manifest.xml" />
