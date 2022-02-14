@@ -11,12 +11,14 @@
     Nav
   } from 'sveltestrap';
 
+import {hosturl} from '../stores/store.js'
+
  $:menu="";
 
  onMount(async () => {
 
    // load menu froms server
-    const url = 'https://localhost:44345/menu';
+    const url = hosturl+'/menu';
 		const res = await fetch(url);
 		menu = await res.json();
 

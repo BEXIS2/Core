@@ -28,7 +28,7 @@ namespace BExIS.Utils.Data.Helpers
                 var o8 = operationManager.Find("Shell", "Help", "*") ?? operationManager.Create("Shell", "Help", "*");
 
                 var o9 = operationManager.Find("Shell", "UiTest", "*") ?? operationManager.Create("Shell", "Help", "*");
-                var o10 = operationManager.Find("Shell", "Menu", "*") ?? operationManager.Create("Shell", "Help", "*");
+                var o10 = operationManager.Find("Shell", "Menu", "*") ?? operationManager.Create("Shell", "Menu", "*");
 
                 var o11 = operationManager.Find("Shell", "Settings", "*") ?? operationManager.Create("Shell", "Settings", "*", settings);
 
