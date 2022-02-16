@@ -11,7 +11,7 @@ namespace BExIS.Modules.Dcm.UI.Hooks
     {
         public LinkViewHook()
         {
-            Start = "dcm/entityreference/startview";
+            Start = "/dcm/entityreference/startview";
         }
 
         public override void Check(long id, string username)

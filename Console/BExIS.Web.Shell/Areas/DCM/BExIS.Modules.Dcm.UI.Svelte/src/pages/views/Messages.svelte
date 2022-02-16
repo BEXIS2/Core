@@ -1,6 +1,7 @@
 <script>
  import { onMount } from 'svelte'; 
- import { hosturl } from '../../stores/store.js'
+ import {loadMessages}  from '../services/Caller'
+
  import { Spinner,ListGroup, ListGroupItem, Button } from 'sveltestrap';
 
 $:messages = null;
@@ -10,16 +11,9 @@ let container = document.getElementById('messages');
 let id = container.getAttribute("dataset");
 
 onMount(async () => {
-   loadMessages()
+   messages = await loadMessages(id)
 })
 
-async function loadMessages()
-{
-   messages = null;
-   const url = hosturl+'dcm/messages/load?id='+id;
-   const res = await fetch(url);
-   messages = await res.json();
-}
 
 </script>
 

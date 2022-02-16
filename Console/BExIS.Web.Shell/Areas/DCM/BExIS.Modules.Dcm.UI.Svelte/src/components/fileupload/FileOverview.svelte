@@ -6,11 +6,12 @@ import { Spinner, Button, Input,Table  } from 'sveltestrap';
 import { faTrash, faSave } from '@fortawesome/free-solid-svg-icons'
 import { onMount }from 'svelte'
 
+import {removeFile, saveFileDescription}  from '../../services/Caller'
+
+
 
 export let id;
 export let files;
-export let removeAction="";
-export let saveAction="";
 
 let el;
 $:date=null;
@@ -25,16 +26,7 @@ async function handleRemoveFile(e, index, file) {
 //remove from server
 console.log(index +"*"+ file);
 
-let data = {id,file}
-
-const options = {
-    method: "POST",
-    body: JSON.stringify({id,file}),
-    headers: {"Content-Type": "application/json"},
-  };
-
-const res = await fetch(removeAction,options);
-
+const res = await removeFile(id,file);
 let result = await res.json();
 
  if(res.status==200 && result)
@@ -47,23 +39,13 @@ let result = await res.json();
 
 async function handleSaveFileDescription(e, index, file, description) {
 
-//remove from server
-console.log(index +"*"+ file + "description");
+//save description on server
+console.log(index +"*"+ file + "*"+description);
+console.log(id);
 
-const options = {
-    method: "POST",
-    body: JSON.stringify({ id, file, description }),
-    headers: {"Content-Type": "application/json"},
-  };
-
-const res = await fetch(saveAction,options);
-if(res.status ==200)
-{
+const res = await saveFileDescription(id, file, description );
 
 }
-
-}
-
 
 </script>
 

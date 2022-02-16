@@ -60,6 +60,7 @@ namespace BExIS.UI.Hooks.Caches
         public EditDatasetDetailsCache()
         {
             Messages = new List<ResultMessage>();
+            Files = new List<FileInfo>();
         }
     }
 

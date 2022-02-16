@@ -1,10 +1,11 @@
 <script>
  import { onMount } from 'svelte'; 
- import { hosturl } from '../stores/store.js'
+ import {getView,getViewStart}  from '../services/Caller'
 	import Header from '../components/view/Header.svelte'
 	import Tab from '../components/view/Tab.svelte'
 	import Debug from '../components/Debug.svelte'
 	import {TabContent, Container } from 'sveltestrap';
+
 
  // load attributes from div
 let container = document.getElementById('view');
@@ -25,9 +26,7 @@ $:testPage="";
 onMount(async () => {
 
 // load menu froms server
-const url = hosturl+'dcm/view/load?id='+id;
-const res = await fetch(url);
-model = await res.json();
+model = await getView(id);
 
 hooks = model.hooks;
 title = model.title;
@@ -43,9 +42,7 @@ console.log(testPage)
 
 async function loadTab(action, id, version)
 {
-			const url = hosturl+action+"?id="+id+"&version="+version;
-			const res = await fetch(url);
-			let test = await res.text();
+	  let test = await getViewStart(action,id,version);
 			return test;
 }
 

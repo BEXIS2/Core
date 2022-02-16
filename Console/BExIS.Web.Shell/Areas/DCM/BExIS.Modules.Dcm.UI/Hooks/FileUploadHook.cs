@@ -11,7 +11,7 @@ namespace BExIS.Modules.Dcm.UI.Hooks
     {
         public FileUploadHook()
         {
-            Start = "dcm/fileupload/start";
+            Start = "/dcm/fileupload/start";
         }
 
         public override void Check(long id, string username)

@@ -6,6 +6,8 @@ using System.Web.Mvc;
 using System.Web.Routing;
 using BExIS.Security.Entities.Authorization;
 using Newtonsoft.Json;
+using BExIS.App.Bootstrap.Helpers;
+using BExIS.Security.Entities.Subjects;
 
 namespace BExIS.App.Bootstrap.Attributes
 {
@@ -34,6 +36,16 @@ namespace BExIS.App.Bootstrap.Attributes
                 var userName = string.Empty;
                 if (filterContext.HttpContext.User.Identity.IsAuthenticated)
                     userName = filterContext.HttpContext.User.Identity.Name;
+
+                // if user is null check request header auth
+                if (string.IsNullOrEmpty(userName))
+                {
+                    var authorization = filterContext.HttpContext.Request.Headers.Get("Authorization");
+                    User user = null;
+                    var res = BExISAuthorizeHelper.GetUserFromAuthorization(authorization, out user);
+                    if (user != null) userName = user.Name;
+
+                }
 
                 if (!entityPermissionManager.HasEffectiveRight(userName, entityType, Convert.ToInt64(filterContext.ActionParameters[keyName]), rightType))
                 {

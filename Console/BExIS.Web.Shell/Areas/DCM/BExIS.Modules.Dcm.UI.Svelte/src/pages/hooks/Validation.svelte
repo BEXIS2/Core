@@ -1,7 +1,5 @@
 <script>
-
-import {onMount} from 'svelte';
-import { hosturl } from '../../stores/store.js'
+import {getHookStart}  from '../../services/Caller'
 import { Spinner, Button, Modal,ModalBody, ModalFooter,ModalHeader } from 'sveltestrap';
 
 export let id=0;
@@ -15,18 +13,11 @@ let model;
 
 export let open = false;
 const toggle = () => (open = !open);
-// onMount(async () => {
-//   load();
-// })
 
 async function load()
 {
-  console.log("validation on mount")
-  let url = hosturl+start+"?id="+id+"&version="+version;
-
-  // load menu froms server
   const res = await fetch(url);
-  model = await res.json();
+  model = await getHookStart(start,id,version);
 }
 
 </script>

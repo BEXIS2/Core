@@ -6,7 +6,7 @@
  import Validation from '../../pages/hooks/Validation.svelte'
  import FileUpload from '../../pages/hooks/FileUpload.svelte'
  import Metadata from '../../pages/hooks/Metadata.svelte'
- import {Row, Col, Spinner} from 'sveltestrap';
+ import {Spinner} from 'sveltestrap';
 
  export let id;
  export let version;
@@ -48,7 +48,7 @@
     <Metadata {id} {version} {...metadataHook}/>
   </div>
 </HookContainer>
-
+ 
 <HookContainer displayName = {fileUploadHook.displayName}>
   <div slot="view">
     <FileUpload {id} {version} hook={fileUploadHook} />

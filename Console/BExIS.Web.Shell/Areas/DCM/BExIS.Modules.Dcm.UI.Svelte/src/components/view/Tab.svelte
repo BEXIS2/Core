@@ -1,6 +1,7 @@
 <script>
 import { onMount } from 'svelte'; 
-import { hosturl } from '../../stores/store.js'
+import {getHookStart}  from '../../services/Caller'
+
 import {TabPane, Spinner } from 'sveltestrap';
 
 
@@ -23,10 +24,7 @@ onMount(async () => {
 
 console.log(name);
 
-// load menu froms server
-const url = hosturl+start+'?id='+id+'&version='+version;
-const res = await fetch(url);
-content = await res.text();
+content = await getHookStart(start,id,version);
 
 })
 

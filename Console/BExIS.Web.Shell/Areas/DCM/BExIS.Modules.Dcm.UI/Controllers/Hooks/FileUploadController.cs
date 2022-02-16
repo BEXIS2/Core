@@ -48,14 +48,17 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
             // check if files in list also on server
             string path = Path.Combine(AppConfiguration.DataPath, "datasets", id.ToString(), "Temp");
-            for (int i = 0; i < cache.Files.Count; i++)
+            if (cache.Files != null)
             {
-                var file = cache.Files[i];
-                //check if if exist on server or not
-                if (file != null && !string.IsNullOrEmpty(file.Name) && System.IO.File.Exists(Path.Combine(path, file.Name)))
-                    model.ExistingFiles.Add(file); // if exist  add to model
-                else
-                    cache.Files.RemoveAt(i); // if not remove from cache
+                for (int i = 0; i < cache.Files.Count; i++)
+                {
+                    var file = cache.Files[i];
+                    //check if if exist on server or not
+                    if (file != null && !string.IsNullOrEmpty(file.Name) && System.IO.File.Exists(Path.Combine(path, file.Name)))
+                        model.ExistingFiles.Add(file); // if exist  add to model
+                    else
+                        cache.Files.RemoveAt(i); // if not remove from cache
+                }
             }
 
             // get accepted file extentions
@@ -117,7 +120,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                         var path = Path.Combine(storepath, fname);
 
                         file.SaveAs(path);
-
+                        if (cache.Files == null) cache.Files = new List<BExIS.UI.Hooks.Caches.FileInfo>();
                         cache.Files.Add(new BExIS.UI.Hooks.Caches.FileInfo(fname, file.ContentType, file.ContentLength, ""));
                         filesNames.Add(fname);
                     }

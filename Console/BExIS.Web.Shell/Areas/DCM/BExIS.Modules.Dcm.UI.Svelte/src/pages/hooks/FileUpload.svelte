@@ -1,10 +1,8 @@
 <script>
 import {FileUploader} from '@bexis2/svelte-bexis2-core-ui';
-import {FileInfo} from '@bexis2/svelte-bexis2-core-ui'
-import Fa from 'svelte-fa/src/fa.svelte'
+import {getHookStart}  from '../../services/Caller'
 
-import { hosturl } from '../../stores/store.js'
-import { faTrash } from '@fortawesome/free-solid-svg-icons'
+
 import { onMount }from 'svelte'
 import { Button, Spinner } from 'sveltestrap';
 
@@ -23,20 +21,21 @@ onMount(async () => {
 // for fileUploader
 let start="";
 let submit="";
+let saveDescription="";
+let removeFile="";
 
 
 async function load()
 {
-  let url = hosturl+hook.start+"?id="+id+"&version="+version;
+  model = await getHookStart(hook.start,id,version);
+  start = hook.start;
+  submit = "/dcm/fileupload/upload";
 
-  // load menu froms server
-  const res = await fetch(url);
-  model = await res.json();
 
-  start = hosturl+hook.start;
-  submit = hosturl+"dcm/fileupload/upload";
 
   console.log(model);
+  console.log(start);
+  console.log(submit);
 }
 
 </script>
@@ -45,6 +44,8 @@ async function load()
 
 <FileUploader {id} {version} data={model} {start} {submit} on:submit={load}/>
 
-<FileOverview {id} files={model.ExistingFiles} removeAction="fileupload/removefile" saveAction="fileupload/saveFileDescription"/>
+{#if model.ExistingFiles}
+  <FileOverview {id} files={model.ExistingFiles} {saveDescription} {removeFile} />
+{/if}
 
 {/if}

@@ -13,7 +13,7 @@ namespace BExIS.Modules.Dcm.UI.Hooks
     {
         public ValidationHook()
         {
-            Start = "dcm/validation/start";
+            Start = "/dcm/validation/start";
         }
 
         public override void Check(long id, string username)

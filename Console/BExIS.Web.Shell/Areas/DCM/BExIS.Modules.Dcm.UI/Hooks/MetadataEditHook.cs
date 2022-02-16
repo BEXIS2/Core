@@ -7,7 +7,7 @@ namespace BExIS.Modules.Dcm.UI.Hooks
     {
         public MetadataEditHook()
         {
-            Start = "dcm/metadata/start";
+            Start = "/dcm/metadata/start";
         }
 
         public override void Check(long id, string username)

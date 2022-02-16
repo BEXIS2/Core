@@ -1,7 +1,11 @@
 <script>
 
 import { onMount } from 'svelte'; 
-import { hosturl } from '../stores/store.js'
+import {Spinner} from 'sveltestrap';
+
+import { getEdit }  from '../services/Caller'
+import { setApiConfig }  from '@bexis2/svelte-bexis2-core-ui'
+
 import Header from '../components/edit/Header.svelte'
 import Data from '../components/edit/Data.svelte'
 import Hooks from '../components/edit/Hooks.svelte'
@@ -30,10 +34,13 @@ $:additionalViews=[];
 
 onMount(async () => {
 
-// load menu froms server
-const url = hosturl+'dcm/edit/load?id='+id;
-const res = await fetch(url);
-model = await res.json();
+console.log("start edit");
+setApiConfig("https://localhost:44345","davidschoene","123456");
+
+
+// load model froms server
+model = await getEdit(id);
+
 
 console.log(model);
 
@@ -100,7 +107,7 @@ let visible=false;
 </script>
 
 {#if !model} <!--if the model == false, access denied-->
-<b>access denied</b>
+  <Spinner color="primary" size="sm" type ="grow" text-center />
 {:else}  <!-- load page -->
 
 <!-- Header -->

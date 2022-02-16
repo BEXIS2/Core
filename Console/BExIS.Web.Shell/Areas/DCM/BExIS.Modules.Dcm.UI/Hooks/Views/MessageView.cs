@@ -11,7 +11,7 @@ namespace BExIS.Modules.Dcm.UI.Hooks.Views
     {
         public MessageView()
         {
-            Start = "dcm/messages/Start";
+            Start = "/dcm/messages/Start";
         }
 
         public override void Check(long id, string username)

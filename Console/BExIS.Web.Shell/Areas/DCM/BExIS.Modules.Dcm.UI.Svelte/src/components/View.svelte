@@ -1,7 +1,7 @@
 <script>
 import { onMount, onDestroy } from 'svelte'; 
-import { hosturl } from '../stores/store.js'
 import { Spinner, Button } from 'sveltestrap';
+import { host } from '@bexis2/svelte-bexis2-core-ui'
 
  
  //entity infos
@@ -17,8 +17,8 @@ $:ExtComponent = null;
 
 onMount(async () =>
 {
-  // load javascript from server
-  const urlscript = hosturl+start+'?id='+id+'&version='+version;
+  //load javascript from server
+  const urlscript = host+start+"?id="+id+"&&version="+version;
 
   import(urlscript).then(resp => {
   ExtComponent = resp.default;

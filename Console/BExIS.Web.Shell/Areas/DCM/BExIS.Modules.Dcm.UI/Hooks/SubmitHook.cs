@@ -13,7 +13,7 @@ namespace BExIS.Modules.Dcm.UI.Hooks
     {
         public SubmitHook()
         {
-            Start = "dcm/submit/start";
+            Start = "/dcm/submit/start";
         }
 
         public override void Check(long id, string username)
