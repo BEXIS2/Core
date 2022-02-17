@@ -1,8 +1,7 @@
 <script>
- import HookLink from '../../components/HookLink.svelte'
- import {Row, Col,Button, Spinner} from 'sveltestrap';
+ import {Row, Col,Button} from 'sveltestrap';
 
- import { hosturl } from '../../stores/store.js'
+ import { host } from '@bexis2/svelte-bexis2-core-ui'
 
  
  export let id;
@@ -12,7 +11,7 @@
  export let start;
 
  let isEnabled = setEnable(status);
- let url = hosturl+start+"?id="+id+"&version="+version;
+ let url = host+start+"?id="+id+"&version="+version;
   
  function setEnable(status)
  {
@@ -25,6 +24,7 @@
  }
 
 function clickEditMetadata() {
+ 
  window.open(url, '_blank').focus();
 }
 

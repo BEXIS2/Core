@@ -11,7 +11,7 @@ namespace BExIS.Modules.Dcm.UI.Hooks
     {
         public DataHook()
         {
-            Start = "dcm/view/startData";
+            Start = "/dcm/view/startData";
         }
 
         public override void Check(long id, string username)

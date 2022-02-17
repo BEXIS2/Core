@@ -1,5 +1,5 @@
 
-(function(l, r) { if (!l || l.getElementById('livereloadscript')) return; r = l.createElement('script'); r.async = 1; r.src = '//' + (self.location.host || 'localhost').split(':')[0] + ':35729/livereload.js?snipver=1'; r.id = 'livereloadscript'; l.getElementsByTagName('head')[0].appendChild(r) })(self.document);
+(function(l, r) { if (!l || l.getElementById('livereloadscript')) return; r = l.createElement('script'); r.async = 1; r.src = '//' + (self.location.host || 'localhost').split(':')[0] + ':35733/livereload.js?snipver=1'; r.id = 'livereloadscript'; l.getElementsByTagName('head')[0].appendChild(r) })(self.document);
 (function () {
     'use strict';
 
@@ -11571,9 +11571,9 @@
     	}
     }
 
-    const hosturl = window.location.origin;
-    //export const hosturl = 'http://bx2test.inf-bb.uni-jena.de:2002/';
-    //export const hosturl = 'http://localhost:43345/';
+    //export const hosturl = window.location.origin;
+    const hosturl = 'http://bx2test.inf-bb.uni-jena.de:2002';
+    //export const hosturl = 'https://localhost:44345';
 
     const username = "davidschoene";
     const password = "123456";

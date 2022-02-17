@@ -24,6 +24,8 @@
     "@fortawesome/fontawesome-svg-core": "^1.2.35",
     "@fortawesome/free-regular-svg-icons": "^5.15.4",
     "@fortawesome/free-solid-svg-icons": "^5.15.4",
+    "@rollup/plugin-json": "^4.1.0",
+    "axios": "0.21.1",
     "datatables.net": "^1.10.25",
     "datatables.net-dt": "^1.1.0",
     "fontawesome-svelte": "^2.0.1",

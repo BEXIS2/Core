@@ -11,7 +11,7 @@ namespace BExIS.Modules.Dcm.UI.Hooks
     {
         public DataStructurePreviewHook()
         {
-            Start = "dcm/view/StartDataStructure";
+            Start = "/dcm/view/StartDataStructure";
         }
 
         public override void Check(long id, string username)

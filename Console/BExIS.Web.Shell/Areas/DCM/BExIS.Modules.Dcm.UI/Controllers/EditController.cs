@@ -1,8 +1,10 @@
 ﻿using BExIS.App.Bootstrap.Attributes;
+using BExIS.App.Bootstrap.Helpers;
 using BExIS.Dlm.Entities.Data;
 using BExIS.Dlm.Services.Data;
 using BExIS.Modules.Dcm.UI.Models.Edit;
 using BExIS.Security.Entities.Authorization;
+using BExIS.Security.Entities.Subjects;
 using BExIS.UI.Hooks;
 using BExIS.UI.Hooks.Caches;
 using Newtonsoft.Json;
@@ -39,6 +41,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         [JsonNetFilter]
         public JsonResult Load(long id, int version = 0)
         {
+
             EditModel model = new EditModel();
             model.Id = id;
             model.Version = version;
@@ -68,9 +71,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 model.Views = hooksManager.GetViewsFor("dataset", "details", HookMode.edit);
 
                 // run all checks
-                string userName = "";
-                if (HttpContext.User.Identity.IsAuthenticated)
-                    userName = HttpContext.User.Identity.Name;
+                string userName = BExISAuthorizeHelper.GetAuthorizedUserName(HttpContext);
 
                 model.Hooks.ForEach(h => h.Check(id, userName));
 

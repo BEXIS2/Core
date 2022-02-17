@@ -137,8 +137,8 @@ function getLocalConfig(configName)
 }
 
 export default [
-		getConfig("edit"),
-		getConfig("view"),
-		getConfig("messages"),
-		getLocalConfig("local")
+		getConfig("edit")
+		// getConfig("view"),
+		// getConfig("messages"),
+		// getLocalConfig("local")
 ]

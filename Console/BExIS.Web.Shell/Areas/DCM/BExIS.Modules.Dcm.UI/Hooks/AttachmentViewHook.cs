@@ -11,7 +11,7 @@ namespace BExIS.Modules.Dcm.UI.Hooks
     {
         public AttachmentViewHook()
         {
-            Start = "dcm/attachments/start";
+            Start = "/dcm/attachments/start";
         }
 
         public override void Check(long id, string username)

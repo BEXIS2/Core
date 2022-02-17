@@ -525,9 +525,125 @@ var app = (function () {
         $inject_state() { }
     }
 
-    const hosturl = 'https://localhost:44345/';
+    //export const hosturl = window.location.origin;
+    //export const hosturl = 'http://bx2test.inf-bb.uni-jena.de:2002';
+    const hosturl = 'https://localhost:44345';
 
-    // export let activeTab = writable("");
+    const username = "davidschoene";
+    const password = "123456";
+
+    var Helper = { 
+
+
+     getEdit:async function (id){
+
+       let headers = new Headers();
+
+       headers.append('Authorization', 'Basic ' + btoa(username + ":" + password));
+       headers.append('Content-Type', 'application/json');
+       
+       const options = { method: "Get", headers: headers};
+       
+
+       const url = hosturl+'/dcm/edit/load?id='+id;
+       const res = await fetch(url, options);
+       let json = await res.json();
+
+       return json;
+     },
+
+     getView:async function (id){
+
+      let headers = new Headers();
+
+      headers.append('Authorization', 'Basic ' + btoa(username + ":" + password));
+      headers.append('Content-Type', 'application/json');
+      
+      const options = { method: "Get", headers: headers};
+
+      const url = hosturl+'/dcm/view/load?id='+id;
+      const res = await fetch(url, options);
+      let json = await res.json();
+
+      return json;
+     },
+
+     getHookStart:async function (action, id, version)
+     {
+      let headers = new Headers();
+
+      headers.append('Authorization', 'Basic ' + btoa(username + ":" + password));
+      headers.append('Content-Type', 'application/json');
+      
+      const options = { method: "Get", headers: headers};
+
+      const url = hosturl+action+'?id='+id+'&version='+version;
+      console.log("getHookStart : "+ url);
+      const res = await fetch(url, options);
+      let text = await res.text();
+      return text;
+     },
+
+     loadMessages:async function (id)
+     {
+       let headers = new Headers();
+
+       headers.append('Authorization', 'Basic ' + btoa(username + ":" + password));
+       headers.append('Content-Type', 'application/json');
+       
+       const options = { method: "Get", headers: headers};
+
+        const url = hosturl+'/dcm/messages/load?id='+id;
+        const res = await fetch(url, options);
+        let messages = await res.json();
+        return messages;
+
+     },
+
+     saveFileDescription:async function( id, file, description )
+     {
+     
+      let headers = new Headers();
+      headers.append('Authorization', 'Basic ' + btoa(username + ":" + password));
+      headers.append('Content-Type', 'application/json');
+
+      const options = {
+        method: "POST",
+        body: JSON.stringify({ id, file, description }),
+        headers: {"Content-Type": "application/json"},
+      };
+
+      const url = hosturl+'/dcm/fileupload/saveFileDescription';
+
+      const res = await fetch(url, options);
+
+      return res;
+
+     },
+
+     // 
+     removeFile:async function( id, file )
+     {
+     
+      let headers = new Headers();
+      headers.append('Authorization', 'Basic ' + btoa(username + ":" + password));
+      headers.append('Content-Type', 'application/json');
+
+      const options = {
+        method: "POST",
+        body: JSON.stringify({id,file}),
+        headers: {"Content-Type": "application/json"},
+      };
+
+      const url = hosturl+'/dcm/fileupload/removefile';
+
+      const res = await fetch(url, options);
+
+      return res;
+
+     }
+
+    };
 
     function toClassName(value) {
       let result = '';
@@ -2502,17 +2618,17 @@ var app = (function () {
 
     function get_each_context(ctx, list, i) {
     	const child_ctx = ctx.slice();
-    	child_ctx[4] = list[i];
+    	child_ctx[3] = list[i];
     	return child_ctx;
     }
 
     function get_each_context_1(ctx, list, i) {
     	const child_ctx = ctx.slice();
-    	child_ctx[7] = list[i];
+    	child_ctx[6] = list[i];
     	return child_ctx;
     }
 
-    // (26:0) <Button on:click={loadMessages}>
+    // (19:0) <Button on:click={Helper.loadMessages}>
     function create_default_slot_2(ctx) {
     	let t;
 
@@ -2532,14 +2648,14 @@ var app = (function () {
     		block,
     		id: create_default_slot_2.name,
     		type: "slot",
-    		source: "(26:0) <Button on:click={loadMessages}>",
+    		source: "(19:0) <Button on:click={Helper.loadMessages}>",
     		ctx
     	});
 
     	return block;
     }
 
-    // (48:0) {:else}
+    // (41:0) {:else}
     function create_else_block(ctx) {
     	let spinner;
     	let current;
@@ -2581,14 +2697,14 @@ var app = (function () {
     		block,
     		id: create_else_block.name,
     		type: "else",
-    		source: "(48:0) {:else}",
+    		source: "(41:0) {:else}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (28:0) {#if messages}
+    // (21:0) {#if messages}
     function create_if_block(ctx) {
     	let listgroup;
     	let current;
@@ -2613,7 +2729,7 @@ var app = (function () {
     		p: function update(ctx, dirty) {
     			const listgroup_changes = {};
 
-    			if (dirty & /*$$scope, messages*/ 1025) {
+    			if (dirty & /*$$scope, messages*/ 513) {
     				listgroup_changes.$$scope = { dirty, ctx };
     			}
 
@@ -2637,16 +2753,16 @@ var app = (function () {
     		block,
     		id: create_if_block.name,
     		type: "if",
-    		source: "(28:0) {#if messages}",
+    		source: "(21:0) {#if messages}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (37:6) {#each message.messages as messagepart}
+    // (30:6) {#each message.messages as messagepart}
     function create_each_block_1(ctx) {
-    	let t0_value = /*messagepart*/ ctx[7] + "";
+    	let t0_value = /*messagepart*/ ctx[6] + "";
     	let t0;
     	let t1;
     	let br;
@@ -2656,7 +2772,7 @@ var app = (function () {
     			t0 = text(t0_value);
     			t1 = space();
     			br = element("br");
-    			add_location(br, file, 37, 23, 867);
+    			add_location(br, file, 30, 23, 722);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, t0, anchor);
@@ -2664,7 +2780,7 @@ var app = (function () {
     			insert_dev(target, br, anchor);
     		},
     		p: function update(ctx, dirty) {
-    			if (dirty & /*messages*/ 1 && t0_value !== (t0_value = /*messagepart*/ ctx[7] + "")) set_data_dev(t0, t0_value);
+    			if (dirty & /*messages*/ 1 && t0_value !== (t0_value = /*messagepart*/ ctx[6] + "")) set_data_dev(t0, t0_value);
     		},
     		d: function destroy(detaching) {
     			if (detaching) detach_dev(t0);
@@ -2677,23 +2793,23 @@ var app = (function () {
     		block,
     		id: create_each_block_1.name,
     		type: "each",
-    		source: "(37:6) {#each message.messages as messagepart}",
+    		source: "(30:6) {#each message.messages as messagepart}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (34:3) <ListGroupItem>
+    // (27:3) <ListGroupItem>
     function create_default_slot_1(ctx) {
     	let b;
-    	let t0_value = /*message*/ ctx[4].timestamp + "";
+    	let t0_value = /*message*/ ctx[3].timestamp + "";
     	let t0;
     	let t1;
     	let br;
     	let t2;
     	let t3;
-    	let each_value_1 = /*message*/ ctx[4].messages;
+    	let each_value_1 = /*message*/ ctx[3].messages;
     	validate_each_argument(each_value_1);
     	let each_blocks = [];
 
@@ -2714,8 +2830,8 @@ var app = (function () {
     			}
 
     			t3 = space();
-    			add_location(b, file, 34, 6, 761);
-    			add_location(br, file, 34, 33, 788);
+    			add_location(b, file, 27, 6, 616);
+    			add_location(br, file, 27, 33, 643);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, b, anchor);
@@ -2731,10 +2847,10 @@ var app = (function () {
     			insert_dev(target, t3, anchor);
     		},
     		p: function update(ctx, dirty) {
-    			if (dirty & /*messages*/ 1 && t0_value !== (t0_value = /*message*/ ctx[4].timestamp + "")) set_data_dev(t0, t0_value);
+    			if (dirty & /*messages*/ 1 && t0_value !== (t0_value = /*message*/ ctx[3].timestamp + "")) set_data_dev(t0, t0_value);
 
     			if (dirty & /*messages*/ 1) {
-    				each_value_1 = /*message*/ ctx[4].messages;
+    				each_value_1 = /*message*/ ctx[3].messages;
     				validate_each_argument(each_value_1);
     				let i;
 
@@ -2771,14 +2887,14 @@ var app = (function () {
     		block,
     		id: create_default_slot_1.name,
     		type: "slot",
-    		source: "(34:3) <ListGroupItem>",
+    		source: "(27:3) <ListGroupItem>",
     		ctx
     	});
 
     	return block;
     }
 
-    // (32:3) {#each messages as message}
+    // (25:3) {#each messages as message}
     function create_each_block(ctx) {
     	let listgroupitem;
     	let current;
@@ -2802,7 +2918,7 @@ var app = (function () {
     		p: function update(ctx, dirty) {
     			const listgroupitem_changes = {};
 
-    			if (dirty & /*$$scope, messages*/ 1025) {
+    			if (dirty & /*$$scope, messages*/ 513) {
     				listgroupitem_changes.$$scope = { dirty, ctx };
     			}
 
@@ -2826,14 +2942,14 @@ var app = (function () {
     		block,
     		id: create_each_block.name,
     		type: "each",
-    		source: "(32:3) {#each messages as message}",
+    		source: "(25:3) {#each messages as message}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (30:0) <ListGroup flush>
+    // (23:0) <ListGroup flush>
     function create_default_slot(ctx) {
     	let each_1_anchor;
     	let current;
@@ -2922,7 +3038,7 @@ var app = (function () {
     		block,
     		id: create_default_slot.name,
     		type: "slot",
-    		source: "(30:0) <ListGroup flush>",
+    		source: "(23:0) <ListGroup flush>",
     		ctx
     	});
 
@@ -2945,7 +3061,7 @@ var app = (function () {
     			$$inline: true
     		});
 
-    	button.$on("click", /*loadMessages*/ ctx[1]);
+    	button.$on("click", Helper.loadMessages);
     	const if_block_creators = [create_if_block, create_else_block];
     	const if_blocks = [];
 
@@ -2977,7 +3093,7 @@ var app = (function () {
     		p: function update(ctx, [dirty]) {
     			const button_changes = {};
 
-    			if (dirty & /*$$scope*/ 1024) {
+    			if (dirty & /*$$scope*/ 512) {
     				button_changes.$$scope = { dirty, ctx };
     			}
 
@@ -3046,15 +3162,8 @@ var app = (function () {
     	let id = container.getAttribute("dataset");
 
     	onMount(async () => {
-    		loadMessages();
+    		$$invalidate(0, messages = await Helper.loadMessages(id));
     	});
-
-    	async function loadMessages() {
-    		$$invalidate(0, messages = null);
-    		const url = hosturl + 'dcm/messages/load?id=' + id;
-    		const res = await fetch(url);
-    		$$invalidate(0, messages = await res.json());
-    	}
 
     	const writable_props = [];
 
@@ -3064,14 +3173,13 @@ var app = (function () {
 
     	$$self.$capture_state = () => ({
     		onMount,
-    		hosturl,
+    		Helper,
     		Spinner,
     		ListGroup,
     		ListGroupItem,
     		Button,
     		container,
     		id,
-    		loadMessages,
     		messages
     	});
 
@@ -3086,7 +3194,7 @@ var app = (function () {
     	}
 
     	$$invalidate(0, messages = null);
-    	return [messages, loadMessages];
+    	return [messages];
     }
 
     class Messages extends SvelteComponentDev {

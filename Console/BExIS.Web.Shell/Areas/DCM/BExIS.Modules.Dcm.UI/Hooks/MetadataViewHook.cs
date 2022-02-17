@@ -11,7 +11,7 @@ namespace BExIS.Modules.Dcm.UI.Hooks
     {
         public MetadataViewHook()
         {
-            Start = "dcm/view/start";
+            Start = "/dcm/view/start";
         }
 
         public override void Check(long id, string username)
