@@ -334,6 +334,7 @@
     <Compile Include="Controllers\API\DatasetOutController.cs" />
     <Compile Include="Controllers\API\AttachmentOutController.cs" />
     <Compile Include="Controllers\API\DataStatisticOutController.cs" />
+    <Compile Include="Controllers\DataCiteDoiController.cs" />
     <Compile Include="Controllers\ExportController.cs" />
     <Compile Include="Controllers\PublicationController.cs" />
     <Compile Include="Controllers\API\DataOutController.cs" />
@@ -661,6 +662,8 @@
     <Content Include="Views\Export\SimpleMetadata.cshtml" />
     <Content Include="Views\Export\SimpleDataStructure.cshtml" />
     <Content Include="Views\Export\XmlNode.cshtml" />
+    <Content Include="Views\DataCiteDoi\_requestRow.cshtml" />
+    <Content Include="Views\DataCiteDoi\index.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
