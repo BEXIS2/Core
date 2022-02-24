@@ -11,7 +11,7 @@ namespace BExIS.Modules.Dcm.UI.Hooks
     {
         public AttachmentEditHook()
         {
-            Start = "/dcm/attachments/start";
+            Start = "/dcm/attachmentupload/start";
         }
 
         public override void Check(long id, string username)

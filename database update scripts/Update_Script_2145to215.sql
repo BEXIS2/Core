@@ -12,6 +12,7 @@ BEGIN TRANSACTION;
 
 -- dcm/Validation - DatasetUploadFeature
 -- dcm/FileUpload - DatasetUploadFeature
+-- dcm/AttachmentUpload - DatasetUploadFeature
 -- dcm/messages - DatasetUploadFeature
 
 

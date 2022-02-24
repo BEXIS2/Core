@@ -1,15 +1,16 @@
 <script>
 import {FileUploader} from '@bexis2/svelte-bexis2-core-ui';
 import {getHookStart}  from '../../services/Caller'
-import { onMount, createEventDispatcher }from 'svelte'
+import { onMount }from 'svelte'
 import FileOverview from '../../components/fileupload/FileOverview.svelte'
-import {Spinner, Alert} from 'sveltestrap'
+import {Spinner} from 'sveltestrap'
 
 export let id=0;
 export let version=1;
 export let hook;
 
 $:model = null;
+$:loading = false;
 
 onMount(async () => {
   load();
@@ -17,35 +18,28 @@ onMount(async () => {
 
 // action for fileupload
 let start="";
-let save='/dcm/fileupload/saveFileDescription';
-let remove='/dcm/fileupload/removefile';
-let submit = "/dcm/fileupload/upload";
-let context = "fileupload";
-let error = "";
-
-$:loading = false;
-$:existError = false;
-
-
-const dispatch = createEventDispatcher();
-
+let save='/dcm/attachmentupload/saveFileDescription';
+let remove='/dcm/attachmentupload/removefile';
+let submit = "/dcm/attachmentupload/upload";
+let context = "attachment"
 async function load()
 {
 
   model = await getHookStart(hook.start,id,version);
   start = hook.start;
   loading = false;
-
+  
 }
+
 
 </script>
 
 {#if model}
 
-  <FileUploader {id} {version} {context} data={model} {start} {submit} on:submited={load} on:submit={()=>loading=true} on:error on:success/>
+<FileUploader {id} {version} {context} data={model} {start} {submit} on:submited={load} on:submit={()=>loading=true } on:error on:success />
 
 {#if model.ExistingFiles}
-  <FileOverview {id} files={model.ExistingFiles} {save} {remove} on:success />
+  <FileOverview {id} files={model.ExistingFiles} {save} {remove} on:success/>
 {/if}
 
 {#if loading}

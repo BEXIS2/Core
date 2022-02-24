@@ -1,4 +1,5 @@
 ﻿using BExIS.UI.Hooks.Caches;
+using BExIS.Utils.Data.Upload;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,11 +9,6 @@ namespace BExIS.UI.Models
 {
     public class FileUploader
     {
-        /// <summary>
-        /// Context is , Data Upload or Attachments
-        /// </summary>
-        public string Context { get; set; }
-
         /// <summary>
         /// based on structured or unstructured Datasets the list of supported filetypes is defined by tenants
         /// </summary>

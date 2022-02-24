@@ -38,20 +38,25 @@
   });
  }
 
+function errorHandler(e)
+{
+  console.log("error event in data");
+
+}
 
 </script>
 
 {#if hooks} <!-- if hooks list is loaded render hooks -->
 
-<HookContainer displayName = {metadataHook.displayName}>
+<HookContainer displayName = {metadataHook.displayName} >
   <div slot="view">
-    <Metadata {id} {version} {...metadataHook}/>
+    <Metadata {id} {version} {...metadataHook} />
   </div>
 </HookContainer>
  
-<HookContainer displayName = {fileUploadHook.displayName}>
+<HookContainer displayName = {fileUploadHook.displayName} let:errorHandler let:successHandler >
   <div slot="view">
-    <FileUpload {id} {version} hook={fileUploadHook} />
+    <FileUpload {id} {version} hook={fileUploadHook}  on:error={(e)=> errorHandler(e)} on:success={(e)=> successHandler(e)} />
   </div>
 </HookContainer>
 

@@ -178,6 +178,7 @@ namespace BExIS.Modules.Dcm.UI.Helpers
 
                 // for hooks and views
                 operationManager.Create("DCM", "FileUpload", "*", DatasetUploadFeature);
+                operationManager.Create("DCM", "AttachmentUpload", "*", DatasetUploadFeature);
                 operationManager.Create("DCM", "Validation", "*", DatasetUploadFeature);
                 operationManager.Create("DCM", "Metadata", "*", DatasetUploadFeature);
                 operationManager.Create("DCM", "Messages", "*", DatasetUploadFeature);

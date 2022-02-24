@@ -33,33 +33,33 @@ $:messageView=[];
 $:additionalViews=[];
 
 onMount(async () => {
-
-console.log("start edit");
-setApiConfig("https://localhost:44345","davidschoene","123456");
-
-
-// load model froms server
-model = await getEdit(id);
-
-
-console.log(model);
-
-hooks = model.hooks;
-views = model.views;
-title = model.title;
-version = model.version
-
-
-// sam/ui/scripts/userpermission.js
-// load svelte
-
-// seperate dcm hooks from other hooks
-seperateHooks(hooks);
-
-// get resultView
-seperateViews(views);
-
+  console.log("start edit");
+  setApiConfig("https://localhost:44345","davidschoene","123456");
+  load();
 })
+
+async function load()
+{
+  // load model froms server
+  model = await getEdit(id);
+
+  console.log(model);
+
+  hooks = model.hooks;
+  views = model.views;
+  title = model.title;
+  version = model.version
+
+
+  // sam/ui/scripts/userpermission.js
+  // load svelte
+
+  // seperate dcm hooks from other hooks
+  seperateHooks(hooks);
+
+  // get resultView
+  seperateViews(views);
+}
 
 // seperate dcm hooks from other hooks
 // known hooks - metadata, fileupload, validation
@@ -125,7 +125,7 @@ let visible=false;
 <div class="top">
 <div id="additonalContainer">
 
-<Hooks bind:hooks= {addtionalhooks} {id} {version}/>
+  <Hooks bind:hooks= {addtionalhooks} {id} {version} />
 
 </div>
 <!-- ResultMessageView -->
@@ -139,7 +139,8 @@ let visible=false;
 {/if}
 
 <style>
- .content{
+
+.content{
   margin:40px 0; 
  }
 

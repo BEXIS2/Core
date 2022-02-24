@@ -760,7 +760,7 @@ namespace BExIS.Utils.Upload
         }
 
         /// <summary>
-        ///
+        /// Return allowed extention list based on the DataStructureType
         /// </summary>
         /// <remarks></remarks>
         /// <seealso cref=""/>
@@ -780,7 +780,7 @@ namespace BExIS.Utils.Upload
                     };
             }
 
-            if (type.Equals(DataStructureType.None) == null || type.Equals(DataStructureType.Unstructured))
+            if (type.Equals(DataStructureType.None) || type.Equals(DataStructureType.Unstructured))
             {
                 if (tenant != null) return tenant.AllowedFileExtensions;
 

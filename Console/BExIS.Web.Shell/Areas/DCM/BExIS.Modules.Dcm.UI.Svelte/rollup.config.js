@@ -38,12 +38,7 @@ function getConfig(configName)
 						format: 'iife',
 						name: 'app',
 						file: '../BExIS.Modules.Dcm.UI/Scripts/svelte/'+configName+'.js'
-					},
-					{
-					file: 'public/build/'+configName+'.js',
-					format: 'iife',
-					name: 'app'
-			}],
+					}],
 			plugins: [
 						svelte({
 							// emitCss: false,
@@ -137,6 +132,7 @@ function getLocalConfig(configName)
 }
 
 export default [
+		getLocalConfig("edit"),
 		getConfig("edit")
 		// getConfig("view"),
 		// getConfig("messages"),

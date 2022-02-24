@@ -58,10 +58,10 @@ export const loadMessages = async (id) => {
 };
 
 // save file description
-export const saveFileDescription = async (id, file, description) => {
+export const saveFileDescription = async (action, id, file, description ) => {
   try {
 
-    const response = await Api.post('/dcm/fileupload/saveFileDescription', { id, file, description });
+    const response = await Api.post(action, { id, file, description });
     return response.data;
   } catch (error) {
     console.error(error);
@@ -69,10 +69,14 @@ export const saveFileDescription = async (id, file, description) => {
 };
 
 // remove file from server
-export const removeFile = async (id, file) => {
+export const removeFile = async (action, id, file ) => {
   try {
+    console.log("remove")
+    console.log(action)
+    console.log(id)
+    console.log(file)
 
-    const response = await Api.post('/dcm/fileupload/removefile', { id, file });
+    const response = await Api.post(action, { id, file });
     return response;
   } catch (error) {
     console.error(error);

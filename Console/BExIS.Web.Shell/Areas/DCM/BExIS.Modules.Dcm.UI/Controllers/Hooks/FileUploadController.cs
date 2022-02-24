@@ -1,8 +1,16 @@
-﻿using BExIS.Dlm.Services.Data;
+﻿using BExIS.App.Bootstrap.Attributes;
+using BExIS.App.Bootstrap.Helpers;
+using BExIS.Dlm.Entities.Data;
+using BExIS.Dlm.Entities.DataStructure;
+using BExIS.Dlm.Services.Data;
+using BExIS.IO;
 using BExIS.Modules.Dcm.UI.Models.Edit;
+using BExIS.Security.Entities.Authorization;
+using BExIS.Security.Services.Utilities;
 using BExIS.UI.Hooks;
 using BExIS.UI.Hooks.Caches;
 using BExIS.UI.Models;
+using BExIS.Utils.Config;
 using BExIS.Utils.Data.Upload;
 using BExIS.Utils.Upload;
 using System;
@@ -12,8 +20,11 @@ using System.Linq;
 using System.Net.Http;
 using System.Web;
 using System.Web.Mvc;
+using Vaiona.Entities.Common;
 using Vaiona.Utils.Cfg;
 using Vaiona.Web.Extensions;
+
+using Cache = BExIS.UI.Hooks.Caches;
 
 namespace BExIS.Modules.Dcm.UI.Controllers
 {
@@ -25,7 +36,6 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         /// <returns></returns>
         public ActionResult Start(long id, int version)
         {
-            //return View();
             return RedirectToAction("load", new { id, version });
         }
 
@@ -36,7 +46,6 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             if (id <= 0) throw new ArgumentException("id must be greater than 0");
 
             FileUploader model = new FileUploader();
-            model.Context = "File Upload";
             model.MaxSize = 0;
             model.Multiple = true;
             model.DescriptionType = DescriptionType.active;
@@ -66,12 +75,15 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             {
                 var dataset = datasetManager.GetDataset(id);
                 DataStructureType datastructureType = DataStructureType.None;
-                if (dataset.DataStructure != null) datastructureType = DataStructureType.Structured;
+
+                if (dataset.DataStructure != null &&
+                    dataset.DataStructure.Self.GetType().Equals(typeof(StructuredDataStructure)))
+                    datastructureType = DataStructureType.Structured;
+
                 model.Accept = UploadHelper.GetExtentionList(datastructureType, this.Session.GetTenant());
             }
 
             hookManager.SaveCache(cache, "dataset", "details", HookMode.edit, id);
-
             return Json(model, JsonRequestBehavior.AllowGet);
         }
 
@@ -82,6 +94,8 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             EditDatasetDetailsCache cache = hookManager.LoadCache<EditDatasetDetailsCache>("dataset", "details", HookMode.edit, id);
             List<string> filesNames = new List<string>();
 
+            string folder = "Temp"; // folder name inside dataset - temp or attachments
+
             if (Request.Files.Count > 0)
             {
                 try
@@ -90,40 +104,24 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                     HttpFileCollectionBase files = Request.Files;
                     for (int i = 0; i < files.Count; i++)
                     {
-                        //string path = AppDomain.CurrentDomain.BaseDirectory + "Uploads/";
-                        //string filename = Path.GetFileName(Request.Files[i].FileName);
-
-                        HttpPostedFileBase file = files[i];
-                        string fname;
-
-                        // Checking for Internet Explorer
-                        if (Request.Browser.Browser.ToUpper() == "IE" || Request.Browser.Browser.ToUpper() == "INTERNETEXPLORER")
-                        {
-                            string[] testfiles = file.FileName.Split(new char[] { '\\' });
-                            fname = testfiles[testfiles.Length - 1];
-                        }
-                        else
-                        {
-                            fname = file.FileName;
-                        }
-
+                        var file = files[i];
+                        string fname = getFileName(file);
                         //data/datasets/1/1/
                         var dataPath = AppConfiguration.DataPath; //Path.Combine(AppConfiguration.WorkspaceRootPath, "Data");
-                        var storepath = Path.Combine(dataPath, "Datasets", id.ToString(), "Temp");
+                        var storepath = Path.Combine(dataPath, "Datasets", id.ToString(), folder);
 
                         // if folder not exist
-                        if (!Directory.Exists(storepath))
-                        {
-                            Directory.CreateDirectory(storepath);
-                        }
+                        if (!Directory.Exists(storepath)) Directory.CreateDirectory(storepath);
 
                         var path = Path.Combine(storepath, fname);
 
                         file.SaveAs(path);
-                        if (cache.Files == null) cache.Files = new List<BExIS.UI.Hooks.Caches.FileInfo>();
-                        cache.Files.Add(new BExIS.UI.Hooks.Caches.FileInfo(fname, file.ContentType, file.ContentLength, ""));
+
+                        if (cache.Files == null) cache.Files = new List<Cache.FileInfo>();
+                        cache.Files.Add(new Cache.FileInfo(fname, file.ContentType, file.ContentLength, ""));
                         filesNames.Add(fname);
                     }
+
                     // Returns message that successfully uploaded
                     return Json("File Uploaded Successfully!");
                 }
@@ -163,6 +161,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 if (f != null) cache.Files.Remove(f);
             }
 
+            cache.Messages.Add(new ResultMessage(DateTime.Now, new List<string>() { file + " removed" }));
             hookManager.SaveCache(cache, "dataset", "details", HookMode.edit, id);
 
             return Json(true);
@@ -181,9 +180,24 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 if (f != null) f.Description = description;
             }
 
+            cache.Messages.Add(new ResultMessage(DateTime.Now, new List<string>() { file + " description updated" }));
             hookManager.SaveCache(cache, "dataset", "details", HookMode.edit, id);
 
             return Json(true);
+        }
+
+        private string getFileName(HttpPostedFileBase file)
+        {
+            // Checking for Internet Explorer
+            if (Request.Browser.Browser.ToUpper() == "IE" || Request.Browser.Browser.ToUpper() == "INTERNETEXPLORER")
+            {
+                string[] testfiles = file.FileName.Split(new char[] { '\\' });
+                return testfiles[testfiles.Length - 1];
+            }
+            else
+            {
+                return file.FileName;
+            }
         }
     }
 }
