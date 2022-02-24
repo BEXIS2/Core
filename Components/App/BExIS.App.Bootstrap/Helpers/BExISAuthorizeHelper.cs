@@ -177,6 +177,28 @@ namespace BExIS.App.Bootstrap.Helpers
             }
         }
 
+        public static User GetUserFromAuthorization(HttpContextBase context)
+        {
+            using (UserManager userManager = new UserManager())
+            {
+                User user = null;
+                string userName = "";
+                if (context.User.Identity.IsAuthenticated)
+                {
+                    var userTask = userManager.FindByNameAsync(context.User.Identity.Name);
+                    userTask.Wait();
+                    user = userTask.Result;
+                }
+                else
+                {
+                    var authorization = context.Request.Headers.Get("Authorization");
+                    GetUserFromAuthorization(authorization, out user);
+                }
+
+                return user;
+            }
+        }
+        
         public static string GetAuthorizedUserName(HttpContextBase context)
         {
             string userName = "";
