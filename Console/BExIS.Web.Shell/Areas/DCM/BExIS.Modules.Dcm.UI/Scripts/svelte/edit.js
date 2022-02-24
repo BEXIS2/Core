@@ -1220,7 +1220,7 @@ var app = (function () {
     	let current;
     	let if_block0 = (/*heading*/ ctx[3] || /*$$slots*/ ctx[10].heading) && create_if_block_3$5(ctx);
     	let if_block1 = /*showClose*/ ctx[5] && create_if_block_2$c(ctx);
-    	const if_block_creators = [create_if_block_1$i, create_else_block$i];
+    	const if_block_creators = [create_if_block_1$j, create_else_block$i];
     	const if_blocks = [];
 
     	function select_block_type(ctx, dirty) {
@@ -1557,7 +1557,7 @@ var app = (function () {
     }
 
     // (46:4) {#if children}
-    function create_if_block_1$i(ctx) {
+    function create_if_block_1$j(ctx) {
     	let t;
 
     	const block = {
@@ -1579,7 +1579,7 @@ var app = (function () {
 
     	dispatch_dev("SvelteRegisterBlock", {
     		block,
-    		id: create_if_block_1$i.name,
+    		id: create_if_block_1$j.name,
     		type: "if",
     		source: "(46:4) {#if children}",
     		ctx
@@ -2018,7 +2018,7 @@ var app = (function () {
     	let current;
     	let mounted;
     	let dispose;
-    	const if_block_creators = [create_if_block_1$h, create_else_block$h];
+    	const if_block_creators = [create_if_block_1$i, create_else_block$h];
     	const if_blocks = [];
 
     	function select_block_type_1(ctx, dirty) {
@@ -2358,7 +2358,7 @@ var app = (function () {
     }
 
     // (44:4) {#if children}
-    function create_if_block_1$h(ctx) {
+    function create_if_block_1$i(ctx) {
     	let t;
 
     	const block_1 = {
@@ -2380,7 +2380,7 @@ var app = (function () {
 
     	dispatch_dev("SvelteRegisterBlock", {
     		block: block_1,
-    		id: create_if_block_1$h.name,
+    		id: create_if_block_1$i.name,
     		type: "if",
     		source: "(44:4) {#if children}",
     		ctx
@@ -3421,7 +3421,7 @@ var app = (function () {
     }
 
     // (34:2) {#if type === 'radio'}
-    function create_if_block_1$g(ctx) {
+    function create_if_block_1$h(ctx) {
     	let input;
     	let mounted;
     	let dispose;
@@ -3493,7 +3493,7 @@ var app = (function () {
 
     	dispatch_dev("SvelteRegisterBlock", {
     		block,
-    		id: create_if_block_1$g.name,
+    		id: create_if_block_1$h.name,
     		type: "if",
     		source: "(34:2) {#if type === 'radio'}",
     		ctx
@@ -3613,7 +3613,7 @@ var app = (function () {
     	let current;
 
     	function select_block_type(ctx, dirty) {
-    		if (/*type*/ ctx[6] === 'radio') return create_if_block_1$g;
+    		if (/*type*/ ctx[6] === 'radio') return create_if_block_1$h;
     		if (/*type*/ ctx[6] === 'switch') return create_if_block_2$a;
     		return create_else_block$g;
     	}
@@ -6405,7 +6405,7 @@ var app = (function () {
     	let if_block;
     	let if_block_anchor;
     	let current;
-    	const if_block_creators = [create_if_block_1$f, create_else_block$f];
+    	const if_block_creators = [create_if_block_1$g, create_else_block$f];
     	const if_blocks = [];
 
     	function select_block_type_2(ctx, dirty) {
@@ -6538,7 +6538,7 @@ var app = (function () {
     }
 
     // (524:2) {#if Array.isArray(feedback)}
-    function create_if_block_1$f(ctx) {
+    function create_if_block_1$g(ctx) {
     	let each_1_anchor;
     	let current;
     	let each_value = /*feedback*/ ctx[9];
@@ -6624,7 +6624,7 @@ var app = (function () {
 
     	dispatch_dev("SvelteRegisterBlock", {
     		block,
-    		id: create_if_block_1$f.name,
+    		id: create_if_block_1$g.name,
     		type: "if",
     		source: "(524:2) {#if Array.isArray(feedback)}",
     		ctx
@@ -8736,7 +8736,7 @@ var app = (function () {
     }
 
     // (15:4) {#if children}
-    function create_if_block_1$e(ctx) {
+    function create_if_block_1$f(ctx) {
     	let t;
 
     	const block = {
@@ -8758,7 +8758,7 @@ var app = (function () {
 
     	dispatch_dev("SvelteRegisterBlock", {
     		block,
-    		id: create_if_block_1$e.name,
+    		id: create_if_block_1$f.name,
     		type: "if",
     		source: "(15:4) {#if children}",
     		ctx
@@ -8876,7 +8876,7 @@ var app = (function () {
     	let if_block;
     	let t;
     	let current;
-    	const if_block_creators = [create_if_block_1$e, create_else_block$e];
+    	const if_block_creators = [create_if_block_1$f, create_else_block$e];
     	const if_blocks = [];
 
     	function select_block_type(ctx, dirty) {
@@ -9263,7 +9263,7 @@ var app = (function () {
     const get_external_slot_context = ctx => ({});
 
     // (216:0) {#if _isMounted}
-    function create_if_block_1$d(ctx) {
+    function create_if_block_1$e(ctx) {
     	let switch_instance;
     	let switch_instance_anchor;
     	let current;
@@ -9344,7 +9344,7 @@ var app = (function () {
 
     	dispatch_dev("SvelteRegisterBlock", {
     		block,
-    		id: create_if_block_1$d.name,
+    		id: create_if_block_1$e.name,
     		type: "if",
     		source: "(216:0) {#if _isMounted}",
     		ctx
@@ -10057,7 +10057,7 @@ var app = (function () {
     	let t;
     	let if_block1_anchor;
     	let current;
-    	let if_block0 = /*_isMounted*/ ctx[11] && create_if_block_1$d(ctx);
+    	let if_block0 = /*_isMounted*/ ctx[11] && create_if_block_1$e(ctx);
     	let if_block1 = /*backdrop*/ ctx[6] && !/*staticModal*/ ctx[0] && create_if_block$l(ctx);
 
     	const block = {
@@ -10086,7 +10086,7 @@ var app = (function () {
     						transition_in(if_block0, 1);
     					}
     				} else {
-    					if_block0 = create_if_block_1$d(ctx);
+    					if_block0 = create_if_block_1$e(ctx);
     					if_block0.c();
     					transition_in(if_block0, 1);
     					if_block0.m(t.parentNode, t);
@@ -11306,7 +11306,7 @@ var app = (function () {
     }
 
     // (15:4) {#if children}
-    function create_if_block_1$c(ctx) {
+    function create_if_block_1$d(ctx) {
     	let t;
 
     	const block = {
@@ -11328,7 +11328,7 @@ var app = (function () {
 
     	dispatch_dev("SvelteRegisterBlock", {
     		block,
-    		id: create_if_block_1$c.name,
+    		id: create_if_block_1$d.name,
     		type: "if",
     		source: "(15:4) {#if children}",
     		ctx
@@ -11446,7 +11446,7 @@ var app = (function () {
     	let if_block;
     	let t;
     	let current;
-    	const if_block_creators = [create_if_block_1$c, create_else_block$c];
+    	const if_block_creators = [create_if_block_1$d, create_else_block$c];
     	const if_blocks = [];
 
     	function select_block_type(ctx, dirty) {
@@ -11918,7 +11918,7 @@ var app = (function () {
     }
 
     // (92:4) {#if body}
-    function create_if_block_1$b(ctx) {
+    function create_if_block_1$c(ctx) {
     	let offcanvasbody;
     	let current;
 
@@ -11963,7 +11963,7 @@ var app = (function () {
 
     	dispatch_dev("SvelteRegisterBlock", {
     		block,
-    		id: create_if_block_1$b.name,
+    		id: create_if_block_1$c.name,
     		type: "if",
     		source: "(92:4) {#if body}",
     		ctx
@@ -12105,7 +12105,7 @@ var app = (function () {
     	let if_block2_anchor;
     	let current;
     	let if_block0 = (/*toggle*/ ctx[6] || /*header*/ ctx[4] || /*$$slots*/ ctx[13].header) && create_if_block_2$7(ctx);
-    	const if_block_creators = [create_if_block_1$b, create_else_block$b];
+    	const if_block_creators = [create_if_block_1$c, create_else_block$b];
     	const if_blocks = [];
 
     	function select_block_type(ctx, dirty) {
@@ -13157,7 +13157,7 @@ var app = (function () {
     	let svg_viewBox_value;
 
     	function select_block_type(ctx, dirty) {
-    		if (typeof /*i*/ ctx[8][4] == 'string') return create_if_block_1$a;
+    		if (typeof /*i*/ ctx[8][4] == 'string') return create_if_block_1$b;
     		return create_else_block$a;
     	}
 
@@ -13324,7 +13324,7 @@ var app = (function () {
     }
 
     // (118:8) {#if typeof i[4] == 'string'}
-    function create_if_block_1$a(ctx) {
+    function create_if_block_1$b(ctx) {
     	let path;
     	let path_d_value;
     	let path_fill_value;
@@ -13356,7 +13356,7 @@ var app = (function () {
 
     	dispatch_dev("SvelteRegisterBlock", {
     		block,
-    		id: create_if_block_1$a.name,
+    		id: create_if_block_1$b.name,
     		type: "if",
     		source: "(118:8) {#if typeof i[4] == 'string'}",
     		ctx
@@ -14126,7 +14126,7 @@ var app = (function () {
     }
 
     // (40:0) {#if type.includes("pdf")}
-    function create_if_block_1$9(ctx) {
+    function create_if_block_1$a(ctx) {
     	let fa;
     	let current;
 
@@ -14160,7 +14160,7 @@ var app = (function () {
 
     	dispatch_dev("SvelteRegisterBlock", {
     		block,
-    		id: create_if_block_1$9.name,
+    		id: create_if_block_1$a.name,
     		type: "if",
     		source: "(40:0) {#if type.includes(\\\"pdf\\\")}",
     		ctx
@@ -14237,7 +14237,7 @@ var app = (function () {
     	let if_block3 = show_if_4 && create_if_block_4$1(ctx);
     	let if_block4 = show_if_3 && create_if_block_3$1(ctx);
     	let if_block5 = show_if_2 && create_if_block_2$6(ctx);
-    	let if_block6 = show_if_1 && create_if_block_1$9(ctx);
+    	let if_block6 = show_if_1 && create_if_block_1$a(ctx);
     	let if_block7 = show_if && create_if_block$g(ctx);
 
     	const block = {
@@ -14442,7 +14442,7 @@ var app = (function () {
     						transition_in(if_block6, 1);
     					}
     				} else {
-    					if_block6 = create_if_block_1$9(ctx);
+    					if_block6 = create_if_block_1$a(ctx);
     					if_block6.c();
     					transition_in(if_block6, 1);
     					if_block6.m(t6.parentNode, t6);
@@ -16163,7 +16163,7 @@ var app = (function () {
     	let current;
     	let mounted;
     	let dispose;
-    	const if_block_creators = [create_if_block_1$8, create_else_block$9];
+    	const if_block_creators = [create_if_block_1$9, create_else_block$9];
     	const if_blocks = [];
 
     	function select_block_type_1(ctx, dirty) {
@@ -16503,7 +16503,7 @@ var app = (function () {
     }
 
     // (44:4) {#if children}
-    function create_if_block_1$8(ctx) {
+    function create_if_block_1$9(ctx) {
     	let t;
 
     	const block_1 = {
@@ -16525,7 +16525,7 @@ var app = (function () {
 
     	dispatch_dev("SvelteRegisterBlock", {
     		block: block_1,
-    		id: create_if_block_1$8.name,
+    		id: create_if_block_1$9.name,
     		type: "if",
     		source: "(44:4) {#if children}",
     		ctx
@@ -17335,7 +17335,7 @@ var app = (function () {
     }
 
     // (34:2) {#if type === 'radio'}
-    function create_if_block_1$7(ctx) {
+    function create_if_block_1$8(ctx) {
     	let input;
     	let mounted;
     	let dispose;
@@ -17407,7 +17407,7 @@ var app = (function () {
 
     	dispatch_dev("SvelteRegisterBlock", {
     		block,
-    		id: create_if_block_1$7.name,
+    		id: create_if_block_1$8.name,
     		type: "if",
     		source: "(34:2) {#if type === 'radio'}",
     		ctx
@@ -17527,7 +17527,7 @@ var app = (function () {
     	let current;
 
     	function select_block_type(ctx, dirty) {
-    		if (/*type*/ ctx[6] === 'radio') return create_if_block_1$7;
+    		if (/*type*/ ctx[6] === 'radio') return create_if_block_1$8;
     		if (/*type*/ ctx[6] === 'switch') return create_if_block_2$4;
     		return create_else_block$8;
     	}
@@ -20194,7 +20194,7 @@ var app = (function () {
     	let if_block;
     	let if_block_anchor;
     	let current;
-    	const if_block_creators = [create_if_block_1$6, create_else_block$7];
+    	const if_block_creators = [create_if_block_1$7, create_else_block$7];
     	const if_blocks = [];
 
     	function select_block_type_2(ctx, dirty) {
@@ -20327,7 +20327,7 @@ var app = (function () {
     }
 
     // (524:2) {#if Array.isArray(feedback)}
-    function create_if_block_1$6(ctx) {
+    function create_if_block_1$7(ctx) {
     	let each_1_anchor;
     	let current;
     	let each_value = /*feedback*/ ctx[9];
@@ -20413,7 +20413,7 @@ var app = (function () {
 
     	dispatch_dev("SvelteRegisterBlock", {
     		block,
-    		id: create_if_block_1$6.name,
+    		id: create_if_block_1$7.name,
     		type: "if",
     		source: "(524:2) {#if Array.isArray(feedback)}",
     		ctx
@@ -24056,11 +24056,11 @@ var app = (function () {
 
     function get_each_context$4(ctx, list, i) {
     	const child_ctx = ctx.slice();
-    	child_ctx[15] = list[i];
+    	child_ctx[16] = list[i];
     	return child_ctx;
     }
 
-    // (183:4) {:else}
+    // (187:4) {:else}
     function create_else_block$6(ctx) {
     	let spinner;
     	let current;
@@ -24102,14 +24102,14 @@ var app = (function () {
     		block,
     		id: create_else_block$6.name,
     		type: "else",
-    		source: "(183:4) {:else}",
+    		source: "(187:4) {:else}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (161:4) {#if model}
+    // (164:4) {#if model}
     function create_if_block$c(ctx) {
     	let row;
     	let t;
@@ -24126,7 +24126,7 @@ var app = (function () {
 
     	button = new Button({
     			props: {
-    				id: /*submitBt*/ ctx[1],
+    				id: /*submitBt*/ ctx[2],
     				color: "primary",
     				style: "display:none",
     				$$slots: { default: [create_default_slot$6] },
@@ -24150,15 +24150,15 @@ var app = (function () {
     		p: function update(ctx, dirty) {
     			const row_changes = {};
 
-    			if (dirty & /*$$scope, model*/ 262145) {
+    			if (dirty & /*$$scope, model, maxSize*/ 524291) {
     				row_changes.$$scope = { dirty, ctx };
     			}
 
     			row.$set(row_changes);
     			const button_changes = {};
-    			if (dirty & /*submitBt*/ 2) button_changes.id = /*submitBt*/ ctx[1];
+    			if (dirty & /*submitBt*/ 4) button_changes.id = /*submitBt*/ ctx[2];
 
-    			if (dirty & /*$$scope*/ 262144) {
+    			if (dirty & /*$$scope*/ 524288) {
     				button_changes.$$scope = { dirty, ctx };
     			}
 
@@ -24186,17 +24186,17 @@ var app = (function () {
     		block,
     		id: create_if_block$c.name,
     		type: "if",
-    		source: "(161:4) {#if model}",
+    		source: "(164:4) {#if model}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (172:12) {#if model.Accept}
-    function create_if_block_1$5(ctx) {
+    // (176:12) {#if model.accept}
+    function create_if_block_1$6(ctx) {
     	let each_1_anchor;
-    	let each_value = /*model*/ ctx[0].Accept;
+    	let each_value = /*model*/ ctx[1].accept;
     	validate_each_argument(each_value);
     	let each_blocks = [];
 
@@ -24220,8 +24220,8 @@ var app = (function () {
     			insert_dev(target, each_1_anchor, anchor);
     		},
     		p: function update(ctx, dirty) {
-    			if (dirty & /*model*/ 1) {
-    				each_value = /*model*/ ctx[0].Accept;
+    			if (dirty & /*model*/ 2) {
+    				each_value = /*model*/ ctx[1].accept;
     				validate_each_argument(each_value);
     				let i;
 
@@ -24252,18 +24252,18 @@ var app = (function () {
 
     	dispatch_dev("SvelteRegisterBlock", {
     		block,
-    		id: create_if_block_1$5.name,
+    		id: create_if_block_1$6.name,
     		type: "if",
-    		source: "(172:12) {#if model.Accept}",
+    		source: "(176:12) {#if model.accept}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (173:14) {#each model.Accept as ext}
+    // (177:14) {#each model.accept as ext}
     function create_each_block$4(ctx) {
-    	let t0_value = /*ext*/ ctx[15] + "";
+    	let t0_value = /*ext*/ ctx[16] + "";
     	let t0;
     	let t1;
 
@@ -24277,7 +24277,7 @@ var app = (function () {
     			insert_dev(target, t1, anchor);
     		},
     		p: function update(ctx, dirty) {
-    			if (dirty & /*model*/ 1 && t0_value !== (t0_value = /*ext*/ ctx[15] + "")) set_data_dev(t0, t0_value);
+    			if (dirty & /*model*/ 2 && t0_value !== (t0_value = /*ext*/ ctx[16] + "")) set_data_dev(t0, t0_value);
     		},
     		d: function destroy(detaching) {
     			if (detaching) detach_dev(t0);
@@ -24289,14 +24289,14 @@ var app = (function () {
     		block,
     		id: create_each_block$4.name,
     		type: "each",
-    		source: "(173:14) {#each model.Accept as ext}",
+    		source: "(177:14) {#each model.accept as ext}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (164:8) <Dropzone            on:drop={handleFilesSelect}             accept={model.Accept}            multipe={model.multipe}            maxSize={model.maxSize}>
+    // (167:8) <Dropzone            on:drop={handleFilesSelect}             accept={model.accept}            multiple={model.multiple}            {maxSize}>
     function create_default_slot_2$5(ctx) {
     	let b0;
     	let fa;
@@ -24304,6 +24304,12 @@ var app = (function () {
     	let span;
     	let b1;
     	let t2;
+    	let b2;
+    	let t3;
+    	let t4_value = /*model*/ ctx[1].maxSize + "";
+    	let t4;
+    	let t5;
+    	let t6;
     	let p;
     	let current;
 
@@ -24312,7 +24318,7 @@ var app = (function () {
     			$$inline: true
     		});
 
-    	let if_block = /*model*/ ctx[0].Accept && create_if_block_1$5(ctx);
+    	let if_block = /*model*/ ctx[1].accept && create_if_block_1$6(ctx);
 
     	const block = {
     		c: function create() {
@@ -24323,13 +24329,19 @@ var app = (function () {
     			b1 = element("b");
     			b1.textContent = "Drag 'n' drop some files here, or click to select files";
     			t2 = space();
+    			b2 = element("b");
+    			t3 = text("max file : ");
+    			t4 = text(t4_value);
+    			t5 = text(" mb");
+    			t6 = space();
     			p = element("p");
     			if (if_block) if_block.c();
     			set_style(b0, "font-size", "xx-large");
-    			add_location(b0, file$b, 168, 10, 3759);
-    			add_location(b1, file$b, 169, 16, 3836);
-    			add_location(span, file$b, 169, 10, 3830);
-    			add_location(p, file$b, 170, 10, 3917);
+    			add_location(b0, file$b, 171, 10, 3755);
+    			add_location(b1, file$b, 172, 16, 3832);
+    			add_location(b2, file$b, 173, 10, 3906);
+    			add_location(span, file$b, 172, 10, 3826);
+    			add_location(p, file$b, 174, 10, 3961);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, b0, anchor);
@@ -24337,17 +24349,24 @@ var app = (function () {
     			insert_dev(target, t0, anchor);
     			insert_dev(target, span, anchor);
     			append_dev(span, b1);
-    			insert_dev(target, t2, anchor);
+    			append_dev(span, t2);
+    			append_dev(span, b2);
+    			append_dev(b2, t3);
+    			append_dev(b2, t4);
+    			append_dev(b2, t5);
+    			insert_dev(target, t6, anchor);
     			insert_dev(target, p, anchor);
     			if (if_block) if_block.m(p, null);
     			current = true;
     		},
     		p: function update(ctx, dirty) {
-    			if (/*model*/ ctx[0].Accept) {
+    			if ((!current || dirty & /*model*/ 2) && t4_value !== (t4_value = /*model*/ ctx[1].maxSize + "")) set_data_dev(t4, t4_value);
+
+    			if (/*model*/ ctx[1].accept) {
     				if (if_block) {
     					if_block.p(ctx, dirty);
     				} else {
-    					if_block = create_if_block_1$5(ctx);
+    					if_block = create_if_block_1$6(ctx);
     					if_block.c();
     					if_block.m(p, null);
     				}
@@ -24370,7 +24389,7 @@ var app = (function () {
     			destroy_component(fa);
     			if (detaching) detach_dev(t0);
     			if (detaching) detach_dev(span);
-    			if (detaching) detach_dev(t2);
+    			if (detaching) detach_dev(t6);
     			if (detaching) detach_dev(p);
     			if (if_block) if_block.d();
     		}
@@ -24380,30 +24399,30 @@ var app = (function () {
     		block,
     		id: create_default_slot_2$5.name,
     		type: "slot",
-    		source: "(164:8) <Dropzone            on:drop={handleFilesSelect}             accept={model.Accept}            multipe={model.multipe}            maxSize={model.maxSize}>",
+    		source: "(167:8) <Dropzone            on:drop={handleFilesSelect}             accept={model.accept}            multiple={model.multiple}            {maxSize}>",
     		ctx
     	});
 
     	return block;
     }
 
-    // (163:6) <Row>
+    // (166:6) <Row>
     function create_default_slot_1$6(ctx) {
     	let dropzone;
     	let current;
 
     	dropzone = new Dropzone({
     			props: {
-    				accept: /*model*/ ctx[0].Accept,
-    				multipe: /*model*/ ctx[0].multipe,
-    				maxSize: /*model*/ ctx[0].maxSize,
+    				accept: /*model*/ ctx[1].accept,
+    				multiple: /*model*/ ctx[1].multiple,
+    				maxSize: /*maxSize*/ ctx[0],
     				$$slots: { default: [create_default_slot_2$5] },
     				$$scope: { ctx }
     			},
     			$$inline: true
     		});
 
-    	dropzone.$on("drop", /*handleFilesSelect*/ ctx[2]);
+    	dropzone.$on("drop", /*handleFilesSelect*/ ctx[3]);
 
     	const block = {
     		c: function create() {
@@ -24415,11 +24434,11 @@ var app = (function () {
     		},
     		p: function update(ctx, dirty) {
     			const dropzone_changes = {};
-    			if (dirty & /*model*/ 1) dropzone_changes.accept = /*model*/ ctx[0].Accept;
-    			if (dirty & /*model*/ 1) dropzone_changes.multipe = /*model*/ ctx[0].multipe;
-    			if (dirty & /*model*/ 1) dropzone_changes.maxSize = /*model*/ ctx[0].maxSize;
+    			if (dirty & /*model*/ 2) dropzone_changes.accept = /*model*/ ctx[1].accept;
+    			if (dirty & /*model*/ 2) dropzone_changes.multiple = /*model*/ ctx[1].multiple;
+    			if (dirty & /*maxSize*/ 1) dropzone_changes.maxSize = /*maxSize*/ ctx[0];
 
-    			if (dirty & /*$$scope, model*/ 262145) {
+    			if (dirty & /*$$scope, model*/ 524290) {
     				dropzone_changes.$$scope = { dirty, ctx };
     			}
 
@@ -24443,14 +24462,14 @@ var app = (function () {
     		block,
     		id: create_default_slot_1$6.name,
     		type: "slot",
-    		source: "(163:6) <Row>",
+    		source: "(166:6) <Row>",
     		ctx
     	});
 
     	return block;
     }
 
-    // (181:6) <Button id="{submitBt}" color="primary" style="display:none" >
+    // (185:6) <Button id="{submitBt}" color="primary" style="display:none" >
     function create_default_slot$6(ctx) {
     	let fa;
     	let current;
@@ -24483,7 +24502,7 @@ var app = (function () {
     		block,
     		id: create_default_slot$6.name,
     		type: "slot",
-    		source: "(181:6) <Button id=\\\"{submitBt}\\\" color=\\\"primary\\\" style=\\\"display:none\\\" >",
+    		source: "(185:6) <Button id=\\\"{submitBt}\\\" color=\\\"primary\\\" style=\\\"display:none\\\" >",
     		ctx
     	});
 
@@ -24501,7 +24520,7 @@ var app = (function () {
     	const if_blocks = [];
 
     	function select_block_type(ctx, dirty) {
-    		if (/*model*/ ctx[0]) return 0;
+    		if (/*model*/ ctx[1]) return 0;
     		return 1;
     	}
 
@@ -24512,7 +24531,7 @@ var app = (function () {
     		c: function create() {
     			form = element("form");
     			if_block.c();
-    			add_location(form, file$b, 159, 0, 3477);
+    			add_location(form, file$b, 162, 0, 3485);
     		},
     		l: function claim(nodes) {
     			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
@@ -24523,7 +24542,7 @@ var app = (function () {
     			current = true;
 
     			if (!mounted) {
-    				dispose = listen_dev(form, "submit", prevent_default(/*handleSubmit*/ ctx[3]), false, true, false);
+    				dispose = listen_dev(form, "submit", prevent_default(/*handleSubmit*/ ctx[4]), false, true, false);
     				mounted = true;
     			}
     		},
@@ -24607,16 +24626,18 @@ var app = (function () {
     	let { submit = "" } = $$props;
     	let { context = "" } = $$props;
     	let { data = null } = $$props;
+    	let maxSize = 0;
     	const dispatch = createEventDispatcher();
 
     	onMount(async () => {
     		if (data == null) {
     			load();
     		} else {
-    			$$invalidate(0, model = data);
-    			$$invalidate(1, submitBt += context);
+    			$$invalidate(1, model = data);
     		}
 
+    		$$invalidate(2, submitBt += context);
+    		$$invalidate(0, maxSize = model.maxSize * 1024 * 1024);
     		console.log("load fileuploader");
     		console.log(model);
     		console.log("----");
@@ -24629,9 +24650,7 @@ var app = (function () {
     		// load menu froms server
     		const res = await Api.get(url);
 
-    		$$invalidate(0, model = await res.json());
-    		console.log(model);
-    		$$invalidate(1, submitBt += context);
+    		$$invalidate(1, model = await res.json());
     	}
 
     	function handleFilesSelect(e) {
@@ -24703,12 +24722,12 @@ var app = (function () {
     	});
 
     	$$self.$$set = $$props => {
-    		if ('id' in $$props) $$invalidate(4, id = $$props.id);
-    		if ('version' in $$props) $$invalidate(5, version = $$props.version);
-    		if ('start' in $$props) $$invalidate(6, start = $$props.start);
-    		if ('submit' in $$props) $$invalidate(7, submit = $$props.submit);
-    		if ('context' in $$props) $$invalidate(8, context = $$props.context);
-    		if ('data' in $$props) $$invalidate(9, data = $$props.data);
+    		if ('id' in $$props) $$invalidate(5, id = $$props.id);
+    		if ('version' in $$props) $$invalidate(6, version = $$props.version);
+    		if ('start' in $$props) $$invalidate(7, start = $$props.start);
+    		if ('submit' in $$props) $$invalidate(8, submit = $$props.submit);
+    		if ('context' in $$props) $$invalidate(9, context = $$props.context);
+    		if ('data' in $$props) $$invalidate(10, data = $$props.data);
     	};
 
     	$$self.$capture_state = () => ({
@@ -24731,6 +24750,7 @@ var app = (function () {
     		submit,
     		context,
     		data,
+    		maxSize,
     		dispatch,
     		load,
     		handleFilesSelect,
@@ -24744,28 +24764,30 @@ var app = (function () {
     	});
 
     	$$self.$inject_state = $$props => {
-    		if ('id' in $$props) $$invalidate(4, id = $$props.id);
-    		if ('version' in $$props) $$invalidate(5, version = $$props.version);
-    		if ('start' in $$props) $$invalidate(6, start = $$props.start);
-    		if ('submit' in $$props) $$invalidate(7, submit = $$props.submit);
-    		if ('context' in $$props) $$invalidate(8, context = $$props.context);
-    		if ('data' in $$props) $$invalidate(9, data = $$props.data);
+    		if ('id' in $$props) $$invalidate(5, id = $$props.id);
+    		if ('version' in $$props) $$invalidate(6, version = $$props.version);
+    		if ('start' in $$props) $$invalidate(7, start = $$props.start);
+    		if ('submit' in $$props) $$invalidate(8, submit = $$props.submit);
+    		if ('context' in $$props) $$invalidate(9, context = $$props.context);
+    		if ('data' in $$props) $$invalidate(10, data = $$props.data);
+    		if ('maxSize' in $$props) $$invalidate(0, maxSize = $$props.maxSize);
     		if ('files' in $$props) files = $$props.files;
-    		if ('model' in $$props) $$invalidate(0, model = $$props.model);
-    		if ('submitBt' in $$props) $$invalidate(1, submitBt = $$props.submitBt);
+    		if ('model' in $$props) $$invalidate(1, model = $$props.model);
+    		if ('submitBt' in $$props) $$invalidate(2, submitBt = $$props.submitBt);
     	};
 
     	if ($$props && "$$inject" in $$props) {
     		$$self.$inject_state($$props.$$inject);
     	}
 
-    	$$invalidate(0, model = null);
-    	$$invalidate(1, submitBt = "submit");
+    	$$invalidate(1, model = null);
+    	$$invalidate(2, submitBt = "submit");
 
     	// dropzone model
     	files = { accepted: [], rejected: [] };
 
     	return [
+    		maxSize,
     		model,
     		submitBt,
     		handleFilesSelect,
@@ -24784,12 +24806,12 @@ var app = (function () {
     		super(options);
 
     		init(this, options, instance$g, create_fragment$g, safe_not_equal, {
-    			id: 4,
-    			version: 5,
-    			start: 6,
-    			submit: 7,
-    			context: 8,
-    			data: 9
+    			id: 5,
+    			version: 6,
+    			start: 7,
+    			submit: 8,
+    			context: 9,
+    			data: 10
     		});
 
     		dispatch_dev("SvelteRegisterComponent", {
@@ -25568,7 +25590,7 @@ var app = (function () {
     	let svg_viewBox_value;
 
     	function select_block_type(ctx, dirty) {
-    		if (typeof /*i*/ ctx[7][4] == 'string') return create_if_block_1$4;
+    		if (typeof /*i*/ ctx[7][4] == 'string') return create_if_block_1$5;
     		return create_else_block$5;
     	}
 
@@ -25754,7 +25776,7 @@ var app = (function () {
     }
 
     // (93:8) {#if typeof i[4] == 'string'}
-    function create_if_block_1$4(ctx) {
+    function create_if_block_1$5(ctx) {
     	let path;
     	let path_d_value;
     	let path_fill_value;
@@ -25791,7 +25813,7 @@ var app = (function () {
 
     	dispatch_dev("SvelteRegisterBlock", {
     		block,
-    		id: create_if_block_1$4.name,
+    		id: create_if_block_1$5.name,
     		type: "if",
     		source: "(93:8) {#if typeof i[4] == 'string'}",
     		ctx
@@ -26337,7 +26359,7 @@ var app = (function () {
     }
 
     // (40:4) {#if error}
-    function create_if_block_1$3(ctx) {
+    function create_if_block_1$4(ctx) {
     	let each_1_anchor;
     	let current;
     	let each_value = /*error*/ ctx[2];
@@ -26423,7 +26445,7 @@ var app = (function () {
 
     	dispatch_dev("SvelteRegisterBlock", {
     		block,
-    		id: create_if_block_1$3.name,
+    		id: create_if_block_1$4.name,
     		type: "if",
     		source: "(40:4) {#if error}",
     		ctx
@@ -26639,7 +26661,7 @@ var app = (function () {
     	let t0;
     	let t1;
     	let current;
-    	let if_block0 = /*error*/ ctx[2] && create_if_block_1$3(ctx);
+    	let if_block0 = /*error*/ ctx[2] && create_if_block_1$4(ctx);
     	let if_block1 = /*success*/ ctx[1] && create_if_block$9(ctx);
     	const view_slot_template = /*#slots*/ ctx[5].view;
     	const view_slot = create_slot(view_slot_template, ctx, /*$$scope*/ ctx[6], get_view_slot_context);
@@ -26674,7 +26696,7 @@ var app = (function () {
     						transition_in(if_block0, 1);
     					}
     				} else {
-    					if_block0 = create_if_block_1$3(ctx);
+    					if_block0 = create_if_block_1$4(ctx);
     					if_block0.c();
     					transition_in(if_block0, 1);
     					if_block0.m(t0.parentNode, t0);
@@ -27202,7 +27224,7 @@ var app = (function () {
     	let t;
     	let if_block1_anchor;
     	let if_block0 = /*model*/ ctx[2].isValid == true && create_if_block_2$2(ctx);
-    	let if_block1 = /*model*/ ctx[2].isValid == false && create_if_block_1$2(ctx);
+    	let if_block1 = /*model*/ ctx[2].isValid == false && create_if_block_1$3(ctx);
 
     	const block = {
     		c: function create() {
@@ -27231,7 +27253,7 @@ var app = (function () {
 
     			if (/*model*/ ctx[2].isValid == false) {
     				if (if_block1) ; else {
-    					if_block1 = create_if_block_1$2(ctx);
+    					if_block1 = create_if_block_1$3(ctx);
     					if_block1.c();
     					if_block1.m(if_block1_anchor.parentNode, if_block1_anchor);
     				}
@@ -27291,7 +27313,7 @@ var app = (function () {
     }
 
     // (34:6) {#if model.isValid==false}
-    function create_if_block_1$2(ctx) {
+    function create_if_block_1$3(ctx) {
     	let p;
 
     	const block = {
@@ -27310,7 +27332,7 @@ var app = (function () {
 
     	dispatch_dev("SvelteRegisterBlock", {
     		block,
-    		id: create_if_block_1$2.name,
+    		id: create_if_block_1$3.name,
     		type: "if",
     		source: "(34:6) {#if model.isValid==false}",
     		ctx
@@ -27822,7 +27844,7 @@ var app = (function () {
     /* src\components\fileupload\FileOverviewItem.svelte generated by Svelte v3.44.1 */
     const file_1 = "src\\components\\fileupload\\FileOverviewItem.svelte";
 
-    // (50:1) <Col xs="1">
+    // (51:1) <Col xs="1">
     function create_default_slot_4$1(ctx) {
     	let fileinfo;
     	let current;
@@ -27863,14 +27885,14 @@ var app = (function () {
     		block,
     		id: create_default_slot_4$1.name,
     		type: "slot",
-    		source: "(50:1) <Col xs=\\\"1\\\">",
+    		source: "(51:1) <Col xs=\\\"1\\\">",
     		ctx
     	});
 
     	return block;
     }
 
-    // (51:1) <Col xs="5">
+    // (52:1) <Col >
     function create_default_slot_3$1(ctx) {
     	let t;
 
@@ -27893,21 +27915,77 @@ var app = (function () {
     		block,
     		id: create_default_slot_3$1.name,
     		type: "slot",
-    		source: "(51:1) <Col xs=\\\"5\\\">",
+    		source: "(52:1) <Col >",
     		ctx
     	});
 
     	return block;
     }
 
-    // (54:1) <Col xs="5">
+    // (55:1) {#if withDescription}
+    function create_if_block_1$2(ctx) {
+    	let col;
+    	let current;
+
+    	col = new Col$1({
+    			props: {
+    				xs: "5",
+    				$$slots: { default: [create_default_slot_2$1] },
+    				$$scope: { ctx }
+    			},
+    			$$inline: true
+    		});
+
+    	const block = {
+    		c: function create() {
+    			create_component(col.$$.fragment);
+    		},
+    		m: function mount(target, anchor) {
+    			mount_component(col, target, anchor);
+    			current = true;
+    		},
+    		p: function update(ctx, dirty) {
+    			const col_changes = {};
+
+    			if (dirty & /*$$scope, description*/ 16385) {
+    				col_changes.$$scope = { dirty, ctx };
+    			}
+
+    			col.$set(col_changes);
+    		},
+    		i: function intro(local) {
+    			if (current) return;
+    			transition_in(col.$$.fragment, local);
+    			current = true;
+    		},
+    		o: function outro(local) {
+    			transition_out(col.$$.fragment, local);
+    			current = false;
+    		},
+    		d: function destroy(detaching) {
+    			destroy_component(col, detaching);
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_if_block_1$2.name,
+    		type: "if",
+    		source: "(55:1) {#if withDescription}",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    // (56:2) <Col xs="5">
     function create_default_slot_2$1(ctx) {
     	let input;
     	let updating_value;
     	let current;
 
     	function input_value_binding(value) {
-    		/*input_value_binding*/ ctx[9](value);
+    		/*input_value_binding*/ ctx[10](value);
     	}
 
     	let input_props = { placeholder: "description" };
@@ -27918,7 +27996,7 @@ var app = (function () {
 
     	input = new Input$1({ props: input_props, $$inline: true });
     	binding_callbacks.push(() => bind$1(input, 'value', input_value_binding));
-    	input.$on("change", /*change_handler*/ ctx[10]);
+    	input.$on("change", /*change_handler*/ ctx[11]);
 
     	const block = {
     		c: function create() {
@@ -27957,14 +28035,14 @@ var app = (function () {
     		block,
     		id: create_default_slot_2$1.name,
     		type: "slot",
-    		source: "(54:1) <Col xs=\\\"5\\\">",
+    		source: "(56:2) <Col xs=\\\"5\\\">",
     		ctx
     	});
 
     	return block;
     }
 
-    // (56:2) <Button size="sm" on:click={e => handleRemoveFile()}>
+    // (59:2) <Button size="sm" on:click={e => handleRemoveFile()}>
     function create_default_slot_1$2(ctx) {
     	let fa;
     	let current;
@@ -27997,14 +28075,14 @@ var app = (function () {
     		block,
     		id: create_default_slot_1$2.name,
     		type: "slot",
-    		source: "(56:2) <Button size=\\\"sm\\\" on:click={e => handleRemoveFile()}>",
+    		source: "(59:2) <Button size=\\\"sm\\\" on:click={e => handleRemoveFile()}>",
     		ctx
     	});
 
     	return block;
     }
 
-    // (57:2) {#if loading}
+    // (60:2) {#if loading}
     function create_if_block$7(ctx) {
     	let spinner;
     	let current;
@@ -28045,14 +28123,14 @@ var app = (function () {
     		block,
     		id: create_if_block$7.name,
     		type: "if",
-    		source: "(57:2) {#if loading}",
+    		source: "(60:2) {#if loading}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (55:1) <Col xs="1">
+    // (58:1) <Col xs="1">
     function create_default_slot$2(ctx) {
     	let button;
     	let t;
@@ -28068,8 +28146,8 @@ var app = (function () {
     			$$inline: true
     		});
 
-    	button.$on("click", /*click_handler*/ ctx[11]);
-    	let if_block = /*loading*/ ctx[3] && create_if_block$7(ctx);
+    	button.$on("click", /*click_handler*/ ctx[12]);
+    	let if_block = /*loading*/ ctx[4] && create_if_block$7(ctx);
 
     	const block = {
     		c: function create() {
@@ -28088,15 +28166,15 @@ var app = (function () {
     		p: function update(ctx, dirty) {
     			const button_changes = {};
 
-    			if (dirty & /*$$scope*/ 8192) {
+    			if (dirty & /*$$scope*/ 16384) {
     				button_changes.$$scope = { dirty, ctx };
     			}
 
     			button.$set(button_changes);
 
-    			if (/*loading*/ ctx[3]) {
+    			if (/*loading*/ ctx[4]) {
     				if (if_block) {
-    					if (dirty & /*loading*/ 8) {
+    					if (dirty & /*loading*/ 16) {
     						transition_in(if_block, 1);
     					}
     				} else {
@@ -28138,7 +28216,7 @@ var app = (function () {
     		block,
     		id: create_default_slot$2.name,
     		type: "slot",
-    		source: "(55:1) <Col xs=\\\"1\\\">",
+    		source: "(58:1) <Col xs=\\\"1\\\">",
     		ctx
     	});
 
@@ -28151,9 +28229,8 @@ var app = (function () {
     	let t0;
     	let col1;
     	let t1;
-    	let col2;
     	let t2;
-    	let col3;
+    	let col2;
     	let current;
 
     	col0 = new Col$1({
@@ -28167,23 +28244,15 @@ var app = (function () {
 
     	col1 = new Col$1({
     			props: {
-    				xs: "5",
     				$$slots: { default: [create_default_slot_3$1] },
     				$$scope: { ctx }
     			},
     			$$inline: true
     		});
 
-    	col2 = new Col$1({
-    			props: {
-    				xs: "5",
-    				$$slots: { default: [create_default_slot_2$1] },
-    				$$scope: { ctx }
-    			},
-    			$$inline: true
-    		});
+    	let if_block = /*withDescription*/ ctx[3] && create_if_block_1$2(ctx);
 
-    	col3 = new Col$1({
+    	col2 = new Col$1({
     			props: {
     				xs: "1",
     				$$slots: { default: [create_default_slot$2] },
@@ -28199,11 +28268,11 @@ var app = (function () {
     			t0 = space();
     			create_component(col1.$$.fragment);
     			t1 = space();
-    			create_component(col2.$$.fragment);
+    			if (if_block) if_block.c();
     			t2 = space();
-    			create_component(col3.$$.fragment);
+    			create_component(col2.$$.fragment);
     			attr_dev(div, "class", "file-overview-item row svelte-1fbgw1x");
-    			add_location(div, file_1, 48, 0, 1111);
+    			add_location(div, file_1, 49, 0, 1140);
     		},
     		l: function claim(nodes) {
     			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
@@ -28214,62 +28283,79 @@ var app = (function () {
     			append_dev(div, t0);
     			mount_component(col1, div, null);
     			append_dev(div, t1);
-    			mount_component(col2, div, null);
+    			if (if_block) if_block.m(div, null);
     			append_dev(div, t2);
-    			mount_component(col3, div, null);
+    			mount_component(col2, div, null);
     			current = true;
     		},
     		p: function update(ctx, [dirty]) {
     			const col0_changes = {};
 
-    			if (dirty & /*$$scope, type*/ 8196) {
+    			if (dirty & /*$$scope, type*/ 16388) {
     				col0_changes.$$scope = { dirty, ctx };
     			}
 
     			col0.$set(col0_changes);
     			const col1_changes = {};
 
-    			if (dirty & /*$$scope, file*/ 8194) {
+    			if (dirty & /*$$scope, file*/ 16386) {
     				col1_changes.$$scope = { dirty, ctx };
     			}
 
     			col1.$set(col1_changes);
+
+    			if (/*withDescription*/ ctx[3]) {
+    				if (if_block) {
+    					if_block.p(ctx, dirty);
+
+    					if (dirty & /*withDescription*/ 8) {
+    						transition_in(if_block, 1);
+    					}
+    				} else {
+    					if_block = create_if_block_1$2(ctx);
+    					if_block.c();
+    					transition_in(if_block, 1);
+    					if_block.m(div, t2);
+    				}
+    			} else if (if_block) {
+    				group_outros();
+
+    				transition_out(if_block, 1, 1, () => {
+    					if_block = null;
+    				});
+
+    				check_outros();
+    			}
+
     			const col2_changes = {};
 
-    			if (dirty & /*$$scope, description*/ 8193) {
+    			if (dirty & /*$$scope, loading*/ 16400) {
     				col2_changes.$$scope = { dirty, ctx };
     			}
 
     			col2.$set(col2_changes);
-    			const col3_changes = {};
-
-    			if (dirty & /*$$scope, loading*/ 8200) {
-    				col3_changes.$$scope = { dirty, ctx };
-    			}
-
-    			col3.$set(col3_changes);
     		},
     		i: function intro(local) {
     			if (current) return;
     			transition_in(col0.$$.fragment, local);
     			transition_in(col1.$$.fragment, local);
+    			transition_in(if_block);
     			transition_in(col2.$$.fragment, local);
-    			transition_in(col3.$$.fragment, local);
     			current = true;
     		},
     		o: function outro(local) {
     			transition_out(col0.$$.fragment, local);
     			transition_out(col1.$$.fragment, local);
+    			transition_out(if_block);
     			transition_out(col2.$$.fragment, local);
-    			transition_out(col3.$$.fragment, local);
     			current = false;
     		},
     		d: function destroy(detaching) {
     			if (detaching) detach_dev(div);
     			destroy_component(col0);
     			destroy_component(col1);
+    			if (if_block) if_block.d();
     			destroy_component(col2);
-    			destroy_component(col3);
     		}
     	};
 
@@ -28291,13 +28377,14 @@ var app = (function () {
     	let { file } = $$props;
     	let { type } = $$props;
     	let { description } = $$props;
+    	let { withDescription } = $$props;
     	const dispatch = createEventDispatcher();
     	let { save } = $$props;
     	let { remove } = $$props;
     	let loading = false;
 
     	async function handleRemoveFile() {
-    		$$invalidate(3, loading = true);
+    		$$invalidate(4, loading = true);
 
     		//remove from server
     		const res = await removeFile(remove, id, file);
@@ -28307,7 +28394,7 @@ var app = (function () {
     			dispatch("removed", { text: message });
     		}
 
-    		$$invalidate(3, loading = false);
+    		$$invalidate(4, loading = false);
     	}
 
     	async function handleSaveFileDescription() {
@@ -28319,7 +28406,7 @@ var app = (function () {
     		}
     	}
 
-    	const writable_props = ['id', 'file', 'type', 'description', 'save', 'remove'];
+    	const writable_props = ['id', 'file', 'type', 'description', 'withDescription', 'save', 'remove'];
 
     	Object.keys($$props).forEach(key => {
     		if (!~writable_props.indexOf(key) && key.slice(0, 2) !== '$$' && key !== 'slot') console.warn(`<FileOverviewItem> was created with unknown prop '${key}'`);
@@ -28334,12 +28421,13 @@ var app = (function () {
     	const click_handler = e => handleRemoveFile();
 
     	$$self.$$set = $$props => {
-    		if ('id' in $$props) $$invalidate(6, id = $$props.id);
+    		if ('id' in $$props) $$invalidate(7, id = $$props.id);
     		if ('file' in $$props) $$invalidate(1, file = $$props.file);
     		if ('type' in $$props) $$invalidate(2, type = $$props.type);
     		if ('description' in $$props) $$invalidate(0, description = $$props.description);
-    		if ('save' in $$props) $$invalidate(7, save = $$props.save);
-    		if ('remove' in $$props) $$invalidate(8, remove = $$props.remove);
+    		if ('withDescription' in $$props) $$invalidate(3, withDescription = $$props.withDescription);
+    		if ('save' in $$props) $$invalidate(8, save = $$props.save);
+    		if ('remove' in $$props) $$invalidate(9, remove = $$props.remove);
     	};
 
     	$$self.$capture_state = () => ({
@@ -28358,6 +28446,7 @@ var app = (function () {
     		file,
     		type,
     		description,
+    		withDescription,
     		dispatch,
     		save,
     		remove,
@@ -28367,13 +28456,14 @@ var app = (function () {
     	});
 
     	$$self.$inject_state = $$props => {
-    		if ('id' in $$props) $$invalidate(6, id = $$props.id);
+    		if ('id' in $$props) $$invalidate(7, id = $$props.id);
     		if ('file' in $$props) $$invalidate(1, file = $$props.file);
     		if ('type' in $$props) $$invalidate(2, type = $$props.type);
     		if ('description' in $$props) $$invalidate(0, description = $$props.description);
-    		if ('save' in $$props) $$invalidate(7, save = $$props.save);
-    		if ('remove' in $$props) $$invalidate(8, remove = $$props.remove);
-    		if ('loading' in $$props) $$invalidate(3, loading = $$props.loading);
+    		if ('withDescription' in $$props) $$invalidate(3, withDescription = $$props.withDescription);
+    		if ('save' in $$props) $$invalidate(8, save = $$props.save);
+    		if ('remove' in $$props) $$invalidate(9, remove = $$props.remove);
+    		if ('loading' in $$props) $$invalidate(4, loading = $$props.loading);
     	};
 
     	if ($$props && "$$inject" in $$props) {
@@ -28384,6 +28474,7 @@ var app = (function () {
     		description,
     		file,
     		type,
+    		withDescription,
     		loading,
     		handleRemoveFile,
     		handleSaveFileDescription,
@@ -28401,12 +28492,13 @@ var app = (function () {
     		super(options);
 
     		init(this, options, instance$a, create_fragment$a, safe_not_equal, {
-    			id: 6,
+    			id: 7,
     			file: 1,
     			type: 2,
     			description: 0,
-    			save: 7,
-    			remove: 8
+    			withDescription: 3,
+    			save: 8,
+    			remove: 9
     		});
 
     		dispatch_dev("SvelteRegisterComponent", {
@@ -28419,7 +28511,7 @@ var app = (function () {
     		const { ctx } = this.$$;
     		const props = options.props || {};
 
-    		if (/*id*/ ctx[6] === undefined && !('id' in props)) {
+    		if (/*id*/ ctx[7] === undefined && !('id' in props)) {
     			console.warn("<FileOverviewItem> was created without expected prop 'id'");
     		}
 
@@ -28435,11 +28527,15 @@ var app = (function () {
     			console.warn("<FileOverviewItem> was created without expected prop 'description'");
     		}
 
-    		if (/*save*/ ctx[7] === undefined && !('save' in props)) {
+    		if (/*withDescription*/ ctx[3] === undefined && !('withDescription' in props)) {
+    			console.warn("<FileOverviewItem> was created without expected prop 'withDescription'");
+    		}
+
+    		if (/*save*/ ctx[8] === undefined && !('save' in props)) {
     			console.warn("<FileOverviewItem> was created without expected prop 'save'");
     		}
 
-    		if (/*remove*/ ctx[8] === undefined && !('remove' in props)) {
+    		if (/*remove*/ ctx[9] === undefined && !('remove' in props)) {
     			console.warn("<FileOverviewItem> was created without expected prop 'remove'");
     		}
     	}
@@ -28476,6 +28572,14 @@ var app = (function () {
     		throw new Error("<FileOverviewItem>: Props cannot be set directly on the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
     	}
 
+    	get withDescription() {
+    		throw new Error("<FileOverviewItem>: Props cannot be read directly from the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
+    	}
+
+    	set withDescription(value) {
+    		throw new Error("<FileOverviewItem>: Props cannot be set directly on the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
+    	}
+
     	get save() {
     		throw new Error("<FileOverviewItem>: Props cannot be read directly from the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
     	}
@@ -28499,12 +28603,12 @@ var app = (function () {
 
     function get_each_context$2(ctx, list, i) {
     	const child_ctx = ctx.slice();
-    	child_ctx[11] = list[i];
-    	child_ctx[13] = i;
+    	child_ctx[13] = list[i];
+    	child_ctx[15] = i;
     	return child_ctx;
     }
 
-    // (53:0) {:else}
+    // (68:0) {:else}
     function create_else_block$3(ctx) {
     	let spinner;
     	let current;
@@ -28546,14 +28650,14 @@ var app = (function () {
     		block,
     		id: create_else_block$3.name,
     		type: "else",
-    		source: "(53:0) {:else}",
+    		source: "(68:0) {:else}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (42:0) {#if files}
+    // (56:0) {#if files}
     function create_if_block$6(ctx) {
     	let each_1_anchor;
     	let current;
@@ -28586,7 +28690,7 @@ var app = (function () {
     			current = true;
     		},
     		p: function update(ctx, dirty) {
-    			if (dirty & /*id, files, save, remove, handleRemoveFile, handleSave*/ 63) {
+    			if (dirty & /*id, files, save, remove, withDescription, handleRemoveFile, handleSave*/ 127) {
     				each_value = /*files*/ ctx[0];
     				validate_each_argument(each_value);
     				let i;
@@ -28642,36 +28746,46 @@ var app = (function () {
     		block,
     		id: create_if_block$6.name,
     		type: "if",
-    		source: "(42:0) {#if files}",
+    		source: "(56:0) {#if files}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (45:1) {#each files as item, index}
+    // (59:1) {#each files as item, index}
     function create_each_block$2(ctx) {
     	let fileoverviewitem;
     	let current;
 
+    	const fileoverviewitem_spread_levels = [
+    		{ id: /*id*/ ctx[2] },
+    		{ file: /*item*/ ctx[13].name },
+    		/*item*/ ctx[13],
+    		{ save: /*save*/ ctx[3] },
+    		{ remove: /*remove*/ ctx[4] },
+    		{
+    			withDescription: /*withDescription*/ ctx[1]
+    		}
+    	];
+
     	function removed_handler(...args) {
-    		return /*removed_handler*/ ctx[7](/*index*/ ctx[13], ...args);
+    		return /*removed_handler*/ ctx[8](/*index*/ ctx[15], ...args);
+    	}
+
+    	let fileoverviewitem_props = {};
+
+    	for (let i = 0; i < fileoverviewitem_spread_levels.length; i += 1) {
+    		fileoverviewitem_props = assign(fileoverviewitem_props, fileoverviewitem_spread_levels[i]);
     	}
 
     	fileoverviewitem = new FileOverviewItem({
-    			props: {
-    				id: /*id*/ ctx[1],
-    				type: /*item*/ ctx[11].Type,
-    				file: /*item*/ ctx[11].Name,
-    				description: /*item*/ ctx[11].Description,
-    				save: /*save*/ ctx[2],
-    				remove: /*remove*/ ctx[3]
-    			},
+    			props: fileoverviewitem_props,
     			$$inline: true
     		});
 
     	fileoverviewitem.$on("removed", removed_handler);
-    	fileoverviewitem.$on("saved", /*handleSave*/ ctx[5]);
+    	fileoverviewitem.$on("saved", /*handleSave*/ ctx[6]);
 
     	const block = {
     		c: function create() {
@@ -28683,13 +28797,20 @@ var app = (function () {
     		},
     		p: function update(new_ctx, dirty) {
     			ctx = new_ctx;
-    			const fileoverviewitem_changes = {};
-    			if (dirty & /*id*/ 2) fileoverviewitem_changes.id = /*id*/ ctx[1];
-    			if (dirty & /*files*/ 1) fileoverviewitem_changes.type = /*item*/ ctx[11].Type;
-    			if (dirty & /*files*/ 1) fileoverviewitem_changes.file = /*item*/ ctx[11].Name;
-    			if (dirty & /*files*/ 1) fileoverviewitem_changes.description = /*item*/ ctx[11].Description;
-    			if (dirty & /*save*/ 4) fileoverviewitem_changes.save = /*save*/ ctx[2];
-    			if (dirty & /*remove*/ 8) fileoverviewitem_changes.remove = /*remove*/ ctx[3];
+
+    			const fileoverviewitem_changes = (dirty & /*id, files, save, remove, withDescription*/ 31)
+    			? get_spread_update(fileoverviewitem_spread_levels, [
+    					dirty & /*id*/ 4 && { id: /*id*/ ctx[2] },
+    					dirty & /*files*/ 1 && { file: /*item*/ ctx[13].name },
+    					dirty & /*files*/ 1 && get_spread_object(/*item*/ ctx[13]),
+    					dirty & /*save*/ 8 && { save: /*save*/ ctx[3] },
+    					dirty & /*remove*/ 16 && { remove: /*remove*/ ctx[4] },
+    					dirty & /*withDescription*/ 2 && {
+    						withDescription: /*withDescription*/ ctx[1]
+    					}
+    				])
+    			: {};
+
     			fileoverviewitem.$set(fileoverviewitem_changes);
     		},
     		i: function intro(local) {
@@ -28710,7 +28831,7 @@ var app = (function () {
     		block,
     		id: create_each_block$2.name,
     		type: "each",
-    		source: "(45:1) {#each files as item, index}",
+    		source: "(59:1) {#each files as item, index}",
     		ctx
     	});
 
@@ -28807,13 +28928,18 @@ var app = (function () {
     	let { files } = $$props;
     	let { save } = $$props;
     	let { remove } = $$props;
-    	let { context } = $$props;
+    	let { descriptionType } = $$props;
+    	let { withDescription } = $$props;
     	const dispatch = createEventDispatcher();
     	let el;
 
     	onMount(async () => {
     		date = Date.now();
+    		setDescriptionValues(descriptionType);
     		console.log("mount file overview");
+    		console.log(descriptionType);
+    		console.log(withDescription);
+    		console.log(files);
     	});
 
     	async function handleRemoveFile(e, index) {
@@ -28826,7 +28952,15 @@ var app = (function () {
     		dispatch("success", { text: e.detail.text });
     	}
 
-    	const writable_props = ['id', 'files', 'save', 'remove', 'context'];
+    	function setDescriptionValues(type) {
+    		//type can be : none = 0, active = 1, required = 2
+    		if (type == 0) $$invalidate(1, withDescription = false);
+
+    		if (type == 1) $$invalidate(1, withDescription = true);
+    		if (type == 2) $$invalidate(1, withDescription = true);
+    	}
+
+    	const writable_props = ['id', 'files', 'save', 'remove', 'descriptionType', 'withDescription'];
 
     	Object.keys($$props).forEach(key => {
     		if (!~writable_props.indexOf(key) && key.slice(0, 2) !== '$$' && key !== 'slot') console_1$2.warn(`<FileOverview> was created with unknown prop '${key}'`);
@@ -28835,11 +28969,12 @@ var app = (function () {
     	const removed_handler = (index, e) => handleRemoveFile(e, index);
 
     	$$self.$$set = $$props => {
-    		if ('id' in $$props) $$invalidate(1, id = $$props.id);
+    		if ('id' in $$props) $$invalidate(2, id = $$props.id);
     		if ('files' in $$props) $$invalidate(0, files = $$props.files);
-    		if ('save' in $$props) $$invalidate(2, save = $$props.save);
-    		if ('remove' in $$props) $$invalidate(3, remove = $$props.remove);
-    		if ('context' in $$props) $$invalidate(6, context = $$props.context);
+    		if ('save' in $$props) $$invalidate(3, save = $$props.save);
+    		if ('remove' in $$props) $$invalidate(4, remove = $$props.remove);
+    		if ('descriptionType' in $$props) $$invalidate(7, descriptionType = $$props.descriptionType);
+    		if ('withDescription' in $$props) $$invalidate(1, withDescription = $$props.withDescription);
     	};
 
     	$$self.$capture_state = () => ({
@@ -28852,20 +28987,23 @@ var app = (function () {
     		files,
     		save,
     		remove,
-    		context,
+    		descriptionType,
+    		withDescription,
     		dispatch,
     		el,
     		handleRemoveFile,
     		handleSave,
+    		setDescriptionValues,
     		date
     	});
 
     	$$self.$inject_state = $$props => {
-    		if ('id' in $$props) $$invalidate(1, id = $$props.id);
+    		if ('id' in $$props) $$invalidate(2, id = $$props.id);
     		if ('files' in $$props) $$invalidate(0, files = $$props.files);
-    		if ('save' in $$props) $$invalidate(2, save = $$props.save);
-    		if ('remove' in $$props) $$invalidate(3, remove = $$props.remove);
-    		if ('context' in $$props) $$invalidate(6, context = $$props.context);
+    		if ('save' in $$props) $$invalidate(3, save = $$props.save);
+    		if ('remove' in $$props) $$invalidate(4, remove = $$props.remove);
+    		if ('descriptionType' in $$props) $$invalidate(7, descriptionType = $$props.descriptionType);
+    		if ('withDescription' in $$props) $$invalidate(1, withDescription = $$props.withDescription);
     		if ('el' in $$props) el = $$props.el;
     		if ('date' in $$props) date = $$props.date;
     	};
@@ -28878,12 +29016,13 @@ var app = (function () {
 
     	return [
     		files,
+    		withDescription,
     		id,
     		save,
     		remove,
     		handleRemoveFile,
     		handleSave,
-    		context,
+    		descriptionType,
     		removed_handler
     	];
     }
@@ -28893,11 +29032,12 @@ var app = (function () {
     		super(options);
 
     		init(this, options, instance$9, create_fragment$9, safe_not_equal, {
-    			id: 1,
+    			id: 2,
     			files: 0,
-    			save: 2,
-    			remove: 3,
-    			context: 6
+    			save: 3,
+    			remove: 4,
+    			descriptionType: 7,
+    			withDescription: 1
     		});
 
     		dispatch_dev("SvelteRegisterComponent", {
@@ -28910,7 +29050,7 @@ var app = (function () {
     		const { ctx } = this.$$;
     		const props = options.props || {};
 
-    		if (/*id*/ ctx[1] === undefined && !('id' in props)) {
+    		if (/*id*/ ctx[2] === undefined && !('id' in props)) {
     			console_1$2.warn("<FileOverview> was created without expected prop 'id'");
     		}
 
@@ -28918,16 +29058,20 @@ var app = (function () {
     			console_1$2.warn("<FileOverview> was created without expected prop 'files'");
     		}
 
-    		if (/*save*/ ctx[2] === undefined && !('save' in props)) {
+    		if (/*save*/ ctx[3] === undefined && !('save' in props)) {
     			console_1$2.warn("<FileOverview> was created without expected prop 'save'");
     		}
 
-    		if (/*remove*/ ctx[3] === undefined && !('remove' in props)) {
+    		if (/*remove*/ ctx[4] === undefined && !('remove' in props)) {
     			console_1$2.warn("<FileOverview> was created without expected prop 'remove'");
     		}
 
-    		if (/*context*/ ctx[6] === undefined && !('context' in props)) {
-    			console_1$2.warn("<FileOverview> was created without expected prop 'context'");
+    		if (/*descriptionType*/ ctx[7] === undefined && !('descriptionType' in props)) {
+    			console_1$2.warn("<FileOverview> was created without expected prop 'descriptionType'");
+    		}
+
+    		if (/*withDescription*/ ctx[1] === undefined && !('withDescription' in props)) {
+    			console_1$2.warn("<FileOverview> was created without expected prop 'withDescription'");
     		}
     	}
 
@@ -28963,11 +29107,19 @@ var app = (function () {
     		throw new Error("<FileOverview>: Props cannot be set directly on the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
     	}
 
-    	get context() {
+    	get descriptionType() {
     		throw new Error("<FileOverview>: Props cannot be read directly from the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
     	}
 
-    	set context(value) {
+    	set descriptionType(value) {
+    		throw new Error("<FileOverview>: Props cannot be set directly on the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
+    	}
+
+    	get withDescription() {
+    		throw new Error("<FileOverview>: Props cannot be read directly from the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
+    	}
+
+    	set withDescription(value) {
     		throw new Error("<FileOverview>: Props cannot be set directly on the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
     	}
     }
@@ -28998,7 +29150,7 @@ var app = (function () {
     	fileuploader.$on("submit", /*submit_handler*/ ctx[11]);
     	fileuploader.$on("error", /*error_handler*/ ctx[12]);
     	fileuploader.$on("success", /*success_handler*/ ctx[13]);
-    	let if_block0 = /*model*/ ctx[4].ExistingFiles && create_if_block_2$1(ctx);
+    	let if_block0 = /*model*/ ctx[4].existingFiles && create_if_block_2$1(ctx);
     	let if_block1 = /*loading*/ ctx[3] && create_if_block_1$1(ctx);
 
     	const block = {
@@ -29027,7 +29179,7 @@ var app = (function () {
     			if (dirty & /*start*/ 4) fileuploader_changes.start = /*start*/ ctx[2];
     			fileuploader.$set(fileuploader_changes);
 
-    			if (/*model*/ ctx[4].ExistingFiles) {
+    			if (/*model*/ ctx[4].existingFiles) {
     				if (if_block0) {
     					if_block0.p(ctx, dirty);
 
@@ -29105,7 +29257,7 @@ var app = (function () {
     	return block;
     }
 
-    // (47:0) {#if model.ExistingFiles}
+    // (45:0) {#if model.existingFiles}
     function create_if_block_2$1(ctx) {
     	let fileoverview;
     	let current;
@@ -29113,7 +29265,8 @@ var app = (function () {
     	fileoverview = new FileOverview({
     			props: {
     				id: /*id*/ ctx[0],
-    				files: /*model*/ ctx[4].ExistingFiles,
+    				files: /*model*/ ctx[4].existingFiles,
+    				descriptionType: /*model*/ ctx[4].descriptionType,
     				save: /*save*/ ctx[5],
     				remove: /*remove*/ ctx[6]
     			},
@@ -29133,7 +29286,8 @@ var app = (function () {
     		p: function update(ctx, dirty) {
     			const fileoverview_changes = {};
     			if (dirty & /*id*/ 1) fileoverview_changes.id = /*id*/ ctx[0];
-    			if (dirty & /*model*/ 16) fileoverview_changes.files = /*model*/ ctx[4].ExistingFiles;
+    			if (dirty & /*model*/ 16) fileoverview_changes.files = /*model*/ ctx[4].existingFiles;
+    			if (dirty & /*model*/ 16) fileoverview_changes.descriptionType = /*model*/ ctx[4].descriptionType;
     			fileoverview.$set(fileoverview_changes);
     		},
     		i: function intro(local) {
@@ -29154,14 +29308,14 @@ var app = (function () {
     		block,
     		id: create_if_block_2$1.name,
     		type: "if",
-    		source: "(47:0) {#if model.ExistingFiles}",
+    		source: "(45:0) {#if model.existingFiles}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (51:0) {#if loading}
+    // (49:0) {#if loading}
     function create_if_block_1$1(ctx) {
     	let spinner;
     	let current;
@@ -29202,7 +29356,7 @@ var app = (function () {
     		block,
     		id: create_if_block_1$1.name,
     		type: "if",
-    		source: "(51:0) {#if loading}",
+    		source: "(49:0) {#if loading}",
     		ctx
     	});
 
@@ -31197,7 +31351,7 @@ var app = (function () {
     	fileuploader.$on("submit", /*submit_handler*/ ctx[11]);
     	fileuploader.$on("error", /*error_handler*/ ctx[12]);
     	fileuploader.$on("success", /*success_handler*/ ctx[13]);
-    	let if_block0 = /*model*/ ctx[4].ExistingFiles && create_if_block_2(ctx);
+    	let if_block0 = /*model*/ ctx[4].existingFiles && create_if_block_2(ctx);
     	let if_block1 = /*loading*/ ctx[3] && create_if_block_1(ctx);
 
     	const block = {
@@ -31226,7 +31380,7 @@ var app = (function () {
     			if (dirty & /*start*/ 4) fileuploader_changes.start = /*start*/ ctx[2];
     			fileuploader.$set(fileuploader_changes);
 
-    			if (/*model*/ ctx[4].ExistingFiles) {
+    			if (/*model*/ ctx[4].existingFiles) {
     				if (if_block0) {
     					if_block0.p(ctx, dirty);
 
@@ -31304,7 +31458,7 @@ var app = (function () {
     	return block;
     }
 
-    // (41:0) {#if model.ExistingFiles}
+    // (41:0) {#if model.existingFiles}
     function create_if_block_2(ctx) {
     	let fileoverview;
     	let current;
@@ -31312,7 +31466,7 @@ var app = (function () {
     	fileoverview = new FileOverview({
     			props: {
     				id: /*id*/ ctx[0],
-    				files: /*model*/ ctx[4].ExistingFiles,
+    				files: /*model*/ ctx[4].existingFiles,
     				save: /*save*/ ctx[5],
     				remove: /*remove*/ ctx[6]
     			},
@@ -31332,7 +31486,7 @@ var app = (function () {
     		p: function update(ctx, dirty) {
     			const fileoverview_changes = {};
     			if (dirty & /*id*/ 1) fileoverview_changes.id = /*id*/ ctx[0];
-    			if (dirty & /*model*/ 16) fileoverview_changes.files = /*model*/ ctx[4].ExistingFiles;
+    			if (dirty & /*model*/ 16) fileoverview_changes.files = /*model*/ ctx[4].existingFiles;
     			fileoverview.$set(fileoverview_changes);
     		},
     		i: function intro(local) {
@@ -31353,7 +31507,7 @@ var app = (function () {
     		block,
     		id: create_if_block_2.name,
     		type: "if",
-    		source: "(41:0) {#if model.ExistingFiles}",
+    		source: "(41:0) {#if model.existingFiles}",
     		ctx
     	});
 

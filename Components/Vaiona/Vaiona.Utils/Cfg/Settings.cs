@@ -109,6 +109,11 @@ namespace Vaiona.Utils.Cfg
                 return null;
             string value = entry.Value.ToString();
             string type = entry.Type;
+
+            // in the settings there are type that are not system types, like selection and list
+            if (type.Equals("selection")) return value;
+
+            // try to convert value to type
             var typedValue = Convert.ChangeType(value, (TypeCode)Enum.Parse(typeof(TypeCode), type));
             return typedValue;
         }

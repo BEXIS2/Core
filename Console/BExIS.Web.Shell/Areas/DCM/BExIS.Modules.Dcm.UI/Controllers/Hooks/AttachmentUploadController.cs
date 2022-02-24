@@ -23,7 +23,7 @@ using System.Web.Mvc;
 using Vaiona.Entities.Common;
 using Vaiona.Utils.Cfg;
 using Vaiona.Web.Extensions;
-
+using Vaiona.Web.Mvc.Modularity;
 using Cache = BExIS.UI.Hooks.Caches;
 
 namespace BExIS.Modules.Dcm.UI.Controllers
@@ -41,15 +41,28 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         }
 
         // GET: FileUpload
+        [JsonNetFilter]
         public JsonResult Load(long id, int version)
         {
             // check incoming variables
             if (id <= 0) throw new ArgumentException("id must be greater than 0");
 
             FileUploader model = new FileUploader();
-            model.MaxSize = 0;
-            model.Multiple = true;
-            model.DescriptionType = DescriptionType.active;
+
+            # region settings
+
+            var settings = ModuleManager.GetModuleSettings("dcm");
+
+            // description
+            var descrType = settings.GetEntryValue("attachmentDescription").ToString();//
+            model.DescriptionType = (DescriptionType)Enum.Parse(typeof(DescriptionType), descrType);
+
+            // max size
+            model.MaxSize = Session.GetTenant().MaximumUploadSize; // need to load from tenant
+            //multifileupload
+            model.Multiple = Boolean.Parse(settings.GetEntryValue("allowMultiAttachmentUpload").ToString());
+
+            #endregion
 
             model.Accept = UploadHelper.GetExtentionList(DataStructureType.None, this.Session.GetTenant());
             // load filelist from database and checlk against the folder

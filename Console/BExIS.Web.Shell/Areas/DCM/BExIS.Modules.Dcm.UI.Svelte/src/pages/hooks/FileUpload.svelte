@@ -41,11 +41,9 @@ async function load()
 </script>
 
 {#if model}
-
   <FileUploader {id} {version} {context} data={model} {start} {submit} on:submited={load} on:submit={()=>loading=true} on:error on:success/>
-
-{#if model.ExistingFiles}
-  <FileOverview {id} files={model.ExistingFiles} {save} {remove} on:success />
+{#if model.existingFiles}
+  <FileOverview {id} files={model.existingFiles} descriptionType={model.descriptionType} {save} {remove} on:success />
 {/if}
 
 {#if loading}

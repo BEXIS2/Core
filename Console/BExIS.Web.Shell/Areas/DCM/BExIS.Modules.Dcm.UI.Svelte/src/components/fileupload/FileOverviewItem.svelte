@@ -12,6 +12,7 @@ export let id;
 export let file;
 export let type;
 export let description;
+export let withDescription;
 const dispatch = createEventDispatcher();
 
 // action to save description
@@ -48,10 +49,12 @@ const res = await saveFileDescription(save,id, file, description );
  
 <div class="file-overview-item row">
  <Col xs="1"><FileInfo {type} size="x-large" /></Col>
- <Col xs="5"> 
+ <Col > 
     {file}
  </Col>
- <Col xs="5"><Input  bind:value="{description}" placeholder="description" on:change={e => handleSaveFileDescription()}/></Col>
+ {#if withDescription}
+  <Col xs="5"><Input  bind:value="{description}" placeholder="description" on:change={e => handleSaveFileDescription()}/></Col>
+{/if}
  <Col xs="1">
   <Button size="sm" on:click={e => handleRemoveFile()}><Fa icon={faTrash}/></Button>
   {#if loading}<Spinner color="info" size="sm" type ="grow" text-center /> {/if}

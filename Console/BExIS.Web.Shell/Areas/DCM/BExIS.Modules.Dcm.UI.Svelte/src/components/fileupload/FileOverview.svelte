@@ -12,8 +12,9 @@ export let save;
 // action to remove file
 export let remove
 
-// context of file overview - data or attachments
-export let context;
+// add description to file display row
+export let descriptionType;
+export let withDescription;
 
 const dispatch = createEventDispatcher();
 
@@ -22,7 +23,11 @@ $:date=null;
 
 onMount(async () => {
   date = Date.now();
+  setDescriptionValues(descriptionType);
   console.log("mount file overview");
+  console.log(descriptionType);
+  console.log(withDescription);
+  console.log(files);
 })
 
 async function handleRemoveFile(e, index) {
@@ -37,16 +42,26 @@ async function handleSave(e) {
   dispatch("success",{text:e.detail.text})
 }
 
+function setDescriptionValues(type)
+{
+  //type can be : none = 0, active = 1, required = 2
+  if(type == 0) withDescription = false;
+  if(type == 1) withDescription = true;
+  if(type == 2) withDescription = true;
+
+}
+
 </script>
 
 {#if files}
 
 <!-- <Container> -->
  {#each files as item, index}
+
   <FileOverviewItem 
-    {id} type={item.Type} file={item.Name} description={item.Description} {save} {remove} 
+    {id} file={item.name} {...item}  {save} {remove} 
     on:removed={e => handleRemoveFile(e, index)} 
-    on:saved={handleSave} />
+    on:saved={handleSave} {withDescription}/>
  {/each}
 <!-- </Container> -->
 

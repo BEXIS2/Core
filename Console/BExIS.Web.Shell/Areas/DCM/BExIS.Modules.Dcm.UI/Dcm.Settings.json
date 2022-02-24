@@ -14,6 +14,32 @@
       "value": 100000,
       "type": "Int32",
       "description": "This number of cells determines the selection whether an upload of structured data should be executed directly or async. "
+    },
+    {
+      "key": "fileuploadDescription",
+      "value": "none",
+      "type": "selection",
+      "description": "If it is activated, it is possible to add a description text per file.",
+      "selection": [ "none", "active", "required" ]
+    },
+    {
+      "key": "allowMultiFileupload",
+      "value": "true",
+      "type": "Boolean",
+      "description": "Allow multiple files to be uploaded at the same time"
+    },
+    {
+      "key": "attachmentDescription",
+      "value": 0,
+      "type": "selection",
+      "description": "If it is activated, it is possible to add a description text per file.",
+      "selection": [ "none", "active", "required" ]
+    },
+    {
+      "key": "allowMultiAttachmentUpload",
+      "value": "true",
+      "type": "Boolean",
+      "description": "Allow multiple files to be uploaded at the same time."
     }
   ]
 }
