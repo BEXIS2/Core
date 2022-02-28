@@ -65,7 +65,7 @@ const res = await saveFileDescription(save,id, file, description );
  
 
  .file-overview-item {
-  border-bottom: 1px solid var(--text-color);
+  border-bottom: 1px solid var(--bg-grey);
   color: var(--text-color);
   padding: 0.5em 0;
   

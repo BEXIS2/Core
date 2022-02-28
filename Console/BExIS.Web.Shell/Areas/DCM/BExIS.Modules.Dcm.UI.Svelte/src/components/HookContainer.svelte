@@ -5,6 +5,8 @@
  import { faAngleRight } from '@fortawesome/free-solid-svg-icons'
 
  export let displayName;
+ export let content=9;
+
 
  $:error = [];
  $:success = null;
@@ -31,12 +33,12 @@ function warningHandler (e){
 
 <div class="hook-container" >
  <Row> 
-  <Col class="col-sm-2">
+  <Col xs="{2}">
     <div class="title-container">
       <b><Fa icon={faAngleRight} /> {displayName}</b>
     </div>
   </Col>
-  <Col class="col-sm-6">
+  <Col xs={{ size: content, order: 2}}>
     {#if error}
       {#each error as item}
         <Alert color="danger" dismissible>{item}</Alert>
@@ -48,9 +50,11 @@ function warningHandler (e){
 
     <slot name="view" {errorHandler} {successHandler} {warningHandler}> render view</slot>
   </Col>
+  <!-- {#if activeSettings}
   <Col class="col-sm-4"> 
     <slot name="settings"> settings area</slot>
   </Col>
+  {/if} -->
  </Row>
 </div>
 

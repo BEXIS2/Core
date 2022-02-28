@@ -48,6 +48,13 @@ namespace BExIS.UI.Hooks.Caches
         public List<ResultMessage> Messages { get; set; }
 
         /// <summary>
+        /// this dictionary store the last modifications of the changed hooks
+        /// string = hook name 
+        /// DateTime = Last Modification
+        /// </summary>
+        public Dictionary<string,DateTime> LastModifications { get; set; }
+
+        /// <summary>
         /// Collect all informations to fine the data in the sheet
         /// </summary>
         public ExcelSetup ExcelSetup { get; set; }
