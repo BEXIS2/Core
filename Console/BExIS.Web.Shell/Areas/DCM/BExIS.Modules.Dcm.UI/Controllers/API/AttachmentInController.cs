@@ -199,15 +199,14 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                     if (cd.Name == originalDescriptor.Name)
                     {
                         cd.URI = originalDescriptor.URI;
-                        cd.Extra = SetDescription(cd.Extra, description);
+                        cd.Description = description;
                     }
                 }
             }
             else
             {
                 // add file description Node
-                XmlDocument doc = SetDescription(originalDescriptor.Extra, description);
-                originalDescriptor.Extra = doc;
+                originalDescriptor.Description = description;
                 //Add current contentdesciptor to list
                 datasetVersion.ContentDescriptors.Add(originalDescriptor);
             }
@@ -215,30 +214,5 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             return storePath;
         }
 
-        private XmlDocument SetDescription(XmlNode extraField, string description)
-        {
-            XmlNode newExtra;
-            var source = (XmlDocument)extraField;
-            if (source == null)
-            {
-                source = new XmlDocument();
-                source.LoadXml("<extra><fileDescription>" + description + "</fileDescription></extra>");
-            }
-            else
-            {
-                if (XmlUtility.GetXmlNodeByName(extraField, "fileDescription") == null)
-                {
-                    XmlNode t = XmlUtility.CreateNode("fileDescription", source);
-                    t.InnerText = description;
-                    source.DocumentElement.AppendChild(t);
-                }
-                else
-                {
-                    var descNodes = source.SelectNodes("/extra/fileDescription");
-                    descNodes[0].InnerText = description;
-                }
-            }
-            return source;
-        }
     }
 }
