@@ -16,6 +16,7 @@ using RestSharp;
 using RestSharp.Authenticators;
 using Lucifron.ReST.Models;
 using Newtonsoft.Json.Linq;
+using Lucifron.ReST.Models.DataCite;
 
 namespace BExIS.Dim.Helpers
 {
@@ -60,21 +61,21 @@ namespace BExIS.Dim.Helpers
             {
                 Data = new DataCiteData()
                 {
-                    Type = Lucifron.ReST.Models.Type.DOIs,
-                    Attributes = new Attributes()
+                    Type = DataCiteType.DOIs,
+                    Attributes = new DataCiteAttributes()
                     {
-                        Creators = authors.Select(a => new DataCiteCreator() { Name = a }).ToList(),
+                        Creators = authors.Select(a => new DataCiteCreator(a, DataCiteCreatorType.Personal)).ToList(),
                         Titles = titles.Select(t => new DataCiteTitle() { Title = t }).ToList(),
                         Subjects = subjects.Select(s => new DataCiteSubject() { Subject = s }).ToList(),
                         Version = $"{version}",
-                        Dates = new List<DataCiteDate>() { new DataCiteDate() { Type = DataCiteDateType.Issued, Date = $"{DateTime.UtcNow.Year}" } },
+                        Dates = new List<DataCiteDate>() { new DataCiteDate() { DateType = DataCiteDateType.Issued, Date = $"{DateTime.UtcNow.Year}" } },
                         DOI = doi,
-                        Event = Event.Hide,
-                        Types = new DataCiteTypes() { ResourceTypeGeneral = ResourceType.Dataset },
+                        Event = DataCiteEventType.Hide,
+                        Types = new DataCiteTypes() { ResourceTypeGeneral = DataCiteResourceType.Dataset },
                         PublicationYear = DateTime.UtcNow.Year,
                         Publisher = ConfigurationManager.AppSettings["doiPublisher"],
                         URL = $"{datasetUrl}?version={version}",
-                        Descriptions = descriptions.Select(d => new DataCiteDescription() { Language = null, Description = d, DataCiteDescriptionType = DataCiteDescriptionType.Abstract }).ToList()
+                        Descriptions = descriptions.Select(d => new DataCiteDescription() { Language = null, Description = d, DescriptionType = DataCiteDescriptionType.Abstract }).ToList()
                     }
                 }
             };
