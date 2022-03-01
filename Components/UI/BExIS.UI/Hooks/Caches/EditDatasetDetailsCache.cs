@@ -69,6 +69,36 @@ namespace BExIS.UI.Hooks.Caches
             Messages = new List<ResultMessage>();
             Files = new List<FileInfo>();
         }
+
+        /// <summary>
+        /// when this function is called the LastModification Dicionary will be updated based on the type of a hook.
+        /// the value, the date wiill be set to datetime now
+        /// </summary>
+        /// <param name="type"></param>
+        public void UpdateLastModificarion(Type type)
+        {
+            //check if dictionary exist
+
+            if (LastModifications == null) LastModifications = new Dictionary<string, DateTime>();
+
+            string key = type.FullName;
+            // if key exist update
+            if (LastModifications.ContainsKey(key))
+                LastModifications[key] = DateTime.Now;
+            else // else create
+                LastModifications.Add(key, DateTime.Now);
+        }
+
+        public DateTime? GetLastModificarion(Type type)
+        {
+            if (LastModifications != null && LastModifications.ContainsKey(type.FullName))
+            {
+                return LastModifications[type.FullName];
+            }
+
+            return null;
+        }
+
     }
 
     public class ExcelSetup

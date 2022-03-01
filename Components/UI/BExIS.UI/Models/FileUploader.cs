@@ -34,6 +34,11 @@ namespace BExIS.UI.Models
         /// </summary>
         public int MaxSize { get; set; }
 
+        /// <summary>
+        /// max size of the file in ???
+        /// </summary>
+        public DateTime? LastModification { get; set; }
+
         public FileUploader()
         {
             Accept = new List<string>();
