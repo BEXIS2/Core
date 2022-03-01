@@ -4,6 +4,7 @@ using BExIS.Dlm.Entities.Data;
 using BExIS.Dlm.Entities.DataStructure;
 using BExIS.Dlm.Services.Data;
 using BExIS.IO;
+using BExIS.Modules.Dcm.UI.Hooks;
 using BExIS.Modules.Dcm.UI.Models.Edit;
 using BExIS.Security.Entities.Authorization;
 using BExIS.Security.Services.Utilities;
@@ -98,6 +99,9 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 model.Accept = UploadHelper.GetExtentionList(datastructureType, this.Session.GetTenant());
             }
 
+            // set modification date
+            model.LastModification = cache.GetLastModificarion(typeof(FileUploadHook));
+
             hookManager.SaveCache(cache, "dataset", "details", HookMode.edit, id);
             return Json(model, JsonRequestBehavior.AllowGet);
         }
@@ -136,6 +140,10 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                         cache.Files.Add(new Cache.FileInfo(fname, file.ContentType, file.ContentLength, ""));
                         filesNames.Add(fname);
                     }
+
+
+                    // update last modification time
+                    cache.UpdateLastModificarion(typeof(FileUploadHook));
 
                     // Returns message that successfully uploaded
                     return Json("File Uploaded Successfully!");
@@ -177,6 +185,8 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             }
 
             cache.Messages.Add(new ResultMessage(DateTime.Now, new List<string>() { file + " removed" }));
+            // update last modification time
+            cache.UpdateLastModificarion(typeof(FileUploadHook));
             hookManager.SaveCache(cache, "dataset", "details", HookMode.edit, id);
 
             return Json(true);
@@ -196,6 +206,8 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             }
 
             cache.Messages.Add(new ResultMessage(DateTime.Now, new List<string>() { file + " description updated" }));
+            // update last modification time
+            cache.UpdateLastModificarion(typeof(FileUploadHook));
             hookManager.SaveCache(cache, "dataset", "details", HookMode.edit, id);
 
             return Json(true);

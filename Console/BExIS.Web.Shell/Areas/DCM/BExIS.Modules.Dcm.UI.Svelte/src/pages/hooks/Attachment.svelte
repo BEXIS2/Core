@@ -3,6 +3,7 @@ import {FileUploader} from '@bexis2/svelte-bexis2-core-ui';
 import {getHookStart}  from '../../services/Caller'
 import { onMount }from 'svelte'
 import FileOverview from '../../components/fileupload/FileOverview.svelte'
+import TimeDuration from '../../components/utils/TimeDuration.svelte'
 import {Spinner} from 'sveltestrap'
 
 export let id=0;
@@ -28,18 +29,22 @@ async function load()
   model = await getHookStart(hook.start,id,version);
   start = hook.start;
   loading = false;
-  
 }
 
 
 </script>
 
 {#if model}
+{#if model.lastModification}
+
+<TimeDuration milliseconds={new Date(model.lastModification)}/>
+
+{/if}
 
 <FileUploader {id} {version} {context} data={model} {start} {submit} on:submited={load} on:submit={()=>loading=true } on:error on:success />
 
 {#if model.existingFiles}
-  <FileOverview {id} files={model.existingFiles} {save} {remove} on:success/>
+  <FileOverview {id} files={model.existingFiles} descriptionType={model.descriptionType} {save} {remove} on:success/>
 {/if}
 
 {#if loading}

@@ -4,6 +4,7 @@ import {getHookStart}  from '../../services/Caller'
 import { onMount, createEventDispatcher }from 'svelte'
 import FileOverview from '../../components/fileupload/FileOverview.svelte'
 import {Spinner, Alert} from 'sveltestrap'
+import TimeDuration from '../../components/utils/TimeDuration.svelte'
 
 export let id=0;
 export let version=1;
@@ -26,21 +27,27 @@ let error = "";
 $:loading = false;
 $:existError = false;
 
-
 const dispatch = createEventDispatcher();
 
 async function load()
 {
-
   model = await getHookStart(hook.start,id,version);
   start = hook.start;
   loading = false;
+  console.log("Attachments")
+  console.log(model)
 
 }
+
 
 </script>
 
 {#if model}
+{#if model.lastModification}
+
+<TimeDuration milliseconds={new Date(model.lastModification)}/>
+
+{/if}
   <FileUploader {id} {version} {context} data={model} {start} {submit} on:submited={load} on:submit={()=>loading=true} on:error on:success/>
 {#if model.existingFiles}
   <FileOverview {id} files={model.existingFiles} descriptionType={model.descriptionType} {save} {remove} on:success />

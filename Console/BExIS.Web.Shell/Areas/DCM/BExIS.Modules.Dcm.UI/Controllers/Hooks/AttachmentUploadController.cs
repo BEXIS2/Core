@@ -4,6 +4,7 @@ using BExIS.Dlm.Entities.Data;
 using BExIS.Dlm.Entities.DataStructure;
 using BExIS.Dlm.Services.Data;
 using BExIS.IO;
+using BExIS.Modules.Dcm.UI.Hooks;
 using BExIS.Modules.Dcm.UI.Models.Edit;
 using BExIS.Security.Entities.Authorization;
 using BExIS.Security.Services.Utilities;
@@ -75,6 +76,13 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                     model.ExistingFiles = getDatasetFileList(datasetVersion);
                 }
             }
+
+            HookManager hookManager = new HookManager();
+            // load cache to check existing files
+            EditDatasetDetailsCache cache = hookManager.LoadCache<EditDatasetDetailsCache>("dataset", "details", HookMode.edit, id);
+            // set modification date
+            model.LastModification = cache.GetLastModificarion(typeof(AttachmentEditHook));
+
 
             return Json(model, JsonRequestBehavior.AllowGet);
         }
@@ -188,6 +196,10 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
                 // add message to the cache
                 cache.Messages.Add(new ResultMessage(DateTime.Now, new List<string>() { file + " removed" }));
+
+                // update last modification time
+                cache.UpdateLastModificarion(typeof(AttachmentEditHook));
+
                 hookManager.SaveCache(cache, "dataset", "details", HookMode.edit, id);
             }
 
@@ -214,9 +226,13 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 contentDescriptor.Description = description;
 
                 dm.UpdateContentDescriptor(contentDescriptor);
+
             }
 
             cache.Messages.Add(new ResultMessage(DateTime.Now, new List<string>() { file + " description updated" }));
+            // update last modification time
+            cache.UpdateLastModificarion(typeof(AttachmentEditHook));
+
             hookManager.SaveCache(cache, "dataset", "details", HookMode.edit, id);
 
             return Json(true);

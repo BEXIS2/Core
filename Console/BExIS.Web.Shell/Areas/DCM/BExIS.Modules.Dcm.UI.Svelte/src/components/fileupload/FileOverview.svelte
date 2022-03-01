@@ -23,11 +23,12 @@ $:date=null;
 
 onMount(async () => {
   date = Date.now();
+
   setDescriptionValues(descriptionType);
   console.log("mount file overview");
   console.log(descriptionType);
   console.log(withDescription);
-  console.log(files);
+
 })
 
 async function handleRemoveFile(e, index) {
