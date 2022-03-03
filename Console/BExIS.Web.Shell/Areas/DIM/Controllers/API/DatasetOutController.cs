@@ -3,6 +3,7 @@ using BExIS.Dim.Entities.Mapping;
 using BExIS.Dim.Helpers.Mapping;
 using BExIS.Dlm.Entities.Data;
 using BExIS.Dlm.Services.Data;
+using BExIS.Dlm.Services.Party;
 using BExIS.Modules.Dim.UI.Models.Api;
 using BExIS.Utils.Route;
 using BExIS.Xml.Helpers;
@@ -15,6 +16,7 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Web.Http;
 using System.Web.Http.Description;
+using System.Xml.Linq;
 
 namespace BExIS.Modules.Dim.UI.Controllers.API
 {
@@ -176,59 +178,98 @@ namespace BExIS.Modules.Dim.UI.Controllers.API
             if (id <= 0) return Request.CreateResponse(HttpStatusCode.PreconditionFailed, "No valid dataset id.");
             if (version <= 0) return Request.CreateResponse(HttpStatusCode.PreconditionFailed, "No valid version.");
 
-            DatasetManager datasetManager = new DatasetManager();
+
             XmlDatasetHelper xmlDatasetHelper = new XmlDatasetHelper();
             try
             {
-                Dataset dataset = datasetManager.GetDataset(id);
-                if (dataset == null) return Request.CreateResponse(HttpStatusCode.PreconditionFailed, "This Dataset not exist");
-
-                int index = version - 1;
-
-                if (version > dataset.Versions.Count) return Request.CreateResponse(HttpStatusCode.PreconditionFailed, "This version does not exit.");
-
-                DatasetVersion datasetVersion = dataset.Versions.OrderBy(d => d.Timestamp).ElementAt(index);
-                if (datasetVersion == null) return Request.CreateResponse(HttpStatusCode.InternalServerError, "It is not possible to load the latest version.");
-
-                ApiDatasetModel datasetModel = new ApiDatasetModel()
+                using (DatasetManager datasetManager = new DatasetManager())
+                using (PartyManager partyManager = new PartyManager())
                 {
-                    Id = id,
-                    Version = version,
-                    VersionId = datasetVersion.Id,
-                    Title = datasetVersion.Title,
-                    Description = datasetVersion.Description,
-                    DataStructureId = dataset.DataStructure.Id,
-                    MetadataStructureId = dataset.MetadataStructure.Id
-                };
+                    Dataset dataset = datasetManager.GetDataset(id);
+                    if (dataset == null) return Request.CreateResponse(HttpStatusCode.PreconditionFailed, "This Dataset not exist");
 
-                // add addtional Iformations
-                foreach (Key k in Enum.GetValues(typeof(Key)))
-                {
-                    var tmp = MappingUtils.GetValuesFromMetadata(Convert.ToInt64(k), LinkElementType.Key,
-                   datasetVersion.Dataset.MetadataStructure.Id, XmlUtility.ToXDocument(datasetVersion.Metadata));
+                    int index = version - 1;
 
-                    if (tmp != null)
+                    if (version > dataset.Versions.Count) return Request.CreateResponse(HttpStatusCode.PreconditionFailed, "This version does not exit.");
+
+                    DatasetVersion datasetVersion = dataset.Versions.OrderBy(d => d.Timestamp).ElementAt(index);
+                    if (datasetVersion == null) return Request.CreateResponse(HttpStatusCode.InternalServerError, "It is not possible to load the latest version.");
+
+                    ApiDatasetModel datasetModel = new ApiDatasetModel()
                     {
-                        string value = string.Join(",", tmp.Distinct());
-                        if (!string.IsNullOrEmpty(value))
+                        Id = id,
+                        Version = version,
+                        VersionId = datasetVersion.Id,
+                        Title = datasetVersion.Title,
+                        Description = datasetVersion.Description,
+                        DataStructureId = dataset.DataStructure.Id,
+                        MetadataStructureId = dataset.MetadataStructure.Id
+                    };
+
+                    // add addtional Iformations
+                    foreach (Key k in Enum.GetValues(typeof(Key)))
+                    {
+                        var tmp = MappingUtils.GetValuesFromMetadata(Convert.ToInt64(k), LinkElementType.Key,
+                       datasetVersion.Dataset.MetadataStructure.Id, XmlUtility.ToXDocument(datasetVersion.Metadata));
+
+                        if (tmp != null)
                         {
-                            datasetModel.AdditionalInformations.Add(k.ToString(), value);
+                            string value = string.Join(",", tmp.Distinct());
+                            if (!string.IsNullOrEmpty(value))
+                            {
+                                datasetModel.AdditionalInformations.Add(k.ToString(), value);
+                            }
+                        }
+                     }
+
+                    //get Author as xelement list
+                    var authors = MappingUtils.GetXElementFromMetadata(Convert.ToInt64(Key.Author), LinkElementType.Key,
+                       datasetVersion.Dataset.MetadataStructure.Id, XmlUtility.ToXDocument(datasetVersion.Metadata));
+
+                    foreach (XElement author in authors)
+                    {
+                        long partyid = getPartyId(author);
+                        // id direct 
+                        if (partyid >0)
+                        {
+                          
+                            var party = partyManager.GetParty(partyid);
+
+                            if (party != null)
+                            {
+                                var attr = party.CustomAttributeValues.Where(a => a.CustomAttribute.IsMain = true).ToArray();
+
+                                datasetModel.Citators.Add(new Citator() { FirstName = attr[0].Value, LastName = attr[1].Value });
+                            }
                         }
                     }
-                }
 
-                var response = Request.CreateResponse(HttpStatusCode.OK);
-                string resp = JsonConvert.SerializeObject(datasetModel);
 
-                response.Content = new StringContent(resp, System.Text.Encoding.UTF8, "application/json");
-                response.Content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
+                    var response = Request.CreateResponse(HttpStatusCode.OK);
+                    string resp = JsonConvert.SerializeObject(datasetModel);
 
-                return response;
+                    response.Content = new StringContent(resp, System.Text.Encoding.UTF8, "application/json");
+                    response.Content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
+
+                    return response;
+                } 
             }
             finally
             {
-                datasetManager.Dispose();
+                
             }
         }
+
+        private long getPartyId(XElement e)
+        {
+            if (e.Attributes().Any(x => x.Name.LocalName.Equals("partyid")))
+            {
+                return Convert.ToInt64(e.Attribute("partyid").Value);
+            }
+            if (e.Parent != null) return getPartyId(e.Parent);
+
+            return 0;
+        }
+            
     }
 }

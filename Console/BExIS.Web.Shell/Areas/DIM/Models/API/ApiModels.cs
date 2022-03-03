@@ -34,10 +34,12 @@ namespace BExIS.Modules.Dim.UI.Models.Api
         public long DataStructureId { get; set; }
         public long MetadataStructureId { get; set; }
         public Dictionary<string, string> AdditionalInformations { get; set; }
+        public List<Citator> Citators { get; set; }
 
         public ApiDatasetModel()
         {
             AdditionalInformations = new Dictionary<string, string>();
+            Citators = new List<Citator>();
         }
     }
 
@@ -51,6 +53,19 @@ namespace BExIS.Modules.Dim.UI.Models.Api
             DatasetId = 0;
             Attachments = new List<ApiSimpleAttachmentModel>();
         }
+    }
+
+    public class Citator
+    {
+        public string FirstName { get; set; }
+        public string LastName { get; set; }
+
+        public Citator()
+        {
+            FirstName = "";
+            LastName = "";
+        }
+
     }
 
     public class ApiSimpleAttachmentModel
