@@ -1305,9 +1305,6 @@
     <Content Include="Themes\telerik.common.min.css" />
     <Content Include="Themes\telerik.rtl.min.css" />
     <Content Include="Global.asax" />
-    <Content Include="Web.config">
-      <SubType>Designer</SubType>
-    </Content>
     <Content Include="Content\Site_old.css" />
     <Content Include="Scripts\jquery-1.4.4.js" />
     <Content Include="Scripts\jquery-1.4.4.min.js" />
@@ -1368,6 +1365,7 @@
     <Content Include="Themes\Default\Layouts\_svelte_telerikLayout.cshtml" />
     <Content Include="Scripts\jquery-2.1.4.min.map" />
     <Content Include="Views\Settings\Index.cshtml" />
+    <None Include="Web.config" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Areas\" />
