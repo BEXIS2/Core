@@ -942,6 +942,110 @@ namespace BExIS.Dim.Helpers.Mapping
             }
         }
 
+        /// <summary>
+        ///
+        /// </summary>
+        /// <param name="targetElementId"></param>
+        /// <param name="targetType"></param>
+        /// <param name="sourceRootId"></param>
+        /// <param name="metadata"></param>
+        /// <returns></returns>
+        public static List<XElement> GetXElementFromMetadata(long targetElementId, LinkElementType targetType,
+            long sourceRootId, XDocument metadata)
+        {
+            //grab values from metadata where targetelementid and targetType is mapped
+            // e.g. get title from metadata
+
+            MappingManager mappingManager = new MappingManager();
+
+            try
+            {
+                List<XElement> tmp = new List<XElement>();
+
+                var mappings = mappingManager.GetMappings().Where(m =>
+                    m.Target.ElementId.Equals(targetElementId) &&
+                    m.Target.Type.Equals(targetType) &&
+                    getRootMapping(m) != null &&
+                    getRootMapping(m).Source.ElementId.Equals(sourceRootId) &&
+                    getRootMapping(m).Source.Type == LinkElementType.MetadataStructure &&
+                    m.Level.Equals(2));
+
+                // possinle cases                   mapping count
+                // 1 - 1                            1
+                // x,y to z (combination merge)     2
+                // x -> z1,z2,z3 (split)            1
+                // x1,x2,x3 -> z (merge)            1
+
+                if (mappings.Count() == 1)
+                {
+                    //possible cases =
+                    // 1 - 1
+                    // x -> z1,z2,z3 (split)
+                    // x1,x2,x3 -> z (join)
+
+                    Entities.Mapping.Mapping m = mappings.FirstOrDefault();
+
+                    if (m != null &&
+                        (m.Source.Type.Equals(LinkElementType.MetadataAttributeUsage) ||
+                         m.Source.Type.Equals(LinkElementType.MetadataNestedAttributeUsage)))
+                    {
+                        IEnumerable<XElement> elements = getXElementsFromAMapping(m, metadata);
+
+                        if (elements.Count() == 1)
+                        {
+                            tmp.Add(elements.First());   
+                        }
+                        else
+                        {
+                            // x1,x2,x3 -> z (join)
+                            foreach (var element in elements)
+                            {
+                                tmp.Add(element);
+                            }
+                        }
+                    }
+                }
+                // x,y to z (combination merge)
+                // if multiply mappings to the same source, it is a merge
+                else
+                {
+                    // all mappings that have the same parent mapping should be handelt together
+                    IEnumerable<long> parentIds = mappings.Select(m => m.Parent.Id).Distinct();
+
+                    foreach (int parentId in parentIds)
+                    {
+                        string mask = "";
+
+                        //load all maaping that belongs to the parent mapping with id -> parentId
+                        IEnumerable<Entities.Mapping.Mapping> tmpMappings = mappings.Where(m => m.Parent.Id.Equals(parentId));
+
+                        foreach (var m in tmpMappings)
+                        {
+                            if (string.IsNullOrEmpty(mask)) mask = mappings.FirstOrDefault().TransformationRule.Mask;
+
+                            if (m.Source.Type.Equals(LinkElementType.MetadataAttributeUsage) ||
+                                m.Source.Type.Equals(LinkElementType.MetadataNestedAttributeUsage))
+                            {
+                                IEnumerable<XElement> elements = getXElementsFromAMapping(m, metadata);
+
+                                //the elements are the result of one mapping
+                                foreach (var element in elements)
+                                {
+                                    tmp.Add(element);
+                                }
+                            }
+                        }
+                    }
+                }
+
+                return tmp;
+            }
+            finally
+            {
+                mappingManager.Dispose();
+            }
+        }
+
         private static IEnumerable<XElement> getXElementsFromAMapping(Entities.Mapping.Mapping m, XDocument metadata)
         {
             Dictionary<string, string> AttrDic = new Dictionary<string, string>();
