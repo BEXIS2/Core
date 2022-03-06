@@ -11,6 +11,7 @@ Alter Table datasetversions add column versiontype varchar(255);
 Alter Table datasetversions add column versionname varchar(255);
 Alter Table datasetversions add column versiondescription text;
 Alter Table datasetversions add column publicaccess boolean;
+Alter Table datasetversions add column publicaccessdate time without time zone,
 
 -- Change/Add splitted requests
 INSERT INTO public.features(
