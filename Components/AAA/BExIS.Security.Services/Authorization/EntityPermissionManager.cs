@@ -178,7 +178,14 @@ namespace BExIS.Security.Services.Authorization
                 return entityPermissionRepository.Get(p => p.Subject.Id == subject.Id && p.Entity.Id == entity.Id && p.Key == key).Count == 1;
             }
         }
-
+        public bool Exists(long entityId, long key)
+        {
+            using (var uow = this.GetUnitOfWork())
+            {
+                var entityPermissionRepository = uow.GetRepository<EntityPermission>();
+                return 1 == entityPermissionRepository.Get(p => p.Subject == null && p.Entity.Id == entityId && p.Key == key).Count();
+            }
+        }
         public bool Exists(long? subjectId, long entityId, long key)
         {
             using (var uow = this.GetUnitOfWork())
