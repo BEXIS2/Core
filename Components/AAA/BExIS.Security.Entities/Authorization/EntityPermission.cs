@@ -1,6 +1,8 @@
 ﻿using BExIS.Security.Entities.Objects;
 using BExIS.Security.Entities.Subjects;
+using System;
 using Vaiona.Entities.Common;
+
 
 namespace BExIS.Security.Entities.Authorization
 {
@@ -36,5 +38,11 @@ namespace BExIS.Security.Entities.Authorization
         public virtual long Key { get; set; }
         public virtual int Rights { get; set; }
         public virtual Subject Subject { get; set; }
-    }
+        public virtual DateTime CreationDate { get; set; }
+
+        public EntityPermission()
+        {
+            CreationDate = DateTime.Now;
+        }
+    }  
 }
