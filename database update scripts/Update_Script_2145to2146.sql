@@ -11,7 +11,7 @@ Alter Table datasetversions add column versiontype varchar(255);
 Alter Table datasetversions add column versionname varchar(255);
 Alter Table datasetversions add column versiondescription text;
 Alter Table datasetversions add column publicaccess boolean;
-Alter Table datasetversions add column publicaccessdate time without time zone,
+Alter Table datasetversions add column publicaccessdate timestamp without time zone;
 
 -- Change/Add splitted requests
 INSERT INTO public.features(
@@ -30,3 +30,6 @@ Update features set description = 'Manange requests by user' where name = 'Reque
 update operations set controller = 'RequestsManage' where controller = 'Requests';
 
 -- Set old permission settings from requests manange to send as well? 
+
+-- Add Creation Date to entitypermissions
+Alter TABLE entitypermissions add column creationdate timestamp without time zone;

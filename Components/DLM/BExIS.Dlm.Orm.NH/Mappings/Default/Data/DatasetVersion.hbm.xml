@@ -111,7 +111,7 @@
 	  <column name="PublicAccess" />
 	</property>
 
-	<property name="PublicAccessDate" type="Timestamp">
+	<property name="PublicAccessDate" type="DateTime">
 	  <column name="PublicAccessDate" />
 	</property>
 
