@@ -276,14 +276,14 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                 // Entity, Entity Party Type and Entity Party
                 var entity = entityManager.FindByName(entityname);
                 var entityPartyType = partyTypeManager.PartyTypeRepository.Get(p => p.Title == entityname).FirstOrDefault();
-                var entityParties = partyManager.Parties.Where(p => p.PartyType.Id == entityPartyType.Id);
+                var entityPartyIds = partyManager.Parties.Where(p => p.PartyType.Id == entityPartyType.Id).Select(p => p.Id);
 
                 List<long> datasetIds = new List<long>();
 
                 // get user
                 var user = userManager.FindByNameAsync(GetUsernameOrDefault()).Result;
 
-                if(user != null)
+                if (user != null)
                 {
                     ViewBag.userLoggedIn = true;
 
@@ -292,16 +292,16 @@ namespace BExIS.Modules.Ddm.UI.Controllers
 
                     var userParty = partyManager.GetPartyByUser(user.Id);
 
-                    if(userParty != null)
+                    if (userParty != null)
                     {
                         // get datasets based on party relationships
-                        List<string> datasetPartyIds = partyManager.PartyRelationshipRepository.Get(p => p.SourceParty.Id == userParty.Id && p.Permission >= (int)rightType && entityParties.Contains(p.TargetParty)).Select(p => p.Title).ToList();
+                        Dictionary<long, string> datasetParties = partyManager.PartyRelationshipRepository.Get(p => p.SourceParty.Id == userParty.Id && p.Permission >= (int)rightType).Select(p => new { p.Id, p.Title }).ToDictionary(p => p.Id, p => p.Title);
 
-                        foreach (var datasetPartyId in datasetPartyIds)
+                        foreach (var datasetParty in datasetParties)
                         {
                             long id;
-                            bool success = long.TryParse(datasetPartyId, out id);
-                            if (success && !datasetIds.Contains(id))
+                            bool success = long.TryParse(datasetParty.Value, out id);
+                            if (success && !datasetIds.Contains(id) && entityPartyIds.Contains(datasetParty.Key))
                                 datasetIds.Add(id);
                         }
                     }
@@ -319,7 +319,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
 
                     Object[] rowArray = new Object[8];
                     string isValid = "no";
-                    
+
                     string type = "file";
                     if (dsv.Dataset.DataStructure.Self is StructuredDataStructure)
                     {
@@ -333,7 +333,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                         string title = dsv.Title;
                         string description = dsv.Description;
 
-                            if (dsv.StateInfo != null)
+                        if (dsv.StateInfo != null)
                         {
                             isValid = DatasetStateInfo.Valid.ToString().Equals(dsv.StateInfo.State) ? "yes" : "no";
                         }
