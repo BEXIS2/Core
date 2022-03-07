@@ -1,6 +1,7 @@
 ﻿using BExIS.Dlm.Entities.Data;
 using BExIS.Dlm.Entities.DataStructure;
 using BExIS.Dlm.Services.Data;
+using BExIS.Dlm.Services.Party;
 using BExIS.Modules.Ddm.UI.Models;
 using BExIS.Security.Entities.Authorization;
 using BExIS.Security.Entities.Objects;
@@ -259,48 +260,58 @@ namespace BExIS.Modules.Ddm.UI.Controllers
         /// <param name="rightType">Type of right (write, delete, grant, read)</param>
         /// <param name="onlyTable">Return only table without header</param>
         /// <returns>model</returns>
-        public ActionResult ShowMyDatasets(string entityname, string rightType, string onlyTable = "false")
+        public ActionResult ShowMyDatasets(string entityname, RightType rightType, string onlyTable = "false")
         {
             ViewBag.Title = PresentationModel.GetViewTitleForTenant("Dashboard", this.Session.GetTenant());
 
             List<MyDatasetsModel> model = new List<MyDatasetsModel>();
+
             using (DatasetManager datasetManager = new DatasetManager())
             using (EntityPermissionManager entityPermissionManager = new EntityPermissionManager())
             using (UserManager userManager = new UserManager())
             using (EntityManager entityManager = new EntityManager())
+            using (PartyTypeManager partyTypeManager = new PartyTypeManager())
+            using (PartyManager partyManager = new PartyManager())
             {
+                // Entity, Entity Party Type and Entity Party
                 var entity = entityManager.FindByName(entityname);
+                var entityPartyType = partyTypeManager.PartyTypeRepository.Get(p => p.Title == entityname).FirstOrDefault();
+                var entityParties = partyManager.Parties.Where(p => p.PartyType.Id == entityPartyType.Id);
+
+                List<long> datasetIds = new List<long>();
+
+                // get user
                 var user = userManager.FindByNameAsync(GetUsernameOrDefault()).Result;
 
-                var rightTypeId = RightType.Read;
+                if(user != null)
+                {
+                    ViewBag.userLoggedIn = true;
 
-                if (rightType == "write")
-                {
-                    rightTypeId = RightType.Write;
-                }
-                else if (rightType == "delete")
-                {
-                    rightTypeId = RightType.Delete;
-                }
-                else if (rightType == "grant")
-                {
-                    rightTypeId = RightType.Grant;
-                }
+                    // get datasets based on entity permissions
+                    datasetIds = entityPermissionManager.GetKeys(GetUsernameOrDefault(), entityname, typeof(Dataset), rightType);
 
-                var userName = GetUsernameOrDefault();
-                if (userName == "DEFAULT")
-                {
-                    ViewBag.userLoggedIn = false;
-                    rightTypeId = RightType.Read;
+                    var userParty = partyManager.GetPartyByUser(user.Id);
+
+                    if(userParty != null)
+                    {
+                        // get datasets based on party relationships
+                        List<string> datasetPartyIds = partyManager.PartyRelationshipRepository.Get(p => p.SourceParty.Id == userParty.Id && p.Permission >= (int)rightType && entityParties.Contains(p.TargetParty)).Select(p => p.Title).ToList();
+
+                        foreach (var datasetPartyId in datasetPartyIds)
+                        {
+                            long id;
+                            bool success = long.TryParse(datasetPartyId, out id);
+                            if (success && !datasetIds.Contains(id))
+                                datasetIds.Add(id);
+                        }
+                    }
                 }
                 else
                 {
-                    ViewBag.userLoggedIn = true;
+                    ViewBag.userLoggedIn = false;
+                    datasetIds = entityPermissionManager.GetKeys(GetUsernameOrDefault(), entityname, typeof(Dataset), RightType.Read);
+
                 }
-
-
-                List<long> datasetIds = entityPermissionManager.GetKeys(GetUsernameOrDefault(), entityname,
-                       typeof(Dataset), rightTypeId);
 
                 List<DatasetVersion> datasetVersions = datasetManager.GetDatasetLatestVersions(datasetIds, true);
                 foreach (var dsv in datasetVersions)
