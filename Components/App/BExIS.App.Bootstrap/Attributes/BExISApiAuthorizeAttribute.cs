@@ -6,6 +6,7 @@ using System.Linq;
 using BExIS.Security.Services.Subjects;
 using System;
 using System.Net.Http;
+using BExIS.Security.Entities.Subjects;
 
 namespace BExIS.App.Bootstrap.Attributes
 {
@@ -13,105 +14,108 @@ namespace BExIS.App.Bootstrap.Attributes
     {
         public override void OnAuthorization(HttpActionContext actionContext)
         {
-            var featurePermissionManager = new FeaturePermissionManager();
-            var operationManager = new OperationManager();
-            var userManager = new UserManager();
-
             try
             {
-                var areaName = "Api";
-                var controllerName = actionContext.ActionDescriptor.ControllerDescriptor.ControllerName;
-                var actionName = actionContext.ActionDescriptor.ActionName;
-                var operation = operationManager.Find(areaName, controllerName, "*");
-                if (operation == null)
+                using (var featurePermissionManager = new FeaturePermissionManager())
+                using (var operationManager = new OperationManager())
+                using (var userManager = new UserManager())
+                using (var identityUserService = new IdentityUserService())
                 {
-                    actionContext.Response = new HttpResponseMessage(System.Net.HttpStatusCode.Forbidden);
-                    return;
-                }
+                    User user = null;
 
-                var feature = operation.Feature;
-                if (feature != null && !featurePermissionManager.Exists(null, feature.Id))
-                {
-                    if (actionContext.Request.Headers.Authorization == null)
+                    // User
+                    switch(actionContext.Request.Headers.Authorization.Scheme)
+                    {
+                        case "Basic":
+                            var basic = actionContext.Request.Headers.Authorization?.ToString().Substring("Basic ".Length).Trim();
+                            if (basic == null)
+                            {
+                                actionContext.Response = new HttpResponseMessage(System.Net.HttpStatusCode.Forbidden);
+                                actionContext.Response.Content = new StringContent("The basic authentication information is not valid.");
+                                return;
+                            }
+
+                            var name = System.Text.Encoding.UTF8.GetString(Convert.FromBase64String(basic)).Split(':')[0];
+                            if(name.Contains('@'))
+                            {
+                                user = userManager.FindByEmailAsync(name).Result;
+                            }
+                            else
+                            {
+                                user = userManager.FindByNameAsync(name).Result;
+                            }
+
+                            if(user == null)
+                            {
+                                actionContext.Response = new HttpResponseMessage(System.Net.HttpStatusCode.Forbidden);
+                                actionContext.Response.Content = new StringContent("There is no user with the given username.");
+                                return;
+                            }
+
+                            var result = identityUserService.CheckPasswordAsync(user, System.Text.Encoding.UTF8.GetString(Convert.FromBase64String(basic)).Split(':')[1]).Result;
+                            if (!result)
+                            {
+                                actionContext.Response = new HttpResponseMessage(System.Net.HttpStatusCode.Forbidden);
+                                actionContext.Response.Content = new StringContent("The username and/or password are incorrect.");
+                                return;
+                            }
+
+                            break;
+                        case "Bearer":
+                            var token = actionContext.Request.Headers.Authorization?.ToString().Substring("Bearer ".Length).Trim();
+                            if (token == null)
+                            {
+                                actionContext.Response = new HttpResponseMessage(System.Net.HttpStatusCode.Forbidden);
+                                actionContext.Response.Content = new StringContent("The token is not valid.");
+                                return;
+                            }
+
+                            var users = userManager.Users.Where(u => u.Token == token);
+                            if(users.Count() != 1)
+                            {
+                                actionContext.Response = new HttpResponseMessage(System.Net.HttpStatusCode.Forbidden);
+                                actionContext.Response.Content = new StringContent("The token is not valid.");
+                                return;
+                            }
+
+                            user = users.First();
+
+                            break;
+                        default:
+                            actionContext.Response = new HttpResponseMessage(System.Net.HttpStatusCode.Forbidden);
+                            return;
+                    }
+
+                    // Feature & Operation
+                    var areaName = "Api";
+                    var controllerName = actionContext.ActionDescriptor.ControllerDescriptor.ControllerName;
+                    var actionName = actionContext.ActionDescriptor.ActionName;
+                    var operation = operationManager.Find(areaName, controllerName, "*");
+
+                    if (operation == null)
                     {
                         actionContext.Response = new HttpResponseMessage(System.Net.HttpStatusCode.Forbidden);
                         return;
                     }
 
-                    if(actionContext.Request.Headers.Authorization.Scheme == "Bearer")
+                    var feature = operation.Feature;
+                    if (feature != null && !featurePermissionManager.Exists(null, feature.Id))
                     {
-                        var token = actionContext.Request.Headers.Authorization?.ToString().Substring("Bearer ".Length).Trim();
-                        if (token != null)
+                        if (!featurePermissionManager.HasAccess(user.Id, feature.Id))
                         {
-                            // resolve the token to the corresponding user
-                            var users = userManager.Users.Where(u => u.Token == token);
-
-                            if (users == null || users.Count() != 1)
-                            {
-                                actionContext.Response = new HttpResponseMessage(System.Net.HttpStatusCode.Forbidden);
-                                actionContext.Response.Content = new StringContent("Bearer token not exist.");
-                                return;
-                            }
-
-                            if (!featurePermissionManager.HasAccess(users.Single().Id, feature.Id))
-                            {
-                                actionContext.Response = new HttpResponseMessage(System.Net.HttpStatusCode.Forbidden);
-                                actionContext.Response.Content = new StringContent("Token is not valid.");
-
-                                return;
-                            }
-
-                            actionContext.ControllerContext.RouteData.Values.Add("user", users.FirstOrDefault()); ;
+                            actionContext.Response = new HttpResponseMessage(System.Net.HttpStatusCode.Forbidden);
+                            actionContext.Response.Content = new StringContent("The system denied the access.");
                             return;
                         }
                     }
 
-                    if (actionContext.Request.Headers.Authorization.Scheme == "Basic")
-                    {
-                        var basic = actionContext.Request.Headers.Authorization?.ToString().Substring("Basic ".Length).Trim();
-                        if (basic != null)
-                        {
-                            using (var identityUserService = new IdentityUserService())
-                            {
-                                var user = userManager.FindByNameAsync(System.Text.Encoding.UTF8.GetString(
-                                Convert.FromBase64String(basic)).Split(':')[0]).Result;
-
-                                if (user != null)
-                                {
-                                    var result = identityUserService.CheckPasswordAsync(user, System.Text.Encoding.UTF8.GetString(
-                                Convert.FromBase64String(basic)).Split(':')[1]).Result;
-
-                                    if (!result)
-                                    {
-                                        actionContext.Response = new HttpResponseMessage(System.Net.HttpStatusCode.Forbidden);
-                                        actionContext.Response.Content = new StringContent("Username and/or Password are incorrect.");
-                                        return;
-                                    }
-
-                                    if (!featurePermissionManager.HasAccess(user.Id, feature.Id))
-                                    {
-                                        actionContext.Response = new HttpResponseMessage(System.Net.HttpStatusCode.Forbidden);
-                                        actionContext.Response.Content = new StringContent("User is not valid.");
-
-                                        return;
-                                    }
-
-                                    actionContext.ControllerContext.RouteData.Values.Add("user", user);
-                                    return;
-                                }
-                            }
-                        }
-                    }
-
-                    actionContext.Response = new HttpResponseMessage(System.Net.HttpStatusCode.Forbidden);
+                    actionContext.ControllerContext.RouteData.Values.Add("user", user);
                     return;
                 }
-            }
-            finally
+            } 
+            catch (Exception ex)
             {
-                featurePermissionManager.Dispose();
-                operationManager.Dispose();
-                userManager.Dispose();
+
             }
         }
     }
