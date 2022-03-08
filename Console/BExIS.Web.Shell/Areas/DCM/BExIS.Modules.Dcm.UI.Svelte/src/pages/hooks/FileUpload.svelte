@@ -34,8 +34,7 @@ async function load()
   model = await getHookStart(hook.start,id,version);
   start = hook.start;
   loading = false;
-  console.log("Attachments")
-  console.log(model)
+
 
 }
 

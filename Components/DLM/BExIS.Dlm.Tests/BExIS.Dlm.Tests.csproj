@@ -88,8 +88,8 @@
     <Reference Include="NHibernate, Version=5.3.0.0, Culture=neutral, PublicKeyToken=aa95f207798dfdb4, processorArchitecture=MSIL">
       <HintPath>..\..\..\packages\NHibernate.5.3.10\lib\net461\NHibernate.dll</HintPath>
     </Reference>
-    <Reference Include="Npgsql">
-      <HintPath>..\..\..\packages\Npgsql.3.2.5\lib\net451\Npgsql.dll</HintPath>
+    <Reference Include="Npgsql, Version=4.0.0.0, Culture=neutral, PublicKeyToken=5d8b90d52f46fda7, processorArchitecture=MSIL">
+      <HintPath>..\..\..\packages\Npgsql.4.0.0\lib\net451\Npgsql.dll</HintPath>
     </Reference>
     <Reference Include="nunit.framework, Version=3.9.0.0, Culture=neutral, PublicKeyToken=2638cd05610744eb, processorArchitecture=MSIL">
       <HintPath>..\..\..\packages\NUnit.3.9.0\lib\net45\nunit.framework.dll</HintPath>
@@ -107,13 +107,16 @@
     <Reference Include="System.Net.Http.Formatting, Version=5.2.3.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\..\..\packages\Microsoft.AspNet.WebApi.Client.5.2.3\lib\net45\System.Net.Http.Formatting.dll</HintPath>
     </Reference>
+    <Reference Include="System.Runtime.CompilerServices.Unsafe, Version=4.0.4.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\..\..\packages\System.Runtime.CompilerServices.Unsafe.4.5.0\lib\netstandard2.0\System.Runtime.CompilerServices.Unsafe.dll</HintPath>
+    </Reference>
     <Reference Include="System.ServiceModel" />
-    <Reference Include="System.Threading.Tasks.Extensions, Version=4.1.1.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
-      <HintPath>..\..\..\packages\System.Threading.Tasks.Extensions.4.4.0\lib\netstandard2.0\System.Threading.Tasks.Extensions.dll</HintPath>
+    <Reference Include="System.Threading.Tasks.Extensions, Version=4.2.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\..\..\packages\System.Threading.Tasks.Extensions.4.5.0\lib\netstandard2.0\System.Threading.Tasks.Extensions.dll</HintPath>
     </Reference>
     <Reference Include="System.Transactions" />
-    <Reference Include="System.ValueTuple, Version=4.0.2.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
-      <HintPath>..\..\..\packages\System.ValueTuple.4.4.0\lib\net47\System.ValueTuple.dll</HintPath>
+    <Reference Include="System.ValueTuple, Version=4.0.3.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\..\..\packages\System.ValueTuple.4.5.0\lib\net47\System.ValueTuple.dll</HintPath>
     </Reference>
     <Reference Include="System.Web" />
     <Reference Include="System.Web.Http, Version=5.2.3.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
@@ -128,6 +131,14 @@
     <ProjectReference Include="..\..\..\Console\BExIS.Web.Shell\BExIS.Web.Shell.csproj">
       <Project>{E5128814-4541-45C8-A9E6-6C91A7E3D1E2}</Project>
       <Name>BExIS.Web.Shell</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\AAA\BExIS.Security.Entities\BExIS.Security.Entities.csproj">
+      <Project>{C230693B-D780-438B-B26C-82257642DD5C}</Project>
+      <Name>BExIS.Security.Entities</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\AAA\BExIS.Security.Services\BExIS.Security.Services.csproj">
+      <Project>{681C8BC4-55F0-4F43-A685-90E246A88CB1}</Project>
+      <Name>BExIS.Security.Services</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\App\BExIS.App.Bootstrap\BExIS.App.Bootstrap.csproj">
       <Project>{7D7FBF8E-37D7-4A4C-B40E-3F267E9B9760}</Project>
@@ -237,6 +248,7 @@
     <Compile Include="Helpers\DatasetHelper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Services\DataStructure\UnitManagerTests.cs" />
+    <Compile Include="Services\Data\EntityTemplateManagerTests.cs" />
     <Compile Include="Services\Data\DatasetManagerTests.cs" />
     <Compile Include="Services\Data\DatasetManager_GetDatasetIdsTests.cs" />
     <Compile Include="Services\Data\DatasetManager_EditDatasetVersionTests.cs" />

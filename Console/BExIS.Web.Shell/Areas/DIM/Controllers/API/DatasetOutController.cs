@@ -232,13 +232,11 @@ namespace BExIS.Modules.Dim.UI.Controllers.API
                         // id direct 
                         if (partyid >0)
                         {
-                          
                             var party = partyManager.GetParty(partyid);
 
                             if (party != null)
                             {
                                 var attr = party.CustomAttributeValues.Where(a => a.CustomAttribute.IsMain = true).ToArray();
-
                                 datasetModel.Citators.Add(new Citator() { FirstName = attr[0].Value, LastName = attr[1].Value });
                             }
                         }

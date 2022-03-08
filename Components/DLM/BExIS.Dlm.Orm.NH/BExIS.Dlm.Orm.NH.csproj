@@ -181,6 +181,10 @@
     <Content Include="Mappings\Default\Data\ContentDescriptor.hbm.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="Mappings\Default\Data\EntityTemplate.hbm.xml">
+      <SubType>Designer</SubType>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="Mappings\Default\Data\Dataset.hbm.xml">
       <SubType>Designer</SubType>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>

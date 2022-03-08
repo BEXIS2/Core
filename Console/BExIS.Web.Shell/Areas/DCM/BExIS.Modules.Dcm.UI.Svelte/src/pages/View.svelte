@@ -25,6 +25,7 @@ $:testPage="";
 
 onMount(async () => {
 
+
 // load menu froms server
 model = await getView(id);
 

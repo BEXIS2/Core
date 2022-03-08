@@ -151,6 +151,7 @@
     <Compile Include="DataStructure\AggregateFunctionManager.cs" />
     <Compile Include="DataStructure\ClassifierManager.cs" />
     <Compile Include="Data\DataTupleIterator.cs" />
+    <Compile Include="Data\EntityTemplateManager.cs" />
     <Compile Include="Helpers\ConstraintHelper.cs" />
     <Compile Include="DataStructure\DataStructureManager.cs" />
     <Compile Include="DataStructure\DataContainerManager.cs" />
@@ -173,6 +174,10 @@
     <Compile Include="TypeSystem\DataTypeUtility.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\AAA\BExIS.Security.Entities\BExIS.Security.Entities.csproj">
+      <Project>{C230693B-D780-438B-B26C-82257642DD5C}</Project>
+      <Name>BExIS.Security.Entities</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\AAA\BExIS.Security.Services\BExIS.Security.Services.csproj">
       <Project>{681c8bc4-55f0-4f43-a685-90e246a88cb1}</Project>
       <Name>BExIS.Security.Services</Name>

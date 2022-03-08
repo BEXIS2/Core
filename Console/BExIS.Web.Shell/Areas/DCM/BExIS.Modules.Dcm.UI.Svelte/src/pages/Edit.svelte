@@ -34,7 +34,7 @@ $:additionalViews=[];
 
 onMount(async () => {
   console.log("start edit");
-  setApiConfig("https://localhost:44345","davidschoene","123456");
+  //setApiConfig("https://localhost:44345","davidschoene","123456");
   load();
 })
 
