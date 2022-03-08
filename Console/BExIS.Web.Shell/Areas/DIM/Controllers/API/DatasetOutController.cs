@@ -122,6 +122,9 @@ namespace BExIS.Modules.Dim.UI.Controllers.API
                     Id = id,
                     Version = versionNumber,
                     VersionId = datasetVersion.Id,
+                    VersionName = datasetVersion.VersionName,
+                    VersionPublicAccess = datasetVersion.PublicAccess,
+                    VersionPublicAccessDate = datasetVersion.PublicAccessDate.ToString(new CultureInfo("en-US")),
                     Title = datasetVersion.Title,
                     Description = datasetVersion.Description,
                     DataStructureId = dataset.DataStructure.Id,
@@ -152,11 +155,13 @@ namespace BExIS.Modules.Dim.UI.Controllers.API
                 // get isMain parts for all found parties if exists (e.g. first and last name)
                 datasetModel.Parties = getPartyIsMainAttributesForParties(elements);
 
+
+                var publicAndDate = getPublicAndDate(id);
                 // check is public
-                datasetModel.IsPublic = getIsPublic(id);
+                datasetModel.IsPublic = publicAndDate.Item1;
 
                 // check for publication date @TODO: replace by stored value
-                datasetModel.PublicationDate = DateTime.Now.ToString(new CultureInfo("en-US"));
+                datasetModel.PublicationDate = publicAndDate.Item2.ToString(new CultureInfo("en-US"));
 
 
                 var response = Request.CreateResponse(HttpStatusCode.OK);
@@ -252,13 +257,14 @@ namespace BExIS.Modules.Dim.UI.Controllers.API
                     // get isMain parts for all found parties if exists (e.g. first and last name)
                     datasetModel.Parties = getPartyIsMainAttributesForParties(elements);
 
+                    var publicAndDate = getPublicAndDate(id);
                     // check is public
-                    datasetModel.IsPublic = getIsPublic(id);
+                    datasetModel.IsPublic = publicAndDate.Item1;
 
                     // check for publication date @TODO: replace by stored value
-                    datasetModel.PublicationDate = DateTime.Now.ToString(new CultureInfo("en-US"));
+                    datasetModel.PublicationDate = publicAndDate.Item2.ToString(new CultureInfo("en-US"));
 
-                     var response = Request.CreateResponse(HttpStatusCode.OK);
+                    var response = Request.CreateResponse(HttpStatusCode.OK);
                     string resp = JsonConvert.SerializeObject(datasetModel);
 
                     response.Content = new StringContent(resp, System.Text.Encoding.UTF8, "application/json");
@@ -325,14 +331,14 @@ namespace BExIS.Modules.Dim.UI.Controllers.API
         }
 
         // @TODO: move to dataset manager?
-        private static bool getIsPublic(long id)
+        private static Tuple<bool, DateTime> getPublicAndDate(long id)
         {
             using (EntityPermissionManager entityPermissionManager = new EntityPermissionManager())
             using (EntityManager entityManager = new EntityManager())
             {
                 long? entityTypeId = entityManager.FindByName(typeof(Dataset).Name)?.Id;
                 entityTypeId = entityTypeId.HasValue ? entityTypeId.Value : -1;
-                return entityPermissionManager.Exists(entityTypeId.Value, id);
+                return entityPermissionManager.GetPublicAndDate(entityTypeId.Value, id);
             }
 
         }

@@ -178,14 +178,27 @@ namespace BExIS.Security.Services.Authorization
                 return entityPermissionRepository.Get(p => p.Subject.Id == subject.Id && p.Entity.Id == entity.Id && p.Key == key).Count == 1;
             }
         }
-        public bool Exists(long entityId, long key)
+        // Get public status and date of publication
+        public Tuple<bool, DateTime> GetPublicAndDate(long entityId, long key)
         {
             using (var uow = this.GetUnitOfWork())
             {
                 var entityPermissionRepository = uow.GetRepository<EntityPermission>();
-                return 1 == entityPermissionRepository.Get(p => p.Subject == null && p.Entity.Id == entityId && p.Key == key).Count();
+                var permission = entityPermissionRepository.Get(p => p.Subject == null && p.Entity.Id == entityId && p.Key == key);
+
+                bool isPublic = false;
+                DateTime publicationDate = DateTime.MinValue; 
+                
+                if (permission.Count == 1)
+                {
+                    isPublic = true;
+                    publicationDate = permission.FirstOrDefault().CreationDate;
+                }
+
+                return Tuple.Create(isPublic, publicationDate);
             }
         }
+
         public bool Exists(long? subjectId, long entityId, long key)
         {
             using (var uow = this.GetUnitOfWork())
