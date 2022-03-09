@@ -57,6 +57,7 @@
     <Compile Include="Controllers\API\DatasetInController.cs" />
     <Compile Include="Controllers\API\MetadataInController.cs" />
     <Compile Include="Controllers\EditController.cs" />
+    <Compile Include="Controllers\EntityTemplatesController.cs" />
     <Compile Include="Controllers\Hooks\AttachmentUploadController.cs" />
     <Compile Include="Controllers\Hooks\FileUploadController.cs" />
     <Compile Include="Controllers\Legacy\AttachmentsController.cs" />
@@ -93,6 +94,7 @@
     <Compile Include="Controllers\ViewController.cs" />
     <Compile Include="DcmModule.cs" />
     <Compile Include="Helpers\API\DataApiHelper.cs" />
+    <Compile Include="Helpers\EntityTemplateHelper.cs" />
     <Compile Include="Helpers\DataASyncUploadHelper.cs" />
     <Compile Include="Helpers\DcmSeedDataGenerator.cs" />
     <Compile Include="Helpers\EasyUploadSuggestion.cs" />
@@ -123,6 +125,7 @@
     <Compile Include="Models\EasyUploadSummaryModel.cs" />
     <Compile Include="Models\Edit\EditModel.cs" />
     <Compile Include="Models\EntityReference\ReferenceModels.cs" />
+    <Compile Include="Models\EntityTemplates\EntityTemplateModels.cs" />
     <Compile Include="Models\FileInfoModel.cs" />
     <Compile Include="Models\FinishUploadModel.cs" />
     <Compile Include="Models\GetFileInformationModel.cs" />
@@ -507,6 +510,7 @@
     <Content Include="Views\View\_test.cshtml" />
     <Content Include="Views\Messages\Index.cshtml" />
     <Content Include="Scripts\jquery-2.1.4.min.map" />
+    <Content Include="Views\EntityTemplate\Index.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

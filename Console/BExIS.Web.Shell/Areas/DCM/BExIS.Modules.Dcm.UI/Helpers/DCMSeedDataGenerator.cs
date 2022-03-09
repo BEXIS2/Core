@@ -135,6 +135,10 @@ namespace BExIS.Modules.Dcm.UI.Helpers
                 Feature MetadataManagementFeature = featureManager.FeatureRepository.Get().FirstOrDefault(f => f.Name.Equals("Metadata Management"));
                 if (MetadataManagementFeature == null) MetadataManagementFeature = featureManager.Create("Metadata Management", "Metadata Management", DataCollectionFeature);
 
+                Feature EntityTemplateManagementFeature = featureManager.FeatureRepository.Get().FirstOrDefault(f => f.Name.Equals("Entity Template Management"));
+                if (EntityTemplateManagementFeature == null) EntityTemplateManagementFeature = featureManager.Create("Entity Template Management", "Entity Template Management", DataCollectionFeature);
+
+
                 #region Help Workflow
 
                 operationManager.Create("DCM", "Help", "*");
@@ -208,6 +212,11 @@ namespace BExIS.Modules.Dcm.UI.Helpers
                 operationManager.Create("DCM", "SubmitSpecifyDataset", "*", MetadataManagementFeature);
 
                 #endregion Metadata Managment Workflow
+
+                #region entity template
+                operationManager.Create("DCM", "EntityTemplates", "*", EntityTemplateManagementFeature);
+
+                #endregion
 
                 #region public available
 
