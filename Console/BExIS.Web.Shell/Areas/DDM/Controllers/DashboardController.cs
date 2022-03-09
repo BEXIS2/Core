@@ -275,8 +275,8 @@ namespace BExIS.Modules.Ddm.UI.Controllers
             {
                 // Entity, Entity Party Type and Entity Party
                 var entity = entityManager.FindByName(entityname);
-                var entityPartyType = partyTypeManager.PartyTypeRepository.Get(p => p.Title == entityname).FirstOrDefault();
-                var entityPartyIds = partyManager.Parties.Where(p => p.PartyType.Id == entityPartyType.Id).Select(p => p.Id);
+                var entityPartyType = partyTypeManager.PartyTypeRepository.Get(p => p.Title == entity.Name).FirstOrDefault();
+                var entityPartyIds = partyManager.Parties.Where(p => p.PartyType.Id == entityPartyType.Id).Select(p => p.Id).ToList();
 
                 List<long> datasetIds = new List<long>();
 
