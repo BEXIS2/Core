@@ -64,7 +64,7 @@ namespace BExIS.Dim.Helpers
                     Type = DataCiteType.DOIs,
                     Attributes = new DataCiteAttributes()
                     {
-                        Creators = authors.Select(a => new DataCiteCreator(a, DataCiteCreatorType.Personal)).ToList(),
+                        Creators = authors.Select(a => DataCiteCreator.Convert(a, DataCiteCreatorType.Personal)).ToList(),
                         Titles = titles.Select(t => new DataCiteTitle() { Title = t }).ToList(),
                         Subjects = subjects.Select(s => new DataCiteSubject() { Subject = s }).ToList(),
                         Version = $"{version}",
