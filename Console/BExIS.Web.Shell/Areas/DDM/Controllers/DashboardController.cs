@@ -295,14 +295,19 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                     if (userParty != null)
                     {
                         // get datasets based on party relationships
-                        Dictionary<long, string> datasetParties = partyManager.PartyRelationshipRepository.Get(p => p.SourceParty.Id == userParty.Id && p.Permission >= (int)rightType).Select(p => new { p.Id, p.Title }).ToDictionary(p => p.Id, p => p.Title);
+                        List<long> partyIds = partyManager.PartyRelationshipRepository.Get(p => p.SourceParty.Id == userParty.Id && p.Permission >= (int)rightType).Select(p => p.TargetParty.Id).ToList();
 
-                        foreach (var datasetParty in datasetParties)
+                        foreach (var partyId in partyIds)
                         {
-                            long id;
-                            bool success = long.TryParse(datasetParty.Value, out id);
-                            if (success && !datasetIds.Contains(id) && entityPartyIds.Contains(datasetParty.Key))
-                                datasetIds.Add(id);
+                            if(entityPartyIds.Contains(partyId))
+                            {
+                                long datasetId = 0;
+                                var success = long.TryParse(partyManager.Find(partyId).Name, out datasetId);
+                                if(success && !datasetIds.Contains(datasetId))
+                                {
+                                    datasetIds.Add(datasetId);
+                                }
+                            } 
                         }
                     }
                 }
