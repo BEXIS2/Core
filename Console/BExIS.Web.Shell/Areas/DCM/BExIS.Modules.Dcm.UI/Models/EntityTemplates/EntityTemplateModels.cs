@@ -11,6 +11,11 @@ namespace BExIS.Modules.Dcm.UI.Models.EntityTemplate
         /// <summary>
         /// Name of the Entity Template
         /// </summary>
+        public long Id { get; set; }
+
+        /// <summary>
+        /// Name of the Entity Template
+        /// </summary>
         public string Name { get; set; }
 
         /// <summary>
@@ -38,6 +43,12 @@ namespace BExIS.Modules.Dcm.UI.Models.EntityTemplate
         /// if false -  only valid metadata will be stored
         /// </summary>
         public virtual bool MetadataInvalidSaveMode { get; set; }
+
+        /// <summary>
+        /// If this flag is true, the entity will have a datastructure
+        /// </summary>
+        public virtual bool HasDatastructure { get; set; }
+
         /// <summary>
         /// List of available Datatructures
         /// </summary>
@@ -66,31 +77,36 @@ namespace BExIS.Modules.Dcm.UI.Models.EntityTemplate
 
         public EntityTemplateModel()
         {
+            Id = 0;
             Name = "";
             Description = "";
+            MetadataStructure = null;
+            EntityType = null;
             AllowedFileTypes = new List<string>();
             DisabledHooks = new List<string>();
             DatastructureList = new List<long>();
             MetadataFields = new List<int>();
             PermissionGroups = new List<long>();
             NotificationGroups = new List<long>();
+            MetadataInvalidSaveMode = false;
+            HasDatastructure = false;
         }
 
         public class KvP
         {
-            public long Key { get; set; }
-            public string Value { get; set; }
+            public long Id { get; set; }
+            public string Text { get; set; }
 
             public KvP()
             {
-                Key = 0;
-                Value = ""; 
+                Id = 0;
+                Text = ""; 
             }
 
             public KvP(long key, string value)
             {
-                Key = key;
-                Value = value;
+                Id = key;
+                Text = value;
             }
         }
     }

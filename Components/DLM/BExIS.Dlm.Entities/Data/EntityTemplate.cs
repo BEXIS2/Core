@@ -33,7 +33,21 @@ namespace BExIS.Dlm.Entities.Data
         /// </summary>
         public virtual MetadataStructure.MetadataStructure MetadataStructure { get; set; }
 
-        public virtual List<int> MetadataFields { get; set; }
+        /// <summary>
+        /// List of available Datatructures
+        /// </summary>
+        public virtual string JsonMetadataFields { get;set; }
+
+        public virtual List<int> MetadataFields {
+            get
+            {
+                return JsonConvert.DeserializeObject<List<int>>(JsonMetadataFields);
+            }
+            set
+            {
+                JsonMetadataFields = JsonConvert.SerializeObject(value);
+            }
+        }
 
         /// <summary>
         /// should the user be able to save the metadata if not alle mandatory are filled correct
@@ -41,6 +55,13 @@ namespace BExIS.Dlm.Entities.Data
         /// if false -  only valid metadata will be stored
         /// </summary>
         public virtual bool MetadataInvalidSaveMode { get; set; }
+
+        /// <summary>
+        /// should the user be able to save the metadata if not alle mandatory are filled correct
+        /// if true - also not valid metadat will be stored
+        /// if false -  only valid metadata will be stored
+        /// </summary>
+        public virtual bool HasDatastructure { get; set; }
 
         /// <summary>
         /// List of available Datatructures
@@ -128,6 +149,13 @@ namespace BExIS.Dlm.Entities.Data
             DatastructureList = new List<long>();
             MetadataFields = new List<int>();
             PermissionGroups = new List<long>();
+
+            JsonAllowedFileTypes = "";
+            JsonDatastructureList = "";
+            JsonDisabledHooks = "";
+            JsonMetadataFields = "";
+            JsonPermissionGroups = "";
+            JsonNotificationGroups = "";
         }
 
         public EntityTemplate(string name, string description, Entity entityType, MetadataStructure.MetadataStructure metadataStructure)
@@ -141,6 +169,13 @@ namespace BExIS.Dlm.Entities.Data
             DatastructureList = new List<long>();
             MetadataFields = new List<int>();
             PermissionGroups = new List<long>();
+
+            JsonAllowedFileTypes = "";
+            JsonDatastructureList = "";
+            JsonDisabledHooks = "";
+            JsonMetadataFields = "";
+            JsonPermissionGroups = "";
+            JsonNotificationGroups = "";
         }
 
     }

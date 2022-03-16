@@ -32,6 +32,10 @@
 		<column name="MetadataInvalidSaveMode" />
 	</property>
 
+	<property name="HasDatastructure" type="Boolean">
+		<column name="HasDatastructure" />
+	</property>
+
 	<property name="JsonDatastructureList" type="string">
 		<column name="JsonDatastructureList" />
 	</property>
@@ -50,6 +54,10 @@
 	<property name="JsonPermissionGroups" type="string">
 		<column name="JsonPermissionGroups" />
 	</property>
+
+	  <property name="JsonMetadataFields" type="string">
+		  <column name="JsonMetadataFields" />
+	  </property>
 
 	<many-to-one name="EntityType" class="BExIS.Security.Entities.Objects.Entity" not-null="true" column="EntityRef"/>
 

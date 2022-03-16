@@ -98,7 +98,7 @@ namespace BExIS.Dlm.Services.Data
 
         public bool Delete(long id)
         {
-            if (id > 0 ) throw new ArgumentException("Entity template must not be null.");
+            if (id == 0 ) throw new ArgumentException("Entity template must not be null.");
 
             Contract.Ensures(Contract.Result<EntityTemplate>() != null && Contract.Result<EntityTemplate>().Id >= 0);
 

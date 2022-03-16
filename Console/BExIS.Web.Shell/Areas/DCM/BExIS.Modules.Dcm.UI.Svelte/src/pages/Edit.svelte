@@ -5,6 +5,7 @@ import {Spinner} from 'sveltestrap';
 
 import { getEdit }  from '../services/Caller'
 import { setApiConfig }  from '@bexis2/svelte-bexis2-core-ui'
+import {notEmtpy} from '../components/form/validation '
 
 import Header from '../components/edit/Header.svelte'
 import Data from '../components/edit/Data.svelte'

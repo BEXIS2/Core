@@ -125,6 +125,7 @@ export const getMetadataStructures = async () => {
   }
 };
 
+
 export const getSystemKeys = async () => {
   try {
     const response = await Api.get('/dcm/entitytemplates/SystemKeys');
@@ -173,7 +174,16 @@ export const getFileTypes = async () => {
 
 export const saveEntityTemplate = async (entityTemplate) => {
   try {
-    const response = await Api.post('/dcm/entitytemplates/Create', entityTemplate);
+    const response = await Api.post('/dcm/entitytemplates/Update', entityTemplate);
+    return response.data;
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+export const deleteEntityTemplate = async (id) => {
+  try {
+    const response = await Api.post('/dcm/entitytemplates/Delete?id='+id);
     return response.data;
   } catch (error) {
     console.error(error);

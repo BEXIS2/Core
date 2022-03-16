@@ -14,8 +14,8 @@
 <FormGroup style="max-height: 210px; overflow:auto; overflow-x:hidden;">
   {#each source as item}
     <div class="form-check">
-      <input class="form-check-input" type=checkbox bind:group={target} value={item}>
-      <label class="form-check-label" for="{key}">{item}</label>
+      <input class="form-check-input" type=checkbox bind:group={target} value={item.key}>
+      <label class="form-check-label" for="{key}}">{item.value}</label>
     </div>
   {/each}
 </FormGroup>

@@ -4,9 +4,11 @@ import Fa from 'svelte-fa/src/fa.svelte'
 import { faPlus } from '@fortawesome/free-solid-svg-icons'
 
 import { onMount } from 'svelte'; 
-import {Spinner,Button, Collapse} from 'sveltestrap';
+import {Spinner,Button, Collapse, Offcanvas } from 'sveltestrap';
 
 import { setApiConfig }  from '@bexis2/svelte-bexis2-core-ui'
+
+import { fade } from 'svelte/transition';
 
 import { 
   getEntities,
@@ -15,7 +17,8 @@ import {
   getSystemKeys,
   getGroups, 
   getHooks,
-  getFileTypes
+  getFileTypes,
+  getEntityTemplateList
 }  from '../services/Caller'
 
 import Edit from '../components/entitytemplate/Edit.svelte'
@@ -30,6 +33,11 @@ let groups=[];
 let filetypes=[];
 
 let isOpen = false;
+let header = "";
+
+$:selectedEntityTemplate = 0;
+
+$:entitytemplates= [];
 
 onMount(async () => {
   console.log("start entity template");
@@ -43,6 +51,8 @@ onMount(async () => {
   groups = await getGroups();
   filetypes = await getFileTypes();
 
+  entitytemplates = await getEntityTemplateList();
+
   console.log("hooks", hooks);
   console.log("metadataStructures", metadataStructures);
   console.log("dataStructures",dataStructures);
@@ -50,14 +60,72 @@ onMount(async () => {
   console.log("entities",entities);
   console.log("groups",groups);
   console.log("filetypes",filetypes);
-
+  console.log("entitytemplates", entitytemplates);
+ 
 })
 
+async function refresh(e)
+{
+  const newEnityTemplate = e.detail;
+  console.log(newEnityTemplate);
+  
+  //remove object from list & add to list again
+  entitytemplates = entitytemplates.filter(e => {
+      return e.id !== newEnityTemplate.id;
+    });
+  entitytemplates = [...entitytemplates, newEnityTemplate];
+
+  // close the form to reset
+  isOpen = false;
+}
+
+// open form as new
+async function create()
+{
+   // set Form header 
+   header="Create a new entity template";
+
+  // set id
+  selectedEntityTemplate = 0;
+  isOpen = !isOpen;
+
+}
+
+// open form in edit with id in e.detail
+async function edit(e)
+{
+  // set Form header 
+  header="Edit a new entity template ("+e.detail+")";
+
+  //remove form from dom
+  isOpen = false;
+ 
+  // reopen form with new object
+  setTimeout(async () => {
+    selectedEntityTemplate = e.detail;
+    
+    isOpen = true;
+  },500)
+}
+
+let open = false;
+const toggle = () => (open = !open);
+
+
 </script>
-<Button color="primary" on:click={() => (isOpen = !isOpen)} class="mb-3">
+
+<Button color="danger" on:click={toggle}>Start</Button>
+
+<Offcanvas {isOpen} {toggle} {header} backdrop="{false}">
+<!-- <Collapse {isOpen}> -->
+  <Edit id = {selectedEntityTemplate} {hooks} {metadataStructures} {dataStructures} {systemKeys} {entities} {groups} {filetypes} on:save={refresh} />
+<!-- </Collapse> -->
+</Offcanvas>
+<!-- {#if !isOpen} -->
+<div transition:fade>
+<Button  color="primary" on:click={create} class="mb-3" disabled={isOpen}>
  <Fa icon={faPlus}/>
 </Button>
-<Collapse {isOpen}>
-<Edit  {hooks} {metadataStructures} {dataStructures} {systemKeys} {entities} {groups} {filetypes}/>
-</Collapse>
-<Overview/>
+</div>
+<!-- {/if} -->
+<Overview bind:entitytemplates={entitytemplates} on:edit={edit} />

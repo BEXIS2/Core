@@ -13,6 +13,7 @@ using System;
 using System.Collections.Generic;
 using System.Web.Mvc;
 using Vaiona.Web.Extensions;
+using static BExIS.Modules.Dcm.UI.Models.EntityTemplate.EntityTemplateModel;
 
 namespace BExIS.Modules.Dcm.UI.Controllers
 {
@@ -66,18 +67,18 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             }
         }
 
-        [JsonNetFilter]
-        [HttpPost]
-        public JsonResult Create(EntityTemplateModel entityTemplate)
-        {
-            using (var entityTemplateManager = new EntityTemplateManager())
-            {
-                var result = entityTemplateManager.Create(EntityTemplateHelper.ConvertTo(entityTemplate));
-                if(result != null) return Json(true);
-            }
+        //[JsonNetFilter]
+        //[HttpPost]
+        //public JsonResult Create(EntityTemplateModel entityTemplate)
+        //{
+        //    using (var entityTemplateManager = new EntityTemplateManager())
+        //    {
+        //        var result = entityTemplateManager.Create(EntityTemplateHelper.ConvertTo(entityTemplate));
+        //        if(result != null) return Json(true);
+        //    }
 
-            return Json(false);
-        }
+        //    return Json(false);
+        //}
 
         [JsonNetFilter]
         [HttpPost]
@@ -85,8 +86,14 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         {
             using (var entityTemplateManager = new EntityTemplateManager())
             {
-                var result = entityTemplateManager.Update(EntityTemplateHelper.ConvertTo(entityTemplate));
-                if (result != null) return Json(true);
+                EntityTemplate result = null;
+
+                if (entityTemplate.Id == 0)
+                    result = entityTemplateManager.Create(EntityTemplateHelper.ConvertTo(entityTemplate));
+                else
+                    result = entityTemplateManager.Update(EntityTemplateHelper.Merge(entityTemplate));
+
+                if (result != null) return Json(EntityTemplateHelper.ConvertTo(result));
             }
 
             return Json(false);
@@ -96,12 +103,12 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         [HttpGet]
         public JsonResult Entities()
         {
-            List<KeyValuePair<long, string>> tmp = new List<KeyValuePair<long, string>>();
+            List<KvP> tmp = new List<KvP>();
             using (var entityManager = new EntityManager())
             {
                 foreach (var entity in entityManager.EntityRepository.Get())
                 {
-                    tmp.Add(new KeyValuePair<long, string>(entity.Id, entity.Name));
+                    tmp.Add(new KvP(entity.Id, entity.Name));
                 }
             }
 
@@ -110,15 +117,14 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
         [JsonNetFilter]
         [HttpGet]
-
         public JsonResult MetadataStructures()
         {
-            List<KeyValuePair<long, string>> tmp = new List<KeyValuePair<long, string>>();
+            List<KvP> tmp = new List<KvP>();
             using (var metadataStrutcureManager = new MetadataStructureManager())
             {
                 foreach (var entity in metadataStrutcureManager.Repo.Get())
                 {
-                    tmp.Add(new KeyValuePair<long, string>(entity.Id, entity.Name));
+                    tmp.Add(new KvP(entity.Id, entity.Name));
                 }
             }
 
