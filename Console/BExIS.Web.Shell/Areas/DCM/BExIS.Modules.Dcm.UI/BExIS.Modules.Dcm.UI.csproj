@@ -510,7 +510,7 @@
     <Content Include="Views\View\_test.cshtml" />
     <Content Include="Views\Messages\Index.cshtml" />
     <Content Include="Scripts\jquery-2.1.4.min.map" />
-    <Content Include="Views\EntityTemplate\Index.cshtml" />
+    <Content Include="Views\EntityTemplates\Index.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

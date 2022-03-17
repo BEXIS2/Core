@@ -4,7 +4,7 @@ import Fa from 'svelte-fa/src/fa.svelte'
 import { faPlus } from '@fortawesome/free-solid-svg-icons'
 
 import { onMount } from 'svelte'; 
-import {Spinner,Button, Collapse, Offcanvas } from 'sveltestrap';
+import {Spinner,Button, Collapse, Container } from 'sveltestrap';
 
 import { setApiConfig }  from '@bexis2/svelte-bexis2-core-ui'
 
@@ -103,29 +103,37 @@ async function edit(e)
   // reopen form with new object
   setTimeout(async () => {
     selectedEntityTemplate = e.detail;
-    
     isOpen = true;
   },500)
 }
 
-let open = false;
-const toggle = () => (open = !open);
-
+const toggle = () => (isOpen = !isOpen);
 
 </script>
 
-<Button color="danger" on:click={toggle}>Start</Button>
-
-<Offcanvas {isOpen} {toggle} {header} backdrop="{false}">
-<!-- <Collapse {isOpen}> -->
-  <Edit id = {selectedEntityTemplate} {hooks} {metadataStructures} {dataStructures} {systemKeys} {entities} {groups} {filetypes} on:save={refresh} />
-<!-- </Collapse> -->
-</Offcanvas>
-<!-- {#if !isOpen} -->
+<!-- <Offcanvas {isOpen} {toggle} {header} backdrop="{false}" > -->
+<Collapse {isOpen} >
+<Container>
+  <Edit id = {selectedEntityTemplate} 
+  {hooks} 
+  {metadataStructures} 
+  {dataStructures} 
+  {systemKeys} 
+  {entities} 
+  {groups} 
+  {filetypes} 
+  on:save={refresh} 
+  on:cancel={()=>isOpen=false}/>
+</Container>
+</Collapse>
+<!-- </Offcanvas> -->
+<Container>
+{#if !isOpen}
 <div transition:fade>
 <Button  color="primary" on:click={create} class="mb-3" disabled={isOpen}>
  <Fa icon={faPlus}/>
 </Button>
 </div>
-<!-- {/if} -->
+{/if}
 <Overview bind:entitytemplates={entitytemplates} on:edit={edit} />
+</Container>

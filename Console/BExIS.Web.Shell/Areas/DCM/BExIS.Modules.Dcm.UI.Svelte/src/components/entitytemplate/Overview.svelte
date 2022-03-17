@@ -6,7 +6,7 @@
 
  import { faTrash, faPen } from '@fortawesome/free-solid-svg-icons'
  import { onMount } from 'svelte'; 
- import {Spinner, Row,Col, Button, ButtonGroup, CardFooter} from 'sveltestrap';
+ import {Spinner, Row,Col, Button, Container} from 'sveltestrap';
  
  import { setApiConfig }  from '@bexis2/svelte-bexis2-core-ui';
 
@@ -41,11 +41,11 @@ async function remove(index, id){
  
  </script>
  
- <h1>Overview</h1>
+<div style="padding-top: 20px;">
 <Row>
  {#if entitytemplates}
     {#each entitytemplates as item, i (item.id)}
-      <Col xs="3">
+      <Col xs="6" ms="4" md="5" >
         <Card {...item} >
            <Button on:click={edit(item.id)}><Fa icon="{faPen}"/></Button>
            <Button on:click={remove(i, item.id)}><Fa icon="{faTrash}"/></Button>
@@ -56,3 +56,4 @@ async function remove(index, id){
   <Spinner color="info" size="sm" type ="grow" text-center />
  {/if}
 </Row>
+</div>

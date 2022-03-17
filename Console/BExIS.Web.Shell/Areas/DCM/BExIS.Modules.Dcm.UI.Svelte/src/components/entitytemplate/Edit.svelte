@@ -1,21 +1,22 @@
 <script>
 
 import Fa from 'svelte-fa/src/fa.svelte'
-import CheckBoxList  from '../form/CheckBoxList.svelte'
 import CheckBoxKvPList  from '../form/CheckBoxKvPList.svelte'
 import DropdownKvP  from '../form/DropdownKvP.svelte'
+import MultiSelect  from '../form/MultiSelect.svelte'
 
 import suite from './edit'
 
 import {createEventDispatcher} from 'svelte'
 
 import { onMount } from 'svelte'; 
-import {Form, FormGroup, Input, Label, Row, Col, Button, Spinner} from 'sveltestrap';
+import {FormGroup, Input, Label, Row, Col, Button, Spinner} from 'sveltestrap';
 
 import { setApiConfig }  from '@bexis2/svelte-bexis2-core-ui'
 import { getEntityTemplate, saveEntityTemplate }  from '../../services/Caller'
 
-import { faSave } from '@fortawesome/free-regular-svg-icons'
+import { faSave, faTrashAlt } from '@fortawesome/free-regular-svg-icons'
+
 
 
  export let id = 0;
@@ -31,9 +32,7 @@ import { faSave } from '@fortawesome/free-regular-svg-icons'
  const dispatch = createEventDispatcher();
 
  $:entityTemplate = null; 
- 
- let form = null;
- let name = null;
+
 
   onMount(async () => {
     console.log("start entity template", id);
@@ -46,6 +45,13 @@ import { faSave } from '@fortawesome/free-regular-svg-icons'
   {
     entityTemplate = await getEntityTemplate(id);
     console.log("load entity", entityTemplate);
+
+    // if id > 0 then run validation
+    if(id>0)
+    {
+      res = suite(entityTemplate);
+    }
+
   }
 
   async function handleSubmit() {
@@ -58,39 +64,21 @@ import { faSave } from '@fortawesome/free-regular-svg-icons'
     }
   }
 
-
-  let res = suite.get();
-  $:disabled = !res.isValid();
   // validation
+  let res = suite.get();
+  // flag to enable submit button
+  $:disabled = !res.isValid();
+
+  //change event: if input change check also validation only on the field
+  // e.target.id is the id of the input component
   function onChangeHandler(e)
   {
     // add some delay so the entityTemplate is updated 
     // otherwise the values are old
     setTimeout(async () => {
-      console.log("input",e.target.id);
-      console.log("Target", e.target.value);
-      console.log("entityTemplate", entityTemplate);
-      console.log("entity", entityTemplate.entityType);
-
       res = suite(entityTemplate, e.target.id)
-
 			},10)
-
-     
-    //  console.log("errors", res.getErrors());
-    //  console.log("name errors", res.getErrors("name"));
-    //  console.log("name has errors", res.hasErrors());
-    //  console.log("------------------");
-    //  console.log("name is valid", res.isValid("name"));
-    //  console.log("description is valid", res.isValid("description"));
-    //  console.log("metadataStructure is valid", res.isValid("metadataStructure"));
-    //  console.log("entityType is valid", res.isValid("entityType"));
-    //  console.log("------------------");
-
-    //  console.log("form is valid", res.isValid());
-
   }
-
 
  </script>
 
@@ -111,20 +99,6 @@ import { faSave } from '@fortawesome/free-regular-svg-icons'
         required={true}
         />
       </FormGroup>
-
-      <FormGroup>
-        <Label for="description" >Description</Label>
-        <Input id="description"
-        bind:value="{entityTemplate.description}" 
-        type="textarea"
-        valid={res.isValid("description")} 
-        invalid={res.hasErrors("description")}  
-        feedback={res.getErrors("description")} 
-        on:input={onChangeHandler} 
-        required={true} 
-        />
-      </FormGroup>
-
     </Col>
     <Col xs="6">
       <DropdownKvP 
@@ -139,7 +113,22 @@ import { faSave } from '@fortawesome/free-regular-svg-icons'
       />
     </Col>
   </Row>
-
+  <Row>
+    <Col xs="12">
+      <FormGroup>
+        <Label for="description" >Description</Label>
+        <Input id="description"
+        bind:value="{entityTemplate.description}" 
+        type="textarea"
+        valid={res.isValid("description")} 
+        invalid={res.hasErrors("description")}  
+        feedback={res.getErrors("description")} 
+        on:input={onChangeHandler} 
+        required={true} 
+        />
+      </FormGroup>
+    </Col>
+  </Row>
   <Row>
     <Col>
       <h3>Metadata</h3>
@@ -154,11 +143,19 @@ import { faSave } from '@fortawesome/free-regular-svg-icons'
       on:change={onChangeHandler} 
       />
 
+      <MultiSelect 
+      title="Metadata input Field" 
+      source={systemKeys}
+      bind:target={entityTemplate.metadataFields}
+      optionIdentifier="key"
+      labelIdentifier="value"
+      isComplex={true}
+      />
+      
       <FormGroup>
         <Input id="metadataInvalidSaveMode" type="switch" label="MetadataInvalidSaveMode" bind:value={entityTemplate.metadataInvalidSaveMode} />
       </FormGroup>
 
-      <CheckBoxKvPList key="systemkey" title="Metadata input Field" source={systemKeys} bind:target={entityTemplate.metadataFields} />
     </Col>
     <Col>
       <h3>Datastructure</h3>
@@ -167,7 +164,7 @@ import { faSave } from '@fortawesome/free-regular-svg-icons'
       </FormGroup>
       
       {#if entityTemplate.hasDatastructure}
-         <CheckBoxKvPList key="datastructures" title="Datastructures" source={dataStructures} bind:target={entityTemplate.datastructureList} />
+        <CheckBoxKvPList key="datastructures" title="Datastructures" source={dataStructures} bind:target={entityTemplate.datastructureList} />
       {/if}
     </Col>
   </Row>
@@ -176,28 +173,50 @@ import { faSave } from '@fortawesome/free-regular-svg-icons'
 
   <Row>
     <Col>
-      <CheckBoxKvPList key="permission" title="Permission groups" source={groups} bind:target={entityTemplate.permissionGroups} />
+      <MultiSelect  
+      title="Permission groups" 
+      source={groups} 
+      bind:target={entityTemplate.permissionGroups}
+      optionIdentifier="key"
+      labelIdentifier="value"
+      isComplex={true}
+      />
     </Col>
     <Col>
-      <CheckBoxKvPList key="notification" title="Notification groups" source={groups} bind:target={entityTemplate.notificationGroups} />
+      <MultiSelect  
+      title="Notification groups" 
+      source={groups} 
+      bind:target={entityTemplate.notificationGroups} 
+      optionIdentifier="key"
+      labelIdentifier="value"
+      isComplex={true}
+      />
     </Col>
   </Row>
 
   <h3>Additional</h3>
+  
   <Row>
     <Col>
-      <CheckBoxList key="hooks" title="Disabled hooks" source={hooks} bind:target={entityTemplate.disabledHooks} />
+      <MultiSelect 
+      title="Disabled hooks" 
+      source={hooks} 
+      bind:target={entityTemplate.disabledHooks} 
+      />
     </Col>
     <Col>
-      <CheckBoxList key="filetypes" title="Allowed File Types" source={filetypes} bind:target={entityTemplate.allowedFileTypes} />
+      <MultiSelect 
+      title="Allowed File Types" 
+      source={filetypes} 
+      bind:target={entityTemplate.allowedFileTypes} 
+      /> 
     </Col>
   </Row>
 
   <Button type="submit" color="primary" {disabled}><Fa icon={faSave}/></Button>
+  <Button color="danger" on:click={()=> dispatch("cancel")}><Fa icon={faTrashAlt}/></Button>
 <!-- </Form> -->
 </form>
 {:else}
 <Spinner color="info" size="sm" type ="grow" text-center />
 {/if}
-
-

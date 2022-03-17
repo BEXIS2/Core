@@ -33,6 +33,7 @@
     "sirv-cli": "^2.0.2",
     "svelte-fa": "^2.4.0",
     "svelte-file-dropzone": "0.0.15",
+    "svelte-select": "^4.4.7",
     "sveltestrap": "^5.9.0",
     "vest": "^4.2.2"
   }
