@@ -134,7 +134,7 @@ import { faSave, faTrashAlt } from '@fortawesome/free-regular-svg-icons'
       <h3>Metadata</h3>
       <DropdownKvP 
       id="metadataStructure"
-      title="Metadata structure" 
+      title="Structure" 
       bind:target={entityTemplate.metadataStructure}
       source={metadataStructures} 
       valid={res.isValid("metadataStructure")}
@@ -144,7 +144,7 @@ import { faSave, faTrashAlt } from '@fortawesome/free-regular-svg-icons'
       />
 
       <MultiSelect 
-      title="Metadata input Field" 
+      title="Required input fields" 
       source={systemKeys}
       bind:target={entityTemplate.metadataFields}
       optionIdentifier="key"
@@ -153,14 +153,14 @@ import { faSave, faTrashAlt } from '@fortawesome/free-regular-svg-icons'
       />
       
       <FormGroup>
-        <Input id="metadataInvalidSaveMode" type="switch" label="MetadataInvalidSaveMode" bind:value={entityTemplate.metadataInvalidSaveMode} />
+        <Input id="metadataInvalidSaveMode" type="switch" label="Invalid save mode" bind:value={entityTemplate.metadataInvalidSaveMode} />
       </FormGroup>
 
     </Col>
     <Col>
       <h3>Datastructure</h3>
       <FormGroup>
-        <Input id="hasDatastructure" type="switch" label="hasDatastructure" bind:checked={entityTemplate.hasDatastructure } />
+        <Input id="hasDatastructure" type="switch" label="Use datastructures?" bind:checked={entityTemplate.hasDatastructure } />
       </FormGroup>
       
       {#if entityTemplate.hasDatastructure}
@@ -174,7 +174,7 @@ import { faSave, faTrashAlt } from '@fortawesome/free-regular-svg-icons'
   <Row>
     <Col>
       <MultiSelect  
-      title="Permission groups" 
+      title="Permission" 
       source={groups} 
       bind:target={entityTemplate.permissionGroups}
       optionIdentifier="key"
@@ -184,7 +184,7 @@ import { faSave, faTrashAlt } from '@fortawesome/free-regular-svg-icons'
     </Col>
     <Col>
       <MultiSelect  
-      title="Notification groups" 
+      title="Notification" 
       source={groups} 
       bind:target={entityTemplate.notificationGroups} 
       optionIdentifier="key"
@@ -206,7 +206,7 @@ import { faSave, faTrashAlt } from '@fortawesome/free-regular-svg-icons'
     </Col>
     <Col>
       <MultiSelect 
-      title="Allowed File Types" 
+      title="Allowed file types" 
       source={filetypes} 
       bind:target={entityTemplate.allowedFileTypes} 
       /> 

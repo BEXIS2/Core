@@ -20776,8 +20776,8 @@ var app = (function () {
     			create_component(button0.$$.fragment);
     			t9 = space();
     			create_component(button1.$$.fragment);
-    			add_location(h30, file$3, 171, 2, 4770);
-    			add_location(h31, file$3, 196, 2, 5318);
+    			add_location(h30, file$3, 171, 2, 4759);
+    			add_location(h31, file$3, 196, 2, 5293);
     			add_location(form, file$3, 86, 0, 2185);
     		},
     		m: function mount(target, anchor) {
@@ -21493,7 +21493,7 @@ var app = (function () {
     	let input_props = {
     		id: "metadataInvalidSaveMode",
     		type: "switch",
-    		label: "MetadataInvalidSaveMode"
+    		label: "Invalid save mode"
     	};
 
     	if (/*entityTemplate*/ ctx[8].metadataInvalidSaveMode !== void 0) {
@@ -21566,7 +21566,7 @@ var app = (function () {
 
     	let dropdownkvp_props = {
     		id: "metadataStructure",
-    		title: "Metadata structure",
+    		title: "Structure",
     		source: /*metadataStructures*/ ctx[1],
     		valid: /*res*/ ctx[7].isValid("metadataStructure"),
     		invalid: /*res*/ ctx[7].hasErrors("metadataStructure"),
@@ -21586,7 +21586,7 @@ var app = (function () {
     	}
 
     	let multiselect_props = {
-    		title: "Metadata input Field",
+    		title: "Required input fields",
     		source: /*systemKeys*/ ctx[3],
     		optionIdentifier: "key",
     		labelIdentifier: "value",
@@ -21710,7 +21710,7 @@ var app = (function () {
     	let input_props = {
     		id: "hasDatastructure",
     		type: "switch",
-    		label: "hasDatastructure"
+    		label: "Use datastructures?"
     	};
 
     	if (/*entityTemplate*/ ctx[8].hasDatastructure !== void 0) {
@@ -21864,7 +21864,7 @@ var app = (function () {
     			t2 = space();
     			if (if_block) if_block.c();
     			if_block_anchor = empty();
-    			add_location(h3, file$3, 160, 6, 4343);
+    			add_location(h3, file$3, 160, 6, 4329);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, h3, anchor);
@@ -22030,7 +22030,7 @@ var app = (function () {
     	}
 
     	let multiselect_props = {
-    		title: "Permission groups",
+    		title: "Permission",
     		source: /*groups*/ ctx[5],
     		optionIdentifier: "key",
     		labelIdentifier: "value",
@@ -22100,7 +22100,7 @@ var app = (function () {
     	}
 
     	let multiselect_props = {
-    		title: "Notification groups",
+    		title: "Notification",
     		source: /*groups*/ ctx[5],
     		optionIdentifier: "key",
     		labelIdentifier: "value",
@@ -22317,7 +22317,7 @@ var app = (function () {
     	}
 
     	let multiselect_props = {
-    		title: "Allowed File Types",
+    		title: "Allowed file types",
     		source: /*filetypes*/ ctx[6]
     	};
 
