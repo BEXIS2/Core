@@ -14,9 +14,8 @@ using System.Threading;
 using BExIS.Security.Services.Utilities;
 using RestSharp;
 using RestSharp.Authenticators;
-using Lucifron.ReST.Models;
 using Newtonsoft.Json.Linq;
-using Lucifron.ReST.Models.DataCite;
+using Lucifron.ReST.Library.Models;
 
 namespace BExIS.Dim.Helpers
 {
