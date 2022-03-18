@@ -33,3 +33,8 @@ update operations set controller = 'RequestsManage' where controller = 'Requests
 
 -- Add Creation Date to entitypermissions
 Alter TABLE entitypermissions add column creationdate timestamp without time zone;
+
+-- Add Entry for api/token
+INSERT INTO public.operations (versionno, extra, module, controller, action, featureref)
+SELECT 1, NULL, 'API', 'Token', '*', null
+WHERE NOT EXISTS (SELECT * FROM public.operations WHERE module='API' AND controller='Token');
