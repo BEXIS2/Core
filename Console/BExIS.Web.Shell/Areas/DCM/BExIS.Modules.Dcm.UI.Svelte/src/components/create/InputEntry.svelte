@@ -1,12 +1,13 @@
 <script>
-   import { Input} from 'sveltestrap';	
+   import { Input, Label, FormGroup} from 'sveltestrap';	
 
    export let type;
    export let value;
    export let label;
 </script>
 
-
+<FormGroup>
+ <Label for="{label}">{label}</Label>
 {#if type=='Boolean'}
     <Input {label} type="checkbox" bind:checked={value} /> 
 {:else if type=='String'}
@@ -16,3 +17,5 @@
 {:else if type=='DateTime'} 
     <Input type="date" bind:value={value} />
 {/if}
+
+</FormGroup>

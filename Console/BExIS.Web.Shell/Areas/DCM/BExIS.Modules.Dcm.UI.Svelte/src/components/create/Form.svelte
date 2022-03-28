@@ -2,7 +2,7 @@
 
 import Fa from 'svelte-fa/src/fa.svelte'
 import { faTrashAlt } from '@fortawesome/free-solid-svg-icons'
-import {Row,Col,Button, Spinner } from 'sveltestrap';
+import {Row,Col,Button, Spinner, FormGroup, Label } from 'sveltestrap';
 import {onMount} from 'svelte'
 import { getCreate, create }  from '../../services/CreateCaller'
 
@@ -11,7 +11,9 @@ import suite from './form'
 import InputEntry from './InputEntry.svelte'
 
 export let id;
-
+let titleField;
+let descriptionField;
+let metadataFields = [];
 
 import {createEventDispatcher} from 'svelte'
 const dispatch = createEventDispatcher();
@@ -29,6 +31,8 @@ onMount(async () => {
 const res = await getCreate(id);
 console.log("res",res);
 if(res != false) model = res;
+
+filterInputs();
 
 });
 
@@ -54,6 +58,29 @@ function onChangeHandler(e)
  },10)
 }
 
+// set title and description and remove from other fields
+// because of getting a good form structure
+function filterInputs()
+{
+  for (let index = 0; index < model.inputFields.length; index++) {
+    const element = model.inputFields[index];
+    if(element.name.toLowerCase() =="title")
+    {
+      titleField = element;
+    }
+    else
+    if(element.name.toLowerCase() =="description")
+    {
+      descriptionField = element;
+    }
+    else
+    {
+      metadataFields = [...metadataFields,element]
+    }
+
+  }
+}
+
 </script>
 
 {#if model}
@@ -64,43 +91,50 @@ function onChangeHandler(e)
 
 <form on:submit|preventDefault={handleSubmit}>
 
-{#each model.inputFields as item}
-<Row>
-  <Col>
-    <b>{item.name}</b>
-  </Col>
-  <Col>
-    <InputEntry label={item.name} type={item.type} bind:value={item.value}/>
-  </Col>
-</Row>
-{/each}
 
 <Row>
   <Col>
-    <b>Usable structures</b>
+    {#if titleField}
+      <InputEntry label={titleField.name} type={titleField.type} bind:value={titleField.value}/>
+    {/if}
+    {#if descriptionField}
+      <InputEntry label={descriptionField.name} type={descriptionField.type} bind:value={descriptionField.value}/>
+    {/if}
+    {#each metadataFields as item}
+      <InputEntry label={item.name} type={item.type} bind:value={item.value}/>
+    {/each}
   </Col>
+</Row>
+
+
+{#if model.datastructures && model.datastructures.length>0} <!--data structures exist-->
+<Row>
   <Col>
+    <b>Usable structures</b>
     <ul>
       {#each model.datastructures as item}
-        <li>{item}</li>
-      {/each}
-    </ul>    
-  </Col>
-</Row>
-<Row>
-  <Col>
-    <b>Supported file types</b>
-  </Col>
-  <Col>
-    <ul>
-      {#each model.fileTypes as item}
           <li>{item}</li>
       {/each}
-      </ul>      
+    </ul>   
   </Col>
 </Row>
+{/if}
+
+{#if model.fileTypes && model.fileTypes.length>0} <!--file types exist-->
 <Row>
-  
+  <Col>
+    <FormGroup>
+      <Label>Supported file types</Label>
+      <ul>
+        {#each model.fileTypes as item}
+            <li>{item}</li>
+        {/each}
+      </ul>
+    </FormGroup>  
+  </Col>
+</Row>
+{/if}
+<Row>
  <Col>
   <p class="text-end">
    <Button color="primary" {disabled} >Create</Button>
