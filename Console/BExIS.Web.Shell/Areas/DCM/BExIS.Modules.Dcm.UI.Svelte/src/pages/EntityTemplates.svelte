@@ -4,7 +4,7 @@ import Fa from 'svelte-fa/src/fa.svelte'
 import { faPlus } from '@fortawesome/free-solid-svg-icons'
 
 import { onMount } from 'svelte'; 
-import {Spinner,Button, Collapse, Container } from 'sveltestrap';
+import {Button, Collapse, Container } from 'sveltestrap';
 
 import { setApiConfig }  from '@bexis2/svelte-bexis2-core-ui'
 

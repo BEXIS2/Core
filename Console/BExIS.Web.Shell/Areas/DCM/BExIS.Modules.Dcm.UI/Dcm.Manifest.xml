@@ -19,7 +19,12 @@
 				title="Manage Metadata Structure" description="Edit or Importa new Metadata Structure" icon=""
 				controller="ManageMetadataStructure" action="Index" argument=""
 				extends="./settingsRoot" />
-
+		
+		<Export tag="menubar" id="create" order="1"
+				title="Create" description="Create a new Entity" icon=""
+				controller="Create" action="index"
+				extends="./menubarRoot" />
+		
 		<Export tag="menubar" id="collect" order="1"
 				title="Collect" description="Quick access to Data Collection Area" icon=""
 				controller="" action=""
@@ -50,6 +55,11 @@
 				title="No thing" description="Change me!" icon=""
 				controller="home" action="index"
 				extends="./apiRoot" />
+
+		<Export tag="settings" id="manageEntityTemplates" order="1"
+            title="Manage Entity Templates" description="..." icon=""
+            controller="entitytemplates" action="index" argument=""
+            extends="./settingsRoot" />
 
 		<!-- INTERNAL-->
 

@@ -1,5 +1,5 @@
 
-(function(l, r) { if (!l || l.getElementById('livereloadscript')) return; r = l.createElement('script'); r.async = 1; r.src = '//' + (self.location.host || 'localhost').split(':')[0] + ':35730/livereload.js?snipver=1'; r.id = 'livereloadscript'; l.getElementsByTagName('head')[0].appendChild(r) })(self.document);
+(function(l, r) { if (!l || l.getElementById('livereloadscript')) return; r = l.createElement('script'); r.async = 1; r.src = '//' + (self.location.host || 'localhost').split(':')[0] + ':35732/livereload.js?snipver=1'; r.id = 'livereloadscript'; l.getElementsByTagName('head')[0].appendChild(r) })(self.document);
 var app = (function () {
     'use strict';
 
@@ -20127,7 +20127,7 @@ var app = (function () {
 
     const { console: console_1$3 } = globals;
 
-    // (74:1) <Label>
+    // (77:1) <Label>
     function create_default_slot_1$4(ctx) {
     	let t;
 
@@ -20150,14 +20150,14 @@ var app = (function () {
     		block,
     		id: create_default_slot_1$4.name,
     		type: "slot",
-    		source: "(74:1) <Label>",
+    		source: "(77:1) <Label>",
     		ctx
     	});
 
     	return block;
     }
 
-    // (76:1) <FormGroup >
+    // (78:1) <FormGroup >
     function create_default_slot$4(ctx) {
     	let select;
     	let updating_value;
@@ -20171,7 +20171,8 @@ var app = (function () {
     		items: /*source*/ ctx[0],
     		optionIdentifier: /*optionIdentifier*/ ctx[2],
     		labelIdentifier: /*labelIdentifier*/ ctx[3],
-    		isMulti: /*isMulti*/ ctx[4]
+    		isMulti: /*isMulti*/ ctx[4],
+    		placeholder: "-- Please select --"
     	};
 
     	if (/*value*/ ctx[5] !== void 0) {
@@ -20222,7 +20223,7 @@ var app = (function () {
     		block,
     		id: create_default_slot$4.name,
     		type: "slot",
-    		source: "(76:1) <FormGroup >",
+    		source: "(78:1) <FormGroup >",
     		ctx
     	});
 
@@ -20363,7 +20364,11 @@ var app = (function () {
     			}
 
     			isLoaded = true;
-    			$$invalidate(5, value = items);
+
+    			if (items.length > 0) {
+    				$$invalidate(5, value = items);
+    			}
+
     			console.log(value);
     		}
 
@@ -20372,7 +20377,11 @@ var app = (function () {
     			console.log("source", source);
     			console.log("target", target);
     			isLoaded = true;
-    			$$invalidate(5, value = target);
+
+    			//set target only if its nit empty
+    			if (target != null && target !== undefined && target != "") {
+    				$$invalidate(5, value = target);
+    			}
     		}
     	});
 
@@ -20448,7 +20457,7 @@ var app = (function () {
     		}
     	};
 
-    	$$invalidate(5, value = []);
+    	$$invalidate(5, value = null);
 
     	return [
     		source,
@@ -20619,7 +20628,7 @@ var app = (function () {
     const { console: console_1$2 } = globals;
     const file$3 = "src\\components\\entitytemplate\\Edit.svelte";
 
-    // (220:0) {:else}
+    // (219:0) {:else}
     function create_else_block$1(ctx) {
     	let spinner;
     	let current;
@@ -20661,14 +20670,14 @@ var app = (function () {
     		block,
     		id: create_else_block$1.name,
     		type: "else",
-    		source: "(220:0) {:else}",
+    		source: "(219:0) {:else}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (85:0) {#if entityTemplate}
+    // (84:0) {#if entityTemplate}
     function create_if_block$3(ctx) {
     	let form;
     	let row0;
@@ -20776,9 +20785,9 @@ var app = (function () {
     			create_component(button0.$$.fragment);
     			t9 = space();
     			create_component(button1.$$.fragment);
-    			add_location(h30, file$3, 171, 2, 4759);
-    			add_location(h31, file$3, 196, 2, 5293);
-    			add_location(form, file$3, 86, 0, 2185);
+    			add_location(h30, file$3, 170, 2, 4757);
+    			add_location(h31, file$3, 195, 2, 5291);
+    			add_location(form, file$3, 85, 0, 2183);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, form, anchor);
@@ -20897,14 +20906,14 @@ var app = (function () {
     		block,
     		id: create_if_block$3.name,
     		type: "if",
-    		source: "(85:0) {#if entityTemplate}",
+    		source: "(84:0) {#if entityTemplate}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (91:8) <Label for="name">
+    // (90:8) <Label for="name">
     function create_default_slot_21(ctx) {
     	let t;
 
@@ -20924,14 +20933,14 @@ var app = (function () {
     		block,
     		id: create_default_slot_21.name,
     		type: "slot",
-    		source: "(91:8) <Label for=\\\"name\\\">",
+    		source: "(90:8) <Label for=\\\"name\\\">",
     		ctx
     	});
 
     	return block;
     }
 
-    // (90:6) <FormGroup>
+    // (89:6) <FormGroup>
     function create_default_slot_20(ctx) {
     	let label;
     	let t;
@@ -21023,14 +21032,14 @@ var app = (function () {
     		block,
     		id: create_default_slot_20.name,
     		type: "slot",
-    		source: "(90:6) <FormGroup>",
+    		source: "(89:6) <FormGroup>",
     		ctx
     	});
 
     	return block;
     }
 
-    // (89:4) <Col xs="6">
+    // (88:4) <Col xs="6">
     function create_default_slot_19(ctx) {
     	let formgroup;
     	let current;
@@ -21078,14 +21087,14 @@ var app = (function () {
     		block,
     		id: create_default_slot_19.name,
     		type: "slot",
-    		source: "(89:4) <Col xs=\\\"6\\\">",
+    		source: "(88:4) <Col xs=\\\"6\\\">",
     		ctx
     	});
 
     	return block;
     }
 
-    // (103:4) <Col xs="6">
+    // (102:4) <Col xs="6">
     function create_default_slot_18(ctx) {
     	let dropdownkvp;
     	let updating_target;
@@ -21153,14 +21162,14 @@ var app = (function () {
     		block,
     		id: create_default_slot_18.name,
     		type: "slot",
-    		source: "(103:4) <Col xs=\\\"6\\\">",
+    		source: "(102:4) <Col xs=\\\"6\\\">",
     		ctx
     	});
 
     	return block;
     }
 
-    // (88:2) <Row>
+    // (87:2) <Row>
     function create_default_slot_17(ctx) {
     	let col0;
     	let t;
@@ -21235,14 +21244,14 @@ var app = (function () {
     		block,
     		id: create_default_slot_17.name,
     		type: "slot",
-    		source: "(88:2) <Row>",
+    		source: "(87:2) <Row>",
     		ctx
     	});
 
     	return block;
     }
 
-    // (119:8) <Label for="description" >
+    // (118:8) <Label for="description" >
     function create_default_slot_16(ctx) {
     	let t;
 
@@ -21262,14 +21271,14 @@ var app = (function () {
     		block,
     		id: create_default_slot_16.name,
     		type: "slot",
-    		source: "(119:8) <Label for=\\\"description\\\" >",
+    		source: "(118:8) <Label for=\\\"description\\\" >",
     		ctx
     	});
 
     	return block;
     }
 
-    // (118:6) <FormGroup>
+    // (117:6) <FormGroup>
     function create_default_slot_15(ctx) {
     	let label;
     	let t;
@@ -21362,14 +21371,14 @@ var app = (function () {
     		block,
     		id: create_default_slot_15.name,
     		type: "slot",
-    		source: "(118:6) <FormGroup>",
+    		source: "(117:6) <FormGroup>",
     		ctx
     	});
 
     	return block;
     }
 
-    // (117:4) <Col xs="12">
+    // (116:4) <Col xs="12">
     function create_default_slot_14(ctx) {
     	let formgroup;
     	let current;
@@ -21417,14 +21426,14 @@ var app = (function () {
     		block,
     		id: create_default_slot_14.name,
     		type: "slot",
-    		source: "(117:4) <Col xs=\\\"12\\\">",
+    		source: "(116:4) <Col xs=\\\"12\\\">",
     		ctx
     	});
 
     	return block;
     }
 
-    // (116:2) <Row>
+    // (115:2) <Row>
     function create_default_slot_13(ctx) {
     	let col;
     	let current;
@@ -21473,14 +21482,14 @@ var app = (function () {
     		block,
     		id: create_default_slot_13.name,
     		type: "slot",
-    		source: "(116:2) <Row>",
+    		source: "(115:2) <Row>",
     		ctx
     	});
 
     	return block;
     }
 
-    // (155:6) <FormGroup>
+    // (154:6) <FormGroup>
     function create_default_slot_12(ctx) {
     	let input;
     	let updating_value;
@@ -21540,14 +21549,14 @@ var app = (function () {
     		block,
     		id: create_default_slot_12.name,
     		type: "slot",
-    		source: "(155:6) <FormGroup>",
+    		source: "(154:6) <FormGroup>",
     		ctx
     	});
 
     	return block;
     }
 
-    // (133:4) <Col>
+    // (132:4) <Col>
     function create_default_slot_11(ctx) {
     	let h3;
     	let t1;
@@ -21618,7 +21627,7 @@ var app = (function () {
     			create_component(multiselect.$$.fragment);
     			t3 = space();
     			create_component(formgroup.$$.fragment);
-    			add_location(h3, file$3, 133, 6, 3489);
+    			add_location(h3, file$3, 132, 6, 3487);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, h3, anchor);
@@ -21690,14 +21699,14 @@ var app = (function () {
     		block,
     		id: create_default_slot_11.name,
     		type: "slot",
-    		source: "(133:4) <Col>",
+    		source: "(132:4) <Col>",
     		ctx
     	});
 
     	return block;
     }
 
-    // (162:6) <FormGroup>
+    // (161:6) <FormGroup>
     function create_default_slot_10(ctx) {
     	let input;
     	let updating_checked;
@@ -21757,14 +21766,14 @@ var app = (function () {
     		block,
     		id: create_default_slot_10.name,
     		type: "slot",
-    		source: "(162:6) <FormGroup>",
+    		source: "(161:6) <FormGroup>",
     		ctx
     	});
 
     	return block;
     }
 
-    // (166:6) {#if entityTemplate.hasDatastructure}
+    // (165:6) {#if entityTemplate.hasDatastructure}
     function create_if_block_1(ctx) {
     	let checkboxkvplist;
     	let updating_target;
@@ -21829,14 +21838,14 @@ var app = (function () {
     		block,
     		id: create_if_block_1.name,
     		type: "if",
-    		source: "(166:6) {#if entityTemplate.hasDatastructure}",
+    		source: "(165:6) {#if entityTemplate.hasDatastructure}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (160:4) <Col>
+    // (159:4) <Col>
     function create_default_slot_9(ctx) {
     	let h3;
     	let t1;
@@ -21864,7 +21873,7 @@ var app = (function () {
     			t2 = space();
     			if (if_block) if_block.c();
     			if_block_anchor = empty();
-    			add_location(h3, file$3, 160, 6, 4329);
+    			add_location(h3, file$3, 159, 6, 4327);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, h3, anchor);
@@ -21932,14 +21941,14 @@ var app = (function () {
     		block,
     		id: create_default_slot_9.name,
     		type: "slot",
-    		source: "(160:4) <Col>",
+    		source: "(159:4) <Col>",
     		ctx
     	});
 
     	return block;
     }
 
-    // (132:2) <Row>
+    // (131:2) <Row>
     function create_default_slot_8(ctx) {
     	let col0;
     	let t;
@@ -22012,14 +22021,14 @@ var app = (function () {
     		block,
     		id: create_default_slot_8.name,
     		type: "slot",
-    		source: "(132:2) <Row>",
+    		source: "(131:2) <Row>",
     		ctx
     	});
 
     	return block;
     }
 
-    // (175:4) <Col>
+    // (174:4) <Col>
     function create_default_slot_7(ctx) {
     	let multiselect;
     	let updating_target;
@@ -22082,14 +22091,14 @@ var app = (function () {
     		block,
     		id: create_default_slot_7.name,
     		type: "slot",
-    		source: "(175:4) <Col>",
+    		source: "(174:4) <Col>",
     		ctx
     	});
 
     	return block;
     }
 
-    // (185:4) <Col>
+    // (184:4) <Col>
     function create_default_slot_6$1(ctx) {
     	let multiselect;
     	let updating_target;
@@ -22152,14 +22161,14 @@ var app = (function () {
     		block,
     		id: create_default_slot_6$1.name,
     		type: "slot",
-    		source: "(185:4) <Col>",
+    		source: "(184:4) <Col>",
     		ctx
     	});
 
     	return block;
     }
 
-    // (174:2) <Row>
+    // (173:2) <Row>
     function create_default_slot_5$1(ctx) {
     	let col0;
     	let t;
@@ -22232,14 +22241,14 @@ var app = (function () {
     		block,
     		id: create_default_slot_5$1.name,
     		type: "slot",
-    		source: "(174:2) <Row>",
+    		source: "(173:2) <Row>",
     		ctx
     	});
 
     	return block;
     }
 
-    // (200:4) <Col>
+    // (199:4) <Col>
     function create_default_slot_4$2(ctx) {
     	let multiselect;
     	let updating_target;
@@ -22299,14 +22308,14 @@ var app = (function () {
     		block,
     		id: create_default_slot_4$2.name,
     		type: "slot",
-    		source: "(200:4) <Col>",
+    		source: "(199:4) <Col>",
     		ctx
     	});
 
     	return block;
     }
 
-    // (207:4) <Col>
+    // (206:4) <Col>
     function create_default_slot_3$3(ctx) {
     	let multiselect;
     	let updating_target;
@@ -22366,14 +22375,14 @@ var app = (function () {
     		block,
     		id: create_default_slot_3$3.name,
     		type: "slot",
-    		source: "(207:4) <Col>",
+    		source: "(206:4) <Col>",
     		ctx
     	});
 
     	return block;
     }
 
-    // (199:2) <Row>
+    // (198:2) <Row>
     function create_default_slot_2$3(ctx) {
     	let col0;
     	let t;
@@ -22446,14 +22455,14 @@ var app = (function () {
     		block,
     		id: create_default_slot_2$3.name,
     		type: "slot",
-    		source: "(199:2) <Row>",
+    		source: "(198:2) <Row>",
     		ctx
     	});
 
     	return block;
     }
 
-    // (216:2) <Button type="submit" color="primary" {disabled}>
+    // (215:2) <Button type="submit" color="primary" {disabled}>
     function create_default_slot_1$3(ctx) {
     	let fa;
     	let current;
@@ -22486,14 +22495,14 @@ var app = (function () {
     		block,
     		id: create_default_slot_1$3.name,
     		type: "slot",
-    		source: "(216:2) <Button type=\\\"submit\\\" color=\\\"primary\\\" {disabled}>",
+    		source: "(215:2) <Button type=\\\"submit\\\" color=\\\"primary\\\" {disabled}>",
     		ctx
     	});
 
     	return block;
     }
 
-    // (217:2) <Button color="danger" on:click={()=> dispatch("cancel")}>
+    // (216:2) <Button color="danger" on:click={()=> dispatch("cancel")}>
     function create_default_slot$3(ctx) {
     	let fa;
     	let current;
@@ -22530,7 +22539,7 @@ var app = (function () {
     		block,
     		id: create_default_slot$3.name,
     		type: "slot",
-    		source: "(217:2) <Button color=\\\"danger\\\" on:click={()=> dispatch(\\\"cancel\\\")}>",
+    		source: "(216:2) <Button color=\\\"danger\\\" on:click={()=> dispatch(\\\"cancel\\\")}>",
     		ctx
     	});
 
@@ -23029,7 +23038,7 @@ var app = (function () {
     		p: function update(ctx, dirty) {
     			const cardtitle_changes = {};
 
-    			if (dirty & /*$$scope, name*/ 2049) {
+    			if (dirty & /*$$scope, name*/ 65) {
     				cardtitle_changes.$$scope = { dirty, ctx };
     			}
 
@@ -23156,9 +23165,9 @@ var app = (function () {
     			t2 = space();
     			span1 = element("span");
     			t3 = text(t3_value);
-    			add_location(span0, file$2, 38, 4, 742);
-    			add_location(br, file$2, 38, 35, 773);
-    			add_location(span1, file$2, 39, 4, 783);
+    			add_location(span0, file$2, 38, 4, 757);
+    			add_location(br, file$2, 38, 35, 788);
+    			add_location(span1, file$2, 39, 4, 798);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, span0, anchor);
@@ -23231,14 +23240,14 @@ var app = (function () {
     		p: function update(ctx, dirty) {
     			const cardsubtitle_changes = {};
 
-    			if (dirty & /*$$scope, description*/ 2050) {
+    			if (dirty & /*$$scope, description*/ 66) {
     				cardsubtitle_changes.$$scope = { dirty, ctx };
     			}
 
     			cardsubtitle.$set(cardsubtitle_changes);
     			const cardtext_changes = {};
 
-    			if (dirty & /*$$scope, metadataStructure, entityType*/ 2060) {
+    			if (dirty & /*$$scope, metadataStructure, entityType*/ 76) {
     				cardtext_changes.$$scope = { dirty, ctx };
     			}
 
@@ -23303,8 +23312,8 @@ var app = (function () {
     // (43:1) <CardFooter>
     function create_default_slot_1$2(ctx) {
     	let current;
-    	const default_slot_template = /*#slots*/ ctx[10].default;
-    	const default_slot = create_slot(default_slot_template, ctx, /*$$scope*/ ctx[11], null);
+    	const default_slot_template = /*#slots*/ ctx[5].default;
+    	const default_slot = create_slot(default_slot_template, ctx, /*$$scope*/ ctx[6], null);
     	const default_slot_or_fallback = default_slot || fallback_block(ctx);
 
     	const block = {
@@ -23320,15 +23329,15 @@ var app = (function () {
     		},
     		p: function update(ctx, dirty) {
     			if (default_slot) {
-    				if (default_slot.p && (!current || dirty & /*$$scope*/ 2048)) {
+    				if (default_slot.p && (!current || dirty & /*$$scope*/ 64)) {
     					update_slot_base(
     						default_slot,
     						default_slot_template,
     						ctx,
-    						/*$$scope*/ ctx[11],
+    						/*$$scope*/ ctx[6],
     						!current
-    						? get_all_dirty_from_scope(/*$$scope*/ ctx[11])
-    						: get_slot_changes(default_slot_template, /*$$scope*/ ctx[11], dirty, null),
+    						? get_all_dirty_from_scope(/*$$scope*/ ctx[6])
+    						: get_slot_changes(default_slot_template, /*$$scope*/ ctx[6], dirty, null),
     						null
     					);
     				}
@@ -23411,21 +23420,21 @@ var app = (function () {
     		p: function update(ctx, dirty) {
     			const cardheader_changes = {};
 
-    			if (dirty & /*$$scope, name*/ 2049) {
+    			if (dirty & /*$$scope, name*/ 65) {
     				cardheader_changes.$$scope = { dirty, ctx };
     			}
 
     			cardheader.$set(cardheader_changes);
     			const cardbody_changes = {};
 
-    			if (dirty & /*$$scope, metadataStructure, entityType, description*/ 2062) {
+    			if (dirty & /*$$scope, metadataStructure, entityType, description*/ 78) {
     				cardbody_changes.$$scope = { dirty, ctx };
     			}
 
     			cardbody.$set(cardbody_changes);
     			const cardfooter_changes = {};
 
-    			if (dirty & /*$$scope*/ 2048) {
+    			if (dirty & /*$$scope*/ 64) {
     				cardfooter_changes.$$scope = { dirty, ctx };
     			}
 
@@ -23491,7 +23500,7 @@ var app = (function () {
     		p: function update(ctx, [dirty]) {
     			const card_changes = {};
 
-    			if (dirty & /*$$scope, metadataStructure, entityType, description, name*/ 2063) {
+    			if (dirty & /*$$scope, metadataStructure, entityType, description, name*/ 79) {
     				card_changes.$$scope = { dirty, ctx };
     			}
 
@@ -23530,25 +23539,15 @@ var app = (function () {
     	let { description = "" } = $$props;
     	let { entityType } = $$props;
     	let { metadataStructure } = $$props;
-    	let { metadataFields } = $$props;
-    	let { permissionGroups } = $$props;
-    	let { notificationGroups } = $$props;
-    	let { disabledHooks } = $$props;
-    	let { allowedHooks } = $$props;
+
+    	// export let metadataFields;
+    	// export let permissionGroups;
+    	// export let notificationGroups;
+    	// export let disabledHooks;
+    	// export let allowedHooks;
     	const dispatch = new createEventDispatcher();
 
-    	const writable_props = [
-    		'id',
-    		'name',
-    		'description',
-    		'entityType',
-    		'metadataStructure',
-    		'metadataFields',
-    		'permissionGroups',
-    		'notificationGroups',
-    		'disabledHooks',
-    		'allowedHooks'
-    	];
+    	const writable_props = ['id', 'name', 'description', 'entityType', 'metadataStructure'];
 
     	Object.keys($$props).forEach(key => {
     		if (!~writable_props.indexOf(key) && key.slice(0, 2) !== '$$' && key !== 'slot') console.warn(`<Card> was created with unknown prop '${key}'`);
@@ -23560,12 +23559,7 @@ var app = (function () {
     		if ('description' in $$props) $$invalidate(1, description = $$props.description);
     		if ('entityType' in $$props) $$invalidate(2, entityType = $$props.entityType);
     		if ('metadataStructure' in $$props) $$invalidate(3, metadataStructure = $$props.metadataStructure);
-    		if ('metadataFields' in $$props) $$invalidate(5, metadataFields = $$props.metadataFields);
-    		if ('permissionGroups' in $$props) $$invalidate(6, permissionGroups = $$props.permissionGroups);
-    		if ('notificationGroups' in $$props) $$invalidate(7, notificationGroups = $$props.notificationGroups);
-    		if ('disabledHooks' in $$props) $$invalidate(8, disabledHooks = $$props.disabledHooks);
-    		if ('allowedHooks' in $$props) $$invalidate(9, allowedHooks = $$props.allowedHooks);
-    		if ('$$scope' in $$props) $$invalidate(11, $$scope = $$props.$$scope);
+    		if ('$$scope' in $$props) $$invalidate(6, $$scope = $$props.$$scope);
     	};
 
     	$$self.$capture_state = () => ({
@@ -23583,11 +23577,6 @@ var app = (function () {
     		description,
     		entityType,
     		metadataStructure,
-    		metadataFields,
-    		permissionGroups,
-    		notificationGroups,
-    		disabledHooks,
-    		allowedHooks,
     		dispatch
     	});
 
@@ -23597,31 +23586,13 @@ var app = (function () {
     		if ('description' in $$props) $$invalidate(1, description = $$props.description);
     		if ('entityType' in $$props) $$invalidate(2, entityType = $$props.entityType);
     		if ('metadataStructure' in $$props) $$invalidate(3, metadataStructure = $$props.metadataStructure);
-    		if ('metadataFields' in $$props) $$invalidate(5, metadataFields = $$props.metadataFields);
-    		if ('permissionGroups' in $$props) $$invalidate(6, permissionGroups = $$props.permissionGroups);
-    		if ('notificationGroups' in $$props) $$invalidate(7, notificationGroups = $$props.notificationGroups);
-    		if ('disabledHooks' in $$props) $$invalidate(8, disabledHooks = $$props.disabledHooks);
-    		if ('allowedHooks' in $$props) $$invalidate(9, allowedHooks = $$props.allowedHooks);
     	};
 
     	if ($$props && "$$inject" in $$props) {
     		$$self.$inject_state($$props.$$inject);
     	}
 
-    	return [
-    		name,
-    		description,
-    		entityType,
-    		metadataStructure,
-    		id,
-    		metadataFields,
-    		permissionGroups,
-    		notificationGroups,
-    		disabledHooks,
-    		allowedHooks,
-    		slots,
-    		$$scope
-    	];
+    	return [name, description, entityType, metadataStructure, id, slots, $$scope];
     }
 
     class Card_1 extends SvelteComponentDev {
@@ -23633,12 +23604,7 @@ var app = (function () {
     			name: 0,
     			description: 1,
     			entityType: 2,
-    			metadataStructure: 3,
-    			metadataFields: 5,
-    			permissionGroups: 6,
-    			notificationGroups: 7,
-    			disabledHooks: 8,
-    			allowedHooks: 9
+    			metadataStructure: 3
     		});
 
     		dispatch_dev("SvelteRegisterComponent", {
@@ -23661,26 +23627,6 @@ var app = (function () {
 
     		if (/*metadataStructure*/ ctx[3] === undefined && !('metadataStructure' in props)) {
     			console.warn("<Card> was created without expected prop 'metadataStructure'");
-    		}
-
-    		if (/*metadataFields*/ ctx[5] === undefined && !('metadataFields' in props)) {
-    			console.warn("<Card> was created without expected prop 'metadataFields'");
-    		}
-
-    		if (/*permissionGroups*/ ctx[6] === undefined && !('permissionGroups' in props)) {
-    			console.warn("<Card> was created without expected prop 'permissionGroups'");
-    		}
-
-    		if (/*notificationGroups*/ ctx[7] === undefined && !('notificationGroups' in props)) {
-    			console.warn("<Card> was created without expected prop 'notificationGroups'");
-    		}
-
-    		if (/*disabledHooks*/ ctx[8] === undefined && !('disabledHooks' in props)) {
-    			console.warn("<Card> was created without expected prop 'disabledHooks'");
-    		}
-
-    		if (/*allowedHooks*/ ctx[9] === undefined && !('allowedHooks' in props)) {
-    			console.warn("<Card> was created without expected prop 'allowedHooks'");
     		}
     	}
 
@@ -23721,46 +23667,6 @@ var app = (function () {
     	}
 
     	set metadataStructure(value) {
-    		throw new Error("<Card>: Props cannot be set directly on the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
-    	}
-
-    	get metadataFields() {
-    		throw new Error("<Card>: Props cannot be read directly from the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
-    	}
-
-    	set metadataFields(value) {
-    		throw new Error("<Card>: Props cannot be set directly on the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
-    	}
-
-    	get permissionGroups() {
-    		throw new Error("<Card>: Props cannot be read directly from the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
-    	}
-
-    	set permissionGroups(value) {
-    		throw new Error("<Card>: Props cannot be set directly on the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
-    	}
-
-    	get notificationGroups() {
-    		throw new Error("<Card>: Props cannot be read directly from the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
-    	}
-
-    	set notificationGroups(value) {
-    		throw new Error("<Card>: Props cannot be set directly on the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
-    	}
-
-    	get disabledHooks() {
-    		throw new Error("<Card>: Props cannot be read directly from the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
-    	}
-
-    	set disabledHooks(value) {
-    		throw new Error("<Card>: Props cannot be set directly on the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
-    	}
-
-    	get allowedHooks() {
-    		throw new Error("<Card>: Props cannot be read directly from the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
-    	}
-
-    	set allowedHooks(value) {
     		throw new Error("<Card>: Props cannot be set directly on the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
     	}
     }
@@ -24587,7 +24493,7 @@ var app = (function () {
     		c: function create() {
     			div = element("div");
     			create_component(button.$$.fragment);
-    			add_location(div, file, 131, 0, 3070);
+    			add_location(div, file, 131, 0, 3062);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div, anchor);
@@ -24958,7 +24864,6 @@ var app = (function () {
     		Fa: Fa$1,
     		faPlus,
     		onMount,
-    		Spinner,
     		Button,
     		Collapse,
     		Container,

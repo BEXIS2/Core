@@ -13,11 +13,7 @@ import Hooks from '../components/edit/Hooks.svelte'
 import Message from '../components/edit/MessagesContainer.svelte'
 import Debug from '../components/Debug.svelte'
 
-
-
-
-
- // load attributes from div
+// load attributes from div
 let container = document.getElementById('edit');
 let id = container.getAttribute("dataset");
 $:version = container.getAttribute("version");

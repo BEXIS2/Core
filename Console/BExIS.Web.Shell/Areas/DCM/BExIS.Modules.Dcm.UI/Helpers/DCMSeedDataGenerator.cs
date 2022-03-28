@@ -147,6 +147,7 @@ namespace BExIS.Modules.Dcm.UI.Helpers
 
                 #region Create Dataset Workflow
 
+                operationManager.Create("DCM", "Create", "*", DatasetCreationFeature);
                 operationManager.Create("DCM", "CreateDataset", "*", DatasetCreationFeature);
                 operationManager.Create("DCM", "Form", "*");
 

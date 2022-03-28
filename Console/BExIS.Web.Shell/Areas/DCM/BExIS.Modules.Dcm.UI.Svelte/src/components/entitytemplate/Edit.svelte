@@ -18,7 +18,6 @@ import { getEntityTemplate, saveEntityTemplate }  from '../../services/Caller'
 import { faSave, faTrashAlt } from '@fortawesome/free-regular-svg-icons'
 
 
-
  export let id = 0;
  
  export let hooks= [];

@@ -56,6 +56,7 @@
     <Compile Include="Controllers\API\DataInController.cs" />
     <Compile Include="Controllers\API\DatasetInController.cs" />
     <Compile Include="Controllers\API\MetadataInController.cs" />
+    <Compile Include="Controllers\CreateController.cs" />
     <Compile Include="Controllers\EditController.cs" />
     <Compile Include="Controllers\EntityTemplatesController.cs" />
     <Compile Include="Controllers\Hooks\AttachmentUploadController.cs" />
@@ -122,6 +123,7 @@
     <Compile Include="Models\CreateDataset\MetadataEditorModel.cs" />
     <Compile Include="Models\CreateDataset\SetupModel.cs" />
     <Compile Include="Models\CreateDataset\StepModelHelper.cs" />
+    <Compile Include="Models\Create\CreateModel.cs" />
     <Compile Include="Models\EasyUploadSummaryModel.cs" />
     <Compile Include="Models\Edit\EditModel.cs" />
     <Compile Include="Models\EntityReference\ReferenceModels.cs" />
@@ -511,6 +513,7 @@
     <Content Include="Views\Messages\Index.cshtml" />
     <Content Include="Scripts\jquery-2.1.4.min.map" />
     <Content Include="Views\EntityTemplates\Index.cshtml" />
+    <Content Include="Views\Create\Index.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

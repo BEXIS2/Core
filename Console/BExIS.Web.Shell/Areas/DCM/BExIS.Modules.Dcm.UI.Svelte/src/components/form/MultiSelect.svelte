@@ -13,7 +13,7 @@
   export let isTargetComplex = false;
   let isLoaded = false;
  
-  $:value = [];
+  $:value = null;
   $:updateTarget(value);
  
   function updateTarget(selection){
@@ -54,7 +54,7 @@
       }
  
       isLoaded = true;
-      value = items;
+      if(items.length>0){value = items;}
       console.log(value);
     }
 
@@ -64,7 +64,10 @@
       console.log("source", source);
       console.log("target",target);
       isLoaded = true;
-      value = target;
+      //set target only if its nit empty
+      if(target!=null && target !== undefined && target != ""){
+        value = target;
+      }
     }
   })
  
@@ -72,7 +75,6 @@
  </script>
  
  <Label>{title}</Label>
- 
  <FormGroup >
  <Select 
  items={source} 
@@ -80,6 +82,7 @@
  {labelIdentifier}
  {isMulti}
  bind:value
+ placeholder="-- Please select --"
  ></Select>
  </FormGroup>
  

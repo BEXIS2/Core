@@ -195,6 +195,33 @@ namespace BExIS.Dim.Services
             return this.GetUnitOfWork().GetReadOnlyRepository<Mapping>().Query().Where(m => m.Parent != null &&
             m.Parent.Id.Equals(id) &&
             m.Level.Equals(level));
+
+        }
+
+        public IEnumerable<Mapping> GetChildMappingFromRoot(long id, long level)
+        {
+            if (level == 1) //if id is root and you want to get only the next children in level 1
+            {
+                return this.GetUnitOfWork().GetReadOnlyRepository<Mapping>().Query().Where(m => m.Parent != null &&
+                m.Parent.Id.Equals(id) &&
+                m.Level.Equals(level));
+            }
+            else
+            if (level == 2) //if you want to have all mappings from level 2 - starten from root
+            {
+                var mappingsLvl1 = GetChildMapping(id, 1);
+
+                // get all level 2
+                var mappingsLvl2 = new List<Mapping>();
+                foreach (var mapping in mappingsLvl1)
+                {
+                    mappingsLvl2.AddRange(GetChildMapping(mapping.Id, 2).ToList());
+                }
+
+                return mappingsLvl2;
+            }
+
+            return new List<Mapping>();
         }
 
         public Mapping GetMappings(long id)

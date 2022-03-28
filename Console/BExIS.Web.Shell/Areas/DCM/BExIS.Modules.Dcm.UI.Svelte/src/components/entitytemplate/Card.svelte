@@ -20,11 +20,11 @@ export let description = "";
 export let entityType;
 export let metadataStructure;
 
-export let metadataFields;
-export let permissionGroups;
-export let notificationGroups;
-export let disabledHooks;
-export let allowedHooks;
+// export let metadataFields;
+// export let permissionGroups;
+// export let notificationGroups;
+// export let disabledHooks;
+// export let allowedHooks;
 
 const dispatch = new createEventDispatcher();
 

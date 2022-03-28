@@ -1,5 +1,3 @@
-/*Default Style */
-
 :root {
     --highlight-color: #ff9700;
     --bg-color-level-1: #388670;
@@ -29,6 +27,12 @@
     --nav-hover: var(--highlight-color);
     --nav-text-color: #777;
     --bs-primary: var(--button-action);
-    --bg-tab: #f9f9f9;
-    --bg-grey: #dedede;
+    --bg-tab: #efefef;
+    /*2.15*/
+    --bexis2-text-color-level-1: #111;
+    --bexis2-text-color-level-2: #333;
+    --bexis2-text-color-level-3: #777;
+    --bexis2-hover: #efefef;
+    --bexis2-border: #eee;
+    --bexis2-bg-color: #fff;
 }

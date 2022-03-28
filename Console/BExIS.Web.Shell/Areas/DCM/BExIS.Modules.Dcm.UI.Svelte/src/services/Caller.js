@@ -189,3 +189,4 @@ export const deleteEntityTemplate = async (id) => {
     console.error(error);
   }
 };
+
