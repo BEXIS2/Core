@@ -20,8 +20,8 @@ const dispatch = createEventDispatcher();
 
 
 // validation
-let res = suite.get();
-$:disabled = false;//!res.isValid();
+let result = suite.get();
+$:disabled = !result.isValid();
 
 let model = null
 
@@ -33,11 +33,14 @@ console.log("res",res);
 if(res != false) model = res;
 
 filterInputs();
-
+suite.reset();
 });
 
 
 async function handleSubmit() {
+  // check if form is valid
+  if(result.isValid)
+  {
     console.log("before submit", model);
     const res = await create(model);
     if(res!=false)
@@ -46,6 +49,7 @@ async function handleSubmit() {
       //dispatch("save", res);
     }
   }
+}
 
 //change event: if input change check also validation only on the field
 // e.target.id is the id of the input component
@@ -54,7 +58,7 @@ function onChangeHandler(e)
   // add some delay so the entityTemplate is updated 
   // otherwise the values are old
   setTimeout(async () => {
-    res = suite(entityTemplate, e.target.id)
+    result = suite(model.inputFields, e.target.id)
  },10)
 }
 
@@ -81,6 +85,7 @@ function filterInputs()
   }
 }
 
+
 </script>
 
 {#if model}
@@ -91,17 +96,31 @@ function filterInputs()
 
 <form on:submit|preventDefault={handleSubmit}>
 
-
 <Row>
   <Col>
     {#if titleField}
-      <InputEntry label={titleField.name} type={titleField.type} bind:value={titleField.value}/>
+      <InputEntry label={titleField.name} type={titleField.type} bind:value={titleField.value}
+      valid={result.isValid(titleField.name)} 
+      invalid={result.hasErrors(titleField.name)}  
+      feedback={result.getErrors(titleField.name)} 
+      on:input={onChangeHandler}
+      />
     {/if}
     {#if descriptionField}
-      <InputEntry label={descriptionField.name} type={descriptionField.type} bind:value={descriptionField.value}/>
+      <InputEntry label={descriptionField.name} type={descriptionField.type} bind:value={descriptionField.value}
+      valid={result.isValid(descriptionField.name)} 
+      invalid={result.hasErrors(descriptionField.name)}  
+      feedback={result.getErrors(descriptionField.name)} 
+      on:input={onChangeHandler}
+      />
     {/if}
     {#each metadataFields as item}
-      <InputEntry label={item.name} type={item.type} bind:value={item.value}/>
+      <InputEntry label={item.name} type={item.type} bind:value={item.value}
+      valid={result.isValid(item.name)} 
+      invalid={result.hasErrors(item.name)}  
+      feedback={result.getErrors(item.name)} 
+      on:input={onChangeHandler}
+      />
     {/each}
   </Col>
 </Row>
