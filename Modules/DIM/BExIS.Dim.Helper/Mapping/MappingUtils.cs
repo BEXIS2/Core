@@ -1109,13 +1109,8 @@ namespace BExIS.Dim.Helpers.Mapping
         #endregion GET FROM Specific MetadataStructure // Source
 
         #region Targets DataTypes
-        /// <summary>
-        /// Get datatype from a target as one of the type of MetadataAttributeUsage,MetadataNestedAttributeUsage, SimpleMetadataAttribute
-        /// </summary>
-        /// <param name="key"></param>
-        /// <param name="metadataStrutcureId"></param>
-        /// <returns></returns>
-        public static string GetTargetDataTypeWhereSourceIsKey(int key, long metadataStrutcureId)
+
+        public static bool HasTarget(int key, long metadataStrutcureId, out LinkElement target)
         {
             using (MappingManager mappingManager = new MappingManager())
             using (var metadataAttributeManager = new MetadataAttributeManager())
@@ -1138,31 +1133,49 @@ namespace BExIS.Dim.Helpers.Mapping
                         var matchMapping = childmappings.Where(m => m.Source.Id.Equals(linkElement.Id)).FirstOrDefault();
                         if (matchMapping != null)
                         {
-                            var elementId = matchMapping.Target.ElementId;
-                            var elemenType = matchMapping.Target.Type;
-                            var datatype = "";
-
-                            if (elemenType == LinkElementType.MetadataAttributeUsage)
-                            {
-                                var mau = metadataAttributeManager.MetadataAttributeUsageRepo.Get(elementId);
-                                datatype = mau.MetadataAttribute.DataType.SystemType;
-                            }
-                            else if (elemenType == LinkElementType.MetadataNestedAttributeUsage)
-                            {
-                                var mnau = metadataAttributeManager.MetadataNestedAttributeUsageRepo.Get(elementId);
-                                datatype = mnau.Member.DataType.SystemType;
-                            }
-                            else if (elemenType == LinkElementType.SimpleMetadataAttribute)
-                            {
-                                var sma = metadataAttributeManager.MetadataSimpleAttributeRepo.Get(elementId);
-                                datatype = sma.DataType.SystemType;
-                            }
-
-                            return datatype;
+                            target = matchMapping.Target;
+                            return true;
                         }
-
                     }
                 }
+            }
+
+            target = null;
+            return false;
+        }
+
+        /// <summary>
+        /// Get datatype from a target as one of the type of MetadataAttributeUsage,MetadataNestedAttributeUsage, SimpleMetadataAttribute
+        /// </summary>
+        /// <param name="key"></param>
+        /// <param name="metadataStrutcureId"></param>
+        /// <returns></returns>
+        public static string GetDataType(LinkElement linkElement)
+        {
+            using (var metadataAttributeManager = new MetadataAttributeManager())
+            {
+                var elementId = linkElement.ElementId;
+                var elemenType = linkElement.Type;
+                var datatype = "";
+
+                if (elemenType == LinkElementType.MetadataAttributeUsage)
+                {
+                    var mau = metadataAttributeManager.MetadataAttributeUsageRepo.Get(elementId);
+                    datatype = mau.MetadataAttribute.DataType.SystemType;
+                }
+                else if (elemenType == LinkElementType.MetadataNestedAttributeUsage)
+                {
+                    var mnau = metadataAttributeManager.MetadataNestedAttributeUsageRepo.Get(elementId);
+                    datatype = mnau.Member.DataType.SystemType;
+                }
+                else if (elemenType == LinkElementType.SimpleMetadataAttribute)
+                {
+                    var sma = metadataAttributeManager.MetadataSimpleAttributeRepo.Get(elementId);
+                    datatype = sma.DataType.SystemType;
+                }
+
+                return datatype;
+     
             }
 
             return string.Empty;

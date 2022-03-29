@@ -42,7 +42,6 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             using (var metadataAttributeManager = new MetadataAttributeManager())
             using (var mappingManager = new MappingManager())
             {
-                MappingUtils mappingUtils = new MappingUtils();
 
                 var entityTemplate = entityTemplateManager.Repo.Get(id);
 
@@ -64,14 +63,22 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                     foreach (var key in entityTemplate.MetadataFields)
                     {
                         var systemKey = (Key)key;
-                        var datatype = MappingUtils.GetTargetDataTypeWhereSourceIsKey(key, entityTemplate.MetadataStructure.Id);
+                        long metadataStructureId = entityTemplate.MetadataStructure.Id;
+                        LinkElement target = null;
 
-                        model.InputFields.Add(new MetadataInputField()
+                        // when there is a mapping get link element
+                        if (MappingUtils.HasTarget(key, metadataStructureId, out target))
                         {
-                            Index = key,
-                            Name = systemKey.ToString(),
-                            Type = datatype
-                        });
+                            // get Datatype of link element
+                            var datatype = MappingUtils.GetDataType(target);
+
+                            model.InputFields.Add(new MetadataInputField()
+                            {
+                                Index = key,
+                                Name = systemKey.ToString(),
+                                Type = datatype
+                            });
+                        }
                     }
                 }
 
