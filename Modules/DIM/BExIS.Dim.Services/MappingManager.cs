@@ -1,4 +1,5 @@
 ﻿using BExIS.Dim.Entities.Mapping;
+using BExIS.Dlm.Services.MetadataStructure;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -59,18 +60,6 @@ namespace BExIS.Dim.Services
             return this.GetUnitOfWork().GetReadOnlyRepository<LinkElement>().Get();
         }
 
-        //public LinkElement GetLinkElement(long id)
-        //{
-        //    using (var uow = this.GetUnitOfWork())
-        //    {
-        //        return uow.GetReadOnlyRepository<LinkElement>().Get().FirstOrDefault(le => le.Id.Equals(id));
-        //    }
-        //}
-
-        //public LinkElement GetLinkElement(LinkElementType type)
-        //{
-        //    return this.GetUnitOfWork().GetReadOnlyRepository<LinkElement>().Get().FirstOrDefault(le => le.Type.Equals(type));
-        //}
 
         public LinkElement GetLinkElement(long elementid, LinkElementType type)
         {
@@ -146,7 +135,10 @@ namespace BExIS.Dim.Services
             return (linkElement);
         }
 
+
         #endregion
+
+        
 
         #region Mapping
 
@@ -228,6 +220,8 @@ namespace BExIS.Dim.Services
         {
             return this.GetUnitOfWork().GetReadOnlyRepository<Mapping>().Get().FirstOrDefault(m => m.Id.Equals(id));
         }
+
+
 
         public Mapping CreateMapping(
 

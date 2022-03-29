@@ -1042,24 +1042,6 @@ namespace BExIS.Modules.Dim.UI.Helper
             }
         }
 
-        //public static bool IsSimpleElement(long id)
-        //{
-        //    MappingManager mappingManager = new MappingManager();
-
-        //    try
-        //    {
-        //        LinkElement le = mappingManager.GetLinkElement(id);
-
-        //        if (le.Complexity == LinkElementComplexity.Simple) return true;
-
-        //        return false;
-        //    }
-        //    finally
-        //    {
-        //        mappingManager.Dispose();
-        //    }
-        //}
-
         public static long GetId(long elementId, LinkElementType type, MappingManager mappingManager)
         {
             long linkElementId = 0;
@@ -1076,48 +1058,14 @@ namespace BExIS.Modules.Dim.UI.Helper
             return linkElementId;
         }
 
-        //public static string GetMask(long elementId, LinkElementType type)
-        //{
-        //    MappingManager mappingManager = new MappingManager();
 
-        //    string mask = "";
-
-        //    LinkElement linkElement =
-        //        mappingManager.LinkElementRepo.Get()
-        //            .FirstOrDefault(le => le.ElementId.Equals(elementId) && le.Type.Equals(type));
-
-        //    if (linkElement != null)
-        //    {
-        //        mask = linkElement.Mask;
-        //    }
-
-        //    return mask;
-        //}
-
-        ///// <summary>
-        ///// if parent is complex send back al children ids
-        ///// else send back the parent id
-        ///// </summary>
-        ///// <returns></returns>
-        //public static List<long> GetChildrenIds(LinkElement parent)
-        //{
-        //    List<long> childrenIds = new List<long>();
-
-        //    if (parent.Complexity.Equals(LinkElementComplexity.Simple))
-        //        childrenIds.Add(parent.Id);
-
-        //    else
-        //    {
-        //        MappingManager mappingManager = new MappingManager();
-        //        childrenIds = mappingManager.LinkElementRepo.Get()
-        //                   .Where(le => le.Parent != null && le.Parent.Id.Equals(parent.Id))
-        //                   .Select(le => le.Id)
-        //                   .ToList();
-        //    }
-
-        //    return childrenIds;
-        //}
-    }
+    
 
     #endregion helper
+
+    
+
+    }
+
+
 }

@@ -13,6 +13,7 @@ using BExIS.Dim.Entities.Mapping;
 using BExIS.Security.Services.Objects;
 using BExIS.Modules.Sam.UI.Models;
 using BExIS.Security.Services.Authorization;
+using BExIS.Dlm.Services.MetadataStructure;
 
 namespace BExIS.Dim.Helpers.Mapping
 {
@@ -1106,6 +1107,69 @@ namespace BExIS.Dim.Helpers.Mapping
         }
 
         #endregion GET FROM Specific MetadataStructure // Source
+
+        #region Targets DataTypes
+        /// <summary>
+        /// Get datatype from a target as one of the type of MetadataAttributeUsage,MetadataNestedAttributeUsage, SimpleMetadataAttribute
+        /// </summary>
+        /// <param name="key"></param>
+        /// <param name="metadataStrutcureId"></param>
+        /// <returns></returns>
+        public static string GetTargetDataTypeWhereSourceIsKey(int key, long metadataStrutcureId)
+        {
+            using (MappingManager mappingManager = new MappingManager())
+            using (var metadataAttributeManager = new MetadataAttributeManager())
+            {
+                // get link elements for mapping source and target 
+                var systemLink = mappingManager.GetLinkElement(0, LinkElementType.System);
+                var metadataLink = mappingManager.GetLinkElement(metadataStrutcureId, LinkElementType.MetadataStructure);
+
+                // get mapping based on source and target link elements
+                var rootMapping = mappingManager.GetMapping(systemLink, metadataLink);
+                if (rootMapping != null) // no root mapping exist then skip
+                {
+                    var childmappings = mappingManager.GetChildMappingFromRoot(rootMapping.Id, 2);
+                    var linkElement = mappingManager.GetLinkElement(key, LinkElementType.Key);
+
+                    // if link element exist and mappings to this element exist
+                    if (linkElement != null && childmappings.Any(m => m.Source.Id.Equals(linkElement.Id)))
+                    {
+                        //get target
+                        var matchMapping = childmappings.Where(m => m.Source.Id.Equals(linkElement.Id)).FirstOrDefault();
+                        if (matchMapping != null)
+                        {
+                            var elementId = matchMapping.Target.ElementId;
+                            var elemenType = matchMapping.Target.Type;
+                            var datatype = "";
+
+                            if (elemenType == LinkElementType.MetadataAttributeUsage)
+                            {
+                                var mau = metadataAttributeManager.MetadataAttributeUsageRepo.Get(elementId);
+                                datatype = mau.MetadataAttribute.DataType.SystemType;
+                            }
+                            else if (elemenType == LinkElementType.MetadataNestedAttributeUsage)
+                            {
+                                var mnau = metadataAttributeManager.MetadataNestedAttributeUsageRepo.Get(elementId);
+                                datatype = mnau.Member.DataType.SystemType;
+                            }
+                            else if (elemenType == LinkElementType.SimpleMetadataAttribute)
+                            {
+                                var sma = metadataAttributeManager.MetadataSimpleAttributeRepo.Get(elementId);
+                                datatype = sma.DataType.SystemType;
+                            }
+
+                            return datatype;
+                        }
+
+                    }
+                }
+            }
+
+            return string.Empty;
+
+        }
+
+        #endregion
 
         #region Helpers
 
