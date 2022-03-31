@@ -358,10 +358,10 @@
     //tab strip
     function prefetch(hook,action,id,version)
     {
-        var url = "/" + action;
+        var url = window.location.origin+"/" + action;
 
         //console.log(hook);
-        //console.log(url);
+        console.log(url);
         //console.log(id);
         //console.log(version);
 

@@ -213,7 +213,9 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                             //dsv.Dataset.MetadataStructure = msm.Repo.Get(dsv.Dataset.MetadataStructure.Id);
 
                             title = dsv.Title; // this function only needs metadata and extra fields, there is no need to pass the version to it.
+                            if(dsv.Dataset.DataStructure!=null)
                             dataStructureId = dsv.Dataset.DataStructure.Id;
+
                             researchPlanId = dsv.Dataset.ResearchPlan.Id;
                             metadata = dsv.Metadata;
 
@@ -239,7 +241,8 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                             isPublic = entityPermissionManager.Exists(null, entityTypeId.Value, id);
 
                             // get data structure type
-                            if (dsv.Dataset.DataStructure.Self.GetType().Equals(typeof(StructuredDataStructure)))
+                            
+                            if (dsv.Dataset.DataStructure!=null && dsv.Dataset.DataStructure.Self.GetType().Equals(typeof(StructuredDataStructure)))
                             {
                                 dataStructureType = DataStructureType.Structured.ToString();
                             }

@@ -37,6 +37,7 @@ namespace BExIS.Dlm.Tests.Services.Data
             var dm = new DatasetManager();
             var rsm = new ResearchPlanManager();
             var mdm = new MetadataStructureManager();
+            var etm = new EntityTemplateManager();
             dsHelper = new DatasetHelper();
 
             dsHelper.PurgeAllDatasets();
@@ -53,10 +54,13 @@ namespace BExIS.Dlm.Tests.Services.Data
             var mds = mdm.Repo.Query().First();
             mds.Should().NotBeNull("Failed to meet a precondition: a metadata strcuture is required.");
 
+            var et = etm.Repo.Query().First();
+            et.Should().NotBeNull("Failed to meet a precondition: a entity template is required.");
+
             // create 10 Datasets
             for (int i = 0; i < 10; i++)
             {
-                Dataset dataset = dm.CreateEmptyDataset(dataStructure, rp, mds);
+                Dataset dataset = dm.CreateEmptyDataset(dataStructure, rp, mds, et);
                 datasetId = dataset.Id;
                 dataset = dsHelper.GenerateTuplesForDataset(dataset, dataStructure, numberOfTuples, "David");
                 dataset.Should().NotBeNull("The dataset tuple generation has failed!");

@@ -229,6 +229,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             DataContainerManager dam = new DataContainerManager();
             //SubjectManager sm = new SubjectManager();
             EntityPermissionManager entityPermissionManager = new EntityPermissionManager();
+            EntityTemplateManager entityTemplateManager = new EntityTemplateManager();
 
             List<Error> temp = new List<Error>();
             try
@@ -424,7 +425,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                     }
 
                     Dataset ds = null;
-                    ds = dm.CreateEmptyDataset(sds, rp, metadataStructure);
+                    ds = dm.CreateEmptyDataset(sds, rp, metadataStructure, entityTemplateManager.Repo.Get(1));
 
                     long datasetId = ds.Id;
                     long sdsId = sds.Id;
@@ -623,6 +624,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 dam.Dispose();
                 //sm.Dispose();
                 entityPermissionManager.Dispose();
+                entityTemplateManager.Dispose();    
             }
         }
 

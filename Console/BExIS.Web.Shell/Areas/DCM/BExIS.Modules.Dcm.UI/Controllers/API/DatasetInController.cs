@@ -58,6 +58,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers.API
             using (UserManager userManager = new UserManager())
             using (EntityPermissionManager entityPermissionManager = new EntityPermissionManager())
             using (MetadataStructureManager metadataStructureManager = new MetadataStructureManager())
+            using (EntityTemplateManager entityTemplateManager = new EntityTemplateManager())
             {
                 try
                 {
@@ -128,7 +129,15 @@ namespace BExIS.Modules.Dcm.UI.Controllers.API
                         return request;
                     }
 
-                    var newDataset = datasetManager.CreateEmptyDataset(dataStructure, rp, metadataStructure);
+                    EntityTemplate entityTemplate = entityTemplateManager.Repo.Get(dataset.EntityTemplateId);
+
+                    if (metadataStructure == null)
+                    {
+                        request.Content = new StringContent("A EntityTemplate with id " + dataset.EntityTemplateId + "does not exist.");
+                        return request;
+                    }
+
+                    var newDataset = datasetManager.CreateEmptyDataset(dataStructure, rp, metadataStructure, entityTemplate);
                     datasetId = newDataset.Id;
 
                     // add security

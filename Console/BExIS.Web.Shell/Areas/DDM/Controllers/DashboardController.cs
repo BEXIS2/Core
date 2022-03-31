@@ -310,7 +310,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                     string isValid = "no";
                     
                     string type = "file";
-                    if (dsv.Dataset.DataStructure.Self is StructuredDataStructure)
+                    if (dsv.Dataset.DataStructure?.Self is StructuredDataStructure)
                     {
                         type = "tabular";
                     }

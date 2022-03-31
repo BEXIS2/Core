@@ -534,6 +534,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             using (DataStructureManager dsm = new DataStructureManager())
             using (ResearchPlanManager rpm = new ResearchPlanManager())
             using (EntityPermissionManager entityPermissionManager = new EntityPermissionManager())
+            using (EntityTemplateManager entityTemplateManager = new EntityTemplateManager())
             using (MetadataStructureManager msm = new MetadataStructureManager())
             {
                 XmlDatasetHelper xmlDatasetHelper = new XmlDatasetHelper();
@@ -564,7 +565,10 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
                             MetadataStructure metadataStructure = msm.Repo.Get(metadataStructureId);
 
-                            var ds = dm.CreateEmptyDataset(dataStructure, rp, metadataStructure);
+                            // the hole class is old code, will be removed
+                            EntityTemplate entityTemplate = entityTemplateManager.Repo.Get(1);
+
+                            var ds = dm.CreateEmptyDataset(dataStructure, rp, metadataStructure, entityTemplate);
                             datasetId = ds.Id;
 
                             // add security

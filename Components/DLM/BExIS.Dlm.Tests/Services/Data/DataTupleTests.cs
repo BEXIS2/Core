@@ -41,6 +41,7 @@ namespace BExIS.Dlm.Tests.Services.Data
             var dm = new DatasetManager();
             var rsm = new ResearchPlanManager();
             var mdm = new MetadataStructureManager();
+            var etm = new EntityTemplateManager();
             dsHelper = new DatasetHelper();
 
             try
@@ -61,7 +62,10 @@ namespace BExIS.Dlm.Tests.Services.Data
                 var mds = mdm.Repo.Query().First();
                 mds.Should().NotBeNull("Failed to meet a precondition: a metadata strcuture is required.");
 
-                Dataset dataset = dm.CreateEmptyDataset(dataStructure, rp, mds);
+                var et = etm.Repo.Query().First();
+                et.Should().NotBeNull("Failed to meet a precondition: a entity template is required.");
+
+                Dataset dataset = dm.CreateEmptyDataset(dataStructure, rp, mds, et);
                 datasetId = dataset.Id;
 
                 // add datatuples
@@ -70,6 +74,7 @@ namespace BExIS.Dlm.Tests.Services.Data
             }
             finally
             {
+                etm.Dispose();
                 dm.CheckInDataset(datasetId, "for testing  datatuples with versions", username, ViewCreationBehavior.None);
             }
         }

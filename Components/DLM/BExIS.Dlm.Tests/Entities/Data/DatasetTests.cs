@@ -55,12 +55,12 @@ namespace BExIS.Dlm.Tests.Entities.Data
         }
 
         [Test]
-        public void InstantiateDatasetWithoutDataStructureTest()
+        public void InstantiateDatasetWithoutDataStructureAndEntityTemplateTest()
         {
             // Test pass means the exception has been thrown and caught properly.
             // Assert.Throws(typeof(ArgumentNullException), delegate { new Dataset(null); });
 
-            Action action = () => new Dataset(null);
+            Action action = () => new Dataset(null,null);
             action.Should().Throw<ArgumentNullException>()
                 //.WithInnerException<ArgumentException>()
                 .WithMessage("*without*data structure*");

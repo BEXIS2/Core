@@ -54,6 +54,7 @@ namespace BExIS.Dlm.Tests.Services.Data
             var dm = new DatasetManager();
             var rsm = new ResearchPlanManager();
             var mdm = new MetadataStructureManager();
+            var etm = new EntityTemplateManager();
             try
             {
                 var dsHelper = new DatasetHelper();
@@ -66,7 +67,11 @@ namespace BExIS.Dlm.Tests.Services.Data
                 var mds = mdm.Repo.Query().First();
                 mds.Should().NotBeNull("Failed to meet a precondition: a metadata strcuture is required.");
 
-                Dataset dataset = dm.CreateEmptyDataset(dataStructure, rp, mds);
+                var et = etm.Repo.Query().First();
+                et.Should().NotBeNull("Failed to meet a precondition: a entity template is required.");
+
+
+                Dataset dataset = dm.CreateEmptyDataset(dataStructure, rp, mds, et);
 
                 dataset.Should().NotBeNull();
                 dataset.Id.Should().BeGreaterThan(0, "Dataset is not persisted.");
@@ -82,6 +87,7 @@ namespace BExIS.Dlm.Tests.Services.Data
                 dm?.Dispose();
                 rsm?.Dispose();
                 mdm?.Dispose();
+                etm?.Dispose();
             }
         }
 
@@ -91,6 +97,8 @@ namespace BExIS.Dlm.Tests.Services.Data
             var dm = new DatasetManager();
             var rsm = new ResearchPlanManager();
             var mdm = new MetadataStructureManager();
+            var etm = new EntityTemplateManager();
+
             try
             {
                 var dsHelper = new DatasetHelper();
@@ -103,7 +111,10 @@ namespace BExIS.Dlm.Tests.Services.Data
                 var mds = mdm.Repo.Query().First();
                 mds.Should().NotBeNull("Failed to meet a precondition: a metadata strcuture is required.");
 
-                Dataset dataset = dm.CreateEmptyDataset(dataStructure, rp, mds);
+                var et = etm.Repo.Query().First();
+                et.Should().NotBeNull("Failed to meet a precondition: a entity template is required.");
+
+                Dataset dataset = dm.CreateEmptyDataset(dataStructure, rp, mds, et);
                 dm.DeleteDataset(dataset.Id, "Javad", false);
 
                 dataset.Should().NotBeNull();
@@ -120,6 +131,7 @@ namespace BExIS.Dlm.Tests.Services.Data
                 dm.Dispose();
                 rsm.Dispose();
                 mdm.Dispose();
+                etm.Dispose();
             }
         }
 
@@ -130,6 +142,7 @@ namespace BExIS.Dlm.Tests.Services.Data
             var dm = new DatasetManager();
             var rsm = new ResearchPlanManager();
             var mdm = new MetadataStructureManager();
+            var etm = new EntityTemplateManager();
 
             try
             {
@@ -143,7 +156,10 @@ namespace BExIS.Dlm.Tests.Services.Data
                 var mds = mdm.Repo.Query().First();
                 mds.Should().NotBeNull("Failed to meet a precondition: a metadata strcuture is required.");
 
-                Dataset dataset = dm.CreateEmptyDataset(dataStructure, rp, mds);
+                var et = etm.Repo.Query().First();
+                et.Should().NotBeNull("Failed to meet a precondition: a entity template is required.");
+
+                Dataset dataset = dm.CreateEmptyDataset(dataStructure, rp, mds, et);
                 dataset = dsHelper.GenerateTuplesForDataset(dataset, dataStructure, numberOfTuples, "Javad");
                 dataset.Should().NotBeNull("The dataset tuple generation has failed!");
 
@@ -170,6 +186,7 @@ namespace BExIS.Dlm.Tests.Services.Data
                 dm.Dispose();
                 rsm.Dispose();
                 mdm.Dispose();
+                etm.Dispose();
             }
         }
 
@@ -224,6 +241,7 @@ namespace BExIS.Dlm.Tests.Services.Data
             var dm = new DatasetManager();
             var rsm = new ResearchPlanManager();
             var mdm = new MetadataStructureManager();
+            var etm = new EntityTemplateManager();
 
             try
             {
@@ -235,7 +253,11 @@ namespace BExIS.Dlm.Tests.Services.Data
                 var mds = mdm.Repo.Query().First();
                 mds.Should().NotBeNull("Failed to meet a precondition: a metadata strcuture is required.");
 
-                Dataset dataset = dm.CreateEmptyDataset(dataStructure, rp, mds);
+                var et = etm.Repo.Query().First();
+                et.Should().NotBeNull("Failed to meet a precondition: a entity template is required.");
+
+                Dataset dataset = dm.CreateEmptyDataset(dataStructure, rp, mds, et);
+
                 dataset = dsHelper.GenerateTuplesForDataset(dataset, dataStructure, numberOfTuples, "Javad");
                 dataset.Should().NotBeNull("The dataset tuple generation has failed!");
 
@@ -265,6 +287,7 @@ namespace BExIS.Dlm.Tests.Services.Data
                 dm.Dispose();
                 rsm.Dispose();
                 mdm.Dispose();
+                etm.Dispose();
             }
         }
 
@@ -289,6 +312,7 @@ namespace BExIS.Dlm.Tests.Services.Data
             var dm = new DatasetManager();
             var rsm = new ResearchPlanManager();
             var mdm = new MetadataStructureManager();
+            var etm = new EntityTemplateManager();
 
             try
             {
@@ -299,8 +323,10 @@ namespace BExIS.Dlm.Tests.Services.Data
 
                 var mds = mdm.Repo.Query().First();
                 mds.Should().NotBeNull("Failed to meet a precondition: a metadata strcuture is required.");
+                var et = etm.Repo.Query().First();
+                et.Should().NotBeNull("Failed to meet a precondition: a entity template is required.");
 
-                Dataset dataset = dm.CreateEmptyDataset(dataStructure, rp, mds);
+                Dataset dataset = dm.CreateEmptyDataset(dataStructure, rp, mds, et);
                 dataset = dsHelper.GenerateTuplesForDataset(dataset, dataStructure, numberOfTuples, "Javad");
                 dataset.Should().NotBeNull("The dataset tuple generation has failed!");
 
@@ -334,6 +360,7 @@ namespace BExIS.Dlm.Tests.Services.Data
                 dm.Dispose();
                 rsm.Dispose();
                 mdm.Dispose();
+                etm.Dispose();
             }
         }
 
@@ -343,6 +370,7 @@ namespace BExIS.Dlm.Tests.Services.Data
             using (var dm = new DatasetManager())
             using (var rsm = new ResearchPlanManager())
             using (var mdm = new MetadataStructureManager())
+            using (var etm = new EntityTemplateManager())
             {
                 //Arrange
                 var dsHelper = new DatasetHelper();
@@ -355,7 +383,10 @@ namespace BExIS.Dlm.Tests.Services.Data
                 var mds = mdm.Repo.Query().First();
                 mds.Should().NotBeNull("Failed to meet a precondition: a metadata strcuture is required.");
 
-                Dataset dataset = dm.CreateEmptyDataset(dataStructure, rp, mds);
+                var et = etm.Repo.Query().First();
+                et.Should().NotBeNull("Failed to meet a precondition: a entity template is required.");
+
+                Dataset dataset = dm.CreateEmptyDataset(dataStructure, rp, mds, et);
 
                 // Act
                 if (dm.IsDatasetCheckedOutFor(dataset.Id, "David") || dm.CheckOutDataset(dataset.Id, "David"))
@@ -380,6 +411,7 @@ namespace BExIS.Dlm.Tests.Services.Data
             using (var dm = new DatasetManager())
             using (var rsm = new ResearchPlanManager())
             using (var mdm = new MetadataStructureManager())
+            using (var etm = new EntityTemplateManager())
             {
                 //Arrange
                 var dsHelper = new DatasetHelper();
@@ -392,7 +424,10 @@ namespace BExIS.Dlm.Tests.Services.Data
                 var mds = mdm.Repo.Query().First();
                 mds.Should().NotBeNull("Failed to meet a precondition: a metadata strcuture is required.");
 
-                Dataset dataset = dm.CreateEmptyDataset(dataStructure, rp, mds);
+                var et = etm.Repo.Query().First();
+                et.Should().NotBeNull("Failed to meet a precondition: a entity template is required.");
+
+                Dataset dataset = dm.CreateEmptyDataset(dataStructure, rp, mds, et);
 
                 // Act
                 if (dm.IsDatasetCheckedOutFor(dataset.Id, "David") || dm.CheckOutDataset(dataset.Id, "David"))
@@ -412,6 +447,7 @@ namespace BExIS.Dlm.Tests.Services.Data
             using (var dm = new DatasetManager())
             using (var rsm = new ResearchPlanManager())
             using (var mdm = new MetadataStructureManager())
+            using (var etm = new EntityTemplateManager())
             {
                 try
                 {
@@ -426,7 +462,10 @@ namespace BExIS.Dlm.Tests.Services.Data
                     var mds = mdm.Repo.Query().First();
                     mds.Should().NotBeNull("Failed to meet a precondition: a metadata strcuture is required.");
 
-                    Dataset dataset = dm.CreateEmptyDataset(dataStructure, rp, mds);
+                    var et = etm.Repo.Query().First();
+                    et.Should().NotBeNull("Failed to meet a precondition: a entity template is required.");
+
+                    Dataset dataset = dm.CreateEmptyDataset(dataStructure, rp, mds, et);
 
                     // Act
                     if (dm.IsDatasetCheckedOutFor(dataset.Id, "David") || dm.CheckOutDataset(dataset.Id, "David"))

@@ -205,11 +205,12 @@ namespace BExIS.Dlm.Services.Data
         /// <param name="metadataStructure">A valid and persisted metadata structure entity.</param>
         /// <returns>A dataset associated to the <paramref name="dataStructure"/>, <paramref name="researchPlan"/>, and <paramref name="metadataStructure"/> entities.</returns>
         //[MeasurePerformance]
-        public Dataset CreateEmptyDataset(Entities.DataStructure.DataStructure dataStructure, ResearchPlan researchPlan, MDS.MetadataStructure metadataStructure)
+        public Dataset CreateEmptyDataset(Entities.DataStructure.DataStructure dataStructure, ResearchPlan researchPlan, MDS.MetadataStructure metadataStructure, EntityTemplate entityTemplate)
         {
-            Contract.Requires(dataStructure != null && dataStructure.Id >= 0);
+            //Contract.Requires(dataStructure != null && dataStructure.Id >= 0);
             Contract.Requires(researchPlan != null && researchPlan.Id >= 0);
             Contract.Requires(metadataStructure != null && metadataStructure.Id >= 0);
+            //Contract.Requires(entityTemplate != null && entityTemplate.Id >= 0);
 
             Contract.Ensures(Contract.Result<Dataset>() != null && Contract.Result<Dataset>().Id >= 0);
 
@@ -219,18 +220,22 @@ namespace BExIS.Dlm.Services.Data
                 var structureRepo = uow.GetReadOnlyRepository<Entities.DataStructure.DataStructure>();
                 var researchPlanRepo = uow.GetReadOnlyRepository<ResearchPlan>();
                 var metadataStructureRepo = uow.GetReadOnlyRepository<MDS.MetadataStructure>();
+                var entityTemplateRepo = uow.GetReadOnlyRepository<EntityTemplate>();
 
-                dataStructure = structureRepo.Get(dataStructure.Id);
+                if(dataStructure!=null)dataStructure = structureRepo.Get(dataStructure.Id);
                 researchPlan = researchPlanRepo.Get(researchPlan.Id);
                 metadataStructure = metadataStructureRepo.Get(metadataStructure.Id);
+                entityTemplate = entityTemplateRepo.Get(entityTemplate.Id);
 
-                Dataset dataset = new Dataset(dataStructure);
+                Dataset dataset = new Dataset(entityTemplate, dataStructure);
 
                 dataset.ResearchPlan = researchPlan;
                 researchPlan.Datasets.Add(dataset);
 
                 dataset.MetadataStructure = metadataStructure;
                 metadataStructure.Datasets.Add(dataset);
+
+                dataset.EntityTemplate = entityTemplate;
 
                 dataset.Status = DatasetStatus.CheckedIn;
                 dataset.CheckOutUser = string.Empty;

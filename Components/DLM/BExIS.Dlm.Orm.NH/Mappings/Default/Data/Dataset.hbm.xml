@@ -80,13 +80,16 @@
     </property>
     
     <!-- Mapping entity associations -->
-    <many-to-one name="DataStructure" class="BExIS.Dlm.Entities.DataStructure.DataStructure" not-null="true" column="DataStructureRef"/>
+    <many-to-one name="DataStructure" class="BExIS.Dlm.Entities.DataStructure.DataStructure" not-null="false" column="DataStructureRef"/>
 
     <many-to-one name="MetadataStructure" class="BExIS.Dlm.Entities.MetadataStructure.MetadataStructure" not-null="false" column="MetadataStructureRef"/> <!-- not-null should be true, when testing is finished-->
 
     <many-to-one name="ResearchPlan" class="BExIS.Dlm.Entities.Administration.ResearchPlan" not-null="false" column="ResearchPlanRef"/>
 
-    <set name="Versions" inverse="true" lazy="true" order-by="Timestamp desc" cascade="all-delete-orphan">
+	<many-to-one name="EntityTemplate" class="BExIS.Dlm.Entities.Data.EntityTemplate" not-null="true" column="EntityTemplateRef"/>
+
+
+	  <set name="Versions" inverse="true" lazy="true" order-by="Timestamp desc" cascade="all-delete-orphan">
       <key>
         <column name="DatasetRef" />
       </key>

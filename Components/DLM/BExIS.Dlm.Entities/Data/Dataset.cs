@@ -94,6 +94,14 @@ namespace BExIS.Dlm.Entities.Data
         /// </summary>
         /// <remarks></remarks>
         /// <seealso cref=""/>        
+        public virtual EntityTemplate EntityTemplate { get; set; } // it can be null, but check how hibernate deals with nullables
+
+
+        /// <summary>
+        ///
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>        
         public virtual ICollection<DatasetView> Views { get; set; }
         #endregion
 
@@ -106,7 +114,7 @@ namespace BExIS.Dlm.Entities.Data
         /// <seealso cref=""/>
         /// <param></param>       
         public Dataset()
-            : this(new StructuredDataStructure())
+            : this(new EntityTemplate(), new StructuredDataStructure())
         {
 
         }
@@ -117,16 +125,21 @@ namespace BExIS.Dlm.Entities.Data
         /// <remarks></remarks>
         /// <seealso cref=""/>
         /// <param name="dataStructure"></param>
-        public Dataset(DataStructure.DataStructure dataStructure)
+        public Dataset(EntityTemplate entityTemplate, DataStructure.DataStructure dataStructure)
         {
-            if (dataStructure == null)
-                throw new ArgumentNullException("Dataset can not be constructed without a data structure.");
+            if (entityTemplate == null)
+                throw new ArgumentNullException("Dataset can not be constructed without a entity template.");
+
+            if (dataStructure != null)
+            {
+                this.DataStructure = dataStructure;
+                dataStructure.Datasets.Add(this);
+            }
+
             Versions = new List<DatasetVersion>();
             Status = DatasetStatus.CheckedIn;
-            //Metadata = null; // new XmlElement();// Metadata.Metadata();
-            //XmlExtendedPropertyValues = new XmlDocument();
-            this.DataStructure = dataStructure;
-            dataStructure.Datasets.Add(this);
+
+           
         }
 
         //public override void Validate()

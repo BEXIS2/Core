@@ -181,7 +181,7 @@ namespace BExIS.Modules.Sam.UI.Controllers
                 List<DatasetStatModel> datasetStat = new List<DatasetStatModel>();
                 foreach (Dataset ds in datasets)
                 {
-                    long noColumns = ds.DataStructure.Self is StructuredDataStructure ? (ds.DataStructure.Self as StructuredDataStructure).Variables.Count() : 0L;
+                    long noColumns = ds.DataStructure!=null && ds.DataStructure.Self is StructuredDataStructure ? (ds.DataStructure.Self as StructuredDataStructure).Variables.Count() : 0L;
                     long noRows = 0; //ds.DataStructure.Self is StructuredDataStructure ? dm.GetDatasetLatestVersionEffectiveTupleCount(ds) : 0; // It would save time to calc the row count for all the datasets at once!
                     bool synced = false;
                     if (string.Compare(ds.StateInfo?.State, "Synced", true) == 0
