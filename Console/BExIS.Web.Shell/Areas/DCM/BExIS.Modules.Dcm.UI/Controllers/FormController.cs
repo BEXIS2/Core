@@ -154,7 +154,8 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                     var dataset = datasetManager.GetDataset(entityId);
                     var metadata = datasetManager.GetDatasetLatestMetadataVersion(entityId);
                     metadataStructureId = dataset.MetadataStructure.Id;
-                    dataStructureId = dataset.DataStructure.Id;
+                    if(dataset.DataStructure!=null)
+                        dataStructureId = dataset.DataStructure.Id;
 
                     if (TaskManager == null)
                     {
@@ -2243,7 +2244,6 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
                 //local path
                 //string path = Path.Combine(AppConfiguration.GetModuleWorkspacePath("DCM"), "metadataTemp.Xml");
-
                 taskManager.AddToBus(CreateTaskmanager.METADATA_XML, metadataXml);
 
                 //setup loaded

@@ -9,6 +9,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 using Vaiona.Utils.Cfg;
+using Vaiona.Utils.IO;
 using Vaiona.Web.Mvc.Modularity;
 
 namespace BExIS.UI.Hooks
@@ -147,14 +148,15 @@ namespace BExIS.UI.Hooks
             // generate filename based on mode,entity and place
             string filename = _mode.ToString().ToLower() + _entity.ToLower() + _place.ToLower() + "cache.json";
 
+            string directory = Path.Combine(AppConfiguration.DataPath, _entity + "s", id.ToString());
             // combine datapath + path + filename
-            string filepath = Path.Combine(AppConfiguration.DataPath, _entity + "s", id.ToString(), filename);
+            string filepath = Path.Combine(directory, filename);
 
-            if (File.Exists(filepath)) // check if file exist, delete maybe?
-            {
-                File.Delete(filepath);
-            }
+            if (File.Exists(filepath)) File.Delete(filepath);// check if file exist, delete maybe?
 
+            if (!Directory.Exists(directory)) Directory.CreateDirectory(directory); // create directory if not exist
+ 
+            
             File.WriteAllText(filepath, JsonConvert.SerializeObject(_cache));
 
             return true;

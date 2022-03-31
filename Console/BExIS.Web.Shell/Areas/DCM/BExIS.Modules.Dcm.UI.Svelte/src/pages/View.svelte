@@ -25,7 +25,7 @@ $:testPage="";
 
 onMount(async () => {
 
-
+ setApiConfig("https://localhost:44345","davidschoene","123456");
 // load menu froms server
 model = await getView(id);
 
@@ -35,8 +35,7 @@ version = model.version
 
 
 //test ui as html
-const testPageUrl = hosturl+'dcm/view/test';
-const resTestPage = await fetch(testPageUrl);
+const resTestPage = await fetch('dcm/view/test');
 testPage = await resTestPage.text();
 console.log(testPage)
 })

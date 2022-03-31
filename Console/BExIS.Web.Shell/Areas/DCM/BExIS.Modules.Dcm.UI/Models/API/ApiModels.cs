@@ -25,5 +25,6 @@ namespace BExIS.Modules.Dcm.UI.Models.API
         public string Description { get; set; }
         public long DataStructureId { get; set; }
         public long MetadataStructureId { get; set; }
+        public long EntityTemplateId { get; set; }
     }
 }

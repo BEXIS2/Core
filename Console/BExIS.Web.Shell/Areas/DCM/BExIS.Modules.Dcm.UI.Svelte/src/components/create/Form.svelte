@@ -23,7 +23,8 @@ const dispatch = createEventDispatcher();
 let result = suite.get();
 $:disabled = !result.isValid();
 
-let model = null
+let model = null;
+let onSaving = true;
 
 
 onMount(async () => {
@@ -34,6 +35,7 @@ if(res != false) model = res;
 
 filterInputs();
 suite.reset();
+
 });
 
 
@@ -41,13 +43,18 @@ async function handleSubmit() {
   // check if form is valid
   if(result.isValid)
   {
+    onSaving = true;
     console.log("before submit", model);
     const res = await create(model);
-    if(res!=false)
+    if(res.success!=false)
     {
       console.log("save", res);
-      //dispatch("save", res);
+      dispatch("save", res.id);
+      
     }
+
+    onSaving = false;
+
   }
 }
 
@@ -107,7 +114,7 @@ function filterInputs()
       />
     {/if}
     {#if descriptionField}
-      <InputEntry label={descriptionField.name} type={descriptionField.type} bind:value={descriptionField.value}
+      <InputEntry label={descriptionField.name} type="Text" bind:value={descriptionField.value}
       valid={result.isValid(descriptionField.name)} 
       invalid={result.hasErrors(descriptionField.name)}  
       feedback={result.getErrors(descriptionField.name)} 
@@ -156,8 +163,13 @@ function filterInputs()
 <Row>
  <Col>
   <p class="text-end">
-   <Button color="primary" {disabled} >Create</Button>
-   <Button color="danger" on:click={()=> dispatch("cancel")}><Fa icon={faTrashAlt}/></Button>
+    <FormGroup>
+      {#if onSaving}
+        <Spinner color="primary" size="sm" type ="grow" text-center />
+      {/if}
+      <Button color="primary" {disabled} >Create </Button>
+      <Button color="danger" type="button" on:click={()=> dispatch("cancel")}><Fa icon={faTrashAlt}/></Button>
+    </FormGroup>  
   </p>
  </Col>
 </Row>

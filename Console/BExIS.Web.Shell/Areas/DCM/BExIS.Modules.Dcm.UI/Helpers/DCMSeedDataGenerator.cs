@@ -2,6 +2,7 @@
 using BExIS.Dlm.Entities.DataStructure;
 using BExIS.Dlm.Entities.MetadataStructure;
 using BExIS.Dlm.Services.Administration;
+using BExIS.Dlm.Services.Data;
 using BExIS.Dlm.Services.DataStructure;
 using BExIS.Dlm.Services.MetadataStructure;
 using BExIS.Security.Entities.Objects;
@@ -9,6 +10,7 @@ using BExIS.Security.Services.Objects;
 using BExIS.Xml.Helpers;
 using BExIS.Xml.Helpers.Mapping;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Xml;
@@ -31,6 +33,7 @@ namespace BExIS.Modules.Dcm.UI.Helpers
             FeatureManager featureManager = new FeatureManager();
             OperationManager operationManager = new OperationManager();
             MetadataStructureManager metadataStructureManager = new MetadataStructureManager();
+            EntityTemplateManager entityTemplateManager = new EntityTemplateManager();
 
             try
             {
@@ -51,6 +54,8 @@ namespace BExIS.Modules.Dcm.UI.Helpers
                 }
 
                 #endregion create none structure
+
+
 
                 #region create none unit
 
@@ -269,6 +274,29 @@ namespace BExIS.Modules.Dcm.UI.Helpers
                 //    ImportSchema("Basic Eml", "eml-dataset.xsd", entity.Name, entity.Name, entity.EntityType.FullName);
 
                 #endregion Add Metadata
+
+                #region create default entitytemplate
+
+                if (!entityTemplateManager.Repo.Get().Any(d => d.Name.Equals("file")))
+                {
+                    EntityTemplate entityTemplate = new EntityTemplate();
+                    entityTemplate.Name = "File";
+                    entityTemplate.Description = "Upload files without Datastructure";
+
+                    // set metadatastructure
+                    var metadataStructure = metadataStructureManager.Repo.Get().Where(m => m.Name.Equals("Basic ABCD")).FirstOrDefault();
+                    entityTemplate.MetadataStructure = metadataStructure;
+                    // default input fields , title, descritpion
+                    entityTemplate.MetadataFields = new List<int>(){ 4,1 };
+
+                    // set entity 
+                    entityTemplate.EntityType = entity;
+
+                    entityTemplateManager.Create(entityTemplate);
+
+                }
+
+                #endregion create default entitytemplate
             }
             catch (Exception ex)
             {
@@ -283,6 +311,7 @@ namespace BExIS.Modules.Dcm.UI.Helpers
                 featureManager.Dispose();
                 operationManager.Dispose();
                 metadataStructureManager.Dispose();
+                entityTemplateManager.Dispose();
             }
         }
 

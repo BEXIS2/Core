@@ -135,10 +135,11 @@ export default [
 	 getLocalConfig("create"),
 		getConfig("create"),
 		getLocalConfig("entities"),
-		getConfig("entities")
+		getConfig("entities"),
+		getConfig("view"),
+		getLocalConfig("view")
 		// getLocalConfig("edit"),
 		// getConfig("edit")
-		// getConfig("view"),
 		// getConfig("messages"),
 		// getLocalConfig("local")
 ]

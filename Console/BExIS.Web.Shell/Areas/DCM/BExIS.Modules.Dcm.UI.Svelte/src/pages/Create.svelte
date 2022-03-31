@@ -8,6 +8,7 @@
  import {Spinner,Row,Col, Collapse } from 'sveltestrap';
 
  import { getEntityTemplateList, getSystemKeys }  from '../services/Caller'
+ import { goTo }  from '../services/BaseCaller'
 
  $:entitytemplates= [];
  $:systemkeys= [];
@@ -35,6 +36,13 @@ function handleSelect(e)
   },500)
 }
 
+function onSaveHandler(e)
+{
+  //e.detail == id of teh new created dataset
+  goTo('/dcm/edit?id='+e.detail);
+
+}
+
 </script>
 
 {#if entitytemplates}
@@ -45,7 +53,7 @@ function handleSelect(e)
  <Col>
   {#if selected}
   <Collapse {isOpen} >
-   <Form id= {selected.id} on:cancel={()=>isOpen=false} />
+   <Form id={selected.id} on:cancel={()=>isOpen=false} on:save={(e)=>onSaveHandler(e)} />
   </Collapse>
   {/if}
  </Col>

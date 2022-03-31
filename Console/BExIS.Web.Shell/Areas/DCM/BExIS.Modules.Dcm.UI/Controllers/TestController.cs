@@ -91,12 +91,14 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             DataStructureManager dataStructureManager = new DataStructureManager();
             MetadataStructureManager metadataStructureManager = new MetadataStructureManager();
             ResearchPlanManager researchPlanManager = new ResearchPlanManager();
+            EntityTemplateManager entityTemplateManager = new EntityTemplateManager();
 
             try
             {
                 var structure = dataStructureManager.UnStructuredDataStructureRepo.Get(1);
                 var metadatastructure = metadataStructureManager.Repo.Get(1);
                 var researchplan = researchPlanManager.Repo.Get(1);
+                var entityTemplate = entityTemplateManager.Repo.Get(1);
                 var xmlDatasetHelper = new XmlDatasetHelper();
 
                 var xmlMetadatWriter = new XmlMetadataWriter(XmlNodeMode.xPath);
@@ -104,7 +106,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
                 for (int i = 0; i < n; i++)
                 {
-                    var dataset = datasetManager.CreateEmptyDataset(structure, researchplan, metadatastructure);
+                    var dataset = datasetManager.CreateEmptyDataset(structure, researchplan, metadatastructure, entityTemplate);
 
                     if (datasetManager.IsDatasetCheckedOutFor(dataset.Id, "test") || datasetManager.CheckOutDataset(dataset.Id, "test"))
                     {

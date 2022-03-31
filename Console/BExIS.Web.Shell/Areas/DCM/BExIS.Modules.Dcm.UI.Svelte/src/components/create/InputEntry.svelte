@@ -15,6 +15,8 @@
     <Input {label} type="checkbox" bind:checked={value} {valid} {invalid} {feedback}/> 
 {:else if type=='String'}
     <Input id={label} type="text" bind:value={value} {valid} {invalid} {feedback}  on:input/>
+{:else if type=='Text'}
+    <Input id={label} type="textarea" bind:value={value} {valid} {invalid} {feedback}  on:input/>
 {:else if type=='Int64' || type=='Int32'}
     <Input type="number" bind:value={value} {valid} {invalid} {feedback} on:input/>
 {:else if type=='DateTime'} 
