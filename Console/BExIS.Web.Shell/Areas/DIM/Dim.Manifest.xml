@@ -5,10 +5,11 @@
 		It allows for exporting data, metadata, and schema.
 	</Description>
 	<Assemblies>
-		<Assembly fullName="BExIS.Dim.Entities" role="" />
-		<Assembly fullName="BExIS.Dim.Helpers" role="" />
-		<Assembly fullName="BExIS.Dim.Services" role="" />
-		<Assembly fullName="BExIS.Dim.Orm.NH" role="" />
+		<Assembly fullName="BExIS.Dim.Entities" role=""/>
+		<Assembly fullName="BExIS.Dim.Helpers" role=""/>
+		<!--<Assembly fullName="BExIS.Dim.Orm.NH" role=""/>-->
+		<Assembly fullName="BExIS.Dim.Services" role=""/>
+		<!--<Assembly fullName="BExIS.Modules.Dim.UI" role="UI"/>-->
 	</Assemblies>
 	<Dependencies>
 		<Dependency moduleId="dcm" version="*.*.*" />
@@ -18,6 +19,13 @@
 				title="Export Metadata" description="Export metadata to other formats and standards" icon=""
 				controller="admin" action="index"
 				extends="./settingsRoot" />
+
+		<Export tag="settings" id="doiRequests" order="1"
+        title="DOI Requests" description="Manage DOI requests" icon=""
+        controller="DataCiteDoi" action="index"
+        extends="./settingsRoot"
+            />
+		
 		<Export tag="lunchbar" id="helpDim" order="5"
 				title="Data Dissemination" description="Data Dissemination Help Manual" icon=""
 				controller="Help" action="index"
