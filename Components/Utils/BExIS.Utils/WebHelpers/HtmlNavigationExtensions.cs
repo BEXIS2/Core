@@ -198,7 +198,14 @@ namespace BExIS.Utils.WebHelpers
         {
             //get parameters for the function to check
             string name = userName;
-            string area = operation.Attribute("area").Value.ToLower();
+
+            // if operation come from the shell the area is empty
+            // operations are resgistered with area as shell
+            // set area as shell if its empty
+            string area = "";
+            if (string.IsNullOrEmpty(operation.Attribute("area").Value)) area = "shell";
+            else area = operation.Attribute("area").Value.ToLower();
+
             string controller = operation.Attribute("controller").Value.ToLower();
 
             string identifier = name + "_" + area + "_" + controller;

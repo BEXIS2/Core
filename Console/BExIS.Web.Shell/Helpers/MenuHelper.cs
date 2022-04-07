@@ -280,13 +280,9 @@ namespace BExIS.Web.Shell.Helpers
                 //currently the action are not check, so we use a wildcard
                 string action = "*";//operation.Attribute("action").Value.ToLower();
 
-                //// check if the operation is public
-                //var op = operationManager.Operations.Where(x => x.Module.ToUpperInvariant() == area.ToUpperInvariant() && x.Controller.ToUpperInvariant() == controller.ToUpperInvariant() && x.Action.ToUpperInvariant() == action.ToUpperInvariant()).FirstOrDefault();
-                //var feature = op?.Feature;
-                //if (feature == null) return true;
+                if (string.IsNullOrEmpty(operation.Attribute("area").Value)) area = "shell";
+                else area = operation.Attribute("area").Value.ToLower();
 
-                ////or user has rights
-                //if (string.IsNullOrEmpty(userName)) return false;
                 bool permission = featurePermissionManager.HasAccess<User>(name, area, controller, action);
 
                 System.Web.HttpContext.Current.Session[identifier] = permission;
