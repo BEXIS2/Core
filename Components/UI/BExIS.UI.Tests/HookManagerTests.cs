@@ -173,7 +173,7 @@ namespace BExIS.UI.Tests
             cache.Messages = list;
 
             //Act
-            bool result = hookManager.SaveCache<EditDatasetDetailsCache>(cache, "dataset", "details", HookMode.edit, 7);
+            bool result = hookManager.SaveCache<EditDatasetDetailsCache>(cache, "dataset", "details", HookMode.edit, 1);
 
             cache = hookManager.LoadCache<EditDatasetDetailsCache>("dataset", "details", HookMode.edit, 1);
 
@@ -204,14 +204,14 @@ namespace BExIS.UI.Tests
             cache.Messages = list;
 
             //Act
-            bool result = hookManager.SaveCache<EditDatasetDetailsCache>(cache, "dataset", "details", HookMode.edit, 7);
+            bool result = hookManager.SaveCache<EditDatasetDetailsCache>(cache, "dataset", "details", HookMode.edit, 1);
 
             cache = hookManager.LoadCache<EditDatasetDetailsCache>("dataset", "details", HookMode.edit, 1);
 
-            var excelFileReader = cache.ExcelFileReaderInfo as ExcelFileReaderInfo;
+            var readerInfo = cache.AsciiFileReaderInfo as AsciiFileReaderInfo;
 
             //Assert
-            Assert.NotNull(excelFileReader);
+            Assert.NotNull(readerInfo);
         }
     }
 }

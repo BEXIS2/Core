@@ -172,7 +172,7 @@ namespace Vaiona.Web.Mvc.Modularity
                         {
                             currentMustChange = true;
                             // set the sibling export node's title
-                            if (!string.IsNullOrWhiteSpace(sibling.Attribute("area").Value)) // Shell items are not prefixed
+                            if (!string.IsNullOrWhiteSpace(sibling.Attribute("area")?.Value)) // Shell items are not prefixed
                             {
                                 string newTitle = string.Format("{0}: {1}", sibling.Attribute("area").Value.Capitalize(), sibling.Attribute("title").Value);
                                 sibling.SetAttributeValue("title", newTitle);

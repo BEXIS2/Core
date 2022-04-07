@@ -63,7 +63,7 @@ namespace BExIS.Dlm.Tests.Entities.Data
             Action action = () => new Dataset(null,null);
             action.Should().Throw<ArgumentNullException>()
                 //.WithInnerException<ArgumentException>()
-                .WithMessage("*without*data structure*");
+                .WithMessage("*without*entity*template.*");
         }
     }
 }
