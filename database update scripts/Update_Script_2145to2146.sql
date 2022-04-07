@@ -38,3 +38,8 @@ Alter TABLE entitypermissions add column creationdate timestamp without time zon
 INSERT INTO public.operations (versionno, extra, module, controller, action, featureref)
 SELECT 1, NULL, 'API', 'Token', '*', null
 WHERE NOT EXISTS (SELECT * FROM public.operations WHERE module='API' AND controller='Token');
+
+-- Add Entry for datacite doi inside dim
+INSERT INTO public.operations (versionno, extra, module, controller, action, featureref)
+SELECT 1, NULL, 'DIM', 'DataCiteDoi', '*', (Select id from features where name = 'Data Dissemination')
+WHERE NOT EXISTS (SELECT * FROM public.operations WHERE module='DIM' AND controller='DataCiteDoi');
