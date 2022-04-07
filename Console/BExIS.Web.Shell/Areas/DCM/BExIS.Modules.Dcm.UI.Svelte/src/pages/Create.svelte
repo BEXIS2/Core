@@ -2,6 +2,7 @@
  import List from '../components/create/List.svelte'
  import Form from '../components/create/Form.svelte'
  import { onMount } from 'svelte'; 
+ import { fade } from 'svelte/transition'; 
 
  import { setApiConfig }  from '@bexis2/svelte-bexis2-core-ui'
 
@@ -44,7 +45,7 @@ function onSaveHandler(e)
 }
 
 </script>
-
+<div in:fade={{ delay: 500 }} out:fade={{ delay: 500 }}>
 {#if entitytemplates}
 <Row>
  <Col>
@@ -53,7 +54,9 @@ function onSaveHandler(e)
  <Col>
   {#if selected}
   <Collapse {isOpen} >
-   <Form id={selected.id} on:cancel={()=>isOpen=false} on:save={(e)=>onSaveHandler(e)} />
+   <div class="form-container">
+    <Form id={selected.id} on:cancel={()=>isOpen=false} on:save={(e)=>onSaveHandler(e)} />
+   </div>
   </Collapse>
   {/if}
  </Col>
@@ -62,3 +65,14 @@ function onSaveHandler(e)
 {:else}
 <Spinner color="info" size="sm" type ="grow" text-center />
 {/if}
+
+</div>
+
+<style>
+
+.form-container
+{
+  padding: 1em;
+}
+
+</style>

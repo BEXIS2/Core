@@ -24,7 +24,7 @@ let result = suite.get();
 $:disabled = !result.isValid();
 
 let model = null;
-let onSaving = true;
+let onSaving = false;
 
 
 onMount(async () => {

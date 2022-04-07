@@ -1,11 +1,11 @@
 <script>
 
-import { onMount } from 'svelte'; 
-import {Spinner} from 'sveltestrap';
+import { onMount,  } from 'svelte'; 
+import { fade  } from 'svelte/transition'; 
+import {Spinner, Container} from 'sveltestrap';
 
 import { getEdit }  from '../services/Caller'
 import { setApiConfig }  from '@bexis2/svelte-bexis2-core-ui'
-import {notEmtpy} from '../components/form/validation '
 
 import Header from '../components/edit/Header.svelte'
 import Data from '../components/edit/Data.svelte'
@@ -107,6 +107,8 @@ let visible=false;
   <Spinner color="primary" size="sm" type ="grow" text-center />
 {:else}  <!-- load page -->
 
+<div in:fade={{ delay: 500 }}>
+
 <!-- Header -->
 <Header {id} {version} {title} />
 
@@ -133,7 +135,11 @@ let visible=false;
 
 <Debug {hooks}/>
 
+</div>
+
 {/if}
+
+
 
 <style>
 

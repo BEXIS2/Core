@@ -278,6 +278,7 @@ namespace BExIS.Modules.Dcm.UI.Helpers
                 #region create default entitytemplate
 
                 if (!entityTemplateManager.Repo.Get().Any(d => d.Name.Equals("file")))
+
                 {
                     EntityTemplate entityTemplate = new EntityTemplate();
                     entityTemplate.Name = "File";

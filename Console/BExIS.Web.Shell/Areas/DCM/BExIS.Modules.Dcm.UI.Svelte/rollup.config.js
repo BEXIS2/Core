@@ -137,9 +137,8 @@ export default [
 		getLocalConfig("entities"),
 		getConfig("entities"),
 		getConfig("view"),
-		getLocalConfig("view")
-		// getLocalConfig("edit"),
-		// getConfig("edit")
-		// getConfig("messages"),
-		// getLocalConfig("local")
+		getLocalConfig("view"),
+		getLocalConfig("edit"),
+		getConfig("edit"),
+		getConfig("messages")
 ]

@@ -1,5 +1,5 @@
 
-(function(l, r) { if (!l || l.getElementById('livereloadscript')) return; r = l.createElement('script'); r.async = 1; r.src = '//' + (self.location.host || 'localhost').split(':')[0] + ':35732/livereload.js?snipver=1'; r.id = 'livereloadscript'; l.getElementsByTagName('head')[0].appendChild(r) })(self.document);
+(function(l, r) { if (!l || l.getElementById('livereloadscript')) return; r = l.createElement('script'); r.async = 1; r.src = '//' + (self.location.host || 'localhost').split(':')[0] + ':35736/livereload.js?snipver=1'; r.id = 'livereloadscript'; l.getElementsByTagName('head')[0].appendChild(r) })(self.document);
 var app = (function () {
     'use strict';
 
@@ -155,7 +155,7 @@ var app = (function () {
     function append_empty_stylesheet(node) {
         const style_element = element('style');
         append_stylesheet(get_root_for_style(node), style_element);
-        return style_element;
+        return style_element.sheet;
     }
     function append_stylesheet(node, style) {
         append(node.head || node, style);
@@ -235,7 +235,12 @@ var app = (function () {
         input.value = value == null ? '' : value;
     }
     function set_style(node, key, value, important) {
-        node.style.setProperty(key, value, important ? 'important' : '');
+        if (value === null) {
+            node.style.removeProperty(key);
+        }
+        else {
+            node.style.setProperty(key, value, important ? 'important' : '');
+        }
     }
     function select_option(select, value) {
         for (let i = 0; i < select.options.length; i += 1) {
@@ -266,7 +271,9 @@ var app = (function () {
         return e;
     }
 
-    const active_docs = new Set();
+    // we need to store the information for multiple documents because a Svelte application could also contain iframes
+    // https://github.com/sveltejs/svelte/issues/3624
+    const managed_styles = new Map();
     let active = 0;
     // https://github.com/darkskyapp/string-hash/blob/master/index.js
     function hash(str) {
@@ -275,6 +282,11 @@ var app = (function () {
         while (i--)
             hash = ((hash << 5) - hash) ^ str.charCodeAt(i);
         return hash >>> 0;
+    }
+    function create_style_information(doc, node) {
+        const info = { stylesheet: append_empty_stylesheet(node), rules: {} };
+        managed_styles.set(doc, info);
+        return info;
     }
     function create_rule(node, a, b, duration, delay, ease, fn, uid = 0) {
         const step = 16.666 / duration;
@@ -286,11 +298,9 @@ var app = (function () {
         const rule = keyframes + `100% {${fn(b, 1 - b)}}\n}`;
         const name = `__svelte_${hash(rule)}_${uid}`;
         const doc = get_root_for_style(node);
-        active_docs.add(doc);
-        const stylesheet = doc.__svelte_stylesheet || (doc.__svelte_stylesheet = append_empty_stylesheet(node).sheet);
-        const current_rules = doc.__svelte_rules || (doc.__svelte_rules = {});
-        if (!current_rules[name]) {
-            current_rules[name] = true;
+        const { stylesheet, rules } = managed_styles.get(doc) || create_style_information(doc, node);
+        if (!rules[name]) {
+            rules[name] = true;
             stylesheet.insertRule(`@keyframes ${name} ${rule}`, stylesheet.cssRules.length);
         }
         const animation = node.style.animation || '';
@@ -316,14 +326,14 @@ var app = (function () {
         raf(() => {
             if (active)
                 return;
-            active_docs.forEach(doc => {
-                const stylesheet = doc.__svelte_stylesheet;
+            managed_styles.forEach(info => {
+                const { stylesheet } = info;
                 let i = stylesheet.cssRules.length;
                 while (i--)
                     stylesheet.deleteRule(i);
-                doc.__svelte_rules = {};
+                info.rules = {};
             });
-            active_docs.clear();
+            managed_styles.clear();
         });
     }
 
@@ -388,22 +398,40 @@ var app = (function () {
     function add_flush_callback(fn) {
         flush_callbacks.push(fn);
     }
-    let flushing = false;
+    // flush() calls callbacks in this order:
+    // 1. All beforeUpdate callbacks, in order: parents before children
+    // 2. All bind:this callbacks, in reverse order: children before parents.
+    // 3. All afterUpdate callbacks, in order: parents before children. EXCEPT
+    //    for afterUpdates called during the initial onMount, which are called in
+    //    reverse order: children before parents.
+    // Since callbacks might update component values, which could trigger another
+    // call to flush(), the following steps guard against this:
+    // 1. During beforeUpdate, any updated components will be added to the
+    //    dirty_components array and will cause a reentrant call to flush(). Because
+    //    the flush index is kept outside the function, the reentrant call will pick
+    //    up where the earlier call left off and go through all dirty components. The
+    //    current_component value is saved and restored so that the reentrant call will
+    //    not interfere with the "parent" flush() call.
+    // 2. bind:this callbacks cannot trigger new flush() calls.
+    // 3. During afterUpdate, any updated components will NOT have their afterUpdate
+    //    callback called a second time; the seen_callbacks set, outside the flush()
+    //    function, guarantees this behavior.
     const seen_callbacks = new Set();
+    let flushidx = 0; // Do *not* move this inside the flush() function
     function flush() {
-        if (flushing)
-            return;
-        flushing = true;
+        const saved_component = current_component;
         do {
             // first, call beforeUpdate functions
             // and update components
-            for (let i = 0; i < dirty_components.length; i += 1) {
-                const component = dirty_components[i];
+            while (flushidx < dirty_components.length) {
+                const component = dirty_components[flushidx];
+                flushidx++;
                 set_current_component(component);
                 update(component.$$);
             }
             set_current_component(null);
             dirty_components.length = 0;
+            flushidx = 0;
             while (binding_callbacks.length)
                 binding_callbacks.pop()();
             // then, once components are updated, call
@@ -423,8 +451,8 @@ var app = (function () {
             flush_callbacks.pop()();
         }
         update_scheduled = false;
-        flushing = false;
         seen_callbacks.clear();
+        set_current_component(saved_component);
     }
     function update($$) {
         if ($$.fragment !== null) {
@@ -756,7 +784,7 @@ var app = (function () {
         return typeof spread_props === 'object' && spread_props !== null ? spread_props : {};
     }
 
-    function bind$1(component, name, callback) {
+    function bind$3(component, name, callback) {
         const index = component.$$.props[name];
         if (index !== undefined) {
             component.$$.bound[index] = callback;
@@ -893,7 +921,7 @@ var app = (function () {
     }
 
     function dispatch_dev(type, detail) {
-        document.dispatchEvent(custom_event(type, Object.assign({ version: '3.44.1' }, detail), true));
+        document.dispatchEvent(custom_event(type, Object.assign({ version: '3.46.4' }, detail), true));
     }
     function append_dev(target, node) {
         dispatch_dev('SvelteDOMInsert', { target, node });
@@ -972,6 +1000,16 @@ var app = (function () {
         }
         $capture_state() { }
         $inject_state() { }
+    }
+
+    function fade(node, { delay = 0, duration = 400, easing = identity } = {}) {
+        const o = +getComputedStyle(node).opacity;
+        return {
+            delay,
+            duration,
+            easing,
+            css: t => `opacity: ${t * o}`
+        };
     }
 
     function getOriginalBodyPadding() {
@@ -1089,6 +1127,14 @@ var app = (function () {
       );
     }
 
+    function uuid() {
+      return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
+        const r = (Math.random() * 16) | 0;
+        const v = c == 'x' ? r : (r & 0x3) | 0x8;
+        return v.toString(16);
+      });
+    }
+
     const subscriber_queue = [];
     /**
      * Create a `Writable` store that allows both updating and reading by subscription.
@@ -1194,17 +1240,7 @@ var app = (function () {
       };
     }
 
-    function fade(node, { delay = 0, duration = 400, easing = identity } = {}) {
-        const o = +getComputedStyle(node).opacity;
-        return {
-            delay,
-            duration,
-            easing,
-            css: t => `opacity: ${t * o}`
-        };
-    }
-
-    /* node_modules\sveltestrap\src\Alert.svelte generated by Svelte v3.44.1 */
+    /* node_modules\sveltestrap\src\Alert.svelte generated by Svelte v3.46.4 */
     const file$G = "node_modules\\sveltestrap\\src\\Alert.svelte";
     const get_heading_slot_changes = dirty => ({});
     const get_heading_slot_context = ctx => ({});
@@ -1897,18 +1933,18 @@ var app = (function () {
     	}
     }
 
-    /* node_modules\sveltestrap\src\Button.svelte generated by Svelte v3.44.1 */
+    /* node_modules\sveltestrap\src\Button.svelte generated by Svelte v3.46.4 */
     const file$F = "node_modules\\sveltestrap\\src\\Button.svelte";
 
-    // (50:0) {:else}
+    // (54:0) {:else}
     function create_else_block_1$3(ctx) {
     	let button;
     	let button_aria_label_value;
     	let current;
     	let mounted;
     	let dispose;
-    	const default_slot_template = /*#slots*/ ctx[18].default;
-    	const default_slot = create_slot(default_slot_template, ctx, /*$$scope*/ ctx[17], null);
+    	const default_slot_template = /*#slots*/ ctx[19].default;
+    	const default_slot = create_slot(default_slot_template, ctx, /*$$scope*/ ctx[18], null);
     	const default_slot_or_fallback = default_slot || fallback_block$9(ctx);
 
     	let button_levels = [
@@ -1933,7 +1969,7 @@ var app = (function () {
     			button = element("button");
     			if (default_slot_or_fallback) default_slot_or_fallback.c();
     			set_attributes(button, button_data);
-    			add_location(button, file$F, 50, 2, 1044);
+    			add_location(button, file$F, 54, 2, 1124);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, button, anchor);
@@ -1943,30 +1979,30 @@ var app = (function () {
     			}
 
     			if (button.autofocus) button.focus();
-    			/*button_binding*/ ctx[22](button);
+    			/*button_binding*/ ctx[23](button);
     			current = true;
 
     			if (!mounted) {
-    				dispose = listen_dev(button, "click", /*click_handler_1*/ ctx[20], false, false, false);
+    				dispose = listen_dev(button, "click", /*click_handler_1*/ ctx[21], false, false, false);
     				mounted = true;
     			}
     		},
     		p: function update(ctx, dirty) {
     			if (default_slot) {
-    				if (default_slot.p && (!current || dirty & /*$$scope*/ 131072)) {
+    				if (default_slot.p && (!current || dirty & /*$$scope*/ 262144)) {
     					update_slot_base(
     						default_slot,
     						default_slot_template,
     						ctx,
-    						/*$$scope*/ ctx[17],
+    						/*$$scope*/ ctx[18],
     						!current
-    						? get_all_dirty_from_scope(/*$$scope*/ ctx[17])
-    						: get_slot_changes(default_slot_template, /*$$scope*/ ctx[17], dirty, null),
+    						? get_all_dirty_from_scope(/*$$scope*/ ctx[18])
+    						: get_slot_changes(default_slot_template, /*$$scope*/ ctx[18], dirty, null),
     						null
     					);
     				}
     			} else {
-    				if (default_slot_or_fallback && default_slot_or_fallback.p && (!current || dirty & /*children, $$scope*/ 131074)) {
+    				if (default_slot_or_fallback && default_slot_or_fallback.p && (!current || dirty & /*children, $$scope*/ 262146)) {
     					default_slot_or_fallback.p(ctx, !current ? -1 : dirty);
     				}
     			}
@@ -1992,7 +2028,7 @@ var app = (function () {
     		d: function destroy(detaching) {
     			if (detaching) detach_dev(button);
     			if (default_slot_or_fallback) default_slot_or_fallback.d(detaching);
-    			/*button_binding*/ ctx[22](null);
+    			/*button_binding*/ ctx[23](null);
     			mounted = false;
     			dispose();
     		}
@@ -2002,14 +2038,14 @@ var app = (function () {
     		block: block_1,
     		id: create_else_block_1$3.name,
     		type: "else",
-    		source: "(50:0) {:else}",
+    		source: "(54:0) {:else}",
     		ctx
     	});
 
     	return block_1;
     }
 
-    // (33:0) {#if href}
+    // (37:0) {#if href}
     function create_if_block$q(ctx) {
     	let a;
     	let current_block_type_index;
@@ -2051,16 +2087,16 @@ var app = (function () {
     			a = element("a");
     			if_block.c();
     			set_attributes(a, a_data);
-    			add_location(a, file$F, 33, 2, 786);
+    			add_location(a, file$F, 37, 2, 866);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, a, anchor);
     			if_blocks[current_block_type_index].m(a, null);
-    			/*a_binding*/ ctx[21](a);
+    			/*a_binding*/ ctx[22](a);
     			current = true;
 
     			if (!mounted) {
-    				dispose = listen_dev(a, "click", /*click_handler*/ ctx[19], false, false, false);
+    				dispose = listen_dev(a, "click", /*click_handler*/ ctx[20], false, false, false);
     				mounted = true;
     			}
     		},
@@ -2112,7 +2148,7 @@ var app = (function () {
     		d: function destroy(detaching) {
     			if (detaching) detach_dev(a);
     			if_blocks[current_block_type_index].d();
-    			/*a_binding*/ ctx[21](null);
+    			/*a_binding*/ ctx[22](null);
     			mounted = false;
     			dispose();
     		}
@@ -2122,18 +2158,18 @@ var app = (function () {
     		block: block_1,
     		id: create_if_block$q.name,
     		type: "if",
-    		source: "(33:0) {#if href}",
+    		source: "(37:0) {#if href}",
     		ctx
     	});
 
     	return block_1;
     }
 
-    // (64:6) {:else}
+    // (68:6) {:else}
     function create_else_block_2$1(ctx) {
     	let current;
-    	const default_slot_template = /*#slots*/ ctx[18].default;
-    	const default_slot = create_slot(default_slot_template, ctx, /*$$scope*/ ctx[17], null);
+    	const default_slot_template = /*#slots*/ ctx[19].default;
+    	const default_slot = create_slot(default_slot_template, ctx, /*$$scope*/ ctx[18], null);
 
     	const block_1 = {
     		c: function create() {
@@ -2148,15 +2184,15 @@ var app = (function () {
     		},
     		p: function update(ctx, dirty) {
     			if (default_slot) {
-    				if (default_slot.p && (!current || dirty & /*$$scope*/ 131072)) {
+    				if (default_slot.p && (!current || dirty & /*$$scope*/ 262144)) {
     					update_slot_base(
     						default_slot,
     						default_slot_template,
     						ctx,
-    						/*$$scope*/ ctx[17],
+    						/*$$scope*/ ctx[18],
     						!current
-    						? get_all_dirty_from_scope(/*$$scope*/ ctx[17])
-    						: get_slot_changes(default_slot_template, /*$$scope*/ ctx[17], dirty, null),
+    						? get_all_dirty_from_scope(/*$$scope*/ ctx[18])
+    						: get_slot_changes(default_slot_template, /*$$scope*/ ctx[18], dirty, null),
     						null
     					);
     				}
@@ -2180,14 +2216,14 @@ var app = (function () {
     		block: block_1,
     		id: create_else_block_2$1.name,
     		type: "else",
-    		source: "(64:6) {:else}",
+    		source: "(68:6) {:else}",
     		ctx
     	});
 
     	return block_1;
     }
 
-    // (62:6) {#if children}
+    // (66:6) {#if children}
     function create_if_block_2$b(ctx) {
     	let t;
 
@@ -2212,14 +2248,14 @@ var app = (function () {
     		block: block_1,
     		id: create_if_block_2$b.name,
     		type: "if",
-    		source: "(62:6) {#if children}",
+    		source: "(66:6) {#if children}",
     		ctx
     	});
 
     	return block_1;
     }
 
-    // (61:10)        
+    // (65:10)        
     function fallback_block$9(ctx) {
     	let current_block_type_index;
     	let if_block;
@@ -2292,18 +2328,18 @@ var app = (function () {
     		block: block_1,
     		id: fallback_block$9.name,
     		type: "fallback",
-    		source: "(61:10)        ",
+    		source: "(65:10)        ",
     		ctx
     	});
 
     	return block_1;
     }
 
-    // (46:4) {:else}
+    // (50:4) {:else}
     function create_else_block$h(ctx) {
     	let current;
-    	const default_slot_template = /*#slots*/ ctx[18].default;
-    	const default_slot = create_slot(default_slot_template, ctx, /*$$scope*/ ctx[17], null);
+    	const default_slot_template = /*#slots*/ ctx[19].default;
+    	const default_slot = create_slot(default_slot_template, ctx, /*$$scope*/ ctx[18], null);
 
     	const block_1 = {
     		c: function create() {
@@ -2318,15 +2354,15 @@ var app = (function () {
     		},
     		p: function update(ctx, dirty) {
     			if (default_slot) {
-    				if (default_slot.p && (!current || dirty & /*$$scope*/ 131072)) {
+    				if (default_slot.p && (!current || dirty & /*$$scope*/ 262144)) {
     					update_slot_base(
     						default_slot,
     						default_slot_template,
     						ctx,
-    						/*$$scope*/ ctx[17],
+    						/*$$scope*/ ctx[18],
     						!current
-    						? get_all_dirty_from_scope(/*$$scope*/ ctx[17])
-    						: get_slot_changes(default_slot_template, /*$$scope*/ ctx[17], dirty, null),
+    						? get_all_dirty_from_scope(/*$$scope*/ ctx[18])
+    						: get_slot_changes(default_slot_template, /*$$scope*/ ctx[18], dirty, null),
     						null
     					);
     				}
@@ -2350,14 +2386,14 @@ var app = (function () {
     		block: block_1,
     		id: create_else_block$h.name,
     		type: "else",
-    		source: "(46:4) {:else}",
+    		source: "(50:4) {:else}",
     		ctx
     	});
 
     	return block_1;
     }
 
-    // (44:4) {#if children}
+    // (48:4) {#if children}
     function create_if_block_1$i(ctx) {
     	let t;
 
@@ -2382,7 +2418,7 @@ var app = (function () {
     		block: block_1,
     		id: create_if_block_1$i.name,
     		type: "if",
-    		source: "(44:4) {#if children}",
+    		source: "(48:4) {#if children}",
     		ctx
     	});
 
@@ -2477,7 +2513,7 @@ var app = (function () {
     	let defaultAriaLabel;
 
     	const omit_props_names = [
-    		"class","active","block","children","close","color","disabled","href","inner","outline","size","style","value"
+    		"class","active","block","children","close","color","disabled","href","inner","outline","size","style","value","white"
     	];
 
     	let $$restProps = compute_rest_props($$props, omit_props_names);
@@ -2496,6 +2532,7 @@ var app = (function () {
     	let { size = null } = $$props;
     	let { style = '' } = $$props;
     	let { value = '' } = $$props;
+    	let { white = false } = $$props;
 
     	function click_handler(event) {
     		bubble.call(this, $$self, event);
@@ -2520,7 +2557,7 @@ var app = (function () {
     	}
 
     	$$self.$$set = $$new_props => {
-    		$$invalidate(23, $$props = assign(assign({}, $$props), exclude_internal_props($$new_props)));
+    		$$invalidate(24, $$props = assign(assign({}, $$props), exclude_internal_props($$new_props)));
     		$$invalidate(9, $$restProps = compute_rest_props($$props, omit_props_names));
     		if ('class' in $$new_props) $$invalidate(10, className = $$new_props.class);
     		if ('active' in $$new_props) $$invalidate(11, active = $$new_props.active);
@@ -2535,7 +2572,8 @@ var app = (function () {
     		if ('size' in $$new_props) $$invalidate(16, size = $$new_props.size);
     		if ('style' in $$new_props) $$invalidate(4, style = $$new_props.style);
     		if ('value' in $$new_props) $$invalidate(5, value = $$new_props.value);
-    		if ('$$scope' in $$new_props) $$invalidate(17, $$scope = $$new_props.$$scope);
+    		if ('white' in $$new_props) $$invalidate(17, white = $$new_props.white);
+    		if ('$$scope' in $$new_props) $$invalidate(18, $$scope = $$new_props.$$scope);
     	};
 
     	$$self.$capture_state = () => ({
@@ -2553,13 +2591,14 @@ var app = (function () {
     		size,
     		style,
     		value,
+    		white,
     		defaultAriaLabel,
     		classes,
     		ariaLabel
     	});
 
     	$$self.$inject_state = $$new_props => {
-    		$$invalidate(23, $$props = assign(assign({}, $$props), $$new_props));
+    		$$invalidate(24, $$props = assign(assign({}, $$props), $$new_props));
     		if ('className' in $$props) $$invalidate(10, className = $$new_props.className);
     		if ('active' in $$props) $$invalidate(11, active = $$new_props.active);
     		if ('block' in $$props) $$invalidate(12, block = $$new_props.block);
@@ -2573,6 +2612,7 @@ var app = (function () {
     		if ('size' in $$props) $$invalidate(16, size = $$new_props.size);
     		if ('style' in $$props) $$invalidate(4, style = $$new_props.style);
     		if ('value' in $$props) $$invalidate(5, value = $$new_props.value);
+    		if ('white' in $$props) $$invalidate(17, white = $$new_props.white);
     		if ('defaultAriaLabel' in $$props) $$invalidate(6, defaultAriaLabel = $$new_props.defaultAriaLabel);
     		if ('classes' in $$props) $$invalidate(7, classes = $$new_props.classes);
     		if ('ariaLabel' in $$props) $$invalidate(8, ariaLabel = $$new_props.ariaLabel);
@@ -2585,8 +2625,11 @@ var app = (function () {
     	$$self.$$.update = () => {
     		$$invalidate(8, ariaLabel = $$props['aria-label']);
 
-    		if ($$self.$$.dirty & /*className, close, outline, color, size, block, active*/ 130048) {
-    			$$invalidate(7, classes = classnames$1(className, close ? 'btn-close' : 'btn', close || `btn${outline ? '-outline' : ''}-${color}`, size ? `btn-${size}` : false, block ? 'd-block w-100' : false, { active }));
+    		if ($$self.$$.dirty & /*className, close, outline, color, size, block, active, white*/ 261120) {
+    			$$invalidate(7, classes = classnames$1(className, close ? 'btn-close' : 'btn', close || `btn${outline ? '-outline' : ''}-${color}`, size ? `btn-${size}` : false, block ? 'd-block w-100' : false, {
+    				active,
+    				'btn-close-white': close && white
+    			}));
     		}
 
     		if ($$self.$$.dirty & /*close*/ 8192) {
@@ -2614,6 +2657,7 @@ var app = (function () {
     		color,
     		outline,
     		size,
+    		white,
     		$$scope,
     		slots,
     		click_handler,
@@ -2640,7 +2684,8 @@ var app = (function () {
     			outline: 15,
     			size: 16,
     			style: 4,
-    			value: 5
+    			value: 5,
+    			white: 17
     		});
 
     		dispatch_dev("SvelteRegisterComponent", {
@@ -2754,9 +2799,17 @@ var app = (function () {
     	set value(value) {
     		throw new Error("<Button>: Props cannot be set directly on the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
     	}
+
+    	get white() {
+    		throw new Error("<Button>: Props cannot be read directly from the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
+    	}
+
+    	set white(value) {
+    		throw new Error("<Button>: Props cannot be set directly on the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
+    	}
     }
 
-    /* node_modules\sveltestrap\src\Col.svelte generated by Svelte v3.44.1 */
+    /* node_modules\sveltestrap\src\Col.svelte generated by Svelte v3.46.4 */
     const file$E = "node_modules\\sveltestrap\\src\\Col.svelte";
 
     function create_fragment$K(ctx) {
@@ -2784,7 +2837,7 @@ var app = (function () {
     			div = element("div");
     			if (default_slot) default_slot.c();
     			set_attributes(div, div_data);
-    			add_location(div, file$E, 60, 0, 1427);
+    			add_location(div, file$E, 63, 0, 1536);
     		},
     		l: function claim(nodes) {
     			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
@@ -2887,6 +2940,10 @@ var app = (function () {
 
     			if (columnProp.offset) {
     				colClasses.push(`offset${colSizeInterfix}${columnProp.offset}`);
+    			}
+
+    			if (columnProp.order) {
+    				colClasses.push(`order${colSizeInterfix}${columnProp.order}`);
     			}
     		} else {
     			colClasses.push(getColumnSizeClass$1(isXs, colWidth, columnProp));
@@ -3024,7 +3081,7 @@ var app = (function () {
     	}
     }
 
-    /* node_modules\sveltestrap\src\Container.svelte generated by Svelte v3.44.1 */
+    /* node_modules\sveltestrap\src\Container.svelte generated by Svelte v3.46.4 */
     const file$D = "node_modules\\sveltestrap\\src\\Container.svelte";
 
     function create_fragment$J(ctx) {
@@ -3255,7 +3312,7 @@ var app = (function () {
     	}
     }
 
-    /* node_modules\sveltestrap\src\FormCheck.svelte generated by Svelte v3.44.1 */
+    /* node_modules\sveltestrap\src\FormCheck.svelte generated by Svelte v3.46.4 */
     const file$C = "node_modules\\sveltestrap\\src\\FormCheck.svelte";
     const get_label_slot_changes$1 = dirty => ({});
     const get_label_slot_context$1 = ctx => ({});
@@ -4097,7 +4154,7 @@ var app = (function () {
     	}
     }
 
-    /* node_modules\sveltestrap\src\FormFeedback.svelte generated by Svelte v3.44.1 */
+    /* node_modules\sveltestrap\src\FormFeedback.svelte generated by Svelte v3.46.4 */
     const file$B = "node_modules\\sveltestrap\\src\\FormFeedback.svelte";
 
     function create_fragment$H(ctx) {
@@ -4266,7 +4323,7 @@ var app = (function () {
     	}
     }
 
-    /* node_modules\sveltestrap\src\InlineContainer.svelte generated by Svelte v3.44.1 */
+    /* node_modules\sveltestrap\src\InlineContainer.svelte generated by Svelte v3.46.4 */
 
     const file$A = "node_modules\\sveltestrap\\src\\InlineContainer.svelte";
 
@@ -4377,7 +4434,7 @@ var app = (function () {
     	}
     }
 
-    /* node_modules\sveltestrap\src\Input.svelte generated by Svelte v3.44.1 */
+    /* node_modules\sveltestrap\src\Input.svelte generated by Svelte v3.46.4 */
     const file$z = "node_modules\\sveltestrap\\src\\Input.svelte";
 
     function get_each_context$6(ctx, list, i) {
@@ -5876,10 +5933,10 @@ var app = (function () {
     	}
 
     	formcheck = new FormCheck$1({ props: formcheck_props, $$inline: true });
-    	binding_callbacks.push(() => bind$1(formcheck, 'checked', formcheck_checked_binding));
-    	binding_callbacks.push(() => bind$1(formcheck, 'inner', formcheck_inner_binding));
-    	binding_callbacks.push(() => bind$1(formcheck, 'group', formcheck_group_binding));
-    	binding_callbacks.push(() => bind$1(formcheck, 'value', formcheck_value_binding));
+    	binding_callbacks.push(() => bind$3(formcheck, 'checked', formcheck_checked_binding));
+    	binding_callbacks.push(() => bind$3(formcheck, 'inner', formcheck_inner_binding));
+    	binding_callbacks.push(() => bind$3(formcheck, 'group', formcheck_group_binding));
+    	binding_callbacks.push(() => bind$3(formcheck, 'value', formcheck_value_binding));
     	formcheck.$on("blur", /*blur_handler_5*/ ctx[174]);
     	formcheck.$on("change", /*change_handler_5*/ ctx[175]);
     	formcheck.$on("focus", /*focus_handler_5*/ ctx[176]);
@@ -6409,7 +6466,8 @@ var app = (function () {
     	const if_blocks = [];
 
     	function select_block_type_2(ctx, dirty) {
-    		if (show_if == null || dirty[0] & /*feedback*/ 512) show_if = !!Array.isArray(/*feedback*/ ctx[9]);
+    		if (dirty[0] & /*feedback*/ 512) show_if = null;
+    		if (show_if == null) show_if = !!Array.isArray(/*feedback*/ ctx[9]);
     		if (show_if) return 0;
     		return 1;
     	}
@@ -8299,10 +8357,10 @@ var app = (function () {
     	}
     }
 
-    /* node_modules\sveltestrap\src\ModalBackdrop.svelte generated by Svelte v3.44.1 */
+    /* node_modules\sveltestrap\src\ModalBackdrop.svelte generated by Svelte v3.46.4 */
     const file$y = "node_modules\\sveltestrap\\src\\ModalBackdrop.svelte";
 
-    // (12:0) {#if isOpen}
+    // (20:0) {#if isOpen && loaded}
     function create_if_block$n(ctx) {
     	let div;
     	let div_intro;
@@ -8310,7 +8368,7 @@ var app = (function () {
     	let current;
     	let mounted;
     	let dispose;
-    	let div_levels = [/*$$restProps*/ ctx[3], { class: /*classes*/ ctx[2] }];
+    	let div_levels = [/*$$restProps*/ ctx[4], { class: /*classes*/ ctx[3] }];
     	let div_data = {};
 
     	for (let i = 0; i < div_levels.length; i += 1) {
@@ -8322,21 +8380,21 @@ var app = (function () {
     			div = element("div");
     			set_attributes(div, div_data);
     			toggle_class(div, "fade", /*fade*/ ctx[1]);
-    			add_location(div, file$y, 12, 2, 350);
+    			add_location(div, file$y, 20, 2, 464);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div, anchor);
     			current = true;
 
     			if (!mounted) {
-    				dispose = listen_dev(div, "click", /*click_handler*/ ctx[5], false, false, false);
+    				dispose = listen_dev(div, "click", /*click_handler*/ ctx[6], false, false, false);
     				mounted = true;
     			}
     		},
     		p: function update(ctx, dirty) {
     			set_attributes(div, div_data = get_spread_update(div_levels, [
-    				dirty & /*$$restProps*/ 8 && /*$$restProps*/ ctx[3],
-    				(!current || dirty & /*classes*/ 4) && { class: /*classes*/ ctx[2] }
+    				dirty & /*$$restProps*/ 16 && /*$$restProps*/ ctx[4],
+    				(!current || dirty & /*classes*/ 8) && { class: /*classes*/ ctx[3] }
     			]));
 
     			toggle_class(div, "fade", /*fade*/ ctx[1]);
@@ -8369,7 +8427,7 @@ var app = (function () {
     		block,
     		id: create_if_block$n.name,
     		type: "if",
-    		source: "(12:0) {#if isOpen}",
+    		source: "(20:0) {#if isOpen && loaded}",
     		ctx
     	});
 
@@ -8379,7 +8437,7 @@ var app = (function () {
     function create_fragment$E(ctx) {
     	let if_block_anchor;
     	let current;
-    	let if_block = /*isOpen*/ ctx[0] && create_if_block$n(ctx);
+    	let if_block = /*isOpen*/ ctx[0] && /*loaded*/ ctx[2] && create_if_block$n(ctx);
 
     	const block = {
     		c: function create() {
@@ -8395,11 +8453,11 @@ var app = (function () {
     			current = true;
     		},
     		p: function update(ctx, [dirty]) {
-    			if (/*isOpen*/ ctx[0]) {
+    			if (/*isOpen*/ ctx[0] && /*loaded*/ ctx[2]) {
     				if (if_block) {
     					if_block.p(ctx, dirty);
 
-    					if (dirty & /*isOpen*/ 1) {
+    					if (dirty & /*isOpen, loaded*/ 5) {
     						transition_in(if_block, 1);
     					}
     				} else {
@@ -8453,6 +8511,11 @@ var app = (function () {
     	let { class: className = '' } = $$props;
     	let { isOpen = false } = $$props;
     	let { fade = true } = $$props;
+    	let loaded = false;
+
+    	onMount(() => {
+    		$$invalidate(2, loaded = true);
+    	});
 
     	function click_handler(event) {
     		bubble.call(this, $$self, event);
@@ -8460,27 +8523,30 @@ var app = (function () {
 
     	$$self.$$set = $$new_props => {
     		$$props = assign(assign({}, $$props), exclude_internal_props($$new_props));
-    		$$invalidate(3, $$restProps = compute_rest_props($$props, omit_props_names));
-    		if ('class' in $$new_props) $$invalidate(4, className = $$new_props.class);
+    		$$invalidate(4, $$restProps = compute_rest_props($$props, omit_props_names));
+    		if ('class' in $$new_props) $$invalidate(5, className = $$new_props.class);
     		if ('isOpen' in $$new_props) $$invalidate(0, isOpen = $$new_props.isOpen);
     		if ('fade' in $$new_props) $$invalidate(1, fade = $$new_props.fade);
     	};
 
     	$$self.$capture_state = () => ({
+    		onMount,
     		classnames: classnames$1,
     		backdropIn,
     		backdropOut,
     		className,
     		isOpen,
     		fade,
+    		loaded,
     		classes
     	});
 
     	$$self.$inject_state = $$new_props => {
-    		if ('className' in $$props) $$invalidate(4, className = $$new_props.className);
+    		if ('className' in $$props) $$invalidate(5, className = $$new_props.className);
     		if ('isOpen' in $$props) $$invalidate(0, isOpen = $$new_props.isOpen);
     		if ('fade' in $$props) $$invalidate(1, fade = $$new_props.fade);
-    		if ('classes' in $$props) $$invalidate(2, classes = $$new_props.classes);
+    		if ('loaded' in $$props) $$invalidate(2, loaded = $$new_props.loaded);
+    		if ('classes' in $$props) $$invalidate(3, classes = $$new_props.classes);
     	};
 
     	if ($$props && "$$inject" in $$props) {
@@ -8488,18 +8554,18 @@ var app = (function () {
     	}
 
     	$$self.$$.update = () => {
-    		if ($$self.$$.dirty & /*className*/ 16) {
-    			$$invalidate(2, classes = classnames$1(className, 'modal-backdrop'));
+    		if ($$self.$$.dirty & /*className*/ 32) {
+    			$$invalidate(3, classes = classnames$1(className, 'modal-backdrop'));
     		}
     	};
 
-    	return [isOpen, fade, classes, $$restProps, className, click_handler];
+    	return [isOpen, fade, loaded, classes, $$restProps, className, click_handler];
     }
 
     class ModalBackdrop extends SvelteComponentDev {
     	constructor(options) {
     		super(options);
-    		init(this, options, instance$E, create_fragment$E, safe_not_equal, { class: 4, isOpen: 0, fade: 1 });
+    		init(this, options, instance$E, create_fragment$E, safe_not_equal, { class: 5, isOpen: 0, fade: 1 });
 
     		dispatch_dev("SvelteRegisterComponent", {
     			component: this,
@@ -8534,7 +8600,7 @@ var app = (function () {
     	}
     }
 
-    /* node_modules\sveltestrap\src\ModalBody.svelte generated by Svelte v3.44.1 */
+    /* node_modules\sveltestrap\src\ModalBody.svelte generated by Svelte v3.46.4 */
     const file$x = "node_modules\\sveltestrap\\src\\ModalBody.svelte";
 
     function create_fragment$D(ctx) {
@@ -8672,16 +8738,16 @@ var app = (function () {
     	}
     }
 
-    /* node_modules\sveltestrap\src\ModalHeader.svelte generated by Svelte v3.44.1 */
+    /* node_modules\sveltestrap\src\ModalHeader.svelte generated by Svelte v3.46.4 */
     const file$w = "node_modules\\sveltestrap\\src\\ModalHeader.svelte";
     const get_close_slot_changes$1 = dirty => ({});
     const get_close_slot_context$1 = ctx => ({});
 
-    // (17:4) {:else}
+    // (18:4) {:else}
     function create_else_block$e(ctx) {
     	let current;
-    	const default_slot_template = /*#slots*/ ctx[7].default;
-    	const default_slot = create_slot(default_slot_template, ctx, /*$$scope*/ ctx[6], null);
+    	const default_slot_template = /*#slots*/ ctx[8].default;
+    	const default_slot = create_slot(default_slot_template, ctx, /*$$scope*/ ctx[7], null);
 
     	const block = {
     		c: function create() {
@@ -8696,15 +8762,15 @@ var app = (function () {
     		},
     		p: function update(ctx, dirty) {
     			if (default_slot) {
-    				if (default_slot.p && (!current || dirty & /*$$scope*/ 64)) {
+    				if (default_slot.p && (!current || dirty & /*$$scope*/ 128)) {
     					update_slot_base(
     						default_slot,
     						default_slot_template,
     						ctx,
-    						/*$$scope*/ ctx[6],
+    						/*$$scope*/ ctx[7],
     						!current
-    						? get_all_dirty_from_scope(/*$$scope*/ ctx[6])
-    						: get_slot_changes(default_slot_template, /*$$scope*/ ctx[6], dirty, null),
+    						? get_all_dirty_from_scope(/*$$scope*/ ctx[7])
+    						: get_slot_changes(default_slot_template, /*$$scope*/ ctx[7], dirty, null),
     						null
     					);
     				}
@@ -8728,14 +8794,14 @@ var app = (function () {
     		block,
     		id: create_else_block$e.name,
     		type: "else",
-    		source: "(17:4) {:else}",
+    		source: "(18:4) {:else}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (15:4) {#if children}
+    // (16:4) {#if children}
     function create_if_block_1$f(ctx) {
     	let t;
 
@@ -8760,14 +8826,14 @@ var app = (function () {
     		block,
     		id: create_if_block_1$f.name,
     		type: "if",
-    		source: "(15:4) {#if children}",
+    		source: "(16:4) {#if children}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (22:4) {#if typeof toggle === 'function'}
+    // (23:4) {#if typeof toggle === 'function'}
     function create_if_block$m(ctx) {
     	let button;
     	let mounted;
@@ -8779,7 +8845,7 @@ var app = (function () {
     			attr_dev(button, "type", "button");
     			attr_dev(button, "class", "btn-close");
     			attr_dev(button, "aria-label", /*closeAriaLabel*/ ctx[1]);
-    			add_location(button, file$w, 22, 6, 488);
+    			add_location(button, file$w, 23, 6, 525);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, button, anchor);
@@ -8817,14 +8883,14 @@ var app = (function () {
     		block,
     		id: create_if_block$m.name,
     		type: "if",
-    		source: "(22:4) {#if typeof toggle === 'function'}",
+    		source: "(23:4) {#if typeof toggle === 'function'}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (21:21)      
+    // (22:21)      
     function fallback_block$7(ctx) {
     	let if_block_anchor;
     	let if_block = typeof /*toggle*/ ctx[0] === 'function' && create_if_block$m(ctx);
@@ -8862,7 +8928,7 @@ var app = (function () {
     		block,
     		id: fallback_block$7.name,
     		type: "fallback",
-    		source: "(21:21)      ",
+    		source: "(22:21)      ",
     		ctx
     	});
 
@@ -8886,10 +8952,10 @@ var app = (function () {
 
     	current_block_type_index = select_block_type(ctx);
     	if_block = if_blocks[current_block_type_index] = if_block_creators[current_block_type_index](ctx);
-    	const close_slot_template = /*#slots*/ ctx[7].close;
-    	const close_slot = create_slot(close_slot_template, ctx, /*$$scope*/ ctx[6], get_close_slot_context$1);
+    	const close_slot_template = /*#slots*/ ctx[8].close;
+    	const close_slot = create_slot(close_slot_template, ctx, /*$$scope*/ ctx[7], get_close_slot_context$1);
     	const close_slot_or_fallback = close_slot || fallback_block$7(ctx);
-    	let div_levels = [/*$$restProps*/ ctx[4], { class: /*classes*/ ctx[3] }];
+    	let div_levels = [/*$$restProps*/ ctx[5], { class: /*classes*/ ctx[4] }];
     	let div_data = {};
 
     	for (let i = 0; i < div_levels.length; i += 1) {
@@ -8904,9 +8970,10 @@ var app = (function () {
     			t = space();
     			if (close_slot_or_fallback) close_slot_or_fallback.c();
     			attr_dev(h5, "class", "modal-title");
-    			add_location(h5, file$w, 13, 2, 315);
+    			attr_dev(h5, "id", /*id*/ ctx[3]);
+    			add_location(h5, file$w, 14, 2, 344);
     			set_attributes(div, div_data);
-    			add_location(div, file$w, 12, 0, 274);
+    			add_location(div, file$w, 13, 0, 303);
     		},
     		l: function claim(nodes) {
     			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
@@ -8950,16 +9017,20 @@ var app = (function () {
     				if_block.m(h5, null);
     			}
 
+    			if (!current || dirty & /*id*/ 8) {
+    				attr_dev(h5, "id", /*id*/ ctx[3]);
+    			}
+
     			if (close_slot) {
-    				if (close_slot.p && (!current || dirty & /*$$scope*/ 64)) {
+    				if (close_slot.p && (!current || dirty & /*$$scope*/ 128)) {
     					update_slot_base(
     						close_slot,
     						close_slot_template,
     						ctx,
-    						/*$$scope*/ ctx[6],
+    						/*$$scope*/ ctx[7],
     						!current
-    						? get_all_dirty_from_scope(/*$$scope*/ ctx[6])
-    						: get_slot_changes(close_slot_template, /*$$scope*/ ctx[6], dirty, get_close_slot_changes$1),
+    						? get_all_dirty_from_scope(/*$$scope*/ ctx[7])
+    						: get_slot_changes(close_slot_template, /*$$scope*/ ctx[7], dirty, get_close_slot_changes$1),
     						get_close_slot_context$1
     					);
     				}
@@ -8970,8 +9041,8 @@ var app = (function () {
     			}
 
     			set_attributes(div, div_data = get_spread_update(div_levels, [
-    				dirty & /*$$restProps*/ 16 && /*$$restProps*/ ctx[4],
-    				(!current || dirty & /*classes*/ 8) && { class: /*classes*/ ctx[3] }
+    				dirty & /*$$restProps*/ 32 && /*$$restProps*/ ctx[5],
+    				(!current || dirty & /*classes*/ 16) && { class: /*classes*/ ctx[4] }
     			]));
     		},
     		i: function intro(local) {
@@ -9005,7 +9076,7 @@ var app = (function () {
 
     function instance$C($$self, $$props, $$invalidate) {
     	let classes;
-    	const omit_props_names = ["class","toggle","closeAriaLabel","children"];
+    	const omit_props_names = ["class","toggle","closeAriaLabel","children","id"];
     	let $$restProps = compute_rest_props($$props, omit_props_names);
     	let { $$slots: slots = {}, $$scope } = $$props;
     	validate_slots('ModalHeader', slots, ['default','close']);
@@ -9013,15 +9084,17 @@ var app = (function () {
     	let { toggle = undefined } = $$props;
     	let { closeAriaLabel = 'Close' } = $$props;
     	let { children = undefined } = $$props;
+    	let { id = undefined } = $$props;
 
     	$$self.$$set = $$new_props => {
     		$$props = assign(assign({}, $$props), exclude_internal_props($$new_props));
-    		$$invalidate(4, $$restProps = compute_rest_props($$props, omit_props_names));
-    		if ('class' in $$new_props) $$invalidate(5, className = $$new_props.class);
+    		$$invalidate(5, $$restProps = compute_rest_props($$props, omit_props_names));
+    		if ('class' in $$new_props) $$invalidate(6, className = $$new_props.class);
     		if ('toggle' in $$new_props) $$invalidate(0, toggle = $$new_props.toggle);
     		if ('closeAriaLabel' in $$new_props) $$invalidate(1, closeAriaLabel = $$new_props.closeAriaLabel);
     		if ('children' in $$new_props) $$invalidate(2, children = $$new_props.children);
-    		if ('$$scope' in $$new_props) $$invalidate(6, $$scope = $$new_props.$$scope);
+    		if ('id' in $$new_props) $$invalidate(3, id = $$new_props.id);
+    		if ('$$scope' in $$new_props) $$invalidate(7, $$scope = $$new_props.$$scope);
     	};
 
     	$$self.$capture_state = () => ({
@@ -9030,15 +9103,17 @@ var app = (function () {
     		toggle,
     		closeAriaLabel,
     		children,
+    		id,
     		classes
     	});
 
     	$$self.$inject_state = $$new_props => {
-    		if ('className' in $$props) $$invalidate(5, className = $$new_props.className);
+    		if ('className' in $$props) $$invalidate(6, className = $$new_props.className);
     		if ('toggle' in $$props) $$invalidate(0, toggle = $$new_props.toggle);
     		if ('closeAriaLabel' in $$props) $$invalidate(1, closeAriaLabel = $$new_props.closeAriaLabel);
     		if ('children' in $$props) $$invalidate(2, children = $$new_props.children);
-    		if ('classes' in $$props) $$invalidate(3, classes = $$new_props.classes);
+    		if ('id' in $$props) $$invalidate(3, id = $$new_props.id);
+    		if ('classes' in $$props) $$invalidate(4, classes = $$new_props.classes);
     	};
 
     	if ($$props && "$$inject" in $$props) {
@@ -9046,8 +9121,8 @@ var app = (function () {
     	}
 
     	$$self.$$.update = () => {
-    		if ($$self.$$.dirty & /*className*/ 32) {
-    			$$invalidate(3, classes = classnames$1(className, 'modal-header'));
+    		if ($$self.$$.dirty & /*className*/ 64) {
+    			$$invalidate(4, classes = classnames$1(className, 'modal-header'));
     		}
     	};
 
@@ -9055,6 +9130,7 @@ var app = (function () {
     		toggle,
     		closeAriaLabel,
     		children,
+    		id,
     		classes,
     		$$restProps,
     		className,
@@ -9068,10 +9144,11 @@ var app = (function () {
     		super(options);
 
     		init(this, options, instance$C, create_fragment$C, safe_not_equal, {
-    			class: 5,
+    			class: 6,
     			toggle: 0,
     			closeAriaLabel: 1,
-    			children: 2
+    			children: 2,
+    			id: 3
     		});
 
     		dispatch_dev("SvelteRegisterComponent", {
@@ -9113,9 +9190,17 @@ var app = (function () {
     	set children(value) {
     		throw new Error("<ModalHeader>: Props cannot be set directly on the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
     	}
+
+    	get id() {
+    		throw new Error("<ModalHeader>: Props cannot be read directly from the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
+    	}
+
+    	set id(value) {
+    		throw new Error("<ModalHeader>: Props cannot be set directly on the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
+    	}
     }
 
-    /* node_modules\sveltestrap\src\Portal.svelte generated by Svelte v3.44.1 */
+    /* node_modules\sveltestrap\src\Portal.svelte generated by Svelte v3.46.4 */
     const file$v = "node_modules\\sveltestrap\\src\\Portal.svelte";
 
     function create_fragment$B(ctx) {
@@ -9256,13 +9341,13 @@ var app = (function () {
     	}
     }
 
-    /* node_modules\sveltestrap\src\Modal.svelte generated by Svelte v3.44.1 */
+    /* node_modules\sveltestrap\src\Modal.svelte generated by Svelte v3.46.4 */
 
     const file$u = "node_modules\\sveltestrap\\src\\Modal.svelte";
     const get_external_slot_changes = dirty => ({});
     const get_external_slot_context = ctx => ({});
 
-    // (216:0) {#if _isMounted}
+    // (223:0) {#if _isMounted}
     function create_if_block_1$e(ctx) {
     	let switch_instance;
     	let switch_instance_anchor;
@@ -9299,7 +9384,7 @@ var app = (function () {
     		p: function update(ctx, dirty) {
     			const switch_instance_changes = {};
 
-    			if (dirty[0] & /*wrapClassName, $$restProps, labelledBy, modalClassName, fade, staticModal, classes, _dialog, contentClassName, body, toggle, header, isOpen*/ 1071039 | dirty[1] & /*$$scope*/ 8) {
+    			if (dirty[0] & /*wrapClassName, $$restProps, labelledBy, modalClassName, fade, staticModal, classes, _dialog, contentClassName, body, toggle, header, isOpen*/ 2119615 | dirty[1] & /*$$scope*/ 8) {
     				switch_instance_changes.$$scope = { dirty, ctx };
     			}
 
@@ -9346,14 +9431,14 @@ var app = (function () {
     		block,
     		id: create_if_block_1$e.name,
     		type: "if",
-    		source: "(216:0) {#if _isMounted}",
+    		source: "(223:0) {#if _isMounted}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (219:6) {#if isOpen}
+    // (226:6) {#if isOpen}
     function create_if_block_2$8(ctx) {
     	let div2;
     	let t0;
@@ -9369,7 +9454,7 @@ var app = (function () {
     	let current;
     	let mounted;
     	let dispose;
-    	const external_slot_template = /*#slots*/ ctx[30].external;
+    	const external_slot_template = /*#slots*/ ctx[31].external;
     	const external_slot = create_slot(external_slot_template, ctx, /*$$scope*/ ctx[34], get_external_slot_context);
     	let if_block0 = /*header*/ ctx[3] && create_if_block_4$2(ctx);
     	const if_block_creators = [create_if_block_3$5, create_else_block$d];
@@ -9394,11 +9479,11 @@ var app = (function () {
     			t1 = space();
     			if_block1.c();
     			attr_dev(div0, "class", div0_class_value = classnames$1('modal-content', /*contentClassName*/ ctx[9]));
-    			add_location(div0, file$u, 237, 12, 5557);
+    			add_location(div0, file$u, 244, 12, 5732);
     			attr_dev(div1, "class", /*classes*/ ctx[14]);
     			attr_dev(div1, "role", "document");
-    			add_location(div1, file$u, 236, 10, 5487);
-    			attr_dev(div2, "arialabelledby", /*labelledBy*/ ctx[5]);
+    			add_location(div1, file$u, 243, 10, 5662);
+    			attr_dev(div2, "aria-labelledby", /*labelledBy*/ ctx[5]);
 
     			attr_dev(div2, "class", div2_class_value = classnames$1('modal', /*modalClassName*/ ctx[8], {
     				fade: /*fade*/ ctx[10],
@@ -9406,7 +9491,7 @@ var app = (function () {
     			}));
 
     			attr_dev(div2, "role", "dialog");
-    			add_location(div2, file$u, 219, 8, 4921);
+    			add_location(div2, file$u, 226, 8, 5106);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div2, anchor);
@@ -9421,17 +9506,17 @@ var app = (function () {
     			if (if_block0) if_block0.m(div0, null);
     			append_dev(div0, t1);
     			if_blocks[current_block_type_index].m(div0, null);
-    			/*div1_binding*/ ctx[31](div1);
+    			/*div1_binding*/ ctx[32](div1);
     			current = true;
 
     			if (!mounted) {
     				dispose = [
-    					listen_dev(div2, "introstart", /*introstart_handler*/ ctx[32], false, false, false),
+    					listen_dev(div2, "introstart", /*introstart_handler*/ ctx[33], false, false, false),
     					listen_dev(div2, "introend", /*onModalOpened*/ ctx[17], false, false, false),
-    					listen_dev(div2, "outrostart", /*outrostart_handler*/ ctx[33], false, false, false),
-    					listen_dev(div2, "outroend", /*onModalClosed*/ ctx[18], false, false, false),
+    					listen_dev(div2, "outrostart", /*onModalClosing*/ ctx[18], false, false, false),
+    					listen_dev(div2, "outroend", /*onModalClosed*/ ctx[19], false, false, false),
     					listen_dev(div2, "click", /*handleBackdropClick*/ ctx[16], false, false, false),
-    					listen_dev(div2, "mousedown", /*handleBackdropMouseDown*/ ctx[19], false, false, false)
+    					listen_dev(div2, "mousedown", /*handleBackdropMouseDown*/ ctx[20], false, false, false)
     				];
 
     				mounted = true;
@@ -9511,7 +9596,7 @@ var app = (function () {
     			}
 
     			if (!current || dirty[0] & /*labelledBy*/ 32) {
-    				attr_dev(div2, "arialabelledby", /*labelledBy*/ ctx[5]);
+    				attr_dev(div2, "aria-labelledby", /*labelledBy*/ ctx[5]);
     			}
 
     			if (!current || dirty[0] & /*modalClassName, fade, staticModal*/ 1281 && div2_class_value !== (div2_class_value = classnames$1('modal', /*modalClassName*/ ctx[8], {
@@ -9548,7 +9633,7 @@ var app = (function () {
     			if (external_slot) external_slot.d(detaching);
     			if (if_block0) if_block0.d();
     			if_blocks[current_block_type_index].d();
-    			/*div1_binding*/ ctx[31](null);
+    			/*div1_binding*/ ctx[32](null);
     			if (detaching && div2_outro) div2_outro.end();
     			mounted = false;
     			run_all(dispose);
@@ -9559,14 +9644,14 @@ var app = (function () {
     		block,
     		id: create_if_block_2$8.name,
     		type: "if",
-    		source: "(219:6) {#if isOpen}",
+    		source: "(226:6) {#if isOpen}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (239:14) {#if header}
+    // (246:14) {#if header}
     function create_if_block_4$2(ctx) {
     	let modalheader;
     	let current;
@@ -9574,6 +9659,7 @@ var app = (function () {
     	modalheader = new ModalHeader({
     			props: {
     				toggle: /*toggle*/ ctx[4],
+    				id: /*labelledBy*/ ctx[5],
     				$$slots: { default: [create_default_slot_3$5] },
     				$$scope: { ctx }
     			},
@@ -9591,6 +9677,7 @@ var app = (function () {
     		p: function update(ctx, dirty) {
     			const modalheader_changes = {};
     			if (dirty[0] & /*toggle*/ 16) modalheader_changes.toggle = /*toggle*/ ctx[4];
+    			if (dirty[0] & /*labelledBy*/ 32) modalheader_changes.id = /*labelledBy*/ ctx[5];
 
     			if (dirty[0] & /*header*/ 8 | dirty[1] & /*$$scope*/ 8) {
     				modalheader_changes.$$scope = { dirty, ctx };
@@ -9616,14 +9703,14 @@ var app = (function () {
     		block,
     		id: create_if_block_4$2.name,
     		type: "if",
-    		source: "(239:14) {#if header}",
+    		source: "(246:14) {#if header}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (240:16) <ModalHeader {toggle}>
+    // (247:16) <ModalHeader {toggle} id={labelledBy}>
     function create_default_slot_3$5(ctx) {
     	let t;
 
@@ -9646,17 +9733,17 @@ var app = (function () {
     		block,
     		id: create_default_slot_3$5.name,
     		type: "slot",
-    		source: "(240:16) <ModalHeader {toggle}>",
+    		source: "(247:16) <ModalHeader {toggle} id={labelledBy}>",
     		ctx
     	});
 
     	return block;
     }
 
-    // (248:14) {:else}
+    // (255:14) {:else}
     function create_else_block$d(ctx) {
     	let current;
-    	const default_slot_template = /*#slots*/ ctx[30].default;
+    	const default_slot_template = /*#slots*/ ctx[31].default;
     	const default_slot = create_slot(default_slot_template, ctx, /*$$scope*/ ctx[34], null);
 
     	const block = {
@@ -9704,14 +9791,14 @@ var app = (function () {
     		block,
     		id: create_else_block$d.name,
     		type: "else",
-    		source: "(248:14) {:else}",
+    		source: "(255:14) {:else}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (244:14) {#if body}
+    // (251:14) {#if body}
     function create_if_block_3$5(ctx) {
     	let modalbody;
     	let current;
@@ -9759,17 +9846,17 @@ var app = (function () {
     		block,
     		id: create_if_block_3$5.name,
     		type: "if",
-    		source: "(244:14) {#if body}",
+    		source: "(251:14) {#if body}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (245:16) <ModalBody>
+    // (252:16) <ModalBody>
     function create_default_slot_2$8(ctx) {
     	let current;
-    	const default_slot_template = /*#slots*/ ctx[30].default;
+    	const default_slot_template = /*#slots*/ ctx[31].default;
     	const default_slot = create_slot(default_slot_template, ctx, /*$$scope*/ ctx[34], null);
 
     	const block = {
@@ -9817,14 +9904,14 @@ var app = (function () {
     		block,
     		id: create_default_slot_2$8.name,
     		type: "slot",
-    		source: "(245:16) <ModalBody>",
+    		source: "(252:16) <ModalBody>",
     		ctx
     	});
 
     	return block;
     }
 
-    // (217:2) <svelte:component this={outer}>
+    // (224:2) <svelte:component this={outer}>
     function create_default_slot_1$a(ctx) {
     	let div;
     	let current;
@@ -9833,7 +9920,7 @@ var app = (function () {
     	let div_levels = [
     		{ class: /*wrapClassName*/ ctx[7] },
     		{ tabindex: "-1" },
-    		/*$$restProps*/ ctx[20]
+    		/*$$restProps*/ ctx[21]
     	];
 
     	let div_data = {};
@@ -9847,7 +9934,7 @@ var app = (function () {
     			div = element("div");
     			if (if_block) if_block.c();
     			set_attributes(div, div_data);
-    			add_location(div, file$u, 217, 4, 4835);
+    			add_location(div, file$u, 224, 4, 5020);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div, anchor);
@@ -9881,7 +9968,7 @@ var app = (function () {
     			set_attributes(div, div_data = get_spread_update(div_levels, [
     				(!current || dirty[0] & /*wrapClassName*/ 128) && { class: /*wrapClassName*/ ctx[7] },
     				{ tabindex: "-1" },
-    				dirty[0] & /*$$restProps*/ 1048576 && /*$$restProps*/ ctx[20]
+    				dirty[0] & /*$$restProps*/ 2097152 && /*$$restProps*/ ctx[21]
     			]));
     		},
     		i: function intro(local) {
@@ -9903,14 +9990,14 @@ var app = (function () {
     		block,
     		id: create_default_slot_1$a.name,
     		type: "slot",
-    		source: "(217:2) <svelte:component this={outer}>",
+    		source: "(224:2) <svelte:component this={outer}>",
     		ctx
     	});
 
     	return block;
     }
 
-    // (258:0) {#if backdrop && !staticModal}
+    // (265:0) {#if backdrop && !staticModal}
     function create_if_block$l(ctx) {
     	let switch_instance;
     	let switch_instance_anchor;
@@ -9994,14 +10081,14 @@ var app = (function () {
     		block,
     		id: create_if_block$l.name,
     		type: "if",
-    		source: "(258:0) {#if backdrop && !staticModal}",
+    		source: "(265:0) {#if backdrop && !staticModal}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (259:2) <svelte:component this={outer}>
+    // (266:2) <svelte:component this={outer}>
     function create_default_slot$a(ctx) {
     	let modalbackdrop;
     	let current;
@@ -10046,7 +10133,7 @@ var app = (function () {
     		block,
     		id: create_default_slot$a.name,
     		type: "slot",
-    		source: "(259:2) <svelte:component this={outer}>",
+    		source: "(266:2) <svelte:component this={outer}>",
     		ctx
     	});
 
@@ -10181,7 +10268,7 @@ var app = (function () {
     	let { scrollable = false } = $$props;
     	let { size = '' } = $$props;
     	let { toggle = undefined } = $$props;
-    	let { labelledBy = '' } = $$props;
+    	let { labelledBy = header ? `modal-${uuid()}` : undefined } = $$props;
     	let { backdrop = true } = $$props;
     	let { wrapClassName = '' } = $$props;
     	let { modalClassName = '' } = $$props;
@@ -10285,8 +10372,6 @@ var app = (function () {
 
     	function handleBackdropClick(e) {
     		if (e.target === _mouseDownElement) {
-    			e.stopPropagation();
-
     			if (!isOpen || !backdrop) {
     				return;
     			}
@@ -10294,6 +10379,7 @@ var app = (function () {
     			const backdropElem = _dialog ? _dialog.parentNode : null;
 
     			if (backdrop === true && backdropElem && e.target === backdropElem && toggle) {
+    				e.stopPropagation();
     				toggle(e);
     			}
     		}
@@ -10304,17 +10390,24 @@ var app = (function () {
 
     		_removeEscListener = browserEvent(document, 'keydown', event => {
     			if (event.key && event.key === 'Escape') {
-    				if (toggle && backdrop === true) toggle(event);
+    				if (toggle && backdrop === true) {
+    					if (_removeEscListener) _removeEscListener();
+    					toggle(event);
+    				}
     			}
     		});
     	}
 
-    	function onModalClosed() {
-    		dispatch('close');
+    	function onModalClosing() {
+    		dispatch('closing');
 
     		if (_removeEscListener) {
     			_removeEscListener();
     		}
+    	}
+
+    	function onModalClosed() {
+    		dispatch('close');
 
     		if (unmountOnClose) {
     			destroy();
@@ -10341,22 +10434,21 @@ var app = (function () {
     	}
 
     	const introstart_handler = () => dispatch('opening');
-    	const outrostart_handler = () => dispatch('closing');
 
     	$$self.$$set = $$new_props => {
     		$$props = assign(assign({}, $$props), exclude_internal_props($$new_props));
-    		$$invalidate(20, $$restProps = compute_rest_props($$props, omit_props_names));
-    		if ('class' in $$new_props) $$invalidate(21, className = $$new_props.class);
+    		$$invalidate(21, $$restProps = compute_rest_props($$props, omit_props_names));
+    		if ('class' in $$new_props) $$invalidate(22, className = $$new_props.class);
     		if ('static' in $$new_props) $$invalidate(0, staticModal = $$new_props.static);
     		if ('isOpen' in $$new_props) $$invalidate(1, isOpen = $$new_props.isOpen);
-    		if ('autoFocus' in $$new_props) $$invalidate(22, autoFocus = $$new_props.autoFocus);
+    		if ('autoFocus' in $$new_props) $$invalidate(23, autoFocus = $$new_props.autoFocus);
     		if ('body' in $$new_props) $$invalidate(2, body = $$new_props.body);
-    		if ('centered' in $$new_props) $$invalidate(23, centered = $$new_props.centered);
-    		if ('container' in $$new_props) $$invalidate(24, container = $$new_props.container);
-    		if ('fullscreen' in $$new_props) $$invalidate(25, fullscreen = $$new_props.fullscreen);
+    		if ('centered' in $$new_props) $$invalidate(24, centered = $$new_props.centered);
+    		if ('container' in $$new_props) $$invalidate(25, container = $$new_props.container);
+    		if ('fullscreen' in $$new_props) $$invalidate(26, fullscreen = $$new_props.fullscreen);
     		if ('header' in $$new_props) $$invalidate(3, header = $$new_props.header);
-    		if ('scrollable' in $$new_props) $$invalidate(26, scrollable = $$new_props.scrollable);
-    		if ('size' in $$new_props) $$invalidate(27, size = $$new_props.size);
+    		if ('scrollable' in $$new_props) $$invalidate(27, scrollable = $$new_props.scrollable);
+    		if ('size' in $$new_props) $$invalidate(28, size = $$new_props.size);
     		if ('toggle' in $$new_props) $$invalidate(4, toggle = $$new_props.toggle);
     		if ('labelledBy' in $$new_props) $$invalidate(5, labelledBy = $$new_props.labelledBy);
     		if ('backdrop' in $$new_props) $$invalidate(6, backdrop = $$new_props.backdrop);
@@ -10364,8 +10456,8 @@ var app = (function () {
     		if ('modalClassName' in $$new_props) $$invalidate(8, modalClassName = $$new_props.modalClassName);
     		if ('contentClassName' in $$new_props) $$invalidate(9, contentClassName = $$new_props.contentClassName);
     		if ('fade' in $$new_props) $$invalidate(10, fade = $$new_props.fade);
-    		if ('unmountOnClose' in $$new_props) $$invalidate(28, unmountOnClose = $$new_props.unmountOnClose);
-    		if ('returnFocusAfterClose' in $$new_props) $$invalidate(29, returnFocusAfterClose = $$new_props.returnFocusAfterClose);
+    		if ('unmountOnClose' in $$new_props) $$invalidate(29, unmountOnClose = $$new_props.unmountOnClose);
+    		if ('returnFocusAfterClose' in $$new_props) $$invalidate(30, returnFocusAfterClose = $$new_props.returnFocusAfterClose);
     		if ('$$scope' in $$new_props) $$invalidate(34, $$scope = $$new_props.$$scope);
     	};
 
@@ -10387,6 +10479,7 @@ var app = (function () {
     		conditionallyUpdateScrollbar,
     		getOriginalBodyPadding,
     		setScrollbarWidth,
+    		uuid,
     		dispatch,
     		className,
     		staticModal,
@@ -10424,6 +10517,7 @@ var app = (function () {
     		close,
     		handleBackdropClick,
     		onModalOpened,
+    		onModalClosing,
     		onModalClosed,
     		handleBackdropMouseDown,
     		dialogBaseClass,
@@ -10432,17 +10526,17 @@ var app = (function () {
     	});
 
     	$$self.$inject_state = $$new_props => {
-    		if ('className' in $$props) $$invalidate(21, className = $$new_props.className);
+    		if ('className' in $$props) $$invalidate(22, className = $$new_props.className);
     		if ('staticModal' in $$props) $$invalidate(0, staticModal = $$new_props.staticModal);
     		if ('isOpen' in $$props) $$invalidate(1, isOpen = $$new_props.isOpen);
-    		if ('autoFocus' in $$props) $$invalidate(22, autoFocus = $$new_props.autoFocus);
+    		if ('autoFocus' in $$props) $$invalidate(23, autoFocus = $$new_props.autoFocus);
     		if ('body' in $$props) $$invalidate(2, body = $$new_props.body);
-    		if ('centered' in $$props) $$invalidate(23, centered = $$new_props.centered);
-    		if ('container' in $$props) $$invalidate(24, container = $$new_props.container);
-    		if ('fullscreen' in $$props) $$invalidate(25, fullscreen = $$new_props.fullscreen);
+    		if ('centered' in $$props) $$invalidate(24, centered = $$new_props.centered);
+    		if ('container' in $$props) $$invalidate(25, container = $$new_props.container);
+    		if ('fullscreen' in $$props) $$invalidate(26, fullscreen = $$new_props.fullscreen);
     		if ('header' in $$props) $$invalidate(3, header = $$new_props.header);
-    		if ('scrollable' in $$props) $$invalidate(26, scrollable = $$new_props.scrollable);
-    		if ('size' in $$props) $$invalidate(27, size = $$new_props.size);
+    		if ('scrollable' in $$props) $$invalidate(27, scrollable = $$new_props.scrollable);
+    		if ('size' in $$props) $$invalidate(28, size = $$new_props.size);
     		if ('toggle' in $$props) $$invalidate(4, toggle = $$new_props.toggle);
     		if ('labelledBy' in $$props) $$invalidate(5, labelledBy = $$new_props.labelledBy);
     		if ('backdrop' in $$props) $$invalidate(6, backdrop = $$new_props.backdrop);
@@ -10450,8 +10544,8 @@ var app = (function () {
     		if ('modalClassName' in $$props) $$invalidate(8, modalClassName = $$new_props.modalClassName);
     		if ('contentClassName' in $$props) $$invalidate(9, contentClassName = $$new_props.contentClassName);
     		if ('fade' in $$props) $$invalidate(10, fade = $$new_props.fade);
-    		if ('unmountOnClose' in $$props) $$invalidate(28, unmountOnClose = $$new_props.unmountOnClose);
-    		if ('returnFocusAfterClose' in $$props) $$invalidate(29, returnFocusAfterClose = $$new_props.returnFocusAfterClose);
+    		if ('unmountOnClose' in $$props) $$invalidate(29, unmountOnClose = $$new_props.unmountOnClose);
+    		if ('returnFocusAfterClose' in $$props) $$invalidate(30, returnFocusAfterClose = $$new_props.returnFocusAfterClose);
     		if ('hasOpened' in $$props) hasOpened = $$new_props.hasOpened;
     		if ('_isMounted' in $$props) $$invalidate(11, _isMounted = $$new_props._isMounted);
     		if ('_triggeringElement' in $$props) _triggeringElement = $$new_props._triggeringElement;
@@ -10470,7 +10564,7 @@ var app = (function () {
     	}
 
     	$$self.$$.update = () => {
-    		if ($$self.$$.dirty[0] & /*className, size, fullscreen, centered, scrollable*/ 245366784) {
+    		if ($$self.$$.dirty[0] & /*className, size, fullscreen, centered, scrollable*/ 490733568) {
     			$$invalidate(14, classes = classnames$1(dialogBaseClass, className, {
     				[`modal-${size}`]: size,
     				'modal-fullscreen': fullscreen === true,
@@ -10480,7 +10574,7 @@ var app = (function () {
     			}));
     		}
 
-    		if ($$self.$$.dirty[0] & /*container, staticModal*/ 16777217) {
+    		if ($$self.$$.dirty[0] & /*container, staticModal*/ 33554433) {
     			$$invalidate(13, outer = container === 'inline' || staticModal
     			? InlineContainer
     			: Portal);
@@ -10506,6 +10600,7 @@ var app = (function () {
     		dispatch,
     		handleBackdropClick,
     		onModalOpened,
+    		onModalClosing,
     		onModalClosed,
     		handleBackdropMouseDown,
     		$$restProps,
@@ -10521,7 +10616,6 @@ var app = (function () {
     		slots,
     		div1_binding,
     		introstart_handler,
-    		outrostart_handler,
     		$$scope
     	];
     }
@@ -10537,17 +10631,17 @@ var app = (function () {
     			create_fragment$A,
     			safe_not_equal,
     			{
-    				class: 21,
+    				class: 22,
     				static: 0,
     				isOpen: 1,
-    				autoFocus: 22,
+    				autoFocus: 23,
     				body: 2,
-    				centered: 23,
-    				container: 24,
-    				fullscreen: 25,
+    				centered: 24,
+    				container: 25,
+    				fullscreen: 26,
     				header: 3,
-    				scrollable: 26,
-    				size: 27,
+    				scrollable: 27,
+    				size: 28,
     				toggle: 4,
     				labelledBy: 5,
     				backdrop: 6,
@@ -10555,8 +10649,8 @@ var app = (function () {
     				modalClassName: 8,
     				contentClassName: 9,
     				fade: 10,
-    				unmountOnClose: 28,
-    				returnFocusAfterClose: 29
+    				unmountOnClose: 29,
+    				returnFocusAfterClose: 30
     			},
     			null,
     			[-1, -1]
@@ -10731,7 +10825,7 @@ var app = (function () {
     	}
     }
 
-    /* node_modules\sveltestrap\src\ModalFooter.svelte generated by Svelte v3.44.1 */
+    /* node_modules\sveltestrap\src\ModalFooter.svelte generated by Svelte v3.46.4 */
     const file$t = "node_modules\\sveltestrap\\src\\ModalFooter.svelte";
 
     function create_fragment$z(ctx) {
@@ -10869,7 +10963,7 @@ var app = (function () {
     	}
     }
 
-    /* node_modules\sveltestrap\src\OffcanvasBackdrop.svelte generated by Svelte v3.44.1 */
+    /* node_modules\sveltestrap\src\OffcanvasBackdrop.svelte generated by Svelte v3.46.4 */
     const file$s = "node_modules\\sveltestrap\\src\\OffcanvasBackdrop.svelte";
 
     // (12:0) {#if isOpen}
@@ -11104,7 +11198,7 @@ var app = (function () {
     	}
     }
 
-    /* node_modules\sveltestrap\src\OffcanvasBody.svelte generated by Svelte v3.44.1 */
+    /* node_modules\sveltestrap\src\OffcanvasBody.svelte generated by Svelte v3.46.4 */
     const file$r = "node_modules\\sveltestrap\\src\\OffcanvasBody.svelte";
 
     function create_fragment$x(ctx) {
@@ -11242,7 +11336,7 @@ var app = (function () {
     	}
     }
 
-    /* node_modules\sveltestrap\src\OffcanvasHeader.svelte generated by Svelte v3.44.1 */
+    /* node_modules\sveltestrap\src\OffcanvasHeader.svelte generated by Svelte v3.46.4 */
     const file$q = "node_modules\\sveltestrap\\src\\OffcanvasHeader.svelte";
     const get_close_slot_changes = dirty => ({});
     const get_close_slot_context = ctx => ({});
@@ -11685,7 +11779,7 @@ var app = (function () {
     	}
     }
 
-    /* node_modules\sveltestrap\src\Offcanvas.svelte generated by Svelte v3.44.1 */
+    /* node_modules\sveltestrap\src\Offcanvas.svelte generated by Svelte v3.46.4 */
 
     const { document: document_1 } = globals;
     const file$p = "node_modules\\sveltestrap\\src\\Offcanvas.svelte";
@@ -12730,15 +12824,15 @@ var app = (function () {
     	}
     }
 
-    /* node_modules\sveltestrap\src\Row.svelte generated by Svelte v3.44.1 */
+    /* node_modules\sveltestrap\src\Row.svelte generated by Svelte v3.46.4 */
     const file$o = "node_modules\\sveltestrap\\src\\Row.svelte";
 
     function create_fragment$u(ctx) {
     	let div;
     	let current;
-    	const default_slot_template = /*#slots*/ ctx[7].default;
-    	const default_slot = create_slot(default_slot_template, ctx, /*$$scope*/ ctx[6], null);
-    	let div_levels = [/*$$restProps*/ ctx[1], { class: /*classes*/ ctx[0] }];
+    	const default_slot_template = /*#slots*/ ctx[8].default;
+    	const default_slot = create_slot(default_slot_template, ctx, /*$$scope*/ ctx[7], null);
+    	let div_levels = [/*$$restProps*/ ctx[2], { class: /*classes*/ ctx[1] }];
     	let div_data = {};
 
     	for (let i = 0; i < div_levels.length; i += 1) {
@@ -12750,7 +12844,7 @@ var app = (function () {
     			div = element("div");
     			if (default_slot) default_slot.c();
     			set_attributes(div, div_data);
-    			add_location(div, file$o, 39, 0, 980);
+    			add_location(div, file$o, 40, 0, 1012);
     		},
     		l: function claim(nodes) {
     			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
@@ -12762,27 +12856,28 @@ var app = (function () {
     				default_slot.m(div, null);
     			}
 
+    			/*div_binding*/ ctx[9](div);
     			current = true;
     		},
     		p: function update(ctx, [dirty]) {
     			if (default_slot) {
-    				if (default_slot.p && (!current || dirty & /*$$scope*/ 64)) {
+    				if (default_slot.p && (!current || dirty & /*$$scope*/ 128)) {
     					update_slot_base(
     						default_slot,
     						default_slot_template,
     						ctx,
-    						/*$$scope*/ ctx[6],
+    						/*$$scope*/ ctx[7],
     						!current
-    						? get_all_dirty_from_scope(/*$$scope*/ ctx[6])
-    						: get_slot_changes(default_slot_template, /*$$scope*/ ctx[6], dirty, null),
+    						? get_all_dirty_from_scope(/*$$scope*/ ctx[7])
+    						: get_slot_changes(default_slot_template, /*$$scope*/ ctx[7], dirty, null),
     						null
     					);
     				}
     			}
 
     			set_attributes(div, div_data = get_spread_update(div_levels, [
-    				dirty & /*$$restProps*/ 2 && /*$$restProps*/ ctx[1],
-    				(!current || dirty & /*classes*/ 1) && { class: /*classes*/ ctx[0] }
+    				dirty & /*$$restProps*/ 4 && /*$$restProps*/ ctx[2],
+    				(!current || dirty & /*classes*/ 2) && { class: /*classes*/ ctx[1] }
     			]));
     		},
     		i: function intro(local) {
@@ -12797,6 +12892,7 @@ var app = (function () {
     		d: function destroy(detaching) {
     			if (detaching) detach_dev(div);
     			if (default_slot) default_slot.d(detaching);
+    			/*div_binding*/ ctx[9](null);
     		}
     	};
 
@@ -12837,7 +12933,7 @@ var app = (function () {
 
     function instance$u($$self, $$props, $$invalidate) {
     	let classes;
-    	const omit_props_names = ["class","noGutters","form","cols"];
+    	const omit_props_names = ["class","noGutters","form","cols","inner"];
     	let $$restProps = compute_rest_props($$props, omit_props_names);
     	let { $$slots: slots = {}, $$scope } = $$props;
     	validate_slots('Row', slots, ['default']);
@@ -12845,15 +12941,24 @@ var app = (function () {
     	let { noGutters = false } = $$props;
     	let { form = false } = $$props;
     	let { cols = 0 } = $$props;
+    	let { inner = undefined } = $$props;
+
+    	function div_binding($$value) {
+    		binding_callbacks[$$value ? 'unshift' : 'push'](() => {
+    			inner = $$value;
+    			$$invalidate(0, inner);
+    		});
+    	}
 
     	$$self.$$set = $$new_props => {
     		$$props = assign(assign({}, $$props), exclude_internal_props($$new_props));
-    		$$invalidate(1, $$restProps = compute_rest_props($$props, omit_props_names));
-    		if ('class' in $$new_props) $$invalidate(2, className = $$new_props.class);
-    		if ('noGutters' in $$new_props) $$invalidate(3, noGutters = $$new_props.noGutters);
-    		if ('form' in $$new_props) $$invalidate(4, form = $$new_props.form);
-    		if ('cols' in $$new_props) $$invalidate(5, cols = $$new_props.cols);
-    		if ('$$scope' in $$new_props) $$invalidate(6, $$scope = $$new_props.$$scope);
+    		$$invalidate(2, $$restProps = compute_rest_props($$props, omit_props_names));
+    		if ('class' in $$new_props) $$invalidate(3, className = $$new_props.class);
+    		if ('noGutters' in $$new_props) $$invalidate(4, noGutters = $$new_props.noGutters);
+    		if ('form' in $$new_props) $$invalidate(5, form = $$new_props.form);
+    		if ('cols' in $$new_props) $$invalidate(6, cols = $$new_props.cols);
+    		if ('inner' in $$new_props) $$invalidate(0, inner = $$new_props.inner);
+    		if ('$$scope' in $$new_props) $$invalidate(7, $$scope = $$new_props.$$scope);
     	};
 
     	$$self.$capture_state = () => ({
@@ -12862,16 +12967,18 @@ var app = (function () {
     		noGutters,
     		form,
     		cols,
+    		inner,
     		getCols: getCols$1,
     		classes
     	});
 
     	$$self.$inject_state = $$new_props => {
-    		if ('className' in $$props) $$invalidate(2, className = $$new_props.className);
-    		if ('noGutters' in $$props) $$invalidate(3, noGutters = $$new_props.noGutters);
-    		if ('form' in $$props) $$invalidate(4, form = $$new_props.form);
-    		if ('cols' in $$props) $$invalidate(5, cols = $$new_props.cols);
-    		if ('classes' in $$props) $$invalidate(0, classes = $$new_props.classes);
+    		if ('className' in $$props) $$invalidate(3, className = $$new_props.className);
+    		if ('noGutters' in $$props) $$invalidate(4, noGutters = $$new_props.noGutters);
+    		if ('form' in $$props) $$invalidate(5, form = $$new_props.form);
+    		if ('cols' in $$props) $$invalidate(6, cols = $$new_props.cols);
+    		if ('inner' in $$props) $$invalidate(0, inner = $$new_props.inner);
+    		if ('classes' in $$props) $$invalidate(1, classes = $$new_props.classes);
     	};
 
     	if ($$props && "$$inject" in $$props) {
@@ -12879,18 +12986,36 @@ var app = (function () {
     	}
 
     	$$self.$$.update = () => {
-    		if ($$self.$$.dirty & /*className, noGutters, form, cols*/ 60) {
-    			$$invalidate(0, classes = classnames$1(className, noGutters ? 'gx-0' : null, form ? 'form-row' : 'row', ...getCols$1(cols)));
+    		if ($$self.$$.dirty & /*className, noGutters, form, cols*/ 120) {
+    			$$invalidate(1, classes = classnames$1(className, noGutters ? 'gx-0' : null, form ? 'form-row' : 'row', ...getCols$1(cols)));
     		}
     	};
 
-    	return [classes, $$restProps, className, noGutters, form, cols, $$scope, slots];
+    	return [
+    		inner,
+    		classes,
+    		$$restProps,
+    		className,
+    		noGutters,
+    		form,
+    		cols,
+    		$$scope,
+    		slots,
+    		div_binding
+    	];
     }
 
     class Row$1 extends SvelteComponentDev {
     	constructor(options) {
     		super(options);
-    		init(this, options, instance$u, create_fragment$u, safe_not_equal, { class: 2, noGutters: 3, form: 4, cols: 5 });
+
+    		init(this, options, instance$u, create_fragment$u, safe_not_equal, {
+    			class: 3,
+    			noGutters: 4,
+    			form: 5,
+    			cols: 6,
+    			inner: 0
+    		});
 
     		dispatch_dev("SvelteRegisterComponent", {
     			component: this,
@@ -12931,9 +13056,17 @@ var app = (function () {
     	set cols(value) {
     		throw new Error("<Row>: Props cannot be set directly on the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
     	}
+
+    	get inner() {
+    		throw new Error("<Row>: Props cannot be read directly from the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
+    	}
+
+    	set inner(value) {
+    		throw new Error("<Row>: Props cannot be set directly on the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
+    	}
     }
 
-    /* node_modules\sveltestrap\src\Spinner.svelte generated by Svelte v3.44.1 */
+    /* node_modules\sveltestrap\src\Spinner.svelte generated by Svelte v3.46.4 */
     const file$n = "node_modules\\sveltestrap\\src\\Spinner.svelte";
 
     // (20:10) Loading...
@@ -13145,7 +13278,7 @@ var app = (function () {
     	}
     }
 
-    /* ..\..\..\..\..\..\_Svelte Workspace\svelte-bexis2-core-ui\node_modules\svelte-fa\src\fa.svelte generated by Svelte v3.44.1 */
+    /* ..\..\..\..\..\..\_Svelte Workspace\svelte-bexis2-core-ui\node_modules\svelte-fa\src\fa.svelte generated by Svelte v3.46.4 */
 
     const file$m = "..\\..\\..\\..\\..\\..\\_Svelte Workspace\\svelte-bexis2-core-ui\\node_modules\\svelte-fa\\src\\fa.svelte";
 
@@ -13859,7 +13992,7 @@ var app = (function () {
       icon: [448, 512, [], "f0c7", "M433.941 129.941l-83.882-83.882A48 48 0 0 0 316.118 32H48C21.49 32 0 53.49 0 80v352c0 26.51 21.49 48 48 48h352c26.51 0 48-21.49 48-48V163.882a48 48 0 0 0-14.059-33.941zM272 80v80H144V80h128zm122 352H54a6 6 0 0 1-6-6V86a6 6 0 0 1 6-6h42v104c0 13.255 10.745 24 24 24h176c13.255 0 24-10.745 24-24V83.882l78.243 78.243a6 6 0 0 1 1.757 4.243V426a6 6 0 0 1-6 6zM224 232c-48.523 0-88 39.477-88 88s39.477 88 88 88 88-39.477 88-88-39.477-88-88-88zm0 128c-22.056 0-40-17.944-40-40s17.944-40 40-40 40 17.944 40 40-17.944 40-40 40z"]
     };
 
-    /* ..\..\..\..\..\..\_Svelte Workspace\svelte-bexis2-core-ui\src\components\File\FileIcon.svelte generated by Svelte v3.44.1 */
+    /* ..\..\..\..\..\..\_Svelte Workspace\svelte-bexis2-core-ui\src\components\File\FileIcon.svelte generated by Svelte v3.46.4 */
 
     // (16:0) {#if type.includes("excel") || type.includes("spreadsheetml")}
     function create_if_block_7$1(ctx) {
@@ -14596,7 +14729,7 @@ var app = (function () {
     	}
     }
 
-    /* ..\..\..\..\..\..\_Svelte Workspace\svelte-bexis2-core-ui\src\components\File\FileInfo.svelte generated by Svelte v3.44.1 */
+    /* ..\..\..\..\..\..\_Svelte Workspace\svelte-bexis2-core-ui\src\components\File\FileInfo.svelte generated by Svelte v3.46.4 */
     const file$l = "..\\..\\..\\..\\..\\..\\_Svelte Workspace\\svelte-bexis2-core-ui\\src\\components\\File\\FileInfo.svelte";
 
     function create_fragment$q(ctx) {
@@ -15243,7 +15376,7 @@ var app = (function () {
         });
     }
 
-    /* ..\..\..\..\..\..\_Svelte Workspace\svelte-bexis2-core-ui\node_modules\svelte-file-dropzone\src\components\Dropzone.svelte generated by Svelte v3.44.1 */
+    /* ..\..\..\..\..\..\_Svelte Workspace\svelte-bexis2-core-ui\node_modules\svelte-file-dropzone\src\components\Dropzone.svelte generated by Svelte v3.46.4 */
     const file$k = "..\\..\\..\\..\\..\\..\\_Svelte Workspace\\svelte-bexis2-core-ui\\node_modules\\svelte-file-dropzone\\src\\components\\Dropzone.svelte";
 
     // (331:8)       
@@ -16042,7 +16175,7 @@ var app = (function () {
       return args.map(toClassName).filter(Boolean).join(' ');
     }
 
-    /* ..\..\..\..\..\..\_Svelte Workspace\svelte-bexis2-core-ui\node_modules\sveltestrap\src\Button.svelte generated by Svelte v3.44.1 */
+    /* ..\..\..\..\..\..\_Svelte Workspace\svelte-bexis2-core-ui\node_modules\sveltestrap\src\Button.svelte generated by Svelte v3.46.4 */
     const file$j = "..\\..\\..\\..\\..\\..\\_Svelte Workspace\\svelte-bexis2-core-ui\\node_modules\\sveltestrap\\src\\Button.svelte";
 
     // (50:0) {:else}
@@ -16901,7 +17034,7 @@ var app = (function () {
     	}
     }
 
-    /* ..\..\..\..\..\..\_Svelte Workspace\svelte-bexis2-core-ui\node_modules\sveltestrap\src\Col.svelte generated by Svelte v3.44.1 */
+    /* ..\..\..\..\..\..\_Svelte Workspace\svelte-bexis2-core-ui\node_modules\sveltestrap\src\Col.svelte generated by Svelte v3.46.4 */
     const file$i = "..\\..\\..\\..\\..\\..\\_Svelte Workspace\\svelte-bexis2-core-ui\\node_modules\\sveltestrap\\src\\Col.svelte";
 
     function create_fragment$n(ctx) {
@@ -17169,7 +17302,7 @@ var app = (function () {
     	}
     }
 
-    /* ..\..\..\..\..\..\_Svelte Workspace\svelte-bexis2-core-ui\node_modules\sveltestrap\src\FormCheck.svelte generated by Svelte v3.44.1 */
+    /* ..\..\..\..\..\..\_Svelte Workspace\svelte-bexis2-core-ui\node_modules\sveltestrap\src\FormCheck.svelte generated by Svelte v3.46.4 */
     const file$h = "..\\..\\..\\..\\..\\..\\_Svelte Workspace\\svelte-bexis2-core-ui\\node_modules\\sveltestrap\\src\\FormCheck.svelte";
     const get_label_slot_changes = dirty => ({});
     const get_label_slot_context = ctx => ({});
@@ -18011,7 +18144,7 @@ var app = (function () {
     	}
     }
 
-    /* ..\..\..\..\..\..\_Svelte Workspace\svelte-bexis2-core-ui\node_modules\sveltestrap\src\FormFeedback.svelte generated by Svelte v3.44.1 */
+    /* ..\..\..\..\..\..\_Svelte Workspace\svelte-bexis2-core-ui\node_modules\sveltestrap\src\FormFeedback.svelte generated by Svelte v3.46.4 */
     const file$g = "..\\..\\..\\..\\..\\..\\_Svelte Workspace\\svelte-bexis2-core-ui\\node_modules\\sveltestrap\\src\\FormFeedback.svelte";
 
     function create_fragment$l(ctx) {
@@ -18180,7 +18313,7 @@ var app = (function () {
     	}
     }
 
-    /* ..\..\..\..\..\..\_Svelte Workspace\svelte-bexis2-core-ui\node_modules\sveltestrap\src\Input.svelte generated by Svelte v3.44.1 */
+    /* ..\..\..\..\..\..\_Svelte Workspace\svelte-bexis2-core-ui\node_modules\sveltestrap\src\Input.svelte generated by Svelte v3.46.4 */
     const file$f = "..\\..\\..\\..\\..\\..\\_Svelte Workspace\\svelte-bexis2-core-ui\\node_modules\\sveltestrap\\src\\Input.svelte";
 
     function get_each_context$5(ctx, list, i) {
@@ -19670,9 +19803,9 @@ var app = (function () {
     	}
 
     	formcheck = new FormCheck({ props: formcheck_props, $$inline: true });
-    	binding_callbacks.push(() => bind$1(formcheck, 'checked', formcheck_checked_binding));
-    	binding_callbacks.push(() => bind$1(formcheck, 'group', formcheck_group_binding));
-    	binding_callbacks.push(() => bind$1(formcheck, 'value', formcheck_value_binding));
+    	binding_callbacks.push(() => bind$3(formcheck, 'checked', formcheck_checked_binding));
+    	binding_callbacks.push(() => bind$3(formcheck, 'group', formcheck_group_binding));
+    	binding_callbacks.push(() => bind$3(formcheck, 'value', formcheck_value_binding));
     	/*formcheck_binding*/ ctx[173](formcheck);
     	formcheck.$on("blur", /*blur_handler_5*/ ctx[174]);
     	formcheck.$on("change", /*change_handler_5*/ ctx[175]);
@@ -20198,7 +20331,8 @@ var app = (function () {
     	const if_blocks = [];
 
     	function select_block_type_2(ctx, dirty) {
-    		if (show_if == null || dirty[0] & /*feedback*/ 512) show_if = !!Array.isArray(/*feedback*/ ctx[9]);
+    		if (dirty[0] & /*feedback*/ 512) show_if = null;
+    		if (show_if == null) show_if = !!Array.isArray(/*feedback*/ ctx[9]);
     		if (show_if) return 0;
     		return 1;
     	}
@@ -22090,7 +22224,7 @@ var app = (function () {
     	}
     }
 
-    /* ..\..\..\..\..\..\_Svelte Workspace\svelte-bexis2-core-ui\node_modules\sveltestrap\src\Row.svelte generated by Svelte v3.44.1 */
+    /* ..\..\..\..\..\..\_Svelte Workspace\svelte-bexis2-core-ui\node_modules\sveltestrap\src\Row.svelte generated by Svelte v3.46.4 */
     const file$e = "..\\..\\..\\..\\..\\..\\_Svelte Workspace\\svelte-bexis2-core-ui\\node_modules\\sveltestrap\\src\\Row.svelte";
 
     function create_fragment$j(ctx) {
@@ -22293,7 +22427,7 @@ var app = (function () {
     	}
     }
 
-    /* ..\..\..\..\..\..\_Svelte Workspace\svelte-bexis2-core-ui\node_modules\sveltestrap\src\Spinner.svelte generated by Svelte v3.44.1 */
+    /* ..\..\..\..\..\..\_Svelte Workspace\svelte-bexis2-core-ui\node_modules\sveltestrap\src\Spinner.svelte generated by Svelte v3.46.4 */
     const file$d = "..\\..\\..\\..\\..\\..\\_Svelte Workspace\\svelte-bexis2-core-ui\\node_modules\\sveltestrap\\src\\Spinner.svelte";
 
     // (20:10) Loading...
@@ -22505,7 +22639,9 @@ var app = (function () {
     	}
     }
 
-    var bind = function bind(fn, thisArg) {
+    var axios$2 = {exports: {}};
+
+    var bind$2 = function bind(fn, thisArg) {
       return function wrap() {
         var args = new Array(arguments.length);
         for (var i = 0; i < args.length; i++) {
@@ -22514,6 +22650,8 @@ var app = (function () {
         return fn.apply(thisArg, args);
       };
     };
+
+    var bind$1 = bind$2;
 
     /*global toString:true*/
 
@@ -22817,7 +22955,7 @@ var app = (function () {
     function extend(a, b, thisArg) {
       forEach(b, function assignValue(val, key) {
         if (thisArg && typeof val === 'function') {
-          a[key] = bind(val, thisArg);
+          a[key] = bind$1(val, thisArg);
         } else {
           a[key] = val;
         }
@@ -22838,7 +22976,7 @@ var app = (function () {
       return content;
     }
 
-    var utils = {
+    var utils$d = {
       isArray: isArray,
       isArrayBuffer: isArrayBuffer,
       isBuffer: isBuffer,
@@ -22863,6 +23001,8 @@ var app = (function () {
       stripBOM: stripBOM
     };
 
+    var utils$c = utils$d;
+
     function encode(val) {
       return encodeURIComponent(val).
         replace(/%3A/gi, ':').
@@ -22880,7 +23020,7 @@ var app = (function () {
      * @param {object} [params] The params to be appended
      * @returns {string} The formatted url
      */
-    var buildURL = function buildURL(url, params, paramsSerializer) {
+    var buildURL$2 = function buildURL(url, params, paramsSerializer) {
       /*eslint no-param-reassign:0*/
       if (!params) {
         return url;
@@ -22889,26 +23029,26 @@ var app = (function () {
       var serializedParams;
       if (paramsSerializer) {
         serializedParams = paramsSerializer(params);
-      } else if (utils.isURLSearchParams(params)) {
+      } else if (utils$c.isURLSearchParams(params)) {
         serializedParams = params.toString();
       } else {
         var parts = [];
 
-        utils.forEach(params, function serialize(val, key) {
+        utils$c.forEach(params, function serialize(val, key) {
           if (val === null || typeof val === 'undefined') {
             return;
           }
 
-          if (utils.isArray(val)) {
+          if (utils$c.isArray(val)) {
             key = key + '[]';
           } else {
             val = [val];
           }
 
-          utils.forEach(val, function parseValue(v) {
-            if (utils.isDate(v)) {
+          utils$c.forEach(val, function parseValue(v) {
+            if (utils$c.isDate(v)) {
               v = v.toISOString();
-            } else if (utils.isObject(v)) {
+            } else if (utils$c.isObject(v)) {
               v = JSON.stringify(v);
             }
             parts.push(encode(key) + '=' + encode(v));
@@ -22930,7 +23070,9 @@ var app = (function () {
       return url;
     };
 
-    function InterceptorManager() {
+    var utils$b = utils$d;
+
+    function InterceptorManager$1() {
       this.handlers = [];
     }
 
@@ -22942,7 +23084,7 @@ var app = (function () {
      *
      * @return {Number} An ID used to remove interceptor later
      */
-    InterceptorManager.prototype.use = function use(fulfilled, rejected) {
+    InterceptorManager$1.prototype.use = function use(fulfilled, rejected) {
       this.handlers.push({
         fulfilled: fulfilled,
         rejected: rejected
@@ -22955,7 +23097,7 @@ var app = (function () {
      *
      * @param {Number} id The ID that was returned by `use`
      */
-    InterceptorManager.prototype.eject = function eject(id) {
+    InterceptorManager$1.prototype.eject = function eject(id) {
       if (this.handlers[id]) {
         this.handlers[id] = null;
       }
@@ -22969,15 +23111,17 @@ var app = (function () {
      *
      * @param {Function} fn The function to call for each interceptor
      */
-    InterceptorManager.prototype.forEach = function forEach(fn) {
-      utils.forEach(this.handlers, function forEachHandler(h) {
+    InterceptorManager$1.prototype.forEach = function forEach(fn) {
+      utils$b.forEach(this.handlers, function forEachHandler(h) {
         if (h !== null) {
           fn(h);
         }
       });
     };
 
-    var InterceptorManager_1 = InterceptorManager;
+    var InterceptorManager_1 = InterceptorManager$1;
+
+    var utils$a = utils$d;
 
     /**
      * Transform the data for a request or a response
@@ -22987,21 +23131,23 @@ var app = (function () {
      * @param {Array|Function} fns A single function or Array of functions
      * @returns {*} The resulting transformed data
      */
-    var transformData = function transformData(data, headers, fns) {
+    var transformData$1 = function transformData(data, headers, fns) {
       /*eslint no-param-reassign:0*/
-      utils.forEach(fns, function transform(fn) {
+      utils$a.forEach(fns, function transform(fn) {
         data = fn(data, headers);
       });
 
       return data;
     };
 
-    var isCancel = function isCancel(value) {
+    var isCancel$1 = function isCancel(value) {
       return !!(value && value.__CANCEL__);
     };
 
-    var normalizeHeaderName = function normalizeHeaderName(headers, normalizedName) {
-      utils.forEach(headers, function processHeader(value, name) {
+    var utils$9 = utils$d;
+
+    var normalizeHeaderName$1 = function normalizeHeaderName(headers, normalizedName) {
+      utils$9.forEach(headers, function processHeader(value, name) {
         if (name !== normalizedName && name.toUpperCase() === normalizedName.toUpperCase()) {
           headers[normalizedName] = value;
           delete headers[name];
@@ -23019,7 +23165,7 @@ var app = (function () {
      * @param {Object} [response] The response.
      * @returns {Error} The error.
      */
-    var enhanceError = function enhanceError(error, config, code, request, response) {
+    var enhanceError$1 = function enhanceError(error, config, code, request, response) {
       error.config = config;
       if (code) {
         error.code = code;
@@ -23050,6 +23196,8 @@ var app = (function () {
       return error;
     };
 
+    var enhanceError = enhanceError$1;
+
     /**
      * Create an Error with the specified message, config, error code, request and response.
      *
@@ -23060,10 +23208,12 @@ var app = (function () {
      * @param {Object} [response] The response.
      * @returns {Error} The created error.
      */
-    var createError = function createError(message, config, code, request, response) {
+    var createError$2 = function createError(message, config, code, request, response) {
       var error = new Error(message);
       return enhanceError(error, config, code, request, response);
     };
+
+    var createError$1 = createError$2;
 
     /**
      * Resolve or reject a Promise based on response status.
@@ -23072,12 +23222,12 @@ var app = (function () {
      * @param {Function} reject A function that rejects the promise.
      * @param {object} response The response.
      */
-    var settle = function settle(resolve, reject, response) {
+    var settle$1 = function settle(resolve, reject, response) {
       var validateStatus = response.config.validateStatus;
       if (!response.status || !validateStatus || validateStatus(response.status)) {
         resolve(response);
       } else {
-        reject(createError(
+        reject(createError$1(
           'Request failed with status code ' + response.status,
           response.config,
           null,
@@ -23087,8 +23237,10 @@ var app = (function () {
       }
     };
 
-    var cookies = (
-      utils.isStandardBrowserEnv() ?
+    var utils$8 = utils$d;
+
+    var cookies$1 = (
+      utils$8.isStandardBrowserEnv() ?
 
       // Standard browser envs support document.cookie
         (function standardBrowserEnv() {
@@ -23097,15 +23249,15 @@ var app = (function () {
               var cookie = [];
               cookie.push(name + '=' + encodeURIComponent(value));
 
-              if (utils.isNumber(expires)) {
+              if (utils$8.isNumber(expires)) {
                 cookie.push('expires=' + new Date(expires).toGMTString());
               }
 
-              if (utils.isString(path)) {
+              if (utils$8.isString(path)) {
                 cookie.push('path=' + path);
               }
 
-              if (utils.isString(domain)) {
+              if (utils$8.isString(domain)) {
                 cookie.push('domain=' + domain);
               }
 
@@ -23143,7 +23295,7 @@ var app = (function () {
      * @param {string} url The URL to test
      * @returns {boolean} True if the specified URL is absolute, otherwise false
      */
-    var isAbsoluteURL = function isAbsoluteURL(url) {
+    var isAbsoluteURL$1 = function isAbsoluteURL(url) {
       // A URL is considered absolute if it begins with "<scheme>://" or "//" (protocol-relative URL).
       // RFC 3986 defines scheme name as a sequence of characters beginning with a letter and followed
       // by any combination of letters, digits, plus, period, or hyphen.
@@ -23157,11 +23309,14 @@ var app = (function () {
      * @param {string} relativeURL The relative URL
      * @returns {string} The combined URL
      */
-    var combineURLs = function combineURLs(baseURL, relativeURL) {
+    var combineURLs$1 = function combineURLs(baseURL, relativeURL) {
       return relativeURL
         ? baseURL.replace(/\/+$/, '') + '/' + relativeURL.replace(/^\/+/, '')
         : baseURL;
     };
+
+    var isAbsoluteURL = isAbsoluteURL$1;
+    var combineURLs = combineURLs$1;
 
     /**
      * Creates a new URL by combining the baseURL with the requestedURL,
@@ -23172,12 +23327,14 @@ var app = (function () {
      * @param {string} requestedURL Absolute or relative URL to combine
      * @returns {string} The combined full path
      */
-    var buildFullPath = function buildFullPath(baseURL, requestedURL) {
+    var buildFullPath$1 = function buildFullPath(baseURL, requestedURL) {
       if (baseURL && !isAbsoluteURL(requestedURL)) {
         return combineURLs(baseURL, requestedURL);
       }
       return requestedURL;
     };
+
+    var utils$7 = utils$d;
 
     // Headers whose duplicates are ignored by node
     // c.f. https://nodejs.org/api/http.html#http_message_headers
@@ -23201,7 +23358,7 @@ var app = (function () {
      * @param {String} headers Headers needing to be parsed
      * @returns {Object} Headers parsed into an object
      */
-    var parseHeaders = function parseHeaders(headers) {
+    var parseHeaders$1 = function parseHeaders(headers) {
       var parsed = {};
       var key;
       var val;
@@ -23209,10 +23366,10 @@ var app = (function () {
 
       if (!headers) { return parsed; }
 
-      utils.forEach(headers.split('\n'), function parser(line) {
+      utils$7.forEach(headers.split('\n'), function parser(line) {
         i = line.indexOf(':');
-        key = utils.trim(line.substr(0, i)).toLowerCase();
-        val = utils.trim(line.substr(i + 1));
+        key = utils$7.trim(line.substr(0, i)).toLowerCase();
+        val = utils$7.trim(line.substr(i + 1));
 
         if (key) {
           if (parsed[key] && ignoreDuplicateOf.indexOf(key) >= 0) {
@@ -23229,8 +23386,10 @@ var app = (function () {
       return parsed;
     };
 
-    var isURLSameOrigin = (
-      utils.isStandardBrowserEnv() ?
+    var utils$6 = utils$d;
+
+    var isURLSameOrigin$1 = (
+      utils$6.isStandardBrowserEnv() ?
 
       // Standard browser envs have full support of the APIs needed to test
       // whether the request URL is of the same origin as current location.
@@ -23280,7 +23439,7 @@ var app = (function () {
         * @returns {boolean} True if URL shares the same origin, otherwise false
         */
           return function isURLSameOrigin(requestURL) {
-            var parsed = (utils.isString(requestURL)) ? resolveURL(requestURL) : requestURL;
+            var parsed = (utils$6.isString(requestURL)) ? resolveURL(requestURL) : requestURL;
             return (parsed.protocol === originURL.protocol &&
                 parsed.host === originURL.host);
           };
@@ -23294,12 +23453,21 @@ var app = (function () {
         })()
     );
 
+    var utils$5 = utils$d;
+    var settle = settle$1;
+    var cookies = cookies$1;
+    var buildURL$1 = buildURL$2;
+    var buildFullPath = buildFullPath$1;
+    var parseHeaders = parseHeaders$1;
+    var isURLSameOrigin = isURLSameOrigin$1;
+    var createError = createError$2;
+
     var xhr = function xhrAdapter(config) {
       return new Promise(function dispatchXhrRequest(resolve, reject) {
         var requestData = config.data;
         var requestHeaders = config.headers;
 
-        if (utils.isFormData(requestData)) {
+        if (utils$5.isFormData(requestData)) {
           delete requestHeaders['Content-Type']; // Let the browser set it
         }
 
@@ -23313,7 +23481,7 @@ var app = (function () {
         }
 
         var fullPath = buildFullPath(config.baseURL, config.url);
-        request.open(config.method.toUpperCase(), buildURL(fullPath, config.params, config.paramsSerializer), true);
+        request.open(config.method.toUpperCase(), buildURL$1(fullPath, config.params, config.paramsSerializer), true);
 
         // Set the request timeout in MS
         request.timeout = config.timeout;
@@ -23388,7 +23556,7 @@ var app = (function () {
         // Add xsrf header
         // This is only done if running in a standard browser environment.
         // Specifically not if we're in a web worker, or react-native.
-        if (utils.isStandardBrowserEnv()) {
+        if (utils$5.isStandardBrowserEnv()) {
           // Add xsrf header
           var xsrfValue = (config.withCredentials || isURLSameOrigin(fullPath)) && config.xsrfCookieName ?
             cookies.read(config.xsrfCookieName) :
@@ -23401,7 +23569,7 @@ var app = (function () {
 
         // Add headers to the request
         if ('setRequestHeader' in request) {
-          utils.forEach(requestHeaders, function setRequestHeader(val, key) {
+          utils$5.forEach(requestHeaders, function setRequestHeader(val, key) {
             if (typeof requestData === 'undefined' && key.toLowerCase() === 'content-type') {
               // Remove Content-Type if data is undefined
               delete requestHeaders[key];
@@ -23413,7 +23581,7 @@ var app = (function () {
         }
 
         // Add withCredentials to request if needed
-        if (!utils.isUndefined(config.withCredentials)) {
+        if (!utils$5.isUndefined(config.withCredentials)) {
           request.withCredentials = !!config.withCredentials;
         }
 
@@ -23463,12 +23631,15 @@ var app = (function () {
       });
     };
 
+    var utils$4 = utils$d;
+    var normalizeHeaderName = normalizeHeaderName$1;
+
     var DEFAULT_CONTENT_TYPE = {
       'Content-Type': 'application/x-www-form-urlencoded'
     };
 
     function setContentTypeIfUnset(headers, value) {
-      if (!utils.isUndefined(headers) && utils.isUndefined(headers['Content-Type'])) {
+      if (!utils$4.isUndefined(headers) && utils$4.isUndefined(headers['Content-Type'])) {
         headers['Content-Type'] = value;
       }
     }
@@ -23485,29 +23656,29 @@ var app = (function () {
       return adapter;
     }
 
-    var defaults = {
+    var defaults$2 = {
       adapter: getDefaultAdapter(),
 
       transformRequest: [function transformRequest(data, headers) {
         normalizeHeaderName(headers, 'Accept');
         normalizeHeaderName(headers, 'Content-Type');
-        if (utils.isFormData(data) ||
-          utils.isArrayBuffer(data) ||
-          utils.isBuffer(data) ||
-          utils.isStream(data) ||
-          utils.isFile(data) ||
-          utils.isBlob(data)
+        if (utils$4.isFormData(data) ||
+          utils$4.isArrayBuffer(data) ||
+          utils$4.isBuffer(data) ||
+          utils$4.isStream(data) ||
+          utils$4.isFile(data) ||
+          utils$4.isBlob(data)
         ) {
           return data;
         }
-        if (utils.isArrayBufferView(data)) {
+        if (utils$4.isArrayBufferView(data)) {
           return data.buffer;
         }
-        if (utils.isURLSearchParams(data)) {
+        if (utils$4.isURLSearchParams(data)) {
           setContentTypeIfUnset(headers, 'application/x-www-form-urlencoded;charset=utf-8');
           return data.toString();
         }
-        if (utils.isObject(data)) {
+        if (utils$4.isObject(data)) {
           setContentTypeIfUnset(headers, 'application/json;charset=utf-8');
           return JSON.stringify(data);
         }
@@ -23541,21 +23712,26 @@ var app = (function () {
       }
     };
 
-    defaults.headers = {
+    defaults$2.headers = {
       common: {
         'Accept': 'application/json, text/plain, */*'
       }
     };
 
-    utils.forEach(['delete', 'get', 'head'], function forEachMethodNoData(method) {
-      defaults.headers[method] = {};
+    utils$4.forEach(['delete', 'get', 'head'], function forEachMethodNoData(method) {
+      defaults$2.headers[method] = {};
     });
 
-    utils.forEach(['post', 'put', 'patch'], function forEachMethodWithData(method) {
-      defaults.headers[method] = utils.merge(DEFAULT_CONTENT_TYPE);
+    utils$4.forEach(['post', 'put', 'patch'], function forEachMethodWithData(method) {
+      defaults$2.headers[method] = utils$4.merge(DEFAULT_CONTENT_TYPE);
     });
 
-    var defaults_1 = defaults;
+    var defaults_1 = defaults$2;
+
+    var utils$3 = utils$d;
+    var transformData = transformData$1;
+    var isCancel = isCancel$1;
+    var defaults$1 = defaults_1;
 
     /**
      * Throws a `Cancel` if cancellation has been requested.
@@ -23572,7 +23748,7 @@ var app = (function () {
      * @param {object} config The config that is to be used for the request
      * @returns {Promise} The Promise to be fulfilled
      */
-    var dispatchRequest = function dispatchRequest(config) {
+    var dispatchRequest$1 = function dispatchRequest(config) {
       throwIfCancellationRequested(config);
 
       // Ensure headers exist
@@ -23586,20 +23762,20 @@ var app = (function () {
       );
 
       // Flatten headers
-      config.headers = utils.merge(
+      config.headers = utils$3.merge(
         config.headers.common || {},
         config.headers[config.method] || {},
         config.headers
       );
 
-      utils.forEach(
+      utils$3.forEach(
         ['delete', 'get', 'head', 'post', 'put', 'patch', 'common'],
         function cleanHeaderConfig(method) {
           delete config.headers[method];
         }
       );
 
-      var adapter = config.adapter || defaults_1.adapter;
+      var adapter = config.adapter || defaults$1.adapter;
 
       return adapter(config).then(function onAdapterResolution(response) {
         throwIfCancellationRequested(config);
@@ -23630,6 +23806,8 @@ var app = (function () {
       });
     };
 
+    var utils$2 = utils$d;
+
     /**
      * Config-specific merge-function which creates a new config-object
      * by merging two configuration objects together.
@@ -23638,7 +23816,7 @@ var app = (function () {
      * @param {Object} config2
      * @returns {Object} New object resulting from merging config2 to config1
      */
-    var mergeConfig = function mergeConfig(config1, config2) {
+    var mergeConfig$2 = function mergeConfig(config1, config2) {
       // eslint-disable-next-line no-param-reassign
       config2 = config2 || {};
       var config = {};
@@ -23655,41 +23833,41 @@ var app = (function () {
       var directMergeKeys = ['validateStatus'];
 
       function getMergedValue(target, source) {
-        if (utils.isPlainObject(target) && utils.isPlainObject(source)) {
-          return utils.merge(target, source);
-        } else if (utils.isPlainObject(source)) {
-          return utils.merge({}, source);
-        } else if (utils.isArray(source)) {
+        if (utils$2.isPlainObject(target) && utils$2.isPlainObject(source)) {
+          return utils$2.merge(target, source);
+        } else if (utils$2.isPlainObject(source)) {
+          return utils$2.merge({}, source);
+        } else if (utils$2.isArray(source)) {
           return source.slice();
         }
         return source;
       }
 
       function mergeDeepProperties(prop) {
-        if (!utils.isUndefined(config2[prop])) {
+        if (!utils$2.isUndefined(config2[prop])) {
           config[prop] = getMergedValue(config1[prop], config2[prop]);
-        } else if (!utils.isUndefined(config1[prop])) {
+        } else if (!utils$2.isUndefined(config1[prop])) {
           config[prop] = getMergedValue(undefined, config1[prop]);
         }
       }
 
-      utils.forEach(valueFromConfig2Keys, function valueFromConfig2(prop) {
-        if (!utils.isUndefined(config2[prop])) {
+      utils$2.forEach(valueFromConfig2Keys, function valueFromConfig2(prop) {
+        if (!utils$2.isUndefined(config2[prop])) {
           config[prop] = getMergedValue(undefined, config2[prop]);
         }
       });
 
-      utils.forEach(mergeDeepPropertiesKeys, mergeDeepProperties);
+      utils$2.forEach(mergeDeepPropertiesKeys, mergeDeepProperties);
 
-      utils.forEach(defaultToConfig2Keys, function defaultToConfig2(prop) {
-        if (!utils.isUndefined(config2[prop])) {
+      utils$2.forEach(defaultToConfig2Keys, function defaultToConfig2(prop) {
+        if (!utils$2.isUndefined(config2[prop])) {
           config[prop] = getMergedValue(undefined, config2[prop]);
-        } else if (!utils.isUndefined(config1[prop])) {
+        } else if (!utils$2.isUndefined(config1[prop])) {
           config[prop] = getMergedValue(undefined, config1[prop]);
         }
       });
 
-      utils.forEach(directMergeKeys, function merge(prop) {
+      utils$2.forEach(directMergeKeys, function merge(prop) {
         if (prop in config2) {
           config[prop] = getMergedValue(config1[prop], config2[prop]);
         } else if (prop in config1) {
@@ -23709,21 +23887,27 @@ var app = (function () {
           return axiosKeys.indexOf(key) === -1;
         });
 
-      utils.forEach(otherKeys, mergeDeepProperties);
+      utils$2.forEach(otherKeys, mergeDeepProperties);
 
       return config;
     };
+
+    var utils$1 = utils$d;
+    var buildURL = buildURL$2;
+    var InterceptorManager = InterceptorManager_1;
+    var dispatchRequest = dispatchRequest$1;
+    var mergeConfig$1 = mergeConfig$2;
 
     /**
      * Create a new instance of Axios
      *
      * @param {Object} instanceConfig The default config for the instance
      */
-    function Axios(instanceConfig) {
+    function Axios$1(instanceConfig) {
       this.defaults = instanceConfig;
       this.interceptors = {
-        request: new InterceptorManager_1(),
-        response: new InterceptorManager_1()
+        request: new InterceptorManager(),
+        response: new InterceptorManager()
       };
     }
 
@@ -23732,7 +23916,7 @@ var app = (function () {
      *
      * @param {Object} config The config specific for this request (merged with this.defaults)
      */
-    Axios.prototype.request = function request(config) {
+    Axios$1.prototype.request = function request(config) {
       /*eslint no-param-reassign:0*/
       // Allow for axios('example/url'[, config]) a la fetch API
       if (typeof config === 'string') {
@@ -23742,7 +23926,7 @@ var app = (function () {
         config = config || {};
       }
 
-      config = mergeConfig(this.defaults, config);
+      config = mergeConfig$1(this.defaults, config);
 
       // Set config.method
       if (config.method) {
@@ -23772,16 +23956,16 @@ var app = (function () {
       return promise;
     };
 
-    Axios.prototype.getUri = function getUri(config) {
-      config = mergeConfig(this.defaults, config);
+    Axios$1.prototype.getUri = function getUri(config) {
+      config = mergeConfig$1(this.defaults, config);
       return buildURL(config.url, config.params, config.paramsSerializer).replace(/^\?/, '');
     };
 
     // Provide aliases for supported request methods
-    utils.forEach(['delete', 'get', 'head', 'options'], function forEachMethodNoData(method) {
+    utils$1.forEach(['delete', 'get', 'head', 'options'], function forEachMethodNoData(method) {
       /*eslint func-names:0*/
-      Axios.prototype[method] = function(url, config) {
-        return this.request(mergeConfig(config || {}, {
+      Axios$1.prototype[method] = function(url, config) {
+        return this.request(mergeConfig$1(config || {}, {
           method: method,
           url: url,
           data: (config || {}).data
@@ -23789,10 +23973,10 @@ var app = (function () {
       };
     });
 
-    utils.forEach(['post', 'put', 'patch'], function forEachMethodWithData(method) {
+    utils$1.forEach(['post', 'put', 'patch'], function forEachMethodWithData(method) {
       /*eslint func-names:0*/
-      Axios.prototype[method] = function(url, data, config) {
-        return this.request(mergeConfig(config || {}, {
+      Axios$1.prototype[method] = function(url, data, config) {
+        return this.request(mergeConfig$1(config || {}, {
           method: method,
           url: url,
           data: data
@@ -23800,7 +23984,7 @@ var app = (function () {
       };
     });
 
-    var Axios_1 = Axios;
+    var Axios_1 = Axios$1;
 
     /**
      * A `Cancel` is an object that is thrown when an operation is canceled.
@@ -23808,17 +23992,19 @@ var app = (function () {
      * @class
      * @param {string=} message The message.
      */
-    function Cancel(message) {
+    function Cancel$1(message) {
       this.message = message;
     }
 
-    Cancel.prototype.toString = function toString() {
+    Cancel$1.prototype.toString = function toString() {
       return 'Cancel' + (this.message ? ': ' + this.message : '');
     };
 
-    Cancel.prototype.__CANCEL__ = true;
+    Cancel$1.prototype.__CANCEL__ = true;
 
-    var Cancel_1 = Cancel;
+    var Cancel_1 = Cancel$1;
+
+    var Cancel = Cancel_1;
 
     /**
      * A `CancelToken` is an object that can be used to request cancellation of an operation.
@@ -23843,7 +24029,7 @@ var app = (function () {
           return;
         }
 
-        token.reason = new Cancel_1(message);
+        token.reason = new Cancel(message);
         resolvePromise(token.reason);
       });
     }
@@ -23910,6 +24096,12 @@ var app = (function () {
       return (typeof payload === 'object') && (payload.isAxiosError === true);
     };
 
+    var utils = utils$d;
+    var bind = bind$2;
+    var Axios = Axios_1;
+    var mergeConfig = mergeConfig$2;
+    var defaults = defaults_1;
+
     /**
      * Create an instance of Axios
      *
@@ -23917,11 +24109,11 @@ var app = (function () {
      * @return {Axios} A new instance of Axios
      */
     function createInstance(defaultConfig) {
-      var context = new Axios_1(defaultConfig);
-      var instance = bind(Axios_1.prototype.request, context);
+      var context = new Axios(defaultConfig);
+      var instance = bind(Axios.prototype.request, context);
 
       // Copy axios.prototype to instance
-      utils.extend(instance, Axios_1.prototype, context);
+      utils.extend(instance, Axios.prototype, context);
 
       // Copy context to instance
       utils.extend(instance, context);
@@ -23930,10 +24122,10 @@ var app = (function () {
     }
 
     // Create the default instance to be exported
-    var axios$1 = createInstance(defaults_1);
+    var axios$1 = createInstance(defaults);
 
     // Expose Axios class to allow class inheritance
-    axios$1.Axios = Axios_1;
+    axios$1.Axios = Axios;
 
     // Factory for creating new instances
     axios$1.create = function create(instanceConfig) {
@@ -23943,7 +24135,7 @@ var app = (function () {
     // Expose Cancel & CancelToken
     axios$1.Cancel = Cancel_1;
     axios$1.CancelToken = CancelToken_1;
-    axios$1.isCancel = isCancel;
+    axios$1.isCancel = isCancel$1;
 
     // Expose all/spread
     axios$1.all = function all(promises) {
@@ -23954,13 +24146,12 @@ var app = (function () {
     // Expose isAxiosError
     axios$1.isAxiosError = isAxiosError;
 
-    var axios_1 = axios$1;
+    axios$2.exports = axios$1;
 
     // Allow use of default import syntax in TypeScript
-    var _default = axios$1;
-    axios_1.default = _default;
+    axios$2.exports.default = axios$1;
 
-    var axios = axios_1;
+    var axios = axios$2.exports;
 
     let host = "window.location.origin";
     let username = "";
@@ -24049,7 +24240,7 @@ var app = (function () {
         patch
     };
 
-    /* ..\..\..\..\..\..\_Svelte Workspace\svelte-bexis2-core-ui\src\components\File\FileUploader.svelte generated by Svelte v3.44.1 */
+    /* ..\..\..\..\..\..\_Svelte Workspace\svelte-bexis2-core-ui\src\components\File\FileUploader.svelte generated by Svelte v3.46.4 */
 
     const { console: console_1$5 } = globals;
     const file$c = "..\\..\\..\\..\\..\\..\\_Svelte Workspace\\svelte-bexis2-core-ui\\src\\components\\File\\FileUploader.svelte";
@@ -24914,7 +25105,7 @@ var app = (function () {
 
     };
 
-    /* src\components\edit\Header.svelte generated by Svelte v3.44.1 */
+    /* src\components\edit\Header.svelte generated by Svelte v3.46.4 */
     const file$b = "src\\components\\edit\\Header.svelte";
 
     // (11:2) <Col class="col-sm-2">
@@ -25258,7 +25449,7 @@ var app = (function () {
     	}
     }
 
-    /* src\components\Hook.svelte generated by Svelte v3.44.1 */
+    /* src\components\Hook.svelte generated by Svelte v3.46.4 */
 
     const { console: console_1$4 } = globals;
     const file$a = "src\\components\\Hook.svelte";
@@ -25567,7 +25758,7 @@ var app = (function () {
       );
     }
 
-    /* node_modules\svelte-fa\src\fa.svelte generated by Svelte v3.44.1 */
+    /* node_modules\svelte-fa\src\fa.svelte generated by Svelte v3.46.4 */
     const file$9 = "node_modules\\svelte-fa\\src\\fa.svelte";
 
     // (78:0) {#if i[4]}
@@ -25595,10 +25786,10 @@ var app = (function () {
     			g0 = svg_element("g");
     			if_block.c();
     			attr_dev(g0, "transform", /*transform*/ ctx[10]);
-    			add_location(g0, file$9, 91, 6, 1462);
+    			add_location(g0, file$9, 91, 6, 1469);
     			attr_dev(g1, "transform", g1_transform_value = `translate(${/*i*/ ctx[7][0] / 2} ${/*i*/ ctx[7][1] / 2})`);
     			attr_dev(g1, "transform-origin", g1_transform_origin_value = `${/*i*/ ctx[7][0] / 4} 0`);
-    			add_location(g1, file$9, 87, 4, 1351);
+    			add_location(g1, file$9, 87, 4, 1358);
     			attr_dev(svg, "id", /*id*/ ctx[0]);
     			attr_dev(svg, "class", svg_class_value = "" + (null_to_empty(/*c*/ ctx[8]) + " svelte-1cj2gr0"));
     			attr_dev(svg, "style", /*s*/ ctx[9]);
@@ -25606,7 +25797,7 @@ var app = (function () {
     			attr_dev(svg, "aria-hidden", "true");
     			attr_dev(svg, "role", "img");
     			attr_dev(svg, "xmlns", "http://www.w3.org/2000/svg");
-    			add_location(svg, file$9, 78, 2, 1188);
+    			add_location(svg, file$9, 78, 2, 1195);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, svg, anchor);
@@ -25697,7 +25888,7 @@ var app = (function () {
     			: /*secondaryOpacity*/ ctx[5]);
 
     			attr_dev(path0, "transform", path0_transform_value = `translate(${/*i*/ ctx[7][0] / -2} ${/*i*/ ctx[7][1] / -2})`);
-    			add_location(path0, file$9, 99, 10, 1714);
+    			add_location(path0, file$9, 99, 10, 1721);
     			attr_dev(path1, "d", path1_d_value = /*i*/ ctx[7][4][1]);
     			attr_dev(path1, "fill", path1_fill_value = /*primaryColor*/ ctx[2] || /*color*/ ctx[1] || 'currentColor');
 
@@ -25706,7 +25897,7 @@ var app = (function () {
     			: /*primaryOpacity*/ ctx[4]);
 
     			attr_dev(path1, "transform", path1_transform_value = `translate(${/*i*/ ctx[7][0] / -2} ${/*i*/ ctx[7][1] / -2})`);
-    			add_location(path1, file$9, 105, 10, 1975);
+    			add_location(path1, file$9, 105, 10, 1982);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, path0, anchor);
@@ -25779,7 +25970,7 @@ var app = (function () {
     			attr_dev(path, "d", path_d_value = /*i*/ ctx[7][4]);
     			attr_dev(path, "fill", path_fill_value = /*color*/ ctx[1] || /*primaryColor*/ ctx[2] || 'currentColor');
     			attr_dev(path, "transform", path_transform_value = `translate(${/*i*/ ctx[7][0] / -2} ${/*i*/ ctx[7][1] / -2})`);
-    			add_location(path, file$9, 93, 10, 1526);
+    			add_location(path, file$9, 93, 10, 1533);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, path, anchor);
@@ -26007,7 +26198,7 @@ var app = (function () {
     		}
 
     		if ($$self.$$.dirty & /*clazz, spin, pulse*/ 12584960) {
-    			$$invalidate(8, c = joinCss([clazz, 'fa', spin && 'spin', pulse && 'pulse'], ' '));
+    			$$invalidate(8, c = joinCss([clazz, 'svelte-fa', spin && 'spin', pulse && 'pulse'], ' '));
     		}
 
     		if ($$self.$$.dirty & /*style, size, pull, fw*/ 118784) {
@@ -26253,21 +26444,22 @@ var app = (function () {
     var Fa$1 = Fa;
 
     /*!
-     * Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com
+     * Font Awesome Free 6.0.0 by @fontawesome - https://fontawesome.com
      * License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License)
+     * Copyright 2022 Fonticons, Inc.
      */
     var faAngleRight = {
       prefix: 'fas',
       iconName: 'angle-right',
-      icon: [256, 512, [], "f105", "M224.3 273l-136 136c-9.4 9.4-24.6 9.4-33.9 0l-22.6-22.6c-9.4-9.4-9.4-24.6 0-33.9l96.4-96.4-96.4-96.4c-9.4-9.4-9.4-24.6 0-33.9L54.3 103c9.4-9.4 24.6-9.4 33.9 0l136 136c9.5 9.4 9.5 24.6.1 34z"]
+      icon: [256, 512, [8250], "f105", "M64 448c-8.188 0-16.38-3.125-22.62-9.375c-12.5-12.5-12.5-32.75 0-45.25L178.8 256L41.38 118.6c-12.5-12.5-12.5-32.75 0-45.25s32.75-12.5 45.25 0l160 160c12.5 12.5 12.5 32.75 0 45.25l-160 160C80.38 444.9 72.19 448 64 448z"]
     };
     var faTrash = {
       prefix: 'fas',
       iconName: 'trash',
-      icon: [448, 512, [], "f1f8", "M432 32H312l-9.4-18.7A24 24 0 0 0 281.1 0H166.8a23.72 23.72 0 0 0-21.4 13.3L136 32H16A16 16 0 0 0 0 48v32a16 16 0 0 0 16 16h416a16 16 0 0 0 16-16V48a16 16 0 0 0-16-16zM53.2 467a48 48 0 0 0 47.9 45h245.8a48 48 0 0 0 47.9-45L416 128H32z"]
+      icon: [448, 512, [], "f1f8", "M135.2 17.69C140.6 6.848 151.7 0 163.8 0H284.2C296.3 0 307.4 6.848 312.8 17.69L320 32H416C433.7 32 448 46.33 448 64C448 81.67 433.7 96 416 96H32C14.33 96 0 81.67 0 64C0 46.33 14.33 32 32 32H128L135.2 17.69zM394.8 466.1C393.2 492.3 372.3 512 346.9 512H101.1C75.75 512 54.77 492.3 53.19 466.1L31.1 128H416L394.8 466.1z"]
     };
 
-    /* src\components\HookContainer.svelte generated by Svelte v3.44.1 */
+    /* src\components\HookContainer.svelte generated by Svelte v3.46.4 */
 
     const { console: console_1$3 } = globals;
     const file$8 = "src\\components\\HookContainer.svelte";
@@ -27036,7 +27228,7 @@ var app = (function () {
     	}
     }
 
-    /* src\pages\hooks\Validation.svelte generated by Svelte v3.44.1 */
+    /* src\pages\hooks\Validation.svelte generated by Svelte v3.46.4 */
 
     const file$7 = "src\\pages\\hooks\\Validation.svelte";
 
@@ -27741,7 +27933,7 @@ var app = (function () {
     	}
     }
 
-    /* src\components\fileupload\FileOverviewItem.svelte generated by Svelte v3.44.1 */
+    /* src\components\fileupload\FileOverviewItem.svelte generated by Svelte v3.46.4 */
     const file_1 = "src\\components\\fileupload\\FileOverviewItem.svelte";
 
     // (51:1) <Col xs="1">
@@ -27895,7 +28087,7 @@ var app = (function () {
     	}
 
     	input = new Input$1({ props: input_props, $$inline: true });
-    	binding_callbacks.push(() => bind$1(input, 'value', input_value_binding));
+    	binding_callbacks.push(() => bind$3(input, 'value', input_value_binding));
     	input.$on("change", /*change_handler*/ ctx[11]);
 
     	const block = {
@@ -28497,7 +28689,7 @@ var app = (function () {
     	}
     }
 
-    /* src\components\fileupload\FileOverview.svelte generated by Svelte v3.44.1 */
+    /* src\components\fileupload\FileOverview.svelte generated by Svelte v3.46.4 */
 
     const { console: console_1$2 } = globals;
 
@@ -29024,16 +29216,17 @@ var app = (function () {
     }
 
     /*!
-     * Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com
+     * Font Awesome Free 6.0.0 by @fontawesome - https://fontawesome.com
      * License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License)
+     * Copyright 2022 Fonticons, Inc.
      */
     var faHourglass = {
       prefix: 'far',
       iconName: 'hourglass',
-      icon: [384, 512, [], "f254", "M368 48h4c6.627 0 12-5.373 12-12V12c0-6.627-5.373-12-12-12H12C5.373 0 0 5.373 0 12v24c0 6.627 5.373 12 12 12h4c0 80.564 32.188 165.807 97.18 208C47.899 298.381 16 383.9 16 464h-4c-6.627 0-12 5.373-12 12v24c0 6.627 5.373 12 12 12h360c6.627 0 12-5.373 12-12v-24c0-6.627-5.373-12-12-12h-4c0-80.564-32.188-165.807-97.18-208C336.102 213.619 368 128.1 368 48zM64 48h256c0 101.62-57.307 184-128 184S64 149.621 64 48zm256 416H64c0-101.62 57.308-184 128-184s128 82.38 128 184z"]
+      icon: [384, 512, [62032, 9203, "hourglass-2", "hourglass-half"], "f254", "M0 24C0 10.75 10.75 0 24 0H360C373.3 0 384 10.75 384 24C384 37.25 373.3 48 360 48H352V66.98C352 107.3 335.1 145.1 307.5 174.5L225.9 256L307.5 337.5C335.1 366 352 404.7 352 445V464H360C373.3 464 384 474.7 384 488C384 501.3 373.3 512 360 512H24C10.75 512 0 501.3 0 488C0 474.7 10.75 464 24 464H32V445C32 404.7 48.01 366 76.52 337.5L158.1 256L76.52 174.5C48.01 145.1 32 107.3 32 66.98V48H24C10.75 48 0 37.25 0 24V24zM99.78 384H284.2C281 379.6 277.4 375.4 273.5 371.5L192 289.9L110.5 371.5C106.6 375.4 102.1 379.6 99.78 384H99.78zM284.2 128C296.1 110.4 304 89.03 304 66.98V48H80V66.98C80 89.03 87 110.4 99.78 128H284.2z"]
     };
 
-    /* src\components\utils\TimeDuration.svelte generated by Svelte v3.44.1 */
+    /* src\components\utils\TimeDuration.svelte generated by Svelte v3.46.4 */
     const file$6 = "src\\components\\utils\\TimeDuration.svelte";
 
     function create_fragment$9(ctx) {
@@ -29186,7 +29379,7 @@ var app = (function () {
     	}
     }
 
-    /* src\pages\hooks\FileUpload.svelte generated by Svelte v3.44.1 */
+    /* src\pages\hooks\FileUpload.svelte generated by Svelte v3.46.4 */
 
     // (44:0) {#if model}
     function create_if_block$5(ctx) {
@@ -29744,7 +29937,7 @@ var app = (function () {
     	}
     }
 
-    /* src\pages\hooks\Metadata.svelte generated by Svelte v3.44.1 */
+    /* src\pages\hooks\Metadata.svelte generated by Svelte v3.46.4 */
     const file$5 = "src\\pages\\hooks\\Metadata.svelte";
 
     // (43:3) <Button on:click={clickEditMetadata}>
@@ -30708,7 +30901,7 @@ var app = (function () {
     	}
     }
 
-    /* src\components\edit\Data.svelte generated by Svelte v3.44.1 */
+    /* src\components\edit\Data.svelte generated by Svelte v3.46.4 */
 
     const { console: console_1$1 } = globals;
     const file$4 = "src\\components\\edit\\Data.svelte";
@@ -31677,7 +31870,7 @@ var app = (function () {
     	}
     }
 
-    /* src\pages\hooks\Attachment.svelte generated by Svelte v3.44.1 */
+    /* src\pages\hooks\Attachment.svelte generated by Svelte v3.46.4 */
 
     // (37:0) {#if model}
     function create_if_block$3(ctx) {
@@ -32224,7 +32417,7 @@ var app = (function () {
     	}
     }
 
-    /* src\components\edit\Hooks.svelte generated by Svelte v3.44.1 */
+    /* src\components\edit\Hooks.svelte generated by Svelte v3.46.4 */
     const file$3 = "src\\components\\edit\\Hooks.svelte";
 
     function get_each_context$1(ctx, list, i) {
@@ -32824,7 +33017,7 @@ var app = (function () {
     	}
     }
 
-    /* src\components\View.svelte generated by Svelte v3.44.1 */
+    /* src\components\View.svelte generated by Svelte v3.46.4 */
     const file$2 = "src\\components\\View.svelte";
 
     function create_fragment$3(ctx) {
@@ -33084,7 +33277,7 @@ var app = (function () {
     	}
     }
 
-    /* src\components\edit\MessagesContainer.svelte generated by Svelte v3.44.1 */
+    /* src\components\edit\MessagesContainer.svelte generated by Svelte v3.46.4 */
 
     // (14:0) <Button color="danger" on:click={toggle}>
     function create_default_slot_1(ctx) {
@@ -33359,7 +33552,7 @@ var app = (function () {
     	}
     }
 
-    /* src\components\Debug.svelte generated by Svelte v3.44.1 */
+    /* src\components\Debug.svelte generated by Svelte v3.46.4 */
 
     const file$1 = "src\\components\\Debug.svelte";
 
@@ -33652,13 +33845,14 @@ var app = (function () {
     	}
     }
 
-    /* src\pages\Edit.svelte generated by Svelte v3.44.1 */
+    /* src\pages\Edit.svelte generated by Svelte v3.46.4 */
 
     const { console: console_1 } = globals;
     const file = "src\\pages\\Edit.svelte";
 
-    // (111:0) {:else}
+    // (108:0) {:else}
     function create_else_block(ctx) {
+    	let div4;
     	let header;
     	let t0;
     	let div3;
@@ -33675,6 +33869,7 @@ var app = (function () {
     	let updating_view;
     	let t3;
     	let debug_1;
+    	let div4_intro;
     	let current;
 
     	header = new Header({
@@ -33700,7 +33895,7 @@ var app = (function () {
     	}
 
     	data = new Data({ props: data_props, $$inline: true });
-    	binding_callbacks.push(() => bind$1(data, 'hooks', data_hooks_binding));
+    	binding_callbacks.push(() => bind$3(data, 'hooks', data_hooks_binding));
 
     	function hooks_1_hooks_binding(value) {
     		/*hooks_1_hooks_binding*/ ctx[9](value);
@@ -33716,7 +33911,7 @@ var app = (function () {
     	}
 
     	hooks_1 = new Hooks({ props: hooks_1_props, $$inline: true });
-    	binding_callbacks.push(() => bind$1(hooks_1, 'hooks', hooks_1_hooks_binding));
+    	binding_callbacks.push(() => bind$3(hooks_1, 'hooks', hooks_1_hooks_binding));
 
     	function message_view_binding(value) {
     		/*message_view_binding*/ ctx[10](value);
@@ -33732,7 +33927,7 @@ var app = (function () {
     	}
 
     	message = new MessagesContainer({ props: message_props, $$inline: true });
-    	binding_callbacks.push(() => bind$1(message, 'view', message_view_binding));
+    	binding_callbacks.push(() => bind$3(message, 'view', message_view_binding));
 
     	debug_1 = new Debug({
     			props: { hooks: /*hooks*/ ctx[5] },
@@ -33741,6 +33936,7 @@ var app = (function () {
 
     	const block = {
     		c: function create() {
+    			div4 = element("div");
     			create_component(header.$$.fragment);
     			t0 = space();
     			div3 = element("div");
@@ -33755,19 +33951,21 @@ var app = (function () {
     			t3 = space();
     			create_component(debug_1.$$.fragment);
     			attr_dev(div0, "id", "dataContainer");
-    			add_location(div0, file, 117, 0, 2484);
+    			add_location(div0, file, 116, 0, 2565);
     			attr_dev(div1, "id", "additonalContainer");
     			attr_dev(div1, "class", "svelte-flg15");
-    			add_location(div1, file, 125, 0, 2628);
+    			add_location(div1, file, 124, 0, 2709);
     			attr_dev(div2, "class", "top svelte-flg15");
-    			add_location(div2, file, 124, 0, 2609);
+    			add_location(div2, file, 123, 0, 2690);
     			attr_dev(div3, "class", "content svelte-flg15");
-    			add_location(div3, file, 115, 0, 2459);
+    			add_location(div3, file, 114, 0, 2540);
+    			add_location(div4, file, 109, 0, 2452);
     		},
     		m: function mount(target, anchor) {
-    			mount_component(header, target, anchor);
-    			insert_dev(target, t0, anchor);
-    			insert_dev(target, div3, anchor);
+    			insert_dev(target, div4, anchor);
+    			mount_component(header, div4, null);
+    			append_dev(div4, t0);
+    			append_dev(div4, div3);
     			append_dev(div3, div0);
     			mount_component(data, div0, null);
     			append_dev(div3, t1);
@@ -33776,8 +33974,8 @@ var app = (function () {
     			mount_component(hooks_1, div1, null);
     			append_dev(div2, t2);
     			mount_component(message, div2, null);
-    			insert_dev(target, t3, anchor);
-    			mount_component(debug_1, target, anchor);
+    			append_dev(div4, t3);
+    			mount_component(debug_1, div4, null);
     			current = true;
     		},
     		p: function update(ctx, dirty) {
@@ -33826,6 +34024,14 @@ var app = (function () {
     			transition_in(hooks_1.$$.fragment, local);
     			transition_in(message.$$.fragment, local);
     			transition_in(debug_1.$$.fragment, local);
+
+    			if (!div4_intro) {
+    				add_render_callback(() => {
+    					div4_intro = create_in_transition(div4, fade, { delay: 500 });
+    					div4_intro.start();
+    				});
+    			}
+
     			current = true;
     		},
     		o: function outro(local) {
@@ -33837,14 +34043,12 @@ var app = (function () {
     			current = false;
     		},
     		d: function destroy(detaching) {
-    			destroy_component(header, detaching);
-    			if (detaching) detach_dev(t0);
-    			if (detaching) detach_dev(div3);
+    			if (detaching) detach_dev(div4);
+    			destroy_component(header);
     			destroy_component(data);
     			destroy_component(hooks_1);
     			destroy_component(message);
-    			if (detaching) detach_dev(t3);
-    			destroy_component(debug_1, detaching);
+    			destroy_component(debug_1);
     		}
     	};
 
@@ -33852,14 +34056,14 @@ var app = (function () {
     		block,
     		id: create_else_block.name,
     		type: "else",
-    		source: "(111:0) {:else}",
+    		source: "(108:0) {:else}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (109:0) {#if !model}
+    // (106:0) {#if !model}
     function create_if_block(ctx) {
     	let spinner;
     	let current;
@@ -33901,7 +34105,7 @@ var app = (function () {
     		block,
     		id: create_if_block.name,
     		type: "if",
-    		source: "(109:0) {#if !model}",
+    		source: "(106:0) {#if !model}",
     		ctx
     	});
 
@@ -34007,8 +34211,7 @@ var app = (function () {
 
     	onMount(async () => {
     		console.log("start edit");
-
-    		//setApiConfig("https://localhost:44345","davidschoene","123456");
+    		setApiConfig("https://localhost:44345", "davidschoene", "123456");
     		load();
     	});
 
@@ -34084,7 +34287,9 @@ var app = (function () {
 
     	$$self.$capture_state = () => ({
     		onMount,
+    		fade,
     		Spinner: Spinner$1,
+    		Container,
     		getEdit,
     		setApiConfig,
     		Header,

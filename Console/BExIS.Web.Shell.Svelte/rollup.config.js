@@ -28,6 +28,7 @@ function serve() {
 	};
 }
 
+
 function getConfig(configName)
 {
 	 return {
@@ -37,8 +38,54 @@ function getConfig(configName)
 						sourcemap: true,
 						format: 'iife',
 						name: 'app',
-						file: '../BExIS.Web.Shell/Scripts/svelte/'+configName+'.js'
-					},
+						file: '../BExIS.Modules.Dcm.UI/Scripts/svelte/'+configName+'.js'
+					}],
+			plugins: [
+						svelte({
+							// emitCss: false,
+							compilerOptions: {
+								// enable run-time checks when not in production
+								dev: !production
+							}
+						}),
+						// we'll extract any component CSS out into
+						// a separate file - better for performance
+						css({ output: configName+'.css'}),
+				
+						// If you have external dependencies installed from
+						// npm, you'll most likely need these plugins. In
+						// some cases you'll need additional configuration -
+						// consult the documentation for details:
+						// https://github.com/rollup/plugins/tree/master/packages/commonjs
+						resolve({
+							browser: true,
+							dedupe: ['svelte']
+						}),
+						commonjs(),
+				
+						// In dev mode, call `npm run start` once
+						// the bundle has been generated
+						!production && serve(),
+				
+						// Watch the `public` directory and refresh the
+						// browser on changes when not in production
+						!production && livereload('public'),
+				
+						// If we're building for production (npm run build
+						// instead of npm run dev), minify
+						production && terser()
+					],
+					watch: {
+								clearScreen: false
+							}
+	}
+}
+
+function getLocalConfig(configName)
+{
+	 return {
+			input: 'src/'+configName+'.js',
+			output: [
 					{
 					file: 'public/build/'+configName+'.js',
 					format: 'iife',
@@ -86,7 +133,10 @@ function getConfig(configName)
 }
 
 export default [
+	 getLocalConfig("shell"),
 		getConfig("shell"),
+		getLocalConfig("menu"),
 		getConfig("menu"),
-		getConfig("uitest")
+		getConfig("uitest"),
+		getLocalConfig("uitest")
 ]
