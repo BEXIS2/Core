@@ -20,6 +20,14 @@ BEGIN TRANSACTION;
 -- dim/publish 
 -- sam/userpermissions
 
+-- EntityTemplates / create Table, Link to Dataset, Is required
+
+-- Variables
+    -- add values from DataAttribute to Variable Instance (datatype, unit, constraints)
+    -- Convert DataAttrributes to Variable Templates
+    -- Convert Variables to Variable Instances
+    -- link Variable Template to Variable Instance
+
 CREATE TABLE public.variable_constraints
 (
     constraintref bigint NOT NULL,
