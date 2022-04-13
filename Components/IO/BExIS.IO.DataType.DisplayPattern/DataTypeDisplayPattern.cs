@@ -68,6 +68,79 @@ namespace BExIS.IO.DataType.DisplayPattern
             return null;
         }
 
+        #region for metadata attributes needed
+        public static XmlNode Dematerialize(DataTypeDisplayPattern dataTypeDisplayPattern)
+        {
+            string StringPattern;
+            string RegexPattern;
 
+            if (dataTypeDisplayPattern.StringPattern == null)
+                StringPattern = "null";
+            else
+                StringPattern = dataTypeDisplayPattern.StringPattern;
+
+            if (dataTypeDisplayPattern.RegexPattern == null)
+                RegexPattern = "null";
+            else
+                RegexPattern = dataTypeDisplayPattern.RegexPattern;
+
+            XmlDocument xmlDoc = new XmlDocument();
+            xmlDoc.LoadXml("<DisplayPattern>" +
+                            "   <Systemtype>" + dataTypeDisplayPattern.Systemtype.ToString() + "</Systemtype>" +
+                            "   <Name>" + dataTypeDisplayPattern.Name + "</Name>" +
+                            "   <StringPattern>" + StringPattern + "</StringPattern>" +
+                            "   <RegexPattern>" + RegexPattern + "</RegexPattern>" +
+                            "</DisplayPattern>");
+            return xmlDoc.DocumentElement;
+        }
+
+        public static DataTypeDisplayPattern Materialize(XmlNode extra)
+        {
+            if (extra != null)
+            {
+                XmlDocument xmlDoc = extra as XmlDocument;
+                XmlNode xmlNode;
+
+                DataTypeDisplayPattern displayPattern = new DataTypeDisplayPattern();
+                if (xmlDoc.GetElementsByTagName("DisplayPattern").Count > 0)
+                {
+                    xmlNode = XmlUtility.GetXmlNodeByName(xmlDoc.GetElementsByTagName("DisplayPattern").Item(0), "Systemtype");
+                    if (xmlNode != null)
+                    {
+                        foreach (DataTypeCode dtc in Enum.GetValues(typeof(DataTypeCode)))
+                        {
+                            if (dtc.ToString() == xmlNode.InnerText)
+                            {
+                                displayPattern.Systemtype = dtc;
+                                break;
+                            }
+                        }
+                    }
+                    else
+                    {
+                        return null;
+                    }
+                    xmlNode = XmlUtility.GetXmlNodeByName(xmlDoc.GetElementsByTagName("DisplayPattern").Item(0), "Name");
+                    if (xmlNode != null && xmlNode.InnerText != "null")
+                        displayPattern.Name = xmlNode.InnerText;
+                    else
+                        displayPattern.Name = null;
+                    xmlNode = XmlUtility.GetXmlNodeByName(xmlDoc.GetElementsByTagName("DisplayPattern").Item(0), "StringPattern");
+                    if (xmlNode != null && xmlNode.InnerText != "null")
+                        displayPattern.StringPattern = xmlNode.InnerText;
+                    else
+                        displayPattern.StringPattern = null;
+                    xmlNode = XmlUtility.GetXmlNodeByName(xmlDoc.GetElementsByTagName("RegexPattern").Item(0), "RegexPattern");
+                    if (xmlNode != null && xmlNode.InnerText != "null")
+                        displayPattern.RegexPattern = xmlNode.InnerText;
+                    else
+                        displayPattern.RegexPattern = null;
+                    return displayPattern;
+                }
+            }
+            return null;
+        }
+
+        #endregion
     }
 }

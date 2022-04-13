@@ -152,22 +152,22 @@ namespace BExIS.Modules.Dim.UI.Controllers
                             if (variableId == -1)
                             {
                                
-                                foreach (Variable vs in structuredDataStructure.Variables)
+                                foreach (VariableInstance vs in structuredDataStructure.Variables)
                                 {
                                     ApiDataStatisticModel dataStatisticModel = new ApiDataStatisticModel();
                                     dt = GetUniqueValues(id, vs.Id);
                                     dataStatisticModel.VariableId = vs.Id;
                                     dataStatisticModel.VariableName = vs.Label;
                                     dataStatisticModel.VariableDescription = vs.Description;
-                                    dataStatisticModel.DataTypeName = vs.DataAttribute.DataType.Name;
-                                    dataStatisticModel.DataTypeSystemType = vs.DataAttribute.DataType.SystemType;
+                                    dataStatisticModel.DataTypeName = vs.DataType.Name;
+                                    dataStatisticModel.DataTypeSystemType = vs.DataType.SystemType;
 
-                                    DataTypeDisplayPattern dtdp = DataTypeDisplayPattern.Materialize(vs.DataAttribute.DataType.Extra);
+                                    DataTypeDisplayPattern dtdp = DataTypeDisplayPattern.Get(vs.DisplayPatternId);
                                     string displayPattern = "";
                                     if (dtdp != null) displayPattern = dtdp.StringPattern;
 
                                     dataStatisticModel.DataTypeDisplayPattern = displayPattern;
-                                    dataStatisticModel.Unit = vs.DataAttribute.Unit.Name;
+                                    dataStatisticModel.Unit = vs.Unit.Name;
 
                                     dataStatisticModel.uniqueValues = dt;
                                     dataStatisticModel.minLength = dt.Compute("Min(length)", string.Empty).ToString();
@@ -194,9 +194,9 @@ namespace BExIS.Modules.Dim.UI.Controllers
                             else
                             {
 
-                                Variable variable = new Variable();
+                                VariableInstance variable = new VariableInstance();
 
-                                foreach (Variable vs in structuredDataStructure.Variables)
+                                foreach (VariableInstance vs in structuredDataStructure.Variables)
                                 {
                                     if (vs.Id == variableId)
                                     {
