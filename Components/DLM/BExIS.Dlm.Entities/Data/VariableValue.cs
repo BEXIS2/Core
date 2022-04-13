@@ -50,29 +50,7 @@ namespace BExIS.Dlm.Entities.Data
         public IList<ParameterValue> ParameterValues { get; set; }
 
 
-        /// <summary>
-        ///
-        /// </summary>
-        /// <remarks></remarks>
-        /// <seealso cref=""/>    
-        [XmlIgnore]
-        [JsonIgnore]
-
-        public DataAttribute DataAttribute
-        {
-            get
-            {
-                if (this.Tuple.DatasetVersion.Dataset.DataStructure.Self is StructuredDataStructure)
-                {
-                    return (this.Variable.DataAttribute);
-                }
-                return (null);
-            }
-
-        }
-
-
-        private Variable _variable;
+        private VariableInstance _variable;
 
         /// <summary>
         ///
@@ -82,13 +60,13 @@ namespace BExIS.Dlm.Entities.Data
         [XmlIgnore]
         [JsonIgnore]
 
-        public Variable Variable
+        public VariableInstance Variable
         {
             get
             {
                 if (this.Tuple.DatasetVersion.Dataset.DataStructure.Self is StructuredDataStructure)
                 {
-                    Variable u = (this.Tuple.DatasetVersion.Dataset.DataStructure.Self as StructuredDataStructure).Variables
+                    VariableInstance u = (this.Tuple.DatasetVersion.Dataset.DataStructure.Self as StructuredDataStructure).Variables
                         .Where(p => p.Id.Equals(this.VariableId))
                         .Select(p => p).FirstOrDefault();
                     return (u);

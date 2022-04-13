@@ -312,35 +312,6 @@ namespace BExIS.Dlm.Services.MetadataStructure
             helper.Delete(constraint);
         }
 
-        public DataAttribute AddExtendedProperty(DataContainer container, ExtendedProperty extendedProperty)
-        {
-            throw new NotImplementedException();
-        }
-
-        public DataAttribute RemoveExtendedProperty(ExtendedProperty extendedProperty)
-        {
-            throw new NotImplementedException();
-        }
-
-        public DataAttribute AddAggregateFunction(DataContainer container, AggregateFunction aggregateFunction)
-        {
-            throw new NotImplementedException();
-        }
-
-        public DataAttribute RemoveAggregateFunction(DataContainer container, AggregateFunction aggregateFunction)
-        {
-            throw new NotImplementedException();
-        }
-
-        public DataAttribute AddGlobalizationInfo(DataContainer container, GlobalizationInfo globalizationInfo)
-        {
-            throw new NotImplementedException();
-        }
-
-        public DataAttribute RemoveGlobalizationInfo(GlobalizationInfo globalizationInfo)
-        {
-            throw new NotImplementedException();
-        }
 
         #endregion
 

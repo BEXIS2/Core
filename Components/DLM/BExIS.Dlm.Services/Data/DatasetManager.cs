@@ -2925,7 +2925,7 @@ namespace BExIS.Dlm.Services.Data
                     if (sds.Variables != null && sds.Variables.Count() > 0)
                     {
                         columnDefinitionList = (from c in sds.Variables
-                                                select new Tuple<string, string, int, long>(c.Label, c.DataAttribute.DataType.SystemType, c.OrderNo, c.Id))
+                                                select new Tuple<string, string, int, long>(c.Label, c.DataType.SystemType, c.OrderNo, c.Id))
                                                .ToList()
                                                ;
                     }

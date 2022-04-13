@@ -328,40 +328,42 @@ namespace BExIS.Web.Shell.Controllers
 
         private void addConstraintsTo()
         {
-            DataContainerManager dcManager = new DataContainerManager();
-            var attr = dcManager.DataAttributeRepo.Get(1);
+            //DataContainerManager dcManager = new DataContainerManager();
+            //var attr = dcManager.DataAttributeRepo.Get(1);
 
-            var c1 = new RangeConstraint(ConstraintProviderSource.Internal, "", "en-US",
-                "should be between 1 and 12 meter", true, null, null, null, 1.00, true, 12.00, true);
-            dcManager.AddConstraint(c1, attr);
-            var v1 = c1.IsSatisfied(14);
+            //var c1 = new RangeConstraint(ConstraintProviderSource.Internal, "", "en-US",
+            //    "should be between 1 and 12 meter", true, null, null, null, 1.00, true, 12.00, true);
+            //dcManager.AddConstraint(c1, attr);
+            //var v1 = c1.IsSatisfied(14);
 
-            var c2 = new PatternConstraint(ConstraintProviderSource.Internal, "", "en-US",
-                "a simple email validation constraint", false, null, null, null, @"^\S+@\S+$", false);
-            dcManager.AddConstraint(c2, attr);
-            var v2 = c2.IsSatisfied("javad.chamanara@uni-jena.com");
+            //var c2 = new PatternConstraint(ConstraintProviderSource.Internal, "", "en-US",
+            //    "a simple email validation constraint", false, null, null, null, @"^\S+@\S+$", false);
+            //dcManager.AddConstraint(c2, attr);
+            //var v2 = c2.IsSatisfied("javad.chamanara@uni-jena.com");
 
-            List<DomainItem> items = new List<DomainItem>()
-            {
-                new DomainItem() {Key = "A", Value = "This is A"},
-                new DomainItem() {Key = "B", Value = "This is B"},
-                new DomainItem() {Key = "C", Value = "This is C"},
-                new DomainItem() {Key = "D", Value = "This is D"},
-            };
-            var c3 = new DomainConstraint(ConstraintProviderSource.Internal, "", "en-US",
-                "a simple domain validation constraint", false, null, null, null, items);
-            dcManager.AddConstraint(c3, attr);
-            var v3 = c3.IsSatisfied("A");
-            v3 = c3.IsSatisfied("E");
-            c3.Negated = true;
-            v3 = c3.IsSatisfied("A");
+            //List<DomainItem> items = new List<DomainItem>()
+            //{
+            //    new DomainItem() {Key = "A", Value = "This is A"},
+            //    new DomainItem() {Key = "B", Value = "This is B"},
+            //    new DomainItem() {Key = "C", Value = "This is C"},
+            //    new DomainItem() {Key = "D", Value = "This is D"},
+            //};
+            //var c3 = new DomainConstraint(ConstraintProviderSource.Internal, "", "en-US",
+            //    "a simple domain validation constraint", false, null, null, null, items);
+            //dcManager.AddConstraint(c3, attr);
+            //var v3 = c3.IsSatisfied("A");
+            //v3 = c3.IsSatisfied("E");
+            //c3.Negated = true;
+            //v3 = c3.IsSatisfied("A");
 
-            var c4 = new ComparisonConstraint(ConstraintProviderSource.Internal, "", "en-US",
-                "a comparison validation constraint", false, null, null, null
-                , ComparisonOperator.GreaterThanOrEqual, ComparisonTargetType.Value, "", ComparisonOffsetType.Ratio,
-                1.25);
-            dcManager.AddConstraint(c4, attr);
-            var v4 = c4.IsSatisfied(14, 10);
+            //var c4 = new ComparisonConstraint(ConstraintProviderSource.Internal, "", "en-US",
+            //    "a comparison validation constraint", false, null, null, null
+            //    , ComparisonOperator.GreaterThanOrEqual, ComparisonTargetType.Value, "", ComparisonOffsetType.Ratio,
+            //    1.25);
+            //dcManager.AddConstraint(c4, attr);
+            //var v4 = c4.IsSatisfied(14, 10);
+
+            throw new NotImplementedException();
         }
 
         private List<PartyRelationship> ConvertDictionaryToPartyRelationships(

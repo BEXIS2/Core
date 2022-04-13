@@ -24,13 +24,6 @@ namespace BExIS.Dlm.Entities.DataStructure
         /// </summary>
         /// <remarks></remarks>
         /// <seealso cref=""/>
-        public virtual DataAttribute DataAttribute { get; set; }
-
-        /// <summary>
-        ///
-        /// </summary>
-        /// <remarks></remarks>
-        /// <seealso cref=""/>
         public virtual Variable Variable { get; set; }
     }
 
@@ -38,35 +31,13 @@ namespace BExIS.Dlm.Entities.DataStructure
     ///
     /// </summary>
     /// <remarks></remarks>
-    public class Variable : BaseUsage
+    public abstract class Variable : BaseUsage
     {
-        public Variable()
-        {
-            MinCardinality = 0; // to make the parameter optional by default
-            MaxCardinality = 1; // this must always remain 1
-            MissingValues = new List<MissingValue>();
-        }
 
         /// <summary>
-        ///
+        /// 
         /// </summary>
-        /// <remarks></remarks>
-        /// <seealso cref=""/>
-        public virtual DataAttribute DataAttribute { get; set; }
-
-        /// <summary>
-        ///
-        /// </summary>
-        /// <remarks></remarks>
-        /// <seealso cref=""/>
-        public virtual StructuredDataStructure DataStructure { get; set; }
-
-        /// <summary>
-        ///
-        /// </summary>
-        /// <remarks> DataAttribute is the controller of this association </remarks>
-        /// <seealso cref=""/>
-        public virtual ICollection<Parameter> Parameters { get; set; }
+        public virtual DataType DataType { get; set; }
 
         /// <summary>
         /// This is the unit directly associated with the variable. At the variable creation time, it is possible to attach the
@@ -77,26 +48,47 @@ namespace BExIS.Dlm.Entities.DataStructure
         /// <remarks>If the variable's unit is going to be changed, the compatibility to the data container's unit's dimension should be preserved.</remarks>
         public virtual Unit Unit { get; set; } // 0..1
 
-        /// <summary>
-        /// 
-        /// </summary>
-        public virtual DataType DataType { get; set; }
-
-        public virtual string DatePattern { get; set; }
-
-        public virtual Variable VariableTemplate { get; set; }
-        public virtual ICollection<MissingValue> MissingValues { get; set; } // 0..1
-
-        public virtual int VarTemplate { get; set; }
 
         public virtual ICollection<Constraint> VariableConstraints { get; set; }
     }
 
     public class VariableInstance : Variable
     {
+        /// <summary>
+        ///
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>
+        public virtual StructuredDataStructure DataStructure { get; set; }
+
+        public virtual VariableTemplate VariableTemplate { get; set; }
+
+        public virtual ICollection<MissingValue> MissingValues { get; set; } // 0..1
+
+        public virtual int VarTemplate { get; set; }
+
+        public virtual int DisplayPatternId { get; set; }
+        public virtual bool IsKey { get; set; }
+
+        public VariableInstance()
+        {
+            MinCardinality = 0; // to make the parameter optional by default
+            MaxCardinality = 1; // this must always remain 1
+            MissingValues = new List<MissingValue>();
+        }
+
     }
 
     public class VariableTemplate : Variable
     {
+        public virtual bool Approved{ get; set; }
+
+
+        public VariableTemplate()
+        {
+            MinCardinality = 0; // to make the parameter optional by default
+            MaxCardinality = 1; // this must always remain 1
+
+        }
     }
 }

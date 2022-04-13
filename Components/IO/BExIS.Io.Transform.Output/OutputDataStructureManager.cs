@@ -79,7 +79,7 @@ namespace BExIS.IO.Transform.Output
                         StructuredDataStructure structuredDataStructure = dataStructureManager.StructuredDataStructureRepo.Get(id);
                         this.Structured = true;
                         DataRow dataRow;
-                        foreach (Variable vs in structuredDataStructure.Variables)
+                        foreach (VariableInstance vs in structuredDataStructure.Variables)
                         {
                             dataRow = this.Variables.NewRow();
                             dataRow["Id"] = vs.Id;
@@ -87,10 +87,10 @@ namespace BExIS.IO.Transform.Output
                             dataRow["Description"] = vs.Description;
                             dataRow["isOptional"] = vs.IsValueOptional;
                             dataRow["Unit"] = vs.Unit.Name;
-                            dataRow["DataType"] = vs.DataAttribute.DataType.Name;
-                            dataRow["SystemType"] = vs.DataAttribute.DataType.SystemType;
-                            dataRow["AttributeName"] = vs.DataAttribute.Name;
-                            dataRow["AttributeDescription"] = vs.DataAttribute.Description;
+                            dataRow["DataType"] = vs.DataType.Name;
+                            dataRow["SystemType"] = vs.DataType.SystemType;
+                            dataRow["AttributeName"] = vs.VariableTemplate.Label;
+                            dataRow["AttributeDescription"] = vs.VariableTemplate.Description;
                             this.Variables.Rows.Add(dataRow);
                         }
                     }
@@ -121,7 +121,7 @@ namespace BExIS.IO.Transform.Output
             Description = variable.Description;
             isOptional = variable.IsValueOptional;
             unit = new UnitElement(variable.Unit.Id);
-            dataType = new DataTypeElement(variable.DataAttribute.DataType.Id);
+            dataType = new DataTypeElement(variable.DataType.Id);
         }
 
     }
@@ -443,12 +443,12 @@ namespace BExIS.IO.Transform.Output
             }
         }
 
-        public List<Variable> getOrderedVariables(StructuredDataStructure structuredDataStructure)
+        public List<VariableInstance> getOrderedVariables(StructuredDataStructure structuredDataStructure)
         {
             return getOrderedVariables(structuredDataStructure.Variables.ToList());
         }
 
-        public List<Variable> getOrderedVariables(List<Variable> Variables)
+        public List<VariableInstance> getOrderedVariables(List<VariableInstance> Variables)
         {
             return Variables.OrderBy(v => v.OrderNo).ToList();
         }
@@ -557,17 +557,16 @@ namespace BExIS.IO.Transform.Output
             Worksheet worksheet = dataStructureFile.WorkbookPart.WorksheetParts.First().Worksheet;
             List<Row> rows = GetRows(worksheet, 1, 11);
 
-            List<Variable> variables = this.GetUnitOfWork().GetReadOnlyRepository<Variable>()
+            List<VariableInstance> variables = this.GetUnitOfWork().GetReadOnlyRepository<VariableInstance>()
                                                             .Query(p => variableIds.Contains(p.Id))
                                                             .OrderBy(p => p.OrderNo)
                                                             .ToList();
-            foreach (Variable var in variables)
+            foreach (VariableInstance var in variables)
             {
                 DataContainerManager CM = null;
                 try
                 {
                     CM = new DataContainerManager();
-                    DataAttribute dataAttribute = CM.DataAttributeRepo.Get(var.DataAttribute.Id);
 
                     int indexVar = variables.ToList().IndexOf(var) + 1;
                     string columnIndex = GetClomunIndex(indexVar);
@@ -587,7 +586,7 @@ namespace BExIS.IO.Transform.Output
                     {
                         CellReference = cellRef,
                         DataType = CellValues.String,
-                        StyleIndex = ExcelHelper.GetExcelStyleIndex(dataAttribute.DataType, styleIndex),
+                        StyleIndex = ExcelHelper.GetExcelStyleIndex(var.DataType, styleIndex, var.DisplayPatternId),
                         CellValue = new CellValue("")
                     };
                     rows.ElementAt(1).AppendChild(cell);
@@ -610,14 +609,14 @@ namespace BExIS.IO.Transform.Output
                         CellReference = cellRef,
                         StyleIndex = (UInt32Value)4U,
                         DataType = CellValues.String,
-                        CellValue = new CellValue(dataAttribute.ShortName)
+                        CellValue = new CellValue(var.Label)
                     };
                     rows.ElementAt(3).AppendChild(cell);
 
                     // description from variable 
                     // if not then from attribute
                     string description = "";
-                    description = String.IsNullOrEmpty(var.Description) ? dataAttribute.Description : var.Description;
+                    description = String.IsNullOrEmpty(var.Description) ? var.Description : "";
 
                     cellRef = columnIndex + 5;
                     cell = new Cell()
@@ -629,20 +628,13 @@ namespace BExIS.IO.Transform.Output
                     };
                     rows.ElementAt(4).AppendChild(cell);
 
-                    string classification = "";
-
-                    if (dataAttribute.Classification != null)
-                    {
-                        classification = dataAttribute.Classification.Name;
-                    }
-
                     cellRef = columnIndex + 6;
                     cell = new Cell()
                     {
                         CellReference = cellRef,
                         StyleIndex = (UInt32Value)4U,
                         DataType = CellValues.String,
-                        CellValue = new CellValue(classification)
+                        CellValue = new CellValue()
                     };
                     rows.ElementAt(5).AppendChild(cell);
 
@@ -665,9 +657,9 @@ namespace BExIS.IO.Transform.Output
 
                     string dataType = "";
 
-                    if (dataAttribute.DataType != null)
+                    if (var.DataType != null)
                     {
-                        dataType = dataAttribute.DataType.Name;
+                        dataType = var.DataType.Name;
                     }
 
                     cellRef = columnIndex + 8;
@@ -696,7 +688,7 @@ namespace BExIS.IO.Transform.Output
                         CellReference = cellRef,
                         StyleIndex = (UInt32Value)4U,
                         DataType = CellValues.String,
-                        CellValue = new CellValue(dataAttribute.IsMultiValue.ToString())
+                        CellValue = new CellValue()
                     };
                     rows.ElementAt(9).AppendChild(cell);
 

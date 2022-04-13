@@ -377,12 +377,11 @@ namespace BExIS.IO.Transform.Output
                     dataStructure = dataStructureManager.StructuredDataStructureRepo.Get(id);
                     dataStructure.Variables = dataStructure.Variables.OrderBy(v => v.OrderNo).ToList();
 
-                    dataStructureManager.StructuredDataStructureRepo.LoadIfNot(dataStructure.Variables.Select(v => v.DataAttribute));
                     dataStructureManager.StructuredDataStructureRepo.LoadIfNot(dataStructure.Variables.Select(v => v.MissingValues));
 
                     foreach (var v in dataStructure.Variables)
                     {
-                        var d = v.DataAttribute.DataType.Description;
+                        var d = v.DataType.Description;
                         var m = v.MissingValues.ToList().Select(mis => mis.Id);
                     }
 
@@ -433,7 +432,7 @@ namespace BExIS.IO.Transform.Output
         /// <param name="source">full list of variables</param>
         /// <param name="selected">variablenames</param>
         /// <returns></returns>
-        protected List<Variable> GetSubsetOfVariables(List<Variable> source, String[] selected)
+        protected List<VariableInstance> GetSubsetOfVariables(List<VariableInstance> source, String[] selected)
         {
             return source.Where(p => selected.Contains(p.Id.ToString())).ToList();
         }
@@ -447,7 +446,7 @@ namespace BExIS.IO.Transform.Output
         /// <param name="source">full list of variables</param>
         /// <param name="selected">variablenames</param>
         /// <returns></returns>
-        protected List<long> GetSubsetOfVariableIds(IEnumerable<Variable> source, String[] selected)
+        protected List<long> GetSubsetOfVariableIds(IEnumerable<VariableInstance> source, String[] selected)
         {
             return source.Where(p => selected.Contains(p.Label.ToString())).ToList().Select(v => v.Id).ToList();
         }
@@ -466,9 +465,9 @@ namespace BExIS.IO.Transform.Output
             return source.Where(p => selected.Contains(p.Variable.Id.ToString())).ToList();
         }
 
-        protected string GetStringFormat(Dlm.Entities.DataStructure.DataType datatype)
+        protected string GetStringFormat(int id)
         {
-            DataTypeDisplayPattern ddp = DataTypeDisplayPattern.Materialize(datatype.Extra);
+            DataTypeDisplayPattern ddp = DataTypeDisplayPattern.Get(id);
             if (ddp != null)
                 return ddp.StringPattern;
 

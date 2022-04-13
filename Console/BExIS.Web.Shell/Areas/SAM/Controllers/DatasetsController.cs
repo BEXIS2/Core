@@ -133,7 +133,7 @@ namespace BExIS.Modules.Sam.UI.Controllers
 
                     foreach (var vv in dataTuple.VariableValues)
                     {
-                        string systemType = vv.DataAttribute.DataType.SystemType;
+                        string systemType = vv.Variable.DataType.SystemType;
                         if (systemType.Equals(typeof(DateTime).Name) && vv.VariableId.Equals(variableid))
                         {
                             string value = vv.Value.ToString();

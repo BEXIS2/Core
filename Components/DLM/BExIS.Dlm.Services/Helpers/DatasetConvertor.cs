@@ -85,7 +85,7 @@ namespace BExIS.Dlm.Services.Helpers
 
                 col.Caption = string.IsNullOrEmpty(vu.Label) ? columnName : vu.Label;
 
-                switch (vu.DataAttribute.DataType.SystemType)
+                switch (vu.DataType.SystemType)
                 {
                     case "String":
                         {
@@ -135,16 +135,6 @@ namespace BExIS.Dlm.Services.Helpers
                             break;
                         }
                 }
-
-                if (vu.Parameters.Count > 0)
-                {
-                    foreach (var pu in vu.Parameters)
-                    {
-                        DataColumn col2 = dt.Columns.Add(pu.Label.Replace(" ", "")); // or DisplayName also
-                        col2.Caption = pu.Label;
-
-                    }
-                }
             }
         }
 
@@ -185,7 +175,7 @@ namespace BExIS.Dlm.Services.Helpers
                         valueAsString = vv.Value.ToString();
 
                         Dlm.Entities.DataStructure.Variable varr = sts.Variables.Where(p => p.Id == vv.VariableId).SingleOrDefault();
-                        switch (varr.DataAttribute.DataType.SystemType)
+                        switch (varr.DataType.SystemType)
                         {
                             case "String":
                                 {

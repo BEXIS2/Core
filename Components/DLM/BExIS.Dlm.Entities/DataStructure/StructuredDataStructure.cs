@@ -28,7 +28,7 @@ namespace BExIS.Dlm.Entities.DataStructure
         /// </summary>
         /// <remarks> StructuredDataStructure is the controller of this association </remarks>
         /// <seealso cref=""/>        
-        public virtual ICollection<Variable> Variables { get; set; }
+        public virtual ICollection<VariableInstance> Variables { get; set; }
      
         /*
         This relationship is used in respective to Data Structure Category.
@@ -78,7 +78,7 @@ namespace BExIS.Dlm.Entities.DataStructure
         {
             //sample: VariableUsages.First().DataAttribute.ParameterUsages.First().Parameter.
             Datasets = new List<Dataset>();
-            Variables = new List<Variable>();
+            Variables = new List<VariableInstance>();
             IndexerType = indexerType;
         }
 

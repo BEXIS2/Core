@@ -106,7 +106,7 @@ namespace BExIS.IO.Transform.Output
         /// <param name="systemType"></param>
         /// <param name="styleIndex"></param>
         /// <returns></returns>
-        public static uint GetExcelStyleIndex(BExIS.Dlm.Entities.DataStructure.DataType dataType, List<StyleIndexStruct> styleIndex)
+        public static uint GetExcelStyleIndex(BExIS.Dlm.Entities.DataStructure.DataType dataType, List<StyleIndexStruct> styleIndex, int displayPatternId)
         {
             if (dataType.SystemType == DataTypeCode.Double.ToString() || dataType.SystemType == DataTypeCode.Decimal.ToString())
                 return styleIndex.Where(p => p.Name.Equals("Decimal")).FirstOrDefault().Index;
@@ -118,7 +118,7 @@ namespace BExIS.IO.Transform.Output
             {
                 if (dataType.Extra != null)
                 {
-                    DataTypeDisplayPattern pattern = DataTypeDisplayPattern.Materialize(dataType.Extra);
+                    DataTypeDisplayPattern pattern = DataTypeDisplayPattern.Get(displayPatternId);
                     if (pattern != null)
                     {
                         StyleIndexStruct tmp = styleIndex.Where(p => p.Name.Equals(pattern.Name)).FirstOrDefault();

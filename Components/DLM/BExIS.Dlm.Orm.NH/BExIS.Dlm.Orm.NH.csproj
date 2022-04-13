@@ -125,10 +125,6 @@
       <SubType>Designer</SubType>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Mappings\Default\DataStructure\DataContainer.DataAttribute.hbm.xml">
-      <SubType>Designer</SubType>
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
     <Content Include="Mappings\Default\DataStructure\DataContainer.hbm.xml">
       <SubType>Designer</SubType>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
@@ -165,9 +161,6 @@
     </Content>
     <Content Include="Mappings\Default\DataStructure\MissingValue.hbm.xml">
       <SubType>Designer</SubType>
-    </Content>
-    <Content Include="Mappings\Default\DataStructure\Parameter.hbm.xml">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Mappings\Default\DataStructure\Unit.hbm.xml">
       <SubType>Designer</SubType>

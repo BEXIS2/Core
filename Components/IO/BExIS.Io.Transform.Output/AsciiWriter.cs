@@ -109,7 +109,7 @@ namespace BExIS.IO.Transform.Output
         {
             if (ds.Variables != null && ds.Variables.Any())
             {
-                List<Variable> variables = ds.Variables.ToList();
+                List<VariableInstance> variables = ds.Variables.ToList();
 
                 if (VisibleColumns != null)
                 {
@@ -137,7 +137,7 @@ namespace BExIS.IO.Transform.Output
                             {
                                 id = variables[i].Id,
                                 name = variables[i].Label,
-                                systemType = variables[i].DataAttribute.DataType.SystemType
+                                systemType = variables[i].DataType.SystemType
                             }
                         );
                 }
@@ -184,7 +184,7 @@ namespace BExIS.IO.Transform.Output
         {
             if (ds.Variables != null && ds.Variables.Any())
             {
-                List<Variable> variables = ds.Variables.ToList();
+                List<VariableInstance> variables = ds.Variables.ToList();
 
                 if (VisibleColumns != null)
                 {
@@ -240,18 +240,18 @@ namespace BExIS.IO.Transform.Output
                 // shortcut
                 var vi = this.VariableIdentifiers[i];
 
-                Variable variable = dataStructure.Variables.Where(p => p.Id == vi.id).SingleOrDefault();
+                VariableInstance variable = dataStructure.Variables.Where(p => p.Id == vi.id).SingleOrDefault();
 
                 if (variable != null)
                 {
-                    Dlm.Entities.DataStructure.DataType dataType = variable.DataAttribute.DataType;
+                    Dlm.Entities.DataStructure.DataType dataType = variable.DataType;
 
                     VariableValue vv = tuple.VariableValues.Where(v => v.VariableId.Equals(vi.id)).FirstOrDefault();
 
                     if (vv != null && vv.Value != null)
                     {
                         // checking for display pattern
-                        string format = GetStringFormat(dataType);
+                        string format = GetStringFormat(variable.DisplayPatternId);
                         if (!string.IsNullOrEmpty(format))
                         {
                             value = GetFormatedValue(vv.Value, dataType, format);
@@ -290,13 +290,13 @@ namespace BExIS.IO.Transform.Output
                 string value = row[i].ToString();
 
                 // check if the value is a missing value and should be replaced
-                Variable variable = dataStructure.Variables.ElementAt(i);
+                VariableInstance variable = dataStructure.Variables.ElementAt(i);
 
                 if (variable != null)
                 {
                     //checking for display pattern
-                    Dlm.Entities.DataStructure.DataType dataType = variable.DataAttribute.DataType;
-                    string format = GetStringFormat(dataType);
+                    Dlm.Entities.DataStructure.DataType dataType = variable.DataType;
+                    string format = GetStringFormat(variable.DisplayPatternId);
                     if (!string.IsNullOrEmpty(format))
                     {
                         value = GetFormatedValue(value, dataType, format);
@@ -335,8 +335,8 @@ namespace BExIS.IO.Transform.Output
                 if (variable != null)
                 {
                     //checking for display pattern
-                    Dlm.Entities.DataStructure.DataType dataType = variable.DataAttribute.DataType;
-                    string format = GetStringFormat(dataType);
+                    Dlm.Entities.DataStructure.DataType dataType = variable.DataType;
+                    string format = GetStringFormat(variable.DisplayPatternId);
                     if (!string.IsNullOrEmpty(format))
                     {
                         value = GetFormatedValue(value, dataType, format);

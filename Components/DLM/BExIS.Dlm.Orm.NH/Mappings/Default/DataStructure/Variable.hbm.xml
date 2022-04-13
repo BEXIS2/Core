@@ -8,7 +8,7 @@
       <generator class="native" />
     </id>
 
-	<discriminator column="VariablesType" type="String" length="3"/>
+	<discriminator column="VariablesType" type="String"/>
 
 	  <version name="VersionNo" type="Int32">
       <column name="VersionNo" />
@@ -19,9 +19,6 @@
     </property>
 
     <!-- Mapping Entity properties -->
-    <property name="OrderNo" type="Int32">
-      <column name="OrderNo" />
-    </property>
 
     <property name="MinCardinality" type="Int32">
       <column name="MinCardinality" />
@@ -43,35 +40,14 @@
       <column name="DefaultValue" />
     </property>
 
-    <property name="DatePattern" type="String">
-      <column name="DatePattern" />
-    </property>
-
-    <many-to-one name="DataAttribute" class="DataAttribute" not-null="true" column="DataAttributeRef" index="idx_DataAttributeRef_Variables"/>
     <many-to-one name="Unit" class="Unit" not-null="false" column="UnitRef" />
-    <many-to-one name="DataStructure" class="StructuredDataStructure" not-null="true" column="DataStructureRef" index="idx_DataStructureRef_Variables" />
     <many-to-one name="DataType" class="DataType" not-null="true" column="DataTypeRef"/>
-    <many-to-one name="VariableTemplate" class="Variable" not-null="false" column="VarTemplateRef"/>
-
     
-	  
-    <set name="Parameters" inverse="true">
-      <key column="VariableRef" not-null="false" />
-      <one-to-many class="Parameter" />
-    </set>
 
-    <set name="MissingValues" inverse="true">
-      <key column="VariableRef" not-null="false" />
-      <one-to-many class="MissingValue" />
-    </set>
-
-   <set name="VariableConstraints" inverse="true" table="Variable_Constraints" lazy="true" cascade="save-update">
+    <set name="VariableConstraints" inverse="true" table="Variable_Constraints" lazy="true" cascade="save-update">
       <key column="VariableRef"/>
       <many-to-many column="ConstraintRef" class="Constraint"/>
     </set>
 
-
-    
-  
   </class>
 </hibernate-mapping>

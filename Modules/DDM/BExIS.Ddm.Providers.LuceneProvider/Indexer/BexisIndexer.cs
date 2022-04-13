@@ -259,7 +259,7 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Indexer
                                 if (vv.VariableId > 0)
                                 {
                                     Variable varr = sds.Variables.Where(p => p.Id == vv.VariableId).SingleOrDefault();
-                                    switch (varr.DataAttribute.DataType.SystemType)
+                                    switch (varr.DataType.SystemType)
                                     {
                                         case "String":
                                             {
@@ -282,12 +282,12 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Indexer
 
                         foreach (var variableId in sds.Variables.Select(v => v.Id))
                         {
-                            var variable = uow.GetReadOnlyRepository<Variable>().Get(variableId);
+                            var variable = uow.GetReadOnlyRepository<VariableInstance>().Get(variableId);
 
-                            generatedStrings.Add(variable.DataAttribute.Name);
+                            generatedStrings.Add(variable.VariableTemplate.Label);
                             generatedStrings.Add(variable.Label);
-                            if (!string.IsNullOrEmpty(variable.DataAttribute.Description))
-                                generatedStrings.Add(variable.DataAttribute.Description);
+                            if (!string.IsNullOrEmpty(variable.Description))
+                                generatedStrings.Add(variable.Description);
                         }
 
                         return generatedStrings;
@@ -331,31 +331,13 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Indexer
 
             foreach (var variable in structuredDataStructure.Variables)
             {
-                tmp.Add(variable.DataAttribute.Name);
+                tmp.Add(variable.VariableTemplate.Label);
                 tmp.Add(variable.Label);
-                if (!string.IsNullOrEmpty(variable.DataAttribute.Description) && variable.DataAttribute.Description != "Unknown")
-                    tmp.Add(variable.DataAttribute.Description);
+                if (!string.IsNullOrEmpty(variable.VariableTemplate.Description) && variable.VariableTemplate.Description != "Unknown")
+                    tmp.Add(variable.VariableTemplate.Description);
             }
 
             return tmp;
-
-            //using (var uow = this.GetUnitOfWork())
-            //{
-
-            //List<string> tmp = new List<string>();
-
-            //foreach (var variableId in structuredDataStructure.Variables.Select(v => v.Id))
-            //{
-            //    var variable = uow.GetReadOnlyRepository<Variable>().Get(variableId);
-
-            //    tmp.Add(variable.DataAttribute.Name);
-            //    tmp.Add(variable.Label);
-            //    if (!string.IsNullOrEmpty(variable.DataAttribute.Description))
-            //        tmp.Add(variable.DataAttribute.Description);
-            //}
-
-            //    return tmp;
-            //}
         }
 
         /// <summary>

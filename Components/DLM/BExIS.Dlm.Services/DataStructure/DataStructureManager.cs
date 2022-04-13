@@ -14,7 +14,7 @@ namespace BExIS.Dlm.Services.DataStructure
     /// The data structure aggregate area is a set of entities like <see cref="DataStructure"/>, <see cref="VariableUsage"/>, and <see cref="ParameterUsage"/> that in 
     /// cooperation together can materialize the formal specification of the structure of group of datasets.
     /// </summary>
-    public class DataStructureManager: IDisposable
+    public class DataStructureManager : IDisposable
     {
 
         private IUnitOfWork guow = null;
@@ -46,7 +46,7 @@ namespace BExIS.Dlm.Services.DataStructure
                 {
                     if (guow != null)
                         guow.Dispose();
-                        isDisposed = true;
+                    isDisposed = true;
                 }
             }
         }
@@ -98,7 +98,7 @@ namespace BExIS.Dlm.Services.DataStructure
                 IRepository<StructuredDataStructure> repo = uow.GetRepository<StructuredDataStructure>();
                 IRepository<UnStructuredDataStructure> sRepo = uow.GetRepository<UnStructuredDataStructure>();
                 if (
-                        (repo.Query(p => p.Name.ToLower() == name.ToLower()).Count() <= 0) && 
+                        (repo.Query(p => p.Name.ToLower() == name.ToLower()).Count() <= 0) &&
                         (sRepo.Query(p => p.Name.ToLower() == name.ToLower()).Count() <= 0)
                     )
                 {
@@ -147,8 +147,7 @@ namespace BExIS.Dlm.Services.DataStructure
                 // delete associated variables and thier parameters
                 foreach (var usage in entity.Variables)
                 {
-                    var localVar = variableRepo.Reload(usage);
-                    paramRepo.Delete(localVar.Parameters.ToList());
+                    var localVar = variableRepo.Reload(usage);   
                     variableRepo.Delete(localVar);
                 }
                 //uow.Commit(); //  should not be needed
@@ -195,7 +194,6 @@ namespace BExIS.Dlm.Services.DataStructure
                     foreach (var usage in latest.Variables)
                     {
                         var localVar = variableRepo.Reload(usage);
-                        paramRepo.Delete(localVar.Parameters.ToList());
                         variableRepo.Delete(localVar);
                     }
                     //uow.Commit(); //  should not be needed
@@ -345,84 +343,85 @@ namespace BExIS.Dlm.Services.DataStructure
         #region Associations
 
         /// <summary>
-        /// Creates a link between a <see cref="StructuredDataStructure"/> and <see cref="DataAttribute"/>. This link is known as <see cref="Variable"/>.
-        /// In addition to what a variable inherits from the associated data attribute, it can have its own label, default and missing values, and optionality of its value.
+        /// Add Variables to datastructure
         /// </summary>
-        /// <param name="dataStructure">The structured data structure to be linked to the data attribute</param>
-        /// <param name="dataAttribute">The data attribute to be used in a data structure as a variable</param>
-        /// <param name="isValueOptional">Indicates whether the <see cref="VariableValue"/> associated to the variable is optional or not. This allows dataset to not provide data values for optional variables.</param>
-        /// <param name="label">The display name of the variable. It may differ from the associated data attribute name. The variable label usually indicates the role of the data attribute in the structure. 
-        /// Its possible for a data structure to use a data attribute more than once by creating more than one variables, hence having different labels.</param>
-        /// <param name="defaultValue">The default value of the associated variable values. Mainly considered for user interface purposes.</param>
-        /// <param name="missingValue">A specific sentinel value that when is put into the variable values, means those values are missing and should not be considered data.</param>
-        /// <param name="variableUnit">A specific unit for the variable. If not provided the unit of the <paramref name="dataAttibute"/> is used.
-        /// If provided, its dimension must be equal to the dimension of the <paramref name="dataAttribute"/>'s unit.</param>
-        /// <returns>A created and persisted variable object.</returns>
-        public Variable AddVariableUsage(StructuredDataStructure dataStructure, DataAttribute dataAttribute, bool isValueOptional, string label, string defaultValue, string missingValue, string description, Unit variableUnit = null, Int32 order = 0)
+        /// <param name="dataStructureId"></param>
+        /// <param name="variableId"></param>
+        /// <returns>updated datastructure</returns>
+        /// <exception cref="ArgumentException"></exception>
+        public StructuredDataStructure AddVariable(long dataStructureId, long variableId)
         {
-            Contract.Requires(dataStructure != null && dataStructure.Id >= 0);
-            Contract.Requires(dataAttribute != null && dataAttribute.Id >= 0);
-            Contract.Requires((variableUnit == null && dataAttribute.Unit == null) || (variableUnit == null) || (variableUnit.Dimension == dataAttribute.Unit.Dimension));
-            Contract.Ensures(Contract.Result<Variable>() != null && Contract.Result<Variable>().Id >= 0);
-
+            if(dataStructureId <= 0) throw new ArgumentException("dataStructureId not exist");
+            if(variableId == null) throw new ArgumentException("variableId not exist");
+   
             using (IUnitOfWork uow = this.GetUnitOfWork())
             {
                 IRepository<StructuredDataStructure> structuredDataStructureRepo = uow.GetRepository<StructuredDataStructure>();
-                IRepository<DataAttribute> attributesRepo = uow.GetRepository<DataAttribute>();
+                IRepository<VariableInstance> variableInstanceRepo = uow.GetRepository<VariableInstance>();
 
-                dataStructure = structuredDataStructureRepo.Get(dataStructure.Id);
-                dataAttribute = attributesRepo.Get(dataAttribute.Id);
+                var dataStructure = structuredDataStructureRepo.Get(dataStructureId);
+                VariableInstance variableInstance = variableInstanceRepo.Get(variableId);
 
                 structuredDataStructureRepo.LoadIfNot(dataStructure.Variables);
-                int count = (from v in dataStructure.Variables
-                             where v.DataAttribute.Id.Equals(dataAttribute.Id)
-                             select v
-                            )
-                            .Count();
 
-                //if (count > 0)
-                //    throw new Exception(string.Format("Data attribute {0} is already used as a variable in data structure {0}", dataAttribute.Id, dataStructure.Id));
+                dataStructure.Variables.Add(variableInstance);
 
-                Variable usage = new Variable()
-                {
-                    DataStructure = dataStructure,
-                    DataAttribute = dataAttribute,
-                    MinCardinality = isValueOptional ? 0 : 1,
-                    // if there is no label provided, use the data attribute name and a sequence number calculated by the number of occurrences of that data attribute in the current structure
-                    Label = !string.IsNullOrWhiteSpace(label) ? label : (count <= 0 ? dataAttribute.Name : string.Format("{0} ({1})", dataAttribute.Name, count)),
-                    DefaultValue = defaultValue,
-                    MissingValue = missingValue,
-                    Description = description,
-                    Unit = (variableUnit != null ? variableUnit : dataAttribute.Unit),
-                    OrderNo = order > 0 ? order: dataStructure.Variables.Count() + 1,
-                };
-                dataAttribute.UsagesAsVariable.Add(usage);
-                dataStructure.Variables.Add(usage);
-
-                IRepository<Variable> repo = uow.GetRepository<Variable>();
-                repo.Put(usage);
+               
+                variableInstanceRepo.Put(variableInstance);
                 uow.Commit();
-                return (usage);
+                return (dataStructure);
             }
         }
 
         /// <summary>
-        /// Detaches the data attribute and the data structure that were linked by the variable and then deletes the variable from the database.
+        /// Add Vraiables to datastructure
         /// </summary>
-        /// <param name="usage">The variable object to be deleted.</param>
-        /// <remarks>If the variable is referenced by any <see cref="DataValue"/> the method fails to delete the variable. Also, all the parameters associated to the variable will be deleted.</remarks>
-        public void RemoveVariableUsage(Variable usage)
+        /// <param name="dataStructureId"></param>
+        /// <param name="variableIds"></param>
+        /// <returns>updated datastructure</returns>
+        /// <exception cref="ArgumentException"></exception>
+        public StructuredDataStructure AddVariables(long dataStructureId, List<long> variableIds)
+        {
+            if (dataStructureId <= 0) throw new ArgumentException("dataStructureId not exist");
+            if (variableIds == null) throw new ArgumentException("variableId not exist");
+
+            using (IUnitOfWork uow = this.GetUnitOfWork())
+            {
+                IRepository<StructuredDataStructure> structuredDataStructureRepo = uow.GetRepository<StructuredDataStructure>();
+                IRepository<VariableInstance> variableInstanceRepo = uow.GetRepository<VariableInstance>();
+
+                var dataStructure = structuredDataStructureRepo.Get(dataStructureId);
+
+                List<VariableInstance> variableInstances = new List<VariableInstance>();
+
+                foreach (var id in variableIds)
+                {
+                    variableInstances.Add(variableInstanceRepo.Get(id));
+                }
+
+                structuredDataStructureRepo.LoadIfNot(dataStructure.Variables);
+
+                dataStructure.Variables.ToList().AddRange(variableInstances);
+
+
+                variableInstanceRepo.Put(variableInstances);
+                uow.Commit();
+                return dataStructure ;
+            }
+        }
+
+        public void RemoveVariableUsage(VariableInstance usage)
         {
             Contract.Requires(usage != null && usage.Id >= 0);
 
             using (IUnitOfWork uow = this.GetUnitOfWork())
             {
-                IRepository<Variable> repo = uow.GetRepository<Variable>();
-                IRepository<Parameter> paramRepo = uow.GetRepository<Parameter>();
+                IRepository<VariableInstance> repo = uow.GetRepository<VariableInstance>();
+                //IRepository<Parameter> paramRepo = uow.GetRepository<Parameter>();
                 usage = repo.Get(usage.Id);
 
                 repo.Delete(usage);
-                paramRepo.Delete(usage.Parameters.ToList());
+                //paramRepo.Delete(usage.Parameters.ToList());
                 uow.Commit();
             }
         }
@@ -433,80 +432,10 @@ namespace BExIS.Dlm.Services.DataStructure
 
             using (IUnitOfWork uow = this.GetUnitOfWork())
             {
-                IRepository<Variable> repo = uow.GetRepository<Variable>();
-                IRepository<Parameter> paramRepo = uow.GetRepository<Parameter>();
+                IRepository<VariableInstance> repo = uow.GetRepository<VariableInstance>();
                 var usage = repo.Get(id);
-
                 repo.Delete(usage);
-                paramRepo.Delete(usage.Parameters.ToList());
-                uow.Commit();
-            }
-        }
 
-        /// <summary>
-        /// The method functions in a similar way to the <see cref="AddVariableUsage"/> method, but operates on a <see cref="Parameter"/>
-        /// </summary>
-        /// <param name="variableUsage"></param>
-        /// <param name="dataAttribute"></param>
-        /// <param name="isValueOptional"></param>
-        /// <param name="label"></param>
-        /// <param name="defaultValue"></param>
-        /// <param name="missingValue"></param>
-        /// <returns></returns>
-        public Parameter AddParameterUsage(Variable variableUsage, DataAttribute dataAttribute, bool isValueOptional, string label, string defaultValue, string missingValue, string description, Int32 order = 0)
-        {
-            Contract.Requires(variableUsage != null && variableUsage.DataAttribute.Id >= 0);
-            Contract.Requires(dataAttribute != null && dataAttribute.Id >= 0);
-            Contract.Ensures(Contract.Result<Parameter>() != null && Contract.Result<Parameter>().Id >= 0);
-            using (IUnitOfWork uow = this.GetUnitOfWork())
-            {
-                IRepository<Variable> variableRepo = uow.GetRepository<Variable>();
-                variableRepo.Reload(variableUsage);
-                variableRepo.LoadIfNot(variableUsage.Parameters);
-                int count = (from pu in variableUsage.Parameters
-                             where pu.DataAttribute.Id.Equals(dataAttribute.Id)
-                             select pu
-                            )
-                            .Count();
-
-                // support multiple use of a data attribute as a parameter in a variable context
-                //if (count > 0)
-                //    throw new Exception(string.Format("Data attribute {0} is already used as a parameter in conjunction with variable {1} in data structure {2}", dataAttribute.Id, variableUsage.DataAttribute.Id, variableUsage.DataStructure.Id));
-
-                Parameter usage = new Parameter()
-                {
-                    DataAttribute = dataAttribute,
-                    Variable = variableUsage,
-                    MinCardinality = isValueOptional ? 0 : 1,
-                    // if there is no label provided, use the data attribute name and a sequence number calculated by the number of occurrences of that data attribute in the current usage
-                    Label = !string.IsNullOrWhiteSpace(label) ? label : (count <= 0 ? dataAttribute.Name : string.Format("{0} ({1})", dataAttribute.Name, count)),
-                    DefaultValue = defaultValue,
-                    MissingValue = missingValue,
-                    Description = description,
-                    OrderNo = order > 0 ? order : variableUsage.Parameters.Count() + 1,
-                };
-                dataAttribute.UsagesAsParameter.Add(usage);
-                variableUsage.Parameters.Add(usage);
-
-                IRepository<Parameter> repo = uow.GetRepository<Parameter>();
-                repo.Put(usage);
-                uow.Commit();
-                return (usage);
-            }
-        }
-
-        /// <summary>
-        /// The method functions in a similar way to the <see cref="RemoveVariableUsage"/> method, but operates on a <see cref="Parameter"/>
-        /// </summary>
-        /// <param name="usage"></param>
-        public void RemoveParameterUsage(Parameter usage)
-        {
-            Contract.Requires(usage != null && usage.Id >= 0);
-
-            using (IUnitOfWork uow = this.GetUnitOfWork())
-            {
-                IRepository<Parameter> repo = uow.GetRepository<Parameter>();
-                repo.Delete(usage);
                 uow.Commit();
             }
         }

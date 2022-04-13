@@ -481,7 +481,7 @@ namespace BExIS.Dlm.Services.DataStructure
 
             foreach (DataTypeCode tc in Enum.GetValues(typeof(DataTypeCode)))
             {
-                if (tc.ToString() == variable.DataAttribute.DataType.SystemType)
+                if (tc.ToString() == variable.DataType.SystemType)
                 {
                     typecode = (TypeCode)tc;
                     break;
@@ -548,7 +548,7 @@ namespace BExIS.Dlm.Services.DataStructure
 
                 foreach (DataTypeCode tc in Enum.GetValues(typeof(DataTypeCode)))
                 {
-                    if (tc.ToString() == entity.Variable.DataAttribute.DataType.SystemType)
+                    if (tc.ToString() == entity.Variable.DataType.SystemType)
                     {
                         typecode = (TypeCode)tc;
                         break;

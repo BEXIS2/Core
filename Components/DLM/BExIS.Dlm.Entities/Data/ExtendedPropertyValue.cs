@@ -45,24 +45,24 @@ namespace BExIS.Dlm.Entities.Data
         {
             get
             {
-                if (this.DatasetVersion.Dataset.DataStructure.Self is StructuredDataStructure)
-                {
-                    StructuredDataStructure sds = (this.DatasetVersion.Dataset.DataStructure.Self as StructuredDataStructure);
-                    ExtendedProperty ep = (from vu in sds.Variables
-                                          let da = vu.DataAttribute
-                                          from exp in da.ExtendedProperties
-                                          where exp.Id == ExtendedPropertyId
-                                          select exp).FirstOrDefault();
-                    if(ep == null)  ep = (from vu in sds.Variables
-                                           from pu in vu.Parameters  
-                                           let da = pu.DataAttribute
-                                           from exp in da.ExtendedProperties
-                                           where exp.Id == ExtendedPropertyId
-                                           select exp).FirstOrDefault();
+                //if (this.DatasetVersion.Dataset.DataStructure.Self is StructuredDataStructure)
+                //{
+                //    StructuredDataStructure sds = (this.DatasetVersion.Dataset.DataStructure.Self as StructuredDataStructure);
+                //    ExtendedProperty ep = (from vu in sds.Variables
+                //                          let da = vu.DataAttribute
+                //                          from exp in da.ExtendedProperties
+                //                          where exp.Id == ExtendedPropertyId
+                //                          select exp).FirstOrDefault();
+                //    if(ep == null)  ep = (from vu in sds.Variables
+                //                           from pu in vu.Parameters  
+                //                           let da = pu.DataAttribute
+                //                           from exp in da.ExtendedProperties
+                //                           where exp.Id == ExtendedPropertyId
+                //                           select exp).FirstOrDefault();
                                               
-                    return (ep);
-                }
-                return (null);
+                //    return (ep);
+                //}
+                throw new NotImplementedException();
             }
         }
 

@@ -134,7 +134,7 @@ namespace BExIS.IO.Transform.Input
 
         #region private
 
-        private IList<Variable> variableList;
+        private IList<VariableInstance> variableList;
         private bool sameOrderLikeStructure = false;
 
         #endregion private
@@ -210,13 +210,14 @@ namespace BExIS.IO.Transform.Input
                 {
                     // if variable from systemtype datatime
                     // maybee needs to convert into the default datetime culture format
-                    if (this.StructuredDataStructure.Variables.Where(p => p.Id.Equals(variableId)).FirstOrDefault().DataAttribute.DataType.SystemType.Equals("DateTime"))
+                    if (this.StructuredDataStructure.Variables.Where(p => p.Id.Equals(variableId)).FirstOrDefault().DataType.SystemType.Equals("DateTime"))
                     {
-                        Dlm.Entities.DataStructure.DataType dataType = this.StructuredDataStructure.Variables.Where(p => p.Id.Equals(variableId)).FirstOrDefault().DataAttribute.DataType;
+                        var variable = this.StructuredDataStructure.Variables.Where(p => p.Id.Equals(variableId)).FirstOrDefault();
+                        Dlm.Entities.DataStructure.DataType dataType = variable.DataType;
 
                         if (dataType != null && dataType.Extra != null)
                         {
-                            DataTypeDisplayPattern dp = DataTypeDisplayPattern.Materialize(dataType.Extra);
+                            DataTypeDisplayPattern dp = DataTypeDisplayPattern.Get(variable.DisplayPatternId);
                             if (dp != null && !string.IsNullOrEmpty(dp.StringPattern)) value = IOUtility.ConvertToDateUS(row[i], dp.StringPattern);
                             else value = IOUtility.ConvertDateToCulture(row[i]);
                         }
@@ -227,11 +228,11 @@ namespace BExIS.IO.Transform.Input
                     }
                     else
                     {
-                        if (this.StructuredDataStructure.Variables.Where(p => p.Id.Equals(variableId)).FirstOrDefault().DataAttribute.DataType.SystemType.Equals("Double") ||
-                            this.StructuredDataStructure.Variables.Where(p => p.Id.Equals(variableId)).FirstOrDefault().DataAttribute.DataType.SystemType.Equals("Decimal") ||
-                            this.StructuredDataStructure.Variables.Where(p => p.Id.Equals(variableId)).FirstOrDefault().DataAttribute.DataType.SystemType.Equals("Float"))
+                        if (this.StructuredDataStructure.Variables.Where(p => p.Id.Equals(variableId)).FirstOrDefault().DataType.SystemType.Equals("Double") ||
+                            this.StructuredDataStructure.Variables.Where(p => p.Id.Equals(variableId)).FirstOrDefault().DataType.SystemType.Equals("Decimal") ||
+                            this.StructuredDataStructure.Variables.Where(p => p.Id.Equals(variableId)).FirstOrDefault().DataType.SystemType.Equals("Float"))
                         {
-                            var datatype = this.StructuredDataStructure.Variables.Where(p => p.Id.Equals(variableId)).FirstOrDefault().DataAttribute.DataType.SystemType;
+                            var datatype = this.StructuredDataStructure.Variables.Where(p => p.Id.Equals(variableId)).FirstOrDefault().DataType.SystemType;
                             value = row[i];
 
                             if (Info.Decimal.Equals(DecimalCharacter.comma))
@@ -463,13 +464,13 @@ namespace BExIS.IO.Transform.Input
 
                     if (hv != null)
                     {
-                        Variable sdvu = getVariableUsage(hv);
+                        VariableInstance sdvu = getVariableUsage(hv);
 
                         if (sdvu != null)
                         {
                             string varName = sdvu.Label;
                             bool optional = sdvu.IsValueOptional;
-                            string dataType = sdvu.DataAttribute.DataType.SystemType;
+                            string dataType = sdvu.DataType.SystemType;
 
                             // change parameters to only sdvu
                             if (!this.ValueValidationManagerDic.ContainsKey(sdvu.Id)) this.ValueValidationManagerDic.Add(sdvu.Id, createValueValidationManager(varName, dataType, optional, sdvu));
@@ -499,23 +500,20 @@ namespace BExIS.IO.Transform.Input
         /// <param name="optional"></param>
         /// <param name="variable"></param>
         /// <returns></returns>
-        private ValueValidationManager createValueValidationManager(string varName, string dataType, bool optional, Variable variable)
+        private ValueValidationManager createValueValidationManager(string varName, string dataType, bool optional, VariableInstance variable)
         {
             string pattern = "";
-            DataAttribute dataAttribute = variable.DataAttribute;
 
             if (string.IsNullOrEmpty(varName))
             {
                 varName = variable.Label;
             }
 
-            if (dataAttribute != null && dataAttribute.DataType != null && dataAttribute.DataType.Extra != null)
-            {
-                DataTypeDisplayPattern displayPattern = DataTypeDisplayPattern.Materialize(dataAttribute.DataType.Extra);
-                if (displayPattern != null) pattern = displayPattern.StringPattern;
-            }
-
-            ValueValidationManager vvm = new ValueValidationManager(varName, dataType, optional, Info.Decimal, pattern, variable.MissingValues, CultureInfo.CurrentCulture, variable.DataAttribute.Constraints);
+    
+            DataTypeDisplayPattern displayPattern = DataTypeDisplayPattern.Pattern.Where(p=>p.Id.Equals(variable.DisplayPatternId)).FirstOrDefault(); //HH:mm:ss
+            if (displayPattern != null) pattern = displayPattern.StringPattern;
+            
+            ValueValidationManager vvm = new ValueValidationManager(varName, dataType, optional, Info.Decimal, pattern, variable.MissingValues, CultureInfo.CurrentCulture, variable.VariableConstraints);
 
             return vvm;
         }
@@ -528,9 +526,9 @@ namespace BExIS.IO.Transform.Input
         /// <remarks></remarks>
         /// <param name="hv"></param>
         /// <returns></returns>
-        private Variable getVariableUsage(VariableIdentifier hv)
+        private VariableInstance getVariableUsage(VariableIdentifier hv)
         {
-            Variable sdvu = new Variable();
+            VariableInstance sdvu = new VariableInstance();
 
             if (hv.id != 0)
             {
@@ -567,14 +565,14 @@ namespace BExIS.IO.Transform.Input
         /// </summary>
         /// <param name="VariableUsageCollection"></param>
         /// <returns></returns>
-        private List<VariableIdentifier> getDatastructureAsListOfVariableIdentifers(ICollection<Variable> Variables)
+        private List<VariableIdentifier> getDatastructureAsListOfVariableIdentifers(ICollection<VariableInstance> Variables)
         {
             var tempList = from v in Variables
                            select new VariableIdentifier
                            {
                                name = v.Label,
                                id = v.Id,
-                               systemType = v.DataAttribute.DataType.SystemType
+                               systemType = v.DataType.SystemType
                            };
 
             return tempList.ToList();
