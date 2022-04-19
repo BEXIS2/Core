@@ -42,9 +42,9 @@ namespace BExIS.Utils.Data.Tests
 
             try
             {
-                dsHelper.PurgeAllDatasets();
-                dsHelper.PurgeAllDataStructures();
-                dsHelper.PurgeAllResearchPlans();
+                //dsHelper.PurgeAllDatasets();
+                //dsHelper.PurgeAllDataStructures();
+                //dsHelper.PurgeAllResearchPlans();
 
                 // generate Data
                 StructuredDataStructure dataStructure = dsHelper.CreateADataStructure();

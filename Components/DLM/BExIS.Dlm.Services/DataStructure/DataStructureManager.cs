@@ -137,19 +137,19 @@ namespace BExIS.Dlm.Services.DataStructure
             using (IUnitOfWork uow = this.GetUnitOfWork())
             {
                 IRepository<StructuredDataStructure> repo = uow.GetRepository<StructuredDataStructure>();
-                IRepository<Variable> variableRepo = uow.GetRepository<Variable>();
-                IRepository<Parameter> paramRepo = uow.GetRepository<Parameter>();
+                IRepository<VariableInstance> variableRepo = uow.GetRepository<VariableInstance>();
 
                 variableRepo.Evict();
-                paramRepo.Evict();
-
+       
                 entity = repo.Reload(entity);
+
                 // delete associated variables and thier parameters
                 foreach (var usage in entity.Variables)
                 {
-                    var localVar = variableRepo.Reload(usage);   
+                    var localVar = variableRepo.Reload(usage);
                     variableRepo.Delete(localVar);
                 }
+
                 //uow.Commit(); //  should not be needed
                 repo.Delete(entity);
 
@@ -176,13 +176,12 @@ namespace BExIS.Dlm.Services.DataStructure
             {
                 IRepository<StructuredDataStructure> repo = uow.GetRepository<StructuredDataStructure>();
                 IReadOnlyRepository<Dataset> datasetRepo = this.GetUnitOfWork().GetReadOnlyRepository<Dataset>();
-                IRepository<Variable> variableRepo = uow.GetRepository<Variable>();
-                IRepository<Parameter> paramRepo = uow.GetRepository<Parameter>();
+                IRepository<VariableInstance> variableRepo = uow.GetRepository<VariableInstance>();
 
                 foreach (var entity in entities)
                 {
                     variableRepo.Evict();
-                    paramRepo.Evict();
+
                     var latest = repo.Reload(entity);
                     if (datasetRepo.Query(p => p.DataStructure.Id == latest.Id).Count() > 0)
                     {

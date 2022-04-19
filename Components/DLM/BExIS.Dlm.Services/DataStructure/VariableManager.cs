@@ -187,6 +187,61 @@ namespace BExIS.Dlm.Services.DataStructure
         /// create a Variable Instance
         /// </summary>
         /// <param name="name"></param>
+        /// <param name="dataStructureId"></param>
+        /// <param name="variableTemplateId"></param>
+        /// <param name="description"></param>
+        /// <param name="defaultValue"></param>
+        /// <returns>created VariableInstance</returns>
+        /// <exception cref="ArgumentException"></exception>
+        public VariableInstance CreateVariable(string name, long dataStructureId, long variableTemplateId, int displayPatternId=0)
+        {
+            // check incoming varaibles
+            if (string.IsNullOrEmpty(name)) throw new ArgumentNullException(nameof(name), "name is empty but is required.");
+            if (dataStructureId <= 0) throw new ArgumentNullException(nameof(dataStructureId), "dataStructureId must be greater then 0.");
+            if (variableTemplateId <= 0) throw new ArgumentNullException(nameof(variableTemplateId), "variableTemplateId must be greater then 0.");
+
+
+
+            
+
+            using (IUnitOfWork uow = this.GetUnitOfWork())
+            {
+                IRepository<VariableInstance> repo = uow.GetRepository<VariableInstance>();
+                IRepository<VariableTemplate> variableTemplateRepo = uow.GetRepository<VariableTemplate>();
+                IRepository<StructuredDataStructure> datastructureRepo = uow.GetRepository<StructuredDataStructure>();
+
+                var datastructure = datastructureRepo.Get(dataStructureId);
+                var variableTemplate = variableTemplateRepo.Get(variableTemplateId);
+
+                VariableInstance e = new VariableInstance()
+                {
+                    Label = name,
+                    DataStructure = datastructure,
+                    VariableTemplate = variableTemplate,
+                    Description = variableTemplate.Description,
+                    DataType = variableTemplate.DataType,
+                    Unit = variableTemplate.Unit,
+                    DefaultValue = variableTemplate.DefaultValue,
+                    IsValueOptional = variableTemplate.IsValueOptional,
+                    DisplayPatternId = displayPatternId
+                };
+
+                // add variable to datastructure
+                datastructure.Variables.Add(e);
+
+                repo.Put(e);
+                uow.Commit();
+
+                return (e);
+            }
+            
+        }
+
+        // create - need datastucture, variable template 
+        /// <summary>
+        /// create a Variable Instance
+        /// </summary>
+        /// <param name="name"></param>
         /// <param name="dataType"></param>
         /// <param name="unit"></param>
         /// <param name="dataStructureId"></param>

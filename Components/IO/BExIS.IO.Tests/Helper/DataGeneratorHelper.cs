@@ -1,5 +1,6 @@
 ﻿using BExIS.Dlm.Entities.Data;
 using BExIS.Dlm.Entities.DataStructure;
+using BExIS.IO.DataType.DisplayPattern;
 using FluentAssertions;
 using System;
 using System.Collections.Generic;
@@ -47,6 +48,8 @@ namespace BExIS.IO.Tests.Helper
 
         public List<string> GenerateRowsWithRandomValuesBasedOnDatastructure(StructuredDataStructure dataStructure,string seperator, long numberOfTuples, bool withQuotes)
         {
+            var datePattern = DataTypeDisplayPattern.Get(dataStructure.Variables.ElementAt(4).DisplayPatternId);
+
             List<string> rows = new List<string>();
 
 
@@ -66,7 +69,7 @@ namespace BExIS.IO.Tests.Helper
 
                     row += seperator.ToString() + Convert.ToDouble(r.Next()).ToString();
                     row += seperator.ToString() + true.ToString();
-                    row += seperator.ToString() + DateTime.Now.ToString();
+                    row += seperator.ToString() + DateTime.Now.ToString(datePattern.DisplayPattern);
 
 
                     rows.Add(row);

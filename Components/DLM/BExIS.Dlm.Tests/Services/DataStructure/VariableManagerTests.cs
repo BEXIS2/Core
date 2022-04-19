@@ -301,11 +301,8 @@ namespace BExIS.Dlm.Tests.Services.DataStructure
                 //Act
                 var variable = variableManager.CreateVariable(
                     "TestVariable",
-                    variableTemplate.DataType,
-                    variableTemplate.Unit,
                     dataStructure.Id,
-                    variableTemplate.Id,
-                    true
+                    variableTemplate.Id
                     );
 
                 //Assert

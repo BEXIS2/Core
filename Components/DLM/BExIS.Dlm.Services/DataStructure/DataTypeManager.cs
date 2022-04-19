@@ -60,7 +60,7 @@ namespace BExIS.Dlm.Services.DataStructure
             {
                 Name = name,
                 Description = description,
-                SystemType = systemType.ToString(),
+                SystemType = systemType.ToString()
             };
 
             using (IUnitOfWork uow = this.GetUnitOfWork())

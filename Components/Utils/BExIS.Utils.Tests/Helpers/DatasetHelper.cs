@@ -66,72 +66,46 @@ namespace BExIS.Utils.Tests.Data.Helpers
 
         public StructuredDataStructure CreateADataStructure()
         {
-            //var unitManager = new UnitManager();
-            //var dataTypeManager = new DataTypeManager();
+            var unitManager = new UnitManager();
+            var dataTypeManager = new DataTypeManager();
             //var attributeManager = new DataContainerManager();
-            //var dsManager = new DataStructureManager();
-            //try
-            //{
-            //    var dim = unitManager.Create("TestDimnesion", "For Unit Testing", "");
-            //    var unit = unitManager.Create("None_UT", "NoneUT", "Use in unit tsting", dim, Dlm.Entities.DataStructure.MeasurementSystem.Metric);
+            var dsManager = new DataStructureManager();
+            var variableManager = new VariableManager();
+            try
+            {
+                var dim = unitManager.Create("TestDimnesion", "For Unit Testing", "");
+                var unit = unitManager.Create("None_UT", "NoneUT", "Use in unit tsting", dim, Dlm.Entities.DataStructure.MeasurementSystem.Metric);
 
-            //    var intType = dataTypeManager.Create("Integer", "Integer", TypeCode.Int32);
-            //    var strType = dataTypeManager.Create("String", "String", TypeCode.String);
-            //    var doubleType = dataTypeManager.Create("Double", "Double", TypeCode.Double);
-            //    var boolType = dataTypeManager.Create("Bool", "Bool", TypeCode.Boolean);
-            //    var dateTimeType = dataTypeManager.Create("DateTime", "DateTime", TypeCode.DateTime);
+                var intType = dataTypeManager.Create("Integer", "Integer", TypeCode.Int32);
+                var strType = dataTypeManager.Create("String", "String", TypeCode.String);
+                var doubleType = dataTypeManager.Create("Double", "Double", TypeCode.Double);
+                var boolType = dataTypeManager.Create("Bool", "Bool", TypeCode.Boolean);
+                var dateTimeType = dataTypeManager.Create("DateTime", "DateTime", TypeCode.DateTime);
 
-            //    var dataAttribute1 = attributeManager.CreateDataAttribute(
-            //        "att1UT", "att1UT", "Attribute for Unit testing",
-            //        false, false, "", Dlm.Entities.DataStructure.MeasurementScale.Nominal, Dlm.Entities.DataStructure.DataContainerType.ValueType,
-            //        "", intType, unit,
-            //        null, null, null, null, null, null
-            //        );
+                var varTemplate1 = variableManager.CreateVariableTemplate("att1UT", intType, unit, false, "Attribute for Unit testing");
+                var varTemplate2 = variableManager.CreateVariableTemplate("att2UT", strType, unit, false, "Attribute for Unit testing");
+                var varTemplate3 = variableManager.CreateVariableTemplate("att3UT", doubleType, unit, false, "Attribute for Unit testing");
+                var varTemplate4 = variableManager.CreateVariableTemplate("att4UT", boolType, unit, false, "Attribute for Unit testing");
+                var varTemplate5 = variableManager.CreateVariableTemplate("att5UT", dateTimeType, unit, false, "Attribute for Unit testing");
 
-            //    var dataAttribute2 = attributeManager.CreateDataAttribute(
-            //        "att2UT", "att1UT", "Attribute for Unit testing",
-            //        false, false, "", Dlm.Entities.DataStructure.MeasurementScale.Nominal, Dlm.Entities.DataStructure.DataContainerType.ValueType,
-            //        "", strType, unit,
-            //        null, null, null, null, null, null
-            //        );
+                StructuredDataStructure dataStructure = dsManager.CreateStructuredDataStructure("dsForTesting", "DS for unit testing", "", "", Dlm.Entities.DataStructure.DataStructureCategory.Generic);
 
-            //    var dataAttribute3 = attributeManager.CreateDataAttribute(
-            //        "att3UT", "att3UT", "Attribute for Unit testing",
-            //        false, false, "", Dlm.Entities.DataStructure.MeasurementScale.Nominal, Dlm.Entities.DataStructure.DataContainerType.ValueType,
-            //        "", doubleType, unit,
-            //        null, null, null, null, null, null
-            //        );
+                var var1 = variableManager.CreateVariable("var1UT", dataStructure.Id, varTemplate1.Id);
+                var var2 = variableManager.CreateVariable("var2UT", dataStructure.Id, varTemplate2.Id);
+                var var3 = variableManager.CreateVariable("var3UT", dataStructure.Id, varTemplate3.Id);
+                var var4 = variableManager.CreateVariable("var4UT", dataStructure.Id, varTemplate4.Id);
+                var var5 = variableManager.CreateVariable("var5UT", dataStructure.Id, varTemplate5.Id);
 
-            //    var dataAttribute4 = attributeManager.CreateDataAttribute(
-            //        "att4UT", "att4UT", "Attribute for Unit testing",
-            //        false, false, "", Dlm.Entities.DataStructure.MeasurementScale.Nominal, Dlm.Entities.DataStructure.DataContainerType.ValueType,
-            //        "", boolType, unit,
-            //        null, null, null, null, null, null
-            //        );
-
-            //    var dataAttribute5 = attributeManager.CreateDataAttribute(
-            //        "att5UT", "att5UT", "Attribute for Unit testing",
-            //        false, false, "", Dlm.Entities.DataStructure.MeasurementScale.Nominal, Dlm.Entities.DataStructure.DataContainerType.ValueType,
-            //        "", dateTimeType, unit,
-            //        null, null, null, null, null, null
-            //        );
-
-            //    StructuredDataStructure dataStructure = dsManager.CreateStructuredDataStructure("dsForTesting", "DS for unit testing", "", "", Dlm.Entities.DataStructure.DataStructureCategory.Generic);
-            //    dsManager.AddVariableUsage(dataStructure, dataAttribute1, true, "var1UT", "", "", "Used for unit testing");
-            //    dsManager.AddVariableUsage(dataStructure, dataAttribute2, true, "var2UT", "", "", "Used for unit testing");
-            //    dsManager.AddVariableUsage(dataStructure, dataAttribute3, true, "var3UT", "", "", "Used for unit testing");
-            //    dsManager.AddVariableUsage(dataStructure, dataAttribute4, true, "var4UT", "", "", "Used for unit testing");
-            //    dsManager.AddVariableUsage(dataStructure, dataAttribute5, true, "var5UT", "", "", "Used for unit testing");
-            //    return dataStructure;
-            //}
-            //catch(Exception ex) { return null; }
-            //finally
-            //{
-            //    unitManager.Dispose();
-            //    dataTypeManager.Dispose();
-            //    attributeManager.Dispose();
-            //    dsManager.Dispose();
-            //}
+                return dataStructure;
+            }
+            catch (Exception ex) { return null; }
+            finally
+            {
+                unitManager.Dispose();
+                dataTypeManager.Dispose();
+                dsManager.Dispose();
+                variableManager.Dispose();
+            }
 
             throw new NotImplementedException();
         }

@@ -5,10 +5,10 @@
       <column name="IndexerType" />
     </property>
 
-    <many-to-one name="Indexer" class="Variable" not-null="false" column="IndexerRef"/>
+    <many-to-one name="Indexer" class="VariableInstance" not-null="false" column="IndexerRef"/>
     
 
-    <set name="Variables" inverse="true"  order-by="orderno asc">
+    <set name="Variables" inverse="true"  order-by="orderno asc" lazy="false">
       <key column="DataStructureRef" not-null="false"/>
       <one-to-many class="VariableInstance" />
     </set>

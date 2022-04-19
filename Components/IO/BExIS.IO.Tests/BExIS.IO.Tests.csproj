@@ -266,6 +266,10 @@
       <Project>{5b48b5a8-eae8-4ef8-8f2c-7fedb1b095d3}</Project>
       <Name>Vaiona.Web</Name>
     </ProjectReference>
+    <ProjectReference Include="..\BExIS.IO.DataType.DisplayPattern\BExIS.IO.DataType.DisplayPattern.csproj">
+      <Project>{8B2EC2B0-6870-456B-BE2D-B0FB4EA68D83}</Project>
+      <Name>BExIS.IO.DataType.DisplayPattern</Name>
+    </ProjectReference>
     <ProjectReference Include="..\BExIS.IO.Transform.Input\BExIS.IO.Transform.Input.csproj">
       <Project>{5C4C8570-A53B-4191-A414-DE028AAAF36A}</Project>
       <Name>BExIS.IO.Transform.Input</Name>
