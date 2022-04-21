@@ -66,7 +66,6 @@
       <HintPath>..\..\..\packages\Iesi.Collections.4.0.4\lib\net461\Iesi.Collections.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.CSharp" />
-    <Reference Include="Microsoft.ExtendedReflection, Version=15.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
     <Reference Include="Microsoft.Pex.Framework, Version=15.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
     </Reference>
@@ -127,10 +126,6 @@
     <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\Console\BExIS.Web.Shell\BExIS.Web.Shell.csproj">
-      <Project>{E5128814-4541-45C8-A9E6-6C91A7E3D1E2}</Project>
-      <Name>BExIS.Web.Shell</Name>
-    </ProjectReference>
     <ProjectReference Include="..\..\App\BExIS.App.Bootstrap\BExIS.App.Bootstrap.csproj">
       <Project>{7D7FBF8E-37D7-4A4C-B40E-3F267E9B9760}</Project>
       <Name>BExIS.App.Bootstrap</Name>
@@ -171,6 +166,7 @@
     <Compile Include="IOUtilityTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Transform\Input\AsciiReaderEncodingTest.cs" />
+    <Compile Include="Transform\Input\StructureAnalyzerTest.cs" />
     <Compile Include="Transform\Input\ExcelReaderTest.cs" />
     <Compile Include="Transform\Input\AsciiReaderTest.cs" />
     <Compile Include="Transform\Input\DataReaderTests.cs" />

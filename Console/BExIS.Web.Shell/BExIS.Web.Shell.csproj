@@ -1283,6 +1283,7 @@
     <Content Include="Themes\Default\Styles\bexis-metadata.css" />
     <Content Include="Themes\Default\Styles\bexis-telerik.css" />
     <Content Include="Themes\Default\Styles\bexis-elements.css" />
+    <Content Include="Themes\Default\Styles\bexis2_bootstrap.css" />
     <Content Include="Themes\Default\Styles\Copy of telerik.default.min.css" />
     <Content Include="Themes\Default\Styles\Default\editor.png" />
     <Content Include="Themes\Default\Styles\emptyPng.png" />

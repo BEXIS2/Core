@@ -127,7 +127,48 @@ namespace BExIS.IO.Transform.Validation.ValueCheck
                             }
 
                         }
+                    case "UInt16":
+                        {
+                            UInt16 i = 0;
 
+                            if (UInt16.TryParse(value, out i))
+                            {
+                                return i;
+                            }
+                            else
+                            {
+                                return new Error(ErrorType.Value, "Can not convert to", new object[] { name, value, row, dataType });
+                            }
+
+                        }
+                    case "UInt32":
+                        {
+                            UInt32 i = 0;
+
+                            if (UInt32.TryParse(value, out i))
+                            {
+                                return i;
+                            }
+                            else
+                            {
+                                return new Error(ErrorType.Value, "Can not convert to", new object[] { name, value, row, dataType });
+                            }
+
+                        }
+                    case "UInt64":
+                        {
+                            UInt64 i = 0;
+
+                            if (UInt64.TryParse(value, out i))
+                            {
+                                return i;
+                            }
+                            else
+                            {
+                                return new Error(ErrorType.Value, "Can not convert to", new object[] { name, value, row, dataType });
+                            }
+
+                        }
                     case "Double":
                         {
 
