@@ -57,6 +57,7 @@ namespace BExIS.IO.Transform.Input
                 return null;
         }
 
+
         public List<List<string>> ReadFile(Stream file)
         {
             List<List<string>> tmp = new List<List<string>>();
@@ -566,6 +567,146 @@ namespace BExIS.IO.Transform.Input
         }
 
         #endregion validate
+
+        #region basic reader functions without AsciiFileReaderInfo
+
+        public static long Count(string fileName)
+        {
+            if (File.Exists(fileName))
+            {
+                using (var file = File.Open(fileName, FileMode.Open, FileAccess.Read))
+                {
+                    return countLinesMaybe(file);
+                }
+
+            }
+
+            return 0;
+        }
+
+        private const char CR = '\r';
+        private const char LF = '\n';
+        private const char NULL = (char)0;
+
+        private static long countLinesMaybe(Stream stream)
+        {
+            var lineCount = 0L;
+
+            var byteBuffer = new byte[1024 * 1024];
+            const int BytesAtTheTime = 4;
+            var detectedEOL = NULL;
+            var currentChar = NULL;
+
+            int bytesRead;
+            while ((bytesRead = stream.Read(byteBuffer, 0, byteBuffer.Length)) > 0)
+            {
+                var i = 0;
+                for (; i <= bytesRead - BytesAtTheTime; i += BytesAtTheTime)
+                {
+                    currentChar = (char)byteBuffer[i];
+
+                    if (detectedEOL != NULL)
+                    {
+                        if (currentChar == detectedEOL) { lineCount++; }
+
+                        currentChar = (char)byteBuffer[i + 1];
+                        if (currentChar == detectedEOL) { lineCount++; }
+
+                        currentChar = (char)byteBuffer[i + 2];
+                        if (currentChar == detectedEOL) { lineCount++; }
+
+                        currentChar = (char)byteBuffer[i + 3];
+                        if (currentChar == detectedEOL) { lineCount++; }
+                    }
+                    else
+                    {
+                        if (currentChar == LF || currentChar == CR)
+                        {
+                            detectedEOL = currentChar;
+                            lineCount++;
+                        }
+                        i -= BytesAtTheTime - 1;
+                    }
+                }
+
+                for (; i < bytesRead; i++)
+                {
+                    currentChar = (char)byteBuffer[i];
+
+                    if (detectedEOL != NULL)
+                    {
+                        if (currentChar == detectedEOL) { lineCount++; }
+                    }
+                    else
+                    {
+                        if (currentChar == LF || currentChar == CR)
+                        {
+                            detectedEOL = currentChar;
+                            lineCount++;
+                        }
+                    }
+                }
+            }
+
+            if (currentChar != LF && currentChar != CR && currentChar != NULL)
+            {
+                lineCount++;
+            }
+            return lineCount;
+        }
+
+
+        public static List<string> GetRandowRows(string fileName, int total, int selection)
+        {
+            if (string.IsNullOrEmpty(fileName)) throw new ArgumentNullException(nameof(fileName), "fileName not exist");
+            if (total==0) throw new Exception("total can not be 0");
+            if (selection == 0) throw new Exception("selection can not be 0");
+            if (total< selection) throw new Exception("total must be greater then selection");
+
+            List<long> selectedRowsIndex = new List<long>();
+            List<string> selectedRows = new List<string>();
+            Random rand = new Random();
+
+            // select row index randomly
+            for (int i = 0; i < selection; i++)
+            {
+                long c = 0;
+                do // run random index till int not exist in the selectRowsIndex
+                {
+                    c = Convert.ToInt64(rand.Next(total));
+                }
+                while (selectedRowsIndex.Contains(c));
+
+                selectedRowsIndex.Add(c);
+            }
+
+            if (File.Exists(fileName))
+            {
+                using (var file = File.Open(fileName, FileMode.Open, FileAccess.Read))
+                {
+                    var lineCount = 0;
+
+                    using (StreamReader streamReader = new StreamReader(file, Encoding.UTF8))
+                    {
+                        string line = "";
+                        while ((line = streamReader.ReadLine()) != null)
+                        {
+                            lineCount++;
+                            if (selectedRowsIndex.Contains(lineCount))
+                                selectedRows.Add(line);
+                        }
+                    }
+                }
+            }
+            else
+            { 
+                throw new FileNotFoundException("file not found");
+            }
+
+            return selectedRows;
+        }
+
+        #endregion
 
         #region helper methods
 

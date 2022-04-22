@@ -180,5 +180,137 @@ namespace BExIS.IO.Tests.Transform.Input
                 throw ex;
             }
         }
+
+        [TestCase(100)]
+        [TestCase(1000)]
+        [TestCase(10000)]
+        [TestCase(100000)]
+        public void Count_FilexExist_ReturnCount(long numberOfRows)
+        {
+            DataGeneratorHelper dgh = new DataGeneratorHelper();
+            var errors = new List<Error>();
+            var testData = dgh.GenerateRowsWithRandomValuesBasedOnDatastructure(dataStructure, ",", numberOfRows, true);
+            IEnumerable<string> vairableNames = dataStructure.Variables.Select(v => v.Label);
+            //generate file to read
+            Encoding encoding = Encoding.Default;
+            string path = Path.Combine(AppConfiguration.DataPath, "testdataforvalidation.txt");
+            if (File.Exists(path))
+            {
+                File.Delete(path);
+            }
+
+            using (StreamWriter sw = new StreamWriter(path))
+            {
+                string header = string.Join(",", vairableNames.ToArray());
+                sw.WriteLine(header);
+
+                foreach (var r in testData)
+                {
+                    sw.WriteLine(r);
+                }
+            }
+
+            // Act
+            var count = AsciiReader.Count(path);
+            numberOfRows++; // add header
+
+            // Assert
+            Assert.AreEqual(numberOfRows, count,"Number of rows is not correct");
+
+        }
+
+        [TestCase(100,2)]
+        [TestCase(1000,100)]
+        [TestCase(10000,100)]
+        [TestCase(100000,100)]
+        public void GetRandowRows_FileExist_ReturnListOfStrings(int total, int selection)
+        {
+            DataGeneratorHelper dgh = new DataGeneratorHelper();
+            var errors = new List<Error>();
+            var testData = dgh.GenerateRowsWithRandomValuesBasedOnDatastructure(dataStructure, ",", total, true);
+            IEnumerable<string> vairableNames = dataStructure.Variables.Select(v => v.Label);
+            //generate file to read
+            Encoding encoding = Encoding.Default;
+            string path = Path.Combine(AppConfiguration.DataPath, "testdataforvalidation.txt");
+            if (File.Exists(path))
+            {
+                File.Delete(path);
+            }
+
+            using (StreamWriter sw = new StreamWriter(path))
+            {
+                string header = string.Join(",", vairableNames.ToArray());
+                sw.WriteLine(header);
+
+                foreach (var r in testData)
+                {
+                    sw.WriteLine(r);
+                }
+            }
+
+            // Act
+            var result = AsciiReader.GetRandowRows(path,total,selection);
+
+            // Assert
+            Assert.AreEqual(result.Count, selection, "Number of rows is not correct");
+
+        }
+
+        [Test()]
+        public void GetRandowRows_FileNotFoundExist_FileNotFoundException()
+        {
+            // Act
+
+            var result = Assert.Throws<FileNotFoundException>(() => AsciiReader.GetRandowRows("c:/data/notexist.txt", 100, 1));
+
+            // Assert
+            Assert.AreEqual(result.Message, "file not found");
+        }
+
+        [Test()]
+        public void GetRandowRows_FileNameIsEmpty_ArgumentNullException()
+        {
+            // Act
+
+            var result = Assert.Throws<ArgumentNullException>(() => AsciiReader.GetRandowRows("", 100, 1));
+            
+            // Assert
+            Assert.AreEqual(result.ParamName, "fileName");
+            Assert.AreEqual(result.Message, "fileName not exist\r\nParametername: fileName");
+        }
+
+        [Test()]
+        public void GetRandowRows_TotalIsZero_Exception()
+        {
+            // Act
+            var result = Assert.Throws<Exception>(() => AsciiReader.GetRandowRows("filepath", 0, 1));
+
+            // Assert
+            Assert.AreEqual(result.Message, "total can not be 0");
+
+
+        }
+
+        [Test()]
+        public void GetRandowRows_SelectionIsZero_Exception()
+        {
+            // Act
+            var result = Assert.Throws<Exception>(() => AsciiReader.GetRandowRows("filepath", 100, 0));
+
+            // Assert
+            Assert.AreEqual(result.Message, "selection can not be 0");
+        }
+
+        [Test()]
+        public void GetRandowRows_SelectionGreaterThenTotal_Exception()
+        {
+            // Act
+            var result = Assert.Throws<Exception>(() => AsciiReader.GetRandowRows("filepath", 1, 2));
+
+            // Assert
+            Assert.AreEqual(result.Message, "total must be greater then selection");
+        }
+
+
     }
 }
