@@ -114,6 +114,7 @@ namespace IDIV.Modules.Mmm.UI.Controllers
 
                 case "audio":
                     return PartialView("_audioPreview", path);
+              
 
                 case "bundle":
                     FileInformation fileInfo = getFileInfo(Server.UrlDecode(path));
@@ -708,6 +709,12 @@ namespace IDIV.Modules.Mmm.UI.Controllers
         {
             path = Server.UrlDecode(path);
             return PartialView("_imageView", getFileInfo(path));
+        }
+
+        public ActionResult DocumentView(string path)
+        {
+            path = Server.UrlDecode(path);
+            return PartialView("_documentView", getFileInfo(path));
         }
 
         public ActionResult BundleView(string path)

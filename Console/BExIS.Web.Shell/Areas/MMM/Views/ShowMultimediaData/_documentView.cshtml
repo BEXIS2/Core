@@ -1,0 +1,19 @@
+﻿@using IDIV.Modules.Mmm.UI.Models
+
+@model FileInformation
+
+@{
+    string type = Model.MimeType.Substring(Model.MimeType.LastIndexOf('/') + 1);
+    string path = @Url.Content("~/mmm/ShowMultimediaData/getFileStreamResult/?send_mail=false&path=" + Server.UrlEncode(Model.Path));
+}
+
+@switch (type)
+{
+    case "pdf":
+        <div id="pdfView">
+            <iframe src="@path#view=fit&zoom=100" type="application/pdf" width="80%" height="500"></iframe>
+        </div>
+    break;
+    default:
+    break;
+}

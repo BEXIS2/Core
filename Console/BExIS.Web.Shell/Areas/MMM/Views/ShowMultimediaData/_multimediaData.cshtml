@@ -389,6 +389,9 @@
         else if ($(this).attr('type').toLowerCase() == "bundle") {
             openBundle($(this).attr('path'));
         }
+        else if ($(this).attr('type').toLowerCase() == "application") {
+            openDocument($(this).attr('path'));
+        }
     });
 
     function openImg(path) {
@@ -399,7 +402,13 @@
     function openBundle(path) {
         loadBundle(path);
         $('#imgModal').modal('toggle');
-    }
+        }
+
+        function openDocument(path) {
+            loadDoc(path);
+            $('#imgModal').modal('toggle');
+        }
+        
 
     function loadImg(path) {
         var parameters = encodeURI('/?path=' + path);
@@ -409,7 +418,16 @@
             layoutImgWindow();
             //setTimeout(function () { initMiniMap() }, 200);
         });
-    }
+        }
+
+        function loadDoc(path) {
+             var parameters = encodeURI('/?path=' + path);
+            $.get('@Url.Action("DocumentView", "ShowMultimediaData", new { area = "MMM" } )' + parameters, function (data) {
+            $('#imgModal .modal-body #content').html(data);
+            initImgWindow();
+            layoutImgWindow();
+        });
+        }
 
     function loadBundle(path) {
         var parameters = encodeURI('/?path=' + path);
@@ -474,7 +492,6 @@
         $('#imgModal .modal-body #content .mmm-image video').css({ 'max-height': parseInt(window.innerHeight * 0.8 - 12) + 'px' });
 
         var path = $('#imgModal .modal-body #content .mmm-image').attr('path');
-
         for (var i = 0; i < imgList.length; i++) {
             if (imgList[i].toLowerCase() == path.toLowerCase()) {
                 if (i > 0)
