@@ -66,6 +66,8 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
             #endregion
 
+            
+
             HookManager hookManager = new HookManager();
 
             // load cache to check existing files
@@ -90,13 +92,22 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             using (var datasetManager = new DatasetManager())
             {
                 var dataset = datasetManager.GetDataset(id);
-                DataStructureType datastructureType = DataStructureType.None;
 
-                if (dataset.DataStructure != null &&
-                    dataset.DataStructure.Self.GetType().Equals(typeof(StructuredDataStructure)))
-                    datastructureType = DataStructureType.Structured;
+                // get list from entity template
+                if (dataset.EntityTemplate.AllowedFileTypes.Any())
+                    model.Accept = dataset.EntityTemplate.AllowedFileTypes;
+                else // if nothing is set in entity template, get default allowed filetypes
+                {
+                    DataStructureType datastructureType = DataStructureType.None;
 
-                model.Accept = UploadHelper.GetExtentionList(datastructureType, this.Session.GetTenant());
+                    // check if datastructure type exist
+                    if (dataset.DataStructure != null &&
+                        dataset.DataStructure.Self.GetType().Equals(typeof(StructuredDataStructure)))
+                        datastructureType = DataStructureType.Structured;
+
+                    // get default list of allowed file types
+                    model.Accept = UploadHelper.GetExtentionList(datastructureType, this.Session.GetTenant());
+                }
             }
 
             // set modification date

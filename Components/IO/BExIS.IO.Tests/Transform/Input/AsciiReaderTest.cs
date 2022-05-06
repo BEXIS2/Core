@@ -191,6 +191,7 @@ namespace BExIS.IO.Tests.Transform.Input
             var errors = new List<Error>();
             var testData = dgh.GenerateRowsWithRandomValuesBasedOnDatastructure(dataStructure, ",", numberOfRows, true);
             IEnumerable<string> vairableNames = dataStructure.Variables.Select(v => v.Label);
+
             //generate file to read
             Encoding encoding = Encoding.Default;
             string path = Path.Combine(AppConfiguration.DataPath, "testdataforvalidation.txt");
@@ -215,14 +216,89 @@ namespace BExIS.IO.Tests.Transform.Input
             numberOfRows++; // add header
 
             // Assert
-            Assert.AreEqual(numberOfRows, count,"Number of rows is not correct");
+            Assert.AreEqual(numberOfRows, count, "Number of rows is not correct");
 
         }
 
-        [TestCase(100,2)]
-        [TestCase(1000,100)]
-        [TestCase(10000,100)]
-        [TestCase(100000,100)]
+        [Test]
+        public void Count_FileNotExist_Count()
+        {
+            // Act
+            var result = Assert.Throws<FileNotFoundException>(() => AsciiReader.Count("c:/data/notexist.txt"));
+
+            // Assert
+            Assert.AreEqual(result.Message, "file not found");
+        }
+
+        [Test]
+        public void Count_FileNameIsEmpty_ArgumentNullException()
+        {
+            // Act
+            var result = Assert.Throws<ArgumentNullException>(() => AsciiReader.Skipped(""));
+
+            // Assert
+            Assert.AreEqual(result.Message, "fileName not exist\r\nParametername: fileName");
+        }
+
+        [Test]
+        public void Skipped_Valid_Count()
+        {
+            // Arrange
+            List<string> rows = new List<string>();
+            rows.Add("");
+            rows.Add("");
+            rows.Add("");
+            rows.Add("abcd");
+            rows.Add("");
+            rows.Add("abcd2");
+
+            //generate file to read
+            Encoding encoding = Encoding.Default;
+            string path = Path.Combine(AppConfiguration.DataPath, "test_skipped.txt");
+            if (File.Exists(path))
+            {
+                File.Delete(path);
+            }
+
+            using (StreamWriter sw = new StreamWriter(path))
+            {
+                foreach (var r in rows)
+                {
+                    sw.WriteLine(r);
+                }
+            }
+
+            // Act
+            int skipped = AsciiReader.Skipped(path);
+
+            //Assert
+            Assert.AreEqual(skipped, 3, "the skipped lines are less or more than expected");
+        }
+
+        [Test]
+        public void Skipped_FileNotExist_FileNotFoundException()
+        {
+            // Act
+            var result = Assert.Throws<FileNotFoundException>(() => AsciiReader.Skipped("c:/data/notexist.txt"));
+
+            // Assert
+            Assert.AreEqual(result.Message, "file not found");
+        }
+
+        [Test]
+        public void Skipped_FileNameIsEmpty_ArgumentNullException()
+        {
+            // Act
+            var result = Assert.Throws<ArgumentNullException>(() => AsciiReader.Skipped(""));
+
+            // Assert
+            Assert.AreEqual(result.Message, "fileName not exist\r\nParametername: fileName");
+        }
+
+        [TestCase(100, 2)]
+        [TestCase(1000, 100)]
+        [TestCase(10000, 100)]
+        [TestCase(100000, 100)]
         public void GetRandowRows_FileExist_ReturnListOfStrings(int total, int selection)
         {
             DataGeneratorHelper dgh = new DataGeneratorHelper();
@@ -249,10 +325,106 @@ namespace BExIS.IO.Tests.Transform.Input
             }
 
             // Act
-            var result = AsciiReader.GetRandowRows(path,total,selection);
+            var result = AsciiReader.GetRandowRows(path, total, selection);
 
             // Assert
             Assert.AreEqual(result.Count, selection, "Number of rows is not correct");
+
+        }
+
+        [Test()]
+        public void GetRandowRows_DataStartValid_ReturnListOfStrings()
+        {
+            //Arrange
+
+            string header = "v1,v2,v3";
+            string unit = "kg,cm,none";
+            string description = "a,b,c,d";
+            var data = new List<string>() { "0,01,02", "1,11,12", "2,21,22", "3,31,32" };
+  
+
+            //generate file to read
+            Encoding encoding = Encoding.Default;
+            string path = Path.Combine(AppConfiguration.DataPath, "test_getrows_indexlistempty.txt");
+            if (File.Exists(path))
+            {
+                File.Delete(path);
+            }
+
+            using (StreamWriter sw = new StreamWriter(path))
+            {
+                sw.WriteLine("");
+                sw.WriteLine("");
+                sw.WriteLine("");
+                sw.WriteLine(header);
+                sw.WriteLine(unit);
+                sw.WriteLine(description);
+                data.ForEach(x => sw.WriteLine(x));
+            }
+
+            int startdata = 4; // get from user selection
+            var total = AsciiReader.Count(path); //10
+            var skipped = AsciiReader.Skipped(path);//3
+            var dataCount = total - skipped - startdata + 1; // 4
+
+            Assert.AreEqual(total,10);
+            Assert.AreEqual(skipped,3);
+            Assert.AreEqual(dataCount,4);
+
+            // Act
+            var result = AsciiReader.GetRandowRows(path,total, dataCount, startdata);
+
+            // Assert
+            Assert.NotNull(result);
+            Assert.AreEqual(result.Count, 4, "more or less rows then expected");
+
+        }
+
+        [Test()]
+        public void GetRandowRows_DataHasEmptyRows_ReturnListOfStrings()
+        {
+            //Arrange
+
+            string header = "v1,v2,v3";
+            string unit = "kg,cm,none";
+            string description = "a,b,c,d";
+            var data = new List<string>() { "0,01,02", "1,11,12","", "2,21,22", "3,31,32" };
+
+
+            //generate file to read
+            Encoding encoding = Encoding.Default;
+            string path = Path.Combine(AppConfiguration.DataPath, "test_getrows_indexlistempty.txt");
+            if (File.Exists(path))
+            {
+                File.Delete(path);
+            }
+
+            using (StreamWriter sw = new StreamWriter(path))
+            {
+                sw.WriteLine("");
+                sw.WriteLine("");
+                sw.WriteLine("");
+                sw.WriteLine(header);
+                sw.WriteLine(unit);
+                sw.WriteLine(description);
+                data.ForEach(x => sw.WriteLine(x));
+            }
+
+            int startdata = 4; // get from user selection
+            var total = AsciiReader.Count(path); //11
+            var skipped = AsciiReader.Skipped(path);//3
+            var dataCount = total - skipped - startdata + 1; // 4
+
+            Assert.AreEqual(total, 11);
+            Assert.AreEqual(skipped, 3);
+            Assert.AreEqual(dataCount, 5);
+
+            // Act
+            var result = AsciiReader.GetRandowRows(path, total, dataCount, startdata);
+
+            // Assert
+            Assert.NotNull(result);
+            Assert.AreEqual(result.Count, 4, "more or less rows then expected");
 
         }
 
@@ -273,7 +445,7 @@ namespace BExIS.IO.Tests.Transform.Input
             // Act
 
             var result = Assert.Throws<ArgumentNullException>(() => AsciiReader.GetRandowRows("", 100, 1));
-            
+
             // Assert
             Assert.AreEqual(result.ParamName, "fileName");
             Assert.AreEqual(result.Message, "fileName not exist\r\nParametername: fileName");
@@ -311,6 +483,139 @@ namespace BExIS.IO.Tests.Transform.Input
             Assert.AreEqual(result.Message, "total must be greater then selection");
         }
 
+        [Test()]
+        public void GetRows__FileNameEmpty_ArgumentNullException()
+        {
+            // Act
+            var result = Assert.Throws<ArgumentNullException>(() => AsciiReader.GetRows(""));
 
+            // Assert
+            Assert.AreEqual(result.Message, "fileName not exist\r\nParametername: fileName");
+
+        }
+
+        [Test()]
+        public void GetRows__FileNotExist_FileNotFoundException()
+        {
+            // Act
+            var result = Assert.Throws<FileNotFoundException>(() => AsciiReader.GetRows("c:/data/notexist.txt"));
+
+            // Assert
+            Assert.AreEqual(result.Message, "file not found");
+
+        }
+
+        [Test()]
+        public void GetRows_FileNameEmpty_ArgumentNullException()
+        {
+            // Act
+            var result = Assert.Throws<ArgumentNullException>(() => AsciiReader.GetRows("",null,null));
+
+            // Assert
+            Assert.AreEqual(result.Message, "fileName not exist\r\nParametername: fileName");
+
+        }
+
+        [Test()]
+        public void GetRows_FileNotExist_FileNotFoundException()
+        {
+            // Act
+            var result = Assert.Throws<FileNotFoundException>(() => AsciiReader.GetRows("c:/data/notexist.txt", new List<int>() {0}, null));
+
+            // Assert
+            Assert.AreEqual(result.Message, "file not found");
+
+        }
+
+        [Test()]
+        public void GetRows_IndexListIsEmpty_ArgumentNullException()
+        {
+            //Arrange
+            //generate file to read
+            Encoding encoding = Encoding.Default;
+            string path = Path.Combine(AppConfiguration.DataPath, "test_getrows_indexlistempty.txt");
+            if (File.Exists(path))
+            {
+                File.Delete(path);
+            }
+
+            using (StreamWriter sw = new StreamWriter(path))
+            {
+                sw.WriteLine("test");
+            }
+
+
+            // Act
+            var result = Assert.Throws<ArgumentNullException>(() => AsciiReader.GetRows(path, null, null));
+
+            // Assert
+            Assert.AreEqual(result.Message, "row index list is empty\r\nParametername: fileName");
+
+        }
+
+        [Test()]
+        public void GetRows_GetRowsFromIndexList_ListOfRows()
+        {
+            //Arrange
+            var data = new List<string>(){ "0", "1", "2", "3" };
+            var wantedRows = new List<int>(){1,3};
+
+            //generate file to read
+            Encoding encoding = Encoding.Default;
+            string path = Path.Combine(AppConfiguration.DataPath, "test_getrows_indexlistempty.txt");
+            if (File.Exists(path))
+            {
+                File.Delete(path);
+            }
+
+            using (StreamWriter sw = new StreamWriter(path))
+            {
+                 data.ForEach(x => sw.WriteLine(x));
+            }
+
+
+            // Act
+            var result =  AsciiReader.GetRows(path, wantedRows);
+
+            // Assert
+            Assert.NotNull(result);
+            Assert.AreEqual(result.Count, wantedRows.Count,"more or less rows then expected");
+            Assert.That(result[0], Is.EqualTo("1"));
+            Assert.That(result[1], Is.EqualTo("3"));
+
+        }
+
+        [Test()]
+        public void GetRows_GetSubsetOfRowsFromIndexList_ListOfRows()
+        {
+            //Arrange
+            var data = new List<string>() { "0,01,02", "1,10,11", "2,20,21", "3,30,31" };
+            var wantedRows = new List<int>() { 1, 3 };
+            var activeCells = new List<bool>() { false,true,false  };
+
+            //generate file to read
+            Encoding encoding = Encoding.Default;
+            string path = Path.Combine(AppConfiguration.DataPath, "test_getsubsetrows_indexlistempty.txt");
+            if (File.Exists(path))
+            {
+                File.Delete(path);
+            }
+
+            using (StreamWriter sw = new StreamWriter(path))
+            {
+                data.ForEach(x => sw.WriteLine(x));
+            }
+
+
+            // Act
+            var result = AsciiReader.GetRows(path, wantedRows,activeCells,TextSeperator.comma);
+
+            // Assert
+            Assert.NotNull(result);
+            Assert.AreEqual(result.Count, wantedRows.Count, "more or less rows then expected");
+            Assert.That(result[0], Is.EqualTo("10"));
+            Assert.That(result[1], Is.EqualTo("30"));
+
+        }
     }
 }

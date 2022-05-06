@@ -1,5 +1,5 @@
 
-(function(l, r) { if (!l || l.getElementById('livereloadscript')) return; r = l.createElement('script'); r.async = 1; r.src = '//' + (self.location.host || 'localhost').split(':')[0] + ':35736/livereload.js?snipver=1'; r.id = 'livereloadscript'; l.getElementsByTagName('head')[0].appendChild(r) })(self.document);
+(function(l, r) { if (!l || l.getElementById('livereloadscript')) return; r = l.createElement('script'); r.async = 1; r.src = '//' + (self.location.host || 'localhost').split(':')[0] + ':35734/livereload.js?snipver=1'; r.id = 'livereloadscript'; l.getElementsByTagName('head')[0].appendChild(r) })(self.document);
 var app = (function () {
     'use strict';
 
@@ -26477,7 +26477,7 @@ var app = (function () {
     	return child_ctx;
     }
 
-    // (36:2) <Col xs="{2}">
+    // (45:2) <Col xs="{2}">
     function create_default_slot_4$3(ctx) {
     	let div;
     	let b;
@@ -26498,9 +26498,9 @@ var app = (function () {
     			create_component(fa.$$.fragment);
     			t0 = space();
     			t1 = text(/*displayName*/ ctx[0]);
-    			add_location(b, file$8, 37, 6, 770);
+    			add_location(b, file$8, 46, 6, 929);
     			attr_dev(div, "class", "title-container svelte-trwc88");
-    			add_location(div, file$8, 36, 4, 733);
+    			add_location(div, file$8, 45, 4, 892);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div, anchor);
@@ -26532,14 +26532,14 @@ var app = (function () {
     		block,
     		id: create_default_slot_4$3.name,
     		type: "slot",
-    		source: "(36:2) <Col xs=\\\"{2}\\\">",
+    		source: "(45:2) <Col xs=\\\"{2}\\\">",
     		ctx
     	});
 
     	return block;
     }
 
-    // (42:4) {#if error}
+    // (53:4) {#if error}
     function create_if_block_1$4(ctx) {
     	let each_1_anchor;
     	let current;
@@ -26628,14 +26628,14 @@ var app = (function () {
     		block,
     		id: create_if_block_1$4.name,
     		type: "if",
-    		source: "(42:4) {#if error}",
+    		source: "(53:4) {#if error}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (44:8) <Alert color="danger" dismissible>
+    // (55:8) <Alert color="danger" dismissible>
     function create_default_slot_3$4(ctx) {
     	let t_value = /*item*/ ctx[9] + "";
     	let t;
@@ -26659,14 +26659,14 @@ var app = (function () {
     		block,
     		id: create_default_slot_3$4.name,
     		type: "slot",
-    		source: "(44:8) <Alert color=\\\"danger\\\" dismissible>",
+    		source: "(55:8) <Alert color=\\\"danger\\\" dismissible>",
     		ctx
     	});
 
     	return block;
     }
 
-    // (43:6) {#each error as item}
+    // (54:6) {#each error as item}
     function create_each_block$3(ctx) {
     	let alert;
     	let current;
@@ -26716,14 +26716,14 @@ var app = (function () {
     		block,
     		id: create_each_block$3.name,
     		type: "each",
-    		source: "(43:6) {#each error as item}",
+    		source: "(54:6) {#each error as item}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (47:4) {#if success}
+    // (58:4) {#if success}
     function create_if_block$9(ctx) {
     	let alert;
     	let current;
@@ -26773,14 +26773,14 @@ var app = (function () {
     		block,
     		id: create_if_block$9.name,
     		type: "if",
-    		source: "(47:4) {#if success}",
+    		source: "(58:4) {#if success}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (48:6) <Alert color="success" dismissible>
+    // (59:6) <Alert color="success" dismissible>
     function create_default_slot_2$4(ctx) {
     	let t;
 
@@ -26803,14 +26803,14 @@ var app = (function () {
     		block,
     		id: create_default_slot_2$4.name,
     		type: "slot",
-    		source: "(48:6) <Alert color=\\\"success\\\" dismissible>",
+    		source: "(59:6) <Alert color=\\\"success\\\" dismissible>",
     		ctx
     	});
 
     	return block;
     }
 
-    // (51:71)  render view
+    // (62:71)  render view
     function fallback_block(ctx) {
     	let t;
 
@@ -26830,14 +26830,14 @@ var app = (function () {
     		block,
     		id: fallback_block.name,
     		type: "fallback",
-    		source: "(51:71)  render view",
+    		source: "(62:71)  render view",
     		ctx
     	});
 
     	return block;
     }
 
-    // (41:2) <Col xs={{ size: content, order: 2}}>
+    // (51:2) <Col xs={{ size: content, order: 2}}>
     function create_default_slot_1$5(ctx) {
     	let t0;
     	let t1;
@@ -26956,14 +26956,14 @@ var app = (function () {
     		block,
     		id: create_default_slot_1$5.name,
     		type: "slot",
-    		source: "(41:2) <Col xs={{ size: content, order: 2}}>",
+    		source: "(51:2) <Col xs={{ size: content, order: 2}}>",
     		ctx
     	});
 
     	return block;
     }
 
-    // (35:1) <Row>
+    // (43:1) <Row>
     function create_default_slot$5(ctx) {
     	let col0;
     	let t;
@@ -27039,7 +27039,7 @@ var app = (function () {
     		block,
     		id: create_default_slot$5.name,
     		type: "slot",
-    		source: "(35:1) <Row>",
+    		source: "(43:1) <Row>",
     		ctx
     	});
 
@@ -27064,7 +27064,7 @@ var app = (function () {
     			div = element("div");
     			create_component(row.$$.fragment);
     			attr_dev(div, "class", "hook-container svelte-trwc88");
-    			add_location(div, file$8, 33, 0, 671);
+    			add_location(div, file$8, 41, 0, 827);
     		},
     		l: function claim(nodes) {
     			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
@@ -27123,6 +27123,11 @@ var app = (function () {
     	let { displayName } = $$props;
     	let { content = 9 } = $$props;
 
+    	onMount(async () => {
+    		offset = titlePosition == "left" ? 0 : 2;
+    		console.log({ displayName } + " offset", offset);
+    	});
+
     	function errorHandler(e) {
     		console.log("handle errors here");
     		console.log(e.detail.messages);
@@ -27151,6 +27156,7 @@ var app = (function () {
     		Row: Row$1,
     		Col: Col$1,
     		Alert,
+    		onMount,
     		Fa: Fa$1,
     		faAngleRight,
     		displayName,

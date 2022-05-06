@@ -1,16 +1,24 @@
 <script>
  import {Row, Col, Alert} from 'sveltestrap';
+ import {onMount} from 'svelte';
  
  import Fa from 'svelte-fa/src/fa.svelte'
  import { faAngleRight } from '@fortawesome/free-solid-svg-icons'
 
  export let displayName;
  export let content=9;
-
-
+ 
  $:error = [];
  $:success = null;
  $:warnings = [];
+
+onMount(async () => {
+
+  offset = titlePosition=="left"?0:2;
+  console.log({displayName}+" offset",offset); 
+
+
+})
 
 function errorHandler (e){ 
   console.log("handle errors here")
@@ -33,12 +41,15 @@ function warningHandler (e){
 
 <div class="hook-container" >
  <Row> 
+ 
   <Col xs="{2}">
     <div class="title-container">
       <b><Fa icon={faAngleRight} /> {displayName}</b>
     </div>
   </Col>
+
   <Col xs={{ size: content, order: 2}}>
+
     {#if error}
       {#each error as item}
         <Alert color="danger" dismissible>{item}</Alert>

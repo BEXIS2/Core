@@ -213,7 +213,7 @@ import { faSave, faTrashAlt } from '@fortawesome/free-regular-svg-icons'
   </Row>
 
   <Button type="submit" color="primary" {disabled}><Fa icon={faSave}/></Button>
-  <Button color="danger" on:click={()=> dispatch("cancel")}><Fa icon={faTrashAlt}/></Button>
+  <Button type="button" color="danger" on:click={()=> dispatch("cancel")}><Fa icon={faTrashAlt}/></Button>
 <!-- </Form> -->
 </form>
 {:else}

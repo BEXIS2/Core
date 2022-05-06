@@ -2,7 +2,7 @@
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
-
+using System.Linq;
 
 namespace BExIS.IO.Tests.Transform.Input
 {
@@ -15,8 +15,8 @@ namespace BExIS.IO.Tests.Transform.Input
         [OneTimeSetUp]
         public void OneTimeSetUp()
         {
-            rows = generateTestRows(1000, ';');
-            rowWithMissingValues = generateTestRows(1000, ';', missingValueList);
+            rows = generateTestRows(100000, ';');
+            rowWithMissingValues = generateTestRows(100000, ';', missingValueList);
         }
 
         [SetUp]
@@ -34,6 +34,8 @@ namespace BExIS.IO.Tests.Transform.Input
         {
         }
 
+        #region delimeter
+
         [TestCase("a,b,c","2.23,2.34,2",TextSeperator.comma)]
         [TestCase("v1;v2;v3","2.23;a,b,c,d,e,f;2",TextSeperator.semicolon)]
         [TestCase("v1\tv2\tv3","2.23\t2.34\t2",TextSeperator.tab)]
@@ -44,11 +46,42 @@ namespace BExIS.IO.Tests.Transform.Input
             StructureAnalyser structureAnalyser = new StructureAnalyser();
 
             //Act
-            var result = structureAnalyser.SuggestDelimter(rowA, rowB);
+            var result = structureAnalyser.SuggestDelimeter(rowA, rowB);
 
             //Assert
             Assert.NotNull(result, "result should not be null.");
             Assert.AreEqual(result,textSeperator,"textseperator not expected");
+        }
+
+        [TestCase("a,\"b\",c", "2.23,\"2.34,2.24\",2", TextSeperator.comma, TextMarker.doubleQuotes)]
+        [TestCase("a,'b',c", "2.23,'2.34,2.24',2", TextSeperator.comma, TextMarker.quotes)]
+        public void SuggestDelimeter_DelimeterInTextMarkers_ResultTextSeperator(string rowA, string rowB, TextSeperator textSeperator, TextMarker textMarker)
+        {
+
+            //Arrange
+            StructureAnalyser structureAnalyser = new StructureAnalyser();
+
+            //Act
+            var result = structureAnalyser.SuggestDelimeter(rowA, rowB, textMarker);
+
+            //Assert
+            Assert.NotNull(result, "result should not be null.");
+            Assert.AreEqual(result, textSeperator, "textseperator not expected");
+        }
+
+        [TestCase("a,\"b\",c", "2.23,\"a;b;c\",2", TextSeperator.comma, TextMarker.doubleQuotes)]
+        public void SuggestDelimeter_CharInTextMarkersEqualToDelimeter_ResultTextSeperator(string rowA, string rowB, TextSeperator textSeperator, TextMarker textMarker)
+        {
+
+            //Arrange
+            StructureAnalyser structureAnalyser = new StructureAnalyser();
+
+            //Act
+            var result = structureAnalyser.SuggestDelimeter(rowA, rowB, TextMarker.doubleQuotes);
+
+            //Assert
+            Assert.NotNull(result, "result should not be null.");
+            Assert.AreEqual(result, textSeperator, "textseperator not expected");
         }
 
         [Test()]
@@ -59,7 +92,7 @@ namespace BExIS.IO.Tests.Transform.Input
             StructureAnalyser structureAnalyser = new StructureAnalyser();
 
             //Act
-            var result = Assert.Throws<ArgumentNullException> (()=> structureAnalyser.SuggestDelimter("", ""));
+            var result = Assert.Throws<ArgumentNullException> (()=> structureAnalyser.SuggestDelimeter("", ""));
 
             //Assert
             Assert.AreEqual(result.Message, "row has no content to suggest.\r\nParametername: rowA");
@@ -75,22 +108,131 @@ namespace BExIS.IO.Tests.Transform.Input
             StructureAnalyser structureAnalyser = new StructureAnalyser();
 
             //Act
-            var result = Assert.Throws<Exception>(() => structureAnalyser.SuggestDelimter(rowA, rowB));
+            var result = Assert.Throws<Exception>(() => structureAnalyser.SuggestDelimeter(rowA, rowB));
 
 
             //Assert
             Assert.AreEqual(result.Message, "the guessing of the operator came to no result.");
         }
 
+        #endregion
 
-        [Test]
-        public void SuggestDataTypes_Valid_ResultWithCorrectTypes()
+        #region decimal
+
+        [TestCase("a,b,c", "2.23,2.34,2", TextSeperator.comma, DecimalCharacter.point)]
+        [TestCase("v1;v2;v3", "2.23;a,b,c,d,e,f;2", TextSeperator.semicolon, DecimalCharacter.point)]
+        [TestCase("v1\tv2\tv3", "2.23\t2.34\t2", TextSeperator.tab, DecimalCharacter.point)]
+        [TestCase("v1\tv2\tv3", "2.23\t2.34\t2", TextSeperator.tab, DecimalCharacter.point)]
+        public void SuggestDecimal_Valid_ResultDecimalCharacter(string rowA, string rowB, TextSeperator textSeperator, DecimalCharacter decimalCharacter)
+        {
+
+            //Arrange
+            StructureAnalyser structureAnalyser = new StructureAnalyser();
+
+            //Act
+            var result = structureAnalyser.SuggestDecimal(rowA, rowB, textSeperator);
+
+            //Assert
+            Assert.NotNull(result, "result should not be null.");
+            Assert.AreEqual(result, decimalCharacter, "decimal character not expected");
+        }
+
+        [TestCase("a;b;c", "100,000,002.23;2.34;2", TextSeperator.semicolon, DecimalCharacter.point)]
+        [TestCase("a\tb\tc", "100,2\t\"der hut ist...\"\t2.409,8", TextSeperator.tab, DecimalCharacter.comma)]
+        [TestCase("a\tb\tc", "1,100.2\t\"der hut ist...\"\t2,400.8", TextSeperator.tab, DecimalCharacter.point)]
+        [TestCase("a\tb\tc", "1.100,2\t\"der hut ist...\"\t2.400,8", TextSeperator.tab, DecimalCharacter.comma)]
+        public void SuggestDecimal_DecimalWithThousandSpot_ResultDecimalCharacter(string rowA, string rowB, TextSeperator textSeperator, DecimalCharacter decimalCharacter)
+        {
+
+            //Arrange
+            StructureAnalyser structureAnalyser = new StructureAnalyser();
+
+            //Act
+            var result = structureAnalyser.SuggestDecimal(rowA, rowB, textSeperator);
+
+            //Assert
+            Assert.NotNull(result, "result should not be null.");
+            Assert.AreEqual(result, decimalCharacter, "decimal character not expected");
+        }
+
+        [Test()]
+        public void SuggestDecimal_EmptyRows_ArgumentNullException()
+        {
+
+            //Arrange
+            StructureAnalyser structureAnalyser = new StructureAnalyser();
+
+            //Act
+            var result = Assert.Throws<ArgumentNullException>(() => structureAnalyser.SuggestDecimal("", "", TextSeperator.tab));
+            
+            //Assert
+            Assert.AreEqual(result.Message, "row has no content to suggest.\r\nParametername: rowA");
+        }
+
+        #endregion
+
+        #region textmarker
+
+
+        [TestCase("'a',b,'c'", "2.23,2.34,'2'", TextMarker.quotes)]
+        public void SuggestTextMarker_Valid_ResultTextSeperator(string rowA, string rowB, TextMarker expect)
+        {
+
+            //Arrange
+            StructureAnalyser structureAnalyser = new StructureAnalyser();
+
+            //Act
+            var result = structureAnalyser.SuggestTextMarker(rowA, rowB);
+
+            //Assert
+            Assert.NotNull(result, "result should not be null.");
+            Assert.AreEqual(expect, result, "text marker not expected");
+        }
+
+        [TestCase("'a',b,'c'", "2.23,'text with \\' and more chars','2'", TextMarker.quotes)]
+        public void SuggestTextMarker_QuotesWithBackslash_ResultTextSeperator(string rowA, string rowB, TextMarker expect)
+        {
+
+            //Arrange
+            StructureAnalyser structureAnalyser = new StructureAnalyser();
+
+            //Act
+            var result = structureAnalyser.SuggestTextMarker(rowA, rowB);
+
+            //Assert
+            Assert.NotNull(result, "result should not be null.");
+            Assert.AreEqual(expect, result, "text marker not expected");
+        }
+
+        [Test()]
+        public void SuggestTextMarker_EmptyRows_ArgumentNullException()
+        {
+
+            //Arrange
+            StructureAnalyser structureAnalyser = new StructureAnalyser();
+
+            //Act
+            var result = Assert.Throws<ArgumentNullException>(() => structureAnalyser.SuggestTextMarker("", ""));
+
+            //Assert
+            Assert.AreEqual(result.Message, "row has no content to suggest.\r\nParametername: rowA");
+        }
+
+        #endregion
+
+        #region systemtypes
+
+        [TestCase(100)]
+        [TestCase(1000)]
+        [TestCase(10000)]
+        [TestCase(100000)]
+        public void SuggestSystemTypes_Valid_ResultWithCorrectTypes(int n)
         {
             //Arrange
             StructureAnalyser structureAnalyser = new StructureAnalyser();
 
             //Act
-            var result = structureAnalyser.SuggestDataTypes(rows, TextSeperator.semicolon, DecimalCharacter.comma, new List<string>());
+            var result = structureAnalyser.SuggestSystemTypes(rows.GetRange(0,n), TextSeperator.semicolon, DecimalCharacter.comma, new List<string>());
 
             //Assert
             Assert.NotNull(result);
@@ -116,13 +258,13 @@ namespace BExIS.IO.Tests.Transform.Input
         }
 
         [Test]
-        public void SuggestDataTypes_ValidWithMissingValues_ResultWithCorrectTypes()
+        public void SuggestSystemTypes_ValidWithMissingValues_ResultWithCorrectTypes()
         {
             //Arrange
             StructureAnalyser structureAnalyser = new StructureAnalyser();
 
             //Act
-            var result = structureAnalyser.SuggestDataTypes(rowWithMissingValues, TextSeperator.semicolon, DecimalCharacter.comma, missingValueList);
+            var result = structureAnalyser.SuggestSystemTypes(rowWithMissingValues, TextSeperator.semicolon, DecimalCharacter.comma, missingValueList);
 
             //Assert
             Assert.NotNull(result);
@@ -146,6 +288,8 @@ namespace BExIS.IO.Tests.Transform.Input
             Assert.That(v6.Equals(typeof(Int64)), "is not Int64");
 
         }
+
+        #endregion
 
         private List<string> generateTestRows(int number, char seperator, List<string> missingValues=null)
         {

@@ -9,6 +9,7 @@ using BExIS.Modules.Dcm.UI.Models.EntityTemplate;
 using BExIS.Security.Services.Objects;
 using BExIS.Security.Services.Subjects;
 using BExIS.UI.Hooks;
+using BExIS.UI.Models;
 using System;
 using System.Collections.Generic;
 using System.Web.Mvc;

@@ -31,6 +31,8 @@
     <TargetFrameworkProfile />
     <PostSharpHostConfigurationFile>Web.config</PostSharpHostConfigurationFile>
     <DontImportPostSharp>True</DontImportPostSharp>
+	<TypeScriptCompileBlocked>True</TypeScriptCompileBlocked>
+	<TypeScriptCompileOnSaveEnabled>False</TypeScriptCompileOnSaveEnabled>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -89,6 +91,7 @@
     <Compile Include="Controllers\Legacy\SubmitValidationController.cs" />
     <Compile Include="Controllers\Hooks\MetadataController.cs" />
     <Compile Include="Controllers\LinkController.cs" />
+    <Compile Include="Controllers\StructureSuggestionController.cs" />
     <Compile Include="Controllers\Views\MessagesController.cs" />
     <Compile Include="Controllers\TestController.cs" />
     <Compile Include="Controllers\Hooks\ValidationController.cs" />
@@ -148,6 +151,7 @@
     <Compile Include="Models\SelectMetaDataModel.cs" />
     <Compile Include="Models\SelectSheetFormatModel.cs" />
     <Compile Include="Models\SelectVerificationModel.cs" />
+    <Compile Include="Models\StructureSuggestion\StructureSuggestionModel.cs" />
     <Compile Include="Models\SummaryModel.cs" />
     <Compile Include="Models\TestModel.cs" />
     <Compile Include="Models\UploadWizardParameters.cs" />
@@ -514,6 +518,7 @@
     <Content Include="Scripts\jquery-2.1.4.min.map" />
     <Content Include="Views\EntityTemplates\Index.cshtml" />
     <Content Include="Views\Create\Index.cshtml" />
+    <Content Include="Views\StructureSuggestion\Index.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

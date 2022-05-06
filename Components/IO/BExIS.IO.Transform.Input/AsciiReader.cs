@@ -572,16 +572,65 @@ namespace BExIS.IO.Transform.Input
 
         public static long Count(string fileName)
         {
+            if (string.IsNullOrEmpty(fileName)) throw new ArgumentNullException(nameof(fileName), "fileName not exist");
+
+            if (File.Exists(fileName))
+            {
+                long count = 0;
+
+                using (var file = File.Open(fileName, FileMode.Open, FileAccess.Read))
+                {
+                    using (StreamReader streamReader = new StreamReader(file))
+                    {
+                        return countLinesMaybe(file);
+                    }
+                }
+
+                return count;
+
+            }
+            else
+            {
+                throw new FileNotFoundException("file not found");
+            }
+
+            return 0;
+        }
+
+        /// <summary>
+        /// return number of skipped rows
+        /// to find the first data, skip al rows that are empty
+        /// </summary>
+        /// <param name="fileName"></param>
+        /// <returns></returns>
+        public static int Skipped(string fileName)
+        {
+            if (string.IsNullOrEmpty(fileName)) throw new ArgumentNullException(nameof(fileName), "fileName not exist");
+
+
+            int count = 0;
             if (File.Exists(fileName))
             {
                 using (var file = File.Open(fileName, FileMode.Open, FileAccess.Read))
                 {
-                    return countLinesMaybe(file);
+                    using (StreamReader streamReader = new StreamReader(file))
+                    {
+                        string line;
+                        while ((line = streamReader.ReadLine()) != null)
+                        {
+                            if (string.IsNullOrWhiteSpace(line)) count++;
+                            else break;
+                        }
+                    }
                 }
 
             }
+            else
+            {
+                throw new FileNotFoundException("file not found");
+            }
 
-            return 0;
+            return count;
         }
 
         private const char CR = '\r';
@@ -656,7 +705,138 @@ namespace BExIS.IO.Transform.Input
         }
 
 
-        public static List<string> GetRandowRows(string fileName, int total, int selection)
+        public static List<string> GetRows(string fileName, int number=0)
+        {
+            if (string.IsNullOrEmpty(fileName)) throw new ArgumentNullException(nameof(fileName), "fileName not exist");
+     
+            List<string> selectedRows = new List<string>();
+            if (File.Exists(fileName))
+            {
+                using (var file = File.Open(fileName, FileMode.Open, FileAccess.Read))
+                {
+
+                    using (StreamReader streamReader = new StreamReader(file, Encoding.UTF8))
+                    {
+                        string line = "";
+                        while ((line = streamReader.ReadLine()) != null)
+                        {
+                            if (!string.IsNullOrWhiteSpace(line))
+                            {
+                                selectedRows.Add(line);
+                                if (selectedRows.Count == number) break;
+                            }
+                        }
+                    }
+                }
+            }
+            else
+            {
+                throw new FileNotFoundException("file not found");
+            }
+
+            return selectedRows;
+        }
+
+        /// <summary>
+        /// get rows by index starting from first detected row- skipped are not counted
+        /// get a subset of the row with a list of active cells 
+        /// cells list must same lenght as row afer split with text seperator
+        /// </summary>
+        /// <param name="fileName"></param>
+        /// <param name="indexList"></param>
+        /// <param name="activeCells"></param>
+        /// <param name="delimeter"></param>
+        /// <returns></returns>
+        /// <exception cref="ArgumentNullException"></exception>
+        /// <exception cref="FileNotFoundException"></exception>
+        public static List<string> GetRows(string fileName, List<int> indexList, List<bool> activeCells=null, TextSeperator delimeter = TextSeperator.tab)
+        {
+            if (string.IsNullOrEmpty(fileName)) throw new ArgumentNullException(nameof(fileName), "fileName not exist");
+            if (indexList == null || !indexList.Any()) throw new ArgumentNullException(nameof(fileName), "row index list is empty");
+
+            List<string> selectedRows = new List<string>();
+
+            if (File.Exists(fileName))
+            {
+                using (var file = File.Open(fileName, FileMode.Open, FileAccess.Read))
+                {
+
+                    using (StreamReader streamReader = new StreamReader(file, Encoding.UTF8))
+                    {
+                        // skipp all empty rows
+                        string line;
+                        int index = 0;
+                        while ((line = streamReader.ReadLine()) != null)
+                        {
+                            if (!string.IsNullOrWhiteSpace(line))
+                            {
+                                
+
+                                // check if index is in indexList
+                                if (indexList.Contains(index))
+                                {
+                                    selectedRows.Add(getSubsetOfLine(line, activeCells, delimeter));
+                                }
+
+                                // if selectedRows count == indexList, all rows are found, break while loop
+                                if(indexList.Count== selectedRows.Count) break;
+
+                                // count only rows they have data
+                                index++;
+                            }
+                        }
+                    }
+                }
+            }
+            else
+            {
+                throw new FileNotFoundException("file not found");
+            }
+
+            return selectedRows;
+        }
+
+        private static string getSubsetOfLine(string line, List<bool> activeCells, TextSeperator delimeter)
+        {
+            // if cell list exist and entry are false, means 
+            // from the row we want a subset of cells
+            if (activeCells != null && activeCells.Any())
+            {
+                #region subset of row
+
+                List<string> subset = new List<string>();
+                int cellCount = activeCells.Count;
+
+                char d = AsciiFileReaderInfo.GetSeperator(delimeter);
+                string[] cells = line.Split(d);
+                int rowSplit = cells.Length;
+
+                // compare cell count with length with row split by text seperator
+                if (cellCount < rowSplit) // number is differ, create a subset
+                {
+                    for (int i = 0; i < activeCells.Count; i++)
+                    {
+                        if (activeCells[i]) subset.Add(cells[i]);
+                    }
+
+                    return String.Join("" + d, subset.ToArray());
+                }
+                else // both have the same lenght
+                {
+                    return line;
+                }
+
+                
+                #endregion
+
+            }
+            else // full row is wanted
+            {
+                return line;
+            }
+        }
+
+        public static List<string> GetRandowRows(string fileName, long total, long selection, long dataStart=0)
         {
             if (string.IsNullOrEmpty(fileName)) throw new ArgumentNullException(nameof(fileName), "fileName not exist");
             if (total==0) throw new Exception("total can not be 0");
@@ -673,7 +853,7 @@ namespace BExIS.IO.Transform.Input
                 long c = 0;
                 do // run random index till int not exist in the selectRowsIndex
                 {
-                    c = Convert.ToInt64(rand.Next(total));
+                    c = Convert.ToInt64(rand.Next(Convert.ToInt32(dataStart), Convert.ToInt32(total)+1));
                 }
                 while (selectedRowsIndex.Contains(c));
 
@@ -692,8 +872,10 @@ namespace BExIS.IO.Transform.Input
                         while ((line = streamReader.ReadLine()) != null)
                         {
                             lineCount++;
-                            if (selectedRowsIndex.Contains(lineCount))
+                            if (!string.IsNullOrWhiteSpace(line) && selectedRowsIndex.Contains(lineCount))
+                            {
                                 selectedRows.Add(line);
+                            }
                         }
                     }
                 }
@@ -705,6 +887,9 @@ namespace BExIS.IO.Transform.Input
 
             return selectedRows;
         }
+
+        
+
 
         #endregion
 
@@ -827,6 +1012,7 @@ namespace BExIS.IO.Transform.Input
             return false;
         }
 
+  
         #endregion helper methods
 
         #region encoding

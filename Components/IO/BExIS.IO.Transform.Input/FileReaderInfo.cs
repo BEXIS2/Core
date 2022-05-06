@@ -66,6 +66,25 @@ namespace BExIS.IO.Transform.Input
         }
 
         /// <summary>
+        /// Get the DecimalCharacter as char
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>
+        /// <param name="decimalCharacter"> DecimalCharacter as enum</param>  
+        /// <returns>DecimalCharacter as String</returns>
+        public static char GetDecimalCharacter(DecimalCharacter decimalCharacter)
+        {
+            switch (decimalCharacter)
+            {
+                case DecimalCharacter.comma:
+                    return ',';
+                case DecimalCharacter.point:
+                    return '.';
+                default: return '.';
+            }
+        }
+
+        /// <summary>
         /// Get the DecimalCharacter as enum
         /// </summary>
         /// <remarks></remarks>
@@ -79,6 +98,25 @@ namespace BExIS.IO.Transform.Input
                 case "comma":
                     return DecimalCharacter.comma;
                 case "point":
+                    return DecimalCharacter.point;
+                default: return DecimalCharacter.point;
+            }
+        }
+
+        /// <summary>
+        /// Get the DecimalCharacter as enum
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>
+        /// <param name="decimalCharacter"> DecimalCharacter as string</param>  
+        /// <returns>DecimalCharacter as enum</returns>
+        public static DecimalCharacter GetDecimalCharacter(char decimalCharacter)
+        {
+            switch (decimalCharacter)
+            {
+                case ',':
+                    return DecimalCharacter.comma;
+                case '.':
                     return DecimalCharacter.point;
                 default: return DecimalCharacter.point;
             }
