@@ -850,7 +850,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                 catch (Exception ex)
                 {
                     var es = new EmailService();
-                    es.Send(MessageHelper.GetUpdateDatasetHeader(id),
+                    es.Send(MessageHelper.GetDownloadDatasetHeader(id, versionNumber),
                         ex.Message,
                         ConfigurationManager.AppSettings["SystemEmail"]
                         );
