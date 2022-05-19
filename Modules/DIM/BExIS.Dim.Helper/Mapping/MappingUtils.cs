@@ -706,13 +706,13 @@ namespace BExIS.Dim.Helpers.Mapping
                 {
                     List<MappingPartyResultElemenet> tmp = new List<MappingPartyResultElemenet>();
 
-                //Select all mappings where the target is mapped to a party custom attr with the party id
-                IList<Entities.Mapping.Mapping> mapping = CachedMappings();
-                var mapping_result = mapping.Where(m =>
-                            m.Target.ElementId.Equals(targetElementId) &&
-                            m.Target.Type.Equals(targetElementType) &&
-                            m.Source.Type.Equals(LinkElementType.PartyCustomType) &&
-                            m.Parent != null
+                    //Select all mappings where the target is mapped to a party custom attr with the party id
+                    IList<Entities.Mapping.Mapping> mapping = CachedMappings();
+                    var mapping_result = mapping.Where(m =>
+                                m.Target.ElementId.Equals(targetElementId) &&
+                                m.Target.Type.Equals(targetElementType) &&
+                                m.Source.Type.Equals(LinkElementType.PartyCustomType) &&
+                                m.Parent != null
                         );
 
                     foreach (var mapping_element in mapping_result)

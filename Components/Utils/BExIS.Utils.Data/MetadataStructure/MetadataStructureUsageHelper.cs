@@ -204,50 +204,50 @@ namespace BExIS.Utils.Data.MetadataStructure
 
         private bool IsCompound(BaseUsage usage)
         {
-            using (IUnitOfWork unitOfWork = this.GetUnitOfWork())
-            {
+            //using (IUnitOfWork unitOfWork = this.GetUnitOfWork())
+            //{
                 MetadataAttribute ma = null;
 
                 if (usage is MetadataAttributeUsage)
                 {
                     MetadataAttributeUsage mau = (MetadataAttributeUsage)usage;
-                    ma = unitOfWork.GetReadOnlyRepository<MetadataAttribute>().Get(mau.MetadataAttribute.Id);
+                    ma = mau.MetadataAttribute;//unitOfWork.GetReadOnlyRepository<MetadataAttribute>().Get(mau.MetadataAttribute.Id);
                 }
 
                 if (usage is MetadataNestedAttributeUsage)
                 {
                     MetadataNestedAttributeUsage mnau = (MetadataNestedAttributeUsage)usage;
-                    ma = unitOfWork.GetReadOnlyRepository<MetadataAttribute>().Get(mnau.Member.Id);
+                ma = mnau.Member; //unitOfWork.GetReadOnlyRepository<MetadataAttribute>().Get(mnau.Member.Id);
                 }
 
                 if (ma != null && ma.Self is MetadataCompoundAttribute) return true;
 
                 return false;
-            }
+            //}
         }
 
         public bool IsSimple(BaseUsage usage)
         {
-            using (IUnitOfWork unitOfWork = this.GetUnitOfWork())
-            {
+            //using (IUnitOfWork unitOfWork = this.GetUnitOfWork())
+            //{
                 MetadataAttribute ma = null;
 
                 if (usage is MetadataAttributeUsage)
                 {
                     MetadataAttributeUsage mau = (MetadataAttributeUsage)usage;
-                    ma = unitOfWork.GetReadOnlyRepository<MetadataAttribute>().Get(mau.MetadataAttribute.Id);
+                    ma = mau.MetadataAttribute; //unitOfWork.GetReadOnlyRepository<MetadataAttribute>().Get(mau.MetadataAttribute.Id);
                 }
 
                 if (usage is MetadataNestedAttributeUsage)
                 {
                     MetadataNestedAttributeUsage mnau = (MetadataNestedAttributeUsage)usage;
-                    ma = unitOfWork.GetReadOnlyRepository<MetadataAttribute>().Get(mnau.Member.Id);
+                    ma = mnau.Member;//unitOfWork.GetReadOnlyRepository<MetadataAttribute>().Get(mnau.Member.Id);
                 }
 
                 if (ma != null && ma.Self is MetadataSimpleAttribute) return true;
 
                 return false;
-            }
+            //}
         }
 
         public string GetNameOfType(BaseUsage usage)
