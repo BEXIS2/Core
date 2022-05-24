@@ -345,10 +345,11 @@
     <Compile Include="Controllers\SubmissionController.cs" />
     <Compile Include="Controllers\TestController.cs" />
     <Compile Include="DimModule.cs" />
-    <Compile Include="Helper\DimSeedDataGenerator.cs" />
-    <Compile Include="Helper\Helper.cs" />
-    <Compile Include="Helper\MappingHelper.cs" />
-    <Compile Include="Helper\ReleationshipHelper.cs" />
+    <Compile Include="Helpers\DimSeedDataGenerator.cs" />
+    <Compile Include="Helpers\Helper.cs" />
+    <Compile Include="Helpers\MappingHelper.cs" />
+    <Compile Include="Helpers\ReleationshipHelper.cs" />
+    <Compile Include="Helpers\SettingsHelper.cs" />
     <Compile Include="Models\AdminModel.cs" />
     <Compile Include="Models\Api\ApiModels.cs" />
     <Compile Include="Models\DatasetModel.cs" />
@@ -573,6 +574,10 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
+    <Content Include="Helpers\help\help_img1.png" />
+    <Content Include="Helpers\help\help_img2.png" />
+    <Content Include="Helpers\help\help_img3.png" />
+    <Content Include="Helpers\help\help_img4.png" />
     <Content Include="Scripts\2013.2.611\jquery-1.7.1.min.js" />
     <Content Include="Scripts\2013.2.611\jquery.validate.min.js" />
     <Content Include="Scripts\2013.2.611\telerik.all.min.js" />
