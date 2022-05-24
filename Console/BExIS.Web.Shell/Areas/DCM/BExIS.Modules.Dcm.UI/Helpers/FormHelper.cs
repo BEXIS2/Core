@@ -118,7 +118,7 @@ namespace BExIS.Modules.Dcm.UI.Helpers
             locked = MappingUtils.ExistSystemFieldMappings(current.Id, type);
 
             // check if a mapping for parties exits
-            //partyMappingExist = MappingUtils.ExistMappingWithParty(current.Id, type);
+            partyMappingExist = MappingUtils.ExistMappingWithParty(current.Id, type);
 
 
             // check if mapping to this metadata attribute is simple or complex.

@@ -208,8 +208,10 @@ var afterClosed = false;
 function OnChangeTextInput(e, ui) {
 
         console.log("change");
-        console.log("afterClosed : " + afterClosed);
-        console.log("on change text input");
+        console.log("e", e);
+        console.log("target", e.target);
+        console.log("ui", ui);
+  
         var value;
 
         if (ui.item === null) {
@@ -218,6 +220,7 @@ function OnChangeTextInput(e, ui) {
         else {
             value = ui.item.value;
         }
+
         //console.log(value);
         var substr = e.target.id.split('_');
         var id = substr[0];
@@ -226,6 +229,14 @@ function OnChangeTextInput(e, ui) {
         var number = substr[2];
         var ParentModelNumber = substr[3];
         var ParentStepID = substr[5];
+
+        console.log("substr", substr);
+        console.log("id", id);
+        console.log("parentid", parentid);
+        console.log("parentname", parentname);
+        console.log("number", number);
+        console.log("ParentModelNumber", ParentModelNumber);
+        console.log("ParentStepID", ParentStepID);
 
         // after close a autocomplete there is a id in the value, 
         // this should be removed before send to the server
@@ -281,21 +292,21 @@ function OnChangeTextInput(e, ui) {
 
                     console.log("--> only runs when autocomplete is not used");
 
-
                     //check if the parent is set to a party
-                    //console.log("after change");
+                    console.log("after change");
                     var parent = $("#" + ParentStepID)[0];
-                    //console.log(parent);
+                    console.log(parent);
                     var partyid = $(parent).attr("partyid");
-                    //console.log(partyid);
+                    console.log(partyid);
 
                     var partyidConverted = TryParseInt(partyid, null);
                     //console.log("tryparse:" + partyidConverted)
-                    //console.log("partyid" + partyid);
-                    //console.log("partyidConverted" + partyidConverted);
+                    console.log("partyid",partyid);
+                    console.log("partyidConverted",partyidConverted);
 
                     //delete party informations when a party was selected before
                     if (partyidConverted !== null && partyidConverted > 0 && afterClosed === false) {
+                        console.log("go delete it");
                         console.log(ParentStepID);
                         console.log(ParentModelNumber);
 
@@ -646,8 +657,8 @@ function OnClose(e, ui) {
     var parent;
     var parentid = 0;
 
-    //console.log(value);
-    //console.log(type);
+    console.log(value);
+    console.log(type);
     // if the autocomplete type a partycustm type
     if (type === "PartyCustomType") {
         console.log("partycustomtype");
@@ -678,6 +689,8 @@ function OnClose(e, ui) {
                     var xpath = $(e.target).attr("xpath");
 
                     if (simple === "True") {
+
+                        console.log("UpdateSimpleMappingWithParty ");
 
                         UpdateSimpleMappingWithParty(uiid, xpath, partyid, onlyValue);
                     }
