@@ -112,7 +112,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
             // get first cells array- alle should be the same, so first one is ok
             // if all cells are active, set it to null, because selection of rows is after
-            List<bool> activeCells = model.Markers.FirstOrDefault().Cells.Contains(false)?null: model.Markers.FirstOrDefault().Cells;
+            List<bool> activeCells = model.Markers.FirstOrDefault().Cells.Contains(false)?model.Markers.FirstOrDefault().Cells:null;
 
             // contains marker rows in order of model.Markers rows index
             List<string> markerRows = AsciiReader.GetRows(path, rowIndexes, activeCells,AsciiFileReaderInfo.GetSeperator(""+(char)model.Delimeter));
@@ -149,17 +149,27 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             model.Variables = new List<VariableModel>();
             int cells = markerRows.First().Split((char)model.Delimeter).Count();
 
+            var strutcureAnalyzer = new StructureAnalyser();
+
             for (int i = 0; i < cells; i++)
             {
                 VariableModel var = new VariableModel();
 
                 var.Name = getValueFromMarkedRow(markerRows, model.Markers, "variable", (char)model.Delimeter, i);
                 var.Description = getValueFromMarkedRow(markerRows, model.Markers, "description", (char)model.Delimeter, i);
-                var.Unit.Text = getValueFromMarkedRow(markerRows, model.Markers, "unit", (char)model.Delimeter, i);
+                
 
                 // check and get datatype
                 if(systemTypes.ContainsKey(i))
                   var.SystemType = systemTypes[i].Name;
+
+                // get list of possible datatypes
+                var.DataType = strutcureAnalyzer.SuggestDataType(var.SystemType).Select(d=> new KvP(d.Id,d.Name)).FirstOrDefault();
+
+                // get list of possible units
+                var unitInput = getValueFromMarkedRow(markerRows, model.Markers, "unit", (char)model.Delimeter, i);
+                strutcureAnalyzer.SuggestUnit(unitInput, var.DataType.Text).ForEach(u => var.PossibleUnits.Add(new KvP(u.Id, u.Name)));
+                var.Unit = var.PossibleUnits.FirstOrDefault();
 
                 model.Variables.Add(var);
 

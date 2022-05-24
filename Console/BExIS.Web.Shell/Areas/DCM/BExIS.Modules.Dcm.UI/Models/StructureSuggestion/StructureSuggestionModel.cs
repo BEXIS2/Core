@@ -91,6 +91,21 @@ namespace BExIS.Modules.Dcm.UI.Models.StructureSuggestion
         public KvP Unit { get; set; }
         public KvP Template { get; set; }
 
+        ///// <summary>
+        ///// List of possible Datatypes based on the result of the strutcure Analyzer 
+        ///// </summary>
+        //public List<KvP> PossibleDataTypes { get; set; }
+
+        /// <summary>
+        /// List of possible units based on the result of the strutcure Analyzer 
+        /// </summary>
+        public List<KvP> PossibleUnits { get; set; }
+
+        /// <summary>
+        /// List of possible Templates based on the result of the strutcure Analyzer 
+        /// </summary>
+        public List<KvP> PossibleTemplates { get; set; }
+
         public VariableModel()
         {
             Id = 0;
@@ -100,6 +115,10 @@ namespace BExIS.Modules.Dcm.UI.Models.StructureSuggestion
             DataType = new KvP();
             Unit = new KvP();
             Template = new KvP();
-        }
+
+            //PossibleDataTypes = new List<KvP>();
+            PossibleUnits = new List<KvP>();
+            PossibleTemplates = new List<KvP>();
+       }
     }
 }

@@ -246,34 +246,36 @@ namespace BExIS.IO.Transform.Input
             using (var dataTypeManager = new DataTypeManager())
             using (var unitManager = new UnitManager())
             {
+
+                List<Unit> units = new List<Unit>();
+
                 if (string.IsNullOrEmpty(dataType)) // no datatype exist
                 {
-                    var allUnits = unitManager.Repo.Get();
-                    Dictionary<Unit,double> matches = new Dictionary<Unit,double>();
-
-                    foreach (var unit in allUnits)
-                    {   
-                        var ro = new RatcliffObershelp();
-                        var nameSimularity = ro.Similarity(input, unit.Name);
-                        var abbrSimularity = ro.Similarity(input, unit.Abbreviation);
-                        var highest = Math.Max(nameSimularity, abbrSimularity);
-
-                        if (highest>=similarity)
-                        {
-                           matches.Add(unit, highest);
-                        }
-                    }
-
-                    return matches.OrderByDescending(x => x.Value).Select(u=>u.Key).ToList();
+                    units = unitManager.Repo.Get().ToList();
                 }
                 else // datatype is not empty
                 {
                     var dt = dataTypeManager.Repo.Query(d => d.Name.ToLower().Equals(dataType)).FirstOrDefault();
-                    if (dt != null) return unitManager.Repo.Query(u => u.AssociatedDataTypes.Contains(dt)).ToList();
+                    if (dt != null) units = unitManager.Repo.Query(u => u.AssociatedDataTypes.Contains(dt)).ToList();
                 }
-            }
 
-            return new List<Unit>();
+                Dictionary<Unit, double> matches = new Dictionary<Unit, double>();
+
+                foreach (var unit in units)
+                {
+                    var ro = new RatcliffObershelp();
+                    var nameSimularity = ro.Similarity(input, unit.Name);
+                    var abbrSimularity = ro.Similarity(input, unit.Abbreviation);
+                    var highest = Math.Max(nameSimularity, abbrSimularity);
+
+                    if (highest >= similarity)
+                    {
+                        matches.Add(unit, highest);
+                    }
+                }
+
+                return matches.OrderByDescending(x => x.Value).Select(u => u.Key).ToList();
+            }
         }
 
         public List<Entites.VariableTemplate> SuggestTemplate(string name, long unitId)

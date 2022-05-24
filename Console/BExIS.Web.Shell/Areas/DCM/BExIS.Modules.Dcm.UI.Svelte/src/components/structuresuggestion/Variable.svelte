@@ -1,7 +1,7 @@
 <script>
 
 import {FormGroup, Label,Input, Col, Row } from 'sveltestrap';
-
+import DropdownKvP  from '../form/DropdownKvP.svelte'
 export let variable;
 export let index;
 
@@ -22,8 +22,7 @@ export let index;
 </FormGroup>
 
 <FormGroup>
- <Label>System Type:</Label> 
- <Input id="sytemType" bind:value={variable.systemType}></Input> 
+ <Label>System Type: {variable.systemType}</Label>
 </FormGroup>
 
 <FormGroup>
@@ -31,10 +30,16 @@ export let index;
  <Input id="dataType" bind:value={variable.dataType.text}></Input> 
 </FormGroup>
 
-<FormGroup>
+<!-- <FormGroup>
  <Label>Unit:</Label> 
  <Input id="unit" bind:value={variable.unit.text}></Input> 
-</FormGroup>
+</FormGroup> -->
+
+<DropdownKvP
+      id="units"
+      title="Unit" 
+      source={variable.possibleUnits}
+      bind:target={variable.unit}/>
 
 <FormGroup>
  <Label>Template:</Label> 
