@@ -5,6 +5,7 @@ using BExIS.Dim.Helpers.Mapping;
 using BExIS.Dim.Services;
 using BExIS.Dlm.Entities.Data;
 using BExIS.Dlm.Services.Data;
+using BExIS.Modules.Dim.UI.Helpers;
 using BExIS.Modules.Dim.UI.Models;
 using BExIS.Security.Entities.Authorization;
 using BExIS.Security.Services.Authorization;
@@ -57,7 +58,6 @@ namespace BExIS.Modules.Dim.UI.Controllers
 
         public ActionResult _grantDoi(long datasetVersionId)
         {
-
             using (DatasetManager datasetManager = new DatasetManager())
             using (PublicationManager publicationManager = new PublicationManager())
             using (EntityPermissionManager entityPermissionManager = new EntityPermissionManager())
@@ -74,56 +74,61 @@ namespace BExIS.Modules.Dim.UI.Controllers
 
                 string datasetUrl = new Uri(new Uri(Request.Url.GetLeftPart(UriPartial.Authority)), Url.Content("~/ddm/Data/ShowData/" + datasetVersion.Dataset.Id).ToString()).ToString();
 
-                string doi = new DataCiteDoiHelper().issueDoi(latestDatasetVersion, datasetUrl, versionNo);
 
-                publication.DatasetVersion = latestDatasetVersion;
-                //  publication.Doi = doi;
-                publication.ExternalLink = doi;
-                publication.Status = "DOI Registered";
-
-                publication = publicationManager.UpdatePublication(publication);
-
-                EmailService es = new EmailService();
-                List<string> tmp = null;
-                string title = new XmlDatasetHelper().GetInformationFromVersion(latestDatasetVersion.Id, NameAttributeValues.title);
-                string subject = "DOI Request for Dataset " + title + "(" + latestDatasetVersion.Dataset.Id + ")";
-                string body = "<p>DOI reqested for dataset <a href=\"" + datasetUrl + "\">" + title + "(" + latestDatasetVersion.Dataset.Id + ")</a>, was granted by the Datamanager.</p>" +
-                    "<p>The doi is<a href=\"https://doi.org/" + doi + "\">" + doi + "</a></p>";
-
-                tmp = new List<string>();
-                List<string> emails = new List<string>();
-                tmp = MappingUtils.GetValuesFromMetadata((int)Key.Email, LinkElementType.Key, latestDatasetVersion.Dataset.MetadataStructure.Id, XmlUtility.ToXDocument(latestDatasetVersion.Metadata));
-
-                foreach (string s in tmp)
+                SettingsHelper settingsHelper = new SettingsHelper();
+                if (settingsHelper.KeyExist("doi_proxy") && settingsHelper.KeyExist("doi_token"))
                 {
-                    var email = s.Trim();
-                    if (!string.IsNullOrEmpty(email) && !emails.Contains(email))
+                    string doi = new DataCiteDoiHelper(settingsHelper.GetValue("doi_proxy"), settingsHelper.GetValue("doi_token")).issueDoi(latestDatasetVersion, datasetUrl, versionNo);
+
+                    publication.DatasetVersion = latestDatasetVersion;
+                    //  publication.Doi = doi;
+                    publication.ExternalLink = doi;
+                    publication.Status = "DOI Registered";
+
+                    publication = publicationManager.UpdatePublication(publication);
+
+                    EmailService es = new EmailService();
+                    List<string> tmp = null;
+                    string title = new XmlDatasetHelper().GetInformationFromVersion(latestDatasetVersion.Id, NameAttributeValues.title);
+                    string subject = "DOI Request for Dataset " + title + "(" + latestDatasetVersion.Dataset.Id + ")";
+                    string body = "<p>DOI reqested for dataset <a href=\"" + datasetUrl + "\">" + title + "(" + latestDatasetVersion.Dataset.Id + ")</a>, was granted by the Datamanager.</p>" +
+                        "<p>The doi is<a href=\"https://doi.org/" + doi + "\">" + doi + "</a></p>";
+
+                    tmp = new List<string>();
+                    List<string> emails = new List<string>();
+                    tmp = MappingUtils.GetValuesFromMetadata((int)Key.Email, LinkElementType.Key, latestDatasetVersion.Dataset.MetadataStructure.Id, XmlUtility.ToXDocument(latestDatasetVersion.Metadata));
+
+                    foreach (string s in tmp)
                     {
-                        emails.Add(email);
+                        var email = s.Trim();
+                        if (!string.IsNullOrEmpty(email) && !emails.Contains(email))
+                        {
+                            emails.Add(email);
+                        }
+
                     }
 
-                }
+                    es.Send(subject, body, emails);
+                    es.Send(subject, body, ConfigurationManager.AppSettings["SystemEmail"]);
 
-                es.Send(subject, body, emails);
-                es.Send(subject, body, ConfigurationManager.AppSettings["SystemEmail"]);
+                    long entityId = entityManager.Entities.Where(e => e.Name.ToLower().Equals("dataset")).FirstOrDefault().Id;
 
-                long entityId = entityManager.Entities.Where(e => e.Name.ToLower().Equals("dataset")).FirstOrDefault().Id;
+                    EntityPermission entityPermission = entityPermissionManager.Find(null, entityId, datasetVersion.Dataset.Id);
 
-                EntityPermission entityPermission = entityPermissionManager.Find(null, entityId, datasetVersion.Dataset.Id);
+                    if (entityPermission == null)
+                    {
+                        entityPermissionManager.Create(null, entityId, datasetVersion.Dataset.Id, (int)RightType.Read);
+                    }
+                    else
+                    {
+                        entityPermission.Rights = (int)RightType.Read;
+                        entityPermissionManager.Update(entityPermission);
+                    }
 
-                if (entityPermission == null)
-                {
-                    entityPermissionManager.Create(null, entityId, datasetVersion.Dataset.Id, (int)RightType.Read);
-                }
-                else
-                {
-                    entityPermission.Rights = (int)RightType.Read;
-                    entityPermissionManager.Update(entityPermission);
-                }
-
-                if (this.IsAccessible("DDM", "SearchIndex", "ReIndexSingle"))
-                {
-                    var x = this.Run("DDM", "SearchIndex", "ReIndexSingle", new RouteValueDictionary() { { "id", datasetVersion.Dataset.Id } });
+                    if (this.IsAccessible("DDM", "SearchIndex", "ReIndexSingle"))
+                    {
+                        var x = this.Run("DDM", "SearchIndex", "ReIndexSingle", new RouteValueDictionary() { { "id", datasetVersion.Dataset.Id } });
+                    }
                 }
 
                 return PartialView("_requestRow", new PublicationModel()
