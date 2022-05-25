@@ -59,7 +59,7 @@
 
 }
 
-<div id="@stepId" name="@Model.UsageName" number="@Model.Number" class="metadataCompountAttributeUsage @styleClass">
+<div id="@stepId" name="@Model.UsageName" number="@Model.Number" class="metadataCompountAttributeUsage @styleClass" partyid="@Model.Model.PartyId" >
     @if (@Model != null && !(hideOptional && Model.IsEmpty() && locked))
     {
 
