@@ -21,16 +21,23 @@ namespace BExIS.Dim.Helpers
 {
     public class DataCiteDoiHelper
     {
-        private string getDOI(long id, string token)
+        private string baseUrl { get; set; }
+        private string token { get; set; }
+
+
+        public DataCiteDoiHelper(string baseUrl, string token)
         {
-            var client = new RestClient(ConfigurationManager.AppSettings["lucifron"]);
+            this.baseUrl = baseUrl;
+            this.token = token;
+        }
+
+        private string getDOI(long id)
+        {
+            var client = new RestClient(baseUrl);
             client.Authenticator = new JwtAuthenticator(token);
 
             var request = new RestRequest($"api/dois/{id}", Method.GET);
             var response = client.Execute(request);
-
-            JObject joResponse = JObject.Parse(response.Content);
-            string doi = joResponse["doi"].ToString();
 
             return response.Content;
         }
@@ -58,25 +65,19 @@ namespace BExIS.Dim.Helpers
 
             var dataCiteModel = new DataCiteModel()
             {
-                Data = new DataCiteData()
-                {
-                    Type = DataCiteType.DOIs,
-                    Attributes = new DataCiteAttributes()
-                    {
-                        Creators = authors.Select(a => DataCiteCreator.Convert(a, DataCiteCreatorType.Personal)).ToList(),
-                        Titles = titles.Select(t => new DataCiteTitle() { Title = t }).ToList(),
-                        Subjects = subjects.Select(s => new DataCiteSubject() { Subject = s }).ToList(),
-                        Version = $"{version}",
-                        Dates = new List<DataCiteDate>() { new DataCiteDate() { DateType = DataCiteDateType.Issued, Date = $"{DateTime.UtcNow.Year}" } },
-                        DOI = doi,
-                        Event = DataCiteEventType.Hide,
-                        Types = new DataCiteTypes() { ResourceTypeGeneral = DataCiteResourceType.Dataset },
-                        PublicationYear = DateTime.UtcNow.Year,
-                        Publisher = ConfigurationManager.AppSettings["doiPublisher"],
-                        URL = $"{datasetUrl}?version={version}",
-                        Descriptions = descriptions.Select(d => new DataCiteDescription() { Language = null, Description = d, DescriptionType = DataCiteDescriptionType.Abstract }).ToList()
-                    }
-                }
+                Type = DataCiteType.DOIs,
+                Creators = authors.Select(a => new DataCiteCreator(a, DataCiteCreatorType.Personal)).ToList(),
+                Titles = titles.Select(t => new DataCiteTitle(t)).ToList(),
+                Subjects = subjects.Select(s => new DataCiteSubject(s)).ToList(),
+                Version = $"{version}",
+                Dates = new List<DataCiteDate>() { new DataCiteDate($"{DateTime.UtcNow.Year}", DataCiteDateType.Issued) },
+                Doi = doi,
+                Event = DataCiteEventType.Hide,
+                ResourceTypeGeneral = DataCiteResourceType.Dataset,
+                PublicationYear = DateTime.UtcNow.Year,
+                Publisher = ConfigurationManager.AppSettings["doiPublisher"],
+                URL = $"{datasetUrl}?version={version}",
+                Descriptions = descriptions.Select(d => new DataCiteDescription(d, null, DataCiteDescriptionType.Abstract)).ToList()
             };
 
             var request = new RestRequest($"api/dois", Method.POST).AddJsonBody(dataCiteModel);
