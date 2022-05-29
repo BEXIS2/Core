@@ -42,7 +42,7 @@ namespace BExIS.Dim.Helpers
             return response.Content;
         }
 
-        private bool sendMetadata(DatasetVersion datasetVersion, string datasetUrl, long version, string doi, string token)
+        private bool sendMetadata(DatasetVersion datasetVersion, string datasetUrl, long version, string doi)
         {
             //
             // authors
@@ -60,7 +60,7 @@ namespace BExIS.Dim.Helpers
             // descriptions
             var descriptions = MappingUtils.GetValuesFromMetadata((int)Key.Description, LinkElementType.Key, datasetVersion.Dataset.MetadataStructure.Id, XmlUtility.ToXDocument(datasetVersion.Metadata));
 
-            var client = new RestClient(ConfigurationManager.AppSettings["lucifron"]);
+            var client = new RestClient(baseUrl);
             client.Authenticator = new JwtAuthenticator(token);
 
             var dataCiteModel = new DataCiteModel()
