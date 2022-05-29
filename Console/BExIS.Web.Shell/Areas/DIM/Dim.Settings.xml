@@ -3,9 +3,21 @@
 	<entry key="help" value="https://github.com/BEXIS2/Documents/blob/2.14.4/Manuals/DIM/Manual.md" type="String"/>
 	<entry key="key2" value="value2" type="String"/>
 	<entry key="key3" value="21" type="Int16"/>
-	<entry key="doi_testmode" value="false" type="Boolean" />
-	<entry key="doi_token" value="uJoCANaYWiahyKD8xwyHPwxxaPS9Q6EaayqCwgSXpXvGqnsYjsqinCiZ7tpxk2io" type="String" />
-	<entry key="doi_proxy" value="https://train.bexis2.uni-jena.de" type="String" />
-	<entry key="doi_provider" value="datacite" type="String" />
-	<entry key="doi_publisher" value="German Centre for Integrative Biodiversity Research (iDiv) Halle-Jena-Leipzig" type="String" />
+	<entry key="datacite_testmode" value="false" type="Boolean" />
+	<entry key="datacite_token" value="uJoCANaYWiahyKD8xwyHPwxxaPS9Q6EaayqCwgSXpXvGqnsYjsqinCiZ7tpxk2io" type="String" />
+	<entry key="datacite_proxy" value="https://train.bexis2.uni-jena.de" type="String" />
+	<entry key="datacite_provider" value="datacite" type="String" />
+	<entry key="datacite_publisher" value="German Centre for Integrative Biodiversity Research (iDiv) Halle-Jena-Leipzig" type="String" />
+	<datacite>
+		<entry key="proxy" value="https://train.bexis2.uni-jena.de" />
+		<entry key="token" value="uJoCANaYWiahyKD8xwyHPwxxaPS9Q6EaayqCwgSXpXvGqnsYjsqinCiZ7tpxk2io" />
+		<entry key="provider" value="datacite" />
+		<mappings>
+			<!--types: key, metadata, entity, fixed-->
+			<!--value: key - System Key, metadata - xpath, entity - property, fixed - value-->
+			<!--party: properties of party-->
+			<entry key="authors" type="key" value="author" party="[firstname] [lastname]"  />
+			<entry key="publisher" type="fixed" value="German Centre for Integrative Biodiversity Research (iDiv) Halle-Jena-Leipzig" />
+		</mappings>
+	</datacite>
 </settings>
