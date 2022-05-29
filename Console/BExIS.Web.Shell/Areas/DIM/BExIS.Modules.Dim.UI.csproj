@@ -352,6 +352,7 @@
     <Compile Include="Helpers\SettingsHelper.cs" />
     <Compile Include="Models\AdminModel.cs" />
     <Compile Include="Models\Api\ApiModels.cs" />
+    <Compile Include="Models\DataCiteModels.cs" />
     <Compile Include="Models\DatasetModel.cs" />
     <Compile Include="Models\DatasetVersionModel.cs" />
     <Compile Include="Models\DataTupleCsvFormatter.cs" />
