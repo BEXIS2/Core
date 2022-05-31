@@ -305,7 +305,7 @@ namespace BExIS.Modules.Dcm.UI.Helper.API
                         }
                     } while (rows.Count() > 0 || inputWasAltered == true);
 
-                    datasetManager.CheckInDataset(id, "via api", userName);
+                    datasetManager.CheckInDataset(id, "via API", userName);
 
                     string title = workingCopy.Title;
 
