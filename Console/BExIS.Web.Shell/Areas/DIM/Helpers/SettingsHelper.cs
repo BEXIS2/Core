@@ -1,4 +1,5 @@
-﻿using BExIS.Modules.Dim.UI.Models;
+﻿using BExIS.Dim.Helpers.Models;
+using BExIS.Modules.Dim.UI.Models;
 using BExIS.Xml.Helpers;
 using System;
 using System.Collections.Generic;
@@ -39,12 +40,21 @@ namespace BExIS.Modules.Dim.UI.Helpers
             return value;
         }
 
-        public List<DataCiteMapping> GetMappings()
+        public List<DataCiteMapping> GetDataCiteMappings()
         {
             XDocument settings = XDocument.Load(filePath);
             List<XElement> mappings = settings.Elements("mappings").ToList();
 
-            return mappings.Select(m => new DataCiteMapping(m.Attribute("key").Value, m.Attribute("type").Value, m.Attribute("value").Value, m.Attribute("party")?.Value)).ToList();
+            //return mappings.Select(m => new DataCiteMapping(m.Attribute("name")?.Value, m.Attribute("type")?.Value, m.Attribute("value")?.Value, m.Attribute("partyAttributes")?.Value.Split(';').Select(part => part.Split('=')).Where(part => part.Length == 2).ToDictionary(sp => sp[0], sp => sp[1]))).ToList();
+            return mappings.Select(m => new DataCiteMapping(m.Attribute("name")?.Value, m.Attribute("type")?.Value, m.Attribute("value")?.Value, Convert.ToBoolean(m.Attribute("useParty")?.Value), m.Attribute("partyAttributes")?.Value.Split(';').Select(part => part.Split('=')).Where(part => part.Length == 2).ToDictionary(sp => sp[0], sp => sp[1]))).ToList();
+        }
+
+        public string GetDataCiteProperty(string propertyName)
+        {
+            XDocument settings = XDocument.Load(filePath);
+            List<XElement> datacite = settings.Elements("datacite").ToList();
+
+            return datacite.Select(m => m.Attribute(propertyName).Value).FirstOrDefault();
         }
     }
 }
