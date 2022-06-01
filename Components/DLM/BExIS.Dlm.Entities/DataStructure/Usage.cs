@@ -50,6 +50,10 @@ namespace BExIS.Dlm.Entities.DataStructure
 
 
         public virtual ICollection<Constraint> VariableConstraints { get; set; }
+
+        public virtual ICollection<MissingValue> MissingValues { get; set; } // 0..1
+
+        public virtual int DisplayPatternId { get; set; }
     }
 
     public class VariableInstance : Variable
@@ -61,13 +65,10 @@ namespace BExIS.Dlm.Entities.DataStructure
         /// <seealso cref=""/>
         public virtual StructuredDataStructure DataStructure { get; set; }
 
-        public virtual VariableTemplate VariableTemplate { get; set; }
-
-        public virtual ICollection<MissingValue> MissingValues { get; set; } // 0..1
+        public virtual VariableTemplate VariableTemplate { get; set; }        
 
         public virtual int VarTemplate { get; set; }
 
-        public virtual int DisplayPatternId { get; set; }
         public virtual bool IsKey { get; set; }
 
         public VariableInstance()
