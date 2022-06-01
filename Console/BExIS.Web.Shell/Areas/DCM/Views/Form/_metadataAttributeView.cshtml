@@ -324,8 +324,14 @@
                                     {
                                         if (Model.EntityMappingExist && !string.IsNullOrEmpty(Model.EntityUrl))
                                         {
-                                            <a href="@Model.EntityUrl" target="_blank">@Model.Value</a>
+                                            <a href="@Model.EntityUrl" target="_blank">@Model.Value</a> 
                                         }
+                                        else if (displayName == "Email")
+                                        {
+                                            string value = Model.Value.ToString();
+                                            string[] email_parts = value.Split('@');
+                                            value = String.Join("<span>werwe</span>", email_parts);
+                                            @email_parts[0]<span>&#x40;</span><!--<span>werwe</span>-->@email_parts[1] }
                                         else
                                         {
                                             @Html.DisplayWithLinksFor(m => m.Value)
