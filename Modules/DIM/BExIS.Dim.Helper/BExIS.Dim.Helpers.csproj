@@ -59,8 +59,8 @@
     <Reference Include="Ionic.Zip">
       <HintPath>..\..\..\Libraries\Ionic.Zip.dll</HintPath>
     </Reference>
-    <Reference Include="Lucifron.ReST.Library, Version=1.0.0.9, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\..\packages\Lucifron.ReST.Library.1.0.0.9\lib\net452\Lucifron.ReST.Library.dll</HintPath>
+    <Reference Include="Lucifron.ReST.Library, Version=1.0.0.10, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\..\packages\Lucifron.ReST.Library.1.0.0.10\lib\net452\Lucifron.ReST.Library.dll</HintPath>
     </Reference>
     <Reference Include="NameParser, Version=1.5.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\..\packages\NameParserSharp.1.5.0\lib\net45\NameParser.dll</HintPath>
@@ -112,6 +112,9 @@
     <Compile Include="GFBIO\GFBIOSubmissionHelper.cs" />
     <Compile Include="GFBIO\GFBIOWebserviceManager.cs" />
     <Compile Include="Mapping\MappingUtils.cs" />
+    <Compile Include="Models\DataCiteModels.cs" />
+    <Compile Include="Services\DataCiteCreatorsService.cs" />
+    <Compile Include="Services\DataCiteTitlesService.cs" />
     <Compile Include="SubmissionManager.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="WebServiceHelper.cs" />
