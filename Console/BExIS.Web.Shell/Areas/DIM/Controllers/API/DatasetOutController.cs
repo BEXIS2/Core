@@ -7,6 +7,7 @@ using BExIS.Dlm.Services.Party;
 using BExIS.Modules.Dim.UI.Models.Api;
 using BExIS.Utils.Route;
 using BExIS.Xml.Helpers;
+using NameParser;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -123,6 +124,7 @@ namespace BExIS.Modules.Dim.UI.Controllers.API
                     Version = versionNumber,
                     VersionId = datasetVersion.Id,
                     VersionName = datasetVersion.VersionName,
+                    VersionDate = datasetVersion.Timestamp,
                     VersionPublicAccess = datasetVersion.PublicAccess,
                     VersionPublicAccessDate = datasetVersion.PublicAccessDate.ToString(new CultureInfo("en-US")),
                     Title = datasetVersion.Title,
@@ -155,6 +157,8 @@ namespace BExIS.Modules.Dim.UI.Controllers.API
                 // get isMain parts for all found parties if exists (e.g. first and last name)
                 datasetModel.Parties = getPartyIsMainAttributesForParties(elements);
 
+                // get splitted names for all non-found parties
+                datasetModel.Names = getSplitedNames(elements);
 
                 var publicAndDate = getPublicAndDate(id);
                 // check is public
@@ -225,6 +229,7 @@ namespace BExIS.Modules.Dim.UI.Controllers.API
                         Version = version,
                         VersionId = datasetVersion.Id,
                         VersionName = datasetVersion.VersionName,
+                        VersionDate = datasetVersion.Timestamp,
                         VersionPublicAccess = datasetVersion.PublicAccess,
                         VersionPublicAccessDate = datasetVersion.PublicAccessDate.ToString(new CultureInfo("en-US")),
                         Title = datasetVersion.Title,
@@ -257,6 +262,9 @@ namespace BExIS.Modules.Dim.UI.Controllers.API
                     // get isMain parts for all found parties if exists (e.g. first and last name)
                     datasetModel.Parties = getPartyIsMainAttributesForParties(elements);
 
+                    // get splitted names for all non-found parties
+                    datasetModel.Names = getSplitedNames(elements);
+
                     var publicAndDate = getPublicAndDate(id);
                     // check is public
                     datasetModel.IsPublic = publicAndDate.Item1;
@@ -288,7 +296,8 @@ namespace BExIS.Modules.Dim.UI.Controllers.API
             if (e.Parent != null) return getPartyId(e.Parent);
 
             return 0;
-        } 
+        }
+
 
         private Dictionary<string, Dictionary<string, string>> getPartyIsMainAttributesForParties(Dictionary<string, List<XElement>> elements)
         {
@@ -327,6 +336,39 @@ namespace BExIS.Modules.Dim.UI.Controllers.API
                
             }
 
+            return dict;
+        }
+
+        private Dictionary<string, Dictionary<string, string>> getSplitedNames(Dictionary<string, List<XElement>> elements)
+        {
+            Dictionary<string, Dictionary<string, string>> dict = new Dictionary<string, Dictionary<string, string>>();
+            using (PartyManager partyManager = new PartyManager())
+            {
+                foreach (var key in elements)
+                {
+                    foreach (XElement element in key.Value)
+                    {
+                        long partyid = getPartyId(element);
+                        Dictionary<string, string> dict2 = new Dictionary<string, string>();
+                        // id direct 
+                        Console.WriteLine(partyid);
+                        if (partyid > 0) { }
+                        else
+                        {
+                            var person = new HumanName(element.Value);
+                            var GivenName = (person.Middle.Length > 0) ? $"{person.First} {person.Middle}" : $"{person.First}";
+                            var FamilyName = person.Last;
+                            dict2.Add("GivenName", GivenName);
+                            dict2.Add("FamilyName", FamilyName);
+
+                            if (!dict.ContainsKey(element.Value))
+                            {
+                                dict.Add(element.Value, dict2);
+                            }
+                        }
+                    }
+                }
+            }
             return dict;
         }
 

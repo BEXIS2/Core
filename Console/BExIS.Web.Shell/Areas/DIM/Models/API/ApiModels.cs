@@ -40,6 +40,8 @@ namespace BExIS.Modules.Dim.UI.Models.Api
         public string VersionPublicAccessDate { get; set; }
         public Dictionary<string, string> AdditionalInformations { get; set; }
         public Dictionary<string, Dictionary<string, string>> Parties { get; set; }
+        public DateTime VersionDate { get; set; }
+        public object Names { get; internal set; }
 
         public ApiDatasetModel()
         {
