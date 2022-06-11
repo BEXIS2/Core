@@ -24,7 +24,7 @@
     bool hideOptional = false;
 
     string displayName = "";
-    displayName = char.ToUpper(Model.DisplayName()[0]) + Model.DisplayName().Substring(1);
+    displayName = char.ToUpper(Model.DisplayName()[0]) + Model.DisplayName().Substring(1).Replace("_", " ");
 
     string lvl = Model.Level.ToString();
     if (Model.Level >= 9)
