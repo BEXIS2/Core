@@ -115,6 +115,7 @@
     <Compile Include="Models\DataCiteModels.cs" />
     <Compile Include="Services\DataCiteCreatorsService.cs" />
     <Compile Include="Services\DataCiteTitlesService.cs" />
+    <Compile Include="Services\DataCiteVersionService.cs" />
     <Compile Include="SubmissionManager.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="WebServiceHelper.cs" />
