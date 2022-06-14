@@ -1111,7 +1111,9 @@ namespace BExIS.Dlm.Services.Party
         {
             //retrieve all the records for this partyId
             var partyCustomGridColumns = PartyCustomGridColumnsRepository.Get(cc => (cc.CustomAttribute.PartyType.Id == partyTypeId || cc.TypePair.SourcePartyType.Id == partyTypeId)
-            && (userId.HasValue ? cc.UserId.Value == userId.Value : !cc.UserId.HasValue));
+            && (cc.UserId == userId));
+            //&& ((userId.HasValue == true && cc.UserId.Value == userId.Value) || !userId.HasValue));
+
             if (!all)
                 partyCustomGridColumns = partyCustomGridColumns.Where(cc => cc.Enable).ToList();
             return partyCustomGridColumns;
