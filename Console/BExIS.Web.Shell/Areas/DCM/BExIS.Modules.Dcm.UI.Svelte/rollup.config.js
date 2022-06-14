@@ -138,8 +138,8 @@ export default [
 		// getConfig("entities"),
 		// // getConfig("view"),
 		// // getLocalConfig("view"),
-		// getLocalConfig("edit"),
-		// getConfig("edit"),
+		getLocalConfig("edit"),
+		getConfig("edit"),
 		// getConfig("messages"),
 		getLocalConfig("structuresuggestion"),
 		getConfig("structuresuggestion")

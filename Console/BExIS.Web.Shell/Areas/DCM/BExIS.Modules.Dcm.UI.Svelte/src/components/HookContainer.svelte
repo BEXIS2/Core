@@ -7,15 +7,13 @@
 
  export let displayName;
  export let content=9;
- 
+
  $:error = [];
  $:success = null;
  $:warnings = [];
 
 onMount(async () => {
 
-  offset = titlePosition=="left"?0:2;
-  console.log({displayName}+" offset",offset); 
 
 
 })

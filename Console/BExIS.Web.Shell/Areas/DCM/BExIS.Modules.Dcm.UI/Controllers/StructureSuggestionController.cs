@@ -153,26 +153,29 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
             for (int i = 0; i < cells; i++)
             {
-                VariableModel var = new VariableModel();
+                if (activeCells[i]) // only create a var to the model if the cell is active
+                {
 
-                var.Name = getValueFromMarkedRow(markerRows, model.Markers, "variable", (char)model.Delimeter, i);
-                var.Description = getValueFromMarkedRow(markerRows, model.Markers, "description", (char)model.Delimeter, i);
-                
+                    VariableModel var = new VariableModel();
 
-                // check and get datatype
-                if(systemTypes.ContainsKey(i))
-                  var.SystemType = systemTypes[i].Name;
+                    var.Name = getValueFromMarkedRow(markerRows, model.Markers, "variable", (char)model.Delimeter, i);
+                    var.Description = getValueFromMarkedRow(markerRows, model.Markers, "description", (char)model.Delimeter, i);
 
-                // get list of possible datatypes
-                var.DataType = strutcureAnalyzer.SuggestDataType(var.SystemType).Select(d=> new KvP(d.Id,d.Name)).FirstOrDefault();
 
-                // get list of possible units
-                var unitInput = getValueFromMarkedRow(markerRows, model.Markers, "unit", (char)model.Delimeter, i);
-                strutcureAnalyzer.SuggestUnit(unitInput, var.DataType.Text).ForEach(u => var.PossibleUnits.Add(new KvP(u.Id, u.Name)));
-                var.Unit = var.PossibleUnits.FirstOrDefault();
+                    // check and get datatype
+                    if (systemTypes.ContainsKey(i))
+                        var.SystemType = systemTypes[i].Name;
 
-                model.Variables.Add(var);
+                    // get list of possible datatypes
+                    var.DataType = strutcureAnalyzer.SuggestDataType(var.SystemType).Select(d => new KvP(d.Id, d.Name)).FirstOrDefault();
 
+                    // get list of possible units
+                    var unitInput = getValueFromMarkedRow(markerRows, model.Markers, "unit", (char)model.Delimeter, i);
+                    strutcureAnalyzer.SuggestUnit(unitInput, var.DataType.Text).ForEach(u => var.PossibleUnits.Add(new KvP(u.Id, u.Name)));
+                    var.Unit = var.PossibleUnits.FirstOrDefault();
+
+                    model.Variables.Add(var);
+                }
             }
 
             // get default missing values

@@ -31,8 +31,8 @@
     <TargetFrameworkProfile />
     <PostSharpHostConfigurationFile>Web.config</PostSharpHostConfigurationFile>
     <DontImportPostSharp>True</DontImportPostSharp>
-	<TypeScriptCompileBlocked>True</TypeScriptCompileBlocked>
-	<TypeScriptCompileOnSaveEnabled>False</TypeScriptCompileOnSaveEnabled>
+    <TypeScriptCompileBlocked>True</TypeScriptCompileBlocked>
+    <TypeScriptCompileOnSaveEnabled>False</TypeScriptCompileOnSaveEnabled>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>

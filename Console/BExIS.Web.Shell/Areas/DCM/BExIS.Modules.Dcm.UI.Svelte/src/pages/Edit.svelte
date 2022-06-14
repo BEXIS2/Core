@@ -128,7 +128,7 @@ let visible=false;
 
 </div>
 <!-- ResultMessageView -->
-<Message bind:view={messageView} {id} {version}/>
+<!-- <Message bind:view={messageView} {id} {version}/> -->
 
 </div>
 </div>

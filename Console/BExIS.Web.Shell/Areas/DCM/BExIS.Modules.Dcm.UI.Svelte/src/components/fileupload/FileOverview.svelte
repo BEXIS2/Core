@@ -28,6 +28,7 @@ onMount(async () => {
   console.log("mount file overview");
   console.log(descriptionType);
   console.log(withDescription);
+  console.log("files",files);
 
 })
 
@@ -52,17 +53,19 @@ function setDescriptionValues(type)
 
 }
 
+
+
 </script>
 
 {#if files}
 
-<!-- <Container> -->
+<!--<Container> -->
  {#each files as item, index}
 
   <FileOverviewItem 
-    {id} file={item.name} {...item}  {save} {remove} 
+    {id} file={item.name} {...item}  {save} {remove}
     on:removed={e => handleRemoveFile(e, index)} 
-    on:saved={handleSave} {withDescription}/>
+    on:saved={handleSave} {withDescription} />
  {/each}
 <!-- </Container> -->
 

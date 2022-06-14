@@ -136,7 +136,5 @@ export default [
 	 getLocalConfig("shell"),
 		getConfig("shell"),
 		getLocalConfig("menu"),
-		getConfig("menu"),
-		getConfig("uitest"),
-		getLocalConfig("uitest")
+		getConfig("menu")
 ]
