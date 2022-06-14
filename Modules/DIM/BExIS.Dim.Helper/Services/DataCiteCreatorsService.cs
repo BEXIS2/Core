@@ -15,14 +15,14 @@ namespace BExIS.Dim.Helpers.Services
 {
     public class DataCiteCreatorsService
     {
-        public List<DataCiteCreator> GetCreators(DatasetVersion datasetVersion, string key, bool useParty = false, string fn = null, string ln = null)
+        public List<DataCiteCreator> GetCreators(DatasetVersion datasetVersion, string key, string fn = null, string ln = null)
         {
             var creators = new List<DataCiteCreator>();
 
             if (datasetVersion == null)
                 return creators;
 
-            if(useParty)
+            if(!string.IsNullOrEmpty(fn) && !string.IsNullOrEmpty(ln))
             {
                 var elements = MappingUtils.GetXElementFromMetadata((int)Enum.Parse(typeof(Key), key), LinkElementType.Key, datasetVersion.Dataset.MetadataStructure.Id, XmlUtility.ToXDocument(datasetVersion.Metadata));
                 foreach (var element in elements)
