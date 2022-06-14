@@ -8,24 +8,41 @@ namespace BExIS.Dim.Helpers.Models
 {
     public class DataCiteSettings
     {
-        public List<DataCiteMapping> Mappings { get; set; }
+        public List<DataCiteSettingsItem> Mappings { get; set; }
+        public List<DataCiteSettingsItem> Placeholders { get; set; }
     }
 
-    public class DataCiteMapping
+    public class DataCiteSettingsItem
     {
         public string Name { get; set; }
         public string Type { get; set; }
         public string Value { get; set; }
-        public bool UseParty { get; set; }
-        public Dictionary<string, string> PartyAttributes { get; set; }
+        public string Extra { get; set; }
 
-        public DataCiteMapping(string name, string type, string value, bool useParty = false, Dictionary<string, string> partyAttributes = null)
+        public DataCiteSettingsItem(string name, string type, string value, string extra = null)
         {
             Name = name;
             Type = type;
             Value = value;
-            UseParty = useParty;
-            PartyAttributes = partyAttributes;
+            Extra = extra;
         }
     }
+
+    //public class DataCiteMapping
+    //{
+    //    public string Name { get; set; }
+    //    public string Type { get; set; }
+    //    public string Value { get; set; }
+    //    public bool UseParty { get; set; }
+    //    public Dictionary<string, string> PartyAttributes { get; set; }
+
+    //    public DataCiteMapping(string name, string type, string value, bool useParty = false, Dictionary<string, string> partyAttributes = null)
+    //    {
+    //        Name = name;
+    //        Type = type;
+    //        Value = value;
+    //        UseParty = useParty;
+    //        PartyAttributes = partyAttributes;
+    //    }
+    //}
 }
