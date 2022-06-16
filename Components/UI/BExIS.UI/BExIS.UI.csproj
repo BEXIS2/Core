@@ -99,7 +99,7 @@
     <Compile Include="Hooks\ResultMessage.cs" />
     <Compile Include="Models\DataTable.cs" />
     <Compile Include="Models\FileUploader.cs" />
-    <Compile Include="Models\KvP.cs" />
+    <Compile Include="Models\ListItem.cs" />
     <Compile Include="Models\Menu.cs" />
     <Compile Include="Models\ModuleSettings.cs" />
     <Compile Include="Models\Treeview.cs" />

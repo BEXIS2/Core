@@ -27,13 +27,13 @@ namespace BExIS.Modules.Dcm.UI.Models.EntityTemplate
         /// <summary>
         /// Entity
         /// </summary>
-        public KvP EntityType { get; set; }
+        public ListItem EntityType { get; set; }
 
 
         /// <summary>
         ///Metadata Structure
         /// </summary>
-        public virtual KvP MetadataStructure { get; set; }
+        public virtual ListItem MetadataStructure { get; set; }
 
 
         public virtual List<int> MetadataFields { get; set; }

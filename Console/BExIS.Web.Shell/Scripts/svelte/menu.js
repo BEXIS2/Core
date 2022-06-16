@@ -1,5 +1,5 @@
 
-(function(l, r) { if (!l || l.getElementById('livereloadscript')) return; r = l.createElement('script'); r.async = 1; r.src = '//' + (self.location.host || 'localhost').split(':')[0] + ':35731/livereload.js?snipver=1'; r.id = 'livereloadscript'; l.getElementsByTagName('head')[0].appendChild(r) })(self.document);
+(function(l, r) { if (!l || l.getElementById('livereloadscript')) return; r = l.createElement('script'); r.async = 1; r.src = '//' + (self.location.host || 'localhost').split(':')[0] + ':35732/livereload.js?snipver=1'; r.id = 'livereloadscript'; l.getElementsByTagName('head')[0].appendChild(r) })(self.document);
 var app = (function () {
     'use strict';
 
@@ -1633,7 +1633,7 @@ var app = (function () {
     	let current;
     	let mounted;
     	let dispose;
-    	const if_block_creators = [create_if_block_1$6, create_else_block$7];
+    	const if_block_creators = [create_if_block_1$6, create_else_block$6];
     	const if_blocks = [];
 
     	function select_block_type_1(ctx, dirty) {
@@ -1915,7 +1915,7 @@ var app = (function () {
     }
 
     // (46:4) {:else}
-    function create_else_block$7(ctx) {
+    function create_else_block$6(ctx) {
     	let current;
     	const default_slot_template = /*#slots*/ ctx[18].default;
     	const default_slot = create_slot(default_slot_template, ctx, /*$$scope*/ ctx[17], null);
@@ -1963,7 +1963,7 @@ var app = (function () {
 
     	dispatch_dev("SvelteRegisterBlock", {
     		block: block_1,
-    		id: create_else_block$7.name,
+    		id: create_else_block$6.name,
     		type: "else",
     		source: "(46:4) {:else}",
     		ctx
@@ -4161,7 +4161,7 @@ var app = (function () {
     const file$f = "node_modules\\sveltestrap\\src\\Dropdown.svelte";
 
     // (124:0) {:else}
-    function create_else_block$6(ctx) {
+    function create_else_block$5(ctx) {
     	let div;
     	let current;
     	const default_slot_template = /*#slots*/ ctx[19].default;
@@ -4229,7 +4229,7 @@ var app = (function () {
 
     	dispatch_dev("SvelteRegisterBlock", {
     		block,
-    		id: create_else_block$6.name,
+    		id: create_else_block$5.name,
     		type: "else",
     		source: "(124:0) {:else}",
     		ctx
@@ -4321,7 +4321,7 @@ var app = (function () {
     	let if_block;
     	let if_block_anchor;
     	let current;
-    	const if_block_creators = [create_if_block$7, create_else_block$6];
+    	const if_block_creators = [create_if_block$7, create_else_block$5];
     	const if_blocks = [];
 
     	function select_block_type(ctx, dirty) {
@@ -4978,7 +4978,7 @@ var app = (function () {
     const file$d = "node_modules\\sveltestrap\\src\\DropdownItem.svelte";
 
     // (49:0) {:else}
-    function create_else_block$5(ctx) {
+    function create_else_block$4(ctx) {
     	let button;
     	let current;
     	let mounted;
@@ -5058,7 +5058,7 @@ var app = (function () {
 
     	dispatch_dev("SvelteRegisterBlock", {
     		block,
-    		id: create_else_block$5.name,
+    		id: create_else_block$4.name,
     		type: "else",
     		source: "(49:0) {:else}",
     		ctx
@@ -5344,7 +5344,7 @@ var app = (function () {
     	let if_block;
     	let if_block_anchor;
     	let current;
-    	const if_block_creators = [create_if_block$6, create_if_block_1$5, create_if_block_2$2, create_else_block$5];
+    	const if_block_creators = [create_if_block$6, create_if_block_1$5, create_if_block_2$2, create_else_block$4];
     	const if_blocks = [];
 
     	function select_block_type(ctx, dirty) {
@@ -5860,7 +5860,7 @@ var app = (function () {
     const file$b = "node_modules\\sveltestrap\\src\\DropdownToggle.svelte";
 
     // (94:0) {:else}
-    function create_else_block$4(ctx) {
+    function create_else_block$3(ctx) {
     	let button;
     	let button_aria_expanded_value;
     	let current;
@@ -5960,7 +5960,7 @@ var app = (function () {
 
     	dispatch_dev("SvelteRegisterBlock", {
     		block: block_1,
-    		id: create_else_block$4.name,
+    		id: create_else_block$3.name,
     		type: "else",
     		source: "(94:0) {:else}",
     		ctx
@@ -6439,7 +6439,7 @@ var app = (function () {
     	let if_block;
     	let if_block_anchor;
     	let current;
-    	const if_block_creators = [create_if_block$5, create_if_block_1$4, create_if_block_2$1, create_else_block$4];
+    	const if_block_creators = [create_if_block$5, create_if_block_1$4, create_if_block_2$1, create_else_block$3];
     	const if_blocks = [];
 
     	function select_block_type(ctx, dirty) {
@@ -7137,7 +7137,7 @@ var app = (function () {
     const file$9 = "node_modules\\sveltestrap\\src\\Navbar.svelte";
 
     // (39:2) {:else}
-    function create_else_block$3(ctx) {
+    function create_else_block$2(ctx) {
     	let current;
     	const default_slot_template = /*#slots*/ ctx[10].default;
     	const default_slot = create_slot(default_slot_template, ctx, /*$$scope*/ ctx[11], null);
@@ -7185,7 +7185,7 @@ var app = (function () {
 
     	dispatch_dev("SvelteRegisterBlock", {
     		block,
-    		id: create_else_block$3.name,
+    		id: create_else_block$2.name,
     		type: "else",
     		source: "(39:2) {:else}",
     		ctx
@@ -7314,7 +7314,7 @@ var app = (function () {
     	let current_block_type_index;
     	let if_block;
     	let current;
-    	const if_block_creators = [create_if_block$4, create_else_block$3];
+    	const if_block_creators = [create_if_block$4, create_else_block$2];
     	const if_blocks = [];
 
     	function select_block_type(ctx, dirty) {
@@ -8684,7 +8684,7 @@ var app = (function () {
     }
 
     // (25:2) {:else}
-    function create_else_block$2(ctx) {
+    function create_else_block$1(ctx) {
     	let dropdown;
     	let current;
 
@@ -8732,7 +8732,7 @@ var app = (function () {
 
     	dispatch_dev("SvelteRegisterBlock", {
     		block,
-    		id: create_else_block$2.name,
+    		id: create_else_block$1.name,
     		type: "else",
     		source: "(25:2) {:else}",
     		ctx
@@ -9213,7 +9213,7 @@ var app = (function () {
     	let if_block;
     	let if_block_anchor;
     	let current;
-    	const if_block_creators = [create_if_block_1$3, create_else_block$2];
+    	const if_block_creators = [create_if_block_1$3, create_else_block$1];
     	const if_blocks = [];
 
     	function select_block_type(ctx, dirty) {
@@ -9449,7 +9449,7 @@ var app = (function () {
 
     	function select_block_type(ctx, dirty) {
     		if (typeof /*i*/ ctx[8][4] == 'string') return create_if_block_1$2;
-    		return create_else_block$1;
+    		return create_else_block;
     	}
 
     	let current_block_type = select_block_type(ctx);
@@ -9531,7 +9531,7 @@ var app = (function () {
     }
 
     // (124:8) {:else}
-    function create_else_block$1(ctx) {
+    function create_else_block(ctx) {
     	let path0;
     	let path0_d_value;
     	let path0_fill_value;
@@ -9605,7 +9605,7 @@ var app = (function () {
 
     	dispatch_dev("SvelteRegisterBlock", {
     		block,
-    		id: create_else_block$1.name,
+    		id: create_else_block.name,
     		type: "else",
     		source: "(124:8) {:else}",
     		ctx
@@ -10719,7 +10719,7 @@ var app = (function () {
     /* src\menu\Menu.svelte generated by Svelte v3.42.1 */
     const file = "src\\menu\\Menu.svelte";
 
-    // (33:4) {#if menu.Logo}
+    // (32:4) {#if menu.Logo}
     function create_if_block_6(ctx) {
     	let img;
     	let img_src_value;
@@ -10731,7 +10731,7 @@ var app = (function () {
     			if (!src_url_equal(img.src, img_src_value = "data:" + /*menu*/ ctx[1].Logo.Mime + ";charset=utf-8;base64, " + /*menu*/ ctx[1].Logo.Data)) attr_dev(img, "src", img_src_value);
     			attr_dev(img, "alt", img_alt_value = /*menu*/ ctx[1].Logo.Name);
     			set_style(img, "height", "40px");
-    			add_location(img, file, 33, 6, 733);
+    			add_location(img, file, 32, 6, 731);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, img, anchor);
@@ -10754,14 +10754,14 @@ var app = (function () {
     		block,
     		id: create_if_block_6.name,
     		type: "if",
-    		source: "(33:4) {#if menu.Logo}",
+    		source: "(32:4) {#if menu.Logo}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (32:2) <NavbarBrand href="/" class="bexis2-nav-brand">
+    // (31:2) <NavbarBrand href="/" class="bexis2-nav-brand">
     function create_default_slot_4(ctx) {
     	let if_block_anchor;
     	let if_block = /*menu*/ ctx[1].Logo && create_if_block_6(ctx);
@@ -10799,63 +10799,14 @@ var app = (function () {
     		block,
     		id: create_default_slot_4.name,
     		type: "slot",
-    		source: "(32:2) <NavbarBrand href=\\\"/\\\" class=\\\"bexis2-nav-brand\\\">",
+    		source: "(31:2) <NavbarBrand href=\\\"/\\\" class=\\\"bexis2-nav-brand\\\">",
     		ctx
     	});
 
     	return block;
     }
 
-    // (70:8) {:else}
-    function create_else_block(ctx) {
-    	let spinner;
-    	let current;
-
-    	spinner = new Spinner({
-    			props: {
-    				color: "primary",
-    				size: "sm",
-    				type: "grow",
-    				"text-center": true
-    			},
-    			$$inline: true
-    		});
-
-    	const block = {
-    		c: function create() {
-    			create_component(spinner.$$.fragment);
-    		},
-    		m: function mount(target, anchor) {
-    			mount_component(spinner, target, anchor);
-    			current = true;
-    		},
-    		p: noop,
-    		i: function intro(local) {
-    			if (current) return;
-    			transition_in(spinner.$$.fragment, local);
-    			current = true;
-    		},
-    		o: function outro(local) {
-    			transition_out(spinner.$$.fragment, local);
-    			current = false;
-    		},
-    		d: function destroy(detaching) {
-    			destroy_component(spinner, detaching);
-    		}
-    	};
-
-    	dispatch_dev("SvelteRegisterBlock", {
-    		block,
-    		id: create_else_block.name,
-    		type: "else",
-    		source: "(70:8) {:else}",
-    		ctx
-    	});
-
-    	return block;
-    }
-
-    // (40:6) {#if menu}
+    // (39:6) {#if menu}
     function create_if_block(ctx) {
     	let nav0;
     	let t;
@@ -10931,14 +10882,14 @@ var app = (function () {
     		block,
     		id: create_if_block.name,
     		type: "if",
-    		source: "(40:6) {#if menu}",
+    		source: "(39:6) {#if menu}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (42:10) {#if menu.MenuBar}
+    // (41:10) {#if menu.MenuBar}
     function create_if_block_5(ctx) {
     	let menubar;
     	let current;
@@ -10979,14 +10930,14 @@ var app = (function () {
     		block,
     		id: create_if_block_5.name,
     		type: "if",
-    		source: "(42:10) {#if menu.MenuBar}",
+    		source: "(41:10) {#if menu.MenuBar}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (41:8) <Nav navbar>
+    // (40:8) <Nav navbar>
     function create_default_slot_3(ctx) {
     	let if_block_anchor;
     	let current;
@@ -11045,14 +10996,14 @@ var app = (function () {
     		block,
     		id: create_default_slot_3.name,
     		type: "slot",
-    		source: "(41:8) <Nav navbar>",
+    		source: "(40:8) <Nav navbar>",
     		ctx
     	});
 
     	return block;
     }
 
-    // (49:10) {#if menu.AccountBar}
+    // (48:10) {#if menu.AccountBar}
     function create_if_block_4(ctx) {
     	let menubar;
     	let current;
@@ -11096,14 +11047,14 @@ var app = (function () {
     		block,
     		id: create_if_block_4.name,
     		type: "if",
-    		source: "(49:10) {#if menu.AccountBar}",
+    		source: "(48:10) {#if menu.AccountBar}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (54:10) {#if menu.LaunchBar}
+    // (53:10) {#if menu.LaunchBar}
     function create_if_block_3(ctx) {
     	let menubar;
     	let current;
@@ -11147,14 +11098,14 @@ var app = (function () {
     		block,
     		id: create_if_block_3.name,
     		type: "if",
-    		source: "(54:10) {#if menu.LaunchBar}",
+    		source: "(53:10) {#if menu.LaunchBar}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (59:10) {#if menu.Extended}
+    // (58:10) {#if menu.Extended}
     function create_if_block_2(ctx) {
     	let menubar;
     	let current;
@@ -11198,14 +11149,14 @@ var app = (function () {
     		block,
     		id: create_if_block_2.name,
     		type: "if",
-    		source: "(59:10) {#if menu.Extended}",
+    		source: "(58:10) {#if menu.Extended}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (64:10) {#if menu.Settings}
+    // (63:10) {#if menu.Settings}
     function create_if_block_1(ctx) {
     	let settingsbar;
     	let current;
@@ -11249,14 +11200,14 @@ var app = (function () {
     		block,
     		id: create_if_block_1.name,
     		type: "if",
-    		source: "(64:10) {#if menu.Settings}",
+    		source: "(63:10) {#if menu.Settings}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (47:8) <Nav navbar class="ms-auto">
+    // (46:8) <Nav navbar class="ms-auto">
     function create_default_slot_2(ctx) {
     	let t0;
     	let t1;
@@ -11414,65 +11365,51 @@ var app = (function () {
     		block,
     		id: create_default_slot_2.name,
     		type: "slot",
-    		source: "(47:8) <Nav navbar class=\\\"ms-auto\\\">",
+    		source: "(46:8) <Nav navbar class=\\\"ms-auto\\\">",
     		ctx
     	});
 
     	return block;
     }
 
-    // (39:2) <Collapse navbar {isOpen} expand="md" >
+    // (38:2) <Collapse navbar {isOpen} expand="md" >
     function create_default_slot_1(ctx) {
-    	let current_block_type_index;
-    	let if_block;
     	let if_block_anchor;
     	let current;
-    	const if_block_creators = [create_if_block, create_else_block];
-    	const if_blocks = [];
-
-    	function select_block_type(ctx, dirty) {
-    		if (/*menu*/ ctx[1]) return 0;
-    		return 1;
-    	}
-
-    	current_block_type_index = select_block_type(ctx);
-    	if_block = if_blocks[current_block_type_index] = if_block_creators[current_block_type_index](ctx);
+    	let if_block = /*menu*/ ctx[1] && create_if_block(ctx);
 
     	const block = {
     		c: function create() {
-    			if_block.c();
+    			if (if_block) if_block.c();
     			if_block_anchor = empty();
     		},
     		m: function mount(target, anchor) {
-    			if_blocks[current_block_type_index].m(target, anchor);
+    			if (if_block) if_block.m(target, anchor);
     			insert_dev(target, if_block_anchor, anchor);
     			current = true;
     		},
     		p: function update(ctx, dirty) {
-    			let previous_block_index = current_block_type_index;
-    			current_block_type_index = select_block_type(ctx);
+    			if (/*menu*/ ctx[1]) {
+    				if (if_block) {
+    					if_block.p(ctx, dirty);
 
-    			if (current_block_type_index === previous_block_index) {
-    				if_blocks[current_block_type_index].p(ctx, dirty);
-    			} else {
+    					if (dirty & /*menu*/ 2) {
+    						transition_in(if_block, 1);
+    					}
+    				} else {
+    					if_block = create_if_block(ctx);
+    					if_block.c();
+    					transition_in(if_block, 1);
+    					if_block.m(if_block_anchor.parentNode, if_block_anchor);
+    				}
+    			} else if (if_block) {
     				group_outros();
 
-    				transition_out(if_blocks[previous_block_index], 1, 1, () => {
-    					if_blocks[previous_block_index] = null;
+    				transition_out(if_block, 1, 1, () => {
+    					if_block = null;
     				});
 
     				check_outros();
-    				if_block = if_blocks[current_block_type_index];
-
-    				if (!if_block) {
-    					if_block = if_blocks[current_block_type_index] = if_block_creators[current_block_type_index](ctx);
-    					if_block.c();
-    				} else {
-    					if_block.p(ctx, dirty);
-    				}
-
-    				transition_in(if_block, 1);
-    				if_block.m(if_block_anchor.parentNode, if_block_anchor);
     			}
     		},
     		i: function intro(local) {
@@ -11485,7 +11422,7 @@ var app = (function () {
     			current = false;
     		},
     		d: function destroy(detaching) {
-    			if_blocks[current_block_type_index].d(detaching);
+    			if (if_block) if_block.d(detaching);
     			if (detaching) detach_dev(if_block_anchor);
     		}
     	};
@@ -11494,14 +11431,14 @@ var app = (function () {
     		block,
     		id: create_default_slot_1.name,
     		type: "slot",
-    		source: "(39:2) <Collapse navbar {isOpen} expand=\\\"md\\\" >",
+    		source: "(38:2) <Collapse navbar {isOpen} expand=\\\"md\\\" >",
     		ctx
     	});
 
     	return block;
     }
 
-    // (31:0) <Navbar id="bexis2-nav-bar" light expand="md" class="fixed-top" >
+    // (30:0) <Navbar id="bexis2-nav-bar" light expand="md" class="fixed-top" >
     function create_default_slot(ctx) {
     	let navbarbrand;
     	let t0;
@@ -11597,7 +11534,7 @@ var app = (function () {
     		block,
     		id: create_default_slot.name,
     		type: "slot",
-    		source: "(31:0) <Navbar id=\\\"bexis2-nav-bar\\\" light expand=\\\"md\\\" class=\\\"fixed-top\\\" >",
+    		source: "(30:0) <Navbar id=\\\"bexis2-nav-bar\\\" light expand=\\\"md\\\" class=\\\"fixed-top\\\" >",
     		ctx
     	});
 

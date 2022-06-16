@@ -1,41 +1,43 @@
 <script>
 
-import Variable from './Variable.svelte'
+import Variable from './variable/Variable.svelte'
 import {Spinner} from 'sveltestrap';
+import {onMount} from 'svelte';
+import {getDataTypes,getUnits} from '../../services/StructureSuggestionCaller'
+
+$:datatypes=null;
+$:units=null;
+
+
+onMount(async ()=>{
+
+datatypes = await getDataTypes();
+units = await getUnits();
+
+console.log("datatypes",datatypes);
+console.log("units", units);
+
+})
 
 export let variables = [];
-// [
-//     {
-//         "id": 0,
-//         "name": "EP",
-//         "description": "",
-//         "systemType": "String",
-//         "dataType": {
-//             "id": 0,
-//             "text": ""
-//         },
-//         "unit": {
-//             "id": 0,
-//             "text": "none"
-//         },
-//         "template": {
-//             "id": 0,
-//             "text": ""
-//         }
-//     }
-// ];
 
 </script>
-
-<h1>Suggestion</h1>
-
-{#if !variables}
-  <!-- content here -->
-  <Spinner color="primary" size="sm" type ="grow" text-center />
+<div class="suggestion-container">
+{#if variables && datatypes && units}
+    <!-- else content here -->
+    {#each variables as variable, i}
+      <!-- content here -->
+      <Variable {variable} index={i} on:change={console.log(variable)} {datatypes} {units}/>
+      <br>
+    {/each}
+  
 {:else}
-  <!-- else content here -->
-  {#each variables as variable, i}
-    <!-- content here -->
-    <Variable {variable} index={i} on:change={console.log(variable)}/>
-  {/each}
+  <Spinner color="primary" size="sm" type ="grow" text-center />
 {/if}
+</div>
+
+<style>
+  .suggestion-container{
+    padding-top: 1rem;
+  }
+</style>

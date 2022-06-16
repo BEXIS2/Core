@@ -35,7 +35,6 @@ onMount(async () => {
  function update(e)
  {
     console.log("update",e.detail);
-    console.log("model",model);
     model = e.detail;
 
     selectionIsActive = false;

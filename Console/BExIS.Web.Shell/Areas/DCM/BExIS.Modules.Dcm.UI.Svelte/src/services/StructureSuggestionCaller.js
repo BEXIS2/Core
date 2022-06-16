@@ -31,3 +31,21 @@ export const generate = async (data) => {
     console.error(error);
   }
 };
+
+export const getDataTypes = async () => {
+  try {
+    const response = await Api.get('/dcm/StructureSuggestion/getDataTypes');
+    return response.data;
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+export const getUnits = async () => {
+  try {
+    const response = await Api.get('/dcm/StructureSuggestion/getUnits');
+    return response.data;
+  } catch (error) {
+    console.error(error);
+  }
+};

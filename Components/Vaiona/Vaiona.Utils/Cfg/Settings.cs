@@ -139,7 +139,7 @@ namespace Vaiona.Utils.Cfg
             {
                 JsonSerializer serializer = new JsonSerializer();
                 jsonSettings = (JsonSettings)serializer.Deserialize(stream, typeof(JsonSettings));
-                stream.Close();
+
             }
         }
     }

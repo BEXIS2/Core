@@ -1,5 +1,6 @@
 ﻿using BExIS.App.Bootstrap.Attributes;
 using BExIS.Dlm.Entities.Data;
+using BExIS.Dlm.Services.DataStructure;
 using BExIS.IO;
 using BExIS.IO.Transform.Input;
 using BExIS.Modules.Dcm.UI.Models.StructureSuggestion;
@@ -84,7 +85,6 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             return Json(model, JsonRequestBehavior.AllowGet);
         }
 
-
         /*
          const MARKER_TYPE = {
             VARIABLE: "variable",
@@ -125,7 +125,9 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 missingValues = markerRows[mvIndex].Split((char)model.Delimeter).ToList();
             }
 
-            // missingvalues
+            //add missing values from model
+            missingValues.AddRange(model.MissingValues.Select(m=>m.DisplayName).ToList());
+
             int startdataIndex = 0;
 
             if (model.Markers.Any(m => m.Type.Equals("data")))
@@ -153,7 +155,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
             for (int i = 0; i < cells; i++)
             {
-                if (activeCells[i]) // only create a var to the model if the cell is active
+                if (activeCells==null || activeCells[i]) // only create a var to the model if the cell is active or the list is null - means add everyone
                 {
 
                     VariableModel var = new VariableModel();
@@ -167,11 +169,11 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                         var.SystemType = systemTypes[i].Name;
 
                     // get list of possible datatypes
-                    var.DataType = strutcureAnalyzer.SuggestDataType(var.SystemType).Select(d => new KvP(d.Id, d.Name)).FirstOrDefault();
+                    var.DataType = strutcureAnalyzer.SuggestDataType(var.SystemType).Select(d => new ListItem(d.Id, d.Name, "analysis results")).FirstOrDefault();
 
                     // get list of possible units
                     var unitInput = getValueFromMarkedRow(markerRows, model.Markers, "unit", (char)model.Delimeter, i);
-                    strutcureAnalyzer.SuggestUnit(unitInput, var.DataType.Text).ForEach(u => var.PossibleUnits.Add(new KvP(u.Id, u.Name)));
+                    strutcureAnalyzer.SuggestUnit(unitInput, var.DataType.Text).ForEach(u => var.PossibleUnits.Add(new ListItem(u.Id, u.Name, "analysis results")));
                     var.Unit = var.PossibleUnits.FirstOrDefault();
 
                     model.Variables.Add(var);
@@ -182,13 +184,57 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             return Json(model);
         }
 
-        private List<KvP> getDelimeters()
+
+        [JsonNetFilter]
+        public JsonResult GetDataTypes()
         {
-            List<KvP> list = new List<KvP>();
+            using (var dataTypeManager = new DataTypeManager())
+            {
+                var datatypes = dataTypeManager.Repo.Get().ToList();
+                List<ListItem> list = new List<ListItem>();
+
+                if (datatypes.Any())
+                {
+                    foreach (var datatype in datatypes)
+                    {
+                        list.Add(new ListItem(datatype.Id, datatype.Name, "other"));
+                    }
+                }
+
+                // get default missing values
+                return Json(list, JsonRequestBehavior.AllowGet);
+            }
+        }
+
+        [JsonNetFilter]
+        public JsonResult GetUnits()
+        {
+            using (var unitManager = new UnitManager())
+            {
+                var units = unitManager.Repo.Get().ToList();
+                List<ListItem> list = new List<ListItem>();
+
+                if (units.Any())
+                {
+                    foreach (var unit in units)
+                    {
+                        list.Add(new ListItem(unit.Id, unit.Name, "other"));
+                    }
+                }
+
+                // get default missing values
+                return Json(list, JsonRequestBehavior.AllowGet);
+            }
+        }
+
+
+        private List<ListItem> getDelimeters()
+        {
+            List<ListItem> list = new List<ListItem>();
 
             // tab
             char c = AsciiFileReaderInfo.GetSeperator(TextSeperator.tab);
-            KvP kvP = new KvP();
+            ListItem kvP = new ListItem();
             kvP.Id = Convert.ToInt32(c);
             kvP.Text = AsciiFileReaderInfo.GetSeperatorAsString(TextSeperator.tab);
 
@@ -197,7 +243,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             //comma
 
             c = AsciiFileReaderInfo.GetSeperator(TextSeperator.comma);
-            kvP = new KvP();
+            kvP = new ListItem();
             kvP.Id = Convert.ToInt32(c);
             kvP.Text = AsciiFileReaderInfo.GetSeperatorAsString(TextSeperator.comma);
 
@@ -206,7 +252,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             // semicolon
 
             c = AsciiFileReaderInfo.GetSeperator(TextSeperator.semicolon);
-            kvP = new KvP();
+            kvP = new ListItem();
             kvP.Id = Convert.ToInt32(c);
             kvP.Text = AsciiFileReaderInfo.GetSeperatorAsString(TextSeperator.semicolon);
 
@@ -214,7 +260,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
             // space
             c = AsciiFileReaderInfo.GetSeperator(TextSeperator.space);
-            kvP = new KvP();
+            kvP = new ListItem();
             kvP.Id = Convert.ToInt32(c);
             kvP.Text = AsciiFileReaderInfo.GetSeperatorAsString(TextSeperator.space);
 
@@ -224,14 +270,14 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             return list;
         }
 
-        private List<KvP> getDecimals()
+        private List<ListItem> getDecimals()
         {
 
-            List<KvP> list = new List<KvP>();
+            List<ListItem> list = new List<ListItem>();
 
             // point
             char c = AsciiFileReaderInfo.GetDecimalCharacter(DecimalCharacter.point);
-            KvP kvP = new KvP();
+            ListItem kvP = new ListItem();
             kvP.Id = Convert.ToInt32(c);
             kvP.Text = AsciiFileReaderInfo.GetDecimal(DecimalCharacter.point);
 
@@ -239,7 +285,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
             // comma
             c = AsciiFileReaderInfo.GetDecimalCharacter(DecimalCharacter.comma);
-            kvP = new KvP();
+            kvP = new ListItem();
             kvP.Id = Convert.ToInt32(c);
             kvP.Text = AsciiFileReaderInfo.GetDecimal(DecimalCharacter.comma);
 
@@ -248,13 +294,13 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             return list;
         }
 
-        private List<KvP> getTextMarkers()
+        private List<ListItem> getTextMarkers()
         {
-            List<KvP> list = new List<KvP>();
+            List<ListItem> list = new List<ListItem>();
 
             // quotes
             char c = AsciiFileReaderInfo.GetTextMarker(TextMarker.quotes);
-            KvP kvP = new KvP();
+            ListItem kvP = new ListItem();
             kvP.Id = Convert.ToInt32(c);
             kvP.Text = AsciiFileReaderInfo.GetTextMarkerAsString(TextMarker.quotes);
 
@@ -262,7 +308,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
             // double quotes
             c = AsciiFileReaderInfo.GetTextMarker(TextMarker.doubleQuotes);
-            kvP = new KvP();
+            kvP = new ListItem();
             kvP.Id = Convert.ToInt32(c);
             kvP.Text = AsciiFileReaderInfo.GetTextMarkerAsString(TextMarker.doubleQuotes);
 

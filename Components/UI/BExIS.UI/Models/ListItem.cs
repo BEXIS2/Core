@@ -6,21 +6,25 @@ using System.Threading.Tasks;
 
 namespace BExIS.UI.Models
 {
-    public class KvP
+    public class ListItem
     {
         public long Id { get; set; }
         public string Text { get; set; }
+        public string Group { get; set; }
 
-        public KvP()
+        public ListItem()
         {
             Id = 0;
             Text = "";
+            Group = "";
         }
 
-        public KvP(long key, string value)
+        public ListItem(long key, string value, string group="")
         {
             Id = key;
             Text = value;
+            Group = group;
         }
+
     }
 }

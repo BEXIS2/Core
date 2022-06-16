@@ -104,12 +104,12 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         [HttpGet]
         public JsonResult Entities()
         {
-            List<KvP> tmp = new List<KvP>();
+            List<ListItem> tmp = new List<ListItem>();
             using (var entityManager = new EntityManager())
             {
                 foreach (var entity in entityManager.EntityRepository.Get())
                 {
-                    tmp.Add(new KvP(entity.Id, entity.Name));
+                    tmp.Add(new ListItem(entity.Id, entity.Name));
                 }
             }
 
@@ -120,12 +120,12 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         [HttpGet]
         public JsonResult MetadataStructures()
         {
-            List<KvP> tmp = new List<KvP>();
+            List<ListItem> tmp = new List<ListItem>();
             using (var metadataStrutcureManager = new MetadataStructureManager())
             {
                 foreach (var entity in metadataStrutcureManager.Repo.Get())
                 {
-                    tmp.Add(new KvP(entity.Id, entity.Name));
+                    tmp.Add(new ListItem(entity.Id, entity.Name));
                 }
             }
 

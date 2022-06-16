@@ -16,9 +16,9 @@ namespace BExIS.Modules.Dcm.UI.Models.StructureSuggestion
         public int Delimeter { get; set; }
         public int Decimal { get; set; }
         public int TextMarker { get; set; }
-        public List<KvP> Delimeters { get; set; }
-        public List<KvP> Decimals { get; set; }
-        public List<KvP> TextMarkers { get; set; }
+        public List<ListItem> Delimeters { get; set; }
+        public List<ListItem> Decimals { get; set; }
+        public List<ListItem> TextMarkers { get; set; }
         public List<string> Preview { get; set; }
 
         /// <summary>
@@ -44,9 +44,9 @@ namespace BExIS.Modules.Dcm.UI.Models.StructureSuggestion
             Decimal = ' ';
             Preview = new List<string>();
             MissingValues = new List<MissingValueModel>();
-            Delimeters = new List<KvP>();
-            Decimals = new List<KvP>();
-            TextMarkers = new List<KvP>();
+            Delimeters = new List<ListItem>();
+            Decimals = new List<ListItem>();
+            TextMarkers = new List<ListItem>();
 
             Markers = new List<Marker>();
 
@@ -87,9 +87,13 @@ namespace BExIS.Modules.Dcm.UI.Models.StructureSuggestion
         public string Description { get; set; }
         public string SystemType { get; set; }
 
-        public KvP DataType { get; set; }
-        public KvP Unit { get; set; }
-        public KvP Template { get; set; }
+        // this variable is part of the primary key 
+        public bool IsKey { get; set; }
+        public bool IsOptional { get; set; }
+
+        public ListItem DataType { get; set; }
+        public ListItem Unit { get; set; }
+        public ListItem Template { get; set; }
 
         ///// <summary>
         ///// List of possible Datatypes based on the result of the strutcure Analyzer 
@@ -99,12 +103,12 @@ namespace BExIS.Modules.Dcm.UI.Models.StructureSuggestion
         /// <summary>
         /// List of possible units based on the result of the strutcure Analyzer 
         /// </summary>
-        public List<KvP> PossibleUnits { get; set; }
+        public List<ListItem> PossibleUnits { get; set; }
 
         /// <summary>
         /// List of possible Templates based on the result of the strutcure Analyzer 
         /// </summary>
-        public List<KvP> PossibleTemplates { get; set; }
+        public List<ListItem> PossibleTemplates { get; set; }
 
         public VariableModel()
         {
@@ -112,13 +116,16 @@ namespace BExIS.Modules.Dcm.UI.Models.StructureSuggestion
             Name = "";
             Description = "";
             SystemType = "";
-            DataType = new KvP();
-            Unit = new KvP();
-            Template = new KvP();
+            DataType = new ListItem();
+            Unit = new ListItem();
+            Template = new ListItem();
+
+            IsKey = false;
+            IsOptional = true;
 
             //PossibleDataTypes = new List<KvP>();
-            PossibleUnits = new List<KvP>();
-            PossibleTemplates = new List<KvP>();
+            PossibleUnits = new List<ListItem>();
+            PossibleTemplates = new List<ListItem>();
        }
     }
 }

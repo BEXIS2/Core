@@ -100,8 +100,8 @@ namespace BExIS.Modules.Dcm.UI.Helpers
             model.NotificationGroups = entityTemplate.NotificationGroups != null ? entityTemplate.NotificationGroups : new List<long>();
             model.MetadataFields = entityTemplate.MetadataFields!=null?entityTemplate.MetadataFields:new List<int>();
 
-            model.MetadataStructure = new KvP(entityTemplate.MetadataStructure.Id, entityTemplate.MetadataStructure.Name);
-            model.EntityType = new KvP(entityTemplate.EntityType.Id, entityTemplate.EntityType.Name);
+            model.MetadataStructure = new ListItem(entityTemplate.MetadataStructure.Id, entityTemplate.MetadataStructure.Name);
+            model.EntityType = new ListItem(entityTemplate.EntityType.Id, entityTemplate.EntityType.Name);
 
 
             return model;

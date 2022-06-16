@@ -38,7 +38,7 @@ function getConfig(configName)
 						sourcemap: true,
 						format: 'iife',
 						name: 'app',
-						file: '../BExIS.Modules.Dcm.UI/Scripts/svelte/'+configName+'.js'
+						file: '../BExIS.Web.Shell/Scripts/svelte/'+configName+'.js'
 					}],
 			plugins: [
 						svelte({

@@ -27955,7 +27955,7 @@ var app = (function () {
     const { console: console_1$3 } = globals;
     const file_1 = "src\\components\\fileupload\\FileOverviewItem.svelte";
 
-    // (75:1) {#if type}
+    // (73:1) {#if type}
     function create_if_block$7(ctx) {
     	let div;
     	let col0;
@@ -27987,7 +27987,6 @@ var app = (function () {
 
     	col2 = new Col$1({
     			props: {
-    				xs: "2",
     				$$slots: { default: [create_default_slot$3] },
     				$$scope: { ctx }
     			},
@@ -28004,8 +28003,8 @@ var app = (function () {
     			if (if_block) if_block.c();
     			t2 = space();
     			create_component(col2.$$.fragment);
-    			attr_dev(div, "class", "file-overview-item row svelte-9s86ag");
-    			add_location(div, file_1, 75, 2, 1733);
+    			attr_dev(div, "class", "file-overview-item row svelte-14a22p1");
+    			add_location(div, file_1, 73, 2, 1689);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div, anchor);
@@ -28093,14 +28092,14 @@ var app = (function () {
     		block,
     		id: create_if_block$7.name,
     		type: "if",
-    		source: "(75:1) {#if type}",
+    		source: "(73:1) {#if type}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (77:2) <Col xs="1">
+    // (75:2) <Col xs="1">
     function create_default_slot_5$1(ctx) {
     	let fileinfo;
     	let current;
@@ -28141,14 +28140,14 @@ var app = (function () {
     		block,
     		id: create_default_slot_5$1.name,
     		type: "slot",
-    		source: "(77:2) <Col xs=\\\"1\\\">",
+    		source: "(75:2) <Col xs=\\\"1\\\">",
     		ctx
     	});
 
     	return block;
     }
 
-    // (78:2) <Col >
+    // (76:2) <Col >
     function create_default_slot_4$1(ctx) {
     	let t;
 
@@ -28171,14 +28170,14 @@ var app = (function () {
     		block,
     		id: create_default_slot_4$1.name,
     		type: "slot",
-    		source: "(78:2) <Col >",
+    		source: "(76:2) <Col >",
     		ctx
     	});
 
     	return block;
     }
 
-    // (81:2) {#if withDescription}
+    // (79:2) {#if withDescription}
     function create_if_block_3$2(ctx) {
     	let col;
     	let current;
@@ -28227,14 +28226,14 @@ var app = (function () {
     		block,
     		id: create_if_block_3$2.name,
     		type: "if",
-    		source: "(81:2) {#if withDescription}",
+    		source: "(79:2) {#if withDescription}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (82:4) <Col xs="5">
+    // (80:4) <Col xs="5">
     function create_default_slot_3$2(ctx) {
     	let input;
     	let updating_value;
@@ -28291,14 +28290,54 @@ var app = (function () {
     		block,
     		id: create_default_slot_3$2.name,
     		type: "slot",
-    		source: "(82:4) <Col xs=\\\"5\\\">",
+    		source: "(80:4) <Col xs=\\\"5\\\">",
     		ctx
     	});
 
     	return block;
     }
 
-    // (86:43) {#if isGenerateAble(type)}
+    // (84:45) <Button size="sm" on:click={e => handleRemoveFile()}>
+    function create_default_slot_2$2(ctx) {
+    	let fa;
+    	let current;
+    	fa = new Fa$1({ props: { icon: faTrash }, $$inline: true });
+
+    	const block = {
+    		c: function create() {
+    			create_component(fa.$$.fragment);
+    		},
+    		m: function mount(target, anchor) {
+    			mount_component(fa, target, anchor);
+    			current = true;
+    		},
+    		p: noop,
+    		i: function intro(local) {
+    			if (current) return;
+    			transition_in(fa.$$.fragment, local);
+    			current = true;
+    		},
+    		o: function outro(local) {
+    			transition_out(fa.$$.fragment, local);
+    			current = false;
+    		},
+    		d: function destroy(detaching) {
+    			destroy_component(fa, detaching);
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_default_slot_2$2.name,
+    		type: "slot",
+    		source: "(84:45) <Button size=\\\"sm\\\" on:click={e => handleRemoveFile()}>",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    // (85:45) {#if isGenerateAble(type)}
     function create_if_block_2$2(ctx) {
     	let button;
     	let current;
@@ -28306,7 +28345,7 @@ var app = (function () {
     	button = new Button$1({
     			props: {
     				size: "sm",
-    				$$slots: { default: [create_default_slot_2$2] },
+    				$$slots: { default: [create_default_slot_1$3] },
     				$$scope: { ctx }
     			},
     			$$inline: true
@@ -28349,15 +28388,15 @@ var app = (function () {
     		block,
     		id: create_if_block_2$2.name,
     		type: "if",
-    		source: "(86:43) {#if isGenerateAble(type)}",
+    		source: "(85:45) {#if isGenerateAble(type)}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (86:69) <Button size="sm" on:click={goToGenerate}>
-    function create_default_slot_2$2(ctx) {
+    // (85:71) <Button size="sm" on:click={goToGenerate}>
+    function create_default_slot_1$3(ctx) {
     	let fa;
     	let current;
 
@@ -28391,56 +28430,16 @@ var app = (function () {
 
     	dispatch_dev("SvelteRegisterBlock", {
     		block,
-    		id: create_default_slot_2$2.name,
-    		type: "slot",
-    		source: "(86:69) <Button size=\\\"sm\\\" on:click={goToGenerate}>",
-    		ctx
-    	});
-
-    	return block;
-    }
-
-    // (88:43) <Button size="sm" on:click={e => handleRemoveFile()}>
-    function create_default_slot_1$3(ctx) {
-    	let fa;
-    	let current;
-    	fa = new Fa$1({ props: { icon: faTrash }, $$inline: true });
-
-    	const block = {
-    		c: function create() {
-    			create_component(fa.$$.fragment);
-    		},
-    		m: function mount(target, anchor) {
-    			mount_component(fa, target, anchor);
-    			current = true;
-    		},
-    		p: noop,
-    		i: function intro(local) {
-    			if (current) return;
-    			transition_in(fa.$$.fragment, local);
-    			current = true;
-    		},
-    		o: function outro(local) {
-    			transition_out(fa.$$.fragment, local);
-    			current = false;
-    		},
-    		d: function destroy(detaching) {
-    			destroy_component(fa, detaching);
-    		}
-    	};
-
-    	dispatch_dev("SvelteRegisterBlock", {
-    		block,
     		id: create_default_slot_1$3.name,
     		type: "slot",
-    		source: "(88:43) <Button size=\\\"sm\\\" on:click={e => handleRemoveFile()}>",
+    		source: "(85:71) <Button size=\\\"sm\\\" on:click={goToGenerate}>",
     		ctx
     	});
 
     	return block;
     }
 
-    // (89:43) {#if loading}
+    // (86:45) {#if loading}
     function create_if_block_1$2(ctx) {
     	let spinner;
     	let current;
@@ -28481,71 +28480,78 @@ var app = (function () {
     		block,
     		id: create_if_block_1$2.name,
     		type: "if",
-    		source: "(89:43) {#if loading}",
+    		source: "(86:45) {#if loading}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (84:2) <Col xs="2">
+    // (82:2) <Col >
     function create_default_slot$3(ctx) {
     	let div3;
     	let div0;
-    	let show_if = isGenerateAble(/*type*/ ctx[2]);
+    	let button;
     	let t0;
     	let div1;
-    	let button;
+    	let show_if = isGenerateAble(/*type*/ ctx[2]);
     	let t1;
     	let div2;
     	let current;
-    	let if_block0 = show_if && create_if_block_2$2(ctx);
 
     	button = new Button$1({
     			props: {
     				size: "sm",
-    				$$slots: { default: [create_default_slot_1$3] },
+    				$$slots: { default: [create_default_slot_2$2] },
     				$$scope: { ctx }
     			},
     			$$inline: true
     		});
 
     	button.$on("click", /*click_handler*/ ctx[14]);
+    	let if_block0 = show_if && create_if_block_2$2(ctx);
     	let if_block1 = /*loading*/ ctx[4] && create_if_block_1$2(ctx);
 
     	const block = {
     		c: function create() {
     			div3 = element("div");
     			div0 = element("div");
-    			if (if_block0) if_block0.c();
+    			create_component(button.$$.fragment);
     			t0 = space();
     			div1 = element("div");
-    			create_component(button.$$.fragment);
+    			if (if_block0) if_block0.c();
     			t1 = space();
     			div2 = element("div");
     			if (if_block1) if_block1.c();
-    			attr_dev(div0, "class", "file-overview-item-option svelte-9s86ag");
-    			add_location(div0, file_1, 85, 4, 2102);
-    			attr_dev(div1, "class", "file-overview-item-option svelte-9s86ag");
-    			add_location(div1, file_1, 87, 4, 2267);
-    			attr_dev(div2, "class", "file-overview-item-option svelte-9s86ag");
-    			add_location(div2, file_1, 88, 4, 2400);
-    			attr_dev(div3, "class", "file-overview-item-options text-end svelte-9s86ag");
-    			add_location(div3, file_1, 84, 4, 2047);
+    			attr_dev(div0, "class", "file-overview-item-option svelte-14a22p1");
+    			add_location(div0, file_1, 83, 6, 2045);
+    			attr_dev(div1, "class", "file-overview-item-option svelte-14a22p1");
+    			add_location(div1, file_1, 84, 6, 2180);
+    			attr_dev(div2, "class", "file-overview-item-option svelte-14a22p1");
+    			add_location(div2, file_1, 85, 6, 2345);
+    			attr_dev(div3, "class", "file-overview-item-options svelte-14a22p1");
+    			add_location(div3, file_1, 82, 4, 1997);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div3, anchor);
     			append_dev(div3, div0);
-    			if (if_block0) if_block0.m(div0, null);
+    			mount_component(button, div0, null);
     			append_dev(div3, t0);
     			append_dev(div3, div1);
-    			mount_component(button, div1, null);
+    			if (if_block0) if_block0.m(div1, null);
     			append_dev(div3, t1);
     			append_dev(div3, div2);
     			if (if_block1) if_block1.m(div2, null);
     			current = true;
     		},
     		p: function update(ctx, dirty) {
+    			const button_changes = {};
+
+    			if (dirty & /*$$scope*/ 65536) {
+    				button_changes.$$scope = { dirty, ctx };
+    			}
+
+    			button.$set(button_changes);
     			if (dirty & /*type*/ 4) show_if = isGenerateAble(/*type*/ ctx[2]);
 
     			if (show_if) {
@@ -28559,7 +28565,7 @@ var app = (function () {
     					if_block0 = create_if_block_2$2(ctx);
     					if_block0.c();
     					transition_in(if_block0, 1);
-    					if_block0.m(div0, null);
+    					if_block0.m(div1, null);
     				}
     			} else if (if_block0) {
     				group_outros();
@@ -28570,14 +28576,6 @@ var app = (function () {
 
     				check_outros();
     			}
-
-    			const button_changes = {};
-
-    			if (dirty & /*$$scope*/ 65536) {
-    				button_changes.$$scope = { dirty, ctx };
-    			}
-
-    			button.$set(button_changes);
 
     			if (/*loading*/ ctx[4]) {
     				if (if_block1) {
@@ -28602,21 +28600,21 @@ var app = (function () {
     		},
     		i: function intro(local) {
     			if (current) return;
-    			transition_in(if_block0);
     			transition_in(button.$$.fragment, local);
+    			transition_in(if_block0);
     			transition_in(if_block1);
     			current = true;
     		},
     		o: function outro(local) {
-    			transition_out(if_block0);
     			transition_out(button.$$.fragment, local);
+    			transition_out(if_block0);
     			transition_out(if_block1);
     			current = false;
     		},
     		d: function destroy(detaching) {
     			if (detaching) detach_dev(div3);
-    			if (if_block0) if_block0.d();
     			destroy_component(button);
+    			if (if_block0) if_block0.d();
     			if (if_block1) if_block1.d();
     		}
     	};
@@ -28625,7 +28623,7 @@ var app = (function () {
     		block,
     		id: create_default_slot$3.name,
     		type: "slot",
-    		source: "(84:2) <Col xs=\\\"2\\\">",
+    		source: "(82:2) <Col >",
     		ctx
     	});
 

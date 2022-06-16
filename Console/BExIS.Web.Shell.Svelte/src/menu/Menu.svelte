@@ -27,7 +27,6 @@ import {hosturl} from '../stores/store.js'
 let isOpen = false;
  const toggle = () => (isOpen = !isOpen);
 </script>
-
 <Navbar id="bexis2-nav-bar" light expand="md" class="fixed-top" >
   <NavbarBrand href="/" class="bexis2-nav-brand">
     {#if menu.Logo}

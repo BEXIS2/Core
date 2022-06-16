@@ -69,8 +69,6 @@ function isGenerateAble(t)
   return false;
 }
 
-//t === "text/plain" || t === "text/csv"
-
 </script>
  {#if type}
   <div class="file-overview-item row">
@@ -81,13 +79,12 @@ function isGenerateAble(t)
   {#if withDescription}
     <Col xs="5"><Input  bind:value="{description}" placeholder="description" on:change={e => handleSaveFileDescription()}/></Col>
   {/if}
-  <Col xs="2">
-    <div class="file-overview-item-options text-end">
-    <div class="file-overview-item-option">{#if isGenerateAble(type)}<Button size="sm" on:click={goToGenerate}><Fa icon={faShareFromSquare}/></Button>{/if}</div>
-
-    <div class="file-overview-item-option"><Button size="sm" on:click={e => handleRemoveFile()}><Fa icon={faTrash}/></Button></div>
-    <div class="file-overview-item-option">{#if loading}<Spinner color="info" size="sm" type ="grow" text-center /> {/if}</div>
-      
+  <Col >
+    <div class="file-overview-item-options">
+      <div class="file-overview-item-option"><Button size="sm" on:click={e => handleRemoveFile()}><Fa icon={faTrash}/></Button></div>
+      <div class="file-overview-item-option">{#if isGenerateAble(type)}<Button size="sm" on:click={goToGenerate}><Fa icon={faShareFromSquare}/></Button>{/if}</div>
+      <div class="file-overview-item-option">{#if loading}<Spinner color="info" size="sm" type ="grow" text-center /> {/if}</div>
+        
     </div>
   </Col>
   </div>
@@ -106,9 +103,8 @@ function isGenerateAble(t)
   }
 
 .file-overview-item-option{
-    float: left;
+    float: right;
     padding-left: 3px;
   }
 
- 
 </style>

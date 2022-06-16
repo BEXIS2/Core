@@ -1,13 +1,16 @@
 <script>
 
  import Fa from 'svelte-fa/src/fa.svelte'
- import DropdownKvP  from '../form/DropdownKvP.svelte'
 
  import { onMount, createEventDispatcher } from 'svelte'; 
 
  import {Spinner,  FormGroup, Input, Label,Table, Button, Col, Row } from 'sveltestrap';
- import {generate}  from '../../services/StructureSuggestionCaller'
  import {faTrashAlt, faPenToSquare } from '@fortawesome/free-regular-svg-icons'
+
+ import {generate}  from '../../services/StructureSuggestionCaller'
+ import MissingValues from './MissingValues.svelte'
+
+ 
  
  export let model = null;
 
@@ -44,8 +47,6 @@
  {
    console.log("load selection");
    setTableInfos(model.preview, String.fromCharCode(model.delimeter));
- 
-
 
  }
  
@@ -314,6 +315,7 @@
    <FormGroup>
      <Input id="c1" type="switch" label="selection support"  bind:checked={selectionsupport}/>  
    </FormGroup>
+
  
    <Row>
      <Col xs=3>
@@ -331,6 +333,10 @@
          <Label><b>Deselect:</b> right mouse button click </Label>
        </FormGroup>
      </Col>
+     <Col>
+      <!-- Missing Values-->
+      <MissingValues bind:list={model.missingValues}/>
+    </Col>
    </Row>
  
    <div class="table-container flipped">
