@@ -30,6 +30,7 @@ using BExIS.Modules.Mmm.UI.Helpers;
 using BExIS.Security.Services.Utilities;
 using System.Configuration;
 using Vaiona.Logging;
+using Spire.Doc;
 
 namespace IDIV.Modules.Mmm.UI.Controllers
 {
@@ -114,7 +115,6 @@ namespace IDIV.Modules.Mmm.UI.Controllers
 
                 case "audio":
                     return PartialView("_audioPreview", path);
-              
 
                 case "bundle":
                     FileInformation fileInfo = getFileInfo(Server.UrlDecode(path));
@@ -717,6 +717,32 @@ namespace IDIV.Modules.Mmm.UI.Controllers
             return PartialView("_documentView", getFileInfo(path));
         }
 
+        public FileResult convertToPDF(string path)
+        {
+            var fileInfo = getFileInfo(path);
+            string type = fileInfo.MimeType.Substring(fileInfo.MimeType.LastIndexOf('/') + 1);
+            string tempPath = Path.Combine(AppConfiguration.DataPath, path) + Path.GetFileName(path) + ".pdf";
+
+            switch(type)
+            {
+                //case "vnd.openxmlformats-officedocument.spreadsheetml.sheet":
+                //case "xlsx":
+                //case "xlsm":
+                //case "vnd.ms-excel.sheet.macroEnabled.12":
+                   
+                //break;
+                case ("vnd.openxmlformats-officedocument.wordprocessingml.document"):
+                    Document doc = new Document();
+                    doc.LoadFromFile(Path.Combine(AppConfiguration.DataPath, path));
+                    doc.Watermark = null;
+                    doc.SaveToFile(tempPath, Spire.Doc.FileFormat.PDF);
+                    doc.Dispose();
+               break;
+            }
+
+            return getFileStreamResult(tempPath);
+        }
+
         public ActionResult BundleView(string path)
         {
             path = Server.UrlDecode(path);
@@ -823,7 +849,7 @@ namespace IDIV.Modules.Mmm.UI.Controllers
                                 Stream zipStream = zipFile.GetInputStream(zipEntry);
                                 using (TextFieldParser parser = new TextFieldParser(zipStream))
                                 {
-                                    parser.TextFieldType = FieldType.Delimited;
+                                    parser.TextFieldType = Microsoft.VisualBasic.FileIO.FieldType.Delimited;
                                     parser.SetDelimiters(";");
                                     List<string> columns = parser.ReadFields().ToList();
                                     long nameIndex = columns.IndexOf("imgName");
@@ -907,7 +933,7 @@ namespace IDIV.Modules.Mmm.UI.Controllers
                                 Stream zipStream = zipFile.GetInputStream(zipEntry);
                                 using (TextFieldParser parser = new TextFieldParser(zipStream))
                                 {
-                                    parser.TextFieldType = FieldType.Delimited;
+                                    parser.TextFieldType = Microsoft.VisualBasic.FileIO.FieldType.Delimited;
                                     parser.SetDelimiters(",");
                                     List<string> columns = parser.ReadFields().ToList();
                                     Measurement measurement = new Measurement();

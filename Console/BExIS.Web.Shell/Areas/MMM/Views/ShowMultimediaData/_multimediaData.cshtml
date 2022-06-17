@@ -31,6 +31,8 @@
 
 <link href="@Url.Content("~/Areas/MMM/Stylesheets/MultimediaData.css")" rel="stylesheet" type="text/css" />
 <script src="@Url.Content("~/Areas/MMM/Scripts/isotope.pkgd.min.js")"></script>
+<script src="@Url.Content("~/Areas/MMM/Scripts/three.min.js")"></script>
+<script src="@Url.Content("~/Areas/MMM/Scripts/o3dv.min.js")"></script>
 
     <div class="row">
         <div class="col-md-1 col-xs-1">
@@ -328,6 +330,12 @@
 
 
     <script type="text/javascript">
+        $(document).ready(function () {
+            //initialization Online3DViewer
+            OV.Init3DViewerElements();
+            console.log("ready");
+        });
+        
 
     $.ajaxSetup({ cache: false });
 
@@ -389,7 +397,7 @@
         else if ($(this).attr('type').toLowerCase() == "bundle") {
             openBundle($(this).attr('path'));
         }
-        else if ($(this).attr('type').toLowerCase() == "application") {
+        else if ($(this).attr('type').toLowerCase() == "application" || $(this).attr('type').toLowerCase() == "text") {
             openDocument($(this).attr('path'));
         }
     });
@@ -423,7 +431,7 @@
         function loadDoc(path) {
              var parameters = encodeURI('/?path=' + path);
             $.get('@Url.Action("DocumentView", "ShowMultimediaData", new { area = "MMM" } )' + parameters, function (data) {
-            $('#imgModal .modal-body #content').html(data);
+                $('#imgModal .modal-body #content').html(data);
             initImgWindow();
             layoutImgWindow();
         });
@@ -574,6 +582,9 @@
             $mediaGrid.isotope({ filter: filter });
 
         });
-    }
+        }
+
+       
+
     </script>
     @*<script async defer src="https://maps.googleapis.com/maps/api/js?key= GOOGLE API KEY HERE &callback=initMiniMap"></script>*@
