@@ -9,6 +9,7 @@ import {
 
 import {goTo}  from '../../services/BaseCaller'
 
+export let id = 0; // entity id
 export let files = null;
 
 function goToGenerate(file)
@@ -30,8 +31,8 @@ function goToGenerate(file)
      <DropdownItem header>File</DropdownItem>
      {#each files as file}
        <!-- content here -->
-       <DropdownItem>{file.name}</DropdownItem>
-     {/each}
+       <DropdownItem on:click={goToGenerate(file.name)}>{file.name}</DropdownItem>
+    {/each}
    {/if}
 
  </DropdownMenu>

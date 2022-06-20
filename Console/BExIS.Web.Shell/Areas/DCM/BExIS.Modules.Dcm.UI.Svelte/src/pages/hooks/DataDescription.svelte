@@ -51,7 +51,7 @@ async function reload()
   <Show></Show>
  {:else}
   <!--generate-->
-  <Generate bind:files={model.readableFiles}></Generate>
+  <Generate bind:files={model.readableFiles} {...model}></Generate>
  {/if}
 
  {#if loading}

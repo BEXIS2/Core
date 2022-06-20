@@ -34505,11 +34505,11 @@ var app = (function () {
 
     function get_each_context$2(ctx, list, i) {
     	const child_ctx = ctx.slice();
-    	child_ctx[2] = list[i];
+    	child_ctx[3] = list[i];
     	return child_ctx;
     }
 
-    // (23:1) <DropdownToggle color="primary" caret>
+    // (24:1) <DropdownToggle color="primary" caret>
     function create_default_slot_6$1(ctx) {
     	let t;
 
@@ -34529,14 +34529,14 @@ var app = (function () {
     		block,
     		id: create_default_slot_6$1.name,
     		type: "slot",
-    		source: "(23:1) <DropdownToggle color=\\\"primary\\\" caret>",
+    		source: "(24:1) <DropdownToggle color=\\\"primary\\\" caret>",
     		ctx
     	});
 
     	return block;
     }
 
-    // (25:3) <DropdownItem header>
+    // (26:3) <DropdownItem header>
     function create_default_slot_5$1(ctx) {
     	let t;
 
@@ -34556,14 +34556,14 @@ var app = (function () {
     		block,
     		id: create_default_slot_5$1.name,
     		type: "slot",
-    		source: "(25:3) <DropdownItem header>",
+    		source: "(26:3) <DropdownItem header>",
     		ctx
     	});
 
     	return block;
     }
 
-    // (26:3) <DropdownItem>
+    // (27:3) <DropdownItem>
     function create_default_slot_4$1(ctx) {
     	let t;
 
@@ -34583,14 +34583,14 @@ var app = (function () {
     		block,
     		id: create_default_slot_4$1.name,
     		type: "slot",
-    		source: "(26:3) <DropdownItem>",
+    		source: "(27:3) <DropdownItem>",
     		ctx
     	});
 
     	return block;
     }
 
-    // (28:3) {#if files && files.length>0}
+    // (29:3) {#if files && files.length>0}
     function create_if_block$6(ctx) {
     	let dropdownitem0;
     	let t0;
@@ -34650,13 +34650,13 @@ var app = (function () {
     		p: function update(ctx, dirty) {
     			const dropdownitem1_changes = {};
 
-    			if (dirty & /*$$scope*/ 32) {
+    			if (dirty & /*$$scope*/ 64) {
     				dropdownitem1_changes.$$scope = { dirty, ctx };
     			}
 
     			dropdownitem1.$set(dropdownitem1_changes);
 
-    			if (dirty & /*files*/ 1) {
+    			if (dirty & /*goToGenerate, files*/ 3) {
     				each_value = /*files*/ ctx[0];
     				validate_each_argument(each_value);
     				let i;
@@ -34720,14 +34720,14 @@ var app = (function () {
     		block,
     		id: create_if_block$6.name,
     		type: "if",
-    		source: "(28:3) {#if files && files.length>0}",
+    		source: "(29:3) {#if files && files.length>0}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (30:5) <DropdownItem header>
+    // (31:5) <DropdownItem header>
     function create_default_slot_3$2(ctx) {
     	let t;
 
@@ -34747,16 +34747,16 @@ var app = (function () {
     		block,
     		id: create_default_slot_3$2.name,
     		type: "slot",
-    		source: "(30:5) <DropdownItem header>",
+    		source: "(31:5) <DropdownItem header>",
     		ctx
     	});
 
     	return block;
     }
 
-    // (33:7) <DropdownItem>
+    // (34:7) <DropdownItem on:click={goToGenerate(file.name)}>
     function create_default_slot_2$2(ctx) {
-    	let t_value = /*file*/ ctx[2].name + "";
+    	let t_value = /*file*/ ctx[3].name + "";
     	let t;
 
     	const block = {
@@ -34767,7 +34767,7 @@ var app = (function () {
     			insert_dev(target, t, anchor);
     		},
     		p: function update(ctx, dirty) {
-    			if (dirty & /*files*/ 1 && t_value !== (t_value = /*file*/ ctx[2].name + "")) set_data_dev(t, t_value);
+    			if (dirty & /*files*/ 1 && t_value !== (t_value = /*file*/ ctx[3].name + "")) set_data_dev(t, t_value);
     		},
     		d: function destroy(detaching) {
     			if (detaching) detach_dev(t);
@@ -34778,14 +34778,14 @@ var app = (function () {
     		block,
     		id: create_default_slot_2$2.name,
     		type: "slot",
-    		source: "(33:7) <DropdownItem>",
+    		source: "(34:7) <DropdownItem on:click={goToGenerate(file.name)}>",
     		ctx
     	});
 
     	return block;
     }
 
-    // (31:5) {#each files as file}
+    // (32:5) {#each files as file}
     function create_each_block$2(ctx) {
     	let dropdownitem;
     	let current;
@@ -34798,6 +34798,10 @@ var app = (function () {
     			$$inline: true
     		});
 
+    	dropdownitem.$on("click", function () {
+    		if (is_function(/*goToGenerate*/ ctx[1](/*file*/ ctx[3].name))) /*goToGenerate*/ ctx[1](/*file*/ ctx[3].name).apply(this, arguments);
+    	});
+
     	const block = {
     		c: function create() {
     			create_component(dropdownitem.$$.fragment);
@@ -34806,10 +34810,11 @@ var app = (function () {
     			mount_component(dropdownitem, target, anchor);
     			current = true;
     		},
-    		p: function update(ctx, dirty) {
+    		p: function update(new_ctx, dirty) {
+    			ctx = new_ctx;
     			const dropdownitem_changes = {};
 
-    			if (dirty & /*$$scope, files*/ 33) {
+    			if (dirty & /*$$scope, files*/ 65) {
     				dropdownitem_changes.$$scope = { dirty, ctx };
     			}
 
@@ -34833,14 +34838,14 @@ var app = (function () {
     		block,
     		id: create_each_block$2.name,
     		type: "each",
-    		source: "(31:5) {#each files as file}",
+    		source: "(32:5) {#each files as file}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (24:1) <DropdownMenu>
+    // (25:1) <DropdownMenu>
     function create_default_slot_1$3(ctx) {
     	let dropdownitem0;
     	let t0;
@@ -34889,14 +34894,14 @@ var app = (function () {
     		p: function update(ctx, dirty) {
     			const dropdownitem0_changes = {};
 
-    			if (dirty & /*$$scope*/ 32) {
+    			if (dirty & /*$$scope*/ 64) {
     				dropdownitem0_changes.$$scope = { dirty, ctx };
     			}
 
     			dropdownitem0.$set(dropdownitem0_changes);
     			const dropdownitem1_changes = {};
 
-    			if (dirty & /*$$scope*/ 32) {
+    			if (dirty & /*$$scope*/ 64) {
     				dropdownitem1_changes.$$scope = { dirty, ctx };
     			}
 
@@ -34952,14 +34957,14 @@ var app = (function () {
     		block,
     		id: create_default_slot_1$3.name,
     		type: "slot",
-    		source: "(24:1) <DropdownMenu>",
+    		source: "(25:1) <DropdownMenu>",
     		ctx
     	});
 
     	return block;
     }
 
-    // (22:0) <ButtonDropdown>
+    // (23:0) <ButtonDropdown>
     function create_default_slot$3(ctx) {
     	let dropdowntoggle;
     	let t;
@@ -34999,14 +35004,14 @@ var app = (function () {
     		p: function update(ctx, dirty) {
     			const dropdowntoggle_changes = {};
 
-    			if (dirty & /*$$scope*/ 32) {
+    			if (dirty & /*$$scope*/ 64) {
     				dropdowntoggle_changes.$$scope = { dirty, ctx };
     			}
 
     			dropdowntoggle.$set(dropdowntoggle_changes);
     			const dropdownmenu_changes = {};
 
-    			if (dirty & /*$$scope, files*/ 33) {
+    			if (dirty & /*$$scope, files*/ 65) {
     				dropdownmenu_changes.$$scope = { dirty, ctx };
     			}
 
@@ -35034,7 +35039,7 @@ var app = (function () {
     		block,
     		id: create_default_slot$3.name,
     		type: "slot",
-    		source: "(22:0) <ButtonDropdown>",
+    		source: "(23:0) <ButtonDropdown>",
     		ctx
     	});
 
@@ -35067,7 +35072,7 @@ var app = (function () {
     		p: function update(ctx, [dirty]) {
     			const buttondropdown_changes = {};
 
-    			if (dirty & /*$$scope, files*/ 33) {
+    			if (dirty & /*$$scope, files*/ 65) {
     				buttondropdown_changes.$$scope = { dirty, ctx };
     			}
 
@@ -35101,6 +35106,7 @@ var app = (function () {
     function instance$a($$self, $$props, $$invalidate) {
     	let { $$slots: slots = {}, $$scope } = $$props;
     	validate_slots('Generate', slots, []);
+    	let { id = 0 } = $$props;
     	let { files = null } = $$props;
 
     	function goToGenerate(file) {
@@ -35108,13 +35114,14 @@ var app = (function () {
     		goTo('/dcm/StructureSuggestion/?id=' + id + '&file=' + file);
     	}
 
-    	const writable_props = ['files'];
+    	const writable_props = ['id', 'files'];
 
     	Object.keys($$props).forEach(key => {
     		if (!~writable_props.indexOf(key) && key.slice(0, 2) !== '$$' && key !== 'slot') console.warn(`<Generate> was created with unknown prop '${key}'`);
     	});
 
     	$$self.$$set = $$props => {
+    		if ('id' in $$props) $$invalidate(2, id = $$props.id);
     		if ('files' in $$props) $$invalidate(0, files = $$props.files);
     	};
 
@@ -35124,11 +35131,13 @@ var app = (function () {
     		DropdownMenu,
     		DropdownToggle,
     		goTo,
+    		id,
     		files,
     		goToGenerate
     	});
 
     	$$self.$inject_state = $$props => {
+    		if ('id' in $$props) $$invalidate(2, id = $$props.id);
     		if ('files' in $$props) $$invalidate(0, files = $$props.files);
     	};
 
@@ -35136,13 +35145,13 @@ var app = (function () {
     		$$self.$inject_state($$props.$$inject);
     	}
 
-    	return [files];
+    	return [files, goToGenerate, id];
     }
 
     class Generate extends SvelteComponentDev {
     	constructor(options) {
     		super(options);
-    		init(this, options, instance$a, create_fragment$a, safe_not_equal, { files: 0 });
+    		init(this, options, instance$a, create_fragment$a, safe_not_equal, { id: 2, files: 0 });
 
     		dispatch_dev("SvelteRegisterComponent", {
     			component: this,
@@ -35150,6 +35159,14 @@ var app = (function () {
     			options,
     			id: create_fragment$a.name
     		});
+    	}
+
+    	get id() {
+    		throw new Error("<Generate>: Props cannot be read directly from the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
+    	}
+
+    	set id(value) {
+    		throw new Error("<Generate>: Props cannot be set directly on the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
     	}
 
     	get files() {
@@ -35428,12 +35445,17 @@ var app = (function () {
     	let generate;
     	let updating_files;
     	let current;
+    	const generate_spread_levels = [/*model*/ ctx[0]];
 
     	function generate_files_binding(value) {
     		/*generate_files_binding*/ ctx[6](value);
     	}
 
     	let generate_props = {};
+
+    	for (let i = 0; i < generate_spread_levels.length; i += 1) {
+    		generate_props = assign(generate_props, generate_spread_levels[i]);
+    	}
 
     	if (/*model*/ ctx[0].readableFiles !== void 0) {
     		generate_props.files = /*model*/ ctx[0].readableFiles;
@@ -35451,7 +35473,9 @@ var app = (function () {
     			current = true;
     		},
     		p: function update(ctx, dirty) {
-    			const generate_changes = {};
+    			const generate_changes = (dirty & /*model*/ 1)
+    			? get_spread_update(generate_spread_levels, [get_spread_object(/*model*/ ctx[0])])
+    			: {};
 
     			if (!updating_files && dirty & /*model*/ 1) {
     				updating_files = true;
