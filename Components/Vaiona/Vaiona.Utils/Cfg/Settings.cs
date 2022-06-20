@@ -134,12 +134,23 @@ namespace Vaiona.Utils.Cfg
 
         private void loadSettings()
         {
-            FileHelper.WaitForFile(settingsFullPath);
-            using (StreamReader stream = File.OpenText(settingsFullPath))
+            
+            try
             {
-                JsonSerializer serializer = new JsonSerializer();
-                jsonSettings = (JsonSettings)serializer.Deserialize(stream, typeof(JsonSettings));
+                FileHelper.WaitForFile(settingsFullPath);
+                using (StreamReader stream = File.OpenText(settingsFullPath))
+                {
+                    JsonSerializer serializer = new JsonSerializer();
+                    jsonSettings = (JsonSettings)serializer.Deserialize(stream, typeof(JsonSettings));
 
+                }
+            }
+            catch (Exception ex)
+            {
+                // do nothing
+                // there seem to be situations where the settings file should be opened twice at almost the same time. 
+                // it is also surprising that the wait function does not change anything.
+                // The catch exits because there will be no problems if the error is ignored, since the settings are loaded anyway and the result is the same.
             }
         }
     }

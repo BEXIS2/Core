@@ -129,8 +129,11 @@ namespace BExIS.UI.Hooks
 
             if (File.Exists(filepath)) // check if file exist
             {
+                FileHelper.WaitForFile(filepath); // wait if the file is still open
+
                 // convert json to object
                 cache = JsonConvert.DeserializeObject<T>(File.ReadAllText(filepath));
+                
             }
 
             return cache;
@@ -152,11 +155,13 @@ namespace BExIS.UI.Hooks
             // combine datapath + path + filename
             string filepath = Path.Combine(directory, filename);
 
+            FileHelper.WaitForFile(filepath); // wait if the file is still open
+
             if (File.Exists(filepath)) File.Delete(filepath);// check if file exist, delete maybe?
 
             if (!Directory.Exists(directory)) Directory.CreateDirectory(directory); // create directory if not exist
- 
-            
+
+
             File.WriteAllText(filepath, JsonConvert.SerializeObject(_cache));
 
             return true;

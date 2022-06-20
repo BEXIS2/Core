@@ -73,6 +73,8 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             }
 
             // get default missing values
+
+
             return Json(model, JsonRequestBehavior.AllowGet);
         }
 
@@ -81,7 +83,8 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         {
             if (model == null) throw new ArgumentNullException(nameof(model));
 
-            // get default missing values
+            //  gerenate missing values and link them to each variable
+
             return Json(model, JsonRequestBehavior.AllowGet);
         }
 

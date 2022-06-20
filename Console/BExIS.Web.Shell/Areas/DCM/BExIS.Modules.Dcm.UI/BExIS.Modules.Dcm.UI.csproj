@@ -61,6 +61,7 @@
     <Compile Include="Controllers\CreateController.cs" />
     <Compile Include="Controllers\EditController.cs" />
     <Compile Include="Controllers\EntityTemplatesController.cs" />
+    <Compile Include="Controllers\Hooks\DataDescriptionController.cs" />
     <Compile Include="Controllers\Hooks\AttachmentUploadController.cs" />
     <Compile Include="Controllers\Hooks\FileUploadController.cs" />
     <Compile Include="Controllers\Legacy\AttachmentsController.cs" />
@@ -109,6 +110,7 @@
     <Compile Include="Hooks\AttachmentViewHook.cs" />
     <Compile Include="Hooks\DataStructurePreviewHook.cs" />
     <Compile Include="Hooks\DataHook.cs" />
+    <Compile Include="Hooks\DataDescriptionHook.cs" />
     <Compile Include="Hooks\LinkViewHook.cs" />
     <Compile Include="Hooks\LinkEditHook.cs" />
     <Compile Include="Hooks\AttachmentEditHook.cs" />
@@ -128,6 +130,7 @@
     <Compile Include="Models\CreateDataset\StepModelHelper.cs" />
     <Compile Include="Models\Create\CreateModel.cs" />
     <Compile Include="Models\EasyUploadSummaryModel.cs" />
+    <Compile Include="Models\Edit\DataDescriptionModel.cs" />
     <Compile Include="Models\Edit\EditModel.cs" />
     <Compile Include="Models\EntityReference\ReferenceModels.cs" />
     <Compile Include="Models\EntityTemplates\EntityTemplateModels.cs" />

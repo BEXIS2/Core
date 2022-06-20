@@ -193,6 +193,8 @@ namespace BExIS.Modules.Dcm.UI.Helpers
                 operationManager.Create("DCM", "Validation", "*", DatasetUploadFeature);
                 operationManager.Create("DCM", "Metadata", "*", DatasetUploadFeature);
                 operationManager.Create("DCM", "Messages", "*", DatasetUploadFeature);
+                operationManager.Create("DCM", "DataDescription", "*", DatasetUploadFeature);
+
 
                 #endregion Update Dataset Workflow
 

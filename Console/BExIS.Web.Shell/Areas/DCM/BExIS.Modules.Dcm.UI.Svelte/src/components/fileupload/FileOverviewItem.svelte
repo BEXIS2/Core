@@ -3,10 +3,10 @@ import Fa from 'svelte-fa/src/fa.svelte'
 
 import {FileInfo} from '@bexis2/svelte-bexis2-core-ui'
 import { Spinner, Button, Input, Col, Row  } from 'sveltestrap';
-import { faTrash, faShareFromSquare } from '@fortawesome/free-solid-svg-icons'
+import { faTrash} from '@fortawesome/free-solid-svg-icons'
 
 import {removeFile, saveFileDescription}  from '../../services/Caller'
-import {goTo}  from '../../services/BaseCaller'
+
 import { createEventDispatcher, onMount } from 'svelte';
 
 export let id;
@@ -26,14 +26,13 @@ export let generateAble = false;
 
 let loading = false;
 
-
-async function handleRemoveFile() {
-loading = true;
-
 onMount(async ()=>{
  console.log("onmount file item?");
 
 })
+
+async function handleRemoveFile() {
+loading = true;
 
 //remove from server
 const res = await removeFile(remove,id,file);
@@ -56,19 +55,6 @@ const res = await saveFileDescription(save,id, file, description );
   }
 }
 
-function goToGenerate()
-{
-   // if its possible the file will be used to start structure analyze
-    goTo('/dcm/StructureSuggestion/?id='+id+'&file='+file);
-}
-
-function isGenerateAble(t)
-{
-  if(t === "text/plain" || t === "text/csv"){return true;}
-
-  return false;
-}
-
 </script>
  {#if type}
   <div class="file-overview-item row">
@@ -82,9 +68,7 @@ function isGenerateAble(t)
   <Col >
     <div class="file-overview-item-options">
       <div class="file-overview-item-option"><Button size="sm" on:click={e => handleRemoveFile()}><Fa icon={faTrash}/></Button></div>
-      <div class="file-overview-item-option">{#if isGenerateAble(type)}<Button size="sm" on:click={goToGenerate}><Fa icon={faShareFromSquare}/></Button>{/if}</div>
-      <div class="file-overview-item-option">{#if loading}<Spinner color="info" size="sm" type ="grow" text-center /> {/if}</div>
-        
+      <div class="file-overview-item-option">{#if loading}<Spinner color="info" size="sm" type ="grow" text-center /> {/if}</div>    
     </div>
   </Col>
   </div>
