@@ -66,16 +66,23 @@ namespace BExIS.Modules.Dim.UI.Controllers
             using (EntityManager entityManager = new EntityManager())
             {
                 SettingsHelper settingsHelper = new SettingsHelper();
-                if (settingsHelper.KeyExist("doi_proxy") && settingsHelper.KeyExist("doi_token"))
+                if (settingsHelper.KeyExist("proxy") && settingsHelper.KeyExist("token"))
                 {
-                    var mappings = settingsHelper.GetDataCiteMappings();
+                    var mappings = settingsHelper.GetDataCiteSettings("mappings");
+                    var placeholders = settingsHelper.GetDataCiteSettings("placeholders");
+
                     DatasetVersion datasetVersion = datasetManager.GetDatasetVersion(datasetVersionId);
 
                     var dataCiteHelper = new DataCiteDoiHelper();
+
+                    var p = dataCiteHelper.CreatePlaceholders(datasetVersion, placeholders);
                     var model = dataCiteHelper.CreateDataCiteModel(datasetVersion, mappings);
 
                     var client = new RestClient(settingsHelper.GetDataCiteProperty("proxy"));
                     client.Authenticator = new JwtAuthenticator(settingsHelper.GetDataCiteProperty("token"));
+
+                    var doi = "null";
+                
                 }
             }
             throw new NotImplementedException();

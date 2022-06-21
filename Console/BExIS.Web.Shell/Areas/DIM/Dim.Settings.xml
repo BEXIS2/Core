@@ -19,7 +19,15 @@
 			<entry name="ResourceType" type="Fixed" value="Dataset" />	
 			<entry name="Titles" type="Key" value="Title" />
 			<entry name="URL" />
-			<entry name="Version" />
-	</mappings>
+			
+			<!-- value: Id, Name, Number -->
+			<entry name="Version" type="Property" value="Name"/>
+		</mappings>
+		<placeholders>
+			<entry name="DatasetId" type="Property" value="DatasetId"/>
+			<entry name="VersionId" type="Property" value="VersionId"/>
+			<entry name="VersionNumber" type="Property" value="VersionNumber"/>
+			<entry name="VersionName" type="Property" value="VersionName"/>
+		</placeholders>
 	</datacite>
 </settings>
