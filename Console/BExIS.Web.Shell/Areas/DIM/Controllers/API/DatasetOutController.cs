@@ -164,7 +164,7 @@ namespace BExIS.Modules.Dim.UI.Controllers.API
                 // check is public
                 datasetModel.IsPublic = publicAndDate.Item1;
 
-                // check for publication date @TODO: replace by stored value
+                // check for publication date 
                 datasetModel.PublicationDate = publicAndDate.Item2.ToString(new CultureInfo("en-US"));
 
 
