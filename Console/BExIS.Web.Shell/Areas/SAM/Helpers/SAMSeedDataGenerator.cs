@@ -73,8 +73,12 @@ namespace BExIS.Modules.Sam.UI.Helpers
 
                     // Help
                     var helpOperation = operationManager.Find("SAM", "Help", "*") ?? operationManager.Create("SAM", "Help", "*");
-
-
+					
+					// Formeer Member
+					var formerMemberFeature = featureManager.FeatureRepository.Get().FirstOrDefault(f => f.Name.Equals("Former Member Management"));
+					if (formerMemberFeature == null) formerMemberFeature = featureManager.Create("Former Member Management", "Former Member Management", administrationFeature);
+					operationManager.Create("SAM", "FormerMember", "*", formerMemberFeature);
+					
 
                     if (!featurePermissionManager.Exists(null, featurePermissionFeature.Id, PermissionType.Grant))
                         featurePermissionManager.Create(null, featurePermissionFeature.Id, PermissionType.Grant);

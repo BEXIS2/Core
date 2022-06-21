@@ -127,6 +127,9 @@
     <Compile Include="Authentication\SignInManager.cs" />
     <Compile Include="Authorization\EntityPermissionManager.cs" />
     <Compile Include="Authorization\FeaturePermissionManager.cs" />
+    <Compile Include="FormerMember\FormerMemberEntityPermissionManager.cs" />
+    <Compile Include="FormerMember\FormerMemberFeaturePermissionManager.cs" />
+    <Compile Include="FormerMember\FormerMemberUsersGroupsRelationManager.cs" />
     <Compile Include="Objects\DatasetStore.cs" />
     <Compile Include="Objects\EntityManager.cs" />
     <Compile Include="Objects\FeatureManager.cs" />
