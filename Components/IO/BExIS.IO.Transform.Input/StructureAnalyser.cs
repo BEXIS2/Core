@@ -148,7 +148,7 @@ namespace BExIS.IO.Transform.Input
             }
 
             // if no decimalCounter is detected, then select point as default
-            if (decimalCounter.Count == 0) return DecimalCharacter.point; //throw new Exception("the guessing of the operator came to no result.");
+            if (decimalCounter.Count == 0) throw new Exception("the guessing of the operator came to no result.");
 
             //// only one exist, return textseperator
             if (decimalCounter.Count == 1) return decimalCounter.First().Key;

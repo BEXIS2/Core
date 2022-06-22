@@ -14,6 +14,8 @@ namespace BExIS.Modules.Dcm.UI.Models.Edit
         public string Description { get; set; }
         public DateTime? LastModification { get; set; }
 
+        public List<VariableModel> Variables { get; set; }
+
         /// <summary>
         /// allready uploaded files in the temp folder
         /// </summary>
@@ -25,8 +27,18 @@ namespace BExIS.Modules.Dcm.UI.Models.Edit
             StructureId = 0;
 
             ReadableFiles = new List<FileInfo>();
+            Variables = new List<VariableModel>();
 
         }
+
+    }
+
+    public class VariableModel
+    {
+        public long Id { get; set; }
+        public string Name { get; set; }
+        public string Unit { get; set; }
+        public string DataType { get; set; }
 
     }
 }

@@ -318,26 +318,29 @@
 
  
    <Row>
-     <Col xs=3>
-     <FormGroup>
-       <Label><b>Total:</b> {model.total}</Label><br/>
-       <Label><b>Found:</b> {model.total-model.skipped}</Label><br/>
-       <Label><b>Skipped:</b> {model.skipped}</Label>
-     </FormGroup>
-     </Col>
-     <Col>
-       <FormGroup>
-         <Label><b>Selection:</b> left mouse button</Label> <br/>
-         <Label><b>Drag:</b> left mouse button down and drag</Label><br/>
-         <Label><b>Select Row:</b> double click left mouse button </Label><br/>
-         <Label><b>Deselect:</b> right mouse button click </Label>
-       </FormGroup>
-     </Col>
      <Col>
       <!-- Missing Values-->
       <MissingValues bind:list={model.missingValues}/>
     </Col>
+    <Col>
+      <FormGroup style="float:right">
+        <Label><b>Controls</b></Label><br/>
+        <Label><b>Selection:</b> left mouse button</Label> <br/>
+        <Label><b>Drag:</b> left mouse button down and drag</Label><br/>
+        <Label><b>Select Row:</b> double click left mouse button </Label><br/>
+        <Label><b>Deselect:</b> right mouse button click </Label>
+      </FormGroup>
+    </Col>
    </Row>
+   <Row>
+    <Col xs=3>
+      <FormGroup>
+        <Label><b>Total:</b> {model.total}</Label>
+        <Label><b>Found:</b> {model.total-model.skipped}</Label>
+        <Label><b>Skipped:</b> {model.skipped}</Label>
+      </FormGroup>
+    </Col>
+  </Row>
  
    <div class="table-container flipped">
      <div class="content">

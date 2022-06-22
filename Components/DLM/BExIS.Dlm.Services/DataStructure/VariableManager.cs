@@ -200,10 +200,6 @@ namespace BExIS.Dlm.Services.DataStructure
             if (dataStructureId <= 0) throw new ArgumentNullException(nameof(dataStructureId), "dataStructureId must be greater then 0.");
             if (variableTemplateId <= 0) throw new ArgumentNullException(nameof(variableTemplateId), "variableTemplateId must be greater then 0.");
 
-
-
-            
-
             using (IUnitOfWork uow = this.GetUnitOfWork())
             {
                 IRepository<VariableInstance> repo = uow.GetRepository<VariableInstance>();
@@ -250,13 +246,13 @@ namespace BExIS.Dlm.Services.DataStructure
         /// <param name="defaultValue"></param>
         /// <returns>created VariableInstance</returns>
         /// <exception cref="ArgumentException"></exception>
-        public VariableInstance CreateVariable(string name, DataType dataType, Unit unit, long dataStructureId, long variableTemplateId, bool isOptional, string description = "", string defaultValue = "")
+        public VariableInstance CreateVariable(string name, DataType dataType, Unit unit, long dataStructureId,  bool isOptional, bool isKey, long variableTemplateId=0, string description = "", string defaultValue = "")
         {
             // check incoming varaibles
             if (string.IsNullOrEmpty(name)) throw new ArgumentNullException(nameof(name), "name is empty but is required.");
             if (dataType == null) throw new ArgumentNullException(nameof(dataType), "datatype is null but is required.");
             if (dataStructureId <= 0) throw new ArgumentNullException(nameof(dataStructureId),"dataStructureId must be greater then 0.");
-            if (variableTemplateId <= 0) throw new ArgumentNullException(nameof(variableTemplateId), "variableTemplateId must be greater then 0.");
+            //if (variableTemplateId <= 0) throw new ArgumentNullException(nameof(variableTemplateId), "variableTemplateId must be greater then 0.");
 
 
 
@@ -267,7 +263,8 @@ namespace BExIS.Dlm.Services.DataStructure
                 DataType = dataType,
                 DefaultValue = defaultValue,
                 Unit = unit,
-                IsValueOptional = isOptional
+                IsValueOptional = isOptional,
+                IsKey = isKey
             };
 
             using (IUnitOfWork uow = this.GetUnitOfWork())

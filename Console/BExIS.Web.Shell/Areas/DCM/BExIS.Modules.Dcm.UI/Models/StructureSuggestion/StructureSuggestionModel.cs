@@ -11,7 +11,22 @@ namespace BExIS.Modules.Dcm.UI.Models.StructureSuggestion
     public class StructureSuggestionModel
     {
 
+        /// <summary>
+        ///  entity id
+        /// </summary>
         public long Id { get; set; }
+        /// <summary>
+        /// title of the data structure
+        /// </summary>
+        public string Title { get; set; }
+        /// <summary>
+        /// description of the data structure
+        /// </summary>
+        public string Description { get; set; }
+
+        /// <summary>
+        /// file that come in
+        /// </summary>
         public string File { get; set; }
         public int Delimeter { get; set; }
         public int Decimal { get; set; }
@@ -40,6 +55,8 @@ namespace BExIS.Modules.Dcm.UI.Models.StructureSuggestion
         {
             Id = 0;
             File = "";
+            Title = "";
+            Description = "";
             Delimeter = ' ';
             Decimal = ' ';
             Preview = new List<string>();

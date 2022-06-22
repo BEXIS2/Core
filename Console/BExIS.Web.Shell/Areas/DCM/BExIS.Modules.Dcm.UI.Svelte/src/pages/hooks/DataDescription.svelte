@@ -1,7 +1,7 @@
 <script>
 
  import {getHookStart}  from '../../services/Caller'
- import { latestFileUploadDate } from '../../stores/editStores';
+ import { latestFileUploadDate, latestDataDescriptionDate } from '../../stores/editStores';
 
  import { onMount }from 'svelte'
 
@@ -18,7 +18,9 @@ export let hook;
  
 $:model = null;
 $:loading = false;
+
 $:$latestFileUploadDate, reload()
+$:$latestDataDescriptionDate, reload()
  
 onMount(async () => {
   load();
@@ -48,7 +50,7 @@ async function reload()
  <!--if structure not exist go to generate view otherwise show structure-->
  {#if model && model.structureId > 0} 
   <!--show-->
-  <Show></Show>
+  <Show {...model}></Show>
  {:else}
   <!--generate-->
   <Generate bind:files={model.readableFiles} {...model}></Generate>

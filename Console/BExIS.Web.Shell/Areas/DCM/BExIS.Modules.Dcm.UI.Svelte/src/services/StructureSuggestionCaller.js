@@ -32,6 +32,15 @@ export const generate = async (data) => {
   }
 };
 
+export const save = async (data) => {
+  try {
+    const response = await Api.post('/dcm/StructureSuggestion/save',data);
+    return response.data;
+  } catch (error) {
+    console.error(error);
+  }
+};
+
 export const getDataTypes = async () => {
   try {
     const response = await Api.get('/dcm/StructureSuggestion/getDataTypes');

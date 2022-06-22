@@ -1,10 +1,15 @@
 ﻿using BExIS.App.Bootstrap.Attributes;
 using BExIS.Dlm.Entities.Data;
+using BExIS.Dlm.Entities.DataStructure;
+using BExIS.Dlm.Services.Data;
 using BExIS.Dlm.Services.DataStructure;
 using BExIS.IO;
 using BExIS.IO.Transform.Input;
+using BExIS.Modules.Dcm.UI.Hooks;
 using BExIS.Modules.Dcm.UI.Models.StructureSuggestion;
 using BExIS.Security.Entities.Authorization;
+using BExIS.UI.Hooks;
+using BExIS.UI.Hooks.Caches;
 using BExIS.UI.Models;
 using System;
 using System.Collections.Generic;
@@ -53,6 +58,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
             if (model.Preview.Any())
             {
+
                 // get delimeter
                 TextSeperator textSeperator = structureAnalyser.SuggestDelimeter(model.Preview.First(), model.Preview.Last());
                 model.Delimeter = AsciiFileReaderInfo.GetSeperator(textSeperator);
@@ -60,8 +66,17 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 model.Delimeters = getDelimeters();
 
                 // get decimal
-                DecimalCharacter decimalCharacter = structureAnalyser.SuggestDecimal(model.Preview.First(), model.Preview.Last(), textSeperator);
-                model.Decimal = AsciiFileReaderInfo.GetDecimalCharacter(decimalCharacter);
+                // the structure analyzer return a result or trigger a exception
+                // catch the exception and set a default value -1 
+                try
+                {
+                    DecimalCharacter decimalCharacter = structureAnalyser.SuggestDecimal(model.Preview.First(), model.Preview.Last(), textSeperator);
+                    model.Decimal = AsciiFileReaderInfo.GetDecimalCharacter(decimalCharacter);
+                } 
+                catch(Exception ex)
+                {
+                    model.Decimal = -1;
+                }
 
                 model.Decimals = getDecimals();
 
@@ -83,9 +98,93 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         {
             if (model == null) throw new ArgumentNullException(nameof(model));
 
-            //  gerenate missing values and link them to each variable
+            using (var structureManager = new DataStructureManager())
+            using (var variableManager = new VariableManager())
+            using (var unitManager = new UnitManager())
+            using (var datatypeManager = new DataTypeManager())
+            using (var datasetManager = new DatasetManager())
+            {
+                // create strutcure
+                StructuredDataStructure newStructure = structureManager.CreateStructuredDataStructure(
+                        model.Title,
+                        model.Description,
+                        null,
+                        null,
+                        DataStructureCategory.Generic
+                    );
 
-            return Json(model, JsonRequestBehavior.AllowGet);
+
+                // create variables
+
+                foreach (var variable in model.Variables)
+                {
+                    // if needed gerenate units??
+                    // if needed gerenate Variabe Template??
+
+                    // get datatype
+                    var dataType = datatypeManager.Repo.Get(variable.DataType.Id);
+                    if (dataType == null) { }// create;
+
+                    // get unit
+                    var unit = unitManager.Repo.Get(variable.Unit.Id);
+                    if (unit == null) { }// create;
+
+                    // create var and add to structure
+
+                    // generate variables
+                    var result = variableManager.CreateVariable(
+                        variable.Name,
+                        dataType,
+                        unit,
+                        newStructure.Id,
+                        variable.IsOptional,
+                        variable.IsKey
+                        );
+
+
+                    // gerenate missing values and link them to each variable
+
+                }
+
+                // store link to entity
+
+                var dataset = datasetManager.GetDataset(model.Id);
+                dataset.DataStructure = newStructure;
+                datasetManager.UpdateDataset(dataset);
+
+                #region update cache
+
+                HookManager hookManager = new HookManager();
+                EditDatasetDetailsCache cache = hookManager.LoadCache<EditDatasetDetailsCache>("dataset", "details", HookMode.edit, model.Id);
+
+                // update Data description hook
+
+                // set file reading informations
+                if (cache.AsciiFileReaderInfo == null)
+                    cache.AsciiFileReaderInfo = new AsciiFileReaderInfo();
+
+                cache.AsciiFileReaderInfo.Decimal = (DecimalCharacter)model.Decimal;
+                cache.AsciiFileReaderInfo.Seperator = (TextSeperator)model.Delimeter;
+                cache.AsciiFileReaderInfo.TextMarker = (TextMarker)model.TextMarker;
+                cache.AsciiFileReaderInfo.Data = model.Markers.Where(m=>m.Type.Equals("data")).FirstOrDefault().Row;
+                cache.AsciiFileReaderInfo.Variables = model.Markers.Where(m=>m.Type.Equals("variable")).FirstOrDefault().Row;
+
+
+                // update modifikation date
+                cache.UpdateLastModificarion(typeof(DataDescriptionHook));
+
+
+                // store in messages
+                string message = String.Format("the structure {0} was successfully created and attached to the dataset {1}.",model.Title, model.Id);
+                cache.Messages.Add(new ResultMessage(DateTime.Now, new List<string>() { message }));
+
+                // save cache
+                hookManager.SaveCache(cache, "dataset", "details", HookMode.edit, model.Id);
+                #endregion
+
+            }
+
+            return Json(true, JsonRequestBehavior.AllowGet);
         }
 
         /*
@@ -362,6 +461,18 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             }
 
             return "";
+        }
+
+        public string GetUsernameOrDefault()
+        {
+            string username = string.Empty;
+            try
+            {
+                username = HttpContext.User.Identity.Name;
+            }
+            catch { }
+
+            return !string.IsNullOrWhiteSpace(username) ? username : "DEFAULT";
         }
     }
 }

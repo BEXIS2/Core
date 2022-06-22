@@ -20,5 +20,11 @@ namespace BExIS.UI.Hooks
             Timestamp = timestamp;
             Messages = messages;
         }
+
+        public ResultMessage(DateTime timestamp, string message)
+        {
+            Timestamp = timestamp;
+            Messages = new List<string>() { message };
+        }
     }
 }

@@ -317,6 +317,59 @@ namespace BExIS.Dlm.Tests.Services.DataStructure
         }
 
         [Test()]
+        public void CreateVariable_WithTemplate_Variable()
+        {
+            using (var variableManager = new VariableManager())
+            using (var datastructureManager = new DataStructureManager())
+            using (var dataTypeManager = new DataTypeManager())
+            using (var unitManager = new UnitManager())
+            {
+                //Arrange
+                var dataType = dataTypeManager.Repo.Get().FirstOrDefault();
+                Assert.IsNotNull(dataType, "datatype not exist");
+
+                var unit = unitManager.Repo.Get().FirstOrDefault();
+                Assert.IsNotNull(unit, "unit not exist");
+
+                //Variable Template
+                var variableTemplate = variableManager.CreateVariableTemplate(
+                    "TestVariableTemplate",
+                    dataType,
+                    unit,
+                    false,
+                    "TestVariableTemplate Description",
+                    "xyz"
+                    );
+
+                // Datastructure
+                var dataStructure = datastructureManager.CreateStructuredDataStructure(
+                    "Test Structure",
+                    "Test StrutcureDescription",
+                    null,
+                    null,
+                    DataStructureCategory.Generic,
+                    null
+                    );
+
+                //Act
+                var variable = variableManager.CreateVariable(
+                    "TestVariable",
+                    dataStructure.Id,
+                    variableTemplate.Id
+                    );
+
+                //Assert
+                Assert.IsNotNull(variable);
+                Assert.That(variable.Id > 0);
+
+                var variableFromDB = variableManager.GetVariable(variable.Id);
+
+                Assert.AreSame(variable, variableFromDB);
+
+            }
+        }
+
+        [Test()]
         public void CreateVariable_NameIsEmptOrNull_ArgumentNullException()
         {
             using (var variableManager = new VariableManager())
@@ -357,8 +410,9 @@ namespace BExIS.Dlm.Tests.Services.DataStructure
                     variableTemplate.DataType,
                     variableTemplate.Unit,
                     dataStructure.Id,
-                    variableTemplate.Id,
-                    true
+                    true,
+                    false,
+                    variableTemplate.Id
                     ));
 
                 //Assert
@@ -408,8 +462,9 @@ namespace BExIS.Dlm.Tests.Services.DataStructure
                    null,
                    variableTemplate.Unit,
                    dataStructure.Id,
-                   variableTemplate.Id,
-                   true
+                   true,
+                   false,
+                   variableTemplate.Id
                    ));
 
                 //Assert
@@ -451,8 +506,9 @@ namespace BExIS.Dlm.Tests.Services.DataStructure
                    variableTemplate.DataType,
                    variableTemplate.Unit,
                    0,
-                   variableTemplate.Id,
-                   true
+                   true,
+                   false,
+                   variableTemplate.Id
                    ));
 
                 //Assert
@@ -463,7 +519,7 @@ namespace BExIS.Dlm.Tests.Services.DataStructure
         }
 
         [Test()]
-        public void CreateVariable_VariableTemplateIdIsZero_ArgumentNullException()
+        public void CreateVariable_WithoutVariableTemplate_Variable()
         {
             using (var variableManager = new VariableManager())
             using (var datastructureManager = new DataStructureManager())
@@ -477,16 +533,6 @@ namespace BExIS.Dlm.Tests.Services.DataStructure
                 var unit = unitManager.Repo.Get().FirstOrDefault();
                 Assert.IsNotNull(unit, "unit not exist");
 
-                //Variable Template
-                var variableTemplate = variableManager.CreateVariableTemplate(
-                    "TestVariableTemplate",
-                    dataType,
-                    unit,
-                    false,
-                    "TestVariableTemplate Description",
-                    "xyz"
-                    );
-
                 // Datastructure
                 var dataStructure = datastructureManager.CreateStructuredDataStructure(
                     "Test Structure",
@@ -498,18 +544,18 @@ namespace BExIS.Dlm.Tests.Services.DataStructure
                     );
 
                 //Act
-                var ex = Assert.Throws<ArgumentNullException>(() => variableManager.CreateVariable(
+                var result = variableManager.CreateVariable(
                    "Test Variable",
-                   variableTemplate.DataType,
-                   variableTemplate.Unit,
+                   dataType,
+                   unit,
                    dataStructure.Id,
-                   0,
-                   true
-                   ));
+                   true,
+                   false
+                   );
 
                 //Assert
-                Assert.That(ex.ParamName, Is.EqualTo("variableTemplateId"));
-                Assert.That(ex.Message, Is.EqualTo("variableTemplateId must be greater then 0.\r\nParametername: variableTemplateId"));
+                Assert.NotNull(result);
+                
 
             }
         }
@@ -555,8 +601,9 @@ namespace BExIS.Dlm.Tests.Services.DataStructure
                     variableTemplate.DataType,
                     variableTemplate.Unit,
                     dataStructure.Id,
-                    variableTemplate.Id,
-                    true
+                    true,
+                    false,
+                    variableTemplate.Id
                     );
 
                 //Act
@@ -619,8 +666,9 @@ namespace BExIS.Dlm.Tests.Services.DataStructure
                     variableTemplate.DataType,
                     variableTemplate.Unit,
                     dataStructure.Id,
-                    variableTemplate.Id,
-                    true
+                    true,
+                    false,
+                    variableTemplate.Id
                     );
 
                 //Act
