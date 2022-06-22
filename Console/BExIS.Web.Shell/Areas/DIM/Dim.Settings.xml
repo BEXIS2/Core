@@ -4,10 +4,10 @@
 	<entry key="key2" value="value2" type="String"/>
 	<entry key="key3" value="21" type="Int16"/>
 	<datacite>
-		<entry key="proxy" value="https://train.bexis2.uni-jena.de" type="String" />
-		<entry key="token" value="uJoCANaYWiahyKD8xwyHPwxxaPS9Q6EaayqCwgSXpXvGqnsYjsqinCiZ7tpxk2io" type="String" />
-		<entry key="provider" value="datacite" type="String" />
-		<entry key="testmode" value="false" type="Boolean" />
+		<entry name="proxy" value="https://localhost:44372/" />
+		<entry name="token" value="n3mEjeh6635kDNU5yHtXijNEu4Eh6XKMigDwoeHVpmrkybyQnMJ4gXDBHFPTaVC4" />
+		<entry name="provider" value="datacite" />
+		<entry name="testmode" value="false" />
 		<mappings>
 			<!--types: Key, Metadata, Entity, Fixed-->
 			<!--value: key - System Key, metadata - xpath, entity - property, fixed - value-->
