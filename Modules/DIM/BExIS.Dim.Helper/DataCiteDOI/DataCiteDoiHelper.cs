@@ -123,7 +123,7 @@ namespace BExIS.Dim.Helpers
                     #region URL
                     case "URL":
 
-                        model.URL = "google.de";
+                        model.URL = $"{HttpContext.Current.Request.Url.GetLeftPart(UriPartial.Authority)}/ddm/Data/ShowData/{datasetVersion.Dataset.Id}";
                         break;
                     #endregion
 
@@ -178,6 +178,11 @@ namespace BExIS.Dim.Helpers
             }
 
             return _placeholders;
+        }
+
+        public string CreateDOI(Dictionary<string, string> placeholders)
+        {
+            return null;
         }
 
         private bool sendMetadata(DatasetVersion datasetVersion, string datasetUrl, long version, string doi)
