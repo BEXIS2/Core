@@ -32,7 +32,7 @@ namespace BExIS.Modules.Dim.UI.Helpers
         public string GetValue(string key)
         {
             XDocument settings = XDocument.Load(filePath);
-            XElement element = XmlUtility.GetXElementByAttribute("entry", "key", key.ToLower(), settings);
+            XElement element = XmlUtility.GetXElementByAttribute("entry", "name", key.ToLower(), settings);
 
             string value = "";
             value = element.Attribute("value")?.Value;
