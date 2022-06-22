@@ -1,43 +1,42 @@
-# BEXIS 2.14.5 Release Notes
+# BEXIS 2.14.6 Release Notes
 
-Attention: Changes were made in the web.config in line: 72 (see [#803](https://github.com/BEXIS2/Core/issues/803))
+Attention: Permission related to **Requests** are now split into: _send requests_ and _manage requests_. Older permission are only set to _manage requests_. Data manager have to set permission for _send requests_ manually! If not, sending requests will not work as it did before.
 
 ### Features
-
+- Send and manage DOI requests to DataCite
 
 ### Enhancements
-- Data policy checkbox removed from registration (does not need to be agreed on) ([#784](https://github.com/BEXIS2/Core/issues/784))
-- Requests and Decissions: Date column sortable ([#781](https://github.com/BEXIS2/Core/issues/781))
-- Replace "Show Data/Dataset" by the current entity name (e.g. Publication) ([#769](https://github.com/BEXIS2/Core/issues/769))
-- Sort users descending by id (manage parties)([#806](https://github.com/BEXIS2/Core/issues/806))
-- Sort data structures descending by id ([#807](https://github.com/BEXIS2/Core/issues/807))
-- Sort users descending by id ([#826](https://github.com/BEXIS2/Core/issues/826))
-- Permission Requests: User without request features rights should not be able to send requests ([#809](https://github.com/BEXIS2/Core/issues/809))
-- Prevent newer metadata versions do not use materialized view, although data has not changed ([#823](https://github.com/BEXIS2/Core/issues/823))
-- EmailService allows optional attachments [#814](https://github.com/BEXIS2/Core/issues/814))
+- Data structure view: Only first linked dataset is shown #851
+- Wiki: add workflow to delete data from a dataset / workaround for purge in bigger instances #866 https://github.com/BEXIS2/Core/wiki/How-to-delete-Tabular-Data-(in-DB)
+- Data Structure Preview: Exchange unit description with abbreviation #870
+- Manage Users: Add email confirmation status and registration date #871
+- Primary Data View: Reduce default number of shown rows from 100 to 10 #886
+- Requests: Add link to dataset #891
+- Public search (metadata) : hide email for bots #692
+- Dataset Details View: Replace underscore with withe-space in field names #919
+
   
 ### Bugs
-- Fix only a maximum of 100 variables possible inside a data structure (max size of JSON objects too small) ([#803](https://github.com/BEXIS2/Core/issues/803))
-- Fix files with longer file names not possible for upload (URI field to short for contentdescriptor) ([#800](https://github.com/BEXIS2/Core/issues/800))
-- Fix appliaction name missing in header on Log In page ([#786](https://github.com/BEXIS2/Core/issues/786))
-- Fix user names during registration should not allow ending spaces ([#786](https://github.com/BEXIS2/Core/issues/786))
-- Fix missing white space on primary data page ([#780](https://github.com/BEXIS2/Core/issues/780))
-- Fix missing "Terms and Conditions" link in footer ([#785](https://github.com/BEXIS2/Core/issues/785))
-- Fix error during data validation (constraints not checked correctly) ([#792](https://github.com/BEXIS2/Core/issues/792))([#804](https://github.com/BEXIS2/Core/issues/804))
-- Fix data structure was not anymore editable after import ([#791](https://github.com/BEXIS2/Core/issues/791))
-- Fix missing checkedIn after rollback during data upload ([#805](https://github.com/BEXIS2/Core/issues/805))
-- Fix missing values sometimes disappaer after save ([#774](https://github.com/BEXIS2/Core/issues/774))
-- Fix download metadata only returned latest version ([#771](https://github.com/BEXIS2/Core/issues/771))
-- Fix image view can not be closed (unstructured data) ([#797](https://github.com/BEXIS2/Core/issues/797))
-- Fix primary data of unstructured datasets are not visible without rights in public data view ([#799](https://github.com/BEXIS2/Core/issues/799))
-- Fix download notification are send on image preview ([#767](https://github.com/BEXIS2/Core/issues/767))
-- Fix dataset download as Excel for > 1 Mio for Datasets should not be allowed ([#825](https://github.com/BEXIS2/Core/issues/825))
-- Fix default execution time for SQL statements by default only 60 seconds (now 3 minutes) ([#816](https://github.com/BEXIS2/Core/issues/816))
+- Fix Public Search: Show "more" leads to login screen #838 ([#838](https://github.com/BEXIS2/Core/issues/838))
+- Fix Error message for unknown ID not user friendly #841
+- Fix WebShell UI: Download not allowed info #105
+- Fix View party: conditional attribute not shown #725
+- Fix API Data Statistics: Missing values not correct resetted #864
+- Fix Search Index: empty variable descriptions are indexed as "Unknown" #865
+- Fix Create metadata structure: spelling mistake #868
+- Fix Manage users/groups: show related line in header of pop-up window #867
+- Fix File (Attachment) Upload Description: Fails for certain characters as stored as XML #846
+- Fix Push Big Files: Max length is null after selecting a file #878
+- Fix Missing Mapping Case return false results #877
+- Fix My Data: Datasets with implicit rights (groups/relationships) are missing #885
+- Fix Error message header wrong for data download exception #910
+- Fix Upload: Improve error message "Can not upload" #915
+- Fix Upload via API: improve text #911
 
 ## I. Software Information
 
 -	Name: BEXIS
--	Version: 2.14.5
+-	Version: 2.14.6
 -	Application Type: Web Application
 -	Platform: Windows
 

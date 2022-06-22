@@ -43,3 +43,97 @@ WHERE NOT EXISTS (SELECT * FROM public.operations WHERE module='API' AND control
 INSERT INTO public.operations (versionno, extra, module, controller, action, featureref)
 SELECT 1, NULL, 'DIM', 'DataCiteDoi', '*', (Select id from features where name = 'Data Dissemination')
 WHERE NOT EXISTS (SELECT * FROM public.operations WHERE module='DIM' AND controller='DataCiteDoi');
+
+-- Add Entry for FormerMembers
+INSERT INTO public.features(versionno, extra, description, name, parentref)
+VALUES (1, null, 'Former Member Management', 'Former Member Management', (Select id from features where name = 'Administration'));
+	
+INSERT INTO public.operations (versionno, extra, module, controller, action, featureref)
+SELECT 1, NULL, 'SAM', 'FormerMember', '*', (Select id from features where name = 'Former Member Management')
+WHERE NOT EXISTS (SELECT * FROM public.operations WHERE module='DIM' AND controller='FormerMember');
+
+CREATE SEQUENCE public.entitypermissions_formermember_id_seq
+    INCREMENT 1
+    START 1
+    MINVALUE 1
+    MAXVALUE 9223372036854775807
+    CACHE 1;
+
+ALTER SEQUENCE public.entitypermissions_formermember_id_seq
+    OWNER TO postgres;
+	
+CREATE SEQUENCE public.featurepermissions_formermember_id_seq
+    INCREMENT 1
+    START 1
+    MINVALUE 1
+    MAXVALUE 9223372036854775807
+    CACHE 1;
+
+ALTER SEQUENCE public.featurepermissions_formermember_id_seq
+    OWNER TO postgres;
+
+CREATE SEQUENCE public.users_groups_formermember_id_seq
+    INCREMENT 1
+    START 1
+    MINVALUE 1
+    MAXVALUE 9223372036854775807
+    CACHE 1;
+
+ALTER SEQUENCE public.users_groups_formermember_id_seq
+    OWNER TO postgres;
+
+CREATE TABLE public.entitypermissions_formermember
+(
+    id bigint NOT NULL DEFAULT nextval('entitypermissions_formermember_id_seq'::regclass),
+    versionno integer NOT NULL,
+    extra xml,
+    entityref bigint,
+    key bigint,
+    rights integer,
+    subjectref bigint,
+    CONSTRAINT entitypermissions_formermember_pkey PRIMARY KEY (id),
+    CONSTRAINT fk75c8c89d9f11e324 FOREIGN KEY (entityref)
+        REFERENCES public.entities (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION
+)
+
+TABLESPACE pg_default;
+
+ALTER TABLE public.entitypermissions_formermember
+    OWNER to postgres;
+
+CREATE TABLE public.featurepermissions_formermember
+(
+    id bigint NOT NULL DEFAULT nextval('featurepermissions_formermember_id_seq'::regclass),
+    versionno integer NOT NULL,
+    extra xml,
+    featureref bigint,
+    permissiontype integer NOT NULL,
+    subjectref bigint,
+    CONSTRAINT featurepermissions_formermember_pkey PRIMARY KEY (id),
+    CONSTRAINT fk4c9ab452b32ba4aa FOREIGN KEY (featureref)
+        REFERENCES public.features (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION
+)
+
+TABLESPACE pg_default;
+
+ALTER TABLE public.featurepermissions_formermember
+    OWNER to postgres;
+	
+CREATE TABLE public.users_groups_formermember
+(
+    id bigint NOT NULL DEFAULT nextval('users_groups_formermember_id_seq'::regclass),
+    versionno integer NOT NULL,
+    extra xml,
+    userref bigint,
+    groupref bigint,
+    CONSTRAINT users_groups_formermember_pkey PRIMARY KEY (id)
+)
+
+TABLESPACE pg_default;
+
+ALTER TABLE public.users_groups_formermember
+    OWNER to postgres;
