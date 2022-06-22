@@ -194,8 +194,6 @@ namespace BExIS.Modules.Dim.UI.Controllers
                     var datacite_request = new RestRequest($"api/datacite", Method.POST).AddJsonBody(JsonConvert.SerializeObject(model));
                     var response = client.Execute(datacite_request);
 
-
-
                     if (response.StatusCode != System.Net.HttpStatusCode.OK)
                     {
                         return PartialView("_requestRow", new PublicationModel()
