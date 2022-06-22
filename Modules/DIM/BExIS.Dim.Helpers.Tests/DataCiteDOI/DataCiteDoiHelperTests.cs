@@ -27,7 +27,7 @@ namespace BExIS.Dim.Helpers.Tests.DataCiteDOI
         {
         }
 
-        [Test()]
+        //[Test()]
         public void ReadMappings_ValidSettings_ReturnList()
         {
             var appConfiguration = AppConfiguration.WorkspaceRootPath;
