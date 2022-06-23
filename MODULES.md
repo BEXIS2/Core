@@ -12,7 +12,7 @@ On this page, modules are listed which are available in the community for all BE
 | Event Management (EMM) |   | Biodiversity Exploratories |   | Release |   |
 | File Management (FMT) |   | Biodiversity Exploratories |   | Release |   |
 | Land-use Intensity (LUI) |   | Biodiversity Exploratories |   | Release |   |
-| Multimedia (MMM) |   | iDiv |   | Release |   |
+| Multimedia Management (MMM) |   | iDiv |   | Release |   |
 | Omic Archives (OA) |   | AquaDiva |   | Release |   |
 | Open Archives Initiative Protocol for Metadata Harvesting  (OAIPMH) | This module extends a BEXIS2 instance with the functionality that BEXIS2 works as a data provider for all harvesters according to the OAI-PMH (Open Archives Initiative Protocol for Metadata Harvesting) protocol. | BEXIS2 | [repo](https://github.com/BEXIS2/OAI-PMH-Module/tree/2.13) | Release |   |
 | Photo Gallery (PGM) |   | Biodiversity Exploratories |   | Release |   |
