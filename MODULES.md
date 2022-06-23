@@ -22,3 +22,13 @@ On this page, modules are listed which are available in the community for all BE
 | Semantic Analysis (SAM) |   | AquaDiva |   | Release |   |
 | Semantic Search (SSM) |   | AquaDiva |   | Release |   |
 | Static Websites (SWS) |   | Biodiversity Exploratories |   | Release |   |
+| BEXIS2-VAT System Interface (BEXIS2-VAT) |   | BEXIS2 |   | Under development |   |
+| Biodiversity Visualisation Recommendation System (BVRS) |   | Biodiversity Exploratories |   | Under development |   |
+| Digital Object Identifier Assignment Workflow (DOIAW) |   | Biodiversity Exploratories, iDiv |   | Under development |   |
+| Sample Archive (RDB) |   | Max Planck Institute for Biogeochemistry |   | Under development |   |
+| Data Quality/Curation Support (Quality/Curation) |   | Biodiversity Exploratories |   | Planned |   |
+| Provenance (Prov) |   | BEXIS2 |   | Planned |   |
+| Public Data (PUD) |   | Biodiversity Exploratories |   | Planned |   |
+| Support for Special Data Types (SDT) |   | Biodiversity Exploratories |   | Planned |   |
+| Synthesis Proposal Module (SPM) |   | Biodiversity Exploratories |   | Planned |   |
+| User Feedback Management (UFM) |   | Biodiversity Exploratories |   | Planned |   |
