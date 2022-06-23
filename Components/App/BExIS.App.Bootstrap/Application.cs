@@ -180,6 +180,9 @@ namespace BExIS.App.Bootstrap
             pManager.Configure(AppConfiguration.DefaultApplicationConnection.ConnectionString,
                 AppConfiguration.DatabaseDialect, "Default", AppConfiguration.ShowQueries, configureModules);
 
+            Console.WriteLine("db connection");
+            Console.WriteLine(AppConfiguration.DefaultApplicationConnection.ConnectionString);
+
             if (AppConfiguration.CreateDatabase)
             {
                 pManager.ExportSchema();
