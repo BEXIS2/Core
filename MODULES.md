@@ -22,7 +22,7 @@ On this page, modules are listed which are available in the community for all BE
 | Semantic Analysis (SAM) |   | AquaDiva |   | Release |   |
 | Semantic Search (SSM) |   | AquaDiva |   | Release |   |
 | Static Websites (SWS) |   | Biodiversity Exploratories |   | Release |   |
-| BEXIS2-VAT System Interface (BEXIS2-VAT) |   | BEXIS2 |   | Under development |   |
+| BEXIS2-VAT System Interface (BEXIS2-VAT) | This BEXIS2 module extends the system with an interface to the [Geo Engine](https://www.geoengine.de/en/start/) | BEXIS2 | [repo](https://github.com/BEXIS2/VAT-Module) | Under development |   |
 | Biodiversity Visualisation Recommendation System (BVRS) |   | Biodiversity Exploratories |   | Under development |   |
 | Digital Object Identifier Assignment Workflow (DOIAW) |   | Biodiversity Exploratories, iDiv |   | Under development |   |
 | Sample Archive (RDB) |   | Max Planck Institute for Biogeochemistry |   | Under development |   |
