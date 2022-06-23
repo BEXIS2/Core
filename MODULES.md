@@ -5,9 +5,8 @@ On this page, modules are listed which are available in the community for all BE
 | Name | Description | Contributor | Source | Status |   |
 | --- | --- | --- | --- | --- | --- |
 | Module Template | This Module is a template for a BEXIS2 module to extend the functionality of the system. | BEXIS2 | [repo](https://github.com/BEXIS2/ModuleTemplate) |   |   |
-| OAI-PMH | This module extends a BEXIS2 instance with the functionality that BEXIS2 works as a data provider for all harvesters according to the OAI-PMH (Open Archives Initiative Protocol for Metadata Harvesting) protocol. |   | [repo](https://github.com/BEXIS2/OAI-PMH-Module/tree/2.13) |   |   |
-| VAT | This BEXIS2 module extends the system with an interface to the [Geo Engine](https://www.geoengine.de/en/start/) |   | [repo](https://github.com/BEXIS2/VAT-Module) | [Release](https://github.com/BEXIS2/VAT-Module/releases/tag/1.0) |   |
 | Alumni Management (ALM) |   | Biodiversity Exploratories |   | Release |   |
+| BEXIS2-VAT System Interface (BEXIS2-VAT) | This BEXIS2 module extends the system with an interface to the [Geo Engine](https://www.geoengine.de/en/start/) | BEXIS2 | [repo](https://github.com/BEXIS2/VAT-Module) | [Release](https://github.com/BEXIS2/VAT-Module/releases/tag/1.0) |   |
 | Data Summarization (DSM) |   | AquaDiva |   | Release |   |
 | Event Management (EMM) |   | Biodiversity Exploratories |   | Release |   |
 | File Management (FMT) |   | Biodiversity Exploratories |   | Release |   |
@@ -22,7 +21,6 @@ On this page, modules are listed which are available in the community for all BE
 | Semantic Analysis (SAM) |   | AquaDiva |   | Release |   |
 | Semantic Search (SSM) |   | AquaDiva |   | Release |   |
 | Static Websites (SWS) |   | Biodiversity Exploratories |   | Release |   |
-| BEXIS2-VAT System Interface (BEXIS2-VAT) | This BEXIS2 module extends the system with an interface to the [Geo Engine](https://www.geoengine.de/en/start/) | BEXIS2 | [repo](https://github.com/BEXIS2/VAT-Module) | Under development |   |
 | Biodiversity Visualisation Recommendation System (BVRS) |   | Biodiversity Exploratories |   | Under development |   |
 | Digital Object Identifier Assignment Workflow (DOIAW) |   | Biodiversity Exploratories, iDiv |   | Under development |   |
 | Sample Archive (RDB) |   | Max Planck Institute for Biogeochemistry |   | Under development |   |
