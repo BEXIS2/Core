@@ -37,7 +37,7 @@ namespace Vaiona.Utils.Cfg
         {
             if (Attribute!=null && Attribute.Any())
             {
-                return Attribute.Where(a => a.Key.ToLower().Equals("placeholder")).FirstOrDefault();
+                return Attribute.Where(a => a.Key.ToLower().Equals(key)).FirstOrDefault();
             }
 
             return null;

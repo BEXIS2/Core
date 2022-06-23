@@ -112,6 +112,8 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                     else
                         cache.Files.RemoveAt(i); // if not remove from cache
                 }
+
+                model.AllFilesReadable = cache.Files.Count == model.ReadableFiles.Count;
             }
 
 
@@ -156,6 +158,9 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
                     // delete datastructure from database
                     dataStructureManager.DeleteStructuredDataStructure(structure);
+
+                    // maybe delete also all variables and missng values
+
 
                     // update cache
                     HookManager hookManager = new HookManager();

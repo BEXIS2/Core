@@ -120,7 +120,10 @@ namespace Vaiona.Utils.Cfg
 
         public Item[] GetList(string entryKey)
         {
-            Entry entry = jsonSettings.Entry.Where(p => p.Key.Equals(entryKey, StringComparison.InvariantCultureIgnoreCase)).FirstOrDefault();
+            Entry entry = jsonSettings.Entry.Where(p => 
+                p.Key.Equals("name", StringComparison.InvariantCultureIgnoreCase) && 
+                p.Value.ToString().Equals(entryKey, StringComparison.InvariantCultureIgnoreCase) &&
+                p.Type=="list").FirstOrDefault();
             if (entry == null)
                 return null;
 

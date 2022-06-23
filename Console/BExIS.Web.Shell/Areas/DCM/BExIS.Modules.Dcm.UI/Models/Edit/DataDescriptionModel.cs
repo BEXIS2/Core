@@ -16,6 +16,10 @@ namespace BExIS.Modules.Dcm.UI.Models.Edit
 
         public List<VariableModel> Variables { get; set; }
 
+        // this value is a flag to check wheter all files from upload is readable or not
+        // if not the ui should hide data description at all
+        public bool AllFilesReadable { get; set; }
+
         /// <summary>
         /// allready uploaded files in the temp folder
         /// </summary>

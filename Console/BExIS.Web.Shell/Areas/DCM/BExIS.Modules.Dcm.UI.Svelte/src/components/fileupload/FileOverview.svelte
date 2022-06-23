@@ -34,6 +34,8 @@ onMount(async () => {
 
 async function handleRemoveFile(e, index) {
 
+  console.log("handleRemoveFile",e,index);
+
    files.splice(index, 1)
    files = [...files];
 

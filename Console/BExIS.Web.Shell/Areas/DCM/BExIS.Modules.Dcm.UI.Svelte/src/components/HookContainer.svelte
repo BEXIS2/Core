@@ -7,6 +7,7 @@
 
  export let displayName;
  export let content=9;
+ export let visible = true;
 
  $:error = [];
  $:success = null;
@@ -37,6 +38,7 @@ function warningHandler (e){
 }
 </script>
 
+{#if visible}
 <div class="hook-container" >
  <Row> 
  
@@ -80,3 +82,4 @@ function warningHandler (e){
  }
 
 </style>
+{/if}

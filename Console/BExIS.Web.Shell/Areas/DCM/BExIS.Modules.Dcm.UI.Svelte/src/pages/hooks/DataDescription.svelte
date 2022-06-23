@@ -34,6 +34,7 @@ async function load()
 
 async function reload()
 {
+  console.log("reload datadscription");
   load();
 } 
  
@@ -41,23 +42,27 @@ async function reload()
  </script>
  
  {#if model}
- {#if model.lastModification}
- 
- <TimeDuration milliseconds={new Date(model.lastModification)}/>
- 
- {/if}
+  {#if model.allFilesReadable==true}
 
- <!--if structure not exist go to generate view otherwise show structure-->
- {#if model && model.structureId > 0} 
-  <!--show-->
-  <Show {...model}></Show>
- {:else}
-  <!--generate-->
-  <Generate bind:files={model.readableFiles} {...model}></Generate>
- {/if}
+    {#if model.lastModification}
+    
+    <TimeDuration milliseconds={new Date(model.lastModification)}/>
+    
+    {/if}
 
- {#if loading}
-   <Spinner color="info" size="sm" type ="grow" text-center />
- {/if}
- 
+    <!--if structure not exist go to generate view otherwise show structure-->
+    {#if model && model.structureId > 0} 
+      <!--show-->
+      <Show {...model}></Show>
+    {:else}
+      <!--generate-->
+      <Generate bind:files={model.readableFiles} {...model}></Generate>
+    {/if}
+
+    {#if loading}
+      <Spinner color="info" size="sm" type ="grow" text-center />
+    {/if}
+  {:else}
+    <span>not available</span>
+  {/if}
  {/if}

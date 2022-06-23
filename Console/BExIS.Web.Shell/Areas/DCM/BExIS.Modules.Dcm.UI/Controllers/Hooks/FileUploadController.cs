@@ -93,21 +93,27 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             {
                 var dataset = datasetManager.GetDataset(id);
 
-                // get list from entity template
+                // get list of file types based on system settings, like 
+                // if structure exist or not
+
+                DataStructureType datastructureType = DataStructureType.None;
+
+                // check if datastructure type exist
+                if (dataset.DataStructure != null &&
+                    dataset.DataStructure.Self.GetType().Equals(typeof(StructuredDataStructure)))
+                    datastructureType = DataStructureType.Structured;
+
+                // get default list of allowed file types
+                model.Accept = UploadHelper.GetExtentionList(datastructureType, this.Session.GetTenant());
+
+                // if entity template has some allowed filestypes
                 if (dataset.EntityTemplate.AllowedFileTypes.Any())
-                    model.Accept = dataset.EntityTemplate.AllowedFileTypes;
-                else // if nothing is set in entity template, get default allowed filetypes
                 {
-                    DataStructureType datastructureType = DataStructureType.None;
-
-                    // check if datastructure type exist
-                    if (dataset.DataStructure != null &&
-                        dataset.DataStructure.Self.GetType().Equals(typeof(StructuredDataStructure)))
-                        datastructureType = DataStructureType.Structured;
-
-                    // get default list of allowed file types
-                    model.Accept = UploadHelper.GetExtentionList(datastructureType, this.Session.GetTenant());
+                    // the system needs to compare them with the system list 
+                    // only add filetypes dat are in both lists
+                    model.Accept = model.Accept.Intersect(dataset.EntityTemplate.AllowedFileTypes).ToList();
                 }
+
             }
 
             // set modification date

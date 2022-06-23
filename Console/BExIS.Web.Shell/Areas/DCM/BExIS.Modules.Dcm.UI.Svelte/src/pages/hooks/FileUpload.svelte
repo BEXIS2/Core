@@ -44,6 +44,7 @@ async function reload()
 {
   /*update store*/
   latestFileUploadDate.set(Date.now());
+
   /* load data*/
   load();
 }
@@ -52,18 +53,18 @@ async function reload()
 </script>
 
 {#if model}
-{#if model.lastModification}
+  {#if model.lastModification}
 
-<TimeDuration milliseconds={new Date(model.lastModification)}/>
+  <TimeDuration milliseconds={new Date(model.lastModification)}/>
 
-{/if}
-  <FileUploader {id} {version} {context} data={model} {start} {submit} on:submited={reload} on:submit={()=>loading=true} on:error on:success/>
-{#if model.existingFiles}
-  <FileOverview {id} files={model.existingFiles} descriptionType={model.descriptionType} {save} {remove} on:success={latestFileUploadDate.set(Date.now())} />
-{/if}
+  {/if}
+    <FileUploader {id} {version} {context} data={model} {start} {submit} on:submited={reload} on:submit={()=>loading=true} on:error on:success/>
+  {#if model.existingFiles}
+    <FileOverview {id} files={model.existingFiles} descriptionType={model.descriptionType} {save} {remove} on:success={reload} />
+  {/if}
 
-{#if loading}
-  <Spinner color="info" size="sm" type ="grow" text-center />
-{/if}
+  {#if loading}
+    <Spinner color="info" size="sm" type ="grow" text-center />
+  {/if}
 
 {/if}

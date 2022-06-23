@@ -85,9 +85,10 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 model.TextMarker = AsciiFileReaderInfo.GetTextMarker(textMarker);
 
                 model.TextMarkers = getTextMarkers();
+         
             }
 
-            // get default missing values
+            model.MissingValues = getDefaultMissingValues();
 
 
             return Json(model, JsonRequestBehavior.AllowGet);
@@ -103,6 +104,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             using (var unitManager = new UnitManager())
             using (var datatypeManager = new DataTypeManager())
             using (var datasetManager = new DatasetManager())
+            using (var missingValueManager = new MissingValueManager())
             {
                 // create strutcure
                 StructuredDataStructure newStructure = structureManager.CreateStructuredDataStructure(
@@ -143,6 +145,10 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
 
                     // gerenate missing values and link them to each variable
+                    foreach (var mv in model.MissingValues)
+                    {
+                        var missingValue = missingValueManager.Create(mv.DisplayName, mv.Description, result);
+                    }
 
                 }
 
@@ -461,6 +467,25 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             }
 
             return "";
+        }
+
+        private List<MissingValueModel> getDefaultMissingValues()
+        {
+            var list = new List<MissingValueModel>();
+            // get default missing values
+            var settings = ModuleManager.GetModuleSettings("rpm");
+            var mv_list = settings.GetList("missingvalues");
+
+            foreach (var mv in mv_list)
+            {
+                list.Add(new MissingValueModel()
+                {
+                    DisplayName = mv.GetAttribute("placeholder")?.Value.ToString(),
+                    Description = mv.GetAttribute("description")?.Value.ToString()
+                });
+            }
+
+            return list;
         }
 
         public string GetUsernameOrDefault()
