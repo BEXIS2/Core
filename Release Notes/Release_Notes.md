@@ -1,9 +1,12 @@
 # BEXIS 2.14.6 Release Notes
 
-Attention: Permission related to **Requests** are now split into: _send requests_ and _manage requests_. Older permission are only set to _manage requests_. Data manager have to set permission for _send requests_ manually! If not, sending requests will not work as it did before.
+Attention: Permission related to **Requests** are now split into: _send requests_ and _manage requests_. Older permission are only set to _manage requests_. Data managers have to set permission for _send requests_ manually! If not, sending requests will not work as it did before.
 
 ### Features
-- Send and manage DOI requests to DataCite
+- Send and manage DOI requests to DataCite ([#888](https://github.com/BEXIS2/Core/issues/888))([#905](https://github.com/BEXIS2/Core/issues/905))(_beta_) 
+- Integration of Former Member Module ([#897](https://github.com/BEXIS2/Core/issues/897)) (_beta_)
+	-  Change status of users to _former user_ by assigning a new group and preserving all previous permissions
+- Versioning: visibility and accessibility on public and internal datasets([#853](https://github.com/BEXIS2/Core/issues/853)) (_beta_)
 
 ### Enhancements
 - Data structure view: Only first linked dataset is shown ([#851](https://github.com/BEXIS2/Core/issues/851))
@@ -14,6 +17,7 @@ Attention: Permission related to **Requests** are now split into: _send requests
 - Requests: Add link to dataset ([#891](https://github.com/BEXIS2/Core/issues/891))
 - Public search (metadata) : hide email for bots ([#692](https://github.com/BEXIS2/Core/issues/692))
 - Dataset Details View: Replace underscore with withe-space in field names ([#919](https://github.com/BEXIS2/Core/issues/919))
+- Add parties (isMain parts) and other fields to the Dataset API needed for citation generation ([#894](https://github.com/BEXIS2/Core/issues/894))
 
   
 ### Bugs
