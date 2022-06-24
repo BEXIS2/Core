@@ -6,32 +6,32 @@ Attention: Permission related to **Requests** are now split into: _send requests
 - Send and manage DOI requests to DataCite
 
 ### Enhancements
-- Data structure view: Only first linked dataset is shown #851
+- Data structure view: Only first linked dataset is shown ([#851](https://github.com/BEXIS2/Core/issues/851))
 - Wiki: add workflow to delete data from a dataset / workaround for purge in bigger instances #866 https://github.com/BEXIS2/Core/wiki/How-to-delete-Tabular-Data-(in-DB)
-- Data Structure Preview: Exchange unit description with abbreviation #870
-- Manage Users: Add email confirmation status and registration date #871
-- Primary Data View: Reduce default number of shown rows from 100 to 10 #886
-- Requests: Add link to dataset #891
-- Public search (metadata) : hide email for bots #692
-- Dataset Details View: Replace underscore with withe-space in field names #919
+- Data Structure Preview: Exchange unit description with abbreviation ([#870](https://github.com/BEXIS2/Core/issues/870))
+- Manage Users: Add email confirmation status and registration date ([#871](https://github.com/BEXIS2/Core/issues/871))
+- Primary Data View: Reduce default number of shown rows from 100 to 10 ([#886](https://github.com/BEXIS2/Core/issues/886))
+- Requests: Add link to dataset ([#891](https://github.com/BEXIS2/Core/issues/891))
+- Public search (metadata) : hide email for bots ([#692](https://github.com/BEXIS2/Core/issues/692))
+- Dataset Details View: Replace underscore with withe-space in field names ([#919](https://github.com/BEXIS2/Core/issues/919))
 
   
 ### Bugs
-- Fix Public Search: Show "more" leads to login screen #838 ([#838](https://github.com/BEXIS2/Core/issues/838))
-- Fix Error message for unknown ID not user friendly #841
-- Fix WebShell UI: Download not allowed info #105
-- Fix View party: conditional attribute not shown #725
-- Fix API Data Statistics: Missing values not correct resetted #864
-- Fix Search Index: empty variable descriptions are indexed as "Unknown" #865
-- Fix Create metadata structure: spelling mistake #868
-- Fix Manage users/groups: show related line in header of pop-up window #867
-- Fix File (Attachment) Upload Description: Fails for certain characters as stored as XML #846
-- Fix Push Big Files: Max length is null after selecting a file #878
-- Fix Missing Mapping Case return false results #877
-- Fix My Data: Datasets with implicit rights (groups/relationships) are missing #885
-- Fix Error message header wrong for data download exception #910
-- Fix Upload: Improve error message "Can not upload" #915
-- Fix Upload via API: improve text #911
+- Fix Public Search: Show "more" leads to login screen ([#838](https://github.com/BEXIS2/Core/issues/838))
+- Fix Error message for unknown ID not user friendly ([#841](https://github.com/BEXIS2/Core/issues/841))
+- Fix WebShell UI: Download not allowed info ([#105](https://github.com/BEXIS2/Core/issues/105))
+- Fix View party: conditional attribute not shown ([#725](https://github.com/BEXIS2/Core/issues/725))
+- Fix API Data Statistics: Missing values not correct resetted ([#864](https://github.com/BEXIS2/Core/issues/864))
+- Fix Search Index: empty variable descriptions are indexed as "Unknown" ([#865](https://github.com/BEXIS2/Core/issues/865))
+- Fix Create metadata structure: spelling mistake ([#868](https://github.com/BEXIS2/Core/issues/868))
+- Fix Manage users/groups: show related line in header of pop-up window ([#867](https://github.com/BEXIS2/Core/issues/867))
+- Fix File (Attachment) Upload Description: Fails for certain characters as stored as XML ([#846](https://github.com/BEXIS2/Core/issues/846))
+- Fix Push Big Files: Max length is null after selecting a file ([#878](https://github.com/BEXIS2/Core/issues/878))
+- Fix Missing Mapping Case return false results ([#877](https://github.com/BEXIS2/Core/issues/877))
+- Fix My Data: Datasets with implicit rights (groups/relationships) are missing ([#885](https://github.com/BEXIS2/Core/issues/885))
+- Fix Error message header wrong for data download exception ([#910](https://github.com/BEXIS2/Core/issues/910))
+- Fix Upload: Improve error message "Can not upload" ([#915](https://github.com/BEXIS2/Core/issues/915))
+- Fix Upload via API: improve text ([#911](https://github.com/BEXIS2/Core/issues/911))
 
 ## I. Software Information
 
