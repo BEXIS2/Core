@@ -3,7 +3,7 @@
 On this page, modules are listed which are available in the community for all BEXIS2 instances.
 
 | Name | Description | Contributor | Repo URL | Status |
-| --- | --- | --- | --- | --- |
+| :-- | :-- | :-- | :-- | :-- |
 | Module Template | This Module is a template for a BEXIS2 module to extend the functionality of the system. | BEXIS2 | https://github.com/BEXIS2/ModuleTemplate | [Release](https://github.com/BEXIS2/ModuleTemplate) |
 | Alumni Management (ALM) |   | [Biodiversity Exploratories](https://www.biodiversity-exploratories.de/en/) |   | Release |
 | BEXIS2-VAT System Interface (BEXIS2-VAT) | This BEXIS2 module extends the system with an interface to the [Geo Engine](https://www.geoengine.de/en/start/) | BEXIS2 | https://github.com/BEXIS2/VAT-Module | [Release](https://github.com/BEXIS2/VAT-Module/releases/tag/1.0) |
