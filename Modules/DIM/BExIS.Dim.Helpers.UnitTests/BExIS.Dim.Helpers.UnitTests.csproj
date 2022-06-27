@@ -13,7 +13,7 @@
   <ItemGroup>
     <PackageReference Include="Cquential.Microsoft.Practices.Unity" Version="2.0.414" />
     <PackageReference Include="Microsoft.AspNet.WebApi.Core" Version="5.2.3" />
-    <PackageReference Include="Newtonsoft.Json" Version="11.0.1" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
     <PackageReference Include="NHibernate" Version="4.1.1.4000" />
     <PackageReference Include="Npgsql" Version="4.0.0" />
     <PackageReference Include="NUnit" Version="3.12.0" />
