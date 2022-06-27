@@ -12,6 +12,7 @@
 
   <ItemGroup>
     <PackageReference Include="Cquential.Microsoft.Practices.Unity" Version="2.0.414" />
+    <PackageReference Include="Iesi.Collections" Version="4.0.4" />
     <PackageReference Include="Microsoft.AspNet.WebApi.Core" Version="5.2.3" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
     <PackageReference Include="NHibernate" Version="4.1.1.4000" />
