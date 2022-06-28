@@ -37,7 +37,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
             using (PublicationManager publicationManager = new PublicationManager())
             {
 
-                Broker broker = publicationManager.RepositoryRepo.Get().Where(b => b.Name.ToLower().Equals(ConfigurationManager.AppSettings["doiProvider"].ToLower())).FirstOrDefault().Broker;
+                Broker broker = publicationManager.RepositoryRepo.Get().Where(b => b.Name.ToLower() == "datacite").FirstOrDefault().Broker;
                 List<Publication> publications = publicationManager.GetPublication().Where(p => p.Broker.Name.ToLower().Equals(broker.Name.ToLower())).ToList();
 
                 foreach (Publication p in publications)
@@ -105,7 +105,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
                     var datacite_request = new RestRequest($"api/datacite", Method.POST).AddJsonBody(JsonConvert.SerializeObject(model));
                     var response = client.Execute(datacite_request);
 
-                    if (response.StatusCode != System.Net.HttpStatusCode.OK)
+                    if (response.StatusCode != System.Net.HttpStatusCode.Created)
                     {
                         return PartialView("_requestRow", new PublicationModel()
                         {
@@ -135,7 +135,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
                     string title = new XmlDatasetHelper().GetInformationFromVersion(latestDatasetVersion.Id, NameAttributeValues.title);
                     string subject = "DOI Request for Dataset " + title + "(" + latestDatasetVersion.Dataset.Id + ")";
                     string body = "<p>DOI reqested for dataset <a href=\"" + datasetUrl + "\">" + title + "(" + latestDatasetVersion.Dataset.Id + ")</a>, was granted by the Datamanager.</p>" +
-                        "<p>The doi is<a href=\"https://doi.org/" + doi + "\">" + doi + "</a></p>";
+                        "<p>The doi is<a href=\"https://doi.org/" + doi.DOI + "\">" + doi.DOI + "</a></p>";
 
                     tmp = new List<string>();
                     List<string> emails = new List<string>();

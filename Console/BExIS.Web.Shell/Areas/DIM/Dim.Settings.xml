@@ -4,8 +4,8 @@
 	<entry key="key2" value="value2" type="String"/>
 	<entry key="key3" value="21" type="Int16"/>
 	<datacite>
-		<entry name="proxy" value="https://localhost:44372/" />
-		<entry name="token" value="n3mEjeh6635kDNU5yHtXijNEu4Eh6XKMigDwoeHVpmrkybyQnMJ4gXDBHFPTaVC4" />
+		<entry name="proxy" value="https://train.bexis2.uni-jena.de/" />
+		<entry name="token" value="mhNTaJCzHsLbquWjHLvPrv9mR3Wg6Uwmo5mkwmhwBWgrmhWZwskSY4B6vz4si7mt" />
 		<entry name="provider" value="datacite" />
 		<entry name="testmode" value="false" />
 		<mappings>
