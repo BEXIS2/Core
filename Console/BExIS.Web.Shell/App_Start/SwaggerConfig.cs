@@ -1,5 +1,5 @@
 using BExIS.Web.Shell;
-using Swagger.Net.Application;
+using Swashbuckle.Application;
 using System.Linq;
 using System.Web.Http;
 using WebActivatorEx;
@@ -18,22 +18,24 @@ namespace BExIS.Web.Shell
                 .EnableSwagger(c =>
                     {
                         c.SingleApiVersion("v1", "Bexis 2 API´s");
-                        c.ApiKey("bearer", "header", "Filling bearer token here");
-                        c.a
-                        //c.PrettyPrint();
-                        //c.IncludeXmlComments(GetXmlCommentsPath());
-                        //c.IgnoreObsoleteProperties();
-                        //c.ResolveConflictingActions(apiDescriptions => apiDescriptions.First());
+                        c.ApiKey("Authorization")
+                        .Description("Filling bearer token here")
+                        .Name("Bearer")
+                        .In("header");
+                        c.PrettyPrint();
+                        c.IncludeXmlComments(GetXmlCommentsPath());
+                        c.IgnoreObsoleteProperties();
+                        c.ResolveConflictingActions(apiDescriptions => apiDescriptions.First());
                         //c.ApiKey("Authorization", "header", "Filling bearer token here");
                     })
 
                 .EnableSwaggerUi("apihelp/{*assetPath}", c =>
                      {
                          c.DocumentTitle("API´s");
-                         //c.InjectJavaScript(thisAssembly, "BExIS.Web.Shell.Scripts.custom-swagger.js");
+                         c.InjectJavaScript(thisAssembly, "BExIS.Web.Shell.Scripts.custom-swagger.js");
                          c.BooleanValues(new[] { "0", "1" });
                          c.EnableDiscoveryUrlSelector();
-                         c.ApiKeySupport("bearer", "header");
+                         c.EnableApiKeySupport("Authorization", "header");
                      });
         }
 
