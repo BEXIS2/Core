@@ -19,7 +19,6 @@ namespace BExIS.Web.Shell
                     {
                         c.SingleApiVersion("v1", "Bexis 2 API´s");
                         c.ApiKey("bearer", "header", "Filling bearer token here");
-                        c.a
                         //c.PrettyPrint();
                         //c.IncludeXmlComments(GetXmlCommentsPath());
                         //c.IgnoreObsoleteProperties();
