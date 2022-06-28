@@ -158,7 +158,12 @@ namespace BExIS.Modules.Dim.UI.Controllers.API
                 datasetModel.Parties = getPartyIsMainAttributesForParties(elements);
 
                 // get splitted names for all non-found parties
-                datasetModel.Names = getSplitedNames(elements);
+                if (elements.ContainsKey(Key.Author.ToString()))
+                {
+                    var authors = new Dictionary<string, List<XElement>>();
+                    authors.Add(Key.Author.ToString(), elements[Key.Author.ToString()]);
+                    datasetModel.Names = getSplitedNames(authors);
+                }
 
                 var publicAndDate = getPublicAndDate(id);
                 // check is public
