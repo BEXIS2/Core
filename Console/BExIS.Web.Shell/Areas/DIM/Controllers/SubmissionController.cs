@@ -446,6 +446,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
 
                         #endregion GENERIC
                     }
+
                     if (datarepo.ToLower().Equals("doi"))
                     {
                         #region datacite
@@ -458,7 +459,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
                         Repository repository =
                             publicationManager.RepositoryRepo.Get()
                                 .Where(b => b.Broker.Name.ToLower().Equals(datarepo.ToLower()) &&
-                                            b.Name.ToLower().Equals(ConfigurationManager.AppSettings["doiProvider"].ToLower()))
+                                            b.Name.ToLower() == "datacite")
                                 .FirstOrDefault();
 
                         if (repository != null && repository.Name.ToLower() == "datacite")
@@ -472,7 +473,6 @@ namespace BExIS.Modules.Dim.UI.Controllers
 
                         #endregion
                     }
-
 
                     if (datarepo.ToLower().Equals("externallink"))
                     {

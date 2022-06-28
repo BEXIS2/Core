@@ -24,7 +24,7 @@ namespace BExIS.Modules.Dim.UI.Helpers
         public bool KeyExist(string key)
         {
             XDocument settings = XDocument.Load(filePath);
-            XElement element = XmlUtility.GetXElementByAttribute("entry", "key", key.ToLower(), settings);
+            XElement element = XmlUtility.GetXElementByAttribute("entry", "name", key.ToLower(), settings);
 
             return element != null ? true : false;
         }

@@ -6,7 +6,7 @@
             var key = this.value;
             console.info('Set bearer token to: ' + key);
             if (key && key.trim() !== '') {
-                swaggerUi.api.clientAuthorizations.add("key", new SwaggerClient.ApiKeyAuthorization("Authorization", "Bearer " + key, "header"));
+                swaggerUi.api.clientAuthorizations.add("api_key", new SwaggerClient.ApiKeyAuthorization("Authorization", "Bearer " + key, "header"));
             }
         });
     });
