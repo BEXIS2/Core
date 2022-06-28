@@ -18,11 +18,13 @@ namespace BExIS.Web.Shell
                 .EnableSwagger(c =>
                     {
                         c.SingleApiVersion("v1", "Bexis 2 API´s");
-                        c.PrettyPrint();
-                        c.IncludeXmlComments(GetXmlCommentsPath());
-                        c.IgnoreObsoleteProperties();
-                        c.ResolveConflictingActions(apiDescriptions => apiDescriptions.First());
-                        c.ApiKey("Authorization", "header", "Filling bearer token here");
+                        c.ApiKey("bearer", "header", "Filling bearer token here");
+                        c.a
+                        //c.PrettyPrint();
+                        //c.IncludeXmlComments(GetXmlCommentsPath());
+                        //c.IgnoreObsoleteProperties();
+                        //c.ResolveConflictingActions(apiDescriptions => apiDescriptions.First());
+                        //c.ApiKey("Authorization", "header", "Filling bearer token here");
                     })
 
                 .EnableSwaggerUi("apihelp/{*assetPath}", c =>
@@ -31,6 +33,7 @@ namespace BExIS.Web.Shell
                          //c.InjectJavaScript(thisAssembly, "BExIS.Web.Shell.Scripts.custom-swagger.js");
                          c.BooleanValues(new[] { "0", "1" });
                          c.EnableDiscoveryUrlSelector();
+                         c.ApiKeySupport("bearer", "header");
                      });
         }
 
