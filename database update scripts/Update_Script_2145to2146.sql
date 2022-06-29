@@ -1,4 +1,6 @@
+BEGIN TRANSACTION;  
 
+-- ROLLBACK TRANSACTION;
 -- Add new description field and copy description from XML field (extra) to the new description column
 Alter Table contentdescriptors add column description text;
 Update contentdescriptors set description =  (xpath('/extra/fileDescription/text()', extra))[1]::text;
@@ -150,3 +152,13 @@ TABLESPACE pg_default;
 
 ALTER TABLE public.users_groups_formermember
     OWNER to postgres;
+
+
+
+
+-- Insert version
+INSERT INTO public.versions(
+	versionno, extra, module, value, date)
+	VALUES (1, null, 'Shell', '2.14.6',NOW());
+
+COMMIT;
