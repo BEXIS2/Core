@@ -44,6 +44,19 @@ INSERT INTO public.operations (versionno, extra, module, controller, action, fea
 SELECT 1, NULL, 'DIM', 'DataCiteDoi', '*', (Select id from features where name = 'Data Dissemination')
 WHERE NOT EXISTS (SELECT * FROM public.operations WHERE module='DIM' AND controller='DataCiteDoi');
 
+-- Add Entry for DOI as broker inside dim
+INSERT INTO public.dim_brokers(
+	versionno, extra, name, server, username, password, metadataformat, primarydataformat, link)
+	VALUES (1, null, 'DOI', '', '', '', '', '', '');
+
+-- Add Entry for DataCite repository inside dim
+insert into public.dim_repositories(
+	versionno, extra, name, url, brokerref)
+select 
+    1, null, 'DataCite', '', id
+from public.dim_brokers where name = 'DOI';
+
+
 -- Add Entry for FormerMembers
 INSERT INTO public.features(versionno, extra, description, name, parentref)
 VALUES (1, null, 'Former Member Management', 'Former Member Management', (Select id from features where name = 'Administration'));
