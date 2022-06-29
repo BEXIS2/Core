@@ -153,7 +153,8 @@ TABLESPACE pg_default;
 ALTER TABLE public.users_groups_formermember
     OWNER to postgres;
 
-
+-- Publication 
+ALTER TABLE public.dim_publications DROP COLUMN doi;
 
 
 -- Insert version
