@@ -28,6 +28,8 @@
     bool hasSimpleMapping = Model.PartySimpleMappingExist;
     bool hasComplexMapping = Model.PartyComplexMappingExist;
 
+    bool isMappingSelection = Model.MappingSelectionField;
+
     string partyid = "";
     if (Model.PartyId != 0)
     {
@@ -226,7 +228,7 @@
                                         <div style="color: gray">Use an entry from autocomplete list.</div>
                                     }
 
-                                    <input class="t-widget t-autocomplete t-input bx-metadataFormTextInput  @errorClass" complex="@hasComplexMapping.ToString()" id="@idInput" idbyxpath="@idByXpath" onKeyUp="OnKeyUpTextInput(this)" name="@idInput" simple="@hasSimpleMapping.ToString()" partyid="@partyid" test="@Model.Id" title="" type="@autoCompleteType" value="@value" xpath="@xpath">
+                                    <input class="t-widget t-autocomplete t-input bx-metadataFormTextInput  @errorClass" complex="@hasComplexMapping.ToString()" id="@idInput" idbyxpath="@idByXpath" onKeyUp="OnKeyUpTextInput(this)" name="@idInput" simple="@hasSimpleMapping.ToString()" partyid="@partyid" test="@Model.Id" title="" type="@autoCompleteType" value="@value" xpath="@xpath" isMappingSelection="@isMappingSelection">
 
                                     // add icons to show linked / not linked party entries; hide both by default
                                     var notLinkedID = @idInput + "_notLinked";

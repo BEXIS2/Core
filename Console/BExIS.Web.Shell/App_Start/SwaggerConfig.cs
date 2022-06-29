@@ -27,6 +27,7 @@ namespace BExIS.Web.Shell
                         c.IgnoreObsoleteProperties();
                         c.ResolveConflictingActions(apiDescriptions => apiDescriptions.First());
                         //c.ApiKey("Authorization", "header", "Filling bearer token here");
+                        c.Schemes(new[] { "https" });
                     })
 
                 .EnableSwaggerUi("apihelp/{*assetPath}", c =>

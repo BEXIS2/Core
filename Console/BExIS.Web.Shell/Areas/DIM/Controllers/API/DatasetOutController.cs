@@ -157,8 +157,24 @@ namespace BExIS.Modules.Dim.UI.Controllers.API
                 // get isMain parts for all found parties if exists (e.g. first and last name)
                 datasetModel.Parties = getPartyIsMainAttributesForParties(elements);
 
-                // get splitted names for all non-found parties
-                datasetModel.Names = getSplitedNames(elements);
+                
+                // set up person key list
+                var personKeyList = new List<string>();
+                // setup dic with values of the persons 
+                var personKeyDic = new Dictionary<string, List<XElement>>();
+
+                // add keys here
+                personKeyList.Add(Key.Author.ToString());
+
+                foreach (var key in personKeyList)
+                {
+                    // check if key exists in alle mapped elements
+                    if (elements.ContainsKey(key))
+                        personKeyDic.Add(key, elements[key]);
+                }
+
+                 
+                datasetModel.Names = getSplitedNames(personKeyDic);
 
                 var publicAndDate = getPublicAndDate(id);
                 // check is public

@@ -1,6 +1,8 @@
 # BEXIS 2.14.6 Release Notes
 
-Attention: Permission related to **Requests** are now split into: _send requests_ and _manage requests_. Older permission are only set to _manage requests_. Data managers have to set permission for _send requests_ manually! If not, sending requests will not work as it did before.
+Attention: Permission related to **Requests** are now split into: _send requests_ and _manage requests_. Older permission is only set to _manage requests_. Data managers have to set permission for _send requests_ manually! If not, sending requests will not work as it did before.
+
+
 
 ### Features
 - Send and manage DOI requests to DataCite ([#888](https://github.com/BEXIS2/Core/issues/888))([#905](https://github.com/BEXIS2/Core/issues/905))(_beta_) 
@@ -9,13 +11,13 @@ Attention: Permission related to **Requests** are now split into: _send requests
 - Versioning: visibility and accessibility on public and internal datasets([#853](https://github.com/BEXIS2/Core/issues/853)) (_beta_)
 
 ### Enhancements
-- Data structure view: Only first linked dataset is shown ([#851](https://github.com/BEXIS2/Core/issues/851))
-- Wiki: add workflow to delete data from a dataset / workaround for purge in bigger instances #866 https://github.com/BEXIS2/Core/wiki/How-to-delete-Tabular-Data-(in-DB)
+- Data structure view: Only the first linked dataset is shown ([#851](https://github.com/BEXIS2/Core/issues/851))
+- Wiki: add workflow to delete data from a dataset/workaround for purge in bigger instances #866 https://github.com/BEXIS2/Core/wiki/How-to-delete-Tabular-Data-(in-DB)
 - Data Structure Preview: Exchange unit description with abbreviation ([#870](https://github.com/BEXIS2/Core/issues/870))
 - Manage Users: Add email confirmation status and registration date ([#871](https://github.com/BEXIS2/Core/issues/871))
-- Primary Data View: Reduce default number of shown rows from 100 to 10 ([#886](https://github.com/BEXIS2/Core/issues/886))
+- Primary Data View: Reduce the default number of shown rows from 100 to 10 ([#886](https://github.com/BEXIS2/Core/issues/886))
 - Requests: Add link to dataset ([#891](https://github.com/BEXIS2/Core/issues/891))
-- Public search (metadata) : hide email for bots ([#692](https://github.com/BEXIS2/Core/issues/692))
+- Public search (metadata): hide email for bots ([#692](https://github.com/BEXIS2/Core/issues/692))
 - Dataset Details View: Replace underscore with withe-space in field names ([#919](https://github.com/BEXIS2/Core/issues/919))
 - Add parties (isMain parts) and other fields to the Dataset API needed for citation generation ([#894](https://github.com/BEXIS2/Core/issues/894))
 
@@ -36,6 +38,8 @@ Attention: Permission related to **Requests** are now split into: _send requests
 - Fix Error message header wrong for data download exception ([#910](https://github.com/BEXIS2/Core/issues/910))
 - Fix Upload: Improve error message "Can not upload" ([#915](https://github.com/BEXIS2/Core/issues/915))
 - Fix Upload via API: improve text ([#911](https://github.com/BEXIS2/Core/issues/911))
+- Fix Empty fields in a selected primary throw an error #923([#923](https://github.com/BEXIS2/Core/issues/923))
+- Fix When removing the owner from the metadata, the rights for the user remain in place ([#914](https://github.com/BEXIS2/Core/issues/914))
 
 ## I. Software Information
 
