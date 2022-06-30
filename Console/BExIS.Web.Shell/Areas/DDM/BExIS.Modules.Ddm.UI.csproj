@@ -172,7 +172,6 @@
     <Compile Include="Helpers\GridHelper.cs" />
     <Compile Include="Helpers\HtmlPrefixScopeExtentions.cs" />
     <Compile Include="Helpers\SearchUIHelper.cs" />
-    <Compile Include="Helpers\SettingsHelper.cs" />
     <Compile Include="Models\DashboardModel.cs" />
     <Compile Include="Models\DatasetPermissionModels.cs" />
     <Compile Include="Models\DecisionModels.cs" />

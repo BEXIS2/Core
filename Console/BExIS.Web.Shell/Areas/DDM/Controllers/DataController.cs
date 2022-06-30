@@ -1594,7 +1594,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
             List<DatasetVersion> datasetVersionsAllowed = new List<DatasetVersion>();
             List<DatasetVersion> datasetVersions = datasetManager.GetDatasetVersions(id).OrderByDescending(d => d.Id).ToList();
 
-            SettingsHelper helper = new SettingsHelper();
+            SettingsHelper helper = new SettingsHelper("ddm");
 
             using (EntityPermissionManager entityPermissionManager = new EntityPermissionManager()) {
 
@@ -1810,7 +1810,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
         private long getVersionId(long datasetId, int version ,string versionName, List<DatasetVersion> datasetVersions)
         {
             long versionId = 0;
-            SettingsHelper helper = new SettingsHelper();
+            SettingsHelper helper = new SettingsHelper("ddm");
             
 
             using (DatasetManager dm = new DatasetManager())
