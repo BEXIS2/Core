@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <settings>
-  <entry key="help" value="https://github.com/BEXIS2/Documents/blob/2.14.4/Manuals/DDM/DataDiscovery_Manual.md" type="String" description="URL to manual"/>
+  <entry key="help" value="https://github.com/BEXIS2/Documents/blob/2.14.6/Manuals/DDM/DataDiscovery_Manual.md" type="String"/>
 
   <entry key="show_primary_data_tab" value="true" type="Boolean" description="Show primary data"/>
   <entry key="show_data_structure_tab" value="true" type="Boolean" description="Show data structure"/>  
@@ -11,6 +11,8 @@
   
   <entry key="show_tabs_deactivated" value="true" type="Boolean" description="Show deactivated (tabs without permision) tabs"/>
 
-  <entry key="check_public_metadata" value="false" type="Boolean" description="Set true to enable to only show metadata for not-loggedin users, if the dataset is public."/>
-    
+  <entry key="check_public_metadata" value="false" type="String" description="Set true to enable to only show metadata for not-loggedin users, if public."/>
+
+	<entry key="reduce_versions_select_logged_in" value="true" type="Boolean"/>
+	<entry key="restrict_latest_version_logged_in" value="false" type="Boolean"/>
 </settings>

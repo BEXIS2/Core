@@ -145,9 +145,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
                             object stats = new object();
 
                             DataTable dt = new DataTable("Varibales");
-                            DataTable dtMissingValues = new DataTable("MissingValues");
-                            dtMissingValues.Columns.Add("placeholder", typeof(String));
-                            dtMissingValues.Columns.Add("displayName", typeof(String));
+                            
 
                             List<ApiDataStatisticModel> dataStatisticModels = new List<ApiDataStatisticModel>();
                             StructuredDataStructure structuredDataStructure = dataStructureManager.StructuredDataStructureRepo.Get(datasetVersion.Dataset.DataStructure.Id);
@@ -175,7 +173,11 @@ namespace BExIS.Modules.Dim.UI.Controllers
                                     dataStatisticModel.minLength = dt.Compute("Min(length)", string.Empty).ToString();
                                     dataStatisticModel.maxLength = dt.Compute("Max(length)", string.Empty).ToString();
                                     dataStatisticModel.count = dt.Compute("Sum(count)", string.Empty).ToString();
-                                    dtMissingValues.Clear();
+                                    
+                                    DataTable dtMissingValues = new DataTable("MissingValues");
+                                    dtMissingValues.Columns.Add("placeholder", typeof(String));
+                                    dtMissingValues.Columns.Add("displayName", typeof(String));
+                                    
                                     foreach (var missingValue in vs.MissingValues)
                                     {
                                         DataRow workRow = dtMissingValues.NewRow();
@@ -210,6 +212,11 @@ namespace BExIS.Modules.Dim.UI.Controllers
                                 dataStatisticModel.minLength = dt.Compute("Min(length)", string.Empty).ToString();
                                 dataStatisticModel.maxLength = dt.Compute("Max(length)", string.Empty).ToString();
                                 dataStatisticModel.count = dt.Compute("Sum(count)", string.Empty).ToString();
+
+                                DataTable dtMissingValues = new DataTable("MissingValues");
+                                dtMissingValues.Columns.Add("placeholder", typeof(String));
+                                dtMissingValues.Columns.Add("displayName", typeof(String));
+
                                 foreach (var missingValue in variable.MissingValues)
                                 {
                                     DataRow workRow = dtMissingValues.NewRow();

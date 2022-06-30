@@ -1,4 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
 <settings>
-  <entry key="help" value="https://github.com/BEXIS2/Documents/blob/2.14.4/Manuals/DIM/Manual.md" type="String" description="URL to manual"/>
+	<entry key="help" value="https://github.com/BEXIS2/Documents/blob/2.14.6/Manuals/DIM/Manual.md" type="String"/>
+
+	<datacite>
+		<entry name="proxy" value="https://train.bexis2.uni-jena.de/" />
+		<entry name="token" value="mhNTaJCzHsLbquWjHLvPrv9mR3Wg6Uwmo5mkwmhwBWgrmhWZwskSY4B6vz4si7mt" />
+		<entry name="provider" value="datacite" />
+		<entry name="testmode" value="false" />
+		<mappings>
+			<!--types: Key, Metadata, Entity, Fixed-->
+			<!--value: key - System Key, metadata - xpath, entity - property, fixed - value-->
+			<!--party: properties of party-->
+			<entry name="Creators" type="Key" value="Author" useParty="true" partyAttributes="Firstname=Firstname;Lastname=Lastname" />
+			<entry name="Event" type="Fixed" value="Hide" />
+			<entry name="PublicationYear" />
+			<entry name="Publisher" type="Fixed" value="German Centre for Integrative Biodiversity Research (iDiv) Halle-Jena-Leipzig" />
+			<entry name="ResourceType" type="Fixed" value="Dataset" />	
+			<entry name="Titles" type="Key" value="Title" />
+			<entry name="URL" />
+			
+			<!-- value: Id, Name, Number -->
+			<entry name="Version" type="Property" value="Name"/>
+		</mappings>
+		<placeholders>
+			<entry name="DatasetId" type="Property" value="DatasetId"/>
+			<entry name="VersionId" type="Property" value="VersionId"/>
+			<entry name="VersionNumber" type="Property" value="VersionNumber"/>
+			<entry name="VersionName" type="Property" value="VersionName"/>
+		</placeholders>
+	</datacite>
 </settings>

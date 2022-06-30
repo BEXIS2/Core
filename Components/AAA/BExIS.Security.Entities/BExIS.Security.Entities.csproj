@@ -87,6 +87,9 @@
     <Compile Include="Authentication\Login.cs" />
     <Compile Include="Authorization\EntityPermission.cs" />
     <Compile Include="Authorization\FeaturePermission.cs" />
+    <Compile Include="FormerMember\EntityPermissionFormerMember.cs" />
+    <Compile Include="FormerMember\FeaturePermissionFormerMember.cs" />
+    <Compile Include="FormerMember\UsersGroupsRelationFormerMember.cs" />
     <Compile Include="Notifications\EmailConfiguration.cs" />
     <Compile Include="Notifications\EmailNotification.cs" />
     <Compile Include="Notifications\Message.cs" />

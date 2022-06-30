@@ -70,8 +70,11 @@ namespace BExIS.Security.Services.Utilities
                 {
                     if (attachment.Length > 0)
                     {
-                        string fileName = Path.GetFileName(attachment.Name);
-                        builder.Attachments.Add(fileName, attachment.OpenRead());
+                        using (FileStream inFile = attachment.OpenRead())
+                        {
+                            string fileName = Path.GetFileName(attachment.Name);
+                            builder.Attachments.Add(fileName, inFile);
+                        }
                     }
                 }
             }

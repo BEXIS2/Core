@@ -3,9 +3,11 @@ using BExIS.Dim.Entities.Mapping;
 using BExIS.Dim.Helpers.Mapping;
 using BExIS.Dlm.Entities.Data;
 using BExIS.Dlm.Services.Data;
+using BExIS.Dlm.Services.Party;
 using BExIS.Modules.Dim.UI.Models.Api;
 using BExIS.Utils.Route;
 using BExIS.Xml.Helpers;
+using NameParser;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -15,6 +17,10 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Web.Http;
 using System.Web.Http.Description;
+using System.Xml.Linq;
+using BExIS.Security.Services.Authorization;
+using BExIS.Security.Services.Objects;
+using System.Globalization;
 
 namespace BExIS.Modules.Dim.UI.Controllers.API
 {
@@ -117,12 +123,17 @@ namespace BExIS.Modules.Dim.UI.Controllers.API
                     Id = id,
                     Version = versionNumber,
                     VersionId = datasetVersion.Id,
+                    VersionName = datasetVersion.VersionName,
+                    VersionDate = datasetVersion.Timestamp,
+                    VersionPublicAccess = datasetVersion.PublicAccess,
+                    VersionPublicAccessDate = datasetVersion.PublicAccessDate.ToString(new CultureInfo("en-US")),
                     Title = datasetVersion.Title,
                     Description = datasetVersion.Description,
                     DataStructureId = dataset.DataStructure.Id,
                     MetadataStructureId = dataset.MetadataStructure.Id
                 };
 
+                Dictionary<string, List<XElement>> elements = new Dictionary<string, List<XElement>>();
                 // add addtional Iformations
                 foreach (Key k in Enum.GetValues(typeof(Key)))
                 {
@@ -136,8 +147,42 @@ namespace BExIS.Modules.Dim.UI.Controllers.API
                         {
                             datasetModel.AdditionalInformations.Add(k.ToString(), value);
                         }
+                        // collect all results for each system key
+                        elements.Add(k.ToString(), MappingUtils.GetXElementFromMetadata(Convert.ToInt64(k), LinkElementType.Key,
+                                    datasetVersion.Dataset.MetadataStructure.Id, XmlUtility.ToXDocument(datasetVersion.Metadata)));
+
                     }
                 }
+
+                // get isMain parts for all found parties if exists (e.g. first and last name)
+                datasetModel.Parties = getPartyIsMainAttributesForParties(elements);
+
+                
+                // set up person key list
+                var personKeyList = new List<string>();
+                // setup dic with values of the persons 
+                var personKeyDic = new Dictionary<string, List<XElement>>();
+
+                // add keys here
+                personKeyList.Add(Key.Author.ToString());
+
+                foreach (var key in personKeyList)
+                {
+                    // check if key exists in alle mapped elements
+                    if (elements.ContainsKey(key))
+                        personKeyDic.Add(key, elements[key]);
+                }
+
+                 
+                datasetModel.Names = getSplitedNames(personKeyDic);
+
+                var publicAndDate = getPublicAndDate(id);
+                // check is public
+                datasetModel.IsPublic = publicAndDate.Item1;
+
+                // check for publication date 
+                datasetModel.PublicationDate = publicAndDate.Item2.ToString(new CultureInfo("en-US"));
+
 
                 var response = Request.CreateResponse(HttpStatusCode.OK);
                 string resp = JsonConvert.SerializeObject(datasetModel);
@@ -176,59 +221,185 @@ namespace BExIS.Modules.Dim.UI.Controllers.API
             if (id <= 0) return Request.CreateResponse(HttpStatusCode.PreconditionFailed, "No valid dataset id.");
             if (version <= 0) return Request.CreateResponse(HttpStatusCode.PreconditionFailed, "No valid version.");
 
-            DatasetManager datasetManager = new DatasetManager();
+
             XmlDatasetHelper xmlDatasetHelper = new XmlDatasetHelper();
             try
             {
-                Dataset dataset = datasetManager.GetDataset(id);
-                if (dataset == null) return Request.CreateResponse(HttpStatusCode.PreconditionFailed, "This Dataset not exist");
+                using (DatasetManager datasetManager = new DatasetManager())
 
-                int index = version - 1;
 
-                if (version > dataset.Versions.Count) return Request.CreateResponse(HttpStatusCode.PreconditionFailed, "This version does not exit.");
-
-                DatasetVersion datasetVersion = dataset.Versions.OrderBy(d => d.Timestamp).ElementAt(index);
-                if (datasetVersion == null) return Request.CreateResponse(HttpStatusCode.InternalServerError, "It is not possible to load the latest version.");
-
-                ApiDatasetModel datasetModel = new ApiDatasetModel()
                 {
-                    Id = id,
-                    Version = version,
-                    VersionId = datasetVersion.Id,
-                    Title = datasetVersion.Title,
-                    Description = datasetVersion.Description,
-                    DataStructureId = dataset.DataStructure.Id,
-                    MetadataStructureId = dataset.MetadataStructure.Id
-                };
+                    Dataset dataset = datasetManager.GetDataset(id);
+                    if (dataset == null) return Request.CreateResponse(HttpStatusCode.PreconditionFailed, "This Dataset not exist");
 
-                // add addtional Iformations
-                foreach (Key k in Enum.GetValues(typeof(Key)))
-                {
-                    var tmp = MappingUtils.GetValuesFromMetadata(Convert.ToInt64(k), LinkElementType.Key,
-                   datasetVersion.Dataset.MetadataStructure.Id, XmlUtility.ToXDocument(datasetVersion.Metadata));
+                    int index = version - 1;
 
-                    if (tmp != null)
+                    if (version > dataset.Versions.Count) return Request.CreateResponse(HttpStatusCode.PreconditionFailed, "This version does not exit.");
+
+                    DatasetVersion datasetVersion = dataset.Versions.OrderBy(d => d.Timestamp).ElementAt(index);
+                    if (datasetVersion == null) return Request.CreateResponse(HttpStatusCode.InternalServerError, "It is not possible to load the latest version.");
+
+                    ApiDatasetModel datasetModel = new ApiDatasetModel()
                     {
-                        string value = string.Join(",", tmp.Distinct());
-                        if (!string.IsNullOrEmpty(value))
+                        Id = id,
+                        Version = version,
+                        VersionId = datasetVersion.Id,
+                        VersionName = datasetVersion.VersionName,
+                        VersionDate = datasetVersion.Timestamp,
+                        VersionPublicAccess = datasetVersion.PublicAccess,
+                        VersionPublicAccessDate = datasetVersion.PublicAccessDate.ToString(new CultureInfo("en-US")),
+                        Title = datasetVersion.Title,
+                        Description = datasetVersion.Description,
+                        DataStructureId = dataset.DataStructure.Id,
+                        MetadataStructureId = dataset.MetadataStructure.Id
+                    };
+
+                    Dictionary<string, List<XElement>> elements = new Dictionary<string, List<XElement>>();
+                    // add addtional Iformations
+                    foreach (Key k in Enum.GetValues(typeof(Key)))
+                    {
+                        var tmp = MappingUtils.GetValuesFromMetadata(Convert.ToInt64(k), LinkElementType.Key,
+                       datasetVersion.Dataset.MetadataStructure.Id, XmlUtility.ToXDocument(datasetVersion.Metadata));
+
+                        if (tmp != null)
                         {
-                            datasetModel.AdditionalInformations.Add(k.ToString(), value);
+                            string value = string.Join(",", tmp.Distinct());
+                            if (!string.IsNullOrEmpty(value))
+                            {
+                                datasetModel.AdditionalInformations.Add(k.ToString(), value);
+                            }
+                            // collect all results for each system key
+                            elements.Add(k.ToString(), MappingUtils.GetXElementFromMetadata(Convert.ToInt64(k), LinkElementType.Key,
+                                        datasetVersion.Dataset.MetadataStructure.Id, XmlUtility.ToXDocument(datasetVersion.Metadata)));
+
                         }
                     }
-                }
 
-                var response = Request.CreateResponse(HttpStatusCode.OK);
-                string resp = JsonConvert.SerializeObject(datasetModel);
+                    // get isMain parts for all found parties if exists (e.g. first and last name)
+                    datasetModel.Parties = getPartyIsMainAttributesForParties(elements);
 
-                response.Content = new StringContent(resp, System.Text.Encoding.UTF8, "application/json");
-                response.Content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
+                    // get splitted names for all non-found parties
+                    datasetModel.Names = getSplitedNames(elements);
 
-                return response;
+                    var publicAndDate = getPublicAndDate(id);
+                    // check is public
+                    datasetModel.IsPublic = publicAndDate.Item1;
+
+                    // check for publication date @TODO: replace by stored value
+                    datasetModel.PublicationDate = publicAndDate.Item2.ToString(new CultureInfo("en-US"));
+
+                    var response = Request.CreateResponse(HttpStatusCode.OK);
+                    string resp = JsonConvert.SerializeObject(datasetModel);
+
+                    response.Content = new StringContent(resp, System.Text.Encoding.UTF8, "application/json");
+                    response.Content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
+
+                    return response;
+                } 
             }
             finally
             {
-                datasetManager.Dispose();
+                
             }
         }
+        // Search if the XML element contains a partyid and return it
+        private long getPartyId(XElement e)
+        {
+            if (e.Attributes().Any(x => x.Name.LocalName.Equals("partyid")))
+            {
+                return Convert.ToInt64(e.Attribute("partyid").Value);
+            }
+            if (e.Parent != null) return getPartyId(e.Parent);
+
+            return 0;
+        }
+
+
+        private Dictionary<string, Dictionary<string, string>> getPartyIsMainAttributesForParties(Dictionary<string, List<XElement>> elements)
+        {
+            Dictionary<string, Dictionary<string, string>> dict = new Dictionary<string, Dictionary<string, string>>();
+            using (PartyManager partyManager = new PartyManager())
+            {
+                foreach (var key in elements)
+                {
+                    foreach (XElement element in key.Value)
+                    {
+                        long partyid = getPartyId(element);
+                        Dictionary<string, string> dict2 = new Dictionary<string, string>();
+                        // id direct 
+                        if (partyid > 0)
+                        {
+
+                            var party = partyManager.GetParty(partyid);
+
+                            if (party != null)
+                            {
+                                var attrs = party.CustomAttributeValues.Where(a => a.CustomAttribute.IsMain == true).ToArray();
+
+                                foreach (var attr in attrs)
+                                {
+                                    dict2.Add(attr.CustomAttribute.Name, attr.Value);
+                                }
+                            }
+                            if (!dict.ContainsKey(element.Value))
+                            {
+                                dict.Add(element.Value, dict2);
+                            }
+
+                        }
+                    }
+                }
+               
+            }
+
+            return dict;
+        }
+
+        private Dictionary<string, Dictionary<string, string>> getSplitedNames(Dictionary<string, List<XElement>> elements)
+        {
+            Dictionary<string, Dictionary<string, string>> dict = new Dictionary<string, Dictionary<string, string>>();
+            using (PartyManager partyManager = new PartyManager())
+            {
+                foreach (var key in elements)
+                {
+                    foreach (XElement element in key.Value)
+                    {
+                        long partyid = getPartyId(element);
+                        Dictionary<string, string> dict2 = new Dictionary<string, string>();
+                        // id direct 
+                        Console.WriteLine(partyid);
+                        if (partyid > 0) { }
+                        else
+                        {
+                            var person = new HumanName(element.Value);
+                            var GivenName = (person.Middle.Length > 0) ? $"{person.First} {person.Middle}" : $"{person.First}";
+                            var FamilyName = person.Last;
+                            dict2.Add("GivenName", GivenName);
+                            dict2.Add("FamilyName", FamilyName);
+
+                            if (!dict.ContainsKey(element.Value))
+                            {
+                                dict.Add(element.Value, dict2);
+                            }
+                        }
+                    }
+                }
+            }
+            return dict;
+        }
+
+        // @TODO: move to dataset manager?
+        private static Tuple<bool, DateTime> getPublicAndDate(long id)
+        {
+            using (EntityPermissionManager entityPermissionManager = new EntityPermissionManager())
+            using (EntityManager entityManager = new EntityManager())
+            {
+                long? entityTypeId = entityManager.FindByName(typeof(Dataset).Name)?.Id;
+                entityTypeId = entityTypeId.HasValue ? entityTypeId.Value : -1;
+                return entityPermissionManager.GetPublicAndDate(entityTypeId.Value, id);
+            }
+
+        }
+
     }
 }

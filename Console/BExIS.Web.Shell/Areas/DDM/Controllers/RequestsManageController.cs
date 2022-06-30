@@ -1,19 +1,14 @@
-﻿using BExIS.Dlm.Entities.Party;
-using BExIS.Dlm.Services.Data;
-using BExIS.Dlm.Services.Party;
-using BExIS.Modules.DDM.UI.Models;
+﻿using BExIS.Modules.DDM.UI.Models;
 using BExIS.Security.Entities.Requests;
 using BExIS.Security.Entities.Subjects;
 using BExIS.Security.Services.Authorization;
 using BExIS.Security.Services.Objects;
 using BExIS.Security.Services.Requests;
-using BExIS.Security.Services.Subjects;
 using BExIS.Security.Services.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Linq;
-using System.Web;
 using System.Web.Mvc;
 using Vaiona.Persistence.Api;
 using Vaiona.Web.Extensions;
@@ -21,103 +16,8 @@ using Vaiona.Web.Mvc.Models;
 
 namespace BExIS.Modules.Ddm.UI.Controllers
 {
-    public class RequestsController : Controller
+    public class RequestsManageController : Controller
     {
-        // GET: Request
-        public JsonResult Send(long id, string intention)
-        {
-            RequestManager requestManager = new RequestManager();
-            SubjectManager subjectManager = new SubjectManager();
-            EntityManager entityManager = new EntityManager();
-            DatasetManager datasetManager = new DatasetManager();
-
-            try
-            {
-                long userId = subjectManager.Subjects.Where(s => s.Name.Equals(HttpContext.User.Identity.Name)).Select(s => s.Id).First();
-                long entityId = entityManager.Entities.Where(e => e.Name.ToLower().Equals("dataset")).First().Id;
-
-                if (!requestManager.Exists(userId, entityId, id) ||
-                    !(requestManager.Exists(userId, entityId, id, Security.Entities.Requests.RequestStatus.Open)))
-                {
-                    var request = requestManager.Create(userId, entityId, id, 3, intention);
-
-                    if (request != null)
-                    {
-                        //reload request
-                        long requestId = request.Id;
-                        request = requestManager.FindById(requestId);
-
-                        var datasetVersion = datasetManager.GetDatasetLatestVersion(id);
-                        string title = datasetVersion.Title;
-                        if (string.IsNullOrEmpty(title)) title = "No Title available.";
-
-                        string emailDescionMaker = request.Decisions.FirstOrDefault().DecisionMaker.Email;
-                        string applicant = getPartyNameOrDefault();
-
-                        //ToDo send emails to owner & requester
-                        var es = new EmailService();
-                        es.Send(MessageHelper.GetSendRequestHeader(id, applicant),
-                            MessageHelper.GetSendRequestMessage(id, title, applicant, intention, request.Applicant.Email),
-                            new List<string> { emailDescionMaker }, new List<string> { ConfigurationManager.AppSettings["SystemEmail"], request.Applicant.Email }, null, new List<string> { request.Applicant.Email }
-                            );
-                    }
-                }
-            }
-            catch (Exception e)
-            {
-                Json(e.Message, JsonRequestBehavior.AllowGet);
-
-                // send mail with error to sys admin
-                var es = new EmailService();
-                es.Send(MessageHelper.GetSendRequestHeader(id, getPartyNameOrDefault()),
-                    MessageHelper.GetSendRequestMessage(id, "unknown", "unkown", e.Message + intention, "unknown"), new List<string> { ConfigurationManager.AppSettings["SystemEmail"] }
-                    );
-            }
-            finally
-            {
-                subjectManager.Dispose();
-                requestManager.Dispose();
-                entityManager.Dispose();
-                datasetManager.Dispose();
-            }
-
-            return Json(true, JsonRequestBehavior.AllowGet);
-        }
-
-        private string getPartyNameOrDefault()
-        {
-
-            var userName = string.Empty;
-            try
-            {
-                userName = HttpContext.User.Identity.Name;
-            }
-            catch { }
-
-            if (userName != null)
-            {
-
-                using (var uow = this.GetUnitOfWork())
-                using (var partyManager = new PartyManager())
-                {
-
-                    var userRepository = uow.GetReadOnlyRepository<User>();
-                    var user = userRepository.Query(s => s.Name.ToUpperInvariant() == userName.ToUpperInvariant()).FirstOrDefault();
-
-                    if (user != null)
-                    {
-                        Party party = partyManager.GetPartyByUser(user.Id);
-                        if (party != null)
-                        {
-                            return party.Name;
-                        }
-                    }
-
-                }
-            }
-            return !string.IsNullOrWhiteSpace(userName) ? userName : "DEFAULT";
-        }
-
 
         public ActionResult Decisions(long entityId)
         {
@@ -346,15 +246,10 @@ namespace BExIS.Modules.Ddm.UI.Controllers
         private string getPartyName(User user)
         {
             using (var uow = this.GetUnitOfWork())
-            using (var partyManager = new PartyManager())
             {
                 if (user != null)
                 {
-                    Party party = partyManager.GetPartyByUser(user.Id);
-                    if (party != null)
-                    {
-                        return party.Name;
-                    }
+                    return user.DisplayName;
                 }
             }
             return user.Name;

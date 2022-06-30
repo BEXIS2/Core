@@ -13,6 +13,10 @@
       <column name="Extra" not-null="false" sql-type="xml" />
     </property>
 
+	<property name="CreationDate" type="DateTime">
+	  <column name="CreationDate"/>
+	</property>
+	  
     <many-to-one name="Entity" column="EntityRef" class="BExIS.Security.Entities.Objects.Entity, BExIS.Security.Entities" index="idx_EntityPermissions_EntityRef"/>
     <property name="Key" type="Int64" index="idx_EntityPermissions_Key"/>
     <property name="Rights" type="Int32" index="idx_EntityPermissions_Rights"/>
