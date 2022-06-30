@@ -1,7 +1,5 @@
 ﻿using BExIS.Dlm.Entities.Data;
-using BExIS.Dlm.Entities.DataStructure;
 using BExIS.Dlm.Services.Data;
-using BExIS.Dlm.Services.DataStructure;
 using BExIS.IO;
 using System;
 using System.Collections.Generic;
@@ -9,14 +7,12 @@ using System.IO;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
-using System.Web.Hosting;
 using Vaiona.Utils.Cfg;
 using System.Net;
 using MetadataExtractor;
 using IDIV.Modules.Mmm.UI.Models;
 using MediaInfoLib;
 using System.Xml;
-using ICSharpCode.SharpZipLib.Core;
 using ICSharpCode.SharpZipLib.Zip;
 using Microsoft.VisualBasic.FileIO;
 using System.Data;
@@ -24,13 +20,11 @@ using BExIS.Security.Services.Authorization;
 using BExIS.Security.Entities.Authorization;
 using Vaiona.Persistence.Api;
 using Vaiona.Entities.Common;
-using BExIS.Utils.Data.Upload;
 using BExIS.Dim.Entities.Mapping;
 using BExIS.Modules.Mmm.UI.Helpers;
 using BExIS.Security.Services.Utilities;
 using System.Configuration;
 using Vaiona.Logging;
-using Spire.Doc;
 
 namespace IDIV.Modules.Mmm.UI.Controllers
 {
@@ -715,32 +709,6 @@ namespace IDIV.Modules.Mmm.UI.Controllers
         {
             path = Server.UrlDecode(path);
             return PartialView("_documentView", getFileInfo(path));
-        }
-
-        public FileResult convertToPDF(string path)
-        {
-            var fileInfo = getFileInfo(path);
-            string type = fileInfo.MimeType.Substring(fileInfo.MimeType.LastIndexOf('/') + 1);
-            string tempPath = Path.Combine(AppConfiguration.DataPath, path) + Path.GetFileName(path) + ".pdf";
-
-            switch(type)
-            {
-                //case "vnd.openxmlformats-officedocument.spreadsheetml.sheet":
-                //case "xlsx":
-                //case "xlsm":
-                //case "vnd.ms-excel.sheet.macroEnabled.12":
-                   
-                //break;
-                case ("vnd.openxmlformats-officedocument.wordprocessingml.document"):
-                    Document doc = new Document();
-                    doc.LoadFromFile(Path.Combine(AppConfiguration.DataPath, path));
-                    doc.Watermark = null;
-                    doc.SaveToFile(tempPath, Spire.Doc.FileFormat.PDF);
-                    doc.Dispose();
-               break;
-            }
-
-            return getFileStreamResult(tempPath);
         }
 
         public ActionResult BundleView(string path)

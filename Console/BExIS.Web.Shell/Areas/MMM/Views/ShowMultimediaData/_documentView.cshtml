@@ -5,6 +5,8 @@
 @{
     string type = Model.MimeType.Substring(Model.MimeType.LastIndexOf('/') + 1);
     string pathStream = @Url.Content("~/mmm/ShowMultimediaData/getFileStreamResult/?send_mail=false&path=" + Server.UrlEncode(Model.Path));
+    string path = @Url.Content("~/mmm/ShowMultimediaData/getFile/?send_mail=false&path=" + Server.UrlEncode(Model.Path));
+
 }
 
 @switch (type)
@@ -19,23 +21,15 @@
             Not supported
         </object>
         break;
-    case ("vnd.openxmlformats-officedocument.wordprocessingml.document"):
-        string pathWord = @Url.Content("~/mmm/ShowMultimediaData/convertToPDF/?path=" + Server.UrlEncode(Model.Path));
-        <div id="pdfView">
-            <iframe src="@pathWord#view=fit&zoom=100" type="application/pdf" width="80%" height="500"></iframe>
+    case "zip":
+    case "x-zip-compressed":
+      
+    case "octet-stream":
+        <div id="fileContainer" filePath="@path">
+
         </div>
         break;
-    case "octet-stream":
-        <h3>Model viewer</h3>
-      <div class="online_3d_viewer"
-        style="width: 800px; height: 600px;"
-        model="@pathStream"
-        camera="3,1,2,0,0,0,0,0,1"
-        defaultcolor="200,0,0"
-        backgroundcolor="200,200,200"
-        edgesettings="on,0,0,0,1">
-    </div>
-        break;
+
     default:
         break;
 }
