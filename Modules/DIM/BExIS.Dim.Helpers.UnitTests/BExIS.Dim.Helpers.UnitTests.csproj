@@ -12,13 +12,13 @@
 
   <ItemGroup>
     <PackageReference Include="Cquential.Microsoft.Practices.Unity" Version="2.0.414" />
-    <PackageReference Include="Iesi.Collections" Version="4.0.4" />
+    <PackageReference Include="Iesi.Collections" Version="4.0.1.4000" />
     <PackageReference Include="Microsoft.AspNet.WebApi.Core" Version="5.2.3" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
     <PackageReference Include="NHibernate" Version="4.1.1.4000" />
     <PackageReference Include="Npgsql" Version="4.0.0" />
-    <PackageReference Include="NUnit" Version="3.12.0" />
-    <PackageReference Include="NUnit3TestAdapter" Version="3.16.1" />
+    <PackageReference Include="NUnit" Version="3.13.3" />
+    <PackageReference Include="NUnit3TestAdapter" Version="4.2.1" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.5.0" />
     <PackageReference Include="Unity" Version="4.0.1" />
   </ItemGroup>
