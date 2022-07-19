@@ -187,17 +187,14 @@ namespace BExIS.Security.Services.Requests
                     var decision = decisionRepository.Query(m => m.Request.Id == requestID).FirstOrDefault();
                     decision.Status = DecisionStatus.Withdrawn;
 
-
                     decisionRepository.Merge(decision);
                     var mergedDecision = decisionRepository.Get(decision.Id);
                     decisionRepository.Put(mergedDecision);
-
                 }
 
                 uow.Commit();
-
             }
-       }
+        }
 
         public void Update(Decision entity)
         {

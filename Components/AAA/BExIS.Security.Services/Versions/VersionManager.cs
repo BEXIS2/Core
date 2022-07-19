@@ -5,7 +5,7 @@ using Version = BExIS.Security.Entities.Versions.Version;
 
 namespace BExIS.Security.Services.Versions
 {
-    public class VersionManager:IDisposable
+    public class VersionManager : IDisposable
     {
         private readonly IUnitOfWork _guow;
         private bool _isDisposed;

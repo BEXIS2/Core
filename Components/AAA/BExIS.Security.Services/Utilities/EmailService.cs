@@ -1,13 +1,13 @@
-﻿using Microsoft.AspNet.Identity;
+﻿using MailKit.Net.Smtp;
+using MailKit.Security;
+using Microsoft.AspNet.Identity;
 using MimeKit;
 using System.Collections.Generic;
 using System.Configuration;
+using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 using Vaiona.Utils.Cfg;
-using System.Linq;
-using MailKit.Net.Smtp;
-using MailKit.Security;
-using System.IO;
 
 namespace BExIS.Security.Services.Utilities
 {
@@ -30,8 +30,8 @@ namespace BExIS.Security.Services.Utilities
                 client.ServerCertificateValidationCallback = (s, c, h, e) => { return true; };
 
                 client.Connect(ConfigurationManager.AppSettings["Email_Host_Name"], int.Parse(ConfigurationManager.AppSettings["Email_Host_Port"]), (SecureSocketOptions)int.Parse(ConfigurationManager.AppSettings["Email_Host_SecureSocketOptions"]));
-                
-                if(!bool.Parse(ConfigurationManager.AppSettings["Email_Host_Anonymous"]))
+
+                if (!bool.Parse(ConfigurationManager.AppSettings["Email_Host_Anonymous"]))
                 {
                     client.Authenticate(ConfigurationManager.AppSettings["Email_Account_Name"], ConfigurationManager.AppSettings["Email_Account_Password"]);
                 }
@@ -88,9 +88,8 @@ namespace BExIS.Security.Services.Utilities
 
         public void Send(IdentityMessage message)
         {
-            using(var mimeMessage = new MimeMessage())
+            using (var mimeMessage = new MimeMessage())
             {
-
                 mimeMessage.From.Add(new MailboxAddress(ConfigurationManager.AppSettings["Email_From_Name"], ConfigurationManager.AppSettings["Email_From_Address"]));
                 mimeMessage.To.Add(new MailboxAddress(message.Destination, message.Destination));
                 mimeMessage.Subject = AppConfiguration.ApplicationName + " - " + message.Subject;
