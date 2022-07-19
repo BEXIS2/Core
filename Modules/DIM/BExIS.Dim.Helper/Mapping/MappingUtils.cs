@@ -9,7 +9,9 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using System.Xml.Linq;
 using Vaiona.Persistence.Api;
+
 using BExIS.Dim.Entities.Mapping;
+
 using BExIS.Security.Services.Objects;
 using BExIS.Modules.Sam.UI.Models;
 using BExIS.Security.Services.Authorization;
@@ -28,12 +30,12 @@ namespace BExIS.Dim.Helpers.Mapping
             try
             {
                 IList<Entities.Mapping.Mapping> mapping = CachedMappings();
-                  return mapping.Where(m =>
-                            m.Target.ElementId.Equals(targetId) &&
-                            m.Target.Type.Equals(targetType) &&
-                            m.Source.ElementId.Equals(sourceId) &&
-                            m.Source.Type.Equals(sourceType)
-                        ).ToList().Any();
+                return mapping.Where(m =>
+                          m.Target.ElementId.Equals(targetId) &&
+                          m.Target.Type.Equals(targetType) &&
+                          m.Source.ElementId.Equals(sourceId) &&
+                          m.Source.Type.Equals(sourceType)
+                      ).ToList().Any();
             }
             catch (Exception ex)
             {
@@ -45,13 +47,13 @@ namespace BExIS.Dim.Helpers.Mapping
         {
             try
             {
-                 IList<Entities.Mapping.Mapping> mapping = CachedMappings();
-                 var mapping_result = mapping.Where(m =>
-                            m.Target.ElementId.Equals(targetId) &&
-                            m.Target.Type.Equals(targetType) &&
-                            m.Source.ElementId.Equals(sourceId) &&
-                            m.Source.Type.Equals(sourceType)
-                        ).ToList();
+                IList<Entities.Mapping.Mapping> mapping = CachedMappings();
+                var mapping_result = mapping.Where(m =>
+                           m.Target.ElementId.Equals(targetId) &&
+                           m.Target.Type.Equals(targetType) &&
+                           m.Source.ElementId.Equals(sourceId) &&
+                           m.Source.Type.Equals(sourceType)
+                       ).ToList();
 
                 if (mapping_result.Any())
                 {
@@ -77,9 +79,9 @@ namespace BExIS.Dim.Helpers.Mapping
                             m.Parent.Id.Equals(parentMappingId)
                         ).ToList();
 
-                    if (mapping_result.Any()) return mapping_result;
+                if (mapping_result.Any()) return mapping_result;
 
-                    return new List<Entities.Mapping.Mapping>();
+                return new List<Entities.Mapping.Mapping>();
             }
             catch (Exception ex)
             {
@@ -97,9 +99,9 @@ namespace BExIS.Dim.Helpers.Mapping
                             m.Source.Type.Equals(sourceType)
                         ).ToList();
 
-                    if (mapping_result.Any()) return mapping_result;
+                if (mapping_result.Any()) return mapping_result;
 
-                    return new List<Entities.Mapping.Mapping>();
+                return new List<Entities.Mapping.Mapping>();
             }
             catch (Exception ex)
             {
@@ -118,9 +120,9 @@ namespace BExIS.Dim.Helpers.Mapping
                             m.Level == level
                         ).ToList();
 
-                    if (mapping_result.Any()) return mapping_result;
+                if (mapping_result.Any()) return mapping_result;
 
-                    return new List<Entities.Mapping.Mapping>();
+                return new List<Entities.Mapping.Mapping>();
             }
             catch (Exception ex)
             {
@@ -159,13 +161,13 @@ namespace BExIS.Dim.Helpers.Mapping
         {
             try
             {
-                    IList<Entities.Mapping.Mapping> mapping = CachedMappings();
-                    return mapping.Where(m =>
-                            m.Target.ElementId.Equals(targetId) &&
-                            m.Target.Type.Equals(targetType) &&
-                            m.Parent != null &&
-                            m.Parent.Source.Type.Equals(LinkElementType.Entity)
-                        ).ToList().Any();
+                IList<Entities.Mapping.Mapping> mapping = CachedMappings();
+                return mapping.Where(m =>
+                        m.Target.ElementId.Equals(targetId) &&
+                        m.Target.Type.Equals(targetType) &&
+                        m.Parent != null &&
+                        m.Parent.Source.Type.Equals(LinkElementType.Entity)
+                    ).ToList().Any();
             }
             catch (Exception ex)
             {
@@ -216,7 +218,6 @@ namespace BExIS.Dim.Helpers.Mapping
                             m.Parent.Target.Type.Equals(rootType) &&
                             m.Parent.Target.ElementId.Equals(rootId)
                         ).ToList().Any();
-
             }
             catch (Exception ex)
             {
@@ -232,16 +233,16 @@ namespace BExIS.Dim.Helpers.Mapping
                 //get all mapppings where target is mapped
                 // LinkElementType.PartyCustomType is set because of the function name
                 // all mapped attributes are LinkElementType.PartyCustomType in this case
-                    List<MappingEntityResultElement> tmp = new List<MappingEntityResultElement>();
+                List<MappingEntityResultElement> tmp = new List<MappingEntityResultElement>();
 
-                    IList<Entities.Mapping.Mapping> mapping = CachedMappings();
-                    var mapping_result = mapping.Where(m =>
-                            m.Target.ElementId.Equals(targetElementId) &&
-                            m.Target.Type.Equals(targetType) &&
-                            m.Source.Type.Equals(LinkElementType.Entity)
-                        ).ToList();
-                    tmp = getAllValuesFromEntites(mapping_result, value);
-                    return tmp;
+                IList<Entities.Mapping.Mapping> mapping = CachedMappings();
+                var mapping_result = mapping.Where(m =>
+                        m.Target.ElementId.Equals(targetElementId) &&
+                        m.Target.Type.Equals(targetType) &&
+                        m.Source.Type.Equals(LinkElementType.Entity)
+                    ).ToList();
+                tmp = getAllValuesFromEntites(mapping_result, value);
+                return tmp;
             }
             catch (Exception ex)
             {
@@ -315,15 +316,15 @@ namespace BExIS.Dim.Helpers.Mapping
                 // LinkElementType.PartyCustomType is set because of the function name
                 // all mapped attributes are LinkElementType.PartyCustomType in this case
 
-                    List<MappingPartyResultElemenet> tmp = new List<MappingPartyResultElemenet>();
-                    IList<Entities.Mapping.Mapping> mapping = CachedMappings();
-                    var mapping_result = mapping.Where(m =>
-                            m.Target.ElementId.Equals(targetElementId) &&
-                            m.Target.Type.Equals(targetType) &&
-                            m.Source.Type.Equals(LinkElementType.PartyCustomType)
-                        ).ToList();
-                    tmp = getAllValuesFromSystem(mapping_result, value);
-                    return tmp;
+                List<MappingPartyResultElemenet> tmp = new List<MappingPartyResultElemenet>();
+                IList<Entities.Mapping.Mapping> mapping = CachedMappings();
+                var mapping_result = mapping.Where(m =>
+                        m.Target.ElementId.Equals(targetElementId) &&
+                        m.Target.Type.Equals(targetType) &&
+                        m.Source.Type.Equals(LinkElementType.PartyCustomType)
+                    ).ToList();
+                tmp = getAllValuesFromSystem(mapping_result, value);
+                return tmp;
             }
             catch (Exception ex)
             {
@@ -348,6 +349,7 @@ namespace BExIS.Dim.Helpers.Mapping
                 throw ex;
             }
         }
+
         /// <summary>
         /// if a simple attr is direct mapped to a PartyCustomType without context informations about th parent
         /// in the database mappings for level 1 & 2 existing for the simple attribute
@@ -361,25 +363,24 @@ namespace BExIS.Dim.Helpers.Mapping
         {
             try
             {
-              
-                    //if party is the parent
-                    IList<Entities.Mapping.Mapping> mapping = CachedMappings();
-                    bool mappingsWhenPartyIsParent = mapping.Where(m =>
-                            m.Target.ElementId.Equals(targetId) &&
-                            m.Target.Type.Equals(targetType) &&
-                            m.Parent != null &&
-                            m.Parent.Source.Type.Equals(LinkElementType.PartyCustomType) &&
-                            m.Level.Equals(2)
-                        ).ToList().Any();
+                //if party is the parent
+                IList<Entities.Mapping.Mapping> mapping = CachedMappings();
+                bool mappingsWhenPartyIsParent = mapping.Where(m =>
+                        m.Target.ElementId.Equals(targetId) &&
+                        m.Target.Type.Equals(targetType) &&
+                        m.Parent != null &&
+                        m.Parent.Source.Type.Equals(LinkElementType.PartyCustomType) &&
+                        m.Level.Equals(2)
+                    ).ToList().Any();
 
-                    bool mapping_result = mapping.Where(m =>
-                            m.Target.ElementId.Equals(targetId) &&
-                            m.Target.Type.Equals(targetType) &&
-                            m.Source.Type.Equals(LinkElementType.PartyCustomType) &&
-                            m.Level.Equals(1)
-                        ).ToList().Any();
+                bool mapping_result = mapping.Where(m =>
+                        m.Target.ElementId.Equals(targetId) &&
+                        m.Target.Type.Equals(targetType) &&
+                        m.Source.Type.Equals(LinkElementType.PartyCustomType) &&
+                        m.Level.Equals(1)
+                    ).ToList().Any();
 
-                    return (mapping_result && mappingsWhenPartyIsParent);
+                return (mapping_result && mappingsWhenPartyIsParent);
             }
             catch (Exception ex)
             {
@@ -401,16 +402,16 @@ namespace BExIS.Dim.Helpers.Mapping
             try
             {
                 IList<Entities.Mapping.Mapping> mapping = CachedMappings();
-                bool mappings_result= mapping.Where(m =>
-                            m.Target.ElementId.Equals(targetId) &&
-                            m.Target.Type.Equals(targetType) &&
-                            m.Parent != null &&
-                            m.Parent.Source.Type.Equals(LinkElementType.PartyCustomType) &&
-                            m.Level.Equals(2)
+                bool mappings_result = mapping.Where(m =>
+                             m.Target.ElementId.Equals(targetId) &&
+                             m.Target.Type.Equals(targetType) &&
+                             m.Parent != null &&
+                             m.Parent.Source.Type.Equals(LinkElementType.PartyCustomType) &&
+                             m.Level.Equals(2)
                         ).ToList().Any();
 
                 //if party same level like target
-               
+
                 bool mappingsWhenPartyIsParent = mapping.Where(m =>
                             m.Target.ElementId.Equals(targetId) &&
                             m.Target.Type.Equals(targetType) &&
@@ -419,7 +420,6 @@ namespace BExIS.Dim.Helpers.Mapping
                         ).ToList().Any();
 
                 return (!mappings_result && mappingsWhenPartyIsParent);
-
             }
             catch (Exception ex)
             {
@@ -438,7 +438,6 @@ namespace BExIS.Dim.Helpers.Mapping
                             m.Parent != null &&
                             m.Parent.Source.Type.Equals(LinkElementType.PartyType)
                         ).ToList().Any();
-
             }
             catch (Exception ex)
             {
@@ -515,7 +514,6 @@ namespace BExIS.Dim.Helpers.Mapping
                         ).ToList().Any();
 
                 return (mappings_result && !mappingsWhenPartyIsParent);
-
             }
             catch (Exception ex)
             {
@@ -534,7 +532,6 @@ namespace BExIS.Dim.Helpers.Mapping
                             m.Parent != null &&
                             m.Parent.Source.ElementId.Equals(partyId)
                         ).ToList().Any();
-
             }
             catch (Exception ex)
             {
@@ -706,14 +703,14 @@ namespace BExIS.Dim.Helpers.Mapping
                 {
                     List<MappingPartyResultElemenet> tmp = new List<MappingPartyResultElemenet>();
 
-                //Select all mappings where the target is mapped to a party custom attr with the party id
-                IList<Entities.Mapping.Mapping> mapping = CachedMappings();
-                var mapping_result = mapping.Where(m =>
-                            m.Target.ElementId.Equals(targetElementId) &&
-                            m.Target.Type.Equals(targetElementType) &&
-                            m.Source.Type.Equals(LinkElementType.PartyCustomType) &&
-                            m.Parent != null
-                        );
+                    //Select all mappings where the target is mapped to a party custom attr with the party id
+                    IList<Entities.Mapping.Mapping> mapping = CachedMappings();
+                    var mapping_result = mapping.Where(m =>
+                                m.Target.ElementId.Equals(targetElementId) &&
+                                m.Target.Type.Equals(targetElementType) &&
+                                m.Source.Type.Equals(LinkElementType.PartyCustomType) &&
+                                m.Parent != null
+                            );
 
                     foreach (var mapping_element in mapping_result)
                     {
@@ -762,7 +759,6 @@ namespace BExIS.Dim.Helpers.Mapping
             }
         }
 
-
         /// <summary>
         /// Check if there is a mapping to system key nodes
         /// return true if yes
@@ -770,10 +766,10 @@ namespace BExIS.Dim.Helpers.Mapping
         /// <param name="id"></param>
         /// <param name="type"></param>
         /// <returns></returns>
-        /// 
+        ///
         public static IList<Entities.Mapping.Mapping> CachedMappings()
         {
-            // System.Web.HttpContext may not existing during the async upload, so check wheter the context exist 
+            // System.Web.HttpContext may not existing during the async upload, so check wheter the context exist
             if (System.Web.HttpContext.Current != null)
             {
                 if (System.Web.HttpContext.Current.Session["mappings"] != null)
@@ -797,7 +793,6 @@ namespace BExIS.Dim.Helpers.Mapping
                     return uow.GetReadOnlyRepository<BExIS.Dim.Entities.Mapping.Mapping>().Get();
                 }
             }
-
         }
 
         public static void Clear()
@@ -898,6 +893,146 @@ namespace BExIS.Dim.Helpers.Mapping
                     }
                 }
                 // x,y to z (combination merge)
+                // x1,x2, y to z list of  enties
+                // if multiply mappings to the same source, it is a merge
+                else
+                {
+                    // get all parent ids to collection mappings that belongs togehter
+                    // if they belong to one parent, together then they should merge
+                    IEnumerable<long> parentIds = mappings.Select(m => m.Parent.Id).Distinct();
+
+                    foreach (int parentId in parentIds)
+                    {
+                        string mask = "";
+
+                        //load all mapping that belongs to the parent mapping with id -> parentId
+                        IEnumerable<Entities.Mapping.Mapping> tmpMappingsSubset = mappings.Where(m => m.Parent.Id.Equals(parentId));
+
+                        // if there is only one mapping belong to the parent, add each xelement as one entry
+                        if (tmpMappingsSubset.Count() == 1)
+                        {
+                            var m = tmpMappingsSubset.First();
+
+                            mask = "";
+
+                            if (m.Source.Type.Equals(LinkElementType.MetadataAttributeUsage) ||
+                                m.Source.Type.Equals(LinkElementType.MetadataNestedAttributeUsage))
+                            {
+                                IEnumerable<XElement> elements = getXElementsFromAMapping(m, metadata);
+
+                                //the elements are the result of one mapping
+                                foreach (var element in elements)
+                                {
+                                    mask = m.TransformationRule.Mask;
+                                    List<string> regExResultList = transform(element.Value, m.TransformationRule);
+                                    string placeHolderName = m.Source.Name;
+
+                                    mask = setOrReplace(mask, regExResultList, placeHolderName);
+                                    tmp.Add(mask);
+                                }
+                            }
+                        }
+                        else
+                        {
+                            mask = "";
+
+                            foreach (var m in tmpMappingsSubset)
+                            {
+                                if (string.IsNullOrEmpty(mask)) mask = tmpMappingsSubset.FirstOrDefault().TransformationRule.Mask;
+
+                                if (m.Source.Type.Equals(LinkElementType.MetadataAttributeUsage) ||
+                                    m.Source.Type.Equals(LinkElementType.MetadataNestedAttributeUsage))
+                                {
+                                    IEnumerable<XElement> elements = getXElementsFromAMapping(m, metadata);
+
+                                    //the elements are the result of one mapping
+                                    foreach (var element in elements)
+                                    {
+                                        List<string> regExResultList = transform(element.Value, m.TransformationRule);
+                                        string placeHolderName = m.Source.Name;
+
+                                        mask = setOrReplace(mask, regExResultList, placeHolderName);
+                                    }
+                                }
+                            }
+
+                            tmp.Add(mask);
+                        }
+                    }
+                }
+
+                return tmp;
+            }
+            finally
+            {
+                mappingManager.Dispose();
+            }
+        }
+
+        /// <summary>
+        ///
+        /// </summary>
+        /// <param name="targetElementId"></param>
+        /// <param name="targetType"></param>
+        /// <param name="sourceRootId"></param>
+        /// <param name="metadata"></param>
+        /// <returns></returns>
+        public static List<XElement> GetXElementFromMetadata(long targetElementId, LinkElementType targetType,
+            long sourceRootId, XDocument metadata)
+        {
+            //grab values from metadata where targetelementid and targetType is mapped
+            // e.g. get title from metadata
+
+            MappingManager mappingManager = new MappingManager();
+
+            try
+            {
+                List<XElement> tmp = new List<XElement>();
+
+                var mappings = mappingManager.GetMappings().Where(m =>
+                    m.Target.ElementId.Equals(targetElementId) &&
+                    m.Target.Type.Equals(targetType) &&
+                    getRootMapping(m) != null &&
+                    getRootMapping(m).Source.ElementId.Equals(sourceRootId) &&
+                    getRootMapping(m).Source.Type == LinkElementType.MetadataStructure &&
+                    m.Level.Equals(2));
+
+                // possinle cases                   mapping count
+                // 1 - 1                            1
+                // x,y to z (combination merge)     2
+                // x -> z1,z2,z3 (split)            1
+                // x1,x2,x3 -> z (merge)            1
+
+                if (mappings.Count() == 1)
+                {
+                    //possible cases =
+                    // 1 - 1
+                    // x -> z1,z2,z3 (split)
+                    // x1,x2,x3 -> z (join)
+
+                    Entities.Mapping.Mapping m = mappings.FirstOrDefault();
+
+                    if (m != null &&
+                        (m.Source.Type.Equals(LinkElementType.MetadataAttributeUsage) ||
+                         m.Source.Type.Equals(LinkElementType.MetadataNestedAttributeUsage)))
+                    {
+                        IEnumerable<XElement> elements = getXElementsFromAMapping(m, metadata);
+
+                        if (elements.Count() == 1)
+                        {
+                            tmp.Add(elements.First());
+                        }
+                        else
+                        {
+                            // x1,x2,x3 -> z (join)
+                            foreach (var element in elements)
+                            {
+                                tmp.Add(element);
+                            }
+                        }
+                    }
+                }
+                // x,y to z (combination merge)
                 // if multiply mappings to the same source, it is a merge
                 else
                 {
@@ -923,15 +1058,10 @@ namespace BExIS.Dim.Helpers.Mapping
                                 //the elements are the result of one mapping
                                 foreach (var element in elements)
                                 {
-                                    List<string> regExResultList = transform(element.Value, m.TransformationRule);
-                                    string placeHolderName = m.Source.Name;
-
-                                    mask = setOrReplace(mask, regExResultList, placeHolderName);
+                                    tmp.Add(element);
                                 }
                             }
                         }
-
-                        tmp.Add(mask);
                     }
                 }
 

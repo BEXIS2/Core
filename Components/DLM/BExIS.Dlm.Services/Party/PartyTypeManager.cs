@@ -173,6 +173,29 @@ namespace BExIS.Dlm.Services.Party
             return (true);
         }
 
+        public PartyType FindById(long partyTypeId)
+        {
+            using (var uow = this.GetUnitOfWork())
+            {
+                var partyTypeRepository = uow.GetRepository<PartyType>();
+                return partyTypeRepository.Get(partyTypeId);
+            }
+        }
+
+        public PartyType FindByName(string entityTypeName)
+        {
+            using (var uow = this.GetUnitOfWork())
+            {
+                var partyTypeRepository = uow.GetRepository<PartyType>();
+                var partyTypes = partyTypeRepository.Query(p => p.Title == entityTypeName);
+
+                if (partyTypes.Count() != 1)
+                    return null;
+
+                return partyTypes.FirstOrDefault();
+            }
+        }
+
         #endregion PartyType
 
         #region PartyCustomAttribute

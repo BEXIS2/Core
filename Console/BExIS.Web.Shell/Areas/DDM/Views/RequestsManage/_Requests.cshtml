@@ -11,6 +11,7 @@
          <!--  <th title="Rights">Rights</th>-->
             <th title="Request status">Request Status</th>
             <th title="Request date">Request Date</th>
+            <th title="View Dataset">View</th>
             <th title="Withdraw request">Withdraw</th>
 
 
@@ -23,21 +24,24 @@
 
             foreach (var m in Model)
             {
-                <tr>
-                    <td>@m.InstanceId</td>
-                    <td>@m.Title</td>
-                    <td>@m.Intention</td>
-                  <!--  <td>@m.Rights</td> -->
-                    <td>@m.RequestStatus</td>
-                    <td>@m.RequestDate.ToString("dd.MM.yyyy")</td>
-                    <td>
-                        @if (m.RequestStatus == "Open")
-                        {
-                            <button type = "button" class="bx bx-grid-function bx-withdraw bx-trash" value="@m.Id"></button>
-                        }
+        <tr>
+            <td>@m.InstanceId</td>
+            <td>@m.Title</td>
+            <td>@m.Intention</td>
+            <!--  <td>@m.Rights</td> -->
+            <td>@m.RequestStatus</td>
+            <td>@m.RequestDate.ToString("dd.MM.yyyy")</td>
+            <td>
+                <a id="@m.Id" class="bx bx-grid-function bx-show" onclick="onclickDataset(this)"></a>
+            </td> 
+            <td>
+                @if (m.RequestStatus == "Open")
+                {
+                    <button type="button" class="bx bx-grid-function bx-withdraw bx-trash" value="@m.Id"></button>
+                }
 
-                    </td>
-                </tr>
+            </td>
+        </tr>
             }
         }
     </tbody>
@@ -45,6 +49,36 @@
 
 
 <script type="text/javascript">
+    function onclickDataset(e) {
+
+        // checked
+        var id = e.getAttribute("id");
+
+
+        var data = {
+            id: id
+        }
+
+        $.ajax({
+            url: '/ddm/Data/IsDatasetCheckedIn',
+            type: 'POST',
+            data: JSON.stringify(data),
+            dataType: 'json',
+            contentType: 'application/json; charset=utf-8',
+            error: function (xhr) {
+                alert('Error: ' + xhr.statusText);
+
+            },
+            success: function (result) {
+                if (result) {
+                    window.open("/ddm/Data/ShowData/" + id, "_blank");
+                } else {
+
+                    alert("Dataset is locked. Please try again later.");
+                }
+            }
+        });
+    }
 
     $('document').ready(function () {
         jQuery.fn.dataTable.render.ellipsis = function (cutoff, wordbreak, escapeHtml) {

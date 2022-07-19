@@ -63,6 +63,11 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 Session["FileInfos"] = attachments;
                 uploadFiles(attachments);
             }
+
+            var dataPath = AppConfiguration.DataPath; //Path.Combine(AppConfiguration.WorkspaceRootPath, "Data");
+            var storepath = Path.Combine(dataPath, "Temp", GetUsernameOrDefault());
+
+            ViewBag.maxFileNameLength = 260 - storepath.Length - 2;
             // Redirect to a view showing the result of the form submission.
             return View("Index", LoadDefaultModel());
         }

@@ -64,7 +64,12 @@
 				controller="help" action="index"
 				extends="./lunchbarRoot/help" />
 
-		<!-- internal api -->
+	  <Export tag="settings" id="formerMember" order="15"
+        title="Manage Former Member" description="" icon=""
+        controller="FormerMember" action="Index"
+        extends="./settingsRoot" /> 
+	 
+    <!-- internal api -->
 
 		<Export tag="internalApi" id="userPermissions_subjects"
 			title="User Permissions - Subjects" description="User Permissions - Subjects" icon=""

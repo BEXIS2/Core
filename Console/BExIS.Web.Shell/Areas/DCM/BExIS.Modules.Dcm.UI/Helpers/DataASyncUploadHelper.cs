@@ -377,8 +377,8 @@ namespace BExIS.Modules.Dcm.UI.Helpers
                             temp.Add(new Error(ErrorType.Other, "Can not upload. : " + e.Message));
                             var es = new EmailService();
                             es.Send(MessageHelper.GetErrorHeader(),
-                                "Can not upload. : " + e.Message,
-                                GeneralSettings.SystemEmail
+                                "Dataset: " + title + "(ID: " + datasetid + ", User: " + User.DisplayName + " )" + " Can not upload. : " + e.Message,
+                                ConfigurationManager.AppSettings["SystemEmail"]
                                 );
                         }
                         finally

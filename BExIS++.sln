@@ -212,6 +212,12 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BExIS.Modules.Dcm.UI", "Con
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BExIS.Utils.Config", "Components\Utils\BExIS.Utils.Config\BExIS.Utils.Config.csproj", "{6EAD7D02-02F7-42FF-85E4-90BB892D3846}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BExIS.Dim.Helpers.UnitTests", "Modules\DIM\BExIS.Dim.Helpers.UnitTests\BExIS.Dim.Helpers.UnitTests.csproj", "{945A3D6D-9E77-4E77-8EDE-62F621FAB978}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BExIS.Modules.Dim.UI.Tests", "Modules\DIM\BExIS.Modules.Dim.UI.Tests\BExIS.Modules.Dim.UI.Tests\BExIS.Modules.Dim.UI.Tests.csproj", "{7B1A67C9-42E4-4995-A6B2-790B13F10471}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BExIS.Dim.Helpers.Tests", "Modules\DIM\BExIS.Dim.Helpers.Tests\BExIS.Dim.Helpers.Tests.csproj", "{A1354F07-B8CE-4632-B1A1-1D5BD18E7F0E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -1487,6 +1493,9 @@ Global
 		{D15121E6-58D0-4796-9DA0-F07A828B9CE2} = {1F340485-39B6-41C2-ACF9-AD9288B52CE5}
 		{44DD2A5E-0D2F-4FAB-B297-4211441030B7} = {6C18F986-A56C-4366-88A4-7046E8901929}
 		{6EAD7D02-02F7-42FF-85E4-90BB892D3846} = {8ACF0B65-BAFD-49FD-A840-D04C4DCDE993}
+		{945A3D6D-9E77-4E77-8EDE-62F621FAB978} = {F3354AC7-CDA1-44E2-8E85-8DB532ED8C75}
+		{7B1A67C9-42E4-4995-A6B2-790B13F10471} = {F3354AC7-CDA1-44E2-8E85-8DB532ED8C75}
+		{A1354F07-B8CE-4632-B1A1-1D5BD18E7F0E} = {F3354AC7-CDA1-44E2-8E85-8DB532ED8C75}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		EnterpriseLibraryConfigurationToolBinariesPath = packages\Unity.2.1.505.0\lib\NET35;packages\Unity.2.1.505.2\lib\NET35

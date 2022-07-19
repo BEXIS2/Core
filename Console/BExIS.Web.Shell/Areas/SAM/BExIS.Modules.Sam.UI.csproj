@@ -321,6 +321,7 @@
     <Compile Include="Controllers\DatasetsController.cs" />
     <Compile Include="Controllers\EntitiesController.cs" />
     <Compile Include="Controllers\EntityPermissionsController.cs" />
+    <Compile Include="Controllers\FormerMemberController.cs" />
     <Compile Include="Controllers\RequestsAdminController.cs" />
     <Compile Include="Controllers\FeaturePermissionsController.cs" />
     <Compile Include="Controllers\GroupsController.cs" />
@@ -331,8 +332,10 @@
     <Compile Include="Controllers\UserPermissionsController.cs" />
     <Compile Include="Controllers\UsersController.cs" />
     <Compile Include="Helpers\Attributes.cs" />
+    <Compile Include="Helpers\FormerMemberStatus.cs" />
     <Compile Include="Helpers\SAMSeedDataGenerator.cs" />
     <Compile Include="Hooks\UserPermissionsHook.cs" />
+    <Compile Include="Helpers\SettingsHelper.cs" />
     <Compile Include="Models\DatasetModels.cs" />
     <Compile Include="Models\DatasetStatModel.cs" />
     <Compile Include="Models\DecisionModels.cs" />
@@ -341,6 +344,7 @@
     <Compile Include="Models\FileModels.cs" />
     <Compile Include="Models\FeatureModels.cs" />
     <Compile Include="Models\FeaturePermissionModels.cs" />
+    <Compile Include="Models\FormerMemberModel.cs" />
     <Compile Include="Models\GroupModels.cs" />
     <Compile Include="Models\InfoModels.cs" />
     <Compile Include="Models\ModuleGridRowModel.cs" />
@@ -429,6 +433,9 @@
     <Content Include="Views\RequestsAdmin\_DecisionsAdmin.cshtml" />
     <Content Include="Views\RequestsAdmin\Index.cshtml" />
     <Content Include="Views\RequestsAdmin\_Entities.cshtml" />
+    <Content Include="Views\FormerMember\ManageFormerMembers.cshtml" />
+    <Content Include="Views\FormerMember\_formerMemberContent.cshtml" />
+    <Content Include="Views\FormerMember\_formerMemberSearch.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

@@ -1,0 +1,38 @@
+﻿@using BExIS.Modules.Dim.UI.Models;
+
+@model PublicationModel
+
+<tr id="@Model.DatasetVersionId" class="doi-row">
+    <td>@Model.Broker.Name</td>
+    <td>@Model.DataRepo</td>
+    @if (!String.IsNullOrEmpty(Model.ExternalLink))
+    {
+        string doiLink = "https://doi.org/" + Model.ExternalLink;
+        <td>
+            <a href="@doiLink">@Model.ExternalLink</a>
+        </td>
+    }
+    else
+    {
+        <td></td>
+    }
+    <td>
+
+        @Html.ActionLink(@Model.DatasetId.ToString() + "(v" + @Model.DatasetVersionNr.ToString() + " " + @Model.DatasetVersionId.ToString() + ")", "Show", "Data", new { Area = "DDM", id = @Model.DatasetId, version = @Model.DatasetVersionNr }, null)
+    </td>
+    </td>
+    <td>@Model.CreationDate</td>
+    <td>@Model.Status</td>
+    <td>
+        @if (Model.Status.ToLower().Contains("registered") || Model.Status.ToLower().Contains("denied"))
+        {
+            <a class="fa bx-grid-function fa-check bx-disabled"></a>
+            <a class="fa bx-grid-function fa-times bx-disabled"></a>
+        }
+        else
+        {
+            <a class="doi-grant fa bx-grid-function fa-check"></a>
+            <a class="doi-deny fa bx-grid-function fa-times"></a>
+        }
+    </td>
+</tr>

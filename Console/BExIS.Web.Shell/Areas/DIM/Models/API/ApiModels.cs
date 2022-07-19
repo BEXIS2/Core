@@ -33,13 +33,20 @@ namespace BExIS.Modules.Dim.UI.Models.Api
         public string Description { get; set; }
         public long DataStructureId { get; set; }
         public long MetadataStructureId { get; set; }
+        public bool IsPublic { get; set; }
+        public string PublicationDate { get; set; }
+        public string VersionName { get; set; }
+        public bool VersionPublicAccess { get; set; }
+        public string VersionPublicAccessDate { get; set; }
         public Dictionary<string, string> AdditionalInformations { get; set; }
-        public List<Citator> Citators { get; set; }
+        public Dictionary<string, Dictionary<string, string>> Parties { get; set; }
+        public DateTime VersionDate { get; set; }
+        public object Names { get; internal set; }
 
         public ApiDatasetModel()
         {
             AdditionalInformations = new Dictionary<string, string>();
-            Citators = new List<Citator>();
+            Parties = new Dictionary<string, Dictionary<string, string>>();
         }
     }
 

@@ -1421,6 +1421,14 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                     attrModel.ParentPartyId = 0;
                 }
 
+                 UpdateAttribute(
+                    usage,
+                    number,
+                    metadataAttributeUsage,
+                    Convert.ToInt32(attrModel.Number),
+                    attrModel.Value,
+                    stepModelHelper.XPath);
+
                 AddXmlAttribute(stepModelHelper.XPath, "partyid", partyId.ToString());
             }
 
