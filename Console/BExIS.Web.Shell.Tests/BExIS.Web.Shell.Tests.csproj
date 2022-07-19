@@ -71,9 +71,6 @@
     <Reference Include="Microsoft.Web.Infrastructure, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Microsoft.Web.Infrastructure.2.0.0\lib\net40\Microsoft.Web.Infrastructure.dll</HintPath>
     </Reference>
-    <Reference Include="Moq, Version=4.8.0.0, Culture=neutral, PublicKeyToken=69f491c39445e920, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Moq.4.8.1\lib\net45\Moq.dll</HintPath>
-    </Reference>
     <Reference Include="Newtonsoft.Json, Version=13.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Newtonsoft.Json.13.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
@@ -87,17 +84,8 @@
       <HintPath>..\..\packages\NUnit.3.13.3\lib\net45\nunit.framework.dll</HintPath>
     </Reference>
     <Reference Include="System" />
-    <Reference Include="System.ComponentModel.Composition" />
-    <Reference Include="System.Configuration" />
-    <Reference Include="System.Net.Http" />
     <Reference Include="System.Net.Http.Formatting, Version=5.2.3.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Microsoft.AspNet.WebApi.Client.5.2.3\lib\net45\System.Net.Http.Formatting.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Runtime.CompilerServices.Unsafe, Version=4.0.4.1, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\System.Runtime.CompilerServices.Unsafe.4.5.3\lib\netstandard1.0\System.Runtime.CompilerServices.Unsafe.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Threading.Tasks.Extensions, Version=4.2.0.1, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\System.Threading.Tasks.Extensions.4.5.4\lib\portable-net45+win8+wp8+wpa81\System.Threading.Tasks.Extensions.dll</HintPath>
     </Reference>
     <Reference Include="System.ValueTuple, Version=4.0.3.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
       <HintPath>..\..\packages\System.ValueTuple.4.5.0\lib\netstandard1.0\System.ValueTuple.dll</HintPath>
@@ -126,56 +114,11 @@
     </Reference>
     <Reference Include="System.Xml" />
     <Reference Include="System.Xml.Linq" />
-    <Reference Include="Vaiona.Core, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Libraries\Vaiona\Vaiona.Core.dll</HintPath>
-    </Reference>
-    <Reference Include="Vaiona.Entities, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Libraries\Vaiona\Vaiona.Entities.dll</HintPath>
-    </Reference>
-    <Reference Include="Vaiona.Entities.Orm.NH">
-      <HintPath>..\..\Libraries\Vaiona\Vaiona.Entities.Orm.NH.dll</HintPath>
-    </Reference>
-    <Reference Include="Vaiona.IoC, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Libraries\Vaiona\Vaiona.IoC.dll</HintPath>
-    </Reference>
-    <Reference Include="Vaiona.Logging, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Libraries\Vaiona\Vaiona.Logging.dll</HintPath>
-    </Reference>
     <Reference Include="Vaiona.Model">
       <HintPath>..\..\Libraries\Vaiona\Vaiona.Model.dll</HintPath>
     </Reference>
-    <Reference Include="Vaiona.MultiTenancy.Api, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Libraries\Vaiona\Vaiona.MultiTenancy.Api.dll</HintPath>
-    </Reference>
-    <Reference Include="Vaiona.MultiTenancy.Services, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Libraries\Vaiona\Vaiona.MultiTenancy.Services.dll</HintPath>
-    </Reference>
-    <Reference Include="Vaiona.Persistence.Api, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Libraries\Vaiona\Vaiona.Persistence.Api.dll</HintPath>
-    </Reference>
-    <Reference Include="Vaiona.PersistenceProviders.NH">
-      <HintPath>..\..\Libraries\Vaiona\Vaiona.PersistenceProviders.NH.dll</HintPath>
-    </Reference>
-    <Reference Include="Vaiona.Utils, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Libraries\Vaiona\Vaiona.Utils.dll</HintPath>
-    </Reference>
     <Reference Include="Vaiona.Web">
       <HintPath>..\..\Libraries\Vaiona\Vaiona.Web.dll</HintPath>
-    </Reference>
-    <Reference Include="Vaiona.Web.Mvc">
-      <HintPath>..\..\Libraries\Vaiona\Vaiona.Web.Mvc.dll</HintPath>
-    </Reference>
-    <Reference Include="Vaiona.Web.Mvc.Modularity, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Libraries\Vaiona\Vaiona.Web.Mvc.Modularity.dll</HintPath>
     </Reference>
   </ItemGroup>
   <Choose>
@@ -197,21 +140,9 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\Components\App\BExIS.App.Bootstrap\BExIS.App.Bootstrap.csproj">
-      <Project>{7D7FBF8E-37D7-4A4C-B40E-3F267E9B9760}</Project>
-      <Name>BExIS.App.Bootstrap</Name>
-    </ProjectReference>
     <ProjectReference Include="..\..\Components\App\BExIS.App.Testing\BExIS.App.Testing.csproj">
       <Project>{0fcf7de1-e8f2-484c-8638-ef759b11d8a2}</Project>
       <Name>BExIS.App.Testing</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Components\EXT\BExIS.Ext.Services\BExIS.Ext.Services.csproj">
-      <Project>{b906a66a-4a09-4207-b590-655ee111ccf1}</Project>
-      <Name>BExIS.Ext.Services</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Components\Utils\BExIS.Utils.Data\BExIS.Utils.Data.csproj">
-      <Project>{A7FBCC13-7E29-4710-82A1-BD6D6F811FDA}</Project>
-      <Name>BExIS.Utils.Data</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\Components\Utils\BExIS.Utils\BExIS.Utils.csproj">
       <Project>{782B71C1-707F-4AB1-80E9-90D2880635B4}</Project>

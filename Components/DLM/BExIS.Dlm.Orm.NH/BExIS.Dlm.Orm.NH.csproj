@@ -53,9 +53,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
-    <Reference Include="System.ComponentModel.Composition" />
     <Reference Include="System.Core" />
-    <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
     <Reference Include="System.Runtime.CompilerServices.Unsafe, Version=4.0.4.1, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>..\..\..\packages\System.Runtime.CompilerServices.Unsafe.4.5.3\lib\netstandard1.0\System.Runtime.CompilerServices.Unsafe.dll</HintPath>
@@ -77,10 +75,6 @@
     <ProjectReference Include="..\..\Utils\BExIS.Utils.NH\BExIS.Utils.NH.csproj">
       <Project>{0f1ec13e-d685-4f4d-a438-52797b0e53a0}</Project>
       <Name>BExIS.Utils.NH</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\BExIS.Dlm.Entities\BExIS.Dlm.Entities.csproj">
-      <Project>{B4E7B1BF-01B4-40AF-8D19-B8F362167261}</Project>
-      <Name>BExIS.Dlm.Entities</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

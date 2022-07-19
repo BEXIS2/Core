@@ -1,10 +1,10 @@
 ﻿@using Telerik.Web.Mvc.UI
 
 @if(Request.IsAuthenticated) {
-    <text>Welcome <strong>@User.Identity.Name</strong>!
+<text>Welcome <strong>@User.Identity.Name</strong>!
     [ @Html.ActionLink("Sign Out", "SignOut", "Account") ]</text>
 }
 else {
-    <text>[ @Html.ActionLink("Sign In", "SignIn", "Account") ]</text>
-    <text>[ @Html.ActionLink("Sign Up", "SignUp", "Account") ]</text>
+<text>[ @Html.ActionLink("Sign In", "SignIn", "Account") ]</text>
+<text>[ @Html.ActionLink("Sign Up", "SignUp", "Account") ]</text>
 }

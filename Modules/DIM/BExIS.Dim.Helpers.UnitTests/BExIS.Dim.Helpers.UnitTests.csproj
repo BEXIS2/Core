@@ -30,21 +30,12 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\..\Components\App\BExIS.App.Testing\BExIS.App.Testing.csproj" />
-    <ProjectReference Include="..\..\..\Components\DLM\BExIS.Dlm.Tests\BExIS.Dlm.Tests.csproj" />
-    <ProjectReference Include="..\BExIS.Dim.Helper\BExIS.Dim.Helpers.csproj" />
-    <ProjectReference Include="..\BExIS.Dim.NH.ORM\BExIS.Dim.Orm.NH.csproj" />
   </ItemGroup>
 
   <ItemGroup>
     <Reference Include="System.Web" />
     <Reference Include="Vaiona.Persistence.Api">
       <HintPath>..\..\..\Libraries\Vaiona\Vaiona.Persistence.Api.dll</HintPath>
-    </Reference>
-    <Reference Include="Vaiona.PersistenceProviders.NH">
-      <HintPath>..\..\..\Libraries\Vaiona\Vaiona.PersistenceProviders.NH.dll</HintPath>
-    </Reference>
-    <Reference Include="Vaiona.Web.Mvc.Modularity">
-      <HintPath>..\..\..\Libraries\Vaiona\Vaiona.Web.Mvc.Modularity.dll</HintPath>
     </Reference>
   </ItemGroup>
 

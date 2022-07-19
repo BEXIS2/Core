@@ -4,7 +4,6 @@ using System.Linq;
 using System.Xml;
 using System.Xml.Linq;
 using BExIS.Dlm.Entities.Data;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using NUnit.Framework;
 using Assert = NUnit.Framework.Assert;
 

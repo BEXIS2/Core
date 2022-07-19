@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Xml;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using NUnit.Framework;
 using Assert = NUnit.Framework.Assert;
 

@@ -23,7 +23,6 @@ using Vaiona.Web.Mvc.Models;
 namespace BExIS.Web.Shell.Controllers
 {
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Reliability", "CA2000:Objekte verwerfen, bevor Bereich verloren geht", Justification = "<Ausstehend>")]
-
     public class TestController : BaseController
     {
         public ActionResult About()
@@ -106,7 +105,6 @@ namespace BExIS.Web.Shell.Controllers
             //expected.Tuples.ForEach(p => p.Amendments.Clear());
             //expected.Tuples.ForEach(p => p.Materialize());
         }
-
 
         //[RecordCall]
         //[LogExceptions]
@@ -225,7 +223,6 @@ namespace BExIS.Web.Shell.Controllers
         }
 
         [DoesNotNeedDataAccess]
-        // tells the persistence manager to not create an ambient session context for this action, which saves a considerable resources and reduces the execution time
         public ActionResult Index2()
         {
             testNHibernateSession();

@@ -1,6 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="..\..\packages\Microsoft.CodeAnalysis.NetAnalyzers.6.0.0\build\Microsoft.CodeAnalysis.NetAnalyzers.props" Condition="Exists('..\..\packages\Microsoft.CodeAnalysis.NetAnalyzers.6.0.0\build\Microsoft.CodeAnalysis.NetAnalyzers.props')" />
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -40,7 +39,6 @@
     <NuGetPackageImportStamp>
     </NuGetPackageImportStamp>
     <Use64BitIISExpress />
-    <DontImportPostSharp>True</DontImportPostSharp>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -68,17 +66,11 @@
       <HintPath>..\..\packages\Antlr.3.5.0.2\lib\Antlr3.Runtime.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="CommonServiceLocator, Version=2.0.6.0, Culture=neutral, PublicKeyToken=489b6accfaf20ef0, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\CommonServiceLocator.2.0.6\lib\net45\CommonServiceLocator.dll</HintPath>
-    </Reference>
     <Reference Include="DataAnnotationsExtensions, Version=5.0.1.27, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\packages\DataAnnotationsExtensions.5.0.1.27\lib\NETFramework40\DataAnnotationsExtensions.dll</HintPath>
     </Reference>
     <Reference Include="DataAnnotationsExtensions.ClientValidation, Version=5.0.1.27, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\packages\DataAnnotationsExtensions.MVC3.5.0.1.27\lib\NETFramework40\DataAnnotationsExtensions.ClientValidation.dll</HintPath>
-    </Reference>
-    <Reference Include="DocumentFormat.OpenXml">
-      <HintPath>..\..\Libraries\DocumentFormat.OpenXml.dll</HintPath>
     </Reference>
     <Reference Include="FluentBootstrap, Version=3.3.5.4, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\packages\FluentBootstrap.3.3.5.4\lib\net40\FluentBootstrap.dll</HintPath>
@@ -99,12 +91,6 @@
     <Reference Include="HtmlAgilityPack, Version=1.11.43.0, Culture=neutral, PublicKeyToken=bd319b19eaf3b43a, processorArchitecture=MSIL">
       <HintPath>..\..\packages\HtmlAgilityPack.1.11.43\lib\Net45\HtmlAgilityPack.dll</HintPath>
     </Reference>
-    <Reference Include="Iesi.Collections, Version=4.0.0.0, Culture=neutral, PublicKeyToken=aa95f207798dfdb4, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Iesi.Collections.4.0.1.4000\lib\net40\Iesi.Collections.dll</HintPath>
-    </Reference>
-    <Reference Include="Ionic.Zip">
-      <HintPath>..\..\Libraries\Ionic.Zip.dll</HintPath>
-    </Reference>
     <Reference Include="Microsoft.AspNet.Identity.Core, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Microsoft.AspNet.Identity.Core.2.2.3\lib\net45\Microsoft.AspNet.Identity.Core.dll</HintPath>
     </Reference>
@@ -113,10 +99,6 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="Microsoft.CSharp" />
-    <Reference Include="Microsoft.IdentityModel, Version=3.5.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Microsoft.IdentityModel.6.1.7600.16394\lib\net35\Microsoft.IdentityModel.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
     <Reference Include="Microsoft.Owin, Version=4.2.2.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Microsoft.Owin.4.2.2\lib\net45\Microsoft.Owin.dll</HintPath>
     </Reference>
@@ -133,15 +115,6 @@
     <Reference Include="Microsoft.Owin.Security.OAuth, Version=4.2.2.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Microsoft.Owin.Security.OAuth.4.2.2\lib\net45\Microsoft.Owin.Security.OAuth.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.Practices.Unity, Version=4.0.0.0, Culture=neutral, PublicKeyToken=6d32ff45e0ccc69f, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Unity.4.0.1\lib\net45\Microsoft.Practices.Unity.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.Practices.Unity.Configuration, Version=4.0.0.0, Culture=neutral, PublicKeyToken=6d32ff45e0ccc69f, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Unity.4.0.1\lib\net45\Microsoft.Practices.Unity.Configuration.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.Practices.Unity.RegistrationByConvention, Version=4.0.0.0, Culture=neutral, PublicKeyToken=6d32ff45e0ccc69f, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Unity.4.0.1\lib\net45\Microsoft.Practices.Unity.RegistrationByConvention.dll</HintPath>
-    </Reference>
     <Reference Include="Microsoft.Web.Helpers, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Microsoft.AspNet.WebHelpers.3.2.3\lib\net45\Microsoft.Web.Helpers.dll</HintPath>
       <Private>True</Private>
@@ -152,42 +125,18 @@
     <Reference Include="Newtonsoft.Json, Version=13.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Newtonsoft.Json.13.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
-    <Reference Include="NHibernate, Version=4.1.0.4000, Culture=neutral, PublicKeyToken=aa95f207798dfdb4, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\NHibernate.4.1.1.4000\lib\net40\NHibernate.dll</HintPath>
-    </Reference>
-    <Reference Include="Npgsql, Version=4.0.0.0, Culture=neutral, PublicKeyToken=5d8b90d52f46fda7, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Npgsql.4.0.0\lib\net451\Npgsql.dll</HintPath>
-    </Reference>
     <Reference Include="Owin, Version=1.0.0.0, Culture=neutral, PublicKeyToken=f0ebd12fd5e55cc5, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Owin.1.0\lib\net40\Owin.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="PostSharp, Version=4.3.48.0, Culture=neutral, PublicKeyToken=b13fd38b8f9c99d7, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\PostSharp.4.3.48\lib\net35-client\PostSharp.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Swashbuckle.Core, Version=1.0.0.0, Culture=neutral, PublicKeyToken=cd1bb07a5ac7c7bc, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Swashbuckle.Core.5.6.0\lib\net40\Swashbuckle.Core.dll</HintPath>
     </Reference>
-    <Reference Include="System.ComponentModel.Composition" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="System.Data.Linq" />
     <Reference Include="System.IO" />
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Net.Http.Formatting, Version=5.2.3.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Microsoft.AspNet.WebApi.Client.5.2.3\lib\net45\System.Net.Http.Formatting.dll</HintPath>
     </Reference>
-    <Reference Include="System.Runtime.CompilerServices.Unsafe, Version=4.0.4.1, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\System.Runtime.CompilerServices.Unsafe.4.5.3\lib\netstandard1.0\System.Runtime.CompilerServices.Unsafe.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Security" />
-    <Reference Include="System.Threading.Tasks.Extensions, Version=4.2.0.1, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\System.Threading.Tasks.Extensions.4.5.4\lib\portable-net45+win8+wp8+wpa81\System.Threading.Tasks.Extensions.dll</HintPath>
-    </Reference>
-    <Reference Include="System.ValueTuple, Version=4.0.3.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\System.ValueTuple.4.5.0\lib\netstandard1.0\System.ValueTuple.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Web.Extensions" />
     <Reference Include="System.Web.Helpers, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Microsoft.AspNet.WebPages.3.2.3\lib\net45\System.Web.Helpers.dll</HintPath>
       <Private>True</Private>
@@ -211,10 +160,6 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
-    <Reference Include="System.Drawing" />
-    <Reference Include="System.Web.DynamicData" />
-    <Reference Include="System.Web.Entity" />
-    <Reference Include="System.Web.ApplicationServices" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Web.WebPages, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Microsoft.AspNet.WebPages.3.2.3\lib\net45\System.Web.WebPages.dll</HintPath>
@@ -228,37 +173,22 @@
       <HintPath>..\..\packages\Microsoft.AspNet.WebPages.3.2.3\lib\net45\System.Web.WebPages.Razor.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Web" />
     <Reference Include="System.Web.Abstractions" />
     <Reference Include="System.Web.Routing" />
     <Reference Include="System.Xml" />
     <Reference Include="System.Configuration" />
-    <Reference Include="System.Web.Services" />
-    <Reference Include="System.EnterpriseServices" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="Telerik.Web.Mvc">
       <HintPath>..\..\packages\TelerikMvcExtensions.2013.2.611\lib\net40\Telerik.Web.Mvc.dll</HintPath>
-    </Reference>
-    <Reference Include="Vaiona.Core, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Libraries\Vaiona\Vaiona.Core.dll</HintPath>
     </Reference>
     <Reference Include="Vaiona.Entities, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Libraries\Vaiona\Vaiona.Entities.dll</HintPath>
     </Reference>
-    <Reference Include="Vaiona.Entities.Orm.NH, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Libraries\Vaiona\Vaiona.Entities.Orm.NH.dll</HintPath>
-    </Reference>
     <Reference Include="Vaiona.IoC, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Libraries\Vaiona\Vaiona.IoC.dll</HintPath>
-    </Reference>
-    <Reference Include="Vaiona.Logging, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Libraries\Vaiona\Vaiona.Logging.dll</HintPath>
     </Reference>
     <Reference Include="Vaiona.Model, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -268,17 +198,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Libraries\Vaiona\Vaiona.MultiTenancy.Api.dll</HintPath>
     </Reference>
-    <Reference Include="Vaiona.MultiTenancy.Services, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Libraries\Vaiona\Vaiona.MultiTenancy.Services.dll</HintPath>
-    </Reference>
     <Reference Include="Vaiona.Persistence.Api, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Libraries\Vaiona\Vaiona.Persistence.Api.dll</HintPath>
-    </Reference>
-    <Reference Include="Vaiona.PersistenceProviders.NH, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Libraries\Vaiona\Vaiona.PersistenceProviders.NH.dll</HintPath>
     </Reference>
     <Reference Include="Vaiona.Utils, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -295,9 +217,6 @@
     <Reference Include="Vaiona.Web.Mvc.Modularity, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Libraries\Vaiona\Vaiona.Web.Mvc.Modularity.dll</HintPath>
-    </Reference>
-    <Reference Include="WebActivator">
-      <HintPath>..\..\packages\WebActivator.1.2.0.0\lib\NETFramework40\WebActivator.dll</HintPath>
     </Reference>
     <Reference Include="WebActivatorEx, Version=2.0.0.0, Culture=neutral, PublicKeyToken=7b26dc2a43f6a0d4, processorArchitecture=MSIL">
       <HintPath>..\..\packages\WebActivatorEx.2.2.0\lib\net40\WebActivatorEx.dll</HintPath>
@@ -427,8 +346,6 @@
     </DesignData>
     <Content Include="App_Data\api_documentation.xml" />
     <Content Include="Content\bootstrap-theme.css" />
-    <Content Include="Content\bootstrap-theme.min.css" />
-    <Content Include="Content\bootstrap.min.css" />
     <Content Include="Content\DataTables\extensions\AutoFill\css\autoFill.bootstrap.css" />
     <Content Include="Content\DataTables\extensions\AutoFill\css\autoFill.bootstrap.min.css" />
     <Content Include="Content\DataTables\extensions\AutoFill\css\autoFill.bootstrap4.css" />
@@ -591,7 +508,6 @@
     <Content Include="Content\handsontable\handsontable.min.css" />
     <Content Include="Content\Images\dfg_logo.gif" />
     <Content Include="Content\bootstrap-combobox.css" />
-    <Content Include="Content\bootstrap.css" />
     <Content Include="Content\Images\Bildmarke_BEXIS_cmyk.svg" />
     <Content Include="Content\Images\Bildmarke_BEXIS_rgb_830x830.jpg" />
     <Content Include="Content\Images\Bildmarke_BEXIS_rgb_830x830.png" />
@@ -610,9 +526,7 @@
     <Content Include="Content\Site.css" />
     <Content Include="Content\bootstrap-slider.min.css" />
     <Content Include="css\font-awesome.css" />
-    <Content Include="css\font-awesome.min.css" />
     <Content Include="fonts\fontawesome-webfont.svg" />
-    <Content Include="fonts\glyphicons-halflings-regular.svg" />
     <Content Include="General.Settings.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -631,13 +545,6 @@
     <Content Include="fonts\fontawesome-webfont.woff" />
     <Content Include="fonts\fontawesome-webfont.ttf" />
     <Content Include="fonts\fontawesome-webfont.eot" />
-    <Content Include="fonts\glyphicons-halflings-regular.woff2" />
-    <Content Include="fonts\glyphicons-halflings-regular.woff" />
-    <Content Include="fonts\glyphicons-halflings-regular.ttf" />
-    <Content Include="fonts\glyphicons-halflings-regular.eot" />
-    <Content Include="Content\bootstrap.min.css.map" />
-    <Content Include="Content\bootstrap.css.map" />
-    <Content Include="Content\bootstrap-theme.min.css.map" />
     <Content Include="Content\bootstrap-theme.css.map" />
     <Content Include="Content\DataTables\media\images\Sorting icons.psd" />
     <Content Include="Content\DataTables\extensions\RowReorder\css\semanticui.scss" />
@@ -715,14 +622,13 @@
     <Content Include="Scripts\DataTables\extensions\ColReorder\Readme.md" />
     <Content Include="Scripts\DataTables\extensions\Buttons\Readme.md" />
     <Content Include="Scripts\DataTables\extensions\AutoFill\Readme.md" />
+    <None Include="packages.config" />
     <None Include="Properties\PublishProfiles\BexisServer_demo.pubxml" />
     <None Include="Properties\PublishProfiles\BexisServer_test.pubxml" />
     <None Include="Properties\PublishProfiles\FolderProfile.pubxml" />
     <None Include="Properties\PublishProfiles\IISProfile.pubxml" />
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
     <EmbeddedResource Include="Scripts\custom-swagger.js" />
-    <Content Include="Scripts\bootstrap.js" />
-    <Content Include="Scripts\bootstrap.min.js" />
     <Content Include="Scripts\DataTables\media\js\dataTables.bootstrap.js" />
     <Content Include="Scripts\DataTables\media\js\dataTables.bootstrap.min.js" />
     <Content Include="Scripts\DataTables\media\js\dataTables.bootstrap4.js" />
@@ -747,27 +653,19 @@
     <Content Include="Scripts\jquery-1.10.2.js" />
     <Content Include="Scripts\jquery-1.10.2.min.js" />
     <Content Include="Scripts\jquery-1.10.2.min.map" />
-    <None Include="Scripts\jquery-3.6.0.intellisense.js" />
     <None Include="Scripts\jquery-2.1.3.intellisense.js" />
-    <Content Include="Scripts\jquery-3.6.0.js" />
-    <Content Include="Scripts\jquery-3.6.0.min.js" />
-    <Content Include="Scripts\jquery-3.6.0.slim.js" />
-    <Content Include="Scripts\jquery-3.6.0.slim.min.js" />
     <Content Include="Scripts\jquery-migrate-3.3.0.js" />
     <Content Include="Scripts\jquery-migrate-3.3.0.min.js" />
     <Content Include="Scripts\jquery.dataTables.js" />
     <Content Include="Scripts\jquery.dataTables.min.js" />
-    <Content Include="Scripts\jquery.validate.unobtrusive.js" />
     <Content Include="Scripts\jquery.validate.unobtrusive.min.js" />
     <Content Include="Scripts\minimap\minimap.js" />
     <Content Include="Scripts\minimap\minimap.min.css" />
     <Content Include="Scripts\minimap\minimap.min.js" />
-    <Content Include="Scripts\modernizr-2.8.3.js" />
     <Content Include="Scripts\respond.js" />
     <Content Include="Scripts\respond.matchmedia.addListener.js" />
     <Content Include="Scripts\respond.matchmedia.addListener.min.js" />
     <Content Include="Scripts\respond.min.js" />
-    <Content Include="Scripts\session.warning.js" />
     <Content Include="Shell.Manifest.xml" />
     <Content Include="Themes\Black\Styles\awesome\css\font-awesome.css" />
     <Content Include="Themes\Black\Styles\awesome\css\font-awesome.min.css" />
@@ -1115,8 +1013,6 @@
     <Content Include="Views\Home\Version.cshtml" />
     <Content Include="Views\Home\NoPermission.cshtml" />
     <Content Include="Web.config.sample" />
-    <Content Include="Scripts\jquery-3.6.0.slim.min.map" />
-    <Content Include="Scripts\jquery-3.6.0.min.map" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Areas\" />
@@ -1151,11 +1047,6 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\Shared\EditorTemplates\Time.cshtml" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="packages.config">
-      <SubType>Designer</SubType>
-    </None>
   </ItemGroup>
   <ItemGroup>
     <Content Include="IoC.config">
@@ -1219,30 +1110,6 @@
       <Project>{c4ca0a99-0af3-4372-a9b7-b9073599bd8b}</Project>
       <Name>BExIS.Dlm.Services</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\Components\EXT\BExIS.Ext.Services\BExIS.Ext.Services.csproj">
-      <Project>{B906A66A-4A09-4207-B590-655EE111CCF1}</Project>
-      <Name>BExIS.Ext.Services</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Components\IO\BExIS.IO.DataType.DisplayPattern\BExIS.IO.DataType.DisplayPattern.csproj">
-      <Project>{8b2ec2b0-6870-456b-be2d-b0fb4ea68d83}</Project>
-      <Name>BExIS.IO.DataType.DisplayPattern</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Components\IO\BExIS.IO.Transform.Input\BExIS.IO.Transform.Input.csproj">
-      <Project>{5c4c8570-a53b-4191-a414-de028aaaf36a}</Project>
-      <Name>BExIS.IO.Transform.Input</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Components\IO\BExIS.IO.Transform.Output\BExIS.IO.Transform.Output.csproj">
-      <Project>{455ec826-9a92-40ff-bd3b-388c288955ce}</Project>
-      <Name>BExIS.IO.Transform.Output</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Components\IO\BExIS.IO.Transform.Validation\BExIS.IO.Transform.Validation.csproj">
-      <Project>{c8a05313-b960-406e-92ec-c1e5b3f47fcd}</Project>
-      <Name>BExIS.IO.Transform.Validation</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Components\IO\BExIS.IO.Transform.Validation\BExIS.IO.Transform.Validation.csproj">
-      <Project>{c8a05313-b960-406e-92ec-c1e5b3f47fcd}</Project>
-      <Name>BExIS.IO.Transform.Validation</Name>
-    </ProjectReference>
     <ProjectReference Include="..\..\Components\IO\BExIS.IO\BExIS.IO.csproj">
       <Project>{e4795f06-20c2-4c4c-a720-9a79896384df}</Project>
       <Name>BExIS.IO</Name>
@@ -1251,10 +1118,6 @@
       <Project>{de0ad99c-c559-422f-8132-cc4d7c46ff83}</Project>
       <Name>BExIS.UI</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\Components\Utils\BExIS.Utils.Data\BExIS.Utils.Data.csproj">
-      <Project>{a7fbcc13-7e29-4710-82a1-bd6d6f811fda}</Project>
-      <Name>BExIS.Utils.Data</Name>
-    </ProjectReference>
     <ProjectReference Include="..\..\Components\Utils\BExIS.Utils\BExIS.Utils.csproj">
       <Project>{782b71c1-707f-4ab1-80e9-90d2880635b4}</Project>
       <Name>BExIS.Utils</Name>
@@ -1262,10 +1125,6 @@
     <ProjectReference Include="..\..\Components\XML\BExIS.Xml.Helpers\BExIS.Xml.Helpers.csproj">
       <Project>{252f7872-a69c-43a6-84b4-4d2abdbdd9ab}</Project>
       <Name>BExIS.Xml.Helpers</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Components\XML\BExIS.Xml.Models\BExIS.Xml.Models.csproj">
-      <Project>{c0c9f0f2-9e65-448d-8000-d311db326460}</Project>
-      <Name>BExIS.Xml.Models</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
@@ -1370,10 +1229,6 @@
   <ItemGroup>
     <WCFMetadata Include="Service References\" />
   </ItemGroup>
-  <ItemGroup>
-    <Analyzer Include="..\..\packages\Microsoft.CodeAnalysis.NetAnalyzers.6.0.0\analyzers\dotnet\cs\Microsoft.CodeAnalysis.CSharp.NetAnalyzers.dll" />
-    <Analyzer Include="..\..\packages\Microsoft.CodeAnalysis.NetAnalyzers.6.0.0\analyzers\dotnet\cs\Microsoft.CodeAnalysis.NetAnalyzers.dll" />
-  </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
     <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
@@ -1424,17 +1279,4 @@ rmdir /S /Q  "$(SolutionDir)Console\Workspace\Components\Vaiona"
 C:\Windows\System32\xcopy "$(SolutionDir)Libraries\Vaiona\Workspace\Components\Vaiona" "$(SolutionDir)Console\Workspace\Components\Vaiona\" /E /C /Y /I</PostBuildEvent>
   </PropertyGroup>
   <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
-  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
-    <PropertyGroup>
-      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
-    </PropertyGroup>
-    <Error Condition="!Exists('..\..\packages\Microsoft.CodeAnalysis.NetAnalyzers.6.0.0\build\Microsoft.CodeAnalysis.NetAnalyzers.props')" Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\Microsoft.CodeAnalysis.NetAnalyzers.6.0.0\build\Microsoft.CodeAnalysis.NetAnalyzers.props'))" />
-    <Error Condition="!Exists('..\..\packages\Microsoft.CodeAnalysis.NetAnalyzers.6.0.0\build\Microsoft.CodeAnalysis.NetAnalyzers.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\Microsoft.CodeAnalysis.NetAnalyzers.6.0.0\build\Microsoft.CodeAnalysis.NetAnalyzers.targets'))" />
-  </Target>
-  <Import Project="..\..\packages\PostSharp.4.3.48\tools\PostSharp.targets" Condition="Exists('..\..\packages\PostSharp.4.3.48\tools\PostSharp.targets')" />
-  <Target Name="EnsurePostSharpImported" BeforeTargets="BeforeBuild" Condition="'$(PostSharp30Imported)' == ''">
-    <Error Condition="!Exists('..\..\packages\PostSharp.4.3.48\tools\PostSharp.targets')" Text="This project references NuGet package(s) that are missing on this computer. Enable NuGet Package Restore to download them.  For more information, see http://www.postsharp.net/links/nuget-restore." />
-    <Error Condition="Exists('..\..\packages\PostSharp.4.3.48\tools\PostSharp.targets')" Text="The build restored NuGet packages. Build the project again to include these packages in the build. For more information, see http://www.postsharp.net/links/nuget-restore." />
-  </Target>
-  <Import Project="..\..\packages\Microsoft.CodeAnalysis.NetAnalyzers.6.0.0\build\Microsoft.CodeAnalysis.NetAnalyzers.targets" Condition="Exists('..\..\packages\Microsoft.CodeAnalysis.NetAnalyzers.6.0.0\build\Microsoft.CodeAnalysis.NetAnalyzers.targets')" />
 </Project>

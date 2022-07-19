@@ -1,7 +1,6 @@
-﻿using System.ComponentModel;
+﻿using BExIS.Security.Entities.Subjects;
 using BExIS.Utils.Filters;
 using System.ComponentModel.DataAnnotations;
-using BExIS.Security.Entities.Subjects;
 
 namespace BExIS.Web.Shell.Models
 {

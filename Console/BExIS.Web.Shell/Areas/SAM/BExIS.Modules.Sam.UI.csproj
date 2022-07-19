@@ -67,13 +67,9 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />
-    <Reference Include="System.ComponentModel.Composition" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Data.Entity" />
-    <Reference Include="System.Net.Http" />
     <Reference Include="System.Net.Http.Formatting, Version=5.2.3.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\..\..\..\packages\Microsoft.AspNet.WebApi.Client.5.2.3\lib\net45\System.Net.Http.Formatting.dll</HintPath>
     </Reference>
@@ -330,17 +326,9 @@
       <Project>{0f1ec13e-d685-4f4d-a438-52797b0e53a0}</Project>
       <Name>BExIS.Utils.NH</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\..\..\Components\Utils\BExIS.Utils\BExIS.Utils.csproj">
-      <Project>{782b71c1-707f-4ab1-80e9-90d2880635b4}</Project>
-      <Name>BExIS.Utils</Name>
-    </ProjectReference>
     <ProjectReference Include="..\..\..\..\Components\XML\BExIS.Xml.Helpers\BExIS.Xml.Helpers.csproj">
       <Project>{252F7872-A69C-43A6-84B4-4D2ABDBDD9AB}</Project>
       <Name>BExIS.Xml.Helpers</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\..\..\Modules\DDM\BExIS.Ddm.Api\BExIS.Ddm.Api.csproj">
-      <Project>{8519EAC6-FBF8-48B3-813F-E0B9D3CC4A52}</Project>
-      <Name>BExIS.Ddm.Api</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

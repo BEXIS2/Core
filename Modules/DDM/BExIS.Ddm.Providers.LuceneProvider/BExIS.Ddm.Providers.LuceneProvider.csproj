@@ -69,10 +69,6 @@
     <ErrorReport>prompt</ErrorReport>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="IBM.Data.DB2, Version=9.7.4.4, Culture=neutral, PublicKeyToken=7c307b91aa13d208, processorArchitecture=x86">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\Libraries\IBM.Data.DB2.dll</HintPath>
-    </Reference>
     <Reference Include="ICSharpCode.SharpZipLib, Version=0.86.0.518, Culture=neutral, PublicKeyToken=1b03e6acf1164f73, processorArchitecture=MSIL">
       <HintPath>..\..\..\packages\SharpZipLib.0.86.0\lib\20\ICSharpCode.SharpZipLib.dll</HintPath>
     </Reference>
@@ -110,17 +106,12 @@
       <HintPath>..\..\..\packages\Lucene.Net.Contrib.3.0.3\lib\net40\Lucene.Net.Contrib.SpellChecker.dll</HintPath>
     </Reference>
     <Reference Include="System" />
-    <Reference Include="System.ComponentModel.Composition" />
-    <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
     <Reference Include="System.Runtime.CompilerServices.Unsafe, Version=4.0.4.1, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>..\..\..\packages\System.Runtime.CompilerServices.Unsafe.4.5.3\lib\netstandard1.0\System.Runtime.CompilerServices.Unsafe.dll</HintPath>
     </Reference>
-    <Reference Include="System.Web" />
-    <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
     <Reference Include="Vaiona.Entities, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
@@ -177,17 +168,9 @@
       <Project>{252f7872-a69c-43a6-84b4-4d2abdbdd9ab}</Project>
       <Name>BExIS.Xml.Helpers</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\..\Components\XML\BExIS.Xml.Models\BExIS.Xml.Models.csproj">
-      <Project>{c0c9f0f2-9e65-448d-8000-d311db326460}</Project>
-      <Name>BExIS.Xml.Models</Name>
-    </ProjectReference>
     <ProjectReference Include="..\BExIS.Ddm.Api\BExIS.Ddm.Api.csproj">
       <Project>{8519eac6-fbf8-48b3-813f-e0b9d3cc4a52}</Project>
       <Name>BExIS.Ddm.Api</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\BExIS.Ddm.Model\BExIS.Ddm.Model.csproj">
-      <Project>{ab46beb8-c36d-412f-9b1a-646c86299a87}</Project>
-      <Name>BExIS.Ddm.Model</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

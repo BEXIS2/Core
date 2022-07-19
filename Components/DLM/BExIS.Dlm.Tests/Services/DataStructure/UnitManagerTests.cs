@@ -7,8 +7,6 @@ using BExIS.Dlm.Services.DataStructure;
 using BExIS.Dlm.Services.MetadataStructure;
 using BExIS.Utils.Config;
 using BExIS.Utils.Data.Helpers;
-using BExIS.Web.Shell;
-using BExIS.Web.Shell.Helpers;
 using FluentAssertions;
 using NUnit.Framework;
 using System;

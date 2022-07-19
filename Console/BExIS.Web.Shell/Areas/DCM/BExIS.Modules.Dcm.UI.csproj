@@ -89,27 +89,22 @@
     </Reference>
     <Reference Include="PresentationCore" />
     <Reference Include="System" />
-    <Reference Include="System.ComponentModel.Composition" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
     <Reference Include="System.Data" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="System.Drawing" />
     <Reference Include="System.IO" />
     <Reference Include="System.IO.Compression" />
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Net.Http.Formatting, Version=5.2.3.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\..\..\..\packages\Microsoft.AspNet.WebApi.Client.5.2.3\lib\net45\System.Net.Http.Formatting.dll</HintPath>
     </Reference>
-    <Reference Include="System.Numerics" />
     <Reference Include="System.Runtime.CompilerServices.Unsafe, Version=4.0.4.1, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>..\..\..\..\packages\System.Runtime.CompilerServices.Unsafe.4.5.3\lib\netstandard1.0\System.Runtime.CompilerServices.Unsafe.dll</HintPath>
     </Reference>
     <Reference Include="System.Runtime.InteropServices.RuntimeInformation, Version=4.0.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>..\..\..\..\packages\System.Runtime.InteropServices.RuntimeInformation.4.3.0\lib\net45\System.Runtime.InteropServices.RuntimeInformation.dll</HintPath>
     </Reference>
-    <Reference Include="System.Security" />
     <Reference Include="System.Threading.Tasks" />
     <Reference Include="System.Threading.Tasks.Extensions, Version=4.2.0.1, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
       <HintPath>..\..\..\..\packages\System.Threading.Tasks.Extensions.4.5.4\lib\portable-net45+win8+wp8+wpa81\System.Threading.Tasks.Extensions.dll</HintPath>
@@ -118,7 +113,6 @@
       <HintPath>..\..\..\..\packages\System.ValueTuple.4.5.0\lib\netstandard1.0\System.ValueTuple.dll</HintPath>
     </Reference>
     <Reference Include="System.Web" />
-    <Reference Include="System.Web.Extensions" />
     <Reference Include="System.Web.Http, Version=5.2.3.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\..\..\..\packages\Microsoft.AspNet.WebApi.Core.5.2.3\lib\net45\System.Web.Http.dll</HintPath>
     </Reference>
@@ -128,7 +122,6 @@
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Web.Routing" />
     <Reference Include="System.Xml" />
-    <Reference Include="System.Web.Services" />
     <Reference Include="System.Web.Helpers, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <Private>True</Private>
       <HintPath>..\..\..\..\packages\Microsoft.AspNet.WebPages.3.2.3\lib\net45\System.Web.Helpers.dll</HintPath>
@@ -159,22 +152,12 @@
     <Reference Include="Vaiona.Entities">
       <HintPath>..\..\..\..\Libraries\Vaiona\Vaiona.Entities.dll</HintPath>
     </Reference>
-    <Reference Include="Vaiona.IoC, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\Libraries\Vaiona\Vaiona.IoC.dll</HintPath>
-    </Reference>
     <Reference Include="Vaiona.Logging, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\Libraries\Vaiona\Vaiona.Logging.dll</HintPath>
     </Reference>
     <Reference Include="Vaiona.Model">
       <HintPath>..\..\..\..\Libraries\Vaiona\Vaiona.Model.dll</HintPath>
-    </Reference>
-    <Reference Include="Vaiona.MultiTenancy.Api">
-      <HintPath>..\..\..\..\Libraries\Vaiona\Vaiona.MultiTenancy.Api.dll</HintPath>
-    </Reference>
-    <Reference Include="Vaiona.MultiTenancy.Services">
-      <HintPath>..\..\..\..\Libraries\Vaiona\Vaiona.MultiTenancy.Services.dll</HintPath>
     </Reference>
     <Reference Include="Vaiona.Persistence.Api, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -627,17 +610,9 @@
       <Project>{B4E7B1BF-01B4-40AF-8D19-B8F362167261}</Project>
       <Name>BExIS.Dlm.Entities</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\..\..\Components\DLM\BExIS.Dlm.Orm.NH\BExIS.Dlm.Orm.NH.csproj">
-      <Project>{E234118C-1B89-493C-B17A-6990F6B98A9F}</Project>
-      <Name>BExIS.Dlm.Orm.NH</Name>
-    </ProjectReference>
     <ProjectReference Include="..\..\..\..\Components\DLM\BExIS.Dlm.Services\BExIS.Dlm.Services.csproj">
       <Project>{C4CA0A99-0AF3-4372-A9B7-B9073599BD8B}</Project>
       <Name>BExIS.Dlm.Services</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\..\..\Components\EXT\BExIS.Ext.Services\BExIS.Ext.Services.csproj">
-      <Project>{B906A66A-4A09-4207-B590-655EE111CCF1}</Project>
-      <Name>BExIS.Ext.Services</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\..\..\Components\IO\BExIS.IO.DataType.DisplayPattern\BExIS.IO.DataType.DisplayPattern.csproj">
       <Project>{8B2EC2B0-6870-456B-BE2D-B0FB4EA68D83}</Project>

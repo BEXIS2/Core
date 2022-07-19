@@ -51,31 +51,11 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
-    <Reference Include="System.ComponentModel.Composition" />
     <Reference Include="System.Core" />
     <Reference Include="System.Runtime.CompilerServices.Unsafe, Version=4.0.4.1, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>..\..\..\packages\System.Runtime.CompilerServices.Unsafe.4.5.3\lib\netstandard1.0\System.Runtime.CompilerServices.Unsafe.dll</HintPath>
     </Reference>
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
-    <Reference Include="Vaiona.Entities">
-      <HintPath>..\..\..\Libraries\Vaiona\Vaiona.Entities.dll</HintPath>
-    </Reference>
-    <Reference Include="Vaiona.Entities.Orm.NH">
-      <HintPath>..\..\..\Libraries\Vaiona\Vaiona.Entities.Orm.NH.dll</HintPath>
-    </Reference>
-    <Reference Include="Vaiona.IoC">
-      <HintPath>..\..\..\Libraries\Vaiona\Vaiona.IoC.dll</HintPath>
-    </Reference>
-    <Reference Include="Vaiona.Persistence.Api">
-      <HintPath>..\..\..\Libraries\Vaiona\Vaiona.Persistence.Api.dll</HintPath>
-    </Reference>
-    <Reference Include="Vaiona.Utils">
-      <HintPath>..\..\..\Libraries\Vaiona\Vaiona.Utils.dll</HintPath>
-    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -83,14 +63,6 @@
     <Compile Include="UsageHelper.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\Components\DLM\BExIS.Dlm.Entities\BExIS.Dlm.Entities.csproj">
-      <Project>{b4e7b1bf-01b4-40af-8d19-b8f362167261}</Project>
-      <Name>BExIS.Dlm.Entities</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\..\Components\DLM\BExIS.Dlm.Services\BExIS.Dlm.Services.csproj">
-      <Project>{c4ca0a99-0af3-4372-a9b7-b9073599bd8b}</Project>
-      <Name>BExIS.Dlm.Services</Name>
-    </ProjectReference>
     <ProjectReference Include="..\BExIS.Dcm.Wizard\BExIS.Dcm.Wizard.csproj">
       <Project>{d17cdd9d-b87b-441b-9248-5c54e92ffc81}</Project>
       <Name>BExIS.Dcm.Wizard</Name>

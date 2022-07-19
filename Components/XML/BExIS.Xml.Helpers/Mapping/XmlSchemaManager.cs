@@ -9,7 +9,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Linq.Dynamic.Core;
 using System.Xml;
 using System.Xml.Schema;
 using Vaiona.Utils.Cfg;
