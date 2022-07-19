@@ -2,10 +2,8 @@
 using BExIS.Utils.NH.Querying;
 using System;
 using System.Collections.Generic;
-using System.Data;
 using System.Linq;
 using System.Linq.Dynamic.Core;
-using System.Text;
 using Vaiona.Persistence.Api;
 
 namespace BExIS.Security.Services.Subjects

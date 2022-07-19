@@ -2,14 +2,10 @@
 using MimeKit;
 using System.Collections.Generic;
 using System.Configuration;
-using System.Linq.Dynamic;
 using System.Threading.Tasks;
 using Vaiona.Utils.Cfg;
 using System.Linq;
 using MailKit.Net.Smtp;
-using System.Security.Authentication;
-using MailKit;
-using System;
 using MailKit.Security;
 using System.IO;
 
