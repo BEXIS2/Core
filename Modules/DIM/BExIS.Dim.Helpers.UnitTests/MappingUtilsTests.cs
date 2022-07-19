@@ -46,14 +46,12 @@ namespace BExIS.Dim.Helpers.UnitTests
         {
             //Arrange
             using (var mappingManager = new MappingManager())
-            using (var dcm = new DataContainerManager())
+            
             using (IUnitOfWork uow = this.GetUnitOfWork())
             {
                 // install module dim because the libaries are otheside of the first setup
 
                 IRepository<LinkElement> repo = uow.GetRepository<LinkElement>();
-
-                var dcs = dcm.DataAttributeRepo.Get();
 
                 // load metadata with data to map
                 var basepath = AppDomain.CurrentDomain.BaseDirectory;

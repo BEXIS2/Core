@@ -98,9 +98,6 @@
     </Reference>
     <Reference Include="System.Xml" />
     <Reference Include="System.Xml.Linq" />
-    <Reference Include="Vaiona.Utils">
-      <HintPath>..\..\..\Libraries\Vaiona\Vaiona.Utils.dll</HintPath>
-    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DataCiteDOI\DataCiteDoiHelperTests.cs" />
@@ -117,9 +114,17 @@
       <Project>{0FCF7DE1-E8F2-484C-8638-EF759B11D8A2}</Project>
       <Name>BExIS.App.Testing</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\..\Components\Utils\BExIS.Utils.Config\BExIS.Utils.Config.csproj">
+      <Project>{6ead7d02-02f7-42ff-85e4-90bb892d3846}</Project>
+      <Name>BExIS.Utils.Config</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\..\Components\Utils\BExIS.Utils\BExIS.Utils.csproj">
       <Project>{782B71C1-707F-4AB1-80E9-90D2880635B4}</Project>
       <Name>BExIS.Utils</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\Components\Vaiona\Vaiona.Utils\Vaiona.Utils.csproj">
+      <Project>{63fcacaa-9534-4fdd-a082-78dcc06baf28}</Project>
+      <Name>Vaiona.Utils</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

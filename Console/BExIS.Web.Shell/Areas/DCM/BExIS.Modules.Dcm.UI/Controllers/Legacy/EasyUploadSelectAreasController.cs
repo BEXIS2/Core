@@ -205,7 +205,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                         model.StepInfo = TaskManager.Current();
                     }
                 }
-            }
+            
 
             return PartialView(model);
         }
