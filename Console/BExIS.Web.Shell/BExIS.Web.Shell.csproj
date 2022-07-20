@@ -689,13 +689,11 @@
     <Content Include="Scripts\handsontable\handsontable.min.js" />
     <Content Include="Scripts\jquery-1.10.2.js" />
     <Content Include="Scripts\jquery-1.10.2.min.js" />
-    <Content Include="Scripts\jquery-1.10.2.min.map" />
-    <None Include="Scripts\jquery-2.1.3.intellisense.js" />
-    <None Include="Scripts\jquery-2.1.4.intellisense.js" />
-    <Content Include="Scripts\jquery-2.1.4.js" />
-    <Content Include="Scripts\jquery-2.1.4.min.js" />
-    <Content Include="Scripts\jquery-migrate-1.2.1.js" />
-    <Content Include="Scripts\jquery-migrate-1.2.1.min.js" />
+    <None Include="Scripts\jquery-3.6.0.intellisense.js" />
+    <Content Include="Scripts\jquery-3.6.0.js" />
+    <Content Include="Scripts\jquery-3.6.0.min.js" />
+    <Content Include="Scripts\jquery-3.6.0.slim.js" />
+    <Content Include="Scripts\jquery-3.6.0.slim.min.js" />
     <Content Include="Scripts\jquery-migrate-3.3.0.js" />
     <Content Include="Scripts\jquery-migrate-3.3.0.min.js" />
     <Content Include="Scripts\jquery.dataTables.js" />
@@ -768,9 +766,6 @@
     <Content Include="Scripts\jQueryUI\1.10.3\js\jquery-1.9.1.js" />
     <Content Include="Scripts\jQueryUI\1.10.3\js\jquery-ui-1.10.3.custom.js" />
     <Content Include="Scripts\jQueryUI\1.10.3\js\jquery-ui-1.10.3.custom.min.js" />
-    <Content Include="Scripts\jquery-1.7.1.min.js" />
-    <Content Include="Scripts\jquery-2.0.3.js" />
-    <Content Include="Scripts\jquery-2.0.3.min.js" />
     <Content Include="Scripts\jquery.ba-resize.min.js" />
     <Content Include="Scripts\Search\search.js" />
     <Content Include="Scripts\switchery\switchery.css" />
@@ -1000,9 +995,6 @@
       <SubType>Designer</SubType>
     </Content>
     <Content Include="Content\Site_old.css" />
-    <Content Include="Scripts\jquery-1.4.4.js" />
-    <Content Include="Scripts\jquery-1.4.4.min.js" />
-    <Content Include="Scripts\jquery-1.4.4-vsdoc.js" />
     <Content Include="Scripts\jquery.unobtrusive-ajax.js" />
     <Content Include="Scripts\jquery.unobtrusive-ajax.min.js" />
     <Content Include="Scripts\jquery.validate.js" />
@@ -1055,7 +1047,8 @@
     <Content Include="Views\Home\Version.cshtml" />
     <Content Include="Views\Home\NoPermission.cshtml" />
     <Content Include="Web.config.sample" />
-    <Content Include="Scripts\jquery-2.1.4.min.map" />
+    <Content Include="Scripts\jquery-3.6.0.slim.min.map" />
+    <Content Include="Scripts\jquery-3.6.0.min.map" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Areas\" />
