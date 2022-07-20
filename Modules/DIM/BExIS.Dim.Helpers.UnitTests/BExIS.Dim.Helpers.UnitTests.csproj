@@ -30,6 +30,8 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\..\Components\App\BExIS.App.Testing\BExIS.App.Testing.csproj" />
+    <ProjectReference Include="..\..\..\Components\DLM\BExIS.Dlm.Services\BExIS.Dlm.Services.csproj" />
+    <ProjectReference Include="..\BExIS.Dim.Services\BExIS.Dim.Services.csproj" />
   </ItemGroup>
 
   <ItemGroup>

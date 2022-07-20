@@ -8,8 +8,8 @@ namespace BExIS.Web.Shell
         public static void RegisterBundles(BundleCollection bundles)
         {
             bundles.Add(new ScriptBundle("~/bundles/jquery").Include(
-                "~/Scripts/jquery-3.6.0.min.js",
-                "~/Scripts/jquery-migrate-3.3.0.min.js",
+                "~/Scripts/jquery-2.1.4.min.js",
+                "~/Scripts/jquery-migrate-1.2.1.min.js",
                 "~/Scripts/jQueryUI/1.10.3/js/jquery-ui-1.10.3.custom.min.js"));
 
             bundles.Add(new ScriptBundle("~/bundles/jqueryval").Include(
