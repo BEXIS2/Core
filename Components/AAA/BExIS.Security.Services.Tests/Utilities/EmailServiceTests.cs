@@ -42,7 +42,7 @@ namespace BExIS.Security.Services.Tests.Utilities
         {
         }
 
-        [Test]
+        //[Test]
         public void Send()
         {
             var file = new FileInfo("c:\\complete\\path\\to\\file.extension");

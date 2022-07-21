@@ -123,9 +123,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Administration\Administration.cd" />
+    <None Include="BExIS.Dlm.Entites.cd" />
     <None Include="DataStructure\DataStructure.cd" />
     <None Include="Data\Data.cd" />
-    <None Include="MetadataStrcuture\MetadataStructure.cd" />
     <None Include="packages.config" />
     <None Include="Party\Party.cd" />
   </ItemGroup>
