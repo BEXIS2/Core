@@ -1,0 +1,271 @@
+﻿using BExIS.Dlm.Entities.Common;
+using BExIS.Dlm.Entities.DataStructure;
+using BExIS.Dlm.Entities.MetadataStructure;
+using BExIS.Dlm.Services.MetadataStructure;
+using Newtonsoft.Json.Linq;
+//using Newtonsoft.Json.Linq;
+using Newtonsoft.Json.Schema;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace BEXIS.JSON.Helpers
+{
+    public class MetadataStructureConverter
+    {
+        public JSchema ConvertToJsonSchema(long id)
+        {
+            if (id == 0) throw new ArgumentException("id");
+
+            JSchema schema = new JSchema();
+
+            schema = addSchemaVersion(schema);
+
+            using (var metadataStructureManager = new MetadataStructureManager())
+            {
+                var metadataStructure = metadataStructureManager.Repo.Get(id);
+
+                if (metadataStructure == null) throw new ArgumentNullException("metadata structure with id " + id + " not exist");
+
+                foreach (var pu in metadataStructure.MetadataPackageUsages)
+                {
+                    var packageUsage = metadataStructureManager.PackageUsageRepo.Get(pu.Id);
+                    bool required = false;
+                    schema = addPackageUsage(packageUsage, schema, out required);
+
+                    if (required)
+                        schema.Required.Add(packageUsage.Label);
+
+                }
+            }
+
+            return schema;
+        }
+
+        private JSchema addPackageUsage(MetadataPackageUsage usage, JSchema schema, out bool required)
+        {
+            var type = usage.MetadataPackage;
+
+            JSchema current = new JSchema();
+
+            // base informations
+            current.Title = usage.Label;
+            current.Type = JSchemaType.Object;
+            current.Description = usage.Description;
+
+
+            // set required
+            if (usage.MinCardinality > 0) required = true;
+            else required = false;
+
+            //childrens
+            if (type != null && type.MetadataAttributeUsages.Any())
+            {
+                foreach (var metadataAttrUsage in type.MetadataAttributeUsages)
+                {
+                    bool _childRequired = false;
+                    current = addMetadataAttrUsage(metadataAttrUsage, current, out _childRequired);
+
+                    // if current is required add it to the parent
+                    if (_childRequired) current.Required.Add(metadataAttrUsage.Label);
+                }
+            }
+
+            // add system properties
+            current = addAttributes(current);
+
+            // add to parent
+            schema.Properties.Add(usage.Label, current);
+
+            return schema;
+        }
+
+        private JSchema addMetadataAttrUsage(BaseUsage usage, JSchema schema, out bool required)
+        {
+
+            MetadataAttribute type = null;
+
+            if(usage is MetadataAttributeUsage)
+            {
+                type = ((MetadataAttributeUsage)usage).MetadataAttribute;
+            }
+
+            if (usage is MetadataNestedAttributeUsage)
+            {
+                type = ((MetadataNestedAttributeUsage)usage).Member;
+            }
+
+            JSchema current = new JSchema();
+
+            current.Title = usage.Label;
+            current.Description = usage.Description;
+
+            // set required
+            if (usage.MinCardinality > 0) required = true;
+            else required = false;
+
+
+            if (type.Self is MetadataSimpleAttribute)
+            {
+                // Datatype
+                // set json schema type based on datatype input
+                current.Type = convertToJSchemaType(type.DataType);
+
+                //if Datatype is datetime, jsosn schema use type string
+                // but need to set a format
+                if (type.DataType.SystemType == "datetime")
+                {
+                    current.Format = "date";
+                }
+
+
+                //Contraints
+                current = addConstraints(current, type.Constraints);
+                
+            }
+
+            if (type.Self is MetadataCompoundAttribute)
+            {
+                var mcu = (MetadataCompoundAttribute)type.Self;
+
+                current.Type = JSchemaType.Object; // maybe also array?
+
+                // properties
+                // from usage and attrbiute
+                if (mcu.MetadataNestedAttributeUsages.Any())
+                {
+                    foreach (var mnau in mcu.MetadataNestedAttributeUsages)
+                    {
+                        bool _childIsRequired = false;
+                        current = addMetadataAttrUsage(mnau, current, out _childIsRequired);
+                        // if current is required add it to the parent
+                        if (_childIsRequired) current.Required.Add(mnau.Label);
+                    }
+                }
+            }
+
+            // add system props
+            current = addAttributes(current);
+
+            // check if usage has cardinality >1 then create a array before
+            if (usage.MaxCardinality > 1)
+            { 
+                JSchema array = new JSchema();
+                array.Type = JSchemaType.Array;
+                array.Items.Add(current);
+                schema.Properties.Add(usage.Label, array);
+
+                // add Range contraint
+                array.MinimumItems = usage.MinCardinality;
+                array.MaximumItems = usage.MaxCardinality;
+                
+
+            }
+            else // add object to schema
+            {
+                schema.Properties.Add(usage.Label, current);
+            }
+
+            return schema;
+        }
+
+        private JSchema addSchemaVersion(JSchema schema)
+        {
+            var value = @"http://json-schema.org/draft-07/schema";
+
+            // add schema rules ref
+            schema.SchemaVersion = new Uri(value);
+            return schema;
+        }
+
+        private JSchemaType convertToJSchemaType(DataType dataType)
+        {
+            switch (dataType.SystemType.ToLower())
+            {
+                case "string": return JSchemaType.String;
+                case "integer": return JSchemaType.Integer;
+                case "uint16": return JSchemaType.Integer;
+                case "uint32": return JSchemaType.Integer;
+                case "uint64": return JSchemaType.Integer;
+                case "int16": return JSchemaType.Integer;
+                case "int32": return JSchemaType.Integer;
+                case "int64": return JSchemaType.Integer;
+                case "boolean": return JSchemaType.Boolean;
+                case "date": return JSchemaType.String;
+                case "double": return JSchemaType.Number;
+                case "float": return JSchemaType.Number;
+                case "decimal": return JSchemaType.Number;
+                default: return JSchemaType.String;
+
+            }
+
+        }
+
+        private JSchema addAttributes(JSchema current)
+        {
+   
+            // usage id, type id, ref as attributes
+            // usage
+            JSchema usageId = new JSchema();
+            usageId.Type = JSchemaType.Integer;
+            current.Properties.Add("@usageId", usageId);
+
+            // ref
+            JSchema refValue = new JSchema();
+            refValue.Type = JSchemaType.Integer;
+            current.Properties.Add("@ref", refValue);
+
+
+            return current;
+        }
+
+        private JSchema addConstraints(JSchema current, ICollection<Constraint> constraints)
+        {
+            if (constraints.Any())
+            {
+                foreach (var constraint in constraints)
+                {
+                    // range ->
+                    //  text ->minLenght & maxLenght
+                    // e.g. integer -> minimum, maximum
+                    if (constraint is RangeConstraint)
+                    {
+                        var r = (RangeConstraint)constraint;
+
+                        // the range of a string need to def as a length in json schema
+                        if (current.Type == JSchemaType.String)
+                        {
+                            current.MinimumLength = Convert.ToInt64(r.Lowerbound);
+
+                            long max = 0;
+                            if(Int64.TryParse(r.Upperbound.ToString(), out max))
+                                current.MaximumLength = max; //may not exist
+                        }
+                        else // numbers or other datatypes
+                        {
+                            current.Minimum = r.Lowerbound;
+                            current.Maximum = r.Upperbound;
+                        }
+                    }
+                    // enum filled by domain list 
+                    if (constraint is DomainConstraint)
+                    {
+                        var d = (DomainConstraint)constraint;
+                        d.Items.ForEach(i => current.Enum.Add(new JValue(i.Value)));
+                    }
+
+                    //pattern -> regex
+                    if (constraint is PatternConstraint)
+                    {
+                        var p = (PatternConstraint)constraint;
+                        current.Pattern = p.MatchingPhrase;
+                    }
+                }
+            }
+
+            return current;
+        }
+    } 
+}
