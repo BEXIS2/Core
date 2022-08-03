@@ -2,11 +2,13 @@ using BExIS.App.Testing;
 using BExIS.Utils.Config;
 using BEXIS.JSON.Helpers;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using Newtonsoft.Json.Schema;
 using Newtonsoft.Json.Schema.Generation;
 using NUnit.Framework;
 using System;
 using System.IO;
+using System.Net;
 
 namespace BExIS.JSON.Helpers.UnitTests
 {
@@ -26,24 +28,34 @@ namespace BExIS.JSON.Helpers.UnitTests
         }
 
         [Test]
-        public void ConvertToJsonSchema_valid_returnJsonSchema()
+        public void ConvertToJsonSchema_validJsonSchema_returnJsonSchema()
         {
+            //Arrange
+            string path = AppDomain.CurrentDomain.BaseDirectory;
+            string schemaPath = Path.Combine(path, "jsonschema-draft7.json");
+
             var metadataStructureConverter = new MetadataStructureConverter();
+
+
+            //Act
             var schema = metadataStructureConverter.ConvertToJsonSchema(1);
 
-            string path = AppDomain.CurrentDomain.BaseDirectory;
-            string schemaPath = Path.Combine(path, "schema.json");
 
+            //Assert
 
-            // serialize JsonSchema directly to a file
-            using (StreamWriter file = File.CreateText(schemaPath))
-            using (JsonTextWriter writer = new JsonTextWriter(file))
+            using (StreamReader file = File.OpenText(schemaPath))
             {
-                schema.WriteTo(writer);
+                JSchema jsonSchemaStandard = JSchema.Parse(file.ReadToEnd());
+                JObject jsonSchema = JObject.Parse(schema.ToString());
+
+                bool valid = jsonSchema.IsValid(jsonSchemaStandard);
+                Assert.IsTrue(valid);
             }
 
             Assert.NotNull(schema);
         }
+
+        //
 
         [Test]
         public void ConvertToJsonSchema_IdNotExist_ArgumentException()

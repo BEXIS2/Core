@@ -15,26 +15,44 @@ namespace BEXIS.JSON.Helpers
 {
     public class MetadataStructureConverter
     {
+        /// <summary>
+        /// Convert a existing metadata structure into a jsonschema
+        /// id of the metadata structure is required
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        /// <exception cref="ArgumentException"></exception>
+        /// <exception cref="ArgumentNullException"></exception>
         public JSchema ConvertToJsonSchema(long id)
         {
             if (id == 0) throw new ArgumentException("id");
 
             JSchema schema = new JSchema();
 
+            // add schema version to schema
             schema = addSchemaVersion(schema);
 
             using (var metadataStructureManager = new MetadataStructureManager())
             {
+                // load metadata structure
                 var metadataStructure = metadataStructureManager.Repo.Get(id);
 
+                // check if metadat structure exist
                 if (metadataStructure == null) throw new ArgumentNullException("metadata structure with id " + id + " not exist");
 
+                // first child level are the MetadataPackageUsages
+                // go to each MetadataPackageUsage and start recursive adding to schema
                 foreach (var pu in metadataStructure.MetadataPackageUsages)
                 {
+                    // load usage from database
                     var packageUsage = metadataStructureManager.PackageUsageRepo.Get(pu.Id);
+
+                    // required usages must be added to a array of the parrent
+                    // addPackageUsage set required as a out property
                     bool required = false;
                     schema = addPackageUsage(packageUsage, schema, out required);
 
+                    // if usage is required add to list
                     if (required)
                         schema.Required.Add(packageUsage.Label);
 
@@ -43,7 +61,14 @@ namespace BEXIS.JSON.Helpers
 
             return schema;
         }
-
+        /// <summary>
+        /// first level of a metadata structure are the package usages
+        /// the function convert a PackageUsage into a JsonSchema and add it to the parent schema 
+        /// </summary>
+        /// <param name="usage"></param>
+        /// <param name="schema"></param>
+        /// <param name="required"></param>
+        /// <returns>parent schema</returns>
         private JSchema addPackageUsage(MetadataPackageUsage usage, JSchema schema, out bool required)
         {
             var type = usage.MetadataPackage;
@@ -82,6 +107,13 @@ namespace BEXIS.JSON.Helpers
             return schema;
         }
 
+        /// <summary>
+        /// convert a BaseUsage to a JsonSchema and add to incoming schema
+        /// </summary>
+        /// <param name="usage"></param>
+        /// <param name="schema"></param>
+        /// <param name="required"></param>
+        /// <returns>incoming schame with the added usage</returns>
         private JSchema addMetadataAttrUsage(BaseUsage usage, JSchema schema, out bool required)
         {
 
@@ -180,6 +212,11 @@ namespace BEXIS.JSON.Helpers
             return schema;
         }
 
+        /// <summary>
+        /// Convert a DataType into a JSchemaType 
+        /// </summary>
+        /// <param name="dataType"></param>
+        /// <returns>JSchemaType</returns>
         private JSchemaType convertToJSchemaType(DataType dataType)
         {
             switch (dataType.SystemType.ToLower())
@@ -203,6 +240,11 @@ namespace BEXIS.JSON.Helpers
 
         }
 
+        /// <summary>
+        /// add a set of attributes to each json object
+        /// </summary>
+        /// <param name="current"></param>
+        /// <returns>schema with attributes</returns>
         private JSchema addAttributes(JSchema current)
         {
    
@@ -212,15 +254,25 @@ namespace BEXIS.JSON.Helpers
             usageId.Type = JSchemaType.Integer;
             current.Properties.Add("@usageId", usageId);
 
+            JSchema typeId = new JSchema();
+            usageId.Type = JSchemaType.Integer;
+            current.Properties.Add("@typeId", typeId);
+
             // ref
             JSchema refValue = new JSchema();
-            refValue.Type = JSchemaType.Integer;
+            refValue.Type = JSchemaType.String;
             current.Properties.Add("@ref", refValue);
 
 
             return current;
         }
 
+        /// <summary>
+        /// add a list of incoming constraints to the current schema
+        /// </summary>
+        /// <param name="current"></param>
+        /// <param name="constraints"></param>
+        /// <returns>schema with contraints</returns>
         private JSchema addConstraints(JSchema current, ICollection<Constraint> constraints)
         {
             if (constraints.Any())
