@@ -4,6 +4,7 @@ using BExIS.Dlm.Services.Data;
 using BExIS.IO.Transform.Output;
 using BExIS.Utils.Route;
 using BExIS.Xml.Helpers;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -150,6 +151,9 @@ namespace BExIS.Modules.Dim.UI.Controllers
         {
             DatasetManager dm = new DatasetManager();
 
+            string returnType = "";
+                returnType = Request.Content.Headers.ContentType?.MediaType;
+
             try
             {
                 if (id == 0) return Request.CreateErrorResponse(HttpStatusCode.PreconditionFailed, "dataset id should be greater then 0.");
@@ -175,9 +179,27 @@ namespace BExIS.Modules.Dim.UI.Controllers
 
                 if (string.IsNullOrEmpty(convertTo))
                 {
-                    //return xmldoc;
-                    HttpResponseMessage response = new HttpResponseMessage { Content = new StringContent(xmldoc.InnerXml, Encoding.UTF8, "application/xml") };
-                    return response;
+
+
+                    switch (returnType)
+                    {
+                        case "application/json": {
+                                HttpResponseMessage response = new HttpResponseMessage { Content = new StringContent(JsonConvert.SerializeObject(xmldoc.DocumentElement), Encoding.UTF8, "application/json") };
+                                return response;
+                            }
+                        case "application/xml":
+                            {
+                                HttpResponseMessage response = new HttpResponseMessage { Content = new StringContent(xmldoc.InnerXml, Encoding.UTF8, "application/xml") };
+                                return response;
+                            }
+                        default:
+                            {
+
+                                HttpResponseMessage response = new HttpResponseMessage { Content = new StringContent(xmldoc.InnerXml, Encoding.UTF8, "application/xml") };
+                                return response;
+                            }
+                    }
+
                 }
                 else
                 {
@@ -188,9 +210,25 @@ namespace BExIS.Modules.Dim.UI.Controllers
 
                         if (newXmlDoc == null) return Request.CreateErrorResponse(HttpStatusCode.InternalServerError, string.Format("No mapping found for this format : {0} .", format));
 
-                        HttpResponseMessage response = new HttpResponseMessage { Content = new StringContent(newXmlDoc.InnerXml, Encoding.UTF8, "application/xml") };
+                        switch (returnType)
+                        {
+                            case "application/json":
+                                {
+                                    HttpResponseMessage response = new HttpResponseMessage { Content = new StringContent(JsonConvert.SerializeObject(newXmlDoc.DocumentElement), Encoding.UTF8, "application/json") };
+                                    return response;
+                                }
+                            case "application/xml":
+                                {
+                                    HttpResponseMessage response = new HttpResponseMessage { Content = new StringContent(newXmlDoc.InnerXml, Encoding.UTF8, "application/xml") };
+                                    return response;
+                                }
+                            default:
+                                {
 
-                        return response;
+                                    HttpResponseMessage response = new HttpResponseMessage { Content = new StringContent(newXmlDoc.InnerXml, Encoding.UTF8, "application/xml") };
+                                    return response;
+                                }
+                        }
                     }
                     catch (Exception ex)
                     {

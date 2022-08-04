@@ -112,6 +112,7 @@ namespace BExIS.Modules.Dim.UI.Helpers
                 #region API
 
                 if (!operationManager.Exists("api", "MetadataOut", "*")) operationManager.Create("API", "MetadataOut", "*", API);
+                if (!operationManager.Exists("api", "MetadataStructureOut", "*")) operationManager.Create("API", "MetadataStructureOut", "*", API);
                 if (!operationManager.Exists("api", "DataOut", "*")) operationManager.Create("api", "DataOut", "*", API);
                 if (!operationManager.Exists("api", "DatasetOut", "*")) operationManager.Create("api", "DatasetOut", "*", API);
                 if (!operationManager.Exists("api", "DataStatisticOut", "*")) operationManager.Create("api", "DataStatisticOut", "*", API);
