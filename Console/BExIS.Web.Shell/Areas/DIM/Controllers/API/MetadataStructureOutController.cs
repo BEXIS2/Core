@@ -21,11 +21,15 @@ using System.Xml;
 namespace BExIS.Modules.Dim.UI.Controllers
 {
     /// <summary>
-    /// This class is designed as a Web API to allow various client tools request metadata of a datasets and get the result in XML.
+    /// This class is designed as a Web API to allow various client tools request metadata structure and get the result in json.
     /// </summary>
     public class MetadataStructureOutController : ApiController
     {
 
+        /// <summary>
+        /// this function return an overview about existing metadata structures
+        /// </summary>
+        /// <returns></returns>
         [BExISApiAuthorize]
         [GetRoute("api/MetadataStructure")]
         public IEnumerable<MetadataStructureViewObject> Get()
@@ -47,6 +51,12 @@ namespace BExIS.Modules.Dim.UI.Controllers
             return tmp;
         }
 
+        /// <summary>
+        /// this api get a metadata structure based on the incoming api.
+        /// it converts the structure into a json schema
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns>json schema</returns>
         [BExISApiAuthorize]
         [GetRoute("api/MetadataStructure/{id}")]
         [HttpGet]
