@@ -72,7 +72,7 @@
 
                     <div id="view-warning" class="alert alert-info" role="alert" style="width: 100%;">
                         <span id="view-warning-icon" class=" fa fa-exclamation-triangle"></span>
-                        Attention, this is not the latest version. Click <span class="btn-link" style="cursor: pointer;" onclick="selectVersion(@Model.Id, @Model.LatestVersion)"><b>here</b></span> to change to the latest version.
+                        Attention, this is not the latest version. Click <span class="btn-link" style="cursor: pointer;" onclick="selectVersion(@Model.Id, @Model.LatestVersionNumber)"><b>here</b></span> to change to the latest (public) version.
                     </div>
                 </div>
             }
@@ -84,7 +84,15 @@
                             <div>
                                 <b>Dataset id:</b> @Model.Id
                                 <b style="padding-left: 5px;">Version:</b>
-                                @Html.DropDownListFor(m => m.VersionSelect, null, new { @class = "bx-dropdown", @style = "border:none;" })
+                                @if (ViewData.ModelState.IsValid)
+                                {                                  
+                                    @Html.DropDownListFor(m => m.VersionSelect, null, Model.LatestVersionNumber + " (Latest internal version)", new { @class = "bx-dropdown", @style = "border:none;" })
+                                }
+                                else
+                                {
+                                    @Html.DropDownListFor(m => m.VersionSelect, null, "Select version", new { @class = "bx-dropdown", @style = "border:none;" })
+
+                                }
                             </div>
                         </div>
                     </div>

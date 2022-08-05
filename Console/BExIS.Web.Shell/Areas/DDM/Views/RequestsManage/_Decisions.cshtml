@@ -12,6 +12,7 @@
                 <!--  <th title="Rights">Rights</th>-->
                 <th title="Request Date">Request Date</th>
                 <th title="Status">Status</th>
+                <th title="View">View</th>
                 <th></th>
 
 
@@ -33,6 +34,9 @@
                         <td>@m.RequestDate.ToString("dd.MM.yyyy")</td>
                         <td>@m.StatusAsText</td>
                         <td>
+                            <a id="@m.Id" class="bx bx-grid-function bx-show" onclick="onclickDataset(this)"></a>
+                        </td>
+                        <td>
                             @if (m.Status == 0)
                             {
                                 <button type="button" class="bx bx-grid-function bx-check" value="@m.Id"></button>
@@ -47,6 +51,39 @@
 
 
     <script type="text/javascript">
+
+        function onclickDataset(e) {
+
+            // checked
+            var id = e.getAttribute("id");
+
+
+            var data = {
+                id: id
+            }
+
+            $.ajax({
+                url: '/ddm/Data/IsDatasetCheckedIn',
+                type: 'POST',
+                data: JSON.stringify(data),
+                dataType: 'json',
+                contentType: 'application/json; charset=utf-8',
+                error: function (xhr) {
+                    alert('Error: ' + xhr.statusText);
+
+                },
+                success: function (result) {
+                    if (result) {
+                        window.open("/ddm/Data/ShowData/" + id, "_blank");
+                    } else {
+
+                        alert("Dataset is locked. Please try again later.");
+                    }
+                }
+            });
+        }
+
+
 
         $('document').ready(function () {
             jQuery.fn.dataTable.render.ellipsis = function (cutoff, wordbreak, escapeHtml) {
@@ -120,7 +157,7 @@
                 var result = confirm('Are you sure you want to accept this request (Id:' + $(this).attr("value") + ')?');
 
                 if (result) {
-                    $.post("/ddm/requests/accept", { DecisionId: $(this).attr("value") }, function (e) {
+                    $.post("/ddm/requestsmanage/accept", { DecisionId: $(this).attr("value") }, function (e) {
                         $(".decision").trigger('click');
                     });
                 }
@@ -130,7 +167,7 @@
                 var result = confirm('Are you sure you want to reject this request (Id:' + $(this).attr("value") + ')?');
 
                 if (result) {
-                    $.post('/ddm/requests/reject', { RequestId: $(this).attr("value") }, function (e) {
+                    $.post('/ddm/requestsmanage/reject', { RequestId: $(this).attr("value") }, function (e) {
                         $(".request").trigger('click');
                     });
                 }
