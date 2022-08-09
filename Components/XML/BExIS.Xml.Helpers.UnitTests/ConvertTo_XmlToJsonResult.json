@@ -1,0 +1,55 @@
+{
+  "@id": 3,
+  "Basic": {},
+  "TechnicalContacts": {
+    "TechnicalContact": [
+      {
+        "Name": "David Schöne",
+        "Phone": "01608037788",
+        "Address": "Von der Gabelentz Straße 9 erfurt 99089 Deutschland"
+      },
+      { "Name": "Sven Thiel" },
+      { "Name": "Franziska" }
+    ]
+  },
+  "ContentContacts": {
+    "ContentContact": {
+      "Name": "David Schöne",
+      "Phone": "01608037788",
+      "Address": "Von der Gabelentz Straße 9 erfurt 99089 Deutschland"
+    }
+  },
+  "OtherProviders": {},
+  "Metadata": {
+    "Description": { "Representation": { "Title": "Test" } },
+    "Scope": {
+      "GeoecologicalTerms": {},
+      "TaxonomicTerms": {}
+    },
+    "Version": {},
+    "RevisionData": { "DateModified": "2022-07-06" },
+    "Owners": {
+      "Owner": {
+        "Organisation": {
+          "Name": { "Representation": {} },
+          "OrgUnits": {}
+        },
+        "Person": { "AtomisedName": {} },
+        "Roles": {},
+        "Addresses": {},
+        "TelephoneNumbers": { "TelephoneNumber": {} },
+        "EmailAddresses": {},
+        "URIs": {}
+      }
+    },
+    "IPRStatements": {
+      "IPRDeclarations": { "IPRDeclaration": {} },
+      "Copyrights": { "Copyright": {} },
+      "Licenses": { "License": {} },
+      "TermsOfUseStatements": { "TermsOfUse": {} },
+      "Disclaimers": { "Disclaimer": {} },
+      "Acknowledgements": { "Acknowledgement": {} },
+      "Citations": { "Citation": {} }
+    }
+  }
+}

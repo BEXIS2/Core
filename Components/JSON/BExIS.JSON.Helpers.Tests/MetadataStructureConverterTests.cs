@@ -46,9 +46,9 @@ namespace BExIS.JSON.Helpers.UnitTests
             using (StreamReader file = File.OpenText(schemaPath))
             {
                 JSchema jsonSchemaStandard = JSchema.Parse(file.ReadToEnd());
-                JObject jsonSchema = JObject.Parse(schema.ToString());
+                JObject json = JObject.Parse(schema.ToString());
 
-                bool valid = jsonSchema.IsValid(jsonSchemaStandard);
+                bool valid = json.IsValid(jsonSchemaStandard);
                 Assert.IsTrue(valid);
             }
 

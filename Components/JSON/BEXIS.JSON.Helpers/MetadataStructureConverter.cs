@@ -61,6 +61,7 @@ namespace BEXIS.JSON.Helpers
 
             return schema;
         }
+
         /// <summary>
         /// first level of a metadata structure are the package usages
         /// the function convert a PackageUsage into a JsonSchema and add it to the parent schema 
@@ -141,21 +142,33 @@ namespace BEXIS.JSON.Helpers
 
             if (type.Self is MetadataSimpleAttribute)
             {
+                //because of the extension of the values with references, the simple attribute must be defined as a jobject,
+                //because json properties cannot have any further attributes. a simple attribute is defined by Jobect with the properties a
+                //#text and @ref. #text receives all constraints, datatypes rules.
+                // the jobject get the cardinalilties
+
+                //set current to JObject
+                current.Type = JSchemaType.Object;
+
+                // add text
+                JSchema currentText = new JSchema();
                 // Datatype
                 // set json schema type based on datatype input
-                current.Type = convertToJSchemaType(type.DataType);
+                currentText.Type = convertToJSchemaType(type.DataType);
 
                 //if Datatype is datetime, jsosn schema use type string
                 // but need to set a format
                 if (type.DataType.SystemType == "datetime")
                 {
-                    current.Format = "date";
+                    currentText.Format = "date";
                 }
 
-
                 //Contraints
-                current = addConstraints(current, type.Constraints);
-                
+                currentText = addConstraints(currentText, type.Constraints);
+
+                //current.Properties.Add("@ref",currentRef);
+                current.Properties.Add("#text",currentText);
+
             }
 
             if (type.Self is MetadataCompoundAttribute)
@@ -192,7 +205,6 @@ namespace BEXIS.JSON.Helpers
                 // add Range contraint
                 array.MinimumItems = usage.MinCardinality;
                 array.MaximumItems = usage.MaxCardinality;
-                
 
             }
             else // add object to schema
@@ -247,22 +259,10 @@ namespace BEXIS.JSON.Helpers
         /// <returns>schema with attributes</returns>
         private JSchema addAttributes(JSchema current)
         {
-   
-            // usage id, type id, ref as attributes
-            // usage
-            JSchema usageId = new JSchema();
-            usageId.Type = JSchemaType.Integer;
-            current.Properties.Add("@usageId", usageId);
-
-            JSchema typeId = new JSchema();
-            usageId.Type = JSchemaType.Integer;
-            current.Properties.Add("@typeId", typeId);
-
             // ref
             JSchema refValue = new JSchema();
             refValue.Type = JSchemaType.String;
             current.Properties.Add("@ref", refValue);
-
 
             return current;
         }
