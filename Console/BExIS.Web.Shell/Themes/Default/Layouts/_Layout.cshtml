@@ -78,28 +78,28 @@
             @Html.RenderAuto("Breadcrumb")
         </div>*@
 
-    <div class="main-content container-fluid" style="margin-top: 36pt; width: 100%;">
-        <table style="table-layout: fixed;">
-            <tr>
+<div class="main-content container-fluid" style="margin-top: 36pt; width: 100%;">
+    <table style="table-layout: fixed;">
+        <tr>
 
-                @if (IsSectionDefined("LeftPane"))
-                {
+            @if (IsSectionDefined("LeftPane"))
+            {
                 <td style="border-top: #9B9B9B solid thin; border-bottom: #9B9B9B solid thin; padding: 12pt 0 12pt 0; width: 250px; max-width: 350px; vertical-align: top;">
                     <div>
                         @RenderSection("LeftPane", false)
                     </div>
                 </td>
                 <td style="width: 20pt; border: none" />
-                }
+            }
 
-                <td style="border-top: #9B9B9B solid thin; border-bottom: #9B9B9B solid thin; padding: 12pt 0 12pt 0; vertical-align: top;">
-                    <div>
-                        @RenderBody()
-                    </div>
-                </td>
+            <td style="border-top: #9B9B9B solid thin; border-bottom: #9B9B9B solid thin; padding: 12pt 0 12pt 0; vertical-align: top;">
+                <div>
+                    @RenderBody()
+                </div>
+            </td>
 
-                @if (IsSectionDefined("RightPane"))
-                {
+            @if (IsSectionDefined("RightPane"))
+            {
                 <td style="width: 20pt; border: none" />
 
                 <td style="border-top: #9B9B9B solid thin; border-bottom: #9B9B9B solid thin; padding: 12pt 0 12pt 0; width: 250px; max-width: 350px; vertical-align: top;">
@@ -107,11 +107,12 @@
                         @RenderSection("RightPane", false)
                     </div>
                 </td>
-                }
-            </tr>
-        </table>
-    </div>
-    @(Html.Telerik().ScriptRegistrar()
+            }
+        </tr>
+    </table>
+</div>
+
+@(Html.Telerik().ScriptRegistrar()
                             .DefaultGroup(group => group.Combined(true).Compress(true)
                             //.DefaultPath("~/Scripts/2013.2.611/")
                             )
@@ -121,10 +122,10 @@
     @Html.RenderAuto("Footer")
 
     <script type="text/javascript">
-    var global_sess_expirationSeconds = @Session.Timeout*60;
-    var global_sess_warningSeconds = @System.Configuration.ConfigurationManager.AppSettings["SessionWarningDelaySecond"].ToString();
-    var global_LogoutUrl = '@Url.Action("ClearSession", "Account", new { area = ""})';
-    var global_sess_resetPage = '@Url.Action("Index", "JS", new { area = ""})';
+        var global_sess_expirationSeconds = @Session.Timeout*60;
+        var global_sess_warningSeconds = @System.Configuration.ConfigurationManager.AppSettings["SessionWarningDelaySecond"].ToString();
+        var global_LogoutUrl = '@Url.Action("ClearSession", "Account", new { area = ""})';
+        var global_sess_resetPage = '@Url.Action("Index", "JS", new { area = ""})';
     </script>
 
     <script src="~/Scripts/session.warning.js"></script>
