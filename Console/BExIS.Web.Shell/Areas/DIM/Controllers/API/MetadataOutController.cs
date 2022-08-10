@@ -137,22 +137,36 @@ namespace BExIS.Modules.Dim.UI.Controllers
             }
         }
 
-        // GET: api/Metadata/5
-        // HttpResponseMessage response = new HttpResponseMessage { Content = new StringContent(doc.innerXml, Encoding.UTF8,"application/xml") };
-
         /// <summary>
-        /// This Get function has been extended by a parameter id. The id refers to the dataset. The metadata will be loaded from the dataset
+        /// this get function returns the metadata for a dataset.
+        /// As output xml and json are available. if no accept or a wrong one is given, xml is returned.
         /// </summary>
+        /// <remarks>
+        ///
+        /// ## format
+        /// Based on the existing transformation options, the converted metadata can be obtained via format.
+        /// 
+        /// ## simplfiedJson
+        /// if you set the accept of the request to return a json, you can manipulate the json with this parameter.
+        /// 0 = returns the metadata with full internal structure
+        /// 1 = returns a simplified form of the structure with all fields and attributes
+        /// 2 = returns the metadata in a simplified structure and does not add all fields and attributes that are empty.
+        /// 
+        /// </remarks>
         /// <param name="id">Dataset Id</param>
-        /// <returns>Xml Document</returns>
+        /// <param name="format">Based on the existing transformation options, the converted metadata can be obtained via format.</param>
+        /// <param name="simplifiedJson">accept 0,1,2</param>
+        /// <returns>metadata as xml or json</returns>
         [BExISApiAuthorize]
         [GetRoute("api/Metadata/{id}")]
-        public HttpResponseMessage Get(int id, [FromUri] string format = null)
+        public HttpResponseMessage Get(int id, [FromUri] string format = null, [FromUri] int simplifiedJson = 0)
         {
             DatasetManager dm = new DatasetManager();
 
             string returnType = "";
-                returnType = Request.Content.Headers.ContentType?.MediaType;
+            //returnType = Request.Content.Headers.ContentType?.MediaType;
+            if (Request.Headers.Accept.Any())
+                returnType = Request.Headers.Accept.First().MediaType;
 
             try
             {
@@ -180,11 +194,35 @@ namespace BExIS.Modules.Dim.UI.Controllers
                 if (string.IsNullOrEmpty(convertTo))
                 {
 
-
                     switch (returnType)
                     {
                         case "application/json": {
-                                HttpResponseMessage response = new HttpResponseMessage { Content = new StringContent(JsonConvert.SerializeObject(xmldoc.DocumentElement), Encoding.UTF8, "application/json") };
+
+                                string json = "";
+
+                                switch (simplifiedJson)
+                                { 
+                                    case 0: {
+                                            json = JsonConvert.SerializeObject(xmldoc.DocumentElement);
+                                        break; 
+                                    }
+                                    case 1:
+                                    {
+                                        XmlMetadataHelper xmlMetadataHelper = new XmlMetadataHelper();
+                                        json = xmlMetadataHelper.ConvertTo(xmldoc, true).ToString();
+
+                                        break;
+                                    }
+                                    case 2:
+                                    {
+                                        XmlMetadataHelper xmlMetadataHelper = new XmlMetadataHelper();
+                                        json = xmlMetadataHelper.ConvertTo(xmldoc).ToString();
+
+                                        break;
+                                    }
+                                }
+
+                                HttpResponseMessage response = new HttpResponseMessage { Content = new StringContent(json, Encoding.UTF8, "application/json") };
                                 return response;
                             }
                         case "application/xml":
