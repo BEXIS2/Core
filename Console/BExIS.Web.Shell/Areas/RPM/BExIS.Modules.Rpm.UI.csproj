@@ -209,6 +209,9 @@
     <Content Include="fonts\glyphicons-halflings-regular.ttf" />
     <Content Include="fonts\glyphicons-halflings-regular.eot" />
     <None Include="Properties\PublishProfiles\BexisServer_demo.pubxml" />
+    <None Include="Properties\PublishProfiles\BexisServer_dev.pubxml" />
+    <None Include="Properties\PublishProfiles\BexisServer_master.pubxml" />
+    <None Include="Properties\PublishProfiles\BexisServer_rc.pubxml" />
     <None Include="Properties\PublishProfiles\BexisServer_test.pubxml" />
     <None Include="Properties\PublishProfiles\FolderProfile.pubxml" />
     <None Include="Scripts\jquery-3.6.0.intellisense.js" />

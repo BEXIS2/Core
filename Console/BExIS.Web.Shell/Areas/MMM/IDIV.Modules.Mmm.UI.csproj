@@ -158,6 +158,9 @@
     </Content>
     <Content Include="Scripts\isotope.pkgd.min.js" />
     <None Include="packages.config" />
+    <None Include="Properties\PublishProfiles\BexisServer_dev.pubxml" />
+    <None Include="Properties\PublishProfiles\BexisServer_master.pubxml" />
+    <None Include="Properties\PublishProfiles\BexisServer_rc.pubxml" />
     <None Include="Scripts\jquery-3.6.0.intellisense.js" />
     <Content Include="Scripts\jquery-3.6.0.js" />
     <Content Include="Scripts\jquery-3.6.0.min.js" />

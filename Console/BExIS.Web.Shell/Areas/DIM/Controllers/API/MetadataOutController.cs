@@ -208,15 +208,15 @@ namespace BExIS.Modules.Dim.UI.Controllers
                                     }
                                     case 1:
                                     {
-                                        XmlMetadataHelper xmlMetadataHelper = new XmlMetadataHelper();
-                                        json = xmlMetadataHelper.ConvertTo(xmldoc, true).ToString();
+                                        XmlMetadataConverter xmlMetadataConverter = new XmlMetadataConverter();
+                                        json = xmlMetadataConverter.ConvertTo(xmldoc, true).ToString();
 
                                         break;
                                     }
                                     case 2:
                                     {
-                                        XmlMetadataHelper xmlMetadataHelper = new XmlMetadataHelper();
-                                        json = xmlMetadataHelper.ConvertTo(xmldoc).ToString();
+                                        XmlMetadataConverter xmlMetadataConverter = new XmlMetadataConverter();
+                                        json = xmlMetadataConverter.ConvertTo(xmldoc).ToString();
 
                                         break;
                                     }
