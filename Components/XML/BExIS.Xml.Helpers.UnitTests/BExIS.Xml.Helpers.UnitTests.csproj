@@ -107,7 +107,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="XmlDataTuplesHelperTests.cs" />
-    <Compile Include="XmlMetadataHelperTests.cs" />
+    <Compile Include="XmlMetadataConverterTests.cs" />
     <Compile Include="XmlUtility_XDocumentTests.cs" />
     <Compile Include="XmlUtility_XmlDocumentTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -115,7 +115,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
-    <None Include="ConvertTo_XmlToJsonResult.json" />
+    <None Include="ConvertTo_XmlToJson.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>

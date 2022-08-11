@@ -17,7 +17,7 @@ using Assert = NUnit.Framework.Assert;
 namespace BExIS.Xml.Helpers.UnitTests
 {
     [TestFixture()]
-    public class XmlMetadataHelperTests
+    public class XmlMetadataConverterTests
     {
         private XDocument _document;
         private TestSetupHelper helper = null;
@@ -59,7 +59,7 @@ namespace BExIS.Xml.Helpers.UnitTests
         public void ConvertTo_XmlToJson_ReturnJson()
         {
             //Arrange
-            XmlMetadataHelper xmlMetadataHelper = new XmlMetadataHelper();
+            XmlMetadataConverter xmlMetadataHelper = new XmlMetadataConverter();
 
             var metadata = "ConvertTo_XmlToJson.xml";
             XmlDocument xmlDocument = new XmlDocument();
@@ -87,6 +87,32 @@ namespace BExIS.Xml.Helpers.UnitTests
             //Assert
             Assert.IsNotNull(json);
             Assert.IsTrue(isvalid);
+        }
+
+        [Test()]
+        public void ConvertTo_JsonToXml_ReturnXml()
+        {
+            //Arrange
+            XmlMetadataConverter xmlMetadataHelper = new XmlMetadataConverter();
+
+            var metadataInput = "ConvertTo_XmlToJson.json";
+            string path = AppDomain.CurrentDomain.BaseDirectory;
+            string metadataInputPath = Path.Combine(path, metadataInput);
+            using (StreamReader r = new StreamReader(metadataInputPath))
+            {
+                XmlMetadataConverter metadataConverter = new XmlMetadataConverter();
+
+                string json = r.ReadToEnd();
+                JObject metadataInputJson = JObject.Parse(json);
+
+                XmlDocument metadataOut = metadataConverter.ConvertTo(metadataInputJson);
+
+                //Assert
+                Assert.IsNotNull(metadataOut);
+            }
+
+            //Assert
+            Assert.Pass();
         }
     }
 }
