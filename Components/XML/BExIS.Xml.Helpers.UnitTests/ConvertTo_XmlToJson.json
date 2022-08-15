@@ -12,6 +12,7 @@
     "TechnicalContact": [
       {
         "@ref": "",
+        "@partyid": "1",
         "Name": {
           "@ref": "",
           "#text": "David Schöne"
@@ -74,6 +75,7 @@
     "ContentContact": [
       {
         "@ref": "",
+        "@partyid": "1",
         "Name": {
           "@ref": "",
           "#text": "David Schöne"

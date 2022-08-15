@@ -255,7 +255,7 @@ namespace BExIS.Xml.Helpers
                 index = Int32.Parse(tmp[1].Remove(tmp[1].IndexOf("]")));
             }
 
-            XmlSchemaElement xsdelement = XsdElements.FirstOrDefault(x => x.Name.Equals(nodeName));
+            XmlSchemaElement xsdelement = XsdElements?.FirstOrDefault(x => x.Name.Equals(nodeName));
 
             string name = nodeName;
             string prefix = "";

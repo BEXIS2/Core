@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Xml;
 using System.Xml.Linq;
 using BExIS.App.Testing;
@@ -96,23 +97,40 @@ namespace BExIS.Xml.Helpers.UnitTests
             XmlMetadataConverter xmlMetadataHelper = new XmlMetadataConverter();
 
             var metadataInput = "ConvertTo_XmlToJson.json";
+            var metadataOriginalXMl = "ConvertTo_XmlToJson.xml";
             string path = AppDomain.CurrentDomain.BaseDirectory;
             string metadataInputPath = Path.Combine(path, metadataInput);
-            using (StreamReader r = new StreamReader(metadataInputPath))
+            string metadataOriginalXMlPath = Path.Combine(path, metadataOriginalXMl);
+
+            XmlDocument metadataOriginal = new XmlDocument();
+            metadataOriginal.Load(metadataOriginalXMlPath);
+
+            using (StreamReader r = new StreamReader(metadataInputPath, Encoding.Default))
             {
                 XmlMetadataConverter metadataConverter = new XmlMetadataConverter();
 
                 string json = r.ReadToEnd();
                 JObject metadataInputJson = JObject.Parse(json);
 
+                // Act
                 XmlDocument metadataOut = metadataConverter.ConvertTo(metadataInputJson);
 
                 //Assert
+                //var a = XmlUtility.ToXDocument(metadataOut);
+                //var b = XmlUtility.ToXDocument(metadataOriginal);
+
+                string xmla = metadataOut.InnerText;
+                string xmlb = metadataOriginal.InnerText;
+
+                Assert.AreEqual(xmla, xmlb);
+                //Assert.AreEqual(a, b);
+                //Assert.IsTrue(XNode.DeepEquals(a, b));
                 Assert.IsNotNull(metadataOut);
             }
 
             //Assert
-            Assert.Pass();
+            //Assert.Pass();
         }
+
     }
 }

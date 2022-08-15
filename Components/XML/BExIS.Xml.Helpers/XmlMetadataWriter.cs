@@ -94,35 +94,6 @@ namespace BExIS.Xml.Helpers
                     role.Add(package);
 
                     setChildren(package, mpu, importXml);
-
-                    //attributes = mpu.MetadataPackage.MetadataAttributeUsages.ToList();
-
-                    //foreach (MetadataAttributeUsage mau in attributes)
-                    //{
-                    //    XElement attribute;
-
-                    //    XElement attributeRole = CreateXElement(mau.Label, XmlNodeType.MetadataAttributeUsage);
-                    //    if (_mode.Equals(XmlNodeMode.xPath))
-                    //    {
-                    //        attributeRole.SetAttributeValue("name", mau.Label);
-                    //        attributeRole.SetAttributeValue("id", mau.Id.ToString());
-                    //    }
-                    //    package.Add(attributeRole);
-
-                    //    attribute = CreateXElement(mau.MetadataAttribute.Name, XmlNodeType.MetadataAttribute);
-                    //    if (_mode.Equals(XmlNodeMode.xPath)) attribute.SetAttributeValue("name", mau.MetadataAttribute.Name);
-
-                    //    attribute.SetAttributeValue("roleId", mau.Id.ToString());
-                    //    attribute.SetAttributeValue("id", mau.MetadataAttribute.Id.ToString());
-                    //    attribute.SetAttributeValue("number", "1");
-
-                    //    string xpath = attributeRole.GetAbsoluteXPath() + attribute.GetAbsoluteXPath();
-
-                    //    attributeRole.Add(attribute);
-
-                    //    setChildren(attribute, mau, importXml);
-
-                    //}
                 }
 
                 return doc;

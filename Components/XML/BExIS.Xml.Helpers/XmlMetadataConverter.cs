@@ -1,6 +1,7 @@
 ﻿using BExIS.Dlm.Entities.Common;
 using BExIS.Dlm.Entities.MetadataStructure;
 using BExIS.Dlm.Services.MetadataStructure;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
@@ -14,6 +15,8 @@ namespace BExIS.Xml.Helpers
 {
     public class XmlMetadataConverter
     {
+        Dictionary<string,string> mappings = new Dictionary<string, string>();
+
         #region XML to JSON
 
         /// <summary>
@@ -322,8 +325,6 @@ namespace BExIS.Xml.Helpers
 
         public XmlDocument ConvertTo(JObject metadataJson)
         {
-            XDocument metadataX = new XDocument();
-
             if (metadataJson == null) throw new ArgumentNullException("metadataJson", "MetadataJson must not be null.");
 
             // get structure id
@@ -333,11 +334,32 @@ namespace BExIS.Xml.Helpers
                 if (Int64.TryParse(metadataJson.Property("@id").Value.ToString(), out id))
                 {
                     XmlMetadataWriter writer = new XmlMetadataWriter(XmlNodeMode.xPath);
-                    metadataX = writer.CreateMetadataXml(id);
-                    XmlDocument metadataXml = XmlUtility.ToXmlDocument(metadataX);
+                    XmlDocument target = XmlUtility.ToXmlDocument(writer.CreateMetadataXml(id));
 
-                    fillXml(metadataXml.DocumentElement, metadataJson);
+                    var source =  JsonConvert.DeserializeXmlNode(metadataJson.ToString(),"Metadata");
 
+                    // generate dictionary with source path as key and target path as value
+                    mappings = getXPathMapping(target);
+
+                    /// put the incoming xml to the internal structure 
+                    /// BUT if there are elements with index >1 then the attributes like id,roleid are not set 
+                    mapNode(target,target.DocumentElement, source.DocumentElement);
+
+                    // generate intern template metadata xml with needed attribtes 
+                    // also every object with index > 1 is generate with attribtes but without values
+                    var xmlMetadatWriter = new XmlMetadataWriter(BExIS.Xml.Helpers.XmlNodeMode.xPath);
+                    var metadataWithAttributesXml = xmlMetadatWriter.CreateMetadataXml(1, XmlUtility.ToXDocument(target));
+
+                    // merge the metadata with attributes and the metadata with values together
+                    var completeMetadata = XmlMetadataImportHelper.FillInXmlValues(target,
+                        XmlMetadataWriter.ToXmlDocument(metadataWithAttributesXml));
+
+                    // additional attributes like partyid or ref
+                    // the source has attributes that are currently not set but set from the ui,
+                    // find this attributes and set it in the complete metadata 
+                    addDynamicAttributes(target, completeMetadata);
+
+                    return completeMetadata;
                 }
                 else
                 {
@@ -365,31 +387,166 @@ namespace BExIS.Xml.Helpers
 
         }
 
-        private void fillXml(XmlNode current, JObject metadataJson)
+
+        private Dictionary<string, string> getXPathMapping(XmlDocument document)
         {
-            // if xmlelement is last, set value
-            // get xmlpath
-            // convert to json path
-            if (current is XmlText)
+            Dictionary<string, string> mappings = new Dictionary<string, string>();
+
+            if (document.DocumentElement != null && document.DocumentElement.ChildNodes.Count > 0)
             {
-                string xpath = XmlUtility.FindXPath(current);
-                string jsonPath = xpathToJsonPath(xpath);
-
-                var token = metadataJson.SelectToken(jsonPath);
-
-                if (token != null && token is JProperty)
+                foreach (XmlNode targetChild in document.DocumentElement.ChildNodes)
                 {
-                    current.InnerText = ((JProperty)token).Value.ToString();
+                    fillDictinary(targetChild, mappings);
                 }
             }
+
+            return mappings;
+        }
+
+        private void fillDictinary(XmlNode target, Dictionary<string,string> mappings)
+        {
+
+            string targetPath  = XmlUtility.GetXPathToNode(target.FirstChild);
+
+            string sourcePath = simplifiedXPath(targetPath);
+            if (!mappings.ContainsKey(sourcePath))
+                mappings.Add(sourcePath, targetPath);
             else
+                mappings[sourcePath] = targetPath;
+
+            if (target.HasChildNodes)
             {
-                if (current is XmlElement)
+                foreach (XmlNode child in target.ChildNodes)
                 {
-                    foreach (XmlNode node in current.ChildNodes)
-                    {
-                        fillXml(node, metadataJson);
+                    fillDictinary(child, mappings);
+                }
+            }
+
+        }
+
+        private XmlDocument mapNode(XmlDocument destinationDoc, XmlNode destinationParentNode, XmlNode sourceNode)
+        {
+            string sourceKey = XmlUtility.GetXPathToNode(sourceNode);
+            string sourceXPath = XmlUtility.GetDirectXPathToNode(sourceNode); // from incoming json
+
+            if (mappings.ContainsKey(sourceKey))//&& !string.IsNullOrEmpty(sourceNode.InnerText)) // should be a simple element
+            {
+                string targetXPath = mappings[sourceKey];
+
+                //ToDo checkif the way to map is intern to extern or extern to intern
+                // X[1]\XType[2]\Y[1]\yType[4]\F[1]\yType[2]
+                string destinationXPath = mapExternPathToInternPathWithIndex(sourceXPath, targetXPath);
+                XmlNode destinationNode = destinationDoc.SelectSingleNode(destinationXPath);
+       
+                if (destinationNode == null)
+                    destinationNode = XmlUtility.GenerateNodeFromXPath(destinationDoc, destinationDoc as XmlNode, destinationXPath, null, null);
+
+                // if a xml element has text, then there is a child of type xmltext
+                if(!string.IsNullOrEmpty(sourceNode.InnerText) == sourceNode.LastChild is XmlText)
+                    destinationNode.InnerText = sourceNode.InnerText;
+
+                // add dynamic att
+                if (sourceNode.Attributes.Count > 0) // may not add if attr is empty
+                {
+                    foreach (XmlAttribute attr in sourceNode.Attributes)
+                    { 
+                        var a = destinationNode.OwnerDocument.CreateAttribute(attr.Name);
+                        a.Value = attr.Value;
+                        destinationNode.Attributes.Append(a);
                     }
+                }
+            }
+
+            if (sourceNode.HasChildNodes)
+            {
+                foreach (XmlNode childNode in sourceNode.ChildNodes)
+                {
+                    destinationDoc = mapNode(destinationDoc, destinationParentNode, childNode);
+                }
+            }
+
+
+            return destinationDoc;
+        }
+
+        private string mapExternPathToInternPathWithIndex(string source, string destination)
+        {
+            string destinationPathWithIndex = "";
+            // load the xpath from source node
+            // x[1]\y[2]\f[1]
+            // X[1]\XType[2]\Y[1]\yType[4]\F[1]\FType[2]\
+
+            string[] sourceSplitWidthIndex = source.Split('/');
+
+            // f[1]\y[2]\x[1]
+            Array.Reverse(sourceSplitWidthIndex);
+
+            string[] destinationSplit = destination.Split('/');
+
+            // XFType\F\yType\Y\XType\x
+            Array.Reverse(destinationSplit);
+            int j = 0;
+            for (int i = 0; i < sourceSplitWidthIndex.Length; i++)
+            {
+                string tmp = sourceSplitWidthIndex[i];
+
+                if (tmp.Contains("["))
+                {
+                    string tmpIndex = tmp.Split('[')[1];
+                    string index = tmpIndex.Remove(tmpIndex.IndexOf(']'));
+
+                    //set to destination array
+
+                    //set j
+                    if (i == 0) j = 0;
+                    else if (i == 1) j = i + 1;
+                    else j = i * 2;
+
+                    if (destinationSplit.Length > j + 1)
+                    {
+                        string destinationTemp = destinationSplit[j];
+                        destinationSplit[j] = destinationTemp + "[" + index + "]";
+                        //set parent
+                        string destinationTempParent = destinationSplit[j + 1];
+                        destinationSplit[j + 1] = destinationTempParent + "[" + 1 + "]";
+                    }
+                }
+            }
+
+            Array.Reverse(destinationSplit);
+
+            // XFType[2]\F[1]\yType[4]\Y[1]\XType[2]\x[1]
+            return String.Join("/", destinationSplit); ;
+        }
+
+        private void addDynamicAttributes(XmlNode source, XmlNode target)
+        {
+            if (source.Attributes!=null && source.Attributes.Count>0)
+            {
+                foreach (XmlNode attr in source.Attributes) 
+                {
+                    if (target != null && !string.IsNullOrEmpty(attr.Value))
+                    {
+                        if (target.Attributes.GetNamedItem(attr.Name) != null) // attr exist
+                        {
+                            target.Attributes.GetNamedItem(attr.Name).Value = attr.Value; // update it
+                        }
+                        else
+                        {
+                            var newAttr = target.OwnerDocument.CreateAttribute(attr.Name);
+                            newAttr.Value = attr.Value;
+                            target.Attributes.Append(newAttr);
+                        }
+                    }
+                }
+            }
+
+            if (source.HasChildNodes)
+            {
+                for (int i = 0; i < source.ChildNodes.Count; i++)
+                {
+                    if(target!=null && target.ChildNodes.Count>0)
+                        addDynamicAttributes(source.ChildNodes[i], target.ChildNodes[i]);
                 }
             }
         }
@@ -399,24 +556,28 @@ namespace BExIS.Xml.Helpers
         /// Usage/Type (xml) = Usage (json)
         /// 
         /// e.g. 
-        /// xml = Metadata/TechnicalContacts/TechnicalContactsType/TechnicalContact/TechnicalContactType/Name/NameType
-        /// json = Metadata.TechnicalContacts.TechnicalContact.Name.#text
+        /// xml =  Metadata/TechnicalContacts[1]/TechnicalContactsType[1]/TechnicalContact[1]/TechnicalContactType[1]/Name[1]/NameType[1]
+        /// new xml = Metadata/TechnicalContacts.TechnicalContact.Name.#text
         /// </summary>
         /// <returns></returns>
-        private string xpathToJsonPath(string xpath)
-        { 
+        private string simplifiedXPath(string xpath)
+        {
+            // if the expath contains #text, then remove it,
+            // this part of the xpath is not needed
+            xpath = xpath.Replace(@"/#text", "");
+
             string[] xpaths = xpath.Split('/');
-            string jsonPath = "";
+            string newPath = "";
 
             /// xml = Metadata/TechnicalContacts/TechnicalContactsType/TechnicalContact/TechnicalContactType/Name/NameType
             ///       0        1                 2                     3                4                    5    6
             for (int i = 0; i < xpaths.Length; i++)
             {
-                if (i == 0) jsonPath += xpath[i];
-                if (i % 2 > 0) jsonPath += "." + xpath[i];
+                if (i == 0) newPath += xpaths[i];
+                else if(i % 2 >  0) newPath += "/" + xpaths[i];
             }
 
-            return jsonPath+"#text";
+            return newPath;
         }
 
         #endregion
