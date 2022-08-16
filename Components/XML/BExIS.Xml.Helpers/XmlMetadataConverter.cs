@@ -317,6 +317,17 @@ namespace BExIS.Xml.Helpers
             {
                 target.Add("@ref", "");
             }
+
+            if (element.HasAttributes && element.HasAttribute("partyid"))
+            {
+                target.Add("@partyid", element.Attributes["partyid"].Value);
+            }
+            else if (includeEmpty)
+            {
+                target.Add("@partyid", "");
+            }
+
+
         }
 
         #endregion
