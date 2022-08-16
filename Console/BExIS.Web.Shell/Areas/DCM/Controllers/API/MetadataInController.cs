@@ -10,6 +10,8 @@ using BExIS.Security.Services.Utilities;
 using BExIS.Utils.Route;
 using BExIS.Xml.Helpers;
 using BExIS.Xml.Helpers.Mapping;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Configuration;
 using System.IO;
@@ -89,7 +91,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
 
                 string contentType = this.Request.Content.Headers.ContentType.MediaType;
 
-                if (string.IsNullOrEmpty(contentType) || (!contentType.Equals("application/xml") && !contentType.Equals("text/plain")))
+                if (string.IsNullOrEmpty(contentType) || (!contentType.Equals("application/xml") && !contentType.Equals("application/json") && !contentType.Equals("text/plain")))
                     return Request.CreateErrorResponse(HttpStatusCode.PreconditionFailed, "The transmitted file is not a xml document.");
 
                 if (requestStream == null)
@@ -118,34 +120,70 @@ namespace BExIS.Modules.Dim.UI.Controllers
                     return Request.CreateErrorResponse(HttpStatusCode.PreconditionFailed, "Dataset not exist.");
 
                 #region convert metadata
+                XmlDocument completeMetadata = null;
 
-                XmlDocument metadataForImport = new XmlDocument();
-                metadataForImport.Load(requestStream);
+                if (contentType.Equals("application/xml"))
+                {
+                    #region application/xml
 
-                // metadataStructure ID
-                var metadataStructureId = dataset.MetadataStructure.Id;
-                var metadataStructrueName = this.GetUnitOfWork().GetReadOnlyRepository<MetadataStructure>().Get(metadataStructureId).Name;
+                    XmlDocument metadataForImport = new XmlDocument();
+                    metadataForImport.Load(requestStream);
 
-                // loadMapping file
-                var path_mappingFile = Path.Combine(AppConfiguration.GetModuleWorkspacePath("DIM"), XmlMetadataImportHelper.GetMappingFileName(metadataStructureId, TransmissionType.mappingFileImport, metadataStructrueName));
+                    // metadataStructure ID
+                    var metadataStructureId = dataset.MetadataStructure.Id;
+                    var metadataStructrueName = this.GetUnitOfWork().GetReadOnlyRepository<MetadataStructure>().Get(metadataStructureId).Name;
 
-                // XML mapper + mapping file
-                var xmlMapperManager = new XmlMapperManager(TransactionDirection.ExternToIntern);
-                xmlMapperManager.Load(path_mappingFile, "IDIV");
+                    // loadMapping file
+                    var path_mappingFile = Path.Combine(AppConfiguration.GetModuleWorkspacePath("DIM"), XmlMetadataImportHelper.GetMappingFileName(metadataStructureId, TransmissionType.mappingFileImport, metadataStructrueName));
 
-                // generate intern metadata without internal attributes
-                var metadataResult = xmlMapperManager.Generate(metadataForImport, 1, true);
+                    // XML mapper + mapping file
+                    var xmlMapperManager = new XmlMapperManager(TransactionDirection.ExternToIntern);
+                    xmlMapperManager.Load(path_mappingFile, "IDIV");
 
-                // generate intern template metadata xml with needed attribtes
-                var xmlMetadatWriter = new XmlMetadataWriter(BExIS.Xml.Helpers.XmlNodeMode.xPath);
-                var metadataXml = xmlMetadatWriter.CreateMetadataXml(metadataStructureId,
-                    XmlUtility.ToXDocument(metadataResult));
+                    // generate intern metadata without internal attributes
+                    var metadataResult = xmlMapperManager.Generate(metadataForImport, 1, true);
 
-                var metadataXmlTemplate = XmlMetadataWriter.ToXmlDocument(metadataXml);
+                    // generate intern template metadata xml with needed attribtes
+                    var xmlMetadatWriter = new XmlMetadataWriter(BExIS.Xml.Helpers.XmlNodeMode.xPath);
+                    var metadataXml = xmlMetadatWriter.CreateMetadataXml(metadataStructureId,
+                        XmlUtility.ToXDocument(metadataResult));
 
-                // set attributes FROM metadataXmlTemplate TO metadataResult
-                var completeMetadata = XmlMetadataImportHelper.FillInXmlValues(metadataResult,
-                    metadataXmlTemplate);
+                    var metadataXmlTemplate = XmlMetadataWriter.ToXmlDocument(metadataXml);
+
+                    // set attributes FROM metadataXmlTemplate TO metadataResult
+                    completeMetadata = XmlMetadataImportHelper.FillInXmlValues(metadataResult,
+                        metadataXmlTemplate);
+
+                    #endregion
+                }
+                else
+                if (contentType.Equals("application/json"))
+                {
+                    #region  application/json
+
+                    using (var streamReader = new StreamReader(requestStream))
+                    using( var jsonReader = new JsonTextReader(streamReader))
+                    { 
+                        JsonSerializer serializer = new JsonSerializer();
+
+                        try
+                        {
+                            JObject x = serializer.Deserialize<JObject>(jsonReader);
+                            XmlMetadataConverter converter = new XmlMetadataConverter();
+                            completeMetadata = converter.ConvertTo(x);
+                        }
+                        catch (JsonReaderException)
+                        {
+                            Console.WriteLine("Invalid JSON.");
+                        }
+
+                        //(requestStream
+
+                        
+
+                    }
+                    #endregion
+                }
 
                 #endregion convert metadata
 
@@ -189,7 +227,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
                         );
                 }
 
-                return Request.CreateErrorResponse(HttpStatusCode.OK, "Metadata successfully updated ");
+                return Request.CreateErrorResponse(HttpStatusCode.OK, "Metadata successfully updated via api.");
             }
             catch (Exception ex)
             {
