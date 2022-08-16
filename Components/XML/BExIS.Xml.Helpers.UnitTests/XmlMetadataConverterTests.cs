@@ -131,8 +131,7 @@ namespace BExIS.Xml.Helpers.UnitTests
                 var aElements = XmlUtility.GetAllChildren(a.Root);
                 var bElements = XmlUtility.GetAllChildren(b.Root);
 
-
-                Assert.That(aElements.Count, Is.EqualTo(bElements.Count()), string.Format("number of elements a {0} is different then b {1}",aElements.Count(),bElements.Count()));
+                Assert.That(aElements.Count, Is.EqualTo(bElements.Count()), string.Format("number of elements a {0} is different then b {1}", aElements.Count(), bElements.Count()));
 
                 if (aElements.Count() == bElements.Count())
                 {
@@ -145,8 +144,8 @@ namespace BExIS.Xml.Helpers.UnitTests
 
                         // check attributes
                         if (aChild.Attributes().Count() > 0)
-                        { 
-                            Assert.That(aChild.Attributes().Count(), Is.EqualTo(bChild.Attributes().Count()), string.Format("number of attributes a {0} is different then b {1}",aChild.Name, bChild.Name));
+                        {
+                            Assert.That(aChild.Attributes().Count(), Is.EqualTo(bChild.Attributes().Count()), string.Format("number of attributes a {0} is different then b {1}", aChild.Name, bChild.Name));
 
                             for (int j = 0; j < aChild.Attributes().Count(); j++)
                             {
@@ -154,15 +153,13 @@ namespace BExIS.Xml.Helpers.UnitTests
                                 var bAttr = bChild.Attributes().ElementAt(j);
 
                                 Assert.That(aAttr.Name, Is.EqualTo(bAttr.Name), string.Format("child attr {0} is not equal to {1}", aChild.Name, bChild.Name));
+                                Assert.That(aAttr.Value, Is.EqualTo(bAttr.Value), string.Format("value of the attr {0} - {1} is not equal to {2} - {3}", aChild.Name, aChild.Value, bChild.Name, bChild.Value));
 
                             }
                         }
                     }
                 }
             }
-
-            //Assert
-            //Assert.Pass();
         }
 
         [Test()]
@@ -184,7 +181,6 @@ namespace BExIS.Xml.Helpers.UnitTests
 
             JObject metadataAsJson = metadataConverter.ConvertTo(metadataOriginal);
             XmlDocument metadataOut = metadataConverter.ConvertTo(metadataAsJson);
-
 
             //Assert
             Assert.IsNotNull(metadataOut);
@@ -225,16 +221,12 @@ namespace BExIS.Xml.Helpers.UnitTests
                             var bAttr = bChild.Attributes().ElementAt(j);
 
                             Assert.That(aAttr.Name, Is.EqualTo(bAttr.Name), string.Format("child attr {0} is not equal to {1}", aChild.Name, bChild.Name));
+                            Assert.That(aAttr.Value, Is.EqualTo(bAttr.Value), string.Format("value of the attr {0} - {1} is not equal to {2} - {3}", aChild.Name,aChild.Value, bChild.Name, bChild.Value));
 
                         }
                     }
                 }
             }
-            
-
-            //Assert
-            //Assert.Pass();
         }
-
     }
 }
