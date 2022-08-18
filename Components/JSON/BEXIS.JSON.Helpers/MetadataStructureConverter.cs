@@ -215,6 +215,12 @@ namespace BEXIS.JSON.Helpers
             return schema;
         }
 
+        /// <summary>
+        /// add schema version to the created schema and is the rules of this
+        /// later the created schema will be validated againts this one
+        /// </summary>
+        /// <param name="schema"></param>
+        /// <returns></returns>
         private JSchema addSchemaVersion(JSchema schema)
         {
             var value = @"http://json-schema.org/draft-07/schema";
