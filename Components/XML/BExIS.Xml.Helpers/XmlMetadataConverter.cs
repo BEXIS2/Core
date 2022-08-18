@@ -1,6 +1,7 @@
 ﻿using BExIS.Dlm.Entities.Common;
 using BExIS.Dlm.Entities.MetadataStructure;
 using BExIS.Dlm.Services.MetadataStructure;
+using BExIS.Xml.Helpers.Mapping;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
@@ -590,6 +591,46 @@ namespace BExIS.Xml.Helpers
 
             return newPath;
         }
+
+
+        /// <summary>
+        /// the incoming metadata json will be checked against the metadata example
+        /// this will not check missing reuired nodes, its only count the number of elements that should not be in the metadata
+        /// find mismatch in the structure will list in errors. This list contains the names of the elements
+        /// </summary>
+        /// <param name="metadataJson"></param>
+        /// <param name="metadataStructureId"></param>
+        /// <param name="errors">name of elements that should not be in the metadata json</param>
+        /// <returns></returns>
+        /// <exception cref="ArgumentNullException"></exception>
+        public bool HasValidStructure(JObject metadataJson, long metadataStructureId, out List<string> errors)
+        {
+            // check incoming parameters
+            if (metadataJson == null) throw new ArgumentNullException("metadataJson", "MetadataJson must not be null.");
+            if (metadataStructureId <= 0 ) throw new ArgumentNullException("metadataStructureId", "metadataStructureId must be greater then 0.");
+
+            // converting json to xml
+            XmlDocument metadataInput = JsonConvert.DeserializeXmlNode(metadataJson.ToString(), "Metadata");
+
+            // load example xml based on metadata structure
+            var xmlMetadatWriter = new XmlMetadataWriter(BExIS.Xml.Helpers.XmlNodeMode.xPath);
+            var metadataExample = xmlMetadatWriter.CreateMetadataXml(1);
+
+            // get all elements from xml documents to compare
+            var listOfElementsInput = XmlUtility.GetAllChildren(XmlUtility.ToXDocument(metadataInput).Root).Select(e=>e.Name.LocalName);
+            var listOfElementsExample = XmlUtility.GetAllChildren(metadataExample.Root).Select(e=>e.Name.LocalName);
+
+
+            // lets compare all elements
+            // the incoming metadata json will be checked against the metadata example
+            // this will not check missing nodes, its only count the number of elements that should not be in the metadata
+            errors = listOfElementsInput.Where(e => !listOfElementsExample.Contains(e)).ToList();
+
+            if (errors.Any()) return false;
+
+            return true;
+        }
+
 
         #endregion
 

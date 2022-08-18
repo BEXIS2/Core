@@ -10,9 +10,12 @@ using BExIS.Security.Services.Utilities;
 using BExIS.Utils.Route;
 using BExIS.Xml.Helpers;
 using BExIS.Xml.Helpers.Mapping;
+using BEXIS.JSON.Helpers;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using Newtonsoft.Json.Schema;
 using System;
+using System.Collections.Generic;
 using System.Configuration;
 using System.IO;
 using System.Linq;
@@ -104,11 +107,6 @@ namespace BExIS.Modules.Dim.UI.Controllers
                 // check incomming values
 
                 if (id == 0) error += "dataset id should be greater then 0.";
-                ////if (data.UpdateMethod == null) error += "update method is not set";
-                ////if (data.Count == 0) error += "count should be greater then 0. ";
-                //if (data.Columns == null) error += "cloumns should not be null. ";
-                //if (data.Data == null) error += "data is empty. ";
-                //if (data.PrimaryKeys == null || data.PrimaryKeys.Count() == 0) error += "the UpdateMethod update has been selected but there are no primary keys available. ";
 
                 if (!string.IsNullOrEmpty(error))
                     return Request.CreateErrorResponse(HttpStatusCode.PreconditionFailed, error);
@@ -168,18 +166,45 @@ namespace BExIS.Modules.Dim.UI.Controllers
 
                         try
                         {
-                            JObject x = serializer.Deserialize<JObject>(jsonReader);
-                            XmlMetadataConverter converter = new XmlMetadataConverter();
-                            completeMetadata = converter.ConvertTo(x);
+                            JObject metadataJson = serializer.Deserialize<JObject>(jsonReader);
+
+                            long mdid = 0;
+                            if (metadataJson.ContainsKey("@id"))
+                            {
+                                if (Int64.TryParse(metadataJson.Property("@id").Value.ToString(), out mdid))
+                                {
+                                    MetadataStructureConverter metadataStructureConverter = new MetadataStructureConverter();
+                                    JSchema schema = metadataStructureConverter.ConvertToJsonSchema(mdid);
+
+                                    XmlMetadataConverter converter = new XmlMetadataConverter();
+
+                                    List<string> notAllowedElements = new List<string>();
+                                    if (converter.HasValidStructure(metadataJson, mdid, out notAllowedElements))
+                                    {
+                                        completeMetadata = converter.ConvertTo(metadataJson);
+                                    }
+                                    else
+                                    {
+                                        return Request.CreateErrorResponse(HttpStatusCode.ExpectationFailed, "the json does not have the expected structure");
+                                    }
+                                }
+                                else
+                                {
+                                    return Request.CreateErrorResponse(HttpStatusCode.ExpectationFailed, "the json does not have the expected structure");
+                                }
+                            }
+                            else
+                            {
+                                return Request.CreateErrorResponse(HttpStatusCode.ExpectationFailed, "the json does not contain any information about the metadata structure");
+                            }
+
+                            
+
                         }
                         catch (JsonReaderException)
                         {
                             Console.WriteLine("Invalid JSON.");
                         }
-
-                        //(requestStream
-
-                        
 
                     }
                     #endregion
@@ -211,12 +236,6 @@ namespace BExIS.Modules.Dim.UI.Controllers
                         datasetManager.EditDatasetVersion(workingCopy, null, null, null);
                         datasetManager.CheckInDataset(id, "via API", user.Name, ViewCreationBehavior.None);
                     }
-
-                    // ToDo add Index update to this api
-                    //if (this.IsAccessible("DDM", "SearchIndex", "ReIndexSingle"))
-                    //{
-                    //    var x = this.Run("DDM", "SearchIndex", "ReIndexSingle", new RouteValueDictionary() { { "id", datasetId } });
-                    //}
 
                     LoggerFactory.LogData(id.ToString(), typeof(Dataset).Name, Vaiona.Entities.Logging.CrudState.Created);
 
