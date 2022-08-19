@@ -38,7 +38,7 @@ namespace BExIS.Xml.Helpers.UnitTests
         /// performs the initial setup for the tests. This runs once per test, NOT per class!
         protected void SetUp()
         {
-            
+
         }
 
         [TearDown]
@@ -75,7 +75,7 @@ namespace BExIS.Xml.Helpers.UnitTests
 
             //Act
             JObject result = xmlMetadataHelper.ConvertTo(xmlDocument);
-            JObject result2 = xmlMetadataHelper.ConvertTo(xmlDocument,true);
+            JObject result2 = xmlMetadataHelper.ConvertTo(xmlDocument, true);
 
             bool isvalid = result.IsValid(schema);
 
@@ -168,7 +168,7 @@ namespace BExIS.Xml.Helpers.UnitTests
             //Arrange
             XmlMetadataConverter xmlMetadataHelper = new XmlMetadataConverter();
 
-    
+
             var metadataOriginalXMl = "ConvertTo_XmlToJson.xml";
             string path = AppDomain.CurrentDomain.BaseDirectory;
             string metadataOriginalXMlPath = Path.Combine(path, metadataOriginalXMl);
@@ -221,12 +221,90 @@ namespace BExIS.Xml.Helpers.UnitTests
                             var bAttr = bChild.Attributes().ElementAt(j);
 
                             Assert.That(aAttr.Name, Is.EqualTo(bAttr.Name), string.Format("child attr {0} is not equal to {1}", aChild.Name, bChild.Name));
-                            Assert.That(aAttr.Value, Is.EqualTo(bAttr.Value), string.Format("value of the attr {0} - {1} is not equal to {2} - {3}", aChild.Name,aChild.Value, bChild.Name, bChild.Value));
+                            Assert.That(aAttr.Value, Is.EqualTo(bAttr.Value), string.Format("value of the attr {0} - {1} is not equal to {2} - {3}", aChild.Name, aChild.Value, bChild.Name, bChild.Value));
 
                         }
                     }
                 }
             }
+        }
+
+        [Test()]
+        public void ConvertTo_DocumentIsNull_ThrowArgumentNullException()
+        {
+            XmlMetadataConverter xmlMetadataHelper = new XmlMetadataConverter();
+            Assert.That(() => xmlMetadataHelper.ConvertTo(null), Throws.ArgumentNullException);
+        }
+
+        [Test()]
+        public void HasValidStructure_ValidDocument_ReturnTrueAnd0Errors()
+        {
+            // Arrange
+            var metadataInput = "ConvertTo_XmlToJson.json";
+            string path = AppDomain.CurrentDomain.BaseDirectory;
+            string metadataInputPath = Path.Combine(path, metadataInput);
+
+            using (StreamReader r = new StreamReader(metadataInputPath, Encoding.Default))
+            {
+                XmlMetadataConverter metadataConverter = new XmlMetadataConverter();
+
+                string json = r.ReadToEnd();
+                JObject metadataInputJson = JObject.Parse(json);
+                
+                //Act
+                XmlMetadataConverter xmlMetadataConverter = new XmlMetadataConverter();
+                List<string> errors = new List<string>();
+                var valid = xmlMetadataConverter.HasValidStructure(metadataInputJson, 1, out errors);
+
+                //Assert
+                Assert.IsTrue(valid, "The result of the function should be true, but is false");
+                Assert.That(errors.Count, Is.EqualTo(0), "The number of errors should be 0");
+            }
+
+        }
+
+        [Test()]
+        public void HasValidStructure_JObjectIsNull_ThrowArgumentNullException()
+        {
+            // Arrange
+            XmlMetadataConverter xmlMetadataHelper = new XmlMetadataConverter();
+            List<String> errors = new List<string>();
+
+            //Act & Assert
+            Assert.That(() => xmlMetadataHelper.HasValidStructure(null,1,out errors), Throws.ArgumentNullException);
+        }
+
+        [Test()]
+        public void HasValidStructure_MetadataStrutcureIdIs0_ThrowArgumentNullException()
+        {
+            //Arrange
+            XmlMetadataConverter xmlMetadataHelper = new XmlMetadataConverter();
+            List<String> errors = new List<string>();
+            JObject jObject = new JObject();
+
+            //Act & Assert
+            Assert.That(() => xmlMetadataHelper.HasValidStructure(jObject, 0, out errors), Throws.ArgumentNullException);
+        }
+
+        [Test()]
+        public void HasValidStructure_InValid_ReturnFalsAndErrors()
+        {
+            //Arrange
+            XmlMetadataConverter xmlMetadataHelper = new XmlMetadataConverter();
+            List<String> errors = new List<string>();
+            var jsonObject = new JObject();
+            jsonObject.Add("Date", DateTime.Now);
+            jsonObject.Add("Album", "Me Against The World");
+            jsonObject.Add("Year", 1995);
+            jsonObject.Add("Artist", "2Pac");
+
+            //Act & Assert
+            bool valid = xmlMetadataHelper.HasValidStructure(jsonObject, 1, out errors);
+
+            // Assert
+            Assert.IsFalse(valid, "The result of the function should be false, but is true");
+            Assert.That(errors.Count,Is.EqualTo(4), "The number of errors should be 4");
+
         }
     }
 }
