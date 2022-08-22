@@ -9,67 +9,59 @@
     string none_id = "none_" + id;
     string convert_id = "convert_" + id;
     string preloader_id = "preloader_" + id;
-}
-<div id="@id" class="dim-export-metadata" exportIAvailable ="@Model.ExportIsAvailable" button="@convert_id">
+    string tableId = "table_" + Model.Id.ToString();
 
-<div class="row">
-    <div class="col-lg-12">
-        @Model.Description
+
+}
+<div id="@id" class="dim-export-metadata" exportIAvailable="@Model.ExportIsAvailable.ToString()" button="@convert_id">
+
+    <div class="row">
+        <div class="col-lg-12">
+            @Model.Description
+        </div>
     </div>
-</div>
 
     <div style="text-align: left; padding: 5px 0;">
         <button id="@convert_id" type="button" class="bx-button bx-disabled function" value="Convert" name="button" onclick="dim_OnClickConvert(this)" disabled="disabled">Export</button>
     </div>
 
-    @(Html.Telerik().Grid(Model.DatasetVersions)
-            .Name("datasetversionsConvertGrid")
-            .HtmlAttributes(new { @class = "convert-grid" })
-            .Filterable()
-            .Pageable(paging => paging
-                .PageSize(20, new int[] { 10, 20, 50, 100, 500 })
-                .Position(GridPagerPosition.Both)
-                .PageTo(1))
+
+    <table id="@tableId" class="display" style="width:100%">
+        <thead>
+            <tr>
                 
-
-            .Columns(columns =>
+                <th>
+                    <input id="@all_id" name="checkedDatasetVersion" type="checkbox" value="all" title="checkedDatasetVersion" class="checkBox" onclick="OnChangeAllCheckbox(this)" />
+                </th>
+                <th title="Id">Id</th>
+                <th title="Version">Version Id</th>
+                <th title="Title">Title</th>
+                <th title="Link">DownloadLink </th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var datasetversion in Model.DatasetVersions)
             {
-            columns.Template(
-                    @<text>
-                        <input id="@item.DatasetVersionId" name="checkedDatasetVersion" type="checkbox" value="@item.DatasetVersionId " title="checkedDatasetVersion" class="checkBox" onclick="onClickCheckBox(this)" />
-                    </text>
-                    ).Width(60)
-                    .HeaderTemplate(
-                        @<text>
-
-                            <input id="@all_id" name="checkedDatasetVersion" type="checkbox"  value="all" title="checkedDatasetVersion" class="checkBox" onclick="OnChangeAllCheckbox(this)" />
-
-                        </text>
-                    )
-                    .HtmlAttributes(new {@class="xyz"})
-                    .HeaderHtmlAttributes(new {@class="xyz"});
-                    
-                columns.Bound(o => o.DatasetId).Title("Dataset id").Width(120);
-                columns.Bound(o => o.DatasetVersionId).Title("Datasetversion id").Width(180);
-                columns.Bound(o => o.Title).Title("Dataset Title")
-                        .Filterable(true);
-                columns.Template(
-                    @<text>
-                        <div class="download-button" style="padding: 0;">
-                            @if (item.MetadataDownloadPath != "")
-                                            {
-                                @Html.ActionLink(" ", "Download", "Admin", new { path = @item.MetadataDownloadPath }, new { @class = "bx bx-grid-function bx-download", style="margin:0;" })
-                            }
-                        </div>
-
-                     </text>
-
-                    ).Title("Download Link");
-
-
+            <tr>
+                <td>
+                    <input id="@datasetversion.DatasetVersionId" name="checkedDatasetVersion" type="checkbox" value="@datasetversion.DatasetVersionId " title="checkedDatasetVersion" class="checkBox" onclick="onClickCheckBox(this)" />
+                </td>
+                <td>@datasetversion.DatasetId</td>
+                <td>@datasetversion.DatasetVersionId</td>
+                <td>@datasetversion.Title</td>
+                <td>
+                    <div class="download-button" style="padding: 0;">
+                        @if(datasetversion.MetadataDownloadPath != "")
+                        {
+                            @Html.ActionLink(" ", "Download", "Admin", new { path = datasetversion.MetadataDownloadPath }, new { @class = "bx bx-grid-function bx-download", style = "margin:0;" })
+                        }
+                    </div>
+                </td>
+            </tr>
             }
-        ))
-        
+
+        </tbody>
+    </table>
 </div>
 <style type="text/css">
 
@@ -97,9 +89,9 @@
 
     $(document).ready(function ()
     {
-        resetAllTelerikIconTitles();
-        addTooltips();
-        //setExportBT();
+        $(@tableId).DataTable({
+            "pageLength": 2
+        });
     });
 
 
@@ -162,7 +154,10 @@
 
 
         $.post('@Url.Action("ConvertSelectedDatasetVersion", "Admin", new { area="DIM"})', { Id: id, SelectedDatasetIds: selectedDatasetIds }, function (e) {
-            $("#" + idString).html(e);
+
+
+
+            //$("#" + idString).html(e);
         });
 
     }
