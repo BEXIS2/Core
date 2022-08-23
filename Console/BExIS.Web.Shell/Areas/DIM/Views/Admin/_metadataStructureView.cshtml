@@ -153,9 +153,7 @@
 
         $.post('@Url.Action("ConvertSelectedDatasetVersion", "Admin", new { area="DIM"})', { Id: id, SelectedDatasetIds: selectedDatasetIds }, function (e) {
 
-
-
-            //$("#" + idString).html(e);
+            $("#" + idString).html(e);
         });
 
     }
