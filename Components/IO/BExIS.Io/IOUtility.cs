@@ -251,17 +251,16 @@ namespace BExIS.IO
         }
 
         /// <summary>
-        /// returns true if the file is supported 
+        /// returns a list of supported ascii filetypes
         /// "e.g. .csv"
         /// </summary>
-        /// <param name="extention"></param>
         /// <returns></returns>
         public Dictionary<string, string> GetSupportedAsciiFiles()
         {
             Dictionary<string, string> tmp = new Dictionary<string, string>();
             tmp.Add("Comma Separated", ".csv");
             tmp.Add("Tab Separated", ".tsv");
-            tmp.Add("Text", ".txt");
+            tmp.Add("Semicolon Separated", ".txt");
 
             return tmp;
         }

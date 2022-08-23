@@ -63,7 +63,7 @@ namespace BExIS.IO.Transform.Output
                         {
                             contentDescriptorTitle = "generatedCSV" + nameExt;
                             ext = ".csv";
-                            textSeperator = TextSeperator.semicolon;
+                            textSeperator = TextSeperator.comma;
                             break;
                         }
                     case "text/tsv":
@@ -78,7 +78,7 @@ namespace BExIS.IO.Transform.Output
                         {
                             contentDescriptorTitle = "generatedTXT" + nameExt;
                             ext = ".txt";
-                            textSeperator = TextSeperator.tab;
+                            textSeperator = TextSeperator.semicolon;
                             break;
                         }
                 }
@@ -145,7 +145,7 @@ namespace BExIS.IO.Transform.Output
                     it will be rebuilt into the case here*/
                     {
                         ext = ".csv";
-                        textSeperator = TextSeperator.semicolon;
+                        textSeperator = TextSeperator.comma;
                         break;
                     }
                 case "text/tsv":
@@ -158,7 +158,7 @@ namespace BExIS.IO.Transform.Output
                 default:
                     {
                         ext = ".txt";
-                        textSeperator = TextSeperator.tab;
+                        textSeperator = TextSeperator.semicolon;
                         break;
                     }
             }
