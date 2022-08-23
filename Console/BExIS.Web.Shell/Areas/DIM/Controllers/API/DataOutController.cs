@@ -15,6 +15,7 @@ using BExIS.Xml.Helpers;
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.IO;
 using System.Linq;
 
 //using System.Linq.Dynamic;
@@ -160,6 +161,8 @@ namespace BExIS.Modules.Dim.UI.Controllers
                         bool isLatestVersion = false;
                         if (version == -1 || dataset.Versions.Count == version) isLatestVersion = true;
 
+                        DataTable dt;
+
                         if (isLatestVersion)
                         {
                             #region get data from the latest version of a dataset
@@ -171,14 +174,11 @@ namespace BExIS.Modules.Dim.UI.Controllers
                             // check the data sturcture type ...
                             if (datasetVersion.Dataset.DataStructure.Self is StructuredDataStructure)
                             {
-                                //FilterExpression filter = null;
-                                //OrderByExpression orderBy = null;
-                                //ProjectionExpression projectionExpression = GetProjectionExpression(projection);
-
+       
                                 // apply selection and projection
                                 long count = datasetManager.RowCount(id);
 
-                                DataTable dt = datasetManager.GetLatestDatasetVersionTuples(id, null, null, null, 0, (int)count);
+                                dt = datasetManager.GetLatestDatasetVersionTuples(id, null, null, null, 0, (int)count);
                                 dt.Strip();
 
                                 if (!string.IsNullOrEmpty(selection))
@@ -192,18 +192,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
                                     dt = OutputDataManager.ProjectionOnDataTable(dt, projection.ToUpper().Split(','));
                                 }
 
-                                dt.TableName = id + "_data";
-
-                                DatasetModel model = new DatasetModel();
-                                model.DataTable = dt;
-
-                                var response = Request.CreateResponse();
-                                response.Content = new ObjectContent(typeof(DatasetModel), model, new DatasetModelCsvFormatter(model.DataTable.TableName));
-                                response.Content.Headers.ContentType = new MediaTypeHeaderValue("text/csv");
-
-                                //set headers on the "response"
-                                return response;
-
+      
                                 #endregion get data from the latest version of a dataset
 
                                 //return model;
@@ -235,7 +224,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
 
                                 // apply selection and projection
                                 int count = datasetManager.GetDatasetVersionEffectiveTuples(datasetVersion).Count;
-                                DataTable dt = datasetManager.GetDatasetVersionTuples(datasetVersion.Id, 0, count);
+                                dt = datasetManager.GetDatasetVersionTuples(datasetVersion.Id, 0, count);
 
                                 dt.Strip();
 
@@ -250,17 +239,6 @@ namespace BExIS.Modules.Dim.UI.Controllers
                                     dt = OutputDataManager.ProjectionOnDataTable(dt, projection.ToUpper().Split(','));
                                 }
 
-                                dt.TableName = id + "_data";
-
-                                DatasetModel model = new DatasetModel();
-                                model.DataTable = dt;
-
-                                var response = Request.CreateResponse();
-                                response.Content = new ObjectContent(typeof(DatasetModel), model, new DatasetModelCsvFormatter(model.DataTable.TableName));
-                                response.Content.Headers.ContentType = new MediaTypeHeaderValue("text/csv");
-
-                                //set headers on the "response"
-                                return response;
                             }
                             else // return files of the unstructure dataset
                             {
@@ -269,6 +247,36 @@ namespace BExIS.Modules.Dim.UI.Controllers
 
                             #endregion load data of a older version of a dataset
                         }
+
+
+                        if (dt != null)
+                        {
+                            dt.TableName = id + "_data";
+
+                            var outputDataManager = new OutputDataManager();
+                            var apifilePath = outputDataManager.GenerateAsciiFile("api", dt, "test", "text/csv", dataset.DataStructure.Id);
+
+                            var response = Request.CreateResponse();
+
+                            using (StreamReader sr = new StreamReader(apifilePath))
+                            {
+                                response.Content = new StringContent(sr.ReadToEnd());
+                                //response.Content = new ObjectContent(typeof(DatasetModel), model, new DatasetModelCsvFormatter(model.DataTable.TableName));
+                                response.Content.Headers.ContentType = new MediaTypeHeaderValue("text/csv");
+                            }
+
+                            //set headers on the "response"
+                            return response;
+                        }
+                        else
+                        {
+                            var request = Request.CreateResponse();
+                            request.Content = new StringContent("The data could not be loaded.");
+
+                            return request;
+                        }
+                       
+
                     }
                     else // has rights?
                     {
@@ -299,21 +307,5 @@ namespace BExIS.Modules.Dim.UI.Controllers
             }
         }
 
-        private ProjectionExpression GetProjectionExpression(string projection)
-        {
-            ProjectionExpression pe = new ProjectionExpression();
-
-            string[] columns = projection.Split(',');
-
-            foreach (string c in columns)
-            {
-                if (!string.IsNullOrEmpty(c))
-                {
-                    pe.Items.Add(new ProjectionItemExpression() { FieldName = c });
-                }
-            }
-
-            return pe;
-        }
     }
 }
