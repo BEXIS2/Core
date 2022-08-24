@@ -44,17 +44,42 @@ namespace BExIS.Security.Services.Utilities
 
         public void Send(string subject, string body, List<string> destinations, List<string> ccs = null, List<string> bccs = null, List<string> replyTos = null, List<FileInfo> attachments = null)
         {
+
+            List<string> _destinations = new List<string>();
+            List<string> _ccs = new List<string>();
+            List<string> _bccs = new List<string>();
+            List<string> _replyTos = new List<string>();
+            string _emailFromName = ConfigurationManager.AppSettings["Email_From_Name"].Trim();
+            string _emailFromAddress = ConfigurationManager.AppSettings["Email_From_Address"].Trim();
+
+            // clear all mails from white space
+            #region clear emails
+
+            if (destinations != null)
+                _destinations = destinations.Select(innerItem => innerItem != null ? innerItem.Trim() : null).ToList();
+
+            if (ccs!=null)
+                    _ccs = ccs.Select(innerItem => innerItem != null ? innerItem.Trim() : null).ToList();
+
+            if (bccs != null)
+                _bccs = bccs.Select(innerItem => innerItem != null ? innerItem.Trim() : null).ToList();
+
+            if (replyTos != null)
+                _replyTos = replyTos.Select(innerItem => innerItem != null ? innerItem.Trim() : null).ToList();
+
+            #endregion
+
             using (var mimeMessage = new MimeMessage())
             {
-                mimeMessage.From.Add(new MailboxAddress(ConfigurationManager.AppSettings["Email_From_Name"], ConfigurationManager.AppSettings["Email_From_Address"]));
+                mimeMessage.From.Add(new MailboxAddress(_emailFromName, _emailFromAddress));
                 if (destinations != null)
-                    mimeMessage.To.AddRange(destinations.Select(d => new MailboxAddress(d, d)));
+                    mimeMessage.To.AddRange(_destinations.Select(d => new MailboxAddress(d, d)));
                 if (ccs != null)
-                    mimeMessage.Cc.AddRange(ccs.Select(c => new MailboxAddress(c, c)));
+                    mimeMessage.Cc.AddRange(_ccs.Select(c => new MailboxAddress(c, c)));
                 if (bccs != null)
-                    mimeMessage.Bcc.AddRange(bccs.Select(b => new MailboxAddress(b, b)));
+                    mimeMessage.Bcc.AddRange(_bccs.Select(b => new MailboxAddress(b, b)));
                 if (replyTos != null)
-                    mimeMessage.ReplyTo.AddRange(replyTos.Select(r => new MailboxAddress(r, r)));
+                    mimeMessage.ReplyTo.AddRange(_replyTos.Select(r => new MailboxAddress(r, r)));
                 mimeMessage.Subject = AppConfiguration.ApplicationName + " - " + subject;
 
                 var builder = new BodyBuilder();
@@ -83,7 +108,7 @@ namespace BExIS.Security.Services.Utilities
 
         public void Send(string subject, string body, string destination)
         {
-            Send(subject, body, new List<string>() { destination }, null, null, null, null);
+            Send(subject, body, new List<string>() { destination.Trim() }, null, null, null, null);
         }
 
         public void Send(IdentityMessage message)
@@ -91,7 +116,7 @@ namespace BExIS.Security.Services.Utilities
             using (var mimeMessage = new MimeMessage())
             {
                 mimeMessage.From.Add(new MailboxAddress(ConfigurationManager.AppSettings["Email_From_Name"], ConfigurationManager.AppSettings["Email_From_Address"]));
-                mimeMessage.To.Add(new MailboxAddress(message.Destination, message.Destination));
+                mimeMessage.To.Add(new MailboxAddress(message.Destination.Trim(), message.Destination.Trim()));
                 mimeMessage.Subject = AppConfiguration.ApplicationName + " - " + message.Subject;
                 mimeMessage.Body = new TextPart(MimeKit.Text.TextFormat.Html) { Text = message.Body };
 
