@@ -1,8 +1,8 @@
 # BEXIS 2.14.7 Release Notes
->Attention in this version the operation table has changed. Please run the database updatescript (2.14.6-2.14.7).
+>Attention in this version the operation table has changed. Please run the database update script (2.14.6-2.14.7).
 
->Furthermore, the download options for Ascii have changed! 
-The label now shows the separator and the file change. .csv is now exported with comma and .txt with semicolon.
+>Furthermore, the download options for ascii have changed! 
+The label now shows the separator and the file type. .csv is now exported with comma and .txt with semicolon.
 
 ### Features
 - API to get metadata structures as JsonSchema ([#916](https://github.com/BEXIS2/Core/issues/916))([#953](https://github.com/BEXIS2/Core/issues/953))
