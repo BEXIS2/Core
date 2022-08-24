@@ -1,50 +1,28 @@
-# BEXIS 2.14.6 Release Notes
+# BEXIS 2.14.7 Release Notes
+>Attention in this version the operation table has changed. Please run the database updatescript (2.14.6-2.14.7).
 
-Attention: Permission related to **Requests** are now split into: _send requests_ and _manage requests_. Older permission is only set to _manage requests_. Data managers have to set permission for _send requests_ manually! If not, sending requests will not work as it did before.
-
-
+>Furthermore, the download options for Ascii have changed! 
+The label now shows the separator and the file change. .csv is now exported with comma and .txt with semicolon.
 
 ### Features
-- Send and manage DOI requests to DataCite ([#888](https://github.com/BEXIS2/Core/issues/888))([#905](https://github.com/BEXIS2/Core/issues/905))(_beta_) 
-- Integration of Former Member Module ([#897](https://github.com/BEXIS2/Core/issues/897)) (_beta_)
-	-  Change status of users to _former user_ by assigning a new group and preserving all previous permissions
-- Versioning: visibility and accessibility on public and internal datasets([#853](https://github.com/BEXIS2/Core/issues/853)) (_beta_)
-
-### Enhancements
-- Data structure view: Only the first linked dataset is shown ([#851](https://github.com/BEXIS2/Core/issues/851))
-- Wiki: add workflow to delete data from a dataset/workaround for purge in bigger instances #866 https://github.com/BEXIS2/Core/wiki/How-to-delete-Tabular-Data-(in-DB)
-- Data Structure Preview: Exchange unit description with abbreviation ([#870](https://github.com/BEXIS2/Core/issues/870))
-- Manage Users: Add email confirmation status and registration date ([#871](https://github.com/BEXIS2/Core/issues/871))
-- Primary Data View: Reduce the default number of shown rows from 100 to 10 ([#886](https://github.com/BEXIS2/Core/issues/886))
-- Requests: Add link to dataset ([#891](https://github.com/BEXIS2/Core/issues/891))
-- Public search (metadata): hide email for bots ([#692](https://github.com/BEXIS2/Core/issues/692))
-- Dataset Details View: Replace underscore with withe-space in field names ([#919](https://github.com/BEXIS2/Core/issues/919))
-- Add parties (isMain parts) and other fields to the Dataset API needed for citation generation ([#894](https://github.com/BEXIS2/Core/issues/894))
-
+- API to get metadata structures as JsonSchema ([#916](https://github.com/BEXIS2/Core/issues/916))([#953](https://github.com/BEXIS2/Core/issues/953))
   
+### Enhancements
+- Extending the metadata api to get and update metadata based on json ([#956](https://github.com/BEXIS2/Core/issues/956))
+- Modification of the ascii files download options ([#858](https://github.com/BEXIS2/Core/issues/858))
+
+
 ### Bugs
-- Fix Public Search: Show "more" leads to login screen ([#838](https://github.com/BEXIS2/Core/issues/838))
-- Fix Error message for unknown ID not user friendly ([#841](https://github.com/BEXIS2/Core/issues/841))
-- Fix WebShell UI: Download not allowed info ([#105](https://github.com/BEXIS2/Core/issues/105))
-- Fix View party: conditional attribute not shown ([#725](https://github.com/BEXIS2/Core/issues/725))
-- Fix API Data Statistics: Missing values not correct resetted ([#864](https://github.com/BEXIS2/Core/issues/864))
-- Fix Search Index: empty variable descriptions are indexed as "Unknown" ([#865](https://github.com/BEXIS2/Core/issues/865))
-- Fix Create metadata structure: spelling mistake ([#868](https://github.com/BEXIS2/Core/issues/868))
-- Fix Manage users/groups: show related line in header of pop-up window ([#867](https://github.com/BEXIS2/Core/issues/867))
-- Fix File (Attachment) Upload Description: Fails for certain characters as stored as XML ([#846](https://github.com/BEXIS2/Core/issues/846))
-- Fix Push Big Files: Max length is null after selecting a file ([#878](https://github.com/BEXIS2/Core/issues/878))
-- Fix Missing Mapping Case return false results ([#877](https://github.com/BEXIS2/Core/issues/877))
-- Fix My Data: Datasets with implicit rights (groups/relationships) are missing ([#885](https://github.com/BEXIS2/Core/issues/885))
-- Fix Error message header wrong for data download exception ([#910](https://github.com/BEXIS2/Core/issues/910))
-- Fix Upload: Improve error message "Can not upload" ([#915](https://github.com/BEXIS2/Core/issues/915))
-- Fix Upload via API: improve text ([#911](https://github.com/BEXIS2/Core/issues/911))
-- Fix Empty fields in a selected primary throw an error #923([#923](https://github.com/BEXIS2/Core/issues/923))
-- Fix When removing the owner from the metadata, the rights for the user remain in place ([#914](https://github.com/BEXIS2/Core/issues/914))
+- Fix, system saves emails with spaces in person form ([#901](https://github.com/BEXIS2/Core/issues/901))
+- Fix, export metadata page design destroyed after paging ([#955](https://github.com/BEXIS2/Core/issues/955))
+- Fix, exporting data via the api now also contains the missing values. ([#942](https://github.com/BEXIS2/Core/issues/942))
+
+<hr>
 
 ## I. Software Information
 
 -	Name: BEXIS
--	Version: 2.14.6
+-	Version: 2.14.7
 -	Application Type: Web Application
 -	Platform: Windows
 
@@ -87,7 +65,7 @@ Attention: Permission related to **Requests** are now split into: _send requests
 
 ## Installation
 
-> To install the software, please follow the instructions in the [BEXIS213 Installation Manual](https://github.com/BEXIS2/Documents/blob/2.13/Guides/Installation/installation.md).
+> To install the software, please follow the instructions in the [BEXIS213 Installation Manual](https://github.com/BEXIS2/Documents/blob/2.14.7/Guides/Installation/installation.md).
 
 ## System Functionality
 
@@ -138,7 +116,7 @@ Metadata view was not available for non-authenticated users (public datasets)  (
 | Allow to switch between dataset versions and show version information ([#283](https://github.com/BEXIS2/Core/issues/283),[#306](https://github.com/BEXIS2/Core/issues/306)) (version 2.13)
 | Integration of Multimedia Module ([#281](https://github.com/BEXIS2/Core/issues/281))(version 2.13)
 | Dataset view: Allow to hide tabs via settings (hide and hide on missing permission) ([#455](https://github.com/BEXIS2/Core/issues/455))
-
+| Versioning: visibility and accessibility on public and internal datasets([#853](https://github.com/BEXIS2/Core/issues/853)) (_beta_) (2.14.6)
 
 
 |Known Issues
@@ -227,7 +205,7 @@ publication workflow from BEXIS 2 to Pensoft data journals (version 2.11.0)
 extended Zip download available incl. separate files for metadata, primary data, data structure, etc.
 |In the Primary data view filtering, sorting, and selecting is no available again allowing users to download custom subsets of a dataset (i.e.selected rows/columns).
 | Allow to map system data (e.g. version, last modification date) in metadata form (automatically filled; not editable for user) ([#192](https://github.com/BEXIS2/Core/issues/192)) (version 2.13)
-
+| Send and manage DOI requests to DataCite ([#888](https://github.com/BEXIS2/Core/issues/888))([#905](https://github.com/BEXIS2/Core/issues/905))(_beta_)(2.14.6)
 
 |Known Issues
 |--|
@@ -269,7 +247,7 @@ extended Zip download available incl. separate files for metadata, primary data,
 | Support Anonymous SMTP (version 2.11.3)
 | Documents management through the UI (e.g. guidelines, policies)
 |  Allow email address in addition to account name for login ([#402](https://github.com/BEXIS2/Core/issues/402)) (version 2.13)
-
+| Integration of Former Member Module ([#897](https://github.com/BEXIS2/Core/issues/897)) (_beta_) (2.14.6)
 
 |Known Issues
 |--|
