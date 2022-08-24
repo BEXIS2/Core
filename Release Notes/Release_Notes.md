@@ -1,5 +1,5 @@
-# BEXIS 2.14.7 Release Notes
->Attention in this version the operation table has changed. Please run the database update script (2.14.6-2.14.7).
+# BEXIS 2.15 Release Notes
+>Attention in this version the operation table has changed. Please run the database update script (2.14.6-2.15).
 
 >Furthermore, the download options for ascii have changed! 
 The label now shows the separator and the file type. .csv is now exported with comma and .txt with semicolon.
@@ -22,7 +22,7 @@ The label now shows the separator and the file type. .csv is now exported with c
 ## I. Software Information
 
 -	Name: BEXIS
--	Version: 2.14.7
+-	Version: 2.15
 -	Application Type: Web Application
 -	Platform: Windows
 
@@ -65,7 +65,7 @@ The label now shows the separator and the file type. .csv is now exported with c
 
 ## Installation
 
-> To install the software, please follow the instructions in the [BEXIS213 Installation Manual](https://github.com/BEXIS2/Documents/blob/2.14.7/Guides/Installation/installation.md).
+> To install the software, please follow the instructions in the [BEXIS213 Installation Manual](https://github.com/BEXIS2/Documents/blob/2.15/Guides/Installation/installation.md).
 
 ## System Functionality
 
