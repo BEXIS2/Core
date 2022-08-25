@@ -1,0 +1,25 @@
+# .github/release.yml
+
+changelog:
+  exclude:
+    labels:
+      - ignore-for-release
+    authors:
+      - octocat
+  categories:
+    - title: Features
+      labels:
+        - EPIC
+        - Feature
+        
+    - title: Bugs
+      labels:
+        - Type: Type: Bug
+        
+    - title: Enhancement
+      labels:
+        - Type: Type: Enhancement
+
+    - title: Other Changes
+      labels:
+        - "*"
