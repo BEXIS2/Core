@@ -10,7 +10,12 @@ using BExIS.Security.Services.Utilities;
 using BExIS.Utils.Route;
 using BExIS.Xml.Helpers;
 using BExIS.Xml.Helpers.Mapping;
+using BEXIS.JSON.Helpers;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using Newtonsoft.Json.Schema;
 using System;
+using System.Collections.Generic;
 using System.Configuration;
 using System.IO;
 using System.Linq;
@@ -89,7 +94,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
 
                 string contentType = this.Request.Content.Headers.ContentType.MediaType;
 
-                if (string.IsNullOrEmpty(contentType) || (!contentType.Equals("application/xml") && !contentType.Equals("text/plain")))
+                if (string.IsNullOrEmpty(contentType) || (!contentType.Equals("application/xml") && !contentType.Equals("application/json") && !contentType.Equals("text/plain")))
                     return Request.CreateErrorResponse(HttpStatusCode.PreconditionFailed, "The transmitted file is not a xml document.");
 
                 if (requestStream == null)
@@ -102,11 +107,6 @@ namespace BExIS.Modules.Dim.UI.Controllers
                 // check incomming values
 
                 if (id == 0) error += "dataset id should be greater then 0.";
-                ////if (data.UpdateMethod == null) error += "update method is not set";
-                ////if (data.Count == 0) error += "count should be greater then 0. ";
-                //if (data.Columns == null) error += "cloumns should not be null. ";
-                //if (data.Data == null) error += "data is empty. ";
-                //if (data.PrimaryKeys == null || data.PrimaryKeys.Count() == 0) error += "the UpdateMethod update has been selected but there are no primary keys available. ";
 
                 if (!string.IsNullOrEmpty(error))
                     return Request.CreateErrorResponse(HttpStatusCode.PreconditionFailed, error);
@@ -118,34 +118,97 @@ namespace BExIS.Modules.Dim.UI.Controllers
                     return Request.CreateErrorResponse(HttpStatusCode.PreconditionFailed, "Dataset not exist.");
 
                 #region convert metadata
+                XmlDocument completeMetadata = null;
 
-                XmlDocument metadataForImport = new XmlDocument();
-                metadataForImport.Load(requestStream);
+                if (contentType.Equals("application/xml"))
+                {
+                    #region application/xml
 
-                // metadataStructure ID
-                var metadataStructureId = dataset.MetadataStructure.Id;
-                var metadataStructrueName = this.GetUnitOfWork().GetReadOnlyRepository<MetadataStructure>().Get(metadataStructureId).Name;
+                    XmlDocument metadataForImport = new XmlDocument();
+                    metadataForImport.Load(requestStream);
 
-                // loadMapping file
-                var path_mappingFile = Path.Combine(AppConfiguration.GetModuleWorkspacePath("DIM"), XmlMetadataImportHelper.GetMappingFileName(metadataStructureId, TransmissionType.mappingFileImport, metadataStructrueName));
+                    // metadataStructure ID
+                    var metadataStructureId = dataset.MetadataStructure.Id;
+                    var metadataStructrueName = this.GetUnitOfWork().GetReadOnlyRepository<MetadataStructure>().Get(metadataStructureId).Name;
 
-                // XML mapper + mapping file
-                var xmlMapperManager = new XmlMapperManager(TransactionDirection.ExternToIntern);
-                xmlMapperManager.Load(path_mappingFile, "IDIV");
+                    // loadMapping file
+                    var path_mappingFile = Path.Combine(AppConfiguration.GetModuleWorkspacePath("DIM"), XmlMetadataImportHelper.GetMappingFileName(metadataStructureId, TransmissionType.mappingFileImport, metadataStructrueName));
 
-                // generate intern metadata without internal attributes
-                var metadataResult = xmlMapperManager.Generate(metadataForImport, 1, true);
+                    // XML mapper + mapping file
+                    var xmlMapperManager = new XmlMapperManager(TransactionDirection.ExternToIntern);
+                    xmlMapperManager.Load(path_mappingFile, "IDIV");
 
-                // generate intern template metadata xml with needed attribtes
-                var xmlMetadatWriter = new XmlMetadataWriter(BExIS.Xml.Helpers.XmlNodeMode.xPath);
-                var metadataXml = xmlMetadatWriter.CreateMetadataXml(metadataStructureId,
-                    XmlUtility.ToXDocument(metadataResult));
+                    // generate intern metadata without internal attributes
+                    var metadataResult = xmlMapperManager.Generate(metadataForImport, 1, true);
 
-                var metadataXmlTemplate = XmlMetadataWriter.ToXmlDocument(metadataXml);
+                    // generate intern template metadata xml with needed attribtes
+                    var xmlMetadatWriter = new XmlMetadataWriter(BExIS.Xml.Helpers.XmlNodeMode.xPath);
+                    var metadataXml = xmlMetadatWriter.CreateMetadataXml(metadataStructureId,
+                        XmlUtility.ToXDocument(metadataResult));
 
-                // set attributes FROM metadataXmlTemplate TO metadataResult
-                var completeMetadata = XmlMetadataImportHelper.FillInXmlValues(metadataResult,
-                    metadataXmlTemplate);
+                    var metadataXmlTemplate = XmlMetadataWriter.ToXmlDocument(metadataXml);
+
+                    // set attributes FROM metadataXmlTemplate TO metadataResult
+                    completeMetadata = XmlMetadataImportHelper.FillInXmlValues(metadataResult,
+                        metadataXmlTemplate);
+
+                    #endregion
+                }
+                else
+                if (contentType.Equals("application/json"))
+                {
+                    #region  application/json
+
+                    using (var streamReader = new StreamReader(requestStream))
+                    using( var jsonReader = new JsonTextReader(streamReader))
+                    { 
+                        JsonSerializer serializer = new JsonSerializer();
+
+                        try
+                        {
+                            JObject metadataJson = serializer.Deserialize<JObject>(jsonReader);
+
+                            long mdid = 0;
+                            if (metadataJson.ContainsKey("@id"))
+                            {
+                                if (Int64.TryParse(metadataJson.Property("@id").Value.ToString(), out mdid))
+                                {
+                                    MetadataStructureConverter metadataStructureConverter = new MetadataStructureConverter();
+                                    JSchema schema = metadataStructureConverter.ConvertToJsonSchema(mdid);
+
+                                    XmlMetadataConverter converter = new XmlMetadataConverter();
+
+                                    List<string> notAllowedElements = new List<string>();
+                                    if (converter.HasValidStructure(metadataJson, mdid, out notAllowedElements))
+                                    {
+                                        completeMetadata = converter.ConvertTo(metadataJson);
+                                    }
+                                    else
+                                    {
+                                        return Request.CreateErrorResponse(HttpStatusCode.ExpectationFailed, "the json does not have the expected structure");
+                                    }
+                                }
+                                else
+                                {
+                                    return Request.CreateErrorResponse(HttpStatusCode.ExpectationFailed, "the json does not have the expected structure");
+                                }
+                            }
+                            else
+                            {
+                                return Request.CreateErrorResponse(HttpStatusCode.ExpectationFailed, "the json does not contain any information about the metadata structure");
+                            }
+
+                            
+
+                        }
+                        catch (JsonReaderException)
+                        {
+                            Console.WriteLine("Invalid JSON.");
+                        }
+
+                    }
+                    #endregion
+                }
 
                 #endregion convert metadata
 
@@ -174,12 +237,6 @@ namespace BExIS.Modules.Dim.UI.Controllers
                         datasetManager.CheckInDataset(id, "via API", user.Name, ViewCreationBehavior.None);
                     }
 
-                    // ToDo add Index update to this api
-                    //if (this.IsAccessible("DDM", "SearchIndex", "ReIndexSingle"))
-                    //{
-                    //    var x = this.Run("DDM", "SearchIndex", "ReIndexSingle", new RouteValueDictionary() { { "id", datasetId } });
-                    //}
-
                     LoggerFactory.LogData(id.ToString(), typeof(Dataset).Name, Vaiona.Entities.Logging.CrudState.Created);
 
                     var es = new EmailService();
@@ -189,7 +246,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
                         );
                 }
 
-                return Request.CreateErrorResponse(HttpStatusCode.OK, "Metadata successfully updated ");
+                return Request.CreateErrorResponse(HttpStatusCode.OK, "Metadata successfully updated via api.");
             }
             catch (Exception ex)
             {

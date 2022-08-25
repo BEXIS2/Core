@@ -52,7 +52,7 @@ namespace BExIS.Modules.Sam.UI.Controllers
             {
                 if (!ModelState.IsValid) return PartialView("_Create", model);
 
-                var user = new User { UserName = model.UserName,FullName = model.UserName, Email = model.Email };
+                var user = new User { UserName = model.UserName,FullName = model.UserName, Email = model.Email.Trim() };
 
                 var result = await identityUserService.CreateAsync(user);
                 if (result.Succeeded)
@@ -188,7 +188,7 @@ namespace BExIS.Modules.Sam.UI.Controllers
                 if (user == null) return PartialView("_Update", model);
 
                 // if the email is changed, the system needs to check, if the incoming email allready exist by a other user or not
-                if (user.Email != model.Email)
+                if (user.Email.Trim() != model.Email.Trim())
                 {
                     // check duplicate email cause of client validation is not working in a telerik window :(
                     var duplicateUser = userManager.FindByEmailAsync(model.Email).Result;
@@ -201,7 +201,7 @@ namespace BExIS.Modules.Sam.UI.Controllers
                         ConfigurationManager.AppSettings["SystemEmail"]
                         );
                 }
-                user.Email = model.Email;
+                user.Email = model.Email.Trim();
 
                 // Update email in party
                 if (ConfigurationManager.AppSettings["usePersonEmailAttributeName"] == "true")

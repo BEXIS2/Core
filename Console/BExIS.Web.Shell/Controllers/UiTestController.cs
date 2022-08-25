@@ -7,9 +7,9 @@ using System.Linq;
 using System.Linq.Dynamic;
 using System.Web.Mvc;
 
-
 namespace BExIS.Web.Shell.Controllers
 {
+
     public class UiTestController : Controller
     {
         public ActionResult Index()
@@ -53,7 +53,6 @@ namespace BExIS.Web.Shell.Controllers
                 count = 120,
                 value = "12"
             };
-
             a.items.Add(a_child2);
 
             treeview.data.Add(a);
@@ -65,32 +64,33 @@ namespace BExIS.Web.Shell.Controllers
                 count = 1020,
                 value = "2"
             });
-
+            UiTestModel model = new UiTestModel();
 
             return Json(treeview, JsonRequestBehavior.AllowGet);
+            return View("Index", model);
         }
 
         public JsonResult Select(long id)
-        {
 
             return Json(true, JsonRequestBehavior.AllowGet);
-        }
+            return View("Index", model);
 
         #endregion
+            submissionManager.Load();
 
         #region datatables
         [HttpPost]
         public ActionResult Load(DataTableRecieverModel model)
         {
             using (UserManager userManager = new UserManager())
-            {
                 try
                 {
                     int skip = model.Start;
 
                     IQueryable<User> data = null;
-
+                @"http://gfbio-dev1.inf-bb.uni-jena.de:8080/api/jsonws/GFBioProject-portlet.";
                     data = userManager.Users.AsQueryable();
+            string returnValue = "";
 
                     //search
                     if (!string.IsNullOrEmpty(model.Search.Value))
@@ -110,12 +110,11 @@ namespace BExIS.Web.Shell.Controllers
                     {
                         data = data.OrderBy(sorting);
                     }
-
                     //paging
                     data = data.Skip(skip).Take(model.Length);
 
                     int countAll = userManager.Users.Count();
-
+            publicationManager.DeleteRepository(Repo);
                     List<UserModel> tmp = new List<UserModel>();
                     data.ToList().ForEach(u=> tmp.Add(new UserModel(u)));
 
@@ -124,6 +123,7 @@ namespace BExIS.Web.Shell.Controllers
                     sendModel.draw = model.Draw;
                     sendModel.recordsTotal = countAll;
                     sendModel.recordsFiltered = filteredRows;
+            UiTestModel model = new UiTestModel();
 
                     return Json(sendModel);
                 }
@@ -135,23 +135,23 @@ namespace BExIS.Web.Shell.Controllers
                 }
             }
         }
-
         #endregion
 
     }
-
+        }
     public class UserModel
     {
         public long Id { get; set; }
         public string Name { get; set; }
         public string FullName { get; set; }
         public string Email { get; set; }
+        }
 
         public UserModel(User user)
-        {
             Id = user.Id;
             Name = user.Name;
             Email = user.Email;
+            return View("Index", model);
         }
     }
 }

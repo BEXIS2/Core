@@ -5,7 +5,7 @@ using Vaiona.Persistence.Api;
 
 namespace BExIS.Security.Services.Objects
 {
-    public class OperationManager: IDisposable
+    public class OperationManager : IDisposable
     {
         private readonly IUnitOfWork _guow;
         private bool _isDisposed;

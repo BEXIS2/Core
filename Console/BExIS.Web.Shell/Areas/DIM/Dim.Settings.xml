@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <settings>
-	<entry key="help" value="https://github.com/BEXIS2/Documents/blob/2.14.6/Manuals/DIM/Manual.md" type="String"/>
-
+	<entry key="help" value="https://github.com/BEXIS2/Documents/blob/2.15/Manuals/DIM/Manual.md" type="String"/>
 	<datacite>
 		<entry name="proxy" value="https://train.bexis2.uni-jena.de/" />
 		<entry name="token" value="mhNTaJCzHsLbquWjHLvPrv9mR3Wg6Uwmo5mkwmhwBWgrmhWZwskSY4B6vz4si7mt" />

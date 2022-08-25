@@ -1,7 +1,12 @@
-﻿using BExIS.Dlm.Entities.MetadataStructure;
+﻿using BExIS.Dlm.Entities.Common;
+using BExIS.Dlm.Entities.MetadataStructure;
+using BExIS.Dlm.Services.MetadataStructure;
 using BExIS.Utils.Models;
+using Newtonsoft.Json.Linq;
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Xml;
 using System.Xml.Linq;
 using Vaiona.Persistence.Api;
 
@@ -41,5 +46,7 @@ namespace BExIS.Xml.Helpers
                 return list;
             }
         }
+
+        
     }
 }

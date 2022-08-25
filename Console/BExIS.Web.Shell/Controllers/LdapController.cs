@@ -6,7 +6,6 @@ using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin.Security;
 using System;
-using System.Configuration;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Web;
@@ -40,7 +39,7 @@ namespace BExIS.Web.Shell.Controllers
                 {
                     if (user.Logins.Any(l => l.LoginProvider == "Ldap"))
                     {
-                        if(string.IsNullOrEmpty(user.Email))
+                        if (string.IsNullOrEmpty(user.Email))
                         {
                             ViewBag.ReturnUrl = returnUrl;
                             return View("Confirm", LoginConfirmModel.Convert(user));

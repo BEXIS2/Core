@@ -1,6 +1,8 @@
 using BExIS.Web.Shell;
 using Swashbuckle.Application;
+using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Web.Http;
 using WebActivatorEx;
 
@@ -44,7 +46,7 @@ namespace BExIS.Web.Shell
         {
             string path = string.Format(@"{0}\App_Data\api_documentation.xml", System.AppDomain.CurrentDomain.BaseDirectory);
 
-            return path;
+            return  path;
         }
     }
 }

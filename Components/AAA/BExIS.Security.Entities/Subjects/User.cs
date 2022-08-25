@@ -31,12 +31,12 @@ namespace BExIS.Security.Entities.Subjects
         public virtual DateTime RegistrationDate { get; set; }
         public virtual string Token { get; set; }
 
-
         public virtual string UserName
         {
             get { return Name; }
             set { Name = value; }
         }
+
         public virtual string FullName
         {
             get { return DisplayName; }

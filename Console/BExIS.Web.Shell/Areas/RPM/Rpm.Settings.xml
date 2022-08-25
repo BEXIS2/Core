@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <settings>
-  <entry key="help" value="https://github.com/BEXIS2/Documents/blob/2.14.6/Manuals/RPM/Manual.md" type="String" description="URL to manual"/>
+  <entry key="help" value="https://github.com/BEXIS2/Documents/blob/2.14.6/Manuals/RPM/Manual.md" type="String"/>
   <missingValues>
     <missingValue>
       <placeholder>na</placeholder>

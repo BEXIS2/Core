@@ -2,13 +2,11 @@
 
 namespace BExIS.Web.Shell.Helpers
 {
-
     public class CustomViewEngine : RazorViewEngine
     {
         public CustomViewEngine()
         {
             var viewLocations = new[] {
-
             "~/Areas/{2}/Views/{1}/{0}.cshtml",
             "~/Areas/{2}/Views/Shared/{0}.cshtml",
             "~/Areas/{2}/UI/Views/{1}/{0}.cshtml",
