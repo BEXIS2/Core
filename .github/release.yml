@@ -10,15 +10,15 @@ changelog:
     - title: Features
       labels:
         - EPIC
-        - Feature
+        - feature
         
     - title: Bugs
       labels:
-        - Type: Type: Bug
+        - bug
         
     - title: Enhancement
       labels:
-        - Type: Type: Enhancement
+        - enhancement
 
     - title: Other Changes
       labels:
