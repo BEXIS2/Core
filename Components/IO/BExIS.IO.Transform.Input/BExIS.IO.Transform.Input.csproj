@@ -10,7 +10,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>BExIS.IO.Transform.Input</RootNamespace>
     <AssemblyName>BExIS.IO.Transform.Input</AssemblyName>
-    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
     <SccProjectName>SAK</SccProjectName>
@@ -65,11 +65,11 @@
     </Reference>
     <Reference Include="System.Xml" />
     <Reference Include="Vaiona.Entities">
-      <HintPath>..\..\..\Libraries\Vaiona\Vaiona.Entities.dll</HintPath>
+      <HintPath>..\..\Vaiona\Vaiona.Entities\bin\Debug\Vaiona.Entities.dll</HintPath>
     </Reference>
     <Reference Include="Vaiona.Logging, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\Libraries\Vaiona\Vaiona.Logging.dll</HintPath>
+      <HintPath>..\..\Vaiona\Vaiona.Logging\bin\Debug\Vaiona.Logging.dll</HintPath>
     </Reference>
     <Reference Include="WindowsBase" />
   </ItemGroup>

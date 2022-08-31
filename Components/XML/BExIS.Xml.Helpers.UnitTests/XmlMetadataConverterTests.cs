@@ -1,18 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Xml;
-using System.Xml.Linq;
-using BExIS.App.Testing;
+﻿using BExIS.App.Testing;
 using BExIS.Utils.Config;
 using BEXIS.JSON.Helpers;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Newtonsoft.Json.Schema;
 using NUnit.Framework;
-using Vaiona.Utils.Cfg;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Text;
+using System.Xml;
+using System.Xml.Linq;
 using Assert = NUnit.Framework.Assert;
 
 namespace BExIS.Xml.Helpers.UnitTests
@@ -250,7 +249,7 @@ namespace BExIS.Xml.Helpers.UnitTests
 
                 string json = r.ReadToEnd();
                 JObject metadataInputJson = JObject.Parse(json);
-                
+
                 //Act
                 XmlMetadataConverter xmlMetadataConverter = new XmlMetadataConverter();
                 List<string> errors = new List<string>();
@@ -271,7 +270,7 @@ namespace BExIS.Xml.Helpers.UnitTests
             List<String> errors = new List<string>();
 
             //Act & Assert
-            Assert.That(() => xmlMetadataHelper.HasValidStructure(null,1,out errors), Throws.ArgumentNullException);
+            Assert.That(() => xmlMetadataHelper.HasValidStructure(null, 1, out errors), Throws.ArgumentNullException);
         }
 
         [Test()]
@@ -303,7 +302,7 @@ namespace BExIS.Xml.Helpers.UnitTests
 
             // Assert
             Assert.IsFalse(valid, "The result of the function should be false, but is true");
-            Assert.That(errors.Count,Is.EqualTo(4), "The number of errors should be 4");
+            Assert.That(errors.Count, Is.EqualTo(4), "The number of errors should be 4");
 
         }
     }

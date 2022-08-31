@@ -10,10 +10,11 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>BExIS.Dim.Helpers</RootNamespace>
     <AssemblyName>BExIS.Dim.Helpers</AssemblyName>
-    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <NuGetPackageImportStamp>
     </NuGetPackageImportStamp>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -78,17 +79,14 @@
     <Reference Include="System.Xml" />
     <Reference Include="Vaiona.Entities, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\Libraries\Vaiona\Vaiona.Entities.dll</HintPath>
+      <HintPath>..\..\..\Components\Vaiona\Vaiona.Entities\bin\Debug\Vaiona.Entities.dll</HintPath>
     </Reference>
     <Reference Include="Vaiona.Logging, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\Libraries\Vaiona\Vaiona.Logging.dll</HintPath>
-    </Reference>
-    <Reference Include="Vaiona.Persistence.Api, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
-      <HintPath>..\..\..\..\BEXIS2GIT\Libraries\Vaiona\Vaiona.Persistence.Api.dll</HintPath>
+      <HintPath>..\..\..\Components\Vaiona\Vaiona.Logging\bin\Debug\Vaiona.Logging.dll</HintPath>
     </Reference>
     <Reference Include="Vaiona.Utils">
-      <HintPath>..\..\..\Libraries\Vaiona\Vaiona.Utils.dll</HintPath>
+      <HintPath>..\..\..\Components\Vaiona\Vaiona.Utils\bin\Debug\Vaiona.Utils.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -134,6 +132,10 @@
     <ProjectReference Include="..\..\..\Components\IO\BExIS.IO\BExIS.IO.csproj">
       <Project>{e4795f06-20c2-4c4c-a720-9a79896384df}</Project>
       <Name>BExIS.IO</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\Components\Vaiona\Vaiona.Persistence.Api\Vaiona.Persistence.Api.csproj">
+      <Project>{640bf81d-354a-4bf0-85fc-f0ad587cf8a2}</Project>
+      <Name>Vaiona.Persistence.Api</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\..\Components\XML\BExIS.Xml.Helpers\BExIS.Xml.Helpers.csproj">
       <Project>{252f7872-a69c-43a6-84b4-4d2abdbdd9ab}</Project>

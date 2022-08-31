@@ -2,8 +2,8 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Text.RegularExpressions;
 using System.Linq;
+using System.Text.RegularExpressions;
 
 namespace BExIS.Modules.Ddm.UI.Models
 {
@@ -86,7 +86,7 @@ namespace BExIS.Modules.Ddm.UI.Models
             sa.displayName = searchAttributeViewModel.displayName;
             sa.sourceName = Regex.Replace(searchAttributeViewModel.displayName, "[^0-9a-zA-Z]+", "");
 
-            sa.metadataName = String.Join(",", searchAttributeViewModel.metadataNames.Where(x=> !string.IsNullOrEmpty(x)).ToArray());
+            sa.metadataName = String.Join(",", searchAttributeViewModel.metadataNames.Where(x => !string.IsNullOrEmpty(x)).ToArray());
 
             //types
             sa.dataType = SearchAttribute.GetDataType(searchAttributeViewModel.dataType);

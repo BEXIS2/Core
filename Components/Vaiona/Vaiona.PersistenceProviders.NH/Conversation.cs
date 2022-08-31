@@ -3,9 +3,6 @@ using NHibernate.Cfg;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Vaiona.Persistence.Api;
 using Vaiona.Utils.Cfg;
 
@@ -192,7 +189,7 @@ namespace Vaiona.PersistenceProviders.NH
             try
             {
                 session = sessionFactory.GetCurrentSession();
-                if(session == null  && openIfNeeded) // && !AppConfiguration.IsWebContext)
+                if (session == null && openIfNeeded) // && !AppConfiguration.IsWebContext)
                 {
                     session = createSingletonSession(); // it is used in the cases where no HTTP request context is available and session per HTTP request does not work.
                 }
@@ -222,7 +219,7 @@ namespace Vaiona.PersistenceProviders.NH
             if (singletonSession == null)
             {
                 singletonSession = sessionFactory.OpenSession(cfg.Interceptor);
-            }            
+            }
             return singletonSession;
         }
 

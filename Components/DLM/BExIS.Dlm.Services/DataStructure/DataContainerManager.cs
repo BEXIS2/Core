@@ -1,13 +1,13 @@
-﻿using System;
+﻿using BExIS.Dlm.Entities.DataStructure;
+using BExIS.Dlm.Services.Helpers;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics.Contracts;
-using BExIS.Dlm.Entities.DataStructure;
 using Vaiona.Persistence.Api;
-using BExIS.Dlm.Services.Helpers;
 
 namespace BExIS.Dlm.Services.DataStructure
 {
-    public class DataContainerManager: IDisposable
+    public class DataContainerManager : IDisposable
     {
         ConstraintHelper helper = new ConstraintHelper();
 
@@ -38,7 +38,7 @@ namespace BExIS.Dlm.Services.DataStructure
                 {
                     if (guow != null)
                         guow.Dispose();
-                        isDisposed = true;
+                    isDisposed = true;
                 }
             }
         }
@@ -60,7 +60,7 @@ namespace BExIS.Dlm.Services.DataStructure
             Contract.Requires(container != null && container.Id >= 0);
 
             Contract.Ensures(Contract.Result<ExtendedProperty>() != null && Contract.Result<ExtendedProperty>().Id >= 0);
-          
+
             ExtendedProperty e = new ExtendedProperty()
             {
                 Name = name,
@@ -158,7 +158,7 @@ namespace BExIS.Dlm.Services.DataStructure
         {
             helper.SaveConstraint(constraint, container);
         }
-        
+
         public void RemoveConstraint(DomainConstraint constraint)
         {
             constraint.DataContainer = null;
@@ -173,17 +173,17 @@ namespace BExIS.Dlm.Services.DataStructure
 
         public void RemoveConstraint(RangeConstraint constraint)
         {
-            constraint.DataContainer = null; 
+            constraint.DataContainer = null;
             helper.Delete(constraint);
         }
 
         public void RemoveConstraint(ComparisonConstraint constraint)
         {
-            constraint.DataContainer = null; 
+            constraint.DataContainer = null;
             helper.Delete(constraint);
         }
-       
-        
+
+
         #endregion
 
     }

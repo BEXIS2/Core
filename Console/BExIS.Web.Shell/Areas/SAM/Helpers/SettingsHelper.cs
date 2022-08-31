@@ -1,9 +1,5 @@
 ﻿using BExIS.Xml.Helpers;
-using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Web;
 using System.Xml.Linq;
 using Vaiona.Utils.Cfg;
 
@@ -23,7 +19,7 @@ namespace BExIS.Modules.SAM.UI.Helpers
             XDocument settings = XDocument.Load(filePath);
             XElement element = XmlUtility.GetXElementByAttribute("entry", "key", key, settings);
 
-            return element != null?true:false;
+            return element != null ? true : false;
         }
 
         public string GetValue(string key)
@@ -36,7 +32,7 @@ namespace BExIS.Modules.SAM.UI.Helpers
             {
                 value = element.Attribute("value")?.Value;
             }
-           
+
             return value;
         }
     }

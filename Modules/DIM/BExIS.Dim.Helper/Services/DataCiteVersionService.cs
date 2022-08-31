@@ -1,9 +1,5 @@
 ﻿using BExIS.Dlm.Entities.Data;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace BExIS.Dim.Helpers.Services
 {
@@ -13,11 +9,11 @@ namespace BExIS.Dim.Helpers.Services
         {
             string version = null;
 
-            switch(type)
+            switch (type)
             {
                 case "Property":
 
-                    switch(value)
+                    switch (value)
                     {
                         case "Id":
 

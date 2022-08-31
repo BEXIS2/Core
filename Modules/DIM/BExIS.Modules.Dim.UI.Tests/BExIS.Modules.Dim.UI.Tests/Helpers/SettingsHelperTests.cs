@@ -1,17 +1,14 @@
-﻿using NUnit.Framework;
-using BExIS.App.Testing;
-using Vaiona.Utils.Cfg;
-using BExIS.Dim.Helpers.Models;
-using System.Linq;
-using RestSharp;
-using RestSharp.Authenticators;
-using BExIS.Modules.Dim.UI;
+﻿using BExIS.App.Testing;
+using BExIS.Dim.Helpers;
 using BExIS.Dlm.Entities.Data;
+using BExIS.Modules.Dim.UI.Helpers;
+using BExIS.Utils.Config;
 using Lucifron.ReST.Library.Models;
 using Newtonsoft.Json;
-using BExIS.Utils.Config;
-using BExIS.Modules.Dim.UI.Helpers;
-using BExIS.Dim.Helpers;
+using NUnit.Framework;
+using RestSharp;
+using RestSharp.Authenticators;
+using Vaiona.Utils.Cfg;
 
 namespace BExIS.Modules.Dim.UI.Tests.Helpers
 {
@@ -70,7 +67,7 @@ namespace BExIS.Modules.Dim.UI.Tests.Helpers
             // DOI
             var placeholders = settingsHelper.GetDataCiteSettings("placeholders");
 
-            var x = new DatasetVersion() { Id = 1337, VersionName = "abc", VersionNo = 111, Dataset = new Dataset() { Id = 42} };
+            var x = new DatasetVersion() { Id = 1337, VersionName = "abc", VersionNo = 111, Dataset = new Dataset() { Id = 42 } };
 
             var p = datacitedoihelper.CreatePlaceholders(x, placeholders);
 

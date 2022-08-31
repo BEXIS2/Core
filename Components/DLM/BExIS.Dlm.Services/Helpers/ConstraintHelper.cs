@@ -1,6 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using BExIS.Dlm.Entities.DataStructure;
+using System.Collections.Generic;
 using System.Diagnostics.Contracts;
-using BExIS.Dlm.Entities.DataStructure;
 using Vaiona.Persistence.Api;
 
 namespace BExIS.Dlm.Services.Helpers
@@ -340,6 +340,6 @@ namespace BExIS.Dlm.Services.Helpers
         }
 
         #endregion
-    
+
     }
 }

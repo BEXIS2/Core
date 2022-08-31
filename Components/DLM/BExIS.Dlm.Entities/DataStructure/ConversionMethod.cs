@@ -9,7 +9,7 @@ namespace BExIS.Dlm.Entities.DataStructure
     ///
     /// </summary>
     /// <remarks></remarks>        
-    public class ConversionMethod: BaseEntity
+    public class ConversionMethod : BaseEntity
     {
         #region Attributes
 
@@ -36,7 +36,7 @@ namespace BExIS.Dlm.Entities.DataStructure
         /// </summary>
         /// <remarks></remarks>
         /// <seealso cref=""/>        
-        public virtual Unit Source{ get; set; }
+        public virtual Unit Source { get; set; }
 
         /// <summary>
         ///
@@ -44,7 +44,7 @@ namespace BExIS.Dlm.Entities.DataStructure
         /// <remarks></remarks>
         /// <seealso cref=""/>        
         public virtual Unit Target { get; set; }
-        
+
         #endregion
 
         #region Mathods

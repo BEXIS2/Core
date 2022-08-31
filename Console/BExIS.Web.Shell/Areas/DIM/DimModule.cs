@@ -1,8 +1,5 @@
 ﻿using BExIS.Modules.Dim.UI.Helpers;
-using BExIS.Modules.Dim.UI.Models;
 using System;
-using System.Net.Http.Formatting;
-using System.Web.Http;
 using Vaiona.Logging;
 using Vaiona.Web.Mvc.Modularity;
 

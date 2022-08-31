@@ -15,12 +15,10 @@ using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Web.Mvc;
-using System.Web.Routing;
 using Telerik.Web.Mvc;
 using Vaiona.Persistence.Api;
 using Vaiona.Web.Extensions;
 using Vaiona.Web.Mvc.Models;
-using Vaiona.Web.Mvc.Modularity;
 
 namespace BExIS.Modules.Ddm.UI.Controllers
 {
@@ -191,7 +189,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                 foreach (var dsv in datasetVersions)
                 {
                     var datasetId = dsv.Dataset.Id;
-                    
+
                     //get permissions
                     int rights = entityPermissionManager.GetEffectiveRights(user?.Id, entity.Id, datasetId);
 
@@ -203,7 +201,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
 
                         if (datasetManager.IsDatasetCheckedIn(datasetId))
                         {
-                            
+
                             string title = dsv.Title;
                             string description = dsv.Description;
 
@@ -229,7 +227,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                         //rowArray[6] = (rights & (int)RightType.Download) > 0 ? "✔" : "✘";
                         rowArray[6] = (rights & (int)RightType.Grant) > 0 ? "✔" : "✘";
                         rowArray[7] = isValid;
-                        
+
                         dataRow = model.NewRow();
                         dataRow.ItemArray = rowArray;
                         model.Rows.Add(dataRow);
@@ -299,15 +297,15 @@ namespace BExIS.Modules.Ddm.UI.Controllers
 
                         foreach (var partyId in partyIds)
                         {
-                            if(entityPartyIds.Contains(partyId))
+                            if (entityPartyIds.Contains(partyId))
                             {
                                 long datasetId = 0;
                                 var success = long.TryParse(partyManager.Find(partyId).Name, out datasetId);
-                                if(success && !datasetIds.Contains(datasetId))
+                                if (success && !datasetIds.Contains(datasetId))
                                 {
                                     datasetIds.Add(datasetId);
                                 }
-                            } 
+                            }
                         }
                     }
                 }

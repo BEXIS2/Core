@@ -1,6 +1,4 @@
 using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Vaiona.Core.Serialization
 {
@@ -12,12 +10,12 @@ namespace Vaiona.Core.Serialization
     [AttributeUsage(AttributeTargets.Class | AttributeTargets.Struct)]
     public class ObjGraphXmlSerializationOptionsAttribute : Attribute
     {
-        public ObjGraphXmlSerializer.SerializationOptions SerializationOptions = new ObjGraphXmlSerializer.SerializationOptions();        
+        public ObjGraphXmlSerializer.SerializationOptions SerializationOptions = new ObjGraphXmlSerializer.SerializationOptions();
 
         public ObjGraphXmlSerializationOptionsAttribute(bool useTypeCache, bool useGraphSerialization)
         {
             SerializationOptions.UseTypeCache = useTypeCache;
-            SerializationOptions.UseGraphSerialization = useGraphSerialization;            
+            SerializationOptions.UseGraphSerialization = useGraphSerialization;
         }
     }
 

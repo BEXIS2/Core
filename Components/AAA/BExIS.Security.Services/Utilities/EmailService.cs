@@ -1,4 +1,5 @@
-﻿using MailKit.Net.Smtp;
+﻿using BExIS.Utils.Config;
+using MailKit.Net.Smtp;
 using MailKit.Security;
 using Microsoft.AspNet.Identity;
 using MimeKit;
@@ -7,7 +8,6 @@ using System.Configuration;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using Vaiona.Utils.Cfg;
 
 namespace BExIS.Security.Services.Utilities
 {
@@ -58,8 +58,8 @@ namespace BExIS.Security.Services.Utilities
             if (destinations != null)
                 _destinations = destinations.Select(innerItem => innerItem != null ? innerItem.Trim() : null).ToList();
 
-            if (ccs!=null)
-                    _ccs = ccs.Select(innerItem => innerItem != null ? innerItem.Trim() : null).ToList();
+            if (ccs != null)
+                _ccs = ccs.Select(innerItem => innerItem != null ? innerItem.Trim() : null).ToList();
 
             if (bccs != null)
                 _bccs = bccs.Select(innerItem => innerItem != null ? innerItem.Trim() : null).ToList();
@@ -80,7 +80,7 @@ namespace BExIS.Security.Services.Utilities
                     mimeMessage.Bcc.AddRange(_bccs.Select(b => new MailboxAddress(b, b)));
                 if (replyTos != null)
                     mimeMessage.ReplyTo.AddRange(_replyTos.Select(r => new MailboxAddress(r, r)));
-                mimeMessage.Subject = AppConfiguration.ApplicationName + " - " + subject;
+                mimeMessage.Subject = GeneralSettings.ApplicationName + " - " + subject;
 
                 var builder = new BodyBuilder();
                 builder.HtmlBody = body;
@@ -117,7 +117,7 @@ namespace BExIS.Security.Services.Utilities
             {
                 mimeMessage.From.Add(new MailboxAddress(ConfigurationManager.AppSettings["Email_From_Name"], ConfigurationManager.AppSettings["Email_From_Address"]));
                 mimeMessage.To.Add(new MailboxAddress(message.Destination.Trim(), message.Destination.Trim()));
-                mimeMessage.Subject = AppConfiguration.ApplicationName + " - " + message.Subject;
+                mimeMessage.Subject = GeneralSettings.ApplicationName + " - " + message.Subject;
                 mimeMessage.Body = new TextPart(MimeKit.Text.TextFormat.Html) { Text = message.Body };
 
                 Send(mimeMessage);
@@ -130,7 +130,7 @@ namespace BExIS.Security.Services.Utilities
             {
                 mimeMessage.From.Add(new MailboxAddress(ConfigurationManager.AppSettings["Email_From_Name"], ConfigurationManager.AppSettings["Email_From_Address"]));
                 mimeMessage.To.Add(new MailboxAddress(message.Destination, message.Destination));
-                mimeMessage.Subject = AppConfiguration.ApplicationName + " - " + message.Subject;
+                mimeMessage.Subject = GeneralSettings.ApplicationName + " - " + message.Subject;
                 mimeMessage.Body = new TextPart(MimeKit.Text.TextFormat.Html) { Text = message.Body };
 
                 Send(mimeMessage);

@@ -1,8 +1,5 @@
 ﻿using BExIS.Dlm.Entities.Data;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using Vaiona.Entities.Common;
 
 /// <summary>
@@ -14,7 +11,7 @@ namespace BExIS.Dlm.Entities.MetadataStructure
     ///
     /// </summary>
     /// <remarks></remarks>        
-    public class MetadataStructure: BusinessEntity
+    public class MetadataStructure : BusinessEntity
     {
         #region Attributes
 
@@ -23,28 +20,28 @@ namespace BExIS.Dlm.Entities.MetadataStructure
         /// </summary>
         /// <remarks></remarks>
         /// <seealso cref=""/>        
-        public virtual string Name          { get; set; }
+        public virtual string Name { get; set; }
 
         /// <summary>
         ///
         /// </summary>
         /// <remarks></remarks>
         /// <seealso cref=""/>        
-        public virtual string Description   { get; set; }
+        public virtual string Description { get; set; }
 
         /// <summary>
         ///
         /// </summary>
         /// <remarks></remarks>
         /// <seealso cref=""/>        
-        public virtual string XsdFileName   { get; set; }
+        public virtual string XsdFileName { get; set; }
 
         /// <summary>
         ///
         /// </summary>
         /// <remarks></remarks>
         /// <seealso cref=""/>        
-        public virtual string XslFileName   { get; set; }
+        public virtual string XslFileName { get; set; }
 
         #endregion
 

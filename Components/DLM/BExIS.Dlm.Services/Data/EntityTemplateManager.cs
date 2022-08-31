@@ -1,15 +1,11 @@
 ﻿using BExIS.Dlm.Entities.Data;
 using System;
-using System.Collections.Generic;
 using System.Diagnostics.Contracts;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Vaiona.Persistence.Api;
 
 namespace BExIS.Dlm.Services.Data
 {
-    public  class EntityTemplateManager : IDisposable
+    public class EntityTemplateManager : IDisposable
     {
         private IUnitOfWork guow = null;
 
@@ -48,9 +44,9 @@ namespace BExIS.Dlm.Services.Data
 
         public EntityTemplate Create(EntityTemplate entityTemplate)
         {
-            if (entityTemplate == null) throw new ArgumentNullException("Entity template must not be null."); 
-            if (entityTemplate.EntityType == null) throw new ArgumentNullException("Entity type must not be null."); 
-            if (entityTemplate.MetadataStructure == null) throw new ArgumentNullException("MetadataStructure must not be null."); 
+            if (entityTemplate == null) throw new ArgumentNullException("Entity template must not be null.");
+            if (entityTemplate.EntityType == null) throw new ArgumentNullException("Entity type must not be null.");
+            if (entityTemplate.MetadataStructure == null) throw new ArgumentNullException("MetadataStructure must not be null.");
 
             using (IUnitOfWork uow = this.GetUnitOfWork())
             {
@@ -64,7 +60,7 @@ namespace BExIS.Dlm.Services.Data
                 }
                 catch (Exception ex)
                 {
-                    throw new Exception("EntityTemplate creation failed.",ex);
+                    throw new Exception("EntityTemplate creation failed.", ex);
                 }
 
             }
@@ -98,7 +94,7 @@ namespace BExIS.Dlm.Services.Data
 
         public bool Delete(long id)
         {
-            if (id == 0 ) throw new ArgumentException("Entity template must not be null.");
+            if (id == 0) throw new ArgumentException("Entity template must not be null.");
 
             Contract.Ensures(Contract.Result<EntityTemplate>() != null && Contract.Result<EntityTemplate>().Id >= 0);
 

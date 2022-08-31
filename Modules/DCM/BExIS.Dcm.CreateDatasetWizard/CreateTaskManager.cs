@@ -55,7 +55,7 @@ namespace BExIS.Dcm.CreateDatasetWizard
         //Action in Form
         public static string NO_IMPORT_ACTION = "NO_IMPORT_ACTION";
         public static string LOCKED = "LOCKED";
-        
+
         //Alternativ info text and title on top
         public static string INFO_ON_TOP_TITLE = "INFO_ON_TOP_TITLE";
         public static string INFO_ON_TOP_DESCRIPTION = "INFO_ON_TOP_DESCRIPTION";

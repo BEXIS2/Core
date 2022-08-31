@@ -13,23 +13,21 @@ using BExIS.Utils.Config;
 using BExIS.Xml.Helpers;
 using System;
 using System.Collections.Generic;
-using System.Configuration;
 using System.Diagnostics;
 using System.Linq;
 using System.Xml.Linq;
 using System.Xml.XPath;
-using Vaiona.IoC;
 using Vaiona.Persistence.Api;
 using Vaiona.Web.Mvc.Modularity;
 
 namespace BExIS.Modules.Dim.UI.Helpers
 {
 
-    
+
 
     public class DimSeedDataGenerator : IModuleSeedDataGenerator
     {
-        
+
 
         public void GenerateSeedData()
         {

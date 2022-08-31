@@ -79,7 +79,7 @@ namespace BExIS.Xml.Helpers
                     {
                         setValues(node, doc); // next level recursively
                     }
-                    
+
                 }
                 else
                 {

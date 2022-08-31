@@ -17,7 +17,6 @@ using Newtonsoft.Json.Linq;
 using Newtonsoft.Json.Schema;
 using System;
 using System.Collections.Generic;
-using System.Configuration;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -26,7 +25,6 @@ using System.Threading.Tasks;
 using System.Web.Http;
 using System.Web.Http.Description;
 using System.Xml;
-using Vaiona.IoC;
 using Vaiona.Logging;
 using Vaiona.Persistence.Api;
 using Vaiona.Utils.Cfg;
@@ -163,8 +161,8 @@ namespace BExIS.Modules.Dim.UI.Controllers
                     #region  application/json
 
                     using (var streamReader = new StreamReader(requestStream))
-                    using( var jsonReader = new JsonTextReader(streamReader))
-                    { 
+                    using (var jsonReader = new JsonTextReader(streamReader))
+                    {
                         JsonSerializer serializer = new JsonSerializer();
 
                         try
@@ -201,7 +199,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
                                 return Request.CreateErrorResponse(HttpStatusCode.ExpectationFailed, "the json does not contain any information about the metadata structure");
                             }
 
-                            
+
 
                         }
                         catch (JsonReaderException)

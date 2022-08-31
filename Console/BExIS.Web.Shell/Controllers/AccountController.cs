@@ -1,20 +1,15 @@
-﻿using BExIS.App.Bootstrap;
-using BExIS.Security.Entities.Subjects;
+﻿using BExIS.Security.Entities.Subjects;
 using BExIS.Security.Services.Authentication;
 using BExIS.Security.Services.Subjects;
 using BExIS.Security.Services.Utilities;
-using BExIS.Utils;
 using BExIS.Utils.Config;
 using BExIS.Web.Shell.Models;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin.Security;
-using System.Configuration;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
-using Vaiona.IoC;
-using Vaiona.Utils.Cfg;
 using Vaiona.Web.Extensions;
 using Vaiona.Web.Mvc.Models;
 using Vaiona.Web.Mvc.Modularity;
@@ -417,7 +412,7 @@ namespace BExIS.Web.Shell.Controllers
                 var policyUrl = Url.Action("Index", "PrivacyPolicy", null, Request.Url.Scheme);
                 var termsUrl = Url.Action("Index", "TermsAndConditions", null, Request.Url.Scheme);
 
-                
+
                 var applicationName = GeneralSettings.ApplicationName;
 
                 await identityUserService.SendEmailAsync(userId, subject,

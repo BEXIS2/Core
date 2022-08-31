@@ -50,6 +50,19 @@
       "value": false,
       "type": "Boolean",
       "description": "Set true to enable to only show metadata for not-loggedin users, if the dataset is public."
+    },
+    {
+      "key": "reduce_versions_select_logged_in",
+      "value": true,
+      "type": "Boolean",
+      "description": ".."
+    },
+    {
+      "key": "restrict_latest_version_logged_in",
+      "value": false,
+      "type": "Boolean",
+      "description": ".."
     }
+
   ]
 }

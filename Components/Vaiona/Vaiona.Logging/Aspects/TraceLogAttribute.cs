@@ -1,11 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using PostSharp.Aspects;
-using Vaiona.Utils.Cfg;
-using Vaiona.Entities.Logging;
+﻿using PostSharp.Aspects;
+using System;
 using System.Diagnostics;
+using Vaiona.Entities.Logging;
+using Vaiona.Utils.Cfg;
 
 namespace Vaiona.Logging.Aspects
 {

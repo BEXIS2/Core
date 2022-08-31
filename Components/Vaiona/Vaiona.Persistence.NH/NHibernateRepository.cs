@@ -1,8 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using NHibernate;
 using Vaiona.Persistence.Api;
 
 namespace Vaiona.Persistence.NH
@@ -13,7 +10,7 @@ namespace Vaiona.Persistence.NH
     /// <typeparam name="TEntity"></typeparam>
     public class NHibernateRepository<TEntity> : NHibernateReadonlyRepository<TEntity>, IRepository<TEntity> where TEntity : class
     {
-        public IUnitOfWork UnitOfWork { get { return(this.UoW as IUnitOfWork);}  }
+        public IUnitOfWork UnitOfWork { get { return (this.UoW as IUnitOfWork); } }
 
         internal NHibernateRepository(NHibernateUnitOfWork uow)
             : base(uow)
@@ -23,7 +20,7 @@ namespace Vaiona.Persistence.NH
         public bool IsTransient(object proxy)
         {
             bool? result = NHibernate.Engine.ForeignKeys.IsTransientSlow(proxy.GetType().FullName, proxy, (this.UnitOfWork as NHibernateUnitOfWork).Session.GetSessionImplementation());
-            return (result==null?false:(bool)result);
+            return (result == null ? false : (bool)result);
         }
 
         public TEntity Merge(TEntity entity)

@@ -1,12 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using NHibernate;
-using Vaiona.Persistence.Api;
-using NHibernate.Engine;
-using System.Diagnostics.Contracts;
+﻿using NHibernate;
+using System;
 using System.Collections;
+using System.Collections.Generic;
+using System.Diagnostics.Contracts;
+using Vaiona.Persistence.Api;
 
 namespace Vaiona.PersistenceProviders.NH
 {
@@ -32,7 +29,7 @@ namespace Vaiona.PersistenceProviders.NH
                 ((NHibernateUnitOfWork)UoW).Session.Merge<TEntity>(entity);
             return (entity);
         }
- 
+
         /// <summary>
         /// In Stateless Mode, it only INSERTs the entity
         /// </summary>
@@ -93,7 +90,7 @@ namespace Vaiona.PersistenceProviders.NH
         private bool putStateless(IStatelessSession session, IEnumerable<TEntity> entities)
         {
             try
-            { 
+            {
                 foreach (var entity in entities)
                 {
                     applyStateInfo(entity);
@@ -112,7 +109,7 @@ namespace Vaiona.PersistenceProviders.NH
                 {
                     applyStateInfo(entity);
                     applyAuditInfo(entity);
-                    if(!IsTransient(entity))
+                    if (!IsTransient(entity))
                         session.Lock(entity, LockMode.Read);
                     session.SaveOrUpdate(entity);
                 }

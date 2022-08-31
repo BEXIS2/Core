@@ -8,8 +8,6 @@ using Newtonsoft.Json.Schema;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace BEXIS.JSON.Helpers
 {
@@ -120,7 +118,7 @@ namespace BEXIS.JSON.Helpers
 
             MetadataAttribute type = null;
 
-            if(usage is MetadataAttributeUsage)
+            if (usage is MetadataAttributeUsage)
             {
                 type = ((MetadataAttributeUsage)usage).MetadataAttribute;
             }
@@ -167,7 +165,7 @@ namespace BEXIS.JSON.Helpers
                 currentText = addConstraints(currentText, type.Constraints);
 
                 //current.Properties.Add("@ref",currentRef);
-                current.Properties.Add("#text",currentText);
+                current.Properties.Add("#text", currentText);
 
             }
 
@@ -196,7 +194,7 @@ namespace BEXIS.JSON.Helpers
 
             // check if usage has cardinality >1 then create a array before
             if (usage.MaxCardinality > 1)
-            { 
+            {
                 JSchema array = new JSchema();
                 array.Type = JSchemaType.Array;
                 array.Items.Add(current);
@@ -298,7 +296,7 @@ namespace BEXIS.JSON.Helpers
                             current.MinimumLength = Convert.ToInt64(r.Lowerbound);
 
                             long max = 0;
-                            if(Int64.TryParse(r.Upperbound.ToString(), out max))
+                            if (Int64.TryParse(r.Upperbound.ToString(), out max))
                                 current.MaximumLength = max; //may not exist
                         }
                         else // numbers or other datatypes
@@ -325,5 +323,5 @@ namespace BEXIS.JSON.Helpers
 
             return current;
         }
-    } 
+    }
 }

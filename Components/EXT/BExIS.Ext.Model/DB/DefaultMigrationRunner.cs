@@ -1,14 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace BExIS.Ext.Model.DB
 {
     /// <summary>
     /// Runs the migrations against the target database, there should be other runners to i.e., generate scripts, etc
     /// </summary>
-    public class DefaultMigrationRunner: IMigrationRunner
+    public class DefaultMigrationRunner : IMigrationRunner
     {
         public DefaultMigrationRunner(object config) // the config can be a connection string, an ORM session, etc
         {

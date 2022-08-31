@@ -1,22 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Xml;
-using System.Linq;
-using System.Web;
-using System.Web.Mvc;
-using BExIS.Dlm.Entities.DataStructure;
-using BExIS.Dlm.Services.DataStructure;
-using BExIS.Dlm.Services.TypeSystem;
-using Vaiona.Persistence.Api;
-using Vaiona.Utils.Cfg;
-using System.Text.RegularExpressions;
-using Vaiona.Web.Mvc.Models;
-using BExIS.IO.DataType.DisplayPattern;
-using Vaiona.Web.Extensions;
-using BExIS.Modules.Rpm.UI.Models;
-using BExIS.IO.Transform.Output;
-using Vaiona.Web.Mvc;
+﻿using BExIS.Modules.Rpm.UI.Models;
 
 namespace BExIS.Modules.Rpm.UI.Controllers
 {
@@ -48,7 +30,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
             ViewBag.Title = PresentationModel.GetViewTitleForTenant("Manage Data Structures", this.Session.GetTenant());
             DataStructureDesignerModel DSDM = new DataStructureDesignerModel();
             DSDM.show = false;
-            
+
             setSessions();
 
             return View("DataStructureDesigner", DSDM);
@@ -62,9 +44,9 @@ namespace BExIS.Modules.Rpm.UI.Controllers
             Session["Structured"] = true;
             setSessions();
 
-            return View("DataStructureDesigner", DSDM); 
+            return View("DataStructureDesigner", DSDM);
         }
-        
+
         public ActionResult createUnStructuredDataStructure()
         {
             ViewBag.Title = PresentationModel.GetViewTitleForTenant("Create unstructured Data Structure", this.Session.GetTenant());
@@ -96,7 +78,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
 
         #region save Datastructure
 
-        public ActionResult saveDataStructure(DataStructureDesignerModel DSDM, string category,string order, string[] varName, long[] optional, long[] varId, string[] varDesc, long[] varUnit)
+        public ActionResult saveDataStructure(DataStructureDesignerModel DSDM, string category, string order, string[] varName, long[] optional, long[] varId, string[] varDesc, long[] varUnit)
         {
             DataStructureManager dsm = null;
             try
@@ -460,7 +442,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                 dataStructureManager.Dispose();
             }
         }
-     
+
         public ActionResult deleteDataStructure(long id)
         {
             bool structured = (bool)Session["Structured"];
@@ -478,7 +460,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
             //DialogResult result;
             //// Displays the MessageBox.
             //result = MessageBox.Show(message, caption, buttons);
-            using(DataStructureManager dataStructureManager = new DataStructureManager())
+            using (DataStructureManager dataStructureManager = new DataStructureManager())
             {
                 if (id != 0)
                 {
@@ -560,7 +542,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                 if (id != 0)
                 {
                     DSDM.GetDataStructureByID(id);
-                    
+
                     DSDM.dataAttributeList = dataAttributeManager.DataAttributeRepo.Get().ToList();
 
                     ViewBag.Title = PresentationModel.GetViewTitleForTenant("Add Variables to: " + DSDM.dataStructure.Name + " (Id: " + DSDM.dataStructure.Id + ")", this.Session.GetTenant());
@@ -586,7 +568,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
             long[][] selected = (long[][])Session["selected"];
 
             using (DataStructureManager dataStructureManager = new DataStructureManager())
-            using(DataContainerManager dataAttributeManager = new DataContainerManager())
+            using (DataContainerManager dataAttributeManager = new DataContainerManager())
             {
                 StructuredDataStructure dataStructure = dataStructureManager.StructuredDataStructureRepo.Get(id);
                 //StructuredDataStructure dataStructure = DSDM.GetDataStructureByID(id);
@@ -597,7 +579,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                     {
                         if (selected != null)
                         {
-                            
+
                             DataAttribute temp = new DataAttribute();
                             XmlDocument doc = (XmlDocument)dataStructure.Extra;
                             XmlNode order;
@@ -708,7 +690,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
         public ActionResult editVariable(string name, long id, string description, long dataStructureId, bool optional, long unitId)
         {
             DataStructureDesignerModel DSDM = new DataStructureDesignerModel();
-            string errorMsg = saveVariable(name, id,description, dataStructureId, optional, unitId);
+            string errorMsg = saveVariable(name, id, description, dataStructureId, optional, unitId);
             DSDM.GetDataStructureByID(dataStructureId);
             if (errorMsg != null && errorMsg != "")
             {
@@ -717,13 +699,13 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                 Session["VariableWindow"] = true;
                 Session["variableId"] = id;
                 return View("DataStructureDesigner", DSDM);
-                
+
             }
             setSessions();
             return View("DataStructureDesigner", DSDM);
         }
 
-        public string saveVariable(string name, long id,string description, long dataStructureId, bool optional, long unitId)
+        public string saveVariable(string name, long id, string description, long dataStructureId, bool optional, long unitId)
         {
             using (UnitManager unitManger = new UnitManager())
             using (DataStructureManager dataStructureManager = new DataStructureManager())
@@ -1025,10 +1007,10 @@ namespace BExIS.Modules.Rpm.UI.Controllers
         {
             IList<Classifier> classList = GetClassRepo().Get().ToList();
             Classifier Parent = new Classifier();
-            if(classList.Where(p => p.Name.Equals(ParentClassifier)).Count().Equals(0))
+            if (classList.Where(p => p.Name.Equals(ParentClassifier)).Count().Equals(0))
                 Parent = null;
             else
-                Parent = classList.Where(p => p.Name.Equals(ParentClassifier)).ToList().First();               
+                Parent = classList.Where(p => p.Name.Equals(ParentClassifier)).ToList().First();
 
             if (id == 0)
             {
@@ -1054,7 +1036,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                 }
             }
             else
-            {       
+            {
                 bool nameNotExist = classList.Where(p => p.Name.Equals(Model.Name)).Count().Equals(0);
                 if (nameNotExist && (Model.Name != "" && Model.Name != null))
                 {
@@ -1080,7 +1062,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                     Session["Window"] = true;
                 }
             }
-            
+
             Session["Class"] = new Classifier();
             return RedirectToAction(parent);
         }
@@ -1140,7 +1122,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
 
         public ActionResult DataTypeManager()
         {
-            ViewBag.Title = PresentationModel.GetViewTitleForTenant( "Manage Data Types", this.Session.GetTenant());
+            ViewBag.Title = PresentationModel.GetViewTitleForTenant("Manage Data Types", this.Session.GetTenant());
             if (Session["Window"] == null)
                 Session["Window"] = false;
 
@@ -1160,7 +1142,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
             }
         }
 
-        public ActionResult editDataType(DataTypeModel Model, long id,string systemType,string pattern, string parent)
+        public ActionResult editDataType(DataTypeModel Model, long id, string systemType, string pattern, string parent)
         {
             using (DataTypeManager dataTypeManager = new DataTypeManager())
             {
@@ -1282,7 +1264,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                         }
                     }
                 }
-               
+
 
                 Session["Window"] = false;
                 Session["DataType"] = new DataTypeModel();
@@ -1297,7 +1279,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
             {
                 Session["nameMsg"] = null;
                 Session["DataType"] = new DataTypeModel(id);
-                Session["Window"] = true;              
+                Session["Window"] = true;
             }
             else
             {
@@ -1366,7 +1348,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
             if (str != "" && str != null)
             {
                 str = str.Trim();
-                if(str.Length > 255)
+                if (str.Length > 255)
                     str = str.Substring(0, 255);
             }
             return (str);

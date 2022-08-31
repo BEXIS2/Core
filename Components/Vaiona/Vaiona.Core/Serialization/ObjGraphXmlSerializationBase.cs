@@ -1,10 +1,9 @@
 using System;
 using System.Collections.Generic;
-using System.Text;
+using System.Linq;
 using System.Reflection;
 using System.Xml;
 using System.Xml.Serialization;
-using System.Linq;
 
 namespace Vaiona.Core.Serialization
 {
@@ -34,7 +33,7 @@ namespace Vaiona.Core.Serialization
         /// It is used for de/serialization. ANy other applicatio/logic thta accesses the raw XML should handle this case.
         /// </summary>
         public static readonly string NULL_VALUE = "_null_null";
-        protected static Dictionary<Type, IDictionary<string, MemberInfo>> memberInfoCache = new Dictionary<Type, IDictionary<string, MemberInfo>>();        
+        protected static Dictionary<Type, IDictionary<string, MemberInfo>> memberInfoCache = new Dictionary<Type, IDictionary<string, MemberInfo>>();
 
         protected XmlDocument doc = new XmlDocument();
 
@@ -46,7 +45,7 @@ namespace Vaiona.Core.Serialization
             {
                 // fetch fields
                 MemberInfo[] members = objType.GetMembers(BindingFlags.Instance | BindingFlags.Public | BindingFlags.DeclaredOnly)
-                    .Where(p=>p.MemberType == MemberTypes.Property || p.MemberType == MemberTypes.Field).ToArray();
+                    .Where(p => p.MemberType == MemberTypes.Property || p.MemberType == MemberTypes.Field).ToArray();
 
                 //objType.GetProperties
                 Dictionary<string, MemberInfo> dict = new Dictionary<string, MemberInfo>(members.Length);
@@ -100,6 +99,6 @@ namespace Vaiona.Core.Serialization
             {
                 element.SetAttribute("typeid", TypeId.ToString());
             }
-        }        
+        }
     }
 }

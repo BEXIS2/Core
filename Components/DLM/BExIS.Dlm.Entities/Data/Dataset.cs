@@ -139,7 +139,7 @@ namespace BExIS.Dlm.Entities.Data
             Versions = new List<DatasetVersion>();
             Status = DatasetStatus.CheckedIn;
 
-           
+
         }
 
         //public override void Validate()

@@ -1,6 +1,5 @@
 ﻿using BExIS.App.Bootstrap.Attributes;
 using BExIS.Ext.Services;
-using BExIS.Utils;
 using BExIS.Utils.Config;
 using System;
 using System.Collections.Generic;
@@ -147,7 +146,7 @@ namespace BExIS.App.Bootstrap
             ModuleManager.StartModules();
 
             // generate settings
-            
+
         }
 
         private void initTenancy()

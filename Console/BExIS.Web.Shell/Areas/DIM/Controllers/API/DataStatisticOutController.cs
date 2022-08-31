@@ -145,13 +145,13 @@ namespace BExIS.Modules.Dim.UI.Controllers
                             object stats = new object();
 
                             DataTable dt = new DataTable("Varibales");
-                            
+
 
                             List<ApiDataStatisticModel> dataStatisticModels = new List<ApiDataStatisticModel>();
                             StructuredDataStructure structuredDataStructure = dataStructureManager.StructuredDataStructureRepo.Get(datasetVersion.Dataset.DataStructure.Id);
                             if (variableId == -1)
                             {
-                               
+
                                 foreach (VariableInstance vs in structuredDataStructure.Variables)
                                 {
                                     ApiDataStatisticModel dataStatisticModel = new ApiDataStatisticModel();
@@ -173,11 +173,11 @@ namespace BExIS.Modules.Dim.UI.Controllers
                                     dataStatisticModel.minLength = dt.Compute("Min(length)", string.Empty).ToString();
                                     dataStatisticModel.maxLength = dt.Compute("Max(length)", string.Empty).ToString();
                                     dataStatisticModel.count = dt.Compute("Sum(count)", string.Empty).ToString();
-                                    
+
                                     DataTable dtMissingValues = new DataTable("MissingValues");
                                     dtMissingValues.Columns.Add("placeholder", typeof(String));
                                     dtMissingValues.Columns.Add("displayName", typeof(String));
-                                    
+
                                     foreach (var missingValue in vs.MissingValues)
                                     {
                                         DataRow workRow = dtMissingValues.NewRow();
@@ -343,7 +343,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
 
         private string GetMin(DataTable missingValues, DataTable dt)
         {
-            for(var i = 0; i < dt.Rows.Count - 1; i++)
+            for (var i = 0; i < dt.Rows.Count - 1; i++)
             {
                 DataRow[] found = missingValues.Select("placeholder = '" + dt.Rows[i][0] + "'");
                 if (found.Length == 0)
@@ -358,7 +358,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
         private string GetMax(DataTable missingValues, DataTable dt)
         {
 
-            for(var i = dt.Rows.Count - 1; i > 0; i--)
+            for (var i = dt.Rows.Count - 1; i > 0; i--)
             {
                 DataRow[] found = missingValues.Select("placeholder = '" + dt.Rows[i][0] + "'");
                 if (found.Length == 0 && !string.IsNullOrEmpty(dt.Rows[i][0].ToString()))
@@ -367,7 +367,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
                 }
             }
 
-            return dt.Rows[dt.Rows.Count-1][0].ToString();
+            return dt.Rows[dt.Rows.Count - 1][0].ToString();
         }
 
     }

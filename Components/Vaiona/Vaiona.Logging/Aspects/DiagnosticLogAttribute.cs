@@ -1,12 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using PostSharp.Aspects;
-using Vaiona.Utils.Cfg;
-using Vaiona.Entities.Logging;
+﻿using PostSharp.Aspects;
+using System;
 using System.Diagnostics;
 using System.Reflection;
+using Vaiona.Entities.Logging;
+using Vaiona.Utils.Cfg;
 
 namespace Vaiona.Logging.Aspects
 {
@@ -52,7 +49,7 @@ namespace Vaiona.Logging.Aspects
             try
             {
                 ParameterInfo[] pms = args.Method.GetParameters();//.ToList().ForEach(p=> p.ToString())
-                strArray = Array.ConvertAll<ParameterInfo, string>(pms, new Converter<ParameterInfo, string>(delegate(ParameterInfo pmi) { return pmi.ToString(); }));
+                strArray = Array.ConvertAll<ParameterInfo, string>(pms, new Converter<ParameterInfo, string>(delegate (ParameterInfo pmi) { return pmi.ToString(); }));
                 mLog.Parameters = string.Join(", ", strArray);
             }
             catch (Exception ex) { }
@@ -60,7 +57,7 @@ namespace Vaiona.Logging.Aspects
             {
                 object[] argArray = args.Arguments.ToArray();
                 strArray = Array.ConvertAll<object, string>(argArray,
-                    new Converter<object, string>(delegate(object arg)
+                    new Converter<object, string>(delegate (object arg)
                         {
                             if (arg != null) return arg.ToString();
                             else return ("NULL");
@@ -69,7 +66,7 @@ namespace Vaiona.Logging.Aspects
                 mLog.ParameterValues = string.Join(", ", strArray);
             }
             catch (Exception ex) { }
-            mLog.ReturnType = args.ReturnValue != null ? args.ReturnValue.GetType().FullName: args.Method.GetType().Name;
+            mLog.ReturnType = args.ReturnValue != null ? args.ReturnValue.GetType().FullName : args.Method.GetType().Name;
             try
             {
                 if (args.ReturnValue != null)

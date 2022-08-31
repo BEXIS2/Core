@@ -1,21 +1,4 @@
-﻿using BExIS.Dlm.Entities.Data;
-using BExIS.Dlm.Entities.DataStructure;
-using BExIS.Dlm.Services.Data;
-using BExIS.Dlm.Services.DataStructure;
-using BExIS.Dlm.Services.TypeSystem;
-using BExIS.IO.DataType.DisplayPattern;
-using BExIS.Modules.Rpm.UI.Classes;
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.IO;
-using System.Linq;
-using System.Xml;
-using Vaiona.Persistence.Api;
-using Vaiona.Utils.Cfg;
-using Vaiona.Web.Mvc.Modularity;
-
-namespace BExIS.Modules.Rpm.UI.Models
+﻿namespace BExIS.Modules.Rpm.UI.Models
 {
     public struct ItemStruct
     {
@@ -58,8 +41,8 @@ namespace BExIS.Modules.Rpm.UI.Models
         {
             this.AttributeFilterDictionary = new Dictionary<string, AttributeFilterStruct>();
             AttributePreviewModel attributePreviewModel = new AttributePreviewModel().fill(false);
-           
-            this.AttributeFilterDictionary.Add("Data Type", new AttributeFilterStruct());          
+
+            this.AttributeFilterDictionary.Add("Data Type", new AttributeFilterStruct());
             this.AttributeFilterDictionary.Add("Unit", new AttributeFilterStruct());
             this.AttributeFilterDictionary.Add("Dimension", new AttributeFilterStruct());
 
@@ -68,7 +51,7 @@ namespace BExIS.Modules.Rpm.UI.Models
 
             foreach (AttributePreviewStruct aps in attributePreviewModel.AttributePreviews)
             {
-                
+
                 key = aps.DataType.ToLower().Replace(" ", "");
                 value = new FilterValueStruct();
 
@@ -240,7 +223,7 @@ namespace BExIS.Modules.Rpm.UI.Models
             this.DataType = "";
             this.Constraints = new Dictionary<long, string>();
             this.Attribute = new AttributePreviewStruct();
-            this.inUse = false;           
+            this.inUse = false;
             this.MissingValues = new List<MissingValueStruct>();
             this.DisplayPattern = "";
             this.isOptional = true;
@@ -368,12 +351,12 @@ namespace BExIS.Modules.Rpm.UI.Models
                         });
                     }
                 }
-                else if(missingValueManager.getPlaceholder(typeCode, this.Id) == null)
+                else if (missingValueManager.getPlaceholder(typeCode, this.Id) == null)
                 {
                     this.MissingValues = null;
                 }
 
-            if (getConstraints)
+                if (getConstraints)
                 {
                     if (variable.DataAttribute.Constraints != null)
                     {
@@ -588,7 +571,7 @@ namespace BExIS.Modules.Rpm.UI.Models
                                             }
                                         }
                                     }
-                                }                             
+                                }
                             }
                             finally
                             {

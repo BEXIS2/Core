@@ -1,16 +1,10 @@
 ﻿using BExIS.App.Bootstrap.Attributes;
 using BExIS.Dlm.Entities.Data;
 using BExIS.Dlm.Services.Data;
-using BExIS.Dlm.Services.MetadataStructure;
 using BExIS.Modules.Dcm.UI.Models.View;
 using BExIS.Security.Entities.Authorization;
-using BExIS.Security.Services.Objects;
 using BExIS.UI.Hooks;
-using BExIS.Xml.Helpers;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
 using System.Web.Mvc;
 
 namespace BExIS.Modules.Dcm.UI.Controllers
@@ -92,7 +86,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         {
             //throw new NotImplementedException();
 
-            return RedirectToAction("LoadMetadata", "Form", new {area="DCM", entityId = id, locked = true, created = false, fromEditMode = true });
+            return RedirectToAction("LoadMetadata", "Form", new { area = "DCM", entityId = id, locked = true, created = false, fromEditMode = true });
         }
 
         /// <summary>
@@ -140,7 +134,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         {
             //throw new NotImplementedException();
 
-            return RedirectToAction("ShowPreviewDataStructure", "Data", new { area = "DDM", datasetID = id});
+            return RedirectToAction("ShowPreviewDataStructure", "Data", new { area = "DDM", datasetID = id });
         }
 
 

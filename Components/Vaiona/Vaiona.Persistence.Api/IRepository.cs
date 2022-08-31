@@ -1,9 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Linq.Expressions;
-using System.Collections;
 
 namespace Vaiona.Persistence.Api
 {
@@ -13,7 +9,7 @@ namespace Vaiona.Persistence.Api
 
         TEntity Merge(TEntity entity);
         bool Put(TEntity entity);
-        bool Put(IEnumerable<TEntity> entities);        
+        bool Put(IEnumerable<TEntity> entities);
         bool Delete(TEntity entity);
         bool Delete(IEnumerable<TEntity> entities);
 

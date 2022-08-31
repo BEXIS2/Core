@@ -1,14 +1,14 @@
 ﻿using BExIS.Dlm.Services.Party;
+using BExIS.Modules.SAM.UI.Helpers;
 using BExIS.Security.Entities.Subjects;
 using BExIS.Security.Services.Subjects;
-using System.Collections.Generic;
-using System.Web.Mvc;
-using System.Web.Services;
 using BExIS.Security.Services.Utilities;
 using BEXIS.Modules.SAM.UI.Model;
-using BExIS.Modules.SAM.UI.Helpers;
-using System.Linq;
+using System.Collections.Generic;
 using System.Configuration;
+using System.Linq;
+using System.Web.Mvc;
+using System.Web.Services;
 
 namespace BEXIS.Modules.SAM.UI.Controllers
 {
@@ -133,7 +133,7 @@ namespace BEXIS.Modules.SAM.UI.Controllers
                 foreach (User user in userManager.Users)
                 {
                     var party = partyManager.GetPartyByUser(user.Id);
-                    if(party != null)
+                    if (party != null)
                         users.Add(new FormerMemberUserModel(user, false, party));
                     else
                         users.Add(new FormerMemberUserModel(user, false));

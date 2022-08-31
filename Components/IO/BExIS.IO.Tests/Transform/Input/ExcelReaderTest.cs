@@ -1,14 +1,6 @@
-﻿using BExIS.App.Testing;
-using BExIS.Dlm.Entities.DataStructure;
-using BExIS.Dlm.Tests.Helpers;
-using BExIS.IO.Transform.Input;
-using BExIS.Utils;
+﻿using BExIS.IO.Transform.Input;
 using NUnit.Framework;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace BExIS.IO.Tests.Transform.Input
 {

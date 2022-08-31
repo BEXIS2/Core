@@ -1,12 +1,10 @@
-﻿using BExIS.Dlm.Services.Data;
+﻿using BExIS.Dlm.Entities.Data;
+using BExIS.Dlm.Services.Data;
+using BExIS.Modules.Vim.UI.Models;
 using BExIS.Security.Services.Authorization;
-using System;
 using System.Collections.Generic;
-using System.Data;
 using System.Linq;
 using System.Web.Mvc;
-using BExIS.Modules.Vim.UI.Models;
-using BExIS.Dlm.Entities.Data;
 
 namespace BExIS.Modules.Vim.UI.Controllers
 {

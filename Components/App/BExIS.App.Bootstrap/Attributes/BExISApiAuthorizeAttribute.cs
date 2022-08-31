@@ -1,12 +1,12 @@
-﻿using BExIS.Security.Services.Authorization;
+﻿using BExIS.Security.Entities.Subjects;
+using BExIS.Security.Services.Authorization;
 using BExIS.Security.Services.Objects;
-using System.Web.Http;
-using System.Web.Http.Controllers;
-using System.Linq;
 using BExIS.Security.Services.Subjects;
 using System;
+using System.Linq;
 using System.Net.Http;
-using BExIS.Security.Entities.Subjects;
+using System.Web.Http;
+using System.Web.Http.Controllers;
 
 namespace BExIS.App.Bootstrap.Attributes
 {
@@ -24,7 +24,7 @@ namespace BExIS.App.Bootstrap.Attributes
                     User user = null;
 
                     // User
-                    switch(actionContext.Request.Headers.Authorization.Scheme)
+                    switch (actionContext.Request.Headers.Authorization.Scheme)
                     {
                         case "Basic":
                             var basic = actionContext.Request.Headers.Authorization?.ToString().Substring("Basic ".Length).Trim();
@@ -36,7 +36,7 @@ namespace BExIS.App.Bootstrap.Attributes
                             }
 
                             var name = System.Text.Encoding.UTF8.GetString(Convert.FromBase64String(basic)).Split(':')[0];
-                            if(name.Contains('@'))
+                            if (name.Contains('@'))
                             {
                                 user = userManager.FindByEmailAsync(name).Result;
                             }
@@ -45,7 +45,7 @@ namespace BExIS.App.Bootstrap.Attributes
                                 user = userManager.FindByNameAsync(name).Result;
                             }
 
-                            if(user == null)
+                            if (user == null)
                             {
                                 actionContext.Response = new HttpResponseMessage(System.Net.HttpStatusCode.Forbidden);
                                 actionContext.Response.Content = new StringContent("There is no user with the given username.");
@@ -71,7 +71,7 @@ namespace BExIS.App.Bootstrap.Attributes
                             }
 
                             var users = userManager.Users.Where(u => u.Token == token);
-                            if(users.Count() != 1)
+                            if (users.Count() != 1)
                             {
                                 actionContext.Response = new HttpResponseMessage(System.Net.HttpStatusCode.Forbidden);
                                 actionContext.Response.Content = new StringContent("The token is not valid.");
@@ -112,7 +112,7 @@ namespace BExIS.App.Bootstrap.Attributes
                     actionContext.ControllerContext.RouteData.Values.Add("user", user);
                     return;
                 }
-            } 
+            }
             catch (Exception ex)
             {
 

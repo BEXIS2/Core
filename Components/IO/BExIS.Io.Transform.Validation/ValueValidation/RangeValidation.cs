@@ -1,5 +1,5 @@
-﻿using System;
-using BExIS.IO.Transform.Validation.Exceptions;
+﻿using BExIS.IO.Transform.Validation.Exceptions;
+using System;
 
 /// <summary>
 ///
@@ -10,7 +10,7 @@ namespace BExIS.IO.Transform.Validation.ValueValidation
     ///
     /// </summary>
     /// <remarks></remarks>        
-    public class RangeValidation:IValueValidation
+    public class RangeValidation : IValueValidation
     {
         # region private
 
@@ -20,28 +20,28 @@ namespace BExIS.IO.Transform.Validation.ValueValidation
         private double min = 0;
         private double max = 0;
 
-            #region get
+        #region get
 
-            
-            public ValueType AppliedTo
+
+        public ValueType AppliedTo
+        {
+            get
             {
-                get
-                {
-                    return appliedTo;
-                }
+                return appliedTo;
             }
+        }
 
-            public string Name
-            {
-                get { return name; }
-            }
+        public string Name
+        {
+            get { return name; }
+        }
 
-            public string DataType
-            {
-                get { return dataType; }
-            }
+        public string DataType
+        {
+            get { return dataType; }
+        }
 
-            #endregion
+        #endregion
 
         #endregion
 
@@ -55,7 +55,7 @@ namespace BExIS.IO.Transform.Validation.ValueValidation
         /// <returns></returns>
         public Error Execute(object value, int row)
         {
-            if (value!=null && value.ToString()!="")
+            if (value != null && value.ToString() != "")
             {
                 if (dataType.Equals(TypeCode.Int16.ToString()) ||
                    dataType.Equals(TypeCode.Int32.ToString()))
@@ -92,7 +92,7 @@ namespace BExIS.IO.Transform.Validation.ValueValidation
         /// <param name="dataType"></param>
         /// <param name="min"></param>
         /// <param name="max"></param>
-        public RangeValidation(string name, string dataType , double min, double max)
+        public RangeValidation(string name, string dataType, double min, double max)
         {
             this.appliedTo = ValueType.All;
             this.min = min;

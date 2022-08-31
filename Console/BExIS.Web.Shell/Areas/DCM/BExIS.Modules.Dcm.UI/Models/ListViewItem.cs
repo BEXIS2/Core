@@ -24,7 +24,7 @@ namespace BExIS.Modules.Dcm.UI.Models
         }
     }
 
-    public class ListViewItemWithType:ListViewItem
+    public class ListViewItemWithType : ListViewItem
     {
         public string Type { get; set; }
 
@@ -33,7 +33,7 @@ namespace BExIS.Modules.Dcm.UI.Models
             Type = "No Type";
         }
 
-        public ListViewItemWithType(long id, string title, string description = "",string type = "")
+        public ListViewItemWithType(long id, string title, string description = "", string type = "")
         {
             Id = id;
             Title = title;

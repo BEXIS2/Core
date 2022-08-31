@@ -1,7 +1,6 @@
 ﻿using BExIS.App.Bootstrap.Attributes;
 using BExIS.Dlm.Entities.Data;
 using BExIS.Dlm.Services.Data;
-using BExIS.IO.Transform.Output;
 using BExIS.Modules.Dim.UI.Models.Api;
 using BExIS.Security.Entities.Authorization;
 using BExIS.Security.Entities.Subjects;
@@ -19,10 +18,7 @@ using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
-using System.Threading.Tasks;
 using System.Web.Http;
-using System.Web.Http.Description;
-using System.Xml;
 using Vaiona.Utils.Cfg;
 
 namespace BExIS.Modules.Dim.UI.Controllers
@@ -91,7 +87,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
                 try
                 {
                     #region is public
-    
+
                     long? entityTypeId = entityManager.FindByName(typeof(Dataset).Name)?.Id;
                     entityTypeId = entityTypeId.HasValue ? entityTypeId.Value : -1;
 

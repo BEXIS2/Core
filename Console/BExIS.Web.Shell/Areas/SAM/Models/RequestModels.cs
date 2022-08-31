@@ -1,7 +1,6 @@
 ﻿using BExIS.Security.Entities.Requests;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 
 namespace BExIS.Modules.Sam.UI.Models
 {

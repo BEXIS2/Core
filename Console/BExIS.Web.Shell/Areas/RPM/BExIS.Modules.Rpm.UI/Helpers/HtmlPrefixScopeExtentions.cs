@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-using System.Web.Mvc;
-
-namespace BExIS.Modules.Rpm.UI.Helpers
+﻿namespace BExIS.Modules.Rpm.UI.Helpers
 {
     public static class HtmlPrefixScopeExtentions
     {

@@ -747,7 +747,7 @@ namespace BExIS.Utils.Upload
                 datatuple.Materialize();
                 object v = datatuple.VariableValues.Where(p => p.VariableId.Equals(t)).First().Value;
                 if (v != null && !String.IsNullOrEmpty(v.ToString()))
-                        value += ";" + v;
+                    value += ";" + v;
             }
             return value;
         }

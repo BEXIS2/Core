@@ -5,12 +5,15 @@ using BExIS.Dlm.Entities.Data;
 using BExIS.Dlm.Services.Data;
 using BExIS.Dlm.Services.Party;
 using BExIS.Modules.Dim.UI.Models.Api;
+using BExIS.Security.Services.Authorization;
+using BExIS.Security.Services.Objects;
 using BExIS.Utils.Route;
 using BExIS.Xml.Helpers;
 using NameParser;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
@@ -18,9 +21,6 @@ using System.Net.Http.Headers;
 using System.Web.Http;
 using System.Web.Http.Description;
 using System.Xml.Linq;
-using BExIS.Security.Services.Authorization;
-using BExIS.Security.Services.Objects;
-using System.Globalization;
 
 namespace BExIS.Modules.Dim.UI.Controllers.API
 {
@@ -157,7 +157,7 @@ namespace BExIS.Modules.Dim.UI.Controllers.API
                 // get isMain parts for all found parties if exists (e.g. first and last name)
                 datasetModel.Parties = getPartyIsMainAttributesForParties(elements);
 
-                
+
                 // set up person key list
                 var personKeyList = new List<string>();
                 // setup dic with values of the persons 
@@ -173,7 +173,7 @@ namespace BExIS.Modules.Dim.UI.Controllers.API
                         personKeyDic.Add(key, elements[key]);
                 }
 
-                 
+
                 datasetModel.Names = getSplitedNames(personKeyDic);
 
                 var publicAndDate = getPublicAndDate(id);
@@ -294,11 +294,11 @@ namespace BExIS.Modules.Dim.UI.Controllers.API
                     response.Content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
 
                     return response;
-                } 
+                }
             }
             finally
             {
-                
+
             }
         }
         // Search if the XML element contains a partyid and return it
@@ -348,7 +348,7 @@ namespace BExIS.Modules.Dim.UI.Controllers.API
                         }
                     }
                 }
-               
+
             }
 
             return dict;

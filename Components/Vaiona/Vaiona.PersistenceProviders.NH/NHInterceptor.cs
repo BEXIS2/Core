@@ -1,10 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using NHibernate;
-using System.Diagnostics;
+﻿using NHibernate;
 using NHibernate.SqlCommand;
+using System;
+using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace Vaiona.PersistenceProviders.NH
 {
@@ -22,4 +20,4 @@ namespace Vaiona.PersistenceProviders.NH
     {
         public static List<string> NHibernateSQL { get; set; }
     }
-}    
+}

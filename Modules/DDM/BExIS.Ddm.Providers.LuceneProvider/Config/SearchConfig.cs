@@ -88,7 +88,7 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Config
         /// <seealso cref=""/>        
         private static void Load()
         {
-            
+
 
             configXML = new XmlDocument();
 
@@ -161,7 +161,7 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Config
                         }
                         catch
                         {
-                            
+
                         }
                     }
 

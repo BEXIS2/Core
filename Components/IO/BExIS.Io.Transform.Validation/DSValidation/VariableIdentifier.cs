@@ -32,7 +32,7 @@ namespace BExIS.IO.Transform.Validation.DSValidation
                     else return false;
                 }
                 else
-                { 
+                {
                     // name is empty
                     if (string.IsNullOrEmpty(check.name) && (check.id != null || check.id != 0))
                     {

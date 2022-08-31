@@ -1,8 +1,5 @@
-﻿using BExIS.IO.Transform.Validation.Exceptions;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Web;
 
 namespace BExIS.Modules.Dcm.UI.Models.Edit
 {

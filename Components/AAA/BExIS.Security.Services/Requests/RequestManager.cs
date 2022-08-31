@@ -4,9 +4,7 @@ using BExIS.Security.Entities.Requests;
 using BExIS.Security.Entities.Subjects;
 using BExIS.Utils.Config;
 using System;
-using System.Configuration;
 using System.Linq;
-using Vaiona.IoC;
 using Vaiona.Persistence.Api;
 
 namespace BExIS.Security.Services.Requests
@@ -16,7 +14,7 @@ namespace BExIS.Security.Services.Requests
         private readonly IUnitOfWork _guow;
         private bool _isDisposed;
 
-        
+
 
         public RequestManager()
         {

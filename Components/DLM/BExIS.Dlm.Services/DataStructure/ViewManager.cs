@@ -1,7 +1,7 @@
-﻿using System.Collections.Generic;
-using System.Diagnostics.Contracts;
-using BExIS.Dlm.Entities.Data;
+﻿using BExIS.Dlm.Entities.Data;
 using BExIS.Dlm.Entities.DataStructure;
+using System.Collections.Generic;
+using System.Diagnostics.Contracts;
 using Vaiona.Persistence.Api;
 
 namespace BExIS.Dlm.Services.DataStructure
@@ -122,6 +122,6 @@ namespace BExIS.Dlm.Services.DataStructure
             }
             return (entity);
         }
-      
+
     }
 }

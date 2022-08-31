@@ -3,42 +3,42 @@ namespace BExIS.IO.Transform.Input
 {
 
     public class FileReaderInfo
-    {       
+    {
         /// <summary>
         /// representation of decimal 
         /// </summary>
         /// <remarks></remarks>
         /// <seealso cref=""/>        
         public DecimalCharacter Decimal { get; set; }
-        
+
         /// <summary>
         /// 
         /// </summary>
         /// <remarks></remarks>
         /// <seealso cref=""/>        
         public Orientation Orientation { get; set; }
-        
+
         /// <summary>
         /// Number of empty columns (columnwise) or rows (rowwise) before the variables are specified.
         /// </summary>
         /// <remarks></remarks>
         /// <seealso cref=""/>        
         public int Offset { get; set; }
-        
+
         /// <summary>
         /// Row/Column in which the variables are.
         /// </summary>
         /// <remarks></remarks>
         /// <seealso cref=""/>        
         public int Variables { get; set; }
-        
+
         /// <summary>
         /// Row/Column in which the Data are.
         /// </summary>
         /// <remarks></remarks>
         /// <seealso cref=""/>        
         public int Data { get; set; }
-        
+
         /// <summary>
         /// Format of the Date
         /// </summary>
@@ -122,6 +122,6 @@ namespace BExIS.IO.Transform.Input
             }
         }
 
-    } 
-    
+    }
+
 }

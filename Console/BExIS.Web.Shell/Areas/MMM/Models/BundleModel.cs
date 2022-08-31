@@ -79,7 +79,7 @@ namespace IDIV.Modules.Mmm.UI.Models
         public string Thumbnail { get; set; }
         public List<Measurement> Measurements { get; set; }
 
-    public ImageInformation()
+        public ImageInformation()
         {
             this.BundlePath = null;
             this.Name = null;
@@ -90,4 +90,3 @@ namespace IDIV.Modules.Mmm.UI.Models
     }
 }
 
-    

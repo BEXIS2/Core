@@ -1,36 +1,40 @@
-﻿using BExIS.Dlm.Entities.Data;
+﻿using BExIS.App.Bootstrap.Attributes;
+using BExIS.Dlm.Entities.Data;
 using BExIS.Dlm.Entities.DataStructure;
+using BExIS.Dlm.Entities.Party;
 using BExIS.Dlm.Services.Data;
 using BExIS.Dlm.Services.DataStructure;
+using BExIS.Dlm.Services.MetadataStructure;
 using BExIS.Dlm.Services.Party;
-using BExIS.Dlm.Entities.Party;
 using BExIS.IO;
 using BExIS.IO.Transform.Output;
 using BExIS.Modules.Ddm.UI.Helpers;
 using BExIS.Modules.Ddm.UI.Models;
 using BExIS.Security.Entities.Authorization;
+using BExIS.Security.Entities.Objects;
+using BExIS.Security.Entities.Subjects;
 using BExIS.Security.Services.Authorization;
 using BExIS.Security.Services.Objects;
 using BExIS.Security.Services.Requests;
 using BExIS.Security.Services.Subjects;
 using BExIS.Security.Services.Utilities;
 using BExIS.UI.Helpers;
+using BExIS.UI.Hooks;
+using BExIS.Utils.Config;
 using BExIS.Utils.NH.Querying;
 using BExIS.Xml.Helpers;
 using Ionic.Zip;
 using System;
-using System.CodeDom;
 using System.Collections.Generic;
-using System.Configuration;
 using System.Data;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Web;
 using System.Web.Mvc;
 using System.Web.Routing;
 using System.Xml;
 using System.Xml.Linq;
-using BExIS.App.Bootstrap.Attributes;
 using Telerik.Web.Mvc;
 using Telerik.Web.Mvc.UI;
 using Vaiona.Logging;
@@ -40,13 +44,6 @@ using Vaiona.Web.Extensions;
 using Vaiona.Web.Mvc;
 using Vaiona.Web.Mvc.Models;
 using Vaiona.Web.Mvc.Modularity;
-using System.Text;
-using BExIS.Security.Entities.Objects;
-using BExIS.Security.Entities.Subjects;
-using BExIS.Dlm.Services.MetadataStructure;
-using BExIS.UI.Hooks;
-using BExIS.Utils.Config;
-using Vaiona.IoC;
 
 namespace BExIS.Modules.Ddm.UI.Controllers
 
@@ -54,7 +51,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
     public class DataController : BaseController
     {
         private XmlDatasetHelper xmlDatasetHelper = new XmlDatasetHelper();
-         
+
 
         [BExISEntityAuthorize(typeof(Dataset), "datasetId", RightType.Grant)]
         public ActionResult DatasetPermissions(long datasetId)
@@ -217,8 +214,8 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                             //dsv.Dataset.MetadataStructure = msm.Repo.Get(dsv.Dataset.MetadataStructure.Id);
 
                             title = dsv.Title; // this function only needs metadata and extra fields, there is no need to pass the version to it.
-                            if(dsv.Dataset.DataStructure!=null)
-                            dataStructureId = dsv.Dataset.DataStructure.Id;
+                            if (dsv.Dataset.DataStructure != null)
+                                dataStructureId = dsv.Dataset.DataStructure.Id;
 
                             researchPlanId = dsv.Dataset.ResearchPlan.Id;
                             metadata = dsv.Metadata;
@@ -245,8 +242,8 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                             isPublic = entityPermissionManager.Exists(null, entityTypeId.Value, id);
 
                             // get data structure type
-                            
-                            if (dsv.Dataset.DataStructure!=null && dsv.Dataset.DataStructure.Self.GetType().Equals(typeof(StructuredDataStructure)))
+
+                            if (dsv.Dataset.DataStructure != null && dsv.Dataset.DataStructure.Self.GetType().Equals(typeof(StructuredDataStructure)))
                             {
                                 dataStructureType = DataStructureType.Structured.ToString();
                             }
@@ -1206,7 +1203,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
         {
             if (hasUserRights(id, RightType.Read))
             {
-                
+
                 DatasetManager datasetManager = new DatasetManager();
                 string title = "";
                 try
@@ -1484,14 +1481,16 @@ namespace BExIS.Modules.Ddm.UI.Controllers
 
             SettingsHelper helper = new SettingsHelper();
 
-            using (EntityPermissionManager entityPermissionManager = new EntityPermissionManager()) {
+            using (EntityPermissionManager entityPermissionManager = new EntityPermissionManager())
+            {
 
                 bool hasEditPermission = false;
 
-                if (GetUsernameOrDefault() != "DEFAULT"){
+                if (GetUsernameOrDefault() != "DEFAULT")
+                {
                     hasEditPermission = entityPermissionManager.HasEffectiveRight(HttpContext.User.Identity.Name, typeof(Dataset), id, RightType.Write);
                 }
-                
+
                 // user has edit permission and can see all versions -> show full list
                 if (hasEditPermission || helper.GetValue("reduce_versions_select_logged_in").ToString() == "false")
                 {
@@ -1499,7 +1498,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                 }
                 // user is not logged in or has no edit permission -> show reduced list
                 else
-                {    
+                {
                     datasetVersionsAllowed = datasetManager.GetDatasetVersionsAllowed(id, true, false, datasetVersions).OrderByDescending(d => d.Id).ToList();
                 }
 
@@ -1695,7 +1694,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
         {
             long versionId = 0;
             SettingsHelper helper = new SettingsHelper();
-            
+
 
             using (DatasetManager dm = new DatasetManager())
             {
@@ -1751,7 +1750,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                         }
                         else
                         {
-                            versionId = dm.GetDatasetLatestVersionId(datasetId); 
+                            versionId = dm.GetDatasetLatestVersionId(datasetId);
                         }
                     }
                     // Get specific version number

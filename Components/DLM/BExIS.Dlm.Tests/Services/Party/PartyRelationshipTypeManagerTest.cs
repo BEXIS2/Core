@@ -1,14 +1,4 @@
-﻿using System;
-using BExIS.App.Testing;
-using BExIS.Utils;
-using NUnit.Framework;
-using BExIS.Dlm.Services.Party;
-using FluentAssertions;
-using System.Linq;
-using BExIS.Dlm.Entities.Party;
-using System.Collections.Generic;
-
-namespace BExIS.Dlm.Tests.Services.Party
+﻿namespace BExIS.Dlm.Tests.Services.Party
 {
     public class PartyRelationshipTypeManagerTest
     {

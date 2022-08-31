@@ -14,16 +14,15 @@ using BExIS.Security.Entities.Authorization;
 using BExIS.Security.Entities.Subjects;
 using BExIS.Security.Services.Authorization;
 using BExIS.Security.Services.Subjects;
+using BExIS.Security.Services.Utilities;
+using BExIS.Utils.Config;
 using BExIS.Xml.Helpers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Web;
 using System.Web.Mvc;
-using Vaiona.Entities.Common;
 using System.Xml.XPath;
-using BExIS.Security.Services.Utilities;
-using BExIS.Utils.Config;
+using Vaiona.Entities.Common;
 
 namespace BExIS.Modules.Dcm.UI.Controllers
 {
@@ -133,7 +132,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 // 1. no selecttion - datastrutcure stays null
                 // 2. one  - set it
                 // 3. more then one - dont set it - datastrutcure stays null
-                if (entityTemplate.HasDatastructure) 
+                if (entityTemplate.HasDatastructure)
                 {
                     // when template has only one datastructure set it
                     if (entityTemplate.DatastructureList.Count == 1)
@@ -177,12 +176,12 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                             var targetXElement = XmlUtility.GetXElementByAttribute(target.Name, "id", target.ElementId.ToString(), metadataXml);
 
                             // may the mapping is on type, then it is the last element and the value should set there
-                            if(targetXElement.Descendants().First() == null) targetXElement.Value = item.Value;
+                            if (targetXElement.Descendants().First() == null) targetXElement.Value = item.Value;
                             else
-                            // if the mappings go thow a usage, the value shoudl set on the type and this element is the child of the usage
-                            // e.g. mappingt to title is usage, set value to title/titleType = "title of the dataset" 
-                            // set value
-                            targetXElement.Descendants().First().Value = item.Value;
+                                // if the mappings go thow a usage, the value shoudl set on the type and this element is the child of the usage
+                                // e.g. mappingt to title is usage, set value to title/titleType = "title of the dataset" 
+                                // set value
+                                targetXElement.Descendants().First().Value = item.Value;
                         }
                     }
                 }
@@ -234,7 +233,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 {
                     entityPermissionManager.Create<User>(GetUsernameOrDefault(), entityTemplate.EntityType.Name, typeof(Dataset), ds.Id, Enum.GetValues(typeof(RightType)).Cast<RightType>().ToList());
                 }
-                
+
 
                 #endregion
 
@@ -271,7 +270,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         }
 
         #region helper
-         
+
         public string GetUsernameOrDefault()
         {
             string username = string.Empty;

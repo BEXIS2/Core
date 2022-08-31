@@ -1,12 +1,12 @@
 ﻿using BExIS.Dlm.Entities.Party;
 using BExIS.Dlm.Services.Party;
-using System;
-using System.Linq;
 using BExIS.Modules.Bam.UI.Models;
-using System.Collections.Generic;
-using System.Linq.Expressions;
-using System.Data;
 using BExIS.Security.Entities.Authorization;
+using System;
+using System.Collections.Generic;
+using System.Data;
+using System.Linq;
+using System.Linq.Expressions;
 
 namespace BExIS.Modules.Bam.UI.Helpers
 {

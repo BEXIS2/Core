@@ -1,8 +1,8 @@
-﻿using System;
+﻿using BExIS.Dlm.Entities.DataStructure;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics.Contracts;
 using System.Linq;
-using BExIS.Dlm.Entities.DataStructure;
 using Vaiona.Persistence.Api;
 
 namespace BExIS.Dlm.Services.DataStructure
@@ -65,7 +65,7 @@ namespace BExIS.Dlm.Services.DataStructure
             using (IUnitOfWork uow = this.GetUnitOfWork())
             {
                 IRepository<Unit> repo = uow.GetRepository<Unit>();
-                
+
                 if (repo.Query(p => p.Name.ToLower() == name.ToLower()).Count() <= 0)
                 {
                     Unit unit = new Unit()

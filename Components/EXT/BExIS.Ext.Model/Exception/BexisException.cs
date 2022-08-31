@@ -4,7 +4,7 @@ namespace BExIS.Ext.Model
 {
     public class BexisException
     {
-        public static void Throw(object entityObj=null, string reason=null, ExceptionType exceptionType=ExceptionType.None, bool GroupFailed = false)
+        public static void Throw(object entityObj = null, string reason = null, ExceptionType exceptionType = ExceptionType.None, bool GroupFailed = false)
         {
             //What should be happen here
             if (entityObj == null)
@@ -16,7 +16,7 @@ namespace BExIS.Ext.Model
 
         public enum ExceptionType
         {
-            None=-1,
+            None = -1,
             Add = 0,
             Edit = 1,
             Delete = 2

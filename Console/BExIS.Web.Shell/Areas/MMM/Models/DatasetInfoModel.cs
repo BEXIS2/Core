@@ -17,7 +17,7 @@
             this.Deleteable = false;
         }
 
-        public DatasetInfo(long datasetId, long datasetVersionId,bool isLatestVersion, bool downloadable, bool deleteable)
+        public DatasetInfo(long datasetId, long datasetVersionId, bool isLatestVersion, bool downloadable, bool deleteable)
         {
             this.DatasetId = datasetId;
             this.DatasetVersionId = datasetVersionId;
@@ -29,4 +29,3 @@
     }
 }
 
-    

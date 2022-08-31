@@ -1,6 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using BExIS.IO.Transform.Validation.Exceptions;
+using System.Collections.Generic;
 using System.Linq;
-using BExIS.IO.Transform.Validation.Exceptions;
 
 /// <summary>
 ///
@@ -50,7 +50,7 @@ namespace BExIS.IO.Transform.Validation.DSValidation
                 foreach (VariableIdentifier o in checkList)
                 {
                     var test = false;
-                    if(o.id==0)
+                    if (o.id == 0)
                         test = sourceList.Select(p => p.name.Equals(o.name)).Contains(true);
                     else
                         test = sourceList.Select(p => p.id.Equals(o.id)).Contains(true);

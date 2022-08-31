@@ -10,10 +10,11 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>BExIS.Utils.Data</RootNamespace>
     <AssemblyName>BExIS.Utils.Data</AssemblyName>
-    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <NuGetPackageImportStamp>
     </NuGetPackageImportStamp>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -46,22 +47,6 @@
     <Reference Include="System.Runtime.CompilerServices.Unsafe, Version=4.0.4.1, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>..\..\..\packages\System.Runtime.CompilerServices.Unsafe.4.5.3\lib\netstandard1.0\System.Runtime.CompilerServices.Unsafe.dll</HintPath>
     </Reference>
-    <Reference Include="Vaiona.Entities">
-      <HintPath>..\..\..\Libraries\Vaiona\Vaiona.Entities.dll</HintPath>
-    </Reference>
-    <Reference Include="Vaiona.Logging, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\_BEXIS2CODE_FOR_MODULES\Libraries\Vaiona\Vaiona.Logging.dll</HintPath>
-    </Reference>
-    <Reference Include="Vaiona.Model">
-      <HintPath>..\..\..\Libraries\Vaiona\Vaiona.Model.dll</HintPath>
-    </Reference>
-    <Reference Include="Vaiona.Persistence.Api">
-      <HintPath>..\..\..\Libraries\Vaiona\Vaiona.Persistence.Api.dll</HintPath>
-    </Reference>
-    <Reference Include="Vaiona.Web.Mvc.Modularity">
-      <HintPath>..\..\..\Libraries\Vaiona\Vaiona.Web.Mvc.Modularity.dll</HintPath>
-    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Helpers\ShellSeedDataGenerator.cs" />
@@ -77,11 +62,11 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\AAA\BExIS.Security.Entities\BExIS.Security.Entities.csproj">
-      <Project>{C230693B-D780-438B-B26C-82257642DD5C}</Project>
+      <Project>{c230693b-d780-438b-b26c-82257642dd5c}</Project>
       <Name>BExIS.Security.Entities</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\AAA\BExIS.Security.Services\BExIS.Security.Services.csproj">
-      <Project>{681C8BC4-55F0-4F43-A685-90E246A88CB1}</Project>
+      <Project>{681c8bc4-55f0-4f43-a685-90e246a88cb1}</Project>
       <Name>BExIS.Security.Services</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\DLM\BExIS.Dlm.Entities\BExIS.Dlm.Entities.csproj">
@@ -97,8 +82,28 @@
       <Name>BExIS.IO.Transform.Input</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\IO\BExIS.IO\BExIS.IO.csproj">
-      <Project>{E4795F06-20C2-4C4C-A720-9A79896384DF}</Project>
+      <Project>{e4795f06-20c2-4c4c-a720-9a79896384df}</Project>
       <Name>BExIS.IO</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Vaiona\Vaiona.Entities\Vaiona.Entities.csproj">
+      <Project>{0815d220-3625-4e23-bbbc-8152345637fe}</Project>
+      <Name>Vaiona.Entities</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Vaiona\Vaiona.Logging\Vaiona.Logging.csproj">
+      <Project>{e8b37581-1cac-463d-903b-b4bee8b2b0e3}</Project>
+      <Name>Vaiona.Logging</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Vaiona\Vaiona.Model\Vaiona.Model.csproj">
+      <Project>{A60AC05F-8C9A-4EFD-9826-452E6049DA4D}</Project>
+      <Name>Vaiona.Model</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Vaiona\Vaiona.Persistence.Api\Vaiona.Persistence.Api.csproj">
+      <Project>{640bf81d-354a-4bf0-85fc-f0ad587cf8a2}</Project>
+      <Name>Vaiona.Persistence.Api</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Vaiona\Vaiona.Web.Mvc.Modularity\Vaiona.Web.Mvc.Modularity.csproj">
+      <Project>{705f8751-e58a-453e-a7fd-0c310fd3cae8}</Project>
+      <Name>Vaiona.Web.Mvc.Modularity</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

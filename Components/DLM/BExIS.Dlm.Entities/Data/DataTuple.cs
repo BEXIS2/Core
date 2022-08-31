@@ -1,13 +1,9 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Xml;
 using Vaiona.Entities.Common;
-using System.IO;
-using System.Xml.Serialization;
-using System.Text;
-using BExIS.Dlm.Entities.DataStructure;
-using Newtonsoft.Json;
 
 /// <summary>
 ///

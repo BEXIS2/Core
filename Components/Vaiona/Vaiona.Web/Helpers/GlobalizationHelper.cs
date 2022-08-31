@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Globalization;
 using System.Threading;
 using System.Web;
@@ -26,7 +23,7 @@ namespace Vaiona.Web.Helpers
         {
             return (HttpContext.Current.Session["SessionCulture"] as CultureInfo);
         }
-        
+
         public static CultureInfo GetCurrentCulture()
         {
             return (Thread.CurrentThread.CurrentCulture);

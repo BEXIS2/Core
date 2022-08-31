@@ -1,13 +1,13 @@
-﻿using System.Collections.Generic;
+﻿using BExIS.Dlm.Entities.DataStructure;
+using System.Collections.Generic;
 using System.Diagnostics.Contracts;
-using BExIS.Dlm.Entities.DataStructure;
 using Vaiona.Persistence.Api;
 
 namespace BExIS.Dlm.Services.DataStructure
 {
     public class MethodologyManager
     {
-        public MethodologyManager() 
+        public MethodologyManager()
         {
         }
 
@@ -35,7 +35,7 @@ namespace BExIS.Dlm.Services.DataStructure
                 repo.Put(u);
                 uow.Commit();
             }
-            return (u);            
+            return (u);
         }
 
         public bool Delete(Methodology entity)
@@ -47,7 +47,7 @@ namespace BExIS.Dlm.Services.DataStructure
             {
                 IRepository<Methodology> repo = uow.GetRepository<Methodology>();
 
-                entity = repo.Reload(entity);                
+                entity = repo.Reload(entity);
                 //relation to DataContainer is managed by the other end
                 repo.Delete(entity);
                 uow.Commit();
@@ -92,7 +92,7 @@ namespace BExIS.Dlm.Services.DataStructure
                 repo.Put(merged);
                 uow.Commit();
             }
-            return (entity);    
+            return (entity);
         }
 
         #endregion

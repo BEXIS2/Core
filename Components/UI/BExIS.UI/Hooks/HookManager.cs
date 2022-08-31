@@ -4,12 +4,8 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 using System.Xml.Linq;
 using Vaiona.Utils.Cfg;
-using Vaiona.Utils.IO;
 using Vaiona.Web.Mvc.Modularity;
 
 namespace BExIS.UI.Hooks
@@ -155,8 +151,8 @@ namespace BExIS.UI.Hooks
             if (File.Exists(filepath)) File.Delete(filepath);// check if file exist, delete maybe?
 
             if (!Directory.Exists(directory)) Directory.CreateDirectory(directory); // create directory if not exist
- 
-            
+
+
             File.WriteAllText(filepath, JsonConvert.SerializeObject(_cache));
 
             return true;

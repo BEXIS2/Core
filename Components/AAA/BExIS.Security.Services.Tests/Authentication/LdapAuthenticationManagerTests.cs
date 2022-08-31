@@ -1,14 +1,9 @@
 ﻿using BExIS.App.Testing;
 using BExIS.Security.Services.Authentication;
-using BExIS.Utils;
 using BExIS.Utils.Config;
 using NUnit.Framework;
 using System;
-using System.Collections.Generic;
 using System.Configuration;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace BExIS.Security.Services.Tests.Authentication
 {

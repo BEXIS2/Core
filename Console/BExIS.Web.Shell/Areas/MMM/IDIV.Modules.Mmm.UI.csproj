@@ -14,7 +14,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>IDIV.Modules.Mmm.UI</RootNamespace>
     <AssemblyName>IDIV.Modules.Mmm.UI</AssemblyName>
-    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
     <MvcBuildViews>false</MvcBuildViews>
     <UseIISExpress>true</UseIISExpress>
     <IISExpressSSLPort />
@@ -25,6 +25,7 @@
     <NuGetPackageImportStamp>
     </NuGetPackageImportStamp>
     <Use64BitIISExpress />
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -74,8 +75,8 @@
       <HintPath>..\..\..\..\..\..\..\..\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.5.2\System.dll</HintPath>
     </Reference>
     <Reference Include="System.Configuration" />
-    <Reference Include="System.Core" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="System.IO.Compression" />
     <Reference Include="System.Memory, Version=4.0.1.1, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
       <HintPath>..\..\..\..\packages\System.Memory.4.5.4\lib\netstandard1.1\System.Memory.dll</HintPath>
@@ -83,6 +84,10 @@
     <Reference Include="System.Net.Http.Formatting, Version=5.2.3.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\..\..\..\packages\Microsoft.AspNet.WebApi.Client.5.2.3\lib\net45\System.Net.Http.Formatting.dll</HintPath>
     </Reference>
+    <Reference Include="System.Web.ApplicationServices" />
+    <Reference Include="System.Web.DynamicData" />
+    <Reference Include="System.Web.Entity" />
+    <Reference Include="System.Web.Extensions" />
     <Reference Include="System.Web.Helpers, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\..\..\..\packages\Microsoft.AspNet.WebPages.3.2.3\lib\net45\System.Web.Helpers.dll</HintPath>
     </Reference>
@@ -112,24 +117,6 @@
       <HintPath>..\..\..\..\packages\Microsoft.AspNet.Razor.3.2.3\lib\net45\System.Web.Razor.dll</HintPath>
     </Reference>
     <Reference Include="System.Xml.Linq" />
-    <Reference Include="Vaiona.Entities">
-      <HintPath>..\..\..\..\Libraries\Vaiona\Vaiona.Entities.dll</HintPath>
-    </Reference>
-    <Reference Include="Vaiona.Logging">
-      <HintPath>..\..\..\..\Libraries\Vaiona\Vaiona.Logging.dll</HintPath>
-    </Reference>
-    <Reference Include="Vaiona.Persistence.Api">
-      <HintPath>..\..\..\..\Libraries\Vaiona\Vaiona.Persistence.Api.dll</HintPath>
-    </Reference>
-    <Reference Include="Vaiona.Utils">
-      <HintPath>..\..\..\..\Libraries\Vaiona\Vaiona.Utils.dll</HintPath>
-    </Reference>
-    <Reference Include="Vaiona.Web.Mvc">
-      <HintPath>..\..\..\..\Libraries\Vaiona\Vaiona.Web.Mvc.dll</HintPath>
-    </Reference>
-    <Reference Include="Vaiona.Web.Mvc.Modularity">
-      <HintPath>..\..\..\..\Libraries\Vaiona\Vaiona.Web.Mvc.Modularity.dll</HintPath>
-    </Reference>
     <Reference Include="XmpCore, Version=6.1.10.1, Culture=neutral, PublicKeyToken=961f4f366277b80e, processorArchitecture=MSIL">
       <HintPath>..\..\..\..\packages\XmpCore.6.1.10.1\lib\net35\XmpCore.dll</HintPath>
     </Reference>
@@ -139,6 +126,7 @@
     <Compile Include="Converter\Converter.cs" />
     <Compile Include="Helpers\SystemMetadataHelper.cs" />
     <Compile Include="Install\MMMSeedDataGenerator.cs" />
+    <Compile Include="MMMAreaRegistration.cs" />
     <Compile Include="Models\BundleModel.cs" />
     <Compile Include="Models\DatasetInfoModel.cs" />
     <Compile Include="Models\FileInformationModel.cs" />
@@ -150,13 +138,11 @@
     <Content Include="Content\bootstrap.min.css" />
     <Content Include="Content\Site.css" />
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
-    <Content Include="Mmm.Settings.xml">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
     <Content Include="Mmm.Manifest.xml">
       <SubType>Designer</SubType>
     </Content>
     <Content Include="Scripts\isotope.pkgd.min.js" />
+    <Content Include="Mmm.Settings.json" />
     <None Include="packages.config" />
     <None Include="Properties\PublishProfiles\BexisServer_dev.pubxml" />
     <None Include="Properties\PublishProfiles\BexisServer_master.pubxml" />
@@ -240,9 +226,37 @@
       <Project>{E4795F06-20C2-4C4C-A720-9A79896384DF}</Project>
       <Name>BExIS.IO</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\..\..\Components\Utils\BExIS.Utils.Config\BExIS.Utils.Config.csproj">
+      <Project>{6EAD7D02-02F7-42FF-85E4-90BB892D3846}</Project>
+      <Name>BExIS.Utils.Config</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\..\..\Components\Utils\BExIS.Utils.Data\BExIS.Utils.Data.csproj">
       <Project>{A7FBCC13-7E29-4710-82A1-BD6D6F811FDA}</Project>
       <Name>BExIS.Utils.Data</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\..\Components\Vaiona\Vaiona.Entities\Vaiona.Entities.csproj">
+      <Project>{0815d220-3625-4e23-bbbc-8152345637fe}</Project>
+      <Name>Vaiona.Entities</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\..\Components\Vaiona\Vaiona.Logging\Vaiona.Logging.csproj">
+      <Project>{e8b37581-1cac-463d-903b-b4bee8b2b0e3}</Project>
+      <Name>Vaiona.Logging</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\..\Components\Vaiona\Vaiona.Persistence.Api\Vaiona.Persistence.Api.csproj">
+      <Project>{640bf81d-354a-4bf0-85fc-f0ad587cf8a2}</Project>
+      <Name>Vaiona.Persistence.Api</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\..\Components\Vaiona\Vaiona.Utils\Vaiona.Utils.csproj">
+      <Project>{63fcacaa-9534-4fdd-a082-78dcc06baf28}</Project>
+      <Name>Vaiona.Utils</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\..\Components\Vaiona\Vaiona.Web.Mvc.Modularity\Vaiona.Web.Mvc.Modularity.csproj">
+      <Project>{705f8751-e58a-453e-a7fd-0c310fd3cae8}</Project>
+      <Name>Vaiona.Web.Mvc.Modularity</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\..\Components\Vaiona\Vaiona.Web.Mvc\Vaiona.Web.Mvc.csproj">
+      <Project>{5f5d22e8-8c05-49cd-854e-8fe8eff1aa6c}</Project>
+      <Name>Vaiona.Web.Mvc</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\..\..\Modules\DIM\BExIS.Dim.Entities\BExIS.Dim.Entities.csproj">
       <Project>{34cad2a2-6928-458b-b8dc-af71d55f20cc}</Project>
@@ -302,7 +316,7 @@
   </Target>
   <PropertyGroup>
     <PostBuildEvent>mkdir "$(SolutionDir)Console\Workspace\Modules\MMM"
-C:\Windows\System32\xcopy "$(ProjectDir)Mmm.Settings.xml" "$(SolutionDir)Console\Workspace\Modules\MMM" /C /Y /I</PostBuildEvent>
+C:\Windows\System32\xcopy "$(ProjectDir)Mmm.Settings.json" "$(SolutionDir)Console\Workspace\Modules\MMM" /C /Y /I</PostBuildEvent>
   </PropertyGroup>
   <Import Project="..\..\..\..\packages\Microsoft.CodeAnalysis.NetAnalyzers.6.0.0\build\Microsoft.CodeAnalysis.NetAnalyzers.targets" Condition="Exists('..\..\..\..\packages\Microsoft.CodeAnalysis.NetAnalyzers.6.0.0\build\Microsoft.CodeAnalysis.NetAnalyzers.targets')" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.

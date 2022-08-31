@@ -1,27 +1,20 @@
 ﻿using BExIS.Dim.Entities.Mapping;
 using BExIS.Dim.Helpers.Mapping;
+using BExIS.Dim.Helpers.Models;
+using BExIS.Dim.Helpers.Services;
 using BExIS.Dlm.Entities.Data;
-using BExIS.Xml.Helpers;
-using System;
-using System.Web;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Xml;
-using System.Configuration;
-using System.Threading;
 using BExIS.Security.Services.Utilities;
+using BExIS.Xml.Helpers;
+using Lucifron.ReST.Library.Models;
 using RestSharp;
 using RestSharp.Authenticators;
-using Newtonsoft.Json.Linq;
-using Lucifron.ReST.Library.Models;
-using BExIS.Dim.Helpers.Models;
-using System.Reflection;
+using System;
+using System.Collections.Generic;
+using System.Configuration;
+using System.Linq;
+using System.Web;
+using System.Xml;
 using System.Xml.Linq;
-using BExIS.Dlm.Services.Party;
-using System.Text.RegularExpressions;
-using BExIS.Dim.Helpers.Services;
-using System.Security.Policy;
 
 namespace BExIS.Dim.Helpers
 {
@@ -78,7 +71,7 @@ namespace BExIS.Dim.Helpers
 
                         DataCiteEventType eventType;
 
-                        if(Enum.TryParse(mapping.Value, out eventType))
+                        if (Enum.TryParse(mapping.Value, out eventType))
                         {
                             model.Event = eventType;
                         }
@@ -149,7 +142,7 @@ namespace BExIS.Dim.Helpers
 
             foreach (var placeholder in placeholders)
             {
-                switch(placeholder.Name)
+                switch (placeholder.Name)
                 {
                     case "DatasetId":
 

@@ -1,4 +1,3 @@
-using BExIS.Xml.Helpers;
 using Moq;
 using NUnit.Framework;
 

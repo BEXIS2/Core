@@ -1,12 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Web.Mvc;
-using Vaiona.Web.Security.Az.Attributes;
-using Vaiona.Persistence.Api;
 using Vaiona.Entities.Security;
-using System.Collections;
+using Vaiona.Persistence.Api;
 using Vaiona.Web.Mvc;
 
 namespace Vaiona.Web.Security.Management
@@ -54,7 +51,7 @@ namespace Vaiona.Web.Security.Management
             using (IUnitOfWork uow = persistenceManager.UnitOfWorkFactory.CreateUnitOfWork(false, true))
             {
                 IRepository<AccessRuleEntity> repo = uow.GetRepository<AccessRuleEntity>();
-                rules = repo.Get(p => p.RuleBody.Contains(role)).ToList();                
+                rules = repo.Get(p => p.RuleBody.Contains(role)).ToList();
             }
             return (rules);
         }
@@ -104,7 +101,7 @@ namespace Vaiona.Web.Security.Management
                 nodes = repo.Query(item => item.Parent.Id == parentId).ToList();
                 if (nodes == null)
                     nodes = new List<AccessRuleEntity>();
-            }            
+            }
             return (nodes);
         }
 

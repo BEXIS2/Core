@@ -1,20 +1,18 @@
 using BExIS.App.Testing;
 using BExIS.Utils.Config;
 using BEXIS.JSON.Helpers;
-using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Newtonsoft.Json.Schema;
-using Newtonsoft.Json.Schema.Generation;
 using NUnit.Framework;
 using System;
 using System.IO;
-using System.Net;
 
 namespace BExIS.JSON.Helpers.UnitTests
 {
     public class MetadataStructureManagerTests
     {
         private TestSetupHelper helper = null;
+
         [OneTimeSetUp]
         public void OneTimeSetUp()
         {

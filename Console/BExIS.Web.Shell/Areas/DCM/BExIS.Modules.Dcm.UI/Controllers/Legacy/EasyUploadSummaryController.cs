@@ -1,34 +1,4 @@
-﻿using BExIS.Dcm.UploadWizard;
-using BExIS.Dlm.Entities.Administration;
-using BExIS.Dlm.Entities.Data;
-using BExIS.Dlm.Entities.DataStructure;
-using BExIS.Dlm.Entities.MetadataStructure;
-using BExIS.Dlm.Services.Data;
-using BExIS.Dlm.Services.DataStructure;
-using BExIS.Dlm.Services.MetadataStructure;
-using BExIS.IO;
-using BExIS.IO.Transform.Input;
-using BExIS.IO.Transform.Validation.DSValidation;
-using BExIS.IO.Transform.Validation.Exceptions;
-using BExIS.IO.Transform.Validation.ValueCheck;
-using BExIS.Modules.Dcm.UI.Models;
-using BExIS.Security.Entities.Authorization;
-using BExIS.Security.Entities.Subjects;
-using BExIS.Security.Services.Authorization;
-using BExIS.Xml.Helpers;
-using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Web.Mvc;
-using System.Web.Routing;
-using System.Xml;
-using System.Xml.Linq;
-using Vaiona.Entities.Common;
-using Vaiona.Persistence.Api;
-using Vaiona.Web.Mvc;
-using Vaiona.Web.Mvc.Modularity;
+﻿using Vaiona.Web.Mvc;
 
 namespace BExIS.Modules.Dcm.UI.Controllers
 {

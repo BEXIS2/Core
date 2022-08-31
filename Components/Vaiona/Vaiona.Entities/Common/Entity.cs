@@ -1,7 +1,6 @@
 ﻿using System;
-using System.Xml;
-using System.Linq;
 using System.Reflection;
+using System.Xml;
 using Vaiona.Core.Serialization;
 
 namespace Vaiona.Entities.Common
@@ -12,7 +11,7 @@ namespace Vaiona.Entities.Common
         #region Fields        
 
         #endregion
-       
+
         #region Attributes
 
         public virtual Int64 Id { get; set; }
@@ -22,7 +21,7 @@ namespace Vaiona.Entities.Common
 
         //public virtual EntityVersionInfo VersionInfo { get; set; } // Map as a component // Version item does not work inside component!!!
         public virtual XmlNode Extra { get; set; }
-        
+
         #endregion
 
         #region Associations
@@ -57,7 +56,7 @@ namespace Vaiona.Entities.Common
         /// No need to override these functions, the base one performs the task for normal cases
         /// If you have a very special case or the performance of the generic one is not good, then override the methods
         /// </summary>
-        public virtual void Dematerialize(bool includeChildren=true)
+        public virtual void Dematerialize(bool includeChildren = true)
         {
             //XmlVariableValues = (XmlDocument)transformer.ExportTo(VariableValues, "VariableValues", 1); sample
             //XmlAmendments = (XmlDocument)transformer.ExportTo(Amendments, "Amendments", 1);
@@ -90,7 +89,7 @@ namespace Vaiona.Entities.Common
         /// No need to override these functions, the base one performs the task for normal cases
         /// If you have a very special case or the performance of the generic one is not good, then override the methods
         /// </summary>
-        public virtual void Materialize(bool includeChildren=true)
+        public virtual void Materialize(bool includeChildren = true)
         {
             IObjectTransfromer transformer = new XmlObjectTransformer();
             //VariableValues = transformer.ImportFrom<List<VariableValue>>(XmlVariableValues, 1, null);
@@ -111,9 +110,9 @@ namespace Vaiona.Entities.Common
                     }
                 }
             }
-        }     
-        
-        #endregion        
+        }
+
+        #endregion
     }
 
     public abstract class BusinessEntity : BaseEntity, IStatefullEntity, IAuditableEntity
@@ -124,7 +123,7 @@ namespace Vaiona.Entities.Common
         public virtual EntityStateInfo StateInfo { get; set; } // Map as a component
         public virtual EntityAuditInfo CreationInfo { get; set; } // Map as a component
         public virtual EntityAuditInfo ModificationInfo { get; set; } // Map as a component
-        
+
         #endregion
 
         #region Associations
@@ -140,7 +139,7 @@ namespace Vaiona.Entities.Common
             ModificationInfo = new EntityAuditInfo();
         }
         //public abstract void Validate();
-        
+
         #endregion
     }
 }

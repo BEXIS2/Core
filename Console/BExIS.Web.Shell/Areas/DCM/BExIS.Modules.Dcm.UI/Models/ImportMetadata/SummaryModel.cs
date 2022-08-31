@@ -2,7 +2,7 @@
 
 namespace BExIS.Modules.Dcm.UI.Models.ImportMetadata
 {
-    public class SummaryModel:AbstractStepModel
+    public class SummaryModel : AbstractStepModel
     {
         public string Title { get; set; }
 
@@ -10,7 +10,7 @@ namespace BExIS.Modules.Dcm.UI.Models.ImportMetadata
         public string RootName { get; set; }
 
         public SummaryModel(StepInfo stepInfo)
-        { 
+        {
             this.StepInfo = stepInfo;
         }
     }

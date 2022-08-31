@@ -1,12 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace Vaiona.Entities.Common
 {
     [AttributeUsageAttribute(AttributeTargets.Class, Inherited = true, AllowMultiple = true)]
-    public class AutomaticMaterializationInfoAttribute: Attribute
+    public class AutomaticMaterializationInfoAttribute : Attribute
     {
         public AutomaticMaterializationInfoAttribute(string sourcePropertyName, Type sourcePropertyType, string targetPropertyName, Type targetPropertyType)
         {

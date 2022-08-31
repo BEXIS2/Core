@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace BExIS.Dim.Entities.Mapping
+﻿namespace BExIS.Dim.Entities.Mapping
 {
     public class MappingPartyResultElemenet
     {

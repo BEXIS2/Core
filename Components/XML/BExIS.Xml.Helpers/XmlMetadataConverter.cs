@@ -1,22 +1,18 @@
 ﻿using BExIS.Dlm.Entities.Common;
 using BExIS.Dlm.Entities.MetadataStructure;
 using BExIS.Dlm.Services.MetadataStructure;
-using BExIS.Xml.Helpers.Mapping;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Xml;
-using System.Xml.Linq;
 
 namespace BExIS.Xml.Helpers
 {
     public class XmlMetadataConverter
     {
-        Dictionary<string,string> mappings = new Dictionary<string, string>();
+        Dictionary<string, string> mappings = new Dictionary<string, string>();
 
         #region XML to JSON
 
@@ -348,14 +344,14 @@ namespace BExIS.Xml.Helpers
                     XmlMetadataWriter writer = new XmlMetadataWriter(XmlNodeMode.xPath);
                     XmlDocument target = XmlUtility.ToXmlDocument(writer.CreateMetadataXml(id));
 
-                    var source =  JsonConvert.DeserializeXmlNode(metadataJson.ToString(),"Metadata");
+                    var source = JsonConvert.DeserializeXmlNode(metadataJson.ToString(), "Metadata");
 
                     // generate dictionary with source path as key and target path as value
                     mappings = getXPathMapping(target);
 
                     /// put the incoming xml to the internal structure 
                     /// BUT if there are elements with index >1 then the attributes like id,roleid are not set 
-                    mapNode(target,target.DocumentElement, source.DocumentElement);
+                    mapNode(target, target.DocumentElement, source.DocumentElement);
 
                     // generate intern template metadata xml with needed attribtes 
                     // also every object with index > 1 is generate with attribtes but without values
@@ -415,10 +411,10 @@ namespace BExIS.Xml.Helpers
             return mappings;
         }
 
-        private void fillDictinary(XmlNode target, Dictionary<string,string> mappings)
+        private void fillDictinary(XmlNode target, Dictionary<string, string> mappings)
         {
 
-            string targetPath  = XmlUtility.GetXPathToNode(target.FirstChild);
+            string targetPath = XmlUtility.GetXPathToNode(target.FirstChild);
 
             string sourcePath = simplifiedXPath(targetPath);
             if (!mappings.ContainsKey(sourcePath))
@@ -449,19 +445,19 @@ namespace BExIS.Xml.Helpers
                 // X[1]\XType[2]\Y[1]\yType[4]\F[1]\yType[2]
                 string destinationXPath = mapExternPathToInternPathWithIndex(sourceXPath, targetXPath);
                 XmlNode destinationNode = destinationDoc.SelectSingleNode(destinationXPath);
-       
+
                 if (destinationNode == null)
                     destinationNode = XmlUtility.GenerateNodeFromXPath(destinationDoc, destinationDoc as XmlNode, destinationXPath, null, null);
 
                 // if a xml element has text, then there is a child of type xmltext
-                if(!string.IsNullOrEmpty(sourceNode.InnerText) == sourceNode.LastChild is XmlText)
+                if (!string.IsNullOrEmpty(sourceNode.InnerText) == sourceNode.LastChild is XmlText)
                     destinationNode.InnerText = sourceNode.InnerText;
 
                 // add dynamic att
                 if (sourceNode.Attributes.Count > 0) // may not add if attr is empty
                 {
                     foreach (XmlAttribute attr in sourceNode.Attributes)
-                    { 
+                    {
                         var a = destinationNode.OwnerDocument.CreateAttribute(attr.Name);
                         a.Value = attr.Value;
                         destinationNode.Attributes.Append(a);
@@ -533,9 +529,9 @@ namespace BExIS.Xml.Helpers
 
         private void addDynamicAttributes(XmlNode source, XmlNode target)
         {
-            if (source.Attributes!=null && source.Attributes.Count>0)
+            if (source.Attributes != null && source.Attributes.Count > 0)
             {
-                foreach (XmlNode attr in source.Attributes) 
+                foreach (XmlNode attr in source.Attributes)
                 {
                     if (target != null && !string.IsNullOrEmpty(attr.Value))
                     {
@@ -557,7 +553,7 @@ namespace BExIS.Xml.Helpers
             {
                 for (int i = 0; i < source.ChildNodes.Count; i++)
                 {
-                    if(target!=null && target.ChildNodes.Count>0)
+                    if (target != null && target.ChildNodes.Count > 0)
                         addDynamicAttributes(source.ChildNodes[i], target.ChildNodes[i]);
                 }
             }
@@ -586,7 +582,7 @@ namespace BExIS.Xml.Helpers
             for (int i = 0; i < xpaths.Length; i++)
             {
                 if (i == 0) newPath += xpaths[i];
-                else if(i % 2 >  0) newPath += "/" + xpaths[i];
+                else if (i % 2 > 0) newPath += "/" + xpaths[i];
             }
 
             return newPath;
@@ -607,7 +603,7 @@ namespace BExIS.Xml.Helpers
         {
             // check incoming parameters
             if (metadataJson == null) throw new ArgumentNullException("metadataJson", "MetadataJson must not be null.");
-            if (metadataStructureId <= 0 ) throw new ArgumentNullException("metadataStructureId", "metadataStructureId must be greater then 0.");
+            if (metadataStructureId <= 0) throw new ArgumentNullException("metadataStructureId", "metadataStructureId must be greater then 0.");
 
             // converting json to xml
             XmlDocument metadataInput = JsonConvert.DeserializeXmlNode(metadataJson.ToString(), "Metadata");
@@ -617,8 +613,8 @@ namespace BExIS.Xml.Helpers
             var metadataExample = xmlMetadatWriter.CreateMetadataXml(1);
 
             // get all elements from xml documents to compare
-            var listOfElementsInput = XmlUtility.GetAllChildren(XmlUtility.ToXDocument(metadataInput).Root).Select(e=>e.Name.LocalName);
-            var listOfElementsExample = XmlUtility.GetAllChildren(metadataExample.Root).Select(e=>e.Name.LocalName);
+            var listOfElementsInput = XmlUtility.GetAllChildren(XmlUtility.ToXDocument(metadataInput).Root).Select(e => e.Name.LocalName);
+            var listOfElementsExample = XmlUtility.GetAllChildren(metadataExample.Root).Select(e => e.Name.LocalName);
 
 
             // lets compare all elements

@@ -154,7 +154,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                     var dataset = datasetManager.GetDataset(entityId);
                     var metadata = datasetManager.GetDatasetLatestMetadataVersion(entityId);
                     metadataStructureId = dataset.MetadataStructure.Id;
-                    if(dataset.DataStructure!=null)
+                    if (dataset.DataStructure != null)
                         dataStructureId = dataset.DataStructure.Id;
 
                     if (TaskManager == null)
@@ -1421,13 +1421,13 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                     attrModel.ParentPartyId = 0;
                 }
 
-                 UpdateAttribute(
-                    usage,
-                    number,
-                    metadataAttributeUsage,
-                    Convert.ToInt32(attrModel.Number),
-                    attrModel.Value,
-                    stepModelHelper.XPath);
+                UpdateAttribute(
+                   usage,
+                   number,
+                   metadataAttributeUsage,
+                   Convert.ToInt32(attrModel.Number),
+                   attrModel.Value,
+                   stepModelHelper.XPath);
 
                 AddXmlAttribute(stepModelHelper.XPath, "partyid", partyId.ToString());
             }

@@ -1,13 +1,13 @@
 ﻿using NHibernate;
 using NHibernate.Cfg;
 using NHibernate.Tool.hbm2ddl;
+using System;
+using System.Collections.Generic;
 using System.Diagnostics.Contracts;
 using System.IO;
-using System;
+using System.Linq;
 using System.Text.RegularExpressions;
 using Vaiona.Persistence.Api;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace Vaiona.Persistence.NH
 {
@@ -147,7 +147,7 @@ namespace Vaiona.Persistence.NH
             }
             catch
             { }
-            
+
             if (session == null)
             {   //strat a new session
                 StartConversation();
@@ -157,7 +157,7 @@ namespace Vaiona.Persistence.NH
 
         public object GetCurrentConversation()
         {
-            return(getSession());
+            return (getSession());
         }
 
         public void StartConversation()

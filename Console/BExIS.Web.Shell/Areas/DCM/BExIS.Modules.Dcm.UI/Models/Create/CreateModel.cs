@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
+﻿using System.Collections.Generic;
 
 namespace BExIS.Modules.Dcm.UI.Models.Create
 {
@@ -28,7 +25,8 @@ namespace BExIS.Modules.Dcm.UI.Models.Create
         }
     }
 
-    public class MetadataInputField {
+    public class MetadataInputField
+    {
 
         public int Index { get; set; }
         public string Name { get; set; }
@@ -36,7 +34,7 @@ namespace BExIS.Modules.Dcm.UI.Models.Create
         public string Value { get; set; }
 
         public MetadataInputField()
-        { 
+        {
             Index = 0;
             Type = "";
             Value = "";

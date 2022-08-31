@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace BExIS.Ext.Model.DB
+﻿namespace BExIS.Ext.Model.DB
 {
     public abstract class Migration
     {

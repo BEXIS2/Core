@@ -278,7 +278,7 @@ namespace BExIS.IO.Transform.Input
                         {
                             // return List of VariablesValues, and error messages
                             if (!isEmpty(line, seperator))
-                            this.DataTuples.Add(ReadRow(rowToList(line, seperator), index));
+                                this.DataTuples.Add(ReadRow(rowToList(line, seperator), index));
                         }
 
                         Position++;
@@ -473,7 +473,7 @@ namespace BExIS.IO.Transform.Input
 
                         }
 
-                        if (dsdIsOk && index >= this.Info.Data && !string.IsNullOrEmpty(line) && !isEmpty(line,seperator))
+                        if (dsdIsOk && index >= this.Info.Data && !string.IsNullOrEmpty(line) && !isEmpty(line, seperator))
                         {
                             var r = rowToList(line, seperator);
                             var e = ValidateRow(r, index);
@@ -592,7 +592,7 @@ namespace BExIS.IO.Transform.Input
                     //if a offset is marked in the filereaader informations the offset needs to skip from the complete string array
                     return tempRow.Skip(fileReaderInfo.Offset).ToList();
                 }
-               
+
             }
             return line.Split(seperator).ToList();
         }
@@ -673,13 +673,13 @@ namespace BExIS.IO.Transform.Input
 
         private bool isEmpty(string line, char seperator)
         {
-            string tmp = line.Replace(seperator,' ');
+            string tmp = line.Replace(seperator, ' ');
 
             if (string.IsNullOrWhiteSpace(tmp))
-            { 
+            {
                 NumberOSkippedfRows++;
                 Debug.WriteLine(tmp);
-                Debug.WriteLine("NumberOSkippedfRows"+ NumberOSkippedfRows);
+                Debug.WriteLine("NumberOSkippedfRows" + NumberOSkippedfRows);
                 return true;
             }
 

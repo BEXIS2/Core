@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net452</TargetFramework>
+    <TargetFramework>net48</TargetFramework>
 
     <IsPackable>false</IsPackable>
   </PropertyGroup>
@@ -20,16 +20,9 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\App\BExIS.App.Testing\BExIS.App.Testing.csproj" />
+    <ProjectReference Include="..\..\Vaiona\Vaiona.Persistence.Api\Vaiona.Persistence.Api.csproj" />
+    <ProjectReference Include="..\..\Vaiona\Vaiona.Persistence.NH\Vaiona.Persistence.NH.csproj" />
     <ProjectReference Include="..\BEXIS.JSON.Helpers\BEXIS.JSON.Helpers.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Reference Include="Vaiona.Persistence.Api">
-      <HintPath>..\..\..\Libraries\Vaiona\Vaiona.Persistence.Api.dll</HintPath>
-    </Reference>
-    <Reference Include="Vaiona.PersistenceProviders.NH">
-      <HintPath>..\..\..\Libraries\Vaiona\Vaiona.PersistenceProviders.NH.dll</HintPath>
-    </Reference>
   </ItemGroup>
 
   <ItemGroup>

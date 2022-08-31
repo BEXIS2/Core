@@ -1,7 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
 
 namespace System
@@ -79,7 +77,7 @@ namespace System
 
         private class Rule
         {
-            private readonly Regex _regex; 
+            private readonly Regex _regex;
             private readonly string _replacement;
 
             public Rule(string pattern, string replacement)
@@ -155,7 +153,7 @@ namespace System
         public static string Titleize(this string word)
         {
             return Regex.Replace(Humanize(Underscore(word)), @"\b([a-z])",
-                                 delegate(Match match)
+                                 delegate (Match match)
                                  {
                                      return match.Captures[0].Value.ToUpper();
                                  });
@@ -169,7 +167,7 @@ namespace System
         public static string Pascalize(this string lowercaseAndUnderscoredWord)
         {
             return Regex.Replace(lowercaseAndUnderscoredWord, "(?:^|_)(.)",
-                                 delegate(Match match)
+                                 delegate (Match match)
                                  {
                                      return match.Groups[1].Value.ToUpper();
                                  });

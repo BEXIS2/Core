@@ -1,7 +1,10 @@
 ﻿using BExIS.Dim.Entities.Mapping;
 using BExIS.Dim.Services;
 using BExIS.Dlm.Entities.Party;
+using BExIS.Dlm.Services.MetadataStructure;
 using BExIS.Dlm.Services.Party;
+using BExIS.Security.Services.Authorization;
+using BExIS.Security.Services.Objects;
 using BExIS.Xml.Helpers;
 using System;
 using System.Collections.Generic;
@@ -9,12 +12,6 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using System.Xml.Linq;
 using Vaiona.Persistence.Api;
-
-using BExIS.Dim.Entities.Mapping;
-
-using BExIS.Security.Services.Objects;
-using BExIS.Security.Services.Authorization;
-using BExIS.Dlm.Services.MetadataStructure;
 
 namespace BExIS.Dim.Helpers.Mapping
 {
@@ -1072,7 +1069,7 @@ namespace BExIS.Dim.Helpers.Mapping
             }
         }
 
-        
+
         private static IEnumerable<XElement> getXElementsFromAMapping(Entities.Mapping.Mapping m, XDocument metadata)
         {
             Dictionary<string, string> AttrDic = new Dictionary<string, string>();
@@ -1201,7 +1198,7 @@ namespace BExIS.Dim.Helpers.Mapping
                 }
 
                 return datatype;
-     
+
             }
 
             return string.Empty;

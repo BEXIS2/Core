@@ -10,7 +10,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>BExIS.Xml.Helpers</RootNamespace>
     <AssemblyName>BExIS.Xml.Helpers</AssemblyName>
-    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <SccProjectName>SAK</SccProjectName>
     <SccLocalPath>SAK</SccLocalPath>
@@ -74,13 +74,13 @@
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
     <Reference Include="Vaiona.Entities">
-      <HintPath>..\..\..\Libraries\Vaiona\Vaiona.Entities.dll</HintPath>
+      <HintPath>..\..\Vaiona\Vaiona.Entities\bin\Debug\Vaiona.Entities.dll</HintPath>
     </Reference>
     <Reference Include="Vaiona.Persistence.Api">
-      <HintPath>..\..\..\Libraries\Vaiona\Vaiona.Persistence.Api.dll</HintPath>
+      <HintPath>..\..\Vaiona\Vaiona.Persistence.Api\bin\Debug\Vaiona.Persistence.Api.dll</HintPath>
     </Reference>
     <Reference Include="Vaiona.Utils">
-      <HintPath>..\..\..\Libraries\Vaiona\Vaiona.Utils.dll</HintPath>
+      <HintPath>..\..\Vaiona\Vaiona.Utils\bin\Debug\Vaiona.Utils.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>

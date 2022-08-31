@@ -1,13 +1,10 @@
 using BExIS.App.Testing;
 using BExIS.Dim.Entities.Mapping;
 using BExIS.Dim.Services;
-using BExIS.Dlm.Services.DataStructure;
 using BExIS.Utils.Config;
 using NUnit.Framework;
 using System;
 using System.IO;
-using System.Web;
-using System.Xml;
 using System.Xml.Linq;
 using Vaiona.Persistence.Api;
 
@@ -45,7 +42,7 @@ namespace BExIS.Dim.Helpers.UnitTests
         {
             //Arrange
             using (var mappingManager = new MappingManager())
-            
+
             using (IUnitOfWork uow = this.GetUnitOfWork())
             {
                 // install module dim because the libaries are otheside of the first setup

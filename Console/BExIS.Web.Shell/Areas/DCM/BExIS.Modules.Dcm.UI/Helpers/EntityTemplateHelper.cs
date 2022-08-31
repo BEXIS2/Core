@@ -3,17 +3,14 @@ using BExIS.Dlm.Services.Data;
 using BExIS.Dlm.Services.MetadataStructure;
 using BExIS.Modules.Dcm.UI.Models.EntityTemplate;
 using BExIS.Security.Services.Objects;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Web;
 
 namespace BExIS.Modules.Dcm.UI.Helpers
 {
     public class EntityTemplateHelper
     {
         public static EntityTemplate ConvertTo(EntityTemplateModel model)
-        { 
+        {
             EntityTemplate entityTemplate = new EntityTemplate();
             entityTemplate.Id = model.Id;
             entityTemplate.Name = model.Name;
@@ -97,7 +94,7 @@ namespace BExIS.Modules.Dcm.UI.Helpers
             model.AllowedFileTypes = entityTemplate.AllowedFileTypes != null ? entityTemplate.AllowedFileTypes : new List<string>();
             model.PermissionGroups = entityTemplate.PermissionGroups != null ? entityTemplate.PermissionGroups : new List<long>();
             model.NotificationGroups = entityTemplate.NotificationGroups != null ? entityTemplate.NotificationGroups : new List<long>();
-            model.MetadataFields = entityTemplate.MetadataFields!=null?entityTemplate.MetadataFields:new List<int>();
+            model.MetadataFields = entityTemplate.MetadataFields != null ? entityTemplate.MetadataFields : new List<int>();
 
             model.MetadataStructure = new EntityTemplateModel.KvP(entityTemplate.MetadataStructure.Id, entityTemplate.MetadataStructure.Name);
             model.EntityType = new EntityTemplateModel.KvP(entityTemplate.EntityType.Id, entityTemplate.EntityType.Name);

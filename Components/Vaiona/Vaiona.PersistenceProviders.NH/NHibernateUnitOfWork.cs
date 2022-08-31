@@ -1,19 +1,15 @@
-﻿using System;
+﻿using NHibernate;
+using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using NHibernate;
-using Vaiona.Persistence.Api;
-using NHibernate.Context;
-using System.Web;
-using System.Diagnostics.Contracts;
-using System.Data.SqlClient;
 using System.Data;
 using System.Data.Common;
+using System.Data.SqlClient;
+using System.Linq;
+using Vaiona.Persistence.Api;
 
 namespace Vaiona.PersistenceProviders.NH
 {
-    public class NHibernateUnitOfWork: IUnitOfWork
+    public class NHibernateUnitOfWork : IUnitOfWork
     {
         private const int LongQueryTimeOut = 3600; //seconds
         //internal ISession Session = null;
@@ -108,7 +104,7 @@ namespace Vaiona.PersistenceProviders.NH
                             BeforeIgnore(this, EventArgs.Empty);
                         try
                         {
-                            if(Session.IsDirty())
+                            if (Session.IsDirty())
                                 Session.Transaction.Rollback();
                         }
                         catch (Exception ex)
@@ -244,7 +240,7 @@ namespace Vaiona.PersistenceProviders.NH
         }
 
         public int ExecuteNonQuery(string queryString, Dictionary<string, object> parameters = null)
-        {            
+        {
             if (parameters != null && parameters.Any(p => p.Value == null))
                 throw new ArgumentException("The parameter array has a null element", "parameters");
 

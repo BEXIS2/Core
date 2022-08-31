@@ -26,7 +26,7 @@ namespace BExIS.Dlm.Entities.DataStructure
         /// <remarks></remarks>
         /// <seealso cref=""/>        
         public virtual string Description { get; set; }
-        
+
         #endregion
 
         #region Associations
@@ -79,7 +79,7 @@ namespace BExIS.Dlm.Entities.DataStructure
         {
             //Constraints = new List<Constraint>();
         }
-        
+
         #endregion
     }
 }

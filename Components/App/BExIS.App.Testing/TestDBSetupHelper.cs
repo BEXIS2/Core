@@ -1,17 +1,8 @@
-﻿using BExIS.App.Bootstrap;
-using Moq;
-using System;
+﻿using System;
 using System.IO;
-using System.Security.Claims;
-using System.Web;
-using System.Web.Http;
-using System.Web.Mvc;
 using Vaiona.IoC;
-using Vaiona.MultiTenancy.Api;
 using Vaiona.Persistence.Api;
-using Vaiona.PersistenceProviders.NH;
 using Vaiona.Utils.Cfg;
-using Vaiona.Web.Mvc.Modularity;
 
 namespace BExIS.App.Testing
 {
@@ -29,7 +20,7 @@ namespace BExIS.App.Testing
 
             Console.WriteLine("db connection");
             Console.WriteLine(AppConfiguration.DefaultApplicationConnection.ConnectionString);
- 
+
         }
 
         public void Start()

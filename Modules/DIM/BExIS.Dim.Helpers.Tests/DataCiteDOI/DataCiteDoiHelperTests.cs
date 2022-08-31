@@ -1,10 +1,6 @@
 ﻿using BExIS.App.Testing;
 using BExIS.Utils.Config;
 using NUnit.Framework;
-using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Threading.Tasks;
 using Vaiona.Utils.Cfg;
 
 namespace BExIS.Dim.Helpers.Tests.DataCiteDOI

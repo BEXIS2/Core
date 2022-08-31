@@ -1,11 +1,11 @@
-﻿using System;
+﻿using BExIS.Dlm.Entities.Data;
+using BExIS.Dlm.Entities.DataStructure;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics.Contracts;
 using System.Linq;
-using BExIS.Dlm.Entities.DataStructure;
 using Vaiona.Persistence.Api;
 using DS = BExIS.Dlm.Entities.DataStructure;
-using BExIS.Dlm.Entities.Data;
 
 namespace BExIS.Dlm.Services.DataStructure
 {
@@ -140,7 +140,7 @@ namespace BExIS.Dlm.Services.DataStructure
                 IRepository<VariableInstance> variableRepo = uow.GetRepository<VariableInstance>();
 
                 variableRepo.Evict();
-       
+
                 entity = repo.Reload(entity);
 
                 // delete associated variables and thier parameters
@@ -350,9 +350,9 @@ namespace BExIS.Dlm.Services.DataStructure
         /// <exception cref="ArgumentException"></exception>
         public StructuredDataStructure AddVariable(long dataStructureId, long variableId)
         {
-            if(dataStructureId <= 0) throw new ArgumentException("dataStructureId not exist");
-            if(variableId == null) throw new ArgumentException("variableId not exist");
-   
+            if (dataStructureId <= 0) throw new ArgumentException("dataStructureId not exist");
+            if (variableId == null) throw new ArgumentException("variableId not exist");
+
             using (IUnitOfWork uow = this.GetUnitOfWork())
             {
                 IRepository<StructuredDataStructure> structuredDataStructureRepo = uow.GetRepository<StructuredDataStructure>();
@@ -365,7 +365,7 @@ namespace BExIS.Dlm.Services.DataStructure
 
                 dataStructure.Variables.Add(variableInstance);
 
-               
+
                 variableInstanceRepo.Put(variableInstance);
                 uow.Commit();
                 return (dataStructure);
@@ -405,7 +405,7 @@ namespace BExIS.Dlm.Services.DataStructure
 
                 variableInstanceRepo.Put(variableInstances);
                 uow.Commit();
-                return dataStructure ;
+                return dataStructure;
             }
         }
 

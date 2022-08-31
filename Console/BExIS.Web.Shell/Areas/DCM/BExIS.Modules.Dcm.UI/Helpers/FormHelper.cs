@@ -75,7 +75,7 @@ namespace BExIS.Modules.Dcm.UI.Helpers
                 MetadataNestedAttributeUsage mnau = (MetadataNestedAttributeUsage)current;
                 metadataAttribute = mnau.Member;
                 type = LinkElementType.MetadataNestedAttributeUsage;
-        
+
             }
             else
             {
@@ -136,7 +136,8 @@ namespace BExIS.Modules.Dcm.UI.Helpers
             // you have to check which of the simple fields is the selection field. 
             // If it is not and there is a mapping for the field, it must be blocked.
             // OR if its allready locked because of a system mapping then let it locked.
-            if (locked == false && (!mappingSelectionField && partyComplexMappingExist && !partySimpleMappingExist)) { 
+            if (locked == false && (!mappingSelectionField && partyComplexMappingExist && !partySimpleMappingExist))
+            {
                 locked = false;
             }
 
@@ -197,8 +198,8 @@ namespace BExIS.Modules.Dcm.UI.Helpers
 
         private static bool hasComplexMapping(long id, LinkElementType type)
         {
-            if (MappingUtils.ExistComplexMappingWithParty(id, type) || 
-                MappingUtils.ExistComplexMappingWithPartyCustomType(id,type))
+            if (MappingUtils.ExistComplexMappingWithParty(id, type) ||
+                MappingUtils.ExistComplexMappingWithPartyCustomType(id, type))
             {
                 return true;
             }

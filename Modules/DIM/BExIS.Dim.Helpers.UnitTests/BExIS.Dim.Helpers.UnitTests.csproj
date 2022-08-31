@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net452</TargetFramework>
+    <TargetFramework>net48</TargetFramework>
 
     <IsPackable>false</IsPackable>
 
@@ -31,17 +31,13 @@
   <ItemGroup>
     <ProjectReference Include="..\..\..\Components\App\BExIS.App.Testing\BExIS.App.Testing.csproj" />
     <ProjectReference Include="..\..\..\Components\DLM\BExIS.Dlm.Services\BExIS.Dlm.Services.csproj" />
+    <ProjectReference Include="..\..\..\Components\Vaiona\Vaiona.Persistence.Api\Vaiona.Persistence.Api.csproj" />
+    <ProjectReference Include="..\..\..\Components\Vaiona\Vaiona.PersistenceProviders.NH\Vaiona.PersistenceProviders.NH.csproj" />
     <ProjectReference Include="..\BExIS.Dim.Services\BExIS.Dim.Services.csproj" />
   </ItemGroup>
 
   <ItemGroup>
     <Reference Include="System.Web" />
-    <Reference Include="Vaiona.Persistence.Api">
-      <HintPath>..\..\..\Libraries\Vaiona\Vaiona.Persistence.Api.dll</HintPath>
-    </Reference>
-    <Reference Include="Vaiona.PersistenceProviders.NH">
-      <HintPath>..\..\..\Libraries\Vaiona\Vaiona.PersistenceProviders.NH.dll</HintPath>
-    </Reference>
   </ItemGroup>
 
   <ItemGroup>

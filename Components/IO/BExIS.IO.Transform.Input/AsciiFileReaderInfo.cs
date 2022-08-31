@@ -8,7 +8,7 @@ namespace BExIS.IO.Transform.Input
     /// This class is required to store information that is important to read of data from ascii files.
     /// </summary>
     /// <remarks></remarks>        
-    public class AsciiFileReaderInfo:FileReaderInfo
+    public class AsciiFileReaderInfo : FileReaderInfo
     {
         /// <summary>
         /// 
@@ -156,7 +156,7 @@ namespace BExIS.IO.Transform.Input
             switch (tmarker)
             {
                 case TextMarker.quotes:
-                    return  '\'';
+                    return '\'';
                 case TextMarker.doubleQuotes:
                     return '"';
                 default: return '"';

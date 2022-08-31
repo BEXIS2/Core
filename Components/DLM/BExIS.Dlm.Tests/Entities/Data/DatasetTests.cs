@@ -1,15 +1,7 @@
-﻿using NUnit.Framework;
-using BExIS.Dlm.Entities.Data;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using BExIS.Dlm.Services.Data;
-using BExIS.Dlm.Services.DataStructure;
-using BExIS.Dlm.Services.Administration;
-using BExIS.App.Testing;
+﻿using BExIS.Dlm.Entities.Data;
 using FluentAssertions;
+using NUnit.Framework;
+using System;
 
 namespace BExIS.Dlm.Tests.Entities.Data
 {
@@ -43,7 +35,7 @@ namespace BExIS.Dlm.Tests.Entities.Data
         /// Inheritance is supported, call sequence form the children
         /// Executes only if: counterpart OneTimeSetUp exists and executed successfully.
         public void OneTimeTearDown()
-        {}
+        { }
 
         [Test()]
         public void InstantiateDatasetTest()
@@ -60,7 +52,7 @@ namespace BExIS.Dlm.Tests.Entities.Data
             // Test pass means the exception has been thrown and caught properly.
             // Assert.Throws(typeof(ArgumentNullException), delegate { new Dataset(null); });
 
-            Action action = () => new Dataset(null,null);
+            Action action = () => new Dataset(null, null);
             action.Should().Throw<ArgumentNullException>()
                 //.WithInnerException<ArgumentException>()
                 .WithMessage("*without*entity*template.*");

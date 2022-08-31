@@ -56,7 +56,7 @@ namespace BExIS.Modules.SAM.UI.Helpers
                     featurePermissions.ForEach(u => alumniFeaturePermissionManager.Create(user, u.Feature, u.PermissionType));
 
                     //Remove orginal feature permissions
-                    for (int i = 0; i<featurePermissions.Count; i++)
+                    for (int i = 0; i < featurePermissions.Count; i++)
                     {
                         featurePermissionManager.Delete(featurePermissions[i].Subject.Id, featurePermissions[i].Feature.Id);
                     }
@@ -76,7 +76,7 @@ namespace BExIS.Modules.SAM.UI.Helpers
 
                 using (var identityUserService = new IdentityUserService())
                 {
-                    for (int i = 0; i<tempList.Count;i++)
+                    for (int i = 0; i < tempList.Count; i++)
                     {
                         alumniUsersGroupsRelationManager.Create(user.Id, tempList[i].Id);
                         var remove = identityUserService.RemoveFromRoleAsync(user.Id, tempList[i].Name).Result;
@@ -108,11 +108,11 @@ namespace BExIS.Modules.SAM.UI.Helpers
             {
                 //transfer all feature permission
                 var alumniFeaturePermissions = alumniFeaturePermissionManager.FormerMemberFeaturePermissionRepository.Get(a => a.Subject.Id == user.Id).ToList();
-                if (alumniFeaturePermissions .Count > 0)
+                if (alumniFeaturePermissions.Count > 0)
                 {
                     alumniFeaturePermissions.ForEach(u => featurePermissionManager.Create(user, u.Feature, u.PermissionType));
                     //remove
-                    for(int i = 0; i< alumniFeaturePermissions.Count;i++)
+                    for (int i = 0; i < alumniFeaturePermissions.Count; i++)
                     {
                         alumniFeaturePermissionManager.Delete(alumniFeaturePermissions[i].Subject.Id, alumniFeaturePermissions[i].Feature.Id);
                     }
@@ -147,5 +147,5 @@ namespace BExIS.Modules.SAM.UI.Helpers
 
             return statuschanged;
         }
-     }
+    }
 }

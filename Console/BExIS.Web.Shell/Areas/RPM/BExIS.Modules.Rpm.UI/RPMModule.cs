@@ -1,14 +1,4 @@
-﻿using BExIS.Dlm.Entities.DataStructure;
-using BExIS.Dlm.Services.DataStructure;
-using BExIS.Modules.Rpm.UI.Classes;
-using BExIS.Modules.Rpm.UI.Helpers;
-using BExIS.Security.Entities.Objects;
-using BExIS.Security.Services.Objects;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using Vaiona.Logging;
-using Vaiona.Web.Mvc.Modularity;
+﻿using BExIS.Modules.Rpm.UI.Helpers;
 
 namespace BExIS.Modules.Rpm.UI
 {

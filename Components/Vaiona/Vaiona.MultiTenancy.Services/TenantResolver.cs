@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using System.Web;
 using Vaiona.Model.MTnt;
 using Vaiona.MultiTenancy.Api;
@@ -49,7 +47,7 @@ namespace Vaiona.MultiTenancy.Services
             string tenantId = AppConfiguration.TenantId;
             // If a tenant is registered in the web.config, it takes precendece! 
             // If no entry is there or has no value, the matching rules of tenants manifest files will be used
-            if(!string.IsNullOrWhiteSpace(tenantId))
+            if (!string.IsNullOrWhiteSpace(tenantId))
             {
                 resolved = store.Tenants
                     .Where(p => p.Status == TenantStatus.Active && p.Id.Equals(tenantId, StringComparison.InvariantCultureIgnoreCase))

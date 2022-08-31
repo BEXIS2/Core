@@ -99,7 +99,7 @@ namespace BExIS.IO.Transform.Output
                 return newXml;
             }
 
-            
+
         }
 
         public static string GetSchemaDirectoryPath(long datasetId)

@@ -28,7 +28,7 @@ namespace BExIS.Ext.Services
                 var feature = operation.Feature;
 
                 if (feature == null) return;
-               
+
                 var result = userManager.FindByNameAsync(username);
                 if (!featurePermissionManager.HasAccess(result.Result?.Id, feature.Id))
                 {

@@ -9,12 +9,10 @@ using BExIS.Security.Services.Utilities;
 using BExIS.Utils.Config;
 using System;
 using System.Collections.Generic;
-using System.Configuration;
 using System.Globalization;
 using System.Linq;
 using System.Web.Mvc;
 using System.Web.Routing;
-using Vaiona.IoC;
 using Vaiona.Logging.Aspects;
 using Vaiona.Web.Extensions;
 using Vaiona.Web.Mvc;
@@ -56,7 +54,7 @@ namespace BExIS.Modules.Sam.UI.Controllers
             {
                 try
                 {
-                    
+
 
                     var userName = GetUsernameOrDefault();
                     var user = userManager.Users.Where(u => u.Name.Equals(userName)).FirstOrDefault();
@@ -181,7 +179,7 @@ namespace BExIS.Modules.Sam.UI.Controllers
                 List<DatasetStatModel> datasetStat = new List<DatasetStatModel>();
                 foreach (Dataset ds in datasets)
                 {
-                    long noColumns = ds.DataStructure!=null && ds.DataStructure.Self is StructuredDataStructure ? (ds.DataStructure.Self as StructuredDataStructure).Variables.Count() : 0L;
+                    long noColumns = ds.DataStructure != null && ds.DataStructure.Self is StructuredDataStructure ? (ds.DataStructure.Self as StructuredDataStructure).Variables.Count() : 0L;
                     long noRows = 0; //ds.DataStructure.Self is StructuredDataStructure ? dm.GetDatasetLatestVersionEffectiveTupleCount(ds) : 0; // It would save time to calc the row count for all the datasets at once!
                     bool synced = false;
                     if (string.Compare(ds.StateInfo?.State, "Synced", true) == 0
@@ -271,7 +269,7 @@ namespace BExIS.Modules.Sam.UI.Controllers
             {
                 try
                 {
-                    
+
 
                     var userName = GetUsernameOrDefault();
                     var user = userManager.Users.Where(u => u.Name.Equals(userName)).FirstOrDefault();

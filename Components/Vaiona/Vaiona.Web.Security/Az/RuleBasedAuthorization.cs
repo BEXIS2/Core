@@ -1,17 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Vaiona.Web.Security.Az.Parser;
 using System.Web.Mvc;
-using System.Runtime.Caching;
-using System.Configuration;
-using System.Web;
-using System.Web.SessionState;
+using Vaiona.Web.Security.Az.Parser;
 
 namespace Vaiona.Web.Security.Az
 {
-    class RuleBasedAuthorization: IAuthorizationService
+    class RuleBasedAuthorization : IAuthorizationService
     {
         //private static MemoryCache actionCache = null;
         static RuleBasedAuthorization()
@@ -35,7 +28,7 @@ namespace Vaiona.Web.Security.Az
             {
                 result = false;
             }
-            return (result.HasValue? result.Value: false);
+            return (result.HasValue ? result.Value : false);
         }
 
 

@@ -3,11 +3,9 @@ using BExIS.Dlm.Entities.Data;
 using BExIS.Security.Entities.Authorization;
 using BExIS.UI.Hooks;
 using BExIS.UI.Hooks.Caches;
-using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Web;
 using System.Web.Mvc;
 using Vaiona.Utils.Cfg;
 
@@ -43,7 +41,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
             if (cache != null && cache.Messages.Any())
             {
-                messages = cache.Messages.ToList().OrderByDescending(m=>m.Timestamp).ToList();
+                messages = cache.Messages.ToList().OrderByDescending(m => m.Timestamp).ToList();
             }
 
             return Json(messages, JsonRequestBehavior.AllowGet);

@@ -71,7 +71,7 @@ namespace BExIS.Xml.Helpers
                 root.SetAttributeValue("id", metadataStructure.Id.ToString());
                 doc.Add(root);
 
-            
+
                 IList<MetadataPackageUsage> packages = uow.GetReadOnlyRepository<MetadataPackageUsage>().Get(p => packageIds.Contains(p.Id));
                 List<MetadataAttributeUsage> attributes;
                 foreach (MetadataPackageUsage mpu in packages)
@@ -770,7 +770,7 @@ namespace BExIS.Xml.Helpers
                     if (attributeRole != null)
                     {
                         XElement attribute = Get(attributeTypeName, number, attributeRole);
-                        if(value!=null) attribute.SetValue(value.ToString());
+                        if (value != null) attribute.SetValue(value.ToString());
                         else attribute.SetValue(string.Empty);
                     }
                 }

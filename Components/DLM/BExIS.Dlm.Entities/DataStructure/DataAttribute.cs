@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-/// <summary>
+﻿/// <summary>
 ///
 /// </summary>        
 namespace BExIS.Dlm.Entities.DataStructure

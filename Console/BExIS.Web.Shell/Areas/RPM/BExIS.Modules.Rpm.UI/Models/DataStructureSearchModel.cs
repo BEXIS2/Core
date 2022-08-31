@@ -1,17 +1,4 @@
-﻿using System;
-using System.Linq;
-using System.Collections.Generic;
-using BExIS.Dlm.Entities.DataStructure;
-using BExIS.Dlm.Services.DataStructure;
-using System.Xml;
-using BExIS.Xml.Helpers;
-using System.Xml.Linq;
-using BExIS.Modules.Rpm.UI.Classes;
-using BExIS.Dlm.Services.Data;
-using BExIS.Dlm.Entities.Data;
-using Vaiona.Persistence.Api;
-
-namespace BExIS.Modules.Rpm.UI.Models
+﻿namespace BExIS.Modules.Rpm.UI.Models
 {
     public class VariablePreview
     {
@@ -213,7 +200,7 @@ namespace BExIS.Modules.Rpm.UI.Models
         }
 
         private List<DataStructure> getUnStucturedDataStructures(string searchTerms, DataStructureManager dataStructureManager)
-        {     
+        {
             if (String.IsNullOrEmpty(searchTerms))
                 return (dataStructureManager.UnStructuredDataStructureRepo.Get().Cast<DataStructure>().ToList());
             else
@@ -311,14 +298,14 @@ namespace BExIS.Modules.Rpm.UI.Models
                         dataStructureResult.Title = ds.Name;
                         dataStructureResult.Description = ds.Description;
                         dataStructureResult.LinkedToDatasets = new List<string>();
-                        
+
                         foreach (Dataset d in ds.Datasets)
                         {
                             dataStructureResult.LinkedToDatasets.Add(d.Id.ToString());
                         }
 
 
-                            if (ds.Datasets.Count > 1) // Allow to edit, if only one file is linked to it
+                        if (ds.Datasets.Count > 1) // Allow to edit, if only one file is linked to it
                             dataStructureResult.inUse = true;
 
                         if (previewIds != null && previewIds.Contains(ds.Id))
@@ -372,4 +359,3 @@ namespace BExIS.Modules.Rpm.UI.Models
     }
 }
 
-    

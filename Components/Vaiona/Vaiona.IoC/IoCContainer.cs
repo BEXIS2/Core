@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Web;
 
 namespace Vaiona.IoC
 {
@@ -28,9 +24,9 @@ namespace Vaiona.IoC
         T Resolve<T>(string name);
         bool IsRegistered<T>(string name);
         //IEnumerable<T> ResolveAll<T>();
-        
+
         void Teardown(object obj);
-        
+
         void StartSessionLevelContainer();
         void ShutdownSessionLevelContainer();
         T ResolveForSession<T>();

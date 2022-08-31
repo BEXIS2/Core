@@ -150,7 +150,7 @@ namespace BExIS.IO
         /// <returns></returns>
         public virtual bool TryConvertDate(string dateAsString, out DateTime dateTime)
         {
-          
+
 
             if (DateTime.TryParse(dateAsString, out dateTime))
             {

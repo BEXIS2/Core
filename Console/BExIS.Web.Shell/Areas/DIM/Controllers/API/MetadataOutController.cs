@@ -12,7 +12,6 @@ using System.Net;
 using System.Net.Http;
 using System.Text;
 using System.Web.Http;
-using System.Web.Http.Description;
 using System.Xml;
 
 namespace BExIS.Modules.Dim.UI.Controllers
@@ -196,30 +195,32 @@ namespace BExIS.Modules.Dim.UI.Controllers
 
                     switch (returnType)
                     {
-                        case "application/json": {
+                        case "application/json":
+                            {
 
                                 string json = "";
 
                                 switch (simplifiedJson)
-                                { 
-                                    case 0: {
+                                {
+                                    case 0:
+                                        {
                                             json = JsonConvert.SerializeObject(xmldoc.DocumentElement);
-                                        break; 
-                                    }
+                                            break;
+                                        }
                                     case 1:
-                                    {
-                                        XmlMetadataConverter xmlMetadataConverter = new XmlMetadataConverter();
-                                        json = xmlMetadataConverter.ConvertTo(xmldoc, true).ToString();
+                                        {
+                                            XmlMetadataConverter xmlMetadataConverter = new XmlMetadataConverter();
+                                            json = xmlMetadataConverter.ConvertTo(xmldoc, true).ToString();
 
-                                        break;
-                                    }
+                                            break;
+                                        }
                                     case 2:
-                                    {
-                                        XmlMetadataConverter xmlMetadataConverter = new XmlMetadataConverter();
-                                        json = xmlMetadataConverter.ConvertTo(xmldoc).ToString();
+                                        {
+                                            XmlMetadataConverter xmlMetadataConverter = new XmlMetadataConverter();
+                                            json = xmlMetadataConverter.ConvertTo(xmldoc).ToString();
 
-                                        break;
-                                    }
+                                            break;
+                                        }
                                 }
 
                                 HttpResponseMessage response = new HttpResponseMessage { Content = new StringContent(json, Encoding.UTF8, "application/json") };

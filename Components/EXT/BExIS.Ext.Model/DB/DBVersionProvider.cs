@@ -1,11 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace BExIS.Ext.Model.DB
 {
-    public class DBVersionProvider: IVersionInfoProvider
+    public class DBVersionProvider : IVersionInfoProvider
     {
         public Version GetLatestVersion(string moduleCode)
         {

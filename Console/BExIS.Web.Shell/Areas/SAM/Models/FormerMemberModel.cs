@@ -39,21 +39,21 @@ namespace BEXIS.Modules.SAM.UI.Model
 
         public FormerMemberUserModel(User user, bool isFormerMember, Party party)
         {
-                UserName = user.UserName;
-                UserEmail = user.Email;
-                IsFormerMember = isFormerMember;
-                Name = user.FullName;
-                StartDate = party.StartDate;
-                EndDate = party.EndDate;
+            UserName = user.UserName;
+            UserEmail = user.Email;
+            IsFormerMember = isFormerMember;
+            Name = user.FullName;
+            StartDate = party.StartDate;
+            EndDate = party.EndDate;
         }
 
         public FormerMemberUserModel(User user, bool isFormerMember)
         {
-                UserName = user.UserName;
-                IsFormerMember = isFormerMember;
-                Name = user.FullName;
-                StartDate = new DateTime();
-                EndDate = new DateTime();
+            UserName = user.UserName;
+            IsFormerMember = isFormerMember;
+            Name = user.FullName;
+            StartDate = new DateTime();
+            EndDate = new DateTime();
         }
     }
 }

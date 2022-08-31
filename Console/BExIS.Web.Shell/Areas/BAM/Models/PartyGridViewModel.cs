@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-
-namespace BExIS.Modules.Bam.UI.Models
+﻿namespace BExIS.Modules.Bam.UI.Models
 {
     public class partyGridModel
     {

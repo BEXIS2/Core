@@ -3,32 +3,23 @@ using BExIS.Dlm.Entities.Data;
 using BExIS.Dlm.Entities.DataStructure;
 using BExIS.Dlm.Services.Data;
 using BExIS.Dlm.Services.DataStructure;
-using BExIS.IO.Transform.Input;
 using BExIS.IO.Transform.Output;
-using BExIS.Modules.Dim.UI.Models;
 using BExIS.Security.Entities.Authorization;
 using BExIS.Security.Entities.Subjects;
 using BExIS.Security.Services.Authorization;
 using BExIS.Security.Services.Objects;
 using BExIS.Security.Services.Subjects;
-using BExIS.Utils.NH.Querying;
 using BExIS.Utils.Route;
 using BExIS.Xml.Helpers;
-using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Data;
 using System.IO;
 using System.Linq;
-
-//using System.Linq.Dynamic;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
-using System.Text;
-using System.Web;
 using System.Web.Http;
-using System.Xml.Serialization;
 
 namespace BExIS.Modules.Dim.UI.Controllers
 {
@@ -110,7 +101,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
 
             // check wheter skip exist and it is a integer
             if (!string.IsNullOrEmpty(skipAsString) && !int.TryParse(skipAsString, out _skip))
-            { 
+            {
                 var request = Request.CreateResponse();
                 request.Content = new StringContent("skip is not a integer.");
 
@@ -175,9 +166,9 @@ namespace BExIS.Modules.Dim.UI.Controllers
             return getData(id, version, token, projection, selection, _skip, _take);
         }
 
-        private HttpResponseMessage getData(long id, int version, string token, string projection = null, string selection = null, int skip = 0, int take = 0 )
+        private HttpResponseMessage getData(long id, int version, string token, string projection = null, string selection = null, int skip = 0, int take = 0)
         {
-           
+
             bool isPublic = false;
 
             using (DatasetManager datasetManager = new DatasetManager())
@@ -224,126 +215,126 @@ namespace BExIS.Modules.Dim.UI.Controllers
                             bool isLatestVersion = false;
                             if (version == -1 || dataset.Versions.Count == version) isLatestVersion = true;
 
-                        DataTable dt;
+                            DataTable dt;
 
-                        if (isLatestVersion)
-                        {
-                            #region get data from the latest version of a dataset
-
-                            DatasetVersion datasetVersion = datasetManager.GetDatasetLatestVersion(id);
-
-                            string title = datasetVersion.Title;
-
-                            // check the data sturcture type ...
-                            if (datasetVersion.Dataset.DataStructure.Self is StructuredDataStructure)
+                            if (isLatestVersion)
                             {
-       
-                                // apply selection and projection
-                                long count = datasetManager.RowCount(id);
+                                #region get data from the latest version of a dataset
 
-                                dt = datasetManager.GetLatestDatasetVersionTuples(id, null, null, null, 0, (int)count);
-                                dt.Strip();
+                                DatasetVersion datasetVersion = datasetManager.GetDatasetLatestVersion(id);
 
-                                if (!string.IsNullOrEmpty(selection))
+                                string title = datasetVersion.Title;
+
+                                // check the data sturcture type ...
+                                if (datasetVersion.Dataset.DataStructure.Self is StructuredDataStructure)
                                 {
-                                    count = (int)datasetManager.RowCount(id);
-                                    //get full dataset
+
+                                    // apply selection and projection
+                                    long count = datasetManager.RowCount(id);
+
                                     dt = datasetManager.GetLatestDatasetVersionTuples(id, null, null, null, 0, (int)count);
-                                        
+                                    dt.Strip();
+
+                                    if (!string.IsNullOrEmpty(selection))
+                                    {
+                                        count = (int)datasetManager.RowCount(id);
+                                        //get full dataset
+                                        dt = datasetManager.GetLatestDatasetVersionTuples(id, null, null, null, 0, (int)count);
+
+                                    }
+
+
+                                    #endregion get data from the latest version of a dataset
+
+                                    //return model;
                                 }
-
-      
-                                #endregion get data from the latest version of a dataset
-
-                                //return model;
+                                else
+                                {
+                                    return Request.CreateResponse();
+                                }
                             }
                             else
                             {
-                                return Request.CreateResponse();
-                            }
-                        }
-                        else
-                        {
-                            #region load data of a older version of a dataset
+                                #region load data of a older version of a dataset
 
-                            int index = version - 1;
-                            if (version >= dataset.Versions.Count)
-                            {
-                                return Request.CreateResponse(HttpStatusCode.PreconditionFailed, String.Format("This version ({0}) is not available for the dataset", version));
-                            }
-
-                            DatasetVersion datasetVersion = dataset.Versions.OrderBy(d => d.Timestamp).ElementAt(version - 1);
-
-                            string title = datasetVersion.Title;
-
-                            // check the data sturcture type ...
-                            if (datasetVersion.Dataset.DataStructure.Self is StructuredDataStructure)
-                            {
-                                //FilterExpression filter = null;
-                                //OrderByExpression orderBy = null;
-
-                                // apply selection and projection
-                                int count = datasetManager.GetDatasetVersionEffectiveTuples(datasetVersion).Count;
-                                dt = datasetManager.GetDatasetVersionTuples(datasetVersion.Id, 0, count);
-
-                                dt.Strip();
-
-                                // if ther is a selection - filter the data
-                                if (!string.IsNullOrEmpty(selection))
+                                int index = version - 1;
+                                if (version >= dataset.Versions.Count)
                                 {
-                                    dt = OutputDataManager.SelectionOnDataTable(dt, selection, true);
+                                    return Request.CreateResponse(HttpStatusCode.PreconditionFailed, String.Format("This version ({0}) is not available for the dataset", version));
                                 }
 
-                                // if ther is a projection - reduce columns
-                                if (!string.IsNullOrEmpty(projection))
+                                DatasetVersion datasetVersion = dataset.Versions.OrderBy(d => d.Timestamp).ElementAt(version - 1);
+
+                                string title = datasetVersion.Title;
+
+                                // check the data sturcture type ...
+                                if (datasetVersion.Dataset.DataStructure.Self is StructuredDataStructure)
                                 {
-                                    // make the header names upper case to make them case insensitive
-                                    dt = OutputDataManager.ProjectionOnDataTable(dt, projection.ToUpper().Split(','));
+                                    //FilterExpression filter = null;
+                                    //OrderByExpression orderBy = null;
+
+                                    // apply selection and projection
+                                    int count = datasetManager.GetDatasetVersionEffectiveTuples(datasetVersion).Count;
+                                    dt = datasetManager.GetDatasetVersionTuples(datasetVersion.Id, 0, count);
+
+                                    dt.Strip();
+
+                                    // if ther is a selection - filter the data
+                                    if (!string.IsNullOrEmpty(selection))
+                                    {
+                                        dt = OutputDataManager.SelectionOnDataTable(dt, selection, true);
+                                    }
+
+                                    // if ther is a projection - reduce columns
+                                    if (!string.IsNullOrEmpty(projection))
+                                    {
+                                        // make the header names upper case to make them case insensitive
+                                        dt = OutputDataManager.ProjectionOnDataTable(dt, projection.ToUpper().Split(','));
+                                    }
+
+                                }
+                                else // return files of the unstructure dataset
+                                {
+                                    return Request.CreateResponse();
                                 }
 
+                                #endregion load data of a older version of a dataset
                             }
-                            else // return files of the unstructure dataset
+
+
+                            if (dt != null)
                             {
-                                return Request.CreateResponse();
+                                dt.TableName = id + "_data";
+
+                                var outputDataManager = new OutputDataManager();
+                                var apifilePath = outputDataManager.GenerateAsciiFile("api", dt, "test", "text/csv", dataset.DataStructure.Id);
+
+                                var response = Request.CreateResponse();
+
+                                using (StreamReader sr = new StreamReader(apifilePath))
+                                {
+                                    response.Content = new StringContent(sr.ReadToEnd());
+                                    //response.Content = new ObjectContent(typeof(DatasetModel), model, new DatasetModelCsvFormatter(model.DataTable.TableName));
+                                    response.Content.Headers.ContentType = new MediaTypeHeaderValue("text/csv");
+                                }
+
+                                //set headers on the "response"
+                                return response;
                             }
-
-                            #endregion load data of a older version of a dataset
-                        }
-
-
-                        if (dt != null)
-                        {
-                            dt.TableName = id + "_data";
-
-                            var outputDataManager = new OutputDataManager();
-                            var apifilePath = outputDataManager.GenerateAsciiFile("api", dt, "test", "text/csv", dataset.DataStructure.Id);
-
-                            var response = Request.CreateResponse();
-
-                            using (StreamReader sr = new StreamReader(apifilePath))
+                            else
                             {
-                                response.Content = new StringContent(sr.ReadToEnd());
-                                //response.Content = new ObjectContent(typeof(DatasetModel), model, new DatasetModelCsvFormatter(model.DataTable.TableName));
-                                response.Content.Headers.ContentType = new MediaTypeHeaderValue("text/csv");
+                                var request = Request.CreateResponse();
+                                request.Content = new StringContent("The data could not be loaded.");
+
+                                return request;
                             }
 
-                            //set headers on the "response"
-                            return response;
+
                         }
-                        else
+                        else // has rights?
                         {
                             var request = Request.CreateResponse();
-                            request.Content = new StringContent("The data could not be loaded.");
-
-                            return request;
-                        }
-                       
-
-                    }
-                    else // has rights?
-                    {
-                        var request = Request.CreateResponse();
-                        request.Content = new StringContent("User has no read right.");
+                            request.Content = new StringContent("User has no read right.");
 
                             return request;
                         }

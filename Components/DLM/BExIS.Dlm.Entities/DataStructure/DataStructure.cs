@@ -1,7 +1,7 @@
-﻿using System.Collections.Generic;
-using System.Xml;
-using BExIS.Dlm.Entities.Administration;
+﻿using BExIS.Dlm.Entities.Administration;
 using BExIS.Dlm.Entities.Data;
+using System.Collections.Generic;
+using System.Xml;
 using Vaiona.Entities.Common;
 
 /// <summary>
@@ -75,7 +75,7 @@ namespace BExIS.Dlm.Entities.DataStructure
         //}
 
         #endregion
-    
+
         #region Associations
 
         /// <summary>
@@ -100,7 +100,7 @@ namespace BExIS.Dlm.Entities.DataStructure
         public virtual ICollection<ResearchPlan> ResearchPlans { get; set; }
 
         #endregion
-    
+
         #region Mathods
         #endregion
 

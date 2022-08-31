@@ -1,6 +1,6 @@
-﻿using System;
+﻿using NUnit.Framework;
+using System;
 using System.Xml;
-using NUnit.Framework;
 using Assert = NUnit.Framework.Assert;
 
 namespace BExIS.Xml.Helpers.UnitTests

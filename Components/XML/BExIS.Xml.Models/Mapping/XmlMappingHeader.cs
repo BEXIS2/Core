@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 using System.Xml;
 
 namespace BExIS.Xml.Models.Mapping
@@ -16,14 +12,14 @@ namespace BExIS.Xml.Models.Mapping
 
         public XmlMappingHeader()
         {
-            Packages = new Dictionary<string,string>();
+            Packages = new Dictionary<string, string>();
             Schemas = new Dictionary<string, string>();
             Attributes = new Dictionary<string, string>();
         }
 
-        public void AddToDestination(string xpath, string prefix="", string parentSequence = "")
+        public void AddToDestination(string xpath, string prefix = "", string parentSequence = "")
         {
-            Destination = new Destination(xpath,parentSequence);
+            Destination = new Destination(xpath, parentSequence);
             Destination.Prefix = prefix;
         }
 

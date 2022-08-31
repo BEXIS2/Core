@@ -7,8 +7,6 @@ using Lucifron.ReST.Library.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Xml.Linq;
 
 namespace BExIS.Dim.Helpers.Services
@@ -22,7 +20,7 @@ namespace BExIS.Dim.Helpers.Services
             if (datasetVersion == null)
                 return creators;
 
-            if(!string.IsNullOrEmpty(fn) && !string.IsNullOrEmpty(ln))
+            if (!string.IsNullOrEmpty(fn) && !string.IsNullOrEmpty(ln))
             {
                 var elements = MappingUtils.GetXElementFromMetadata((int)Enum.Parse(typeof(Key), key), LinkElementType.Key, datasetVersion.Dataset.MetadataStructure.Id, XmlUtility.ToXDocument(datasetVersion.Metadata));
                 foreach (var element in elements)
@@ -38,7 +36,7 @@ namespace BExIS.Dim.Helpers.Services
 
                 foreach (var value in values)
                 {
-                    if(!string.IsNullOrEmpty(value))
+                    if (!string.IsNullOrEmpty(value))
                     {
                         var creator = new DataCiteCreator(value, DataCiteCreatorType.Personal);
                         if (creator != null)
@@ -46,12 +44,12 @@ namespace BExIS.Dim.Helpers.Services
                     }
                 }
 
-                    return values.Select(a => new DataCiteCreator(a, DataCiteCreatorType.Personal)).ToList();
+                return values.Select(a => new DataCiteCreator(a, DataCiteCreatorType.Personal)).ToList();
             }
 
             return creators;
         }
-        
+
         private DataCiteCreator getCreator(XElement element, string fn, string ln)
         {
             if (element == null)

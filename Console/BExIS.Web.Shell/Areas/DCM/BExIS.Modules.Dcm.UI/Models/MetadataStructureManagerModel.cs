@@ -1,6 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using BExIS.Utils.Models;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using BExIS.Utils.Models;
 
 namespace BExIS.Modules.Dcm.UI.Models
 {

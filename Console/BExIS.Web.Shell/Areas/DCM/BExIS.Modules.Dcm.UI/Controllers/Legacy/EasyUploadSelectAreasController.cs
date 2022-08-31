@@ -171,23 +171,24 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                     string filePath = TaskManager.Bus[EasyUploadTaskManager.FILEPATH].ToString();
                     FileStream fis = null;
                     string jsonTable = "{}";
-                    fis = new FileStream(filePath, FileMode.Open, FileAccess.Read);
+                    using (fis = new FileStream(filePath, FileMode.Open, FileAccess.Read))
+                    {
 
-                    //Generate the Sheet-List and grab the active worksheet
-                    JsonTableGenerator EUEReader = new JsonTableGenerator(fis);
-                    //If the active worksheet was never changed, we default to the first one
-                    string activeWorksheet;
-                    if (!TaskManager.Bus.ContainsKey(EasyUploadTaskManager.ACTIVE_WOKSHEET_URI))
-                    {
-                        activeWorksheet = EUEReader.GetFirstWorksheetUri().ToString();
-                        TaskManager.AddToBus(EasyUploadTaskManager.ACTIVE_WOKSHEET_URI, activeWorksheet);
-                    }
-                    else
-                    {
-                        activeWorksheet = TaskManager.Bus[EasyUploadTaskManager.ACTIVE_WOKSHEET_URI].ToString();
-                    }
-                    //Generate the table for the active worksheet
-                    jsonTable = EUEReader.GenerateJsonTable(CurrentSheetFormat, activeWorksheet);
+                        //Generate the Sheet-List and grab the active worksheet
+                        JsonTableGenerator EUEReader = new JsonTableGenerator(fis);
+                        //If the active worksheet was never changed, we default to the first one
+                        string activeWorksheet;
+                        if (!TaskManager.Bus.ContainsKey(EasyUploadTaskManager.ACTIVE_WOKSHEET_URI))
+                        {
+                            activeWorksheet = EUEReader.GetFirstWorksheetUri().ToString();
+                            TaskManager.AddToBus(EasyUploadTaskManager.ACTIVE_WOKSHEET_URI, activeWorksheet);
+                        }
+                        else
+                        {
+                            activeWorksheet = TaskManager.Bus[EasyUploadTaskManager.ACTIVE_WOKSHEET_URI].ToString();
+                        }
+                        //Generate the table for the active worksheet
+                        jsonTable = EUEReader.GenerateJsonTable(CurrentSheetFormat, activeWorksheet);
 
                         //Save the worksheet uris to the model
                         model.SheetUriDictionary = EUEReader.GetWorksheetUris();
@@ -205,7 +206,8 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                         model.StepInfo = TaskManager.Current();
                     }
                 }
-            
+            }
+
 
             return PartialView(model);
         }

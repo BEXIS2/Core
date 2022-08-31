@@ -15,9 +15,7 @@ using BExIS.Security.Services.Subjects;
 using BExIS.Utils.Route;
 using BExIS.Xml.Helpers;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Net;
 using System.Net.Http;
 using System.Web.Http;
 using System.Web.Http.Description;
@@ -44,7 +42,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers.API
         /// <returns> HttpResponseMessage </returns>
         [BExISApiAuthorize]
         [PostRoute("api/Dataset")]
-        public HttpResponseMessage Post([FromBody]PostApiDatasetModel dataset)
+        public HttpResponseMessage Post([FromBody] PostApiDatasetModel dataset)
         {
             var request = Request.CreateResponse();
             User user = null;
@@ -189,7 +187,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers.API
         [ApiExplorerSettings(IgnoreApi = true)]
         [BExISApiAuthorize]
         [PutRoute("api/Dataset")]
-        public void Put(int id, [FromBody]string value)
+        public void Put(int id, [FromBody] string value)
         {
         }
 

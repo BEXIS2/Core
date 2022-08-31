@@ -1,14 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.IO;
 using Vaiona.MultiTenancy.Services;
 using Vaiona.Utils.Cfg;
 
 namespace BExIS.Ext.Services
 {
-    public class BExISTenantPathProvider: DefaultTenantPathProvider
+    public class BExISTenantPathProvider : DefaultTenantPathProvider
     {
         protected override string GetImagePathFromFallbackTenant(string fallbackTenantId, string imageFileName)
         {

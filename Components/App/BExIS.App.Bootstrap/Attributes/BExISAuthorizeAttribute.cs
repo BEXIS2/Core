@@ -4,8 +4,6 @@ using BExIS.Security.Services.Authorization;
 using BExIS.Security.Services.Objects;
 using BExIS.Security.Services.Subjects;
 using Newtonsoft.Json;
-using System;
-using System.Text;
 using System.Web.Mvc;
 using System.Web.Routing;
 
@@ -65,7 +63,7 @@ namespace BExIS.App.Bootstrap.Attributes
                 {
                     var authorization = filterContext.HttpContext.Request.Headers.Get("Authorization");
                     User user = null;
-                    var res = BExISAuthorizeHelper.HttpRequestAuthorization(authorization,feature.Id, out user);
+                    var res = BExISAuthorizeHelper.HttpRequestAuthorization(authorization, feature.Id, out user);
                     if (user != null) userName = user.Name;
                     if (res != null) res.Dispose();
 
@@ -79,7 +77,7 @@ namespace BExIS.App.Bootstrap.Attributes
                 if (!filterContext.HttpContext.User.Identity.IsAuthenticated)
                 {
                     //HandleUnauthorizedRequest(filterContext);
-      
+
                     var returnType = ((ReflectedActionDescriptor)filterContext.ActionDescriptor).MethodInfo.ReturnType;
                     if (returnType == typeof(JsonResult))  // if the action work with json result a json object should be returned
                     {
