@@ -1,0 +1,504 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="BExIS.Dlm.Entities.MetadataStructure.MetadataAttribute">
+    <Position X="5" Y="10.25" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAACAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>MetadataStrcuture\MetadataAttribute.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="BExIS.Dlm.Entities.Administration.ResearchPlan" Collapsed="true">
+    <Position X="30.25" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAgAEAAAAAAAQACAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Administration\ResearchPlan.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="BExIS.Dlm.Entities.Common.BaseUsage" Collapsed="true">
+    <Position X="6" Y="5.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAEAAgAAAAAAAAAAAAAABAAAQgAAAAAACCAAI=</HashCode>
+      <FileName>Common\BaseUsage.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="BExIS.Dlm.Entities.Data.Amendment" Collapsed="true">
+    <Position X="14.75" Y="8.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Data\Amendment.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="BExIS.Dlm.Entities.Data.ContentDescriptor" Collapsed="true">
+    <Position X="25" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAgAARAAAAgAAQAACAAAAAAAAAAAAAAAAI=</HashCode>
+      <FileName>Data\ContentDescriptor.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="BExIS.Dlm.Entities.Data.Dataset" Collapsed="true">
+    <Position X="28.5" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AgQAAAAEAQAAAEAAAAAAAAAAAAAAAEEAAAAACAAAAAA=</HashCode>
+      <FileName>Data\Dataset.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="BExIS.Dlm.Entities.Data.DatasetVersion" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="30.25" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AgACUAAkABIgAEAgIAACAAAADAAAAEAAAAQAAAAEAAA=</HashCode>
+      <FileName>Data\DatasetVersion.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="BExIS.Dlm.Entities.Data.AbstractTuple" Collapsed="true">
+    <Position X="14.75" Y="3" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>CoACAAAACAAAAAAAAAAiBAAAAAAAAAAAAAEgEAAAgAI=</HashCode>
+      <FileName>Data\DataTuple.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="BExIS.Dlm.Entities.Data.DataTuple" Collapsed="true">
+    <Position X="13.5" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>CAACAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAAAAA=</HashCode>
+      <FileName>Data\DataTuple.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="BExIS.Dlm.Entities.Data.DataTupleVersion" Collapsed="true">
+    <Position X="15.75" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>CAAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAAAAQ=</HashCode>
+      <FileName>Data\DataTupleVersion.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="BExIS.Dlm.Entities.Data.DataValue" Collapsed="true">
+    <Position X="14.75" Y="5.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAgAIAAAAABAAAAAgAAEAAAA=</HashCode>
+      <FileName>Data\DataValue.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="BExIS.Dlm.Entities.Data.ExtendedPropertyValue" Collapsed="true">
+    <Position X="12.5" Y="6.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAEAAAAAAAAAAAAgAAAAACAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Data\ExtendedPropertyValue.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="BExIS.Dlm.Entities.Data.ParameterValue" Collapsed="true">
+    <Position X="14.75" Y="6.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAgAAAAAgAEAAAAAAAAAQAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Data\ParameterValue.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="BExIS.Dlm.Entities.Data.VariableValue" Collapsed="true">
+    <Position X="17" Y="6.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAABABAAAEAAAAgAAAgAAAAAAAAAAAAAAQAAAAAAAA=</HashCode>
+      <FileName>Data\VariableValue.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="BExIS.Dlm.Entities.DataStructure.AggregateFunction" Collapsed="true">
+    <Position X="21.5" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAgAAAAAAAAAAQAAAAAAAAIAAAAAAAAAAA=</HashCode>
+      <FileName>DataStructure\AggregateFunction.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="BExIS.Dlm.Entities.DataStructure.Classifier" Collapsed="true">
+    <Position X="23.25" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAgAAAAAAAEQAQAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>DataStructure\Classifier.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="BExIS.Dlm.Entities.DataStructure.Constraint" Collapsed="true">
+    <Position X="12.75" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AQAABAEAQgAkAAAAAAAQAEAAAAAAAAAAACAACiBAAAA=</HashCode>
+      <FileName>DataStructure\Constraint.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="BExIS.Dlm.Entities.DataStructure.DomainConstraint" Collapsed="true">
+    <Position X="9.5" Y="2" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AQAAAAAAAAAACAAAAAAQAAAAAAAAAAAAAAAAACAAgAA=</HashCode>
+      <FileName>DataStructure\Constraint.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="BExIS.Dlm.Entities.DataStructure.DomainItem" Collapsed="true">
+    <Position X="26.75" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAgAAAAAAA=</HashCode>
+      <FileName>DataStructure\Constraint.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="BExIS.Dlm.Entities.DataStructure.PatternConstraint" Collapsed="true">
+    <Position X="11.75" Y="2" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AQAAAAgAAAAAAEAAAAAQAAAAAAAAAAAAAAAAACAAAAA=</HashCode>
+      <FileName>DataStructure\Constraint.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="BExIS.Dlm.Entities.DataStructure.RangeConstraint" Collapsed="true">
+    <Position X="14" Y="2" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AQAAgAAACAAAAAABAAAQAAAAAAEAAAAAAAAAACAAAAA=</HashCode>
+      <FileName>DataStructure\Constraint.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="BExIS.Dlm.Entities.DataStructure.ComparisonConstraint" Collapsed="true">
+    <Position X="16.25" Y="2" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AQAAAAAAACAAAAAAAAAQACAAAAAAAAAAAAAAgDAAIAA=</HashCode>
+      <FileName>DataStructure\Constraint.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="BExIS.Dlm.Entities.DataStructure.ConversionMethod" Collapsed="true">
+    <Position X="26.75" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAgAgAAAAAAAAACAAAAAABAAAAAAAAAAAAAA=</HashCode>
+      <FileName>DataStructure\ConversionMethod.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="BExIS.Dlm.Entities.DataStructure.DataAttribute" Collapsed="true">
+    <Position X="0.5" Y="8.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAABAAQAAAAAACAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>DataStructure\DataAttribute.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="BExIS.Dlm.Entities.DataStructure.DataContainer" Collapsed="true">
+    <Position X="5" Y="8.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAEAAgAIhACAAIAABCAQEAAIAApAAAAAAAAECAAA=</HashCode>
+      <FileName>DataStructure\DataContainer.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="BExIS.Dlm.Entities.DataStructure.DataStructure" Collapsed="true">
+    <Position X="1.75" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AgAAgAAAAAAgAEAAAAABAQQAAAAAAAAAAAAAAAACAAA=</HashCode>
+      <FileName>DataStructure\DataStructure.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="BExIS.Dlm.Entities.DataStructure.DataType" Collapsed="true">
+    <Position X="23.25" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAEAAAAgAAAAAAAAAAQAAAAAAAAIAAAAAAAgAAA=</HashCode>
+      <FileName>DataStructure\DataType.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="BExIS.Dlm.Entities.DataStructure.DatasetView" Collapsed="true">
+    <Position X="21.5" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAIAAAAAAAAAAAQDAAAAAAAAAAAAAAAAIAA=</HashCode>
+      <FileName>DataStructure\DataView.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="BExIS.Dlm.Entities.DataStructure.Dimension" Collapsed="true">
+    <Position X="25" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAgABAAAAAAAAQAAAAAAAAAEAAAAAAAAAA=</HashCode>
+      <FileName>DataStructure\Dimension.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="BExIS.Dlm.Entities.DataStructure.ExtendedProperty" Collapsed="true">
+    <Position X="28.5" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAABAAAAAAgAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>DataStructure\ExtendedProperty.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="BExIS.Dlm.Entities.DataStructure.GlobalizationInfo" Collapsed="true">
+    <Position X="30.25" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAFAAAAAAgAAAAAAAAAAAAAAAAAAAAACAAAAAAAAA=</HashCode>
+      <FileName>DataStructure\GlobalizationInfo.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="BExIS.Dlm.Entities.DataStructure.Methodology" Collapsed="true">
+    <Position X="26.75" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAACAAAgAAAAAAAAAAAAAABIQAAAAAAAAAA=</HashCode>
+      <FileName>DataStructure\Mathodology.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="BExIS.Dlm.Entities.DataStructure.MissingValue" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="28.5" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAEAAAAAAgBAAAAAAAAAAAAAAAAAAAAAQAAAAAAAA=</HashCode>
+      <FileName>DataStructure\MissingValue.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="BExIS.Dlm.Entities.DataStructure.ObtainingMethod" Collapsed="true">
+    <Position X="30.25" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAgAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>DataStructure\ObtainingMethod.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="BExIS.Dlm.Entities.DataStructure.StructuredDataStructure" Collapsed="true">
+    <Position X="0.5" Y="2" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAABAAAAAAAAAAAAAAAAQAAAAAAACAAAAQAAAAAAAA=</HashCode>
+      <FileName>DataStructure\StructuredDataStructure.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="BExIS.Dlm.Entities.DataStructure.Unit" Collapsed="true">
+    <Position X="21.5" Y="5.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAABAEAAgAAAAgAAABAQCAAAAQAAIAAAAAAAAAAA=</HashCode>
+      <FileName>DataStructure\Unit.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="BExIS.Dlm.Entities.DataStructure.UnStructuredDataStructure" Collapsed="true">
+    <Position X="2.75" Y="2" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>DataStructure\UnStructuredDataStructure.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="BExIS.Dlm.Entities.DataStructure.Parameter" Collapsed="true">
+    <Position X="6" Y="7" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAgAAAAAAAAAAAAAAAAAAQAAAAAAAA=</HashCode>
+      <FileName>DataStructure\Usage.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="BExIS.Dlm.Entities.DataStructure.Variable" Collapsed="true">
+    <Position X="8.25" Y="7" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAgIAAAAAAAAAAAAEAAAIAAAAIAAAA=</HashCode>
+      <FileName>DataStructure\Usage.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="BExIS.Dlm.Entities.Metadata.Metadata" Collapsed="true">
+    <Position X="7.75" Y="10" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Metadata\Metadata.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="BExIS.Dlm.Entities.MetadataStructure.MetadataAttributeUsage" Collapsed="true">
+    <Position X="10.5" Y="7" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAAAAEA=</HashCode>
+      <FileName>MetadataStrcuture\MetadataAttributeUsage.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="BExIS.Dlm.Entities.MetadataStructure.MetadataCompoundAttribute" Collapsed="true">
+    <Position X="0.5" Y="11.5" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAABAAIAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>MetadataStrcuture\MetadataCompoundAttribute.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="BExIS.Dlm.Entities.MetadataStructure.MetadataNestedAttributeUsage" Collapsed="true">
+    <Position X="0.5" Y="7" Width="2.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAACAAAAAAAAAAAAIAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>MetadataStrcuture\MetadataNestedAttributeUsage.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="BExIS.Dlm.Entities.MetadataStructure.MetadataPackage" Collapsed="true">
+    <Position X="10" Y="8.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAgAAAAAAECAAQAAAAAAAAAAAAAAAAAQAA=</HashCode>
+      <FileName>MetadataStrcuture\MetadataPackage.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="BExIS.Dlm.Entities.MetadataStructure.MetadataPackageUsage" Collapsed="true">
+    <Position X="3.5" Y="7" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAEA=</HashCode>
+      <FileName>MetadataStrcuture\MetadataPackageUsage.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="BExIS.Dlm.Entities.MetadataStructure.MetadataSimpleAttribute" Collapsed="true">
+    <Position X="0.5" Y="10.5" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>MetadataStrcuture\MetadataSimpleAttribute.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="BExIS.Dlm.Entities.MetadataStructure.MetadataStructure" Collapsed="true">
+    <Position X="7.75" Y="8.75" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAgAAAAAAAEQQQAAAAAAAAABAAAAAACAAA=</HashCode>
+      <FileName>MetadataStrcuture\MetadataStructure.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="BExIS.Dlm.Entities.Party.Party" Collapsed="true">
+    <Position X="21.5" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAIgEAAAAAACAAQgAAAAAAACAAACAEAAAQA=</HashCode>
+      <FileName>Party\Party.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="BExIS.Dlm.Entities.Party.PartyUser" Collapsed="true">
+    <Position X="28.5" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AEAAAAAAAAAAAAAAAAAAAAgEAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Party\PartyAccount.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="BExIS.Dlm.Entities.Party.PartyCustomAttribute" Collapsed="true">
+    <Position X="23.25" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAUAAAABKgAAAAgAACAIQAAAAAAQAiAAAAAAAAAAA=</HashCode>
+      <FileName>Party\PartyCustomAttribute.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="BExIS.Dlm.Entities.Party.PartyCustomAttributeValue" Collapsed="true">
+    <Position X="25" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AEAAAAAAAAAEAAAAAAAAAAAAAAAAAAAAAAAgAAAAAAA=</HashCode>
+      <FileName>Party\PartyCustomAttributeValue.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="BExIS.Dlm.Entities.Party.PartyCustomGridColumns" Collapsed="true">
+    <Position X="26.75" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAEAAAAAAAACAgAAAAAAAAAAAAIAAAAAAA=</HashCode>
+      <FileName>Party\PartyCustomGridColumns.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="BExIS.Dlm.Entities.Party.PartyRelationship" Collapsed="true">
+    <Position X="28.5" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAgAAAAAAAgBGAAAIAAAAAgAAAgAAAAAAAAAGAAAAA=</HashCode>
+      <FileName>Party\PartyRelationship.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="BExIS.Dlm.Entities.Party.PartyRelationshipType" Collapsed="true">
+    <Position X="30.25" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAEAAAABAgAEAAAAAAAAAAAAAAAEBAAAAAAACCgAA=</HashCode>
+      <FileName>Party\PartyRelationshipType.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="BExIS.Dlm.Entities.Party.PartyStatus" Collapsed="true">
+    <Position X="21.5" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AEAAIAAAAAAgAAAAAAACAAAAAAAAAAAAEAAAAAAAAAA=</HashCode>
+      <FileName>Party\PartyStatus.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="BExIS.Dlm.Entities.Party.PartyStatusType" Collapsed="true">
+    <Position X="23.25" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAQAAAAAAgAAAEAAAAAAQAAAAAAAACAAAAAAAAAAA=</HashCode>
+      <FileName>Party\PartyStatusType.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="BExIS.Dlm.Entities.Party.PartyType" Collapsed="true">
+    <Position X="25" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAEIEAABAgAEAAAAAAAAAAAAAAAQAAACAAAAAoAAA=</HashCode>
+      <FileName>Party\PartyType.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="BExIS.Dlm.Entities.Party.PartyTypePair" Collapsed="true">
+    <Position X="26.75" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAABIAAAAAkAEAAAAAAAQAAAAAABAAAAQAAACAAAAA=</HashCode>
+      <FileName>Party\PartyTypePair.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Enum Name="BExIS.Dlm.Entities.Data.DatasetStatus" Collapsed="true">
+    <Position X="21.5" Y="7.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAABAAEAAAAEAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Data\Dataset.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="BExIS.Dlm.Entities.Data.DatasetStateInfo" Collapsed="true">
+    <Position X="30.25" Y="6.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAIAAAAAAAAAAAAAAAAAAAAAAAAAAAAABAAAAAA=</HashCode>
+      <FileName>Data\Dataset.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="BExIS.Dlm.Entities.Data.DatasetVersionStatus" Collapsed="true">
+    <Position X="23.25" Y="7.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAABAAAAAAAEAAAAAAAAIAAAAAAAA=</HashCode>
+      <FileName>Data\DatasetVersion.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="BExIS.Dlm.Entities.Data.TupleAction" Collapsed="true">
+    <Position X="21.5" Y="8.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAEAAAAEAAAQQAAAAAAAAAAAA=</HashCode>
+      <FileName>Data\DataTuple.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="BExIS.Dlm.Entities.Data.DataTupleType" Collapsed="true">
+    <Position X="26.75" Y="7.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACAAAAAAQ=</HashCode>
+      <FileName>Data\DataTuple.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="BExIS.Dlm.Entities.DataStructure.ConstraintProviderSource" Collapsed="true">
+    <Position X="26.75" Y="6.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAIAAAAAAAAAAAAAAAAAAAAAACAA=</HashCode>
+      <FileName>DataStructure\Constraint.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="BExIS.Dlm.Entities.DataStructure.ComparisonOperator" Collapsed="true">
+    <Position X="23.25" Y="6.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAACAAAAAAAAAAgAAAAAAAAAAAAAAAAAAAAQRAACA=</HashCode>
+      <FileName>DataStructure\Constraint.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="BExIS.Dlm.Entities.DataStructure.ComparisonTargetType" Collapsed="true">
+    <Position X="25" Y="6.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAQAAAAAAQgAAAAAAA=</HashCode>
+      <FileName>DataStructure\Constraint.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="BExIS.Dlm.Entities.DataStructure.ComparisonOffsetType" Collapsed="true">
+    <Position X="21.5" Y="6.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAACAAAAAAACAAAAA=</HashCode>
+      <FileName>DataStructure\Constraint.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="BExIS.Dlm.Entities.DataStructure.DataContainerType" Collapsed="true">
+    <Position X="28.5" Y="6.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAIEAA=</HashCode>
+      <FileName>DataStructure\DataContainer.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="BExIS.Dlm.Entities.DataStructure.MeasurementScale" Collapsed="true">
+    <Position X="28.5" Y="7.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAJAAAAQAAgAAACQAAAAAAAAAAAA=</HashCode>
+      <FileName>DataStructure\DataContainer.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="BExIS.Dlm.Entities.DataStructure.DataStructureCategory" Collapsed="true">
+    <Position X="25" Y="7.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAIAAAAAAAACAAACAAAQAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>DataStructure\DataStructure.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="BExIS.Dlm.Entities.DataStructure.MeasurementSystem" Collapsed="true">
+    <Position X="30.25" Y="7.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>CAAAAAAAAAAAAAAAAABAAAAAAAAAAAACAAAAAAEAABA=</HashCode>
+      <FileName>DataStructure\Unit.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>

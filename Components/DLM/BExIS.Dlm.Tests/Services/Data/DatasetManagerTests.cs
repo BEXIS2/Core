@@ -8,8 +8,6 @@ using BExIS.Dlm.Services.MetadataStructure;
 using BExIS.Dlm.Tests.Helpers;
 using BExIS.Utils;
 using BExIS.Utils.Data.Helpers;
-using BExIS.Web.Shell;
-using BExIS.Web.Shell.Helpers;
 using FluentAssertions;
 using NUnit.Framework;
 using System;

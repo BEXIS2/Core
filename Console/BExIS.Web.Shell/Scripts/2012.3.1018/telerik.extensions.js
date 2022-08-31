@@ -120,7 +120,7 @@
             /// <param type="array" name="items">Array of json objects where each json object has the following attributes:
             /// 1. text: the text that is displayed for a dropdown list item.
             /// OR
-            /// 2. value: the value for a dropdown list item. 
+            /// 2. value: the value for a dropdown list item.
             /// </param>
             /// <example>
             /// $('#dropdownlist').data('tDropDownList').dataBind(
@@ -132,7 +132,7 @@
             /// );
             ///
             /// $('#dropdownlist').data('tDropDownList').disableListItems([{ text:'Red' },{ text:'Orange' }]);
-            /// 
+            ///
             /// $('#dropdownlist').data('tDropDownList').disableListItems([{ value:'1' },{ text:'5' }]);
             /// </example>
             disableListItems: function (disableItems) {
@@ -210,8 +210,6 @@
         }
     };
 
-
-
     // Was the tekerik.grid.min.js added to the page by the telerik script registrar?
     if ($.telerik.grid != undefined) {
         // Extend the grid plugin.
@@ -266,7 +264,7 @@
             /// </summary>
             /// <param type="json" name="o">JSON object with the following attributes:
             /// onlyColsDefinedInMarkup (defaults to true) [optional]:
-            //      true - sorting should only be enabled for columns 
+            //      true - sorting should only be enabled for columns
             ///         that have Sortable set to true for columns defined in the HTML markup.
             ///     false - sorting should be enabled for all columns regardless of what
             ///         columns have Sortable set in the HTML markup.
@@ -429,7 +427,6 @@
         $.extend(true, $.telerik.grid.prototype, gridExtensions);
     }
 
-
     // Was the tekerik.tabstrip.min.js added to the page by the telerik script registrar?
     if ($.telerik.tabstrip != undefined) {
         // Extend the tabstrip plugin.
@@ -546,8 +543,8 @@
             /// </param>
             /// <example>
             /// tabStrip.addTab({
-            ///     text: 'New Tab', 
-            ///     url: "@Url.Content("~")TabStrip/GetTabContent", 
+            ///     text: 'New Tab',
+            ///     url: "@Url.Content("~")TabStrip/GetTabContent",
             ///     data: { tabName: 'New Tab' },
             ///     complete: function() {
             ///         tabStrip.selectTab({ text: 'New Tab' });
@@ -689,7 +686,7 @@
             },
             /// <summary>
             /// Remove the contents for all tabs in the tabstrip.
-            /// Once this is done, there is no way of restoring the 
+            /// Once this is done, there is no way of restoring the
             /// tab contents.
             /// </summary>
             /// <example>
@@ -705,8 +702,6 @@
         $.extend(true, $.telerik.tabstrip.prototype, tabstripExtensions);
     }
 
-
-
     // Was the tekerik.treeview.min.js added to the page by the telerik script registrar?
     if ($.telerik.treeview != undefined) {
         // Extend the treeview plugin.
@@ -715,7 +710,7 @@
             /// Add a context menu to the treeview.
             /// </summary>
             /// <param type="json object" name="o">
-            /// json object with a function to determine whether the context menu should be displayed 
+            /// json object with a function to determine whether the context menu should be displayed
             /// for a node and a list of menu items for the context menu.
             /// </param>
             /// <example>
@@ -726,7 +721,7 @@
             /// 	    },
             ///         contextMenuOpening: function (menu, node) {
             ///             // Find the 'Edit' context menu option and disable it.
-            ///             $.each(menu.menuItems, function (idx, item) {            
+            ///             $.each(menu.menuItems, function (idx, item) {
             ///                 if (item.text == 'Edit') {
             ///                     item.disabled = true;
             ///                     return false;
@@ -1072,8 +1067,6 @@
         $.extend(true, $.telerik.treeview.prototype, treeviewExtensions);
     }
 
-
-
     // Was the tekerik.window.min.js added to the page by the telerik script registrar?
     if ($.telerik.window != undefined) {
         // Extend the window plugin.
@@ -1117,4 +1110,4 @@
         var scrollbarWidth = 0;
         if (!scrollbarWidth) { if ($.browser.msie) { var $textarea1 = $('<textarea cols="10" rows="2"></textarea>').css({ position: 'absolute', top: -1000, left: -1000 }).appendTo('body'), $textarea2 = $('<textarea cols="10" rows="2" style="overflow: hidden;"></textarea>').css({ position: 'absolute', top: -1000, left: -1000 }).appendTo('body'); scrollbarWidth = $textarea1.width() - $textarea2.width(); $textarea1.add($textarea2).remove(); } else { var $div = $('<div />').css({ width: 100, height: 100, overflow: 'auto', position: 'absolute', top: -1000, left: -1000 }).prependTo('body').append('<div />').find('div').css({ width: '100%', height: 200 }); scrollbarWidth = 100 - $div.width(); $div.parent().remove(); } } return scrollbarWidth;
     };
-})(jQuery); 
+})(jQuery);

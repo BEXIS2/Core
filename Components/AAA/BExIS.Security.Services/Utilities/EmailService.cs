@@ -1,20 +1,13 @@
-﻿using Microsoft.AspNet.Identity;
+﻿using MailKit.Net.Smtp;
+using MailKit.Security;
+using Microsoft.AspNet.Identity;
 using MimeKit;
 using System.Collections.Generic;
 using System.Configuration;
-using System.Linq.Dynamic;
+using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 using Vaiona.Utils.Cfg;
-using System.Linq;
-using MailKit.Net.Smtp;
-using System.Security.Authentication;
-using MailKit;
-using System;
-using MailKit.Security;
-using System.IO;
-using Vaiona.IoC;
-using BExIS.Utils;
-using BExIS.Utils.Config;
 
 namespace BExIS.Security.Services.Utilities
 {
@@ -51,75 +44,98 @@ namespace BExIS.Security.Services.Utilities
 
         public void Send(string subject, string body, List<string> destinations, List<string> ccs = null, List<string> bccs = null, List<string> replyTos = null, List<FileInfo> attachments = null)
         {
-            var mimeMessage = new MimeMessage();
 
-            
+            List<string> _destinations = new List<string>();
+            List<string> _ccs = new List<string>();
+            List<string> _bccs = new List<string>();
+            List<string> _replyTos = new List<string>();
+            string _emailFromName = ConfigurationManager.AppSettings["Email_From_Name"].Trim();
+            string _emailFromAddress = ConfigurationManager.AppSettings["Email_From_Address"].Trim();
 
-            mimeMessage.From.Add(new MailboxAddress(ConfigurationManager.AppSettings["Email_From_Name"], ConfigurationManager.AppSettings["Email_From_Address"]));
+            // clear all mails from white space
+            #region clear emails
+
             if (destinations != null)
-                mimeMessage.To.AddRange(destinations.Select(d => new MailboxAddress(d, d)));
-            if (ccs != null)
-                mimeMessage.Cc.AddRange(ccs.Select(c => new MailboxAddress(c, c)));
+                _destinations = destinations.Select(innerItem => innerItem != null ? innerItem.Trim() : null).ToList();
+
+            if (ccs!=null)
+                    _ccs = ccs.Select(innerItem => innerItem != null ? innerItem.Trim() : null).ToList();
+
             if (bccs != null)
-                mimeMessage.Bcc.AddRange(bccs.Select(b => new MailboxAddress(b, b)));
+                _bccs = bccs.Select(innerItem => innerItem != null ? innerItem.Trim() : null).ToList();
+
             if (replyTos != null)
-                mimeMessage.ReplyTo.AddRange(replyTos.Select(r => new MailboxAddress(r, r)));
-            mimeMessage.Subject = GeneralSettings.ApplicationName + " - " + subject;
+                _replyTos = replyTos.Select(innerItem => innerItem != null ? innerItem.Trim() : null).ToList();
 
-            var builder = new BodyBuilder();
-            builder.HtmlBody = body;
+            #endregion
 
-            if (attachments != null)
+            using (var mimeMessage = new MimeMessage())
             {
-                foreach (var attachment in attachments)
+                mimeMessage.From.Add(new MailboxAddress(_emailFromName, _emailFromAddress));
+                if (destinations != null)
+                    mimeMessage.To.AddRange(_destinations.Select(d => new MailboxAddress(d, d)));
+                if (ccs != null)
+                    mimeMessage.Cc.AddRange(_ccs.Select(c => new MailboxAddress(c, c)));
+                if (bccs != null)
+                    mimeMessage.Bcc.AddRange(_bccs.Select(b => new MailboxAddress(b, b)));
+                if (replyTos != null)
+                    mimeMessage.ReplyTo.AddRange(_replyTos.Select(r => new MailboxAddress(r, r)));
+                mimeMessage.Subject = AppConfiguration.ApplicationName + " - " + subject;
+
+                var builder = new BodyBuilder();
+                builder.HtmlBody = body;
+
+                if (attachments != null)
                 {
-                    if (attachment.Length > 0)
+                    foreach (var attachment in attachments)
                     {
-                        using (FileStream inFile = attachment.OpenRead())
+                        if (attachment.Length > 0)
                         {
-                            string fileName = Path.GetFileName(attachment.Name);
-                            builder.Attachments.Add(fileName, inFile);
+                            using (FileStream inFile = attachment.OpenRead())
+                            {
+                                string fileName = Path.GetFileName(attachment.Name);
+                                builder.Attachments.Add(fileName, inFile);
+                            }
                         }
                     }
                 }
+
+                mimeMessage.Body = builder.ToMessageBody();
+
+                Send(mimeMessage);
             }
-
-            mimeMessage.Body = builder.ToMessageBody();
-
-            Send(mimeMessage);
         }
 
         public void Send(string subject, string body, string destination)
         {
-            Send(subject, body, new List<string>() { destination }, null, null, null, null);
+            Send(subject, body, new List<string>() { destination.Trim() }, null, null, null, null);
         }
 
         public void Send(IdentityMessage message)
         {
-            var mimeMessage = new MimeMessage();
-            
+            using (var mimeMessage = new MimeMessage())
+            {
+                mimeMessage.From.Add(new MailboxAddress(ConfigurationManager.AppSettings["Email_From_Name"], ConfigurationManager.AppSettings["Email_From_Address"]));
+                mimeMessage.To.Add(new MailboxAddress(message.Destination.Trim(), message.Destination.Trim()));
+                mimeMessage.Subject = AppConfiguration.ApplicationName + " - " + message.Subject;
+                mimeMessage.Body = new TextPart(MimeKit.Text.TextFormat.Html) { Text = message.Body };
 
-            mimeMessage.From.Add(new MailboxAddress(ConfigurationManager.AppSettings["Email_From_Name"], ConfigurationManager.AppSettings["Email_From_Address"]));
-            mimeMessage.To.Add(new MailboxAddress(message.Destination, message.Destination));
-            mimeMessage.Subject = GeneralSettings.ApplicationName + " - " + message.Subject;
-            mimeMessage.Body = new TextPart(MimeKit.Text.TextFormat.Html) { Text = message.Body };
-
-            Send(mimeMessage);
+                Send(mimeMessage);
+            }
         }
 
         public async Task SendAsync(IdentityMessage message)
         {
-            var mimeMessage = new MimeMessage();
-            
+            using (var mimeMessage = new MimeMessage())
+            {
+                mimeMessage.From.Add(new MailboxAddress(ConfigurationManager.AppSettings["Email_From_Name"], ConfigurationManager.AppSettings["Email_From_Address"]));
+                mimeMessage.To.Add(new MailboxAddress(message.Destination, message.Destination));
+                mimeMessage.Subject = AppConfiguration.ApplicationName + " - " + message.Subject;
+                mimeMessage.Body = new TextPart(MimeKit.Text.TextFormat.Html) { Text = message.Body };
 
-            mimeMessage.From.Add(new MailboxAddress(ConfigurationManager.AppSettings["Email_From_Name"], ConfigurationManager.AppSettings["Email_From_Address"]));
-            mimeMessage.To.Add(new MailboxAddress(message.Destination, message.Destination));
-            mimeMessage.Subject = GeneralSettings.ApplicationName + " - " + message.Subject;
-            mimeMessage.Body = new TextPart(MimeKit.Text.TextFormat.Html) { Text = message.Body };
-
-            Send(mimeMessage);
-
-            await Task.FromResult(0);
+                Send(mimeMessage);
+                await Task.FromResult(0);
+            }
         }
 
         private bool IsValidEmail(string email)

@@ -6,7 +6,6 @@ using System;
 using System.Linq;
 using Vaiona.Persistence.Api;
 
-
 namespace BExIS.Security.Services.FormerMember
 {
     public class FormerMemberFeaturePermissionManager : IDisposable
@@ -128,7 +127,6 @@ namespace BExIS.Security.Services.FormerMember
             }
         }
 
-       
         public FeaturePermissionFormerMember Find(long? subjectId, long featureId)
         {
             using (var uow = this.GetUnitOfWork())

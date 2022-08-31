@@ -1,15 +1,31 @@
-﻿
-.bpp-csv, .bpp-txt, .bpp-xlsx, .bpp-csv-subset, .bpp-txt-subset, .bpp-xlsx-subset{
-    height:40px;
-    width:40px;
+﻿.bpp-csv, .bpp-txt, .bpp-xlsx, .bpp-csv-subset, .bpp-txt-subset, .bpp-xlsx-subset {
+    height: 40px;
+    width: 40px;
     display: inline-block;
     background-repeat: no-repeat;
     vertical-align: top;
 }
-.bpp-csv{background-image: url('Default/bpp/csv2_sw_40.png');}
-.bpp-txt{background-image:url('Default/bpp/txt2_sw_40.png');}
-.bpp-xlsx{background-image:url('Default/bpp/xlsx_sw_40.png');}
 
-.bpp-csv-subset{background-image: url('Default/bpp/csv2_sw_40_subset.png');}
-.bpp-txt-subset{background-image:url('Default/bpp/txt2_sw_40_subset.png');}
-.bpp-xlsx-subset{background-image:url('Default/bpp/xlsx_sw_40_subset.png');}
+.bpp-csv {
+    background-image: url('Default/bpp/csv2_sw_40.png');
+}
+
+.bpp-txt {
+    background-image: url('Default/bpp/txt2_sw_40.png');
+}
+
+.bpp-xlsx {
+    background-image: url('Default/bpp/xlsx_sw_40.png');
+}
+
+.bpp-csv-subset {
+    background-image: url('Default/bpp/csv2_sw_40_subset.png');
+}
+
+.bpp-txt-subset {
+    background-image: url('Default/bpp/txt2_sw_40_subset.png');
+}
+
+.bpp-xlsx-subset {
+    background-image: url('Default/bpp/xlsx_sw_40_subset.png');
+}

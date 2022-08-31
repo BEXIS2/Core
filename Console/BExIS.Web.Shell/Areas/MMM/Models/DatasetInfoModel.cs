@@ -1,8 +1,4 @@
-﻿using System.IO;
-using System.Collections.Generic;
-using System.Collections;
-
-namespace IDIV.Modules.Mmm.UI.Models
+﻿namespace IDIV.Modules.Mmm.UI.Models
 {
     public class DatasetInfo
     {

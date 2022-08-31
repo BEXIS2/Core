@@ -2,6 +2,7 @@
 using BExIS.Dlm.Entities.DataStructure;
 using BExIS.Dlm.Services.DataStructure;
 using BExIS.Utils.Config;
+using BExIS.Utils.Data.Helpers;
 using FluentAssertions;
 using NUnit.Framework;
 using System;

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<settings>
+  <entry key="help" value="https://github.com/BEXIS2/Documents/blob/2.15/Manuals/SAM/Manual.md" type="String"/>
+  <entry key="key2" value="value2" type="String" />
+  <entry key="key3" value="21" type="Int16" />
+
+  <entry key="formerMemberRole" value="test_old" type="String"/>
+  <entry key="mailTextApplied" value=" This implies that your access to some features in BExIS will be restricted. You have full access to your datasets and publications." type="String"/>
+  <entry key="mailTextRevoked" value=" This implies that your previous access rights to features and datasets in BEXIS have been re-applied." type="String"/>
+</settings>

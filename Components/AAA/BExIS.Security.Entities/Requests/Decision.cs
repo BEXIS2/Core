@@ -1,6 +1,5 @@
 ﻿using BExIS.Security.Entities.Subjects;
 using System;
-using System.ComponentModel;
 using Vaiona.Entities.Common;
 
 namespace BExIS.Security.Entities.Requests

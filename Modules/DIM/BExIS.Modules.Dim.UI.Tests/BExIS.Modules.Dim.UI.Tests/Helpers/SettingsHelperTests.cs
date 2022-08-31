@@ -1,6 +1,7 @@
 ﻿using NUnit.Framework;
 using BExIS.App.Testing;
 using Vaiona.Utils.Cfg;
+using BExIS.Dim.Helpers.Models;
 using System.Linq;
 using RestSharp;
 using RestSharp.Authenticators;

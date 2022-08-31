@@ -1,9 +1,7 @@
-﻿using BExIS.Sam.Providers.Ldap;
-using Microsoft.AspNet.Identity;
+﻿using Microsoft.AspNet.Identity;
 using Microsoft.Owin;
 using Microsoft.Owin.Security.Cookies;
 using Microsoft.Owin.Security.DataProtection;
-using Microsoft.Owin.Security.Google;
 using Owin;
 
 namespace BExIS.Security.Services.Utilities

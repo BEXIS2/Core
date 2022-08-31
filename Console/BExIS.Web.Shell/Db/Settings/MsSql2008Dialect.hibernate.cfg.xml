@@ -13,5 +13,4 @@
     <property name="show_sql">True</property>
     <property name="format_sql">True</property>
     </session-factory>
-  
 </hibernate-configuration>

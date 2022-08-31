@@ -224,6 +224,11 @@ namespace BExIS.Modules.Dim.UI.Controllers
                             bool isLatestVersion = false;
                             if (version == -1 || dataset.Versions.Count == version) isLatestVersion = true;
 
+                        DataTable dt;
+
+                        if (isLatestVersion)
+                        {
+                            #region get data from the latest version of a dataset
 
                             DatasetVersion datasetVersion = datasetManager.GetDatasetLatestVersion(id);
 
@@ -232,23 +237,54 @@ namespace BExIS.Modules.Dim.UI.Controllers
                             // check the data sturcture type ...
                             if (datasetVersion.Dataset.DataStructure.Self is StructuredDataStructure)
                             {
-                                int count = 0;
-                                DataTable dt;
+       
+                                // apply selection and projection
+                                long count = datasetManager.RowCount(id);
 
-                                // is the version the latest , get data from materilzed view
-                                // otherwise get datat from datatuples and datatupleversions direct
-                                if (isLatestVersion) // latest version
+                                dt = datasetManager.GetLatestDatasetVersionTuples(id, null, null, null, 0, (int)count);
+                                dt.Strip();
+
+                                if (!string.IsNullOrEmpty(selection))
                                 {
                                     count = (int)datasetManager.RowCount(id);
                                     //get full dataset
                                     dt = datasetManager.GetLatestDatasetVersionTuples(id, null, null, null, 0, (int)count);
                                         
                                 }
-                                else // previews version
-                                {
-                                    count = datasetManager.GetDatasetVersionEffectiveTuples(datasetVersion).Count;
-                                    dt = datasetManager.GetDatasetVersionTuples(datasetVersion.Id, 0, count);
-                                }
+
+      
+                                #endregion get data from the latest version of a dataset
+
+                                //return model;
+                            }
+                            else
+                            {
+                                return Request.CreateResponse();
+                            }
+                        }
+                        else
+                        {
+                            #region load data of a older version of a dataset
+
+                            int index = version - 1;
+                            if (version >= dataset.Versions.Count)
+                            {
+                                return Request.CreateResponse(HttpStatusCode.PreconditionFailed, String.Format("This version ({0}) is not available for the dataset", version));
+                            }
+
+                            DatasetVersion datasetVersion = dataset.Versions.OrderBy(d => d.Timestamp).ElementAt(version - 1);
+
+                            string title = datasetVersion.Title;
+
+                            // check the data sturcture type ...
+                            if (datasetVersion.Dataset.DataStructure.Self is StructuredDataStructure)
+                            {
+                                //FilterExpression filter = null;
+                                //OrderByExpression orderBy = null;
+
+                                // apply selection and projection
+                                int count = datasetManager.GetDatasetVersionEffectiveTuples(datasetVersion).Count;
+                                dt = datasetManager.GetDatasetVersionTuples(datasetVersion.Id, 0, count);
 
                                 dt.Strip();
 
@@ -265,37 +301,49 @@ namespace BExIS.Modules.Dim.UI.Controllers
                                     dt = OutputDataManager.ProjectionOnDataTable(dt, projection.ToUpper().Split(','));
                                 }
 
-                                dt.TableName = id + "_data"; // add data table name
-                                dt = OutputDataManager.SkipAndTakeDataTable(dt, skip, take); // use skip and take if its set from the api
-
-                                //prepare temp file and save it
-                                string mimetype = MimeMapping.GetMimeMapping(".csv");
-                                string path = ioOutputDataManager.GenerateAsciiFile("temp", dt, title, mimetype, datasetVersion.Dataset.DataStructure.Id);
-                                var structureDataStrutcure = dataStrutcureManager.StructuredDataStructureRepo.Get(datasetVersion.Dataset.DataStructure.Id);
-      
-                                // get Contenttype from request
-                                var contentType = Request.Content.Headers.ContentType;
-
-                                // read all data in string
-                                string data = File.ReadAllText(path,Encoding.UTF8);
-
-                                var response = Request.CreateResponse();
-                                //transform data based on incoming media type
-                                response.Content = getContent(data, contentType);
-                                return response;
-
                             }
-                            else
+                            else // return files of the unstructure dataset
                             {
                                 return Request.CreateResponse();
                             }
 
-                            
+                            #endregion load data of a older version of a dataset
                         }
-                        else // has rights?
+
+
+                        if (dt != null)
+                        {
+                            dt.TableName = id + "_data";
+
+                            var outputDataManager = new OutputDataManager();
+                            var apifilePath = outputDataManager.GenerateAsciiFile("api", dt, "test", "text/csv", dataset.DataStructure.Id);
+
+                            var response = Request.CreateResponse();
+
+                            using (StreamReader sr = new StreamReader(apifilePath))
+                            {
+                                response.Content = new StringContent(sr.ReadToEnd());
+                                //response.Content = new ObjectContent(typeof(DatasetModel), model, new DatasetModelCsvFormatter(model.DataTable.TableName));
+                                response.Content.Headers.ContentType = new MediaTypeHeaderValue("text/csv");
+                            }
+
+                            //set headers on the "response"
+                            return response;
+                        }
+                        else
                         {
                             var request = Request.CreateResponse();
-                            request.Content = new StringContent("User has no read right.");
+                            request.Content = new StringContent("The data could not be loaded.");
+
+                            return request;
+                        }
+                       
+
+                    }
+                    else // has rights?
+                    {
+                        var request = Request.CreateResponse();
+                        request.Content = new StringContent("User has no read right.");
 
                             return request;
                         }
@@ -319,61 +367,5 @@ namespace BExIS.Modules.Dim.UI.Controllers
 
         }
 
-        private ProjectionExpression getProjectionExpression(string projection)
-        {
-            ProjectionExpression pe = new ProjectionExpression();
-
-            string[] columns = projection.Split(',');
-
-            foreach (string c in columns)
-            {
-                if (!string.IsNullOrEmpty(c))
-                {
-                    pe.Items.Add(new ProjectionItemExpression() { FieldName = c });
-                }
-            }
-
-            return pe;
-        }
-
-        /// <summary>
-        /// based on the media type the content shoudl be transformed
-        /// supported types
-        /// text/csv
-        /// application/xml
-        /// application/json
-        /// </summary>
-        /// <param name="data"></param>
-        /// <param name="mediaType"></param>
-        /// <returns>StringContent</returns>
-        private StringContent getContent(string data, MediaTypeHeaderValue contenType)
-        {
-            if (contenType == null || string.IsNullOrEmpty(contenType.MediaType) || contenType.MediaType.Equals("text/csv"))
-            {
-                return new StringContent(data, Encoding.UTF8, contenType.MediaType);
-            }
-
-            if (contenType.MediaType.Equals("application/json",StringComparison.InvariantCulture))
-            {
-                var jsonString = JsonConvert.SerializeObject(data);
-                return new StringContent(jsonString, Encoding.UTF8, contenType.MediaType);
-            }
-            else if (contenType.MediaType.Equals("application/xml", StringComparison.InvariantCulture))
-            {
-                XmlSerializer xmlSerializer = new XmlSerializer(typeof(List<List<string>>));
-
-                using (MemoryStream memoryStream = new MemoryStream())
-                using (StreamReader streamReader = new StreamReader(memoryStream))
-                {
-                    xmlSerializer.Serialize(memoryStream, data);
-                    memoryStream.Position = 0;
-                    var xmlString = streamReader.ReadToEnd();
-
-                    return new StringContent(xmlString, Encoding.UTF8, contenType.MediaType);
-                }
-            }
-
-            return null;
-        }
     }
 }

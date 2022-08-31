@@ -3,6 +3,7 @@
 
 # BExIS-specific files
 [Ww]orkspace/
+[Pp]ackages/
 
 # User-specific files
 *.suo

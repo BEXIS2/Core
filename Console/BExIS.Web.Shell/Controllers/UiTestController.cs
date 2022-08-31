@@ -7,7 +7,6 @@ using System.Linq;
 using System.Linq.Dynamic;
 using System.Web.Mvc;
 
-
 namespace BExIS.Web.Shell.Controllers
 {
     public class UiTestController : Controller

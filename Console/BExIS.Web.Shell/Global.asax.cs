@@ -110,7 +110,6 @@ namespace BExIS.Web.Shell
                 Response.End();
             }
         }
-    
 
         /// <summary>
         /// the function is called on any http request, which include static resources too!

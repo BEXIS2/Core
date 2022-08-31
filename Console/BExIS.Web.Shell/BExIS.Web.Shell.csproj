@@ -1,10 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="..\..\packages\Microsoft.CodeAnalysis.FxCopAnalyzers.3.3.0\build\Microsoft.CodeAnalysis.FxCopAnalyzers.props" Condition="Exists('..\..\packages\Microsoft.CodeAnalysis.FxCopAnalyzers.3.3.0\build\Microsoft.CodeAnalysis.FxCopAnalyzers.props')" />
-  <Import Project="..\..\packages\Microsoft.NetFramework.Analyzers.3.3.0\build\Microsoft.NetFramework.Analyzers.props" Condition="Exists('..\..\packages\Microsoft.NetFramework.Analyzers.3.3.0\build\Microsoft.NetFramework.Analyzers.props')" />
-  <Import Project="..\..\packages\Microsoft.NetCore.Analyzers.3.3.0\build\Microsoft.NetCore.Analyzers.props" Condition="Exists('..\..\packages\Microsoft.NetCore.Analyzers.3.3.0\build\Microsoft.NetCore.Analyzers.props')" />
-  <Import Project="..\..\packages\Microsoft.CodeQuality.Analyzers.3.3.0\build\Microsoft.CodeQuality.Analyzers.props" Condition="Exists('..\..\packages\Microsoft.CodeQuality.Analyzers.3.3.0\build\Microsoft.CodeQuality.Analyzers.props')" />
-  <Import Project="..\..\packages\Microsoft.CodeAnalysis.VersionCheckAnalyzer.3.3.0\build\Microsoft.CodeAnalysis.VersionCheckAnalyzer.props" Condition="Exists('..\..\packages\Microsoft.CodeAnalysis.VersionCheckAnalyzer.3.3.0\build\Microsoft.CodeAnalysis.VersionCheckAnalyzer.props')" />
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -18,7 +13,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>BExIS.Web.Shell</RootNamespace>
     <AssemblyName>BExIS.Web.Shell</AssemblyName>
-    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <MvcBuildViews>false</MvcBuildViews>
     <UseIISExpress>true</UseIISExpress>
     <FileUpgradeFlags>
@@ -40,14 +35,10 @@
     <RestorePackages>true</RestorePackages>
     <MvcProjectUpgradeChecked>true</MvcProjectUpgradeChecked>
     <TargetFrameworkProfile />
-    <TypeScriptCompileBlocked>true</TypeScriptCompileBlocked>
     <UseGlobalApplicationHostFile />
     <NuGetPackageImportStamp>
     </NuGetPackageImportStamp>
     <Use64BitIISExpress />
-    <PostSharpHostConfigurationFile>web.config</PostSharpHostConfigurationFile>
-    <TypeScriptCompileBlocked>True</TypeScriptCompileBlocked>
-    <DontImportPostSharp>True</DontImportPostSharp>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -72,16 +63,14 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Antlr3.Runtime, Version=3.5.0.2, Culture=neutral, PublicKeyToken=eb42632606e9261f, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Antlr3.Runtime.3.5.1\lib\net40-client\Antlr3.Runtime.dll</HintPath>
+      <HintPath>..\..\packages\Antlr.3.5.0.2\lib\Antlr3.Runtime.dll</HintPath>
+      <Private>True</Private>
     </Reference>
-    <Reference Include="DataAnnotationsExtensions, Version=1.1.0.0, Culture=neutral, PublicKeyToken=358a5681c50fd84c, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\DataAnnotationsExtensions.1.1.0.0\lib\NETFramework40\DataAnnotationsExtensions.dll</HintPath>
+    <Reference Include="DataAnnotationsExtensions, Version=5.0.1.27, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\DataAnnotationsExtensions.5.0.1.27\lib\NETFramework40\DataAnnotationsExtensions.dll</HintPath>
     </Reference>
-    <Reference Include="DataAnnotationsExtensions.ClientValidation, Version=1.1.0.0, Culture=neutral, PublicKeyToken=358a5681c50fd84c, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\DataAnnotationsExtensions.MVC3.1.1.0.0\lib\NETFramework40\DataAnnotationsExtensions.ClientValidation.dll</HintPath>
-    </Reference>
-    <Reference Include="DocumentFormat.OpenXml">
-      <HintPath>..\..\Libraries\DocumentFormat.OpenXml.dll</HintPath>
+    <Reference Include="DataAnnotationsExtensions.ClientValidation, Version=5.0.1.27, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\DataAnnotationsExtensions.MVC3.5.0.1.27\lib\NETFramework40\DataAnnotationsExtensions.ClientValidation.dll</HintPath>
     </Reference>
     <Reference Include="FluentBootstrap, Version=3.3.5.4, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\packages\FluentBootstrap.3.3.5.4\lib\net40\FluentBootstrap.dll</HintPath>
@@ -89,51 +78,42 @@
     <Reference Include="FluentBootstrap.Mvc, Version=3.3.5.4, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\packages\FluentBootstrap.Mvc.3.3.5.4\lib\net40\FluentBootstrap.Mvc.dll</HintPath>
     </Reference>
-    <Reference Include="Glimpse.AspNet, Version=1.8.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Glimpse.AspNet.1.8.0\lib\net45\Glimpse.AspNet.dll</HintPath>
+    <Reference Include="Glimpse.AspNet, Version=1.9.2.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Glimpse.AspNet.1.9.2\lib\net45\Glimpse.AspNet.dll</HintPath>
     </Reference>
-    <Reference Include="Glimpse.Core, Version=1.8.2.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Glimpse.1.8.2\lib\net45\Glimpse.Core.dll</HintPath>
+    <Reference Include="Glimpse.Core, Version=1.8.6.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Glimpse.1.8.6\lib\net45\Glimpse.Core.dll</HintPath>
     </Reference>
     <Reference Include="Glimpse.Mvc5, Version=1.5.3.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Glimpse.Mvc5.1.5.3\lib\net45\Glimpse.Mvc5.dll</HintPath>
+      <Private>True</Private>
     </Reference>
-    <Reference Include="HtmlAgilityPack, Version=1.4.9.5, Culture=neutral, PublicKeyToken=bd319b19eaf3b43a, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\HtmlAgilityPack.1.4.9.5\lib\Net45\HtmlAgilityPack.dll</HintPath>
-    </Reference>
-    <Reference Include="Iesi.Collections, Version=4.0.0.4000, Culture=neutral, PublicKeyToken=aa95f207798dfdb4, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Iesi.Collections.4.0.4\lib\net461\Iesi.Collections.dll</HintPath>
-    </Reference>
-    <Reference Include="Ionic.Zip">
-      <HintPath>..\..\Libraries\Ionic.Zip.dll</HintPath>
+    <Reference Include="HtmlAgilityPack, Version=1.11.43.0, Culture=neutral, PublicKeyToken=bd319b19eaf3b43a, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\HtmlAgilityPack.1.11.43\lib\Net45\HtmlAgilityPack.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.AspNet.Identity.Core, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Microsoft.AspNet.Identity.Core.2.2.3\lib\net45\Microsoft.AspNet.Identity.Core.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.AspNet.Identity.Owin, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Microsoft.AspNet.Identity.Owin.2.2.1\lib\net45\Microsoft.AspNet.Identity.Owin.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="Microsoft.CSharp" />
-    <Reference Include="Microsoft.IdentityModel, Version=3.5.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Microsoft.IdentityModel.6.1.7600.16394\lib\net35\Microsoft.IdentityModel.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.Owin, Version=3.1.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Microsoft.Owin.3.1.0\lib\net45\Microsoft.Owin.dll</HintPath>
+    <Reference Include="Microsoft.Owin, Version=4.2.2.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Microsoft.Owin.4.2.2\lib\net45\Microsoft.Owin.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Owin.Host.SystemWeb, Version=3.1.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Microsoft.Owin.Host.SystemWeb.3.1.0\lib\net45\Microsoft.Owin.Host.SystemWeb.dll</HintPath>
+      <Private>True</Private>
     </Reference>
-    <Reference Include="Microsoft.Owin.Security, Version=3.1.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Microsoft.Owin.Security.3.1.0\lib\net45\Microsoft.Owin.Security.dll</HintPath>
+    <Reference Include="Microsoft.Owin.Security, Version=4.2.2.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Microsoft.Owin.Security.4.2.2\lib\net45\Microsoft.Owin.Security.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.Owin.Security.Cookies, Version=3.1.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Microsoft.Owin.Security.Cookies.3.1.0\lib\net45\Microsoft.Owin.Security.Cookies.dll</HintPath>
+    <Reference Include="Microsoft.Owin.Security.Cookies, Version=4.2.2.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Microsoft.Owin.Security.Cookies.4.2.2\lib\net45\Microsoft.Owin.Security.Cookies.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.Owin.Security.OAuth, Version=3.1.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Microsoft.Owin.Security.OAuth.3.1.0\lib\net45\Microsoft.Owin.Security.OAuth.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.Practices.ServiceLocation, Version=1.3.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\CommonServiceLocator.1.3\lib\portable-net4+sl5+netcore45+wpa81+wp8\Microsoft.Practices.ServiceLocation.dll</HintPath>
+    <Reference Include="Microsoft.Owin.Security.OAuth, Version=4.2.2.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Microsoft.Owin.Security.OAuth.4.2.2\lib\net45\Microsoft.Owin.Security.OAuth.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Practices.Unity, Version=4.0.0.0, Culture=neutral, PublicKeyToken=6d32ff45e0ccc69f, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Unity.4.0.1\lib\net45\Microsoft.Practices.Unity.dll</HintPath>
@@ -146,66 +126,41 @@
     </Reference>
     <Reference Include="Microsoft.Web.Helpers, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Microsoft.AspNet.WebHelpers.3.2.3\lib\net45\Microsoft.Web.Helpers.dll</HintPath>
+      <Private>True</Private>
     </Reference>
-    <Reference Include="Microsoft.Web.Infrastructure, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Microsoft.Web.Infrastructure.1.0.0.0\lib\net40\Microsoft.Web.Infrastructure.dll</HintPath>
+    <Reference Include="Microsoft.Web.Infrastructure, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Microsoft.Web.Infrastructure.2.0.0\lib\net40\Microsoft.Web.Infrastructure.dll</HintPath>
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=13.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Newtonsoft.Json.13.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
-    </Reference>
-    <Reference Include="NHibernate, Version=5.3.0.0, Culture=neutral, PublicKeyToken=aa95f207798dfdb4, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\NHibernate.5.3.10\lib\net461\NHibernate.dll</HintPath>
     </Reference>
     <Reference Include="Npgsql, Version=4.0.0.0, Culture=neutral, PublicKeyToken=5d8b90d52f46fda7, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Npgsql.4.0.0\lib\net451\Npgsql.dll</HintPath>
     </Reference>
     <Reference Include="Owin, Version=1.0.0.0, Culture=neutral, PublicKeyToken=f0ebd12fd5e55cc5, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Owin.1.0\lib\net40\Owin.dll</HintPath>
-    </Reference>
-    <Reference Include="PostSharp, Version=4.3.48.0, Culture=neutral, PublicKeyToken=b13fd38b8f9c99d7, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\PostSharp.4.3.48\lib\net35-client\PostSharp.dll</HintPath>
       <Private>True</Private>
-    </Reference>
-    <Reference Include="Remotion.Linq, Version=2.2.0.0, Culture=neutral, PublicKeyToken=fee00910d6e5f53b, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Remotion.Linq.2.2.0\lib\net45\Remotion.Linq.dll</HintPath>
-    </Reference>
-    <Reference Include="Remotion.Linq.EagerFetching, Version=2.2.0.0, Culture=neutral, PublicKeyToken=fee00910d6e5f53b, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Remotion.Linq.EagerFetching.2.2.0\lib\net45\Remotion.Linq.EagerFetching.dll</HintPath>
     </Reference>
     <Reference Include="Swashbuckle.Core, Version=1.0.0.0, Culture=neutral, PublicKeyToken=cd1bb07a5ac7c7bc, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Swashbuckle.Core.5.6.0\lib\net40\Swashbuckle.Core.dll</HintPath>
     </Reference>
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="System.Data.Linq" />
     <Reference Include="System.IO" />
-    <Reference Include="System.Linq.Dynamic, Version=1.0.6132.35681, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\System.Linq.Dynamic.1.0.7\lib\net40\System.Linq.Dynamic.dll</HintPath>
-    </Reference>
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Net.Http.Formatting, Version=5.2.3.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Microsoft.AspNet.WebApi.Client.5.2.3\lib\net45\System.Net.Http.Formatting.dll</HintPath>
     </Reference>
     <Reference Include="System.Runtime.CompilerServices.Unsafe, Version=4.0.4.1, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\System.Runtime.CompilerServices.Unsafe.4.5.3\lib\net461\System.Runtime.CompilerServices.Unsafe.dll</HintPath>
+      <HintPath>..\..\packages\System.Runtime.CompilerServices.Unsafe.4.5.3\lib\netstandard1.0\System.Runtime.CompilerServices.Unsafe.dll</HintPath>
     </Reference>
-    <Reference Include="System.ServiceModel" />
     <Reference Include="System.Threading.Tasks.Extensions, Version=4.2.0.1, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\System.Threading.Tasks.Extensions.4.5.4\lib\net461\System.Threading.Tasks.Extensions.dll</HintPath>
+      <HintPath>..\..\packages\System.Threading.Tasks.Extensions.4.5.4\lib\portable-net45+win8+wp8+wpa81\System.Threading.Tasks.Extensions.dll</HintPath>
     </Reference>
-    <Reference Include="System.Transactions" />
     <Reference Include="System.ValueTuple, Version=4.0.3.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\System.ValueTuple.4.5.0\lib\net47\System.ValueTuple.dll</HintPath>
+      <HintPath>..\..\packages\System.ValueTuple.4.5.0\lib\netstandard1.0\System.ValueTuple.dll</HintPath>
     </Reference>
-    <Reference Include="System.Web.Extensions" />
-    <Reference Include="System" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Drawing" />
-    <Reference Include="System.Web.DynamicData" />
-    <Reference Include="System.Web.Entity" />
-    <Reference Include="System.Web.ApplicationServices" />
-    <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Web.Helpers, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Microsoft.AspNet.WebPages.3.2.3\lib\net45\System.Web.Helpers.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="System.Web.Http, Version=5.2.3.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Microsoft.AspNet.WebApi.Core.5.2.3\lib\net45\System.Web.Http.dll</HintPath>
@@ -215,53 +170,93 @@
     </Reference>
     <Reference Include="System.Web.Mvc, Version=5.2.3.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Microsoft.AspNet.Mvc.5.2.3\lib\net45\System.Web.Mvc.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="System.Web.Optimization, Version=1.1.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Microsoft.AspNet.Web.Optimization.1.1.3\lib\net40\System.Web.Optimization.dll</HintPath>
     </Reference>
     <Reference Include="System.Web.Razor, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Microsoft.AspNet.Razor.3.2.3\lib\net45\System.Web.Razor.dll</HintPath>
+      <Private>True</Private>
     </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Web.WebPages, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Microsoft.AspNet.WebPages.3.2.3\lib\net45\System.Web.WebPages.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="System.Web.WebPages.Deployment, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Microsoft.AspNet.WebPages.3.2.3\lib\net45\System.Web.WebPages.Deployment.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="System.Web.WebPages.Razor, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Microsoft.AspNet.WebPages.3.2.3\lib\net45\System.Web.WebPages.Razor.dll</HintPath>
+      <Private>True</Private>
     </Reference>
-    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Web" />
     <Reference Include="System.Web.Abstractions" />
     <Reference Include="System.Web.Routing" />
     <Reference Include="System.Xml" />
     <Reference Include="System.Configuration" />
-    <Reference Include="System.Web.Services" />
-    <Reference Include="System.EnterpriseServices" />
     <Reference Include="System.Xml.Linq" />
-    <Reference Include="Telerik.Web.Mvc, Version=2013.2.611.340, Culture=neutral, PublicKeyToken=29ac1a93ec063d92, processorArchitecture=MSIL">
+    <Reference Include="Telerik.Web.Mvc">
       <HintPath>..\..\packages\TelerikMvcExtensions.2013.2.611\lib\net40\Telerik.Web.Mvc.dll</HintPath>
     </Reference>
-    <Reference Include="WebActivator, Version=1.2.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\WebActivator.1.2.0.0\lib\NETFramework40\WebActivator.dll</HintPath>
+    <Reference Include="Vaiona.Entities, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Libraries\Vaiona\Vaiona.Entities.dll</HintPath>
+    </Reference>
+    <Reference Include="Vaiona.IoC, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Libraries\Vaiona\Vaiona.IoC.dll</HintPath>
+    </Reference>
+    <Reference Include="Vaiona.Model, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Libraries\Vaiona\Vaiona.Model.dll</HintPath>
+    </Reference>
+    <Reference Include="Vaiona.MultiTenancy.Api, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Libraries\Vaiona\Vaiona.MultiTenancy.Api.dll</HintPath>
+    </Reference>
+    <Reference Include="Vaiona.Persistence.Api, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Libraries\Vaiona\Vaiona.Persistence.Api.dll</HintPath>
+    </Reference>
+    <Reference Include="Vaiona.PersistenceProviders.NH">
+      <HintPath>..\..\Libraries\Vaiona\Vaiona.PersistenceProviders.NH.dll</HintPath>
+    </Reference>
+    <Reference Include="Vaiona.Utils, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Libraries\Vaiona\Vaiona.Utils.dll</HintPath>
+    </Reference>
+    <Reference Include="Vaiona.Web, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Libraries\Vaiona\Vaiona.Web.dll</HintPath>
+    </Reference>
+    <Reference Include="Vaiona.Web.Mvc, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Libraries\Vaiona\Vaiona.Web.Mvc.dll</HintPath>
+    </Reference>
+    <Reference Include="Vaiona.Web.Mvc.Modularity, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Libraries\Vaiona\Vaiona.Web.Mvc.Modularity.dll</HintPath>
     </Reference>
     <Reference Include="WebActivatorEx, Version=2.0.0.0, Culture=neutral, PublicKeyToken=7b26dc2a43f6a0d4, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\WebActivatorEx.2.0\lib\net40\WebActivatorEx.dll</HintPath>
+      <HintPath>..\..\packages\WebActivatorEx.2.2.0\lib\net40\WebActivatorEx.dll</HintPath>
     </Reference>
     <Reference Include="WebGrease, Version=1.6.5135.21930, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\..\packages\WebGrease.1.6.0\lib\WebGrease.dll</HintPath>
     </Reference>
     <Reference Include="WebMatrix.Data, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Microsoft.AspNet.WebPages.Data.3.2.3\lib\net45\WebMatrix.Data.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="WebMatrix.WebData, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Microsoft.AspNet.WebPages.WebData.3.2.3\lib\net45\WebMatrix.WebData.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="WindowsBase" />
-    <Reference Include="XmlSampleGenerator, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Microsoft.Xml.XMLGen.1.0.0\lib\XmlSampleGenerator.dll</HintPath>
-    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="App_GlobalResources\EditorLocalization.de-DE.designer.cs">
@@ -337,6 +332,7 @@
     <Compile Include="App_Start\BundleConfig.cs" />
     <Compile Include="App_Start\RegisterClientValidationExtensions.cs" />
     <Compile Include="App_Start\SwaggerConfig.cs" />
+    <Compile Include="Attributes\BExISAuthorizeAttribute.cs" />
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\API\TokenController.cs" />
     <Compile Include="Controllers\ErrorController.cs" />
@@ -345,9 +341,7 @@
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\JSController.cs" />
     <Compile Include="Controllers\LdapController.cs" />
-    <Compile Include="Controllers\MenuController.cs" />
     <Compile Include="Controllers\PrivacyPolicyController.cs" />
-    <Compile Include="Controllers\SettingsController.cs" />
     <Compile Include="Controllers\TermsAndConditionsController.cs" />
     <Compile Include="Controllers\TestController.cs" />
     <Compile Include="Controllers\UiTestController.cs" />
@@ -358,11 +352,9 @@
     <Compile Include="Helpers\BExISDataHelper.cs" />
     <Compile Include="Helpers\BexisModelManager.cs" />
     <Compile Include="Helpers\CustomViewEngine.cs" />
-    <Compile Include="Helpers\MenuHelper.cs" />
     <Compile Include="Models\AccountModels.cs" />
     <Compile Include="Models\EntitySelectorModel.cs" />
     <Compile Include="Models\ManageModels.cs" />
-    <Compile Include="Models\SettingsModels.cs" />
     <Compile Include="Models\UiTestModel.cs" />
     <Compile Include="Models\VersionModels.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -377,353 +369,10 @@
       <SubType>Designer</SubType>
     </DesignData>
     <Content Include="App_Data\api_documentation.xml" />
-    <Content Include="Content\2013.2.611\Black\editor.png" />
-    <Content Include="Content\2013.2.611\Black\imagebrowser.png" />
-    <Content Include="Content\2013.2.611\Black\loading.gif" />
-    <Content Include="Content\2013.2.611\Black\slider-h.gif" />
-    <Content Include="Content\2013.2.611\Black\slider-v.gif" />
-    <Content Include="Content\2013.2.611\Black\sprite-vertical.png" />
-    <Content Include="Content\2013.2.611\Black\sprite.png" />
-    <Content Include="Content\2013.2.611\Black\treeview-line.png" />
-    <Content Include="Content\2013.2.611\Black\treeview-nodes-rtl.png" />
-    <Content Include="Content\2013.2.611\Black\treeview-nodes.png" />
-    <Content Include="Content\2013.2.611\Default\editor.png" />
-    <Content Include="Content\2013.2.611\Default\imagebrowser.png" />
-    <Content Include="Content\2013.2.611\Default\loading.gif" />
-    <Content Include="Content\2013.2.611\Default\slider-h.gif" />
-    <Content Include="Content\2013.2.611\Default\slider-v.gif" />
-    <Content Include="Content\2013.2.611\Default\sprite-vertical.png" />
-    <Content Include="Content\2013.2.611\Default\sprite.png" />
-    <Content Include="Content\2013.2.611\Default\treeview-line.png" />
-    <Content Include="Content\2013.2.611\Default\treeview-nodes-rtl.png" />
-    <Content Include="Content\2013.2.611\Default\treeview-nodes.png" />
-    <Content Include="Content\2013.2.611\Forest\editor.png" />
-    <Content Include="Content\2013.2.611\Forest\imagebrowser.png" />
-    <Content Include="Content\2013.2.611\Forest\loading.gif" />
-    <Content Include="Content\2013.2.611\Forest\slider-h.gif" />
-    <Content Include="Content\2013.2.611\Forest\slider-v.gif" />
-    <Content Include="Content\2013.2.611\Forest\sprite-vertical.png" />
-    <Content Include="Content\2013.2.611\Forest\sprite.png" />
-    <Content Include="Content\2013.2.611\Forest\treeview-line.png" />
-    <Content Include="Content\2013.2.611\Forest\treeview-nodes-rtl.png" />
-    <Content Include="Content\2013.2.611\Forest\treeview-nodes.png" />
-    <Content Include="Content\2013.2.611\Hay\editor.png" />
-    <Content Include="Content\2013.2.611\Hay\imagebrowser.png" />
-    <Content Include="Content\2013.2.611\Hay\loading.gif" />
-    <Content Include="Content\2013.2.611\Hay\slider-h.gif" />
-    <Content Include="Content\2013.2.611\Hay\slider-v.gif" />
-    <Content Include="Content\2013.2.611\Hay\sprite-vertical.png" />
-    <Content Include="Content\2013.2.611\Hay\sprite.png" />
-    <Content Include="Content\2013.2.611\Hay\treeview-line.png" />
-    <Content Include="Content\2013.2.611\Hay\treeview-nodes-rtl.png" />
-    <Content Include="Content\2013.2.611\Hay\treeview-nodes.png" />
-    <Content Include="Content\2013.2.611\Metro\editor.png" />
-    <Content Include="Content\2013.2.611\Metro\imagebrowser.png" />
-    <Content Include="Content\2013.2.611\Metro\loading.gif" />
-    <Content Include="Content\2013.2.611\Metro\slider-h.gif" />
-    <Content Include="Content\2013.2.611\Metro\slider-v.gif" />
-    <Content Include="Content\2013.2.611\Metro\sprite.png" />
-    <Content Include="Content\2013.2.611\Office2007\editor.png" />
-    <Content Include="Content\2013.2.611\Office2007\imagebrowser.png" />
-    <Content Include="Content\2013.2.611\Office2007\loading.gif" />
-    <Content Include="Content\2013.2.611\Office2007\slider-h.gif" />
-    <Content Include="Content\2013.2.611\Office2007\slider-v.gif" />
-    <Content Include="Content\2013.2.611\Office2007\sprite-vertical.png" />
-    <Content Include="Content\2013.2.611\Office2007\sprite.png" />
-    <Content Include="Content\2013.2.611\Office2007\treeview-line.png" />
-    <Content Include="Content\2013.2.611\Office2007\treeview-nodes-rtl.png" />
-    <Content Include="Content\2013.2.611\Office2007\treeview-nodes.png" />
-    <Content Include="Content\2013.2.611\Office2010Black\editor.png" />
-    <Content Include="Content\2013.2.611\Office2010Black\imagebrowser.png" />
-    <Content Include="Content\2013.2.611\Office2010Black\loading.gif" />
-    <Content Include="Content\2013.2.611\Office2010Black\slider-h.gif" />
-    <Content Include="Content\2013.2.611\Office2010Black\slider-v.gif" />
-    <Content Include="Content\2013.2.611\Office2010Black\sprite-vertical.png" />
-    <Content Include="Content\2013.2.611\Office2010Black\sprite.png" />
-    <Content Include="Content\2013.2.611\Office2010Black\treeview-line.png" />
-    <Content Include="Content\2013.2.611\Office2010Black\treeview-nodes-rtl.png" />
-    <Content Include="Content\2013.2.611\Office2010Black\treeview-nodes.png" />
-    <Content Include="Content\2013.2.611\Office2010Blue\editor.png" />
-    <Content Include="Content\2013.2.611\Office2010Blue\gradient.png" />
-    <Content Include="Content\2013.2.611\Office2010Blue\imagebrowser.png" />
-    <Content Include="Content\2013.2.611\Office2010Blue\loading.gif" />
-    <Content Include="Content\2013.2.611\Office2010Blue\slider-h.gif" />
-    <Content Include="Content\2013.2.611\Office2010Blue\slider-v.gif" />
-    <Content Include="Content\2013.2.611\Office2010Blue\sprite-vertical.png" />
-    <Content Include="Content\2013.2.611\Office2010Blue\sprite.png" />
-    <Content Include="Content\2013.2.611\Office2010Silver\editor.png" />
-    <Content Include="Content\2013.2.611\Office2010Silver\gradient.png" />
-    <Content Include="Content\2013.2.611\Office2010Silver\imagebrowser.png" />
-    <Content Include="Content\2013.2.611\Office2010Silver\loading.gif" />
-    <Content Include="Content\2013.2.611\Office2010Silver\slider-h.gif" />
-    <Content Include="Content\2013.2.611\Office2010Silver\slider-v.gif" />
-    <Content Include="Content\2013.2.611\Office2010Silver\sprite-vertical.png" />
-    <Content Include="Content\2013.2.611\Office2010Silver\sprite.png" />
-    <Content Include="Content\2013.2.611\Outlook\editor.png" />
-    <Content Include="Content\2013.2.611\Outlook\imagebrowser.png" />
-    <Content Include="Content\2013.2.611\Outlook\loading.gif" />
-    <Content Include="Content\2013.2.611\Outlook\slider-h.gif" />
-    <Content Include="Content\2013.2.611\Outlook\slider-v.gif" />
-    <Content Include="Content\2013.2.611\Outlook\sprite-vertical.png" />
-    <Content Include="Content\2013.2.611\Outlook\sprite.png" />
-    <Content Include="Content\2013.2.611\Outlook\treeview-line.png" />
-    <Content Include="Content\2013.2.611\Outlook\treeview-nodes-rtl.png" />
-    <Content Include="Content\2013.2.611\Outlook\treeview-nodes.png" />
-    <Content Include="Content\2013.2.611\Simple\editor.png" />
-    <Content Include="Content\2013.2.611\Simple\imagebrowser.png" />
-    <Content Include="Content\2013.2.611\Simple\loading.gif" />
-    <Content Include="Content\2013.2.611\Simple\slider-h.gif" />
-    <Content Include="Content\2013.2.611\Simple\slider-v.gif" />
-    <Content Include="Content\2013.2.611\Simple\sprite.png" />
-    <Content Include="Content\2013.2.611\Simple\treeview-line.png" />
-    <Content Include="Content\2013.2.611\Simple\treeview-nodes-rtl.png" />
-    <Content Include="Content\2013.2.611\Simple\treeview-nodes.png" />
-    <Content Include="Content\2013.2.611\Sitefinity\editor.png" />
-    <Content Include="Content\2013.2.611\Sitefinity\imagebrowser.png" />
-    <Content Include="Content\2013.2.611\Sitefinity\loading.gif" />
-    <Content Include="Content\2013.2.611\Sitefinity\slider-h.gif" />
-    <Content Include="Content\2013.2.611\Sitefinity\slider-v.gif" />
-    <Content Include="Content\2013.2.611\Sitefinity\sprite-vertical.png" />
-    <Content Include="Content\2013.2.611\Sitefinity\sprite.png" />
-    <Content Include="Content\2013.2.611\Sitefinity\treeview-line.png" />
-    <Content Include="Content\2013.2.611\Sitefinity\treeview-nodes-rtl.png" />
-    <Content Include="Content\2013.2.611\Sitefinity\treeview-nodes.png" />
-    <Content Include="Content\2013.2.611\Sunset\editor.png" />
-    <Content Include="Content\2013.2.611\Sunset\imagebrowser.png" />
-    <Content Include="Content\2013.2.611\Sunset\loading.gif" />
-    <Content Include="Content\2013.2.611\Sunset\slider-h.gif" />
-    <Content Include="Content\2013.2.611\Sunset\slider-v.gif" />
-    <Content Include="Content\2013.2.611\Sunset\sprite-vertical.png" />
-    <Content Include="Content\2013.2.611\Sunset\sprite.png" />
-    <Content Include="Content\2013.2.611\Sunset\treeview-line.png" />
-    <Content Include="Content\2013.2.611\Sunset\treeview-nodes-rtl.png" />
-    <Content Include="Content\2013.2.611\Sunset\treeview-nodes.png" />
-    <Content Include="Content\2013.2.611\telerik.black.min.css" />
-    <Content Include="Content\2013.2.611\telerik.common.min.css" />
-    <Content Include="Content\2013.2.611\telerik.default.min.css" />
-    <Content Include="Content\2013.2.611\telerik.forest.min.css" />
-    <Content Include="Content\2013.2.611\telerik.hay.min.css" />
-    <Content Include="Content\2013.2.611\telerik.metro.min.css" />
-    <Content Include="Content\2013.2.611\telerik.office2007.min.css" />
-    <Content Include="Content\2013.2.611\telerik.office2010black.min.css" />
-    <Content Include="Content\2013.2.611\telerik.office2010blue.min.css" />
-    <Content Include="Content\2013.2.611\telerik.office2010silver.min.css" />
-    <Content Include="Content\2013.2.611\telerik.outlook.min.css" />
-    <Content Include="Content\2013.2.611\telerik.rtl.min.css" />
-    <Content Include="Content\2013.2.611\telerik.simple.min.css" />
-    <Content Include="Content\2013.2.611\telerik.sitefinity.min.css" />
-    <Content Include="Content\2013.2.611\telerik.sunset.min.css" />
-    <Content Include="Content\2013.2.611\telerik.telerik.min.css" />
-    <Content Include="Content\2013.2.611\telerik.transparent.min.css" />
-    <Content Include="Content\2013.2.611\telerik.vista.min.css" />
-    <Content Include="Content\2013.2.611\telerik.web20.min.css" />
-    <Content Include="Content\2013.2.611\telerik.webblue.min.css" />
-    <Content Include="Content\2013.2.611\telerik.windows7.min.css" />
-    <Content Include="Content\2013.2.611\Telerik\editor.png" />
-    <Content Include="Content\2013.2.611\Telerik\imagebrowser.png" />
-    <Content Include="Content\2013.2.611\Telerik\loading.gif" />
-    <Content Include="Content\2013.2.611\Telerik\slider-h.gif" />
-    <Content Include="Content\2013.2.611\Telerik\slider-v.gif" />
-    <Content Include="Content\2013.2.611\Telerik\sprite-vertical.png" />
-    <Content Include="Content\2013.2.611\Telerik\sprite.png" />
-    <Content Include="Content\2013.2.611\Telerik\treeview-line.png" />
-    <Content Include="Content\2013.2.611\Telerik\treeview-nodes-rtl.png" />
-    <Content Include="Content\2013.2.611\Telerik\treeview-nodes.png" />
-    <Content Include="Content\2013.2.611\Transparent\active.png" />
-    <Content Include="Content\2013.2.611\Transparent\editor.png" />
-    <Content Include="Content\2013.2.611\Transparent\gradient.png" />
-    <Content Include="Content\2013.2.611\Transparent\group.png" />
-    <Content Include="Content\2013.2.611\Transparent\hover.png" />
-    <Content Include="Content\2013.2.611\Transparent\imagebrowser.png" />
-    <Content Include="Content\2013.2.611\Transparent\loading.gif" />
-    <Content Include="Content\2013.2.611\Transparent\selected.png" />
-    <Content Include="Content\2013.2.611\Transparent\slider-h.gif" />
-    <Content Include="Content\2013.2.611\Transparent\slider-v.gif" />
-    <Content Include="Content\2013.2.611\Transparent\sprite-vertical.png" />
-    <Content Include="Content\2013.2.611\Transparent\sprite.png" />
-    <Content Include="Content\2013.2.611\Transparent\toolbar.png" />
-    <Content Include="Content\2013.2.611\Transparent\widget.png" />
-    <Content Include="Content\2013.2.611\Vista\editor.png" />
-    <Content Include="Content\2013.2.611\Vista\imagebrowser.png" />
-    <Content Include="Content\2013.2.611\Vista\loading.gif" />
-    <Content Include="Content\2013.2.611\Vista\slider-h.gif" />
-    <Content Include="Content\2013.2.611\Vista\slider-v.gif" />
-    <Content Include="Content\2013.2.611\Vista\sprite-vertical.png" />
-    <Content Include="Content\2013.2.611\Vista\sprite.png" />
-    <Content Include="Content\2013.2.611\Web20\editor.png" />
-    <Content Include="Content\2013.2.611\Web20\imagebrowser.png" />
-    <Content Include="Content\2013.2.611\Web20\loading.gif" />
-    <Content Include="Content\2013.2.611\Web20\slider-h.gif" />
-    <Content Include="Content\2013.2.611\Web20\slider-v.gif" />
-    <Content Include="Content\2013.2.611\Web20\sprite-vertical.png" />
-    <Content Include="Content\2013.2.611\Web20\sprite.png" />
-    <Content Include="Content\2013.2.611\Web20\treeview-line.png" />
-    <Content Include="Content\2013.2.611\Web20\treeview-nodes-rtl.png" />
-    <Content Include="Content\2013.2.611\Web20\treeview-nodes.png" />
-    <Content Include="Content\2013.2.611\WebBlue\editor.png" />
-    <Content Include="Content\2013.2.611\WebBlue\imagebrowser.png" />
-    <Content Include="Content\2013.2.611\WebBlue\loading.gif" />
-    <Content Include="Content\2013.2.611\WebBlue\slider-h.gif" />
-    <Content Include="Content\2013.2.611\WebBlue\slider-v.gif" />
-    <Content Include="Content\2013.2.611\WebBlue\sprite-vertical.png" />
-    <Content Include="Content\2013.2.611\WebBlue\sprite.png" />
-    <Content Include="Content\2013.2.611\WebBlue\treeview-line.png" />
-    <Content Include="Content\2013.2.611\WebBlue\treeview-nodes-rtl.png" />
-    <Content Include="Content\2013.2.611\WebBlue\treeview-nodes.png" />
-    <Content Include="Content\2013.2.611\Windows7\editor.png" />
-    <Content Include="Content\2013.2.611\Windows7\imagebrowser.png" />
-    <Content Include="Content\2013.2.611\Windows7\loading.gif" />
-    <Content Include="Content\2013.2.611\Windows7\slider-h.gif" />
-    <Content Include="Content\2013.2.611\Windows7\slider-v.gif" />
-    <Content Include="Content\2013.2.611\Windows7\sprite-vertical.png" />
-    <Content Include="Content\2013.2.611\Windows7\sprite.png" />
     <Content Include="Content\bootstrap-theme.css" />
     <Content Include="Content\bootstrap-theme.min.css" />
     <Content Include="Content\bootstrap.css" />
     <Content Include="Content\bootstrap.min.css" />
-    <Content Include="Content\DataTables-1.10.12\extensions\AutoFill\css\autoFill.bootstrap.css" />
-    <Content Include="Content\DataTables-1.10.12\extensions\AutoFill\css\autoFill.bootstrap.min.css" />
-    <Content Include="Content\DataTables-1.10.12\extensions\AutoFill\css\autoFill.bootstrap4.css" />
-    <Content Include="Content\DataTables-1.10.12\extensions\AutoFill\css\autoFill.bootstrap4.min.css" />
-    <Content Include="Content\DataTables-1.10.12\extensions\AutoFill\css\autoFill.dataTables.css" />
-    <Content Include="Content\DataTables-1.10.12\extensions\AutoFill\css\autoFill.dataTables.min.css" />
-    <Content Include="Content\DataTables-1.10.12\extensions\AutoFill\css\autoFill.foundation.css" />
-    <Content Include="Content\DataTables-1.10.12\extensions\AutoFill\css\autoFill.foundation.min.css" />
-    <Content Include="Content\DataTables-1.10.12\extensions\AutoFill\css\autoFill.jqueryui.css" />
-    <Content Include="Content\DataTables-1.10.12\extensions\AutoFill\css\autoFill.jqueryui.min.css" />
-    <Content Include="Content\DataTables-1.10.12\extensions\AutoFill\css\autoFill.semanticui.css" />
-    <Content Include="Content\DataTables-1.10.12\extensions\AutoFill\css\autoFill.semanticui.min.css" />
-    <Content Include="Content\DataTables-1.10.12\extensions\Buttons\css\buttons.bootstrap.css" />
-    <Content Include="Content\DataTables-1.10.12\extensions\Buttons\css\buttons.bootstrap.min.css" />
-    <Content Include="Content\DataTables-1.10.12\extensions\Buttons\css\buttons.bootstrap4.css" />
-    <Content Include="Content\DataTables-1.10.12\extensions\Buttons\css\buttons.bootstrap4.min.css" />
-    <Content Include="Content\DataTables-1.10.12\extensions\Buttons\css\buttons.dataTables.css" />
-    <Content Include="Content\DataTables-1.10.12\extensions\Buttons\css\buttons.dataTables.min.css" />
-    <Content Include="Content\DataTables-1.10.12\extensions\Buttons\css\buttons.foundation.css" />
-    <Content Include="Content\DataTables-1.10.12\extensions\Buttons\css\buttons.foundation.min.css" />
-    <Content Include="Content\DataTables-1.10.12\extensions\Buttons\css\buttons.jqueryui.css" />
-    <Content Include="Content\DataTables-1.10.12\extensions\Buttons\css\buttons.jqueryui.min.css" />
-    <Content Include="Content\DataTables-1.10.12\extensions\Buttons\css\buttons.semanticui.css" />
-    <Content Include="Content\DataTables-1.10.12\extensions\Buttons\css\buttons.semanticui.min.css" />
-    <Content Include="Content\DataTables-1.10.12\extensions\ColReorder\css\colReorder.bootstrap.css" />
-    <Content Include="Content\DataTables-1.10.12\extensions\ColReorder\css\colReorder.bootstrap.min.css" />
-    <Content Include="Content\DataTables-1.10.12\extensions\ColReorder\css\colReorder.bootstrap4.css" />
-    <Content Include="Content\DataTables-1.10.12\extensions\ColReorder\css\colReorder.bootstrap4.min.css" />
-    <Content Include="Content\DataTables-1.10.12\extensions\ColReorder\css\colReorder.dataTables.css" />
-    <Content Include="Content\DataTables-1.10.12\extensions\ColReorder\css\colReorder.dataTables.min.css" />
-    <Content Include="Content\DataTables-1.10.12\extensions\ColReorder\css\colReorder.foundation.css" />
-    <Content Include="Content\DataTables-1.10.12\extensions\ColReorder\css\colReorder.foundation.min.css" />
-    <Content Include="Content\DataTables-1.10.12\extensions\ColReorder\css\colReorder.jqueryui.css" />
-    <Content Include="Content\DataTables-1.10.12\extensions\ColReorder\css\colReorder.jqueryui.min.css" />
-    <Content Include="Content\DataTables-1.10.12\extensions\ColReorder\css\colReorder.semanticui.css" />
-    <Content Include="Content\DataTables-1.10.12\extensions\ColReorder\css\colReorder.semanticui.min.css" />
-    <Content Include="Content\DataTables-1.10.12\extensions\FixedColumns\css\fixedColumns.bootstrap.css" />
-    <Content Include="Content\DataTables-1.10.12\extensions\FixedColumns\css\fixedColumns.bootstrap.min.css" />
-    <Content Include="Content\DataTables-1.10.12\extensions\FixedColumns\css\fixedColumns.bootstrap4.css" />
-    <Content Include="Content\DataTables-1.10.12\extensions\FixedColumns\css\fixedColumns.bootstrap4.min.css" />
-    <Content Include="Content\DataTables-1.10.12\extensions\FixedColumns\css\fixedColumns.dataTables.css" />
-    <Content Include="Content\DataTables-1.10.12\extensions\FixedColumns\css\fixedColumns.dataTables.min.css" />
-    <Content Include="Content\DataTables-1.10.12\extensions\FixedColumns\css\fixedColumns.foundation.css" />
-    <Content Include="Content\DataTables-1.10.12\extensions\FixedColumns\css\fixedColumns.foundation.min.css" />
-    <Content Include="Content\DataTables-1.10.12\extensions\FixedColumns\css\fixedColumns.jqueryui.css" />
-    <Content Include="Content\DataTables-1.10.12\extensions\FixedColumns\css\fixedColumns.jqueryui.min.css" />
-    <Content Include="Content\DataTables-1.10.12\extensions\FixedColumns\css\fixedColumns.semanticui.css" />
-    <Content Include="Content\DataTables-1.10.12\extensions\FixedColumns\css\fixedColumns.semanticui.min.css" />
-    <Content Include="Content\DataTables-1.10.12\extensions\FixedHeader\css\fixedHeader.bootstrap.css" />
-    <Content Include="Content\DataTables-1.10.12\extensions\FixedHeader\css\fixedHeader.bootstrap.min.css" />
-    <Content Include="Content\DataTables-1.10.12\extensions\FixedHeader\css\fixedHeader.bootstrap4.css" />
-    <Content Include="Content\DataTables-1.10.12\extensions\FixedHeader\css\fixedHeader.bootstrap4.min.css" />
-    <Content Include="Content\DataTables-1.10.12\extensions\FixedHeader\css\fixedHeader.dataTables.css" />
-    <Content Include="Content\DataTables-1.10.12\extensions\FixedHeader\css\fixedHeader.dataTables.min.css" />
-    <Content Include="Content\DataTables-1.10.12\extensions\FixedHeader\css\fixedHeader.foundation.css" />
-    <Content Include="Content\DataTables-1.10.12\extensions\FixedHeader\css\fixedHeader.foundation.min.css" />
-    <Content Include="Content\DataTables-1.10.12\extensions\FixedHeader\css\fixedHeader.jqueryui.css" />
-    <Content Include="Content\DataTables-1.10.12\extensions\FixedHeader\css\fixedHeader.jqueryui.min.css" />
-    <Content Include="Content\DataTables-1.10.12\extensions\FixedHeader\css\fixedHeader.semanticui.css" />
-    <Content Include="Content\DataTables-1.10.12\extensions\FixedHeader\css\fixedHeader.semanticui.min.css" />
-    <Content Include="Content\DataTables-1.10.12\extensions\KeyTable\css\keyTable.bootstrap.css" />
-    <Content Include="Content\DataTables-1.10.12\extensions\KeyTable\css\keyTable.bootstrap.min.css" />
-    <Content Include="Content\DataTables-1.10.12\extensions\KeyTable\css\keyTable.bootstrap4.css" />
-    <Content Include="Content\DataTables-1.10.12\extensions\KeyTable\css\keyTable.bootstrap4.min.css" />
-    <Content Include="Content\DataTables-1.10.12\extensions\KeyTable\css\keyTable.dataTables.css" />
-    <Content Include="Content\DataTables-1.10.12\extensions\KeyTable\css\keyTable.dataTables.min.css" />
-    <Content Include="Content\DataTables-1.10.12\extensions\KeyTable\css\keyTable.foundation.css" />
-    <Content Include="Content\DataTables-1.10.12\extensions\KeyTable\css\keyTable.foundation.min.css" />
-    <Content Include="Content\DataTables-1.10.12\extensions\KeyTable\css\keyTable.jqueryui.css" />
-    <Content Include="Content\DataTables-1.10.12\extensions\KeyTable\css\keyTable.jqueryui.min.css" />
-    <Content Include="Content\DataTables-1.10.12\extensions\KeyTable\css\keyTable.semanticui.css" />
-    <Content Include="Content\DataTables-1.10.12\extensions\KeyTable\css\keyTable.semanticui.min.css" />
-    <Content Include="Content\DataTables-1.10.12\extensions\Responsive\css\responsive.bootstrap.css" />
-    <Content Include="Content\DataTables-1.10.12\extensions\Responsive\css\responsive.bootstrap.min.css" />
-    <Content Include="Content\DataTables-1.10.12\extensions\Responsive\css\responsive.bootstrap4.css" />
-    <Content Include="Content\DataTables-1.10.12\extensions\Responsive\css\responsive.bootstrap4.min.css" />
-    <Content Include="Content\DataTables-1.10.12\extensions\Responsive\css\responsive.dataTables.css" />
-    <Content Include="Content\DataTables-1.10.12\extensions\Responsive\css\responsive.dataTables.min.css" />
-    <Content Include="Content\DataTables-1.10.12\extensions\Responsive\css\responsive.foundation.css" />
-    <Content Include="Content\DataTables-1.10.12\extensions\Responsive\css\responsive.foundation.min.css" />
-    <Content Include="Content\DataTables-1.10.12\extensions\Responsive\css\responsive.jqueryui.css" />
-    <Content Include="Content\DataTables-1.10.12\extensions\Responsive\css\responsive.jqueryui.min.css" />
-    <Content Include="Content\DataTables-1.10.12\extensions\Responsive\css\responsive.semanticui.css" />
-    <Content Include="Content\DataTables-1.10.12\extensions\Responsive\css\responsive.semanticui.min.css" />
-    <Content Include="Content\DataTables-1.10.12\extensions\RowReorder\css\rowReorder.bootstrap.css" />
-    <Content Include="Content\DataTables-1.10.12\extensions\RowReorder\css\rowReorder.bootstrap.min.css" />
-    <Content Include="Content\DataTables-1.10.12\extensions\RowReorder\css\rowReorder.bootstrap4.css" />
-    <Content Include="Content\DataTables-1.10.12\extensions\RowReorder\css\rowReorder.bootstrap4.min.css" />
-    <Content Include="Content\DataTables-1.10.12\extensions\RowReorder\css\rowReorder.dataTables.css" />
-    <Content Include="Content\DataTables-1.10.12\extensions\RowReorder\css\rowReorder.dataTables.min.css" />
-    <Content Include="Content\DataTables-1.10.12\extensions\RowReorder\css\rowReorder.foundation.css" />
-    <Content Include="Content\DataTables-1.10.12\extensions\RowReorder\css\rowReorder.foundation.min.css" />
-    <Content Include="Content\DataTables-1.10.12\extensions\RowReorder\css\rowReorder.jqueryui.css" />
-    <Content Include="Content\DataTables-1.10.12\extensions\RowReorder\css\rowReorder.jqueryui.min.css" />
-    <Content Include="Content\DataTables-1.10.12\extensions\RowReorder\css\rowReorder.semanticui.css" />
-    <Content Include="Content\DataTables-1.10.12\extensions\RowReorder\css\rowReorder.semanticui.min.css" />
-    <Content Include="Content\DataTables-1.10.12\extensions\Scroller\css\scroller.bootstrap.css" />
-    <Content Include="Content\DataTables-1.10.12\extensions\Scroller\css\scroller.bootstrap.min.css" />
-    <Content Include="Content\DataTables-1.10.12\extensions\Scroller\css\scroller.bootstrap4.css" />
-    <Content Include="Content\DataTables-1.10.12\extensions\Scroller\css\scroller.bootstrap4.min.css" />
-    <Content Include="Content\DataTables-1.10.12\extensions\Scroller\css\scroller.dataTables.css" />
-    <Content Include="Content\DataTables-1.10.12\extensions\Scroller\css\scroller.dataTables.min.css" />
-    <Content Include="Content\DataTables-1.10.12\extensions\Scroller\css\scroller.foundation.css" />
-    <Content Include="Content\DataTables-1.10.12\extensions\Scroller\css\scroller.foundation.min.css" />
-    <Content Include="Content\DataTables-1.10.12\extensions\Scroller\css\scroller.jqueryui.css" />
-    <Content Include="Content\DataTables-1.10.12\extensions\Scroller\css\scroller.jqueryui.min.css" />
-    <Content Include="Content\DataTables-1.10.12\extensions\Scroller\css\scroller.semanticui.css" />
-    <Content Include="Content\DataTables-1.10.12\extensions\Scroller\css\scroller.semanticui.min.css" />
-    <Content Include="Content\DataTables-1.10.12\extensions\Select\css\select.bootstrap.css" />
-    <Content Include="Content\DataTables-1.10.12\extensions\Select\css\select.bootstrap.min.css" />
-    <Content Include="Content\DataTables-1.10.12\extensions\Select\css\select.bootstrap4.css" />
-    <Content Include="Content\DataTables-1.10.12\extensions\Select\css\select.bootstrap4.min.css" />
-    <Content Include="Content\DataTables-1.10.12\extensions\Select\css\select.dataTables.css" />
-    <Content Include="Content\DataTables-1.10.12\extensions\Select\css\select.dataTables.min.css" />
-    <Content Include="Content\DataTables-1.10.12\extensions\Select\css\select.foundation.css" />
-    <Content Include="Content\DataTables-1.10.12\extensions\Select\css\select.foundation.min.css" />
-    <Content Include="Content\DataTables-1.10.12\extensions\Select\css\select.jqueryui.css" />
-    <Content Include="Content\DataTables-1.10.12\extensions\Select\css\select.jqueryui.min.css" />
-    <Content Include="Content\DataTables-1.10.12\extensions\Select\css\select.semanticui.css" />
-    <Content Include="Content\DataTables-1.10.12\extensions\Select\css\select.semanticui.min.css" />
-    <Content Include="Content\DataTables-1.10.12\media\css\dataTables.bootstrap.css" />
-    <Content Include="Content\DataTables-1.10.12\media\css\dataTables.bootstrap.min.css" />
-    <Content Include="Content\DataTables-1.10.12\media\css\dataTables.bootstrap4.css" />
-    <Content Include="Content\DataTables-1.10.12\media\css\dataTables.bootstrap4.min.css" />
-    <Content Include="Content\DataTables-1.10.12\media\css\dataTables.foundation.css" />
-    <Content Include="Content\DataTables-1.10.12\media\css\dataTables.foundation.min.css" />
-    <Content Include="Content\DataTables-1.10.12\media\css\dataTables.jqueryui.css" />
-    <Content Include="Content\DataTables-1.10.12\media\css\dataTables.jqueryui.min.css" />
-    <Content Include="Content\DataTables-1.10.12\media\css\dataTables.material.css" />
-    <Content Include="Content\DataTables-1.10.12\media\css\dataTables.material.min.css" />
-    <Content Include="Content\DataTables-1.10.12\media\css\dataTables.semanticui.css" />
-    <Content Include="Content\DataTables-1.10.12\media\css\dataTables.semanticui.min.css" />
-    <Content Include="Content\DataTables-1.10.12\media\css\dataTables.uikit.css" />
-    <Content Include="Content\DataTables-1.10.12\media\css\dataTables.uikit.min.css" />
-    <Content Include="Content\DataTables-1.10.12\media\css\jquery.dataTables.css" />
-    <Content Include="Content\DataTables-1.10.12\media\css\jquery.dataTables.min.css" />
-    <Content Include="Content\DataTables-1.10.12\media\css\jquery.dataTables_themeroller.css" />
-    <Content Include="Content\DataTables-1.10.12\media\images\favicon.ico" />
-    <Content Include="Content\DataTables-1.10.12\media\images\sort_asc.png" />
-    <Content Include="Content\DataTables-1.10.12\media\images\sort_asc_disabled.png" />
-    <Content Include="Content\DataTables-1.10.12\media\images\sort_both.png" />
-    <Content Include="Content\DataTables-1.10.12\media\images\sort_desc.png" />
-    <Content Include="Content\DataTables-1.10.12\media\images\sort_desc_disabled.png" />
     <Content Include="Content\DataTables\extensions\AutoFill\css\autoFill.bootstrap.css" />
     <Content Include="Content\DataTables\extensions\AutoFill\css\autoFill.bootstrap.min.css" />
     <Content Include="Content\DataTables\extensions\AutoFill\css\autoFill.bootstrap4.css" />
@@ -903,126 +552,34 @@
     <Content Include="Content\Images\Bad.png" />
     <Content Include="Content\Site.css" />
     <Content Include="Content\bootstrap-slider.min.css" />
-    <Content Include="css\bootstrap-slider.min.css" />
     <Content Include="css\font-awesome.css" />
-    <Content Include="css\font-awesome.min.css" />
     <Content Include="fonts\fontawesome-webfont.svg" />
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
+    <Content Include="General.Settings.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="robots.txt" />
-    <Content Include="Scripts\2013.2.611\jquery-1.7.1.min.js" />
-    <Content Include="Scripts\2013.2.611\jquery.validate.min.js" />
     <Content Include="Scripts\2013.2.611\telerik.all.min.js" />
-    <Content Include="Scripts\2013.2.611\telerik.autocomplete.min.js" />
-    <Content Include="Scripts\2013.2.611\telerik.calendar.min.js" />
-    <Content Include="Scripts\2013.2.611\telerik.chart.min.js" />
-    <Content Include="Scripts\2013.2.611\telerik.datetimepicker.min.js" />
-    <Content Include="Scripts\2013.2.611\telerik.draganddrop.min.js" />
-    <Content Include="Scripts\2013.2.611\telerik.editor.min.js" />
     <Content Include="Scripts\2013.2.611\telerik.grid.backup.js" />
-    <Content Include="Scripts\2013.2.611\telerik.grid.editing.min.js" />
-    <Content Include="Scripts\2013.2.611\telerik.grid.grouping.min.js" />
-    <Content Include="Scripts\2013.2.611\telerik.grid.reordering.min.js" />
-    <Content Include="Scripts\2013.2.611\telerik.grid.resizing.min.js" />
-    <Content Include="Scripts\2013.2.611\telerik.imagebrowser.min.js" />
-    <Content Include="Scripts\2013.2.611\telerik.list.min.js" />
-    <Content Include="Scripts\2013.2.611\telerik.menu.min.js" />
-    <Content Include="Scripts\2013.2.611\telerik.panelbar.min.js" />
-    <Content Include="Scripts\2013.2.611\telerik.slider.min.js" />
-    <Content Include="Scripts\2013.2.611\telerik.splitter.min.js" />
-    <Content Include="Scripts\2013.2.611\telerik.tabstrip.min.js" />
-    <Content Include="Scripts\2013.2.611\telerik.textbox.min.js" />
-    <Content Include="Scripts\2013.2.611\telerik.timepicker.min.js" />
-    <Content Include="Scripts\2013.2.611\telerik.upload.min.js" />
-    <Content Include="Scripts\2013.2.611\telerik.window.min.js" />
     <Content Include="Scripts\autosize\autosize.js" />
     <Content Include="Scripts\autosize\autosize.min.js" />
     <Content Include="Scripts\bexis-jquery-ui.js" />
+    <Content Include="Scripts\bootstrap-slider.min.js" />
     <Content Include="Scripts\bexis-metadata.js" />
     <Content Include="Content\Images\Bildmarke_BEXIS_cmyk.ai" />
     <Content Include="Content\Images\Logo_BEXIS_cmyk.ai" />
+    <Content Include="fonts\FontAwesome.otf" />
+    <Content Include="fonts\fontawesome-webfont.woff2" />
+    <Content Include="fonts\fontawesome-webfont.woff" />
+    <Content Include="fonts\fontawesome-webfont.ttf" />
+    <Content Include="fonts\fontawesome-webfont.eot" />
+    <Content Include="Content\bootstrap-theme.css.map" />
     <Content Include="Content\DataTables\media\images\Sorting icons.psd" />
     <Content Include="Content\DataTables\extensions\RowReorder\css\semanticui.scss" />
     <Content Include="Content\DataTables\extensions\Buttons\css\mixins.scss" />
     <Content Include="Content\DataTables\extensions\Buttons\css\common.scss" />
-    <Content Include="Scripts\bootstrap-slider.min.js" />
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />
-    <Content Include="Scripts\DataTables-1.10.12\extensions\AutoFill\js\autoFill.bootstrap.js" />
-    <Content Include="Scripts\DataTables-1.10.12\extensions\AutoFill\js\autoFill.bootstrap.min.js" />
-    <Content Include="Scripts\DataTables-1.10.12\extensions\AutoFill\js\autoFill.bootstrap4.js" />
-    <Content Include="Scripts\DataTables-1.10.12\extensions\AutoFill\js\autoFill.bootstrap4.min.js" />
-    <Content Include="Scripts\DataTables-1.10.12\extensions\AutoFill\js\autoFill.foundation.js" />
-    <Content Include="Scripts\DataTables-1.10.12\extensions\AutoFill\js\autoFill.foundation.min.js" />
-    <Content Include="Scripts\DataTables-1.10.12\extensions\AutoFill\js\autoFill.jqueryui.js" />
-    <Content Include="Scripts\DataTables-1.10.12\extensions\AutoFill\js\autoFill.jqueryui.min.js" />
-    <Content Include="Scripts\DataTables-1.10.12\extensions\AutoFill\js\autoFill.semanticui.js" />
-    <Content Include="Scripts\DataTables-1.10.12\extensions\AutoFill\js\autoFill.semanticui.min.js" />
-    <Content Include="Scripts\DataTables-1.10.12\extensions\AutoFill\js\dataTables.autoFill.js" />
-    <Content Include="Scripts\DataTables-1.10.12\extensions\AutoFill\js\dataTables.autoFill.min.js" />
-    <Content Include="Scripts\DataTables-1.10.12\extensions\Buttons\js\buttons.bootstrap.js" />
-    <Content Include="Scripts\DataTables-1.10.12\extensions\Buttons\js\buttons.bootstrap.min.js" />
-    <Content Include="Scripts\DataTables-1.10.12\extensions\Buttons\js\buttons.bootstrap4.js" />
-    <Content Include="Scripts\DataTables-1.10.12\extensions\Buttons\js\buttons.bootstrap4.min.js" />
-    <Content Include="Scripts\DataTables-1.10.12\extensions\Buttons\js\buttons.colVis.js" />
-    <Content Include="Scripts\DataTables-1.10.12\extensions\Buttons\js\buttons.colVis.min.js" />
-    <Content Include="Scripts\DataTables-1.10.12\extensions\Buttons\js\buttons.flash.js" />
-    <Content Include="Scripts\DataTables-1.10.12\extensions\Buttons\js\buttons.flash.min.js" />
-    <Content Include="Scripts\DataTables-1.10.12\extensions\Buttons\js\buttons.foundation.js" />
-    <Content Include="Scripts\DataTables-1.10.12\extensions\Buttons\js\buttons.foundation.min.js" />
-    <Content Include="Scripts\DataTables-1.10.12\extensions\Buttons\js\buttons.html5.js" />
-    <Content Include="Scripts\DataTables-1.10.12\extensions\Buttons\js\buttons.html5.min.js" />
-    <Content Include="Scripts\DataTables-1.10.12\extensions\Buttons\js\buttons.jqueryui.js" />
-    <Content Include="Scripts\DataTables-1.10.12\extensions\Buttons\js\buttons.jqueryui.min.js" />
-    <Content Include="Scripts\DataTables-1.10.12\extensions\Buttons\js\buttons.print.js" />
-    <Content Include="Scripts\DataTables-1.10.12\extensions\Buttons\js\buttons.print.min.js" />
-    <Content Include="Scripts\DataTables-1.10.12\extensions\Buttons\js\buttons.semanticui.js" />
-    <Content Include="Scripts\DataTables-1.10.12\extensions\Buttons\js\buttons.semanticui.min.js" />
-    <Content Include="Scripts\DataTables-1.10.12\extensions\Buttons\js\dataTables.buttons.js" />
-    <Content Include="Scripts\DataTables-1.10.12\extensions\Buttons\js\dataTables.buttons.min.js" />
-    <Content Include="Scripts\DataTables-1.10.12\extensions\Buttons\swf\flashExport.swf" />
-    <Content Include="Scripts\DataTables-1.10.12\extensions\ColReorder\js\dataTables.colReorder.js" />
-    <Content Include="Scripts\DataTables-1.10.12\extensions\ColReorder\js\dataTables.colReorder.min.js" />
-    <Content Include="Scripts\DataTables-1.10.12\extensions\FixedColumns\js\dataTables.fixedColumns.js" />
-    <Content Include="Scripts\DataTables-1.10.12\extensions\FixedColumns\js\dataTables.fixedColumns.min.js" />
-    <Content Include="Scripts\DataTables-1.10.12\extensions\FixedHeader\js\dataTables.fixedHeader.js" />
-    <Content Include="Scripts\DataTables-1.10.12\extensions\FixedHeader\js\dataTables.fixedHeader.min.js" />
-    <Content Include="Scripts\DataTables-1.10.12\extensions\KeyTable\js\dataTables.keyTable.js" />
-    <Content Include="Scripts\DataTables-1.10.12\extensions\KeyTable\js\dataTables.keyTable.min.js" />
-    <Content Include="Scripts\DataTables-1.10.12\extensions\Responsive\js\dataTables.responsive.js" />
-    <Content Include="Scripts\DataTables-1.10.12\extensions\Responsive\js\dataTables.responsive.min.js" />
-    <Content Include="Scripts\DataTables-1.10.12\extensions\Responsive\js\responsive.bootstrap.js" />
-    <Content Include="Scripts\DataTables-1.10.12\extensions\Responsive\js\responsive.bootstrap.min.js" />
-    <Content Include="Scripts\DataTables-1.10.12\extensions\Responsive\js\responsive.bootstrap4.js" />
-    <Content Include="Scripts\DataTables-1.10.12\extensions\Responsive\js\responsive.bootstrap4.min.js" />
-    <Content Include="Scripts\DataTables-1.10.12\extensions\Responsive\js\responsive.foundation.js" />
-    <Content Include="Scripts\DataTables-1.10.12\extensions\Responsive\js\responsive.foundation.min.js" />
-    <Content Include="Scripts\DataTables-1.10.12\extensions\Responsive\js\responsive.jqueryui.js" />
-    <Content Include="Scripts\DataTables-1.10.12\extensions\Responsive\js\responsive.jqueryui.min.js" />
-    <Content Include="Scripts\DataTables-1.10.12\extensions\Responsive\js\responsive.semanticui.js" />
-    <Content Include="Scripts\DataTables-1.10.12\extensions\Responsive\js\responsive.semanticui.min.js" />
-    <Content Include="Scripts\DataTables-1.10.12\extensions\RowReorder\js\dataTables.rowReorder.js" />
-    <Content Include="Scripts\DataTables-1.10.12\extensions\RowReorder\js\dataTables.rowReorder.min.js" />
-    <Content Include="Scripts\DataTables-1.10.12\extensions\Scroller\js\dataTables.scroller.js" />
-    <Content Include="Scripts\DataTables-1.10.12\extensions\Scroller\js\dataTables.scroller.min.js" />
-    <Content Include="Scripts\DataTables-1.10.12\extensions\Select\js\dataTables.select.js" />
-    <Content Include="Scripts\DataTables-1.10.12\extensions\Select\js\dataTables.select.min.js" />
-    <Content Include="Scripts\DataTables-1.10.12\media\js\dataTables.bootstrap.js" />
-    <Content Include="Scripts\DataTables-1.10.12\media\js\dataTables.bootstrap.min.js" />
-    <Content Include="Scripts\DataTables-1.10.12\media\js\dataTables.bootstrap4.js" />
-    <Content Include="Scripts\DataTables-1.10.12\media\js\dataTables.bootstrap4.min.js" />
-    <Content Include="Scripts\DataTables-1.10.12\media\js\dataTables.foundation.js" />
-    <Content Include="Scripts\DataTables-1.10.12\media\js\dataTables.foundation.min.js" />
-    <Content Include="Scripts\DataTables-1.10.12\media\js\dataTables.jqueryui.js" />
-    <Content Include="Scripts\DataTables-1.10.12\media\js\dataTables.jqueryui.min.js" />
-    <Content Include="Scripts\DataTables-1.10.12\media\js\dataTables.material.js" />
-    <Content Include="Scripts\DataTables-1.10.12\media\js\dataTables.material.min.js" />
-    <Content Include="Scripts\DataTables-1.10.12\media\js\dataTables.semanticui.js" />
-    <Content Include="Scripts\DataTables-1.10.12\media\js\dataTables.semanticui.min.js" />
-    <Content Include="Scripts\DataTables-1.10.12\media\js\dataTables.uikit.js" />
-    <Content Include="Scripts\DataTables-1.10.12\media\js\dataTables.uikit.min.js" />
-    <Content Include="Scripts\DataTables-1.10.12\media\js\jquery.dataTables.js" />
-    <Content Include="Scripts\DataTables-1.10.12\media\js\jquery.dataTables.min.js" />
-    <Content Include="Scripts\DataTables-1.10.12\media\js\jquery.js" />
     <Content Include="Scripts\DataTables\extensions\AutoFill\js\autoFill.bootstrap.js" />
     <Content Include="Scripts\DataTables\extensions\AutoFill\js\autoFill.bootstrap.min.js" />
     <Content Include="Scripts\DataTables\extensions\AutoFill\js\autoFill.bootstrap4.js" />
@@ -1095,11 +652,6 @@
     <Content Include="Scripts\DataTables\extensions\ColReorder\Readme.md" />
     <Content Include="Scripts\DataTables\extensions\Buttons\Readme.md" />
     <Content Include="Scripts\DataTables\extensions\AutoFill\Readme.md" />
-    <Content Include="fonts\FontAwesome.otf" />
-    <Content Include="fonts\fontawesome-webfont.woff2" />
-    <Content Include="fonts\fontawesome-webfont.woff" />
-    <Content Include="fonts\fontawesome-webfont.ttf" />
-    <Content Include="fonts\fontawesome-webfont.eot" />
     <Content Include="fonts\glyphicons-halflings-regular.woff2" />
     <Content Include="fonts\glyphicons-halflings-regular.woff" />
     <Content Include="fonts\glyphicons-halflings-regular.ttf" />
@@ -1107,84 +659,14 @@
     <Content Include="Content\bootstrap.min.css.map" />
     <Content Include="Content\bootstrap.css.map" />
     <Content Include="Content\bootstrap-theme.min.css.map" />
-    <Content Include="Content\bootstrap-theme.css.map" />
-    <Content Include="Content\DataTables-1.10.12\media\images\Sorting icons.psd" />
-    <Content Include="Content\DataTables-1.10.12\extensions\RowReorder\css\semanticui.scss" />
-    <Content Include="Content\DataTables-1.10.12\extensions\Buttons\css\mixins.scss" />
-    <Content Include="Content\DataTables-1.10.12\extensions\Buttons\css\common.scss" />
-    <Content Include="General.Settings.json" />
     <None Include="packages.config" />
     <None Include="Properties\PublishProfiles\BexisServer_demo.pubxml" />
+    <None Include="Properties\PublishProfiles\BexisServer_master.pubxml" />
+    <None Include="Properties\PublishProfiles\BexisServer_dev.pubxml" />
+    <None Include="Properties\PublishProfiles\BexisServer_rc.pubxml" />
     <None Include="Properties\PublishProfiles\BexisServer_test.pubxml" />
     <None Include="Properties\PublishProfiles\FolderProfile.pubxml" />
-    <None Include="Properties\PublishProfiles\IISProfile.pubxml" />
-    <Content Include="Scripts\DataTables-1.10.12\extensions\Select\Readme.md" />
-    <Content Include="Scripts\DataTables-1.10.12\extensions\Scroller\Readme.md" />
-    <Content Include="Scripts\DataTables-1.10.12\extensions\RowReorder\Readme.md" />
-    <Content Include="Scripts\DataTables-1.10.12\extensions\Responsive\Readme.md" />
-    <Content Include="Scripts\DataTables-1.10.12\extensions\KeyTable\Readme.md" />
-    <Content Include="Scripts\DataTables-1.10.12\extensions\FixedHeader\Readme.md" />
-    <Content Include="Scripts\DataTables-1.10.12\extensions\FixedColumns\Readme.md" />
-    <Content Include="Scripts\DataTables-1.10.12\extensions\ColReorder\Readme.md" />
-    <Content Include="Scripts\DataTables-1.10.12\extensions\Buttons\Readme.md" />
-    <Content Include="Scripts\DataTables-1.10.12\extensions\AutoFill\Readme.md" />
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
-    <Content Include="App_GlobalResources\UploadLocalization.zh-CN.resx">
-      <Generator>GlobalResourceProxyGenerator</Generator>
-      <LastGenOutput>UploadLocalization.zh-CN.designer.cs</LastGenOutput>
-    </Content>
-    <Content Include="App_GlobalResources\UploadLocalization.ru-RU.resx">
-      <Generator>GlobalResourceProxyGenerator</Generator>
-      <LastGenOutput>UploadLocalization.ru-RU.designer.cs</LastGenOutput>
-    </Content>
-    <Content Include="App_GlobalResources\UploadLocalization.pt-PT.resx">
-      <Generator>GlobalResourceProxyGenerator</Generator>
-      <LastGenOutput>UploadLocalization.pt-PT.designer.cs</LastGenOutput>
-    </Content>
-    <Content Include="App_GlobalResources\UploadLocalization.pt-BR.resx">
-      <Generator>GlobalResourceProxyGenerator</Generator>
-      <LastGenOutput>UploadLocalization.pt-BR.designer.cs</LastGenOutput>
-    </Content>
-    <Content Include="App_GlobalResources\UploadLocalization.pl-PL.resx">
-      <Generator>GlobalResourceProxyGenerator</Generator>
-      <LastGenOutput>UploadLocalization.pl-PL.designer.cs</LastGenOutput>
-    </Content>
-    <Content Include="App_GlobalResources\UploadLocalization.nl-NL.resx">
-      <Generator>GlobalResourceProxyGenerator</Generator>
-      <LastGenOutput>UploadLocalization.nl-NL.designer.cs</LastGenOutput>
-    </Content>
-    <Content Include="App_GlobalResources\UploadLocalization.fr-FR.resx">
-      <Generator>GlobalResourceProxyGenerator</Generator>
-      <LastGenOutput>UploadLocalization.fr-FR.designer.cs</LastGenOutput>
-    </Content>
-    <Content Include="App_GlobalResources\UploadLocalization.en-US.resx">
-      <Generator>GlobalResourceProxyGenerator</Generator>
-      <LastGenOutput>UploadLocalization.en-US.designer.cs</LastGenOutput>
-    </Content>
-    <Content Include="App_GlobalResources\GridLocalization.resx">
-      <Generator>GlobalResourceProxyGenerator</Generator>
-      <LastGenOutput>GridLocalization.designer.cs</LastGenOutput>
-    </Content>
-    <Content Include="App_GlobalResources\GridLocalization.en-US.resx">
-      <Generator>GlobalResourceProxyGenerator</Generator>
-      <LastGenOutput>GridLocalization.en-US.designer.cs</LastGenOutput>
-    </Content>
-    <Content Include="App_GlobalResources\GridLocalization.de-DE.resx">
-      <Generator>GlobalResourceProxyGenerator</Generator>
-      <LastGenOutput>GridLocalization.de-DE.designer.cs</LastGenOutput>
-    </Content>
-    <Content Include="App_GlobalResources\EditorLocalization.resx">
-      <Generator>GlobalResourceProxyGenerator</Generator>
-      <LastGenOutput>EditorLocalization.designer.cs</LastGenOutput>
-    </Content>
-    <Content Include="App_GlobalResources\EditorLocalization.en-US.resx">
-      <Generator>GlobalResourceProxyGenerator</Generator>
-      <LastGenOutput>EditorLocalization.en-US.designer.cs</LastGenOutput>
-    </Content>
-    <Content Include="App_GlobalResources\EditorLocalization.de-DE.resx">
-      <Generator>GlobalResourceProxyGenerator</Generator>
-      <LastGenOutput>EditorLocalization.de-DE.designer.cs</LastGenOutput>
-    </Content>
     <EmbeddedResource Include="Scripts\custom-swagger.js" />
     <Content Include="Scripts\DataTables\media\js\dataTables.bootstrap.js" />
     <Content Include="Scripts\DataTables\media\js\dataTables.bootstrap.min.js" />
@@ -1209,41 +691,66 @@
     <Content Include="Scripts\handsontable\handsontable.min.js" />
     <Content Include="Scripts\jquery-1.10.2.js" />
     <Content Include="Scripts\jquery-1.10.2.min.js" />
-    <Content Include="Scripts\jquery-1.10.2.min.map" />
-    <None Include="Scripts\jquery-2.1.3.intellisense.js" />
-    <None Include="Scripts\jquery-2.1.4.intellisense.js" />
-    <Content Include="Scripts\jquery-2.1.4.js" />
-    <Content Include="Scripts\jquery-2.1.4.min.js" />
-    <Content Include="Scripts\jquery-migrate-1.2.1.js" />
-    <Content Include="Scripts\jquery-migrate-1.2.1.min.js" />
+    <None Include="Scripts\jquery-2.2.4.intellisense.js" />
+    <Content Include="Scripts\jquery-2.2.4.js" />
+    <Content Include="Scripts\jquery-2.2.4.min.js" />
+    <Content Include="Scripts\jquery-migrate-1.4.1.js" />
+    <Content Include="Scripts\jquery-migrate-1.4.1.min.js" />
+    <Content Include="Scripts\jquery.dataTables.js" />
+    <Content Include="Scripts\jquery.dataTables.min.js" />
+    <Content Include="Scripts\jquery-2.2.4.min.map" />
+    <None Include="Scripts\jquery.validate-vsdoc.js" />
+    <Content Include="Scripts\jquery.validate.js" />
+    <Content Include="Scripts\jquery.validate.min.js" />
     <Content Include="Scripts\jquery.validate.unobtrusive.js" />
     <Content Include="Scripts\jquery.validate.unobtrusive.min.js" />
     <Content Include="Scripts\minimap\minimap.js" />
     <Content Include="Scripts\minimap\minimap.min.css" />
     <Content Include="Scripts\minimap\minimap.min.js" />
-    <Content Include="Scripts\modernizr-2.8.3.js" />
     <Content Include="Scripts\respond.js" />
     <Content Include="Scripts\respond.matchmedia.addListener.js" />
     <Content Include="Scripts\respond.matchmedia.addListener.min.js" />
     <Content Include="Scripts\respond.min.js" />
-    <Content Include="Scripts\session.warning.js" />
-    <Content Include="Scripts\svelte\menu.css" />
-    <Content Include="Scripts\svelte\menu.js" />
-    <Content Include="Scripts\svelte\settings.css" />
-    <Content Include="Scripts\svelte\settings.js" />
-    <Content Include="Scripts\svelte\shell.js" />
-    <Content Include="Scripts\svelte\uitest.js" />
     <Content Include="Shell.Manifest.xml" />
+    <Content Include="Themes\Black\Styles\awesome\css\font-awesome.css" />
+    <Content Include="Themes\Black\Styles\awesome\css\font-awesome.min.css" />
+    <Content Include="Themes\Black\Styles\awesome\fonts\fontawesome-webfont.svg" />
+    <Content Include="Themes\Black\Styles\bexis-elements.css" />
+    <Content Include="Themes\Black\Styles\bexis-font-awesome-extension.css" />
+    <Content Include="Themes\Black\Styles\bexis-telerik.css" />
     <Content Include="Themes\Default\Styles\awesome\css\font-awesome.css" />
     <Content Include="Themes\Default\Styles\awesome\css\font-awesome.min.css" />
     <Content Include="Themes\Default\Styles\awesome\fonts\fontawesome-webfont.svg" />
     <Content Include="Scripts\2012.3.1018\telerik.extensions.js" />
+    <Content Include="Scripts\2013.2.611\jquery-1.7.1.min.js" />
+    <Content Include="Scripts\2013.2.611\jquery.validate.min.js" />
+    <Content Include="Scripts\2013.2.611\telerik.autocomplete.min.js" />
+    <Content Include="Scripts\2013.2.611\telerik.calendar.min.js" />
+    <Content Include="Scripts\2013.2.611\telerik.chart.min.js" />
     <Content Include="Scripts\2013.2.611\telerik.combobox.min.js" />
     <Content Include="Scripts\2013.2.611\telerik.common.min.js" />
     <Content Include="Scripts\2013.2.611\telerik.datepicker.min.js" />
+    <Content Include="Scripts\2013.2.611\telerik.datetimepicker.min.js" />
+    <Content Include="Scripts\2013.2.611\telerik.draganddrop.min.js" />
+    <Content Include="Scripts\2013.2.611\telerik.editor.min.js" />
+    <Content Include="Scripts\2013.2.611\telerik.grid.editing.min.js" />
     <Content Include="Scripts\2013.2.611\telerik.grid.filtering.min.js" />
+    <Content Include="Scripts\2013.2.611\telerik.grid.grouping.min.js" />
     <Content Include="Scripts\2013.2.611\telerik.grid.min.js" />
+    <Content Include="Scripts\2013.2.611\telerik.grid.reordering.min.js" />
+    <Content Include="Scripts\2013.2.611\telerik.grid.resizing.min.js" />
+    <Content Include="Scripts\2013.2.611\telerik.imagebrowser.min.js" />
+    <Content Include="Scripts\2013.2.611\telerik.list.min.js" />
+    <Content Include="Scripts\2013.2.611\telerik.menu.min.js" />
+    <Content Include="Scripts\2013.2.611\telerik.panelbar.min.js" />
+    <Content Include="Scripts\2013.2.611\telerik.slider.min.js" />
+    <Content Include="Scripts\2013.2.611\telerik.splitter.min.js" />
+    <Content Include="Scripts\2013.2.611\telerik.tabstrip.min.js" />
+    <Content Include="Scripts\2013.2.611\telerik.textbox.min.js" />
+    <Content Include="Scripts\2013.2.611\telerik.timepicker.min.js" />
     <Content Include="Scripts\2013.2.611\telerik.treeview.min.js" />
+    <Content Include="Scripts\2013.2.611\telerik.upload.min.js" />
+    <Content Include="Scripts\2013.2.611\telerik.window.min.js" />
     <Content Include="Scripts\bexis_default.js" />
     <Content Include="Scripts\jQueryUI\1.10.3\css\smoothness\images\animated-overlay.gif" />
     <Content Include="Scripts\jQueryUI\1.10.3\css\smoothness\images\ui-bg_flat_0_aaaaaa_40x100.png" />
@@ -1264,9 +771,6 @@
     <Content Include="Scripts\jQueryUI\1.10.3\js\jquery-1.9.1.js" />
     <Content Include="Scripts\jQueryUI\1.10.3\js\jquery-ui-1.10.3.custom.js" />
     <Content Include="Scripts\jQueryUI\1.10.3\js\jquery-ui-1.10.3.custom.min.js" />
-    <Content Include="Scripts\jquery-1.7.1.min.js" />
-    <Content Include="Scripts\jquery-2.0.3.js" />
-    <Content Include="Scripts\jquery-2.0.3.min.js" />
     <Content Include="Scripts\jquery.ba-resize.min.js" />
     <Content Include="Scripts\Search\search.js" />
     <Content Include="Scripts\switchery\switchery.css" />
@@ -1274,6 +778,16 @@
     <Content Include="Scripts\switchery\switchery.min.css" />
     <Content Include="Scripts\switchery\switchery.min.js" />
     <Content Include="Scripts\trunk8.js" />
+    <Content Include="Themes\Black\Styles\Black\editor.png" />
+    <Content Include="Themes\Black\Styles\Black\imagebrowser.png" />
+    <Content Include="Themes\Black\Styles\Black\loading.gif" />
+    <Content Include="Themes\Black\Styles\Black\slider-h.gif" />
+    <Content Include="Themes\Black\Styles\Black\slider-v.gif" />
+    <Content Include="Themes\Black\Styles\Black\sprite-vertical.png" />
+    <Content Include="Themes\Black\Styles\Black\sprite.png" />
+    <Content Include="Themes\Black\Styles\Black\treeview-line.png" />
+    <Content Include="Themes\Black\Styles\Black\treeview-nodes-rtl.png" />
+    <Content Include="Themes\Black\Styles\Black\treeview-nodes.png" />
     <Content Include="Themes\Default\Layouts\_Layout.xml">
       <SubType>Designer</SubType>
     </Content>
@@ -1302,18 +816,192 @@
     <Content Include="Themes\Default\Styles\search.css" />
     <Content Include="Themes\Default\Styles\telerik.default.min.css" />
     <Content Include="Themes\Default\Styles\wizard.css" />
+    <Content Include="Themes\Forest\Styles\Forest\editor.png" />
+    <Content Include="Themes\Forest\Styles\Forest\imagebrowser.png" />
+    <Content Include="Themes\Forest\Styles\Forest\loading.gif" />
+    <Content Include="Themes\Forest\Styles\Forest\slider-h.gif" />
+    <Content Include="Themes\Forest\Styles\Forest\slider-v.gif" />
+    <Content Include="Themes\Forest\Styles\Forest\sprite-vertical.png" />
+    <Content Include="Themes\Forest\Styles\Forest\sprite.png" />
+    <Content Include="Themes\Forest\Styles\Forest\treeview-line.png" />
+    <Content Include="Themes\Forest\Styles\Forest\treeview-nodes-rtl.png" />
+    <Content Include="Themes\Forest\Styles\Forest\treeview-nodes.png" />
+    <Content Include="Themes\Hay\Styles\Hay\editor.png" />
+    <Content Include="Themes\Hay\Styles\Hay\imagebrowser.png" />
+    <Content Include="Themes\Hay\Styles\Hay\loading.gif" />
+    <Content Include="Themes\Hay\Styles\Hay\slider-h.gif" />
+    <Content Include="Themes\Hay\Styles\Hay\slider-v.gif" />
+    <Content Include="Themes\Hay\Styles\Hay\sprite-vertical.png" />
+    <Content Include="Themes\Hay\Styles\Hay\sprite.png" />
+    <Content Include="Themes\Hay\Styles\Hay\treeview-line.png" />
+    <Content Include="Themes\Hay\Styles\Hay\treeview-nodes-rtl.png" />
+    <Content Include="Themes\Hay\Styles\Hay\treeview-nodes.png" />
+    <Content Include="Themes\Metro\Styles\Metro\editor.png" />
+    <Content Include="Themes\Metro\Styles\Metro\imagebrowser.png" />
+    <Content Include="Themes\Metro\Styles\Metro\loading.gif" />
+    <Content Include="Themes\Metro\Styles\Metro\slider-h.gif" />
+    <Content Include="Themes\Metro\Styles\Metro\slider-v.gif" />
+    <Content Include="Themes\Metro\Styles\Metro\sprite.png" />
+    <Content Include="Themes\Office2007\Styles\Office2007\editor.png" />
+    <Content Include="Themes\Office2007\Styles\Office2007\imagebrowser.png" />
+    <Content Include="Themes\Office2007\Styles\Office2007\loading.gif" />
+    <Content Include="Themes\Office2007\Styles\Office2007\slider-h.gif" />
+    <Content Include="Themes\Office2007\Styles\Office2007\slider-v.gif" />
+    <Content Include="Themes\Office2007\Styles\Office2007\sprite-vertical.png" />
+    <Content Include="Themes\Office2007\Styles\Office2007\sprite.png" />
+    <Content Include="Themes\Office2007\Styles\Office2007\treeview-line.png" />
+    <Content Include="Themes\Office2007\Styles\Office2007\treeview-nodes-rtl.png" />
+    <Content Include="Themes\Office2007\Styles\Office2007\treeview-nodes.png" />
+    <Content Include="Themes\Office2010Black\Styles\Office2010Black\editor.png" />
+    <Content Include="Themes\Office2010Black\Styles\Office2010Black\imagebrowser.png" />
+    <Content Include="Themes\Office2010Black\Styles\Office2010Black\loading.gif" />
+    <Content Include="Themes\Office2010Black\Styles\Office2010Black\slider-h.gif" />
+    <Content Include="Themes\Office2010Black\Styles\Office2010Black\slider-v.gif" />
+    <Content Include="Themes\Office2010Black\Styles\Office2010Black\sprite-vertical.png" />
+    <Content Include="Themes\Office2010Black\Styles\Office2010Black\sprite.png" />
+    <Content Include="Themes\Office2010Black\Styles\Office2010Black\treeview-line.png" />
+    <Content Include="Themes\Office2010Black\Styles\Office2010Black\treeview-nodes-rtl.png" />
+    <Content Include="Themes\Office2010Black\Styles\Office2010Black\treeview-nodes.png" />
+    <Content Include="Themes\Office2010Blue\Styles\Office2010Blue\editor.png" />
+    <Content Include="Themes\Office2010Blue\Styles\Office2010Blue\gradient.png" />
+    <Content Include="Themes\Office2010Blue\Styles\Office2010Blue\imagebrowser.png" />
+    <Content Include="Themes\Office2010Blue\Styles\Office2010Blue\loading.gif" />
+    <Content Include="Themes\Office2010Blue\Styles\Office2010Blue\slider-h.gif" />
+    <Content Include="Themes\Office2010Blue\Styles\Office2010Blue\slider-v.gif" />
+    <Content Include="Themes\Office2010Blue\Styles\Office2010Blue\sprite-vertical.png" />
+    <Content Include="Themes\Office2010Blue\Styles\Office2010Blue\sprite.png" />
+    <Content Include="Themes\Office2010Silver\Styles\Office2010Silver\editor.png" />
+    <Content Include="Themes\Office2010Silver\Styles\Office2010Silver\gradient.png" />
+    <Content Include="Themes\Office2010Silver\Styles\Office2010Silver\imagebrowser.png" />
+    <Content Include="Themes\Office2010Silver\Styles\Office2010Silver\loading.gif" />
+    <Content Include="Themes\Office2010Silver\Styles\Office2010Silver\slider-h.gif" />
+    <Content Include="Themes\Office2010Silver\Styles\Office2010Silver\slider-v.gif" />
+    <Content Include="Themes\Office2010Silver\Styles\Office2010Silver\sprite-vertical.png" />
+    <Content Include="Themes\Office2010Silver\Styles\Office2010Silver\sprite.png" />
+    <Content Include="Themes\Outlook\Styles\Outlook\editor.png" />
+    <Content Include="Themes\Outlook\Styles\Outlook\imagebrowser.png" />
+    <Content Include="Themes\Outlook\Styles\Outlook\loading.gif" />
+    <Content Include="Themes\Outlook\Styles\Outlook\slider-h.gif" />
+    <Content Include="Themes\Outlook\Styles\Outlook\slider-v.gif" />
+    <Content Include="Themes\Outlook\Styles\Outlook\sprite-vertical.png" />
+    <Content Include="Themes\Outlook\Styles\Outlook\sprite.png" />
+    <Content Include="Themes\Outlook\Styles\Outlook\treeview-line.png" />
+    <Content Include="Themes\Outlook\Styles\Outlook\treeview-nodes-rtl.png" />
+    <Content Include="Themes\Outlook\Styles\Outlook\treeview-nodes.png" />
+    <Content Include="Themes\Simple\Styles\Simple\editor.png" />
+    <Content Include="Themes\Simple\Styles\Simple\imagebrowser.png" />
+    <Content Include="Themes\Simple\Styles\Simple\loading.gif" />
+    <Content Include="Themes\Simple\Styles\Simple\slider-h.gif" />
+    <Content Include="Themes\Simple\Styles\Simple\slider-v.gif" />
+    <Content Include="Themes\Simple\Styles\Simple\sprite.png" />
+    <Content Include="Themes\Simple\Styles\Simple\treeview-line.png" />
+    <Content Include="Themes\Simple\Styles\Simple\treeview-nodes-rtl.png" />
+    <Content Include="Themes\Simple\Styles\Simple\treeview-nodes.png" />
+    <Content Include="Themes\Sitefinity\Styles\Sitefinity\editor.png" />
+    <Content Include="Themes\Sitefinity\Styles\Sitefinity\imagebrowser.png" />
+    <Content Include="Themes\Sitefinity\Styles\Sitefinity\loading.gif" />
+    <Content Include="Themes\Sitefinity\Styles\Sitefinity\slider-h.gif" />
+    <Content Include="Themes\Sitefinity\Styles\Sitefinity\slider-v.gif" />
+    <Content Include="Themes\Sitefinity\Styles\Sitefinity\sprite-vertical.png" />
+    <Content Include="Themes\Sitefinity\Styles\Sitefinity\sprite.png" />
+    <Content Include="Themes\Sitefinity\Styles\Sitefinity\treeview-line.png" />
+    <Content Include="Themes\Sitefinity\Styles\Sitefinity\treeview-nodes-rtl.png" />
+    <Content Include="Themes\Sitefinity\Styles\Sitefinity\treeview-nodes.png" />
+    <Content Include="Themes\Sunset\Styles\Sunset\editor.png" />
+    <Content Include="Themes\Sunset\Styles\Sunset\imagebrowser.png" />
+    <Content Include="Themes\Sunset\Styles\Sunset\loading.gif" />
+    <Content Include="Themes\Sunset\Styles\Sunset\slider-h.gif" />
+    <Content Include="Themes\Sunset\Styles\Sunset\slider-v.gif" />
+    <Content Include="Themes\Sunset\Styles\Sunset\sprite-vertical.png" />
+    <Content Include="Themes\Sunset\Styles\Sunset\sprite.png" />
+    <Content Include="Themes\Sunset\Styles\Sunset\treeview-line.png" />
+    <Content Include="Themes\Sunset\Styles\Sunset\treeview-nodes-rtl.png" />
+    <Content Include="Themes\Sunset\Styles\Sunset\treeview-nodes.png" />
+    <Content Include="Themes\Black\Styles\telerik.black.min.css" />
     <Content Include="Themes\telerik.common.min.css" />
+    <Content Include="Themes\Forest\Styles\telerik.forest.min.css" />
+    <Content Include="Themes\Hay\Styles\telerik.hay.min.css" />
+    <Content Include="Themes\Metro\Styles\telerik.metro.min.css" />
+    <Content Include="Themes\Office2007\Styles\telerik.office2007.min.css" />
+    <Content Include="Themes\Office2010Black\Styles\telerik.office2010black.min.css" />
+    <Content Include="Themes\Office2010Blue\Styles\telerik.office2010blue.min.css" />
+    <Content Include="Themes\Office2010Silver\Styles\telerik.office2010silver.min.css" />
+    <Content Include="Themes\Outlook\Styles\telerik.outlook.min.css" />
     <Content Include="Themes\telerik.rtl.min.css" />
+    <Content Include="Themes\Simple\Styles\telerik.simple.min.css" />
+    <Content Include="Themes\Sitefinity\Styles\telerik.sitefinity.min.css" />
+    <Content Include="Themes\Sunset\Styles\telerik.sunset.min.css" />
+    <Content Include="Themes\Telerik\Styles\telerik.telerik.min.css" />
+    <Content Include="Themes\Transparent\Styles\telerik.transparent.min.css" />
+    <Content Include="Themes\Vista\Styles\telerik.vista.min.css" />
+    <Content Include="Themes\Web20\Styles\telerik.web20.min.css" />
+    <Content Include="Themes\WebBlue\Styles\telerik.webblue.min.css" />
+    <Content Include="Themes\Windows7\Styles\telerik.windows7.min.css" />
+    <Content Include="Themes\Telerik\Styles\Telerik\editor.png" />
+    <Content Include="Themes\Telerik\Styles\Telerik\imagebrowser.png" />
+    <Content Include="Themes\Telerik\Styles\Telerik\loading.gif" />
+    <Content Include="Themes\Telerik\Styles\Telerik\slider-h.gif" />
+    <Content Include="Themes\Telerik\Styles\Telerik\slider-v.gif" />
+    <Content Include="Themes\Telerik\Styles\Telerik\sprite-vertical.png" />
+    <Content Include="Themes\Telerik\Styles\Telerik\sprite.png" />
+    <Content Include="Themes\Telerik\Styles\Telerik\treeview-line.png" />
+    <Content Include="Themes\Telerik\Styles\Telerik\treeview-nodes-rtl.png" />
+    <Content Include="Themes\Telerik\Styles\Telerik\treeview-nodes.png" />
+    <Content Include="Themes\Transparent\Styles\Transparent\active.png" />
+    <Content Include="Themes\Transparent\Styles\Transparent\editor.png" />
+    <Content Include="Themes\Transparent\Styles\Transparent\gradient.png" />
+    <Content Include="Themes\Transparent\Styles\Transparent\group.png" />
+    <Content Include="Themes\Transparent\Styles\Transparent\hover.png" />
+    <Content Include="Themes\Transparent\Styles\Transparent\imagebrowser.png" />
+    <Content Include="Themes\Transparent\Styles\Transparent\loading.gif" />
+    <Content Include="Themes\Transparent\Styles\Transparent\selected.png" />
+    <Content Include="Themes\Transparent\Styles\Transparent\slider-h.gif" />
+    <Content Include="Themes\Transparent\Styles\Transparent\slider-v.gif" />
+    <Content Include="Themes\Transparent\Styles\Transparent\sprite-vertical.png" />
+    <Content Include="Themes\Transparent\Styles\Transparent\sprite.png" />
+    <Content Include="Themes\Transparent\Styles\Transparent\toolbar.png" />
+    <Content Include="Themes\Transparent\Styles\Transparent\widget.png" />
+    <Content Include="Themes\Vista\Styles\Vista\editor.png" />
+    <Content Include="Themes\Vista\Styles\Vista\imagebrowser.png" />
+    <Content Include="Themes\Vista\Styles\Vista\loading.gif" />
+    <Content Include="Themes\Vista\Styles\Vista\slider-h.gif" />
+    <Content Include="Themes\Vista\Styles\Vista\slider-v.gif" />
+    <Content Include="Themes\Vista\Styles\Vista\sprite-vertical.png" />
+    <Content Include="Themes\Vista\Styles\Vista\sprite.png" />
+    <Content Include="Themes\Web20\Styles\Web20\editor.png" />
+    <Content Include="Themes\Web20\Styles\Web20\imagebrowser.png" />
+    <Content Include="Themes\Web20\Styles\Web20\loading.gif" />
+    <Content Include="Themes\Web20\Styles\Web20\slider-h.gif" />
+    <Content Include="Themes\Web20\Styles\Web20\slider-v.gif" />
+    <Content Include="Themes\Web20\Styles\Web20\sprite-vertical.png" />
+    <Content Include="Themes\Web20\Styles\Web20\sprite.png" />
+    <Content Include="Themes\Web20\Styles\Web20\treeview-line.png" />
+    <Content Include="Themes\Web20\Styles\Web20\treeview-nodes-rtl.png" />
+    <Content Include="Themes\Web20\Styles\Web20\treeview-nodes.png" />
+    <Content Include="Themes\WebBlue\Styles\WebBlue\editor.png" />
+    <Content Include="Themes\WebBlue\Styles\WebBlue\imagebrowser.png" />
+    <Content Include="Themes\WebBlue\Styles\WebBlue\loading.gif" />
+    <Content Include="Themes\WebBlue\Styles\WebBlue\slider-h.gif" />
+    <Content Include="Themes\WebBlue\Styles\WebBlue\slider-v.gif" />
+    <Content Include="Themes\WebBlue\Styles\WebBlue\sprite-vertical.png" />
+    <Content Include="Themes\WebBlue\Styles\WebBlue\sprite.png" />
+    <Content Include="Themes\WebBlue\Styles\WebBlue\treeview-line.png" />
+    <Content Include="Themes\WebBlue\Styles\WebBlue\treeview-nodes-rtl.png" />
+    <Content Include="Themes\WebBlue\Styles\WebBlue\treeview-nodes.png" />
+    <Content Include="Themes\Windows7\Styles\Windows7\editor.png" />
+    <Content Include="Themes\Windows7\Styles\Windows7\imagebrowser.png" />
+    <Content Include="Themes\Windows7\Styles\Windows7\loading.gif" />
+    <Content Include="Themes\Windows7\Styles\Windows7\slider-h.gif" />
+    <Content Include="Themes\Windows7\Styles\Windows7\slider-v.gif" />
+    <Content Include="Themes\Windows7\Styles\Windows7\sprite-vertical.png" />
+    <Content Include="Themes\Windows7\Styles\Windows7\sprite.png" />
     <Content Include="Global.asax" />
+    <Content Include="Web.config">
+      <SubType>Designer</SubType>
+    </Content>
     <Content Include="Content\Site_old.css" />
-    <Content Include="Scripts\jquery-1.4.4.js" />
-    <Content Include="Scripts\jquery-1.4.4.min.js" />
-    <Content Include="Scripts\jquery-1.4.4-vsdoc.js" />
     <Content Include="Scripts\jquery.unobtrusive-ajax.js" />
     <Content Include="Scripts\jquery.unobtrusive-ajax.min.js" />
-    <Content Include="Scripts\jquery.validate.js" />
-    <Content Include="Scripts\jquery.validate.min.js" />
-    <Content Include="Scripts\jquery.validate-vsdoc.js" />
     <Content Include="Scripts\jquery-ui.js" />
     <Content Include="Scripts\jquery-ui.min.js" />
     <Content Include="Scripts\MicrosoftAjax.js" />
@@ -1361,16 +1049,10 @@
     <Content Include="Views\Home\Version.cshtml" />
     <Content Include="Views\Home\NoPermission.cshtml" />
     <Content Include="Web.config.sample" />
-    <Content Include="Themes\Default\Layouts\_svelteLayout.cshtml" />
-    <Content Include="Themes\Default\Layouts\_svelte_telerikLayout.cshtml" />
-    <Content Include="Scripts\jquery-2.1.4.min.map" />
-    <Content Include="Views\Settings\Index.cshtml" />
-    <None Include="Web.config" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Areas\" />
     <Folder Include="Views\Help\" />
-    <Folder Include="Views\Menu\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\Home\About.cshtml" />
@@ -1464,30 +1146,6 @@
       <Project>{c4ca0a99-0af3-4372-a9b7-b9073599bd8b}</Project>
       <Name>BExIS.Dlm.Services</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\Components\EXT\BExIS.Ext.Services\BExIS.Ext.Services.csproj">
-      <Project>{B906A66A-4A09-4207-B590-655EE111CCF1}</Project>
-      <Name>BExIS.Ext.Services</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Components\IO\BExIS.IO.DataType.DisplayPattern\BExIS.IO.DataType.DisplayPattern.csproj">
-      <Project>{8b2ec2b0-6870-456b-be2d-b0fb4ea68d83}</Project>
-      <Name>BExIS.IO.DataType.DisplayPattern</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Components\IO\BExIS.IO.Transform.Input\BExIS.IO.Transform.Input.csproj">
-      <Project>{5c4c8570-a53b-4191-a414-de028aaaf36a}</Project>
-      <Name>BExIS.IO.Transform.Input</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Components\IO\BExIS.IO.Transform.Output\BExIS.IO.Transform.Output.csproj">
-      <Project>{455ec826-9a92-40ff-bd3b-388c288955ce}</Project>
-      <Name>BExIS.IO.Transform.Output</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Components\IO\BExIS.IO.Transform.Validation\BExIS.IO.Transform.Validation.csproj">
-      <Project>{c8a05313-b960-406e-92ec-c1e5b3f47fcd}</Project>
-      <Name>BExIS.IO.Transform.Validation</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Components\IO\BExIS.IO.Transform.Validation\BExIS.IO.Transform.Validation.csproj">
-      <Project>{c8a05313-b960-406e-92ec-c1e5b3f47fcd}</Project>
-      <Name>BExIS.IO.Transform.Validation</Name>
-    </ProjectReference>
     <ProjectReference Include="..\..\Components\IO\BExIS.IO\BExIS.IO.csproj">
       <Project>{e4795f06-20c2-4c4c-a720-9a79896384df}</Project>
       <Name>BExIS.IO</Name>
@@ -1495,10 +1153,6 @@
     <ProjectReference Include="..\..\Components\UI\BExIS.UI\BExIS.UI.csproj">
       <Project>{de0ad99c-c559-422f-8132-cc4d7c46ff83}</Project>
       <Name>BExIS.UI</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Components\Utils\BExIS.Utils.Config\BExIS.Utils.Config.csproj">
-      <Project>{6EAD7D02-02F7-42FF-85E4-90BB892D3846}</Project>
-      <Name>BExIS.Utils.Config</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\Components\Utils\BExIS.Utils.Data\BExIS.Utils.Data.csproj">
       <Project>{a7fbcc13-7e29-4710-82a1-bd6d6f811fda}</Project>
@@ -1508,77 +1162,17 @@
       <Project>{782b71c1-707f-4ab1-80e9-90d2880635b4}</Project>
       <Name>BExIS.Utils</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\Components\Vaiona\Vaiona.Core\Vaiona.Core.csproj">
-      <Project>{b446c14f-9df1-4c3c-a634-e3addd05c48a}</Project>
-      <Name>Vaiona.Core</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Components\Vaiona\Vaiona.Entities.Orm.NH\Vaiona.Entities.Orm.NH.csproj">
-      <Project>{c4d4bc9e-8832-4966-be58-cb684e9a74e8}</Project>
-      <Name>Vaiona.Entities.Orm.NH</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Components\Vaiona\Vaiona.Entities\Vaiona.Entities.csproj">
-      <Project>{0815d220-3625-4e23-bbbc-8152345637fe}</Project>
-      <Name>Vaiona.Entities</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Components\Vaiona\Vaiona.IoC\Vaiona.IoC.csproj">
-      <Project>{29a7be0f-a17c-4ae8-8ca1-15fe4dd74129}</Project>
-      <Name>Vaiona.IoC</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Components\Vaiona\Vaiona.Logging\Vaiona.Logging.csproj">
-      <Project>{e8b37581-1cac-463d-903b-b4bee8b2b0e3}</Project>
-      <Name>Vaiona.Logging</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Components\Vaiona\Vaiona.Model\Vaiona.Model.csproj">
-      <Project>{a60ac05f-8c9a-4efd-9826-452e6049da4d}</Project>
-      <Name>Vaiona.Model</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Components\Vaiona\Vaiona.MultiTenancy.Api\Vaiona.MultiTenancy.Api.csproj">
-      <Project>{bccd3d7b-8a50-4fa2-b9d3-2cb31bea60b3}</Project>
-      <Name>Vaiona.MultiTenancy.Api</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Components\Vaiona\Vaiona.MultiTenancy.Services\Vaiona.MultiTenancy.Services.csproj">
-      <Project>{4639d130-e0aa-4aef-b9bd-bef6ad99dbaf}</Project>
-      <Name>Vaiona.MultiTenancy.Services</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Components\Vaiona\Vaiona.Persistence.Api\Vaiona.Persistence.Api.csproj">
-      <Project>{640bf81d-354a-4bf0-85fc-f0ad587cf8a2}</Project>
-      <Name>Vaiona.Persistence.Api</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Components\Vaiona\Vaiona.Persistence.NH\Vaiona.Persistence.NH.csproj">
-      <Project>{8c5c0209-69a3-4579-9f9b-4d5f084a3b85}</Project>
-      <Name>Vaiona.Persistence.NH</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Components\Vaiona\Vaiona.PersistenceProviders.NH\Vaiona.PersistenceProviders.NH.csproj">
-      <Project>{2fb8def8-5749-4eae-8588-8a5aaed251a5}</Project>
-      <Name>Vaiona.PersistenceProviders.NH</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Components\Vaiona\Vaiona.Utils\Vaiona.Utils.csproj">
-      <Project>{63fcacaa-9534-4fdd-a082-78dcc06baf28}</Project>
-      <Name>Vaiona.Utils</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Components\Vaiona\Vaiona.Web.Mvc.Modularity\Vaiona.Web.Mvc.Modularity.csproj">
-      <Project>{705f8751-e58a-453e-a7fd-0c310fd3cae8}</Project>
-      <Name>Vaiona.Web.Mvc.Modularity</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Components\Vaiona\Vaiona.Web.Mvc\Vaiona.Web.Mvc.csproj">
-      <Project>{5f5d22e8-8c05-49cd-854e-8fe8eff1aa6c}</Project>
-      <Name>Vaiona.Web.Mvc</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Components\Vaiona\Vaiona.Web.Security\Vaiona.Web.Security.csproj">
-      <Project>{d15121e6-58d0-4796-9da0-f07a828b9ce2}</Project>
-      <Name>Vaiona.Web.Security</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Components\Vaiona\Vaiona.Web\Vaiona.Web.csproj">
-      <Project>{5b48b5a8-eae8-4ef8-8f2c-7fedb1b095d3}</Project>
-      <Name>Vaiona.Web</Name>
-    </ProjectReference>
     <ProjectReference Include="..\..\Components\XML\BExIS.Xml.Helpers\BExIS.Xml.Helpers.csproj">
       <Project>{252f7872-a69c-43a6-84b4-4d2abdbdd9ab}</Project>
       <Name>BExIS.Xml.Helpers</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\Components\XML\BExIS.Xml.Models\BExIS.Xml.Models.csproj">
-      <Project>{c0c9f0f2-9e65-448d-8000-d311db326460}</Project>
-      <Name>BExIS.Xml.Models</Name>
+    <ProjectReference Include="..\..\Modules\DDM\BExIS.Ddm.Model\BExIS.Ddm.Model.csproj">
+      <Project>{ab46beb8-c36d-412f-9b1a-646c86299a87}</Project>
+      <Name>BExIS.Ddm.Model</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Modules\DDM\BExIS.Ddm.Providers.LuceneProvider\BExIS.Ddm.Providers.LuceneProvider.csproj">
+      <Project>{fbe3101a-791a-4eab-9b8f-f6e071f8dbdc}</Project>
+      <Name>BExIS.Ddm.Providers.LuceneProvider</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
@@ -1590,20 +1184,98 @@
     <Content Include="_AppStart.cshtml" />
     <Content Include="Views\Home\SessionTimeout.cshtml" />
     <Content Include="Views\UiTest\Index.cshtml" />
+    <Content Include="Themes\Black\Styles\awesome\fonts\fontawesome-webfont.eot" />
+    <Content Include="Themes\Black\Styles\awesome\fonts\fontawesome-webfont.ttf" />
+    <Content Include="Themes\Black\Styles\awesome\fonts\fontawesome-webfont.woff" />
+    <Content Include="Themes\Black\Styles\awesome\fonts\fontawesome-webfont.woff2" />
+    <Content Include="Themes\Black\Styles\awesome\fonts\FontAwesome.otf" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="App_GlobalResources\UploadLocalization.zh-CN.resx">
+      <Generator>GlobalResourceProxyGenerator</Generator>
+      <LastGenOutput>UploadLocalization.zh-CN.designer.cs</LastGenOutput>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="App_GlobalResources\UploadLocalization.ru-RU.resx">
+      <Generator>GlobalResourceProxyGenerator</Generator>
+      <LastGenOutput>UploadLocalization.ru-RU.designer.cs</LastGenOutput>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="App_GlobalResources\UploadLocalization.pt-PT.resx">
+      <Generator>GlobalResourceProxyGenerator</Generator>
+      <LastGenOutput>UploadLocalization.pt-PT.designer.cs</LastGenOutput>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="App_GlobalResources\UploadLocalization.pt-BR.resx">
+      <Generator>GlobalResourceProxyGenerator</Generator>
+      <LastGenOutput>UploadLocalization.pt-BR.designer.cs</LastGenOutput>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="App_GlobalResources\UploadLocalization.pl-PL.resx">
+      <Generator>GlobalResourceProxyGenerator</Generator>
+      <LastGenOutput>UploadLocalization.pl-PL.designer.cs</LastGenOutput>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="App_GlobalResources\UploadLocalization.nl-NL.resx">
+      <Generator>GlobalResourceProxyGenerator</Generator>
+      <LastGenOutput>UploadLocalization.nl-NL.designer.cs</LastGenOutput>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="App_GlobalResources\UploadLocalization.fr-FR.resx">
+      <Generator>GlobalResourceProxyGenerator</Generator>
+      <LastGenOutput>UploadLocalization.fr-FR.designer.cs</LastGenOutput>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="App_GlobalResources\UploadLocalization.en-US.resx">
+      <Generator>GlobalResourceProxyGenerator</Generator>
+      <LastGenOutput>UploadLocalization.en-US.designer.cs</LastGenOutput>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="App_GlobalResources\GridLocalization.resx">
+      <Generator>GlobalResourceProxyGenerator</Generator>
+      <LastGenOutput>GridLocalization.designer.cs</LastGenOutput>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="App_GlobalResources\GridLocalization.en-US.resx">
+      <Generator>GlobalResourceProxyGenerator</Generator>
+      <LastGenOutput>GridLocalization.en-US.designer.cs</LastGenOutput>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="App_GlobalResources\GridLocalization.de-DE.resx">
+      <Generator>GlobalResourceProxyGenerator</Generator>
+      <LastGenOutput>GridLocalization.de-DE.designer.cs</LastGenOutput>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="App_GlobalResources\EditorLocalization.resx">
+      <Generator>GlobalResourceProxyGenerator</Generator>
+      <LastGenOutput>EditorLocalization.designer.cs</LastGenOutput>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="App_GlobalResources\EditorLocalization.en-US.resx">
+      <Generator>GlobalResourceProxyGenerator</Generator>
+      <LastGenOutput>EditorLocalization.en-US.designer.cs</LastGenOutput>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="App_GlobalResources\EditorLocalization.de-DE.resx">
+      <Generator>GlobalResourceProxyGenerator</Generator>
+      <LastGenOutput>EditorLocalization.de-DE.designer.cs</LastGenOutput>
+    </Content>
   </ItemGroup>
   <ItemGroup>
     <WCFMetadata Include="Service References\" />
-  </ItemGroup>
-  <ItemGroup>
-    <Analyzer Include="..\..\packages\Microsoft.CodeAnalysis.VersionCheckAnalyzer.3.3.0\analyzers\dotnet\cs\Microsoft.CodeAnalysis.VersionCheckAnalyzer.resources.dll" />
-    <Analyzer Include="..\..\packages\Microsoft.CodeAnalysis.VersionCheckAnalyzer.3.3.0\analyzers\dotnet\Microsoft.CodeAnalysis.VersionCheckAnalyzer.dll" />
-    <Analyzer Include="..\..\packages\Microsoft.CodeQuality.Analyzers.3.3.0\analyzers\dotnet\cs\Humanizer.dll" />
-    <Analyzer Include="..\..\packages\Microsoft.CodeQuality.Analyzers.3.3.0\analyzers\dotnet\cs\Microsoft.CodeQuality.Analyzers.dll" />
-    <Analyzer Include="..\..\packages\Microsoft.CodeQuality.Analyzers.3.3.0\analyzers\dotnet\cs\Microsoft.CodeQuality.CSharp.Analyzers.dll" />
-    <Analyzer Include="..\..\packages\Microsoft.NetCore.Analyzers.3.3.0\analyzers\dotnet\cs\Microsoft.NetCore.Analyzers.dll" />
-    <Analyzer Include="..\..\packages\Microsoft.NetCore.Analyzers.3.3.0\analyzers\dotnet\cs\Microsoft.NetCore.CSharp.Analyzers.dll" />
-    <Analyzer Include="..\..\packages\Microsoft.NetFramework.Analyzers.3.3.0\analyzers\dotnet\cs\Microsoft.NetFramework.Analyzers.dll" />
-    <Analyzer Include="..\..\packages\Microsoft.NetFramework.Analyzers.3.3.0\analyzers\dotnet\cs\Microsoft.NetFramework.CSharp.Analyzers.dll" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
@@ -1620,7 +1292,7 @@
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Import Project="$(VSToolsPath)\WebApplications\Microsoft.WebApplication.targets" Condition="'$(VSToolsPath)' != ''" />
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v10.0\WebApplications\Microsoft.WebApplication.targets" Condition="false" />
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
   </Target>
@@ -1648,28 +1320,11 @@
     </VisualStudio>
   </ProjectExtensions>
   <PropertyGroup>
-    <PostBuildEvent>
-			rmdir /S /Q  "$(SolutionDir)Console\Workspace\General\Db\Settings"
-			C:\Windows\System32\xcopy "$(ProjectDir)Db\Settings" "$(SolutionDir)Console\Workspace\General\Db\Settings" /E /C /Y /I
-			C:\Windows\System32\xcopy "$(ProjectDir)General.Settings.json" "$(SolutionDir)Console\Workspace\General" /C /Y /I
-			rmdir /S /Q  "$(SolutionDir)Console\Workspace\Components\Vaiona"
-			C:\Windows\System32\xcopy "$(SolutionDir)Libraries\Vaiona\Workspace\Components\Vaiona" "$(SolutionDir)Console\Workspace\Components\Vaiona\" /E /C /Y /I
-		</PostBuildEvent>
+    <PostBuildEvent>rmdir /S /Q  "$(SolutionDir)Console\Workspace\General\Db\Settings"
+C:\Windows\System32\xcopy "$(ProjectDir)Db\Settings" "$(SolutionDir)Console\Workspace\General\Db\Settings" /E /C /Y /I
+C:\Windows\System32\xcopy "$(ProjectDir)General.Settings.xml" "$(SolutionDir)Console\Workspace\General" /C /Y /I
+rmdir /S /Q  "$(SolutionDir)Console\Workspace\Components\Vaiona"
+C:\Windows\System32\xcopy "$(SolutionDir)Libraries\Vaiona\Workspace\Components\Vaiona" "$(SolutionDir)Console\Workspace\Components\Vaiona\" /E /C /Y /I</PostBuildEvent>
   </PropertyGroup>
   <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
-  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
-    <PropertyGroup>
-      <ErrorText>Dieses Projekt verweist auf mindestens ein NuGet-Paket, das auf diesem Computer fehlt. Verwenden Sie die Wiederherstellung von NuGet-Paketen, um die fehlenden Dateien herunterzuladen. Weitere Informationen finden Sie unter "http://go.microsoft.com/fwlink/?LinkID=322105". Die fehlende Datei ist "{0}".</ErrorText>
-    </PropertyGroup>
-    <Error Condition="!Exists('..\..\packages\Microsoft.CodeAnalysis.VersionCheckAnalyzer.3.3.0\build\Microsoft.CodeAnalysis.VersionCheckAnalyzer.props')" Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\Microsoft.CodeAnalysis.VersionCheckAnalyzer.3.3.0\build\Microsoft.CodeAnalysis.VersionCheckAnalyzer.props'))" />
-    <Error Condition="!Exists('..\..\packages\Microsoft.CodeQuality.Analyzers.3.3.0\build\Microsoft.CodeQuality.Analyzers.props')" Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\Microsoft.CodeQuality.Analyzers.3.3.0\build\Microsoft.CodeQuality.Analyzers.props'))" />
-    <Error Condition="!Exists('..\..\packages\Microsoft.NetCore.Analyzers.3.3.0\build\Microsoft.NetCore.Analyzers.props')" Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\Microsoft.NetCore.Analyzers.3.3.0\build\Microsoft.NetCore.Analyzers.props'))" />
-    <Error Condition="!Exists('..\..\packages\Microsoft.NetFramework.Analyzers.3.3.0\build\Microsoft.NetFramework.Analyzers.props')" Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\Microsoft.NetFramework.Analyzers.3.3.0\build\Microsoft.NetFramework.Analyzers.props'))" />
-    <Error Condition="!Exists('..\..\packages\Microsoft.CodeAnalysis.FxCopAnalyzers.3.3.0\build\Microsoft.CodeAnalysis.FxCopAnalyzers.props')" Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\Microsoft.CodeAnalysis.FxCopAnalyzers.3.3.0\build\Microsoft.CodeAnalysis.FxCopAnalyzers.props'))" />
-  </Target>
-  <Import Project="..\..\packages\PostSharp.4.3.48\tools\PostSharp.targets" Condition="Exists('..\..\packages\PostSharp.4.3.48\tools\PostSharp.targets')" />
-  <Target Name="EnsurePostSharpImported" BeforeTargets="BeforeBuild" Condition="'$(PostSharp30Imported)' == ''">
-    <Error Condition="!Exists('..\..\packages\PostSharp.4.3.48\tools\PostSharp.targets')" Text="This project references NuGet package(s) that are missing on this computer. Enable NuGet Package Restore to download them.  For more information, see http://www.postsharp.net/links/nuget-restore." />
-    <Error Condition="Exists('..\..\packages\PostSharp.4.3.48\tools\PostSharp.targets')" Text="The build restored NuGet packages. Build the project again to include these packages in the build. For more information, see http://www.postsharp.net/links/nuget-restore." />
-  </Target>
 </Project>

@@ -12,7 +12,6 @@
       <column name="Extra" not-null="false" sql-type="xml" />
     </property>
 
-
     <property name="Intention" type="StringClob">
       <column name="Intention" sql-type="text" />
     </property>
@@ -32,7 +31,6 @@
     <property name="Status" type="BExIS.Security.Entities.Requests.RequestStatus, BExIS.Security.Entities">
       <column name="Status" />
     </property>
-
 
     <set name="Decisions" inverse="true" cascade="all-delete-orphan" lazy="true">
       <key column="RequestRef" />

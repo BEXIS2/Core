@@ -1,217 +1,177 @@
 ﻿/*Stepper*/
-.createWizardStep 
-{
-   height:90%;
+.createWizardStep {
+    height: 90%;
 }
-#preloader
-{
-    position:fixed;
-    overflow:visible;
-    top:50%;
-    left:50%;
-    z-index:100000;
+
+#preloader {
+    position: fixed;
+    overflow: visible;
+    top: 50%;
+    left: 50%;
+    z-index: 100000;
 }
 /*Tables*/
 
-table
-{
+table {
     border-style: none;
 }
 
-tr td
-{
+tr td {
     border-style: none;
 }
 
 /*Summary*/
 
-#summaryRight
-{
-    float:left;
+#summaryRight {
+    float: left;
 }
 
-#summaryLeft
-{
-    float:left;
-    width:50%;
+#summaryLeft {
+    float: left;
+    width: 50%;
 }
-
 
 /*Navigation*/
 
-#NavDiv
-{
-    width:100%;
-    bottom:10px;
+#NavDiv {
+    width: 100%;
+    bottom: 10px;
 }
 
-#UploadWizardNavDiv
-{
-    width:100%;
-    bottom:10px;
+#UploadWizardNavDiv {
+    width: 100%;
+    bottom: 10px;
 }
 
-#NavigationTable  
-{
+#NavigationTable {
     border-style: none;
-    width:100%;
+    width: 100%;
 }
 
-#UploadWizard_NavigationTable
-{
+#UploadWizard_NavigationTable {
     border-style: none;
-    width:100%;
+    width: 100%;
 }
 
-#Nav_Left
-{
-    width:100px;
+#Nav_Left {
+    width: 100px;
 }
 
-#Nav_Right
-{
-    width:10px;   
-        
+#Nav_Right {
+    width: 10px;
 }
 
-#Nav_Options
-{
-    width:210px;
+#Nav_Options {
+    width: 210px;
 }
 
-#Nav_Pages
-{
-    text-align:center;
-        
+#Nav_Pages {
+    text-align: center;
 }
-
 
 /**Errors*/
 .uploadWizardStep {
     display: flex;
 }
 
-
-
 .wizardStep_Error {
- /* width: 45%;*/
+    /* width: 45%;*/
     color: red;
     top: 120px;
     right: 10px;
     height: auto;
     max-height: 500px;
     overflow: auto;
-   /* position: absolute;*/
+    /* position: absolute;*/
 }
 
-.uploadWizardStep_Error
-{
-  /*width:45%;*/
-    color:red;
-    top:120px;
-    right:10px;
-    height:auto;
-    max-height:500px;
-    overflow:auto;
-  /*  position:absolute;*/
+.uploadWizardStep_Error {
+    /*width:45%;*/
+    color: red;
+    top: 120px;
+    right: 10px;
+    height: auto;
+    max-height: 500px;
+    overflow: auto;
+    /*  position:absolute;*/
 }
 
-.createWizardStep_Error
-{
-
-   /* width:20%;*/
-    color:red;
-    top:120px;
-    right:10px;
-    height:auto;
-    max-height:500px;
-    overflow:auto;
- /*   position:absolute;*/
+.createWizardStep_Error {
+    /* width:20%;*/
+    color: red;
+    top: 120px;
+    right: 10px;
+    height: auto;
+    max-height: 500px;
+    overflow: auto;
+    /*   position:absolute;*/
 }
 
-.createWizardStep_Error a
-{
-    color:red;
+    .createWizardStep_Error a {
+        color: red;
+    }
+
+.wizardStep_Success {
+    /*  width:45%;*/
+    color: green;
+    top: 120px;
+    right: 10px;
+    /*  position:absolute;*/
 }
 
-.wizardStep_Success
-{
-  /*  width:45%;*/
-    color:green;
-    top:120px;
-    right:10px;
-  /*  position:absolute;*/
+.uploadWizardStep_Success {
+    /*   width:45%;*/
+    color: green;
+    top: 120px;
+    right: 10px;
+    /*   position:absolute;*/
 }
 
-.uploadWizardStep_Success
-{
- /*   width:45%;*/
-    color:green;
-    top:120px;
-    right:10px;
- /*   position:absolute;*/
+.createWizardStep_Success {
+    /*  width:20%;*/
+    color: green;
+    top: 120px;
+    right: 10px;
+    /*  position:absolute;*/
 }
 
-.createWizardStep_Success{
-
-  /*  width:20%;*/
-    color:green;
-    top:120px;
-    right:10px;
-  /*  position:absolute;*/
+.wizardStep_Main {
+    width: 45%;
+    top: 10px;
+    left: 10%;
+    /* height:400px;*/
 }
 
-.wizardStep_Main
-{
-    width:45%;
-    top:10px;
-    left:10%; 
-   /* height:400px;*/
+.uploadWizardStep_Main {
+    width: 45%;
+    top: 10px;
+    left: 10%;
+    /* min-height:500px; */
 }
 
-.uploadWizardStep_Main
-{
-    width:45%;
-    top:10px;
-    left:10%;
-   /* min-height:500px; */
+.createWizardStep_Main {
+    width: 65%;
+    top: 10px;
+    left: 10%;
+    /* min-height:500px; */
 }
 
-.createWizardStep_Main
-{
-    width:65%;
-    top:10px;
-    left:10%;
-   /* min-height:500px; */
+.wizard_PK_Span {
+    width: 33%;
 }
 
-.wizard_PK_Span
-{
-    width:33%;
-
+.uploadWizard_PK_Span {
+    width: 33%;
 }
 
-.uploadWizard_PK_Span
-{
-    width:33%;
-
+.wizardStep_Content {
+    height: 220px;
 }
 
-.wizardStep_Content 
-{
-    height:220px;
-   
+.uploadWizardStep_Content {
+    /* height:400px;*/
 }
 
-.uploadWizardStep_Content 
-{
-   /* height:400px;*/
-
-   
-}
-
-.createWizardStep_Content
-{
-    height:auto;
- 
+.createWizardStep_Content {
+    height: auto;
 }

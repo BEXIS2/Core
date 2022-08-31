@@ -1,6 +1,5 @@
 using BExIS.App.Testing;
 using BExIS.Dim.Entities.Mapping;
-using BExIS.Dim.Helpers.Mapping;
 using BExIS.Dim.Services;
 using BExIS.Dlm.Services.DataStructure;
 using BExIS.Utils.Config;
