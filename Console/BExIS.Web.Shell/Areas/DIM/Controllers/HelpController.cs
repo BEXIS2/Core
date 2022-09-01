@@ -5,6 +5,8 @@ using Vaiona.Utils.Cfg;
 using System.Xml.Linq;
 using System.IO;
 using BExIS.Xml.Helpers;
+using System;
+using BExIS.Utils.Helpers;
 
 namespace BExIS.Modules.Dim.UI.Controllers
 {
@@ -20,6 +22,13 @@ namespace BExIS.Modules.Dim.UI.Controllers
             XElement help = XmlUtility.GetXElementByAttribute("entry", "key", "help", settings);
 
             string helpurl = help.Attribute("value")?.Value;
+
+
+            //add default link if not set
+            if (String.IsNullOrEmpty(helpurl))
+            {
+                helpurl = ManualHelper.GetUrl(AppConfiguration.ApplicationVersion, "DIM");
+            }
 
 
             return Redirect(helpurl);
