@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using BExIS.UI.Models;
+using System.Collections.Generic;
 
 namespace BExIS.Modules.Dcm.UI.Models.EntityTemplate
 {

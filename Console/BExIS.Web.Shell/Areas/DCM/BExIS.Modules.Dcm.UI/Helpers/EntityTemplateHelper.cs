@@ -3,6 +3,7 @@ using BExIS.Dlm.Services.Data;
 using BExIS.Dlm.Services.MetadataStructure;
 using BExIS.Modules.Dcm.UI.Models.EntityTemplate;
 using BExIS.Security.Services.Objects;
+using BExIS.UI.Models;
 using System.Collections.Generic;
 
 namespace BExIS.Modules.Dcm.UI.Helpers
