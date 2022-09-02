@@ -1,9 +1,4 @@
-﻿using BExIS.Security.Entities.Authorization;
-using BExIS.UI.Hooks;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
+﻿using BExIS.UI.Hooks;
 
 namespace BExIS.Modules.Dcm.UI.Hooks
 {

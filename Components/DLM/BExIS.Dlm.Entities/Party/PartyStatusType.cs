@@ -1,12 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Collections.Generic;
 using Vaiona.Entities.Common;
 
 namespace BExIS.Dlm.Entities.Party
 {
-    public class PartyStatusType: BaseEntity
+    public class PartyStatusType : BaseEntity
     {
         public PartyStatusType()
         {
@@ -20,7 +17,7 @@ namespace BExIS.Dlm.Entities.Party
 
         #region Associations
         public virtual PartyType PartyType { get; set; }
-        public virtual ICollection<PartyStatus> Statuses{ get; set; }
+        public virtual ICollection<PartyStatus> Statuses { get; set; }
         #endregion
     }
 }

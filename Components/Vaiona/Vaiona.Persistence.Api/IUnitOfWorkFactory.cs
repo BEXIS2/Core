@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Vaiona.Persistence.Api
 {
@@ -15,10 +11,10 @@ namespace Vaiona.Persistence.Api
     }
     public interface IUnitOfWorkFactory
     {
-        IUnitOfWork CreateUnitOfWork(bool autoCommit = false, bool throwExceptionOnError = true, 
+        IUnitOfWork CreateUnitOfWork(bool autoCommit = false, bool throwExceptionOnError = true,
             EventHandler beforeCommit = null, EventHandler afterCommit = null, EventHandler beforeIgnore = null, EventHandler afterIgnore = null);
 
-        IUnitOfWork CreateBulkUnitOfWork(bool autoCommit = false, bool throwExceptionOnError = true, 
+        IUnitOfWork CreateBulkUnitOfWork(bool autoCommit = false, bool throwExceptionOnError = true,
             EventHandler beforeCommit = null, EventHandler afterCommit = null, EventHandler beforeIgnore = null, EventHandler afterIgnore = null);
 
         IUnitOfWork CreateIsolatedUnitOfWork(bool autoCommit = false, bool throwExceptionOnError = true,

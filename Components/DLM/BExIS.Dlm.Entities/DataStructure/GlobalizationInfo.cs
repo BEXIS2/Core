@@ -9,7 +9,7 @@ namespace BExIS.Dlm.Entities.DataStructure
     ///
     /// </summary>
     /// <remarks></remarks>        
-    public class GlobalizationInfo: BaseEntity
+    public class GlobalizationInfo : BaseEntity
     {
         #region Attributes
 

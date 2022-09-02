@@ -1,7 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using BExIS.Modules.Dcm.UI.Models.Metadata;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Web.Mvc;
-using BExIS.Modules.Dcm.UI.Models.Metadata;
 
 namespace BExIS.Modules.Dcm.UI.Models
 {
@@ -58,6 +58,6 @@ namespace BExIS.Modules.Dcm.UI.Models
 
         }
 
-       
+
     }
 }

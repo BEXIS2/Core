@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using Vaiona.Entities.Logging;
 using Vaiona.Persistence.Api;
-using Vaiona.Entities.Logging;
 
 namespace Vaiona.Logging.Loggers
 {

@@ -3,13 +3,11 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Vaiona.Persistence.Api;
 
 namespace BExIS.Dlm.Services.Data
 {
-    public class DataTupleIterator : IEnumerable<AbstractTuple> 
+    public class DataTupleIterator : IEnumerable<AbstractTuple>
     {
         List<long> tupleIds = new List<long>();
         DatasetManager datasetManager;

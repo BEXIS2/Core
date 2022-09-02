@@ -36,6 +36,8 @@ namespace BExIS.Modules.Dim.UI.Models
         public string Status { get; set; }
         public List<string> DataRepos { get; set; }
         public DateTime CreationDate { get; set; }
+
+        public long DatasetId { get; set; }
     }
 
     public class BrokerModel

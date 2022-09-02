@@ -1,6 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using BExIS.Dlm.Entities.Data;
+using System.Collections.Generic;
 using System.Linq;
-using BExIS.Dlm.Entities.Data;
 
 namespace BExIS.Modules.Vim.UI.Models
 {

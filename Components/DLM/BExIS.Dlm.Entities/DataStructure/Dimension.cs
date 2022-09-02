@@ -1,12 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Collections.Generic;
 using Vaiona.Entities.Common;
 
 namespace BExIS.Dlm.Entities.DataStructure
 {
-    public class Dimension: BaseEntity
+    public class Dimension : BaseEntity
     {
         #region Attributes
         public virtual string Name { get; set; }
@@ -22,9 +19,9 @@ namespace BExIS.Dlm.Entities.DataStructure
         #endregion
 
         #region Associations
-        
+
         public virtual ICollection<Unit> Units { get; set; }
-        
+
         #endregion
 
         #region Mathods

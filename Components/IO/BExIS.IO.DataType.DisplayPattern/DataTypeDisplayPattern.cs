@@ -44,9 +44,10 @@ namespace BExIS.IO.DataType.DisplayPattern
         /// use this property in the form of DataTypeInfo.Types to access all the types and filter them using LINQ if required
         /// </summary>
         public static List<DataTypeDisplayPattern> Pattern { get { return displayPatterns; } }
-        public static DataTypeDisplayPattern Get(int id ) {
+        public static DataTypeDisplayPattern Get(int id)
+        {
 
-            if(id <=0 ) throw new ArgumentException("id is missing");
+            if (id <= 0) throw new ArgumentException("id is missing");
 
             return displayPatterns.Where(p => p.Id.Equals(id)).FirstOrDefault();
         }

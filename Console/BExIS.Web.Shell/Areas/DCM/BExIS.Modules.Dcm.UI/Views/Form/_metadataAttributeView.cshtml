@@ -28,6 +28,8 @@
     bool hasSimpleMapping = Model.PartySimpleMappingExist;
     bool hasComplexMapping = Model.PartyComplexMappingExist;
 
+    bool isMappingSelection = Model.MappingSelectionField;
+
     string partyid = "";
     if (Model.PartyId != 0)
     {
@@ -61,7 +63,7 @@
     displayName = String.Join(" ", wordList);
 
     // Make first char uppercase
-    displayName = char.ToUpper(displayName[0]) + displayName.Substring(1);
+    displayName = char.ToUpper(displayName[0]) + displayName.Substring(1).Replace("_", " ");
 
     if (Model.EntityMappingExist)
     {
@@ -226,7 +228,7 @@
                                         <div style="color: gray">Use an entry from autocomplete list.</div>
                                     }
 
-                                    <input class="t-widget t-autocomplete t-input bx-metadataFormTextInput  @errorClass" complex="@hasComplexMapping.ToString()" id="@idInput" idbyxpath="@idByXpath" onKeyUp="OnKeyUpTextInput(this)" name="@idInput" simple="@hasSimpleMapping.ToString()" partyid="@partyid" test="@Model.Id" title="" type="@autoCompleteType" value="@value" xpath="@xpath">
+                                    <input class="t-widget t-autocomplete t-input bx-metadataFormTextInput  @errorClass" complex="@hasComplexMapping.ToString()" id="@idInput" idbyxpath="@idByXpath" onKeyUp="OnKeyUpTextInput(this)" name="@idInput" simple="@hasSimpleMapping.ToString()" partyid="@partyid" test="@Model.Id" title="" type="@autoCompleteType" value="@value" xpath="@xpath" isMappingSelection="@isMappingSelection">
 
                                     // add icons to show linked / not linked party entries; hide both by default
                                     var notLinkedID = @idInput + "_notLinked";
@@ -324,8 +326,14 @@
                                     {
                                         if (Model.EntityMappingExist && !string.IsNullOrEmpty(Model.EntityUrl))
                                         {
-                                            <a href="@Model.EntityUrl" target="_blank">@Model.Value</a>
+                                            <a href="@Model.EntityUrl" target="_blank">@Model.Value</a> 
                                         }
+                                        else if (displayName == "Email")
+                                        {
+                                            string value = Model.Value.ToString();
+                                            string[] email_parts = value.Split('@');
+                                            value = String.Join("<span>werwe</span>", email_parts);
+                                            @email_parts[0]<span>&#x40;</span><!--<span>werwe</span>-->@email_parts[1] }
                                         else
                                         {
                                             @Html.DisplayWithLinksFor(m => m.Value)

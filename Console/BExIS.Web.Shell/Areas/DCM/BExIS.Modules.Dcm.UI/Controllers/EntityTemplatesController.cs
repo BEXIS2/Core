@@ -46,7 +46,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         [HttpGet]
         public JsonResult Get(long id)
         {
-            if(id==0) return Json(new EntityTemplateModel(), JsonRequestBehavior.AllowGet);
+            if (id == 0) return Json(new EntityTemplateModel(), JsonRequestBehavior.AllowGet);
 
 
             using (var entityTemplateManager = new EntityTemplateManager())
@@ -140,7 +140,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
             foreach (var key in Enum.GetValues(typeof(Key)))
             {
-                tmp.Add(new KeyValuePair<int,string>(Convert.ToInt32(key),key.ToString()));
+                tmp.Add(new KeyValuePair<int, string>(Convert.ToInt32(key), key.ToString()));
             }
 
             return Json(tmp, JsonRequestBehavior.AllowGet);

@@ -16,7 +16,7 @@ namespace BExIS.IO.Transform.Validation
         /// </summary>
         /// <remarks></remarks>
         /// <seealso cref=""/>        
-        ValueType AppliedTo  { get;}
+        ValueType AppliedTo { get; }
 
         /// <summary>
         ///
@@ -31,7 +31,7 @@ namespace BExIS.IO.Transform.Validation
         /// <remarks></remarks>
         /// <seealso cref=""/>        
         string DataType { get; }
-        
+
         /// <summary>
         /// 
         /// </summary>
@@ -41,14 +41,14 @@ namespace BExIS.IO.Transform.Validation
         /// <param name="row"></param>
         /// <returns></returns>
         Error Execute(object value, int row);
-             
+
     }
 
     /// <summary>
     /// 
     /// </summary>
     public enum ValueType
-    { 
+    {
         Number,
         Date,
         String,

@@ -1,13 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Web.SessionState;
 using System.Globalization;
-using System.Threading;
-using Vaiona.Web.Helpers;
-using Vaiona.Model.MTnt;
 using System.Web;
+using System.Web.SessionState;
+using Vaiona.Model.MTnt;
+using Vaiona.Web.Helpers;
 
 namespace Vaiona.Web.Extensions
 {

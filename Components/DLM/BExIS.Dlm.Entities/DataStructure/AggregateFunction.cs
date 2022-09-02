@@ -10,7 +10,7 @@ namespace BExIS.Dlm.Entities.DataStructure
     /// This entity lets define various processing functions that can be applied on variables. for example, temperature can be processed by Min, Max, Average, etc.
     /// </summary>
     /// <remarks></remarks>   
-    public class AggregateFunction: BaseEntity
+    public class AggregateFunction : BaseEntity
     {
         #region Attributes
 

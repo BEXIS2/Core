@@ -19,14 +19,12 @@ using BExIS.Utils.Extensions;
 using BExIS.Xml.Helpers;
 using Ionic.Zip;
 using System;
-using System.Configuration;
 using System.IO;
 using System.Linq;
 using System.Text;
 using System.Web.Mvc;
 using System.Web.Routing;
 using System.Xml;
-using Vaiona.IoC;
 using Vaiona.Logging;
 using Vaiona.Persistence.Api;
 using Vaiona.Utils.Cfg;
@@ -35,7 +33,7 @@ using Vaiona.Web.Mvc.Modularity;
 namespace BExIS.Modules.Dim.UI.Controllers
 {
     public class ExportController : Controller
-    { 
+    {
         // GET: Export
         /// <summary>
         ///

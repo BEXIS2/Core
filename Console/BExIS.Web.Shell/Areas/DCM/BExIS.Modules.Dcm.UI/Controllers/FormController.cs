@@ -154,7 +154,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                     var dataset = datasetManager.GetDataset(entityId);
                     var metadata = datasetManager.GetDatasetLatestMetadataVersion(entityId);
                     metadataStructureId = dataset.MetadataStructure.Id;
-                    if(dataset.DataStructure!=null)
+                    if (dataset.DataStructure != null)
                         dataStructureId = dataset.DataStructure.Id;
 
                     if (TaskManager == null)

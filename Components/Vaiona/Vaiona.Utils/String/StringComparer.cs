@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace Vaiona.Utils.String
 {
@@ -9,13 +7,13 @@ namespace Vaiona.Utils.String
     {
         public bool Equals(string x, string y)
         {
-            return string.Equals(x, y, StringComparison.InvariantCultureIgnoreCase);            
+            return string.Equals(x, y, StringComparison.InvariantCultureIgnoreCase);
         }
 
         public int GetHashCode(string obj)
         {
             return obj.GetHashCode();
         }
-    }       
+    }
 
 }

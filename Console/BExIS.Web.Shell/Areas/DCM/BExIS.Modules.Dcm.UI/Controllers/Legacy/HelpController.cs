@@ -1,5 +1,4 @@
-﻿using BExIS.UI.Helpers;
-using System.Web.Mvc;
+﻿using System.Web.Mvc;
 using Vaiona.Web.Mvc.Modularity;
 
 namespace BExIS.Modules.Dcm.UI.Controllers

@@ -1,8 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Web;
 using Vaiona.Model.MTnt;
 
@@ -31,7 +28,7 @@ namespace Vaiona.MultiTenancy.Api
         /// <param name="request">http request that contains url and port number to be used for matching</param>
         /// <returns></returns>
         Tenant Resolve(HttpRequest request);
-        
+
         /// <summary>
         /// Resolves the tanent using its identifier
         /// </summary>

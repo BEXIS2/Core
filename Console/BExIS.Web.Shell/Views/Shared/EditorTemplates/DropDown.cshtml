@@ -1,16 +1,12 @@
 ﻿@model object
 @using System.Collections
 
-
 @{
     List<string> stringList = new List<string>();
     stringList.Add("xyc");
 }
 
-
 @Html.DropDownList("inlineDropdown",
        new SelectList(stringList))
 <script type="text/javascript">
-
-
 </script>

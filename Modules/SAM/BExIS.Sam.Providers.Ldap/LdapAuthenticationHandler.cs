@@ -1,5 +1,4 @@
-﻿using Microsoft.Owin.Infrastructure;
-using Microsoft.Owin.Security;
+﻿using Microsoft.Owin.Security;
 using Microsoft.Owin.Security.Infrastructure;
 using System.Threading.Tasks;
 

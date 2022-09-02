@@ -1,6 +1,6 @@
-﻿using System;
+﻿using BExIS.Xml.Helpers;
+using System;
 using System.Collections.Generic;
-using BExIS.Xml.Helpers;
 
 /// <summary>
 /// 
@@ -36,7 +36,7 @@ namespace BExIS.Modules.Ddm.UI.Models
     /// 
     /// </summary>
     /// <remarks></remarks>        
-    public class PackageUsageModel:BaseModelElement
+    public class PackageUsageModel : BaseModelElement
     {
 
         /// <summary>
@@ -64,7 +64,7 @@ namespace BExIS.Modules.Ddm.UI.Models
     /// 
     /// </summary>
     /// <remarks></remarks>        
-    public class PackageModel:BaseModelElement
+    public class PackageModel : BaseModelElement
     {
         /// <summary>
         /// AttribueUsages is a dictionary
@@ -80,13 +80,13 @@ namespace BExIS.Modules.Ddm.UI.Models
         /// <seealso cref=""/>        
         public PackageModel()
         {
-            Name="";
+            Name = "";
             DisplayName = "";
             Attributes = new List<BaseModelElement>();
         }
     }
 
-    public class SimpleAttributeModel:BaseModelElement
+    public class SimpleAttributeModel : BaseModelElement
     {
         public string Value { get; set; }
 
@@ -98,7 +98,7 @@ namespace BExIS.Modules.Ddm.UI.Models
         }
     }
 
-    public class CompundAttributeModel:BaseModelElement
+    public class CompundAttributeModel : BaseModelElement
     {
         public List<BaseModelElement> Childrens { get; set; }
 

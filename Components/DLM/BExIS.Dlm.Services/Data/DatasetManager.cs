@@ -3,20 +3,19 @@ using BExIS.Dlm.Entities.Data;
 using BExIS.Dlm.Entities.DataStructure;
 using BExIS.Dlm.Orm.NH.Utils;
 using BExIS.Dlm.Services.Helpers;
+using BExIS.Utils.NH.Querying;
 using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Text;
 using System.Xml;
 using Vaiona.Logging;
 using Vaiona.Logging.Aspects;
 using Vaiona.Persistence.Api;
 using MDS = BExIS.Dlm.Entities.MetadataStructure;
-using BExIS.Utils.NH.Querying;
-using System.Text;
-using System.Diagnostics;
 
 namespace System.Data
 {
@@ -222,7 +221,7 @@ namespace BExIS.Dlm.Services.Data
                 var metadataStructureRepo = uow.GetReadOnlyRepository<MDS.MetadataStructure>();
                 var entityTemplateRepo = uow.GetReadOnlyRepository<EntityTemplate>();
 
-                if(dataStructure!=null)dataStructure = structureRepo.Get(dataStructure.Id);
+                if (dataStructure != null) dataStructure = structureRepo.Get(dataStructure.Id);
                 researchPlan = researchPlanRepo.Get(researchPlan.Id);
                 metadataStructure = metadataStructureRepo.Get(metadataStructure.Id);
                 entityTemplate = entityTemplateRepo.Get(entityTemplate.Id);
@@ -1287,10 +1286,10 @@ namespace BExIS.Dlm.Services.Data
                 datasetVersions = new List<DatasetVersion>();
                 datasetVersions = GetDatasetVersions(datasetId);
             }
-            
+
             // 1. Select explicit dataset versions with a "public access" flag.This will have the higeth priority
             List<DatasetVersion> versionIdPublicList = datasetVersions.OrderBy(d => d.Timestamp).Where(d => d.PublicAccess).ToList();
-            
+
             // 2. Check for major dataset versions
             List<DatasetVersion> versionIdMajorList = new List<DatasetVersion>();
             if (major)
@@ -1433,14 +1432,14 @@ namespace BExIS.Dlm.Services.Data
             {
                 var datasetVersionRepo = uow.GetReadOnlyRepository<DatasetVersion>();
 
-                    var q1 = datasetVersionRepo.Query(p =>
-                            p.Dataset.Status == datasetStatus && p.Status == versionStatus
-                        )
-                        .Select(p => p.Dataset.Id)
-                        .OrderBy(p => p)
-                        .Distinct();
-                    return (q1.ToList());
-                }
+                var q1 = datasetVersionRepo.Query(p =>
+                        p.Dataset.Status == datasetStatus && p.Status == versionStatus
+                    )
+                    .Select(p => p.Dataset.Id)
+                    .OrderBy(p => p)
+                    .Distinct();
+                return (q1.ToList());
+            }
         }
 
         /// <summary>
@@ -1640,12 +1639,12 @@ namespace BExIS.Dlm.Services.Data
         {
             using (IUnitOfWork uow = this.GetUnitOfWork())
             {
-   
+
 
                 var datasetVersionRepo = uow.GetReadOnlyRepository<DatasetVersion>();
-                var datasetVersions = datasetVersionRepo.Query().Where(dsv=>dsv.Dataset.Id.Equals(id)).OrderBy(dsv=>dsv.Timestamp);
+                var datasetVersions = datasetVersionRepo.Query().Where(dsv => dsv.Dataset.Id.Equals(id)).OrderBy(dsv => dsv.Timestamp);
 
-                if (datasetVersions.Any() && datasetVersions.Count() >= (versionNr-1))
+                if (datasetVersions.Any() && datasetVersions.Count() >= (versionNr - 1))
                 {
                     return datasetVersions.ToList().ElementAt(versionNr - 1).Id;
                 }

@@ -1,11 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using BExIS.Ddm.Providers.LuceneProvider.Helpers;
+﻿using BExIS.Ddm.Providers.LuceneProvider.Helpers;
 using Lucene.Net.Documents;
 using Lucene.Net.Index;
 using Lucene.Net.Search;
 using Lucene.Net.Store;
+using System;
+using System.Collections.Generic;
+using System.IO;
 
 /// <summary>
 ///
@@ -44,7 +44,7 @@ namespace Lucene.Net.SynonymEngine
         {
             searcherWordnet.Dispose();
             searcherTranslator.Dispose();
-        }    
+        }
 
         /// <summary>
         /// 

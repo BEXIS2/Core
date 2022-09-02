@@ -11,7 +11,6 @@ using BExIS.Security.Entities.Subjects;
 using BExIS.Security.Services.Authorization;
 using BExIS.Security.Services.Objects;
 using BExIS.Security.Services.Subjects;
-using BExIS.Utils.NH.Querying;
 using BExIS.Utils.Route;
 using BExIS.Xml.Helpers;
 using Newtonsoft.Json;
@@ -56,7 +55,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
                     {
                         structuredIds.Add(id);
                     }
-                    
+
                 }
                 return structuredIds;
             }
@@ -78,7 +77,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
             return getData(id, -1, token);
         }
 
-       
+
         private HttpResponseMessage getData(long id, int variableId, string token)
         {
             DatasetManager datasetManager = new DatasetManager();
@@ -146,7 +145,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
                             }
                             else
                             {
-                               
+
                             }
                             //dt.Strip();
 
@@ -200,7 +199,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
             }
         }
 
-    
+
         private DataTable GetDuplicates(long datasetId, List<string> variables)
         {
             StringBuilder mvBuilder = new StringBuilder();

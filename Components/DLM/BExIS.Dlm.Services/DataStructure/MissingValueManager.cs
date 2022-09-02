@@ -1,12 +1,10 @@
-﻿using System;
+﻿using BExIS.Dlm.Entities.DataStructure;
+using BExIS.Dlm.Services.TypeSystem;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics.Contracts;
-using BExIS.Dlm.Entities.DataStructure;
-using Vaiona.Persistence.Api;
-using BExIS.Dlm.Services.Helpers;
 using System.Linq;
-
-using BExIS.Dlm.Services.TypeSystem;
+using Vaiona.Persistence.Api;
 
 namespace BExIS.Dlm.Services.DataStructure
 {
@@ -213,7 +211,7 @@ namespace BExIS.Dlm.Services.DataStructure
                             {
                                 temp = temp.AddHours(-1);
                                 temp = temp.AddYears(-1); //Reduce also by 1 year to be able to distinguish placeholder also after application of display pattern e.g. YYYY-MM-DD
-                            }                            
+                            }
                             return temp.ToString(format);
                         }
                         catch

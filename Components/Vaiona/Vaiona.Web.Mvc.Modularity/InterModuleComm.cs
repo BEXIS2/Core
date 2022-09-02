@@ -3,12 +3,10 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
-using System.Web.Http;
 using System.Web.Mvc;
 using System.Web.Mvc.Html;
 using System.Web.Routing;
 using System.Xml.Linq;
-using Vaiona.Utils.Cfg;
 
 namespace Vaiona.Web.Mvc.Modularity
 {
@@ -162,7 +160,7 @@ namespace Vaiona.Web.Mvc.Modularity
                 ControllerBuilder.Current.DefaultNamespaces.Add(controllerType.Namespace);
             try
             {
-            // prepare the call
+                // prepare the call
                 try
                 {
                     // perform the call and return the result
@@ -273,7 +271,7 @@ namespace Vaiona.Web.Mvc.Modularity
             return false;
         }
 
-        private static bool isActionCallValid(string moduleId, string controllerName, string actionName, bool api=false)
+        private static bool isActionCallValid(string moduleId, string controllerName, string actionName, bool api = false)
         {
             try
             {
@@ -283,7 +281,8 @@ namespace Vaiona.Web.Mvc.Modularity
                     exports = ModuleManager.GetModuleInfo(moduleId).Manifest
                       .ManifestDoc.Element("Exports").Elements("Export")
                       .Where(p => p.Attribute("tag").Value.Equals("api", StringComparison.InvariantCultureIgnoreCase)).ToList();
-                } else
+                }
+                else
                 {
                     exports = ModuleManager.GetModuleInfo(moduleId).Manifest
                       .ManifestDoc.Element("Exports").Elements("Export")

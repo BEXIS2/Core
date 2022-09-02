@@ -1,11 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Web;
-using NHibernate;
+﻿using NHibernate;
 using NHibernate.Context;
 using NHibernate.Engine;
-using System.Runtime.Remoting.Messaging;
-using Vaiona.Utils.Cfg;
 using Vaiona.IoC;
 using Vaiona.Persistence.Api;
 
@@ -28,11 +23,12 @@ namespace Vaiona.PersistenceProviders.NH
         /// Retrieve the current session for the session factory.
         /// </summary>
         /// <returns></returns>
-        public ISession CurrentSession() {
+        public ISession CurrentSession()
+        {
             ISession session;
             session = getPerHttpRequestSession();
             //var currentSessionFactoryMap = GetCurrentFactoryMap();
-            
+
             //if (currentSessionFactoryMap == null || !currentSessionFactoryMap.TryGetValue(_factory, out session)) {
             //    return null;
             //}

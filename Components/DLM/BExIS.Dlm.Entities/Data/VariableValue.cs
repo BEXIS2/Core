@@ -1,9 +1,9 @@
-﻿using System;
+﻿using BExIS.Dlm.Entities.DataStructure;
+using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Xml.Serialization;
-using BExIS.Dlm.Entities.DataStructure;
-using Newtonsoft.Json;
 
 /// <summary>
 ///
@@ -14,7 +14,7 @@ namespace BExIS.Dlm.Entities.Data
     ///
     /// </summary>
     /// <remarks></remarks>        
-    public class VariableValue: DataValue
+    public class VariableValue : DataValue
     {
         #region Attributes
 

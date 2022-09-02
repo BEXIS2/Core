@@ -1,18 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-using System.Data;
+﻿using BExIS.Dlm.Entities.Data;
 using BExIS.Dlm.Entities.DataStructure;
-using BExIS.Dlm.Entities.Data;
-using Vaiona.Utils.Cfg;
-using System.IO;
+using BExIS.Dlm.Services.TypeSystem;
 using BExIS.IO;
 using BExIS.IO.DataType.DisplayPattern;
-using BExIS.Dlm.Services.DataStructure;
-using System.Text;
-using BExIS.Dlm.Services.TypeSystem;
+using System;
+using System.Collections.Generic;
+using System.Data;
 using System.Globalization;
+using System.IO;
+using System.Text;
+using Vaiona.Utils.Cfg;
 
 namespace BExIS.Modules.Ddm.UI.Models
 {
@@ -112,7 +109,7 @@ namespace BExIS.Modules.Ddm.UI.Models
         {
             List<string> cv = new List<string>();
 
-                
+
             if (dataStructure != null)
             {
                 foreach (var variable in dataStructure.Variables)
@@ -209,7 +206,7 @@ namespace BExIS.Modules.Ddm.UI.Models
             return tmp;
         }
 
-        
+
     }
 
     public enum DataStructureType

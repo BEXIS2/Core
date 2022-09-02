@@ -139,7 +139,6 @@ namespace BExIS.Security.Services.Utilities
             stringBuilder.AppendLine($"<b>Intention:</b> \"{reason}\" <br/><br/>");
             stringBuilder.AppendLine("To decide on this request login to  " + ConfigurationManager.AppSettings["ApplicationName"] + ". You will find all pending requests under My Data/Dashboard -> Datasets -> Decisions.");
 
-
             return stringBuilder.ToString();
         }
 
@@ -152,7 +151,7 @@ namespace BExIS.Security.Services.Utilities
         {
             StringBuilder stringBuilder = new StringBuilder();
             stringBuilder.AppendLine($"Dataset request from User \"{requester}\" for dataset <b>\"{title}\"</b> with id <b>{datasetid}</b> was withdrawn.<br/>");
-         
+
             return stringBuilder.ToString();
         }
 
@@ -285,6 +284,15 @@ namespace BExIS.Security.Services.Utilities
             return $"User <b>{userName} has updated his/her email. Old: {emailOld} New: {emailNew}";
         }
 
+        public static string GetChangedRoleHeader(string userName, string newRole, string changeType)
+        {
+            return $"Account of {userName} {changeType} {newRole} status";
+        }
+
+        public static string GetChangedRoleAppliedMessage(string userName, string newRole, string changeType, string additionalInformation)
+        {
+            return $"The {newRole} role has been {changeType} your account.<br/><br/>{additionalInformation}";
+        }
 
         #region upload api
 
@@ -416,7 +424,7 @@ namespace BExIS.Security.Services.Utilities
             return stringBuilder.ToString();
         }
 
-        #endregion
+        #endregion upload async
 
         #region serach index
 
@@ -426,10 +434,10 @@ namespace BExIS.Security.Services.Utilities
         }
 
         public static string GetSearchReIndexMessage(List<string> errors = null)
-        { 
+        {
             string message = $"The creation of the search index is finished.";
 
-            if (errors != null && errors.Count>0)
+            if (errors != null && errors.Count > 0)
             {
                 message += $"the following errors have occurred. </br>";
 
@@ -442,6 +450,6 @@ namespace BExIS.Security.Services.Utilities
             return message;
         }
 
-        #endregion
+        #endregion serach index
     }
 }

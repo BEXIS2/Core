@@ -1,12 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Linq;
-using BExIS.Dlm.Entities.DataStructure;
-using BExIS.Dlm.Services.DataStructure;
-using System.Web;
-
-/// <summary>
+﻿/// <summary>
 ///
 /// </summary>        
 namespace BExIS.Modules.Rpm.UI.Models

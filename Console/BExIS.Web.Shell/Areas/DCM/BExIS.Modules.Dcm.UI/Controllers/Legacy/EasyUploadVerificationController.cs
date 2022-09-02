@@ -1,25 +1,4 @@
-﻿using BExIS.Dcm.UploadWizard;
-using BExIS.Dcm.Wizard;
-using BExIS.Dlm.Entities.DataStructure;
-using BExIS.Dlm.Services.DataStructure;
-using BExIS.IO;
-using BExIS.IO.Transform.Validation.Exceptions;
-using BExIS.IO.Transform.Validation.ValueCheck;
-using BExIS.Modules.Dcm.UI.Helpers;
-using BExIS.Modules.Dcm.UI.Models;
-using BExIS.Utils.Models;
-using F23.StringSimilarity;
-using Newtonsoft.Json;
-using OfficeOpenXml;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Web.Mvc;
-using System.Web.Routing;
-using System.Web.UI.WebControls;
-using Vaiona.Persistence.Api;
-using Vaiona.Web.Mvc;
+﻿using Vaiona.Web.Mvc;
 
 namespace BExIS.Modules.Dcm.UI.Controllers
 {

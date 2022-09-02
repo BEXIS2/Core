@@ -46,7 +46,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                         xmlDatasetHelper.HasEntityType(metadataStructure.Id, "bexis.dlm.entities.data.dataset"))
                     {
                         model.AvailableMetadata.Add(new Tuple<long, string>(metadataStructure.Id, metadataStructure.Name));
-                    }                        
+                    }
                 }
                 //Sort the metadata structures
                 model.AvailableMetadata.Sort((md1, md2) => md1.Item1.CompareTo(md2.Item1));

@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Xml;
 
 /// <summary>
@@ -16,7 +14,7 @@ namespace BExIS.UI.Wizard
     /// <remarks></remarks>        
     public class AbstractTaskManager
     {
-   
+
         public List<StepInfo> StepInfos;
         public List<StepInfo> TaskInfos;
         protected StepInfo currentStepInfo;

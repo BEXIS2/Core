@@ -1,0 +1,28 @@
+﻿@using BEXIS.Modules.SAM.UI.Model
+
+@model  List<FormerMemberUserModel>
+
+
+<table>
+    @foreach(FormerMemberUserModel u in Model)
+    {
+        <tr>
+            <td>
+                @u.Name
+            </td>
+            <td>
+                @u.UserName
+            </td>
+            <td>
+                @u.UserEmail
+            </td>
+            <td>
+                @u.StartDate
+            </td>
+            <td>
+                @u.EndDate
+            </td>
+        </tr>
+    }
+</table>
+

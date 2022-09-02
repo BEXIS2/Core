@@ -1,13 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Xml;
+﻿using System.Xml;
 
 namespace BExIS.Xml.Models.Mapping
 {
-    public class Destination:XmlMappingPath
+    public class Destination : XmlMappingPath
     {
         public string ParentSequence { get; set; }
         public string Prefix { get; set; }
@@ -39,19 +34,19 @@ namespace BExIS.Xml.Models.Mapping
             {
                 xPath = xmlNode.Attributes[XmlMapperAttributes.xPath.ToString()].Value;
 
-                
+
                 if (xmlNode.Attributes[XmlMapperAttributes.sequence.ToString()] != null)
                 {
                     sequenceName = xmlNode.Attributes[XmlMapperAttributes.sequence.ToString()].Value;
                 }
 
-                
+
                 if (xmlNode.Attributes[XmlMapperAttributes.prefix.ToString()] != null)
                 {
                     prefix = xmlNode.Attributes[XmlMapperAttributes.prefix.ToString()].Value;
                 }
 
-                
+
                 if (xmlNode.Attributes[XmlMapperAttributes.namespaceUri.ToString()] != null)
                 {
                     namespaceUri = xmlNode.Attributes[XmlMapperAttributes.namespaceUri.ToString()].Value;
@@ -59,7 +54,7 @@ namespace BExIS.Xml.Models.Mapping
 
 
             }
-            
+
             return new Destination(xPath, sequenceName, prefix, namespaceUri);
         }
 

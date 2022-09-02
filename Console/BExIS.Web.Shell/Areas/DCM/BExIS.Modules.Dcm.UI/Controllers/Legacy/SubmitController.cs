@@ -128,7 +128,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                     TaskManager = (TaskManager)Session["TaskManager"];
                     TaskManager.AddToBus(TaskManager.DATASTRUCTURE_TYPE, type);
 
-                    if(entityId > 0) TaskManager.AddToBus(TaskManager.DATASET_ID, entityId);
+                    if (entityId > 0) TaskManager.AddToBus(TaskManager.DATASET_ID, entityId);
 
                     Session["TaskManager"] = TaskManager;
                 }
@@ -150,7 +150,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 SetParametersToTaskmanager(entityId);
             }
 
-            return View("UploadWizard",(TaskManager)Session["TaskManager"]);
+            return View("UploadWizard", (TaskManager)Session["TaskManager"]);
         }
 
         #region UploadNavigation
@@ -215,7 +215,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
         public ActionResult ShowDashboard()
         {
-            return RedirectToAction("Index", "Dashboard", new RouteValueDictionary { { "area", "DDM" }});
+            return RedirectToAction("Index", "Dashboard", new RouteValueDictionary { { "area", "DDM" } });
         }
 
         #endregion Navigation options
@@ -271,7 +271,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 {
                     return tempUnStructured.OrderBy(p => p.Title).ToList();
                 }
-  
+
             }
             finally
             {

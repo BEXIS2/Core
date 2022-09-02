@@ -1,5 +1,5 @@
-﻿using System.Collections.Generic;
-using BExIS.IO.Transform.Validation.Exceptions;
+﻿using BExIS.IO.Transform.Validation.Exceptions;
+using System.Collections.Generic;
 
 /// <summary>
 ///
@@ -10,7 +10,7 @@ namespace BExIS.IO.Transform.Validation.ValueValidation
     ///
     /// </summary>
     /// <remarks></remarks>        
-    public class DomainValidation:IValueValidation
+    public class DomainValidation : IValueValidation
     {
         private ValueType appliedTo = new ValueType();
         private string name = "";
@@ -67,11 +67,11 @@ namespace BExIS.IO.Transform.Validation.ValueValidation
         /// <returns></returns>
         public Error Execute(object value, int row)
         {
-            
-            if (value!=null)
+
+            if (value != null)
             {
-                if(CheckList.Contains(value.ToString())) return null;
-                else return new Error(ErrorType.Value,"Value is not in domain", new object[] { name, value, row, dataType });
+                if (CheckList.Contains(value.ToString())) return null;
+                else return new Error(ErrorType.Value, "Value is not in domain", new object[] { name, value, row, dataType });
             }
 
             return null;

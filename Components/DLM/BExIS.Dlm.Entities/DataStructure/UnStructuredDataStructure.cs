@@ -17,7 +17,7 @@ namespace BExIS.Dlm.Entities.DataStructure
             //sample: VariableUsages.First().DataAttribute.ParameterUsages.First().Parameter.
             Datasets = new List<Dataset>();
         }
-        
+
         //public override void Validate()
         //{
         //    // at least one ContentDescriptor

@@ -1,12 +1,12 @@
 ﻿using BExIS.Dlm.Entities.Party;
 using BExIS.Dlm.Services.Party;
-using System;
-using System.Linq;
 using BExIS.Modules.Bam.UI.Models;
-using System.Collections.Generic;
-using System.Linq.Expressions;
-using System.Data;
 using BExIS.Security.Entities.Authorization;
+using System;
+using System.Collections.Generic;
+using System.Data;
+using System.Linq;
+using System.Linq.Expressions;
 
 namespace BExIS.Modules.Bam.UI.Helpers
 {
@@ -156,10 +156,10 @@ namespace BExIS.Modules.Bam.UI.Helpers
                 foreach (var partyCustomAttributeValueString in partyCustomAttributeValues)
                 {
                     PartyCustomAttribute partyCustomAttribute = partyTypeManager.PartyCustomAttributeRepository.Get(int.Parse(partyCustomAttributeValueString.Key));
-                    string value = string.IsNullOrEmpty(partyCustomAttributeValueString.Value) ? "" : partyCustomAttributeValueString.Value;
+                    string value = string.IsNullOrEmpty(partyCustomAttributeValueString.Value) ? "" : partyCustomAttributeValueString.Value.Trim();
                     newAddPartyCustomAttrValues.Add(partyCustomAttribute, value);
                 }
-                party.CustomAttributeValues = partyManager.AddPartyCustomAttributeValues(party, partyCustomAttributeValues.ToDictionary(cc => long.Parse(cc.Key), cc => cc.Value)).ToList();
+                party.CustomAttributeValues = partyManager.AddPartyCustomAttributeValues(party, partyCustomAttributeValues.ToDictionary(cc => long.Parse(cc.Key), cc => cc.Value.Trim())).ToList();
 
                 return party;
             }

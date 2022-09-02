@@ -1,8 +1,4 @@
-﻿using BExIS.UI.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
+﻿using System.Collections.Generic;
 
 namespace BExIS.Modules.Dcm.UI.Models.EntityTemplate
 {
@@ -93,6 +89,22 @@ namespace BExIS.Modules.Dcm.UI.Models.EntityTemplate
             HasDatastructure = false;
         }
 
+        public class KvP
+        {
+            public long Id { get; set; }
+            public string Text { get; set; }
 
+            public KvP()
+            {
+                Id = 0;
+                Text = "";
+            }
+
+            public KvP(long key, string value)
+            {
+                Id = key;
+                Text = value;
+            }
+        }
     }
 }

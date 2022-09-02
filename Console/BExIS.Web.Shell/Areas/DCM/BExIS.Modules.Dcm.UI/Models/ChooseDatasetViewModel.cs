@@ -1,6 +1,6 @@
-﻿using System.Collections.Generic;
-using BExIS.Dcm.Wizard;
+﻿using BExIS.Dcm.Wizard;
 using BExIS.IO.Transform.Validation.Exceptions;
+using System.Collections.Generic;
 
 namespace BExIS.Modules.Dcm.UI.Models
 {
@@ -10,7 +10,7 @@ namespace BExIS.Modules.Dcm.UI.Models
         public int SelectedDatasetId { get; set; }
         public int SelectedDatastructureId { get; set; }
         public string DatasetTitle { get; set; }
-      
+
         public List<long> Datasets { get; set; }
 
         public List<ListViewItem> DatasetsViewList { get; set; }
@@ -22,7 +22,7 @@ namespace BExIS.Modules.Dcm.UI.Models
             ErrorList = new List<Error>();
             DatasetsViewList = new List<ListViewItem>();
             DatasetTitle = "";
-           
+
         }
     }
 }

@@ -1,8 +1,8 @@
-﻿using System.Collections.Generic;
-using System.Diagnostics.Contracts;
-using BExIS.Dlm.Entities.DataStructure;
-using Vaiona.Persistence.Api;
+﻿using BExIS.Dlm.Entities.DataStructure;
 using System;
+using System.Collections.Generic;
+using System.Diagnostics.Contracts;
+using Vaiona.Persistence.Api;
 
 namespace BExIS.Dlm.Services.DataStructure
 {
@@ -60,11 +60,11 @@ namespace BExIS.Dlm.Services.DataStructure
 
             using (IUnitOfWork uow = this.GetUnitOfWork())
             {
-                IRepository<Classifier> repo = uow.GetRepository < Classifier>();
+                IRepository<Classifier> repo = uow.GetRepository<Classifier>();
                 repo.Put(u);
                 uow.Commit();
             }
-            return (u);            
+            return (u);
         }
 
         public bool Delete(Classifier entity)
@@ -76,7 +76,7 @@ namespace BExIS.Dlm.Services.DataStructure
             {
                 IRepository<Classifier> repo = uow.GetRepository<Classifier>();
                 entity = repo.Reload(entity);
-                
+
                 //delete the Classifier
                 repo.Delete(entity);
 
@@ -126,7 +126,7 @@ namespace BExIS.Dlm.Services.DataStructure
                 repo.Put(merged);
                 uow.Commit();
             }
-            return (entity);    
+            return (entity);
         }
 
         #endregion
@@ -167,8 +167,8 @@ namespace BExIS.Dlm.Services.DataStructure
                 IRepository<Classifier> repo = uow.GetRepository<Classifier>();
 
                 end1 = repo.Reload(end1);
-                repo.LoadIfNot(end1.Children); 
-                
+                repo.LoadIfNot(end1.Children);
+
                 end2 = repo.Reload(end2);
                 repo.LoadIfNot(end2.Parent);
 

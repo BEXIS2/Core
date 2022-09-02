@@ -1,19 +1,16 @@
-﻿using System;
+﻿using NHibernate;
+using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using NHibernate;
-using Vaiona.Persistence.Api;
-using NHibernate.Context;
-using System.Web;
-using System.Diagnostics.Contracts;
 using System.Data;
 using System.Data.Common;
 using System.Data.SqlClient;
+using System.Diagnostics.Contracts;
+using System.Linq;
+using Vaiona.Persistence.Api;
 
 namespace Vaiona.PersistenceProviders.NH
 {
-    public class NHibernateBulkUnitOfWork: IUnitOfWork
+    public class NHibernateBulkUnitOfWork : IUnitOfWork
     {
         private const int LongQueryTimeOut = 3600; //seconds
 
@@ -43,7 +40,7 @@ namespace Vaiona.PersistenceProviders.NH
             return (repo);
         }
 
-        public void ClearCache(bool applyChanges=true)
+        public void ClearCache(bool applyChanges = true)
         {
             //Session.
         }

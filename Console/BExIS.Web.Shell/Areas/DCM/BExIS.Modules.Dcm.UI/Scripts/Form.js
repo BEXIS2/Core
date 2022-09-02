@@ -208,9 +208,9 @@ var afterClosed = false;
 function OnChangeTextInput(e, ui) {
 
         console.log("change");
-        console.log("e", e);
-        console.log("target", e.target);
-        console.log("ui", ui);
+        //console.log("e", e);
+        //console.log("target", e.target);
+        //console.log("ui", ui);
   
         var value;
 
@@ -230,13 +230,17 @@ function OnChangeTextInput(e, ui) {
         var ParentModelNumber = substr[3];
         var ParentStepID = substr[5];
 
-        console.log("substr", substr);
-        console.log("id", id);
-        console.log("parentid", parentid);
-        console.log("parentname", parentname);
-        console.log("number", number);
-        console.log("ParentModelNumber", ParentModelNumber);
-        console.log("ParentStepID", ParentStepID);
+        var isMappingSelection = e.target.getAttribute("isMappingSelection");
+
+
+        //console.log("substr", substr);
+        //console.log("id", id);
+        //console.log("parentid", parentid);
+        //console.log("parentname", parentname);
+        //console.log("number", number);
+        //console.log("ParentModelNumber", ParentModelNumber);
+        //console.log("ParentStepID", ParentStepID);
+    console.log("isMappingSelection", isMappingSelection);
 
         // after close a autocomplete there is a id in the value, 
         // this should be removed before send to the server
@@ -270,9 +274,9 @@ function OnChangeTextInput(e, ui) {
                 // to prevent this, a flag is set to check wheter this event is fired after a close event or not
                 if (afterClosed === false) {
 
-                    console.log("after validate value on server");
-                    console.log("afterClosed : " + afterClosed);
-                    console.log("if : " + (afterClosed === false));
+                    //console.log("after validate value on server");
+                    //console.log("afterClosed : " + afterClosed);
+                    //console.log("if : " + (afterClosed === false));
 
                     var id = e.target.id;
                     //console.log("OnChangeTextInput");
@@ -301,14 +305,14 @@ function OnChangeTextInput(e, ui) {
 
                     var partyidConverted = TryParseInt(partyid, null);
                     //console.log("tryparse:" + partyidConverted)
-                    console.log("partyid",partyid);
-                    console.log("partyidConverted",partyidConverted);
+                    //console.log("partyid",partyid);
+                    //console.log("partyidConverted",partyidConverted);
 
                     //delete party informations when a party was selected before
-                    if (partyidConverted !== null && partyidConverted > 0 && afterClosed === false) {
+                    if (partyidConverted !== null && partyidConverted > 0 && afterClosed === false && isMappingSelection!==null) {
                         console.log("go delete it");
-                        console.log(ParentStepID);
-                        console.log(ParentModelNumber);
+                        //console.log(ParentStepID);
+                        //console.log(ParentModelNumber);
 
                         UpdateWithParty(ParentStepID, ParentModelNumber, 0);
                     }

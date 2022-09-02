@@ -15,7 +15,7 @@ namespace BExIS.Xml.Helpers
 
         public List<EntityStoreItem> GetEntities()
         {
-            return GetEntities(0,0);
+            return GetEntities(0, 0);
         }
 
         public List<EntityStoreItem> GetEntities(int skip, int take)
@@ -91,8 +91,8 @@ namespace BExIS.Xml.Helpers
             using (DatasetManager dm = new DatasetManager())
             using (MetadataStructureManager metadataStructureManager = new MetadataStructureManager())
             {
-                
-                
+
+
                 XmlDatasetHelper xmlDatasetHelper = new XmlDatasetHelper();
                 var entities = new List<EntityStoreItem>();
                 int count = 0;
@@ -219,7 +219,7 @@ namespace BExIS.Xml.Helpers
             try
             {
                 dataset = dm.GetDataset(id);
-                return dataset!=null? true:false;
+                return dataset != null ? true : false;
             }
             catch (Exception ex)
             {

@@ -1,25 +1,11 @@
-﻿using System;
-using System.Web.Mvc;
-using System.Linq;
-using System.Collections.Generic;
-using BExIS.Dlm.Entities.DataStructure;
-using BExIS.Dlm.Services.DataStructure;
-
-using BExIS.IO.Transform.Output;
-
-using Vaiona.Web.Mvc.Models;
-using Vaiona.Web.Extensions;
-using BExIS.Dlm.Services.Data;
-using BExIS.Dlm.Entities.Data;
-
-namespace BExIS.Modules.Rpm.UI.Models
+﻿namespace BExIS.Modules.Rpm.UI.Models
 {
     public class MessageModel
     {
         public bool hasMessage { get; set; }
         public string Message { get; set; }
         public string CssId { get; set; }
-        
+
 
         public MessageModel()
         {
@@ -86,11 +72,11 @@ namespace BExIS.Modules.Rpm.UI.Models
             }
         }
 
-        public static MessageModel validateDataStructureDelete(long Id , DataStructure dataStructure)
+        public static MessageModel validateDataStructureDelete(long Id, DataStructure dataStructure)
         {
             if (dataStructure != null && dataStructure.Id != 0)
             {
-                
+
                 if (dataStructure.Datasets.Count == 0)
                 {
                     return new MessageModel()
@@ -212,7 +198,7 @@ namespace BExIS.Modules.Rpm.UI.Models
                     };
                 }
             }
-            
+
         }
 
         public static MessageModel validateAttributeDelete(long Id)
@@ -386,4 +372,3 @@ namespace BExIS.Modules.Rpm.UI.Models
     }
 }
 
-    

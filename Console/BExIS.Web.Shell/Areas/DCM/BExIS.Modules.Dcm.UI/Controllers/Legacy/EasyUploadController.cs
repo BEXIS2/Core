@@ -1,11 +1,11 @@
 ﻿using BExIS.Dcm.UploadWizard;
+using BExIS.Modules.Dcm.UI.Models;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Web.Mvc;
 using System.Web.Routing;
 using System.Xml;
-using BExIS.Modules.Dcm.UI.Models;
 using Vaiona.Utils.Cfg;
 using Vaiona.Web.Extensions;
 using Vaiona.Web.Mvc.Models;

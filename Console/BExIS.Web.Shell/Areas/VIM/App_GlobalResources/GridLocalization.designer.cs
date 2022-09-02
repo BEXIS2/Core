@@ -13,13 +13,13 @@ namespace Resources {
     
     
     /// <summary>
-    ///    Eine stark typisierte Ressourcenklasse zum Suchen von lokalisierten Zeichenfolgen usw.
+    ///   Eine stark typisierte Ressourcenklasse zum Suchen von lokalisierten Zeichenfolgen usw.
     /// </summary>
-    // Diese Klasse wurde von der Klasse "StronglyTypedResourceBuilder"
-    // über ein Tool wie ResGen oder Visual Studio automatisch generiert.
-    // Um einen Member hinzuzufügen oder zu entfernen, bearbeiten Sie die RESX-Datei und führen dann ResGen
+    // Diese Klasse wurde von der StronglyTypedResourceBuilder-Klasse
+    // mit einem Tool wie ResGen oder Visual Studio automatisch generiert.
+    // Bearbeiten Sie zum Hinzufügen oder Entfernen eines Members die RESX-Datei, und führen Sie dann ResGen
     // mit der /str-Option erneut aus, oder Sie erstellen das Visual Studio-Projekt neu.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Web.Application.StronglyTypedResourceProxyBuilder", "17.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Web.Application.StronglyTypedResourceProxyBuilder", "16.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     internal class GridLocalization {
@@ -33,7 +33,7 @@ namespace Resources {
         }
         
         /// <summary>
-        ///    Gibt die zwischengespeicherte ResourceManager-Instanz zurück, die von dieser Klasse verwendet wird.
+        ///   Gibt die von dieser Klasse verwendete zwischengespeicherte ResourceManager-Instanz zurück.
         /// </summary>
         [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
         internal static global::System.Resources.ResourceManager ResourceManager {
@@ -47,8 +47,8 @@ namespace Resources {
         }
         
         /// <summary>
-        ///    Überschreibt die CurrentUICulture-Eigenschaft des aktuellen Threads für alle
-        ///    Ressourcenlookups, die diese stark typisierte Ressourcenklasse verwenden.
+        ///   Überschreibt die CurrentUICulture-Eigenschaft des aktuellen Threads für alle
+        ///   Ressourcenlookups, die diese stark typisierte Ressourcenklasse verwenden.
         /// </summary>
         [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
         internal static global::System.Globalization.CultureInfo Culture {
@@ -61,7 +61,7 @@ namespace Resources {
         }
         
         /// <summary>
-        ///    Sucht eine lokalisierte Zeichenfolge, die Add new record ähnelt.
+        ///   Sucht eine lokalisierte Zeichenfolge, die Add new record ähnelt.
         /// </summary>
         internal static string AddNew {
             get {
@@ -70,7 +70,7 @@ namespace Resources {
         }
         
         /// <summary>
-        ///    Sucht eine lokalisierte Zeichenfolge, die Cancel ähnelt.
+        ///   Sucht eine lokalisierte Zeichenfolge, die Cancel ähnelt.
         /// </summary>
         internal static string Cancel {
             get {
@@ -79,7 +79,7 @@ namespace Resources {
         }
         
         /// <summary>
-        ///    Sucht eine lokalisierte Zeichenfolge, die Cancel changes ähnelt.
+        ///   Sucht eine lokalisierte Zeichenfolge, die Cancel changes ähnelt.
         /// </summary>
         internal static string CancelChanges {
             get {
@@ -88,7 +88,7 @@ namespace Resources {
         }
         
         /// <summary>
-        ///    Sucht eine lokalisierte Zeichenfolge, die Delete ähnelt.
+        ///   Sucht eine lokalisierte Zeichenfolge, die Delete ähnelt.
         /// </summary>
         internal static string Delete {
             get {
@@ -97,7 +97,7 @@ namespace Resources {
         }
         
         /// <summary>
-        ///    Sucht eine lokalisierte Zeichenfolge, die Are you sure you want to delete this record? ähnelt.
+        ///   Sucht eine lokalisierte Zeichenfolge, die Are you sure you want to delete this record? ähnelt.
         /// </summary>
         internal static string DeleteConfirmation {
             get {
@@ -106,7 +106,7 @@ namespace Resources {
         }
         
         /// <summary>
-        ///    Sucht eine lokalisierte Zeichenfolge, die Displaying items {0} - {1} of {2} ähnelt.
+        ///   Sucht eine lokalisierte Zeichenfolge, die Displaying items {0} - {1} of {2} ähnelt.
         /// </summary>
         internal static string DisplayingItems {
             get {
@@ -115,7 +115,7 @@ namespace Resources {
         }
         
         /// <summary>
-        ///    Sucht eine lokalisierte Zeichenfolge, die Edit ähnelt.
+        ///   Sucht eine lokalisierte Zeichenfolge, die Edit ähnelt.
         /// </summary>
         internal static string Edit {
             get {
@@ -124,7 +124,7 @@ namespace Resources {
         }
         
         /// <summary>
-        ///    Sucht eine lokalisierte Zeichenfolge, die Filter ähnelt.
+        ///   Sucht eine lokalisierte Zeichenfolge, die Filter ähnelt.
         /// </summary>
         internal static string Filter {
             get {
@@ -133,7 +133,7 @@ namespace Resources {
         }
         
         /// <summary>
-        ///    Sucht eine lokalisierte Zeichenfolge, die And ähnelt.
+        ///   Sucht eine lokalisierte Zeichenfolge, die And ähnelt.
         /// </summary>
         internal static string FilterAnd {
             get {
@@ -142,7 +142,7 @@ namespace Resources {
         }
         
         /// <summary>
-        ///    Sucht eine lokalisierte Zeichenfolge, die is false ähnelt.
+        ///   Sucht eine lokalisierte Zeichenfolge, die is false ähnelt.
         /// </summary>
         internal static string FilterBoolIsFalse {
             get {
@@ -151,7 +151,7 @@ namespace Resources {
         }
         
         /// <summary>
-        ///    Sucht eine lokalisierte Zeichenfolge, die is true ähnelt.
+        ///   Sucht eine lokalisierte Zeichenfolge, die is true ähnelt.
         /// </summary>
         internal static string FilterBoolIsTrue {
             get {
@@ -160,7 +160,7 @@ namespace Resources {
         }
         
         /// <summary>
-        ///    Sucht eine lokalisierte Zeichenfolge, die Clear Filter ähnelt.
+        ///   Sucht eine lokalisierte Zeichenfolge, die Clear Filter ähnelt.
         /// </summary>
         internal static string FilterClear {
             get {
@@ -169,7 +169,7 @@ namespace Resources {
         }
         
         /// <summary>
-        ///    Sucht eine lokalisierte Zeichenfolge, die Is equal to ähnelt.
+        ///   Sucht eine lokalisierte Zeichenfolge, die Is equal to ähnelt.
         /// </summary>
         internal static string FilterDateEq {
             get {
@@ -178,7 +178,7 @@ namespace Resources {
         }
         
         /// <summary>
-        ///    Sucht eine lokalisierte Zeichenfolge, die Is after or equal to ähnelt.
+        ///   Sucht eine lokalisierte Zeichenfolge, die Is after or equal to ähnelt.
         /// </summary>
         internal static string FilterDateGe {
             get {
@@ -187,7 +187,7 @@ namespace Resources {
         }
         
         /// <summary>
-        ///    Sucht eine lokalisierte Zeichenfolge, die Is after ähnelt.
+        ///   Sucht eine lokalisierte Zeichenfolge, die Is after ähnelt.
         /// </summary>
         internal static string FilterDateGt {
             get {
@@ -196,7 +196,7 @@ namespace Resources {
         }
         
         /// <summary>
-        ///    Sucht eine lokalisierte Zeichenfolge, die Is before or equal to ähnelt.
+        ///   Sucht eine lokalisierte Zeichenfolge, die Is before or equal to ähnelt.
         /// </summary>
         internal static string FilterDateLe {
             get {
@@ -205,7 +205,7 @@ namespace Resources {
         }
         
         /// <summary>
-        ///    Sucht eine lokalisierte Zeichenfolge, die Is before ähnelt.
+        ///   Sucht eine lokalisierte Zeichenfolge, die Is before ähnelt.
         /// </summary>
         internal static string FilterDateLt {
             get {
@@ -214,7 +214,7 @@ namespace Resources {
         }
         
         /// <summary>
-        ///    Sucht eine lokalisierte Zeichenfolge, die Is not equal to ähnelt.
+        ///   Sucht eine lokalisierte Zeichenfolge, die Is not equal to ähnelt.
         /// </summary>
         internal static string FilterDateNe {
             get {
@@ -223,7 +223,7 @@ namespace Resources {
         }
         
         /// <summary>
-        ///    Sucht eine lokalisierte Zeichenfolge, die Is equal to ähnelt.
+        ///   Sucht eine lokalisierte Zeichenfolge, die Is equal to ähnelt.
         /// </summary>
         internal static string FilterEnumEq {
             get {
@@ -232,7 +232,7 @@ namespace Resources {
         }
         
         /// <summary>
-        ///    Sucht eine lokalisierte Zeichenfolge, die Is not equal to ähnelt.
+        ///   Sucht eine lokalisierte Zeichenfolge, die Is not equal to ähnelt.
         /// </summary>
         internal static string FilterEnumNe {
             get {
@@ -241,7 +241,7 @@ namespace Resources {
         }
         
         /// <summary>
-        ///    Sucht eine lokalisierte Zeichenfolge, die Is equal to ähnelt.
+        ///   Sucht eine lokalisierte Zeichenfolge, die Is equal to ähnelt.
         /// </summary>
         internal static string FilterForeignKeyEq {
             get {
@@ -250,7 +250,7 @@ namespace Resources {
         }
         
         /// <summary>
-        ///    Sucht eine lokalisierte Zeichenfolge, die Is not equal to ähnelt.
+        ///   Sucht eine lokalisierte Zeichenfolge, die Is not equal to ähnelt.
         /// </summary>
         internal static string FilterForeignKeyNe {
             get {
@@ -259,7 +259,7 @@ namespace Resources {
         }
         
         /// <summary>
-        ///    Sucht eine lokalisierte Zeichenfolge, die Is equal to ähnelt.
+        ///   Sucht eine lokalisierte Zeichenfolge, die Is equal to ähnelt.
         /// </summary>
         internal static string FilterNumberEq {
             get {
@@ -268,7 +268,7 @@ namespace Resources {
         }
         
         /// <summary>
-        ///    Sucht eine lokalisierte Zeichenfolge, die Is greater than or equal to ähnelt.
+        ///   Sucht eine lokalisierte Zeichenfolge, die Is greater than or equal to ähnelt.
         /// </summary>
         internal static string FilterNumberGe {
             get {
@@ -277,7 +277,7 @@ namespace Resources {
         }
         
         /// <summary>
-        ///    Sucht eine lokalisierte Zeichenfolge, die Is greater than ähnelt.
+        ///   Sucht eine lokalisierte Zeichenfolge, die Is greater than ähnelt.
         /// </summary>
         internal static string FilterNumberGt {
             get {
@@ -286,7 +286,7 @@ namespace Resources {
         }
         
         /// <summary>
-        ///    Sucht eine lokalisierte Zeichenfolge, die Is less than or equal to ähnelt.
+        ///   Sucht eine lokalisierte Zeichenfolge, die Is less than or equal to ähnelt.
         /// </summary>
         internal static string FilterNumberLe {
             get {
@@ -295,7 +295,7 @@ namespace Resources {
         }
         
         /// <summary>
-        ///    Sucht eine lokalisierte Zeichenfolge, die Is less than ähnelt.
+        ///   Sucht eine lokalisierte Zeichenfolge, die Is less than ähnelt.
         /// </summary>
         internal static string FilterNumberLt {
             get {
@@ -304,7 +304,7 @@ namespace Resources {
         }
         
         /// <summary>
-        ///    Sucht eine lokalisierte Zeichenfolge, die Is not equal to ähnelt.
+        ///   Sucht eine lokalisierte Zeichenfolge, die Is not equal to ähnelt.
         /// </summary>
         internal static string FilterNumberNe {
             get {
@@ -313,7 +313,7 @@ namespace Resources {
         }
         
         /// <summary>
-        ///    Sucht eine lokalisierte Zeichenfolge, die Or ähnelt.
+        ///   Sucht eine lokalisierte Zeichenfolge, die Or ähnelt.
         /// </summary>
         internal static string FilterOr {
             get {
@@ -322,7 +322,7 @@ namespace Resources {
         }
         
         /// <summary>
-        ///    Sucht eine lokalisierte Zeichenfolge, die -Select value- ähnelt.
+        ///   Sucht eine lokalisierte Zeichenfolge, die -Select value- ähnelt.
         /// </summary>
         internal static string FilterSelectValue {
             get {
@@ -331,7 +331,7 @@ namespace Resources {
         }
         
         /// <summary>
-        ///    Sucht eine lokalisierte Zeichenfolge, die Show rows with value that ähnelt.
+        ///   Sucht eine lokalisierte Zeichenfolge, die Show rows with value that ähnelt.
         /// </summary>
         internal static string FilterShowRows {
             get {
@@ -340,7 +340,7 @@ namespace Resources {
         }
         
         /// <summary>
-        ///    Sucht eine lokalisierte Zeichenfolge, die Ends with ähnelt.
+        ///   Sucht eine lokalisierte Zeichenfolge, die Ends with ähnelt.
         /// </summary>
         internal static string FilterStringEndsWith {
             get {
@@ -349,7 +349,7 @@ namespace Resources {
         }
         
         /// <summary>
-        ///    Sucht eine lokalisierte Zeichenfolge, die Is equal to ähnelt.
+        ///   Sucht eine lokalisierte Zeichenfolge, die Is equal to ähnelt.
         /// </summary>
         internal static string FilterStringEq {
             get {
@@ -358,7 +358,7 @@ namespace Resources {
         }
         
         /// <summary>
-        ///    Sucht eine lokalisierte Zeichenfolge, die Is not equal to ähnelt.
+        ///   Sucht eine lokalisierte Zeichenfolge, die Is not equal to ähnelt.
         /// </summary>
         internal static string FilterStringNe {
             get {
@@ -367,7 +367,7 @@ namespace Resources {
         }
         
         /// <summary>
-        ///    Sucht eine lokalisierte Zeichenfolge, die Does not contain ähnelt.
+        ///   Sucht eine lokalisierte Zeichenfolge, die Does not contain ähnelt.
         /// </summary>
         internal static string FilterStringNotSubstringOf {
             get {
@@ -376,7 +376,7 @@ namespace Resources {
         }
         
         /// <summary>
-        ///    Sucht eine lokalisierte Zeichenfolge, die Starts with ähnelt.
+        ///   Sucht eine lokalisierte Zeichenfolge, die Starts with ähnelt.
         /// </summary>
         internal static string FilterStringStartsWith {
             get {
@@ -385,7 +385,7 @@ namespace Resources {
         }
         
         /// <summary>
-        ///    Sucht eine lokalisierte Zeichenfolge, die Contains ähnelt.
+        ///   Sucht eine lokalisierte Zeichenfolge, die Contains ähnelt.
         /// </summary>
         internal static string FilterStringSubstringOf {
             get {
@@ -394,7 +394,7 @@ namespace Resources {
         }
         
         /// <summary>
-        ///    Sucht eine lokalisierte Zeichenfolge, die Drag a column header and drop it here to group by that column ähnelt.
+        ///   Sucht eine lokalisierte Zeichenfolge, die Drag a column header and drop it here to group by that column ähnelt.
         /// </summary>
         internal static string GroupHint {
             get {
@@ -403,7 +403,7 @@ namespace Resources {
         }
         
         /// <summary>
-        ///    Sucht eine lokalisierte Zeichenfolge, die Insert ähnelt.
+        ///   Sucht eine lokalisierte Zeichenfolge, die Insert ähnelt.
         /// </summary>
         internal static string Insert {
             get {
@@ -412,7 +412,7 @@ namespace Resources {
         }
         
         /// <summary>
-        ///    Sucht eine lokalisierte Zeichenfolge, die No records to display. ähnelt.
+        ///   Sucht eine lokalisierte Zeichenfolge, die No records to display. ähnelt.
         /// </summary>
         internal static string NoRecords {
             get {
@@ -421,7 +421,7 @@ namespace Resources {
         }
         
         /// <summary>
-        ///    Sucht eine lokalisierte Zeichenfolge, die Page  ähnelt.
+        ///   Sucht eine lokalisierte Zeichenfolge, die Page  ähnelt.
         /// </summary>
         internal static string Page {
             get {
@@ -430,7 +430,7 @@ namespace Resources {
         }
         
         /// <summary>
-        ///    Sucht eine lokalisierte Zeichenfolge, die of {0} ähnelt.
+        ///   Sucht eine lokalisierte Zeichenfolge, die of {0} ähnelt.
         /// </summary>
         internal static string PageOf {
             get {
@@ -439,7 +439,7 @@ namespace Resources {
         }
         
         /// <summary>
-        ///    Sucht eine lokalisierte Zeichenfolge, die Refresh ähnelt.
+        ///   Sucht eine lokalisierte Zeichenfolge, die Refresh ähnelt.
         /// </summary>
         internal static string Refresh {
             get {
@@ -448,7 +448,7 @@ namespace Resources {
         }
         
         /// <summary>
-        ///    Sucht eine lokalisierte Zeichenfolge, die Save changes ähnelt.
+        ///   Sucht eine lokalisierte Zeichenfolge, die Save changes ähnelt.
         /// </summary>
         internal static string SaveChanges {
             get {
@@ -457,7 +457,7 @@ namespace Resources {
         }
         
         /// <summary>
-        ///    Sucht eine lokalisierte Zeichenfolge, die Select ähnelt.
+        ///   Sucht eine lokalisierte Zeichenfolge, die Select ähnelt.
         /// </summary>
         internal static string Select {
             get {
@@ -466,7 +466,7 @@ namespace Resources {
         }
         
         /// <summary>
-        ///    Sucht eine lokalisierte Zeichenfolge, die sorted ascending ähnelt.
+        ///   Sucht eine lokalisierte Zeichenfolge, die sorted ascending ähnelt.
         /// </summary>
         internal static string SortedAsc {
             get {
@@ -475,7 +475,7 @@ namespace Resources {
         }
         
         /// <summary>
-        ///    Sucht eine lokalisierte Zeichenfolge, die sorted descending ähnelt.
+        ///   Sucht eine lokalisierte Zeichenfolge, die sorted descending ähnelt.
         /// </summary>
         internal static string SortedDesc {
             get {
@@ -484,7 +484,7 @@ namespace Resources {
         }
         
         /// <summary>
-        ///    Sucht eine lokalisierte Zeichenfolge, die ungroup ähnelt.
+        ///   Sucht eine lokalisierte Zeichenfolge, die ungroup ähnelt.
         /// </summary>
         internal static string UnGroup {
             get {
@@ -493,7 +493,7 @@ namespace Resources {
         }
         
         /// <summary>
-        ///    Sucht eine lokalisierte Zeichenfolge, die Update ähnelt.
+        ///   Sucht eine lokalisierte Zeichenfolge, die Update ähnelt.
         /// </summary>
         internal static string Update {
             get {

@@ -1,10 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Vaiona.Utils.IO
 {
@@ -22,7 +19,7 @@ namespace Vaiona.Utils.IO
         // wait until the catalog file is released. It may need a timer to avoid deadlocks
         public static void WaitForFile(string filePath)
         {
-            while (!CanReadFile(filePath));
+            while (!CanReadFile(filePath)) ;
         }
         public static bool CanReadFile(string filePath)
         {

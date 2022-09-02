@@ -1,13 +1,9 @@
-﻿using Vaiona.Web.Mvc.Modularity;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Web.Mvc;
 using System.Web.Routing;
-using System.Xml.Linq;
 using Vaiona.Logging;
 
 namespace Vaiona.Web.Mvc.Modularity

@@ -56,7 +56,7 @@ namespace BExIS.Modules.Sam.UI.Controllers
         [HttpPost]
         public async Task<ActionResult> Create(CreateGroupModel model)
         {
-            using(var identityGroupService = new IdentityGroupService())
+            using (var identityGroupService = new IdentityGroupService())
             {
                 if (!ModelState.IsValid) return PartialView("_Create", model);
 
@@ -95,7 +95,7 @@ namespace BExIS.Modules.Sam.UI.Controllers
 
                 var result = await identityGroupService.DeleteAsync(group);
                 return result.Succeeded;
-     
+
             }
         }
 

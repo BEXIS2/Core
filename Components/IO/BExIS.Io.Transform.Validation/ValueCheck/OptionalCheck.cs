@@ -1,5 +1,5 @@
-﻿using System;
-using BExIS.IO.Transform.Validation.Exceptions;
+﻿using BExIS.IO.Transform.Validation.Exceptions;
+using System;
 
 /// <summary>
 ///
@@ -10,51 +10,51 @@ namespace BExIS.IO.Transform.Validation.ValueCheck
     ///
     /// </summary>
     /// <remarks></remarks>        
-    public class OptionalCheck:IValueCheck
+    public class OptionalCheck : IValueCheck
     {
-        # region private
+        #region private
 
-            private ValueType appliedTo = new ValueType();
-            private bool optional = false;
-            private string name = "";
-            private string dataType = "";
+        private ValueType appliedTo = new ValueType();
+        private bool optional = false;
+        private string name = "";
+        private string dataType = "";
 
-            #region get
+        #region get
 
-            /// <summary>
-            ///
-            /// </summary>
-            /// <remarks></remarks>
-            /// <seealso cref=""/>        
-            public ValueType AppliedTo
+        /// <summary>
+        ///
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>        
+        public ValueType AppliedTo
+        {
+            get
             {
-                get
-                {
-                    return appliedTo;
-                }
+                return appliedTo;
             }
+        }
 
-            /// <summary>
-            ///
-            /// </summary>
-            /// <remarks></remarks>
-            /// <seealso cref=""/>        
-            public string Name
-            {
-                get { return name; }
-            }
+        /// <summary>
+        ///
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>        
+        public string Name
+        {
+            get { return name; }
+        }
 
-            /// <summary>
-            ///
-            /// </summary>
-            /// <remarks></remarks>
-            /// <seealso cref=""/>        
-            public string DataType
-            {
-                get { return dataType; }
-            }
-            
-            #endregion
+        /// <summary>
+        ///
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>        
+        public string DataType
+        {
+            get { return dataType; }
+        }
+
+        #endregion
 
         #endregion
 

@@ -1,9 +1,6 @@
 ﻿using BExIS.IO.Transform.Input;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace BExIS.UI.Hooks.Caches
 {
@@ -52,7 +49,7 @@ namespace BExIS.UI.Hooks.Caches
         /// string = hook name 
         /// DateTime = Last Modification
         /// </summary>
-        public Dictionary<string,DateTime> LastModifications { get; set; }
+        public Dictionary<string, DateTime> LastModifications { get; set; }
 
         /// <summary>
         /// Collect all informations to fine the data in the sheet

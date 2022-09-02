@@ -56,7 +56,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             var dataPath = AppConfiguration.DataPath; //Path.Combine(AppConfiguration.WorkspaceRootPath, "Data");
             var storepath = Path.Combine(dataPath, "Temp", GetUsernameOrDefault());
 
-            model.MaxFileLength = 260-storepath.Length-2;
+            model.MaxFileLength = 260 - storepath.Length - 2;
 
             return PartialView(model);
         }
@@ -169,7 +169,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                             }
 
                         }
-                        catch (NotSupportedException ex) 
+                        catch (NotSupportedException ex)
                         {
                             model.ErrorList.Add(new Error(ErrorType.Other, ex.Message));
                         }

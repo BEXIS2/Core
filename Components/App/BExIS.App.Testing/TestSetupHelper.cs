@@ -1,7 +1,4 @@
 ﻿using BExIS.App.Bootstrap;
-using BExIS.Utils;
-
-using BExIS.Utils;
 
 using BExIS.Utils.Config;
 using Moq;
@@ -55,7 +52,7 @@ namespace BExIS.App.Testing
             var tenant = tenantResolver.DefaultTenant;
 
             // setting the landing page for the current session
-            
+
             var landingPage = GeneralSettings.LandingPage;
             tenant.LandingPage = landingPage; // checks and sets
 

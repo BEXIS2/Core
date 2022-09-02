@@ -3,9 +3,7 @@ using BExIS.Dlm.Entities.DataStructure;
 using BExIS.Dlm.Tests.Helpers;
 using BExIS.IO.Tests.Helper;
 using BExIS.IO.Transform.Input;
-using BExIS.IO.Transform.Validation.DSValidation;
 using BExIS.IO.Transform.Validation.Exceptions;
-using BExIS.Utils;
 using BExIS.Utils.Config;
 using Moq;
 using NUnit.Framework;
@@ -14,7 +12,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using Vaiona.Utils.Cfg;
 
 namespace BExIS.IO.Tests.Transform.Input

@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Linq;
-using System.Text;
 
 namespace Vaiona.Persistence.Api
 {
@@ -33,14 +31,14 @@ namespace Vaiona.Persistence.Api
         //     The session will never read items from the cache, but will add items to the cache
         //     as it reads them from the database. In this mode, the effect of hibernate.cache.use_minimal_puts
         //     is bypassed, in order to force a cache refresh
-        Refresh = 5    
+        Refresh = 5
     }
-    public interface IUnitOfWork: IDisposable
+    public interface IUnitOfWork : IDisposable
     {
         IPersistenceManager PersistenceManager { get; }
         IReadOnlyRepository<TEntity> GetReadOnlyRepository<TEntity>(CacheMode cacheMode = CacheMode.Ignore) where TEntity : class;
         IRepository<TEntity> GetRepository<TEntity>() where TEntity : class;
-        void ClearCache(bool applyChanages=true);
+        void ClearCache(bool applyChanages = true);
 
         /// <summary>
         /// Commits all the changed made by associated repositories.

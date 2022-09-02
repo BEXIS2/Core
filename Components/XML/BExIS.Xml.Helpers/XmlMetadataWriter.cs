@@ -71,7 +71,7 @@ namespace BExIS.Xml.Helpers
                 root.SetAttributeValue("id", metadataStructure.Id.ToString());
                 doc.Add(root);
 
-            
+
                 IList<MetadataPackageUsage> packages = uow.GetReadOnlyRepository<MetadataPackageUsage>().Get(p => packageIds.Contains(p.Id));
                 List<MetadataAttributeUsage> attributes;
                 foreach (MetadataPackageUsage mpu in packages)
@@ -94,7 +94,6 @@ namespace BExIS.Xml.Helpers
                     role.Add(package);
 
                     setChildren(package, mpu, importXml);
-
                 }
 
                 return doc;

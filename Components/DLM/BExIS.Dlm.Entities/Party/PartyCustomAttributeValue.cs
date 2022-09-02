@@ -1,12 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Vaiona.Entities.Common;
+﻿using Vaiona.Entities.Common;
 
 namespace BExIS.Dlm.Entities.Party
 {
-    public class PartyCustomAttributeValue: BaseEntity
+    public class PartyCustomAttributeValue : BaseEntity
     {
         public PartyCustomAttributeValue()
         {

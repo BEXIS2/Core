@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Xml.Linq;
 
 namespace BExIS.Xml.Helpers
@@ -33,7 +31,7 @@ namespace BExIS.Xml.Helpers
                 else
                 {
                     //string namespacePrefix = e.GetPrefixOfNamespace(currentNamespace);
-                    name += "/"+ e.Name.LocalName;
+                    name += "/" + e.Name.LocalName;
                 }
 
                 return name;
@@ -76,7 +74,7 @@ namespace BExIS.Xml.Helpers
                 else
                 {
                     //string namespacePrefix = e.GetPrefixOfNamespace(currentNamespace);
-                    name += "/" + e.Name.LocalName +"["+index+"]";
+                    name += "/" + e.Name.LocalName + "[" + index + "]";
                 }
 
                 return name;

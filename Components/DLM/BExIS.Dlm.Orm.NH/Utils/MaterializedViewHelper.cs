@@ -1,12 +1,11 @@
-﻿using System;
+﻿using BExIS.Utils.NH.Querying;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using Vaiona.Persistence.Api;
 using Vaiona.Utils.Cfg;
-using BExIS.Utils.NH.Querying;
 
 namespace BExIS.Dlm.Orm.NH.Utils
 {
@@ -386,7 +385,7 @@ namespace BExIS.Dlm.Orm.NH.Utils
             string accessPathTemplate = @"xpath('/Content/Item[Property[@Name=""VariableId"" and @value=""{0}""]][1]/Property[@Name=""Value""]/@value', t.xmlvariablevalues)";
             string accessPath = string.Format(accessPathTemplate, Id);
 
-//            string fieldDef = $"CASE WHEN ({accessPath}::text = '{{\"\"}}'::text) THEN NULL WHEN ({accessPath}::text = '{{_null_null}}'::text) THEN NULL ELSE cast(({accessPath}::character varying[])[1] {fieldType}) END AS {this.BuildColumnName(Id).ToLower()}";
+            //            string fieldDef = $"CASE WHEN ({accessPath}::text = '{{\"\"}}'::text) THEN NULL WHEN ({accessPath}::text = '{{_null_null}}'::text) THEN NULL ELSE cast(({accessPath}::character varying[])[1] {fieldType}) END AS {this.BuildColumnName(Id).ToLower()}";
             string fieldDef = $"cast((t.values::character varying[])[{order}]  {fieldType}) AS {this.BuildColumnName(Id).ToLower()}";
 
             //string fieldDef = string.Format(fieldTemplate, accessPath, fieldType, this.BuildColumnName(Id).ToLower());

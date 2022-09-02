@@ -7,10 +7,8 @@ using BExIS.Security.Services.Utilities;
 using BExIS.Utils.Config;
 using System;
 using System.Collections.Generic;
-using System.Configuration;
 using System.Linq;
 using System.Web.Mvc;
-using Vaiona.IoC;
 using Vaiona.Persistence.Api;
 
 namespace BExIS.Modules.Ddm.UI.Controllers

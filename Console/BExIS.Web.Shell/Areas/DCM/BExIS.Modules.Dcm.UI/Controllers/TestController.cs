@@ -9,10 +9,8 @@ using BExIS.Utils.Config;
 using BExIS.Utils.Helpers;
 using BExIS.Xml.Helpers;
 using System;
-using System.Configuration;
 using System.Diagnostics;
 using System.Web.Mvc;
-using Vaiona.IoC;
 
 namespace BExIS.Modules.Dcm.UI.Controllers
 {

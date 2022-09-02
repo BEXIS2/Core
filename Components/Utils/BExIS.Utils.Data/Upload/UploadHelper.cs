@@ -10,7 +10,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Xml;
 using Vaiona.Model.MTnt;
 using Vaiona.Persistence.Api;
 
@@ -747,14 +746,8 @@ namespace BExIS.Utils.Upload
                 // so if value is empty add timestamp millisec
                 datatuple.Materialize();
                 object v = datatuple.VariableValues.Where(p => p.VariableId.Equals(t)).First().Value;
-                if (v != null)
-                    if (!String.IsNullOrEmpty(v.ToString()))
-                        //if (!String.IsNullOrEmpty((string)v))
-                        value += ";" + v;
-                    else
-                        return "";
-                else
-                    return "";
+                if (v != null && !String.IsNullOrEmpty(v.ToString()))
+                    value += ";" + v;
             }
             return value;
         }

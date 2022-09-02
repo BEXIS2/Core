@@ -1,13 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-//using Microsoft.Office.Interop.Excel;
+﻿//using Microsoft.Office.Interop.Excel;
 //using BExIS.IO.Transform;
 //using BExIS.IO.Transform.Input;
-using System.IO;
-using BExIS.Dlm.Services.DataStructure;
-using BExIS.Dlm.Entities.DataStructure;
 
 namespace BExIS.Modules.Rpm.UI.Helpers.SeedData
 {
@@ -289,7 +282,7 @@ namespace BExIS.Modules.Rpm.UI.Helpers.SeedData
                     }
                 }
             }
-            return mappedAttributes;      
+            return mappedAttributes;
         }
 
 
@@ -446,40 +439,40 @@ namespace BExIS.Modules.Rpm.UI.Helpers.SeedData
 
         //////////////////////////////////////////////////////////////////////////////////////////////////
         // helper methods
-    //    #region helper methods
+        //    #region helper methods
 
-    //    //Method to initialize opening Excel
-    //    static void excel_init(String path, string sheetName, long startRow, ref long endRow)
-    //    {
-    //        appExcel = new Microsoft.Office.Interop.Excel.Application();
+        //    //Method to initialize opening Excel
+        //    static void excel_init(String path, string sheetName, long startRow, ref long endRow)
+        //    {
+        //        appExcel = new Microsoft.Office.Interop.Excel.Application();
 
-    //        if (System.IO.File.Exists(path))
-    //        {
-    //            newWorkbook = appExcel.Workbooks.Open(path, true, true);
-    //            objsheet = (_Worksheet)appExcel.Sheets[sheetName];
-    //            string rangeCell = "A" + startRow.ToString();
-    //            Range range = objsheet.get_Range(rangeCell);
-    //            range = range.get_End(XlDirection.xlDown);
-    //            endRow = range.Row + 1;
-    //        }
-    //    }
+        //        if (System.IO.File.Exists(path))
+        //        {
+        //            newWorkbook = appExcel.Workbooks.Open(path, true, true);
+        //            objsheet = (_Worksheet)appExcel.Sheets[sheetName];
+        //            string rangeCell = "A" + startRow.ToString();
+        //            Range range = objsheet.get_Range(rangeCell);
+        //            range = range.get_End(XlDirection.xlDown);
+        //            endRow = range.Row + 1;
+        //        }
+        //    }
 
-    //    //Method to get a cell value
-    //    static string getValue(string rowId, string columId)
-    //    {
-    //        string cellname = columId + rowId;
-    //        string value = string.Empty;
-    //        try
-    //        {
-    //            value = objsheet.get_Range(cellname).get_Value().ToString();
-    //        }
-    //        catch
-    //        {
-    //            value = "";
-    //        }
-    //        return value;
-    //    }
+        //    //Method to get a cell value
+        //    static string getValue(string rowId, string columId)
+        //    {
+        //        string cellname = columId + rowId;
+        //        string value = string.Empty;
+        //        try
+        //        {
+        //            value = objsheet.get_Range(cellname).get_Value().ToString();
+        //        }
+        //        catch
+        //        {
+        //            value = "";
+        //        }
+        //        return value;
+        //    }
 
-    //    #endregion
+        //    #endregion
     }
 }

@@ -1,11 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-using BExIS.Dlm.Entities.DataStructure;
-using BExIS.Dlm.Services.DataStructure;
-
-namespace BExIS.Modules.Rpm.UI.Models
+﻿namespace BExIS.Modules.Rpm.UI.Models
 {
     public class DataAttributeManagerModel
     {
@@ -96,7 +89,7 @@ namespace BExIS.Modules.Rpm.UI.Models
                         FormalDescriptions = FormalDescriptions + "\r\n" + temp.FormalDescription;
                 }
             }
-            
+
             return FormalDescriptions;
         }
 

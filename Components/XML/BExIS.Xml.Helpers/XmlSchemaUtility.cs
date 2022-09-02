@@ -107,7 +107,7 @@ namespace BExIS.Xml.Helpers
 
                 XmlSchemaComplexType complexType = element.ElementSchemaType as XmlSchemaComplexType;
 
-                if(complexType==null) complexType = element.SchemaType as XmlSchemaComplexType;
+                if (complexType == null) complexType = element.SchemaType as XmlSchemaComplexType;
 
                 if (complexType != null)
                 {

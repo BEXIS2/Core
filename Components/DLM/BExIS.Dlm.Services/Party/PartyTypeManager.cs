@@ -4,8 +4,6 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics.Contracts;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Vaiona.Persistence.Api;
 
 namespace BExIS.Dlm.Services.Party
@@ -171,6 +169,29 @@ namespace BExIS.Dlm.Services.Party
             }
             // if any problem was detected during the commit, an exception will be thrown!
             return (true);
+        }
+
+        public PartyType FindById(long partyTypeId)
+        {
+            using (var uow = this.GetUnitOfWork())
+            {
+                var partyTypeRepository = uow.GetRepository<PartyType>();
+                return partyTypeRepository.Get(partyTypeId);
+            }
+        }
+
+        public PartyType FindByName(string entityTypeName)
+        {
+            using (var uow = this.GetUnitOfWork())
+            {
+                var partyTypeRepository = uow.GetRepository<PartyType>();
+                var partyTypes = partyTypeRepository.Query(p => p.Title == entityTypeName);
+
+                if (partyTypes.Count() != 1)
+                    return null;
+
+                return partyTypes.FirstOrDefault();
+            }
         }
 
         #endregion PartyType

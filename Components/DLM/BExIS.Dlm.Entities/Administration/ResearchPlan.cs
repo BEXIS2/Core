@@ -1,5 +1,5 @@
-﻿using System.Collections.Generic;
-using BExIS.Dlm.Entities.Data;
+﻿using BExIS.Dlm.Entities.Data;
+using System.Collections.Generic;
 using Vaiona.Entities.Common;
 
 /// <summary>
@@ -11,7 +11,7 @@ namespace BExIS.Dlm.Entities.Administration
     ///
     /// </summary>
     /// <remarks></remarks>        
-    public class ResearchPlan: BaseEntity
+    public class ResearchPlan : BaseEntity
     {
         public ResearchPlan()
         {

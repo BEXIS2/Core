@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace Vaiona.Entities.Security
 {
@@ -32,7 +31,7 @@ namespace Vaiona.Entities.Security
         {
             get
             {
-                var a = string.IsNullOrWhiteSpace(RuleBody)? new List<string>(): RuleBody.Replace(" | ", '|'.ToString()).Split('|').ToList();
+                var a = string.IsNullOrWhiteSpace(RuleBody) ? new List<string>() : RuleBody.Replace(" | ", '|'.ToString()).Split('|').ToList();
                 a.RemoveAll(p => string.IsNullOrWhiteSpace(p));
                 return (a);
             }

@@ -1,7 +1,7 @@
-﻿using System;
-using BExIS.Dlm.Entities.DataStructure;
-using System.Xml.Serialization;
+﻿using BExIS.Dlm.Entities.DataStructure;
 using Newtonsoft.Json;
+using System;
+using System.Xml.Serialization;
 
 /// <summary>
 ///
@@ -22,7 +22,7 @@ namespace BExIS.Dlm.Entities.Data
         /// <remarks></remarks>
         /// <seealso cref=""/>   
         [JsonProperty("v")]
-        
+
         public object Value { get; set; }
 
         /// <summary>

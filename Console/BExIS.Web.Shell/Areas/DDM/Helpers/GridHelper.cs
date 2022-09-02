@@ -1,9 +1,9 @@
-﻿using System;
+﻿using BExIS.Dlm.Entities.Data;
+using BExIS.Utils.NH.Querying;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Globalization;
-using BExIS.Dlm.Entities.Data;
-using BExIS.Utils.NH.Querying;
 using Telerik.Web.Mvc;
 using Telerik.Web.Mvc.Infrastructure.Implementation;
 

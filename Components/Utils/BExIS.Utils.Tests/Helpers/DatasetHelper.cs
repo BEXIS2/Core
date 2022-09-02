@@ -5,14 +5,10 @@ using BExIS.Dlm.Services.Administration;
 using BExIS.Dlm.Services.Data;
 using BExIS.Dlm.Services.DataStructure;
 using FluentAssertions;
-using NHibernate.Id.Insert;
 using System;
-using System.CodeDom;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace BExIS.Utils.Tests.Data.Helpers
 {
@@ -110,7 +106,7 @@ namespace BExIS.Utils.Tests.Data.Helpers
             throw new NotImplementedException();
         }
 
-        public Dataset GenerateTuplesForDataset(Dataset dataset, StructuredDataStructure dataStructure, long numberOfTuples,string username)
+        public Dataset GenerateTuplesForDataset(Dataset dataset, StructuredDataStructure dataStructure, long numberOfTuples, string username)
         {
             dataset.Status.Should().Be(DatasetStatus.CheckedIn);
             dataset.Should().NotBeNull();
@@ -128,10 +124,10 @@ namespace BExIS.Utils.Tests.Data.Helpers
                     DatasetVersion workingCopy = dm.GetDatasetWorkingCopy(dataset.Id);
 
                     DataTuple dt = new DataTuple();
-                    dt.VariableValues.Add(new VariableValue() { VariableId = dataStructure.Variables.First().Id, Value = r.Next()});
+                    dt.VariableValues.Add(new VariableValue() { VariableId = dataStructure.Variables.First().Id, Value = r.Next() });
                     dt.VariableValues.Add(new VariableValue() { VariableId = dataStructure.Variables.Skip(1).First().Id, Value = "Test" });
                     dt.VariableValues.Add(new VariableValue() { VariableId = dataStructure.Variables.Skip(2).First().Id, Value = Convert.ToDouble(r.Next()) });
-                    dt.VariableValues.Add(new VariableValue() { VariableId = dataStructure.Variables.Skip(3).First().Id, Value =  true});
+                    dt.VariableValues.Add(new VariableValue() { VariableId = dataStructure.Variables.Skip(3).First().Id, Value = true });
                     dt.VariableValues.Add(new VariableValue() { VariableId = dataStructure.Variables.Skip(4).First().Id, Value = "01.01.2017" });
                     dt.Dematerialize();
 
@@ -155,7 +151,8 @@ namespace BExIS.Utils.Tests.Data.Helpers
                 }
                 return dataset;
             }
-            catch (Exception ex) {
+            catch (Exception ex)
+            {
                 return null;
             }
             finally
@@ -181,7 +178,7 @@ namespace BExIS.Utils.Tests.Data.Helpers
 
                     DatasetVersion workingCopy = dm.GetDatasetWorkingCopy(dataset.Id);
 
-                    
+
 
                     List<DataTuple> tuples = new List<DataTuple>();
 
@@ -342,7 +339,7 @@ namespace BExIS.Utils.Tests.Data.Helpers
                     editedTuples.Add((DataTuple)dataTuple);
                 }
 
-             
+
 
                 return editedTuples;
             }

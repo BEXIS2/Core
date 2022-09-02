@@ -1,19 +1,17 @@
 using System;
-using System.Collections.Generic;
-using System.Xml;
-using System.Reflection;
-using System.Xml.Serialization;
 using System.Collections;
-using System.Globalization;
-using System.Threading;
+using System.Collections.Generic;
+using System.Reflection;
 using System.Text;
-using System.IO;
+using System.Threading;
+using System.Xml;
+using System.Xml.Serialization;
 
 namespace Vaiona.Core.Serialization
 {
     public class ObjGraphXmlSerializer : ObjGraphXmlSerializationBase
-    {   
-        Dictionary<Type, TypeInfo> typeCache = new Dictionary<Type, TypeInfo>();        
+    {
+        Dictionary<Type, TypeInfo> typeCache = new Dictionary<Type, TypeInfo>();
         Dictionary<Type, IDictionary<ObjKeyForCache, ObjInfo>> objCache = new Dictionary<Type, IDictionary<ObjKeyForCache, ObjInfo>>();
         int objCacheNextId = 0;
         SerializationOptions options;
@@ -65,12 +63,12 @@ namespace Vaiona.Core.Serialization
                 {
                     // set the type of the element to be a reference to the type ID
                     // since the element is no longer the only one of this type                    
-                    typeInfo.WriteTypeId(onlyElement);                    
+                    typeInfo.WriteTypeId(onlyElement);
                     onlyElement.RemoveAttribute("type");
                     onlyElement.RemoveAttribute("assembly");
                     typeInfo.OnlyElement = null;
                 }
-                typeInfo.WriteTypeId(element);                
+                typeInfo.WriteTypeId(element);
             }
             else
             {
@@ -82,7 +80,7 @@ namespace Vaiona.Core.Serialization
                 //typeCache.Add(objType, typeInfo);
                 //// add detailed type information
                 //WriteTypeToNode(element, objType);
-            }            
+            }
         }
 
         void WriteTypeToNode(XmlElement element, Type objType)
@@ -100,19 +98,19 @@ namespace Vaiona.Core.Serialization
                 {
                     // there is more than one element having this type
                     XmlElement e = doc.CreateElement("TypeInfo");
-                    kv.Value.WriteTypeId(e);                    
+                    kv.Value.WriteTypeId(e);
                     WriteTypeToNode(e, kv.Key);
                     element.AppendChild(e);
                 }
             }
             return element.HasChildNodes ? element : null;
-        }        
+        }
 
         public XmlDocument Serialize(object obj, int ver, string instanceName, string rootElementName)
         {
             XmlElement element = SerializeCore(instanceName, obj, ObjectType, rootElementName);
             element.SetAttribute("version", ver.ToString());
-            element.SetAttribute("culture", Thread.CurrentThread.CurrentCulture.ToString());            
+            element.SetAttribute("culture", Thread.CurrentThread.CurrentCulture.ToString());
             // add typeinfo
             XmlElement typeInfo = GetTypeInfoNode();
             if (typeInfo != null)
@@ -128,9 +126,9 @@ namespace Vaiona.Core.Serialization
         bool AddObjToCache(Type objType, object obj, XmlElement element)
         {
             ObjKeyForCache kfc = new ObjKeyForCache(obj);
-            IDictionary<ObjKeyForCache, ObjInfo> entry;            
+            IDictionary<ObjKeyForCache, ObjInfo> entry;
             if (objCache.TryGetValue(objType, out entry))
-            {                
+            {
                 // look for this particular object                
                 ObjInfo objInfoFound;
                 if (entry.TryGetValue(kfc, out objInfoFound))
@@ -144,7 +142,7 @@ namespace Vaiona.Core.Serialization
                     // write id to element
                     objInfoFound.WriteObjId(element);
                     return false;
-                }                
+                }
             }
             else
             {
@@ -183,7 +181,7 @@ namespace Vaiona.Core.Serialization
                 if (options.UseGraphSerialization && !AddObjToCache(objType, obj, element))
                 {
                     return element;
-                }                
+                }
                 // the object has just been added                
                 SetTypeInfo(objType, element);
 
@@ -226,7 +224,7 @@ namespace Vaiona.Core.Serialization
                     XmlWriter wr = XmlWriter.Create(sb, settings);
                     wr.WriteStartElement("value");
                     xmlSer.WriteXml(wr);
-                    wr.WriteEndElement();                    
+                    wr.WriteEndElement();
                     wr.Close();
 
                     element.InnerXml = sb.ToString();
@@ -243,7 +241,7 @@ namespace Vaiona.Core.Serialization
                     SerializeComplexType(obj, objType, element);
                     return element;
                 }
-                
+
                 if (objType.IsEnum)
                 {
                     object val = Enum.Format(objType, obj, "d");
@@ -251,7 +249,7 @@ namespace Vaiona.Core.Serialization
                 }
                 else
                 {
-                    if (objType.IsPrimitive || objType == typeof(string) || 
+                    if (objType.IsPrimitive || objType == typeof(string) ||
                         objType == typeof(DateTime) || objType == typeof(decimal))
                     {
                         element.SetAttribute("value", obj.ToString());
@@ -261,7 +259,7 @@ namespace Vaiona.Core.Serialization
                         // this is most probably a struct
                         SerializeComplexType(obj, objType, element);
                     }
-                }                    
+                }
             }
 
             return element;
@@ -296,27 +294,27 @@ namespace Vaiona.Core.Serialization
             //Type objType = obj.GetType();
             // get all instance fields
             IDictionary<string, MemberInfo> members = GetTypeMembersInfo(objType);
-            foreach (KeyValuePair<string, MemberInfo> member in members)                
-            {                    
+            foreach (KeyValuePair<string, MemberInfo> member in members)
+            {
                 // serialize field
-                 XmlElement e = null;
-                 if (member.Value.MemberType == MemberTypes.Field)
-                 {
-                     FieldInfo f = ((FieldInfo)member.Value);
-                     object value = f.GetValue(obj);
-                     Type effectiveType = (value.GetType() != typeof(object)) ? value.GetType() : f.FieldType;
-                     e = SerializeCore(member.Key, value, effectiveType, "Field");
-                 }
-                 else if (member.Value.MemberType == MemberTypes.Property)
-                 {
-                     PropertyInfo p = ((PropertyInfo)member.Value);
-                     object value = p.GetValue(obj, null);
-                     Type effectiveType = (value != null && value.GetType() != typeof(object)) ? value.GetType() : p.PropertyType;
-                     e = SerializeCore(member.Key, value, effectiveType, "Property");
-                 }
+                XmlElement e = null;
+                if (member.Value.MemberType == MemberTypes.Field)
+                {
+                    FieldInfo f = ((FieldInfo)member.Value);
+                    object value = f.GetValue(obj);
+                    Type effectiveType = (value.GetType() != typeof(object)) ? value.GetType() : f.FieldType;
+                    e = SerializeCore(member.Key, value, effectiveType, "Field");
+                }
+                else if (member.Value.MemberType == MemberTypes.Property)
+                {
+                    PropertyInfo p = ((PropertyInfo)member.Value);
+                    object value = p.GetValue(obj, null);
+                    Type effectiveType = (value != null && value.GetType() != typeof(object)) ? value.GetType() : p.PropertyType;
+                    e = SerializeCore(member.Key, value, effectiveType, "Property");
+                }
                 element.AppendChild(e);
             }
-        }        
+        }
 
         class ObjInfo
         {

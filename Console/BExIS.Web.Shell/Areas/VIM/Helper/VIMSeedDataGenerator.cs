@@ -1,9 +1,7 @@
 ﻿using BExIS.Security.Entities.Objects;
 using BExIS.Security.Services.Objects;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Web;
 using Vaiona.Web.Mvc.Modularity;
 
 namespace BExIS.Modules.Vim.UI.Helper
@@ -14,7 +12,7 @@ namespace BExIS.Modules.Vim.UI.Helper
         {
             using (FeatureManager featureManager = new FeatureManager())
             using (OperationManager operationManager = new OperationManager())
-            { 
+            {
                 try
                 {
                     Feature visualization =
@@ -32,7 +30,7 @@ namespace BExIS.Modules.Vim.UI.Helper
                     throw ex;
                 }
             }
-    
+
         }
 
         public void Dispose()

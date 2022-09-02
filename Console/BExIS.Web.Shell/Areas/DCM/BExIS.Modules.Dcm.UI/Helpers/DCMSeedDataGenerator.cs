@@ -291,7 +291,7 @@ namespace BExIS.Modules.Dcm.UI.Helpers
                     var metadataStructure = metadataStructureManager.Repo.Get().Where(m => m.Name.Equals("Basic ABCD")).FirstOrDefault();
                     entityTemplate.MetadataStructure = metadataStructure;
                     // default input fields , title, descritpion
-                    entityTemplate.MetadataFields = new List<int>(){ 4,1 };
+                    entityTemplate.MetadataFields = new List<int>() { 4, 1 };
 
                     // set entity 
                     entityTemplate.EntityType = entity;

@@ -1,9 +1,8 @@
-﻿using System;
+﻿using BExIS.Dcm.Wizard;
+using BExIS.IO.Transform.Validation.Exceptions;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using BExIS.Dcm.Wizard;
-using BExIS.IO.Transform.Validation.Exceptions;
-using BExIS.Utils.Data.Upload;
 
 namespace BExIS.Modules.Dcm.UI.Models
 {
@@ -15,7 +14,7 @@ namespace BExIS.Modules.Dcm.UI.Models
         public int DatasetId { get; set; }
 
         [Display(Name = "Dataset Title")]
-        public String  DatasetTitle { get; set; }
+        public String DatasetTitle { get; set; }
 
         [Display(Name = "Dataset Status")]
         public String DatasetStatus { get; set; }
@@ -59,7 +58,7 @@ namespace BExIS.Modules.Dcm.UI.Models
         //Sync or ASync updload
         [Display(Name = "Async")]
         public bool AsyncUpload { get; set; }
-        public string  AsyncUploadMessage { get; set; }
+        public string AsyncUploadMessage { get; set; }
 
 
         public StepInfo StepInfo { get; set; }

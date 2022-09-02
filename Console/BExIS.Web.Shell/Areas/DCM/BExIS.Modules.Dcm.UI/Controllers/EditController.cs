@@ -4,17 +4,8 @@ using BExIS.Dlm.Entities.Data;
 using BExIS.Dlm.Services.Data;
 using BExIS.Modules.Dcm.UI.Models.Edit;
 using BExIS.Security.Entities.Authorization;
-using BExIS.Security.Entities.Subjects;
 using BExIS.UI.Hooks;
-using BExIS.UI.Hooks.Caches;
-using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Web;
 using System.Web.Mvc;
-using Vaiona.Utils.Cfg;
 
 namespace BExIS.Modules.Dcm.UI.Controllers
 {

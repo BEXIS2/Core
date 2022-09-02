@@ -38,7 +38,7 @@ namespace BExIS.UI.Wizard
         /// </summary>
         /// <remarks></remarks>
         /// <seealso cref=""/>        
-        public Dictionary<String,object> Parameters { get; set; }
+        public Dictionary<String, object> Parameters { get; set; }
 
         /// <summary>
         ///

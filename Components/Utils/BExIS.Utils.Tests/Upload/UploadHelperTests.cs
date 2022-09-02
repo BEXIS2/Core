@@ -4,7 +4,6 @@ using BExIS.Dlm.Entities.DataStructure;
 using BExIS.Dlm.Services.Administration;
 using BExIS.Dlm.Services.Data;
 using BExIS.Dlm.Services.MetadataStructure;
-using BExIS.Utils;
 using BExIS.Utils.Config;
 using BExIS.Utils.Tests.Data.Helpers;
 using BExIS.Utils.Upload;
@@ -13,9 +12,6 @@ using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Vaiona.Persistence.Api;
 
 namespace BExIS.Utils.Data.Tests
 {

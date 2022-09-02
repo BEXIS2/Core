@@ -1,13 +1,4 @@
-﻿using System;
-using System.Linq;
-using System.Collections.Generic;
-using BExIS.Dlm.Entities.DataStructure;
-using BExIS.Dlm.Services.DataStructure;
-using System.Data;
-using BExIS.Dlm.Entities.Data;
-using BExIS.Dlm.Services.Data;
-
-namespace BExIS.Modules.Rpm.UI.Models
+﻿namespace BExIS.Modules.Rpm.UI.Models
 {
     public class Structure
     {
@@ -83,4 +74,3 @@ namespace BExIS.Modules.Rpm.UI.Models
         }
     }
 }
-    

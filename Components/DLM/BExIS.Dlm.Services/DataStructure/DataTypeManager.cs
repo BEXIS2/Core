@@ -1,16 +1,16 @@
-﻿using System.Collections.Generic;
-using System.Diagnostics.Contracts;
-using BExIS.Dlm.Entities.DataStructure;
-using Vaiona.Persistence.Api;
-using System.Linq;
+﻿using BExIS.Dlm.Entities.DataStructure;
 using System;
+using System.Collections.Generic;
+using System.Diagnostics.Contracts;
+using System.Linq;
+using Vaiona.Persistence.Api;
 
 namespace BExIS.Dlm.Services.DataStructure
 {
     public class DataTypeManager : IDisposable
     {
         private IUnitOfWork guow = null;
-        public DataTypeManager() 
+        public DataTypeManager()
         {
             //// define aggregate paths
             ////AggregatePaths.Add((Unit u) => u.ConversionsIamTheSource);            
@@ -55,7 +55,7 @@ namespace BExIS.Dlm.Services.DataStructure
         {
             Contract.Requires(!string.IsNullOrWhiteSpace(name));
             Contract.Ensures(Contract.Result<DataType>() != null && Contract.Result<DataType>().Id >= 0);
-            
+
             DataType u = new DataType()
             {
                 Name = name,
@@ -69,7 +69,7 @@ namespace BExIS.Dlm.Services.DataStructure
                 repo.Put(u);
                 uow.Commit();
             }
-            return (u);            
+            return (u);
         }
 
         public bool Delete(DataType entity)
@@ -82,7 +82,7 @@ namespace BExIS.Dlm.Services.DataStructure
                 IRepository<DataType> repo = uow.GetRepository<DataType>();
 
                 entity = repo.Reload(entity);
-                
+
                 // remove all associations
                 entity.ApplicableUnits.ToList().ForEach(u => u.AssociatedDataTypes.Remove(entity));
                 entity.ApplicableUnits.Clear();
@@ -136,7 +136,7 @@ namespace BExIS.Dlm.Services.DataStructure
                 repo.Put(merged);
                 uow.Commit();
             }
-            return (entity);    
+            return (entity);
         }
 
         #endregion

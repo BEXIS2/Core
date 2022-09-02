@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Collections.Generic;
 
 namespace BExIS.Dlm.Entities.MetadataStructure
 {
@@ -11,7 +8,7 @@ namespace BExIS.Dlm.Entities.MetadataStructure
 
         #region Methods
 
-        public MetadataCompoundAttribute(): base()
+        public MetadataCompoundAttribute() : base()
         {
             MetadataNestedAttributeUsages = new List<MetadataNestedAttributeUsage>();
         }

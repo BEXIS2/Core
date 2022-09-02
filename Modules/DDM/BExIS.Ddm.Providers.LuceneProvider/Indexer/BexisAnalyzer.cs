@@ -1,8 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using Lucene.Net.Analysis;
+﻿using Lucene.Net.Analysis;
 using Lucene.Net.Analysis.Standard;
 using Lucene.Net.SynonymEngine;
+using System;
+using System.Collections.Generic;
 
 /// <summary>
 ///
@@ -15,21 +15,21 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Indexer
     /// <remarks></remarks>        
     class BexisAnalyzer : Analyzer
     {
-        private String[] GERMAN_STOP_WORDS = 
-		{
-			"einer", "eine", "eines", "einem", "einen",
-			"der", "die", "das", "dass", "daß",
-			"du", "er", "sie", "es",
-			"was", "wer", "wie", "wir",
-			"und", "oder", "ohne", "mit",
-			"am", "im", "in", "aus", "auf",
-			"ist", "sein", "war", "wird",
-			"ihr", "ihre", "ihres",
-			"als", "für", "von", "aus",
-			"dich", "dir", "mich", "mir",
-			"mein", "kein", "schulze",
-			"durch", "wegen", "den", "im", "fur", "für",  "mit", "zur", "von"
-		};
+        private String[] GERMAN_STOP_WORDS =
+        {
+            "einer", "eine", "eines", "einem", "einen",
+            "der", "die", "das", "dass", "daß",
+            "du", "er", "sie", "es",
+            "was", "wer", "wie", "wir",
+            "und", "oder", "ohne", "mit",
+            "am", "im", "in", "aus", "auf",
+            "ist", "sein", "war", "wird",
+            "ihr", "ihre", "ihres",
+            "als", "für", "von", "aus",
+            "dich", "dir", "mich", "mir",
+            "mein", "kein", "schulze",
+            "durch", "wegen", "den", "im", "fur", "für",  "mit", "zur", "von"
+        };
 
         public ISynonymEngine SynonymEngine { get; private set; }
 
@@ -107,7 +107,7 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Indexer
             //result = new GermanStemFilter(result, excltable);
             //result = new PorterStemFilter(result);
             result = new SynonymFilter(result, SynonymEngine); // injects the synonyms. #
-       
+
             return result;
         }
 
