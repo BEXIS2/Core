@@ -118,6 +118,10 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\App\BExIS.App.Bootstrap\BExIS.App.Bootstrap.csproj">
+      <Project>{7D7FBF8E-37D7-4A4C-B40E-3F267E9B9760}</Project>
+      <Name>BExIS.App.Bootstrap</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\App\BExIS.App.Testing\BExIS.App.Testing.csproj">
       <Project>{0FCF7DE1-E8F2-484C-8638-EF759B11D8A2}</Project>
       <Name>BExIS.App.Testing</Name>
@@ -146,6 +150,9 @@
     <Compile Include="IOUtilityTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Transform\Input\AsciiReaderEncodingTest.cs" />
+    <Compile Include="Transform\Input\StructureAnalyzer_SuggestUnitTests.cs" />
+    <Compile Include="Transform\Input\StructureAnalyzer_SuggestDataTypeTests.cs" />
+    <Compile Include="Transform\Input\StructureAnalyzerTest.cs" />
     <Compile Include="Transform\Input\ExcelReaderTest.cs" />
     <Compile Include="Transform\Input\AsciiReaderTest.cs" />
     <Compile Include="Transform\Input\DataReaderTests.cs" />

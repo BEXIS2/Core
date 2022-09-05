@@ -105,6 +105,7 @@
     <Compile Include="Hooks\View.cs" />
     <Compile Include="Models\DataTable.cs" />
     <Compile Include="Models\FileUploader.cs" />
+    <Compile Include="Models\ListItem.cs" />
     <Compile Include="Models\Menu.cs" />
     <Compile Include="Models\ModuleSettings.cs" />
     <Compile Include="Models\Treeview.cs" />
@@ -123,7 +124,7 @@
       <Name>BExIS.Security.Entities</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\AAA\BExIS.Security.Services\BExIS.Security.Services.csproj">
-      <Project>{681C8BC4-55F0-4F43-A685-90E246A88CB1}</Project>
+      <Project>{681c8bc4-55f0-4f43-a685-90e246a88cb1}</Project>
       <Name>BExIS.Security.Services</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\DLM\BExIS.Dlm.Entities\BExIS.Dlm.Entities.csproj">
@@ -138,6 +139,10 @@
       <Project>{5C4C8570-A53B-4191-A414-DE028AAAF36A}</Project>
       <Name>BExIS.IO.Transform.Input</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\IO\BExIS.IO\BExIS.IO.csproj">
+      <Project>{E4795F06-20C2-4C4C-A720-9A79896384DF}</Project>
+      <Name>BExIS.IO</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\Utils\BExIS.Utils.Config\BExIS.Utils.Config.csproj">
       <Project>{6EAD7D02-02F7-42FF-85E4-90BB892D3846}</Project>
       <Name>BExIS.Utils.Config</Name>
@@ -147,7 +152,7 @@
       <Name>BExIS.Utils.NH</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\Utils\BExIS.Utils\BExIS.Utils.csproj">
-      <Project>{782B71C1-707F-4AB1-80E9-90D2880635B4}</Project>
+      <Project>{782b71c1-707f-4ab1-80e9-90d2880635b4}</Project>
       <Name>BExIS.Utils</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\Vaiona\Vaiona.Utils\Vaiona.Utils.csproj">

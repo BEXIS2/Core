@@ -1,4 +1,5 @@
-﻿using BExIS.Xml.Helpers;
+﻿using BExIS.IO;
+using BExIS.Xml.Helpers;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -125,8 +126,11 @@ namespace BExIS.UI.Hooks
 
             if (File.Exists(filepath)) // check if file exist
             {
+                FileHelper.WaitForFile(filepath); // wait if the file is still open
+
                 // convert json to object
                 cache = JsonConvert.DeserializeObject<T>(File.ReadAllText(filepath));
+                
             }
 
             return cache;
@@ -147,6 +151,8 @@ namespace BExIS.UI.Hooks
             string directory = Path.Combine(AppConfiguration.DataPath, _entity + "s", id.ToString());
             // combine datapath + path + filename
             string filepath = Path.Combine(directory, filename);
+
+            FileHelper.WaitForFile(filepath); // wait if the file is still open
 
             if (File.Exists(filepath)) File.Delete(filepath);// check if file exist, delete maybe?
 

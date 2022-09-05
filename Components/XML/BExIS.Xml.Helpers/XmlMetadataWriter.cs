@@ -770,7 +770,7 @@ namespace BExIS.Xml.Helpers
                     if (attributeRole != null)
                     {
                         XElement attribute = Get(attributeTypeName, number, attributeRole);
-                        if (value != null) attribute.SetValue(value.ToString());
+                        if(value!=null) attribute.SetValue(value.ToString());
                         else attribute.SetValue(string.Empty);
                     }
                 }

@@ -31,6 +31,8 @@
     <TargetFrameworkProfile />
     <PostSharpHostConfigurationFile>Web.config</PostSharpHostConfigurationFile>
     <DontImportPostSharp>True</DontImportPostSharp>
+    <TypeScriptCompileBlocked>True</TypeScriptCompileBlocked>
+    <TypeScriptCompileOnSaveEnabled>False</TypeScriptCompileOnSaveEnabled>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -59,6 +61,7 @@
     <Compile Include="Controllers\CreateController.cs" />
     <Compile Include="Controllers\EditController.cs" />
     <Compile Include="Controllers\EntityTemplatesController.cs" />
+    <Compile Include="Controllers\Hooks\DataDescriptionController.cs" />
     <Compile Include="Controllers\Hooks\AttachmentUploadController.cs" />
     <Compile Include="Controllers\Hooks\FileUploadController.cs" />
     <Compile Include="Controllers\Legacy\AttachmentsController.cs" />
@@ -89,6 +92,7 @@
     <Compile Include="Controllers\Legacy\SubmitValidationController.cs" />
     <Compile Include="Controllers\Hooks\MetadataController.cs" />
     <Compile Include="Controllers\LinkController.cs" />
+    <Compile Include="Controllers\StructureSuggestionController.cs" />
     <Compile Include="Controllers\Views\MessagesController.cs" />
     <Compile Include="Controllers\TestController.cs" />
     <Compile Include="Controllers\Hooks\ValidationController.cs" />
@@ -106,6 +110,7 @@
     <Compile Include="Hooks\AttachmentViewHook.cs" />
     <Compile Include="Hooks\DataStructurePreviewHook.cs" />
     <Compile Include="Hooks\DataHook.cs" />
+    <Compile Include="Hooks\DataDescriptionHook.cs" />
     <Compile Include="Hooks\LinkViewHook.cs" />
     <Compile Include="Hooks\LinkEditHook.cs" />
     <Compile Include="Hooks\AttachmentEditHook.cs" />
@@ -125,6 +130,7 @@
     <Compile Include="Models\CreateDataset\StepModelHelper.cs" />
     <Compile Include="Models\Create\CreateModel.cs" />
     <Compile Include="Models\EasyUploadSummaryModel.cs" />
+    <Compile Include="Models\Edit\DataDescriptionModel.cs" />
     <Compile Include="Models\Edit\EditModel.cs" />
     <Compile Include="Models\EntityReference\ReferenceModels.cs" />
     <Compile Include="Models\EntityTemplates\EntityTemplateModels.cs" />
@@ -148,6 +154,7 @@
     <Compile Include="Models\SelectMetaDataModel.cs" />
     <Compile Include="Models\SelectSheetFormatModel.cs" />
     <Compile Include="Models\SelectVerificationModel.cs" />
+    <Compile Include="Models\StructureSuggestion\StructureSuggestionModel.cs" />
     <Compile Include="Models\SummaryModel.cs" />
     <Compile Include="Models\TestModel.cs" />
     <Compile Include="Models\UploadWizardParameters.cs" />
@@ -522,6 +529,7 @@
     <Content Include="Scripts\svelte\entities.js.map" />
     <Content Include="Scripts\svelte\messages.js.map" />
     <Content Include="Scripts\svelte\view.js.map" />
+    <Content Include="Views\StructureSuggestion\Index.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

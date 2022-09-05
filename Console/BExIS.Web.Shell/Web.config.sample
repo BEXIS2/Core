@@ -273,11 +273,5 @@
 	<telerik>
 		<webAssets useTelerikContentDeliveryNetwork="false" />
 	</telerik>
-	<glimpse defaultRuntimePolicy="On" endpointBaseUri="~/Glimpse.axd">
-		<!--
-          For more information on how to configure Glimpse, please visit http://getglimpse.com/Help/Configuration
-          or access {your site}/Glimpse.axd for even more details and a Configuration Tool to support you.
-      -->
-	</glimpse>
+	
 </configuration>
-<!--ProjectGuid: E5128814-4541-45C8-A9E6-6C91A7E3D1E2-->

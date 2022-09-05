@@ -84,6 +84,29 @@ namespace BExIS.IO.Transform.Input
         }
 
         /// <summary>
+        /// Get TextSeperator based on string as name 
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>
+        /// <param name="seperator">Name of TextSeperator</param>       
+        /// <returns>TextSeperator as enum TextSeperator</returns>
+        public static TextSeperator GetSeperator(char seperator)
+        {
+            switch (seperator)
+            {
+                case ',':
+                    return TextSeperator.comma;
+                case ';':
+                    return TextSeperator.semicolon;
+                case ' ':
+                    return TextSeperator.space;
+                case '\t':
+                    return TextSeperator.tab;
+                default: return TextSeperator.tab;
+            }
+        }
+
+        /// <summary>
         /// Get a Textseparator as a Character
         /// </summary>
         /// <param name="sep"></param>

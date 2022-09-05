@@ -21,50 +21,6 @@ namespace BExIS.Modules.Dcm.UI.Models.Metadata
         {
             Source = source;
 
-
-
-            //if (Source is MetadataAttributeUsage)
-            //{
-
-            //    MetadataAttributeUsage mau = (MetadataAttributeUsage)Source;
-
-            //    if (mau.MetadataAttribute.Self is MetadataCompoundAttribute)
-            //    {
-            //        MetadataCompoundAttribute mca = (MetadataCompoundAttribute)mau.MetadataAttribute.Self;
-
-            //        if (mca != null)
-            //        {
-            //            foreach (MetadataNestedAttributeUsage usage in mca.MetadataNestedAttributeUsages)
-            //            {
-            //                if (UsageHelper.IsSimple(usage))
-            //                {
-            //                    MetadataAttributeModels.Add(MetadataAttributeModel.Convert(usage, mau, metadataStructureId, Number));
-            //                }
-            //            }
-            //        }
-            //    }
-            //}
-
-            //if (Source is MetadataNestedAttributeUsage)
-            //{
-            //    MetadataNestedAttributeUsage mnau = (MetadataNestedAttributeUsage)Source;
-            //    if (mnau.Member.Self is MetadataCompoundAttribute)
-            //    {
-            //        MetadataCompoundAttribute mca = (MetadataCompoundAttribute)mnau.Member.Self;
-
-            //        if (mca != null)
-            //        {
-            //            foreach (MetadataNestedAttributeUsage usage in mca.MetadataNestedAttributeUsages)
-            //            {
-            //                if (UsageHelper.IsSimple(usage))
-            //                {
-            //                    MetadataAttributeModels.Add(MetadataAttributeModel.Convert(usage, mnau, metadataStructureId, Number));
-            //                }
-            //            }
-            //        }
-            //    }
-            //}
-
             if (Source is MetadataPackageUsage)
             {
                 MetadataPackageUsage mpu = (MetadataPackageUsage)Source;

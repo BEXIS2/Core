@@ -132,13 +132,15 @@ function getLocalConfig(configName)
 }
 
 export default [
-	 getLocalConfig("create"),
-		getConfig("create"),
-		getLocalConfig("entities"),
-		getConfig("entities"),
-		getConfig("view"),
-		getLocalConfig("view"),
+	 // getLocalConfig("create"),
+		// getConfig("create"),
+		// getLocalConfig("entities"),
+		// getConfig("entities"),
+		// // getConfig("view"),
+		// // getLocalConfig("view"),
 		getLocalConfig("edit"),
 		getConfig("edit"),
-		getConfig("messages")
+		// getConfig("messages"),
+		getLocalConfig("structuresuggestion"),
+		getConfig("structuresuggestion")
 ]

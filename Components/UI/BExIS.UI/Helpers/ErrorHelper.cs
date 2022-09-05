@@ -1,4 +1,5 @@
-﻿using BExIS.Security.Services.Utilities;
+﻿
+using BExIS.Security.Services.Utilities;
 using BExIS.Utils.Config;
 using Vaiona.Logging;
 

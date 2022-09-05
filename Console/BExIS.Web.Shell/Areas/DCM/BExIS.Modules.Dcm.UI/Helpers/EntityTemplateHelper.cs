@@ -3,6 +3,7 @@ using BExIS.Dlm.Services.Data;
 using BExIS.Dlm.Services.MetadataStructure;
 using BExIS.Modules.Dcm.UI.Models.EntityTemplate;
 using BExIS.Security.Services.Objects;
+using BExIS.UI.Models;
 using System.Collections.Generic;
 
 namespace BExIS.Modules.Dcm.UI.Helpers
@@ -96,8 +97,8 @@ namespace BExIS.Modules.Dcm.UI.Helpers
             model.NotificationGroups = entityTemplate.NotificationGroups != null ? entityTemplate.NotificationGroups : new List<long>();
             model.MetadataFields = entityTemplate.MetadataFields != null ? entityTemplate.MetadataFields : new List<int>();
 
-            model.MetadataStructure = new EntityTemplateModel.KvP(entityTemplate.MetadataStructure.Id, entityTemplate.MetadataStructure.Name);
-            model.EntityType = new EntityTemplateModel.KvP(entityTemplate.EntityType.Id, entityTemplate.EntityType.Name);
+            model.MetadataStructure = new ListItem(entityTemplate.MetadataStructure.Id, entityTemplate.MetadataStructure.Name);
+            model.EntityType = new ListItem(entityTemplate.EntityType.Id, entityTemplate.EntityType.Name);
 
 
             return model;

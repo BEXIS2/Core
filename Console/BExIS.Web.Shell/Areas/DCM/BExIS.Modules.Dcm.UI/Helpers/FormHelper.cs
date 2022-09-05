@@ -8,6 +8,7 @@ using BExIS.Modules.Dcm.UI.Models.Metadata;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Vaiona.Persistence.Api;
 
 namespace BExIS.Modules.Dcm.UI.Helpers
 {
@@ -130,7 +131,8 @@ namespace BExIS.Modules.Dcm.UI.Helpers
 
             // set the flag tru if the attribute is one where the complex object will be fill from
             // e.g. User: name -> name is a main attribute, so its possible so select user by name
-            mappingSelectionField = MappingUtils.PartyAttrIsMain(current.Id, type);
+            if(partySimpleMappingExist || partyComplexMappingExist)
+                mappingSelectionField = MappingUtils.PartyAttrIsMain(current.Id, type);
 
             // in case the parent was mapped as a complex object, 
             // you have to check which of the simple fields is the selection field. 
@@ -216,6 +218,100 @@ namespace BExIS.Modules.Dcm.UI.Helpers
             }
 
             return false;
+        }
+
+        public static void ClearCache()
+        {
+            System.Web.HttpContext.Current.Session["MetadataAttributeUsages"] = null;
+            System.Web.HttpContext.Current.Session["MetadataNestedAttributeUsages"] = null;
+            System.Web.HttpContext.Current.Session["MetadataPackageUsages"] = null;
+        }
+
+        public static IList<MetadataAttributeUsage> CachedMetadataAttributeUsages()
+        {
+            string key = "MetadataAttributeUsages";
+            // System.Web.HttpContext may not existing during the async upload, so check wheter the context exist 
+            if (System.Web.HttpContext.Current != null)
+            {
+                if (System.Web.HttpContext.Current.Session[key] != null)
+                {
+                    return (List<MetadataAttributeUsage>)System.Web.HttpContext.Current.Session[key];
+                }
+                else
+                {
+                    using (IUnitOfWork uow = (new object()).GetUnitOfWork())
+                    {
+                        var usages = uow.GetReadOnlyRepository<MetadataAttributeUsage>().Get();
+                        System.Web.HttpContext.Current.Session[key] = usages;
+                        return usages;
+                    }
+                }
+            }
+            else // if the System.Web.HttpContext is not existing, mappings need to be loaded by every call
+            {
+                using (IUnitOfWork uow = (new object()).GetUnitOfWork())
+                {
+                    return uow.GetReadOnlyRepository<MetadataAttributeUsage>().Get();
+                }
+            }
+        }
+
+        public static IList<MetadataNestedAttributeUsage> CachedMetadataNestedAttributeUsages()
+        {
+            string key = "MetadataNestedAttributeUsages";
+            // System.Web.HttpContext may not existing during the async upload, so check wheter the context exist 
+            if (System.Web.HttpContext.Current != null)
+            {
+                if (System.Web.HttpContext.Current.Session[key] != null)
+                {
+                    return (List<MetadataNestedAttributeUsage>)System.Web.HttpContext.Current.Session[key];
+                }
+                else
+                {
+                    using (IUnitOfWork uow = (new object()).GetUnitOfWork())
+                    {
+                        var usages = uow.GetReadOnlyRepository<MetadataNestedAttributeUsage>().Get();
+                        System.Web.HttpContext.Current.Session[key] = usages;
+                        return usages;
+                    }
+                }
+            }
+            else // if the System.Web.HttpContext is not existing, mappings need to be loaded by every call
+            {
+                using (IUnitOfWork uow = (new object()).GetUnitOfWork())
+                {
+                    return uow.GetReadOnlyRepository<MetadataNestedAttributeUsage>().Get();
+                }
+            }
+        }
+
+        public static IList<MetadataPackageUsage> CachedMetadataPackageUsages()
+        {
+            string key = "MetadataPackageUsages";
+            // System.Web.HttpContext may not existing during the async upload, so check wheter the context exist 
+            if (System.Web.HttpContext.Current != null)
+            {
+                if (System.Web.HttpContext.Current.Session[key] != null)
+                {
+                    return (List<MetadataPackageUsage>)System.Web.HttpContext.Current.Session[key];
+                }
+                else
+                {
+                    using (IUnitOfWork uow = (new object()).GetUnitOfWork())
+                    {
+                        var usages = uow.GetReadOnlyRepository<MetadataPackageUsage>().Get();
+                        System.Web.HttpContext.Current.Session[key] = usages;
+                        return usages;
+                    }
+                }
+            }
+            else // if the System.Web.HttpContext is not existing, mappings need to be loaded by every call
+            {
+                using (IUnitOfWork uow = (new object()).GetUnitOfWork())
+                {
+                    return uow.GetReadOnlyRepository<MetadataPackageUsage>().Get();
+                }
+            }
         }
     }
 }

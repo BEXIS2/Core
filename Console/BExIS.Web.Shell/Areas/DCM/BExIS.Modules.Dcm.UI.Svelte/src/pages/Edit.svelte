@@ -40,7 +40,7 @@ async function load()
   // load model froms server
   model = await getEdit(id);
 
-  console.log(model);
+  console.log("editmodel", model);
 
   hooks = model.hooks;
   views = model.views;
@@ -128,7 +128,7 @@ let visible=false;
 
 </div>
 <!-- ResultMessageView -->
-<Message bind:view={messageView} {id} {version}/>
+<!-- <Message bind:view={messageView} {id} {version}/> -->
 
 </div>
 </div>

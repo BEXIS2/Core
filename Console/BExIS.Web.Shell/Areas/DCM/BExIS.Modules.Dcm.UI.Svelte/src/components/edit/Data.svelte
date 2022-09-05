@@ -5,6 +5,7 @@
  import HookContainer from '../HookContainer.svelte';
  import Validation from '../../pages/hooks/Validation.svelte'
  import FileUpload from '../../pages/hooks/FileUpload.svelte'
+ import DataDescription from '../../pages/hooks/DataDescription.svelte'
  import Metadata from '../../pages/hooks/Metadata.svelte'
  import {Spinner, Row, Col} from 'sveltestrap';
  import Fa from 'svelte-fa/src/fa.svelte'
@@ -22,8 +23,6 @@
 
  $:showValidation = false;
 
-
-
  $:hooks, setHooks(hooks);
 
  function setHooks(_hooks)
@@ -36,7 +35,11 @@
     if(h.name == "datadescription"){ dataDescriptionHook = h; }
     if(h.name == "submit"){ submitHook = h; }
 
+   
   });
+
+    console.log("_hooks",_hooks);
+    console.log("dataDescriptionHook",dataDescriptionHook);
  }
 
 function errorHandler(e)
@@ -62,17 +65,18 @@ function errorHandler(e)
 </div>
 </Col> <!-- Data Title-->
 <Col xs="10"><!-- Data Hooks-->
+
     <HookContainer displayName = {dataDescriptionHook.displayName}>
       <div slot="view">
-        <Hook {id} {version} {...dataDescriptionHook} />
+        <DataDescription {id} {version} hook={dataDescriptionHook} />
       </div>
     </HookContainer>
 
     <HookContainer displayName = 
-    {fileUploadHook.displayName} 
-    let:errorHandler 
-    let:successHandler 
-    content=9>
+      {fileUploadHook.displayName} 
+      let:errorHandler 
+      let:successHandler 
+      content=9>
       <div slot="view">
         <FileUpload {id} {version} hook={fileUploadHook}  on:error={(e)=> errorHandler(e)} on:success={(e)=> successHandler(e)} />
       </div>
