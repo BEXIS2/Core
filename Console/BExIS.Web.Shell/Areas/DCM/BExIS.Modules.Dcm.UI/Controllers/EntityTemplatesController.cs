@@ -68,19 +68,6 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             }
         }
 
-        //[JsonNetFilter]
-        //[HttpPost]
-        //public JsonResult Create(EntityTemplateModel entityTemplate)
-        //{
-        //    using (var entityTemplateManager = new EntityTemplateManager())
-        //    {
-        //        var result = entityTemplateManager.Create(EntityTemplateHelper.ConvertTo(entityTemplate));
-        //        if(result != null) return Json(true);
-        //    }
-
-        //    return Json(false);
-        //}
-
         [JsonNetFilter]
         [HttpPost]
         public JsonResult Update(EntityTemplateModel entityTemplate)

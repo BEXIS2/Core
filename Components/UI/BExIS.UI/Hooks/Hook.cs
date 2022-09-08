@@ -74,7 +74,7 @@ namespace BExIS.UI.Hooks
         {
             using (FeaturePermissionManager featurePermissionManager = new FeaturePermissionManager())
             {
-                return featurePermissionManager.HasAccess<User>(username, Start.Split('/')[0], Start.Split('/')[1], "*");
+                return featurePermissionManager.HasAccess<User>(username, Start.Split('/')[1], Start.Split('/')[2], "*");
             }
         }
 

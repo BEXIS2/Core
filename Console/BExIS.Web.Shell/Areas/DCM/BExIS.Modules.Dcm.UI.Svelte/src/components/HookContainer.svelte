@@ -8,15 +8,17 @@
  export let displayName;
  export let content=9;
  export let visible = true;
+ export let status=0;
 
  $:error = [];
  $:success = null;
  $:warnings = [];
 
+ let isActive = false;
+
 onMount(async () => {
-
-
-
+  console.log("status",status)
+  isActive = setActive(status);
 })
 
 function errorHandler (e){ 
@@ -36,15 +38,28 @@ function warningHandler (e){
   console.log("handle warnings here");
   console.log( e.detail.text)
 }
+
+
+// visibility
+function setActive(status)
+{
+  if(status == 0 ||status == 1 || status==5) // disabled || access denied || inactive
+  {
+    return false;
+  }
+    
+  return true; // every other status enable the hook
+}
+
 </script>
 
-{#if visible}
+{#if visible && isActive}
 <div class="hook-container" >
  <Row> 
  
   <Col xs="{2}">
     <div class="title-container">
-      <b><Fa icon={faAngleRight} /> {displayName}</b>
+      <b><Fa icon={faAngleRight} /> {displayName}</b> 
     </div>
   </Col>
 
@@ -61,11 +76,6 @@ function warningHandler (e){
 
     <slot name="view" {errorHandler} {successHandler} {warningHandler}> render view</slot>
   </Col>
-  <!-- {#if activeSettings}
-  <Col class="col-sm-4"> 
-    <slot name="settings"> settings area</slot>
-  </Col>
-  {/if} -->
  </Row>
 </div>
 

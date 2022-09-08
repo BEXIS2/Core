@@ -46,6 +46,8 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 {
                     datasetVersion = datasetManager.GetDatasetLatestVersion(id);
                     model.Version = datasetManager.GetDatasetVersionCount(id); // get number of the latest version
+
+                    
                 }
                 else // get specific
                 {
@@ -65,6 +67,14 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 string userName = BExISAuthorizeHelper.GetAuthorizedUserName(HttpContext);
 
                 model.Hooks.ForEach(h => h.Check(id, userName));
+
+                // add informations disbaled hooks from the enity template
+                // based on the entity template, hooks can be disabled.
+                foreach (var hook in model.Hooks)
+                {
+                    if (datasetVersion.Dataset.EntityTemplate.DisabledHooks.Contains(hook.DisplayName))
+                        hook.Status = HookStatus.Disabled;
+                }
 
                 return Json(model, JsonRequestBehavior.AllowGet);
             }

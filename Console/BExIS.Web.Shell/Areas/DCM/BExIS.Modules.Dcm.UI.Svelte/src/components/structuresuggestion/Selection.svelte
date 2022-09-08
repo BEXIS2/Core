@@ -9,6 +9,7 @@
 
  import {generate}  from '../../services/StructureSuggestionCaller'
  import MissingValues from './MissingValues.svelte'
+ import FileReaderInfo from '../_general/FileReaderInfo.svelte';
 
  
  
@@ -266,7 +267,8 @@
  
  <div id="structure-suggestion-container" on:mousedown="{beginDrag}" on:mouseup="{endDrag}">
   <form on:submit|preventDefault={generateDS}>
-   <Row>
+    <FileReaderInfo {...model} bind:delimeter={model.delimeter}></FileReaderInfo>
+   <!-- <Row>
      <Col>
        <FormGroup>
          <Label>Delimeter</Label>
@@ -300,9 +302,9 @@
            {/each}
          </Input>
       </FormGroup>
-     </Col>
+     </Col> -->
  
-   </Row>
+   <!-- </Row> -->
     <FormGroup>
      <Button type="button"  color="danger" on:click={()=> onclickHandler(MARKER_TYPE.VARIABLE)}>Variable</Button>
      <Button type="button"  color="success" on:click={()=>onclickHandler(MARKER_TYPE.UNIT)}>Unit</Button>

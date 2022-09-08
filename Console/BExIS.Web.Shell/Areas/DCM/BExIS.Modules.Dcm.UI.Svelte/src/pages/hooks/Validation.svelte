@@ -1,6 +1,9 @@
 <script>
 import {getHookStart}  from '../../services/Caller'
-import { Spinner, Button, Modal,ModalBody, ModalFooter,ModalHeader } from 'sveltestrap';
+import { latestFileUploadDate, latestDataDescriptionDate } from '../../stores/editStores';
+import { Spinner, Alert } from 'sveltestrap';
+import { onMount }from 'svelte'
+
 
 export let id=0;
 export let version=1;
@@ -11,37 +14,57 @@ export let description="";
 
 let model;
 
-export let open = false;
-const toggle = () => (open = !open);
+$:$latestFileUploadDate, reload()
+$:$latestDataDescriptionDate, reload()
+
+onMount(async () => {
+  load();
+})
 
 async function load()
 {
-  const res = await fetch(url);
+  //const res = await fetch(url);
   model = await getHookStart(start,id,version);
+  console.log("validation",model);
 }
 
+async function reload()
+{
+  console.log("run validation");
+  load();
+} 
+
 </script>
-<Modal isOpen={open} on:close on:open={load}>
-  <ModalHeader {toggle}>{displayName}</ModalHeader>
-  <ModalBody>
-    {#if model}
+  
+  {#if model}
 
-      <!-- valid-->  
-      {#if model.isValid==true}
-      <p>imported data is valid</p>
-      {/if}
-      <!-- invalid-->  
-      {#if model.isValid==false}
-      <p>imported data is invalid</p>
-      {/if}
+    {#if model.isValid == true}
+          <Alert color="success" dismissible>valid</Alert>  
+      {:else}
+          <Alert color="danger" dismissible>not valid</Alert>
 
-      {:else} <!-- while data is not loaded show a loading information -->
+          <b>errors</b>
+          
+          <ul>
+            {#each model.errors as error}
+              <!-- content here -->
+              <li>{error}</li>
+            {/each}
+          </ul>
 
-      <Spinner color="info" size="sm" type ="grow" text-center />
-
+          <b>sorted errors</b>
+          <ul>
+            {#each model.sortedErrors as error}
+            <!-- content here -->
+            <li >{error}</li>
+            {/each}
+          </ul>
     {/if}
-  </ModalBody>
-  <ModalFooter>
-    <Button color="primary" on:click={toggle} >Cancel</Button>
-  </ModalFooter>
-</Modal>
+  
+
+
+    {:else} <!-- while data is not loaded show a loading information -->
+
+    <Spinner color="info" size="sm" type ="grow" text-center />
+
+  {/if}

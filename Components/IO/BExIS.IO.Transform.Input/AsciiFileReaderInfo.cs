@@ -130,6 +130,29 @@ namespace BExIS.IO.Transform.Input
         }
 
         /// <summary>
+        /// Get a Textseparator as a Character
+        /// </summary>
+        /// <param name="sep"></param>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>
+        /// <returns>TextSeperator as character</returns>
+        public static char GetSeperator(int sep)
+        {
+            switch (sep)
+            {
+                case 44:
+                    return ',';
+                case 59:
+                    return ';';
+                case 32:
+                    return ' ';
+                case 9:
+                default:
+                    return '\t';
+            }
+        }
+
+        /// <summary>
         /// Get Textmarker enum type as String
         /// </summary>
         /// <remarks></remarks>

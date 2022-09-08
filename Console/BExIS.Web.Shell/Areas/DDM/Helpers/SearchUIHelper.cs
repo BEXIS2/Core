@@ -396,7 +396,7 @@ namespace BExIS.Modules.Ddm.UI.Helpers
                         else
                             dr["VariableId"] = "n/a";
 
-                        if (sdvu.DataType != null)
+                        if (sdvu.VariableTemplate != null)
                             dr["Category"] = sdvu.VariableTemplate.Label;
                         else
                             dr["Category"] = "n/a";

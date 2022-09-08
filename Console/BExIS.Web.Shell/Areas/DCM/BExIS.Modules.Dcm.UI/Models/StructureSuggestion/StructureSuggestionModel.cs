@@ -64,9 +64,7 @@ namespace BExIS.Modules.Dcm.UI.Models.StructureSuggestion
             Delimeters = new List<ListItem>();
             Decimals = new List<ListItem>();
             TextMarkers = new List<ListItem>();
-
             Markers = new List<Marker>();
-
             Variables = new List<VariableModel>();
         }
     }

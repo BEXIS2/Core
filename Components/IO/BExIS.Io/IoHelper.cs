@@ -39,10 +39,10 @@ namespace BExIS.IO
     /// <remarks></remarks>        
     public enum TextSeperator
     {
-        tab,
-        comma,
-        semicolon,
-        space
+        tab = 9,
+        comma = 44,
+        semicolon = 59,
+        space = 32
     }
 
     /// <summary>

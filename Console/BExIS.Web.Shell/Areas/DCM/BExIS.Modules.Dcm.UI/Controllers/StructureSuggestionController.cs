@@ -172,8 +172,8 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 cache.AsciiFileReaderInfo.Decimal = (DecimalCharacter)model.Decimal;
                 cache.AsciiFileReaderInfo.Seperator = (TextSeperator)model.Delimeter;
                 cache.AsciiFileReaderInfo.TextMarker = (TextMarker)model.TextMarker;
-                cache.AsciiFileReaderInfo.Data = model.Markers.Where(m=>m.Type.Equals("data")).FirstOrDefault().Row;
-                cache.AsciiFileReaderInfo.Variables = model.Markers.Where(m=>m.Type.Equals("variable")).FirstOrDefault().Row;
+                cache.AsciiFileReaderInfo.Data = model.Markers.Where(m=>m.Type.Equals("data")).FirstOrDefault().Row+1; // add 1 to store nit the index but the row
+                cache.AsciiFileReaderInfo.Variables = model.Markers.Where(m=>m.Type.Equals("variable")).FirstOrDefault().Row+1;// add 1 to store nit the index but the row
 
 
                 // update modifikation date
@@ -334,7 +334,6 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 return Json(list, JsonRequestBehavior.AllowGet);
             }
         }
-
 
         private List<ListItem> getDelimeters()
         {
