@@ -5,7 +5,7 @@ import {Api} from "@bexis2/svelte-bexis2-core-ui";
 /****************/ 
 /* Create*/
 /****************/ 
-export const getStructureSuggestion = async (id, file, version) => {
+export const load = async (id, file, version) => {
  try {
    const response = await Api.get('/dcm/StructureSuggestion/load?id='+ id +'&&file='+file+'&&version='+version );
    return response.data;
@@ -26,6 +26,15 @@ export const getDelimeters = async (id, file, version) => {
 export const generate = async (data) => {
   try {
     const response = await Api.post('/dcm/StructureSuggestion/generate',data);
+    return response.data;
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+export const store = async (data) => {
+  try {
+    const response = await Api.post('/dcm/StructureSuggestion/store',data);
     return response.data;
   } catch (error) {
     console.error(error);

@@ -7,13 +7,14 @@
  import {Spinner,  FormGroup, Input, Label,Table, Button, Col, Row } from 'sveltestrap';
  import {faTrashAlt, faPenToSquare } from '@fortawesome/free-regular-svg-icons'
 
- import {generate}  from '../../services/StructureSuggestionCaller'
- import MissingValues from './MissingValues.svelte'
- import FileReaderInfo from '../_general/FileReaderInfo.svelte';
+ import {store, load}  from '../../services/StructureSuggestionCaller'
+ import MissingValues from '../structuresuggestion/MissingValues.svelte'
 
- 
- 
- export let model = null;
+ export let id;
+ export let file="";
+
+
+ let model = null;
 
  let isDrag = false;
  let state = [];
@@ -40,14 +41,16 @@
 
  onMount(async () => {
   console.log("start selection suggestion");
-  console.log("model",model);
-  load();
+  init();
  })
  
- async function load()
+ async function init()
  {
    console.log("load selection");
+   model = await load(id,file);
+   
    setTableInfos(model.preview, String.fromCharCode(model.delimeter));
+   setMarkers(model.markers);
 
  }
  
@@ -67,6 +70,19 @@
  
    console.log(state);
    
+ }
+
+ function setMarkers(markers)
+ {
+    for (var i = 0; i < markers.length; i++) {
+      let marker = markers[i]
+      console.log("marker",marker);
+      updateSelection(marker.type, marker.row-1, marker.cells);
+
+      // check if varaible is set, then activet store
+      if(marker.type==MARKER_TYPE.VARIABLE){isValid=true}
+   }
+
  }
  
  function beginDrag(e) { isDrag = true; }
@@ -243,19 +259,19 @@
    selection = [...selection, obj];
  }
  
- async function generateDS()
+ async function save()
  {
    model.markers = selection;
 
-   console.log("before generate", model);
-   let res = await generate(model);
+   console.log("save selection", model);
+   let res = await store(model);
    console.log(res);
 
    if(res!=false)
-    {
-      console.log("generated", res);
-      dispatch("generated", res);
-    }
+  {
+    console.log("selection", res);
+    dispatch("saved", model);
+  }
 
  }
  
@@ -266,45 +282,44 @@
  {:else}  <!-- load page -->
  
  <div id="structure-suggestion-container" on:mousedown="{beginDrag}" on:mouseup="{endDrag}">
-  <form on:submit|preventDefault={generateDS}>
-    <FileReaderInfo {...model} bind:delimeter={model.delimeter}></FileReaderInfo>
-   <!-- <Row>
-     <Col>
-       <FormGroup>
-         <Label>Delimeter</Label>
-         <Input type="select" id="delimeter" bind:value={model.delimeter}>
-          <option value={null}>-- Please select --</option>
-           {#each model.delimeters as item}
-              <option value={item.id}>{item.text}</option>
-           {/each}
-         </Input>
-        </FormGroup>
-     </Col>
-  
-     <Col>
-       <FormGroup>
-          <Label>Decimal</Label>
-          <Input type="select" id="decimal" bind:value={model.decimal} >
+  <form on:submit|preventDefault={save}>
+  <Row>
+      <Col>
+        <FormGroup>
+          <Label>Delimeter</Label>
+          <Input type="select" id="delimeter" bind:value={model.delimeter}>
             <option value={null}>-- Please select --</option>
-            {#each model.decimals as item}
+            {#each model.delimeters as item}
+                <option value={item.id}>{item.text}</option>
+            {/each}
+          </Input>
+          </FormGroup>
+      </Col>
+    
+      <Col>
+        <FormGroup>
+            <Label>Decimal</Label>
+            <Input type="select" id="decimal" bind:value={model.decimal} >
+              <option value={null}>-- Please select --</option>
+              {#each model.decimals as item}
+                  <option value={item.id} >{item.text}</option>
+              {/each}
+            </Input>
+        </FormGroup>
+      </Col>
+      <Col>
+        <FormGroup>
+          <Label>TextMarker</Label>
+          <Input type="select" id="decimal" bind:value={model.textMarker} >
+            <option value={null}>-- Please select --</option>
+            {#each model.textMarkers as item}
                 <option value={item.id} >{item.text}</option>
             {/each}
           </Input>
-       </FormGroup>
-     </Col>
-     <Col>
-       <FormGroup>
-         <Label>TextMarker</Label>
-         <Input type="select" id="decimal" bind:value={model.textMarker} >
-           <option value={null}>-- Please select --</option>
-           {#each model.textMarkers as item}
-               <option value={item.id} >{item.text}</option>
-           {/each}
-         </Input>
-      </FormGroup>
-     </Col> -->
+        </FormGroup>
+      </Col>
  
-   <!-- </Row> -->
+    </Row>
     <FormGroup>
      <Button type="button"  color="danger" on:click={()=> onclickHandler(MARKER_TYPE.VARIABLE)}>Variable</Button>
      <Button type="button"  color="success" on:click={()=>onclickHandler(MARKER_TYPE.UNIT)}>Unit</Button>

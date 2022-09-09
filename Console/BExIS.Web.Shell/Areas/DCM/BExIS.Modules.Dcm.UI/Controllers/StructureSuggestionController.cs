@@ -38,8 +38,22 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         [JsonNetFilter]
         public JsonResult Load(long id, string file, int version = 0)
         {
+            // check incoming values
             if (id <= 0) throw new ArgumentException(nameof(id));
-            if (string.IsNullOrEmpty(file)) throw new ArgumentException(nameof(file));
+
+            // if filereader info allready exist, load the data from the cache otherwise, suggest it
+            HookManager hookManager = new HookManager();
+            EditDatasetDetailsCache cache = hookManager.LoadCache<EditDatasetDetailsCache>("dataset", "details", HookMode.edit, id);
+
+            // file can be incoming or set from editcache
+            if (string.IsNullOrEmpty(file)) // incoming file ist not set
+            {
+                if (cache.Files != null && cache.Files.Any()) // files added to the files list allready, 
+                {
+                    // use the first one
+                    file = cache.Files.First().Name;
+                }
+            }
 
             //checi if file exist
             var filepath = Path.Combine(AppConfiguration.DataPath, "Datasets", id.ToString(), "temp", file);
@@ -56,43 +70,72 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             model.Total = AsciiReader.Count(filepath);
             model.Skipped = AsciiReader.Skipped(filepath);
 
-            if (model.Preview.Any())
+
+            if (cache.AsciiFileReaderInfo == null) // file reader infos not exit, suggest it
+            {
+                if (model.Preview.Any())
+                {
+                    // get delimeter
+                    TextSeperator textSeperator = structureAnalyser.SuggestDelimeter(model.Preview.First(), model.Preview.Last());
+                    model.Delimeter = AsciiFileReaderInfo.GetSeperator(textSeperator);
+
+                    // get decimal
+                    // the structure analyzer return a result or trigger a exception
+                    // catch the exception and set a default value -1 
+                    try
+                    {
+                        DecimalCharacter decimalCharacter = structureAnalyser.SuggestDecimal(model.Preview.First(), model.Preview.Last(), textSeperator);
+                        model.Decimal = AsciiFileReaderInfo.GetDecimalCharacter(decimalCharacter);
+                    }
+                    catch (Exception ex)
+                    {
+                        model.Decimal = -1;
+                    }
+
+                    // get textmarkers
+                    TextMarker textMarker = structureAnalyser.SuggestTextMarker(model.Preview.First(), model.Preview.Last());
+                    model.TextMarker = AsciiFileReaderInfo.GetTextMarker(textMarker);
+
+                }
+                
+            }
+            else // allready exist, set it
             {
 
-                // get delimeter
-                TextSeperator textSeperator = structureAnalyser.SuggestDelimeter(model.Preview.First(), model.Preview.Last());
-                model.Delimeter = AsciiFileReaderInfo.GetSeperator(textSeperator);
+                model.Decimal = (int)cache.AsciiFileReaderInfo.Decimal;
+                model.Delimeter = (int)cache.AsciiFileReaderInfo.Seperator;
+                model.TextMarker = (int)cache.AsciiFileReaderInfo.TextMarker;
 
-                model.Delimeters = getDelimeters();
+                // variables
+                model.Markers.Add(
+                    new Marker()
+                    {
+                        Row = cache.AsciiFileReaderInfo.Variables,
+                        Type = "variable",
+                        Cells = cache.AsciiFileReaderInfo.Cells
 
-                // get decimal
-                // the structure analyzer return a result or trigger a exception
-                // catch the exception and set a default value -1 
-                try
-                {
-                    DecimalCharacter decimalCharacter = structureAnalyser.SuggestDecimal(model.Preview.First(), model.Preview.Last(), textSeperator);
-                    model.Decimal = AsciiFileReaderInfo.GetDecimalCharacter(decimalCharacter);
-                } 
-                catch(Exception ex)
-                {
-                    model.Decimal = -1;
-                }
+                    });
 
-                model.Decimals = getDecimals();
-
-                // get textmarkers
-                TextMarker textMarker = structureAnalyser.SuggestTextMarker(model.Preview.First(), model.Preview.Last());
-                model.TextMarker = AsciiFileReaderInfo.GetTextMarker(textMarker);
-
-                model.TextMarkers = getTextMarkers();
-         
+                // Data
+                model.Markers.Add(
+                    new Marker()
+                    {
+                        Row = cache.AsciiFileReaderInfo.Data,
+                        Type = "data",
+                        Cells = cache.AsciiFileReaderInfo.Cells
+                    });
             }
 
+            // get lists
+            model.Decimals = getDecimals();
+            model.Delimeters = getDelimeters();
+            model.TextMarkers = getTextMarkers();
             model.MissingValues = getDefaultMissingValues();
-
 
             return Json(model, JsonRequestBehavior.AllowGet);
         }
+
+
 
         [JsonNetFilter]
         public JsonResult Save(StructureSuggestionModel model)
@@ -158,49 +201,58 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 dataset.DataStructure = newStructure;
                 datasetManager.UpdateDataset(dataset);
 
-                #region update cache
-
-                HookManager hookManager = new HookManager();
-                EditDatasetDetailsCache cache = hookManager.LoadCache<EditDatasetDetailsCache>("dataset", "details", HookMode.edit, model.Id);
-
-                // update Data description hook
-
-                // set file reading informations
-                if (cache.AsciiFileReaderInfo == null)
-                    cache.AsciiFileReaderInfo = new AsciiFileReaderInfo();
-
-                cache.AsciiFileReaderInfo.Decimal = (DecimalCharacter)model.Decimal;
-                cache.AsciiFileReaderInfo.Seperator = (TextSeperator)model.Delimeter;
-                cache.AsciiFileReaderInfo.TextMarker = (TextMarker)model.TextMarker;
-                cache.AsciiFileReaderInfo.Data = model.Markers.Where(m=>m.Type.Equals("data")).FirstOrDefault().Row+1; // add 1 to store nit the index but the row
-                cache.AsciiFileReaderInfo.Variables = model.Markers.Where(m=>m.Type.Equals("variable")).FirstOrDefault().Row+1;// add 1 to store nit the index but the row
-
-
-                // update modifikation date
-                cache.UpdateLastModificarion(typeof(DataDescriptionHook));
-
-
-                // store in messages
-                string message = String.Format("the structure {0} was successfully created and attached to the dataset {1}.",model.Title, model.Id);
-                cache.Messages.Add(new ResultMessage(DateTime.Now, new List<string>() { message }));
-
-                // save cache
-                hookManager.SaveCache(cache, "dataset", "details", HookMode.edit, model.Id);
-                #endregion
+                
 
             }
 
             return Json(true, JsonRequestBehavior.AllowGet);
         }
 
-        /*
-         const MARKER_TYPE = {
-            VARIABLE: "variable",
-            DESCRIPTION: "description",
-            UNIT: "unit",
-            MISSING_VALUES:  "missing-values"
+        [JsonNetFilter]
+        public JsonResult Store(StructureSuggestionModel model)
+        {
+            #region update cache
+
+            HookManager hookManager = new HookManager();
+            EditDatasetDetailsCache cache = hookManager.LoadCache<EditDatasetDetailsCache>("dataset", "details", HookMode.edit, model.Id);
+
+            // update Data description hook
+
+            // set file reading informations
+            if (cache.AsciiFileReaderInfo == null)
+                cache.AsciiFileReaderInfo = new AsciiFileReaderInfo();
+
+            cache.AsciiFileReaderInfo.Decimal = (DecimalCharacter)model.Decimal;
+            cache.AsciiFileReaderInfo.Seperator = (TextSeperator)model.Delimeter;
+            cache.AsciiFileReaderInfo.TextMarker = (TextMarker)model.TextMarker;
+            cache.AsciiFileReaderInfo.Data = model.Markers.Where(m => m.Type.Equals("data")).FirstOrDefault().Row + 1; // add 1 to store nit the index but the row
+            cache.AsciiFileReaderInfo.Variables = model.Markers.Where(m => m.Type.Equals("variable")).FirstOrDefault().Row + 1;// add 1 to store nit the index but the row
+            cache.AsciiFileReaderInfo.Cells = model.Markers.Where(m => m.Type.Equals("variable")).FirstOrDefault().Cells;
+
+            // update modifikation date
+            cache.UpdateLastModificarion(typeof(DataDescriptionHook));
+
+
+            // store in messages
+            string message = String.Format("the structure {0} was successfully created and attached to the dataset {1}.", model.Title, model.Id);
+            cache.Messages.Add(new ResultMessage(DateTime.Now, new List<string>() { message }));
+
+            // save cache
+            hookManager.SaveCache(cache, "dataset", "details", HookMode.edit, model.Id);
+            #endregion
+
+
+            return Json(true, JsonRequestBehavior.AllowGet);
         }
-         */
+
+        /*
+             const MARKER_TYPE = {
+                VARIABLE: "variable",
+                DESCRIPTION: "description",
+                UNIT: "unit",
+                MISSING_VALUES:  "missing-values"
+            }
+             */
         [JsonNetFilter]
         [HttpPost]
         public JsonResult Generate(StructureSuggestionModel model)

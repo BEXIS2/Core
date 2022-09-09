@@ -1,4 +1,5 @@
 ﻿
+using System.Collections.Generic;
 /// <summary>
 ///
 /// </summary>        
@@ -10,6 +11,8 @@ namespace BExIS.IO.Transform.Input
     /// <remarks></remarks>        
     public class AsciiFileReaderInfo : FileReaderInfo
     {
+        public List<bool> Cells { get; set; }
+
         /// <summary>
         /// 
         /// </summary>
@@ -21,6 +24,7 @@ namespace BExIS.IO.Transform.Input
             Orientation = Orientation.columnwise;
             Variables = 1;
             Data = 2;
+            Cells = new List<bool>();
         }
 
         /// <summary>

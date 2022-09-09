@@ -1,9 +1,10 @@
 <script>
 import {getHookStart}  from '../../services/Caller'
 import { latestFileUploadDate, latestDataDescriptionDate } from '../../stores/editStores';
-import { Spinner, Alert } from 'sveltestrap';
+import { Spinner, Alert,Button, Modal,ModalHeader, ModalBody } from 'sveltestrap';
 import { onMount }from 'svelte'
 
+import Selection from '../../components/structuresuggestion/Selection.svelte';
 
 export let id=0;
 export let version=1;
@@ -13,6 +14,10 @@ export let start="";
 export let description="";
 
 let model;
+
+// modal window for selection
+let open = false;
+
 
 $:$latestFileUploadDate, reload()
 $:$latestDataDescriptionDate, reload()
@@ -26,13 +31,19 @@ async function load()
   //const res = await fetch(url);
   model = await getHookStart(start,id,version);
   console.log("validation",model);
+
 }
 
 async function reload()
 {
   console.log("run validation");
   load();
+
 } 
+
+const toggle = () => {
+    open = !open;
+  };
 
 </script>
   
@@ -59,6 +70,14 @@ async function reload()
             <li >{error}</li>
             {/each}
           </ul>
+          
+          <Button color="primary" on:click={toggle}>open reader informations</Button>
+          <Modal isOpen={open} {toggle} fullscreen="{true}">
+            <ModalHeader {toggle}>Setup filer reader information {model.isValid}</ModalHeader>
+            <ModalBody>  
+              <Selection id={id} on:saved={reload}/>
+            </ModalBody>
+          </Modal>
     {/if}
   
 

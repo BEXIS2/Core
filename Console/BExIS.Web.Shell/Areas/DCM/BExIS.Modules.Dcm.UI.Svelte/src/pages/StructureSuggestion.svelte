@@ -14,7 +14,7 @@ import { fade  } from 'svelte/transition';
 import {Spinner, Button, FormGroup, Input, Label, Row, Col} from 'sveltestrap';
 
 import { setApiConfig }  from '@bexis2/svelte-bexis2-core-ui'
-import { getStructureSuggestion, save }  from '../services/StructureSuggestionCaller'
+import { generate, save }  from '../services/StructureSuggestionCaller'
 import { goTo }  from '../services/BaseCaller'
 
  // load attributes from div
@@ -35,17 +35,20 @@ onMount(async () => {
    console.log("start structure suggestion");
    setApiConfig("https://localhost:44345","davidschoene","123456");
    
-    // load model froms server
-    model = await getStructureSuggestion(id,file,version);
-    console.log("model", model);
  })
 
- function update(e)
+ async function  update(e)
  {
     console.log("update",e.detail);
     model = e.detail;
 
-    selectionIsActive = false;
+    let res = await generate(e.detail);
+
+    if(res != false)
+    {
+      model = res;
+      selectionIsActive = false;
+    }
  }
 
 async function onSaveHandler()
@@ -60,11 +63,12 @@ async function onSaveHandler()
 
 {#if !model}
   <Spinner color="primary" size="sm" type ="grow" text-center />
+  
 {:else}
 
    {#if selectionIsActive}
     <div transition:fade>
-      <Selection {model} on:generated={update}/>
+      <Selection {...model} on:saved={update}/>
     </div>
    {:else}
     {#if model.variables.length>0}

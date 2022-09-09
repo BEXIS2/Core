@@ -98,6 +98,7 @@
     <Compile Include="Controllers\Hooks\ValidationController.cs" />
     <Compile Include="Controllers\ViewController.cs" />
     <Compile Include="DcmModule.cs" />
+    <Compile Include="FileReaderInfoController.cs" />
     <Compile Include="Helpers\API\DataApiHelper.cs" />
     <Compile Include="Helpers\EntityTemplateHelper.cs" />
     <Compile Include="Helpers\DataASyncUploadHelper.cs" />
@@ -540,6 +541,7 @@
   <ItemGroup>
     <Folder Include="Content\Images\" />
     <Folder Include="Views\DcmAdmin\" />
+    <Folder Include="Views\FileReaderInfo\" />
     <Folder Include="Views\FileUpload\" />
     <Folder Include="Views\Home\" />
     <Folder Include="Views\Validation\" />
