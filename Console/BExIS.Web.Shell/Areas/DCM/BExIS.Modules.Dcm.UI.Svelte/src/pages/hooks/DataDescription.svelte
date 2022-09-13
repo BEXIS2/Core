@@ -28,13 +28,13 @@ onMount(async () => {
 
 async function load()
 {
-  console.log("datadscription",hook);
+  //console.log("datadscription",hook);
   model = await getHookStart(hook.start,id,version);
 }
 
 async function reload()
 {
-  console.log("reload datadscription");
+  //console.log("reload datadscription");
   load();
 } 
  

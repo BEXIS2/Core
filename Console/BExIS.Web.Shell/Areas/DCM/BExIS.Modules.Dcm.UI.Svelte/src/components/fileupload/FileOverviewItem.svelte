@@ -27,7 +27,7 @@ export let generateAble = false;
 let loading = false;
 
 onMount(async ()=>{
- console.log("onmount file item?");
+ 
 
 })
 

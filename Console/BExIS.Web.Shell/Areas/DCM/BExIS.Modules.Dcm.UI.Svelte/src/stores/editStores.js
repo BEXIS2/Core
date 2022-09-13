@@ -5,3 +5,5 @@ The date shows the last change on the page.*/
 export const latestFileUploadDate = writable(0);
 
 export const latestDataDescriptionDate = writable(0);
+
+export const hooksStatus = writable([]);

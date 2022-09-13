@@ -5,6 +5,10 @@
  import Fa from 'svelte-fa/src/fa.svelte'
  import { faAngleRight } from '@fortawesome/free-solid-svg-icons'
 
+import { hooksStatus } from '../stores/editStores';
+
+
+ export let name; 
  export let displayName;
  export let content=9;
  export let visible = true;
@@ -14,12 +18,19 @@
  $:success = null;
  $:warnings = [];
 
- let isActive = false;
+ $:active = false;
 
 onMount(async () => {
-  console.log("status",status)
-  isActive = setActive(status);
+
+  //active = setActive(status);
+  hooksStatus.subscribe(h=>{
+    if(h[name]!=undefined)
+    {
+      active = setActive(h[name]);
+    }
+  })
 })
+
 
 function errorHandler (e){ 
   console.log("handle errors here")
@@ -39,10 +50,10 @@ function warningHandler (e){
   console.log( e.detail.text)
 }
 
-
 // visibility
 function setActive(status)
 {
+
   if(status == 0 ||status == 1 || status==5) // disabled || access denied || inactive
   {
     return false;
@@ -53,7 +64,11 @@ function setActive(status)
 
 </script>
 
-{#if visible && isActive}
+{$hooksStatus[name]}
+{status}
+{active}
+
+{#if visible && active}
 <div class="hook-container" >
  <Row> 
  

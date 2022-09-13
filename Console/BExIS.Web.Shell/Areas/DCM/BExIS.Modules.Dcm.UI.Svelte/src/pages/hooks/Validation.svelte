@@ -30,13 +30,13 @@ async function load()
 {
   //const res = await fetch(url);
   model = await getHookStart(start,id,version);
-  console.log("validation",model);
+  //console.log("validation",model);
 
 }
 
 async function reload()
 {
-  console.log("run validation");
+  //console.log("run validation");
   load();
 
 } 

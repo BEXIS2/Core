@@ -35,9 +35,9 @@
 
   });
 
-  console.log("_hooks",_hooks);
-  console.log("dataDescriptionHook",dataDescriptionHook);
- }
+  //console.log("_hooks",_hooks);
+  
+}
 
 function errorHandler(e)
 {
@@ -49,7 +49,7 @@ function errorHandler(e)
 
 {#if hooks} <!-- if hooks list is loaded render hooks -->
 
-<HookContainer displayName = {metadataHook.displayName} >
+<HookContainer  {...metadataHook} >
   <div slot="view">
     <Metadata {id} {version} {...metadataHook} />
   </div>
@@ -59,7 +59,7 @@ function errorHandler(e)
 
 <Col ><!-- Data Hooks-->
 
-    <HookContainer {...dataDescriptionHook}>
+    <HookContainer {...dataDescriptionHook} >
       <div slot="view">
         <DataDescription {id} {version} hook={dataDescriptionHook} />
       </div>
@@ -68,13 +68,14 @@ function errorHandler(e)
     <HookContainer 
       {...fileUploadHook}
       let:errorHandler 
-      let:successHandler 
-      content=9>
+      let:successHandler >
+      
       <div slot="view">
         <FileUpload {id} {version} hook={fileUploadHook}  on:error={(e)=> errorHandler(e)} on:success={(e)=> successHandler(e)} />
       </div>
     </HookContainer>
-    <HookContainer {...validationHook}>
+
+    <HookContainer {...validationHook} >
       <div slot="view"> <!-- validation Hooks-->
           <Validation {id} {version} {...validationHook} />
       </div>
