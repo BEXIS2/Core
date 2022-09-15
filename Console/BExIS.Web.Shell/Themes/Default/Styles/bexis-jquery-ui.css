@@ -64,10 +64,10 @@
         margin-bottom: 40px;
     }
 
-.alert {
-    border-color: #f24c24;
-    background-color: #ebebeb;
-}
+    .alert {
+        /*border-color: #f24c24;
+        background-color: #ebebeb;*/
+    }
 
     .alert .ui-widget-header {
         background-color: #f24c24;

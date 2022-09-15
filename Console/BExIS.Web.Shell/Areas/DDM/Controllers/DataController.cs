@@ -1356,7 +1356,9 @@ namespace BExIS.Modules.Ddm.UI.Controllers
 
                     if (this.IsAccessible("RPM", "DataStructureEdit", "Index"))
                     {
-                        dataStructure = uow.GetReadOnlyRepository<StructuredDataStructure>().Get(ds.Dataset.DataStructure.Id);
+                        if(ds.Dataset.DataStructure != null)
+                            dataStructure = uow.GetReadOnlyRepository<StructuredDataStructure>().Get(ds.Dataset.DataStructure.Id);
+
                         bool structured = false;
                         if (dataStructure != null)
                             structured = true;

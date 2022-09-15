@@ -14,7 +14,7 @@ import { fade  } from 'svelte/transition';
 import {Spinner, Button, FormGroup, Input, Label, Row, Col} from 'sveltestrap';
 
 import { setApiConfig }  from '@bexis2/svelte-bexis2-core-ui'
-import { generate, save }  from '../services/StructureSuggestionCaller'
+import { generate, save, load }  from '../services/StructureSuggestionCaller'
 import { goTo }  from '../services/BaseCaller'
 
  // load attributes from div
@@ -34,6 +34,7 @@ onMount(async () => {
 
    console.log("start structure suggestion");
    setApiConfig("https://localhost:44345","davidschoene","123456");
+   model = await load(id,file,0);
    
  })
 

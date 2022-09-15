@@ -807,6 +807,13 @@ var app = (function () {
     function get_spread_object(spread_props) {
         return typeof spread_props === 'object' && spread_props !== null ? spread_props : {};
     }
+    function each(items, fn) {
+        let str = '';
+        for (let i = 0; i < items.length; i += 1) {
+            str += fn(items[i], i);
+        }
+        return str;
+    }
 
     function bind$3(component, name, callback) {
         const index = component.$$.props[name];
@@ -1279,7 +1286,7 @@ var app = (function () {
     	let div_transition;
     	let current;
     	let if_block0 = (/*heading*/ ctx[3] || /*$$slots*/ ctx[10].heading) && create_if_block_3$9(ctx);
-    	let if_block1 = /*showClose*/ ctx[5] && create_if_block_2$i(ctx);
+    	let if_block1 = /*showClose*/ ctx[5] && create_if_block_2$j(ctx);
     	const if_block_creators = [create_if_block_1$o, create_else_block$r];
     	const if_blocks = [];
 
@@ -1347,7 +1354,7 @@ var app = (function () {
     				if (if_block1) {
     					if_block1.p(ctx, dirty);
     				} else {
-    					if_block1 = create_if_block_2$i(ctx);
+    					if_block1 = create_if_block_2$j(ctx);
     					if_block1.c();
     					if_block1.m(div, t1);
     				}
@@ -1498,7 +1505,7 @@ var app = (function () {
     }
 
     // (38:4) {#if showClose}
-    function create_if_block_2$i(ctx) {
+    function create_if_block_2$j(ctx) {
     	let button;
     	let mounted;
     	let dispose;
@@ -1549,7 +1556,7 @@ var app = (function () {
 
     	dispatch_dev("SvelteRegisterBlock", {
     		block,
-    		id: create_if_block_2$i.name,
+    		id: create_if_block_2$j.name,
     		type: "if",
     		source: "(38:4) {#if showClose}",
     		ctx
@@ -2248,7 +2255,7 @@ var app = (function () {
     }
 
     // (66:6) {#if children}
-    function create_if_block_2$h(ctx) {
+    function create_if_block_2$i(ctx) {
     	let t;
 
     	const block_1 = {
@@ -2270,7 +2277,7 @@ var app = (function () {
 
     	dispatch_dev("SvelteRegisterBlock", {
     		block: block_1,
-    		id: create_if_block_2$h.name,
+    		id: create_if_block_2$i.name,
     		type: "if",
     		source: "(66:6) {#if children}",
     		ctx
@@ -2285,7 +2292,7 @@ var app = (function () {
     	let if_block;
     	let if_block_anchor;
     	let current;
-    	const if_block_creators = [create_if_block_2$h, create_else_block_2$1];
+    	const if_block_creators = [create_if_block_2$i, create_else_block_2$1];
     	const if_blocks = [];
 
     	function select_block_type_2(ctx, dirty) {
@@ -5814,7 +5821,7 @@ var app = (function () {
     	let th;
     	let t;
     	let current;
-    	let if_block = /*footer*/ ctx[1] && create_if_block_2$g(ctx);
+    	let if_block = /*footer*/ ctx[1] && create_if_block_2$h(ctx);
     	const footer_slot_template = /*#slots*/ ctx[9].footer;
     	const footer_slot = create_slot(footer_slot_template, ctx, /*$$scope*/ ctx[8], get_footer_slot_context);
     	let th_levels = [/*$$restProps*/ ctx[7]];
@@ -5849,7 +5856,7 @@ var app = (function () {
     				if (if_block) {
     					if_block.p(ctx, dirty);
     				} else {
-    					if_block = create_if_block_2$g(ctx);
+    					if_block = create_if_block_2$h(ctx);
     					if_block.c();
     					if_block.m(th, t);
     				}
@@ -5969,7 +5976,7 @@ var app = (function () {
     }
 
     // (19:4) {#if footer}
-    function create_if_block_2$g(ctx) {
+    function create_if_block_2$h(ctx) {
     	let t;
 
     	const block = {
@@ -5989,7 +5996,7 @@ var app = (function () {
 
     	dispatch_dev("SvelteRegisterBlock", {
     		block,
-    		id: create_if_block_2$g.name,
+    		id: create_if_block_2$h.name,
     		type: "if",
     		source: "(19:4) {#if footer}",
     		ctx
@@ -6489,7 +6496,7 @@ var app = (function () {
     }
 
     // (45:15) 
-    function create_if_block_2$f(ctx) {
+    function create_if_block_2$g(ctx) {
     	let a;
     	let current;
     	let mounted;
@@ -6573,7 +6580,7 @@ var app = (function () {
 
     	dispatch_dev("SvelteRegisterBlock", {
     		block,
-    		id: create_if_block_2$f.name,
+    		id: create_if_block_2$g.name,
     		type: "if",
     		source: "(45:15) ",
     		ctx
@@ -6765,7 +6772,7 @@ var app = (function () {
     	let if_block;
     	let if_block_anchor;
     	let current;
-    	const if_block_creators = [create_if_block$B, create_if_block_1$l, create_if_block_2$f, create_else_block$n];
+    	const if_block_creators = [create_if_block$B, create_if_block_1$l, create_if_block_2$g, create_else_block$n];
     	const if_blocks = [];
 
     	function select_block_type(ctx, dirty) {
@@ -7405,7 +7412,7 @@ var app = (function () {
     }
 
     // (80:25) 
-    function create_if_block_2$e(ctx) {
+    function create_if_block_2$f(ctx) {
     	let span;
     	let span_aria_expanded_value;
     	let current;
@@ -7504,7 +7511,7 @@ var app = (function () {
 
     	dispatch_dev("SvelteRegisterBlock", {
     		block: block_1,
-    		id: create_if_block_2$e.name,
+    		id: create_if_block_2$f.name,
     		type: "if",
     		source: "(80:25) ",
     		ctx
@@ -7874,7 +7881,7 @@ var app = (function () {
     	let if_block;
     	let if_block_anchor;
     	let current;
-    	const if_block_creators = [create_if_block$A, create_if_block_1$k, create_if_block_2$e, create_else_block$m];
+    	const if_block_creators = [create_if_block$A, create_if_block_1$k, create_if_block_2$f, create_else_block$m];
     	const if_blocks = [];
 
     	function select_block_type(ctx, dirty) {
@@ -8369,7 +8376,7 @@ var app = (function () {
     }
 
     // (50:30) 
-    function create_if_block_2$d(ctx) {
+    function create_if_block_2$e(ctx) {
     	let input;
     	let mounted;
     	let dispose;
@@ -8439,7 +8446,7 @@ var app = (function () {
 
     	dispatch_dev("SvelteRegisterBlock", {
     		block,
-    		id: create_if_block_2$d.name,
+    		id: create_if_block_2$e.name,
     		type: "if",
     		source: "(50:30) ",
     		ctx
@@ -8642,7 +8649,7 @@ var app = (function () {
 
     	function select_block_type(ctx, dirty) {
     		if (/*type*/ ctx[6] === 'radio') return create_if_block_1$j;
-    		if (/*type*/ ctx[6] === 'switch') return create_if_block_2$d;
+    		if (/*type*/ ctx[6] === 'switch') return create_if_block_2$e;
     		return create_else_block$l;
     	}
 
@@ -9308,7 +9315,7 @@ var app = (function () {
     	let current;
     	const default_slot_template = /*#slots*/ ctx[12].default;
     	const default_slot = create_slot(default_slot_template, ctx, /*$$scope*/ ctx[11], null);
-    	let if_block = (/*label*/ ctx[0] || /*$$slots*/ ctx[4].label) && create_if_block_2$c(ctx);
+    	let if_block = (/*label*/ ctx[0] || /*$$slots*/ ctx[4].label) && create_if_block_2$d(ctx);
     	let div_levels = [/*$$restProps*/ ctx[3], { class: /*classes*/ ctx[2] }];
     	let div_data = {};
 
@@ -9360,7 +9367,7 @@ var app = (function () {
     						transition_in(if_block, 1);
     					}
     				} else {
-    					if_block = create_if_block_2$c(ctx);
+    					if_block = create_if_block_2$d(ctx);
     					if_block.c();
     					transition_in(if_block, 1);
     					if_block.m(div, null);
@@ -9518,7 +9525,7 @@ var app = (function () {
     }
 
     // (37:4) {#if label || $$slots.label}
-    function create_if_block_2$c(ctx) {
+    function create_if_block_2$d(ctx) {
     	let label_1;
     	let t0;
     	let t1;
@@ -9580,7 +9587,7 @@ var app = (function () {
 
     	dispatch_dev("SvelteRegisterBlock", {
     		block,
-    		id: create_if_block_2$c.name,
+    		id: create_if_block_2$d.name,
     		type: "if",
     		source: "(37:4) {#if label || $$slots.label}",
     		ctx
@@ -10238,7 +10245,7 @@ var app = (function () {
     }
 
     // (93:0) {#if tag === 'input'}
-    function create_if_block_2$b(ctx) {
+    function create_if_block_2$c(ctx) {
     	let current_block_type_index;
     	let if_block;
     	let if_block_anchor;
@@ -10347,7 +10354,7 @@ var app = (function () {
 
     	dispatch_dev("SvelteRegisterBlock", {
     		block,
-    		id: create_if_block_2$b.name,
+    		id: create_if_block_2$c.name,
     		type: "if",
     		source: "(93:0) {#if tag === 'input'}",
     		ctx
@@ -12411,7 +12418,7 @@ var app = (function () {
     	let t;
     	let if_block1_anchor;
     	let current;
-    	const if_block_creators = [create_if_block_2$b, create_if_block_21$1, create_if_block_22$1];
+    	const if_block_creators = [create_if_block_2$c, create_if_block_21$1, create_if_block_22$1];
     	const if_blocks = [];
 
     	function select_block_type(ctx, dirty) {
@@ -15381,7 +15388,7 @@ var app = (function () {
     }
 
     // (226:6) {#if isOpen}
-    function create_if_block_2$a(ctx) {
+    function create_if_block_2$b(ctx) {
     	let div2;
     	let t0;
     	let div1;
@@ -15584,7 +15591,7 @@ var app = (function () {
 
     	dispatch_dev("SvelteRegisterBlock", {
     		block,
-    		id: create_if_block_2$a.name,
+    		id: create_if_block_2$b.name,
     		type: "if",
     		source: "(226:6) {#if isOpen}",
     		ctx
@@ -15857,7 +15864,7 @@ var app = (function () {
     function create_default_slot_1$g(ctx) {
     	let div;
     	let current;
-    	let if_block = /*isOpen*/ ctx[1] && create_if_block_2$a(ctx);
+    	let if_block = /*isOpen*/ ctx[1] && create_if_block_2$b(ctx);
 
     	let div_levels = [
     		{ class: /*wrapClassName*/ ctx[7] },
@@ -15892,7 +15899,7 @@ var app = (function () {
     						transition_in(if_block, 1);
     					}
     				} else {
-    					if_block = create_if_block_2$a(ctx);
+    					if_block = create_if_block_2$b(ctx);
     					if_block.c();
     					transition_in(if_block, 1);
     					if_block.m(div, null);
@@ -17591,7 +17598,7 @@ var app = (function () {
     const get_header_slot_context = ctx => ({});
 
     // (86:4) {#if toggle || header || $$slots.header}
-    function create_if_block_2$9(ctx) {
+    function create_if_block_2$a(ctx) {
     	let offcanvasheader;
     	let current;
 
@@ -17638,7 +17645,7 @@ var app = (function () {
 
     	dispatch_dev("SvelteRegisterBlock", {
     		block,
-    		id: create_if_block_2$9.name,
+    		id: create_if_block_2$a.name,
     		type: "if",
     		source: "(86:4) {#if toggle || header || $$slots.header}",
     		ctx
@@ -18002,7 +18009,7 @@ var app = (function () {
     	let t1;
     	let if_block2_anchor;
     	let current;
-    	let if_block0 = (/*toggle*/ ctx[6] || /*header*/ ctx[4] || /*$$slots*/ ctx[13].header) && create_if_block_2$9(ctx);
+    	let if_block0 = (/*toggle*/ ctx[6] || /*header*/ ctx[4] || /*$$slots*/ ctx[13].header) && create_if_block_2$a(ctx);
     	const if_block_creators = [create_if_block_1$d, create_else_block$f];
     	const if_blocks = [];
 
@@ -18076,7 +18083,7 @@ var app = (function () {
     						transition_in(if_block0, 1);
     					}
     				} else {
-    					if_block0 = create_if_block_2$9(ctx);
+    					if_block0 = create_if_block_2$a(ctx);
     					if_block0.c();
     					transition_in(if_block0, 1);
     					if_block0.m(div, t0);
@@ -21458,7 +21465,7 @@ var app = (function () {
     }
 
     // (36:0) {#if type.includes("word")}
-    function create_if_block_2$8(ctx) {
+    function create_if_block_2$9(ctx) {
     	let fa;
     	let current;
 
@@ -21492,7 +21499,7 @@ var app = (function () {
 
     	dispatch_dev("SvelteRegisterBlock", {
     		block,
-    		id: create_if_block_2$8.name,
+    		id: create_if_block_2$9.name,
     		type: "if",
     		source: "(36:0) {#if type.includes(\\\"word\\\")}",
     		ctx
@@ -21612,7 +21619,7 @@ var app = (function () {
     	let if_block2 = show_if_5 && create_if_block_5$1(ctx);
     	let if_block3 = show_if_4 && create_if_block_4$2(ctx);
     	let if_block4 = show_if_3 && create_if_block_3$4(ctx);
-    	let if_block5 = show_if_2 && create_if_block_2$8(ctx);
+    	let if_block5 = show_if_2 && create_if_block_2$9(ctx);
     	let if_block6 = show_if_1 && create_if_block_1$b(ctx);
     	let if_block7 = show_if && create_if_block$n(ctx);
 
@@ -21793,7 +21800,7 @@ var app = (function () {
     						transition_in(if_block5, 1);
     					}
     				} else {
-    					if_block5 = create_if_block_2$8(ctx);
+    					if_block5 = create_if_block_2$9(ctx);
     					if_block5.c();
     					transition_in(if_block5, 1);
     					if_block5.m(t5.parentNode, t5);
@@ -23709,7 +23716,7 @@ var app = (function () {
     }
 
     // (62:6) {#if children}
-    function create_if_block_2$7(ctx) {
+    function create_if_block_2$8(ctx) {
     	let t;
 
     	const block_1 = {
@@ -23731,7 +23738,7 @@ var app = (function () {
 
     	dispatch_dev("SvelteRegisterBlock", {
     		block: block_1,
-    		id: create_if_block_2$7.name,
+    		id: create_if_block_2$8.name,
     		type: "if",
     		source: "(62:6) {#if children}",
     		ctx
@@ -23746,7 +23753,7 @@ var app = (function () {
     	let if_block;
     	let if_block_anchor;
     	let current;
-    	const if_block_creators = [create_if_block_2$7, create_else_block_2];
+    	const if_block_creators = [create_if_block_2$8, create_else_block_2];
     	const if_blocks = [];
 
     	function select_block_type_2(ctx, dirty) {
@@ -24631,7 +24638,7 @@ var app = (function () {
     }
 
     // (50:30) 
-    function create_if_block_2$6(ctx) {
+    function create_if_block_2$7(ctx) {
     	let input;
     	let mounted;
     	let dispose;
@@ -24701,7 +24708,7 @@ var app = (function () {
 
     	dispatch_dev("SvelteRegisterBlock", {
     		block,
-    		id: create_if_block_2$6.name,
+    		id: create_if_block_2$7.name,
     		type: "if",
     		source: "(50:30) ",
     		ctx
@@ -24904,7 +24911,7 @@ var app = (function () {
 
     	function select_block_type(ctx, dirty) {
     		if (/*type*/ ctx[6] === 'radio') return create_if_block_1$9;
-    		if (/*type*/ ctx[6] === 'switch') return create_if_block_2$6;
+    		if (/*type*/ ctx[6] === 'switch') return create_if_block_2$7;
     		return create_else_block$a;
     	}
 
@@ -25764,7 +25771,7 @@ var app = (function () {
     }
 
     // (93:0) {#if tag === 'input'}
-    function create_if_block_2$5(ctx) {
+    function create_if_block_2$6(ctx) {
     	let current_block_type_index;
     	let if_block;
     	let if_block_anchor;
@@ -25873,7 +25880,7 @@ var app = (function () {
 
     	dispatch_dev("SvelteRegisterBlock", {
     		block,
-    		id: create_if_block_2$5.name,
+    		id: create_if_block_2$6.name,
     		type: "if",
     		source: "(93:0) {#if tag === 'input'}",
     		ctx
@@ -27923,7 +27930,7 @@ var app = (function () {
     	let t;
     	let if_block1_anchor;
     	let current;
-    	const if_block_creators = [create_if_block_2$5, create_if_block_21, create_if_block_22];
+    	const if_block_creators = [create_if_block_2$6, create_if_block_21, create_if_block_22];
     	const if_blocks = [];
 
     	function select_block_type(ctx, dirty) {
@@ -31485,7 +31492,7 @@ var app = (function () {
 
     /* ..\..\..\..\..\..\_Svelte Workspace\svelte-bexis2-core-ui\src\components\File\FileUploader.svelte generated by Svelte v3.46.4 */
 
-    const { console: console_1$8 } = globals;
+    const { console: console_1$9 } = globals;
     const file$g = "..\\..\\..\\..\\..\\..\\_Svelte Workspace\\svelte-bexis2-core-ui\\src\\components\\File\\FileUploader.svelte";
 
     function get_each_context$8(ctx, list, i) {
@@ -32142,7 +32149,7 @@ var app = (function () {
     	const writable_props = ['id', 'version', 'start', 'submit', 'context', 'data'];
 
     	Object.keys($$props).forEach(key => {
-    		if (!~writable_props.indexOf(key) && key.slice(0, 2) !== '$$' && key !== 'slot') console_1$8.warn(`<FileUploader> was created with unknown prop '${key}'`);
+    		if (!~writable_props.indexOf(key) && key.slice(0, 2) !== '$$' && key !== 'slot') console_1$9.warn(`<FileUploader> was created with unknown prop '${key}'`);
     	});
 
     	$$self.$$set = $$props => {
@@ -32691,7 +32698,7 @@ var app = (function () {
 
     /* src\components\Hook.svelte generated by Svelte v3.46.4 */
 
-    const { console: console_1$7 } = globals;
+    const { console: console_1$8 } = globals;
     const file$e = "src\\components\\Hook.svelte";
 
     // (44:0) {#if isEnabled}
@@ -32820,7 +32827,7 @@ var app = (function () {
     	const writable_props = ['status', 'displayName', 'description'];
 
     	Object.keys($$props).forEach(key => {
-    		if (!~writable_props.indexOf(key) && key.slice(0, 2) !== '$$' && key !== 'slot') console_1$7.warn(`<Hook> was created with unknown prop '${key}'`);
+    		if (!~writable_props.indexOf(key) && key.slice(0, 2) !== '$$' && key !== 'slot') console_1$8.warn(`<Hook> was created with unknown prop '${key}'`);
     	});
 
     	function click_handler(event) {
@@ -33714,7 +33721,7 @@ var app = (function () {
 
     /* src\components\HookContainer.svelte generated by Svelte v3.46.4 */
 
-    const { console: console_1$6 } = globals;
+    const { console: console_1$7 } = globals;
     const file$c = "src\\components\\HookContainer.svelte";
     const get_view_slot_changes = dirty => ({});
 
@@ -33864,7 +33871,7 @@ var app = (function () {
     }
 
     // (83:4) {#if error}
-    function create_if_block_2$4(ctx) {
+    function create_if_block_2$5(ctx) {
     	let each_1_anchor;
     	let current;
     	let each_value = /*error*/ ctx[6];
@@ -33950,7 +33957,7 @@ var app = (function () {
 
     	dispatch_dev("SvelteRegisterBlock", {
     		block,
-    		id: create_if_block_2$4.name,
+    		id: create_if_block_2$5.name,
     		type: "if",
     		source: "(83:4) {#if error}",
     		ctx
@@ -34166,7 +34173,7 @@ var app = (function () {
     	let t0;
     	let t1;
     	let current;
-    	let if_block0 = /*error*/ ctx[6] && create_if_block_2$4(ctx);
+    	let if_block0 = /*error*/ ctx[6] && create_if_block_2$5(ctx);
     	let if_block1 = /*success*/ ctx[5] && create_if_block_1$5(ctx);
     	const view_slot_template = /*#slots*/ ctx[11].view;
     	const view_slot = create_slot(view_slot_template, ctx, /*$$scope*/ ctx[12], get_view_slot_context);
@@ -34201,7 +34208,7 @@ var app = (function () {
     						transition_in(if_block0, 1);
     					}
     				} else {
-    					if_block0 = create_if_block_2$4(ctx);
+    					if_block0 = create_if_block_2$5(ctx);
     					if_block0.c();
     					transition_in(if_block0, 1);
     					if_block0.m(t0.parentNode, t0);
@@ -34521,7 +34528,7 @@ var app = (function () {
     	const writable_props = ['name', 'displayName', 'content', 'visible', 'status'];
 
     	Object.keys($$props).forEach(key => {
-    		if (!~writable_props.indexOf(key) && key.slice(0, 2) !== '$$' && key !== 'slot') console_1$6.warn(`<HookContainer> was created with unknown prop '${key}'`);
+    		if (!~writable_props.indexOf(key) && key.slice(0, 2) !== '$$' && key !== 'slot') console_1$7.warn(`<HookContainer> was created with unknown prop '${key}'`);
     	});
 
     	$$self.$$set = $$props => {
@@ -34618,11 +34625,11 @@ var app = (function () {
     		const props = options.props || {};
 
     		if (/*name*/ ctx[0] === undefined && !('name' in props)) {
-    			console_1$6.warn("<HookContainer> was created without expected prop 'name'");
+    			console_1$7.warn("<HookContainer> was created without expected prop 'name'");
     		}
 
     		if (/*displayName*/ ctx[1] === undefined && !('displayName' in props)) {
-    			console_1$6.warn("<HookContainer> was created without expected prop 'displayName'");
+    			console_1$7.warn("<HookContainer> was created without expected prop 'displayName'");
     		}
     	}
 
@@ -35486,7 +35493,7 @@ var app = (function () {
 
     /* src\components\structuresuggestion\MissingValues.svelte generated by Svelte v3.46.4 */
 
-    const { console: console_1$5 } = globals;
+    const { console: console_1$6 } = globals;
     const file$a = "src\\components\\structuresuggestion\\MissingValues.svelte";
 
     function get_each_context$6(ctx, list, i) {
@@ -35841,7 +35848,7 @@ var app = (function () {
     	const writable_props = ['list'];
 
     	Object.keys($$props).forEach(key => {
-    		if (!~writable_props.indexOf(key) && key.slice(0, 2) !== '$$' && key !== 'slot') console_1$5.warn(`<MissingValues> was created with unknown prop '${key}'`);
+    		if (!~writable_props.indexOf(key) && key.slice(0, 2) !== '$$' && key !== 'slot') console_1$6.warn(`<MissingValues> was created with unknown prop '${key}'`);
     	});
 
     	function missingvalue_displayName_binding(value, item) {
@@ -35916,7 +35923,7 @@ var app = (function () {
 
     /* src\components\structuresuggestion\Selection.svelte generated by Svelte v3.46.4 */
 
-    const { console: console_1$4 } = globals;
+    const { console: console_1$5 } = globals;
     const file_1$1 = "src\\components\\structuresuggestion\\Selection.svelte";
 
     function get_each_context$5(ctx, list, i) {
@@ -39201,7 +39208,7 @@ var app = (function () {
     	const writable_props = ['id', 'file'];
 
     	Object.keys($$props).forEach(key => {
-    		if (!~writable_props.indexOf(key) && key.slice(0, 2) !== '$$' && key !== 'slot') console_1$4.warn(`<Selection> was created with unknown prop '${key}'`);
+    		if (!~writable_props.indexOf(key) && key.slice(0, 2) !== '$$' && key !== 'slot') console_1$5.warn(`<Selection> was created with unknown prop '${key}'`);
     	});
 
     	function input_value_binding(value) {
@@ -39374,7 +39381,7 @@ var app = (function () {
     		const props = options.props || {};
 
     		if (/*id*/ ctx[14] === undefined && !('id' in props)) {
-    			console_1$4.warn("<Selection> was created without expected prop 'id'");
+    			console_1$5.warn("<Selection> was created without expected prop 'id'");
     		}
     	}
 
@@ -39396,6 +39403,8 @@ var app = (function () {
     }
 
     /* src\pages\hooks\Validation.svelte generated by Svelte v3.46.4 */
+
+    const { console: console_1$4 } = globals;
     const file$9 = "src\\pages\\hooks\\Validation.svelte";
 
     function get_each_context$4(ctx, list, i) {
@@ -39406,11 +39415,11 @@ var app = (function () {
 
     function get_each_context_1(ctx, list, i) {
     	const child_ctx = ctx.slice();
-    	child_ctx[13] = list[i];
+    	child_ctx[16] = list[i];
     	return child_ctx;
     }
 
-    // (85:4) {:else}
+    // (83:4) {:else}
     function create_else_block_1$1(ctx) {
     	let spinner;
     	let current;
@@ -39452,14 +39461,14 @@ var app = (function () {
     		block,
     		id: create_else_block_1$1.name,
     		type: "else",
-    		source: "(85:4) {:else}",
+    		source: "(83:4) {:else}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (50:2) {#if model}
+    // (51:2) {#if model}
     function create_if_block$c(ctx) {
     	let current_block_type_index;
     	let if_block;
@@ -39532,27 +39541,22 @@ var app = (function () {
     		block,
     		id: create_if_block$c.name,
     		type: "if",
-    		source: "(50:2) {#if model}",
+    		source: "(51:2) {#if model}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (54:6) {:else}
+    // (55:6) {:else}
     function create_else_block$5(ctx) {
     	let alert;
     	let t0;
-    	let b0;
+    	let t1;
+    	let br;
     	let t2;
-    	let ul0;
-    	let t3;
-    	let b1;
-    	let t5;
-    	let ul1;
-    	let t6;
     	let button;
-    	let t7;
+    	let t3;
     	let modal;
     	let current;
 
@@ -39566,21 +39570,7 @@ var app = (function () {
     			$$inline: true
     		});
 
-    	let each_value_1 = /*model*/ ctx[1].errors;
-    	validate_each_argument(each_value_1);
-    	let each_blocks_1 = [];
-
-    	for (let i = 0; i < each_value_1.length; i += 1) {
-    		each_blocks_1[i] = create_each_block_1(get_each_context_1(ctx, each_value_1, i));
-    	}
-
-    	let each_value = /*model*/ ctx[1].sortedErrors;
-    	validate_each_argument(each_value);
-    	let each_blocks = [];
-
-    	for (let i = 0; i < each_value.length; i += 1) {
-    		each_blocks[i] = create_each_block$4(get_each_context$4(ctx, each_value, i));
-    	}
+    	let if_block = /*model*/ ctx[1].fileErrors && create_if_block_2$4(ctx);
 
     	button = new Button$1({
     			props: {
@@ -39608,120 +39598,52 @@ var app = (function () {
     		c: function create() {
     			create_component(alert.$$.fragment);
     			t0 = space();
-    			b0 = element("b");
-    			b0.textContent = "errors";
+    			if (if_block) if_block.c();
+    			t1 = space();
+    			br = element("br");
     			t2 = space();
-    			ul0 = element("ul");
-
-    			for (let i = 0; i < each_blocks_1.length; i += 1) {
-    				each_blocks_1[i].c();
-    			}
-
-    			t3 = space();
-    			b1 = element("b");
-    			b1.textContent = "sorted errors";
-    			t5 = space();
-    			ul1 = element("ul");
-
-    			for (let i = 0; i < each_blocks.length; i += 1) {
-    				each_blocks[i].c();
-    			}
-
-    			t6 = space();
     			create_component(button.$$.fragment);
-    			t7 = space();
+    			t3 = space();
     			create_component(modal.$$.fragment);
-    			add_location(b0, file$9, 56, 10, 1190);
-    			add_location(ul0, file$9, 58, 10, 1227);
-    			add_location(b1, file$9, 65, 10, 1395);
-    			add_location(ul1, file$9, 66, 10, 1427);
+    			add_location(br, file$9, 70, 10, 1568);
     		},
     		m: function mount(target, anchor) {
     			mount_component(alert, target, anchor);
     			insert_dev(target, t0, anchor);
-    			insert_dev(target, b0, anchor);
+    			if (if_block) if_block.m(target, anchor);
+    			insert_dev(target, t1, anchor);
+    			insert_dev(target, br, anchor);
     			insert_dev(target, t2, anchor);
-    			insert_dev(target, ul0, anchor);
-
-    			for (let i = 0; i < each_blocks_1.length; i += 1) {
-    				each_blocks_1[i].m(ul0, null);
-    			}
-
-    			insert_dev(target, t3, anchor);
-    			insert_dev(target, b1, anchor);
-    			insert_dev(target, t5, anchor);
-    			insert_dev(target, ul1, anchor);
-
-    			for (let i = 0; i < each_blocks.length; i += 1) {
-    				each_blocks[i].m(ul1, null);
-    			}
-
-    			insert_dev(target, t6, anchor);
     			mount_component(button, target, anchor);
-    			insert_dev(target, t7, anchor);
+    			insert_dev(target, t3, anchor);
     			mount_component(modal, target, anchor);
     			current = true;
     		},
     		p: function update(ctx, dirty) {
     			const alert_changes = {};
 
-    			if (dirty & /*$$scope*/ 262144) {
+    			if (dirty & /*$$scope*/ 524288) {
     				alert_changes.$$scope = { dirty, ctx };
     			}
 
     			alert.$set(alert_changes);
 
-    			if (dirty & /*model*/ 2) {
-    				each_value_1 = /*model*/ ctx[1].errors;
-    				validate_each_argument(each_value_1);
-    				let i;
-
-    				for (i = 0; i < each_value_1.length; i += 1) {
-    					const child_ctx = get_each_context_1(ctx, each_value_1, i);
-
-    					if (each_blocks_1[i]) {
-    						each_blocks_1[i].p(child_ctx, dirty);
-    					} else {
-    						each_blocks_1[i] = create_each_block_1(child_ctx);
-    						each_blocks_1[i].c();
-    						each_blocks_1[i].m(ul0, null);
-    					}
+    			if (/*model*/ ctx[1].fileErrors) {
+    				if (if_block) {
+    					if_block.p(ctx, dirty);
+    				} else {
+    					if_block = create_if_block_2$4(ctx);
+    					if_block.c();
+    					if_block.m(t1.parentNode, t1);
     				}
-
-    				for (; i < each_blocks_1.length; i += 1) {
-    					each_blocks_1[i].d(1);
-    				}
-
-    				each_blocks_1.length = each_value_1.length;
-    			}
-
-    			if (dirty & /*model*/ 2) {
-    				each_value = /*model*/ ctx[1].sortedErrors;
-    				validate_each_argument(each_value);
-    				let i;
-
-    				for (i = 0; i < each_value.length; i += 1) {
-    					const child_ctx = get_each_context$4(ctx, each_value, i);
-
-    					if (each_blocks[i]) {
-    						each_blocks[i].p(child_ctx, dirty);
-    					} else {
-    						each_blocks[i] = create_each_block$4(child_ctx);
-    						each_blocks[i].c();
-    						each_blocks[i].m(ul1, null);
-    					}
-    				}
-
-    				for (; i < each_blocks.length; i += 1) {
-    					each_blocks[i].d(1);
-    				}
-
-    				each_blocks.length = each_value.length;
+    			} else if (if_block) {
+    				if_block.d(1);
+    				if_block = null;
     			}
 
     			const button_changes = {};
 
-    			if (dirty & /*$$scope*/ 262144) {
+    			if (dirty & /*$$scope*/ 524288) {
     				button_changes.$$scope = { dirty, ctx };
     			}
 
@@ -39729,7 +39651,7 @@ var app = (function () {
     			const modal_changes = {};
     			if (dirty & /*open*/ 4) modal_changes.isOpen = /*open*/ ctx[2];
 
-    			if (dirty & /*$$scope, id, model*/ 262147) {
+    			if (dirty & /*$$scope, id, model*/ 524291) {
     				modal_changes.$$scope = { dirty, ctx };
     			}
 
@@ -39751,18 +39673,12 @@ var app = (function () {
     		d: function destroy(detaching) {
     			destroy_component(alert, detaching);
     			if (detaching) detach_dev(t0);
-    			if (detaching) detach_dev(b0);
+    			if (if_block) if_block.d(detaching);
+    			if (detaching) detach_dev(t1);
+    			if (detaching) detach_dev(br);
     			if (detaching) detach_dev(t2);
-    			if (detaching) detach_dev(ul0);
-    			destroy_each(each_blocks_1, detaching);
-    			if (detaching) detach_dev(t3);
-    			if (detaching) detach_dev(b1);
-    			if (detaching) detach_dev(t5);
-    			if (detaching) detach_dev(ul1);
-    			destroy_each(each_blocks, detaching);
-    			if (detaching) detach_dev(t6);
     			destroy_component(button, detaching);
-    			if (detaching) detach_dev(t7);
+    			if (detaching) detach_dev(t3);
     			destroy_component(modal, detaching);
     		}
     	};
@@ -39771,14 +39687,14 @@ var app = (function () {
     		block,
     		id: create_else_block$5.name,
     		type: "else",
-    		source: "(54:6) {:else}",
+    		source: "(55:6) {:else}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (52:4) {#if model.isValid == true}
+    // (53:4) {#if model.isValid == true}
     function create_if_block_1$4(ctx) {
     	let alert;
     	let current;
@@ -39804,7 +39720,7 @@ var app = (function () {
     		p: function update(ctx, dirty) {
     			const alert_changes = {};
 
-    			if (dirty & /*$$scope*/ 262144) {
+    			if (dirty & /*$$scope*/ 524288) {
     				alert_changes.$$scope = { dirty, ctx };
     			}
 
@@ -39828,14 +39744,14 @@ var app = (function () {
     		block,
     		id: create_if_block_1$4.name,
     		type: "if",
-    		source: "(52:4) {#if model.isValid == true}",
+    		source: "(53:4) {#if model.isValid == true}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (55:10) <Alert color="danger" dismissible>
+    // (56:10) <Alert color="danger" dismissible>
     function create_default_slot_5$2(ctx) {
     	let t;
 
@@ -39855,31 +39771,99 @@ var app = (function () {
     		block,
     		id: create_default_slot_5$2.name,
     		type: "slot",
-    		source: "(55:10) <Alert color=\\\"danger\\\" dismissible>",
+    		source: "(56:10) <Alert color=\\\"danger\\\" dismissible>",
     		ctx
     	});
 
     	return block;
     }
 
-    // (60:12) {#each model.errors as error}
+    // (58:10) {#if model.fileErrors}
+    function create_if_block_2$4(ctx) {
+    	let each_1_anchor;
+    	let each_value = /*model*/ ctx[1].fileErrors;
+    	validate_each_argument(each_value);
+    	let each_blocks = [];
+
+    	for (let i = 0; i < each_value.length; i += 1) {
+    		each_blocks[i] = create_each_block$4(get_each_context$4(ctx, each_value, i));
+    	}
+
+    	const block = {
+    		c: function create() {
+    			for (let i = 0; i < each_blocks.length; i += 1) {
+    				each_blocks[i].c();
+    			}
+
+    			each_1_anchor = empty();
+    		},
+    		m: function mount(target, anchor) {
+    			for (let i = 0; i < each_blocks.length; i += 1) {
+    				each_blocks[i].m(target, anchor);
+    			}
+
+    			insert_dev(target, each_1_anchor, anchor);
+    		},
+    		p: function update(ctx, dirty) {
+    			if (dirty & /*model*/ 2) {
+    				each_value = /*model*/ ctx[1].fileErrors;
+    				validate_each_argument(each_value);
+    				let i;
+
+    				for (i = 0; i < each_value.length; i += 1) {
+    					const child_ctx = get_each_context$4(ctx, each_value, i);
+
+    					if (each_blocks[i]) {
+    						each_blocks[i].p(child_ctx, dirty);
+    					} else {
+    						each_blocks[i] = create_each_block$4(child_ctx);
+    						each_blocks[i].c();
+    						each_blocks[i].m(each_1_anchor.parentNode, each_1_anchor);
+    					}
+    				}
+
+    				for (; i < each_blocks.length; i += 1) {
+    					each_blocks[i].d(1);
+    				}
+
+    				each_blocks.length = each_value.length;
+    			}
+    		},
+    		d: function destroy(detaching) {
+    			destroy_each(each_blocks, detaching);
+    			if (detaching) detach_dev(each_1_anchor);
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_if_block_2$4.name,
+    		type: "if",
+    		source: "(58:10) {#if model.fileErrors}",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    // (63:16) {#each fileerror.errors as error}
     function create_each_block_1(ctx) {
     	let li;
-    	let t_value = /*error*/ ctx[13] + "";
+    	let t_value = /*error*/ ctx[16] + "";
     	let t;
 
     	const block = {
     		c: function create() {
     			li = element("li");
     			t = text(t_value);
-    			add_location(li, file$9, 61, 14, 1327);
+    			add_location(li, file$9, 63, 18, 1452);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, li, anchor);
     			append_dev(li, t);
     		},
     		p: function update(ctx, dirty) {
-    			if (dirty & /*model*/ 2 && t_value !== (t_value = /*error*/ ctx[13] + "")) set_data_dev(t, t_value);
+    			if (dirty & /*model*/ 2 && t_value !== (t_value = /*error*/ ctx[16] + "")) set_data_dev(t, t_value);
     		},
     		d: function destroy(detaching) {
     			if (detaching) detach_dev(li);
@@ -39890,34 +39874,97 @@ var app = (function () {
     		block,
     		id: create_each_block_1.name,
     		type: "each",
-    		source: "(60:12) {#each model.errors as error}",
+    		source: "(63:16) {#each fileerror.errors as error}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (68:12) {#each model.sortedErrors as error}
+    // (59:12) {#each model.fileErrors as fileerror}
     function create_each_block$4(ctx) {
-    	let li;
-    	let t_value = /*error*/ ctx[13] + "";
-    	let t;
+    	let hr;
+    	let t0;
+    	let b;
+    	let t1_value = /*fileerror*/ ctx[13].file + "";
+    	let t1;
+    	let t2;
+    	let ul;
+    	let t3;
+    	let each_value_1 = /*fileerror*/ ctx[13].errors;
+    	validate_each_argument(each_value_1);
+    	let each_blocks = [];
+
+    	for (let i = 0; i < each_value_1.length; i += 1) {
+    		each_blocks[i] = create_each_block_1(get_each_context_1(ctx, each_value_1, i));
+    	}
 
     	const block = {
     		c: function create() {
-    			li = element("li");
-    			t = text(t_value);
-    			add_location(li, file$9, 69, 12, 1529);
+    			hr = element("hr");
+    			t0 = space();
+    			b = element("b");
+    			t1 = text(t1_value);
+    			t2 = space();
+    			ul = element("ul");
+
+    			for (let i = 0; i < each_blocks.length; i += 1) {
+    				each_blocks[i].c();
+    			}
+
+    			t3 = space();
+    			add_location(hr, file$9, 59, 14, 1318);
+    			add_location(b, file$9, 60, 14, 1338);
+    			add_location(ul, file$9, 61, 14, 1377);
     		},
     		m: function mount(target, anchor) {
-    			insert_dev(target, li, anchor);
-    			append_dev(li, t);
+    			insert_dev(target, hr, anchor);
+    			insert_dev(target, t0, anchor);
+    			insert_dev(target, b, anchor);
+    			append_dev(b, t1);
+    			insert_dev(target, t2, anchor);
+    			insert_dev(target, ul, anchor);
+
+    			for (let i = 0; i < each_blocks.length; i += 1) {
+    				each_blocks[i].m(ul, null);
+    			}
+
+    			append_dev(ul, t3);
     		},
     		p: function update(ctx, dirty) {
-    			if (dirty & /*model*/ 2 && t_value !== (t_value = /*error*/ ctx[13] + "")) set_data_dev(t, t_value);
+    			if (dirty & /*model*/ 2 && t1_value !== (t1_value = /*fileerror*/ ctx[13].file + "")) set_data_dev(t1, t1_value);
+
+    			if (dirty & /*model*/ 2) {
+    				each_value_1 = /*fileerror*/ ctx[13].errors;
+    				validate_each_argument(each_value_1);
+    				let i;
+
+    				for (i = 0; i < each_value_1.length; i += 1) {
+    					const child_ctx = get_each_context_1(ctx, each_value_1, i);
+
+    					if (each_blocks[i]) {
+    						each_blocks[i].p(child_ctx, dirty);
+    					} else {
+    						each_blocks[i] = create_each_block_1(child_ctx);
+    						each_blocks[i].c();
+    						each_blocks[i].m(ul, t3);
+    					}
+    				}
+
+    				for (; i < each_blocks.length; i += 1) {
+    					each_blocks[i].d(1);
+    				}
+
+    				each_blocks.length = each_value_1.length;
+    			}
     		},
     		d: function destroy(detaching) {
-    			if (detaching) detach_dev(li);
+    			if (detaching) detach_dev(hr);
+    			if (detaching) detach_dev(t0);
+    			if (detaching) detach_dev(b);
+    			if (detaching) detach_dev(t2);
+    			if (detaching) detach_dev(ul);
+    			destroy_each(each_blocks, detaching);
     		}
     	};
 
@@ -39925,14 +39972,14 @@ var app = (function () {
     		block,
     		id: create_each_block$4.name,
     		type: "each",
-    		source: "(68:12) {#each model.sortedErrors as error}",
+    		source: "(59:12) {#each model.fileErrors as fileerror}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (74:10) <Button color="primary" on:click={toggle}>
+    // (72:10) <Button color="primary" on:click={toggle}>
     function create_default_slot_4$4(ctx) {
     	let t;
 
@@ -39952,14 +39999,14 @@ var app = (function () {
     		block,
     		id: create_default_slot_4$4.name,
     		type: "slot",
-    		source: "(74:10) <Button color=\\\"primary\\\" on:click={toggle}>",
+    		source: "(72:10) <Button color=\\\"primary\\\" on:click={toggle}>",
     		ctx
     	});
 
     	return block;
     }
 
-    // (76:12) <ModalHeader {toggle}>
+    // (74:12) <ModalHeader {toggle}>
     function create_default_slot_3$5(ctx) {
     	let t0;
     	let t1_value = /*model*/ ctx[1].isValid + "";
@@ -39987,14 +40034,14 @@ var app = (function () {
     		block,
     		id: create_default_slot_3$5.name,
     		type: "slot",
-    		source: "(76:12) <ModalHeader {toggle}>",
+    		source: "(74:12) <ModalHeader {toggle}>",
     		ctx
     	});
 
     	return block;
     }
 
-    // (77:12) <ModalBody>
+    // (75:12) <ModalBody>
     function create_default_slot_2$5(ctx) {
     	let selection;
     	let current;
@@ -40037,14 +40084,14 @@ var app = (function () {
     		block,
     		id: create_default_slot_2$5.name,
     		type: "slot",
-    		source: "(77:12) <ModalBody>",
+    		source: "(75:12) <ModalBody>",
     		ctx
     	});
 
     	return block;
     }
 
-    // (75:10) <Modal isOpen={open} {toggle} fullscreen="{true}">
+    // (73:10) <Modal isOpen={open} {toggle} fullscreen="{true}">
     function create_default_slot_1$7(ctx) {
     	let modalheader;
     	let t;
@@ -40083,14 +40130,14 @@ var app = (function () {
     		p: function update(ctx, dirty) {
     			const modalheader_changes = {};
 
-    			if (dirty & /*$$scope, model*/ 262146) {
+    			if (dirty & /*$$scope, model*/ 524290) {
     				modalheader_changes.$$scope = { dirty, ctx };
     			}
 
     			modalheader.$set(modalheader_changes);
     			const modalbody_changes = {};
 
-    			if (dirty & /*$$scope, id*/ 262145) {
+    			if (dirty & /*$$scope, id*/ 524289) {
     				modalbody_changes.$$scope = { dirty, ctx };
     			}
 
@@ -40118,14 +40165,14 @@ var app = (function () {
     		block,
     		id: create_default_slot_1$7.name,
     		type: "slot",
-    		source: "(75:10) <Modal isOpen={open} {toggle} fullscreen=\\\"{true}\\\">",
+    		source: "(73:10) <Modal isOpen={open} {toggle} fullscreen=\\\"{true}\\\">",
     		ctx
     	});
 
     	return block;
     }
 
-    // (53:10) <Alert color="success" dismissible>
+    // (54:10) <Alert color="success" dismissible>
     function create_default_slot$7(ctx) {
     	let t;
 
@@ -40145,7 +40192,7 @@ var app = (function () {
     		block,
     		id: create_default_slot$7.name,
     		type: "slot",
-    		source: "(53:10) <Alert color=\\\"success\\\" dismissible>",
+    		source: "(54:10) <Alert color=\\\"success\\\" dismissible>",
     		ctx
     	});
 
@@ -40261,7 +40308,9 @@ var app = (function () {
     	async function load() {
     		//const res = await fetch(url);
     		$$invalidate(1, model = await getHookStart(start, id, version));
-    	} //console.log("validation",model);
+
+    		console.log("validation", model);
+    	}
 
     	async function reload() {
     		//console.log("run validation");
@@ -40275,7 +40324,7 @@ var app = (function () {
     	const writable_props = ['id', 'version', 'status', 'displayName', 'start', 'description'];
 
     	Object.keys($$props).forEach(key => {
-    		if (!~writable_props.indexOf(key) && key.slice(0, 2) !== '$$' && key !== 'slot') console.warn(`<Validation> was created with unknown prop '${key}'`);
+    		if (!~writable_props.indexOf(key) && key.slice(0, 2) !== '$$' && key !== 'slot') console_1$4.warn(`<Validation> was created with unknown prop '${key}'`);
     	});
 
     	$$self.$$set = $$props => {
@@ -40299,6 +40348,7 @@ var app = (function () {
     		ModalBody,
     		onMount,
     		Selection,
+    		each,
     		id,
     		version,
     		status,
@@ -41834,7 +41884,7 @@ var app = (function () {
     			create_component(fa.$$.fragment);
     			t0 = space();
     			t1 = text(/*diff*/ ctx[0]);
-    			add_location(p, file$8, 39, 0, 1030);
+    			add_location(p, file$8, 46, 0, 1108);
     		},
     		l: function claim(nodes) {
     			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
@@ -41888,7 +41938,11 @@ var app = (function () {
     	const mm = zeroPadded(Math.floor(milliseconds / 1000 / 60));
 
     	// const ss = zeroPadded(Math.floor(milliseconds / 1000) % 60);
-    	return `${mm} min`;
+    	if (mm < 60) {
+    		return `${mm} min`;
+    	} else {
+    		return `> 60 min`;
+    	}
     }
 
     function instance$d($$self, $$props, $$invalidate) {

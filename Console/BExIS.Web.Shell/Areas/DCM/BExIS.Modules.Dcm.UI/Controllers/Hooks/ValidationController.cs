@@ -129,6 +129,15 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                                         cache.UpdateSetup.RowsCount = reader.NumberOfRows;
                                     }
                                 }
+
+                                if (errors.Any())
+                                {
+                                    FileErrors fileErrors = new FileErrors();
+                                    fileErrors.File = file.Name;
+                                    errors.ForEach(e => fileErrors.Errors.Add(e.ToHtmlString()));
+                                    fileErrors.SortedErrors = SortErrors(errors);
+                                    model.FileErrors.Add(fileErrors);
+                                }
                             }
                         }
                     }
@@ -138,24 +147,36 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                     errors.Add(new Error(ErrorType.Other, ex.Message));
                 }
 
-                // if there are errors, sort them for the ui
-                if (errors.Any())
-                {
-                    // sort errors for ui
-                    model.SortedErrors = SortErrors(errors);
 
-                    // convert errors to strings
-                    errors.ForEach(e => model.Errors.Add(e.ToHtmlString()));
-
-                    cache.IsDataValid = false;
-                    cache.Messages.Add(new ResultMessage(DateTime.Now, model.Errors));
-                    model.IsValid = false;
-                }
-                else // no errors, set IsValid to True;
+                // if the validation is done, prepare the model 
+                if (cache.Files.Any()) //if any file exits update model 
                 {
+                    // set this flags as default, if a error exist it will change
                     cache.IsDataValid = true;
                     model.IsValid = true;
-                    cache.Messages.Add(new ResultMessage(DateTime.Now, new List<string>() { "The validation was successful." }));
+
+                    foreach (var fileErrors in model.FileErrors)
+                    {
+                        // if there are errors
+                        if (fileErrors.Errors.Any())
+                        {
+                            cache.IsDataValid = false; 
+                            model.IsValid = cache.IsDataValid;
+                            cache.Messages.Add(new ResultMessage(DateTime.Now, fileErrors.Errors)); // add message for the history
+                        }
+
+                    }
+
+                    // if model is valid , add a message 
+                    if (model.IsValid)
+                    {
+                        cache.Messages.Add(new ResultMessage(DateTime.Now, new List<string>() { "The validation was successful." })); // add message for the history
+                    }
+                }
+                else
+                {
+                    cache.IsDataValid = false;
+                    model.IsValid = false;
                 }
 
                 // save cache

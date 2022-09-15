@@ -28725,7 +28725,7 @@ var app = (function () {
     const { console: console_1 } = globals;
     const file_1 = "src\\pages\\StructureSuggestion.svelte";
 
-    // (74:4) {#if model.variables.length>0}
+    // (75:4) {#if model.variables.length>0}
     function create_if_block_2(ctx) {
     	let div;
     	let row;
@@ -28784,7 +28784,7 @@ var app = (function () {
     			create_component(structureattributes.$$.fragment);
     			t1 = space();
     			create_component(suggestion.$$.fragment);
-    			add_location(div, file_1, 74, 6, 1947);
+    			add_location(div, file_1, 75, 6, 1988);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div, anchor);
@@ -28858,14 +28858,14 @@ var app = (function () {
     		block,
     		id: create_if_block_2.name,
     		type: "if",
-    		source: "(74:4) {#if model.variables.length>0}",
+    		source: "(75:4) {#if model.variables.length>0}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (69:3) {#if selectionIsActive}
+    // (70:3) {#if selectionIsActive}
     function create_if_block_1(ctx) {
     	let div;
     	let selection;
@@ -28885,7 +28885,7 @@ var app = (function () {
     		c: function create() {
     			div = element("div");
     			create_component(selection.$$.fragment);
-    			add_location(div, file_1, 69, 4, 1809);
+    			add_location(div, file_1, 70, 4, 1850);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div, anchor);
@@ -28927,14 +28927,14 @@ var app = (function () {
     		block,
     		id: create_if_block_1.name,
     		type: "if",
-    		source: "(69:3) {#if selectionIsActive}",
+    		source: "(70:3) {#if selectionIsActive}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (64:0) {#if !model}
+    // (65:0) {#if !model}
     function create_if_block(ctx) {
     	let spinner;
     	let current;
@@ -28976,14 +28976,14 @@ var app = (function () {
     		block,
     		id: create_if_block.name,
     		type: "if",
-    		source: "(64:0) {#if !model}",
+    		source: "(65:0) {#if !model}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (78:12) <Button on:click={()=>selectionIsActive=true}>
+    // (79:12) <Button on:click={()=>selectionIsActive=true}>
     function create_default_slot_4(ctx) {
     	let fa;
     	let current;
@@ -29020,14 +29020,14 @@ var app = (function () {
     		block,
     		id: create_default_slot_4.name,
     		type: "slot",
-    		source: "(78:12) <Button on:click={()=>selectionIsActive=true}>",
+    		source: "(79:12) <Button on:click={()=>selectionIsActive=true}>",
     		ctx
     	});
 
     	return block;
     }
 
-    // (77:10) <Col>
+    // (78:10) <Col>
     function create_default_slot_3(ctx) {
     	let button;
     	let current;
@@ -29077,14 +29077,14 @@ var app = (function () {
     		block,
     		id: create_default_slot_3.name,
     		type: "slot",
-    		source: "(77:10) <Col>",
+    		source: "(78:10) <Col>",
     		ctx
     	});
 
     	return block;
     }
 
-    // (82:14) <Button color="primary" on:click={onSaveHandler} disabled={!areVariablesValid ||!areAttributesValid }>
+    // (83:14) <Button color="primary" on:click={onSaveHandler} disabled={!areVariablesValid ||!areAttributesValid }>
     function create_default_slot_2(ctx) {
     	let fa;
     	let current;
@@ -29117,14 +29117,14 @@ var app = (function () {
     		block,
     		id: create_default_slot_2.name,
     		type: "slot",
-    		source: "(82:14) <Button color=\\\"primary\\\" on:click={onSaveHandler} disabled={!areVariablesValid ||!areAttributesValid }>",
+    		source: "(83:14) <Button color=\\\"primary\\\" on:click={onSaveHandler} disabled={!areVariablesValid ||!areAttributesValid }>",
     		ctx
     	});
 
     	return block;
     }
 
-    // (80:10) <Col>
+    // (81:10) <Col>
     function create_default_slot_1(ctx) {
     	let div;
     	let button;
@@ -29147,7 +29147,7 @@ var app = (function () {
     			div = element("div");
     			create_component(button.$$.fragment);
     			attr_dev(div, "class", "text-end");
-    			add_location(div, file_1, 80, 12, 2142);
+    			add_location(div, file_1, 81, 12, 2183);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div, anchor);
@@ -29183,14 +29183,14 @@ var app = (function () {
     		block,
     		id: create_default_slot_1.name,
     		type: "slot",
-    		source: "(80:10) <Col>",
+    		source: "(81:10) <Col>",
     		ctx
     	});
 
     	return block;
     }
 
-    // (76:8) <Row>
+    // (77:8) <Row>
     function create_default_slot(ctx) {
     	let col0;
     	let t;
@@ -29263,7 +29263,7 @@ var app = (function () {
     		block,
     		id: create_default_slot.name,
     		type: "slot",
-    		source: "(76:8) <Row>",
+    		source: "(77:8) <Row>",
     		ctx
     	});
 
@@ -29385,6 +29385,7 @@ var app = (function () {
     	onMount(async () => {
     		console.log("start structure suggestion");
     		setApiConfig("https://localhost:44345", "davidschoene", "123456");
+    		$$invalidate(3, model = await load(id, file, 0));
     	});
 
     	async function update(e) {
@@ -29441,6 +29442,7 @@ var app = (function () {
     		setApiConfig,
     		generate,
     		save,
+    		load,
     		goTo,
     		container,
     		id,

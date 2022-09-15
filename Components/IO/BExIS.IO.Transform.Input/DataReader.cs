@@ -442,14 +442,20 @@ namespace BExIS.IO.Transform.Input
                 DatastructureMatchCheck dmc = new DatastructureMatchCheck();
                 matchErrors = dmc.Execute(SubmitedVariableIdentifiers, source, this.StructuredDataStructure.Name);
 
-                // check the equivalent order of the strutcures
-                DatastructureOrderCheck dso = new DatastructureOrderCheck();
-                orderErrors = dso.Execute(SubmitedVariableIdentifiers, source, this.StructuredDataStructure.Name);
-
-                sameOrderLikeStructure = orderErrors == null ? true : false;
-
                 if (matchErrors != null) errors.AddRange(matchErrors);
-                if (orderErrors != null) errors.AddRange(orderErrors);
+
+                if (!matchErrors.Any())
+                {
+                    // check the equivalent order of the strutcures
+                    DatastructureOrderCheck dso = new DatastructureOrderCheck();
+                    orderErrors = dso.Execute(SubmitedVariableIdentifiers, source, this.StructuredDataStructure.Name);
+
+                    sameOrderLikeStructure = orderErrors == null ? true : false;
+
+                    if (orderErrors != null) errors.AddRange(orderErrors);
+                }
+
+                
 
             }
             catch

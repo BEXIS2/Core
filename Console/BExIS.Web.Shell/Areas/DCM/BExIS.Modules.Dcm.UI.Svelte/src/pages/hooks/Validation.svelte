@@ -5,6 +5,7 @@ import { Spinner, Alert,Button, Modal,ModalHeader, ModalBody } from 'sveltestrap
 import { onMount }from 'svelte'
 
 import Selection from '../../components/structuresuggestion/Selection.svelte';
+import { each } from 'svelte/internal';
 
 export let id=0;
 export let version=1;
@@ -30,7 +31,7 @@ async function load()
 {
   //const res = await fetch(url);
   model = await getHookStart(start,id,version);
-  //console.log("validation",model);
+  console.log("validation",model);
 
 }
 
@@ -54,23 +55,20 @@ const toggle = () => {
       {:else}
           <Alert color="danger" dismissible>not valid</Alert>
 
-          <b>errors</b>
-          
-          <ul>
-            {#each model.errors as error}
-              <!-- content here -->
-              <li>{error}</li>
-            {/each}
-          </ul>
+          {#if model.fileErrors}
+            {#each model.fileErrors as fileerror}
+              <hr>
+              <b>{fileerror.file}</b>
+              <ul>
+                {#each fileerror.errors as error}
+                  <li>{error}</li>
+                {/each}
+              </ul>
 
-          <b>sorted errors</b>
-          <ul>
-            {#each model.sortedErrors as error}
-            <!-- content here -->
-            <li >{error}</li>
             {/each}
-          </ul>
-          
+          {/if}
+
+          <br/>
           <Button color="primary" on:click={toggle}>open reader informations</Button>
           <Modal isOpen={open} {toggle} fullscreen="{true}">
             <ModalHeader {toggle}>Setup filer reader information {model.isValid}</ModalHeader>
