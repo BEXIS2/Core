@@ -1,5 +1,6 @@
 using BExIS.Web.Shell;
 using Swashbuckle.Application;
+using System.Configuration;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -16,6 +17,10 @@ namespace BExIS.Web.Shell
         {
             var thisAssembly = typeof(SwaggerConfig).Assembly;
 
+            string rootUrl = "";
+            if (ConfigurationManager.AppSettings["SwaggerRootUrl"] != null)
+                rootUrl = ConfigurationManager.AppSettings["SwaggerRootUrl"].ToString();
+
             GlobalConfiguration.Configuration
                 .EnableSwagger(c =>
                     {
@@ -30,6 +35,9 @@ namespace BExIS.Web.Shell
                         c.ResolveConflictingActions(apiDescriptions => apiDescriptions.First());
                         //c.ApiKey("Authorization", "header", "Filling bearer token here");
                         c.Schemes(new[] { "https" });
+
+                        if(!string.IsNullOrEmpty(rootUrl))c.RootUrl(r => rootUrl);
+
                     })
 
                 .EnableSwaggerUi("apihelp/{*assetPath}", c =>
