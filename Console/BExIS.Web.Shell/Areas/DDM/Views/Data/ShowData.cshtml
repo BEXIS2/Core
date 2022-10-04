@@ -406,7 +406,7 @@
             alert("Please fill in the respective intention in order to send the request!");
         }
         else {
-            $.post("/DDM/Data/SendRequest", { id, intention }, function (data) {
+            $.post("/DDM/RequestsSend/Send", { id, intention }, function (data) {
                 if (data === true) {
                     $("#sendRequestBt").prop("disabled", "disabled");
                     $("#sendRequestBt").addClass("bx-disabled", "bx-disabled");
