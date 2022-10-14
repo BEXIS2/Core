@@ -87,4 +87,8 @@ namespace BExIS.Modules.Dim.UI.Models.Api
         public DataTable missingValues { get; set; }
 
     }
+    public class PostApiMetadataStatisticModel
+    {
+        public string xpath { get; set; }
+    }
 }
