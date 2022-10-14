@@ -346,6 +346,7 @@
     <Compile Include="Controllers\API\DatasetOutController.cs" />
     <Compile Include="Controllers\API\AttachmentOutController.cs" />
     <Compile Include="Controllers\API\DataStatisticOutController.cs" />
+    <Compile Include="Controllers\API\MetadataStatisticOutController.cs" />
     <Compile Include="Controllers\API\MetadataStructureOutController.cs" />
     <Compile Include="Controllers\DataCiteDoiController.cs" />
     <Compile Include="Controllers\ExportController.cs" />
