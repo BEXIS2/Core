@@ -35,6 +35,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
         /// <returns></returns>
         [BExISApiAuthorize]
         [GetRoute("api/MetadataStructure")]
+        [ResponseType(typeof(MetadataStructureViewObject))]
         public IEnumerable<MetadataStructureViewObject> Get()
         {
             List<MetadataStructureViewObject> tmp = new List<MetadataStructureViewObject>();
@@ -55,15 +56,22 @@ namespace BExIS.Modules.Dim.UI.Controllers
             }
             return tmp;
         }
- 
 
-       
+
+
         /// <summary>
         /// this api get a metadata structure based on the incoming api.
         /// it converts the structure into a json schema
         /// </summary>
+        /// <remarks>
+        /// the API returns the selected metadata structure in json schema.
+        /// each object contains a @ref attribute of type string, simple types contain a #text where the value is entered. 
+        /// even a simple value therefore consists of @ref and #text.
+        /// @ref will beused fpor internal or external references
+        /// #text is used to store input values
+        /// </remarks>
         /// <param name="id"></param>
-        /// <returns>json schema</returns>
+        /// <returns>metadata structure as json schema</returns>
         [BExISApiAuthorize]
         [GetRoute("api/MetadataStructure/{id}")]
         [HttpGet]
