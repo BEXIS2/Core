@@ -491,40 +491,23 @@
         </member>
         <member name="M:BExIS.Modules.Dim.UI.Controllers.API.DatasetOutController.Get">
             <summary>
-            This function displays a list of all datasets Id´s in the system.
+            Get a list of all datasets Id´s in the system.
             </summary>
-            <returns>IEnumerable with ApiSimpleDatasetModel</returns>
         </member>
         <member name="M:BExIS.Modules.Dim.UI.Controllers.API.DatasetOutController.Get(System.Int64)">
              <summary>
-             This function returns basic information from the latest version of a data set. An identifier is required.
+             Get metadata of the latest version of a dataset by id.
              </summary>
             
              <param name="id">Identifier of a dataset</param>
-             <returns>
-            {
-             "Title":"Title of my Dataset.",
-             "Description":"Description of my Dataset.",
-             "DataStructureId":1,
-             "MetadataStructureId":1,
-            }
-             </returns>
         </member>
         <member name="M:BExIS.Modules.Dim.UI.Controllers.API.DatasetOutController.Get(System.Int64,System.Int32)">
              <summary>
-             This function returns basic information from a version of a data set. An identifier and version is required.
+             Get metadata of a specific version of a dataset by id and version number.
              </summary>
             
              <param name="id">Identifier of a dataset</param>
              <param name="version">Version of a dataset</param>
-             <returns>
-            {
-             "Title":"Title of my Dataset.",
-             "Description":"Description of my Dataset.",
-             "DataStructureId":1,
-             "MetadataStructureId":1,
-            }
-             </returns>
         </member>
         <member name="T:BExIS.Modules.Dim.UI.Controllers.AttachmentOutController">
             <summary>
@@ -580,6 +563,7 @@
             <summary>
             Get a list of unique metadata values, count and list of occurrence
             </summary>
+            <remarks>Data is directly returned from the database without (currently) any further permission check. Nested nodes are cuurently not supported.</remarks>
             <returns>JSON object</returns>
         </member>
         <member name="T:BExIS.Modules.Dim.UI.Controllers.MetadataStructureOutController">
@@ -691,7 +675,7 @@
         </member>
         <member name="M:BExIS.Modules.Dim.UI.Controllers.MetadataOutController.Get">
             <summary>
-            With the Get function you get an overview of the exiting datasets from which you can load metadata.
+            Get list of exiting datasets from which metadata can be loaded.
             </summary>
             <remarks>
             With the Get function you get an overview of the exiting datasets from which you can load metadata.
@@ -701,14 +685,13 @@
         </member>
         <member name="M:BExIS.Modules.Dim.UI.Controllers.MetadataOutController.GetBySchema(System.String)">
             <summary>
-            With the Get function you get all metadata based on the given metadata schema name
+            Get all metadata of all datasets based on the given metadata schema name as XML
             </summary>
             <returns>XML with all metadata of the metadata schema</returns>
         </member>
         <member name="M:BExIS.Modules.Dim.UI.Controllers.MetadataOutController.Get(System.Int32,System.String,System.Int32)">
              <summary>
-             this get function returns the metadata for a dataset.
-             As output xml and json are available. if no accept or a wrong one is given, xml is returned.
+             Get metadata for a dataset as XML (default) or JSON (internal, complete or simplified structure)
              </summary>
              <remarks>
             
@@ -716,10 +699,10 @@
              Based on the existing transformation options, the converted metadata can be obtained via format.
              
              ## simplfiedJson
-             if you set the accept of the request to return a json, you can manipulate the json with this parameter.
-             0 = returns the metadata with full internal structure
-             1 = returns a simplified form of the structure with all fields and attributes
-             2 = returns the metadata in a simplified structure and does not add all fields and attributes that are empty.
+             if you set the accept of the request to return a json, you can manipulate the json with this parameter. <br/>
+             0 = returns the metadata with full internal structure <br/>
+             1 = returns a simplified form of the structure with all fields and attributes <br/>
+             2 = returns the metadata in a simplified structure and does not add all fields and attributes that are empty. 
              
              </remarks>
              <param name="id">Dataset Id</param>

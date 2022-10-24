@@ -466,6 +466,12 @@
               Sucht eine lokalisierte Zeichenfolge, die Update ähnelt.
             </summary>
         </member>
+        <member name="M:BExIS.Web.Shell.Controllers.API.TokenController.Get">
+            <summary>
+            Get the token based on basic authentication
+            </summary>
+            <returns>Token</returns>
+        </member>
         <member name="M:BExIS.Web.Shell.Controllers.UiTestController.verifyErrors(System.Object,System.Xml.Schema.ValidationEventArgs)">
             <summary>
             Commented by Javad due to modularity issues.
