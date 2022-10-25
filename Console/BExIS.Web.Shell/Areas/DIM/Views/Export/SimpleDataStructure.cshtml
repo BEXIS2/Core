@@ -23,7 +23,7 @@
     @foreach (DataRow row in Model.Data.Rows)
     {
         <tr>
-            @foreach (string item in row.ItemArray)
+            @foreach (var item in row.ItemArray)
             {
 
                 <td>
