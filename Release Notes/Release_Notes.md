@@ -3,6 +3,8 @@
 
 >For developer: API documentation is now generated automatically. Files need to be copied during build (debug & relaese) into the App_Data. Example changes can be found e.g. in the BExIS.Modules.Dim.UI.csproj file. At line 45 and changes in line 379 ([#973](https://github.com/BEXIS2/Core/issues/973))
 
+**Workspace changes:** https://github.com/BEXIS2/Workspace/compare/2.15...2.16
+
 ### Features
 - Metadata Statistic API: Draft version added supporting query by xpath and filtering by metadata structue and dataset ids ([#979](https://github.com/BEXIS2/Core/issues/979))([#986](https://github.com/BEXIS2/Core/issues/986))([#991](https://github.com/BEXIS2/Core/issues/991))
   
@@ -22,3 +24,4 @@
 - Fix no dataset download, if no primary data was uploaded ([#562](https://github.com/BEXIS2/Core/issues/562))
 - Fix metadata import via API works only with metadata structure id 1 ([#977](https://github.com/BEXIS2/Core/issues/977))
 - Fix metadata status not allways copied correct in a new version (e.g., during data import via API) ([#985](https://github.com/BEXIS2/Core/issues/985))
+
