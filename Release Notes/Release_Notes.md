@@ -13,12 +13,12 @@
 - Data Statistic API: Improve documentation ([#975](https://github.com/BEXIS2/Core/issues/975))
 - Former Member: Allow for dynamic email content via settings ([#976](https://github.com/BEXIS2/Core/issues/976))
 - Improve API documentation and automation of manual steps ([#973](https://github.com/BEXIS2/Core/issues/973))
-- Improve automation of build process ([#964](https://github.com/BEXIS2/Core/issues/964)
-- Add further publishing profiles ([#972](https://github.com/BEXIS2/Core/issues/972)
+- Improve automation of build process ([#964](https://github.com/BEXIS2/Core/issues/964))
+- Add further publishing profiles ([#972](https://github.com/BEXIS2/Core/issues/972))
 
 
 ### Bugs
-- Fix spaces in names during mapping cause JavaScript error ([#2651](https://github.com/BEXIS2/Core/issues/265))
+- Fix spaces in names during mapping cause JavaScript error ([#265](https://github.com/BEXIS2/Core/issues/265))
 - Fix no dataset download, if no primary data was uploaded ([#562](https://github.com/BEXIS2/Core/issues/562))
 - Fix metadata import via API works only with metadata structure id 1 ([#977](https://github.com/BEXIS2/Core/issues/977))
-- Fix metadata status not allways copied correct in a new version (e.g., during data import via API) ([#977](https://github.com/BEXIS2/Core/issues/977))
+- Fix metadata status not allways copied correct in a new version (e.g., during data import via API) ([#985](https://github.com/BEXIS2/Core/issues/985))
