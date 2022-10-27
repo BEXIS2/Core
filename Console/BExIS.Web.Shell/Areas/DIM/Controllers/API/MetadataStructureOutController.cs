@@ -67,8 +67,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
         /// the API returns the selected metadata structure in json schema.
         /// each object contains a @ref attribute of type string, simple types contain a #text where the value is entered. 
         /// even a simple value therefore consists of @ref and #text.
-        /// @ref will beused fpor internal or external references
-        /// #text is used to store input values
+        /// @ref will beused fpor internal or external references, #text is used to store input values
         /// </remarks>
         /// <param name="id"></param>
         /// <returns>metadata structure as json schema</returns>
