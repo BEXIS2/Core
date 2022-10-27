@@ -1,5 +1,6 @@
 # BEXIS 2.16 Release Notes
 >Help URLs are now generated automatically based on the used relaese version. It is not needed from now on to always update the links in the workspace. Empty values in the settings file (default -> generated links) can be still overwritten with your own customized help links.
+
 >For developer: API documentation is now generated automatically. Files need to be copied during build (debug & relaese) into the App_Data. Example changes can be found e.g. in the BExIS.Modules.Dim.UI.csproj file. At line 45 and changes in line 379 ([#973](https://github.com/BEXIS2/Core/issues/973))
 
 ### Features
