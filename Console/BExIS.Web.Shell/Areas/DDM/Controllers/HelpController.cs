@@ -8,6 +8,8 @@ using BExIS.Xml.Helpers;
 using System.Xml.Linq;
 using System.Net;
 using System.Web;
+using System;
+using BExIS.Utils.Helpers;
 
 namespace BExIS.Modules.Ddm.UI.Controllers
 {
@@ -24,15 +26,11 @@ namespace BExIS.Modules.Ddm.UI.Controllers
 
             string helpurl = help.Attribute("value")?.Value;
 
-            //ServicePointManager.Expect100Continue = true;
-            //ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
-            //using (var client = new WebClient())
-            //{
-            //    var helpfile = client.DownloadString(helpurl);
-
-            //    string model = Markdown.ToHtml(helpfile);
-            //    return View("Index", (object)model);
-            //}
+            //add default link if not set
+            if (String.IsNullOrEmpty(helpurl))
+            {
+                helpurl = ManualHelper.GetUrl(AppConfiguration.ApplicationVersion, "DDM");
+            }
 
             return Redirect(helpurl);
         }

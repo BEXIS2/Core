@@ -117,10 +117,16 @@ namespace BExIS.Modules.Dim.UI.Controllers
 
         private HttpResponseMessage getData(long id, int version, string token, string projection = null, string selection = null)
         {
+
+            if (id <= 0)
+                return Request.CreateErrorResponse(HttpStatusCode.PreconditionFailed, "Id should be greater then 0");
+
+          
             DatasetManager datasetManager = new DatasetManager();
             UserManager userManager = new UserManager();
             EntityPermissionManager entityPermissionManager = new EntityPermissionManager();
             EntityManager entityManager = new EntityManager();
+
 
             bool isPublic = false;
             try
@@ -139,10 +145,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
                 if (!isPublic && String.IsNullOrEmpty(token))
 
                 {
-                    var request = Request.CreateResponse();
-                    request.Content = new StringContent("Bearer token not exist.");
-
-                    return request;
+                    return Request.CreateErrorResponse(HttpStatusCode.Unauthorized, "Bearer token not exist.");
                 }
 
                 User user = userManager.Users.Where(u => u.Token.Equals(token)).FirstOrDefault();
@@ -161,7 +164,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
                         bool isLatestVersion = false;
                         if (version == -1 || dataset.Versions.Count == version) isLatestVersion = true;
 
-                        DataTable dt;
+                        DataTable dt = null;
 
                         if (isLatestVersion)
                         {
@@ -174,32 +177,41 @@ namespace BExIS.Modules.Dim.UI.Controllers
                             // check the data sturcture type ...
                             if (datasetVersion.Dataset.DataStructure.Self is StructuredDataStructure)
                             {
-       
+
+
                                 // apply selection and projection
-                                long count = datasetManager.RowCount(id);
+                                long count = datasetManager.GetDataTuplesCount(datasetVersion.Id);
 
-                                dt = datasetManager.GetLatestDatasetVersionTuples(id, null, null, null, 0, (int)count);
-                                dt.Strip();
-
-                                if (!string.IsNullOrEmpty(selection))
+                                if (count > 0)
                                 {
-                                    dt = OutputDataManager.SelectionOnDataTable(dt, selection, true);
+                                    dt = datasetManager.GetLatestDatasetVersionTuples(id, null, null, null, 0, (int)count);
+                                    dt.Strip();
+
+                                    if (!string.IsNullOrEmpty(selection))
+                                    {
+                                        dt = OutputDataManager.SelectionOnDataTable(dt, selection, true);
+                                    }
+
+                                    if (!string.IsNullOrEmpty(projection))
+                                    {
+                                        // make the header names upper case to make them case insensitive
+                                        dt = OutputDataManager.ProjectionOnDataTable(dt, projection.ToUpper().Split(','));
+                                    }
+                                }
+                                else
+                                {
+                                    return Request.CreateErrorResponse(HttpStatusCode.BadRequest, "There is no data for the dataset.");
                                 }
 
-                                if (!string.IsNullOrEmpty(projection))
-                                {
-                                    // make the header names upper case to make them case insensitive
-                                    dt = OutputDataManager.ProjectionOnDataTable(dt, projection.ToUpper().Split(','));
-                                }
 
-      
                                 #endregion get data from the latest version of a dataset
 
                                 //return model;
                             }
                             else
                             {
-                                return Request.CreateResponse();
+                                return Request.CreateErrorResponse(HttpStatusCode.BadRequest, "The data of this dataset is not structured.");
+
                             }
                         }
                         else
@@ -224,25 +236,34 @@ namespace BExIS.Modules.Dim.UI.Controllers
 
                                 // apply selection and projection
                                 int count = datasetManager.GetDatasetVersionEffectiveTuples(datasetVersion).Count;
-                                dt = datasetManager.GetDatasetVersionTuples(datasetVersion.Id, 0, count);
 
-                                dt.Strip();
-
-                                if (!string.IsNullOrEmpty(selection))
+                                if (count > 0) // has primary data
                                 {
-                                    dt = OutputDataManager.SelectionOnDataTable(dt, selection);
+
+                                    dt = datasetManager.GetDatasetVersionTuples(datasetVersion.Id, 0, count);
+
+                                    dt.Strip();
+
+                                    if (!string.IsNullOrEmpty(selection))
+                                    {
+                                        dt = OutputDataManager.SelectionOnDataTable(dt, selection);
+                                    }
+
+                                    if (!string.IsNullOrEmpty(projection))
+                                    {
+                                        // make the header names upper case to make them case insensitive
+                                        dt = OutputDataManager.ProjectionOnDataTable(dt, projection.ToUpper().Split(','));
+                                    }
                                 }
-
-                                if (!string.IsNullOrEmpty(projection))
+                                else // has no primary data
                                 {
-                                    // make the header names upper case to make them case insensitive
-                                    dt = OutputDataManager.ProjectionOnDataTable(dt, projection.ToUpper().Split(','));
+                                    return Request.CreateErrorResponse(HttpStatusCode.BadRequest, "There is no data for the dataset version.");
                                 }
 
                             }
                             else // return files of the unstructure dataset
                             {
-                                return Request.CreateResponse();
+                                return Request.CreateErrorResponse(HttpStatusCode.BadRequest, "The data is not structured.");
                             }
 
                             #endregion load data of a older version of a dataset
@@ -270,28 +291,20 @@ namespace BExIS.Modules.Dim.UI.Controllers
                         }
                         else
                         {
-                            var request = Request.CreateResponse();
-                            request.Content = new StringContent("The data could not be loaded.");
-
-                            return request;
+                            return Request.CreateErrorResponse(HttpStatusCode.BadRequest, "The data could not be loaded.");
                         }
                        
 
                     }
                     else // has rights?
                     {
-                        var request = Request.CreateResponse();
-                        request.Content = new StringContent("User has no read right.");
 
-                        return request;
+                        return Request.CreateErrorResponse(HttpStatusCode.Forbidden, "User has no read right.");
                     }
                 }
                 else
                 {
-                    var request = Request.CreateResponse();
-                    request.Content = new StringContent("User is not available.");
-
-                    return request;
+                    return Request.CreateErrorResponse(HttpStatusCode.Unauthorized, "User is not available.");
                 }
             }
             catch (Exception e)

@@ -1,28 +1,6 @@
-﻿using BExIS.App.Bootstrap.Attributes;
-using BExIS.Dim.Helpers.API;
-using BExIS.Dlm.Entities.Data;
-using BExIS.Dlm.Entities.DataStructure;
-using BExIS.Dlm.Services.Data;
-using BExIS.Dlm.Services.DataStructure;
-using BExIS.IO.Transform.Input;
-using BExIS.IO.Transform.Output;
-using BExIS.IO.Transform.Validation.DSValidation;
-using BExIS.IO.Transform.Validation.Exceptions;
-using BExIS.Modules.Dcm.UI.Models.API;
-using BExIS.Modules.Dcm.UI.Helper.API;
-using BExIS.Security.Entities.Authorization;
-using BExIS.Security.Entities.Subjects;
-using BExIS.Security.Services.Authorization;
-using BExIS.Security.Services.Subjects;
-using BExIS.Security.Services.Utilities;
-using BExIS.Utils.Data.Upload;
-using BExIS.Utils.Upload;
-using BExIS.Xml.Helpers;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Configuration;
-using System.Data;
-using System.Diagnostics;
+
 using System.Linq;
 using System.Net;
 using System.Net.Http;
@@ -33,12 +11,20 @@ using System.Web.Http;
 using System.Web.Http.Description;
 using System.IO;
 using Vaiona.Utils.Cfg;
-using BExIS.IO;
 using System.Web;
 using System.Xml;
 using System.Text.RegularExpressions;
-using BExIS.Utils.Route;
 using Vaiona.Entities.Common;
+using BExIS.Xml.Helpers;
+using BExIS.App.Bootstrap.Attributes;
+using BExIS.Utils.Route;
+using BExIS.Security.Entities.Subjects;
+using BExIS.Dlm.Services.Data;
+using BExIS.Security.Services.Subjects;
+using BExIS.Security.Services.Authorization;
+using BExIS.Dlm.Entities.Data;
+using BExIS.Security.Entities.Authorization;
+using BExIS.IO;
 
 namespace BExIS.Modules.Dcm.UI.Controllers
 {

@@ -20,7 +20,7 @@
 		<add key="UseSchemaInDatabaseGeneration" value="False" />
 		<add key="ThrowErrorWhenParialContentNotFound" value="False" />
 		<add key="ApplicationName" value="{APPLICATIONNAME}" />
-		<add key="ApplicationVersion" value="2.15" />
+		<add key="ApplicationVersion" value="2.16" />
 		<add key="SessionWarningDelaySecond" value="30" />
 		<!-- Keep it as false, there are some test data in the database-->
 		<add key="CreateDatabase" value="false" />
@@ -45,6 +45,9 @@
 		<add key="DefaultThemeName" value="default" />
 		<add key="ActiveLayoutName" value="_Layout" />
 		<add key="SystemEmail" value="{SYSTEM_EMAIL}" />
+		<!--in case a reverse proxy is used, swagger cannot get the called host address. This means that the api document cannot be loaded correctly.
+			In this case, the correct url must be entered here.-->
+		<add key="SwaggerRootUrl" value="" />
 		<!--
       If this flag is set to true, all exceptions will be forwarded to SystemEmail.
     -->

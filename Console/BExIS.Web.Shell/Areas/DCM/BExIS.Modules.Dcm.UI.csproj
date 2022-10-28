@@ -33,7 +33,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <DocumentationFile>bin\BExIS.Modules.Dcm.UI.xml</DocumentationFile>
+    <DocumentationFile>bin\BExIS.Modules.Dcm.UI.xml </DocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -42,6 +42,7 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <DocumentationFile>bin\BExIS.Modules.Dcm.UI.xml</DocumentationFile>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Antlr3.Runtime, Version=3.5.0.2, Culture=neutral, PublicKeyToken=eb42632606e9261f, processorArchitecture=MSIL">
@@ -484,6 +485,7 @@
     <None Include="Properties\PublishProfiles\BexisServer_master.pubxml" />
     <None Include="Properties\PublishProfiles\BexisServer_dev.pubxml" />
     <None Include="Properties\PublishProfiles\BexisServer_rc.pubxml" />
+    <None Include="Properties\PublishProfiles\BexisServer_train.pubxml" />
     <None Include="Scripts\jquery-3.6.0.intellisense.js" />
     <Content Include="Scripts\jquery-3.6.0.js" />
     <Content Include="Scripts\jquery-3.6.0.min.js" />
@@ -731,7 +733,8 @@
   </Target>
   <PropertyGroup>
     <PostBuildEvent>mkdir "$(SolutionDir)Console\Workspace\Modules\DCM"
-C:\Windows\System32\xcopy "$(ProjectDir)Dcm.Settings.xml" "$(SolutionDir)Console\Workspace\Modules\DCM" /C /Y /I</PostBuildEvent>
+C:\Windows\System32\xcopy "$(ProjectDir)Dcm.Settings.xml" "$(SolutionDir)Console\Workspace\Modules\DCM" /C /Y /I
+C:\Windows\System32\xcopy "$(ProjectDir)\bin\BExIS.Modules.Dcm.UI.xml" "$(SolutionDir)Console\BExIS.Web.Shell\App_Data" /C /Y /I</PostBuildEvent>
   </PropertyGroup>
   <Import Project="..\..\..\..\packages\PostSharp.4.3.48\tools\PostSharp.targets" Condition="Exists('..\..\..\..\packages\PostSharp.4.3.48\tools\PostSharp.targets')" />
   <Target Name="EnsurePostSharpImported" BeforeTargets="BeforeBuild" Condition="'$(PostSharp30Imported)' == ''">

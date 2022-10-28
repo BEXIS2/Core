@@ -49,8 +49,8 @@
 
             @foreach (SimpleMappingModel simpleMappingModel in Model.SimpleMappings)
             {
-                string sourceId = simpleMappingModel.Source.Type + "_" + simpleMappingModel.Source.ElementId + "_" + @simpleMappingModel.Source.Position + "_" + @simpleMappingModel.Source.Name + "_MappingSimpleLinkElement";
-                string targetId = simpleMappingModel.Target.Type + "_" + simpleMappingModel.Target.ElementId + "_" + @simpleMappingModel.Target.Position + "_" + @simpleMappingModel.Target.Name + "_MappingSimpleLinkElement";
+                string sourceId = simpleMappingModel.Source.Type + "_" + simpleMappingModel.Source.ElementId + "_" + @simpleMappingModel.Source.Position + "_" + @simpleMappingModel.Source.Name.Replace(' ','-') + "_MappingSimpleLinkElement";
+                string targetId = simpleMappingModel.Target.Type + "_" + simpleMappingModel.Target.ElementId + "_" + @simpleMappingModel.Target.Position + "_" + @simpleMappingModel.Target.Name.Replace(' ','-') + "_MappingSimpleLinkElement";
 
                 <span id="@simpleMappingModel.Id" class="mapping-container-simple-hidden-mapping" targetId="@targetId" sourceId="@sourceId"></span>
             }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Data;
 using System.Linq;
 using System.Web;
@@ -40,7 +41,7 @@ namespace BExIS.Modules.Dim.UI.Models.Api
         public string VersionPublicAccessDate { get; set; }
         public Dictionary<string, string> AdditionalInformations { get; set; }
         public Dictionary<string, Dictionary<string, string>> Parties { get; set; }
-        public DateTime VersionDate { get; set; }
+        public string VersionDate { get; set; }
         public object Names { get; internal set; }
 
         public ApiDatasetModel()
@@ -85,6 +86,15 @@ namespace BExIS.Modules.Dim.UI.Models.Api
         public string maxLength { get; set; }
         public string minLength { get; set; }
         public DataTable missingValues { get; set; }
+
+    }
+
+    public class PostApiMetadataStatisticModel
+    {
+        public string xpath { get; set; }
+        public string[] datasetIds { get; set; }
+        public string[] metadatastructureIds { get; set; }
+        public string regex { get; set; }
 
     }
 }

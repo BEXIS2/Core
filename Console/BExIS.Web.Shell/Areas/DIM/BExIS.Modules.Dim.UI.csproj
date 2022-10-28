@@ -42,6 +42,7 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <DocumentationFile>bin\BExIS.Modules.Dim.UI.xml</DocumentationFile>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="DataAnnotationsValidator, Version=2.1.0.0, Culture=neutral, PublicKeyToken=cd9c89f8de08f74c, processorArchitecture=MSIL">
@@ -346,6 +347,7 @@
     <Compile Include="Controllers\API\DatasetOutController.cs" />
     <Compile Include="Controllers\API\AttachmentOutController.cs" />
     <Compile Include="Controllers\API\DataStatisticOutController.cs" />
+    <Compile Include="Controllers\API\MetadataStatisticOutController.cs" />
     <Compile Include="Controllers\API\MetadataStructureOutController.cs" />
     <Compile Include="Controllers\DataCiteDoiController.cs" />
     <Compile Include="Controllers\ExportController.cs" />
@@ -638,6 +640,7 @@
     <None Include="Properties\PublishProfiles\BexisServer_master.pubxml" />
     <None Include="Properties\PublishProfiles\BexisServer_rc.pubxml" />
     <None Include="Properties\PublishProfiles\BexisServer_test.pubxml" />
+    <None Include="Properties\PublishProfiles\BexisServer_train.pubxml" />
     <None Include="Properties\PublishProfiles\FolderProfile.pubxml" />
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
     <Content Include="Scripts\bootstrap.js" />
@@ -1033,7 +1036,8 @@
   <PropertyGroup>
     <PostBuildEvent>mkdir "$(SolutionDir)Console\Workspace\Modules\DIM"
 C:\Windows\System32\xcopy "$(ProjectDir)Dim.Settings.xml" "$(SolutionDir)Console\Workspace\Modules\DIM" /C /Y /I
-C:\Windows\System32\xcopy "$(ProjectDir)\App_Data\submissionConfig.xml" "$(SolutionDir)Console\Workspace\Modules\DIM" /C /Y /I</PostBuildEvent>
+C:\Windows\System32\xcopy "$(ProjectDir)\App_Data\submissionConfig.xml" "$(SolutionDir)Console\Workspace\Modules\DIM" /C /Y /I
+C:\Windows\System32\xcopy "$(ProjectDir)\bin\BExIS.Modules.Dim.UI.xml" "$(SolutionDir)Console\BExIS.Web.Shell\App_Data" /C /Y /I</PostBuildEvent>
   </PropertyGroup>
   <Import Project="..\..\..\..\packages\Microsoft.CodeAnalysis.NetAnalyzers.6.0.0\build\Microsoft.CodeAnalysis.NetAnalyzers.targets" Condition="Exists('..\..\..\..\packages\Microsoft.CodeAnalysis.NetAnalyzers.6.0.0\build\Microsoft.CodeAnalysis.NetAnalyzers.targets')" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.

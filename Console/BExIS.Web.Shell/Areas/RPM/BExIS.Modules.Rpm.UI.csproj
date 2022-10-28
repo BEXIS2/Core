@@ -42,6 +42,7 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <DocumentationFile>bin\BExIS.Modules.Rpm.UI.xml</DocumentationFile>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Microsoft.CSharp" />
@@ -213,6 +214,7 @@
     <None Include="Properties\PublishProfiles\BexisServer_master.pubxml" />
     <None Include="Properties\PublishProfiles\BexisServer_rc.pubxml" />
     <None Include="Properties\PublishProfiles\BexisServer_test.pubxml" />
+    <None Include="Properties\PublishProfiles\BexisServer_train.pubxml" />
     <None Include="Properties\PublishProfiles\FolderProfile.pubxml" />
     <None Include="Scripts\jquery-3.6.0.intellisense.js" />
     <Content Include="Scripts\jquery-3.6.0.js" />
@@ -373,7 +375,8 @@
   </Target>
   <PropertyGroup>
     <PostBuildEvent>mkdir "$(SolutionDir)Console\Workspace\Modules\RPM"
-C:\Windows\System32\xcopy "$(ProjectDir)Rpm.Settings.xml" "$(SolutionDir)Console\Workspace\Modules\RPM" /C /Y /I</PostBuildEvent>
+C:\Windows\System32\xcopy "$(ProjectDir)Rpm.Settings.xml" "$(SolutionDir)Console\Workspace\Modules\RPM" /C /Y /I
+C:\Windows\System32\xcopy "$(ProjectDir)\bin\BExIS.Modules.Rpm.UI.xml" "$(SolutionDir)Console\BExIS.Web.Shell\App_Data" /C /Y /I</PostBuildEvent>
   </PropertyGroup>
   <Import Project="..\..\..\..\packages\Microsoft.CodeAnalysis.NetAnalyzers.6.0.0\build\Microsoft.CodeAnalysis.NetAnalyzers.targets" Condition="Exists('..\..\..\..\packages\Microsoft.CodeAnalysis.NetAnalyzers.6.0.0\build\Microsoft.CodeAnalysis.NetAnalyzers.targets')" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.

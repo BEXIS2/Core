@@ -184,6 +184,7 @@
     <None Include="Properties\PublishProfiles\BexisServer_master.pubxml" />
     <None Include="Properties\PublishProfiles\BexisServer_dev.pubxml" />
     <None Include="Properties\PublishProfiles\BexisServer_rc.pubxml" />
+    <None Include="Properties\PublishProfiles\BexisServer_train.pubxml" />
     <None Include="Scripts\jquery-3.6.0.intellisense.js" />
     <Content Include="Scripts\jquery-3.6.0.js" />
     <Content Include="Scripts\jquery-3.6.0.min.js" />
@@ -283,6 +284,10 @@
     <ProjectReference Include="..\..\..\..\Components\IO\BExIS.IO.Transform.Validation\BExIS.IO.Transform.Validation.csproj">
       <Project>{c8a05313-b960-406e-92ec-c1e5b3f47fcd}</Project>
       <Name>BExIS.IO.Transform.Validation</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\..\Components\Utils\BExIS.Utils\BExIS.Utils.csproj">
+      <Project>{782B71C1-707F-4AB1-80E9-90D2880635B4}</Project>
+      <Name>BExIS.Utils</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\..\..\Components\XML\BExIS.Xml.Helpers\BExIS.Xml.Helpers.csproj">
       <Project>{252F7872-A69C-43A6-84B4-4D2ABDBDD9AB}</Project>

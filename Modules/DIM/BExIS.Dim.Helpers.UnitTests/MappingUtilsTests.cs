@@ -40,7 +40,7 @@ namespace BExIS.Dim.Helpers.UnitTests
         {
         }
 
-        [Test()]
+        //[Test()]
         public void GetValuesFromMetadata_MultiMappingsOnDifferentKomplexTypes_ListOfValues()
         {
             //Arrange

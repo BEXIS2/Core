@@ -26,7 +26,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
 
         // GET: api/Metadata
         /// <summary>
-        /// With the Get function you get an overview of the exiting datasets from which you can load metadata.
+        /// Get list of exiting datasets from which metadata can be loaded.
         /// </summary>
         /// <remarks>
         /// With the Get function you get an overview of the exiting datasets from which you can load metadata.
@@ -76,7 +76,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
 
         // GET:api/MetadataBySchema/GBIF
         /// <summary>
-        /// With the Get function you get all metadata based on the given metadata schema name
+        /// Get all metadata of all datasets based on the given metadata schema name as XML
         /// </summary>
         /// <returns>XML with all metadata of the metadata schema</returns>
         [BExISApiAuthorize]
@@ -138,8 +138,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
         }
 
         /// <summary>
-        /// this get function returns the metadata for a dataset.
-        /// As output xml and json are available. if no accept or a wrong one is given, xml is returned.
+        /// Get metadata for a dataset as XML (default) or JSON (internal, complete or simplified structure)
         /// </summary>
         /// <remarks>
         ///
@@ -147,10 +146,10 @@ namespace BExIS.Modules.Dim.UI.Controllers
         /// Based on the existing transformation options, the converted metadata can be obtained via format.
         /// 
         /// ## simplfiedJson
-        /// if you set the accept of the request to return a json, you can manipulate the json with this parameter.
-        /// 0 = returns the metadata with full internal structure
-        /// 1 = returns a simplified form of the structure with all fields and attributes
-        /// 2 = returns the metadata in a simplified structure and does not add all fields and attributes that are empty.
+        /// if you set the accept of the request to return a json, you can manipulate the json with this parameter. <br/>
+        /// 0 = returns the metadata with full internal structure <br/>
+        /// 1 = returns a simplified form of the structure with all fields and attributes <br/>
+        /// 2 = returns the metadata in a simplified structure and does not add all fields and attributes that are empty. 
         /// 
         /// </remarks>
         /// <param name="id">Dataset Id</param>
