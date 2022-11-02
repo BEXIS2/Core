@@ -75,7 +75,9 @@ namespace BExIS.IO.Transform.Output
                         this.Variables.Columns.Add("SystemType");
                         this.Variables.Columns.Add("AttributeName");
                         this.Variables.Columns.Add("AttributeDescription");
-
+                        this.Variables.Columns.Add("DisplayPattern");
+                        this.Variables.Columns.Add("MissingValues", typeof(DataTable));
+                        
                         StructuredDataStructure structuredDataStructure = dataStructureManager.StructuredDataStructureRepo.Get(id);
                         this.Structured = true;
                         DataRow dataRow;
@@ -87,10 +89,30 @@ namespace BExIS.IO.Transform.Output
                             dataRow["Description"] = vs.Description;
                             dataRow["isOptional"] = vs.IsValueOptional;
                             dataRow["Unit"] = vs.Unit.Name;
-                            dataRow["DataType"] = vs.DataType.Name;
-                            dataRow["SystemType"] = vs.DataType.SystemType;
-                            dataRow["AttributeName"] = vs.VariableTemplate.Label;
-                            dataRow["AttributeDescription"] = vs.VariableTemplate.Description;
+                            dataRow["DataType"] = vs.DataAttribute.DataType.Name;
+                            dataRow["SystemType"] = vs.DataAttribute.DataType.SystemType;
+                            dataRow["AttributeName"] = vs.DataAttribute.Name;
+                            dataRow["AttributeDescription"] = vs.DataAttribute.Description;
+
+                            DataTypeDisplayPattern dtdp = DataTypeDisplayPattern.Materialize(vs.DataAttribute.DataType.Extra);
+                            string displayPattern = "";
+                            if (dtdp != null) displayPattern = dtdp.StringPattern;
+
+                            dataRow["DisplayPattern"] = displayPattern;
+
+                            DataTable dtMissingValues = new DataTable("MissingValues");
+                            dtMissingValues.Columns.Add("placeholder", typeof(String));
+                            dtMissingValues.Columns.Add("displayName", typeof(String));
+
+                            foreach (var missingValue in vs.MissingValues)
+                            {
+                                DataRow workRow = dtMissingValues.NewRow();
+                                workRow["placeholder"] = missingValue.Placeholder;
+                                workRow["displayName"] = missingValue.DisplayName;
+                                dtMissingValues.Rows.Add(workRow);
+                            }
+                            dataRow["missingValues"] = dtMissingValues;
+
                             this.Variables.Rows.Add(dataRow);
                         }
                     }

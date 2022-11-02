@@ -1867,6 +1867,9 @@ namespace BExIS.Dlm.Services.Data
         {
             using (IUnitOfWork uow = this.GetUnitOfWork())
             {
+
+                //StateInfo
+
                 var datasetRepo = uow.GetReadOnlyRepository<Dataset>();
                 var datasetVersionRepo = uow.GetReadOnlyRepository<DatasetVersion>();
 
@@ -2775,6 +2778,16 @@ namespace BExIS.Dlm.Services.Data
                             dsNewVersion.VersionType = previousCheckedInVersion.VersionType;
                             dsNewVersion.VersionName = previousCheckedInVersion.VersionName;
                             dsNewVersion.PublicAccess = previousCheckedInVersion.PublicAccess; //@Todo Copy or set to NULL?
+                            dsNewVersion.StateInfo = previousCheckedInVersion.StateInfo;
+
+                            // in state the status of the metadat is store
+                            // e.g. metadata is valid
+                            // this state need to copied to the new version
+                            if (dsNewVersion.StateInfo != null)
+                            {
+                                dsNewVersion.StateInfo.Comment = "";
+                                dsNewVersion.StateInfo.Timestamp = null;
+                            }
 
                             foreach (var item in previousCheckedInVersion.ContentDescriptors)
                             {

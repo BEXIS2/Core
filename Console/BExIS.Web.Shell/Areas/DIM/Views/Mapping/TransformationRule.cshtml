@@ -4,8 +4,8 @@
 @{
     string id = Model.Id + "_TransformationRule";
 
-    string sourceId = Model.Source.Type + "_" + Model.Source.ElementId + "_" + Model.Source.Position + "_" + Model.Source.Name + "_TransformationRuleItem";
-    string targetId = Model.Target.Type + "_" + Model.Target.ElementId + "_" + Model.Target.Position + "_" + Model.Target.Name + "_TransformationRuleItem";
+    string sourceId = Model.Source.Type + "_" + Model.Source.ElementId + "_" + Model.Source.Position + "_" + Model.Source.Name.Replace(' ', '-') + "_TransformationRuleItem";
+    string targetId = Model.Target.Type + "_" + Model.Target.ElementId + "_" + Model.Target.Position + "_" + Model.Target.Name.Replace(' ', '-') + "_TransformationRuleItem";
 
 }
 

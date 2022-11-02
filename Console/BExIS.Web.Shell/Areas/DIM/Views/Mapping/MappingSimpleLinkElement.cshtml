@@ -6,7 +6,7 @@
 @{
 
 
-    string id = Model.Type + "_" + Model.ElementId + "_" + @Model.Position + "_" + @Model.Name+"_MappingSimpleLinkElement";
+    string id = Model.Type + "_" + Model.ElementId + "_" + @Model.Position + "_" + @Model.Name.Replace(' ','-')+"_MappingSimpleLinkElement";
 
 }
 

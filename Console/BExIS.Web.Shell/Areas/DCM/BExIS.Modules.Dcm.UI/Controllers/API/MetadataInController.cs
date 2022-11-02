@@ -48,6 +48,24 @@ namespace BExIS.Modules.Dim.UI.Controllers
         }
 
         // PUT: api/Metadata/5
+        /// <summary>
+        /// Import metadata via json or xml to a specifiy entity
+        /// </summary>
+        /// <remarks>
+        /// In the Metadata PUT Api there are two different ways to import metadata.
+        /// 
+        /// 1. XML
+        /// Send an xml in the xml content to update the metadata, each xpath is checked and if there is a possible mapping, the fields are updated.
+        ///
+        /// 2. JSON
+        /// In relation to the dataset with a metadatastructure, the incoming metadata as json is validated against the associated JSON schema. Only if the json is valid, the metadata is updated.
+        /// 
+        /// </remarks>
+        /// <param name="id">identifier for an specifiy entity e.g. dataset in the system </param>
+        /// <exception cref="HttpStatusCode.PreconditionFailed"></exception>
+        /// <exception cref="HttpStatusCode.ExpectationFailed"></exception>
+        /// <exception cref="HttpStatusCode.InternalServerError"></exception>
+        /// <returns>Message</returns>
         [BExISApiAuthorize]
         [PutRoute("api/Metadata/{id}")]
         public async Task<HttpResponseMessage> Put(int id)

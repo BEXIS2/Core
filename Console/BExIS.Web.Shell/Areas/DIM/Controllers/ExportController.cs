@@ -214,7 +214,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
                     LoggerFactory.LogCustom("Primary Data Start");
 
                     // check the data sturcture type ...
-                    if (format != null && datasetVersion.Dataset.DataStructure.Self is StructuredDataStructure)
+                    if (format != null && datasetVersion.Dataset.DataStructure.Self is StructuredDataStructure && dm.GetDataTuplesCount(datasetVersion.Id) >0)
                     {
                         OutputDataManager odm = new OutputDataManager();
                         // apply selection and projection
@@ -365,7 +365,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
             catch (Exception ex)
             {
                 LoggerFactory.LogCustom("Error: " + ex.Message);
-                return null;
+                throw ex;
             }
             finally
             {

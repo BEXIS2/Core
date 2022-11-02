@@ -1,0 +1,772 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>BExIS.Modules.Dim.UI</name>
+    </assembly>
+    <members>
+        <member name="T:Resources.EditorLocalization">
+            <summary>
+              A strongly-typed resource class, for looking up localized strings, etc.
+            </summary>
+        </member>
+        <member name="P:Resources.EditorLocalization.ResourceManager">
+            <summary>
+              Returns the cached ResourceManager instance used by this class.
+            </summary>
+        </member>
+        <member name="P:Resources.EditorLocalization.Culture">
+            <summary>
+              Overrides the current thread's CurrentUICulture property for all
+              resource lookups using this strongly typed resource class.
+            </summary>
+        </member>
+        <member name="P:Resources.EditorLocalization.Bold">
+            <summary>
+              Looks up a localized string similar to Bold.
+            </summary>
+        </member>
+        <member name="P:Resources.EditorLocalization.Close">
+            <summary>
+              Looks up a localized string similar to Close.
+            </summary>
+        </member>
+        <member name="P:Resources.EditorLocalization.CreateLink">
+            <summary>
+              Looks up a localized string similar to Insert hyperlink.
+            </summary>
+        </member>
+        <member name="P:Resources.EditorLocalization.DeleteFile">
+            <summary>
+              Looks up a localized string similar to Are you sure you want to delete {0}?.
+            </summary>
+        </member>
+        <member name="P:Resources.EditorLocalization.DirectoryNotFound">
+            <summary>
+              Looks up a localized string similar to A directory with this name was not found..
+            </summary>
+        </member>
+        <member name="P:Resources.EditorLocalization.EmptyFolder">
+            <summary>
+              Looks up a localized string similar to Empty Folder.
+            </summary>
+        </member>
+        <member name="P:Resources.EditorLocalization.FontName">
+            <summary>
+              Looks up a localized string similar to Select font family.
+            </summary>
+        </member>
+        <member name="P:Resources.EditorLocalization.FontNameInherit">
+            <summary>
+              Looks up a localized string similar to (inherited font).
+            </summary>
+        </member>
+        <member name="P:Resources.EditorLocalization.FontSize">
+            <summary>
+              Looks up a localized string similar to Select font size.
+            </summary>
+        </member>
+        <member name="P:Resources.EditorLocalization.FontSizeInherit">
+            <summary>
+              Looks up a localized string similar to (inherited size).
+            </summary>
+        </member>
+        <member name="P:Resources.EditorLocalization.FormatBlock">
+            <summary>
+              Looks up a localized string similar to Select block type.
+            </summary>
+        </member>
+        <member name="P:Resources.EditorLocalization.Indent">
+            <summary>
+              Looks up a localized string similar to Indent.
+            </summary>
+        </member>
+        <member name="P:Resources.EditorLocalization.Insert">
+            <summary>
+              Looks up a localized string similar to Insert.
+            </summary>
+        </member>
+        <member name="P:Resources.EditorLocalization.InsertHtml">
+            <summary>
+              Looks up a localized string similar to Insert HTML.
+            </summary>
+        </member>
+        <member name="P:Resources.EditorLocalization.InsertImage">
+            <summary>
+              Looks up a localized string similar to Insert image.
+            </summary>
+        </member>
+        <member name="P:Resources.EditorLocalization.InsertOrderedList">
+            <summary>
+              Looks up a localized string similar to Insert ordered list.
+            </summary>
+        </member>
+        <member name="P:Resources.EditorLocalization.InsertUnorderedList">
+            <summary>
+              Looks up a localized string similar to Insert unordered list.
+            </summary>
+        </member>
+        <member name="P:Resources.EditorLocalization.InvalidFileType">
+            <summary>
+              Looks up a localized string similar to The selected file {0} is not valid. Supported file types are {1}..
+            </summary>
+        </member>
+        <member name="P:Resources.EditorLocalization.Italic">
+            <summary>
+              Looks up a localized string similar to Italic.
+            </summary>
+        </member>
+        <member name="P:Resources.EditorLocalization.JustifyCenter">
+            <summary>
+              Looks up a localized string similar to Center text.
+            </summary>
+        </member>
+        <member name="P:Resources.EditorLocalization.JustifyFull">
+            <summary>
+              Looks up a localized string similar to Justify.
+            </summary>
+        </member>
+        <member name="P:Resources.EditorLocalization.JustifyLeft">
+            <summary>
+              Looks up a localized string similar to Align text left.
+            </summary>
+        </member>
+        <member name="P:Resources.EditorLocalization.JustifyRight">
+            <summary>
+              Looks up a localized string similar to Align text right.
+            </summary>
+        </member>
+        <member name="P:Resources.EditorLocalization.OpenInNewWindow">
+            <summary>
+              Looks up a localized string similar to Open link in new window.
+            </summary>
+        </member>
+        <member name="P:Resources.EditorLocalization.Or">
+            <summary>
+              Looks up a localized string similar to or.
+            </summary>
+        </member>
+        <member name="P:Resources.EditorLocalization.OrderBy">
+            <summary>
+              Looks up a localized string similar to Arrange by:.
+            </summary>
+        </member>
+        <member name="P:Resources.EditorLocalization.OrderByName">
+            <summary>
+              Looks up a localized string similar to Name.
+            </summary>
+        </member>
+        <member name="P:Resources.EditorLocalization.OrderBySize">
+            <summary>
+              Looks up a localized string similar to Size.
+            </summary>
+        </member>
+        <member name="P:Resources.EditorLocalization.Outdent">
+            <summary>
+              Looks up a localized string similar to Outdent.
+            </summary>
+        </member>
+        <member name="P:Resources.EditorLocalization.OverwriteFile">
+            <summary>
+              Looks up a localized string similar to A file with name {0} already exists in the current directory. Do you want to overwrite it?.
+            </summary>
+        </member>
+        <member name="P:Resources.EditorLocalization.Strikethrough">
+            <summary>
+              Looks up a localized string similar to Strikethrough.
+            </summary>
+        </member>
+        <member name="P:Resources.EditorLocalization.Style">
+            <summary>
+              Looks up a localized string similar to Styles.
+            </summary>
+        </member>
+        <member name="P:Resources.EditorLocalization.Tooltip">
+            <summary>
+              Looks up a localized string similar to Tooltip.
+            </summary>
+        </member>
+        <member name="P:Resources.EditorLocalization.Underline">
+            <summary>
+              Looks up a localized string similar to Underline.
+            </summary>
+        </member>
+        <member name="P:Resources.EditorLocalization.Unlink">
+            <summary>
+              Looks up a localized string similar to Remove hyperlink.
+            </summary>
+        </member>
+        <member name="P:Resources.EditorLocalization.UploadFile">
+            <summary>
+              Looks up a localized string similar to Upload.
+            </summary>
+        </member>
+        <member name="P:Resources.EditorLocalization.WebAddress">
+            <summary>
+              Looks up a localized string similar to Web address.
+            </summary>
+        </member>
+        <member name="T:Resources.GridLocalization">
+            <summary>
+              A strongly-typed resource class, for looking up localized strings, etc.
+            </summary>
+        </member>
+        <member name="P:Resources.GridLocalization.ResourceManager">
+            <summary>
+              Returns the cached ResourceManager instance used by this class.
+            </summary>
+        </member>
+        <member name="P:Resources.GridLocalization.Culture">
+            <summary>
+              Overrides the current thread's CurrentUICulture property for all
+              resource lookups using this strongly typed resource class.
+            </summary>
+        </member>
+        <member name="P:Resources.GridLocalization.AddNew">
+            <summary>
+              Looks up a localized string similar to Add new record.
+            </summary>
+        </member>
+        <member name="P:Resources.GridLocalization.Cancel">
+            <summary>
+              Looks up a localized string similar to Cancel.
+            </summary>
+        </member>
+        <member name="P:Resources.GridLocalization.CancelChanges">
+            <summary>
+              Looks up a localized string similar to Cancel changes.
+            </summary>
+        </member>
+        <member name="P:Resources.GridLocalization.Delete">
+            <summary>
+              Looks up a localized string similar to Delete.
+            </summary>
+        </member>
+        <member name="P:Resources.GridLocalization.DeleteConfirmation">
+            <summary>
+              Looks up a localized string similar to Are you sure you want to delete this record?.
+            </summary>
+        </member>
+        <member name="P:Resources.GridLocalization.DisplayingItems">
+            <summary>
+              Looks up a localized string similar to Displaying items {0} - {1} of {2}.
+            </summary>
+        </member>
+        <member name="P:Resources.GridLocalization.Edit">
+            <summary>
+              Looks up a localized string similar to Edit.
+            </summary>
+        </member>
+        <member name="P:Resources.GridLocalization.Filter">
+            <summary>
+              Looks up a localized string similar to Filter.
+            </summary>
+        </member>
+        <member name="P:Resources.GridLocalization.FilterAnd">
+            <summary>
+              Looks up a localized string similar to And.
+            </summary>
+        </member>
+        <member name="P:Resources.GridLocalization.FilterBoolIsFalse">
+            <summary>
+              Looks up a localized string similar to is false.
+            </summary>
+        </member>
+        <member name="P:Resources.GridLocalization.FilterBoolIsTrue">
+            <summary>
+              Looks up a localized string similar to is true.
+            </summary>
+        </member>
+        <member name="P:Resources.GridLocalization.FilterClear">
+            <summary>
+              Looks up a localized string similar to Clear Filter.
+            </summary>
+        </member>
+        <member name="P:Resources.GridLocalization.FilterDateEq">
+            <summary>
+              Looks up a localized string similar to Is equal to.
+            </summary>
+        </member>
+        <member name="P:Resources.GridLocalization.FilterDateGe">
+            <summary>
+              Looks up a localized string similar to Is after or equal to.
+            </summary>
+        </member>
+        <member name="P:Resources.GridLocalization.FilterDateGt">
+            <summary>
+              Looks up a localized string similar to Is after.
+            </summary>
+        </member>
+        <member name="P:Resources.GridLocalization.FilterDateLe">
+            <summary>
+              Looks up a localized string similar to Is before or equal to.
+            </summary>
+        </member>
+        <member name="P:Resources.GridLocalization.FilterDateLt">
+            <summary>
+              Looks up a localized string similar to Is before.
+            </summary>
+        </member>
+        <member name="P:Resources.GridLocalization.FilterDateNe">
+            <summary>
+              Looks up a localized string similar to Is not equal to.
+            </summary>
+        </member>
+        <member name="P:Resources.GridLocalization.FilterEnumEq">
+            <summary>
+              Looks up a localized string similar to Is equal to.
+            </summary>
+        </member>
+        <member name="P:Resources.GridLocalization.FilterEnumNe">
+            <summary>
+              Looks up a localized string similar to Is not equal to.
+            </summary>
+        </member>
+        <member name="P:Resources.GridLocalization.FilterForeignKeyEq">
+            <summary>
+              Looks up a localized string similar to Is equal to.
+            </summary>
+        </member>
+        <member name="P:Resources.GridLocalization.FilterForeignKeyNe">
+            <summary>
+              Looks up a localized string similar to Is not equal to.
+            </summary>
+        </member>
+        <member name="P:Resources.GridLocalization.FilterNumberEq">
+            <summary>
+              Looks up a localized string similar to Is equal to.
+            </summary>
+        </member>
+        <member name="P:Resources.GridLocalization.FilterNumberGe">
+            <summary>
+              Looks up a localized string similar to Is greater than or equal to.
+            </summary>
+        </member>
+        <member name="P:Resources.GridLocalization.FilterNumberGt">
+            <summary>
+              Looks up a localized string similar to Is greater than.
+            </summary>
+        </member>
+        <member name="P:Resources.GridLocalization.FilterNumberLe">
+            <summary>
+              Looks up a localized string similar to Is less than or equal to.
+            </summary>
+        </member>
+        <member name="P:Resources.GridLocalization.FilterNumberLt">
+            <summary>
+              Looks up a localized string similar to Is less than.
+            </summary>
+        </member>
+        <member name="P:Resources.GridLocalization.FilterNumberNe">
+            <summary>
+              Looks up a localized string similar to Is not equal to.
+            </summary>
+        </member>
+        <member name="P:Resources.GridLocalization.FilterOr">
+            <summary>
+              Looks up a localized string similar to Or.
+            </summary>
+        </member>
+        <member name="P:Resources.GridLocalization.FilterSelectValue">
+            <summary>
+              Looks up a localized string similar to -Select value-.
+            </summary>
+        </member>
+        <member name="P:Resources.GridLocalization.FilterShowRows">
+            <summary>
+              Looks up a localized string similar to Show rows with value that.
+            </summary>
+        </member>
+        <member name="P:Resources.GridLocalization.FilterStringEndsWith">
+            <summary>
+              Looks up a localized string similar to Ends with.
+            </summary>
+        </member>
+        <member name="P:Resources.GridLocalization.FilterStringEq">
+            <summary>
+              Looks up a localized string similar to Is equal to.
+            </summary>
+        </member>
+        <member name="P:Resources.GridLocalization.FilterStringNe">
+            <summary>
+              Looks up a localized string similar to Is not equal to.
+            </summary>
+        </member>
+        <member name="P:Resources.GridLocalization.FilterStringNotSubstringOf">
+            <summary>
+              Looks up a localized string similar to Does not contain.
+            </summary>
+        </member>
+        <member name="P:Resources.GridLocalization.FilterStringStartsWith">
+            <summary>
+              Looks up a localized string similar to Starts with.
+            </summary>
+        </member>
+        <member name="P:Resources.GridLocalization.FilterStringSubstringOf">
+            <summary>
+              Looks up a localized string similar to Contains.
+            </summary>
+        </member>
+        <member name="P:Resources.GridLocalization.GroupHint">
+            <summary>
+              Looks up a localized string similar to Drag a column header and drop it here to group by that column.
+            </summary>
+        </member>
+        <member name="P:Resources.GridLocalization.Insert">
+            <summary>
+              Looks up a localized string similar to Insert.
+            </summary>
+        </member>
+        <member name="P:Resources.GridLocalization.NoRecords">
+            <summary>
+              Looks up a localized string similar to No records to display..
+            </summary>
+        </member>
+        <member name="P:Resources.GridLocalization.Page">
+            <summary>
+              Looks up a localized string similar to Page .
+            </summary>
+        </member>
+        <member name="P:Resources.GridLocalization.PageOf">
+            <summary>
+              Looks up a localized string similar to of {0}.
+            </summary>
+        </member>
+        <member name="P:Resources.GridLocalization.Refresh">
+            <summary>
+              Looks up a localized string similar to Refresh.
+            </summary>
+        </member>
+        <member name="P:Resources.GridLocalization.SaveChanges">
+            <summary>
+              Looks up a localized string similar to Save changes.
+            </summary>
+        </member>
+        <member name="P:Resources.GridLocalization.Select">
+            <summary>
+              Looks up a localized string similar to Select.
+            </summary>
+        </member>
+        <member name="P:Resources.GridLocalization.SortedAsc">
+            <summary>
+              Looks up a localized string similar to sorted ascending.
+            </summary>
+        </member>
+        <member name="P:Resources.GridLocalization.SortedDesc">
+            <summary>
+              Looks up a localized string similar to sorted descending.
+            </summary>
+        </member>
+        <member name="P:Resources.GridLocalization.UnGroup">
+            <summary>
+              Looks up a localized string similar to ungroup.
+            </summary>
+        </member>
+        <member name="P:Resources.GridLocalization.Update">
+            <summary>
+              Looks up a localized string similar to Update.
+            </summary>
+        </member>
+        <member name="M:BExIS.Modules.Dim.UI.Controllers.DataQualityOutController.Get">
+            <summary>
+            Get a list of all dataset ids
+            </summary>
+            <returns>List of ids</returns>
+        </member>
+        <member name="M:BExIS.Modules.Dim.UI.Controllers.DataQualityOutController.Get(System.Int32)">
+            <param name="id">Dataset Id</param>
+        </member>
+        <member name="T:BExIS.Modules.Dim.UI.Controllers.API.DatasetOutController">
+             <summary>
+             This class is designed as a Web API to access data sets externally.
+             The provided HTTPGET functions provide an overview of all data records and basic information about a selected data record.
+            
+             The information about a dataset shows the title, description, data structure, and metadata structure.
+             </summary>
+             <remarks>
+             This class is designed as a Web API to access data sets externally.
+             The provided HTTPGET functions provide an overview of all data records and basic information about a selected data record.
+            
+             The information about a dataset shows the title, description, data structure, and metadata structure.
+             </remarks>
+        </member>
+        <member name="M:BExIS.Modules.Dim.UI.Controllers.API.DatasetOutController.Get">
+            <summary>
+            Get a list of all datasets Id´s in the system.
+            </summary>
+        </member>
+        <member name="M:BExIS.Modules.Dim.UI.Controllers.API.DatasetOutController.Get(System.Int64)">
+             <summary>
+             Get metadata of the latest version of a dataset by id.
+             </summary>
+            
+             <param name="id">Identifier of a dataset</param>
+        </member>
+        <member name="M:BExIS.Modules.Dim.UI.Controllers.API.DatasetOutController.Get(System.Int64,System.Int32)">
+             <summary>
+             Get metadata of a specific version of a dataset by id and version number.
+             </summary>
+            
+             <param name="id">Identifier of a dataset</param>
+             <param name="version">Version of a dataset</param>
+        </member>
+        <member name="T:BExIS.Modules.Dim.UI.Controllers.AttachmentOutController">
+            <summary>
+            This class is designed as a Web API to allow various client tools request metadata of a datasets and get the result in XML.
+            </summary>
+        </member>
+        <member name="M:BExIS.Modules.Dim.UI.Controllers.AttachmentOutController.Get">
+            <summary>
+            With the Get function you get an overview of the exiting datasets and there attachments.
+            </summary>
+            <remarks>
+            With the Get function you get an overview of the exiting datasets and there attachments.
+            </remarks>
+            <returns>List of ApiDatasetAttachmentsModel</returns>
+        </member>
+        <member name="M:BExIS.Modules.Dim.UI.Controllers.AttachmentOutController.Get(System.Int32)">
+            <summary>
+            With the Get function you get an overview of one specific dataset and there attachments.
+            </summary>
+            <remarks>
+            With the Get function you get an overview of one specific dataset and there attachments.
+            </remarks>
+            <returns>ApiDatasetAttachmentsModel</returns>
+        </member>
+        <member name="M:BExIS.Modules.Dim.UI.Controllers.AttachmentOutController.Get(System.Int32,System.Int64)">
+            <summary>
+            This Get function has been extended by a parameter id. The id refers to the dataset. The metadata will be loaded from the dataset
+            </summary>
+            <param name="id">Dataset Id</param>
+            <returns>Xml Document</returns>
+        </member>
+        <member name="M:BExIS.Modules.Dim.UI.Controllers.DataStatisticOutController.Get">
+            <summary>
+            Get a list of all dataset ids
+            </summary>
+            <returns>List of ids</returns>
+        </member>
+        <member name="M:BExIS.Modules.Dim.UI.Controllers.DataStatisticOutController.Get(System.Int32)">
+            <summary>
+            Get unique values, max and min values, and max and min length for all variables
+            </summary>
+            <param name="id">Dataset Id</param>
+        </member>
+        <member name="M:BExIS.Modules.Dim.UI.Controllers.DataStatisticOutController.Get(System.Int64,System.Int32)">
+            <summary>
+            Get unique values, max and min values, and max and min length for one variable
+            </summary>
+            <param name="id">Dataset Id</param>
+            <param name="variableId">Variable id</param>
+            <returns></returns>
+        </member>
+        <member name="M:BExIS.Modules.Dim.UI.Controllers.MetadataStatisticOutController.Post(BExIS.Modules.Dim.UI.Models.Api.PostApiMetadataStatisticModel)">
+            <summary>
+            Get a list of unique metadata values, count and list of occurrence
+            </summary>
+            <remarks>Data is directly returned from the database without (currently) any further permission check. Nested nodes are cuurently not supported.</remarks>
+            <returns>JSON object</returns>
+        </member>
+        <member name="T:BExIS.Modules.Dim.UI.Controllers.MetadataStructureOutController">
+            <summary>
+            This class is designed as a Web API to allow various client tools request metadata structure and get the result in json.
+            </summary>
+        </member>
+        <member name="M:BExIS.Modules.Dim.UI.Controllers.MetadataStructureOutController.Get">
+            <summary>
+            this function return an overview about existing metadata structures
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:BExIS.Modules.Dim.UI.Controllers.MetadataStructureOutController.Get(System.Int64)">
+            <summary>
+            this api get a metadata structure based on the incoming api.
+            it converts the structure into a json schema
+            </summary>
+            <remarks>
+            the API returns the selected metadata structure in json schema.
+            each object contains a @ref attribute of type string, simple types contain a #text where the value is entered. 
+            even a simple value therefore consists of @ref and #text.
+            @ref will beused fpor internal or external references, #text is used to store input values
+            </remarks>
+            <param name="id"></param>
+            <returns>metadata structure as json schema</returns>
+        </member>
+        <member name="M:BExIS.Modules.Dim.UI.Controllers.ExportController.GetZipOfDatasetVersion(System.Int64,System.String)">
+             <summary>
+            
+             </summary>
+             <param name="datasetVersionId"></param>
+             <param name="primaryDataFormat">mimetype like text/csv, text/plain</param>
+             <returns></returns>
+        </member>
+        <member name="M:BExIS.Modules.Dim.UI.Controllers.ExportController.GetMetadataAsHtmlFile(System.Int64)">
+            <summary>
+            Return a metadata as html file from a  datasetversion
+            </summary>
+            <param name="id"></param>
+            <returns></returns>
+        </member>
+        <member name="M:BExIS.Modules.Dim.UI.Controllers.ExportController.GetDataStructureAsHtmlFile(System.Int64)">
+            <summary>
+            Get a html file of the data structure from a dataset
+            </summary>
+            <param name="id">dataset id</param>
+            <returns>html file</returns>
+        </member>
+        <!-- Badly formed XML comment ignored for member "M:BExIS.Modules.Dim.UI.Controllers.PublicationController.Get(System.Int32)" -->
+        <member name="T:BExIS.Modules.Dim.UI.Controllers.DataOutController">
+            <summary>
+            This class is designed as a Web API to allow various client tools request datasets or a view on data sets and get the result in
+            either of XML, JSON, or CSV formats.
+            </summary>
+            <remarks>
+            This class is designed as a Web API to allow various client tools request datasets or a view on data sets and get the result in
+            either of XML, JSON, or CSV formats.
+            The design follows the RESTFull pattern mentioned in http://www.asp.net/web-api/overview/older-versions/creating-a-web-api-that-supports-crud-operations
+            CSV formatter is implemented in the DataTupleCsvFormatter class in the Models folder.
+            The formatter is registered in the WebApiConfig as an automatic formatter, so if the clinet sets the request's Mime type to text/csv, this formatter will be automatically engaged.
+            text/xml and text/json return XML and JSON content accordingly.
+            </remarks>
+        </member>
+        <member name="M:BExIS.Modules.Dim.UI.Controllers.DataOutController.Get">
+            <summary>
+            Get a list of all dataset ids
+            </summary>
+            <returns>List of ids</returns>
+        </member>
+        <member name="M:BExIS.Modules.Dim.UI.Controllers.DataOutController.Get(System.Int32,System.String,System.String)">
+            <summary>
+            In addition to the id, it is possible to have projection and selection criteria passed to the action via query string parameters
+            </summary>
+            <param name="id">Dataset Id</param>
+            <param name="header">Is a comman separated list of variable names that determines which variables of the dataset. e.g: Var1,Var2,var3</param>
+            <param name="filter">is a logical expression that filters the tuples of the chosen dataset. e.g. : Var1='Value'</param>
+            <returns> data from the latest version of a dataset</returns>
+            <remarks> The action accepts the following additional parameters via the query string
+            1: header: is a comman separated list of variable names that determines which variables of the dataset version tuples should take part in the result set
+            2: filter: is a logical expression that filters the tuples of the chosen dataset. The expression should have been written against the variables of the dataset only.
+            logical operators, nesting, precedence, and SOME functions should be supported.
+            </remarks>
+        </member>
+        <member name="M:BExIS.Modules.Dim.UI.Controllers.DataOutController.Get(System.Int64,System.Int32,System.String,System.String)">
+            <summary>
+            In addition to the id, it is possible to have projection and selection criteria passed to the action via query string parameters
+            </summary>
+            <param name="id">Dataset Id</param>
+            <param name="version">Version number of the dataset</param>
+            <returns></returns>
+            <remarks> The action accepts the following additional parameters via the query string
+            1: header: is a comman separated list of ids that determines which variables of the dataset version tuples should take part in the result set
+            2: filter: is a logical expression that filters the tuples of the chosen dataset. The expression should have been written against the variables of the dataset only.
+            logical operators, nesting, precedence, and SOME functions should be supported.
+            </remarks>
+        </member>
+        <member name="M:BExIS.Modules.Dim.UI.Controllers.ExportGFBIOController.Get">
+            <summary>
+            Show all Datasetids with export functions
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="T:BExIS.Modules.Dim.UI.Controllers.MetadataOutController">
+            <summary>
+            This class is designed as a Web API to allow various client tools request metadata of a datasets and get the result in XML.
+            </summary>
+        </member>
+        <member name="M:BExIS.Modules.Dim.UI.Controllers.MetadataOutController.Get">
+            <summary>
+            Get list of exiting datasets from which metadata can be loaded.
+            </summary>
+            <remarks>
+            With the Get function you get an overview of the exiting datasets from which you can load metadata.
+            The format indicates the possible conversions. Without format the system internal metadata xml document is loaded.
+            </remarks>
+            <returns>List of MetadataViewObject</returns>
+        </member>
+        <member name="M:BExIS.Modules.Dim.UI.Controllers.MetadataOutController.GetBySchema(System.String)">
+            <summary>
+            Get all metadata of all datasets based on the given metadata schema name as XML
+            </summary>
+            <returns>XML with all metadata of the metadata schema</returns>
+        </member>
+        <member name="M:BExIS.Modules.Dim.UI.Controllers.MetadataOutController.Get(System.Int32,System.String,System.Int32)">
+             <summary>
+             Get metadata for a dataset as XML (default) or JSON (internal, complete or simplified structure)
+             </summary>
+             <remarks>
+            
+             ## format
+             Based on the existing transformation options, the converted metadata can be obtained via format.
+             
+             ## simplfiedJson
+             if you set the accept of the request to return a json, you can manipulate the json with this parameter. <br/>
+             0 = returns the metadata with full internal structure <br/>
+             1 = returns a simplified form of the structure with all fields and attributes <br/>
+             2 = returns the metadata in a simplified structure and does not add all fields and attributes that are empty. 
+             
+             </remarks>
+             <param name="id">Dataset Id</param>
+             <param name="format">Based on the existing transformation options, the converted metadata can be obtained via format.</param>
+             <param name="simplifiedJson">accept 0,1,2</param>
+             <returns>metadata as xml or json</returns>
+        </member>
+        <member name="M:BExIS.Modules.Dim.UI.Controllers.SubmissionController.publishData(System.Int64,System.Int64)">
+            <summary>
+            ToDo Refactor submission Commented by Javad due to modularity issues.
+            Thes functions should call the APIs of the DIM module and get json objects back.
+            If Publication or any other entity is not part of the DLM, it is visible only to its own module.
+            Other mosules who consume the API results of a module, should only expect .NET types, DLM types, json, xml, CSV, or Html.
+            </summary>
+        </member>
+        <member name="M:BExIS.Modules.Dim.UI.Controllers.SubmissionController.PrepareData(System.Int64,System.Int64,System.String,System.String)">
+            <summary>
+            prepare data for the broker and repo
+            and return a tuple
+            tuple.item1 = filepath
+            tuple.item2 = mimetype
+            </summary>
+            <param name="datasetVersionId"></param>
+            <param name="datasetId"></param>
+            <param name="datarepo"></param>
+            <param name="broker"></param>
+            <returns></returns>
+        </member>
+        <member name="M:BExIS.Modules.Dim.UI.Controllers.SubmissionController.GetStatus(BExIS.Dim.Entities.Publication.Publication)">
+            <summary>
+            Get Status from publiction
+            </summary>
+            <param name="id"></param>
+            <returns></returns>
+        </member>
+        <member name="M:BExIS.Modules.Dim.UI.Helpers.DimSeedDataGenerator.createToKeyMapping(System.String,BExIS.Dim.Entities.Mapping.LinkElementType,System.String,BExIS.Dim.Entities.Mapping.LinkElementType,BExIS.Dim.Entities.Mapping.Key,BExIS.Dim.Entities.Mapping.Mapping,System.Xml.Linq.XDocument,BExIS.Dim.Services.MappingManager,BExIS.Dim.Entities.Mapping.TransformationRule)">
+            <summary>
+            Map a node from xml to system key
+            </summary>
+            <param name="simpleNodeName">name or xpath</param>
+            <param name="simpleType"></param>
+            <param name="complexNodeName">name or xpath</param>
+            <param name="complexType"></param>
+            <param name="key"></param>
+            <param name="root"></param>
+            <param name="metadataRef"></param>
+            <param name="mappingManager"></param>
+        </member>
+        <member name="M:BExIS.Modules.Dim.UI.Helpers.DimSeedDataGenerator.createFromKeyMapping(System.String,BExIS.Dim.Entities.Mapping.LinkElementType,System.String,BExIS.Dim.Entities.Mapping.LinkElementType,BExIS.Dim.Entities.Mapping.Key,BExIS.Dim.Entities.Mapping.Mapping,System.Xml.Linq.XDocument,BExIS.Dim.Services.MappingManager)">
+            <summary>
+            Map a system key to xml node
+            </summary>
+            <param name="simpleNodeName"></param>
+            <param name="simpleType"></param>
+            <param name="complexNodeName"></param>
+            <param name="complexType"></param>
+            <param name="key"></param>
+            <param name="root"></param>
+            <param name="metadataRef"></param>
+            <param name="mappingManager"></param>
+        </member>
+        <member name="T:BExIS.Modules.Dim.UI.Models.DatasetModel">
+            <summary>
+            It is only a wrapper around the DataTable class to provide a specific name for Result formatting in MVC pipeline.
+            </summary>
+        </member>
+    </members>
+</doc>

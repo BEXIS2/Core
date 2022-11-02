@@ -356,7 +356,7 @@ namespace BExIS.Xml.Helpers
                     // generate intern template metadata xml with needed attribtes 
                     // also every object with index > 1 is generate with attribtes but without values
                     var xmlMetadatWriter = new XmlMetadataWriter(BExIS.Xml.Helpers.XmlNodeMode.xPath);
-                    var metadataWithAttributesXml = xmlMetadatWriter.CreateMetadataXml(1, XmlUtility.ToXDocument(target));
+                    var metadataWithAttributesXml = xmlMetadatWriter.CreateMetadataXml(id, XmlUtility.ToXDocument(target));
 
                     // merge the metadata with attributes and the metadata with values together
                     var completeMetadata = XmlMetadataImportHelper.FillInXmlValues(target,
@@ -610,7 +610,7 @@ namespace BExIS.Xml.Helpers
 
             // load example xml based on metadata structure
             var xmlMetadatWriter = new XmlMetadataWriter(BExIS.Xml.Helpers.XmlNodeMode.xPath);
-            var metadataExample = xmlMetadatWriter.CreateMetadataXml(1);
+            var metadataExample = xmlMetadatWriter.CreateMetadataXml(metadataStructureId);
 
             // get all elements from xml documents to compare
             var listOfElementsInput = XmlUtility.GetAllChildren(XmlUtility.ToXDocument(metadataInput).Root).Select(e => e.Name.LocalName);

@@ -9,5 +9,8 @@
                 swaggerUi.api.clientAuthorizations.add("api_key", new SwaggerClient.ApiKeyAuthorization("Authorization", "Bearer " + key, "header"));
             }
         });
+                 
     });
 })();
+
+
