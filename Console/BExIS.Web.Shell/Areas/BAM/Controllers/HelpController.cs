@@ -7,6 +7,8 @@ using BExIS.Xml.Helpers;
 using Vaiona.Utils.Cfg;
 using BExIS.Dlm.Services.Data;
 using BExIS.Utils.Helpers;
+using System;
+using BExIS.Utils.Config;
 
 namespace BExIS.Modules.Bam.UI.Controllers
 {
@@ -20,7 +22,7 @@ namespace BExIS.Modules.Bam.UI.Controllers
             //add default link if not set
             if (String.IsNullOrEmpty(helpurl))
             {
-                helpurl = ManualHelper.GetUrl(AppConfiguration.ApplicationVersion, "BAM");
+                helpurl = ManualHelper.GetUrl(GeneralSettings.ApplicationVersion, "BAM");
             }
 
             return Redirect(helpurl);

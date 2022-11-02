@@ -6,6 +6,8 @@ using BExIS.Xml.Helpers;
 using Vaiona.Utils.Cfg;
 using System;
 using BExIS.Utils.Helpers;
+using Vaiona.Web.Mvc.Modularity;
+using BExIS.Utils.Config;
 
 namespace BExIS.Modules.Vim.UI.Controllers
 {
@@ -21,7 +23,7 @@ namespace BExIS.Modules.Vim.UI.Controllers
             //add default link if not set
             if (String.IsNullOrEmpty(helpurl))
             {
-                helpurl = ManualHelper.GetUrl(AppConfiguration.ApplicationVersion, "VIM");
+                helpurl = ManualHelper.GetUrl(GeneralSettings.ApplicationVersion, "VIM");
             }
 
 

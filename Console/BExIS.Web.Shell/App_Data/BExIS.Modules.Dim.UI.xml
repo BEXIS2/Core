@@ -6,464 +6,464 @@
     <members>
         <member name="T:Resources.EditorLocalization">
             <summary>
-              A strongly-typed resource class, for looking up localized strings, etc.
+              Eine stark typisierte Ressourcenklasse zum Suchen von lokalisierten Zeichenfolgen usw.
             </summary>
         </member>
         <member name="P:Resources.EditorLocalization.ResourceManager">
             <summary>
-              Returns the cached ResourceManager instance used by this class.
+              Gibt die von dieser Klasse verwendete zwischengespeicherte ResourceManager-Instanz zurück.
             </summary>
         </member>
         <member name="P:Resources.EditorLocalization.Culture">
             <summary>
-              Overrides the current thread's CurrentUICulture property for all
-              resource lookups using this strongly typed resource class.
+              Überschreibt die CurrentUICulture-Eigenschaft des aktuellen Threads für alle
+              Ressourcenlookups, die diese stark typisierte Ressourcenklasse verwenden.
             </summary>
         </member>
         <member name="P:Resources.EditorLocalization.Bold">
             <summary>
-              Looks up a localized string similar to Bold.
+              Sucht eine lokalisierte Zeichenfolge, die Bold ähnelt.
             </summary>
         </member>
         <member name="P:Resources.EditorLocalization.Close">
             <summary>
-              Looks up a localized string similar to Close.
+              Sucht eine lokalisierte Zeichenfolge, die Close ähnelt.
             </summary>
         </member>
         <member name="P:Resources.EditorLocalization.CreateLink">
             <summary>
-              Looks up a localized string similar to Insert hyperlink.
+              Sucht eine lokalisierte Zeichenfolge, die Insert hyperlink ähnelt.
             </summary>
         </member>
         <member name="P:Resources.EditorLocalization.DeleteFile">
             <summary>
-              Looks up a localized string similar to Are you sure you want to delete {0}?.
+              Sucht eine lokalisierte Zeichenfolge, die Are you sure you want to delete {0}? ähnelt.
             </summary>
         </member>
         <member name="P:Resources.EditorLocalization.DirectoryNotFound">
             <summary>
-              Looks up a localized string similar to A directory with this name was not found..
+              Sucht eine lokalisierte Zeichenfolge, die A directory with this name was not found. ähnelt.
             </summary>
         </member>
         <member name="P:Resources.EditorLocalization.EmptyFolder">
             <summary>
-              Looks up a localized string similar to Empty Folder.
+              Sucht eine lokalisierte Zeichenfolge, die Empty Folder ähnelt.
             </summary>
         </member>
         <member name="P:Resources.EditorLocalization.FontName">
             <summary>
-              Looks up a localized string similar to Select font family.
+              Sucht eine lokalisierte Zeichenfolge, die Select font family ähnelt.
             </summary>
         </member>
         <member name="P:Resources.EditorLocalization.FontNameInherit">
             <summary>
-              Looks up a localized string similar to (inherited font).
+              Sucht eine lokalisierte Zeichenfolge, die (inherited font) ähnelt.
             </summary>
         </member>
         <member name="P:Resources.EditorLocalization.FontSize">
             <summary>
-              Looks up a localized string similar to Select font size.
+              Sucht eine lokalisierte Zeichenfolge, die Select font size ähnelt.
             </summary>
         </member>
         <member name="P:Resources.EditorLocalization.FontSizeInherit">
             <summary>
-              Looks up a localized string similar to (inherited size).
+              Sucht eine lokalisierte Zeichenfolge, die (inherited size) ähnelt.
             </summary>
         </member>
         <member name="P:Resources.EditorLocalization.FormatBlock">
             <summary>
-              Looks up a localized string similar to Select block type.
+              Sucht eine lokalisierte Zeichenfolge, die Select block type ähnelt.
             </summary>
         </member>
         <member name="P:Resources.EditorLocalization.Indent">
             <summary>
-              Looks up a localized string similar to Indent.
+              Sucht eine lokalisierte Zeichenfolge, die Indent ähnelt.
             </summary>
         </member>
         <member name="P:Resources.EditorLocalization.Insert">
             <summary>
-              Looks up a localized string similar to Insert.
+              Sucht eine lokalisierte Zeichenfolge, die Insert ähnelt.
             </summary>
         </member>
         <member name="P:Resources.EditorLocalization.InsertHtml">
             <summary>
-              Looks up a localized string similar to Insert HTML.
+              Sucht eine lokalisierte Zeichenfolge, die Insert HTML ähnelt.
             </summary>
         </member>
         <member name="P:Resources.EditorLocalization.InsertImage">
             <summary>
-              Looks up a localized string similar to Insert image.
+              Sucht eine lokalisierte Zeichenfolge, die Insert image ähnelt.
             </summary>
         </member>
         <member name="P:Resources.EditorLocalization.InsertOrderedList">
             <summary>
-              Looks up a localized string similar to Insert ordered list.
+              Sucht eine lokalisierte Zeichenfolge, die Insert ordered list ähnelt.
             </summary>
         </member>
         <member name="P:Resources.EditorLocalization.InsertUnorderedList">
             <summary>
-              Looks up a localized string similar to Insert unordered list.
+              Sucht eine lokalisierte Zeichenfolge, die Insert unordered list ähnelt.
             </summary>
         </member>
         <member name="P:Resources.EditorLocalization.InvalidFileType">
             <summary>
-              Looks up a localized string similar to The selected file {0} is not valid. Supported file types are {1}..
+              Sucht eine lokalisierte Zeichenfolge, die The selected file {0} is not valid. Supported file types are {1}. ähnelt.
             </summary>
         </member>
         <member name="P:Resources.EditorLocalization.Italic">
             <summary>
-              Looks up a localized string similar to Italic.
+              Sucht eine lokalisierte Zeichenfolge, die Italic ähnelt.
             </summary>
         </member>
         <member name="P:Resources.EditorLocalization.JustifyCenter">
             <summary>
-              Looks up a localized string similar to Center text.
+              Sucht eine lokalisierte Zeichenfolge, die Center text ähnelt.
             </summary>
         </member>
         <member name="P:Resources.EditorLocalization.JustifyFull">
             <summary>
-              Looks up a localized string similar to Justify.
+              Sucht eine lokalisierte Zeichenfolge, die Justify ähnelt.
             </summary>
         </member>
         <member name="P:Resources.EditorLocalization.JustifyLeft">
             <summary>
-              Looks up a localized string similar to Align text left.
+              Sucht eine lokalisierte Zeichenfolge, die Align text left ähnelt.
             </summary>
         </member>
         <member name="P:Resources.EditorLocalization.JustifyRight">
             <summary>
-              Looks up a localized string similar to Align text right.
+              Sucht eine lokalisierte Zeichenfolge, die Align text right ähnelt.
             </summary>
         </member>
         <member name="P:Resources.EditorLocalization.OpenInNewWindow">
             <summary>
-              Looks up a localized string similar to Open link in new window.
+              Sucht eine lokalisierte Zeichenfolge, die Open link in new window ähnelt.
             </summary>
         </member>
         <member name="P:Resources.EditorLocalization.Or">
             <summary>
-              Looks up a localized string similar to or.
+              Sucht eine lokalisierte Zeichenfolge, die or ähnelt.
             </summary>
         </member>
         <member name="P:Resources.EditorLocalization.OrderBy">
             <summary>
-              Looks up a localized string similar to Arrange by:.
+              Sucht eine lokalisierte Zeichenfolge, die Arrange by: ähnelt.
             </summary>
         </member>
         <member name="P:Resources.EditorLocalization.OrderByName">
             <summary>
-              Looks up a localized string similar to Name.
+              Sucht eine lokalisierte Zeichenfolge, die Name ähnelt.
             </summary>
         </member>
         <member name="P:Resources.EditorLocalization.OrderBySize">
             <summary>
-              Looks up a localized string similar to Size.
+              Sucht eine lokalisierte Zeichenfolge, die Size ähnelt.
             </summary>
         </member>
         <member name="P:Resources.EditorLocalization.Outdent">
             <summary>
-              Looks up a localized string similar to Outdent.
+              Sucht eine lokalisierte Zeichenfolge, die Outdent ähnelt.
             </summary>
         </member>
         <member name="P:Resources.EditorLocalization.OverwriteFile">
             <summary>
-              Looks up a localized string similar to A file with name {0} already exists in the current directory. Do you want to overwrite it?.
+              Sucht eine lokalisierte Zeichenfolge, die A file with name {0} already exists in the current directory. Do you want to overwrite it? ähnelt.
             </summary>
         </member>
         <member name="P:Resources.EditorLocalization.Strikethrough">
             <summary>
-              Looks up a localized string similar to Strikethrough.
+              Sucht eine lokalisierte Zeichenfolge, die Strikethrough ähnelt.
             </summary>
         </member>
         <member name="P:Resources.EditorLocalization.Style">
             <summary>
-              Looks up a localized string similar to Styles.
+              Sucht eine lokalisierte Zeichenfolge, die Styles ähnelt.
             </summary>
         </member>
         <member name="P:Resources.EditorLocalization.Tooltip">
             <summary>
-              Looks up a localized string similar to Tooltip.
+              Sucht eine lokalisierte Zeichenfolge, die Tooltip ähnelt.
             </summary>
         </member>
         <member name="P:Resources.EditorLocalization.Underline">
             <summary>
-              Looks up a localized string similar to Underline.
+              Sucht eine lokalisierte Zeichenfolge, die Underline ähnelt.
             </summary>
         </member>
         <member name="P:Resources.EditorLocalization.Unlink">
             <summary>
-              Looks up a localized string similar to Remove hyperlink.
+              Sucht eine lokalisierte Zeichenfolge, die Remove hyperlink ähnelt.
             </summary>
         </member>
         <member name="P:Resources.EditorLocalization.UploadFile">
             <summary>
-              Looks up a localized string similar to Upload.
+              Sucht eine lokalisierte Zeichenfolge, die Upload ähnelt.
             </summary>
         </member>
         <member name="P:Resources.EditorLocalization.WebAddress">
             <summary>
-              Looks up a localized string similar to Web address.
+              Sucht eine lokalisierte Zeichenfolge, die Web address ähnelt.
             </summary>
         </member>
         <member name="T:Resources.GridLocalization">
             <summary>
-              A strongly-typed resource class, for looking up localized strings, etc.
+              Eine stark typisierte Ressourcenklasse zum Suchen von lokalisierten Zeichenfolgen usw.
             </summary>
         </member>
         <member name="P:Resources.GridLocalization.ResourceManager">
             <summary>
-              Returns the cached ResourceManager instance used by this class.
+              Gibt die von dieser Klasse verwendete zwischengespeicherte ResourceManager-Instanz zurück.
             </summary>
         </member>
         <member name="P:Resources.GridLocalization.Culture">
             <summary>
-              Overrides the current thread's CurrentUICulture property for all
-              resource lookups using this strongly typed resource class.
+              Überschreibt die CurrentUICulture-Eigenschaft des aktuellen Threads für alle
+              Ressourcenlookups, die diese stark typisierte Ressourcenklasse verwenden.
             </summary>
         </member>
         <member name="P:Resources.GridLocalization.AddNew">
             <summary>
-              Looks up a localized string similar to Add new record.
+              Sucht eine lokalisierte Zeichenfolge, die Add new record ähnelt.
             </summary>
         </member>
         <member name="P:Resources.GridLocalization.Cancel">
             <summary>
-              Looks up a localized string similar to Cancel.
+              Sucht eine lokalisierte Zeichenfolge, die Cancel ähnelt.
             </summary>
         </member>
         <member name="P:Resources.GridLocalization.CancelChanges">
             <summary>
-              Looks up a localized string similar to Cancel changes.
+              Sucht eine lokalisierte Zeichenfolge, die Cancel changes ähnelt.
             </summary>
         </member>
         <member name="P:Resources.GridLocalization.Delete">
             <summary>
-              Looks up a localized string similar to Delete.
+              Sucht eine lokalisierte Zeichenfolge, die Delete ähnelt.
             </summary>
         </member>
         <member name="P:Resources.GridLocalization.DeleteConfirmation">
             <summary>
-              Looks up a localized string similar to Are you sure you want to delete this record?.
+              Sucht eine lokalisierte Zeichenfolge, die Are you sure you want to delete this record? ähnelt.
             </summary>
         </member>
         <member name="P:Resources.GridLocalization.DisplayingItems">
             <summary>
-              Looks up a localized string similar to Displaying items {0} - {1} of {2}.
+              Sucht eine lokalisierte Zeichenfolge, die Displaying items {0} - {1} of {2} ähnelt.
             </summary>
         </member>
         <member name="P:Resources.GridLocalization.Edit">
             <summary>
-              Looks up a localized string similar to Edit.
+              Sucht eine lokalisierte Zeichenfolge, die Edit ähnelt.
             </summary>
         </member>
         <member name="P:Resources.GridLocalization.Filter">
             <summary>
-              Looks up a localized string similar to Filter.
+              Sucht eine lokalisierte Zeichenfolge, die Filter ähnelt.
             </summary>
         </member>
         <member name="P:Resources.GridLocalization.FilterAnd">
             <summary>
-              Looks up a localized string similar to And.
+              Sucht eine lokalisierte Zeichenfolge, die And ähnelt.
             </summary>
         </member>
         <member name="P:Resources.GridLocalization.FilterBoolIsFalse">
             <summary>
-              Looks up a localized string similar to is false.
+              Sucht eine lokalisierte Zeichenfolge, die is false ähnelt.
             </summary>
         </member>
         <member name="P:Resources.GridLocalization.FilterBoolIsTrue">
             <summary>
-              Looks up a localized string similar to is true.
+              Sucht eine lokalisierte Zeichenfolge, die is true ähnelt.
             </summary>
         </member>
         <member name="P:Resources.GridLocalization.FilterClear">
             <summary>
-              Looks up a localized string similar to Clear Filter.
+              Sucht eine lokalisierte Zeichenfolge, die Clear Filter ähnelt.
             </summary>
         </member>
         <member name="P:Resources.GridLocalization.FilterDateEq">
             <summary>
-              Looks up a localized string similar to Is equal to.
+              Sucht eine lokalisierte Zeichenfolge, die Is equal to ähnelt.
             </summary>
         </member>
         <member name="P:Resources.GridLocalization.FilterDateGe">
             <summary>
-              Looks up a localized string similar to Is after or equal to.
+              Sucht eine lokalisierte Zeichenfolge, die Is after or equal to ähnelt.
             </summary>
         </member>
         <member name="P:Resources.GridLocalization.FilterDateGt">
             <summary>
-              Looks up a localized string similar to Is after.
+              Sucht eine lokalisierte Zeichenfolge, die Is after ähnelt.
             </summary>
         </member>
         <member name="P:Resources.GridLocalization.FilterDateLe">
             <summary>
-              Looks up a localized string similar to Is before or equal to.
+              Sucht eine lokalisierte Zeichenfolge, die Is before or equal to ähnelt.
             </summary>
         </member>
         <member name="P:Resources.GridLocalization.FilterDateLt">
             <summary>
-              Looks up a localized string similar to Is before.
+              Sucht eine lokalisierte Zeichenfolge, die Is before ähnelt.
             </summary>
         </member>
         <member name="P:Resources.GridLocalization.FilterDateNe">
             <summary>
-              Looks up a localized string similar to Is not equal to.
+              Sucht eine lokalisierte Zeichenfolge, die Is not equal to ähnelt.
             </summary>
         </member>
         <member name="P:Resources.GridLocalization.FilterEnumEq">
             <summary>
-              Looks up a localized string similar to Is equal to.
+              Sucht eine lokalisierte Zeichenfolge, die Is equal to ähnelt.
             </summary>
         </member>
         <member name="P:Resources.GridLocalization.FilterEnumNe">
             <summary>
-              Looks up a localized string similar to Is not equal to.
+              Sucht eine lokalisierte Zeichenfolge, die Is not equal to ähnelt.
             </summary>
         </member>
         <member name="P:Resources.GridLocalization.FilterForeignKeyEq">
             <summary>
-              Looks up a localized string similar to Is equal to.
+              Sucht eine lokalisierte Zeichenfolge, die Is equal to ähnelt.
             </summary>
         </member>
         <member name="P:Resources.GridLocalization.FilterForeignKeyNe">
             <summary>
-              Looks up a localized string similar to Is not equal to.
+              Sucht eine lokalisierte Zeichenfolge, die Is not equal to ähnelt.
             </summary>
         </member>
         <member name="P:Resources.GridLocalization.FilterNumberEq">
             <summary>
-              Looks up a localized string similar to Is equal to.
+              Sucht eine lokalisierte Zeichenfolge, die Is equal to ähnelt.
             </summary>
         </member>
         <member name="P:Resources.GridLocalization.FilterNumberGe">
             <summary>
-              Looks up a localized string similar to Is greater than or equal to.
+              Sucht eine lokalisierte Zeichenfolge, die Is greater than or equal to ähnelt.
             </summary>
         </member>
         <member name="P:Resources.GridLocalization.FilterNumberGt">
             <summary>
-              Looks up a localized string similar to Is greater than.
+              Sucht eine lokalisierte Zeichenfolge, die Is greater than ähnelt.
             </summary>
         </member>
         <member name="P:Resources.GridLocalization.FilterNumberLe">
             <summary>
-              Looks up a localized string similar to Is less than or equal to.
+              Sucht eine lokalisierte Zeichenfolge, die Is less than or equal to ähnelt.
             </summary>
         </member>
         <member name="P:Resources.GridLocalization.FilterNumberLt">
             <summary>
-              Looks up a localized string similar to Is less than.
+              Sucht eine lokalisierte Zeichenfolge, die Is less than ähnelt.
             </summary>
         </member>
         <member name="P:Resources.GridLocalization.FilterNumberNe">
             <summary>
-              Looks up a localized string similar to Is not equal to.
+              Sucht eine lokalisierte Zeichenfolge, die Is not equal to ähnelt.
             </summary>
         </member>
         <member name="P:Resources.GridLocalization.FilterOr">
             <summary>
-              Looks up a localized string similar to Or.
+              Sucht eine lokalisierte Zeichenfolge, die Or ähnelt.
             </summary>
         </member>
         <member name="P:Resources.GridLocalization.FilterSelectValue">
             <summary>
-              Looks up a localized string similar to -Select value-.
+              Sucht eine lokalisierte Zeichenfolge, die -Select value- ähnelt.
             </summary>
         </member>
         <member name="P:Resources.GridLocalization.FilterShowRows">
             <summary>
-              Looks up a localized string similar to Show rows with value that.
+              Sucht eine lokalisierte Zeichenfolge, die Show rows with value that ähnelt.
             </summary>
         </member>
         <member name="P:Resources.GridLocalization.FilterStringEndsWith">
             <summary>
-              Looks up a localized string similar to Ends with.
+              Sucht eine lokalisierte Zeichenfolge, die Ends with ähnelt.
             </summary>
         </member>
         <member name="P:Resources.GridLocalization.FilterStringEq">
             <summary>
-              Looks up a localized string similar to Is equal to.
+              Sucht eine lokalisierte Zeichenfolge, die Is equal to ähnelt.
             </summary>
         </member>
         <member name="P:Resources.GridLocalization.FilterStringNe">
             <summary>
-              Looks up a localized string similar to Is not equal to.
+              Sucht eine lokalisierte Zeichenfolge, die Is not equal to ähnelt.
             </summary>
         </member>
         <member name="P:Resources.GridLocalization.FilterStringNotSubstringOf">
             <summary>
-              Looks up a localized string similar to Does not contain.
+              Sucht eine lokalisierte Zeichenfolge, die Does not contain ähnelt.
             </summary>
         </member>
         <member name="P:Resources.GridLocalization.FilterStringStartsWith">
             <summary>
-              Looks up a localized string similar to Starts with.
+              Sucht eine lokalisierte Zeichenfolge, die Starts with ähnelt.
             </summary>
         </member>
         <member name="P:Resources.GridLocalization.FilterStringSubstringOf">
             <summary>
-              Looks up a localized string similar to Contains.
+              Sucht eine lokalisierte Zeichenfolge, die Contains ähnelt.
             </summary>
         </member>
         <member name="P:Resources.GridLocalization.GroupHint">
             <summary>
-              Looks up a localized string similar to Drag a column header and drop it here to group by that column.
+              Sucht eine lokalisierte Zeichenfolge, die Drag a column header and drop it here to group by that column ähnelt.
             </summary>
         </member>
         <member name="P:Resources.GridLocalization.Insert">
             <summary>
-              Looks up a localized string similar to Insert.
+              Sucht eine lokalisierte Zeichenfolge, die Insert ähnelt.
             </summary>
         </member>
         <member name="P:Resources.GridLocalization.NoRecords">
             <summary>
-              Looks up a localized string similar to No records to display..
+              Sucht eine lokalisierte Zeichenfolge, die No records to display. ähnelt.
             </summary>
         </member>
         <member name="P:Resources.GridLocalization.Page">
             <summary>
-              Looks up a localized string similar to Page .
+              Sucht eine lokalisierte Zeichenfolge, die Page  ähnelt.
             </summary>
         </member>
         <member name="P:Resources.GridLocalization.PageOf">
             <summary>
-              Looks up a localized string similar to of {0}.
+              Sucht eine lokalisierte Zeichenfolge, die of {0} ähnelt.
             </summary>
         </member>
         <member name="P:Resources.GridLocalization.Refresh">
             <summary>
-              Looks up a localized string similar to Refresh.
+              Sucht eine lokalisierte Zeichenfolge, die Refresh ähnelt.
             </summary>
         </member>
         <member name="P:Resources.GridLocalization.SaveChanges">
             <summary>
-              Looks up a localized string similar to Save changes.
+              Sucht eine lokalisierte Zeichenfolge, die Save changes ähnelt.
             </summary>
         </member>
         <member name="P:Resources.GridLocalization.Select">
             <summary>
-              Looks up a localized string similar to Select.
+              Sucht eine lokalisierte Zeichenfolge, die Select ähnelt.
             </summary>
         </member>
         <member name="P:Resources.GridLocalization.SortedAsc">
             <summary>
-              Looks up a localized string similar to sorted ascending.
+              Sucht eine lokalisierte Zeichenfolge, die sorted ascending ähnelt.
             </summary>
         </member>
         <member name="P:Resources.GridLocalization.SortedDesc">
             <summary>
-              Looks up a localized string similar to sorted descending.
+              Sucht eine lokalisierte Zeichenfolge, die sorted descending ähnelt.
             </summary>
         </member>
         <member name="P:Resources.GridLocalization.UnGroup">
             <summary>
-              Looks up a localized string similar to ungroup.
+              Sucht eine lokalisierte Zeichenfolge, die ungroup ähnelt.
             </summary>
         </member>
         <member name="P:Resources.GridLocalization.Update">
             <summary>
-              Looks up a localized string similar to Update.
+              Sucht eine lokalisierte Zeichenfolge, die Update ähnelt.
             </summary>
         </member>
         <member name="M:BExIS.Modules.Dim.UI.Controllers.DataQualityOutController.Get">
@@ -634,7 +634,7 @@
             </summary>
             <returns>List of ids</returns>
         </member>
-        <member name="M:BExIS.Modules.Dim.UI.Controllers.DataOutController.Get(System.Int32,System.String,System.String)">
+        <member name="M:BExIS.Modules.Dim.UI.Controllers.DataOutController.Get(System.Int32,System.String,System.String,System.String,System.String)">
             <summary>
             In addition to the id, it is possible to have projection and selection criteria passed to the action via query string parameters
             </summary>
@@ -648,7 +648,7 @@
             logical operators, nesting, precedence, and SOME functions should be supported.
             </remarks>
         </member>
-        <member name="M:BExIS.Modules.Dim.UI.Controllers.DataOutController.Get(System.Int64,System.Int32,System.String,System.String)">
+        <member name="M:BExIS.Modules.Dim.UI.Controllers.DataOutController.Get(System.Int64,System.Int32,System.String,System.String,System.String,System.String)">
             <summary>
             In addition to the id, it is possible to have projection and selection criteria passed to the action via query string parameters
             </summary>

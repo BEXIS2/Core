@@ -8,6 +8,7 @@ using System.IO;
 using BExIS.Xml.Helpers;
 using System;
 using BExIS.Utils.Helpers;
+using BExIS.Utils.Config;
 
 namespace BExIS.Modules.Dim.UI.Controllers
 {
@@ -23,7 +24,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
             //add default link if not set
             if (String.IsNullOrEmpty(helpurl))
             {
-                helpurl = ManualHelper.GetUrl(AppConfiguration.ApplicationVersion, "DIM");
+                helpurl = ManualHelper.GetUrl(GeneralSettings.ApplicationVersion, "DIM");
             }
 
 

@@ -11,6 +11,7 @@ using System.Net;
 using System.Web;
 using System;
 using BExIS.Utils.Helpers;
+using BExIS.Utils.Config;
 
 namespace BExIS.Modules.Ddm.UI.Controllers
 {
@@ -27,7 +28,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
             //add default link if not set
             if (String.IsNullOrEmpty(helpurl))
             {
-                helpurl = ManualHelper.GetUrl(AppConfiguration.ApplicationVersion, "DDM");
+                helpurl = ManualHelper.GetUrl(GeneralSettings.ApplicationVersion, "DDM");
             }
            
 

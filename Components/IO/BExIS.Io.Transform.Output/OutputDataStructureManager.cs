@@ -89,12 +89,12 @@ namespace BExIS.IO.Transform.Output
                             dataRow["Description"] = vs.Description;
                             dataRow["isOptional"] = vs.IsValueOptional;
                             dataRow["Unit"] = vs.Unit.Name;
-                            dataRow["DataType"] = vs.DataAttribute.DataType.Name;
-                            dataRow["SystemType"] = vs.DataAttribute.DataType.SystemType;
-                            dataRow["AttributeName"] = vs.DataAttribute.Name;
-                            dataRow["AttributeDescription"] = vs.DataAttribute.Description;
+                            dataRow["DataType"] = vs.DataType.Name;
+                            dataRow["SystemType"] = vs.DataType.SystemType;
+                            dataRow["AttributeName"] = vs.VariableTemplate.Label;
+                            dataRow["AttributeDescription"] = vs.VariableTemplate.Description;
 
-                            DataTypeDisplayPattern dtdp = DataTypeDisplayPattern.Materialize(vs.DataAttribute.DataType.Extra);
+                            DataTypeDisplayPattern dtdp = DataTypeDisplayPattern.Materialize(vs.DataType.Extra);
                             string displayPattern = "";
                             if (dtdp != null) displayPattern = dtdp.StringPattern;
 
