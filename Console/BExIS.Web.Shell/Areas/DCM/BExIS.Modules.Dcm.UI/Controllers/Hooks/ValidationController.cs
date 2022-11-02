@@ -145,6 +145,10 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 catch (Exception ex)
                 {
                     errors.Add(new Error(ErrorType.Other, ex.Message));
+                    FileErrors fileErrors = new FileErrors();
+                    fileErrors.SortedErrors = SortErrors(errors);
+                    model.FileErrors.Add(fileErrors);
+
                 }
 
 

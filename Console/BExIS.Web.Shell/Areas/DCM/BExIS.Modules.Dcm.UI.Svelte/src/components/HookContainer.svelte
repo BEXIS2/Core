@@ -64,9 +64,9 @@ function setActive(status)
 
 </script>
 
-{$hooksStatus[name]}
+<!-- {$hooksStatus[name]}
 {status}
-{active}
+{active} -->
 
 {#if visible && active}
 <div class="hook-container" >
