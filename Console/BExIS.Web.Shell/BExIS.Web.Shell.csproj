@@ -46,8 +46,8 @@
     </NuGetPackageImportStamp>
     <Use64BitIISExpress />
     <PostSharpHostConfigurationFile>web.config</PostSharpHostConfigurationFile>
-    <DontImportPostSharp>True</DontImportPostSharp>
     <TypeScriptCompileBlocked>True</TypeScriptCompileBlocked>
+    <DontImportPostSharp>True</DontImportPostSharp>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
