@@ -1,6 +1,6 @@
 ﻿<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2" assembly="BExIS.Security.Entities" namespace="BExIS.Security.Entities.Subjects">
   <union-subclass xmlns="urn:nhibernate-mapping-2.2" name="Group" table="Groups" extends="Subject" dynamic-update="true">
-    <property name="Description" type="String" >
+    <property name="Description" type="String">
       <column name="Description" sql-type="text" />
     </property>
     <property name="IsValid" type="yes_no" />

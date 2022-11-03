@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Linq.Dynamic;
 using System.Text;
 using System.Xml;
 using System.Xml.Linq;
@@ -256,7 +255,7 @@ namespace BExIS.Xml.Helpers
                 index = Int32.Parse(tmp[1].Remove(tmp[1].IndexOf("]")));
             }
 
-            XmlSchemaElement xsdelement = XsdElements.FirstOrDefault(x => x.Name.Equals(nodeName));
+            XmlSchemaElement xsdelement = XsdElements?.FirstOrDefault(x => x.Name.Equals(nodeName));
 
             string name = nodeName;
             string prefix = "";

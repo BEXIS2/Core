@@ -1,10 +1,11 @@
 ﻿using System.Web.Mvc;
 using Vaiona.Web.Mvc.Models;
-using Vaiona.Web.Extensions;
 using System.Xml.Linq;
 using System.IO;
 using BExIS.Xml.Helpers;
 using Vaiona.Utils.Cfg;
+using System;
+using BExIS.Utils.Helpers;
 
 namespace BExIS.Modules.Vim.UI.Controllers
 {
@@ -20,6 +21,12 @@ namespace BExIS.Modules.Vim.UI.Controllers
             XElement help = XmlUtility.GetXElementByAttribute("entry", "key", "help", settings);
 
             string helpurl = help.Attribute("value")?.Value;
+
+            //add default link if not set
+            if (String.IsNullOrEmpty(helpurl))
+            {
+                helpurl = ManualHelper.GetUrl(AppConfiguration.ApplicationVersion, "VIM");
+            }
 
 
             return Redirect(helpurl);

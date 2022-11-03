@@ -25,12 +25,10 @@ namespace BExIS.Security.Services.FormerMember
             Dispose(true);
         }
 
-
         public void Create(long userRefId, long groupRefId)
         {
             using (var uow = this.GetUnitOfWork())
             {
-                
                 var formerMemberUsersGroupsRelation = new UsersGroupsRelationFormerMember()
                 {
                     UserRef = userRefId,
@@ -53,12 +51,10 @@ namespace BExIS.Security.Services.FormerMember
             }
         }
 
-
         public void Dispose()
         {
             Dispose(true);
         }
-
 
         protected void Dispose(bool disposing)
         {

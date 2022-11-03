@@ -9,13 +9,10 @@ using System.Web;
 using System.Web.Mvc;
 using Vaiona.Utils.Cfg;
 using System.Net;
-using MetadataExtractor;
 using IDIV.Modules.Mmm.UI.Models;
-using MediaInfoLib;
 using System.Xml;
 using ICSharpCode.SharpZipLib.Zip;
 using Microsoft.VisualBasic.FileIO;
-using System.Data;
 using BExIS.Security.Services.Authorization;
 using BExIS.Security.Entities.Authorization;
 using Vaiona.Persistence.Api;
@@ -24,7 +21,9 @@ using BExIS.Dim.Entities.Mapping;
 using BExIS.Modules.Mmm.UI.Helpers;
 using BExIS.Security.Services.Utilities;
 using System.Configuration;
+using MediaInfoLib;
 using Vaiona.Logging;
+using MetadataExtractor;
 
 namespace IDIV.Modules.Mmm.UI.Controllers
 {

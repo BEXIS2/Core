@@ -10,7 +10,6 @@ using BExIS.Dlm.Services.DataStructure;
 using BExIS.Dlm.Services.TypeSystem;
 using Vaiona.Persistence.Api;
 using Vaiona.Utils.Cfg;
-using System.Windows.Forms;
 using System.Text.RegularExpressions;
 using Vaiona.Web.Mvc.Models;
 using BExIS.IO.DataType.DisplayPattern;

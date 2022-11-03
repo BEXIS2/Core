@@ -5,7 +5,6 @@ using Vaiona.Entities.Common;
 
 namespace BExIS.Security.Entities.FormerMember
 {
-   
     public class FeaturePermissionFormerMember : BaseEntity
     {
         public virtual Feature Feature { get; set; }

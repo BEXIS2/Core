@@ -156,10 +156,10 @@ namespace BExIS.Modules.Bam.UI.Helpers
                 foreach (var partyCustomAttributeValueString in partyCustomAttributeValues)
                 {
                     PartyCustomAttribute partyCustomAttribute = partyTypeManager.PartyCustomAttributeRepository.Get(int.Parse(partyCustomAttributeValueString.Key));
-                    string value = string.IsNullOrEmpty(partyCustomAttributeValueString.Value) ? "" : partyCustomAttributeValueString.Value;
+                    string value = string.IsNullOrEmpty(partyCustomAttributeValueString.Value) ? "" : partyCustomAttributeValueString.Value.Trim();
                     newAddPartyCustomAttrValues.Add(partyCustomAttribute, value);
                 }
-                party.CustomAttributeValues = partyManager.AddPartyCustomAttributeValues(party, partyCustomAttributeValues.ToDictionary(cc => long.Parse(cc.Key), cc => cc.Value)).ToList();
+                party.CustomAttributeValues = partyManager.AddPartyCustomAttributeValues(party, partyCustomAttributeValues.ToDictionary(cc => long.Parse(cc.Key), cc => cc.Value.Trim())).ToList();
 
                 return party;
             }

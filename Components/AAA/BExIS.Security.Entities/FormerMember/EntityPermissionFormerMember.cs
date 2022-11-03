@@ -4,8 +4,6 @@ using Vaiona.Entities.Common;
 
 namespace BExIS.Security.Entities.FormerMember
 {
-
-
     /// <summary>
     ///
     /// </summary>

@@ -1,16 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
-using System.Linq;
-using System.Web;
 
 namespace BExIS.Web.Shell.Helpers
 {
     public static class BexisDataHelper
     {
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="data"></param>
@@ -45,7 +42,7 @@ namespace BExIS.Web.Shell.Helpers
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="data"></param>
@@ -57,8 +54,8 @@ namespace BExIS.Web.Shell.Helpers
             DataTable table = new DataTable();
             foreach (string column in columns)
             {
-                PropertyDescriptor prop = props.Find(column,false);
-                if(prop!=null)
+                PropertyDescriptor prop = props.Find(column, false);
+                if (prop != null)
                     table.Columns.Add(prop.Name, prop.PropertyType);
             }
             object[] values = new object[table.Columns.Count];
@@ -66,12 +63,11 @@ namespace BExIS.Web.Shell.Helpers
             {
                 foreach (PropertyDescriptor prop in props)
                 {
-                    if(columns.Contains(prop.Name))
+                    if (columns.Contains(prop.Name))
                     {
                         int columnIndex = table.Columns.IndexOf(table.Columns[prop.Name]);
                         values[columnIndex] = prop.GetValue(item);
                     }
-                    
                 }
 
                 table.Rows.Add(values);

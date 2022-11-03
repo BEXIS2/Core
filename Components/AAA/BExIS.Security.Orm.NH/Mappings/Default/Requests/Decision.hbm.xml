@@ -13,7 +13,6 @@
       <column name="Extra" not-null="false" sql-type="xml" />
     </property>
 
-
     <property name="DecisionDate" type="DateTime">
       <column name="DecisionDate" />
     </property>
@@ -25,7 +24,6 @@
     <property name="Status" type="BExIS.Security.Entities.Requests.DecisionStatus, BExIS.Security.Entities">
       <column name="Status" />
     </property>
-
 
     <many-to-one name="DecisionMaker" column="DecisionMakerRef" class="BExIS.Security.Entities.Subjects.User, BExIS.Security.Entities" />
 

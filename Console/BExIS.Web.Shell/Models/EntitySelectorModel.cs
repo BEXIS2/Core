@@ -18,7 +18,6 @@ namespace BExIS.Web.Shell.Models
 
         public Dictionary<string, string> Parameters { get; set; }
 
-
         public EntitySelectorModel()
         {
             Title = "";

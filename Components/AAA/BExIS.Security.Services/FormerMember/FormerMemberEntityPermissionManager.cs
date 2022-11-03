@@ -53,7 +53,7 @@ namespace BExIS.Security.Services.FormerMember
                 uow.Commit();
             }
         }
-     
+
         public void Delete(EntityPermissionFormerMember formerMemberEntityPermission)
         {
             using (var uow = this.GetUnitOfWork())
@@ -112,7 +112,7 @@ namespace BExIS.Security.Services.FormerMember
                 return formerMemberEntityPermissionRepository.Get(formerMemberEntityPermissionId);
             }
         }
-      
+
         public void Update(EntityPermissionFormerMember entity)
         {
             using (var uow = this.GetUnitOfWork())

@@ -21,7 +21,6 @@
             extends="./menubarRoot"
             />-->
 
-
     <Export tag="lunchbar" id="lunchbarRoot" order="1"
             title="" description="" icon=""
             controller="" action=""
@@ -46,7 +45,7 @@
             title="" description="" icon=""
             controller="" action=""
             extends="." />
-    
+
     <!--FAQ-->
     <Export tag="lunchbar" id="helpDdm" order="9"
             title="FAQ" description="Link to the faq page" icon=""

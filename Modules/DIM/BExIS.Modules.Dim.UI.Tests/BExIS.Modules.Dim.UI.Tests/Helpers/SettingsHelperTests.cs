@@ -4,7 +4,6 @@ using BExIS.App.Testing;
 using BExIS.Utils.Config;
 using Vaiona.Utils.Cfg;
 using BExIS.Dim.Helpers.Models;
-using System.Linq;
 using RestSharp;
 using RestSharp.Authenticators;
 using BExIS.Dim.Helpers;

@@ -11,11 +11,11 @@
     <div class="col-md-12">
         @if (ViewBag.HasLocalPassword)
         {
-            @Html.Partial("_ChangePassword")
+        @Html.Partial("_ChangePassword")
         }
         else
         {
-            @Html.Partial("_SetPassword")
+        @Html.Partial("_SetPassword")
         }
 
         <section id="externalLogins">

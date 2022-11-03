@@ -1,6 +1,9 @@
 using BExIS.Web.Shell;
 using Swashbuckle.Application;
+using System.Configuration;
+using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Web.Http;
 using WebActivatorEx;
 
@@ -14,6 +17,10 @@ namespace BExIS.Web.Shell
         {
             var thisAssembly = typeof(SwaggerConfig).Assembly;
 
+            string rootUrl = "";
+            if (ConfigurationManager.AppSettings["SwaggerRootUrl"] != null)
+                rootUrl = ConfigurationManager.AppSettings["SwaggerRootUrl"].ToString();
+
             GlobalConfiguration.Configuration
                 .EnableSwagger(c =>
                     {
@@ -23,11 +30,16 @@ namespace BExIS.Web.Shell
                         .Name("Bearer")
                         .In("header");
                         c.PrettyPrint();
-                        c.IncludeXmlComments(GetXmlCommentsPath());
+
+                        addXmlDocumentations(c);
+
                         c.IgnoreObsoleteProperties();
                         c.ResolveConflictingActions(apiDescriptions => apiDescriptions.First());
                         //c.ApiKey("Authorization", "header", "Filling bearer token here");
                         c.Schemes(new[] { "https" });
+
+                        if(!string.IsNullOrEmpty(rootUrl))c.RootUrl(r => rootUrl);
+
                     })
 
                 .EnableSwaggerUi("apihelp/{*assetPath}", c =>
@@ -40,11 +52,19 @@ namespace BExIS.Web.Shell
                      });
         }
 
-        private static string GetXmlCommentsPath()
+        private static void addXmlDocumentations(SwaggerDocsConfig c)
         {
-            string path = string.Format(@"{0}\App_Data\api_documentation.xml", System.AppDomain.CurrentDomain.BaseDirectory);
+            //get app_data path
+            string path = string.Format(@"{0}\App_Data", System.AppDomain.CurrentDomain.BaseDirectory);
 
-            return path;
+            // get all files from the direcory (app_data)
+            var files = Directory.EnumerateFiles(path);
+
+            if (files != null) 
+            { 
+                // add each file (xml documenation) to the swagger config
+                files.ToList().ForEach(f =>c.IncludeXmlComments(f));
+            }
         }
     }
 }

@@ -1,280 +1,473 @@
 ﻿/*GENERAL*/
 .t-link {
-	text-decoration: none;
+    text-decoration: none;
 }
-
 
 /*GRID*/
 .t-widget .t-grid {
-	border: none;
-	position:relative;
-	zoom:1
+    border: none;
+    position: relative;
+    zoom: 1
 }
 
 .t-grid td {
-	padding-left: 30px;
+    padding-left: 30px;
 }
 
 /*GRID Grouping*/
-.t-group-indicator{margin-right:5px}
-.t-grouping-header{ background: #f5f5f5;border-top: #afb0b1 solid 1px; padding-bottom: 5px; padding-top: 5px;}
-.t-grouping-dropclue{background:url('Default/sprite.png') no-repeat -48px -288px}
-.t-grouping-row .t-group-cell,.t-grouping-row p{background:#fff}
-.t-grouping-header .t-link .t-arrow-up-small, .t-grouping-header .t-link .t-arrow-down-small {padding-right:5px }
-.t-group-indicator .t-button {padding-left:5px;}
-
-/*GRID Footer*/
-.t-refresh{display: none}
-.t-status-text{}
-
-.t-grid .t-status { border:none}
-.t-grid .t-status-text{ display: none}
-.t-grid .t-pager{ width: 100%; text-align: center;}
-
-.t-grid-pager{border: none; margin-top:50px;}
-
-.t-pager .t-link, 
-.t-pager .t-state-active,
-.t-group-indicator .t-link {
-	margin:0 2px 0 2px; 
-	font-family: Arial;
+.t-group-indicator {
+    margin-right: 5px
 }
 
-.t-group-indicator .t-link, .t-group-delete
-{
-	color:#ffffff;
+.t-grouping-header {
+    background: #f5f5f5;
+    border-top: #afb0b1 solid 1px;
+    padding-bottom: 5px;
+    padding-top: 5px;
+}
+
+.t-grouping-dropclue {
+    background: url('Default/sprite.png') no-repeat -48px -288px
+}
+
+.t-grouping-row .t-group-cell, .t-grouping-row p {
+    background: #fff
+}
+
+.t-grouping-header .t-link .t-arrow-up-small, .t-grouping-header .t-link .t-arrow-down-small {
+    padding-right: 5px
+}
+
+.t-group-indicator .t-button {
+    padding-left: 5px;
+}
+
+/*GRID Footer*/
+.t-refresh {
+    display: none
+}
+
+.t-status-text {
+}
+
+.t-grid .t-status {
+    border: none
+}
+
+.t-grid .t-status-text {
+    display: none
+}
+
+.t-grid .t-pager {
+    width: 100%;
+    text-align: center;
+}
+
+.t-grid-pager {
+    border: none;
+    margin-top: 50px;
+}
+
+.t-pager .t-link,
+.t-pager .t-state-active,
+.t-group-indicator .t-link {
+    margin: 0 2px 0 2px;
+    font-family: Arial;
+}
+
+.t-group-indicator .t-link, .t-group-delete {
+    color: #ffffff;
 }
 
 /*GRID sorting*/
 .t-arrow-down, .t-arrow-up {
-	margin-left: 4px;
+    margin-left: 4px;
 }
 
 /*GRID Filter*/
 .t-grid-filter {
-	vertical-align: central;
-	float: left;
-	margin-right: 5px;
+    vertical-align: central;
+    float: left;
+    margin-right: 5px;
 }
 
 .t-filter {
-	display: none;
+    display: none;
 }
 
-.t-grid .t-animation-container{position:absolute}
-.t-animation-container {height:100%}
-.t-animation-container {height:100%}
-.t-grid .t-filter-options{position:absolute;border-width:1px;border-style:solid;padding:3px;width:148px;-moz-border-radius:3px;-webkit-border-radius:3px;border-radius:3px}
-.t-filter-options {background-color:white}
-.t-filter-options .t-filter-help-text,.t-filter-options select,.t-filter-options input,.t-filter-options .t-button,.t-filter-options .t-datepicker{display:block;margin-bottom:4px}
-.t-filter-options select{width:148px}
-.t-filter-options input{width:142px}
-.t-filter-options .t-datepicker{width:100%}
-.t-filter-options .t-filter-button{margin-bottom:0}
-.t-filter-options .t-filter-logic{width:5em}
+.t-grid .t-animation-container {
+    position: absolute
+}
 
-.t-popup{border-width:1px;border-style:solid}
-.t-popup .t-item{padding:1px 5px 1px 3px;cursor:default}
-.t-popup,.t-menu .t-group{-moz-box-shadow:2px 2px 2px #aaa;-webkit-box-shadow:2px 2px 2px #aaa;box-shadow:2px 2px 2px #aaa}
+.t-animation-container {
+    height: 100%
+}
+
+.t-animation-container {
+    height: 100%
+}
+
+.t-grid .t-filter-options {
+    position: absolute;
+    border-width: 1px;
+    border-style: solid;
+    padding: 3px;
+    width: 148px;
+    -moz-border-radius: 3px;
+    -webkit-border-radius: 3px;
+    border-radius: 3px
+}
+
+.t-filter-options {
+    background-color: white
+}
+
+    .t-filter-options .t-filter-help-text, .t-filter-options select, .t-filter-options input, .t-filter-options .t-button, .t-filter-options .t-datepicker {
+        display: block;
+        margin-bottom: 4px
+    }
+
+    .t-filter-options select {
+        width: 148px
+    }
+
+    .t-filter-options input {
+        width: 142px
+    }
+
+    .t-filter-options .t-datepicker {
+        width: 100%
+    }
+
+    .t-filter-options .t-filter-button {
+        margin-bottom: 0
+    }
+
+    .t-filter-options .t-filter-logic {
+        width: 5em
+    }
+
+.t-popup {
+    border-width: 1px;
+    border-style: solid
+}
+
+    .t-popup .t-item {
+        padding: 1px 5px 1px 3px;
+        cursor: default
+    }
+
+.t-popup, .t-menu .t-group {
+    -moz-box-shadow: 2px 2px 2px #aaa;
+    -webkit-box-shadow: 2px 2px 2px #aaa;
+    box-shadow: 2px 2px 2px #aaa
+}
 
 .t-state-active {
-	
 }
 
 /*GRID Paging*/
 .t-numeric {
-	display:inline-block;
-	*display:inline;
-	zoom:1;
-	/*padding-right: 4px;*/
+    display: inline-block;
+    *display: inline;
+    zoom: 1;
+    /*padding-right: 4px;*/
 }
 
 /* TreeView */
-div.t-treeview{border-width:0;background:0;white-space:nowrap;overflow:auto; width: 284px;}
-.t-treeview .t-plus,.t-treeview .t-minus,.t-treeview .t-plus-disabled,.t-treeview .t-minus-disabled{margin-left:-16px;margin-top:2px;float:left;/* required for Opera */*float:none;/* IE6 does not like it as node text wraps */cursor:pointer}
-.t-treeview .t-group,.t-treeview .t-content{list-style-type:none;background:0;margin:0;padding:0; list-style-position:inside}
-.t-treeview .t-item{padding:0 0 0 16px;margin:0;border-width:0;position:static;top:auto;display:block}
-.t-treeview .t-animation-container{height:auto!important}
-.t-treeview .t-icon,.t-treeview .t-image,.t-treeview .t-sprite,.t-treeview .t-in{display:inline-block;*display:inline;zoom:1;vertical-align:top}
-.t-treeview .t-plus,.t-treeview .t-minus,.t-treeview .t-plus-disabled,.t-treeview .t-minus-disabled{margin-left:-16px;margin-top:2px;float:left;/* required for Opera */*float:none;/* IE6 does not like it as node text wraps */cursor:pointer}
-.t-treeview .t-plus-disabled,.t-treeview .t-minus-disabled{cursor:default}
-.t-treeview .t-sprite,.t-treeview .t-image{margin-right:3px}
-.t-treeview .t-in{margin:1px 0;padding:2px 4px 2px 3px;text-decoration:none;line-height:16px;margin-left:2px}
-.t-treeview span.t-in{cursor:default}
-.t-treeview .t-state-hover,.t-treeview .t-state-selected{padding:1px 3px 1px 2px;border-width:1px;border-style:solid;-moz-border-radius:4px;-webkit-border-radius:4px;border-radius:4px}
-.t-treeview .t-drop-clue{width:80px;visibility:hidden;height:5px;position:absolute;margin-top:-3px;z-index:10000;background-color:transparent;background-repeat:no-repeat}
+div.t-treeview {
+    border-width: 0;
+    background: 0;
+    white-space: nowrap;
+    overflow: auto;
+    width: 284px;
+}
+
+.t-treeview .t-plus, .t-treeview .t-minus, .t-treeview .t-plus-disabled, .t-treeview .t-minus-disabled {
+    margin-left: -16px;
+    margin-top: 2px;
+    float: left; /* required for Opera */
+    *float: none; /* IE6 does not like it as node text wraps */
+    cursor: pointer
+}
+
+.t-treeview .t-group, .t-treeview .t-content {
+    list-style-type: none;
+    background: 0;
+    margin: 0;
+    padding: 0;
+    list-style-position: inside
+}
+
+.t-treeview .t-item {
+    padding: 0 0 0 16px;
+    margin: 0;
+    border-width: 0;
+    position: static;
+    top: auto;
+    display: block
+}
+
+.t-treeview .t-animation-container {
+    height: auto !important
+}
+
+.t-treeview .t-icon, .t-treeview .t-image, .t-treeview .t-sprite, .t-treeview .t-in {
+    display: inline-block;
+    *display: inline;
+    zoom: 1;
+    vertical-align: top
+}
+
+.t-treeview .t-plus, .t-treeview .t-minus, .t-treeview .t-plus-disabled, .t-treeview .t-minus-disabled {
+    margin-left: -16px;
+    margin-top: 2px;
+    float: left; /* required for Opera */
+    *float: none; /* IE6 does not like it as node text wraps */
+    cursor: pointer
+}
+
+.t-treeview .t-plus-disabled, .t-treeview .t-minus-disabled {
+    cursor: default
+}
+
+.t-treeview .t-sprite, .t-treeview .t-image {
+    margin-right: 3px
+}
+
+.t-treeview .t-in {
+    margin: 1px 0;
+    padding: 2px 4px 2px 3px;
+    text-decoration: none;
+    line-height: 16px;
+    margin-left: 2px
+}
+
+.t-treeview span.t-in {
+    cursor: default
+}
+
+.t-treeview .t-state-hover, .t-treeview .t-state-selected {
+    padding: 1px 3px 1px 2px;
+    border-width: 1px;
+    border-style: solid;
+    -moz-border-radius: 4px;
+    -webkit-border-radius: 4px;
+    border-radius: 4px
+}
+
+.t-treeview .t-drop-clue {
+    width: 80px;
+    visibility: hidden;
+    height: 5px;
+    position: absolute;
+    margin-top: -3px;
+    z-index: 10000;
+    background-color: transparent;
+    background-repeat: no-repeat
+}
 
 /*customs TreeView*/
-.t-treeview .t-treeview-lines .t-headeritem{ font-weight:bold;}
-.t-treeview .t-item{ border-top:solid 1px; padding-top:5px;padding-bottom:5px;}
-.t-treeview .t-last{padding-bottom:0px;}
-.t-treeview  { border-bottom:solid 1px;}
-.t-item-more { color:#afb0b1; }
-.t-treeview li{ padding:0; margin:0;}
+.t-treeview .t-treeview-lines .t-headeritem {
+    font-weight: bold;
+}
+
+.t-treeview .t-item {
+    border-top: solid 1px;
+    padding-top: 5px;
+    padding-bottom: 5px;
+}
+
+.t-treeview .t-last {
+    padding-bottom: 0px;
+}
+
+.t-treeview {
+    border-bottom: solid 1px;
+}
+
+.t-item-more {
+    color: #afb0b1;
+}
+
+.t-treeview li {
+    padding: 0;
+    margin: 0;
+}
 
 /* TabStrip */
-.t-tabstrip{margin:0;padding:0;zoom:1}
-.t-tabstrip .t-tabstrip-items{padding:0 .3em}
-.t-tabstrip-items .t-item,.t-panelbar .t-tabstrip-items .t-item{list-style-type:none; vertical-align:top; display:inline-block;*display:inline;
-	zoom:1;
-	padding:0;
-	position:relative;
-
-}
-.t-tabstrip-items .t-state-active,.t-panelbar .t-tabstrip-items .t-state-active{
-
-	font-family:Arial;
-
-	padding:0;
-	position:relative;
-	color:yellow;
-	background-color:#bee1da;
-	height:auto;
+.t-tabstrip {
+    margin: 0;
+    padding: 0;
+    zoom: 1
 }
 
-.t-tabstrip-items .t-link,.t-panelbar .t-tabstrip-items .t-link{padding:.3em .9em;display:inline-block;*display:inline;zoom:1;border-bottom-width:0;outline:0}
-.t-tabstrip .t-content,.t-panelbar .t-tabstrip .t-content{border-width:1px; border-style:solid; border-color:#bee1da;}
-.t-tabstrip>.t-content,.t-panelbar .t-tabstrip>.t-content{display:none}
-* html .t-tabstrip .t-content,* html .t-panelbar .t-tabstrip .t-content{display:none}
-* html .t-tabstrip .t-content .t-content,* html .t-panelbar .t-tabstrip .t-content .t-content{display:block}
+    .t-tabstrip .t-tabstrip-items {
+        padding: 0 .3em
+    }
 
+.t-tabstrip-items .t-item, .t-panelbar .t-tabstrip-items .t-item {
+    list-style-type: none;
+    vertical-align: top;
+    display: inline-block;
+    *display: inline;
+    zoom: 1;
+    padding: 0;
+    position: relative;
+}
+
+.t-tabstrip-items .t-state-active, .t-panelbar .t-tabstrip-items .t-state-active {
+    font-family: Arial;
+    padding: 0;
+    position: relative;
+    color: yellow;
+    background-color: #bee1da;
+    height: auto;
+}
+
+.t-tabstrip-items .t-link, .t-panelbar .t-tabstrip-items .t-link {
+    padding: .3em .9em;
+    display: inline-block;
+    *display: inline;
+    zoom: 1;
+    border-bottom-width: 0;
+    outline: 0
+}
+
+.t-tabstrip .t-content, .t-panelbar .t-tabstrip .t-content {
+    border-width: 1px;
+    border-style: solid;
+    border-color: #bee1da;
+}
+
+.t-tabstrip > .t-content, .t-panelbar .t-tabstrip > .t-content {
+    display: none
+}
+
+* html .t-tabstrip .t-content, * html .t-panelbar .t-tabstrip .t-content {
+    display: none
+}
+
+    * html .t-tabstrip .t-content .t-content, * html .t-panelbar .t-tabstrip .t-content .t-content {
+        display: block
+    }
 
 /* Tab Stript Customs */
-.t-content.t-state-active
-{
-	background-color: white;
-	color: black;
-	height: auto;
+.t-content.t-state-active {
+    background-color: white;
+    color: black;
+    height: auto;
 }
 
-.t-tabstrip .t-item .t-state-active
-{
-	color:#72b1a0;
-	background-color:#bee1da;
-	margin:0;
-	padding:0;
+.t-tabstrip .t-item .t-state-active {
+    color: #72b1a0;
+    background-color: #bee1da;
+    margin: 0;
+    padding: 0;
 }
 
 /* Menu */
-.t-menu
-{
-	cursor: default;
+.t-menu {
+    cursor: default;
 }
 
-.t-menu,
-.t-menu .t-group
-{
-	list-style: none;
-	padding: 0;
-	margin: 0;
-	zoom: 1;
-}
+    .t-menu,
+    .t-menu .t-group {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        zoom: 1;
+    }
 
-.t-menu .t-group .t-link
-{
-	padding-right: 2em;
-}
+        .t-menu .t-group .t-link {
+            padding-right: 2em;
+        }
 
-.t-menu .t-item
-{
-	position: relative;
-	display: inline-block;
-	*display: inline;
-	zoom: 1;
-	border-width: 0 1px 0 0;
-	border-style: solid;
-	vertical-align: top;
-}
+        .t-menu .t-item {
+            position: relative;
+            display: inline-block;
+            *display: inline;
+            zoom: 1;
+            border-width: 0 1px 0 0;
+            border-style: solid;
+            vertical-align: top;
+        }
 
-.t-menu-vertical .t-item
-{
-	display: block;
-	border-width: 0;
+.t-menu-vertical .t-item {
+    display: block;
+    border-width: 0;
 }
 
 .t-menu .t-image,
-.t-menu .t-sprite
-{
-	margin: 0 4px 0 -4px;
-	vertical-align: top;
+.t-menu .t-sprite {
+    margin: 0 4px 0 -4px;
+    vertical-align: top;
 }
 
-.t-menu .t-link
-{
-	text-decoration: none;
-	padding: .25em .97em;
-	display: block;
+.t-menu .t-link {
+    text-decoration: none;
+    padding: .25em .97em;
+    display: block;
 }
 
-.t-menu .t-group
-{
-	display: none;
-	white-space: nowrap;
-	border-style: solid;
-	border-width: 1px;
-	overflow: visible;
+.t-menu .t-group {
+    display: none;
+    white-space: nowrap;
+    border-style: solid;
+    border-width: 1px;
+    overflow: visible;
 }
 
-.t-menu .t-group .t-item
-{
-	display: block;
-	border-width: 0;
+    .t-menu .t-group .t-item {
+        display: block;
+        border-width: 0;
+    }
+
+    .t-menu .t-group .t-link {
+        zoom: 1;
+    }
+
+.t-menu .t-arrow-down {
+    margin-left: 2px;
+    margin-right: -10px;
+    vertical-align: top;
 }
 
-.t-menu .t-group .t-link
-{
-	zoom: 1;
-}
-
-.t-menu .t-arrow-down
-{
-	margin-left: 2px;
-	margin-right: -10px;
-	vertical-align: top;
-}
-
-.t-menu .t-arrow-next
-{
-	position: absolute;
-	right: 0;
-	top: 3px;
+.t-menu .t-arrow-next {
+    position: absolute;
+    right: 0;
+    top: 3px;
 }
 
 .t-menu .t-animation-container,
 .t-menu .t-group,
-.t-menu-context
-{
-	left: -1px;
-	position: absolute;
+.t-menu-context {
+    left: -1px;
+    position: absolute;
 }
 
-.t-menu-context .t-group
-{
-	position:static;
-	display:block;
-}
+    .t-menu-context .t-group {
+        position: static;
+        display: block;
+    }
 
-.t-menu-context
-{
-	z-index:11000;
+.t-menu-context {
+    z-index: 11000;
 }
 
 .t-menu .t-animation-container .t-animation-container,
-.t-menu .t-group .t-group
-{
-	left: 100%;
-	top: -1px;
+.t-menu .t-group .t-group {
+    left: 100%;
+    top: -1px;
 }
 
 .t-menu-vertical .t-animation-container,
-.t-menu-vertical .t-group
-{
-	left: 100%;
-	top: -1px;
+.t-menu-vertical .t-group {
+    left: 100%;
+    top: -1px;
 }
 
-.t-menu .t-animation-container .t-group
-{
-	left: auto;
-	top: auto;
+.t-menu .t-animation-container .t-group {
+    left: auto;
+    top: auto;
 }

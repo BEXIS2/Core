@@ -1,6 +1,6 @@
 ﻿<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2" assembly="BExIS.Security.Entities" namespace="BExIS.Security.Entities.FormerMember">
   <class xmlns="urn:nhibernate-mapping-2.2" name="UsersGroupsRelationFormerMember" table="Users_Groups_FormerMember" dynamic-update="true">
-    
+
     <id name="Id" type="Int64">
       <generator class="native" />
     </id>
@@ -12,7 +12,6 @@
     <property name="Extra" type="System.Xml.XmlDocument, System.Xml, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
       <column name="Extra" not-null="false" sql-type="xml" />
     </property>
-
 
     <property name="UserRef" type="Int64" />
     <property name="GroupRef" type="Int64" />

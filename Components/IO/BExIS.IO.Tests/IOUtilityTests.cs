@@ -8,7 +8,6 @@ using System;
 using System.Globalization;
 using BExIS.IO.Transform.Validation.ValueCheck;
 using BExIS.IO.Transform.Validation.Exceptions;
-using NHibernate.Criterion;
 
 namespace BExIS.IO.Tests
 {

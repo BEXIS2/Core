@@ -1,6 +1,5 @@
 using BExIS.App.Testing;
 using BExIS.Dim.Entities.Mapping;
-using BExIS.Dim.Helpers.Mapping;
 using BExIS.Dim.Services;
 using BExIS.Dlm.Services.DataStructure;
 using BExIS.Utils.Config;
@@ -41,7 +40,7 @@ namespace BExIS.Dim.Helpers.UnitTests
         {
         }
 
-        [Test()]
+        //[Test()]
         public void GetValuesFromMetadata_MultiMappingsOnDifferentKomplexTypes_ListOfValues()
         {
             //Arrange

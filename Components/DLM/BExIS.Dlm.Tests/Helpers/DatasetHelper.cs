@@ -5,7 +5,6 @@ using BExIS.Dlm.Services.Administration;
 using BExIS.Dlm.Services.Data;
 using BExIS.Dlm.Services.DataStructure;
 using FluentAssertions;
-using NHibernate.Id.Insert;
 using System;
 using System.CodeDom;
 using System.Collections.Generic;

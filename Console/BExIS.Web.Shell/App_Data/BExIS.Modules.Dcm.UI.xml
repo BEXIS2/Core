@@ -1,0 +1,459 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>BExIS.Modules.Dcm.UI</name>
+    </assembly>
+    <members>
+        <member name="T:BExIS.Modules.Dcm.UI.Controllers.AttachmentInController">
+            <summary>
+            This class is designed as a Web API to allow various client tools request datasets or a view on data sets and get the result in
+            either of XML, JSON, or CSV formats.
+            </summary>
+            <remarks>
+            This class is designed as a Web API to allow various client tools request datasets or a view on data sets and get the result in
+            either of XML, JSON, or CSV formats.
+            The design follows the RESTFull pattern mentioned in http://www.asp.net/web-api/overview/older-versions/creating-a-web-api-that-supports-crud-operations
+            CSV formatter is implemented in the DataTupleCsvFormatter class in the Models folder.
+            The formatter is registered in the WebApiConfig as an automatic formatter, so if the clinet sets the request's Mime type to text/csv, this formatter will be automatically engaged.
+            text/xml and text/json return XML and JSON content accordingly.
+            </remarks>
+        </member>
+        <member name="T:BExIS.Modules.Dcm.UI.Controllers.DataInController">
+            <summary>
+            This class is designed as a Web API to allow various client tools request datasets or a view on data sets and get the result in
+            CSV formats.
+            </summary>
+            <remarks>
+            This class is designed as a Web API to allow various client tools request datasets or a view on data sets and get the result in
+            CSV formats.
+            The design follows the RESTFull pattern mentioned in http://www.asp.net/web-api/overview/older-versions/creating-a-web-api-that-supports-crud-operations
+            CSV formatter is implemented in the DataTupleCsvFormatter class in the Models folder.
+            The formatter is registered in the WebApiConfig as an automatic formatter, so if the clinet sets the request's Mime type to text/csv, this formatter will be automatically engaged.
+            text/xml and text/json return XML and JSON content accordingly.
+            </remarks>
+        </member>
+        <member name="M:BExIS.Modules.Dcm.UI.Controllers.DataInController.Post(BExIS.Modules.Dcm.UI.Models.API.PushDataApiModel)">
+            <summary>
+            append data to a dataset
+            </summary>
+            <param name="data"></param>
+        </member>
+        <member name="M:BExIS.Modules.Dcm.UI.Controllers.DataInController.Put(BExIS.Modules.Dcm.UI.Models.API.PutDataApiModel)">
+            <summary>
+            append and update data to an existing dataset
+            </summary>
+        </member>
+        <member name="M:BExIS.Modules.Dcm.UI.Controllers.DataInController.Delete(System.Int32)">
+            <summary>
+            Deletes an existing dataset
+            </summary>
+            <param name="id"></param>
+        </member>
+        <member name="M:BExIS.Modules.Dcm.UI.Controllers.API.DatasetInController.Post(BExIS.Modules.Dcm.UI.Models.API.PostApiDatasetModel)">
+             <summary>
+            
+             </summary>
+             <example>
+            {
+             "Title":"Title of my Dataset.",
+             "Description":"Description of my Dataset.",
+             "DataStructureId":1,
+             "MetadataStructureId":1,
+            }
+             </example>
+             <param name="dataset"></param>
+             <returns> HttpResponseMessage </returns>
+        </member>
+        <member name="M:BExIS.Modules.Dcm.UI.Controllers.AttachmentsController.GetDatasetFileList(BExIS.Dlm.Entities.Data.DatasetVersion)">
+            <summary>
+            read filenames from datapath/Datasets/id
+            </summary>
+            <returns>return a list with all names from FileStream in the folder</returns>
+        </member>
+        <member name="M:BExIS.Modules.Dcm.UI.Controllers.CreateDatasetController.Index(System.Int64,System.String)">
+            <summary>
+            Load the createDataset action with different parameter type options
+            type eg ("DataStructureId", "DatasetId", "MetadataStructureId")
+            </summary>
+            <param name="id"></param>
+            <param name="type"></param>
+            <returns></returns>
+        </member>
+        <member name="M:BExIS.Modules.Dcm.UI.Controllers.CreateDatasetController.ReloadIndex(System.Int64,System.String)">
+            <summary>
+            ReLoad the createDataset action with different parameter type options
+            type eg ("DataStructureId", "DatasetId", "MetadataStructureId")
+            </summary>
+            <param name="id"></param>
+            <param name="type"></param>
+            <returns></returns>
+        </member>
+        <member name="M:BExIS.Modules.Dcm.UI.Controllers.CreateDatasetController.LoadLists(BExIS.Modules.Dcm.UI.Models.CreateDataset.SetupModel)">
+            <summary>
+            load all existing lists for this step
+            if there are stored in the session
+            </summary>
+            <param name="model"></param>
+            <returns></returns>
+        </member>
+        <member name="M:BExIS.Modules.Dcm.UI.Controllers.CreateDatasetController.SetXml(System.Xml.Linq.XDocument)">
+            <summary>
+            Store the incoming xmldocument in the bus of the Create TaskManager with
+            the METADATA_XML key
+            </summary>
+            <param name="metadataXml"></param>
+        </member>
+        <member name="M:BExIS.Modules.Dcm.UI.Controllers.CreateDatasetController.SubmitDataset(System.Boolean,System.String)">
+            <summary>
+            Submit a Dataset based on the imformations
+            in the CreateTaskManager
+            </summary>
+        </member>
+        <member name="M:BExIS.Modules.Dcm.UI.Controllers.CreateDatasetController.ShowData(System.Int64)">
+            <summary>
+            redirect to the DDM/Data/ShowData Action
+            </summary>
+            <param name="id"></param>
+            <returns></returns>
+        </member>
+        <member name="M:BExIS.Modules.Dcm.UI.Controllers.CreateDatasetController.StartUploadWizard">
+            <summary>
+            Load the UploadWizard with preselected parameters
+            and redirect to "UploadWizard", "Submit", area = "Dcm"
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:BExIS.Modules.Dcm.UI.Controllers.CreateDatasetController.setRelationships(System.Int64,System.Int64,System.Xml.XmlDocument,System.String)">
+            <summary>
+            this function is parsing the xmldocument to
+            create releationships based on releationshiptypes between datasets and person parties
+            </summary>
+            <param name="datasetid"></param>
+            <param name="metadataStructureId"></param>
+            <param name="metadata"></param>
+        </member>
+        <member name="M:BExIS.Modules.Dcm.UI.Controllers.EasyUploadSelectAFileController.SelectFileProcess(System.Web.HttpPostedFileBase)">
+            <summary>
+            Selected File store din the BUS
+            </summary>
+            <param name="SelectFileUploader"></param>
+            <returns></returns>
+        </member>
+        <member name="M:BExIS.Modules.Dcm.UI.Controllers.EasyUploadSelectAFileController.SelectFileFromServerProcess(System.String)">
+            <summary>
+            Selected File from server and store into BUS
+            </summary>
+            <param name="SelectFileUploader"></param>
+            <returns></returns>
+        </member>
+        <member name="M:BExIS.Modules.Dcm.UI.Controllers.EasyUploadSelectAFileController.GetServerFileList">
+            <summary>
+            read filenames from datapath/Temp/Username
+            </summary>
+            <returns>return a list with all names from FileStream in the folder</returns>
+        </member>
+        <member name="M:BExIS.Modules.Dcm.UI.Controllers.EasyUploadSelectAFileController.IsSupportedExtention(BExIS.Dcm.UploadWizard.EasyUploadTaskManager)">
+            <summary>
+            returns true if Extention in the Bus will supported
+            </summary>
+            <param name="taskManager"></param>
+            <returns></returns>
+        </member>
+        <member name="M:BExIS.Modules.Dcm.UI.Controllers.EasyUploadSummaryController.ValidateRows(System.String)">
+            <summary>
+            Determin whether the selected datatypes are suitable
+            </summary>
+        </member>
+        <member name="M:BExIS.Modules.Dcm.UI.Controllers.EasyUploadVerificationController.GetExcelHeaderFields(OfficeOpenXml.ExcelWorksheet,BExIS.Utils.Models.SheetFormat,System.String)">
+            <summary>
+            
+            </summary>
+            <param name="excelWorksheet"></param>
+            <param name="sheetFormat"></param>
+            <param name="selectedAreaJsonArray"></param>
+            <returns></returns>
+        </member>
+        <member name="M:BExIS.Modules.Dcm.UI.Controllers.EasyUploadVerificationController.GetExcelHeaderFieldsTopDown(OfficeOpenXml.ExcelWorksheet,BExIS.Utils.Models.SheetArea)">
+            <summary>
+            Gets all values from selected header area. This method is for top to down scheme, so the header fields are in one row
+            </summary>
+            <param name="excelWorksheet">ExcelWorksheet with the data</param>
+            <param name="selectedArea">Defined header area with start and end for rows and columns</param>
+            <returns>Simple list with values of the header fields as string</returns>
+        </member>
+        <member name="M:BExIS.Modules.Dcm.UI.Controllers.EasyUploadVerificationController.GetExcelHeaderFieldsLeftRight(OfficeOpenXml.ExcelWorksheet,BExIS.Utils.Models.SheetArea)">
+            <summary>
+            Gets all values from selected header area. This method is for left to right scheme, so the header fields are in one coulumn
+            </summary>
+            <param name="excelWorksheet">ExcelWorksheet with the data</param>
+            <param name="selectedArea">Defined header area with start and end for rows and columns</param>
+            <returns>Simple list with values of the header fields as string</returns>
+        </member>
+        <member name="M:BExIS.Modules.Dcm.UI.Controllers.EasyUploadVerificationController.ValidateRows(System.String)">
+            <summary>
+            Determin whether the selected datatypes are suitable
+            </summary>
+        </member>
+        <member name="M:BExIS.Modules.Dcm.UI.Controllers.EasyUploadVerificationController.similarity(System.String,System.String)">
+            <summary>
+            Combines multiple String-similarities with equal weight
+            </summary>
+        </member>
+        <member name="M:BExIS.Modules.Dcm.UI.Controllers.EntityReferenceController.Delete(System.Int64)">
+             <summary>
+            
+             </summary>
+             <param name="model"></param>
+             <returns></returns>
+        </member>
+        <member name="M:BExIS.Modules.Dcm.UI.Controllers.FormController.SelectFileProcess(System.Web.HttpPostedFileBase)">
+            <summary>
+            Selected File store din the BUS
+            </summary>
+            <param name="SelectFileUploader"></param>
+            <returns></returns>
+        </member>
+        <member name="M:BExIS.Modules.Dcm.UI.Controllers.FormController._AutoCompleteAjaxLoading(System.String,System.Int64,System.String)">
+            <summary>
+            Is called when the user write a letter in Autocomplete User Component
+            </summary>
+        </member>
+        <member name="M:BExIS.Modules.Dcm.UI.Controllers.FormController.Insert(BExIS.Modules.Dcm.UI.Models.Metadata.MetadataAttributeModel,BExIS.Modules.Dcm.UI.Models.CreateDataset.StepModelHelper,System.Int32)">
+            <summary>
+            insert at a spezific number in the same children usages
+            </summary>
+            <param name="childModel"></param>
+            <param name="stepModelHelperParent"></param>
+            <param name="number"></param>
+            <returns></returns>
+        </member>
+        <member name="M:BExIS.Modules.Dcm.UI.Controllers.FormController.UpdateChildrens(BExIS.Modules.Dcm.UI.Models.CreateDataset.StepModelHelper,System.Int64)">
+            <summary>
+            Update metadataattributemodels in a parentmodel.
+            Update number of childrens, based on the usage id
+            </summary>
+            <param name="stepModelHelper"></param>
+            <param name="usageId"></param>
+            <returns></returns>
+        </member>
+        <member name="M:BExIS.Modules.Dcm.UI.Controllers.FormController.LoadSimpleAttributesForModelFromXml(BExIS.Modules.Dcm.UI.Models.CreateDataset.StepModelHelper,BExIS.Dcm.CreateDatasetWizard.CreateTaskmanager)">
+            <summary>
+            load for the complex model all simple attribute models from the global set metadata xml 
+            
+            </summary>
+            <param name="stepModelHelper"></param>
+            <returns></returns>
+        </member>
+        <member name="M:BExIS.Modules.Dcm.UI.Controllers.FormController.hasUserEditAccessRights(System.Int64)">
+            <summary>
+            return true if user has edit rights
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:BExIS.Modules.Dcm.UI.Controllers.FormController.hasUserEditRights(System.Int64)">
+            <summary>
+            return true if user has edit rights
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:BExIS.Modules.Dcm.UI.Controllers.FormController.SetAdditionalFunctions(System.String,System.String,System.String,System.String)">
+            <summary>
+            Set a action in the Form
+            </summary>
+            <param name="actionName"></param>
+            <param name="controllerName"></param>
+            <param name="area"></param>
+            <param name="type">submit,cancel,reset,copy</param>
+        </member>
+        <member name="M:BExIS.Modules.Dcm.UI.Controllers.FormController.SetCopyFunctionForView(System.String,System.String,System.String)">
+            <summary>
+            Set a action in the Form
+            </summary>
+            <param name="actionName"></param>
+            <param name="controllerName"></param>
+            <param name="area"></param>
+            <param name="type">submit,cancel,reset,copy</param>
+        </member>
+        <member name="M:BExIS.Modules.Dcm.UI.Controllers.ImportMetadataStructureSelectAFileController.SelectFileProcess(System.Web.HttpPostedFileBase)">
+            <summary>
+            Selected File store din the BUS
+            </summary>
+            <param name="SelectFileUploader"></param>
+            <returns></returns>
+        </member>
+        <member name="M:BExIS.Modules.Dcm.UI.Controllers.ImportMetadataStructureSelectAFileController.SelectFileFromServerProcess(System.String)">
+            <summary>
+            Selected File from server and store into BUS
+            </summary>
+            <param name="SelectFileUploader"></param>
+            <returns></returns>
+        </member>
+        <member name="M:BExIS.Modules.Dcm.UI.Controllers.ImportMetadataStructureSelectAFileController.GetServerFileList">
+            <summary>
+            read filenames from datapath/Temp/Username
+            </summary>
+            <returns>return a list with all names from FileStream in the folder</returns>
+        </member>
+        <member name="M:BExIS.Modules.Dcm.UI.Controllers.ImportMetadataStructureSelectAFileController.IsSupportedExtention(BExIS.Dcm.ImportMetadataStructureWizard.ImportMetadataStructureTaskManager)">
+            <summary>
+            returns true if Extention in the Bus will supported
+            </summary>
+            <param name="taskManager"></param>
+            <returns></returns>
+        </member>
+        <member name="M:BExIS.Modules.Dcm.UI.Controllers.ImportMetadataStructureSetParametersController.StoreParametersToMetadataStruture(System.Int64,System.String,System.String,System.String,System.String,System.String)">
+            <summary>
+            </summary>
+            <param name="id"></param>
+            <param name="titlePath"></param>
+            <param name="descriptionPath"></param>
+            <param name="mappingFilePath"></param>
+            <param name="direction"></param>
+        </member>
+        <member name="M:BExIS.Modules.Dcm.UI.Controllers.ManageMetadataStructureController.GetAllXPath(System.Int64)">
+            <summary>
+            Get all simple attributes of a metadata Structure
+            </summary>
+            <param name="metadatastructureId"></param>
+            <returns></returns>
+        </member>
+        <member name="M:BExIS.Modules.Dcm.UI.Controllers.PushController.GetServerFileList">
+            <summary>
+            read filenames from datapath/Temp/Username
+            </summary>
+            <returns>return a list with all names from FileStream in the folder</returns>
+        </member>
+        <member name="M:BExIS.Modules.Dcm.UI.Controllers.SubmitSelectAFileController.SelectFileProcess(System.Web.HttpPostedFileBase)">
+            <summary>
+            Selected File store din the BUS
+            </summary>
+            <param name="SelectFileUploader"></param>
+            <returns></returns>
+        </member>
+        <member name="M:BExIS.Modules.Dcm.UI.Controllers.SubmitSelectAFileController.SelectFileFromServerProcess(System.String)">
+            <summary>
+            Selected File from server and store into BUS
+            </summary>
+            <param name="SelectFileUploader"></param>
+            <returns></returns>
+        </member>
+        <member name="M:BExIS.Modules.Dcm.UI.Controllers.SubmitSelectAFileController.GetServerFileList">
+            <summary>
+            read filenames from datapath/Temp/Username
+            </summary>
+            <returns>return a list with all names from FileStream in the folder</returns>
+        </member>
+        <member name="M:BExIS.Modules.Dcm.UI.Controllers.SubmitSelectAFileController.IsSupportedExtention(BExIS.Dcm.UploadWizard.TaskManager)">
+            <summary>
+            returns true if Extention in the Bus will supported
+            </summary>
+            <param name="taskManager"></param>
+            <returns></returns>
+        </member>
+        <member name="M:BExIS.Modules.Dcm.UI.Helper.API.DataApiHelper.Run">
+            <summary>
+            starting the upload process
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:BExIS.Modules.Dcm.UI.Helpers.DcmSeedDataGenerator.StoreParametersToMetadataStruture(System.Int64,System.String,System.String,System.String,System.String,System.String,System.String)">
+            <summary>
+            </summary>
+            <param name="id"></param>
+            <param name="titlePath"></param>
+            <param name="descriptionPath"></param>
+            <param name="mappingFilePath"></param>
+            <param name="direction"></param>
+        </member>
+        <member name="M:BExIS.Modules.Dcm.UI.Helpers.EntityReferenceHelper.GetReferencesTypes">
+            <summary>
+            this function return a list of all reference types. This types are listed in the entity reference config.xml in the workspace
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:BExIS.Modules.Dcm.UI.Helpers.EntityReferenceHelper.GetEntityTypesWhitlist">
+            <summary>
+            this function return a list of all allowed entity types. This types are listed in the entity reference config.xml in the workspace
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:BExIS.Modules.Dcm.UI.Helpers.UploadUIHelper.GetColumnName(System.String)">
+            <summary>
+            Given a cell name, parses the specified cell to get the column name.
+            </summary>
+            <param name="cellReference">Address of the cell (ie. B2)</param>
+            <returns>Column Name (ie. B)</returns>
+        </member>
+        <member name="M:BExIS.Modules.Dcm.UI.Helpers.UploadUIHelper.GetColumnIndexFromName(System.String)">
+            <summary>
+            Given just the column name (no row index), it will return the zero based column index.
+            Note: This method will only handle columns with a length of up to two (ie. A to Z and AA to ZZ).
+            A length of three can be implemented when needed.
+            </summary>
+            <param name="columnName">Column Name (ie. A or AB)</param>
+            <returns>Zero based index if the conversion was successful; otherwise null</returns>
+        </member>
+        <member name="M:BExIS.Modules.Dcm.UI.Models.CreateDataset.StepModelHelper.SetActiveByPreload">
+            <summary>
+            When a Component is required and not in a choice object
+            then it will actived automaticlly
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="P:BExIS.Modules.Dcm.UI.Models.FileInfoModel.Decimal">
+            <summary>
+            representation of decimal 
+            </summary>
+        </member>
+        <member name="P:BExIS.Modules.Dcm.UI.Models.FileInfoModel.Orientation">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:BExIS.Modules.Dcm.UI.Models.FileInfoModel.Offset">
+            <summary>
+            Number of empty columns (columnwise) or rows (rowwise) before the variables are specified.
+            </summary>
+        </member>
+        <member name="P:BExIS.Modules.Dcm.UI.Models.FileInfoModel.Variables">
+            <summary>
+            Row/Column in which the variables are.
+            </summary>
+        </member>
+        <member name="P:BExIS.Modules.Dcm.UI.Models.FileInfoModel.Data">
+            <summary>
+            Row/Column in which the Data are.
+            </summary>
+        </member>
+        <member name="P:BExIS.Modules.Dcm.UI.Models.FileInfoModel.Dateformat">
+            <summary>
+            Format of the Date
+            </summary>
+        </member>
+        <member name="T:BExIS.Modules.Dim.UI.Controllers.MetadataInController">
+            <summary>
+            This class is designed as a Web API to allow various client tools request metadata of a datasets and get the result in XML.
+            </summary>
+        </member>
+        <member name="M:BExIS.Modules.Dim.UI.Controllers.MetadataInController.Put(System.Int32)">
+             <summary>
+             Import metadata via json or xml to a specifiy entity
+             </summary>
+             <remarks>
+             In the Metadata PUT Api there are two different ways to import metadata.
+             
+             1. XML
+             Send an xml in the xml content to update the metadata, each xpath is checked and if there is a possible mapping, the fields are updated.
+            
+             2. JSON
+             In relation to the dataset with a metadatastructure, the incoming metadata as json is validated against the associated JSON schema. Only if the json is valid, the metadata is updated.
+             
+             </remarks>
+             <param name="id">identifier for an specifiy entity e.g. dataset in the system </param>
+             <exception cref="F:System.Net.HttpStatusCode.PreconditionFailed"></exception>
+             <exception cref="F:System.Net.HttpStatusCode.ExpectationFailed"></exception>
+             <exception cref="F:System.Net.HttpStatusCode.InternalServerError"></exception>
+             <returns>Message</returns>
+        </member>
+    </members>
+</doc>

@@ -1,14 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Vaiona.Persistence.Api;
 using Version = BExIS.Security.Entities.Versions.Version;
 
 namespace BExIS.Security.Services.Versions
 {
-    public class VersionManager:IDisposable
+    public class VersionManager : IDisposable
     {
         private readonly IUnitOfWork _guow;
         private bool _isDisposed;

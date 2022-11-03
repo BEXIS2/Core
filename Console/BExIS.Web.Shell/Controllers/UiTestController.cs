@@ -10,11 +10,9 @@ using System.Web.Mvc;
 using System.Xml;
 using System.Xml.Schema;
 
-
 namespace BExIS.Web.Shell.Controllers
 {
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Reliability", "CA2000:Objekte verwerfen, bevor Bereich verloren geht", Justification = "<Ausstehend>")]
-
     public class UiTestController : Controller
     {
         //[RecordCall]
@@ -61,10 +59,7 @@ namespace BExIS.Web.Shell.Controllers
                 Console.WriteLine(ex.Message);
             }
 
-
-
             UiTestModel model = new UiTestModel();
-
 
             return View("Index", model);
         }
@@ -79,7 +74,6 @@ namespace BExIS.Web.Shell.Controllers
         /*
         public ActionResult MappingTest()
         {
-
             //create Linkelements
 
             MappingManager mappingManager = new MappingManager();
@@ -103,12 +97,10 @@ namespace BExIS.Web.Shell.Controllers
             UiTestModel model = new UiTestModel();
             model = DynamicListToDataTable();
 
-
             return View("Index", model);
         }
         public async Task<ActionResult> Call()
         {
-
             SubmissionManager submissionManager = new SubmissionManager();
             submissionManager.Load();
 
@@ -144,15 +136,12 @@ namespace BExIS.Web.Shell.Controllers
                 Debug.WriteLine(exception);
             }
 
-
-
             Debug.WriteLine(user);
 
             //get-project-by-id
             var project = await gfbioWebserviceManager.GetProjectById(201);
             GFBIOProject gfbioproject = new JavaScriptSerializer().Deserialize<GFBIOProject>(project);
             Debug.WriteLine(gfbioproject);
-
 
             //get - research - object - by - id
             var researchObject = await gfbioWebserviceManager.GetResearchObjectById(2001);
@@ -162,7 +151,6 @@ namespace BExIS.Web.Shell.Controllers
             var newProject = await gfbioWebserviceManager.CreateProject(16297, "MyBexisProject", "MyBexisProject Description");
             gfbioproject = new JavaScriptSerializer().Deserialize<GFBIOProject>(newProject);
             Debug.WriteLine(newProject);
-
 
             string jsonResearchObject = "[" +
                                         "{ \"description\":\"information':'minimal information\",  \"name\":\"example 1\", \"researchobjecttype\":\"test\", \"submitterid\":1592616297},"
@@ -183,7 +171,6 @@ namespace BExIS.Web.Shell.Controllers
 
         public async Task<string> CallGFBIOWebservice(string apiName, string entityName, string json, string jsonRequest)
         {
-
             string server =
                 @"http://gfbio-dev1.inf-bb.uni-jena.de:8080/api/jsonws/GFBioProject-portlet.";
 
@@ -191,8 +178,6 @@ namespace BExIS.Web.Shell.Controllers
             string parameters = json;
 
             string url = server + entityName + "/" + apiName + "/" + jsonRequest + "/";
-
-
 
             Debug.WriteLine(url);
             string returnValue = "";
@@ -230,7 +215,7 @@ namespace BExIS.Web.Shell.Controllers
 
         public ActionResult publicationTest()
         {
-            //get datasetversion 
+            //get datasetversion
             DatasetManager datasetManager = new DatasetManager();
 
             DatasetVersion dsv = datasetManager.GetDatasetLatestVersion(1);
@@ -238,7 +223,6 @@ namespace BExIS.Web.Shell.Controllers
             //publicationtest
 
             PublicationManager publicationManager = new PublicationManager();
-
 
             //create broker
             Broker broker = publicationManager.CreateBroker("Broker 1", "ServerUrl", "dave", "1234", "", "text/csv");
@@ -253,11 +237,9 @@ namespace BExIS.Web.Shell.Controllers
             p.Repository = Repo;
             publicationManager.UpdatePublication(p);
 
-
             publicationManager.DeletePublication(p);
             publicationManager.DeleteBroker(broker);
             publicationManager.DeleteRepository(Repo);
-
 
             UiTestModel model = new UiTestModel();
 
@@ -277,7 +259,6 @@ namespace BExIS.Web.Shell.Controllers
 
         public ActionResult sendForm(UiTestModel model)
         {
-
             return View("Index", model);
         }
 
@@ -287,7 +268,6 @@ namespace BExIS.Web.Shell.Controllers
         //[MeasurePerformance]
         private UiTestModel DynamicListToDataTable()
         {
-
             DataStructureManager dm = new DataStructureManager();
 
             UiTestModel model = new UiTestModel();
@@ -318,7 +298,6 @@ namespace BExIS.Web.Shell.Controllers
             //DatasetVersion dsv = dm.GetDatasetLatestVersion(testdatasetId);
             //string title = XmlDatasetHelper.GetInformation(dsv, NameAttributeValues.title);
 
-
             //if (gfbio != null)
             //{
             //    formatname =
@@ -326,7 +305,6 @@ namespace BExIS.Web.Shell.Controllers
             //            .First();
             //    OutputMetadataManager.GetConvertedMetadata(testdatasetId, TransmissionType.mappingFileExport,
             //        formatname);
-
 
             //    // get primary data
             //    // check the data sturcture type ...
@@ -343,8 +321,6 @@ namespace BExIS.Web.Shell.Controllers
             //    string zipFilePath = Path.Combine(zipPath, zipName);
 
             //    FileHelper.CreateDicrectoriesIfNotExist(Path.GetDirectoryName(zipFilePath));
-
-
 
             //    if (FileHelper.FileExist(zipFilePath))
             //    {
@@ -373,12 +349,7 @@ namespace BExIS.Web.Shell.Controllers
             //    newXmlDoc = dsv.Metadata;
             //}
 
-
-
-
             return View("Index", model);
         }
-
-
     }
 }

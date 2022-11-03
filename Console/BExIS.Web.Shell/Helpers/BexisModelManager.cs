@@ -49,8 +49,6 @@ namespace BExIS.Web.Shell.Helpers
             return tmp;
         }
 
-        #endregion
-
-
+        #endregion EntitySelectorModel
     }
 }

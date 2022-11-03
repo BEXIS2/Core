@@ -72,7 +72,7 @@ namespace BExIS.Security.Services.Requests
                     {
                         var partyRelationship =
                             partyRelationshipRepository.Query(
-                                    m => m.PartyRelationshipType.Title == ConfigurationManager.AppSettings["OwnerPartyRelationshipType"]  && m.TargetParty.Id == dataset_party.Id)
+                                    m => m.PartyRelationshipType.Title == ConfigurationManager.AppSettings["OwnerPartyRelationshipType"] && m.TargetParty.Id == dataset_party.Id)
                                 .FirstOrDefault();
 
                         if (partyRelationship != null)

@@ -1,5 +1,4 @@
-﻿
-$(document).ready(function ()
+﻿$(document).ready(function ()
 {
 	resetAllTelerikIconTitles();
 	truncateTitle();
@@ -14,7 +13,6 @@ $(document).ready(function ()
 	$(".main-content").css("margin-top", h);
 
 	$(window).resize(function () {
-
 		var h = $(".navbar").height();
 		console.log("h = " + h);
 		$("#information-container").css("top", h);
@@ -47,18 +45,16 @@ function truncateTitle()
 {
 	$('.bx-trunc-child').each(function ()
 	{
-
 		//$(this).trunk8();
-		//if (!$(this).attr("title") == true) { 
+		//if (!$(this).attr("title") == true) {
 		var n = $(".bx-trunc-parent").width()-60;
 		var text = $(this).text();
 		console.log(text);
-		
+
 		var ntLast
 		var nt
 		//Link Breiter als/ oder gleich breit Container
 		if ($(this).width() >= n) {
-			
 			//console.log("start truncate xxx");
 			//console.log(this);
 			//console.log("text:" + text);
@@ -86,13 +82,10 @@ function truncateTitle()
 			});
 
 			//console.log("new text:" + $(this).text());
-
-
 		}
 		//Link kürzer als Container
 		else if (text.indexOf(".") !== -1 || text === '' || text === null)
 		{
-
 			var l = $(this).text().length;
 			if (l === 0)
 			{
@@ -119,23 +112,18 @@ function truncateTitle()
 			}
 			else
 			{
-
 				$(this).width(maxWidth);
 			}
 
 			nt = t.split(" ");
 			ntLast = nt.pop();
 
-
 			$(this).trunk8(
 				{
 					fill: "..." + ntLast
 				});
 		}
-
-
 	});
-
 }
 
 function addTooltips() {
@@ -151,9 +139,7 @@ function addTooltips() {
  * TELERIK EXTENTIONS
  */
 
-
 $(".t-grid").load(function () {
-
 	$(".t-grid th").each(function () {
 		var element = $(this);
 		var div;
@@ -176,7 +162,6 @@ $(".t-grid").load(function () {
 });
 
 $(".t-grid th").click(function (e) {
-
 	//var element = e.currentTarget;
 
 	//var arrow = $(element).find("span")[0];
@@ -195,17 +180,15 @@ $(".t-grid th").click(function (e) {
 	//    (!hasDownClass && display == "none")
 	//    ||
 	//    (!hasDownClass && display.length == 0)) {
-
 	//    $(arrow).removeClass();
 	//    $(arrow).addClass("t-icon");
 	//    $(arrow).addClass("t-arrow-up");
 	//    $(arrow).attr("display", "inline-block");
 	//    console.log("1");
 
-	//} else 
+	//} else
 	//if ((hasDownClass && display.length == 0) ||
 	//    (hasDownClass && display == "none")) {
-
 	//    $(arrow).removeClass();
 	//    $(arrow).addClass("t-icon");
 	//    $(arrow).addClass("t-arrow-down");
@@ -215,7 +198,6 @@ $(".t-grid th").click(function (e) {
 	//}
 	//else
 	//if (hasUpClass) {
-
 	//    $(arrow).removeClass();
 	//    $(arrow).addClass("t-icon");
 	//    $(arrow).addClass("t-arrow-down");
@@ -226,9 +208,7 @@ $(".t-grid th").click(function (e) {
 
 	//console.log(arrow);
 
-
 	//if (orderBy.indexOf("desc")>0) {
-
 	//    $(arrow).removeClass();
 	//    $(arrow).addClass("t-icon");
 	//    $(arrow).addClass("t-icon t-arrow-up");
@@ -236,7 +216,6 @@ $(".t-grid th").click(function (e) {
 	//}
 	//else
 	//    if (orderBy.indexOf("asc") > 0) {
-
 	//    $(arrow).removeClass();
 	//    $(arrow).addClass("t-icon");
 	//    $(arrow).addClass("t-icon t-arrow-up");
@@ -252,9 +231,7 @@ $(".t-grid th").click(function (e) {
 })
 
 $(".t-grid").change(function () {
-
 	$(".t-grid th").each(function () {
-
 		var element = $(this);
 		var div = $(document.createElement("div"));
 		div.addClass("bx-header-title");
@@ -272,8 +249,6 @@ $(".t-grid").change(function () {
 		div.append(a);
 
 		element.prepend(div);
-
-
 	});
 });
 
@@ -304,14 +279,12 @@ $(".bx-list-multi >li").click(function ()
 		$(this).addClass("selected");
 	}
 });
-  
 
 /**************************
  * *******PRELOADER********/
 
 $.fn.extend({
 	preloader: function(fontsize, text, height) {
-
 		var h = $(this).height();
 		if (height !== null && height > 0) {
 			h = height;
@@ -368,13 +341,11 @@ $.fn.extend({
 	},
 
 	removePreloader: function () {
-
 		$(".preloader").remove();
 		$(this).children().show();
 		return this;
 	}
 });
-
 
 /* jQuery Validation Extension - CheckBox */
 if (jQuery.validator) {
@@ -391,8 +362,6 @@ if (jQuery.validator) {
         else
             return false;
     });
-
- 
 
 	if (jQuery.validator.unobtrusive) {
         jQuery.validator.unobtrusive.adapters.addBool("checkrequired");
