@@ -29,6 +29,7 @@
     <NuGetPackageImportStamp>
     </NuGetPackageImportStamp>
     <Use64BitIISExpress />
+    <DontImportPostSharp>True</DontImportPostSharp>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -60,10 +61,13 @@
       <HintPath>..\..\..\..\packages\Microsoft.IdentityModel.6.1.7600.16394\lib\net35\Microsoft.IdentityModel.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Newtonsoft.Json, Version=11.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\..\..\..\packages\Newtonsoft.Json.11.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
+    <Reference Include="Newtonsoft.Json, Version=13.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\..\..\..\packages\Newtonsoft.Json.13.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
-    <Reference Include="PostSharp, Version=4.3.19.0, Culture=neutral, PublicKeyToken=b13fd38b8f9c99d7" />
+    <Reference Include="PostSharp, Version=4.3.48.0, Culture=neutral, PublicKeyToken=b13fd38b8f9c99d7, processorArchitecture=MSIL">
+      <HintPath>..\..\..\..\packages\PostSharp.4.3.48\lib\net35-client\PostSharp.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Configuration" />
@@ -159,8 +163,8 @@
     <Compile Include="Controllers\DatasetsController.cs" />
     <Compile Include="Controllers\EntitiesController.cs" />
     <Compile Include="Controllers\EntityPermissionsController.cs" />
+    <Compile Include="Controllers\FormerMemberController.cs" />
     <Compile Include="Controllers\RequestsAdminController.cs" />
-    <Compile Include="Controllers\RequestsController.cs" />
     <Compile Include="Controllers\FeaturePermissionsController.cs" />
     <Compile Include="Controllers\GroupsController.cs" />
     <Compile Include="Controllers\HelpController.cs" />
@@ -170,7 +174,9 @@
     <Compile Include="Controllers\UserPermissionsController.cs" />
     <Compile Include="Controllers\UsersController.cs" />
     <Compile Include="Helpers\Attributes.cs" />
+    <Compile Include="Helpers\FormerMemberStatus.cs" />
     <Compile Include="Helpers\SAMSeedDataGenerator.cs" />
+    <Compile Include="Helpers\SettingsHelper.cs" />
     <Compile Include="Models\DatasetModels.cs" />
     <Compile Include="Models\DatasetStatModel.cs" />
     <Compile Include="Models\DecisionModels.cs" />
@@ -179,6 +185,7 @@
     <Compile Include="Models\FileModels.cs" />
     <Compile Include="Models\FeatureModels.cs" />
     <Compile Include="Models\FeaturePermissionModels.cs" />
+    <Compile Include="Models\FormerMemberModel.cs" />
     <Compile Include="Models\GroupModels.cs" />
     <Compile Include="Models\InfoModels.cs" />
     <Compile Include="Models\ModuleGridRowModel.cs" />
@@ -245,10 +252,6 @@
     <Content Include="Web.config" />
     <Content Include="Views\Entities\Index.cshtml" />
     <Content Include="Views\Entities\Create.cshtml" />
-    <Content Include="Views\Requests\_Entities.cshtml" />
-    <Content Include="Views\Requests\Index.cshtml" />
-    <Content Include="Views\Requests\_Requests.cshtml" />
-    <Content Include="Views\Requests\_Decisions.cshtml" />
     <Content Include="Views\Datasets\Delete.cshtml" />
     <Content Include="Views\Datasets\Index.cshtml" />
     <Content Include="Views\Datasets\Purge.cshtml" />
@@ -268,11 +271,13 @@
     <Content Include="Views\EntityPermissions\_Subjects.cshtml" />
     <Content Include="Views\UserPermissions\_Subjects.cshtml" />
     <Content Include="Views\Datasets\Sync.cshtml" />
-    <Content Include="Views\Requests\_Requests_And_Decisions.cshtml" />
     <Content Include="Views\EntityPermissions\_Permissions.cshtml" />
     <Content Include="Views\RequestsAdmin\_DecisionsAdmin.cshtml" />
     <Content Include="Views\RequestsAdmin\Index.cshtml" />
     <Content Include="Views\RequestsAdmin\_Entities.cshtml" />
+    <Content Include="Views\FormerMember\ManageFormerMembers.cshtml" />
+    <Content Include="Views\FormerMember\_formerMemberContent.cshtml" />
+    <Content Include="Views\FormerMember\_formerMemberSearch.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -392,6 +397,11 @@
     <PostBuildEvent>mkdir "$(SolutionDir)Console\Workspace\Modules\SAM"
 C:\Windows\System32\xcopy "$(ProjectDir)Sam.Settings.xml" "$(SolutionDir)Console\Workspace\Modules\SAM" /C /Y /I</PostBuildEvent>
   </PropertyGroup>
+  <Import Project="..\..\..\..\packages\PostSharp.4.3.48\tools\PostSharp.targets" Condition="Exists('..\..\..\..\packages\PostSharp.4.3.48\tools\PostSharp.targets')" />
+  <Target Name="EnsurePostSharpImported" BeforeTargets="BeforeBuild" Condition="'$(PostSharp30Imported)' == ''">
+    <Error Condition="!Exists('..\..\..\..\packages\PostSharp.4.3.48\tools\PostSharp.targets')" Text="This project references NuGet package(s) that are missing on this computer. Enable NuGet Package Restore to download them.  For more information, see http://www.postsharp.net/links/nuget-restore." />
+    <Error Condition="Exists('..\..\..\..\packages\PostSharp.4.3.48\tools\PostSharp.targets')" Text="The build restored NuGet packages. Build the project again to include these packages in the build. For more information, see http://www.postsharp.net/links/nuget-restore." />
+  </Target>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

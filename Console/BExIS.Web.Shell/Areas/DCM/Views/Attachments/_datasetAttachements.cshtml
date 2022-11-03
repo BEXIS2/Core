@@ -12,9 +12,14 @@
 @model BExIS.Modules.Dcm.UI.Models.Attachments.DatasetFilesModel
 
 @{
-    int mbMax = Model.FileSize;
+    HttpRuntimeSection section = System.Configuration.ConfigurationManager.GetSection("system.web/httpRuntime") as HttpRuntimeSection;
+    int int_MaxRequestLength = section.MaxRequestLength;
+    int mbMax = int_MaxRequestLength / 1024;
+
     long datasetId = (long)(ViewBag.datasetId);
     short fileIndex = 0;
+
+    int maxFileNameLength = (int)(ViewBag.maxFileNameLength);
 }
 <table>
     <tr>
@@ -32,6 +37,7 @@
                         Note:  Depending on your network connection the upload may take some time. Please stay patient.
                     </p>
                     <p>Maximum file size: @mbMax MB</p>
+                    <p>Maximum file name length: @maxFileNameLength </p>
                 </div>
 
                 @using (Html.BeginForm("ProcessSubmit", "Attachments", new { area = "Dcm", datasetId = datasetId },
@@ -102,28 +108,23 @@ FormMethod.Post, new { id = "uploadForm", enctype = "multipart/form-data" }))
 
         var maxsize = '@mbMax';
 
-        if (e.files.length == 0) {
-            $('#push_submitBt').addClass("bx-disabled");
-            $('#push_submitBt').attr("disabled", "disabled");
-        } else {
-            $('#push_submitBt').removeClass("bx-disabled");
-            $('#push_submitBt').removeAttr("disabled");
-        }
+       
 
         for (var i = 0; i < e.files.length; i = i + 1) {
 
             var file = e.files[i];
-            @*//console.log(file.extension);
-            if (!IsExtentionValid(file.extension)) {
 
-                alert("File : " + file.name + ";\n" + "Only " + '@fileExtListAsString' + "/n files can be uploaded")
+            // check file name lenght
+            var filenamelength = '@maxFileNameLength';
+
+            if (file.name.length >= filenamelength) {
+
+                alert("The filename is too long.\nThe maximum allowed file name length is " + filenamelength + ". The name of your file is currently " + file.name.length +" long.\nPlease change your file name and try it again." )
                 e.preventDefault();
                 return false;
-            } else {*@
+            }
 
-            //alert(file.size);
-            //alert(maxsize);
-
+            // check size
             if (file.size > (maxsize * 1024 * 1024)) {
                 alert("Maximum file size exceeded. The maximum support file size is " +
                     maxsize +
@@ -132,6 +133,14 @@ FormMethod.Post, new { id = "uploadForm", enctype = "multipart/form-data" }))
                 return false;
                 // }
             }
+        }
+
+        if (e.files.length == 0) {
+            $('#push_submitBt').addClass("bx-disabled");
+            $('#push_submitBt').attr("disabled", "disabled");
+        } else {
+            $('#push_submitBt').removeClass("bx-disabled");
+            $('#push_submitBt').removeAttr("disabled");
         }
     }
     function bytesToSize(bytes) {

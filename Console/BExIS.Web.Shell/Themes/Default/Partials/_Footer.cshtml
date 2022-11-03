@@ -27,6 +27,11 @@
             @Html.ActionLink("Privacy Policy", "policy", "footer", new { area = "" }, null)
         }
 
+        @if (!string.IsNullOrEmpty(Html.GetTenant().TermsAndConditionsFileNamePath))
+        {
+            @Html.ActionLink("Terms and Conditions", "termsandconditions", "footer", new { area = "" }, null)
+        }
+
         @if (!string.IsNullOrEmpty(Html.GetTenant().ContactUsFileNamePath))
         {
             @Html.ActionLink("Contact Us", "contactus", "footer", new { area = "" }, null)

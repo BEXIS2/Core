@@ -390,9 +390,9 @@ namespace BExIS.IO.Transform.Input
 
                             if (temp.Count == 0)
                             {
-                                temp = validationManager.ValidateValue(v, indexOfRow);
-                                temp2 = validationManager.ValidateConstraints(v, indexOfRow);
-                                temp = temp.Union(temp2).ToList();
+                                //temp = validationManager.ValidateValue(v, indexOfRow);
+                                temp = validationManager.ValidateConstraints(value, indexOfRow);
+                                //temp = temp.Union(temp2).ToList();
                             }
 
                             if(temp.Any()) errors = errors.Union(temp).ToList();

@@ -1,4 +1,6 @@
 ﻿@model BExIS.Modules.Bam.UI.Models.AddRelationshipModel
+@using BExIS.Dlm.Entities.Party;
+@using System.Linq;
 @{
     var sourceParty = Model.SourceParty;
     var partyManager = new BExIS.Dlm.Services.Party.PartyManager();
@@ -38,7 +40,23 @@
                         </td>
                         <td style="min-width:300px;">
                             <table>
-                                @foreach (var party in (Model.isAsSource ? partyTypePair.SourcePartyType.Parties : partyTypePair.TargetPartyType.Parties))
+                                @{ 
+                                    List<Party> parties = new List<Party>();
+
+                                    if (Model.isAsSource)
+                                    {
+                                        parties = partyTypePair.SourcePartyType.Parties.ToList();
+                                    }
+                                    else {
+                                        parties = partyTypePair.TargetPartyType.Parties.ToList();
+                                    }
+
+                                    parties = parties.OrderBy(p => p.Name).ToList();
+                                    
+                                }
+
+
+                                @foreach (var party in parties)
                                 {
                                     if ((partyTypePair.SourcePartyType.Id != party.PartyType.Id) || ((partyTypePair.SourcePartyType.Id == party.PartyType.Id) && partyManager.CheckCondition(partyTypePair.ConditionSource, party.Id)))
                                     {

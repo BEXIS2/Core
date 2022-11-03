@@ -1,6 +1,7 @@
 ﻿using BExIS.Dlm.Entities.Data;
 using BExIS.Dlm.Entities.DataStructure;
 using BExIS.Dlm.Services.Data;
+using BExIS.Dlm.Services.Party;
 using BExIS.Modules.Ddm.UI.Models;
 using BExIS.Security.Entities.Authorization;
 using BExIS.Security.Entities.Objects;
@@ -259,48 +260,63 @@ namespace BExIS.Modules.Ddm.UI.Controllers
         /// <param name="rightType">Type of right (write, delete, grant, read)</param>
         /// <param name="onlyTable">Return only table without header</param>
         /// <returns>model</returns>
-        public ActionResult ShowMyDatasets(string entityname, string rightType, string onlyTable = "false")
+        public ActionResult ShowMyDatasets(string entityname, RightType rightType, string onlyTable = "false")
         {
             ViewBag.Title = PresentationModel.GetViewTitleForTenant("Dashboard", this.Session.GetTenant());
 
             List<MyDatasetsModel> model = new List<MyDatasetsModel>();
+
             using (DatasetManager datasetManager = new DatasetManager())
             using (EntityPermissionManager entityPermissionManager = new EntityPermissionManager())
             using (UserManager userManager = new UserManager())
             using (EntityManager entityManager = new EntityManager())
+            using (PartyTypeManager partyTypeManager = new PartyTypeManager())
+            using (PartyManager partyManager = new PartyManager())
             {
+                // Entity, Entity Party Type and Entity Party
                 var entity = entityManager.FindByName(entityname);
+                var entityPartyType = partyTypeManager.PartyTypeRepository.Get(p => p.Title == entity.Name).FirstOrDefault();
+                var entityPartyIds = partyManager.Parties.Where(p => p.PartyType.Id == entityPartyType.Id).Select(p => p.Id).ToList();
+
+                List<long> datasetIds = new List<long>();
+
+                // get user
                 var user = userManager.FindByNameAsync(GetUsernameOrDefault()).Result;
 
-                var rightTypeId = RightType.Read;
+                if (user != null)
+                {
+                    ViewBag.userLoggedIn = true;
 
-                if (rightType == "write")
-                {
-                    rightTypeId = RightType.Write;
-                }
-                else if (rightType == "delete")
-                {
-                    rightTypeId = RightType.Delete;
-                }
-                else if (rightType == "grant")
-                {
-                    rightTypeId = RightType.Grant;
-                }
+                    // get datasets based on entity permissions
+                    datasetIds = entityPermissionManager.GetKeys(GetUsernameOrDefault(), entityname, typeof(Dataset), rightType);
 
-                var userName = GetUsernameOrDefault();
-                if (userName == "DEFAULT")
-                {
-                    ViewBag.userLoggedIn = false;
-                    rightTypeId = RightType.Read;
+                    var userParty = partyManager.GetPartyByUser(user.Id);
+
+                    if (userParty != null)
+                    {
+                        // get datasets based on party relationships
+                        List<long> partyIds = partyManager.PartyRelationshipRepository.Get(p => p.SourceParty.Id == userParty.Id && p.Permission >= (int)rightType).Select(p => p.TargetParty.Id).ToList();
+
+                        foreach (var partyId in partyIds)
+                        {
+                            if(entityPartyIds.Contains(partyId))
+                            {
+                                long datasetId = 0;
+                                var success = long.TryParse(partyManager.Find(partyId).Name, out datasetId);
+                                if(success && !datasetIds.Contains(datasetId))
+                                {
+                                    datasetIds.Add(datasetId);
+                                }
+                            } 
+                        }
+                    }
                 }
                 else
                 {
-                    ViewBag.userLoggedIn = true;
+                    ViewBag.userLoggedIn = false;
+                    datasetIds = entityPermissionManager.GetKeys(GetUsernameOrDefault(), entityname, typeof(Dataset), RightType.Read);
+
                 }
-
-
-                List<long> datasetIds = entityPermissionManager.GetKeys(GetUsernameOrDefault(), entityname,
-                       typeof(Dataset), rightTypeId);
 
                 List<DatasetVersion> datasetVersions = datasetManager.GetDatasetLatestVersions(datasetIds, true);
                 foreach (var dsv in datasetVersions)
@@ -308,7 +324,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
 
                     Object[] rowArray = new Object[8];
                     string isValid = "no";
-                    
+
                     string type = "file";
                     if (dsv.Dataset.DataStructure.Self is StructuredDataStructure)
                     {
@@ -322,7 +338,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                         string title = dsv.Title;
                         string description = dsv.Description;
 
-                            if (dsv.StateInfo != null)
+                        if (dsv.StateInfo != null)
                         {
                             isValid = DatasetStateInfo.Valid.ToString().Equals(dsv.StateInfo.State) ? "yes" : "no";
                         }
@@ -641,43 +657,5 @@ namespace BExIS.Modules.Ddm.UI.Controllers
 
         #endregion mydatasets
 
-        #region requests & decisions
-
-        /// <summary>
-        /// load requests of a entity type & user
-        /// </summary>
-        /// <param name="id">Id of a entity type</param>
-        /// <returns></returns>
-        public ActionResult Requests(long id)
-        {
-            if (this.IsAccessible("SAM", "Requests", "Requests"))
-            {
-                var view = this.Render("SAM", "Requests", "Requests", new RouteValueDictionary()
-                {
-                    { "entityId", id }
-                });
-
-                return Content(view.ToHtmlString(), "text/html");
-            }
-
-            return PartialView("Error"); ;
-        }
-
-        public ActionResult Decisions(long id)
-        {
-            if (this.IsAccessible("SAM", "Requests", "Decisions"))
-            {
-                var view = this.Render("SAM", "Requests", "Decisions", new RouteValueDictionary()
-                {
-                    { "entityId", id }
-                });
-
-                return Content(view.ToHtmlString(), "text/html");
-            }
-
-            return PartialView("Error"); ;
-        }
-
-        #endregion requests & decisions
     }
 }

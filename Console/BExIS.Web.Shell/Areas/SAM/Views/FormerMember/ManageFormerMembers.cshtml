@@ -1,0 +1,229 @@
+﻿@using BEXIS.Modules.SAM.UI.Model
+@model List<FormerMemberUserModel>
+
+@section scripts
+{
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.25/css/jquery.dataTables.css">
+    <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.25/js/jquery.dataTables.js"></script>
+}
+
+
+
+@section Information
+{
+}
+
+@if (ViewData.ModelState.IsValid)
+{
+    @section LeftPane
+{
+
+
+        <div class="alumniContent">
+            @Html.Partial("_formerMemberSearch", Model)
+    
+</div>
+}
+<div>
+    <div class="alumniContent">
+        <table id="formerMemberTable" class="display" width="100%">
+            <thead>
+                <tr>
+                    <th>
+                        User Name
+                    </th>
+
+                    <th>
+                        Name
+                    </th>
+                    <th>
+                        Start Date
+                    </th>
+                    <th>
+                        End Date
+                    </th>
+                    <th>
+                        Is Former Member
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>@item.UserName</td>
+                        <td>@item.Name</td>
+                        <td>@item.StartDate.ToString("yyyy-MM-dd")</td>
+                        <td>@item.EndDate.ToString("yyyy-MM-dd")</td>
+                        <td>@item.IsFormerMember</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+}
+else
+{
+<div>
+    <ul>
+    @string.Join(" ", ViewData.ModelState.Values
+                       .SelectMany(x => x.Errors)
+                       .Select(x => x.ErrorMessage))
+    </ul>
+</div>
+}
+
+
+<style>
+    .ui-datepicker .ui-datepicker-title select {
+        color: #000;
+    }
+</style>
+
+<script type="text/javascript">
+
+
+
+     $(document).ready(function () {
+         var table = $('#formerMemberTable').DataTable({
+             searchPane: true,
+             sortable: true,
+            "pageLength": 50,
+            "columnDefs": [ {
+                "targets": 4, //Targets would be the 0 based index of the column
+                "orderDataType": 'dom-checkbox',
+                "data": 'IsFormerMember',
+                "render": function (data, type, full, meta) {
+                    console.log(type);
+                    if (data === "True") {
+                        return "<input type='checkbox' checked  value='" + data + "' /><input type='hidden' value='" + data + "' />";
+                    }
+                    else return "<input type='checkbox' value='" + data + "'  /><input type='hidden' value='" + data + "' />";
+                },
+       } ]
+         });
+
+
+
+         $('#formerMemberTable').on('click', 'input[type="checkbox"]', function () {
+
+             var tr = $(this).closest("tr");
+             var userName = $("#formerMemberTable").DataTable().rows(tr).data()[0][0];
+
+         if ($(this).is(':checked')) {
+                    $.post('@Url.Action("ChangeStatusToFormerMember", "FormerMember")',
+                        {
+                            userName: userName
+                        },
+                        function () {
+                            $("#formerMemberTable .t-refresh").trigger('click');
+                        });
+                } else {
+                    $.post('@Url.Action("ChangeStatusToNonFormerMember", "FormerMember")',
+                        {
+                            userName: userName
+                        },
+                        function () {
+                            $("#formerMemberTable .t-refresh").trigger('click');
+                        });
+                }
+         });
+
+     /* is alumni checkbox* */
+
+         $('#isFormerMemberFilterOn').on("click", function (e) {
+             table.draw();
+         });
+
+         $('#nonFormerMemberFilterOn').on("click", function (e) {
+             table.draw();
+         });
+
+
+     /*date picker* https://stackoverflow.com/questions/54691908/datatablesdatepicker-filter-table-by-date-range/ */
+
+         $("#endDateStart").datepicker({
+             "dateFormat": "yy/mm/dd",
+             changeMonth: true,
+             changeYear: true,
+             "onSelect": function (date) {  // This handler kicks off the filtering.
+                 minDateFilter = new Date(date).getTime();
+                 table.draw(); // Redraw the table with the filtered data.
+             }
+         }).keyup(function () {
+             minDateFilter = new Date(this.value).getTime();
+             table.draw();
+         });
+
+         $("#endDateEnd").datepicker({
+             changeMonth: true,
+             changeYear: true,
+             yearRange: "1930:2030",
+             "dateFormat": "yy/mm/dd",
+             "onSelect": function (date) {
+                 maxDateFilter = new Date(date).getTime();
+                 if (minDateFilter > maxDateFilter) {
+                     alert("Error: Start date is greater than end date.");
+                 }
+                 else {
+                     table.draw();
+                 }
+             }
+         }).keyup(function () {
+             var from = $("#endDateStart").val();
+             var to = $("#endDateEnd").val();
+
+             if (Date.parse(from) > Date.parse(to)) {
+                 alert("Invalid Date Range");
+             }
+             else {
+                 maxDateFilter = new Date(this.value).getTime();
+                 myDataTable.draw();
+             }
+
+         });
+
+         // The below code actually does the date filtering.
+         minDateFilter = "";
+         maxDateFilter = "";
+
+         $.fn.dataTableExt.afnFiltering.push(
+             function (oSettings, aData, iDataIndex) {
+                 if (typeof aData._date == 'undefined') {
+                     aData._date = new Date(aData[3]).getTime(); // Your date column is 3, hence aData[3].
+                 }
+
+                 if (minDateFilter && !isNaN(minDateFilter)) {
+                     if (aData._date < minDateFilter) {
+                         return false;
+                     }
+                 }
+
+                 if (maxDateFilter && !isNaN(maxDateFilter)) {
+                     if (aData._date > maxDateFilter) {
+                         return false;
+                     }
+                 }
+
+                 var row = table.row(iDataIndex).node();
+                 var checkedFormerMember = $('#isFormerMemberFilterOn').is(':checked');
+                 var checkednonFormerMember = $('#nonFormerMemberFilterOn').is(':checked');
+
+                 if ((checkedFormerMember && !checkednonFormerMember) && !$(row).find('input').prop('checked')) {
+                     return false;
+                 }
+
+                 if ((checkednonFormerMember && !checkedFormerMember) && $(row).find('input').prop('checked')) {
+                     return false;
+                 }
+
+                 return true;
+             }
+         );
+     });
+
+</script>
+
+

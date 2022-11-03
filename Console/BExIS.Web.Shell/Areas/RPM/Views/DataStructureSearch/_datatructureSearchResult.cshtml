@@ -15,7 +15,7 @@
           e.OnDataBinding("dataStructureResultGrid_onDataBinding");
           e.OnDataBound("dataStructureResultGrid_onDataBound");
       })
-      .Sortable(sorting => sorting.OrderBy(sortOrder => sortOrder.Add(c => c.Title)))
+      .Sortable(sorting => sorting.OrderBy(sortOrder => sortOrder.Add(c => c.Id).Descending()))
       .Columns(columns =>
       {
           columns.Bound(c => c.Id)

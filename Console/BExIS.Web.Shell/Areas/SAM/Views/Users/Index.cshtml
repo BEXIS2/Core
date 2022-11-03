@@ -27,18 +27,20 @@
 @(Html.Telerik().Grid<UserGridRowModel>().Name("grid_users")
       .Columns(columns =>
       {
-          columns.Bound(u => u.Id);
-          columns.Bound(u => u.Name);
-          columns.Bound(u => u.DisplayName);
-          columns.Bound(u => u.Email);
-          columns.Template(@<text>
+      columns.Bound(u => u.Id);
+      columns.Bound(u => u.Name);
+      columns.Bound(u => u.DisplayName);
+      columns.Bound(u => u.Email);
+      columns.Bound(u => u.IsEmailConfirmed);
+      columns.Bound(u => u.RegistrationDate).Format("{0:yyyy-MM-dd}");
+      columns.Template(@<text>
                 <button type="button" class="bx bx-grid-function bx-edit"></button>
                 <button type="button" class="bx bx-grid-function bx-group"></button>
                 <button type="button" class="bx bx-grid-function bx-trash"></button>
         </text>)
        .ClientTemplate(
-           "<button type=\"button\" class=\"bx bx-grid-function bx-edit\" value=\"<#= Id #>\" title=\"Edit User\"></button>" +
-           "<button type=\"button\" class=\"bx bx-grid-function bx-group\" value=\"<#= Id #>\" title=\"Edit Membership(s)\"></button>" +
+           "<button type=\"button\" class=\"bx bx-grid-function bx-edit\" value=\"<#= Id #>\" title=\"Edit User: <#= DisplayName #>\"></button>" +
+           "<button type=\"button\" class=\"bx bx-grid-function bx-group\" value=\"<#= Id #>\" title=\"Edit Membership(s): <#= DisplayName #> \"></button>" +
            "<button type=\"button\" class=\"bx bx-grid-function bx-trash\" value=\"<#= Id #>\" title=\"Delete User\"></button>")
        .Width(110);
 })
@@ -59,8 +61,8 @@
 })
 .Sortable(sortable => sortable
    .OrderBy(orderby => orderby
-       .Add(m => m.Name)
-       .Ascending()
+       .Add(m => m.Id)
+       .Descending()
    )
 )
 )
@@ -132,6 +134,7 @@
 
             $('.bx-edit')
                 .click(function () {
+                    var title = $(this).attr("title");
                     $.ajax({
                         type: 'GET',
                         url: '@Url.Action("Update", "Users")',
@@ -139,7 +142,7 @@
                         dataType: 'html',
                         success: function (htmlData) {
                             var windowElement = $.telerik.window.create({
-                                title: "Update User",
+                                title: title,
                                 html: "<div id='content_updateUser' class='bx-window'>" + htmlData + "</div>",
                                 contentUrl: "",
                                 actions: ["Close"],
@@ -166,6 +169,8 @@
 
             $('.bx-group')
                 .click(function () {
+                    console.log($(this), $(this).attr("title"))
+                    var title = $(this).attr("title");
                     $.ajax({
                         type: 'GET',
                         url: '@Url.Action("Groups", "Users")',
@@ -173,7 +178,7 @@
                         dataType: 'html',
                         success: function (htmlData) {
                             var windowElement = $.telerik.window.create({
-                                title: "Update Membership(s)",
+                                title: title,
                                 html: "<div id='content_groups' class='bx-window'>" + htmlData + "</div>",
                                 contentUrl: "",
                                 actions: ["Close"],

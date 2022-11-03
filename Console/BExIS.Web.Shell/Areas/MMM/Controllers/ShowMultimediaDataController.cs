@@ -1,7 +1,5 @@
 ﻿using BExIS.Dlm.Entities.Data;
-using BExIS.Dlm.Entities.DataStructure;
 using BExIS.Dlm.Services.Data;
-using BExIS.Dlm.Services.DataStructure;
 using BExIS.IO;
 using System;
 using System.Collections.Generic;
@@ -9,14 +7,12 @@ using System.IO;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
-using System.Web.Hosting;
 using Vaiona.Utils.Cfg;
 using System.Net;
 using MetadataExtractor;
 using IDIV.Modules.Mmm.UI.Models;
 using MediaInfoLib;
 using System.Xml;
-using ICSharpCode.SharpZipLib.Core;
 using ICSharpCode.SharpZipLib.Zip;
 using Microsoft.VisualBasic.FileIO;
 using System.Data;
@@ -24,7 +20,6 @@ using BExIS.Security.Services.Authorization;
 using BExIS.Security.Entities.Authorization;
 using Vaiona.Persistence.Api;
 using Vaiona.Entities.Common;
-using BExIS.Utils.Data.Upload;
 using BExIS.Dim.Entities.Mapping;
 using BExIS.Modules.Mmm.UI.Helpers;
 using BExIS.Security.Services.Utilities;
@@ -157,7 +152,7 @@ namespace IDIV.Modules.Mmm.UI.Controllers
             }
         }
 
-        public FileResult getFile(string path)
+        public FileResult getFile(string path, string send_mail = "true")
         {
             path = Server.UrlDecode(path);
             if (FileHelper.FileExist(Path.Combine(AppConfiguration.DataPath, path)))
@@ -184,16 +179,18 @@ namespace IDIV.Modules.Mmm.UI.Controllers
                         // by download only the files, the user need to know th edataset id and the version number
                         int versionNr = datasetManager.GetDatasetVersionNr(datasetInfo.DatasetVersionId);
                         string filename = datasetInfo.DatasetId + "_" + versionNr + "_" + fileInfo.Name;
-                        
+
                         string message = string.Format("File from {0} version {1} was downloaded: {2}.", datasetID, versionNr, filename);
                         LoggerFactory.LogCustom(message);
 
                         var es = new EmailService();
-                        es.Send(MessageHelper.GetFileDownloadHeader(datasetID, versionNr),
-                            MessageHelper.GetFileDownloadMessage(GetUsernameOrDefault(), datasetID, fileInfo.Name),
-                            ConfigurationManager.AppSettings["SystemEmail"]
-                            );
-
+                        if (send_mail == "true")
+                        {
+                            es.Send(MessageHelper.GetFileDownloadHeader(datasetID, versionNr),
+                                MessageHelper.GetFileDownloadMessage(GetUsernameOrDefault(), datasetID, fileInfo.Name),
+                                ConfigurationManager.AppSettings["SystemEmail"]
+                                );
+                        }
                         return File(path, MimeMapping.GetMimeMapping(fileInfo.Name), filename);
                     }
                     else
@@ -708,6 +705,12 @@ namespace IDIV.Modules.Mmm.UI.Controllers
             return PartialView("_imageView", getFileInfo(path));
         }
 
+        public ActionResult DocumentView(string path)
+        {
+            path = Server.UrlDecode(path);
+            return PartialView("_documentView", getFileInfo(path));
+        }
+
         public ActionResult BundleView(string path)
         {
             path = Server.UrlDecode(path);
@@ -814,7 +817,7 @@ namespace IDIV.Modules.Mmm.UI.Controllers
                                 Stream zipStream = zipFile.GetInputStream(zipEntry);
                                 using (TextFieldParser parser = new TextFieldParser(zipStream))
                                 {
-                                    parser.TextFieldType = FieldType.Delimited;
+                                    parser.TextFieldType = Microsoft.VisualBasic.FileIO.FieldType.Delimited;
                                     parser.SetDelimiters(";");
                                     List<string> columns = parser.ReadFields().ToList();
                                     long nameIndex = columns.IndexOf("imgName");
@@ -898,7 +901,7 @@ namespace IDIV.Modules.Mmm.UI.Controllers
                                 Stream zipStream = zipFile.GetInputStream(zipEntry);
                                 using (TextFieldParser parser = new TextFieldParser(zipStream))
                                 {
-                                    parser.TextFieldType = FieldType.Delimited;
+                                    parser.TextFieldType = Microsoft.VisualBasic.FileIO.FieldType.Delimited;
                                     parser.SetDelimiters(",");
                                     List<string> columns = parser.ReadFields().ToList();
                                     Measurement measurement = new Measurement();

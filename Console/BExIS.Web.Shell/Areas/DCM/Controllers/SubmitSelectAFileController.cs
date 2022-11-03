@@ -52,7 +52,11 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
             model.serverFileList = GetServerFileList();
 
+            // get max file lenght
+            var dataPath = AppConfiguration.DataPath; //Path.Combine(AppConfiguration.WorkspaceRootPath, "Data");
+            var storepath = Path.Combine(dataPath, "Temp", GetUsernameOrDefault());
 
+            model.MaxFileLength = 260-storepath.Length-2;
 
             return PartialView(model);
         }

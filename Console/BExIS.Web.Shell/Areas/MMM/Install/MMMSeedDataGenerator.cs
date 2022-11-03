@@ -24,7 +24,7 @@ namespace BExIS.Modules.Mmm.UI.Helpers
                     Search = featureManager.Create("Search", "Search");
 
                 if (!operationManager.Exists("MMM", "ShowMultimediaData", "*"))
-                    operationManager.Create("MMM", "ShowMultimediaData", "*", Search);
+                    operationManager.Create("MMM", "ShowMultimediaData", "*");
             }
 
         }

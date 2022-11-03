@@ -275,3 +275,7 @@ paket-files/
 /Console/BExIS.Web.Shell/Web.Debug.config
 /Console/BExIS.Web.Shell/samples/Credentials.config.sample
 /Console/BExIS.Web.Shell/web.config
+/Console/Workspace
+/Console/Workspace_local_v2.14
+/Console/Workspace_server_v2.14
+/Console/Workspace_v2.12

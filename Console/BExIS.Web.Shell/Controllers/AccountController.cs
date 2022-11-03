@@ -10,8 +10,9 @@ using System.Configuration;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
-using System.Web.SessionState;
 using Vaiona.Utils.Cfg;
+using Vaiona.Web.Extensions;
+using Vaiona.Web.Mvc.Models;
 using Vaiona.Web.Mvc.Modularity;
 
 namespace BExIS.Web.Shell.Controllers
@@ -43,7 +44,6 @@ namespace BExIS.Web.Shell.Controllers
                     ConfigurationManager.AppSettings["SystemEmail"]
                     );
 
-
                 return this.IsAccessible("bam", "PartyService", "UserRegistration")
                     ? RedirectToAction("UserRegistration", "PartyService", new { area = "bam" })
                     : RedirectToAction("Index", "Home");
@@ -53,7 +53,6 @@ namespace BExIS.Web.Shell.Controllers
                 identityUserService.Dispose();
                 signInManager.Dispose();
             }
-
         }
 
         //
@@ -140,7 +139,6 @@ namespace BExIS.Web.Shell.Controllers
                         result = await identityUserService.AddLoginAsync(user.Id, info.Login);
                         if (result.Succeeded)
                         {
-
                             await signInManager.SignInAsync(user, false, false);
                             return RedirectToLocal(returnUrl);
                         }
@@ -210,6 +208,7 @@ namespace BExIS.Web.Shell.Controllers
         // GET: /Account/Login
         public ActionResult Login(string returnUrl)
         {
+            ViewBag.Title = PresentationModel.GetViewTitleForTenant("Log In", this.Session.GetTenant());
             ViewBag.ReturnUrl = returnUrl;
             return View();
         }
@@ -232,14 +231,11 @@ namespace BExIS.Web.Shell.Controllers
             // To enable password failures to trigger account lockout, change to shouldLockout: true
             using (var signInManager = new SignInManager(AuthenticationManager))
             using (var identityUserService = new IdentityUserService())
-            { 
-   
+            {
                 if (!ModelState.IsValid)
                 {
                     return View(model);
                 }
-
-
 
                 // Search for user by email, if not found search by user name
                 var user = await identityUserService.FindByEmailAsync(model.UserName);
@@ -263,8 +259,6 @@ namespace BExIS.Web.Shell.Controllers
                     }
                 }
 
-
-
                 var result =
                     await signInManager.PasswordSignInAsync(model.UserName, model.Password, model.RememberMe, false);
                 switch (result)
@@ -280,7 +274,6 @@ namespace BExIS.Web.Shell.Controllers
                         return View(model);
                 }
             }
-  
         }
 
         //
@@ -317,10 +310,10 @@ namespace BExIS.Web.Shell.Controllers
             {
                 if (!ModelState.IsValid) return View(model);
 
-                if(!string.IsNullOrEmpty(model.Extra))
+                if (!string.IsNullOrEmpty(model.Extra))
                     return View(model);
 
-                var user = new User { UserName = model.UserName,FullName = model.UserName, Email = model.Email };
+                var user = new User { UserName = model.UserName, FullName = model.UserName, Email = model.Email, HasTermsAndConditionsAccepted = model.TermsAndConditions };
 
                 var result = await identityUserService.CreateAsync(user, model.Password);
                 if (result.Succeeded)
@@ -339,7 +332,6 @@ namespace BExIS.Web.Shell.Controllers
                         ConfigurationManager.AppSettings["SystemEmail"]
                         );
 
-
                     ViewBag.Message = "Before you can log in to complete your registration, please check your email and verify your email address. If you did not receive an email, please also check your spam folder.";
 
                     return View("Info");
@@ -353,9 +345,6 @@ namespace BExIS.Web.Shell.Controllers
             {
                 identityUserService.Dispose();
             }
-
-
-
         }
 
         //
@@ -423,7 +412,7 @@ namespace BExIS.Web.Shell.Controllers
 
                 var policyUrl = Url.Action("Index", "PrivacyPolicy", null, Request.Url.Scheme);
                 var termsUrl = Url.Action("Index", "TermsAndConditions", null, Request.Url.Scheme);
-                
+
                 var applicationName = AppConfiguration.ApplicationName;
 
                 await identityUserService.SendEmailAsync(userId, subject,

@@ -28,6 +28,11 @@ namespace BExIS.Web.Shell.Controllers
             return View("Content", null, Session.GetTenant().ImprintFileNamePath);
         }
 
+        public ActionResult TermsAndConditions()
+        {
+            ViewBag.Title = PresentationModel.GetViewTitleForTenant("TermsAndConditions", this.Session.GetTenant());
+            return View("Content", null, this.Session.GetTenant().TermsAndConditionsFileNamePath);
+        }
         public ActionResult Policy()
         {
             ViewBag.Title = PresentationModel.GetViewTitleForTenant("Policy", this.Session.GetTenant());

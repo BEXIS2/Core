@@ -1,53 +1,50 @@
-# BEXIS 2.14.4 Release Notes
+# BEXIS 2.14.6 Release Notes
 
-> Attention ! changes have been made in SMTP credentials and web.config. If an update is made, please use the new files and adapt them.
+Attention: Permission related to **Requests** are now split into: _send requests_ and _manage requests_. Older permission is only set to _manage requests_. Data managers have to set permission for _send requests_ manually! If not, sending requests will not work as it did before.
+
+
 
 ### Features
-- New API to retieve all metadata by schema name (api/MetadataBySchema/{Schema name}) ([#733](https://github.com/BEXIS2/Core/issues/733))
-- Add new Landing page option to allow on "no permission" forward to a public landing page for logged-in user ([#719](https://github.com/BEXIS2/Core/issues/719))
-
-
+- Send and manage DOI requests to DataCite ([#888](https://github.com/BEXIS2/Core/issues/888))([#905](https://github.com/BEXIS2/Core/issues/905))(_beta_) 
+- Integration of Former Member Module ([#897](https://github.com/BEXIS2/Core/issues/897)) (_beta_)
+	-  Change status of users to _former user_ by assigning a new group and preserving all previous permissions
+- Versioning: visibility and accessibility on public and internal datasets([#853](https://github.com/BEXIS2/Core/issues/853)) (_beta_)
 
 ### Enhancements
-- Metadata Edit: Show, if a linked metadata field is connected or filled with free text ([#607](https://github.com/BEXIS2/Core/issues/607))
-- Metadata Edit: Sort autocomplete list (party: e.g. persons, projects) alphabetic and hide duplicates in the list ([#697](https://github.com/BEXIS2/Core/issues/697))
-- Metadata Edit: Mark autocomplete fields for user ([#608](https://github.com/BEXIS2/Core/issues/608))
-- Metadata Edit - Data structure: make edit link more visible ([#722](https://github.com/BEXIS2/Core/issues/722))
-- Metadata Edit - Data structure: Show "Create Variable Template" button based on permission and settings ([#723](https://github.com/BEXIS2/Core/issues/723))
-- Metadata Edit - Create Links: truncate dataset title and sort descending (newest first) ([#703](https://github.com/BEXIS2/Core/issues/703)) ([#714](https://github.com/BEXIS2/Core/issues/714))
-- Data structure list: Show linked datasets for each data structure ([#765](https://github.com/BEXIS2/Core/issues/765))
-- Dashboard: Show full title and do not truncate ([#718](https://github.com/BEXIS2/Core/issues/718))
-- Dashboard: Add other dataset types (e.g., Publication) ([#663](https://github.com/BEXIS2/Core/issues/663))
-- Dashboard/Search: Change default order from ASC to DESC; ([#693](https://github.com/BEXIS2/Core/issues/693))
-- View parties: Increase Paging options and default value to 100 instead of 10 ([#731](https://github.com/BEXIS2/Core/issues/731))
-- Registration form: prevent to fill out by bots ([#622](https://github.com/BEXIS2/Core/issues/622))
-- Data Upload: Increase the size of "changedescription" field in datasetversions ([#698](https://github.com/BEXIS2/Core/issues/698))
-- Manage Datasets: Show title in list ([#712](https://github.com/BEXIS2/Core/issues/712))
-- Manage Requests Admin: Add Dataset ID to table ([#751](https://github.com/BEXIS2/Core/issues/751))
-- Requests: Increase the size of Intention field ([#736](https://github.com/BEXIS2/Core/issues/736))
-- API: Extend data statistic API by variable information ([#749](https://github.com/BEXIS2/Core/issues/749))
+- Data structure view: Only the first linked dataset is shown ([#851](https://github.com/BEXIS2/Core/issues/851))
+- Wiki: add workflow to delete data from a dataset/workaround for purge in bigger instances #866 https://github.com/BEXIS2/Core/wiki/How-to-delete-Tabular-Data-(in-DB)
+- Data Structure Preview: Exchange unit description with abbreviation ([#870](https://github.com/BEXIS2/Core/issues/870))
+- Manage Users: Add email confirmation status and registration date ([#871](https://github.com/BEXIS2/Core/issues/871))
+- Primary Data View: Reduce the default number of shown rows from 100 to 10 ([#886](https://github.com/BEXIS2/Core/issues/886))
+- Requests: Add link to dataset ([#891](https://github.com/BEXIS2/Core/issues/891))
+- Public search (metadata): hide email for bots ([#692](https://github.com/BEXIS2/Core/issues/692))
+- Dataset Details View: Replace underscore with withe-space in field names ([#919](https://github.com/BEXIS2/Core/issues/919))
+- Add parties (isMain parts) and other fields to the Dataset API needed for citation generation ([#894](https://github.com/BEXIS2/Core/issues/894))
+
   
 ### Bugs
-- Fix Edit - View - Edit not possible: CreateTaskmanager not able to handle multiple tabs ([#720](https://github.com/BEXIS2/Core/issues/720))
-- Fix validation for Excel files fails (wrong start & end column calculation) ([#701](https://github.com/BEXIS2/Core/issues/701)) 
-- Fix existing relationships are not shown in user's view ([#708](https://github.com/BEXIS2/Core/issues/708))
-- Fix Cancel button disappears after a click on Validate during metadata edit ([#711](https://github.com/BEXIS2/Core/issues/711))
-- Fix Add IF EXISTS to DROP mv during Purge of datasets ([#732](https://github.com/BEXIS2/Core/issues/732))
-- Fix Change email address in Party by Admin does not update user email ([#729](https://github.com/BEXIS2/Core/issues/729))
-- Fix Conversion from JSON to DataTable converts NULL values to max.value instead ([#739](https://github.com/BEXIS2/Core/issues/739))
-- Fix Order number should never have gaps during data structure save  ([#745](https://github.com/BEXIS2/Core/issues/745))
-- Fix setRelationships() (called during Create Dataset) does not allow multiple entity types (only "Dataset") ([#748](https://github.com/BEXIS2/Core/issues/748))
-- Fix ActionInfo -> IsComplete() checks 3 times the same  ([#721](https://github.com/BEXIS2/Core/issues/721))
-- Fix Data structure template validation error ([#740](https://github.com/BEXIS2/Core/issues/740))
-- Fix Effective rights not shown correctly ([#679](https://github.com/BEXIS2/Core/issues/679))
-- Fix API: MetadataOut can not handle CheckedOut datasets ([#734](https://github.com/BEXIS2/Core/issues/734))
-- Fix Metadata edit/creation: Entries from 2nd complex block onward saved incomplete ([#758](https://github.com/BEXIS2/Core/issues/758))
-
+- Fix Public Search: Show "more" leads to login screen ([#838](https://github.com/BEXIS2/Core/issues/838))
+- Fix Error message for unknown ID not user friendly ([#841](https://github.com/BEXIS2/Core/issues/841))
+- Fix WebShell UI: Download not allowed info ([#105](https://github.com/BEXIS2/Core/issues/105))
+- Fix View party: conditional attribute not shown ([#725](https://github.com/BEXIS2/Core/issues/725))
+- Fix API Data Statistics: Missing values not correct resetted ([#864](https://github.com/BEXIS2/Core/issues/864))
+- Fix Search Index: empty variable descriptions are indexed as "Unknown" ([#865](https://github.com/BEXIS2/Core/issues/865))
+- Fix Create metadata structure: spelling mistake ([#868](https://github.com/BEXIS2/Core/issues/868))
+- Fix Manage users/groups: show related line in header of pop-up window ([#867](https://github.com/BEXIS2/Core/issues/867))
+- Fix File (Attachment) Upload Description: Fails for certain characters as stored as XML ([#846](https://github.com/BEXIS2/Core/issues/846))
+- Fix Push Big Files: Max length is null after selecting a file ([#878](https://github.com/BEXIS2/Core/issues/878))
+- Fix Missing Mapping Case return false results ([#877](https://github.com/BEXIS2/Core/issues/877))
+- Fix My Data: Datasets with implicit rights (groups/relationships) are missing ([#885](https://github.com/BEXIS2/Core/issues/885))
+- Fix Error message header wrong for data download exception ([#910](https://github.com/BEXIS2/Core/issues/910))
+- Fix Upload: Improve error message "Can not upload" ([#915](https://github.com/BEXIS2/Core/issues/915))
+- Fix Upload via API: improve text ([#911](https://github.com/BEXIS2/Core/issues/911))
+- Fix Empty fields in a selected primary throw an error #923([#923](https://github.com/BEXIS2/Core/issues/923))
+- Fix When removing the owner from the metadata, the rights for the user remain in place ([#914](https://github.com/BEXIS2/Core/issues/914))
 
 ## I. Software Information
 
 -	Name: BEXIS
--	Version: 2.14.4
+-	Version: 2.14.6
 -	Application Type: Web Application
 -	Platform: Windows
 

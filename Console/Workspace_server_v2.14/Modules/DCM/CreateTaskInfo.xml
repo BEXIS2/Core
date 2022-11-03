@@ -1,5 +1,0 @@
-<stepInfos>
-	<stepInfo title="Dataset setup" action="SelectDatasetSetup" area="DCM" controller="CreateSelectDatasetSetup"/>
-	<stepInfo title="Summary" action="Summary" area="DCM" controller="CreateSummary"/>
-</stepInfos>
-

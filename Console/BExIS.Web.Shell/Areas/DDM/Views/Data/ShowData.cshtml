@@ -28,6 +28,13 @@
         show_tabs.Add("show_tabs_deactivated", "true"); // "false" = also hide request button, if not available in addition to deactivated tabs
     }
 
+    int total = 0;
+    if (Session["gridTotal"] != null)
+    {
+        total = Convert.ToInt32(Session["gridTotal"]); //  (int)Session["gridTotal"];
+    }
+
+
 }
 
 @section Information
@@ -65,7 +72,7 @@
 
                     <div id="view-warning" class="alert alert-info" role="alert" style="width: 100%;">
                         <span id="view-warning-icon" class=" fa fa-exclamation-triangle"></span>
-                        Attention, this is not the latest version. Click <span class="btn-link" style="cursor: pointer;" onclick="selectVersion(@Model.Id, @Model.LatestVersion)"><b>here</b></span> to change to the latest version.
+                        Attention, this is not the latest version. Click <span class="btn-link" style="cursor: pointer;" onclick="selectVersion(@Model.Id, @Model.LatestVersionNumber)"><b>here</b></span> to change to the latest (public) version.
                     </div>
                 </div>
             }
@@ -77,7 +84,15 @@
                             <div>
                                 <b>Dataset id:</b> @Model.Id
                                 <b style="padding-left: 5px;">Version:</b>
-                                @Html.DropDownListFor(m => m.VersionSelect, null, new { @class = "bx-dropdown", @style = "border:none;" })
+                                @if (ViewData.ModelState.IsValid)
+                                {                                  
+                                    @Html.DropDownListFor(m => m.VersionSelect, null, Model.LatestVersionNumber + " (Latest internal version)", new { @class = "bx-dropdown", @style = "border:none;" })
+                                }
+                                else
+                                {
+                                    @Html.DropDownListFor(m => m.VersionSelect, null, "Select version", new { @class = "bx-dropdown", @style = "border:none;" })
+
+                                }
                             </div>
                         </div>
                     </div>
@@ -100,7 +115,10 @@
                                 </button>
                                 <ul class="dropdown-menu" aria-labelledby="dropdownMenu1" style="z-index:100000; margin-top:10px;">
                                     <li><a href="@Url.Action("DownloadZip", "Data", new { id = @Model.Id, format = "application/xlsm", version = Model.VersionId })">... with Template</a></li>
+                                    @if (@total < 1048576) // hide Excel download for bigger datasets, which exceed the max number of rows in excel
+                                    {
                                     <li><a href="@Url.Action("DownloadZip", "Data", new { id = @Model.Id, format = "application/xlsx", version = Model.VersionId })">... with Excel</a></li>
+                                    }
                                     <li><a href="@Url.Action("DownloadZip", "Data", new { id = @Model.Id, format = "text/csv", version = Model.VersionId })">... with CSV</a></li>
                                     <li><a href="@Url.Action("DownloadZip", "Data", new { id = @Model.Id, format = "text/tsv", version = Model.VersionId })">... with TSV</a></li>
                                     <li><a href="@Url.Action("DownloadZip", "Data", new { id = @Model.Id, format = "text/plain", version = Model.VersionId })">... with TXT</a></li>
@@ -114,27 +132,38 @@
                     }
                     else
                     {
-                        if (Model.RequestAble)
+                        if (Model.HasRequestRight)
                         {
-
-                            if (Model.RequestExist)
+                            if (Model.RequestAble)
                             {
-                                <button id="sendRequestBt" class="bx-button function bx-disabled" title="Send request to the owner of the dataset for the rights to see and download the primary data." disabled="disabled">Request Pending</button>
+
+                                if (Model.RequestExist)
+                                {
+                                    <button id="sendRequestBt" class="bx-button function bx-disabled" title="Send request to the owner of the dataset for the rights to see and download the primary data." disabled="disabled">Request Pending</button>
+                                }
+                                else
+                                {
+                                    @Html.TextArea("intention", new { @class = "bx-input", placeholder = "describe your intention " });
+                                    <button id="sendRequestBt" datasetId="@Model.Id" class="bx-button function" title="Send request to the owner of the dataset for the rights to see and download the primary data.">Request Access</button>
+                                }
                             }
                             else
                             {
-                                @Html.TextArea("intention", new { @class = "bx-input", placeholder = "describe your intention " });
-                                <button id="sendRequestBt" datasetId="@Model.Id" class="bx-button function" title="Send request to the owner of the dataset for the rights to see and download the primary data.">Request Access</button>
+                                if (show_tabs["show_tabs_deactivated"] == "true")
+                                {
+                                    <button id="sendRequestBt" class="bx-button function bx-disabled" title="Send request to the owner of the dataset for the rights to see and download the primary data. If the function is not available, please contact the administrator." disabled="disabled">Currently not available</button>
+                                }
                             }
                         }
                         else
                         {
                             if (show_tabs["show_tabs_deactivated"] == "true")
                             {
-                                <button id="sendRequestBt" class="bx-button function bx-disabled" title="Send request to the owner of the dataset for the rights to see and download the primary data. If the function is not available, please contact the administrator." disabled="disabled">Currently not available</button>
+                                <button id="sendRequestBt" class="bx-button function bx-disabled" title="You have no right to make requests." disabled="disabled">Currently not available</button>
                             }
                         }
                     }
+                 
                 </div>
             </div>
             @if (@Model != null)
@@ -377,7 +406,7 @@
             alert("Please fill in the respective intention in order to send the request!");
         }
         else {
-            $.post("/DDM/Data/SendRequest", { id, intention }, function (data) {
+            $.post("/DDM/RequestsSend/Send", { id, intention }, function (data) {
                 if (data === true) {
                     $("#sendRequestBt").prop("disabled", "disabled");
                     $("#sendRequestBt").addClass("bx-disabled", "bx-disabled");

@@ -21,6 +21,14 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             ViewBag.Title = PresentationModel.GetViewTitleForTenant("Push Big File", this.Session.GetTenant());
 
             Session["Files"] = null;
+
+            // get max file name length
+            // get max file lenght
+            var dataPath = AppConfiguration.DataPath; //Path.Combine(AppConfiguration.WorkspaceRootPath, "Data");
+            var storepath = Path.Combine(dataPath, "Temp", GetUsernameOrDefault());
+
+            ViewBag.maxFileNameLength = 260 - storepath.Length - 2;
+
             return View(LoadDefaultModel());
         }
 
@@ -55,6 +63,11 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 Session["FileInfos"] = attachments;
                 uploadFiles(attachments);
             }
+
+            var dataPath = AppConfiguration.DataPath; //Path.Combine(AppConfiguration.WorkspaceRootPath, "Data");
+            var storepath = Path.Combine(dataPath, "Temp", GetUsernameOrDefault());
+
+            ViewBag.maxFileNameLength = 260 - storepath.Length - 2;
             // Redirect to a view showing the result of the form submission.
             return View("Index", LoadDefaultModel());
         }
@@ -132,7 +145,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             {
                 ServerFileList = GetServerFileList(),
                 SupportedFileExtentions = UploadHelper.GetExtentionList(DataStructureType.Unstructured, this.Session.GetTenant()),
-                FileSize = this.Session.GetTenant().MaximumUploadSize
+                // FileSize = this.Session.GetTenant().MaximumUploadSize
             };
 
             return model;

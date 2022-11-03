@@ -6,6 +6,8 @@
 @section scripts
 {
     <script src="@Url.Content("~/Areas/Sam/Scripts/sam-datasets.js")" type="text/javascript"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/luxon/1.27.0/luxon.min.js" type="text/javascript"></script>
+    <script src="//cdn.datatables.net/plug-ins/1.10.25/sorting/datetime-luxon.js" type="text/javascript"></script>
 }
 
 @section Information
@@ -27,72 +29,261 @@
 <h2>The dataset management functions accessible from here may have unrecoverable effects! Use them with care.</h2>
 <h3>Datasets</h3>
 <p style="width:100%; text-align: -webkit-right;">
-    @Html.ActionLink("Sync All", "SyncAll", new { area = "Sam" }, new { @class = "bx-button function"})
+    @Html.ActionLink("Sync All", "SyncAll", new { area = "Sam" }, new { @class = "bx-button function" })
 </p>
-<table>
-    <tr>
-        <th>ID</th>
-        <th>Title</th>
-        <th>Status</th>
-        <th>Rows</th>
-        <th>Variables</th>
-        <th>Actions</th>
-    </tr>
+<table id="dataset_table" class="display" style="width:100%">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Title</th>
+            <th>Status</th>
+            <th>Metadate complete</th>
+            <th>Creation</th>
+            <th>Last Metadata</th>
+            <th>Last Data Change</th>
+            <th>Last Change</th>
+            <th>Last Change Type</th>
+            <th>Last Change Description</th>
+            <th>Last Change Performer</th>
+            <th>Rows</th>
+            <th>Variables</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
     @foreach (var entity in Model)
     {
-<tr id="@entity.Id">
-    <td>@(entity.Id)</td>
-    <td>@(entity.Title)</td>
-    @if (DatasetIds.Contains(entity.Id))
-    {
-        if (entity.Status == DatasetStatus.CheckedIn)
-        {
-            <td style="color: darkgreen">@(entity.Status.ToString())</td>
-            <td class="number-of-rows">@(entity.NoOfRows)</td>
-            <td>@(entity.NoOfCols)</td>
-            <td>
-                @Html.ActionLink("Sync", "Sync", new { id = entity.Id, area = "Sam" }, new { @style = entity.IsSynced ? "color:darkgreen;" : "color:black;" }) |
-                @Html.ActionLink("Versions", "Versions", new { id = entity.Id, area = "Sam" }) |
-                @Html.ActionLink("Delete", "Delete", new { id = entity.Id, area = "Sam" }) |
-                @Html.ActionLink("Purge", "Purge", new { id = entity.Id, area = "Sam" }) |
-                <a entityid="@entity.Id" class="number-of-rows-bt">Count</a>
-            </td>
-        }
-        else if (entity.Status == DatasetStatus.CheckedOut)
-        {
-            <td style="color: darkblue">@(entity.Status.ToString())</td>
-            <td class="number-of-rows">@(entity.NoOfRows)</td>
-            <td>@(entity.NoOfCols)</td>
-            <td>
-                @Html.ActionLink("Sync", "Sync", new { id = entity.Id, area = "Sam" }, new { @style = entity.IsSynced ? "color:darkgreen;" : "color:black;" }) |
-                @Html.ActionLink("Versions", "Versions", new { id = entity.Id, area = "Sam" }) |
-                @Html.ActionLink("Purge", "Purge", new { id = entity.Id })|
-                <a entityid="@entity.Id" class="number-of-rows-bt">Count</a>
-            </td>
-        }
-        else if (entity.Status == DatasetStatus.Deleted)
-        {
-            <td style="color: red">@(entity.Status.ToString())</td>
-            <td class="number-of-rows">@(entity.NoOfRows)</td>
-            <td>@(entity.NoOfCols)</td>
+        <tr id="@entity.Id">
+            <td>@(entity.Id)</td>
+            <td>@(entity.Title)</td>
+            @if (DatasetIds.Contains(entity.Id))
+            {
+                if (entity.Status == DatasetStatus.CheckedIn)
+                {
+                    <td style="color: darkgreen">@(entity.Status.ToString())</td>
+                    <td>@(entity.ValidState)</td>
+                    <td>@(entity.CreationDate)</td>
+                    <td>@(entity.LastMetadataChange)</td>
+                    <td>@(entity.LastDataChange)</td>
+                    <td>@(entity.LastChange)</td>
+                    <td>@(entity.LastChangeType)</td>
+                    <td>@(entity.LastChangeDescription)</td>
+                    <td>@(entity.LastChangeAccount)</td>
 
-            <td>
-                @Html.ActionLink("Sync", "Sync", new { id = entity.Id, area = "Sam" }, new { @style = entity.IsSynced ? "color:darkgreen;" : "color:black;" }) |
-                @Html.ActionLink("Versions", "Versions", new { id = entity.Id, area = "Sam" }) |
-                @Html.ActionLink("Purge", "Purge", new { id = entity.Id, area = "Sam" }) |
-                <a entityid="@entity.Id" class="number-of-rows-bt">Count</a>
-            </td>
-        }
-    }
-    else
-    {
-        <td style="color: red">@(entity.Status.ToString())</td>
-        <td>@(entity.NoOfRows)</td>
-        <td>@(entity.NoOfCols)</td>
-        <td>
-            No Permissions!
-        </td>
-    }
-</tr>
+                    <td class="number-of-rows">@(entity.NoOfRows)</td>
+                    <td>@(entity.NoOfCols)</td>
+                    <td>
+                        @Html.ActionLink("Sync", "Sync", new { id = entity.Id, area = "Sam" }, new { @style = entity.IsSynced ? "color:darkgreen;" : "color:black;" }) |
+                        @Html.ActionLink("Versions", "Versions", new { id = entity.Id, area = "Sam" }) |
+                        @Html.ActionLink("Delete", "Delete", new { id = entity.Id, area = "Sam" }) |
+                        @Html.ActionLink("Purge", "Purge", new { id = entity.Id, area = "Sam" }) |
+                        <a entityid="@entity.Id" class="number-of-rows-bt">Count</a>
+                    </td>
+                }
+                else if (entity.Status == DatasetStatus.CheckedOut)
+                {
+                    <td style="color: darkblue">@(entity.Status.ToString())</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td class="number-of-rows">@(entity.NoOfRows)</td>
+                    <td>@(entity.NoOfCols)</td>
+                    <td>
+                        @Html.ActionLink("Sync", "Sync", new { id = entity.Id, area = "Sam" }, new { @style = entity.IsSynced ? "color:darkgreen;" : "color:black;" }) |
+                        @Html.ActionLink("Versions", "Versions", new { id = entity.Id, area = "Sam" }) |
+                        @Html.ActionLink("Purge", "Purge", new { id = entity.Id })|
+                        <a entityid="@entity.Id" class="number-of-rows-bt">Count</a>
+                    </td>
+                }
+                else if (entity.Status == DatasetStatus.Deleted)
+                {
+                    <td style="color: red">@(entity.Status.ToString())</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td class="number-of-rows">@(entity.NoOfRows)</td>
+                    <td>@(entity.NoOfCols)</td>
+
+                    <td>
+                        @Html.ActionLink("Sync", "Sync", new { id = entity.Id, area = "Sam" }, new { @style = entity.IsSynced ? "color:darkgreen;" : "color:black;" }) |
+                        @Html.ActionLink("Versions", "Versions", new { id = entity.Id, area = "Sam" }) |
+                        @Html.ActionLink("Purge", "Purge", new { id = entity.Id, area = "Sam" }) |
+                        <a entityid="@entity.Id" class="number-of-rows-bt">Count</a>
+                    </td>
+                }
+            }
+            else
+            {
+                <td style="color: red">@(entity.Status.ToString())</td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td>@(entity.NoOfRows)</td>
+                <td>@(entity.NoOfCols)</td>
+                <td>
+                    No Permissions!
+                </td>
+            }
+        </tr>
     }
 </table>
+
+<script type="text/javascript">
+
+
+
+    $('document').ready(function () {
+        jQuery.fn.dataTable.render.ellipsis = function (cutoff, wordbreak, escapeHtml) {
+            var esc = function (t) {
+                return t
+                    .replace(/&/g, '&amp;')
+                    .replace(/</g, '&lt;')
+                    .replace(/>/g, '&gt;')
+                    .replace(/"/g, '&quot;');
+            };
+
+            return function (d, type, row) {
+                // Order, search and type get the original data
+                if (type !== 'display') {
+                    return d;
+                }
+
+                if (typeof d !== 'number' && typeof d !== 'string') {
+                    return d;
+                }
+
+                d = d.toString(); // cast numbers
+
+                if (d.length <= cutoff) {
+                    return d;
+                }
+
+                var shortened = d.substr(0, cutoff - 1);
+
+                // Find the last white space character in the string
+                if (wordbreak) {
+                    shortened = shortened.replace(/\s([^\s]*)$/, '');
+                }
+
+                // Protect against uncontrolled HTML input
+                if (escapeHtml) {
+                    shortened = esc(shortened);
+                }
+
+                return '<span class="ellipsis" title="' + esc(d) + '">' + shortened + '&#8230;</span>';
+            };
+        };
+
+        jQuery.fn.dataTable.luxon('dd.MM.yyyy');
+
+        var oTable = $("#dataset_table").DataTable({
+            "autoWidth": false,
+            ordering: true,
+            order: [[0, "desc"]], // order by Id
+            paging: false,
+            responsive: true,
+
+            createdRow: function (row, data, dataIndex) {
+                if (data[3] == "no") {
+                    $(row).addClass('error');
+                }
+            },
+
+
+            /*  columnDefs: [
+                  {
+                      targets: 1,
+                      render: $.fn.dataTable.render.ellipsis(60, true)
+                  }]
+                  */
+        });
+
+        ;
+    })
+
+
+    function resultGrid_OnRowDataBound(e) {
+
+        //alert(e.item);
+        var obj = e.row.childNodes;
+
+        $.each(obj, function (i) {
+
+            obj[i].title = obj[i].textContent;
+            if (obj[i].textContent.length > 50) {
+                obj[i].textContent = jQuery.trim(obj[i].textContent).substring(0, 50).trim(this) + "...";
+            }
+        });
+        // Add color to row based on value (yes / no) in 7. column ToDo: make it not fixed to position in array
+        $('.result-grid tbody tr').each(function () {
+            var cellText = $(this).find("td").eq(7).html();
+            if (cellText == "no") {
+                $(this).find("td").eq(7).parent().addClass("error");
+            }
+
+        });
+
+    }
+
+    function onclickDataset(e) {
+
+        // checked
+        var id = e.getAttribute("id");
+
+
+        var data = {
+            id: id
+        }
+
+        $.ajax({
+            url: '/ddm/Data/IsDatasetCheckedIn',
+            type: 'POST',
+            data: JSON.stringify(data),
+            dataType: 'json',
+            contentType: 'application/json; charset=utf-8',
+            error: function (xhr) {
+                alert('Error: ' + xhr.statusText);
+
+            },
+            success: function (result) {
+                if (result) {
+                    window.open("/ddm/Data/ShowData/" + id, "_blank");
+                } else {
+
+                    alert("Dataset is locked. Please try again later.");
+                }
+            }
+        });
+    }
+
+
+</script>
+
+<style type="text/css">
+
+    #resultGrid .t-grid-content {
+        position: relative;
+        height: auto !important;
+        max-height: 450px;
+        /*overflow:auto;*/
+    }
+
+    #resultGrid .t-status {
+        display: none;
+    }
+</style>
+

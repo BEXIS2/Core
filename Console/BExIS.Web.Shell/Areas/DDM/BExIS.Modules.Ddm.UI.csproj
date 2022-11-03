@@ -61,8 +61,8 @@
     <Reference Include="Microsoft.Web.Helpers">
       <HintPath>..\..\..\..\packages\Microsoft.AspNet.WebHelpers.3.2.3\lib\net45\Microsoft.Web.Helpers.dll</HintPath>
     </Reference>
-    <Reference Include="Newtonsoft.Json, Version=11.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\..\..\..\packages\Newtonsoft.Json.11.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
+    <Reference Include="Newtonsoft.Json, Version=13.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\..\..\..\packages\Newtonsoft.Json.13.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
@@ -163,6 +163,8 @@
     <Compile Include="Controllers\HelpController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\PublicSearchController.cs" />
+    <Compile Include="Controllers\RequestsManageController.cs" />
+    <Compile Include="Controllers\RequestsSendController.cs" />
     <Compile Include="Controllers\SearchIndexController.cs" />
     <Compile Include="Controllers\TestController.cs" />
     <Compile Include="DdmModule.cs" />
@@ -170,8 +172,12 @@
     <Compile Include="Helpers\GridHelper.cs" />
     <Compile Include="Helpers\HtmlPrefixScopeExtentions.cs" />
     <Compile Include="Helpers\SearchUIHelper.cs" />
+    <Compile Include="Helpers\SettingsHelper.cs" />
     <Compile Include="Models\DashboardModel.cs" />
     <Compile Include="Models\DatasetPermissionModels.cs" />
+    <Compile Include="Models\DecisionModels.cs" />
+    <Compile Include="Models\EntityModels.cs" />
+    <Compile Include="Models\RequestModels.cs" />
     <Compile Include="Models\SearchAttributeViewModel.cs" />
     <Compile Include="Models\ShowDataModel.cs" />
     <Compile Include="Models\ShowMetadataModel.cs" />
@@ -446,6 +452,11 @@
     <Content Include="Views\Dashboard\_myDatasetsViewHeader.cshtml" />
     <Content Include="Views\Shared\Error.cshtml" />
     <Content Include="Views\Data\Show.cshtml" />
+    <Content Include="Views\RequestsManage\Index.cshtml" />
+    <Content Include="Views\RequestsManage\_Decisions.cshtml" />
+    <Content Include="Views\RequestsManage\_Entities.cshtml" />
+    <Content Include="Views\RequestsManage\_Requests.cshtml" />
+    <Content Include="Views\RequestsManage\_Requests_And_Decisions.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

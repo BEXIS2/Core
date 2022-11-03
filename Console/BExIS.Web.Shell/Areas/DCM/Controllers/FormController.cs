@@ -1406,14 +1406,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                         attrModel.Locked = true;
                     }
 
-                    UpdateAttribute(
-                    usage,
-                    number,
-                    metadataAttributeUsage,
-                    Convert.ToInt32(attrModel.Number),
-                    attrModel.Value,
-                    stepModelHelper.XPath);
-
+                   
                 }
                 else
                 {
@@ -1428,6 +1421,14 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                     attrModel.Locked = false;
                     attrModel.ParentPartyId = 0;
                 }
+
+                 UpdateAttribute(
+                    usage,
+                    number,
+                    metadataAttributeUsage,
+                    Convert.ToInt32(attrModel.Number),
+                    attrModel.Value,
+                    stepModelHelper.XPath);
 
                 AddXmlAttribute(stepModelHelper.XPath, "partyid", partyId.ToString());
             }

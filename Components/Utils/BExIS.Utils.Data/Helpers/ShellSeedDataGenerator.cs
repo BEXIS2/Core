@@ -27,10 +27,11 @@ namespace BExIS.Utils.Data.Helpers
                 var o6 = operationManager.Find("Shell", "Footer", "*") ?? operationManager.Create("Shell", "Footer", "*");
                 var o7 = operationManager.Find("Shell", "Ldap", "*") ?? operationManager.Create("Shell", "Ldap", "*");
                 var o8 = operationManager.Find("Shell", "Help", "*") ?? operationManager.Create("Shell", "Help", "*");
+                var o9 = operationManager.Find("Api", "Token", "*") ?? operationManager.Create("Api", "Token", "*");
 
-                if (!versionManager.Exists("Shell", "2.14.3"))
+                if (!versionManager.Exists("Shell", "2.14.5"))
                 {
-                    versionManager.Create("Shell", "2.14.3");
+                    versionManager.Create("Shell", "2.14.5");
                 }
             }
         }

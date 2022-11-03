@@ -287,6 +287,15 @@ namespace BExIS.Security.Services.Utilities
             return $"User <b>{userName} has updated his/her email. Old: {emailOld} New: {emailNew}";
         }
 
+        public static string GetChangedRoleHeader(string userName, string newRole, string changeType)
+        {
+            return $"Account of {userName} {changeType} {newRole} status";
+        }
+
+        public static string GetChangedRoleAppliedMessage(string userName, string newRole, string changeType, string additionalInformation)
+        {
+            return $"The {newRole} role has been {changeType} your account.<br/><br/>{additionalInformation}";
+        }
 
         #region upload api
 
