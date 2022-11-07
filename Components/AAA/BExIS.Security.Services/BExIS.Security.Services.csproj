@@ -117,7 +117,7 @@
       <HintPath>..\..\..\packages\System.Threading.Tasks.Extensions.4.5.4\lib\portable-net45+win8+wp8+wpa81\System.Threading.Tasks.Extensions.dll</HintPath>
     </Reference>
     <Reference Include="Vaiona.Entities">
-      <HintPath>..\..\..\Libraries\Vaiona\Vaiona.Entities.dll</HintPath>
+      <HintPath>..\..\Vaiona\Vaiona.Entities\bin\Release\Vaiona.Entities.dll</HintPath>
     </Reference>
     <Reference Include="Vaiona.Persistence.Api">
       <HintPath>..\..\Vaiona\Vaiona.Persistence.Api\bin\Debug\Vaiona.Persistence.Api.dll</HintPath>

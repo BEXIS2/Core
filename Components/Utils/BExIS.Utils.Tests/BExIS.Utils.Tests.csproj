@@ -99,17 +99,6 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="System.Xml.Linq" />
-    <Reference Include="Vaiona.Entities, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\Libraries\Vaiona\Vaiona.Entities.dll</HintPath>
-    </Reference>
-    <Reference Include="Vaiona.Persistence.Api, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\Libraries\Vaiona\Vaiona.Persistence.Api.dll</HintPath>
-    </Reference>
-    <Reference Include="Vaiona.PersistenceProviders.NH">
-      <HintPath>..\..\..\Libraries\Vaiona\Vaiona.PersistenceProviders.NH.dll</HintPath>
-    </Reference>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\App\BExIS.App.Testing\BExIS.App.Testing.csproj">
@@ -131,6 +120,18 @@
     <ProjectReference Include="..\..\DLM\BExIS.Dlm.Services\BExIS.Dlm.Services.csproj">
       <Project>{C4CA0A99-0AF3-4372-A9B7-B9073599BD8B}</Project>
       <Name>BExIS.Dlm.Services</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Vaiona\Vaiona.Entities\Vaiona.Entities.csproj">
+      <Project>{0815d220-3625-4e23-bbbc-8152345637fe}</Project>
+      <Name>Vaiona.Entities</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Vaiona\Vaiona.Persistence.Api\Vaiona.Persistence.Api.csproj">
+      <Project>{640bf81d-354a-4bf0-85fc-f0ad587cf8a2}</Project>
+      <Name>Vaiona.Persistence.Api</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Vaiona\Vaiona.PersistenceProviders.NH\Vaiona.PersistenceProviders.NH.csproj">
+      <Project>{2fb8def8-5749-4eae-8588-8a5aaed251a5}</Project>
+      <Name>Vaiona.PersistenceProviders.NH</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
