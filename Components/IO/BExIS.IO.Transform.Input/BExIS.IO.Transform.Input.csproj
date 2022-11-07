@@ -70,10 +70,6 @@
     <Reference Include="Vaiona.Entities">
       <HintPath>..\..\Vaiona\Vaiona.Entities\bin\Debug\Vaiona.Entities.dll</HintPath>
     </Reference>
-    <Reference Include="Vaiona.Logging, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Vaiona\Vaiona.Logging\bin\Debug\Vaiona.Logging.dll</HintPath>
-    </Reference>
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
@@ -108,6 +104,10 @@
     <ProjectReference Include="..\..\Vaiona\Vaiona.Entities\Vaiona.Entities.csproj">
       <Project>{0815d220-3625-4e23-bbbc-8152345637fe}</Project>
       <Name>Vaiona.Entities</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Vaiona\Vaiona.Logging\Vaiona.Logging.csproj">
+      <Project>{e8b37581-1cac-463d-903b-b4bee8b2b0e3}</Project>
+      <Name>Vaiona.Logging</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\Vaiona\Vaiona.Logging\Vaiona.Logging.csproj">
       <Project>{e8b37581-1cac-463d-903b-b4bee8b2b0e3}</Project>

@@ -24,6 +24,7 @@ using System.Linq;
 //using System.Linq.Dynamic;
 using System.Net;
 using System.Net.Http;
+using System.Web.Http.Description;
 using System.Net.Http.Headers;
 using System.Text;
 using System.Web.Http;
@@ -35,7 +36,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
     public class DataStatisticOutController : ApiController
     {
 
-        // GET: api/data
+        // GET api/DataStatistic
         /// <summary>
         /// Get a list of all dataset ids
         /// </summary>
@@ -66,10 +67,15 @@ namespace BExIS.Modules.Dim.UI.Controllers
             }
         }
 
+
+        // GET api/DataStatistic/{id}
+        /// <summary>
+        /// Get unique values, max and min values, and max and min length for all variables
+        /// </summary>
         /// <param name="id">Dataset Id</param>
         [BExISApiAuthorize]
-        //[Route("api/Data")]
         [GetRoute("api/DataStatistic/{id}")]
+        [ResponseType(typeof(ApiDataStatisticModel))]
         [HttpGet]
         public HttpResponseMessage Get(int id)
         {
@@ -78,12 +84,17 @@ namespace BExIS.Modules.Dim.UI.Controllers
             return getData(id, -1, token);
         }
 
+
+        // GET api/DataStatistic/{id}/{variableId}
+        /// <summary>
+        /// Get unique values, max and min values, and max and min length for one variable
+        /// </summary>
         /// <param name="id">Dataset Id</param>
         /// <param name="variableId">Variable id</param>
         /// <returns></returns>
         [BExISApiAuthorize]
-        //[Route("api/Data")]
         [GetRoute("api/DataStatistic/{id}/{variableId}")]
+        [ResponseType(typeof(ApiDataStatisticModel))]
         [HttpGet]
         public HttpResponseMessage Get(long id, int variableId)
         {

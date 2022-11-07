@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<settings>
+  <entry key="help" value="" type="String"/><!-- empty will generate a default url -->
+
+	<!-- Defined AccountPartyTypes value in web config format is like PartyType1:PartyTypePairTitle1-PartyTypePairTitle2,PartyType2 -->
+  <entry key="AccountPartyTypes" value="Person" type="String" />
+  <entry key="help" value="" type="String"/>
+  <entry key="key3" value="21" type="Int16" />
+</settings>

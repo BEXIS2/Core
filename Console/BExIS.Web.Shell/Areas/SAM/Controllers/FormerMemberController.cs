@@ -72,10 +72,20 @@ namespace BEXIS.Modules.SAM.UI.Controllers
 
                         //send mail
                         var es = new EmailService();
-                        string mailTextComponent = helper.GetValue("mailTextApplied").ToString();
+                        //build email with text blocks from the settings file
+                        string mailTextBody =   helper.GetValue("mailTextTitle").ToString() + " " + user.DisplayName + "," + "<br/><br/>" +
+                                                helper.GetValue("mailTextMainApplied").ToString() + "<br/><br/>" +
+                                                helper.GetValue("mailTextClosing").ToString();
 
-                        es.Send(MessageHelper.GetChangedRoleHeader(user.DisplayName, formerMemberRole, "set to"),
-                                MessageHelper.GetChangedRoleAppliedMessage(user.DisplayName, formerMemberRole, "applied to", mailTextComponent),
+                        //if there is no subject defined in settings use system subject
+                        string subject;
+                        if (!string.IsNullOrEmpty(helper.GetValue("mailTextSubject").ToString()))
+                            subject = helper.GetValue("mailTextSubject").ToString();
+                        else
+                            subject = MessageHelper.GetChangedRoleHeader(user.DisplayName, formerMemberRole, "set to");
+
+                        es.Send(subject,
+                                mailTextBody,
                                 new List<string>() { user.Email },
                                 new List<string>() { ConfigurationManager.AppSettings["SystemEmail"] }
                                 );
@@ -108,10 +118,20 @@ namespace BEXIS.Modules.SAM.UI.Controllers
 
                         //send mail
                         var es = new EmailService();
-                        string mailTextComponent = helper.GetValue("mailTextRevoked").ToString();
+                        //build email with text blocks from the settings file
+                        string mailTextBody = helper.GetValue("mailTextTitle").ToString() + " " + user.DisplayName + "," + "<br/><br/>" +
+                                              helper.GetValue("mailTextMainRevoked").ToString() + "<br/><br/>" +
+                                             helper.GetValue("mailTextClosing").ToString();
 
-                        es.Send(MessageHelper.GetChangedRoleHeader(user.DisplayName, formerMemberRole, "revoked from"),
-                                MessageHelper.GetChangedRoleAppliedMessage(user.DisplayName, formerMemberRole, "revoked from", mailTextComponent),
+                        //if there is no subject defined in settings use system subject
+                        string subject;
+                        if (!string.IsNullOrEmpty(helper.GetValue("mailTextSubject").ToString()))
+                            subject = helper.GetValue("mailTextSubject").ToString();
+                        else
+                            subject = MessageHelper.GetChangedRoleHeader(user.DisplayName, formerMemberRole, "set to");
+
+                        es.Send(subject,
+                                mailTextBody,
                                 new List<string>() { user.Email },
                                 new List<string>() { ConfigurationManager.AppSettings["SystemEmail"] }
                                 );

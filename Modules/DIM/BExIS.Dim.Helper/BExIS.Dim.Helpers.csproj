@@ -77,17 +77,6 @@
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Xml" />
-    <Reference Include="Vaiona.Entities, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\Components\Vaiona\Vaiona.Entities\bin\Debug\Vaiona.Entities.dll</HintPath>
-    </Reference>
-    <Reference Include="Vaiona.Logging, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\Components\Vaiona\Vaiona.Logging\bin\Debug\Vaiona.Logging.dll</HintPath>
-    </Reference>
-    <Reference Include="Vaiona.Utils">
-      <HintPath>..\..\..\Components\Vaiona\Vaiona.Utils\bin\Debug\Vaiona.Utils.dll</HintPath>
-    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Api\ApiHelper.cs" />
@@ -133,9 +122,21 @@
       <Project>{e4795f06-20c2-4c4c-a720-9a79896384df}</Project>
       <Name>BExIS.IO</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\..\Components\Vaiona\Vaiona.Entities\Vaiona.Entities.csproj">
+      <Project>{0815D220-3625-4E23-BBBC-8152345637FE}</Project>
+      <Name>Vaiona.Entities</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\Components\Vaiona\Vaiona.Logging\Vaiona.Logging.csproj">
+      <Project>{E8B37581-1CAC-463D-903B-B4BEE8B2B0E3}</Project>
+      <Name>Vaiona.Logging</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\..\Components\Vaiona\Vaiona.Persistence.Api\Vaiona.Persistence.Api.csproj">
       <Project>{640bf81d-354a-4bf0-85fc-f0ad587cf8a2}</Project>
       <Name>Vaiona.Persistence.Api</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\Components\Vaiona\Vaiona.Utils\Vaiona.Utils.csproj">
+      <Project>{63fcacaa-9534-4fdd-a082-78dcc06baf28}</Project>
+      <Name>Vaiona.Utils</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\..\Components\XML\BExIS.Xml.Helpers\BExIS.Xml.Helpers.csproj">
       <Project>{252f7872-a69c-43a6-84b4-4d2abdbdd9ab}</Project>

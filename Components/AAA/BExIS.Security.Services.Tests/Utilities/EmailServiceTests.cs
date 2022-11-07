@@ -96,7 +96,7 @@ namespace BExIS.Security.Services.Tests.Utilities
         }
 
 
-        [Test]
+        //[Test]
         public void Send_EmailWithWhiteSpaceinBCCs_SendSuccess()
         {
             EmailService emailService = new EmailService();
