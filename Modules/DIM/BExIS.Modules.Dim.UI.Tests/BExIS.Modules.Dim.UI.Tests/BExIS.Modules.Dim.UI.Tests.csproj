@@ -109,14 +109,6 @@
     <Reference Include="System.Web.Http, Version=5.2.3.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\..\..\..\packages\Microsoft.AspNet.WebApi.Core.5.2.3\lib\net45\System.Web.Http.dll</HintPath>
     </Reference>
-    <Reference Include="Vaiona.Entities, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\Components\Vaiona\Vaiona.Entities\bin\Debug\Vaiona.Entities.dll</HintPath>
-    </Reference>
-    <Reference Include="Vaiona.Utils, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\Components\Vaiona\Vaiona.Utils\bin\Debug\Vaiona.Utils.dll</HintPath>
-    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Helpers\SettingsHelperTests.cs" />
@@ -145,6 +137,14 @@
     <ProjectReference Include="..\..\..\..\Components\Utils\BExIS.Utils\BExIS.Utils.csproj">
       <Project>{782B71C1-707F-4AB1-80E9-90D2880635B4}</Project>
       <Name>BExIS.Utils</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\..\Components\Vaiona\Vaiona.Entities\Vaiona.Entities.csproj">
+      <Project>{0815d220-3625-4e23-bbbc-8152345637fe}</Project>
+      <Name>Vaiona.Entities</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\..\Components\Vaiona\Vaiona.Utils\Vaiona.Utils.csproj">
+      <Project>{63fcacaa-9534-4fdd-a082-78dcc06baf28}</Project>
+      <Name>Vaiona.Utils</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\..\..\Console\BExIS.Web.Shell\Areas\DIM\BExIS.Modules.Dim.UI.csproj">
       <Project>{9BFFFD11-03C6-47DF-9CC9-F458A9A49377}</Project>
