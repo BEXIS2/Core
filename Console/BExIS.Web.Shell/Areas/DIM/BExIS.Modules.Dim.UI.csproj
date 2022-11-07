@@ -567,10 +567,6 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
-    <Content Include="Helpers\help\help_img1.png" />
-    <Content Include="Helpers\help\help_img2.png" />
-    <Content Include="Helpers\help\help_img3.png" />
-    <Content Include="Helpers\help\help_img4.png" />
     <Content Include="LICENSE.txt" />
     <Content Include="Scripts\2013.2.611\jquery-1.7.1.min.js" />
     <Content Include="Scripts\2013.2.611\jquery.validate.min.js" />
