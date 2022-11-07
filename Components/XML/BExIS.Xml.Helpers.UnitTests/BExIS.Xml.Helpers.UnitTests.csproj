@@ -100,17 +100,6 @@
     </Reference>
     <Reference Include="System.Xml" />
     <Reference Include="System.Xml.Linq" />
-    <Reference Include="Vaiona.Persistence.Api, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\Libraries\Vaiona\Vaiona.Persistence.Api.dll</HintPath>
-    </Reference>
-    <Reference Include="Vaiona.PersistenceProviders.NH">
-      <HintPath>..\..\..\Libraries\Vaiona\Vaiona.PersistenceProviders.NH.dll</HintPath>
-    </Reference>
-    <Reference Include="Vaiona.Utils, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\Libraries\Vaiona\Vaiona.Utils.dll</HintPath>
-    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="XmlDataTuplesHelperTests.cs" />
@@ -155,6 +144,18 @@
     <ProjectReference Include="..\..\Utils\BExIS.Utils\BExIS.Utils.csproj">
       <Project>{782B71C1-707F-4AB1-80E9-90D2880635B4}</Project>
       <Name>BExIS.Utils</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Vaiona\Vaiona.Persistence.Api\Vaiona.Persistence.Api.csproj">
+      <Project>{640bf81d-354a-4bf0-85fc-f0ad587cf8a2}</Project>
+      <Name>Vaiona.Persistence.Api</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Vaiona\Vaiona.PersistenceProviders.NH\Vaiona.PersistenceProviders.NH.csproj">
+      <Project>{2fb8def8-5749-4eae-8588-8a5aaed251a5}</Project>
+      <Name>Vaiona.PersistenceProviders.NH</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Vaiona\Vaiona.Utils\Vaiona.Utils.csproj">
+      <Project>{63fcacaa-9534-4fdd-a082-78dcc06baf28}</Project>
+      <Name>Vaiona.Utils</Name>
     </ProjectReference>
     <ProjectReference Include="..\BExIS.Xml.Helpers\BExIS.Xml.Helpers.csproj">
       <Project>{252f7872-a69c-43a6-84b4-4d2abdbdd9ab}</Project>
