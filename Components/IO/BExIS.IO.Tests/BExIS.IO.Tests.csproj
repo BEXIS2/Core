@@ -105,17 +105,6 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="System.Xml.Linq" />
-    <Reference Include="Vaiona.Entities, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Vaiona\Vaiona.Entities\bin\Debug\Vaiona.Entities.dll</HintPath>
-    </Reference>
-    <Reference Include="Vaiona.PersistenceProviders.NH">
-      <HintPath>..\..\..\Libraries\Vaiona\Vaiona.PersistenceProviders.NH.dll</HintPath>
-    </Reference>
-    <Reference Include="Vaiona.Utils, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Vaiona\Vaiona.Utils\bin\Debug\Vaiona.Utils.dll</HintPath>
-    </Reference>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\App\BExIS.App.Bootstrap\BExIS.App.Bootstrap.csproj">
@@ -183,6 +172,14 @@
     <ProjectReference Include="..\..\Utils\BExIS.Utils\BExIS.Utils.csproj">
       <Project>{782B71C1-707F-4AB1-80E9-90D2880635B4}</Project>
       <Name>BExIS.Utils</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Vaiona\Vaiona.Entities\Vaiona.Entities.csproj">
+      <Project>{0815D220-3625-4E23-BBBC-8152345637FE}</Project>
+      <Name>Vaiona.Entities</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Vaiona\Vaiona.Utils\Vaiona.Utils.csproj">
+      <Project>{63FCACAA-9534-4FDD-A082-78DCC06BAF28}</Project>
+      <Name>Vaiona.Utils</Name>
     </ProjectReference>
     <ProjectReference Include="..\BExIS.IO.DataType.DisplayPattern\BExIS.IO.DataType.DisplayPattern.csproj">
       <Project>{8B2EC2B0-6870-456B-BE2D-B0FB4EA68D83}</Project>
