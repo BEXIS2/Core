@@ -948,7 +948,6 @@
   <ItemGroup>
     <Content Include="App_GlobalResources\EditorLocalization.resx">
       <Generator>GlobalResourceProxyGenerator</Generator>
-      <LastGenOutput>EditorLocalization.designer.cs</LastGenOutput>
     </Content>
   </ItemGroup>
   <ItemGroup>
