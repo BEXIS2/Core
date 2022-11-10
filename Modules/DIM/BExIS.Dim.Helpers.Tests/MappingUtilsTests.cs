@@ -8,7 +8,7 @@ using System.IO;
 using System.Xml.Linq;
 using Vaiona.Persistence.Api;
 
-namespace BExIS.Dim.Helpers.UnitTests
+namespace BExIS.Dim.Helpers.Tests
 {
     [TestFixture()]
     public class MappingUtilsTests
