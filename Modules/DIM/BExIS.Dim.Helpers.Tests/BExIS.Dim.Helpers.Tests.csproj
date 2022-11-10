@@ -46,14 +46,14 @@
     <Reference Include="Antlr3.Runtime, Version=3.5.0.2, Culture=neutral, PublicKeyToken=eb42632606e9261f, processorArchitecture=MSIL">
       <HintPath>..\..\..\packages\Antlr3.Runtime.3.5.1\lib\net40-client\Antlr3.Runtime.dll</HintPath>
     </Reference>
-    <Reference Include="DataAnnotationsValidator, Version=2.1.0.0, Culture=neutral, PublicKeyToken=cd9c89f8de08f74c, processorArchitecture=MSIL">
-      <HintPath>..\..\..\packages\DataAnnotationsValidator.2.1.0\lib\net40\DataAnnotationsValidator.dll</HintPath>
+    <Reference Include="DataAnnotationsValidator, Version=2.2.0.0, Culture=neutral, PublicKeyToken=cd9c89f8de08f74c, processorArchitecture=MSIL">
+      <HintPath>..\..\..\packages\DataAnnotationsValidator.2.2.0\lib\net471\DataAnnotationsValidator.dll</HintPath>
     </Reference>
     <Reference Include="Iesi.Collections, Version=4.0.0.4000, Culture=neutral, PublicKeyToken=aa95f207798dfdb4, processorArchitecture=MSIL">
       <HintPath>..\..\..\packages\Iesi.Collections.4.0.4\lib\net461\Iesi.Collections.dll</HintPath>
     </Reference>
-    <Reference Include="Lucifron.ReST.Library, Version=1.0.0.10, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\..\packages\Lucifron.ReST.Library.1.0.0.10\lib\net452\Lucifron.ReST.Library.dll</HintPath>
+    <Reference Include="Lucifron.ReST.Library, Version=1.0.0.11, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\..\packages\Lucifron.ReST.Library.1.0.0.11\lib\net48\Lucifron.ReST.Library.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="Microsoft.VisualStudio.TestPlatform.TestFramework, Version=14.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
