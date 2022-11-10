@@ -12,7 +12,6 @@ using BExIS.Security.Services.Authorization;
 using BExIS.Security.Services.Objects;
 using BExIS.Security.Services.Utilities;
 using BExIS.Xml.Helpers;
-using Lucifron.ReST.Library.Models;
 using Newtonsoft.Json;
 using RestSharp;
 using RestSharp.Authenticators;

@@ -13,13 +13,13 @@ namespace Resources {
     
     
     /// <summary>
-    ///   Eine stark typisierte Ressourcenklasse zum Suchen von lokalisierten Zeichenfolgen usw.
+    ///    Eine stark typisierte Ressourcenklasse zum Suchen von lokalisierten Zeichenfolgen usw.
     /// </summary>
-    // Diese Klasse wurde von der StronglyTypedResourceBuilder-Klasse
-    // mit einem Tool wie ResGen oder Visual Studio automatisch generiert.
-    // Bearbeiten Sie zum Hinzufügen oder Entfernen eines Members die RESX-Datei, und führen Sie dann ResGen
+    // Diese Klasse wurde von der Klasse "StronglyTypedResourceBuilder"
+    // über ein Tool wie ResGen oder Visual Studio automatisch generiert.
+    // Um einen Member hinzuzufügen oder zu entfernen, bearbeiten Sie die RESX-Datei und führen dann ResGen
     // mit der /str-Option erneut aus, oder Sie erstellen das Visual Studio-Projekt neu.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Web.Application.StronglyTypedResourceProxyBuilder", "16.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Web.Application.StronglyTypedResourceProxyBuilder", "17.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     internal class EditorLocalization {
@@ -33,7 +33,7 @@ namespace Resources {
         }
         
         /// <summary>
-        ///   Gibt die von dieser Klasse verwendete zwischengespeicherte ResourceManager-Instanz zurück.
+        ///    Gibt die zwischengespeicherte ResourceManager-Instanz zurück, die von dieser Klasse verwendet wird.
         /// </summary>
         [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
         internal static global::System.Resources.ResourceManager ResourceManager {
@@ -47,8 +47,8 @@ namespace Resources {
         }
         
         /// <summary>
-        ///   Überschreibt die CurrentUICulture-Eigenschaft des aktuellen Threads für alle
-        ///   Ressourcenlookups, die diese stark typisierte Ressourcenklasse verwenden.
+        ///    Überschreibt die CurrentUICulture-Eigenschaft des aktuellen Threads für alle
+        ///    Ressourcenlookups, die diese stark typisierte Ressourcenklasse verwenden.
         /// </summary>
         [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
         internal static global::System.Globalization.CultureInfo Culture {
@@ -61,7 +61,7 @@ namespace Resources {
         }
         
         /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die Bold ähnelt.
+        ///    Sucht eine lokalisierte Zeichenfolge, die Bold ähnelt.
         /// </summary>
         internal static string Bold {
             get {
@@ -70,7 +70,7 @@ namespace Resources {
         }
         
         /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die Close ähnelt.
+        ///    Sucht eine lokalisierte Zeichenfolge, die Close ähnelt.
         /// </summary>
         internal static string Close {
             get {
@@ -79,7 +79,7 @@ namespace Resources {
         }
         
         /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die Insert hyperlink ähnelt.
+        ///    Sucht eine lokalisierte Zeichenfolge, die Insert hyperlink ähnelt.
         /// </summary>
         internal static string CreateLink {
             get {
@@ -88,7 +88,7 @@ namespace Resources {
         }
         
         /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die Are you sure you want to delete {0}? ähnelt.
+        ///    Sucht eine lokalisierte Zeichenfolge, die Are you sure you want to delete {0}? ähnelt.
         /// </summary>
         internal static string DeleteFile {
             get {
@@ -97,7 +97,7 @@ namespace Resources {
         }
         
         /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die A directory with this name was not found. ähnelt.
+        ///    Sucht eine lokalisierte Zeichenfolge, die A directory with this name was not found. ähnelt.
         /// </summary>
         internal static string DirectoryNotFound {
             get {
@@ -106,7 +106,7 @@ namespace Resources {
         }
         
         /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die Empty Folder ähnelt.
+        ///    Sucht eine lokalisierte Zeichenfolge, die Empty Folder ähnelt.
         /// </summary>
         internal static string EmptyFolder {
             get {
@@ -115,7 +115,7 @@ namespace Resources {
         }
         
         /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die Select font family ähnelt.
+        ///    Sucht eine lokalisierte Zeichenfolge, die Select font family ähnelt.
         /// </summary>
         internal static string FontName {
             get {
@@ -124,7 +124,7 @@ namespace Resources {
         }
         
         /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die (inherited font) ähnelt.
+        ///    Sucht eine lokalisierte Zeichenfolge, die (inherited font) ähnelt.
         /// </summary>
         internal static string FontNameInherit {
             get {
@@ -133,7 +133,7 @@ namespace Resources {
         }
         
         /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die Select font size ähnelt.
+        ///    Sucht eine lokalisierte Zeichenfolge, die Select font size ähnelt.
         /// </summary>
         internal static string FontSize {
             get {
@@ -142,7 +142,7 @@ namespace Resources {
         }
         
         /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die (inherited size) ähnelt.
+        ///    Sucht eine lokalisierte Zeichenfolge, die (inherited size) ähnelt.
         /// </summary>
         internal static string FontSizeInherit {
             get {
@@ -151,7 +151,7 @@ namespace Resources {
         }
         
         /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die Select block type ähnelt.
+        ///    Sucht eine lokalisierte Zeichenfolge, die Select block type ähnelt.
         /// </summary>
         internal static string FormatBlock {
             get {
@@ -160,7 +160,7 @@ namespace Resources {
         }
         
         /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die Indent ähnelt.
+        ///    Sucht eine lokalisierte Zeichenfolge, die Indent ähnelt.
         /// </summary>
         internal static string Indent {
             get {
@@ -169,7 +169,7 @@ namespace Resources {
         }
         
         /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die Insert ähnelt.
+        ///    Sucht eine lokalisierte Zeichenfolge, die Insert ähnelt.
         /// </summary>
         internal static string Insert {
             get {
@@ -178,7 +178,7 @@ namespace Resources {
         }
         
         /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die Insert HTML ähnelt.
+        ///    Sucht eine lokalisierte Zeichenfolge, die Insert HTML ähnelt.
         /// </summary>
         internal static string InsertHtml {
             get {
@@ -187,7 +187,7 @@ namespace Resources {
         }
         
         /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die Insert image ähnelt.
+        ///    Sucht eine lokalisierte Zeichenfolge, die Insert image ähnelt.
         /// </summary>
         internal static string InsertImage {
             get {
@@ -196,7 +196,7 @@ namespace Resources {
         }
         
         /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die Insert ordered list ähnelt.
+        ///    Sucht eine lokalisierte Zeichenfolge, die Insert ordered list ähnelt.
         /// </summary>
         internal static string InsertOrderedList {
             get {
@@ -205,7 +205,7 @@ namespace Resources {
         }
         
         /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die Insert unordered list ähnelt.
+        ///    Sucht eine lokalisierte Zeichenfolge, die Insert unordered list ähnelt.
         /// </summary>
         internal static string InsertUnorderedList {
             get {
@@ -214,7 +214,7 @@ namespace Resources {
         }
         
         /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die The selected file {0} is not valid. Supported file types are {1}. ähnelt.
+        ///    Sucht eine lokalisierte Zeichenfolge, die The selected file {0} is not valid. Supported file types are {1}. ähnelt.
         /// </summary>
         internal static string InvalidFileType {
             get {
@@ -223,7 +223,7 @@ namespace Resources {
         }
         
         /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die Italic ähnelt.
+        ///    Sucht eine lokalisierte Zeichenfolge, die Italic ähnelt.
         /// </summary>
         internal static string Italic {
             get {
@@ -232,7 +232,7 @@ namespace Resources {
         }
         
         /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die Center text ähnelt.
+        ///    Sucht eine lokalisierte Zeichenfolge, die Center text ähnelt.
         /// </summary>
         internal static string JustifyCenter {
             get {
@@ -241,7 +241,7 @@ namespace Resources {
         }
         
         /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die Justify ähnelt.
+        ///    Sucht eine lokalisierte Zeichenfolge, die Justify ähnelt.
         /// </summary>
         internal static string JustifyFull {
             get {
@@ -250,7 +250,7 @@ namespace Resources {
         }
         
         /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die Align text left ähnelt.
+        ///    Sucht eine lokalisierte Zeichenfolge, die Align text left ähnelt.
         /// </summary>
         internal static string JustifyLeft {
             get {
@@ -259,7 +259,7 @@ namespace Resources {
         }
         
         /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die Align text right ähnelt.
+        ///    Sucht eine lokalisierte Zeichenfolge, die Align text right ähnelt.
         /// </summary>
         internal static string JustifyRight {
             get {
@@ -268,7 +268,7 @@ namespace Resources {
         }
         
         /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die Open link in new window ähnelt.
+        ///    Sucht eine lokalisierte Zeichenfolge, die Open link in new window ähnelt.
         /// </summary>
         internal static string OpenInNewWindow {
             get {
@@ -277,7 +277,7 @@ namespace Resources {
         }
         
         /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die or ähnelt.
+        ///    Sucht eine lokalisierte Zeichenfolge, die or ähnelt.
         /// </summary>
         internal static string Or {
             get {
@@ -286,7 +286,7 @@ namespace Resources {
         }
         
         /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die Arrange by: ähnelt.
+        ///    Sucht eine lokalisierte Zeichenfolge, die Arrange by: ähnelt.
         /// </summary>
         internal static string OrderBy {
             get {
@@ -295,7 +295,7 @@ namespace Resources {
         }
         
         /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die Name ähnelt.
+        ///    Sucht eine lokalisierte Zeichenfolge, die Name ähnelt.
         /// </summary>
         internal static string OrderByName {
             get {
@@ -304,7 +304,7 @@ namespace Resources {
         }
         
         /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die Size ähnelt.
+        ///    Sucht eine lokalisierte Zeichenfolge, die Size ähnelt.
         /// </summary>
         internal static string OrderBySize {
             get {
@@ -313,7 +313,7 @@ namespace Resources {
         }
         
         /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die Outdent ähnelt.
+        ///    Sucht eine lokalisierte Zeichenfolge, die Outdent ähnelt.
         /// </summary>
         internal static string Outdent {
             get {
@@ -322,7 +322,7 @@ namespace Resources {
         }
         
         /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die A file with name {0} already exists in the current directory. Do you want to overwrite it? ähnelt.
+        ///    Sucht eine lokalisierte Zeichenfolge, die A file with name {0} already exists in the current directory. Do you want to overwrite it? ähnelt.
         /// </summary>
         internal static string OverwriteFile {
             get {
@@ -331,7 +331,7 @@ namespace Resources {
         }
         
         /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die Strikethrough ähnelt.
+        ///    Sucht eine lokalisierte Zeichenfolge, die Strikethrough ähnelt.
         /// </summary>
         internal static string Strikethrough {
             get {
@@ -340,7 +340,7 @@ namespace Resources {
         }
         
         /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die Styles ähnelt.
+        ///    Sucht eine lokalisierte Zeichenfolge, die Styles ähnelt.
         /// </summary>
         internal static string Style {
             get {
@@ -349,7 +349,7 @@ namespace Resources {
         }
         
         /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die Tooltip ähnelt.
+        ///    Sucht eine lokalisierte Zeichenfolge, die Tooltip ähnelt.
         /// </summary>
         internal static string Tooltip {
             get {
@@ -358,7 +358,7 @@ namespace Resources {
         }
         
         /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die Underline ähnelt.
+        ///    Sucht eine lokalisierte Zeichenfolge, die Underline ähnelt.
         /// </summary>
         internal static string Underline {
             get {
@@ -367,7 +367,7 @@ namespace Resources {
         }
         
         /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die Remove hyperlink ähnelt.
+        ///    Sucht eine lokalisierte Zeichenfolge, die Remove hyperlink ähnelt.
         /// </summary>
         internal static string Unlink {
             get {
@@ -376,7 +376,7 @@ namespace Resources {
         }
         
         /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die Upload ähnelt.
+        ///    Sucht eine lokalisierte Zeichenfolge, die Upload ähnelt.
         /// </summary>
         internal static string UploadFile {
             get {
@@ -385,7 +385,7 @@ namespace Resources {
         }
         
         /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die Web address ähnelt.
+        ///    Sucht eine lokalisierte Zeichenfolge, die Web address ähnelt.
         /// </summary>
         internal static string WebAddress {
             get {

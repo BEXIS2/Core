@@ -7,7 +7,7 @@ using NUnit.Framework;
 using System;
 using System.IO;
 
-namespace BExIS.JSON.Helpers.UnitTests
+namespace BExIS.JSON.Helpers.Tests
 {
     public class MetadataStructureManagerTests
     {
