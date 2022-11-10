@@ -81,13 +81,13 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\Components\DLM\BExIS.Dlm.Services\BExIS.Dlm.Services.csproj">
-      <Project>{c4ca0a99-0af3-4372-a9b7-b9073599bd8b}</Project>
-      <Name>BExIS.Dlm.Services</Name>
-    </ProjectReference>
     <ProjectReference Include="..\..\DLM\BExIS.Dlm.Entities\BExIS.Dlm.Entities.csproj">
       <Project>{b4e7b1bf-01b4-40af-8d19-b8f362167261}</Project>
       <Name>BExIS.Dlm.Entities</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\DLM\BExIS.Dlm.Services\BExIS.Dlm.Services.csproj">
+      <Project>{c4ca0a99-0af3-4372-a9b7-b9073599bd8b}</Project>
+      <Name>BExIS.Dlm.Services</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\Vaiona\Vaiona.Entities\Vaiona.Entities.csproj">
       <Project>{0815d220-3625-4e23-bbbc-8152345637fe}</Project>
