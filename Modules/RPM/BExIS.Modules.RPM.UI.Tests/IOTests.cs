@@ -9,7 +9,7 @@ using BExIS.App.Testing;
 
 namespace BExIS.Modules.RPM.UI.Tests
 {
-    public class Tests
+    public class IOTests
     {
         private TestSetupHelper helper = null;
 

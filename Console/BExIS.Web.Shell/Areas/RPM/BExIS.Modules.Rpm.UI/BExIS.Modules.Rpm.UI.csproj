@@ -116,150 +116,25 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Controllers\StructuresController.cs" />
+    <Compile Include="Helpers\HtmlPrefixScopeExtentions.cs" />
+    <Compile Include="Helpers\RPMSeedDataGenerator.cs" />
+    <Compile Include="Helpers\SeedData\AttributeCreator.cs" />
+    <Compile Include="Helpers\SeedData\MappingReader.cs" />
     <Compile Include="IO\UnitIO.cs" />
     <Compile Include="IO\VariableTemplateIO.cs" />
-    <Compile Include="old\Classes\DataStructureIO.cs" />
-    <Compile Include="old\Controllers\Legacy2\DataStructureEditController.cs" />
-    <Compile Include="old\Controllers\Legacy2\DataStructureIOController.cs" />
-    <Compile Include="old\Controllers\Legacy2\DataStructureSearchController.cs" />
-    <Compile Include="old\Controllers\Legacy2\HelpController.cs" />
-    <Compile Include="old\Controllers\Legacy2\StructuresController.cs" />
-    <Compile Include="old\Controllers\Legacy\DataAttributeController.cs" />
-    <Compile Include="old\Controllers\Legacy\HomeController.cs" />
-    <Compile Include="old\Controllers\Legacy\UnitController.cs" />
-    <Compile Include="old\Helpers\HtmlPrefixScopeExtentions.cs" />
-    <Compile Include="old\Helpers\RPMSeedDataGenerator.cs" />
-    <Compile Include="old\Helpers\SeedData\AttributeCreator.cs" />
-    <Compile Include="old\Helpers\SeedData\MappingReader.cs" />
-    <Compile Include="old\Hooks\DataStructureEditHook.cs" />
-    <Compile Include="old\Models\ConstraintModels.cs" />
-    <Compile Include="old\Models\DataStructureEditModel.cs" />
-    <Compile Include="old\Models\DataStructureSearchModel.cs" />
-    <Compile Include="old\Models\Legacy\DataAttributeModel.cs" />
-    <Compile Include="old\Models\Legacy\DataStructureDesignerModel.cs" />
-    <Compile Include="old\Models\Legacy\DataStructureTreeModel.cs" />
-    <Compile Include="old\Models\Legacy\DataTypeManagerModel.cs" />
-    <Compile Include="old\Models\Legacy\UnitDimenstionModel.cs" />
-    <Compile Include="old\Models\Legacy\UnitManagerModel.cs" />
-    <Compile Include="old\Models\MessageModel.cs" />
-    <Compile Include="old\Models\StructureModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RpmModule.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="old\Content\bootstrap-theme.css" />
-    <Content Include="old\Content\bootstrap-theme.min.css" />
-    <Content Include="old\fonts\glyphicons-halflings-regular.svg" />
     <Content Include="Rpm.Manifest.xml">
       <SubType>Designer</SubType>
     </Content>
-    <Content Include="old\Scripts\2013.2.611\jquery-1.7.1.min.js" />
-    <Content Include="old\Scripts\2013.2.611\jquery.validate.min.js" />
-    <Content Include="old\Scripts\2013.2.611\telerik.all.min.js" />
-    <Content Include="old\Scripts\2013.2.611\telerik.autocomplete.min.js" />
-    <Content Include="old\Scripts\2013.2.611\telerik.calendar.min.js" />
-    <Content Include="old\Scripts\2013.2.611\telerik.chart.min.js" />
-    <Content Include="old\Scripts\2013.2.611\telerik.combobox.min.js" />
-    <Content Include="old\Scripts\2013.2.611\telerik.common.min.js" />
-    <Content Include="old\Scripts\2013.2.611\telerik.datepicker.min.js" />
-    <Content Include="old\Scripts\2013.2.611\telerik.datetimepicker.min.js" />
-    <Content Include="old\Scripts\2013.2.611\telerik.draganddrop.min.js" />
-    <Content Include="old\Scripts\2013.2.611\telerik.editor.min.js" />
-    <Content Include="old\Scripts\2013.2.611\telerik.grid.editing.min.js" />
-    <Content Include="old\Scripts\2013.2.611\telerik.grid.filtering.min.js" />
-    <Content Include="old\Scripts\2013.2.611\telerik.grid.grouping.min.js" />
-    <Content Include="old\Scripts\2013.2.611\telerik.grid.min.js" />
-    <Content Include="old\Scripts\2013.2.611\telerik.grid.reordering.min.js" />
-    <Content Include="old\Scripts\2013.2.611\telerik.grid.resizing.min.js" />
-    <Content Include="old\Scripts\2013.2.611\telerik.imagebrowser.min.js" />
-    <Content Include="old\Scripts\2013.2.611\telerik.list.min.js" />
-    <Content Include="old\Scripts\2013.2.611\telerik.menu.min.js" />
-    <Content Include="old\Scripts\2013.2.611\telerik.panelbar.min.js" />
-    <Content Include="old\Scripts\2013.2.611\telerik.slider.min.js" />
-    <Content Include="old\Scripts\2013.2.611\telerik.splitter.min.js" />
-    <Content Include="old\Scripts\2013.2.611\telerik.tabstrip.min.js" />
-    <Content Include="old\Scripts\2013.2.611\telerik.textbox.min.js" />
-    <Content Include="old\Scripts\2013.2.611\telerik.timepicker.min.js" />
-    <Content Include="old\Scripts\2013.2.611\telerik.treeview.min.js" />
-    <Content Include="old\Scripts\2013.2.611\telerik.upload.min.js" />
-    <Content Include="old\Scripts\2013.2.611\telerik.window.min.js" />
-    <Content Include="old\Scripts\bootstrap.js" />
-    <Content Include="old\Scripts\bootstrap.min.js" />
-    <Content Include="old\Scripts\draggabilly.pkgd.js" />
-    <Content Include="old\Scripts\draggabilly.pkgd.min.js" />
-    <Content Include="old\Scripts\isotope.pkgd.min.js" />
-    <Content Include="old\fonts\glyphicons-halflings-regular.woff" />
-    <Content Include="old\fonts\glyphicons-halflings-regular.ttf" />
-    <Content Include="old\fonts\glyphicons-halflings-regular.eot" />
     <Content Include="Rpm.Settings.json" />
     <None Include="packages.config" />
     <None Include="Properties\PublishProfiles\BexisServer_demo.pubxml" />
     <None Include="Properties\PublishProfiles\BexisServer_test.pubxml" />
     <None Include="Properties\PublishProfiles\FolderProfile.pubxml" />
-    <None Include="old\Scripts\jquery-2.1.4.intellisense.js" />
-    <Content Include="old\Scripts\jquery-2.1.4.js" />
-    <Content Include="old\Scripts\jquery-2.1.4.min.js" />
-    <Content Include="old\Scripts\jquery-migrate-1.2.1.js" />
-    <Content Include="old\Scripts\jquery-migrate-1.2.1.min.js" />
-    <None Include="old\Scripts\jquery.validate-vsdoc.js" />
-    <Content Include="old\Scripts\jquery.validate.js" />
-    <Content Include="old\Scripts\jquery.validate.min.js" />
-    <Content Include="old\Scripts\jquery.validate.unobtrusive.js" />
-    <Content Include="old\Scripts\jquery.validate.unobtrusive.min.js" />
-    <Content Include="old\Scripts\modernizr-2.8.3.js" />
-    <Content Include="old\Scripts\packery.pkgd.bexis.min.js" />
-    <Content Include="old\Scripts\packery.pkgd.js" />
-    <Content Include="old\Scripts\packery.pkgd.min.js" />
-    <Content Include="old\Scripts\respond.js" />
-    <Content Include="old\Scripts\respond.min.js" />
-    <Content Include="old\Stylesheets\DataStructure.css" />
-    <Content Include="old\Stylesheets\DataStructureEdit.css" />
-    <Content Include="old\Stylesheets\DataStructureSearch.css" />
-    <Content Include="old\Stylesheets\RPM.css" />
-    <Content Include="old\Views\Help\Informations.xml" />
-    <Content Include="old\Views\Web.config">
-      <SubType>Designer</SubType>
-    </Content>
-    <Content Include="old\Views\_ViewStart.cshtml" />
     <Content Include="web.config" />
-    <Content Include="old\Views\DataAttribute\AttributeManager.cshtml" />
-    <Content Include="old\Views\DataAttribute\_domainItemView.cshtml" />
-    <Content Include="old\Views\DataAttribute\_editAttribute.cshtml" />
-    <Content Include="old\Views\DataStructureEdit\Index.cshtml" />
-    <Content Include="old\Views\DataStructureEdit\_attributeElement.cshtml" />
-    <Content Include="old\Views\DataStructureEdit\_attributeFilter.cshtml" />
-    <Content Include="old\Views\DataStructureEdit\_attributeSearchResult.cshtml" />
-    <Content Include="old\Views\DataStructureEdit\_dataStructure.cshtml" />
-    <Content Include="old\Views\DataStructureEdit\_dropdown.cshtml" />
-    <Content Include="old\Views\DataStructureEdit\_editAttribute.cshtml" />
-    <Content Include="old\Views\DataStructureEdit\_editUnit.cshtml" />
-    <Content Include="old\Views\DataStructureEdit\_variableElement.cshtml" />
-    <Content Include="old\Views\DataStructureSearch\Index.cshtml" />
-    <Content Include="old\Views\DataStructureSearch\_dataStructuredStructurePreview.cshtml" />
-    <Content Include="old\Views\DataStructureSearch\_datatructureSearchResult.cshtml" />
-    <Content Include="old\Views\Help\Index.cshtml" />
-    <Content Include="old\Views\Home\ClassificationManager.cshtml" />
-    <Content Include="old\Views\Home\DataStructureDesigner.cshtml" />
-    <Content Include="old\Views\Home\DatatypeManager.cshtml" />
-    <Content Include="old\Views\Home\Index.cshtml" />
-    <Content Include="old\Views\Home\_addVariable.cshtml" />
-    <Content Include="old\Views\Home\_dataStructureSaveAs.cshtml" />
-    <Content Include="old\Views\Home\_editClassifier.cshtml" />
-    <Content Include="old\Views\Home\_editDataType.cshtml" />
-    <Content Include="old\Views\Home\_editVariable.cshtml" />
-    <Content Include="old\Views\Home\_showDatasets.cshtml" />
-    <Content Include="old\Views\Home\_showDataStructure.cshtml" />
-    <Content Include="old\Views\Home\_showDataStructureInfo.cshtml" />
-    <Content Include="old\Views\Shared\_createDataStructure.cshtml" />
-    <Content Include="old\Views\Shared\_domainConstraintView.cshtml" />
-    <Content Include="old\Views\Shared\_message.cshtml" />
-    <Content Include="old\Views\Shared\_messageWindow.cshtml" />
-    <Content Include="old\Views\Shared\_patternConstraintView.cshtml" />
-    <Content Include="old\Views\Shared\_rangeConstraintView.cshtml" />
-    <Content Include="old\Views\Unit\UnitManager.cshtml" />
-    <Content Include="old\Views\Unit\_editUnit.cshtml" />
-    <Content Include="old\Views\DataStructureEdit\_missingValueElement.cshtml" />
-    <Content Include="old\Scripts\jquery-2.1.4.min.map" />
     <None Include="web.Debug.config">
       <DependentUpon>web.config</DependentUpon>
     </None>
@@ -345,9 +220,7 @@
       <Name>BExIS.Xml.Helpers</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="old\Content\Images\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <Analyzer Include="..\..\..\..\..\packages\Microsoft.CodeAnalysis.VersionCheckAnalyzer.3.3.0\analyzers\dotnet\cs\Microsoft.CodeAnalysis.VersionCheckAnalyzer.resources.dll" />
     <Analyzer Include="..\..\..\..\..\packages\Microsoft.CodeAnalysis.VersionCheckAnalyzer.3.3.0\analyzers\dotnet\Microsoft.CodeAnalysis.VersionCheckAnalyzer.dll" />
