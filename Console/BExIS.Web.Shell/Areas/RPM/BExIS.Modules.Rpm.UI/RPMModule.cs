@@ -1,4 +1,7 @@
 ﻿using BExIS.Modules.Rpm.UI.Helpers;
+using System;
+using Vaiona.Logging;
+using Vaiona.Web.Mvc.Modularity;
 
 namespace BExIS.Modules.Rpm.UI
 {

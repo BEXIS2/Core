@@ -2,6 +2,13 @@
 //using BExIS.IO.Transform;
 //using BExIS.IO.Transform.Input;
 
+using BExIS.Dlm.Entities.DataStructure;
+using BExIS.Dlm.Services.DataStructure;
+using System;
+using System.IO;
+using System.Linq;
+using System.Text;
+
 namespace BExIS.Modules.Rpm.UI.Helpers.SeedData
 {
     public class MappingReader

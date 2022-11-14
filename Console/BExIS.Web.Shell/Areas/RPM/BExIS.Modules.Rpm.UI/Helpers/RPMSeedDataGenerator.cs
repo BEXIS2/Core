@@ -1,9 +1,20 @@
-﻿using BExIS.Modules.Rpm.UI.Helpers.SeedData;
+﻿using BExIS.Dlm.Entities.Administration;
+using BExIS.Dlm.Services.Administration;
+using BExIS.Modules.Rpm.UI.Helpers.SeedData;
+using BExIS.Security.Entities.Objects;
+using BExIS.Security.Services.Authorization;
+using BExIS.Security.Services.Objects;
+using System.Collections.Generic;
+using System.Data;
+using System.Linq;
+using Vaiona.Utils.Cfg;
+using Vaiona.Web.Mvc.Modularity;
 
 namespace BExIS.Modules.Rpm.UI.Helpers
 {
     public class RPMSeedDataGenerator : IModuleSeedDataGenerator
     {
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Reliability", "CA2000:Objekte verwerfen, bevor Bereich verloren geht", Justification = "<Ausstehend>")]
         public void GenerateSeedData()
         {
 
@@ -120,6 +131,7 @@ namespace BExIS.Modules.Rpm.UI.Helpers
 
             //// read attributes from csv file
             DataTable mappedAttributes = mappingReader.readAttributes(filePath);
+
             // free memory
             mappedDataTypes.Clear();
             mappedDimensions.Clear();
@@ -127,8 +139,7 @@ namespace BExIS.Modules.Rpm.UI.Helpers
             //attributeCreator.CreateAttributes(ref mappedAttributes);
 
             createResearchPlan();
-            //createSeedDataTypes();
-            //createSIUnits();
+
             //createEmlDatasetAdv();
             //createABCD();
 

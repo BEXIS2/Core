@@ -805,7 +805,7 @@ namespace BExIS.IO.Transform.Input
                 #region subset of row
 
                 List<string> subset = new List<string>();
-                int cellCount = activeCells.Count;
+                int cellCount = activeCells.Where(v=>v==true).ToList().Count;
 
                 char d = AsciiFileReaderInfo.GetSeperator(delimeter);
                 string[] cells = line.Split(d);

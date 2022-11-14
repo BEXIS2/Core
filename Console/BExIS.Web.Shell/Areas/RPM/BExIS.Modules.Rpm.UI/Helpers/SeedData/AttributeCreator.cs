@@ -1,4 +1,15 @@
-﻿namespace BExIS.Modules.Rpm.UI.Helpers.SeedData
+﻿using BExIS.Dlm.Entities.DataStructure;
+using BExIS.Dlm.Services.DataStructure;
+using BExIS.Dlm.Services.TypeSystem;
+using BExIS.IO.DataType.DisplayPattern;
+using System;
+using System.Collections.Generic;
+using System.Data;
+using System.Linq;
+using System.Xml;
+using Vaiona.Persistence.Api;
+
+namespace BExIS.Modules.Rpm.UI.Helpers.SeedData
 {
     public class AttributeCreator
     {

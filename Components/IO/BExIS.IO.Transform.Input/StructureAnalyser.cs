@@ -269,7 +269,7 @@ namespace BExIS.IO.Transform.Input
                     var abbrSimularity = ro.Similarity(input, unit.Abbreviation);
                     var highest = Math.Max(nameSimularity, abbrSimularity);
 
-                    if (highest >= similarity)
+                    if (string.IsNullOrEmpty(input) || highest >= similarity)
                     {
                         matches.Add(unit, highest);
                     }
