@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Microsoft.Practices.Unity;
-using System.Web;
+﻿using Microsoft.Practices.Unity;
+using System;
 
 namespace Vaiona.IoC.Unity
 {
@@ -30,7 +26,7 @@ namespace Vaiona.IoC.Unity
         {
             return UnityPerRequestHttpModule.GetValue(key);
         }
-        
+
         public override void RemoveValue()
         {
             var disposable = GetValue() as IDisposable;

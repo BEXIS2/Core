@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Xml.Linq;
+﻿using System.Xml.Linq;
 
 namespace Vaiona.Web.Mvc.Modularity
 {
@@ -11,7 +6,7 @@ namespace Vaiona.Web.Mvc.Modularity
     {
         private XElement xManifest; //maybe not needed
 
-        public ModuleManifest(string manifestPath):
+        public ModuleManifest(string manifestPath) :
             this(XElement.Load(manifestPath))
         {
             // nothing is needed.

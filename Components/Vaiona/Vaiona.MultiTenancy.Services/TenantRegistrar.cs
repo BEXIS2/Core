@@ -1,12 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Vaiona.Model.MTnt;
 using Vaiona.MultiTenancy.Api;
-using Vaiona.Utils.Cfg;
 
 namespace Vaiona.MultiTenancy.Services
 {
@@ -101,9 +96,9 @@ namespace Vaiona.MultiTenancy.Services
             // It is not allowed to delete an ACTIVE tenant. If needed, the chosen tenant must be inctivated first.
             if (tenant.Status == TenantStatus.Active)
                 throw new Exception(string.Format("Tenant '{0}' could not be unregistered. It is active.", id));
-            
+
             // There MUST at least one active tenant remaining registered after deleting this one
-            if(store.Tenants.Where(p=>p.Status == TenantStatus.Active).Count() <= 0)
+            if (store.Tenants.Where(p => p.Status == TenantStatus.Active).Count() <= 0)
                 throw new Exception(string.Format("Tenant '{0}' could not be unregistered. There would not be another active tenant after unregistering '{0}'.", id));
 
             try

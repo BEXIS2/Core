@@ -18,13 +18,11 @@ using Lucene.Net.Search;
 using Lucene.Net.Store;
 using System;
 using System.Collections.Generic;
-using System.Configuration;
 using System.Data;
 using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Xml;
-using Vaiona.IoC;
 using Vaiona.Persistence.Api;
 
 /// <summary>
@@ -144,7 +142,7 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Indexer
             pathIndex = FSDirectory.Open(new DirectoryInfo(luceneIndexPath));
             autoCompleteIndex = FSDirectory.Open(new DirectoryInfo(autoCompleteIndexPath));
 
-           
+
 
             using (var bexisAnalyzer = new BexisAnalyzer())
             using (var nGramAnalyzer = new NGramAnalyzer())
@@ -178,7 +176,7 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Indexer
             List<string> errors = new List<string>();
             try
             {
-                
+
                 IList<long> ids = dm.GetDatasetLatestIds();
                 IList<long> ids_rev = ids.Reverse().ToList();
 
@@ -209,7 +207,7 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Indexer
                 if (errors.Count > 0)
                     throw new Exception(string.Join("\n\r", errors));
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 throw ex;
 
@@ -219,7 +217,7 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Indexer
                 dm.Dispose();
                 GC.Collect();
 
-                
+
 
                 var es = new EmailService();
                 es.Send(MessageHelper.GetSearchReIndexHeader(),
@@ -354,11 +352,11 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Indexer
 
             if (BexisIndexSearcher.searcher != null)
             {
-                if(BexisIndexSearcher.searcher.IndexReader!=null)BexisIndexSearcher.searcher?.IndexReader?.Dispose();
+                if (BexisIndexSearcher.searcher.IndexReader != null) BexisIndexSearcher.searcher?.IndexReader?.Dispose();
                 BexisIndexSearcher.searcher.Dispose();
             }
 
-            
+
             BexisIndexSearcher.searcher = new IndexSearcher(_Reader);
             BexisIndexSearcher._Reader = _Reader;
             indexWriter.GetReader().Dispose();

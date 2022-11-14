@@ -1,11 +1,11 @@
-﻿using System;
+﻿using NUnit.Framework;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
-using NUnit.Framework;
 
 namespace BExIS.App.Testing
 {
@@ -26,7 +26,7 @@ namespace BExIS.App.Testing
         /// performs the initial setup for the tests. This runs once per test, NOT per class!
         protected void SetUp()
         {
-           
+
         }
 
         [TearDown]
@@ -72,14 +72,14 @@ namespace BExIS.App.Testing
 
                     String line;
                     int count = 0;
-                    
+
                     //bool found = false;
                     lines = new List<string>();
                     while ((line = streamReader.ReadLine()) != null)
                     {
                         count++;
 
-                        if ((Regex.IsMatch(line, regexPatternManager) 
+                        if ((Regex.IsMatch(line, regexPatternManager)
                             && !line.Trim().StartsWith("using")
                             && !line.Trim().StartsWith("*")
                             && !line.Trim().StartsWith("/")
@@ -90,7 +90,7 @@ namespace BExIS.App.Testing
                             && !line.Trim().Contains("ImportMetadataStructureTaskManager")
                             && !line.Trim().Contains("EasyUploadTaskManager")
                             && !line.Trim().Contains("TaskManager")
-                            && !line.Trim().Contains("base(")) || 
+                            && !line.Trim().Contains("base(")) ||
                             (Regex.IsMatch(line, regexPatternDispose) && !line.Contains("guow")))
                         {
                             bool isInit = false;
@@ -113,17 +113,17 @@ namespace BExIS.App.Testing
                                 //e.g line = dm.dispose();
                                 var name = line.Split('.')[0];
                                 name = name.Trim();
-                                if(name.Contains('?'))name=name.Replace("?",string.Empty);
+                                if (name.Contains('?')) name = name.Replace("?", string.Empty);
 
                                 for (int i = 0; i < lines.Count; i++)
                                 {
                                     var l = lines[i];
                                     if (l.Contains(name)) lines.RemoveAt(i);
                                 }
-                                
+
                             }
 
-                            
+
                         }
                     }
 
@@ -145,7 +145,7 @@ namespace BExIS.App.Testing
             }
 
             Debug.WriteLine("********************");
-            Debug.WriteLine("open: "+countAll);
+            Debug.WriteLine("open: " + countAll);
             Debug.WriteLine("********************");
         }
 

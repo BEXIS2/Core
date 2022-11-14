@@ -3,7 +3,6 @@
 //!----------------------------------------------------------
 //! MicrosoftMvcValidation.js
 
-
 Type.registerNamespace('Sys.Mvc');
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -11,30 +10,25 @@ Type.registerNamespace('Sys.Mvc');
 
 Sys.Mvc.$create_Validation = function Sys_Mvc_Validation() { return {}; }
 
-
 ////////////////////////////////////////////////////////////////////////////////
 // Sys.Mvc.JsonValidationField
 
 Sys.Mvc.$create_JsonValidationField = function Sys_Mvc_JsonValidationField() { return {}; }
-
 
 ////////////////////////////////////////////////////////////////////////////////
 // Sys.Mvc.JsonValidationOptions
 
 Sys.Mvc.$create_JsonValidationOptions = function Sys_Mvc_JsonValidationOptions() { return {}; }
 
-
 ////////////////////////////////////////////////////////////////////////////////
 // Sys.Mvc.JsonValidationRule
 
 Sys.Mvc.$create_JsonValidationRule = function Sys_Mvc_JsonValidationRule() { return {}; }
 
-
 ////////////////////////////////////////////////////////////////////////////////
 // Sys.Mvc.ValidationContext
 
 Sys.Mvc.$create_ValidationContext = function Sys_Mvc_ValidationContext() { return {}; }
-
 
 ////////////////////////////////////////////////////////////////////////////////
 // Sys.Mvc.NumberValidator
@@ -48,7 +42,6 @@ Sys.Mvc.NumberValidator.create = function Sys_Mvc_NumberValidator$create(rule) {
     return Function.createDelegate(new Sys.Mvc.NumberValidator(), new Sys.Mvc.NumberValidator().validate);
 }
 Sys.Mvc.NumberValidator.prototype = {
-    
     validate: function Sys_Mvc_NumberValidator$validate(value, context) {
         /// <param name="value" type="String">
         /// </param>
@@ -62,7 +55,6 @@ Sys.Mvc.NumberValidator.prototype = {
         return (!isNaN(n));
     }
 }
-
 
 ////////////////////////////////////////////////////////////////////////////////
 // Sys.Mvc.FormContext
@@ -190,7 +182,7 @@ Sys.Mvc.FormContext._parseJsonOptions = function Sys_Mvc_FormContext$_parseJsonO
         registeredValidatorCallbacks = [];
         formElement.validationCallbacks = registeredValidatorCallbacks;
     }
-    registeredValidatorCallbacks.push(Function.createDelegate(null, function() {
+    registeredValidatorCallbacks.push(Function.createDelegate(null, function () {
         return Sys.Mvc._validationUtil.arrayIsNullOrEmpty(formContext.validate('submit'));
     }));
     return formContext;
@@ -203,13 +195,13 @@ Sys.Mvc.FormContext.prototype = {
     _validationSummaryULElement: null,
     _formElement: null,
     replaceValidationSummary: false,
-    
+
     addError: function Sys_Mvc_FormContext$addError(message) {
         /// <param name="message" type="String">
         /// </param>
-        this.addErrors([ message ]);
+        this.addErrors([message]);
     },
-    
+
     addErrors: function Sys_Mvc_FormContext$addErrors(messages) {
         /// <param name="messages" type="Array" elementType="String">
         /// </param>
@@ -218,12 +210,12 @@ Sys.Mvc.FormContext.prototype = {
             this._onErrorCountChanged();
         }
     },
-    
+
     clearErrors: function Sys_Mvc_FormContext$clearErrors() {
         Array.clear(this._errors);
         this._onErrorCountChanged();
     },
-    
+
     _displayError: function Sys_Mvc_FormContext$_displayError() {
         if (this._validationSummaryElement) {
             if (this._validationSummaryULElement) {
@@ -238,7 +230,7 @@ Sys.Mvc.FormContext.prototype = {
             Sys.UI.DomElement.addCssClass(this._validationSummaryElement, Sys.Mvc.FormContext._validationSummaryErrorCss);
         }
     },
-    
+
     _displaySuccess: function Sys_Mvc_FormContext$_displaySuccess() {
         var validationSummaryElement = this._validationSummaryElement;
         if (validationSummaryElement) {
@@ -250,12 +242,12 @@ Sys.Mvc.FormContext.prototype = {
             Sys.UI.DomElement.addCssClass(validationSummaryElement, Sys.Mvc.FormContext._validationSummaryValidCss);
         }
     },
-    
+
     enableDynamicValidation: function Sys_Mvc_FormContext$enableDynamicValidation() {
         Sys.UI.DomEvent.addHandler(this._formElement, 'click', this._onClickHandler);
         Sys.UI.DomEvent.addHandler(this._formElement, 'submit', this._onSubmitHandler);
     },
-    
+
     _findSubmitButton: function Sys_Mvc_FormContext$_findSubmitButton(element) {
         /// <param name="element" type="Object" domElement="true">
         /// </param>
@@ -276,13 +268,13 @@ Sys.Mvc.FormContext.prototype = {
         }
         return null;
     },
-    
+
     _form_OnClick: function Sys_Mvc_FormContext$_form_OnClick(e) {
         /// <param name="e" type="Sys.UI.DomEvent">
         /// </param>
         this._submitButtonClicked = this._findSubmitButton(e.target);
     },
-    
+
     _form_OnSubmit: function Sys_Mvc_FormContext$_form_OnSubmit(e) {
         /// <param name="e" type="Sys.UI.DomEvent">
         /// </param>
@@ -296,7 +288,7 @@ Sys.Mvc.FormContext.prototype = {
             e.preventDefault();
         }
     },
-    
+
     _onErrorCountChanged: function Sys_Mvc_FormContext$_onErrorCountChanged() {
         if (!this._errors.length) {
             this._displaySuccess();
@@ -305,7 +297,7 @@ Sys.Mvc.FormContext.prototype = {
             this._displayError();
         }
     },
-    
+
     validate: function Sys_Mvc_FormContext$validate(eventName) {
         /// <param name="eventName" type="String">
         /// </param>
@@ -328,7 +320,6 @@ Sys.Mvc.FormContext.prototype = {
         return errors;
     }
 }
-
 
 ////////////////////////////////////////////////////////////////////////////////
 // Sys.Mvc.FieldContext
@@ -388,13 +379,13 @@ Sys.Mvc.FieldContext.prototype = {
     formContext: null,
     replaceValidationMessageContents: false,
     validationMessageElement: null,
-    
+
     addError: function Sys_Mvc_FieldContext$addError(message) {
         /// <param name="message" type="String">
         /// </param>
-        this.addErrors([ message ]);
+        this.addErrors([message]);
     },
-    
+
     addErrors: function Sys_Mvc_FieldContext$addErrors(messages) {
         /// <param name="messages" type="Array" elementType="String">
         /// </param>
@@ -403,12 +394,12 @@ Sys.Mvc.FieldContext.prototype = {
             this._onErrorCountChanged();
         }
     },
-    
+
     clearErrors: function Sys_Mvc_FieldContext$clearErrors() {
         Array.clear(this._errors);
         this._onErrorCountChanged();
     },
-    
+
     _displayError: function Sys_Mvc_FieldContext$_displayError() {
         var validationMessageElement = this.validationMessageElement;
         if (validationMessageElement) {
@@ -425,7 +416,7 @@ Sys.Mvc.FieldContext.prototype = {
             Sys.UI.DomElement.addCssClass(element, Sys.Mvc.FieldContext._inputElementErrorCss);
         }
     },
-    
+
     _displaySuccess: function Sys_Mvc_FieldContext$_displaySuccess() {
         var validationMessageElement = this.validationMessageElement;
         if (validationMessageElement) {
@@ -442,7 +433,7 @@ Sys.Mvc.FieldContext.prototype = {
             Sys.UI.DomElement.addCssClass(element, Sys.Mvc.FieldContext._inputElementValidCss);
         }
     },
-    
+
     _element_OnBlur: function Sys_Mvc_FieldContext$_element_OnBlur(e) {
         /// <param name="e" type="Sys.UI.DomEvent">
         /// </param>
@@ -450,13 +441,13 @@ Sys.Mvc.FieldContext.prototype = {
             this.validate('blur');
         }
     },
-    
+
     _element_OnChange: function Sys_Mvc_FieldContext$_element_OnChange(e) {
         /// <param name="e" type="Sys.UI.DomEvent">
         /// </param>
         e.target[Sys.Mvc.FieldContext._hasTextChangedTag] = true;
     },
-    
+
     _element_OnInput: function Sys_Mvc_FieldContext$_element_OnInput(e) {
         /// <param name="e" type="Sys.UI.DomEvent">
         /// </param>
@@ -465,7 +456,7 @@ Sys.Mvc.FieldContext.prototype = {
             this.validate('input');
         }
     },
-    
+
     _element_OnPropertyChange: function Sys_Mvc_FieldContext$_element_OnPropertyChange(e) {
         /// <param name="e" type="Sys.UI.DomEvent">
         /// </param>
@@ -476,7 +467,7 @@ Sys.Mvc.FieldContext.prototype = {
             }
         }
     },
-    
+
     enableDynamicValidation: function Sys_Mvc_FieldContext$enableDynamicValidation() {
         var elements = this.elements;
         for (var i = 0; i < elements.length; i++) {
@@ -494,7 +485,7 @@ Sys.Mvc.FieldContext.prototype = {
             Sys.UI.DomEvent.addHandler(element, 'blur', this._onBlurHandler);
         }
     },
-    
+
     _getErrorString: function Sys_Mvc_FieldContext$_getErrorString(validatorReturnValue, fieldErrorMessage) {
         /// <param name="validatorReturnValue" type="Object">
         /// </param>
@@ -510,13 +501,13 @@ Sys.Mvc.FieldContext.prototype = {
         }
         return null;
     },
-    
+
     _getStringValue: function Sys_Mvc_FieldContext$_getStringValue() {
         /// <returns type="String"></returns>
         var elements = this.elements;
         return (elements.length > 0) ? elements[0].value : null;
     },
-    
+
     _markValidationFired: function Sys_Mvc_FieldContext$_markValidationFired() {
         var elements = this.elements;
         for (var i = 0; i < elements.length; i++) {
@@ -524,7 +515,7 @@ Sys.Mvc.FieldContext.prototype = {
             element[Sys.Mvc.FieldContext._hasValidationFiredTag] = true;
         }
     },
-    
+
     _onErrorCountChanged: function Sys_Mvc_FieldContext$_onErrorCountChanged() {
         if (!this._errors.length) {
             this._displaySuccess();
@@ -533,7 +524,7 @@ Sys.Mvc.FieldContext.prototype = {
             this._displayError();
         }
     },
-    
+
     validate: function Sys_Mvc_FieldContext$validate(eventName) {
         /// <param name="eventName" type="String">
         /// </param>
@@ -559,7 +550,6 @@ Sys.Mvc.FieldContext.prototype = {
         return errors;
     }
 }
-
 
 ////////////////////////////////////////////////////////////////////////////////
 // Sys.Mvc.RangeValidator
@@ -587,7 +577,7 @@ Sys.Mvc.RangeValidator.create = function Sys_Mvc_RangeValidator$create(rule) {
 Sys.Mvc.RangeValidator.prototype = {
     _minimum: null,
     _maximum: null,
-    
+
     validate: function Sys_Mvc_RangeValidator$validate(value, context) {
         /// <param name="value" type="String">
         /// </param>
@@ -601,7 +591,6 @@ Sys.Mvc.RangeValidator.prototype = {
         return (!isNaN(n) && this._minimum <= n && n <= this._maximum);
     }
 }
-
 
 ////////////////////////////////////////////////////////////////////////////////
 // Sys.Mvc.RegularExpressionValidator
@@ -622,7 +611,7 @@ Sys.Mvc.RegularExpressionValidator.create = function Sys_Mvc_RegularExpressionVa
 }
 Sys.Mvc.RegularExpressionValidator.prototype = {
     _pattern: null,
-    
+
     validate: function Sys_Mvc_RegularExpressionValidator$validate(value, context) {
         /// <param name="value" type="String">
         /// </param>
@@ -637,7 +626,6 @@ Sys.Mvc.RegularExpressionValidator.prototype = {
         return (!Sys.Mvc._validationUtil.arrayIsNullOrEmpty(matches) && matches[0].length === value.length);
     }
 }
-
 
 ////////////////////////////////////////////////////////////////////////////////
 // Sys.Mvc.RequiredValidator
@@ -722,7 +710,6 @@ Sys.Mvc.RequiredValidator._validateTextualInput = function Sys_Mvc_RequiredValid
     return (!Sys.Mvc._validationUtil.stringIsNullOrEmpty(element.value));
 }
 Sys.Mvc.RequiredValidator.prototype = {
-    
     validate: function Sys_Mvc_RequiredValidator$validate(value, context) {
         /// <param name="value" type="String">
         /// </param>
@@ -746,7 +733,6 @@ Sys.Mvc.RequiredValidator.prototype = {
         return true;
     }
 }
-
 
 ////////////////////////////////////////////////////////////////////////////////
 // Sys.Mvc.StringLengthValidator
@@ -774,7 +760,7 @@ Sys.Mvc.StringLengthValidator.create = function Sys_Mvc_StringLengthValidator$cr
 Sys.Mvc.StringLengthValidator.prototype = {
     _maxLength: 0,
     _minLength: 0,
-    
+
     validate: function Sys_Mvc_StringLengthValidator$validate(value, context) {
         /// <param name="value" type="String">
         /// </param>
@@ -787,7 +773,6 @@ Sys.Mvc.StringLengthValidator.prototype = {
         return (this._minLength <= value.length && value.length <= this._maxLength);
     }
 }
-
 
 ////////////////////////////////////////////////////////////////////////////////
 // Sys.Mvc._validationUtil
@@ -831,7 +816,6 @@ Sys.Mvc._validationUtil.setInnerText = function Sys_Mvc__validationUtil$setInner
     element.appendChild(textNode);
 }
 
-
 ////////////////////////////////////////////////////////////////////////////////
 // Sys.Mvc.ValidatorRegistry
 
@@ -850,7 +834,6 @@ Sys.Mvc.ValidatorRegistry._getDefaultValidators = function Sys_Mvc_ValidatorRegi
     /// <returns type="Object"></returns>
     return { required: Function.createDelegate(null, Sys.Mvc.RequiredValidator.create), length: Function.createDelegate(null, Sys.Mvc.StringLengthValidator.create), regex: Function.createDelegate(null, Sys.Mvc.RegularExpressionValidator.create), range: Function.createDelegate(null, Sys.Mvc.RangeValidator.create), number: Function.createDelegate(null, Sys.Mvc.NumberValidator.create) };
 }
-
 
 Sys.Mvc.NumberValidator.registerClass('Sys.Mvc.NumberValidator');
 Sys.Mvc.FormContext.registerClass('Sys.Mvc.FormContext');
@@ -877,7 +860,7 @@ Sys.Mvc.ValidatorRegistry.validators = Sys.Mvc.ValidatorRegistry._getDefaultVali
 // -----------------------------------
 
 // register validation
-Sys.Application.add_load(function() {
-  Sys.Application.remove_load(arguments.callee);
-  Sys.Mvc.FormContext._Application_Load();
+Sys.Application.add_load(function () {
+    Sys.Application.remove_load(arguments.callee);
+    Sys.Mvc.FormContext._Application_Load();
 });

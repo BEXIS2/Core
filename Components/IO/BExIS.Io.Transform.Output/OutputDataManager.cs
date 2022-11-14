@@ -2,7 +2,6 @@
 using BExIS.Dlm.Services.Data;
 using BExIS.Dlm.Services.DataStructure;
 using BExIS.Xml.Helpers;
-using DocumentFormat.OpenXml.Office2010.Excel;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -63,7 +62,7 @@ namespace BExIS.IO.Transform.Output
                         {
                             contentDescriptorTitle = "generatedCSV" + nameExt;
                             ext = ".csv";
-                            textSeperator = TextSeperator.semicolon;
+                            textSeperator = TextSeperator.comma;
                             break;
                         }
                     case "text/tsv":
@@ -78,7 +77,7 @@ namespace BExIS.IO.Transform.Output
                         {
                             contentDescriptorTitle = "generatedTXT" + nameExt;
                             ext = ".txt";
-                            textSeperator = TextSeperator.tab;
+                            textSeperator = TextSeperator.semicolon;
                             break;
                         }
                 }
@@ -145,7 +144,7 @@ namespace BExIS.IO.Transform.Output
                     it will be rebuilt into the case here*/
                     {
                         ext = ".csv";
-                        textSeperator = TextSeperator.semicolon;
+                        textSeperator = TextSeperator.comma;
                         break;
                     }
                 case "text/tsv":
@@ -158,7 +157,7 @@ namespace BExIS.IO.Transform.Output
                 default:
                     {
                         ext = ".txt";
-                        textSeperator = TextSeperator.tab;
+                        textSeperator = TextSeperator.semicolon;
                         break;
                     }
             }
@@ -203,6 +202,17 @@ namespace BExIS.IO.Transform.Output
             return path;
         }
 
+
+
+        /// <summary>
+        /// version id = 0 == latest version
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="versionId"></param>
+        /// <param name="createAsTemplate"></param>
+        /// <param name="data"></param>
+        /// <param name="withUnits"></param>
+        /// <returns></returns>
         public string GenerateExcelFile(long id, long versionId, bool createAsTemplate, DataTable data = null, bool withUnits = false)
         {
             string mimeType = "";
@@ -262,7 +272,7 @@ namespace BExIS.IO.Transform.Output
 
                 if (data == null)
                 {
-                    data = getData(id,versionId);
+                    data = getData(id, versionId);
                 }
 
                 long datastuctureId = datasetVersion.Dataset.DataStructure.Id;
@@ -413,7 +423,7 @@ namespace BExIS.IO.Transform.Output
                 int versionNr = dm.GetDatasetVersionNr(datasetVersion);
 
                 // create the generated FileStream and determine its location
-                string dynamicPath = IOHelper.GetDynamicStorePath(datasetId, versionNr, "data"+nameExt, ext);
+                string dynamicPath = IOHelper.GetDynamicStorePath(datasetId, versionNr, "data" + nameExt, ext);
                 //Register the generated data FileStream as a resource of the current dataset version
                 //ContentDescriptor generatedDescriptor = new ContentDescriptor()
                 //{
@@ -497,13 +507,13 @@ namespace BExIS.IO.Transform.Output
                 // if versionid = 0 - get latest Version
                 // if version is not 0
                 // check if version is latest version
-                if (id != 0 && (versionId == 0 ||dm.GetDatasetLatestVersionId(id).Equals(versionId)))
+                if (id != 0 && (versionId == 0 || dm.GetDatasetLatestVersionId(id).Equals(versionId)))
                 {
-                        DataTable data;
-                    
-                        data = dm.GetLatestDatasetVersionTuples(id);
-                        data.Strip();
-                        return data;
+                    DataTable data;
+
+                    data = dm.GetLatestDatasetVersionTuples(id);
+                    data.Strip();
+                    return data;
                 }
 
 
@@ -578,14 +588,14 @@ namespace BExIS.IO.Transform.Output
             return newDt;
         }
 
-        public static DataTable SkipAndTakeDataTable(DataTable dt, int skip = 0, int take = 0)
-        {
-            // skip and take higher 0 use both
-            if (skip > 0 && take > 0)
-                return dt.AsEnumerable().Skip(skip*take).Take(take).CopyToDataTable();
+        //public static DataTable SkipAndTakeDataTable(DataTable dt, int skip = 0, int take = 0)
+        //{
+        //    // skip and take higher 0 use both
+        //    if (skip > 0 && take > 0)
+        //        return dt.AsEnumerable().Skip(skip * take).Take(take).CopyToDataTable();
 
-            return dt;
-        }
+        //    return dt;
+        //}
 
         public static void ClearTempDirectory()
         {

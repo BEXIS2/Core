@@ -17,10 +17,6 @@ let attachmentHook;
 
 $:addtionalhooks= [];
 
-// onMount(async () => {
-//   seperateHooks(hooks);
-// })
-
 function seperateHooks(hooks)
 {
   hooks.forEach(element => {
@@ -37,14 +33,14 @@ function seperateHooks(hooks)
 </script>
  {#if addtionalhooks} <!-- if hooks list is loaded render hooks -->
 
- <HookContainer displayName = {attachmentHook.displayName} let:errorHandler let:successHandler>
+ <HookContainer {...attachmentHook} let:errorHandler let:successHandler>
   <div slot="view">
     <Attachments {id} {version} hook = {attachmentHook}  on:error={(e)=> errorHandler(e)} on:success={(e)=> successHandler(e)} />
   </div>
 </HookContainer>
 
  {#each addtionalhooks as hook}
-  <HookContainer displayName = {hook.displayName}>
+  <HookContainer {...hook}>
     <div slot="view">
       <Hook {id} {version} {...hook} />
     </div>

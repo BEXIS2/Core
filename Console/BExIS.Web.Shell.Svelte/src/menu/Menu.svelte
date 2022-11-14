@@ -27,7 +27,6 @@ import {hosturl} from '../stores/store.js'
 let isOpen = false;
  const toggle = () => (isOpen = !isOpen);
 </script>
-
 <Navbar id="bexis2-nav-bar" light expand="md" class="fixed-top" >
   <NavbarBrand href="/" class="bexis2-nav-brand">
     {#if menu.Logo}
@@ -67,8 +66,7 @@ let isOpen = false;
 
           
         </Nav>
-        {:else} <!-- while data is not loaded show a loading information -->
-          <Spinner color="primary" size="sm" type ="grow" text-center />
+
         {/if}
   </Collapse>
 </Navbar>
@@ -138,6 +136,10 @@ let isOpen = false;
 
   :global(#bexis2-nav-bar > div > div > ul > li.dropdown.show.nav-item > div > button > a) {
       font-size: 14px;
+  }
+
+  :global(#bexis2-nav-bar > div > div > ul > li.dropdown.show.nav-item > div > button > a:visited) {
+    color:var(--nav-text-color);
   }
 
 </style>

@@ -1,11 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics.Contracts;
-using System.Linq;
-using BExIS.Dlm.Entities.DataStructure;
+﻿using BExIS.Dlm.Entities.DataStructure;
+using System;
 using Vaiona.Persistence.Api;
-using DS = BExIS.Dlm.Entities.DataStructure;
-using BExIS.Dlm.Entities.Data;
 
 namespace BExIS.Dlm.Services.DataStructure
 {
@@ -101,8 +96,8 @@ namespace BExIS.Dlm.Services.DataStructure
         public VariableTemplate CreateVariableTemplate(string name, DataType dataType, Unit unit, bool isOptional, string description="",  string defaultValue="", int displayPatternId=0)
         {
             // check incoming varaibles
-            if (string.IsNullOrEmpty(name)) throw new ArgumentNullException(nameof(name),"Name is empty but is required.");
-            if (dataType == null) throw new ArgumentNullException(nameof(dataType),"DataType is null but is required.");
+            if (string.IsNullOrEmpty(name)) throw new ArgumentNullException(nameof(name), "Name is empty but is required.");
+            if (dataType == null) throw new ArgumentNullException(nameof(dataType), "DataType is null but is required.");
 
             VariableTemplate e = new VariableTemplate()
             {
@@ -149,7 +144,7 @@ namespace BExIS.Dlm.Services.DataStructure
         public bool DeleteVariableTemplate(long id)
         {
 
-            if (id<=0) throw new ArgumentException("Id must be greater then 0.", nameof(id));
+            if (id <= 0) throw new ArgumentException("Id must be greater then 0.", nameof(id));
 
             using (IUnitOfWork uow = this.GetUnitOfWork())
             {
@@ -194,7 +189,7 @@ namespace BExIS.Dlm.Services.DataStructure
         /// <param name="defaultValue"></param>
         /// <returns>created VariableInstance</returns>
         /// <exception cref="ArgumentException"></exception>
-        public VariableInstance CreateVariable(string name, long dataStructureId, long variableTemplateId, int displayPatternId=0)
+        public VariableInstance CreateVariable(string name, long dataStructureId, long variableTemplateId, int displayPatternId = 0)
         {
             // check incoming varaibles
             if (string.IsNullOrEmpty(name)) throw new ArgumentNullException(nameof(name), "name is empty but is required.");
@@ -203,7 +198,7 @@ namespace BExIS.Dlm.Services.DataStructure
 
 
 
-            
+
 
             using (IUnitOfWork uow = this.GetUnitOfWork())
             {
@@ -235,7 +230,7 @@ namespace BExIS.Dlm.Services.DataStructure
 
                 return (e);
             }
-            
+
         }
 
         // create - need datastucture, variable template 
@@ -251,13 +246,13 @@ namespace BExIS.Dlm.Services.DataStructure
         /// <param name="defaultValue"></param>
         /// <returns>created VariableInstance</returns>
         /// <exception cref="ArgumentException"></exception>
-        public VariableInstance CreateVariable(string name, DataType dataType, Unit unit, long dataStructureId, long variableTemplateId, bool isOptional, string description = "", string defaultValue = "")
+        public VariableInstance CreateVariable(string name, DataType dataType, Unit unit, long dataStructureId,  bool isOptional, bool isKey, long variableTemplateId=0, string description = "", string defaultValue = "")
         {
             // check incoming varaibles
             if (string.IsNullOrEmpty(name)) throw new ArgumentNullException(nameof(name), "name is empty but is required.");
             if (dataType == null) throw new ArgumentNullException(nameof(dataType), "datatype is null but is required.");
             if (dataStructureId <= 0) throw new ArgumentNullException(nameof(dataStructureId),"dataStructureId must be greater then 0.");
-            if (variableTemplateId <= 0) throw new ArgumentNullException(nameof(variableTemplateId), "variableTemplateId must be greater then 0.");
+            //if (variableTemplateId <= 0) throw new ArgumentNullException(nameof(variableTemplateId), "variableTemplateId must be greater then 0.");
 
 
 
@@ -268,7 +263,8 @@ namespace BExIS.Dlm.Services.DataStructure
                 DataType = dataType,
                 DefaultValue = defaultValue,
                 Unit = unit,
-                IsValueOptional = isOptional
+                IsValueOptional = isOptional,
+                IsKey = isKey
             };
 
             using (IUnitOfWork uow = this.GetUnitOfWork())
@@ -324,7 +320,7 @@ namespace BExIS.Dlm.Services.DataStructure
         public bool DeleteVariable(long id)
         {
 
-            if (id <= 0) throw new ArgumentException("Id must be greater then 0.",nameof(id));
+            if (id <= 0) throw new ArgumentException("Id must be greater then 0.", nameof(id));
 
             using (IUnitOfWork uow = this.GetUnitOfWork())
             {

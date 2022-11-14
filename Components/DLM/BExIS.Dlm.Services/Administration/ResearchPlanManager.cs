@@ -1,10 +1,10 @@
-﻿using System.Collections.Generic;
+﻿using BExIS.Dlm.Entities.Administration;
+using System;
+using System.Collections.Generic;
 using System.Diagnostics.Contracts;
 using System.Linq;
-using BExIS.Dlm.Entities.Administration;
 using Vaiona.Persistence.Api;
 using DataStructureEntity = BExIS.Dlm.Entities.DataStructure.DataStructure;
-using System;
 
 namespace BExIS.Dlm.Services.Administration
 {
@@ -66,7 +66,7 @@ namespace BExIS.Dlm.Services.Administration
                 repo.Put(e);
                 uow.Commit();
             }
-            return (e);            
+            return (e);
         }
 
         public bool Delete(ResearchPlan entity)
@@ -77,9 +77,9 @@ namespace BExIS.Dlm.Services.Administration
             using (IUnitOfWork uow = this.GetUnitOfWork())
             {
                 IRepository<ResearchPlan> repo = uow.GetRepository<ResearchPlan>();
-                
+
                 entity = repo.Reload(entity);
-                
+
                 // delete all links to other entities
                 entity.Datasets.ToList().ForEach(a => a.ResearchPlan = null);
                 // data structures have n-m relationship via a coupling table. deleting the research plan will delete entries in that table but not the data structures.
@@ -103,7 +103,7 @@ namespace BExIS.Dlm.Services.Administration
 
             using (IUnitOfWork uow = this.GetUnitOfWork())
             {
-                IRepository<ResearchPlan> repo = uow.GetRepository<ResearchPlan>();                
+                IRepository<ResearchPlan> repo = uow.GetRepository<ResearchPlan>();
 
                 foreach (var entity in entities)
                 {
@@ -111,7 +111,7 @@ namespace BExIS.Dlm.Services.Administration
 
                     // remove all associations between current unit and the conversions
                     latest.Datasets.ToList().ForEach(a => a.ResearchPlan = null);
-                  
+
                     //delete the entity
                     repo.Delete(latest);
                 }
@@ -136,7 +136,7 @@ namespace BExIS.Dlm.Services.Administration
                 repo.Put(merged);
                 uow.Commit();
             }
-            return (entity);    
+            return (entity);
         }
 
         #endregion
@@ -178,8 +178,8 @@ namespace BExIS.Dlm.Services.Administration
                 IRepository<DataStructureEntity> end2Repo = uow.GetRepository<DataStructureEntity>();
 
                 end1 = end1Repo.Reload(end1);
-                end1Repo.LoadIfNot(end1.DataStructures); 
-                
+                end1Repo.LoadIfNot(end1.DataStructures);
+
                 end2 = end2Repo.Reload(end2);
                 end2Repo.LoadIfNot(end2.ResearchPlans);
 

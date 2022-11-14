@@ -1,16 +1,12 @@
-﻿using System;
+﻿using NHibernate;
+using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using NHibernate;
-using Vaiona.Persistence.Api;
-using NHibernate.Context;
-using System.Web;
 using System.Data;
+using Vaiona.Persistence.Api;
 
 namespace Vaiona.Persistence.NH
 {
-    public class NHibernateUnitOfWork: IUnitOfWork
+    public class NHibernateUnitOfWork : IUnitOfWork
     {
         internal ISession Session = null;
         private bool autoCommit = false;
@@ -83,7 +79,7 @@ namespace Vaiona.Persistence.NH
                     Session.Transaction.Rollback();
                     if (AfterIgnore != null)
                         AfterIgnore(this, EventArgs.Empty);
-                    
+
                 }
             }
             catch (Exception ex)

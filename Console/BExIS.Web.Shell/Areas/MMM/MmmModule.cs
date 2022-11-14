@@ -7,7 +7,7 @@ namespace IDIV.Modules.Mmm.UI
 {
     public class MmmModule : ModuleBase
     {
-        public MmmModule(): base("MMM")
+        public MmmModule() : base("MMM")
         {
             LoggerFactory.GetFileLogger().LogCustom("...ctor of mmm...");
         }

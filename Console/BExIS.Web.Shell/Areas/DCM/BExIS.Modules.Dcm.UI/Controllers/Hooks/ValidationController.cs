@@ -1,22 +1,21 @@
 ﻿using BExIS.App.Bootstrap.Attributes;
 using BExIS.Dlm.Entities.Data;
+using BExIS.Dlm.Entities.DataStructure;
 using BExIS.Dlm.Services.Data;
+using BExIS.Dlm.Services.DataStructure;
+using BExIS.IO;
+using BExIS.IO.Transform.Input;
 using BExIS.IO.Transform.Validation.Exceptions;
+using BExIS.Modules.Dcm.UI.Models.Edit;
 using BExIS.Security.Entities.Authorization;
 using BExIS.UI.Hooks;
 using BExIS.UI.Hooks.Caches;
-using BExIS.Modules.Dcm.UI.Models.Edit;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Web;
 using System.Web.Mvc;
 using Vaiona.Utils.Cfg;
-using BExIS.Dlm.Services.DataStructure;
-using BExIS.Dlm.Entities.DataStructure;
-using BExIS.IO;
-using BExIS.IO.Transform.Input;
 
 namespace BExIS.Modules.Dcm.UI.Controllers
 {
@@ -130,6 +129,15 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                                         cache.UpdateSetup.RowsCount = reader.NumberOfRows;
                                     }
                                 }
+
+                                if (errors.Any())
+                                {
+                                    FileErrors fileErrors = new FileErrors();
+                                    fileErrors.File = file.Name;
+                                    errors.ForEach(e => fileErrors.Errors.Add(e.ToHtmlString()));
+                                    fileErrors.SortedErrors = SortErrors(errors);
+                                    model.FileErrors.Add(fileErrors);
+                                }
                             }
                         }
                     }
@@ -137,26 +145,42 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 catch (Exception ex)
                 {
                     errors.Add(new Error(ErrorType.Other, ex.Message));
+                    FileErrors fileErrors = new FileErrors();
+                    fileErrors.SortedErrors = SortErrors(errors);
+                    model.FileErrors.Add(fileErrors);
+
                 }
 
-                // if there are errors, sort them for the ui
-                if (errors.Any())
-                {
-                    // sort errors for ui
-                    model.SortedErrors = SortErrors(errors);
 
-                    // convert errors to strings
-                    errors.ForEach(e => model.Errors.Add(e.ToHtmlString()));
-
-                    cache.IsDataValid = false;
-                    cache.Messages.Add(new ResultMessage(DateTime.Now, model.Errors));
-                    model.IsValid = false;
-                }
-                else // no errors, set IsValid to True;
+                // if the validation is done, prepare the model 
+                if (cache.Files.Any()) //if any file exits update model 
                 {
+                    // set this flags as default, if a error exist it will change
                     cache.IsDataValid = true;
                     model.IsValid = true;
-                    cache.Messages.Add(new ResultMessage(DateTime.Now, new List<string>() { "The validation was successful." }));
+
+                    foreach (var fileErrors in model.FileErrors)
+                    {
+                        // if there are errors
+                        if (fileErrors.Errors.Any())
+                        {
+                            cache.IsDataValid = false; 
+                            model.IsValid = cache.IsDataValid;
+                            cache.Messages.Add(new ResultMessage(DateTime.Now, fileErrors.Errors)); // add message for the history
+                        }
+
+                    }
+
+                    // if model is valid , add a message 
+                    if (model.IsValid)
+                    {
+                        cache.Messages.Add(new ResultMessage(DateTime.Now, new List<string>() { "The validation was successful." })); // add message for the history
+                    }
+                }
+                else
+                {
+                    cache.IsDataValid = false;
+                    model.IsValid = false;
                 }
 
                 // save cache

@@ -50,7 +50,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 {
                     // add title to model
                     if (TaskManager.Bus.ContainsKey(TaskManager.DATASET_TITLE) && TaskManager.Bus[TaskManager.DATASET_TITLE] != null)
-                    { 
+                    {
                         model.DatasetTitle = TaskManager.Bus[TaskManager.DATASET_TITLE].ToString();
                     }
                     // add seleted dataset id to model
@@ -194,7 +194,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         {
             using (DatasetManager datasetManager = new DatasetManager())
             using (ResearchPlanManager rpm = new ResearchPlanManager())
-            { 
+            {
                 TaskManager = (TaskManager)Session["TaskManager"];
 
                 if (datasetManager.GetDatasetVersionEffectiveTupleCount(datasetManager.GetDatasetLatestVersion(datasetId)) > 0)

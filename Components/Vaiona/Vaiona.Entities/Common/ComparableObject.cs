@@ -1,7 +1,7 @@
 ﻿using System;
-using System.Reflection;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 
 namespace Vaiona.Entities.Common
 {
@@ -36,10 +36,12 @@ namespace Vaiona.Entities.Common
         //[ThreadStatic]
         //private static Dictionary<Type, IEnumerable<PropertyInfo>> signaturePropertiesDictionary;
 
-        public override bool Equals(object obj) {
+        public override bool Equals(object obj)
+        {
             var compareTo = obj as ComparableObject;
 
-            if (ReferenceEquals(this, compareTo)) {
+            if (ReferenceEquals(this, compareTo))
+            {
                 return true;
             }
 
@@ -55,8 +57,10 @@ namespace Vaiona.Entities.Common
         ///     if at all, in an object's lifetime, it's important that properties are carefully
         ///     selected which truly represent the signature of an object.
         /// </summary>
-        public override int GetHashCode() {
-            unchecked {
+        public override int GetHashCode()
+        {
+            unchecked
+            {
                 var signatureProperties = GetSignatureProperties();
 
                 // It's possible for two objects to return the same hash code based on 
@@ -68,7 +72,8 @@ namespace Vaiona.Entities.Common
                                               .Where(value => value != null)
                                               .Aggregate(hashCode, (current, value) => (current * HashMultiplier) ^ value.GetHashCode());
 
-                if (signatureProperties.Any()) {
+                if (signatureProperties.Any())
+                {
                     return hashCode;
                 }
 
@@ -80,26 +85,30 @@ namespace Vaiona.Entities.Common
 
         /// <summary>
         /// </summary>
-        public virtual IEnumerable<PropertyInfo> GetSignatureProperties() {
+        public virtual IEnumerable<PropertyInfo> GetSignatureProperties()
+        {
             IEnumerable<PropertyInfo> properties;
 
             // Init the signaturePropertiesDictionary here due to reasons described at 
             // http://blogs.msdn.com/jfoscoding/archive/2006/07/18/670497.aspx
-            if (signaturePropertiesDictionary == null) {
+            if (signaturePropertiesDictionary == null)
+            {
                 signaturePropertiesDictionary = new Dictionary<Type, IEnumerable<PropertyInfo>>();
             }
 
-            if (signaturePropertiesDictionary.TryGetValue(GetType(), out properties)) {
+            if (signaturePropertiesDictionary.TryGetValue(GetType(), out properties))
+            {
                 return properties;
             }
-            
+
             return signaturePropertiesDictionary[GetType()] = GetTypeSpecificSignatureProperties();
         }
 
         /// <summary>
         ///     You may override this method to provide your own comparison routine.
         /// </summary>
-        public virtual bool HasSameObjectSignatureAs(ComparableObject compareTo) {
+        public virtual bool HasSameObjectSignatureAs(ComparableObject compareTo)
+        {
             var signatureProperties = GetSignatureProperties();
 
             if ((from property in signatureProperties
@@ -107,7 +116,8 @@ namespace Vaiona.Entities.Common
                  let valueToCompareTo = property.GetValue(compareTo, null)
                  where valueOfThisObject != null || valueToCompareTo != null
                  where (valueOfThisObject == null ^ valueToCompareTo == null) || (!valueOfThisObject.Equals(valueToCompareTo))
-                 select valueOfThisObject).Any()) {
+                 select valueOfThisObject).Any())
+            {
                 return false;
             }
 
@@ -134,7 +144,8 @@ namespace Vaiona.Entities.Common
         /// 
         ///     Related discussion is at http://groups.google.com/group/sharp-architecture/browse_thread/thread/ddd05f9baede023a ...thanks Jay Oliver!
         /// </summary>
-        protected virtual Type GetTypeUnproxied() {
+        protected virtual Type GetTypeUnproxied()
+        {
             return GetType();
         }
     }

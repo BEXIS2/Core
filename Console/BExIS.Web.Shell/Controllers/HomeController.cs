@@ -1,25 +1,16 @@
-﻿using System.Web.Mvc;
-using Vaiona.Web.Mvc.Data;
-using Vaiona.Web.Mvc.Modularity;
-using Vaiona.Web.Extensions;
-using Vaiona.Web.Mvc.Models;
-using BExIS.Web.Shell.Helpers;
-using Vaiona.IoC;
-using BExIS.App.Bootstrap;
-using System;
-using System.Configuration;
-using System.IO;
-using System.Xml.Linq;
-using BExIS.Security.Services.Versions;
-using BExIS.Web.Shell.Models;
-using BExIS.Xml.Helpers;
-using Vaiona.Utils.Cfg;
-using BExIS.Security.Services.Authorization;
+﻿using BExIS.Security.Services.Authorization;
 using BExIS.Security.Services.Objects;
 using BExIS.Security.Services.Subjects;
-using BExIS.UI.Helpers;
-using BExIS.Utils;
+using BExIS.Security.Services.Versions;
 using BExIS.Utils.Config;
+using BExIS.Web.Shell.Models;
+using System;
+using System.Configuration;
+using System.Web.Mvc;
+using Vaiona.Web.Extensions;
+using Vaiona.Web.Mvc.Data;
+using Vaiona.Web.Mvc.Models;
+using Vaiona.Web.Mvc.Modularity;
 
 namespace BExIS.Web.Shell.Controllers
 {
@@ -39,7 +30,7 @@ namespace BExIS.Web.Shell.Controllers
             if (!string.IsNullOrEmpty(HttpContext.User?.Identity?.Name)) //user
             {
                 // User exist : load ladingpage for users
-                
+
                 var landingPageForUsers = GeneralSettings.LandingPageForUsers;
 
                 if (landingPageForUsers.Split(',').Length == 3)//check wheter 3 values exist for teh action
@@ -118,7 +109,7 @@ namespace BExIS.Web.Shell.Controllers
                 var database = versionManager.GetLatestVersion().Value;
 
                 // load version from workspace in settings file of general
-                
+
                 string workspace = GeneralSettings.ApplicationVersion;
 
                 var model = new VersionModel()

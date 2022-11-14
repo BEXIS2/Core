@@ -62,7 +62,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
 
                 return View(model);
             }
- 
+
         }
 
         public ActionResult Mapping(long sourceId = 1, long targetId = 0,

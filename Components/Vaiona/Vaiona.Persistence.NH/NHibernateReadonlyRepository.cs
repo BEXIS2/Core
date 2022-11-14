@@ -1,14 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using NHibernate;
-using NHibernate.Linq;
-using System.Linq.Expressions;
-using System.Diagnostics.Contracts;
+﻿using NHibernate;
 using NHibernate.Metadata;
-using Vaiona.Persistence.Api;
+using System;
 using System.Collections;
+using System.Collections.Generic;
+using System.Diagnostics.Contracts;
+using System.Linq;
+using System.Linq.Expressions;
+using Vaiona.Persistence.Api;
 
 namespace Vaiona.Persistence.NH
 {
@@ -46,7 +44,7 @@ namespace Vaiona.Persistence.NH
         public TEntity Get(long id)
         {
             // NHibernateUtil.Initialize( paths
-            return (UoW.Session.Get<TEntity>(id)); 
+            return (UoW.Session.Get<TEntity>(id));
         }
 
         public TEntity Reload(TEntity entity)
@@ -56,15 +54,15 @@ namespace Vaiona.Persistence.NH
             if (metaInfo.HasIdentifierProperty)
             {
                 object idValue = entity.GetType().GetProperty(metaInfo.IdentifierPropertyName).GetValue(entity, null);
-                return (UoW.Session.Get<TEntity>(idValue)); 
+                return (UoW.Session.Get<TEntity>(idValue));
             }
-            return(default(TEntity));
+            return (default(TEntity));
         }
 
         public TEntity Refresh(Int64 id)
         {
             Evict<TEntity>(id);
-            return (UoW.Session.Get<TEntity>(id)); 
+            return (UoW.Session.Get<TEntity>(id));
         }
 
         public IList<TEntity> Get(Expression<Func<TEntity, bool>> expression)
@@ -159,12 +157,12 @@ namespace Vaiona.Persistence.NH
             throw new NotImplementedException();
         }
 
-    
+
         public bool IsPropertyLoaded(object proxy, string propertyName)
         {
             return (NHibernateUtil.IsPropertyInitialized(proxy, propertyName));
         }
-     
+
         public bool IsLoaded(object proxy)
         {
             return (NHibernateUtil.IsInitialized(proxy));

@@ -1,11 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-using BExIS.Dlm.Entities.DataStructure;
-using System.ComponentModel.DataAnnotations;
-
-namespace BExIS.Modules.Rpm.UI.Models
+﻿namespace BExIS.Modules.Rpm.UI.Models
 {
     public class ConstraintModel
     {
@@ -16,7 +9,7 @@ namespace BExIS.Modules.Rpm.UI.Models
         public string FormalDescription { get; set; }
     }
 
-    public class RangeConstraintModel:ConstraintModel
+    public class RangeConstraintModel : ConstraintModel
     {
         public double Min { get; set; }
         //[GreaterThan("Min")]
@@ -35,7 +28,7 @@ namespace BExIS.Modules.Rpm.UI.Models
         {
             MinInclude = true;
             AttributeId = attributeId;
-            FormalDescription = (new RangeConstraint() {LowerboundIncluded = MinInclude}).FormalDescription;
+            FormalDescription = (new RangeConstraint() { LowerboundIncluded = MinInclude }).FormalDescription;
         }
         public static RangeConstraintModel Convert(RangeConstraint rangeConstraint, long attributeId)
         {
@@ -53,7 +46,7 @@ namespace BExIS.Modules.Rpm.UI.Models
         }
     }
 
-    public class PatternConstraintModel:ConstraintModel
+    public class PatternConstraintModel : ConstraintModel
     {
         public string MatchingPhrase { get; set; }
 
@@ -82,17 +75,17 @@ namespace BExIS.Modules.Rpm.UI.Models
         }
     }
 
-    public class DomainConstraintModel:ConstraintModel
+    public class DomainConstraintModel : ConstraintModel
     {
         public string Terms { get; set; }
 
         public DomainConstraintModel()
         {
-            Terms= "";
+            Terms = "";
             AttributeId = 0;
             List<DomainItem> ldi = new List<DomainItem>();
             ldi.Add(new DomainItem());
-            FormalDescription = (new DomainConstraint() {Items = ldi}).FormalDescription;
+            FormalDescription = (new DomainConstraint() { Items = ldi }).FormalDescription;
         }
 
         public DomainConstraintModel(long attributeId)
@@ -111,7 +104,7 @@ namespace BExIS.Modules.Rpm.UI.Models
             string terms = "";
             if (domainConstraint.Items != null)
             {
-                foreach(DomainItem i in domainConstraint.Items)
+                foreach (DomainItem i in domainConstraint.Items)
                 {
                     if (String.IsNullOrEmpty(i.Value))
                     {
@@ -129,7 +122,7 @@ namespace BExIS.Modules.Rpm.UI.Models
                     }
                 }
             }
-         
+
             return new DomainConstraintModel(attributeId)
             {
                 Id = domainConstraint.Id,

@@ -164,6 +164,7 @@ namespace BExIS.Modules.Dcm.UI.Helpers
                 operationManager.Create("DCM", "Edit", "*");
                 operationManager.Create("DCM", "View", "*");
                 operationManager.Create("DCM", "Metadata", "*", DatasetCreationFeature);
+                operationManager.Create("DCM", "StructureSuggestion", "*", DatasetCreationFeature);
 
                 #endregion Create Dataset Workflow
 
@@ -192,6 +193,8 @@ namespace BExIS.Modules.Dcm.UI.Helpers
                 operationManager.Create("DCM", "Validation", "*", DatasetUploadFeature);
                 operationManager.Create("DCM", "Metadata", "*", DatasetUploadFeature);
                 operationManager.Create("DCM", "Messages", "*", DatasetUploadFeature);
+                operationManager.Create("DCM", "DataDescription", "*", DatasetUploadFeature);
+
 
                 #endregion Update Dataset Workflow
 
@@ -288,7 +291,7 @@ namespace BExIS.Modules.Dcm.UI.Helpers
                     var metadataStructure = metadataStructureManager.Repo.Get().Where(m => m.Name.Equals("Basic ABCD")).FirstOrDefault();
                     entityTemplate.MetadataStructure = metadataStructure;
                     // default input fields , title, descritpion
-                    entityTemplate.MetadataFields = new List<int>(){ 4,1 };
+                    entityTemplate.MetadataFields = new List<int>() { 4, 1 };
 
                     // set entity 
                     entityTemplate.EntityType = entity;

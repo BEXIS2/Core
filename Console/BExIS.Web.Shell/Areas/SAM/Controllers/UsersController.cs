@@ -9,14 +9,12 @@ using BExIS.Utils.NH.Querying;
 using Microsoft.AspNet.Identity;
 using System;
 using System.Collections.Generic;
-using System.Configuration;
 using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Web.Mvc;
 using Telerik.Web.Mvc;
 using Telerik.Web.Mvc.Extensions;
-using Vaiona.IoC;
 using Vaiona.Web.Mvc;
 
 namespace BExIS.Modules.Sam.UI.Controllers
@@ -54,7 +52,7 @@ namespace BExIS.Modules.Sam.UI.Controllers
             {
                 if (!ModelState.IsValid) return PartialView("_Create", model);
 
-                var user = new User { UserName = model.UserName, FullName = model.UserName, Email = model.Email };
+                var user = new User { UserName = model.UserName, FullName = model.UserName, Email = model.Email.Trim() };
 
                 var result = await identityUserService.CreateAsync(user);
                 if (result.Succeeded)
@@ -181,7 +179,7 @@ namespace BExIS.Modules.Sam.UI.Controllers
             using (var partyManager = new PartyManager())
             using (var partyTypeManager = new PartyTypeManager())
             {
-                
+
 
                 // check wheter model is valid or not
                 if (!ModelState.IsValid) return PartialView("_Update", model);
@@ -191,7 +189,7 @@ namespace BExIS.Modules.Sam.UI.Controllers
                 if (user == null) return PartialView("_Update", model);
 
                 // if the email is changed, the system needs to check, if the incoming email allready exist by a other user or not
-                if (user.Email != model.Email)
+                if (user.Email.Trim() != model.Email.Trim())
                 {
                     // check duplicate email cause of client validation is not working in a telerik window :(
                     var duplicateUser = userManager.FindByEmailAsync(model.Email).Result;
@@ -204,7 +202,7 @@ namespace BExIS.Modules.Sam.UI.Controllers
                         GeneralSettings.SystemEmail
                         );
                 }
-                user.Email = model.Email;
+                user.Email = model.Email.Trim();
 
                 // Update email in party
                 if (GeneralSettings.UsePersonEmailAttributeName)

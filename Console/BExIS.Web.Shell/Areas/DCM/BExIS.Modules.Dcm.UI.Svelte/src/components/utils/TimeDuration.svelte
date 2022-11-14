@@ -32,7 +32,14 @@ function formatTime(milliseconds) {
     // const hh = zeroPadded(Math.floor(milliseconds / 1000 / 60 / 24));
     const mm = zeroPadded(Math.floor(milliseconds / 1000 / 60));
     // const ss = zeroPadded(Math.floor(milliseconds / 1000) % 60);
-    return `${mm} min`;
+
+    if(mm<60) {
+      return `${mm} min`;
+    }
+    else 
+    {
+      return `> 60 min`
+    }
 }
 
 

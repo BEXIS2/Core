@@ -1,16 +1,36 @@
 <script>
  import {Row, Col, Alert} from 'sveltestrap';
+ import {onMount} from 'svelte';
  
  import Fa from 'svelte-fa/src/fa.svelte'
  import { faAngleRight } from '@fortawesome/free-solid-svg-icons'
 
+import { hooksStatus } from '../stores/editStores';
+
+
+ export let name; 
  export let displayName;
  export let content=9;
-
+ export let visible = true;
+ export let status=0;
 
  $:error = [];
  $:success = null;
  $:warnings = [];
+
+ $:active = false;
+
+onMount(async () => {
+
+  //active = setActive(status);
+  hooksStatus.subscribe(h=>{
+    if(h[name]!=undefined)
+    {
+      active = setActive(h[name]);
+    }
+  })
+})
+
 
 function errorHandler (e){ 
   console.log("handle errors here")
@@ -29,16 +49,37 @@ function warningHandler (e){
   console.log("handle warnings here");
   console.log( e.detail.text)
 }
+
+// visibility
+function setActive(status)
+{
+
+  if(status == 0 ||status == 1 || status==5) // disabled || access denied || inactive
+  {
+    return false;
+  }
+    
+  return true; // every other status enable the hook
+}
+
 </script>
 
+<!-- {$hooksStatus[name]}
+{status}
+{active} -->
+
+{#if visible && active}
 <div class="hook-container" >
  <Row> 
+ 
   <Col xs="{2}">
     <div class="title-container">
-      <b><Fa icon={faAngleRight} /> {displayName}</b>
+      <b><Fa icon={faAngleRight} /> {displayName}</b> 
     </div>
   </Col>
+
   <Col xs={{ size: content, order: 2}}>
+
     {#if error}
       {#each error as item}
         <Alert color="danger" dismissible>{item}</Alert>
@@ -50,11 +91,6 @@ function warningHandler (e){
 
     <slot name="view" {errorHandler} {successHandler} {warningHandler}> render view</slot>
   </Col>
-  <!-- {#if activeSettings}
-  <Col class="col-sm-4"> 
-    <slot name="settings"> settings area</slot>
-  </Col>
-  {/if} -->
  </Row>
 </div>
 
@@ -71,3 +107,4 @@ function warningHandler (e){
  }
 
 </style>
+{/if}

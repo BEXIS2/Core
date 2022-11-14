@@ -1,7 +1,6 @@
-﻿using System;
-using System.Linq;
+﻿using BExIS.Dlm.Entities.DataStructure;
+using System;
 using System.Xml.Serialization;
-using BExIS.Dlm.Entities.DataStructure;
 
 /// <summary>
 ///
@@ -12,7 +11,7 @@ namespace BExIS.Dlm.Entities.Data
     ///
     /// </summary>
     /// <remarks></remarks>        
-    public class ExtendedPropertyValue: DataValue
+    public class ExtendedPropertyValue : DataValue
     {
         #region Attributes
 
@@ -59,7 +58,7 @@ namespace BExIS.Dlm.Entities.Data
                 //                           from exp in da.ExtendedProperties
                 //                           where exp.Id == ExtendedPropertyId
                 //                           select exp).FirstOrDefault();
-                                              
+
                 //    return (ep);
                 //}
                 throw new NotImplementedException();

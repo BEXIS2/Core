@@ -1,8 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using BExIS.Dlm.Entities.Data;
+using BExIS.IO.Transform.Validation.Exceptions;
+using System.Collections.Generic;
 using System.IO;
 using System.Web;
-using BExIS.Dlm.Entities.Data;
-using BExIS.IO.Transform.Validation.Exceptions;
 
 namespace BExIS.Modules.Dcm.UI.Models
 {

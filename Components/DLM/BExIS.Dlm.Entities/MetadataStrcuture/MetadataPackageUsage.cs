@@ -1,9 +1,4 @@
 ﻿using BExIS.Dlm.Entities.Common;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Vaiona.Entities.Common;
 
 /// <summary>
 ///
@@ -14,7 +9,7 @@ namespace BExIS.Dlm.Entities.MetadataStructure
     ///
     /// </summary>
     /// <remarks></remarks>        
-    public class MetadataPackageUsage: BaseUsage
+    public class MetadataPackageUsage : BaseUsage
     {
         #region Attributes
 
@@ -29,14 +24,14 @@ namespace BExIS.Dlm.Entities.MetadataStructure
         /// </summary>
         /// <remarks> intentionally used the full name. otherwise is not shown in the class diagram. </remarks>
         /// <seealso cref=""/>        
-        public virtual BExIS.Dlm.Entities.MetadataStructure.MetadataStructure   MetadataStructure   { get; set; }
+        public virtual BExIS.Dlm.Entities.MetadataStructure.MetadataStructure MetadataStructure { get; set; }
 
         /// <summary>
         ///
         /// </summary>
         /// <remarks></remarks>
         /// <seealso cref=""/>        
-        public virtual MetadataPackage                                          MetadataPackage     { get; set; }
+        public virtual MetadataPackage MetadataPackage { get; set; }
 
         #endregion
 

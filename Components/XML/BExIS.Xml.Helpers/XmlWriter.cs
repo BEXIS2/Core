@@ -1,7 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Xml;
 using System.Xml.Linq;
 using System.Xml.XPath;
@@ -53,7 +51,7 @@ namespace BExIS.Xml.Helpers
                 XElement element = new XElement(name.Replace(" ", ""));
                 element.SetAttributeValue("type", type.ToString());
 
-                return element; 
+                return element;
             }
 
             return null;
@@ -98,7 +96,7 @@ namespace BExIS.Xml.Helpers
         /// <returns></returns>
         protected bool Exist(string xpath)
         {
-            if (_tempXDoc.XPathSelectElement(xpath)!=null)
+            if (_tempXDoc.XPathSelectElement(xpath) != null)
                 return true;
             else
                 return false;
@@ -270,7 +268,7 @@ namespace BExIS.Xml.Helpers
 
             if (_mode.Equals(XmlNodeMode.xPath))
             {
-                return _tempXDoc.Root.Descendants(name.Replace(" ", "")).Where(p => p.Attribute("id") != null 
+                return _tempXDoc.Root.Descendants(name.Replace(" ", "")).Where(p => p.Attribute("id") != null
                                                                             && p.Attribute("id").Value.Equals(id.ToString())).FirstOrDefault();
             }
 
@@ -328,66 +326,66 @@ namespace BExIS.Xml.Helpers
 
         #region get list of xelement
 
-            /// <summary>
-            /// 
-            /// </summary>
-            /// <remarks></remarks>
-            /// <seealso cref=""/>
-            /// <param name="name"></param>
-            /// <param name="source"></param>
-            /// <returns></returns>
-            protected List<XElement> GetChildren(string name, XElement source)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>
+        /// <param name="name"></param>
+        /// <param name="source"></param>
+        /// <returns></returns>
+        protected List<XElement> GetChildren(string name, XElement source)
+        {
+            if (_mode.Equals(XmlNodeMode.type))
             {
-                if (_mode.Equals(XmlNodeMode.type))
-                {
-                    return source.Elements().Where(p => p.Attribute("name").Equals(name)).ToList();
+                return source.Elements().Where(p => p.Attribute("name").Equals(name)).ToList();
 
-                }
-
-                if (_mode.Equals(XmlNodeMode.xPath))
-                {
-                    return source.Elements(name.Replace(" ", "")).ToList();
-                }
-
-                return null;
             }
+
+            if (_mode.Equals(XmlNodeMode.xPath))
+            {
+                return source.Elements(name.Replace(" ", "")).ToList();
+            }
+
+            return null;
+        }
         #endregion
 
         #region static
 
-                /// <summary>
-                /// 
-                /// </summary>
-                /// <remarks></remarks>
-                /// <seealso cref=""/>
-                /// <param name="xDocument"></param>
-                /// <returns></returns>
-                public static XmlDocument ToXmlDocument(XDocument xDocument)
-                {
-                    var xmlDocument = new XmlDocument();
-                    using (var xmlReader = xDocument.CreateReader())
-                    {
-                        xmlDocument.Load(xmlReader);
-                    }
-                    return xmlDocument;
-                }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>
+        /// <param name="xDocument"></param>
+        /// <returns></returns>
+        public static XmlDocument ToXmlDocument(XDocument xDocument)
+        {
+            var xmlDocument = new XmlDocument();
+            using (var xmlReader = xDocument.CreateReader())
+            {
+                xmlDocument.Load(xmlReader);
+            }
+            return xmlDocument;
+        }
 
-                /// <summary>
-                /// 
-                /// </summary>
-                /// <remarks></remarks>
-                /// <seealso cref=""/>
-                /// <param name="xmlDocument"></param>
-                /// <returns></returns>
-                public static XDocument ToXDocument(XmlDocument xmlDocument)
-                {
-                    using (var nodeReader = new XmlNodeReader(xmlDocument))
-                    {
-                        nodeReader.MoveToContent();
-                        return XDocument.Load(nodeReader);
-                    }
-                }
-            #endregion
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>
+        /// <param name="xmlDocument"></param>
+        /// <returns></returns>
+        public static XDocument ToXDocument(XmlDocument xmlDocument)
+        {
+            using (var nodeReader = new XmlNodeReader(xmlDocument))
+            {
+                nodeReader.MoveToContent();
+                return XDocument.Load(nodeReader);
+            }
+        }
+        #endregion
 
     }
 

@@ -5,15 +5,12 @@ using BExIS.Dlm.Services.Administration;
 using BExIS.Dlm.Services.Data;
 using BExIS.Dlm.Services.MetadataStructure;
 using BExIS.Dlm.Tests.Helpers;
-using BExIS.Utils;
 using BExIS.Utils.Config;
 using FluentAssertions;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Vaiona.Persistence.Api;
 
 namespace BExIS.Dlm.Tests.Services.Data

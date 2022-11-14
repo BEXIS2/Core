@@ -154,7 +154,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                     var dataset = datasetManager.GetDataset(entityId);
                     var metadata = datasetManager.GetDatasetLatestMetadataVersion(entityId);
                     metadataStructureId = dataset.MetadataStructure.Id;
-                    if(dataset.DataStructure!=null)
+                    if (dataset.DataStructure != null)
                         dataStructureId = dataset.DataStructure.Id;
 
                     if (TaskManager == null)
@@ -622,6 +622,8 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             ViewBag.Title = PresentationModel.GetViewTitleForTenant("Create Dataset", this.Session.GetTenant());
             ViewData["ShowOptional"] = true;
             ViewData["EntityId"] = (long)-1;
+
+            FormHelper.ClearCache();
 
             var Model = new MetadataEditorModel();
 
@@ -1400,13 +1402,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                         attrModel.Locked = true;
                     }
 
-                    UpdateAttribute(
-                    usage,
-                    number,
-                    metadataAttributeUsage,
-                    Convert.ToInt32(attrModel.Number),
-                    attrModel.Value,
-                    stepModelHelper.XPath);
+                   
                 }
                 else
                 {
@@ -1420,6 +1416,14 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                     attrModel.Locked = false;
                     attrModel.ParentPartyId = 0;
                 }
+
+                 UpdateAttribute(
+                    usage,
+                    number,
+                    metadataAttributeUsage,
+                    Convert.ToInt32(attrModel.Number),
+                    attrModel.Value,
+                    stepModelHelper.XPath);
 
                 AddXmlAttribute(stepModelHelper.XPath, "partyid", partyId.ToString());
             }
@@ -2367,11 +2371,13 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         private BaseUsage loadUsage(long Id, Type type)
         {
             if (type.Equals(typeof(MetadataAttributeUsage)))
-                return this.GetUnitOfWork().GetReadOnlyRepository<MetadataAttributeUsage>().Get(Id);
+                return FormHelper.CachedMetadataAttributeUsages().Where(m=>m.Id.Equals(Id)).FirstOrDefault();
+            
             if (type.Equals(typeof(MetadataNestedAttributeUsage)))
-                return this.GetUnitOfWork().GetReadOnlyRepository<MetadataNestedAttributeUsage>().Get(Id);
+                return FormHelper.CachedMetadataNestedAttributeUsages().Where(m => m.Id.Equals(Id)).FirstOrDefault();
+
             if (type.Equals(typeof(MetadataPackageUsage)))
-                return this.GetUnitOfWork().GetReadOnlyRepository<MetadataPackageUsage>().Get(Id);
+                return FormHelper.CachedMetadataPackageUsages().Where(m => m.Id.Equals(Id)).FirstOrDefault();
 
             return null;
         }
@@ -3205,17 +3211,6 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                     stepModelHelper.Model = model;
                 }
             }
-
-            //if (validateIt)
-            //{
-            //    //validate packages
-            //    List<Error> errors = validateStep(stepModelHelper.Model);
-            //    if (errors != null)
-            //        model.ErrorList = errors;
-            //    else
-            //        model.ErrorList = new List<Error>();
-
-            //}
 
             model.StepInfo = stepInfo;
 

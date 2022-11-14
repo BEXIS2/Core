@@ -1,15 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using NHibernate;
-using NHibernate.Linq;
-using System.Linq.Expressions;
-using System.Diagnostics.Contracts;
-using NHibernate.Metadata;
-using Vaiona.Persistence.Api;
-using System.Collections;
+﻿using NHibernate;
 using NHibernate.Engine;
+using NHibernate.Linq;
+using NHibernate.Metadata;
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Diagnostics.Contracts;
+using System.Linq;
+using System.Linq.Expressions;
+using Vaiona.Persistence.Api;
 
 namespace Vaiona.PersistenceProviders.NH
 {
@@ -23,7 +22,7 @@ namespace Vaiona.PersistenceProviders.NH
             this.cacheMode = (NHibernate.CacheMode)Enum.Parse(typeof(NHibernate.CacheMode), Enum.GetName(typeof(Vaiona.Persistence.Api.CacheMode), cacheMode));
         }
 
-        public IUnitOfWork UnitOfWork { get { return (UoW);} }
+        public IUnitOfWork UnitOfWork { get { return (UoW); } }
 
         public void Evict()
         {
@@ -33,7 +32,7 @@ namespace Vaiona.PersistenceProviders.NH
 
         public void Evict(object id)
         {
-            if(UoW is NHibernateUnitOfWork)
+            if (UoW is NHibernateUnitOfWork)
                 ((NHibernateUnitOfWork)UoW).Session.SessionFactory.Evict(typeof(TEntity), id);
         }
 
@@ -66,7 +65,7 @@ namespace Vaiona.PersistenceProviders.NH
                 isim = (this.UnitOfWork as NHibernateBulkUnitOfWork).Session.GetSessionImplementation();
             bool? result = NHibernate.Engine.ForeignKeys.IsTransientSlow(proxy.GetType().FullName, proxy, isim);
             return (result == null ? false : (bool)result);
-        
+
         }
 
         public TEntity Reload(TEntity entity)
@@ -260,12 +259,12 @@ namespace Vaiona.PersistenceProviders.NH
         {
             throw new NotImplementedException();
         }
-    
+
         public bool IsPropertyLoaded(object proxy, string propertyName)
         {
             return (NHibernateUtil.IsPropertyInitialized(proxy, propertyName));
         }
-     
+
         public bool IsLoaded(object proxy)
         {
             return (NHibernateUtil.IsInitialized(proxy));

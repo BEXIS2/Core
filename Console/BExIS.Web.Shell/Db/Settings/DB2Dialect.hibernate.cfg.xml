@@ -7,10 +7,9 @@
       <property name="dialect">NHibernate.Dialect.DB2Dialect</property>
       <property name='adonet.batch_size'>100</property>
       <property name="default_schema">Standard</property>
-      
+
       <property name="show_sql">true</property>
       <property name="format_sql">true</property>
       <property name="generate_statistics">false</property>
   </session-factory>
-
 </hibernate-configuration>

@@ -1,14 +1,12 @@
 ﻿using BExIS.Dlm.Entities.Data;
 using BExIS.Dlm.Entities.DataStructure;
 using BExIS.Dlm.Services.Data;
-using BExIS.Dlm.Services.DataStructure;
 using BExIS.IO.DataType.DisplayPattern;
 using BExIS.IO.Transform.Validation;
 using BExIS.IO.Transform.Validation.DSValidation;
 using BExIS.IO.Transform.Validation.Exceptions;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -248,24 +246,26 @@ namespace BExIS.IO.Transform.Input
 
                             switch (datatype)
                             {
-                                case "Double": {
+                                case "Double":
+                                    {
                                         double tmp = 0;
-                                        if(double.TryParse(value, NumberStyles.Any, new CultureInfo("en-US"), out tmp))
+                                        if (double.TryParse(value, NumberStyles.Any, new CultureInfo("en-US"), out tmp))
                                             value = tmp.ToString("G16", new CultureInfo("en-US"));
-                                        break; }
+                                        break;
+                                    }
 
                                 case "Decimal":
                                     {
                                         decimal tmp = 0;
-                                        if(decimal.TryParse(value, NumberStyles.Any, new CultureInfo("en-US"), out tmp))
-                                            value = ""+tmp.ToString("G29", new CultureInfo("en-US"));
+                                        if (decimal.TryParse(value, NumberStyles.Any, new CultureInfo("en-US"), out tmp))
+                                            value = "" + tmp.ToString("G29", new CultureInfo("en-US"));
                                         break;
                                     }
                                 case "Float":
                                     {
                                         float tmp = 0;
                                         if (float.TryParse(value, NumberStyles.Any, new CultureInfo("en-US"), out tmp))
-                                            value = ""+tmp.ToString("G7", new CultureInfo("en-US"));
+                                            value = "" + tmp.ToString("G7", new CultureInfo("en-US"));
                                         break;
                                     }
                             }
@@ -340,8 +340,8 @@ namespace BExIS.IO.Transform.Input
         #region validation
 
         private void setValidationInformation()
-        { 
-        
+        {
+
         }
 
         VariableIdentifier hv = new VariableIdentifier();
@@ -396,13 +396,13 @@ namespace BExIS.IO.Transform.Input
                                 //temp = temp.Union(temp2).ToList();
                             }
 
-                            if(temp.Any()) errors = errors.Union(temp).ToList();
+                            if (temp.Any()) errors = errors.Union(temp).ToList();
                         }
                         valuePosition++;
                     }
-                    catch(Exception ex)
+                    catch (Exception ex)
                     {
-                        Error e = new Error(ErrorType.Other, "Error : "+ex.Message);
+                        Error e = new Error(ErrorType.Other, "Error : " + ex.Message);
                         errors.Add(e);
                     }
                 }
@@ -442,14 +442,20 @@ namespace BExIS.IO.Transform.Input
                 DatastructureMatchCheck dmc = new DatastructureMatchCheck();
                 matchErrors = dmc.Execute(SubmitedVariableIdentifiers, source, this.StructuredDataStructure.Name);
 
-                // check the equivalent order of the strutcures
-                DatastructureOrderCheck dso = new DatastructureOrderCheck();
-                orderErrors = dso.Execute(SubmitedVariableIdentifiers, source, this.StructuredDataStructure.Name);
-
-                sameOrderLikeStructure = orderErrors == null ? true : false ;
-
                 if (matchErrors != null) errors.AddRange(matchErrors);
-                if (orderErrors != null) errors.AddRange(orderErrors);
+
+                if (!matchErrors.Any())
+                {
+                    // check the equivalent order of the strutcures
+                    DatastructureOrderCheck dso = new DatastructureOrderCheck();
+                    orderErrors = dso.Execute(SubmitedVariableIdentifiers, source, this.StructuredDataStructure.Name);
+
+                    sameOrderLikeStructure = orderErrors == null ? true : false;
+
+                    if (orderErrors != null) errors.AddRange(orderErrors);
+                }
+
+                
 
             }
             catch
@@ -473,7 +479,7 @@ namespace BExIS.IO.Transform.Input
                             string dataType = sdvu.DataType.SystemType;
 
                             // change parameters to only sdvu
-                            if (!this.ValueValidationManagerDic.ContainsKey(sdvu.Id)) 
+                            if (!this.ValueValidationManagerDic.ContainsKey(sdvu.Id))
                                 this.ValueValidationManagerDic.Add(sdvu.Id, createValueValidationManager(varName, dataType, optional, sdvu));
                         }
                         else
@@ -510,10 +516,10 @@ namespace BExIS.IO.Transform.Input
                 varName = variable.Label;
             }
 
-    
-            DataTypeDisplayPattern displayPattern = DataTypeDisplayPattern.Pattern.Where(p=>p.Id.Equals(variable.DisplayPatternId)).FirstOrDefault(); //HH:mm:ss
+
+            DataTypeDisplayPattern displayPattern = DataTypeDisplayPattern.Pattern.Where(p => p.Id.Equals(variable.DisplayPatternId)).FirstOrDefault(); //HH:mm:ss
             if (displayPattern != null) pattern = displayPattern.StringPattern;
-            
+
             ValueValidationManager vvm = new ValueValidationManager(varName, dataType, optional, Info.Decimal, pattern, variable.MissingValues, CultureInfo.CurrentCulture, variable.VariableConstraints);
 
             return vvm;

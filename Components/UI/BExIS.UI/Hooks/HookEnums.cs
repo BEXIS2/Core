@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace BExIS.UI.Hooks
+﻿namespace BExIS.UI.Hooks
 {
     //The hook status is used to adjust the hook in the UI.
     //This allows the hook to be deactivated, made available or hidden.

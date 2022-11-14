@@ -2,8 +2,6 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace BExIS.IO.Transform.Input
 {
@@ -43,9 +41,9 @@ namespace BExIS.IO.Transform.Input
         };
 
         public ExcelHelper()
-        { 
-            
-            
+        {
+
+
         }
 
 
@@ -89,7 +87,7 @@ namespace BExIS.IO.Transform.Input
             {
                 return output.ToString();
             }
-  
+
             return "0";
         }
 
@@ -115,7 +113,7 @@ namespace BExIS.IO.Transform.Input
             else if (cellValue.Contains(',')) ci = new CultureInfo("de-DE");
 
 
-            if (double.TryParse(cellValue,NumberStyles.Any, ci, out output))
+            if (double.TryParse(cellValue, NumberStyles.Any, ci, out output))
             {
                 // round if formatcode is empty
                 if (string.IsNullOrEmpty(formatCode))
@@ -129,7 +127,7 @@ namespace BExIS.IO.Transform.Input
                     int charLenght = tmp.ToString().Length;
                     int roundTo = maxcharlength - charLenght - 1; //max 11 - integer - 1 decimal char
 
-                    if(roundTo>0)output = Math.Round(output, roundTo);
+                    if (roundTo > 0) output = Math.Round(output, roundTo);
 
                     return output.ToString();
                 }
@@ -138,7 +136,7 @@ namespace BExIS.IO.Transform.Input
                     //if its scientific data then return the cell value
                     //if (formatCode.ToLower().Contains("e")) return cellValue;
 
-                    return output.ToString(formatCode,ci);
+                    return output.ToString(formatCode, ci);
                 }
             }
 

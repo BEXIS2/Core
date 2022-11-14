@@ -1,19 +1,12 @@
 ﻿using BExIS.Modules.Dcm.UI.Models.EntityReference;
-using BExIS.Security.Services.Objects;
 using BExIS.Security.Entities.Objects;
+using BExIS.Security.Services.Objects;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-using System.Web.Mvc;
-using BExIS.Dlm.Services.MetadataStructure;
-using BExIS.Dim.Helpers.Mapping;
-using BExIS.Dlm.Services.Data;
-using BExIS.Dlm.Entities.Data;
-using System.Xml;
-using BExIS.Xml.Helpers;
-using System.Xml.Linq;
 using System.IO;
+using System.Linq;
+using System.Web.Mvc;
+using System.Xml.Linq;
 using Vaiona.Utils.Cfg;
 
 namespace BExIS.Modules.Dcm.UI.Helpers

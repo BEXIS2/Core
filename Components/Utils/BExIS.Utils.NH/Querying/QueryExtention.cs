@@ -2,11 +2,8 @@
 using NHibernate.Hql.Ast.ANTLR;
 using NHibernate.Linq;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace BExIS.Utils.NH.Querying
 {
@@ -20,7 +17,7 @@ namespace BExIS.Utils.NH.Querying
             var factory = sessionImpl.Factory;
             var nhLinqExpression = new NhLinqExpression(queryable.Expression, factory);
             var translatorFactory = new ASTQueryTranslatorFactory();
-           
+
             //in case you want the parameters as well
             var parameters = nhLinqExpression.ParameterValuesByName.ToDictionary(x => x.Key, x => x.Value.Item1);
 

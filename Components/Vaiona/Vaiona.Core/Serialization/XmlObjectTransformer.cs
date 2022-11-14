@@ -1,9 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Xml;
 using System.IO;
+using System.Xml;
 
 namespace Vaiona.Core.Serialization
 {
@@ -62,7 +59,7 @@ namespace Vaiona.Core.Serialization
             return (deSerializer.Deserialize(doc, version, typeResolver));
         }
 
-        public T ImportFrom<T>(object source, ITypeResolver typeResolver = null, int version = 1, bool resetImportInfo = false)        
+        public T ImportFrom<T>(object source, ITypeResolver typeResolver = null, int version = 1, bool resetImportInfo = false)
         {
             return (((T)ImportFrom(typeof(T), source, typeResolver, version, resetImportInfo)));
         }

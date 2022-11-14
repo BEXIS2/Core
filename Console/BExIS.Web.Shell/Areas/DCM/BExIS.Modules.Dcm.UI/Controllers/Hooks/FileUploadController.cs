@@ -1,27 +1,18 @@
 ﻿using BExIS.App.Bootstrap.Attributes;
-using BExIS.App.Bootstrap.Helpers;
-using BExIS.Dlm.Entities.Data;
 using BExIS.Dlm.Entities.DataStructure;
 using BExIS.Dlm.Services.Data;
-using BExIS.IO;
 using BExIS.Modules.Dcm.UI.Hooks;
-using BExIS.Modules.Dcm.UI.Models.Edit;
-using BExIS.Security.Entities.Authorization;
-using BExIS.Security.Services.Utilities;
 using BExIS.UI.Hooks;
 using BExIS.UI.Hooks.Caches;
 using BExIS.UI.Models;
-using BExIS.Utils.Config;
 using BExIS.Utils.Data.Upload;
 using BExIS.Utils.Upload;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Net.Http;
 using System.Web;
 using System.Web.Mvc;
-using Vaiona.Entities.Common;
 using Vaiona.Utils.Cfg;
 using Vaiona.Web.Extensions;
 using Vaiona.Web.Mvc.Modularity;
@@ -48,13 +39,13 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             if (id <= 0) throw new ArgumentException("id must be greater than 0");
 
             FileUploader model = new FileUploader();
-            
+
             model.Multiple = true;
 
             # region settings
 
             var settings = ModuleManager.GetModuleSettings("dcm");
-            
+
             // description
             var descrType = settings.GetEntryValue("fileuploaddescription").ToString();//
             model.DescriptionType = (DescriptionType)Enum.Parse(typeof(DescriptionType), descrType);
@@ -65,6 +56,8 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             model.Multiple = Boolean.Parse(settings.GetEntryValue("allowMultiFileupload").ToString());
 
             #endregion
+
+            
 
             HookManager hookManager = new HookManager();
 
@@ -90,13 +83,28 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             using (var datasetManager = new DatasetManager())
             {
                 var dataset = datasetManager.GetDataset(id);
+
+                // get list of file types based on system settings, like 
+                // if structure exist or not
+
                 DataStructureType datastructureType = DataStructureType.None;
 
+                // check if datastructure type exist
                 if (dataset.DataStructure != null &&
                     dataset.DataStructure.Self.GetType().Equals(typeof(StructuredDataStructure)))
                     datastructureType = DataStructureType.Structured;
 
+                // get default list of allowed file types
                 model.Accept = UploadHelper.GetExtentionList(datastructureType, this.Session.GetTenant());
+
+                // if entity template has some allowed filestypes
+                if (dataset.EntityTemplate.AllowedFileTypes.Any())
+                {
+                    // the system needs to compare them with the system list 
+                    // only add filetypes dat are in both lists
+                    model.Accept = model.Accept.Intersect(dataset.EntityTemplate.AllowedFileTypes).ToList();
+                }
+
             }
 
             // set modification date

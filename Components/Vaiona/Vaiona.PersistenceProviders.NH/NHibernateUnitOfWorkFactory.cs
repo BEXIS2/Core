@@ -1,16 +1,12 @@
 ﻿using NHibernate;
 using NHibernate.Cfg;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Vaiona.Persistence.Api;
 using Vaiona.Utils.Cfg;
 
 namespace Vaiona.PersistenceProviders.NH
 {
-    public class NHibernateUnitOfWorkFactory: IUnitOfWorkFactory
+    public class NHibernateUnitOfWorkFactory : IUnitOfWorkFactory
     {
         private NHibernatePersistenceManager manager;
         private ISessionFactory sessionFactory;

@@ -4,9 +4,6 @@ using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace BExIS.Security.Services.Tests.Utilities
 {
@@ -42,7 +39,7 @@ namespace BExIS.Security.Services.Tests.Utilities
         {
         }
 
-        [Test]
+        //[Test]
         public void Send()
         {
             var file = new FileInfo("c:\\complete\\path\\to\\file.extension");
@@ -52,11 +49,70 @@ namespace BExIS.Security.Services.Tests.Utilities
 
             EmailService emailService = new EmailService();
 
-            emailService.Send("subject_test", "Hallo again!? Emails are working now!", new List<string>(){ "m6thsv2@googlemail.com"} , null, null, null, files);
+            emailService.Send("subject_test", "Hallo again!? Emails are working now!", new List<string>() { "m6thsv2@googlemail.com" }, null, null, null, files);
         }
 
         /*
          * Further test methods
          */
+
+        //[Test]
+        public void Send_EmailWithWhiteSpace_SendSuccess()
+        {
+            EmailService emailService = new EmailService();
+            bool success = true;
+            try
+            {
+                emailService.Send("subject_test", "Hallo again!? Emails are working now!", new List<string>() { " david.blaa@googlemail.com " });
+            }
+            catch (Exception ex)
+            {
+                success = false;
+            }
+            finally
+            {
+                Assert.IsTrue(success, "send mail was not succesfull");
+            }
+
+        }
+
+        //[Test]
+        public void Send_EmailWithWhiteSpaceinCCs_SendSuccess()
+        {
+            EmailService emailService = new EmailService();
+            bool success = true;
+            try
+            {
+                emailService.Send("subject_test", "Hallo again!? Emails are working now!", new List<string>() { "david.blaa@googlemail.com" }, new List<string>() { "david.schoene@uni-jena.de " });
+            }
+            catch (Exception ex)
+            {
+                success = false;
+            }
+            finally
+            {
+                Assert.IsTrue(success, "send mail was not succesfull");
+            }
+        }
+
+
+        //[Test]
+        public void Send_EmailWithWhiteSpaceinBCCs_SendSuccess()
+        {
+            EmailService emailService = new EmailService();
+            bool success = true;
+            try
+            {
+                emailService.Send("subject_test", "Hallo again!? Emails are working now!", new List<string>() { "david.blaa@googlemail.com" }, null, new List<string>() { "david.schoene@uni-jena.de " });
+            }
+            catch (Exception ex)
+            {
+                success = false;
+            }
+            finally
+            {
+                Assert.IsTrue(success, "send mail was not succesfull");
+            }
+        }
     }
 }

@@ -1,9 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Globalization;
-using BExIS.Dlm.Entities.DataStructure;
+﻿using BExIS.Dlm.Entities.DataStructure;
 using BExIS.IO.Transform.Validation.Exceptions;
 using BExIS.IO.Transform.Validation.ValueCheck;
+using System;
+using System.Collections.Generic;
+using System.Globalization;
 
 /// <summary>
 ///
@@ -137,7 +137,7 @@ namespace BExIS.IO.Transform.Validation
         /// <returns></returns>
         public List<Error> ValidateValue(object value, int row)
         {
-           
+
             foreach (IValueValidation vv in ValidationList)
             {
                 e = vv.Execute(value, row);
@@ -180,7 +180,7 @@ namespace BExIS.IO.Transform.Validation
         /// <param name="optional"></param>
         /// <param name="decimalCharacter"></param>
         /// <param name="pattern"></param>
-        public ValueValidationManager(string name, string dataType, bool optional, DecimalCharacter decimalCharacter, string pattern = "", IEnumerable<MissingValue> missingValues = null, CultureInfo cultureInfo = null, ICollection<Constraint> constraints = null )
+        public ValueValidationManager(string name, string dataType, bool optional, DecimalCharacter decimalCharacter, string pattern = "", IEnumerable<MissingValue> missingValues = null, CultureInfo cultureInfo = null, ICollection<Constraint> constraints = null)
         {
             _name = name;
             _dataType = dataType;

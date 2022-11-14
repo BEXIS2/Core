@@ -13,6 +13,8 @@ import Hooks from '../components/edit/Hooks.svelte'
 import Message from '../components/edit/MessagesContainer.svelte'
 import Debug from '../components/Debug.svelte'
 
+import { latestFileUploadDate, latestDataDescriptionDate, hooksStatus } from '../stores/editStores';
+
 // load attributes from div
 let container = document.getElementById('edit');
 let id = container.getAttribute("dataset");
@@ -20,6 +22,8 @@ $:version = container.getAttribute("version");
 
 let title = "";
 let model = false;
+
+let hookStatusList = null;
 
 $:hooks=null;
 $:views=null;
@@ -29,24 +33,39 @@ $:addtionalhooks= [];
 $:messageView=[];
 $:additionalViews=[];
 
+
+
 onMount(async () => {
   console.log("start edit");
   setApiConfig("https://localhost:44345","davidschoene","123456");
   load();
+
+})
+
+
+latestFileUploadDate.subscribe(e =>{
+  reload();
+})
+
+latestDataDescriptionDate.subscribe(e =>{
+  reload();
 })
 
 async function load()
 {
+  
   // load model froms server
   model = await getEdit(id);
 
-  console.log(model);
+  console.log("editmodel", model);
 
   hooks = model.hooks;
   views = model.views;
   title = model.title;
   version = model.version
 
+  // update store
+  updateStatus(hooks);
 
   // sam/ui/scripts/userpermission.js
   // load svelte
@@ -57,6 +76,25 @@ async function load()
   // get resultView
   seperateViews(views);
 }
+
+async function reload()
+{
+  console.log("reload");
+
+  setApiConfig("https://localhost:44345","davidschoene","123456");
+  // load model froms server
+  model = await getEdit(id);
+  hooks = model.hooks
+
+  // there is a need for a time delay to update the hook status
+  // if not exit, the first run faild because the hooks are not  
+  setTimeout(async () => {
+				// update store
+        updateStatus(model.hooks);
+			}, 1000) /* <--- If this is enough greater than transition, it doesn't happen... */
+
+}
+
 
 // seperate dcm hooks from other hooks
 // known hooks - metadata, fileupload, validation
@@ -98,14 +136,32 @@ function seperateViews(views)
   console.log(additionalViews)
 }
 
+async function updateStatus(_hooks)
+{
+  var dic = new Object();
+
+
+
+  _hooks.forEach(hook => {
+    dic[hook.name] = hook.status
+  });
+
+  console.log("before",$hooksStatus);
+
+  hooksStatus.set(dic);
+
+  console.log("updateStatus",$hooksStatus);
+  console.log("length",$hooksStatus.length);
+
+  hookStatusList = $hooksStatus;
+}
+
 // debug infos 
 let visible=false;
 
 </script>
 
-{#if !model} <!--if the model == false, access denied-->
-  <Spinner color="primary" size="sm" type ="grow" text-center />
-{:else}  <!-- load page -->
+{#if model && hookStatusList} <!--if the model == true, load page-->
 
 <div in:fade={{ delay: 500 }}>
 
@@ -128,15 +184,16 @@ let visible=false;
 
 </div>
 <!-- ResultMessageView -->
-<Message bind:view={messageView} {id} {version}/>
+<!-- <Message bind:view={messageView} {id} {version}/> -->
 
 </div>
 </div>
 
-<Debug {hooks}/>
+<Debug bind:hooks = {hooks}/>
 
 </div>
-
+{:else}  <!-- access denied -->
+  <Spinner color="primary" size="sm" type ="grow" text-center />
 {/if}
 
 

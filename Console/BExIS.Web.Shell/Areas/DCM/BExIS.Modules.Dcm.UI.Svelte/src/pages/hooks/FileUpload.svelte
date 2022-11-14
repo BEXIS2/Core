@@ -6,6 +6,8 @@ import FileOverview from '../../components/fileupload/FileOverview.svelte'
 import {Spinner, Alert} from 'sveltestrap'
 import TimeDuration from '../../components/utils/TimeDuration.svelte'
 
+import { latestFileUploadDate } from '../../stores/editStores';
+
 export let id=0;
 export let version=1;
 export let hook;
@@ -33,8 +35,18 @@ async function load()
 {
   model = await getHookStart(hook.start,id,version);
   start = hook.start;
-  loading = false;
 
+  loading = false;
+  
+}
+
+async function reload() 
+{
+  /*update store*/
+  latestFileUploadDate.set(Date.now());
+
+  /* load data*/
+  load();
 
 }
 
@@ -42,18 +54,18 @@ async function load()
 </script>
 
 {#if model}
-{#if model.lastModification}
+  {#if model.lastModification}
 
-<TimeDuration milliseconds={new Date(model.lastModification)}/>
+  <TimeDuration milliseconds={new Date(model.lastModification)}/>
 
-{/if}
-  <FileUploader {id} {version} {context} data={model} {start} {submit} on:submited={load} on:submit={()=>loading=true} on:error on:success/>
-{#if model.existingFiles}
-  <FileOverview {id} files={model.existingFiles} descriptionType={model.descriptionType} {save} {remove} on:success />
-{/if}
+  {/if}
+    <FileUploader {id} {version} {context} data={model} {start} {submit} on:submited={reload} on:submit={()=>loading=true} on:error on:success/>
+  {#if model.existingFiles}
+    <FileOverview {id} files={model.existingFiles} descriptionType={model.descriptionType} {save} {remove} on:success={reload} />
+  {/if}
 
-{#if loading}
-  <Spinner color="info" size="sm" type ="grow" text-center />
-{/if}
+  {#if loading}
+    <Spinner color="info" size="sm" type ="grow" text-center />
+  {/if}
 
 {/if}

@@ -1,15 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Configuration;
+using System.Linq;
 using System.Runtime.Caching;
-using System.Web.SessionState;
 using System.Web;
 using System.Web.Mvc;
-using Vaiona.IoC;
+using System.Web.SessionState;
 using Vaiona.Entities.Security;
+using Vaiona.IoC;
 using Vaiona.Persistence.Api;
-using System.Reflection;
 
 namespace Vaiona.Web.Security.Az.Attributes
 {
@@ -22,14 +21,14 @@ namespace Vaiona.Web.Security.Az.Attributes
         }
     }
 
-    [AttributeUsage (AttributeTargets.Class | AttributeTargets.Method, Inherited= true)]
+    [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method, Inherited = true)]
     public class SecureFeatureAttribute : SecureFeatureInfoAttribute
-    {        
+    {
         private IAuthorizationService azService; // to be injected by DI
-        
+
         public string AccessRule { get; set; }
         public string FeatureKey { get; set; }
-        public string ParentFeatureKey { get; set; }        
+        public string ParentFeatureKey { get; set; }
         public bool FetchAccessRuleFromDB { get; set; }
 
         public string FullKey { get { return (string.Format("{0}.{1}", ParentFeatureKey, FeatureKey)); } }
@@ -55,10 +54,10 @@ namespace Vaiona.Web.Security.Az.Attributes
         {
             azService = IoCFactory.Container.Resolve<IAuthorizationService>() as IAuthorizationService;
             AccessRule = accessRule;
-            FeatureKey =  featureKey;
+            FeatureKey = featureKey;
             ParentFeatureKey = parentActionKey;
             FetchAccessRuleFromDB = fetchAccessRuleFromDB;
-        }        
+        }
 
         /// <summary>
         /// This is an authorization system for actions of an MVC application. in the security system all parts of action identification e.g. Area, Controller and Action 
@@ -133,17 +132,17 @@ namespace Vaiona.Web.Security.Az.Attributes
             if (!result.HasValue || result.Value == false)
             {
                 filterContext.Result = new HttpUnauthorizedResult();
-            }                           
+            }
         }
 
         private bool checkAllowAnonymous(AuthorizationContext filterContext)
         {
             var methods = filterContext.ActionDescriptor.ControllerDescriptor.ControllerType.GetMethods().ToList()
-                .Where(p=>p.Name.Equals(filterContext.ActionDescriptor.ActionName)); //((filterContext.ActionDescriptor.ActionName);
+                .Where(p => p.Name.Equals(filterContext.ActionDescriptor.ActionName)); //((filterContext.ActionDescriptor.ActionName);
             foreach (var method in methods) // method may have overloads
             {
                 //if there is any secured feature overload, anonymous acces is denied on all overloads!
-                if (method.GetCustomAttributes(typeof(SecureFeatureAttribute), true).Count() > 0) 
+                if (method.GetCustomAttributes(typeof(SecureFeatureAttribute), true).Count() > 0)
                     return (false);
             }
             foreach (var method in methods) // method may have overloads
@@ -181,9 +180,9 @@ namespace Vaiona.Web.Security.Az.Attributes
                 //areaName = !string.IsNullOrWhiteSpace(areaName) ? areaName : "Shell";
             }
             catch { }
-            ParentFeatureKey = !string.IsNullOrWhiteSpace(ParentFeatureKey) 
-                                ? ParentFeatureKey 
-                                : string.Format("{0}.{1}", areaName, filterContext.ActionDescriptor.ControllerDescriptor.ControllerName);                 
+            ParentFeatureKey = !string.IsNullOrWhiteSpace(ParentFeatureKey)
+                                ? ParentFeatureKey
+                                : string.Format("{0}.{1}", areaName, filterContext.ActionDescriptor.ControllerDescriptor.ControllerName);
         }
 
         private void fetchRule(AuthorizationContext filterContext)
@@ -201,7 +200,7 @@ namespace Vaiona.Web.Security.Az.Attributes
 
             // extract all sub keys to fetch them from db
             List<string> subKeys = new List<string>();
-            
+
             subKeys.Add(temp);
             do
             {
@@ -214,7 +213,7 @@ namespace Vaiona.Web.Security.Az.Attributes
 
             //fetch access rules coreponsing to all subkeys
             IPersistenceManager persistenceManager = PersistenceFactory.GetPersistenceManager();
-            
+
             List<AccessRuleEntity> rules;
             using (IUnitOfWork uow = persistenceManager.UnitOfWorkFactory.CreateUnitOfWork(false, true))
             {
@@ -222,14 +221,14 @@ namespace Vaiona.Web.Security.Az.Attributes
                 rules = accessRuleRepo.Get(p => subKeys.Contains(p.SecurityKey) && p.SecurityObjectType == SecurityObjectType.Feature)
                                 .OrderBy(p => p.SecurityKey.Length).ToList();
             }
-            
+
             // compile the final access rules based on action hierarchy and rule merging policy
             AccessRule = string.Empty;
             AccessRuleMergeOption mergeOption = (AccessRuleMergeOption)Enum.Parse(typeof(AccessRuleMergeOption), ConfigurationManager.AppSettings["AccessRuleMergeOption"]);
             switch (mergeOption)
             {
                 case AccessRuleMergeOption.MaximumRight:
-                    foreach (var rule in rules.Where(p=> !string.IsNullOrWhiteSpace(p.RuleBody)))
+                    foreach (var rule in rules.Where(p => !string.IsNullOrWhiteSpace(p.RuleBody)))
                     {
                         AccessRule = AccessRule + " | (" + rule.RuleBody + ")";
                     }
@@ -239,11 +238,11 @@ namespace Vaiona.Web.Security.Az.Attributes
                     //AccessRule = rules.Where(p=> !string.IsNullOrWhiteSpace(p.RuleBody))
                     //                .Select(x => x.RuleBody)
                     //                .Aggregate((current, next) => '(' + current + ") | (" + next + ')');
-                
-                    
+
+
                     break;
                 case AccessRuleMergeOption.MinimumRight:
-                    foreach (var rule in rules.Where(p=> !string.IsNullOrWhiteSpace(p.RuleBody)))
+                    foreach (var rule in rules.Where(p => !string.IsNullOrWhiteSpace(p.RuleBody)))
                     {
                         AccessRule = AccessRule + " & (" + rule.RuleBody + ")";
                     }
@@ -263,7 +262,7 @@ namespace Vaiona.Web.Security.Az.Attributes
                 policy.SlidingExpiration = new TimeSpan(0, 0, cacheTime);
                 filterContext.HttpContext.Application.GetAccessRuleCache().Add(FullKey, AccessRule, policy, null);
             }
-        }       
+        }
     }
 
     //public class AllowAnonymousAttribute : Attribute

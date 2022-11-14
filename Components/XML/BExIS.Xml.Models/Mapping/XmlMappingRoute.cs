@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Linq;
 using System.Xml;
 
 namespace BExIS.Xml.Models.Mapping
@@ -16,7 +12,7 @@ namespace BExIS.Xml.Models.Mapping
         {
             XmlMappingRoute route = new XmlMappingRoute();
 
-            if(xmlNode.Name.Equals(XmlMapperTags.route.ToString()))
+            if (xmlNode.Name.Equals(XmlMapperTags.route.ToString()))
             {
                 foreach (XmlNode childNode in xmlNode.ChildNodes)
                 {
@@ -52,7 +48,7 @@ namespace BExIS.Xml.Models.Mapping
             destinationXPath = destinationXPath.TrimEnd('/');
 
             string[] temp = destinationXPath.Split('/');
-            
+
             //lenght wihtout last element
             int lengthWithoutLastElement = temp.Length - 1;
 

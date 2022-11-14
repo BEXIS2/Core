@@ -12,7 +12,6 @@ using BExIS.Security.Entities.Subjects;
 using BExIS.Security.Services.Utilities;
 using BExIS.Utils.Config;
 using BExIS.Utils.Data.Upload;
-using BExIS.Utils.Models;
 using BExIS.Utils.Upload;
 using BExIS.Xml.Helpers;
 using System;
@@ -25,7 +24,6 @@ using System.Threading.Tasks;
 using System.Web;
 using System.Xml;
 using Vaiona.Entities.Common;
-using Vaiona.IoC;
 using Vaiona.Logging.Aspects;
 using Vaiona.Persistence.Api;
 using Vaiona.Utils.Cfg;
@@ -377,8 +375,8 @@ namespace BExIS.Modules.Dcm.UI.Helpers
                             temp.Add(new Error(ErrorType.Other, "Can not upload. : " + e.Message));
                             var es = new EmailService();
                             es.Send(MessageHelper.GetErrorHeader(),
-                                "Can not upload. : " + e.Message,
-                                GeneralSettings.SystemEmail
+                                "Dataset: " + title + "(ID: " + datasetid + ", User: " + User.DisplayName + " )" + " Can not upload. : " + e.Message,
+                                ConfigurationManager.AppSettings["SystemEmail"]
                                 );
                         }
                         finally

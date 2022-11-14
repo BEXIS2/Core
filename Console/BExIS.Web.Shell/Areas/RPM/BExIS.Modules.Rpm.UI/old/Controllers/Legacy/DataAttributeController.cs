@@ -1,14 +1,4 @@
-﻿using BExIS.Dlm.Entities.DataStructure;
-using BExIS.Dlm.Services.DataStructure;
-using BExIS.Modules.Rpm.UI.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web.Mvc;
-using Vaiona.Utils.Cfg;
-using Vaiona.Web.Extensions;
-using Vaiona.Web.Mvc;
-using Vaiona.Web.Mvc.Models;
+﻿using BExIS.Modules.Rpm.UI.Models;
 
 namespace BExIS.Modules.Rpm.UI.Controllers
 {
@@ -320,7 +310,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
             {
                 str = str.Trim();
                 //if (str.Length > 255)
-                    //str = str.Substring(0, 255);
+                //str = str.Substring(0, 255);
             }
             return (str);
         }

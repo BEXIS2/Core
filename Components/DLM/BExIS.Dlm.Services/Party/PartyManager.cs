@@ -3,7 +3,6 @@ using BExIS.Ext.Model;
 using NCalc;
 using System;
 using System.Collections.Generic;
-using System.Data;
 using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -474,10 +473,10 @@ namespace BExIS.Dlm.Services.Party
 
                 var cnt = 0;
 
-                if(direction == 0)
+                if (direction == 0)
                     cnt = repoPR.Query(item => (item.PartyRelationshipType != null && item.PartyRelationshipType.Id == partyRelationship.PartyRelationshipType.Id)
                                       && (item.SourceParty != null && item.SourceParty.Id == partyRelationship.SourceParty.Id)).Count();
-                else if(direction == 1)
+                else if (direction == 1)
                     cnt = repoPR.Query(item => (item.PartyRelationshipType != null && item.PartyRelationshipType.Id == partyRelationship.PartyRelationshipType.Id)
                                       && (item.TargetParty != null && item.TargetParty.Id == partyRelationship.TargetParty.Id)).Count();
 
@@ -1063,7 +1062,7 @@ namespace BExIS.Dlm.Services.Party
         /// <returns></returns>
         private Dictionary<PartyCustomAttribute, string> ConvertDictionaryToPartyCustomeAttrValuesDictionary(Dictionary<long, string> partyCustomAttributes)
         {
-            
+
             using (var partyTypeManager = new PartyTypeManager())
             {
                 var result = new Dictionary<PartyCustomAttribute, string>();
@@ -1111,7 +1110,9 @@ namespace BExIS.Dlm.Services.Party
         {
             //retrieve all the records for this partyId
             var partyCustomGridColumns = PartyCustomGridColumnsRepository.Get(cc => (cc.CustomAttribute.PartyType.Id == partyTypeId || cc.TypePair.SourcePartyType.Id == partyTypeId)
-            && (userId.HasValue ? cc.UserId.Value == userId.Value : !cc.UserId.HasValue));
+            && (cc.UserId == userId));
+            //&& ((userId.HasValue == true && cc.UserId.Value == userId.Value) || !userId.HasValue));
+
             if (!all)
                 partyCustomGridColumns = partyCustomGridColumns.Where(cc => cc.Enable).ToList();
             return partyCustomGridColumns;

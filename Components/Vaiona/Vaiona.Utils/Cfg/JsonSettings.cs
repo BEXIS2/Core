@@ -1,9 +1,5 @@
 ﻿using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Vaiona.Utils.Cfg
 {
@@ -35,9 +31,9 @@ namespace Vaiona.Utils.Cfg
 
         public Attribute GetAttribute(string key)
         {
-            if (Attribute!=null && Attribute.Any())
+            if (Attribute != null && Attribute.Any())
             {
-                return Attribute.Where(a => a.Key.ToLower().Equals("placeholder")).FirstOrDefault();
+                return Attribute.Where(a => a.Key.ToLower().Equals(key)).FirstOrDefault();
             }
 
             return null;

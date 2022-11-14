@@ -1,5 +1,6 @@
 ﻿using BExIS.App.Bootstrap.Attributes;
 using BExIS.Dim.Entities.Publication;
+using BExIS.Dim.Helpers;
 using BExIS.Dim.Helpers.Export;
 using BExIS.Dim.Helpers.GFBIO;
 using BExIS.Dim.Services;
@@ -13,6 +14,7 @@ using BExIS.Security.Services.Authorization;
 using BExIS.Xml.Helpers;
 using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -444,6 +446,60 @@ namespace BExIS.Modules.Dim.UI.Controllers
 
                         #endregion GENERIC
                     }
+
+                    //if (datarepo.ToLower().Equals("doi"))
+                    //{
+                    //    #region datacite
+
+                    //    Broker broker =
+                    //        publicationManager.BrokerRepo.Get()
+                    //            .Where(b => b.Name.ToLower().Equals(datarepo.ToLower()))
+                    //            .FirstOrDefault();
+
+                    //    Repository repository =
+                    //        publicationManager.RepositoryRepo.Get()
+                    //            .Where(b => b.Broker.Name.ToLower().Equals(datarepo.ToLower()) &&
+                    //                        b.Name.ToLower() == "datacite")
+                    //            .FirstOrDefault();
+
+                    //    if (repository != null && repository.Name.ToLower() == "datacite")
+                    //    {
+                    //        string datasetUrl = new Uri(new Uri(Request.Url.GetLeftPart(UriPartial.Authority)), Url.Content("~/ddm/Data/ShowData/" + datasetVersion.Dataset.Id).ToString()).ToString();
+                    //        new DataCiteDoiHelper().sendRequest(datasetVersion, datasetUrl);
+
+                    //        string title = xmlDatasetHelper.GetInformationFromVersion(datasetVersion.Id, NameAttributeValues.title);
+                    //        publicationManager.CreatePublication(datasetVersion, broker, repository, title, 0, zipfilepath, datasetUrl, "under review");
+                    //    }
+
+                    //    #endregion
+                    //}
+
+                    if (datarepo.ToLower().Equals("externallink"))
+                    {
+                        #region datacite
+
+                        Broker broker =
+                            publicationManager.BrokerRepo.Get()
+                                .Where(b => b.Name.ToLower().Equals(datarepo.ToLower()))
+                                .FirstOrDefault();
+
+                        Repository repository =
+                            publicationManager.RepositoryRepo.Get()
+                                .Where(b => b.Broker.Name.ToLower().Equals(datarepo.ToLower()) &&
+                                            b.Name.ToLower().Equals(ConfigurationManager.AppSettings["doiProvider"].ToLower()))
+                                .FirstOrDefault();
+
+                        //if (repository != null && repository.Name.ToLower() == "datacite")
+                        //{
+                        //    string datasetUrl = new Uri(new Uri(Request.Url.GetLeftPart(UriPartial.Authority)), Url.Content("~/ddm/Data/ShowData/" + datasetVersion.Dataset.Id).ToString()).ToString();
+                        //    new DataCiteDoiHelper().sendRequest(datasetVersion, datasetUrl);
+
+                        //    string title = xmlDatasetHelper.GetInformationFromVersion(datasetVersion.Id, NameAttributeValues.title);
+                        //    publicationManager.CreatePublication(datasetVersion, broker, repository, title, 0, zipfilepath, datasetUrl, "under review");
+                        //}
+                        #endregion datacite
+                    }
+
                 }
                 else
                 {

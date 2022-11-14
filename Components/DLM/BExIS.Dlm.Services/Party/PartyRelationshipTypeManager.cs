@@ -4,8 +4,6 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics.Contracts;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Vaiona.Persistence.Api;
 
 namespace BExIS.Dlm.Services.Party
@@ -63,7 +61,7 @@ namespace BExIS.Dlm.Services.Party
         /// <returns></returns>
         public PartyRelationshipType Create(string title, string displayName, string description, bool indicatesHierarchy, int maxCardinality,
             int minCardinality, bool partyRelationShipTypeDefault, PartyType partyTypePairAlowedSource, PartyType partyTypePairAlowedTarget,
-            string partyTypePairTitle, string partyTypePairDescription,string conditionSource,string conditionTarget,int permissionTemplate)
+            string partyTypePairTitle, string partyTypePairDescription, string conditionSource, string conditionTarget, int permissionTemplate)
         {
 
             Contract.Requires(!string.IsNullOrWhiteSpace(title) && !string.IsNullOrWhiteSpace(partyTypePairTitle));
@@ -89,9 +87,9 @@ namespace BExIS.Dlm.Services.Party
                 PartyRelationshipType = entity,
                 Title = partyTypePairTitle,
                 PartyRelationShipTypeDefault = partyRelationShipTypeDefault,
-                ConditionSource=conditionSource,
-                PermissionTemplate=permissionTemplate,
-                ConditionTarget=conditionTarget
+                ConditionSource = conditionSource,
+                PermissionTemplate = permissionTemplate,
+                ConditionTarget = conditionTarget
             };
 
             using (IUnitOfWork uow = this.GetUnitOfWork())
@@ -104,7 +102,7 @@ namespace BExIS.Dlm.Services.Party
             }
             return (entity);
         }
-        public PartyRelationshipType Update(long id, string title, string displayName,string description, bool indicatesHierarchy, int maxCardinality,
+        public PartyRelationshipType Update(long id, string title, string displayName, string description, bool indicatesHierarchy, int maxCardinality,
            int minCardinality)
         {
             Contract.Requires(id > 0);
@@ -186,7 +184,7 @@ namespace BExIS.Dlm.Services.Party
         /// </summary>
         /// <param name="sourcePartyTypeId"></param>
         /// <returns></returns>
-        public IEnumerable<PartyRelationshipType> GetAllPartyRelationshipTypes(long sourcePartyTypeId,Boolean targetToSource=false)
+        public IEnumerable<PartyRelationshipType> GetAllPartyRelationshipTypes(long sourcePartyTypeId, Boolean targetToSource = false)
         {
             Contract.Requires(sourcePartyTypeId > 0);
             using (IUnitOfWork uow = this.GetUnitOfWork())
@@ -194,7 +192,7 @@ namespace BExIS.Dlm.Services.Party
                 IRepository<PartyType> repoPT = uow.GetRepository<PartyType>();
                 IRepository<PartyRelationshipType> repoPRT = uow.GetRepository<PartyRelationshipType>();
                 PartyType sourcePartyType = repoPT.Get(sourcePartyTypeId);
-                var partyRelationshipTypes = repoPRT.Get(cc => cc.AssociatedPairs.Any(item => (!item.SourcePartyType.SystemType && !item.TargetPartyType.SystemType) && item.SourcePartyType.Id == sourcePartyTypeId || (targetToSource && item.TargetPartyType.Id==sourcePartyTypeId))).OrderBy(item => item.Title);
+                var partyRelationshipTypes = repoPRT.Get(cc => cc.AssociatedPairs.Any(item => (!item.SourcePartyType.SystemType && !item.TargetPartyType.SystemType) && item.SourcePartyType.Id == sourcePartyTypeId || (targetToSource && item.TargetPartyType.Id == sourcePartyTypeId))).OrderBy(item => item.Title);
                 return partyRelationshipTypes;
             }
         }
@@ -204,7 +202,7 @@ namespace BExIS.Dlm.Services.Party
 
         #region PartyTypePair
         public PartyTypePair AddPartyTypePair(string title, PartyType allowedSource, PartyType allowedTarget, string description, bool partyRelationShipTypeDefault,
-            PartyRelationshipType partyRelationshipType,string conditionSource,string conditionTarget,int permissionsTemplate)
+            PartyRelationshipType partyRelationshipType, string conditionSource, string conditionTarget, int permissionsTemplate)
         {
             Contract.Requires(!string.IsNullOrEmpty(title));
             Contract.Requires(allowedSource != null && allowedSource.Id > 0);
@@ -219,9 +217,9 @@ namespace BExIS.Dlm.Services.Party
                 PartyRelationshipType = partyRelationshipType,
                 Title = title,
                 PartyRelationShipTypeDefault = partyRelationShipTypeDefault,
-                ConditionSource=conditionSource,
-                ConditionTarget=conditionTarget,
-               PermissionTemplate =permissionsTemplate
+                ConditionSource = conditionSource,
+                ConditionTarget = conditionTarget,
+                PermissionTemplate = permissionsTemplate
             };
             using (IUnitOfWork uow = this.GetUnitOfWork())
             {
@@ -316,12 +314,12 @@ namespace BExIS.Dlm.Services.Party
         #endregion
 
         #region additional_methods
-        public IEnumerable<PartyTypePair> GetPartyTypePairs(PartyRelationshipType partyRelationshipType,PartyType sourcePartyType, PartyType targetPartyType)
+        public IEnumerable<PartyTypePair> GetPartyTypePairs(PartyRelationshipType partyRelationshipType, PartyType sourcePartyType, PartyType targetPartyType)
         {
             using (IUnitOfWork uow = this.GetUnitOfWork())
             {
                 IRepository<PartyTypePair> repoPartyTypePair = uow.GetRepository<PartyTypePair>();
-                var partyTypePairs=repoPartyTypePair.Get(cc =>cc.PartyRelationshipType.Id==partyRelationshipType.Id && cc.SourcePartyType.Id == sourcePartyType.Id && cc.TargetPartyType.Id == targetPartyType.Id);
+                var partyTypePairs = repoPartyTypePair.Get(cc => cc.PartyRelationshipType.Id == partyRelationshipType.Id && cc.SourcePartyType.Id == sourcePartyType.Id && cc.TargetPartyType.Id == targetPartyType.Id);
                 return partyTypePairs;
             }
         }

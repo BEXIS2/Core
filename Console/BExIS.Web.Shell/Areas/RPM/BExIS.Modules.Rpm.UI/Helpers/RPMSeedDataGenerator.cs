@@ -1,17 +1,4 @@
-﻿using BExIS.Dlm.Entities.Administration;
-using BExIS.Dlm.Entities.DataStructure;
-using BExIS.Dlm.Services.Administration;
-using BExIS.Dlm.Services.DataStructure;
-using BExIS.Modules.Rpm.UI.Classes;
-using BExIS.Modules.Rpm.UI.Helpers.SeedData;
-using BExIS.Security.Entities.Objects;
-using BExIS.Security.Services.Authorization;
-using BExIS.Security.Services.Objects;
-using System.Collections.Generic;
-using System.Data;
-using System.Linq;
-using Vaiona.Utils.Cfg;
-using Vaiona.Web.Mvc.Modularity;
+﻿using BExIS.Modules.Rpm.UI.Helpers.SeedData;
 
 namespace BExIS.Modules.Rpm.UI.Helpers
 {

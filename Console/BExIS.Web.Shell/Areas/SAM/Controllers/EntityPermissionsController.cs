@@ -1,5 +1,4 @@
 ﻿using BExIS.Dlm.Services.Party;
-using BExIS.Dlm.Entities.Party;
 using BExIS.Modules.Sam.UI.Models;
 using BExIS.Security.Entities.Authorization;
 using BExIS.Security.Entities.Subjects;
@@ -111,7 +110,7 @@ namespace BExIS.Modules.Sam.UI.Controllers
             {
                 var instanceStore = (IEntityStore)Activator.CreateInstance(entityManager.FindById(entityId).EntityStoreType);
                 var instances = instanceStore.GetEntities().Select(i => EntityInstanceGridRowModel.Convert(i, entityPermissionManager.Exists(null, entityId, i.Id))).ToList();
-                
+
                 return View(new GridModel<EntityInstanceGridRowModel> { Data = instances });
             }
             finally
@@ -178,7 +177,7 @@ namespace BExIS.Modules.Sam.UI.Controllers
 
                 return View(new GridModel<ReferredEntityPermissionGridRowModel> { Data = entityPermissions });
             }
-       
+
         }
 
         public void RemoveInstanceFromPublic(long entityId, long instanceId)

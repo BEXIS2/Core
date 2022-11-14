@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Collections.Generic;
 using Vaiona.Entities.Common;
 
 /// <summary>
@@ -13,7 +10,7 @@ namespace BExIS.Dlm.Entities.MetadataStructure
     ///
     /// </summary>
     /// <remarks></remarks>        
-    public class MetadataPackage: BusinessEntity
+    public class MetadataPackage : BusinessEntity
     {
         #region Attributes
 
@@ -22,22 +19,22 @@ namespace BExIS.Dlm.Entities.MetadataStructure
         /// </summary>
         /// <remarks></remarks>
         /// <seealso cref=""/>        
-        public virtual string   Name        { get; set; }
+        public virtual string Name { get; set; }
 
         /// <summary>
         ///
         /// </summary>
         /// <remarks></remarks>
         /// <seealso cref=""/>        
-        public virtual string   Description { get; set; }
+        public virtual string Description { get; set; }
 
         /// <summary>
         ///
         /// </summary>
         /// <remarks></remarks>
         /// <seealso cref=""/>        
-        public virtual bool     IsEnabled     { get; set; }
-        
+        public virtual bool IsEnabled { get; set; }
+
         #endregion
 
         #region Associations
@@ -47,15 +44,15 @@ namespace BExIS.Dlm.Entities.MetadataStructure
         /// </summary>
         /// <remarks></remarks>
         /// <seealso cref=""/>        
-        public virtual ICollection<MetadataPackageUsage>    UsedIn                  { get; set; }
+        public virtual ICollection<MetadataPackageUsage> UsedIn { get; set; }
 
         /// <summary>
         ///
         /// </summary>
         /// <remarks> needs to preserve the order </remarks>
         /// <seealso cref=""/>        
-        public virtual ICollection<MetadataAttributeUsage>  MetadataAttributeUsages { get; set; }
-        
+        public virtual ICollection<MetadataAttributeUsage> MetadataAttributeUsages { get; set; }
+
         #endregion
 
         #region Mathods

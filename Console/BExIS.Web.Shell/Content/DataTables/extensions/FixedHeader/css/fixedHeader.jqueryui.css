@@ -1,15 +1,15 @@
 table.fixedHeader-floating {
-  position: fixed !important;
-  background-color: white;
+    position: fixed !important;
+    background-color: white;
 }
 
 table.fixedHeader-locked {
-  position: absolute !important;
-  background-color: white;
+    position: absolute !important;
+    background-color: white;
 }
 
 @media print {
-  table.fixedHeader-floating {
-    display: none;
-  }
+    table.fixedHeader-floating {
+        display: none;
+    }
 }

@@ -7,7 +7,6 @@
 
 @using Telerik.Web.Mvc.UI;
 @using Vaiona.Web.Mvc.Modularity
-@using System.Web.Optimization
 @using System.Text.RegularExpressions
 
 @{
@@ -257,7 +256,7 @@
         {
             if (element.Level == 0)
             {
-                displayName = char.ToUpper(element.UsageName[0]) + element.UsageName.Substring(1);
+                displayName = char.ToUpper(element.UsageName[0]) + element.UsageName.Substring(1).Replace("_", " ");
                 displayName = Regex.Replace(displayName, "((?<=[a-z])[A-Z])", " $1");
                 id_label_container_1 = element.StepId + "_1_LabelContainerMenu";
                 id_label_container = element.StepId + "_Menu";

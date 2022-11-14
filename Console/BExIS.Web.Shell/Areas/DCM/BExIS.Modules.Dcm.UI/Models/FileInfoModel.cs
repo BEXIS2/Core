@@ -57,6 +57,6 @@ namespace BExIS.Modules.Dcm.UI.Models
             SheetUriDictionary = new Dictionary<Uri, string>();
             activeSheetUri = "";
         }
-  
+
     }
 }

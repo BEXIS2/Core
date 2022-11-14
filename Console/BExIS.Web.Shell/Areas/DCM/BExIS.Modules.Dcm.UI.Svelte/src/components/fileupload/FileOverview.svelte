@@ -1,9 +1,9 @@
 <script>
-import { Spinner, Container  } from 'sveltestrap';
-import { onMount , createEventDispatcher}from 'svelte'
-
+import Fa from 'svelte-fa/src/fa.svelte'
 import FileOverviewItem from './FileOverviewItem.svelte'
 
+import { Spinner, Button  } from 'sveltestrap';
+import { onMount , createEventDispatcher}from 'svelte'
 
 export let id;
 export let files;
@@ -25,13 +25,16 @@ onMount(async () => {
   date = Date.now();
 
   setDescriptionValues(descriptionType);
-  console.log("mount file overview");
-  console.log(descriptionType);
-  console.log(withDescription);
+  // console.log("mount file overview");
+  // console.log(descriptionType);
+  // console.log(withDescription);
+  // console.log("files",files);
 
 })
 
 async function handleRemoveFile(e, index) {
+
+  console.log("handleRemoveFile",e,index);
 
    files.splice(index, 1)
    files = [...files];
@@ -52,17 +55,19 @@ function setDescriptionValues(type)
 
 }
 
+
+
 </script>
 
 {#if files}
 
-<!-- <Container> -->
- {#each files as item, index}
+<!--<Container> -->
+ {#each files as file, index}
 
   <FileOverviewItem 
-    {id} file={item.name} {...item}  {save} {remove} 
+    {id} file={file.name} {...file}  {save} {remove}
     on:removed={e => handleRemoveFile(e, index)} 
-    on:saved={handleSave} {withDescription}/>
+    on:saved={handleSave} {withDescription} />
  {/each}
 <!-- </Container> -->
 

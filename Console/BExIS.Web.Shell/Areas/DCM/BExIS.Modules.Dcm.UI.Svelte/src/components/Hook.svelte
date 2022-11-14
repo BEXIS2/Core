@@ -42,7 +42,7 @@ function setActive(status)
 </script>
 
 {#if isEnabled}
-
+  
   <div class="mb-3 hook-status-{status} hook" class:inactive={!active} title="{description}" on:click>
     {displayName.toUpperCase()}
   </div> 

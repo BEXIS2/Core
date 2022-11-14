@@ -5,7 +5,7 @@ White    #000000   brigth
 Gray 01  #f5f5f5
 Gray 02  #ebebeb
 Gray 03  #afb0b1
-Gray 04  #009cdf   dark // new 323232 
+Gray 04  #009cdf   dark // new 323232
 Black    #ffffff
 Yellow   #ffbb52
 Orange   #ff9700
@@ -17,55 +17,46 @@ Green 04  #d2e8e3
 Green 05  #eff7f6   brigth
 */
 
-
 /*Helpers*/
 .vcenter {
-	display: inline-block;
-	vertical-align: middle;
-	float: none;
+    display: inline-block;
+    vertical-align: middle;
+    float: none;
 }
 
 /**LINK im Content*/
-.nav a
-{
-	/*text-transform:uppercase;*/
-
+.nav a {
+    /*text-transform:uppercase;*/
 }
 
-.nav a:hover
-{
-	/*text-transform:uppercase;*/
-	color:var(--nav-hover)!important;
-	cursor: pointer;
-}
-
+    .nav a:hover {
+        /*text-transform:uppercase;*/
+        color: var(--nav-hover) !important;
+        cursor: pointer;
+    }
 
 .bx-link,
 .content a,
 .t-link,
-.t-in
-{
-	color: var(--bg-color-level-1);
-	cursor: pointer;
+.t-in {
+    color: var(--bg-color-level-1);
+    cursor: pointer;
 }
 
-
-.bx-link:hover,
-.content  a:hover,
-.content  a::selection,
-.content  a .t-link:hover,
-.content  a .t-link::selection,
-.content .t-in:hover,
-.content .t-in::selection
-{
-	font-weight:bold;
-	cursor: pointer;
-}
+    .bx-link:hover,
+    .content a:hover,
+    .content a::selection,
+    .content a .t-link:hover,
+    .content a .t-link::selection,
+    .content .t-in:hover,
+    .content .t-in::selection {
+        font-weight: bold;
+        cursor: pointer;
+    }
 
 .bx-selection {
-   cursor: pointer !important;
+    cursor: pointer !important;
 }
-
 
 button,
 .t-button,
@@ -88,31 +79,29 @@ button,
 }
 
 a.bx-button {
-	text-decoration:none;
+    text-decoration: none;
 }
 
-a.bx-button:hover {
-	color: white;
-}
+    a.bx-button:hover {
+        color: white;
+    }
 
-button.small, 
-.bx-button.small, 
-.t-filter-options .t-clear-button, 
+button.small,
+.bx-button.small,
+.t-filter-options .t-clear-button,
 .t-filter-options .t-filter-button,
 .t-grid-Edit,
 .t-grid-Create,
 .t-grid-Delete,
-.ui-dialog .ui-dialog-buttonpane button 
-{
-	padding: 6px 12px 6px 12px;
-	font-size:94%;
+.ui-dialog .ui-dialog-buttonpane button {
+    padding: 6px 12px 6px 12px;
+    font-size: 94%;
 }
 
 button.smaller,
-.bx-button.smaller
-{
-	padding: 3px 12px 3px 12px;
-	font-size:80%;
+.bx-button.smaller {
+    padding: 3px 12px 3px 12px;
+    font-size: 80%;
 }
 
 button.action,
@@ -122,7 +111,7 @@ button.action,
 }
 
 .whiteText {
-	color: white !important;
+    color: white !important;
 }
 
 button.function,
@@ -133,10 +122,9 @@ button.function,
 }
 
 button.confirm,
-.t-button.confirm, 
-.bx-button.confirm
-{
-	background: #000000;
+.t-button.confirm,
+.bx-button.confirm {
+    background: #000000;
 }
 
 .bx-button.bx-disabled,
@@ -145,29 +133,28 @@ button.confirm,
 .bx-grid-function.bx-disabled,
 button.bx-disabled,
 button.t-state-disabled,
-.t-link.t-state-disabled .t-icon
-{
-	background-color:white;
-	border: 1px #afb0b1 solid;
-	color:#afb0b1;
-	cursor:not-allowed;
+.t-link.t-state-disabled .t-icon {
+    background-color: white;
+    border: 1px #afb0b1 solid;
+    color: #afb0b1;
+    cursor: not-allowed;
 }
 
 a {
     cursor: pointer;
 }
 
-a.bx-grid-function {
-	margin-left:2px;
-	margin-right:2px;
-}
+    a.bx-grid-function {
+        margin-left: 2px;
+        margin-right: 2px;
+    }
 
 .t-grid-filter {
-	 cursor: pointer;
+    cursor: pointer;
 }
 
 input[type=radio].css-checkbox {
-	background: none;
+    background: none;
 }
 
 .bx-combo-button {
@@ -179,33 +166,31 @@ input[type=radio].css-checkbox {
 .bx-tab,
 .t-tabstrip .t-item,
 li.t-state-disabled .t-link {
-	background-color: white;
-	border-top: 4px solid #afb0b1;
-	border-left: 2px solid #afb0b1;
-	border-right: 2px solid #afb0b1;
-	border-top-left-radius: 8px;
-	border-top-right-radius: 8px;
+    background-color: white;
+    border-top: 4px solid #afb0b1;
+    border-left: 2px solid #afb0b1;
+    border-right: 2px solid #afb0b1;
+    border-top-left-radius: 8px;
+    border-top-right-radius: 8px;
 }
 
 .bx-tab-active,
-.t-tabstrip li.t-state-active
-{
-	background-color:#f5f5f5;
-	color:white;
-	font-weight:bold;
-	margin-bottom:0;
-	border-bottom:none;
-	vertical-align:bottom;
-	height:36px;
-	border-bottom-left-radius:0;
-	border-bottom-right-radius:0;
+.t-tabstrip li.t-state-active {
+    background-color: #f5f5f5;
+    color: white;
+    font-weight: bold;
+    margin-bottom: 0;
+    border-bottom: none;
+    vertical-align: bottom;
+    height: 36px;
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
 }
 
 .bx-tab-disabled,
-li.t-state-disabled .t-link
-{
-	color:#bbbbbb;
-	cursor:not-allowed;
+li.t-state-disabled .t-link {
+    color: #bbbbbb;
+    cursor: not-allowed;
 }
 
 /**Input**/
@@ -236,12 +221,10 @@ li.t-state-disabled .t-link
 
 .bx-input,
 .t-autocomplete,
-.t-datepicker .t-picker-wrap input 
-{
+.t-datepicker .t-picker-wrap input {
     -webkit-appearance: none; /*Removes default chrome and safari style*/
     -moz-appearance: none; /* Removes Default Firefox style*/
 }
-
 
 .bx-input,
 .bx-textarea,
@@ -251,92 +234,82 @@ li.t-state-disabled .t-link
 
 .bx-input,
 .t-autocomplete,
-.t-datepicker .t-picker-wrap input
-{
-	height:30px;
+.t-datepicker .t-picker-wrap input {
+    height: 30px;
 }
 
 input,
 textarea,
 select {
-	border: 1px solid #000000;    
+    border: 1px solid #000000;
 }
 
 input,
-textarea{
-	padding-left:3px;
+textarea {
+    padding-left: 3px;
 }
 
-input:disabled,
-textarea:disabled,
-.bx-input.bx-disabled,
-.bx-textarea.bx-disabled,
-.t-autocomplete.bx-disabled
-{
-	border-color: #565655;
-	background-color:#f5f5f5;
-	color: #565655;
+    input:disabled,
+    textarea:disabled,
+    .bx-input.bx-disabled,
+    .bx-textarea.bx-disabled,
+    .t-autocomplete.bx-disabled {
+        border-color: #565655;
+        background-color: #f5f5f5;
+        color: #565655;
+    }
+
+.bx-dropdown {
+    height: 36px;
+    width: auto;
 }
 
-.bx-dropdown
-{
-	height:36px;
-	width:auto;
+.bx-select-mouseover {
+    background-color: var(--bg-color-bx-selected-mousover);
+    color: white;
 }
 
-.bx-select-mouseover
-{
-	background-color:var(--bg-color-bx-selected-mousover);
-	color:white;
+.bx-input-icon {
+    height: 36px;
+    margin-left: -15px;
 }
 
-.bx-input-icon
-{
-	height:36px;
-	margin-left:-15px;
-}
-
-.bx-input-error
-{
-	border-color: #f24c24!important;
+.bx-input-error {
+    border-color: #f24c24 !important;
 }
 
 /*Lists*/
-.bx-list, 
-.bx-list-multi
-{
-	width:100%;
-	border-bottom: 1px solid #ebebeb;
+.bx-list,
+.bx-list-multi {
+    width: 100%;
+    border-bottom: 1px solid #ebebeb;
 }
 
-ul.bx-list, 
-ul.bx-list-multi
-{
-	list-style-type: none; 
-	width:100%;
-	padding:0;
-	margin:0;
-	border-bottom: 1px solid #ebebeb;
+ul.bx-list,
+ul.bx-list-multi {
+    list-style-type: none;
+    width: 100%;
+    padding: 0;
+    margin: 0;
+    border-bottom: 1px solid #ebebeb;
 }
 
-.bx-list li, 
-.bx-list-multi li
-{
-   padding: 13px 40px 13px;
-   padding-top:13px;
-   padding-bottom:13px;
-   font-size:12pt;
-   margin:0;
-   border-top: 1px solid #ebebeb;
+.bx-list li,
+.bx-list-multi li {
+    padding: 13px 40px 13px;
+    padding-top: 13px;
+    padding-bottom: 13px;
+    font-size: 12pt;
+    margin: 0;
+    border-top: 1px solid #ebebeb;
 }
 
-.bx-list li:hover, 
-.bx-list-multi li:hover
-{
-   background-color:#eff7f6;
-   color: var(--bg-color-level-1);
-   border-top: 1px solid white;
-}
+    .bx-list li:hover,
+    .bx-list-multi li:hover {
+        background-color: #eff7f6;
+        color: var(--bg-color-level-1);
+        border-top: 1px solid white;
+    }
 
     .bx-list li.selected,
     .bx-list-multi li.selected {
@@ -369,29 +342,24 @@ ul.bx-list-multi
     border-color: var(--bg-color-level-2);
 }
 
-.overlayContent li a,
-.overlayContent li span
-{
-	color:black;
-}
+    .overlayContent li a,
+    .overlayContent li span {
+        color: black;
+    }
 
-.overlayContent .bx-more
-{
-	color:#afb0b1;
-}
+    .overlayContent .bx-more {
+        color: #afb0b1;
+    }
 
-
-.overlay .overlayHeader i:hover
-{
-	color:white;
-	cursor:pointer;
+.overlay .overlayHeader i:hover {
+    color: white;
+    cursor: pointer;
 }
 
 /*Slider*/
 .slider .slider-selection,
-.slider .slider-handle
-{
-	background: black;
+.slider .slider-handle {
+    background: black;
 }
 
 .slider .slider-track-high,
@@ -411,63 +379,57 @@ ul.bx-list-multi
     border: 1px solid var(--bg-color-level-2);
 }
 
-
 /*Window Layout*/
 .bx-window,
 .t-window,
-.t-window-content
-{
-	background-color:#ebebeb;
-	max-width: 95vm;
+.t-window-content {
+    background-color: #ebebeb;
+    max-width: 95vm;
 }
 
-.bx-window .bx-title
-{
-	padding:4px 0;
-	font-size:13pt;
+    .bx-window .bx-title {
+        padding: 4px 0;
+        font-size: 13pt;
+    }
+
+    .bx-window .bx-content {
+        background-color: white;
+        padding: 10px;
+    }
+
+.bx-footer {
+    padding: 10px 5px;
 }
 
-.bx-window .bx-content
-{
-	background-color:white;
-	padding: 10px;
+.bx-window .bx-footer, .bx-window .bx-title {
+    padding: 10px 0px;
 }
 
-.bx-footer
-{
-	padding: 10px 5px;
-}
-.bx-window .bx-footer, .bx-window .bx-title
-{
-	padding: 10px 0px;
-}
+    .bx-footer.left,
+    .bx-window .bx-footer.left {
+        text-align: left;
+    }
 
-.bx-footer.left,
-.bx-window .bx-footer.left
-{
-	text-align:left;
-}
-.bx-footer.right,
-.bx-window .bx-footer.right
-{
-	text-align:right;
-}
-.bx-footer.center,
-.bx-window .bx-footer.center
-{
-	text-align:center;
-}
+    .bx-footer.right,
+    .bx-window .bx-footer.right {
+        text-align: right;
+    }
+
+    .bx-footer.center,
+    .bx-window .bx-footer.center {
+        text-align: center;
+    }
 
 /*Required and Error*/
 
 .bx-errorMsg,
 .bx-required {
-	color:#f24c24;
+    color: #f24c24;
 }
 
 .bx-required {
-	font-size:6pt;
-	vertical-align:top;
+    font-size: 6pt;
+    vertical-align: top;
 }
 
 /*information section*/
@@ -476,9 +438,11 @@ ul.bx-list-multi
     color: var(--information-link-color);
     font-weight: bold;
 }
-.bx-informationLink:hover {
-    color: var(--information-link-hover-color);
-}
+
+    .bx-informationLink:hover {
+        color: var(--information-link-hover-color);
+    }
+
 #information-container {
     background-color: var(--information-bg-color);
     color: var(--information-text-color);
@@ -488,24 +452,23 @@ ul.bx-list-multi
 }
 
 .bx-selection-grid tr:hover {
-	background-color: #eff7f6;
+    background-color: #eff7f6;
 }
 
 /**GENERAL*/
 
 .bx-mouse-pointer:hover {
-	cursor: pointer;
+    cursor: pointer;
 }
-
 
 /**States**/
 .bx-success {
-    color:green;
+    color: green;
 }
 
 /**Settings Menu*/
 .settings-menu {
-   height: auto; 
-   overflow-x: hidden; 
-   max-height: 500px;
+    height: auto;
+    overflow-x: hidden;
+    max-height: 500px;
 }

@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Web;
 
 namespace Vaiona.IoC.Unity
@@ -10,7 +8,7 @@ namespace Vaiona.IoC.Unity
     public class UnityPerRequestHttpModule : IHttpModule
     {
         private static readonly string IoCPerRequestKey = "IoCRerRequestKey_";
-        
+
 
 
         /// <summary>

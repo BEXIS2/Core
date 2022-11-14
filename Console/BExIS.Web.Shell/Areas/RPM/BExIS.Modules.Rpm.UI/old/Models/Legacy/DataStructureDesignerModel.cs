@@ -1,13 +1,4 @@
-﻿using BExIS.Dlm.Entities.DataStructure;
-using BExIS.Dlm.Services.Data;
-using BExIS.Dlm.Services.DataStructure;
-using BExIS.Xml.Helpers;
-using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Linq;
-using System.Xml;
-using XmlNodeType = System.Xml.XmlNodeType;
+﻿using XmlNodeType = System.Xml.XmlNodeType;
 
 /// <summary>
 ///
@@ -238,7 +229,7 @@ namespace BExIS.Modules.Rpm.UI.Models
                 }
                 return orderedVariables;
             }
-        
+
         }
 
         public StructuredDataStructure GetDataStructureByID(long ID)
@@ -354,7 +345,7 @@ namespace BExIS.Modules.Rpm.UI.Models
                         return (unStructuredDataStructure);
                     }
                 }
-                
+
             }
         }
 

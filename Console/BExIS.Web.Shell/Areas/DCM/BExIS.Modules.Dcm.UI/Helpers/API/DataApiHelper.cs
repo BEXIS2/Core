@@ -14,16 +14,13 @@ using BExIS.Security.Services.Utilities;
 using BExIS.Utils.Config;
 using BExIS.Utils.Data.Upload;
 using BExIS.Utils.Upload;
-using BExIS.Xml.Helpers;
 using System;
 using System.Collections.Generic;
-using System.Configuration;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Vaiona.Entities.Common;
-using Vaiona.IoC;
 using Vaiona.Utils.Cfg;
 
 namespace BExIS.Modules.Dcm.UI.Helper.API
@@ -307,7 +304,7 @@ namespace BExIS.Modules.Dcm.UI.Helper.API
                         }
                     } while (rows.Count() > 0 || inputWasAltered == true);
 
-                    datasetManager.CheckInDataset(id, "via api", userName);
+                    datasetManager.CheckInDataset(id, "via API", userName);
 
                     string title = workingCopy.Title;
 

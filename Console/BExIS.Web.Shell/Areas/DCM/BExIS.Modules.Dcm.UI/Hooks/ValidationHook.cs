@@ -2,10 +2,7 @@
 using BExIS.Security.Entities.Authorization;
 using BExIS.UI.Hooks;
 using BExIS.UI.Hooks.Caches;
-using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Web;
 
 namespace BExIS.Modules.Dcm.UI.Hooks
 {
@@ -32,7 +29,7 @@ namespace BExIS.Modules.Dcm.UI.Hooks
                 using (var datasetManager = new DatasetManager())
                 {
                     var dataset = datasetManager.GetDataset(id);
-                    if (dataset == null && dataset.DataStructure == null) { Status = HookStatus.Disabled; return; }
+                    if (dataset == null || dataset.DataStructure == null) { Status = HookStatus.Disabled; return; }
                 }
 
                 // check if file not exist

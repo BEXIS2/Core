@@ -1,11 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace Vaiona.Web.Mvc.Data
 {
-    public class DoesNotNeedDataAccess: Attribute
+    public class DoesNotNeedDataAccess : Attribute
     {
     }
 }

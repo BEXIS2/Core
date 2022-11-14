@@ -10,7 +10,7 @@ namespace BExIS.Dlm.Entities.Data
     ///
     /// </summary>
     /// <remarks></remarks>        
-    public class ContentDescriptor: BaseEntity
+    public class ContentDescriptor : BaseEntity
     {
         #region Attributes
 

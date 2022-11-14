@@ -40,6 +40,24 @@
       "value": "true",
       "type": "Boolean",
       "description": "Allow multiple files to be uploaded at the same time."
+    },
+    {
+      "key": "minToAnalyse",
+      "value": 100,
+      "type": "Int32",
+      "description": "Min number of rows to analyze strutcure."
+    },
+    {
+      "key": "maxToAnalyse",
+      "value": 10000,
+      "type": "Int32",
+      "description": "Max number of rows to analyze strutcure."
+    },
+    {
+      "key": "precentageToAnalyse",
+      "value": 50,
+      "type": "Int32",
+      "description": "Percentage of rows to analyze strutcure."
     }
   ]
 }

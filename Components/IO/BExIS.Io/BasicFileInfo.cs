@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-namespace BExIS.IO
+﻿namespace BExIS.IO
 {
     /// <summary>
     /// Basic informations of a file
@@ -40,7 +35,7 @@ namespace BExIS.IO
         /// </summary>
         /// <param name="path">Location where the file exist</param>
         /// <param name="mimeType">Type of the file</param>
-        public BasicFileInfo(string name,  string path,string mimeType, string extention, double fileSize)
+        public BasicFileInfo(string name, string path, string mimeType, string extention, double fileSize)
         {
             Name = name;
             Uri = path;

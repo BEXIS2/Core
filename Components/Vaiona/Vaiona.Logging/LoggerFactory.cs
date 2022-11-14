@@ -1,11 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Vaiona.Entities.Logging;
-using Vaiona.Utils.Cfg;
 using System.Diagnostics;
+using Vaiona.Entities.Logging;
 using Vaiona.Logging.Loggers;
+using Vaiona.Utils.Cfg;
 
 namespace Vaiona.Logging
 {
@@ -33,7 +30,8 @@ namespace Vaiona.Logging
                 if (IoC.IoCFactory.Container.IsRegistered<ILogger>(loggerKey))
                     return IoC.IoCFactory.Container.Resolve<ILogger>(loggerKey);
                 return IoC.IoCFactory.Container.Resolve<ILogger>();
-            } else if (loggerType.Equals("FILE"))
+            }
+            else if (loggerType.Equals("FILE"))
             {
                 return FileLogger.GetInstance();
             }
@@ -45,12 +43,12 @@ namespace Vaiona.Logging
             logEntry.Environemt = string.Join(", ", logEntry.Environemt, string.Format("Server OS={0}, Server .NET={1}", Environment.OSVersion, Environment.Version));
             if (AppConfiguration.HttpContext != null && AppConfiguration.HttpContext.Request != null)
             {
-                logEntry.Environemt = string.Join(", ",  logEntry.Environemt, string.Format("UserAgent={0}, HttpMethod={1}, IsSecureConnection={2}, UserHostAddress={3} ({4})",
+                logEntry.Environemt = string.Join(", ", logEntry.Environemt, string.Format("UserAgent={0}, HttpMethod={1}, IsSecureConnection={2}, UserHostAddress={3} ({4})",
                                                                             AppConfiguration.HttpContext.Request.UserAgent,
                                                                             AppConfiguration.HttpContext.Request.HttpMethod,
                                                                             AppConfiguration.HttpContext.Request.IsSecureConnection,
                                                                             AppConfiguration.HttpContext.Request.UserHostAddress,
-                                                                            (AppConfiguration.HttpContext.Request.IsLocal? "Local Request": "Remote Request")
+                                                                            (AppConfiguration.HttpContext.Request.IsLocal ? "Local Request" : "Remote Request")
                                                                             )
                                                  );
             }
@@ -148,7 +146,7 @@ namespace Vaiona.Logging
             ILogger logger = create(logEntry.LogType);
             logEntry = (RelationLogEntry)prepareLogEntry(logEntry);
             logEntry = (RelationLogEntry)refineLogEntry(logEntry);
-            logEntry.Desription = string.Format("A relationship between entity {0} of type '{1}' and entity {2} of type '{3}' is {4}.", 
+            logEntry.Desription = string.Format("A relationship between entity {0} of type '{1}' and entity {2} of type '{3}' is {4}.",
             logEntry.SourceObjectId, logEntry.SourceObjectType, logEntry.DestinationObjectId, logEntry.DestinationObjectType, logEntry.State);
             RelationLogDelegate dlgt = new RelationLogDelegate(logger.LogRelation);
             IAsyncResult ar = dlgt.BeginInvoke(logEntry, null, null);

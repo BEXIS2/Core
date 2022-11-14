@@ -3,10 +3,11 @@ import Fa from 'svelte-fa/src/fa.svelte'
 
 import {FileInfo} from '@bexis2/svelte-bexis2-core-ui'
 import { Spinner, Button, Input, Col, Row  } from 'sveltestrap';
-import { faTrash } from '@fortawesome/free-solid-svg-icons'
+import { faTrash} from '@fortawesome/free-solid-svg-icons'
 
 import {removeFile, saveFileDescription}  from '../../services/Caller'
-import { createEventDispatcher } from 'svelte';
+
+import { createEventDispatcher, onMount } from 'svelte';
 
 export let id;
 export let file;
@@ -20,19 +21,28 @@ export let save;
 // action to remove file
 export let remove
 
+// set if its possible to generate a structure based on that file
+export let generateAble = false;
+
 let loading = false;
+
+onMount(async ()=>{
+ 
+
+})
 
 async function handleRemoveFile() {
 loading = true;
+
 //remove from server
 const res = await removeFile(remove,id,file);
 
- if(res.status==200 )
- {
-   let message = file+" removed."
-   dispatch("removed",{text:message})
- }
- loading = false;
+  if(res.status==200 )
+  {
+    let message = file+" removed."
+    dispatch("removed",{text:message})
+  }
+  loading = false;
 }
 
 async function handleSaveFileDescription() {
@@ -46,21 +56,23 @@ const res = await saveFileDescription(save,id, file, description );
 }
 
 </script>
- 
-<div class="file-overview-item row">
- <Col xs="1"><FileInfo {type} size="x-large" /></Col>
- <Col > 
-    {file}
- </Col>
- {#if withDescription}
-  <Col xs="5"><Input  bind:value="{description}" placeholder="description" on:change={e => handleSaveFileDescription()}/></Col>
+ {#if type}
+  <div class="file-overview-item row">
+  <Col xs="1"><FileInfo {type} size="x-large" /></Col>
+  <Col > 
+      {file}
+  </Col>
+  {#if withDescription}
+    <Col xs="5"><Input  bind:value="{description}" placeholder="description" on:change={e => handleSaveFileDescription()}/></Col>
+  {/if}
+  <Col >
+    <div class="file-overview-item-options">
+      <div class="file-overview-item-option"><Button size="sm" on:click={e => handleRemoveFile()}><Fa icon={faTrash}/></Button></div>
+      <div class="file-overview-item-option">{#if loading}<Spinner color="info" size="sm" type ="grow" text-center /> {/if}</div>    
+    </div>
+  </Col>
+  </div>
 {/if}
- <Col xs="1">
-  <Button size="sm" on:click={e => handleRemoveFile()}><Fa icon={faTrash}/></Button>
-  {#if loading}<Spinner color="info" size="sm" type ="grow" text-center /> {/if}
- </Col>
-</div>
-
 <style>
  
 
@@ -68,6 +80,15 @@ const res = await saveFileDescription(save,id, file, description );
   border-bottom: 1px solid var(--bg-grey);
   color: var(--text-color);
   padding: 0.5em 0;
-  
  }
+
+ .file-overview-item-options{
+    width:100%;
+  }
+
+.file-overview-item-option{
+    float: right;
+    padding-left: 3px;
+  }
+
 </style>

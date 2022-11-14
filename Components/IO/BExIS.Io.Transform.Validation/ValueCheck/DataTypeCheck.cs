@@ -1,7 +1,6 @@
-﻿using System;
+﻿using BExIS.IO.Transform.Validation.Exceptions;
+using System;
 using System.Globalization;
-using System.Text.RegularExpressions;
-using BExIS.IO.Transform.Validation.Exceptions;
 using System.Linq;
 
 /// <summary>
@@ -92,7 +91,7 @@ namespace BExIS.IO.Transform.Validation.ValueCheck
                                 return i;
                             }
                             else
-                            { 
+                            {
                                 return new Error(ErrorType.Value, "Can not convert to", new object[] { name, value, row, dataType });
                             }
                         }
@@ -127,7 +126,48 @@ namespace BExIS.IO.Transform.Validation.ValueCheck
                             }
 
                         }
+                    case "UInt16":
+                        {
+                            UInt16 i = 0;
 
+                            if (UInt16.TryParse(value, out i))
+                            {
+                                return i;
+                            }
+                            else
+                            {
+                                return new Error(ErrorType.Value, "Can not convert to", new object[] { name, value, row, dataType });
+                            }
+
+                        }
+                    case "UInt32":
+                        {
+                            UInt32 i = 0;
+
+                            if (UInt32.TryParse(value, out i))
+                            {
+                                return i;
+                            }
+                            else
+                            {
+                                return new Error(ErrorType.Value, "Can not convert to", new object[] { name, value, row, dataType });
+                            }
+
+                        }
+                    case "UInt64":
+                        {
+                            UInt64 i = 0;
+
+                            if (UInt64.TryParse(value, out i))
+                            {
+                                return i;
+                            }
+                            else
+                            {
+                                return new Error(ErrorType.Value, "Can not convert to", new object[] { name, value, row, dataType });
+                            }
+
+                        }
                     case "Double":
                         {
 
@@ -160,7 +200,7 @@ namespace BExIS.IO.Transform.Validation.ValueCheck
                                             return new Error(ErrorType.Value, "False decimal character.", new object[] { name, value, row, dataType });
                                         }
                                     }
-                                        
+
                                     return new Error(ErrorType.Value, "Can not convert to.", new object[] { name, value, row, dataType });
                                 }
 
@@ -172,9 +212,9 @@ namespace BExIS.IO.Transform.Validation.ValueCheck
                                         if (!temp[temp.Length - 1].Contains('.'))
                                         {
                                             //chek lenght of the string and compare to the max storage of the datatype
-                                            if(value.Length>15)
+                                            if (value.Length > 15)
                                                 return new Error(ErrorType.Value, "the value of the number is outside the value range of double. Change it do decimal.", new object[] { name, value, row, dataType });
-                                            
+
                                             double d = 0;
                                             if (double.TryParse(value, NumberStyles.Any, new CultureInfo("de-DE"), out d))
                                             {
@@ -189,7 +229,7 @@ namespace BExIS.IO.Transform.Validation.ValueCheck
                                     }
 
                                     return new Error(ErrorType.Value, "Can not convert to.", new object[] { name, value, row, dataType });
-                                    
+
                                 }
 
                                 return Convert.ToDouble(value);
@@ -251,7 +291,7 @@ namespace BExIS.IO.Transform.Validation.ValueCheck
                                             {
                                                 return d;
                                             }
-                        
+
                                         }
                                         else
                                         {
@@ -276,8 +316,8 @@ namespace BExIS.IO.Transform.Validation.ValueCheck
 
 
                             if (!string.IsNullOrEmpty(pattern))
-                            { 
-                                if(IOUtility.ConvertToDate(value, pattern, out dateTime, culture))
+                            {
+                                if (IOUtility.ConvertToDate(value, pattern, out dateTime, culture))
                                 {
                                     return dateTime;
                                 }
@@ -352,7 +392,7 @@ namespace BExIS.IO.Transform.Validation.ValueCheck
         /// <param name="name"></param>
         /// <param name="dataType"></param>
         /// <param name="pattern"></param>
-        public DataTypeCheck(string name, string dataType, DecimalCharacter decimalCharacter, string pattern = "", CultureInfo cultureInfo = null )
+        public DataTypeCheck(string name, string dataType, DecimalCharacter decimalCharacter, string pattern = "", CultureInfo cultureInfo = null)
         {
             this.appliedTo = ValueType.Number;
             this.name = name;

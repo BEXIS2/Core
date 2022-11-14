@@ -1,10 +1,7 @@
-﻿using System;
+﻿using NUnit.Framework;
 using System.Collections.Generic;
 using System.Linq;
-using System.Xml;
 using System.Xml.Linq;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using NUnit.Framework;
 using Assert = NUnit.Framework.Assert;
 
 namespace BExIS.Xml.Helpers.UnitTests

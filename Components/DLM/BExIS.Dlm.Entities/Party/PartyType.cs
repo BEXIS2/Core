@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Xml.Serialization;
+﻿using System.Collections.Generic;
 using Vaiona.Entities.Common;
 
 namespace BExIS.Dlm.Entities.Party

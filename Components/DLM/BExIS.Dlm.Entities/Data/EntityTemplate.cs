@@ -1,10 +1,6 @@
 ﻿using BExIS.Security.Entities.Objects;
 using Newtonsoft.Json;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Vaiona.Entities.Common;
 
 namespace BExIS.Dlm.Entities.Data
@@ -36,9 +32,10 @@ namespace BExIS.Dlm.Entities.Data
         /// <summary>
         /// List of available Datatructures
         /// </summary>
-        public virtual string JsonMetadataFields { get;set; }
+        public virtual string JsonMetadataFields { get; set; }
 
-        public virtual List<int> MetadataFields {
+        public virtual List<int> MetadataFields
+        {
             get
             {
                 return JsonConvert.DeserializeObject<List<int>>(JsonMetadataFields);
@@ -67,13 +64,16 @@ namespace BExIS.Dlm.Entities.Data
         /// List of available Datatructures
         /// </summary>
         public virtual string JsonDatastructureList { get; set; }
-        public virtual List<long> DatastructureList { 
-            get {
+        public virtual List<long> DatastructureList
+        {
+            get
+            {
                 return JsonConvert.DeserializeObject<List<long>>(JsonDatastructureList);
-            } 
-            set{
+            }
+            set
+            {
                 JsonDatastructureList = JsonConvert.SerializeObject(value);
-            } 
+            }
         }
 
         /// <summary>
@@ -81,7 +81,8 @@ namespace BExIS.Dlm.Entities.Data
         /// </summary>
         public virtual string JsonAllowedFileTypes { get; set; }
         /// 
-        public virtual List<string> AllowedFileTypes {
+        public virtual List<string> AllowedFileTypes
+        {
             get
             {
                 return JsonConvert.DeserializeObject<List<string>>(JsonAllowedFileTypes);
@@ -96,7 +97,8 @@ namespace BExIS.Dlm.Entities.Data
         /// list of hidden hooks from ui
         /// </summary>
         public virtual string JsonDisabledHooks { get; set; }
-        public virtual List<string> DisabledHooks {
+        public virtual List<string> DisabledHooks
+        {
             get
             {
                 return JsonConvert.DeserializeObject<List<string>>(JsonDisabledHooks);
@@ -112,7 +114,8 @@ namespace BExIS.Dlm.Entities.Data
         /// when a email is sended to the owner or admin send also to this groups
         /// </summary>
         public virtual string JsonNotificationGroups { get; set; }
-        public virtual List<long> NotificationGroups {
+        public virtual List<long> NotificationGroups
+        {
             get
             {
                 return JsonConvert.DeserializeObject<List<long>>(JsonNotificationGroups);

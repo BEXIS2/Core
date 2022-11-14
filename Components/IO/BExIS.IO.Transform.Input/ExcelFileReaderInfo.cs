@@ -1,8 +1,4 @@
-﻿
-
-using System;
-using System.Collections.Generic;
-/// <summary>
+﻿/// <summary>
 ///
 /// </summary>        
 namespace BExIS.IO.Transform.Input
@@ -12,7 +8,7 @@ namespace BExIS.IO.Transform.Input
     ///
     /// </summary>
     /// <remarks></remarks>            
-    public class ExcelFileReaderInfo:FileReaderInfo
+    public class ExcelFileReaderInfo : FileReaderInfo
     {
         public int VariablesStartRow { get; set; }
 

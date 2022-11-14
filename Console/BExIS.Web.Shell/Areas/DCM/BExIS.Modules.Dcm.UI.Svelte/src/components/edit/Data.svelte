@@ -5,6 +5,7 @@
  import HookContainer from '../HookContainer.svelte';
  import Validation from '../../pages/hooks/Validation.svelte'
  import FileUpload from '../../pages/hooks/FileUpload.svelte'
+ import DataDescription from '../../pages/hooks/DataDescription.svelte'
  import Metadata from '../../pages/hooks/Metadata.svelte'
  import {Spinner, Row, Col} from 'sveltestrap';
  import Fa from 'svelte-fa/src/fa.svelte'
@@ -20,10 +21,6 @@
  let validationHook;
  let submitHook;
 
- $:showValidation = false;
-
-
-
  $:hooks, setHooks(hooks);
 
  function setHooks(_hooks)
@@ -37,54 +34,54 @@
     if(h.name == "submit"){ submitHook = h; }
 
   });
- }
+
+  //console.log("_hooks",_hooks);
+  
+}
 
 function errorHandler(e)
 {
   console.log("error event in data");
-
 }
+
 
 </script>
 
 {#if hooks} <!-- if hooks list is loaded render hooks -->
 
-<HookContainer displayName = {metadataHook.displayName} >
+<HookContainer  {...metadataHook} >
   <div slot="view">
     <Metadata {id} {version} {...metadataHook} />
   </div>
 </HookContainer>
 
 <Row>
-<Col xs="1">
-<div class="title-container">
-  <b><Fa icon={faAngleRight} /> Data</b>
-</div>
-</Col> <!-- Data Title-->
-<Col xs="10"><!-- Data Hooks-->
-    <HookContainer displayName = {dataDescriptionHook.displayName}>
+
+<Col ><!-- Data Hooks-->
+
+    <HookContainer {...dataDescriptionHook} >
       <div slot="view">
-        <Hook {id} {version} {...dataDescriptionHook} />
+        <DataDescription {id} {version} hook={dataDescriptionHook} />
       </div>
     </HookContainer>
-
-    <HookContainer displayName = 
-    {fileUploadHook.displayName} 
-    let:errorHandler 
-    let:successHandler 
-    content=9>
+    
+    <HookContainer 
+      {...fileUploadHook}
+      let:errorHandler 
+      let:successHandler >
+      
       <div slot="view">
         <FileUpload {id} {version} hook={fileUploadHook}  on:error={(e)=> errorHandler(e)} on:success={(e)=> successHandler(e)} />
       </div>
     </HookContainer>
+
+    <HookContainer {...validationHook} >
+      <div slot="view"> <!-- validation Hooks-->
+          <Validation {id} {version} {...validationHook} />
+      </div>
+    </HookContainer>
   </Col>
- <Col xs="1"> <!-- validation Hooks-->
-    <div class="left-container">
-      <b>placeholder validation</b>
-      <Hook {id} {version} {...validationHook} on:click={() => showValidation=true} />
-      <Validation {id} {version} {...validationHook} open={showValidation} on:close={()=>showValidation = false}/>
-    </div>
-  </Col> 
+
 </Row>
  
  {:else} <!-- while data is not loaded show a loading information -->

@@ -1,6 +1,6 @@
-﻿using System.Collections.Generic;
-using BExIS.Dcm.Wizard;
+﻿using BExIS.Dcm.Wizard;
 using BExIS.IO.Transform.Validation.Exceptions;
+using System.Collections.Generic;
 
 namespace BExIS.Modules.Dcm.UI.Models
 {

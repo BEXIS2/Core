@@ -1,6 +1,5 @@
 using BExIS.App.Bootstrap.Attributes;
 using BExIS.Dlm.Entities.Data;
-using BExIS.Dlm.Entities.Party;
 using BExIS.Dlm.Services.Party;
 using BExIS.Modules.Sam.UI.Models;
 using BExIS.Security.Entities.Authorization;
@@ -16,7 +15,7 @@ namespace BExIS.Modules.Sam.UI.Controllers
     public class UserPermissionsController : Controller
     {
         [BExISEntityAuthorize(typeof(Dataset), "id", RightType.Grant)]
-        public ActionResult Start(long id, int version=0)
+        public ActionResult Start(long id, int version = 0)
         {
             using (var entityManager = new EntityManager())
             {
@@ -91,15 +90,15 @@ namespace BExIS.Modules.Sam.UI.Controllers
             {
                 var subjects = new List<EntityPermissionGridRowModel>();
                 using (var partyManager = new PartyManager())
-                
-                foreach (var subject in subjectManager.Subjects)
-                {
-                    var rights = entityPermissionManager.GetRights(subject.Id, entityId, instanceId);
-                    var effectiveRights = entityPermissionManager.GetEffectiveRights(subject.Id, entityId, instanceId);
 
-     
-                    subjects.Add(EntityPermissionGridRowModel.Convert(subject, rights, effectiveRights));
-                }
+                    foreach (var subject in subjectManager.Subjects)
+                    {
+                        var rights = entityPermissionManager.GetRights(subject.Id, entityId, instanceId);
+                        var effectiveRights = entityPermissionManager.GetEffectiveRights(subject.Id, entityId, instanceId);
+
+
+                        subjects.Add(EntityPermissionGridRowModel.Convert(subject, rights, effectiveRights));
+                    }
 
                 return View(new GridModel<EntityPermissionGridRowModel> { Data = subjects });
             }

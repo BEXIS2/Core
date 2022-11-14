@@ -1,5 +1,4 @@
-﻿using BExIS.Security.Entities.Objects;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -59,7 +58,7 @@ namespace BExIS.Modules.Sam.UI.Models
                 //    return string.Concat("./", path);
                 //}
                 //else
-                    return !string.IsNullOrEmpty(Path) ? string.Concat("./", Path.Replace("|", "/")) : string.Empty;
+                return !string.IsNullOrEmpty(Path) ? string.Concat("./", Path.Replace("|", "/")) : string.Empty;
             }
         }
 
@@ -75,7 +74,7 @@ namespace BExIS.Modules.Sam.UI.Models
         }
         public static FileOrFolderModel Convert(XElement element)
         {
-            
+
             string name = element.Attribute("name").Value;
             string displayName = element.Attribute("displayName").Value;
             string description = element.Attribute("description").Value;

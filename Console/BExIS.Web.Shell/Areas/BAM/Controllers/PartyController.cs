@@ -7,18 +7,16 @@ using BExIS.Security.Services.Utilities;
 using BExIS.Utils.Config;
 using System;
 using System.Collections.Generic;
-using System.Configuration;
 using System.Data;
 using System.Linq;
 using System.Web.Mvc;
-using Vaiona.IoC;
 using Vaiona.Web.Mvc.Models;
 
 namespace BExIS.Modules.Bam.UI.Controllers
 {
     public class PartyController : Controller
     {
-        
+
         public ActionResult Index()
         {
             using (var partyTypeManager = new PartyTypeManager())
@@ -83,7 +81,7 @@ namespace BExIS.Modules.Bam.UI.Controllers
                     ViewBag.partyTypeId = partyType.First().Id;
 
                     return PartialView("_partiesDynamicGridPartial");
-                    
+
                 }
                 else
                 {
@@ -92,7 +90,7 @@ namespace BExIS.Modules.Bam.UI.Controllers
                         partiesForGrid.Add(new partyGridModel() { Id = party.Id, Name = party.Name, PartyTypeTitle = party.PartyType.DisplayName, StartDate = (party.StartDate != null && party.StartDate < new DateTime(1000, 1, 1) ? "" : party.StartDate.ToString("yyyy-MM-dd")), EndDate = (party.EndDate != null && party.EndDate > new DateTime(3000, 1, 1) ? "" : party.EndDate.ToString("yyyy-MM-dd")), IsTemp = party.IsTemp });
                     return PartialView("_partiesPartial", partiesForGrid.OrderByDescending(cc => cc.IsTemp).ThenByDescending(cc => cc.StartDate).ThenBy(cc => cc.Name).ToList());
                 }
-                
+
             }
         }
 
@@ -104,7 +102,7 @@ namespace BExIS.Modules.Bam.UI.Controllers
                 partyTypeManager = new PartyTypeManager();
                 ViewBag.Title = PresentationModel.GetGenericViewTitle("Create Party");
                 var model = new PartyModel();
-                model.PartyTypeList = partyTypeManager.PartyTypeRepository.Get(cc=>!cc.SystemType).ToList();
+                model.PartyTypeList = partyTypeManager.PartyTypeRepository.Get(cc => !cc.SystemType).ToList();
                 ViewBag.RelationTabAsDefault = false;
                 ViewBag.Title = "Create party";
                 return View("CreateEdit", model);
@@ -182,7 +180,7 @@ namespace BExIS.Modules.Bam.UI.Controllers
                         {
                             // get value from custom attribute
                             var entity = party.CustomAttributeValues.FirstOrDefault(item => item.CustomAttribute.Id == nameProp.Id);
-                            
+
                             // get user based on party 
                             var userid = partyManager.GetUserIdByParty(party.Id);
                             var userTask = userManager.FindByIdAsync(userid);
@@ -193,7 +191,7 @@ namespace BExIS.Modules.Bam.UI.Controllers
                             if (user.Email != entity.Value)
                             {
 
-                                
+
 
 
                                 var es = new EmailService();
@@ -205,7 +203,7 @@ namespace BExIS.Modules.Bam.UI.Controllers
                                 // Update user email
                                 user.Email = entity.Value;
                                 userManager.UpdateAsync(user);
-                            }      
+                            }
                         }
                     }
                 }
@@ -334,12 +332,12 @@ namespace BExIS.Modules.Bam.UI.Controllers
                 foreach (var partyRelationship in partyRelationships)
                 {
                     // Party TargetParty = partyManager.PartyRepository.Get(partyRelationship.TargetParty.Id);
-                   // PartyRelationshipType partyRelationshipType = partyRelationshipManager.PartyRelationshipTypeRepository.Get(partyRelationship.PartyRelationshipType.Id);
+                    // PartyRelationshipType partyRelationshipType = partyRelationshipManager.PartyRelationshipTypeRepository.Get(partyRelationship.PartyRelationshipType.Id);
                     PartyTypePair partyTypePair = partyRelationshipManager.PartyTypePairRepository.Get(partyRelationship.PartyTypePair.Id);
                     //Min date value is sent from telerik date time element, if it was empty
                     if (partyRelationship.EndDate == DateTime.MinValue)
                         partyRelationship.EndDate = DateTime.MaxValue;
-                    partyManager.AddPartyRelationship(partyRelationship.SourceParty, partyRelationship.TargetParty,  partyRelationship.Title, partyRelationship.Description, partyTypePair, partyRelationship.StartDate, partyRelationship.EndDate, partyRelationship.Scope);
+                    partyManager.AddPartyRelationship(partyRelationship.SourceParty, partyRelationship.TargetParty, partyRelationship.Title, partyRelationship.Description, partyTypePair, partyRelationship.StartDate, partyRelationship.EndDate, partyRelationship.Scope);
                 }
                 partyManager?.Dispose();
                 return RedirectToAction("CreateEdit", "party", new { id = partyId, relationTabAsDefault = true });
@@ -478,7 +476,7 @@ namespace BExIS.Modules.Bam.UI.Controllers
         {
             using (PartyManager partyManager = new PartyManager())
             {
-                return partyManager.UpdatePartyRelationship(partyRelationship.Id, partyRelationship.Title, partyRelationship.Description, partyRelationship.StartDate, partyRelationship.EndDate, partyRelationship.Scope,partyRelationship.Permission);
+                return partyManager.UpdatePartyRelationship(partyRelationship.Id, partyRelationship.Title, partyRelationship.Description, partyRelationship.StartDate, partyRelationship.EndDate, partyRelationship.Scope, partyRelationship.Permission);
             }
         }
 

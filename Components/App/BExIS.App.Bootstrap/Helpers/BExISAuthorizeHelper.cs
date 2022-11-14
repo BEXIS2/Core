@@ -1,16 +1,15 @@
-﻿using System;
-using System.Linq;
-using System.Net.Http;
-using System.Web;
-using System.Web.Mvc;
-using BExIS.Security.Entities.Subjects;
+﻿using BExIS.Security.Entities.Subjects;
 using BExIS.Security.Services.Authorization;
 using BExIS.Security.Services.Objects;
 using BExIS.Security.Services.Subjects;
+using System;
+using System.Linq;
+using System.Net.Http;
+using System.Web;
 
 namespace BExIS.App.Bootstrap.Helpers
 {
-    public  class BExISAuthorizeHelper
+    public class BExISAuthorizeHelper
     {
         /// <summary>
         /// This function checks the HttpRequest Authorization string for Authorization types (Bearer & Basic). 
@@ -110,7 +109,7 @@ namespace BExIS.App.Bootstrap.Helpers
             }
         }
 
-        public static User GetUserFromAuthorization(string authorisation,out User user)
+        public static User GetUserFromAuthorization(string authorisation, out User user)
         {
 
             using (var featurePermissionManager = new FeaturePermissionManager())
@@ -198,7 +197,7 @@ namespace BExIS.App.Bootstrap.Helpers
                 return user;
             }
         }
-        
+
         public static string GetAuthorizedUserName(HttpContextBase context)
         {
             string userName = "";
@@ -210,7 +209,7 @@ namespace BExIS.App.Bootstrap.Helpers
                 var authorization = context.Request.Headers.Get("Authorization");
                 GetUserFromAuthorization(authorization, out user);
 
-                if(user!=null) userName = user.UserName;
+                if (user != null) userName = user.UserName;
             }
 
             return userName;

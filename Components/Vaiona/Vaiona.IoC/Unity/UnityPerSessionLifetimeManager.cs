@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Microsoft.Practices.Unity;
+﻿using Microsoft.Practices.Unity;
 using System.Web;
 
 namespace Vaiona.IoC.Unity
@@ -20,7 +16,7 @@ namespace Vaiona.IoC.Unity
         {
             return HttpContext.Current.Session[this.sessionKey];
         }
-        
+
         public override void RemoveValue()
         {
             HttpContext.Current.Session.Remove(this.sessionKey);

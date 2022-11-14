@@ -92,7 +92,7 @@ namespace BExIS.Dlm.Services.MetadataStructure
                 /*PostgreSQL82Dialect, DB2Dialect*/
                 if (AppConfiguration.DatabaseDialect.Equals("DB2Dialect"))
                 {
-                    return GetPackages(structureId).Select(p=>p.Id).ToList();
+                    return GetPackages(structureId).Select(p => p.Id).ToList();
                 }
                 else //if (AppConfiguration.DatabaseDialect.Equals("PostgreSQL82Dialect"))
                 {
@@ -104,7 +104,7 @@ namespace BExIS.Dlm.Services.MetadataStructure
             }
         }
 
-        private List<MetadataPackageUsage> GetPackages(Int64 structureId) 
+        private List<MetadataPackageUsage> GetPackages(Int64 structureId)
         {
             using (IUnitOfWork uow = this.GetUnitOfWork())
             {
@@ -202,7 +202,7 @@ namespace BExIS.Dlm.Services.MetadataStructure
                 IRepository<MDS.MetadataStructure> repo = uow.GetRepository<MDS.MetadataStructure>();
                 repo.Merge(entity);
                 var merged = repo.Get(entity.Id);
-                repo.Put(merged); 
+                repo.Put(merged);
 
                 uow.Commit();
             }

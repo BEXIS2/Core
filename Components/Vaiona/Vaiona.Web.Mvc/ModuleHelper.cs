@@ -1,9 +1,9 @@
-﻿using System.Web;
-using System.Linq;
+﻿using System;
 using System.Collections.Generic;
-using System.Web.Mvc;
-using System;
+using System.Linq;
 using System.Reflection;
+using System.Web;
+using System.Web.Mvc;
 
 namespace Vaiona.Web.Mvc
 {
@@ -51,7 +51,7 @@ namespace Vaiona.Web.Mvc
         {
             List<MethodInfo> actions = controllerType.GetMethods().Where(p => p.IsPublic).ToList();
             actions = (from a in actions
-                       //from ano in a.GetCustomAttributes(typeof(AllowAnonymousAttribute), true).Cast<AreaAttribute>() // should be done in the security package
+                           //from ano in a.GetCustomAttributes(typeof(AllowAnonymousAttribute), true).Cast<AreaAttribute>() // should be done in the security package
                        where (typeof(ActionResult).IsAssignableFrom(a.ReturnType))
                        select a
                        ).ToList();

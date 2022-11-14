@@ -1,10 +1,6 @@
 ﻿using BExIS.App.Bootstrap.Attributes;
 using BExIS.Utils.Route;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using System.Net.Http;
 using System.Web.Http;
 
 namespace BExIS.Modules.Dcm.UI.Controllers

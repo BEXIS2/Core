@@ -1,9 +1,5 @@
 ﻿using BExIS.Security.Entities.Authorization;
 using BExIS.UI.Hooks;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
 
 namespace BExIS.Modules.Dcm.UI.Hooks
 {
@@ -27,7 +23,7 @@ namespace BExIS.Modules.Dcm.UI.Hooks
             bool hasAccess = hasUserAccessRights(username);
 
             // user rights to the dataset
-            bool hasRights = hasUserEntityRights(id, username,RightType.Read);
+            bool hasRights = hasUserEntityRights(id, username, RightType.Read);
 
             // if one fail then access is denied
             if (hasAccess == false || hasRights == false)

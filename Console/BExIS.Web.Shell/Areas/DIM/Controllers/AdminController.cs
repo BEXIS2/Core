@@ -81,6 +81,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
             #region load Model
 
             DatasetManager datasetManager = new DatasetManager();
+
             try
             {
                 datasetVersionIds = datasetManager.GetDatasetVersionLatestIds();

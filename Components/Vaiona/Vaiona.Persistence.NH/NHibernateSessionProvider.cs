@@ -1,10 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Web;
-using NHibernate;
+﻿using NHibernate;
 using NHibernate.Context;
 using NHibernate.Engine;
+using System;
+using System.Collections.Generic;
 using System.Runtime.Remoting.Messaging;
+using System.Web;
 
 namespace Vaiona.Persistence.NH
 {
@@ -22,12 +22,14 @@ namespace Vaiona.Persistence.NH
         /// Retrieve the current session for the session factory.
         /// </summary>
         /// <returns></returns>
-        public ISession CurrentSession() {
+        public ISession CurrentSession()
+        {
             Lazy<ISession> initializer;
             var currentSessionFactoryMap = GetCurrentFactoryMap();
-            
+
             if (currentSessionFactoryMap == null ||
-                !currentSessionFactoryMap.TryGetValue(_factory, out initializer)) {
+                !currentSessionFactoryMap.TryGetValue(_factory, out initializer))
+            {
                 return null;
             }
 
@@ -39,7 +41,8 @@ namespace Vaiona.Persistence.NH
         /// </summary>
         /// <param name="sessionInitializer"></param>
         /// <param name="sessionFactory"></param>
-        public static void Bind(Lazy<ISession> sessionInitializer, ISessionFactory sessionFactory) {
+        public static void Bind(Lazy<ISession> sessionInitializer, ISessionFactory sessionFactory)
+        {
             var map = GetCurrentFactoryMap();
             map[sessionFactory] = sessionInitializer;
         }
@@ -49,7 +52,8 @@ namespace Vaiona.Persistence.NH
         /// </summary>
         /// <param name="sessionFactory"></param>
         /// <returns></returns>
-        public static ISession UnBind(ISessionFactory sessionFactory) {
+        public static ISession UnBind(ISessionFactory sessionFactory)
+        {
             var map = GetCurrentFactoryMap();
             var sessionInitializer = map[sessionFactory];
             map[sessionFactory] = null;
@@ -62,10 +66,12 @@ namespace Vaiona.Persistence.NH
         /// If there is no map create/store and return a new one.
         /// </summary>
         /// <returns></returns>
-        private static IDictionary<ISessionFactory, Lazy<ISession>> GetCurrentFactoryMap() {
+        private static IDictionary<ISessionFactory, Lazy<ISession>> GetCurrentFactoryMap()
+        {
             var currentFactoryMap = FactoryMapInContext;
 
-            if (currentFactoryMap == null) {
+            if (currentFactoryMap == null)
+            {
                 currentFactoryMap = new Dictionary<ISessionFactory, Lazy<ISession>>();
                 FactoryMapInContext = currentFactoryMap;
             }
@@ -73,26 +79,34 @@ namespace Vaiona.Persistence.NH
             return currentFactoryMap;
         }
 
-        private static IDictionary<ISessionFactory, Lazy<ISession>> FactoryMapInContext {
-            get {
-                if (IsInWebContext()) {
+        private static IDictionary<ISessionFactory, Lazy<ISession>> FactoryMapInContext
+        {
+            get
+            {
+                if (IsInWebContext())
+                {
                     return HttpContext.Current.Items[CURRENT_SESSION_CONTEXT_KEY] as IDictionary<ISessionFactory, Lazy<ISession>>;
                 }
-                else {
+                else
+                {
                     return CallContext.GetData(CURRENT_SESSION_CONTEXT_KEY) as IDictionary<ISessionFactory, Lazy<ISession>>;
                 }
             }
-            set {
-                if (IsInWebContext()) {
+            set
+            {
+                if (IsInWebContext())
+                {
                     HttpContext.Current.Items[CURRENT_SESSION_CONTEXT_KEY] = value;
                 }
-                else {
+                else
+                {
                     CallContext.SetData(CURRENT_SESSION_CONTEXT_KEY, value);
                 }
             }
         }
 
-        private static bool IsInWebContext() {
+        private static bool IsInWebContext()
+        {
             return HttpContext.Current != null;
         }
 

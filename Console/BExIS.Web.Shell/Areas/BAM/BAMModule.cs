@@ -21,7 +21,7 @@ namespace BExIS.Modules.Bam.UI
                 {
                     generator.GenerateSeedData();
                 }
-                
+
             }
             catch (Exception e)
             {

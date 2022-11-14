@@ -1,13 +1,13 @@
-﻿using System;
+﻿using BExIS.Dlm.Entities.Common;
+using BExIS.Xml.Helpers;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Xml.Linq;
-using BExIS.Dlm.Entities.Common;
-using BExIS.Xml.Helpers;
 
 namespace BExIS.Modules.Dcm.UI.Models.Metadata
 {
-    public class AbstractMetadataStepModel:AbstractStepModel
+    public class AbstractMetadataStepModel : AbstractStepModel
     {
         public BaseUsage Source { get; set; }
         public int Number { get; set; }
@@ -55,7 +55,7 @@ namespace BExIS.Modules.Dcm.UI.Models.Metadata
                             Number = number
                         };
 
-                        if (!Instance.Where(t=>t.Id.Equals(temp.Id) && t.Number.Equals(temp.Number)).Any())
+                        if (!Instance.Where(t => t.Id.Equals(temp.Id) && t.Number.Equals(temp.Number)).Any())
                         {
                             Instance.Add(
 

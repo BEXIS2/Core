@@ -4,9 +4,6 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Globalization;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Telerik.Web.Mvc;
 using Telerik.Web.Mvc.Infrastructure.Implementation;
 
@@ -430,7 +427,7 @@ namespace BExIS.UI.Helpers
                         };
                     }
                 case FilterOperator.IsEqualTo: // can be a string or a number
-                {
+                    {
                         if (fd.ConvertedValue is int)
                         {
                             return new FilterNumberItemExpression()

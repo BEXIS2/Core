@@ -5,28 +5,25 @@
  * indicated in the AssemblyInfo.cs file of this project.
  *	* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace Vaiona.Web.Security.Az.Parser
 {
-	class Not : IAccessRule
-	{
-		public IAccessRule InnerRule;
+    class Not : IAccessRule
+    {
+        public IAccessRule InnerRule;
         public bool Evaluate(Func<string, bool> roleMatcher, Func<string, bool> userMatcher)
-		{
-			return !InnerRule.Evaluate(roleMatcher, userMatcher);
-		}
+        {
+            return !InnerRule.Evaluate(roleMatcher, userMatcher);
+        }
 
-		public string ShowRule(int pad)
-		{
-			String padStr = new string(' ', pad * 4);
+        public string ShowRule(int pad)
+        {
+            String padStr = new string(' ', pad * 4);
 
-			return
-				 padStr + "Begin Not\r\n" +
-				 InnerRule.ShowRule(pad + 1) +
-				 padStr + "End Not\r\n";
-		}
-	}
+            return
+                 padStr + "Begin Not\r\n" +
+                 InnerRule.ShowRule(pad + 1) +
+                 padStr + "End Not\r\n";
+        }
+    }
 }

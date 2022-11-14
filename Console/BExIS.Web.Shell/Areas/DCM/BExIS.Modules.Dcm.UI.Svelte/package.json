@@ -9,7 +9,7 @@
     "install bexis2 ui core": "npm install --save-dev C:\\Users\\admin\\AppData\\Roaming\\npm\\node_modules\\@bexis2\\svelte-bexis2-core-ui"
   },
   "devDependencies": {
-    "@bexis2/svelte-bexis2-core-ui": "file:../../../../../../../../../../AppData/Roaming/npm/node_modules/@bexis2/svelte-bexis2-core-ui",
+    "@bexis2/svelte-bexis2-core-ui": "file:../../../../../../_Svelte Workspace/svelte-bexis2-core-ui",
     "@rollup/plugin-commonjs": "^21.0.2",
     "@rollup/plugin-node-resolve": "^13.1.3",
     "rollup": "^2.70.1",

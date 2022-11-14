@@ -1,5 +1,5 @@
-﻿using System.Collections.Generic;
-using BExIS.Dlm.Entities.Data;
+﻿using BExIS.Dlm.Entities.Data;
+using System.Collections.Generic;
 using Vaiona.Entities.Common;
 
 /// <summary>
@@ -11,7 +11,7 @@ namespace BExIS.Dlm.Entities.DataStructure
     ///
     /// </summary>
     /// <remarks></remarks>        
-    public class DatasetView: BaseEntity
+    public class DatasetView : BaseEntity
     {
         /// <summary>
         ///

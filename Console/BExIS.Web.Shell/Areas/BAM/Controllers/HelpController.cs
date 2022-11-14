@@ -1,17 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-using System.Web.Mvc;
+﻿using System.Web.Mvc;
+using Vaiona.Web.Mvc.Modularity;
 using Vaiona.Web.Mvc.Models;
-using Vaiona.Web.Extensions;
 using System.IO;
 using System.Xml.Linq;
 using BExIS.Xml.Helpers;
 using Vaiona.Utils.Cfg;
 using BExIS.Dlm.Services.Data;
-using BExIS.UI.Helpers;
-using Vaiona.Web.Mvc.Modularity;
+using BExIS.Utils.Helpers;
+using System;
+using BExIS.Utils.Config;
 
 namespace BExIS.Modules.Bam.UI.Controllers
 {
@@ -21,6 +18,12 @@ namespace BExIS.Modules.Bam.UI.Controllers
         public ActionResult Index()
         {
             string helpurl = ModuleManager.GetModuleSettings("BAM").GetEntryValue("help").ToString();
+
+            //add default link if not set
+            if (String.IsNullOrEmpty(helpurl))
+            {
+                helpurl = ManualHelper.GetUrl(GeneralSettings.ApplicationVersion, "BAM");
+            }
 
             return Redirect(helpurl);
         }

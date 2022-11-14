@@ -1,12 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Vaiona.Model.MTnt;
-
-
-namespace Vaiona.MultiTenancy.Api
+﻿namespace Vaiona.MultiTenancy.Api
 {
     public interface ITenantRegistrar
     {
@@ -19,7 +11,7 @@ namespace Vaiona.MultiTenancy.Api
         /// <param name="string tenantZipPackagePath">The full path to the tenant package in zipped format. The tenant's file name is excluded.</param>
         /// <remarks>The zip tenant package should be assumed temprary, as the register method may delete the zip after installing it.</remarks>
         /// <param name="deleteSource">determines wheather the the source package should be removed.</param>
-        void Register(string tenantId, string tenantZipPackagePath, bool deleteSource=true);
+        void Register(string tenantId, string tenantZipPackagePath, bool deleteSource = true);
         void Unregister(string id);
         void Activate(string id);
         void Inactivate(string id);

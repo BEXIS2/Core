@@ -1,14 +1,10 @@
-﻿using NUnit.Framework;
-using System.IO;
-using BExIS.IO;
-using Vaiona.Utils.Cfg;
-using FluentAssertions;
-using System.Collections.Generic;
-using System;
-using System.Globalization;
+﻿using BExIS.IO.Transform.Validation.Exceptions;
 using BExIS.IO.Transform.Validation.ValueCheck;
-using BExIS.IO.Transform.Validation.Exceptions;
-using NHibernate.Criterion;
+using FluentAssertions;
+using NUnit.Framework;
+using System;
+using System.Collections.Generic;
+using System.Globalization;
 
 namespace BExIS.IO.Tests
 {
@@ -60,7 +56,7 @@ namespace BExIS.IO.Tests
             foreach (var dt in DateTimeCases)
             {
                 DateTime result;
-                iOUtility.ConvertToDate(dt.InputDateTimeString, dt.Pattern,out result, dt.CultureInfo);
+                iOUtility.ConvertToDate(dt.InputDateTimeString, dt.Pattern, out result, dt.CultureInfo);
 
                 if (dt.ItMatch)
                 {
@@ -169,10 +165,10 @@ namespace BExIS.IO.Tests
 
             cases.Add(new DateTimeHelperUTObject("2017", "yyyy", "1/1/2017 12:00:00 AM", true));
             //cases.Add(new DateTimeHelperUTObject("1", "MM", "1/1/"+DateTime.Now.Year+" 12:00:00 AM", true));
-            cases.Add(new DateTimeHelperUTObject("jan", "MMM", "1/1/"+DateTime.Now.Year+" 12:00:00 AM", true));
-            cases.Add(new DateTimeHelperUTObject("01", "MM", "1/1/"+DateTime.Now.Year+" 12:00:00 AM", true));
-            cases.Add(new DateTimeHelperUTObject("january", "MMMM", "1/1/"+DateTime.Now.Year+" 12:00:00 AM", true));
-            cases.Add(new DateTimeHelperUTObject("Januar", "MMMM", "1/1/"+DateTime.Now.Year+" 12:00:00 AM", true, new CultureInfo("de-de")));
+            cases.Add(new DateTimeHelperUTObject("jan", "MMM", "1/1/" + DateTime.Now.Year + " 12:00:00 AM", true));
+            cases.Add(new DateTimeHelperUTObject("01", "MM", "1/1/" + DateTime.Now.Year + " 12:00:00 AM", true));
+            cases.Add(new DateTimeHelperUTObject("january", "MMMM", "1/1/" + DateTime.Now.Year + " 12:00:00 AM", true));
+            cases.Add(new DateTimeHelperUTObject("Januar", "MMMM", "1/1/" + DateTime.Now.Year + " 12:00:00 AM", true, new CultureInfo("de-de")));
             //cases.Add(new DateTimeHelperUTObject("24/10/2017", "MM/dd/yyyy", "10/24/2017 12:00:00 AM", true));
 
             return cases;
@@ -198,7 +194,7 @@ namespace BExIS.IO.Tests
 
             if (cultureInfo == null) CultureInfo = CultureInfo.InvariantCulture;
             else CultureInfo = cultureInfo;
- 
+
         }
     }
 }

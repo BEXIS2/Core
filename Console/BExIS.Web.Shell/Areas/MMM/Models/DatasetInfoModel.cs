@@ -1,8 +1,4 @@
-﻿using System.IO;
-using System.Collections.Generic;
-using System.Collections;
-
-namespace IDIV.Modules.Mmm.UI.Models
+﻿namespace IDIV.Modules.Mmm.UI.Models
 {
     public class DatasetInfo
     {
@@ -21,7 +17,7 @@ namespace IDIV.Modules.Mmm.UI.Models
             this.Deleteable = false;
         }
 
-        public DatasetInfo(long datasetId, long datasetVersionId,bool isLatestVersion, bool downloadable, bool deleteable)
+        public DatasetInfo(long datasetId, long datasetVersionId, bool isLatestVersion, bool downloadable, bool deleteable)
         {
             this.DatasetId = datasetId;
             this.DatasetVersionId = datasetVersionId;
@@ -33,4 +29,3 @@ namespace IDIV.Modules.Mmm.UI.Models
     }
 }
 
-    

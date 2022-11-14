@@ -96,6 +96,13 @@ namespace BExIS.Dlm.Entities.Data
         /// <remarks></remarks>
         /// <seealso cref=""/>        
         public virtual bool PublicAccess { get; set; }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>        
+        public virtual DateTime PublicAccessDate { get; set; }
         #endregion
 
         #region Associations

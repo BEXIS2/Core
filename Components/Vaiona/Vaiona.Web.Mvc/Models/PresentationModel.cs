@@ -1,13 +1,7 @@
-﻿using BExIS.Utils;
-using BExIS.Utils.Config;
-using System;
+﻿using BExIS.Utils.Config;
 using System.Collections.Generic;
 using System.Diagnostics.Contracts;
-using System.Linq;
-using System.Text;
-using Vaiona.IoC;
 using Vaiona.Model.MTnt;
-using Vaiona.Utils.Cfg;
 
 namespace Vaiona.Web.Mvc.Models
 {
@@ -30,7 +24,7 @@ namespace Vaiona.Web.Mvc.Models
         public static string GetGenericViewTitle(string viewTitle)
         {
             Contract.Requires(!string.IsNullOrWhiteSpace(viewTitle));
-            
+
 
             string appInfo = GeneralSettings.ApplicationInfo;
             if (!string.IsNullOrWhiteSpace(appInfo))

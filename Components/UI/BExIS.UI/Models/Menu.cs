@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 
 namespace BExIS.UI.Models
 {
@@ -44,7 +40,7 @@ namespace BExIS.UI.Models
             Module = "";
         }
 
-        public MenuItem(string title, string url, string module, string target="_self")
+        public MenuItem(string title, string url, string module, string target = "_self")
         {
             Title = title;
             Url = url;

@@ -37,12 +37,12 @@ namespace BExIS.Modules.Dim.UI.Controllers
         }
 
         // POST: api/Export
-        public void Post([FromBody]string value)
+        public void Post([FromBody] string value)
         {
         }
 
         // PUT: api/Export/5
-        public void Put(int id, [FromBody]string value)
+        public void Put(int id, [FromBody] string value)
         {
         }
 

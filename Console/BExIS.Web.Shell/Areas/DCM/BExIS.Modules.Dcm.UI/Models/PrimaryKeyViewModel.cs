@@ -1,8 +1,7 @@
-﻿using System.Collections.Generic;
-using BExIS.Dcm.UploadWizard;
-using BExIS.Dcm.Wizard;
+﻿using BExIS.Dcm.Wizard;
 using BExIS.IO.Transform.Validation.Exceptions;
 using BExIS.Utils.Data.Upload;
+using System.Collections.Generic;
 
 namespace BExIS.Modules.Dcm.UI.Models
 {

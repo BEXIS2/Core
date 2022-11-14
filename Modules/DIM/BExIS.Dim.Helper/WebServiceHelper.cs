@@ -1,9 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 
 namespace BExIS.Dim.Helpers
 {
@@ -15,7 +11,7 @@ namespace BExIS.Dim.Helpers
         /// </summary>
         /// <param name="source"></param>
         public static string Encode(string source)
-        { 
+        {
             string tmp = "";
             string pattern = @"(?:[a-z][a-z]*[0-9]+[a-z0-9]*)";
             Regex rg = new Regex(pattern, RegexOptions.IgnoreCase);
@@ -26,7 +22,7 @@ namespace BExIS.Dim.Helpers
                 byte charInByte = Convert.ToByte(character);
                 string hex = charInByte.ToString("x");
                 hex = "%" + hex.ToUpper();
-                string match = new string(character,1);
+                string match = new string(character, 1);
 
                 tmp += rg.Match(match).Success ? match : hex;
             }

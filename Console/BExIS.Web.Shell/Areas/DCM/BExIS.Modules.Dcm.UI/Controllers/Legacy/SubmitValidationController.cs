@@ -122,7 +122,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                         dsm.StructuredDataStructureRepo.LoadIfNot(sds.Variables);
 
                         // Add Number of Variables to the BUS
-                        if(sds != null)
+                        if (sds != null)
                             TaskManager.AddToBus(TaskManager.NUMBERSOFVARIABLES, sds.Variables.Count);
 
 
@@ -216,7 +216,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                     // create a dictionary for error messages
 
                     // variable issues
-                    var varNames = errorList.Where(e=> e.GetType().Equals(ErrorType.Value)).Select(e => e.getName() ).Distinct();
+                    var varNames = errorList.Where(e => e.GetType().Equals(ErrorType.Value)).Select(e => e.getName()).Distinct();
                     var varIssues = errorList.Where(e => e.GetType().Equals(ErrorType.Value)).Select(e => e.GetMessage()).Distinct();
 
                     List<Tuple<string, int, string>> sortedErrors = new List<Tuple<string, int, string>>();

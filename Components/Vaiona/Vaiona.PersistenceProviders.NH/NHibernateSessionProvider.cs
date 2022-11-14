@@ -1,11 +1,7 @@
 ﻿using NHibernate;
 using NHibernate.Cfg;
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Vaiona.IoC;
 using Vaiona.Persistence.Api;
 
@@ -37,7 +33,7 @@ namespace Vaiona.PersistenceProviders.NH
                 Trace.WriteLine("SQL output at:" + DateTime.Now.ToString() + "--> " + "A conversation was closed. ID: " + session.GetHashCode());
             session.Dispose();
             session = null;
-           // GC.Collect();
+            // GC.Collect();
         }
 
     }

@@ -1,21 +1,18 @@
-﻿using System.Web;
-using NHibernate;
+﻿using NHibernate;
 using NHibernate.Cfg;
 using NHibernate.Tool.hbm2ddl;
+using System;
+using System.Collections.Generic;
 using System.Diagnostics.Contracts;
 using System.IO;
-using System;
-using System.Text.RegularExpressions;
-using Vaiona.Persistence.Api;
-using NHibernate.Context;
-using System.Collections.Generic;
 using System.Linq;
-using Vaiona.Utils.Cfg;
-using System.Diagnostics;
 using System.Reflection;
-using Vaiona.Web.Mvc.Modularity;
+using System.Text.RegularExpressions;
 using Vaiona.IoC;
 using Vaiona.Logging;
+using Vaiona.Persistence.Api;
+using Vaiona.Utils.Cfg;
+using Vaiona.Web.Mvc.Modularity;
 
 namespace Vaiona.PersistenceProviders.NH
 {

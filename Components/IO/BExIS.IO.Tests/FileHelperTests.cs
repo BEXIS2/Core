@@ -1,9 +1,7 @@
-﻿using NUnit.Framework;
+﻿using FluentAssertions;
+using NUnit.Framework;
 using System.IO;
-using BExIS.IO;
 using Vaiona.Utils.Cfg;
-using FluentAssertions;
-
 
 namespace BExIS.IO.Tests
 {
@@ -24,7 +22,7 @@ namespace BExIS.IO.Tests
         {
             // because these tests are working on in-memory objects (datasets) only, there is no need to do the test app setup
             directory = Path.Combine(AppConfiguration.DataPath, "TestDirectory");
-            destinationDirectory = Path.Combine(AppConfiguration.DataPath,"TestDestinationDirectory");
+            destinationDirectory = Path.Combine(AppConfiguration.DataPath, "TestDestinationDirectory");
             filePath = Path.Combine(directory, "test.txt");
             fileDestinationPath = Path.Combine(destinationDirectory, "test.txt");
             errorFilePath = Path.Combine(directory, "errortest.txt");
@@ -46,7 +44,7 @@ namespace BExIS.IO.Tests
 
             if (File.Exists(fileDestinationPath)) File.Delete(fileDestinationPath);
 
-            if (Directory.Exists(directory)) Directory.Delete(directory,true);
+            if (Directory.Exists(directory)) Directory.Delete(directory, true);
 
         }
 
@@ -57,7 +55,7 @@ namespace BExIS.IO.Tests
         /// Executes only if: counterpart OneTimeSetUp exists and executed successfully.
         public void OneTimeTearDown()
         {
-           
+
         }
 
         [Test()]

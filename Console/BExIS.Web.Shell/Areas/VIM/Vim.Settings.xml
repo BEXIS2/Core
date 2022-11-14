@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<settings id="vim" name="visualisation modul" description="stats anout datasets">
-  <entry key="help" value="https://github.com/BEXIS2/Documents/blob/2.14.5/Manuals/VIM/Manual.md" type="String" description="URL to manual" />
+<settings>
+  <entry key="help" value="" type="String"/>
+
 </settings>

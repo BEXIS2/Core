@@ -5,8 +5,6 @@ using BExIS.IO.Transform.Input;
 using BExIS.IO.Transform.Validation.Exceptions;
 using BExIS.Modules.Dcm.UI.Helpers;
 using BExIS.Modules.Dcm.UI.Models;
-using BExIS.UI.Helpers;
-using BExIS.Utils.Models;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;

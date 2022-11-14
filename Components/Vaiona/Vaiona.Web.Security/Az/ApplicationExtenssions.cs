@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Runtime.Caching;
-using System.Web;
+﻿using System.Runtime.Caching;
 
 namespace System.Web
 {
@@ -24,6 +19,6 @@ namespace System.Web
         public static void ClearAccessRuleCache(this HttpApplicationStateBase app)
         {
             app["AccessRuleCache"] = null;
-        }     
+        }
     }
 }

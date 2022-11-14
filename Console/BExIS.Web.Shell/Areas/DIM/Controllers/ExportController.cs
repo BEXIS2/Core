@@ -19,14 +19,12 @@ using BExIS.Utils.Extensions;
 using BExIS.Xml.Helpers;
 using Ionic.Zip;
 using System;
-using System.Configuration;
 using System.IO;
 using System.Linq;
 using System.Text;
 using System.Web.Mvc;
 using System.Web.Routing;
 using System.Xml;
-using Vaiona.IoC;
 using Vaiona.Logging;
 using Vaiona.Persistence.Api;
 using Vaiona.Utils.Cfg;
@@ -35,7 +33,7 @@ using Vaiona.Web.Mvc.Modularity;
 namespace BExIS.Modules.Dim.UI.Controllers
 {
     public class ExportController : Controller
-    { 
+    {
         // GET: Export
         /// <summary>
         ///
@@ -216,7 +214,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
                     LoggerFactory.LogCustom("Primary Data Start");
 
                     // check the data sturcture type ...
-                    if (format != null && datasetVersion.Dataset.DataStructure.Self is StructuredDataStructure)
+                    if (format != null && datasetVersion.Dataset.DataStructure.Self is StructuredDataStructure && dm.GetDataTuplesCount(datasetVersion.Id) >0)
                     {
                         OutputDataManager odm = new OutputDataManager();
                         // apply selection and projection
@@ -367,7 +365,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
             catch (Exception ex)
             {
                 LoggerFactory.LogCustom("Error: " + ex.Message);
-                return null;
+                throw ex;
             }
             finally
             {

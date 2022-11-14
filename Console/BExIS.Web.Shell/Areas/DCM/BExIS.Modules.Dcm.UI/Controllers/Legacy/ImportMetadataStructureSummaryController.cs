@@ -1,6 +1,6 @@
 ﻿using BExIS.Dcm.ImportMetadataStructureWizard;
-using System.Web.Mvc;
 using BExIS.Modules.Dcm.UI.Models.ImportMetadata;
+using System.Web.Mvc;
 
 namespace BExIS.Modules.Dcm.UI.Controllers
 {

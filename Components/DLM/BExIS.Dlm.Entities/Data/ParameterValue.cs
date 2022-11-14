@@ -1,7 +1,6 @@
-﻿using System;
-using System.Linq;
+﻿using BExIS.Dlm.Entities.DataStructure;
+using System;
 using System.Xml.Serialization;
-using BExIS.Dlm.Entities.DataStructure;
 
 /// <summary>
 ///
@@ -12,7 +11,7 @@ namespace BExIS.Dlm.Entities.Data
     ///
     /// </summary>
     /// <remarks></remarks>        
-    public class ParameterValue: DataValue
+    public class ParameterValue : DataValue
     {
         /// <summary>
         ///
@@ -27,7 +26,7 @@ namespace BExIS.Dlm.Entities.Data
         /// <remarks></remarks>
         /// <seealso cref=""/>        
         [XmlIgnore]
-        public VariableValue VariableValue{ get; set; } // reference to the containing variable value
+        public VariableValue VariableValue { get; set; } // reference to the containing variable value
 
 
         /// <summary>

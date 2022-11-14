@@ -1,13 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Xml;
 using Vaiona.Entities.Common;
 
 namespace BExIS.Dlm.Entities.Party
 {
-    public class PartyStatus: BaseEntity
+    public class PartyStatus : BaseEntity
     {
         #region Attributes
         public virtual DateTime Timestamp { get; set; }

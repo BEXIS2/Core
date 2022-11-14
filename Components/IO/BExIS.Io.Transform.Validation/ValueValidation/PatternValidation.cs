@@ -1,5 +1,5 @@
-﻿using System.Text.RegularExpressions;
-using BExIS.IO.Transform.Validation.Exceptions;
+﻿using BExIS.IO.Transform.Validation.Exceptions;
+using System.Text.RegularExpressions;
 
 /// <summary>
 ///
@@ -10,7 +10,7 @@ namespace BExIS.IO.Transform.Validation.ValueValidation
     ///
     /// </summary>
     /// <remarks></remarks>        
-    public class PatternValidation:IValueValidation
+    public class PatternValidation : IValueValidation
     {
         private ValueType appliedTo = new ValueType();
         private string name = "";
@@ -67,7 +67,7 @@ namespace BExIS.IO.Transform.Validation.ValueValidation
         /// <returns></returns>
         public Error Execute(object value, int row)
         {
-            if (value!=null)
+            if (value != null)
             {
                 Regex rx = new Regex(pattern);
 
@@ -95,6 +95,6 @@ namespace BExIS.IO.Transform.Validation.ValueValidation
             this.dataType = dataType;
             this.pattern = pattern;
         }
-    
+
     }
 }

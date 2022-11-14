@@ -1,11 +1,7 @@
 ﻿using Newtonsoft.Json;
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Xml.Linq;
 using Vaiona.Utils.IO;
 
 namespace Vaiona.Utils.Cfg
@@ -120,7 +116,10 @@ namespace Vaiona.Utils.Cfg
 
         public Item[] GetList(string entryKey)
         {
-            Entry entry = jsonSettings.Entry.Where(p => p.Key.Equals(entryKey, StringComparison.InvariantCultureIgnoreCase)).FirstOrDefault();
+            Entry entry = jsonSettings.Entry.Where(p => 
+                p.Key.Equals("name", StringComparison.InvariantCultureIgnoreCase) && 
+                p.Value.ToString().Equals(entryKey, StringComparison.InvariantCultureIgnoreCase) &&
+                p.Type=="list").FirstOrDefault();
             if (entry == null)
                 return null;
 
@@ -134,12 +133,23 @@ namespace Vaiona.Utils.Cfg
 
         private void loadSettings()
         {
-            FileHelper.WaitForFile(settingsFullPath);
-            using (StreamReader stream = File.OpenText(settingsFullPath))
+            
+            try
             {
-                JsonSerializer serializer = new JsonSerializer();
-                jsonSettings = (JsonSettings)serializer.Deserialize(stream, typeof(JsonSettings));
-                stream.Close();
+                FileHelper.WaitForFile(settingsFullPath);
+                using (StreamReader stream = File.OpenText(settingsFullPath))
+                {
+                    JsonSerializer serializer = new JsonSerializer();
+                    jsonSettings = (JsonSettings)serializer.Deserialize(stream, typeof(JsonSettings));
+
+                }
+            }
+            catch (Exception ex)
+            {
+                // do nothing
+                // there seem to be situations where the settings file should be opened twice at almost the same time. 
+                // it is also surprising that the wait function does not change anything.
+                // The catch exits because there will be no problems if the error is ignored, since the settings are loaded anyway and the result is the same.
             }
         }
     }

@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 using Vaiona.Entities.Common;
 
 /// <summary>
@@ -27,7 +26,7 @@ namespace BExIS.Dlm.Entities.DataStructure
     ///
     /// </summary>
     /// <remarks></remarks>        
-    public abstract class DataContainer: BusinessEntity
+    public abstract class DataContainer : BusinessEntity
     {
         #region Attributes
 
@@ -170,9 +169,9 @@ namespace BExIS.Dlm.Entities.DataStructure
         //    }
         //}
 
-        
+
         #endregion
-        
+
         #region Methods
 
         /// <summary>

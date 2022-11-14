@@ -9,6 +9,7 @@ using BExIS.Modules.Dcm.UI.Models.EntityTemplate;
 using BExIS.Security.Services.Objects;
 using BExIS.Security.Services.Subjects;
 using BExIS.UI.Hooks;
+using BExIS.UI.Models;
 using System;
 using System.Collections.Generic;
 using System.Web.Mvc;
@@ -45,7 +46,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         [HttpGet]
         public JsonResult Get(long id)
         {
-            if(id==0) return Json(new EntityTemplateModel(), JsonRequestBehavior.AllowGet);
+            if (id == 0) return Json(new EntityTemplateModel(), JsonRequestBehavior.AllowGet);
 
 
             using (var entityTemplateManager = new EntityTemplateManager())
@@ -66,19 +67,6 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 return Json(result);
             }
         }
-
-        //[JsonNetFilter]
-        //[HttpPost]
-        //public JsonResult Create(EntityTemplateModel entityTemplate)
-        //{
-        //    using (var entityTemplateManager = new EntityTemplateManager())
-        //    {
-        //        var result = entityTemplateManager.Create(EntityTemplateHelper.ConvertTo(entityTemplate));
-        //        if(result != null) return Json(true);
-        //    }
-
-        //    return Json(false);
-        //}
 
         [JsonNetFilter]
         [HttpPost]
@@ -103,12 +91,12 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         [HttpGet]
         public JsonResult Entities()
         {
-            List<KvP> tmp = new List<KvP>();
+            List<ListItem> tmp = new List<ListItem>();
             using (var entityManager = new EntityManager())
             {
                 foreach (var entity in entityManager.EntityRepository.Get())
                 {
-                    tmp.Add(new KvP(entity.Id, entity.Name));
+                    tmp.Add(new ListItem(entity.Id, entity.Name));
                 }
             }
 
@@ -119,12 +107,12 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         [HttpGet]
         public JsonResult MetadataStructures()
         {
-            List<KvP> tmp = new List<KvP>();
+            List<ListItem> tmp = new List<ListItem>();
             using (var metadataStrutcureManager = new MetadataStructureManager())
             {
                 foreach (var entity in metadataStrutcureManager.Repo.Get())
                 {
-                    tmp.Add(new KvP(entity.Id, entity.Name));
+                    tmp.Add(new ListItem(entity.Id, entity.Name));
                 }
             }
 
@@ -139,7 +127,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
             foreach (var key in Enum.GetValues(typeof(Key)))
             {
-                tmp.Add(new KeyValuePair<int,string>(Convert.ToInt32(key),key.ToString()));
+                tmp.Add(new KeyValuePair<int, string>(Convert.ToInt32(key), key.ToString()));
             }
 
             return Json(tmp, JsonRequestBehavior.AllowGet);

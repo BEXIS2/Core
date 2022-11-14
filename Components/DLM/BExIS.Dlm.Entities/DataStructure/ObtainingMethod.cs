@@ -10,7 +10,7 @@ namespace BExIS.Dlm.Entities.DataStructure
     /// like: Measurement, Observation, Processing, Simulation, Interpretation and Description
     /// </summary>
     /// <remarks></remarks>        
-    public class ObtainingMethod: BaseEntity
+    public class ObtainingMethod : BaseEntity
     {
         /// <summary>
         ///

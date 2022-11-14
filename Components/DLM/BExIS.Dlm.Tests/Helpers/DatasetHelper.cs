@@ -5,14 +5,10 @@ using BExIS.Dlm.Services.Administration;
 using BExIS.Dlm.Services.Data;
 using BExIS.Dlm.Services.DataStructure;
 using FluentAssertions;
-using NHibernate.Id.Insert;
 using System;
-using System.CodeDom;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace BExIS.Dlm.Tests.Helpers
 {
@@ -110,7 +106,7 @@ namespace BExIS.Dlm.Tests.Helpers
             throw new NotImplementedException();
         }
 
-        public Dataset GenerateTuplesForDataset(Dataset dataset, StructuredDataStructure dataStructure, long numberOfTuples,string username)
+        public Dataset GenerateTuplesForDataset(Dataset dataset, StructuredDataStructure dataStructure, long numberOfTuples, string username)
         {
             dataset.Status.Should().Be(DatasetStatus.CheckedIn);
             dataset.Should().NotBeNull();
@@ -128,10 +124,10 @@ namespace BExIS.Dlm.Tests.Helpers
                     DatasetVersion workingCopy = dm.GetDatasetWorkingCopy(dataset.Id);
 
                     DataTuple dt = new DataTuple();
-                    dt.VariableValues.Add(new VariableValue() { VariableId = dataStructure.Variables.First().Id, Value = r.Next()});
+                    dt.VariableValues.Add(new VariableValue() { VariableId = dataStructure.Variables.First().Id, Value = r.Next() });
                     dt.VariableValues.Add(new VariableValue() { VariableId = dataStructure.Variables.Skip(1).First().Id, Value = "Test" });
                     dt.VariableValues.Add(new VariableValue() { VariableId = dataStructure.Variables.Skip(2).First().Id, Value = Convert.ToDouble(r.Next()) });
-                    dt.VariableValues.Add(new VariableValue() { VariableId = dataStructure.Variables.Skip(3).First().Id, Value =  true});
+                    dt.VariableValues.Add(new VariableValue() { VariableId = dataStructure.Variables.Skip(3).First().Id, Value = true });
                     dt.VariableValues.Add(new VariableValue() { VariableId = dataStructure.Variables.Skip(4).First().Id, Value = "01.01.2017" });
                     dt.Dematerialize();
 
@@ -155,7 +151,8 @@ namespace BExIS.Dlm.Tests.Helpers
                 }
                 return dataset;
             }
-            catch (Exception ex) {
+            catch (Exception ex)
+            {
                 return null;
             }
             finally
@@ -181,7 +178,7 @@ namespace BExIS.Dlm.Tests.Helpers
 
                     DatasetVersion workingCopy = dm.GetDatasetWorkingCopy(dataset.Id);
 
-                    
+
 
                     List<DataTuple> tuples = new List<DataTuple>();
 
@@ -342,7 +339,7 @@ namespace BExIS.Dlm.Tests.Helpers
                     editedTuples.Add((DataTuple)dataTuple);
                 }
 
-             
+
 
                 return editedTuples;
             }
@@ -367,18 +364,18 @@ namespace BExIS.Dlm.Tests.Helpers
         /// <param name="updateVarIndex"></param>
         /// <param name="datasetManager"></param>
         /// <returns></returns>
-        public DataTuple  GetUpdatedDatatuple(DataTuple source, int updateVarIndex)
+        public DataTuple GetUpdatedDatatuple(DataTuple source, int updateVarIndex)
         {
 
-                if (source == null) return null;
+            if (source == null) return null;
 
-                source.Materialize();
+            source.Materialize();
 
-                var vv = source.VariableValues[updateVarIndex];
-                if (vv != null)
+            var vv = source.VariableValues[updateVarIndex];
+            if (vv != null)
+            {
+                switch (updateVarIndex)
                 {
-                    switch (updateVarIndex)
-                    {
 
                     case 0://int
                         {
@@ -396,7 +393,7 @@ namespace BExIS.Dlm.Tests.Helpers
                             {
                                 stringChars[i] = chars[random.Next(chars.Length)];
                             }
-           
+
                             vv.Value = new String(stringChars);
 
                             break;
@@ -413,22 +410,22 @@ namespace BExIS.Dlm.Tests.Helpers
 
                             break;
                         }
-                    case 4: 
-                        { 
+                    case 4:
+                        {
                             vv.Value = DateTime.Now.ToString(new CultureInfo("en-US"));
 
-                            break; 
+                            break;
                         }
 
                         //default:
-                    }
-
-
                 }
-                source.Dematerialize();
-                source.Should().NotBeNull();
 
-                return source;
+
+            }
+            source.Dematerialize();
+            source.Should().NotBeNull();
+
+            return source;
         }
 
 

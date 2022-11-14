@@ -1,8 +1,8 @@
-﻿using System.Collections.Generic;
-using System.IO;
-using BExIS.Dlm.Entities.Data;
+﻿using BExIS.Dlm.Entities.Data;
 using BExIS.IO.Transform.Validation.DSValidation;
 using BExIS.IO.Transform.Validation.Exceptions;
+using System.Collections.Generic;
+using System.IO;
 
 /// <summary>
 ///

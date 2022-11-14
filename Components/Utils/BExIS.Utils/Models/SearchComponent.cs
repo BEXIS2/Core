@@ -140,7 +140,7 @@ namespace BExIS.Utils.Models
         #endregion Facets
 
         #region General
-        public IEnumerable<General> Generals{ get; set; }
+        public IEnumerable<General> Generals { get; set; }
 
         public bool ContainsGeneral(string name)
         {

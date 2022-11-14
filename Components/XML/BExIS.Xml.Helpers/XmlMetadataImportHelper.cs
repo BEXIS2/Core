@@ -69,7 +69,7 @@ namespace BExIS.Xml.Helpers
                         {
                             XmlNode tmpNode = doc.SelectSingleNode(xpath);
 
-                            if (tmpNode != null && value != null)
+                            if (tmpNode != null && !string.IsNullOrEmpty(value))
                             {
                                 tmpNode.InnerText = value;
                             }
@@ -79,7 +79,7 @@ namespace BExIS.Xml.Helpers
                     {
                         setValues(node, doc); // next level recursively
                     }
-                    
+
                 }
                 else
                 {

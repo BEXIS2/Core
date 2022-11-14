@@ -1,6 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using BExIS.IO.Transform.Validation.Exceptions;
+using System.Collections.Generic;
 using System.Linq;
-using BExIS.IO.Transform.Validation.Exceptions;
 
 /// <summary>
 ///
@@ -47,20 +47,20 @@ namespace BExIS.IO.Transform.Validation.DSValidation
             // check length
             if (checkList.Count.Equals(sourceList.Count))
             {
-                for(int i = 0; i < checkList.Count; i++)
+                for (int i = 0; i < checkList.Count; i++)
                 {
                     var incoming = checkList.ElementAt(i);
                     var source = sourceList.ElementAt(i);
 
                     var test = false;
-                    if(incoming.id==0)
+                    if (incoming.id == 0)
                         test = incoming.name.Equals(source.name);
                     else
                         test = incoming.id.Equals(source.id);
 
                     if (!test)
                         errorVariables.Add(incoming.name);
-                       
+
                 }
                 if (errorVariables.Count() > 0)
                 {

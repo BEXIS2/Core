@@ -1,16 +1,15 @@
-﻿using System;
+﻿using Microsoft.Web.Helpers;
+using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
-using System.Text;
-using Vaiona.Utils.Cfg;
-using System.Xml.Linq;
-using Vaiona.Web.Mvc.Models;
+using System.Runtime.Caching;
+using System.Web;
 using System.Web.Mvc;
 using System.Web.Mvc.Html;
-using Microsoft.Web.Helpers;
-using System.IO;
-using System.Web;
-using System.Runtime.Caching;
+using System.Xml.Linq;
+using Vaiona.Utils.Cfg;
+using Vaiona.Web.Mvc.Models;
 
 namespace Vaiona.Web.Mvc
 {
@@ -22,7 +21,7 @@ namespace Vaiona.Web.Mvc
             {
                 string output = string.Empty;
                 List<ActionModel> acModels = getContentProviderInfo(contentKey, data);
-                foreach (var acModel in acModels.Where(p=>p.IsEnabled == true))
+                foreach (var acModel in acModels.Where(p => p.IsEnabled == true))
                 {
                     if (acModel.Type.Equals("Action", StringComparison.InvariantCultureIgnoreCase))
                     {

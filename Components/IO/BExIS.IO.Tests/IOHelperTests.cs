@@ -1,11 +1,6 @@
-﻿using NUnit.Framework;
-using System.IO;
-using BExIS.IO;
-using Vaiona.Utils.Cfg;
-using FluentAssertions;
-using System.Collections.Generic;
+﻿using FluentAssertions;
+using NUnit.Framework;
 using System;
-using System.Globalization;
 
 namespace BExIS.IO.Tests
 {
@@ -63,7 +58,7 @@ namespace BExIS.IO.Tests
 
         [TestCase(-1, 1, "title", ".txt")]
         [TestCase(1, -1, "title", ".txt")]
-        [TestCase(1, 1, "",".txt")]
+        [TestCase(1, 1, "", ".txt")]
         [TestCase(1, 1, "title", "")]
         public void GetDynamicStorePathWidthExceptionTest(long datasetId, long datasetVersionOrderNr, string title, string extention)
         {

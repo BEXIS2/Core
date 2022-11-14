@@ -1,9 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace BExIS.IO
 {
@@ -15,7 +11,7 @@ namespace BExIS.IO
             if (datasetId < 1) throw new Exception("Dataset id can not be less then 1.");
             if (datasetVersionOrderNr < 1) throw new Exception("Dataset version number can not be less then 1.");
             if (string.IsNullOrEmpty(title)) throw new Exception("Title should not be Empty.");
-            if (string.IsNullOrEmpty(extention))throw new Exception("Extention should not be Empty."); 
+            if (string.IsNullOrEmpty(extention)) throw new Exception("Extention should not be Empty.");
             if (extention.IndexOf('.') == -1) throw new Exception("Extention should start with '.' .");
 
             string storePath = Path.Combine("Datasets", datasetId.ToString(), "DatasetVersions");
@@ -43,10 +39,10 @@ namespace BExIS.IO
     /// <remarks></remarks>        
     public enum TextSeperator
     {
-        tab,
-        comma,
-        semicolon,
-        space
+        tab = 9,
+        comma = 44,
+        semicolon = 59,
+        space = 32
     }
 
     /// <summary>

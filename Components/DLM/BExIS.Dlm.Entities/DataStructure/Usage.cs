@@ -1,6 +1,5 @@
 ﻿using BExIS.Dlm.Entities.Common;
 using System.Collections.Generic;
-using Vaiona.Entities.Common;
 
 /// <summary>
 ///
@@ -82,7 +81,7 @@ namespace BExIS.Dlm.Entities.DataStructure
 
     public class VariableTemplate : Variable
     {
-        public virtual bool Approved{ get; set; }
+        public virtual bool Approved { get; set; }
 
 
         public VariableTemplate()

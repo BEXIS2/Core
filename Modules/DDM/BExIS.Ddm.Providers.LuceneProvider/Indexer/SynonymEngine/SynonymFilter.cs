@@ -1,7 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using Lucene.Net.Analysis;
+﻿using Lucene.Net.Analysis;
 using Lucene.Net.Analysis.Tokenattributes;
+using System;
+using System.Collections.Generic;
 using AttributeSource = Lucene.Net.Util.AttributeSource;
 
 /// <summary>
@@ -58,16 +58,18 @@ namespace Lucene.Net.SynonymEngine
         /// <returns></returns>
         public override bool IncrementToken()
         {
-            if (synonymStack.Count > 0) {
+            if (synonymStack.Count > 0)
+            {
                 String syn = synonymStack.Pop();
                 RestoreState(current);
                 termAtt.SetTermBuffer(syn);
-                posIncrAtt.PositionIncrement=0;
+                posIncrAtt.PositionIncrement = 0;
                 return true;
             }
             if (!input.IncrementToken())
                 return false;
-            if (addAliasesToStack()) {
+            if (addAliasesToStack())
+            {
                 current = CaptureState();
             }
             return true;
@@ -81,17 +83,20 @@ namespace Lucene.Net.SynonymEngine
         /// <seealso cref=""/>
         /// <param></param>     
         /// <returns></returns>
-        private bool addAliasesToStack() {
+        private bool addAliasesToStack()
+        {
             String[] synonyms = engine.GetSynonyms(termAtt.Term);
-            if (synonyms == null) {
-            return false;
+            if (synonyms == null)
+            {
+                return false;
             }
 
-            foreach (String synonym in synonyms) {
+            foreach (String synonym in synonyms)
+            {
                 synonymStack.Push(synonym);
             }
             return true;
         }
-       
+
     }
 }

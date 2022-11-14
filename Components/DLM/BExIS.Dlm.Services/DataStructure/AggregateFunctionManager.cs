@@ -1,6 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using BExIS.Dlm.Entities.DataStructure;
+using System.Collections.Generic;
 using System.Diagnostics.Contracts;
-using BExIS.Dlm.Entities.DataStructure;
 using Vaiona.Persistence.Api;
 
 namespace BExIS.Dlm.Services.DataStructure
@@ -8,7 +8,7 @@ namespace BExIS.Dlm.Services.DataStructure
     public class AggregateFunctionManager
     {
         private IUnitOfWork guow = null;
-        public AggregateFunctionManager() 
+        public AggregateFunctionManager()
         {
             //// define aggregate paths
             ////AggregatePaths.Add((Unit u) => u.ConversionsIamTheSource);            
@@ -37,7 +37,7 @@ namespace BExIS.Dlm.Services.DataStructure
                 repo.Put(u);
                 uow.Commit();
             }
-            return (u);            
+            return (u);
         }
 
         public bool Delete(AggregateFunction entity)
@@ -49,7 +49,7 @@ namespace BExIS.Dlm.Services.DataStructure
             {
                 IRepository<AggregateFunction> repo = uow.GetRepository<AggregateFunction>();
 
-                entity = repo.Reload(entity);                
+                entity = repo.Reload(entity);
                 //relation to DataContainer is managed by the other end
                 repo.Delete(entity);
                 uow.Commit();
@@ -94,7 +94,7 @@ namespace BExIS.Dlm.Services.DataStructure
                 repo.Put(merged);
                 uow.Commit();
             }
-            return (entity);    
+            return (entity);
         }
 
         #endregion
