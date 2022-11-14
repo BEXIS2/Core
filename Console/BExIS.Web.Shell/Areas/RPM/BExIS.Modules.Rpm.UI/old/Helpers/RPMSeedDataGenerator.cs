@@ -1,4 +1,17 @@
-﻿using BExIS.Modules.Rpm.UI.Helpers.SeedData;
+﻿using BExIS.Dlm.Entities.Administration;
+using BExIS.Dlm.Entities.DataStructure;
+using BExIS.Dlm.Services.Administration;
+using BExIS.Dlm.Services.DataStructure;
+using BExIS.Modules.Rpm.UI.Classes;
+using BExIS.Modules.Rpm.UI.Helpers.SeedData;
+using BExIS.Security.Entities.Objects;
+using BExIS.Security.Services.Authorization;
+using BExIS.Security.Services.Objects;
+using System.Collections.Generic;
+using System.Data;
+using System.Linq;
+using Vaiona.Utils.Cfg;
+using Vaiona.Web.Mvc.Modularity;
 
 namespace BExIS.Modules.Rpm.UI.Helpers
 {
@@ -124,7 +137,7 @@ namespace BExIS.Modules.Rpm.UI.Helpers
             mappedDataTypes.Clear();
             mappedDimensions.Clear();
             // create read attributes in bpp
-            //attributeCreator.CreateAttributes(ref mappedAttributes);
+            attributeCreator.CreateAttributes(ref mappedAttributes);
 
             createResearchPlan();
             //createSeedDataTypes();
@@ -136,19 +149,19 @@ namespace BExIS.Modules.Rpm.UI.Helpers
             //ImportSchema("Basic ABCD", "ABCD_2.06.XSD","Dataset","BExIS.Dlm.Entities.Data.Dataset");
             //ImportSchema("Basic Eml", "eml.xsd","dataset","BExIS.Dlm.Entities.Data.Dataset");
 
-            //DataStructureManager dsm = null;
-            //try
-            //{
-            //    dsm = new DataStructureManager();
-            //    foreach (StructuredDataStructure sds in dsm.StructuredDataStructureRepo.Get())
-            //    {
-            //        DataStructureIO.convertOrder(sds);
-            //    }
-            //}
-            //finally
-            //{
-            //    dsm.Dispose();
-            //}
+            DataStructureManager dsm = null;
+            try
+            {
+                dsm = new DataStructureManager();
+                foreach (StructuredDataStructure sds in dsm.StructuredDataStructureRepo.Get())
+                {
+                    DataStructureIO.convertOrder(sds);
+                }
+            }
+            finally
+            {
+                dsm.Dispose();
+            }
         }
 
         private static void createResearchPlan()

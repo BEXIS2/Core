@@ -1,91 +1,102 @@
-﻿namespace BExIS.Modules.Rpm.UI.Helpers.SeedData
+﻿using BExIS.Dlm.Entities.DataStructure;
+using BExIS.Dlm.Services.DataStructure;
+using BExIS.Dlm.Services.TypeSystem;
+using BExIS.IO.DataType.DisplayPattern;
+using System;
+using System.Collections.Generic;
+using System.Data;
+using System.Linq;
+using System.Xml;
+using Vaiona.Persistence.Api;
+
+namespace BExIS.Modules.Rpm.UI.Helpers.SeedData
 {
     public class AttributeCreator
     {
         // create read attributes in bpp
-        //public void CreateAttributes(ref DataTable mappedAttributes)
-        //{
-        //    DataContainerManager attributeManager = null;
-        //    DataTypeManager dataTypeManager = null;
-        //    UnitManager unitManager = null;
-        //    try
-        //    {
-        //        attributeManager = new DataContainerManager();
-        //        dataTypeManager = new DataTypeManager();
-        //        unitManager = new UnitManager();
+        public void CreateAttributes(ref DataTable mappedAttributes)
+        {
+            DataContainerManager attributeManager = null;
+            DataTypeManager dataTypeManager = null;
+            UnitManager unitManager = null;
+            try
+            {
+                attributeManager = new DataContainerManager();
+                dataTypeManager = new DataTypeManager();
+                unitManager = new UnitManager();
 
-        //        foreach (DataRow mapAttributesRow in mappedAttributes.Rows)
-        //        {
+                foreach (DataRow mapAttributesRow in mappedAttributes.Rows)
+                {
 
-        //            DataAttribute attribute = new DataAttribute();
+                    DataAttribute attribute = new DataAttribute();
 
-        //            // values of the attribute
-        //            attribute.ShortName = mapAttributesRow["ShortName"].ToString();
-        //            attribute.Name = mapAttributesRow["Name"].ToString();
-        //            attribute.Description = mapAttributesRow["Description"].ToString();
-        //            attribute.IsMultiValue = false;
-        //            attribute.IsBuiltIn = false;
-        //            //attribute.Owner = "BMM";
-        //            attribute.Scope = "";
-        //            attribute.MeasurementScale = MeasurementScale.Categorial; ////////!!!!!!!!fromMapping??????????????????
-        //            attribute.ContainerType = DataContainerType.ReferenceType;
-        //            attribute.EntitySelectionPredicate = "";
-        //            attribute.DataType = dataTypeManager.Repo.Get(Convert.ToInt64(mapAttributesRow["DataTypeId"]));
-        //            attribute.Unit = unitManager.Repo.Get(Convert.ToInt64(mapAttributesRow["UnitId"]));
-        //            attribute.Methodology = null;
-        //            attribute.Classification = null;
-        //            attribute.AggregateFunctions = null;
-        //            attribute.GlobalizationInfos = null;
-        //            attribute.Constraints = null;
-        //            attribute.ExtendedProperties = null;
+                    // values of the attribute
+                    attribute.ShortName = mapAttributesRow["ShortName"].ToString();
+                    attribute.Name = mapAttributesRow["Name"].ToString();
+                    attribute.Description = mapAttributesRow["Description"].ToString();
+                    attribute.IsMultiValue = false;
+                    attribute.IsBuiltIn = false;
+                    //attribute.Owner = "BMM";
+                    attribute.Scope = "";
+                    attribute.MeasurementScale = MeasurementScale.Categorial; ////////!!!!!!!!fromMapping??????????????????
+                    attribute.ContainerType = DataContainerType.ReferenceType;
+                    attribute.EntitySelectionPredicate = "";
+                    attribute.DataType = dataTypeManager.Repo.Get(Convert.ToInt64(mapAttributesRow["DataTypeId"]));
+                    attribute.Unit = unitManager.Repo.Get(Convert.ToInt64(mapAttributesRow["UnitId"]));
+                    attribute.Methodology = null;
+                    attribute.Classification = null;
+                    attribute.AggregateFunctions = null;
+                    attribute.GlobalizationInfos = null;
+                    attribute.Constraints = null;
+                    attribute.ExtendedProperties = null;
 
-        //            DataAttribute dataAttribute = new DataAttribute();
-        //            DataAttribute existAttribute = attributeManager.DataAttributeRepo.Get(a =>
-        //                attribute.Name.Equals(a.Name) &&
-        //                attribute.ShortName.Equals(a.ShortName) &&
-        //                attribute.Unit.Id.Equals(a.Unit.Id) &&
-        //                attribute.DataType.Id.Equals(a.DataType.Id)
-        //                ).FirstOrDefault();
+                    DataAttribute dataAttribute = new DataAttribute();
+                    DataAttribute existAttribute = attributeManager.DataAttributeRepo.Get(a =>
+                        attribute.Name.Equals(a.Name) &&
+                        attribute.ShortName.Equals(a.ShortName) &&
+                        attribute.Unit.Id.Equals(a.Unit.Id) &&
+                        attribute.DataType.Id.Equals(a.DataType.Id)
+                        ).FirstOrDefault();
 
-        //            // if attribute not exists (name, shortName) then create
-        //            if (existAttribute == null)
-        //            {
-        //                dataAttribute = attributeManager.CreateDataAttribute(
-        //                    attribute.ShortName,
-        //                    attribute.Name,
-        //                    attribute.Description,
-        //                    attribute.IsMultiValue,
-        //                    attribute.IsBuiltIn,
-        //                    attribute.Scope,
-        //                    attribute.MeasurementScale,
-        //                    attribute.ContainerType,
-        //                    attribute.EntitySelectionPredicate,
-        //                    attribute.DataType,
-        //                    attribute.Unit,
-        //                    attribute.Methodology,
-        //                    attribute.Classification,
-        //                    attribute.AggregateFunctions,
-        //                    attribute.GlobalizationInfos,
-        //                    attribute.Constraints,
-        //                    attribute.ExtendedProperties
-        //                    );
-        //            }
-        //            else
-        //            {
-        //                dataAttribute = existAttribute;
-        //            }
+                    // if attribute not exists (name, shortName) then create
+                    if (existAttribute == null)
+                    {
+                        dataAttribute = attributeManager.CreateDataAttribute(
+                            attribute.ShortName,
+                            attribute.Name,
+                            attribute.Description,
+                            attribute.IsMultiValue,
+                            attribute.IsBuiltIn,
+                            attribute.Scope,
+                            attribute.MeasurementScale,
+                            attribute.ContainerType,
+                            attribute.EntitySelectionPredicate,
+                            attribute.DataType,
+                            attribute.Unit,
+                            attribute.Methodology,
+                            attribute.Classification,
+                            attribute.AggregateFunctions,
+                            attribute.GlobalizationInfos,
+                            attribute.Constraints,
+                            attribute.ExtendedProperties
+                            );
+                    }
+                    else
+                    {
+                        dataAttribute = existAttribute;
+                    }
 
-        //            // add attributeId to the mappedAttributes Table
-        //            mapAttributesRow["AttributeId"] = dataAttribute.Id;
-        //        }
-        //    }
-        //    finally
-        //    {
-        //        attributeManager.Dispose();
-        //        dataTypeManager.Dispose();
-        //        unitManager.Dispose();
-        //    }
-        //}
+                    // add attributeId to the mappedAttributes Table
+                    mapAttributesRow["AttributeId"] = dataAttribute.Id;
+                }
+            }
+            finally
+            {
+                attributeManager.Dispose();
+                dataTypeManager.Dispose();
+                unitManager.Dispose();
+            }
+        }
 
 
         // create read units in bpp
