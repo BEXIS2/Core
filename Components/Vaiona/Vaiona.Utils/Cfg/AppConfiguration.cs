@@ -473,7 +473,7 @@ namespace Vaiona.Utils.Cfg
                 }
                 catch
                 {
-                    return new Uri("NotFound.htm");
+                    return new Uri("http://NotFound.htm");
                 }
             }
         }

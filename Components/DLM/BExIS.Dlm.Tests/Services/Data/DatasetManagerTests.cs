@@ -23,7 +23,21 @@ namespace BExIS.Dlm.Tests.Services.Data
         public void OneTimeSetUp()
         {
             helper = new TestSetupHelper(WebApiConfig.Register, false);
+        }
 
+
+        [SetUp]
+        public void SetUp()
+        {
+            var dsHelper = new DatasetHelper();
+            dsHelper.PurgeAllDatasets();
+            dsHelper.PurgeAllDataStructures();
+            dsHelper.PurgeAllResearchPlans();
+        }
+
+        [TearDown]
+        public void TearDown()
+        {
             var dsHelper = new DatasetHelper();
             dsHelper.PurgeAllDatasets();
             dsHelper.PurgeAllDataStructures();
@@ -33,12 +47,9 @@ namespace BExIS.Dlm.Tests.Services.Data
         [OneTimeTearDown]
         public void OneTimeTearDown()
         {
-            var dsHelper = new DatasetHelper();
-            dsHelper.PurgeAllDatasets();
-            dsHelper.PurgeAllDataStructures();
-            dsHelper.PurgeAllResearchPlans();
             helper.Dispose();
         }
+
 
         [Test()]
         public void CreateEmptyDatasetTest()

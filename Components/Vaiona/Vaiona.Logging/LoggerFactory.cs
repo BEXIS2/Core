@@ -54,7 +54,8 @@ namespace Vaiona.Logging
             }
             logEntry.Environemt = logEntry.Environemt.TrimStart(", ".ToCharArray());
 
-            logEntry.ExtraInfo = string.Join(", ", logEntry.ExtraInfo, string.Format("SessionID={0}", AppConfiguration.HttpContext.Session.SessionID))
+            if (logEntry.ExtraInfo!=null && AppConfiguration.HttpContext!=null)
+                logEntry.ExtraInfo = string.Join(", ", logEntry.ExtraInfo, string.Format("SessionID={0}", AppConfiguration.HttpContext.Session.SessionID))
                                        .TrimStart(", ".ToCharArray());
             return logEntry;
         }
