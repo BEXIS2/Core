@@ -431,16 +431,16 @@ namespace BExIS.Modules.Rpm.UI.Helpers.SeedData
                         string[] vars = line.Split((char)59);
 
                         System.Data.DataRow newRow = mappedDataTypes.NewRow();
-                        newRow["Name"] = vars[0];
-                        newRow["Description"] = vars[1];
-                        newRow["SystemType"] = vars[2];
-                        newRow["DisplayPattern"] = vars[3];
+                        newRow["Name"] = vars[0].Trim();
+                        newRow["Description"] = vars[1].Trim();
+                        newRow["SystemType"] = vars[2].Trim();
+                        newRow["DisplayPattern"] = vars[3].Trim();
                         mappedDataTypes.Rows.Add(newRow);
                     }
                 }
             }
 
-            return mappedDataTypes;
+             return mappedDataTypes;
         }
 
 

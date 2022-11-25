@@ -11,6 +11,11 @@
        <slot name="property"></slot>
  </Col>
  <Col>
+      <div class="variable-displaypattern">
+            <slot name="displaypattern"></slot>
+      </div>
+ </Col>
+ <Col>
        <div class="variable-description">
          <slot name="description"></slot>
        </div>

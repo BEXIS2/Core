@@ -257,6 +257,25 @@ namespace BExIS.IO.Tests.Transform.Input
 
         }
 
+        public void SuggestSystemTypes_ValidDateTypes_ResultWithCorrectTypes(int n)
+        {
+            //Arrange
+            StructureAnalyser structureAnalyser = new StructureAnalyser();
+
+            List<string> dateValues = new List<string>();
+            dateValues.Add("2022-12-24"); // yyyy-MM-dd
+
+
+
+
+            //Act
+            var result = structureAnalyser.SuggestSystemTypes(rows.GetRange(0, n), TextSeperator.semicolon, DecimalCharacter.comma, new List<string>());
+
+            //Assert
+            Assert.NotNull(result);
+
+        }
+
         [Test]
         public void SuggestSystemTypes_ValidWithMissingValues_ResultWithCorrectTypes()
         {

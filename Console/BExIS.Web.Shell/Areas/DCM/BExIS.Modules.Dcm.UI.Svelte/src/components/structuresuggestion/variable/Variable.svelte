@@ -46,6 +46,8 @@ onMount(()=>{
 
       setValidationState(res);
       },10)
+
+      console.log(variable);
 })
 
 //change event: if input change check also validation only on the field
@@ -134,7 +136,35 @@ function setValidationState(res)
                     {/each}
                   {/if}
             </FormGroup>
-           
+      </div>
+      <div slot="displaypattern">      
+            <FormGroup>
+                  <Label>Displaypattern:</Label> 
+                  <Select 
+                        id="displaypattern"
+                        items={variable.possibleDisplayPattern} 
+                        optionIdentifier="id"
+                        labelIdentifier="text"
+                        isMulti={false}
+                        isClearable={false}
+                        bind:value={variable.displayPattern}
+                  
+                        placeholder="-- Please select --"
+                        hasError = {res.hasErrors("displayPattern")}
+                        on:select={(e)=>onSelectHandler(e,"displayPattern")}
+                        on:clear={(e)=>onSelectHandler(e,"displayPattern")}
+                        >
+                  </Select>
+
+                  {#if res.hasErrors("displayPattern")}
+                    {#each res.getErrors("displayPattern") as error}
+                         <!-- content here -->
+                         <div class="invalid-feedback" style="display:block">
+                          {error}
+                        </div>
+                    {/each}
+                  {/if}
+            </FormGroup>
       </div>
       <div slot="description">
             <DataTypeDescription type={variable.dataType.text} />

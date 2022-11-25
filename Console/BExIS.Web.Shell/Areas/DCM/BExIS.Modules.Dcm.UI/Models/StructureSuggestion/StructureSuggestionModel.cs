@@ -31,6 +31,7 @@ namespace BExIS.Modules.Dcm.UI.Models.StructureSuggestion
         public int Delimeter { get; set; }
         public int Decimal { get; set; }
         public int TextMarker { get; set; }
+
         public List<ListItem> Delimeters { get; set; }
         public List<ListItem> Decimals { get; set; }
         public List<ListItem> TextMarkers { get; set; }
@@ -109,6 +110,7 @@ namespace BExIS.Modules.Dcm.UI.Models.StructureSuggestion
         public ListItem DataType { get; set; }
         public ListItem Unit { get; set; }
         public ListItem Template { get; set; }
+        public ListItem DisplayPattern { get; set; }
 
         ///// <summary>
         ///// List of possible Datatypes based on the result of the strutcure Analyzer 
@@ -125,6 +127,11 @@ namespace BExIS.Modules.Dcm.UI.Models.StructureSuggestion
         /// </summary>
         public List<ListItem> PossibleTemplates { get; set; }
 
+        /// <summary>
+        /// List of possible Templates based on the result of the strutcure Analyzer 
+        /// </summary>
+        public List<ListItem> PossibleDisplayPattern { get; set; }
+
         public VariableModel()
         {
             Id = 0;
@@ -134,6 +141,7 @@ namespace BExIS.Modules.Dcm.UI.Models.StructureSuggestion
             DataType = new ListItem();
             Unit = new ListItem();
             Template = new ListItem();
+            DisplayPattern = new ListItem(-1,"","");
 
             IsKey = false;
             IsOptional = true;
@@ -141,6 +149,7 @@ namespace BExIS.Modules.Dcm.UI.Models.StructureSuggestion
             //PossibleDataTypes = new List<KvP>();
             PossibleUnits = new List<ListItem>();
             PossibleTemplates = new List<ListItem>();
+            PossibleDisplayPattern = new List<ListItem>();
        }
     }
 }
