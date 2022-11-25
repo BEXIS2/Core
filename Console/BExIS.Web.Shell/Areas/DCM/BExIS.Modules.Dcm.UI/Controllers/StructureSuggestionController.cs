@@ -4,6 +4,7 @@ using BExIS.Dlm.Entities.DataStructure;
 using BExIS.Dlm.Services.Data;
 using BExIS.Dlm.Services.DataStructure;
 using BExIS.IO;
+using BExIS.IO.DataType.DisplayPattern;
 using BExIS.IO.Transform.Input;
 using BExIS.Modules.Dcm.UI.Hooks;
 using BExIS.Modules.Dcm.UI.Models.StructureSuggestion;
@@ -174,16 +175,24 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                     var unit = unitManager.Repo.Get(variable.Unit.Id);
                     if (unit == null) { }// create;
 
+                    // set displayPattern
+                    int displayPattern = -1;
+                    if (variable.DisplayPattern != null) displayPattern = Convert.ToInt32(variable.DisplayPattern.Id);
+
                     // create var and add to structure
 
-                    // generate variables
+                        // generate variables
                     var result = variableManager.CreateVariable(
                         variable.Name,
                         dataType,
                         unit,
                         newStructure.Id,
                         variable.IsOptional,
-                        variable.IsKey
+                        variable.IsKey,
+                        0,
+                        "",
+                        "",
+                        displayPattern
                         );
 
 
@@ -315,7 +324,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
             for (int i = 0; i < cells; i++)
             {
-                if (activeCells==null || activeCells[i]) // only create a var to the model if the cell is active or the list is null - means add everyone
+                if (activeCells == null || activeCells[i]) // only create a var to the model if the cell is active or the list is null - means add everyone
                 {
 
                     VariableModel var = new VariableModel();
@@ -335,6 +344,16 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                     var unitInput = getValueFromMarkedRow(markerRows, model.Markers, "unit", (char)model.Delimeter, i);
                     strutcureAnalyzer.SuggestUnit(unitInput, var.DataType.Text).ForEach(u => var.PossibleUnits.Add(new ListItem(u.Id, u.Name, "analysis results")));
                     var.Unit = var.PossibleUnits.FirstOrDefault();
+
+
+                    // get suggestes DisplayPattern / currently only for DateTime
+                    if (var.SystemType.Equals(typeof(DateTime).Name))
+                    {
+                        var.DisplayPattern = null; // here a suggesten of the display pattern is needed
+                        var displayPattern = DataTypeDisplayPattern.Pattern.Where(p => p.Systemtype.ToString().Equals(var.SystemType));
+                        displayPattern.ToList().ForEach(d => var.PossibleDisplayPattern.Add(new ListItem(d.Id, d.DisplayPattern)));
+                    }
+
 
                     model.Variables.Add(var);
                 }

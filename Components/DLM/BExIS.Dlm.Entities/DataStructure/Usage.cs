@@ -75,6 +75,7 @@ namespace BExIS.Dlm.Entities.DataStructure
             MinCardinality = 0; // to make the parameter optional by default
             MaxCardinality = 1; // this must always remain 1
             MissingValues = new List<MissingValue>();
+            DisplayPatternId = -1;
         }
 
     }

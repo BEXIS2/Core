@@ -9,6 +9,7 @@ using System.Text.RegularExpressions;
 using BExIS.Dlm.Services.DataStructure;
 using BExIS.Dlm.Entities.DataStructure;
 using F23.StringSimilarity;
+using BExIS.IO.DataType.DisplayPattern;
 
 namespace BExIS.IO.Transform.Input
 {
@@ -305,7 +306,8 @@ namespace BExIS.IO.Transform.Input
             Dictionary<int, List<Type>> source = new Dictionary<int, List<Type>>();
             Dictionary<int, Type> result = new Dictionary<int, Type>();
 
-            // get teyp checks
+
+            // get type checks
             checks = getDataTypeChecks(decimalCharacter);
 
             // create dictionary with types per column
@@ -340,32 +342,39 @@ namespace BExIS.IO.Transform.Input
 
         private List<Type> checkValue(string value, List<Type> types, List<string> missingValues)
         {
+
             value = value.Trim();
             // if list has no entries - skip
             if (types.Count == 0) return types;
 
+
             // check missing values
             if (missingValues.Contains(value)) return types;
 
+            List<Type> approvedTypes = new List<Type>();
+
             // check value
-            for (int i = 0; i < types.Count; i++)
+            foreach (var type in types)
             {
-                var type = types.ElementAt(i);
                 if (type != null)
                 {
-                    //get typecheck
-                    var check = getCheckBasedOnType(type);
-                    var result = check.Execute(value, 0);
+                    var checks = getChecksBasedOnType(type);
 
-                    // if result is an error, skip it
-                    if (result.GetType().Equals(typeof(Error)))
+                    foreach (var check in checks)
                     {
-                        types.RemoveAt(i);
+                        //get typecheck
+                        var result = check.Execute(value, 0);
+
+                        // if result is an error, skip it
+                        if (!result.GetType().Equals(typeof(Error)) && !approvedTypes.Contains(type))
+                        {
+                            approvedTypes.Add(type);
+                        }
                     }
                 }
             }
 
-            return types;
+            return approvedTypes;
         }
 
         /// <summary>
@@ -380,7 +389,15 @@ namespace BExIS.IO.Transform.Input
 
             foreach (var type in types)
             {
+                // add default datatype check without displaypattern
                 typeChecks.Add(new DataTypeCheck("", type.Name, decimalCharacter));
+
+                // if display pattern exist then also add a typecheck per type * displaypattern 
+                var displayPatterns = DataTypeDisplayPattern.Pattern.Where(p => p.Systemtype.ToString().Equals(Type.GetTypeCode(type).ToString()));
+                foreach (var dp in displayPatterns)
+                {
+                    typeChecks.Add(new DataTypeCheck("", type.Name, decimalCharacter, dp.DisplayPattern));
+                }
             }
 
             return typeChecks;
@@ -404,9 +421,9 @@ namespace BExIS.IO.Transform.Input
             return types;
         }
 
-        private DataTypeCheck getCheckBasedOnType(Type type)
+        private IEnumerable<DataTypeCheck> getChecksBasedOnType(Type type)
         {
-            return checks.Where(c => c.DataType.Equals(type.Name)).FirstOrDefault();
+            return checks.Where(c => c.DataType.Equals(type.Name));
         }
 
         private Type getMostRestructiveType(List<Type> types)

@@ -189,7 +189,7 @@ namespace BExIS.Dlm.Services.DataStructure
         /// <param name="defaultValue"></param>
         /// <returns>created VariableInstance</returns>
         /// <exception cref="ArgumentException"></exception>
-        public VariableInstance CreateVariable(string name, long dataStructureId, long variableTemplateId, int displayPatternId = 0)
+        public VariableInstance CreateVariable(string name, long dataStructureId, long variableTemplateId, int displayPatternId = -1)
         {
             // check incoming varaibles
             if (string.IsNullOrEmpty(name)) throw new ArgumentNullException(nameof(name), "name is empty but is required.");
@@ -233,6 +233,8 @@ namespace BExIS.Dlm.Services.DataStructure
 
         }
 
+
+
         // create - need datastucture, variable template 
         /// <summary>
         /// create a Variable Instance
@@ -241,12 +243,15 @@ namespace BExIS.Dlm.Services.DataStructure
         /// <param name="dataType"></param>
         /// <param name="unit"></param>
         /// <param name="dataStructureId"></param>
+        /// <param name="isOptional"></param>
+        /// <param name="isKey"></param>
         /// <param name="variableTemplateId"></param>
         /// <param name="description"></param>
         /// <param name="defaultValue"></param>
-        /// <returns>created VariableInstance</returns>
-        /// <exception cref="ArgumentException"></exception>
-        public VariableInstance CreateVariable(string name, DataType dataType, Unit unit, long dataStructureId,  bool isOptional, bool isKey, long variableTemplateId=0, string description = "", string defaultValue = "")
+        /// <param name="displayPatternId"></param>
+        /// <returns></returns>
+        /// <exception cref="ArgumentNullException"></exception>
+        public VariableInstance CreateVariable(string name, DataType dataType, Unit unit, long dataStructureId, bool isOptional, bool isKey, long variableTemplateId = 0, string description = "", string defaultValue = "", int displayPatternId = 0)
         {
             // check incoming varaibles
             if (string.IsNullOrEmpty(name)) throw new ArgumentNullException(nameof(name), "name is empty but is required.");
@@ -264,7 +269,8 @@ namespace BExIS.Dlm.Services.DataStructure
                 DefaultValue = defaultValue,
                 Unit = unit,
                 IsValueOptional = isOptional,
-                IsKey = isKey
+                IsKey = isKey,
+                DisplayPatternId = displayPatternId,
             };
 
             using (IUnitOfWork uow = this.GetUnitOfWork())

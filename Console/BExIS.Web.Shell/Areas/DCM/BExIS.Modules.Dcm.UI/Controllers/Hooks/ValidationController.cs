@@ -90,7 +90,10 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
                             // Add Number of Variables to the cache
                             if (sds != null)
+                            {
+                                if (cache.UpdateSetup == null) cache.UpdateSetup = new UpdateSetup();
                                 cache.UpdateSetup.VariablesCount = sds.Variables.Count;
+                            }
 
                             // read all files
                             foreach (var file in cache.Files)
