@@ -1,3 +1,21 @@
+.b2-button {
+	border-radius: 8px;
+	margin: 2px;border: none;
+	padding: 10px 20px 10px 20px;
+	font-size: inherit;
+}
+
+.function{
+	background: var(--button-function);
+	color:rgb(255, 255, 255);
+}
+
+.action{
+	background: var(--button-action);
+	color:rgb(255, 255, 255);
+}
+
+/*
 html, body {
 	position: relative;
 	width: 100%;
@@ -61,3 +79,4 @@ button:not(:disabled):active {
 button:focus {
 	border-color: #666;
 }
+*/

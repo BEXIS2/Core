@@ -1,0 +1,135 @@
+{
+  "src/create.js": {
+    "file": "create.js",
+    "src": "src/create.js",
+    "isEntry": true,
+    "imports": [
+      "_Api.221a6fec.js",
+      "_vest.production.0a6b8fe1.js",
+      "_Collapse.7c2858da.js",
+      "_Caller.4580056f.js",
+      "_BaseCaller.96d2da98.js"
+    ],
+    "css": [
+      "assets/create.css"
+    ]
+  },
+  "src/edit.js": {
+    "file": "edit.js",
+    "src": "src/edit.js",
+    "isEntry": true,
+    "imports": [
+      "_Api.221a6fec.js",
+      "_Caller.4580056f.js",
+      "_Selection.f6b85a79.js",
+      "_index.972657ec.js",
+      "_BaseCaller.96d2da98.js"
+    ],
+    "css": [
+      "assets/edit.css"
+    ]
+  },
+  "src/structuresuggestion.js": {
+    "file": "structuresuggestion.js",
+    "src": "src/structuresuggestion.js",
+    "isEntry": true,
+    "imports": [
+      "_Api.221a6fec.js",
+      "_Selection.f6b85a79.js",
+      "_Select.d87129ac.js",
+      "_vest.production.0a6b8fe1.js",
+      "_index.972657ec.js",
+      "_BaseCaller.96d2da98.js"
+    ],
+    "css": [
+      "assets/structuresuggestion.css"
+    ]
+  },
+  "src/entities.js": {
+    "file": "entities.js",
+    "src": "src/entities.js",
+    "isEntry": true,
+    "imports": [
+      "_Api.221a6fec.js",
+      "_Collapse.7c2858da.js",
+      "_Caller.4580056f.js",
+      "_Select.d87129ac.js",
+      "_vest.production.0a6b8fe1.js",
+      "_index.972657ec.js"
+    ]
+  },
+  "_Api.221a6fec.js": {
+    "file": "assets/Api.221a6fec.js",
+    "css": [
+      "assets/Api.css"
+    ]
+  },
+  "_Collapse.7c2858da.js": {
+    "file": "assets/Collapse.7c2858da.js",
+    "imports": [
+      "_Api.221a6fec.js",
+      "_Caller.4580056f.js"
+    ]
+  },
+  "_Caller.4580056f.js": {
+    "file": "assets/Caller.4580056f.js",
+    "imports": [
+      "_Api.221a6fec.js"
+    ]
+  },
+  "_BaseCaller.96d2da98.js": {
+    "file": "assets/BaseCaller.96d2da98.js",
+    "imports": [
+      "_Api.221a6fec.js"
+    ]
+  },
+  "_vest.production.0a6b8fe1.js": {
+    "file": "assets/vest.production.0a6b8fe1.js"
+  },
+  "_Selection.f6b85a79.js": {
+    "file": "assets/Selection.f6b85a79.js",
+    "imports": [
+      "_Api.221a6fec.js",
+      "_index.972657ec.js"
+    ],
+    "css": [
+      "assets/Selection.css"
+    ]
+  },
+  "_index.972657ec.js": {
+    "file": "assets/index.972657ec.js"
+  },
+  "_Select.d87129ac.js": {
+    "file": "assets/Select.d87129ac.js",
+    "imports": [
+      "_Api.221a6fec.js"
+    ],
+    "css": [
+      "assets/Select.css"
+    ]
+  },
+  "src/create.css": {
+    "file": "assets/create.css",
+    "src": "src/create.css"
+  },
+  "src/structuresuggestion.css": {
+    "file": "assets/structuresuggestion.css",
+    "src": "src/structuresuggestion.css"
+  },
+  "Selection.css": {
+    "file": "assets/Selection.css",
+    "src": "Selection.css"
+  },
+  "Api.css": {
+    "file": "assets/Api.css",
+    "src": "Api.css"
+  },
+  "Select.css": {
+    "file": "assets/Select.css",
+    "src": "Select.css"
+  },
+  "src/edit.css": {
+    "file": "assets/edit.css",
+    "src": "src/edit.css"
+  }
+}
