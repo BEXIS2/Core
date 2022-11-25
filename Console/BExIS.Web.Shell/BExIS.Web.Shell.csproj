@@ -893,8 +893,6 @@
     <Content Include="Scripts\svelte\menu.js" />
     <Content Include="Scripts\svelte\settings.css" />
     <Content Include="Scripts\svelte\settings.js" />
-    <Content Include="Scripts\svelte\shell.js" />
-    <Content Include="Scripts\svelte\uitest.js" />
     <Content Include="Shell.Manifest.xml" />
     <Content Include="Themes\Default\Styles\awesome\css\font-awesome.css" />
     <Content Include="Themes\Default\Styles\awesome\css\font-awesome.min.css" />
@@ -1037,10 +1035,7 @@
     <Content Include="Views\Home\Version.cshtml" />
     <Content Include="Views\Home\NoPermission.cshtml" />
     <Content Include="Web.config.sample" />
-    <Content Include="Scripts\svelte\menu.js.map" />
     <Content Include="Scripts\svelte\settings.js.map" />
-    <Content Include="Scripts\svelte\shell.js.map" />
-    <Content Include="Scripts\svelte\uitest.js.map" />
     <Content Include="Views\Settings\Index.cshtml" />
     <Content Include="Themes\Default\Layouts\_svelte_telerikLayout.cshtml" />
     <Content Include="Themes\Default\Layouts\_svelteLayout.cshtml" />
