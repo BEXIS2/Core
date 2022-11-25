@@ -4,11 +4,11 @@
     "src": "src/create.js",
     "isEntry": true,
     "imports": [
-      "_Api.221a6fec.js",
-      "_vest.production.0a6b8fe1.js",
-      "_Collapse.7c2858da.js",
-      "_Caller.4580056f.js",
-      "_BaseCaller.96d2da98.js"
+      "_Api.js",
+      "_vest.production.js",
+      "_Collapse.js",
+      "_Caller.js",
+      "_BaseCaller.js"
     ],
     "css": [
       "assets/create.css"
@@ -19,11 +19,11 @@
     "src": "src/edit.js",
     "isEntry": true,
     "imports": [
-      "_Api.221a6fec.js",
-      "_Caller.4580056f.js",
-      "_Selection.f6b85a79.js",
-      "_index.972657ec.js",
-      "_BaseCaller.96d2da98.js"
+      "_Api.js",
+      "_Caller.js",
+      "_Selection.js",
+      "_index.js",
+      "_BaseCaller.js"
     ],
     "css": [
       "assets/edit.css"
@@ -34,12 +34,12 @@
     "src": "src/structuresuggestion.js",
     "isEntry": true,
     "imports": [
-      "_Api.221a6fec.js",
-      "_Selection.f6b85a79.js",
-      "_Select.d87129ac.js",
-      "_vest.production.0a6b8fe1.js",
-      "_index.972657ec.js",
-      "_BaseCaller.96d2da98.js"
+      "_Api.js",
+      "_Selection.js",
+      "_Select.js",
+      "_vest.production.js",
+      "_index.js",
+      "_BaseCaller.js"
     ],
     "css": [
       "assets/structuresuggestion.css"
@@ -50,59 +50,59 @@
     "src": "src/entities.js",
     "isEntry": true,
     "imports": [
-      "_Api.221a6fec.js",
-      "_Collapse.7c2858da.js",
-      "_Caller.4580056f.js",
-      "_Select.d87129ac.js",
-      "_vest.production.0a6b8fe1.js",
-      "_index.972657ec.js"
+      "_Api.js",
+      "_Collapse.js",
+      "_Caller.js",
+      "_Select.js",
+      "_vest.production.js",
+      "_index.js"
     ]
   },
-  "_Api.221a6fec.js": {
-    "file": "assets/Api.221a6fec.js",
+  "_Api.js": {
+    "file": "assets/Api.js",
     "css": [
       "assets/Api.css"
     ]
   },
-  "_Collapse.7c2858da.js": {
-    "file": "assets/Collapse.7c2858da.js",
+  "_Collapse.js": {
+    "file": "assets/Collapse.js",
     "imports": [
-      "_Api.221a6fec.js",
-      "_Caller.4580056f.js"
+      "_Api.js",
+      "_Caller.js"
     ]
   },
-  "_Caller.4580056f.js": {
-    "file": "assets/Caller.4580056f.js",
+  "_Caller.js": {
+    "file": "assets/Caller.js",
     "imports": [
-      "_Api.221a6fec.js"
+      "_Api.js"
     ]
   },
-  "_BaseCaller.96d2da98.js": {
-    "file": "assets/BaseCaller.96d2da98.js",
+  "_BaseCaller.js": {
+    "file": "assets/BaseCaller.js",
     "imports": [
-      "_Api.221a6fec.js"
+      "_Api.js"
     ]
   },
-  "_vest.production.0a6b8fe1.js": {
-    "file": "assets/vest.production.0a6b8fe1.js"
+  "_vest.production.js": {
+    "file": "assets/vest.production.js"
   },
-  "_Selection.f6b85a79.js": {
-    "file": "assets/Selection.f6b85a79.js",
+  "_Selection.js": {
+    "file": "assets/Selection.js",
     "imports": [
-      "_Api.221a6fec.js",
-      "_index.972657ec.js"
+      "_Api.js",
+      "_index.js"
     ],
     "css": [
       "assets/Selection.css"
     ]
   },
-  "_index.972657ec.js": {
-    "file": "assets/index.972657ec.js"
+  "_index.js": {
+    "file": "assets/index.js"
   },
-  "_Select.d87129ac.js": {
-    "file": "assets/Select.d87129ac.js",
+  "_Select.js": {
+    "file": "assets/Select.js",
     "imports": [
-      "_Api.221a6fec.js"
+      "_Api.js"
     ],
     "css": [
       "assets/Select.css"
@@ -116,20 +116,20 @@
     "file": "assets/structuresuggestion.css",
     "src": "src/structuresuggestion.css"
   },
-  "Selection.css": {
-    "file": "assets/Selection.css",
-    "src": "Selection.css"
-  },
   "Api.css": {
     "file": "assets/Api.css",
     "src": "Api.css"
   },
-  "Select.css": {
-    "file": "assets/Select.css",
-    "src": "Select.css"
+  "Selection.css": {
+    "file": "assets/Selection.css",
+    "src": "Selection.css"
   },
   "src/edit.css": {
     "file": "assets/edit.css",
     "src": "src/edit.css"
+  },
+  "Select.css": {
+    "file": "assets/Select.css",
+    "src": "Select.css"
   }
 }

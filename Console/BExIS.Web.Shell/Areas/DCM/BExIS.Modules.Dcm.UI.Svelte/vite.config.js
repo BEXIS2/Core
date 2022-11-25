@@ -21,7 +21,7 @@ export default defineConfig(({ command, mode, ssrBuild }) => {
           ],
           output: {
             inlineDynamicImports:false,
-            chunkFileNames: `assets/[name].[hash].js`,
+            chunkFileNames: `assets/[name].js`,
             entryFileNames: "[name].js",
             assetFileNames: "assets/[name].[ext]",
             dir: "../BExIS.Modules.Dcm.UI/Scripts/svelte/"
