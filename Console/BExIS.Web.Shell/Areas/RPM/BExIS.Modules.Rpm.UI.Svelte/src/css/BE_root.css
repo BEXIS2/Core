@@ -1,0 +1,28 @@
+:root {
+    --bg-color-level-1: #388670;
+    --bg-color-level-2: #72b1a0;
+    --bg-color-level-3: #cde7cf;
+    --bg-color-level-4: #d2e8e3;
+    --bg-color-level-5: #eff7f6;
+    --border-width-field: 1px;
+    --border-color-field: #afb0b1;
+    --button-function: #01939A;
+    --button-action: #01939A;
+    --information-bg-color: #037932;
+    --information-text-color: white;
+    --information-link-color: #00C90D;
+    --information-link-hover-color: #05a8e6;
+    --bg-color-metadata-level-1: #b7d6bd;
+    --bg-color-metadata-level-3: #cde7cf;
+    --bg-color-metadata-level-5: #dcedde;
+    --bg-color-metadata-level-7: #ebf3ee;
+    --bg-color-metadata-level-9: #FAFAFA;
+    --bg-bx-active: #45B2A1;
+    --bg-bx-disbaled-hover: #ffffff;
+    --bg-bx-hover: #037932;
+    --nav-hover: var(--highlight-color);
+    --t-grid-a-hover: var(--highlight-color);
+    --t-windows-titlebar-color: var(--highlight-color);
+    --t-animation-container-hover-selected: #01939A;
+    --bg-color-bx-selected-mousover: var(--highlight-color);
+}
