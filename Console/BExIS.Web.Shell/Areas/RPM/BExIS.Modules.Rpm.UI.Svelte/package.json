@@ -1,36 +1,25 @@
 {
-  "name": "svelte-app",
-  "version": "1.0.0",
+  "name": "bexis2.rpm.ui",
   "private": true,
+  "version": "1.0.0",
+  "type": "module",
   "scripts": {
-    "build": "rollup -c",
-    "dev": "rollup -c -w",
-    "start": "sirv public --no-clear",
+    "dev": "vite",
+    "build ": "vite build --watch", 
+
+    "preview": "vite preview",
     "install bexis2 ui core": "npm install --save-dev C:\\Users\\admin\\AppData\\Roaming\\npm\\node_modules\\@bexis2\\svelte-bexis2-core-ui"
   },
   "devDependencies": {
-    "@bexis2/svelte-bexis2-core-ui": "file:../../../../../../../../../../AppData/Roaming/npm/node_modules/@bexis2/svelte-bexis2-core-ui",
-    "@rollup/plugin-commonjs": "^17.0.0",
-    "@rollup/plugin-node-resolve": "^11.0.0",
-    "rollup": "^2.3.4",
-    "rollup-plugin-css-only": "^3.1.0",
-    "rollup-plugin-livereload": "^2.0.0",
-    "rollup-plugin-svelte": "^7.0.0",
-    "rollup-plugin-terser": "^7.0.0",
-    "svelte": "^3.0.0"
+    "@bexis2/svelte-bexis2-core-ui": "file:../../../../../../_Svelte Workspace/svelte-bexis2-core-ui",
+    "@sveltejs/vite-plugin-svelte": "^1.1.0",
+    "svelte": "^3.52.0",
+    "vite": "^3.2.3"
   },
   "dependencies": {
-    "@fortawesome/fontawesome-free": "^5.15.3",
-    "@fortawesome/fontawesome-svg-core": "^1.2.35",
-    "@fortawesome/free-regular-svg-icons": "^5.15.4",
-    "@fortawesome/free-solid-svg-icons": "^5.15.4",
-    "datatables.net": "^1.10.25",
-    "datatables.net-dt": "^1.1.0",
-    "fontawesome-svelte": "^2.0.1",
+    "axios": "0.26.1",
     "jquery": "^3.6.0",
-    "sirv-cli": "^1.0.0",
-    "svelte-fa": "^2.2.1",
-    "svelte-file-dropzone": "0.0.15",
-    "sveltestrap": "^5.5.1"
+    "sirv-cli": "^2.0.2",
+    "sveltestrap": "^5.9.0"
   }
 }
