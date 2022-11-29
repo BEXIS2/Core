@@ -135,6 +135,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Helper\HashHelperTests.cs" />
     <Compile Include="Helper\ManualHelperTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

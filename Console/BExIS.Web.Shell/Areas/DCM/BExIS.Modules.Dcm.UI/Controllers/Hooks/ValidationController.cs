@@ -10,6 +10,7 @@ using BExIS.Modules.Dcm.UI.Models.Edit;
 using BExIS.Security.Entities.Authorization;
 using BExIS.UI.Hooks;
 using BExIS.UI.Hooks.Caches;
+using BExIS.Utils.Helpers;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -105,42 +106,57 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
                                 if (System.IO.File.Exists(filePath))
                                 {
-                                    if (ext.Equals(".xlsm")) // excel Template
+                                    // check if hash of file has changed or not exist
+                                    // if so, then valdiate and overide hash if not set results to model
+
+                                    string incomingHash = HashHelper.CreateMD5Hash(file.Name, file.Lenght.ToString());
+
+                                    // if a validation is allready run and the file has not changed, skip validation
+                                    if (file.ValidationHash != incomingHash)
                                     {
-                                        ExcelReader reader = new ExcelReader(sds, new ExcelFileReaderInfo());
-                                        Stream = reader.Open(filePath);
-                                        reader.ValidateTemplateFile(Stream, fileName, id);
-                                        errors = reader.ErrorMessages;
-                                        cache.UpdateSetup.RowsCount = reader.NumberOfRows;
-                                    }
-                                    else
-                                    if (iOUtility.IsSupportedExcelFile(ext)) // Excel
-                                    {
-                                        ExcelReader reader = new ExcelReader(sds, (ExcelFileReaderInfo)cache.ExcelFileReaderInfo);
-                                        Stream = reader.Open(filePath);
-                                        reader.ValidateFile(Stream, fileName, id);
-                                        errors = reader.ErrorMessages;
-                                        cache.UpdateSetup.RowsCount = reader.NumberOfRows;
-                                    }
-                                    else
-                                    if (iOUtility.IsSupportedAsciiFile(ext)) // asccii
-                                    {
-                                        AsciiReader reader = new AsciiReader(sds, (AsciiFileReaderInfo)cache.AsciiFileReaderInfo);
-                                        Stream = reader.Open(filePath);
-                                        reader.ValidateFile(Stream, fileName, id);
-                                        errors = reader.ErrorMessages;
-                                        cache.UpdateSetup.RowsCount = reader.NumberOfRows;
+
+                                        if (ext.Equals(".xlsm")) // excel Template
+                                        {
+                                            ExcelReader reader = new ExcelReader(sds, new ExcelFileReaderInfo());
+                                            Stream = reader.Open(filePath);
+                                            reader.ValidateTemplateFile(Stream, fileName, id);
+                                            file.Errors = reader.ErrorMessages;
+                                            cache.UpdateSetup.RowsCount = reader.NumberOfRows;
+                                        }
+                                        else
+                                        if (iOUtility.IsSupportedExcelFile(ext)) // Excel
+                                        {
+                                            ExcelReader reader = new ExcelReader(sds, (ExcelFileReaderInfo)cache.ExcelFileReaderInfo);
+                                            Stream = reader.Open(filePath);
+                                            reader.ValidateFile(Stream, fileName, id);
+                                            file.Errors = reader.ErrorMessages;
+                                            cache.UpdateSetup.RowsCount = reader.NumberOfRows;
+                                        }
+                                        else
+                                        if (iOUtility.IsSupportedAsciiFile(ext)) // asccii
+                                        {
+                                            AsciiReader reader = new AsciiReader(sds, (AsciiFileReaderInfo)cache.AsciiFileReaderInfo);
+                                            Stream = reader.Open(filePath);
+                                            reader.ValidateFile(Stream, fileName, id);
+                                            file.Errors = reader.ErrorMessages;
+                                            cache.UpdateSetup.RowsCount = reader.NumberOfRows;
+                                        }
+
+                                        file.ValidationHash = incomingHash;
                                     }
                                 }
 
-                                if (errors.Any())
+                                if (file.Errors.Any())
                                 {
                                     FileErrors fileErrors = new FileErrors();
                                     fileErrors.File = file.Name;
-                                    errors.ForEach(e => fileErrors.Errors.Add(e.ToHtmlString()));
-                                    fileErrors.SortedErrors = SortErrors(errors);
+                                    file.Errors.ForEach(e => fileErrors.Errors.Add(e.ToHtmlString()));
+                                    fileErrors.SortedErrors = SortErrors(file.Errors);
                                     model.FileErrors.Add(fileErrors);
+
+                                    errors.AddRange(file.Errors); // set to global error list
                                 }
+
                             }
                         }
                     }

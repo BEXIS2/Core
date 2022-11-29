@@ -3,7 +3,7 @@ using BExIS.Utils.Helpers;
 using NUnit.Framework;
 
 
-namespace BExIS.Utils.Data.Tests
+namespace BExIS.Utils.Tests
 {
     [TestFixture()]
     public class ManualHelperTests
