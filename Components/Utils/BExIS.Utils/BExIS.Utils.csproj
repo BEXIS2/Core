@@ -111,6 +111,7 @@
     <Compile Include="Extensions\ViewExtentions.cs" />
     <Compile Include="Filters\MustBeTrueAttribute.cs" />
     <Compile Include="Filters\QueryAttribute.cs" />
+    <Compile Include="Helpers\HashHelper.cs" />
     <Compile Include="Helpers\ManualHelper.cs" />
     <Compile Include="Helpers\RegExHelper.cs" />
     <Compile Include="Models\SearchAttribute.cs" />

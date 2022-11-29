@@ -40,7 +40,7 @@
     </NuGetPackageImportStamp>
     <Use64BitIISExpress />
     <PostSharpHostConfigurationFile>web.config</PostSharpHostConfigurationFile>
-    <TypeScriptCompileBlocked>true</TypeScriptCompileBlocked>
+    <TypeScriptCompileBlocked>True</TypeScriptCompileBlocked>
     <TypeScriptCompileOnSaveEnabled>False</TypeScriptCompileOnSaveEnabled>
     <DontImportPostSharp>True</DontImportPostSharp>
   </PropertyGroup>

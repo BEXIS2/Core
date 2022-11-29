@@ -1,4 +1,5 @@
 ﻿using BExIS.IO.Transform.Input;
+using BExIS.IO.Transform.Validation.Exceptions;
 using System;
 using System.Collections.Generic;
 
@@ -143,6 +144,19 @@ namespace BExIS.UI.Hooks.Caches
 
         public string Description { get; set; }
 
+        /// <summary>
+        /// after a successful validation runs a hash will be genereated
+        /// it combines the file-names, changedates and data description
+        /// check the hash before you go on to be sure that nothings changed
+        /// </summary>
+        public string ValidationHash { get; set; }
+
+        /// <summary>
+        /// if a validation faild, then errors are stored here
+        /// if no errors, validation sucess
+        /// </summary>
+        public List<Error> Errors{ get; set; }
+
         public FileInfo()
         { }
 
@@ -152,6 +166,7 @@ namespace BExIS.UI.Hooks.Caches
             Type = type;
             Lenght = length;
             Description = description;
+            Errors = new List<Error>();
         }
     }
 }
