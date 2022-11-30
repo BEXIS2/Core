@@ -7,7 +7,9 @@ export const getEdit = async (id) => {
     console.log("edit");
     try {
       const response = await Api.get('/dcm/edit/load?id='+id);
-      return response.data;
+      console.log(response);
+
+      return response;
       
     } catch (error) {
       console.error(error);
@@ -18,7 +20,7 @@ export const getEdit = async (id) => {
 export const getView = async (id) => {
   try {
     const response = await Api.get('/dcm/view/load?id='+id);
-    return response.data;
+    return response;
   } catch (error) {
     console.error(error);
   }
@@ -29,7 +31,7 @@ export const getHookStart = async (action, id, version) => {
   try {
     const url = action+'?id='+id+'&version='+version
     const response = await Api.get(url);
-    return response.data;
+    return response;
   } catch (error) {
     console.error(error);
   }
@@ -51,7 +53,7 @@ export const loadMessages = async (id) => {
 
     console.log("test load messages")
     const response = await Api.get('/dcm/messages/load?id='+id);
-    return response.data;
+    return response;
   } catch (error) {
     console.error(error);
   }
@@ -62,7 +64,7 @@ export const saveFileDescription = async (action, id, file, description ) => {
   try {
 
     const response = await Api.post(action, { id, file, description });
-    return response.data;
+    return response;
   } catch (error) {
     console.error(error);
   }
@@ -92,7 +94,7 @@ export const removeFile = async (action, id, file ) => {
 export const getEntityTemplate = async (id) => {
   try {
     const response = await Api.get('/dcm/entitytemplates/Get?id='+id);
-    return response.data;
+    return response;
   } catch (error) {
     console.error(error);
   }
@@ -101,7 +103,7 @@ export const getEntityTemplate = async (id) => {
 export const getEntityTemplateList = async () => {
   try {
     const response = await Api.get('/dcm/entitytemplates/Load');
-    return response.data;
+    return response;
   } catch (error) {
     console.error(error);
   }
@@ -110,7 +112,7 @@ export const getEntityTemplateList = async () => {
 export const getEntities = async () => {
   try {
     const response = await Api.get('/dcm/entitytemplates/Entities');
-    return response.data;
+    return response;
   } catch (error) {
     console.error(error);
   }
@@ -119,7 +121,7 @@ export const getEntities = async () => {
 export const getMetadataStructures = async () => {
   try {
     const response = await Api.get('/dcm/entitytemplates/MetadataStructures');
-    return response.data;
+    return response;
   } catch (error) {
     console.error(error);
   }
@@ -129,7 +131,7 @@ export const getMetadataStructures = async () => {
 export const getSystemKeys = async () => {
   try {
     const response = await Api.get('/dcm/entitytemplates/SystemKeys');
-    return response.data;
+    return response;
   } catch (error) {
     console.error(error);
   }
@@ -138,7 +140,7 @@ export const getSystemKeys = async () => {
 export const getDataStructures = async () => {
   try {
     const response = await Api.get('/dcm/entitytemplates/DataStructures');
-    return response.data;
+    return response;
   } catch (error) {
     console.error(error);
   }
@@ -147,7 +149,7 @@ export const getDataStructures = async () => {
 export const getHooks = async () => {
   try {
     const response = await Api.get('/dcm/entitytemplates/Hooks');
-    return response.data;
+    return response;
   } catch (error) {
     console.error(error);
   }
@@ -156,7 +158,7 @@ export const getHooks = async () => {
 export const getGroups = async () => {
   try {
     const response = await Api.get('/dcm/entitytemplates/Groups');
-    return response.data;
+    return response;
   } catch (error) {
     console.error(error);
   }
@@ -165,7 +167,7 @@ export const getGroups = async () => {
 export const getFileTypes = async () => {
   try {
     const response = await Api.get('/dcm/entitytemplates/FileTypes');
-    return response.data;
+    return response;
   } catch (error) {
     console.error(error);
   }
@@ -175,7 +177,7 @@ export const getFileTypes = async () => {
 export const saveEntityTemplate = async (entityTemplate) => {
   try {
     const response = await Api.post('/dcm/entitytemplates/Update', entityTemplate);
-    return response.data;
+    return response;
   } catch (error) {
     console.error(error);
   }
@@ -184,7 +186,7 @@ export const saveEntityTemplate = async (entityTemplate) => {
 export const deleteEntityTemplate = async (id) => {
   try {
     const response = await Api.post('/dcm/entitytemplates/Delete?id='+id);
-    return response.data;
+    return response;
   } catch (error) {
     console.error(error);
   }

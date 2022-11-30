@@ -15,9 +15,9 @@ export default defineConfig(({ command, mode, ssrBuild }) => {
         rollupOptions:{
           input:[
             "src/create.js",
-            "src/edit.js",
-            "src/structuresuggestion.js",
-            "src/entities.js"
+             "src/edit.js",
+             "src/structuresuggestion.js",
+             "src/entities.js"
           ],
           output: {
             inlineDynamicImports:false,
@@ -31,7 +31,7 @@ export default defineConfig(({ command, mode, ssrBuild }) => {
       },
 
       plugins: [svelte()]
-    }
-  
+    } 
+
 })
 

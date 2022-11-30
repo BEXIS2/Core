@@ -8,7 +8,7 @@ import {Api} from "@bexis2/svelte-bexis2-core-ui";
 export const getCreate = async (id) => {
  try {
    const response = await Api.get('/dcm/create/get?id='+id);
-   return response.data;
+   return response;
  } catch (error) {
    console.error(error);
  }
@@ -17,7 +17,7 @@ export const getCreate = async (id) => {
 export const create = async (data) => {
   try {
     const response = await Api.post('/dcm/create/create', data);
-    return response.data;
+    return response;
   } catch (error) {
     console.error(error);
   }
