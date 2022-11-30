@@ -8,7 +8,7 @@ import {Api} from "@bexis2/svelte-bexis2-core-ui";
 export const deleteStructure = async (id, structureId) => {
  try {
    const response = await Api.delete('/dcm/datadescription/delete',{id,structureId});
-   return response.data;
+   return response;
  } catch (error) {
    console.error(error);
  }

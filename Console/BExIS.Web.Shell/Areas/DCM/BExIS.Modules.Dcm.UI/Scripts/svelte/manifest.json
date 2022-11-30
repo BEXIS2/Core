@@ -112,21 +112,21 @@
     "file": "assets/create.css",
     "src": "src/create.css"
   },
-  "src/structuresuggestion.css": {
-    "file": "assets/structuresuggestion.css",
-    "src": "src/structuresuggestion.css"
-  },
-  "Api.css": {
-    "file": "assets/Api.css",
-    "src": "Api.css"
+  "src/edit.css": {
+    "file": "assets/edit.css",
+    "src": "src/edit.css"
   },
   "Selection.css": {
     "file": "assets/Selection.css",
     "src": "Selection.css"
   },
-  "src/edit.css": {
-    "file": "assets/edit.css",
-    "src": "src/edit.css"
+  "Api.css": {
+    "file": "assets/Api.css",
+    "src": "Api.css"
+  },
+  "src/structuresuggestion.css": {
+    "file": "assets/structuresuggestion.css",
+    "src": "src/structuresuggestion.css"
   },
   "Select.css": {
     "file": "assets/Select.css",
