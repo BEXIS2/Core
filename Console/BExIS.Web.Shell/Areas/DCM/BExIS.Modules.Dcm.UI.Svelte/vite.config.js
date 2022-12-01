@@ -9,18 +9,15 @@ export default defineConfig(({ command, mode, ssrBuild }) => {
       
       // build specific config
       build:{
-        manifest:true,
-        outDir:"public",
+        //manifest:false,
+        //outDir:"public",
         //assetsDir:'build',
         rollupOptions:{
           input:[
-            "src/create.js",
-             "src/edit.js",
-             "src/structuresuggestion.js",
-             "src/entities.js"
+            "src/"+mode+".js"
           ],
           output: {
-            inlineDynamicImports:false,
+            inlineDynamicImports:true,
             chunkFileNames: `assets/[name].js`,
             entryFileNames: "[name].js",
             assetFileNames: "assets/[name].[ext]",

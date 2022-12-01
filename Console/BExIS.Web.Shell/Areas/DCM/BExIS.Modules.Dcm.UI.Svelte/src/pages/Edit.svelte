@@ -196,8 +196,6 @@ let visible=false;
   <Spinner color="primary" size="sm" type ="grow" text-center />
 {/if}
 
-
-
 <style>
 
 .content{
@@ -219,7 +217,5 @@ let visible=false;
 
 }
 
+
 </style>
-
-
-

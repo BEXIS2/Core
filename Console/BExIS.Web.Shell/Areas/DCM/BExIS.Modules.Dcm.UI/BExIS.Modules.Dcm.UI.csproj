@@ -442,20 +442,10 @@
     <Content Include="Scripts\respond.matchmedia.addListener.js" />
     <Content Include="Scripts\respond.matchmedia.addListener.min.js" />
     <Content Include="Scripts\respond.min.js" />
-    <Content Include="Scripts\svelte\assets\Api.css" />
-    <Content Include="Scripts\svelte\assets\Api.js" />
-    <Content Include="Scripts\svelte\assets\BaseCaller.js" />
-    <Content Include="Scripts\svelte\assets\Caller.js" />
-    <Content Include="Scripts\svelte\assets\Collapse.js" />
     <Content Include="Scripts\svelte\assets\create.css" />
     <Content Include="Scripts\svelte\assets\edit.css" />
-    <Content Include="Scripts\svelte\assets\index.js" />
-    <Content Include="Scripts\svelte\assets\Select.css" />
-    <Content Include="Scripts\svelte\assets\Select.js" />
-    <Content Include="Scripts\svelte\assets\Selection.css" />
-    <Content Include="Scripts\svelte\assets\Selection.js" />
+    <Content Include="Scripts\svelte\assets\entities.css" />
     <Content Include="Scripts\svelte\assets\structuresuggestion.css" />
-    <Content Include="Scripts\svelte\assets\vest.production.js" />
     <Content Include="Scripts\svelte\create.js" />
     <Content Include="Scripts\svelte\edit.js" />
     <Content Include="Scripts\svelte\entities.js" />
@@ -539,7 +529,6 @@
     <Content Include="Views\EntityTemplates\Index.cshtml" />
     <Content Include="Views\Create\Index.cshtml" />
     <Content Include="Views\StructureSuggestion\Index.cshtml" />
-    <Content Include="Scripts\svelte\manifest.json" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

@@ -5,7 +5,10 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build ": "vite build --watch",
+    "build create": "vite build --watch --mode create",
+    "build edit": "vite build --watch --mode edit",
+    "build entities": "vite build --watch --mode entities",
+    "build structuresuggestion": "vite build --watch --mode structuresuggestion",
     "preview": "vite preview",
     "install bexis2 ui core": "npm install --save-dev C:\\Users\\admin\\AppData\\Roaming\\npm\\node_modules\\@bexis2\\svelte-bexis2-core-ui"
   },
@@ -21,7 +24,6 @@
     "@fortawesome/free-regular-svg-icons": "^6.0.0",
     "@fortawesome/free-solid-svg-icons": "^6.0.0",
     "@rollup/plugin-json": "^4.1.0",
-    "axios": "0.24.0",
     "datatables.net": "^1.11.5",
     "datatables.net-dt": "^1.11.5",
     "fontawesome-svelte": "^2.0.1",
