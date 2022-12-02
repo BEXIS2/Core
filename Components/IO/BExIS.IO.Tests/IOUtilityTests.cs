@@ -171,6 +171,14 @@ namespace BExIS.IO.Tests
             cases.Add(new DateTimeHelperUTObject("Januar", "MMMM", "1/1/" + DateTime.Now.Year + " 12:00:00 AM", true, new CultureInfo("de-de")));
             //cases.Add(new DateTimeHelperUTObject("24/10/2017", "MM/dd/yyyy", "10/24/2017 12:00:00 AM", true));
 
+            cases.Add(new DateTimeHelperUTObject("2006-2-2", "yyyy-M-d", "2/2/2006 12:00:00 AM", true));
+            cases.Add(new DateTimeHelperUTObject("2006-02-02", "yyyy-MM-dd", "2/2/2006 12:00:00 AM", true));
+
+            cases.Add(new DateTimeHelperUTObject("2006-2-2", "yyyy-d-M", "2/2/2006 12:00:00 AM", true));
+            cases.Add(new DateTimeHelperUTObject("2006-02-02", "yyyy-dd-MM", "2/2/2006 12:00:00 AM", true));
+            cases.Add(new DateTimeHelperUTObject("5/10/2014 12:00:00 AM", "d/M/yyyy hh:mm:ss tt", "10/5/2014 12:00:00 AM", true));
+            cases.Add(new DateTimeHelperUTObject("5/10/2014 12:00:00 AM", "M/d/yyyy hh:mm:ss tt", "5/10/2014 12:00:00 AM", true));
+
             return cases;
         }
 
