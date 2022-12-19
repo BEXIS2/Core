@@ -1,6 +1,6 @@
 <script lang="ts">
-  import List from '../../components/create/List.svelte'
-  import Form from '../../components/create/Form.svelte'
+  import List from './List.svelte'
+  import Form from './Form.svelte'
   import { onMount } from 'svelte'; 
   import { fade } from 'svelte/transition'; 
 
@@ -8,7 +8,7 @@
 
   import {Spinner,Row,Col, Collapse } from 'sveltestrap';
 
-  import { getEntityTemplateList, getSystemKeys }  from '../../services/Caller'
+  import { getEntityTemplateList, getSystemKeys }  from '../../services/EntityTemplateCaller'
   import { goTo }  from '../../services/BaseCaller'
 
   import type {EntityTemplateModel } from '../../models/EntityTemplate'
@@ -77,7 +77,7 @@ function onSaveHandler(e)
  </Row>
  
  {:else}
- <Spinner color="info" size="sm" type ="grow" text-center />
+ <Spinner color="info" size="sm" type ="grow"  />
  {/if}
  
  </div>

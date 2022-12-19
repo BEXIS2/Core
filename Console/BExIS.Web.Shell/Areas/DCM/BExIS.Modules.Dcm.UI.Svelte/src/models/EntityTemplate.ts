@@ -1,3 +1,6 @@
+import type { ListItem } from "./Models";
+
+
 export interface EntityTemplateModel {
  id: number;
  name: string;
@@ -12,15 +15,4 @@ export interface EntityTemplateModel {
  disabledHooks: string[];
  notificationGroups: number[];
  permissionGroups: number[];
-}
-
-export interface KvP {
- id: number;
- text: string;
-}
-
-export interface ListItem {
- id: number;
- text: string;
- group: string;
 }
