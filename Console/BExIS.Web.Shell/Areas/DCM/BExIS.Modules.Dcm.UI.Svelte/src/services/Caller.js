@@ -1,6 +1,6 @@
 // Implementations for all the calls for the pokemon endpoints.
 //import Api from "./Api";
-import {Api} from "@bexis2/svelte-bexis2-core-ui";
+import {Api} from "@bexis2/bexis2-core-ui/src/lib/index";
 
 // get Model for Edit page
 export const getEdit = async (id) => {
@@ -9,7 +9,7 @@ export const getEdit = async (id) => {
       const response = await Api.get('/dcm/edit/load?id='+id);
       console.log(response);
 
-      return response;
+      return response.json();
       
     } catch (error) {
       console.error(error);
@@ -20,7 +20,7 @@ export const getEdit = async (id) => {
 export const getView = async (id) => {
   try {
     const response = await Api.get('/dcm/view/load?id='+id);
-    return response;
+    return response.json();
   } catch (error) {
     console.error(error);
   }
@@ -31,7 +31,7 @@ export const getHookStart = async (action, id, version) => {
   try {
     const url = action+'?id='+id+'&version='+version
     const response = await Api.get(url);
-    return response;
+    return response.json();
   } catch (error) {
     console.error(error);
   }
@@ -41,7 +41,7 @@ export const getViewStart = async (action, id, version) => {
   try {
     const url = action+'?id='+id+'&version='+version
     const response = await Api.get(url);
-    return response;
+    return response.json();
   } catch (error) {
     console.error(error);
   }
@@ -53,7 +53,7 @@ export const loadMessages = async (id) => {
 
     console.log("test load messages")
     const response = await Api.get('/dcm/messages/load?id='+id);
-    return response;
+    return response.json();
   } catch (error) {
     console.error(error);
   }
@@ -64,7 +64,7 @@ export const saveFileDescription = async (action, id, file, description ) => {
   try {
 
     const response = await Api.post(action, { id, file, description });
-    return response;
+    return response.json();
   } catch (error) {
     console.error(error);
   }
@@ -79,7 +79,7 @@ export const removeFile = async (action, id, file ) => {
     console.log(file)
 
     const response = await Api.post(action, { id, file });
-    return response;
+    return response.json();
   } catch (error) {
     console.error(error);
   }
@@ -94,7 +94,7 @@ export const removeFile = async (action, id, file ) => {
 export const getEntityTemplate = async (id) => {
   try {
     const response = await Api.get('/dcm/entitytemplates/Get?id='+id);
-    return response;
+    return response.json();
   } catch (error) {
     console.error(error);
   }
@@ -103,7 +103,7 @@ export const getEntityTemplate = async (id) => {
 export const getEntityTemplateList = async () => {
   try {
     const response = await Api.get('/dcm/entitytemplates/Load');
-    return response;
+    return response.json();
   } catch (error) {
     console.error(error);
   }
@@ -112,7 +112,7 @@ export const getEntityTemplateList = async () => {
 export const getEntities = async () => {
   try {
     const response = await Api.get('/dcm/entitytemplates/Entities');
-    return response;
+    return response.json();
   } catch (error) {
     console.error(error);
   }
@@ -121,7 +121,7 @@ export const getEntities = async () => {
 export const getMetadataStructures = async () => {
   try {
     const response = await Api.get('/dcm/entitytemplates/MetadataStructures');
-    return response;
+    return response.json();
   } catch (error) {
     console.error(error);
   }
@@ -131,7 +131,7 @@ export const getMetadataStructures = async () => {
 export const getSystemKeys = async () => {
   try {
     const response = await Api.get('/dcm/entitytemplates/SystemKeys');
-    return response;
+    return response.json();
   } catch (error) {
     console.error(error);
   }
@@ -140,7 +140,7 @@ export const getSystemKeys = async () => {
 export const getDataStructures = async () => {
   try {
     const response = await Api.get('/dcm/entitytemplates/DataStructures');
-    return response;
+    return response.json();
   } catch (error) {
     console.error(error);
   }
@@ -149,7 +149,7 @@ export const getDataStructures = async () => {
 export const getHooks = async () => {
   try {
     const response = await Api.get('/dcm/entitytemplates/Hooks');
-    return response;
+    return response.json();
   } catch (error) {
     console.error(error);
   }
@@ -158,7 +158,7 @@ export const getHooks = async () => {
 export const getGroups = async () => {
   try {
     const response = await Api.get('/dcm/entitytemplates/Groups');
-    return response;
+    return response.json();
   } catch (error) {
     console.error(error);
   }
@@ -167,7 +167,7 @@ export const getGroups = async () => {
 export const getFileTypes = async () => {
   try {
     const response = await Api.get('/dcm/entitytemplates/FileTypes');
-    return response;
+    return response.json();
   } catch (error) {
     console.error(error);
   }
@@ -177,7 +177,7 @@ export const getFileTypes = async () => {
 export const saveEntityTemplate = async (entityTemplate) => {
   try {
     const response = await Api.post('/dcm/entitytemplates/Update', entityTemplate);
-    return response;
+    return response.json();
   } catch (error) {
     console.error(error);
   }
@@ -186,7 +186,7 @@ export const saveEntityTemplate = async (entityTemplate) => {
 export const deleteEntityTemplate = async (id) => {
   try {
     const response = await Api.post('/dcm/entitytemplates/Delete?id='+id);
-    return response;
+    return response.json();
   } catch (error) {
     console.error(error);
   }

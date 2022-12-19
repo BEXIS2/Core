@@ -1,7 +1,7 @@
 <script>
 import { onMount, onDestroy } from 'svelte'; 
 import { Spinner, Button } from 'sveltestrap';
-import { host } from '@bexis2/svelte-bexis2-core-ui'
+import { host } from '@bexis2/bexis2-core-ui/src/lib/index'
 
  
  //entity infos

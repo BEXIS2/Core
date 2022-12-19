@@ -12,7 +12,7 @@ import {createEventDispatcher} from 'svelte'
 import { onMount } from 'svelte'; 
 import {FormGroup, Input, Label, Row, Col, Button, Spinner} from 'sveltestrap';
 
-import { setApiConfig }  from '@bexis2/svelte-bexis2-core-ui'
+import { setApiConfig }  from '@bexis2/bexis2-core-ui/src/lib/index'
 import { getEntityTemplate, saveEntityTemplate }  from '../../services/Caller'
 
 import { faSave, faTrashAlt } from '@fortawesome/free-regular-svg-icons'

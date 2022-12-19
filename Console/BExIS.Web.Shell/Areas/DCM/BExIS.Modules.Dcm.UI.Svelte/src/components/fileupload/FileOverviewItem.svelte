@@ -1,7 +1,7 @@
 <script>
-import Fa from 'svelte-fa/src/fa.svelte'
+import {Fa} from 'svelte-fa/src/index.js'
 
-import {FileInfo} from '@bexis2/svelte-bexis2-core-ui'
+import {FileInfo} from '@bexis2/bexis2-core-ui/src/lib/index'
 import { Spinner, Button, Input, Col, Row  } from 'sveltestrap';
 import { faTrash} from '@fortawesome/free-solid-svg-icons'
 
@@ -58,7 +58,7 @@ const res = await saveFileDescription(save,id, file, description );
 </script>
  {#if type}
   <div class="file-overview-item row">
-  <Col xs="1"><FileInfo {type} size="x-large" /></Col>
+  <Col xs="1"><FileInfo {type} size="x-large" />test</Col>
   <Col > 
       {file}
   </Col>
@@ -68,7 +68,7 @@ const res = await saveFileDescription(save,id, file, description );
   <Col >
     <div class="file-overview-item-options">
       <div class="file-overview-item-option"><Button size="sm" on:click={e => handleRemoveFile()}><Fa icon={faTrash}/></Button></div>
-      <div class="file-overview-item-option">{#if loading}<Spinner color="info" size="sm" type ="grow" text-center /> {/if}</div>    
+      <div class="file-overview-item-option">{#if loading}<Spinner color="info" size="sm" type ="grow" /> {/if}</div>    
     </div>
   </Col>
   </div>

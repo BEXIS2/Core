@@ -6,7 +6,7 @@ import { faPlus } from '@fortawesome/free-solid-svg-icons'
 import { onMount } from 'svelte'; 
 import {Button, Collapse, Container } from 'sveltestrap';
 
-import { setApiConfig }  from '@bexis2/svelte-bexis2-core-ui'
+import { setApiConfig }  from '@bexis2/bexis2-core-ui/src/lib/index'
 
 import { fade } from 'svelte/transition';
 

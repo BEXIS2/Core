@@ -1,10 +1,10 @@
-<script>
+<script >
  import List from '../components/create/List.svelte'
  import Form from '../components/create/Form.svelte'
  import { onMount } from 'svelte'; 
  import { fade } from 'svelte/transition'; 
 
- import { setApiConfig }  from '@bexis2/svelte-bexis2-core-ui'
+ import { setApiConfig }  from '@bexis2/bexis2-core-ui/src/lib/index'
 
  import {Spinner,Row,Col, Collapse } from 'sveltestrap';
 
@@ -13,7 +13,7 @@
 
  $:entitytemplates= [];
  $:systemkeys= [];
- $:selected= null;
+ $:selected= undefined;
 
  onMount(async () => {
   setApiConfig("https://localhost:44345","davidschoene","123456");
@@ -21,7 +21,7 @@
   systemkeys = await getSystemKeys();
  })
 
-$:isOpen = selected;
+$:isOpen = false;
 
 function handleSelect(e)
 {

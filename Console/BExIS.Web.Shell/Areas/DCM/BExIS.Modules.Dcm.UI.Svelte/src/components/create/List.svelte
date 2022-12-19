@@ -4,7 +4,7 @@
 
  import {createEventDispatcher} from 'svelte';
 
- const dispatch = new createEventDispatcher();
+ const dispatch = createEventDispatcher();
 
 </script>
 

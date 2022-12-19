@@ -73,5 +73,5 @@ function setDescriptionValues(type)
 
 {:else}
   <!-- spinner here -->
-  <Spinner color="primary" size="sm" type ="grow" text-center />
+  <Spinner color="primary" size="sm" type ="grow" />
 {/if}

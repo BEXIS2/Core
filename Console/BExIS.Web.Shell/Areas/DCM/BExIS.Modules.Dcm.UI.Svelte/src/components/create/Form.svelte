@@ -1,6 +1,6 @@
 <script>
 
-import Fa from 'svelte-fa/src/fa.svelte'
+import Fa from 'svelte-fa/src/index'
 import { faTrashAlt } from '@fortawesome/free-solid-svg-icons'
 import {Row,Col,Button, Spinner, FormGroup, Label } from 'sveltestrap';
 import {onMount} from 'svelte'
@@ -29,6 +29,8 @@ let onSaving = false;
 
 onMount(async () => {
 
+console.log("form");
+
 const res = await getCreate(id);
 console.log("res",res);
 if(res != false) model = res;
@@ -41,7 +43,7 @@ suite.reset();
 
 async function handleSubmit() {
   // check if form is valid
-  if(result.isValid)
+  if(result.isValid())
   {
     onSaving = true;
     console.log("before submit", model);
@@ -67,6 +69,13 @@ function onChangeHandler(e)
   setTimeout(async () => {
     result = suite(model.inputFields, e.target.id)
  },10)
+}
+
+function onCancel(){
+
+  suite.reset();
+  dispatch("cancel");
+
 }
 
 // set title and description and remove from other fields
@@ -165,10 +174,10 @@ function filterInputs()
   <p class="text-end">
     <FormGroup>
       {#if onSaving}
-        <Spinner color="primary" size="sm" type ="grow" text-center />
+        <Spinner color="primary" size="sm" type ="grow" />
       {/if}
       <Button color="primary" {disabled} >Create </Button>
-      <Button color="danger" type="button" on:click={()=> dispatch("cancel")}><Fa icon={faTrashAlt}/></Button>
+      <Button color="danger" type="button" on:click={onCancel}><Fa icon={faTrashAlt}/></Button>
     </FormGroup>  
   </p>
  </Col>
@@ -176,5 +185,5 @@ function filterInputs()
 
 </form>
 {:else} <!-- while data is not loaded show a loading information -->
-<Spinner color="primary" size="sm" type ="grow" text-center />
+<Spinner color="primary" size="sm" type ="grow" />
 {/if}

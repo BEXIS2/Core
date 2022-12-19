@@ -190,7 +190,6 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
                     bool IsUniqueInFile = uploadWizardHelper.IsUnique(
                         Convert.ToInt64(TaskManager.Bus[TaskManager.DATASET_ID].ToString()),
-                        identifiers,
                         TaskManager.Bus[TaskManager.EXTENTION].ToString(),
                         TaskManager.Bus[TaskManager.FILENAME].ToString(),
                         TaskManager.Bus[TaskManager.FILEPATH].ToString(),

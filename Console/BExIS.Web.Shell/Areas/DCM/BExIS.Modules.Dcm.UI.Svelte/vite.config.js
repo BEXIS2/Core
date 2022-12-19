@@ -1,34 +1,8 @@
-import { defineConfig } from 'vite'
-import { svelte } from '@sveltejs/vite-plugin-svelte'
+import { sveltekit } from '@sveltejs/kit/vite';
 
-// https://vitejs.dev/config/
-export default defineConfig(({ command, mode, ssrBuild }) => {
+/** @type {import('vite').UserConfig} */
+const config = {
+	 	plugins: [sveltekit()]
+};
 
-    return {
-      //mode:'development',
-      
-      // build specific config
-      build:{
-        //manifest:false,
-        //outDir:"public",
-        //assetsDir:'build',
-        rollupOptions:{
-          input:[
-            "src/"+mode+".js"
-          ],
-          output: {
-            inlineDynamicImports:true,
-            chunkFileNames: `assets/[name].js`,
-            entryFileNames: "[name].js",
-            assetFileNames: "assets/[name].[ext]",
-            dir: "../BExIS.Modules.Dcm.UI/Scripts/svelte/"
-          }
-
-          }
-      },
-
-      plugins: [svelte()]
-    } 
-
-})
-
+export default config;

@@ -5,7 +5,7 @@ import { fade  } from 'svelte/transition';
 import {Spinner, Container} from 'sveltestrap';
 
 import { getEdit }  from '../services/Caller'
-import { setApiConfig }  from '@bexis2/svelte-bexis2-core-ui'
+import { setApiConfig }  from '@bexis2/bexis2-core-ui/src/lib/index'
 
 import Header from '../components/edit/Header.svelte'
 import Data from '../components/edit/Data.svelte'
@@ -160,6 +160,8 @@ async function updateStatus(_hooks)
 let visible=false;
 
 </script>
+
+
 
 {#if model && hookStatusList} <!--if the model == true, load page-->
 

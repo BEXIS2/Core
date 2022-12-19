@@ -19,7 +19,8 @@ import {Row,Col } from 'sveltestrap';
 
 </script>
 
-<div class="list-item" on:click>
+<!-- svelte-ignore a11y-click-events-have-key-events -->
+<div class="list-item" on:click >
 
  <Row>
   <Col xs=4 md=2>

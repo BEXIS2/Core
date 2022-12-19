@@ -2,15 +2,23 @@
     ViewBag.Title = "Edit";
     Layout = "~/Themes/Default/Layouts/_svelteLayout.cshtml";
 
-}
-
-<link href="~/Areas/DCM/BExIS.Modules.DCM.UI/Scripts/svelte/assets/create.css" rel="stylesheet">
-
-@section scripts
-{
-    <script src="~/Areas/DCM/BExIS.Modules.DCM.UI/Scripts/svelte/create.js"></script>
+    string page = ViewData["PageScript"].ToString();
+    string pageId = ViewData["PageId"].ToString();
 
 }
 
 
-<div id="create" > </div>
+
+<script type="module" data-sveltekit-hydrate="create">
+
+    import page from '@page'
+
+    const app = new page({
+        target: document.querySelector('[data-sveltekit-hydrate="create"]').parentNode
+    });
+
+</script>
+
+
+
+

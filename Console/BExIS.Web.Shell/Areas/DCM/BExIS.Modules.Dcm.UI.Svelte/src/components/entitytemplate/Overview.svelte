@@ -8,7 +8,7 @@
  import { onMount } from 'svelte'; 
  import {Spinner, Row,Col, Button, Container} from 'sveltestrap';
  
- import { setApiConfig }  from '@bexis2/svelte-bexis2-core-ui';
+ import { setApiConfig }  from '@bexis2/bexis2-core-ui/src/lib/index';
 
 
  const dispatch = createEventDispatcher();

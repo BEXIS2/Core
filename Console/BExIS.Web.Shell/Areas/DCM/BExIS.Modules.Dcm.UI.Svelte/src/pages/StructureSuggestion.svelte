@@ -13,7 +13,7 @@ import { fade  } from 'svelte/transition';
 
 import {Spinner, Button, FormGroup, Input, Label, Row, Col} from 'sveltestrap';
 
-import { setApiConfig }  from '@bexis2/svelte-bexis2-core-ui'
+import { setApiConfig }  from '@bexis2/bexis2-core-ui/src/lib/index'
 import { generate, save, load }  from '../services/StructureSuggestionCaller'
 import { goTo }  from '../services/BaseCaller'
 

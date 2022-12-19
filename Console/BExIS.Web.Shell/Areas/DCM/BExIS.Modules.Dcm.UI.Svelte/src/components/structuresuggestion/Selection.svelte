@@ -1,11 +1,11 @@
 <script>
 
- import Fa from 'svelte-fa/src/fa.svelte'
+//  import Fa from 'svelte-fa/src/fa.svelte'
 
  import { onMount, createEventDispatcher } from 'svelte'; 
 
- import {Spinner,  FormGroup, Input, Label,Table, Button, Col, Row } from 'sveltestrap';
- import {faTrashAlt, faPenToSquare } from '@fortawesome/free-regular-svg-icons'
+ import {Spinner,  FormGroup, Input, Label,Table, Button, Col, Row } from 'sveltestrap'
+//  import {faTrashAlt, faPenToSquare } from '@fortawesome/free-regular-svg-icons'
 
  import {store, load}  from '../../services/StructureSuggestionCaller'
  import MissingValues from '../structuresuggestion/MissingValues.svelte'
@@ -278,7 +278,7 @@
  </script>
  
  {#if !model || state.length==0} <!--if the model == false, access denied-->
-   <Spinner color="primary" size="sm" type ="grow" text-center />
+   <Spinner color="primary" size="sm" type ="grow" />
  {:else}  <!-- load page -->
  
  <div id="structure-suggestion-container" on:mousedown="{beginDrag}" on:mouseup="{endDrag}">
@@ -326,8 +326,9 @@
      <Button type="button"  color="warning" on:click={()=>onclickHandler(MARKER_TYPE.DESCRIPTION)}>Description</Button>
      <Button type="button"  color="info" on:click={()=>onclickHandler(MARKER_TYPE.MISSING_VALUES)}>Missing Values</Button>
      <Button type="button"  color="primary" on:click={()=>onclickHandler(MARKER_TYPE.DATA)}>Data</Button>
-     <Button type="button"  on:click={cleanSelection}><Fa icon={faTrashAlt}/></Button>
-     <Button disabled={!isValid}><Fa icon={faPenToSquare}/></Button>
+     <Button type="button"  on:click={cleanSelection}>delete</Button> 
+     <Button disabled={!isValid}>edit</Button>
+     <!--<Fa icon={faTrashAlt}/> <Fa icon={faPenToSquare}/> -->
    </FormGroup>
    <FormGroup>
      <Input id="c1" type="switch" label="selection support"  bind:checked={selectionsupport}/>  
