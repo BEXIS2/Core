@@ -23,21 +23,3 @@ let model:FileUploaderModel={
 
 <h1>Hello and welcome to my site!</h1>
 <a href="/about">About my site</a>
-
-
-<div>
- <form on:submit={submitForm}>
-   <input
-     type="text"
-     bind:value={postVar}
-     placeholder={"Superhero Name"}
-   />
-   <br />
-   <input 
-     type="file" 
-     bind:files={fileVar} />
-   <br />
-   <input type="submit" />
- </form>
-</div>
- 

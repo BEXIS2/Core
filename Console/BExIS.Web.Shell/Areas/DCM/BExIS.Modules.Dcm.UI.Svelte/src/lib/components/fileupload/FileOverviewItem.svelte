@@ -32,17 +32,20 @@ onMount(async ()=>{
 })
 
 async function handleRemoveFile() {
-  
+
+  console.log("remove file")
 loading = true;
 
 //remove from server
 const res = await removeFile(remove,id,file);
-
-  if(res.status==200 )
+console.log("remove file",res)
+  if(res == true)
   {
+    console.log("remove file")
     let message = file+" removed."
     dispatch("removed",{text:message})
   }
+
   loading = false;
 }
 

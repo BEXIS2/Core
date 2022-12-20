@@ -3,7 +3,7 @@
 import Variable from './variable/Variable.svelte'
 import {Spinner, Button} from 'sveltestrap';
 import {onMount} from 'svelte';
-import {getDataTypes,getUnits} from './caller.js'
+import {getDataTypes,getUnits} from './services.js'
 
 
 export let variables = [];
