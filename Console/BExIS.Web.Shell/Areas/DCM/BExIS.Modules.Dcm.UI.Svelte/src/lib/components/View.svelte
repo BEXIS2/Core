@@ -1,17 +1,17 @@
-<script>
+<script lang="ts">
 import { onMount, onDestroy } from 'svelte'; 
 import { Spinner, Button } from 'sveltestrap';
 import { host } from '@bexis2/bexis2-core-ui/src/lib/index'
 
  
  //entity infos
- export let id;
- export let version;
+ export let id:number;
+ export let version:number;
  
  //entity view infos
- export let name;
- export let displayName;
- export let start;
+ export let name:string;
+ export let displayName:string;
+ export let start:string;
 
 $:ExtComponent = null;
 

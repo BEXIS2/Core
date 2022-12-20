@@ -7,8 +7,10 @@ import {Api} from "@bexis2/bexis2-core-ui/src/lib/index";
 /****************/ 
 export const deleteStructure = async (id, structureId) => {
  try {
-   const response = await Api.delete('/dcm/datadescription/delete',{id,structureId});
-   return response.json();
+  
+
+   const response = await Api.delete('/dcm/datadescription/delete',"{id,structureId}");
+   return response.data;
  } catch (error) {
    console.error(error);
  }

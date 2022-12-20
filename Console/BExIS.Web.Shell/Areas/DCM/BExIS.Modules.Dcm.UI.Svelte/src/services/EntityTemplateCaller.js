@@ -3,7 +3,7 @@ import {Api} from "@bexis2/bexis2-core-ui/src/lib/index";
 export const getEntityTemplate = async (id) => {
   try {
     const response = await Api.get('/dcm/entitytemplates/Get?id='+id);
-    return response.json();
+    return response.data;
   } catch (error) {
     console.error(error);
   }
@@ -12,7 +12,7 @@ export const getEntityTemplate = async (id) => {
 export const getEntityTemplateList = async () => {
   try {
     const response = await Api.get('/dcm/entitytemplates/Load');
-    return response.json();
+    return response.data;
   } catch (error) {
     console.error(error);
   }
@@ -21,7 +21,7 @@ export const getEntityTemplateList = async () => {
 export const getEntities = async () => {
   try {
     const response = await Api.get('/dcm/entitytemplates/Entities');
-    return response.json();
+    return response.data;
   } catch (error) {
     console.error(error);
   }
@@ -30,7 +30,7 @@ export const getEntities = async () => {
 export const getMetadataStructures = async () => {
   try {
     const response = await Api.get('/dcm/entitytemplates/MetadataStructures');
-    return response.json();
+    return response.data;
   } catch (error) {
     console.error(error);
   }
@@ -40,7 +40,7 @@ export const getMetadataStructures = async () => {
 export const getSystemKeys = async () => {
   try {
     const response = await Api.get('/dcm/entitytemplates/SystemKeys');
-    return response.json();
+    return response.data;
   } catch (error) {
     console.error(error);
   }
@@ -49,7 +49,7 @@ export const getSystemKeys = async () => {
 export const getDataStructures = async () => {
   try {
     const response = await Api.get('/dcm/entitytemplates/DataStructures');
-    return response.json();
+    return response.data;
   } catch (error) {
     console.error(error);
   }
@@ -58,7 +58,7 @@ export const getDataStructures = async () => {
 export const getHooks = async () => {
   try {
     const response = await Api.get('/dcm/entitytemplates/Hooks');
-    return response.json();
+    return response.data;
   } catch (error) {
     console.error(error);
   }
@@ -67,7 +67,7 @@ export const getHooks = async () => {
 export const getGroups = async () => {
   try {
     const response = await Api.get('/dcm/entitytemplates/Groups');
-    return response.json();
+    return response.data;
   } catch (error) {
     console.error(error);
   }
@@ -76,7 +76,7 @@ export const getGroups = async () => {
 export const getFileTypes = async () => {
   try {
     const response = await Api.get('/dcm/entitytemplates/FileTypes');
-    return response.json();
+    return response.data;
   } catch (error) {
     console.error(error);
   }
@@ -86,7 +86,7 @@ export const getFileTypes = async () => {
 export const saveEntityTemplate = async (entityTemplate) => {
   try {
     const response = await Api.post('/dcm/entitytemplates/Update', entityTemplate);
-    return response.json();
+    return response.data;
   } catch (error) {
     console.error(error);
   }
@@ -95,7 +95,7 @@ export const saveEntityTemplate = async (entityTemplate) => {
 export const deleteEntityTemplate = async (id) => {
   try {
     const response = await Api.post('/dcm/entitytemplates/Delete?id='+id);
-    return response.json();
+    return response.data;
   } catch (error) {
     console.error(error);
   }

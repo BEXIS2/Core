@@ -1,7 +1,7 @@
 <script>
  import { onMount } from 'svelte'; 
 
- import { getView }  from './caller'
+ import { getView }  from './services'
  import { getViewStart }  from '../../services/HookCaller'
  import { setApiConfig }  from '@bexis2/bexis2-core-ui/src/lib/index'
 

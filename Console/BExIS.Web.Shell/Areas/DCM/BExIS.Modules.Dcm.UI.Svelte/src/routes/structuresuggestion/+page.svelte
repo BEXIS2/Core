@@ -13,7 +13,7 @@
  import {Spinner, Button, FormGroup, Input, Label, Row, Col} from 'sveltestrap';
  
  import { setApiConfig }  from '@bexis2/bexis2-core-ui/src/lib/index'
- import { generate, save, load }  from './caller.js'
+ import { generate, save, load }  from './services'
  import { goTo }  from '../../services/BaseCaller'
  
   // load attributes from div

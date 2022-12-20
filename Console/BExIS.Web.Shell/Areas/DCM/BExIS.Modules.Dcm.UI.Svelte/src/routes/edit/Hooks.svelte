@@ -1,7 +1,7 @@
 <script>
 import HookContainer from '../../lib/components/HookContainer.svelte';
 import Hook from '../../lib/components//Hook.svelte';
-import Attachments from '../../pointer/hooks/Attachment.svelte'
+import Attachments from '../../lib/hooks/Attachment.svelte'
 
 import { Spinner} from 'sveltestrap';
 import {onMount} from 'svelte'

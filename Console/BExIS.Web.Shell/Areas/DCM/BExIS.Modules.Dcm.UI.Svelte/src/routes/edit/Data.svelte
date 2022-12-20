@@ -3,10 +3,10 @@
  import Hook from '../../lib/components/Hook.svelte'
 
  import HookContainer from '../../lib/components/HookContainer.svelte';
- import Validation from '../../pointer/hooks/Validation.svelte'
- import FileUpload from '../../pointer/hooks/FileUpload.svelte'
- import DataDescription from '../../pointer/hooks/DataDescription.svelte'
- import Metadata from '../../pointer/hooks/Metadata.svelte'
+ import Validation from '../../lib/hooks/Validation.svelte'
+ import FileUpload from '../../lib/hooks/FileUpload.svelte'
+ import DataDescription from '../../lib/hooks/DataDescription.svelte'
+ import Metadata from '../../lib/hooks/Metadata.svelte'
  import {Spinner, Row, Col} from 'sveltestrap';
  import Fa from 'svelte-fa/src/fa.svelte'
  import { faAngleRight } from '@fortawesome/free-solid-svg-icons'

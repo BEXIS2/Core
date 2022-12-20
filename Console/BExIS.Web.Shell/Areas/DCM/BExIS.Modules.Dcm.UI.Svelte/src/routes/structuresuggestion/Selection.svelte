@@ -7,7 +7,7 @@
  import {Spinner,  FormGroup, Input, Label,Table, Button, Col, Row } from 'sveltestrap'
 //  import {faTrashAlt, faPenToSquare } from '@fortawesome/free-regular-svg-icons'
 
- import {store, load}  from './caller.js'
+ import {store, load}  from './services.js'
  import MissingValues from '../structuresuggestion/MissingValues.svelte'
 
  export let id;

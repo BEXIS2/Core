@@ -6,7 +6,7 @@ export const getHookStart = async (action, id, version) => {
   try {
     const url = action+'?id='+id+'&version='+version
     const response = await Api.get(url);
-    return response.json();
+    return response.data;
   } catch (error) {
     console.error(error);
   }
@@ -17,7 +17,7 @@ export const getViewStart = async (action, id, version) => {
   try {
     const url = action+'?id='+id+'&version='+version
     const response = await Api.get(url);
-    return response.json();
+    return response.data;
   } catch (error) {
     console.error(error);
   }

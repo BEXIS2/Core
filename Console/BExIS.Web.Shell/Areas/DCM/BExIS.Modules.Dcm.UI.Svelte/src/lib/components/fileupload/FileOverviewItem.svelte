@@ -32,6 +32,7 @@ onMount(async ()=>{
 })
 
 async function handleRemoveFile() {
+  
 loading = true;
 
 //remove from server

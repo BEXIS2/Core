@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
 import Fa from 'svelte-fa/src/fa.svelte'
 import FileOverviewItem from './FileOverviewItem.svelte'
 
@@ -19,7 +19,8 @@ export let withDescription;
 const dispatch = createEventDispatcher();
 
 let el;
-$:date=null;
+let date:number;
+$:date;
 
 onMount(async () => {
   date = Date.now();
