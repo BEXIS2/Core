@@ -52,7 +52,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
                     // Return error, if token is provided, but not valid
                     else
                     {
-                        return Request.CreateErrorResponse(HttpStatusCode.Unauthorized, "Token is not valid.");
+                        return Request.CreateErrorResponse(HttpStatusCode.Forbidden, "Token is not valid.");
                     }
                 }
 
