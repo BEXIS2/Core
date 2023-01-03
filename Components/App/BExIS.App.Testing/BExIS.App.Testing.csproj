@@ -96,7 +96,9 @@
     <Reference Include="Vaiona.PersistenceProviders.NH">
       <HintPath>..\..\..\Libraries\Vaiona\Vaiona.PersistenceProviders.NH.dll</HintPath>
     </Reference>
-    <Reference Include="Vaiona.Utils, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" />
+    <Reference Include="Vaiona.Utils, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+      <HintPath>..\..\..\Libraries\Vaiona\Vaiona.Utils.dll</HintPath>
+    </Reference>
     <Reference Include="Vaiona.Web.Mvc.Modularity, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\Libraries\Vaiona\Vaiona.Web.Mvc.Modularity.dll</HintPath>
