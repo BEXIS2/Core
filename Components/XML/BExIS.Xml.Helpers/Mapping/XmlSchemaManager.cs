@@ -958,14 +958,15 @@ namespace BExIS.Xml.Helpers.Mapping
                     //complex element
                     else
                     {
+                        XmlSchemaComplexType complexTypeOfChild = XmlSchemaUtility.GetComplextType(child);
+
                         //break if infinity loop
-                        if (parents.Contains(child.Name))
+                        if (currentInternalXPath.Split('/').Contains(complexTypeOfChild.Name))
                         {
                             Debug.WriteLine("save for infinit loop");
                         }
                         else
                         {
-                            XmlSchemaComplexType complexTypeOfChild = XmlSchemaUtility.GetComplextType(child);
 
                             if (ct.Name == null || complexTypeOfChild.Name == null)
                             {
