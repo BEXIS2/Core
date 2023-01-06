@@ -146,6 +146,8 @@ namespace BExIS.Modules.Dim.UI.Helpers
 
                 createMappings();
 
+                createDOIMappingConcept();
+
                 #endregion MAPPING
             }
             catch (Exception ex)
@@ -160,6 +162,25 @@ namespace BExIS.Modules.Dim.UI.Helpers
             }
 
             //ImportPartyTypes();
+        }
+
+        private void createDOIMappingConcept()
+        {
+            using (var conceptManager = new ConceptManager())
+            {
+                // concept
+                var concept = conceptManager.CreateMappingConcept("DataCite", "The concept is needed to create a DIO via DataCite.", "");
+
+                // keys
+                var title = conceptManager.CreateMappingKey("Title", "", "", false, false, concept);
+
+
+                var creator = conceptManager.CreateMappingKey("Creator", "", "",false,true,concept);
+                var firstname = conceptManager.CreateMappingKey("Firstname", "", "", false, false, concept,creator);
+                var lastname = conceptManager.CreateMappingKey("Lastname", "", "", false, false, concept, creator);
+
+
+            }
         }
 
         private void createMetadataStructureRepoMaps()

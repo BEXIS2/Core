@@ -7,6 +7,8 @@
 
 @{
     ViewBag.Title = "Metadata Structure Mapping";
+    ViewData["SelectionList"] = Model.SelectionList;
+    Session["SelectionList"] = Model.SelectionList;
 }
     @section Information
     {
@@ -26,14 +28,7 @@
 
     @section LeftPane
     {
-        @*<span>
-            @(Html.Telerik().DropDownList()
-                                .Name("SelectSource")
-                                .Placeholder("Select")
-                                .HtmlAttributes(new { @class = "bx-dropdown", style = "width:100%;" })
-                                .ClientEvents(events => events.OnChange("onChangeSourceDropDown"))
-                                .BindTo(new SelectList(Model.SelectionList, "Id", "Name", Model.Source.ElementId + "_" + Model.Source.Type)))
-        </span>*@
+
 
         @if (Model.Source != null)
         {
@@ -41,17 +36,7 @@
         }
     }
 
-    @Html.ActionLink(" ", "Switch", "Mapping", new 
-    {
-        sourceId =   Model.Source.Id,
-        targetId =  Model.Target.Id,
-        sourceType =Model.Source.Type,
-        targetType =Model.Target.Type,
-
-    }, new
-    {
-        @class = "bx-button fa fa-exchange function"
-    })
+    <button onclick="switchSide()" class = "bx-button fa fa-exchange function" ></button>
 
 
     @Html.Partial("Mappings",Model.ParentMappings)
@@ -59,19 +44,11 @@
 
     @section RightPane
     {
-        @*<span>
-            @(Html.Telerik().DropDownList()
-                            .Name("SelectTarget")
-                            .Placeholder("Select")
-                            .HtmlAttributes(new { @class = "bx-dropdown", style="width:100%;" })
-                            .ClientEvents(events => events.OnChange("onChangeTargetDropDown"))
-                            .BindTo(new SelectList(Model.SelectionList,"Id","Name", Model.Target.ElementId+"_"+ Model.Target.Type)))
-
-        </span>*@
+       
 
         @if (Model.Target != null)
         {
-            @Html.Partial("LinkElemenRoot", Model.Target)
+            @Html.Partial("LinkElemenRoot", Model.Target, new ViewDataDictionary(){ { "SelectionList", Model.SelectionList }, { "test", "test" } })
         }
     }
 
@@ -83,32 +60,24 @@
         var substr = e.value;
         var id = substr.split("_")[0];
         var type = substr.split("_")[1];
-        console.log(substr);
-        console.log(type);
-        console.log(id);
 
-        var source = $("#le-root-source");
-        console.log(source);
-        var sourceId = $(source).attr("id").split("_")[1];
+        var source = $("#le-root-source")[0];
         var sourceInfo = $(source).find(".le-root-info")[0];
+        var sourceId = $(sourceInfo).find("#Id").text();
         var sourceType = $(sourceInfo).find("#Type").text();
-
-        var target = $("#le-root-target");
-        console.log(target);
-        var targetId = $(target).attr("id").split("_")[1];
-        var targetInfo = $(target).find(".le-root-info")[0];
-        var targetType = $(targetInfo).find("#Type").text();
 
 
         //long sourceId, long targetId = 0, LinkElementType type = LinkElementType.System
         var sendData =
         {
             "sourceId": sourceId,
-            "targetId": targetId,
+            "targetId": id,
             "sourceType": sourceType,
-            "targetType": targetType,
-            "position":"Source"
+            "targetType": type,
+            "position":"Target"
         }
+
+        console.log("senddata", sendData)
 
         $("#le-root-target").preloader(12,"Loading Target");
 
@@ -125,9 +94,9 @@
         var substr = e.value;
         var id = substr.split("_")[0];
         var type = substr.split("_")[1];
-        console.log(substr);
-        console.log(type);
-        console.log(id);
+        console.log("substr",substr);
+        console.log("type",type);
+        console.log("id",id);
 
         var target = $("#le-root-target");
         console.log(target);
@@ -180,8 +149,73 @@
             data: JSON.stringify(senddata),
             success: function (data) {
                 $("#" + id).replaceWith(data);
+
+                setTimeout(function () {
+                    console.log("reload mappings")
+                    reloadAllConnections();
+                }, 100);
+
             },
             error: function (data) { alert("error") }
         });
     }
+
+    function switchSide() {
+        var source = $("#le-root-source")[0];
+        console.log("source", source);
+        var sourceInfo = $(source).find(".le-root-info")[0];
+        var sourceId = $(sourceInfo).find("#Id").text();
+        var sourceType = $(sourceInfo).find("#Type").text();
+
+        var target = $("#le-root-target")[0];
+        console.log("target", target);
+        var targetInfo = $(target).find(".le-root-info")[0];
+        console.log("info", targetInfo);
+        var targetId = $(targetInfo).find("#Id").text();
+        var targetType = $(targetInfo).find("#Type").text();
+
+        console.log("info_id", targetId);
+        console.log("info_type", targetType);
+
+        var switchedData =
+        {
+            "sourceId": targetId,
+            "targetId": sourceId,
+            "sourceType": targetType,
+            "targetType": sourceType,
+            "position": "Target"
+        }
+
+        var switchedDataSource =
+        {
+            "sourceId": targetId,
+            "targetId": sourceId,
+            "sourceType": targetType,
+            "targetType": sourceType,
+            "position": "Source"
+        }
+
+        var switchedDataTarget =
+        {
+            "sourceId": targetId,
+            "targetId": sourceId,
+            "sourceType": targetType,
+            "targetType": sourceType,
+            "position": "Target"
+        }
+
+        $("#le-root-source").preloader(12, "Loading Source");
+        $("#le-root-target").preloader(12, "Loading Source");
+
+        $("#dim-mapping-middle").preloader(12, "Loading Mappings");
+
+        reloadSite("le-root-source", switchedDataSource);
+
+        reloadSite("le-root-target", switchedDataTarget);
+
+        reloadMapping("dim-mapping-middle", switchedData);
+
+        
+    }
+
 </script>

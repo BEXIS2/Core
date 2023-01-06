@@ -55,6 +55,8 @@
     <Compile Include="Mapping\LinkElement.cs" />
     <Compile Include="Mapping\LinkElementTypes.cs" />
     <Compile Include="Mapping\Mapping.cs" />
+    <Compile Include="Mapping\MappingKey.cs" />
+    <Compile Include="Mapping\MappingConcept.cs" />
     <Compile Include="Mapping\MappingResultElemenet.cs" />
     <Compile Include="Mapping\TransformationRule.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

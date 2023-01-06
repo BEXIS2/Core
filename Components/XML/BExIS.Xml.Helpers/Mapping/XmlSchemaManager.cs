@@ -967,6 +967,7 @@ namespace BExIS.Xml.Helpers.Mapping
                         }
                         else
                         {
+                           
 
                             if (ct.Name == null || complexTypeOfChild.Name == null)
                             {

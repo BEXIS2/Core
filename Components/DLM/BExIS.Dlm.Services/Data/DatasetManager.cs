@@ -2841,7 +2841,7 @@ namespace BExIS.Dlm.Services.Data
                     dsv.Status = DatasetVersionStatus.CheckedIn;
 
                     ds.Status = DatasetStatus.CheckedIn;
-                    ds.LastCheckIOTimestamp = DateTime.UtcNow;
+                    ds.LastCheckIOTimestamp = DateTime.UtcNow; 
                     ds.CheckOutUser = string.Empty;
                     repo.Put(ds);
                     uow.Commit();
