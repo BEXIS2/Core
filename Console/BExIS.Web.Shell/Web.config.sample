@@ -15,6 +15,8 @@
 		<add name="ApplicationServices" connectionString="Server={SERVER};Port={PORT};Database={DATABASENAME};Userid={USER};Password={PASSWORD};Pooling=true;MinPoolSize=2;MaxPoolSize=100;ConnectionIdleLifetime=3600;" />
 	</connectionStrings>
 	<appSettings file="../Workspace/General/Configurations/Credentials.config">
+		<add key="Exceptionless:ApiKey" value="{Exceptionless_ApiKey}" />
+		<add key="Exceptionless:ServerUrl" value="{Exceptionless_ServerUrl}" />
 		<add key="ClientValidationEnabled" value="true" />
 		<add key="UnobtrusiveJavaScriptEnabled" value="true" />
 		<add key="UseSchemaInDatabaseGeneration" value="False" />
