@@ -1000,9 +1000,6 @@
     <Content Include="Themes\Windows7\Styles\Windows7\sprite-vertical.png" />
     <Content Include="Themes\Windows7\Styles\Windows7\sprite.png" />
     <Content Include="Global.asax" />
-    <Content Include="Web.config">
-      <SubType>Designer</SubType>
-    </Content>
     <Content Include="Content\Site_old.css" />
     <Content Include="Scripts\jquery.unobtrusive-ajax.js" />
     <Content Include="Scripts\jquery.unobtrusive-ajax.min.js" />
@@ -1053,6 +1050,7 @@
     <Content Include="Views\Home\Version.cshtml" />
     <Content Include="Views\Home\NoPermission.cshtml" />
     <Content Include="Web.config.sample" />
+    <None Include="Web.config" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Areas\" />

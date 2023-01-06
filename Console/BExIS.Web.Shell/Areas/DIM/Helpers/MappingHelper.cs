@@ -9,6 +9,7 @@ using BExIS.Modules.Dim.UI.Models.Mapping;
 using BExIS.Security.Entities.Objects;
 using BExIS.Security.Services.Objects;
 using BExIS.Utils.Data.MetadataStructure;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -49,6 +50,24 @@ namespace BExIS.Modules.Dim.UI.Helper
                     tmp.Add(li);
                 }
 
+                // add concepts
+                using (var conceptManager = new ConceptManager())
+                {
+                    var concepts = conceptManager.MappingConceptRepo.Get();
+
+                    foreach (var concept in concepts)
+                    {
+                        li = new LinkElementRootListItem(
+                            concept.Id,
+                            concept.Name,
+                            LinkElementType.MappingConcept
+                            );
+
+                            tmp.Add(li);
+                    }
+
+                }
+
                 return tmp;
             }
             finally
@@ -68,13 +87,16 @@ namespace BExIS.Modules.Dim.UI.Helper
             try
             {
                 MetadataStructure metadataStructure = metadataStructureManager.Repo.Get(id);
+                List<LinkElement> allLinkElements = mappingManager.GetLinkElements().ToList();
 
                 LinkElementRootModel model = new LinkElementRootModel(LinkElementType.MetadataStructure, id, metadataStructure.Name, rootModelType);
 
                 if (metadataStructure != null)
                 {
-                    LinkElement metadataStructureLinkElement = mappingManager.GetLinkElement(metadataStructure.Id,
-                            LinkElementType.MetadataStructure);
+
+
+                    //LinkElement metadataStructureLinkElement = mappingManager.GetLinkElement(metadataStructure.Id, LinkElementType.MetadataStructure);
+                    LinkElement metadataStructureLinkElement = allLinkElements.Where(l=>l.ElementId.Equals(metadataStructure.Id) && l.Type==LinkElementType.MetadataStructure).FirstOrDefault();
 
                     long metadataStructureLinkElementId = 0;
                     if (metadataStructureLinkElement != null)
@@ -91,7 +113,7 @@ namespace BExIS.Modules.Dim.UI.Helper
 
                     foreach (var pUsage in metadataStructure.MetadataPackageUsages)
                     {
-                        addUsageAsLinkElement(pUsage, "Metadata", model, LEModel);
+                        addUsageAsLinkElement(pUsage, "Metadata", model, LEModel, allLinkElements);
                     }
 
                     model = CreateLinkElementContainerModels(model);
@@ -106,7 +128,7 @@ namespace BExIS.Modules.Dim.UI.Helper
         }
 
         public static void addUsageAsLinkElement(BaseUsage usage, string parentXpath, LinkElementRootModel rootModel,
-            LinkElementModel parent)
+            LinkElementModel parent, List<LinkElement> linkElements)
         {
             int min = usage.MinCardinality;
             string childName = "";
@@ -171,8 +193,11 @@ namespace BExIS.Modules.Dim.UI.Helper
             long linkElementId = 0;
             string mask = "";
 
-            LinkElement linkElement = type.GetUnitOfWork().GetReadOnlyRepository<LinkElement>().Get()
-                    .FirstOrDefault(le => le.ElementId.Equals(usage.Id) && le.Type.Equals(type));
+            //LinkElement linkElement = type.GetUnitOfWork().GetReadOnlyRepository<LinkElement>().Get()
+            //        .FirstOrDefault(le => le.ElementId.Equals(usage.Id) && le.Type.Equals(type));
+
+            LinkElement linkElement = linkElements.FirstOrDefault(le => le.ElementId.Equals(usage.Id) && le.Type.Equals(type));
+
 
             if (linkElement != null)
             {
@@ -192,7 +217,7 @@ namespace BExIS.Modules.Dim.UI.Helper
                 linkElementId = 0;
 
                 linkElement =
-                    type.GetUnitOfWork().GetReadOnlyRepository<LinkElement>().Get()
+                    linkElements
                         .FirstOrDefault(
                             le =>
                                 le.ElementId.Equals(typeId) &&
@@ -230,7 +255,7 @@ namespace BExIS.Modules.Dim.UI.Helper
             {
                 foreach (BaseUsage childUsage in childrenUsages)
                 {
-                    addUsageAsLinkElement(childUsage, xPath, rootModel, LEModel);
+                    addUsageAsLinkElement(childUsage, xPath, rootModel, LEModel, linkElements);
                 }
 
                 //AddChildrens
@@ -412,6 +437,91 @@ namespace BExIS.Modules.Dim.UI.Helper
 
         #endregion Load Model From System
 
+        #region Load from MappingConcept
+
+        public static LinkElementRootModel LoadMappingConcept(long id, LinkElementPostion position, MappingManager mappingManager)
+        {
+            if (id <= 0) throw new ArgumentException("id should not be 0 or less");
+            if (mappingManager ==null) throw new ArgumentException("mappingManager should not be null");
+
+            using (var conceptManager = new ConceptManager())
+            {
+                var concept = conceptManager.MappingConceptRepo.Get(id);
+                if(concept == null) throw new ArgumentNullException("concept not exist");
+
+                LinkElementRootModel root = new LinkElementRootModel(LinkElementType.MappingConcept, id, concept.Name, position);
+
+                if (concept != null)
+                {
+                    LinkElement conceptLinkElement = mappingManager.GetLinkElement(concept.Id,
+                            LinkElementType.MappingConcept);
+
+                    long conceptLinkElementId = 0;
+                    if (conceptLinkElement != null)
+                        conceptLinkElementId = conceptLinkElement.Id;
+
+                    LinkElementModel LEModel = new LinkElementModel(
+                        conceptLinkElementId,
+                        concept.Id,
+                        LinkElementType.MappingConcept,
+                        concept.Name, 
+                        "Concept",
+                        position,
+                        LinkElementComplexity.Complex,
+                        concept.Description);
+
+                    var keys = conceptManager.MappingKeyRepo.Get().Where(c => c.Concept.Id == concept.Id && c.Parent == null);// get first level
+
+                    foreach (var key in keys)
+                    {
+                        addKeys(key, "Concept", root, LEModel);
+                    }
+
+                    //root = CreateLinkElementContainerModels(root);
+                    root.Id = id;
+
+                    root = CreateLinkElementContainerModels(root);
+
+                    return root;
+                }
+            }
+
+            return null;
+        }
+
+        private static void addKeys(MappingKey key, string path, LinkElementRootModel root, LinkElementModel parent)
+        {
+            long linkElementId = 0;
+
+            LinkElementType type = LinkElementType.MappingKey;
+
+            LinkElement linkElement = type.GetUnitOfWork().GetReadOnlyRepository<LinkElement>().Get()
+                    .FirstOrDefault(le => le.ElementId.Equals(key.Id) && le.Type.Equals(type));
+
+            if (linkElement != null)
+            {
+                linkElementId = linkElement.Id;
+            }
+
+            LinkElementComplexity complexity = key.IsComplex?LinkElementComplexity.Complex: LinkElementComplexity.Simple;
+
+            string linkeElementPath = path + "/" + key.Name;
+
+            LinkElementModel LEModel = new LinkElementModel(
+               linkElementId,
+               key.Id,
+               type, key.Name, linkeElementPath, root.Position, complexity, key.Description);
+            LEModel.Parent = parent;
+            root.LinkElements.Add(LEModel);
+
+            foreach (var c in key.Children)
+            {
+                addKeys(c, linkeElementPath, root, LEModel);
+            }
+        }
+
+        #endregion
+
         #region loadMapping
 
         public static List<ComplexMappingModel> LoadMappings(Mapping rootMapping)
@@ -515,9 +625,42 @@ namespace BExIS.Modules.Dim.UI.Helper
                         model.Children = getChildrenFromMetadataAttributeUsage(model);
                         break;
                     }
+                case LinkElementType.MappingKey:
+                    {
+                        //ToDo load childrens from packageUsage
+                        model.Children = getChildrenFromMappingConcept(model);
+                        break;
+                    }
             }
 
             return model;
+        }
+
+        private static List<LinkElementModel> getChildrenFromMappingConcept(LinkElementModel model)
+        {
+            using (var conceptManager = new ConceptManager())
+            {
+                var parent = conceptManager.MappingKeyRepo.Get(model.ElementId);
+                if (parent != null & parent.Children.Any())
+                {
+                    // set only not complex - only simple
+                    foreach (var child in parent.Children.Where(c=>c.IsComplex==false))
+                    {
+                        model.Children.Add(
+                            new LinkElementModel(
+                                0,
+                                child.Id,
+                                LinkElementType.MappingKey, 
+                                child.Name, "", 
+                                model.Position, 
+                                LinkElementComplexity.Simple,
+                                child.Description)
+                            );
+                    }
+                }
+
+                return model.Children;
+            }
         }
 
         private static List<LinkElementModel> getChildrenFromPartyType(LinkElementModel model)

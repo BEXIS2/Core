@@ -573,15 +573,15 @@ function removeAllFromConnections() {
     if (connections.length > 0) {
         connections.forEach(
             function (c) {
-                console.log("parent connection");
-                console.log("------");
+                //console.log("parent connection");
+                //console.log("------");
 
                 if (c.connections.length > 0) {
-                    console.log("childs :" + c.connections.length);
+                    //console.log("childs :" + c.connections.length);
                     c.connections.splice(0, c.connections.length);
-                    console.log("childs removed");
+                    //console.log("childs removed");
 
-                    console.log("childs :" + c.connections.length);
+                    //console.log("childs :" + c.connections.length);
                 }
             }
         )

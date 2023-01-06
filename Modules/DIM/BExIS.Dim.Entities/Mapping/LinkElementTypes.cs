@@ -79,6 +79,8 @@
         Role = 12,
         PartyRelationshipType = 13,
         Entity = 14,
+        MappingConcept = 15,
+        MappingKey = 16
     }
 
     public class LinkElementMetadataStructure : LinkElement { }
