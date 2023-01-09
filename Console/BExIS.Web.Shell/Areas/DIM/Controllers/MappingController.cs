@@ -332,7 +332,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
             return PartialView("MappingLinkElement", linkElementModel);
         }
 
-        public ActionResult SaveMapping(ComplexMappingModel model)
+        public ActionResult SaveMapping(ComplexMappingModel model, bool both=false)
         {
 
             MappingManager mappingManager = new MappingManager();
@@ -352,7 +352,8 @@ namespace BExIS.Modules.Dim.UI.Controllers
                 //create root mapping if not exist
                 Mapping rootMapping = MappingHelper.CreateIfNotExistMapping(sourceParent, targetParent, 0, null, null, mappingManager);
                 // also create the mapping in the other direction
-                Mapping rootMappingReverse = MappingHelper.CreateIfNotExistMapping(targetParent, sourceParent, 0, null, null, mappingManager);
+                Mapping rootMappingReverse = null;
+                if (both) rootMappingReverse = MappingHelper.CreateIfNotExistMapping(targetParent, sourceParent, 0, null, null, mappingManager);
 
                 #endregion
 
@@ -375,7 +376,8 @@ namespace BExIS.Modules.Dim.UI.Controllers
                 //save mapping
                 Mapping mapping = MappingHelper.CreateIfNotExistMapping(source, target, 1, null, rootMapping, mappingManager);
                 // also create the mapping in the other direction
-                Mapping mappingReverse = MappingHelper.CreateIfNotExistMapping(target, source, 1, null, rootMappingReverse, mappingManager);
+                Mapping mappingReverse = null;
+                if(both)mappingReverse = MappingHelper.CreateIfNotExistMapping(target, source, 1, null, rootMappingReverse, mappingManager);
 
                 model.Id = mapping.Id;
                 model.ParentId = mapping.Parent.Id;
@@ -383,8 +385,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
 
                 #region create or update simple mapping
 
-                MappingHelper.UpdateSimpleMappings(source.Id, target.Id, model.SimpleMappings, mapping, mappingManager);
-                MappingHelper.UpdateSimpleMappings(target.Id, source.Id, model.SimpleMappings, mappingReverse, mappingManager);
+                MappingHelper.UpdateSimpleMappings(source.Id, target.Id, model.SimpleMappings, mapping, mappingReverse, mappingManager, both);
 
                 #endregion
 

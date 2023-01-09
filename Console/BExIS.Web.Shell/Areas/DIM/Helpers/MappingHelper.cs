@@ -1060,7 +1060,7 @@ namespace BExIS.Modules.Dim.UI.Helper
 
         #region delete
 
-        public static bool UpdateSimpleMappings(long sourceId, long targetId, List<SimpleMappingModel> newListOfSimpleMappings, Mapping parent, MappingManager mappingManager)
+        public static bool UpdateSimpleMappings(long sourceId, long targetId, List<SimpleMappingModel> newListOfSimpleMappings, Mapping parent, Mapping parentReverse, MappingManager mappingManager,bool bothDirections)
         {
             List<Mapping> mappingsInDatabase = mappingManager.MappingRepo.Get()
                     .Where(m => m.Parent != null && m.Parent.Id.Equals(parent.Id)).ToList();
@@ -1078,6 +1078,17 @@ namespace BExIS.Modules.Dim.UI.Helper
                     mapping.Target.ElementId.Equals(newMapping.Target.ElementId))
                     {
                         exist = true;
+                    }
+
+
+                    if (bothDirections)
+                    { 
+                        //other direction
+                        if (mapping.Source.ElementId.Equals(newMapping.Target.ElementId) &&
+                        mapping.Target.ElementId.Equals(newMapping.Source.ElementId))
+                        {
+                            exist = true;
+                        }
                     }
                 }
 
@@ -1114,6 +1125,9 @@ namespace BExIS.Modules.Dim.UI.Helper
                 TransformationRule transformationRule = new TransformationRule(sm.TransformationRule.Id, sm.TransformationRule.RegEx, sm.TransformationRule.Mask);
 
                 Mapping simplemapping = MappingHelper.CreateIfNotExistMapping(simpleMappingSource, simpleMappingTarget, 2, null, parent, mappingManager);
+                // also create other direction with parentReverse
+                Mapping simplemappingReverse = null;
+                if (bothDirections) simplemappingReverse = MappingHelper.CreateIfNotExistMapping(simpleMappingTarget, simpleMappingSource, 2, null, parentReverse, mappingManager);
 
                 if (transformationRule != null)
                 {

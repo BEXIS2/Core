@@ -300,6 +300,14 @@ function saveMapping(e, create) {
     ////console.log(e);
     var parent = $(e).parents(".mapping-container")[0];
 
+    var bothDirection = $(parent).find(".both-directions")[0];
+    var isBothDirection = false;
+
+    if ($(bothDirection).is(":checked")) {
+        isBothDirection = true;
+    }
+
+   
     var mappingId = $(parent).attr("id").split("_")[2];
     var parentMappingId = $(parent).attr("parent");
     ////console.log(parent);
@@ -375,10 +383,11 @@ function saveMapping(e, create) {
 
     var sendData =
     {
-        model
+        model,
+        both: isBothDirection
     }
 
-    ////console.log(sendData);
+    console.log(sendData);
 
     $.ajax({
         type: "POST",
@@ -433,7 +442,10 @@ function saveMapping(e, create) {
             updateSaveOptionOnNewContainer();
             updateSaveOptions($(parent).attr("id"), false);
         },
-        error: function (data) { alert("error") }
+        error: function (data) {
+            console.log(data);
+            alert("error")
+        }
     });
 }
 
