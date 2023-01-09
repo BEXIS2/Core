@@ -709,6 +709,28 @@
              <param name="simplifiedJson">accept 0,1,2</param>
              <returns>metadata as xml or json</returns>
         </member>
+        <member name="M:BExIS.Modules.Dim.UI.Controllers.MetadataOutController.Get(System.Int32,System.Int32,System.String,System.Int32)">
+             <summary>
+             Get metadata for a dataset as XML (default) or JSON (internal, complete or simplified structure)
+             </summary>
+             <remarks>
+            
+             ## format
+             Based on the existing transformation options, the converted metadata can be obtained via format.
+             
+             ## simplfiedJson
+             if you set the accept of the request to return a json, you can manipulate the json with this parameter. <br/>
+             0 = returns the metadata with full internal structure <br/>
+             1 = returns a simplified form of the structure with all fields and attributes <br/>
+             2 = returns the metadata in a simplified structure and does not add all fields and attributes that are empty. 
+             
+             </remarks>
+             <param name="id">Dataset Id</param>
+             <param name="version">Version number</param>
+             <param name="format">Based on the existing transformation options, the converted metadata can be obtained via format.</param>
+             <param name="simplifiedJson">accept 0,1,2</param>
+             <returns>metadata as xml or json</returns>
+        </member>
         <member name="M:BExIS.Modules.Dim.UI.Controllers.SubmissionController.publishData(System.Int64,System.Int64)">
             <summary>
             ToDo Refactor submission Commented by Javad due to modularity issues.
