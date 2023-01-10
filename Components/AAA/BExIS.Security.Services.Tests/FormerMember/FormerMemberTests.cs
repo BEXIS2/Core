@@ -76,12 +76,11 @@ namespace BExIS.Security.Services.Tests.FormerMember
         {
             //Arrange
             //Arrange
-            using (var groupManager = new GroupManager())
+            using (var identityUserService = new IdentityUserService())
             {
                 if (group.Users.Contains(user))
                 {
-                    group.Users.Remove(user);
-                    groupManager.UpdateAsync(group);
+                    identityUserService.RemoveFromRoleAsync(user.Id, group.Name);
                 }
             }
 
@@ -181,12 +180,12 @@ namespace BExIS.Security.Services.Tests.FormerMember
         public void ChangeStatusToNonFormerMember_UserIsNotFormerMember_ReturnFalse()
         {
             //Arrange
-            using (var groupManager = new GroupManager())
+            using (var identityUserService = new IdentityUserService())
             {
                 if (group.Users.Contains(user))
                 {
                     group.Users.Remove(user);
-                    groupManager.UpdateAsync(group);
+                    identityUserService.RemoveFromRoleAsync(user.Id, group.Name);
                 }
             }
 
