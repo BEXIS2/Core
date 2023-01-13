@@ -89,7 +89,9 @@ namespace BExIS.Modules.Dim.UI.Helper
                 MetadataStructure metadataStructure = metadataStructureManager.Repo.Get(id);
                 List<LinkElement> allLinkElements = mappingManager.GetLinkElements().ToList();
 
-                LinkElementRootModel model = new LinkElementRootModel(LinkElementType.MetadataStructure, id, metadataStructure.Name, rootModelType);
+                LinkElementRootModel model = new LinkElementRootModel(LinkElementType.MetadataStructure, id, metadataStructure.Name, rootModelType, "System mappings refers to internal keys that are automatically set in the metadata, party type (e.g. person) relationshipships(owner)");
+
+                
 
                 if (metadataStructure != null)
                 {
@@ -116,8 +118,32 @@ namespace BExIS.Modules.Dim.UI.Helper
                         addUsageAsLinkElement(pUsage, "Metadata", model, LEModel, allLinkElements);
                     }
 
+
+                    // set default element
+                    long defaultLEId = 0;
+                    LinkElement defaultLE = allLinkElements.FirstOrDefault(le => le.Type.Equals(LinkElementType.Default));
+
+                    if (defaultLE != null)
+                    {
+                        defaultLEId = defaultLE.Id;
+                    }
+
+                    LinkElementModel LEDefault = new LinkElementModel(defaultLEId, 1, LinkElementType.Default, "Default", "", rootModelType, LinkElementComplexity.Simple, "");
+
+                    LEDefault.Parent = LEModel;
+                    model.LinkElements.Add(LEDefault);
+
+
+                    // create container
+
                     model = CreateLinkElementContainerModels(model);
                     model.Id = id;
+
+
+                    
+
+
+                    
                 }
                 return model;
             }
@@ -274,7 +300,7 @@ namespace BExIS.Modules.Dim.UI.Helper
             using (PartyRelationshipTypeManager partyRelationshipTypeManager = new PartyRelationshipTypeManager())
             using (EntityManager entityManager = new EntityManager())
             {
-                LinkElementRootModel model = new LinkElementRootModel(LinkElementType.System, 0, "System", rootModelType);
+                LinkElementRootModel model = new LinkElementRootModel(LinkElementType.System, 0, "System", rootModelType, "An internal metadata structure used for metadata of entities.");
 
                 LinkElement SystemRoot = mappingManager.GetLinkElement(0, LinkElementType.System);
 
@@ -449,7 +475,7 @@ namespace BExIS.Modules.Dim.UI.Helper
                 var concept = conceptManager.MappingConceptRepo.Get(id);
                 if(concept == null) throw new ArgumentNullException("concept not exist");
 
-                LinkElementRootModel root = new LinkElementRootModel(LinkElementType.MappingConcept, id, concept.Name, position);
+                LinkElementRootModel root = new LinkElementRootModel(LinkElementType.MappingConcept, id, concept.Name, position, concept.Description, concept.Url);
 
                 if (concept != null)
                 {
@@ -468,7 +494,8 @@ namespace BExIS.Modules.Dim.UI.Helper
                         "Concept",
                         position,
                         LinkElementComplexity.Complex,
-                        concept.Description);
+                        concept.Description,
+                        concept.Url);
 
                     var keys = conceptManager.MappingKeyRepo.Get().Where(c => c.Concept.Id == concept.Id && c.Parent == null);// get first level
 
@@ -510,7 +537,7 @@ namespace BExIS.Modules.Dim.UI.Helper
             LinkElementModel LEModel = new LinkElementModel(
                linkElementId,
                key.Id,
-               type, key.Name, linkeElementPath, root.Position, complexity, key.Description);
+               type, key.Name, linkeElementPath, root.Position, complexity, key.Description, key.Url, key.Optional);
             LEModel.Parent = parent;
             root.LinkElements.Add(LEModel);
 
@@ -654,7 +681,9 @@ namespace BExIS.Modules.Dim.UI.Helper
                                 child.Name, "", 
                                 model.Position, 
                                 LinkElementComplexity.Simple,
-                                child.Description)
+                                child.Description,
+                                child.Url,
+                                child.Optional)
                             );
                     }
                 }
