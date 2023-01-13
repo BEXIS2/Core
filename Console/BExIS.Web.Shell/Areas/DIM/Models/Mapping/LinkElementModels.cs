@@ -39,11 +39,16 @@ namespace BExIS.Modules.Dim.UI.Models.Mapping
         public long ElementId { get; set; }
         public string Name { get; set; }
         public LinkElementType Type { get; set; }
+
+        public string Description { get; set; }
+
+        public string Url { get; set; }
+
         public List<LinkElementContainerModel> LinkElementContainers { get; set; }
         public List<LinkElementModel> LinkElements { get; set; }
         public LinkElementPostion Position { get; set; }
 
-        public LinkElementRootModel(LinkElementType type, long elementId, string name, LinkElementPostion position)
+        public LinkElementRootModel(LinkElementType type, long elementId, string name, LinkElementPostion position, string description, string url="")
         {
             Id = ElementId;
             ElementId = elementId;
@@ -52,6 +57,8 @@ namespace BExIS.Modules.Dim.UI.Models.Mapping
             LinkElementContainers = new List<LinkElementContainerModel>();
             LinkElements = new List<LinkElementModel>();
             Position = position;
+            Url = url;
+            Description = description;
         }
     }
 
@@ -80,6 +87,9 @@ namespace BExIS.Modules.Dim.UI.Models.Mapping
         public String Name { get; set; }
         public String Description { get; set; }
         public String XPath { get; set; }
+        public String Url { get; set; }
+
+        public bool Optional { get; set; }
         public LinkElementPostion Position { get; set; }
         public LinkElementComplexity Complexity { get; set; }
 
@@ -97,6 +107,8 @@ namespace BExIS.Modules.Dim.UI.Models.Mapping
             Parent = null;
             Complexity = LinkElementComplexity.None;
             Type = LinkElementType.SimpleMetadataAttribute;
+            Url = "";
+            Optional = true;
         }
 
         public LinkElementModel(
@@ -107,7 +119,9 @@ namespace BExIS.Modules.Dim.UI.Models.Mapping
             string xpath,
             LinkElementPostion position,
             LinkElementComplexity complexity,
-            string description = ""
+            string description = "",
+            string url = "",
+            bool optional = true
             )
         {
             Id = id;
@@ -119,6 +133,8 @@ namespace BExIS.Modules.Dim.UI.Models.Mapping
             Position = position;
             Children = new List<LinkElementModel>();
             Complexity = complexity;
+            Url = url;
+            Optional = optional;
         }
     }
 

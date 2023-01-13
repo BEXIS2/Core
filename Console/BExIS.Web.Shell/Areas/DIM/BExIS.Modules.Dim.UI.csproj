@@ -687,6 +687,7 @@
     <Content Include="Views\Export\XmlNode.cshtml" />
     <Content Include="Views\DataCiteDoi\_requestRow.cshtml" />
     <Content Include="Views\DataCiteDoi\index.cshtml" />
+    <Content Include="Views\Mapping\LinkElementContent.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

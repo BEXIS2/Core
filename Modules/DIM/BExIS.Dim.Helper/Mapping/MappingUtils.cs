@@ -846,47 +846,54 @@ namespace BExIS.Dim.Helpers.Mapping
 
                     Entities.Mapping.Mapping m = mappings.FirstOrDefault();
 
-                    if (m != null &&
-                        (m.Source.Type.Equals(LinkElementType.MetadataAttributeUsage) ||
-                         m.Source.Type.Equals(LinkElementType.MetadataNestedAttributeUsage)))
+                    if (m != null)
                     {
-                        IEnumerable<XElement> elements = getXElementsFromAMapping(m, metadata);
-
-                        if (elements.Count() == 1)
+                        if (m.Source.Type.Equals(LinkElementType.MetadataAttributeUsage) ||
+                            m.Source.Type.Equals(LinkElementType.MetadataNestedAttributeUsage))
                         {
-                            var element = elements.First();
-                            string mask = m.TransformationRule.Mask;
-                            // 1 - 1
-                            // x -> z1,z2,z3 (split)
-                            List<string> result = transform(element.Value, m.TransformationRule);
+                            IEnumerable<XElement> elements = getXElementsFromAMapping(m, metadata);
 
-                            if (result.Count == 1) // 1 - 1
+                            if (elements.Count() == 1)
                             {
-                                mask = setOrReplace(mask, result, m.Source.Name);
-                                tmp.Add(mask);
-                            }
-                            else // x -> z1,z2,z3 (split)
-                            {
-                                if (string.IsNullOrEmpty(mask)) tmp.AddRange(result);
-                                else
+                                var element = elements.First();
+                                string mask = m.TransformationRule.Mask;
+                                // 1 - 1
+                                // x -> z1,z2,z3 (split)
+                                List<string> result = transform(element.Value, m.TransformationRule);
+
+                                if (result.Count == 1) // 1 - 1
                                 {
-                                    //ToDo Add mask
-                                    foreach (string r in result)
+                                    mask = setOrReplace(mask, result, m.Source.Name);
+                                    tmp.Add(mask);
+                                }
+                                else // x -> z1,z2,z3 (split)
+                                {
+                                    if (string.IsNullOrEmpty(mask)) tmp.AddRange(result);
+                                    else
                                     {
-                                        mask = setOrReplace(mask, new List<string>() { r }, m.Source.Name);
-                                        tmp.Add(mask);
+                                        //ToDo Add mask
+                                        foreach (string r in result)
+                                        {
+                                            mask = setOrReplace(mask, new List<string>() { r }, m.Source.Name);
+                                            tmp.Add(mask);
+                                        }
                                     }
                                 }
                             }
-                        }
-                        else
-                        {
-                            // x1,x2,x3 -> z (join)
-
-                            foreach (var element in elements)
+                            else
                             {
-                                tmp.AddRange(transform(element.Value, m.TransformationRule));
+                                // x1,x2,x3 -> z (join)
+
+                                foreach (var element in elements)
+                                {
+                                    tmp.AddRange(transform(element.Value, m.TransformationRule));
+                                }
                             }
+                        }
+                        else if (m.Source.Type.Equals(LinkElementType.Default))
+                        {
+                            string mask = m.TransformationRule.Mask;
+                            tmp.Add(mask);
                         }
                     }
                 }

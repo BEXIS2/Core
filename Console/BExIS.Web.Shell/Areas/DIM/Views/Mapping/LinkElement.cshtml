@@ -1,35 +1,12 @@
 ﻿
 @using BExIS.Modules.Dim.UI.Models.Mapping
-@using System.Text.RegularExpressions
+
 
 @model LinkElementModel
 
 @{
     string id = Model.ElementId + "_" + Model.Position + "_" + Model.Name;
     string c = "le-simple-" + Model.Position;
-
-
-    // Add before every uppercase word empty space (e.g. LastNameTEST -> Last Name TEST)
-    string displayName = Regex.Replace(Model.Name, "((?<=[a-z])[A-Z])", " $1");
-
-    // split at " "
-    string[] wordList = displayName.Split(new char[0]);
-
-
-    for (int i = 0; i < wordList.Length; i++)
-    {
-        if (wordList[i].ToUpper() != wordList[i])
-        {
-            wordList[i] = wordList[i].ToLower();
-        }
-    }
-
-    displayName = String.Join(" ", wordList);
-
-    // Make first char uppercase
-    displayName = char.ToUpper(displayName[0]) + displayName.Substring(1);
-
-
 
 }
 
@@ -45,6 +22,8 @@
         <div id="Position">@Model.Position</div>
         <div id="Complexity">@Model.Complexity</div>
         <div id="XPath">@Model.XPath</div>
+        <div id="Optional">@Model.Optional</div>
+        <div id="Url">@Model.Url</div>
     </div>
 
 
@@ -53,32 +32,25 @@
         <tr>
             @if (Model.Position.Equals(LinkElementPostion.Source))
             {
-                <td class="le-simple-header-td">
-                    <div class="le-simple-header" title="@displayName">
-                        @displayName
-                    </div>
-                    <div class="le-simple-path" value="@Model.XPath">
-                        @Model.XPath.Replace("/", "/ ")
-                    </div>
-                </td>
+            <td class="le-simple-header-td">
+
+                @Html.Partial("LinkElementContent", Model)
+
+            </td>
                 <td class="le-simple-selector-container">
-                    <button class="fa fa-info bx-button small bx-disabled" disabled type="@Model.Type.ToString()" title="Is type of: @Model.Type.ToString()"></button>
+                    <button class="fa fa-info bx-button small bx-disabled" disabled type="@Model.Type.ToString()" title="@Model.Description"></button>
                     <span class="bx bx-next bx-button function small le-simple-selector" onclick="leSimpleSelectorClick(this)"></span>
                 </td>
             }
             else
             {
                 <td class="le-simple-selector-container">
-                    <button class="fa fa-info bx-button small bx-disabled" disabled type="@Model.Type.ToString()" title="Is type of: @Model.Type.ToString()"></button>
+                    <button class="fa fa-info bx-button small bx-disabled" disabled type="@Model.Type.ToString()" title="@Model.Description"></button>
                     <span class="bx bx-previous bx-button function small le-simple-selector" onclick="leSimpleSelectorClick(this)"></span>
                 </td>
                 <td class="le-simple-header-td">
-                    <div class="le-simple-header" title="@displayName">
-                        @displayName
-                    </div>
-                    <div class="le-simple-path" value="@Model.XPath">
-                        @Model.XPath.Replace("/", "/ ")
-                    </div>
+
+                    @Html.Partial("LinkElementContent", Model)
                 </td>
             }
         </tr>
