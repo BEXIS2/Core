@@ -168,6 +168,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BExIS.Utils.Tests", "Compon
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BExIS.Dim.Services.Tests", "Modules\DIM\BExIS.Dim.Services.Tests\BExIS.Dim.Services.Tests.csproj", "{130D9C4B-4F35-4EEC-8FD2-7D2A9B288F8B}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BExIS.JSON.Helper.Tests", "Components\JSON\BExIS.JSON.Helper.Tests\BExIS.JSON.Helper.Tests.csproj", "{50E8266F-EC07-4010-8EE9-1150EA8D688E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -1175,6 +1177,24 @@ Global
 		{130D9C4B-4F35-4EEC-8FD2-7D2A9B288F8B}.TestServerRelease|Mixed Platforms.Build.0 = Release|Any CPU
 		{130D9C4B-4F35-4EEC-8FD2-7D2A9B288F8B}.TestServerRelease|x86.ActiveCfg = Release|Any CPU
 		{130D9C4B-4F35-4EEC-8FD2-7D2A9B288F8B}.TestServerRelease|x86.Build.0 = Release|Any CPU
+		{50E8266F-EC07-4010-8EE9-1150EA8D688E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{50E8266F-EC07-4010-8EE9-1150EA8D688E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{50E8266F-EC07-4010-8EE9-1150EA8D688E}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{50E8266F-EC07-4010-8EE9-1150EA8D688E}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{50E8266F-EC07-4010-8EE9-1150EA8D688E}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{50E8266F-EC07-4010-8EE9-1150EA8D688E}.Debug|x86.Build.0 = Debug|Any CPU
+		{50E8266F-EC07-4010-8EE9-1150EA8D688E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{50E8266F-EC07-4010-8EE9-1150EA8D688E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{50E8266F-EC07-4010-8EE9-1150EA8D688E}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{50E8266F-EC07-4010-8EE9-1150EA8D688E}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{50E8266F-EC07-4010-8EE9-1150EA8D688E}.Release|x86.ActiveCfg = Release|Any CPU
+		{50E8266F-EC07-4010-8EE9-1150EA8D688E}.Release|x86.Build.0 = Release|Any CPU
+		{50E8266F-EC07-4010-8EE9-1150EA8D688E}.TestServerRelease|Any CPU.ActiveCfg = Release|Any CPU
+		{50E8266F-EC07-4010-8EE9-1150EA8D688E}.TestServerRelease|Any CPU.Build.0 = Release|Any CPU
+		{50E8266F-EC07-4010-8EE9-1150EA8D688E}.TestServerRelease|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{50E8266F-EC07-4010-8EE9-1150EA8D688E}.TestServerRelease|Mixed Platforms.Build.0 = Release|Any CPU
+		{50E8266F-EC07-4010-8EE9-1150EA8D688E}.TestServerRelease|x86.ActiveCfg = Release|Any CPU
+		{50E8266F-EC07-4010-8EE9-1150EA8D688E}.TestServerRelease|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -1254,6 +1274,7 @@ Global
 		{738E6ADD-20CB-4AF1-B42D-C6C2C76D782D} = {8ACF0B65-BAFD-49FD-A840-D04C4DCDE993}
 		{2D3FC458-6990-481D-B26B-EEE50CE512E1} = {8ACF0B65-BAFD-49FD-A840-D04C4DCDE993}
 		{130D9C4B-4F35-4EEC-8FD2-7D2A9B288F8B} = {F3354AC7-CDA1-44E2-8E85-8DB532ED8C75}
+		{50E8266F-EC07-4010-8EE9-1150EA8D688E} = {229CFC49-4F5B-450D-BA7F-7C47ED8005D8}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {9B6E4921-8EBA-487D-A098-3E473A0EAC64}
