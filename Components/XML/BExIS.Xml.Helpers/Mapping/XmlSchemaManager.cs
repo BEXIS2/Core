@@ -1527,6 +1527,11 @@ namespace BExIS.Xml.Helpers.Mapping
                     };
                 }
 
+                //if (complexType.Attributes.Count > 0)
+                //{
+                //    createExtendedPropteries( mca, complexType.Attributes)
+                //}
+
                 return mca;
             }
             finally
@@ -1569,6 +1574,7 @@ namespace BExIS.Xml.Helpers.Mapping
                 dataTypeManager.Dispose();
             }
         }
+
 
         #endregion metadata structure
 

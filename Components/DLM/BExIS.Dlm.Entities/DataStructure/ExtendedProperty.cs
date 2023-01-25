@@ -26,7 +26,7 @@ namespace BExIS.Dlm.Entities.DataStructure
         /// <remarks></remarks>
         /// <seealso cref=""/>        
         public virtual string Description { get; set; }
-        
+
         #endregion
 
         #region Associations
