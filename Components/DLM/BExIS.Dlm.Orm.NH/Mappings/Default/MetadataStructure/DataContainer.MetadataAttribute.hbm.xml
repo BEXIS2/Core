@@ -12,6 +12,14 @@
       <one-to-many class="MetadataAttributeUsage" />
     </set>
 
+	  <set name="MetadataParameterUsages" inverse="true" order-by="Id" cascade="all-delete-orphan">
+		  <!--cascade only insert, update, set null in case of delete-->
+		  <key>
+			  <column name="MetadataAttributeRef" />
+		  </key>
+		  <one-to-many class="MetadataParameterUsage" />
+	  </set>
+
   </subclass>
   
 </hibernate-mapping>

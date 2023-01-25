@@ -172,6 +172,7 @@ namespace BExIS.Dlm.Entities.DataStructure
         {
             defaultMessageTemplate = "Provided value is not a domain item. The value should be one of these items: {0}.";
             defaultNegatedMessageTemplate = "Provided value is a domain item, but the constraint is negated. The value should not be one of these items: {0}.";
+            Items = new List<DomainItem>();
         }
 
         public DomainConstraint(ConstraintProviderSource provider, string constraintSelectionPredicate, string cultureId

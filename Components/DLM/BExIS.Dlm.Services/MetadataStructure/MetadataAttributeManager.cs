@@ -20,10 +20,12 @@ namespace BExIS.Dlm.Services.MetadataStructure
             this.MetadataAttributeRepo = guow.GetReadOnlyRepository<MetadataAttribute>();
             this.MetadataSimpleAttributeRepo = guow.GetReadOnlyRepository<MetadataSimpleAttribute>();
             this.MetadataCompoundAttributeRepo = guow.GetReadOnlyRepository<MetadataCompoundAttribute>();
+            this.MetadataParameterRepo = guow.GetReadOnlyRepository<MetadataParameter>();
 
             //[DS] add this Repos to get usages by id
             this.MetadataNestedAttributeUsageRepo = guow.GetReadOnlyRepository<MetadataNestedAttributeUsage>();
             this.MetadataAttributeUsageRepo = guow.GetReadOnlyRepository<MetadataAttributeUsage>();
+            this.MetadataParameterUsageRepo = guow.GetReadOnlyRepository<MetadataParameterUsage>();
         }
 
         private bool isDisposed = false;
@@ -54,10 +56,12 @@ namespace BExIS.Dlm.Services.MetadataStructure
 
         // provide read only repos for the whole aggregate area
         public IReadOnlyRepository<MetadataAttribute> MetadataAttributeRepo { get; private set; }
+        public IReadOnlyRepository<MetadataParameter> MetadataParameterRepo { get; private set; }
         public IReadOnlyRepository<MetadataSimpleAttribute> MetadataSimpleAttributeRepo { get; private set; }
         public IReadOnlyRepository<MetadataCompoundAttribute> MetadataCompoundAttributeRepo { get; private set; }
         public IReadOnlyRepository<MetadataNestedAttributeUsage> MetadataNestedAttributeUsageRepo { get; private set; }
         public IReadOnlyRepository<MetadataAttributeUsage> MetadataAttributeUsageRepo { get; private set; }
+        public IReadOnlyRepository<MetadataParameterUsage> MetadataParameterUsageRepo { get; private set; }
 
         #endregion
 
@@ -162,6 +166,29 @@ namespace BExIS.Dlm.Services.MetadataStructure
             using (IUnitOfWork uow = this.GetUnitOfWork())
             {
                 IRepository<MetadataCompoundAttribute> repo = uow.GetRepository<MetadataCompoundAttribute>();
+                repo.Put(entity);
+                uow.Commit();
+            }
+            return (entity);
+        }
+
+        /// <summary>
+        /// Persists a metadata parameter in the database
+        /// </summary>
+        /// <param name="entity">is an unsaved metadata parameter</param>
+        /// <returns>The saved metadata parameter</returns>
+        /// <remarks>It should have at least a non empty short name.</remarks>     
+        public MetadataParameter Create(MetadataParameter entity)
+        {
+            if (entity == null) throw new ArgumentNullException(nameof(entity), "parameter not exist.");
+            if(string.IsNullOrWhiteSpace(entity.ShortName)) throw new ArgumentNullException(nameof(entity.ShortName), "shortname of parameter is empty.");
+            if(entity.DataType == null) throw new ArgumentNullException(nameof(entity.DataType), "data type of parameter is null.");
+            Contract.Ensures(Contract.Result<MetadataCompoundAttribute>() != null && Contract.Result<MetadataCompoundAttribute>().Id >= 0);
+
+
+            using (IUnitOfWork uow = this.GetUnitOfWork())
+            {
+                IRepository<MetadataParameter> repo = uow.GetRepository<MetadataParameter>();
                 repo.Put(entity);
                 uow.Commit();
             }
@@ -312,14 +339,17 @@ namespace BExIS.Dlm.Services.MetadataStructure
             helper.Delete(constraint);
         }
 
-        public DataAttribute AddExtendedProperty(DataContainer container, ExtendedProperty extendedProperty)
+        public ExtendedProperty AddExtendedProperty(DataContainer container, ExtendedProperty extendedProperty)
         {
-            throw new NotImplementedException();
+            ExtendedPropertyHelper helper = new ExtendedPropertyHelper();
+            return helper.Create(extendedProperty, container); 
+
         }
 
-        public DataAttribute RemoveExtendedProperty(ExtendedProperty extendedProperty)
+        public bool RemoveExtendedProperty(ExtendedProperty extendedProperty)
         {
-            throw new NotImplementedException();
+            ExtendedPropertyHelper helper = new ExtendedPropertyHelper();
+            return helper.Delete(extendedProperty);
         }
 
         public DataAttribute AddAggregateFunction(DataContainer container, AggregateFunction aggregateFunction)

@@ -30,7 +30,9 @@
     <AssociationLine Name="UsagesAsParameter" Type="BExIS.Dlm.Entities.DataStructure.Parameter" FixedFromPoint="true" FixedToPoint="true">
       <Path>
         <Point X="11.25" Y="6.812" />
-        <Point X="8.938" Y="6.812" />
+        <Point X="9.5" Y="6.812" />
+        <Point X="9.5" Y="7.127" />
+        <Point X="8.938" Y="7.127" />
         <Point X="8.938" Y="8" />
       </Path>
       <MemberNameLabel ManuallyPlaced="true">
@@ -63,13 +65,12 @@
     </ShowAsCollectionAssociation>
   </Class>
   <Class Name="BExIS.Dlm.Entities.DataStructure.Constraint">
-    <Position X="4" Y="2" Width="2.25" />
+    <Position X="3.75" Y="1.5" Width="2.25" />
     <Compartments>
       <Compartment Name="Fields" Collapsed="true" />
-      <Compartment Name="Properties" Collapsed="true" />
     </Compartments>
     <TypeIdentifier>
-      <HashCode>AQAABAEAQgAkAAAAAAAAAEAAAAAAAAAAACAACiBAAAA=</HashCode>
+      <HashCode>AQAABAEAQgAkAAAAAAAQAEAAAAAAAAAAACAACiBAAAA=</HashCode>
       <FileName>DataStructure\Constraint.cs</FileName>
     </TypeIdentifier>
     <ShowAsAssociation>
@@ -150,8 +151,8 @@
       <Path>
         <Point X="10" Y="2.438" />
         <Point X="8.125" Y="2.438" />
-        <Point X="8.125" Y="2.206" />
-        <Point X="6.25" Y="2.206" />
+        <Point X="8.125" Y="1.91" />
+        <Point X="6" Y="1.91" />
       </Path>
     </AssociationLine>
     <AssociationLine Name="ExtendedProperties" Type="BExIS.Dlm.Entities.DataStructure.ExtendedProperty" FixedFromPoint="true" FixedToPoint="true">
@@ -185,7 +186,7 @@
       </MemberNameLabel>
     </AssociationLine>
     <TypeIdentifier>
-      <HashCode>AAAAAECAgAIhAAAAIAABCAQEAAIAApAAAAAAAAECAAA=</HashCode>
+      <HashCode>AAAAAEAAgAIhACAAIAABCAQEAAIAApAAAAAAAAECAAA=</HashCode>
       <FileName>DataStructure\DataContainer.cs</FileName>
     </TypeIdentifier>
     <ShowAsAssociation>
@@ -203,18 +204,24 @@
     </ShowAsCollectionAssociation>
   </Class>
   <Class Name="BExIS.Dlm.Entities.DataStructure.DataStructure" Collapsed="true">
-    <Position X="4" Y="4.75" Width="1.5" />
+    <Position X="4" Y="5.75" Width="1.5" />
     <AssociationLine Name="Datasets" Type="BExIS.Dlm.Entities.Data.Dataset" FixedFromPoint="true" FixedToPoint="true">
       <Path>
-        <Point X="4" Y="4.75" />
-        <Point X="4" Y="4.469" />
+        <Point X="4" Y="5.75" />
+        <Point X="4" Y="5.232" />
+        <Point X="3.5" Y="5.232" />
+        <Point X="3.5" Y="4.469" />
         <Point X="2.25" Y="4.469" />
       </Path>
     </AssociationLine>
-    <AssociationLine Name="Views" Type="BExIS.Dlm.Entities.DataStructure.DataView" FixedFromPoint="true" FixedToPoint="true">
+    <AssociationLine Name="Views" Type="BExIS.Dlm.Entities.DataStructure.DatasetView" FixedFromPoint="true" FixedToPoint="true">
       <Path>
-        <Point X="4.375" Y="5.441" />
-        <Point X="4.375" Y="6.27" />
+        <Point X="4.375" Y="6.441" />
+        <Point X="4.375" Y="6.504" />
+        <Point X="3.938" Y="6.504" />
+        <Point X="3.938" Y="6.27" />
+        <Point X="3.833" Y="6.27" Type="JumpStart" />
+        <Point X="3.667" Y="6.27" Type="JumpEnd" />
         <Point X="2" Y="6.27" />
       </Path>
     </AssociationLine>
@@ -252,7 +259,7 @@
       <Property Name="ApplicableUnits" />
     </ShowAsCollectionAssociation>
   </Class>
-  <Class Name="BExIS.Dlm.Entities.DataStructure.ExtendedProperty" Collapsed="true">
+  <Class Name="BExIS.Dlm.Entities.DataStructure.ExtendedProperty">
     <Position X="7.5" Y="5" Width="1.75" />
     <AssociationLine Name="DataContainer" Type="BExIS.Dlm.Entities.DataStructure.DataContainer" FixedFromPoint="true" FixedToPoint="true">
       <Path>
@@ -408,15 +415,8 @@
         <Point X="11.25" Y="7.25" />
       </Path>
     </AssociationLine>
-    <AssociationLine Name="Variable" Type="BExIS.Dlm.Entities.DataStructure.Variable" FixedFromPoint="true" FixedToPoint="true">
-      <Path>
-        <Point X="9.5" Y="9.81" />
-        <Point X="9.5" Y="11" />
-        <Point X="11.25" Y="11" />
-      </Path>
-    </AssociationLine>
     <TypeIdentifier>
-      <HashCode>AAAAAAAAEAAAAAAgAAAAAAAAAABAAAQgAAQAAAAAAAA=</HashCode>
+      <HashCode>AAAAAAAAAAAAAAAgAAAAAAAAAAAAAAAAAAQAAAAAAAA=</HashCode>
       <FileName>DataStructure\Usage.cs</FileName>
     </TypeIdentifier>
     <ShowAsAssociation>
@@ -453,7 +453,7 @@
       </Path>
     </AssociationLine>
     <TypeIdentifier>
-      <HashCode>AAAAAAAAEAAAAAAgAAAAAAAAAABAAEQgAIAAAAAAAAA=</HashCode>
+      <HashCode>AAAAAAAAAAAAAAAgIAAAAAAAAAAAAEAAAIAAAAIAAAA=</HashCode>
       <FileName>DataStructure\Usage.cs</FileName>
     </TypeIdentifier>
     <ShowAsAssociation>
@@ -474,19 +474,19 @@
       <Path>
         <Point X="2.25" Y="4.812" />
         <Point X="2.625" Y="4.812" />
-        <Point X="2.625" Y="4.938" />
-        <Point X="4" Y="4.938" />
+        <Point X="2.625" Y="5.938" />
+        <Point X="4" Y="5.938" />
       </Path>
     </AssociationLine>
     <TypeIdentifier>
-      <HashCode>AgQAAAAEAQAAAAAAAAAAAAAAAAAAAEEAAAAACAAAAAA=</HashCode>
+      <HashCode>AgQAAAAEAQAAAEAAAAAAAAAAAAAAAEEAAAAACAAAAAA=</HashCode>
       <FileName>Data\Dataset.cs</FileName>
     </TypeIdentifier>
     <ShowAsAssociation>
       <Property Name="DataStructure" />
     </ShowAsAssociation>
   </Class>
-  <Class Name="BExIS.Dlm.Entities.DataStructure.DataView">
+  <Class Name="BExIS.Dlm.Entities.DataStructure.DatasetView">
     <Position X="0.5" Y="5.75" Width="1.5" />
     <Compartments>
       <Compartment Name="Properties" Collapsed="true" />
@@ -494,8 +494,10 @@
     <AssociationLine Name="DataStructures" Type="BExIS.Dlm.Entities.DataStructure.DataStructure" ManuallyRouted="true" FixedFromPoint="true" FixedToPoint="true">
       <Path>
         <Point X="2" Y="5.893" />
-        <Point X="4.188" Y="5.893" />
-        <Point X="4.188" Y="5.441" />
+        <Point X="3.75" Y="5.893" />
+        <Point X="3.75" Y="6.816" />
+        <Point X="4.188" Y="6.816" />
+        <Point X="4.188" Y="6.441" />
       </Path>
     </AssociationLine>
     <TypeIdentifier>
