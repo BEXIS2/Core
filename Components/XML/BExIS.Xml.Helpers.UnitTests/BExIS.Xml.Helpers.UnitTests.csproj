@@ -108,6 +108,7 @@
   <ItemGroup>
     <Compile Include="XmlDataTuplesHelperTests.cs" />
     <Compile Include="XmlMetadataConverterTests.cs" />
+    <Compile Include="XmlSchemaManagerTests.cs" />
     <Compile Include="XmlUtility_XDocumentTests.cs" />
     <Compile Include="XmlUtility_XmlDocumentTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -115,7 +116,51 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
+    <None Include="App_Data\datacite\datacite-numberType-v4.xsd">
+      <SubType>Designer</SubType>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Include="ConvertTo_XmlToJson.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="App_Data\datacite\datacite-contributorType-v4.xsd">
+      <SubType>Designer</SubType>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="App_Data\datacite\datacite-dateType-v4.xsd">
+      <SubType>Designer</SubType>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="App_Data\datacite\datacite-descriptionType-v4.xsd">
+      <SubType>Designer</SubType>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="App_Data\datacite\datacite-funderIdentifierType-v4.xsd">
+      <SubType>Designer</SubType>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="App_Data\datacite\datacite-nameType-v4.xsd">
+      <SubType>Designer</SubType>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="App_Data\datacite\datacite-relatedIdentifierType-v4.xsd">
+      <SubType>Designer</SubType>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="App_Data\datacite\datacite-relationType-v4.xsd">
+      <SubType>Designer</SubType>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="App_Data\datacite\datacite-resourceType-v4.xsd">
+      <SubType>Designer</SubType>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="App_Data\datacite\datacite-titleType-v4.xsd">
+      <SubType>Designer</SubType>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="App_Data\datacite\metadata.xsd">
+      <SubType>Designer</SubType>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="packages.config" />
