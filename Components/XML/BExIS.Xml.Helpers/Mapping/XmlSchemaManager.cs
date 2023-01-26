@@ -99,6 +99,10 @@ namespace BExIS.Xml.Helpers.Mapping
         /// <param name="path"></param>
         public void Load(string path, string username)
         {
+            if(string.IsNullOrEmpty(path)) throw new ArgumentNullException("path");
+            if(!File.Exists(path)) throw new FileNotFoundException("path");
+            if (string.IsNullOrEmpty(username)) throw new ArgumentNullException("username");
+
             userName = username;
 
             xsdFilePath = path;
@@ -163,7 +167,7 @@ namespace BExIS.Xml.Helpers.Mapping
                     settings.DtdProcessing = DtdProcessing.Ignore;
 
                     string dataPath = Path.Combine(AppConfiguration.DataPath, "Temp", userName, include.SchemaLocation.Split('/').Last());
-
+  
                     using (XmlReader test = XmlReader.Create(dataPath, settings))
                     {
                         include.Schema = XmlSchema.Read(test, verifyErrors);
