@@ -299,6 +299,61 @@ namespace BExIS.Dlm.Services.MetadataStructure
 
         #region Associations
 
+        /// <summary>
+        /// add a metadata parameter to an metadata attribute and connect both via metadata parameter usage
+        /// </summary>
+        /// <param name="attribute"></param>
+        /// <param name="parameter"></param>
+        /// <param name="label"></param>
+        /// <param name="description"></param>
+        /// <returns></returns>
+        public MetadataParameterUsage AddParameterUsage(MetadataAttribute attribute, MetadataParameter parameter)
+        {
+            if(parameter == null || parameter.Id <= 0) throw new ArgumentNullException("parameter","parameter should not be null.") ;
+            if(attribute == null || attribute.Id <= 0) throw new ArgumentNullException("attribute", "attribute should not be null.");
+
+            string label = parameter.Name;
+            string description = parameter.Description;
+
+            using (IUnitOfWork uow = this.GetUnitOfWork())
+            {
+                var parameterRepo = uow.GetReadOnlyRepository<MetadataParameter>();
+                var attributesRepo = uow.GetReadOnlyRepository<MetadataAttribute>();
+
+                attribute = attributesRepo.Get(attribute.Id);
+                attributesRepo.Reload(attribute);
+                attributesRepo.LoadIfNot(attribute.MetadataParameterUsages);
+
+                int count = 0;
+                try
+                {
+                    count = (from v in attribute.MetadataParameterUsages
+                             where v.Member.Id.Equals(parameter.Id)
+                             select v
+                             )
+                             .Count();
+                }
+                catch { }
+
+                MetadataParameterUsage usage = new MetadataParameterUsage()
+                {
+                    Master = attribute,
+                    Member = parameter,
+                    // if there is no label provided, use the attribute name and a sequence number calculated by the number of occurrences of that attribute in the current structure
+                    Label = !string.IsNullOrWhiteSpace(label) ? label : (count <= 0 ? attribute.Name : string.Format("{0} ({1})", attribute.Name, count)),
+                    Description = description
+                };
+
+               //attribute.MetadataParameterUsages.Add(usage);
+
+                IRepository<MetadataParameterUsage> repo = uow.GetRepository<MetadataParameterUsage>();
+                repo.Put(usage);
+                uow.Commit();
+
+                return (usage);
+            }
+        }
+
         public void AddConstraint(DomainConstraint constraint, DataContainer container)
         {
             helper.SaveConstraint(constraint, container);

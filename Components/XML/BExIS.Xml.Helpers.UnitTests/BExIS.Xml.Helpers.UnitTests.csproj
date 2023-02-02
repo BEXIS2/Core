@@ -93,6 +93,7 @@
     <Reference Include="System.Web.Http, Version=5.2.3.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35" />
     <Reference Include="System.Xml" />
     <Reference Include="System.Xml.Linq" />
+    <Reference Include="Vaiona.Entities, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" />
     <Reference Include="Vaiona.Persistence.Api, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\Libraries\Vaiona\Vaiona.Persistence.Api.dll</HintPath>
@@ -177,6 +178,10 @@
     <ProjectReference Include="..\..\DLM\BExIS.Dlm.Entities\BExIS.Dlm.Entities.csproj">
       <Project>{B4E7B1BF-01B4-40AF-8D19-B8F362167261}</Project>
       <Name>BExIS.Dlm.Entities</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\DLM\BExIS.Dlm.Services\BExIS.Dlm.Services.csproj">
+      <Project>{C4CA0A99-0AF3-4372-A9B7-B9073599BD8B}</Project>
+      <Name>BExIS.Dlm.Services</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\JSON\BEXIS.JSON.Helpers\BEXIS.JSON.Helpers.csproj">
       <Project>{C4D68AC5-84FA-4A97-9E64-9F11623DADC9}</Project>
