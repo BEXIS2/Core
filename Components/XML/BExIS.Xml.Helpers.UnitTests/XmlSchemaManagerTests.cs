@@ -4,6 +4,9 @@ using System.IO;
 using System.Linq;
 using System.Xml;
 using System.Xml.Linq;
+using BExIS.App.Testing;
+using BExIS.Dlm.Services.MetadataStructure;
+using BExIS.Utils.Config;
 using BExIS.Xml.Helpers.Mapping;
 using NUnit.Framework;
 using Vaiona.Utils.Cfg;
@@ -17,12 +20,18 @@ namespace BExIS.Xml.Helpers.UnitTests
         private string _temp;
         private string _username = "david";
 
+        private List<long> deleteMDS = new List<long>();
+
+        private TestSetupHelper helper = null;
+
         [OneTimeSetUp]
         /// It is called once prior to executing any of the tests in a fixture.
         /// Multiple methods can be marked. Order is not preserved.
         /// Inheritance is supported, call sequence form the parents
         public void OneTimeSetUp()
         {
+            helper = new TestSetupHelper(WebApiConfig.Register, false);
+
             // get schame path
             string path = AppDomain.CurrentDomain.BaseDirectory;
             string dic = Path.Combine(path, "App_Data/datacite/");
@@ -75,6 +84,16 @@ namespace BExIS.Xml.Helpers.UnitTests
             foreach (DirectoryInfo dir in di.GetDirectories())
             {
                 dir.Delete(true);
+            }
+
+            // delete created metadata structures
+            using (var metadataStructureManager = new MetadataStructureManager())
+            {
+                foreach (var md in metadataStructureManager.Repo.Get())
+                {
+                    if (deleteMDS.Contains(md.Id))
+                        metadataStructureManager.Delete(md);
+                }
             }
         }
 
@@ -130,6 +149,31 @@ namespace BExIS.Xml.Helpers.UnitTests
             //Act
             //Assert
             Assert.That(() => xmlSchemaManager.Load(_schemaPath,""), Throws.ArgumentNullException);
+
+        }
+
+        [Test()]
+        public void Generate_valid_MetadataStructure()
+        {
+            //Arrange
+            XmlSchemaManager xmlSchemaManager = new XmlSchemaManager();
+            xmlSchemaManager.Load(_schemaPath, _username);
+
+            //act
+            var id =  xmlSchemaManager.GenerateMetadataStructure("", "test");
+
+            Assert.That(id > 0);
+
+            using (var metadataStructureManager = new MetadataStructureManager())
+            using (var metadataAttributeManager = new MetadataAttributeManager())
+            {
+                var metadataStructure = metadataStructureManager.Repo.Get(id);
+
+                //15 package usages
+
+            }
+
+            deleteMDS.Add(id);
 
         }
 

@@ -29,9 +29,9 @@ namespace BExIS.Utils.Data.Helpers
                 var o8 = operationManager.Find("Shell", "Help", "*") ?? operationManager.Create("Shell", "Help", "*");
                 var o9 = operationManager.Find("Api", "Token", "*") ?? operationManager.Create("Api", "Token", "*");
 
-                if (!versionManager.Exists("Shell", "2.14.5"))
+                if (!versionManager.Exists("Shell", "2.17"))
                 {
-                    versionManager.Create("Shell", "2.14.5");
+                    versionManager.Create("Shell", "2.17");
                 }
             }
         }
