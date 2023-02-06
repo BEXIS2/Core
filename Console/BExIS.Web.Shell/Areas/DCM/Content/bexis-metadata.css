@@ -90,10 +90,22 @@ Green 05  #eff7f6
     text-align:right;
     
 }
+
+.parameter-label, .parameter-description {
+    text-align: left;
+    font-size: smaller;
+}
+
 .bx-metadataFormTextInput {
     width: 490px;
     max-width: 490px;
 }
+
+.bx-metadata-form-input-small {
+   
+    font-size:smaller;
+}
+
 
 .bx-metadataForm-textArea-display {
     border: var(--border-width-field) solid var(--border-color-field);
@@ -109,6 +121,13 @@ Green 05  #eff7f6
 .metadataAttributeInput
 {
     width: 500px;
+    /*border:ridge 1px yellow;*/
+}
+
+.paremeter-input {
+    width: 400px;
+    padding-right:10px;
+    float: left;
     /*border:ridge 1px yellow;*/
 }
 
@@ -134,6 +153,7 @@ Green 05  #eff7f6
     /*border:dotted 1px green;*/
     margin:0px;
 }
+
 
 .metadata-activate-checkbox {
     margin-top: 6px;  margin-left: 10px;

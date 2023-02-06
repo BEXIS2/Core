@@ -34,6 +34,8 @@ namespace BExIS.Modules.Dcm.UI.Models.Metadata
         public double LowerBoundary { get; set; }
         public double UpperBoundary { get; set; }
 
+        public List<MetadataParameterModel> Parameters { get; set; }
+
         #region Mapping Variables
 
         public bool MappingSelectionField { get; set; }
@@ -110,7 +112,8 @@ namespace BExIS.Modules.Dcm.UI.Models.Metadata
                 UpperBoundary = this.UpperBoundary,
                 LowerBoundary = this.LowerBoundary,
                 PartyId = 0,
-                MappingSelectionField = false
+                MappingSelectionField = false,
+                Parameters = this.Parameters
             };
         }
     }

@@ -1443,7 +1443,7 @@ namespace BExIS.Xml.Helpers.Mapping
                         temp = metadataAttributeManager.Create(name, name, description, false, false, "David Blaa", MeasurementScale.Categorial, DataContainerType.ValueType, "", dataType, noneunit, null, null, null, null);
 
                         //add constraints to the metadataAttribute
-                        List<Constraint> constraints = ConvertToConstraints(type.Content, temp);
+                        List<Constraint> constraints = convertToConstraints(type.Content, temp);
                         if (constraints != null && constraints.Count() > 0)
                             temp.Constraints = constraints;
 
@@ -1493,20 +1493,22 @@ namespace BExIS.Xml.Helpers.Mapping
                         //add to dic for reuse of created attributes
                         createdAttributesDic.Add(temp.Id, temp.Name);
 
+
                         XmlSchemaSimpleContentRestriction simpleContentRestriction;
                         List<Constraint> constraints = new List<Constraint>();
 
-                        if(type.ContentModel!=null){
+                        if (type.ContentModel != null)
+                        {
                             if (type.ContentModel.Content is XmlSchemaSimpleContentRestriction)
                             {
                                 simpleContentRestriction = (XmlSchemaSimpleContentRestriction)type.ContentModel.Content;
-                                constraints = ConvertToConstraints(simpleContentRestriction, temp);
+                                constraints = convertToConstraints(simpleContentRestriction, temp);
                             }
 
                             if (constraints != null && constraints.Count() > 0)
                                 temp.Constraints = constraints;
                         }
-                            
+
 
                         // Add attributes as metadata packages
 
@@ -1526,8 +1528,10 @@ namespace BExIS.Xml.Helpers.Mapping
                             }
                         }
 
-                        return temp;
                     }
+
+                    return temp;
+                    
                 }
 
                 return null;
@@ -1612,59 +1616,66 @@ namespace BExIS.Xml.Helpers.Mapping
         private MetadataParameterUsage createMetadataParameterUsage(MetadataAttribute metadataAttribute, object xmlAttribute, DataTypeManager dataTypeManager, MetadataAttributeManager metadataAttributeManager)
         {
             string parameterUsageName = "";
+            string description = "";
             List<Constraint> constraints = new List<Constraint>();
+
 
             if (xmlAttribute is XmlSchemaAttribute)
             {
                 var x = ((XmlSchemaAttribute)xmlAttribute);
-                xmlAttribute = x.AttributeType as XmlSchemaSimpleType;
+                if (!string.IsNullOrEmpty(x.Name)) parameterUsageName = x.Name;
+
+                xmlAttribute = x.AttributeSchemaType as XmlSchemaSimpleType;
+
+                // if xmlAttribute is null, load type from SimpleTypeList by SchemaTypeNameDefault
+                if (xmlAttribute == null && !string.IsNullOrEmpty(x.SchemaTypeName.Name))
+                {
+                    xmlAttribute = SimpleTypes.Where(t => t.Name.Equals(x.SchemaTypeName.Name)).FirstOrDefault();
+                }
+                else
+                // if xmlAttribute is null, load type from SimpleTypeList by RefName
+                if (xmlAttribute == null && !string.IsNullOrEmpty(x.RefName.Name))
+                {
+                    xmlAttribute = SimpleTypes.Where(t => t.Name.Equals(x.SchemaTypeName.Name)).FirstOrDefault();
+                }
+
             }
 
             if (xmlAttribute is XmlSchemaSimpleType)
             {
                 var x = ((XmlSchemaSimpleType)xmlAttribute);
-                parameterUsageName = x.Name;
+                if (string.IsNullOrEmpty(parameterUsageName) && x.Name!=null) parameterUsageName  = x.Name;
 
-                constraints = ConvertToConstraints(x.Content, metadataAttribute);
+                if(x.Annotation!= null) description = GetDescription(x.Annotation);
+             
 
-            }
-
-
-            var parameter = createMetadataParameter(metadataAttribute, parameterUsageName, dataTypeManager);
-            if (parameter != null)
-            {
-                // if not exist then create in db
-                if (parameter.Id == 0)
-                {
-                    // create
-                    parameter = metadataAttributeManager.Create(parameter);
-
-                    if (constraints != null && constraints.Count() > 0)
-                    {
-                        // add constraints
-                        foreach (var constraint in constraints)
-                        {
-                            if (constraint is DomainConstraint) metadataAttributeManager.AddConstraint((DomainConstraint)constraint, parameter);
-                            if (constraint is RangeConstraint) metadataAttributeManager.AddConstraint((RangeConstraint)constraint, parameter);
-                            if (constraint is PatternConstraint) metadataAttributeManager.AddConstraint((PatternConstraint)constraint, parameter);
-                        }
-
-                     }
-                }
-
+                var parameter = createMetadataParameter(metadataAttribute, parameterUsageName, description, dataTypeManager);
                 if (parameter != null)
                 {
-                    createdParametersDic.Add(parameter.Id, parameter.Name);
+                    // if not exist then create in db
+                    if (parameter.Id == 0)
+                    {
+                        // create
+                        parameter = metadataAttributeManager.Create(parameter);
 
-                    // create parameter Usage beweteen MetadataAttribute and Parameter
-                    metadataAttributeManager.AddParameterUsage(metadataAttribute, parameter);
+                        constraints = convertToConstraints(x.Content, parameter);
+                        parameter.Constraints = constraints;
+
+                        createdParametersDic.Add(parameter.Id, parameter.Name);
+                    }
+
+                    if (parameter != null)
+                    {
+                        // create parameter Usage beweteen MetadataAttribute and Parameter
+                        metadataAttributeManager.AddParameterUsage(metadataAttribute, parameter);
+                    }
                 }
+
             }
-            
 
             return null;
         }
-        private MetadataParameter createMetadataParameter(MetadataAttribute metadataAttribute, string name, DataTypeManager dataTypeManager)
+        private MetadataParameter createMetadataParameter(MetadataAttribute metadataAttribute, string name,string description, DataTypeManager dataTypeManager)
         {
             if (string.IsNullOrEmpty(name)) return null;
 
@@ -1683,8 +1694,9 @@ namespace BExIS.Xml.Helpers.Mapping
                 {
                     ShortName = name,
                     Name = name,
-                    Description = "",
-                    DataType = dt1
+                    Description = description,
+                    DataType = dt1,
+                   
                 };
 
             }
@@ -1943,20 +1955,15 @@ namespace BExIS.Xml.Helpers.Mapping
 
         private MetadataParameter getExistingMetadataParameter(string name)
         {
-            MetadataAttributeManager metadataAttributeManager = new MetadataAttributeManager();
-
-            try
+            using(MetadataAttributeManager metadataAttributeManager = new MetadataAttributeManager())
             {
-                if (createdCompoundsDic.ContainsValue(name))
+                if (createdParametersDic.ContainsValue(name))
                 {
                     long id = createdParametersDic.Where(k => k.Value.Equals(name)).FirstOrDefault().Key;
                     return metadataAttributeManager.MetadataParameterRepo.Get(id);
                 }
                 return null;
-            }
-            finally
-            {
-                metadataAttributeManager.Dispose();
+   
             }
         }
 
@@ -2089,7 +2096,7 @@ namespace BExIS.Xml.Helpers.Mapping
 
         #endregion helper functions
 
-        private List<Constraint> ConvertToConstraints(XmlSchemaObject restriction, MetadataAttribute attr)
+        private List<Constraint> convertToConstraints(XmlSchemaObject restriction, MetadataAttribute attr)
         {
 
             List<Constraint> constraints = new List<Constraint>();
@@ -2118,7 +2125,7 @@ namespace BExIS.Xml.Helpers.Mapping
                     {
                         foreach (XmlSchemaObject facet in simpleTypeRestriction.Facets)
                         {
-                            Constraint c = ConvertFacetToConstraint(facet, attr, constraints);
+                            Constraint c = convertFacetToConstraint(facet, attr, constraints);
                             if (c != null)
                                 constraints.Add(c);
                         }
@@ -2150,7 +2157,7 @@ namespace BExIS.Xml.Helpers.Mapping
                     {
                         foreach (XmlSchemaObject facet in simpleContentRestriction.Facets)
                         {
-                            Constraint c = ConvertFacetToConstraint(facet, attr, constraints);
+                            Constraint c = convertFacetToConstraint(facet, attr, constraints);
                             if (c != null)
                                 constraints.Add(c);
                         }
@@ -2166,7 +2173,7 @@ namespace BExIS.Xml.Helpers.Mapping
         /// </summary>
         /// <param name="facet"></param>
         /// <returns></returns>
-        private Constraint ConvertFacetToConstraint(XmlSchemaObject facet, MetadataAttribute attr, List<Constraint> constraints)
+        private Constraint convertFacetToConstraint(XmlSchemaObject facet, MetadataAttribute attr, List<Constraint> constraints)
         {
             DataContainerManager dataContainerManager = new DataContainerManager();
             try

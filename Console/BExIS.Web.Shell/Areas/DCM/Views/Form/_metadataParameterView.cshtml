@@ -1,0 +1,70 @@
+﻿@model BExIS.Modules.Dcm.UI.Models.Metadata.MetadataParameterModel
+@using BExIS.Modules.Dcm.UI.Models
+@using BExIS.Utils.WebHelpers
+@using Telerik.Web.Mvc.UI
+@using System.Text.RegularExpressions
+@{ 
+    string id = Model.Id + "_" + Model.Parent.Id + "_" + Model.Number + "_" + Model.ParentModelNumber + "_" + Model.NumberOfSourceInPackage + "_" + Model.ParentStepId;
+    string idByXpath = ((string)ViewData["Xpath"]).Replace("//", "_").Replace('[', '_').Replace(']', '_') + Model.DisplayName + "_" + Model.NumberOfSourceInPackage;  // Replace special character by underscore
+    string xpath = ((string)ViewData["Xpath"]) + "//" + Model.DisplayName + "[1]//" + Model.MetadataParameterName + "[" + Model.NumberOfSourceInPackage + "]";
+    string idInput = id + "_Input";
+
+    string displayName = "";
+
+    // Add before every uppercase word empty space (e.g. LastNameTEST -> Last Name TEST)
+    displayName = Regex.Replace(Model.DisplayName, "((?<=[a-z])[A-Z])", " $1");
+
+    // split at " "
+    string[] wordList = displayName.Split(new char[0]);
+
+    // lowercase all words, except of uppercase abbreviations (e.g. URL)
+    for (int i = 0; i < wordList.Length; i++)
+    {
+        if (wordList[i].ToUpper() != wordList[i])
+        {
+            wordList[i] = wordList[i].ToLower();
+        }
+    }
+
+    displayName = String.Join(" ", wordList);
+
+    // Make first char uppercase
+    displayName = char.ToUpper(displayName[0]) + displayName.Substring(1).Replace("_", " ");
+
+
+}
+
+
+
+    <div class="parameter-label">
+        @displayName
+    </div>
+    <div class="paremeter-input">
+
+
+        @if (Model.DomainList.Count > 0) // dropdown
+        {
+            @(Html.Telerik().DropDownList()
+        .Name(@idInput)
+        .Placeholder("Please select")
+        .HtmlAttributes(new { idbyxpath = @idByXpath, PackageId = @Model.Parent.Id, @class = "bx-dropdown" })
+        .ClientEvents(events => events.OnChange("OnChangeDropDown"))
+        .BindTo(new SelectList(Model.DomainList, Model.Value)))
+        }
+        else // input
+        {
+            string value = "";
+            <input class="bx-input " id="@idInput" idbyxpath="@idByXpath" name="@idInput" title="" value="@value" xpath="@xpath">
+        }
+
+        @if (!string.IsNullOrEmpty(Model.Discription))
+        {
+            
+        }
+    </div>
+    <div>
+        <button type="button" title="@Html.Raw(Regex.Replace(Model.Discription, "<(.|\\n)*?>", string.Empty))" class="bx-function bx-disabled bx-info fa fa-info" onclick="showHelp('help_@idInput');"></button>
+    </div>
+
+
+
