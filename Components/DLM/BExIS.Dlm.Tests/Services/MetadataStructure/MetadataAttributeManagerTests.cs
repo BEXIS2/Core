@@ -30,6 +30,8 @@ namespace BExIS.Dlm.Tests.Services.Metadata
         [Test()]
         public void CreateMetadataParameter_WithDomainContraint_returnMetadataParameter()
         {
+            MetadataParameter metadataParameter = new MetadataParameter();
+
             using (var metadataAttributeManager = new MetadataAttributeManager())
             using (var dataTypeManager = new DataTypeManager())
             {
@@ -42,7 +44,7 @@ namespace BExIS.Dlm.Tests.Services.Metadata
                 DomainConstraint constraint = new DomainConstraint();
                 constraint.Items.Add(new DomainItem() { Key = "test_key", Value="test_value" });
 
-                MetadataParameter metadataParameter = new MetadataParameter();
+                
                 metadataParameter.ShortName = "test";
                 metadataParameter.Name = "test";
                 metadataParameter.Description ="test";
@@ -53,17 +55,25 @@ namespace BExIS.Dlm.Tests.Services.Metadata
 
                 metadataAttributeManager.AddConstraint(constraint, metadataParameter);
 
-                metadataParameter = metadataAttributeManager.MetadataParameterRepo.Get(metadataParameter.Id);
+               
 
+
+               
+            }
+
+            using (var metadataAttributeManager = new MetadataAttributeManager())
+            using (var dataTypeManager = new DataTypeManager())
+            {
+                metadataParameter = metadataAttributeManager.MetadataParameterRepo.Get(metadataParameter.Id);
 
                 // Assert
                 Assert.IsNotNull(metadataParameter);
-                Assert.That(metadataParameter.Id>0);
+                Assert.That(metadataParameter.Id > 0);
 
-                Assert.That(metadataParameter.Constraints.Count>0);
-                Assert.That(metadataParameter.Constraints.First().Id>0);
+                Assert.That(metadataParameter.Constraints.Count > 0);
+                Assert.That(metadataParameter.Constraints.First().Id > 0);
             }
-               
+
         }
 
         [Test()]

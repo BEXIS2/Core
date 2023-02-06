@@ -185,7 +185,6 @@ namespace BExIS.Dlm.Services.MetadataStructure
             if(entity.DataType == null) throw new ArgumentNullException(nameof(entity.DataType), "data type of parameter is null.");
             Contract.Ensures(Contract.Result<MetadataCompoundAttribute>() != null && Contract.Result<MetadataCompoundAttribute>().Id >= 0);
 
-
             using (IUnitOfWork uow = this.GetUnitOfWork())
             {
                 IRepository<MetadataParameter> repo = uow.GetRepository<MetadataParameter>();
@@ -324,23 +323,14 @@ namespace BExIS.Dlm.Services.MetadataStructure
                 attributesRepo.Reload(attribute);
                 attributesRepo.LoadIfNot(attribute.MetadataParameterUsages);
 
-                int count = 0;
-                try
-                {
-                    count = (from v in attribute.MetadataParameterUsages
-                             where v.Member.Id.Equals(parameter.Id)
-                             select v
-                             )
-                             .Count();
-                }
-                catch { }
+
 
                 MetadataParameterUsage usage = new MetadataParameterUsage()
                 {
                     Master = attribute,
                     Member = parameter,
                     // if there is no label provided, use the attribute name and a sequence number calculated by the number of occurrences of that attribute in the current structure
-                    Label = !string.IsNullOrWhiteSpace(label) ? label : (count <= 0 ? attribute.Name : string.Format("{0} ({1})", attribute.Name, count)),
+                    Label = parameter.Name,
                     Description = description
                 };
 
@@ -351,6 +341,20 @@ namespace BExIS.Dlm.Services.MetadataStructure
                 uow.Commit();
 
                 return (usage);
+            }
+        }
+
+        public MetadataParameter GetParameter(long id)
+        {
+            using (IUnitOfWork uow = this.GetUnitOfWork())
+            {
+                IRepository<MetadataParameter> parameters = uow.GetRepository<MetadataParameter>();
+                IRepository<Constraint> constraints = uow.GetRepository<Constraint>();
+
+                var parameter = parameters.Get(id);
+                parameter.Constraints = constraints.Query(c => c.DataContainer.Id.Equals(id)).ToList();
+
+                return parameter;
             }
         }
 

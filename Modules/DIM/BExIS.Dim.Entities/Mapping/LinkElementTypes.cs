@@ -81,7 +81,8 @@
         Entity = 14,
         MappingConcept = 15,
         MappingKey = 16,
-        Default = 17
+        Default = 17,
+        MetadataParameterUsage = 18
     }
 
     public class LinkElementMetadataStructure : LinkElement { }
