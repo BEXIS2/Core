@@ -85,7 +85,11 @@
     // check global locked
     if (ViewData.Keys.Contains("Locked")) { locked = (bool)ViewData["Locked"]; }
     // check attr locked
-    if (!locked && Model.Locked) { locked = Model.Locked; }
+    if (!locked && Model.Locked) {
+        locked = Model.Locked;
+        ViewData["locked"] = Model.Locked;
+
+    }
 
     lockedClass = "bx-disabled";
 }

@@ -30,40 +30,54 @@
 
     // Make first char uppercase
     displayName = char.ToUpper(displayName[0]) + displayName.Substring(1).Replace("_", " ");
+    bool locked = true;
 
-
+    if (ViewData.ContainsKey("locked"))
+    {
+        locked = (bool)ViewData["locked"];
+    }
 }
 
 
 
-    <div class="parameter-label">
-        @displayName
+    <div class="bx-parameter-label">
+        @displayName (@locked)
     </div>
-    <div class="paremeter-input">
+    <div class="bx-paremeter-input">
 
+        @if (locked)
+        {
+            <div class="bx-input bx-disabled-parameter">
+                @if (Model.Value != null)
+                {
+                    @Html.DisplayWithLinksFor(m => m.Value)
+                }
+            </div>
+        }
+        else
+        {
+            if (Model.DomainList.Count > 0) // dropdown
+            {
+                @(Html.Telerik().DropDownList()
+                    .Name(@idInput)
+                    .Placeholder("Please select")
+                    .HtmlAttributes(new { idbyxpath = @idByXpath, PackageId = @Model.Parent.Id, @class = "bx-dropdown" })
+                    .ClientEvents(events => events.OnChange("OnChangeParameterDropDown"))
+                    .BindTo(new SelectList(Model.DomainList, Model.Value)))
+            }
+            else // input
+            {
+                string value = "";
+                <input class="bx-input" id="@idInput" idbyxpath="@idByXpath" name="@idInput" title="" value="@value" xpath="@xpath">
+            }
+        }
 
-        @if (Model.DomainList.Count > 0) // dropdown
-        {
-            @(Html.Telerik().DropDownList()
-        .Name(@idInput)
-        .Placeholder("Please select")
-        .HtmlAttributes(new { idbyxpath = @idByXpath, PackageId = @Model.Parent.Id, @class = "bx-dropdown" })
-        .ClientEvents(events => events.OnChange("OnChangeDropDown"))
-        .BindTo(new SelectList(Model.DomainList, Model.Value)))
-        }
-        else // input
-        {
-            string value = "";
-            <input class="bx-input " id="@idInput" idbyxpath="@idByXpath" name="@idInput" title="" value="@value" xpath="@xpath">
-        }
-
-        @if (!string.IsNullOrEmpty(Model.Discription))
-        {
-            
-        }
     </div>
     <div>
-        <button type="button" title="@Html.Raw(Regex.Replace(Model.Discription, "<(.|\\n)*?>", string.Empty))" class="bx-function bx-disabled bx-info fa fa-info" onclick="showHelp('help_@idInput');"></button>
+        @if (!string.IsNullOrEmpty(Model.Discription))
+        {
+            <button type="button" title="@Html.Raw(Regex.Replace(Model.Discription, "<(.|\\n)*?>", string.Empty))" class="bx-function bx-disabled bx-info fa fa-info" onclick="showHelp('help_@idInput');"></button>
+        }
     </div>
 
 

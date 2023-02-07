@@ -10,6 +10,9 @@ namespace BExIS.Modules.Dcm.UI.Models.Metadata
 {
     public class MetadataParameterModel
     {
+        /// <summary>
+        /// Parameter Usage Id
+        /// </summary>
         public long Id { get; set; }
         public long Number { get; set; }
         public long ParentModelNumber { get; set; }

@@ -240,7 +240,7 @@ function OnChangeTextInput(e, ui) {
         //console.log("number", number);
         //console.log("ParentModelNumber", ParentModelNumber);
         //console.log("ParentStepID", ParentStepID);
-    console.log("isMappingSelection", isMappingSelection);
+        console.log("isMappingSelection", isMappingSelection);
 
         // after close a autocomplete there is a id in the value, 
         // this should be removed before send to the server
@@ -431,6 +431,37 @@ function OnChangeDropDown(e) {
             $("#" + newId).replaceWith(response);
 
             updateHeader();
+
+        });
+};
+
+function OnChangeParameterDropDown(e) {
+    var idParentDiv = $(this).attr("id");
+    var substr = e.target.id.split('_');
+    var id = substr[0];
+    var parentid = substr[1];
+    var parentname = $("#" + e.id).attr("title");
+    var number = substr[2];
+    var ParentModelNumber = substr[3];
+    var ParentStepID = substr[5];
+
+    $.post("/DCM/Form/ValidateMetadataParameterUsage",
+        {
+            value: e.value,
+            id: id,
+            attrUsageId: parentid,
+            number: number,
+            parentModelNumber: ParentModelNumber,
+            ParentStepId: ParentStepID
+        },
+        function (response) {
+            var index = idParentDiv.lastIndexOf("_");
+            var newId = idParentDiv.substr(0, index);
+
+            $("#" + newId).replaceWith(response);
+
+            updateHeader();
+
         });
 };
 

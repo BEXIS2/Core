@@ -2360,20 +2360,6 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             return null;
         }
 
-        //private StepModelHelper updateStepModelHelper(StepModelHelper stepModelHelper)
-        //{
-        //    TaskManager = (CreateTaskmanager)Session["CreateDatasetTaskmanager"];
-        //    if (TaskManager.Bus.ContainsKey(CreateTaskmanager.METADATA_STEP_MODEL_HELPER))
-        //    {
-        //        var x = ((List<StepModelHelper>)TaskManager.Bus[CreateTaskmanager.METADATA_STEP_MODEL_HELPER]).Where(s => s.StepId.Equals(stepModelHelper.StepId)).FirstOrDefault();
-        //        x = stepModelHelper;
-
-        //        return x;
-        //    }
-
-        //    return null;
-        //}
-
         private bool IsImportAvavilable(long metadataStructureId)
         {
             return xmlDatasetHelper.HasExportInformation(metadataStructureId);
@@ -2808,6 +2794,23 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             metadataXml.Save(path);
         }
 
+        private void UpdateParameter(BaseUsage attribute, int number, object value, string parentXpath, KeyValuePair<string,string> parameter)
+        {
+            TaskManager = (CreateTaskmanager)Session["CreateDatasetTaskmanager"];
+            var metadataXml = getMetadata(TaskManager);
+            var xmlMetadataWriter = new XmlMetadataWriter(XmlNodeMode.xPath);
+
+            Dictionary<string, string> parameters = new Dictionary<string, string>();
+            parameters.Add(parameter.Key,parameter.Value);
+
+            metadataXml = xmlMetadataWriter.Update(metadataXml, attribute, number, null, metadataStructureUsageHelper.GetNameOfType(attribute), parentXpath, parameters);
+
+            TaskManager.Bus[CreateTaskmanager.METADATA_XML] = metadataXml;
+            // locat path
+            var path = Path.Combine(AppConfiguration.GetModuleWorkspacePath("DCM"), "metadataTemp.Xml");
+            metadataXml.Save(path);
+        }
+
         private void UpdateAttribute(BaseUsage parentUsage, int packageNumber, BaseUsage attribute, int number, object value, string parentXpath, Dictionary<string, string> xmlAttrs)
         {
             TaskManager = (CreateTaskmanager)Session["CreateDatasetTaskmanager"];
@@ -3014,6 +3017,51 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 stepModelHelper.Model.MetadataAttributeModels.Add(model);
                 return PartialView("_metadataAttributeView", model);
             }
+        }
+
+        [HttpPost]
+        public ActionResult ValidateMetadataParameterUsage(string value, int id, long attrUsageId, int number, int parentModelNumber, int parentStepId)
+        {
+            //delete all white spaces from start and end
+            value = value.Trim();
+
+            TaskManager = (CreateTaskmanager)Session["CreateDatasetTaskmanager"];
+            var stepModelHelper = GetStepModelhelper(parentStepId, TaskManager);
+
+            var ParentUsageId = stepModelHelper.UsageId;
+            var parentUsage = loadUsage(stepModelHelper.UsageId, stepModelHelper.UsageType);
+            var pNumber = stepModelHelper.Number;
+
+            metadataStructureUsageHelper = new MetadataStructureUsageHelper();
+
+            var metadataAttributeUsage = metadataStructureUsageHelper.GetChildren(parentUsage.Id, parentUsage.GetType()).Where(u => u.Id.Equals(attrUsageId)).FirstOrDefault();
+            var metadataParameterUsage = metadataStructureUsageHelper.GetParameters(attrUsageId, metadataAttributeUsage.GetType()).FirstOrDefault(p=>p.Id.Equals(id));
+
+            //UpdateXml
+            var metadataStructureId = Convert.ToInt64(TaskManager.Bus[CreateTaskmanager.METADATASTRUCTURE_ID]);
+            var model = FormHelper.CreateMetadataParameterModel(metadataParameterUsage as BaseUsage, metadataAttributeUsage, metadataStructureId, parentModelNumber, parentStepId);
+ 
+
+            //check if datatype is a datetime then check display pattern and manipulate the incoming string
+            if (model.SystemType.Equals(typeof(DateTime).Name))
+            {
+                if (!string.IsNullOrEmpty(model.DisplayPattern))
+                {
+                    var dt = DateTime.Parse(value);
+                    value = dt.ToString(model.DisplayPattern);
+                }
+            }
+
+            model.Value = value;
+            model.Number = number;
+
+            //create para
+            KeyValuePair<string, string> parameter = new KeyValuePair<string, string>(metadataParameterUsage.Label, value);
+            UpdateParameter(metadataAttributeUsage, number, value, stepModelHelper.XPath, parameter);
+
+            ViewData["Xpath"] = stepModelHelper.XPath; // set Xpath for idbyxapth
+
+            return PartialView("_metadataParameterView", model);
         }
 
         private List<Error> validateAttribute(MetadataAttributeModel aModel)
@@ -3396,6 +3444,12 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
                             #endregion entity mapping
 
+                            #region parameters
+
+
+
+                            #endregion
+
                             // if at least on item has a value, the parent should be activated
                             setStepModelActive(stepModelHelper);
                         }
@@ -3426,7 +3480,27 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                         if (i == numberOfSMM) newMetadataAttributeModel.last = true;
                         additionalyMetadataAttributeModel.Add(newMetadataAttributeModel);
                     }
+
+                    #region parameters
+                    // if a attribute as also parameter, try to get values from xml
+
+                    foreach (var parameterModel in simpleMetadataAttributeModel.Parameters)
+                    {
+                        string parameterName = parameterModel.DisplayName;
+                        if (simpleElement.HasAttributes)
+                        { 
+                            var xParameter = simpleElement.Attribute(parameterName);
+                            if(xParameter!=null)
+                                parameterModel.Value = xParameter.Value;
+                        }
+                    }
+
+
+                    #endregion
                 }
+
+
+
             }
 
             foreach (var item in additionalyMetadataAttributeModel)

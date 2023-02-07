@@ -41,7 +41,8 @@ namespace BExIS.Modules.Dcm.UI.Models.Metadata
                         {
                             if (metadataStructureUsageHelper.IsSimple(usage))
                             {
-                                MetadataAttributeModels.Add(FormHelper.CreateMetadataAttributeModel(usage, mau, metadataStructureId, Number, stepId));
+                                var metadataAtrributeModel = FormHelper.CreateMetadataAttributeModel(usage, mau, metadataStructureId, Number, stepId);
+                                MetadataAttributeModels.Add(metadataAtrributeModel);
                             }
                         }
                     }
@@ -61,12 +62,15 @@ namespace BExIS.Modules.Dcm.UI.Models.Metadata
                         {
                             if (metadataStructureUsageHelper.IsSimple(usage))
                             {
-                                MetadataAttributeModels.Add(FormHelper.CreateMetadataAttributeModel(usage, mnau, metadataStructureId, Number, stepId));
+                                var metadataAtrributeModel = FormHelper.CreateMetadataAttributeModel(usage, mnau, metadataStructureId, Number, stepId);
+                                MetadataAttributeModels.Add(metadataAtrributeModel);
+
                             }
                         }
                     }
                 }
             }
         }
+
     }
 }
