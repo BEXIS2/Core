@@ -43,5 +43,10 @@ namespace BExIS.Dlm.Entities.MetadataStructure
 
         #endregion
 
+        public MetadataParameterUsage()
+        {
+            DefaultValue = "";
+        }
+
     }
 }

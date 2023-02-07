@@ -188,7 +188,7 @@ namespace BExIS.Modules.Dcm.UI.Helpers
             };
         }
 
-        public static MetadataParameterModel CreateMetadataParameterModel(BaseUsage current, BaseUsage parent, long metadataStructureId, int packageModelNumber, long parentStepId)
+        public static MetadataParameterModel CreateMetadataParameterModel(BaseUsage parameter, BaseUsage attribute, long metadataStructureId, int packageModelNumber, long parentStepId)
         {
             using (var metadataAttributeManager = new MetadataAttributeManager())
             {
@@ -199,9 +199,9 @@ namespace BExIS.Modules.Dcm.UI.Helpers
                 double upperBoundary = 0;
 
 
-                if (current is MetadataParameterUsage)
+                if (parameter is MetadataParameterUsage)
                 {
-                    MetadataParameterUsage mpu = (MetadataParameterUsage)current;
+                    MetadataParameterUsage mpu = (MetadataParameterUsage)parameter;
                     metadataParameter = metadataAttributeManager.GetParameter(mpu.Member.Id);
 
                     if (metadataParameter.Constraints.Where(c => (c is DomainConstraint)).Count() > 0)
@@ -233,15 +233,16 @@ namespace BExIS.Modules.Dcm.UI.Helpers
 
                     return new MetadataParameterModel
                     {
-                        Id = metadataParameter.Id,
+                        Id = parameter.Id,
                         Number = 1,
                         ParentModelNumber = packageModelNumber,
                         MetadataStructureId = metadataStructureId,
-                        MetadataParameterName = metadataParameter.Name,
-                        Parent = parent,
-                        Source = current,
-                        DisplayName = metadataParameter.Name,
-                        Discription = metadataParameter.Description,
+                        MetadataParameterName = parameter.Label,
+                        MetadataParameterId = metadataParameter.Id,
+                        Parent = attribute,
+                        Source = parameter,
+                        DisplayName = parameter.Label,
+                        Discription = parameter.Description,
                         ConstraintDescription = constraintsDescription,
                         DataType = metadataParameter.DataType.Name,
                         SystemType = metadataParameter.DataType.SystemType,
@@ -250,11 +251,9 @@ namespace BExIS.Modules.Dcm.UI.Helpers
                         //MaxCardinality = metadataParameter.MaxCardinality,
                         NumberOfSourceInPackage = 1,
                         DomainList = domainConstraintList,
-
-                        MetadataParameterId = metadataParameter.Id,
                         ParentStepId = parentStepId,
                         LowerBoundary = lowerBoundary,
-                        UpperBoundary = upperBoundary,
+                        UpperBoundary = upperBoundary
                     };
                 }
 
