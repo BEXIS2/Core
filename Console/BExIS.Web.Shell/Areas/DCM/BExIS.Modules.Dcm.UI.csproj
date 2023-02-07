@@ -249,6 +249,7 @@
     <Compile Include="Models\Metadata\MetadataInstanceModel.cs" />
     <Compile Include="Models\Metadata\MetadataPackageModel.cs" />
     <Compile Include="Models\Metadata\MetadataParameterModel.cs" />
+    <Compile Include="Models\Metadata\UIComponentModel.cs" />
     <Compile Include="Models\PrimaryKeyViewModel.cs" />
     <Compile Include="Models\Push\SendBigFilesToServerModel.cs" />
     <Compile Include="Models\SelectAreasModel.cs" />
@@ -586,6 +587,12 @@
     <None Include="Properties\PublishProfiles\BexisServer_test.pubxml" />
     <None Include="Properties\PublishProfiles\FolderProfile.pubxml" />
     <Content Include="Views\Form\_metadataParameterView.cshtml" />
+    <Content Include="Views\Form\_integer.cshtml" />
+    <Content Include="Views\Form\_displayonly.cshtml" />
+    <Content Include="Views\Form\_bool.cshtml" />
+    <Content Include="Views\Form\_number.cshtml" />
+    <Content Include="Views\Form\_date.cshtml" />
+    <Content Include="Views\Form\_list.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

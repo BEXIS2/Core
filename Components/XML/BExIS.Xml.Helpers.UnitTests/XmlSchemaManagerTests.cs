@@ -35,7 +35,7 @@ namespace BExIS.Xml.Helpers.UnitTests
             // get schame path
             string path = AppDomain.CurrentDomain.BaseDirectory;
             string dic = Path.Combine(path, "App_Data/datacite/");
-            _schemaPath = Path.Combine(path, dic, "metadata.xsd");
+            _schemaPath = Path.Combine(path, dic, "metadata - Kopie.xsd");
 
             if (!File.Exists(_schemaPath))
             {
