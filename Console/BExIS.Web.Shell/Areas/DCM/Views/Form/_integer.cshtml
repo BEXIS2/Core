@@ -1,0 +1,76 @@
+﻿@model BExIS.Modules.Dcm.UI.Models.Metadata.UIComponentModel
+@using Telerik.Web.Mvc.UI
+@using BExIS.Modules.Dcm.UI.Models.Metadata
+
+@{
+    int? value = null;
+    if (Model.Value != null)
+    {
+        value = Convert.ToInt32(Model.Value);
+    }
+
+    int minValue = 0;
+    int maxValue = Int32.MaxValue;
+
+    if (Model.SystemType.Equals(TypeCode.Int16.ToString()))
+    {
+        minValue = Int16.MinValue;
+        maxValue = Int16.MaxValue;
+    }
+
+    if (Model.SystemType.Equals(TypeCode.Int32.ToString()))
+    {
+        minValue = Int32.MinValue;
+        maxValue = Int32.MaxValue;
+    }
+
+    if (Model.SystemType.Equals(TypeCode.Int64.ToString()))
+    {
+        minValue = Int32.MinValue; // Telerik function does not accept long
+        maxValue = Int32.MaxValue; // Telerik function does not accept long
+    }
+
+    if (Model.SystemType.Equals(TypeCode.UInt16.ToString()))
+    {
+        minValue = 0;
+        maxValue = Int16.MaxValue;
+    }
+
+    if (Model.SystemType.Equals(TypeCode.UInt32.ToString()))
+    {
+        minValue = 0;
+        maxValue = Int32.MaxValue;
+    }
+
+    if (Model.SystemType.Equals(TypeCode.UInt64.ToString()))
+    {
+        minValue = 0;
+        maxValue = Int32.MaxValue; // Telerik function does not accept long
+    }
+
+    string action = "OnChangeNumbers";
+    if (Model.Type.Equals(MetadataAttrType.Parameter)) { action = "OnChangeParameterNumbers"; }
+
+}
+
+@if (!Model.Locked)
+{
+
+    @(Html.Telerik().IntegerTextBox()
+                    .Name(Model.IdInput)
+                    .MinValue(minValue)
+                    .MaxValue(maxValue)
+                    .Value(value)
+                    .ClientEvents(events => events
+                    .OnChange(action))
+                    .InputHtmlAttributes(new {
+                        idbyxpath = @Model.IdByXpath,
+                        PackageId = @Model.ParentId,
+                        Title = @Model.ErrorMessage,
+                        @class = "bx-input bx-metadataFormTextInput " + @Model.ErrorClass })
+                        )
+}
+else
+{
+    @Html.Partial("_displayonly", Model)
+}

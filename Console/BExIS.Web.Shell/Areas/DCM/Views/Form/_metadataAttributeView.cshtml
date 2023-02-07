@@ -1,8 +1,8 @@
 ﻿@model BExIS.Modules.Dcm.UI.Models.Metadata.MetadataAttributeModel
-@using BExIS.Modules.Dcm.UI.Models
 @using BExIS.Utils.WebHelpers
 @using Telerik.Web.Mvc.UI
 @using System.Text.RegularExpressions
+@using BExIS.Modules.Dcm.UI.Models.Metadata
 
 @{
     string id = Model.Id + "_" + Model.Parent.Id + "_" + Model.Number + "_" + Model.ParentModelNumber + "_" + Model.NumberOfSourceInPackage + "_" + Model.ParentStepId;
@@ -85,7 +85,8 @@
     // check global locked
     if (ViewData.Keys.Contains("Locked")) { locked = (bool)ViewData["Locked"]; }
     // check attr locked
-    if (!locked && Model.Locked) {
+    if (!locked && Model.Locked)
+    {
         locked = Model.Locked;
         ViewData["locked"] = Model.Locked;
 
@@ -120,6 +121,25 @@
     }
 }
 
+@{
+    UIComponentModel uiComponentModel = new UIComponentModel(MetadataAttrType.Attribute)
+    {
+        IdByXpath = idByXpath,
+        IdInput = idInput,
+        Value = Model.Value,
+        SystemType = Model.SystemType,
+        Locked = locked,
+        DisplayName = displayName,
+        DomainList = Model.DomainList,
+        ErrorClass =errorClass,
+        ErrorMessage = errorMessage,
+        DisplayPattern = Model.DisplayPattern,
+        Discription = Model.Discription,
+        ParentId = Model.Parent.Id
+    };
+
+}
+
 <div id="@id" class="metadataAttributeContent" onload="metadataAttributeOnLoad(this, @hasErrors)">
 
     @if (@Model != null && !(!showOptional && Model.IsEmpty && (Model.MinCardinality == 0) && locked))
@@ -148,74 +168,67 @@
                 @*Empty = @Model.IsEmpty.ToString();*@
             </td>
             <td class="metadataAttributeInput">
-                @if (Model.SystemType.Equals(TypeCode.String.ToString()))
+
+                @if (Model.DomainList.Count > 0)
                 {
-                    // Math.Abs(Model.UpperBoundary - 1.7976931348623157E+308) < 0.11 check if upper boundary is set to default value (1.7976931348623157E+308) to exclude from rule for textareas which requires an active set maximum length
-                    if (Model.DataType.ToLower().Equals("text") ||
-                        (Model.UpperBoundary > 256 && !(Math.Abs(Model.UpperBoundary - 1.7976931348623157E+308) < 0.11)) ||
-                        (Model.DataType.ToLower().Equals("string") &&
-                         Model.Value != null &&
-                         Model.Value.ToString().Length >= 60
-                         )
-                    )
+                    @Html.Partial("_list", uiComponentModel)
+                }
+                else
+                {
+                    if (Model.SystemType.Equals(TypeCode.String.ToString()))
                     {
-                        if (!locked)
+                        // Math.Abs(Model.UpperBoundary - 1.7976931348623157E+308) < 0.11 check if upper boundary is set to default value (1.7976931348623157E+308) to exclude from rule for textareas which requires an active set maximum length
+                        if (Model.DataType.ToLower().Equals("text") ||
+                            (Model.UpperBoundary > 256 && !(Math.Abs(Model.UpperBoundary - 1.7976931348623157E+308) < 0.11)) ||
+                            (Model.DataType.ToLower().Equals("string") &&
+                             Model.Value != null &&
+                             Model.Value.ToString().Length >= 60
+                             )
+                        )
                         {
-                            if (Model.DomainList.Count == 0)
+                            if (!locked)
                             {
                                 @Html.TextAreaFor(m => m.Value,
-                                    new
-                                         {
-                                             OnChange = "OnChange(this)",
-                                        Name = @displayName,
-                                        Id = @idInput,
-                                        idbyxpath = @idByXpath,
-                                        PackageId = @Model.Parent.Id,
-                                        Title = @errorMessage,
-                                        @class = "bx-input bx-metadataFormTextInput " + @errorClass,
+                                        new
+                                        {
+                                            OnChange = "OnChange(this)",
+                                            Name = @displayName,
+                                            Id = @idInput,
+                                            idbyxpath = @idByXpath,
+                                            PackageId = @Model.Parent.Id,
+                                            Title = @errorMessage,
+                                            @class = "bx-input bx-metadataFormTextInput " + @errorClass,
 
-                                             OnLoad = "OnKeyUpTextInput(this)"
-                                    })
+                                            OnLoad = "OnKeyUpTextInput(this)"
+                                        })
+
                             }
                             else
                             {
-                                @(Html.Telerik().DropDownList()
-                                            .Placeholder("Please select")
-                                            .Name(@idInput)
-                                            .HtmlAttributes(new { idbyxpath = @idByXpath, PackageId = @Model.Parent.Id, Title = @errorMessage, @class = "bx-dropdown " + @errorClass })
-                                            .ClientEvents(events => events.OnChange("OnChangeDropDown"))
-                                            .BindTo(new SelectList(Model.DomainList, Model.Value)))
-                            }
-                        }
-                        else
-                        {
 
-                            //@Html.TextAreaFor(m => m.Value, new { disabled = "disabled", Name = @displayName, Id = @idInput, PackageId = @Model.Parent.Id, Title = @errorMessage, @class = "bx-input bx-metadataFormTextInput " + @errorClass + " " + lockedClass })
-                            if (Model.Value == null)
-                            {
-                                <div class="bx-input bx-metadataFormTextInput bx-disabled"></div>
+                                //@Html.TextAreaFor(m => m.Value, new { disabled = "disabled", Name = @displayName, Id = @idInput, PackageId = @Model.Parent.Id, Title = @errorMessage, @class = "bx-input bx-metadataFormTextInput " + @errorClass + " " + lockedClass })
+                                if (Model.Value == null)
+                                {
+                                    <div class="bx-input bx-metadataFormTextInput bx-disabled"></div>
+                                }
+                                else
+                                {
+                                    //Attention: leave the below code in one line to avoid a leading emtpy line
+                                    <div class="bx-metadataForm-textArea-display">
+                                        @if (Model.Value != null)
+                                        {@Html.DisplayWithLinksFor(m => m.Value)}
+                                    </div>
+                                }
                             }
-                            else
-                            {
-                                //Attention: leave the below code in one line to avoid a leading emtpy line
-                                <div class="bx-metadataForm-textArea-display">
-                                    @if (Model.Value != null)
-                                    {@Html.DisplayWithLinksFor(m => m.Value)}
-                                </div>
-                            }
+
                         }
 
-                    }
-
-                    if (Model.DataType.ToLower().Equals("string") &&
-                        (Model.UpperBoundary < 256 || (Math.Abs(Model.UpperBoundary - 1.7976931348623157E+308) < 0.11)) &&
-                        ((Model.Value != null && Model.Value.ToString().Length < 60) ||
-                        Model.Value == null))
-                    {
-                        if (!locked)
+                        if (Model.DataType.ToLower().Equals("string") &&
+                            (Model.UpperBoundary < 256 || (Math.Abs(Model.UpperBoundary - 1.7976931348623157E+308) < 0.11)) &&
+                            ((Model.Value != null && Model.Value.ToString().Length < 60) ||
+                            Model.Value == null))
                         {
-
-                            if (Model.DomainList.Count == 0)
+                            if (!locked)
                             {
                                 string value = "";
                                 if (@Model.Value != null)
@@ -310,74 +323,45 @@
                                      });
                                 </script>
 
-
-
                             }
                             else
                             {
-                                @(Html.Telerik().DropDownList()
-                                            .Name(@idInput)
-                                            .Placeholder("Please select")
-                                            .HtmlAttributes(new { idbyxpath = @idByXpath, PackageId = @Model.Parent.Id, Title = @errorMessage, @class = "bx-dropdown " + @errorClass })
-                                            .ClientEvents(events => events.OnChange("OnChangeDropDown"))
-                                            .BindTo(new SelectList(Model.DomainList, Model.Value)))
-                            }
-                        }
-                        else
-                        {
-                            //@Html.TextBoxFor(m => m.Value, new {disabled = "disabled", Name = @displayName, Id = @idInput, PackageId = @Model.Parent.Id, Title = @errorMessage, @class = "bx-input bx-metadataFormTextInput " + @errorClass + " " + lockedClass})
 
-                            <div class="bx-input bx-metadataFormTextInput  bx-disabled" style="padding-top: 4px;">
-                                @if (Model.Value != null)
-                                {
-                                    if (Model.EntityMappingExist && !string.IsNullOrEmpty(Model.EntityUrl))
+                                <div class="bx-input bx-metadataFormTextInput  bx-disabled" style="padding-top: 4px;">
+                                    @if (Model.Value != null)
                                     {
-                                        <a href="@Model.EntityUrl" target="_blank">@Model.Value</a>
+                                        if (Model.EntityMappingExist && !string.IsNullOrEmpty(Model.EntityUrl))
+                                        {
+                                            <a href="@Model.EntityUrl" target="_blank">@Model.Value</a>
+                                        }
+                                        else if (displayName == "Email")
+                                        {
+                                            string value = Model.Value.ToString();
+                                            string[] email_parts = value.Split('@');
+                                            value = String.Join("<span>werwe</span>", email_parts);
+                                            @email_parts[0]<span>&#x40;</span><!--<span>werwe</span>-->@email_parts[1] }
+                                        else
+                                        {
+                                            @Html.DisplayWithLinksFor(m => m.Value)
+                                        }
                                     }
-                                    else if (displayName == "Email")
-                                    {
-                                        string value = Model.Value.ToString();
-                                        string[] email_parts = value.Split('@');
-                                        value = String.Join("<span>werwe</span>", email_parts);
-                                        @email_parts[0]<span>&#x40;</span><!--<span>werwe</span>-->@email_parts[1] }
-                                    else
-                                    {
-                                        @Html.DisplayWithLinksFor(m => m.Value)
-                                    }
-                                }
-                            </div>
+                                </div>
+
+                            }
 
                         }
 
                     }
-
                 }
 
                 @if (Model.SystemType.Equals(TypeCode.Boolean.ToString()))
                 {
 
-                    bool value = false;//(bool?)Model.Value ?? false;
-                    try
-                    {
-                        value = Convert.ToBoolean(Model.Value);
-                    }
-                    catch
-                    {
-                        value = false;
-                    }
-
-                    if (!locked)
-                    {
-                        @Html.CheckBox(Model.DisplayName, value, new { idbyxpath = @idByXpath, OnClick = "OnChangeCheckBox(this)", Name = @displayName, Id = @idInput, PackageId = @Model.Parent.Id, Title = @errorMessage })
-                    }
-                    else
-                    {
-                        @Html.CheckBox(Model.DisplayName, value, new { idbyxpath = @idByXpath, OnClick = "OnChangeCheckBox(this)", disabled = "disabled", Name = @displayName, Id = @idInput, PackageId = @Model.Parent.Id, Title = @errorMessage })
-                    }
+                    @Html.Partial("_bool", uiComponentModel)
 
                 }
 
-                @if (Model.SystemType.Equals(TypeCode.Int32.ToString()) ||
+                @if(Model.SystemType.Equals(TypeCode.Int32.ToString()) ||
                     Model.SystemType.Equals(TypeCode.Int64.ToString()) ||
                     Model.SystemType.Equals(TypeCode.Int16.ToString()) ||
                     Model.SystemType.Equals(TypeCode.UInt16.ToString()) ||
@@ -386,69 +370,7 @@
 
                 )
                 {
-                    if (!locked)
-                    {
-
-                        int? value = null;
-                        if (Model.Value != null)
-                        {
-                            value = Convert.ToInt32(Model.Value);
-                        }
-
-                        int minValue = 0;
-                        int maxValue = Int32.MaxValue;
-
-                        if (Model.SystemType.Equals(TypeCode.Int16.ToString()))
-                        {
-                            minValue = Int16.MinValue;
-                            maxValue = Int16.MaxValue;
-                        }
-
-                        if (Model.SystemType.Equals(TypeCode.Int32.ToString()))
-                        {
-                            minValue = Int32.MinValue;
-                            maxValue = Int32.MaxValue;
-                        }
-
-                        if (Model.SystemType.Equals(TypeCode.Int64.ToString()))
-                        {
-                            minValue = Int32.MinValue; // Telerik function does not accept long
-                            maxValue = Int32.MaxValue; // Telerik function does not accept long
-                        }
-
-                        if (Model.SystemType.Equals(TypeCode.UInt16.ToString()))
-                        {
-                            minValue = 0;
-                            maxValue = Int16.MaxValue;
-                        }
-
-                        if (Model.SystemType.Equals(TypeCode.UInt32.ToString()))
-                        {
-                            minValue = 0;
-                            maxValue = Int32.MaxValue;
-                        }
-
-                        if (Model.SystemType.Equals(TypeCode.UInt64.ToString()))
-                        {
-                            minValue = 0;
-                            maxValue = Int32.MaxValue; // Telerik function does not accept long
-                        }
-
-                        @(Html.Telerik().IntegerTextBox()
-                                                                            .Name(idInput)
-                                                                            .MinValue(minValue)
-                                                                            .MaxValue(maxValue)
-                                                                            .Value(value)
-                                                                            .ClientEvents(events => events
-                                                                            .OnChange("OnChangeNumbers"))
-                                                                            .InputHtmlAttributes(new { idbyxpath = @idByXpath, PackageId = @Model.Parent.Id, Title = @errorMessage, @class = "bx-input bx-metadataFormTextInput " + @errorClass })
-                            )
-                    }
-                    else
-                    {
-
-                        @Html.TextBoxFor(m => m.Value, new { idbyxpath = @idByXpath, disabled = "disabled", Name = @displayName, Id = @idInput, PackageId = @Model.Parent.Id, Title = @errorMessage, @class = "bx-input bx-metadataFormTextInput " + @errorClass + " " + lockedClass })
-                    }
+                    @Html.Partial("_integer", uiComponentModel)
                 }
 
                 @if (Model.SystemType.Equals(TypeCode.Decimal.ToString()) ||
@@ -456,56 +378,15 @@
                 Model.SystemType.Equals(TypeCode.Single.ToString())
                 )
                 {
-                    if (!locked)
-                    {
-                        @Html.TextBoxFor(m => m.Value, new { idbyxpath = @idByXpath, OnChange = "OnChange(this)", Name = @displayName, Id = @idInput, PackageId = @Model.Parent.Id, Title = @errorMessage, @class = "bx-input bx-metadataFormTextInput " + @errorClass })
-                    }
-                    else
-                    {
-                        @Html.TextBoxFor(m => m.Value, new { idbyxpath = @idByXpath, OnChange = "OnChange(this)", disabled = "disabled", Name = @displayName, Id = @idInput, PackageId = @Model.Parent.Id, Title = @errorMessage, @class = "bx-input bx-metadataFormTextInput " + @errorClass })
-                    }
+                    @Html.Partial("_number", uiComponentModel)
                 }
 
                 @if (Model.SystemType.Equals(TypeCode.DateTime.ToString()))
                 {
-                    if (!locked)
-                    {
-                        string value = "";
-                        if (Model.Value != null)
-                        {
-                            value = Model.Value.ToString();
-                        }
-                        else
-                        {
-                            value = "";//@defaultDate.ToString();
-                        }
-                        string format = Model.DisplayPattern;
-
-                        if (string.IsNullOrEmpty(format))
-                        {
-                            format = "yyyy-MM-dd";
-                        }
-
-                        @(Html.Telerik().DatePicker()
-                                    .Name(@idInput)
-                                    .ShowButton(true)
-                                    .TodayButton("d")
-                                    .OpenOnFocus(true)
-                                    .Format(format)
-                                    .Value(value)
-                                    .ClientEvents(events => events
-                                        .OnChange("OnChangeDatePicker"))
-                                    .InputHtmlAttributes(new { idbyxpath = @idByXpath, Title = @errorMessage, @class = @errorClass })
-                            )
-                    }
-                    else
-                    {
-                        @Html.TextBoxFor(m => m.Value, new { idbyxpath = @idByXpath, disabled = "disabled", Name = @displayName, Id = @idInput, PackageId = @Model.Parent.Id, @class = "bx-input bx-metadataFormTextInput " + lockedClass })
-                    }
+                    @Html.Partial("_date", uiComponentModel)
                 }
             </td>
             <td class="metadataAttributeOption">
-
                 <table id="attributeOptionTable">
                     <tr>
                         <td>
@@ -561,11 +442,10 @@
                 <td class="metadataAttributeInput">
                     @Html.Partial("_metadataParameterView", parameter)
                 </td>
+                <td></td>
             </tr>
         }
-
-
-        </table>
+    </table>
     }
 </div>
 

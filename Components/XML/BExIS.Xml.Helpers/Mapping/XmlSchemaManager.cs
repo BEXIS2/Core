@@ -1649,7 +1649,7 @@ namespace BExIS.Xml.Helpers.Mapping
                 if(x.Annotation!= null) description = GetDescription(x.Annotation);
              
 
-                var parameter = createMetadataParameter(metadataAttribute, parameterUsageName, description, dataTypeManager);
+                var parameter = createMetadataParameter(metadataAttribute,  parameterUsageName, description, x.Datatype);
                 if (parameter != null)
                 {
                     // if not exist then create in db
@@ -1675,16 +1675,15 @@ namespace BExIS.Xml.Helpers.Mapping
 
             return null;
         }
-        private MetadataParameter createMetadataParameter(MetadataAttribute metadataAttribute, string name,string description, DataTypeManager dataTypeManager)
+        private MetadataParameter createMetadataParameter(MetadataAttribute metadataAttribute, string name,string description, XmlSchemaDatatype type)
         {
             if (string.IsNullOrEmpty(name)) return null;
+     
 
-            DataType dt1 = dataTypeManager.Repo.Get(p => p.Name.ToLower().Equals("string")).FirstOrDefault();
+            string datatype = type?.ValueType.Name;
+            string typeCodename = type?.TypeCode.ToString();
+            DataType dataType = GetDataType(datatype, typeCodename);
 
-            if (dt1 == null)
-            {
-                dt1 = dataTypeManager.Create("string", "A test String", System.TypeCode.String);
-            }
             MetadataParameter parameter = getExistingMetadataParameter(name); ;
 
             if(parameter == null)
@@ -1695,8 +1694,7 @@ namespace BExIS.Xml.Helpers.Mapping
                     ShortName = name,
                     Name = name,
                     Description = description,
-                    DataType = dt1,
-                   
+                    DataType = dataType,
                 };
 
             }
@@ -1989,6 +1987,9 @@ namespace BExIS.Xml.Helpers.Mapping
         // vielleicht besser mit festen datatypes im system
         private DataType GetDataType(string dataTypeAsString, string typeCodeName)
         {
+            // if nothing exist then use string as datatype
+            if (string.IsNullOrEmpty(dataTypeAsString) && string.IsNullOrEmpty(typeCodeName)) return GetDataType("string", "");
+
             DataTypeManager dataTypeManager = new DataTypeManager();
             try
             {

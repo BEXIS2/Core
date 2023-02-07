@@ -97,7 +97,7 @@ Green 05  #eff7f6
 }
 
 .bx-metadataFormTextInput {
-    width: 490px;
+    width: 100%;
     max-width: 490px;
 }
 
@@ -125,16 +125,16 @@ Green 05  #eff7f6
 }
 
 .bx-paremeter-input {
-    width: 400px;
-    padding-right:10px;
+    width: auto;
+    min-width: 50%;
+    max-width: 90%;
+    padding-right: 10px;
     float: left;
     /*border:ridge 1px yellow;*/
 }
 
 input:disabled, .bx-input.bx-disabled-parameter {
-    border-color: #afb0b1;
-    background-color: #f5f5f5;
-    color: #565655;
+
     padding-top: 5px;
 }
 

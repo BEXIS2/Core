@@ -1,0 +1,12 @@
+﻿@model BExIS.Modules.Dcm.UI.Models.Metadata.UIComponentModel
+
+
+@Html.TextBoxFor(m => m.Value, new { 
+    idbyxpath = @Model.IdByXpath, 
+    disabled = "disabled", 
+    Name = @Model.DisplayName, 
+    Id = @Model.IdInput, 
+    PackageId = @Model.ParentId, 
+    Title = @Model.ErrorMessage, 
+    @class = "bx-input bx-metadataFormTextInput " + Model.ErrorClass + " " + @Model.LockedClass })
+

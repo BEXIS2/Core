@@ -1,0 +1,17 @@
+﻿@model BExIS.Modules.Dcm.UI.Models.Metadata.UIComponentModel
+@using BExIS.Modules.Dcm.UI.Models.Metadata
+
+@{
+    string action = "OnChange(this)";
+    if (Model.Type.Equals(MetadataAttrType.Parameter)) { action = "OnChangeParameter(this)"; }
+
+}
+
+@if (!Model.Locked)
+{
+    @Html.TextBoxFor(m => m.Value, new { idbyxpath = @Model.IdByXpath, OnChange = @action, Name = @Model.DisplayName, Id = @Model.IdInput, PackageId = @Model.ParentId, Title = @Model.ErrorMessage, @class = "bx-input bx-metadataFormTextInput " + @Model.ErrorClass })
+}
+else
+{
+    @Html.Partial("_displayonly", Model)
+}
