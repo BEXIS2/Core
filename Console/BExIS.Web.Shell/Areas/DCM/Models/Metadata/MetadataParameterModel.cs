@@ -14,7 +14,7 @@ namespace BExIS.Modules.Dcm.UI.Models.Metadata
         /// Parameter Usage Id
         /// </summary>
         public long Id { get; set; }
-        public long Number { get; set; }
+        public long AttributeNumber { get; set; }
         public long ParentModelNumber { get; set; }
         public long ParentStepId { get; set; }
         public long ParentPartyId { get; set; }
@@ -62,7 +62,7 @@ namespace BExIS.Modules.Dcm.UI.Models.Metadata
             return new MetadataParameterModel
             {
                 Id = this.Id,
-                Number = number,
+                AttributeNumber = number,
                 ParentModelNumber = this.ParentModelNumber,
                 MetadataStructureId = this.MetadataStructureId,
                 Parent = this.Parent,

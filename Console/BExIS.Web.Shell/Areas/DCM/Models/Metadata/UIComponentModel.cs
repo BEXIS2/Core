@@ -43,7 +43,7 @@ namespace BExIS.Modules.Dcm.UI.Models.Metadata
             ParentId = 0;
             DisplayName = String.Empty;
             DisplayPattern = String.Empty;
-            Value = String.Empty;
+            Value = null;
             DomainList = new List<object>();
             SystemType = String.Empty;
             ErrorMessage = String.Empty;

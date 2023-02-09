@@ -3,6 +3,8 @@ using BExIS.Dlm.Entities.MetadataStructure;
 using BExIS.IO.Transform.Validation.Exceptions;
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Xml.Linq;
 using Vaiona.Persistence.Api;
 
 namespace BExIS.Modules.Dcm.UI.Models.Metadata
@@ -10,6 +12,7 @@ namespace BExIS.Modules.Dcm.UI.Models.Metadata
     public class MetadataAttributeModel
     {
         public long Id { get; set; }
+
         public long Number { get; set; }
         public long ParentModelNumber { get; set; }
         public long ParentStepId { get; set; }
@@ -80,7 +83,7 @@ namespace BExIS.Modules.Dcm.UI.Models.Metadata
 
         public MetadataAttributeModel Copy(long number, int numberOfSourceInPackage)
         {
-            return new MetadataAttributeModel
+            var copy = new MetadataAttributeModel
             {
                 Id = this.Id,
                 Number = number,
@@ -113,8 +116,33 @@ namespace BExIS.Modules.Dcm.UI.Models.Metadata
                 LowerBoundary = this.LowerBoundary,
                 PartyId = 0,
                 MappingSelectionField = false,
-                Parameters = this.Parameters
+                Parameters = new List<MetadataParameterModel>()
             };
+
+            foreach (var p in this.Parameters)
+            {
+                copy.Parameters.Add(p.Copy(number, numberOfSourceInPackage));
+            }
+
+
+            return copy;
+        }
+
+        public void Update(XElement xelement)
+        { 
+            this.Value = xelement.Value;
+
+            if (xelement.HasAttributes)
+            {
+                foreach (var attr in xelement.Attributes())
+                {
+                    var parameter = Parameters.FirstOrDefault(p => p.DisplayName.ToLower().Equals(attr.Name.LocalName.ToLower()));
+                    if(parameter != null)
+                    {
+                        parameter.Value = attr.Value;
+                    }
+                }
+            }
         }
     }
 }

@@ -1056,6 +1056,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
             var modelAttribute = FormHelper.CreateMetadataAttributeModel(metadataAttributeUsage, parentUsage, metadataStructureId, parentModelNumber, stepModelHelperParent.StepId);
             modelAttribute.Number = ++number;
+            modelAttribute.Parameters.ForEach(p => p.AttributeNumber = modelAttribute.Number);
 
             var model = stepModelHelperParent.Model;
 
@@ -2652,6 +2653,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 var child = mams.ElementAt(i);
                 child.NumberOfSourceInPackage = mams.Count();
                 child.Number = i + 1;
+                child.Parameters.ForEach(p => p.AttributeNumber = child.Number);
             }
 
             mams = UpdateFirstAndLast(mams.ToList()).AsEnumerable();
@@ -2794,7 +2796,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             metadataXml.Save(path);
         }
 
-        private void UpdateParameter(BaseUsage attribute, int number, object value, string parentXpath, KeyValuePair<string,string> parameter)
+        private void UpdateParameter(BaseUsage attribute,int attrNumber, object value, string parentXpath, KeyValuePair<string,string> parameter)
         {
             TaskManager = (CreateTaskmanager)Session["CreateDatasetTaskmanager"];
             var metadataXml = getMetadata(TaskManager);
@@ -2803,7 +2805,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             Dictionary<string, string> parameters = new Dictionary<string, string>();
             parameters.Add(parameter.Key,parameter.Value);
 
-            metadataXml = xmlMetadataWriter.Update(metadataXml, attribute, number, null, metadataStructureUsageHelper.GetNameOfType(attribute), parentXpath, parameters);
+            metadataXml = xmlMetadataWriter.Update(metadataXml, attribute, attrNumber, null, metadataStructureUsageHelper.GetNameOfType(attribute), parentXpath, parameters);
 
             TaskManager.Bus[CreateTaskmanager.METADATA_XML] = metadataXml;
             // locat path
@@ -2979,8 +2981,12 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             model.Number = number;
 
             UpdateAttribute(parentUsage, parentModelNumber, metadataAttributeUsage, number, value, stepModelHelper.XPath);
+            // update model 
 
             ViewData["Xpath"] = stepModelHelper.XPath; // set Xpath for idbyxapth
+                                                       // read temp metadata XML
+            
+            var metadata = getMetadata(TaskManager); // new getMetadata(TaskManager)
 
             if (stepModelHelper.Model.MetadataAttributeModels.Where(a => a.Id.Equals(id) && a.Number.Equals(number)).Count() > 0)
             {
@@ -2989,8 +2995,6 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 selectedMetadatAttributeModel.Value = model.Value;
                 selectedMetadatAttributeModel.Errors = validateAttribute(selectedMetadatAttributeModel);
 
-                // read temp metadata XML
-                var metadata = getMetadata(TaskManager); // new getMetadata(TaskManager)
                 // get xpath for element at position x (number)
                 var xpath = stepModelHelper.GetXPathFromSimpleAttribute(selectedMetadatAttributeModel.Id, number);
                 // get simple element based on xpath
@@ -3008,13 +3012,23 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                     }
                 }
 
+                // reload model based on xelement value and existing attributes
+                selectedMetadatAttributeModel.Update(simpleElement);
+
                 Session["CreateDatasetTaskmanager"] = TaskManager;
 
                 return PartialView("_metadataAttributeView", selectedMetadatAttributeModel);
             }
             else
             {
+                var xpath = stepModelHelper.GetXPathFromSimpleAttribute(model.Id, number);
+                // get simple element based on xpath
+                var simpleElement = XmlUtility.GetXElementByXPath(xpath, metadata);
+
+                model.Update(simpleElement);
+
                 stepModelHelper.Model.MetadataAttributeModels.Add(model);
+
                 return PartialView("_metadataAttributeView", model);
             }
         }
@@ -3053,7 +3067,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             }
 
             model.Value = value;
-            model.Number = number;
+            model.AttributeNumber = number;
 
             //create para
             KeyValuePair<string, string> parameter = new KeyValuePair<string, string>(metadataParameterUsage.Label, value);
@@ -3402,7 +3416,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
                         if (simpleElement != null && !String.IsNullOrEmpty(simpleElement.Value))
                         {
-                            simpleMetadataAttributeModel.Value = simpleElement.Value;
+                            simpleMetadataAttributeModel.Update(simpleElement);
 
                             #region entity & Party mapping
 
@@ -3444,12 +3458,6 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
                             #endregion entity mapping
 
-                            #region parameters
-
-
-
-                            #endregion
-
                             // if at least on item has a value, the parent should be activated
                             setStepModelActive(stepModelHelper);
                         }
@@ -3457,7 +3465,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                     else
                     {
                         var newMetadataAttributeModel = simpleMetadataAttributeModel.Copy(i, numberOfSMM);
-                        newMetadataAttributeModel.Value = simpleElement.Value;
+                        newMetadataAttributeModel.Update(simpleElement);
 
                         // if this simple attr is linked to a party, add partyid to Model
                         if (simpleElement.Attributes().Any(a => a.Name.LocalName.ToLowerInvariant().Equals("partyid")))
@@ -3481,22 +3489,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                         additionalyMetadataAttributeModel.Add(newMetadataAttributeModel);
                     }
 
-                    #region parameters
-                    // if a attribute as also parameter, try to get values from xml
 
-                    foreach (var parameterModel in simpleMetadataAttributeModel.Parameters)
-                    {
-                        string parameterName = parameterModel.DisplayName;
-                        if (simpleElement.HasAttributes)
-                        { 
-                            var xParameter = simpleElement.Attribute(parameterName);
-                            if(xParameter!=null)
-                                parameterModel.Value = xParameter.Value;
-                        }
-                    }
-
-
-                    #endregion
                 }
 
 

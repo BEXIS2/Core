@@ -1990,6 +1990,11 @@ namespace BExIS.Xml.Helpers.Mapping
             // if nothing exist then use string as datatype
             if (string.IsNullOrEmpty(dataTypeAsString) && string.IsNullOrEmpty(typeCodeName)) return GetDataType("string", "");
 
+            // in xsd defined xs:integer has value type decimal, xs:int = int32
+            // so we need to overright the decimal to integer 
+            if (typeCodeName.ToLower().Equals("integer") && dataTypeAsString.ToLower().Equals("decimal")) dataTypeAsString = "int64";
+
+
             DataTypeManager dataTypeManager = new DataTypeManager();
             try
             {
@@ -2046,7 +2051,7 @@ namespace BExIS.Xml.Helpers.Mapping
         {
             foreach (TypeCode tc in Enum.GetValues(typeof(TypeCode)))
             {
-                if (tc.ToString().Equals(dataType)) return tc;
+                if (tc.ToString().ToLower().Equals(dataType.ToLower())) return tc;
             }
 
             return TypeCode.String;
