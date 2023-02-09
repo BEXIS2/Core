@@ -1,11 +1,10 @@
 ﻿@model BExIS.Modules.Dcm.UI.Models.Metadata.MetadataParameterModel
 @using BExIS.Modules.Dcm.UI.Models
 @using BExIS.Utils.WebHelpers
-@using Telerik.Web.Mvc.UI
 @using System.Text.RegularExpressions
 @using BExIS.Modules.Dcm.UI.Models.Metadata
 @{
-    string id = Model.Id + "_" + Model.Parent.Id + "_" + Model.Number + "_" + Model.ParentModelNumber + "_" + Model.NumberOfSourceInPackage + "_" + Model.ParentStepId;
+    string id = Model.Id + "_" + Model.Parent.Id + "_" + Model.AttributeNumber + "_" + Model.ParentModelNumber + "_" + Model.NumberOfSourceInPackage + "_" + Model.ParentStepId;
     string idByXpath = ((string)ViewData["Xpath"]).Replace("//", "_").Replace('[', '_').Replace(']', '_') + Model.DisplayName + "_" + Model.NumberOfSourceInPackage;  // Replace special character by underscore
     string xpath = ((string)ViewData["Xpath"]) + "//" + Model.DisplayName + "[1]//" + Model.MetadataParameterName + "[" + Model.NumberOfSourceInPackage + "]";
     string idInput = id + "_Input";
@@ -50,31 +49,30 @@
         DisplayPattern = Model.DisplayPattern,
         Discription = Model.Discription,
         ParentId = Model.Parent.Id
-        
     };
 }
 
 
 
 <div class="bx-parameter-label">
-    @displayName (@Model.SystemType)
+    @displayName
 </div>
 <div class="bx-paremeter-input">
 
-    @if (locked)
-    {
-        <div class="bx-input bx-disabled bx-disabled-parameter">
-            @if (Model.Value != null)
-            {
-                @Html.DisplayWithLinksFor(m => m.Value)
-            }
-        </div>
-    }
-    else
-    {
-        if (Model.SystemType.Equals(TypeCode.String.ToString()))
-        {
 
+    @if (Model.SystemType.Equals(TypeCode.String.ToString()))
+    {
+        if (locked)
+        {
+            <div class="bx-input bx-disabled bx-disabled-parameter">
+                @if (Model.Value != null)
+                {
+                    @Html.DisplayWithLinksFor(m => m.Value)
+                }
+            </div>
+        }
+        else
+        {
             if (Model.DomainList.Count > 0) // dropdown
             {
                 uiComponentModel.OnChangeAction = "OnChangeParameterDropDown";
@@ -84,10 +82,11 @@
             else // input
             {
                 string value = "";
-                <input class="bx-input" id="@idInput" idbyxpath="@idByXpath" name="@idInput" title="" value="@value" xpath="@xpath" onKeyUp="OnKeyUpTextInput(this)" >
+                if (@Model.Value != null) { value = @Model.Value.ToString();}
+
+                <input class="bx-input" id="@idInput" idbyxpath="@idByXpath" name="@idInput" title="" value="@value" xpath="@xpath" onchange="OnChangeParameter(this)" />
             }
         }
-
     }
 
     @if (Model.SystemType.Equals(TypeCode.Int32.ToString()) ||
@@ -111,6 +110,12 @@
     {
         @Html.Partial("_bool", uiComponentModel)
     }
+
+    @if (Model.SystemType.Equals(TypeCode.DateTime.ToString()))
+    {
+        @Html.Partial("_date", uiComponentModel)
+    }
+
 
 </div>
 <div>

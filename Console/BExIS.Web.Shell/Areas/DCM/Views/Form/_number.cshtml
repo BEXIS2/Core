@@ -7,9 +7,22 @@
 
 }
 
+
 @if (!Model.Locked)
 {
-    @Html.TextBoxFor(m => m.Value, new { idbyxpath = @Model.IdByXpath, OnChange = @action, Name = @Model.DisplayName, Id = @Model.IdInput, PackageId = @Model.ParentId, Title = @Model.ErrorMessage, @class = "bx-input bx-metadataFormTextInput " + @Model.ErrorClass })
+    @*@Html.TextBoxFor(m => m.Value,
+        new
+        {
+            idbyxpath = @Model.IdByXpath,
+            OnChange = @action,
+            Name = @Model.DisplayName,
+            Id = @Model.IdInput,
+            PackageId = @Model.ParentId,
+            Title = @Model.ErrorMessage,
+            @class = "bx-input bx-metadataFormTextInput " + @Model.ErrorClass
+        })*@
+
+    <input class="bx-input" id="@Model.IdInput" idbyxpath="@Model.IdByXpath" name="@Model.IdInput" title="" value="@Model.Value" onchange="@action" />
 }
 else
 {

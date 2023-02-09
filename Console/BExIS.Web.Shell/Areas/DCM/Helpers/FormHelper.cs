@@ -234,7 +234,7 @@ namespace BExIS.Modules.Dcm.UI.Helpers
                     return new MetadataParameterModel
                     {
                         Id = parameter.Id,
-                        Number = 1,
+                        AttributeNumber = 1,
                         ParentModelNumber = packageModelNumber,
                         MetadataStructureId = metadataStructureId,
                         MetadataParameterName = parameter.Label,
