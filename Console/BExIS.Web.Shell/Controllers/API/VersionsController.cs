@@ -17,7 +17,7 @@ namespace BExIS.Web.Shell.Controllers.API
     public class VersionsController : ApiController
     {
         [HttpGet, GetRoute("api/versions/")]
-        public async Task<HttpResponseMessage> Get()
+        public async Task<HttpResponseMessage> GetVersions()
         {
             try
             {
@@ -50,6 +50,57 @@ namespace BExIS.Web.Shell.Controllers.API
                 return Request.CreateErrorResponse(HttpStatusCode.InternalServerError, ex);
             }
         }
-            
+
+        [HttpGet, GetRoute("api/versions/site")]
+        public async Task<HttpResponseMessage> GetVersionFromSite()
+        {
+            try
+            {
+                // Site
+                var versionSite = ConfigurationManager.AppSettings["ApplicationVersion"];
+
+                return Request.CreateResponse(HttpStatusCode.OK, versionSite);
+            }
+            catch (Exception ex)
+            {
+                return Request.CreateErrorResponse(HttpStatusCode.InternalServerError, ex);
+            }
+        }
+
+        [HttpGet, GetRoute("api/versions/workspace")]
+        public async Task<HttpResponseMessage> GetVersionFromWorkspace()
+        {
+            try
+            {
+                // Workspace
+                string filePath = Path.Combine(AppConfiguration.WorkspaceGeneralRoot, "General.Settings.xml");
+                XDocument settings = XDocument.Load(filePath);
+                XElement entry = XmlUtility.GetXElementByAttribute("entry", "key", "version", settings);
+                var versionWorkspace = entry.Attribute("value")?.Value;
+
+                return Request.CreateResponse(HttpStatusCode.OK, versionWorkspace);
+            }
+            catch (Exception ex)
+            {
+                return Request.CreateErrorResponse(HttpStatusCode.InternalServerError, ex);
+            }
+        }
+
+        [HttpGet, GetRoute("api/versions/database")]
+        public async Task<HttpResponseMessage> GetVersionFromDatabase()
+        {
+            try
+            {
+                using (var versionManager = new VersionManager())
+                {
+                    var versionDatabase = versionManager.GetLatestVersion().Value;
+                    return Request.CreateResponse(HttpStatusCode.OK, versionDatabase);
+                }
+            }
+            catch (Exception ex)
+            {
+                return Request.CreateErrorResponse(HttpStatusCode.InternalServerError, ex);
+            }
+        }
     }
 }
