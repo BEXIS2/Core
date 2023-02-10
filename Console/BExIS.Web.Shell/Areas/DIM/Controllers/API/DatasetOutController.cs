@@ -73,6 +73,7 @@ namespace BExIS.Modules.Dim.UI.Controllers.API
                         };
 
                         datasetModel.Versions.Add(datasetVersionModel);
+                        datasetModel.Title = dsv.Title;
                     }
                     datasetModels.Add(datasetModel);
                 }

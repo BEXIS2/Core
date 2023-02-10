@@ -11,6 +11,7 @@ namespace BExIS.Modules.Dim.UI.Models.Api
     public class ApiSimpleDatasetModel
     {
         public long Id { get; set; }
+        public string Title { get; set; }
         public List<ApiSimpleDatasetVersionModel> Versions { get; set; }
 
         public ApiSimpleDatasetModel()
