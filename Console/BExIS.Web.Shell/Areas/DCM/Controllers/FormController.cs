@@ -3068,6 +3068,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
             model.Value = value;
             model.AttributeNumber = number;
+            //model.Errors = validateParameter(model);
 
             //create para
             KeyValuePair<string, string> parameter = new KeyValuePair<string, string>(metadataParameterUsage.Label, value);
@@ -3111,11 +3112,44 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 }
             }
 
-            //// dataset title node should be check if its exit or not
-            //if (errors.Count == 0 && aModel.DataType.ToLower().Contains("string"))
-            //{
-            //    XmlReader reader =;
-            //}
+            if (errors.Count == 0)
+                return null;
+            else
+                return errors;
+        }
+
+        private List<Error> validateParameter(MetadataParameterModel aModel)
+        {
+            var errors = new List<Error>();
+            //optional check
+            if (aModel.MinCardinality > 0 && (aModel.Value == null || String.IsNullOrEmpty(aModel.Value.ToString())))
+                errors.Add(new Error(ErrorType.MetadataAttribute, "is required", new object[] { aModel.DisplayName, aModel.Value, aModel.AttributeNumber, aModel.ParentModelNumber, aModel.Parent.Label }));
+            else
+                if (aModel.MinCardinality > 0 && String.IsNullOrEmpty(aModel.Value.ToString()))
+                errors.Add(new Error(ErrorType.MetadataAttribute, "is required", new object[] { aModel.DisplayName, aModel.Value, aModel.AttributeNumber, aModel.ParentModelNumber, aModel.Parent.Label }));
+
+            //check datatype
+            if (aModel.Value != null && !String.IsNullOrEmpty(aModel.Value.ToString()))
+            {
+                if (!DataTypeUtility.IsTypeOf(aModel.Value, aModel.SystemType))
+                {
+                    errors.Add(new Error(ErrorType.MetadataAttribute, "Value can´t convert to the type: " + aModel.SystemType + ".", new object[] { aModel.DisplayName, aModel.Value, aModel.AttributeNumber, aModel.ParentModelNumber, aModel.Parent.Label }));
+                }
+                else
+                {
+                    var type = Type.GetType("System." + aModel.SystemType);
+                    var value = Convert.ChangeType(aModel.Value, type);
+
+                    // check Constraints
+                    foreach (var constraint in aModel.GetMetadataParameter().Constraints)
+                    {
+                        if (value != null && !constraint.IsSatisfied(value))
+                        {
+                            errors.Add(new Error(ErrorType.MetadataAttribute, constraint.ErrorMessage, new object[] { aModel.DisplayName, aModel.Value, aModel.AttributeNumber, aModel.ParentModelNumber, aModel.Parent.Label }));
+                        }
+                    }
+                }
+            }
 
             if (errors.Count == 0)
                 return null;
