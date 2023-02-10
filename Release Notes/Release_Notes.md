@@ -1,27 +1,41 @@
-# BEXIS 2.16 Release Notes
->Help URLs are now generated automatically based on the used relaese version. It is not needed from now on to always update the links in the workspace. Empty values in the settings file (default -> generated links) can be still overwritten with your own customized help links.
+# BEXIS 2.17 Release Notes
+>Web.config update to add Exceptionless -> see: https://github.com/BEXIS2/Core/commit/8b50510f30bd9c00a20faedb9fecf9e255005085
 
->For developer: API documentation is now generated automatically. Files need to be copied during build (debug & relaese) into the App_Data. Example changes can be found e.g. in the BExIS.Modules.Dim.UI.csproj file. At line 45 and changes in line 379 ([#973](https://github.com/BEXIS2/Core/issues/973))
-
-**Workspace changes:** https://github.com/BEXIS2/Workspace/compare/2.15...2.16
+**Workspace changes:** https://github.com/BEXIS2/Workspace/compare/2.16...2.17
 
 ### Features
-- Metadata Statistic API: Draft version added supporting query by xpath and filtering by metadata structue and dataset ids ([#979](https://github.com/BEXIS2/Core/issues/979))([#986](https://github.com/BEXIS2/Core/issues/986))([#991](https://github.com/BEXIS2/Core/issues/991))
+- Adding Exceptionless for System Loggging/Monitoring ([#1040](https://github.com/BEXIS2/Core/issues/1040))
+- Add attributes during XSD import, show and edit ([#1050](https://github.com/BEXIS2/Core/issues/1050))
+
   
 ### Enhancements
-- Metadata Structure API: Add entity type ([#987](https://github.com/BEXIS2/Core/issues/971))
-- Primaray Data API: Improve error messages ([#858](https://github.com/BEXIS2/Core/issues/858))
-- Data Structure API: Extend by missing values and date pattern ([#974](https://github.com/BEXIS2/Core/issues/974))
-- Data Statistic API: Improve documentation ([#975](https://github.com/BEXIS2/Core/issues/975))
-- Former Member: Allow for dynamic email content via settings ([#976](https://github.com/BEXIS2/Core/issues/976))
-- Improve API documentation and automation of manual steps ([#973](https://github.com/BEXIS2/Core/issues/973))
-- Improve automation of build process ([#964](https://github.com/BEXIS2/Core/issues/964))
-- Add further publishing profiles ([#972](https://github.com/BEXIS2/Core/issues/972))
+- Metadata API: Add check for public ([#1037](https://github.com/BEXIS2/Core/issues/1037))
+- Metadata API: Add request by version ([#1036](https://github.com/BEXIS2/Core/issues/1036))
+- Dataset API: Add title ([#1075](https://github.com/BEXIS2/Core/issues/1075))
+- Metadata Statistic API: Exclude ds, add regex and metadata structure ([#1014](https://github.com/BEXIS2/Core/issues/1014))
+- Schema Mapping: User should be able to map a key to a default value if no field matches ([#1048](https://github.com/BEXIS2/Core/issues/1048))
+- Schema Mapping: (Automatic) bidirectional mapping ([#1008](https://github.com/BEXIS2/Core/issues/1008))
+- Schema Mapping: Convert hard coded system keys of B2 to a dynamic list enhancement ([#963](https://github.com/BEXIS2/Core/issues/963))
+- SAM - Former member feature: Add tests ([#920](https://github.com/BEXIS2/Core/issues/920))
+- SAM - Former member feature: Add documentation ([#921](https://github.com/BEXIS2/Core/issues/921))
+- LDAP Login: Check of "null" or "empty" email addresses ([#1067](https://github.com/BEXIS2/Core/issues/1067))
+- Set/Unset Public: Send email to Admin ([#1026](https://github.com/BEXIS2/Core/issues/1026))
+- Dataset Download: Adapt text in Download-Button of unstructured datasets ([#1030](https://github.com/BEXIS2/Core/issues/1030))
+- Code Cleanup: Removal of unnecessary rpm projects ([#1065](https://github.com/BEXIS2/Core/issues/1065))
+- Wiki page for E2E tests recordings for Data Manager ([#1010](https://github.com/BEXIS2/Core/issues/1010))
 
-
+ 
 ### Bugs
-- Fix spaces in names during mapping cause JavaScript error ([#265](https://github.com/BEXIS2/Core/issues/265))
-- Fix no dataset download, if no primary data was uploaded ([#562](https://github.com/BEXIS2/Core/issues/562))
-- Fix metadata import via API works only with metadata structure id 1 ([#977](https://github.com/BEXIS2/Core/issues/977))
-- Fix metadata status not allways copied correct in a new version (e.g., during data import via API) ([#985](https://github.com/BEXIS2/Core/issues/985))
-
+- Fix row count to hide Excel download not always correct bug ([#1046](https://github.com/BEXIS2/Core/issues/1046))
+- Fix wrong mail subject if you revoke status (Former Members) ([#1073](https://github.com/BEXIS2/Core/issues/1073))
+- Fix change to former member return always true (Former Members) ([#1043](https://github.com/BEXIS2/Core/issues/1043))
+- Fix after deleting a dataset users are not able to change the permissions ([#1033](https://github.com/BEXIS2/Core/issues/1033))
+- Fix attachment uploads does not trigger system key (e.g. version) update in metadata ([#1045](https://github.com/BEXIS2/Core/issues/1045))
+- Fix Swagger API should not read non-XML files ([#1035](https://github.com/BEXIS2/Core/issues/1035))
+- Fix empty metadata container ([#1039](https://github.com/BEXIS2/Core/issues/1039))
+- Fix XSD import set elements as complex type, when no datatype is defined ([#1034](https://github.com/BEXIS2/Core/issues/1034))
+- Fix during user registration relationships title has an additional colon ([#1057](https://github.com/BEXIS2/Core/issues/1057))
+- Fix prevent send notification email on video preview ([#1024](https://github.com/BEXIS2/Core/issues/1024))
+- Fix authorization via API: Make http authorization header field name handling case-insensitive ([#1023](https://github.com/BEXIS2/Core/issues/1023))
+- Fix missing try/catch within FromExcelSerialDate(data import) ([#1068](https://github.com/BEXIS2/Core/issues/1068))
+- Fix missing try/catch for better error handling (email service) ([#1060](https://github.com/BEXIS2/Core/issues/1060))
