@@ -29,9 +29,9 @@
     }
 
     int total = 0;
-    if (Session["gridTotal"] != null)
+    if (ViewData["gridTotal"] != null)
     {
-        total = Convert.ToInt32(Session["gridTotal"]); //  (int)Session["gridTotal"];
+        total = Convert.ToInt32(ViewData["gridTotal"]); //  (int)Session["gridTotal"];
     }
 
 
@@ -61,7 +61,6 @@
 
 @if (Model != null && ((Model.IsPublic == true || User.Identity.Name != "") || check_public_metadata == "false"))
 {
-
     <div id="showData">
         <div id="showData">
             <h1>@Model.Title</h1>
@@ -114,10 +113,11 @@
                                     <span class="caret"></span>
                                 </button>
                                 <ul class="dropdown-menu" aria-labelledby="dropdownMenu1" style="z-index:100000; margin-top:10px;">
-                                    <li><a href="@Url.Action("DownloadZip", "Data", new { id = @Model.Id, format = "application/xlsm", version = Model.VersionId })">... with Template</a></li>
+
                                     @if (@total < 1048576) // hide Excel download for bigger datasets, which exceed the max number of rows in excel
                                     {
-                                    <li><a href="@Url.Action("DownloadZip", "Data", new { id = @Model.Id, format = "application/xlsx", version = Model.VersionId })">... with Excel</a></li>
+                                        <li><a href="@Url.Action("DownloadZip", "Data", new { id = @Model.Id, format = "application/xlsm", version = Model.VersionId })">... with Template</a></li>
+                                        <li><a href="@Url.Action("DownloadZip", "Data", new { id = @Model.Id, format = "application/xlsx", version = Model.VersionId })">... with Excel</a></li>
                                     }
                                     <li><a href="@Url.Action("DownloadZip", "Data", new { id = @Model.Id, format = "text/csv", version = Model.VersionId })">... with CSV</a></li>
                                     <li><a href="@Url.Action("DownloadZip", "Data", new { id = @Model.Id, format = "text/tsv", version = Model.VersionId })">... with TSV</a></li>
