@@ -55,7 +55,17 @@
 
 
 <div class="bx-parameter-label">
-    @displayName
+
+    @if (Model.MinCardinality > 0)
+    {
+        <b title="This field is required" style="color:red">*</b>
+        <b title="@Model.Discription">@displayName</b>
+    }
+    else
+    {
+        <span title="@Model.Discription">@displayName</span>
+    }
+
 </div>
 <div class="bx-paremeter-input">
 

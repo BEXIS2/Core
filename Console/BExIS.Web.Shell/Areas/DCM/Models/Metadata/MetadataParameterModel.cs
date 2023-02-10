@@ -1,5 +1,6 @@
 ﻿using BExIS.Dlm.Entities.Common;
 using BExIS.Dlm.Entities.MetadataStructure;
+using BExIS.IO.Transform.Validation.Exceptions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -32,6 +33,8 @@ namespace BExIS.Modules.Dcm.UI.Models.Metadata
         public string DisplayPattern { get; set; }
         public int NumberOfSourceInPackage { get; set; }
         public List<object> DomainList { get; set; }
+
+        public List<Error> Errors { get; set; }
 
         public double LowerBoundary { get; set; }
         public double UpperBoundary { get; set; }
