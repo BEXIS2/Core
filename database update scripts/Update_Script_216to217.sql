@@ -11,6 +11,18 @@ INSERT INTO public.versions(
 -- CREATE TABLES
 
 -- MAPPING CONCEPT
+
+CREATE SEQUENCE public.mappingconcepts_id_seq
+	INCREMENT 1
+	START 1
+	MINVALUE 1
+	MAXVALUE 9223372036854775807
+	CACHE 1;
+
+ALTER SEQUENCE public.mappingconcepts_id_seq
+    OWNER TO postgres;
+
+
 CREATE TABLE public.mappingconcepts
 (
     id bigint NOT NULL DEFAULT nextval('mappingconcepts_id_seq'::regclass),
@@ -34,17 +46,19 @@ CREATE INDEX idx_mappingconcepts_name
     (name COLLATE pg_catalog."default" ASC NULLS LAST)
     TABLESPACE pg_default;
 
-	CREATE SEQUENCE public.mappingconcepts_id_seq
-	INCREMENT 1
-	START 1
-	MINVALUE 1
-	MAXVALUE 9223372036854775807
-	CACHE 1;
-
-ALTER SEQUENCE public.mappingconcepts_id_seq
-    OWNER TO postgres;
 
 -- MAPPING KEY
+
+CREATE SEQUENCE public.mappingkeys_id_seq
+    INCREMENT 1
+    START 1
+    MINVALUE 1
+    MAXVALUE 9223372036854775807
+    CACHE 1;
+
+ALTER SEQUENCE public.mappingkeys_id_seq
+    OWNER TO postgres;
+
 CREATE TABLE public.mappingkeys
 (
     id bigint NOT NULL DEFAULT nextval('mappingkeys_id_seq'::regclass),
@@ -84,17 +98,16 @@ CREATE INDEX idx_mappingkeys_id
     TABLESPACE pg_default;
 
 
-CREATE SEQUENCE public.mappingkeys_id_seq
+-- Metadata Parameter Usages
+CREATE SEQUENCE public.metadataparameterusages_id_seq
     INCREMENT 1
     START 1
     MINVALUE 1
     MAXVALUE 9223372036854775807
     CACHE 1;
 
-ALTER SEQUENCE public.mappingkeys_id_seq
+ALTER SEQUENCE public.metadataparameterusages_id_seq
     OWNER TO postgres;
-
--- Metadata Parameter Usages
 
 CREATE TABLE public.metadataparameterusages
 (
@@ -132,14 +145,6 @@ CREATE INDEX idx_metadataparameterusages_label
     TABLESPACE pg_default;
 
 
-CREATE SEQUENCE public.metadataparameterusages_id_seq
-    INCREMENT 1
-    START 1
-    MINVALUE 1
-    MAXVALUE 9223372036854775807
-    CACHE 1;
 
-ALTER SEQUENCE public.metadataparameterusages_id_seq
-    OWNER TO postgres;
 
 COMMIT;
