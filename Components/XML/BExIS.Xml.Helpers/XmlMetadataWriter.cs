@@ -35,6 +35,8 @@ namespace BExIS.Xml.Helpers
     /// <remarks></remarks>
     public class XmlMetadataWriter : XmlWriter
     {
+        private MetadataAttributeManager _metadataAttrManager = null;
+
         /// <summary>
         ///
         /// </summary>
@@ -57,7 +59,10 @@ namespace BExIS.Xml.Helpers
         {
             using (IUnitOfWork uow = this.GetUnitOfWork())
             using (MetadataStructureManager metadataStructureManager = new MetadataStructureManager())
+            using (MetadataAttributeManager metadataAttributeManager = new MetadataAttributeManager())
             {
+                _metadataAttrManager = metadataAttributeManager;
+
                 MetadataStructure metadataStructure = this.GetUnitOfWork().GetReadOnlyRepository<MetadataStructure>().Get(metadataStructureId);
 
                 List<Int64> packageIds = metadataStructureManager.GetEffectivePackageIds(metadataStructureId).ToList();
@@ -509,31 +514,38 @@ namespace BExIS.Xml.Helpers
         {
             List<XElement> tmp = new List<XElement>();
 
+            MetadataAttribute _metadataAttribute = null;
+
             string typeName = "";
             string id = "";
             string roleId = "";
+            long metadataAttrId = 0;
             ICollection<MetadataParameterUsage> parameters =  new List<MetadataParameterUsage>();
 
             if (attributeUsage is MetadataAttributeUsage)
             {
                 MetadataAttributeUsage metadataAttributeUsage = (MetadataAttributeUsage)attributeUsage;
                 typeName = metadataAttributeUsage.MetadataAttribute.Name;
-                id = metadataAttributeUsage.MetadataAttribute.Id.ToString();
+                metadataAttrId = metadataAttributeUsage.MetadataAttribute.Id;
+                id = metadataAttrId.ToString();
                 roleId = metadataAttributeUsage.Id.ToString();
-
-                if (metadataAttributeUsage.MetadataAttribute.MetadataParameterUsages.Any())
-                    parameters = metadataAttributeUsage.MetadataAttribute.MetadataParameterUsages;
+                
             }
             else
             {
                 MetadataNestedAttributeUsage mnau = (MetadataNestedAttributeUsage)attributeUsage;
                 typeName = mnau.Member.Name;
-                id = mnau.Member.Id.ToString();
+                metadataAttrId = mnau.Member.Id;
+                id = metadataAttrId.ToString();
                 roleId = mnau.Id.ToString();
-
-                if (mnau.Member.MetadataParameterUsages.Any())
-                    parameters = mnau.Member.MetadataParameterUsages;
             }
+
+            // set parameters
+            // reload type from db 
+            _metadataAttribute = _metadataAttrManager.MetadataAttributeRepo.Get(metadataAttrId);
+            if (_metadataAttribute!=null && _metadataAttribute.MetadataParameterUsages.Any())
+                parameters = _metadataAttribute.MetadataParameterUsages;
+
 
             if (!Exist(typeName, number, current))
             {

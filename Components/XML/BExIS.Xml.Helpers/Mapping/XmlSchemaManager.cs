@@ -81,6 +81,9 @@ namespace BExIS.Xml.Helpers.Mapping
 
         public static bool MoveFile(string tempFile, string destinationPath)
         {
+
+            if (tempFile.Equals(destinationPath)) return true; // allready on th place
+
             if (File.Exists(tempFile))
             {
                 if(File.Exists(destinationPath)) File.Delete(destinationPath);
