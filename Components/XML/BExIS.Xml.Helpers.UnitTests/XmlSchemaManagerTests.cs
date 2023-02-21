@@ -68,7 +68,7 @@ namespace BExIS.Xml.Helpers.UnitTests
         /// performs the initial setup for the tests. This runs once per test, NOT per class!
         protected void SetUp()
         {
-           
+            
         }
 
         [TearDown]
@@ -94,6 +94,17 @@ namespace BExIS.Xml.Helpers.UnitTests
                     if (deleteMDS.Contains(md.Id))
                         metadataStructureManager.Delete(md);
                 }
+            }
+
+            // reset app data folder
+            var targetDir = Path.GetDirectoryName(_schemaPath);
+            var sourceDir = Path.Combine(AppConfiguration.GetModuleWorkspacePath("DCM"), "Metadata", "test");
+
+            foreach (var file in Directory.GetFiles(sourceDir))
+            {
+                var targetFilePath = Path.Combine(targetDir, Path.GetFileName(file));
+                if(!File.Exists(targetFilePath))
+                    File.Copy(file, targetFilePath);
             }
         }
 
