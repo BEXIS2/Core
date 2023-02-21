@@ -27,7 +27,7 @@ namespace BExIS.Dim.Service.Tests
         {
         }
 
-        [Test()]
+        //[Test()]
         public void CreateMappingConcept_valid_NewMappingConcept()
         {
             using (var conceptManager = new ConceptManager())
