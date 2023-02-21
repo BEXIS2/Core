@@ -3448,7 +3448,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                                 simpleMetadataAttributeModel.Locked = !simpleMetadataAttributeModel.MappingSelectionField;
                         }
 
-                        if (simpleElement != null && !String.IsNullOrEmpty(simpleElement.Value))
+                        if (simpleElement != null)
                         {
                             simpleMetadataAttributeModel.Update(simpleElement);
 

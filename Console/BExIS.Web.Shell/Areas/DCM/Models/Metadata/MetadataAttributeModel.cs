@@ -130,7 +130,7 @@ namespace BExIS.Modules.Dcm.UI.Models.Metadata
 
         public void Update(XElement xelement)
         { 
-            this.Value = xelement.Value;
+            this.Value = xelement?.Value;
 
             if (xelement.HasAttributes)
             {

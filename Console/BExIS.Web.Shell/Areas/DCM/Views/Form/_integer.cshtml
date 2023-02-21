@@ -4,7 +4,7 @@
 
 @{
     int? value = null;
-    if (Model.Value != null)
+    if (Model.Value != null && Model.Value!="")
     {
         value = Convert.ToInt32(Model.Value);
     }
