@@ -178,8 +178,6 @@ namespace BExIS.Modules.Dim.UI.Helpers
                 var creator = conceptManager.CreateMappingKey("Creator", "", "www.google.de",false,true,concept);
                 var firstname = conceptManager.CreateMappingKey("Firstname", "", "", false, false, concept,creator);
                 var lastname = conceptManager.CreateMappingKey("Lastname", "", "", false, false, concept, creator);
-
-
             }
         }
 

@@ -37,18 +37,18 @@ namespace BExIS.Modules.Dim.UI.Helper
                 tmp.Add(li);
 
                 //load Metadata Strutcure
-                IEnumerable<MetadataStructure> metadataStructures = metadataStructureManager.Repo.Get();
+                //IEnumerable<MetadataStructure> metadataStructures = metadataStructureManager.Repo.Get();
 
-                foreach (var metadataStructure in metadataStructures)
-                {
-                    li = new LinkElementRootListItem(
-                        metadataStructure.Id,
-                        metadataStructure.Name,
-                        LinkElementType.MetadataStructure
-                        );
+                //foreach (var metadataStructure in metadataStructures)
+                //{
+                //    li = new LinkElementRootListItem(
+                //        metadataStructure.Id,
+                //        metadataStructure.Name,
+                //        LinkElementType.MetadataStructure
+                //        );
 
-                    tmp.Add(li);
-                }
+                //    tmp.Add(li);
+                //}
 
                 // add concepts
                 using (var conceptManager = new ConceptManager())

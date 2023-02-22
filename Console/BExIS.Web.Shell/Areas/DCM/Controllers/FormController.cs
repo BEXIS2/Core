@@ -3076,6 +3076,22 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
             ViewData["Xpath"] = stepModelHelper.XPath; // set Xpath for idbyxapth
 
+            // store in stephelper
+            if (stepModelHelper.Model.MetadataAttributeModels.Any()) // check if metadata Attribute models exist
+            { 
+                var metadataAttributeModel = stepModelHelper.Model.MetadataAttributeModels.Where(m=>m.Source.Id.Equals(attrUsageId) && m.Number.Equals((long)number)).FirstOrDefault();// get metadata attribute model for this parameter
+                if (metadataAttributeModel != null)
+                { 
+                    if(metadataAttributeModel.Parameters.Any())
+                    {
+                        // get stored parameter model and replace it
+                        var storedParameterModel = metadataAttributeModel.Parameters.Where(p => p.Id.Equals(model.Id)).FirstOrDefault();
+                        storedParameterModel.Value = model.Value;
+                        storedParameterModel.Errors = validateParameter(model);
+                    }
+                }
+            }
+
             return PartialView("_metadataParameterView", model);
         }
 
