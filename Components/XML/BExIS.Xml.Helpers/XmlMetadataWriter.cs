@@ -790,19 +790,58 @@ namespace BExIS.Xml.Helpers
             {
                 XmlDocument xmlDocument = XmlUtility.ToXmlDocument(metadataXml);
 
-                XmlNode first = xmlDocument.SelectSingleNode(firstXPath);
-                XmlNode next = xmlDocument.SelectSingleNode(secondXPath);
+                XmlElement first = xmlDocument.SelectSingleNode(firstXPath) as XmlElement;
+                XmlElement next = xmlDocument.SelectSingleNode(secondXPath) as XmlElement;
 
-                string contentFromFirst = first.InnerXml;
-                string contentFromNext = next.InnerXml;
+                XmlNode parent = first.ParentNode;
 
-                first.InnerXml = contentFromNext;
-                next.InnerXml = contentFromFirst;
+
+                int firstI = getIndexOfChild(parent.ChildNodes, first);
+                int nextI = getIndexOfChild(parent.ChildNodes, next);
+
+                if (firstI < nextI) //first before next
+                {
+                    var clone = first.Clone(); // copie first
+                    parent.RemoveChild(first);
+                    parent.InsertAfter(clone, next);
+                }
+                else //first after next
+                {
+                    var clone = first.Clone(); // copie first
+                    parent.RemoveChild(first);
+                    parent.InsertBefore(clone, next);
+                }
+
+                // reset attribute number
+                resetNumberAttr(parent.ChildNodes);
+
 
                 metadataXml = XmlUtility.ToXDocument(xmlDocument);
             }
 
             return metadataXml;
+        }
+
+        private int getIndexOfChild(XmlNodeList list, XmlElement element)
+        {
+            for (int i = 0; i < list.Count; i++)
+            {
+                if (element == list[i]) { 
+                    return i;
+                }
+            }
+
+            return 0;
+        }
+
+        private void resetNumberAttr(XmlNodeList list)
+        {
+            for (int i = 0; i < list.Count; i++)
+            {
+                XmlElement element = (XmlElement)list[i];
+                int number = i + 1;
+                element.SetAttribute("number", number.ToString());
+            }
         }
 
         #region update
