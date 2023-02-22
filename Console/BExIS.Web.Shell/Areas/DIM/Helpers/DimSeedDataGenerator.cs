@@ -146,7 +146,7 @@ namespace BExIS.Modules.Dim.UI.Helpers
 
                 createMappings();
 
-                createDOIMappingConcept();
+                //createDOIMappingConcept();
 
                 #endregion MAPPING
             }
