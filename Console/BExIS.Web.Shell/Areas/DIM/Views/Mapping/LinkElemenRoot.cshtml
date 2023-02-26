@@ -5,9 +5,14 @@
 @{
     string searchId = "le-root-search-filter-" + Model.Position;
     string id = "le-root-" + Model.Position.ToString().ToLower();
-}
+
+
+    List<LinkElementRootListItem> list = (List<LinkElementRootListItem>)Session["SelectionList"];
+    }
 
 <div id="@id" class="le-root @Model.Position dim-Container">
+
+
 
     <div class="le-root-info" style="display: none">
         <div id="Id">@Model.Id</div>
@@ -15,11 +20,32 @@
         <div id="ElementId">@Model.ElementId</div>
         <div id="Type">@Model.Type</div>
         <div id="Position">@Model.Position</div>
+        <div id="Url">@Model.Url</div>
     </div>
 
-    <div class="le-root-header">
-        <b> @Model.Name</b>
+
+
+            @if (Model.Position == LinkElementPostion.Target && list != null)
+            {
+
+                @(Html.Telerik().DropDownList()
+                                        .Name("SelectTarget")
+                                        .Placeholder("Select")
+                                        .HtmlAttributes(new { @class = "bx-dropdown", style = "width:100%;" })
+                                        .ClientEvents(events => events.OnChange("onChangeTargetDropDown"))
+                                        .BindTo(new SelectList(list, "Id", "Name", Model.ElementId + "_" + Model.Type)))
+            }
+            else
+            {
+                <div class="le-root-header">
+                    <b> @Model.Name</b>
+                </div>
+            }
+       
+    <div class="le-root-description">
+        @Model.Description
     </div>
+
 
     <div class="le-root-search">
 
@@ -39,16 +65,17 @@
         {
             <span>@Html.CheckBox("Type", true, new { @class = "prefilter" }) Type </span>
             <span>@Html.CheckBox("Usage", true, new { @class = "prefilter" }) Usage </span>
+            <span>@Html.CheckBox("Default", true, new { @class = "prefilter" }) Default </span>
         }
 
     </div>
 
     <div class="le-root-content">
 
-            @foreach (var child in Model.LinkElementContainers)
-            {
-                @Html.Partial("LinkElementContainer", child)
-            }
+        @foreach (var child in Model.LinkElementContainers)
+        {
+            @Html.Partial("LinkElementContainer", child)
+        }
 
 
     </div>
@@ -60,12 +87,12 @@
     var identifer = ".le-container-content-" + position;
     var identiferSimple = ".le-simple-" + position;
 
-    
+
     $(document)
         .ready(function () {
             initIsotope(identiferSimple);
         });
 
 
-    
+
     </script>

@@ -300,6 +300,14 @@ function saveMapping(e, create) {
     ////console.log(e);
     var parent = $(e).parents(".mapping-container")[0];
 
+    var bothDirection = $(parent).find(".both-directions")[0];
+    var isBothDirection = false;
+
+    if ($(bothDirection).is(":checked")) {
+        isBothDirection = true;
+    }
+
+   
     var mappingId = $(parent).attr("id").split("_")[2];
     var parentMappingId = $(parent).attr("parent");
     ////console.log(parent);
@@ -375,10 +383,11 @@ function saveMapping(e, create) {
 
     var sendData =
     {
-        model
+        model,
+        both: isBothDirection
     }
 
-    ////console.log(sendData);
+    console.log(sendData);
 
     $.ajax({
         type: "POST",
@@ -433,7 +442,10 @@ function saveMapping(e, create) {
             updateSaveOptionOnNewContainer();
             updateSaveOptions($(parent).attr("id"), false);
         },
-        error: function (data) { alert("error") }
+        error: function (data) {
+            console.log(data);
+            alert("error")
+        }
     });
 }
 
@@ -573,15 +585,15 @@ function removeAllFromConnections() {
     if (connections.length > 0) {
         connections.forEach(
             function (c) {
-                console.log("parent connection");
-                console.log("------");
+                //console.log("parent connection");
+                //console.log("------");
 
                 if (c.connections.length > 0) {
-                    console.log("childs :" + c.connections.length);
+                    //console.log("childs :" + c.connections.length);
                     c.connections.splice(0, c.connections.length);
-                    console.log("childs removed");
+                    //console.log("childs removed");
 
-                    console.log("childs :" + c.connections.length);
+                    //console.log("childs :" + c.connections.length);
                 }
             }
         )

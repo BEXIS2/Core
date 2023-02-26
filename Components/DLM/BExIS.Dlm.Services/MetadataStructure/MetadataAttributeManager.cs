@@ -20,10 +20,12 @@ namespace BExIS.Dlm.Services.MetadataStructure
             this.MetadataAttributeRepo = guow.GetReadOnlyRepository<MetadataAttribute>();
             this.MetadataSimpleAttributeRepo = guow.GetReadOnlyRepository<MetadataSimpleAttribute>();
             this.MetadataCompoundAttributeRepo = guow.GetReadOnlyRepository<MetadataCompoundAttribute>();
+            this.MetadataParameterRepo = guow.GetReadOnlyRepository<MetadataParameter>();
 
             //[DS] add this Repos to get usages by id
             this.MetadataNestedAttributeUsageRepo = guow.GetReadOnlyRepository<MetadataNestedAttributeUsage>();
             this.MetadataAttributeUsageRepo = guow.GetReadOnlyRepository<MetadataAttributeUsage>();
+            this.MetadataParameterUsageRepo = guow.GetReadOnlyRepository<MetadataParameterUsage>();
         }
 
         private bool isDisposed = false;
@@ -54,10 +56,12 @@ namespace BExIS.Dlm.Services.MetadataStructure
 
         // provide read only repos for the whole aggregate area
         public IReadOnlyRepository<MetadataAttribute> MetadataAttributeRepo { get; private set; }
+        public IReadOnlyRepository<MetadataParameter> MetadataParameterRepo { get; private set; }
         public IReadOnlyRepository<MetadataSimpleAttribute> MetadataSimpleAttributeRepo { get; private set; }
         public IReadOnlyRepository<MetadataCompoundAttribute> MetadataCompoundAttributeRepo { get; private set; }
         public IReadOnlyRepository<MetadataNestedAttributeUsage> MetadataNestedAttributeUsageRepo { get; private set; }
         public IReadOnlyRepository<MetadataAttributeUsage> MetadataAttributeUsageRepo { get; private set; }
+        public IReadOnlyRepository<MetadataParameterUsage> MetadataParameterUsageRepo { get; private set; }
 
         #endregion
 
@@ -169,6 +173,28 @@ namespace BExIS.Dlm.Services.MetadataStructure
         }
 
         /// <summary>
+        /// Persists a metadata parameter in the database
+        /// </summary>
+        /// <param name="entity">is an unsaved metadata parameter</param>
+        /// <returns>The saved metadata parameter</returns>
+        /// <remarks>It should have at least a non empty short name.</remarks>     
+        public MetadataParameter Create(MetadataParameter entity)
+        {
+            if (entity == null) throw new ArgumentNullException(nameof(entity), "parameter not exist.");
+            if(string.IsNullOrWhiteSpace(entity.ShortName)) throw new ArgumentNullException(nameof(entity.ShortName), "shortname of parameter is empty.");
+            if(entity.DataType == null) throw new ArgumentNullException(nameof(entity.DataType), "data type of parameter is null.");
+            Contract.Ensures(Contract.Result<MetadataCompoundAttribute>() != null && Contract.Result<MetadataCompoundAttribute>().Id >= 0);
+
+            using (IUnitOfWork uow = this.GetUnitOfWork())
+            {
+                IRepository<MetadataParameter> repo = uow.GetRepository<MetadataParameter>();
+                repo.Put(entity);
+                uow.Commit();
+            }
+            return (entity);
+        }
+
+        /// <summary>
         /// Deletes the saved <paramref name="entity"/> from the database. The entity should not be a built-in one.
         /// </summary>
         /// <param name="entity"></param>
@@ -272,6 +298,66 @@ namespace BExIS.Dlm.Services.MetadataStructure
 
         #region Associations
 
+        /// <summary>
+        /// add a metadata parameter to an metadata attribute and connect both via metadata parameter usage
+        /// </summary>
+        /// <param name="attribute"></param>
+        /// <param name="parameter"></param>
+        /// <param name="label"></param>
+        /// <param name="description"></param>
+        /// <returns></returns>
+        public MetadataParameterUsage AddParameterUsage(MetadataAttribute attribute, MetadataParameter parameter)
+        {
+            if(parameter == null || parameter.Id <= 0) throw new ArgumentNullException("parameter","parameter should not be null.") ;
+            if(attribute == null || attribute.Id <= 0) throw new ArgumentNullException("attribute", "attribute should not be null.");
+
+            string label = parameter.Name;
+            string description = parameter.Description;
+
+            using (IUnitOfWork uow = this.GetUnitOfWork())
+            {
+                var parameterRepo = uow.GetReadOnlyRepository<MetadataParameter>();
+                var attributesRepo = uow.GetReadOnlyRepository<MetadataAttribute>();
+
+                attribute = attributesRepo.Get(attribute.Id);
+                attributesRepo.Reload(attribute);
+                attributesRepo.LoadIfNot(attribute.MetadataParameterUsages);
+
+
+
+                MetadataParameterUsage usage = new MetadataParameterUsage()
+                {
+                    Master = attribute,
+                    Member = parameter,
+                    // if there is no label provided, use the attribute name and a sequence number calculated by the number of occurrences of that attribute in the current structure
+                    Label = parameter.Name,
+                    Description = description
+                };
+
+               //attribute.MetadataParameterUsages.Add(usage);
+
+                IRepository<MetadataParameterUsage> repo = uow.GetRepository<MetadataParameterUsage>();
+                repo.Put(usage);
+                uow.Commit();
+
+                return (usage);
+            }
+        }
+
+        public MetadataParameter GetParameter(long id)
+        {
+            using (IUnitOfWork uow = this.GetUnitOfWork())
+            {
+                IRepository<MetadataParameter> parameters = uow.GetRepository<MetadataParameter>();
+                IRepository<Constraint> constraints = uow.GetRepository<Constraint>();
+
+                var parameter = parameters.Get(id);
+                parameter.Constraints = constraints.Query(c => c.DataContainer.Id.Equals(id)).ToList();
+
+                return parameter;
+            }
+        }
+
         public void AddConstraint(DomainConstraint constraint, DataContainer container)
         {
             helper.SaveConstraint(constraint, container);
@@ -312,14 +398,17 @@ namespace BExIS.Dlm.Services.MetadataStructure
             helper.Delete(constraint);
         }
 
-        public DataAttribute AddExtendedProperty(DataContainer container, ExtendedProperty extendedProperty)
+        public ExtendedProperty AddExtendedProperty(DataContainer container, ExtendedProperty extendedProperty)
         {
-            throw new NotImplementedException();
+            ExtendedPropertyHelper helper = new ExtendedPropertyHelper();
+            return helper.Create(extendedProperty, container); 
+
         }
 
-        public DataAttribute RemoveExtendedProperty(ExtendedProperty extendedProperty)
+        public bool RemoveExtendedProperty(ExtendedProperty extendedProperty)
         {
-            throw new NotImplementedException();
+            ExtendedPropertyHelper helper = new ExtendedPropertyHelper();
+            return helper.Delete(extendedProperty);
         }
 
         public DataAttribute AddAggregateFunction(DataContainer container, AggregateFunction aggregateFunction)

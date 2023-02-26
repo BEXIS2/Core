@@ -19,6 +19,9 @@ using Vaiona.Web.Extensions;
 using Vaiona.Web.Mvc;
 using Vaiona.Web.Mvc.Models;
 using Vaiona.Web.Mvc.Modularity;
+using BExIS.Security.Services.Utilities;
+using System.Configuration;
+using Vaiona.Persistence.Api;
 
 namespace BExIS.Modules.Sam.UI.Controllers
 {
@@ -40,6 +43,13 @@ namespace BExIS.Modules.Sam.UI.Controllers
                     {
                         var x = this.Run("DDM", "SearchIndex", "ReIndexSingle", new RouteValueDictionary() { { "id", instanceId } });
                     }
+
+                    var es = new EmailService();
+                    es.Send(MessageHelper.GetSetPublicHeader(instanceId),
+                        MessageHelper.GetSetPublicMessage(getPartyNameOrDefault(), instanceId),
+                        ConfigurationManager.AppSettings["SystemEmail"]
+                        );
+
                 }
             }
             finally
@@ -196,6 +206,12 @@ namespace BExIS.Modules.Sam.UI.Controllers
                 {
                     var x = this.Run("DDM", "SearchIndex", "ReIndexSingle", new RouteValueDictionary() { { "id", instanceId } });
                 }
+
+                var es = new EmailService();
+                es.Send(MessageHelper.GetUnsetPublicHeader(instanceId),
+                    MessageHelper.GetUnsetPublicMessage(getPartyNameOrDefault(), instanceId),
+                    ConfigurationManager.AppSettings["SystemEmail"]
+                    );
             }
             finally
             {
@@ -289,6 +305,31 @@ namespace BExIS.Modules.Sam.UI.Controllers
                 subjectManager.Dispose();
                 entityPermissionManager.Dispose();
             }
+        }
+
+        private string getPartyNameOrDefault()
+        {
+            var userName = string.Empty;
+            try
+            {
+                userName = HttpContext.User.Identity.Name;
+            }
+            catch { }
+
+            if (userName != null)
+            {
+                using (var uow = this.GetUnitOfWork())
+                {
+                    var userRepository = uow.GetReadOnlyRepository<User>();
+                    var user = userRepository.Query(s => s.Name.ToUpperInvariant() == userName.ToUpperInvariant()).FirstOrDefault();
+
+                    if (user != null)
+                    {
+                        return user.DisplayName;
+                    }
+                }
+            }
+            return !string.IsNullOrWhiteSpace(userName) ? userName : "DEFAULT";
         }
     }
 }

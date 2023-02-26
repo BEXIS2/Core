@@ -72,6 +72,12 @@
     <Reference Include="DataAnnotationsExtensions.ClientValidation, Version=5.0.1.27, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\packages\DataAnnotationsExtensions.MVC3.5.0.1.27\lib\NETFramework40\DataAnnotationsExtensions.ClientValidation.dll</HintPath>
     </Reference>
+    <Reference Include="Exceptionless, Version=4.0.0.0, Culture=neutral, PublicKeyToken=fc181f0a46f65747, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Exceptionless.4.6.2\lib\net452\Exceptionless.dll</HintPath>
+    </Reference>
+    <Reference Include="Exceptionless.Mvc, Version=4.0.0.0, Culture=neutral, PublicKeyToken=fc181f0a46f65747, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Exceptionless.Mvc.4.6.2\lib\net452\Exceptionless.Mvc.dll</HintPath>
+    </Reference>
     <Reference Include="FluentBootstrap, Version=3.3.5.4, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\packages\FluentBootstrap.3.3.5.4\lib\net40\FluentBootstrap.dll</HintPath>
     </Reference>
@@ -124,6 +130,7 @@
     <Reference Include="Microsoft.Practices.Unity.RegistrationByConvention, Version=4.0.0.0, Culture=neutral, PublicKeyToken=6d32ff45e0ccc69f, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Unity.4.0.1\lib\net45\Microsoft.Practices.Unity.RegistrationByConvention.dll</HintPath>
     </Reference>
+    <Reference Include="Microsoft.VisualBasic" />
     <Reference Include="Microsoft.Web.Helpers, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Microsoft.AspNet.WebHelpers.3.2.3\lib\net45\Microsoft.Web.Helpers.dll</HintPath>
       <Private>True</Private>
@@ -149,9 +156,12 @@
     <Reference Include="System.Net.Http.Formatting, Version=5.2.3.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Microsoft.AspNet.WebApi.Client.5.2.3\lib\net45\System.Net.Http.Formatting.dll</HintPath>
     </Reference>
+    <Reference Include="System.Net.Http.WebRequest" />
+    <Reference Include="System.Numerics" />
     <Reference Include="System.Runtime.CompilerServices.Unsafe, Version=4.0.4.1, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>..\..\packages\System.Runtime.CompilerServices.Unsafe.4.5.3\lib\netstandard1.0\System.Runtime.CompilerServices.Unsafe.dll</HintPath>
     </Reference>
+    <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Threading.Tasks.Extensions, Version=4.2.0.1, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
       <HintPath>..\..\packages\System.Threading.Tasks.Extensions.4.5.4\lib\portable-net45+win8+wp8+wpa81\System.Threading.Tasks.Extensions.dll</HintPath>
     </Reference>
@@ -335,6 +345,7 @@
     <Compile Include="Attributes\BExISAuthorizeAttribute.cs" />
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\API\TokenController.cs" />
+    <Compile Include="Controllers\API\VersionsController.cs" />
     <Compile Include="Controllers\ErrorController.cs" />
     <Compile Include="Controllers\FooterController.cs" />
     <Compile Include="Controllers\HelpController.cs" />
@@ -1000,9 +1011,6 @@
     <Content Include="Themes\Windows7\Styles\Windows7\sprite-vertical.png" />
     <Content Include="Themes\Windows7\Styles\Windows7\sprite.png" />
     <Content Include="Global.asax" />
-    <Content Include="Web.config">
-      <SubType>Designer</SubType>
-    </Content>
     <Content Include="Content\Site_old.css" />
     <Content Include="Scripts\jquery.unobtrusive-ajax.js" />
     <Content Include="Scripts\jquery.unobtrusive-ajax.min.js" />
@@ -1053,6 +1061,7 @@
     <Content Include="Views\Home\Version.cshtml" />
     <Content Include="Views\Home\NoPermission.cshtml" />
     <Content Include="Web.config.sample" />
+    <None Include="Web.config" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Areas\" />
@@ -1169,10 +1178,6 @@
     <ProjectReference Include="..\..\Components\XML\BExIS.Xml.Helpers\BExIS.Xml.Helpers.csproj">
       <Project>{252f7872-a69c-43a6-84b4-4d2abdbdd9ab}</Project>
       <Name>BExIS.Xml.Helpers</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Modules\DDM\BExIS.Ddm.Model\BExIS.Ddm.Model.csproj">
-      <Project>{ab46beb8-c36d-412f-9b1a-646c86299a87}</Project>
-      <Name>BExIS.Ddm.Model</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\Modules\DDM\BExIS.Ddm.Providers.LuceneProvider\BExIS.Ddm.Providers.LuceneProvider.csproj">
       <Project>{fbe3101a-791a-4eab-9b8f-f6e071f8dbdc}</Project>

@@ -5,7 +5,7 @@
   </Description>
   <Assemblies>
     <Assembly fullName="BExIS.Ddm.Api" role="" />
-    <Assembly fullName="BExIS.Ddm.Model" role="" />
+    <!--<Assembly fullName="BExIS.Ddm.Model" role="" />-->
     <Assembly fullName="BExIS.Ddm.Providers.LuceneProvider" role="" />
   </Assemblies>
   <Dependencies>

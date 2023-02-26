@@ -1,0 +1,47 @@
+﻿@model BExIS.Modules.Dcm.UI.Models.Metadata.UIComponentModel
+
+@using Telerik.Web.Mvc.UI
+@using BExIS.Modules.Dcm.UI.Models.Metadata
+
+@{
+    string action = "OnChangeDatePicker";
+    if (Model.Type.Equals(MetadataAttrType.Parameter)) { action = "OnChangeParameterDatePicker"; }
+
+}
+
+
+@if (!Model.Locked)
+{
+    string value = "";
+    if (Model.Value != null)
+    {
+        value = Model.Value.ToString();
+    }
+    else
+    {
+        value = "";//@defaultDate.ToString();
+    }
+    string format = Model.DisplayPattern;
+
+    if (string.IsNullOrEmpty(format))
+    {
+        format = "yyyy-MM-dd";
+    }
+
+    @(Html.Telerik().DatePicker()
+            .Name(@Model.IdInput)
+            .ShowButton(true)
+            .TodayButton("d")
+            .OpenOnFocus(true)
+            .Format(format)
+            .Value(value)
+            .ClientEvents(events => events
+                .OnChange(action))
+            .InputHtmlAttributes(new { idbyxpath = @Model.IdByXpath, Title = @Model.ErrorMessage, @class = Model.ErrorClass })
+                        )
+}
+else
+{
+    @Html.Partial("_displayonly", Model)
+}
+

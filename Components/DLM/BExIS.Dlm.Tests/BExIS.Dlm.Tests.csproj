@@ -157,6 +157,8 @@
     <Compile Include="Services\Data\DataTupleTests.cs" />
     <Compile Include="Services\Data\DatasetManager_GetDatasetVersionEffectiveDataTuplesTest.cs" />
     <Compile Include="Services\Data\DatasetManager_GetDataTuplesTest.cs" />
+    <Compile Include="Services\Helpers\ExtendedPropertyHelperTests.cs" />
+    <Compile Include="Services\MetadataStructure\MetadataAttributeManagerTests.cs" />
     <Compile Include="Services\MetadataStructure\MetadataStructureManagerTests.cs" />
     <Compile Include="Services\Party\PartyManagerTests.cs" />
     <Compile Include="Services\Party\PartyRelationshipTypeManagerTest.cs" />

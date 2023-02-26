@@ -28,7 +28,7 @@ namespace BExIS.Dlm.Entities.MetadataStructure
         /// </summary>
         /// <remarks></remarks>
         /// <seealso cref=""/>        
-        public virtual MetadataCompoundAttribute      Master     { get; set; }
+        public virtual MetadataCompoundAttribute    Master     { get; set; }
 
         /// <summary>
         ///

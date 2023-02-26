@@ -24,10 +24,10 @@ namespace BExIS.App.Bootstrap.Attributes
                     User user = null;
 
                     // User
-                    switch(actionContext.Request.Headers.Authorization.Scheme)
+                    switch(actionContext.Request.Headers.Authorization.Scheme.ToLower())
                     {
-                        case "Basic":
-                            var basic = actionContext.Request.Headers.Authorization?.ToString().Substring("Basic ".Length).Trim();
+                        case "basic":
+                            var basic = actionContext.Request.Headers.Authorization?.ToString().Substring("basic ".Length).Trim();
                             if (basic == null)
                             {
                                 actionContext.Response = new HttpResponseMessage(System.Net.HttpStatusCode.Forbidden);
@@ -61,8 +61,8 @@ namespace BExIS.App.Bootstrap.Attributes
                             }
 
                             break;
-                        case "Bearer":
-                            var token = actionContext.Request.Headers.Authorization?.ToString().Substring("Bearer ".Length).Trim();
+                        case "bearer":
+                            var token = actionContext.Request.Headers.Authorization?.ToString().Substring("bearer ".Length).Trim();
                             if (token == null)
                             {
                                 actionContext.Response = new HttpResponseMessage(System.Net.HttpStatusCode.Forbidden);
