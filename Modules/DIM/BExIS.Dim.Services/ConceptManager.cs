@@ -109,7 +109,7 @@ namespace BExIS.Dim.Services
 
         #region Key
 
-        public MappingKey CreateMappingKey(string name, string description, string url, bool optional, bool isComplex,MappingConcept concept = null, MappingKey parent = null)
+        public MappingKey CreateMappingKey(string name, string description, string url, bool optional, bool isComplex, string xpath= "", MappingConcept concept = null, MappingKey parent = null)
         {
 
             MappingKey entity = new MappingKey();
@@ -120,6 +120,7 @@ namespace BExIS.Dim.Services
             entity.IsComplex = isComplex;
             entity.Concept = concept;
             entity.Parent = parent;
+            entity.XPath = xpath;
 
             using (IUnitOfWork uow = this.GetUnitOfWork())
             {

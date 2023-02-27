@@ -129,21 +129,18 @@ namespace BExIS.Dim.Services
             return (true);
         }
 
-        public LinkElement UpdateLinkElement(long id)
+        public LinkElement UpdateLinkElement(LinkElement entity)
         {
-            var linkElement = this.GetUnitOfWork().GetReadOnlyRepository<LinkElement>().Get(id);
+            using (var uow = this.GetUnitOfWork())
+            { 
+                var repo = uow.GetRepository<LinkElement>();
+                repo.Merge(entity);
+                var merged = repo.Get(entity.Id);
+                repo.Put(merged);
+                uow.Commit();
 
-            if (linkElement != null)
-            {
-                using (IUnitOfWork uow = this.GetUnitOfWork())
-                {
-                    IRepository<LinkElement> repo = uow.GetRepository<LinkElement>();
-                    repo.Put(linkElement);
-                    uow.Commit();
-                }
+                return (entity);
             }
-
-            return (linkElement);
         }
 
         #endregion

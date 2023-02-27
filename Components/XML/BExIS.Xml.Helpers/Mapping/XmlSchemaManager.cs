@@ -12,6 +12,7 @@ using System.IO;
 using System.Linq;
 using System.Xml;
 using System.Xml.Schema;
+using Vaiona.Persistence.Api;
 using Vaiona.Utils.Cfg;
 
 namespace BExIS.Xml.Helpers.Mapping
@@ -501,8 +502,6 @@ namespace BExIS.Xml.Helpers.Mapping
 
         #endregion load schema
 
-
-
         #region import To MetadatStructure
 
         public Dictionary<string, List<Constraint>> ConvertSimpleTypes()
@@ -895,6 +894,43 @@ namespace BExIS.Xml.Helpers.Mapping
                 return test.Id;
             }
 
+        }
+
+        public bool GenerateMappingFile(long id, string name, string concept, List<XmlMappingRoute> routes)
+        {
+  
+            //mappingFileInternalToExternal.Header.AddToSchemas(name, "Metadata/" + name + "/" + concept);
+
+            mappingFileInternalToExternal.Routes.AddRange(routes);
+
+            generateXmlMappingFile(mappingFileInternalToExternal, name, concept);
+
+            // register
+            //mappingFileNameExport;
+            using (var metadataStructureManager = new MetadataStructureManager())
+            {
+                MetadataStructure metadataStructure = this.GetUnitOfWork().GetReadOnlyRepository<MetadataStructure>().Get(id);
+
+                XmlDocument xmlDoc = new XmlDocument();
+
+                if (metadataStructure.Extra != null)
+                {
+                    xmlDoc = (XmlDocument)metadataStructure.Extra;
+                }
+
+                XmlDatasetHelper xmlDatasetHelper = new XmlDatasetHelper();
+                XmlNode convertRef = XmlUtility.GetXmlNodeByAttribute(xmlDoc.DocumentElement, "convertRef", "name", concept);
+
+                if (convertRef == null)
+                {
+                    xmlDoc = xmlDatasetHelper.AddReferenceToXml(xmlDoc, concept, mappingFileNameExport, "mappingFileExport", "extra/convertReferences/convertRef");
+
+                    metadataStructure.Extra = xmlDoc;
+                    metadataStructureManager.Update(metadataStructure);
+                }
+            }
+
+            return false;
         }
 
         private string findPathFromRoot(XmlSchemaElement element, string name, string path)
@@ -1816,15 +1852,13 @@ namespace BExIS.Xml.Helpers.Mapping
             root.AppendChild(routes);
 
             if (direction == 0)
-            {
                 mappingFileNameExport = "MappingFile_intern_" + sourceName + "_to_extern_" + DestinationName + ".xml";
-                mappingFile.Save(Path.Combine(AppConfiguration.GetModuleWorkspacePath("DIM"), mappingFileNameExport));
-            }
             else
-            {
                 mappingFileNameImport = "MappingFile_extern_" + sourceName + "_to_intern_" + DestinationName + ".xml";
-                mappingFile.Save(Path.Combine(AppConfiguration.GetModuleWorkspacePath("DIM"), mappingFileNameImport));
-            }
+
+            string path = Path.Combine(AppConfiguration.GetModuleWorkspacePath("DIM"), mappingFileNameExport);
+            if(File.Exists(path)) File.Delete(path);
+            mappingFile.Save(path);
 
             return mappingFile;
         }

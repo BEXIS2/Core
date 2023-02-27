@@ -285,31 +285,21 @@ namespace BExIS.Xml.Helpers.Mapping
             XmlDeclaration declaration = newMetadata.CreateXmlDeclaration("1.0", "utf-8", null);
             newMetadata.AppendChild(declaration);
 
-            // Add Schema
-            newMetadata.Schemas = xmlSchemaManager.SchemaSet;
-
-            //create namespaces
-
-            this.xmlSchemaManager.XmlNamespaceManager = new XmlNamespaceManager(newMetadata.NameTable);
-            foreach (var ns in xmlSchemaManager.Schema.Namespaces.ToArray())
+            if (xmlSchemaManager.SchemaSet != null)
             {
-                this.xmlSchemaManager.XmlNamespaceManager.AddNamespace(ns.Name, ns.Namespace);
+                // Add Schema
+                newMetadata.Schemas = xmlSchemaManager.SchemaSet;
+
+                //create namespaces
+                this.xmlSchemaManager.XmlNamespaceManager = new XmlNamespaceManager(newMetadata.NameTable);
+                foreach (var ns in xmlSchemaManager.Schema.Namespaces.ToArray())
+                {
+                    this.xmlSchemaManager.XmlNamespaceManager.AddNamespace(ns.Name, ns.Namespace);
+                }
+
             }
 
-            //newMetadata.CreateXmlDeclaration("1.0", "utf-8", null);
-            //newMetadata.Load(defaultFilePath);
-            //XmlNode root = newMetadata.DocumentElement;
-
-            //if (!String.IsNullOrEmpty(xmlMapper.Header.Destination.XPath))
-            //{
-            //    newMetadata.AppendChild(newMetadata.CreateElement(xmlMapper.Header.Destination.Prefix, xmlMapper.Header.Destination.XPath, xmlMapper.Header.Destination.NamepsaceURI));
-            //}
-            //else
-            //{
-            //    newMetadata.AppendChild(newMetadata.CreateElement("root"));
-            //}
-
-            // create nodes
+             // create nodes
             newMetadata = mapNode(newMetadata, null, metadataXml.DocumentElement);
 
             // add required attributes
@@ -319,45 +309,51 @@ namespace BExIS.Xml.Helpers.Mapping
             //root.Prefix = "";
             XmlAttribute rootAttr = null;
 
-            //create NameSpaces
-            foreach (var nsp in xmlSchemaManager.Schema.Namespaces.ToArray())
+            if (xmlSchemaManager.Schema != null)
             {
-                string attrName = "xmlns";
-
-                if (!string.IsNullOrEmpty(nsp.Name)) attrName += ":" + nsp.Name;
-
-                if (root.Attributes[attrName] == null)
+                //create NameSpaces
+                foreach (var nsp in xmlSchemaManager.Schema.Namespaces.ToArray())
                 {
-                    rootAttr = newMetadata.CreateAttribute(attrName);
-                    rootAttr.Value = nsp.Namespace;
-                    root.Attributes.Append(rootAttr);
+                    string attrName = "xmlns";
 
-                    //root.
+                    if (!string.IsNullOrEmpty(nsp.Name)) attrName += ":" + nsp.Name;
 
-                    //Add Prefix to root
-                    if (nsp.Namespace.Equals(xmlSchemaManager.Schema.TargetNamespace))
+                    if (root.Attributes[attrName] == null)
                     {
-                        if (!string.IsNullOrEmpty(nsp.Name))
-                            root.Prefix = nsp.Name;
-                        //root.NamespaceURI = xmlSchemaManager.Schema.TargetNamespace;
+                        rootAttr = newMetadata.CreateAttribute(attrName);
+                        rootAttr.Value = nsp.Namespace;
+                        root.Attributes.Append(rootAttr);
+
+                        //root.
+
+                        //Add Prefix to root
+                        if (nsp.Namespace.Equals(xmlSchemaManager.Schema.TargetNamespace))
+                        {
+                            if (!string.IsNullOrEmpty(nsp.Name))
+                                root.Prefix = nsp.Name;
+                            //root.NamespaceURI = xmlSchemaManager.Schema.TargetNamespace;
+                        }
                     }
                 }
             }
 
-            //add root attributes
-            foreach (KeyValuePair<string, string> attribute in xmlMapper.Header.Attributes)
+            if (xmlMapper.Header != null)
             {
-                XmlAttribute attr = newMetadata.CreateAttribute(attribute.Key);
-                attr.Value = attribute.Value;
-                root.Attributes.Append(attr);
-            }
+                //add root attributes
+                foreach (KeyValuePair<string, string> attribute in xmlMapper.Header.Attributes)
+                {
+                    XmlAttribute attr = newMetadata.CreateAttribute(attribute.Key);
+                    attr.Value = attribute.Value;
+                    root.Attributes.Append(attr);
+                }
 
-            //add root namespaces
-            foreach (KeyValuePair<string, string> package in xmlMapper.Header.Packages)
-            {
-                XmlAttribute attr = newMetadata.CreateAttribute(package.Key);
-                attr.Value = package.Value;
-                root.Attributes.Append(attr);
+                //add root namespaces
+                foreach (KeyValuePair<string, string> package in xmlMapper.Header.Packages)
+                {
+                    XmlAttribute attr = newMetadata.CreateAttribute(package.Key);
+                    attr.Value = package.Value;
+                    root.Attributes.Append(attr);
+                }
             }
 
             string path = getStorePath(datasetVersionId, exportTo);
@@ -734,6 +730,9 @@ namespace BExIS.Xml.Helpers.Mapping
         // add required attributes
         private XmlDocument addAttributes(XmlDocument doc, XmlNode parentNode)
         {
+            if (parentNode == null) return doc;
+            if (doc == null) new ArgumentNullException("can not add attributes because xml document is null");
+
             if (xmlSchemaManager.HasAttributes(parentNode))
             {
                 addAttributesToXmlNode(doc, parentNode, xmlSchemaManager.GetAttributes(parentNode));

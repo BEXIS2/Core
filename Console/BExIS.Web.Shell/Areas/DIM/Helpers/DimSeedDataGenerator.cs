@@ -146,7 +146,7 @@ namespace BExIS.Modules.Dim.UI.Helpers
 
                 createMappings();
 
-                //createDOIMappingConcept();
+                createDOIMappingConcept();
 
                 #endregion MAPPING
             }
@@ -172,12 +172,12 @@ namespace BExIS.Modules.Dim.UI.Helpers
                 var concept = conceptManager.CreateMappingConcept("DOI", "The concept is needed to create a DIO via DataCite.", "https://schema.datacite.org/meta/kernel-4.4/");
 
                 // keys
-                var title = conceptManager.CreateMappingKey("Title", "", "", false, false, concept);
+                var title = conceptManager.CreateMappingKey("Title", "", "", false, false,"concept", concept);
 
 
-                var creator = conceptManager.CreateMappingKey("Creator", "", "www.google.de",false,true,concept);
-                var firstname = conceptManager.CreateMappingKey("Firstname", "", "", false, false, concept,creator);
-                var lastname = conceptManager.CreateMappingKey("Lastname", "", "", false, false, concept, creator);
+                var creator = conceptManager.CreateMappingKey("Creator", "", "www.google.de",false,true, "concept/creator", concept);
+                var firstname = conceptManager.CreateMappingKey("Firstname", "", "", false, false, "concept/creator/firstname", concept,creator);
+                var lastname = conceptManager.CreateMappingKey("Lastname", "", "", false, false, "concept/creator/lastname", concept, creator);
             }
         }
 
