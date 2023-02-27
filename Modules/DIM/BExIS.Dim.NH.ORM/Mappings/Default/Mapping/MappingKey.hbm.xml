@@ -23,6 +23,10 @@
 		  <column name="Optional" />
 	  </property>
 
+	  <property name="XPath" type="string">
+		  <column name="XPath" />
+	  </property>
+
 	  <property name="IsComplex" type="boolean">
 		  <column name="IsComplex" />
 	  </property>
