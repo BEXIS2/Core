@@ -171,15 +171,19 @@ namespace BExIS.Modules.Dim.UI.Helpers
                 // concept
                 var concept = conceptManager.CreateMappingConcept("DOI", "The concept is needed to create a DIO via DataCite.", "https://schema.datacite.org/meta/kernel-4.4/");
 
-                // keys
-                var titles = conceptManager.CreateMappingKey("Titles", "", "", false, true,"data/titles/", concept);
-                var title = conceptManager.CreateMappingKey("Title", "", "", false, false,"data/titles/title", concept, titles);
-                var lang = conceptManager.CreateMappingKey("Lang", "", "", false, false,"data/titles/lang", concept, titles);
+                // type
+                var type = conceptManager.CreateMappingKey("Type", "", "", false, false, "data/type", concept);
 
+                // title(s)
+                var titles = conceptManager.CreateMappingKey("Titles", "", "", false, true, "data/attributes/titles", concept);
+                var title = conceptManager.CreateMappingKey("Title", "", "", false, false, "data/attributes/titles/title", concept, titles);
+                var lang = conceptManager.CreateMappingKey("Lang", "", "", false, false, "data/attributes/titles/lang", concept, titles);
+                var TitleType = conceptManager.CreateMappingKey("TitleType", "", "", false, false, "data/attributes/titles/titleType", concept, titles);
 
-                var creator = conceptManager.CreateMappingKey("Creators", "", "www.google.de",false,true, "data/creators", concept);
-                var firstname = conceptManager.CreateMappingKey("Firstname", "", "", false, false, "data/creators/firstname", concept,creator);
-                var lastname = conceptManager.CreateMappingKey("Lastname", "", "", false, false, "data/creators/lastname", concept, creator);
+                // creator(s)
+                var creators = conceptManager.CreateMappingKey("Creators", "", "www.google.de",false,true, "data/attributes/creators", concept);
+                var firstname = conceptManager.CreateMappingKey("Firstname", "", "", false, false, "data/attributes/creators/firstname", concept,creators);
+                var lastname = conceptManager.CreateMappingKey("Lastname", "", "", false, false, "data/attributes/creators/lastname", concept, creators);
             }
         }
 
