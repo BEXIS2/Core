@@ -501,7 +501,7 @@ namespace BExIS.Modules.Dim.UI.Helper
 
                     foreach (var key in keys)
                     {
-                        addKeys(key, "Concept", root, LEModel);
+                        addKeys(key, root, LEModel);
                     }
 
                     //root = CreateLinkElementContainerModels(root);
@@ -516,7 +516,7 @@ namespace BExIS.Modules.Dim.UI.Helper
             return null;
         }
 
-        private static void addKeys(MappingKey key, string path, LinkElementRootModel root, LinkElementModel parent)
+        private static void addKeys(MappingKey key, LinkElementRootModel root, LinkElementModel parent)
         {
             long linkElementId = 0;
 
@@ -532,18 +532,23 @@ namespace BExIS.Modules.Dim.UI.Helper
 
             LinkElementComplexity complexity = key.IsComplex?LinkElementComplexity.Complex: LinkElementComplexity.Simple;
 
-            string linkeElementPath = path + "/" + key.Name;
-
+  
             LinkElementModel LEModel = new LinkElementModel(
                linkElementId,
                key.Id,
-               type, key.Name, linkeElementPath, root.Position, complexity, key.Description, key.Url, key.Optional);
+               type, key.Name, 
+               key.XPath, 
+               root.Position, 
+               complexity, 
+               key.Description, 
+               key.Url, 
+               key.Optional);
             LEModel.Parent = parent;
             root.LinkElements.Add(LEModel);
 
             foreach (var c in key.Children)
             {
-                addKeys(c, linkeElementPath, root, LEModel);
+                addKeys(c, root, LEModel);
             }
         }
 

@@ -172,12 +172,14 @@ namespace BExIS.Modules.Dim.UI.Helpers
                 var concept = conceptManager.CreateMappingConcept("DOI", "The concept is needed to create a DIO via DataCite.", "https://schema.datacite.org/meta/kernel-4.4/");
 
                 // keys
-                var title = conceptManager.CreateMappingKey("Title", "", "", false, false,"concept", concept);
+                var titles = conceptManager.CreateMappingKey("Titles", "", "", false, true,"data/titles/", concept);
+                var title = conceptManager.CreateMappingKey("Title", "", "", false, false,"data/titles/title", concept, titles);
+                var lang = conceptManager.CreateMappingKey("Lang", "", "", false, false,"data/titles/lang", concept, titles);
 
 
-                var creator = conceptManager.CreateMappingKey("Creator", "", "www.google.de",false,true, "concept/creator", concept);
-                var firstname = conceptManager.CreateMappingKey("Firstname", "", "", false, false, "concept/creator/firstname", concept,creator);
-                var lastname = conceptManager.CreateMappingKey("Lastname", "", "", false, false, "concept/creator/lastname", concept, creator);
+                var creator = conceptManager.CreateMappingKey("Creators", "", "www.google.de",false,true, "data/creators", concept);
+                var firstname = conceptManager.CreateMappingKey("Firstname", "", "", false, false, "data/creators/firstname", concept,creator);
+                var lastname = conceptManager.CreateMappingKey("Lastname", "", "", false, false, "data/creators/lastname", concept, creator);
             }
         }
 
