@@ -23,6 +23,9 @@
 		<column name="Url" />
 	</property>
 
+	  <property name="XSD" type="string">
+		  <column name="Url" />
+	  </property>
   </class>
 
 </hibernate-mapping>
