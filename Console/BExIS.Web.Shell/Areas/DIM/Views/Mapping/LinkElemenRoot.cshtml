@@ -63,7 +63,7 @@
 
         @if (Model.Type.ToString().Contains("Metadata"))
         {
-            <span>@Html.CheckBox("Type", true, new { @class = "prefilter"}) Type </span>
+            @*<span>@Html.CheckBox("Type", true, new { @class = "prefilter"}) Type </span>*@
             <span>@Html.CheckBox("Usage", true, new { @class = "prefilter" }) Usage </span>
             <span>@Html.CheckBox("Default", true, new { @class = "prefilter" }) Default </span>
         }

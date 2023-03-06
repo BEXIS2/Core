@@ -24,7 +24,7 @@
 	</property>
 
 	  <property name="XSD" type="string">
-		  <column name="Url" />
+		  <column name="XSD" />
 	  </property>
   </class>
 

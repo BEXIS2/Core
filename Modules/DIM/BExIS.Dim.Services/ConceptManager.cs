@@ -52,14 +52,15 @@ namespace BExIS.Dim.Services
 
         #region Concept
 
-        public MappingConcept CreateMappingConcept( string name, string description, string url)
+        public MappingConcept CreateMappingConcept( string name, string description, string url, string xsd)
         {
 
             MappingConcept concept = new MappingConcept();
             concept.Name = name;
             concept.Description = description;
             concept.Url = url;
-            
+            concept.XSD = xsd;
+
             using (IUnitOfWork uow = this.GetUnitOfWork())
             {
                 IRepository<MappingConcept> repo = uow.GetRepository<MappingConcept>();

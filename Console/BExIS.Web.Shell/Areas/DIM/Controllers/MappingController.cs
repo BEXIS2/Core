@@ -432,32 +432,32 @@ namespace BExIS.Modules.Dim.UI.Controllers
 
         private void updateMappingFile(Mapping root)
         {
-            // get all complexMappings with simple mappings
-            var complexMappings = MappingHelper.LoadMappings(root);
+            //// get all complexMappings with simple mappings
+            //var complexMappings = MappingHelper.LoadMappings(root);
 
-            List<XmlMappingRoute> routes = new List<XmlMappingRoute>();
+            //List<XmlMappingRoute> routes = new List<XmlMappingRoute>();
 
-            foreach (var complexMapping in complexMappings)
-            {
-                if(complexMapping.SimpleMappings.Any())
-                {
-                    foreach (var simpleMapping in complexMapping.SimpleMappings)
-                    {
-                        // create a XmlMappingroute for each simplemapping
-                        XmlMappingRoute r = new XmlMappingRoute();
-                        r.Source = new Source(simpleMapping.Source.XPath);
-                        r.Destination = new Destination(simpleMapping.Target.XPath, complexMapping.Target.Name);
+            //foreach (var complexMapping in complexMappings)
+            //{
+            //    if(complexMapping.SimpleMappings.Any())
+            //    {
+            //        foreach (var simpleMapping in complexMapping.SimpleMappings)
+            //        {
+            //            // create a XmlMappingroute for each simplemapping
+            //            XmlMappingRoute r = new XmlMappingRoute();
+            //            r.Source = new Source(simpleMapping.Source.XPath);
+            //            r.Destination = new Destination(simpleMapping.Target.XPath, complexMapping.Target.Name);
 
-                        routes.Add(r);
-                    }
-                }
-            }
+            //            routes.Add(r);
+            //        }
+            //    }
+            //}
 
-            if (routes.Any())
-            {
-                XmlSchemaManager manager = new XmlSchemaManager();
-                manager.GenerateMappingFile(root.Source.ElementId, root.Source.Name, root.Target.Name, routes);
-            }
+            //if (routes.Any())
+            //{
+            //    XmlSchemaManager manager = new XmlSchemaManager();
+            //    manager.GenerateMappingFile(root.Source.ElementId, root.Source.Name, root.Target.Name, routes);
+            //}
         }
 
         public ActionResult LoadEmptyMapping()

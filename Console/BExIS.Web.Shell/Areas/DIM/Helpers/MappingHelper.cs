@@ -238,40 +238,40 @@ namespace BExIS.Modules.Dim.UI.Helper
             rootModel.LinkElements.Add(LEModel);
 
             //add type
-            if (addTypeAsLinkElement)
-            {
-                linkElementId = 0;
+            //if (addTypeAsLinkElement)
+            //{
+            //    linkElementId = 0;
 
-                linkElement =
-                    linkElements
-                        .FirstOrDefault(
-                            le =>
-                                le.ElementId.Equals(typeId) &&
-                                le.Type.Equals(LinkElementType.ComplexMetadataAttribute));
+            //    linkElement =
+            //        linkElements
+            //            .FirstOrDefault(
+            //                le =>
+            //                    le.ElementId.Equals(typeId) &&
+            //                    le.Type.Equals(LinkElementType.ComplexMetadataAttribute));
 
-                if (linkElement != null)
-                {
-                    linkElementId = linkElement.Id;
-                }
+            //    if (linkElement != null)
+            //    {
+            //        linkElementId = linkElement.Id;
+            //    }
 
-                LEModel = new LinkElementModel(
-                    linkElementId,
-                    typeId,
-                    LinkElementType.ComplexMetadataAttribute,
-                    typeName,
-                    xPath,
-                    rootModel.Position,
-                    complexity,
-                    typeDescription);
+            //    LEModel = new LinkElementModel(
+            //        linkElementId,
+            //        typeId,
+            //        LinkElementType.ComplexMetadataAttribute,
+            //        typeName,
+            //        xPath,
+            //        rootModel.Position,
+            //        complexity,
+            //        typeDescription);
 
-                LEModel.Parent = parent;
+            //    LEModel.Parent = parent;
 
-                if (!rootModel.LinkElements.Any(le => le.ElementId.Equals(typeId) &&
-                                                      le.Type.Equals(LinkElementType.ComplexMetadataAttribute)))
-                {
-                    rootModel.LinkElements.Add(LEModel);
-                }
-            }
+            //    if (!rootModel.LinkElements.Any(le => le.ElementId.Equals(typeId) &&
+            //                                          le.Type.Equals(LinkElementType.ComplexMetadataAttribute)))
+            //    {
+            //        rootModel.LinkElements.Add(LEModel);
+            //    }
+            //}
 
             //Debug.WriteLine("1: " + LEModel.Name + " " + LEModel.Type);
 
@@ -544,7 +544,10 @@ namespace BExIS.Modules.Dim.UI.Helper
                key.Url, 
                key.Optional);
             LEModel.Parent = parent;
-            root.LinkElements.Add(LEModel);
+
+            // add only to link elements when parent is root (mapping concept) or is complex
+            if(parent.Type.Equals(LinkElementType.MappingConcept) || LEModel.Complexity.Equals(LinkElementComplexity.Complex))
+                root.LinkElements.Add(LEModel);
 
             foreach (var c in key.Children)
             {
