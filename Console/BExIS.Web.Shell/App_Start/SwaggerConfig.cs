@@ -58,12 +58,12 @@ namespace BExIS.Web.Shell
             string path = string.Format(@"{0}\App_Data", System.AppDomain.CurrentDomain.BaseDirectory);
 
             // get all files from the direcory (app_data)
-            var files = Directory.EnumerateFiles(path);
+            var files = Directory.EnumerateFiles(path,"*.xml");
 
             if (files != null) 
             { 
                 // add each file (xml documenation) to the swagger config
-                files.ToList().ForEach(f =>c.IncludeXmlComments(f));
+                files.ToList().ForEach(f => c.IncludeXmlComments(f));
             }
         }
     }

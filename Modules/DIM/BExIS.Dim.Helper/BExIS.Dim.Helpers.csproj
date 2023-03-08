@@ -85,7 +85,7 @@
       <HintPath>..\..\..\Libraries\Vaiona\Vaiona.Logging.dll</HintPath>
     </Reference>
     <Reference Include="Vaiona.Persistence.Api, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
-      <HintPath>..\..\..\..\BEXIS2GIT\Libraries\Vaiona\Vaiona.Persistence.Api.dll</HintPath>
+      <HintPath>..\..\..\Libraries\Vaiona\Vaiona.Persistence.Api.dll</HintPath>
     </Reference>
     <Reference Include="Vaiona.Utils">
       <HintPath>..\..\..\Libraries\Vaiona\Vaiona.Utils.dll</HintPath>

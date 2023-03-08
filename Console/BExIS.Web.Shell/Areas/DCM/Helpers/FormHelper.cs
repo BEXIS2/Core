@@ -3,6 +3,7 @@ using BExIS.Dim.Helpers.Mapping;
 using BExIS.Dlm.Entities.Common;
 using BExIS.Dlm.Entities.DataStructure;
 using BExIS.Dlm.Entities.MetadataStructure;
+using BExIS.Dlm.Services.MetadataStructure;
 using BExIS.IO.DataType.DisplayPattern;
 using BExIS.Modules.Dcm.UI.Models.Metadata;
 using System;
@@ -62,6 +63,8 @@ namespace BExIS.Modules.Dcm.UI.Helpers
             bool entityMappingExist = false;
             bool partyMappingExist = false;
             bool mappingSelectionField = false;
+
+            List<MetadataParameterModel> parameters = new List<MetadataParameterModel>();
 
             string metadataAttributeName = "";
 
@@ -143,6 +146,12 @@ namespace BExIS.Modules.Dcm.UI.Helpers
             // check if a mapping for entites exits
             entityMappingExist = MappingUtils.ExistMappingWithEntity(current.Id, type);
 
+            // check wheter attribute has parameters nd create modesl for them
+            foreach (var p in metadataAttribute.MetadataParameterUsages)
+            {
+                parameters.Add(FormHelper.CreateMetadataParameterModel(p, current, metadataStructureId, packageModelNumber, parentStepId));
+            }
+
             return new MetadataAttributeModel
             {
                 Id = current.Id,
@@ -174,8 +183,82 @@ namespace BExIS.Modules.Dcm.UI.Helpers
                 PartyComplexMappingExist = partyComplexMappingExist,
                 LowerBoundary = lowerBoundary,
                 UpperBoundary = upperBoundary,
-                MappingSelectionField = mappingSelectionField
+                MappingSelectionField = mappingSelectionField,
+                Parameters = parameters
             };
+        }
+
+        public static MetadataParameterModel CreateMetadataParameterModel(BaseUsage parameter, BaseUsage attribute, long metadataStructureId, int packageModelNumber, long parentStepId)
+        {
+            using (var metadataAttributeManager = new MetadataAttributeManager())
+            {
+                MetadataParameter metadataParameter = null; ;
+                List<object> domainConstraintList = new List<object>();
+                string constraintsDescription = "";
+                double lowerBoundary = 0;
+                double upperBoundary = 0;
+
+
+                if (parameter is MetadataParameterUsage)
+                {
+                    MetadataParameterUsage mpu = (MetadataParameterUsage)parameter;
+                    metadataParameter = metadataAttributeManager.GetParameter(mpu.Member.Id);
+
+                    if (metadataParameter.Constraints.Where(c => (c is DomainConstraint)).Count() > 0)
+                        domainConstraintList = createDomainContraintList(metadataParameter);
+
+                    if (metadataParameter.Constraints.Count > 0)
+                    {
+                        foreach (Constraint c in metadataParameter.Constraints)
+                        {
+                            if (string.IsNullOrEmpty(constraintsDescription)) constraintsDescription = c.FormalDescription;
+                            else constraintsDescription = String.Format("{0}\n{1}", constraintsDescription, c.FormalDescription);
+                        }
+                        if (metadataParameter.DataType.Name == "string" && metadataParameter.Constraints.Where(c => (c is RangeConstraint)).Count() > 0)
+                        {
+                            foreach (RangeConstraint r in metadataParameter.Constraints.Where(c => (c is RangeConstraint)))
+                            {
+                                lowerBoundary = r.Lowerbound;
+                                upperBoundary = r.Upperbound;
+                            }
+                        }
+                    }
+
+                    //load displayPattern
+                    DataTypeDisplayPattern dtdp = DataTypeDisplayPattern.Materialize(metadataParameter.DataType.Extra);
+                    string displayPattern = "";
+                    if (dtdp != null) displayPattern = dtdp.StringPattern;
+
+
+
+                    return new MetadataParameterModel
+                    {
+                        Id = parameter.Id,
+                        AttributeNumber = 1,
+                        ParentModelNumber = packageModelNumber,
+                        MetadataStructureId = metadataStructureId,
+                        MetadataParameterName = parameter.Label,
+                        MetadataParameterId = metadataParameter.Id,
+                        Parent = attribute,
+                        Source = parameter,
+                        DisplayName = parameter.Label,
+                        Discription = parameter.Description,
+                        ConstraintDescription = constraintsDescription,
+                        DataType = metadataParameter.DataType.Name,
+                        SystemType = metadataParameter.DataType.SystemType,
+                        DisplayPattern = displayPattern,
+                        //MinCardinality = metadataParameter.MinCardinality,
+                        //MaxCardinality = metadataParameter.MaxCardinality,
+                        NumberOfSourceInPackage = 1,
+                        DomainList = domainConstraintList,
+                        ParentStepId = parentStepId,
+                        LowerBoundary = lowerBoundary,
+                        UpperBoundary = upperBoundary
+                    };
+                }
+
+                return null;
+            }
         }
 
         private static List<object> createDomainContraintList(MetadataAttribute attribute)

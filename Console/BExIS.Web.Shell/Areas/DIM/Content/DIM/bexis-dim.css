@@ -42,9 +42,19 @@
 .le-root-search .bx-input {
     width: 100%;
 }
+
+.le-root-description {
+    font-size: 8pt;
+    /*word-spacing: -1px;*/
+    padding: 5px;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+}
+
 .le-container {
     height: auto;
-    border: 1px solid #afb0b1; 
+    border: 1px solid #afb0b1;
     margin: 5px 0;
     background-color: #d2e8e3;
 }
@@ -75,6 +85,12 @@
 
 .le-simple-header-td {
     max-width: 1px;
+}
+
+.le-simple-type {
+    font-size: 8pt;
+    word-spacing: -1px;
+    cursor: pointer;
 }
 
 .le-simple-path {

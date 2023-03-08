@@ -1,0 +1,33 @@
+﻿@model BExIS.Modules.Dcm.UI.Models.Metadata.UIComponentModel
+@using BExIS.Modules.Dcm.UI.Models.Metadata
+
+@{
+    bool value = false;//(bool?)Model.Value ?? false;
+    try
+    {
+        value = Convert.ToBoolean(Model.Value);
+    }
+    catch
+    {
+        value = false;
+    }
+
+    string action = "OnChangeCheckBox(this)";
+    if (Model.Type.Equals(MetadataAttrType.Parameter)){ action = "OnChangeParameterCheckBox(this)"; }
+
+    string disabled = Model.Locked ? "disabled" : "";
+}
+
+
+@Html.CheckBox(Model.DisplayName, value,
+    new{
+            idbyxpath = @Model.IdByXpath,
+            OnClick = action,
+            disabled = disabled,
+            Name = @Model.DisplayName,
+            Id = @Model.IdInput,
+            PackageId = @Model.ParentId,
+            Title = @Model.ErrorMessage
+        })
+
+

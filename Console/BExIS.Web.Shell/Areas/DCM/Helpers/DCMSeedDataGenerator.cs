@@ -100,7 +100,9 @@ namespace BExIS.Modules.Dcm.UI.Helpers
                 {
                     XmlDocument xmlDoc = new XmlDocument();
 
-                    if (entity.Extra != null) xmlDoc.AppendChild(entity.Extra);
+                    if (entity.Extra != null) 
+                        if(entity.Extra is XmlDocument) xmlDoc = entity.Extra as XmlDocument ;
+                        else xmlDoc.AppendChild(entity.Extra);
 
                     //update to Extra
                     XmlDatasetHelper xmlDatasetHelper = new XmlDatasetHelper();

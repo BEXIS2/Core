@@ -1,0 +1,61 @@
+﻿@using BExIS.Modules.Dim.UI.Models.Mapping
+@using System.Text.RegularExpressions
+
+@{
+    string id = Model.ElementId + "_" + Model.Position + "_" + Model.Name;
+    string c = "le-simple-" + Model.Position;
+
+
+    // Add before every uppercase word empty space (e.g. LastNameTEST -> Last Name TEST)
+    string displayName = Regex.Replace(Model.Name, "((?<=[a-z])[A-Z])", " $1");
+
+    // split at " "
+    string[] wordList = displayName.Split(new char[0]);
+
+
+    for (int i = 0; i < wordList.Length; i++)
+    {
+        if (wordList[i].ToUpper() != wordList[i])
+        {
+            wordList[i] = wordList[i].ToLower();
+        }
+    }
+
+    displayName = String.Join(" ", wordList);
+
+    // Make first char uppercase
+    displayName = char.ToUpper(displayName[0]) + displayName.Substring(1);
+
+    string type = Regex.Replace(Model.Type.ToString(), "([a-z])([A-Z])", "$1 $2");
+
+}
+
+
+@model LinkElementModel
+
+<div class="le-simple-header" title="@displayName">
+
+    @if (string.IsNullOrEmpty(Model.Url))
+    {
+        @displayName
+    }
+    else
+    {
+        <a href="@Model.Url" target="_blank"> @displayName</a>
+    }
+
+    @if (!Model.Optional)
+    { 
+        <span title="required" style="color:red">*</span>
+    }
+
+</div>
+<div class="le-simple-type" value="@Model.Type.ToString()">
+    <b>type:</b> @type
+</div>
+<div class="le-simple-path" value="@Model.XPath">
+    @if (!string.IsNullOrEmpty(Model.XPath))
+    {
+        <b>path:</b> @Model.XPath.Replace("/", "/ ")
+    }
+</div>

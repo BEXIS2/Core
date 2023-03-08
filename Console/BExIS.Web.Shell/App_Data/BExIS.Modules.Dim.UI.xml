@@ -561,9 +561,9 @@
         </member>
         <member name="M:BExIS.Modules.Dim.UI.Controllers.MetadataStatisticOutController.Post(BExIS.Modules.Dim.UI.Models.Api.PostApiMetadataStatisticModel)">
             <summary>
-            Get a list of unique metadata values, count and list of occurrence
+            Get a list of unique metadata values, count and list of occurrence for a given XPath.
             </summary>
-            <remarks>Data is directly returned from the database without (currently) any further permission check. Nested nodes are cuurently not supported.</remarks>
+            <remarks>Data is directly returned from the database. A valid token is needed to access also non-public dataset.</remarks>
             <returns>JSON object</returns>
         </member>
         <member name="T:BExIS.Modules.Dim.UI.Controllers.MetadataStructureOutController">
@@ -709,6 +709,28 @@
              <param name="simplifiedJson">accept 0,1,2</param>
              <returns>metadata as xml or json</returns>
         </member>
+        <member name="M:BExIS.Modules.Dim.UI.Controllers.MetadataOutController.Get(System.Int32,System.Int32,System.String,System.Int32)">
+             <summary>
+             Get metadata for a dataset as XML (default) or JSON (internal, complete or simplified structure)
+             </summary>
+             <remarks>
+            
+             ## format
+             Based on the existing transformation options, the converted metadata can be obtained via format.
+             
+             ## simplfiedJson
+             if you set the accept of the request to return a json, you can manipulate the json with this parameter. <br/>
+             0 = returns the metadata with full internal structure <br/>
+             1 = returns a simplified form of the structure with all fields and attributes <br/>
+             2 = returns the metadata in a simplified structure and does not add all fields and attributes that are empty. 
+             
+             </remarks>
+             <param name="id">Dataset Id</param>
+             <param name="version">Version number</param>
+             <param name="format">Based on the existing transformation options, the converted metadata can be obtained via format.</param>
+             <param name="simplifiedJson">accept 0,1,2</param>
+             <returns>metadata as xml or json</returns>
+        </member>
         <member name="M:BExIS.Modules.Dim.UI.Controllers.SubmissionController.publishData(System.Int64,System.Int64)">
             <summary>
             ToDo Refactor submission Commented by Javad due to modularity issues.
@@ -762,6 +784,61 @@
             <param name="root"></param>
             <param name="metadataRef"></param>
             <param name="mappingManager"></param>
+        </member>
+        <member name="T:BExIS.Modules.Dim.UI.Models.Api.ApiDatasetModel">
+            <summary>
+            Return model of Dataset API
+            </summary>
+        </member>
+        <member name="T:BExIS.Modules.Dim.UI.Models.Api.ApiDataStatisticModel">
+            <summary>
+            Return model of Data Statistic API
+            </summary>
+        </member>
+        <member name="T:BExIS.Modules.Dim.UI.Models.Api.PostApiMetadataStatisticModel">
+            <summary>
+            Return model of Metadata Statistic API
+            </summary>
+        </member>
+        <member name="P:BExIS.Modules.Dim.UI.Models.Api.PostApiMetadataStatisticModel.Xpath">
+            <summary>
+            Xpath e.g. Metadata/methods/methodsType/measurements/measurementsType/sampleAnalysis/
+            </summary>
+        </member>
+        <member name="P:BExIS.Modules.Dim.UI.Models.Api.PostApiMetadataStatisticModel.DatasetVersionIdsInclude">
+            <summary>
+            List of Dataset version IDs to include instead of dataset id (latests versions)
+            </summary>
+        </member>
+        <member name="P:BExIS.Modules.Dim.UI.Models.Api.PostApiMetadataStatisticModel.DatasetIdsInclude">
+            <summary>
+            List of Dataset IDs to include 
+            </summary>
+        </member>
+        <member name="P:BExIS.Modules.Dim.UI.Models.Api.PostApiMetadataStatisticModel.DatasetIdsExclude">
+            <summary>
+            List of Dataset IDs to exclude 
+            </summary>
+        </member>
+        <member name="P:BExIS.Modules.Dim.UI.Models.Api.PostApiMetadataStatisticModel.MetadatastructureIdsInclude">
+            <summary>
+            List of Metdata structure IDs to include 
+            </summary>
+        </member>
+        <member name="P:BExIS.Modules.Dim.UI.Models.Api.PostApiMetadataStatisticModel.MetadatastructureIdsExclude">
+            <summary>
+            List of Metdata structure IDs to exclude
+            </summary>
+        </member>
+        <member name="P:BExIS.Modules.Dim.UI.Models.Api.PostApiMetadataStatisticModel.RegexInclude">
+            <summary>
+            Regex to define text to include
+            </summary>
+        </member>
+        <member name="P:BExIS.Modules.Dim.UI.Models.Api.PostApiMetadataStatisticModel.RegexExclude">
+            <summary>
+            Regex to define text to exclude
+            </summary>
         </member>
         <member name="T:BExIS.Modules.Dim.UI.Models.DatasetModel">
             <summary>

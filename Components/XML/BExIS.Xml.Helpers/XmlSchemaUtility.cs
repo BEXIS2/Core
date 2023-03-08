@@ -433,8 +433,12 @@ namespace BExIS.Xml.Helpers
             if (element.ElementSchemaType is XmlSchemaComplexType)
             {
                 XmlSchemaComplexType complexType = (XmlSchemaComplexType)element.ElementSchemaType;
-                if (complexType.ContentModel is XmlSchemaSimpleContent)
+                if (complexType.ContentType is XmlSchemaContentType.TextOnly ||
+                   complexType.ContentType is XmlSchemaContentType.Mixed ||
+                   complexType.ContentType is XmlSchemaContentType.Empty)
                     return true;
+
+
             }
 
             return false;

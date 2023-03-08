@@ -45,8 +45,12 @@
     <Reference Include="System.Data" />
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Xml" />
-    <Reference Include="Vaiona.Entities, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" />
-    <Reference Include="Vaiona.Persistence.Api, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" />
+    <Reference Include="Vaiona.Entities">
+      <HintPath>..\..\..\Libraries\Vaiona\Vaiona.Entities.dll</HintPath>
+    </Reference>
+    <Reference Include="Vaiona.Persistence.Api">
+      <HintPath>..\..\..\Libraries\Vaiona\Vaiona.Persistence.Api.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="MetadataStructureConverter.cs" />

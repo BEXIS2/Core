@@ -25,6 +25,9 @@ namespace BExIS.Dlm.Entities.MetadataStructure
         /// <seealso cref=""/>        
         public virtual ICollection<MetadataAttributeUsage> UsedIn { get; set; }
 
+        public virtual ICollection<MetadataParameterUsage> MetadataParameterUsages { get; set; }
+
+
         #endregion
 
         #region Mathods
@@ -38,6 +41,7 @@ namespace BExIS.Dlm.Entities.MetadataStructure
         public MetadataAttribute()
         {
             UsedIn = new List<MetadataAttributeUsage>();
+            MetadataParameterUsages = new List<MetadataParameterUsage>();
         }
 
         #endregion

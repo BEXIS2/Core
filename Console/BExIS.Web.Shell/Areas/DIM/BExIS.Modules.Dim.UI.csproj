@@ -362,6 +362,7 @@
     <Compile Include="DimModule.cs" />
     <Compile Include="Helpers\DimSeedDataGenerator.cs" />
     <Compile Include="Helpers\Helper.cs" />
+    <Compile Include="Helpers\MappingConceptHelper.cs" />
     <Compile Include="Helpers\MappingHelper.cs" />
     <Compile Include="Helpers\ReleationshipHelper.cs" />
     <Compile Include="Helpers\SettingsHelper.cs" />
@@ -590,10 +591,6 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
-    <Content Include="Helpers\help\help_img1.png" />
-    <Content Include="Helpers\help\help_img2.png" />
-    <Content Include="Helpers\help\help_img3.png" />
-    <Content Include="Helpers\help\help_img4.png" />
     <Content Include="LICENSE.txt" />
     <Content Include="Scripts\2013.2.611\jquery-1.7.1.min.js" />
     <Content Include="Scripts\2013.2.611\jquery.validate.min.js" />
@@ -690,6 +687,7 @@
     <Content Include="Views\Export\XmlNode.cshtml" />
     <Content Include="Views\DataCiteDoi\_requestRow.cshtml" />
     <Content Include="Views\DataCiteDoi\index.cshtml" />
+    <Content Include="Views\Mapping\LinkElementContent.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

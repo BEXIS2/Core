@@ -1,12 +1,20 @@
 ﻿using BExIS.App.Bootstrap.Attributes;
 using BExIS.Dlm.Entities.Data;
 using BExIS.Dlm.Services.Data;
+using BExIS.Dlm.Services.DataStructure;
 using BExIS.IO.Transform.Output;
+using BExIS.Security.Entities.Requests;
+using BExIS.Security.Entities.Subjects;
+using BExIS.Security.Entities.Versions;
+using BExIS.Security.Services.Authorization;
+using BExIS.Security.Services.Objects;
+using BExIS.Security.Services.Subjects;
 using BExIS.Utils.Route;
 using BExIS.Xml.Helpers;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
@@ -14,6 +22,7 @@ using System.Text;
 using System.Web.Http;
 using System.Web.Http.Description;
 using System.Xml;
+using Vaiona.Persistence.Api;
 
 namespace BExIS.Modules.Dim.UI.Controllers
 {
@@ -158,25 +167,91 @@ namespace BExIS.Modules.Dim.UI.Controllers
         /// <returns>metadata as xml or json</returns>
         [BExISApiAuthorize]
         [GetRoute("api/Metadata/{id}")]
-        public HttpResponseMessage Get(int id, [FromUri] string format = null, [FromUri] int simplifiedJson = 0)
+        public HttpResponseMessage Get(int id, [FromUri] string format = null, [FromUri] int simplifiedJson = 0) {
+
+            return GetMetadata(id, -1, format, simplifiedJson);
+        }
+
+
+        /// <summary>
+        /// Get metadata for a dataset as XML (default) or JSON (internal, complete or simplified structure)
+        /// </summary>
+        /// <remarks>
+        ///
+        /// ## format
+        /// Based on the existing transformation options, the converted metadata can be obtained via format.
+        /// 
+        /// ## simplfiedJson
+        /// if you set the accept of the request to return a json, you can manipulate the json with this parameter. <br/>
+        /// 0 = returns the metadata with full internal structure <br/>
+        /// 1 = returns a simplified form of the structure with all fields and attributes <br/>
+        /// 2 = returns the metadata in a simplified structure and does not add all fields and attributes that are empty. 
+        /// 
+        /// </remarks>
+        /// <param name="id">Dataset Id</param>
+        /// <param name="version">Version number</param>
+        /// <param name="format">Based on the existing transformation options, the converted metadata can be obtained via format.</param>
+        /// <param name="simplifiedJson">accept 0,1,2</param>
+        /// <returns>metadata as xml or json</returns>
+        [BExISApiAuthorize]
+        [GetRoute("api/Metadata/{id}/{version}")]
+        public HttpResponseMessage Get(int id, int version = -1, [FromUri] string format = null, [FromUri] int simplifiedJson = 0)
         {
-            DatasetManager dm = new DatasetManager();
+            return GetMetadata(id, version, format, simplifiedJson);
+        }
+
+        private HttpResponseMessage GetMetadata(int id, int version, string format, int simplifiedJson)
+        {
+            
+            DatasetVersion datasetVersion = null;
 
             string returnType = "";
             //returnType = Request.Content.Headers.ContentType?.MediaType;
             if (Request.Headers.Accept.Any())
                 returnType = Request.Headers.Accept.First().MediaType;
 
-            try
+            using (DatasetManager dm = new DatasetManager())
+            using (EntityManager entityManager = new EntityManager())
+            using (EntityPermissionManager entityPermissionManager = new EntityPermissionManager())
+            using (UserManager userManager = new UserManager())
             {
-                if (id == 0) return Request.CreateErrorResponse(HttpStatusCode.PreconditionFailed, "dataset id should be greater then 0.");
+                if (id == 0) return Request.CreateErrorResponse(HttpStatusCode.PreconditionFailed, "Dataset id should be greater then 0.");
 
                 //entity permissions
                 if (id > 0)
                 {
-                    Dataset d = dm.GetDataset(id);
-                    if (d == null)
-                        return Request.CreateErrorResponse(HttpStatusCode.PreconditionFailed, "the dataset with the id (" + id + ") does not exist.");
+                    Dataset dataset = dm.GetDataset(id);
+
+                    // Check if dataset is public
+                    long? entityTypeId = entityManager.FindByName(typeof(Dataset).Name)?.Id;
+                    entityTypeId = entityTypeId.HasValue ? entityTypeId.Value : -1;
+                    bool isPublic = false;
+                    isPublic = entityPermissionManager.Exists(null, entityTypeId.Value, id);
+
+                    // If dataset is not public check if a valid token is provided
+                    if (isPublic == false)
+                    {
+                        string token = this.Request.Headers.Authorization?.Parameter;
+                        User user = null;
+
+                        if (!String.IsNullOrEmpty(token))
+                        {
+                            user = userManager.Users.Where(u => u.Token.Equals(token)).FirstOrDefault();
+
+                            // If user is registered pass
+                            if (user == null)
+                            { 
+                                return Request.CreateErrorResponse(HttpStatusCode.Forbidden, "The dataset is not public and the token is not valid.");
+                            }
+                        }
+                        else
+                        {
+                            return Request.CreateErrorResponse(HttpStatusCode.Forbidden, "The dataset is not public and a token is not provided.");
+                        }
+                    }
+
+                    if (dataset == null)
+                        return Request.CreateErrorResponse(HttpStatusCode.PreconditionFailed, "The dataset with the id (" + id + ") does not exist.");
                 }
 
                 string convertTo = "";
@@ -187,38 +262,62 @@ namespace BExIS.Modules.Dim.UI.Controllers
                 }
                 catch (Exception ex) { }
 
-                DatasetVersion dsv = dm.GetDatasetLatestVersion(id);
-                XmlDocument xmldoc = dsv.Metadata;
+                // try to get latest dataset version 
+                if (version == -1)
+                {
+                    datasetVersion = dm.GetDatasetLatestVersion(id);
+                }
+                
+                // try to get dataset version by version number
+                else
+                {
+                    int index = version - 1;
+                    Dataset dataset = dm.GetDataset(id);
+                    try
+                    {
+                        datasetVersion = dataset.Versions.OrderBy(d => d.Timestamp).ElementAt(index);
+                    }
+                    catch (Exception ex)
+                    {
+                    }
+                }
+                // Check if a dataset version was set
+                if (datasetVersion == null) return Request.CreateResponse(HttpStatusCode.InternalServerError, "It is not possible to load the latest or given version.");
+
+
+                XmlDocument xmldoc = datasetVersion.Metadata;
 
                 if (string.IsNullOrEmpty(convertTo))
                 {
 
                     switch (returnType)
                     {
-                        case "application/json": {
+                        case "application/json":
+                            {
 
                                 string json = "";
 
                                 switch (simplifiedJson)
-                                { 
-                                    case 0: {
+                                {
+                                    case 0:
+                                        {
                                             json = JsonConvert.SerializeObject(xmldoc.DocumentElement);
-                                        break; 
-                                    }
+                                            break;
+                                        }
                                     case 1:
-                                    {
-                                        XmlMetadataConverter xmlMetadataConverter = new XmlMetadataConverter();
-                                        json = xmlMetadataConverter.ConvertTo(xmldoc, true).ToString();
+                                        {
+                                            XmlMetadataConverter xmlMetadataConverter = new XmlMetadataConverter();
+                                            json = xmlMetadataConverter.ConvertTo(xmldoc, true).ToString();
 
-                                        break;
-                                    }
+                                            break;
+                                        }
                                     case 2:
-                                    {
-                                        XmlMetadataConverter xmlMetadataConverter = new XmlMetadataConverter();
-                                        json = xmlMetadataConverter.ConvertTo(xmldoc).ToString();
+                                        {
+                                            XmlMetadataConverter xmlMetadataConverter = new XmlMetadataConverter();
+                                            json = xmlMetadataConverter.ConvertTo(xmldoc).ToString();
 
-                                        break;
-                                    }
+                                            break;
+                                        }
                                 }
 
                                 HttpResponseMessage response = new HttpResponseMessage { Content = new StringContent(json, Encoding.UTF8, "application/json") };
@@ -273,12 +372,11 @@ namespace BExIS.Modules.Dim.UI.Controllers
                     }
                 }
             }
-            finally
-            {
-                dm.Dispose();
-            }
         }
+
     }
+
+
 
     public class MetadataViewObject
     {

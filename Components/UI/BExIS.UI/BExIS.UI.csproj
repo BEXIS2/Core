@@ -76,7 +76,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\packages\TelerikMvcExtensions.2013.2.611\lib\net40\Telerik.Web.Mvc.dll</HintPath>
     </Reference>
-    <Reference Include="Vaiona.Entities, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" />
+    <Reference Include="Vaiona.Entities, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+      <HintPath>..\..\..\Libraries\Vaiona\Vaiona.Entities.dll</HintPath>
+    </Reference>
     <Reference Include="Vaiona.Logging, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\Libraries\Vaiona\Vaiona.Logging.dll</HintPath>
