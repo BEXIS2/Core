@@ -700,7 +700,7 @@
       <Name>BExIS.Dim.Helpers</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\BExIS.Web.Shell.csproj">
-      <Project>{e5128814-4541-45c8-a9e6-6c91a7e3d1e2}</Project>
+      <Project>{E5128814-4541-45C8-A9E6-6C91A7E3D1E2}</Project>
       <Name>BExIS.Web.Shell</Name>
     </ProjectReference>
     <ProjectReference Include="..\DIM\BExIS.Modules.Dim.UI.csproj">

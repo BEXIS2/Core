@@ -151,10 +151,6 @@
       <Project>{782B71C1-707F-4AB1-80E9-90D2880635B4}</Project>
       <Name>BExIS.Utils</Name>
     </ProjectReference>
-    <ProjectReference Include="..\BExIS.Web.Shell\BExIS.Web.Shell.csproj">
-      <Project>{E5128814-4541-45C8-A9E6-6C91A7E3D1E2}</Project>
-      <Name>BExIS.Web.Shell</Name>
-    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Analyzer Include="..\..\packages\Microsoft.CodeAnalysis.NetAnalyzers.6.0.0\analyzers\dotnet\cs\Microsoft.CodeAnalysis.CSharp.NetAnalyzers.dll" />

@@ -4,6 +4,7 @@ using FluentAssertions;
 using NUnit.Framework;
 using System.Web.Mvc;
 using Vaiona.Web.Extensions;
+using BExIS.Web.Shell.Controllers;
 
 namespace BExIS.Web.Shell.Controllers.Tests
 {
