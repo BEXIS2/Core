@@ -312,7 +312,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
                         if(concept == null )
                             return Request.CreateErrorResponse(HttpStatusCode.PreconditionFailed, "In combination with the format subset - subsettype must not be empty");
 
-                        xmlDoc = MappingUtils.GetConcept(id, concept.Id, xmlDoc);
+                        xmlDoc = MappingUtils.GetConceptOutput(id, concept.Id, xmlDoc);
                     }
 
                 }
