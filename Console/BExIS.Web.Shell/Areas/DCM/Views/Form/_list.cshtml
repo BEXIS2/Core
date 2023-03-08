@@ -13,7 +13,7 @@
 @if (!Model.Locked)
 { 
 
-    @if (Model.DomainList.Count > 0)
+    if (Model.DomainList.Count > 0)
     {
 
         @(Html.Telerik().DropDownList()
