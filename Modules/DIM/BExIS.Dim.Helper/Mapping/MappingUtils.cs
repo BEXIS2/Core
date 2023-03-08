@@ -9,11 +9,10 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using System.Xml.Linq;
 using Vaiona.Persistence.Api;
-
 using BExIS.Dim.Entities.Mapping;
-
 using BExIS.Security.Services.Objects;
 using BExIS.Security.Services.Authorization;
+using System.Xml;
 
 namespace BExIS.Dim.Helpers.Mapping
 {
@@ -74,6 +73,7 @@ namespace BExIS.Dim.Helpers.Mapping
             {
                 IList<Entities.Mapping.Mapping> mapping = CachedMappings();
                 var mapping_result = mapping.Where(m =>
+                            m.Parent!=null && 
                             m.Parent.Id.Equals(parentMappingId)
                         ).ToList();
 
@@ -768,7 +768,7 @@ namespace BExIS.Dim.Helpers.Mapping
         public static IList<Entities.Mapping.Mapping> CachedMappings()
         {
             // System.Web.HttpContext may not existing during the async upload, so check wheter the context exist
-            if (System.Web.HttpContext.Current != null)
+            if (System.Web.HttpContext.Current != null && System.Web.HttpContext.Current.Session != null)
             {
                 if (System.Web.HttpContext.Current.Session["mappings"] != null)
                 {
@@ -1139,6 +1139,105 @@ namespace BExIS.Dim.Helpers.Mapping
 
         #endregion GET FROM Specific MetadataStructure // Source
 
+        public static XmlDocument GetConcept(long metadataStructureId, long conceptId, XmlDocument metadata)
+        { 
+            XmlDocument concept = new XmlDocument();
+            concept.AppendChild(XmlUtility.CreateNode("concept", concept));
+
+            // get all complex mappings for the root
+            var root = GetMappings(metadataStructureId, LinkElementType.MetadataStructure, conceptId, LinkElementType.MappingConcept).FirstOrDefault();
+            var complexMappings = GetMappings(root.Id);
+
+            foreach (var complexMapping in complexMappings)
+            {
+                // get list of source elements for metadata
+                LinkElement cSource = complexMapping.Source;
+                LinkElement cTarget = complexMapping.Target;
+                var xSourceList = metadata.SelectNodes(cSource.XPath);
+                List<string> tmp = new List<string>();
+
+                foreach (XmlNode xSource in xSourceList)
+                {
+                    //create target complex element
+                    XmlNode xTarget = concept.CreateElement(cTarget.Name);
+
+                    // get childrens of complex mapping
+                    var simpleMappings = GetMappings(complexMapping.Id);
+
+                    var listOfTargets = simpleMappings.Select(m => m.Target.Id);
+
+                    // for each simple mapping
+
+                    foreach (var simpleMapping in simpleMappings)
+                    {
+    
+                        LinkElement sSource = simpleMapping.Source;
+                        LinkElement sTarget = simpleMapping.Target;
+
+                        XmlNode xSimpleSource = null;
+
+                        // if the linkelement of the complex mapping and the simple mapping are the same
+                        // then the xml node is the same, no need to go deeper
+                        if (cSource.ElementId.Equals(sSource.ElementId) && cSource.Type.Equals(sSource.Type))
+                            xSimpleSource = xSource;
+                        else
+                            xSimpleSource = XmlUtility.GetXmlNodeByName(xSource, sSource.Name);
+
+
+                        // result is the set value, based on previews runs it must becheck wheter
+                        // the xmlnode allready exist and have some value inside
+                        // by the mapping thete is a complex to simple mapping possible
+                        // this means xTarget is allready the simple node where the value should be set, or get
+                        string result = "";//xSimpleSource.InnerText; target
+                        if (xTarget.Value == null && xTarget.ChildNodes.Count == 0) // first run everythink is empty
+                            result = String.Empty;
+                        else if (xTarget.Value != null) result = xTarget.Value; // xTarget allready simple target, so check value
+                        else // xTarget is complex, get simple node by name and get value
+                        { 
+                            XmlNode simpleXTarget = XmlUtility.GetXmlNodeByName(xTarget, sTarget.Name);
+                            if(simpleXTarget != null) result = simpleXTarget.InnerText;
+                        }
+
+                        // transformation
+                        // if the result is empty may its the first run, so set the mask
+                        if (string.IsNullOrEmpty(result)) result = simpleMapping.TransformationRule.Mask;
+
+                        //tranform the value against the tarsnformation rules
+                        string value = xSimpleSource.InnerText!=null? xSimpleSource.InnerText : String.Empty;
+                        List<string> regExResultList = transform(value, simpleMapping.TransformationRule);
+                  
+                        if(string.IsNullOrEmpty(simpleMapping.TransformationRule.Mask))
+                            result = result+ string.Join(", ", regExResultList.ToArray());
+                        else
+                            result = setOrReplace(result, regExResultList, simpleMapping.Source.Name);
+                   
+
+                        // complex to simple mapping
+                        if (cTarget.ElementId.Equals(sTarget.ElementId) && cTarget.Type.Equals(sTarget.Type))
+                        {
+                            xTarget.InnerText = result;
+                        }
+                        else // complex to complex
+                        {
+                            var xSimpleTarget = concept.CreateElement(sTarget.Name);
+                            xSimpleTarget.InnerText = result;
+                            xTarget.AppendChild(xSimpleTarget);
+                        }
+
+
+                    }
+
+                    concept.DocumentElement.AppendChild(xTarget);
+                }
+            }
+
+            return concept;
+        }
+
+        #region
+
+        #endregion
+
         #region Helpers
 
         private static Entities.Mapping.Mapping getRootMapping(Entities.Mapping.Mapping mapping)
@@ -1203,14 +1302,14 @@ namespace BExIS.Dim.Helpers.Mapping
 
                         if (mask.Contains(completePlaceHolderName))
                             mask = mask.Replace(completePlaceHolderName, r);
-                        else
-                        {
-                            if (!string.IsNullOrEmpty(r))
-                                mask = string.IsNullOrEmpty(mask) ? mask = r : mask += " " + r;
-                        }
+ 
                     }
 
                     return mask;
+                }
+                else
+                { 
+                    mask = string.Join(", ", replacers.ToArray());
                 }
 
                 if (replacers.Count > 1) return string.Join(", ", replacers.ToArray());
