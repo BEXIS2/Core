@@ -146,7 +146,9 @@ namespace BExIS.Modules.Dim.UI.Helpers
 
                 createMappings();
 
-                //createDOIMappingConcept();
+                createDOIMappingConcept();
+
+                createGBIFDWCMappingConcept();
 
                 #endregion MAPPING
             }
@@ -169,15 +171,369 @@ namespace BExIS.Modules.Dim.UI.Helpers
             using (var conceptManager = new ConceptManager())
             {
                 // concept
-                var concept = conceptManager.CreateMappingConcept("DOI", "The concept is needed to create a DIO via DataCite.", "https://schema.datacite.org/meta/kernel-4.4/");
+                // check if concept exist
+                var concept = conceptManager.MappingConceptRepo.Query(c => c.Name.Equals("DOI")).FirstOrDefault();
 
-                // keys
-                var title = conceptManager.CreateMappingKey("Title", "", "", false, false, concept);
+                var keys = new List<MappingKey>();
+
+                if (concept == null) //if not create
+                    concept = conceptManager.CreateMappingConcept("DOI", "The concept is needed to create a DIO via DataCite.", "https://schema.datacite.org/meta/kernel-4.4/","");
+                else // if exist load available keys
+                {
+                    keys = conceptManager.MappingKeyRepo.Query(k => k.Concept.Id.Equals(concept.Id)).ToList();
+                }
+
+                // type
+                if(!keys.Any(k=>k.Name.Equals("Type")))
+                    conceptManager.CreateMappingKey("Type", "", "", false, false, "data/type", concept);
+
+                // title(s)
+                MappingKey titles = null;
+                if (!keys.Any(k => k.Name.Equals("Titles")))
+                    titles = conceptManager.CreateMappingKey("Titles", "", "", false, true, "data/attributes/titles", concept);
+
+                if (!keys.Any(k => k.Name.Equals("Title")))
+                    conceptManager.CreateMappingKey("Title", "", "", false, false, "data/attributes/titles/title", concept, titles);
+
+                if (!keys.Any(k => k.Name.Equals("Lang")))
+                    conceptManager.CreateMappingKey("Lang", "", "", false, false, "data/attributes/titles/lang", concept, titles);
+
+                if (!keys.Any(k => k.Name.Equals("TitleType")))
+                    conceptManager.CreateMappingKey("TitleType", "", "", false, false, "data/attributes/titles/titleType", concept, titles);
+
+                // creator(s)
+                MappingKey creators = null;
+                if (!keys.Any(k => k.Name.Equals("Creators")))
+                    creators = conceptManager.CreateMappingKey("Creators", "", "www.google.de",false,true, "data/attributes/creators", concept);
+
+                if (!keys.Any(k => k.Name.Equals("Firstname")))
+                    conceptManager.CreateMappingKey("Firstname", "", "", false, false, "data/attributes/creators/firstname", concept,creators);
+
+                if (!keys.Any(k => k.Name.Equals("Lastname")))
+                   conceptManager.CreateMappingKey("Lastname", "", "", false, false, "data/attributes/creators/lastname", concept, creators);
+            }
+        }
+
+        private void createGBIFDWCMappingConcept()
+        {
+            using (var conceptManager = new ConceptManager())
+            {
+                var concept = conceptManager.MappingConceptRepo.Query(c => c.Name.Equals("GBIF - DWC")).FirstOrDefault();
+
+                var keys = new List<MappingKey>();
+
+                if (concept == null) //if not create
+                    concept = conceptManager.CreateMappingConcept("GBIF - DWC", "The concept is needed to create a darwin core archive for GBIF.", "https://ipt.gbif.org/manual/en/ipt/latest/dwca-guide", @"Modules\DIM\concepts\gbif\eml.xsd");
+                else // if exist load available keys
+                {
+                    keys = conceptManager.MappingKeyRepo.Query(k => k.Concept.Id.Equals(concept.Id)).ToList();
+                }
 
 
-                var creator = conceptManager.CreateMappingKey("Creator", "", "www.google.de",false,true,concept);
-                var firstname = conceptManager.CreateMappingKey("Firstname", "", "", false, false, concept,creator);
-                var lastname = conceptManager.CreateMappingKey("Lastname", "", "", false, false, concept, creator);
+                //title
+                if (!keys.Any(k => k.Name.Equals("title")))
+                    conceptManager.CreateMappingKey(
+                        "title", 
+                        "A description of the resource that is being documented that is long enough to differentiate it from other similar resources. Multiple titles may be provided, particularly " +
+                        "when trying to express the title in more than one language (use the \"xml: lang\" attribute to indicate the language if not English/en). E.g. Vernal pool amphibian density data, Isla Vista, 1990-1996.",
+                        "https://sbclter.msi.ucsb.edu/external/InformationManagement/EML_211_schema/docs/eml-2.1.1/eml-resource.html#title", 
+                        false, 
+                        false,
+                        "eml/dataset/title", 
+                        concept);
+
+                //alternateIdentifier
+                if (!keys.Any(k => k.Name.Equals("alternateIdentifier")))
+                    conceptManager.CreateMappingKey(
+                        "alternateIdentifier",
+                        "It is a Universally Unique Identifier (UUID) for the EML document and not for the dataset. This term is optional. A list of different identifiers can be supplied. E.g., 619a4b95-1a82-4006-be6a-7dbe3c9b33c5.",
+                        "https://sbclter.msi.ucsb.edu/external/InformationManagement/EML_211_schema/docs/eml-2.1.1/eml-resource.html#alternateIdentifier",
+                        true,
+                        false,
+                        "eml/dataset/alternateIdentifier",
+                        concept);
+
+                //creator
+                MappingKey creator = null;
+                if (!keys.Any(k => k.Name.Equals("creator")))
+                    creator = conceptManager.CreateMappingKey(
+                        "creator",
+                        "The resource creator is the person or organization responsible for creating the resource itself. See section “People and Organizations” for more details.",
+                        "https://sbclter.msi.ucsb.edu/external/InformationManagement/EML_211_schema/docs/eml-2.1.1/eml-resource.html#creator", 
+                        false,
+                        true, 
+                        "eml/dataset/creator", 
+                        concept);
+
+                // creator/givenName
+                if (!keys.Any(k => k.XPath.Equals("eml/dataset/creator/individualName/givenName")))
+                    conceptManager.CreateMappingKey(
+                        "givenName",
+                        "Subfield of individualName field. The given name field can be used for the first name of the individual associated with the resource, or for any other names that are not intended to be alphabetized (as appropriate). E.g., Jonny",
+                        "https://sbclter.msi.ucsb.edu/external/InformationManagement/EML_211_schema/docs/eml-2.1.1/eml-party.html#givenName",
+                        true,
+                        false,
+                        "eml/dataset/creator/individualName/givenName",
+                        concept, creator);
+
+                // creator/surName
+                if (!keys.Any(k => k.XPath.Equals("eml/dataset/creator/individualName/surName")))
+                    conceptManager.CreateMappingKey(
+                        "surName",
+                        "Subfield of individualName field. The surname field is used for the last name of the individual associated with the resource. This is typically the family name of an individual, for example, the name by which s/he is referred to in citations. E.g. Carson",
+                        "https://sbclter.msi.ucsb.edu/external/InformationManagement/EML_211_schema/docs/eml-2.1.1/eml-party.html#surName",
+                        true,
+                        false,
+                        "eml/dataset/creator/individualName/surName",
+                        concept, creator);
+
+                //metadataProvider
+                MappingKey metadataProvider = null;
+                if (!keys.Any(k => k.Name.Equals("metadataProvider")))
+                    metadataProvider = conceptManager.CreateMappingKey(
+                        "metadataProvider",
+                        "The metadataProvider is the person or organization responsible for providing documentation for the resource. See section “People and Organizations” for more details",
+                        "https://sbclter.msi.ucsb.edu/external/InformationManagement/EML_211_schema/docs/eml-2.1.1/eml-resource.html#metadataProvider",
+                        false,
+                        true,
+                        "eml/dataset/metadataProvider",
+                        concept);
+
+                // metadataProvider/givenName
+                if (!keys.Any(k => k.XPath.Equals("eml/dataset/metadataProvider/individualName/givenName")))
+                    conceptManager.CreateMappingKey(
+                        "givenName",
+                        "Subfield of individualName field. The given name field can be used for the first name of the individual associated with the resource, or for any other names that are not intended to be alphabetized (as appropriate). E.g., Jonny",
+                        "https://sbclter.msi.ucsb.edu/external/InformationManagement/EML_211_schema/docs/eml-2.1.1/eml-party.html#givenName",
+                        true,
+                        false,
+                        "eml/dataset/metadataProvider/individualName/givenName",
+                        concept, metadataProvider);
+
+                // metadataProvider/surName
+                if (!keys.Any(k => k.XPath.Equals("eml/dataset/metadataProvider/individualName/surName")))
+                    conceptManager.CreateMappingKey(
+                        "surName",
+                        "Subfield of individualName field. The surname field is used for the last name of the individual associated with the resource. This is typically the family name of an individual, for example, the name by which s/he is referred to in citations. E.g. Carson",
+                        "https://sbclter.msi.ucsb.edu/external/InformationManagement/EML_211_schema/docs/eml-2.1.1/eml-party.html#surName",
+                        true,
+                        false,
+                        "eml/dataset/metadataProvider/individualName/surName",
+                        concept, metadataProvider);
+
+                //pubDate
+                if (!keys.Any(k => k.Name.Equals("pubDate")))
+                    conceptManager.CreateMappingKey(
+                        "pubDate",
+                        "The date that the resource was published. The format should be represented as: CCYY, which represents a 4 digit year, or as CCYY-MM-DD, which denotes the full year, month, and day. Note that month and day are optional components. Formats must conform to ISO 8601. E.g. 2010-09-20.",
+                        "https://sbclter.msi.ucsb.edu/external/InformationManagement/EML_211_schema/docs/eml-2.1.1/eml-resource.html#pubDate",
+                        false,
+                        false,
+                        "eml/dataset/pubDate",
+                        concept);
+
+                //language
+                if (!keys.Any(k => k.Name.Equals("language")))
+                    conceptManager.CreateMappingKey(
+                        "language",
+                        "The language in which the resource (not the metadata document) is written. This can be a well-known language name, or one of the ISO language codes to be more precise. GBIF recommendation is to use the ISO language code (https://api.gbif.org/v1/enumeration/language). E.g., English.",
+                        "https://sbclter.msi.ucsb.edu/external/InformationManagement/EML_211_schema/docs/eml-2.1.1/eml-resource.html#language",
+                        true,
+                        false,
+                        "eml/dataset/language",
+                        concept);
+
+                //abstract
+                if (!keys.Any(k => k.Name.Equals("abstract")))
+                    conceptManager.CreateMappingKey(
+                        "abstract",
+                        "A brief overview of the resource that is being documented.",
+                        "https://sbclter.msi.ucsb.edu/external/InformationManagement/EML_211_schema/docs/eml-2.1.1/eml-resource.html#abstract",
+                        false,
+                        false,
+                        "eml/dataset/abstract/para",
+                        concept);
+
+                //intellectualRights
+                if (!keys.Any(k => k.Name.Equals("intellectualRights")))
+                    conceptManager.CreateMappingKey(
+                        "intellectualRights",
+                        "A rights management statement for the resource, or reference a service providing such information. Rights information encompasses Intellectual Property Rights (IPR), Copyright, and various Property Rights. In the case of a data set, rights might include requirements for use, requirements for attribution, or other requirements the owner would like to impose. " +
+                        "E.g., © 2001 Regents of the University of California Santa Barbara. Free for use by all individuals provided that the owners are acknowledged in any use or publication.",
+                        "https://sbclter.msi.ucsb.edu/external/InformationManagement/EML_211_schema/docs/eml-2.1.1/eml-resource.html#intellectualRights",
+                        true,
+                        false,
+                        "eml/dataset/intellectualRights",
+                        concept);
+
+                //keyword
+                if (!keys.Any(k => k.Name.Equals("keyword")))
+                    conceptManager.CreateMappingKey(
+                        "keyword",
+                        "This field names a keyword or key phrase that concisely describes the resource or is related to the resource. Each keyword field should contain one and only one keyword (i.e., keywords should not be separated by commas or other delimiters)." +
+                        "Example(s): biodiversity",
+                        "https://sbclter.msi.ucsb.edu/external/InformationManagement/EML_211_schema/docs/eml-2.1.1/eml-resource.html#keyword",
+                        true,
+                        false,
+                        "eml/dataset/keywordSet/keyword",
+                        concept);
+
+                //geographicCoverage
+                MappingKey geographicCoverage = null;
+                if (!keys.Any(k => k.Name.Equals("geographicCoverage")))
+                    geographicCoverage = conceptManager.CreateMappingKey(
+                        "geographicCoverage",
+                        "A container for spatial information about a resource; allows a bounding box for the overall coverage (in lat long), and also allows description of arbitrary polygons with exclusions.",
+                        "https://sbclter.msi.ucsb.edu/external/InformationManagement/EML_211_schema/docs/eml-2.1.1/eml-coverage.html#geographicCoverage",
+                        false,
+                        true,
+                        "eml/dataset/coverage/geographicCoverage",
+                        concept);
+
+                //geographicCoverage/geographicDescription
+                if (!keys.Any(k => k.XPath.Equals("eml/dataset/coverage/geographicCoverage/geographicDescription")))
+                    conceptManager.CreateMappingKey(
+                        "geographicDescription",
+                        "A short text description of a dataset’s geographic areal domain.A text description is especially important to provide a geographic setting when the extent of the dataset cannot be well described by the \"boundingCoordinates\".E.g., \"Manistee River watershed\", \"extent of 7 1/2 minute quads containing any property belonging to Yellowstone National Park\"",
+                        "https://sbclter.msi.ucsb.edu/external/InformationManagement/EML_211_schema/docs/eml-2.1.1/eml-coverage.html#geographicDescription",
+                        false,
+                        false,
+                        "eml/dataset/coverage/geographicCoverage/geographicDescription",
+                        concept, geographicCoverage);
+
+                //geographicCoverage/boundingCoordinates/westBoundingCoordinate
+                if (!keys.Any(k => k.XPath.Equals("eml/dataset/coverage/geographicCoverage/boundingCoordinates/westBoundingCoordinate")))
+                    conceptManager.CreateMappingKey(
+                        "westBoundingCoordinate",
+                        "Subfield of boundingCoordinates field covering the W margin of a bounding box. The longitude in decimal degrees of the western-most point of the bounding box that is being described. E.g., -18.25, +25, 45.24755.",
+                        "https://sbclter.msi.ucsb.edu/external/InformationManagement/EML_211_schema/docs/eml-2.1.1/eml-coverage.html#westBoundingCoordinate",
+                        false,
+                        false,
+                        "eml/dataset/coverage/geographicCoverage/boundingCoordinates/westBoundingCoordinate",
+                        concept, geographicCoverage);
+
+                //geographicCoverage/boundingCoordinates/eastBoundingCoordinate
+                if (!keys.Any(k => k.XPath.Equals("eml/dataset/coverage/geographicCoverage/boundingCoordinates/eastBoundingCoordinate")))
+                    conceptManager.CreateMappingKey(
+                        "eastBoundingCoordinate",
+                        "Subfield of boundingCoordinates field covering the E margin of a bounding box. The longitude in decimal degrees of the eastern-most point of the bounding box that is being described. E.g., -18.25, +25, 45.24755.",
+                        "https://sbclter.msi.ucsb.edu/external/InformationManagement/EML_211_schema/docs/eml-2.1.1/eml-coverage.html#eastBoundingCoordinate",
+                        false,
+                        false,
+                        "eml/dataset/coverage/geographicCoverage/boundingCoordinates/eastBoundingCoordinate",
+                        concept, geographicCoverage);
+
+                //geographicCoverage/boundingCoordinates/northBoundingCoordinate
+                if (!keys.Any(k => k.XPath.Equals("eml/dataset/coverage/geographicCoverage/boundingCoordinates/northBoundingCoordinate")))
+                    conceptManager.CreateMappingKey(
+                        "northBoundingCoordinate",
+                        "Subfield of boundingCoordinates field covering the N margin of a bounding box. The longitude in decimal degrees of the northern-most point of the bounding box that is being described. E.g., -18.25, +25, 65.24755.",
+                        "https://sbclter.msi.ucsb.edu/external/InformationManagement/EML_211_schema/docs/eml-2.1.1/eml-coverage.html#northBoundingCoordinate",
+                        false,
+                        false,
+                        "eml/dataset/coverage/geographicCoverage/boundingCoordinates/northBoundingCoordinate",
+                        concept, geographicCoverage);
+
+                //geographicCoverage/boundingCoordinates/southBoundingCoordinate
+                if (!keys.Any(k => k.XPath.Equals("eml/dataset/coverage/geographicCoverage/boundingCoordinates/southBoundingCoordinate")))
+                    conceptManager.CreateMappingKey(
+                        "southBoundingCoordinate",
+                        "Subfield of boundingCoordinates field covering the S margin of a bounding box. The longitude in decimal degrees of the southern-most point of the bounding box that is being described. E.g., -118.25, +25, 84.24755.",
+                        "https://sbclter.msi.ucsb.edu/external/InformationManagement/EML_211_schema/docs/eml-2.1.1/eml-coverage.html#southBoundingCoordinate",
+                        false,
+                        false,
+                        "eml/dataset/coverage/geographicCoverage/boundingCoordinates/southBoundingCoordinate",
+                        concept, geographicCoverage);
+
+                //taxonomicCoverage
+                MappingKey taxonomicCoverage = null;
+                if (!keys.Any(k => k.Name.Equals("taxonomicCoverage")))
+                    taxonomicCoverage = conceptManager.CreateMappingKey(
+                        "taxonomicCoverage",
+                        "A container for taxonomic information about a resource. It includes a list of species names (or higher level ranks) from one or more classification systems. Please note the taxonomic classifications should not be nested, just listed one after the other.",
+                        "https://sbclter.msi.ucsb.edu/external/InformationManagement/EML_211_schema/docs/eml-2.1.1/eml-coverage.html#TaxonomicCoverage",
+                        false,
+                        true,
+                        "eml/dataset/coverage/taxonomicCoverage",
+                        concept);
+
+                if (!keys.Any(k => k.XPath.Equals("eml/dataset/coverage/taxonomicCoverage/generalTaxonomicCoverage")))
+                    conceptManager.CreateMappingKey(
+                        "generalTaxonomicCoverage",
+                        "Taxonomic Coverage is a container for taxonomic information about a resource. It includes a list of species names (or higher level ranks) from one or more classification systems. A description of the range of taxa addressed in the data set or collection. Use a simple comma separated list of taxa. " +
+                        "E.g., \"All vascular plants were identified to family or species, mosses and lichens were identified as moss or lichen.\"",
+                        "https://sbclter.msi.ucsb.edu/external/InformationManagement/EML_211_schema/docs/eml-2.1.1/eml-coverage.html#generalTaxonomicCoverage",
+                        true,
+                        false,
+                        "eml/dataset/coverage/taxonomicCoverage/generalTaxonomicCoverage",
+                        concept, taxonomicCoverage);
+
+                if (!keys.Any(k => k.XPath.Equals("eml/dataset/coverage/taxonomicCoverage/taxonomicClassification/taxonRankName")))
+                    conceptManager.CreateMappingKey(
+                        "taxonRankName",
+                        "The name of the taxonomic rank for which the Taxon rank value is provided. E.g., phylum, class, genus, species.",
+                        "https://sbclter.msi.ucsb.edu/external/InformationManagement/EML_211_schema/docs/eml-2.1.1/eml-coverage.html#taxonRankName",
+                        true,
+                        false,
+                        "eml/dataset/coverage/taxonomicCoverage/taxonomicClassification/taxonRankName",
+                        concept, taxonomicCoverage);
+
+                if (!keys.Any(k => k.XPath.Equals("eml/dataset/coverage/taxonomicCoverage/taxonomicClassification/taxonRankValue")))
+                    conceptManager.CreateMappingKey(
+                        "taxonRankValue",
+                        "The name representing the taxonomic rank of the taxon being described. E.g. Acer would be an example of a genus rank value, and rubrum would be an example of a species rank value, together indicating the common name of red maple. It is recommended to start with Kingdom and include ranks down to the most detailed level possible.",
+                        "https://sbclter.msi.ucsb.edu/external/InformationManagement/EML_211_schema/docs/eml-2.1.1/eml-coverage.html#taxonRankName",
+                        false,
+                        false,
+                        "eml/dataset/coverage/taxonomicCoverage/taxonomicClassification/taxonRankValue",
+                        concept, taxonomicCoverage);
+
+                if (!keys.Any(k => k.XPath.Equals("eml/dataset/coverage/taxonomicCoverage/taxonomicClassification/commonName")))
+                    conceptManager.CreateMappingKey(
+                        "commonName",
+                        "Applicable common names; these common names may be general descriptions of a group of organisms if appropriate. E.g., invertebrates, waterfowl.",
+                        "https://sbclter.msi.ucsb.edu/external/InformationManagement/EML_211_schema/docs/eml-2.1.1/eml-coverage.html#commonName",
+                        true,
+                        false,
+                        "eml/dataset/coverage/taxonomicCoverage/taxonomicClassification/commonName",
+                        concept, taxonomicCoverage);
+
+                //contact
+                MappingKey contact = null;
+                if (!keys.Any(k => k.Name.Equals("contact")))
+                    contact = conceptManager.CreateMappingKey(
+                        "contact",
+                        "The contact field contains contact information for this dataset. This is the person or institution to contact with questions about the use, interpretation of a data set. See section “People and Organizations” for more details.",
+                        "https://sbclter.msi.ucsb.edu/external/InformationManagement/EML_211_schema/docs/eml-2.1.1/eml-resource.html#contact",
+                        false,
+                        true,
+                        "eml/dataset/contact",
+                        concept);
+
+                // contact/givenName
+                if (!keys.Any(k => k.XPath.Equals("eml/dataset/contact/individualName/givenName")))
+                    conceptManager.CreateMappingKey(
+                        "givenName",
+                        "Subfield of individualName field. The given name field can be used for the first name of the individual associated with the resource, or for any other names that are not intended to be alphabetized (as appropriate). E.g., Jonny",
+                        "https://sbclter.msi.ucsb.edu/external/InformationManagement/EML_211_schema/docs/eml-2.1.1/eml-party.html#givenName",
+                        true,
+                        false,
+                        "eml/dataset/contact/individualName/givenName",
+                        concept, contact);
+
+                // contact/surName
+                if (!keys.Any(k => k.XPath.Equals("eml/dataset/contact/individualName/surName")))
+                    conceptManager.CreateMappingKey(
+                        "surName",
+                        "Subfield of individualName field. The surname field is used for the last name of the individual associated with the resource. This is typically the family name of an individual, for example, the name by which s/he is referred to in citations. E.g. Carson",
+                        "https://sbclter.msi.ucsb.edu/external/InformationManagement/EML_211_schema/docs/eml-2.1.1/eml-party.html#surName",
+                        true,
+                        false,
+                        "eml/dataset/contact/individualName/surName",
+                        concept, contact);
+
+
+       
             }
         }
 

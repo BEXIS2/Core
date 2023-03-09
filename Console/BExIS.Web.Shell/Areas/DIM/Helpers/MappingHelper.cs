@@ -238,40 +238,40 @@ namespace BExIS.Modules.Dim.UI.Helper
             rootModel.LinkElements.Add(LEModel);
 
             //add type
-            if (addTypeAsLinkElement)
-            {
-                linkElementId = 0;
+            //if (addTypeAsLinkElement)
+            //{
+            //    linkElementId = 0;
 
-                linkElement =
-                    linkElements
-                        .FirstOrDefault(
-                            le =>
-                                le.ElementId.Equals(typeId) &&
-                                le.Type.Equals(LinkElementType.ComplexMetadataAttribute));
+            //    linkElement =
+            //        linkElements
+            //            .FirstOrDefault(
+            //                le =>
+            //                    le.ElementId.Equals(typeId) &&
+            //                    le.Type.Equals(LinkElementType.ComplexMetadataAttribute));
 
-                if (linkElement != null)
-                {
-                    linkElementId = linkElement.Id;
-                }
+            //    if (linkElement != null)
+            //    {
+            //        linkElementId = linkElement.Id;
+            //    }
 
-                LEModel = new LinkElementModel(
-                    linkElementId,
-                    typeId,
-                    LinkElementType.ComplexMetadataAttribute,
-                    typeName,
-                    xPath,
-                    rootModel.Position,
-                    complexity,
-                    typeDescription);
+            //    LEModel = new LinkElementModel(
+            //        linkElementId,
+            //        typeId,
+            //        LinkElementType.ComplexMetadataAttribute,
+            //        typeName,
+            //        xPath,
+            //        rootModel.Position,
+            //        complexity,
+            //        typeDescription);
 
-                LEModel.Parent = parent;
+            //    LEModel.Parent = parent;
 
-                if (!rootModel.LinkElements.Any(le => le.ElementId.Equals(typeId) &&
-                                                      le.Type.Equals(LinkElementType.ComplexMetadataAttribute)))
-                {
-                    rootModel.LinkElements.Add(LEModel);
-                }
-            }
+            //    if (!rootModel.LinkElements.Any(le => le.ElementId.Equals(typeId) &&
+            //                                          le.Type.Equals(LinkElementType.ComplexMetadataAttribute)))
+            //    {
+            //        rootModel.LinkElements.Add(LEModel);
+            //    }
+            //}
 
             //Debug.WriteLine("1: " + LEModel.Name + " " + LEModel.Type);
 
@@ -501,7 +501,7 @@ namespace BExIS.Modules.Dim.UI.Helper
 
                     foreach (var key in keys)
                     {
-                        addKeys(key, "Concept", root, LEModel);
+                        addKeys(key, root, LEModel);
                     }
 
                     //root = CreateLinkElementContainerModels(root);
@@ -516,7 +516,7 @@ namespace BExIS.Modules.Dim.UI.Helper
             return null;
         }
 
-        private static void addKeys(MappingKey key, string path, LinkElementRootModel root, LinkElementModel parent)
+        private static void addKeys(MappingKey key, LinkElementRootModel root, LinkElementModel parent)
         {
             long linkElementId = 0;
 
@@ -532,18 +532,26 @@ namespace BExIS.Modules.Dim.UI.Helper
 
             LinkElementComplexity complexity = key.IsComplex?LinkElementComplexity.Complex: LinkElementComplexity.Simple;
 
-            string linkeElementPath = path + "/" + key.Name;
-
+  
             LinkElementModel LEModel = new LinkElementModel(
                linkElementId,
                key.Id,
-               type, key.Name, linkeElementPath, root.Position, complexity, key.Description, key.Url, key.Optional);
+               type, key.Name, 
+               key.XPath, 
+               root.Position, 
+               complexity, 
+               key.Description, 
+               key.Url, 
+               key.Optional);
             LEModel.Parent = parent;
-            root.LinkElements.Add(LEModel);
+
+            // add only to link elements when parent is root (mapping concept) or is complex
+            if(parent.Type.Equals(LinkElementType.MappingConcept) || LEModel.Complexity.Equals(LinkElementComplexity.Complex))
+                root.LinkElements.Add(LEModel);
 
             foreach (var c in key.Children)
             {
-                addKeys(c, linkeElementPath, root, LEModel);
+                addKeys(c, root, LEModel);
             }
         }
 
@@ -678,7 +686,8 @@ namespace BExIS.Modules.Dim.UI.Helper
                                 0,
                                 child.Id,
                                 LinkElementType.MappingKey, 
-                                child.Name, "", 
+                                child.Name, 
+                                child.XPath, 
                                 model.Position, 
                                 LinkElementComplexity.Simple,
                                 child.Description,
@@ -719,10 +728,10 @@ namespace BExIS.Modules.Dim.UI.Helper
 
         private static List<LinkElementModel> getChildrenFromComplexMetadataAttribute(LinkElementModel model)
         {
-            return getChildrenFromComplexMetadataAttribute(model.ElementId, model.Position);
+            return getChildrenFromComplexMetadataAttribute(model.ElementId, model.Position, model.XPath);
         }
 
-        private static List<LinkElementModel> getChildrenFromComplexMetadataAttribute(long metadataCompountAttributeId, LinkElementPostion position)
+        private static List<LinkElementModel> getChildrenFromComplexMetadataAttribute(long metadataCompountAttributeId, LinkElementPostion position, string xpath)
         {
             List<LinkElementModel> tmp = new List<LinkElementModel>();
 
@@ -734,6 +743,7 @@ namespace BExIS.Modules.Dim.UI.Helper
 
                 foreach (var attr in mca.MetadataNestedAttributeUsages)
                 {
+       
                     LinkElementComplexity complexity = LinkElementComplexity.None;
                     LinkElementType type = LinkElementType.ComplexMetadataAttribute;
 
@@ -747,11 +757,18 @@ namespace BExIS.Modules.Dim.UI.Helper
 
                     type = LinkElementType.MetadataNestedAttributeUsage;
 
+                    string attrXPath = xpath + "/" + attr.Label + "/" + attr.Member.Name;
+
                     tmp.Add(
                             new LinkElementModel(
                                 0,
                                 attr.Id,
-                                type, attr.Label, "", position, complexity, attr.Description)
+                                type, 
+                                attr.Label,
+                                attrXPath, 
+                                position, 
+                                complexity, 
+                                attr.Description)
                             );
                 }
 
@@ -779,7 +796,7 @@ namespace BExIS.Modules.Dim.UI.Helper
 
                 if (complexity == LinkElementComplexity.Complex)
                 {
-                    return getChildrenFromComplexMetadataAttribute(metadataAttributeUsage.MetadataAttribute.Id, model.Position);
+                    return getChildrenFromComplexMetadataAttribute(metadataAttributeUsage.MetadataAttribute.Id, model.Position, model.XPath);
                 }
 
                 return new List<LinkElementModel>();
@@ -808,7 +825,7 @@ namespace BExIS.Modules.Dim.UI.Helper
 
                 if (complexity == LinkElementComplexity.Complex)
                 {
-                    return getChildrenFromComplexMetadataAttribute(metadataNestedAttributeUsage.Member.Id, model.Position);
+                    return getChildrenFromComplexMetadataAttribute(metadataNestedAttributeUsage.Member.Id, model.Position, model.XPath);
                 }
 
                 return new List<LinkElementModel>();
@@ -821,7 +838,7 @@ namespace BExIS.Modules.Dim.UI.Helper
 
         private static List<LinkElementModel> getChildrenFromMetadataPackage(LinkElementModel model)
         {
-            return getChildrenFromMetadataPackage(model.ElementId, model.Position);
+            return getChildrenFromMetadataPackage(model.ElementId, model.Position, model.XPath);
         }
 
         private static List<LinkElementModel> getChildrenFromMetadataPackageUsage(LinkElementModel model)
@@ -831,7 +848,7 @@ namespace BExIS.Modules.Dim.UI.Helper
             {
                 MetadataPackageUsage metadataPackageUsage = msm.PackageUsageRepo.Get(model.ElementId);
 
-                return getChildrenFromMetadataPackage(metadataPackageUsage.MetadataPackage.Id, model.Position);
+                return getChildrenFromMetadataPackage(metadataPackageUsage.MetadataPackage.Id, model.Position, model.XPath);
             }
             finally
             {
@@ -839,7 +856,7 @@ namespace BExIS.Modules.Dim.UI.Helper
             }
         }
 
-        private static List<LinkElementModel> getChildrenFromMetadataPackage(long metadataPackageId, LinkElementPostion pos)
+        private static List<LinkElementModel> getChildrenFromMetadataPackage(long metadataPackageId, LinkElementPostion pos, string xpath)
         {
             MetadataPackageManager metadataPackageManager = new MetadataPackageManager();
 
@@ -857,17 +874,20 @@ namespace BExIS.Modules.Dim.UI.Helper
                         ? LinkElementComplexity.Simple
                         : LinkElementComplexity.Complex;
 
-                    //type = attr.Member.Self is MetadataSimpleAttribute
-                    //    ? LinkElementType.SimpleMetadataAttribute
-                    //    : LinkElementType.ComplexMetadataAttribute;
-
                     type = LinkElementType.MetadataAttributeUsage;
+
+                    string attrXPath = xpath + "/" + attr.Label + "/" + attr.MetadataAttribute.Name;
 
                     tmp.Add(
                             new LinkElementModel(
                                 0,
                                 attr.Id,
-                                type, attr.Label, "", pos, complexity, attr.Description)
+                                type, 
+                                attr.Label, 
+                                xpath, 
+                                pos, 
+                                complexity, 
+                                attr.Description)
                             );
                 }
 
@@ -1020,13 +1040,21 @@ namespace BExIS.Modules.Dim.UI.Helper
         {
             if (ExistLinkElement(leModel))
             {
-                return mappingManager.LinkElementRepo.Get()
+                var element = mappingManager.LinkElementRepo.Get()
                     .FirstOrDefault(le =>
                     le.ElementId.Equals(leModel.ElementId) &&
                     le.Type.Equals(leModel.Type) &&
                     le.Complexity.Equals(leModel.Complexity)
                     //le.Parent.Id.Equals(parentId)
                     );
+
+                if (element.XPath== null || !element.XPath.Equals(leModel.XPath))
+                {
+                    element.XPath = leModel.XPath;
+                    mappingManager.UpdateLinkElement(element);
+                }
+
+                return element;
             }
             else
             {
@@ -1228,24 +1256,6 @@ namespace BExIS.Modules.Dim.UI.Helper
             }
         }
 
-        //public static bool IsSimpleElement(long id)
-        //{
-        //    MappingManager mappingManager = new MappingManager();
-
-        //    try
-        //    {
-        //        LinkElement le = mappingManager.GetLinkElement(id);
-
-        //        if (le.Complexity == LinkElementComplexity.Simple) return true;
-
-        //        return false;
-        //    }
-        //    finally
-        //    {
-        //        mappingManager.Dispose();
-        //    }
-        //}
-
         public static long GetId(long elementId, LinkElementType type, MappingManager mappingManager)
         {
             long linkElementId = 0;
@@ -1262,47 +1272,7 @@ namespace BExIS.Modules.Dim.UI.Helper
             return linkElementId;
         }
 
-        //public static string GetMask(long elementId, LinkElementType type)
-        //{
-        //    MappingManager mappingManager = new MappingManager();
-
-        //    string mask = "";
-
-        //    LinkElement linkElement =
-        //        mappingManager.LinkElementRepo.Get()
-        //            .FirstOrDefault(le => le.ElementId.Equals(elementId) && le.Type.Equals(type));
-
-        //    if (linkElement != null)
-        //    {
-        //        mask = linkElement.Mask;
-        //    }
-
-        //    return mask;
-        //}
-
-        ///// <summary>
-        ///// if parent is complex send back al children ids
-        ///// else send back the parent id
-        ///// </summary>
-        ///// <returns></returns>
-        //public static List<long> GetChildrenIds(LinkElement parent)
-        //{
-        //    List<long> childrenIds = new List<long>();
-
-        //    if (parent.Complexity.Equals(LinkElementComplexity.Simple))
-        //        childrenIds.Add(parent.Id);
-
-        //    else
-        //    {
-        //        MappingManager mappingManager = new MappingManager();
-        //        childrenIds = mappingManager.LinkElementRepo.Get()
-        //                   .Where(le => le.Parent != null && le.Parent.Id.Equals(parent.Id))
-        //                   .Select(le => le.Id)
-        //                   .ToList();
-        //    }
-
-        //    return childrenIds;
-        //}
+ 
     }
 
     #endregion helper

@@ -1,4 +1,7 @@
 ﻿using BExIS.App.Bootstrap.Attributes;
+using BExIS.Dim.Entities.Mapping;
+using BExIS.Dim.Helpers.Mapping;
+using BExIS.Dim.Services;
 using BExIS.Dlm.Entities.Data;
 using BExIS.Dlm.Services.Data;
 using BExIS.Dlm.Services.DataStructure;
@@ -69,7 +72,9 @@ namespace BExIS.Modules.Dim.UI.Controllers
                         // AttributeNames.name means the destination metadata name
                         List<string> t = xmlDatasetHelper.GetAllTransmissionInformation(id, TransmissionType.mappingFileExport, AttributeNames.name).ToList();
 
-                        mvo.Format = t.ToArray();
+                        //mvo.Format = t.ToArray();
+
+                        mvo.SubsetType = getAllAvailableConcepts(id);
 
                         tmp.Add(mvo);
                     }
@@ -110,10 +115,10 @@ namespace BExIS.Modules.Dim.UI.Controllers
 
                     // get metadata schema name
                     List<string> t = xmlDatasetHelper.GetAllTransmissionInformation(id, TransmissionType.mappingFileExport, AttributeNames.name).ToList();
-                    mvo.Format = t.ToArray();
+                    string format = t.ToArray().FirstOrDefault();
 
                     // filter by metadata schema name
-                    if (mvo.Format.FirstOrDefault() == name)
+                    if (format == name)
                     {
                         // get latest version of dataset
                         DatasetVersion dsv = dm.GetDatasetLatestVersion(id);
@@ -162,14 +167,15 @@ namespace BExIS.Modules.Dim.UI.Controllers
         /// 
         /// </remarks>
         /// <param name="id">Dataset Id</param>
-        /// <param name="format">Based on the existing transformation options, the converted metadata can be obtained via format.</param>
+        /// <param name="format">Internal,External,Subset</param>
+        /// <param name="subsetType">Based on the existing concept mappings, the converted metadata can be obtained via subsetType.</param>
         /// <param name="simplifiedJson">accept 0,1,2</param>
         /// <returns>metadata as xml or json</returns>
         [BExISApiAuthorize]
         [GetRoute("api/Metadata/{id}")]
-        public HttpResponseMessage Get(int id, [FromUri] string format = null, [FromUri] int simplifiedJson = 0) {
+        public HttpResponseMessage Get(int id, [FromUri] Format format = Format.Internal, [FromUri] string subsetType = null, [FromUri] int simplifiedJson = 0) {
 
-            return GetMetadata(id, -1, format, simplifiedJson);
+            return GetMetadata(id, -1, format, subsetType, simplifiedJson);
         }
 
 
@@ -190,17 +196,18 @@ namespace BExIS.Modules.Dim.UI.Controllers
         /// </remarks>
         /// <param name="id">Dataset Id</param>
         /// <param name="version">Version number</param>
-        /// <param name="format">Based on the existing transformation options, the converted metadata can be obtained via format.</param>
+        /// <param name="format">Internal,External,Subset</param>
+        /// <param name="subsetType">Based on the existing concept mappings, the converted metadata can be obtained via subsetType.</param>
         /// <param name="simplifiedJson">accept 0,1,2</param>
         /// <returns>metadata as xml or json</returns>
         [BExISApiAuthorize]
         [GetRoute("api/Metadata/{id}/{version}")]
-        public HttpResponseMessage Get(int id, int version = -1, [FromUri] string format = null, [FromUri] int simplifiedJson = 0)
+        public HttpResponseMessage Get(int id, int version = -1, [FromUri] Format format = Format.Internal, [FromUri] string subsetType = null, [FromUri] int simplifiedJson = 0)
         {
-            return GetMetadata(id, version, format, simplifiedJson);
+            return GetMetadata(id, version, format, subsetType, simplifiedJson);
         }
 
-        private HttpResponseMessage GetMetadata(int id, int version, string format, int simplifiedJson)
+        private HttpResponseMessage GetMetadata(int id, int version, Format format, string subsetType, int simplifiedJson)
         {
             
             DatasetVersion datasetVersion = null;
@@ -254,13 +261,6 @@ namespace BExIS.Modules.Dim.UI.Controllers
                         return Request.CreateErrorResponse(HttpStatusCode.PreconditionFailed, "The dataset with the id (" + id + ") does not exist.");
                 }
 
-                string convertTo = "";
-
-                try
-                {
-                    convertTo = this.Request.GetQueryNameValuePairs().FirstOrDefault(p => "format".Equals(p.Key, StringComparison.InvariantCultureIgnoreCase)).Value;
-                }
-                catch (Exception ex) { }
 
                 // try to get latest dataset version 
                 if (version == -1)
@@ -285,36 +285,68 @@ namespace BExIS.Modules.Dim.UI.Controllers
                 if (datasetVersion == null) return Request.CreateResponse(HttpStatusCode.InternalServerError, "It is not possible to load the latest or given version.");
 
 
-                XmlDocument xmldoc = datasetVersion.Metadata;
+                XmlDocument xmlDoc = datasetVersion.Metadata;
+  
 
-                if (string.IsNullOrEmpty(convertTo))
+                //format = intern
+                // do not transformation
+
+                //format = extern
+                if (format == Format.External)
                 {
+                    List<string> t = xmlDatasetHelper.GetAllTransmissionInformation(id, TransmissionType.mappingFileExport, AttributeNames.name).ToList();
+                    string convertTo = t.ToArray().FirstOrDefault();
+                    xmlDoc = OutputMetadataManager.GetConvertedMetadata(id, TransmissionType.mappingFileExport, convertTo);
+                }
+
+                //format subset && subsetType 
+                if (format == Format.Subset)
+                {
+                    if (string.IsNullOrEmpty(subsetType))
+                        return Request.CreateErrorResponse(HttpStatusCode.PreconditionFailed, "In combination with the format subset - subsettype must not be empty");
+
+                    using (var conceptManager = new ConceptManager())
+                    {
+                        var concept = conceptManager.MappingConceptRepo.Get().Where(c => c.Name.Equals(subsetType)).FirstOrDefault();
+                        
+                        if(concept == null )
+                            return Request.CreateErrorResponse(HttpStatusCode.PreconditionFailed, "In combination with the format subset - subsettype must not be empty");
+
+                        xmlDoc = MappingUtils.GetConceptOutput(id, concept.Id, xmlDoc);
+                    }
+
+                }
+
+
+                try
+                {
+
+                    if (xmlDoc == null) return Request.CreateErrorResponse(HttpStatusCode.InternalServerError, string.Format("No mapping found for this format : {0} .", format));
 
                     switch (returnType)
                     {
                         case "application/json":
                             {
-
                                 string json = "";
 
                                 switch (simplifiedJson)
                                 {
                                     case 0:
                                         {
-                                            json = JsonConvert.SerializeObject(xmldoc.DocumentElement);
+                                            json = JsonConvert.SerializeObject(xmlDoc.DocumentElement);
                                             break;
                                         }
                                     case 1:
                                         {
                                             XmlMetadataConverter xmlMetadataConverter = new XmlMetadataConverter();
-                                            json = xmlMetadataConverter.ConvertTo(xmldoc, true).ToString();
+                                            json = xmlMetadataConverter.ConvertTo(xmlDoc, true).ToString();
 
                                             break;
                                         }
                                     case 2:
                                         {
                                             XmlMetadataConverter xmlMetadataConverter = new XmlMetadataConverter();
-                                            json = xmlMetadataConverter.ConvertTo(xmldoc).ToString();
+                                            json = xmlMetadataConverter.ConvertTo(xmlDoc).ToString();
 
                                             break;
                                         }
@@ -325,55 +357,46 @@ namespace BExIS.Modules.Dim.UI.Controllers
                             }
                         case "application/xml":
                             {
-                                HttpResponseMessage response = new HttpResponseMessage { Content = new StringContent(xmldoc.InnerXml, Encoding.UTF8, "application/xml") };
+                                HttpResponseMessage response = new HttpResponseMessage { Content = new StringContent(xmlDoc.InnerXml, Encoding.UTF8, "application/xml") };
                                 return response;
                             }
                         default:
                             {
 
-                                HttpResponseMessage response = new HttpResponseMessage { Content = new StringContent(xmldoc.InnerXml, Encoding.UTF8, "application/xml") };
+                                HttpResponseMessage response = new HttpResponseMessage { Content = new StringContent(xmlDoc.InnerXml, Encoding.UTF8, "application/xml") };
                                 return response;
                             }
                     }
-
                 }
-                else
+                catch (Exception ex)
                 {
-                    try
-                    {
-                        XmlDocument newXmlDoc = OutputMetadataManager.GetConvertedMetadata(id, TransmissionType.mappingFileExport,
-                            convertTo);
-
-                        if (newXmlDoc == null) return Request.CreateErrorResponse(HttpStatusCode.InternalServerError, string.Format("No mapping found for this format : {0} .", format));
-
-                        switch (returnType)
-                        {
-                            case "application/json":
-                                {
-                                    HttpResponseMessage response = new HttpResponseMessage { Content = new StringContent(JsonConvert.SerializeObject(newXmlDoc.DocumentElement), Encoding.UTF8, "application/json") };
-                                    return response;
-                                }
-                            case "application/xml":
-                                {
-                                    HttpResponseMessage response = new HttpResponseMessage { Content = new StringContent(newXmlDoc.InnerXml, Encoding.UTF8, "application/xml") };
-                                    return response;
-                                }
-                            default:
-                                {
-
-                                    HttpResponseMessage response = new HttpResponseMessage { Content = new StringContent(newXmlDoc.InnerXml, Encoding.UTF8, "application/xml") };
-                                    return response;
-                                }
-                        }
-                    }
-                    catch (Exception ex)
-                    {
-                        return null;
-                    }
+                    return null;
                 }
             }
         }
 
+        private string[] getAllAvailableConcepts(long id)
+        {
+            using (var conceptManager = new ConceptManager())
+            using (var mappingManager = new MappingManager())
+            {
+                string[] concepts = { };
+                // get all root mappings to mds with id wich mapped to a mapping concept 
+                var allMappings = mappingManager.GetMappings()
+                    .Where(m =>
+                    m.Source.ElementId.Equals(id) &&
+                    m.Source.Type.Equals(LinkElementType.MetadataStructure) &&
+                    m.Target.Type.Equals(LinkElementType.MappingConcept));
+
+
+                if (allMappings.Any())
+                {
+                    concepts = allMappings.Select(m => m.Target.Name).ToArray();
+                }
+
+                return concepts;
+            }
+        }
     }
 
 
@@ -381,6 +404,14 @@ namespace BExIS.Modules.Dim.UI.Controllers
     public class MetadataViewObject
     {
         public long DatasetId { get; set; }
-        public string[] Format { get; set; }
+        public Format Format { get; set; }
+        public string[] SubsetType { get; set; }
+    }
+
+    public enum Format
+    {
+         Internal,
+         External,
+         Subset
     }
 }

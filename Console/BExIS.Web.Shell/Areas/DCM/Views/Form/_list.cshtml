@@ -11,16 +11,21 @@
 
 
 @if (!Model.Locked)
-{
+{ 
 
     if (Model.DomainList.Count > 0)
     {
 
-    @(Html.Telerik().DropDownList()
-                .Placeholder("Please select")
-                .Name(@Model.IdInput)
-                .HtmlAttributes(new { idbyxpath = @Model.IdByXpath, PackageId = @Model.ParentId, Title = @Model.ErrorMessage, @class = "bx-dropdown " + @Model.ErrorClass })
-                .ClientEvents(events => events.OnChange(action))
-                .BindTo(new SelectList(Model.DomainList, Model.Value)))
+        @(Html.Telerik().DropDownList()
+        .Placeholder("Please select")
+        .Name(@Model.IdInput)
+        .HtmlAttributes(new { idbyxpath = @Model.IdByXpath, PackageId = @Model.ParentId, Title = @Model.ErrorMessage, @class = "bx-dropdown " + @Model.ErrorClass })
+        .ClientEvents(events => events.OnChange(action))
+        .BindTo(new SelectList(Model.DomainList, Model.Value)))
     }
+
+}
+else
+{
+    @Html.Partial("_displayonly", Model)
 }

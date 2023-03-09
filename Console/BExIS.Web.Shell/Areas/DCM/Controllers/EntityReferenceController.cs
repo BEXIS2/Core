@@ -1,5 +1,6 @@
 ﻿using BExIS.App.Bootstrap.Attributes;
 using BExIS.Dlm.Entities.Data;
+using BExIS.Dlm.Services.Data;
 using BExIS.Modules.Dcm.UI.Helpers;
 using BExIS.Modules.Dcm.UI.Models.EntityReference;
 using BExIS.Security.Entities.Authorization;
@@ -152,7 +153,8 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             model.SourceReferences = helper.GetSourceReferences(sourceId, sourceTypeId, sourceVersion);
             model.HasEditRights = hasUserRights(sourceId, RightType.Write);
 
-            return PartialView("Show", model);
+     
+           return PartialView("Show", model);
         }
 
         public ActionResult Show2(long sourceId, long sourceTypeId, int sourceVersion)
