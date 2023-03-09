@@ -5,5 +5,5 @@
 
 ### Bugs
 - fix dropdown is not locked in metadata view mode
-- fix all optional block allways active in metadata view&edit [#1094](https://github.com/BEXIS2/Core/issues/1094)
+- fix all optional blocks allways active in metadata ([#1094])(https://github.com/BEXIS2/Core/issues/1094)
 
