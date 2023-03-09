@@ -1,8 +1,7 @@
-# BEXIS 2.17 Release Notes
->Web.config update to add Exceptionless -> see: https://github.com/BEXIS2/Core/commit/8b50510f30bd9c00a20faedb9fecf9e255005085
->Database update: https://github.com/BEXIS2/Core/blob/rc/database%20update%20scripts/Update_Script_216to217.sql
+# BEXIS 2.17.1 Release Notes
+>Database update: [https://github.com/BEXIS2/Core/blob/rc/database%20update%20scripts/Update_Script_216to217.sql](https://github.com/BEXIS2/Core/blob/rc/database%20update%20scripts/Update_Script_217to2171.sql)
 
-**Workspace changes:** https://github.com/BEXIS2/Workspace/compare/2.16...2.17
+**Workspace changes:** [2.17...2.17.1](https://github.com/BEXIS2/Workspace/compare/2.17...2.7.1)
 
 ### Features
 - Adding Exceptionless for System Loggging/Monitoring ([#1040](https://github.com/BEXIS2/Core/issues/1040))
