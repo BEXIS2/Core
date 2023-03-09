@@ -346,6 +346,12 @@ namespace BExIS.Modules.Dim.UI.Controllers
                                 tmp = new Tuple<string, string>(dataRepoConverter.Convert(datasetVersionId), "text/xml");
                                 return tmp;
                             }
+                        case "gbif":
+                            {
+                                GBIFDataRepoConverter dataRepoConverter = new GBIFDataRepoConverter(repository);
+                                tmp = new Tuple<string, string>(dataRepoConverter.Convert(datasetVersionId), "application/zip");
+                                return tmp;
+                            }
                         default:
                             {
                                 //default
@@ -443,6 +449,19 @@ namespace BExIS.Modules.Dim.UI.Controllers
                                 .Where(b => b.Name.ToLower().Equals(datarepo.ToLower()))
                                 .FirstOrDefault();
                         publicationManager.CreatePublication(datasetVersion, broker, datasetVersion.Title, 0, zipfilepath, "","created");
+
+                        #endregion GENERIC
+                    }
+
+                    if (datarepo.ToLower().Equals("gbif"))
+                    {
+                        #region gbif
+
+                        Broker broker =
+                            publicationManager.BrokerRepo.Get()
+                                .Where(b => b.Name.ToLower().Equals(datarepo.ToLower()))
+                                .FirstOrDefault();
+                        publicationManager.CreatePublication(datasetVersion, broker, datasetVersion.Title, 0, zipfilepath, "", "created");
 
                         #endregion GENERIC
                     }

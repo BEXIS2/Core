@@ -95,6 +95,8 @@
     <Compile Include="Api\ApiHelper.cs" />
     <Compile Include="BasicWebService.cs" />
     <Compile Include="DataCiteDOI\DataCiteDoiHelper.cs" />
+    <Compile Include="GBIF\GBIFHelper.cs" />
+    <Compile Include="Export\GBIFDataRepoConverter.cs" />
     <Compile Include="Export\PangaeaDataRepoConverter.cs" />
     <Compile Include="Export\GenericDataRepoConverter.cs" />
     <Compile Include="Export\IDataRepoConverter.cs" />
