@@ -218,12 +218,12 @@ namespace BExIS.Modules.Dim.UI.Helpers
         {
             using (var conceptManager = new ConceptManager())
             {
-                var concept = conceptManager.MappingConceptRepo.Query(c => c.Name.Equals("GBIF - DWC")).FirstOrDefault();
+                var concept = conceptManager.MappingConceptRepo.Query(c => c.Name.Equals("GBIF")).FirstOrDefault();
 
                 var keys = new List<MappingKey>();
 
                 if (concept == null) //if not create
-                    concept = conceptManager.CreateMappingConcept("GBIF - DWC", "The concept is needed to create a darwin core archive for GBIF.", "https://ipt.gbif.org/manual/en/ipt/latest/dwca-guide", @"Modules\DIM\concepts\gbif\eml.xsd");
+                    concept = conceptManager.CreateMappingConcept("GBIF", "The concept is needed to create a darwin core archive for GBIF.", "https://ipt.gbif.org/manual/en/ipt/latest/dwca-guide", @"Modules\DIM\concepts\gbif\eml.xsd");
                 else // if exist load available keys
                 {
                     keys = conceptManager.MappingKeyRepo.Query(k => k.Concept.Id.Equals(concept.Id)).ToList();
@@ -282,7 +282,7 @@ namespace BExIS.Modules.Dim.UI.Helpers
                         "surName",
                         "Subfield of individualName field. The surname field is used for the last name of the individual associated with the resource. This is typically the family name of an individual, for example, the name by which s/he is referred to in citations. E.g. Carson",
                         "https://sbclter.msi.ucsb.edu/external/InformationManagement/EML_211_schema/docs/eml-2.1.1/eml-party.html#surName",
-                        true,
+                        false,
                         false,
                         "eml/dataset/creator/individualName/surName",
                         concept, creator);
@@ -316,7 +316,7 @@ namespace BExIS.Modules.Dim.UI.Helpers
                         "surName",
                         "Subfield of individualName field. The surname field is used for the last name of the individual associated with the resource. This is typically the family name of an individual, for example, the name by which s/he is referred to in citations. E.g. Carson",
                         "https://sbclter.msi.ucsb.edu/external/InformationManagement/EML_211_schema/docs/eml-2.1.1/eml-party.html#surName",
-                        true,
+                        false,
                         false,
                         "eml/dataset/metadataProvider/individualName/surName",
                         concept, metadataProvider);
@@ -385,7 +385,7 @@ namespace BExIS.Modules.Dim.UI.Helpers
                         "geographicCoverage",
                         "A container for spatial information about a resource; allows a bounding box for the overall coverage (in lat long), and also allows description of arbitrary polygons with exclusions.",
                         "https://sbclter.msi.ucsb.edu/external/InformationManagement/EML_211_schema/docs/eml-2.1.1/eml-coverage.html#geographicCoverage",
-                        false,
+                        true,
                         true,
                         "eml/dataset/coverage/geographicCoverage",
                         concept);
@@ -452,7 +452,7 @@ namespace BExIS.Modules.Dim.UI.Helpers
                         "taxonomicCoverage",
                         "A container for taxonomic information about a resource. It includes a list of species names (or higher level ranks) from one or more classification systems. Please note the taxonomic classifications should not be nested, just listed one after the other.",
                         "https://sbclter.msi.ucsb.edu/external/InformationManagement/EML_211_schema/docs/eml-2.1.1/eml-coverage.html#TaxonomicCoverage",
-                        false,
+                        true,
                         true,
                         "eml/dataset/coverage/taxonomicCoverage",
                         concept);
