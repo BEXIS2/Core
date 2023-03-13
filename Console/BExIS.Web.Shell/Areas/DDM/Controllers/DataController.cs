@@ -44,6 +44,7 @@ using System.Text;
 using BExIS.Security.Entities.Objects;
 using BExIS.Security.Entities.Subjects;
 using BExIS.Dlm.Services.MetadataStructure;
+using System.Web.UI.WebControls;
 
 namespace BExIS.Modules.Ddm.UI.Controllers
 
@@ -174,15 +175,16 @@ namespace BExIS.Modules.Ddm.UI.Controllers
 
                     XmlDocument metadata = new XmlDocument();
 
-                    if (dm.IsDatasetCheckedIn(id))
+
+                    // Retrieve data for active and hidden (marked as deleted) datasets
+                    if (dm.IsDatasetCheckedIn(id) || dm.IsDatasetDeleted(id))
                     {
                         List<DatasetVersion> datasetVersions = dm.GetDatasetVersions(id);
                         List<DatasetVersion> datasetVersionsAllowed = new List<DatasetVersion>();
 
                         // Get version id based on public or internal access. Version name has a higher priority as version.
-                        // Public access has higher priority as makor/minor versions
-                        versionId = getVersionId(id, version, versionName, datasetVersions);
-
+                        // Public access has higher priority as major/minor versions
+                        versionId = getVersionId(id, version, versionName, datasetVersions, researcobject.Status);
                         // Set if the latest version is selected. Compare current version id against unfiltered max id
                         latestVersionId = datasetVersions.OrderByDescending(d => d.Timestamp).Select(d => d.Id).FirstOrDefault();
                         latestVersionNr = dm.GetDatasetVersionNr(latestVersionId);
@@ -255,7 +257,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                     }
                     else
                     {
-                        ModelState.AddModelError(string.Empty, "Dataset is just in processing.");
+                            ModelState.AddModelError(string.Empty, "Dataset is just in processing.");
                     }
 
                     model = new ShowDataModel()
@@ -280,11 +282,23 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                         IsPublic = isPublic,
                     };
 
-                    //set metadata in session
+                   //set metadata in session
                     Session["ShowDataMetadata"] = metadata;
                     ViewData["VersionSelect"] = getVersionsSelectList(id, dm);
                     ViewData["isValid"] = isValid;
                     ViewData["datasetSettings"] = getSettingsDataset();
+                    ViewData["Message"] = "";
+                    ViewData["State"] = "";
+
+                    // set message and unset all tabs except of metadata (+ data structure & links)
+                    if (dm.IsDatasetDeleted(id))
+                    {
+                        ViewData["Message"] = "Dataset is out of date. Reason: " + researcobject.ModificationInfo.Comment + ". Please check the \"Links\" tab to find possible linked newer versions.";
+                        ViewData["State"] = "hidden";
+                        model.GrantAccess = false;
+                        model.ViewAccess = false;
+                        model.DownloadAccess = false;
+                    }
 
                     return View(model);
                     
@@ -1809,7 +1823,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
             return !string.IsNullOrWhiteSpace(userName) ? userName : "DEFAULT";
         }
 
-        private long getVersionId(long datasetId, int version ,string versionName, List<DatasetVersion> datasetVersions)
+        private long getVersionId(long datasetId, int version ,string versionName, List<DatasetVersion> datasetVersions, DatasetStatus datasetStatus)
         {
             long versionId = 0;
             SettingsHelper helper = new SettingsHelper();
@@ -1818,7 +1832,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
             using (DatasetManager dm = new DatasetManager())
             {
 
-                List<DatasetVersion> datasetVersionsAllowed = dm.GetDatasetVersionsAllowed(datasetId, true, false, datasetVersions);
+                List<DatasetVersion> datasetVersionsAllowed = dm.GetDatasetVersionsAllowed(datasetId, true, false, datasetVersions, datasetStatus);
 
                 // User is not logged in
                 if (GetUsernameOrDefault() == "DEFAULT")
@@ -1870,7 +1884,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                         }
                         else
                         {
-                            versionId = dm.GetDatasetLatestVersionId(datasetId); 
+                            versionId = dm.GetDatasetLatestVersionId(datasetId, datasetStatus); 
                         }
                     }
                     // Get specific version number
