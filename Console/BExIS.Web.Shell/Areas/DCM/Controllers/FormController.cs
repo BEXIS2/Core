@@ -3509,7 +3509,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                             #endregion entity mapping
 
                             // if at least on item has a value, the parent should be activated
-                            setStepModelActive(stepModelHelper);
+                           if(simpleMetadataAttributeModel.Value!=null) setStepModelActive(stepModelHelper);
                         }
                     }
                     else
