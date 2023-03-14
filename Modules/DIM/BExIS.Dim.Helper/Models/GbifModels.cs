@@ -15,6 +15,8 @@ namespace BExIS.Dim.Helpers.Models
         samplingEvent
     }
 
+    #region xml
+
     [XmlRoot("archive")]
     public class Archive
     {
@@ -62,8 +64,8 @@ namespace BExIS.Dim.Helpers.Models
         [XmlElement("id")]
         public Id Id { get; set; }
 
-        [XmlElement("field")]
-        public List<Field> Fields { get; set; }
+        [XmlArrayItem("field")]
+        public List<Field> fields { get; set; }
 
         public Core()
         {
@@ -75,7 +77,7 @@ namespace BExIS.Dim.Helpers.Models
             RowType = String.Empty;
             files = new List<string>();
             Id = new Id();
-            Fields = new List<Field>();
+            fields = new List<Field>();
 
         }
     }
@@ -86,7 +88,7 @@ namespace BExIS.Dim.Helpers.Models
         public int Index { get; set; }
 
         [XmlAttribute("term")]
-        public int Term { get; set; }
+        public string Term { get; set; }
     }
 
     public class Id
@@ -94,4 +96,17 @@ namespace BExIS.Dim.Helpers.Models
         [XmlAttribute("index")]
         public int Index { get; set; }
     }
+
+    #endregion
+
+    #region json
+
+    public class DWTerms
+    {
+        public GbifDataType Type { get; set; }
+
+        public List<Field> Field { get; set; }
+    }
+
+    #endregion
 }

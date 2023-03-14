@@ -22,9 +22,9 @@ namespace System.Data
 {
     public static class DataTableExtensionsForDataset
     {
-        public static void Strip(this DataTable table)
+        public static void Strip(this DataTable table, bool keepId=false)
         {
-            if (table.Columns.Contains("id")) { table.Columns.Remove("id"); }
+            if (table.Columns.Contains("id") && keepId==false) { table.Columns.Remove("id"); }
             if (table.Columns.Contains("orderno")) { table.Columns.Remove("orderno"); }
             if (table.Columns.Contains("timestamp")) { table.Columns.Remove("timestamp"); }
             if (table.Columns.Contains("versionid")) { table.Columns.Remove("versionid"); }

@@ -276,7 +276,7 @@ namespace BExIS.IO.Transform.Output
             return true;
         }
 
-        protected override bool AddRow(DataRow row, long rowIndex)
+        protected override bool AddRow(DataRow row, long rowIndex, bool internalId = false)
         {
             // number of columns
             int colCount = row.Table.Columns.Count;
@@ -290,24 +290,28 @@ namespace BExIS.IO.Transform.Output
                 string value = row[i].ToString();
 
                 // check if the value is a missing value and should be replaced
-                Variable variable = dataStructure.Variables.ElementAt(i);
-
-                if (variable != null)
+                int j = internalId ? i-1:i;
+                if (j >= 0)
                 {
-                    //checking for display pattern
-                    Dlm.Entities.DataStructure.DataType dataType = variable.DataAttribute.DataType;
-                    string format = GetStringFormat(dataType);
-                    if (!string.IsNullOrEmpty(format))
-                    {
-                        value = GetFormatedValue(value, dataType, format);
-                    }
-                    else value = value.ToString();
+                    Variable variable = dataStructure.Variables.ElementAt(j);
 
-                    // checking for missing values
-                    if (variable.MissingValues.Any(mv => mv.Placeholder.Equals(value)))
+                    if (variable != null)
                     {
+                        //checking for display pattern
+                        Dlm.Entities.DataStructure.DataType dataType = variable.DataAttribute.DataType;
+                        string format = GetStringFormat(dataType);
+                        if (!string.IsNullOrEmpty(format))
+                        {
+                            value = GetFormatedValue(value, dataType, format);
+                        }
+                        else value = value.ToString();
 
-                        value = variable.MissingValues.FirstOrDefault(mv => mv.Placeholder.Equals(value)).DisplayName;
+                        // checking for missing values
+                        if (variable.MissingValues.Any(mv => mv.Placeholder.Equals(value)))
+                        {
+
+                            value = variable.MissingValues.FirstOrDefault(mv => mv.Placeholder.Equals(value)).DisplayName;
+                        }
                     }
                 }
                 // add value to row
