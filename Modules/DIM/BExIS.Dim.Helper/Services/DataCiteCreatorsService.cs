@@ -3,13 +3,13 @@ using BExIS.Dim.Helpers.Mapping;
 using BExIS.Dlm.Entities.Data;
 using BExIS.Dlm.Services.Party;
 using BExIS.Xml.Helpers;
-using Lucifron.ReST.Library.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
+using Vaelastrasz.Library.Models.DataCite;
 
 namespace BExIS.Dim.Helpers.Services
 {
