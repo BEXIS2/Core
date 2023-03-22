@@ -152,6 +152,7 @@
   <ItemGroup>
     <Compile Include="AtoModule.cs" />
     <Compile Include="Controllers\HomeController.cs" />
+    <Compile Include="Controllers\OrganigramController.cs" />
     <Compile Include="Helpers\ATOSeedDataGenerator.cs" />
     <Compile Include="Models\CategoryModel.cs" />
     <Compile Include="Models\FileModel.cs" />
@@ -189,6 +190,7 @@
     <Content Include="Views\Home\Information.cshtml" />
     <Content Include="Views\Home\Documentation.cshtml" />
     <Content Include="Views\Home\ExternalCalendar.cshtml" />
+    <Content Include="Views\Organigram\Index.cshtml" />
     <None Include="web.Debug.config">
       <DependentUpon>web.config</DependentUpon>
     </None>

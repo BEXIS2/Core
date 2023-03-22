@@ -38,8 +38,11 @@ namespace BExIS.Modules.Ato.UI.Helpers
             Feature DocumentationFeature = featureManager.FeatureRepository.Get().FirstOrDefault(f => f.Name.Equals("Documents"));
             if (DocumentationFeature == null) DocumentationFeature = featureManager.Create("Documents", "Documents", ATOFeature);
 
+            Feature OrganigramFeature = featureManager.FeatureRepository.Get().FirstOrDefault(f => f.Name.Equals("Organigram"));
+            if (OrganigramFeature == null) OrganigramFeature = featureManager.Create("Organigram", "Organigram");
 
             var ATOOperation = operationManager.Create("ATO", "Home", "*", DocumentationFeature);
+            operationManager.Create("ATO", "Organigram", "*", OrganigramFeature);
 
         }
 

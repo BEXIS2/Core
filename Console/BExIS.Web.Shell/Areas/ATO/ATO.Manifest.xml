@@ -20,6 +20,11 @@
 						title="Calendar" description="atto calendar" icon=""
 						controller="home" action="calendar"
 						extends="./menubarRoot/Information" />
+
+    <Export tag="menubar" id="organigram" order="10"
+        title="Organigram" description="atto organigram" icon=""
+        controller="organigram" action="index"
+        extends="./menubarRoot" />
     
 	<!-- Settings Example-->
 		<!--<Export tag="settings" id="manageMetadata" order="1"
