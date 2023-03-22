@@ -1,0 +1,30 @@
+﻿@using Telerik.Web.Mvc.UI
+@using Vaiona.Web.Mvc.Modularity
+
+@model BExIS.Modules.Dim.UI.Models.CreateDataCiteDoiModel
+
+@using (Ajax.BeginForm("Create", "DataCiteDoi", new AjaxOptions { HttpMethod = "POST", UpdateTargetId = "content_createDataCiteDoi", OnSuccess = "createDataCiteDoi_onSuccess" }))
+{
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary(true)
+
+    @Html.HiddenFor(m => m.DatasetId)
+    Html.HiddenFor(m => m.DatasetVersionId)
+
+    <table class="bx-table-form">
+        <tr>
+            <td>
+                @Html.LabelFor(m => m.DataCiteModel.Data.Attributes.Doi)
+            </td>
+            <td>
+                @Html.TextBoxFor(m => m.DataCiteModel.Data.Attributes.Doi, new { @class = "t-input bx-input" })
+                @Html.ValidationMessageFor(m => m.DataCiteModel.Data.Attributes.Doi)
+            </td>
+        </tr>
+    </table>
+
+    <div class="bx-footer right">
+        <button style="margin-right: 1px" type="submit" class="bx-button action">Save</button>
+        <button style="margin-left: 1px" type="button" id="button_createDataCiteDoi_cancel" class="bx-button action">Cancel</button>
+    </div>
+}
