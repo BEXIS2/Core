@@ -1,21 +1,21 @@
 ﻿using BExIS.Dlm.Services.Party;
 using BExIS.Modules.Bam.UI.Models;
+using BExIS.Utils.Route;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Threading.Tasks;
 using System.Web.Http;
 
 namespace BExIS.Modules.Bam.UI.Controllers.API
 {
     //[BExISApiAuthorize]
-    [Route("api")]
     public class PartiesController : ApiController
     {
-        [HttpGet]
-        [ActionName("parties")]
-        public IHttpActionResult Get(long partyId)
+        [HttpGet, GetRoute("api/parties/{partyId}")]
+        public async Task<HttpResponseMessage> Get(long partyId)
         {
             try
             {
@@ -24,14 +24,14 @@ namespace BExIS.Modules.Bam.UI.Controllers.API
                     var party = partyManager.GetParty(partyId);
 
                     if (party == null)
-                        return BadRequest($"party with id: {partyId} does not exist.");
+                        return Request.CreateResponse(HttpStatusCode.BadRequest, $"party with id: {partyId} does not exist.");
 
-                    return Ok(ReadPartyModel.Convert(party));
+                    return Request.CreateResponse(HttpStatusCode.OK, ReadPartyModel.Convert(party));
                 }
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);
+                return Request.CreateErrorResponse(HttpStatusCode.InternalServerError, ex);
             }
         }
 
