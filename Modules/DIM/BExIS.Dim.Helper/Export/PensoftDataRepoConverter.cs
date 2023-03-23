@@ -7,6 +7,7 @@ using BExIS.IO;
 using BExIS.IO.Transform.Output;
 using BExIS.Xml.Helpers;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Xml;
 
@@ -64,9 +65,10 @@ namespace BExIS.Dim.Helpers.Export
             }
         }
 
-        public bool Validate(long datasetVersionId)
+        public bool Validate(long datasetVersionId, out List<string> errors)
         {
-            throw new NotImplementedException();
+            errors = new List<string>();
+            return true; //throw new NotImplementedException();
         }
 
         public PensoftDataRepoConverter(Repository datarepo)
