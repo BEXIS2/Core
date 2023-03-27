@@ -1,0 +1,789 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- The element annotations in this document are drawn from the appropriate standard. -->
+<!-- For EML - see http://knb.ecoinformatics.org/software/eml/eml-2.1.1/index.html -->
+<!-- For NCD - see Natural Collections Descriptions (NCD) v0.9 2008 http://wiki.tdwg.org/twiki/bin/viewfile/NCD/WebHome?rev=1;filename=NCD-v090_TDWG.doc -->
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" version="1.0" xmlns:eml="eml://ecoinformatics.org/eml-2.1.1" elementFormDefault="qualified" xmlns:dc="http://purl.org/dc/terms/">
+<xs:element name="dataset">
+<xs:annotation>
+<xs:documentation>The dataset element is a wrapper for all other elements relating to a single dataset</xs:documentation>
+</xs:annotation>
+<xs:complexType>
+<xs:sequence>
+  <xs:element name="alternateIdentifier" minOccurs="0" maxOccurs="unbounded" type="xs:string">
+    <xs:annotation>
+      <xs:documentation>This is the only identifier issued by the IPT for the metadata document; it is a UUID</xs:documentation>
+    </xs:annotation>
+  </xs:element>
+<xs:element ref="title" maxOccurs="unbounded"/>
+<!-- Original creator of the dataset/resource, not necessarily the agent authoring the eml file nor the primary contact -->
+<xs:element ref="creator"/>
+<!-- "Metadata author" the agent authoring the eml file -->
+<xs:element name="metadataProvider" type="agentType">
+<xs:annotation>
+<xs:documentation>The party responsible for the creation of the metadata document</xs:documentation>
+</xs:annotation>
+</xs:element>
+<xs:element ref="associatedParty" minOccurs="0" maxOccurs="unbounded"/>
+<xs:element ref="pubDate"/>
+<xs:element ref="language" minOccurs="0"/>
+<xs:element ref="abstract"/>
+<xs:element ref="keywordSet" minOccurs="0" maxOccurs="unbounded"/>
+<xs:element ref="additionalInfo" minOccurs="0"/>
+<xs:element ref="intellectualRights" minOccurs="0"/>
+<xs:element ref="distribution" minOccurs="0"/>
+<xs:element ref="coverage" minOccurs="0"/>
+<xs:element ref="purpose" minOccurs="0"/>
+<!-- Current primary contact for the dataset. The creator of the resource might be dead, left the organisation or doesnt want to be bothered. -->
+<xs:element name="contact" type="agentType"/>
+<xs:element ref="methods" minOccurs="0"/>
+<xs:element ref="project" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+</xs:element>
+  
+
+  
+<xs:element name="creator" type="agentType">
+<xs:annotation>
+<xs:documentation>The creator is the person who created the resource (not necessarily the author of this metadata about the resource).
+This is the person or institution to contact with questions about the use, interpretation of a dataset.
+</xs:documentation>
+</xs:annotation>
+</xs:element>
+<xs:complexType name="agentType">
+<xs:sequence>
+<xs:choice maxOccurs="unbounded" minOccurs="1">
+<xs:element name="organizationName" minOccurs="0" type="NonEmptyStringType">
+<xs:annotation>
+<xs:documentation>The full name of the organization that is associated with the resource. This field is intended to describe which institution or overall organization is associated with the resource being described.</xs:documentation>
+</xs:annotation>
+</xs:element>
+<xs:element ref="individualName" minOccurs="0" />
+<xs:element name="positionName" minOccurs="0" type="NonEmptyStringType">
+<xs:annotation>
+<xs:documentation>This field is intended to be used instead of a particular person or full organization name. If the associated person who holds the role changes frequently, then Position Name would be used for consistency. E.g., GBIF Data Manager.</xs:documentation>
+</xs:annotation>
+</xs:element>
+</xs:choice>
+<xs:element ref="address" minOccurs="0"/>
+<xs:element ref="phone" minOccurs="0"/>
+<xs:element ref="electronicMailAddress" minOccurs="0"/>
+<xs:element ref="onlineUrl" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+<xs:complexType name="agentWithRoleType">
+<xs:complexContent>
+<xs:extension base="agentType">
+<xs:sequence>
+<xs:element ref="role"/>
+</xs:sequence>
+</xs:extension>
+</xs:complexContent>
+</xs:complexType>
+<xs:element name="associatedParty" type="agentWithRoleType">
+<xs:annotation>
+<xs:documentation>A party associated with the resource. Parties have particular roles.</xs:documentation>
+</xs:annotation>
+</xs:element>
+<xs:element name="pubDate" type="yearDate">
+<xs:annotation>
+<xs:documentation>The date on which the resource was published</xs:documentation>
+</xs:annotation>
+</xs:element>
+<xs:element name="language" type="NonEmptyStringType">
+<xs:annotation>
+<xs:documentation>The language in which the resource (not the metadata document) is written</xs:documentation>
+</xs:annotation>
+</xs:element>
+<xs:element name="abstract">
+<xs:annotation>
+<xs:documentation>A brief overview describing the dataset</xs:documentation>
+</xs:annotation>
+<xs:complexType>
+<xs:sequence>
+<xs:element ref="para"/>
+</xs:sequence>
+</xs:complexType>
+</xs:element>
+<xs:element name="keywordSet">
+<xs:annotation>
+<xs:documentation>A wrapper element for the keyword and keywordThesaurus elements</xs:documentation>
+</xs:annotation>
+<xs:complexType>
+<xs:sequence>
+<xs:element name="keyword" type="NonEmptyStringType" maxOccurs="unbounded">
+<xs:annotation>
+<xs:documentation>This field names a keyword or key phrase that concisely describes the resource or is related to the resource. Each keyword field should contain one and only one keyword</xs:documentation>
+</xs:annotation>
+</xs:element>
+<xs:element name="keywordThesaurus" type="NonEmptyStringType">
+<xs:annotation>
+<xs:documentation>The name of the official keyword thesaurus from which keyword was derived</xs:documentation>
+</xs:annotation>
+</xs:element>
+</xs:sequence>
+</xs:complexType>
+</xs:element>
+<xs:element name="additionalInfo">
+<xs:annotation>
+<xs:documentation>Any information that is not characterized by the other resource metadata fields</xs:documentation>
+</xs:annotation>
+<xs:complexType>
+<xs:sequence>
+<xs:element ref="para"/>
+</xs:sequence>
+</xs:complexType>
+</xs:element>
+<xs:element name="intellectualRights">
+<xs:annotation>
+<xs:documentation>Contain a rights management statement for the resource, or reference a service providing such information</xs:documentation>
+</xs:annotation>
+<xs:complexType>
+<xs:sequence>
+<xs:element ref="para"/>
+</xs:sequence>
+</xs:complexType>
+</xs:element>
+<xs:element name="coverage">
+<xs:annotation>
+<xs:documentation>Describes the extent of the coverage of the resource in terms of its spatial extent, temporal extent, and taxonomic extent</xs:documentation>
+</xs:annotation>
+<xs:complexType>
+<xs:choice maxOccurs="unbounded">
+<xs:element name="geographicCoverage" minOccurs="0" maxOccurs="1">
+<xs:annotation>
+<xs:documentation>A container for spatial information about a resource; allows a bounding box for the overall coverage (in lat long), and also allows description of arbitrary polygons with exclusions.</xs:documentation>
+</xs:annotation>
+<xs:complexType>
+<xs:sequence>
+<xs:element name="geographicDescription" type="NonEmptyStringType" minOccurs="1">
+<xs:annotation>
+<xs:documentation>A short text description of a dataset's geographic areal domain. A text description is especially important to provide a geographic setting when the extent of the dataset cannot be well described by the "boundingCoordinates".</xs:documentation>
+</xs:annotation>
+</xs:element>
+<xs:element name="boundingCoordinates">
+<xs:annotation>
+<xs:documentation>Bounding Coordinates are the four margins (N, S, E, W) of a bounding box, or when considered in lat-lon pairs, the corners of the box.</xs:documentation>
+</xs:annotation>
+<xs:complexType>
+<xs:sequence>
+<xs:element name="westBoundingCoordinate" type="xs:decimal">
+<xs:annotation>
+<xs:documentation>The westBoundingCoordinate field defines the longitude of the western-most point of the bounding box that is being described.</xs:documentation>
+</xs:annotation>
+</xs:element>
+<xs:element name="eastBoundingCoordinate" type="xs:decimal">
+<xs:annotation>
+<xs:documentation>The eastBoundingCoordinate field defines the longitude of the eastern-most point of the bounding box that is being described.</xs:documentation>
+</xs:annotation>
+</xs:element>
+<xs:element name="northBoundingCoordinate" type="xs:decimal">
+<xs:annotation>
+<xs:documentation>The northBoundingCoordinate field defines the latitude of the northern-most point of the bounding box that is being described.</xs:documentation>
+</xs:annotation>
+</xs:element>
+<xs:element name="southBoundingCoordinate" type="xs:decimal">
+<xs:annotation>
+<xs:documentation>The southBoundingCoordinate field defines the latitude of the southern-most point of the bounding box that is being described.</xs:documentation>
+</xs:annotation>
+</xs:element>
+</xs:sequence>
+</xs:complexType>
+</xs:element>
+</xs:sequence>
+</xs:complexType>
+</xs:element>
+<xs:element name="temporalCoverage" minOccurs="0" maxOccurs="1">
+    <xs:annotation>
+      <xs:documentation>This field specifies temporal coverage, and allows coverages to be a single point in time, multiple points in time, or a range of dates. </xs:documentation>
+    </xs:annotation>
+    <xs:complexType>
+      <xs:choice>
+        <xs:element name="rangeOfDates">
+          <xs:annotation>
+            <xs:documentation>The 'RangeOfDates' field is intended to be used for describing a range of dates and/or times. It may be used multiple times to document multiple date ranges. It allows for two 'singleDateTime' fields, the first to be used as the beginning dateTime, and the second to be used as the ending dateTime of the range.</xs:documentation>
+          </xs:annotation>
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="beginDate" type="calendarDate">
+                <xs:annotation>
+                  <xs:documentation>A single time stamp signifying the beginning of some time period</xs:documentation>
+                </xs:annotation>
+              </xs:element>
+              <xs:element name="endDate" type="calendarDate">
+                <xs:annotation>
+                  <xs:documentation>A single time stamp signifying the end of some time period</xs:documentation>
+                </xs:annotation>
+              </xs:element>
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+        <xs:element name="singleDateTime" type="calendarDate">
+          <xs:annotation>
+            <xs:documentation>The SingleDateTime field is intended to describe a single date and time for an event</xs:documentation>
+          </xs:annotation>
+        </xs:element>
+      </xs:choice>
+    </xs:complexType>
+  </xs:element>
+<xs:element name="taxonomicCoverage" minOccurs="0" maxOccurs="1">
+    <xs:annotation>
+      <xs:documentation>Taxonomic Coverage is a container for taxonomic information about a resource. It includes a list of species names (or higher level ranks) from one or more classification systems.</xs:documentation>
+    </xs:annotation>
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="generalTaxonomicCoverage" type="NonEmptyStringType" minOccurs="0">
+          <xs:annotation>
+            <xs:documentation>A general description of the range of taxa addressed in the data set or collection</xs:documentation>
+          </xs:annotation>
+        </xs:element>
+        <xs:element name="taxonomicClassification" maxOccurs="unbounded">
+          <xs:annotation>
+            <xs:documentation>Information about the range of taxa addressed in the dataset or collection</xs:documentation>
+          </xs:annotation>
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="taxonRankName" type="NonEmptyStringType" minOccurs="0">
+                <xs:annotation>
+                  <xs:documentation>The name of the taxonomic rank for which the Taxon rank value is provided, e.g., Phylum, Class, Genus, Species</xs:documentation>
+                </xs:annotation>
+              </xs:element>
+              <xs:element name="taxonRankValue" type="NonEmptyStringType">
+                <xs:annotation>
+                  <xs:documentation>The name representing the taxonomic rank of the taxon being described</xs:documentation>
+                </xs:annotation>
+              </xs:element>
+              <xs:element name="commonName" type="NonEmptyStringType" minOccurs="0">
+                <xs:annotation>
+                  <xs:documentation>Applicable common names; these common names may be general descriptions of a group of organisms if appropriate, e.g., invertebrates, waterfowl</xs:documentation>
+                </xs:annotation>
+              </xs:element>
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+</xs:choice>
+</xs:complexType>
+</xs:element>
+
+
+
+<xs:element name="purpose">
+<xs:annotation>
+<xs:documentation>A description of the purpose of the resource/dataset</xs:documentation>
+</xs:annotation>
+<xs:complexType>
+<xs:sequence>
+<xs:element ref="para"/>
+</xs:sequence>
+</xs:complexType>
+</xs:element>
+<xs:element name="methods">
+<xs:annotation>
+<xs:documentation>The methods field documents scientific methods used in the collection of this dataset. It includes information on items such as tools, instrument calibration and software.</xs:documentation>
+</xs:annotation>
+<xs:complexType>
+<xs:choice maxOccurs="unbounded">
+<xs:element name="methodStep" type="description" minOccurs ="0">
+<xs:annotation>
+<xs:documentation>The methodStep field allows for repeated sets of elements that document a series of procedures followed to produce a data object. These include text descriptions of the procedures, relevant literature, software, instrumentation, source data and any quality control measures taken.</xs:documentation>
+</xs:annotation>
+</xs:element>
+<xs:element name="qualityControl" type="description"  minOccurs ="0">
+<xs:annotation>
+<xs:documentation>The qualityControl field provides a location for the description of actions taken to either control or assess the quality of data resulting from the associated method step. </xs:documentation>
+</xs:annotation>
+</xs:element>
+<xs:element name="sampling"  minOccurs ="0">
+<xs:annotation>
+<xs:documentation>Description of sampling procedures including the geographic, temporal and taxonomic coverage of the study.</xs:documentation>
+</xs:annotation>
+<xs:complexType>
+<xs:sequence>
+<xs:element name="studyExtent" type="description">
+<xs:annotation>
+<xs:documentation>The field studyExtent represents both a specific sampling area and the sampling frequency (temporal boundaries, frequency of occurrence). The geographic studyExtent is usually a surrogate (representative area of) for the larger area documented in the "studyAreaDescription". </xs:documentation>
+</xs:annotation>
+</xs:element>
+<xs:element name="samplingDescription">
+<xs:annotation>
+<xs:documentation>The samplingDescription field allows for a text-based/human readable description of the sampling procedures used in the research project. The content of this element would be similar to a description of sampling procedures found in the methods section of a journal article.</xs:documentation>
+</xs:annotation>
+<xs:complexType>
+<xs:sequence>
+<xs:element ref="para"/>
+</xs:sequence>
+</xs:complexType>
+</xs:element>
+</xs:sequence>
+</xs:complexType>
+</xs:element>
+</xs:choice>
+</xs:complexType>
+</xs:element>
+<xs:element name="project">
+<xs:annotation>
+<xs:documentation>The project field contains information on the project in which this dataset was collected. It includes information such as project personnel, funding, study area, project design and related projects.</xs:documentation>
+</xs:annotation>
+<xs:complexType>
+<xs:sequence>
+<xs:element ref="title"/>
+<xs:element name="personnel" type="agentWithRoleType">
+<xs:annotation>
+<xs:documentation>The Personnel field extends ResponsibleParty with role information and is used to document people involved in a research project by providing contact information and their role in the project. </xs:documentation>
+</xs:annotation>
+</xs:element>
+<xs:element name="funding">
+<xs:annotation>
+<xs:documentation>The funding field is used to provide information about funding sources for the project such as: grant and contract numbers; names and addresses of funding sources.</xs:documentation>
+</xs:annotation>
+<xs:complexType>
+<xs:sequence>
+<xs:element ref="para"/>
+</xs:sequence>
+</xs:complexType>
+</xs:element>
+<xs:element name="studyAreaDescription">
+<xs:annotation>
+<xs:documentation>The studyAreaDescription field documents the physical area associated with the research project. It can include descriptions of the geographic, temporal, and taxonomic coverage of the research location and descriptions of domains (themes) of interest such as climate, geology, soils or disturbances.</xs:documentation>
+</xs:annotation>
+<xs:complexType>
+<xs:sequence>
+<xs:element ref="descriptor"/>
+</xs:sequence>
+</xs:complexType>
+</xs:element>
+<xs:element name="designDescription" type="description">
+<xs:annotation>
+<xs:documentation>The field designDescription contains general textual descriptions of research design. It can include detailed accounts of goals, motivations, theory, hypotheses, strategy, statistical design, and actual work. </xs:documentation>
+</xs:annotation>
+</xs:element>
+</xs:sequence>
+</xs:complexType>
+</xs:element>
+<xs:element name="descriptor">
+<xs:annotation>
+<xs:documentation>The descriptor field is used to document domains (themes) of interest such as climate, geology, soils or disturbances.</xs:documentation>
+</xs:annotation>
+<xs:complexType>
+<xs:sequence>
+<xs:element ref="descriptorValue"/>
+</xs:sequence>
+<xs:attribute name="citableClassificationSystem" use="optional" type="xs:boolean"/>
+<xs:attribute name="name" use="optional" type="descriptorEnum"/>
+</xs:complexType>
+</xs:element>
+<xs:simpleType name="descriptorEnum">
+<xs:restriction base="xs:string">
+<xs:enumeration value="thematic"/>
+<xs:enumeration value="geographic"/>
+<xs:enumeration value="generic"/>
+</xs:restriction>
+</xs:simpleType>
+<xs:element name="descriptorValue" type="xs:string">
+<xs:annotation>
+<xs:documentation>The descriptorValue field contains a general description, either thematic or geographic, of the study area.</xs:documentation>
+</xs:annotation>
+</xs:element>
+<xs:element name="additionalMetadata">
+<xs:annotation>
+<xs:documentation>A flexible field for including any other relevant metadata that pertains to the resource being described. This field allows EML to be extensible in that any XML-based metadata can be included in this element.</xs:documentation>
+</xs:annotation>
+<xs:complexType>
+<xs:sequence>
+<xs:element name="metadata">
+<xs:annotation>
+<xs:documentation>This element contains the additional metadata to be included in the document. This element should be used for extending EML to include metadata that is not already available in another part of the EML specification.</xs:documentation>
+</xs:annotation>
+<xs:complexType>
+<xs:sequence>
+<xs:element name="gbif">
+<xs:annotation>
+<xs:documentation>A block of additional metadata used for some special GBIF purposes and crossmapping to other schemas like the TDWG Natural Collection Data (NCD) schema</xs:documentation>
+</xs:annotation>
+<xs:complexType>
+<xs:sequence>
+<!-- additional general metadata -->
+<xs:element name="dateStamp" type="xs:dateTime">
+<xs:annotation>
+<xs:documentation>The date the metadata document was created or modified.</xs:documentation>
+</xs:annotation>
+</xs:element>
+<xs:element name="hierarchyLevel" type="NonEmptyStringType" minOccurs="0">
+<xs:annotation>
+<xs:documentation/>
+</xs:annotation>
+</xs:element>
+<xs:element name="citation" type="citationType" minOccurs="0">
+<xs:annotation>
+<xs:documentation>A single citation for use when citing the dataset</xs:documentation>
+</xs:annotation>
+</xs:element>
+<xs:element name="bibliography" minOccurs="0">
+<xs:annotation>
+<xs:documentation>A list of citations that form a bibliography on literature related / used in the dataset</xs:documentation>
+</xs:annotation>
+<xs:complexType>
+<xs:sequence>
+<xs:element name="citation" type="citationType" maxOccurs="unbounded"/>
+</xs:sequence>
+</xs:complexType>
+</xs:element>
+<xs:element name="physical" maxOccurs="unbounded" minOccurs="0">
+<xs:annotation>
+<xs:documentation>A container element for all of the elements that let you describe the internal/external characteristics and distribution of a data object (e.g., dataObject, dataFormat, distribution) .</xs:documentation>
+</xs:annotation>
+<xs:complexType>
+<xs:sequence>
+<xs:element ref="objectName"/>
+<xs:element ref="characterEncoding"/>
+<xs:element ref="dataFormat"/>
+<xs:element ref="distribution"/>
+</xs:sequence>
+</xs:complexType>
+</xs:element>
+<xs:element name="resourceLogoUrl" type="xs:anyURI" minOccurs="0">
+<xs:annotation>
+<xs:documentation>URL of the logo associated with a resource</xs:documentation>
+</xs:annotation>
+</xs:element>
+<!-- additional NCD collection metadata -->
+<xs:element name="collection" minOccurs="0">
+<xs:annotation>
+<xs:documentation>A container element for other elements associated with collections (e.g., collectionIdentifier, collectionName).</xs:documentation>
+</xs:annotation>
+<xs:complexType>
+<xs:sequence>
+<xs:element name="parentCollectionIdentifier" type="NonEmptyStringType">
+<xs:annotation>
+<xs:documentation>Identifier for the parent collection for this sub-collection. Enables a hierarchy of collections and sub collections to be built. </xs:documentation>
+</xs:annotation>
+</xs:element>
+<xs:element name="collectionIdentifier" type="NonEmptyStringType">
+<xs:annotation>
+<xs:documentation>The URI (LSID or URL) of the collection. In RDF, used as URI of the collection resource.</xs:documentation>
+</xs:annotation>
+</xs:element>
+<xs:element name="collectionName" type="NonEmptyStringType">
+<xs:annotation>
+<xs:documentation>Official name of the Collection in the local language</xs:documentation>
+</xs:annotation>
+</xs:element>
+</xs:sequence>
+</xs:complexType>
+</xs:element>
+<xs:element name="formationPeriod" type="NonEmptyStringType" minOccurs="0" maxOccurs="unbounded">
+<xs:annotation>
+<xs:documentation>Text description of the time period during which the collection was assembled e.g. "Victorian", or "1922 - 1932", or "c. 1750". </xs:documentation>
+</xs:annotation>
+</xs:element>
+<xs:element name="specimenPreservationMethod" type="NonEmptyStringType" minOccurs="0" maxOccurs="unbounded">
+<xs:annotation>
+<xs:documentation>Picklist keyword indicating the process or technique used to prevent physical deterioration of non-living collections. Expected to contain a value from the GBIF Specimen Preservation Method vocabulary</xs:documentation>
+</xs:annotation>
+</xs:element>
+<xs:element name="livingTimePeriod" type="NonEmptyStringType" minOccurs="0" maxOccurs="unbounded">
+<xs:annotation>
+<xs:documentation>Time period during which biological material was alive. (for palaeontological collections)</xs:documentation>
+</xs:annotation>
+</xs:element>
+<xs:element ref="jgtiCuratorialUnit" maxOccurs="unbounded" minOccurs="0"/>
+<xs:element ref="dc:replaces" minOccurs="0">
+<xs:annotation>
+<xs:documentation>Pointer to previous version of the document</xs:documentation>
+</xs:annotation>
+</xs:element>
+</xs:sequence>
+</xs:complexType>
+</xs:element>
+</xs:sequence>
+</xs:complexType>
+</xs:element>
+</xs:sequence>
+</xs:complexType>
+</xs:element>
+<xs:complexType name="citationType">
+<xs:annotation>
+<xs:documentation>A single literature citation with an optional identifier</xs:documentation>
+</xs:annotation>
+<xs:simpleContent>
+<xs:extension base="NonEmptyStringType">
+<xs:attribute name="identifier" use="optional" type="xs:string">
+<xs:annotation>
+<xs:documentation>A URI, DOI or other persistent identifier for the citation</xs:documentation>
+</xs:annotation>
+</xs:attribute>
+</xs:extension>
+</xs:simpleContent>
+</xs:complexType>
+<xs:element name="jgtiCuratorialUnit">
+<xs:annotation>
+<xs:documentation>A quantitative descriptor (number of specimens, samples or batches). </xs:documentation>
+</xs:annotation>
+<xs:complexType>
+<xs:sequence>
+<xs:element name="jgtiUnitType" type="NonEmptyStringType">
+<xs:annotation>
+<xs:documentation>A general description of the unit of curation, e.g., 'jar containing plankton sample'; </xs:documentation>
+</xs:annotation>
+</xs:element>
+<xs:choice maxOccurs="1" minOccurs="1">
+<xs:element name="jgtiUnits">
+<xs:annotation>
+<xs:documentation>The exact number of units within the collection</xs:documentation>
+</xs:annotation>
+<xs:complexType>
+<xs:simpleContent>
+<xs:extension base="xs:integer">
+<xs:attribute name="uncertaintyMeasure" use="required" type="xs:integer">
+<xs:annotation>
+<xs:documentation>A measure of the uncertainty (+ or -) x associated with the jgtiUnits value</xs:documentation>
+</xs:annotation>
+</xs:attribute>
+</xs:extension>
+</xs:simpleContent>
+</xs:complexType>
+</xs:element>
+<xs:element name="jgtiUnitRange">
+<xs:annotation>
+<xs:documentation>A range of numbers (x to x), with the lower value representing an exact number, when the higher value is omitted.</xs:documentation>
+</xs:annotation>
+<xs:complexType>
+<xs:sequence>
+<xs:element name="beginRange" type="xs:integer">
+<xs:annotation>
+<xs:documentation>The lower value in a range of numbers. Use to represent an exact number by omitting the "endRange" value.</xs:documentation>
+</xs:annotation>
+</xs:element>
+<xs:element name="endRange" type="xs:integer">
+<xs:annotation>
+<xs:documentation>The upper value in a range of numbers.</xs:documentation>
+</xs:annotation>
+</xs:element>
+</xs:sequence>
+</xs:complexType>
+</xs:element>
+</xs:choice>
+</xs:sequence>
+</xs:complexType>
+</xs:element>
+<xs:element name="objectName" type="xs:string">
+<xs:annotation>
+<xs:documentation>The name of the data object. This often is the filename of a file in a file system or that is accessible on the network. </xs:documentation>
+</xs:annotation>
+</xs:element>
+<xs:element name="characterEncoding" type="xs:string">
+<xs:annotation>
+<xs:documentation>This element contains the name of the character encoding. This is typically ASCII or UTF-8, or one of the other common encodings.</xs:documentation>
+</xs:annotation>
+</xs:element>
+<xs:element name="dataFormat">
+<xs:annotation>
+<xs:documentation>This is a container element for other elements which describe the internal physical characteristics of the data object.</xs:documentation>
+</xs:annotation>
+<xs:complexType>
+<xs:sequence>
+<xs:element name="externallyDefinedFormat">
+<xs:annotation>
+<xs:documentation>Information about a non-text or proprietary formatted object. </xs:documentation>
+</xs:annotation>
+<xs:complexType>
+<xs:sequence>
+<xs:element name="formatName" type="xs:string">
+<xs:annotation>
+<xs:documentation>Name of the format of the data object, e.g., ESRI Shapefile.</xs:documentation>
+</xs:annotation>
+</xs:element>
+<xs:element name="formatVersion" type="xs:decimal">
+<xs:annotation>
+<xs:documentation>Version of the format of the data object</xs:documentation>
+</xs:annotation>
+</xs:element>
+</xs:sequence>
+</xs:complexType>
+</xs:element>
+</xs:sequence>
+</xs:complexType>
+</xs:element>
+<xs:element name="title" type="i18nString">
+<xs:annotation>
+<xs:documentation>The 'title' field provides a description of the resource that is being documented that is long enough to differentiate it from other similar resources. Multiple titles may be provided, particularly when trying to express the title in more than one language (use the "xml:lang" attribute to indicate the language if not English/en).</xs:documentation>
+</xs:annotation>
+</xs:element>
+<xs:element name="individualName">
+<xs:annotation>
+<xs:documentation>The individualName field contains subfields so that a person's name can be broken down into parts.</xs:documentation>
+</xs:annotation>
+<xs:complexType>
+<xs:sequence>
+<xs:element name="givenName" type="NonEmptyStringType" minOccurs="0">
+<xs:annotation>
+<xs:documentation>The given name field can be used for first name of the individual associated with the resource, or for any other names that are not intended to be alphabetized, (as appropriate). </xs:documentation>
+</xs:annotation>
+</xs:element>
+<xs:element name="surName" type="NonEmptyStringType">
+<xs:annotation>
+<xs:documentation>The surname field is used for the last name of the individual associated with the resource. This is typically the family name of an individual, for example, the name by which s/he is referred to in citations. </xs:documentation>
+</xs:annotation>
+</xs:element>
+</xs:sequence>
+</xs:complexType>
+</xs:element>
+<xs:element name="address">
+<xs:annotation>
+<xs:documentation>The address field is a container for multiple subfields that describe the physical or electronic address of the responsible party for a resource.</xs:documentation>
+</xs:annotation>
+<xs:complexType>
+<xs:sequence>
+<xs:element name="deliveryPoint" type="NonEmptyStringType" minOccurs="0">
+<xs:annotation>
+<xs:documentation>The delivery point field is used for the physical address for postal communication, e.g., GBIF Secretariat, Universitetsparken 15</xs:documentation>
+</xs:annotation>
+</xs:element>
+<xs:element name="city" type="NonEmptyStringType" minOccurs="0">
+<xs:annotation>
+<xs:documentation>The city field is used for the city name of the contact associated with a particular resource.</xs:documentation>
+</xs:annotation>
+</xs:element>
+<xs:element name="administrativeArea" type="NonEmptyStringType" minOccurs="0">
+<xs:annotation>
+<xs:documentation>The administrative area field is the equivalent of a 'state' in the U.S., or Province in Canada. This field is intended to accommodate the many types of international administrative areas.</xs:documentation>
+</xs:annotation>
+</xs:element>
+<xs:element name="postalCode" type="NonEmptyStringType" minOccurs="0">
+<xs:annotation>
+<xs:documentation>The postal code is equivalent to a U.S. zip code, or the number used for routing to an international address. </xs:documentation>
+</xs:annotation>
+</xs:element>
+<xs:element name="country" type="NonEmptyStringType" minOccurs="0">
+<xs:annotation>
+<xs:documentation>The country field is used for the name of the contact's country.</xs:documentation>
+</xs:annotation>
+</xs:element>
+</xs:sequence>
+</xs:complexType>
+</xs:element>
+<xs:element name="phone" type="xs:string">
+<xs:annotation>
+<xs:documentation>The phone field describes information about the responsible party's telephone, be it a voice phone, fax.</xs:documentation>
+</xs:annotation>
+</xs:element>
+<xs:element name="electronicMailAddress" type="NonEmptyStringType">
+<xs:annotation>
+<xs:documentation>The electronic mail address is the email address for the party. It is intended to be an Internet SMTP email address, which should consist of a username followed by the @ symbol, followed by the email server domain name address.</xs:documentation>
+</xs:annotation>
+</xs:element>
+<xs:element name="onlineUrl" type="xs:anyURI">
+<xs:annotation>
+<xs:documentation>A link to associated online information, usually a web site. When the party represents an organization, this is the URL to a website or other online information about the organization. If the party is an individual, it might be their personal web site or other related online information about the party.</xs:documentation>
+</xs:annotation>
+</xs:element>
+<xs:element name="role" type="xs:string">
+<xs:annotation>
+<xs:documentation>Use this field to describe the role the party played with respect to the resource. Some potential roles include technician, reviewer, principal investigator, and many others.</xs:documentation>
+</xs:annotation>
+</xs:element>
+<xs:element name="para" type="xs:string">
+<xs:annotation>
+<xs:documentation>The "paragraph" element allows for text blocks to be included in EML. </xs:documentation>
+</xs:annotation>
+</xs:element>
+<xs:element name="distribution">
+<xs:annotation>
+<xs:documentation>This element provides information on how the resource is distributed. When used at the resource level, this element can provide only general information, but elements for describing connections to online systems are provided.</xs:documentation>
+</xs:annotation>
+<xs:complexType>
+<xs:sequence>
+<xs:element ref="online"/>
+</xs:sequence>
+<xs:attribute name="scope" type="xs:string"/>
+</xs:complexType>
+</xs:element>
+<xs:element name="online">
+<xs:annotation>
+<xs:documentation>This element contains information for accessing the resource online represented as a URL connection</xs:documentation>
+</xs:annotation>
+<xs:complexType>
+<xs:sequence>
+<xs:element ref="url"/>
+</xs:sequence>
+</xs:complexType>
+</xs:element>
+<xs:element name="url">
+<xs:annotation>
+<xs:documentation>The URL of the resource that is available online. </xs:documentation>
+</xs:annotation>
+<xs:complexType>
+<xs:simpleContent>
+<xs:extension base="xs:anyURI">
+<xs:attribute name="function" use="required" type="xs:string"/>
+</xs:extension>
+</xs:simpleContent>
+</xs:complexType>
+</xs:element>
+<xs:complexType name="calendarDate">
+<xs:sequence>
+<xs:element ref="calendarDate2"/>
+</xs:sequence>
+</xs:complexType>
+<xs:element name="calendarDate2" type="yearDate">
+<xs:annotation>
+<xs:documentation>The calendar date field is used to express a date, giving the year, month, and day. The format should be one that complies with the International Standards Organization's standard 8601. The recommended format for EML is YYYY-MM-DD, where Y is the four digit year, M is the two digit month code (01 - 12, where January = 01), and D is the two digit day of the month (01 - 31). This field can also be used to enter just the year portion of a date.</xs:documentation>
+</xs:annotation>
+</xs:element>
+<xs:complexType name="description">
+<xs:sequence>
+<xs:element ref="description"/>
+</xs:sequence>
+</xs:complexType>
+<xs:element name="description">
+<xs:annotation>
+<xs:documentation>The field Description contains general textual descriptions.</xs:documentation>
+</xs:annotation>
+<xs:complexType mixed="true">
+<xs:sequence>
+<xs:element ref="para" minOccurs="0" maxOccurs="unbounded"/>
+</xs:sequence>
+</xs:complexType>
+</xs:element>
+<!-- DATA TYPES TAKEN FROM THE EML 2.1.1 SCHEMAS -->
+<xs:simpleType name="yearDate">
+<xs:annotation>
+<xs:documentation>
+A type allowing a year or date value.
+This type is the union of the built-in types for year and date.
+Example: 1999, or 2001-03-15
+</xs:documentation>
+</xs:annotation>
+<!--<xs:union memberTypes="xs:gYear xs:date"/>-->
+  <xs:restriction base="xs:date">
+  </xs:restriction>
+</xs:simpleType>
+<xs:simpleType name="NonEmptyStringType">
+<xs:annotation>
+<xs:documentation>
+Non Empty String Type.
+This type specifies a content pattern for all elements
+that are required by EML to ensure that there is actual content (i.e.,
+not just whitespace). The pattern described can be interpreted as
+"at least one non-whitespace character, followed
+by any number of whitespace plus not-whitespace characters. "
+Leading and/or trailing whitespace is allowed, and whitespace
+may include carriage returns and newlines.
+</xs:documentation>
+</xs:annotation>
+<xs:restriction base="xs:string">
+<xs:minLength value="1"/>
+<xs:pattern value="[\s]*[\S][\s\S]*"/>
+</xs:restriction>
+</xs:simpleType>
+<xs:complexType name="i18nString">
+<xs:simpleContent>
+<xs:extension base="NonEmptyStringType">
+<xs:attribute ref="xml:lang" use="optional"/>
+</xs:extension>
+</xs:simpleContent>
+</xs:complexType>
+</xs:schema>

@@ -1256,7 +1256,9 @@ namespace BExIS.Dim.Helpers.Mapping
 
             // get all complex mappings for the root
             var root = GetMappings(metadataStructureId, LinkElementType.MetadataStructure, conceptId, LinkElementType.MappingConcept).FirstOrDefault();
-            var complexMappings = GetMappings(root.Id);
+            var complexMappings = GetMappings(root.Id)?.OrderBy(m=>m.Target.ElementId);
+
+
 
             foreach (var complexMapping in complexMappings)
             {
@@ -1273,6 +1275,8 @@ namespace BExIS.Dim.Helpers.Mapping
                 // get list of source elements for metadata
                 LinkElement cSource = complexMapping.Source;
                 LinkElement cTarget = complexMapping.Target;
+
+
                 var xSourceList = metadata.SelectNodes(cSource.XPath);
                 List<string> tmp = new List<string>();
 
@@ -1293,9 +1297,9 @@ namespace BExIS.Dim.Helpers.Mapping
 
 
                     // get childrens of complex mapping
-                    var simpleMappings = GetMappings(complexMapping.Id);
+                    var simpleMappings = GetMappings(complexMapping.Id)?.OrderBy(m => m.Target.Id);
 
-                    var listOfTargets = simpleMappings.Select(m => m.Target.Id);
+                    var listOfTargets = simpleMappings.Select(m => m.Target.ElementId);
 
                     // for each simple mapping
 

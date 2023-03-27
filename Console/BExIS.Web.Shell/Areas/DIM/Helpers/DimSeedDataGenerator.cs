@@ -229,6 +229,16 @@ namespace BExIS.Modules.Dim.UI.Helpers
                     keys = conceptManager.MappingKeyRepo.Query(k => k.Concept.Id.Equals(concept.Id)).ToList();
                 }
 
+                //alternateIdentifier
+                if (!keys.Any(k => k.Name.Equals("alternateIdentifier")))
+                    conceptManager.CreateMappingKey(
+                        "alternateIdentifier",
+                        "It is a Universally Unique Identifier (UUID) for the EML document and not for the dataset. This term is optional. A list of different identifiers can be supplied. E.g., 619a4b95-1a82-4006-be6a-7dbe3c9b33c5.",
+                        "https://sbclter.msi.ucsb.edu/external/InformationManagement/EML_211_schema/docs/eml-2.1.1/eml-resource.html#alternateIdentifier",
+                        false,
+                        false,
+                        "eml/dataset/alternateIdentifier",
+                        concept);
 
                 //title
                 if (!keys.Any(k => k.Name.Equals("title")))
@@ -240,17 +250,6 @@ namespace BExIS.Modules.Dim.UI.Helpers
                         false, 
                         false,
                         "eml/dataset/title", 
-                        concept);
-
-                //alternateIdentifier
-                if (!keys.Any(k => k.Name.Equals("alternateIdentifier")))
-                    conceptManager.CreateMappingKey(
-                        "alternateIdentifier",
-                        "It is a Universally Unique Identifier (UUID) for the EML document and not for the dataset. This term is optional. A list of different identifiers can be supplied. E.g., 619a4b95-1a82-4006-be6a-7dbe3c9b33c5.",
-                        "https://sbclter.msi.ucsb.edu/external/InformationManagement/EML_211_schema/docs/eml-2.1.1/eml-resource.html#alternateIdentifier",
-                        true,
-                        false,
-                        "eml/dataset/alternateIdentifier",
                         concept);
 
                 //creator
@@ -361,9 +360,9 @@ namespace BExIS.Modules.Dim.UI.Helpers
                         "A rights management statement for the resource, or reference a service providing such information. Rights information encompasses Intellectual Property Rights (IPR), Copyright, and various Property Rights. In the case of a data set, rights might include requirements for use, requirements for attribution, or other requirements the owner would like to impose. " +
                         "E.g., © 2001 Regents of the University of California Santa Barbara. Free for use by all individuals provided that the owners are acknowledged in any use or publication.",
                         "https://sbclter.msi.ucsb.edu/external/InformationManagement/EML_211_schema/docs/eml-2.1.1/eml-resource.html#intellectualRights",
-                        true,
                         false,
-                        "eml/dataset/intellectualRights",
+                        false,
+                        "eml/dataset/intellectualRights/para/ulink/citetitle",
                         concept);
 
                 //keyword

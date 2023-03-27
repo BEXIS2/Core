@@ -217,6 +217,10 @@ namespace BExIS.Modules.Dim.UI.Controllers
             if (Request.Headers.Accept.Any())
                 returnType = Request.Headers.Accept.First().MediaType;
 
+            if(format == Format.Subset && simplifiedJson > 0 )
+                return Request.CreateErrorResponse(HttpStatusCode.PreconditionFailed, "The output with format.subset 2 only works with simplifiedJson = 0");
+
+
             using (DatasetManager dm = new DatasetManager())
             using (EntityManager entityManager = new EntityManager())
             using (EntityPermissionManager entityPermissionManager = new EntityPermissionManager())
