@@ -45,6 +45,9 @@
     <DocumentationFile>bin\BExIS.Modules.Dim.UI.xml</DocumentationFile>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="BeginCollectionItem, Version=1.2.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\..\..\packages\BeginCollectionItem.1.2.1.0\lib\net35\BeginCollectionItem.dll</HintPath>
+    </Reference>
     <Reference Include="DataAnnotationsValidator, Version=2.1.0.0, Culture=neutral, PublicKeyToken=cd9c89f8de08f74c, processorArchitecture=MSIL">
       <HintPath>..\..\..\..\packages\DataAnnotationsValidator.2.1.0\lib\net40\DataAnnotationsValidator.dll</HintPath>
     </Reference>
@@ -126,8 +129,8 @@
       <HintPath>..\..\..\..\packages\TelerikMvcExtensions.2013.2.611\lib\net40\Telerik.Web.Mvc.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Vaelastrasz.Library, Version=2.0.3.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\..\..\packages\Vaelastrasz.Library.2.0.3\lib\netstandard1.2\Vaelastrasz.Library.dll</HintPath>
+    <Reference Include="Vaelastrasz.Library, Version=2.0.4.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\..\..\packages\Vaelastrasz.Library.2.0.4\lib\netstandard1.2\Vaelastrasz.Library.dll</HintPath>
     </Reference>
     <Reference Include="Vaiona.Entities, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -695,6 +698,8 @@
     <Content Include="Views\DataCiteDoi\index.cshtml" />
     <Content Include="Views\Mapping\LinkElementContent.cshtml" />
     <Content Include="Views\DataCiteDoi\_Create.cshtml" />
+    <Content Include="Views\Shared\EditorTemplates\_Creator.cshtml" />
+    <Content Include="Views\Shared\EditorTemplates\Collection.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -706,7 +711,6 @@
     <Folder Include="Content\Images\" />
     <Folder Include="Scripts\Models\Mapping\" />
     <Folder Include="Views\Api\" />
-    <Folder Include="Views\Shared\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

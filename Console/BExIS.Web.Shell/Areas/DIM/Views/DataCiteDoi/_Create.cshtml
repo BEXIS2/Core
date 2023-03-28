@@ -1,30 +1,45 @@
 ﻿@using Telerik.Web.Mvc.UI
 @using Vaiona.Web.Mvc.Modularity
+@using System.Collections.Generic
 
 @model BExIS.Modules.Dim.UI.Models.CreateDataCiteDoiModel
 
-@using (Ajax.BeginForm("Create", "DataCiteDoi", new AjaxOptions { HttpMethod = "POST", UpdateTargetId = "content_createDataCiteDoi", OnSuccess = "createDataCiteDoi_onSuccess" }))
-{
-    @Html.AntiForgeryToken()
-    @Html.ValidationSummary(true)
+<p>Hier kommt der Text</p>
 
-    @Html.HiddenFor(m => m.DatasetId)
-    Html.HiddenFor(m => m.DatasetVersionId)
 
-    <table class="bx-table-form">
-        <tr>
-            <td>
-                @Html.LabelFor(m => m.DataCiteModel.Data.Attributes.Doi)
-            </td>
-            <td>
-                @Html.TextBoxFor(m => m.DataCiteModel.Data.Attributes.Doi, new { @class = "t-input bx-input" })
-                @Html.ValidationMessageFor(m => m.DataCiteModel.Data.Attributes.Doi)
-            </td>
-        </tr>
-    </table>
+    @using (Ajax.BeginForm("Create", "DataCiteDoi", new AjaxOptions { HttpMethod = "POST", UpdateTargetId = "content_createDataCiteDoi", OnSuccess = "createDataCiteDoi_onSuccess" }))
+    {
+        @Html.AntiForgeryToken()
+        @Html.ValidationSummary(true)
 
-    <div class="bx-footer right">
-        <button style="margin-right: 1px" type="submit" class="bx-button action">Save</button>
-        <button style="margin-left: 1px" type="button" id="button_createDataCiteDoi_cancel" class="bx-button action">Cancel</button>
-    </div>
+        @Html.HiddenFor(m => m.DatasetId)
+        @Html.HiddenFor(m => m.DatasetVersionId)
+
+        <table class="bx-table-form">
+            <tr>
+                <td>
+                    @Html.LabelFor(m => m.DataCiteModel.Data.Attributes.Doi)
+                </td>
+                <td>
+                    @Html.TextBoxFor(m => m.DataCiteModel.Data.Attributes.Doi, new { @class = "t-input bx-input" })
+                    @Html.ValidationMessageFor(m => m.DataCiteModel.Data.Attributes.Doi)
+                </td>
+            </tr>
+        </table>
+
+        <div id="new-Employee">
+            @foreach (var creator in Model.DataCiteModel.Data.Attributes.Creators)
+            {
+                Html.RenderPartial("_Creator", creator);
+            }
+        </div>
+        <div>
+            <input type="button" id="addemployee" name="addCreator" value="Add Creator" />
+            <br />
+        </div>
+
+<div class="bx-footer right">
+    <button style="margin-right: 1px" type="submit" class="bx-button action">Save</button>
+    <button style="margin-left: 1px" type="button" id="button_createDataCiteDoi_cancel" class="bx-button action">Cancel</button>
+</div>
 }

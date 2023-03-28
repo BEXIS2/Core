@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-using Vaelastrasz.Library.Models;
+﻿using Vaelastrasz.Library.Models;
 
 namespace BExIS.Modules.Dim.UI.Models
 {

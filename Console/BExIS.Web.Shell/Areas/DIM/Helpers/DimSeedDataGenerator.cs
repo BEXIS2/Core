@@ -172,12 +172,12 @@ namespace BExIS.Modules.Dim.UI.Helpers
             {
                 // concept
                 // check if concept exist
-                var concept = conceptManager.MappingConceptRepo.Query(c => c.Name.Equals("DOI")).FirstOrDefault();
+                var concept = conceptManager.MappingConceptRepo.Query(c => c.Name.Equals("DataCiteDoi")).FirstOrDefault();
 
                 var keys = new List<MappingKey>();
 
                 if (concept == null) //if not create
-                    concept = conceptManager.CreateMappingConcept("DOI", "The concept is needed to create a DIO via DataCite.", "https://schema.datacite.org/meta/kernel-4.4/","");
+                    concept = conceptManager.CreateMappingConcept("DataCiteDoi", "The concept is needed to create a DIO via DataCite.", "https://schema.datacite.org/meta/kernel-4.4/","");
                 else // if exist load available keys
                 {
                     keys = conceptManager.MappingKeyRepo.Query(k => k.Concept.Id.Equals(concept.Id)).ToList();

@@ -18,12 +18,9 @@ using RestSharp.Authenticators;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
-using System.IO;
 using System.Linq;
 using System.Web.Mvc;
 using System.Web.Routing;
-using System.Xml;
-using System.Xml.Serialization;
 using Vaelastrasz.Library.Models;
 using Vaiona.Web.Mvc;
 using Vaiona.Web.Mvc.Modularity;
@@ -242,24 +239,23 @@ namespace BExIS.Modules.Dim.UI.Controllers
             using (var conceptManager = new ConceptManager())
             {
                 var datasetVersion = datasetManager.GetDatasetVersion(datasetVersionId);
-                var concept = conceptManager.MappingConceptRepo.Query(c => c.Name == "DataCiteDoi").FirstOrDefault();
+                //var concept = conceptManager.MappingConceptRepo.Query(c => c.Name == "DataCiteDoi").FirstOrDefault();
 
-                if(concept == null)
-                    return PartialView("_Create", new CreateDataCiteDoiModel(datasetVersion.Dataset.Id, datasetVersion.Id));
+                //if(concept == null)
+                //    return PartialView("_Create", new CreateDataCiteDoiModel(datasetVersion.Dataset.Id, datasetVersion.Id));
 
-                var output = MappingUtils.GetConceptOutput(datasetVersion.Dataset.MetadataStructure.Id, concept.Id, datasetVersion.Metadata);
+                //var output = MappingUtils.GetConceptOutput(datasetVersion.Dataset.MetadataStructure.Id, concept.Id, datasetVersion.Metadata);
 
-                CreateDataCiteModel response = null;
-                XmlSerializer serializer = new XmlSerializer(typeof(CreateDataCiteModel));
-                using (XmlReader reader = new XmlNodeReader(output))
-                {
-                    response = (CreateDataCiteModel)serializer.Deserialize(reader);
-                }
+                CreateDataCiteModel response = new CreateDataCiteModel();
+                //XmlSerializer serializer = new XmlSerializer(typeof(CreateDataCiteModel));
+                //using (XmlReader reader = new XmlNodeReader(output))
+                //{
+                //    response = (CreateDataCiteModel)serializer.Deserialize(reader);
+                //}
 
                 var model = new CreateDataCiteDoiModel(datasetVersion.Dataset.Id, datasetVersion.Id, response);
 
-
-                return PartialView("_Create", model);
+                return View("_Create", model);
             }
         }
 
