@@ -441,10 +441,12 @@ function saveMapping(e, create) {
             enableAddicons("Source");
             updateSaveOptionOnNewContainer();
             updateSaveOptions($(parent).attr("id"), false);
+
+            updateRequiredMappings();
         },
         error: function (data) {
             console.log(data);
-            alert("error")
+            alert("error");
         }
     });
 }
@@ -470,6 +472,8 @@ function deleteMapping(e) {
                 ////console.log(connections);
                 removeParentFromConnections($(parent).attr("id"));
                 reloadAllConnections();
+
+                updateRequiredMappings();
 
                 enableAddicons("Target");
                 enableAddicons("Source");
@@ -1267,4 +1271,67 @@ function filter(elems, terms, types) {
     }
 
     return searchFilter;
+}
+
+function updateRequiredMappings() {
+
+    var allrequired = $("[class=le-simple-info][optional=False][position=Target]").find("#Name");
+    var allRequiredLabels = [];
+
+    var existingMappingTargets = $('.mapping_container_target').find(".le-mapping-complex-info").find("#Name");
+    var existingLabels = [];
+
+    $(allrequired).each(function () {
+        var title = this.innerText;
+        allRequiredLabels.push(title);
+
+        console.log("i", allRequiredLabels.length);
+
+    }
+    )
+
+    $(existingMappingTargets).each(function () {
+
+        var title = this.innerText;
+        existingLabels.push(title);
+
+
+    }
+    )
+
+    console.log("allRequiredLabels", allRequiredLabels);
+    console.log("existingLabels", existingLabels);
+
+    var notset = allRequiredLabels.filter(function (el) {
+        return !existingLabels.includes(el);
+    });
+
+    console.log("not set", notset);
+
+    var r = allRequiredLabels.length;
+    var n = notset.length;
+
+    console.log("r", allRequiredLabels.length);
+    console.log("n", notset.length);
+
+    if (r > 0) {
+        $("#mapping-stats-value")[0].innerText = r - n + "/" + r;
+        $("#mapping-stats-button").show();
+        $("#mapping-stats-missed")[0].innerText = notset.join(', ');
+    }
+    else {
+        $("#mapping-stats-button").hide();
+    }
+
+    if (n == 0 && r > 0) {
+        $("#mapping-stats-button").removeClass("btn-danger");
+        $("#mapping-stats-button").addClass("btn-success");
+    }
+    else {
+        $("#mapping-stats-button").removeClass("btn-success");
+        $("#mapping-stats-button").addClass("btn-danger");
+        $("#mapping-stats-button").attr("title", notset.join(', '))
+    }
+
+
 }
