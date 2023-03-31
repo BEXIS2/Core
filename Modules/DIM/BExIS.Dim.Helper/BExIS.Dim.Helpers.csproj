@@ -65,6 +65,7 @@
     <Reference Include="System.Core" />
     <Reference Include="System.IO.Compression" />
     <Reference Include="System.Numerics" />
+    <Reference Include="System.Data" />
     <Reference Include="System.Runtime.CompilerServices.Unsafe, Version=4.0.4.1, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>..\..\..\packages\System.Runtime.CompilerServices.Unsafe.4.5.3\lib\netstandard1.0\System.Runtime.CompilerServices.Unsafe.dll</HintPath>
     </Reference>
@@ -100,7 +101,7 @@
     <Compile Include="Api\ApiHelper.cs" />
     <Compile Include="BasicWebService.cs" />
     <Compile Include="DataCiteDOI\DataCiteDoiHelper.cs" />
-    <Compile Include="GBIF\GBIFHelper.cs" />
+    <Compile Include="GBIF\GbifHelper.cs" />
     <Compile Include="Export\GBIFDataRepoConverter.cs" />
     <Compile Include="Export\PangaeaDataRepoConverter.cs" />
     <Compile Include="Export\GenericDataRepoConverter.cs" />
@@ -110,6 +111,8 @@
     <Compile Include="GFBIO\GFBIOWebserviceManager.cs" />
     <Compile Include="Mapping\MappingUtils.cs" />
     <Compile Include="Models\DataCiteModels.cs" />
+    <Compile Include="Models\GbifModels.cs" />
+    <Compile Include="Models\PangeaModels.cs" />
     <Compile Include="Services\DataCiteCreatorsService.cs" />
     <Compile Include="Services\DataCiteTitlesService.cs" />
     <Compile Include="Services\DataCiteVersionService.cs" />
@@ -125,6 +128,10 @@
     <ProjectReference Include="..\..\..\Components\AAA\BExIS.Security.Services\BExIS.Security.Services.csproj">
       <Project>{681C8BC4-55F0-4F43-A685-90E246A88CB1}</Project>
       <Name>BExIS.Security.Services</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\Components\App\BExIS.App.Bootstrap\BExIS.App.Bootstrap.csproj">
+      <Project>{7D7FBF8E-37D7-4A4C-B40E-3F267E9B9760}</Project>
+      <Name>BExIS.App.Bootstrap</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\..\Components\DLM\BExIS.Dlm.Entities\BExIS.Dlm.Entities.csproj">
       <Project>{B4E7B1BF-01B4-40AF-8D19-B8F362167261}</Project>

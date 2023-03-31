@@ -218,17 +218,27 @@ namespace BExIS.Modules.Dim.UI.Helpers
         {
             using (var conceptManager = new ConceptManager())
             {
-                var concept = conceptManager.MappingConceptRepo.Query(c => c.Name.Equals("GBIF - DWC")).FirstOrDefault();
+                var concept = conceptManager.MappingConceptRepo.Query(c => c.Name.Equals("GBIF")).FirstOrDefault();
 
                 var keys = new List<MappingKey>();
 
                 if (concept == null) //if not create
-                    concept = conceptManager.CreateMappingConcept("GBIF - DWC", "The concept is needed to create a darwin core archive for GBIF.", "https://ipt.gbif.org/manual/en/ipt/latest/dwca-guide", @"Modules\DIM\concepts\gbif\eml.xsd");
+                    concept = conceptManager.CreateMappingConcept("GBIF", "The concept is needed to create a darwin core archive for GBIF.", "https://ipt.gbif.org/manual/en/ipt/latest/dwca-guide", @"Modules\DIM\concepts\gbif\eml.xsd");
                 else // if exist load available keys
                 {
                     keys = conceptManager.MappingKeyRepo.Query(k => k.Concept.Id.Equals(concept.Id)).ToList();
                 }
 
+                //alternateIdentifier
+                if (!keys.Any(k => k.Name.Equals("alternateIdentifier")))
+                    conceptManager.CreateMappingKey(
+                        "alternateIdentifier",
+                        "It is a Universally Unique Identifier (UUID) for the EML document and not for the dataset. This term is optional. A list of different identifiers can be supplied. E.g., 619a4b95-1a82-4006-be6a-7dbe3c9b33c5.",
+                        "https://sbclter.msi.ucsb.edu/external/InformationManagement/EML_211_schema/docs/eml-2.1.1/eml-resource.html#alternateIdentifier",
+                        false,
+                        false,
+                        "eml/dataset/alternateIdentifier",
+                        concept);
 
                 //title
                 if (!keys.Any(k => k.Name.Equals("title")))
@@ -240,17 +250,6 @@ namespace BExIS.Modules.Dim.UI.Helpers
                         false, 
                         false,
                         "eml/dataset/title", 
-                        concept);
-
-                //alternateIdentifier
-                if (!keys.Any(k => k.Name.Equals("alternateIdentifier")))
-                    conceptManager.CreateMappingKey(
-                        "alternateIdentifier",
-                        "It is a Universally Unique Identifier (UUID) for the EML document and not for the dataset. This term is optional. A list of different identifiers can be supplied. E.g., 619a4b95-1a82-4006-be6a-7dbe3c9b33c5.",
-                        "https://sbclter.msi.ucsb.edu/external/InformationManagement/EML_211_schema/docs/eml-2.1.1/eml-resource.html#alternateIdentifier",
-                        true,
-                        false,
-                        "eml/dataset/alternateIdentifier",
                         concept);
 
                 //creator
@@ -282,7 +281,7 @@ namespace BExIS.Modules.Dim.UI.Helpers
                         "surName",
                         "Subfield of individualName field. The surname field is used for the last name of the individual associated with the resource. This is typically the family name of an individual, for example, the name by which s/he is referred to in citations. E.g. Carson",
                         "https://sbclter.msi.ucsb.edu/external/InformationManagement/EML_211_schema/docs/eml-2.1.1/eml-party.html#surName",
-                        true,
+                        false,
                         false,
                         "eml/dataset/creator/individualName/surName",
                         concept, creator);
@@ -316,7 +315,7 @@ namespace BExIS.Modules.Dim.UI.Helpers
                         "surName",
                         "Subfield of individualName field. The surname field is used for the last name of the individual associated with the resource. This is typically the family name of an individual, for example, the name by which s/he is referred to in citations. E.g. Carson",
                         "https://sbclter.msi.ucsb.edu/external/InformationManagement/EML_211_schema/docs/eml-2.1.1/eml-party.html#surName",
-                        true,
+                        false,
                         false,
                         "eml/dataset/metadataProvider/individualName/surName",
                         concept, metadataProvider);
@@ -361,9 +360,9 @@ namespace BExIS.Modules.Dim.UI.Helpers
                         "A rights management statement for the resource, or reference a service providing such information. Rights information encompasses Intellectual Property Rights (IPR), Copyright, and various Property Rights. In the case of a data set, rights might include requirements for use, requirements for attribution, or other requirements the owner would like to impose. " +
                         "E.g., © 2001 Regents of the University of California Santa Barbara. Free for use by all individuals provided that the owners are acknowledged in any use or publication.",
                         "https://sbclter.msi.ucsb.edu/external/InformationManagement/EML_211_schema/docs/eml-2.1.1/eml-resource.html#intellectualRights",
-                        true,
                         false,
-                        "eml/dataset/intellectualRights",
+                        false,
+                        "eml/dataset/intellectualRights/para/ulink/citetitle",
                         concept);
 
                 //keyword
@@ -385,7 +384,7 @@ namespace BExIS.Modules.Dim.UI.Helpers
                         "geographicCoverage",
                         "A container for spatial information about a resource; allows a bounding box for the overall coverage (in lat long), and also allows description of arbitrary polygons with exclusions.",
                         "https://sbclter.msi.ucsb.edu/external/InformationManagement/EML_211_schema/docs/eml-2.1.1/eml-coverage.html#geographicCoverage",
-                        false,
+                        true,
                         true,
                         "eml/dataset/coverage/geographicCoverage",
                         concept);
@@ -452,7 +451,7 @@ namespace BExIS.Modules.Dim.UI.Helpers
                         "taxonomicCoverage",
                         "A container for taxonomic information about a resource. It includes a list of species names (or higher level ranks) from one or more classification systems. Please note the taxonomic classifications should not be nested, just listed one after the other.",
                         "https://sbclter.msi.ucsb.edu/external/InformationManagement/EML_211_schema/docs/eml-2.1.1/eml-coverage.html#TaxonomicCoverage",
-                        false,
+                        true,
                         true,
                         "eml/dataset/coverage/taxonomicCoverage",
                         concept);

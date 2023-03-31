@@ -1256,7 +1256,9 @@ namespace BExIS.Dim.Helpers.Mapping
 
             // get all complex mappings for the root
             var root = GetMappings(metadataStructureId, LinkElementType.MetadataStructure, conceptId, LinkElementType.MappingConcept).FirstOrDefault();
-            var complexMappings = GetMappings(root.Id);
+            var complexMappings = GetMappings(root.Id)?.OrderBy(m=>m.Target.ElementId);
+
+
 
             foreach (var complexMapping in complexMappings)
             {
@@ -1273,6 +1275,8 @@ namespace BExIS.Dim.Helpers.Mapping
                 // get list of source elements for metadata
                 LinkElement cSource = complexMapping.Source;
                 LinkElement cTarget = complexMapping.Target;
+
+
                 var xSourceList = metadata.SelectNodes(cSource.XPath);
                 List<string> tmp = new List<string>();
 
@@ -1293,9 +1297,9 @@ namespace BExIS.Dim.Helpers.Mapping
 
 
                     // get childrens of complex mapping
-                    var simpleMappings = GetMappings(complexMapping.Id);
+                    var simpleMappings = GetMappings(complexMapping.Id)?.OrderBy(m => m.Target.Id);
 
-                    var listOfTargets = simpleMappings.Select(m => m.Target.Id);
+                    var listOfTargets = simpleMappings.Select(m => m.Target.ElementId);
 
                     // for each simple mapping
 
@@ -1361,6 +1365,78 @@ namespace BExIS.Dim.Helpers.Mapping
             }
 
             return concept;
+        }
+
+        public static bool IsMapped(long source, LinkElementType sourceType, long target, LinkElementType targetType, out List<string> errors)
+        {
+            if(source<=0) throw new ArgumentNullException("source");
+            if(target<=0) throw new ArgumentNullException("target");
+
+            // if its not metadata strutcure against concept, its not impelmented
+            if (sourceType != LinkElementType.MetadataStructure || targetType != LinkElementType.MappingConcept)
+                throw new NotImplementedException("currently only check for metastructure against concept avaialble");
+
+            errors = new List<string>();
+            bool isValid = true;
+
+            // get all complex mappings for the root
+            var root = GetMappings(source, LinkElementType.MetadataStructure, target, LinkElementType.MappingConcept).FirstOrDefault();
+            var complexMappings = GetMappings(root.Id);
+
+            // get all simple mappings
+            List<Entities.Mapping.Mapping> simpleMappings = new List<Entities.Mapping.Mapping>();
+            complexMappings.ForEach(c => simpleMappings.AddRange(GetMappings(c.Id)));
+
+            
+
+            using (var conceptManager = new ConceptManager())
+            {
+                // get all keys belongs to teh concep
+                var keys = conceptManager.MappingKeyRepo.Query(k => k.Concept.Id.Equals(target));
+
+                //get keys of concept from level 1
+                //every key that has no parent key
+                var keysLevel1 = keys.Where(k => k.Parent == null);
+
+                if (keysLevel1.Any())
+                {
+                    foreach (var key in keysLevel1)
+                    {
+                        // check only not optional
+                        if (key.Optional == false)
+                        {
+                            // check if complex mapping exist for this key
+                            var complex = complexMappings.FirstOrDefault(c => c.Target.ElementId.Equals(key.Id));
+                            if (complex == null)
+                            {
+                                errors.Add(String.Format("The mapping of concept {0} is missing", key.Name));
+                                isValid = false;
+                            }
+                            else
+                            {
+                                var simpleKeys = keys.Where(k => k.Parent.Id.Equals(key.Id));
+                                foreach (var simpleKey in simpleKeys)
+                                {
+                                    // check only not optional
+                                    if (simpleKey.Optional == false)
+                                    {
+                                        var simple = simpleMappings.FirstOrDefault(s => s.Target.ElementId.Equals(simpleKey.Id) && s.Parent.Id.Equals(complex.Id));
+                                        if (simple == null)
+                                        {
+                                            errors.Add(String.Format("The mapping of key {0} in concept is missing", simpleKey.Name, key.Name));
+                                            isValid = false;
+                                        }
+                                    }
+                                }
+
+                            }
+                        }
+                    }
+                }
+            }
+
+
+            return isValid;
         }
 
         #region
