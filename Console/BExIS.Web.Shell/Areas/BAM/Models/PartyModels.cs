@@ -9,6 +9,8 @@ namespace BExIS.Modules.Bam.UI.Models
     public class ReadPartyModel
     {
         public long Id { get; set; }
+
+        public long PartyTypeId { get; set; }
         public Dictionary<string, string> PartyCustomAttributes { get; set; }
 
         public ReadPartyModel() 
@@ -21,7 +23,8 @@ namespace BExIS.Modules.Bam.UI.Models
         {
             var model = new ReadPartyModel
             {
-                Id = party.Id
+                Id = party.Id,
+                PartyTypeId = party.PartyType.Id
             };
 
             foreach (var item in party.CustomAttributeValues)
