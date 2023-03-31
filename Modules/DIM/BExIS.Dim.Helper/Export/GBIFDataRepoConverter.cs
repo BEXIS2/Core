@@ -6,6 +6,7 @@ using BExIS.Dim.Helpers.Models;
 using BExIS.Dim.Services;
 using BExIS.Dlm.Entities.Data;
 using BExIS.Dlm.Services.Data;
+using BExIS.IO;
 using BExIS.IO.Transform.Output;
 using BExIS.Xml.Helpers;
 using Ionic.Zip;
@@ -42,6 +43,8 @@ namespace BExIS.Dim.Helpers.Export
                 string subpath = Path.Combine(dataset.Id.ToString(), "publish", "gbif");
                 string folder = Path.Combine(datasetsPath, subpath);
 
+                FileHelper.CreateDicrectoriesIfNotExist(folder);
+
                 string zipfilename = "dwc_" + dataset.Id + "_" + versionNumber + "_Dataset.zip";
 
                 string zipfilepath = Path.Combine(folder, zipfilename);
@@ -58,13 +61,13 @@ namespace BExIS.Dim.Helpers.Export
                 {
                     long metadatastructureId = dataset.MetadataStructure.Id;
                     long id = dataset.Id;
-                    long versionId = datasetversion.Id;
+                    long versionId = datasetversion.Id; 
+                    string xsdPath = Path.Combine(AppConfiguration.WorkspaceRootPath, concept.XSD);
 
                     // generate metadata
-                    string metadataFilePath = helper.GenerateResourceMetadata(concept.Id, metadatastructureId, datasetversion.Metadata, folder);
+                    string metadataFilePath = helper.GenerateResourceMetadata(concept.Id, metadatastructureId, datasetversion.Metadata, folder, xsdPath);
                     if(File.Exists(metadataFilePath)) zip.AddFile(metadataFilePath, "");
                 
-                    
                     // get data
                     string datapath = helper.GenerateData(id, versionId);
                     if (File.Exists(datapath)) zip.AddFile(datapath, "");
@@ -85,6 +88,8 @@ namespace BExIS.Dim.Helpers.Export
 
         public bool Validate(long datasetVersionId, out List<string> errors)
         {
+           
+
             long metadataStructureId = 0;
             long dataStructureId = 0;
             bool valid = true;
@@ -97,24 +102,13 @@ namespace BExIS.Dim.Helpers.Export
                 long datasetId = datasetversion.Dataset.Id;
                 dataStructureId = datasetversion.Dataset.DataStructure.Id;
                 metadataStructureId = datasetversion.Dataset.MetadataStructure.Id;
-                XmlDatasetHelper xmlDatasetHelper = new XmlDatasetHelper();
 
-                var t = xmlDatasetHelper.GetAllTransmissionInformation(datasetId, TransmissionType.mappingFileExport, AttributeNames.name).ToList();
+                string datasetsPath = Path.Combine(AppConfiguration.DataPath, "Datasets");
+                string subpath = Path.Combine(datasetId.ToString(), "publish", "gbif");
+                string folder = Path.Combine(datasetsPath, subpath);
 
-                string convertTo = t.ToArray().FirstOrDefault();
-                string metadataValidMessage = OutputMetadataManager.IsValideAgainstSchema(datasetversion.Dataset.Id, TransmissionType.mappingFileExport, convertTo);
+                FileHelper.CreateDicrectoriesIfNotExist(folder);
 
-                // no metadata validation available for now
-                //if (!string.IsNullOrEmpty(metadataValidMessage))
-                //{
-                //    errors.Add(metadataValidMessage);
-                //}
-
-
-                // concept exist and is mapped to structure
-
-                
-                
                 var concept = conceptManager.MappingConceptRepo.Get().Where(c => c.Name.Equals(_dataRepo.Name)).FirstOrDefault();
 
                 if (concept == null)
@@ -124,6 +118,22 @@ namespace BExIS.Dim.Helpers.Export
                     List<string> errorsList = new List<string>();
                     if (MappingUtils.IsMapped(metadataStructureId, LinkElementType.MetadataStructure, concept.Id, LinkElementType.MappingConcept, out errorsList) == false)
                         errors.AddRange(errorsList);
+
+
+                    // if concept is linked to a xsd, generate metadata and validaed it against the schema
+                    if (!string.IsNullOrEmpty(concept.XSD))
+                    {
+                        GbifHelper helper = new GbifHelper();
+                        string xsdPath = Path.Combine(AppConfiguration.WorkspaceRootPath, concept.XSD);
+
+                        string metadataPath = helper.GenerateResourceMetadata(concept.Id, metadataStructureId, datasetversion.Metadata, folder, xsdPath);
+
+                        List<string> metadataErrors = new List<string>();
+                        helper.ValidateResourceMetadata(metadataPath, xsdPath, out metadataErrors);
+
+                        errors.AddRange(metadataErrors);
+                   }
+
                 }
 
                 // in V2 file for structure exist
@@ -133,7 +143,7 @@ namespace BExIS.Dim.Helpers.Export
                 if (!File.Exists(dwtermsFilePath))
                     errors.Add("dw_terms.json file not exist.");
 
-                // check all needed dw terms maaped for the type
+                // check all needed dw terms mapped for the type
 
 
 

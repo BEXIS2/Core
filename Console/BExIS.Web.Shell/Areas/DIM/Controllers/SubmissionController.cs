@@ -96,8 +96,8 @@ namespace BExIS.Modules.Dim.UI.Controllers
                 List<Publication> publications =
                     publicationManager.PublicationRepo.Query().Where(p => versions.Contains(p.DatasetVersion.Id)).ToList();
 
-                //get versionNr
-                versionNr = datasetManager.GetDatasetVersionNr(datasetVersionId);
+                ////get versionNr
+                //versionNr = datasetManager.GetDatasetVersionNr(datasetVersionId);
 
                 foreach (var pub in publications)
                 {
@@ -107,11 +107,15 @@ namespace BExIS.Modules.Dim.UI.Controllers
                     if (pub.Repository != null)
                     {
                         repo = publicationManager.RepositoryRepo.Get(pub.Repository.Id);
+                  
                     }
                     string dataRepoName = repo == null ? "" : repo.Name;
 
                     List<string> repos =
                         GetRepos(dataset.MetadataStructure.Id, broker.Id, publicationManager).Select(r => r.Name).ToList();
+
+                    //get versionNr
+                    versionNr = datasetManager.GetDatasetVersionNr(pub.DatasetVersion.Id);
 
                     model.Publications.Add(new PublicationModel()
                     {

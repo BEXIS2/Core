@@ -4,6 +4,7 @@ using BExIS.Dim.Helpers.Models;
 using BExIS.Dlm.Services.Data;
 using BExIS.Dlm.Services.DataStructure;
 using BExIS.IO.Transform.Output;
+using BExIS.Xml.Helpers.Mapping;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -13,6 +14,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml;
+using System.Xml.Schema;
 using System.Xml.Serialization;
 using Vaiona.Utils.Cfg;
 
@@ -107,16 +109,77 @@ namespace BExIS.Dim.Helpers.GBIF
         }
 
         // generate the metafile 
-        public string GenerateResourceMetadata(long conceptId, long metadataStrutcureId, XmlDocument metadata, string directory)
+        public string GenerateResourceMetadata(long conceptId, long metadataStrutcureId, XmlDocument metadata, string directory, string xsdPath)
         {
+            if (!File.Exists(xsdPath)) throw new FileNotFoundException("xsd");
+            if (metadata == null) throw new NullReferenceException("metadata");
+            if (string.IsNullOrEmpty(directory)) throw new ArgumentNullException("directory");
+            if (conceptId<=0) throw new ArgumentNullException("conceptId");
+            if (metadataStrutcureId <= 0) throw new ArgumentNullException("metadataStrutcureId");
+
             string metadataFilePath = Path.Combine(directory, "metadata.xml");
             XmlDocument conceptOutput = MappingUtils.GetConceptOutput(metadataStrutcureId, conceptId, metadata);
+
+            // FIX NEEDED - set lizenze url attribute - eml/dataset/intellectualRights/para/ulink/citetitle
+            XmlElement linzenz = (XmlElement)conceptOutput.SelectSingleNode("eml/dataset/intellectualRights/para/ulink");
+            if (linzenz != null)
+            {
+                XmlAttribute url = conceptOutput.CreateAttribute("url");
+                url.Value = "na";
+                linzenz.Attributes.Append(url);
+            }
+
+            XmlElement root = conceptOutput.CreateElement("eml", "eml", "eml://ecoinformatics.org/eml-2.1.1");
+            root.InnerXml = conceptOutput.DocumentElement.InnerXml;
+
+            XmlAttribute xsi = conceptOutput.CreateAttribute("xsi", "schemaLocation", "http://www.w3.org/2001/XMLSchema-instance");
+            xsi.Value = "eml://ecoinformatics.org/eml-2.1.1 http://rs.gbif.org/schema/eml-gbif-profile/1.2/eml.xsd";
+            root.Attributes.Append(xsi);
+
+            root.SetAttribute("system", "https://demo.bexis2.uni-jena.de");
+            root.SetAttribute("scope", "system");
+            root.SetAttribute("xml:lang", "en");
+            root.SetAttribute("packageId", "na");
+
+            
+            conceptOutput.ReplaceChild(root, conceptOutput.DocumentElement);
+          
+
             if (conceptOutput != null) conceptOutput.Save(metadataFilePath);
 
             // add parameter
 
             return metadataFilePath;
         }
+
+        // validate metadata Gaianst XSD
+        public bool ValidateResourceMetadata(string metadataFilePath, string xsdPath, out List<string> errors)
+        {
+            List<string>  el = new List<string>();
+
+            if (!File.Exists(metadataFilePath)) throw new FileNotFoundException("metadata");
+            if (!File.Exists(xsdPath)) throw new FileNotFoundException("xsd");
+
+            XmlSchemaManager xmlSchemaManager = new XmlSchemaManager();
+            xmlSchemaManager.Load(xsdPath, "system");
+
+
+            XmlDocument metadata = new XmlDocument();
+            metadata.Load(metadataFilePath);
+            metadata.Schemas = xmlSchemaManager.SchemaSet;
+
+            string msg = "";
+            metadata.Validate((o, e) => {
+                el.Add(e.Message);
+            });
+
+            errors = el;
+
+            if (errors.Any()) return false;
+
+            return true;
+        }
+
 
         public string GenerateData(long id, long versionId)
         {

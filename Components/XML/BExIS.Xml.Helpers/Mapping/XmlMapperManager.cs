@@ -309,6 +309,8 @@ namespace BExIS.Xml.Helpers.Mapping
             //root.Prefix = "";
             XmlAttribute rootAttr = null;
 
+            if (root == null) return newMetadata;
+
             if (xmlSchemaManager.Schema != null)
             {
                 //create NameSpaces
