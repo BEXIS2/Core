@@ -157,6 +157,8 @@
   <ItemGroup>
     <Compile Include="Controllers\API\PartiesController.cs" />
     <Compile Include="Controllers\API\PartyCustomAttributesController.cs" />
+    <Compile Include="Controllers\API\PartyRelationshipsController.cs" />
+    <Compile Include="Controllers\API\PartyRelationshipTypesController.cs" />
     <Compile Include="Controllers\API\PartyTypesController.cs" />
     <Compile Include="Controllers\HelpController.cs" />
     <Compile Include="Controllers\PartyController.cs" />
@@ -170,6 +172,9 @@
     <Compile Include="Models\PartyGridViewModel.cs" />
     <Compile Include="Models\PartyModel.cs" />
     <Compile Include="Models\PartyModels.cs" />
+    <Compile Include="Models\PartyRelationshipModels.cs" />
+    <Compile Include="Models\PartyRelationshipTypeModels.cs" />
+    <Compile Include="Models\PartyRelationshipTypePairModels.cs" />
     <Compile Include="Models\PartyTypeAccountModel.cs" />
     <Compile Include="BamModule.cs" />
     <Compile Include="Models\PartyTypeModels.cs" />
