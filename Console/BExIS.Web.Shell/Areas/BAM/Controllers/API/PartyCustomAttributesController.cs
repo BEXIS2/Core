@@ -15,50 +15,25 @@ namespace BExIS.Modules.Bam.UI.Controllers.API
 {
     public class PartyCustomAttributesController : ApiController
     {
-        public class PartyTypesController : ApiController
+        [HttpGet, Route("api/partyCustomAttributes/{partyTypeId}")]
+        public async Task<HttpResponseMessage> Get(long partyTypeId)
         {
-            [HttpGet, GetRoute("api/partyCustomAttributes/{partyTypeName}")]
-            public async Task<HttpResponseMessage> Get(string partyTypeName)
+            try
             {
-                try
+                using (var partyTypeManager = new PartyTypeManager())
                 {
-                    using (var partyTypeManager = new PartyTypeManager())
-                    {
-                        var partyType = partyTypeManager.FindByName(partyTypeName);
+                    var partyType = partyTypeManager.FindById(partyTypeId);
 
-                        if (partyType == null)
-                            return Request.CreateResponse(HttpStatusCode.BadRequest, $"partytype with name: {partyTypeName} does not exist.");
+                    if (partyType == null)
+                        return Request.CreateResponse(HttpStatusCode.BadRequest, $"partytype with id: {partyTypeId} does not exist.");
 
-                        IEnumerable<ReadPartyCustomAttributeModel> customAttributes = partyType.CustomAttributes.Select(c => ReadPartyCustomAttributeModel.Convert(c));
-                        return Request.CreateResponse(HttpStatusCode.OK, customAttributes);
-                    }
-                }
-                catch (Exception ex)
-                {
-                    return Request.CreateErrorResponse(HttpStatusCode.InternalServerError, ex);
+                    IEnumerable<ReadPartyCustomAttributeModel> customAttributes = partyType.CustomAttributes.Select(c => ReadPartyCustomAttributeModel.Convert(c));
+                    return Request.CreateResponse(HttpStatusCode.OK, customAttributes);
                 }
             }
-
-            [HttpGet, GetRoute("api/partyCustomAttributes/{partyTypeId}")]
-            public async Task<HttpResponseMessage> Get(long partyTypeId)
+            catch (Exception ex)
             {
-                try
-                {
-                    using (var partyTypeManager = new PartyTypeManager())
-                    {
-                        var partyType = partyTypeManager.FindById(partyTypeId);
-
-                        if (partyType == null)
-                            return Request.CreateResponse(HttpStatusCode.BadRequest, $"partytype with id: {partyTypeId} does not exist.");
-
-                        IEnumerable<ReadPartyCustomAttributeModel> customAttributes = partyType.CustomAttributes.Select(c => ReadPartyCustomAttributeModel.Convert(c));
-                        return Request.CreateResponse(HttpStatusCode.OK, customAttributes);
-                    }
-                }
-                catch (Exception ex)
-                {
-                    return Request.CreateErrorResponse(HttpStatusCode.InternalServerError, ex);
-                }
+                return Request.CreateErrorResponse(HttpStatusCode.InternalServerError, ex);
             }
         }
     }
