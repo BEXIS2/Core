@@ -293,7 +293,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                     // set message and unset all tabs except of metadata (+ data structure & links)
                     if (dm.IsDatasetDeleted(id))
                     {
-                        ViewData["Message"] = "Dataset is out of date. Reason: " + researcobject.ModificationInfo.Comment + ". Please check the \"Links\" tab to find possible linked newer versions.";
+                        ViewData["Message"] = "The dataset has been withdrawn. Reason: " + researcobject.ModificationInfo.Comment + ". Please check the \'Links\' section if a new version is available.";
                         ViewData["State"] = "hidden";
                         model.GrantAccess = false;
                         model.ViewAccess = false;
