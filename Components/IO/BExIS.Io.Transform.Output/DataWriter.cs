@@ -214,7 +214,10 @@ namespace BExIS.IO.Transform.Output
                 createDirectoriesIfNotExist(storePath);
             }
 
-            return Path.Combine(storePath, title + extension);
+             // replace special chars to avoid invaild path names
+            string pathSaveTitle = string.Join("_", title.Split(Path.GetInvalidFileNameChars()));
+
+            return Path.Combine(storePath, pathSaveTitle + extension);
         }
 
         /// <summary>
