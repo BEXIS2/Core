@@ -730,7 +730,7 @@
       <Project>{8B2EC2B0-6870-456B-BE2D-B0FB4EA68D83}</Project>
       <Name>BExIS.IO.DataType.DisplayPattern</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\..\..\Components\IO\BExIS.IO.Transform.Output\BExIS.IO.Transform.Output.csproj">
+    <ProjectReference Include="..\..\..\..\Components\IO\BExIS.Io.Transform.Output\BExIS.IO.Transform.Output.csproj">
       <Project>{455ec826-9a92-40ff-bd3b-388c288955ce}</Project>
       <Name>BExIS.IO.Transform.Output</Name>
     </ProjectReference>

@@ -1005,7 +1005,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                     {
                         //check if mappings exist between system/relationships and the metadatastructure/attr
                         // get all party mapped nodes
-                        IEnumerable<XElement> complexElements = XmlUtility.GetXElementsByAttribute("partyid", XmlUtility.ToXDocument(metadata));
+                       IEnumerable<XElement> complexElements = XmlUtility.GetXElementsByAttribute("partyid", XmlUtility.ToXDocument(metadata));
 
                         // get all relationshipTypes where entityname is involved
                         var relationshipTypes = uow.GetReadOnlyRepository<PartyRelationshipType>().Get().Where(
@@ -1029,12 +1029,9 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                                             r.PartyTypePair != null && r.PartyTypePair.Id.Equals(partyTpePair.Id)
                                         );
 
-                                    IEnumerable<long> partyids = complexElements.Select(i => Convert.ToInt64(i.Attribute("partyid").Value));
-
-
                                     foreach (PartyRelationship pr in relationships)
                                     {
-                                        if (!partyids.Contains(pr.TargetParty.Id)) partyManager.RemovePartyRelationship(pr);
+                                        partyManager.RemovePartyRelationship(pr);
                                     }
 
                                 }
@@ -1046,12 +1043,9 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                                             r.PartyTypePair != null && r.PartyTypePair.Id.Equals(partyTpePair.Id)
                                         );
 
-                                    IEnumerable<long> partyids = complexElements.Select(i => Convert.ToInt64(i.Attribute("partyid").Value));
-
-
                                     foreach (PartyRelationship pr in relationships)
                                     {
-                                        if (!partyids.Contains(pr.SourceParty.Id)) partyManager.RemovePartyRelationship(pr);
+                                        partyManager.RemovePartyRelationship(pr);
                                     }
                                 }
                             }

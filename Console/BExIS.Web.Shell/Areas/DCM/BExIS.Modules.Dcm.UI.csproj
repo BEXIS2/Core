@@ -639,7 +639,7 @@
       <Project>{5C4C8570-A53B-4191-A414-DE028AAAF36A}</Project>
       <Name>BExIS.IO.Transform.Input</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\..\..\Components\IO\BExIS.IO.Transform.Output\BExIS.IO.Transform.Output.csproj">
+    <ProjectReference Include="..\..\..\..\Components\IO\BExIS.Io.Transform.Output\BExIS.IO.Transform.Output.csproj">
       <Project>{455ec826-9a92-40ff-bd3b-388c288955ce}</Project>
       <Name>BExIS.IO.Transform.Output</Name>
     </ProjectReference>
