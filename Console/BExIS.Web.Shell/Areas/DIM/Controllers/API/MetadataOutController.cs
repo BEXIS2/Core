@@ -195,19 +195,116 @@ namespace BExIS.Modules.Dim.UI.Controllers
         /// 
         /// </remarks>
         /// <param name="id">Dataset Id</param>
-        /// <param name="version">Version number</param>
+        /// <param name="versionId">Version Id</param>
         /// <param name="format">Internal,External,Subset</param>
         /// <param name="subsetType">Based on the existing concept mappings, the converted metadata can be obtained via subsetType.</param>
         /// <param name="simplifiedJson">accept 0,1,2</param>
         /// <returns>metadata as xml or json</returns>
         [BExISApiAuthorize]
-        [GetRoute("api/Metadata/{id}/{version}")]
-        public HttpResponseMessage Get(int id, int version = -1, [FromUri] Format format = Format.Internal, [FromUri] string subsetType = null, [FromUri] int simplifiedJson = 0)
+        [GetRoute("api/Metadata/{id}/{versionId}")]
+        public HttpResponseMessage Get(long id, long? versionId = -1, [FromUri] Format format = Format.Internal, [FromUri] string subsetType = null, [FromUri] int simplifiedJson = 0)
         {
-            return GetMetadata(id, version, format, subsetType, simplifiedJson);
+            long vId = -1;
+            if (versionId != null) vId = Convert.ToInt64(versionId);
+
+            return GetMetadata(id, vId, format, subsetType, simplifiedJson);
         }
 
-        private HttpResponseMessage GetMetadata(int id, int version, Format format, string subsetType, int simplifiedJson)
+
+        /// <summary>
+        /// Get metadata for a dataset as XML (default) or JSON (internal, complete or simplified structure)
+        /// </summary>
+        /// <remarks>
+        ///
+        /// ## format
+        /// Based on the existing transformation options, the converted metadata can be obtained via format.
+        /// 
+        /// ## simplfiedJson
+        /// if you set the accept of the request to return a json, you can manipulate the json with this parameter. <br/>
+        /// 0 = returns the metadata with full internal structure <br/>
+        /// 1 = returns a simplified form of the structure with all fields and attributes <br/>
+        /// 2 = returns the metadata in a simplified structure and does not add all fields and attributes that are empty. 
+        /// 
+        /// </remarks>
+        /// <param name="id">Dataset Id</param>
+        /// <param name="version_number">Version number</param>
+        /// <param name="format">Internal,External,Subset</param>
+        /// <param name="subsetType">Based on the existing concept mappings, the converted metadata can be obtained via subsetType.</param>
+        /// <param name="simplifiedJson">accept 0,1,2</param>
+        /// <returns>metadata as xml or json</returns>
+        [BExISApiAuthorize]
+        [GetRoute("api/Metadata/{id}/version_number/{version_number}")]
+        public HttpResponseMessage Get(long id, int version_number, [FromUri] Format format = Format.Internal, [FromUri] string subsetType = null, [FromUri] int simplifiedJson = 0)
+        {
+            if (id <= 0)
+                return Request.CreateErrorResponse(HttpStatusCode.PreconditionFailed, "Id should be greater then 0");
+
+            if(version_number <= 0)
+                return Request.CreateErrorResponse(HttpStatusCode.PreconditionFailed, "Version should be greater then 0");
+
+            using (DatasetManager dm = new DatasetManager())
+            {
+                int index = version_number - 1;
+                Dataset dataset = dm.GetDataset(id);
+
+                int versions = dataset.Versions.Count;
+
+                if(versions< version_number)
+                    return Request.CreateErrorResponse(HttpStatusCode.PreconditionFailed, "This version number does not exist for this dataset");
+
+                var datasetVersion = dataset.Versions.OrderBy(d => d.Timestamp).ElementAt(index);
+
+
+
+                return GetMetadata(id, datasetVersion.Id, format, subsetType, simplifiedJson);
+            }
+        }
+
+        /// <summary>
+        /// Get metadata for a dataset as XML (default) or JSON (internal, complete or simplified structure)
+        /// </summary>
+        /// <remarks>
+        ///
+        /// ## format
+        /// Based on the existing transformation options, the converted metadata can be obtained via format.
+        /// 
+        /// ## simplfiedJson
+        /// if you set the accept of the request to return a json, you can manipulate the json with this parameter. <br/>
+        /// 0 = returns the metadata with full internal structure <br/>
+        /// 1 = returns a simplified form of the structure with all fields and attributes <br/>
+        /// 2 = returns the metadata in a simplified structure and does not add all fields and attributes that are empty. 
+        /// 
+        /// </remarks>
+        /// <param name="id">Dataset Id</param>
+        /// <param name="version_name">Version name</param>
+        /// <param name="format">Internal,External,Subset</param>
+        /// <param name="subsetType">Based on the existing concept mappings, the converted metadata can be obtained via subsetType.</param>
+        /// <param name="simplifiedJson">accept 0,1,2</param>
+        /// <returns>metadata as xml or json</returns>
+        [BExISApiAuthorize]
+        [GetRoute("api/Metadata/{id}/version_name/{version_name}")]
+        public HttpResponseMessage Get(long id, string version_name, [FromUri] Format format = Format.Internal, [FromUri] string subsetType = null, [FromUri] int simplifiedJson = 0)
+        {
+            if (id <= 0)
+                return Request.CreateErrorResponse(HttpStatusCode.PreconditionFailed, "Id should be greater then 0");
+
+            if (string.IsNullOrEmpty(version_name))
+                return Request.CreateErrorResponse(HttpStatusCode.PreconditionFailed, "Version name not exist");
+
+
+            using (DatasetManager dm = new DatasetManager())
+            {
+                
+                var versionId = dm.GetDatasetVersions(id).Where(d => d.VersionName == version_name).Select(d => d.Id).FirstOrDefault();
+
+                if(versionId<=0)
+                    return Request.CreateErrorResponse(HttpStatusCode.PreconditionFailed, "This version name does not exist for this dataset");
+
+                return GetMetadata(id, versionId, format, subsetType, simplifiedJson);
+            }
+        }
+
+        private HttpResponseMessage GetMetadata(long id, long versionId, Format format, string subsetType, int simplifiedJson)
         {
             
             DatasetVersion datasetVersion = null;
@@ -227,6 +324,34 @@ namespace BExIS.Modules.Dim.UI.Controllers
             using (UserManager userManager = new UserManager())
             {
                 if (id == 0) return Request.CreateErrorResponse(HttpStatusCode.PreconditionFailed, "Dataset id should be greater then 0.");
+
+                // try to get latest dataset version 
+                if (versionId == -1)
+                {
+                    datasetVersion = dm.GetDatasetLatestVersion(id);
+                }
+
+                // try to get dataset version by version number
+                else
+                {
+                    Dataset dataset = dm.GetDataset(id);
+                    try
+                    {
+                        // check version belongs to dataset
+                        if (!dataset.Versions.Select(v => v.Id).Contains(versionId)) return Request.CreateResponse(HttpStatusCode.PreconditionFailed, "this version id is not part of the dataset " + id);
+
+                        datasetVersion = dm.GetDatasetVersion(versionId);
+
+
+                    }
+                    catch (Exception ex)
+                    {
+                    }
+                }
+                // Check if a dataset version was set
+                if (datasetVersion == null) return Request.CreateResponse(HttpStatusCode.InternalServerError, "It is not possible to load the latest or given version.");
+
+
 
                 //entity permissions
                 if (id > 0)
@@ -266,29 +391,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
                 }
 
 
-                // try to get latest dataset version 
-                if (version == -1)
-                {
-                    datasetVersion = dm.GetDatasetLatestVersion(id);
-                }
                 
-                // try to get dataset version by version number
-                else
-                {
-                    int index = version - 1;
-                    Dataset dataset = dm.GetDataset(id);
-                    try
-                    {
-                        datasetVersion = dataset.Versions.OrderBy(d => d.Timestamp).ElementAt(index);
-                    }
-                    catch (Exception ex)
-                    {
-                    }
-                }
-                // Check if a dataset version was set
-                if (datasetVersion == null) return Request.CreateResponse(HttpStatusCode.InternalServerError, "It is not possible to load the latest or given version.");
-
-
                 XmlDocument xmlDoc = datasetVersion.Metadata;
   
 

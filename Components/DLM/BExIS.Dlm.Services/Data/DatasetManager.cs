@@ -1098,8 +1098,12 @@ namespace BExIS.Dlm.Services.Data
                 if (dsVersion != null)
                     return (dsVersion);
 
+                DatasetVersion dsv = datasetVersionRepo.Get(versionId);
+                if (dsv == null)
+                    throw new NullReferenceException(string.Format("Dataset version {0} not exist.", versionId));
+
                 // else there is a problem, try to find and report it
-                Dataset dataset = datasetVersionRepo.Get(versionId).Dataset; // it would be nice to not fetch the dataset!
+                Dataset dataset = dsv.Dataset; // it would be nice to not fetch the dataset!
 
                 if (dataset.Status == DatasetStatus.Deleted)
                     throw new Exception(string.Format("Dataset version {0} is not associated with any dataset.", versionId));
