@@ -664,12 +664,38 @@
             logical operators, nesting, precedence, and SOME functions should be supported.
             </remarks>
         </member>
-        <member name="M:BExIS.Modules.Dim.UI.Controllers.DataOutController.Get(System.Int64,System.Int32,System.String,System.String)">
+        <member name="M:BExIS.Modules.Dim.UI.Controllers.DataOutController.Get(System.Int64,System.Int64,System.String,System.String)">
             <summary>
-            In addition to the id, it is possible to have projection and selection criteria passed to the action via query string parameters
+            In addition to the id and version id, it is possible to have projection and selection criteria passed to the action via query string parameters
             </summary>
             <param name="id">Dataset Id</param>
-            <param name="version">Version number of the dataset</param>
+            <param name="versionId">Version Id of the dataset</param>
+            <returns></returns>
+            <remarks> The action accepts the following additional parameters via the query string
+            1: header: is a comman separated list of ids that determines which variables of the dataset version tuples should take part in the result set
+            2: filter: is a logical expression that filters the tuples of the chosen dataset. The expression should have been written against the variables of the dataset only.
+            logical operators, nesting, precedence, and SOME functions should be supported.
+            </remarks>
+        </member>
+        <member name="M:BExIS.Modules.Dim.UI.Controllers.DataOutController.Get(System.Int64,System.Int32,System.String,System.String)">
+            <summary>
+            In addition to the id and version number, it is possible to have projection and selection criteria passed to the action via query string parameters
+            </summary>
+            <param name="id">Dataset Id</param>
+            <param name="version_number">Version number of the dataset</param>
+            <returns></returns>
+            <remarks> The action accepts the following additional parameters via the query string
+            1: header: is a comman separated list of ids that determines which variables of the dataset version tuples should take part in the result set
+            2: filter: is a logical expression that filters the tuples of the chosen dataset. The expression should have been written against the variables of the dataset only.
+            logical operators, nesting, precedence, and SOME functions should be supported.
+            </remarks>
+        </member>
+        <member name="M:BExIS.Modules.Dim.UI.Controllers.DataOutController.Get(System.Int64,System.String,System.String,System.String)">
+            <summary>
+            In addition to the id and version name, it is possible to have projection and selection criteria passed to the action via query string parameters
+            </summary>
+            <param name="id">Dataset Id</param>
+            <param name="version_name">Version name of the dataset</param>
             <returns></returns>
             <remarks> The action accepts the following additional parameters via the query string
             1: header: is a comman separated list of ids that determines which variables of the dataset version tuples should take part in the result set
