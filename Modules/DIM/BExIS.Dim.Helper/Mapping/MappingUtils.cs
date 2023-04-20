@@ -1278,8 +1278,18 @@ namespace BExIS.Dim.Helpers.Mapping
                 LinkElement cSource = complexMapping.Source;
                 LinkElement cTarget = complexMapping.Target;
 
+                //if type is default create a xmlNodeList with a xmlnode with the default value inside
+                List<XmlNode> xSourceList = new List<XmlNode>();
+                if (cSource.Type == LinkElementType.Default)
+                {
+                    XmlElement defaultNode = metadata.CreateElement("Default");
+                    defaultNode.InnerText = "";
+                    xSourceList.Add(defaultNode);
+                }
+                else // cSource is not a default type, oso get all nodes from xpath and add them to a list
+                    foreach(XmlNode xSource in metadata.SelectNodes(cSource.XPath))
+                        xSourceList.Add(xSource);
 
-                var xSourceList = metadata.SelectNodes(cSource.XPath);
                 List<string> tmp = new List<string>();
 
                 foreach (XmlNode xSource in xSourceList)
@@ -1359,14 +1369,16 @@ namespace BExIS.Dim.Helpers.Mapping
                         }
                         else // complex to complex
                         {
-                            string subsetXpath = sTarget.XPath.Remove(0,cTarget.XPath.Count());
+                            string subsetXpath = sTarget.XPath.Remove(0, cTarget.XPath.Count());
                             var xSimpleTarget = XmlUtility.GenerateNodeFromXPath(concept, xTarget, subsetXpath);
                             xSimpleTarget.InnerText = result;
                         }
 
 
                     }
+                    
                 }
+
             }
 
             return concept;
