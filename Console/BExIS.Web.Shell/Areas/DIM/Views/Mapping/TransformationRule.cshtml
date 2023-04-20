@@ -17,7 +17,6 @@
         <table>
             <tr>
                 <td>
-                    
                 </td>
                 <td>
                     Source
@@ -33,14 +32,14 @@
                 <td>
                     Rule:
                 </td>
-                <td >
+                <td>
                     <span id="sourceName">@Model.Source.Name</span>
                 </td>
 
                 <td>
                     @Html.TextBox("RegExPattern", @Model.TransformationRule.RegEx)
                 </td>
-                
+
                 <td>
                     @Html.TextBox("Mask", @Model.TransformationRule.Mask)
                 </td>
@@ -62,6 +61,20 @@
                     <div id="result" class="col-md-5">
 
                     </div>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    Default:
+                </td>
+                <td>
+                    @Html.TextBox("Default", @Model.TransformationRule.Default)
+                </td>
+                <td>
+         
+                </td>
+                <td>
+           
                 </td>
             </tr>
         </table>

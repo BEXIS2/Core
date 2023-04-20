@@ -935,6 +935,7 @@ namespace BExIS.Modules.Dim.UI.Helper
                 transformationRuleModel.Id = mapping.TransformationRule.Id;
                 transformationRuleModel.RegEx = mapping.TransformationRule.RegEx;
                 transformationRuleModel.Mask = mapping.TransformationRule.Mask;
+                transformationRuleModel.Default = mapping.TransformationRule.DefaultValue;
             }
             else
             {
@@ -1094,7 +1095,7 @@ namespace BExIS.Modules.Dim.UI.Helper
             {
                 if (rule != null && rule.Id == 0 && rule.RegEx != null)
                 {
-                    rule = mappingManager.CreateTransformationRule(rule.RegEx, rule.Mask);
+                    rule = mappingManager.CreateTransformationRule(rule.RegEx, rule.Mask, rule.DefaultValue);
                 }
 
                 mapping = mappingManager.CreateMapping(source, target, level, rule, parent);
@@ -1103,7 +1104,7 @@ namespace BExIS.Modules.Dim.UI.Helper
             {
                 if (rule != null)
                 {
-                    rule = mappingManager.UpdateTransformationRule(rule.Id, rule.RegEx, rule.Mask);
+                    rule = mappingManager.UpdateTransformationRule(rule.Id, rule.RegEx, rule.Mask, rule.DefaultValue);
 
                     mapping.TransformationRule = rule;
                     mappingManager.UpdateMapping(mapping);
@@ -1179,7 +1180,7 @@ namespace BExIS.Modules.Dim.UI.Helper
                 //if (sm.TransformationRule. != null)
                 //    simpleMappingTarget = mappingManager.UpdateLinkElement(simpleMappingTarget.Id);
 
-                TransformationRule transformationRule = new TransformationRule(sm.TransformationRule.Id, sm.TransformationRule.RegEx, sm.TransformationRule.Mask);
+                TransformationRule transformationRule = new TransformationRule(sm.TransformationRule.Id, sm.TransformationRule.RegEx, sm.TransformationRule.Mask, sm.TransformationRule.Default);
 
                 Mapping simplemapping = MappingHelper.CreateIfNotExistMapping(simpleMappingSource, simpleMappingTarget, 2, null, parent, mappingManager);
                 // also create other direction with parentReverse
@@ -1188,7 +1189,7 @@ namespace BExIS.Modules.Dim.UI.Helper
 
                 if (transformationRule != null)
                 {
-                    transformationRule = mappingManager.UpdateTransformationRule(transformationRule.Id, transformationRule.RegEx, transformationRule.Mask);
+                    transformationRule = mappingManager.UpdateTransformationRule(transformationRule.Id, transformationRule.RegEx, transformationRule.Mask, transformationRule.DefaultValue);
 
                     simplemapping.TransformationRule = transformationRule;
                     mappingManager.UpdateMapping(simplemapping);
