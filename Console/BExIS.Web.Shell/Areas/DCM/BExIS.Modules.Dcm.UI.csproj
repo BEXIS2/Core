@@ -695,6 +695,10 @@
       <Project>{34CAD2A2-6928-458B-B8DC-AF71D55F20CC}</Project>
       <Name>BExIS.Dim.Entities</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\..\..\Modules\DIM\BExIS.Dim.Helper\BExIS.Dim.Helpers.csproj">
+      <Project>{81EF18E8-DCED-4980-96F9-E99124075B82}</Project>
+      <Name>BExIS.Dim.Helpers</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\BExIS.Web.Shell.csproj">
       <Project>{e5128814-4541-45c8-a9e6-6c91a7e3d1e2}</Project>
       <Name>BExIS.Web.Shell</Name>
