@@ -7,8 +7,6 @@ using BExIS.Dim.Services;
 using BExIS.Dlm.Entities.Data;
 using BExIS.Dlm.Services.Data;
 using BExIS.IO;
-using BExIS.IO.Transform.Output;
-using BExIS.Xml.Helpers;
 using Ionic.Zip;
 using System;
 using System.Collections.Generic;
