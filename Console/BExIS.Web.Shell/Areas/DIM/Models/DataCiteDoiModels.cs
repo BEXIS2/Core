@@ -1,4 +1,5 @@
-﻿using Vaelastrasz.Library.Models;
+﻿using Newtonsoft.Json;
+using Vaelastrasz.Library.Models;
 
 namespace BExIS.Modules.Dim.UI.Models
 {
@@ -7,12 +8,21 @@ namespace BExIS.Modules.Dim.UI.Models
         public long DatasetId { get; set; }
         public long DatasetVersionId { get; set; }
         public CreateDataCiteModel DataCiteModel { get; set; }
+        public string JSON => JsonConvert.SerializeObject(DataCiteModel, Formatting.Indented);
+
+        public CreateDataCiteDoiModel()
+        {
+            DatasetId = 0;
+            DatasetVersionId = 0;
+            DataCiteModel = new CreateDataCiteModel();
+        }
 
         public CreateDataCiteDoiModel(long datasetId, long datasetVersionId)
         {
             DatasetId = datasetId;
             DatasetVersionId = datasetVersionId;
             DataCiteModel = new CreateDataCiteModel();
+
         }
 
         public CreateDataCiteDoiModel(long datasetId, long datasetVersionId, CreateDataCiteModel dataCiteModel)
