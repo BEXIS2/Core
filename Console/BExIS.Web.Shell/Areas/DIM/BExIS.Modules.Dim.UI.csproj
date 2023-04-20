@@ -45,9 +45,6 @@
     <DocumentationFile>bin\BExIS.Modules.Dim.UI.xml</DocumentationFile>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="BeginCollectionItem, Version=1.2.1.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\..\..\packages\BeginCollectionItem.1.2.1.0\lib\net35\BeginCollectionItem.dll</HintPath>
-    </Reference>
     <Reference Include="DataAnnotationsValidator, Version=2.1.0.0, Culture=neutral, PublicKeyToken=cd9c89f8de08f74c, processorArchitecture=MSIL">
       <HintPath>..\..\..\..\packages\DataAnnotationsValidator.2.1.0\lib\net40\DataAnnotationsValidator.dll</HintPath>
     </Reference>
@@ -370,6 +367,7 @@
     <Compile Include="DimModule.cs" />
     <Compile Include="Helpers\DimSeedDataGenerator.cs" />
     <Compile Include="Helpers\Helper.cs" />
+    <Compile Include="Helpers\HtmlPrefixScopeExtensions.cs" />
     <Compile Include="Helpers\MappingConceptHelper.cs" />
     <Compile Include="Helpers\MappingHelper.cs" />
     <Compile Include="Helpers\ReleationshipHelper.cs" />
@@ -697,9 +695,9 @@
     <Content Include="Views\DataCiteDoi\_requestRow.cshtml" />
     <Content Include="Views\DataCiteDoi\index.cshtml" />
     <Content Include="Views\Mapping\LinkElementContent.cshtml" />
-    <Content Include="Views\DataCiteDoi\_Create.cshtml" />
-    <Content Include="Views\Shared\EditorTemplates\_Creator.cshtml" />
-    <Content Include="Views\Shared\EditorTemplates\Collection.cshtml" />
+    <Content Include="Views\DataCiteDoi\Create.cshtml" />
+    <Content Include="Views\DataCiteDoi\_Creator.cshtml" />
+    <Content Include="Views\DataCiteDoi\_Affiliation.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -711,6 +709,7 @@
     <Folder Include="Content\Images\" />
     <Folder Include="Scripts\Models\Mapping\" />
     <Folder Include="Views\Api\" />
+    <Folder Include="Views\Shared\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -776,6 +775,10 @@
     <ProjectReference Include="..\..\..\..\Modules\DIM\BExIS.Dim.Entities\BExIS.Dim.Entities.csproj">
       <Project>{34cad2a2-6928-458b-b8dc-af71d55f20cc}</Project>
       <Name>BExIS.Dim.Entities</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\..\Modules\DIM\BExIS.Dim.Helper\BExIS.Dim.Helpers.csproj">
+      <Project>{81EF18E8-DCED-4980-96F9-E99124075B82}</Project>
+      <Name>BExIS.Dim.Helpers</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\..\..\Modules\DIM\BExIS.Dim.Services\BExIS.Dim.Services.csproj">
       <Project>{cac933a2-6849-4c61-82b4-cbf4052210cc}</Project>
