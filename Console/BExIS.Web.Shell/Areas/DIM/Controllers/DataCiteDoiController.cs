@@ -22,6 +22,7 @@ using System.Linq;
 using System.Web.Mvc;
 using System.Web.Routing;
 using Vaelastrasz.Library.Models;
+using Vaelastrasz.Library.Models.DataCite;
 using Vaiona.Web.Mvc;
 using Vaiona.Web.Mvc.Modularity;
 
@@ -255,7 +256,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
 
                 var model = new CreateDataCiteDoiModel(datasetVersion.Dataset.Id, datasetVersion.Id, response);
 
-                return View("_Create", model);
+                return View("Create", model);
             }
         }
 
@@ -295,6 +296,17 @@ namespace BExIS.Modules.Dim.UI.Controllers
         public ActionResult Reject(string s)
         {
             return View();
+        }
+
+        public PartialViewResult AddCreator()
+        {
+            return PartialView("_Creator", new DataCiteCreator());
+        }
+
+        public PartialViewResult AddAffiliation(string containerPrefix)
+        {
+            ViewData["ContainerPrefix"] = containerPrefix;
+            return PartialView("_Affiliation", new DataCiteAffiliation());
         }
     }
 }
