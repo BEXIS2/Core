@@ -612,7 +612,7 @@ namespace BExIS.Dim.Helpers.Mapping
                             List<string> regExResultList = transform(attrValue.Value, mapping.TransformationRule);
                             string placeHolderName = attrValue.CustomAttribute.Name;
 
-                            mask = setOrReplace(mask, regExResultList, placeHolderName);
+                            mask = setOrReplace(mask, regExResultList, placeHolderName, mapping.TransformationRule.DefaultValue);
 
                             resultObject.Value = mask;
                         }
@@ -663,7 +663,7 @@ namespace BExIS.Dim.Helpers.Mapping
                                 List<string> regExResultList = transform(attrValue.Value, mapping_element.TransformationRule);
                                 string placeHolderName = attrValue.CustomAttribute.Name;
 
-                                mask = setOrReplace(mask, regExResultList, placeHolderName);
+                                mask = setOrReplace(mask, regExResultList, placeHolderName, mapping_element.TransformationRule.DefaultValue);
                             }
                         }
 
@@ -863,7 +863,7 @@ namespace BExIS.Dim.Helpers.Mapping
 
                                 if (result.Count == 1) // 1 - 1
                                 {
-                                    mask = setOrReplace(mask, result, m.Source.Name);
+                                    mask = setOrReplace(mask, result, m.Source.Name, m.TransformationRule.DefaultValue);
                                     tmp.Add(mask);
                                 }
                                 else // x -> z1,z2,z3 (split)
@@ -874,7 +874,7 @@ namespace BExIS.Dim.Helpers.Mapping
                                         //ToDo Add mask
                                         foreach (string r in result)
                                         {
-                                            mask = setOrReplace(mask, new List<string>() { r }, m.Source.Name);
+                                            mask = setOrReplace(mask, new List<string>() { r }, m.Source.Name, m.TransformationRule.DefaultValue);
                                             tmp.Add(mask);
                                         }
                                     }
@@ -932,7 +932,7 @@ namespace BExIS.Dim.Helpers.Mapping
                                     List<string> regExResultList = transform(element.Value, m.TransformationRule);
                                     string placeHolderName = m.Source.Name;
 
-                                    mask = setOrReplace(mask, regExResultList, placeHolderName);
+                                    mask = setOrReplace(mask, regExResultList, placeHolderName, m.TransformationRule.DefaultValue);
                                     tmp.Add(mask);
                                 }
                             }
@@ -956,7 +956,7 @@ namespace BExIS.Dim.Helpers.Mapping
                                         List<string> regExResultList = transform(element.Value, m.TransformationRule);
                                         string placeHolderName = m.Source.Name;
 
-                                        mask = setOrReplace(mask, regExResultList, placeHolderName);
+                                        mask = setOrReplace(mask, regExResultList, placeHolderName, m.TransformationRule.DefaultValue);
                                     }
                                 }
                             }
@@ -1217,8 +1217,8 @@ namespace BExIS.Dim.Helpers.Mapping
                         if(string.IsNullOrEmpty(simpleMapping.TransformationRule.Mask))
                             result = result+ string.Join(", ", regExResultList.ToArray());
                         else
-                            result = setOrReplace(result, regExResultList, simpleMapping.Source.Name);
-                   
+                            result = setOrReplace(result, regExResultList, simpleMapping.Source.Name, simpleMapping.TransformationRule.DefaultValue);
+
 
                         // complex to simple mapping
                         if (cTarget.ElementId.Equals(sTarget.ElementId) && cTarget.Type.Equals(sTarget.Type))
@@ -1256,6 +1256,8 @@ namespace BExIS.Dim.Helpers.Mapping
 
             // get all complex mappings for the root
             var root = GetMappings(metadataStructureId, LinkElementType.MetadataStructure, conceptId, LinkElementType.MappingConcept).FirstOrDefault();
+            if (root == null) return concept; // no mapping exist
+            
             var complexMappings = GetMappings(root.Id)?.OrderBy(m=>m.Target.ElementId);
 
 
@@ -1276,8 +1278,18 @@ namespace BExIS.Dim.Helpers.Mapping
                 LinkElement cSource = complexMapping.Source;
                 LinkElement cTarget = complexMapping.Target;
 
+                //if type is default create a xmlNodeList with a xmlnode with the default value inside
+                List<XmlNode> xSourceList = new List<XmlNode>();
+                if (cSource.Type == LinkElementType.Default)
+                {
+                    XmlElement defaultNode = metadata.CreateElement("Default");
+                    defaultNode.InnerText = "";
+                    xSourceList.Add(defaultNode);
+                }
+                else // cSource is not a default type, oso get all nodes from xpath and add them to a list
+                    foreach(XmlNode xSource in metadata.SelectNodes(cSource.XPath))
+                        xSourceList.Add(xSource);
 
-                var xSourceList = metadata.SelectNodes(cSource.XPath);
                 List<string> tmp = new List<string>();
 
                 foreach (XmlNode xSource in xSourceList)
@@ -1344,7 +1356,10 @@ namespace BExIS.Dim.Helpers.Mapping
                         if (string.IsNullOrEmpty(simpleMapping.TransformationRule.Mask))
                             result = result + string.Join(", ", regExResultList.ToArray());
                         else
-                            result = setOrReplace(result, regExResultList, simpleMapping.Source.Name);
+                            result = setOrReplace(result, regExResultList, simpleMapping.Source.Name, simpleMapping.TransformationRule.DefaultValue);
+
+                        // if the result is empty but a default value exist, then set the default value
+                        if (string.IsNullOrEmpty(result) && !string.IsNullOrEmpty(simpleMapping.TransformationRule.DefaultValue)) result = simpleMapping.TransformationRule.DefaultValue;
 
 
                         // complex to simple mapping
@@ -1354,14 +1369,16 @@ namespace BExIS.Dim.Helpers.Mapping
                         }
                         else // complex to complex
                         {
-                            string subsetXpath = sTarget.XPath.Remove(0,cTarget.XPath.Count());
+                            string subsetXpath = sTarget.XPath.Remove(0, cTarget.XPath.Count());
                             var xSimpleTarget = XmlUtility.GenerateNodeFromXPath(concept, xTarget, subsetXpath);
                             xSimpleTarget.InnerText = result;
                         }
 
 
                     }
+                    
                 }
+
             }
 
             return concept;
@@ -1481,7 +1498,7 @@ namespace BExIS.Dim.Helpers.Mapping
             return tmp;
         }
 
-        private static string setOrReplace(string mask, List<string> replacers, string attrName)
+        private static string setOrReplace(string mask, List<string> replacers, string attrName, string defaultValue)
         {
             // in case of haven a boolean value in the metadata, true or false is not the value that should came out.
             // the name of that what is checked is important here
@@ -1522,7 +1539,8 @@ namespace BExIS.Dim.Helpers.Mapping
                 return replacers[0];
             }
 
-            return "";
+            // if not values exist, check if a default is set
+            return string.IsNullOrEmpty(defaultValue)?"":defaultValue;
         }
 
         #endregion Helpers

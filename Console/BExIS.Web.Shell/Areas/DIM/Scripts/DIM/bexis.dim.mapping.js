@@ -221,7 +221,7 @@ function createElement(info, element) {
     return obj;
 }
 
-function createTransformationRule(id, regexPattern, mask) {
+function createTransformationRule(id, regexPattern, mask, defaultValue) {
     /**
      * public long Id { get; set; }
         public string RegEx { get; set; }
@@ -230,7 +230,8 @@ function createTransformationRule(id, regexPattern, mask) {
     {
         "Id": id,
         "RegEx": regexPattern,
-        "Mask": mask
+        "Mask": mask,
+        "Default":defaultValue
     }
 
     return obj;
@@ -259,6 +260,7 @@ function createSimpleMapping(conn, sourceParent, targetParent, parentMappingId) 
     var trId = 0;
     var regexPattern = "";
     var mask = "";
+    var defaultValue = "";
 
     //get rull based on conn
     var rule = findRuleFromConn(conn);
@@ -274,9 +276,10 @@ function createSimpleMapping(conn, sourceParent, targetParent, parentMappingId) 
 
     regexPattern = $("#" + ruleId).find("#RegExPattern").val();
     mask = $("#" + ruleId).find("#Mask").val();
+    defaultValue = $("#" + ruleId).find("#Default").val();
 
     ////console.log(regexPattern);
-    var transformationRuleObj = createTransformationRule(trId, regexPattern, mask);
+    var transformationRuleObj = createTransformationRule(trId, regexPattern, mask, defaultValue);
 
     ////console.log(transformationRuleObj);
 

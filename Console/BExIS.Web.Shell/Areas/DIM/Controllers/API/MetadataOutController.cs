@@ -508,10 +508,10 @@ namespace BExIS.Modules.Dim.UI.Controllers
 
 
 
-    public class MetadataViewObject
+    public class MetadataViewObject 
     {
         public long DatasetId { get; set; }
-        public Format Format { get; set; }
+        //public Format Format { get; set; }
         public string[] SubsetType { get; set; }
     }
 
