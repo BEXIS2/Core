@@ -49,13 +49,13 @@ namespace BExIS.Modules.Dim.UI.Controllers
         [GetRoute("api/Metadata")]
         public IEnumerable<MetadataViewObject> Get()
         {
-            DatasetManager dm = new DatasetManager();
 
-            try
+            
+
+            List<MetadataViewObject> tmp = new List<MetadataViewObject>();
+            using (var dm = new DatasetManager())
             {
                 var datasetIds = dm.GetDatasetIds();
-
-                List<MetadataViewObject> tmp = new List<MetadataViewObject>();
 
                 foreach (var id in datasetIds)
                 {
@@ -63,6 +63,8 @@ namespace BExIS.Modules.Dim.UI.Controllers
                     // the system is not able to load metadat data informations
                     if (dm.IsDatasetCheckedIn(id))
                     {
+                        var dataset = dm.GetDataset(id);
+
                         MetadataViewObject mvo = new MetadataViewObject();
                         mvo.DatasetId = id;
 
@@ -73,19 +75,15 @@ namespace BExIS.Modules.Dim.UI.Controllers
                         List<string> t = xmlDatasetHelper.GetAllTransmissionInformation(id, TransmissionType.mappingFileExport, AttributeNames.name).ToList();
 
                         //mvo.Format = t.ToArray();
-
-                        mvo.SubsetType = getAllAvailableConcepts(id);
+                        mvo.SubsetType = getAllAvailableConcepts(dataset.MetadataStructure.Id);
 
                         tmp.Add(mvo);
                     }
                 }
+            }
 
-                return tmp;
-            }
-            finally
-            {
-                dm.Dispose();
-            }
+            return tmp;
+    
         }
 
         // GET:api/MetadataBySchema/GBIF
@@ -419,7 +417,9 @@ namespace BExIS.Modules.Dim.UI.Controllers
                         if(concept == null )
                             return Request.CreateErrorResponse(HttpStatusCode.PreconditionFailed, "In combination with the format subset - subsettype must not be empty");
 
-                        xmlDoc = MappingUtils.GetConceptOutput(id, concept.Id, xmlDoc);
+                        long mdId = datasetVersion.Dataset.MetadataStructure.Id;
+
+                        xmlDoc = MappingUtils.GetConceptOutput(mdId, concept.Id, xmlDoc);
                     }
 
                 }

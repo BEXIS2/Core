@@ -1303,7 +1303,7 @@ namespace BExIS.Dim.Helpers.Mapping
                     {
                         var xTargetPrevList = concept.SelectNodes(cTarget.XPath);
                         var last = xTargetPrevList[xTargetPrevList.Count - 1];
-                        xTarget = concept.CreateElement(cTarget.Name);
+                        xTarget = concept.CreateElement(last.Name);
                         last.ParentNode.InsertAfter(xTarget, last);
                     }
 
