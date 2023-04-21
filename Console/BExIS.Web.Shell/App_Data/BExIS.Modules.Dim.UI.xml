@@ -650,7 +650,7 @@
             </summary>
             <returns>List of ids</returns>
         </member>
-        <member name="M:BExIS.Modules.Dim.UI.Controllers.DataOutController.Get(System.Int32,System.String,System.String,System.String,System.String)">
+        <member name="M:BExIS.Modules.Dim.UI.Controllers.DataOutController.Get(System.Int32,System.String,System.String)">
             <summary>
             In addition to the id, it is possible to have projection and selection criteria passed to the action via query string parameters
             </summary>
@@ -820,6 +820,14 @@
              <param name="subsetType">Based on the existing concept mappings, the converted metadata can be obtained via subsetType.</param>
              <param name="simplifiedJson">accept 0,1,2</param>
              <returns>metadata as xml or json</returns>
+        </member>
+        <member name="M:BExIS.Modules.Dim.UI.Controllers.PublishController.Start(System.Int64,System.Int32)">
+            <summary>
+            Entrypoint for Publish Hook
+            </summary>
+            <param name="id"></param>
+            <param name="version"></param>
+            <returns></returns>
         </member>
         <member name="M:BExIS.Modules.Dim.UI.Controllers.SubmissionController.publishData(System.Int64,System.Int64)">
             <summary>

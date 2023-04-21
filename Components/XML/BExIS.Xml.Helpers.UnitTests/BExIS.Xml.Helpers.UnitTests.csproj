@@ -210,6 +210,10 @@
       <Project>{782B71C1-707F-4AB1-80E9-90D2880635B4}</Project>
       <Name>BExIS.Utils</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\Vaiona\Vaiona.Entities\Vaiona.Entities.csproj">
+      <Project>{0815D220-3625-4E23-BBBC-8152345637FE}</Project>
+      <Name>Vaiona.Entities</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\Vaiona\Vaiona.Persistence.Api\Vaiona.Persistence.Api.csproj">
       <Project>{640bf81d-354a-4bf0-85fc-f0ad587cf8a2}</Project>
       <Name>Vaiona.Persistence.Api</Name>

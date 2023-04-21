@@ -293,29 +293,30 @@ namespace BExIS.IO.Transform.Output
                 int j = internalId ? i-1:i;
                 if (j >= 0)
                 {
-                    VariableInstance variable = dataStructure.Variables.ElementAt(i);
+                    VariableInstance variable = dataStructure.Variables.ElementAt(j);
 
-                if (variable != null)
-                {
-                    //checking for display pattern
-                    Dlm.Entities.DataStructure.DataType dataType = variable.DataType;
-                    string format = GetStringFormat(variable.DisplayPatternId);
-                    if (!string.IsNullOrEmpty(format))
+                    if (variable != null)
                     {
-                        value = GetFormatedValue(value, dataType, format);
-                    }
-                    else value = value.ToString();
+                        //checking for display pattern
+                        Dlm.Entities.DataStructure.DataType dataType = variable.DataType;
+                        string format = GetStringFormat(variable.DisplayPatternId);
+                        if (!string.IsNullOrEmpty(format))
+                        {
+                            value = GetFormatedValue(value, dataType, format);
+                        }
+                        else value = value.ToString();
 
-                    // checking for missing values
-                    if (variable.MissingValues.Any(mv => mv.Placeholder.Equals(value)))
-                    {
+                        // checking for missing values
+                        if (variable.MissingValues.Any(mv => mv.Placeholder.Equals(value)))
+                        {
 
-                        value = variable.MissingValues.FirstOrDefault(mv => mv.Placeholder.Equals(value)).DisplayName;
+                            value = variable.MissingValues.FirstOrDefault(mv => mv.Placeholder.Equals(value)).DisplayName;
+                        }
+
                     }
-                    
+                    // add value to row
+                    line[j] = escapeValue(value);
                 }
-                // add value to row
-                line[i] = escapeValue(value);
             }
 
             // Add to result

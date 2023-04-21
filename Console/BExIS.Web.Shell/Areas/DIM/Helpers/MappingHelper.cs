@@ -1276,5 +1276,6 @@ namespace BExIS.Modules.Dim.UI.Helper
  
     }
 
+    #endregion
 
 }

@@ -147,6 +147,8 @@
     <Compile Include="Models\Metadata\MetadataCompoundAttributeModel.cs" />
     <Compile Include="Models\Metadata\MetadataInstanceModel.cs" />
     <Compile Include="Models\Metadata\MetadataPackageModel.cs" />
+    <Compile Include="Models\Metadata\MetadataParameterModel.cs" />
+    <Compile Include="Models\Metadata\UIComponentModel.cs" />
     <Compile Include="Models\PrimaryKeyViewModel.cs" />
     <Compile Include="Models\Push\SendBigFilesToServerModel.cs" />
     <Compile Include="Models\SelectAreasModel.cs" />
