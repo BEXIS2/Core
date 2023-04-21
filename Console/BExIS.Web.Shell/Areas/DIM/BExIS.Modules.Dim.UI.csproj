@@ -367,6 +367,7 @@
     <Compile Include="DimModule.cs" />
     <Compile Include="Helpers\DimSeedDataGenerator.cs" />
     <Compile Include="Helpers\Helper.cs" />
+    <Compile Include="Helpers\MappingConceptHelper.cs" />
     <Compile Include="Helpers\MappingHelper.cs" />
     <Compile Include="Helpers\ReleationshipHelper.cs" />
     <Compile Include="Helpers\SettingsHelper.cs" />
@@ -692,6 +693,7 @@
     <Content Include="Views\Export\XmlNode.cshtml" />
     <Content Include="Views\DataCiteDoi\_requestRow.cshtml" />
     <Content Include="Views\DataCiteDoi\index.cshtml" />
+    <Content Include="Views\Mapping\LinkElementContent.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -734,7 +736,7 @@
       <Project>{8B2EC2B0-6870-456B-BE2D-B0FB4EA68D83}</Project>
       <Name>BExIS.IO.DataType.DisplayPattern</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\..\..\Components\IO\BExIS.IO.Transform.Output\BExIS.IO.Transform.Output.csproj">
+    <ProjectReference Include="..\..\..\..\Components\IO\BExIS.Io.Transform.Output\BExIS.IO.Transform.Output.csproj">
       <Project>{455ec826-9a92-40ff-bd3b-388c288955ce}</Project>
       <Name>BExIS.IO.Transform.Output</Name>
     </ProjectReference>
@@ -797,6 +799,10 @@
     <ProjectReference Include="..\..\..\..\Components\XML\BExIS.Xml.Helpers\BExIS.Xml.Helpers.csproj">
       <Project>{252F7872-A69C-43A6-84B4-4D2ABDBDD9AB}</Project>
       <Name>BExIS.Xml.Helpers</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\..\Components\XML\BExIS.Xml.Models\BExIS.Xml.Models.csproj">
+      <Project>{C0C9F0F2-9E65-448D-8000-D311DB326460}</Project>
+      <Name>BExIS.Xml.Models</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\..\..\Modules\DIM\BExIS.Dim.Entities\BExIS.Dim.Entities.csproj">
       <Project>{34cad2a2-6928-458b-b8dc-af71d55f20cc}</Project>

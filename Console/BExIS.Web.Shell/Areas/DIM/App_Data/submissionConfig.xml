@@ -49,5 +49,20 @@
 				</dataRepo>
 			</dataRepos>
 		</broker>
+		<broker>
+			<name>GBIF</name>
+			<metadatastandard></metadatastandard>
+			<primarydataformat>text/csv</primarydataformat>
+			<server></server>
+			<user></user>
+			<password></password>
+			<link></link>
+			<dataRepos>
+				<dataRepo>
+					<name>GBIF</name>
+					<url>https://www.gbif.org/</url>
+				</dataRepo>
+			</dataRepos>
+		</broker>
 	</brokers>
 </publishTo>

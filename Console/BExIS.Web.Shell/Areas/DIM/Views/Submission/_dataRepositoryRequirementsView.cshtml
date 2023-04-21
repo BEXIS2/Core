@@ -26,5 +26,15 @@ else
         <b>@Model.metadataValidMessage</b>
     }
 
+    if (!Model.IsValid)
+    {
+        <ul>
+            @foreach (string e in Model.Errors)
+            {
+                <li>e</li>
+            }
+        </ul>
+    }
+
 }
 

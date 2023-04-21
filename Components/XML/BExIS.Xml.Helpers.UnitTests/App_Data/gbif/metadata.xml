@@ -1,0 +1,36 @@
+<eml:eml eml="eml://ecoinformatics.org/eml-2.1.1" xsi:schemaLocation="eml://ecoinformatics.org/eml-2.1.1 http://rs.gbif.org/schema/eml-gbif-profile/1.2/eml.xsd" system="https://demo.bexis2.uni-jena.de" scope="system" xml:lang="en" packageId="1234567890" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <dataset>
+    <alternateIdentifier>
+    </alternateIdentifier>
+    <title>Dataset Test</title>
+    <creator>
+      <individualName>
+        <givenName>David</givenName>
+        <surName>Schöne</surName>
+      </individualName>
+    </creator>
+    <metadataProvider>
+      <individualName>
+        <givenName>David</givenName>
+        <surName>Schöne</surName>
+      </individualName>
+    </metadataProvider>
+    <metadataProvider>
+      <individualName>
+        <givenName>Sven</givenName>
+        <surName>Thiel</surName>
+      </individualName>
+    </metadataProvider>
+    <pubDate>2023-03-01</pubDate>
+    <abstract>
+      <para>
+      </para>
+    </abstract>
+    <contact>
+      <individualName>
+        <givenName>David</givenName>
+        <surName>Schöne</surName>
+      </individualName>
+    </contact>
+  </dataset>
+</eml:eml>

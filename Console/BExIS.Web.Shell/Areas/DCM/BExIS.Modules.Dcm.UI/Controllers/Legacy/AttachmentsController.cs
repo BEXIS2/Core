@@ -1,7 +1,9 @@
 ﻿using BExIS.App.Bootstrap.Attributes;
+using BExIS.Dim.Entities.Mapping;
 using BExIS.Dlm.Entities.Data;
 using BExIS.Dlm.Services.Data;
 using BExIS.IO;
+using BExIS.Modules.Dcm.UI.Helpers;
 using BExIS.Modules.Dcm.UI.Models.Attachments;
 using BExIS.Security.Entities.Authorization;
 using BExIS.Security.Services.Authorization;
@@ -232,6 +234,8 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 {
                     DatasetVersion datasetVersion = dm.GetDatasetWorkingCopy(datasetId);
 
+
+
                     //set StateInfo of the previus version
                     if (datasetVersion.StateInfo == null)
                     {
@@ -266,6 +270,12 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                     };
 
                     string filenameList = string.Join(", ", attachments.Select(f => f.FileName).ToArray());
+
+                    // update metadata
+                    int v = 1;
+                    if (datasetVersion.Dataset.Versions != null && datasetVersion.Dataset.Versions.Count > 1) v = datasetVersion.Dataset.Versions.Count();
+                    datasetVersion.Metadata = setSystemValuesToMetadata(datasetId, v, datasetVersion.Dataset.MetadataStructure.Id, datasetVersion.Metadata, false);
+
 
                     dm.EditDatasetVersion(datasetVersion, null, null, null);
                     dm.CheckInDataset(dataset.Id, filenameList, GetUsernameOrDefault(), ViewCreationBehavior.None);
@@ -315,45 +325,20 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             return storePath;
         }
 
-        /*
-        private XmlDocument SetDescription(XmlNode extraField, string description)
+        private XmlDocument setSystemValuesToMetadata(long datasetid, long version, long metadataStructureId, XmlDocument metadata, bool newDataset)
         {
-            XmlNode newExtra;
-            var source = (XmlDocument)extraField;
-            if (source == null)
-            {
-                source = new XmlDocument();
-                source.LoadXml("<extra><fileDescription>" + description + "</fileDescription></extra>");
-            }
-            else
-            {
-                if (XmlUtility.GetXmlNodeByName(extraField, "fileDescription") == null)
-                {
-                    XmlNode t = XmlUtility.CreateNode("fileDescription", source);
-                    t.InnerText = description;
-                    source.DocumentElement.AppendChild(t);
-                }
-                else
-                {
-                    var descNodes = source.SelectNodes("/extra/fileDescription");
-                    descNodes[0].InnerText = description;
-                }
-            }
-            return source;
-        }
+            SystemMetadataHelper systemMetadataHelper = new SystemMetadataHelper();
 
-        private string GetDescription(XmlNode extra)
-        {
-            if ((XmlDocument)extra != null)
-            {
-                var descNode = extra.SelectNodes("/extra/fileDescription");
-                if (descNode != null)
-                {
-                    return descNode[0].InnerText;
-                }
-            }
-            return "";
-        }*/
+            Key[] myObjArray = { };
+
+            if (newDataset) myObjArray = new Key[] { Key.Id, Key.Version, Key.DateOfVersion, Key.DataCreationDate, Key.DataLastModified };
+            else myObjArray = new Key[] { Key.Id, Key.Version, Key.DateOfVersion, Key.DataLastModified };
+
+
+            var metadata_new = systemMetadataHelper.SetSystemValuesToMetadata(datasetid, version, metadataStructureId, metadata, myObjArray);
+
+            return metadata_new;
+        }
 
         public string GetUsernameOrDefault()
         {

@@ -276,7 +276,7 @@ namespace BExIS.IO.Transform.Output
             return true;
         }
 
-        protected override bool AddRow(DataRow row, long rowIndex)
+        protected override bool AddRow(DataRow row, long rowIndex, bool internalId = false)
         {
             // number of columns
             int colCount = row.Table.Columns.Count;
@@ -290,7 +290,10 @@ namespace BExIS.IO.Transform.Output
                 string value = row[i].ToString();
 
                 // check if the value is a missing value and should be replaced
-                VariableInstance variable = dataStructure.Variables.ElementAt(i);
+                int j = internalId ? i-1:i;
+                if (j >= 0)
+                {
+                    VariableInstance variable = dataStructure.Variables.ElementAt(i);
 
                 if (variable != null)
                 {
@@ -309,6 +312,7 @@ namespace BExIS.IO.Transform.Output
 
                         value = variable.MissingValues.FirstOrDefault(mv => mv.Placeholder.Equals(value)).DisplayName;
                     }
+                    
                 }
                 // add value to row
                 line[i] = escapeValue(value);

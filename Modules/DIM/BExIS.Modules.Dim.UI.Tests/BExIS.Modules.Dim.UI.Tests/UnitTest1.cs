@@ -5,7 +5,7 @@ namespace BExIS.Modules.Dim.UI.Tests
     [TestClass]
     public class UnitTest1
     {
-        [TestMethod]
+        //[TestMethod]
         public void TestMethod1()
         {
         }

@@ -276,7 +276,8 @@ namespace BExIS.Modules.Dcm.UI.Helpers
                 var list = entityReferenceManager.References.Where(r =>
                         r.TargetId.Equals(id) &&
                         r.TargetEntityId.Equals(typeid) &&
-                        r.TargetVersion <= version).ToList();
+                        r.TargetVersion <= version
+                        ).ToList();
 
                 list.ForEach(r => tmp.Add(helper.Convert(r)));
                 tmp.RemoveAll(item => item == null);

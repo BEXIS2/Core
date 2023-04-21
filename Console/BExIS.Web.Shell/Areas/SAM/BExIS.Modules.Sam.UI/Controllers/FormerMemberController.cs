@@ -123,12 +123,7 @@ namespace BEXIS.Modules.SAM.UI.Controllers
                                               helper.GetValue("mailTextMainRevoked").ToString() + "<br/><br/>" +
                                              helper.GetValue("mailTextClosing").ToString();
 
-                        //if there is no subject defined in settings use system subject
-                        string subject;
-                        if (!string.IsNullOrEmpty(helper.GetValue("mailTextSubject").ToString()))
-                            subject = helper.GetValue("mailTextSubject").ToString();
-                        else
-                            subject = MessageHelper.GetChangedRoleHeader(user.DisplayName, formerMemberRole, "set to");
+                        string subject = MessageHelper.GetChangedRoleHeader(user.DisplayName, formerMemberRole, "revoke from");
 
                         es.Send(subject,
                                 mailTextBody,

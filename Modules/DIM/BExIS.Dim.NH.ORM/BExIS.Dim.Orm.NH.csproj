@@ -57,6 +57,14 @@
     <Folder Include="Mappings\PostgreSQL82Dialect\" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Mappings\Default\Mapping\MappingKey.hbm.xml">
+      <SubType>Designer</SubType>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Mappings\Default\Mapping\MappingConcept.hbm.xml">
+      <SubType>Designer</SubType>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="Mappings\Default\Mapping\LinkElement.hbm.xml">
       <SubType>Designer</SubType>
     </Content>
