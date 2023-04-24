@@ -170,6 +170,7 @@ namespace BExIS.Xml.Helpers
             try
             {
                 if (doc == null) return null;
+                if (parent == null) return null;
 
                 // grab the next node name in the xpath; or return parent if empty
                 string[] partsOfXPath = xpath.Trim('/').Split('/');
