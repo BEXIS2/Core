@@ -1478,36 +1478,41 @@ namespace BExIS.Modules.Ddm.UI.Controllers
 
                 using (var uow = this.GetUnitOfWork())
                 {
-                    long dsId = dm.GetDatasetLatestVersion(datasetID).Id;
-                    DatasetVersion ds = uow.GetUnitOfWork().GetReadOnlyRepository<DatasetVersion>().Get(dsId);
+                    Dataset dataset = dm.GetDataset(datasetID);
+       
                     DataStructure dataStructure = null;
-                    long id = (long)datasetID;
+                    long id = (long)dataset.Id;
                     string DSlink = null;
 
-                    if (this.IsAccessible("RPM", "DataStructureEdit", "Index"))
+                    if (dataset.DataStructure != null)
                     {
-                        dataStructure = uow.GetReadOnlyRepository<StructuredDataStructure>().Get(ds.Dataset.DataStructure.Id);
-                        bool structured = false;
-                        if (dataStructure != null)
-                            structured = true;
-                        else
-                            dataStructure = uow.GetReadOnlyRepository<UnStructuredDataStructure>().Get(ds.Dataset.DataStructure.Id);
+                        long dataStructureId = dataset.DataStructure.Id;
 
-                        if (structured)
+                        if (this.IsAccessible("RPM", "DataStructureEdit", "Index"))
                         {
-                            if (entityPermissionManager.HasEffectiveRight(HttpContext.User.Identity.Name, typeof(Dataset), id, RightType.Write))
-                            {
-                                Feature feature = operationManager.OperationRepository.Query().Where(o => o.Module.ToLower().Equals("rpm") && o.Controller.ToLower().Equals("datastructureedit")).FirstOrDefault().Feature;
-                                Subject subject = subjectManager.SubjectRepository.Query().Where(s => s.Name.Equals(HttpContext.User.Identity.Name)).FirstOrDefault();
+                            dataStructure = uow.GetReadOnlyRepository<StructuredDataStructure>().Get(dataStructureId);
+                            bool structured = false;
+                            if (dataStructure != null)
+                                structured = true;
+                            else
+                                dataStructure = uow.GetReadOnlyRepository<UnStructuredDataStructure>().Get(dataStructureId);
 
-                                if (featurePermissionManager.HasAccess(subject.Id, feature.Id))
-                                    DSlink = "/RPM/DataStructureEdit/?dataStructureId=" + dataStructure.Id;
+                            if (structured)
+                            {
+                                if (entityPermissionManager.HasEffectiveRight(HttpContext.User.Identity.Name, typeof(Dataset), id, RightType.Write))
+                                {
+                                    Feature feature = operationManager.OperationRepository.Query().Where(o => o.Module.ToLower().Equals("rpm") && o.Controller.ToLower().Equals("datastructureedit")).FirstOrDefault().Feature;
+                                    Subject subject = subjectManager.SubjectRepository.Query().Where(s => s.Name.Equals(HttpContext.User.Identity.Name)).FirstOrDefault();
+
+                                    if (featurePermissionManager.HasAccess(subject.Id, feature.Id))
+                                        DSlink = "/RPM/DataStructureEdit/?dataStructureId=" + dataStructureId;
+                                }
                             }
                         }
-                    }
-                    else
-                    {
-                        dataStructure = uow.GetReadOnlyRepository<DataStructure>().Get(ds.Dataset.DataStructure.Id);
+                        else
+                        {
+                            dataStructure = uow.GetReadOnlyRepository<DataStructure>().Get(dataStructureId);
+                        }
                     }
 
                     Tuple<DataStructure, long, string> m = new Tuple<DataStructure, long, string>(
@@ -1517,6 +1522,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                         );
 
                     return PartialView("_previewDatastructure", m);
+                    
                 }
             }
         }
