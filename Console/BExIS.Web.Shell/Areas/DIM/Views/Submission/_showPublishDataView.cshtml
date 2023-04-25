@@ -54,6 +54,9 @@
                                 var isConverterValid = data.isValid;
                                 var errors = data.errors;
 
+                                // reset message container
+                                $("#requirementsContainer").text("");
+
                                 if (!isConverterValid) {
                                     console.log(errors);
                                 }
@@ -202,6 +205,7 @@
 
                 } else {
                     hasSuccessed = true;
+                    $("#requirementsContainer").html("");
                 }
                
                 //reload site
@@ -209,7 +213,7 @@
                     { datasetid: id },
                     function(site) {
 
-                        //alert("test");
+                        alert(htmltext);
                         $("#publishContentContainer").replaceWith(site);
                         $("#requirementsContainer").html(htmltext);
 
