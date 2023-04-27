@@ -134,7 +134,7 @@
 
                             },
                             failure: function(errMsg) {
-                                alert(errMsg);
+                                //alert(errMsg);
                                 $("#preloader").removePreloader();
 
                             }
@@ -213,7 +213,7 @@
                     { datasetid: id },
                     function(site) {
 
-                        alert(htmltext);
+                        //alert(htmltext);
                         $("#publishContentContainer").replaceWith(site);
                         $("#requirementsContainer").html(htmltext);
 

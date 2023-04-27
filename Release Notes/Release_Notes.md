@@ -12,7 +12,8 @@
 ### Features
 - Deleted Datasets: Adjust info text, add reason and allow metadata view (https://github.com/BEXIS2/Core/issues/1099)
 - Version API: Add (https://github.com/BEXIS2/Core/issues/1028)
--
+- Export a single dataset to darwin core archive format (v1)  (https://github.com/BEXIS2/Core/issues/917) - [how to setup?](https://github.com/BEXIS2/Documents/blob/master/Manuals/DIM/Manual.md#3-gbif)
+
 ### Enhancements
 - Metadata API: Unify API calls and add version number and name (https://github.com/BEXIS2/Core/issues/1101)
 - Metadata API: Update to get values in the structure of the concept (https://github.com/BEXIS2/Core/issues/1093)
