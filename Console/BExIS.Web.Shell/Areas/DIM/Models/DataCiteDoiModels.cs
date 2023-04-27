@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using System.Runtime.CompilerServices;
 using Vaelastrasz.Library.Models;
 
 namespace BExIS.Modules.Dim.UI.Models

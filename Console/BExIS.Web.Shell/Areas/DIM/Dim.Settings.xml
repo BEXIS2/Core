@@ -4,24 +4,13 @@
 	<entry key="key2" value="value2" type="String"/>
 	<entry key="key3" value="21" type="Int16"/>
 	<datacite>
-		<entry name="proxy" value="https://train.bexis2.uni-jena.de/" />
-		<entry name="token" value="mhNTaJCzHsLbquWjHLvPrv9mR3Wg6Uwmo5mkwmhwBWgrmhWZwskSY4B6vz4si7mt" />
+		<entry name="proxy" value="http://localhost:5041/" />
+		<entry name="credentials" value="eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoic3ZlbiIsIm5iZiI6MTY4MjUxMTM0MiwiZXhwIjoxNjgyNTE0OTQyLCJpYXQiOjE2ODI1MTEzNDIsImlzcyI6Imh0dHBzOi8vbG9jYWxob3N0OjcwNDEiLCJhdWQiOiJodHRwOi8vbG9jYWxob3N0OjMwMDAifQ.nZDGM9oNSK2Jf7U1R_vrdx5fp1XDct9p_hmVEYF8lH8NBOShN7-hFQENES5UY60i7mzJj484FLsp_skezHmoYQ" />
 		<entry name="provider" value="datacite" />
 		<entry name="testmode" value="false" />
 		<mappings>
-			<!--types: Key, Metadata, Entity, Fixed-->
-			<!--value: key - System Key, metadata - xpath, entity - property, fixed - value-->
-			<!--party: properties of party-->
-			<entry name="Creators" type="Key" value="Author" useParty="true" partyAttributes="Firstname=Firstname;Lastname=Lastname" />
-			<entry name="Event" type="Fixed" value="Hide" />
-			<entry name="PublicationYear" />
-			<entry name="Publisher" type="Fixed" value="German Centre for Integrative Biodiversity Research (iDiv) Halle-Jena-Leipzig" />
-			<entry name="ResourceType" type="Fixed" value="Dataset" />	
-			<entry name="Titles" type="Key" value="Title" />
-			<entry name="URL" />
-			
-			<!-- value: Id, Name, Number -->
-			<entry name="Version" type="Property" value="Name"/>
+			<entry name="URL" type="Replacement" value="{DatasetId}?version={VersionNumber}" />
+			<entry name="Version" type="Replacement" value="{VersionNumber}"/>
 		</mappings>
 		<placeholders>
 			<entry name="DatasetId" type="Property" value="DatasetId"/>

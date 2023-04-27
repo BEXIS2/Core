@@ -21,10 +21,16 @@ using System.Configuration;
 using System.Linq;
 using System.Web.Mvc;
 using System.Web.Routing;
+using System.Xml;
+using System.Xml.Serialization;
 using Vaelastrasz.Library.Models;
 using Vaelastrasz.Library.Models.DataCite;
 using Vaiona.Web.Mvc;
 using Vaiona.Web.Mvc.Modularity;
+using BExIS.Dim.Helpers.Extensions;
+using System.IO;
+using System.Runtime.Remoting.Messaging;
+using System.Web.UI.WebControls;
 
 namespace BExIS.Modules.Dim.UI.Controllers
 {
@@ -235,26 +241,53 @@ namespace BExIS.Modules.Dim.UI.Controllers
         }
 
         public ActionResult Create(long datasetVersionId)
+        
         {
             using (var datasetManager = new DatasetManager())
             using (var conceptManager = new ConceptManager())
             {
                 var datasetVersion = datasetManager.GetDatasetVersion(datasetVersionId);
-                //var concept = conceptManager.MappingConceptRepo.Query(c => c.Name == "DataCiteDoi").FirstOrDefault();
+                var concept = conceptManager.MappingConceptRepo.Query(c => c.Name == "DataCiteDoi").FirstOrDefault();
 
-                //if(concept == null)
-                //    return PartialView("_Create", new CreateDataCiteDoiModel(datasetVersion.Dataset.Id, datasetVersion.Id));
+                var model = new CreateDataCiteDoiModel(datasetVersion.Dataset.Id, datasetVersion.Id);
 
-                //var output = MappingUtils.GetConceptOutput(datasetVersion.Dataset.MetadataStructure.Id, concept.Id, datasetVersion.Metadata);
+                if (concept == null)
+                    return View("Create", model);
+
+                var xml = MappingUtils.GetConceptOutput(datasetVersion.Dataset.MetadataStructure.Id, concept.Id, datasetVersion.Metadata);
 
                 CreateDataCiteModel response = new CreateDataCiteModel();
-                //XmlSerializer serializer = new XmlSerializer(typeof(CreateDataCiteModel));
-                //using (XmlReader reader = new XmlNodeReader(output))
-                //{
-                //    response = (CreateDataCiteModel)serializer.Deserialize(reader);
-                //}
 
-                var model = new CreateDataCiteDoiModel(datasetVersion.Dataset.Id, datasetVersion.Id, response);
+                XmlSerializer serializer = new XmlSerializer(typeof(CreateDataCiteDataModel));
+                using (XmlReader reader = new XmlNodeReader(xml))
+                {
+                    model.DataCiteModel.Data = (CreateDataCiteDataModel)serializer.Deserialize(reader);
+                }
+
+                // settings
+                var settingsHelper = new SettingsHelper();
+                var datacitedoihelper = new DataCiteDoiHelper();
+
+                var mappings = settingsHelper.GetDataCiteSettings("mappings");
+                var placeholders = datacitedoihelper.CreatePlaceholders(datasetVersion, settingsHelper.GetDataCiteSettings("placeholders"));
+
+                // mappings
+                // update values from settings afterwards
+                model.DataCiteModel.UpdateCreateDataCiteModel(mappings, placeholders);
+
+                // doi
+                // set a specific doi into the model
+                if (settingsHelper.KeyExist("proxy") && settingsHelper.KeyExist("credentials"))
+                {
+                    var client = new RestClient(settingsHelper.GetValue("proxy"));
+                    client.Authenticator = new JwtAuthenticator(settingsHelper.GetValue("credentials"));
+
+                    var doi_request = new RestRequest($"api/dois", Method.POST).AddJsonBody(placeholders);
+                    var doi = JsonConvert.DeserializeObject<ReadDOIModel>(client.Execute(doi_request).Content);
+
+                    model.DataCiteModel.Data.Attributes.Doi = doi.DOI;
+                }
+
 
                 return View("Create", model);
             }
@@ -263,11 +296,28 @@ namespace BExIS.Modules.Dim.UI.Controllers
         [HttpPost]
         public ActionResult Create(CreateDataCiteDoiModel model)
         {
-            SettingsHelper settingsHelper = new SettingsHelper();
+            using (var datasetManager = new DatasetManager())
+            {
+                var datasetVersion = datasetManager.GetDatasetVersion(model.DatasetVersionId);
 
+                var settingsHelper = new SettingsHelper();
+                var datacitedoihelper = new DataCiteDoiHelper();
+
+                var placeholders = datacitedoihelper.CreatePlaceholders(datasetVersion, settingsHelper.GetDataCiteSettings("placeholders"));
+
+                var client = new RestClient(settingsHelper.GetValue("proxy"));
+                client.Authenticator = new JwtAuthenticator(settingsHelper.GetValue("credentials"));
+
+                var doi_request = new RestRequest($"api/dois", Method.POST).AddJsonBody(placeholders);
+                var doi = JsonConvert.DeserializeObject<ReadDOIModel>(client.Execute(doi_request).Content);
+            }
 
             return View();
         }
+
+
+
+
 
         public ActionResult Update()
         {

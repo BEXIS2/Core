@@ -22,6 +22,7 @@ using System.Text.RegularExpressions;
 using BExIS.Dim.Helpers.Services;
 using System.Security.Policy;
 using Vaelastrasz.Library.Models;
+using System.Runtime.CompilerServices;
 
 namespace BExIS.Dim.Helpers
 {
@@ -53,76 +54,10 @@ namespace BExIS.Dim.Helpers
             {
                 switch (mapping.Name)
                 {
-                    #region Creators
-                    case "Creators":
-
-                        string fn = null;
-                        string ln = null;
-
-                        if (mapping.Extra != null)
-                        {
-                            var partyAttributes = mapping.Extra.Split(';').Select(part => part.Split('=')).Where(part => part.Length == 2).ToDictionary(sp => sp[0], sp => sp[1]);
-
-                            partyAttributes.TryGetValue("Firstname", out fn);
-                            partyAttributes.TryGetValue("Lastname", out ln);
-                        }
-
-                        var dataCiteCreatorsService = new DataCiteCreatorsService();
-                        model.Data.Attributes.Creators = dataCiteCreatorsService.GetCreators(datasetVersion, mapping.Value, fn, ln);
-
-                        break;
-                    #endregion
-
-                    #region Event
-                    case "Event":
-
-                        DataCiteEventType eventType;
-
-                        if(Enum.TryParse(mapping.Value, out eventType))
-                        {
-                            model.Data.Attributes.Event = eventType;
-                        }
-                        else
-                        {
-                            model.Data.Attributes.Event = DataCiteEventType.Hide;
-                        }
-
-                        break;
-                    #endregion
-
-                    #region PublicationYear
-                    case "PublicationYear":
-
-                        model.Data.Attributes.PublicationYear = DateTime.UtcNow.Year;
-                        break;
-                    #endregion
-
-                    #region Publisher
-                    case "Publisher":
-
-                        model.Data.Attributes.Publisher = mapping.Value;
-                        break;
-                    #endregion
-
-                    #region ResourceType
-                    case "ResourceType":
-
-                        model.Data.Attributes.Types.ResourceType = mapping.Value;
-                        break;
-                    #endregion
-
-                    #region Titles
-                    case "Titles":
-
-                        var dataCiteTitlesService = new DataCiteTitlesService();
-                        model.Data.Attributes.Titles = dataCiteTitlesService.GetTitles(datasetVersion, mapping.Value);
-                        break;
-                    #endregion
-
                     #region URL
                     case "URL":
 
-                        model.Data.Attributes.URL = $"{HttpContext.Current.Request.Url.GetLeftPart(UriPartial.Authority)}/ddm/Data/ShowData/{datasetVersion.Dataset.Id}";
+                        model.Data.Attributes.URL = $"{HttpContext.Current.Request.Url.GetLeftPart(UriPartial.Authority)}/ddm/Data/ShowData/";
                         break;
                     #endregion
 
@@ -149,7 +84,7 @@ namespace BExIS.Dim.Helpers
 
             foreach (var placeholder in placeholders)
             {
-                switch(placeholder.Name)
+                switch (placeholder.Name)
                 {
                     case "DatasetId":
 
