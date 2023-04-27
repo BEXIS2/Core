@@ -14,7 +14,7 @@
 
 <div id="@id" class="le-simple @id @c" title="@Model.Description">
 
-    <div class="le-simple-info" style="display: none">
+    <div class="le-simple-info" style="display: none" optional="@Model.Optional.ToString()" complexity="@Model.Complexity" position="@Model.Position">
         <div id="Id">@Model.Id</div>
         <div id="Name">@Model.Name</div>
         <div id="ElementId">@Model.ElementId</div>
@@ -25,8 +25,6 @@
         <div id="Optional">@Model.Optional</div>
         <div id="Url">@Model.Url</div>
     </div>
-
-
 
     <table>
         <tr>

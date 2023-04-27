@@ -143,12 +143,14 @@ namespace BExIS.Modules.Dim.UI.Models.Mapping
         public long Id { get; set; }
         public string RegEx { get; set; }
         public string Mask { get; set; }
+        public string Default { get; set; }
 
         public TransformationRuleModel()
         {
             Id = 0;
             RegEx = "";
             Mask = "";
+            Default = "";
         }
     }
 

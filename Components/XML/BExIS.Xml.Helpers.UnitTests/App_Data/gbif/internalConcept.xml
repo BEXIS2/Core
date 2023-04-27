@@ -1,0 +1,34 @@
+<eml>
+	<dataset>
+		<alternateIdentifier/>
+		<title>Dataset Test</title>
+		<creator>
+			<individualName>
+				<givenName>David</givenName>
+				<surName>Schöne</surName>
+			</individualName>
+		</creator>
+		<metadataProvider>
+			<individualName>
+				<givenName>David</givenName>
+				<surName>Schöne</surName>
+			</individualName>
+		</metadataProvider>
+		<metadataProvider>
+			<individualName>
+				<givenName>Sven</givenName>
+				<surName>Thiel</surName>
+			</individualName>
+		</metadataProvider>
+		<pubDate>2023-03-01</pubDate>
+		<abstract>
+			<para/>
+		</abstract>
+		<contact>
+			<individualName>
+				<givenName>David</givenName>
+				<surName>Schöne</surName>
+			</individualName>
+		</contact>
+	</dataset>
+</eml>

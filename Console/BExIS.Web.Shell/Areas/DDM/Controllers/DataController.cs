@@ -44,6 +44,7 @@ using System.Text;
 using BExIS.Security.Entities.Objects;
 using BExIS.Security.Entities.Subjects;
 using BExIS.Dlm.Services.MetadataStructure;
+using System.Web.UI.WebControls;
 
 namespace BExIS.Modules.Ddm.UI.Controllers
 
@@ -174,15 +175,16 @@ namespace BExIS.Modules.Ddm.UI.Controllers
 
                     XmlDocument metadata = new XmlDocument();
 
-                    if (dm.IsDatasetCheckedIn(id))
+
+                    // Retrieve data for active and hidden (marked as deleted) datasets
+                    if (dm.IsDatasetCheckedIn(id) || dm.IsDatasetDeleted(id))
                     {
                         List<DatasetVersion> datasetVersions = dm.GetDatasetVersions(id);
                         List<DatasetVersion> datasetVersionsAllowed = new List<DatasetVersion>();
 
                         // Get version id based on public or internal access. Version name has a higher priority as version.
-                        // Public access has higher priority as makor/minor versions
-                        versionId = getVersionId(id, version, versionName, datasetVersions);
-
+                        // Public access has higher priority as major/minor versions
+                        versionId = getVersionId(id, version, versionName, datasetVersions, researcobject.Status);
                         // Set if the latest version is selected. Compare current version id against unfiltered max id
                         latestVersionId = datasetVersions.OrderByDescending(d => d.Timestamp).Select(d => d.Id).FirstOrDefault();
                         latestVersionNr = dm.GetDatasetVersionNr(latestVersionId);
@@ -255,7 +257,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                     }
                     else
                     {
-                        ModelState.AddModelError(string.Empty, "Dataset is just in processing.");
+                            ModelState.AddModelError(string.Empty, "Dataset is just in processing.");
                     }
 
                     model = new ShowDataModel()
@@ -280,11 +282,23 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                         IsPublic = isPublic,
                     };
 
-                    //set metadata in session
+                   //set metadata in session
                     Session["ShowDataMetadata"] = metadata;
                     ViewData["VersionSelect"] = getVersionsSelectList(id, dm);
                     ViewData["isValid"] = isValid;
                     ViewData["datasetSettings"] = getSettingsDataset();
+                    ViewData["Message"] = "";
+                    ViewData["State"] = "";
+
+                    // set message and unset all tabs except of metadata (+ data structure & links)
+                    if (dm.IsDatasetDeleted(id))
+                    {
+                        ViewData["Message"] = "The dataset has been withdrawn. Reason: " + researcobject.ModificationInfo.Comment + ". Please check the \'Links\' section if a new version is available.";
+                        ViewData["State"] = "hidden";
+                        model.GrantAccess = false;
+                        model.ViewAccess = false;
+                        model.DownloadAccess = false;
+                    }
 
                     return View(model);
                     
@@ -686,7 +700,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
         public ActionResult _CustomPrimaryDataBinding(GridCommand command, string columns, int datasetId, int versionId)
         {
             GridModel model = new GridModel();
-            Session["Filter"] = command;
+            ViewData["Filter"] = command;
             DatasetManager dm = new DatasetManager();
 
             try
@@ -705,17 +719,17 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                         OrderByExpression orderBy = TelerikGridHelper.Convert(command.SortDescriptors.ToList());
 
                         table = dm.GetLatestDatasetVersionTuples(datasetId, filter, orderBy, null, command.Page - 1, command.PageSize);
-                        Session["gridTotal"] = dm.RowCount(datasetId, filter);
+                        ViewData["gridTotal"] = dm.RowCount(datasetId, filter);
                     }
                     // get primarydata from other version with tuples
                     else
                     {
                         table = dm.GetDatasetVersionTuples(versionId, command.Page - 1, command.PageSize);
-                        Session["gridTotal"] = dm.GetDatasetVersionEffectiveTuples(dsv).Count;
+                        ViewData["gridTotal"] = dm.GetDatasetVersionEffectiveTuples(dsv).Count;
                     }
 
                     model = new GridModel(table);
-                    model.Total = Convert.ToInt32(Session[versionId + "gridTotal"]); // (int)Session["gridTotal"];
+                    model.Total = Convert.ToInt32(ViewData["gridTotal"]); // (int)Session["gridTotal"];
                 }
                 else
                 {
@@ -1464,36 +1478,41 @@ namespace BExIS.Modules.Ddm.UI.Controllers
 
                 using (var uow = this.GetUnitOfWork())
                 {
-                    long dsId = dm.GetDatasetLatestVersion(datasetID).Id;
-                    DatasetVersion ds = uow.GetUnitOfWork().GetReadOnlyRepository<DatasetVersion>().Get(dsId);
+                    Dataset dataset = dm.GetDataset(datasetID);
+       
                     DataStructure dataStructure = null;
-                    long id = (long)datasetID;
+                    long id = (long)dataset.Id;
                     string DSlink = null;
 
-                    if (this.IsAccessible("RPM", "DataStructureEdit", "Index"))
+                    if (dataset.DataStructure != null)
                     {
-                        dataStructure = uow.GetReadOnlyRepository<StructuredDataStructure>().Get(ds.Dataset.DataStructure.Id);
-                        bool structured = false;
-                        if (dataStructure != null)
-                            structured = true;
-                        else
-                            dataStructure = uow.GetReadOnlyRepository<UnStructuredDataStructure>().Get(ds.Dataset.DataStructure.Id);
+                        long dataStructureId = dataset.DataStructure.Id;
 
-                        if (structured)
+                        if (this.IsAccessible("RPM", "DataStructureEdit", "Index"))
                         {
-                            if (entityPermissionManager.HasEffectiveRight(HttpContext.User.Identity.Name, typeof(Dataset), id, RightType.Write))
-                            {
-                                Feature feature = operationManager.OperationRepository.Query().Where(o => o.Module.ToLower().Equals("rpm") && o.Controller.ToLower().Equals("datastructureedit")).FirstOrDefault().Feature;
-                                Subject subject = subjectManager.SubjectRepository.Query().Where(s => s.Name.Equals(HttpContext.User.Identity.Name)).FirstOrDefault();
+                            dataStructure = uow.GetReadOnlyRepository<StructuredDataStructure>().Get(dataStructureId);
+                            bool structured = false;
+                            if (dataStructure != null)
+                                structured = true;
+                            else
+                                dataStructure = uow.GetReadOnlyRepository<UnStructuredDataStructure>().Get(dataStructureId);
 
-                                if (featurePermissionManager.HasAccess(subject.Id, feature.Id))
-                                    DSlink = "/RPM/DataStructureEdit/?dataStructureId=" + dataStructure.Id;
+                            if (structured)
+                            {
+                                if (entityPermissionManager.HasEffectiveRight(HttpContext.User.Identity.Name, typeof(Dataset), id, RightType.Write))
+                                {
+                                    Feature feature = operationManager.OperationRepository.Query().Where(o => o.Module.ToLower().Equals("rpm") && o.Controller.ToLower().Equals("datastructureedit")).FirstOrDefault().Feature;
+                                    Subject subject = subjectManager.SubjectRepository.Query().Where(s => s.Name.Equals(HttpContext.User.Identity.Name)).FirstOrDefault();
+
+                                    if (featurePermissionManager.HasAccess(subject.Id, feature.Id))
+                                        DSlink = "/RPM/DataStructureEdit/?dataStructureId=" + dataStructureId;
+                                }
                             }
                         }
-                    }
-                    else
-                    {
-                        dataStructure = uow.GetReadOnlyRepository<DataStructure>().Get(ds.Dataset.DataStructure.Id);
+                        else
+                        {
+                            dataStructure = uow.GetReadOnlyRepository<DataStructure>().Get(dataStructureId);
+                        }
                     }
 
                     Tuple<DataStructure, long, string> m = new Tuple<DataStructure, long, string>(
@@ -1503,6 +1522,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                         );
 
                     return PartialView("_previewDatastructure", m);
+                    
                 }
             }
         }
@@ -1809,7 +1829,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
             return !string.IsNullOrWhiteSpace(userName) ? userName : "DEFAULT";
         }
 
-        private long getVersionId(long datasetId, int version ,string versionName, List<DatasetVersion> datasetVersions)
+        private long getVersionId(long datasetId, int version ,string versionName, List<DatasetVersion> datasetVersions, DatasetStatus datasetStatus)
         {
             long versionId = 0;
             SettingsHelper helper = new SettingsHelper();
@@ -1818,7 +1838,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
             using (DatasetManager dm = new DatasetManager())
             {
 
-                List<DatasetVersion> datasetVersionsAllowed = dm.GetDatasetVersionsAllowed(datasetId, true, false, datasetVersions);
+                List<DatasetVersion> datasetVersionsAllowed = dm.GetDatasetVersionsAllowed(datasetId, true, false, datasetVersions, datasetStatus);
 
                 // User is not logged in
                 if (GetUsernameOrDefault() == "DEFAULT")
@@ -1870,7 +1890,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                         }
                         else
                         {
-                            versionId = dm.GetDatasetLatestVersionId(datasetId); 
+                            versionId = dm.GetDatasetLatestVersionId(datasetId, datasetStatus); 
                         }
                     }
                     // Get specific version number

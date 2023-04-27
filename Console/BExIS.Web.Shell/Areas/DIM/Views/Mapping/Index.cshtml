@@ -5,11 +5,11 @@
 
 <div id="DIM_MappingContainer">
 
-@{
-    ViewBag.Title = "Metadata Structure Mapping";
-    ViewData["SelectionList"] = Model.SelectionList;
-    Session["SelectionList"] = Model.SelectionList;
-}
+    @{
+        ViewBag.Title = "Metadata Structure Mapping";
+        ViewData["SelectionList"] = Model.SelectionList;
+        Session["SelectionList"] = Model.SelectionList;
+    }
     @section Information
     {
         Here you are able to create/edit mappings between two metadata structures or a metadata structure and system information defined in other modules (e.g. party package).
@@ -20,7 +20,7 @@
     @section Scripts{
 
         <link href="@Url.Content("~/Areas/DIM/Content/DIM/bexis-dim.css")" rel="stylesheet" type="text/css" />
-        
+
         <script src="@Url.Content("~/Areas/DIM/Scripts/DIM/bexis.dim.mapping.js")"></script>
         <script src="@Url.Content("~/Areas/DIM/Scripts/DIM/isotope.pkgd.min.js")"></script>
         <script src="@Url.Content("~/Areas/DIM/Scripts/DIM/jsPlumb-2.2.8-min.js")"></script>
@@ -36,19 +36,26 @@
         }
     }
 
-    <button onclick="switchSide()" class = "bx-button fa fa-exchange function" ></button>
+    <button onclick="switchSide()" class="bx-button fa fa-exchange function"></button>
 
 
-    @Html.Partial("Mappings",Model.ParentMappings)
+
+    <div id="mapping-stats-button" class="btn btn-danger pull-right" style="display:none" onclick='$("#mapping-stats-missed").toggle()'>
+        <b>required mappings</b> <span id="mapping-stats-value" class="badge"></span>
+    </div>
+
+    <p id="mapping-stats-missed" class="pull-right"  style="display:none; padding-right:20px;"></p>
+
+    @Html.Partial("Mappings", Model.ParentMappings)
 
 
     @section RightPane
     {
-       
+
 
         @if (Model.Target != null)
         {
-            @Html.Partial("LinkElemenRoot", Model.Target, new ViewDataDictionary(){ { "SelectionList", Model.SelectionList }, { "test", "test" } })
+            @Html.Partial("LinkElemenRoot", Model.Target, new ViewDataDictionary() { { "SelectionList", Model.SelectionList }, { "test", "test" } })
         }
     }
 
@@ -87,6 +94,7 @@
 
         reloadMapping("dim-mapping-middle", sendData);
 
+        $("#mapping-stats-button").hide();
     }
 
     function onChangeSourceDropDown(e) {
@@ -215,7 +223,7 @@
 
         reloadMapping("dim-mapping-middle", switchedData);
 
-        
+        updateRequiredMappings();
     }
 
 </script>

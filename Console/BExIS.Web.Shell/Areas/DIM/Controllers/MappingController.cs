@@ -3,6 +3,8 @@ using BExIS.Dim.Helpers.Mapping;
 using BExIS.Dim.Services;
 using BExIS.Modules.Dim.UI.Helper;
 using BExIS.Modules.Dim.UI.Models.Mapping;
+using BExIS.Xml.Helpers.Mapping;
+using BExIS.Xml.Models.Mapping;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,25 +14,6 @@ namespace BExIS.Modules.Dim.UI.Controllers
 {
     public class MappingController : Controller
     {
-        public JsonResult Test()
-        {
-            using (var conceptManager = new ConceptManager())
-            {
-                var mappingConcept = conceptManager.CreateMappingConcept("test", "description", "url");
-
-                var mK = conceptManager.CreateMappingKey("key1", "description", "url", true, true, mappingConcept);
-               
-                var mK1 = conceptManager.CreateMappingKey("key2", "description", "url", true, true, mappingConcept, mK);
-
-                //mK.Children.Add(mK1);
-
-                conceptManager.UpdateMappingKey(mK);
-
-                var mk3 = conceptManager.MappingKeyRepo.Get(3);
-
-                return Json(mK, JsonRequestBehavior.AllowGet); 
-            }
-        }
 
         // GET: DIM/Mapping
         public ActionResult Index(long sourceId = 1, long targetId = 0, LinkElementType type = LinkElementType.System)
@@ -84,11 +67,53 @@ namespace BExIS.Modules.Dim.UI.Controllers
                         }
 
                     }
+
+
+                    // in case of the link element has no xpath because of a older version of bexis 2
+                    // every mapping will be check
+                    // if a link element has no xpath get it from the generated models and update them for the furture
+
+                    updateXPaths(model.ParentMappings, model.Source, model.Target);
+
                 }
 
                 return View(model);
             }
  
+        }
+
+        private void updateXPaths(List<ComplexMappingModel> mappings, LinkElementRootModel source, LinkElementRootModel target)
+        {
+            foreach (var mapping in mappings)
+            {
+                var sourceElement = source.LinkElements.FirstOrDefault(s => s.ElementId == mapping.Source.ElementId && s.Type == mapping.Source.Type);
+                if (sourceElement != null)mapping.Source.XPath = sourceElement.XPath;
+                var targetElement = target.LinkElements.FirstOrDefault(t => t.ElementId == mapping.Target.ElementId && t.Type == mapping.Target.Type);
+                if (targetElement != null) mapping.Target.XPath = targetElement.XPath;
+
+                if (mapping.SimpleMappings.Any())
+                {
+                    foreach (var simpleMapping in mapping.SimpleMappings)
+                    {
+                        var sourceSimpleElement = source.LinkElements.FirstOrDefault(s => s.ElementId == simpleMapping.Source.ElementId && s.Complexity == LinkElementComplexity.Simple);
+                        if (sourceSimpleElement != null) simpleMapping.Source.XPath = sourceSimpleElement.XPath;
+                        var targetSimpleElement = target.LinkElements.FirstOrDefault(t => t.ElementId == simpleMapping.Target.ElementId && t.Complexity == LinkElementComplexity.Simple);
+                        if (targetSimpleElement != null) simpleMapping.Target.XPath = targetSimpleElement.XPath;
+                    }
+                }
+
+                foreach (var sourceChildren in mapping.Source.Children)
+                { 
+                    var sc = source.LinkElements.FirstOrDefault(s => s.ElementId == sourceChildren.ElementId && s.Complexity == LinkElementComplexity.Simple);
+                    if(sc!=null) sourceChildren.XPath = sc.XPath;
+                }
+
+                foreach (var targetChildren in mapping.Target.Children)
+                {
+                    var tc = target.LinkElements.FirstOrDefault(s => s.ElementId == targetChildren.ElementId && s.Complexity == LinkElementComplexity.Simple);
+                    if (tc != null) targetChildren.XPath = tc.XPath;
+                }
+            }
         }
 
         public ActionResult Mapping(long sourceId = 1, long targetId = 0,
@@ -316,6 +341,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
                     }
                 }
 
+                updateXPaths(model, source, target);
 
                 return PartialView("Mappings", model);
             }
@@ -389,6 +415,11 @@ namespace BExIS.Modules.Dim.UI.Controllers
 
                 #endregion
 
+                #region generate or update mapping file
+
+                updateMappingFile(rootMapping);
+
+                #endregion
                 //load all mappings
                 return PartialView("Mapping", model);
             }
@@ -397,6 +428,36 @@ namespace BExIS.Modules.Dim.UI.Controllers
                 mappingManager.Dispose();
                 MappingUtils.Clear();
             }
+        }
+
+        private void updateMappingFile(Mapping root)
+        {
+            //// get all complexMappings with simple mappings
+            //var complexMappings = MappingHelper.LoadMappings(root);
+
+            //List<XmlMappingRoute> routes = new List<XmlMappingRoute>();
+
+            //foreach (var complexMapping in complexMappings)
+            //{
+            //    if(complexMapping.SimpleMappings.Any())
+            //    {
+            //        foreach (var simpleMapping in complexMapping.SimpleMappings)
+            //        {
+            //            // create a XmlMappingroute for each simplemapping
+            //            XmlMappingRoute r = new XmlMappingRoute();
+            //            r.Source = new Source(simpleMapping.Source.XPath);
+            //            r.Destination = new Destination(simpleMapping.Target.XPath, complexMapping.Target.Name);
+
+            //            routes.Add(r);
+            //        }
+            //    }
+            //}
+
+            //if (routes.Any())
+            //{
+            //    XmlSchemaManager manager = new XmlSchemaManager();
+            //    manager.GenerateMappingFile(root.Source.ElementId, root.Source.Name, root.Target.Name, routes);
+            //}
         }
 
         public ActionResult LoadEmptyMapping()

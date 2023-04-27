@@ -371,6 +371,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
         #region extra xdoc
 
+ 
         private XmlDocument AddReferenceToMetadatStructure(string nodeName, string nodePath, string nodeType, string destinationPath, XmlDocument xmlDoc)
         {
             XmlDocument doc = xmlDatasetHelper.AddReferenceToXml(xmlDoc, nodeName, nodePath, nodeType, destinationPath);

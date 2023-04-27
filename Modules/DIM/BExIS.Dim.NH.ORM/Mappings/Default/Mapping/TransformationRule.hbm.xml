@@ -26,5 +26,9 @@
       <column name="Mask" />
     </property>
 
+	<property name="DefaultValue" type="string">
+		<column name="DefaultValue" />
+	</property>
+
   </class>
 </hibernate-mapping>

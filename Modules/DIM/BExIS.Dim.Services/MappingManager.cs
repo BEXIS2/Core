@@ -129,21 +129,18 @@ namespace BExIS.Dim.Services
             return (true);
         }
 
-        public LinkElement UpdateLinkElement(long id)
+        public LinkElement UpdateLinkElement(LinkElement entity)
         {
-            var linkElement = this.GetUnitOfWork().GetReadOnlyRepository<LinkElement>().Get(id);
+            using (var uow = this.GetUnitOfWork())
+            { 
+                var repo = uow.GetRepository<LinkElement>();
+                repo.Merge(entity);
+                var merged = repo.Get(entity.Id);
+                repo.Put(merged);
+                uow.Commit();
 
-            if (linkElement != null)
-            {
-                using (IUnitOfWork uow = this.GetUnitOfWork())
-                {
-                    IRepository<LinkElement> repo = uow.GetRepository<LinkElement>();
-                    repo.Put(linkElement);
-                    uow.Commit();
-                }
+                return (entity);
             }
-
-            return (linkElement);
         }
 
         #endregion
@@ -333,12 +330,13 @@ namespace BExIS.Dim.Services
 
         #region Transformation Rule
 
-        public TransformationRule CreateTransformationRule(string regex, string mask)
+        public TransformationRule CreateTransformationRule(string regex, string mask, string defaultValue = "")
         {
             var transformationRule = new TransformationRule()
             {
                 RegEx = regex,
-                Mask = mask
+                Mask = mask,
+                DefaultValue = defaultValue
             };
 
             using (IUnitOfWork uow = this.GetUnitOfWork())
@@ -351,7 +349,7 @@ namespace BExIS.Dim.Services
             return (transformationRule);
         }
 
-        public TransformationRule UpdateTransformationRule(long id, string regex, string mask)
+        public TransformationRule UpdateTransformationRule(long id, string regex, string mask, string defaultValue = "")
         {
 
             using (IUnitOfWork uow = this.GetUnitOfWork())
@@ -359,11 +357,12 @@ namespace BExIS.Dim.Services
                 var transformationRule = uow.GetRepository<TransformationRule>().Get(id);
 
                 if (transformationRule == null)
-                    transformationRule = CreateTransformationRule(regex, mask);
+                    transformationRule = CreateTransformationRule(regex, mask, defaultValue);
                 else
                 {
                     transformationRule.RegEx = regex;
                     transformationRule.Mask = mask;
+                    transformationRule.DefaultValue = defaultValue;
                 }
 
 

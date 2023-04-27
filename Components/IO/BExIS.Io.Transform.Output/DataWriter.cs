@@ -214,7 +214,10 @@ namespace BExIS.IO.Transform.Output
                 createDirectoriesIfNotExist(storePath);
             }
 
-            return Path.Combine(storePath, title + extension);
+             // replace special chars to avoid invaild path names
+            string pathSaveTitle = string.Join("_", title.Split(Path.GetInvalidFileNameChars()));
+
+            return Path.Combine(storePath, pathSaveTitle + extension);
         }
 
         /// <summary>
@@ -543,7 +546,7 @@ namespace BExIS.IO.Transform.Output
         // add a single row to the output file
         protected abstract bool AddRow(AbstractTuple tuple, long rowIndex);
 
-        protected abstract bool AddRow(DataRow row, long rowIndex);
+        protected abstract bool AddRow(DataRow row, long rowIndex, bool internalId=false);
 
         protected abstract bool AddRow(string[] row, long rowIndex);
 
@@ -683,7 +686,7 @@ namespace BExIS.IO.Transform.Output
         /// <param name="filePath"></param>
         /// <param name="dataStructureId"></param>
         /// <returns></returns>
-        public List<Error> AddData(DataTable table, string filePath, long dataStructureId, string[] units = null)
+        public List<Error> AddData(DataTable table, string filePath, long dataStructureId, string[] units = null, bool internalId = false)
         {
             if (File.Exists(filePath))
             {
@@ -705,7 +708,7 @@ namespace BExIS.IO.Transform.Output
                     foreach (DataRow row in table.Rows)
                     {
                         // add row and increment current index
-                        if (AddRow(row, rowIndex))
+                        if (AddRow(row, rowIndex, internalId))
                         {
                             rowIndex += 1;
                         }
