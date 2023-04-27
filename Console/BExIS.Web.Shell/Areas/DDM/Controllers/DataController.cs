@@ -700,7 +700,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
         public ActionResult _CustomPrimaryDataBinding(GridCommand command, string columns, int datasetId, int versionId)
         {
             GridModel model = new GridModel();
-            Session["Filter"] = command;
+            ViewData["Filter"] = command;
             DatasetManager dm = new DatasetManager();
 
             try
@@ -719,17 +719,17 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                         OrderByExpression orderBy = TelerikGridHelper.Convert(command.SortDescriptors.ToList());
 
                         table = dm.GetLatestDatasetVersionTuples(datasetId, filter, orderBy, null, command.Page - 1, command.PageSize);
-                        Session["gridTotal"] = dm.RowCount(datasetId, filter);
+                        ViewData["gridTotal"] = dm.RowCount(datasetId, filter);
                     }
                     // get primarydata from other version with tuples
                     else
                     {
                         table = dm.GetDatasetVersionTuples(versionId, command.Page - 1, command.PageSize);
-                        Session["gridTotal"] = dm.GetDatasetVersionEffectiveTuples(dsv).Count;
+                        ViewData["gridTotal"] = dm.GetDatasetVersionEffectiveTuples(dsv).Count;
                     }
 
                     model = new GridModel(table);
-                    model.Total = Convert.ToInt32(Session[versionId + "gridTotal"]); // (int)Session["gridTotal"];
+                    model.Total = Convert.ToInt32(ViewData["gridTotal"]); // (int)Session["gridTotal"];
                 }
                 else
                 {
