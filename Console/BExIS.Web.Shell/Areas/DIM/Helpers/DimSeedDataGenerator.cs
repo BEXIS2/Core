@@ -253,7 +253,7 @@ namespace BExIS.Modules.Dim.UI.Helpers
                 // description(s)
                 MappingKey descriptions = null;
                 if (!keys.Any(k => k.XPath.Equals("Descriptions")))
-                    descriptions = conceptManager.CreateMappingKey("Subjects", "", "www.google.de", false, true, "data/attributes/descriptions", concept);
+                    descriptions = conceptManager.CreateMappingKey("Descriptions", "", "", false, true, "data/attributes/descriptions", concept);
 
                 if (!keys.Any(k => k.XPath.Equals("data/attributes/descriptions/lang")))
                     conceptManager.CreateMappingKey("Lang", "", "", false, false, "data/attributes/descriptions/lang", concept, descriptions);
