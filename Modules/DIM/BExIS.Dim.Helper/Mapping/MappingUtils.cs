@@ -1303,7 +1303,7 @@ namespace BExIS.Dim.Helpers.Mapping
                     {
                         var xTargetPrevList = concept.SelectNodes(cTarget.XPath);
                         var last = xTargetPrevList[xTargetPrevList.Count - 1];
-                        xTarget = concept.CreateElement(cTarget.Name);
+                        xTarget = concept.CreateElement(last.Name);
                         last.ParentNode.InsertAfter(xTarget, last);
                     }
 
@@ -1398,6 +1398,14 @@ namespace BExIS.Dim.Helpers.Mapping
 
             // get all complex mappings for the root
             var root = GetMappings(source, LinkElementType.MetadataStructure, target, LinkElementType.MappingConcept).FirstOrDefault();
+
+            if (root == null)
+            {
+                errors.Add(String.Format("no root mapping exist between {0} and {1}", sourceType.ToString(), targetType.ToString()));
+                return false;
+            }
+            
+
             var complexMappings = GetMappings(root.Id);
 
             // get all simple mappings
