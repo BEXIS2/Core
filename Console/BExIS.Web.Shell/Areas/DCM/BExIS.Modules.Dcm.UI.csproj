@@ -696,7 +696,7 @@
       <Name>BExIS.Dim.Entities</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\..\..\Modules\DIM\BExIS.Dim.Helper\BExIS.Dim.Helpers.csproj">
-      <Project>{81ef18e8-dced-4980-96f9-e99124075b82}</Project>
+      <Project>{81EF18E8-DCED-4980-96F9-E99124075B82}</Project>
       <Name>BExIS.Dim.Helpers</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\BExIS.Web.Shell.csproj">

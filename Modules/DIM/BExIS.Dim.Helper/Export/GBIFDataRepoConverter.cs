@@ -110,13 +110,18 @@ namespace BExIS.Dim.Helpers.Export
                 var concept = conceptManager.MappingConceptRepo.Get().Where(c => c.Name.Equals(_dataRepo.Name)).FirstOrDefault();
 
                 if (concept == null)
+                {
                     errors.Add("Concept not exist.");
+                    return false;
+                }
                 else
                 {
                     List<string> errorsList = new List<string>();
                     if (MappingUtils.IsMapped(metadataStructureId, LinkElementType.MetadataStructure, concept.Id, LinkElementType.MappingConcept, out errorsList) == false)
+                    {
                         errors.AddRange(errorsList);
-
+                        return false;
+                    }
 
                     // if concept is linked to a xsd, generate metadata and validaed it against the schema
                     if (!string.IsNullOrEmpty(concept.XSD))
@@ -130,7 +135,7 @@ namespace BExIS.Dim.Helpers.Export
                         helper.ValidateResourceMetadata(metadataPath, xsdPath, out metadataErrors);
 
                         errors.AddRange(metadataErrors);
-                   }
+                    }
 
                 }
 

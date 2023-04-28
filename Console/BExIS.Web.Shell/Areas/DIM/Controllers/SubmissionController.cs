@@ -180,11 +180,8 @@ namespace BExIS.Modules.Dim.UI.Controllers
                         List<string> exportNames =
                             xmlDatasetHelper.GetAllTransmissionInformation(datasetid,
                                 TransmissionType.mappingFileExport, AttributeNames.name).ToList();
-                        if (string.IsNullOrEmpty(broker.MetadataFormat) || exportNames.Contains(broker.MetadataFormat)) model.IsMetadataConvertable = true;
 
-                        // Validate
-                        model.metadataValidMessage = OutputMetadataManager.IsValideAgainstSchema(datasetid,
-                            TransmissionType.mappingFileExport, datarepo);
+                        if (string.IsNullOrEmpty(broker.MetadataFormat) || exportNames.Contains(broker.MetadataFormat)) model.IsMetadataConvertable = true;
 
                         #region primary Data
 
@@ -217,30 +214,29 @@ namespace BExIS.Modules.Dim.UI.Controllers
                                         break;
                                     }
 
-                                case "pangaea":
-                                    {
-                                        PangaeaDataRepoConverter dataRepoConverter = new PangaeaDataRepoConverter(repository);
-                                        model.IsValid = dataRepoConverter.Validate(version, out errors);
-                                        break;
+                                //case "pangaea":
+                                //    {
+                                //        PangaeaDataRepoConverter dataRepoConverter = new PangaeaDataRepoConverter(repository);
+                                //        model.IsValid = dataRepoConverter.Validate(version, out errors);
+                                //        break;
 
-                                    }
-                                case "collections":
-                                    {
-                                        GenericDataRepoConverter dataRepoConverter = new GenericDataRepoConverter(repository);
-                                        model.IsValid = dataRepoConverter.Validate(version, out errors);
-                                        break;
-                                    }
-                                case "pensoft":
-                                    {
-                                        PensoftDataRepoConverter dataRepoConverter = new PensoftDataRepoConverter(repository);
-                                        model.IsValid = dataRepoConverter.Validate(version, out errors);
-                                        break;
-                                    }
+                                //    }
+                                //case "collections":
+                                //    {
+                                //        GenericDataRepoConverter dataRepoConverter = new GenericDataRepoConverter(repository);
+                                //        model.IsValid = dataRepoConverter.Validate(version, out errors);
+                                //        break;
+                                //    }
+                                //case "pensoft":
+                                //    {
+                                //        PensoftDataRepoConverter dataRepoConverter = new PensoftDataRepoConverter(repository);
+                                //        model.IsValid = dataRepoConverter.Validate(version, out errors);
+                                //        break;
+                                //    }
                                 default:
                                     {
-                                        //default
-                                        GenericDataRepoConverter dataRepoConverter = new GenericDataRepoConverter(repository);
-                                        model.IsValid = dataRepoConverter.Validate(version, out errors);
+                                        //default - no extra validation needed
+                                        model.IsValid = true;
                                         break;
                                     }
                             }
@@ -278,6 +274,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
             using (DatasetManager dm = new DatasetManager())
             {
                 // datasetversion
+                Dataset dataset = dm.GetDataset(datasetid);
                 long version = dm.GetDatasetLatestVersion(datasetid).Id;
 
                 if (publicationManager.BrokerRepo.Get().Any(d => d.Name.ToLower().Equals(datarepo.ToLower())))
@@ -306,8 +303,11 @@ namespace BExIS.Modules.Dim.UI.Controllers
                             //model.IsMetadataConvertable = true;
                             isMetadataConvertable = true;
 
+                            // get metadata structure name
+                            string metadataStructureName = dataset.MetadataStructure.Name;
+
                             // Validate
-                            metadataValidMessage = OutputMetadataManager.IsValideAgainstSchema(datasetid, TransmissionType.mappingFileExport, datarepo);
+                            metadataValidMessage = OutputMetadataManager.IsValideAgainstSchema(datasetid, TransmissionType.mappingFileExport, metadataStructureName);
                         }
 
                         #endregion metadata
@@ -345,30 +345,29 @@ namespace BExIS.Modules.Dim.UI.Controllers
                                         break;
                                     }
 
-                                case "pangaea":
-                                    {
-                                        PangaeaDataRepoConverter dataRepoConverter = new PangaeaDataRepoConverter(repository);
-                                        isValid = dataRepoConverter.Validate(version, out errors);
-                                        break;
+                                //case "pangaea":
+                                //    {
+                                //        PangaeaDataRepoConverter dataRepoConverter = new PangaeaDataRepoConverter(repository);
+                                //        isValid = dataRepoConverter.Validate(version, out errors);
+                                //        break;
 
-                                    }
-                                case "collections":
-                                    {
-                                        GenericDataRepoConverter dataRepoConverter = new GenericDataRepoConverter(repository);
-                                        isValid = dataRepoConverter.Validate(version, out errors);
-                                        break;
-                                    }
-                                case "pensoft":
-                                    {
-                                        PensoftDataRepoConverter dataRepoConverter = new PensoftDataRepoConverter(repository);
-                                        isValid = dataRepoConverter.Validate(version, out errors);
-                                        break;
-                                    }
+                                //    }
+                                //case "collections":
+                                //    {
+                                //        GenericDataRepoConverter dataRepoConverter = new GenericDataRepoConverter(repository);
+                                //        isValid = dataRepoConverter.Validate(version, out errors);
+                                //        break;
+                                //    }
+                                //case "pensoft":
+                                //    {
+                                //        PensoftDataRepoConverter dataRepoConverter = new PensoftDataRepoConverter(repository);
+                                //        isValid = dataRepoConverter.Validate(version, out errors);
+                                //        break;
+                                //    }
                                 default:
-                                    {
-                                        //default
-                                        GenericDataRepoConverter dataRepoConverter = new GenericDataRepoConverter(repository);
-                                        isValid = dataRepoConverter.Validate(version, out errors);
+                                    { 
+                                        //default - no extra validation needed
+                                        isValid = true;
                                         break;
                                     }
                             }
