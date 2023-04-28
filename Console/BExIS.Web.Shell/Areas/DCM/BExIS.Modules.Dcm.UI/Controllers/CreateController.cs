@@ -38,6 +38,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
             ViewData["PageId"] = pageId;
             ViewData["PageScript"] = SvelteHelper.GetPageScript("DCM", pageId);
+            ViewData["PageCss"] = SvelteHelper.GetPageCss("DCM", pageId);
 
             return View();
         }

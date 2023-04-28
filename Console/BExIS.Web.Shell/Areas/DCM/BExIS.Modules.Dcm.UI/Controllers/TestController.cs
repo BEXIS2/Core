@@ -4,9 +4,7 @@ using BExIS.Dlm.Services.Data;
 using BExIS.Dlm.Services.DataStructure;
 using BExIS.Dlm.Services.MetadataStructure;
 using BExIS.Security.Services.Objects;
-using BExIS.Security.Services.Utilities;
-using BExIS.Utils.Config;
-using BExIS.Utils.Helpers;
+using BExIS.UI.Helpers;
 using BExIS.Xml.Helpers;
 using System;
 using System.Diagnostics;
@@ -20,30 +18,16 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         // GET: Test
         public ActionResult Index()
         {
-            var es = new EmailService();
-            var datasetId = 1;
-            var title = "my cool dataset";
-            es.Send(MessageHelper.GetCreateDatasetHeader(datasetId, "Dataset"),
-                MessageHelper.GetCreateDatasetMessage(datasetId, title, "David Schöne", "Dataset"),
-                GeneralSettings.SystemEmail
-                );
+            string pageId = "test";
+            string module = "DCM";
 
-            string name = "test";
-            var x = RegExHelper.IsFilenameValid(name);
+            ViewData["PageId"] = pageId;
+            ViewData["PageScript"] = SvelteHelper.GetPageScript(module, pageId);
+            ViewData["PageCss"] = SvelteHelper.GetPageCss(module, pageId);
 
-            name = "test | filename";
-
-            x = RegExHelper.IsFilenameValid(name);
-
-            name = RegExHelper.GetCleanedFilename(name);
-
-            name = "des<>";
-            x = RegExHelper.IsFilenameValid(name);
-            name = RegExHelper.GetCleanedFilename(name);
-
-            name = "123\"";
-            x = RegExHelper.IsFilenameValid(name);
-            name = RegExHelper.GetCleanedFilename(name);
+            ViewData["LayoutScript"] = SvelteHelper.GetLayoutScript(module);
+            ViewData["LayoutCss"] = SvelteHelper.GetLayoutCss(module);
+            ViewData["LayoutSvelteScript"] = SvelteHelper.GetLayoutSvelteScript(module);
 
             return View();
         }

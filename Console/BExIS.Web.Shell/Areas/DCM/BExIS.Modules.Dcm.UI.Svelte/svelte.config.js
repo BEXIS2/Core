@@ -12,10 +12,11 @@ const config = {
 
 	kit: {
 		adapter: adapter({
-			pages:'../BExIS.Modules.Dcm.UI/Scripts/svelte',
-			assets:"../BExIS.Modules.Dcm.UI/Scripts/svelte",
+			pages:'../BExIS.Modules.Dcm.UI/Scripts/svelte', // ../BExIS.Modules.Dcm.UI/Scripts/svelte
+			assets:'../BExIS.Modules.Dcm.UI/Scripts/svelte',// ../BExIS.Modules.Dcm.UI/Scripts/svelte
 			fallback:null,
-			precompress:false,
+			precompress:true,
+			preprocess:true,
 			strict:false
 		}
 		)

@@ -1,44 +1,48 @@
 {
-	"name": "bexis.modules.dcm.ui.svelte",
+	"name": "bexis-ui-template",
 	"version": "0.0.1",
 	"private": true,
 	"scripts": {
 		"dev": "vite dev",
-		"build": "vite build --watch",
+		"build": "vite build ",
 		"preview": "vite preview",
 		"test": "playwright test",
 		"check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
 		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
+		"test:unit": "vitest",
 		"lint": "prettier --plugin-search-dir . --check . && eslint .",
 		"format": "prettier --plugin-search-dir . --write .",
-		"install bexis2 ui core": "npm install --save-dev C:\\Users\\admin\\AppData\\Roaming\\npm\\node_modules\\@bexis2\\bexis2-core-ui\\"
+		"postinstall": "patch-package"
 	},
 	"devDependencies": {
-		"@bexis2/BEXIS2-core-ui": "file:../../../../../../_Svelte Workspace/bexis2-core-ui",
 		"@playwright/test": "^1.28.1",
-		"@sveltejs/adapter-auto": "^1.0.0-next.90",
-		"@sveltejs/kit": "^1.0.0-next.587",
+		"@skeletonlabs/skeleton": "^1.0.0",
+		"@sveltejs/adapter-auto": "^2.0.0",
+		"@sveltejs/kit": "^1.5.0",
+		"@tailwindcss/forms": "^0.5.3",
+		"@tailwindcss/line-clamp": "^0.4.2",
+		"@tailwindcss/typography": "^0.5.9",
 		"@typescript-eslint/eslint-plugin": "^5.45.0",
 		"@typescript-eslint/parser": "^5.45.0",
+		"autoprefixer": "^10.4.14",
 		"eslint": "^8.28.0",
 		"eslint-config-prettier": "^8.5.0",
 		"eslint-plugin-svelte3": "^4.0.0",
+		"postcss": "^8.4.21",
 		"prettier": "^2.8.0",
 		"prettier-plugin-svelte": "^2.8.1",
 		"svelte": "^3.54.0",
-		"svelte-check": "^2.9.2",
+		"svelte-check": "^3.0.1",
+		"tailwindcss": "^3.2.7",
 		"tslib": "^2.4.1",
 		"typescript": "^4.9.3",
-		"vite": "^4.0.0"
+		"vite": "^4.0.0",
+		"vitest": "^0.25.3"
 	},
 	"type": "module",
 	"dependencies": {
-		"@fortawesome/free-regular-svg-icons": "^6.2.1",
-		"@fortawesome/free-solid-svg-icons": "^6.2.1",
-		"@sveltejs/adapter-static": "^1.0.0-next.50",
-		"svelte-fa": "^3.0.3",
-		"svelte-select": "^5.0.0",
-		"sveltestrap": "^5.10.0",
-		"vest": "^4.6.8"
+		"@bexis2/bexis2-core-ui": "^0.0.3",
+		"@sveltejs/adapter-static": "^2.0.1",
+		"patch-package": "^6.5.1"
 	}
 }
