@@ -14,6 +14,317 @@ ALTER TABLE public.mappingkeys
 
 
 -- insert DATA
+-- DOI
+
+INSERT INTO public.mappingconcepts(
+	version, name, description, url, xsd) 
+	SELECT 1,'DataCiteDoi', 'The concept is needed to create a DIO via DataCite.', 'https://schema.datacite.org/meta/kernel-4.4/', ''
+	WHERE NOT EXISTS (SELECT * FROM public.mappingconcepts WHERE name='DataCiteDoi');
+
+-- Type
+INSERT INTO public.mappingkeys(
+	name, description, url, optional, iscomplex, xpath, concept, parentref)
+SELECT 'Type', 
+'',
+'',
+false,
+false,
+'data/type',
+(SELECT id FROM public.mappingconcepts WHERE name='DataCiteDoi'),
+null
+WHERE NOT EXISTS (SELECT * FROM public.mappingkeys WHERE name='Type' and concept = (SELECT id FROM public.mappingconcepts WHERE name='DataCiteDoi'));
+
+-- Event
+INSERT INTO public.mappingkeys(
+	name, description, url, optional, iscomplex, xpath, concept, parentref)
+SELECT 'Event', 
+'',
+'',
+false,
+false,
+'data/attributes/event',
+(SELECT id FROM public.mappingconcepts WHERE name='DataCiteDoi'),
+null
+WHERE NOT EXISTS (SELECT * FROM public.mappingkeys WHERE name='Event' and concept = (SELECT id FROM public.mappingconcepts WHERE name='DataCiteDoi'));
+
+-- PublicationYear
+INSERT INTO public.mappingkeys(
+	name, description, url, optional, iscomplex, xpath, concept, parentref)
+SELECT 'PublicationYear', 
+'',
+'',
+false,
+false,
+'data/attributes/publicationYear',
+(SELECT id FROM public.mappingconcepts WHERE name='DataCiteDoi'),
+null
+WHERE NOT EXISTS (SELECT * FROM public.mappingkeys WHERE name='PublicationYear' and concept = (SELECT id FROM public.mappingconcepts WHERE name='DataCiteDoi'));
+
+-- Publisher
+INSERT INTO public.mappingkeys(
+	name, description, url, optional, iscomplex, xpath, concept, parentref)
+SELECT 'Publisher', 
+'',
+'',
+false,
+false,
+'data/attributes/publisher',
+(SELECT id FROM public.mappingconcepts WHERE name='DataCiteDoi'),
+null
+WHERE NOT EXISTS (SELECT * FROM public.mappingkeys WHERE name='Publisher' and concept = (SELECT id FROM public.mappingconcepts WHERE name='DataCiteDoi'));
+
+
+--Titles
+INSERT INTO public.mappingkeys(
+	name, description, url, optional, iscomplex, xpath, concept, parentref)
+SELECT 'Titles', 
+'',
+'',
+false,
+true,
+'data/attributes/titles',
+(SELECT id FROM public.mappingconcepts WHERE name='DataCiteDoi'),
+null
+WHERE NOT EXISTS (SELECT * FROM public.mappingkeys WHERE name='Titles' and concept = (SELECT id FROM public.mappingconcepts WHERE name='DataCiteDoi'));
+
+-- Titles/Title
+INSERT INTO public.mappingkeys(
+	name, description, url, optional, iscomplex, xpath, concept, parentref)
+SELECT 'Title', 
+'',
+'',
+false,
+false,
+'data/attributes/titles/title',
+(SELECT id FROM public.mappingconcepts WHERE name='DataCiteDoi'),
+(SELECT id FROM public.mappingkeys WHERE name='Titles'and concept = (SELECT id FROM public.mappingconcepts WHERE name='DataCiteDoi'))
+WHERE NOT EXISTS (SELECT * FROM public.mappingkeys WHERE name='Title' and parentref =  (SELECT id FROM public.mappingkeys WHERE name='Titles'and concept = (SELECT id FROM public.mappingconcepts WHERE name='DataCiteDoi')));
+
+-- Titles/Lang
+INSERT INTO public.mappingkeys(
+	name, description, url, optional, iscomplex, xpath, concept, parentref)
+SELECT 'Lang', 
+'',
+'',
+false,
+false,
+'data/attributes/titles/lang',
+(SELECT id FROM public.mappingconcepts WHERE name='DataCiteDoi'),
+(SELECT id FROM public.mappingkeys WHERE name='Titles'and concept = (SELECT id FROM public.mappingconcepts WHERE name='DataCiteDoi'))
+WHERE NOT EXISTS (SELECT * FROM public.mappingkeys WHERE name='Lang' and parentref =  (SELECT id FROM public.mappingkeys WHERE name='Titles'and concept = (SELECT id FROM public.mappingconcepts WHERE name='DataCiteDoi')));
+
+-- Titles/TitleType
+INSERT INTO public.mappingkeys(
+	name, description, url, optional, iscomplex, xpath, concept, parentref)
+SELECT 'TitleType', 
+'',
+'',
+false,
+false,
+'data/attributes/titles/titleType',
+(SELECT id FROM public.mappingconcepts WHERE name='DataCiteDoi'),
+(SELECT id FROM public.mappingkeys WHERE name='Titles'and concept = (SELECT id FROM public.mappingconcepts WHERE name='DataCiteDoi'))
+WHERE NOT EXISTS (SELECT * FROM public.mappingkeys WHERE name='TitleType' and parentref =  (SELECT id FROM public.mappingkeys WHERE name='Titles'and concept = (SELECT id FROM public.mappingconcepts WHERE name='DataCiteDoi')));
+
+--Creators
+INSERT INTO public.mappingkeys(
+	name, description, url, optional, iscomplex, xpath, concept, parentref)
+SELECT 'Creators', 
+'',
+'',
+false,
+true,
+'data/attributes/creators',
+(SELECT id FROM public.mappingconcepts WHERE name='DataCiteDoi'),
+null
+WHERE NOT EXISTS (SELECT * FROM public.mappingkeys WHERE name='Creators' and concept = (SELECT id FROM public.mappingconcepts WHERE name='DataCiteDoi'));
+
+-- Creators/FullName
+INSERT INTO public.mappingkeys(
+	name, description, url, optional, iscomplex, xpath, concept, parentref)
+SELECT 'FullName', 
+'',
+'',
+false,
+false,
+'data/attributes/creators/name',
+(SELECT id FROM public.mappingconcepts WHERE name='DataCiteDoi'),
+(SELECT id FROM public.mappingkeys WHERE name='Creators'and concept = (SELECT id FROM public.mappingconcepts WHERE name='DataCiteDoi'))
+WHERE NOT EXISTS (SELECT * FROM public.mappingkeys WHERE name='FullName' and parentref =  (SELECT id FROM public.mappingkeys WHERE name='Creators'and concept = (SELECT id FROM public.mappingconcepts WHERE name='DataCiteDoi')));
+
+-- Creators/GivenName
+INSERT INTO public.mappingkeys(
+	name, description, url, optional, iscomplex, xpath, concept, parentref)
+SELECT 'GivenName', 
+'',
+'',
+false,
+false,
+'data/attributes/creators/givenName',
+(SELECT id FROM public.mappingconcepts WHERE name='DataCiteDoi'),
+(SELECT id FROM public.mappingkeys WHERE name='Creators'and concept = (SELECT id FROM public.mappingconcepts WHERE name='DataCiteDoi'))
+WHERE NOT EXISTS (SELECT * FROM public.mappingkeys WHERE name='GivenName' and parentref =  (SELECT id FROM public.mappingkeys WHERE name='Creators'and concept = (SELECT id FROM public.mappingconcepts WHERE name='DataCiteDoi')));
+
+-- Creators/FamilyName
+INSERT INTO public.mappingkeys(
+	name, description, url, optional, iscomplex, xpath, concept, parentref)
+SELECT 'FamilyName', 
+'',
+'',
+false,
+false,
+'data/attributes/creators/familyName',
+(SELECT id FROM public.mappingconcepts WHERE name='DataCiteDoi'),
+(SELECT id FROM public.mappingkeys WHERE name='Creators'and concept = (SELECT id FROM public.mappingconcepts WHERE name='DataCiteDoi'))
+WHERE NOT EXISTS (SELECT * FROM public.mappingkeys WHERE name='FamilyName' and parentref =  (SELECT id FROM public.mappingkeys WHERE name='Creators'and concept = (SELECT id FROM public.mappingconcepts WHERE name='DataCiteDoi')));
+
+-- Creators/NameType
+INSERT INTO public.mappingkeys(
+	name, description, url, optional, iscomplex, xpath, concept, parentref)
+SELECT 'NameType', 
+'',
+'',
+false,
+false,
+'data/attributes/creators/nameType',
+(SELECT id FROM public.mappingconcepts WHERE name='DataCiteDoi'),
+(SELECT id FROM public.mappingkeys WHERE name='Creators'and concept = (SELECT id FROM public.mappingconcepts WHERE name='DataCiteDoi'))
+WHERE NOT EXISTS (SELECT * FROM public.mappingkeys WHERE name='NameType' and parentref =  (SELECT id FROM public.mappingkeys WHERE name='Creators'and concept = (SELECT id FROM public.mappingconcepts WHERE name='DataCiteDoi')));
+
+--Subjects
+INSERT INTO public.mappingkeys(
+	name, description, url, optional, iscomplex, xpath, concept, parentref)
+SELECT 'Subjects', 
+'',
+'',
+false,
+true,
+'data/attributes/subjects',
+(SELECT id FROM public.mappingconcepts WHERE name='DataCiteDoi'),
+null
+WHERE NOT EXISTS (SELECT * FROM public.mappingkeys WHERE name='Subjects' and concept = (SELECT id FROM public.mappingconcepts WHERE name='DataCiteDoi'));
+
+-- Subjects/Subject
+INSERT INTO public.mappingkeys(
+	name, description, url, optional, iscomplex, xpath, concept, parentref)
+SELECT 'Subject', 
+'',
+'',
+false,
+false,
+'data/attributes/subjects/subject',
+(SELECT id FROM public.mappingconcepts WHERE name='DataCiteDoi'),
+(SELECT id FROM public.mappingkeys WHERE name='Subjects'and concept = (SELECT id FROM public.mappingconcepts WHERE name='DataCiteDoi'))
+WHERE NOT EXISTS (SELECT * FROM public.mappingkeys WHERE name='Subject' and parentref =  (SELECT id FROM public.mappingkeys WHERE name='Subjects'and concept = (SELECT id FROM public.mappingconcepts WHERE name='DataCiteDoi')));
+
+-- Subjects/SubjectScheme
+INSERT INTO public.mappingkeys(
+	name, description, url, optional, iscomplex, xpath, concept, parentref)
+SELECT 'SubjectScheme', 
+'',
+'',
+false,
+false,
+'data/attributes/subjects/subjectScheme',
+(SELECT id FROM public.mappingconcepts WHERE name='DataCiteDoi'),
+(SELECT id FROM public.mappingkeys WHERE name='Subjects'and concept = (SELECT id FROM public.mappingconcepts WHERE name='DataCiteDoi'))
+WHERE NOT EXISTS (SELECT * FROM public.mappingkeys WHERE name='SubjectScheme' and parentref =  (SELECT id FROM public.mappingkeys WHERE name='Subjects'and concept = (SELECT id FROM public.mappingconcepts WHERE name='DataCiteDoi')));
+
+-- Subjects/SchemeUri
+INSERT INTO public.mappingkeys(
+	name, description, url, optional, iscomplex, xpath, concept, parentref)
+SELECT 'SchemeUri', 
+'',
+'',
+false,
+false,
+'data/attributes/subjects/schemeUri',
+(SELECT id FROM public.mappingconcepts WHERE name='DataCiteDoi'),
+(SELECT id FROM public.mappingkeys WHERE name='Subjects'and concept = (SELECT id FROM public.mappingconcepts WHERE name='DataCiteDoi'))
+WHERE NOT EXISTS (SELECT * FROM public.mappingkeys WHERE name='SchemeUri' and parentref =  (SELECT id FROM public.mappingkeys WHERE name='Subjects'and concept = (SELECT id FROM public.mappingconcepts WHERE name='DataCiteDoi')));
+
+
+-- Subjects/ValueUri
+INSERT INTO public.mappingkeys(
+	name, description, url, optional, iscomplex, xpath, concept, parentref)
+SELECT 'ValueUri', 
+'',
+'',
+false,
+false,
+'data/attributes/subjects/valueUri',
+(SELECT id FROM public.mappingconcepts WHERE name='DataCiteDoi'),
+(SELECT id FROM public.mappingkeys WHERE name='Subjects'and concept = (SELECT id FROM public.mappingconcepts WHERE name='DataCiteDoi'))
+WHERE NOT EXISTS (SELECT * FROM public.mappingkeys WHERE name='ValueUri' and parentref =  (SELECT id FROM public.mappingkeys WHERE name='Subjects'and concept = (SELECT id FROM public.mappingconcepts WHERE name='DataCiteDoi')));
+
+-- Subjects/Lang
+INSERT INTO public.mappingkeys(
+	name, description, url, optional, iscomplex, xpath, concept, parentref)
+SELECT 'Lang', 
+'',
+'',
+false,
+false,
+'data/attributes/subjects/lang',
+(SELECT id FROM public.mappingconcepts WHERE name='DataCiteDoi'),
+(SELECT id FROM public.mappingkeys WHERE name='Subjects'and concept = (SELECT id FROM public.mappingconcepts WHERE name='DataCiteDoi'))
+WHERE NOT EXISTS (SELECT * FROM public.mappingkeys WHERE name='Lang' and parentref =  (SELECT id FROM public.mappingkeys WHERE name='Subjects'and concept = (SELECT id FROM public.mappingconcepts WHERE name='DataCiteDoi')));
+
+--Descriptions
+INSERT INTO public.mappingkeys(
+	name, description, url, optional, iscomplex, xpath, concept, parentref)
+SELECT 'Descriptions', 
+'',
+'',
+false,
+true,
+'data/attributes/descriptions',
+(SELECT id FROM public.mappingconcepts WHERE name='DataCiteDoi'),
+null
+WHERE NOT EXISTS (SELECT * FROM public.mappingkeys WHERE name='Descriptions' and concept = (SELECT id FROM public.mappingconcepts WHERE name='DataCiteDoi'));
+
+-- Descriptions/Lang
+INSERT INTO public.mappingkeys(
+	name, description, url, optional, iscomplex, xpath, concept, parentref)
+SELECT 'Lang', 
+'',
+'',
+false,
+false,
+'data/attributes/descriptions/lang',
+(SELECT id FROM public.mappingconcepts WHERE name='DataCiteDoi'),
+(SELECT id FROM public.mappingkeys WHERE name='Descriptions'and concept = (SELECT id FROM public.mappingconcepts WHERE name='DataCiteDoi'))
+WHERE NOT EXISTS (SELECT * FROM public.mappingkeys WHERE name='Lang' and parentref =  (SELECT id FROM public.mappingkeys WHERE name='Descriptions'and concept = (SELECT id FROM public.mappingconcepts WHERE name='DataCiteDoi')));
+
+-- Descriptions/Description
+INSERT INTO public.mappingkeys(
+	name, description, url, optional, iscomplex, xpath, concept, parentref)
+SELECT 'Description', 
+'',
+'',
+false,
+false,
+'data/attributes/descriptions/description',
+(SELECT id FROM public.mappingconcepts WHERE name='DataCiteDoi'),
+(SELECT id FROM public.mappingkeys WHERE name='Descriptions'and concept = (SELECT id FROM public.mappingconcepts WHERE name='DataCiteDoi'))
+WHERE NOT EXISTS (SELECT * FROM public.mappingkeys WHERE name='Description' and parentref =  (SELECT id FROM public.mappingkeys WHERE name='Descriptions'and concept = (SELECT id FROM public.mappingconcepts WHERE name='DataCiteDoi')));
+
+-- Descriptions/DescriptionType
+INSERT INTO public.mappingkeys(
+	name, description, url, optional, iscomplex, xpath, concept, parentref)
+SELECT 'DescriptionType', 
+'',
+'',
+false,
+false,
+'data/attributes/descriptions/descriptionType',
+(SELECT id FROM public.mappingconcepts WHERE name='DataCiteDoi'),
+(SELECT id FROM public.mappingkeys WHERE name='Descriptions'and concept = (SELECT id FROM public.mappingconcepts WHERE name='DataCiteDoi'))
+WHERE NOT EXISTS (SELECT * FROM public.mappingkeys WHERE name='DescriptionType' and parentref =  (SELECT id FROM public.mappingkeys WHERE name='Descriptions'and concept = (SELECT id FROM public.mappingconcepts WHERE name='DataCiteDoi')));
+
+
+-- END DOI
+
 -- GBIF
 
 INSERT INTO public.mappingconcepts(
@@ -376,6 +687,8 @@ false,
 WHERE NOT EXISTS (SELECT * FROM public.mappingkeys WHERE name='surName' and parentref =  (SELECT id FROM public.mappingkeys WHERE name='contact' and concept = (SELECT id FROM public.mappingconcepts WHERE name='GBIF')));
 
 -- END GBIF
+
+
 
 
 -- END insert DATA
