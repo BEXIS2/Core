@@ -183,7 +183,7 @@
       <Name>BExIS.Web.Shell</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\App\BExIS.App.Testing\BExIS.App.Testing.csproj">
-      <Project>{0FCF7DE1-E8F2-484C-8638-EF759B11D8A2}</Project>
+      <Project>{0fcf7de1-e8f2-484c-8638-ef759b11d8a2}</Project>
       <Name>BExIS.App.Testing</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\DLM\BExIS.Dlm.Entities\BExIS.Dlm.Entities.csproj">
@@ -195,7 +195,7 @@
       <Name>BExIS.Dlm.Services</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\JSON\BEXIS.JSON.Helpers\BEXIS.JSON.Helpers.csproj">
-      <Project>{C4D68AC5-84FA-4A97-9E64-9F11623DADC9}</Project>
+      <Project>{c4d68ac5-84fa-4a97-9e64-9f11623dadc9}</Project>
       <Name>BEXIS.JSON.Helpers</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\Utils\BExIS.Utils.Config\BExIS.Utils.Config.csproj">
