@@ -77,6 +77,34 @@ namespace BExIS.Utils.Data.MetadataStructure
             }
         }
 
+        public ICollection<MetadataParameterUsage> GetParameters(long usageId, Type type)
+        {
+            using (IUnitOfWork unitOfWork = this.GetUnitOfWork())
+            {
+
+                if (type.Equals(typeof(MetadataPackageUsage)))
+                {
+                    MetadataPackageUsage mpu = unitOfWork.GetReadOnlyRepository<MetadataPackageUsage>().Get(usageId);
+                }
+
+                if (type.Equals(typeof(MetadataAttributeUsage)))
+                {
+                    MetadataAttributeUsage mau = unitOfWork.GetReadOnlyRepository<MetadataAttributeUsage>().Get(usageId);
+                    return mau.MetadataAttribute.MetadataParameterUsages;
+                    
+                }
+
+                if (type.Equals(typeof(MetadataNestedAttributeUsage)))
+                {
+                    MetadataNestedAttributeUsage mnau = unitOfWork.GetReadOnlyRepository<MetadataNestedAttributeUsage>().Get(usageId);
+                    return mnau.Member.MetadataParameterUsages;
+
+                }
+
+                return null;
+            }
+        }
+
         public List<BaseUsage> GetCompoundChildrens(long usageId, Type type)
         {
             using (IUnitOfWork unitOfWork = this.GetUnitOfWork())

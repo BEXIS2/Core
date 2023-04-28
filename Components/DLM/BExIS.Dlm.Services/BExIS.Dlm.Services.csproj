@@ -148,6 +148,7 @@
     <Compile Include="DataStructure\AggregateFunctionManager.cs" />
     <Compile Include="DataStructure\ClassifierManager.cs" />
     <Compile Include="Data\DataTupleIterator.cs" />
+    <Compile Include="Helpers\ExtendedPropertyHelper.cs" />
     <Compile Include="Data\EntityTemplateManager.cs" />
     <Compile Include="Helpers\ConstraintHelper.cs" />
     <Compile Include="DataStructure\DataStructureManager.cs" />
@@ -163,6 +164,7 @@
     <Compile Include="MetadataStructure\MetadataAttributeManager.cs" />
     <Compile Include="MetadataStructure\MetadataStructureManager.cs" />
     <Compile Include="Party\PartyManager.cs" />
+    <Compile Include="Party\PartyRelationshipManager.cs" />
     <Compile Include="Party\PartyRelationshipTypeManager.cs" />
     <Compile Include="Party\PartyTypeManager.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

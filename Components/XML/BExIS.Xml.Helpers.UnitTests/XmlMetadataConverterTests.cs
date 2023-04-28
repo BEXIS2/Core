@@ -1,5 +1,6 @@
 ﻿using BExIS.App.Testing;
 using BExIS.Utils.Config;
+using BExIS.Xml.Helpers.Mapping;
 using BEXIS.JSON.Helpers;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -305,5 +306,33 @@ namespace BExIS.Xml.Helpers.UnitTests
             Assert.That(errors.Count, Is.EqualTo(4), "The number of errors should be 4");
 
         }
+
+        //[Test()]
+        //public void ConvertTo_XmlToXml_returnXml()
+        //{
+        //    string path = AppDomain.CurrentDomain.BaseDirectory;
+        //    string dic = Path.Combine(path, "App_Data/gbif/");
+        //    string xsdPath = Path.Combine(path, dic, "eml.xsd");
+        //    string internalXmlPath = Path.Combine(path, dic, "internalConcept.xml");
+        //    string outputPath = Path.Combine(path, dic, "metadata.xml");
+
+        //    // arrange
+            
+        //    XmlDocument internalXml = new XmlDocument();
+        //    internalXml.Load(internalXmlPath);
+
+        //    XmlMetadataConverter converter = new XmlMetadataConverter();
+
+        //    // act
+        //    var output = converter.ConvertTo(internalXml, xsdPath);
+
+
+        //    // assert
+
+
+
+        //}
+
+
     }
 }

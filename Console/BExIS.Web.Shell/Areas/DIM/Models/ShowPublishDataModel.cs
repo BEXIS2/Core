@@ -70,14 +70,19 @@ namespace BExIS.Modules.Dim.UI.Models
         public string metadataValidMessage { get; set; }
         public bool IsDataConvertable { get; set; }
 
+        public bool IsValid { get; set; }
+        public List<string> Errors { get; set; }
+
         public DataRepoRequirentModel()
         {
             IsMetadataConvertable = false;
             metadataValidMessage = "";
             IsDataConvertable = false;
+            IsValid = false;
             DatasetId = 0;
             DatasetVersionId = 0;
             Exist = false;
+            Errors = new List<string>();
         }
     }
 }

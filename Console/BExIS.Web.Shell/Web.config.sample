@@ -22,7 +22,7 @@
 		<add key="UseSchemaInDatabaseGeneration" value="False" />
 		<add key="ThrowErrorWhenParialContentNotFound" value="False" />
 		<add key="ApplicationName" value="{APPLICATIONNAME}" />
-		<add key="ApplicationVersion" value="2.16" />
+		<add key="ApplicationVersion" value="2.18" />
 		<add key="SessionWarningDelaySecond" value="30" />
 		<!-- Keep it as false, there are some test data in the database-->
 		<add key="CreateDatabase" value="false" />
@@ -122,10 +122,12 @@
 	</system.web>
 	<system.webServer>
 		<modules runAllManagedModulesForAllRequests="true">
+			<remove name="ExceptionlessModule" />
 			<remove name="UnityPerRequestHttpModule" />
 			<remove name="WebDAVModule" />
 			<add name="UnityPerRequestHttpModule" type="Vaiona.IoC.Unity.UnityPerRequestHttpModule, Vaiona.IoC" preCondition="managedHandler" />
 			<add name="Glimpse" type="Glimpse.AspNet.HttpModule, Glimpse.AspNet" preCondition="integratedMode" />
+			<add name="ExceptionlessModule" type="Exceptionless.Mvc.ExceptionlessModule, Exceptionless.Mvc" />
 		</modules>
 		<security>
 			<requestFiltering>

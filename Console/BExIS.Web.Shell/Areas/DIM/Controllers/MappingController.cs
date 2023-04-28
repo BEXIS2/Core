@@ -3,6 +3,8 @@ using BExIS.Dim.Helpers.Mapping;
 using BExIS.Dim.Services;
 using BExIS.Modules.Dim.UI.Helper;
 using BExIS.Modules.Dim.UI.Models.Mapping;
+using BExIS.Xml.Helpers.Mapping;
+using BExIS.Xml.Models.Mapping;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,6 +14,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
 {
     public class MappingController : Controller
     {
+
         // GET: DIM/Mapping
         public ActionResult Index(long sourceId = 1, long targetId = 0, LinkElementType type = LinkElementType.System)
         {
@@ -37,6 +40,12 @@ namespace BExIS.Modules.Dim.UI.Controllers
                             model.SelectionList = MappingHelper.LoadSelectionList();
                             break;
                         }
+                    case LinkElementType.MappingConcept:
+                        {
+                            model.Target = MappingHelper.LoadMappingConcept(targetId, LinkElementPostion.Target, mappingManager);
+                            model.SelectionList = MappingHelper.LoadSelectionList();
+                            break;
+                        }
                 }
 
                 if (model.Source != null && model.Target != null)
@@ -58,6 +67,14 @@ namespace BExIS.Modules.Dim.UI.Controllers
                         }
 
                     }
+
+
+                    // in case of the link element has no xpath because of a older version of bexis 2
+                    // every mapping will be check
+                    // if a link element has no xpath get it from the generated models and update them for the furture
+
+                    updateXPaths(model.ParentMappings, model.Source, model.Target);
+
                 }
 
                 return View(model);
@@ -65,7 +82,59 @@ namespace BExIS.Modules.Dim.UI.Controllers
 
         }
 
+        private void updateXPaths(List<ComplexMappingModel> mappings, LinkElementRootModel source, LinkElementRootModel target)
+        {
+            foreach (var mapping in mappings)
+            {
+                var sourceElement = source.LinkElements.FirstOrDefault(s => s.ElementId == mapping.Source.ElementId && s.Type == mapping.Source.Type);
+                if (sourceElement != null)mapping.Source.XPath = sourceElement.XPath;
+                var targetElement = target.LinkElements.FirstOrDefault(t => t.ElementId == mapping.Target.ElementId && t.Type == mapping.Target.Type);
+                if (targetElement != null) mapping.Target.XPath = targetElement.XPath;
+
+                if (mapping.SimpleMappings.Any())
+                {
+                    foreach (var simpleMapping in mapping.SimpleMappings)
+                    {
+                        var sourceSimpleElement = source.LinkElements.FirstOrDefault(s => s.ElementId == simpleMapping.Source.ElementId && s.Complexity == LinkElementComplexity.Simple);
+                        if (sourceSimpleElement != null) simpleMapping.Source.XPath = sourceSimpleElement.XPath;
+                        var targetSimpleElement = target.LinkElements.FirstOrDefault(t => t.ElementId == simpleMapping.Target.ElementId && t.Complexity == LinkElementComplexity.Simple);
+                        if (targetSimpleElement != null) simpleMapping.Target.XPath = targetSimpleElement.XPath;
+                    }
+                }
+
+                foreach (var sourceChildren in mapping.Source.Children)
+                { 
+                    var sc = source.LinkElements.FirstOrDefault(s => s.ElementId == sourceChildren.ElementId && s.Complexity == LinkElementComplexity.Simple);
+                    if(sc!=null) sourceChildren.XPath = sc.XPath;
+                }
+
+                foreach (var targetChildren in mapping.Target.Children)
+                {
+                    var tc = target.LinkElements.FirstOrDefault(s => s.ElementId == targetChildren.ElementId && s.Complexity == LinkElementComplexity.Simple);
+                    if (tc != null) targetChildren.XPath = tc.XPath;
+                }
+            }
+        }
+
         public ActionResult Mapping(long sourceId = 1, long targetId = 0,
+            LinkElementType sourceType = LinkElementType.System, LinkElementType targetType = LinkElementType.System,
+            LinkElementPostion position = LinkElementPostion.Target)
+        {
+            var model = generateModel(sourceId, targetId, sourceType, targetType, position);
+
+            return View("Index", model);
+        }
+
+        //public ActionResult Switch(long sourceId = 1, long targetId = 0,
+        //    LinkElementType sourceType = LinkElementType.System, LinkElementType targetType = LinkElementType.System,
+        //    LinkElementPostion position = LinkElementPostion.Target)
+        //{
+        //    var model = generateModel(targetId,sourceId, targetType, sourceType, position);
+
+        //    return PartialView("Index", model);
+        //}
+
+        private MappingMainModel generateModel(long sourceId = 1, long targetId = 0,
             LinkElementType sourceType = LinkElementType.System, LinkElementType targetType = LinkElementType.System,
             LinkElementPostion position = LinkElementPostion.Target)
         {
@@ -95,6 +164,12 @@ namespace BExIS.Modules.Dim.UI.Controllers
                             if (!model.SelectionList.Any()) model.SelectionList = MappingHelper.LoadSelectionList();
                             break;
                         }
+                    case LinkElementType.MappingConcept:
+                        {
+                            model.Source = MappingHelper.LoadMappingConcept(sourceId, LinkElementPostion.Source, mappingManager);
+                            if (!model.SelectionList.Any()) model.SelectionList = MappingHelper.LoadSelectionList();
+                            break;
+                        }
                 }
 
                 #endregion
@@ -111,6 +186,12 @@ namespace BExIS.Modules.Dim.UI.Controllers
                     case LinkElementType.MetadataStructure:
                         {
                             model.Target = MappingHelper.LoadFromMetadataStructure(targetId, LinkElementPostion.Target, mappingManager);
+                            if (!model.SelectionList.Any()) model.SelectionList = MappingHelper.LoadSelectionList();
+                            break;
+                        }
+                    case LinkElementType.MappingConcept:
+                        {
+                            model.Target = MappingHelper.LoadMappingConcept(targetId, LinkElementPostion.Target, mappingManager);
                             if (!model.SelectionList.Any()) model.SelectionList = MappingHelper.LoadSelectionList();
                             break;
                         }
@@ -137,27 +218,13 @@ namespace BExIS.Modules.Dim.UI.Controllers
                     }
                 }
 
-                return View("Index", model);
+                return model;
+               
             }
             finally
             {
                 mappingManager.Dispose();
             }
-        }
-
-        public ActionResult Switch(long sourceId = 1, long targetId = 0,
-            LinkElementType sourceType = LinkElementType.System, LinkElementType targetType = LinkElementType.System,
-            LinkElementPostion position = LinkElementPostion.Target)
-        {
-
-            return RedirectToAction("Mapping", new
-            {
-                sourceId = targetId,
-                targetId = sourceId,
-                sourceType = targetType,
-                targetType = sourceType,
-                position = position
-            });
         }
 
         public ActionResult ReloadTarget(long sourceId = 1, long targetId = 0, LinkElementType sourceType = LinkElementType.System, LinkElementType targetType = LinkElementType.System, LinkElementPostion position = LinkElementPostion.Target)
@@ -183,6 +250,11 @@ namespace BExIS.Modules.Dim.UI.Controllers
                     case LinkElementType.MetadataStructure:
                         {
                             model = MappingHelper.LoadFromMetadataStructure(id, position, mappingManager);
+                            break;
+                        }
+                    case LinkElementType.MappingConcept:
+                        {
+                            model = MappingHelper.LoadMappingConcept(id, position, mappingManager);
                             break;
                         }
                 }
@@ -217,7 +289,12 @@ namespace BExIS.Modules.Dim.UI.Controllers
                         }
                     case LinkElementType.MetadataStructure:
                         {
-                            source = MappingHelper.LoadFromMetadataStructure(targetId, LinkElementPostion.Source, mappingManager);
+                            source = MappingHelper.LoadFromMetadataStructure(sourceId, LinkElementPostion.Source, mappingManager);
+                            break;
+                        }
+                    case LinkElementType.MappingConcept:
+                        {
+                            source = MappingHelper.LoadMappingConcept(sourceId, LinkElementPostion.Source, mappingManager);
                             break;
                         }
                 }
@@ -234,6 +311,11 @@ namespace BExIS.Modules.Dim.UI.Controllers
                     case LinkElementType.MetadataStructure:
                         {
                             target = MappingHelper.LoadFromMetadataStructure(targetId, LinkElementPostion.Target, mappingManager);
+                            break;
+                        }
+                    case LinkElementType.MappingConcept:
+                        {
+                            target = MappingHelper.LoadMappingConcept(targetId, position, mappingManager);
                             break;
                         }
                 }
@@ -259,6 +341,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
                     }
                 }
 
+                updateXPaths(model, source, target);
 
                 return PartialView("Mappings", model);
             }
@@ -275,7 +358,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
             return PartialView("MappingLinkElement", linkElementModel);
         }
 
-        public ActionResult SaveMapping(ComplexMappingModel model)
+        public ActionResult SaveMapping(ComplexMappingModel model, bool both=false)
         {
 
             MappingManager mappingManager = new MappingManager();
@@ -294,6 +377,9 @@ namespace BExIS.Modules.Dim.UI.Controllers
 
                 //create root mapping if not exist
                 Mapping rootMapping = MappingHelper.CreateIfNotExistMapping(sourceParent, targetParent, 0, null, null, mappingManager);
+                // also create the mapping in the other direction
+                Mapping rootMappingReverse = null;
+                if (both) rootMappingReverse = MappingHelper.CreateIfNotExistMapping(targetParent, sourceParent, 0, null, null, mappingManager);
 
                 #endregion
 
@@ -315,16 +401,25 @@ namespace BExIS.Modules.Dim.UI.Controllers
 
                 //save mapping
                 Mapping mapping = MappingHelper.CreateIfNotExistMapping(source, target, 1, null, rootMapping, mappingManager);
+                // also create the mapping in the other direction
+                Mapping mappingReverse = null;
+                if(both)mappingReverse = MappingHelper.CreateIfNotExistMapping(target, source, 1, null, rootMappingReverse, mappingManager);
+
                 model.Id = mapping.Id;
                 model.ParentId = mapping.Parent.Id;
                 #endregion
 
                 #region create or update simple mapping
 
-                MappingHelper.UpdateSimpleMappings(source.Id, target.Id, model.SimpleMappings, mapping, mappingManager);
+                MappingHelper.UpdateSimpleMappings(source.Id, target.Id, model.SimpleMappings, mapping, mappingReverse, mappingManager, both);
 
                 #endregion
 
+                #region generate or update mapping file
+
+                updateMappingFile(rootMapping);
+
+                #endregion
                 //load all mappings
                 return PartialView("Mapping", model);
             }
@@ -333,6 +428,36 @@ namespace BExIS.Modules.Dim.UI.Controllers
                 mappingManager.Dispose();
                 MappingUtils.Clear();
             }
+        }
+
+        private void updateMappingFile(Mapping root)
+        {
+            //// get all complexMappings with simple mappings
+            //var complexMappings = MappingHelper.LoadMappings(root);
+
+            //List<XmlMappingRoute> routes = new List<XmlMappingRoute>();
+
+            //foreach (var complexMapping in complexMappings)
+            //{
+            //    if(complexMapping.SimpleMappings.Any())
+            //    {
+            //        foreach (var simpleMapping in complexMapping.SimpleMappings)
+            //        {
+            //            // create a XmlMappingroute for each simplemapping
+            //            XmlMappingRoute r = new XmlMappingRoute();
+            //            r.Source = new Source(simpleMapping.Source.XPath);
+            //            r.Destination = new Destination(simpleMapping.Target.XPath, complexMapping.Target.Name);
+
+            //            routes.Add(r);
+            //        }
+            //    }
+            //}
+
+            //if (routes.Any())
+            //{
+            //    XmlSchemaManager manager = new XmlSchemaManager();
+            //    manager.GenerateMappingFile(root.Source.ElementId, root.Source.Name, root.Target.Name, routes);
+            //}
         }
 
         public ActionResult LoadEmptyMapping()

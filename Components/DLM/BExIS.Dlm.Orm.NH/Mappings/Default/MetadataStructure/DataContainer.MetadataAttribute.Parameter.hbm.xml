@@ -1,0 +1,7 @@
+<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2" assembly="BExIS.Dlm.Entities" namespace="BExIS.Dlm.Entities.MetadataStructure">
+  
+  <subclass name="MetadataParameter" extends="MetadataAttribute" discriminator-value="MP" dynamic-update="true">
+    
+  </subclass>
+  
+</hibernate-mapping>

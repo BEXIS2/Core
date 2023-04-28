@@ -90,10 +90,22 @@ Green 05  #eff7f6
     text-align:right;
     
 }
+
+.bx-parameter-label, .bx- parameter-description {
+    text-align: left;
+    font-size: smaller;
+}
+
 .bx-metadataFormTextInput {
-    width: 490px;
+    width: 100%;
     max-width: 490px;
 }
+
+.bx-metadata-form-input-small {
+   
+    font-size:smaller;
+}
+
 
 .bx-metadataForm-textArea-display {
     border: var(--border-width-field) solid var(--border-color-field);
@@ -111,6 +123,21 @@ Green 05  #eff7f6
     width: 500px;
     /*border:ridge 1px yellow;*/
 }
+
+.bx-paremeter-input {
+    width: auto;
+    min-width: 50%;
+    max-width: 90%;
+    padding-right: 10px;
+    float: left;
+    /*border:ridge 1px yellow;*/
+}
+
+input:disabled, .bx-input.bx-disabled-parameter {
+
+    padding-top: 5px;
+}
+
 
 .metadataAttributeInput .bx-dropdown
 {
@@ -135,6 +162,7 @@ Green 05  #eff7f6
     margin:0px;
 }
 
+
 .metadata-activate-checkbox {
     margin-top: 6px;  margin-left: 10px;
     font-size: 16px;
@@ -149,6 +177,8 @@ Green 05  #eff7f6
 input:disabled, textarea:disabled, .bx-input.bx-disabled, .bx-textarea.bx-disabled, .t-autocomplete.bx-disabled {
     border-color: #afb0b1;
 }
+
+
 
 /**Level**/
 .Metadata-Level-1 {

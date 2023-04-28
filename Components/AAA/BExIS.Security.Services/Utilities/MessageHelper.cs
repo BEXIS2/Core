@@ -294,6 +294,27 @@ namespace BExIS.Security.Services.Utilities
             return $"The {newRole} role has been {changeType} your account.<br/><br/>{additionalInformation}";
         }
 
+
+        public static string GetSetPublicHeader(long datasetid)
+        {
+            return $"Dataset set public with id = {datasetid}";
+        }
+
+        public static string GetSetPublicMessage(string userName, long datasetid)
+        {
+            return $"The dataset with id {datasetid} was set to public by {userName}.";
+        }
+
+        public static string GetUnsetPublicHeader(long datasetid)
+        {
+            return $"Dataset unset public with id = {datasetid}";
+        }
+
+        public static string GetUnsetPublicMessage(string userName, long datasetid)
+        {
+            return $"The dataset with id {datasetid} was unset from public by {userName}.";
+        }
+
         #region upload api
 
         public static string GetPushApiStoreHeader(long datasetid, string title)

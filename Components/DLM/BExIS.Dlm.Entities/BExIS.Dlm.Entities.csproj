@@ -96,12 +96,14 @@
     <Compile Include="Data\VariableValueCollection.cs" />
     <Compile Include="Data\Dataset.cs" />
     <Compile Include="Data\DataTuple.cs" />
+    <Compile Include="MetadataStrcuture\MetadataParameterUsage.cs" />
     <Compile Include="MetadataStrcuture\MetadataNestedAttributeUsage.cs" />
     <Compile Include="MetadataStrcuture\MetadataAttribute.cs" />
     <Compile Include="MetadataStrcuture\MetadataAttributeUsage.cs" />
     <Compile Include="MetadataStrcuture\MetadataCompoundAttribute.cs" />
     <Compile Include="MetadataStrcuture\MetadataPackage.cs" />
     <Compile Include="MetadataStrcuture\MetadataPackageUsage.cs" />
+    <Compile Include="MetadataStrcuture\MetadataParameter.cs" />
     <Compile Include="MetadataStrcuture\MetadataSimpleAttribute.cs" />
     <Compile Include="MetadataStrcuture\MetadataStructure.cs" />
     <Compile Include="Metadata\Metadata.cs" />

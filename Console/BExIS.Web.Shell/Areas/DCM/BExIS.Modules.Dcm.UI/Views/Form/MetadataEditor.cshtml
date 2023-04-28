@@ -183,17 +183,17 @@
                 {
                     <td style="width: 100px">
                         @(Html.Telerik().Upload()
-                                                                      .Name("SelectFileUploader")
-                                                                      .Multiple(false)
-                                                                      .ShowFileList(false)
-                                                                      .HtmlAttributes(new { title = "Import from xml", accept = ".xml" })
-                                                                      .ClientEvents(events => events
-                                                                          .OnSuccess("OnSuccess")
-                                                                          .OnSelect("SelectFileProcess_OnSelect")
-                                                                          .OnLoad("SelectFileUploader_OnLoad"))
-                                                                      .Async(async => async
-                                                                          .Save("SelectFileProcess", "Form")
-                                                                          .AutoUpload(true))
+                            .Name("SelectFileUploader")
+                            .Multiple(false)
+                            .ShowFileList(false)
+                            .HtmlAttributes(new { title = "Import from xml", accept = ".xml" })
+                            .ClientEvents(events => events
+                                .OnSuccess("OnSuccess")
+                                .OnSelect("SelectFileProcess_OnSelect")
+                                .OnLoad("SelectFileUploader_OnLoad"))
+                            .Async(async => async
+                                .Save("SelectFileProcess", "Form")
+                                .AutoUpload(true))
 
                         )
                     </td>

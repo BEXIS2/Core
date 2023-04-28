@@ -995,7 +995,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                     {
                         //check if mappings exist between system/relationships and the metadatastructure/attr
                         // get all party mapped nodes
-                        IEnumerable<XElement> complexElements = XmlUtility.GetXElementsByAttribute("partyid", XmlUtility.ToXDocument(metadata));
+                       IEnumerable<XElement> complexElements = XmlUtility.GetXElementsByAttribute("partyid", XmlUtility.ToXDocument(metadata));
 
                         // get all relationshipTypes where entityname is involved
                         var relationshipTypes = uow.GetReadOnlyRepository<PartyRelationshipType>().Get().Where(
@@ -1023,7 +1023,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
                                     foreach (PartyRelationship pr in relationships)
                                     {
-                                        if (!partyids.Contains(pr.TargetParty.Id)) partyManager.RemovePartyRelationship(pr);
+                                        partyManager.RemovePartyRelationship(pr);
                                     }
                                 }
                                 else if (partyTpePair.TargetPartyType.Title.ToLower().Equals(entityname.ToLower()))
@@ -1038,7 +1038,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
                                     foreach (PartyRelationship pr in relationships)
                                     {
-                                        if (!partyids.Contains(pr.SourceParty.Id)) partyManager.RemovePartyRelationship(pr);
+                                        partyManager.RemovePartyRelationship(pr);
                                     }
                                 }
                             }
