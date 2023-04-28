@@ -1,25 +1,25 @@
 ﻿@{
-        ViewBag.Title = "Edit";
-        Layout = "~/Themes/Default/Layouts/_svelteLayout.cshtml";
+    ViewBag.Title = "Test";
+    Layout = "~/Themes/Default/Layouts/_svelteLayout.cshtml";
 
-        string page = ViewData["PageScript"].ToString();
-        string pagecss = ViewData["PageCss"].ToString();
-        string pageId = ViewData["PageId"].ToString();
+    string page = ViewData["PageScript"].ToString();
+    string pagecss = ViewData["PageCss"].ToString();
+    string pageId = ViewData["PageId"].ToString();
 
 
-        string skeletoncss = "../../../Content/skeleton/themes/theme-modern.css";
+    //string skeletoncss = "../../../Content/skeleton/themes/theme-modern.css";
 
-        string layoutcss = ViewData["LayoutCss"].ToString();
-        string layoutScript = ViewData["LayoutScript"].ToString();
+    string layoutcss = ViewData["LayoutCss"].ToString();
+    string layoutScript = ViewData["LayoutScript"].ToString();
 
-        string layoutSvelteScript = ViewData["LayoutSvelteScript"].ToString();
+    string layoutSvelteScript = ViewData["LayoutSvelteScript"].ToString();
 
     }
 
     <link href="@pagecss" rel="stylesheet">
 
     <link href="@layoutcss" rel="stylesheet">
-    <link href="@skeletoncss" rel="stylesheet">
+    @*<link href="@skeletoncss" rel="stylesheet">*@
 
     <script src="@layoutSvelteScript" type="module"></script>
 

@@ -90,7 +90,7 @@
     <Compile Include="Controllers\Legacy\SubmitSummaryController.cs" />
     <Compile Include="Controllers\Legacy\SubmitValidationController.cs" />
     <Compile Include="Controllers\Hooks\MetadataController.cs" />
-    <Compile Include="Controllers\LinkController.cs" />
+    <Compile Include="Controllers\API\LinkController.cs" />
     <Compile Include="Controllers\StructureSuggestionController.cs" />
     <Compile Include="Controllers\Views\MessagesController.cs" />
     <Compile Include="Controllers\TestController.cs" />
