@@ -20,7 +20,7 @@ namespace BExIS.Modules.Dim.UI.Tests.Helpers
         [OneTimeSetUp]
         public void OneTimeSetUp()
         {
-            helper = new TestSetupHelper(WebApiConfig.Register, false);
+            //helper = new TestSetupHelper(WebApiConfig.Register, false);
         }
 
         [OneTimeTearDown]

@@ -72,11 +72,11 @@ namespace BExIS.IO.Tests.Helpers
                 var dim = unitManager.Create("TestDimnesion", "For Unit Testing", "");
                 var unit = unitManager.Create("None_UT", "NoneUT", "Use in unit tsting", dim, Dlm.Entities.DataStructure.MeasurementSystem.Metric);
 
-                var intType = dataTypeManager.Create("Integer", "Integer", TypeCode.Int32);
-                var strType = dataTypeManager.Create("String", "String", TypeCode.String);
-                var doubleType = dataTypeManager.Create("Double", "Double", TypeCode.Double);
-                var boolType = dataTypeManager.Create("Bool", "Bool", TypeCode.Boolean);
-                var dateTimeType = dataTypeManager.Create("DateTime", "DateTime", TypeCode.DateTime);
+                var intType = dataTypeManager.Repo.Get().FirstOrDefault(d=>d.Name.Equals("Integer"))==null?dataTypeManager.Create("Integer", "Integer", TypeCode.Int32): dataTypeManager.Repo.Get().FirstOrDefault(d => d.Name.Equals("Integer"));
+                var strType = dataTypeManager.Repo.Get().FirstOrDefault(d => d.Name.Equals("String")) == null ? dataTypeManager.Create("String", "String", TypeCode.String): dataTypeManager.Repo.Get().FirstOrDefault(d => d.Name.Equals("String"));
+                var doubleType = dataTypeManager.Repo.Get().FirstOrDefault(d => d.Name.Equals("Double")) == null ? dataTypeManager.Create("Double", "Double", TypeCode.Double): dataTypeManager.Repo.Get().FirstOrDefault(d => d.Name.Equals("Double"));
+                var boolType = dataTypeManager.Repo.Get().FirstOrDefault(d => d.Name.Equals("Bool")) == null ? dataTypeManager.Create("Bool", "Bool", TypeCode.Boolean): dataTypeManager.Repo.Get().FirstOrDefault(d => d.Name.Equals("Bool"));
+                var dateTimeType = dataTypeManager.Repo.Get().FirstOrDefault(d => d.Name.Equals("DateTime")) == null ? dataTypeManager.Create("DateTime", "DateTime", TypeCode.DateTime): dataTypeManager.Repo.Get().FirstOrDefault(d => d.Name.Equals("DateTime"));
 
                 var varTemplate1 = variableManager.CreateVariableTemplate("att1UT", intType, unit, false, "Attribute for Unit testing");
                 var varTemplate2 = variableManager.CreateVariableTemplate("att2UT", strType, unit, false, "Attribute for Unit testing");
