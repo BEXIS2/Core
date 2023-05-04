@@ -1,4 +1,4 @@
-import {Api} from "@bexis2/bexis2-core-ui/src/lib/index";
+import {Api} from "@bexis2/bexis2-core-ui";
 
 
 // get start page from hook
