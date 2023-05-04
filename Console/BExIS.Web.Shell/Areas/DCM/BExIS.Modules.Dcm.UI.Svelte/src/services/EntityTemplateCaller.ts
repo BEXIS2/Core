@@ -1,6 +1,7 @@
-import {Api} from "@bexis2/bexis2-core-ui/src/lib/index";
+import {Api} from "@bexis2/bexis2-core-ui/";
+import type { EntityTemplateModel } from "../models/EntityTemplate";
 
-export const getEntityTemplate = async (id) => {
+export const getEntityTemplate = async (id:bigint) => {
   try {
     const response = await Api.get('/dcm/entitytemplates/Get?id='+id);
     return response.data;
@@ -83,7 +84,7 @@ export const getFileTypes = async () => {
 };
 
 
-export const saveEntityTemplate = async (entityTemplate) => {
+export const saveEntityTemplate = async (entityTemplate:EntityTemplateModel) => {
   try {
     const response = await Api.post('/dcm/entitytemplates/Update', entityTemplate);
     return response.data;
@@ -92,9 +93,9 @@ export const saveEntityTemplate = async (entityTemplate) => {
   }
 };
 
-export const deleteEntityTemplate = async (id) => {
+export const deleteEntityTemplate = async (id:bigint) => {
   try {
-    const response = await Api.post('/dcm/entitytemplates/Delete?id='+id);
+    const response = await Api.post('/dcm/entitytemplates/Delete',id);
     return response.data;
   } catch (error) {
     console.error(error);
