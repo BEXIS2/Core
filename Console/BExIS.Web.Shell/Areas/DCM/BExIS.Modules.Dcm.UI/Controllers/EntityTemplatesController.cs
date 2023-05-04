@@ -24,7 +24,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         // GET: EntityTemplate
         public ActionResult Index()
         {
-            string pageId = "entities";
+            string pageId = "entitytemplate";
             string module = "DCM";
 
             ViewData["PageId"] = pageId;
@@ -49,7 +49,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 {
                     entityTemplateModels.Add(EntityTemplateHelper.ConvertTo(e));
                 }
-
+                
                 return Json(entityTemplateModels, JsonRequestBehavior.AllowGet);
             }
         }
