@@ -60,9 +60,9 @@ namespace BExIS.Xml.Helpers
                         // create tuples based on dataset id list, and get latest version of each dataset
 
                         List<DatasetVersion> datasetVersions = dm.GetDatasetLatestVersions(datasetIds, false);
+
                         foreach (var dsv in datasetVersions)
                         {
-
                             var e = new EntityStoreItem()
                             {
                                 Id = dsv.Dataset.Id,
@@ -71,6 +71,24 @@ namespace BExIS.Xml.Helpers
                             };
 
                             entities.Add(e);
+                        }
+
+                        List<DatasetVersion> deletedDatasetVersions = dm.GetDeletedDatasetLatestVersions(datasetIds);
+                        if (deletedDatasetVersions.Any())
+                        {
+                            foreach (var dsv in deletedDatasetVersions)
+                            {
+                                var e = new EntityStoreItem()
+                                {
+                                    Id = dsv.Dataset.Id,
+                                    Title = dsv.Title + " (deleted)",
+                                    Version = dm.GetDatasetVersionCount(dsv.Dataset.Id)
+                                };
+
+
+                                entities.Add(e);
+                            }
+
 
                         }
                     }

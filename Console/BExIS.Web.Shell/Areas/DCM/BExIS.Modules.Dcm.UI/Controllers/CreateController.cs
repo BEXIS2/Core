@@ -15,10 +15,13 @@ using BExIS.Security.Entities.Subjects;
 using BExIS.Security.Services.Authorization;
 using BExIS.Security.Services.Subjects;
 using BExIS.Security.Services.Utilities;
+using BExIS.UI.Helpers;
 using BExIS.Utils.Config;
 using BExIS.Xml.Helpers;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Web.Mvc;
 using System.Xml.XPath;
@@ -31,6 +34,12 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         // GET: Create
         public ActionResult Index()
         {
+            string pageId = "create";
+
+            ViewData["PageId"] = pageId;
+            ViewData["PageScript"] = SvelteHelper.GetPageScript("DCM", pageId);
+            ViewData["PageCss"] = SvelteHelper.GetPageCss("DCM", pageId);
+
             return View();
         }
 

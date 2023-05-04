@@ -1,15 +1,35 @@
 ﻿@{
-    ViewBag.Title = "Edit";
-    Layout = "~/Themes/Default/Layouts/_svelteLayout.cshtml";
+        ViewBag.Title = "Test";
+        Layout = "~/Themes/Default/Layouts/_svelteLayout.cshtml";
 
-}
-
-<link href="~/Areas/DCM/BExIS.Modules.DCM.UI/Scripts/svelte/assets/entities.css" rel="stylesheet">
-
-@section scripts
-{
-   <script src="~/Areas/DCM/BExIS.Modules.DCM.UI/Scripts/svelte/entities.js"></script>
-}
+        string page = ViewData["PageScript"].ToString();
+        string pagecss = ViewData["PageCss"].ToString();
+        string pageId = ViewData["PageId"].ToString();
 
 
-<div id="entities"></div>
+        string layoutcss = ViewData["LayoutCss"].ToString();
+        string layoutScript = ViewData["LayoutScript"].ToString();
+
+        string layoutSvelteScript = ViewData["LayoutSvelteScript"].ToString();
+
+    }
+
+<link href="@pagecss" rel="stylesheet">
+
+<link href="@layoutcss" rel="stylesheet">
+@*<link href="@skeletoncss" rel="stylesheet">*@
+
+<script src="@layoutSvelteScript" type="module"></script>
+
+
+<script type="module" data-sveltekit-hydrate="create">
+
+        import page from '@page'
+
+        const app = new page({
+            target: document.querySelector('[data-sveltekit-hydrate="create"]').parentNode
+        });
+
+</script>
+
+

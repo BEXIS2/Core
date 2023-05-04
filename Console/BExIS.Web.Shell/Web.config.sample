@@ -9,7 +9,9 @@
 			<section name="webAssets" type="Telerik.Web.Mvc.Configuration.WebAssetConfigurationSection, Telerik.Web.Mvc" requirePermission="false" />
 		</sectionGroup>
 		<section name="glimpse" type="Glimpse.Core.Configuration.Section, Glimpse.Core" />
+		<section name="exceptionless" type="Exceptionless.ExceptionlessSection, Exceptionless" />
 	</configSections>
+	<exceptionless apiKey="{exceptionless:apiKey}" serverUrl="{exceptionless:serverUrl}" />
 	<connectionStrings>
 		<!-- This is a new (13.09.2017) connection string with parameteres compatible with Npgsql 3.2.5. Javad. -->
 		<add name="ApplicationServices" connectionString="Server={SERVER};Port={PORT};Database={DATABASENAME};Userid={USER};Password={PASSWORD};Pooling=true;MinPoolSize=2;MaxPoolSize=100;ConnectionIdleLifetime=3600;" />
@@ -20,7 +22,7 @@
 		<add key="UseSchemaInDatabaseGeneration" value="False" />
 		<add key="ThrowErrorWhenParialContentNotFound" value="False" />
 		<add key="ApplicationName" value="{APPLICATIONNAME}" />
-		<add key="ApplicationVersion" value="2.16" />
+		<add key="ApplicationVersion" value="2.18" />
 		<add key="SessionWarningDelaySecond" value="30" />
 		<!-- Keep it as false, there are some test data in the database-->
 		<add key="CreateDatabase" value="false" />
@@ -120,10 +122,12 @@
 	</system.web>
 	<system.webServer>
 		<modules runAllManagedModulesForAllRequests="true">
+			<remove name="ExceptionlessModule" />
 			<remove name="UnityPerRequestHttpModule" />
 			<remove name="WebDAVModule" />
 			<add name="UnityPerRequestHttpModule" type="Vaiona.IoC.Unity.UnityPerRequestHttpModule, Vaiona.IoC" preCondition="managedHandler" />
 			<add name="Glimpse" type="Glimpse.AspNet.HttpModule, Glimpse.AspNet" preCondition="integratedMode" />
+			<add name="ExceptionlessModule" type="Exceptionless.Mvc.ExceptionlessModule, Exceptionless.Mvc" />
 		</modules>
 		<security>
 			<requestFiltering>

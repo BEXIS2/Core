@@ -44,7 +44,7 @@ namespace BExIS.Modules.Dcm.UI.Helper.API
         private DataApiModel _data = null;
         private string _title = "";
         private List<long> variableIds = new List<long>();
-        private UploadMethod _uploadMethod;
+        //private UploadMethod _uploadMethod;
 
         public DataApiHelper(Dataset dataset, User user, DataApiModel data, string title, UploadMethod uploadMethod)
         {
@@ -58,7 +58,7 @@ namespace BExIS.Modules.Dcm.UI.Helper.API
             _user = user;
             _data = data;
             _title = title;
-            _uploadMethod = uploadMethod;
+            //_uploadMethod = uploadMethod;
 
             _dataStructure = dataStructureManager.StructuredDataStructureRepo.Get(_dataset.DataStructure.Id);
             reader = new AsciiReader(_dataStructure, new AsciiFileReaderInfo());
@@ -112,9 +112,9 @@ namespace BExIS.Modules.Dcm.UI.Helper.API
 
             Debug.WriteLine("end storing data");
 
-            if (_uploadMethod.Equals(UploadMethod.Update)) return await PKCheck();
+            return await PKCheck();
 
-            return await Validate();
+
         }
 
         public async Task<bool> PKCheck()
@@ -128,25 +128,12 @@ namespace BExIS.Modules.Dcm.UI.Helper.API
 
                 PutDataApiModel data = (PutDataApiModel)_data;
                 string[] pks = null;
-                if (data != null) pks = data.PrimaryKeys;
+                //if (data != null) pks = data.PrimaryKeys;
 
-                variableIds = new List<long>();
-                if (pks != null && _dataStructure != null)
+                if (_dataStructure != null)
                 {
-                    //check if primary keys are exiting in the datastrutcure
-                    foreach (var variable in _dataStructure.Variables)
-                    {
-                        if (pks.Any(p => p.ToLower().Equals(variable.Label.ToLower()))) variableIds.Add(variable.Id);
-                    }
-
-                    if (!variableIds.Count.Equals(pks.Count()))
-                    {
-                        errors.Add("The list of primary keys is unequal to the existing equal variables in the datatructure.");
-                        return false;
-                    }
-
                     bool IsUniqueInDb = uploadHelper.IsUnique2(_dataset.Id, variableIds);
-                    bool IsUniqueInFile = uploadHelper.IsUnique(_dataset.Id, variableIds, ".tsv", Path.GetFileName(_filepath), _filepath, new AsciiFileReaderInfo(), _dataStructure.Id);
+                    bool IsUniqueInFile = uploadHelper.IsUnique(_dataset.Id, ".tsv", Path.GetFileName(_filepath), _filepath, new AsciiFileReaderInfo(), _dataStructure.Id);
 
                     if (!IsUniqueInDb || !IsUniqueInFile)
                     {
@@ -285,23 +272,13 @@ namespace BExIS.Modules.Dcm.UI.Helper.API
                         }
 
                         //Update Method -- append or update
-                        if (_uploadMethod == UploadMethod.Append)
+                        if (rows.Count() > 0)
                         {
-                            if (rows.Count > 0)
-                            {
-                                datasetManager.EditDatasetVersion(workingCopy, rows, null, null);
-                                inputWasAltered = true;
-                            }
+                            var splittedDatatuples = uploadHelper.GetSplitDatatuples(rows, variableIds, workingCopy, ref datatupleFromDatabaseIds);
+                            datasetManager.EditDatasetVersion(workingCopy, splittedDatatuples["new"], splittedDatatuples["edit"], null);
+                            inputWasAltered = true;
                         }
-                        else if (_uploadMethod == UploadMethod.Update)
-                        {
-                            if (rows.Count() > 0)
-                            {
-                                var splittedDatatuples = uploadHelper.GetSplitDatatuples(rows, variableIds, workingCopy, ref datatupleFromDatabaseIds);
-                                datasetManager.EditDatasetVersion(workingCopy, splittedDatatuples["new"], splittedDatatuples["edit"], null);
-                                inputWasAltered = true;
-                            }
-                        }
+                        
                     } while (rows.Count() > 0 || inputWasAltered == true);
 
                     datasetManager.CheckInDataset(id, "via API", userName);

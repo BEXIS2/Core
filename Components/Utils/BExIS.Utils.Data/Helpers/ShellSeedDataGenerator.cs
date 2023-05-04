@@ -33,9 +33,9 @@ namespace BExIS.Utils.Data.Helpers
 
                 var o12 = operationManager.Find("Shell", "Settings", "*") ?? operationManager.Create("Shell", "Settings", "*", settings);
 
-                if (!versionManager.Exists("Shell", "2.14.5"))
+                if (!versionManager.Exists("Shell", "2.18"))
                 {
-                    versionManager.Create("Shell", "2.14.5");
+                    versionManager.Create("Shell", "2.18");
                 }
             }
         }

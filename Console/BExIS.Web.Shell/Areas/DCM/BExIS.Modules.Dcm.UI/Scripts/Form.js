@@ -121,7 +121,7 @@ function metadataAttributeOnLoad(e, hasErrors) {
 // check wheter input field is to small for the incoming input
 // if its to small change to text area
 function OnKeyUpTextInput(e) {
-    //console.log("OnKeyDownTextInput");
+    //console.log("OnKeyUpTextInput");
     //console.log(e.id);
     //console.log(e.value.length);
     //console.log(e.value);
@@ -208,10 +208,7 @@ var afterClosed = false;
 function OnChangeTextInput(e, ui) {
 
         console.log("change");
-        //console.log("e", e);
-        //console.log("target", e.target);
-        //console.log("ui", ui);
-  
+ 
         var value;
 
         if (ui.item === null) {
@@ -240,7 +237,7 @@ function OnChangeTextInput(e, ui) {
         //console.log("number", number);
         //console.log("ParentModelNumber", ParentModelNumber);
         //console.log("ParentStepID", ParentStepID);
-    console.log("isMappingSelection", isMappingSelection);
+        console.log("isMappingSelection", isMappingSelection);
 
         // after close a autocomplete there is a id in the value, 
         // this should be removed before send to the server
@@ -269,6 +266,8 @@ function OnChangeTextInput(e, ui) {
             },
             function (response) {
 
+                console.log(response);
+
                 // after the on close event from the autocomplete component, the values change in the input fields
                 // after this changes again this change event is triggered
                 // to prevent this, a flag is set to check wheter this event is fired after a close event or not
@@ -280,21 +279,23 @@ function OnChangeTextInput(e, ui) {
 
                     var id = e.target.id;
                     //console.log("OnChangeTextInput");
-                    //console.log(id);
+
+                    console.log("id", id);
 
                     var index = id.lastIndexOf("_");
                     var newId = id.substr(0, index);
-                    //console.log(newId);
+                    console.log("newId",newId);
+
 
                     $("#" + newId).replaceWith(response);
-                    updateHeader();
+                    //updateHeader();
 
                     //alert("test");
                     autosize($('textarea'));
 
 
 
-                    console.log("--> only runs when autocomplete is not used");
+                    //console.log("--> only runs when autocomplete is not used");
 
                     //check if the parent is set to a party
                     console.log("after change");
@@ -304,9 +305,9 @@ function OnChangeTextInput(e, ui) {
                     console.log(partyid);
 
                     var partyidConverted = TryParseInt(partyid, null);
-                    //console.log("tryparse:" + partyidConverted)
-                    //console.log("partyid",partyid);
-                    //console.log("partyidConverted",partyidConverted);
+                    console.log("tryparse:" + partyidConverted)
+                    console.log("partyid",partyid);
+                    console.log("partyidConverted",partyidConverted);
 
                     //delete party informations when a party was selected before
                     if (partyidConverted !== null && partyidConverted > 0 && afterClosed === false && isMappingSelection!==null) {
@@ -331,7 +332,7 @@ function OnChangeTextInput(e, ui) {
 }
 
 function OnChange(e) {
-    //console.log("OnChange");
+    console.log("OnChange");
     var substr = e.id.split('_');
     var id = substr[0];
     var parentid = substr[1];
@@ -353,6 +354,41 @@ function OnChange(e) {
         function (response) {
             var index = e.id.lastIndexOf("_");
             var newId = e.id.substr(0, index);
+
+            console.log("OnChange", response);
+            $("#" + newId).replaceWith(response);
+
+            updateHeader();
+
+            if ($('textarea') !== null) {
+                autosize($('textarea'));
+            }
+        });
+}
+
+function OnChangeParameter(e) {
+    //console.log("OnChange");
+    var substr = e.id.split('_');
+    var id = substr[0];
+    var parentid = substr[1];
+    var number = substr[2];
+    var ParentModelNumber = substr[3];
+    var ParentStepID = substr[5];
+
+    $.post("/DCM/Form/ValidateMetadataParameterUsage",
+        {
+            value: e.value,
+            id: id,
+            attrUsageId: parentid,
+            number: number,
+            parentModelNumber: ParentModelNumber,
+            ParentStepId: ParentStepID
+        },
+        function (response) {
+            var index = e.id.lastIndexOf("_");
+            var newId = e.id.substr(0, index);
+
+            console.log("OnChangeParameter",response);
 
             $("#" + newId).replaceWith(response);
 
@@ -403,6 +439,41 @@ function OnChangeCheckBox(e) {
             updateHeader();
         });
 }
+function OnChangeParameterCheckBox(e) {
+    var substr = e.id.split('_');
+    var id = substr[0];
+    var parentid = substr[1];
+    var parentname = $("#" + e.id).attr("title");
+    var number = substr[2];
+    var ParentModelNumber = substr[3];
+    var ParentStepID = substr[5];
+
+    var value;
+
+    if ($("#" + e.id).attr('checked')) {
+        value = true;
+    } else {
+        value = false;
+    }
+
+    $.post("/DCM/Form/ValidateMetadataParameterUsage",
+        {
+            value: value,
+            id: id,
+            attrUsageId: parentid,
+            number: number,
+            parentModelNumber: ParentModelNumber,
+            ParentStepId: ParentStepID
+        },
+        function (response) {
+
+            var index = e.id.lastIndexOf("_");
+            var newId = e.id.substr(0, index);
+
+            $("#" + newId).replaceWith(response);
+            updateHeader();
+        });
+}
 
 function OnChangeDropDown(e) {
     var idParentDiv = $(this).attr("id");
@@ -431,6 +502,36 @@ function OnChangeDropDown(e) {
             $("#" + newId).replaceWith(response);
 
             updateHeader();
+
+        });
+};
+function OnChangeParameterDropDown(e) {
+    var idParentDiv = $(this).attr("id");
+    var substr = e.target.id.split('_');
+    var id = substr[0];
+    var parentid = substr[1];
+    var parentname = $("#" + e.id).attr("title");
+    var number = substr[2];
+    var ParentModelNumber = substr[3];
+    var ParentStepID = substr[5];
+
+    $.post("/DCM/Form/ValidateMetadataParameterUsage",
+        {
+            value: e.value,
+            id: id,
+            attrUsageId: parentid,
+            number: number,
+            parentModelNumber: ParentModelNumber,
+            ParentStepId: ParentStepID
+        },
+        function (response) {
+            var index = idParentDiv.lastIndexOf("_");
+            var newId = idParentDiv.substr(0, index);
+
+            $("#" + newId).replaceWith(response);
+
+            updateHeader();
+
         });
 };
 
@@ -465,6 +566,36 @@ function OnChangeNumbers(e) {
             updateHeader();
         });
 }
+function OnChangeParameterNumbers(e) {
+    var idParentDiv = $(this).attr("id");
+    var value = $(e.currentTarget).val();
+    var substr = e.target.id.split('_');
+    var id = substr[0];
+    var parentid = substr[1];
+    var parentname = ""//e.target.attr("title");
+    var metadataStructureId = substr[2];
+    var number = substr[3];
+    var ParentModelNumber = substr[4];
+    var ParentStepID = substr[5];
+
+    $.post("/DCM/Form/ValidateMetadataParameterUsage",
+        {
+            value: value,
+            id: id,
+            attrUsageId: parentid,
+            number: number,
+            parentModelNumber: ParentModelNumber,
+            ParentStepId: ParentStepID
+        },
+        function (response) {
+            var index = idParentDiv.lastIndexOf("_");
+            var newId = idParentDiv.substr(0, index);
+
+            $("#" + newId).replaceWith(response);
+
+            updateHeader();
+        });
+}
 
 function OnChangeDatePicker(e) {
     //console.log(e.value);
@@ -485,6 +616,37 @@ function OnChangeDatePicker(e) {
             id: id,
             parentid: parentid,
             parentname: parentname,
+            number: number,
+            parentModelNumber: ParentModelNumber,
+            ParentStepId: ParentStepID
+        },
+        function (response) {
+            var index = idParentDiv.lastIndexOf("_");
+            var newId = idParentDiv.substr(0, index);
+
+            $("#" + newId).replaceWith(response);
+
+            updateHeader();
+        });
+}
+function OnChangeParameterDatePicker(e) {
+    //console.log(e.value);
+
+    var value = $(e.currentTarget).val(); // data value as normal text string (not as DateTime string -> e.value)
+    var idParentDiv = $(this).attr("id");
+    var substr = e.target.id.split('_');
+    var id = substr[0];
+    var parentid = substr[1];
+    var parentname = $("#" + e.id).attr("title");
+    var number = substr[2];
+    var ParentModelNumber = substr[3];
+    var ParentStepID = substr[5];
+
+    $.post("/DCM/Form/ValidateMetadataParameterUsage",
+        {
+            value: value,
+            id: id,
+            attrUsageId: parentid,
             number: number,
             parentModelNumber: ParentModelNumber,
             ParentStepId: ParentStepID

@@ -76,6 +76,7 @@ namespace BExIS.Modules.Dim.UI.Controllers.API
                         };
 
                         datasetModel.Versions.Add(datasetVersionModel);
+                        datasetModel.Title = dsv.Title;
                     }
                     datasetModels.Add(datasetModel);
                 }
@@ -85,7 +86,7 @@ namespace BExIS.Modules.Dim.UI.Controllers.API
 
         // GET api/Dataset/{id}
         /// <summary>
-        /// Get metadata of the latest version of a dataset by id.
+        /// Get dataset informations of the latest version of a dataset by id.
         /// </summary>
         ///
         /// <param name="id">Identifier of a dataset</param>
@@ -126,54 +127,140 @@ namespace BExIS.Modules.Dim.UI.Controllers.API
 
         // GET api/DatasetOut/{id}/{version}
         /// <summary>
-        /// Get metadata of a specific version of a dataset by id and version number.
+        /// Get dataset informations of a specific version of a dataset by id and version id.
         /// </summary>
         ///
         /// <param name="id">Identifier of a dataset</param>
-        /// <param name="version">Version of a dataset</param>
+        /// <param name="versionId">Version Id of a dataset</param>
         [BExISApiAuthorize]
-        [GetRoute("api/Dataset/{id}/{version}")]
+        [GetRoute("api/Dataset/{id}/{versionId}")]
         [ResponseType(typeof(ApiDatasetModel))]
-        public HttpResponseMessage Get(long id, int version)
+        public HttpResponseMessage Get(long id, long versionId)
         {
-            // Check parameter
-            if (id <= 0) return Request.CreateResponse(HttpStatusCode.PreconditionFailed, "No valid dataset id.");
-            if (version <= 0) return Request.CreateResponse(HttpStatusCode.PreconditionFailed, "No valid version.");
+            return get(id, versionId);
+        }
 
+        // GET api/DatasetOut/{id}/{version}
+        /// <summary>
+        /// Get dataset informations of a specific version of a dataset by id and version number.
+        /// </summary>
+        ///
+        /// <param name="id">Identifier of a dataset</param>
+        /// <param name="version_number">Version of a dataset</param>
+        [BExISApiAuthorize]
+        [GetRoute("api/Dataset/{id}/version_number/{version_number}")]
+        [ResponseType(typeof(ApiDatasetModel))]
+        public HttpResponseMessage Get(long id, int version_number)
+        {
+            if (id <= 0)
+                return Request.CreateErrorResponse(HttpStatusCode.PreconditionFailed, "Id should be greater then 0");
 
-            using (DatasetManager datasetManager = new DatasetManager())
+            if (version_number <= 0)
+                return Request.CreateErrorResponse(HttpStatusCode.PreconditionFailed, "Version should be greater then 0");
+
+            using (DatasetManager dm = new DatasetManager())
             {
-                // try to get dataset by id
-                Dataset dataset = datasetManager.GetDataset(id);
-                if (dataset == null) return Request.CreateResponse(HttpStatusCode.PreconditionFailed, "This Dataset not exist");
+                int index = version_number - 1;
+                Dataset dataset = dm.GetDataset(id);
 
-                // check version number
-                if (version > dataset.Versions.Count) return Request.CreateResponse(HttpStatusCode.PreconditionFailed, "This version does not exit.");
+                int versions = dataset.Versions.Count;
+
+                if (versions < version_number)
+                    return Request.CreateErrorResponse(HttpStatusCode.PreconditionFailed, "This version number does not exist for this dataset");
+
+                var datasetVersion = dataset.Versions.OrderBy(d => d.Timestamp).ElementAt(index);
+
+
+                return get(id, datasetVersion.Id);
+            }
+        }
+
+        // GET api/DatasetOut/{id}/{version}
+        /// <summary>
+        /// Get dataset informations of a specific version of a dataset by id and version name.
+        /// </summary>
+        ///
+        /// <param name="id">Identifier of a dataset</param>
+        /// <param name="version_name">Version name of a dataset</param>
+        [BExISApiAuthorize]
+        [GetRoute("api/Dataset/{id}/version_name/{version_name}")]
+        [ResponseType(typeof(ApiDatasetModel))]
+        public HttpResponseMessage Get(long id, string version_name)
+        {
+            if (id <= 0)
+                return Request.CreateErrorResponse(HttpStatusCode.PreconditionFailed, "Id should be greater then 0");
+
+            if (string.IsNullOrEmpty(version_name))
+                return Request.CreateErrorResponse(HttpStatusCode.PreconditionFailed, "Version name not exist");
+
+
+            using (DatasetManager dm = new DatasetManager())
+            {
+
+                var versionId = dm.GetDatasetVersions(id).Where(d => d.VersionName == version_name).Select(d => d.Id).FirstOrDefault();
+
+                if (versionId <= 0)
+                    return Request.CreateErrorResponse(HttpStatusCode.PreconditionFailed, "This version name does not exist for this dataset");
+
                 
-                // try to get dataset version 
-                int index = version - 1;
-                DatasetVersion datasetVersion = dataset.Versions.OrderBy(d => d.Timestamp).ElementAt(index);
-                if (datasetVersion == null) return Request.CreateResponse(HttpStatusCode.InternalServerError, "It is not possible to load the latest version.");
+                return get(id, versionId);
+            }
+        }
 
-                // get metadata structure id from XML as it could differ from the current metadata structure ID stored at dataset level
-                var metadata = datasetVersion.Metadata;
-                long metadataStructureId = -1;
-                if (metadata.DocumentElement.Attributes["id"] != null)
+        private HttpResponseMessage get(long id, long versionId)
+        {
+            try
+            {
+                // Check parameter
+                if (id <= 0) return Request.CreateResponse(HttpStatusCode.PreconditionFailed, "No valid dataset id.");
+                if (versionId <= 0) return Request.CreateResponse(HttpStatusCode.PreconditionFailed, "No valid version id.");
+
+
+                using (DatasetManager datasetManager = new DatasetManager())
                 {
-                    metadataStructureId = (long)Convert.ToInt64(metadata.DocumentElement.Attributes["id"].Value);
+                    // try to get dataset by id
+                    Dataset dataset = datasetManager.GetDataset(id);
+                    if (dataset == null) return Request.CreateResponse(HttpStatusCode.PreconditionFailed, "This Dataset not exist");
+
+                    // get version number
+                    int version = datasetManager.GetDatasetVersionNr(versionId);
+
+                    // check version belongs to dataset
+                    if (!dataset.Versions.Select(v => v.Id).Contains(versionId)) return Request.CreateResponse(HttpStatusCode.PreconditionFailed, "this version id is not part of the dataset " + id);
+
+
+                    // check version number
+                    if (version > dataset.Versions.Count) return Request.CreateResponse(HttpStatusCode.PreconditionFailed, "This version does not exit.");
+
+                    
+                    // try to get dataset version 
+                    DatasetVersion datasetVersion = datasetManager.GetDatasetVersion(versionId);//dataset.Versions.OrderBy(d => d.Timestamp).ElementAt(index);
+                    if (datasetVersion == null) return Request.CreateResponse(HttpStatusCode.InternalServerError, "It is not possible to load the latest version.");
+
+                    // get metadata structure id from XML as it could differ from the current metadata structure ID stored at dataset level
+                    var metadata = datasetVersion.Metadata;
+                    long metadataStructureId = -1;
+                    if (metadata.DocumentElement.Attributes["id"] != null)
+                    {
+                        metadataStructureId = (long)Convert.ToInt64(metadata.DocumentElement.Attributes["id"].Value);
+                    }
+
+                    // get content
+                    ApiDatasetModel datasetModel = getContent(datasetVersion, id, version, metadataStructureId, dataset.DataStructure.Id);
+
+                    // create response and return as JSON
+                    var response = Request.CreateResponse(HttpStatusCode.OK);
+                    string resp = JsonConvert.SerializeObject(datasetModel);
+
+                    response.Content = new StringContent(resp, System.Text.Encoding.UTF8, "application/json");
+                    response.Content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
+
+                    return response;
                 }
-
-                // get content
-                ApiDatasetModel datasetModel = getContent(datasetVersion, id, version, metadataStructureId, dataset.DataStructure.Id);
-
-                // create response and return as JSON
-                var response = Request.CreateResponse(HttpStatusCode.OK);
-                string resp = JsonConvert.SerializeObject(datasetModel);
-
-                response.Content = new StringContent(resp, System.Text.Encoding.UTF8, "application/json");
-                response.Content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
-
-                return response;
+            }
+            catch (Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.InternalServerError, ex.Message);
             }
         }
 

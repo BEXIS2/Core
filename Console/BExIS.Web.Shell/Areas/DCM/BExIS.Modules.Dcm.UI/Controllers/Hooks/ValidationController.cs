@@ -11,6 +11,7 @@ using BExIS.Security.Entities.Authorization;
 using BExIS.UI.Hooks;
 using BExIS.UI.Hooks.Caches;
 using BExIS.Utils.Helpers;
+using BExIS.Utils.Upload;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -23,6 +24,8 @@ namespace BExIS.Modules.Dcm.UI.Controllers
     public class ValidationController : Controller
     {
         private FileStream Stream;
+        private UploadHelper uploadWizardHelper = new UploadHelper();
+
 
         // GET: Validation
         public ActionResult Index()
@@ -74,7 +77,10 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                     //check dataset and datastructure
                     var dataset = datasetManager.GetDataset(id); ;
                     if (dataset == null)
+                    {
+
                         errors.Add(new Error(ErrorType.Other, "The validation cannot be executed because a dataset with id " + id + " not exist."));
+                    }
                     else // dataset exist
                     {
                         // if datastructue is null
@@ -117,26 +123,35 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
                                         if (ext.Equals(".xlsm")) // excel Template
                                         {
-                                            ExcelReader reader = new ExcelReader(sds, new ExcelFileReaderInfo());
-                                            Stream = reader.Open(filePath);
-                                            reader.ValidateTemplateFile(Stream, fileName, id);
-                                            file.Errors = reader.ErrorMessages;
-                                            cache.UpdateSetup.RowsCount = reader.NumberOfRows;
+                                            //ExcelReader reader = new ExcelReader(sds, new ExcelFileReaderInfo());
+                                            //Stream = reader.Open(filePath);
+                                            //reader.ValidateTemplateFile(Stream, fileName, id);
+                                            //file.Errors = reader.ErrorMessages;
+                                            //cache.UpdateSetup.RowsCount = reader.NumberOfRows;
+                                            throw new NotImplementedException("validation with .xlsm is not supported yet");
                                         }
                                         else
                                         if (iOUtility.IsSupportedExcelFile(ext)) // Excel
                                         {
-                                            ExcelReader reader = new ExcelReader(sds, (ExcelFileReaderInfo)cache.ExcelFileReaderInfo);
-                                            Stream = reader.Open(filePath);
-                                            reader.ValidateFile(Stream, fileName, id);
-                                            file.Errors = reader.ErrorMessages;
-                                            cache.UpdateSetup.RowsCount = reader.NumberOfRows;
+                                            //ExcelReader reader = new ExcelReader(sds, (ExcelFileReaderInfo)cache.ExcelFileReaderInfo);
+                                            //Stream = reader.Open(filePath);
+                                            //reader.ValidateFile(Stream, fileName, id);
+                                            //file.Errors = reader.ErrorMessages;
+                                            //cache.UpdateSetup.RowsCount = reader.NumberOfRows;
+                                            throw new NotImplementedException("validation with .xlsx is not supported yet");
                                         }
                                         else
                                         if (iOUtility.IsSupportedAsciiFile(ext)) // asccii
                                         {
                                             AsciiReader reader = new AsciiReader(sds, (AsciiFileReaderInfo)cache.AsciiFileReaderInfo);
                                             Stream = reader.Open(filePath);
+                                            //check against primary key
+                                            var unique = uploadWizardHelper.IsUnique(id, ext, fileName, filePath, (AsciiFileReaderInfo)cache.AsciiFileReaderInfo, datastructureId);
+                                            if (!unique)
+                                            {
+                                                file.Errors.Add(new Error(ErrorType.Datastructure, "the data in the file violate the primary key set."));
+                                            }
+                                            //validate
                                             reader.ValidateFile(Stream, fileName, id);
                                             file.Errors = reader.ErrorMessages;
                                             cache.UpdateSetup.RowsCount = reader.NumberOfRows;

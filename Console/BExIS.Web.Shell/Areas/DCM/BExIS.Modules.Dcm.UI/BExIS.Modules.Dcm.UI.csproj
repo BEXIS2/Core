@@ -84,14 +84,13 @@
     <Compile Include="Controllers\Legacy\ManageMetadataStructureController.cs" />
     <Compile Include="Controllers\Legacy\PushController.cs" />
     <Compile Include="Controllers\Legacy\SubmitController.cs" />
-    <Compile Include="Controllers\Legacy\SubmitChooseUpdateMethodController.cs" />
     <Compile Include="Controllers\Legacy\SubmitGetFileInformationController.cs" />
     <Compile Include="Controllers\Legacy\SubmitSelectAFileController.cs" />
     <Compile Include="Controllers\Legacy\SubmitSpecifyDatasetController.cs" />
     <Compile Include="Controllers\Legacy\SubmitSummaryController.cs" />
     <Compile Include="Controllers\Legacy\SubmitValidationController.cs" />
     <Compile Include="Controllers\Hooks\MetadataController.cs" />
-    <Compile Include="Controllers\LinkController.cs" />
+    <Compile Include="Controllers\API\LinkController.cs" />
     <Compile Include="Controllers\StructureSuggestionController.cs" />
     <Compile Include="Controllers\Views\MessagesController.cs" />
     <Compile Include="Controllers\TestController.cs" />
@@ -148,6 +147,8 @@
     <Compile Include="Models\Metadata\MetadataCompoundAttributeModel.cs" />
     <Compile Include="Models\Metadata\MetadataInstanceModel.cs" />
     <Compile Include="Models\Metadata\MetadataPackageModel.cs" />
+    <Compile Include="Models\Metadata\MetadataParameterModel.cs" />
+    <Compile Include="Models\Metadata\UIComponentModel.cs" />
     <Compile Include="Models\PrimaryKeyViewModel.cs" />
     <Compile Include="Models\Push\SendBigFilesToServerModel.cs" />
     <Compile Include="Models\SelectAreasModel.cs" />
@@ -370,6 +371,7 @@
     <Content Include="Content\bootstrap-theme.min.css" />
     <Content Include="Content\bootstrap.css" />
     <Content Include="Content\bootstrap.min.css" />
+    <Content Include="Content\theme-skeleton.css" />
     <Content Include="Dcm.Manifest.xml">
       <SubType>Designer</SubType>
     </Content>
@@ -442,24 +444,16 @@
     <Content Include="Scripts\respond.matchmedia.addListener.js" />
     <Content Include="Scripts\respond.matchmedia.addListener.min.js" />
     <Content Include="Scripts\respond.min.js" />
-    <Content Include="Scripts\svelte\assets\Api.css" />
-    <Content Include="Scripts\svelte\assets\Api.js" />
-    <Content Include="Scripts\svelte\assets\BaseCaller.js" />
-    <Content Include="Scripts\svelte\assets\Caller.js" />
-    <Content Include="Scripts\svelte\assets\Collapse.js" />
-    <Content Include="Scripts\svelte\assets\create.css" />
-    <Content Include="Scripts\svelte\assets\edit.css" />
-    <Content Include="Scripts\svelte\assets\index.js" />
-    <Content Include="Scripts\svelte\assets\Select.css" />
-    <Content Include="Scripts\svelte\assets\Select.js" />
-    <Content Include="Scripts\svelte\assets\Selection.css" />
-    <Content Include="Scripts\svelte\assets\Selection.js" />
-    <Content Include="Scripts\svelte\assets\structuresuggestion.css" />
-    <Content Include="Scripts\svelte\assets\vest.production.js" />
-    <Content Include="Scripts\svelte\create.js" />
-    <Content Include="Scripts\svelte\edit.js" />
-    <Content Include="Scripts\svelte\entities.js" />
-    <Content Include="Scripts\svelte\structuresuggestion.js" />
+    <Content Include="Scripts\svelte\_app\immutable\assets\_page.4f1e9ba5.css" />
+    <Content Include="Scripts\svelte\_app\immutable\assets\_page.e5bb56a3.css" />
+    <Content Include="Scripts\svelte\_app\immutable\chunks\2.23778dc2.js" />
+    <Content Include="Scripts\svelte\_app\immutable\chunks\3.5fe1fc31.js" />
+    <Content Include="Scripts\svelte\_app\immutable\chunks\index.615b5812.js" />
+    <Content Include="Scripts\svelte\_app\immutable\chunks\index.84e7447a.js" />
+    <Content Include="Scripts\svelte\_app\immutable\chunks\_layout.c51e0381.js" />
+    <Content Include="Scripts\svelte\_app\immutable\entry\test-page.svelte.aeabd045.js" />
+    <Content Include="Scripts\svelte\_app\immutable\entry\_layout.js.4d2bc252.js" />
+    <Content Include="Scripts\svelte\_app\immutable\entry\_page.svelte.da17dedb.js" />
     <Content Include="Views\Help\Informations.xml" />
     <Content Include="Views\Web.config" />
     <Content Include="Views\_ViewStart.cshtml" />
@@ -539,7 +533,8 @@
     <Content Include="Views\EntityTemplates\Index.cshtml" />
     <Content Include="Views\Create\Index.cshtml" />
     <Content Include="Views\StructureSuggestion\Index.cshtml" />
-    <Content Include="Scripts\svelte\manifest.json" />
+    <Content Include="Scripts\svelte\_app\version.json" />
+    <Content Include="Scripts\svelte\vite-manifest.json" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

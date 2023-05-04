@@ -16,7 +16,7 @@ namespace BExIS.Modules.Dcm.UI.Models.API
 
     public class PutDataApiModel : DataApiModel
     {
-        public string[] PrimaryKeys { get; set; }
+        //public string[] PrimaryKeys { get; set; }
     }
 
     public class PostApiDatasetModel

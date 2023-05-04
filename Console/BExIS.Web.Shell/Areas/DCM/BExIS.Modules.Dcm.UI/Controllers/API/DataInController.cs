@@ -327,7 +327,6 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 //if (data.Count == 0) error += "count should be greater then 0. ";
                 if (data.Columns == null) error += "cloumns should not be null. ";
                 if (data.Data == null) error += "data is empty. ";
-                if (data.PrimaryKeys == null || data.PrimaryKeys.Count() == 0) error += "the UpdateMethod update has been selected but there are no primary keys available. ";
 
                 if (!string.IsNullOrEmpty(error))
                     return Request.CreateErrorResponse(HttpStatusCode.PreconditionFailed, error);
@@ -379,22 +378,19 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                         #region primary key check
 
                         //prepare  primary keys ids from the exiting dataset
-                        List<long> variableIds = new List<long>();
-                        foreach (var variable in dataStructure.Variables)
-                        {
-                            if (data.PrimaryKeys.Any(p => p.ToLower().Equals(variable.Label.ToLower()))) variableIds.Add(variable.Id);
-                        }
+                        List<VariableInstance> variables = dataStructure.Variables.Where(v=>v.IsKey).ToList();
+
 
                         // prepare pk index list from data
-                        int[] primaryKeyIndexes = new int[data.PrimaryKeys.Length];
-                        for (int i = 0; i < data.PrimaryKeys.Length; i++)
+                        int[] primaryKeyIndexes = new int[variables.Count];
+                        for (int i = 0; i < variables.Count; i++)
                         {
-                            string pk = data.PrimaryKeys[i];
+                            string pk = variables.ElementAt(i).Label;
                             primaryKeyIndexes[i] = data.Columns.ToList().IndexOf(pk);
                         }
 
                         //check primary with data : uniqueness
-                        bool IsUniqueInDb = uploadHelper.IsUnique2(dataset.Id, variableIds);
+                        bool IsUniqueInDb = uploadHelper.IsUnique2(dataset.Id, variables.Select(v=>v.Id).ToList()); // may can removed
                         bool IsUniqueInData = uploadHelper.IsUnique(primaryKeyIndexes, data.Data);
 
                         if (!IsUniqueInDb || !IsUniqueInData)
@@ -476,7 +472,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
                             if (datatuples.Count > 0)
                             {
-                                var splittedDatatuples = uploadHelper.GetSplitDatatuples(datatuples, variableIds, workingCopy, ref datatupleFromDatabaseIds);
+                                var splittedDatatuples = uploadHelper.GetSplitDatatuples(datatuples, variables.Select(v=>v.Id).ToList(), workingCopy, ref datatupleFromDatabaseIds);
                                 datasetManager.EditDatasetVersion(workingCopy, splittedDatatuples["new"], splittedDatatuples["edit"], null);
                             }
 

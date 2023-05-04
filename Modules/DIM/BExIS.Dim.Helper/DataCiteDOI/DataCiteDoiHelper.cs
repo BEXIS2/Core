@@ -1,20 +1,28 @@
 ﻿using BExIS.Dim.Entities.Mapping;
 using BExIS.Dim.Helpers.Mapping;
-using BExIS.Dim.Helpers.Models;
-using BExIS.Dim.Helpers.Services;
 using BExIS.Dlm.Entities.Data;
-using BExIS.Security.Services.Utilities;
 using BExIS.Xml.Helpers;
-using Lucifron.ReST.Library.Models;
+using System;
+using System.Web;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Linq;
+using System.Xml;
+using System.Configuration;
+using System.Threading;
+using BExIS.Security.Services.Utilities;
 using RestSharp;
 using RestSharp.Authenticators;
-using System;
-using System.Collections.Generic;
-using System.Configuration;
-using System.Linq;
-using System.Web;
-using System.Xml;
+using Newtonsoft.Json.Linq;
+using BExIS.Dim.Helpers.Models;
+using System.Reflection;
 using System.Xml.Linq;
+using BExIS.Dlm.Services.Party;
+using System.Text.RegularExpressions;
+using BExIS.Dim.Helpers.Services;
+using System.Security.Policy;
+using Vaelastrasz.Library.Models;
+using System.Runtime.CompilerServices;
 
 namespace BExIS.Dim.Helpers
 {
@@ -39,83 +47,17 @@ namespace BExIS.Dim.Helpers
                 return model;
 
             // mandatory and fixed values
-            model.Type = DataCiteType.DOIs;
-            model.ResourceTypeGeneral = DataCiteResourceType.Dataset;
+            model.Data.Type = DataCiteType.DOIs;
+            //model.Data.ResourceTypeGeneral = DataCiteResourceType.Dataset;
 
             foreach (var mapping in mappings)
             {
                 switch (mapping.Name)
                 {
-                    #region Creators
-                    case "Creators":
-
-                        string fn = null;
-                        string ln = null;
-
-                        if (mapping.Extra != null)
-                        {
-                            var partyAttributes = mapping.Extra.Split(';').Select(part => part.Split('=')).Where(part => part.Length == 2).ToDictionary(sp => sp[0], sp => sp[1]);
-
-                            partyAttributes.TryGetValue("Firstname", out fn);
-                            partyAttributes.TryGetValue("Lastname", out ln);
-                        }
-
-                        var dataCiteCreatorsService = new DataCiteCreatorsService();
-                        model.Creators = dataCiteCreatorsService.GetCreators(datasetVersion, mapping.Value, fn, ln);
-
-                        break;
-                    #endregion
-
-                    #region Event
-                    case "Event":
-
-                        DataCiteEventType eventType;
-
-                        if (Enum.TryParse(mapping.Value, out eventType))
-                        {
-                            model.Event = eventType;
-                        }
-                        else
-                        {
-                            model.Event = DataCiteEventType.Hide;
-                        }
-
-                        break;
-                    #endregion
-
-                    #region PublicationYear
-                    case "PublicationYear":
-
-                        model.PublicationYear = DateTime.UtcNow.Year;
-                        break;
-                    #endregion
-
-                    #region Publisher
-                    case "Publisher":
-
-                        model.Publisher = mapping.Value;
-                        break;
-                    #endregion
-
-                    #region ResourceType
-                    case "ResourceType":
-
-                        model.ResourceType = mapping.Value;
-                        break;
-                    #endregion
-
-                    #region Titles
-                    case "Titles":
-
-                        var dataCiteTitlesService = new DataCiteTitlesService();
-                        model.Titles = dataCiteTitlesService.GetTitles(datasetVersion, mapping.Value);
-                        break;
-                    #endregion
-
                     #region URL
                     case "URL":
 
-                        model.URL = $"{HttpContext.Current.Request.Url.GetLeftPart(UriPartial.Authority)}/ddm/Data/ShowData/{datasetVersion.Dataset.Id}";
+                        model.Data.Attributes.URL = $"{HttpContext.Current.Request.Url.GetLeftPart(UriPartial.Authority)}/ddm/Data/ShowData/";
                         break;
                     #endregion
 
@@ -123,7 +65,7 @@ namespace BExIS.Dim.Helpers
                     case "Version":
 
                         var dataCiteVersionService = new DataCiteVersionService();
-                        model.Version = dataCiteVersionService.GetVersion(datasetVersion, mapping.Type, mapping.Value);
+                        model.Data.Attributes.Version = dataCiteVersionService.GetVersion(datasetVersion, mapping.Type, mapping.Value);
                         break;
                     #endregion
 
@@ -201,19 +143,19 @@ namespace BExIS.Dim.Helpers
 
             var dataCiteModel = new CreateDataCiteModel()
             {
-                Type = DataCiteType.DOIs,
-                Creators = authors.Select(a => new DataCiteCreator(a, DataCiteCreatorType.Personal)).ToList(),
-                Titles = titles.Select(t => new DataCiteTitle(t)).ToList(),
-                //Subjects = subjects.Select(s => new DataCiteSubject(s)).ToList(),
-                Version = $"{version}",
-                Dates = new List<DataCiteDate>() { new DataCiteDate($"{DateTime.UtcNow.Year}", DataCiteDateType.Issued) },
-                Doi = doi,
-                Event = DataCiteEventType.Hide,
-                ResourceTypeGeneral = DataCiteResourceType.Dataset,
-                PublicationYear = DateTime.UtcNow.Year,
-                Publisher = ConfigurationManager.AppSettings["doiPublisher"],
-                URL = $"{datasetUrl}?version={version}",
-                Descriptions = descriptions.Select(d => new DataCiteDescription(d, null, DataCiteDescriptionType.Abstract)).ToList()
+                //Type = DataCiteType.DOIs,
+                //Creators = authors.Select(a => new DataCiteCreator(a, DataCiteCreatorType.Personal)).ToList(),
+                //Titles = titles.Select(t => new DataCiteTitle(t)).ToList(),
+                ////Subjects = subjects.Select(s => new DataCiteSubject(s)).ToList(),
+                //Version = $"{version}",
+                //Dates = new List<DataCiteDate>() { new DataCiteDate($"{DateTime.UtcNow.Year}", DataCiteDateType.Issued) },
+                //Doi = doi,
+                //Event = DataCiteEventType.Hide,
+                //ResourceTypeGeneral = DataCiteResourceType.Dataset,
+                //PublicationYear = DateTime.UtcNow.Year,
+                //Publisher = ConfigurationManager.AppSettings["doiPublisher"],
+                //URL = $"{datasetUrl}?version={version}",
+                //Descriptions = descriptions.Select(d => new DataCiteDescription(d, null, DataCiteDescriptionType.Abstract)).ToList()
             };
 
             var request = new RestRequest($"api/dois", Method.POST).AddJsonBody(dataCiteModel);

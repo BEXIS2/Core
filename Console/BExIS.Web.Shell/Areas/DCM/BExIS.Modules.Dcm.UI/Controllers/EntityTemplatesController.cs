@@ -8,13 +8,14 @@ using BExIS.Modules.Dcm.UI.Helpers;
 using BExIS.Modules.Dcm.UI.Models.EntityTemplate;
 using BExIS.Security.Services.Objects;
 using BExIS.Security.Services.Subjects;
+using BExIS.UI.Helpers;
 using BExIS.UI.Hooks;
 using BExIS.UI.Models;
 using System;
 using System.Collections.Generic;
 using System.Web.Mvc;
 using Vaiona.Web.Extensions;
-using static BExIS.Modules.Dcm.UI.Models.EntityTemplate.EntityTemplateModel;
+
 
 namespace BExIS.Modules.Dcm.UI.Controllers
 {
@@ -23,6 +24,17 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         // GET: EntityTemplate
         public ActionResult Index()
         {
+            string pageId = "entitytemplate";
+            string module = "DCM";
+
+            ViewData["PageId"] = pageId;
+            ViewData["PageScript"] = SvelteHelper.GetPageScript(module, pageId);
+            ViewData["PageCss"] = SvelteHelper.GetPageCss(module, pageId);
+
+            ViewData["LayoutScript"] = SvelteHelper.GetLayoutScript(module);
+            ViewData["LayoutCss"] = SvelteHelper.GetLayoutCss(module);
+            ViewData["LayoutSvelteScript"] = SvelteHelper.GetLayoutSvelteScript(module);
+
             return View();
         }
 
@@ -37,7 +49,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 {
                     entityTemplateModels.Add(EntityTemplateHelper.ConvertTo(e));
                 }
-
+                
                 return Json(entityTemplateModels, JsonRequestBehavior.AllowGet);
             }
         }

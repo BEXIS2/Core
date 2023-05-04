@@ -390,7 +390,7 @@ namespace BExIS.Utils.Upload
         /// <param name="ext"></param>
         /// <param name="filename"></param>
         /// <returns></returns>
-        public bool IsUnique(long datasetId, List<long> primaryKeys, string ext, string filename, string filepath, FileReaderInfo info, long datastructureId)
+        public bool IsUnique(long datasetId, string ext, string filename, string filepath, FileReaderInfo info, long datastructureId)
         {
             Hashtable hashtable = new Hashtable();
             Hashtable test = new Hashtable();
@@ -412,6 +412,8 @@ namespace BExIS.Utils.Upload
                     using (DataStructureManager datastructureManager = new DataStructureManager())
                     {
                         StructuredDataStructure sds = datastructureManager.StructuredDataStructureRepo.Get(datastructureId);
+                        List<long> primaryKeys = sds.Variables.Where(v => v.IsKey).Select(v => v.Id).ToList();
+
                         AsciiFileReaderInfo afri = (AsciiFileReaderInfo)info;
 
                         AsciiReader reader = new AsciiReader(sds, afri, new IOUtility());
@@ -474,6 +476,7 @@ namespace BExIS.Utils.Upload
                     using (DataStructureManager datastructureManager = new DataStructureManager())
                     {
                         StructuredDataStructure sds = datastructureManager.StructuredDataStructureRepo.Get(datastructureId);
+                        List<long> primaryKeys = sds.Variables.Where(v => v.IsKey).Select(v => v.Id).ToList();
 
                         ExcelReader reader = new ExcelReader(sds, new ExcelFileReaderInfo());
                         reader.Position = position;

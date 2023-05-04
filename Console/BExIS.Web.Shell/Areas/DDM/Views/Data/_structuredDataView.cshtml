@@ -19,9 +19,9 @@
     pagerStyles |= GridPagerStyles.Numeric;
 
     int total = 0;
-    if (Session["gridTotal"] != null)
+    if (ViewData["gridTotal"] != null)
     {
-        total = Convert.ToInt32(Session["gridTotal"]); //  (int)Session["gridTotal"];
+        total = Convert.ToInt32(ViewData["gridTotal"]); //  (int)Session["gridTotal"];
     }
 
     string compareValues = String.Join(";", Model.CompareValuesOfDataTypes.ToArray());

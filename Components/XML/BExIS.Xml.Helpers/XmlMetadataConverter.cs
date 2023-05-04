@@ -5,8 +5,11 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Xml;
+using System.Xml.Linq;
+using System.Xml.Schema;
 
 namespace BExIS.Xml.Helpers
 {
@@ -627,6 +630,42 @@ namespace BExIS.Xml.Helpers
             return true;
         }
 
+
+        #endregion
+
+        #region xml to xml based on xsd
+
+        //public XmlDocument ConvertTo(XmlDocument source, string xsdPath)
+        //{
+        //    if (source == null) throw new ArgumentNullException("source", "source must not be null.");
+        //    if (string.IsNullOrEmpty(xsdPath)) throw new ArgumentNullException("xsdPath", "xsdPath must not be null.");
+        //    if (!File.Exists(xsdPath)) throw new ArgumentNullException("xsdPath", "file not exist.");
+
+        //    XmlDocument newMetadata = new XmlDocument();
+
+        //    XmlSchemaManager xmlSchemaManager = new XmlSchemaManager();
+        //    xmlSchemaManager.Load(xsdPath, "test");
+
+        //    if (source.DocumentElement != null)
+        //    {
+        //        XmlElement root = source.DocumentElement;
+
+        //        var type = xmlSchemaManager.Elements.Where(e => e.Name == root.Name).ToList().FirstOrDefault();
+
+        //        //if(type != null)
+
+        //            //XmlElement targetRoot = newMetadata.CreateElement()
+
+        //    }
+
+
+        //    return newMetadata;
+        //}
+
+        //private XmlElement addChild(XmlElement parentSource, XmlElement ParentTarget XmlDocument newMetadata)
+        //{ 
+            
+        //}
 
         #endregion
 
