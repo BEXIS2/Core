@@ -1,9 +1,11 @@
-<script type="ts">
+<script lang="ts">
  
  import { onMount } from 'svelte'; 
  import { fade } from 'svelte/transition';
 
  import { setApiConfig }  from '@bexis2/bexis2-core-ui'
+
+ import type { EntityTemplateModel } from '../../models/EntityTemplate'
 
  import { 
    getEntities,
@@ -16,7 +18,7 @@
    getEntityTemplateList
  }  from '../../services/EntityTemplateCaller'
 
- import type { EntityTemplateModel } from "../../models/EntityTemplate";
+
 
 
  let hooks= [];
@@ -49,6 +51,7 @@
  
    entitytemplates = await getEntityTemplateList();
  
+
    console.log("hooks", hooks);
    console.log("metadataStructures", metadataStructures);
    console.log("dataStructures",dataStructures);
