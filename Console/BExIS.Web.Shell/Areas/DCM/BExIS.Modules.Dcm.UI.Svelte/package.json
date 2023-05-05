@@ -1,5 +1,5 @@
 {
-	"name": "bexis-ui-template",
+	"name": "bexis-dcm-ui",
 	"version": "0.0.1",
 	"private": true,
 	"scripts": {
@@ -41,8 +41,9 @@
 	},
 	"type": "module",
 	"dependencies": {
-		"@bexis2/bexis2-core-ui": "^0.0.4",
+		"@bexis2/bexis2-core-ui": "^0.0.20",
 		"@sveltejs/adapter-static": "^2.0.1",
-		"patch-package": "^6.5.1"
+		"patch-package": "^6.5.1",
+		"svelte-fa": "^3.0.3"
 	}
 }
