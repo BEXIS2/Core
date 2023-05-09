@@ -3,9 +3,14 @@
  import { onMount } from 'svelte'; 
  import { fade } from 'svelte/transition';
 
- import { setApiConfig }  from '@bexis2/bexis2-core-ui'
+ // ui components
+ import Fa from 'svelte-fa/src/fa.svelte'
+ import { faPlus } from '@fortawesome/free-solid-svg-icons'
+ import Overview from './Overview.svelte';
+ import Edit from './Edit.svelte';
 
- import type { EntityTemplateModel } from '../../models/EntityTemplate'
+ // services
+ import { setApiConfig }  from '@bexis2/bexis2-core-ui'
 
  import { 
    getEntities,
@@ -18,7 +23,8 @@
    getEntityTemplateList
  }  from '../../services/EntityTemplateCaller'
 
-
+ // types
+ import type { EntityTemplateModel } from '../../models/EntityTemplate'
 
 
  let hooks= [];
@@ -111,7 +117,23 @@
 
 </script>
 
+<div class="p-5">
+{#if isOpen}
 
+<Edit id = {selectedEntityTemplate} 
+   {hooks} 
+   {metadataStructures} 
+   {dataStructures} 
+   {systemKeys} 
+   {entities} 
+   {groups} 
+   {filetypes} 
+   on:save={refresh} 
+   on:cancel={()=>isOpen=false}/>
 
-<h1>Entities</h1>
+{:else}
+  <button type="button" on:click={create} class="btn variant-filled bg-secondary-400"><Fa icon={faPlus}/></button>
+{/if}
 
+<Overview bind:entitytemplates={entitytemplates} on:edit={edit} />
+</div>

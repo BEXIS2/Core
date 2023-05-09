@@ -41,9 +41,11 @@
 	},
 	"type": "module",
 	"dependencies": {
-		"@bexis2/bexis2-core-ui": "^0.0.20",
+		"@bexis2/bexis2-core-ui": "^0.0.22",
 		"@sveltejs/adapter-static": "^2.0.1",
 		"patch-package": "^6.5.1",
-		"svelte-fa": "^3.0.3"
+		"svelte-fa": "^3.0.3",
+		"svelte-select": "^5.6.0",
+		"vest": "^4.6.11"
 	}
 }
