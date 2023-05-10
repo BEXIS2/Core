@@ -621,6 +621,10 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Indexer
                     return;
 
                 DatasetVersion dsv = dm.GetDatasetLatestVersion(id);
+
+                // if dataset has no structure -> nothing to do
+                if (dsv.Dataset.DataStructure == null) return;
+
                 StructuredDataStructure sds = dsm.StructuredDataStructureRepo.Get(dsv.Dataset.DataStructure.Id);
                 if (sds == null)
                     return;

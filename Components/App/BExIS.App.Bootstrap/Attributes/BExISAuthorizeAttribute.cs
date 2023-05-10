@@ -83,6 +83,7 @@ namespace BExIS.App.Bootstrap.Attributes
                     {
 
                         ContentResult content = new ContentResult();
+        
                         content.ContentType = "application/json";
                         content.Content = JsonConvert.SerializeObject(false);
                         filterContext.Result = content;

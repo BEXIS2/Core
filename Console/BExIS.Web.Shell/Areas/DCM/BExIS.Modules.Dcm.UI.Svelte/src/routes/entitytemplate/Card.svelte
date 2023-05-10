@@ -1,6 +1,7 @@
 <script>
 
 import { createEventDispatcher } from 'svelte'
+import ContentContainer from '../../lib/components/ContentContainer.svelte';
 
 export let id;
 export let name = "";
@@ -12,7 +13,7 @@ const dispatch = createEventDispatcher();
 
 </script>
 
-<div class="card p-4">
+<ContentContainer>
 	<header class="card-header"><h2>{name}</h2></header>
  
 	<section class="p-4">
@@ -26,4 +27,4 @@ const dispatch = createEventDispatcher();
    no action setup
   </slot>
  </footer>
-</div>
+</ContentContainer>

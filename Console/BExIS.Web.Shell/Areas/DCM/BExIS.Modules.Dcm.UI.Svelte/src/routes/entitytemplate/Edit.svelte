@@ -3,18 +3,15 @@
  
 import {createEventDispatcher} from 'svelte'
 import { onMount } from 'svelte'; 
+import { fade } from 'svelte/transition';
 
 // ui Components
  import Fa from 'svelte-fa/src/fa.svelte'
- import CheckBoxKvPList  from '../../lib/components/form/CheckBoxKvPList.svelte'
- import DropdownKvP  from '../../lib/components/form/DropdownKvP.svelte'
- import MultiSelect  from '../../lib/components/form/MultiSelect.svelte'
- import Input from '../../lib/components/form/Input.svelte'
- import TextArea from '../../lib/components/form/TextArea.svelte'
- import { Spinner }  from '@bexis2/bexis2-core-ui'
+ import { CheckboxKVPList, DropdownKVP, MultiSelect, TextArea,TextInput, Spinner } from "@bexis2/bexis2-core-ui";
  import { faSave, faTrashAlt } from '@fortawesome/free-regular-svg-icons/index'
  import {SlideToggle} from '@skeletonlabs/skeleton'
- 
+ import ContentContainer from '../../lib/components/ContentContainer.svelte';
+
  // validation
  import suite from './edit'
 
@@ -40,13 +37,15 @@ import { onMount } from 'svelte';
   let et:EntityTemplateModel;
 
   $:entityTemplate = et; 
- 
- 
+
+  console.log("edit");
+  suite.reset();
    onMount(async () => {
      console.log("start entity template", id);
      setApiConfig("https://localhost:44345","davidschoene","123456");
      load();
-     suite.reset();
+     console.log("onmount");
+     
    })
   
    async function load()
@@ -81,7 +80,7 @@ import { onMount } from 'svelte';
    // e.target.id is the id of the input component
    function onChangeHandler(e)
    {
-    console.log("input changed", e)
+     //console.log("input changed", e)
      // add some delay so the entityTemplate is updated 
      // otherwise the values are old
      setTimeout(async () => {
@@ -95,12 +94,12 @@ import { onMount } from 'svelte';
 
 
 {#if entityTemplate}
-<div>
+<ContentContainer>
  <form on:submit|preventDefault={handleSubmit}>
 
   <div class="w-full grid grid-cols-1 md:grid-cols-2 gap-4">
 
-  <Input
+  <TextInput
    id="name"
    label="Name"
    bind:value={entityTemplate.name} 
@@ -111,9 +110,10 @@ import { onMount } from 'svelte';
    required={true}
    />
 
-   <DropdownKvP 
+   <DropdownKVP 
     id="entityType" 
     title="Entity" 
+    required = {true},
     source={entities} 
     bind:target={entityTemplate.entityType} 
     valid={res.isValid("entityType")}
@@ -142,7 +142,7 @@ import { onMount } from 'svelte';
     <div class="flex flex-col space-y-4">
      <h3>Metadata</h3>
 
-     <DropdownKvP 
+     <DropdownKVP 
       id="metadataStructure"
       title="Structure" 
       bind:target={entityTemplate.metadataStructure}
@@ -176,7 +176,7 @@ import { onMount } from 'svelte';
        </SlideToggle>
    
        {#if entityTemplate.hasDatastructure}
-           <CheckBoxKvPList key="datastructures" title="Datastructures" source={dataStructures} bind:target={entityTemplate.datastructureList} />
+           <CheckboxKVPList key="datastructures" title="Datastructures" source={dataStructures} bind:target={entityTemplate.datastructureList} />
        {/if}
 
        </div>
@@ -220,14 +220,13 @@ import { onMount } from 'svelte';
    </div>
 
   <div class="py-5">
-
    <button type="submit" class="btn bg-slate-500" {disabled}><Fa icon={faSave}/></button>
    <button type="button" class="btn bg-warning-500" on:click={()=> dispatch("cancel")}><Fa icon={faTrashAlt}/></button>
-   
   </div>
  </form>
-</div>
+</ContentContainer> 
 {:else}
-<Spinner/>
+  <Spinner/>
 {/if}
+
 

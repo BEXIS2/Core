@@ -2,7 +2,7 @@
 	/* =~= Theme Properties =~= */
 	--theme-font-family-base: system-ui;
 	--theme-font-family-heading: system-ui;
-	--theme-font-color-base: 0 0 0;
+	--theme-font-color-base: var(--color-surface-900);
 	--theme-font-color-dark: 255 255 255;
 	--theme-rounded-base: 4px;
 	--theme-rounded-container: 4px;
@@ -92,9 +92,6 @@
 --color-surface-600: 199 199 199; /* ⬅ #c7c7c7 */
 --color-surface-700: 166 166 166; /* ⬅ #a6a6a6 */
 --color-surface-800: 133 133 133; /* ⬅ #858585 */
---color-surface-900: 108 108 108; /* ⬅ #6c6c6c */
-    /* dark mode surface | #1f2937 */
-	--color-surface-800: 19 25 33; /* ⬅ #131921 */
-	--color-surface-900: 15 20 27; /* ⬅ #0f141b */
-	
+--color-surface-900: 80 80 80; /* ⬅ #6c6c6c */
+
 }
