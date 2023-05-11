@@ -1080,13 +1080,13 @@
     <Content Include="Views\Shared\SessionTimeout.cshtml" />
     <Content Include="Views\Home\Version.cshtml" />
     <Content Include="Views\Home\NoPermission.cshtml" />
-    <Content Include="Web.config.sample" />
+    <None Include="Web.config" />
     <Content Include="Views\Shared\EditorTemplates\Collection.cshtml" />
     <Content Include="Scripts\svelte\settings.js.map" />
     <Content Include="Views\Settings\Index.cshtml" />
     <Content Include="Themes\Default\Layouts\_svelte_telerikLayout.cshtml" />
     <Content Include="Themes\Default\Layouts\_svelteLayout.cshtml" />
-    <None Include="Web.config" />
+    <None Include="Web.config.old" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Areas\" />
