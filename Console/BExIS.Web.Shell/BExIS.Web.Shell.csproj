@@ -337,7 +337,8 @@
     <Compile Include="App_Start\RegisterClientValidationExtensions.cs" />
     <Compile Include="App_Start\SwaggerConfig.cs" />
     <Compile Include="Controllers\AccountController.cs" />
-    <Compile Include="Controllers\API\TokenController.cs" />
+    <Compile Include="Controllers\API\ModulesController.cs" />
+    <Compile Include="Controllers\API\TokensController.cs" />
     <Compile Include="Controllers\API\VersionsController.cs" />
     <Compile Include="Controllers\ErrorController.cs" />
     <Compile Include="Controllers\FooterController.cs" />
@@ -362,7 +363,7 @@
     <Compile Include="Models\AccountModels.cs" />
     <Compile Include="Models\EntitySelectorModel.cs" />
     <Compile Include="Models\ManageModels.cs" />
-    <Compile Include="Models\SettingsModels.cs" />
+    <Compile Include="Models\ModuleModels.cs" />
     <Compile Include="Models\UiTestModel.cs" />
     <Compile Include="Models\VersionModels.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
