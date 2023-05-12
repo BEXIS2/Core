@@ -35,6 +35,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         /// <param name="version">version number of the dataset</param>
         /// <returns></returns>
         [BExISEntityAuthorize(typeof(Dataset), "id", RightType.Read)]
+        [JsonNetFilter]
         public JsonResult Load(long id, int version = 0)
         {
             ViewModel model = new ViewModel();

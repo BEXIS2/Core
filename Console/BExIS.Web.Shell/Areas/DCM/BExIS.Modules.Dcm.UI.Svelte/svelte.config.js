@@ -10,10 +10,11 @@ const config = {
 	// for more information about preprocessors
 	preprocess: vitePreprocess(),
 
+
 	kit: {
 		adapter: adapter({
-			pages:'../BExIS.Modules.Dcm.UI/Scripts/svelte', // ../BExIS.Modules.Dcm.UI/Scripts/svelte
-			assets:'../BExIS.Modules.Dcm.UI/Scripts/svelte',// ../BExIS.Modules.Dcm.UI/Scripts/svelte
+			pages:'', // ../BExIS.Modules.Dcm.UI/Scripts/svelte
+			assets:"",// ../BExIS.Modules.Dcm.UI/Scripts/svelte
 			fallback:null,
 			precompress:true,
 			preprocess:true,
