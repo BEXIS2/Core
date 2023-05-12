@@ -466,7 +466,7 @@
               Sucht eine lokalisierte Zeichenfolge, die Update ähnelt.
             </summary>
         </member>
-        <member name="M:BExIS.Web.Shell.Controllers.API.TokenController.Get">
+        <member name="M:BExIS.Web.Shell.Controllers.API.TokensController.Get">
             <summary>
             Get the token based on basic authentication
             </summary>
