@@ -1,8 +1,8 @@
 import { Api } from "@bexis2/bexis2-core-ui";
 
-export const getVersions = async () => {
+export const getModules = async () => {
     try {
-        const response = await Api.get('/api/settings');
+        const response = await Api.get('/api/modules');
         console.log("response:", response);
         return response.data;
     } catch (error) {
@@ -10,9 +10,9 @@ export const getVersions = async () => {
     }
 };
 
-export const getVersion = async (name:string) => {
+export const getModuleByName = async (name:string) => {
     try {
-        const response = await Api.get(`/api/setting/${name}`);
+        const response = await Api.get(`/api/modules/${name}`);
         return response.data;
     } catch (error) {
         console.error(error);

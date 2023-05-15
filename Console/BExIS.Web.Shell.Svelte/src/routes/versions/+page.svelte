@@ -19,9 +19,9 @@ onMount(async () => {
 
 {#if versions}
 <div>
-    <div>Database: {versions.Database}</div>
-    <div>Workspace: {versions.Workspace}</div>
-    <div>Site: {versions.Site}</div>
+    <div>Database: {versions.database}</div>
+    <div>Workspace: {versions.workspace}</div>
+    <div>Site: {versions.site}</div>
 </div>
 {:else}
 <div class="loading"></div>

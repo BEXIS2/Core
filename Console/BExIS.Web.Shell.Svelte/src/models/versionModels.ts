@@ -1,5 +1,5 @@
 export interface ReadVersionsModel {
-    Site:string,
-    Workspace:string,
-    Database:string
+    site:string,
+    workspace:string,
+    database:string
    }
