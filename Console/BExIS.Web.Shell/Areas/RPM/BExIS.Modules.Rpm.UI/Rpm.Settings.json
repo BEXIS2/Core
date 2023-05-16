@@ -22,11 +22,8 @@
       "description": "Show -Create Variable Template- on data structure edit"
     },
     {
-      "key": "name",
-      "value": "missingvalues",
-      "type": "list",
-      "description": "placeholder... description...",
-      "item": [
+      "key": "missingValues",
+      "value": [
         {
           "attribute": [
             {
@@ -53,10 +50,11 @@
               "value": "not measured",
               "type": "String"
             }
-          ]
+          ],
+          "type": "list",
+          "description": "placeholder... description..."
         }
       ]
     }
-
   ]
 }
