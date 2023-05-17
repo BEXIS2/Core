@@ -1,4 +1,4 @@
-﻿@model BExIS.Modules.Dcm.UI.Models.Metadata.UIComponentModel
+﻿﻿@model BExIS.Modules.Dcm.UI.Models.Metadata.UIComponentModel
 @using BExIS.Modules.Dcm.UI.Models.Metadata
 
 @{
@@ -15,11 +15,14 @@
     string action = "OnChangeCheckBox(this)";
     if (Model.Type.Equals(MetadataAttrType.Parameter)) { action = "OnChangeParameterCheckBox(this)"; }
 
+    string disabled = Model.Locked ? "disabled" : "";
 }
 
-@if (!Model.Locked){
+@if (!Model.Locked)
+{
     @Html.CheckBox(Model.DisplayName, value,
-    new{
+    new
+        {
             idbyxpath = @Model.IdByXpath,
             OnClick = action,
             Name = @Model.DisplayName,
@@ -28,27 +31,17 @@
             Title = @Model.ErrorMessage
         })
 }
-else{
-  @Html.CheckBox(Model.DisplayName, value,
-    new{
-            idbyxpath = @Model.IdByXpath,
-            OnClick = action,
-            disabled = disabled,
-            Name = @Model.DisplayName,
-            Id = @Model.IdInput,
-            PackageId = @Model.ParentId,
-            Title = @Model.ErrorMessage
-        })
-}
-
-{ @Html.CheckBox(Model.DisplayName, value,
-  new
-  {
-          idbyxpath = @Model.IdByXpath,
-          OnClick = action,
-          Name = @Model.DisplayName,
-          Id = @Model.IdInput,
-          PackageId = @Model.ParentId,
-          Title = @Model.ErrorMessage
-      })
+else
+{
+    @Html.CheckBox(Model.DisplayName, value,
+      new
+        {
+              idbyxpath = @Model.IdByXpath,
+              OnClick = action,
+              disabled = disabled,
+              Name = @Model.DisplayName,
+              Id = @Model.IdInput,
+              PackageId = @Model.ParentId,
+              Title = @Model.ErrorMessage
+          })
 }
