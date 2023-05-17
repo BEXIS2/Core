@@ -29,7 +29,7 @@ namespace BExIS.Modules.Dim.UI.Tests.Helpers
         {
         }
 
-        //[Test()]
+        [Test()]
         public void ReadProxy_ValidSettings_ReturnString()
         {
             var appConfiguration = AppConfiguration.WorkspaceRootPath;
@@ -41,7 +41,7 @@ namespace BExIS.Modules.Dim.UI.Tests.Helpers
             Assert.That(1, Is.EqualTo(1));
         }
 
-        //[Test()]
+        [Test()]
         public void ReadMappings_ValidSettings_ReturnList()
         {
             var appConfiguration = AppConfiguration.WorkspaceRootPath;

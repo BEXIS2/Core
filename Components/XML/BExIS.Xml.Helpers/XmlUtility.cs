@@ -169,7 +169,8 @@ namespace BExIS.Xml.Helpers
         {
             try
             {
-                if (doc == null || parent == null) return null;
+                if (doc == null) return null;
+                //if (parent == null) return null;
 
                 // grab the next node name in the xpath; or return parent if empty
                 string[] partsOfXPath = xpath.Trim('/').Split('/');
@@ -192,10 +193,10 @@ namespace BExIS.Xml.Helpers
                     index = Int32.Parse(tmp[1].Remove(tmp[1].IndexOf("]")));
                 }
 
-                XmlNodeList nodes = parent.SelectNodes(nodeName);
+                XmlNodeList nodes = parent!=null?parent.SelectNodes(nodeName):doc.SelectNodes(nodeName);
 
                 XmlNode node = nodes[index - 1];
-
+          
                 if (node == null)
                 {
                     if (nextNodeInXPath.StartsWith("@"))
@@ -205,7 +206,8 @@ namespace BExIS.Xml.Helpers
                     }
                     else
                     {
-                        node = parent.AppendChild(doc.CreateElement(nodeName));
+                        if (parent != null) node = parent.AppendChild(doc.CreateElement(nodeName));
+                        else return null;
                     }
                 }
 

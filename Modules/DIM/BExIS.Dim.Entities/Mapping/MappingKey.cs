@@ -19,6 +19,8 @@ namespace BExIS.Dim.Entities.Mapping
         public virtual MappingConcept Concept { get; set; }
         public virtual ICollection<MappingKey> Children { get; set; }
 
+        public virtual string XPath { get; set; }
+
 
         public MappingKey()
         {
@@ -28,6 +30,7 @@ namespace BExIS.Dim.Entities.Mapping
             Optional = false;
             IsComplex = false;
             Children = new List<MappingKey>();
+            XPath = string.Empty;
         }
 
     } 

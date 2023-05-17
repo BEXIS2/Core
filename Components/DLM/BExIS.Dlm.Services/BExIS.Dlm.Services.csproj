@@ -172,6 +172,7 @@
     <Compile Include="MetadataStructure\MetadataAttributeManager.cs" />
     <Compile Include="MetadataStructure\MetadataStructureManager.cs" />
     <Compile Include="Party\PartyManager.cs" />
+    <Compile Include="Party\PartyRelationshipManager.cs" />
     <Compile Include="Party\PartyRelationshipTypeManager.cs" />
     <Compile Include="Party\PartyTypeManager.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

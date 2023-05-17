@@ -1,4 +1,6 @@
-﻿namespace BExIS.Dim.Helpers.Export
+﻿using System.Collections.Generic;
+
+namespace BExIS.Dim.Helpers.Export
 {
     public interface IDataRepoConverter
     {
@@ -15,6 +17,6 @@
         /// </summary>
         /// <param name="datasetVersionId"></param>
         /// <returns></returns>
-        bool Validate(long datasetVersionId);
+        bool Validate(long datasetVersionId, out List<string> errors);
     }
 }

@@ -14,12 +14,15 @@ namespace BExIS.Dim.Entities.Mapping
         public virtual string Name { get; set; }
         public virtual string Description { get; set; }
         public virtual string Url { get; set; }
+        public virtual string XSD { get; set; }
+
 
         public MappingConcept()
         {
             Name = string.Empty;
             Description = string.Empty;
             Url = string.Empty;
+            XSD = string.Empty;
         }
     } 
 }

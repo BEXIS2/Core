@@ -52,14 +52,15 @@ namespace BExIS.Dim.Services
 
         #region Concept
 
-        public MappingConcept CreateMappingConcept( string name, string description, string url)
+        public MappingConcept CreateMappingConcept( string name, string description, string url, string xsd)
         {
 
             MappingConcept concept = new MappingConcept();
             concept.Name = name;
             concept.Description = description;
             concept.Url = url;
-            
+            concept.XSD = xsd;
+
             using (IUnitOfWork uow = this.GetUnitOfWork())
             {
                 IRepository<MappingConcept> repo = uow.GetRepository<MappingConcept>();
@@ -109,7 +110,7 @@ namespace BExIS.Dim.Services
 
         #region Key
 
-        public MappingKey CreateMappingKey(string name, string description, string url, bool optional, bool isComplex,MappingConcept concept = null, MappingKey parent = null)
+        public MappingKey CreateMappingKey(string name, string description, string url, bool optional, bool isComplex, string xpath= "", MappingConcept concept = null, MappingKey parent = null)
         {
 
             MappingKey entity = new MappingKey();
@@ -120,6 +121,7 @@ namespace BExIS.Dim.Services
             entity.IsComplex = isComplex;
             entity.Concept = concept;
             entity.Parent = parent;
+            entity.XPath = xpath;
 
             using (IUnitOfWork uow = this.GetUnitOfWork())
             {

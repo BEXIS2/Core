@@ -90,12 +90,12 @@ namespace BExIS.Modules.Dim.UI.Controllers
             return getData(id, -1, token, projection, selection);
         }
 
-        // GET: api/data/5
+
         /// <summary>
-        /// In addition to the id, it is possible to have projection and selection criteria passed to the action via query string parameters
+        /// In addition to the id and version id, it is possible to have projection and selection criteria passed to the action via query string parameters
         /// </summary>
         /// <param name="id">Dataset Id</param>
-        /// <param name="version">Version number of the dataset</param>
+        /// <param name="versionId">Version Id of the dataset</param>
         /// <returns></returns>
         /// <remarks> The action accepts the following additional parameters via the query string
         /// 1: header: is a comman separated list of ids that determines which variables of the dataset version tuples should take part in the result set
@@ -104,18 +104,105 @@ namespace BExIS.Modules.Dim.UI.Controllers
         /// </remarks>
         [BExISApiAuthorize]
         //[Route("api/Data")]
-        [GetRoute("api/Data/{id}/{version}")]
+        [GetRoute("api/Data/{id}/{versionId}")]
         [HttpGet]
-        public HttpResponseMessage Get(long id, int version, [FromUri] string header = null, [FromUri] string filter = null)
+        public HttpResponseMessage Get(long id, long versionId, [FromUri] string header = null, [FromUri] string filter = null)
         {
+            if (id <= 0)
+                return Request.CreateErrorResponse(HttpStatusCode.PreconditionFailed, "Id should be greater then 0");
+
             string projection = this.Request.GetQueryNameValuePairs().FirstOrDefault(p => "header".Equals(p.Key, StringComparison.InvariantCultureIgnoreCase)).Value;
             string selection = this.Request.GetQueryNameValuePairs().FirstOrDefault(p => "filter".Equals(p.Key, StringComparison.InvariantCultureIgnoreCase)).Value;
             string token = this.Request.Headers.Authorization?.Parameter;
 
-            return getData(id, version, token, projection, selection);
+            return getData(id, versionId, token, projection, selection);
         }
 
-        private HttpResponseMessage getData(long id, int version, string token, string projection = null, string selection = null)
+        /// <summary>
+        /// In addition to the id and version number, it is possible to have projection and selection criteria passed to the action via query string parameters
+        /// </summary>
+        /// <param name="id">Dataset Id</param>
+        /// <param name="version_number">Version number of the dataset</param>
+        /// <returns></returns>
+        /// <remarks> The action accepts the following additional parameters via the query string
+        /// 1: header: is a comman separated list of ids that determines which variables of the dataset version tuples should take part in the result set
+        /// 2: filter: is a logical expression that filters the tuples of the chosen dataset. The expression should have been written against the variables of the dataset only.
+        /// logical operators, nesting, precedence, and SOME functions should be supported.
+        /// </remarks>
+        [BExISApiAuthorize]
+        //[Route("api/Data")]
+        [GetRoute("api/Data/{id}/version_number/{version_number}")]
+        [HttpGet]
+        public HttpResponseMessage Get(long id, int version_number, [FromUri] string header = null, [FromUri] string filter = null)
+        {
+            if (id <= 0)
+                return Request.CreateErrorResponse(HttpStatusCode.PreconditionFailed, "Id should be greater then 0");
+
+            if (version_number <= 0)
+                return Request.CreateErrorResponse(HttpStatusCode.PreconditionFailed, "Version should be greater then 0");
+
+            string projection = this.Request.GetQueryNameValuePairs().FirstOrDefault(p => "header".Equals(p.Key, StringComparison.InvariantCultureIgnoreCase)).Value;
+            string selection = this.Request.GetQueryNameValuePairs().FirstOrDefault(p => "filter".Equals(p.Key, StringComparison.InvariantCultureIgnoreCase)).Value;
+            string token = this.Request.Headers.Authorization?.Parameter;
+
+            using (DatasetManager dm = new DatasetManager())
+            {
+                int index = version_number - 1;
+                Dataset dataset = dm.GetDataset(id);
+
+                int versions = dataset.Versions.Count;
+
+                if (versions < version_number)
+                    return Request.CreateErrorResponse(HttpStatusCode.PreconditionFailed, "This version number does not exist for this dataset");
+
+                var datasetVersion = dataset.Versions.OrderBy(d => d.Timestamp).ElementAt(index);
+
+                return getData(id, datasetVersion.Id, token, projection, selection);
+            }
+
+        }
+
+        /// <summary>
+        /// In addition to the id and version name, it is possible to have projection and selection criteria passed to the action via query string parameters
+        /// </summary>
+        /// <param name="id">Dataset Id</param>
+        /// <param name="version_name">Version name of the dataset</param>
+        /// <returns></returns>
+        /// <remarks> The action accepts the following additional parameters via the query string
+        /// 1: header: is a comman separated list of ids that determines which variables of the dataset version tuples should take part in the result set
+        /// 2: filter: is a logical expression that filters the tuples of the chosen dataset. The expression should have been written against the variables of the dataset only.
+        /// logical operators, nesting, precedence, and SOME functions should be supported.
+        /// </remarks>
+        [BExISApiAuthorize]
+        //[Route("api/Data")]
+        [GetRoute("api/Data/{id}/version_name/{version_name}")]
+        [HttpGet]
+        public HttpResponseMessage Get(long id, string version_name, [FromUri] string header = null, [FromUri] string filter = null)
+        {
+            if (id <= 0)
+                return Request.CreateErrorResponse(HttpStatusCode.PreconditionFailed, "Id should be greater then 0");
+
+            if (string.IsNullOrEmpty(version_name))
+                return Request.CreateErrorResponse(HttpStatusCode.PreconditionFailed, "Version name not exist");
+
+
+            string projection = this.Request.GetQueryNameValuePairs().FirstOrDefault(p => "header".Equals(p.Key, StringComparison.InvariantCultureIgnoreCase)).Value;
+            string selection = this.Request.GetQueryNameValuePairs().FirstOrDefault(p => "filter".Equals(p.Key, StringComparison.InvariantCultureIgnoreCase)).Value;
+            string token = this.Request.Headers.Authorization?.Parameter;
+
+            using (DatasetManager dm = new DatasetManager())
+            {
+
+                var versionId = dm.GetDatasetVersions(id).Where(d => d.VersionName == version_name).Select(d => d.Id).FirstOrDefault();
+
+                if (versionId <= 0)
+                    return Request.CreateErrorResponse(HttpStatusCode.PreconditionFailed, "This version name does not exist for this dataset");
+
+                return getData(id, versionId, token, projection, selection);
+            }
+        }
+
+        private HttpResponseMessage getData(long id, long versionId, string token, string projection = null, string selection = null)
         {
 
             if (id <= 0)
@@ -156,21 +243,28 @@ namespace BExIS.Modules.Dim.UI.Controllers
                     {
                         XmlDatasetHelper xmlDatasetHelper = new XmlDatasetHelper();
                         OutputDataManager ioOutputDataManager = new OutputDataManager();
-
+                        
                         Dataset dataset = datasetManager.GetDataset(id);
+                        if(dataset == null) return Request.CreateResponse(HttpStatusCode.PreconditionFailed, "dataset " + id +" not exist.");
 
+                        DatasetVersion datasetVersion = datasetManager.GetDatasetLatestVersion(id);
+             
                         // If the requested version is -1 or the last version of the dataset, then the data will be loaded in a
                         // different way than when loading the data from an older version
                         bool isLatestVersion = false;
-                        if (version == -1 || dataset.Versions.Count == version) isLatestVersion = true;
 
+                        if (versionId == -1) isLatestVersion = true;
+                        else
+                        {
+                            // check version id belongs to dataset
+                            if (!dataset.Versions.Select(v => v.Id).Contains(versionId)) return Request.CreateResponse(HttpStatusCode.PreconditionFailed, "this version id is not part of the dataset " + id);
+                            if (versionId == -1 || datasetVersion.Id == versionId) isLatestVersion = true;
+                        }
                         DataTable dt = null;
 
                         if (isLatestVersion)
                         {
                             #region get data from the latest version of a dataset
-
-                            DatasetVersion datasetVersion = datasetManager.GetDatasetLatestVersion(id);
 
                             string title = datasetVersion.Title;
 
@@ -218,13 +312,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
                         {
                             #region load data of a older version of a dataset
 
-                            int index = version - 1;
-                            if (version >= dataset.Versions.Count)
-                            {
-                                return Request.CreateResponse(HttpStatusCode.PreconditionFailed, String.Format("This version ({0}) is not available for the dataset", version));
-                            }
-
-                            DatasetVersion datasetVersion = dataset.Versions.OrderBy(d => d.Timestamp).ElementAt(version - 1);
+                            datasetVersion = datasetManager.GetDatasetVersion(versionId);
 
                             string title = datasetVersion.Title;
 
