@@ -47,12 +47,14 @@ namespace BExIS.UI.Helpers
             {
                 string json = r.ReadToEnd();
                 Dictionary<string, Dictionary<string, object>> manifest = JsonConvert.DeserializeObject<Dictionary<string, Dictionary<string, object>>>(json);
+                if (manifest.ContainsKey(key))
+                {
+                    var page = manifest[key];
 
-                var page = manifest[key];
+                    string pagehash = page["file"].ToString();//"_page.svelte-2b7e1fbb.js";
 
-                string pagehash = page["file"].ToString();//"_page.svelte-2b7e1fbb.js";
-
-                return svelteBuildPath + pagehash;
+                    return svelteBuildPath + pagehash;
+                }
             }
 
             return "";

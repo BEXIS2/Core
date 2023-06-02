@@ -34,7 +34,10 @@ $:testPage="";
 
 onMount(async () => {
 
-	console.log("onmount",model);
+
+	
+
+console.log("onmount",model);
 
 hooks = model.hooks;
 title = model.title;

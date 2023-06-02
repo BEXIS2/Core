@@ -1,5 +1,14 @@
-<!-- YOU CAN DELETE EVERYTHING IN THIS PAGE -->
+<script>
+	import {Page} from "@bexis2/bexis2-core-ui";
+</script>
 
-<div class="container h-full mx-auto flex justify-center items-center">
-	<h1>Let's get cracking bones!</h1>
+<Page title="Data Collection Module">
+
+<div class="grid grid-flow-col gap-10 ">
+	<a class="btn variant-filled-secondary" href="./entitytemplate">entitytemplate</a>
+	<a class="btn variant-filled-secondary" href="./create">create</a>
+	<a class="btn variant-filled-secondary" href="./edit">edit</a>
+	<a class="btn variant-filled-secondary" href="./structuresuggestion">structuresuggestion</a>
 </div>
+
+</Page>

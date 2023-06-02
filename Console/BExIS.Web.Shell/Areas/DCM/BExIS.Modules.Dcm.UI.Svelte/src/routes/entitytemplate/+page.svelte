@@ -8,9 +8,9 @@
  import { faPlus } from '@fortawesome/free-solid-svg-icons'
  import Overview from './Overview.svelte';
  import Edit from './Edit.svelte';
-
+ 
  // services
- import { setApiConfig }  from '@bexis2/bexis2-core-ui'
+ import { setApiConfig, Page }  from '@bexis2/bexis2-core-ui'
 
  import { 
    getEntities,
@@ -117,7 +117,8 @@
 
 </script>
 
-<div class="p-5">
+<Page title="Entity Templates" note="On this page you can edit entity template.">
+
 {#if isOpen}
 
 <Edit id = {selectedEntityTemplate} 
@@ -132,8 +133,11 @@
    on:cancel={()=>isOpen=false}/>
 
 {:else}
+<div class="w-full">
   <button type="button" on:click={create} class="btn variant-filled bg-secondary-400"><Fa icon={faPlus}/></button>
+</div>
 {/if}
 
 <Overview bind:entitytemplates={entitytemplates} on:edit={edit} />
-</div>
+
+</Page>
