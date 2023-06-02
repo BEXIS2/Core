@@ -1,31 +1,51 @@
 ﻿@{
-    ViewBag.Title = "View";
-    Layout = "~/Themes/Default/Layouts/_svelte_telerikLayout.cshtml";
+    ViewBag.Title = "Test";
+    Layout = "~/Themes/Default/Layouts/_svelteLayout.cshtml";
 
-}
+    string page = ViewData["PageScript"].ToString();
+    string pagecss = ViewData["PageCss"].ToString();
+    string pageId = ViewData["PageId"].ToString();
 
-<link href="~/Areas/DCM/BExIS.Modules.DCM.UI/Scripts/svelte/view.css" rel="stylesheet">
 
-@section scripts
-{
-    <script src="~/Areas/DCM/BExIS.Modules.DCM.UI/Scripts/svelte/view.js"></script>
+    //string skeletoncss = "../../../Content/skeleton/themes/theme-modern.css";
 
-}
-
-@{
-    long id = 0;
-    long version = 0;
-
-    if (ViewBag.id != null)
+    string layoutcss = "";
+    if (ViewData["LayoutCss"] != null)
     {
-        id = (long)ViewBag.id;
+        layoutcss =  ViewData["LayoutCss"].ToString();
     }
 
-    if (ViewBag.version != null)
-    {
-        version = (long)ViewBag.version;
-    }
+    string layoutScript = ViewData["LayoutScript"].ToString();
 
-}
+    string layoutSvelteScript = ViewData["LayoutSvelteScript"].ToString();
 
-<div id="view" dataset="@id" version="@version"> </div>
+    long id = Convert.ToInt64(ViewData["id"]);
+    long version = Convert.ToInt64(ViewData["version"]);
+
+            }
+
+    <link href="@pagecss" rel="stylesheet">
+    <link href="@layoutcss" rel="stylesheet">
+
+    <script src="@layoutSvelteScript" type="module"></script>
+    
+    <script>
+        window.view = {
+            id: '@id'
+        }
+        console.log("bexis2", window.view.id)
+    </script>
+
+    <script type="module" data-sveltekit-hydrate="view">
+
+        import page from '@page'
+
+
+        const app = new page({
+            target: document.querySelector('[data-sveltekit-hydrate="view"]').parentNode
+        });
+
+    </script>
+
+
+

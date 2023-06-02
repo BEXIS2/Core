@@ -113,7 +113,7 @@ import { fade } from 'svelte/transition';
    <DropdownKVP 
     id="entityType" 
     title="Entity" 
-    required = {true},
+    required = {true}
     source={entities} 
     bind:target={entityTemplate.entityType} 
     valid={res.isValid("entityType")}
