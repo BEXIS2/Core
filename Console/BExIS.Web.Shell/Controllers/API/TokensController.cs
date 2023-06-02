@@ -10,7 +10,7 @@ using System.Web.Http.Description;
 
 namespace BExIS.Web.Shell.Controllers.API
 {
-    public class TokenController : ApiController
+    public class TokensController : ApiController
     {
 
         // GET api/Token/
@@ -19,7 +19,7 @@ namespace BExIS.Web.Shell.Controllers.API
         /// </summary>
         /// <returns>Token</returns>
         [BExISApiAuthorize]
-        [GetRoute("api/Token/")]
+        [GetRoute("api/token")]
         [HttpGet]
         public async Task<HttpResponseMessage> Get()
         {

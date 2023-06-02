@@ -112,7 +112,7 @@ namespace BExIS.Web.Shell.Controllers
 
                 string workspace = GeneralSettings.ApplicationVersion;
 
-                var model = new VersionModel()
+                var model = new ReadVersionsModel()
                 {
                     Site = site,
                     Database = database,

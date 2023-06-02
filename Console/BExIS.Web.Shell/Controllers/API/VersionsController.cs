@@ -35,7 +35,7 @@ namespace BExIS.Web.Shell.Controllers.API
                     XElement entry = XmlUtility.GetXElementByAttribute("entry", "key", "version", settings);
                     var versionWorkspace = entry.Attribute("value")?.Value;
 
-                    var model = new VersionModel()
+                    var model = new ReadVersionsModel()
                     {
                         Site = versionSite,
                         Database = versionDatabase,

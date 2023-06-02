@@ -1,6 +1,6 @@
 ﻿namespace BExIS.Web.Shell.Models
 {
-    public class VersionModel
+    public class ReadVersionsModel
     {
         public string Site { get; set; }
         public string Workspace { get; set; }
