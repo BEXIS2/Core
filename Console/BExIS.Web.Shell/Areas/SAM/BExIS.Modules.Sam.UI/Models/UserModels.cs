@@ -1,4 +1,5 @@
 ﻿using BExIS.Security.Entities.Subjects;
+using Newtonsoft.Json;
 using System;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -6,6 +7,34 @@ using System.Web.Mvc;
 
 namespace BExIS.Modules.Sam.UI.Models
 {
+    public class ReadUserModel
+    {
+        [JsonProperty("id")]
+        public long Id { get; set; }
+        [JsonProperty("email")]
+        public string Email { get; set; }
+        [JsonProperty("userName")]
+        public string UserName { get; set; }
+
+        [JsonProperty("creationDate")]
+        public DateTimeOffset CreationDate { get; set; }
+
+        [JsonProperty("modificationDate")]
+        public DateTimeOffset ModificationDate { get; set; }
+
+        public static ReadUserModel Convert(User user)
+        {
+            return new ReadUserModel()
+            {
+                Id = user.Id,
+                UserName = user.UserName,
+                Email = user.Email,
+                CreationDate = user.CreationDate,
+                ModificationDate = user.ModificationDate
+            };
+        }
+    }
+
     public class CreateUserModel
     {
         [Remote("ValidateEmail", "Users")]
