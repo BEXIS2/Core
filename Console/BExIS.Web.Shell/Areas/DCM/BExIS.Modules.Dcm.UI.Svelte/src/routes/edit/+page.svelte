@@ -69,11 +69,11 @@
    version = Number(container?.getAttribute("version"));
 
    console.log("start edit",id,version);
-   if(dev)
-    {
-      //setup api
-      setApiConfig("https://localhost:44345","davidschoene","123456");
-    }
+   
+   if (import.meta.env.DEV) {
+			console.log('dev');
+			setApiConfig('https://localhost:44345', 'davidschoene', '123456');
+		}
 
    // load
    load();

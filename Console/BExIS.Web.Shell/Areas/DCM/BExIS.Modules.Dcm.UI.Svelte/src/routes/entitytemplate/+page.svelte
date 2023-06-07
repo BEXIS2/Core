@@ -46,11 +46,11 @@
  
  onMount(async () => {
    console.log("start entity template");
-   
-   if(dev)
-  {
-      setApiConfig("https://localhost:44345","davidschoene","123456");
-  }
+
+   if (import.meta.env.DEV) {
+			console.log('dev');
+			setApiConfig('https://localhost:44345', 'davidschoene', '123456');
+		}
 
  
    hooks = await getHooks();

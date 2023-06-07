@@ -1,115 +1,100 @@
 <script lang="ts">
+	import Suggestion from './Suggestion.svelte';
+	import Selection from './Selection.svelte';
+	import StructureAttributes from './StructureAttributes.svelte';
 
- import Suggestion from './Suggestion.svelte'
- import Selection from './Selection.svelte'
- import StructureAttributes from './StructureAttributes.svelte'
-  
- import Fa from 'svelte-fa/src/fa.svelte'
- import { faSave } from '@fortawesome/free-regular-svg-icons'
- import { faArrowLeft } from '@fortawesome/free-solid-svg-icons'
- 
- import { onMount,  } from 'svelte'; 
- import { fade  } from 'svelte/transition'; 
- 
- import { setApiConfig,Spinner, Page }  from '@bexis2/bexis2-core-ui'
- import { generate, save, load }  from './services'
- import { goTo }  from '../../services/BaseCaller'
- 
+	import Fa from 'svelte-fa/src/fa.svelte';
+	import { faSave } from '@fortawesome/free-regular-svg-icons';
+	import { faArrowLeft } from '@fortawesome/free-solid-svg-icons';
 
- import type{StructureSuggestionModel} from '../../models/StructureSuggestion'
+	import { onMount } from 'svelte';
+	import { fade } from 'svelte/transition';
 
- import { dev } from '$app/environment'
- 
-  // load attributes from div
-  let container;
-  let id:number;
-  let version:number = 0;
-  let file:string;
- 
-let model:StructureSuggestionModel;
-$:model;
+	import { setApiConfig, Spinner, Page } from '@bexis2/bexis2-core-ui';
+	import { generate, save, load } from './services';
+	import { goTo } from '../../services/BaseCaller';
 
- 
- let selectionIsActive = true;
- 
- let areVariablesValid = false;
- let areAttributesValid = false;
- 
- onMount(async () => {
- 
-    // get data from parent
-    container = document.getElementById('structuresuggestion');
-    id = container?.getAttribute("dataset");
-    version = container?.getAttribute("version");
-    file = container?.getAttribute("file");
+	import type { StructureSuggestionModel } from '../../models/StructureSuggestion';
 
-    console.log("start structure suggestion",id, version, file)
-    //setup api
-    if(dev)
-    {
-        setApiConfig("https://localhost:44345","davidschoene","123456");
-    }
+	import { dev } from '$app/environment';
 
-    // load data from server
-    model = await load(id,file,0);
-    
-    console.log("model",model);
-    
-  })
- 
-  async function  update(e)
-  {
-     console.log("update",e.detail);
-     model = e.detail;
- 
-     let res = await generate(e.detail);
- 
-     if(res != false)
-     {
-       model = res;
-       selectionIsActive = false;
-     }
-  }
- 
- async function onSaveHandler()
- {
-   const res = await save(model);
-   console.log("save",res);
- 
-   goTo("/dcm/edit?id="+model.id);
- }
- 
- </script>
- 
- <Page title="Structure Suggestion" note="generate a structure from a file.">
+	// load attributes from div
+	let container;
+	let id: number;
+	let version: number = 0;
+	let file: string;
 
- {#if !model}
-   <Spinner/>
-   
- {:else}
- 
-    {#if selectionIsActive}
-     <div transition:fade>
-       <Selection {model} on:saved={update}/>
-     </div>
-    {:else}
-     {#if model.variables.length>0}
-       <div transition:fade>
-         <div>
-    
-             <button on:click={()=>selectionIsActive=true}><Fa icon={faArrowLeft}/></button>
-   
-             <div class="text-end">
-               <button color="primary" on:click={onSaveHandler} disabled={!areVariablesValid ||!areAttributesValid }><Fa icon={faSave}/></button>
-             </div>
-      
-          </div>
-         
-         <StructureAttributes {model} bind:valid={areAttributesValid}/>
-         <Suggestion variables = {model.variables} bind:valid={areVariablesValid}/>
-       </div>
-     {/if}
-    {/if}
- {/if}
+	let model: StructureSuggestionModel;
+	$: model;
 
+	let selectionIsActive = true;
+
+	let areVariablesValid = false;
+	let areAttributesValid = false;
+
+	onMount(async () => {
+		// get data from parent
+		container = document.getElementById('structuresuggestion');
+		id = container?.getAttribute('dataset');
+		version = container?.getAttribute('version');
+		file = container?.getAttribute('file');
+
+		console.log('start structure suggestion', id, version, file);
+		//setup api
+		if (import.meta.env.DEV) {
+			console.log('dev');
+			setApiConfig('https://localhost:44345', 'davidschoene', '123456');
+		}
+
+		// load data from server
+		model = await load(id, file, 0);
+
+		console.log('model', model);
+	});
+
+	async function update(e) {
+		console.log('update', e.detail);
+		model = e.detail;
+
+		let res = await generate(e.detail);
+
+		if (res != false) {
+			model = res;
+			selectionIsActive = false;
+		}
+	}
+
+	async function onSaveHandler() {
+		const res = await save(model);
+		console.log('save', res);
+
+		goTo('/dcm/edit?id=' + model.id);
+	}
+</script>
+
+<Page title="Structure Suggestion" note="generate a structure from a file.">
+	{#if !model}
+		<Spinner />
+	{:else if selectionIsActive}
+		<div transition:fade>
+			<Selection {model} on:saved={update} />
+		</div>
+	{:else if model.variables.length > 0}
+		<div transition:fade>
+			<div>
+				<button on:click={() => (selectionIsActive = true)}><Fa icon={faArrowLeft} /></button>
+
+				<div class="text-end">
+					<button
+						color="primary"
+						on:click={onSaveHandler}
+						disabled={!areVariablesValid || !areAttributesValid}><Fa icon={faSave} /></button
+					>
+				</div>
+			</div>
+
+			<StructureAttributes {model} bind:valid={areAttributesValid} />
+			<Suggestion variables={model.variables} bind:valid={areVariablesValid} />
+		</div>
+	{/if}
 </Page>
