@@ -1,4 +1,6 @@
-﻿using BExIS.UI.Models;
+﻿using BExIS.App.Bootstrap.Helpers;
+using BExIS.Security.Entities.Subjects;
+using BExIS.UI.Models;
 using BExIS.Web.Shell.Helpers;
 using System;
 using System.Collections.Generic;
@@ -21,6 +23,17 @@ namespace BExIS.Web.Shell.Controllers
             {
                 userName = HttpContext.User.Identity.Name;
                 isAuthenticated = true;
+            }
+            else
+            {
+                var authorization = HttpContext.Request.Headers.Get("Authorization");
+                User user = null;
+                var res = BExISAuthorizeHelper.GetUserFromAuthorization(authorization, out user);
+                if (user != null)
+                {
+                    userName = user.Name;
+                    isAuthenticated = true;
+                }
             }
 
             Menu menu = new Menu();
