@@ -459,16 +459,16 @@
     <Content Include="Scripts\svelte\_app\immutable\chunks\index.8b48ad28.js" />
     <Content Include="Scripts\svelte\_app\immutable\chunks\Page.74e7a17c.js" />
     <Content Include="Scripts\svelte\_app\immutable\chunks\Select.56c86c6c.js" />
-    <Content Include="Scripts\svelte\_app\immutable\chunks\singletons.ad186c8f.js" />
+    <Content Include="Scripts\svelte\_app\immutable\chunks\singletons.48253690.js" />
     <Content Include="Scripts\svelte\_app\immutable\chunks\SlideToggle.7f5857fe.js" />
     <Content Include="Scripts\svelte\_app\immutable\chunks\Spinner.61cd4034.js" />
     <Content Include="Scripts\svelte\_app\immutable\chunks\store.36de5848.js" />
     <Content Include="Scripts\svelte\_app\immutable\chunks\TextInput.65f17824.js" />
     <Content Include="Scripts\svelte\_app\immutable\chunks\vest.production.5c15686f.js" />
-    <Content Include="Scripts\svelte\_app\immutable\entry\app.e92d31f2.js" />
-    <Content Include="Scripts\svelte\_app\immutable\entry\start.f4f0d77c.js" />
+    <Content Include="Scripts\svelte\_app\immutable\entry\app.6b4e8470.js" />
+    <Content Include="Scripts\svelte\_app\immutable\entry\start.7a62dd73.js" />
     <Content Include="Scripts\svelte\_app\immutable\nodes\0.de69985c.js" />
-    <Content Include="Scripts\svelte\_app\immutable\nodes\1.793f3d78.js" />
+    <Content Include="Scripts\svelte\_app\immutable\nodes\1.97422f42.js" />
     <Content Include="Scripts\svelte\_app\immutable\nodes\2.a2358446.js" />
     <Content Include="Scripts\svelte\_app\immutable\nodes\3.e6bc1297.js" />
     <Content Include="Scripts\svelte\_app\immutable\nodes\4.eb91a5b5.js" />
@@ -594,16 +594,8 @@
     <Content Include="Scripts\svelte\_app\immutable\nodes\7.8056e9d7.js.gz" />
     <Content Include="Scripts\svelte\_app\immutable\nodes\8.76985b85.js.br" />
     <Content Include="Scripts\svelte\_app\immutable\nodes\8.76985b85.js.gz" />
-    <Content Include="Scripts\svelte\_app\immutable\chunks\singletons.ad186c8f.js.br" />
-    <Content Include="Scripts\svelte\_app\immutable\chunks\singletons.ad186c8f.js.gz" />
-    <Content Include="Scripts\svelte\_app\immutable\entry\app.e92d31f2.js.br" />
-    <Content Include="Scripts\svelte\_app\immutable\entry\app.e92d31f2.js.gz" />
-    <Content Include="Scripts\svelte\_app\immutable\entry\start.f4f0d77c.js.br" />
-    <Content Include="Scripts\svelte\_app\immutable\entry\start.f4f0d77c.js.gz" />
     <Content Include="Scripts\svelte\_app\immutable\nodes\0.de69985c.js.br" />
     <Content Include="Scripts\svelte\_app\immutable\nodes\0.de69985c.js.gz" />
-    <Content Include="Scripts\svelte\_app\immutable\nodes\1.793f3d78.js.br" />
-    <Content Include="Scripts\svelte\_app\immutable\nodes\1.793f3d78.js.gz" />
     <Content Include="Scripts\svelte\_app\immutable\nodes\3.e6bc1297.js.br" />
     <Content Include="Scripts\svelte\_app\immutable\nodes\3.e6bc1297.js.gz" />
     <Content Include="Scripts\svelte\_app\immutable\nodes\4.eb91a5b5.js.br" />
@@ -612,6 +604,8 @@
     <Content Include="Scripts\svelte\_app\immutable\nodes\5.99218825.js.gz" />
     <Content Include="Scripts\svelte\_app\immutable\nodes\6.48f1da18.js.br" />
     <Content Include="Scripts\svelte\_app\immutable\nodes\6.48f1da18.js.gz" />
+    <Content Include="Scripts\svelte\_app\immutable\nodes\1.97422f42.js.br" />
+    <Content Include="Scripts\svelte\_app\immutable\nodes\1.97422f42.js.gz" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
