@@ -19,8 +19,11 @@ const config = {
 			preprocess:true,
 			strict:false
 		}
-		)
-
+		),
+		alias: {
+			$models: './src/models',
+			$services: './src/services',
+	}
 	}
 };
 
