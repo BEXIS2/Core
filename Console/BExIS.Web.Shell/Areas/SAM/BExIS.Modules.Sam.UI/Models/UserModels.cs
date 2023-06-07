@@ -29,8 +29,8 @@ namespace BExIS.Modules.Sam.UI.Models
                 Id = user.Id,
                 UserName = user.UserName,
                 Email = user.Email,
-                CreationDate = user.CreationDate,
-                ModificationDate = user.ModificationDate
+                CreationDate = DateTimeOffset.Now,
+                ModificationDate = DateTimeOffset.Now
             };
         }
     }
