@@ -9,10 +9,10 @@
  import { fade } from 'svelte/transition'; 
 
  import { setApiConfig, Spinner }  from '@bexis2/bexis2-core-ui'
- import { getEntityTemplateList, getSystemKeys }  from '../../services/EntityTemplateCaller'
- import { goTo }  from '../../services/BaseCaller'
+ import { getEntityTemplateList, getSystemKeys }  from '$services/EntityTemplateCaller'
+ import { goTo }  from '$services/BaseCaller'
 
- import type {EntityTemplateModel } from '../../models/EntityTemplate'
+ import type {EntityTemplateModel } from '$models/EntityTemplate'
 
 
 let entitytemplate:EntityTemplateModel;
@@ -64,7 +64,7 @@ console.log(links)
 <Page 
 title="Create a Dataset" 
 note="On this page you can create a dataset based on a template. please select on template and fill out the form." 
-{links}>
+{links} >
 
 <div in:fade={{ delay: 500 }} out:fade={{ delay: 500 }}>
 {#if entitytemplates}

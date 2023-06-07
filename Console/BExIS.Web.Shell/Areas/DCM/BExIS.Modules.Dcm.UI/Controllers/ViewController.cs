@@ -38,10 +38,6 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             ViewData["LayoutSvelteScript"] = SvelteHelper.GetLayoutSvelteScript(module);
 
 
-            ViewData["DatasetId"] = id;
-            ViewData["DatasetVersion"] = version;
-
-
             return View();
         }
 

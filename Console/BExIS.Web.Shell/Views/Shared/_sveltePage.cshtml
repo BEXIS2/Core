@@ -1,0 +1,53 @@
+﻿@{
+    string start = "";
+
+    if (ViewData["start"] != null) { start = ViewData["start"].ToString(); }
+
+    string app = "";
+
+    if (ViewData["app"] != null) { app = ViewData["app"].ToString(); }
+
+
+    if (!string.IsNullOrEmpty(start) || !string.IsNullOrEmpty(app))
+    {
+
+
+    <script>
+        {
+            console.log("location", location);
+            console.log("pathname", location.pathname);
+            console.log("pathname.slice", location.pathname.slice(0, -1));
+            console.log("url", new URL(".", location));
+            console.log("url.path.slice", new URL(".", location).pathname.slice(0, -1));
+
+            //location.pathname = "/dcm/create/";
+            console.log("pathname", location.pathname);
+
+            __sveltekit_jzt7tf = {
+                base: new URL(".", location).pathname.slice(0, -1),
+                env: {}
+            };
+
+            console.log(__sveltekit_jzt7tf);
+
+            const element = document.currentScript.parentElement;
+
+            console.log("element",element);
+            console.log("app",'@app');
+            console.log("start",'@start');
+
+            Promise.all([
+                import('@start'),
+                import('@app')
+            ]).then(([kit, app]) => {
+
+                console.log("kit", kit);
+                console.log("app", app);
+  
+
+                kit.start(app, element);
+            });
+        }
+    </script>
+    }
+}

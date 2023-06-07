@@ -19,7 +19,7 @@ hover:bg-primary-100 space-x-100 active:bg-primary-300" on:click >
    <Fa size="3x" icon={faFileAlt}/>
 
    <div>
-    <h3>{name}</h3> 
+    <h3 class="h3">{name}</h3> 
     <span >{description}</span>
    </div>
 

@@ -1085,8 +1085,9 @@
     <Content Include="Views\Shared\EditorTemplates\Collection.cshtml" />
     <Content Include="Scripts\svelte\settings.js.map" />
     <Content Include="Views\Settings\Index.cshtml" />
-    <Content Include="Themes\Default\Layouts\_svelte_telerikLayout.cshtml" />
     <Content Include="Themes\Default\Layouts\_svelteLayout.cshtml" />
+    <Content Include="Views\Shared\_sveltePage.cshtml" />
+    <Content Include="Themes\Default\Layouts\_svelteLayout - Kopieren.cshtml" />
     <None Include="Web.config" />
   </ItemGroup>
   <ItemGroup>

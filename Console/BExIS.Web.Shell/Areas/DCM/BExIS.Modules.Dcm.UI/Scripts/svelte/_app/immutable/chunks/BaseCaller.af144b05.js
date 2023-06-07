@@ -1,1 +1,0 @@
-import{a6 as c}from"./index.83db4375.js";import{h as i}from"./ProgressBar.svelte_svelte_type_style_lang.f6568725.js";function r(o,{delay:t=0,duration:s=400,easing:a=c}={}){const e=+getComputedStyle(o).opacity;return{delay:t,duration:s,easing:a,css:n=>`opacity: ${n*e}`}}const m=async o=>{window.open(i+o,"_self").focus()};export{r as f,m as g};

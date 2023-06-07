@@ -4,19 +4,19 @@
  import { fade  } from 'svelte/transition'; 
 
  import { getEdit }  from './services'
- import { setApiConfig, Spinner }  from '@bexis2/bexis2-core-ui'
+ import { setApiConfig, Spinner, Page }  from '@bexis2/bexis2-core-ui'
  
  import Header from './Header.svelte'
  import Data from './Data.svelte'
  import Hooks from './Hooks.svelte'
  import Message from './MessagesContainer.svelte'
- import Debug from '../../lib/components/Debug.svelte'
+ import Debug from '$lib/components/Debug.svelte'
  
  import { latestFileUploadDate, latestDataDescriptionDate, hooksStatus } from './stores';
  
  import type { EditModel, HookModel, ViewModel} from './types';
  import { isEditModel} from './types';
- import Hook from '../../lib/components/Hook.svelte';
+ import Hook from '$lib/components/Hook.svelte';
 
  // load attributes from div
  let container ;
@@ -57,8 +57,6 @@
 
  let messageView:ViewModel;
  $:messageView;
-
-
 
 
  onMount(async () => {
@@ -198,6 +196,8 @@ let visible=false;
 
 </script>
 
+<Page>
+
 {#if model && hookStatusList} <!--if the model == true, load page-->
 <!-- Header -->
 <Header {id} {version} {title} />
@@ -214,3 +214,4 @@ let visible=false;
   <Spinner label="loading edit page" position="center"/>
 </div>
 {/if}
+</Page>
