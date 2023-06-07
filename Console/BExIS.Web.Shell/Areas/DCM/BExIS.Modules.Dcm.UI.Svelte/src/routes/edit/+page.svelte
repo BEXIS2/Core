@@ -18,6 +18,8 @@
  import { isEditModel} from './types';
  import Hook from '$lib/components/Hook.svelte';
 
+ import { dev } from '$app/environment'
+
  // load attributes from div
  let container ;
  let id:number = 0;
@@ -67,8 +69,11 @@
    version = Number(container?.getAttribute("version"));
 
    console.log("start edit",id,version);
-   //setup api
-   setApiConfig("https://localhost:44345","davidschoene","123456");
+   if(dev)
+    {
+      //setup api
+      setApiConfig("https://localhost:44345","davidschoene","123456");
+    }
 
    // load
    load();
