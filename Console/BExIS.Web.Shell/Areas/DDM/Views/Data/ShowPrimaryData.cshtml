@@ -9,7 +9,7 @@
 
     string lable_upload = "Upload";
 
-    if (Model.DataStructureType == DataStructureType.Structured && Model.Data != null)
+    if (Model !=null && Model.DataStructureType == DataStructureType.Structured && Model.Data != null)
     {
         if (Model.Data.Rows.Count > 0)
         {
@@ -20,7 +20,8 @@
 }
 
 <div class="ShowData_Main">
-
+    @if (@Model != null)
+    {
     <div class="row">
         <div class="col-md-2 col-xs-2">
             @if (Model.HasEditRight)
@@ -53,6 +54,10 @@
         }
 
     </div>
+    }
+    else { 
+        <span>no data available</span>
+    }
 </div>
 
 

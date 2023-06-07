@@ -14,7 +14,7 @@ const dispatch = createEventDispatcher();
 </script>
 
 <ContentContainer>
-	<header class="card-header"><h2>{name}</h2></header>
+	<header class="card-header"><h2 class="h2">{name}</h2></header>
  
 	<section class="p-4">
   {#if description }{description}{/if}

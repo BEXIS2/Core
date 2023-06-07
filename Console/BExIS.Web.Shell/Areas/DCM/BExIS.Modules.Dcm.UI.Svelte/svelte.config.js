@@ -9,20 +9,26 @@ const config = {
 	// Consult https://kit.svelte.dev/docs/integrations#preprocessors
 	// for more information about preprocessors
 	preprocess: vitePreprocess(),
-
-
 	kit: {
 		adapter: adapter({
-			pages:'', // ../BExIS.Modules.Dcm.UI/Scripts/svelte
-			assets:"",// ../BExIS.Modules.Dcm.UI/Scripts/svelte
+			pages:'../BExIS.Modules.Dcm.UI/Scripts/svelte', // ../BExIS.Modules.Dcm.UI/Scripts/svelte
+			assets:'../BExIS.Modules.Dcm.UI/Scripts/svelte',// ../BExIS.Modules.Dcm.UI/Scripts/svelte
 			fallback:null,
 			precompress:true,
 			preprocess:true,
 			strict:false
+		}),
+		paths:{
+			base: process.env.NODE_ENV ==='production' ? '/dcm':'' // add module id here
+		},
+
+		alias: {
+				$models: './src/models',
+				$services: './src/services',
 		}
-		)
 
 	}
+	
 };
 
 export default config;
