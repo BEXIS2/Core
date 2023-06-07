@@ -4,6 +4,7 @@ using BExIS.Dlm.Entities.Data;
 using BExIS.Dlm.Services.Data;
 using BExIS.Modules.Dcm.UI.Models.Edit;
 using BExIS.Security.Entities.Authorization;
+using BExIS.UI.Helpers;
 using BExIS.UI.Hooks;
 using System.Web.Mvc;
 
@@ -15,8 +16,12 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         [BExISEntityAuthorize(typeof(Dataset), "id", RightType.Write)]
         public ActionResult Index(long id, int version = 0)
         {
-            ViewBag.id = id;
-            ViewBag.version = version;
+            string module = "DCM";
+
+            ViewData["id"] = id;
+            ViewData["version"] = version;
+            ViewData["app"] = SvelteHelper.GetApp(module);
+            ViewData["start"] = SvelteHelper.GetStart(module);
 
             return View();
         }
@@ -72,7 +77,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 // based on the entity template, hooks can be disabled.
                 foreach (var hook in model.Hooks)
                 {
-                    if (datasetVersion.Dataset.EntityTemplate.DisabledHooks.Contains(hook.DisplayName))
+                    if (datasetVersion.Dataset.EntityTemplate.DisabledHooks != null && datasetVersion.Dataset.EntityTemplate.DisabledHooks.Contains(hook.DisplayName))
                         hook.Status = HookStatus.Disabled;
                 }
 

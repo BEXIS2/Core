@@ -34,11 +34,10 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         // GET: Create
         public ActionResult Index()
         {
-            string pageId = "create";
+            string module = "DCM";
 
-            ViewData["PageId"] = pageId;
-            ViewData["PageScript"] = SvelteHelper.GetPageScript("DCM", pageId);
-            ViewData["PageCss"] = SvelteHelper.GetPageCss("DCM", pageId);
+            ViewData["app"] = SvelteHelper.GetApp(module);
+            ViewData["start"] = SvelteHelper.GetStart(module);
 
             return View();
         }

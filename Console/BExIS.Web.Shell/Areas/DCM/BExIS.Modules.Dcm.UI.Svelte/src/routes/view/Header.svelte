@@ -4,9 +4,9 @@
  export let version; 
  export let title = "";
 
- </script>
+</script>
 
-<h1>{title}</h1>
+<h2 class="h2">{title}</h2>
 Dataset Id: {id}
 Version: {version}
 <b>version selection</b>

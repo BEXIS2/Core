@@ -9,6 +9,7 @@ using BExIS.IO.Transform.Input;
 using BExIS.Modules.Dcm.UI.Hooks;
 using BExIS.Modules.Dcm.UI.Models.StructureSuggestion;
 using BExIS.Security.Entities.Authorization;
+using BExIS.UI.Helpers;
 using BExIS.UI.Hooks;
 using BExIS.UI.Hooks.Caches;
 using BExIS.UI.Models;
@@ -29,9 +30,13 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         [BExISEntityAuthorize(typeof(Dataset), "id", RightType.Write)]
         public ActionResult Index(long id, string file, int version = 0)
         {
-            ViewBag.id = id;
-            ViewBag.version = version;
-            ViewBag.file = file;
+            string module = "dcm";
+
+            ViewData["id"] = id;
+            ViewData["version"] = version;
+            ViewData["file"] = file;
+            ViewData["app"] = SvelteHelper.GetApp(module);
+            ViewData["start"] = SvelteHelper.GetStart(module);
 
             return View();
         }
