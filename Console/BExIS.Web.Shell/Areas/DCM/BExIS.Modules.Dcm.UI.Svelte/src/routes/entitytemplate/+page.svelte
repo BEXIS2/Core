@@ -46,8 +46,8 @@
  
  onMount(async () => {
    console.log("start entity template");
-
-  if(dev)
+   
+   if(dev)
   {
       setApiConfig("https://localhost:44345","davidschoene","123456");
   }
