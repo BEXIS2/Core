@@ -1,0 +1,96 @@
+@using System.Web.Optimization
+@using BExIS.Utils.WebHelpers
+@using Microsoft.AspNet.Identity
+@using Telerik.Web.Mvc.UI;
+@using Vaiona.Web.Mvc;
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>@ViewBag.Title</title>
+
+    @Html.Favicon(Html.GetTenant().FavIconPath)
+
+
+    <style>
+        .t-window-content {
+            height: auto !important;
+            width: auto !important;
+        }
+
+
+        /* #information-container-2 {
+            background-color: var(--information-bg-color);
+            color: var(--information-text-color);
+            position:fixed;
+            width: 100%;
+            z-index: 1000;
+        }*/
+    </style>
+
+    @RenderSection("Head", false)
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-KyZXEAg3QhqLMpG8r+8fhAXLRk2vvoC2f3B09zVXn8CA5QIVfZOJ3BCsw2P0p/We" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-U1DAWAznBHeqEIlVSCgzq+c9gqGAJn5c/t99JyeKa9xxaYpSvHU5awsuZVVFIhvj" crossorigin="anonymous"></script>
+
+
+    @Styles.Render("~/bundles/svelte_general_bexis")
+    @Styles.Render("~/bundles/bexis")
+    @Styles.Render("~/Scripts/svelte/menu.css")
+
+    @Scripts.Render("~/bundles/svelte_jquery")
+
+    @*<link href="~/Content/docs.css" rel="stylesheet" />
+    <link href="~/Content/skeleton/themes/theme-modern.css" rel="stylesheet" />*@
+</head>
+
+<body data-theme="skeleton">
+
+    <!-- svelte container -->
+    <div id="menu"></div>
+
+
+    <div id="informationContainer">
+
+
+        <div id="information-container" class="container-fluid">
+
+            <a href="#information" data-bs-toggle="collapse" style="color: white">@ViewBag.Title <i class="fa fa-angle-double-down"></i></a>
+            <div class="collapse" id="information">
+                <div class="container" style="padding: 0pt 48pt 24pt 48pt; text-align: justify;">
+                    @RenderSection("Information", false)
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="main-content container-fluid" style="margin-top: 36pt; width: 100%;">
+        <table style="table-layout: fixed;">
+            <tr>
+                <td style=" border-bottom: #9B9B9B solid thin; padding: 12pt 0 12pt 0; vertical-align: top;">
+                    <div>
+                        @RenderBody()
+                    </div>
+                </td>
+            </tr>
+        </table>
+    </div>
+
+    @Html.RenderAuto("Footer")
+
+    <script type="text/javascript">
+        var global_sess_expirationSeconds = @Session.Timeout*60;
+        var global_sess_warningSeconds = @System.Configuration.ConfigurationManager.AppSettings["SessionWarningDelaySecond"].ToString();
+        var global_LogoutUrl = '@Url.Action("ClearSession", "Account", new { area = ""})';
+        var global_sess_resetPage = '@Url.Action("Index", "JS", new { area = ""})';
+    </script>
+
+    <script src="~/Scripts/session.warning.js"></script>
+
+    @RenderSection("Scripts", false)
+
+    @Scripts.Render("~/Scripts/svelte/menu.js")
+
+</body>
+</html>
