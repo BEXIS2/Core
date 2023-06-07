@@ -12,8 +12,6 @@ namespace BExIS.UI.Helpers
     {
         public static string GetStart(string module)
         {
-            string appDomain = AppDomain.CurrentDomain.BaseDirectory;
-            string svelteBuildPath = "/Areas/" + module + "/BExIS.Modules." + module + ".UI/Scripts/svelte/";
             return getScript(module, "node_modules/@sveltejs/kit/src/runtime/client/start.js");
         }
 
@@ -26,7 +24,6 @@ namespace BExIS.UI.Helpers
         {
             string appDomain = AppDomain.CurrentDomain.BaseDirectory;
             string svelteBuildPath = "/Areas/" + module + "/BExIS.Modules." + module + ".UI/Scripts/svelte";
-
 
             return svelteBuildPath;
         }
@@ -94,7 +91,12 @@ namespace BExIS.UI.Helpers
         private  static string getScript(string module,string key)
         {
             string appDomain = AppDomain.CurrentDomain.BaseDirectory;
-            string svelteBuildPath = "/Areas/" + module + "/BExIS.Modules." + module + ".UI/Scripts/svelte/";
+            string debugPathAdditionals = "";
+#if DEBUG
+            debugPathAdditionals = "/BExIS.Modules." + module + ".UI";
+#endif
+
+            string svelteBuildPath = "/Areas/" + module + debugPathAdditionals + "/Scripts/svelte/";
             string manifestJson = "vite-manifest.json";
             //string key = "src/routes/" + pageId + "/+page.svelte";
 
