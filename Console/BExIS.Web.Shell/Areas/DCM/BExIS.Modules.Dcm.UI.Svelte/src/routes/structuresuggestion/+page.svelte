@@ -18,6 +18,8 @@
 
  import type{StructureSuggestionModel} from '../../models/StructureSuggestion'
 
+ import { dev } from '$app/environment'
+ 
   // load attributes from div
   let container;
   let id:number;
@@ -43,7 +45,10 @@ $:model;
 
     console.log("start structure suggestion",id, version, file)
     //setup api
-    setApiConfig("https://localhost:44345","davidschoene","123456");
+    if(dev)
+    {
+        setApiConfig("https://localhost:44345","davidschoene","123456");
+    }
 
     // load data from server
     model = await load(id,file,0);

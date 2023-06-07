@@ -11,6 +11,7 @@
  
  // services
  import { setApiConfig, Page }  from '@bexis2/bexis2-core-ui'
+ import { dev } from '$app/environment'
 
  import { 
    getEntities,
@@ -45,7 +46,12 @@
  
  onMount(async () => {
    console.log("start entity template");
-   setApiConfig("https://localhost:44345","davidschoene","123456");
+
+  if(dev)
+  {
+      setApiConfig("https://localhost:44345","davidschoene","123456");
+  }
+
  
    hooks = await getHooks();
    metadataStructures = await getMetadataStructures();

@@ -14,6 +14,8 @@
 
  import type {EntityTemplateModel } from '$models/EntityTemplate'
 
+ import { dev } from '$app/environment'
+
 
 let entitytemplate:EntityTemplateModel;
 
@@ -22,7 +24,12 @@ $:systemkeys= [];
 $:selected = entitytemplate;
 
 onMount(async () => {
- setApiConfig("https://localhost:44345","davidschoene","123456");
+
+ if(dev)
+ {
+    setApiConfig("https://localhost:44345","davidschoene","123456");
+ }
+
  entitytemplates = await getEntityTemplateList();
  systemkeys = await getSystemKeys();
 })
