@@ -14,16 +14,14 @@
 	import '../app.postcss';
 
  import { onMount,  } from 'svelte'; 
-	import { dev } from '$app/environment'
  import { setApiConfig }  from '@bexis2/bexis2-core-ui'
 
 	onMount(async () => {
 	//setup api
-	if(dev)
-	{
-				 console.log("layout api setup")
-					setApiConfig("https://localhost:44345","davidschoene","123456");
-	}
+	if (import.meta.env.DEV) {
+			console.log('dev');
+			setApiConfig('https://localhost:44345', 'davidschoene', '123456');
+		}
 
 })
 
