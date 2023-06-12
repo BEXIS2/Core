@@ -24,19 +24,14 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         // GET: EntityTemplate
         public ActionResult Index()
         {
-            string pageId = "entitytemplate";
             string module = "DCM";
 
-            ViewData["PageId"] = pageId;
-            ViewData["PageScript"] = SvelteHelper.GetPageScript(module, pageId);
-            ViewData["PageCss"] = SvelteHelper.GetPageCss(module, pageId);
-
-            ViewData["LayoutScript"] = SvelteHelper.GetLayoutScript(module);
-            ViewData["LayoutCss"] = SvelteHelper.GetLayoutCss(module);
-            ViewData["LayoutSvelteScript"] = SvelteHelper.GetLayoutSvelteScript(module);
+            ViewData["app"] = SvelteHelper.GetApp(module);
+            ViewData["start"] = SvelteHelper.GetStart(module);
 
             return View();
         }
+
 
         [JsonNetFilter]
         [HttpGet]
