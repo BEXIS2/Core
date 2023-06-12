@@ -10,7 +10,7 @@ import { onMount } from 'svelte';
 
 onMount(async () => {
    console.log("start entity template");
-   setApiConfig("https://localhost:44345","davidschoene","123456");
+  //  setApiConfig("https://localhost:44345","davidschoene","123456");
 
 
    try {

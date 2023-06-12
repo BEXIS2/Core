@@ -69,11 +69,11 @@
    version = Number(container?.getAttribute("version"));
 
    console.log("start edit",id,version);
-   
-   if (import.meta.env.DEV) {
-			console.log('dev');
-			setApiConfig('https://localhost:44345', 'davidschoene', '123456');
-		}
+
+  //  if (import.meta.env.DEV) {
+	// 		console.log('dev');
+	// 		setApiConfig('https://localhost:44345', 'davidschoene', '123456');
+	// 	}
 
    // load
    load();
@@ -123,7 +123,7 @@ async function reload()
 {
   console.log("reload");
 
-  setApiConfig("https://localhost:44345","davidschoene","123456");
+  // setApiConfig("https://localhost:44345","davidschoene","123456");
   // load model froms server
   model = await getEdit(id);
   hooks = model.hooks
