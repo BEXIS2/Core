@@ -15,8 +15,6 @@
  import type {EntityTemplateModel } from '$models/EntityTemplate'
 
 
-import.meta.env.DEV
-
 let entitytemplate:EntityTemplateModel;
 
 $:entitytemplates=[];
@@ -25,12 +23,8 @@ $:selected = entitytemplate;
 
 onMount(async () => {
 
-  if(import.meta.env.DEV)
- {  console.log("dev");
-    setApiConfig("https://localhost:44345","davidschoene","123456");
- }
 
-
+ 
  entitytemplates = await getEntityTemplateList();
  systemkeys = await getSystemKeys();
 })

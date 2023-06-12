@@ -41,10 +41,10 @@
 
 		console.log('start structure suggestion', id, version, file);
 		//setup api
-		if (import.meta.env.DEV) {
-			console.log('dev');
-			setApiConfig('https://localhost:44345', 'davidschoene', '123456');
-		}
+		// if (import.meta.env.DEV) {
+		// 	console.log('dev');
+		// 	setApiConfig('https://localhost:44345', 'davidschoene', '123456');
+		// }
 
 		// load data from server
 		model = await load(id, file, 0);

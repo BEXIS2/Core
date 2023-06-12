@@ -38,11 +38,9 @@ import { fade } from 'svelte/transition';
 
   $:entityTemplate = et; 
 
-  console.log("edit");
   suite.reset();
    onMount(async () => {
      console.log("start entity template", id);
-     setApiConfig("https://localhost:44345","davidschoene","123456");
      load();
      console.log("onmount");
      
