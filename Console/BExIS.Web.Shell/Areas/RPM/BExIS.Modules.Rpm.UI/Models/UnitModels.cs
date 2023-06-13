@@ -29,7 +29,7 @@ namespace BExIS.Modules.Rpm.UI.Models.Units
         /// <summary>
         /// Dimension
         /// </summary>
-        public DimensionItem Dimension { get; set; }
+        public DimensionListItem Dimension { get; set; }
 
         /// <summary>
         /// Datatypes
@@ -47,7 +47,7 @@ namespace BExIS.Modules.Rpm.UI.Models.Units
             Name = string.Empty;
             Description = string.Empty;
             Abbreviation = string.Empty;
-            Dimension = new DimensionItem();
+            Dimension = new DimensionListItem();
             Datatypes = new List<DataTypeListItem>();
         }
     }
@@ -84,7 +84,7 @@ namespace BExIS.Modules.Rpm.UI.Models.Units
         }
     }
 
-    public class DimensionItem
+    public class DimensionListItem
     {
 
         /// <summary>
@@ -97,7 +97,7 @@ namespace BExIS.Modules.Rpm.UI.Models.Units
         /// </summary>
         public string Name { get; set; }
 
-        public DimensionItem()
+        public DimensionListItem()
         {
             Id = 0;
             Name = string.Empty;

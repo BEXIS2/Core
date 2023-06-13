@@ -18,9 +18,10 @@ const config = {
 			precompress:true,
 			preprocess:true,
 			strict:false
+		}),
+		paths:{
+			base: process.env.NODE_ENV ==='production' ? '/rpm':'' // add module id here e.g. /dcm
 		}
-		)
-
 	}
 };
 

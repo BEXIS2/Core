@@ -16,11 +16,23 @@ using BExIS.Dlm.Entities.DataStructure;
 using System.Linq;
 using BExIS.Utils.Helpers;
 using Vaiona.Persistence.Api;
+using System.Web.Http.Results;
+
 
 namespace BExIS.Modules.Rpm.UI.Controllers
 {
     public class UnitController : Controller
     {
+        public ActionResult Index()
+        {
+            string module = "RPM";
+
+            ViewData["app"] = SvelteHelper.GetApp(module);
+            ViewData["start"] = SvelteHelper.GetStart(module);
+
+            return View();
+        }
+
         [JsonNetFilter]
         [HttpGet]
         public JsonResult GetUnits()
@@ -49,7 +61,20 @@ namespace BExIS.Modules.Rpm.UI.Controllers
             }
         }
 
-        public JsonResult editUnit(UnitListItem unitListItem)
+
+        [JsonNetFilter]
+        [HttpGet]
+        public JsonResult GetDimensions()
+        {
+            using (UnitManager unitManager = new UnitManager())
+            {
+                return Json(convertToDimensionListItem(unitManager.DimensionRepo.Get().OrderBy(ds => ds.Id).ToList()), JsonRequestBehavior.AllowGet);
+            }
+        }
+
+        [JsonNetFilter]
+        [HttpPost]
+        public JsonResult EditUnit(UnitListItem unitListItem)
         {
             ValidationResult validationResult = new ValidationResult {
                 IsValid = false,
@@ -75,7 +100,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                         if (unitListItem.Id == 0)
                         {
                             //add proper dimention later
-                            unit = unitManager.Create(unitListItem.Name, unitListItem.Abbreviation, unitListItem.Description,unitManager.DimensionRepo.Get(1), (MeasurementSystem)Enum.Parse(typeof(MeasurementSystem), unitListItem.MeasurementSystem));
+                            unit = unitManager.Create(unitListItem.Name, unitListItem.Abbreviation, unitListItem.Description,unitManager.DimensionRepo.Get(unitListItem.Dimension.Id), (MeasurementSystem)Enum.Parse(typeof(MeasurementSystem), unitListItem.MeasurementSystem));
                             // The element have to be reloaded after ceate  
                             unit = unitManager.Repo.Get(unit.Id);
                         }
@@ -106,8 +131,46 @@ namespace BExIS.Modules.Rpm.UI.Controllers
             }
             return Json(result, JsonRequestBehavior.AllowGet);
         }
-        
-        
+
+        [JsonNetFilter]
+        [HttpPost]
+        public JsonResult DeleteUnit(long id)
+        {
+            if (id > 0)
+            {
+                using (UnitManager unitManager = new UnitManager())
+                {
+                    Unit unit = unitManager.Repo.Get(id);
+                    if (unit != null)
+                    {
+                        unitManager.Delete(unit);
+                        return Json(true, JsonRequestBehavior.AllowGet);
+                    }
+                }
+            }
+            return Json(false, JsonRequestBehavior.AllowGet);
+        }
+
+        private List<DimensionListItem> convertToDimensionListItem(List<Dimension> dimensions)
+        {
+            List<DimensionListItem> dimensionListItems = new List<DimensionListItem>();
+
+            foreach (Dimension dimension in dimensions)
+            {
+                dimensionListItems.Add(convertToDimensionListItem(dimension));
+            }
+            return dimensionListItems;
+        }
+        private DimensionListItem convertToDimensionListItem(Dimension dimension)
+        {
+            DimensionListItem dimensionListItem = new DimensionListItem
+            {
+                Id = dimension.Id,
+                Name = dimension.Name,
+               
+            };
+            return dimensionListItem;
+        }
 
         private List<DataTypeListItem> convertToDataTypeListItem(List<DataType> dataTypes)
         {
@@ -130,6 +193,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
             };
             return dataTypeListItem;
         }
+
         private List<UnitListItem> convertToUnitListItem(List<Unit> units)
         {
             List<UnitListItem> unitListItems = new List<UnitListItem>();
@@ -148,11 +212,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                 Name = unit.Name,
                 Description = unit.Description,
                 Abbreviation = unit.Abbreviation,
-                Dimension = new DimensionItem
-                {
-                    Id = unit.Dimension.Id,
-                    Name = unit.Dimension.Name,
-                },
+                Dimension = convertToDimensionListItem(unit.Dimension),
                 Datatypes = convertToDataTypeListItem(unit.AssociatedDataTypes.ToList()),
                 MeasurementSystem = unit.MeasurementSystem.ToString(),
             };
