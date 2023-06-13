@@ -37,6 +37,9 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BExIS.Security.Entities", "
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BExIS.Security.Orm.NH", "Components\AAA\BExIS.Security.Orm.NH\BExIS.Security.Orm.NH.csproj", "{3D726430-CB41-4607-A615-CD48F510229B}"
+	ProjectSection(ProjectDependencies) = postProject
+		{C4D4BC9E-8832-4966-BE58-CB684E9A74E8} = {C4D4BC9E-8832-4966-BE58-CB684E9A74E8}
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BExIS.Security.Services", "Components\AAA\BExIS.Security.Services\BExIS.Security.Services.csproj", "{681C8BC4-55F0-4F43-A685-90E246A88CB1}"
 	ProjectSection(ProjectDependencies) = postProject
@@ -48,6 +51,9 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BExIS.Dlm.Entities", "Components\DLM\BExIS.Dlm.Entities\BExIS.Dlm.Entities.csproj", "{B4E7B1BF-01B4-40AF-8D19-B8F362167261}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BExIS.Dlm.Orm.NH", "Components\DLM\BExIS.Dlm.Orm.NH\BExIS.Dlm.Orm.NH.csproj", "{E234118C-1B89-493C-B17A-6990F6B98A9F}"
+	ProjectSection(ProjectDependencies) = postProject
+		{C4D4BC9E-8832-4966-BE58-CB684E9A74E8} = {C4D4BC9E-8832-4966-BE58-CB684E9A74E8}
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BExIS.Dlm.Services", "Components\DLM\BExIS.Dlm.Services\BExIS.Dlm.Services.csproj", "{C4CA0A99-0AF3-4372-A9B7-B9073599BD8B}"
 EndProject
@@ -1560,8 +1566,8 @@ Global
 		{455EC826-9A92-40FF-BD3B-388C288955CE} = {A83D7DBD-986A-482F-A24C-EA581E3FD8F2}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
-		SolutionGuid = {9B6E4921-8EBA-487D-A098-3E473A0EAC64}
 		EnterpriseLibraryConfigurationToolBinariesPath = packages\Unity.2.1.505.0\lib\NET35;packages\Unity.2.1.505.2\lib\NET35
+		SolutionGuid = {9B6E4921-8EBA-487D-A098-3E473A0EAC64}
 	EndGlobalSection
 	GlobalSection(SubversionScc) = preSolution
 		Svn-Managed = True

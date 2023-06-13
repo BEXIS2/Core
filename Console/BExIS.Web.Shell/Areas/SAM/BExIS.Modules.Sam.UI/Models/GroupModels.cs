@@ -1,7 +1,11 @@
 ﻿using BExIS.Security.Entities.Subjects;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
+using System;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Web.Mvc;
+using System.Web.UI;
 
 namespace BExIS.Modules.Sam.UI.Models
 {
@@ -76,6 +80,43 @@ namespace BExIS.Modules.Sam.UI.Models
 
     public class ReadGroupModel
     {
+        [JsonProperty("id")]
+        public long Id { get; set; }
+        [JsonProperty("description")]
+        public string Description { get; set; }
+        [JsonProperty("name")]
+        public string Name { get; set; }
+
+        [JsonProperty("creationDate"), JsonConverter(typeof(CustomDateTimeConverter))]
+        public DateTimeOffset CreationDate { get; set; }
+
+        [JsonProperty("modificationDate"), JsonConverter(typeof(CustomDateTimeConverter))]
+        public DateTimeOffset ModificationDate { get; set; }
+
+        public static ReadGroupModel Convert(Group group)
+        {
+            return new ReadGroupModel()
+            {
+                Description = group.Description,
+                Name = group.Name,
+                Id = group.Id,
+                CreationDate = DateTimeOffset.Now,
+                ModificationDate = DateTimeOffset.Now
+            };
+        }
+    }
+
+    public class CustomDateTimeConverter : IsoDateTimeConverter
+    {
+        public CustomDateTimeConverter()
+        {
+            DateTimeFormat = "yyyy-MM-dd";
+        }
+
+        public CustomDateTimeConverter(string format)
+        {
+            DateTimeFormat = format;
+        }
     }
 
     public class UpdateGroupModel

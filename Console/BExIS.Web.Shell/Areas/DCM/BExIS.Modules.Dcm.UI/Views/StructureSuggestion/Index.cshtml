@@ -4,34 +4,19 @@
 
 }
 
-<link href="~/Areas/DCM/BExIS.Modules.DCM.UI/Scripts/svelte/assets/structuresuggestion.css" rel="stylesheet">
-
-@section scripts
-{
-    <script src="~/Areas/DCM/BExIS.Modules.DCM.UI/Scripts/svelte/structuresuggestion.js"></script>
-
-}
-
 @{
     long id = 0;
     long version = 0;
     string file = "";
 
-    if (ViewBag.id != null)
-    {
-        id = (long)ViewBag.id;
-    }
+    if (ViewData["id"] != null) { id = Convert.ToInt64(ViewData["id"]); }
 
-    if (ViewBag.version != null)
-    {
-        version = (long)ViewBag.version;
-    }
+    if (ViewData["version"] != null) { version = Convert.ToInt64(ViewData["version"]); }
 
-    if (ViewBag.file != null)
-    {
-        file = ViewBag.file.ToString();
-    }
+    if (ViewData["file"] != null) { file = ViewData["file"].ToString(); }
 
 }
 
-<div id="structuresuggestion" dataset="@id" version="@version" file="@file"> </div>
+<div id="structuresuggestion" dataset="@id" version="@version" file="@file">
+    @Html.Partial("_sveltePage")
+</div>

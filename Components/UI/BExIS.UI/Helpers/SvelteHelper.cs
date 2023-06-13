@@ -10,6 +10,27 @@ namespace BExIS.UI.Helpers
 {
     public class SvelteHelper
     {
+        public static string GetStart(string module)
+        {
+            string appDomain = AppDomain.CurrentDomain.BaseDirectory;
+            string svelteBuildPath = "/Areas/" + module + "/BExIS.Modules." + module + ".UI/Scripts/svelte/";
+            return getScript(module, "node_modules/@sveltejs/kit/src/runtime/client/start.js");
+        }
+
+        public static string GetApp(string module)
+        {
+            return getScript(module, ".svelte-kit/generated/client-optimized/app.js");
+        }
+
+        public static string GetAppPath(string module)
+        {
+            string appDomain = AppDomain.CurrentDomain.BaseDirectory;
+            string svelteBuildPath = "/Areas/" + module + "/BExIS.Modules." + module + ".UI/Scripts/svelte";
+
+
+            return svelteBuildPath;
+        }
+
         public static string GetPageScript(string module, string pageId)
         {
             string appDomain = AppDomain.CurrentDomain.BaseDirectory;
@@ -47,12 +68,14 @@ namespace BExIS.UI.Helpers
             {
                 string json = r.ReadToEnd();
                 Dictionary<string, Dictionary<string, object>> manifest = JsonConvert.DeserializeObject<Dictionary<string, Dictionary<string, object>>>(json);
+                if (manifest.ContainsKey(key))
+                {
+                    var page = manifest[key];
 
-                var page = manifest[key];
+                    string pagehash = page["file"].ToString();//"_page.svelte-2b7e1fbb.js";
 
-                string pagehash = page["file"].ToString();//"_page.svelte-2b7e1fbb.js";
-
-                return svelteBuildPath + pagehash;
+                    return svelteBuildPath + pagehash;
+                }
             }
 
             return "";

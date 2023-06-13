@@ -1,4 +1,4 @@
-import {Api} from "@bexis2/bexis2-core-ui/";
+import {Api} from "@bexis2/bexis2-core-ui";
 import type { EntityTemplateModel } from "../models/EntityTemplate";
 
 export const getEntityTemplate = async (id:bigint) => {
@@ -95,7 +95,7 @@ export const saveEntityTemplate = async (entityTemplate:EntityTemplateModel) => 
 
 export const deleteEntityTemplate = async (id:bigint) => {
   try {
-    const response = await Api.post('/dcm/entitytemplates/Delete',id);
+    const response = await Api.delete('/dcm/entitytemplates/Delete',{id});
     return response.data;
   } catch (error) {
     console.error(error);

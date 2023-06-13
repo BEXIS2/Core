@@ -1,24 +1,9 @@
 ﻿@{
-    ViewBag.Title = "Edit";
+    ViewBag.Title = "Create";
     Layout = "~/Themes/Default/Layouts/_svelteLayout.cshtml";
-
-    string page = ViewData["PageScript"].ToString();
-    string pageId = ViewData["PageId"].ToString();
 
 }
 
-
-
-<script type="module" data-sveltekit-hydrate="create">
-
-    import page from '@page'
-
-    const app = new page({
-        target: document.querySelector('[data-sveltekit-hydrate="create"]').parentNode
-    });
-
-</script>
-
-
-
-
+<div id="create">
+    @Html.Partial("_sveltePage")
+</div>

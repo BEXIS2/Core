@@ -70,7 +70,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
 
         [JsonNetFilter]
-        [HttpPost]
+        [HttpDelete]
         public JsonResult Delete(long id)
         {
             using (var entityTemplateManager = new EntityTemplateManager())

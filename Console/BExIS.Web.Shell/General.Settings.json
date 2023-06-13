@@ -2,6 +2,16 @@
   "id": "shell",
   "name": "...",
   "description": "The default landing page for the search in the form of <moduleId>, <controller>, <action>. The application's home page will redirect here.    The module must be avilable and active, otherwise another redirect happens to the home page, which causes a loop.     The designated action must be set to public in the feature permission mgmt, otherwise the request will be redirected to the login page.     The 'type' attribute must be compatible with the System.TypeCode case-sensitive.",
+  "JWT": {
+    "ValidateAudience": false,
+    "ValidateIssuer": false,
+    "ValidAudience": "http://localhost:3000",
+    "ValidIssuer": "https://localhost:7041",
+    "IssuerSigningKey": "JWTAuthenticationHIGHsecuredPasswordVVVp1OH7Xzyr",
+    "RequireExpirationTime": false,
+    "ValidateLifetime": false,
+    "ValidLifetime": 1
+  },
   "entry": [
     {
       "key": "applicationName",

@@ -337,7 +337,8 @@
     <Compile Include="App_Start\RegisterClientValidationExtensions.cs" />
     <Compile Include="App_Start\SwaggerConfig.cs" />
     <Compile Include="Controllers\AccountController.cs" />
-    <Compile Include="Controllers\API\TokenController.cs" />
+    <Compile Include="Controllers\API\ModulesController.cs" />
+    <Compile Include="Controllers\API\TokensController.cs" />
     <Compile Include="Controllers\API\VersionsController.cs" />
     <Compile Include="Controllers\ErrorController.cs" />
     <Compile Include="Controllers\FooterController.cs" />
@@ -362,7 +363,7 @@
     <Compile Include="Models\AccountModels.cs" />
     <Compile Include="Models\EntitySelectorModel.cs" />
     <Compile Include="Models\ManageModels.cs" />
-    <Compile Include="Models\SettingsModels.cs" />
+    <Compile Include="Models\ModuleModels.cs" />
     <Compile Include="Models\UiTestModel.cs" />
     <Compile Include="Models\VersionModels.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -1080,13 +1081,14 @@
     <Content Include="Views\Shared\SessionTimeout.cshtml" />
     <Content Include="Views\Home\Version.cshtml" />
     <Content Include="Views\Home\NoPermission.cshtml" />
-    <None Include="Web.config" />
+    <Content Include="Web.config.sample" />
     <Content Include="Views\Shared\EditorTemplates\Collection.cshtml" />
     <Content Include="Scripts\svelte\settings.js.map" />
     <Content Include="Views\Settings\Index.cshtml" />
-    <Content Include="Themes\Default\Layouts\_svelte_telerikLayout.cshtml" />
     <Content Include="Themes\Default\Layouts\_svelteLayout.cshtml" />
-    <None Include="Web.config.old" />
+    <Content Include="Views\Shared\_sveltePage.cshtml" />
+    <Content Include="Themes\Default\Layouts\_svelteLayoutBackup.cshtml" />
+    <None Include="Web.config" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Areas\" />
@@ -1396,8 +1398,6 @@
     <PostBuildEvent>rmdir /S /Q  "$(SolutionDir)Console\Workspace\General\Db\Settings"
 C:\Windows\System32\xcopy "$(ProjectDir)Db\Settings" "$(SolutionDir)Console\Workspace\General\Db\Settings" /E /C /Y /I
 C:\Windows\System32\xcopy "$(ProjectDir)General.Settings.json" "$(SolutionDir)Console\Workspace\General" /C /Y /I
-rmdir /S /Q  "$(SolutionDir)Console\Workspace\Components\Vaiona"
-C:\Windows\System32\xcopy "$(SolutionDir)Libraries\Vaiona\Workspace\Components\Vaiona" "$(SolutionDir)Console\Workspace\Components\Vaiona\" /E /C /Y /I
 C:\Windows\System32\xcopy "$(ProjectDir)\bin\BExIS.Web.Shell.xml" "$(SolutionDir)Console\BExIS.Web.Shell\App_Data" /C /Y /I</PostBuildEvent>
   </PropertyGroup>
   <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />

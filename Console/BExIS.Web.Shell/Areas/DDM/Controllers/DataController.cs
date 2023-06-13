@@ -615,80 +615,86 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                     // get latest or other datasetversion
                     DatasetVersion dsv = dm.GetDatasetVersion(versionId);
                     bool latestVersion = versionId == dm.GetDatasetLatestVersionId(datasetID);
-
-                    StructuredDataStructure sds = dsm.StructuredDataStructureRepo.Get(dsv.Dataset.DataStructure.Id);
-                    DataStructure ds = dsm.AllTypesDataStructureRepo.Get(dsv.Dataset.DataStructure.Id);
-
-                    // TODO: refactor Download Right not existing, so i set it to read
-                    bool downloadAccess = entityPermissionManager.HasEffectiveRight(HttpContext.User.Identity.Name, typeof(Dataset), datasetID, RightType.Read);
-
-                    //TITLE
-                    string title = dsv.Title;
-
-                    if (ds.Self.GetType() == typeof(StructuredDataStructure))
+                    if (dsv.Dataset.DataStructure != null)
                     {
-                        //ToDO Javad: 18.07.2017 -> replaced to the new API for fast retrieval of the latest version
-                        //
-                        //List<AbstractTuple> dataTuples = dm.GetDatasetVersionEffectiveTuples(dsv, 0, 100);
-                        //DataTable table = SearchUIHelper.ConvertPrimaryDataToDatatable(dsv, dataTuples);
+                        StructuredDataStructure sds = dsm.StructuredDataStructureRepo.Get(dsv.Dataset.DataStructure.Id);
+                        DataStructure ds = dsm.AllTypesDataStructureRepo.Get(dsv.Dataset.DataStructure.Id);
 
-                        DataTable table = null;
-                        // Count "Data" changes between current and latest version
-                        int numberNewerDataVersions = dm.GetDatasetVersions(datasetID).Where(x => x.Id > versionId).Count(x => x.ModificationInfo.Comment.Contains("Data"));
+                        // TODO: refactor Download Right not existing, so i set it to read
+                        bool downloadAccess = entityPermissionManager.HasEffectiveRight(HttpContext.User.Identity.Name, typeof(Dataset), datasetID, RightType.Read);
 
-                        // use MV for latest version and all older versions, if no data has been changed (only metadata)
-                        if (latestVersion || numberNewerDataVersions == 0)
+                        //TITLE
+                        string title = dsv.Title;
+
+                        if (ds.Self.GetType() == typeof(StructuredDataStructure))
                         {
-                            try
+                            //ToDO Javad: 18.07.2017 -> replaced to the new API for fast retrieval of the latest version
+                            //
+                            //List<AbstractTuple> dataTuples = dm.GetDatasetVersionEffectiveTuples(dsv, 0, 100);
+                            //DataTable table = SearchUIHelper.ConvertPrimaryDataToDatatable(dsv, dataTuples);
+
+                            DataTable table = null;
+                            // Count "Data" changes between current and latest version
+                            int numberNewerDataVersions = dm.GetDatasetVersions(datasetID).Where(x => x.Id > versionId).Count(x => x.ModificationInfo.Comment.Contains("Data"));
+
+                            // use MV for latest version and all older versions, if no data has been changed (only metadata)
+                            if (latestVersion || numberNewerDataVersions == 0)
                             {
-                                long count = dm.RowCount(datasetID, null);
-                                if (count > 0) table = dm.GetLatestDatasetVersionTuples(datasetID, null, null, null, 0, 10);
-                                else ModelState.AddModelError(string.Empty, "<span style=\"color: black;\"> There is no primary data available/uploaded. </span><br/><br/> <span style=\"font-weight: normal;color: black;\">Please note that the data may have been uploaded to another repository and is referenced here in the metadata.</span>");
+                                try
+                                {
+                                    long count = dm.RowCount(datasetID, null);
+                                    if (count > 0) table = dm.GetLatestDatasetVersionTuples(datasetID, null, null, null, 0, 10);
+                                    else ModelState.AddModelError(string.Empty, "<span style=\"color: black;\"> There is no primary data available/uploaded. </span><br/><br/> <span style=\"font-weight: normal;color: black;\">Please note that the data may have been uploaded to another repository and is referenced here in the metadata.</span>");
+                                }
+                                catch
+                                {
+                                    ModelState.AddModelError(string.Empty, "The data is not available, please ask the administrator for a synchronization.");
+                                }
+
+                                ViewData["gridTotal"] = dm.RowCount(dsv.Dataset.Id, null);
                             }
-                            catch
+                            else
                             {
-                                ModelState.AddModelError(string.Empty, "The data is not available, please ask the administrator for a synchronization.");
+                                table = dm.GetDatasetVersionTuples(versionId, 0, 10);
+                                ViewData["gridTotal"] = dm.GetDatasetVersionEffectiveTuples(dsv).Count;
                             }
 
-                            ViewData["gridTotal"] = dm.RowCount(dsv.Dataset.Id, null);
-                        }
-                        else
-                        {
-                            table = dm.GetDatasetVersionTuples(versionId, 0, 10);
-                            ViewData["gridTotal"] = dm.GetDatasetVersionEffectiveTuples(dsv).Count;
-                        }
+                            sds.Variables = sds.Variables.OrderBy(v => v.OrderNo).ToList();
 
-                        sds.Variables = sds.Variables.OrderBy(v => v.OrderNo).ToList();
-
-                        return PartialView(ShowPrimaryDataModel.Convert(
-                            datasetID,
-                            versionId,
-                            title,
-                            sds,
-                            table,
-                            downloadAccess,
-                            iOUtility.GetSupportedAsciiFiles(),
-                            latestVersion,
-                            hasUserRights(datasetID, RightType.Write)
-                            ));
-                    }
-
-                    if (ds.Self.GetType() == typeof(UnStructuredDataStructure))
-                    {
-                        if (this.IsAccessible("MMM", "ShowMultimediaData", "multimediaData") && GeneralSettings.UseMultiMediaModule)
-                            return RedirectToAction("multimediaData", "ShowMultimediaData", new RouteValueDictionary { { "area", "MMM" }, { "datasetID", datasetID }, { "versionId", versionId } });
-                        else
-                            return
-                                PartialView(ShowPrimaryDataModel.Convert(datasetID,
+                            return PartialView(ShowPrimaryDataModel.Convert(
+                                datasetID,
                                 versionId,
                                 title,
-                                ds,
-                                SearchUIHelper.GetContantDescriptorFromKey(dsv, "unstructuredData"),
+                                sds,
+                                table,
                                 downloadAccess,
                                 iOUtility.GetSupportedAsciiFiles(),
                                 latestVersion,
                                 hasUserRights(datasetID, RightType.Write)
                                 ));
+                        }
+
+                        if (ds.Self.GetType() == typeof(UnStructuredDataStructure))
+                        {
+                            if (this.IsAccessible("MMM", "ShowMultimediaData", "multimediaData") && GeneralSettings.UseMultiMediaModule)
+                                return RedirectToAction("multimediaData", "ShowMultimediaData", new RouteValueDictionary { { "area", "MMM" }, { "datasetID", datasetID }, { "versionId", versionId } });
+                            else
+                                return
+                                    PartialView(ShowPrimaryDataModel.Convert(datasetID,
+                                    versionId,
+                                    title,
+                                    ds,
+                                    SearchUIHelper.GetContantDescriptorFromKey(dsv, "unstructuredData"),
+                                    downloadAccess,
+                                    iOUtility.GetSupportedAsciiFiles(),
+                                    latestVersion,
+                                    hasUserRights(datasetID, RightType.Write)
+                                    ));
+                        }
+                    }
+                    else
+                    {
+                        ModelState.AddModelError(string.Empty, "The dataset has no data structure.");
                     }
                 }
                 else

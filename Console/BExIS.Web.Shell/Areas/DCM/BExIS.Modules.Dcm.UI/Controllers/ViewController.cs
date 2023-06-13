@@ -3,6 +3,7 @@ using BExIS.Dlm.Entities.Data;
 using BExIS.Dlm.Services.Data;
 using BExIS.Modules.Dcm.UI.Models.View;
 using BExIS.Security.Entities.Authorization;
+using BExIS.UI.Helpers;
 using BExIS.UI.Hooks;
 using System;
 using System.Web.Mvc;
@@ -21,8 +22,21 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         /// <returns></returns>
         public ActionResult Index(long id, int version = 0)
         {
-            ViewBag.id = id;
-            ViewBag.version = version;
+            string pageId = "view";
+            string module = "DCM";
+
+            ViewData["PageId"] = pageId;
+            ViewData["PageScript"] = SvelteHelper.GetPageScript(module, pageId);
+            ViewData["PageCss"] = SvelteHelper.GetPageCss(module, pageId);
+
+            ViewData["id"] = id;
+            ViewData["version"] = version;
+
+
+            ViewData["LayoutScript"] = SvelteHelper.GetLayoutScript(module);
+            ViewData["LayoutCss"] = SvelteHelper.GetLayoutCss(module);
+            ViewData["LayoutSvelteScript"] = SvelteHelper.GetLayoutSvelteScript(module);
+
 
             return View();
         }
@@ -35,6 +49,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         /// <param name="version">version number of the dataset</param>
         /// <returns></returns>
         [BExISEntityAuthorize(typeof(Dataset), "id", RightType.Read)]
+        [JsonNetFilter]
         public JsonResult Load(long id, int version = 0)
         {
             ViewModel model = new ViewModel();
