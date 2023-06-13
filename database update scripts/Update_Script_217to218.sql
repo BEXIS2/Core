@@ -687,7 +687,6 @@ false,
 WHERE NOT EXISTS (SELECT * FROM public.mappingkeys WHERE name='surName' and parentref =  (SELECT id FROM public.mappingkeys WHERE name='contact' and concept = (SELECT id FROM public.mappingconcepts WHERE name='GBIF')));
 
 -- END GBIF
--- END insert DATA
 
 -- add gbif broker and datarepo
 INSERT INTO public.dim_brokers(
@@ -699,6 +698,9 @@ INSERT INTO public.dim_repositories(
 	versionno,name, url, brokerref)
 	Select 1,'GBIF','https://www.gbif.org/', (Select id from public.dim_brokers where name='GBIF' )
 		WHERE NOT EXISTS (Select id from public.dim_repositories where name='GBIF' AND brokerref = (Select id from public.dim_brokers where name='GBIF' ) )
+
+
+-- END insert DATA
 
 -- Insert version
 INSERT INTO public.versions(
