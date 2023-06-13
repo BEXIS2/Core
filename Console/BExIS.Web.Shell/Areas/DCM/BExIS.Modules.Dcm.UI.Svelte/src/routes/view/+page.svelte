@@ -39,7 +39,7 @@
 
 		console.log('start view', id, version);
 		//setup api
-		setApiConfig('https://localhost:44345', 'davidschoene', '123456');
+		// setApiConfig('https://localhost:44345', 'davidschoene', '123456');
 
 		// load data from server
 		model = await getView(id);

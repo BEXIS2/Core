@@ -523,8 +523,13 @@
     <Content Include="Views\EntityTemplates\Index.cshtml" />
     <Content Include="Views\Create\Index.cshtml" />
     <Content Include="Views\StructureSuggestion\Index.cshtml" />
-    <Content Include="Scripts\svelte\_app\version.json" />
-    <Content Include="Scripts\svelte\vite-manifest.json" />
+    <Content Include="Views\Form\_bool.cshtml" />
+    <Content Include="Views\Form\_date.cshtml" />
+    <Content Include="Views\Form\_displayonly.cshtml" />
+    <Content Include="Views\Form\_integer.cshtml" />
+    <Content Include="Views\Form\_list.cshtml" />
+    <Content Include="Views\Form\_metadataParameterView.cshtml" />
+    <Content Include="Views\Form\_number.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -534,9 +539,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Content\Images\" />
-    <Folder Include="Scripts\svelte\_app\immutable\assets\" />
-    <Folder Include="Scripts\svelte\_app\immutable\chunks\" />
-    <Folder Include="Scripts\svelte\_app\immutable\entry\" />
     <Folder Include="Views\DcmAdmin\" />
     <Folder Include="Views\FileReaderInfo\" />
     <Folder Include="Views\FileUpload\" />
