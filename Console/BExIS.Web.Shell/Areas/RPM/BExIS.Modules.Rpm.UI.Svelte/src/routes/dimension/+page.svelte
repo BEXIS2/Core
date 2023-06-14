@@ -10,78 +10,42 @@ import TableOption from './components/tableOptions.svelte';
 import { writable, type Writable } from 'svelte/store';
 
 import type { ModalSettings, ModalComponent } from '@skeletonlabs/skeleton';
-import type {UnitListItem, DimensionListItem} from "./models";
+import type { DimensionListItem} from "./models";
 
   
-let u: UnitListItem[] = [];
-let unit:UnitListItem;
+let ds:DimensionListItem[] = [];
 const tableStore = writable<any[]>([]);
+let dimension:DimensionListItem;
 let showForm=false;
-$:units = u;
-$:ts = setTableStore(u);
-$:tableStore.set(ts);
+$:dimensions = ds;
+$:tableStore.set(ds);
 
 onMount(async () => {
   setApiConfig("https://localhost:44345","*","*");
-  u = await apiCalls.GetUnits();
+  ds = await apiCalls.GetDimensions();
   clear();
 });
-
-function setTableStore(unitListItems:UnitListItem[]):any[]
-{
-  let datatypes: string;
-  let t:any[] = [];
-  unitListItems.forEach
-    (u => {
-        datatypes = '';
-        u.datatypes.forEach(dt => {
-            if(datatypes === '')
-            {
-              datatypes = dt.name
-            }
-            else
-            {
-              datatypes = datatypes + ', ' + dt.name
-            }  
-          }); 
-        t = [...t, {
-            id:u.id,
-            name:u.name,
-            description:u.description,
-            abbreviation:u.abbreviation,
-            datatypes:datatypes,
-            dimension:(u.dimension === undefined) ? "": u.dimension.name,
-            measurementSystem:u.measurementSystem,
-          }
-        ]        
-      }
-    );
-    return t;
-  }
 
 async function reload(): Promise<void>
 {
   showForm=false;
-  u = await apiCalls.GetUnits();
+  ds = await apiCalls.GetDimensions();
   clear();
 }
 
 async function clear()
 {
-  unit= {
+  dimension = {
     id:0,
-    name:"",
-    description:"",
-    abbreviation:"",
-    dimension: undefined,
-    datatypes:[],
-    measurementSystem:""
-  }; 
+    name:'',
+    description:'',
+    specification:'',
+  }
 }
 
-function editUnit(type:any)
+function editDimension(type:any)
 {
-  unit = units.find(u => u.id === type.id)!;
+  dimension = dimensions.find(d => d.id === type.id)!;
   if(type.action == 'edit')
   {
     showForm=true;
@@ -91,33 +55,34 @@ function editUnit(type:any)
     const modal: ModalSettings = {
       type: 'confirm',
       title: 'Delete Unit',
-      body: 'Are you sure you wish to delete Unit "'+  unit.name + '" (' + unit.abbreviation + ')?',
+      body: 'Are you sure you wish to delete Dimension "'+  dimension.name + '" (' + dimension.specification + ')?',
       // TRUE if confirm pressed, FALSE if cancel pressed
       response: (r: boolean) => {if(r === true){
-        deleteUnit(type.id);
+        deleteDimension(type.id);
       }},
     };
     modalStore.trigger(modal);
   }
 }
 
-async function deleteUnit(id:number)
+async function deleteDimension(id:number)
 {
-  await apiCalls.DeleteUnit(id);
+  let test = await apiCalls.DeleteDimension(id);
+  console.log("deleted", test)
   reload();
 }
 
 </script>
 
 <div class="p-5">
-{#if ts.length > 0 && ts}
+{#if ds.length > 0 && ds}
 
-  <h1>units</h1>
+  <h1>dimensions</h1>
   
   <div class="py-5">
     {#if showForm}
       <div in:fade out:fade>
-        <Form {unit} {units} on:cancel={reload} on:save={reload}/>
+        <Form {dimension} {dimensions} on:cancel={reload} on:save={reload}/>
       </div>
     {:else}
       <button type="button" class="btn variant-filled" on:click={() => (showForm = !showForm)}>+</button>
@@ -127,10 +92,10 @@ async function deleteUnit(id:number)
 
   <div class="w-max">
   <Table on:action=
-    {(obj) => editUnit(obj.detail.type)}  
+    {(obj) => editDimension(obj.detail.type)}  
   config=
     {{
-      id: 'Units',
+      id: 'Dimensions',
       data: tableStore,
       optionsComponent: TableOption,
       columns: {

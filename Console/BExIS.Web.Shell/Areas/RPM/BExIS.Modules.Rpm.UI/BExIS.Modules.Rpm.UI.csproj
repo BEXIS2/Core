@@ -116,6 +116,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Controllers\DimensionController.cs" />
     <Compile Include="Controllers\UnitController.cs" />
     <Compile Include="Controllers\StructuresController.cs" />
     <Compile Include="Helpers\HtmlPrefixScopeExtentions.cs" />
@@ -124,6 +125,8 @@
     <Compile Include="Helpers\SeedData\MappingReader.cs" />
     <Compile Include="IO\UnitIO.cs" />
     <Compile Include="IO\VariableTemplateIO.cs" />
+    <Compile Include="Models\DimensionModels.cs" />
+    <Compile Include="Models\Models.cs" />
     <Compile Include="Models\UnitModels.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RpmModule.cs" />

@@ -1,23 +1,14 @@
 ﻿using BExIS.App.Bootstrap.Attributes;
-using BExIS.Dlm.Services.Data;
 using BExIS.Dlm.Services.DataStructure;
-using BExIS.Dlm.Services.MetadataStructure;
-using BExIS.Security.Services.Objects;
-using BExIS.Security.Services.Subjects;
 using BExIS.UI.Helpers;
-using BExIS.UI.Hooks;
-using BExIS.UI.Models;
 using System;
 using System.Collections.Generic;
 using System.Web.Mvc;
-using Vaiona.Web.Extensions;
+using BExIS.Modules.Rpm.UI.Models;
 using BExIS.Modules.Rpm.UI.Models.Units;
+using BExIS.Modules.Rpm.UI.Models.Dimensions;
 using BExIS.Dlm.Entities.DataStructure;
 using System.Linq;
-using BExIS.Utils.Helpers;
-using Vaiona.Persistence.Api;
-using System.Web.Http.Results;
-
 
 namespace BExIS.Modules.Rpm.UI.Controllers
 {
@@ -99,7 +90,6 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                         
                         if (unitListItem.Id == 0)
                         {
-                            //add proper dimention later
                             unit = unitManager.Create(unitListItem.Name, unitListItem.Abbreviation, unitListItem.Description,unitManager.DimensionRepo.Get(unitListItem.Dimension.Id), (MeasurementSystem)Enum.Parse(typeof(MeasurementSystem), unitListItem.MeasurementSystem));
                             // The element have to be reloaded after ceate  
                             unit = unitManager.Repo.Get(unit.Id);
@@ -167,7 +157,8 @@ namespace BExIS.Modules.Rpm.UI.Controllers
             {
                 Id = dimension.Id,
                 Name = dimension.Name,
-               
+                Description = dimension.Description,
+                Specification = dimension.Specification,
             };
             return dimensionListItem;
         }
@@ -219,7 +210,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
             return unitListItem;
         }
 
-        private ValidationResult unitValidation(UnitListItem unitListItem, UnitManager unitManager)
+        private static ValidationResult unitValidation(UnitListItem unitListItem, UnitManager unitManager)
         {
             if (unitListItem != null && unitManager != null)
             {
@@ -233,7 +224,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                 }
                 else
                 {
-                    if (!units.Where(p => p.Name.ToLower().Equals(unitListItem.Name.ToLower())).Count().Equals(0))
+                    if (!units.Where(p => p.Name.ToLower().Equals(unitListItem.Name.ToLower())).Any())
                     {
                         if (unitListItem.Id != units.Where(p => p.Name.ToLower().Equals(unitListItem.Name.ToLower())).ToList().First().Id)
                         {
@@ -250,7 +241,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                 }
                 else
                 {
-                    if (!units.Where(p => p.Abbreviation.ToLower().Equals(unitListItem.Abbreviation.ToLower())).Count().Equals(0))
+                    if (!units.Where(p => p.Abbreviation.ToLower().Equals(unitListItem.Abbreviation.ToLower())).Any())
                     {
                         if (unitListItem.Id != units.Where(p => p.Abbreviation.ToLower().Equals(unitListItem.Abbreviation.ToLower())).ToList().First().Id)
                         {
