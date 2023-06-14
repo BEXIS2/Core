@@ -1,5 +1,5 @@
-﻿using BExIS.UI.Models;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using BExIS.Modules.Rpm.UI.Models.Dimensions;
 
 namespace BExIS.Modules.Rpm.UI.Models.Units
 {
@@ -81,47 +81,6 @@ namespace BExIS.Modules.Rpm.UI.Models.Units
             Name = string.Empty;
             Description = string.Empty;
             SystemType = string.Empty;
-        }
-    }
-
-    public class DimensionListItem
-    {
-
-        /// <summary>
-        /// Name of the Entity Template
-        /// </summary>
-        public long Id { get; set; }
-
-        /// <summary>
-        /// Name of the Entity Template
-        /// </summary>
-        public string Name { get; set; }
-
-        public DimensionListItem()
-        {
-            Id = 0;
-            Name = string.Empty;
-        }
-    }
-
-    public class ValidationResult
-    {
-        public bool IsValid { get; set; }
-        public List<ValidationItem> ValidationItems { get; set; }
-        public ValidationResult()
-        {
-            IsValid = true;
-            ValidationItems = new List<ValidationItem>();
-        }
-    }
-    public class ValidationItem
-    {
-        public string Name { get; set; }
-        public string Message { get; set; }
-        public ValidationItem()
-        {
-            Name = string.Empty;
-            Message = string.Empty;
         }
     }
 }

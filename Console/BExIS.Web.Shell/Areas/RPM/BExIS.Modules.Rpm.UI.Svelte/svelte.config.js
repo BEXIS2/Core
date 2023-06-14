@@ -12,8 +12,8 @@ const config = {
 
 	kit: {
 		adapter: adapter({
-			pages:'../BExIS.Modules.RPM.UI/Scripts/svelte',
-			assets:'../BExIS.Modules.RPM.UI/Scripts/svelte',
+			pages:'../BExIS.Modules.Rpm.UI/Scripts/svelte',
+			assets:'../BExIS.Modules.Rpm.UI/Scripts/svelte',
 			fallback:null,
 			precompress:true,
 			preprocess:true,

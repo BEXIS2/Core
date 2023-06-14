@@ -4,10 +4,12 @@
 
     import Fa from 'svelte-fa/src/fa.svelte';
 	import { faSave, faTrashAlt } from '@fortawesome/free-regular-svg-icons/index';
-
-    import type {UnitListItem, DataTypeListItem, DimensionListItem} from "../models";
+    
 	import { onMount } from "svelte";
     import * as apiCalls  from '../services/apiCalls';
+
+    import type {UnitListItem, DataTypeListItem, DimensionListItem, UnitValidationResult} from "../models";
+    import type {ListItem} from "@bexis2/bexis2-core-ui";
 
     // event
     import { createEventDispatcher } from 'svelte';
@@ -30,11 +32,12 @@
     let dt: DataTypeListItem[];
     let ms: string[];
     let ds: DimensionListItem [] = [];
-    let listItem = {id:unit.dimension.id, text:unit.dimension.name};
+    let listItem = (unit.dimension === undefined) ? undefined:{id:unit.dimension.id, text:unit.dimension.name};
     $:dataTypes = dt;
     $:measurementSystems = ms;
-    $:dimensions = ds.map(({id, name}) => ({'id': id, 'text': name}));;
-    $:unit.dimension = {id:listItem.id || 0, name:listItem.text || ""};
+    $:dimensions = ds.map(({id, name}) => ({'id': id, 'text': name}));
+    $:unit.dimension = (listItem === undefined) ? undefined:ds.find(d => d.id === listItem?.id);
+    $:console.log("unit.dimension", unit.dimension)
 
     onMount(async () => {
         dt = await apiCalls.GetDataTypes();
@@ -65,8 +68,7 @@
 
     async function submit() 
     {
-        let test = await apiCalls.EditUnit(unit);
-        console.log('valid', test);
+        await apiCalls.EditUnit(unit);
         dispatch("save");
 	}
 

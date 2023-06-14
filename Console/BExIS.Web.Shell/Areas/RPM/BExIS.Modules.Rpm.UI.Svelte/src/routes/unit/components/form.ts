@@ -14,7 +14,7 @@ const suite = create((data:dataType, fieldName) => {
 	});
 
 	test('name', 'name is not unique', () => {
-		return data.units.find(u => u.name === data.unit.name)== null || data.units.find(u => u.name === data.unit.name)?.id == data.unit.id;
+		return data.units.find(u => u.name.toLowerCase() === data.unit.name.toLowerCase())== null || data.units.find(u => u.name === data.unit.name)?.id == data.unit.id;
 	});
 
 	test('abbreviation', 'abbreviation is required', () => {
@@ -40,7 +40,7 @@ const suite = create((data:dataType, fieldName) => {
 
 	test('dimension', 'dimension is required', () => {
 		console.log('dimension','check');
-		enforce(data.unit.dimension.id).isNotBlank();
+		enforce(data.unit.dimension?.id).isNotBlank();
 	});
 });
 

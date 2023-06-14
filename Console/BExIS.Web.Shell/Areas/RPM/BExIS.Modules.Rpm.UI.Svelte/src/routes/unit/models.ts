@@ -1,9 +1,11 @@
+import type {ValidationResult} from "../../models";
+
 export interface UnitListItem {
  id: number;
  name: string;
  description:string;
  abbreviation: string;
- dimension: DimensionListItem;
+ dimension?: DimensionListItem;
  datatypes: DataTypeListItem[];
  measurementSystem: string;
 }
@@ -19,3 +21,16 @@ export interface DimensionListItem{
     id: number;
     name: string;
 }
+
+export interface DimensionListItem {
+    id: number;
+    name: string;
+    description: string;
+    specification: string;
+}
+
+export interface UnitValidationResult {
+    validationResult:ValidationResult;
+    unitListItem:UnitListItem;
+}
+
