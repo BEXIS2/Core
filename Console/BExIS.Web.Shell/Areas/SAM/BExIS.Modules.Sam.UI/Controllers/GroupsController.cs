@@ -136,6 +136,11 @@ namespace BExIS.Modules.Sam.UI.Controllers
         /// <returns></returns>
         public ActionResult Index()
         {
+            string module = "SAM";
+
+            ViewData["app"] = SvelteHelper.GetApp(module);
+            ViewData["start"] = SvelteHelper.GetStart(module);
+
             return View();
         }
 
