@@ -22,7 +22,9 @@ $:systemkeys= [];
 $:selected = entitytemplate;
 
 onMount(async () => {
- setApiConfig("https://localhost:44345","davidschoene","123456");
+
+
+ 
  entitytemplates = await getEntityTemplateList();
  systemkeys = await getSystemKeys();
 })

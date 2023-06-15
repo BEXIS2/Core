@@ -76,7 +76,12 @@
 		<add key="usePersonEmailAttributeName" value="false" />
 		<add key="PersonEmailAttributeName" value="Email" />
 		<add key="aspnet:MaxJsonDeserializerMembers" value="120000" />
-
+		<!--<add key="doiTestmode" value="false" />-->
+		<!-- <add key="doiToken" value="aZ0KRPR6GW" /> -->
+		<!--<add key="doiToken" value="uJoCANaYWiahyKD8xwyHPwxxaPS9Q6EaayqCwgSXpXvGqnsYjsqinCiZ7tpxk2io" />-->
+		<!--<add key="lucifron" value="https://train.bexis2.uni-jena.de" />-->
+		<!--<add key="doiProvider" value="datacite" />-->
+		<!--<add key="doiPublisher" value="German Centre for Integrative Biodiversity Research (iDiv) Halle-Jena-Leipzig" />-->
 	</appSettings>
 	<system.web>
 		<globalization uiCulture="en-US" culture="en-US" />
@@ -275,5 +280,11 @@
 	<telerik>
 		<webAssets useTelerikContentDeliveryNetwork="false" />
 	</telerik>
-	
+	<glimpse defaultRuntimePolicy="On" endpointBaseUri="~/Glimpse.axd">
+		<!--
+          For more information on how to configure Glimpse, please visit http://getglimpse.com/Help/Configuration
+          or access {your site}/Glimpse.axd for even more details and a Configuration Tool to support you.
+      -->
+	</glimpse>
 </configuration>
+<!--ProjectGuid: E5128814-4541-45C8-A9E6-6C91A7E3D1E2-->

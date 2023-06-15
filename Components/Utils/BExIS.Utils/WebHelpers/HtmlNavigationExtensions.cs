@@ -38,13 +38,13 @@ namespace BExIS.Utils.WebHelpers
                     {
                         sb.Append($"<li><a href='");
                         if (!string.IsNullOrWhiteSpace(child.Attribute("area").Value))
-                            sb.Append(@"/").Append(child.Attribute("area").Value);
+                            sb.Append(@"/").Append(child.Attribute("area").Value.ToLower());
 
                         if (!string.IsNullOrWhiteSpace(child.Attribute("controller").Value))
-                            sb.Append(@"/").Append(child.Attribute("controller").Value);
+                            sb.Append(@"/").Append(child.Attribute("controller").Value.ToLower());
 
                         if (!string.IsNullOrWhiteSpace(child.Attribute("action").Value))
-                            sb.Append(@"/").Append(child.Attribute("action").Value);
+                            sb.Append(@"/").Append(child.Attribute("action").Value.ToLower());
 
                         sb.Append("' target=\"_blank\" >").Append(child.Attribute("title").Value).Append("</a></li>");
                     }
@@ -93,13 +93,13 @@ namespace BExIS.Utils.WebHelpers
 
                             menuItemSb.Append($"<li><a href='");
                             if (!string.IsNullOrWhiteSpace(child.Attribute("area").Value))
-                                menuItemSb.Append(@"/").Append(child.Attribute("area").Value);
+                                menuItemSb.Append(@"/").Append(child.Attribute("area").Value.ToLower());
 
                             if (!string.IsNullOrWhiteSpace(child.Attribute("controller").Value))
-                                menuItemSb.Append(@"/").Append(child.Attribute("controller").Value);
+                                menuItemSb.Append(@"/").Append(child.Attribute("controller").Value.ToLower());
 
                             if (!string.IsNullOrWhiteSpace(child.Attribute("action").Value))
-                                menuItemSb.Append(@"/").Append(child.Attribute("action").Value);
+                                menuItemSb.Append(@"/").Append(child.Attribute("action").Value.ToLower());
 
                             menuItemSb.Append("'>").Append(child.Attribute("title").Value).Append("</a></li>");
                         }
@@ -115,13 +115,13 @@ namespace BExIS.Utils.WebHelpers
                     {
                         sb.Append($"<li><a href='");
                         if (!string.IsNullOrWhiteSpace(menuBarItem.Attribute("area").Value))
-                            sb.Append(@"/").Append(menuBarItem.Attribute("area").Value);
+                            sb.Append(@"/").Append(menuBarItem.Attribute("area").Value.ToLower());
 
                         if (!string.IsNullOrWhiteSpace(menuBarItem.Attribute("controller").Value))
-                            sb.Append(@"/").Append(menuBarItem.Attribute("controller").Value);
+                            sb.Append(@"/").Append(menuBarItem.Attribute("controller").Value.ToLower());
 
                         if (!string.IsNullOrWhiteSpace(menuBarItem.Attribute("action").Value))
-                            sb.Append(@"/").Append(menuBarItem.Attribute("action").Value);
+                            sb.Append(@"/").Append(menuBarItem.Attribute("action").Value.ToLower());
 
                         sb.Append("'>").Append(menuBarItem.Attribute("title").Value).Append("</a></li>");
                     }
@@ -179,10 +179,10 @@ namespace BExIS.Utils.WebHelpers
                         sb.Append(@"/").Append(area);
 
                     if (!string.IsNullOrWhiteSpace(child.Attribute("controller").Value))
-                        sb.Append(@"/").Append(child.Attribute("controller").Value);
+                        sb.Append(@"/").Append(child.Attribute("controller").Value.ToLower());
 
                     if (!string.IsNullOrWhiteSpace(child.Attribute("action").Value))
-                        sb.Append(@"/").Append(child.Attribute("action").Value);
+                        sb.Append(@"/").Append(child.Attribute("action").Value.ToLower());
 
                     sb.Append("'>").Append(child.Attribute("title").Value).Append("</a></li>");
                 }
