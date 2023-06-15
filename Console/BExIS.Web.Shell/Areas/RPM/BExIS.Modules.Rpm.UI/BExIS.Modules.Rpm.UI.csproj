@@ -116,6 +116,8 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Controllers\DimensionController.cs" />
+    <Compile Include="Controllers\UnitController.cs" />
     <Compile Include="Controllers\StructuresController.cs" />
     <Compile Include="Helpers\HtmlPrefixScopeExtentions.cs" />
     <Compile Include="Helpers\RPMSeedDataGenerator.cs" />
@@ -123,6 +125,9 @@
     <Compile Include="Helpers\SeedData\MappingReader.cs" />
     <Compile Include="IO\UnitIO.cs" />
     <Compile Include="IO\VariableTemplateIO.cs" />
+    <Compile Include="Models\DimensionModels.cs" />
+    <Compile Include="Models\Models.cs" />
+    <Compile Include="Models\UnitModels.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RpmModule.cs" />
   </ItemGroup>
@@ -136,6 +141,10 @@
     <None Include="Properties\PublishProfiles\BexisServer_test.pubxml" />
     <None Include="Properties\PublishProfiles\FolderProfile.pubxml" />
     <Content Include="web.config" />
+    <Content Include="Views\Unit\Index.cshtml" />
+    <Content Include="Views\Index.cshtml" />
+    <Content Include="Views\Web.config" />
+    <Content Include="Views\_ViewStart.cshtml" />
     <None Include="web.Debug.config">
       <DependentUpon>web.config</DependentUpon>
     </None>

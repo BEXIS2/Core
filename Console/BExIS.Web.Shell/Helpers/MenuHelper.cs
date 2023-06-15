@@ -142,27 +142,27 @@ namespace BExIS.Web.Shell.Helpers
                 menuItem.Title = userName;
 
                 //create profile link
-                MenuItem profile = new MenuItem("Profile", "BAM/PartyService/Edit", "BAM");
+                MenuItem profile = new MenuItem("Profile", "bam/partyservice/edit", "bam");
                 menuItem.Items.Add(profile);
 
                 //create token link
-                MenuItem token = new MenuItem("Token", "Account/Profile", "Shell");
+                MenuItem token = new MenuItem("Token", "account/profile", "shell");
                 menuItem.Items.Add(token);
 
                 //create api link
-                MenuItem api = new MenuItem("Api", "/apihelp/index", "Shell", "_blank");
+                MenuItem api = new MenuItem("Api", "/apihelp/index", "shell", "_blank");
                 menuItem.Items.Add(api);
 
                 //create logoff link
-                MenuItem logoff = new MenuItem("LogOFF", "Account/LogOff", "Shell");
+                MenuItem logoff = new MenuItem("LogOFF", "account/logoff", "shell");
                 menuItem.Items.Add(logoff);
 
                 menuItems.Add(menuItem);
             }
             else
             {
-                MenuItem register = new MenuItem("Register","Account/Register","Shell");
-                MenuItem login = new MenuItem("Login","Account/Login", "Shell");
+                MenuItem register = new MenuItem("Register","account/register","shell");
+                MenuItem login = new MenuItem("Login","account/login", "shell");
 
                 menuItems.Add(register);
                 menuItems.Add(login);
@@ -228,13 +228,13 @@ namespace BExIS.Web.Shell.Helpers
 
 
             if (!string.IsNullOrWhiteSpace(element.Attribute("area").Value))
-                sb.Append(@"/").Append(element.Attribute("area").Value);
+                sb.Append(@"/").Append(element.Attribute("area").Value.ToLower());
 
             if (!string.IsNullOrWhiteSpace(element.Attribute("controller").Value))
-                sb.Append(@"/").Append(element.Attribute("controller").Value);
+                sb.Append(@"/").Append(element.Attribute("controller").Value.ToLower());
 
             if (!string.IsNullOrWhiteSpace(element.Attribute("action").Value))
-                sb.Append(@"/").Append(element.Attribute("action").Value);
+                sb.Append(@"/").Append(element.Attribute("action").Value.ToLower());
 
             return sb.ToString();
         }

@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
 import { onMount } from 'svelte'; 
 import {getHookStart}  from '../../services/HookCaller'
 
@@ -15,30 +15,36 @@ export let displayName;
 export let start
 
 // tab pane properties
-export let active;
+export let active:boolean;
 
 
-$:content=null;
+
+$:content="";
 
 onMount(async () => {
 
 console.log(name);
 
-content = await getHookStart(start,id,version);
+// content = await getHookStart(start,id,version);
 
 })
 
 </script>
 
+{#if active}
+{displayName}
 <div id="{name}" > 
 {#if content}
  <div >
-  {@html content}
+  <!-- {@html content} -->
+  {displayName}
  </div>
  {:else} <!-- while data is not loaded show a loading information -->
 
   <Spinner />
 
 {/if}
-
 </div>
+{/if}
+
+

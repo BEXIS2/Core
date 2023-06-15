@@ -444,16 +444,6 @@
     <Content Include="Scripts\respond.matchmedia.addListener.js" />
     <Content Include="Scripts\respond.matchmedia.addListener.min.js" />
     <Content Include="Scripts\respond.min.js" />
-    <Content Include="Scripts\svelte\_app\immutable\assets\_page.4f1e9ba5.css" />
-    <Content Include="Scripts\svelte\_app\immutable\assets\_page.e5bb56a3.css" />
-    <Content Include="Scripts\svelte\_app\immutable\chunks\2.23778dc2.js" />
-    <Content Include="Scripts\svelte\_app\immutable\chunks\3.5fe1fc31.js" />
-    <Content Include="Scripts\svelte\_app\immutable\chunks\index.615b5812.js" />
-    <Content Include="Scripts\svelte\_app\immutable\chunks\index.84e7447a.js" />
-    <Content Include="Scripts\svelte\_app\immutable\chunks\_layout.c51e0381.js" />
-    <Content Include="Scripts\svelte\_app\immutable\entry\test-page.svelte.aeabd045.js" />
-    <Content Include="Scripts\svelte\_app\immutable\entry\_layout.js.4d2bc252.js" />
-    <Content Include="Scripts\svelte\_app\immutable\entry\_page.svelte.da17dedb.js" />
     <Content Include="Views\Help\Informations.xml" />
     <Content Include="Views\Web.config" />
     <Content Include="Views\_ViewStart.cshtml" />
@@ -533,8 +523,13 @@
     <Content Include="Views\EntityTemplates\Index.cshtml" />
     <Content Include="Views\Create\Index.cshtml" />
     <Content Include="Views\StructureSuggestion\Index.cshtml" />
-    <Content Include="Scripts\svelte\_app\version.json" />
-    <Content Include="Scripts\svelte\vite-manifest.json" />
+    <Content Include="Views\Form\_bool.cshtml" />
+    <Content Include="Views\Form\_date.cshtml" />
+    <Content Include="Views\Form\_displayonly.cshtml" />
+    <Content Include="Views\Form\_integer.cshtml" />
+    <Content Include="Views\Form\_list.cshtml" />
+    <Content Include="Views\Form\_metadataParameterView.cshtml" />
+    <Content Include="Views\Form\_number.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

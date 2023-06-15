@@ -1,14 +1,18 @@
 <script lang="ts">
  import List from './List.svelte'
  import Form from './Form.svelte'
+ import {Page} from '@bexis2/bexis2-core-ui';
+
+ import type { Link } from "@bexis2/bexis2-core-ui";
+
  import { onMount } from 'svelte'; 
  import { fade } from 'svelte/transition'; 
 
  import { setApiConfig, Spinner }  from '@bexis2/bexis2-core-ui'
- import { getEntityTemplateList, getSystemKeys }  from '../../services/EntityTemplateCaller'
- import { goTo }  from '../../services/BaseCaller'
+ import { getEntityTemplateList, getSystemKeys }  from '$services/EntityTemplateCaller'
+ import { goTo }  from '$services/BaseCaller'
 
- import type {EntityTemplateModel } from '../../models/EntityTemplate'
+ import type {EntityTemplateModel } from '$models/EntityTemplate'
 
 
 let entitytemplate:EntityTemplateModel;
@@ -18,7 +22,9 @@ $:systemkeys= [];
 $:selected = entitytemplate;
 
 onMount(async () => {
- setApiConfig("https://localhost:44345","davidschoene","123456");
+
+
+ 
  entitytemplates = await getEntityTemplateList();
  systemkeys = await getSystemKeys();
 })
@@ -51,16 +57,24 @@ function onSaveHandler(e)
 
 }
 
+let links:Link[] = [{label:"manual",url:"https://github.com/BEXIS2/Documents/blob/master/Manuals/DCM/Manual.md"}]
+
+console.log(links)
+
 </script>
 
+<Page 
+title="Create a Dataset" 
+note="On this page you can create a dataset based on a template. please select on template and fill out the form." 
+{links} >
 
 <div in:fade={{ delay: 500 }} out:fade={{ delay: 500 }}>
 {#if entitytemplates}
-<div class="w-full grid grid-cols-1 md:grid-cols-2 gap-1 p-5">
+<div class="w-full grid grid-cols-1 md:grid-cols-2 gap-5">
   <div>
     <List items={entitytemplates} on:select={handleSelect}/>
   </div>
- <div>
+ <div >
   {#if selected && isOpen}
     <Form bind:id={selected.id} on:cancel={()=>isOpen=false} on:save={(e)=>onSaveHandler(e)} />
   {/if}
@@ -72,3 +86,5 @@ function onSaveHandler(e)
 {/if}
 
 </div>
+
+</Page>

@@ -6,14 +6,10 @@
  import {onMount} from 'svelte'
  import { getCreate, create }  from './services'
  
-
-
- 
-
  // ui components
  import { Spinner }  from '@bexis2/bexis2-core-ui'
  import InputEntry from './InputEntry.svelte'
- import ContentContainer from '../../lib/components/ContentContainer.svelte';
+ import ContentContainer from '$lib/components/ContentContainer.svelte';
 
  export let id;
  let titleField;
@@ -114,7 +110,7 @@
 {#if model}
 <ContentContainer>
 <div class="pb-10">
-  <h1>Create a {model.name}</h1>
+  <h2 class="h2">Create a {model.name}</h2>
   <p class="pt-5">{model.description}</p>
 </div>
 
