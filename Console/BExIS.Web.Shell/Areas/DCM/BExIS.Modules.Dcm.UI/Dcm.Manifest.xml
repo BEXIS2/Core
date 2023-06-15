@@ -58,7 +58,7 @@
 
 		<Export tag="settings" id="manageEntityTemplates" order="1"
             title="Manage Entity Templates" description="..." icon=""
-            controller="entitytemplates" action="index" argument=""
+            controller="entitytemplates" action="" argument=""
             extends="./settingsRoot" />
 
 		<!-- INTERNAL-->
