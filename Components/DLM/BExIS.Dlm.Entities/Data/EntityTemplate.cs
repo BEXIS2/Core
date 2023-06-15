@@ -154,6 +154,7 @@ namespace BExIS.Dlm.Entities.Data
             PermissionGroups = new List<long>();
             NotificationGroups = new List<long>();
 
+
             JsonAllowedFileTypes = "";
             JsonDatastructureList = "";
             JsonDisabledHooks = "";

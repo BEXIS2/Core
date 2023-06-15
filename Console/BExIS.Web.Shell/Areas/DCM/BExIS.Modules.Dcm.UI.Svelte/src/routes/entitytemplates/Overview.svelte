@@ -47,8 +47,8 @@
   {#if entitytemplates}
   {#each entitytemplates as item, i (item.id)}
     <Card {...item} >
-      <button class="btn variant-ringed-primary" on:click={edit(item.id)}><Fa icon="{faPen}" /></button>
-      <button class="btn variant-ringed-secondary" on:click={remove(i, item.id)}><Fa icon="{faTrash}"/></button>
+      <button class="btn variant-filled-primary" on:click={edit(item.id)}><Fa icon="{faPen}" /></button>
+      <button class="btn variant-filled-secondary" on:click={remove(i, item.id)}><Fa icon="{faTrash}"/></button>
     </Card>
   {/each}
   {:else}
