@@ -10,22 +10,23 @@ import { fade } from 'svelte/transition';
  import { CheckboxKVPList, DropdownKVP, MultiSelect, TextArea,TextInput, Spinner } from "@bexis2/bexis2-core-ui";
  import { faSave, faTrashAlt } from '@fortawesome/free-regular-svg-icons/index'
  import {SlideToggle} from '@skeletonlabs/skeleton'
- import ContentContainer from '../../lib/components/ContentContainer.svelte';
+ import ContentContainer from '../../lib/components/ContentContainer.svelte'
 
  // validation
  import suite from './edit'
 
  // services
- import { setApiConfig }  from '@bexis2/bexis2-core-ui'
+
  import { getEntityTemplate, saveEntityTemplate }  from '../../services/EntityTemplateCaller'
 
  // types
  import type { EntityTemplateModel } from '../../models/EntityTemplate'
+ import type { ListItem } from '@bexis2/bexis2-core-ui'
  
   export let id = 0;
   
   export let hooks= [];
-  export let metadataStructures= [];
+  export let metadataStructures:ListItem[]= [];
   export let dataStructures=[];
   export let systemKeys=[];
   export let entities=[];
@@ -85,8 +86,6 @@ import { fade } from 'svelte/transition';
        res = suite(entityTemplate, e.target.id)
     },10)
    }
- 
- $:test = false;
 
   </script>
 
@@ -106,6 +105,7 @@ import { fade } from 'svelte/transition';
    feedback={res.getErrors("name")} 
    on:input={onChangeHandler}
    required={true}
+   placeholder="Define a unique content-related name for your template."
    />
 
    <DropdownKVP 
@@ -118,6 +118,7 @@ import { fade } from 'svelte/transition';
     invalid={res.hasErrors("entityType")}  
     feedback={res.getErrors("entityType")} 
     on:change={onChangeHandler} 
+    complexTarget = {true}
    />
 
    <TextArea 
@@ -129,6 +130,7 @@ import { fade } from 'svelte/transition';
     feedback={res.getErrors("description")} 
     on:input={onChangeHandler} 
     required={true} 
+    placeholder="Briefly describe in which cases this template should be used. Based on entity or usecase."
     />
   
   </div>
@@ -138,7 +140,7 @@ import { fade } from 'svelte/transition';
    <div class="py-5 w-full grid grid-cols-1 md:grid-cols-2 gap-4">
 
     <div class="flex flex-col space-y-4">
-     <h3>Metadata</h3>
+     <h3 class="h3">Metadata</h3>
 
      <DropdownKVP 
       id="metadataStructure"
@@ -149,6 +151,8 @@ import { fade } from 'svelte/transition';
       invalid={res.hasErrors("metadataStructure")}  
       feedback={res.getErrors("metadataStructure")} 
       on:change={onChangeHandler} 
+      complexTarget={true}
+      required={true}
       />
 
       <MultiSelect 
@@ -167,7 +171,7 @@ import { fade } from 'svelte/transition';
      </div>
 
      <div class="flex flex-col space-y-4">
-       <h3>Datastructure</h3>
+       <h3 class="h3">Datastructure</h3>
    
        <SlideToggle name="Use datastructures?" bind:checked={entityTemplate.hasDatastructure} >
         Use datastructures?
@@ -181,7 +185,7 @@ import { fade } from 'svelte/transition';
    </div>
 
    
-   <h3>Group</h3>
+   <h3 class="h3">Group</h3>
    <div class="py-5 w-full grid grid-cols-1 md:grid-cols-2 gap-4">
     <MultiSelect  
       title="Permission" 
@@ -202,7 +206,7 @@ import { fade } from 'svelte/transition';
       />
    </div>
 
-   <h3>Additional</h3>
+   <h3 class="h3">Additional</h3>
    <div class="py-5 w-full grid grid-cols-1 md:grid-cols-2 gap-4">
     <MultiSelect 
       title="Disabled hooks" 
@@ -224,7 +228,7 @@ import { fade } from 'svelte/transition';
  </form>
 </ContentContainer> 
 {:else}
-  <Spinner/>
+  <Spinner textCss="text-secondary-500"/>
 {/if}
 
 

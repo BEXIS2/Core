@@ -5,6 +5,7 @@
 	"scripts": {
 		"dev": "vite dev",
 		"build": "vite build",
+		"build watch": "vite build --watch",
 		"preview": "vite preview",
 		"test": "playwright test",
 		"check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
@@ -41,7 +42,7 @@
 	},
 	"type": "module",
 	"dependencies": {
-		"@bexis2/bexis2-core-ui": "^0.1.5",
+		"@bexis2/bexis2-core-ui": "^0.1.6",
 		"@fortawesome/free-solid-svg-icons": "^6.4.0",
 		"@sveltejs/adapter-static": "^2.0.1",
 		"patch-package": "^6.5.1",

@@ -28,6 +28,9 @@
  import type { EntityTemplateModel } from '../../models/EntityTemplate'
 
 
+ // Store 
+ import { entityTemplatesStore, x } from "./store"
+
  let hooks= [];
  let metadataStructures= [];
  let dataStructures=[];
@@ -41,18 +44,18 @@
  
  $:selectedEntityTemplate = 0;
 
- let entitytemplatesArray:EntityTemplateModel[];
- $:entitytemplates = entitytemplatesArray;
+ let entitytemplates:EntityTemplateModel[];
+ $:entitytemplates;
  
+
+//  entityTemplatesStore.subscribe(value => {
+// 		entitytemplates = value;
+// 	});
+
+
  onMount(async () => {
    console.log("start entity template");
 
-  //  if (import.meta.env.DEV) {
-	// 		console.log('dev');
-	// 		setApiConfig('https://localhost:44345', 'davidschoene', '123456');
-	// 	}
-
- 
    hooks = await getHooks();
    metadataStructures = await getMetadataStructures();
    dataStructures = await getDataStructures();
@@ -61,17 +64,18 @@
    groups = await getGroups();
    filetypes = await getFileTypes();
  
-   entitytemplates = await getEntityTemplateList();
+   entitytemplates =  await getEntityTemplateList();
+   entityTemplatesStore.set(entitytemplates);
  
 
-   console.log("hooks", hooks);
-   console.log("metadataStructures", metadataStructures);
-   console.log("dataStructures",dataStructures);
-   console.log("systemKeys",systemKeys);
-   console.log("entities",entities);
-   console.log("groups",groups);
-   console.log("filetypes",filetypes);
-   console.log("entitytemplates", entitytemplates);
+  //  console.log("hooks", hooks);
+  //  console.log("metadataStructures", metadataStructures);
+  //  console.log("dataStructures",dataStructures);
+  //  console.log("systemKeys",systemKeys);
+  //  console.log("entities",entities);
+  //  console.log("groups",groups);
+  //  console.log("filetypes",filetypes);
+  // console.log("entitytemplates", entitytemplates);
   
  })
  
