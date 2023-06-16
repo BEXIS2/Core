@@ -52,6 +52,6 @@
     </Card>
   {/each}
   {:else}
-   <Spinner />
+  <Spinner textCss="text-secondary-500"/>
   {/if}
 </div>
