@@ -1,5 +1,6 @@
 ﻿using BExIS.App.Bootstrap.Attributes;
 using BExIS.Dim.Entities.Mapping;
+using BExIS.Dim.Services;
 using BExIS.Dlm.Entities.Data;
 using BExIS.Dlm.Services.Data;
 using BExIS.Dlm.Services.DataStructure;
@@ -13,6 +14,7 @@ using BExIS.UI.Hooks;
 using BExIS.UI.Models;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Web.Mvc;
 using Vaiona.Web.Extensions;
 
@@ -128,16 +130,44 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
         [JsonNetFilter]
         [HttpGet]
-        public JsonResult SystemKeys()
+        public JsonResult SystemKeys(long metadataStructureId)
         {
-            List<KeyValuePair<int, string>> tmp = new List<KeyValuePair<int, string>>();
+            List<ListItem> tmp = new List<ListItem>();
 
-            foreach (var key in Enum.GetValues(typeof(Key)))
+            if (metadataStructureId > 0)
             {
-                tmp.Add(new KeyValuePair<int, string>(Convert.ToInt32(key), key.ToString()));
+                // check wheter mapping exist based on metadata structure id
+                using (var mappingManager = new MappingManager())
+                {
+                    var source = mappingManager.LinkElementRepo.Get().Where(l => l.ElementId.Equals(metadataStructureId) && l.Type.Equals(LinkElementType.MetadataStructure)).FirstOrDefault();
+                    var target = mappingManager.LinkElementRepo.Get().Where(l => l.Type.Equals(LinkElementType.System)).FirstOrDefault();
+                    var rootMapping = mappingManager.GetMapping(source, target);
+                    if (rootMapping != null) // root mapping to system keys exist
+                    {
+                        var childMappings = mappingManager.GetChildMappingFromRoot(rootMapping.Id, 1);
+                        var targets = childMappings.Select(m => m.Target.Name);
+                       
+
+                        foreach (var key in Enum.GetValues(typeof(Key)))
+                        {
+                            var mapped = "mapped";
+                            if (!targets.Contains(key.ToString())) mapped = "unmapped";
+
+                            ListItem item = new ListItem()
+                            {
+                                Id = Convert.ToInt64(key),
+                                Text = key.ToString(),
+                                Group = mapped
+                            };
+
+                            tmp.Add(item);
+                        }
+                    }
+                }
             }
 
             return Json(tmp, JsonRequestBehavior.AllowGet);
+            
         }
 
         [JsonNetFilter]

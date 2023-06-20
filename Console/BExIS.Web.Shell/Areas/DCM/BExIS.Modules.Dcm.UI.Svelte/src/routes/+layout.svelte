@@ -13,17 +13,6 @@
 	//Most of your app wide CSS should be put in this file
 	import '../app.postcss';
 
- import { onMount,  } from 'svelte'; 
- import { setApiConfig }  from '@bexis2/bexis2-core-ui'
-
-	onMount(async () => {
-	//setup api
-	// if (import.meta.env.DEV) {
-	// 		console.log('dev');
-	// 		setApiConfig('https://localhost:44345', 'davidschoene', '123456');
-	// 	}
-
-})
 
 </script>
 

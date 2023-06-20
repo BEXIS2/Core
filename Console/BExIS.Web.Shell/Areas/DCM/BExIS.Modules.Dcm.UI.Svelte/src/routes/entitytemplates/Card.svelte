@@ -14,12 +14,25 @@ const dispatch = createEventDispatcher();
 </script>
 
 <ContentContainer>
-	<header class="card-header"><h2 class="h2">{name}</h2></header>
+	<header class="card-header">
+    <div class="grid grid-cols-2">
+      <div class="text-left">
+        <h2 class="h2">{name}</h2>
+        <span class="text-sm">{metadataStructure.text}</span> 
+      </div>
+      <div class="text-right">
+        <span class="badge variant-filled-secondary">{entityType.text}</span>
+      </div>
+    </div>
+    
+  </header>
  
 	<section class="p-4">
-  {#if description }{description}{/if}
-  <p>{entityType.text}</p> <br>
-  <span>{metadataStructure.text}</span>
+ 
+
+  {#if description }<blockquote class="blockquote mb-5">{description}</blockquote>{/if}
+
+  
 
  </section>
 	<footer class="card-footer">

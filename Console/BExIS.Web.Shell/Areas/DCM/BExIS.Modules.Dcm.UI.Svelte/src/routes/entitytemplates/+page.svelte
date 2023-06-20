@@ -10,14 +10,13 @@
  import Edit from './Edit.svelte';
  
  // services
- import { setApiConfig, Page }  from '@bexis2/bexis2-core-ui'
+ import { Page }  from '@bexis2/bexis2-core-ui'
 
 
  import { 
    getEntities,
    getDataStructures,
    getMetadataStructures,
-   getSystemKeys,
    getGroups, 
    getHooks,
    getFileTypes,
@@ -29,12 +28,11 @@
 
 
  // Store 
- import { entityTemplatesStore, x } from "./store"
+ import { entityTemplatesStore } from "./store"
 
  let hooks= [];
  let metadataStructures= [];
  let dataStructures=[];
- let systemKeys=[];
  let entities=[];
  let groups=[];
  let filetypes=[];
@@ -59,7 +57,6 @@
    hooks = await getHooks();
    metadataStructures = await getMetadataStructures();
    dataStructures = await getDataStructures();
-   systemKeys = await getSystemKeys();
    entities = await getEntities();
    groups = await getGroups();
    filetypes = await getFileTypes();
@@ -67,7 +64,6 @@
    entitytemplates =  await getEntityTemplateList();
    entityTemplatesStore.set(entitytemplates);
  
-
   //  console.log("hooks", hooks);
   //  console.log("metadataStructures", metadataStructures);
   //  console.log("dataStructures",dataStructures);
@@ -75,7 +71,7 @@
   //  console.log("entities",entities);
   //  console.log("groups",groups);
   //  console.log("filetypes",filetypes);
-  // console.log("entitytemplates", entitytemplates);
+   console.log("entitytemplates", entitytemplates);
   
  })
  
@@ -135,7 +131,6 @@
    {hooks} 
    {metadataStructures} 
    {dataStructures} 
-   {systemKeys} 
    {entities} 
    {groups} 
    {filetypes} 
