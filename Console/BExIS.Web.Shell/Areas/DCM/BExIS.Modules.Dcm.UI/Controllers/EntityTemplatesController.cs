@@ -72,6 +72,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         {
             using (var entityTemplateManager = new EntityTemplateManager())
             {
+
                 var result = entityTemplateManager.Delete(id);
                 return Json(result);
             }
