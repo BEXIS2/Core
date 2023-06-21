@@ -15,4 +15,5 @@ export interface EntityTemplateModel {
  disabledHooks: string[];
  notificationGroups: number[];
  permissionGroups: number[];
+ linkedSubjects:ListItem[];
 }

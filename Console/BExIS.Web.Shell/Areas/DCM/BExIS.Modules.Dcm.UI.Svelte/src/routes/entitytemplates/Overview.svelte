@@ -63,12 +63,12 @@ async  function remove(index, id){
 
 </script>
 
-<div class="py-5 w-full grid grid-cols-2 md:grid-cols-3 gap-4">
+<div class="py-5 w-full grid sm:grid-cols-1 md:grid-cols-2  lg:grid-cols-3 gap-4">
   {#if entitytemplates}
   {#each entitytemplates as item, i (item.id)}
     <Card {...item} >
-      <button class="btn variant-filled-primary" on:click={edit(item.id)}><Fa icon="{faPen}" /></button>
-      <button class="btn variant-filled-warning" on:click={deletionConfirmation(i, item.id)}><Fa icon="{faTrash}"/></button>
+      <button class="btn variant-filled-primary" on:click={()=>edit(item.id)}><Fa icon="{faPen}" /></button>
+      <button class="btn variant-filled-warning" disabled={item.linkedSubjects.length>0} on:click={()=>deletionConfirmation(i, item.id)}><Fa icon="{faTrash}"/></button>
     </Card>
   {/each}
   {:else}
