@@ -13,45 +13,40 @@
 	import type { TableConfig, Columns, Column } from '@bexis2/bexis2-core-ui';
 	import { writable, get, type Writable } from 'svelte/store';
 
-	const store = writable<ReadGroupModel[]>([]);
-	let tableConfig: TableConfig<ReadGroupModel>;
-	onMount(async () => {
-		const groups = await getGroups() as ReadGroupModel[];
-		console.log('type of creationdate1',typeof groups.at(0)?.creationDate);
-		store.set(groups);
-		console.log('type of creationdate2',typeof new Date(get(store).at(0)?.creationDate ?? "1999-12-31"));
-		console.log('store', get(store));
-		tableConfig = {
+	const tableStore = writable<ReadGroupModel[]>([]);
+	let groups: ReadGroupModel[];
+	$:tableStore.set(groups);
+	let tableConfig: TableConfig<ReadGroupModel> ={
 			id: 'groups',
-			data: store,
+			data: tableStore,
 			columns: {
 				creationDate: {
 					header: 'Creation Date',
 					instructions: {
-						toStringFn: (date: Date) => date.toDateString()//,
+						toStringFn: (date: Date) => date.toDateString() //,
 						// toSortableValueFn: (date: Date) => date.getTime(),
 						// toFilterableValueFn: (date: Date) => date
-						
 					}
 				},
 				modificationDate: {
 					header: 'Modification Date',
 					instructions: {
-						toStringFn: (date: Date) => date.toDateString()//,
+						toStringFn: (date: Date) => date.toDateString() //,
 						// toSortableValueFn: (date: Date) => date.getTime(),
 						// toFilterableValueFn: (date: Date) => date
-						
 					}
 				}
 			}
 		};
+	onMount(async () => {
+		groups = (await getGroups()) as ReadGroupModel[];
 	});
 </script>
 
 <Page title="Groups" note="Overview of Groups">
 	<div slot="description">Hier kommt die Beschreibung!</div>
 	<div class="w-1/2">
-		{#if $store.length > 0}
+		{#if groups}
 			<Table config={tableConfig} />
 		{:else}
 			<Spinner textCss="text-warning-500" />
