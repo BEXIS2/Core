@@ -5,6 +5,7 @@ using BExIS.Modules.Dcm.UI.Models.EntityTemplate;
 using BExIS.Security.Services.Objects;
 using BExIS.UI.Models;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace BExIS.Modules.Dcm.UI.Helpers
 {
@@ -99,6 +100,27 @@ namespace BExIS.Modules.Dcm.UI.Helpers
 
             model.MetadataStructure = new ListItem(entityTemplate.MetadataStructure.Id, entityTemplate.MetadataStructure.Name);
             model.EntityType = new ListItem(entityTemplate.EntityType.Id, entityTemplate.EntityType.Name);
+
+
+            // check if subject are allready created, and list them for the view
+            using (var datasetManager = new DatasetManager())
+            {
+                long etId = entityTemplate.Id;
+                var datasetsetWithThisTemplate = datasetManager.DatasetRepo.Query().Where(d => d.EntityTemplate.Id.Equals(etId));
+
+                // get throw all the subjects that are linked to the entitytemplate
+                foreach (var ds in datasetsetWithThisTemplate.ToList())
+                {
+                    if (ds == null) continue; // dataset not exist
+                    DatasetVersion dsv = null;
+                    if(datasetManager.IsDatasetCheckedIn(ds.Id))dsv = datasetManager.GetDatasetLatestVersion(ds.Id); // set version if its not checked out
+                    var l = new ListItem();
+                    l.Id = ds.Id; 
+                    l.Text = dsv != null?dsv.Title.ToString():"Dataset is checked out."; // if a version is available, get the title
+                    l.Group = entityTemplate.EntityType.Name; // add entity name 
+                    model.LinkedSubjects.Add(l);
+                }
+            }
 
 
             return model;

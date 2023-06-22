@@ -1,7 +1,7 @@
 <script>
 
  import Fa from 'svelte-fa/src/index'
- import { faTrashAlt } from '@fortawesome/free-solid-svg-icons'
+ import { faTrashAlt, faSave } from '@fortawesome/free-solid-svg-icons'
 
  import {onMount} from 'svelte'
  import { getCreate, create }  from './services'
@@ -168,8 +168,8 @@
  {/if}
 
  <div class="pt-5">
-  <button type="submit" class="btn bg-slate-500" {disabled}>Create</button>
-  <button type="button" class="btn bg-warning-500" on:click={onCancel}><Fa icon={faTrashAlt}/></button>
+  <button type="submit" class="btn variant-filled-surface" {disabled}><Fa icon={faSave}/></button>
+  <button type="button" class="btn variant-filled-warning" on:click={onCancel}><Fa icon={faTrashAlt}/></button>
  </div>
 </form>
 </ContentContainer>

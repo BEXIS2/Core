@@ -10,14 +10,13 @@
  import Edit from './Edit.svelte';
  
  // services
- import { setApiConfig, Page }  from '@bexis2/bexis2-core-ui'
+ import { Page }  from '@bexis2/bexis2-core-ui'
 
 
  import { 
    getEntities,
    getDataStructures,
    getMetadataStructures,
-   getSystemKeys,
    getGroups, 
    getHooks,
    getFileTypes,
@@ -28,10 +27,12 @@
  import type { EntityTemplateModel } from '../../models/EntityTemplate'
 
 
+ // Store 
+ import { entityTemplatesStore } from "./store"
+
  let hooks= [];
  let metadataStructures= [];
  let dataStructures=[];
- let systemKeys=[];
  let entities=[];
  let groups=[];
  let filetypes=[];
@@ -41,36 +42,35 @@
  
  $:selectedEntityTemplate = 0;
 
- let entitytemplatesArray:EntityTemplateModel[];
- $:entitytemplates = entitytemplatesArray;
+ let entitytemplates:EntityTemplateModel[];
+ $:entitytemplates;
  
+
+//  entityTemplatesStore.subscribe(value => {
+// 		entitytemplates = value;
+// 	});
+
+
  onMount(async () => {
    console.log("start entity template");
 
-  //  if (import.meta.env.DEV) {
-	// 		console.log('dev');
-	// 		setApiConfig('https://localhost:44345', 'davidschoene', '123456');
-	// 	}
-
- 
    hooks = await getHooks();
    metadataStructures = await getMetadataStructures();
    dataStructures = await getDataStructures();
-   systemKeys = await getSystemKeys();
    entities = await getEntities();
    groups = await getGroups();
    filetypes = await getFileTypes();
  
-   entitytemplates = await getEntityTemplateList();
+   entitytemplates =  await getEntityTemplateList();
+   entityTemplatesStore.set(entitytemplates);
  
-
-   console.log("hooks", hooks);
-   console.log("metadataStructures", metadataStructures);
-   console.log("dataStructures",dataStructures);
-   console.log("systemKeys",systemKeys);
-   console.log("entities",entities);
-   console.log("groups",groups);
-   console.log("filetypes",filetypes);
+  //  console.log("hooks", hooks);
+  //  console.log("metadataStructures", metadataStructures);
+  //  console.log("dataStructures",dataStructures);
+  //  console.log("systemKeys",systemKeys);
+  //  console.log("entities",entities);
+  //  console.log("groups",groups);
+  //  console.log("filetypes",filetypes);
    console.log("entitytemplates", entitytemplates);
   
  })
@@ -131,7 +131,6 @@
    {hooks} 
    {metadataStructures} 
    {dataStructures} 
-   {systemKeys} 
    {entities} 
    {groups} 
    {filetypes} 

@@ -38,14 +38,16 @@ export const getMetadataStructures = async () => {
 };
 
 
-export const getSystemKeys = async () => {
+
+export const getSystemKeys= async (id) => {
   try {
-    const response = await Api.get('/dcm/entitytemplates/SystemKeys');
+    const response = await Api.get('/dcm/entitytemplates/SystemKeys?metadataStructureId='+id);
     return response.data;
   } catch (error) {
     console.error(error);
   }
 };
+
 
 export const getDataStructures = async () => {
   try {

@@ -73,6 +73,11 @@ namespace BExIS.Modules.Dcm.UI.Models.EntityTemplate
         /// </summary>
         public virtual List<long> PermissionGroups { get; set; }
 
+        /// <summary>
+        /// list of all suject that are created withthis template
+        /// </summary>
+        public virtual List<ListItem> LinkedSubjects { get; set; }
+
         public EntityTemplateModel()
         {
             Id = 0;
@@ -88,6 +93,8 @@ namespace BExIS.Modules.Dcm.UI.Models.EntityTemplate
             NotificationGroups = new List<long>();
             MetadataInvalidSaveMode = false;
             HasDatastructure = false;
+
+            LinkedSubjects = new List<ListItem>();
         }
 
         public class KvP

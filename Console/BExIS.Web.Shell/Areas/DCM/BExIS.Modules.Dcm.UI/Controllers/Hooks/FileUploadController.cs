@@ -98,7 +98,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 model.Accept = UploadHelper.GetExtentionList(datastructureType, this.Session.GetTenant());
 
                 // if entity template has some allowed filestypes
-                if (dataset.EntityTemplate.AllowedFileTypes.Any())
+                if (dataset.EntityTemplate.AllowedFileTypes!=null && dataset.EntityTemplate.AllowedFileTypes.Any())
                 {
                     // the system needs to compare them with the system list 
                     // only add filetypes dat are in both lists

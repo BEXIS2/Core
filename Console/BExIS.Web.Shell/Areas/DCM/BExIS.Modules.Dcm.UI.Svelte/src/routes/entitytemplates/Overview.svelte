@@ -9,6 +9,7 @@
   // ui components
   import {Spinner} from '@bexis2/bexis2-core-ui'
   import Card from './Card.svelte'
+  import { Modal, modalStore } from '@skeletonlabs/skeleton';
 
   //services
   import { setApiConfig }  from '@bexis2/bexis2-core-ui';
@@ -16,6 +17,7 @@
 
   //types
   import type { EntityTemplateModel } from '../../models/EntityTemplate'
+  import type { ModalSettings } from '@skeletonlabs/skeleton';
 
   const dispatch = createEventDispatcher();
 
@@ -26,11 +28,29 @@
     dispatch("edit",id);
   }
 
-  async function remove(index, id){
+  // when bt for remove is trigger a conformation is needed
+  function deletionConfirmation(index, id){
 
-    console.log(index,id);
-  //remove in backend
+
+    const modal: ModalSettings = {
+      type: 'confirm',
+      title: 'Please Confirm',
+      body: 'Are you sure you wish to remove?',
+      response: (r: boolean) => {
+        remove(index, id);
+      }
+    };
+
+    modalStore.trigger(modal);
+  }
+
+// call delete entity template on server
+async  function remove(index, id){
+
+  console.log(index,id);
+    //remove in backend
     const res = await deleteEntityTemplate(id)
+    console.log(res)
     if(res === true)
     {
       //remove list
@@ -38,20 +58,22 @@
         return idx !== index;
       });
     }
-  }
+}
 
 
 </script>
 
-<div class="py-5 w-full grid grid-cols-2 md:grid-cols-3 gap-4">
+<div class="py-5 w-full grid sm:grid-cols-1 md:grid-cols-2  lg:grid-cols-3 gap-4">
   {#if entitytemplates}
   {#each entitytemplates as item, i (item.id)}
     <Card {...item} >
-      <button class="btn variant-ringed-primary" on:click={edit(item.id)}><Fa icon="{faPen}" /></button>
-      <button class="btn variant-ringed-secondary" on:click={remove(i, item.id)}><Fa icon="{faTrash}"/></button>
+      <button class="btn variant-filled-primary" on:click={()=>edit(item.id)}><Fa icon="{faPen}" /></button>
+      <button class="btn variant-filled-warning" disabled={item.linkedSubjects.length>0} on:click={()=>deletionConfirmation(i, item.id)}><Fa icon="{faTrash}"/></button>
     </Card>
   {/each}
   {:else}
-   <Spinner />
+  <Spinner textCss="text-secondary-500"/>
   {/if}
 </div>
+
+<Modal/>
