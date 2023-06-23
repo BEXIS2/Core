@@ -1,17 +1,18 @@
-<script>
+<script lang="ts">
 import { onMount }from 'svelte'
 import Fa from 'svelte-fa'
 import { faHourglass } from '@fortawesome/free-regular-svg-icons/index'
 
 export let milliseconds = 0;
 $:currentDate = new Date();
-$:diff= null;
+let diff:string;
+$:diff;
 
 onMount(async () => {
 
   const interval = setInterval(() => {
     currentDate = new Date();
-    diff = formatTime(currentDate - milliseconds);
+    diff = formatTime(Number(currentDate) - milliseconds);
 
 		}, 1000);
 

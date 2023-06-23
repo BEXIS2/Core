@@ -17,13 +17,14 @@ let loading = false;
 async function remove()
 {
  loading = true;
+ console.log("remove")
  const res = await deleteStructure(id,structureId);
 
  console.log(res);
  if(res.success = true)
  {
    // update store
-   latestDataDescriptionDate.set(Date.now);
+   latestDataDescriptionDate.set(Date.now());
  }
  else
  {

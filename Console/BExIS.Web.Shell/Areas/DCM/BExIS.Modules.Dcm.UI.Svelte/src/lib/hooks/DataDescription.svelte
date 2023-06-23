@@ -18,8 +18,8 @@ export let id=0;
 export let version=1;
 export let hook;
  
-let m:DataDescriptionModel;
-$:model = m;
+let model:DataDescriptionModel;
+$:model;
 $:loading = false;
 
 $:$latestFileUploadDate, reload()
@@ -31,13 +31,13 @@ onMount(async () => {
 
 async function load()
 {
-  //console.log("datadscription",hook);
+  console.log("datadscription",hook);
   model = await getHookStart(hook.start,id,version);
 }
 
 async function reload()
 {
-  //console.log("reload datadscription");
+  console.log("reload datadscription");
   load();
 } 
  
@@ -49,7 +49,7 @@ async function reload()
 
     {#if model.lastModification}
     
-    <TimeDuration milliseconds={new Date(model.lastModification)}/>
+    <TimeDuration milliseconds={Number(new Date(model.lastModification))}/>
     
     {/if}
 

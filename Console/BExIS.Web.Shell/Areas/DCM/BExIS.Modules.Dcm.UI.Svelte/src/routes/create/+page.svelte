@@ -18,7 +18,7 @@
 let entitytemplate:EntityTemplateModel;
 
 $:entitytemplates=[];
-$:systemkeys= [];
+// $:systemkeys= [];
 $:selected = entitytemplate;
 
 onMount(async () => {
@@ -26,7 +26,7 @@ onMount(async () => {
 
  
  entitytemplates = await getEntityTemplateList();
- systemkeys = await getSystemKeys();
+//  systemkeys = await getSystemKeys(0);
 })
 
 

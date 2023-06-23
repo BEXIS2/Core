@@ -165,8 +165,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                     );
 
 
-                // create variables
-
+                // create variable
                 foreach (var variable in model.Variables)
                 {
                     // if needed gerenate units??

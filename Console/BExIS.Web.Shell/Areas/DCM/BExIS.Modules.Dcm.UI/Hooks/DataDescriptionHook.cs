@@ -42,9 +42,11 @@ namespace BExIS.Modules.Dcm.UI.Hooks
         {
             // check if dataset has description
             using (var datasetManager = new DatasetManager())
+            using (var entityTemplateManager = new EntityTemplateManager())
             {
                 var dataset = datasetManager.GetDataset(id);
-                if (dataset == null || dataset.DataStructure == null) { Status = HookStatus.Disabled; return; }
+                var template = entityTemplateManager.Repo.Get(dataset.EntityTemplate.Id);
+                if (dataset == null || template == null || template.HasDatastructure == false) { Status = HookStatus.Disabled; return; }
                 else Status = HookStatus.Open;
 
             }

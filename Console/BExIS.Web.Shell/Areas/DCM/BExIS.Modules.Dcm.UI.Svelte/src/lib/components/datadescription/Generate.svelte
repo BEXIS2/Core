@@ -1,7 +1,7 @@
 <script lang="ts">
 
 import {goTo}  from '../../../services/BaseCaller'
-import Select from 'svelte-select/Select.svelte';
+import {MultiSelect} from '@bexis2/bexis2-core-ui';
 import { onMount } from 'svelte';
 
 export let id = 0; // entity id
@@ -10,7 +10,7 @@ export let files:any[];
 function goToGenerate(file)
 {
    // if its possible the file will be used to start structure analyze
-    goTo('/dcm/StructureSuggestion/?id='+id+'&file='+file);
+    goTo('/dcm/structuresuggestion/?id='+id+'&file='+file);
 }
 
 type item ={
@@ -18,11 +18,14 @@ type item ={
    label:string,
    group:string
 }
-let l:item[];
 
-$:list = l;
-function setList()
+let list:item[];
+$:list, setList(files);
+
+// list is a comibnation of options, already existing datastructures and files
+function setList(files)
 {
+  
   list = [];
   list.push({value:"create new",label:"create new", group:"options"})
 
@@ -36,10 +39,12 @@ function setList()
 
 
 onMount(async () => {
-  setList();
+  //setList(files);
   console.log("select list",list)
 });
 
+// after select a value from the dropdown 
+// it will go to the generator or selet a exiting structure
 function change(e)
 {
   let item = e.detail;
@@ -54,14 +59,22 @@ function change(e)
   }
 }
 
-const groupBy = (item) => item.group;
-
 </script>
 
 {#if list}
 
 <div class="grid grid-cols-2 py-3">
-    <Select items={list} {groupBy} on:change={change}/>
+   <MultiSelect 
+   id="SelectDataStructure" 
+   title="Select a Datastructure or generate from File"
+   itemId="value"
+   itemLabel="label"
+   bind:source={list} 
+   itemGroup="group" 
+   on:change={change}
+   complexSource={true}
+   target
+   />
 </div>
 {/if}
 
