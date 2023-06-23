@@ -68,17 +68,15 @@ title="Create a Dataset"
 note="On this page you can create a dataset based on a template. please select on template and fill out the form." 
 {links} >
 
-<div in:fade={{ delay: 500 }} out:fade={{ delay: 500 }}>
+<div in:fade={{ delay: 500 }} out:fade={{ delay: 500 }} >
 {#if entitytemplates}
 <div class="w-full grid grid-cols-1 md:grid-cols-2 gap-5">
-  <div>
-    <List items={entitytemplates} on:select={handleSelect}/>
-  </div>
- <div >
+
+  <List items={entitytemplates} on:select={handleSelect}/>
+
   {#if selected && isOpen}
     <Form bind:id={selected.id} on:cancel={()=>isOpen=false} on:save={(e)=>onSaveHandler(e)} />
   {/if}
- </div>
 </div>
 
 {:else}

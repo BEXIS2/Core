@@ -32,4 +32,17 @@ export const allowedFileTypesHelp = {
 	description:"Select features that should not be displayed during editing and display."
 }
 
+export const dataStructureHelp = {
+	title:"Options for datastructures",
+	description:"<u>1. active vs not active</u>"+ 
+	"<ul class=\"ul list-disc p-5\"><li><b>active datastructure</b> - tabular data will be uploaded</li>"+
+	"<li><b>deactivate</b> - files will be uploaded directly and will not be processed furtherSelect features that should not be displayed during editing and display.</li></ul>"+
+	"<u>2. selection or not</u>"+
+ "<ul class=\"ul list-disc p-5\"><li>if you activate datastructure, you can define a selection of datastructures from the system.</li>"+
+	"<li>selected - only these structures can be used later on,	not selected - new structures can be selected.</li></ul>"
+}
+
+
+
+
 
