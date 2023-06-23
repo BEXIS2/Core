@@ -106,7 +106,7 @@
  
  
  </script>
-
+<div>
 {#if model}
 <ContentContainer>
 <div class="pb-10">
@@ -176,3 +176,4 @@
 {:else} <!-- while data is not loaded show a loading information -->
 <Spinner />
 {/if}
+</div>

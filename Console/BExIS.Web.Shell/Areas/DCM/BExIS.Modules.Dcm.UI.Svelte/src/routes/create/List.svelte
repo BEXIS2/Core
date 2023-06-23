@@ -9,7 +9,7 @@
 
 </script>
 
-<div class="grid gap-1 max-h-screen/2 overflow-auto pr-4 space-y-4">
+<div class="grid gap-1 pr-4 space-y-1">
 {#each items as item, index}
   <ListItem {...item} on:click={()=>dispatch("select",index)}/>
 {/each}
