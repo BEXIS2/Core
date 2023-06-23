@@ -21,7 +21,7 @@
 </script>
 <button type="button" class="btn-icon variant-ringed-warning" use:popup={popupFeatured}><Fa icon={faQuestion}/> </button>
 
-<div class="card  p-4 w-72 shadow-xl bg-surface-300 z-50 text-left" data-popup="{title}">
+<div class="card p-4 w-72 shadow-xl bg-surface-300 z-50 text-left space-y-2" data-popup="{title}">
  <h3 class="h3">{title}</h3>
- <p>{description}</p>
+ <p class="p">{@html description}</p>
 </div>

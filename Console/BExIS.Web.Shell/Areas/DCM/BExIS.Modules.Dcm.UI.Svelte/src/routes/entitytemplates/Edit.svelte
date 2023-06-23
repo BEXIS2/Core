@@ -243,19 +243,36 @@ import { fade } from 'svelte/transition';
       
 
     </div>
+    <div class="flex flex-col space-y-4">
+      <h3 class="h3">Datastructure</h3>
+      <EntryContainer>
+        <div class="mt-7 space-y-5">
+        <SlideToggle name="Use datastructures?" bind:checked={entityTemplate.hasDatastructure} >
+          Use datastructures?
+        </SlideToggle>
 
-     <div class="flex flex-col space-y-4">
-       <h3 class="h3">Datastructure</h3>
-         
-       <SlideToggle name="Use datastructures?" bind:checked={entityTemplate.hasDatastructure} >
-        Use datastructures?
-       </SlideToggle>
-   
-       {#if entityTemplate.hasDatastructure}
-           <CheckboxKVPList key="datastructures" title="Datastructures" source={dataStructures} bind:target={entityTemplate.datastructureList} />
-       {/if}
-
+        {#if entityTemplate.hasDatastructure}
+        <MultiSelect  
+          id="datastructures"
+          title="Limit the selection of datastrutcures" 
+          source={dataStructures} 
+          bind:target={entityTemplate.datastructureList}
+          itemId="key"
+          itemLabel="value"
+          complexSource={true}
+          />
+        {/if}
        </div>
+        <div slot="help">
+          <Help {...HelpInfo.dataStructureHelp}/>
+        </div>
+      
+      </EntryContainer>
+
+
+    </div>
+  
+
    </div>
 
    <h3 class="h3">Group</h3>
