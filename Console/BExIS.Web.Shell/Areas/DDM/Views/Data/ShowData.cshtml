@@ -129,137 +129,138 @@
 
 @if (Model != null && ((Model.IsPublic == true || User.Identity.Name != "") || check_public_metadata == "false"))
 {
-    <div id="showData">
-        <h1>@Model.Title</h1>
+<div id="showData">
+    <div>
+        <h1>@Model.Title <a class="bx bx-edit" href="/dcm/edit?id=@Model.Id"></a></h1>
+    </div>
 
+    @if (ViewData["Message"].ToString() != "")
+    {
+        <div id="view-error-container">
 
-            @if (ViewData["Message"].ToString() != "")
-            {
-                <div id="view-error-container">
+            <div id="view-error" class="alert alert-danger" role="alert" style="width: 100%;">
+                <span id="view-error-icon" class=" fa fa-exclamation-triangle"></span>
+                @ViewData["Message"].ToString()
+            </div>
+        </div>
+    }
 
-                    <div id="view-error" class="alert alert-danger" role="alert" style="width: 100%;">
-                        <span id="view-error-icon" class=" fa fa-exclamation-triangle"></span>
-                        @ViewData["Message"].ToString()
-                    </div>
-                </div>
-            }
+    @if (!Model.LatestVersion && ViewData["state"].ToString() != "hidden")
+    {
+        <div id="view-warning-container">
 
-            @if (!Model.LatestVersion && ViewData["state"].ToString() != "hidden")
-            {
-                <div id="view-warning-container">
+            <div id="view-warning" class="alert alert-info" role="alert" style="width: 100%;">
+                <span id="view-warning-icon" class=" fa fa-exclamation-triangle"></span>
+                Attention, this is not the latest version. Click <span class="btn-link" style="cursor: pointer;" onclick="selectVersion(@Model.Id, @Model.LatestVersionNumber)"><b>here</b></span> to change to the latest (public) version.
+            </div>
+        </div>
+    }
 
-                    <div id="view-warning" class="alert alert-info" role="alert" style="width: 100%;">
-                        <span id="view-warning-icon" class=" fa fa-exclamation-triangle"></span>
-                        Attention, this is not the latest version. Click <span class="btn-link" style="cursor: pointer;" onclick="selectVersion(@Model.Id, @Model.LatestVersionNumber)"><b>here</b></span> to change to the latest (public) version.
-                    </div>
-                </div>
-            }
-
-            @if (ViewData["state"].ToString() != "hidden")
-            {
-                <div id="view-header" class="row">
-                    <div id="view-header-dataset-details" class="col-xs-6 col-md-6 col-lg-6 ">
-                        <div class="row">
-                            <div class="col-md-6" style="white-space: nowrap;display: flex;">
-                                <div>
-                                    <b>Dataset id:</b> @Model.Id
-                                    <b style="padding-left: 5px;">Version:</b>
-                                    @if (ViewData.ModelState.IsValid)
-                                    {
-                                        @Html.DropDownListFor(m => m.VersionSelect, null, Model.LatestVersionNumber + " (Latest internal version)", new { @class = "bx-dropdown", @style = "border:none;" })
-                                    }
-                                    else
-                                    {
-                                        @Html.DropDownListFor(m => m.VersionSelect, null, "Select version", new { @class = "bx-dropdown", @style = "border:none;" })
-
-                                    }
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-xs-2 col-md-2 col-lg-2">
-                        <div id="preloaderContainer"></div>
-                    </div>
-
-                    <div id="view-header-dataset-options" class="col-xs-4 col-md-4 col-lg-4 pull-right text-right">
-
-                        @if (Model.DownloadAccess)
-                        {
-
-                            if (Model.DataStructureType.ToLower().Equals("structured"))
+    @if (ViewData["state"].ToString() != "hidden")
+    {
+        <div id="view-header" class="row">
+            <div id="view-header-dataset-details" class="col-xs-6 col-md-6 col-lg-6 ">
+                <div class="row">
+                    <div class="col-md-6" style="white-space: nowrap;display: flex;">
+                        <div>
+                            <b>Dataset id:</b> @Model.Id
+                            <b style="padding-left: 5px;">Version:</b>
+                            @if (ViewData.ModelState.IsValid)
                             {
-                                <span class="dropdown">
-                                    <button class="bx-button function" type="button" id="dropdownMenu1" data-toggle="dropdown" title="Download dataset with a selected dataformat for the primary data" aria-haspopup="true" aria-expanded="true">
-                                        Download Dataset
-                                        <span class="caret"></span>
-                                    </button>
-                                    <ul class="dropdown-menu" aria-labelledby="dropdownMenu1" style="z-index:100000; margin-top:10px;">
-
-                                        @if (@total < 1048576) // hide Excel download for bigger datasets, which exceed the max number of rows in excel
-                                        {
-                                            <li><a href="@Url.Action("DownloadZip", "Data", new { id = @Model.Id, format = "application/xlsm", version = Model.VersionId })">... with Template</a></li>
-                                            <li><a href="@Url.Action("DownloadZip", "Data", new { id = @Model.Id, format = "application/xlsx", version = Model.VersionId })">... with Excel</a></li>
-                                        }
-                                        <li><a href="@Url.Action("DownloadZip", "Data", new { id = @Model.Id, format = "text/csv", version = Model.VersionId })">... with CSV</a></li>
-                                        <li><a href="@Url.Action("DownloadZip", "Data", new { id = @Model.Id, format = "text/tsv", version = Model.VersionId })">... with TSV</a></li>
-                                        <li><a href="@Url.Action("DownloadZip", "Data", new { id = @Model.Id, format = "text/plain", version = Model.VersionId })">... with TXT</a></li>
-                                    </ul>
-                                </span>
+                                @Html.DropDownListFor(m => m.VersionSelect, null, Model.LatestVersionNumber + " (Latest internal version)", new { @class = "bx-dropdown", @style = "border:none;" })
                             }
                             else
                             {
-                                <a class="bx-button function" href="@Url.Action("DownloadZip", "Data", new { id = @Model.Id, version = Model.VersionId, format = "" })">Download Dataset</a>
+                                @Html.DropDownListFor(m => m.VersionSelect, null, "Select version", new { @class = "bx-dropdown", @style = "border:none;" })
+
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xs-2 col-md-2 col-lg-2">
+                <div id="preloaderContainer"></div>
+            </div>
+
+            <div id="view-header-dataset-options" class="col-xs-4 col-md-4 col-lg-4 pull-right text-right">
+
+                @if (Model.DownloadAccess)
+                {
+
+                    if (Model.DataStructureType.ToLower().Equals("structured"))
+                    {
+                        <span class="dropdown">
+                            <button class="bx-button function" type="button" id="dropdownMenu1" data-toggle="dropdown" title="Download dataset with a selected dataformat for the primary data" aria-haspopup="true" aria-expanded="true">
+                                Download Dataset
+                                <span class="caret"></span>
+                            </button>
+                            <ul class="dropdown-menu" aria-labelledby="dropdownMenu1" style="z-index:100000; margin-top:10px;">
+
+                                @if (@total < 1048576) // hide Excel download for bigger datasets, which exceed the max number of rows in excel
+                                {
+                                    <li><a href="@Url.Action("DownloadZip", "Data", new { id = @Model.Id, format = "application/xlsm", version = Model.VersionId })">... with Template</a></li>
+                                    <li><a href="@Url.Action("DownloadZip", "Data", new { id = @Model.Id, format = "application/xlsx", version = Model.VersionId })">... with Excel</a></li>
+                                }
+                                <li><a href="@Url.Action("DownloadZip", "Data", new { id = @Model.Id, format = "text/csv", version = Model.VersionId })">... with CSV</a></li>
+                                <li><a href="@Url.Action("DownloadZip", "Data", new { id = @Model.Id, format = "text/tsv", version = Model.VersionId })">... with TSV</a></li>
+                                <li><a href="@Url.Action("DownloadZip", "Data", new { id = @Model.Id, format = "text/plain", version = Model.VersionId })">... with TXT</a></li>
+                            </ul>
+                        </span>
+                    }
+                    else
+                    {
+                        <a class="bx-button function" href="@Url.Action("DownloadZip", "Data", new { id = @Model.Id, version = Model.VersionId, format = "" })">Download Dataset</a>
+                    }
+                }
+                else
+                {
+                    if (Model.HasRequestRight)
+                    {
+                        if (Model.RequestAble)
+                        {
+
+                            if (Model.RequestExist)
+                            {
+                                <button id="sendRequestBt" class="bx-button function bx-disabled" title="Send request to the owner of the dataset for the rights to see and download the primary data." disabled="disabled">Request Pending</button>
+                            }
+                            else
+                            {
+                                @Html.TextArea("intention", new { @class = "bx-input", placeholder = "describe your intention " });
+                                <button id="sendRequestBt" datasetId="@Model.Id" class="bx-button function" title="Send request to the owner of the dataset for the rights to see and download the primary data.">Request Access</button>
                             }
                         }
                         else
                         {
-                            if (Model.HasRequestRight)
+                            if (show_tabs["show_tabs_deactivated"] == "true")
                             {
-                                if (Model.RequestAble)
-                                {
-
-                                    if (Model.RequestExist)
-                                    {
-                                        <button id="sendRequestBt" class="bx-button function bx-disabled" title="Send request to the owner of the dataset for the rights to see and download the primary data." disabled="disabled">Request Pending</button>
-                                    }
-                                    else
-                                    {
-                                        @Html.TextArea("intention", new { @class = "bx-input", placeholder = "describe your intention " });
-                                        <button id="sendRequestBt" datasetId="@Model.Id" class="bx-button function" title="Send request to the owner of the dataset for the rights to see and download the primary data.">Request Access</button>
-                                    }
-                                }
-                                else
-                                {
-                                    if (show_tabs["show_tabs_deactivated"] == "true")
-                                    {
-                                        <button id="sendRequestBt" class="bx-button function bx-disabled" title="Send request to the owner of the dataset for the rights to see and download the primary data. If the function is not available, please contact the administrator." disabled="disabled">Currently not available</button>
-                                    }
-                                }
-                            }
-                            else
-                            {
-                                if (show_tabs["show_tabs_deactivated"] == "true")
-                                {
-                                    <button id="sendRequestBt" class="bx-button function bx-disabled" title="You have no right to make requests." disabled="disabled">Currently not available</button>
-                                }
+                                <button id="sendRequestBt" class="bx-button function bx-disabled" title="Send request to the owner of the dataset for the rights to see and download the primary data. If the function is not available, please contact the administrator." disabled="disabled">Currently not available</button>
                             }
                         }
-
-                    </div>
-                </div>
-            }
-            @if (@Model != null)
-            {
-                if (ViewData.ModelState.IsValid)
-                {
-                <ul class="nav nav-tabs">
-                    <!--load hooks in tab header-->
-                    <!--dataset hooks-->
-                    @foreach (var hook in datasetHooks)
+                    }
+                    else
                     {
-                        if (hook.Status != BExIS.UI.Hooks.HookStatus.AccessDenied &&
-                        hook.Status != BExIS.UI.Hooks.HookStatus.Disabled)
+                        if (show_tabs["show_tabs_deactivated"] == "true")
                         {
+                            <button id="sendRequestBt" class="bx-button function bx-disabled" title="You have no right to make requests." disabled="disabled">Currently not available</button>
+                        }
+                    }
+                }
+
+            </div>
+        </div>
+    }
+    @if (@Model != null)
+    {
+        if (ViewData.ModelState.IsValid)
+        {
+            <ul class="nav nav-tabs">
+                <!--load hooks in tab header-->
+                <!--dataset hooks-->
+                @foreach (var hook in datasetHooks)
+                {
+                    if (hook.Status != BExIS.UI.Hooks.HookStatus.AccessDenied &&
+                    hook.Status != BExIS.UI.Hooks.HookStatus.Disabled)
+                    {
 
                         var baseid = @hook.Name.ToLower();
                         <!--set first element to active-->
@@ -270,31 +271,31 @@
                             <a href="#@baseid" aria-controls="@baseid" role="tab" data-toggle="tab" onclick="selectTab('@hook.Name.ToLower()')" onmouseover="prefetch('@hook.Name.ToLower()', '@hook.Start', @Model.Id, @Model.Version)">@hook.DisplayName.ToUpper()</a>
                         </li>
 
-                        }
                     }
-                
-                            <!--additional hooks-->
+                }
 
-                    @foreach (var hook in additionalHooks)
+                <!--additional hooks-->
+
+                @foreach (var hook in additionalHooks)
+                {
+                    if (hook.Status != BExIS.UI.Hooks.HookStatus.AccessDenied &&
+                        hook.Status != BExIS.UI.Hooks.HookStatus.Disabled)
                     {
-                        if (hook.Status != BExIS.UI.Hooks.HookStatus.AccessDenied &&
-                            hook.Status != BExIS.UI.Hooks.HookStatus.Disabled)
-                        {
 
-                            var baseid = @hook.Name.ToLower();
-                            var active = hook.Name.Equals(activeHook.Name) ? "active" : "";
+                        var baseid = @hook.Name.ToLower();
+                        var active = hook.Name.Equals(activeHook.Name) ? "active" : "";
 
-                            <!--set first element to active-->
-                            var disabled = hook.Status.Equals(BExIS.UI.Hooks.HookStatus.Disabled) ? "disabled" : "";
+                        <!--set first element to active-->
+                        var disabled = hook.Status.Equals(BExIS.UI.Hooks.HookStatus.Disabled) ? "disabled" : "";
 
-                            <li role="presentation" class="@active @disabled">
-                                <a href="#@baseid" aria-controls="@baseid" role="tab" data-toggle="tab" onclick="selectTab('@hook.Name.ToLower()')" onmouseover="prefetch('@hook.Name.ToLower()', '@hook.Start', @Model.Id, @Model.Version)">@hook.DisplayName.ToUpper()</a>
-                            </li>
+                        <li role="presentation" class="@active @disabled">
+                            <a href="#@baseid" aria-controls="@baseid" role="tab" data-toggle="tab" onclick="selectTab('@hook.Name.ToLower()')" onmouseover="prefetch('@hook.Name.ToLower()', '@hook.Start', @Model.Id, @Model.Version)">@hook.DisplayName.ToUpper()</a>
+                        </li>
 
-                        }
                     }
-                    </ul>
-           
+                }
+            </ul>
+
 
             <!--load hooks in tab content-->
             <!--dataset hooks-->
@@ -327,7 +328,7 @@
             @Html.ValidationSummary(true);
         }
     }
-    </div>
+</div>
     <script type="text/javascript">
 
 	function grid_subjects_onDataBound() {
@@ -477,3 +478,9 @@ else
 {
     @Html.ValidationSummary(true);
 }
+
+<style>
+    a:hover, a {
+        text-decoration:none;
+    }
+</style>

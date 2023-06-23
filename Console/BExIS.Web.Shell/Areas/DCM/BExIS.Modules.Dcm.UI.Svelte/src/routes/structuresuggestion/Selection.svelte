@@ -289,7 +289,7 @@
 					title="Delimeter"
 					bind:target={model.delimeter}
 					source={model.delimeters}
-					targetIsComplex={false}
+					complexTarget={false}
 				/>
 			</div>
 			<div>
@@ -298,7 +298,7 @@
 					title="Decimal"
 					bind:target={model.decimal}
 					source={model.decimals}
-					targetIsComplex={false}
+					complexTarget={false}
 				/>
 			</div>
 			<div>
@@ -307,7 +307,7 @@
 					title="TextMarker"
 					bind:target={model.textMarker}
 					source={model.textMarkers}
-					targetIsComplex={false}
+					complexTarget={false}
 				/>
 			</div>
 
@@ -405,7 +405,7 @@
 							<tr>
 								{#each row.split(String.fromCharCode(model.delimeter)) as cell, c}
 									<td 
-                    class="hover:cursor-pointer select-none"
+										class="hover:cursor-pointer select-none"
 
 										on:dblclick={dbclickHandler(r)}
 										on:mousedown={mouseDownHandler(r, c)}

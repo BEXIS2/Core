@@ -31,7 +31,7 @@ function onChangeHandler(e)
 
 </script>
 {#if model}
-<div class="structure-attributes-container">
+<div class="structure-attributes-container grid md:grid-cols-2 sm:grid-cols-1 gap-5">
   <TextInput 
     id="title"
     label="Title"

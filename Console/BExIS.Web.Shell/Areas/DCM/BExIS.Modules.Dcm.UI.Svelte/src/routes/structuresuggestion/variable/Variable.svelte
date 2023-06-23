@@ -1,9 +1,7 @@
 <script>
 
 import {onMount, createEventDispatcher} from 'svelte';
-import {TextInput} from '@bexis2/bexis2-core-ui'
-
-import Select from 'svelte-select';
+import {TextInput,TextArea, MultiSelect} from '@bexis2/bexis2-core-ui'
 
 import DataTypeDescription from './DataTypeDescription.svelte'
 import Container from './Container.svelte'
@@ -25,11 +23,11 @@ let res = suite.get();
 
 let loaded = false;
 
-const dispatch = new createEventDispatcher();
-
-const groupBy = (item) => item.group;
+const dispatch = createEventDispatcher();
 
 onMount(()=>{
+
+      console.log("generate var -----------------")
 
       datatypes = [...datatypes.filter(d=>d.id!=variable.dataType.id)]
       datatypes = [variable.dataType,...datatypes];
@@ -48,7 +46,7 @@ onMount(()=>{
       setValidationState(res);
       },10)
 
-      console.log(variable);
+      console.log("variable",variable);
 })
 
 //change event: if input change check also validation only on the field
@@ -86,21 +84,21 @@ function setValidationState(res)
 
 {#if loaded}
 <div class="card">
-
       <header class="card-header">
             <Header bind:isKey={variable.isKey} bind:isOptional={variable.isOptional} name={variable.name} {index}/>
       </header>
       <section class="p-4">
             <!--Description-->
 <Container pSize=8>
+
       <div slot="property">
-            <TextInput id="description" 
+            <TextArea id="description" 
             bind:value={variable.description} 
             on:input={onChangeHandler}
             valid={res.isValid("description")} 
             invalid={res.hasErrors("description")}  
             feedback={res.getErrors("description")} 
-            ></TextInput> 
+            ></TextArea> 
 
       </div>
 </Container>
@@ -109,21 +107,22 @@ function setValidationState(res)
 <Container>
       <div slot="property">
   
-            <Select 
+            <MultiSelect 
                   id="dataType"
-                  items={datatypes} 
-                  optionIdentifier="id"
-                  labelIdentifier="text"
+                  title="Data Type"
+                  source={datatypes} 
+                  itemId="id"
+                  itemLabel="text"
+                  itemGroup="group"
+                  complexSource={true}
+                  complexTarget={true}
                   isMulti={false}
-                  isClearable={false}
-                  bind:value={variable.dataType}
-                  {groupBy}
+                  bind:target={variable.dataType}
                   placeholder="-- Please select --"
-                  hasError = {res.hasErrors("dataType")}
-                  on:select={(e)=>onSelectHandler(e,"dataType")}
+                  on:change={(e)=>onSelectHandler(e,"dataType")}
                   on:clear={(e)=>onSelectHandler(e,"dataType")}
                   >
-            </Select>
+            </MultiSelect>
 
             {#if res.hasErrors("dataType")}
                   {#each res.getErrors("dataType") as error}
@@ -135,23 +134,25 @@ function setValidationState(res)
             {/if}
 
       </div>
-      <div slot="displaypattern">      
 
-            <Select 
+      <div slot="displaypattern">      
+       
+            <MultiSelect 
                   id="displaypattern"
-                  items={variable.possibleDisplayPattern} 
-                  optionIdentifier="id"
-                  labelIdentifier="text"
+                  title="Display Pattern"
+                  source={variable.possibleDisplayPattern} 
+                  itemId="id"
+                  itemLabel="text"
+                  itemGroup="group"
+                  complexSource={true}
+                  complexTarget={true}
                   isMulti={false}
-                  isClearable={false}
-                  bind:value={variable.displayPattern}
-            
+                  bind:target={variable.displayPattern}
                   placeholder="-- Please select --"
-                  hasError = {res.hasErrors("displayPattern")}
-                  on:select={(e)=>onSelectHandler(e,"displayPattern")}
-                  on:clear={(e)=>onSelectHandler(e,"displayPattern")}
+                  on:change={(e)=>onSelectHandler(e,"displaypattern")}
+                  on:clear={(e)=>onSelectHandler(e,"displaypattern")}
                   >
-            </Select>
+            </MultiSelect>
 
             {#if res.hasErrors("displayPattern")}
                   {#each res.getErrors("displayPattern") as error}
@@ -161,6 +162,7 @@ function setValidationState(res)
                   </div>
                   {/each}
             {/if}
+          
 
       </div>
       <div slot="description">
@@ -171,20 +173,22 @@ function setValidationState(res)
 <!--Unit-->
 <Container>
       <div slot="property">
-      <Select 
-            id="unit"
-            items={units} 
-            optionIdentifier="id"
-            labelIdentifier="text"
-            isMulti={false}
-            isClearable={true}
-            bind:value={variable.unit}
-            {groupBy}
-            placeholder="-- Please select --"
-            hasError = {res.hasErrors("unit")}
-            on:select={(e)=>onSelectHandler(e,"unit")}
-            on:clear={(e)=>onSelectHandler(e,"unit")}
-            ></Select>
+            <MultiSelect 
+                  id="unit"
+                  title="Unit"
+                  source={units} 
+                  itemId="id"
+                  itemLabel="text"
+                  itemGroup="group"
+                  complexSource={true}
+                  complexTarget={true}
+                  isMulti={false}
+                  bind:target={variable.unit}
+                  placeholder="-- Please select --"
+                  on:change={(e)=>onSelectHandler(e,"unit")}
+                  on:clear={(e)=>onSelectHandler(e,"unit")}
+                  >
+            </MultiSelect>
 
             {#if res.hasErrors("unit")}
                   {#each res.getErrors("unit") as error}
@@ -206,7 +210,7 @@ function setValidationState(res)
 <!--Meaning-->
 <Container>
       <div slot="property">
-            <TextInput id="template" bind:value={variable.template.text}></TextInput> 
+            <TextInput id="template" label="Variable Template" bind:value={variable.template.text}></TextInput> 
       </div>
       <div slot="description">
             ...

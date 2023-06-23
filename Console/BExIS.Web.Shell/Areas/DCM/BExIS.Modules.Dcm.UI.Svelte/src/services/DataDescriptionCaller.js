@@ -9,7 +9,7 @@ export const deleteStructure = async (id, structureId) => {
  try {
   
 
-   const response = await Api.delete('/dcm/datadescription/delete',"{id,structureId}");
+   const response = await Api.delete('/dcm/datadescription/delete',{id,structureId});
    return response.data;
  } catch (error) {
    console.error(error);
