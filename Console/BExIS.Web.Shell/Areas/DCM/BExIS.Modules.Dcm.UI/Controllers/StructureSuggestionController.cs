@@ -550,13 +550,20 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             var settings = ModuleManager.GetModuleSettings("rpm");
             var mv_list = settings.GetList("missingvalues");
 
-            foreach (var mv in mv_list)
+            if (mv_list != null)
             {
-                list.Add(new MissingValueModel()
+                foreach (var mv in mv_list)
                 {
-                    DisplayName = mv.GetAttribute("placeholder")?.Value.ToString(),
-                    Description = mv.GetAttribute("description")?.Value.ToString()
-                });
+                    list.Add(new MissingValueModel()
+                    {
+                        DisplayName = mv.GetAttribute("placeholder")?.Value.ToString(),
+                        Description = mv.GetAttribute("description")?.Value.ToString()
+                    });
+                }
+            }
+            else // create a empty list entry
+            {
+                list.Add(new MissingValueModel());
             }
 
             return list;

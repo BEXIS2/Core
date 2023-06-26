@@ -33,7 +33,7 @@ export let variables =[];
 					<td>{row.id}</td>
 					<td>{row.name}</td>
 					<td>{row.unit}</td>
-					<td>{row.Datatype}</td>
+					<td>{row.dataType}</td>
 				</tr>
 			{/each}
 		</tbody>

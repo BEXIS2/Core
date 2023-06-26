@@ -41,6 +41,7 @@ async function reload()
   load();
 } 
  
+
  
  </script>
  
@@ -59,7 +60,7 @@ async function reload()
       <Show {...model}></Show>
     {:else}
       <!--generate-->
-      <Generate bind:files={model.readableFiles} {...model}></Generate>
+      <Generate bind:files={model.readableFiles} {...model} on:selected={()=> latestDataDescriptionDate.set(Date.now())}></Generate>
     {/if}
 
     {#if loading}
