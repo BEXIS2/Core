@@ -73,6 +73,7 @@ function change(e)
    itemGroup="group" 
    on:change={change}
    complexSource={true}
+   isMulti={false}
    target
    />
 </div>

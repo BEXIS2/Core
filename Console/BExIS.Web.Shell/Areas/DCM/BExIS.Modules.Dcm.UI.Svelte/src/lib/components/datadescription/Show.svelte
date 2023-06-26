@@ -16,15 +16,15 @@ export let variables =[];
 {#if variables}
 
 <!-- Responsive Container (recommended) -->
-<div class="table-container">
+<div class="table-container py-5 max-h-[180px] overflow-auto">
 	<!-- Native Table Element -->
-	<table class="table table-compact">
+	<table class="table table-compact bg-tertiary-20">
 		<thead>
-			<tr>
-				<th>Id</th>
-				<th>Name</th>
-				<th>Unit</th>
-				<th>Datatype</th>
+			<tr class="bg-primary-300">
+				<th class="!p-2">Id</th>
+				<th class="!p-2">Name</th>
+				<th class="!p-2">Unit</th>
+				<th class="!p-2">Datatype</th>
 			</tr>
 		</thead>
 		<tbody>
