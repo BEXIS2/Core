@@ -6,6 +6,7 @@ export let model;
 export let valid = false;
 
 import suite from './structureAttributes'
+	import { error } from '@sveltejs/kit';
 
 // validation
 let res = suite.get();
@@ -30,6 +31,8 @@ function onChangeHandler(e)
 }
 
 </script>
+
+
 {#if model}
 <div class="structure-attributes-container grid md:grid-cols-2 sm:grid-cols-1 gap-5">
   <TextInput 

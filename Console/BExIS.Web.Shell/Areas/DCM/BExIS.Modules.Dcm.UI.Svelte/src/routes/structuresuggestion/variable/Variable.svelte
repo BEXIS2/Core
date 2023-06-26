@@ -1,7 +1,7 @@
 <script>
 
 import {onMount, createEventDispatcher} from 'svelte';
-import {TextInput,TextArea, MultiSelect} from '@bexis2/bexis2-core-ui'
+import {TextInput,TextArea, MultiSelect, Alert} from '@bexis2/bexis2-core-ui'
 
 import DataTypeDescription from './DataTypeDescription.svelte'
 import Container from './Container.svelte'
@@ -127,9 +127,8 @@ function setValidationState(res)
             {#if res.hasErrors("dataType")}
                   {#each res.getErrors("dataType") as error}
                         <!-- content here -->
-                        <div class="invalid-feedback" style="display:block">
-                        {error}
-                  </div>
+                        <Alert message="{error}"/> 
+      
                   {/each}
             {/if}
 
@@ -157,9 +156,7 @@ function setValidationState(res)
             {#if res.hasErrors("displayPattern")}
                   {#each res.getErrors("displayPattern") as error}
                         <!-- content here -->
-                        <div class="invalid-feedback" style="display:block">
-                        {error}
-                  </div>
+                  <Alert message="{error}"/> 
                   {/each}
             {/if}
           
@@ -193,9 +190,7 @@ function setValidationState(res)
             {#if res.hasErrors("unit")}
                   {#each res.getErrors("unit") as error}
                         <!-- content here -->
-                        <div class="invalid-feedback" style="display:block">
-                        {error}
-                  </div>
+                        <Alert message="{error}"/> 
                   {/each}
             {/if}
 

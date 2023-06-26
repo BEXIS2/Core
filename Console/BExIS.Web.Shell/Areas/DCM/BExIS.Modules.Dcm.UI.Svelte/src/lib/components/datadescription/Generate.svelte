@@ -1,11 +1,17 @@
 <script lang="ts">
 
 import {goTo}  from '../../../services/BaseCaller'
-import {MultiSelect} from '@bexis2/bexis2-core-ui';
-import { onMount } from 'svelte';
+import {MultiSelect, Spinner} from '@bexis2/bexis2-core-ui';
+import type {ListItem} from '@bexis2/bexis2-core-ui';
+import { onMount, createEventDispatcher } from 'svelte';
+
+import {availableStructues, setStructure} from '$services/DataDescriptionCaller'
+
 
 export let id = 0; // entity id
 export let files:any[];
+
+const dispatch = createEventDispatcher();
 
 function goToGenerate(file)
 {
@@ -13,69 +19,93 @@ function goToGenerate(file)
     goTo('/dcm/structuresuggestion/?id='+id+'&file='+file);
 }
 
-type item ={
-   value:string,
-   label:string,
-   group:string
-}
 
-let list:item[];
-$:list, setList(files);
-
+let list:ListItem[]; 
+$:list;
+let loading:boolean; 
+$:loading;
+let structures=[];
+$:structures;
 // list is a comibnation of options, already existing datastructures and files
 function setList(files)
 {
   
   list = [];
-  list.push({value:"create new",label:"create new", group:"options"})
-
-  if(files!== null)
+  list.push({id:0,text:"create new", group:"options"})
+  //console.log(structures)
+  if(structures!== null && structures != undefined) 
+  {
+      list = [...list,...structures];
+  }
+  
+  if(files!== null && files !== undefined)
   {
     files.forEach(i => 
-      list.push({value:i.name,label:i.name, group:"files"})
+      list.push({id:i.name,text:i.name, group:"file"})
     );
   }
+
+  console.log("list", list)
 }
 
 
 onMount(async () => {
+  loading = false;
   //setList(files);
-  console.log("select list",list)
+  structures = await availableStructues(id);
+  setList(files);
 });
 
 // after select a value from the dropdown 
 // it will go to the generator or selet a exiting structure
-function change(e)
+async function change(e)
 {
   let item = e.detail;
+  console.log("select item",item)
 
-  if(item.type==="options")
+  if(item.group==="options")
   {
     console.log("go to create a datastructure");
   }
-  else
+  else if(item.group==="structure")
   {
+    console.log("select a structure",id,item.id);
+    loading = true;
+    await setStructure(id, item.id)
+    dispatch("selected")
+
+  }
+  else if(item.group==="file")
+  {
+    loading = true;
     goToGenerate(e.detail.value);
   }
 }
 
 </script>
 
-{#if list}
+{#if list && structures}
 
 <div class="grid grid-cols-2 py-3">
    <MultiSelect 
    id="SelectDataStructure" 
    title="Select a Datastructure or generate from File"
-   itemId="value"
-   itemLabel="label"
+   itemId="id"
+   itemLabel="text"
+   itemGroup="group"
    bind:source={list} 
-   itemGroup="group" 
    on:change={change}
    complexSource={true}
+   complexTarget={true}
    isMulti={false}
-   target
    />
+   {#if loading}
+   <span class="p-5">
+    <Spinner textCss="text-surface-500"/>
+  </span>
+   {/if}
 </div>
+
+
 {/if}
 

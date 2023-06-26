@@ -56,7 +56,7 @@ function checkValidationState()
     {/each}
   
 {:else}
-  <Spinner color="primary" size="sm" type ="grow" />
+  <Spinner />
 {/if}
 </div>
 
