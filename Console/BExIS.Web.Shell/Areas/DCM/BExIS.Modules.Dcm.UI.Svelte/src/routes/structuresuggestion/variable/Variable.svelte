@@ -119,23 +119,17 @@ function setValidationState(res)
                   isMulti={false}
                   bind:target={variable.dataType}
                   placeholder="-- Please select --"
+                  invalid={res.hasErrors("displayPattern")}
+                  feedback={res.getErrors("displayPattern")}
                   on:change={(e)=>onSelectHandler(e,"dataType")}
                   on:clear={(e)=>onSelectHandler(e,"dataType")}
                   >
             </MultiSelect>
-
-            {#if res.hasErrors("dataType")}
-                  {#each res.getErrors("dataType") as error}
-                        <!-- content here -->
-                        <Alert message="{error}"/> 
-      
-                  {/each}
-            {/if}
-
       </div>
 
       <div slot="displaypattern">      
-       
+            <!--Show only when display pattern exists-->
+       {#if variable.displayPattern && variable.possibleDisplayPattern.length>0}
             <MultiSelect 
                   id="displaypattern"
                   title="Display Pattern"
@@ -148,18 +142,13 @@ function setValidationState(res)
                   isMulti={false}
                   bind:target={variable.displayPattern}
                   placeholder="-- Please select --"
+                  invalid={res.hasErrors("displayPattern")}
+                  feedback={res.getErrors("displayPattern")}
                   on:change={(e)=>onSelectHandler(e,"displaypattern")}
                   on:clear={(e)=>onSelectHandler(e,"displaypattern")}
                   >
             </MultiSelect>
-
-            {#if res.hasErrors("displayPattern")}
-                  {#each res.getErrors("displayPattern") as error}
-                        <!-- content here -->
-                  <Alert message="{error}"/> 
-                  {/each}
-            {/if}
-          
+          {/if}
 
       </div>
       <div slot="description">
@@ -182,17 +171,13 @@ function setValidationState(res)
                   isMulti={false}
                   bind:target={variable.unit}
                   placeholder="-- Please select --"
+                  invalid={res.hasErrors("unit")}
+                  feedback={res.getErrors("unit")}
                   on:change={(e)=>onSelectHandler(e,"unit")}
                   on:clear={(e)=>onSelectHandler(e,"unit")}
+
                   >
             </MultiSelect>
-
-            {#if res.hasErrors("unit")}
-                  {#each res.getErrors("unit") as error}
-                        <!-- content here -->
-                        <Alert message="{error}"/> 
-                  {/each}
-            {/if}
 
 
       </div>

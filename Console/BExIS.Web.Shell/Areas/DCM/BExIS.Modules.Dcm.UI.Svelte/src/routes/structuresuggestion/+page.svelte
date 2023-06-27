@@ -32,6 +32,8 @@
 	let areVariablesValid = false;
 	let areAttributesValid = false;
 
+	let init:boolean = true;
+
 	onMount(async () => {
 		// get data from parent
 		container = document.getElementById('structuresuggestion');
@@ -70,6 +72,12 @@
 
 		goTo('/dcm/edit?id=' + model.id);
 	}
+ 
+	function back()
+	{
+	  selectionIsActive = true;
+			init = false;
+	}
 </script>
 
 <Page title="Structure Suggestion" note="generate a structure from a file.">
@@ -77,12 +85,12 @@
 		<Spinner />
 	{:else if selectionIsActive}
 		<div transition:fade>
-			<Selection {model} on:saved={update} />
+			<Selection {model} on:saved={update} {init}/>
 		</div>
 	{:else if model.variables.length > 0}
 		<div transition:fade>
 			<div>
-				<button on:click={() => (selectionIsActive = true)}><Fa icon={faArrowLeft} /></button>
+				<button on:click={()=>back()}><Fa icon={faArrowLeft} /></button>
 
 				<div class="text-end">
 					<button

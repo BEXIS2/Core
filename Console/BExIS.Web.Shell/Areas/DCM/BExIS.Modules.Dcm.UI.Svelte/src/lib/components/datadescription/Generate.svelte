@@ -67,6 +67,11 @@ async function change(e)
   {
     console.log("go to create a datastructure");
   }
+  else if(item.group==="file")
+  {
+    loading = true;
+    goToGenerate(e.detail.text);
+  }
   else if(item.group==="structure")
   {
     console.log("select a structure",id,item.id);
@@ -74,11 +79,6 @@ async function change(e)
     await setStructure(id, item.id)
     dispatch("selected")
 
-  }
-  else if(item.group==="file")
-  {
-    loading = true;
-    goToGenerate(e.detail.value);
   }
 }
 

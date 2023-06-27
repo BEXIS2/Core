@@ -5,6 +5,8 @@ import {Spinner} from '@bexis2/bexis2-core-ui';
 import {onMount} from 'svelte';
 import {getDataTypes,getUnits} from './services.js'
 
+import Fa from 'svelte-fa/src/fa.svelte'
+import { faSave, faTrash } from '@fortawesome/free-solid-svg-icons/index'
 
 export let variables = [];
 
@@ -44,8 +46,10 @@ function checkValidationState()
   valid = variableValidationStates.every(v=>v===true)
 }
 
+
+
 </script>
-<div class="suggestion-container">
+<div class="suggestion-container" >
 
 {#if variables && datatypes && units && variableValidationStates}
     <!-- else content here -->

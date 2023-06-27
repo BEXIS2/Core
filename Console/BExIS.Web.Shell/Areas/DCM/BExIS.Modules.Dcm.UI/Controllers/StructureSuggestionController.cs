@@ -103,7 +103,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                     model.TextMarker = AsciiFileReaderInfo.GetTextMarker(textMarker);
 
                 }
-                
+
             }
             else // allready exist, set it
             {
@@ -130,6 +130,25 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                         Type = "data",
                         Cells = cache.AsciiFileReaderInfo.Cells
                     });
+
+                // Unit
+                model.Markers.Add(
+                    new Marker()
+                    {
+                        Row = cache.AsciiFileReaderInfo.Unit,
+                        Type = "unit",
+                        Cells = cache.AsciiFileReaderInfo.Cells
+                    });
+
+                //description
+                model.Markers.Add(
+                    new Marker()
+                    {
+                        Row = cache.AsciiFileReaderInfo.Description,
+                        Type = "description",
+                        Cells = cache.AsciiFileReaderInfo.Cells
+                    });
+            
             }
 
             // get lists
@@ -240,6 +259,8 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             cache.AsciiFileReaderInfo.TextMarker = (TextMarker)model.TextMarker;
             cache.AsciiFileReaderInfo.Data = model.Markers.Where(m => m.Type.Equals("data")).FirstOrDefault().Row + 1; // add 1 to store nit the index but the row
             cache.AsciiFileReaderInfo.Variables = model.Markers.Where(m => m.Type.Equals("variable")).FirstOrDefault().Row + 1;// add 1 to store nit the index but the row
+            cache.AsciiFileReaderInfo.Description = model.Markers.Where(m => m.Type.Equals("description")).FirstOrDefault().Row + 1;// add 1 to store nit the index but the row
+            cache.AsciiFileReaderInfo.Unit = model.Markers.Where(m => m.Type.Equals("unit")).FirstOrDefault().Row + 1;// add 1 to store nit the index but the row
             cache.AsciiFileReaderInfo.Cells = model.Markers.Where(m => m.Type.Equals("variable")).FirstOrDefault().Cells;
 
             // update modifikation date
