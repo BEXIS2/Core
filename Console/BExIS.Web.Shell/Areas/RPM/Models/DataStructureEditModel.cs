@@ -581,21 +581,11 @@ namespace BExIS.Modules.Rpm.UI.Models
                                 datasetManager = new DatasetManager();
                                 foreach (Dataset d in dataStructure.Datasets)
                                 {
+
                                     if (datasetManager.RowAny(d.Id))
                                     {
                                         this.inUse = true;
                                         break;
-                                    }
-                                    else
-                                    {
-                                        foreach (DatasetVersion dv in d.Versions)
-                                        {
-                                            if (datasetManager.GetDatasetVersionEffectiveTuples(dv).Any())
-                                            {
-                                                this.inUse = true;
-                                                break;
-                                            }
-                                        }
                                     }
                                 }                             
                             }
