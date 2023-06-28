@@ -10,13 +10,13 @@
 	import { onMount } from 'svelte';
 	import { fade } from 'svelte/transition';
 
-	import { setApiConfig, Spinner, Page } from '@bexis2/bexis2-core-ui';
-	import { generate, save, load } from './services';
+	import { Spinner, Page } from '@bexis2/bexis2-core-ui';
+	import { generate, save, load, getDisplayPattern,getStructures } from './services';
 	import { goTo } from '../../services/BaseCaller';
 
 	import type { StructureSuggestionModel } from '../../models/StructureSuggestion';
-
-	import { dev } from '$app/environment';
+import { displayPatternStore, structureStore } from './store';
+	
 
 	// load attributes from div
 	let container;
@@ -42,14 +42,18 @@
 		file = container?.getAttribute('file');
 
 		console.log('start structure suggestion', id, version, file);
-		//setup api
-		// if (import.meta.env.DEV) {
-		// 	console.log('dev');
-		// 	setApiConfig('https://localhost:44345', 'davidschoene', '123456');
-		// }
+
 
 		// load data from server
 		model = await load(id, file, 0);
+
+		// load sturctures for validation against existings
+		const structures = await getStructures();
+		structureStore.set(structures);
+	
+		// load display pattern onces for all edit types
+		const displayPattern = await getDisplayPattern();
+		displayPatternStore.set(displayPattern);
 
 		console.log('model', model);
 	});

@@ -5,9 +5,6 @@ import {Spinner} from '@bexis2/bexis2-core-ui';
 import {onMount} from 'svelte';
 import {getDataTypes,getUnits} from './services.js'
 
-import Fa from 'svelte-fa/src/fa.svelte'
-import { faSave, faTrash } from '@fortawesome/free-solid-svg-icons/index'
-
 export let variables = [];
 
 $:datatypes=null;

@@ -410,7 +410,8 @@ import { faSave, faTrash } from '@fortawesome/free-solid-svg-icons/index'
 
 			<div class="col-span-3" />
 			<div>
-				<table class="table table-compact"><!-- on:contextmenu={(e)=> e.preventDefault()}-->
+				<table class="table table-compact"
+				 on:contextmenu={(e)=> e.preventDefault()} >
 					<tbody> 
 						{#each model.preview as row, r}
 							<tr>

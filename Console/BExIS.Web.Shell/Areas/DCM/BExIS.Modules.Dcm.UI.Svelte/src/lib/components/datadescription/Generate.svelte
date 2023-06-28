@@ -32,18 +32,19 @@ function setList(files)
   
   list = [];
   list.push({id:0,text:"create new", group:"options"})
-  //console.log(structures)
-  if(structures!== null && structures != undefined) 
-  {
-      list = [...list,...structures];
-  }
-  
   if(files!== null && files !== undefined)
   {
     files.forEach(i => 
       list.push({id:i.name,text:i.name, group:"file"})
     );
   }
+  //console.log(structures)
+  if(structures!== null && structures != undefined) 
+  {
+      list = [...list,...structures];
+  }
+  
+
 
   console.log("list", list)
 }
