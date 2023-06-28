@@ -14,6 +14,24 @@ export const load = async (id, file, version) => {
  }
 };
 
+export const getStructures = async () => {
+  try {
+    const response = await Api.get('/dcm/StructureSuggestion/GetStructures' );
+    return response.data;
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+export const getDisplayPattern = async () => {
+  try {
+    const response = await Api.get('/dcm/StructureSuggestion/GetDisplayPattern' );
+    return response.data;
+  } catch (error) {
+    console.error(error);
+  }
+};
+
 export const getDelimeters = async (id, file, version) => {
   try {
     const response = await Api.get('/dcm/StructureSuggestion/GetDelimters' );

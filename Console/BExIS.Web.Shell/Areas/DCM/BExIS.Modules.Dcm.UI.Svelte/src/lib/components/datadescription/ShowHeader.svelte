@@ -48,19 +48,13 @@ async function remove()
     <Spinner textCss="text-surface-500"/>
     </div>
     {/if}
-   
+ 
   </div>
-
-
   <div>
    <div class="text-end">
     <button class="btn bg-warning-500" on:click="{remove}"><Fa icon={faTrash}/></button>
    </div>
    <p>{description}</p>
   </div>
-
-
-
- 
 </div>
 

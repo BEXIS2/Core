@@ -46,6 +46,7 @@ function onChangeHandler(e)
     required={true}>
   </TextInput>
 
+  <div>
   <TextArea 
     id="description",
     label="Description"
@@ -56,6 +57,10 @@ function onChangeHandler(e)
     feedback={res.getErrors("description")} 
     required={true}>
   </TextArea>
+  {#if model.description != undefined}
+  <span class="text-right" class:text-error-500="{model.description.length>255}">{255-model.description.length}</span>
+  {/if}
+</div>
 </div>
 
 {/if}

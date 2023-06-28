@@ -32,18 +32,19 @@ function setList(files)
   
   list = [];
   list.push({id:0,text:"create new", group:"options"})
-  //console.log(structures)
-  if(structures!== null && structures != undefined) 
-  {
-      list = [...list,...structures];
-  }
-  
   if(files!== null && files !== undefined)
   {
     files.forEach(i => 
       list.push({id:i.name,text:i.name, group:"file"})
     );
   }
+  //console.log(structures)
+  if(structures!== null && structures != undefined) 
+  {
+      list = [...list,...structures];
+  }
+  
+
 
   console.log("list", list)
 }
@@ -67,6 +68,11 @@ async function change(e)
   {
     console.log("go to create a datastructure");
   }
+  else if(item.group==="file")
+  {
+    loading = true;
+    goToGenerate(e.detail.text);
+  }
   else if(item.group==="structure")
   {
     console.log("select a structure",id,item.id);
@@ -74,11 +80,6 @@ async function change(e)
     await setStructure(id, item.id)
     dispatch("selected")
 
-  }
-  else if(item.group==="file")
-  {
-    loading = true;
-    goToGenerate(e.detail.value);
   }
 }
 

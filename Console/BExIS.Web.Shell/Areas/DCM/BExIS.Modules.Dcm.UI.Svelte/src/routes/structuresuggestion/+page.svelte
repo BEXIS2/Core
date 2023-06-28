@@ -10,13 +10,13 @@
 	import { onMount } from 'svelte';
 	import { fade } from 'svelte/transition';
 
-	import { setApiConfig, Spinner, Page } from '@bexis2/bexis2-core-ui';
-	import { generate, save, load } from './services';
+	import { Spinner, Page } from '@bexis2/bexis2-core-ui';
+	import { generate, save, load, getDisplayPattern,getStructures } from './services';
 	import { goTo } from '../../services/BaseCaller';
 
 	import type { StructureSuggestionModel } from '../../models/StructureSuggestion';
-
-	import { dev } from '$app/environment';
+import { displayPatternStore, structureStore } from './store';
+	
 
 	// load attributes from div
 	let container;
@@ -32,6 +32,8 @@
 	let areVariablesValid = false;
 	let areAttributesValid = false;
 
+	let init:boolean = true;
+
 	onMount(async () => {
 		// get data from parent
 		container = document.getElementById('structuresuggestion');
@@ -40,14 +42,18 @@
 		file = container?.getAttribute('file');
 
 		console.log('start structure suggestion', id, version, file);
-		//setup api
-		// if (import.meta.env.DEV) {
-		// 	console.log('dev');
-		// 	setApiConfig('https://localhost:44345', 'davidschoene', '123456');
-		// }
+
 
 		// load data from server
 		model = await load(id, file, 0);
+
+		// load sturctures for validation against existings
+		const structures = await getStructures();
+		structureStore.set(structures);
+	
+		// load display pattern onces for all edit types
+		const displayPattern = await getDisplayPattern();
+		displayPatternStore.set(displayPattern);
 
 		console.log('model', model);
 	});
@@ -70,6 +76,12 @@
 
 		goTo('/dcm/edit?id=' + model.id);
 	}
+ 
+	function back()
+	{
+	  selectionIsActive = true;
+			init = false;
+	}
 </script>
 
 <Page title="Structure Suggestion" note="generate a structure from a file.">
@@ -77,12 +89,12 @@
 		<Spinner />
 	{:else if selectionIsActive}
 		<div transition:fade>
-			<Selection {model} on:saved={update} />
+			<Selection {model} on:saved={update} {init}/>
 		</div>
 	{:else if model.variables.length > 0}
 		<div transition:fade>
 			<div>
-				<button on:click={() => (selectionIsActive = true)}><Fa icon={faArrowLeft} /></button>
+				<button on:click={()=>back()}><Fa icon={faArrowLeft} /></button>
 
 				<div class="text-end">
 					<button

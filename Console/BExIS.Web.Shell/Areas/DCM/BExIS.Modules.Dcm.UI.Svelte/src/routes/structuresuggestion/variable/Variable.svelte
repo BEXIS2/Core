@@ -1,221 +1,230 @@
-<script>
+<script lang="ts">
+	import { onMount, createEventDispatcher } from 'svelte';
+	import { TextInput, TextArea, MultiSelect } from '@bexis2/bexis2-core-ui';
 
-import {onMount, createEventDispatcher} from 'svelte';
-import {TextInput,TextArea, MultiSelect, Alert} from '@bexis2/bexis2-core-ui'
+	//types
+	import type { ListItem } from '@bexis2/bexis2-core-ui';
+	import type { VariableModel } from '../types.ts';
 
-import DataTypeDescription from './DataTypeDescription.svelte'
-import Container from './Container.svelte'
-import Header from './Header.svelte'
-import Footer from './Footer.svelte'
+	//stores
+	import { get } from 'svelte/store';
+	import { displayPatternStore } from '../store';
 
-import suite from './variable'
+	import DataTypeDescription from './DataTypeDescription.svelte';
+	import Container from './Container.svelte';
+	import Header from './Header.svelte';
+	import Footer from './Footer.svelte';
 
-export let variable;
-export let index;
+	import suite from './variable';
 
-export let datatypes;
-export let units;
+	export let variable: VariableModel;
+	export let index: number;
 
-export let isValid=false;
+	export let datatypes: ListItem[];
+	export let units: ListItem[];
 
-// validation
-let res = suite.get();
+	export let isValid: boolean = false;
 
-let loaded = false;
+	// validation
+	let res = suite.get();
 
-const dispatch = createEventDispatcher();
+	let loaded = false;
 
-onMount(()=>{
+	//displaypattern
+	let displayPattern: ListItem[];
+	$: displayPattern;
 
-      console.log("generate var -----------------")
+	function updateDisplayPattern(type) {
+		// currently only date, date tim e and time is use with display pattern.
+		// however the serve only now datetime so we need to preselect the possible display pattern to date, time and datetime
+		let allDisplayPattern = get(displayPatternStore);
 
-      datatypes = [...datatypes.filter(d=>d.id!=variable.dataType.id)]
-      datatypes = [variable.dataType,...datatypes];
+		if (type.text.toLowerCase() === 'date') {
+			// date without time
+                  displayPattern = allDisplayPattern.filter((m) => m.group.toLowerCase().includes(type.text) && (!m.text.toLowerCase().includes('h') || !m.text.toLowerCase().includes('s')));
 
-      units = [...units.filter(d=> !variable.possibleUnits.some(u=>u.id==d.id))]
-      units = [...variable.possibleUnits,...units];
+		}else if (type.text.toLowerCase() === 'time') {
+			// time without date
+                  displayPattern = allDisplayPattern.filter((m) => m.group.toLowerCase().includes(type.text) && (!m.text.toLowerCase().includes('d') || !m.text.toLowerCase().includes('y')));
 
-      loaded = true;
+		}else if( type.text.toLowerCase() === 'datetime')
+            {
+                  // both
+                  displayPattern = allDisplayPattern.filter((m) => m.group.toLowerCase().includes(type.text));
+            }
 
-      // reset & reload validation
-      suite.reset();
-      
-      setTimeout(async () => {
-      res = suite(variable);
+		console.log(type, displayPattern);
+	}
 
-      setValidationState(res);
-      },10)
+	const dispatch = createEventDispatcher();
 
-      console.log("variable",variable);
-})
+	onMount(() => {
+		console.log('generate var -----------------');
 
-//change event: if input change check also validation only on the field
-// e.target.id is the id of the input component
-function onChangeHandler(e)
-{
-  // add some delay so the entityTemplate is updated 
-  // otherwise the values are old
-  setTimeout(async () => {
+		datatypes = [...datatypes.filter((d) => d.id != variable.dataType.id)];
+		datatypes = [variable.dataType, ...datatypes];
 
-      res = suite(variable, e.target.id)
-      setValidationState(res);
+		units = [...units.filter((d) => !variable.possibleUnits.some((u) => u.id == d.id))];
+		units = [...variable.possibleUnits, ...units];
 
- },10)
-}
+		loaded = true;
 
-//change event: if select change check also validation only on the field
-// *** is the id of the input component
-function onSelectHandler(e,id)
-{
-  //console.log(e);
-  res = suite(variable, id);
+		// reset & reload validation
+		suite.reset();
 
-  setValidationState(res);
-}
+		setTimeout(async () => {
+			res = suite(variable);
 
-function setValidationState(res)
-{
- isValid = res.isValid();
- // dispatch this event to the parent to check the save button
- dispatch("var-change");
-}
+			setValidationState(res);
 
+			updateDisplayPattern(variable.dataType);
+		}, 10);
+
+		console.log('variable', variable);
+	});
+
+	//change event: if input change check also validation only on the field
+	// e.target.id is the id of the input component
+	function onChangeHandler(e) {
+		// add some delay so the entityTemplate is updated
+		// otherwise the values are old
+		setTimeout(async () => {
+			res = suite(variable, e.target.id);
+			setValidationState(res);
+		}, 10);
+	}
+
+	//change event: if select change check also validation only on the field
+	// *** is the id of the input component
+	function onSelectHandler(e, id) {
+		//console.log(e);
+		res = suite(variable, id);
+
+		setValidationState(res);
+
+		if (id == 'dataType') {
+			console.log('update displaypattern');
+			updateDisplayPattern(variable.dataType);
+		}
+	}
+
+	function setValidationState(res) {
+		isValid = res.isValid();
+		// dispatch this event to the parent to check the save button
+		dispatch('var-change');
+	}
 </script>
 
 {#if loaded}
-<div class="card">
-      <header class="card-header">
-            <Header bind:isKey={variable.isKey} bind:isOptional={variable.isOptional} name={variable.name} {index}/>
-      </header>
-      <section class="p-4">
-            <!--Description-->
-<Container pSize=8>
+	<div class="card">
+		<header class="card-header">
+			<Header
+				bind:isKey={variable.isKey}
+				bind:isOptional={variable.isOptional}
+				name={variable.name}
+				{index}
+			/>
+		</header>
+		<section class="p-4">
+			<!--Description-->
+			<Container pSize="8">
+				<div slot="property">
+					<TextArea
+						id="description"
+						bind:value={variable.description}
+						on:input={onChangeHandler}
+						valid={res.isValid('description')}
+						invalid={res.hasErrors('description')}
+						feedback={res.getErrors('description')}
+					/>
+				</div>
+			</Container>
 
-      <div slot="property">
-            <TextArea id="description" 
-            bind:value={variable.description} 
-            on:input={onChangeHandler}
-            valid={res.isValid("description")} 
-            invalid={res.hasErrors("description")}  
-            feedback={res.getErrors("description")} 
-            ></TextArea> 
+			<!--Datatype-->
+			<Container>
+				<div slot="property">
+					<MultiSelect
+						id="dataType"
+						title="Data Type"
+						source={datatypes}
+						itemId="id"
+						itemLabel="text"
+						itemGroup="group"
+						complexSource={true}
+						complexTarget={true}
+						isMulti={false}
+						bind:target={variable.dataType}
+						placeholder="-- Please select --"
+						invalid={res.hasErrors('displayPattern')}
+						feedback={res.getErrors('displayPattern')}
+						on:change={(e) => onSelectHandler(e, 'dataType')}
+						on:clear={(e) => onSelectHandler(e, 'dataType')}
+					/>
+				</div>
 
-      </div>
-</Container>
+				<div slot="displaypattern">
+					<!--Show only when display pattern exists-->
+					{#if variable.possibleDisplayPattern != undefined && variable.possibleDisplayPattern.length > 0}
+						<MultiSelect
+							id="displaypattern"
+							title="Display Pattern"
+							source={displayPattern}
+							itemId="id"
+							itemLabel="text"
+							itemGroup="group"
+							complexSource={true}
+							complexTarget={true}
+							isMulti={false}
+							bind:target={variable.displayPattern}
+							placeholder="-- Please select --"
+							invalid={res.hasErrors('displayPattern')}
+							feedback={res.getErrors('displayPattern')}
+							on:change={(e) => onSelectHandler(e, 'displaypattern')}
+							on:clear={(e) => onSelectHandler(e, 'displaypattern')}
+						/>
+					{/if}
+				</div>
+				<div slot="description">
+					<DataTypeDescription type={variable.dataType.text} />
+				</div>
+			</Container>
 
-<!--Datatype-->
-<Container>
-      <div slot="property">
-  
-            <MultiSelect 
-                  id="dataType"
-                  title="Data Type"
-                  source={datatypes} 
-                  itemId="id"
-                  itemLabel="text"
-                  itemGroup="group"
-                  complexSource={true}
-                  complexTarget={true}
-                  isMulti={false}
-                  bind:target={variable.dataType}
-                  placeholder="-- Please select --"
-                  on:change={(e)=>onSelectHandler(e,"dataType")}
-                  on:clear={(e)=>onSelectHandler(e,"dataType")}
-                  >
-            </MultiSelect>
+			<!--Unit-->
+			<Container>
+				<div slot="property">
+					<MultiSelect
+						id="unit"
+						title="Unit"
+						source={units}
+						itemId="id"
+						itemLabel="text"
+						itemGroup="group"
+						complexSource={true}
+						complexTarget={true}
+						isMulti={false}
+						bind:target={variable.unit}
+						placeholder="-- Please select --"
+						invalid={res.hasErrors('unit')}
+						feedback={res.getErrors('unit')}
+						on:change={(e) => onSelectHandler(e, 'unit')}
+						on:clear={(e) => onSelectHandler(e, 'unit')}
+					/>
+				</div>
+				<div slot="description">
+					show all information about the units in a table Nothing found? Make a new suggestion.
+				</div>
+			</Container>
 
-            {#if res.hasErrors("dataType")}
-                  {#each res.getErrors("dataType") as error}
-                        <!-- content here -->
-                        <Alert message="{error}"/> 
-      
-                  {/each}
-            {/if}
-
-      </div>
-
-      <div slot="displaypattern">      
-       
-            <MultiSelect 
-                  id="displaypattern"
-                  title="Display Pattern"
-                  source={variable.possibleDisplayPattern} 
-                  itemId="id"
-                  itemLabel="text"
-                  itemGroup="group"
-                  complexSource={true}
-                  complexTarget={true}
-                  isMulti={false}
-                  bind:target={variable.displayPattern}
-                  placeholder="-- Please select --"
-                  on:change={(e)=>onSelectHandler(e,"displaypattern")}
-                  on:clear={(e)=>onSelectHandler(e,"displaypattern")}
-                  >
-            </MultiSelect>
-
-            {#if res.hasErrors("displayPattern")}
-                  {#each res.getErrors("displayPattern") as error}
-                        <!-- content here -->
-                  <Alert message="{error}"/> 
-                  {/each}
-            {/if}
-          
-
-      </div>
-      <div slot="description">
-            <DataTypeDescription type={variable.dataType.text} />
-      </div>
-</Container>
-
-<!--Unit-->
-<Container>
-      <div slot="property">
-            <MultiSelect 
-                  id="unit"
-                  title="Unit"
-                  source={units} 
-                  itemId="id"
-                  itemLabel="text"
-                  itemGroup="group"
-                  complexSource={true}
-                  complexTarget={true}
-                  isMulti={false}
-                  bind:target={variable.unit}
-                  placeholder="-- Please select --"
-                  on:change={(e)=>onSelectHandler(e,"unit")}
-                  on:clear={(e)=>onSelectHandler(e,"unit")}
-                  >
-            </MultiSelect>
-
-            {#if res.hasErrors("unit")}
-                  {#each res.getErrors("unit") as error}
-                        <!-- content here -->
-                        <Alert message="{error}"/> 
-                  {/each}
-            {/if}
-
-
-      </div>
-      <div slot="description">
-            show all information about the units in a table 
-            Nothing found? Make a new suggestion.
-      </div>
-</Container>
-
-<!--Meaning-->
-<Container>
-      <div slot="property">
-            <TextInput id="template" label="Variable Template" bind:value={variable.template.text}></TextInput> 
-      </div>
-      <div slot="description">
-            ...
-      </div>
-</Container>
-
-</section>
-<footer class="card-footer">
-      <Footer {...variable}></Footer>  
-</footer>
-</div>
-
+			<!--Meaning-->
+			<Container>
+				<div slot="property">
+					<TextInput id="template" label="Variable Template" bind:value={variable.template.text} />
+				</div>
+				<div slot="description">...</div>
+			</Container>
+		</section>
+		<footer class="card-footer">
+			<Footer {...variable} />
+		</footer>
+	</div>
 {/if}

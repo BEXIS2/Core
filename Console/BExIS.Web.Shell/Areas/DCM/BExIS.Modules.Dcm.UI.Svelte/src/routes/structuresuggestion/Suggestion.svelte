@@ -5,7 +5,6 @@ import {Spinner} from '@bexis2/bexis2-core-ui';
 import {onMount} from 'svelte';
 import {getDataTypes,getUnits} from './services.js'
 
-
 export let variables = [];
 
 $:datatypes=null;
@@ -44,8 +43,10 @@ function checkValidationState()
   valid = variableValidationStates.every(v=>v===true)
 }
 
+
+
 </script>
-<div class="suggestion-container">
+<div class="suggestion-container" >
 
 {#if variables && datatypes && units && variableValidationStates}
     <!-- else content here -->
