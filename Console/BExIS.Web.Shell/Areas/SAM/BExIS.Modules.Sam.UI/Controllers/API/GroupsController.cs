@@ -57,7 +57,7 @@ namespace BExIS.Modules.Sam.UI.Controllers.API
             }
         }
 
-        [HttpPost, GetRoute("api/groups")]
+        [HttpPost, PostRoute("api/groups")]
         public async Task<HttpResponseMessage> Post(CreateGroupModel model)
         {
             try
