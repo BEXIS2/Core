@@ -3,7 +3,7 @@
  import Form from './Form.svelte'
  import {Page} from '@bexis2/bexis2-core-ui';
 
- import type { Link } from "@bexis2/bexis2-core-ui";
+ import type { linkType } from "@bexis2/bexis2-core-ui";
 
  import { onMount } from 'svelte'; 
  import { fade } from 'svelte/transition'; 
@@ -57,7 +57,7 @@ function onSaveHandler(e)
 
 }
 
-let links:Link[] = [{label:"manual",url:"https://github.com/BEXIS2/Documents/blob/master/Manuals/DCM/Manual.md"}]
+let links:linkType[] = [{label:"manual",url:"https://github.com/BEXIS2/Documents/blob/master/Manuals/DCM/Manual.md"}]
 
 console.log(links)
 

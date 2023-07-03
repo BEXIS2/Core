@@ -182,9 +182,12 @@ async function updateStatus(_hooks)
 {
   let dic:{[key:string]:number}={[""]:0};
 
-  _hooks.forEach(hook => {
-    dic[hook.name] = hook.status
-  });
+  if(_hooks!==undefined)
+  {
+    _hooks.forEach(hook => {
+      dic[hook.name] = hook.status
+    });
+  }
 
   console.log("before",$hooksStatus);
 

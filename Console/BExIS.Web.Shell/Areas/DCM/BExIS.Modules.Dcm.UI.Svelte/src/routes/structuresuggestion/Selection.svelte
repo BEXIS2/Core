@@ -15,7 +15,7 @@ import { faSave, faTrash } from '@fortawesome/free-solid-svg-icons/index'
 
 	//types
 	import type { StructureSuggestionModel, Marker } from '../../models/StructureSuggestion';
-	import { Position } from "@bexis2/bexis2-core-ui";
+	import { positionType } from "@bexis2/bexis2-core-ui";
 
  export let model: StructureSuggestionModel;
 	export let init:boolean = true;
@@ -278,9 +278,9 @@ import { faSave, faTrash } from '@fortawesome/free-solid-svg-icons/index'
 {#if !model || state.length == 0 || generate==false}
 	<!--if the model == false, access denied-->
 	{#if !model || state.length == 0 || generate==false}
-		<div class="h-full w-full text-surface-700"><Spinner position={Position.center} label="Loading Structure Suggestion based on: {model.file}"/></div>
+		<div class="h-full w-full text-surface-700"><Spinner position={position.center} label="Loading Structure Suggestion based on: {model.file}"/></div>
 	{:else}
-		<div class="h-full w-full text-surface-700"><Spinner position={Position.center} label="Generate Structure..."/></div>
+		<div class="h-full w-full text-surface-700"><Spinner position={position.center} label="Generate Structure..."/></div>
 	{/if}
 {:else}
 	<!-- load page -->

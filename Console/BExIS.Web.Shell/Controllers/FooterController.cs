@@ -9,8 +9,9 @@ namespace BExIS.Web.Shell.Controllers
         // GET: footer
         public ActionResult Index()
         {
-            return View();
+            return PartialView("Content", Session.GetTenant().FooterPath);
         }
+
 
         public ActionResult ContactUs()
         {

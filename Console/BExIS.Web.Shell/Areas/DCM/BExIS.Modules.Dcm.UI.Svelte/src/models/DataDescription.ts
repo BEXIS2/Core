@@ -1,4 +1,4 @@
-import { FileInfo } from "@bexis2/bexis2-core-ui";
+import { fileInfoType } from "@bexis2/bexis2-core-ui";
 
 export interface DataDescriptionModel {
     id: number;
@@ -8,7 +8,7 @@ export interface DataDescriptionModel {
     lastModification: string | null;
     variables: VariableModel[];
     allFilesReadable: boolean;
-    readableFiles: FileInfo[];
+    readableFiles: fileInfoType[];
 }
 
 export interface VariableModel {

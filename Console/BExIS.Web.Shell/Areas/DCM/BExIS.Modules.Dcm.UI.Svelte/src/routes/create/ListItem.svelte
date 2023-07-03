@@ -3,8 +3,6 @@
 import Fa from 'svelte-fa/src/fa.svelte'
 import { faFileAlt } from '@fortawesome/free-solid-svg-icons'
 
-import { FileInfo } from '@bexis2/bexis2-core-ui'
-
 export let id;
 export let index;
 export let name;

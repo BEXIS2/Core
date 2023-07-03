@@ -9,13 +9,13 @@ import TimeDuration from '$lib/components/utils/TimeDuration.svelte'
 
 import { latestFileUploadDate } from '../../routes/edit/stores';
 
-import type { FileUploaderModel } from '@bexis2/bexis2-core-ui'
+import type { fileUploaderModel } from '@bexis2/bexis2-core-ui'
 
 export let id=0;
 export let version=1;
 export let hook;
 
-let model:FileUploaderModel;
+let model:fileUploaderModel;
 $:model;
 
 onMount(async () => {

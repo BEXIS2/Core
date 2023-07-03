@@ -342,6 +342,7 @@
     <Compile Include="Controllers\API\VersionsController.cs" />
     <Compile Include="Controllers\ErrorController.cs" />
     <Compile Include="Controllers\FooterController.cs" />
+    <Compile Include="Controllers\HeaderController.cs" />
     <Compile Include="Controllers\HelpController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\JSController.cs" />
@@ -1088,6 +1089,9 @@
     <Content Include="Themes\Default\Layouts\_svelteLayout.cshtml" />
     <Content Include="Views\Shared\_sveltePage.cshtml" />
     <Content Include="Themes\Default\Layouts\_svelteLayoutBackup.cshtml" />
+    <Content Include="Views\Header\Index.cshtml" />
+    <Content Include="Views\Footer\Index.cshtml" />
+    <Content Include="Views\Header\Content.cshtml" />
     <None Include="Web.config" />
   </ItemGroup>
   <ItemGroup>

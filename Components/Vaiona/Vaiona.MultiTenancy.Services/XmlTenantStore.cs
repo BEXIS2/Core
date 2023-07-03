@@ -234,6 +234,30 @@ namespace Vaiona.MultiTenancy.Services
 
             try
             {
+                tenant.Header = manifest.Element("Header").Value;
+            }
+            catch
+            {
+                if (tenant.UseFallback == true && tenant.Fallback != null)
+                {
+                    tenant.Header = defaultTenant.Header;
+                }
+            }
+
+            try
+            {
+                tenant.Footer = manifest.Element("Footer").Value;
+            }
+            catch
+            {
+                if (tenant.UseFallback == true && tenant.Fallback != null)
+                {
+                    tenant.Footer = defaultTenant.Footer;
+                }
+            }
+
+            try
+            {
                 tenant.PolicyFileName = manifest.Element("PolicyFileName").Value;
             }
             catch
