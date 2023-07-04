@@ -71,10 +71,11 @@ function errorHandler(e)
   <HookContainer 
     {...fileUploadHook}
     let:errorHandler 
-    let:successHandler >
+    let:successHandler 
+    let:warningHandler>
     
     <div slot="view">
-      <FileUpload {id} {version} hook={fileUploadHook}  on:error={(e)=> errorHandler(e)} on:success={(e)=> successHandler(e)} />
+      <FileUpload {id} {version} hook={fileUploadHook}  on:error={(e)=> errorHandler(e)} on:success={(e)=> successHandler(e)} on:warning={(e)=>warningHandler(e)} />
     </div>
   </HookContainer>
 

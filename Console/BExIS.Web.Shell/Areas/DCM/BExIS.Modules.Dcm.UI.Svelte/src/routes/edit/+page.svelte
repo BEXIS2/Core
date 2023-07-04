@@ -219,7 +219,7 @@ let visible=false;
 
 {:else}  <!-- access denied -->
 <div class="h-screen">
-  <Spinner label="loading edit page" position="center"/>
+  <Spinner textCss="text-surface-800" label="loading edit page" position="center"/>
 </div>
 {/if}
 </Page>
