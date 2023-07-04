@@ -189,12 +189,12 @@ async function updateStatus(_hooks)
     });
   }
 
-  console.log("before",$hooksStatus);
+  //console.log("before",$hooksStatus);
 
   hooksStatus.set(dic);
 
-  console.log("updateStatus",$hooksStatus);
-  console.log("length",$hooksStatus.length);
+  //console.log("updateStatus",$hooksStatus);
+  //console.log("length",$hooksStatus.length);
 
   hookStatusList = $hooksStatus;
 }

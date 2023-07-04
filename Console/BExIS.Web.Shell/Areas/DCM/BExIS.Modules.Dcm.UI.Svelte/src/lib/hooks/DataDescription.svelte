@@ -8,7 +8,7 @@
 import TimeDuration from '../../lib/components/utils/TimeDuration.svelte'
 import Generate from '../../lib/components/datadescription/Generate.svelte'
 import Show from '../../lib/components/datadescription/Show.svelte'
-import {Spinner} from '@bexis2/bexis2-core-ui'
+import {Spinner, positionType} from '@bexis2/bexis2-core-ui'
 
 import type {DataDescriptionModel} from '../../models/DataDescription'
 
@@ -31,13 +31,13 @@ onMount(async () => {
 
 async function load()
 {
-  console.log("datadscription",hook);
+  model = undefined;
   model = await getHookStart(hook.start,id,version);
 }
 
 async function reload()
 {
-  console.log("reload datadscription");
+  console.log("reload datadescription");
   load();
 } 
  
@@ -69,4 +69,8 @@ async function reload()
   {:else}
     <span>not available</span>
   {/if}
+  {:else}
+  <div class="w-full h-full text-surface-600">
+    <Spinner label="loading data description" position="{positionType.center}"/>
+  </div>
  {/if}

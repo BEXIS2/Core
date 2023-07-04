@@ -2,10 +2,10 @@
 
 import {goTo}  from '../../../services/BaseCaller'
 import {MultiSelect, Spinner} from '@bexis2/bexis2-core-ui';
-import type {ListItem} from '@bexis2/bexis2-core-ui';
+import type {listItemType} from '@bexis2/bexis2-core-ui';
 import { onMount, createEventDispatcher } from 'svelte';
 
-import {availableStructues, setStructure} from '$services/DataDescriptionCaller'
+import {setStructure} from '$services/DataDescriptionCaller'
 
 
 export let id = 0; // entity id
@@ -20,7 +20,7 @@ function goToGenerate(file)
 }
 
 
-let list:ListItem[]; 
+let list:listItemType[]; 
 $:list;
 let loading:boolean; 
 $:loading;
@@ -44,18 +44,16 @@ function setList(files)
       list = [...list,...structures];
   }
   
-
-
   console.log("list", list)
 }
 
 
 onMount(async () => {
   loading = false;
-  //setList(files);
-  structures = await availableStructues(id);
+  console.log("reload generated")
   setList(files);
 });
+
 
 // after select a value from the dropdown 
 // it will go to the generator or selet a exiting structure

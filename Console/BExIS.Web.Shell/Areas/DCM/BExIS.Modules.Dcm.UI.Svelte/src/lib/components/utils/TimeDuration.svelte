@@ -47,6 +47,10 @@ function formatTime(milliseconds) {
 </script>
 <div class="flex gap-1 pb-5">
   <div class="self-center"><Fa icon={faHourglass} /></div>
-  <div class="self-center"> {diff}</div>
+  <div class="self-center"> 
+  {#if diff}
+    {diff}
+  {/if}
+  </div>
 
 </div>
