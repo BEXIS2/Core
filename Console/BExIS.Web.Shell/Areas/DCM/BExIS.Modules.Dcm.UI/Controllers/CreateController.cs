@@ -153,6 +153,11 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 // create empty Dataset
                 ResearchPlan rp = rpm.Repo.Get(1); // not used but needed
 
+                // check if something missing
+                if(rp == null) throw new ArgumentNullException(nameof(rp));
+                if(metadataStructure == null) throw new ArgumentNullException(nameof(metadataStructure));
+                if(entityTemplate == null) throw new ArgumentNullException(nameof(entityTemplate));
+
                 var ds = dm.CreateEmptyDataset(dataStructure, rp, metadataStructure, entityTemplate);
                 datasetId = ds.Id;
 
