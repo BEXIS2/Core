@@ -14,6 +14,8 @@ const suite = create((data = {}, fieldName)=>
 
     const listOfStructures = get(structureStore).map(e => e.text);
 
+    console.log("title exist check",data.title,listOfStructures)
+
     return enforce(data.title).notInside(listOfStructures);
   })
 
