@@ -411,6 +411,45 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         }
 
         [JsonNetFilter]
+        public JsonResult GetStructures()
+        {
+            using (var structureManager = new DataStructureManager())
+            {
+                List<ListItem> list = new List<ListItem>();
+                var structures = structureManager.StructuredDataStructureRepo.Get();
+
+                if (structures.Any())
+                {
+                    foreach (var structure in structures)
+                    {
+                        list.Add(new ListItem(structure.Id, structure.Name));
+                    }
+                }
+
+                // get default missing values
+                return Json(list, JsonRequestBehavior.AllowGet);
+            }
+        }
+
+        [JsonNetFilter]
+        public JsonResult GetDisplayPattern()
+        {
+            List<ListItem> list = new List<ListItem>();
+            foreach(var displayPattern in DataTypeDisplayPattern.Pattern)
+            {
+                list.Add(new ListItem()
+                {
+                    Id = displayPattern.Id,
+                    Text = displayPattern.DisplayPattern,
+                    Group = displayPattern.Systemtype.ToString()
+                });
+            }
+
+            // get list of all display pattern
+            return Json(list, JsonRequestBehavior.AllowGet);
+        }
+
+        [JsonNetFilter]
         public JsonResult GetUnits()
         {
             using (var unitManager = new UnitManager())
