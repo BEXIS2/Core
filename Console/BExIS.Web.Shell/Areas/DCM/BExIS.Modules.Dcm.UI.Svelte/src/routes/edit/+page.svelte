@@ -114,6 +114,8 @@ async function load()
    // get resultView
    seperateViews(views);
   }
+
+  console.log("model and hooks", model,hookStatusList);
 }
 
 async function reload()
@@ -186,9 +188,12 @@ async function updateStatus(_hooks)
     });
   }
 
-  console.log("update Hookstatus",$hooksStatus);
+  console.log("cuurent Hookstatus",$hooksStatus);
 
   hooksStatus.set(dic);
+
+  console.log("update Hookstatus",$hooksStatus);
+
 
   //console.log("updateStatus",$hooksStatus);
   //console.log("length",$hooksStatus.length);
