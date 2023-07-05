@@ -13,9 +13,10 @@
 	//Most of your app wide CSS should be put in this file
 	import '../app.postcss';
 
+import {Menu} from '@bexis2/bexis2-core-ui';
 
 </script>
 
-
+<Menu></Menu>
 
 <slot></slot>

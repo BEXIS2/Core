@@ -89,12 +89,13 @@ async function load()
   console.log("load");
   // load model froms server
   model = await getEdit(id);
+  console.log("edit after wait", model);
 
 
   if(isEditModel(model))
   {
 
-   console.log("editmodel", model);
+   console.log("edit after check", model);
 
    hooks = model.hooks;
    views = model.views;
@@ -185,7 +186,7 @@ async function updateStatus(_hooks)
     });
   }
 
-  //console.log("before",$hooksStatus);
+  console.log("update Hookstatus",$hooksStatus);
 
   hooksStatus.set(dic);
 
