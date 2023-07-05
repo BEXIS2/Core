@@ -9,6 +9,8 @@ export interface DataDescriptionModel {
     variables: VariableModel[];
     allFilesReadable: boolean;
     readableFiles: fileInfoType[];
+    isRestricted:boolean;
+    isStructured
 }
 
 export interface VariableModel {

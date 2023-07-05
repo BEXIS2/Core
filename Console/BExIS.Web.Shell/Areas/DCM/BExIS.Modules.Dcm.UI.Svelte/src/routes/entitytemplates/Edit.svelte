@@ -7,13 +7,12 @@ import { fade } from 'svelte/transition';
 
 // ui Components
  import Fa from 'svelte-fa/src/fa.svelte'
- import { CheckboxKVPList, DropdownKVP, MultiSelect, TextArea,TextInput, Spinner } from "@bexis2/bexis2-core-ui";
+ import { DropdownKVP, MultiSelect, TextArea,TextInput, Spinner } from "@bexis2/bexis2-core-ui";
  import { faSave, faTrash, faQuestion } from '@fortawesome/free-solid-svg-icons/index'
  import {SlideToggle} from '@skeletonlabs/skeleton'
  import ContentContainer from '../../lib/components/ContentContainer.svelte'
  import { Modal, modalStore } from '@skeletonlabs/skeleton';
- import { popup } from '@skeletonlabs/skeleton';
- import Help from './Help.svelte';
+
  import EntryContainer from './EntryContainer.svelte';
 
 
@@ -26,17 +25,23 @@ import { fade } from 'svelte/transition';
 
  // types
  import type { EntityTemplateModel } from '../../models/EntityTemplate'
- import type { ListItem } from '@bexis2/bexis2-core-ui'
+ import type { listItemType } from '@bexis2/bexis2-core-ui'
  import type { ModalSettings,PopupSettings } from '@skeletonlabs/skeleton';
  
 
  // help
- import * as HelpInfo from './help'
+ import {editHelp} from './help'
+ import { helpStore } from '@bexis2/bexis2-core-ui'
+ import type { helpItemType, helpStoreType } from "@bexis2/bexis2-core-ui"
+
+ //Set list of help items and clear selection
+ helpStore.setHelpItemList(editHelp);
+
 
   export let id = 0;
   
   export let hooks= [];
-  export let metadataStructures:ListItem[]= [];
+  export let metadataStructures:listItemType[]= [];
   export let dataStructures=[];
   let systemKeys;
   export let entities=[];
@@ -164,6 +169,7 @@ import { fade } from 'svelte/transition';
    on:input={onChangeHandler}
    required={true}
    placeholder="Define a unique content-related name for your template."
+   help={true}
    />
 
    <DropdownKVP 
@@ -177,6 +183,7 @@ import { fade } from 'svelte/transition';
     feedback={res.getErrors("entityType")} 
     on:change={onChangeHandler} 
     complexTarget = {true}
+    help={true}
    />
 
    <TextArea 
@@ -189,6 +196,7 @@ import { fade } from 'svelte/transition';
     on:input={onChangeHandler} 
     required={true} 
     placeholder="Briefly describe in which cases this template should be used. Based on entity or usecase."
+    help={true}
     />
   
   </div>
@@ -211,6 +219,7 @@ import { fade } from 'svelte/transition';
       on:change={onChangeHandler} 
       complexTarget={true}
       required={true}
+      help={true}
       />
 
       {#if systemKeys}
@@ -224,21 +233,18 @@ import { fade } from 'svelte/transition';
           itemLabel="text"
           itemGroup="group"
           complexSource={true}
+          help={true}
           />
-          <div slot="help">
-            <Help {...HelpInfo.metadataFieldsHelp}/>
-          </div>
+
         </EntryContainer>
       {/if}
 
       <EntryContainer>
+        <div id="invalidSaveMode"></div>
         <SlideToggle name="Invalid-save-mode" bind:value={entityTemplate.metadataInvalidSaveMode} >
           Invalid save mode
         </SlideToggle>
 
-        <div slot="help">
-          <Help {...HelpInfo.invalidSaveModeHelp}/>
-        </div>
       </EntryContainer>
       
 
@@ -246,7 +252,7 @@ import { fade } from 'svelte/transition';
     <div class="flex flex-col space-y-4">
       <h3 class="h3">Datastructure</h3>
       <EntryContainer>
-        <div class="mt-7 space-y-5">
+        <div class="mt-7 space-y-5" on:mouseover={()=>helpStore.show("hasDatastructure")}>
         <SlideToggle name="Use datastructures?" bind:checked={entityTemplate.hasDatastructure} >
           Use datastructures?
         </SlideToggle>
@@ -260,12 +266,10 @@ import { fade } from 'svelte/transition';
           itemId="key"
           itemLabel="value"
           complexSource={true}
+          help={true}
           />
         {/if}
        </div>
-        <div slot="help">
-          <Help {...HelpInfo.dataStructureHelp}/>
-        </div>
       
       </EntryContainer>
 
@@ -280,18 +284,15 @@ import { fade } from 'svelte/transition';
 
       <EntryContainer>
         <MultiSelect  
-          id="permission"
+          id="permissions"
           title="Permission" 
           source={groups} 
           bind:target={entityTemplate.permissionGroups}
           itemId="key"
           itemLabel="value"
           complexSource={true}
+          help={true}
           />
-
-        <div slot="help">
-          <Help {...HelpInfo.permissionHelp}/>
-        </div>
       </EntryContainer>
       
  
@@ -304,10 +305,9 @@ import { fade } from 'svelte/transition';
           itemId="key"
           itemLabel="value"
           complexSource={true}
+          help={true}
           />
-        <div slot="help">
-          <Help {...HelpInfo.noticiationHelp}/>
-        </div>
+
       </EntryContainer>
   
      
@@ -322,10 +322,9 @@ import { fade } from 'svelte/transition';
         title="Disabled hooks" 
         source={hooks} 
         bind:target={entityTemplate.disabledHooks} 
+        help={true}
       />
-      <div slot="help">
-        <Help {...HelpInfo.disabledHooksHelp}/>
-      </div>
+
     </EntryContainer>
 
     <EntryContainer>
@@ -333,11 +332,10 @@ import { fade } from 'svelte/transition';
         id="allowedFileTypes"
         title="Allowed file types" 
         source={filetypes} 
-        bind:target={entityTemplate.allowedFileTypes} 
+        bind:target={entityTemplate.allowedFileTypes}
+        help={true} 
       /> 
-      <div slot="help">
-        <Help {...HelpInfo.allowedFileTypesHelp}/>
-      </div>
+ 
     </EntryContainer>
 
   </div>
