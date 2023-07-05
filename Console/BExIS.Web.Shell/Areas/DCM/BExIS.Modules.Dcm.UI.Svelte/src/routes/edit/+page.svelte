@@ -38,8 +38,9 @@
   views: []
  };
 
- let hookStatusList:{[key:string]:number};
 
+let hookStatusList:{[key:string]:number};
+$:hookStatusList
 // hooks
  let hooks:HookModel[];
  $:hooks=[];
@@ -70,11 +71,6 @@
 
    console.log("start edit",id,version);
 
-  //  if (import.meta.env.DEV) {
-	// 		console.log('dev');
-	// 		setApiConfig('https://localhost:44345', 'davidschoene', '123456');
-	// 	}
-
    // load
    load();
  })
@@ -90,7 +86,7 @@ latestDataDescriptionDate.subscribe(e =>{
 
 async function load()
 {
-  
+  console.log("load");
   // load model froms server
   model = await getEdit(id);
 
@@ -174,8 +170,8 @@ function seperateViews(views)
      }
   });
 
-  console.log(messageView)
-  console.log(additionalViews)
+  // console.log(messageView)
+  // console.log(additionalViews)
 }
 
 async function updateStatus(_hooks)
@@ -206,6 +202,7 @@ let visible=false;
 
 <Page>
 
+
 {#if model && hookStatusList} <!--if the model == true, load page-->
 <!-- Header -->
 <Header {id} {version} {title} />
@@ -222,4 +219,5 @@ let visible=false;
   <Spinner textCss="text-surface-800" label="loading edit page" position="center"/>
 </div>
 {/if}
+
 </Page>

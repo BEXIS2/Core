@@ -59,7 +59,7 @@ function onSaveHandler(e)
 
 let links:linkType[] = [{label:"manual",url:"https://github.com/BEXIS2/Documents/blob/master/Manuals/DCM/Manual.md"}]
 
-console.log(links)
+//console.log(links)
 
 </script>
 

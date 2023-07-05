@@ -4,11 +4,11 @@ import {Api} from "@bexis2/bexis2-core-ui";
 
 // get Model for Edit page
 export const getEdit = async (id) => {
-    console.log("edit",id);
+    //console.log("edit",id);
 
     try {
       const response = await Api.get('/dcm/edit/load?id='+id);
-      console.log(response);
+      //console.log(response);
 
       return response.data;
       
@@ -22,7 +22,7 @@ export const getEdit = async (id) => {
 export const loadMessages = async (id) => {
   try {
 
-    console.log("test load messages")
+    //console.log("test load messages")
     const response = await Api.get('/dcm/messages/load?id='+id);
     return response.data;
   } catch (error) {
@@ -44,10 +44,10 @@ export const saveFileDescription = async (action, id, file, description ) => {
 // remove file from server
 export const removeFile = async (action, id, file ) => {
   try {
-    console.log("remove")
-    console.log(action)
-    console.log(id)
-    console.log(file)
+    // console.log("remove")
+    // console.log(action)
+    // console.log(id)
+    // console.log(file)
     
 
     const response = await Api.post(action, {id,file} );

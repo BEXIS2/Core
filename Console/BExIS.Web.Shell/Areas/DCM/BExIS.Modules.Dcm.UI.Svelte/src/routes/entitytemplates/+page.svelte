@@ -71,14 +71,14 @@
   //  console.log("entities",entities);
   //  console.log("groups",groups);
   //  console.log("filetypes",filetypes);
-   console.log("entitytemplates", entitytemplates);
+   //console.log("entitytemplates", entitytemplates);
   
  })
  
  async function refresh(e:any)
  {
    const newEnityTemplate = e.detail;
-   console.log(newEnityTemplate);
+   //console.log(newEnityTemplate);
    
    //remove object from list & add to list again
    entitytemplates = entitytemplates.filter(e => {

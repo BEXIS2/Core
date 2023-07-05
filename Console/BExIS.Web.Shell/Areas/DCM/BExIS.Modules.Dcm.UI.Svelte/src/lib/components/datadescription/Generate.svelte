@@ -44,13 +44,13 @@ function setList(files)
       list = [...list,...structures];
   }
   
-  console.log("list", list)
+  //console.log("list", list)
 }
 
 
 onMount(async () => {
   loading = false;
-  console.log("reload generated")
+  //console.log("reload generated")
   setList(files);
 });
 
@@ -60,11 +60,11 @@ onMount(async () => {
 async function change(e)
 {
   let item = e.detail;
-  console.log("select item",item)
+  //console.log("select item",item)
 
   if(item.group==="options")
   {
-    console.log("go to create a datastructure");
+    //console.log("go to create a datastructure");
   }
   else if(item.group==="file")
   {
@@ -73,7 +73,7 @@ async function change(e)
   }
   else if(item.group==="structure")
   {
-    console.log("select a structure",id,item.id);
+    //console.log("select a structure",id,item.id);
     loading = true;
     await setStructure(id, item.id)
     dispatch("selected")

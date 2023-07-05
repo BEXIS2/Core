@@ -37,7 +37,7 @@ async function load()
 
 async function reload()
 {
-  console.log("reload datadescription");
+  //console.log("reload datadescription");
   load();
 } 
  
