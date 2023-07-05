@@ -18,7 +18,6 @@
  import { isEditModel} from './types';
  import Hook from '$lib/components/Hook.svelte';
 
- import { dev } from '$app/environment'
 
  // load attributes from div
  let container ;
@@ -72,7 +71,7 @@ $:hookStatusList
    console.log("start edit",id,version);
 
    // load
-   load();
+   await load();
  })
 
 
@@ -113,6 +112,7 @@ async function load()
 
    // get resultView
    seperateViews(views);
+   console.log("test")
   }
 
   console.log("model and hooks", model,hookStatusList);
@@ -177,7 +177,7 @@ function seperateViews(views)
   // console.log(additionalViews)
 }
 
-async function updateStatus(_hooks)
+function updateStatus(_hooks)
 {
   let dic:{[key:string]:number}={[""]:0};
 
@@ -186,17 +186,11 @@ async function updateStatus(_hooks)
     _hooks.forEach(hook => {
       dic[hook.name] = hook.status
     });
+
+    console.log("cuurent Hookstatus",$hooksStatus);
+    hooksStatus.set(dic);
+    console.log("update Hookstatus",$hooksStatus);
   }
-
-  console.log("cuurent Hookstatus",$hooksStatus);
-
-  hooksStatus.set(dic);
-
-  console.log("update Hookstatus",$hooksStatus);
-
-
-  //console.log("updateStatus",$hooksStatus);
-  //console.log("length",$hooksStatus.length);
 
   hookStatusList = $hooksStatus;
 }
