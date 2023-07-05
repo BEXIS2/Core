@@ -24,6 +24,16 @@ namespace BExIS.Modules.Dcm.UI.Models.Edit
         /// allready uploaded files in the temp folder
         /// </summary>
         public List<FileInfo> ReadableFiles { get; set; }
+
+        /// <summary>
+        /// if true you should be aböle to select a structre frim the system or import from file
+        /// </summary>
+        public bool IsStructured { get; set; }
+
+        /// <summary>
+        /// choose only from predefiend structres
+        /// </summary>
+        public bool IsRestricted { get; set; }
         public DataDescriptionModel()
         {
             Title = "";
@@ -32,6 +42,9 @@ namespace BExIS.Modules.Dcm.UI.Models.Edit
 
             ReadableFiles = new List<FileInfo>();
             Variables = new List<VariableModel>();
+
+            IsStructured = false;
+            IsRestricted = false;
 
         }
 

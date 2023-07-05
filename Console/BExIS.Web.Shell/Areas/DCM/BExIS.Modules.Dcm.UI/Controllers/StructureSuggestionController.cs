@@ -259,9 +259,15 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             cache.AsciiFileReaderInfo.TextMarker = (TextMarker)model.TextMarker;
             cache.AsciiFileReaderInfo.Data = model.Markers.Where(m => m.Type.Equals("data")).FirstOrDefault().Row + 1; // add 1 to store nit the index but the row
             cache.AsciiFileReaderInfo.Variables = model.Markers.Where(m => m.Type.Equals("variable")).FirstOrDefault().Row + 1;// add 1 to store nit the index but the row
-            cache.AsciiFileReaderInfo.Description = model.Markers.Where(m => m.Type.Equals("description")).FirstOrDefault().Row + 1;// add 1 to store nit the index but the row
-            cache.AsciiFileReaderInfo.Unit = model.Markers.Where(m => m.Type.Equals("unit")).FirstOrDefault().Row + 1;// add 1 to store nit the index but the row
             cache.AsciiFileReaderInfo.Cells = model.Markers.Where(m => m.Type.Equals("variable")).FirstOrDefault().Cells;
+
+            // additional infotmations
+            // description
+            var descriptionMarker = model.Markers.Where(m => m.Type.Equals("description")).FirstOrDefault();
+            if(descriptionMarker != null) cache.AsciiFileReaderInfo.Description = descriptionMarker.Row + 1;// add 1 to store nit the index but the row
+            // units
+            var unitMarker = model.Markers.Where(m => m.Type.Equals("unit")).FirstOrDefault();
+            cache.AsciiFileReaderInfo.Unit = unitMarker.Row + 1;// add 1 to store nit the index but the row
 
             // update modifikation date
             cache.UpdateLastModificarion(typeof(DataDescriptionHook));

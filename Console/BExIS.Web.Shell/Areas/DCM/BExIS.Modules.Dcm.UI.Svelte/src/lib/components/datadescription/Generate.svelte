@@ -5,11 +5,12 @@ import {MultiSelect, Spinner} from '@bexis2/bexis2-core-ui';
 import type {listItemType} from '@bexis2/bexis2-core-ui';
 import { onMount, createEventDispatcher } from 'svelte';
 
-import {setStructure} from '$services/DataDescriptionCaller'
+import {availableStructues, setStructure} from '$services/DataDescriptionCaller'
 
 
 export let id = 0; // entity id
 export let files:any[];
+export let isRestricted:false;
 
 const dispatch = createEventDispatcher();
 
@@ -26,32 +27,13 @@ let loading:boolean;
 $:loading;
 let structures=[];
 $:structures;
-// list is a comibnation of options, already existing datastructures and files
-function setList(files)
-{
-  
-  list = [];
-  list.push({id:0,text:"create new", group:"options"})
-  if(files!== null && files !== undefined)
-  {
-    files.forEach(i => 
-      list.push({id:i.name,text:i.name, group:"file"})
-    );
-  }
-  //console.log(structures)
-  if(structures!== null && structures != undefined) 
-  {
-      list = [...list,...structures];
-  }
-  
-  //console.log("list", list)
-}
 
 
 onMount(async () => {
   loading = false;
   //console.log("reload generated")
-  setList(files);
+  structures = await availableStructues(id);
+  setList(files,structures);
 });
 
 
@@ -80,6 +62,32 @@ async function change(e)
 
   }
 }
+
+// list is a comibnation of options, already existing datastructures and files
+function setList(files, structureList)
+{
+  
+  list = [];
+
+  if(isRestricted == false) // if user is not restricted by selection of the structures, then add option to vcreate a new one
+  {
+    list.push({id:0,text:"create new", group:"options"})
+  }
+
+  if(files && isRestricted == false) // if user is not restricted by selection of the structures, then add option to create from file
+  {
+    files.forEach(i => 
+      list.push({id:i.name,text:i.name, group:"file"})
+    );
+  }
+
+  if(structureList) //structureList!== null && structureList != undefined)
+  {
+      list = [...list,...structureList];
+  }
+
+}
+
 
 </script>
 

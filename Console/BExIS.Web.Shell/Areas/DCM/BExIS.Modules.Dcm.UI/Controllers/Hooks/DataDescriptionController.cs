@@ -89,6 +89,20 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                         }
                     }
                 }
+
+                // get values from template
+                using (var entityTemplateManager = new EntityTemplateManager())
+                using (var datasetManager = new DatasetManager())
+                {
+                    var dataset = datasetManager.GetDataset(id);
+                    if (dataset == null) throw new NullReferenceException(String.Format("Subject wih id {0} not exist",id));
+
+                    var template = entityTemplateManager.Repo.Get(dataset.EntityTemplate.Id);
+                    if (template == null) throw new NullReferenceException(String.Format("Template wih id {0} not exist", id));
+
+                    model.IsStructured = template.HasDatastructure;
+                    model.IsRestricted = template.DatastructureList.Any();
+                }
             }
 
 
@@ -119,6 +133,8 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
             // set modification date
             model.LastModification = cache.GetLastModificarion(typeof(DataDescriptionHook));
+
+            
 
 
             return Json(model, JsonRequestBehavior.AllowGet);

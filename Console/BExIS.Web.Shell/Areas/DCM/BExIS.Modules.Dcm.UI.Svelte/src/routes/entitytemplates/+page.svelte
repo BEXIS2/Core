@@ -123,7 +123,7 @@
 
 </script>
 
-<Page title="Entity Templates" note="On this page you can edit entity template.">
+<Page title="Entity Templates" note="On this page you can edit entity template." help={true}>
 
 
 <svelte:fragment>
