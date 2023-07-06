@@ -26,14 +26,18 @@ import { faSave, faTrash } from '@fortawesome/free-solid-svg-icons/index'
 
 	let isDrag: boolean = false;
 	let state: boolean[][] = [];
-	let sel: Marker[] = [];
-	$: selection = sel;
+	let selection: Marker[] = [];
+	$: selection;
 	let cLength: number = 0;
 	let rLength: number = 0;
 	let selectionsupport: boolean = false;
 	let generate:boolean = true;
 
 	let selectedRowIndex: number = 0;
+
+	let errors:string[] = [];
+	$:errors;
+	
 
 	// currently only one requirement exit
 	// variable need to be selected
@@ -89,10 +93,10 @@ import { faSave, faTrash } from '@fortawesome/free-solid-svg-icons/index'
 				updateSelection(marker.type, marker.row, marker.cells);
 			}
 
-			// check if varaible is set, then activet store
-			if (marker.type == MARKER_TYPE.VARIABLE) {
-				isValid = true;
-			}
+			// // check if varaible is set, then activet store
+			// if (marker.type == MARKER_TYPE.VARIABLE) {
+			// 	isValid = true;
+			// }
 		}
 	}
 
@@ -121,6 +125,7 @@ import { faSave, faTrash } from '@fortawesome/free-solid-svg-icons/index'
 			//left mouse click
 			if (e.which === 1 || e.button === 0) {
 				selectCell(c);
+
 			}
 
 			// right mouse click
@@ -135,13 +140,18 @@ import { faSave, faTrash } from '@fortawesome/free-solid-svg-icons/index'
 			//left mouse click
 			if (e.which === 1 || e.button === 0) {
 				selectCell(c);
+
 			}
 
 			// right mouse click
 			if (e.which === 3 || e.button === 2) {
 				deselectCell(c);
+
 			}
 		}
+
+		
+
 	};
 
 	const dbclickHandler = (c) => (e) => {
@@ -180,12 +190,17 @@ import { faSave, faTrash } from '@fortawesome/free-solid-svg-icons/index'
 				}
 			}
 		}
+
+		// clean all deactive selections
+		cleanSelection();
+		//check if selection is valid for save
+		checkStatus();
 	};
 
 	const selectRow = (r) => {
 		console.log('set true');
 		for (var i = 0; i < cLength; i++) {
-			console.log(i);
+			//console.log(i);
 			state[r][i] = true;
 		}
 	};
@@ -198,9 +213,16 @@ import { faSave, faTrash } from '@fortawesome/free-solid-svg-icons/index'
 		}
 	}
 
-	function cleanSelection() {
+	// set selection empty or a new set up
+	function resetSelection() {
 		selection = [];
 		isValid = false;
+	}
+
+	// remove every selection that has only false values in the array
+	function cleanSelection() {
+
+		selection = selection.filter(s=> s.cells.find(c=>c === true));
 	}
 
 	function getMarkerLayout(r) {
@@ -218,10 +240,6 @@ import { faSave, faTrash } from '@fortawesome/free-solid-svg-icons/index'
 		// get selected cells
 		let selectedCells = state[selectedRowIndex];
 
-		if (type == MARKER_TYPE.VARIABLE) {
-			isValid = true;
-		}
-
 		// if selectionsupport is true and one entry exist, means that the cells selection is the same
 		// like the stored one
 		if (selectionsupport && selection.length > 0) {
@@ -229,14 +247,20 @@ import { faSave, faTrash } from '@fortawesome/free-solid-svg-icons/index'
 		}
 
 		updateSelection(type, selectedRowIndex, selectedCells);
+
+		//check if selection is valid for save
+		checkStatus();
+
 	}
 
 	function updateSelection(type, index, cells) {
+
 		let obj = {
 			type: type,
 			row: index,
 			cells: cells
 		};
+
 
 		// if exist row, remove entry
 		let exist = selection.find((e) => e.row == obj.row);
@@ -253,7 +277,59 @@ import { faSave, faTrash } from '@fortawesome/free-solid-svg-icons/index'
 		// add obj to list and return new list
 		selection = [...selection, obj];
 
-    console.log("selection", selection)
+
+	}
+
+	// different thinks need to be done before save button is active
+	function checkStatus()
+	{
+		errors = [];
+		// minimum marker for variable and data need to exist
+		let variabelMarker = selection.find(s=> s.type == MARKER_TYPE.VARIABLE )
+		let dataMarker = selection.find(s=> s.type == MARKER_TYPE.DATA )
+
+		let selectionCount = selection.length;
+
+  if(selectionCount > 0) // only check if selection exist
+		{
+				if(!variabelMarker)
+				{
+					errors.push("the variables still need to be marked");
+				}
+
+				if(!dataMarker)
+				{
+					errors.push("the data still need to be marked");
+				}
+
+				let lastCount = 0;
+				for (let index = 0; index < selection.length; index++) {
+					const element = selection[index];
+					console.log(index, element)
+					let c = element.cells.filter(c=> c == true)?.length; // get length of all cells marked as true
+					if(index>0)// after first run, check count against the others 
+					{
+								if(c!=lastCount) {
+									let message ="selection mismatch, the rows must have the same number of marked cells  "
+									errors.push(message);
+									break;
+								}
+					} 
+				
+
+					lastCount = c;// last count set 
+
+				}
+		 	isValid = errors.length == 0?true:false;
+
+		}
+		else // no selection
+		{
+			isValid = false; // no selection, no errors,  not valid
+			errors = [];
+
+		}
+
 	}
 
 	async function save() {
@@ -272,6 +348,8 @@ import { faSave, faTrash } from '@fortawesome/free-solid-svg-icons/index'
 			generate = false;
 		}
 	}
+
+
 </script>
 
 <div>
@@ -348,16 +426,25 @@ import { faSave, faTrash } from '@fortawesome/free-solid-svg-icons/index'
 						on:click={() => onclickHandler(MARKER_TYPE.DATA)}>Data</button
 					>
 			
-					<div class="my-5 float-right">
-						<button class="variant-ghost-warning btn text-3xl" type="button" on:click={cleanSelection}><Fa icon={faTrash}/></button>
+					<div class="my-1 float-right">
+
+		
+						<button class="variant-ghost-warning btn text-3xl" type="button" on:click={resetSelection}><Fa icon={faTrash}/></button>
 						<button class="btn variant-ghost-surface text-3xl" disabled={!isValid}>
 							<Fa icon={faSave}/> </button>
-
 					</div>
+
+
+
 					<div >
 						<SlideToggle name="selection support" bind:checked={selectionsupport}
 							>selection support</SlideToggle
 						>
+						<div class="m-2 float-right text-sm">
+							{#each errors as error}
+							<label class="text-error-500">{error}</label>
+							{/each}
+							</div>
 					</div>
 				<div>
 					<!-- Missing Values-->
@@ -368,6 +455,7 @@ import { faSave, faTrash } from '@fortawesome/free-solid-svg-icons/index'
 					<label><b>Found:</b> {model.total - model.skipped}</label>
 					<label><b>Skipped:</b> {model.skipped}</label>
 				</div>
+
 			</div>
 
 			<!-- controls-->
@@ -410,6 +498,7 @@ import { faSave, faTrash } from '@fortawesome/free-solid-svg-icons/index'
 
 			<div class="col-span-3" />
 			<div>
+
 				<table class="table table-compact"
 				 on:contextmenu={(e)=> e.preventDefault()} >
 					<tbody> 
