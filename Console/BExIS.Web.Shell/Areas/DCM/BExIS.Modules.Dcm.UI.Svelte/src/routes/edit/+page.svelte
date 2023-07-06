@@ -200,7 +200,7 @@ let visible=false;
 
 </script>
 
-<Page>
+<Page title="Edit dataset: {model.title}">
 
 
 {#if model && hookStatusList} <!--if the model == true, load page-->

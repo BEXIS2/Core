@@ -123,7 +123,7 @@
 
 </script>
 
-<Page title="Entity Templates" note="On this page you can edit entity template." help={true}>
+<Page title="Entity Templates" note="On this page you can edit entity template." help={true} >
 
 
 <svelte:fragment>
@@ -141,7 +141,7 @@
    on:cancel={()=>isOpen=false}/>
 
 {:else}
-<div class="w-full">
+<div class="w-screen">
   <button type="button" on:click={create} class="btn variant-filled bg-secondary-400 "><Fa icon={faPlus}/></button>
 </div>
 {/if}
