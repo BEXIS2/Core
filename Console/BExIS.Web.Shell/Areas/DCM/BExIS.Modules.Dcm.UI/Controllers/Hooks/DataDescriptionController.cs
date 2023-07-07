@@ -250,7 +250,6 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             return Json(tmp, JsonRequestBehavior.AllowGet);
         }
 
-       
         [HttpPut]
         public JsonResult Set(long id, long structureId)
         {

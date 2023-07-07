@@ -4,7 +4,7 @@ import {Spinner} from '@bexis2/bexis2-core-ui';
 import Fa from 'svelte-fa/src/fa.svelte'
 import { faTrash } from '@fortawesome/free-solid-svg-icons'
 
-import { removeStructure} from '../../../services/DataDescriptionCaller'
+import { removeStructure} from '$services/DataDescriptionCaller'
 import { latestDataDescriptionDate } from '../../../routes/edit/stores';
 
 export let id;

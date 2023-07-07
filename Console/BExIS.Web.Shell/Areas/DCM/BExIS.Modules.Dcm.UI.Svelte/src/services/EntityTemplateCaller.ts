@@ -7,6 +7,7 @@ export const getEntityTemplate = async (id:bigint) => {
     return response.data;
   } catch (error) {
     console.error(error);
+    throw error;
   }
 };
 
@@ -16,6 +17,7 @@ export const getEntityTemplateList = async () => {
     return response.data;
   } catch (error) {
     console.error(error);
+    throw error;
   }
 };
 
@@ -25,6 +27,7 @@ export const getEntities = async () => {
     return response.data;
   } catch (error) {
     console.error(error);
+    throw error;
   }
 };
 
@@ -34,6 +37,7 @@ export const getMetadataStructures = async () => {
     return response.data;
   } catch (error) {
     console.error(error);
+    throw error;
   }
 };
 
@@ -45,6 +49,7 @@ export const getSystemKeys= async (id) => {
     return response.data;
   } catch (error) {
     console.error(error);
+    throw error;
   }
 };
 
@@ -55,6 +60,7 @@ export const getDataStructures = async () => {
     return response.data;
   } catch (error) {
     console.error(error);
+    throw error;
   }
 };
 
@@ -64,7 +70,7 @@ export const getHooks = async () => {
     return response.data;
   } catch (error) {
     console.error(error);
-    throw new Error(error);
+    throw error;
   }
 };
 
@@ -74,7 +80,7 @@ export const getGroups = async () => {
     return response.data;
   } catch (error) {
     console.error(error);
-    throw new Error(error);
+    throw error;
   }
 };
 
@@ -84,7 +90,7 @@ export const getFileTypes = async () => {
     return response.data;
   } catch (error) {
     console.error(error);
-    throw new Error(error);
+    throw error;
   }
 };
 
@@ -95,7 +101,7 @@ export const saveEntityTemplate = async (entityTemplate:EntityTemplateModel) => 
     return response.data;
   } catch (error) {
     console.error(error);
-    throw new Error(error);
+    throw error;
   }
 };
 
@@ -105,7 +111,7 @@ export const deleteEntityTemplate = async (id:bigint) => {
     return response.data;
   } catch (error) {
     console.error(error);
-    throw new Error(error);
+    throw error;
   }
 };
 

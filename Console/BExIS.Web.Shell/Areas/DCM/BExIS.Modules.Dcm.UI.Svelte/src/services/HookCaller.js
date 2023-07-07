@@ -9,6 +9,8 @@ export const getHookStart = async (action, id, version) => {
     return response.data;
   } catch (error) {
     console.error(error);
+    const m = "the area of "+{id}+" cannot be loaded." 
+    throw new Error(m);
   }
 };
 
@@ -20,6 +22,8 @@ export const getViewStart = async (action, id, version) => {
     return response.data;
   } catch (error) {
     console.error(error);
+    const m = "the area of "+{id}+" cannot be loaded." 
+    throw new Error(m);
   }
  };
  
