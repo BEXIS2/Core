@@ -5,6 +5,7 @@ import Attachments from '$lib/hooks/Attachment.svelte'
 
 import {Spinner} from '@bexis2/bexis2-core-ui';
 import {onMount} from 'svelte'
+	import { construct_svelte_component } from 'svelte/internal';
 
 
  export let id;
@@ -19,8 +20,9 @@ $:addtionalhooks= [];
 
 function seperateHooks(hooks)
 {
+  console.log("h",hooks);
   hooks.forEach(element => {
-    
+  
      if(element.name == "attachments"){ attachmentHook = element;} 
      else
      {

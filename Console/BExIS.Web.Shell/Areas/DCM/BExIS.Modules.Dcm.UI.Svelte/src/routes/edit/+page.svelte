@@ -4,14 +4,14 @@
  import { fade  } from 'svelte/transition'; 
 
  import { getEdit }  from './services'
- import { setApiConfig, Spinner, Page }  from '@bexis2/bexis2-core-ui'
+ import { Spinner, Page, ErrorMessage, pageContentLayoutType }  from '@bexis2/bexis2-core-ui'
  
  import Header from './Header.svelte'
  import Data from './Data.svelte'
  import Hooks from './Hooks.svelte'
  import Message from './MessagesContainer.svelte'
  import Debug from '$lib/components/Debug.svelte'
- 
+
  import { latestFileUploadDate, latestDataDescriptionDate, hooksStatus } from './stores';
  
  import type { EditModel, HookModel, ViewModel} from './types';
@@ -60,80 +60,47 @@ $:hookStatusList
  let messageView:ViewModel;
  $:messageView;
 
+// latestFileUploadDate.subscribe(e =>{
+//   console.log("latestFileUploadDate")
+//   load();
+// })
 
- onMount(async () => {
-
-   // get data from parent
-   container = document.getElementById('edit');
-   id = Number(container?.getAttribute("dataset"));
-   version = Number(container?.getAttribute("version"));
-
-   console.log("start edit",id,version);
-
-   // load
-   await load();
- })
-
-
- latestFileUploadDate.subscribe(e =>{
-  reload();
-})
-
-latestDataDescriptionDate.subscribe(e =>{
-  reload();
-})
+// latestDataDescriptionDate.subscribe(e =>{
+//   load();
+// })
 
 async function load()
 {
-  console.log("load");
+  // get data from parent
+  container = document.getElementById('edit');
+  id = Number(container?.getAttribute("dataset"));
+  version = Number(container?.getAttribute("version"));
+
   // load model froms server
   model = await getEdit(id);
-  console.log("edit after wait", model);
-
-
-  if(isEditModel(model))
-  {
-
-   console.log("edit after check", model);
-
-   hooks = model.hooks;
-   views = model.views;
-   title = model.title;
-   version = model.version
-
-   // update store
-   updateStatus(hooks);
-
-   // sam/ui/scripts/userpermission.js
-   // load svelte
-
-   // seperate dcm hooks from other hooks
-   seperateHooks(hooks);
-
-   // get resultView
-   seperateViews(views);
-   console.log("test")
-  }
-
-  console.log("model and hooks", model,hookStatusList);
-}
-
-async function reload()
-{
-  console.log("reload");
-
-  // setApiConfig("https://localhost:44345","davidschoene","123456");
-  // load model froms server
-  model = await getEdit(id);
+  console.log("edit model ",model)
   hooks = model.hooks
+  views = model.views;
+  title = model.title;
+  version = model.version
 
   // there is a need for a time delay to update the hook status
   // if not exit, the first run faild because the hooks are not  
   setTimeout(async () => {
-				// update store
-        updateStatus(model.hooks);
-			}, 1000) /* <--- If this is enough greater than transition, it doesn't happen... */
+    // update store
+    updateStatus(model.hooks);
 
+      // seperate dcm hooks from other hooks
+      seperateHooks(hooks);
+
+      // get resultView
+      seperateViews(views);
+  
+  }, 1000) /* <--- If this is enough greater than transition, it doesn't happen... */
+
+
+
+  console.log("model and hooks", model,hookStatusList);
 }
 
 
@@ -141,6 +108,9 @@ async function reload()
 // known hooks - metadata, fileupload, validation
 function seperateHooks(hooks:HookModel[])
 {
+  datasethooks = [];
+  addtionalhooks = [];
+
   hooks.forEach(element => {
      if(
      element.name == "metadata" || 
@@ -187,9 +157,9 @@ function updateStatus(_hooks)
       dic[hook.name] = hook.status
     });
 
-    console.log("cuurent Hookstatus",$hooksStatus);
+    //console.log("cuurent Hookstatus",$hooksStatus);
     hooksStatus.set(dic);
-    console.log("update Hookstatus",$hooksStatus);
+    //console.log("update Hookstatus",$hooksStatus);
   }
 
   hookStatusList = $hooksStatus;
@@ -200,24 +170,35 @@ let visible=false;
 
 </script>
 
-<Page title="Edit dataset: {model.title}">
 
+  <Page title="Edit dataset: {model.title}" contentLayoutType={pageContentLayoutType.full}>
 
-{#if model && hookStatusList} <!--if the model == true, load page-->
-<!-- Header -->
-<Header {id} {version} {title} />
+{#await load()}
+  <div class="w-full h-full text-surface-600">
+    <Spinner label="loading edit page" />
+  </div>
+{:then a}
+    {#if model && hookStatusList} <!--if the model == true, load page-->
+    <!-- Header -->
+    <Header {id} {version} {title} />
 
-<!-- Data Module Hooks -->
-<Data bind:hooks= {datasethooks} {id} {version}/>
+    <!-- Data Module Hooks -->
+    <Data bind:hooks= {datasethooks} {id} {version}/>
 
-<hr class="!border-dashed" />
+    <hr class="!border-dashed" />
 
-<Hooks bind:hooks= {addtionalhooks} {id} {version} />
+    <Hooks bind:hooks= {addtionalhooks} {id} {version} />
 
-{:else}  <!-- access denied -->
-<div class="h-screen">
-  <Spinner textCss="text-surface-800" label="loading edit page" position="center"/>
-</div>
-{/if}
+    {:else}  <!-- access denied -->
+    <div class="h-screen">
+      <Spinner textCss="text-surface-800" label="loading edit page" position="center"/>
+    </div>
+    {/if}
+
+{:catch error}
+   
+  <ErrorMessage {error}/>
+
+{/await}
 
 </Page>

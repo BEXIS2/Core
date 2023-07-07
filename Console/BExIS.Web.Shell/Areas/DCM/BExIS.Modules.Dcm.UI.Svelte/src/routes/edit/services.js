@@ -14,6 +14,7 @@ export const getEdit = async (id) => {
       
     } catch (error) {
       console.error("error",error);
+      throw error;
     }
 };
 
@@ -27,6 +28,7 @@ export const loadMessages = async (id) => {
     return response.data;
   } catch (error) {
     console.error(error);
+    throw error;
   }
 };
 
@@ -38,22 +40,18 @@ export const saveFileDescription = async (action, id, file, description ) => {
     return response.data;
   } catch (error) {
     console.error(error);
+    throw error;
   }
 };
 
 // remove file from server
 export const removeFile = async (action, id, file ) => {
   try {
-    // console.log("remove")
-    // console.log(action)
-    // console.log(id)
-    // console.log(file)
-    
 
     const response = await Api.post(action, {id,file} );
     return response.data;
   } catch (error) {
     console.error(error);
+    throw error;
   }
-
 };
