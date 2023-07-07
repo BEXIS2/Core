@@ -1,7 +1,8 @@
 <script lang="ts">
  
- import { onMount } from 'svelte'; 
  import { fade } from 'svelte/transition';
+
+ import { positionType, ErrorMessage } from '@bexis2/bexis2-core-ui';
 
  // ui components
  import Fa from 'svelte-fa/src/fa.svelte'
@@ -10,7 +11,7 @@
  import Edit from './Edit.svelte';
  
  // services
- import { Page }  from '@bexis2/bexis2-core-ui'
+ import { Page, Spinner }  from '@bexis2/bexis2-core-ui'
 
 
  import { 
@@ -46,15 +47,10 @@
  $:entitytemplates;
  
 
-//  entityTemplatesStore.subscribe(value => {
-// 		entitytemplates = value;
-// 	});
-
-
- onMount(async () => {
-   console.log("start entity template");
-
+ async function load()
+ { 
    hooks = await getHooks();
+   console.log("hooks",hooks);
    metadataStructures = await getMetadataStructures();
    dataStructures = await getDataStructures();
    entities = await getEntities();
@@ -63,17 +59,8 @@
  
    entitytemplates =  await getEntityTemplateList();
    entityTemplatesStore.set(entitytemplates);
- 
-  //  console.log("hooks", hooks);
-  //  console.log("metadataStructures", metadataStructures);
-  //  console.log("dataStructures",dataStructures);
-  //  console.log("systemKeys",systemKeys);
-  //  console.log("entities",entities);
-  //  console.log("groups",groups);
-  //  console.log("filetypes",filetypes);
-   //console.log("entitytemplates", entitytemplates);
-  
- })
+
+ }
  
  async function refresh(e:any)
  {
@@ -128,25 +115,37 @@
 
 <svelte:fragment>
 
-{#if isOpen}
+{#await load()}
+  <div class="text-surface-800">
+    <Spinner position={positionType.center} label="loading entity templates" />
+  </div>
+{:then result}
 
-<Edit id = {selectedEntityTemplate} 
-   {hooks} 
-   {metadataStructures} 
-   {dataStructures} 
-   {entities} 
-   {groups} 
-   {filetypes} 
-   on:save={refresh} 
-   on:cancel={()=>isOpen=false}/>
+  {#if isOpen}
 
-{:else}
-<div class="w-screen">
-  <button type="button" on:click={create} class="btn variant-filled bg-secondary-400 "><Fa icon={faPlus}/></button>
-</div>
-{/if}
+  <Edit id = {selectedEntityTemplate} 
+    {hooks} 
+    {metadataStructures} 
+    {dataStructures} 
+    {entities} 
+    {groups} 
+    {filetypes} 
+    on:save={refresh} 
+    on:cancel={()=>isOpen=false}/>
 
-<Overview bind:entitytemplates={entitytemplates} on:edit={edit} />
+  {:else}
+  <div class="w-screen">
+    <button type="button" on:click={create} class="btn variant-filled bg-secondary-400 "><Fa icon={faPlus}/></button>
+  </div>
+  {/if}
+
+  <Overview bind:entitytemplates={entitytemplates} on:edit={edit} />
+
+{:catch error}
+ 
+  <ErrorMessage {error}/>
+ 
+{/await}
 
 
 </svelte:fragment>

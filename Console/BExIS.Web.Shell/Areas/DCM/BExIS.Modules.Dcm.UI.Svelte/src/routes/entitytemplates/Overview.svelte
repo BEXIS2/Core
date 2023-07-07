@@ -12,7 +12,7 @@
 	import { Modal, modalStore } from '@skeletonlabs/skeleton';
 
 	//services
-	import { setApiConfig, positionType } from '@bexis2/bexis2-core-ui';
+	import { positionType } from '@bexis2/bexis2-core-ui';
 	import { deleteEntityTemplate } from '../../services/EntityTemplateCaller';
 
 	//types
