@@ -1,9 +1,9 @@
 export interface ValidationResult {
-    isValid: boolean;
-    validationItems: ValidationItem[];
+	isValid: boolean;
+	validationItems: ValidationItem[];
 }
 
 export interface ValidationItem {
-    name: string;
-    message: string;
+	name: string;
+	message: string;
 }
