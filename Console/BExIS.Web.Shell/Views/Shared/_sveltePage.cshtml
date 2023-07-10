@@ -22,9 +22,16 @@
             console.log("pathname", location.pathname);
 
             const base = new URL(".", location).pathname.slice(0, -1);
+            const assets = "../Scripts/svelte"
+
+            const a = "./Scripts/svelte"
+
+            console.log(base);
+            console.log(a);
+            console.log(assets);
 
             __sveltekit_1yilire = {
-    
+                assets: "../Scripts/svelte",
                 base: base,
                 env: {}
             };
