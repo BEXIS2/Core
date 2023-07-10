@@ -23,12 +23,13 @@
             //location.pathname = "/dcm/create/";
             console.log("pathname", location.pathname);
 
-            __sveltekit_jzt7tf = {
+            __sveltekit_1yilire = {
+                assets: "../Scripts/svelte",
                 base: new URL(".", location).pathname.slice(0, -1),
                 env: {}
             };
 
-            console.log(__sveltekit_jzt7tf);
+            console.log(__sveltekit_1yilire);
 
             const element = document.currentScript.parentElement;
 
@@ -40,11 +41,6 @@
                 import('@start'),
                 import('@app')
             ]).then(([kit, app]) => {
-
-                console.log("kit", kit);
-                console.log("app", app);
-  
-
                 kit.start(app, element);
             });
         }
