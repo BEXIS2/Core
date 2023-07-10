@@ -19,13 +19,14 @@
             console.log("pathname.slice", location.pathname.slice(0, -1));
             console.log("url", new URL(".", location));
             console.log("url.path.slice", new URL(".", location).pathname.slice(0, -1));
-
-            //location.pathname = "/dcm/create/";
             console.log("pathname", location.pathname);
 
+            const url = new URL(".", location).pathname.slice(0, -1);
+            const assets = "../Scripts/svelte"
+            console.log(url)
             __sveltekit_1yilire = {
-                assets: "../Scripts/svelte",
-                base: new URL(".", location).pathname.slice(0, -1),
+                assets: assets,
+                base: url,
                 env: {}
             };
 
