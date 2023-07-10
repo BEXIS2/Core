@@ -19,7 +19,9 @@ const config = {
 			strict:false
 		}),
 		paths:{
-			base: process.env.NODE_ENV ==='production' ? '/areas/dcm/Scripts/svelte':'' // add module id here
+			relative:true,
+			base: process.env.NODE_ENV ==='production' ? '/dcm':''// add module id here,
+
 		},
 
 		alias: {
