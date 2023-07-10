@@ -3,13 +3,13 @@
 import { onMount } from 'svelte';
 import { fade } from 'svelte/transition';
 import { Modal, modalStore } from '@skeletonlabs/skeleton';
-import { setApiConfig, Spinner, Table } from '@bexis2/bexis2-core-ui';
+import { Spinner, Table } from '@bexis2/bexis2-core-ui';
 import * as apiCalls  from './services/apiCalls';
 import Form from './components/form.svelte';
 import TableOption from './components/tableOptions.svelte';
 import { writable, type Writable } from 'svelte/store';
 
-import type { ModalSettings, ModalComponent } from '@skeletonlabs/skeleton';
+import type { ModalSettings } from '@skeletonlabs/skeleton';
 import type { DimensionListItem} from "./models";
 
   
@@ -21,7 +21,6 @@ $:dimensions = ds;
 $:tableStore.set(ds);
 
 onMount(async () => {
-  setApiConfig("https://localhost:44345","*","*");
   ds = await apiCalls.GetDimensions();
   clear();
 });

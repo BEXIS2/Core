@@ -224,7 +224,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                 }
                 else
                 {
-                    if (!units.Where(p => p.Name.ToLower().Equals(unitListItem.Name.ToLower())).Any())
+                    if (units.Where(p => p.Name.ToLower().Equals(unitListItem.Name.ToLower())).Any())
                     {
                         if (unitListItem.Id != units.Where(p => p.Name.ToLower().Equals(unitListItem.Name.ToLower())).ToList().First().Id)
                         {
@@ -241,7 +241,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                 }
                 else
                 {
-                    if (!units.Where(p => p.Abbreviation.ToLower().Equals(unitListItem.Abbreviation.ToLower())).Any())
+                    if (units.Where(p => p.Abbreviation.ToLower().Equals(unitListItem.Abbreviation.ToLower())).Any())
                     {
                         if (unitListItem.Id != units.Where(p => p.Abbreviation.ToLower().Equals(unitListItem.Abbreviation.ToLower())).ToList().First().Id)
                         {

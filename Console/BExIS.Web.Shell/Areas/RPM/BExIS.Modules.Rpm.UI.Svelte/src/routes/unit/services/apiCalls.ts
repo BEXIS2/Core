@@ -13,6 +13,7 @@ export const GetUnits = async () => {
   catch (error) 
   {
     console.error(error);
+    throw error;
   }
 };
 
@@ -25,6 +26,7 @@ export const GetMeasurementSystems = async () => {
   catch (error) 
   {
     console.error(error);
+    throw error;
   }
 };
 
@@ -37,6 +39,7 @@ export const GetDataTypes = async () => {
   catch (error) 
   {
     console.error(error);
+    throw error;
   }
 };
 
@@ -49,6 +52,7 @@ export const GetDimensions = async () => {
   catch (error) 
   {
     console.error(error);
+    throw error;
   }
 };
 
@@ -61,6 +65,7 @@ export const EditUnit = async (unitListItem:UnitListItem) => {
   catch (error) 
   {
     console.error(error);
+    throw error;
   }
 };
 
@@ -73,6 +78,7 @@ export const DeleteUnit = async (id:number) => {
   catch (error) 
   {
     console.error(error);
+    throw error;
   }
 };
 

@@ -147,7 +147,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                 }
                 else
                 {
-                    if (!dimensions.Where(p => p.Name.ToLower().Equals(dimensionListItem.Name.ToLower())).Any())
+                    if (dimensions.Where(p => p.Name.ToLower().Equals(dimensionListItem.Name.ToLower())).Any())
                     {
                         if (dimensionListItem.Id != dimensions.Where(p => p.Name.ToLower().Equals(dimensionListItem.Name.ToLower())).ToList().First().Id)
                         {

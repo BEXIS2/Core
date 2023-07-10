@@ -1,5 +1,5 @@
 import {Api} from "@bexis2/bexis2-core-ui";
-import type { DimensionListItem} from "./models";
+import type { DimensionListItem} from "../models";
 
 export const GetDimensions = async () => {
   try 
