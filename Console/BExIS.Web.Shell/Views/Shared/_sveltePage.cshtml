@@ -21,12 +21,11 @@
             console.log("url.path.slice", new URL(".", location).pathname.slice(0, -1));
             console.log("pathname", location.pathname);
 
-            const url = new URL(".", location).pathname.slice(0, -1);
-            const assets = "../Scripts/svelte"
-            console.log(url)
+            const base = new URL(".", location).pathname.slice(0, -1);
+
             __sveltekit_1yilire = {
-                assets: assets,
-                base: url,
+    
+                base: base,
                 env: {}
             };
 
