@@ -21,19 +21,25 @@
             console.log("url.path.slice", new URL(".", location).pathname.slice(0, -1));
             console.log("pathname", location.pathname);
 
-            const base = new URL(".", location).pathname.slice(0, -1);
+            const base = new URL(".", location).pathname.slice(0, -1) +"/BExIS.Modules.Dcm.UI";
             const assets = base+"/Scripts/svelte"
 
             console.log(base);
             console.log(assets);
 
-            __sveltekit_1yilire = {
-                assets: assets,
-                base: base,
+            //__sveltekit_1yilire = {
+              
+            //    base: "/dcm",
+            //    env: {}
+            //};
+
+            __sveltekit_19e9fi3 = {
+                assets: "/Areas/DCM/BExIS.Modules.DCM.UI/Scripts/svelte",
+                base: new URL("..", location).pathname.slice(0, -1),
                 env: {}
             };
 
-            console.log(__sveltekit_1yilire);
+            console.log(__sveltekit_19e9fi3);
 
             const element = document.currentScript.parentElement;
 
