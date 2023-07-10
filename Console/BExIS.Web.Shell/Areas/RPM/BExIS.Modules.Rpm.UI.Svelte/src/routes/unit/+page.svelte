@@ -1,30 +1,33 @@
 <script lang="ts">
-
 import { onMount } from 'svelte';
-import { fade } from 'svelte/transition';
+import { slide, fade } from 'svelte/transition';
 import { Modal, modalStore } from '@skeletonlabs/skeleton';
-import { setApiConfig, Spinner, Table } from '@bexis2/bexis2-core-ui';
+import { Page, Table, ErrorMessage, helpStore } from '@bexis2/bexis2-core-ui';
 import * as apiCalls  from './services/apiCalls';
 import Form from './components/form.svelte';
+import TablePlaceholder from '../components/tablePlaceholder.svelte';
 import TableOption from './components/tableOptions.svelte';
 import { writable, type Writable } from 'svelte/store';
+import Fa from 'svelte-fa';
+import { faPlus, faXmark} from '@fortawesome/free-solid-svg-icons';
 
-import type { ModalSettings, ModalComponent } from '@skeletonlabs/skeleton';
-import type {UnitListItem, DimensionListItem} from "./models";
+import type { ModalSettings } from '@skeletonlabs/skeleton';
+import type { UnitListItem } from "./models";
+import type {helpItemType} from "@bexis2/bexis2-core-ui"; 
 
+//help
+import help from './help/help.json';
+let helpItems: helpItemType[] = help.helpItems;
   
 let u: UnitListItem[] = [];
 let unit:UnitListItem;
 const tableStore = writable<any[]>([]);
 let showForm=false;
 $:units = u;
-$:ts = setTableStore(u);
-$:tableStore.set(ts);
+$:tableStore.set(setTableStore(u));
 
 onMount(async () => {
-  setApiConfig("https://localhost:44345","*","*");
-  u = await apiCalls.GetUnits();
-  clear();
+  helpStore.setHelpItemList(helpItems);
 });
 
 function setTableStore(unitListItems:UnitListItem[]):any[]
@@ -59,14 +62,14 @@ function setTableStore(unitListItems:UnitListItem[]):any[]
     return t;
   }
 
-async function reload(): Promise<void>
+async function reload()
 {
   showForm=false;
   u = await apiCalls.GetUnits();
   clear();
 }
 
-async function clear()
+function clear()
 {
   unit= {
     id:0,
@@ -82,6 +85,7 @@ async function clear()
 function editUnit(type:any)
 {
   unit = units.find(u => u.id === type.id)!;
+  console.log("Unit", unit);
   if(type.action == 'edit')
   {
     showForm=true;
@@ -107,44 +111,77 @@ async function deleteUnit(id:number)
   reload();
 }
 
+function toggleForm()
+{
+  if(showForm)
+  {
+    clear()
+  }
+  showForm = !showForm;
+}
+
 </script>
 
-<div class="p-5">
-{#if ts.length > 0 && ts}
+<Page help={true}>
+<!-- <div class="flex justify-center">
+<div class="p-5 max-w-7xl"> -->
+  <h1 class="h1">Units</h1>
+  {#await reload()}
+  <div class="grid w-full grid-cols-2 gap-5 my-4 pb-1 border-b border-primary-500">
+    <div class="h-9 w-96 placeholder animate-pulse">
+    </div>
+    <div class="flex justify-end">
+      <button class="btn placeholder animate-pulse shadow-md h-9 w-16"><Fa icon={faPlus}></Fa></button>
+    </div>
+  </div>
 
-  <h1>units</h1>
-  
-  <div class="py-5">
-    {#if showForm}
-      <div in:fade out:fade>
-        <Form {unit} {units} on:cancel={reload} on:save={reload}/>
+  <div>
+    <TablePlaceholder cols={7}/>
+  </div>
+  {:then}
+    <!-- svelte-ignore a11y-click-events-have-key-events -->
+    <div class="grid grid-cols-2 gap-5 my-4 pb-1 border-b border-primary-500">
+      <div class="h3 h-9">
+        {#if unit.id < 1}
+          Create neẇ Unit
+        {:else}
+          {unit.name}
+        {/if}
       </div>
-    {:else}
-      <button type="button" class="btn variant-filled" on:click={() => (showForm = !showForm)}>+</button>
-    {/if}
-  
-  </div>
+      <div class="text-right">
+        {#if !showForm}
+        <!-- svelte-ignore a11y-mouse-events-have-key-events -->
+        <button in:fade out:fade class="btn variant-filled-secondary shadow-md h-9 w-16" title="Create neẇ Unit" id="create"on:mouseover={() => {helpStore.show('create');}} on:click={() => toggleForm()}><Fa icon={faPlus}></Fa></button>
+        {/if}
+      </div>
+    </div>
 
-  <div class="w-max">
-  <Table on:action=
-    {(obj) => editUnit(obj.detail.type)}  
-  config=
-    {{
-      id: 'Units',
-      data: tableStore,
-      optionsComponent: TableOption,
-      columns: {
-			  id: {
-				exclude: true
-			  },
-      }
-    }}
-  />
-  </div>
- 
-{:else}
-<Spinner/>  
-{/if}
-</div>
-
+      {#if showForm}
+        <div in:slide out:slide>
+          <Form {unit} {units} on:cancel={toggleForm} on:save={reload}/>
+        </div>
+      {/if}
+    
+    <div>
+    <Table on:action=
+      {(obj) => editUnit(obj.detail.type)}  
+    config=
+      {{
+        id: 'Units',
+        data: tableStore,
+        optionsComponent: TableOption,
+        columns: {
+          id: {
+          exclude: true
+          },
+        }
+      }}
+    />
+    </div>
+  {:catch error}
+      <ErrorMessage {error}/>
+  {/await}
+<!-- </div>
+</div> -->
+</Page>
 <Modal/>
