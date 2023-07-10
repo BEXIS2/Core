@@ -1,8 +1,8 @@
 diff --git a/node_modules/@sveltejs/kit/src/exports/vite/index.js b/node_modules/@sveltejs/kit/src/exports/vite/index.js
-index 028d873..1e43886 100644
+index a26ca5b..6544f58 100644
 --- a/node_modules/@sveltejs/kit/src/exports/vite/index.js
 +++ b/node_modules/@sveltejs/kit/src/exports/vite/index.js
-@@ -797,8 +797,8 @@ function kit({ svelte_config }) {
+@@ -794,8 +794,8 @@ function kit({ svelte_config }) {
  					);
  
  					// avoid making the manifest available to users
