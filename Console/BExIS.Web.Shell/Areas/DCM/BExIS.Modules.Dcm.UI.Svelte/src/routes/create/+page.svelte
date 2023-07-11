@@ -68,9 +68,9 @@ title="Create a Dataset"
 note="On this page you can create a dataset based on a template. please select on template and fill out the form." 
 {links} >
 
-<div in:fade={{ delay: 500 }} out:fade={{ delay: 500 }} >
+<div in:fade={{ delay: 500 }} out:fade={{ delay: 500 }}  class="w-full">
 {#if entitytemplates}
-<div class="w-full grid grid-cols-1 md:grid-cols-2 gap-5">
+<div class="w-full grid grid-cols-1 lg:grid-cols-2 gap-5">
 
   <List items={entitytemplates} on:select={handleSelect}/>
 

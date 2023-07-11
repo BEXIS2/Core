@@ -19,7 +19,7 @@ export let allowedFileTypes=[];
 
 <div class="m-1 grid grid-cols-9 border-b-violet-700 p-5 shadow-md ring-1 ring-gray-900/5
 hover:bg-primary-100 space-x-100 active:bg-primary-300" on:click >
-   <div class="text-left pt-2">   
+   <div class="text-left pt-2 min-w-full">   
       <Fa size="3x" icon={faFileAlt}/>
    </div>
    <div class="text-left col-span-6">
