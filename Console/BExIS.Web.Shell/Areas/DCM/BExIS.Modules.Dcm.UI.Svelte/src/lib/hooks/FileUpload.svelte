@@ -11,6 +11,15 @@ import { latestFileUploadDate } from '../../routes/edit/stores';
 
 import type { fileUploaderModel } from '@bexis2/bexis2-core-ui'
 
+
+// action for fileupload
+let start="";
+let save='/dcm/fileupload/saveFileDescription';
+let remove='/dcm/fileupload/removefile';
+let submit = "/dcm/fileupload/upload";
+let context = "fileupload";
+let error = "";
+
 export let id=0;
 export let version=1;
 export let hook;
@@ -22,13 +31,7 @@ onMount(async () => {
   load();
 })
 
-// action for fileupload
-let start="";
-let save='/dcm/fileupload/saveFileDescription';
-let remove='/dcm/fileupload/removefile';
-let submit = "/dcm/fileupload/upload";
-let context = "fileupload";
-let error = "";
+
 
 $:loading = false;
 $:existError = false;
@@ -42,8 +45,6 @@ async function load()
 
   loading = false;
 
-  //console.log("FileUploadHook",model)
-  
 }
 
 async function reload(e) 
@@ -72,19 +73,23 @@ function warning(e)
 
 </script>
 
-{#if model != undefined}
-  {#if model.lastModification}
+{#await load()}
+  <div class="text-surface-800">
+    <Spinner label="loading File Uploader" />
+  </div>
 
-  <TimeDuration milliseconds={new Date(model.lastModification).getTime()}/>
+{:then result}
 
-  {/if}
-    <FileUploader {id} {version} {context} data={model} {start} {submit} on:submited={reload} on:submit={()=>loading=true} on:error on:success/>
-  {#if model.existingFiles}
-    <FileOverview {id} files={model.existingFiles} descriptionType={model.descriptionType} {save} {remove} on:success={success} on:warning={warning} />
-  {/if}
-
-  {#if loading}
-    <Spinner />
-  {/if}
-
+{#if model.lastModification}
+  <TimeDuration milliseconds={new Date(model.lastModification)}/>
 {/if}
+  <FileUploader {id} {version} {context} data={model} {start} {submit} on:submited={load} on:submit={()=>loading=true } on:error on:success />
+{#if model.existingFiles}
+  <FileOverview {id} files={model.existingFiles} descriptionType={model.descriptionType} {save} {remove} on:success/>
+{/if}
+
+{:catch error} 
+
+  <ErrorMessage {error}/>
+
+{/await}

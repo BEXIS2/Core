@@ -32,9 +32,11 @@ function seperateHooks(hooks)
     });
 }
 
-let hookColor = "bg-surface-300"
+let hookColor = "bg-surface-200"
  
 </script>
+
+<div class="{hookColor}">
  {#if addtionalhooks} <!-- if hooks list is loaded render hooks -->
 
  <HookContainer {...attachmentHook}  let:errorHandler let:successHandler  color="{hookColor}" >
@@ -55,5 +57,5 @@ let hookColor = "bg-surface-300"
     <Spinner/>
  {/if}
 
-
+</div> 
 
