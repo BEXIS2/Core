@@ -1,19 +1,18 @@
-import type {ValidationResult} from "../../models";
+import type { ValidationResult } from '../../models';
 
-export interface DimensionListItem{
-    id: number;
-    name: string;
+export interface DimensionListItem {
+	id: number;
+	name: string;
 }
 
 export interface DimensionListItem {
-    id: number;
-    name: string;
-    description: string;
-    specification: string;
+	id: number;
+	name: string;
+	description: string;
+	specification: string;
 }
 
 export interface DimensionValidationResult {
-    validationResult:ValidationResult;
-    unitListItem:DimensionListItem;
+	validationResult: ValidationResult;
+	unitListItem: DimensionListItem;
 }
-
