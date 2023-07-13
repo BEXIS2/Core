@@ -125,7 +125,7 @@ namespace BExIS.Modules.Rpm.UI.Helpers
                 {
                     operationManager.Create("RPM", "LinksMeanings", "*", dataMeaning);
                 }
-                using (meaningManagr _meaningManager = new meaningManagr())
+                using (meaningManager _meaningManager = new meaningManager())
                 {
                     _meaningManager.addExternalLink("http://exampleURI_1", "Example 1", "entity");
                     _meaningManager.addExternalLink("http://exampleURI_2", "Example 2", "entity");

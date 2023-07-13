@@ -100,7 +100,7 @@
     <Compile Include="Meanings\ExternalLinks.cs" />
     <Compile Include="Meanings\ImeaningManagr.cs" />
     <Compile Include="Meanings\Meaning.cs" />
-    <Compile Include="Meanings\meaningManagr.cs" />
+    <Compile Include="Meanings\meaningManager.cs" />
     <Compile Include="MetadataStrcuture\MetadataNestedAttributeUsage.cs" />
     <Compile Include="MetadataStrcuture\MetadataAttribute.cs" />
     <Compile Include="MetadataStrcuture\MetadataAttributeUsage.cs" />

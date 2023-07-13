@@ -11,12 +11,12 @@ using BExIS.Dlm.Entities.DataStructure;
 
 namespace BExIS.Dlm.Entities.Meanings
 {
-    public class meaningManagr : ImeaningManagr 
+    public class meaningManager : ImeaningManagr 
     {
         // Track whether Dispose has been called.
         private bool disposedValue;
 
-        public meaningManagr()
+        public meaningManager()
         {
         }
 
