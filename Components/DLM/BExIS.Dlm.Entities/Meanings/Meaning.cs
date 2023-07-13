@@ -18,23 +18,22 @@ namespace BExIS.Dlm.Entities.Meanings
             this.Name = meaning.Name;
             this.ShortName = meaning.ShortName;
             this.Description = meaning.Description;
-            this.approved = meaning.approved;
-            this.selectable = meaning.selectable;
-            this.variable = meaning.variable;
-            this.externalLink = meaning.externalLink;
-            this.related_meaning = meaning.related_meaning;
+            this.Selectable = meaning.Selectable;
+            this.Variable = meaning.Variable;
+            this.ExternalLink = meaning.ExternalLink;
+            this.Related_meaning = meaning.Related_meaning;
         }
 
-        public Meaning(String name, String shortName, String description, Selectable selectable, Approved approved, IEnumerable<ExternalLink> externalLink, IList<Variable> variable, IList<Meaning> meaning)
+        public Meaning(String name, String shortName, String description, Selectable Selectable, Approved approved, IEnumerable<ExternalLink> ExternalLink, IList<Variable> Variable, IList<Meaning> meaning)
         {
             this.Name = name;
             this.ShortName = shortName;
             this.Description = description;
-            this.selectable = selectable;
-            this.approved = approved;
-            this.variable = variable;
-            this.externalLink = externalLink;
-            this.related_meaning = meaning;
+            this.Selectable = Selectable;
+            this.Approved = approved;
+            this.Variable = Variable;
+            this.ExternalLink = ExternalLink;
+            this.Related_meaning = meaning;
         }
 
         [Required(ErrorMessage = "Must not be Empty")]
@@ -44,17 +43,17 @@ namespace BExIS.Dlm.Entities.Meanings
         [Required(ErrorMessage = "Must not be Empty")]
         public virtual String Description { get; set; }
         [Required(ErrorMessage = "Must not be Empty")]
-        public virtual Selectable selectable { get; set; }
+        public virtual Selectable Selectable { get; set; }
         [Required(ErrorMessage = "Must not be Empty")]
-        public virtual Approved approved { get; set; }
+        public virtual Approved Approved { get; set; }
 
         [Required(ErrorMessage = "Must not be Empty")]
-        public virtual IEnumerable<ExternalLink> externalLink { get; set; }
+        public virtual IEnumerable<ExternalLink> ExternalLink { get; set; }
 
         [Required(ErrorMessage = "Must not be Empty")]
-        public virtual IEnumerable<Variable> variable { get; set; }
+        public virtual IEnumerable<Variable> Variable { get; set; }
 
-        public virtual IEnumerable<Meaning> related_meaning { get; set; }
+        public virtual IEnumerable<Meaning> Related_meaning { get; set; }
 
         protected virtual void Dispose(bool disposing)
         {

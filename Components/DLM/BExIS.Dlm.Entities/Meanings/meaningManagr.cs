@@ -148,13 +148,13 @@ namespace BExIS.Dlm.Entities.Meanings
                     Meaning meaning = repo.Get().FirstOrDefault(x => id == x.Id.ToString());
 
                     meaning.Name = Name;
-                    meaning.related_meaning = related_meanings;
-                    meaning.selectable = selectable;
+                    meaning.Related_meaning = related_meanings;
+                    meaning.Selectable = selectable;
                     meaning.ShortName = ShortName;
-                    meaning.variable = variables;
-                    meaning.externalLink = externalLinks;
+                    meaning.Variable = variables;
+                    meaning.ExternalLink = externalLinks;
                     meaning.Description = Description;
-                    meaning.approved = approved;
+                    meaning.Approved = approved;
                     //repo.Merge(meaning);
                     repo.Put(meaning);
                     uow.Commit();
@@ -228,9 +228,9 @@ namespace BExIS.Dlm.Entities.Meanings
 
                     Meaning parentMeaning = repo.Get().FirstOrDefault(x => x.Id.ToString() == parentID);
                     Meaning childMeaning = repo.Get().FirstOrDefault(x => x.Id.ToString() == childID);
-                    List<Meaning> relatedMeaning = parentMeaning.related_meaning.ToList<Meaning>();
+                    List<Meaning> relatedMeaning = parentMeaning.Related_meaning.ToList<Meaning>();
                     relatedMeaning.Add(childMeaning);
-                    parentMeaning.related_meaning = relatedMeaning;
+                    parentMeaning.Related_meaning = relatedMeaning;
                     repo.Put(parentMeaning);
                     uow.Commit();
 

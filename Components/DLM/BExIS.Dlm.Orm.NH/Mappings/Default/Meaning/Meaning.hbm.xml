@@ -23,28 +23,28 @@
 	 <column name="Description" />
 	</property>
 
-	<property name="approved" type="BExIS.Dlm.Entities.Meanings.Approved, BExIS.Dlm.Entities">
-	 <column name="approved"/>
+	<property name="Approved" type="BExIS.Dlm.Entities.Meanings.Approved, BExIS.Dlm.Entities">
+	 <column name="Approved"/>
 	</property>
 
-	<property name="selectable" type="BExIS.Dlm.Entities.Meanings.Selectable, BExIS.Dlm.Entities">
-	 <column name="selectable"/>
+	<property name="Selectable" type="BExIS.Dlm.Entities.Meanings.Selectable, BExIS.Dlm.Entities">
+	 <column name="Selectable"/>
 	</property>
 
-	  <bag  name="externalLink" inverse="false" lazy="true" fetch="select" >
+	  <bag  name="ExternalLink" inverse="false" lazy="true" fetch="select" >
 		  <key>
-			  <column name="externalLinkref" />
+			  <column name="ExternalLinkref" />
 		  </key>
 		  <one-to-many class="ExternalLink" />
 	  </bag >
 
 
-	  <set name="related_meaning" table="meaning_meaning" inverse="false" lazy="true" fetch="select" cascade="save-update" >
+	  <set name="Related_meaning" table="meaning_meaning" inverse="false" lazy="true" fetch="select" cascade="save-update" >
 		  <key column="MeaningsParentRef"/>
 		  <many-to-many column="MeaningsChildrenRef" class="Meaning"/>
 	  </set>
 
-	  <set name="variable" table="meanings_Variables" inverse="false" lazy="false" fetch="select" cascade="save-update"  >
+	  <set name="Variable" table="Meanings_Variables" inverse="false" lazy="false" fetch="select" cascade="save-update"  >
 		  <key column="id"/>
 		  <many-to-many class="BExIS.Dlm.Entities.DataStructure.Variable" column="Variable"/>
 	  </set>
