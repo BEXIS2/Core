@@ -56,19 +56,14 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             // load cache to get informations about the current upload workflow
             EditDatasetDetailsCache cache = hookManager.LoadCache<EditDatasetDetailsCache>("dataset", "details", HookMode.edit, id);
 
-            //ceck needed informtions from the cache
-            //1. Filereader informations
-            if (cache.ExcelFileReaderInfo == null && cache.AsciiFileReaderInfo == null)
-                errors.Add(new Error(ErrorType.Other, "The validation cannot be executed because file informations are missing."));
-
             //2. Files
             if (cache.Files == null || cache.Files.Any() == false)
-                errors.Add(new Error(ErrorType.Other, "The validation cannot be executed because no files are exiting."));
+                errors.Add(new Error(ErrorType.File, "The validation cannot be executed because no files are exiting."));
 
-            using (var datasetManager = new DatasetManager())
-            using (var dataStructureManager = new DataStructureManager())
+            if (!errors.Any())
             {
-                try
+                using (var datasetManager = new DatasetManager())
+                using (var dataStructureManager = new DataStructureManager())
                 {
                     // check if id is a valid value
                     if (id <= 0)
@@ -78,15 +73,16 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                     var dataset = datasetManager.GetDataset(id); ;
                     if (dataset == null)
                     {
-
-                        errors.Add(new Error(ErrorType.Other, "The validation cannot be executed because a dataset with id " + id + " not exist."));
+                        errors.Add(new Error(ErrorType.Dataset, "The validation cannot be executed because a dataset with id " + id + " not exist.","Dataset"));
                     }
                     else // dataset exist
                     {
+
+                        #region file error
                         // if datastructue is null
                         if (dataset.DataStructure == null)
                         {
-                            errors.Add(new Error(ErrorType.Other, "The validation cannot be executed because a dataset has no structure."));
+                            errors.Add(new Error(ErrorType.Datastructure, "The validation cannot be executed because a dataset has no structure.","Datastructure"));
                         }
                         else // datastrutcure exist
                         {
@@ -105,126 +101,171 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                             // read all files
                             foreach (var file in cache.Files)
                             {
-                                // get extention, name & path
-                                var ext = Path.GetExtension(file.Name);
-                                var fileName = Path.GetFileName(file.Name);
-                                var filePath = Path.Combine(AppConfiguration.DataPath, "Datasets", id.ToString(), "Temp", file.Name);
-
-                                if (System.IO.File.Exists(filePath))
+                                try
                                 {
-                                    // check if hash of file has changed or not exist
-                                    // if so, then valdiate and overide hash if not set results to model
+                                    // get extention, name & path
+                                    var ext = Path.GetExtension(file.Name);
+                                    var fileName = Path.GetFileName(file.Name);
+                                    var filePath = Path.Combine(AppConfiguration.DataPath, "Datasets", id.ToString(), "Temp", file.Name);
 
-                                    string incomingHash = HashHelper.CreateMD5Hash(file.Name, file.Lenght.ToString());
-
-                                    // if a validation is allready run and the file has not changed, skip validation
-                                    if (file.ValidationHash != incomingHash)
+                                    //check file reader info
+                                    bool existReaderInfo = true;
+                                    if (cache.AsciiFileReaderInfo == null)
+                                    {
+                                        existReaderInfo = false;
+                                        file.Errors.Add(new Error(ErrorType.FileReader, "File reader informations missing.", "FileReader"));
+                                    }
+                                    else
                                     {
 
-                                        if (ext.Equals(".xlsm")) // excel Template
+                                        if (System.IO.File.Exists(filePath))
                                         {
-                                            //ExcelReader reader = new ExcelReader(sds, new ExcelFileReaderInfo());
-                                            //Stream = reader.Open(filePath);
-                                            //reader.ValidateTemplateFile(Stream, fileName, id);
-                                            //file.Errors = reader.ErrorMessages;
-                                            //cache.UpdateSetup.RowsCount = reader.NumberOfRows;
-                                            throw new NotImplementedException("validation with .xlsm is not supported yet");
-                                        }
-                                        else
-                                        if (iOUtility.IsSupportedExcelFile(ext)) // Excel
-                                        {
-                                            //ExcelReader reader = new ExcelReader(sds, (ExcelFileReaderInfo)cache.ExcelFileReaderInfo);
-                                            //Stream = reader.Open(filePath);
-                                            //reader.ValidateFile(Stream, fileName, id);
-                                            //file.Errors = reader.ErrorMessages;
-                                            //cache.UpdateSetup.RowsCount = reader.NumberOfRows;
-                                            throw new NotImplementedException("validation with .xlsx is not supported yet");
-                                        }
-                                        else
-                                        if (iOUtility.IsSupportedAsciiFile(ext)) // asccii
-                                        {
-                                            AsciiReader reader = new AsciiReader(sds, (AsciiFileReaderInfo)cache.AsciiFileReaderInfo);
-                                            Stream = reader.Open(filePath);
-                                            //check against primary key
-                                            var unique = uploadWizardHelper.IsUnique(id, ext, fileName, filePath, (AsciiFileReaderInfo)cache.AsciiFileReaderInfo, datastructureId);
-                                            if (!unique)
-                                            {
-                                                file.Errors.Add(new Error(ErrorType.Datastructure, "the data in the file violate the primary key set."));
-                                            }
-                                            //validate
-                                            reader.ValidateFile(Stream, fileName, id);
-                                            file.Errors = reader.ErrorMessages;
-                                            cache.UpdateSetup.RowsCount = reader.NumberOfRows;
-                                        }
+                                            // check if hash of file has changed or not exist
+                                            // if so, then valdiate and overide hash if not set results to model
 
-                                        file.ValidationHash = incomingHash;
+                                            string incomingHash = HashHelper.CreateMD5Hash(file.Name, file.Lenght.ToString());
+
+                                            // if a validation is allready run and the file has not changed, skip validation
+                                            if (file.ValidationHash != incomingHash)
+                                            {
+
+                                                file.Errors = new List<Error>(); // reset error list
+
+                                                if (ext.Equals(".xlsm")) // excel Template
+                                                {
+                                                    //ExcelReader reader = new ExcelReader(sds, new ExcelFileReaderInfo());
+                                                    //Stream = reader.Open(filePath);
+                                                    //reader.ValidateTemplateFile(Stream, fileName, id);
+                                                    //file.Errors = reader.ErrorMessages;
+                                                    //cache.UpdateSetup.RowsCount = reader.NumberOfRows;
+                                                    //throw new NotImplementedException("validation with .xlsm is not supported yet");
+                                                    file.Errors.Add(new Error(ErrorType.File, "Validation with .xlsm is not supported yet.", "File"));
+                                                }
+                                                else
+                                                if (iOUtility.IsSupportedExcelFile(ext)) // Excel
+                                                {
+                                                    //ExcelReader reader = new ExcelReader(sds, (ExcelFileReaderInfo)cache.ExcelFileReaderInfo);
+                                                    //Stream = reader.Open(filePath);
+                                                    //reader.ValidateFile(Stream, fileName, id);
+                                                    //file.Errors = reader.ErrorMessages;
+                                                    //cache.UpdateSetup.RowsCount = reader.NumberOfRows;
+                                                    //throw new NotImplementedException("validation with .xlsx is not supported yet");
+                                                    file.Errors.Add(new Error(ErrorType.File, "Validation with .xlsm is not supported yet.", "File"));
+                                                }
+                                                else
+                                                if (iOUtility.IsSupportedAsciiFile(ext)) // asccii
+                                                {
+                                                    AsciiReader reader = new AsciiReader(sds, (AsciiFileReaderInfo)cache.AsciiFileReaderInfo);
+
+                                                    // current validation direction
+                                                    // check data structure
+                                                    // check values
+                                                    // check primary key
+
+                                                    using (Stream = reader.Open(filePath))
+                                                    {
+                                                        //validate
+                                                        reader.ValidateFile(Stream, fileName, id); // structure and values
+                                                        file.Errors = reader.ErrorMessages;
+                                                        cache.UpdateSetup.RowsCount = reader.NumberOfRows;
+                                                    }
+
+                                                    if (file.Errors == null || file.Errors.Count == 0)
+                                                    {
+                                                        //check against primary key
+                                                        var unique = uploadWizardHelper.IsUnique(id, ext, fileName, filePath, (AsciiFileReaderInfo)cache.AsciiFileReaderInfo, datastructureId);
+                                                        if (!unique)
+                                                        {
+                                                            file.Errors.Add(new Error(ErrorType.PrimaryKey, "the data in the file violate the primary key set.", "Primary Key"));
+                                                        }
+                                                    }
+                                                }
+
+                                                file.ValidationHash = incomingHash;
+                                            }
+                                        }
+                                        else
+                                        {
+                                            file.Errors.Add(new Error(ErrorType.File, "File is missing.", "File"));
+                                        }
                                     }
                                 }
-
-                                if (file.Errors.Any())
+                                catch (Exception ex)
                                 {
-                                    FileErrors fileErrors = new FileErrors();
-                                    fileErrors.File = file.Name;
-                                    file.Errors.ForEach(e => fileErrors.Errors.Add(e.ToHtmlString()));
-                                    fileErrors.SortedErrors = SortErrors(file.Errors);
-                                    model.FileErrors.Add(fileErrors);
+                                    file.Errors?.Add(new Error(ErrorType.Dataset, ex.Message,"Dataset"));
+                                }
+                                finally
+                                {
 
-                                    errors.AddRange(file.Errors); // set to global error list
+                                    if (file.Errors.Any())
+                                    {
+                                        FileValidationResult result = new FileValidationResult();
+                                        result.File = file.Name;
+                                        file.Errors.ForEach(e => result.Errors.Add(e.ToHtmlString()));
+                                        result.SortedErrors = SortFileErrors(file.Errors);
+                                        model.FileResults.Add(result);
+
+                                        errors.AddRange(file.Errors); // set to global error list
+                                    }
                                 }
 
                             }
                         }
+
+                        #endregion
                     }
-                }
-                catch (Exception ex)
-                {
-                    errors.Add(new Error(ErrorType.Other, ex.Message));
-                    FileErrors fileErrors = new FileErrors();
-                    fileErrors.SortedErrors = SortErrors(errors);
-                    model.FileErrors.Add(fileErrors);
+                    //}
+                    //catch (Exception ex)
+                    //{
+                    //    errors.Add(new Error(ErrorType.Other, ex.Message));
+                    //    FileErrors fileErrors = new FileErrors();
+                    //    fileErrors.SortedErrors = SortFileErrors(errors);
+                    //    model.FileErrors.Add(fileErrors);
 
-                }
+                    //}
 
-
-                // if the validation is done, prepare the model 
-                if (cache.Files.Any()) //if any file exits update model 
-                {
-                    // set this flags as default, if a error exist it will change
-                    cache.IsDataValid = true;
-                    model.IsValid = true;
-
-                    foreach (var fileErrors in model.FileErrors)
+                    // if the validation is done, prepare the model 
+                    if (cache.Files.Any()) //if any file exits update model 
                     {
-                        // if there are errors
-                        if (fileErrors.Errors.Any())
+                        // set this flags as default, if a error exist it will change
+                        cache.IsDataValid = true;
+                        model.IsValid = true;
+
+                        foreach (var result in model.FileResults)
                         {
-                            cache.IsDataValid = false; 
-                            model.IsValid = cache.IsDataValid;
-                            cache.Messages.Add(new ResultMessage(DateTime.Now, fileErrors.Errors)); // add message for the history
+                            // if there are errors
+                            if (result.Errors.Any())
+                            {
+                                cache.IsDataValid = false;
+                                model.IsValid = cache.IsDataValid;
+                                cache.Messages.Add(new ResultMessage(DateTime.Now, result.Errors)); // add message for the history
+                            }
+
                         }
 
                     }
-
-                    // if model is valid , add a message 
-                    if (model.IsValid)
+                    else
                     {
-                        cache.Messages.Add(new ResultMessage(DateTime.Now, new List<string>() { "The validation was successful." })); // add message for the history
+                        cache.IsDataValid = false;
+                        model.IsValid = false;
                     }
                 }
-                else
-                {
-                    cache.IsDataValid = false;
-                    model.IsValid = false;
-                }
-
-                // save cache
-                hookManager.SaveCache(cache, "dataset", "details", HookMode.edit, id);
-
-                return Json(model, JsonRequestBehavior.AllowGet);
             }
+
+            // if model is valid , add a message 
+            if (model.IsValid)
+            {
+                cache.Messages.Add(new ResultMessage(DateTime.Now, new List<string>() { "The validation was successful." })); // add message for the history
+            }
+
+
+            // save cache
+            hookManager.SaveCache(cache, "dataset", "details", HookMode.edit, id);
+
+            return Json(model, JsonRequestBehavior.AllowGet);
         }
 
-        private List<Tuple<string, int, string>> SortErrors(List<Error> errors)
+        private List<SortedError> SortFileErrors(List<Error> errors)
         {
             if (errors.Count > 0)
             {
@@ -236,7 +277,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 var varNames = errors.Where(e => e.GetType().Equals(ErrorType.Value)).Select(e => e.getName()).Distinct();
                 var varIssues = errors.Where(e => e.GetType().Equals(ErrorType.Value)).Select(e => e.GetMessage()).Distinct();
 
-                List<Tuple<string, int, string>> sortedErrors = new List<Tuple<string, int, string>>();
+                List<SortedError> sortedErrors = new List<SortedError>();
 
                 foreach (string vn in varNames)
                 {
@@ -244,12 +285,34 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                     {
                         int c = errors.Where(e => e.getName().Equals(vn) && e.GetMessage().Equals(i)).Count();
 
+
                         if (c > 0)
                         {
-                            sortedErrors.Add(new Tuple<string, int, string>(vn, c, i));
+                            var err = errors.Where(e => e.getName().Equals(vn) && e.GetMessage().Equals(i)).FirstOrDefault();
+                            sortedErrors.Add(new SortedError(vn, c, i, err.GetType()));
                         }
                     }
                 }
+
+                // others
+                var othersNames = errors.Where(e => e.GetType()!= ErrorType.Value).Select(e => e.getName()).Distinct();
+                var othersIssues = errors.Where(e => e.GetType()!=ErrorType.Value).Select(e => e.GetMessage()).Distinct();
+
+                foreach (string vn in othersNames)
+                {
+                    foreach (string i in othersIssues)
+                    {
+                        int c = errors.Where(e => e.getName().Equals(vn) && e.GetMessage().Equals(i)).Count();
+
+                        if (c > 0)
+                        {
+                            var err = errors.Where(e => e.getName().Equals(vn) && e.GetMessage().Equals(i)).FirstOrDefault();
+
+                            sortedErrors.Add(new SortedError(vn, c, i, err.GetType()));
+                        }
+                    }
+                }
+
 
                 if (sortedErrors.Count > 0)
                 {
@@ -257,7 +320,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 }
             }
 
-            return new List<Tuple<string, int, string>>();
+            return new List<SortedError>();
         }
     }
 }

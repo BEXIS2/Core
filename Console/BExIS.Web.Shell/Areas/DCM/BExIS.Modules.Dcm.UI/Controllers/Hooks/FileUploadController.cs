@@ -1,7 +1,9 @@
 ﻿using BExIS.App.Bootstrap.Attributes;
 using BExIS.Dlm.Entities.DataStructure;
 using BExIS.Dlm.Services.Data;
+using BExIS.IO;
 using BExIS.Modules.Dcm.UI.Hooks;
+using BExIS.Modules.Dcm.UI.Models.Edit;
 using BExIS.UI.Hooks;
 using BExIS.UI.Hooks.Caches;
 using BExIS.UI.Models;
@@ -38,9 +40,10 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             // check incoming variables
             if (id <= 0) throw new ArgumentException("id must be greater than 0");
 
-            FileUploader model = new FileUploader();
+            FileUploadModel model = new FileUploadModel();
+            bool updateNeeded = false; // the file list in the cach can be not up to date, maybee after check & remove a save is needed
 
-            model.Multiple = true;
+            model.FileUploader.Multiple = true;
 
             # region settings
 
@@ -48,16 +51,16 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
             // description
             var descrType = settings.GetEntryValue("fileuploaddescription").ToString();//
-            model.DescriptionType = (DescriptionType)Enum.Parse(typeof(DescriptionType), descrType);
+            model.FileUploader.DescriptionType = (DescriptionType)Enum.Parse(typeof(DescriptionType), descrType);
 
             // max size
-            model.MaxSize = Session.GetTenant().MaximumUploadSize; // need to load from tenant
+            model.FileUploader.MaxSize = Session.GetTenant().MaximumUploadSize; // need to load from tenant
             //multifileupload
-            model.Multiple = Boolean.Parse(settings.GetEntryValue("allowMultiFileupload").ToString());
+            model.FileUploader.Multiple = Boolean.Parse(settings.GetEntryValue("allowMultiFileupload").ToString());
 
             #endregion
 
-            
+
 
             HookManager hookManager = new HookManager();
 
@@ -68,15 +71,25 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             string path = Path.Combine(AppConfiguration.DataPath, "datasets", id.ToString(), "Temp");
             if (cache.Files != null)
             {
+                int countReadableFile = 0;
                 for (int i = 0; i < cache.Files.Count; i++)
                 {
                     var file = cache.Files[i];
                     //check if if exist on server or not
                     if (file != null && !string.IsNullOrEmpty(file.Name) && System.IO.File.Exists(Path.Combine(path, file.Name)))
-                        model.ExistingFiles.Add(file); // if exist  add to model
+                    {
+                        if (isReadable(file)) countReadableFile++;
+                        model.FileUploader.ExistingFiles.Add(file); // if exist  add to model
+                    }
                     else
+                    {
                         cache.Files.RemoveAt(i); // if not remove from cache
+                        updateNeeded = true; // save chache is needed
+                    }
                 }
+
+                // set flag to know if every file is readable or not
+                model.AllFilesReadable = cache.Files.Count == countReadableFile;
             }
 
             // get accepted file extentions
@@ -95,22 +108,25 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                     datastructureType = DataStructureType.Structured;
 
                 // get default list of allowed file types
-                model.Accept = UploadHelper.GetExtentionList(datastructureType, this.Session.GetTenant());
+                model.FileUploader.Accept = UploadHelper.GetExtentionList(datastructureType, this.Session.GetTenant());
 
                 // if entity template has some allowed filestypes
-                if (dataset.EntityTemplate.AllowedFileTypes!=null && dataset.EntityTemplate.AllowedFileTypes.Any())
+                if (dataset.EntityTemplate.AllowedFileTypes != null && dataset.EntityTemplate.AllowedFileTypes.Any())
                 {
                     // the system needs to compare them with the system list 
                     // only add filetypes dat are in both lists
-                    model.Accept = model.Accept.Intersect(dataset.EntityTemplate.AllowedFileTypes).ToList();
+                    model.FileUploader.Accept = model.FileUploader.Accept.Intersect(dataset.EntityTemplate.AllowedFileTypes).ToList();
                 }
 
             }
 
+            // set flag for the filereader information, if false, then fiule reader need to be set
+            model.AsciiFileReaderInfo = cache.AsciiFileReaderInfo;
+
             // set modification date
             model.LastModification = cache.GetLastModificarion(typeof(FileUploadHook));
 
-            hookManager.SaveCache(cache, "dataset", "details", HookMode.edit, id);
+            if (updateNeeded) hookManager.SaveCache(cache, "dataset", "details", HookMode.edit, id); // file may removed so update cache is needed
             return Json(model, JsonRequestBehavior.AllowGet);
         }
 
@@ -233,6 +249,14 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             {
                 return file.FileName;
             }
+        }
+
+
+
+        private bool isReadable(Cache.FileInfo file)
+        {
+            IOUtility iou = new IOUtility();
+            return iou.IsSupportedAsciiFile(Path.GetExtension(file.Name));
         }
     }
 }

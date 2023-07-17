@@ -11,11 +11,11 @@
 	import { fade } from 'svelte/transition';
 
 	import { Spinner, Page } from '@bexis2/bexis2-core-ui';
-	import { generate, save, load, getDisplayPattern,getStructures } from './services';
-	import { goTo } from '../../services/BaseCaller';
+	import { generate, save, load, getDisplayPattern,getStructures } from '$services/StructureSuggestionCaller';
+	import { goTo } from '$services/BaseCaller';
 
-	import type { StructureSuggestionModel } from '../../models/StructureSuggestion';
-import { displayPatternStore, structureStore } from './store';
+	import type { StructureSuggestionModel } from '$models/StructureSuggestion';
+	import { displayPatternStore, structureStore } from './store';
 	
 
 	// load attributes from div
@@ -86,7 +86,7 @@ import { displayPatternStore, structureStore } from './store';
 
 <Page title="Structure Suggestion" note="generate a structure from a file.">
 	{#if !model}
-		<Spinner />
+		<Spinner label="the file {file} is currently being analyzed"/>
 	{:else if selectionIsActive}
 		<div transition:fade>
 			<Selection {model} on:saved={update} {init}/>

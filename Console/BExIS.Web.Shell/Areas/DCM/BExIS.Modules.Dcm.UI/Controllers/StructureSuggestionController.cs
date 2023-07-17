@@ -222,7 +222,10 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                     // gerenate missing values and link them to each variable
                     foreach (var mv in model.MissingValues)
                     {
-                        var missingValue = missingValueManager.Create(mv.DisplayName, mv.Description, result);
+                        if (!string.IsNullOrEmpty(mv.DisplayName))
+                        {
+                            var missingValue = missingValueManager.Create(mv.DisplayName, mv.Description, result);
+                        }
                     }
 
                 }
@@ -267,7 +270,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             if(descriptionMarker != null) cache.AsciiFileReaderInfo.Description = descriptionMarker.Row + 1;// add 1 to store nit the index but the row
             // units
             var unitMarker = model.Markers.Where(m => m.Type.Equals("unit")).FirstOrDefault();
-            cache.AsciiFileReaderInfo.Unit = unitMarker.Row + 1;// add 1 to store nit the index but the row
+            if (unitMarker != null) cache.AsciiFileReaderInfo.Unit = unitMarker.Row + 1;// add 1 to store nit the index but the row
 
             // update modifikation date
             cache.UpdateLastModificarion(typeof(DataDescriptionHook));

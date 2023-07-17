@@ -1,15 +1,21 @@
 <script lang="ts">
 import { onMount, createEventDispatcher }from 'svelte'
 
-import {FileUploader, Spinner} from '@bexis2/bexis2-core-ui';
-import {getHookStart}  from '../../services/HookCaller'
+import {FileUploader, Spinner, ErrorMessage} from '@bexis2/bexis2-core-ui';
+import {getHookStart}  from '$services/HookCaller'
 
 import FileOverview from '$lib/components/fileupload/FileOverview.svelte'
 import TimeDuration from '$lib/components/utils/TimeDuration.svelte'
+import FileReaderInformation from '$lib/components/fileupload/FileReaderInformation.svelte'
+
 
 import { latestFileUploadDate } from '../../routes/edit/stores';
 
-import type { fileUploaderModel } from '@bexis2/bexis2-core-ui'
+import type { FileUploadModel } from '$models/FileUpload'
+
+export let id=0;
+export let version=1;
+export let hook;
 
 
 // action for fileupload
@@ -20,11 +26,7 @@ let submit = "/dcm/fileupload/upload";
 let context = "fileupload";
 let error = "";
 
-export let id=0;
-export let version=1;
-export let hook;
-
-let model:fileUploaderModel;
+let model:FileUploadModel;
 $:model;
 
 onMount(async () => {
@@ -83,13 +85,15 @@ function warning(e)
 {#if model.lastModification}
   <TimeDuration milliseconds={new Date(model.lastModification)}/>
 {/if}
-  <FileUploader {id} {version} {context} data={model} {start} {submit} on:submited={load} on:submit={()=>loading=true } on:error on:success />
-{#if model.existingFiles}
-  <FileOverview {id} files={model.existingFiles} descriptionType={model.descriptionType} {save} {remove} on:success/>
+
+  <FileUploader {id} {version} {context} data={model.fileUploader} {start} {submit} on:submited={load} on:submit={()=>loading=true } on:error on:success />
+
+{#if model.fileUploader.existingFiles}
+  <FileOverview {id} files={model.fileUploader.existingFiles} descriptionType={model.fileUploader.descriptionType} {save} {remove} on:success/>
 {/if}
 
+<FileReaderInformation {id} readableFiles={model.fileUploader.existingFiles} asciiFileReaderInfo = {model.asciiFileReaderInfo}/>
+
 {:catch error} 
-
   <ErrorMessage {error}/>
-
 {/await}

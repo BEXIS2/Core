@@ -110,6 +110,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             // load cache to check existing files
             EditDatasetDetailsCache cache = hookManager.LoadCache<EditDatasetDetailsCache>("dataset", "details", HookMode.edit, id);
 
+            
             // check if files in list also on server
             string path = Path.Combine(AppConfiguration.DataPath, "datasets", id.ToString(), "Temp");
             if (cache.Files != null)

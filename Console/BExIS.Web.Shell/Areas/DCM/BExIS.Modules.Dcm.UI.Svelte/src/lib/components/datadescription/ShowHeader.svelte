@@ -1,60 +1,52 @@
-<script>
-import {Spinner} from '@bexis2/bexis2-core-ui';
+<script lang="ts">
+	import { Spinner } from '@bexis2/bexis2-core-ui';
+	import type { fileInfoType } from '@bexis2/bexis2-core-ui';
 
-import Fa from 'svelte-fa/src/fa.svelte'
-import { faTrash } from '@fortawesome/free-solid-svg-icons'
+	import Fa from 'svelte-fa';
+	import { faTrash } from '@fortawesome/free-solid-svg-icons';
 
-import { removeStructure} from '$services/DataDescriptionCaller'
-import { latestDataDescriptionDate } from '../../../routes/edit/stores';
+	import { removeStructure } from '$services/DataDescriptionCaller';
+	import { latestDataDescriptionDate } from '../../../routes/edit/stores';
 
-export let id;
-export let structureId;
-export let title;
-export let description;
+	export let id;
+	export let structureId;
+	export let title;
+	export let description;
+	export let fileReaderExist;
+	export let readableFiles: fileInfoType[] = [];
 
-let loading = false;
+	let loading = false;
 
-async function remove()
-{
- loading = true;
- console.log("remove")
- const res = await removeStructure(id);
+	async function remove() {
+		loading = true;
+		console.log('remove');
+		const res = await removeStructure(id);
 
- console.log(res);
- if(res == true)
- {
-   // update store
-   latestDataDescriptionDate.set(Date.now());
- }
- else
- {
-   //show message
- }
+		console.log(res);
+		if (res == true) {
+			// update store
+			latestDataDescriptionDate.set(Date.now());
+		} else {
+			//show message
+		}
 
- loading = false;
-
-}
-
+		loading = false;
+	}
 </script>
 
 <div class="show-datadescription-header-container grid grid-cols-2">
-
-  <div class="flex gap-3">
-    <h2 class="h2">{title} ({structureId}) 
-      
-    </h2>
-    {#if loading}
-    <div>
-    <Spinner textCss="text-surface-500"/>
-    </div>
-    {/if}
- 
-  </div>
-  <div>
-   <div class="text-end">
-    <button class="btn bg-warning-500" on:click="{remove}"><Fa icon={faTrash}/></button>
-   </div>
-   <p>{description}</p>
-  </div>
+	<div class="flex gap-3">
+		<h2 class="h2">{title} ({structureId})</h2>
+		{#if loading}
+			<div>
+				<Spinner textCss="text-surface-500" />
+			</div>
+		{/if}
+	</div>
+	<div>
+		<div class="text-end flex-auto">
+			<button class="btn bg-warning-500" on:click={remove}><Fa icon={faTrash} /></button>
+		</div>
+		<p>{description}</p>
+	</div>
 </div>
-

@@ -43,7 +43,7 @@ const res = await removeFile(remove,id,file);
     let message = file+" removed."
     dispatch("removed",{text:message})
   }
-
+  console.log("remove loading")
   loading = false;
 }
 
@@ -85,3 +85,7 @@ const res = await saveFileDescription(save,id, file, description );
   </div>
 
 {/if}
+
+
+
+

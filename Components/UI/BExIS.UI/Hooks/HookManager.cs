@@ -110,10 +110,14 @@ namespace BExIS.UI.Hooks
         // load cache
         public T LoadCache<T>(string _entity, string _place, HookMode _mode, long id) where T : new()
         {
+        
             //check incoming values
             if (string.IsNullOrEmpty(_entity)) throw new ArgumentNullException(nameof(_entity));
             if (string.IsNullOrEmpty(_place)) throw new ArgumentNullException(nameof(_place));
             if (id <= 0) throw new ArgumentOutOfRangeException(nameof(id));
+
+
+            string sessionId = getSessionId(_entity, _place, _mode, id);
 
             T cache = new T();
 
@@ -126,7 +130,7 @@ namespace BExIS.UI.Hooks
 
             if (File.Exists(filepath)) // check if file exist
             {
-                FileHelper.WaitForFile(filepath); // wait if the file is still open
+                FileHelper.WaitForFile(filepath, FileAccess.Read); // wait if the file is still open
 
                 // convert json to object
                 cache = JsonConvert.DeserializeObject<T>(File.ReadAllText(filepath));
@@ -138,6 +142,8 @@ namespace BExIS.UI.Hooks
 
         public bool SaveCache<T>(T _cache, string _entity, string _place, HookMode _mode, long id)
         {
+            string sessionId = getSessionId(_entity, _place, _mode, id);
+
             //check incoming values
             if (_cache == null) throw new ArgumentNullException(nameof(_cache));
             if (string.IsNullOrEmpty(_entity)) throw new ArgumentNullException(nameof(_entity));
@@ -152,9 +158,13 @@ namespace BExIS.UI.Hooks
             // combine datapath + path + filename
             string filepath = Path.Combine(directory, filename);
 
-            FileHelper.WaitForFile(filepath); // wait if the file is still open
+          
 
-            if (File.Exists(filepath)) File.Delete(filepath);// check if file exist, delete maybe?
+            if (File.Exists(filepath))
+            {
+                FileHelper.WaitForFile(filepath); // wait if the file is still open
+                File.Delete(filepath); // check if file exist, delete maybe? }
+            }
 
             if (!Directory.Exists(directory)) Directory.CreateDirectory(directory); // create directory if not exist
 
@@ -162,6 +172,15 @@ namespace BExIS.UI.Hooks
             File.WriteAllText(filepath, JsonConvert.SerializeObject(_cache));
 
             return true;
+        }
+
+        /// <summary>
+        /// create a session id based on the hook part
+        /// </summary>
+        /// <returns>session id as string</returns>
+        private string getSessionId(string _entity, string _place, HookMode _mode, long id)
+        {
+            return string.Format("{0}-{1}-{2}-{3}", _entity, _place, _mode, id);
         }
     }
 }

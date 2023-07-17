@@ -158,7 +158,13 @@ namespace BExIS.UI.Hooks.Caches
         public List<Error> Errors{ get; set; }
 
         public FileInfo()
-        { }
+        {
+            Name = string.Empty;
+            Type = string.Empty; ;
+            Lenght = 0 ;
+            Description = string.Empty;
+            Errors = new List<Error>();
+        }
 
         public FileInfo(string name, string type, int length, string description)
         {

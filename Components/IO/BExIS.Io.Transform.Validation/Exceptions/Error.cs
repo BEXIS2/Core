@@ -47,6 +47,12 @@ namespace BExIS.IO.Transform.Validation.Exceptions
             return this._dataType;
         }
 
+        public Error()
+        {
+            _issue = string.Empty;
+            _errorType = ErrorType.Other;
+        }
+
         /// <summary>
         /// 
         /// </summary>
@@ -72,6 +78,7 @@ namespace BExIS.IO.Transform.Validation.Exceptions
         {
             _name = name;
             _issue = issue;
+            _errorType = errorType;
         }
 
         /// <summary>
@@ -189,6 +196,9 @@ namespace BExIS.IO.Transform.Validation.Exceptions
         Datastructure,
         Value,
         MetadataAttribute,
-        Other
+        Other,
+        FileReader,
+        PrimaryKey,
+        File
     }
 }

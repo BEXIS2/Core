@@ -95,35 +95,35 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                                 {
                                     // open FileStream
                                     var reader = new ExcelReader(null, null);
-                                    Stream = reader.Open(filePath);
-                                    //Session["Stream"] = Stream;
-
-                                    //check is it template
-
-                                    if (reader.IsTemplate(Stream))
+                                    using (Stream = reader.Open(filePath))
                                     {
-                                        TaskManager.Current().SetValid(true);
-                                        TaskManager.AddToBus(TaskManager.IS_TEMPLATE, "true");
-                                        TaskManager.AddToBus(TaskManager.FILE_READER_INFO, new ExcelFileReaderInfo()
+                                        //Session["Stream"] = Stream;
+
+                                        //check is it template
+
+                                        if (reader.IsTemplate(Stream))
                                         {
-                                            Offset = 1,
-                                            Variables = 1,
-                                            Data = 13,
-                                            Decimal = DecimalCharacter.point
-                                        });
-                                    }
-                                    else
-                                    {
-                                        model.ErrorList.Add(new Error(ErrorType.Other, "File is not a Template"));
-                                        TaskManager.AddToBus(TaskManager.IS_TEMPLATE, "false");
-                                    }
+                                            TaskManager.Current().SetValid(true);
+                                            TaskManager.AddToBus(TaskManager.IS_TEMPLATE, "true");
+                                            TaskManager.AddToBus(TaskManager.FILE_READER_INFO, new ExcelFileReaderInfo()
+                                            {
+                                                Offset = 1,
+                                                Variables = 1,
+                                                Data = 13,
+                                                Decimal = DecimalCharacter.point
+                                            });
+                                        }
+                                        else
+                                        {
+                                            model.ErrorList.Add(new Error(ErrorType.Other, "File is not a Template"));
+                                            TaskManager.AddToBus(TaskManager.IS_TEMPLATE, "false");
+                                        }
 
-                                    if (!ExcelReader.SUPPORTED_APPLICATIONS.Contains(reader.Application))
-                                    {
-                                        model.ErrorList.Add(new Error(ErrorType.Other, "The document was created in an application " + reader.Application + " that will currently not support"));
+                                        if (!ExcelReader.SUPPORTED_APPLICATIONS.Contains(reader.Application))
+                                        {
+                                            model.ErrorList.Add(new Error(ErrorType.Other, "The document was created in an application " + reader.Application + " that will currently not support"));
+                                        }
                                     }
-
-                                    Stream.Close();
                                 }
                                 else
                                 {
@@ -143,11 +143,11 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                                     {
                                         // open FileStream
                                         var reader = new AsciiReader(null, null, new IOUtility());
-                                        Stream = reader.Open(filePath);
-                                        //Session["Stream"] = Stream;
-                                        TaskManager.Current().SetValid(true);
-
-                                        Stream.Close();
+                                        using (Stream = reader.Open(filePath))
+                                        {
+                                            //Session["Stream"] = Stream;
+                                            TaskManager.Current().SetValid(true);
+                                        }
                                     }
                                 }
                                 #endregion
