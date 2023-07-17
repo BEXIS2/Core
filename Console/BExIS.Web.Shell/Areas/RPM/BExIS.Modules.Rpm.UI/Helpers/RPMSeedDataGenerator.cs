@@ -1,9 +1,6 @@
 ﻿using BExIS.Dlm.Entities.Administration;
-using BExIS.Dlm.Entities.DataStructure;
 using BExIS.Dlm.Entities.Meanings;
 using BExIS.Dlm.Services.Administration;
-using BExIS.Dlm.Services.DataStructure;
-using BExIS.Modules.Rpm.UI.Classes;
 using BExIS.Modules.Rpm.UI.Helpers.SeedData;
 using BExIS.Security.Entities.Objects;
 using BExIS.Security.Services.Authorization;
@@ -108,23 +105,28 @@ namespace BExIS.Modules.Rpm.UI.Helpers
 
                 //meanings features and security levels
                 Feature dataMeaning = features.FirstOrDefault(f =>
-                    f.Name.Equals("Data Meaning") &&
+                    f.Name.Equals("Data Meaning Manager") &&
                     f.Parent != null &&
                     f.Parent.Id.Equals(dataPlanning.Id));
                 if (dataMeaning == null)
                     dataMeaning = featureManager.Create("Data Meaning", "Data Meaning Management", dataPlanning);
+                if (!operationManager.Exists("API", "MeaningsAdmin", "*"))
+                {
+                    operationManager.Create("API", "MeaningsAdmin", "*", dataMeaning);
+                }
+
+                Feature dataMeaning_pub = features.FirstOrDefault(f =>
+                    f.Name.Equals("Data Meaning (public)") &&
+                    f.Parent != null &&
+                    f.Parent.Id.Equals(dataPlanning.Id));
+                if (dataMeaning_pub == null)
+                    dataMeaning_pub = featureManager.Create("Data Meaning (public)", "Data Meaning Management", dataPlanning);
                 if (!operationManager.Exists("API", "Meanings", "*"))
                 {
-                    operationManager.Create("API", "Meanings", "*", dataMeaning);
+                    operationManager.Create("API", "Meanings", "*", dataMeaning_pub);
+                    featurePermissionManager.Create(null, dataMeaning_pub.Id, Security.Entities.Authorization.PermissionType.Grant);
                 }
-                if (!operationManager.Exists("API", "ExternalLinks", "*"))
-                {
-                    operationManager.Create("API", "ExternalLinks", "*", dataMeaning);
-                }
-                if (!operationManager.Exists("RPM", "LinksMeanings", "*"))
-                {
-                    operationManager.Create("RPM", "LinksMeanings", "*", dataMeaning);
-                }
+
                 using (meaningManager _meaningManager = new meaningManager())
                 {
                     _meaningManager.addExternalLink("http://exampleURI_1", "Example 1", "entity");

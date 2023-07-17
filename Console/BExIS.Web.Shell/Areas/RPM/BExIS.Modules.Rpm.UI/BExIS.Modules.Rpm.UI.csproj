@@ -117,6 +117,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Controllers\MeaningsController.cs" />
+    <Compile Include="Controllers\MeaningsAdminController.cs" />
     <Compile Include="Controllers\StructuresController.cs" />
     <Compile Include="Helpers\HtmlPrefixScopeExtentions.cs" />
     <Compile Include="Helpers\RPMSeedDataGenerator.cs" />
