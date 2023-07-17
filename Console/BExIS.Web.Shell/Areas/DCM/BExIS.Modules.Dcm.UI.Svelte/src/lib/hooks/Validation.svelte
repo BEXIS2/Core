@@ -9,9 +9,6 @@
 	import type { ValidationModel } from '$models/ValidationModels';
 
 
-	import Fa from 'svelte-fa'
- import { faCheck } from '@fortawesome/free-solid-svg-icons'
-
 	export let id = 0;
 	export let version = 1;
 	export let status = 0;
@@ -21,8 +18,6 @@
 
 	let model: ValidationModel;
 	$: model;
-	// modal window for selection
-	let open = false;
 
 	$: $latestFileUploadDate, reload();
 	$: $latestDataDescriptionDate, reload();

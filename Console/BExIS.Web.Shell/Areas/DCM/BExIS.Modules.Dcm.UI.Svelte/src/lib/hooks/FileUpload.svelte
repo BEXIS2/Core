@@ -86,10 +86,10 @@ function warning(e)
   <TimeDuration milliseconds={new Date(model.lastModification)}/>
 {/if}
 
-  <FileUploader {id} {version} {context} data={model.fileUploader} {start} {submit} on:submited={load} on:submit={()=>loading=true } on:error on:success />
+  <FileUploader {id} {version} {context} data={model.fileUploader} {start} {submit} on:submited={reload} on:submit={()=>loading=true } on:error on:success />
 
 {#if model.fileUploader.existingFiles}
-  <FileOverview {id} files={model.fileUploader.existingFiles} descriptionType={model.fileUploader.descriptionType} {save} {remove} on:success/>
+  <FileOverview {id} files={model.fileUploader.existingFiles} descriptionType={model.fileUploader.descriptionType} {save} {remove} on:success={success} on:warning={warning}/>
 {/if}
 
 <FileReaderInformation {id} readableFiles={model.fileUploader.existingFiles} asciiFileReaderInfo = {model.asciiFileReaderInfo}/>
