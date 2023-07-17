@@ -57,9 +57,8 @@ async function reloadByFileUpdate()
     <Spinner label="loading data description" />
   </div>
  {:then a}
-  {#if model && model.allFilesReadable==true}
 
-    {#if model.lastModification}
+    {#if model && model.lastModification}
     
     <TimeDuration milliseconds={Number(new Date(model.lastModification))}/>
     
@@ -70,14 +69,18 @@ async function reloadByFileUpdate()
       <!--show-->
       <Show {...model}></Show>
     {:else}
-      <!--generate-->
-      <!-- <Generate bind:files={model.readableFiles} {...model} on:selected={()=> latestDataDescriptionDate.set(Date.now())} isRestricted={model.isRestricted}></Generate> -->
-      <Generate {id} {version} {model} {hook} on:selected={()=> latestDataDescriptionDate.set(Date.now())}></Generate>
-    {/if}
 
-  {:else}
-    <span>not available</span>
-  {/if}
+      {#if model && model.allFilesReadable==true}
+
+            <!--generate-->
+            <!-- <Generate bind:files={model.readableFiles} {...model} on:selected={()=> latestDataDescriptionDate.set(Date.now())} isRestricted={model.isRestricted}></Generate> -->
+            <Generate {id} {version} {model} {hook} on:selected={()=> latestDataDescriptionDate.set(Date.now())}></Generate>
+            
+        {:else}
+        <span>not available</span>
+      {/if}
+
+    {/if}
 
   {:catch error}
    

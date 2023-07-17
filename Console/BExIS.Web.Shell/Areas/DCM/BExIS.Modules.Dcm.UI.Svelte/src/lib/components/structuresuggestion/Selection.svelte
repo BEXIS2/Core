@@ -4,26 +4,24 @@
 	// ui components
 	import { Spinner, DropdownKVP } from '@bexis2/bexis2-core-ui';
 	import { SlideToggle } from '@skeletonlabs/skeleton';
-	import MissingValues from '../structuresuggestion/MissingValues.svelte';
+	import MissingValues from './MissingValues.svelte';
 
 	//services
-	import { store, load } from './services.js';
+	import { store, load } from '$services/StructureSuggestionCaller';
 
-import Fa from 'svelte-fa/src/fa.svelte'
+import Fa from 'svelte-fa'
 import { faSave, faTrash } from '@fortawesome/free-solid-svg-icons/index'
 
 
 	//types
-	import type { StructureSuggestionModel, Marker } from '../../models/StructureSuggestion';
+	import type { StructureSuggestionModel, Marker } from '$models/StructureSuggestion';
 	import { positionType } from "@bexis2/bexis2-core-ui";
 
  export let model: StructureSuggestionModel;
+	$: model;
 	export let init:boolean = true;
 
 	let delimeter;
-
-	$: model;
-
 	let isDrag: boolean = false;
 	let state: boolean[][] = [];
 	let selection: Marker[] = [];
@@ -352,7 +350,6 @@ import { faSave, faTrash } from '@fortawesome/free-solid-svg-icons/index'
 
 </script>
 
-<div>
 {#if !model || state.length == 0 || generate==false}
 	<!--if the model == false, access denied-->
 	{#if !model || state.length == 0 || generate==false}
@@ -534,9 +531,8 @@ import { faSave, faTrash } from '@fortawesome/free-solid-svg-icons/index'
 			</div>
 		</div>
 	</form>
-
 {/if}
-</div>
+
 <style>
   
 	.variable {

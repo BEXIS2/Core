@@ -4,6 +4,7 @@ using BExIS.Dlm.Entities.Data;
 using BExIS.Dlm.Services.Data;
 using BExIS.IO;
 using BExIS.Modules.Dcm.UI.Hooks;
+using BExIS.Modules.Dcm.UI.Models.Edit;
 using BExIS.Security.Services.Utilities;
 using BExIS.UI.Hooks;
 using BExIS.UI.Hooks.Caches;
@@ -44,7 +45,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             // check incoming variables
             if (id <= 0) throw new ArgumentException("id must be greater than 0");
 
-            FileUploader model = new FileUploader();
+            FileUploadModel model = new FileUploadModel();
 
             # region settings
 
@@ -52,16 +53,16 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
             // description
             var descrType = settings.GetEntryValue("attachmentDescription").ToString();//
-            model.DescriptionType = (DescriptionType)Enum.Parse(typeof(DescriptionType), descrType);
+            model.FileUploader.DescriptionType = (DescriptionType)Enum.Parse(typeof(DescriptionType), descrType);
 
             // max size
-            model.MaxSize = Session.GetTenant().MaximumUploadSize; // need to load from tenant
+            model.FileUploader.MaxSize = Session.GetTenant().MaximumUploadSize; // need to load from tenant
             //multifileupload
-            model.Multiple = Boolean.Parse(settings.GetEntryValue("allowMultiAttachmentUpload").ToString());
+            model.FileUploader.Multiple = Boolean.Parse(settings.GetEntryValue("allowMultiAttachmentUpload").ToString());
 
             #endregion
 
-            model.Accept = UploadHelper.GetExtentionList(DataStructureType.None, this.Session.GetTenant());
+            model.FileUploader.Accept = UploadHelper.GetExtentionList(DataStructureType.None, this.Session.GetTenant());
             // load filelist from database and checlk against the folder
             using (DatasetManager dm = new DatasetManager())
             {
@@ -69,7 +70,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 var datasetVersion = dm.GetDatasetLatestVersion(id);
                 if (datasetVersion != null)
                 {
-                    model.ExistingFiles = getDatasetFileList(datasetVersion);
+                    model.FileUploader.ExistingFiles = getDatasetFileList(datasetVersion);
                 }
             }
 

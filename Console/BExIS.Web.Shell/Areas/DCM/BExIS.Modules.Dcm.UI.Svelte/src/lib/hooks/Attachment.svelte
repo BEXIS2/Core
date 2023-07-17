@@ -1,11 +1,12 @@
 <script lang="ts">
-	import { FileUploader } from '@bexis2/bexis2-core-ui';
+	import { FileUploader,ErrorMessage } from '@bexis2/bexis2-core-ui';
 	import { getHookStart } from '$services/HookCaller';
 	import { onMount, createEventDispatcher } from 'svelte';
 	import FileOverview from '$lib/components/fileupload/FileOverview.svelte';
 	import TimeDuration from '$lib/components/utils/TimeDuration.svelte';
 	import { Spinner } from '@bexis2/bexis2-core-ui';
-	import type { fileUploaderModel } from '@bexis2/bexis2-core-ui';
+	import type { FileUploadModel } from '$models/FileUpload';
+
 
 	export let id = 0;
 	export let version = 1;
@@ -18,7 +19,7 @@
 	let submit = '/dcm/attachmentupload/upload';
 	let context = 'attachment';
 
-	let model: fileUploaderModel;
+	let model: FileUploadModel;
 	$: model;
 
 	onMount(async () => {
@@ -38,8 +39,6 @@
 	}
 
 	async function reload(e) {
-		/*update store*/
-		latestFileUploadDate.set(Date.now());
 
 		/* load data*/
 		load();
@@ -70,7 +69,7 @@
 		{id}
 		{version}
 		{context}
-		data={model}
+		data={model.fileUploader}
 		{start}
 		{submit}
 		on:submited={load}
@@ -78,11 +77,11 @@
 		on:error
 		on:success
 	/>
-	{#if model.existingFiles}
+	{#if model.fileUploader.existingFiles}
 		<FileOverview
 			{id}
-			files={model.existingFiles}
-			descriptionType={model.descriptionType}
+			files={model.fileUploader.existingFiles}
+			descriptionType={model.fileUploader.descriptionType}
 			{save}
 			{remove}
 			on:success

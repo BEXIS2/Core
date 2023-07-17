@@ -444,7 +444,7 @@ namespace BExIS.IO.Transform.Input
 
                 if (matchErrors != null) errors.AddRange(matchErrors);
 
-                if (!matchErrors.Any())
+                if (matchErrors == null || !matchErrors.Any())
                 {
                     // check the equivalent order of the strutcures
                     DatastructureOrderCheck dso = new DatastructureOrderCheck();

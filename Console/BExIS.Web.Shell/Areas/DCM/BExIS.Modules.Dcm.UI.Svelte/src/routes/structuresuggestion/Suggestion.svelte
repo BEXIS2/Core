@@ -57,7 +57,7 @@ function checkValidationState()
     {/each}
   
 {:else}
-  <Spinner />
+  <Spinner label="loading suggested structure" />
 {/if}
 </div>
 

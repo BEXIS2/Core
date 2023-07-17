@@ -174,39 +174,42 @@ namespace BExIS.Modules.Dcm.UI.Helper.API
             }
 
             // validate file
-            Stream = reader.Open(_filepath);
-            reader.ValidateFile(Stream, Path.GetFileName(_filepath), _dataset.Id);
-            List<Error> errors = reader.ErrorMessages;
-
-            // if errors exist -> send messages back
-            if (errors.Count > 0)
+            using (Stream = reader.Open(_filepath))
             {
-                List<string> errorArray = new List<string>();
+                reader.ValidateFile(Stream, Path.GetFileName(_filepath), _dataset.Id);
+                List<Error> errors = reader.ErrorMessages;
 
-                foreach (var e in errors)
+                // if errors exist -> send messages back
+                if (errors.Count > 0)
                 {
-                    errorArray.Add(e.GetMessage());
+                    List<string> errorArray = new List<string>();
+
+                    foreach (var e in errors)
+                    {
+                        errorArray.Add(e.GetMessage());
+                    }
+
+                    var es = new EmailService();
+                    es.Send(MessageHelper.GetPushApiValidateHeader(_dataset.Id, _title),
+                        MessageHelper.GetPushApiValidateMessage(_dataset.Id, _user.UserName, errorArray.ToArray()),
+                        new List<string>() { _user.Email },
+                        new List<string>() { GeneralSettings.SystemEmail }
+                        );
+
+                    return false;
                 }
-
-                var es = new EmailService();
-                es.Send(MessageHelper.GetPushApiValidateHeader(_dataset.Id, _title),
-                    MessageHelper.GetPushApiValidateMessage(_dataset.Id, _user.UserName, errorArray.ToArray()),
-                    new List<string>() { _user.Email },
-                    new List<string>() { GeneralSettings.SystemEmail }
-                    );
-
-                return false;
+                else
+                {
+                    var es = new EmailService();
+                    es.Send(MessageHelper.GetPushApiValidateHeader(_dataset.Id, _title),
+                        MessageHelper.GetPushApiValidateMessage(_dataset.Id, _user.UserName),
+                        new List<string>() { _user.Email },
+                        new List<string>() { GeneralSettings.SystemEmail }
+                        );
+                }
+                Debug.WriteLine("end validate data");
             }
-            else
-            {
-                var es = new EmailService();
-                es.Send(MessageHelper.GetPushApiValidateHeader(_dataset.Id, _title),
-                    MessageHelper.GetPushApiValidateMessage(_dataset.Id, _user.UserName),
-                    new List<string>() { _user.Email },
-                    new List<string>() { GeneralSettings.SystemEmail }
-                    );
-            }
-            Debug.WriteLine("end validate data");
+            
 
             return await Upload();
         }
@@ -247,9 +250,10 @@ namespace BExIS.Modules.Dcm.UI.Helper.API
                     {
                         counter++;
                         inputWasAltered = false;
-                        Stream = reader.Open(_filepath);
-                        rows = reader.ReadFile(Stream, Path.GetFileName(_filepath), id, packageSize);
-                        Stream.Close();
+                        using (Stream = reader.Open(_filepath))
+                        {
+                            rows = reader.ReadFile(Stream, Path.GetFileName(_filepath), id, packageSize);
+                        }
 
                         // if errors exist, send email to user and stop process
                         if (reader.ErrorMessages.Count > 0)

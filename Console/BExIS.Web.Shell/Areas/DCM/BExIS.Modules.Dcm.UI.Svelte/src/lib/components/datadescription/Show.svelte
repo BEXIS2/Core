@@ -6,12 +6,15 @@ export let id; //enityid
 export let title;
 export let description;
 export let structureId;
+export let fileReaderExist; // if filereader not exist, need to set 
+export let readableFiles;   // if file reader not exist, select from this files to generate a suggestion
 
 export let variables =[];
 
 </script>
-
-<Header {id} {structureId} {title} {description} ></Header>
+{#if readableFiles}
+	<Header {id} {structureId} {title} {description} {fileReaderExist} {readableFiles}></Header>
+{/if}
 
 {#if variables}
 

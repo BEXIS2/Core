@@ -36,7 +36,7 @@ namespace BExIS.Modules.Dcm.UI.Hooks
                 if (cache.Files == null || cache.Files.Any() == false) { Status = HookStatus.Inactive; return; }
 
                 // if file reader information exist
-                if (cache.ExcelFileReaderInfo == null && cache.AsciiFileReaderInfo == null) { Status = HookStatus.Inactive; return; }
+                // if (cache.ExcelFileReaderInfo == null && cache.AsciiFileReaderInfo == null) { Status = HookStatus.Inactive; return; }
 
                 // if everthing exist
                 Status = HookStatus.Open;

@@ -80,7 +80,7 @@ function errorHandler(e)
   </HookContainer>
 
   <HookContainer {...validationHook} >
-    <div slot="view"> <!-- validation Hooks-->
+    <div slot="view"> 
         <Validation {id} {version} {...validationHook} />
     </div>
   </HookContainer>
