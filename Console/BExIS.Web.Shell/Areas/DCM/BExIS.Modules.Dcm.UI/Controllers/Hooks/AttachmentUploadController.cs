@@ -8,6 +8,7 @@ using BExIS.Modules.Dcm.UI.Models.Edit;
 using BExIS.Security.Services.Utilities;
 using BExIS.UI.Hooks;
 using BExIS.UI.Hooks.Caches;
+using BExIS.UI.Hooks.Logs;
 using BExIS.UI.Models;
 using BExIS.Utils.Config;
 using BExIS.Utils.Data.Upload;
@@ -90,8 +91,11 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             // load edit dataset cache
             HookManager hookManager = new HookManager();
             EditDatasetDetailsCache cache = hookManager.LoadCache<EditDatasetDetailsCache>("dataset", "details", HookMode.edit, id);
+            EditDatasetDetailsLog logs = hookManager.LoadLog<EditDatasetDetailsLog>("dataset", "details", HookMode.edit, id);
+
 
             List<string> filesNames = new List<string>();
+            var username = BExISAuthorizeHelper.GetAuthorizedUserName(HttpContext);
 
             string folder = "Attachments"; // folder name inside dataset - temp or attachments
 
@@ -143,8 +147,9 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                     List<string> messages = new List<string> { "Files uploaded" };
                     messages.AddRange(filesNames);
 
-                    cache.Messages.Add(new ResultMessage(DateTime.Now, messages));
-                    hookManager.SaveCache(cache, "dataset", "details", HookMode.edit, id);
+                    logs.Messages.Add(new LogMessage(DateTime.Now, messages, username, "Attachment upload","upload"));
+                    hookManager.Save(cache,logs, "dataset", "details", HookMode.edit, id);
+
                 }
             }
             else
@@ -159,6 +164,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             // load edit dataset cache
             HookManager hookManager = new HookManager();
             EditDatasetDetailsCache cache = hookManager.LoadCache<EditDatasetDetailsCache>("dataset", "details", HookMode.edit, id);
+            EditDatasetDetailsLog log = hookManager.LoadLog<EditDatasetDetailsLog>("dataset", "details", HookMode.edit, id);
 
             using (var dm = new DatasetManager())
             {
@@ -192,12 +198,13 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                                 );
 
                 // add message to the cache
-                cache.Messages.Add(new ResultMessage(DateTime.Now, new List<string>() { file + " removed" }));
+                log.Messages.Add(new LogMessage(DateTime.Now, new List<string>() { file + " removed" }, username, "Attachment upload", "remove"));
 
                 // update last modification time
                 cache.UpdateLastModificarion(typeof(AttachmentEditHook));
 
-                hookManager.SaveCache(cache, "dataset", "details", HookMode.edit, id);
+                hookManager.Save(cache,log, "dataset", "details", HookMode.edit, id);
+
             }
 
             return Json(true);
@@ -208,10 +215,10 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         {
             HookManager hookManager = new HookManager();
             EditDatasetDetailsCache cache = hookManager.LoadCache<EditDatasetDetailsCache>("dataset", "details", HookMode.edit, id);
+            EditDatasetDetailsLog log = hookManager.LoadLog<EditDatasetDetailsLog>("dataset", "details", HookMode.edit, id);
 
             using (var dm = new DatasetManager())
             {
-                var username = BExISAuthorizeHelper.GetAuthorizedUserName(HttpContext);
 
                 var filePath = Path.Combine(AppConfiguration.DataPath, "Datasets", id.ToString(), "Attachments", file);
                 var dataset = dm.GetDataset(id);
@@ -226,11 +233,17 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
             }
 
-            cache.Messages.Add(new ResultMessage(DateTime.Now, new List<string>() { file + " description updated" }));
+            var username = BExISAuthorizeHelper.GetAuthorizedUserName(HttpContext);
+            //new LogMessage(DateTime.Now, new List<string>() { file + " removed" }, username, "Attachment", "remove")
+            log.Messages.Add(new LogMessage(DateTime.Now, new List<string>() { file + " description updated" } , username, "Attachment upload", "save description" ));
             // update last modification time
             cache.UpdateLastModificarion(typeof(AttachmentEditHook));
 
-            hookManager.SaveCache(cache, "dataset", "details", HookMode.edit, id);
+
+            // save cache and logs
+            hookManager.Save(cache, log, "dataset", "details", HookMode.edit, id);
+
+
 
             return Json(true);
         }

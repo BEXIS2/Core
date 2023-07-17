@@ -1,4 +1,5 @@
 ﻿using BExIS.App.Bootstrap.Attributes;
+using BExIS.App.Bootstrap.Helpers;
 using BExIS.Dlm.Entities.DataStructure;
 using BExIS.Dlm.Services.Data;
 using BExIS.IO;
@@ -6,6 +7,7 @@ using BExIS.Modules.Dcm.UI.Hooks;
 using BExIS.Modules.Dcm.UI.Models.Edit;
 using BExIS.UI.Hooks;
 using BExIS.UI.Hooks.Caches;
+using BExIS.UI.Hooks.Logs;
 using BExIS.UI.Models;
 using BExIS.Utils.Data.Upload;
 using BExIS.Utils.Upload;
@@ -135,6 +137,10 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         {
             HookManager hookManager = new HookManager();
             EditDatasetDetailsCache cache = hookManager.LoadCache<EditDatasetDetailsCache>("dataset", "details", HookMode.edit, id);
+            EditDatasetDetailsLog log = hookManager.LoadLog<EditDatasetDetailsLog>("dataset", "details", HookMode.edit, id);
+
+            var username = BExISAuthorizeHelper.GetAuthorizedUserName(HttpContext);
+
             List<string> filesNames = new List<string>();
 
             string folder = "Temp"; // folder name inside dataset - temp or attachments
@@ -181,8 +187,8 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                     List<string> messages = new List<string> { "Files uploaded" };
                     messages.AddRange(filesNames);
 
-                    cache.Messages.Add(new ResultMessage(DateTime.Now, messages));
-                    hookManager.SaveCache(cache, "dataset", "details", HookMode.edit, id);
+                    log.Messages.Add(new LogMessage(DateTime.Now, messages, username,"File upload","upload"));
+                    hookManager.Save(cache,log, "dataset", "details", HookMode.edit, id);
                 }
             }
             else
@@ -201,6 +207,9 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             // remove file from cache
             HookManager hookManager = new HookManager();
             EditDatasetDetailsCache cache = hookManager.LoadCache<EditDatasetDetailsCache>("dataset", "details", HookMode.edit, id);
+            EditDatasetDetailsLog log = hookManager.LoadLog<EditDatasetDetailsLog>("dataset", "details", HookMode.edit, id);
+            var username = BExISAuthorizeHelper.GetAuthorizedUserName(HttpContext);
+
 
             if (cache.Files.Any(f => f.Name == file))
             {
@@ -208,10 +217,10 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 if (f != null) cache.Files.Remove(f);
             }
 
-            cache.Messages.Add(new ResultMessage(DateTime.Now, new List<string>() { file + " removed" }));
+            log.Messages.Add(new LogMessage(DateTime.Now, new List<string>() { file + " removed" }, username,"File upload","remove"));
             // update last modification time
             cache.UpdateLastModificarion(typeof(FileUploadHook));
-            hookManager.SaveCache(cache, "dataset", "details", HookMode.edit, id);
+            hookManager.Save(cache,log, "dataset", "details", HookMode.edit, id);
 
             return Json(true);
         }
@@ -222,6 +231,9 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             // remove file from cache
             HookManager hookManager = new HookManager();
             EditDatasetDetailsCache cache = hookManager.LoadCache<EditDatasetDetailsCache>("dataset", "details", HookMode.edit, id);
+            EditDatasetDetailsLog log = hookManager.LoadLog<EditDatasetDetailsLog>("dataset", "details", HookMode.edit, id);
+
+            var username = BExISAuthorizeHelper.GetAuthorizedUserName(HttpContext);
 
             if (cache.Files.Any(f => f.Name == file))
             {
@@ -229,7 +241,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 if (f != null) f.Description = description;
             }
 
-            cache.Messages.Add(new ResultMessage(DateTime.Now, new List<string>() { file + " description updated" }));
+            log.Messages.Add(new LogMessage(DateTime.Now, new List<string>() { file + " description updated" }, username,"File upload", "save file description"));
             // update last modification time
             cache.UpdateLastModificarion(typeof(FileUploadHook));
             hookManager.SaveCache(cache, "dataset", "details", HookMode.edit, id);

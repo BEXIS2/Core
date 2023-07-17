@@ -3,7 +3,7 @@
 	import ValidationResult from '$lib/components/validation/ValidationResult.svelte';
 
 	import { getHookStart } from '../../services/HookCaller';
-	import { latestFileUploadDate, latestDataDescriptionDate } from '../../routes/edit/stores';
+	import { latestFileUploadDate, latestDataDescriptionDate, latestFileReaderDate } from '../../routes/edit/stores';
 	import { onMount } from 'svelte';
 
 	import type { ValidationModel } from '$models/ValidationModels';
@@ -21,6 +21,7 @@
 
 	$: $latestFileUploadDate, reload();
 	$: $latestDataDescriptionDate, reload();
+	$: $latestFileReaderDate, reload();
 
 	onMount(async () => {
 		reload();
@@ -42,7 +43,7 @@
 {:then a}
 	{#if model &&  model.fileResults}
 		{#each model.fileResults as fileResult}
-			<ValidationResult {...fileResult} />
+			<ValidationResult bind:sortedErrors={fileResult.sortedErrors} bind:file={fileResult.file} />
 		{/each}
 	{/if}
 {:catch error}

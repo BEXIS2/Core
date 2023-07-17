@@ -3,6 +3,7 @@ using BExIS.Dlm.Entities.Data;
 using BExIS.Security.Entities.Authorization;
 using BExIS.UI.Hooks;
 using BExIS.UI.Hooks.Caches;
+using BExIS.UI.Hooks.Logs;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -34,10 +35,10 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         [JsonNetFilter]
         public JsonResult Load(long id, int version = 0)
         {
-            List<ResultMessage> messages = new List<ResultMessage>();
+            List<LogMessage> messages = new List<LogMessage>();
 
             var hookManager = new HookManager();
-            var cache = hookManager.LoadCache<EditDatasetDetailsCache>("dataset", "details", HookMode.edit, id);
+            var cache = hookManager.LoadLog<EditDatasetDetailsLog>("dataset", "details", HookMode.edit, id);
 
             if (cache != null && cache.Messages.Any())
             {

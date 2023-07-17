@@ -1,4 +1,5 @@
 ﻿using BExIS.App.Bootstrap.Attributes;
+using BExIS.App.Bootstrap.Helpers;
 using BExIS.Dlm.Entities.Data;
 using BExIS.Dlm.Entities.DataStructure;
 using BExIS.Dlm.Services.Data;
@@ -12,6 +13,7 @@ using BExIS.Security.Entities.Authorization;
 using BExIS.UI.Helpers;
 using BExIS.UI.Hooks;
 using BExIS.UI.Hooks.Caches;
+using BExIS.UI.Hooks.Logs;
 using BExIS.UI.Models;
 using System;
 using System.Collections.Generic;
@@ -250,6 +252,9 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
             HookManager hookManager = new HookManager();
             EditDatasetDetailsCache cache = hookManager.LoadCache<EditDatasetDetailsCache>("dataset", "details", HookMode.edit, model.Id);
+            EditDatasetDetailsLog log = hookManager.LoadLog<EditDatasetDetailsLog>("dataset", "details", HookMode.edit, model.Id);
+
+            var username = BExISAuthorizeHelper.GetAuthorizedUserName(HttpContext);
 
             // update Data description hook
 
@@ -278,7 +283,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
             // store in messages
             string message = String.Format("the structure {0} was successfully created and attached to the dataset {1}.", model.Title, model.Id);
-            cache.Messages.Add(new ResultMessage(DateTime.Now, new List<string>() { message }));
+            log.Messages.Add(new LogMessage(DateTime.Now, new List<string>() { message }, username,"Structure suggestion","store"));
 
             // save cache
             hookManager.SaveCache(cache, "dataset", "details", HookMode.edit, model.Id);

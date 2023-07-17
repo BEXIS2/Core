@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { decimalCharacterType, orientationType } from '@bexis2/bexis2-core-ui';
+	import type { decimalCharacterType, orientationType, textMarkerType, textSeperatorType } from '@bexis2/bexis2-core-ui';
  import Item from './Item.svelte';
 
 	export let seperator: textSeperatorType;

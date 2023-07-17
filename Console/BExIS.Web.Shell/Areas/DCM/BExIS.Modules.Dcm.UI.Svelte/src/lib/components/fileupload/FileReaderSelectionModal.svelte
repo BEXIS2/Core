@@ -4,13 +4,14 @@
 import type { StructureSuggestionModel } from '$models/StructureSuggestion';
 
 import Selection from '../structuresuggestion/Selection.svelte';
-import {latestDataDescriptionDate } from '../../../routes/edit/stores';
+import { latestFileReaderDate } from '../../../routes/edit/stores';
 
 export let model:StructureSuggestionModel;
 
 
 import { Drawer, drawerStore } from '@skeletonlabs/skeleton';
 import type { DrawerSettings } from '@skeletonlabs/skeleton';
+
 
 open();
 
@@ -31,7 +32,9 @@ function open(): void {
 
   function close()
   {
-    latestDataDescriptionDate.set(Date.now());
+			console.log("close selection");
+			
+			 latestFileReaderDate.set(Date.now());
 				drawerStore.close();
   }
 

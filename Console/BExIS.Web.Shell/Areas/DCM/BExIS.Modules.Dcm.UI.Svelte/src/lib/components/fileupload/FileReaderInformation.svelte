@@ -15,31 +15,36 @@ import FileReader from './FileReader.svelte';
 import Fa from 'svelte-fa'
 import { faCheck } from '@fortawesome/free-solid-svg-icons'
 
-
 export let id;
 export let readableFiles:fileInfoType[] = []; 
 export let asciiFileReaderInfo:asciiFileReaderInfoType;
 
 let target;
-	$: target;
-
 let model: StructureSuggestionModel;
 $:model;
 let list:string[] = []; 
+$:list, update(readableFiles);
 
+let loading = false;
 
-onMount(async () => {
+// onMount(async () => {
 
-list = readableFiles.map(m=>m.name);
-
- console.log("SHOW HEADER",readableFiles)
-});
+// });
 
 async function selectFile(e)
 {
-  if(target) {
-    model = await load(id, target, 0);
+	console.log("file reader select file", e.detail.value);
+	
+	if(e.detail.value) {
+    model = await load(id, e.detail.value, 0);
   }
+}
+
+function update(files)
+{
+	 loading=true;
+		list = files.map(f=>f.name);
+		loading=false;
 }
 
 </script>
@@ -61,10 +66,12 @@ async function selectFile(e)
 <MultiSelect
 		id="fileselection"
 		title="Select a File"
-		bind:target
+		bind:target={target}
 		source={list}
 		on:change={selectFile}
 		isMulti={false}
+		complexTarget={true}
+		{loading}
 		placeholder="please select a file to suggest the reader informations"
 	/>
 

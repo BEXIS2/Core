@@ -1,4 +1,5 @@
 ﻿using BExIS.App.Bootstrap.Attributes;
+using BExIS.App.Bootstrap.Helpers;
 using BExIS.Dlm.Entities.Data;
 using BExIS.Dlm.Entities.DataStructure;
 using BExIS.Dlm.Services.Data;
@@ -10,6 +11,7 @@ using BExIS.Modules.Dcm.UI.Models.Edit;
 using BExIS.Security.Entities.Authorization;
 using BExIS.UI.Hooks;
 using BExIS.UI.Hooks.Caches;
+using BExIS.UI.Hooks.Logs;
 using BExIS.Utils.Helpers;
 using BExIS.Utils.Upload;
 using System;
@@ -54,7 +56,10 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             List<Error> errors = new List<Error>();
 
             // load cache to get informations about the current upload workflow
-            EditDatasetDetailsCache cache = hookManager.LoadCache<EditDatasetDetailsCache>("dataset", "details", HookMode.edit, id);
+            EditDatasetDetailsCache cache = hookManager.LoadCache<EditDatasetDetailsCache>("dataset", "details", HookMode.edit, id );
+            EditDatasetDetailsLog log = hookManager.LoadLog<EditDatasetDetailsLog>("dataset", "details", HookMode.edit, id);
+            var username = BExISAuthorizeHelper.GetAuthorizedUserName(HttpContext);
+
 
             //2. Files
             if (cache.Files == null || cache.Files.Any() == false)
@@ -122,8 +127,9 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                                         {
                                             // check if hash of file has changed or not exist
                                             // if so, then valdiate and overide hash if not set results to model
-
-                                            string incomingHash = HashHelper.CreateMD5Hash(file.Name, file.Lenght.ToString());
+                                            // the hash value need to be abot: name, lenght, structure id, ascci reader info;
+                                            // if something has changed also validation need to repeat
+                                            string incomingHash = HashHelper.CreateMD5Hash(file.Name, file.Lenght.ToString(), datastructureId.ToString(), cache.AsciiFileReaderInfo.ToJson());
 
                                             // if a validation is allready run and the file has not changed, skip validation
                                             if (file.ValidationHash != incomingHash)
@@ -238,7 +244,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                             {
                                 cache.IsDataValid = false;
                                 model.IsValid = cache.IsDataValid;
-                                cache.Messages.Add(new ResultMessage(DateTime.Now, result.Errors)); // add message for the history
+                                log.Messages.Add(new LogMessage(DateTime.Now, result.Errors, username,"Validation","validate")); // add message for the history
                             }
 
                         }
@@ -255,12 +261,12 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             // if model is valid , add a message 
             if (model.IsValid)
             {
-                cache.Messages.Add(new ResultMessage(DateTime.Now, new List<string>() { "The validation was successful." })); // add message for the history
+                log.Messages.Add(new LogMessage(DateTime.Now, new List<string>() { "The validation was successful." }, username, "Validation", "validate")); // add message for the history
             }
 
 
             // save cache
-            hookManager.SaveCache(cache, "dataset", "details", HookMode.edit, id);
+            hookManager.Save(cache,log, "dataset", "details", HookMode.edit, id);
 
             return Json(model, JsonRequestBehavior.AllowGet);
         }
