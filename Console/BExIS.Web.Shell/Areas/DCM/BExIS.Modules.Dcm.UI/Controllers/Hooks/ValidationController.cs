@@ -58,6 +58,8 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             // load cache to get informations about the current upload workflow
             EditDatasetDetailsCache cache = hookManager.LoadCache<EditDatasetDetailsCache>("dataset", "details", HookMode.edit, id );
             EditDatasetDetailsLog log = hookManager.LoadLog<EditDatasetDetailsLog>("dataset", "details", HookMode.edit, id);
+            if(log==null) log = new EditDatasetDetailsLog();
+
             var username = BExISAuthorizeHelper.GetAuthorizedUserName(HttpContext);
 
 
@@ -245,17 +247,22 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                         cache.IsDataValid = true;
                         model.IsValid = true;
 
+                        List<string> e = new List<string>(); //overall collection of errors
+
                         foreach (var result in model.FileResults)
                         {
+
                             // if there are errors
                             if (result.Errors.Any())
                             {
                                 cache.IsDataValid = false;
                                 model.IsValid = cache.IsDataValid;
-                                log.Messages.Add(new LogMessage(DateTime.Now, result.Errors, username,"Validation","validate")); // add message for the history
+                                result.Errors.ForEach(error=> e.Add(result.File+" : "+error)); // add file name to each message
                             }
-
                         }
+
+                        if(e.Any())
+                            log.Messages.Add(new LogMessage(DateTime.Now, e, username, "Validation", "validate")); // add message for the history
 
                     }
                     else
