@@ -1,4 +1,5 @@
 ﻿using BExIS.App.Bootstrap.Attributes;
+using BExIS.App.Bootstrap.Helpers;
 using BExIS.Dlm.Entities.Data;
 using BExIS.Dlm.Entities.DataStructure;
 using BExIS.Dlm.Services.Data;
@@ -10,6 +11,7 @@ using BExIS.Modules.Dcm.UI.Models.Edit;
 using BExIS.Security.Entities.Authorization;
 using BExIS.UI.Hooks;
 using BExIS.UI.Hooks.Caches;
+using BExIS.UI.Hooks.Logs;
 using BExIS.Utils.Helpers;
 using BExIS.Utils.Upload;
 using System;
@@ -54,7 +56,12 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             List<Error> errors = new List<Error>();
 
             // load cache to get informations about the current upload workflow
-            EditDatasetDetailsCache cache = hookManager.LoadCache<EditDatasetDetailsCache>("dataset", "details", HookMode.edit, id);
+            EditDatasetDetailsCache cache = hookManager.LoadCache<EditDatasetDetailsCache>("dataset", "details", HookMode.edit, id );
+            EditDatasetDetailsLog log = hookManager.LoadLog<EditDatasetDetailsLog>("dataset", "details", HookMode.edit, id);
+            if(log==null) log = new EditDatasetDetailsLog();
+
+            var username = BExISAuthorizeHelper.GetAuthorizedUserName(HttpContext);
+
 
             //2. Files
             if (cache.Files == null || cache.Files.Any() == false)
@@ -101,104 +108,112 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                             // read all files
                             foreach (var file in cache.Files)
                             {
+                                // get extention, name & path
+                                var ext = Path.GetExtension(file.Name);
+                                var fileName = Path.GetFileName(file.Name);
+                                var filePath = Path.Combine(AppConfiguration.DataPath, "Datasets", id.ToString(), "Temp", file.Name);
+                                List<Error> fileErrors = new List<Error>(); // collection of errors 
+
                                 try
                                 {
-                                    // get extention, name & path
-                                    var ext = Path.GetExtension(file.Name);
-                                    var fileName = Path.GetFileName(file.Name);
-                                    var filePath = Path.Combine(AppConfiguration.DataPath, "Datasets", id.ToString(), "Temp", file.Name);
-
-                                    //check file reader info
-                                    bool existReaderInfo = true;
-                                    if (cache.AsciiFileReaderInfo == null)
-                                    {
-                                        existReaderInfo = false;
-                                        file.Errors.Add(new Error(ErrorType.FileReader, "File reader informations missing.", "FileReader"));
-                                    }
-                                    else
-                                    {
-
-                                        if (System.IO.File.Exists(filePath))
+                                    
+                                        //check file reader info
+                                        bool existReaderInfo = true;
+                                        if (cache.AsciiFileReaderInfo == null)
                                         {
-                                            // check if hash of file has changed or not exist
-                                            // if so, then valdiate and overide hash if not set results to model
-
-                                            string incomingHash = HashHelper.CreateMD5Hash(file.Name, file.Lenght.ToString());
-
-                                            // if a validation is allready run and the file has not changed, skip validation
-                                            if (file.ValidationHash != incomingHash)
-                                            {
-
-                                                file.Errors = new List<Error>(); // reset error list
-
-                                                if (ext.Equals(".xlsm")) // excel Template
-                                                {
-                                                    //ExcelReader reader = new ExcelReader(sds, new ExcelFileReaderInfo());
-                                                    //Stream = reader.Open(filePath);
-                                                    //reader.ValidateTemplateFile(Stream, fileName, id);
-                                                    //file.Errors = reader.ErrorMessages;
-                                                    //cache.UpdateSetup.RowsCount = reader.NumberOfRows;
-                                                    //throw new NotImplementedException("validation with .xlsm is not supported yet");
-                                                    file.Errors.Add(new Error(ErrorType.File, "Validation with .xlsm is not supported yet.", "File"));
-                                                }
-                                                else
-                                                if (iOUtility.IsSupportedExcelFile(ext)) // Excel
-                                                {
-                                                    //ExcelReader reader = new ExcelReader(sds, (ExcelFileReaderInfo)cache.ExcelFileReaderInfo);
-                                                    //Stream = reader.Open(filePath);
-                                                    //reader.ValidateFile(Stream, fileName, id);
-                                                    //file.Errors = reader.ErrorMessages;
-                                                    //cache.UpdateSetup.RowsCount = reader.NumberOfRows;
-                                                    //throw new NotImplementedException("validation with .xlsx is not supported yet");
-                                                    file.Errors.Add(new Error(ErrorType.File, "Validation with .xlsm is not supported yet.", "File"));
-                                                }
-                                                else
-                                                if (iOUtility.IsSupportedAsciiFile(ext)) // asccii
-                                                {
-                                                    AsciiReader reader = new AsciiReader(sds, (AsciiFileReaderInfo)cache.AsciiFileReaderInfo);
-
-                                                    // current validation direction
-                                                    // check data structure
-                                                    // check values
-                                                    // check primary key
-
-                                                    using (Stream = reader.Open(filePath))
-                                                    {
-                                                        //validate
-                                                        reader.ValidateFile(Stream, fileName, id); // structure and values
-                                                        file.Errors = reader.ErrorMessages;
-                                                        cache.UpdateSetup.RowsCount = reader.NumberOfRows;
-                                                    }
-
-                                                    if (file.Errors == null || file.Errors.Count == 0)
-                                                    {
-                                                        //check against primary key
-                                                        var unique = uploadWizardHelper.IsUnique(id, ext, fileName, filePath, (AsciiFileReaderInfo)cache.AsciiFileReaderInfo, datastructureId);
-                                                        if (!unique)
-                                                        {
-                                                            file.Errors.Add(new Error(ErrorType.PrimaryKey, "the data in the file violate the primary key set.", "Primary Key"));
-                                                        }
-                                                    }
-                                                }
-
-                                                file.ValidationHash = incomingHash;
-                                            }
+                                            existReaderInfo = false;
+                                            fileErrors.Add(new Error(ErrorType.FileReader, "File reader informations missing.", "FileReader"));
                                         }
                                         else
                                         {
-                                            file.Errors.Add(new Error(ErrorType.File, "File is missing.", "File"));
+
+                                            if (System.IO.File.Exists(filePath))
+                                            {
+
+                                                // check if hash of file has changed or not exist
+                                                // if so, then valdiate and overide hash if not set results to model
+                                                // the hash value need to be abot: name, lenght, structure id, ascci reader info;
+                                                // if something has changed also validation need to repeat
+                                                string readerInfo = cache.AsciiFileReaderInfo != null ? cache.AsciiFileReaderInfo.ToJson() : "";
+                                                string incomingHash = HashHelper.CreateMD5Hash(file.Name, file.Lenght.ToString(), datastructureId.ToString(), readerInfo);
+
+                                                // if a validation is allready run and the file has not changed, skip validation
+                                                if (file.ValidationHash != incomingHash)
+                                                {
+                                                    if (ext.Equals(".xlsm")) // excel Template
+                                                    {
+                                                        //ExcelReader reader = new ExcelReader(sds, new ExcelFileReaderInfo());
+                                                        //Stream = reader.Open(filePath);
+                                                        //reader.ValidateTemplateFile(Stream, fileName, id);
+                                                        //file.Errors = reader.ErrorMessages;
+                                                        //cache.UpdateSetup.RowsCount = reader.NumberOfRows;
+                                                        //throw new NotImplementedException("validation with .xlsm is not supported yet");
+                                                        fileErrors.Add(new Error(ErrorType.File, "Validation with .xlsm is not supported yet.", "File"));
+                                                    }
+                                                    else
+                                                    if (iOUtility.IsSupportedExcelFile(ext)) // Excel
+                                                    {
+                                                        //ExcelReader reader = new ExcelReader(sds, (ExcelFileReaderInfo)cache.ExcelFileReaderInfo);
+                                                        //Stream = reader.Open(filePath);
+                                                        //reader.ValidateFile(Stream, fileName, id);
+                                                        //file.Errors = reader.ErrorMessages;
+                                                        //cache.UpdateSetup.RowsCount = reader.NumberOfRows;
+                                                        //throw new NotImplementedException("validation with .xlsx is not supported yet");
+                                                        fileErrors.Add(new Error(ErrorType.File, "Validation with .xlsm is not supported yet.", "File"));
+                                                    }
+                                                    else
+                                                    if (iOUtility.IsSupportedAsciiFile(ext)) // asccii
+                                                    {
+                                                        AsciiReader reader = new AsciiReader(sds, (AsciiFileReaderInfo)cache.AsciiFileReaderInfo);
+
+                                                        // current validation direction
+                                                        // check data structure
+                                                        // check values
+                                                        // check primary key
+
+                                                        using (Stream = reader.Open(filePath))
+                                                        {
+                                                            //validate
+                                                            reader.ValidateFile(Stream, fileName, id); // structure and values
+                                                            fileErrors = reader.ErrorMessages;
+                                                            cache.UpdateSetup.RowsCount = reader.NumberOfRows;
+                                                        }
+
+                                                        if (fileErrors == null || fileErrors.Count == 0)
+                                                        {
+                                                            //check against primary key
+                                                            var unique = uploadWizardHelper.IsUnique(id, ext, fileName, filePath, (AsciiFileReaderInfo)cache.AsciiFileReaderInfo, datastructureId);
+                                                            if (!unique)
+                                                            {
+                                                                fileErrors.Add(new Error(ErrorType.PrimaryKey, "the data in the file violate the primary key set.", "Primary Key"));
+                                                            }
+                                                        }
+                                                    }
+
+                                                    file.ValidationHash = incomingHash;
+                                                }
+                                                
+
+                                            }
+                                            else
+                                            {
+                                                fileErrors.Add(new Error(ErrorType.File, "File is missing.", "File"));
+                                            }
+                                            
                                         }
-                                    }
+                                    
                                 }
                                 catch (Exception ex)
                                 {
-                                    file.Errors?.Add(new Error(ErrorType.Dataset, ex.Message,"Dataset"));
+                                    fileErrors?.Add(new Error(ErrorType.Dataset, ex.Message, "Dataset"));
                                 }
                                 finally
                                 {
 
-                                    if (file.Errors.Any())
-                                    {
+                                    if (fileErrors.Any()) file.Errors = fileErrors;
+                                    
+                                    if(file.Errors.Any())
+                                    { 
                                         FileValidationResult result = new FileValidationResult();
                                         result.File = file.Name;
                                         file.Errors.ForEach(e => result.Errors.Add(e.ToHtmlString()));
@@ -208,6 +223,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                                         errors.AddRange(file.Errors); // set to global error list
                                     }
                                 }
+                                
 
                             }
                         }
@@ -231,17 +247,22 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                         cache.IsDataValid = true;
                         model.IsValid = true;
 
+                        List<string> e = new List<string>(); //overall collection of errors
+
                         foreach (var result in model.FileResults)
                         {
+
                             // if there are errors
                             if (result.Errors.Any())
                             {
                                 cache.IsDataValid = false;
                                 model.IsValid = cache.IsDataValid;
-                                cache.Messages.Add(new ResultMessage(DateTime.Now, result.Errors)); // add message for the history
+                                result.Errors.ForEach(error=> e.Add(result.File+" : "+error)); // add file name to each message
                             }
-
                         }
+
+                        if(e.Any())
+                            log.Messages.Add(new LogMessage(DateTime.Now, e, username, "Validation", "validate")); // add message for the history
 
                     }
                     else
@@ -255,12 +276,12 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             // if model is valid , add a message 
             if (model.IsValid)
             {
-                cache.Messages.Add(new ResultMessage(DateTime.Now, new List<string>() { "The validation was successful." })); // add message for the history
+                log.Messages.Add(new LogMessage(DateTime.Now, new List<string>() { "The validation was successful." }, username, "Validation", "validate")); // add message for the history
             }
 
 
             // save cache
-            hookManager.SaveCache(cache, "dataset", "details", HookMode.edit, id);
+            hookManager.Save(cache,log, "dataset", "details", HookMode.edit, id);
 
             return Json(model, JsonRequestBehavior.AllowGet);
         }
@@ -288,8 +309,10 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
                         if (c > 0)
                         {
-                            var err = errors.Where(e => e.getName().Equals(vn) && e.GetMessage().Equals(i)).FirstOrDefault();
-                            sortedErrors.Add(new SortedError(vn, c, i, err.GetType()));
+                            var errs = errors.Where(e => e.getName().Equals(vn) && e.GetMessage().Equals(i));
+                            List<string> errorMessages = new List<string>();
+                            errs.ToList().ForEach(e => errorMessages.Add(e.ToHtmlString()));
+                            sortedErrors.Add(new SortedError(vn, c, i, errs.FirstOrDefault().GetType(), errorMessages));
                         }
                     }
                 }
@@ -306,9 +329,10 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
                         if (c > 0)
                         {
-                            var err = errors.Where(e => e.getName().Equals(vn) && e.GetMessage().Equals(i)).FirstOrDefault();
-
-                            sortedErrors.Add(new SortedError(vn, c, i, err.GetType()));
+                            var errs = errors.Where(e => e.getName().Equals(vn) && e.GetMessage().Equals(i));
+                            List<string> errorMessages = new List<string>();
+                            errs.ToList().ForEach(e => errorMessages.Add(e.ToHtmlString()));
+                            sortedErrors.Add(new SortedError(vn, c, i, errs.FirstOrDefault().GetType(), errorMessages));
                         }
                     }
                 }

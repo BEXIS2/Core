@@ -1,9 +1,9 @@
 <script lang="ts">
 	import Suggestion from './Suggestion.svelte';
-	import Selection from './Selection.svelte';
+	import Selection from '$lib/components/structuresuggestion/Selection.svelte';;
 	import StructureAttributes from './StructureAttributes.svelte';
 
-	import Fa from 'svelte-fa/src/fa.svelte';
+	import Fa from 'svelte-fa';
 	import { faSave } from '@fortawesome/free-regular-svg-icons';
 	import { faArrowLeft } from '@fortawesome/free-solid-svg-icons';
 
@@ -16,7 +16,7 @@
 
 	import type { StructureSuggestionModel } from '$models/StructureSuggestion';
 	import { displayPatternStore, structureStore } from './store';
-	
+	import { pageContentLayoutType} from '@bexis2/bexis2-core-ui'
 
 	// load attributes from div
 	let container;
@@ -84,7 +84,7 @@
 	}
 </script>
 
-<Page title="Structure Suggestion" note="generate a structure from a file.">
+<Page title="Structure Suggestion" note="generate a structure from a file." contentLayoutType={pageContentLayoutType.full} >
 	{#if !model}
 		<Spinner label="the file {file} is currently being analyzed"/>
 	{:else if selectionIsActive}

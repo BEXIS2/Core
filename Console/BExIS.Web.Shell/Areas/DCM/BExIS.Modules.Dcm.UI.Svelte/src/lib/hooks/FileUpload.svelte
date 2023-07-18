@@ -9,7 +9,7 @@ import TimeDuration from '$lib/components/utils/TimeDuration.svelte'
 import FileReaderInformation from '$lib/components/fileupload/FileReaderInformation.svelte'
 
 
-import { latestFileUploadDate } from '../../routes/edit/stores';
+import { latestFileUploadDate, latestFileReaderDate } from '../../routes/edit/stores';
 
 import type { FileUploadModel } from '$models/FileUpload'
 
@@ -26,6 +26,8 @@ let submit = "/dcm/fileupload/upload";
 let context = "fileupload";
 let error = "";
 
+$:$latestFileReaderDate, load()
+
 let model:FileUploadModel;
 $:model;
 
@@ -33,10 +35,7 @@ onMount(async () => {
   load();
 })
 
-
-
 $:loading = false;
-$:existError = false;
 
 const dispatch = createEventDispatcher();
 
@@ -49,7 +48,7 @@ async function load()
 
 }
 
-async function reload(e) 
+async function reload() 
 {
   /*update store*/
   latestFileUploadDate.set(Date.now());
@@ -61,20 +60,20 @@ async function reload(e)
 function success(e)
 {
   console.log("success");
-  reload(e);
+  reload();
   dispatch("success",{text:e.detail.text})
 }
 
 function warning(e)
 {
   console.log("warning");
-  reload(e);
+  reload();
   dispatch("warning",{text:e.detail.text})
 }
 
 
 </script>
-
+<div class="space-y-2">
 {#await load()}
   <div class="text-surface-800">
     <Spinner label="loading File Uploader" />
@@ -92,8 +91,9 @@ function warning(e)
   <FileOverview {id} files={model.fileUploader.existingFiles} descriptionType={model.fileUploader.descriptionType} {save} {remove} on:success={success} on:warning={warning}/>
 {/if}
 
-<FileReaderInformation {id} readableFiles={model.fileUploader.existingFiles} asciiFileReaderInfo = {model.asciiFileReaderInfo}/>
+<FileReaderInformation {id} bind:readableFiles={model.fileUploader.existingFiles} bind:asciiFileReaderInfo = {model.asciiFileReaderInfo}/>
 
 {:catch error} 
   <ErrorMessage {error}/>
 {/await}
+</div>

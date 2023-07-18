@@ -1,4 +1,5 @@
 ﻿
+using Newtonsoft.Json;
 using System.Collections.Generic;
 /// <summary>
 ///
@@ -43,6 +44,12 @@ namespace BExIS.IO.Transform.Input
         /// <remarks></remarks>
         /// <seealso cref="TextMarker"/>        
         public TextMarker TextMarker { get; set; }
+
+        // return
+        public string ToJson()
+        {
+            return JsonConvert.SerializeObject(this);
+        }
 
         /// <summary>
         /// Get TextSeperator as string

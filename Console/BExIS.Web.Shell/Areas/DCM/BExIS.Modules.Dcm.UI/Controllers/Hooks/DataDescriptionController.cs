@@ -12,6 +12,7 @@ using BExIS.Security.Entities.Authorization;
 using BExIS.Security.Services.Utilities;
 using BExIS.UI.Hooks;
 using BExIS.UI.Hooks.Caches;
+using BExIS.UI.Hooks.Logs;
 using BExIS.UI.Models;
 using BExIS.Utils.Config;
 using BExIS.Utils.Data.Upload;
@@ -105,7 +106,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 }
             }
 
-
+  
             HookManager hookManager = new HookManager();
             // load cache to check existing files
             EditDatasetDetailsCache cache = hookManager.LoadCache<EditDatasetDetailsCache>("dataset", "details", HookMode.edit, id);
@@ -183,8 +184,11 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                     HookManager hookManager = new HookManager();
 
                     EditDatasetDetailsCache cache = hookManager.LoadCache<EditDatasetDetailsCache>("dataset", "details", HookMode.edit, id);
+                    EditDatasetDetailsLog log = hookManager.LoadCache<EditDatasetDetailsLog>("dataset", "details", HookMode.edit, id);
                     var message = String.Format("the data structure {0} was successfully deleted", structureId);
-                    cache.Messages.Add(new ResultMessage(DateTime.Now, message ));
+
+                    var username = BExISAuthorizeHelper.GetAuthorizedUserName(HttpContext);
+                    log.Messages.Add(new LogMessage(DateTime.Now, message,username,"Data description","delete" ));
 
                     cache.UpdateLastModificarion(typeof(DataDescriptionHook));
 
@@ -262,6 +266,9 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             {
                 var hookManager = new HookManager();
                 EditDatasetDetailsCache cache = hookManager.LoadCache<EditDatasetDetailsCache>("dataset", "details", HookMode.edit, id);
+                EditDatasetDetailsLog log = hookManager.LoadLog<EditDatasetDetailsLog>("dataset", "details", HookMode.edit, id);
+                var username = BExISAuthorizeHelper.GetAuthorizedUserName(HttpContext);
+
 
                 var dataset = datasetManager.GetDataset(id);
                 if (dataset == null) throw new ArgumentNullException("dataset");
@@ -278,10 +285,10 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
                 // store in messages
                 string message = String.Format("the structure {0} was successfully attached to the dataset {1}.", structure.Name, id);
-                cache.Messages.Add(new ResultMessage(DateTime.Now, new List<string>() { message }));
+                log.Messages.Add(new LogMessage(DateTime.Now, new List<string>() { message }, username, "Data description","set"));
 
                 // save cache
-                hookManager.SaveCache(cache, "dataset", "details", HookMode.edit, id);
+                hookManager.Save(cache,log, "dataset", "details", HookMode.edit, id);
 
                 return Json(true, JsonRequestBehavior.AllowGet);
             }
@@ -295,6 +302,8 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             {
                 var hookManager = new HookManager();
                 EditDatasetDetailsCache cache = hookManager.LoadCache<EditDatasetDetailsCache>("dataset", "details", HookMode.edit, id);
+                EditDatasetDetailsLog log = hookManager.LoadLog<EditDatasetDetailsLog>("dataset", "details", HookMode.edit, id);
+                var username = BExISAuthorizeHelper.GetAuthorizedUserName(HttpContext);
 
 
                 var dataset = datasetManager.GetDataset(id);
@@ -309,10 +318,11 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
                 // store in messages
                 string message = String.Format("structure was successfully removed from the dataset {0}.", id);
-                cache.Messages.Add(new ResultMessage(DateTime.Now, new List<string>() { message }));
+                log.Messages.Add(new LogMessage(DateTime.Now, new List<string>() { message }, username, "Data description","remove"));
 
                 // save cache
-                hookManager.SaveCache(cache, "dataset", "details", HookMode.edit, id);
+                hookManager.Save(cache, log, "dataset", "details", HookMode.edit, id);
+
 
                 return Json(true, JsonRequestBehavior.AllowGet);
             }

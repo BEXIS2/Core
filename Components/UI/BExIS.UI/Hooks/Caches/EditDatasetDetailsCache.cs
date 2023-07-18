@@ -40,12 +40,6 @@ namespace BExIS.UI.Hooks.Caches
         public List<FileInfo> Files { get; set; }
 
         /// <summary>
-        /// if something is done or any result from a hook should generate a Message to show the user the result of the hook
-        /// This list is the collection of all this messages
-        /// </summary>
-        public List<ResultMessage> Messages { get; set; }
-
-        /// <summary>
         /// this dictionary store the last modifications of the changed hooks
         /// string = hook name 
         /// DateTime = Last Modification
@@ -64,7 +58,6 @@ namespace BExIS.UI.Hooks.Caches
 
         public EditDatasetDetailsCache()
         {
-            Messages = new List<ResultMessage>();
             Files = new List<FileInfo>();
         }
 

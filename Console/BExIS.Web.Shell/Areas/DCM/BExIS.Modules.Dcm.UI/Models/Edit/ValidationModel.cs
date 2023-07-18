@@ -41,19 +41,23 @@ namespace BExIS.Modules.Dcm.UI.Models.Edit
         public string Issue { get; set; }
         public ErrorType Type { get; set; }
 
+        public List<string> Errors { get; set; }
+
         public SortedError()
         {
             Name =  string.Empty;
             Count = 0;
             Issue = string.Empty;
             Type = ErrorType.Other;
+            Errors = new List<string>();
         }
-        public SortedError(string name, int count, string issue, ErrorType type)
+        public SortedError(string name, int count, string issue, ErrorType type, List<string> errors)
         {
             Name = name;
             Count = count;
             Issue = issue;
             Type = type;
+            Errors = errors;
         }
     
     }
