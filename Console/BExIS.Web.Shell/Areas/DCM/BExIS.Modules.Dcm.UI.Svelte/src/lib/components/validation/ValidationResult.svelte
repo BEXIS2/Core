@@ -5,11 +5,13 @@ import { onMount } from "svelte";
 
 import Fa from 'svelte-fa'
 import { faCheck, faXmark, faBan  } from '@fortawesome/free-solid-svg-icons'
+	import Message from "./Message.svelte";
 
 
 
 export let file;
 export let sortedErrors: SortedError[];
+$:sortedErrors;
 
 let workflow:ErrorType[] = [ErrorType.Dataset,ErrorType.File,ErrorType.FileReader, ErrorType.Datastructure, ErrorType.Value, ErrorType.PrimaryKey];
 let checks:Check[]= [];
@@ -27,7 +29,7 @@ for (let index = 0; index < workflow.length; index++) {
 
   const type = workflow[index];
   const name = ErrorType[type];
-  const errors = sortedErrors.filter(e=>e.type === type)
+  const errors = sortedErrors.filter(e=>e.type === type) // get list of sorted errors based on a type e.g. data structure or value
   const style = getStyle(errors.length, faild);
   let c:Check = {name, type, errors, style}
   
@@ -59,7 +61,7 @@ function getStyle(count, faild)
 
 
 </script>
-
+{#if sortedErrors}
 <div class="variant-ghost-success variant-ghost-error variant-ghost-surface hidden"> </div>
 
 <div class="card p-5 space-y-3 mb-5">
@@ -100,14 +102,14 @@ function getStyle(count, faild)
 </div>
 
 {#if selected}
-<div class="card p-3 shadow-sm border-error-300 border-solid border">
+<div class="card shadow-sm border-error-300 border-solid border">
 
- <ol class="list-disc px-5">
-  {#each selected.errors as error}
-   <li>{error.issue}</li>
-  {/each}
- </ol>
+{#each selected.errors as error}
+  <Message title={error.issue} count={error.count} messages={error.errors}/>
+{/each}
+
 </div>
 {/if}
 
 </div>
+{/if}

@@ -73,7 +73,7 @@ function warning(e)
 
 
 </script>
-
+<div class="space-y-2">
 {#await load()}
   <div class="text-surface-800">
     <Spinner label="loading File Uploader" />
@@ -96,3 +96,4 @@ function warning(e)
 {:catch error} 
   <ErrorMessage {error}/>
 {/await}
+</div>

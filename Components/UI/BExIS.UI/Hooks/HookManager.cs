@@ -198,7 +198,7 @@ namespace BExIS.UI.Hooks
 
             // load json if exist
             // generate filename based on mode,entity and place
-            string filename = _mode.ToString().ToLower() + _entity.ToLower() + _place.ToLower() + "cache.json";
+            string filename = _mode.ToString().ToLower() + _entity.ToLower() + _place.ToLower() + "log.json";
 
             // combine datapath + path + filename
             string filepath = Path.Combine(AppConfiguration.DataPath, _entity + "s", id.ToString(), filename);

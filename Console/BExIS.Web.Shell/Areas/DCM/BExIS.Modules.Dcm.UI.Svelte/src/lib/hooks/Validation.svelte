@@ -43,6 +43,7 @@
 {:then a}
 	{#if model &&  model.fileResults}
 		{#each model.fileResults as fileResult}
+
 			<ValidationResult bind:sortedErrors={fileResult.sortedErrors} bind:file={fileResult.file} />
 		{/each}
 	{/if}

@@ -102,7 +102,7 @@ namespace BExIS.IO
                 }
                 catch (Exception ex)
                 {
-                    if (numTries > 10000)
+                    if (numTries > 1000000)
                     {
                         return false;
                     }

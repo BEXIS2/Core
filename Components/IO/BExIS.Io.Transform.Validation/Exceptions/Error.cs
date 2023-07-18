@@ -27,6 +27,20 @@ namespace BExIS.IO.Transform.Validation.Exceptions
         private string _issue = "";
         private ErrorType _errorType;
 
+        // getter
+        public string Name { get { return _name; } set { _name = value; } }
+        public string Value { get { return _value; } set { _value = value; } } 
+        public int Row { get { return _row; } set { _row = value; } }
+        public int Number { get { return _number; } set { _number = value; }  }
+        public string Package { get { return _package; } set { _package = value; } }
+        public string PackageLabel { get { return _packageLabel; } set { _packageLabel = value; } }
+        public ErrorType ErrorType { get { return _errorType; } set { _errorType = value; } }
+        public string DataType { get { return _dataType; } set { _dataType = value; } }
+        public string DatePattern { get { return _datePattern; } set { _datePattern = value; } }
+
+        public string Issue { get { return _issue; } set { _issue = value; } }
+
+
         public String getName()
         {
             return this._name;

@@ -14,6 +14,7 @@ export interface SortedError {
     count: number;
     issue: string;
     type: ErrorType;
+    errors: string[];
 }
 
 export enum ErrorType {
