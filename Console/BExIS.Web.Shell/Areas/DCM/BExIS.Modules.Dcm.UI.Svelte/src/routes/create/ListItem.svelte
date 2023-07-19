@@ -22,7 +22,7 @@ hover:bg-primary-100 space-x-100 active:bg-primary-300" on:click >
    <div class="flex-none text-left">   
       <Fa size="4x" icon={faFileAlt}/>
    </div>
-   <div class="text-left grow bg-zinc-300 h-full">
+   <div class="text-left grow h-full">
       <h3 class="h3">{name}</h3>
       <span class="text-sm">{description}</span> 
     </div>

@@ -140,19 +140,19 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 // check wheter mapping exist based on metadata structure id
                 using (var mappingManager = new MappingManager())
                 {
-                    var source = mappingManager.LinkElementRepo.Get().Where(l => l.ElementId.Equals(metadataStructureId) && l.Type.Equals(LinkElementType.MetadataStructure)).FirstOrDefault();
-                    var target = mappingManager.LinkElementRepo.Get().Where(l => l.Type.Equals(LinkElementType.System)).FirstOrDefault();
+                    var source = mappingManager.LinkElementRepo.Get().Where(l => l.Type.Equals(LinkElementType.System)).FirstOrDefault();
+                    var target = mappingManager.LinkElementRepo.Get().Where(l => l.ElementId.Equals(metadataStructureId) && l.Type.Equals(LinkElementType.MetadataStructure)).FirstOrDefault();  
                     var rootMapping = mappingManager.GetMapping(source, target);
                     if (rootMapping != null) // root mapping to system keys exist
                     {
                         var childMappings = mappingManager.GetChildMappingFromRoot(rootMapping.Id, 1);
-                        var targets = childMappings.Select(m => m.Target.Name);
+                        var sources = childMappings.Select(m => m.Source.Name);
                        
 
                         foreach (var key in Enum.GetValues(typeof(Key)))
                         {
                             var mapped = "mapped";
-                            if (!targets.Contains(key.ToString())) mapped = "unmapped";
+                            if (!sources.Contains(key.ToString())) mapped = "unmapped";
 
                             ListItem item = new ListItem()
                             {
@@ -167,7 +167,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 }
             }
 
-            return Json(tmp, JsonRequestBehavior.AllowGet);
+            return Json(tmp.OrderBy(i=>i.Group), JsonRequestBehavior.AllowGet);
             
         }
 
