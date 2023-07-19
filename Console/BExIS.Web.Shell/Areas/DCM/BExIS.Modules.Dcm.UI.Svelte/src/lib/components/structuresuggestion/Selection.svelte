@@ -59,6 +59,9 @@ import { faSave, faTrash } from '@fortawesome/free-solid-svg-icons/index'
 
 		delimeter = model.delimeter;
 
+
+		checkStatus();
+
 	});
 
 

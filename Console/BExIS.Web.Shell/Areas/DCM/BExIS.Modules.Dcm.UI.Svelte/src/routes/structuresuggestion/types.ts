@@ -1,4 +1,4 @@
-import type { ListItem } from "@bexis2/bexis2-core-ui";
+import type { listItemType } from "@bexis2/bexis2-core-ui";
 
 export interface StructureSuggestionModel {
     id: number;
@@ -8,9 +8,9 @@ export interface StructureSuggestionModel {
     delimeter: number;
     decimal: number;
     textMarker: number;
-    delimeters: ListItem[];
-    decimals: ListItem[];
-    textMarkers: ListItem[];
+    delimeters: listItemType[];
+    decimals: listItemType[];
+    textMarkers: listItemType[];
     preview: string[];
     total: number;
     skipped: number;
@@ -37,11 +37,11 @@ export interface VariableModel {
     systemType: string;
     isKey: boolean;
     isOptional: boolean;
-    dataType: ListItem;
-    unit: ListItem;
-    template: ListItem;
-    displayPattern: ListItem;
-    possibleUnits: ListItem[];
-    possibleTemplates: ListItem[];
-    possibleDisplayPattern: ListItem[];
+    dataType: listItemType;
+    unit: listItemType;
+    template: listItemType;
+    displayPattern: listItemType | undefined;
+    possibleUnits: listItemType[];
+    possibleTemplates: listItemType[];
+    possibleDisplayPattern: listItemType[];
 }

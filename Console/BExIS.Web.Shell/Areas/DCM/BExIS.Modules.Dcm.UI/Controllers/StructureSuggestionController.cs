@@ -475,12 +475,12 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 {
                     foreach (var unit in units)
                     {
-                        list.Add(new ListItem(unit.Id, unit.Name, "other"));
+                        list.Add(new ListItem(unit.Id, unit.Abbreviation, "other"));
                     }
                 }
 
                 // get default missing values
-                return Json(list, JsonRequestBehavior.AllowGet);
+                return Json(list.OrderBy(i=>i.Group), JsonRequestBehavior.AllowGet);
             }
         }
 
@@ -596,7 +596,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             long skipped = AsciiReader.Skipped(file);
 
             // rows only with data
-            var dataTotal = total - skipped - datastart;
+            var dataTotal = total - skipped - (datastart-1);
 
             long selection = structureAnalyser.GetNumberOfRowsToAnalyse(min, max, percentage, dataTotal);
 
