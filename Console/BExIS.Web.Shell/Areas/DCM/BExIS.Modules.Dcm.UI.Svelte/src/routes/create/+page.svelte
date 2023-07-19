@@ -1,7 +1,7 @@
 <script lang="ts">
  import List from './List.svelte'
  import Form from './Form.svelte'
- import {Page} from '@bexis2/bexis2-core-ui';
+ import {Page, pageContentLayoutType} from '@bexis2/bexis2-core-ui';
 
  import type { linkType } from "@bexis2/bexis2-core-ui";
 
@@ -63,11 +63,12 @@ let links:linkType[] = [{label:"manual",url:"https://github.com/BEXIS2/Documents
 <Page 
 title="Create a Dataset" 
 note="On this page you can create a dataset based on a template. please select on template and fill out the form." 
-{links} >
+{links} 
+contentLayoutType={pageContentLayoutType.full}>
 
-<div in:fade={{ delay: 500 }} out:fade={{ delay: 500 }}  class="w-max">
+<div in:fade={{ delay: 500 }} out:fade={{ delay: 500 }}>
 {#if entitytemplates}
-<div class="w-full grid grid-cols-1 lg:grid-cols-2 gap-5">
+<div class="grid grid-cols-1 lg:grid-cols-2">
 
   <List items={entitytemplates} on:select={handleSelect}/>
 
