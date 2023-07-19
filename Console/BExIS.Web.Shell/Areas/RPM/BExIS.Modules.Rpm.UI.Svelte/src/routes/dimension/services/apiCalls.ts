@@ -7,6 +7,7 @@ export const GetDimensions = async () => {
 		return response.data;
 	} catch (error) {
 		console.error(error);
+		throw error;
 	}
 };
 
@@ -16,6 +17,7 @@ export const EditDimension = async (dimensionListItem: DimensionListItem) => {
 		return response.data;
 	} catch (error) {
 		console.error(error);
+		throw error;
 	}
 };
 
@@ -25,5 +27,6 @@ export const DeleteDimension = async (id: number) => {
 		return response.data;
 	} catch (error) {
 		console.error(error);
+		throw error;
 	}
 };

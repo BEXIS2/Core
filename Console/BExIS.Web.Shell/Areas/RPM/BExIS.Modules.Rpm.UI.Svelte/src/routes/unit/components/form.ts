@@ -39,15 +39,15 @@ const suite = create((data: dataType, fieldName) => {
 		enforce(data.unit.description).longerThan(10);
 	});
 
-	test('datatype', 'at least one dataype is required', () => {
-		console.log('datatype', 'check');
-		enforce(data.unit.datatypes).isNotBlank();
-	});
+	// test('datatype', 'at least one dataype is required', () => {
+	// 	console.log('datatype', 'check');
+	// 	enforce(data.unit.datatypes).isNotBlank();
+	// });
 
-	test('dimension', 'dimension is required', () => {
-		console.log('dimension', 'check');
-		enforce(data.unit.dimension?.id).isNotBlank();
-	});
+	// test('dimension', 'dimension is required', () => {
+	// 	console.log('dimension', 'check');
+	// 	enforce(data.unit.dimension?.id).isNotBlank();
+	// });
 });
 
 export default suite;

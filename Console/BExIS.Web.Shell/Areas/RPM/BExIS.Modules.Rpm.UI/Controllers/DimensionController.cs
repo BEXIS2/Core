@@ -34,6 +34,8 @@ namespace BExIS.Modules.Rpm.UI.Controllers
             }
         }
 
+        [JsonNetFilter]
+        [HttpPost]
         public JsonResult EditDimension(DimensionListItem dimensionListItem)
         {
             ValidationResult validationResult = new ValidationResult
@@ -83,6 +85,8 @@ namespace BExIS.Modules.Rpm.UI.Controllers
             return Json(result, JsonRequestBehavior.AllowGet);
         }
 
+        [JsonNetFilter]
+        [HttpPost]
         public JsonResult DeleteDimension(long id)
         {
             if (id > 0)
@@ -90,7 +94,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                 using (UnitManager unitManager = new UnitManager())
                 {
                     Dimension dimension = unitManager.DimensionRepo.Get(id);
-                    if (!dimension.Units.Any())
+                    if (dimension != null && !dimension.Units.Any())
                     {
                         unitManager.Delete(dimension);
                         return Json(true, JsonRequestBehavior.AllowGet);
@@ -112,12 +116,19 @@ namespace BExIS.Modules.Rpm.UI.Controllers
         }
         private DimensionListItem convertToDimensionListItem(Dimension dimension)
         {
+            bool inuse = false;
+            if(dimension.Units.Any())
+                inuse = true;
+            else
+                inuse = false;
+
             DimensionListItem dimensionListItem = new DimensionListItem
             {
                 Id = dimension.Id,
                 Name = dimension.Name,
                 Description = dimension.Description,
                 Specification = dimension.Specification,
+                InUse = inuse,
             };
             return dimensionListItem;
         }
