@@ -13,6 +13,9 @@ let res = suite.get();
 
 onMount(()=>{
   suite.reset();
+  if(model.title==="") {
+    model.title = model.id;
+  }
 
 })
 
