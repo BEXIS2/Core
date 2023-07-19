@@ -8,6 +8,7 @@ export interface UnitListItem {
 	dimension?: DimensionListItem;
 	datatypes: DataTypeListItem[];
 	measurementSystem: string;
+	inUse: boolean;
 }
 
 export interface DataTypeListItem {
@@ -15,11 +16,6 @@ export interface DataTypeListItem {
 	name: string;
 	description: string;
 	systemType: string;
-}
-
-export interface DimensionListItem {
-	id: number;
-	name: string;
 }
 
 export interface DimensionListItem {

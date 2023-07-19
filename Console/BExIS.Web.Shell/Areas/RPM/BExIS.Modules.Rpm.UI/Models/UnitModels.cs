@@ -41,6 +41,8 @@ namespace BExIS.Modules.Rpm.UI.Models.Units
         /// </summary>
         public string MeasurementSystem { get; set; }
 
+        public bool InUse { get; set; }
+
         public UnitListItem()
         {
             Id = 0;
@@ -49,6 +51,7 @@ namespace BExIS.Modules.Rpm.UI.Models.Units
             Abbreviation = string.Empty;
             Dimension = new DimensionListItem();
             Datatypes = new List<DataTypeListItem>();
+            InUse = false;
         }
     }
 

@@ -1,14 +1,19 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
-	import { fade } from 'svelte/transition';
-	import { Modal, modalStore } from '@skeletonlabs/skeleton';
-	import { Spinner, Table } from '@bexis2/bexis2-core-ui';
+	import { slide, fade } from 'svelte/transition';
+	import { Modal, Toast, modalStore, toastStore } from '@skeletonlabs/skeleton';
+	import { Page, Table, ErrorMessage, helpStore } from '@bexis2/bexis2-core-ui';
 	import * as apiCalls from './services/apiCalls';
 	import Form from './components/form.svelte';
-	import TableOption from './components/tableOptions.svelte';
+	import TableElement from '../components/tableElement.svelte';
+	import TableElements from '../components/tableElements.svelte';
+	import TablePlaceholder from '../components/tablePlaceholder.svelte';
+	import TableOption from '../components/tableOptions.svelte';
 	import { writable, type Writable } from 'svelte/store';
+	import Fa from 'svelte-fa';
+	import { faPlus, faXmark } from '@fortawesome/free-solid-svg-icons';
 
-	import type { ModalSettings } from '@skeletonlabs/skeleton';
+	import type { ModalSettings, ToastSettings } from '@skeletonlabs/skeleton';
 	import type { DimensionListItem } from './models';
 
 	let ds: DimensionListItem[] = [];
@@ -18,10 +23,7 @@
 	$: dimensions = ds;
 	$: tableStore.set(ds);
 
-	onMount(async () => {
-		ds = await apiCalls.GetDimensions();
-		clear();
-	});
+	onMount(async () => {});
 
 	async function reload(): Promise<void> {
 		showForm = false;
@@ -34,7 +36,8 @@
 			id: 0,
 			name: '',
 			description: '',
-			specification: ''
+			specification: '',
+			inUse: false
 		};
 	}
 
@@ -65,46 +68,105 @@
 	}
 
 	async function deleteDimension(id: number) {
-		let test = await apiCalls.DeleteDimension(id);
-		console.log('deleted', test);
+		let success = await apiCalls.DeleteDimension(id);
+		if (success != true) {
+			const toast: ToastSettings = {
+				classes: 'bg-error-300 border-solid border-2 border-error-500 shadow-md text-surface-900',
+				message: 'Can\'t delete Dimension "' + dimension.name + '".'
+			};
+			toastStore.trigger(toast);
+		} else {
+			const toast: ToastSettings = {
+				classes:
+					'bg-success-300 border-solid border-2 border-success-500 shadow-md text-surface-900',
+				message: 'Dimension "' + dimension.name + '" deleted.'
+			};
+			toastStore.trigger(toast);
+		}
 		reload();
+	}
+
+	function toggleForm() {
+		if (showForm) {
+			clear();
+		}
+		showForm = !showForm;
 	}
 </script>
 
-<div class="p-5">
-	{#if ds.length > 0 && ds}
-		<h1>dimensions</h1>
+<Page help={true} title="Manage Dimensions">
+	<div class="p-5">
+		<h1 class="h1">Dimensions</h1>
 
-		<div class="py-5">
-			{#if showForm}
-				<div in:fade out:fade>
-					<Form {dimension} {dimensions} on:cancel={reload} on:save={reload} />
+		{#await reload()}
+			<div class="grid w-full grid-cols-2 gap-5 my-4 pb-1 border-b border-primary-500">
+				<div class="h-9 w-96 placeholder animate-pulse" />
+				<div class="flex justify-end">
+					<button class="btn placeholder animate-pulse shadow-md h-9 w-16"
+						><Fa icon={faPlus} /></button
+					>
 				</div>
-			{:else}
-				<button type="button" class="btn variant-filled" on:click={() => (showForm = !showForm)}
-					>+</button
-				>
+			</div>
+			<div>
+				<TablePlaceholder cols={4} />
+			</div>
+		{:then}
+			<!-- svelte-ignore a11y-click-events-have-key-events -->
+			<div class="grid grid-cols-2 gap-5 my-4 pb-1 border-b border-primary-500">
+				<div class="h3 h-9">
+					{#if dimension.id < 1}
+						Create neẇ Dimension
+					{:else}
+						{dimension.name}
+					{/if}
+				</div>
+				<div class="text-right">
+					{#if !showForm}
+						<!-- svelte-ignore a11y-mouse-events-have-key-events -->
+						<button
+							in:fade
+							out:fade
+							class="btn variant-filled-secondary shadow-md h-9 w-16"
+							title="Create neẇ Unit"
+							id="create"
+							on:mouseover={() => {
+								helpStore.show('create');
+							}}
+							on:click={() => toggleForm()}><Fa icon={faPlus} /></button
+						>
+					{/if}
+				</div>
+			</div>
+
+			{#if showForm}
+				<div in:slide out:slide>
+					<Form {dimension} {dimensions} on:cancel={toggleForm} on:save={reload} />
+				</div>
 			{/if}
-		</div>
 
-		<div class="w-max">
-			<Table
-				on:action={(obj) => editDimension(obj.detail.type)}
-				config={{
-					id: 'Units',
-					data: tableStore,
-					optionsComponent: TableOption,
-					columns: {
-						id: {
-							exclude: true
+			<div class="w-max">
+				<Table
+					on:action={(obj) => editDimension(obj.detail.type)}
+					config={{
+						id: 'Units',
+						data: tableStore,
+						optionsComponent: TableOption,
+						columns: {
+							id: {
+								exclude: true
+							},
+							inUse: {
+								disableFiltering: true,
+								exclude: true
+							}
 						}
-					}
-				}}
-			/>
-		</div>
-	{:else}
-		<Spinner />
-	{/if}
-</div>
-
+					}}
+				/>
+			</div>
+		{:catch error}
+			<ErrorMessage {error} />
+		{/await}
+	</div>
+</Page>
 <Modal />
+<Toast position="t" />
