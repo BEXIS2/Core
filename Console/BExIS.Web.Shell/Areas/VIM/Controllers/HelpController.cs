@@ -18,7 +18,7 @@ namespace BExIS.Modules.Vim.UI.Controllers
 
         public ActionResult Index()
         {
-            string helpurl = ModuleManager.GetModuleSettings("VIM").GetEntryValue("help").ToString();
+            string helpurl = ModuleManager.GetModuleSettings("VIM").GetValueByKey("help").ToString();
 
             //add default link if not set
             if (String.IsNullOrEmpty(helpurl))
