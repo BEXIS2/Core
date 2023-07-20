@@ -586,9 +586,9 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         private Dictionary<int,Type> suggestSystemTypes(string file, TextSeperator delimeter, DecimalCharacter decimalCharacter, List<string> missingValues,int datastart)
         {
             var settings = ModuleManager.GetModuleSettings("Dcm");
-            int min = Convert.ToInt32(settings.GetEntryValue("minToAnalyse"));
-            int max = Convert.ToInt32(settings.GetEntryValue("maxToAnalyse"));
-            int percentage = Convert.ToInt32(settings.GetEntryValue("precentageToAnalyse"));
+            int min = Convert.ToInt32(settings.GetValueByKey("minToAnalyse"));
+            int max = Convert.ToInt32(settings.GetValueByKey("maxToAnalyse"));
+            int percentage = Convert.ToInt32(settings.GetValueByKey("precentageToAnalyse"));
 
             StructureAnalyser structureAnalyser = new StructureAnalyser();
 
@@ -622,7 +622,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             var list = new List<MissingValueModel>();
             // get default missing values
             var settings = ModuleManager.GetModuleSettings("rpm");
-            var mv_list = settings.GetList("missingvalues");
+            var mv_list = settings.GetValueByKey("missingValues") as List<Vaiona.Utils.Cfg.Entry>;
 
             if (mv_list != null)
             {
@@ -630,8 +630,8 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 {
                     list.Add(new MissingValueModel()
                     {
-                        DisplayName = mv.GetAttribute("placeholder")?.Value.ToString(),
-                        Description = mv.GetAttribute("description")?.Value.ToString()
+                        DisplayName = mv.Value.ToString(),
+                        Description = mv.Description.ToString()
                     });
                 }
             }
@@ -639,6 +639,9 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             {
                 list.Add(new MissingValueModel());
             }
+
+            list.Add(new MissingValueModel());
+
 
             return list;
         }
