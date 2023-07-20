@@ -19,7 +19,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
 
         public ActionResult Index()
         {
-            string helpurl = ModuleManager.GetModuleSettings("DIM").GetEntryValue("help").ToString();
+            string helpurl = ModuleManager.GetModuleSettings("DIM").GetValueByKey("help").ToString();
 
             //add default link if not set
             if (String.IsNullOrEmpty(helpurl))
