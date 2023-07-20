@@ -20,12 +20,3 @@ export interface VariableModel {
     unit: string;
     dataType: string;
 }
-
-
-export const MARKER_TYPE = {
-    VARIABLE: 'variable',
-    DESCRIPTION: 'description',
-    UNIT: 'unit',
-    MISSING_VALUES: 'missing-values',
-    DATA: 'data'
-};

@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { onMount, createEventDispatcher } from 'svelte';
+	import { onMount, afterUpdate, createEventDispatcher } from 'svelte';
 	import { TextInput, TextArea, MultiSelect } from '@bexis2/bexis2-core-ui';
 
 	//types
@@ -18,6 +18,7 @@
 	import suite from './variable';
 	
 	export let variable: VariableModel;
+	$:variable;
 	export let data:string[];
 	export let index: number;
 
@@ -91,21 +92,23 @@
 		units = [...variable.possibleUnits, ...units];
 
 		loaded = true;
-
 		// reset & reload validation
 		suite.reset();
 
 		setTimeout(async () => {
+						updateDisplayPattern(variable.dataType);
+						res = suite(variable);
+						setValidationState(res);
+					}, 10);
+			
+			});
 
-			updateDisplayPattern(variable.dataType);
+	afterUpdate(()=>{
+		res = suite(variable);
+		setValidationState(res);
+		console.log("u");
+	})
 
-			res = suite(variable);
-
-			setValidationState(res);
-
-		
-		}, 10);
-	});
 
 	//change event: if input change check also validation only on the field
 	// e.target.id is the id of the input component
@@ -138,9 +141,21 @@
 		// dispatch this event to the parent to check the save button
 		dispatch('var-change');
 	}
+
+	function next()
+	{
+		 dispatch('copy-next',index);
+	}
+
+	function all()
+	{
+		 dispatch('copy-all',index);
+	}
+
 </script>
 
-{#if loaded}
+
+{#if loaded && variable}
 	<div class="card">
 		<header class="card-header">
 			<Header
@@ -218,7 +233,7 @@
 				</div>
 				<div slot="description">
 					{#if variable.dataType}
-					<DataTypeDescription type={variable.dataType.text} missingValues={missingValues} />
+						<DataTypeDescription type={variable.dataType.text} missingValues={missingValues} />
 					{/if}
 				</div>
 			</Container>
@@ -258,7 +273,15 @@
 			</Container>
 		</section>
 		<footer class="card-footer">
-			<Footer {...variable} />
+			<div class="flex">
+				<div class="grow"></div>
+				<div class=" flex-none text-right">
+					
+						<button type="button" class="chip variant-filled-surface" on:click={next}>copy to next</button>
+						<button type="button" class="chip variant-filled-surface" on:click={all}>copy to all</button>
+
+				</div>
+			</div>
 		</footer>
 	</div>
 {/if}

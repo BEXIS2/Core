@@ -13,6 +13,7 @@ export let data:string[][];
 
 $:datatypes=null;
 $:units=null;
+$:variables;
 
 
 // validation array
@@ -25,9 +26,9 @@ onMount(async ()=>{
 datatypes = await getDataTypes();
 units = await getUnits();
 
-console.log("datatypes",datatypes);
-console.log("units", units);
-console.log("units", missingValues);
+// console.log("datatypes",datatypes);
+// console.log("units", units);
+// console.log("units", missingValues);
 
 fillVariableValdationStates(variables);
 
@@ -59,15 +60,68 @@ function getColumnData(cellIndex)
   return cValues;
 }
 
+// copy data from varaible on index i to the next one
+function copyNext(e){
+  const i = e.detail;
+  if(variables.length>=(i+1))
+  {
+    const v = variables[i];
+    const nextIndex = i+1;
+    let v2 = variables[nextIndex];
+    v2 = updateVariableFromOther(v,v2)
+    variables[nextIndex] = v2
+  }
+}
+
+// copy data from varaible on index i to all next
+function copyAll(e){
+  const i = e.detail;
+  if(variables.length>=(i+1))
+  { 
+    const v = variables[i];
+    const start = i+1;
+    for (let index = start; index < variables.length; index++) {
+      let v2 = variables[index];
+      v2 = updateVariableFromOther(v,v2);
+      variables[index] = v2;
+    }
+  }
+}
+
+
+/*
+*
+    isKey: boolean;
+    isOptional: boolean;
+    dataType: ListItem;
+    unit: ListItem;
+    template: ListItem;
+    displayPattern: ListItem | undefined;
+*/
+
+function updateVariableFromOther(from,to)
+{
+  if(from && to)
+  {
+    to.description = from.description;
+    to.dataType = from.dataType;
+    to.unit = from.unit;
+    to.template = from.template;
+    to.displayPattern = from.displayPattern;
+  }
+
+  return to;
+}
+
 </script>
 <div class="suggestion-container" >
 
 {#if variables && datatypes && units && variableValidationStates && missingValues}
     <!-- else content here -->
-    {#each variables as variable, i}
+    {#each variables as variable, i (variable.name)}
       <!-- content here -->
       <Variable 
-        {variable} 
+        bind:variable={variable} 
         index={i} 
         on:var-change={checkValidationState}  
         {datatypes} 
@@ -75,6 +129,8 @@ function getColumnData(cellIndex)
         bind:isValid={variableValidationStates[i]} 
         bind:missingValues={missingValues}
         data={getColumnData(i)}
+        on:copy-next={copyNext}
+        on:copy-all={copyAll}
         />
       <br>
     {/each}
