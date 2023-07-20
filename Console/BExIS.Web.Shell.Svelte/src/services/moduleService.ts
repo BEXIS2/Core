@@ -1,19 +1,36 @@
 import { Api } from "@bexis2/bexis2-core-ui";
 
-export const getModules = async () => {
+export const get = async () => {
     try {
-        const response = await Api.get('/api/modules');
-        console.log("response:", response);
-        return response.data;
+        const response = await Api.get('/api/settings');
+        return response;
     } catch (error) {
         console.error(error);
     }
 };
 
-export const getModuleByName = async (name:string) => {
+export const put = async (model:any) => {
     try {
-        const response = await Api.get(`/api/modules/${name}`);
-        return response.data;
+        const response = await Api.put('/api/settings', model);
+        return response;
+    } catch (error) {
+        console.error(error);
+    }
+};
+
+export const getByModuleId = async (id:string) => {
+    try {
+        const response = await Api.get(`/api/settings/${id}`);
+        return response;
+    } catch (error) {
+        console.error(error);
+    }
+};
+
+export const putByModuleId = async (id:string, model:any) => {
+    try {
+        const response = await Api.put(`/api/settings/${id}`, model);
+        return response;
     } catch (error) {
         console.error(error);
     }
