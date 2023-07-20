@@ -1,40 +1,66 @@
-<script lang="ts">    
+<script lang="ts">
+	import { onMount } from 'svelte';
 
-    import { onMount } from 'svelte';
-    
-    import { setApiConfig }  from '@bexis2/bexis2-core-ui'
-    import { getModules }  from '../../services/moduleService'
-    import type { ReadModuleModel } from "../../models/moduleModels";
-    
-    let modules:Array<ReadModuleModel>;
-    
-    onMount(async () => {
-        setApiConfig("https://localhost:44345", "sdfsdfs", "sdfsdfsdf");
-        console.log("SUPI");
-        modules = await getModules();
-        console.log(modules);
-    })
-    
-    </script>
-    
-    {#if modules && modules.length > 0}
+    import Fa from 'svelte-fa/src/index'
+    import { faSave } from '@fortawesome/free-solid-svg-icons'
 
-        {#each modules as m} 
-            {#if m.id == 'RPM'}
-            <div>
-            <div>Id: {m.id}</div>
-            <div>Title: {m.title}</div>
-            <div>Description: {m.description}</div>
+    import { Page } from '@bexis2/bexis2-core-ui';
+    import Entry from '../../components/entry.svelte'
+	import { get, putByModuleId } from '../../services/moduleService';
+	import type { ReadModuleModel } from '../../models/moduleModels';
+	import type { ReadEntryModel } from '$models/settingModels';
 
-            {#each m.settings['Settings'] as Setting}
-                <div>{Setting.Name}</div>
-            {/each}
-        </div>
+	let module: ReadModuleModel;
 
-            {/if}
-            <!-- <div>Settings: {JSON.stringify(m.settings)}</div> -->
-        
+	onMount(async () => {
+		// module = await getModuleByName('sam');
+	});
+
+    async function getSettings() {
+        const response = await get(); //ByName('sam');
+        if (response?.status == 200) {
+            console.log(response.data);
+            return await response.data;
+        }
+
+        throw new Error("Something went wrong.");
+    }
+
+    export async function putSettings(moduleId:string, model:any)
+    {
+        const response = await putByModuleId(moduleId, model); //ByName('sam');
+        if (response?.status == 200) {
+            return await response.data;
+        }
+
+        throw new Error("Something went wrong.");
+    }
+</script>
+
+<Page>
+    <div>
+        {#await getSettings()}
+            <div id="spinner">... loading ...</div>
+        {:then data}
+        {#each data as m}
+        <form on:submit|preventDefault={() => putSettings(m.id, m)}>
+        <div>Id: {m.id}</div>
+        <div>Title: {m.title}</div>
+        <div>Description: {m.description}</div>
+    
+        <!-- <div>Settings: {module.settings['entries']}</div> -->
+        {#each m.entries as entry}
+            <Entry entry={entry}/>
         {/each}
-    {:else}
-    <div class="loading"></div>
-    {/if}
+
+        <button class="btn variant-filled-primary" type="submit">
+            <Fa icon={faSave}/>
+        </button>
+        </form>
+        {/each}
+        {:catch error}
+            <div id="spinner">{error}</div>
+        {/await}
+    </div>
+
+</Page>
