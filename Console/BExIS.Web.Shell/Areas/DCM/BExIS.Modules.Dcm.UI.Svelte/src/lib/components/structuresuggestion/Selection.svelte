@@ -93,11 +93,6 @@ import { faSave, faTrash } from '@fortawesome/free-solid-svg-icons/index'
 			{
 				updateSelection(marker.type, marker.row, marker.cells);
 			}
-
-			// // check if varaible is set, then activet store
-			// if (marker.type == MARKER_TYPE.VARIABLE) {
-			// 	isValid = true;
-			// }
 		}
 	}
 
@@ -201,7 +196,7 @@ import { faSave, faTrash } from '@fortawesome/free-solid-svg-icons/index'
 	const selectRow = (r) => {
 		console.log('set true');
 		for (var i = 0; i < cLength; i++) {
-			//console.log(i);
+			console.log("select row",cLength);
 			state[r][i] = true;
 		}
 	};
@@ -350,6 +345,10 @@ import { faSave, faTrash } from '@fortawesome/free-solid-svg-icons/index'
 		}
 	}
 
+ function changeDelimeter()
+	{
+			setTableInfos(model.preview, String.fromCharCode(model.delimeter));
+	}
 
 </script>
 
@@ -376,6 +375,7 @@ import { faSave, faTrash } from '@fortawesome/free-solid-svg-icons/index'
 					bind:target={model.delimeter}
 					source={model.delimeters}
 					complexTarget={false}
+					on:change={changeDelimeter}
 				/>
 			</div>
 			<div>
