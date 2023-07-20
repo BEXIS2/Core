@@ -72,7 +72,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         }
 
         /// <summary>
-        /// read filenames from datapath/Temp/Username
+        /// read filenames from datapath/Temp/UserName
         /// </summary>
         /// <returns>return a list with all names from FileStream in the folder</returns>
         private List<BasicFileInfo> GetServerFileList()
