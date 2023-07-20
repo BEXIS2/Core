@@ -3,8 +3,8 @@
 	import { TextInput, TextArea, MultiSelect } from '@bexis2/bexis2-core-ui';
 
 	//types
-	import type { ListItemType, listItemType } from '@bexis2/bexis2-core-ui';
-	import type { VariableModel } from '../types.ts';
+	import type { listItemType } from '@bexis2/bexis2-core-ui';
+	import type { VariableModel, missingValueType } from "$models/StructureSuggestion";
 
 	//stores
 	import { get } from 'svelte/store';
@@ -16,13 +16,13 @@
 	import Footer from './Footer.svelte';
 
 	import suite from './variable';
-
-
+	
 	export let variable: VariableModel;
 	export let index: number;
 
-	export let datatypes: ListItemType[];
-	export let units: ListItemType[];
+	export let datatypes: listItemType[];
+	export let units: listItemType[];
+	export let missingValues:missingValueType[];
 
 	export let isValid: boolean = false;
  $:isValid;
@@ -32,7 +32,7 @@
 	let loaded = false;
 
 	//displaypattern
-	let displayPattern: ListItemType[];
+	let displayPattern: listItemType[];
 	$: displayPattern;
 
 	function updateDisplayPattern(type) {
@@ -146,7 +146,6 @@
 {#if loaded}
 	<div class="card">
 		<header class="card-header">
-			{isValid}
 			<Header
 				bind:isKey={variable.isKey}
 				bind:isOptional={variable.isOptional}
@@ -216,7 +215,7 @@
 				</div>
 				<div slot="description">
 					{#if variable.dataType}
-					<DataTypeDescription type={variable.dataType.text} />
+					<DataTypeDescription type={variable.dataType.text} missingValues={missingValues} />
 					{/if}
 				</div>
 			</Container>

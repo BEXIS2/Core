@@ -16,10 +16,10 @@ export interface StructureSuggestionModel {
     skipped: number;
     markers: Marker[];
     variables: VariableModel[];
-    missingValues: MissingValueModel[];
+    missingValues: missingValueType[];
 }
 
-export interface MissingValueModel {
+export interface missingValueType {
     displayName: string;
     description: string;
 }
@@ -40,7 +40,7 @@ export interface VariableModel {
     dataType: ListItem;
     unit: ListItem;
     template: ListItem;
-    displayPattern: ListItem;
+    displayPattern: ListItem | undefined;
     possibleUnits: ListItem[];
     possibleTemplates: ListItem[];
     possibleDisplayPattern: ListItem[];

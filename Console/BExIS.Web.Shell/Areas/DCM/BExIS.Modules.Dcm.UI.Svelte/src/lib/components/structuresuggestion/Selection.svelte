@@ -501,7 +501,8 @@ import { faSave, faTrash } from '@fortawesome/free-solid-svg-icons/index'
 
 				<table class="table table-compact"
 				 on:contextmenu={(e)=> e.preventDefault()} >
-					<tbody> 
+
+					<tbody>
 						{#each model.preview as row, r}
 							<tr>
 								{#each row.split(String.fromCharCode(model.delimeter)) as cell, c}

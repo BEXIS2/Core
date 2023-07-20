@@ -89,7 +89,7 @@
 		<Spinner label="the file {file} is currently being analyzed"/>
 	{:else if selectionIsActive}
 		<div transition:fade>
-			<Selection {model} on:saved={update} {init}/>
+			<Selection bind:model = {model} on:saved={update} {init}/>
 		</div>
 	{:else if model.variables.length > 0}
 		<div transition:fade>
@@ -106,7 +106,7 @@
 			</div>
 
 			<StructureAttributes {model} bind:valid={areAttributesValid} />
-			<Suggestion variables={model.variables} bind:valid={areVariablesValid} />
+			<Suggestion bind:variables={model.variables} bind:valid={areVariablesValid} bind:missingValues={model.missingValues} />
 		</div>
 	{/if}
 </Page>

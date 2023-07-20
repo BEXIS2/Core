@@ -6,6 +6,7 @@ import {onMount} from 'svelte';
 import {getDataTypes,getUnits} from '$services/StructureSuggestionCaller'
 
 export let variables = [];
+export let missingValues = [];
 
 $:datatypes=null;
 $:units=null;
@@ -23,8 +24,10 @@ units = await getUnits();
 
 console.log("datatypes",datatypes);
 console.log("units", units);
+console.log("units", missingValues);
 
 fillVariableValdationStates(variables);
+
 
 })
 
@@ -48,11 +51,11 @@ function checkValidationState()
 </script>
 <div class="suggestion-container" >
 
-{#if variables && datatypes && units && variableValidationStates}
+{#if variables && datatypes && units && variableValidationStates && missingValues}
     <!-- else content here -->
     {#each variables as variable, i}
       <!-- content here -->
-      <Variable {variable} index={i} on:var-change={checkValidationState}  {datatypes} {units} bind:isValid={variableValidationStates[i]}/>
+      <Variable {variable} index={i} on:var-change={checkValidationState}  {datatypes} {units} bind:isValid={variableValidationStates[i]} bind:missingValues={missingValues}/>
       <br>
     {/each}
   
