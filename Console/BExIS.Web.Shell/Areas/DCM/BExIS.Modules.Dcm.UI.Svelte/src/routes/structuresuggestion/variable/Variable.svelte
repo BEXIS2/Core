@@ -18,6 +18,7 @@
 	import suite from './variable';
 	
 	export let variable: VariableModel;
+	export let data:string[];
 	export let index: number;
 
 	export let datatypes: listItemType[];
@@ -82,7 +83,6 @@
 	const dispatch = createEventDispatcher();
 
 	onMount(() => {
-		console.log('generate var -----------------');
 
 		datatypes = [...datatypes.filter((d) => d.id != variable.dataType.id)];
 		datatypes = [variable.dataType, ...datatypes];
@@ -103,8 +103,7 @@
 
 			setValidationState(res);
 
-			
-
+		
 		}, 10);
 	});
 
@@ -123,8 +122,6 @@
 	// *** is the id of the input component
 	function onSelectHandler(e, id) {
 
-		console.log(e,id);
-		console.log("variable.displayPattern",variable.displayPattern);
 		res = suite(variable, id);
 
 
@@ -166,6 +163,12 @@
 						invalid={res.hasErrors('description')}
 						feedback={res.getErrors('description')}
 					/>
+
+				</div>
+				<div slot="description">
+					{#if data}
+						<b>Data preview: </b> {data.join(', ')}
+					{/if}
 				</div>
 			</Container>
 

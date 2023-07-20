@@ -18,17 +18,9 @@ const suite = create((data = {}, fieldName)=>
   })
 
   test("displayPattern","display pattern is required",()=>{
-
-    // if (data.dataType && 
-    //   data.dataType.text.toLowerCase() === 'date' || 
-    //   data.dataType.text.toLowerCase() === 'time' || 
-    //   data.dataType.text.toLowerCase() === 'datetime')
-    // {
-       console.log("displayPattern - check", data.displayPattern);
-    
       enforce(data.displayPattern).isNotNull();
       enforce(data.displayPattern).isNotUndefined();
-    // }
+
    })
 
   

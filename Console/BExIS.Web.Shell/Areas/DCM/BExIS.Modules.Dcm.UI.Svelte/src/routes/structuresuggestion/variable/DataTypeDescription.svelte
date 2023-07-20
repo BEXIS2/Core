@@ -3,10 +3,7 @@
 import type { missingValueType } from "$models/StructureSuggestion";
 
  export let type;
- export let missingValues:any[];
-
- console.log("missing values",missingValues);
- let mv = ""
+ export let missingValues:missingValueType[];
 
 </script>
 

@@ -1,12 +1,15 @@
-<script>
+<script lang="ts">
 
 import Variable from './variable/Variable.svelte'
 import {Spinner} from '@bexis2/bexis2-core-ui';
 import {onMount} from 'svelte';
 import {getDataTypes,getUnits} from '$services/StructureSuggestionCaller'
+import type { VariableModel, missingValueType } from '$models/StructureSuggestion';
 
-export let variables = [];
-export let missingValues = [];
+export let variables:VariableModel[] = [];
+export let missingValues:missingValueType[] = [];
+export let data:string[][];
+
 
 $:datatypes=null;
 $:units=null;
@@ -46,7 +49,15 @@ function checkValidationState()
   valid = variableValidationStates.every(v=>v===true)
 }
 
-
+function getColumnData(cellIndex)
+{
+  let cValues:string[]= [];
+  for (let index = 0; index < data.length; index++) {
+    const c = data[index][cellIndex];
+    cValues.push(c);
+  }
+  return cValues;
+}
 
 </script>
 <div class="suggestion-container" >
@@ -55,7 +66,16 @@ function checkValidationState()
     <!-- else content here -->
     {#each variables as variable, i}
       <!-- content here -->
-      <Variable {variable} index={i} on:var-change={checkValidationState}  {datatypes} {units} bind:isValid={variableValidationStates[i]} bind:missingValues={missingValues}/>
+      <Variable 
+        {variable} 
+        index={i} 
+        on:var-change={checkValidationState}  
+        {datatypes} 
+        {units} 
+        bind:isValid={variableValidationStates[i]} 
+        bind:missingValues={missingValues}
+        data={getColumnData(i)}
+        />
       <br>
     {/each}
   
