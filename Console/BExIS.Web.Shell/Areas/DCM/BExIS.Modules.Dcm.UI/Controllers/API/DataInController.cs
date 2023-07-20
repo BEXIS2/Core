@@ -74,7 +74,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
             //load from apiConfig
             int cellLimit = 100000;
-            Int32.TryParse(settings.GetEntryValue("celllimit").ToString(), out cellLimit);
+            Int32.TryParse(settings.GetValueByKey("celllimit").ToString(), out cellLimit);
 
             try
             {
@@ -287,7 +287,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
             //load from apiConfig
             int cellLimit = 100000;
-            Int32.TryParse(settings.GetEntryValue("celllimit").ToString(), out cellLimit);
+            Int32.TryParse(settings.GetValueByKey("celllimit").ToString(), out cellLimit);
 
             try
             {
