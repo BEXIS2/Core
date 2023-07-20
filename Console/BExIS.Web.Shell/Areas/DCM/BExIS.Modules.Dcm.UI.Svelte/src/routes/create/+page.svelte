@@ -68,7 +68,7 @@ contentLayoutType={pageContentLayoutType.full}>
 
 <div in:fade={{ delay: 500 }} out:fade={{ delay: 500 }}>
 {#if entitytemplates}
-<div class="grid grid-cols-1 lg:grid-cols-2">
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-3">
 
   <List items={entitytemplates} on:select={handleSelect}/>
 
