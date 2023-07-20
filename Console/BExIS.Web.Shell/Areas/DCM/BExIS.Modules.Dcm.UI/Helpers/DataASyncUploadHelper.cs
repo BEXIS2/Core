@@ -156,53 +156,54 @@ namespace BExIS.Modules.Dcm.UI.Helpers
                                     Bus[TaskManager.CURRENTPACKAGE] = counter;
 
                                     //open stream
-                                    Stream = reader.Open(Bus[TaskManager.FILEPATH].ToString());
-                                    rows = new List<DataTuple>();
+                                    using (Stream = reader.Open(Bus[TaskManager.FILEPATH].ToString()))
+                                    {
+                                        rows = new List<DataTuple>();
 
-                                    if (iOUtility.IsSupportedExcelFile(Bus[TaskManager.EXTENTION].ToString()))
-                                    {
-                                        if (reader.Position < excelFileReaderInfo.DataEndRow)
-                                            rows = reader.ReadFile(Stream, Bus[TaskManager.FILENAME].ToString(), (int)id, packageSize);
-                                    }
-                                    else
-                                    {
-                                        rows = reader.ReadTemplateFile(Stream, Bus[TaskManager.FILENAME].ToString(), (int)id, packageSize);
-                                    }
-
-                                    //Debug.WriteLine("ReadFile: " + counter + "  Time " + upload.Elapsed.TotalSeconds.ToString());
-
-                                    if (reader.ErrorMessages.Count > 0)
-                                    {
-                                        //model.ErrorList = reader.errorMessages;
-                                    }
-                                    else
-                                    {
-                                        //XXX Add packagesize to excel read function
-                                        if (Bus.ContainsKey(TaskManager.DATASET_STATUS))
+                                        if (iOUtility.IsSupportedExcelFile(Bus[TaskManager.EXTENTION].ToString()))
                                         {
-                                            if (Bus[TaskManager.DATASET_STATUS].ToString().Equals("new") || ((UploadMethod)Bus[TaskManager.UPLOAD_METHOD]).Equals(UploadMethod.Append))
-                                            {
-                                                dm.EditDatasetVersion(workingCopy, rows, null, null);
-                                                //Debug.WriteLine("EditDatasetVersion: " + counter + "  Time " + upload.Elapsed.TotalSeconds.ToString());
-                                                //Debug.WriteLine("----");
-                                            }
-                                            else
-                                            if (Bus[TaskManager.DATASET_STATUS].ToString().Equals("edit"))
-                                            {
-                                                if (rows.Count() > 0)
-                                                {
-                                                    Dictionary<string, List<DataTuple>> splittedDatatuples = new Dictionary<string, List<DataTuple>>();
-                                                    splittedDatatuples = uploadWizardHelper.GetSplitDatatuples(rows, (List<long>)Bus[TaskManager.PRIMARY_KEYS], workingCopy, ref datatupleFromDatabaseIds);
-
-                                                    dm.EditDatasetVersion(workingCopy, splittedDatatuples["new"], splittedDatatuples["edit"], null);
-                                                }
-                                            }
+                                            if (reader.Position < excelFileReaderInfo.DataEndRow)
+                                                rows = reader.ReadFile(Stream, Bus[TaskManager.FILENAME].ToString(), (int)id, packageSize);
                                         }
                                         else
                                         {
+                                            rows = reader.ReadTemplateFile(Stream, Bus[TaskManager.FILENAME].ToString(), (int)id, packageSize);
+                                        }
+
+                                        //Debug.WriteLine("ReadFile: " + counter + "  Time " + upload.Elapsed.TotalSeconds.ToString());
+
+                                        if (reader.ErrorMessages.Count > 0)
+                                        {
+                                            //model.ErrorList = reader.errorMessages;
+                                        }
+                                        else
+                                        {
+                                            //XXX Add packagesize to excel read function
+                                            if (Bus.ContainsKey(TaskManager.DATASET_STATUS))
+                                            {
+                                                if (Bus[TaskManager.DATASET_STATUS].ToString().Equals("new") || ((UploadMethod)Bus[TaskManager.UPLOAD_METHOD]).Equals(UploadMethod.Append))
+                                                {
+                                                    dm.EditDatasetVersion(workingCopy, rows, null, null);
+                                                    //Debug.WriteLine("EditDatasetVersion: " + counter + "  Time " + upload.Elapsed.TotalSeconds.ToString());
+                                                    //Debug.WriteLine("----");
+                                                }
+                                                else
+                                                if (Bus[TaskManager.DATASET_STATUS].ToString().Equals("edit"))
+                                                {
+                                                    if (rows.Count() > 0)
+                                                    {
+                                                        Dictionary<string, List<DataTuple>> splittedDatatuples = new Dictionary<string, List<DataTuple>>();
+                                                        splittedDatatuples = uploadWizardHelper.GetSplitDatatuples(rows, (List<long>)Bus[TaskManager.PRIMARY_KEYS], workingCopy, ref datatupleFromDatabaseIds);
+
+                                                        dm.EditDatasetVersion(workingCopy, splittedDatatuples["new"], splittedDatatuples["edit"], null);
+                                                    }
+                                                }
+                                            }
+                                            else
+                                            {
+                                            }
                                         }
                                     }
-                                    Stream?.Close();
 
                                     //count rows
                                     numberOfRows += rows.Count();
@@ -250,9 +251,10 @@ namespace BExIS.Modules.Dcm.UI.Helpers
                                         inputWasAltered = false;
                                         Bus[TaskManager.CURRENTPACKAGE] = counter;
 
-                                        Stream = reader.Open(Bus[TaskManager.FILEPATH].ToString());
-                                        rows = reader.ReadFile(Stream, Bus[TaskManager.FILENAME].ToString(), id, packageSize);
-                                        Stream.Close();
+                                        using (Stream = reader.Open(Bus[TaskManager.FILEPATH].ToString()))
+                                        {
+                                            rows = reader.ReadFile(Stream, Bus[TaskManager.FILENAME].ToString(), id, packageSize);
+                                        }                                      
 
                                         if (reader.ErrorMessages.Count > 0)
                                         {

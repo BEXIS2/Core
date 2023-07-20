@@ -8,7 +8,7 @@ export interface EditModel {
 }
 
 export function isEditModel(model: any): model is EditModel {
- return 'id' in model;
+ return  model.id !== undefined;
 }
 
 export interface HookModel {

@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Web;
 using System.Xml.Linq;
 using Vaiona.Utils.Cfg;
 using Vaiona.Web.Mvc.Modularity;
@@ -107,9 +108,21 @@ namespace BExIS.UI.Hooks
             return hooks;
         }
 
-        // load cache
+        public bool Save<C,L>(C _cache,L _log, string _entity, string _place, HookMode _mode, long id)
+        {
+            var saveCache = SaveCache(_cache, _entity, _place, _mode, id);
+            var saveLog = SaveLog(_log, _entity, _place, _mode, id);
+
+            if (saveLog && saveCache) return true;
+
+            return false;
+        }
+
+            #region cache
         public T LoadCache<T>(string _entity, string _place, HookMode _mode, long id) where T : new()
         {
+
+       
             //check incoming values
             if (string.IsNullOrEmpty(_entity)) throw new ArgumentNullException(nameof(_entity));
             if (string.IsNullOrEmpty(_place)) throw new ArgumentNullException(nameof(_place));
@@ -126,11 +139,10 @@ namespace BExIS.UI.Hooks
 
             if (File.Exists(filepath)) // check if file exist
             {
-                FileHelper.WaitForFile(filepath); // wait if the file is still open
+                FileHelper.WaitForFile(filepath, FileAccess.Read); // wait if the file is still open
 
                 // convert json to object
                 cache = JsonConvert.DeserializeObject<T>(File.ReadAllText(filepath));
-                
             }
 
             return cache;
@@ -138,6 +150,7 @@ namespace BExIS.UI.Hooks
 
         public bool SaveCache<T>(T _cache, string _entity, string _place, HookMode _mode, long id)
         {
+
             //check incoming values
             if (_cache == null) throw new ArgumentNullException(nameof(_cache));
             if (string.IsNullOrEmpty(_entity)) throw new ArgumentNullException(nameof(_entity));
@@ -152,9 +165,13 @@ namespace BExIS.UI.Hooks
             // combine datapath + path + filename
             string filepath = Path.Combine(directory, filename);
 
-            FileHelper.WaitForFile(filepath); // wait if the file is still open
+          
 
-            if (File.Exists(filepath)) File.Delete(filepath);// check if file exist, delete maybe?
+            if (File.Exists(filepath))
+            {
+                FileHelper.WaitForFile(filepath); // wait if the file is still open
+                File.Delete(filepath); // check if file exist, delete maybe? }
+            }
 
             if (!Directory.Exists(directory)) Directory.CreateDirectory(directory); // create directory if not exist
 
@@ -163,5 +180,71 @@ namespace BExIS.UI.Hooks
 
             return true;
         }
+        #endregion
+
+        #region result messages
+
+        // load cache
+        public T LoadLog<T>(string _entity, string _place, HookMode _mode, long id) where T : new()
+        {
+
+
+            //check incoming values
+            if (string.IsNullOrEmpty(_entity)) throw new ArgumentNullException(nameof(_entity));
+            if (string.IsNullOrEmpty(_place)) throw new ArgumentNullException(nameof(_place));
+            if (id <= 0) throw new ArgumentOutOfRangeException(nameof(id));
+
+            T cache = new T();
+
+            // load json if exist
+            // generate filename based on mode,entity and place
+            string filename = _mode.ToString().ToLower() + _entity.ToLower() + _place.ToLower() + "log.json";
+
+            // combine datapath + path + filename
+            string filepath = Path.Combine(AppConfiguration.DataPath, _entity + "s", id.ToString(), filename);
+
+            if (File.Exists(filepath)) // check if file exist
+            {
+                FileHelper.WaitForFile(filepath, FileAccess.Read); // wait if the file is still open
+
+                // convert json to object
+                cache = JsonConvert.DeserializeObject<T>(File.ReadAllText(filepath));
+            }
+            
+            return cache;
+        }
+
+        public bool SaveLog<T>(T _log, string _entity, string _place, HookMode _mode, long id)
+        {
+            //check incoming values
+            if (_log == null) throw new ArgumentNullException(nameof(_log));
+            if (string.IsNullOrEmpty(_entity)) throw new ArgumentNullException(nameof(_entity));
+            if (string.IsNullOrEmpty(_place)) throw new ArgumentNullException(nameof(_place));
+            if (id <= 0) throw new ArgumentOutOfRangeException(nameof(id));
+
+            // load json if exist
+            // generate filename based on mode,entity and place
+            string filename = _mode.ToString().ToLower() + _entity.ToLower() + _place.ToLower() + "log.json";
+
+            string directory = Path.Combine(AppConfiguration.DataPath, _entity + "s", id.ToString());
+            // combine datapath + path + filename
+            string filepath = Path.Combine(directory, filename);
+
+            if (File.Exists(filepath))
+            {
+                FileHelper.WaitForFile(filepath); // wait if the file is still open
+                File.Delete(filepath); // check if file exist, delete maybe? }
+            }
+
+            if (!Directory.Exists(directory)) Directory.CreateDirectory(directory); // create directory if not exist
+
+
+            File.WriteAllText(filepath, JsonConvert.SerializeObject(_log));
+
+            return true;
+        }
+
+        #endregion
+
     }
 }

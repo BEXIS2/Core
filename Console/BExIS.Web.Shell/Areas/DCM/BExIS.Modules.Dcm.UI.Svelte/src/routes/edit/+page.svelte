@@ -4,21 +4,20 @@
  import { fade  } from 'svelte/transition'; 
 
  import { getEdit }  from './services'
- import { setApiConfig, Spinner, Page }  from '@bexis2/bexis2-core-ui'
+ import { Spinner, Page, ErrorMessage, pageContentLayoutType }  from '@bexis2/bexis2-core-ui'
  
  import Header from './Header.svelte'
  import Data from './Data.svelte'
  import Hooks from './Hooks.svelte'
  import Message from './MessagesContainer.svelte'
  import Debug from '$lib/components/Debug.svelte'
- 
+
  import { latestFileUploadDate, latestDataDescriptionDate, hooksStatus } from './stores';
  
  import type { EditModel, HookModel, ViewModel} from './types';
  import { isEditModel} from './types';
  import Hook from '$lib/components/Hook.svelte';
 
- import { dev } from '$app/environment'
 
  // load attributes from div
  let container ;
@@ -38,8 +37,9 @@
   views: []
  };
 
- let hookStatusList:{[key:string]:number};
 
+let hookStatusList:{[key:string]:number};
+$:hookStatusList
 // hooks
  let hooks:HookModel[];
  $:hooks=[];
@@ -60,81 +60,47 @@
  let messageView:ViewModel;
  $:messageView;
 
+// latestFileUploadDate.subscribe(e =>{
+//   console.log("latestFileUploadDate")
+//   load();
+// })
 
- onMount(async () => {
-
-   // get data from parent
-   container = document.getElementById('edit');
-   id = Number(container?.getAttribute("dataset"));
-   version = Number(container?.getAttribute("version"));
-
-   console.log("start edit",id,version);
-
-  //  if (import.meta.env.DEV) {
-	// 		console.log('dev');
-	// 		setApiConfig('https://localhost:44345', 'davidschoene', '123456');
-	// 	}
-
-   // load
-   load();
- })
-
-
- latestFileUploadDate.subscribe(e =>{
-  reload();
-})
-
-latestDataDescriptionDate.subscribe(e =>{
-  reload();
-})
+// latestDataDescriptionDate.subscribe(e =>{
+//   load();
+// })
 
 async function load()
 {
-  
+  // get data from parent
+  container = document.getElementById('edit');
+  id = Number(container?.getAttribute("dataset"));
+  version = Number(container?.getAttribute("version"));
+
   // load model froms server
   model = await getEdit(id);
-
-
-  if(isEditModel(model))
-  {
-
-   console.log("editmodel", model);
-
-   hooks = model.hooks;
-   views = model.views;
-   title = model.title;
-   version = model.version
-
-   // update store
-   updateStatus(hooks);
-
-   // sam/ui/scripts/userpermission.js
-   // load svelte
-
-   // seperate dcm hooks from other hooks
-   seperateHooks(hooks);
-
-   // get resultView
-   seperateViews(views);
-  }
-}
-
-async function reload()
-{
-  console.log("reload");
-
-  // setApiConfig("https://localhost:44345","davidschoene","123456");
-  // load model froms server
-  model = await getEdit(id);
+  console.log("edit model ",model)
   hooks = model.hooks
+  views = model.views;
+  title = model.title;
+  version = model.version
 
   // there is a need for a time delay to update the hook status
   // if not exit, the first run faild because the hooks are not  
   setTimeout(async () => {
-				// update store
-        updateStatus(model.hooks);
-			}, 1000) /* <--- If this is enough greater than transition, it doesn't happen... */
+    // update store
+    updateStatus(model.hooks);
 
+      // seperate dcm hooks from other hooks
+      seperateHooks(hooks);
+
+      // get resultView
+      seperateViews(views);
+  
+  }, 1000) /* <--- If this is enough greater than transition, it doesn't happen... */
+
+
+
+  console.log("model and hooks", model,hookStatusList);
 }
 
 
@@ -142,6 +108,9 @@ async function reload()
 // known hooks - metadata, fileupload, validation
 function seperateHooks(hooks:HookModel[])
 {
+  datasethooks = [];
+  addtionalhooks = [];
+
   hooks.forEach(element => {
      if(
      element.name == "metadata" || 
@@ -174,24 +143,24 @@ function seperateViews(views)
      }
   });
 
-  console.log(messageView)
-  console.log(additionalViews)
+  // console.log(messageView)
+  // console.log(additionalViews)
 }
 
-async function updateStatus(_hooks)
+function updateStatus(_hooks)
 {
   let dic:{[key:string]:number}={[""]:0};
 
-  _hooks.forEach(hook => {
-    dic[hook.name] = hook.status
-  });
+  if(_hooks!==undefined)
+  {
+    _hooks.forEach(hook => {
+      dic[hook.name] = hook.status
+    });
 
-  console.log("before",$hooksStatus);
-
-  hooksStatus.set(dic);
-
-  console.log("updateStatus",$hooksStatus);
-  console.log("length",$hooksStatus.length);
+    //console.log("cuurent Hookstatus",$hooksStatus);
+    hooksStatus.set(dic);
+    //console.log("update Hookstatus",$hooksStatus);
+  }
 
   hookStatusList = $hooksStatus;
 }
@@ -201,22 +170,35 @@ let visible=false;
 
 </script>
 
-<Page>
 
-{#if model && hookStatusList} <!--if the model == true, load page-->
-<!-- Header -->
-<Header {id} {version} {title} />
+  <Page title="Edit dataset: {model.title}" contentLayoutType={pageContentLayoutType.full}>
 
-<!-- Data Module Hooks -->
-<Data bind:hooks= {datasethooks} {id} {version}/>
+{#await load()}
+  <div class="w-full h-full text-surface-600">
+    <Spinner label="loading edit page" />
+  </div>
+{:then a}
+    {#if model && hookStatusList} <!--if the model == true, load page-->
+    <!-- Header -->
+    <Header {id} {version} {title} />
 
-<hr class="!border-dashed" />
+    <!-- Data Module Hooks -->
+    <Data bind:hooks= {datasethooks} {id} {version}/>
 
-<Hooks bind:hooks= {addtionalhooks} {id} {version} />
+    <hr class="!border-dashed" />
 
-{:else}  <!-- access denied -->
-<div class="h-screen">
-  <Spinner label="loading edit page" position="center"/>
-</div>
-{/if}
+    <Hooks bind:hooks= {addtionalhooks} {id} {version} />
+
+    {:else}  <!-- access denied -->
+    <div class="h-screen">
+      <Spinner textCss="text-surface-800" label="loading edit page" position="center"/>
+    </div>
+    {/if}
+
+{:catch error}
+   
+  <ErrorMessage {error}/>
+
+{/await}
+
 </Page>

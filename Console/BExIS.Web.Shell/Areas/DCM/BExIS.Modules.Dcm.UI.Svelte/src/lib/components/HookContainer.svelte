@@ -36,19 +36,30 @@ onMount(async () => {
 function errorHandler (e){ 
   console.log("handle errors here")
   console.log(e.detail.messages)
+  resetInformations();
   error = e.detail.messages;
+
 }
 
 function successHandler (e){ 
   console.log("handle success here")
   console.log( e.detail.text)
+  resetInformations();
   success = e.detail.text;
-
 }
 
 function warningHandler (e){ 
   console.log("handle warnings here");
   console.log( e.detail.text)
+  resetInformations();
+  warnings[0] =  e.detail.text
+}
+
+function resetInformations()
+{
+  error=[];
+  warnings=[];
+  success = null;
 }
 
 // visibility
@@ -74,11 +85,15 @@ function setActive(status)
     <div class="flex gap-2 text-center">
       <h4 class="h5">{displayName}</h4>
     </div>
-    <div class="col-span-5">
+    <div class="col-span-5 grid gap-5">
       {#if error}
         {#each error as item}
-          <Alert cssClass="variant-filled-error" message={item}/>
-
+          <Alert cssClass="variant-filled-error" message={item} />
+        {/each}
+      {/if}
+      {#if warnings}
+        {#each warnings as item}
+          <Alert cssClass="variant-filled-warning" message={item} />
         {/each}
       {/if}
       {#if success}

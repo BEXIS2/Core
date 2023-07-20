@@ -57,7 +57,6 @@ namespace BExIS.IO.Transform.Input
                 return null;
         }
 
-
         public List<List<string>> ReadFile(Stream file)
         {
             List<List<string>> tmp = new List<List<string>>();
@@ -440,19 +439,19 @@ namespace BExIS.IO.Transform.Input
             // Check params
             if (this.FileStream == null)
             {
-                this.ErrorMessages.Add(new Error(ErrorType.Other, "File not exist"));
+                this.ErrorMessages.Add(new Error(ErrorType.File, "File not exist"));
             }
             if (!this.FileStream.CanRead)
             {
-                this.ErrorMessages.Add(new Error(ErrorType.Other, "File is not readable"));
+                this.ErrorMessages.Add(new Error(ErrorType.File, "File is not readable"));
             }
             if (this.Info.Variables <= 0)
             {
-                this.ErrorMessages.Add(new Error(ErrorType.Other, "Startrow of Variable can´t be 0"));
+                this.ErrorMessages.Add(new Error(ErrorType.FileReader, "Startrow of Variable can´t be 0"));
             }
             if (this.Info.Data <= 0)
             {
-                this.ErrorMessages.Add(new Error(ErrorType.Other, "Startrow of Data can´t be 0"));
+                this.ErrorMessages.Add(new Error(ErrorType.FileReader, "Startrow of Data can´t be 0"));
             }
 
             if (this.ErrorMessages.Count == 0)

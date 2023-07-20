@@ -15,7 +15,7 @@ export let description="";
 const isEnabled = setEnable(status);
 const active = setActive(status);
 
-console.log(active);
+// console.log(active);
 
 // let url = hosturl+start+"?id="+id+"&version="+version;
 

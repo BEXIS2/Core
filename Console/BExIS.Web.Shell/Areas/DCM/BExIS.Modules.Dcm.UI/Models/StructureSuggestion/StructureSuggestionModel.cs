@@ -144,7 +144,7 @@ namespace BExIS.Modules.Dcm.UI.Models.StructureSuggestion
             DisplayPattern = new ListItem(-1,"","");
 
             IsKey = false;
-            IsOptional = true;
+            IsOptional = false;
 
             //PossibleDataTypes = new List<KvP>();
             PossibleUnits = new List<ListItem>();

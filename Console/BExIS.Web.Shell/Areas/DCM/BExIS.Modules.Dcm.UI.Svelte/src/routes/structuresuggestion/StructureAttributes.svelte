@@ -6,12 +6,16 @@ export let model;
 export let valid = false;
 
 import suite from './structureAttributes'
+	import { error } from '@sveltejs/kit';
 
 // validation
 let res = suite.get();
 
 onMount(()=>{
   suite.reset();
+  if(model.title==="") {
+    model.title = model.id;
+  }
 
 })
 
@@ -30,8 +34,10 @@ function onChangeHandler(e)
 }
 
 </script>
+
+
 {#if model}
-<div class="structure-attributes-container">
+<div class="structure-attributes-container grid md:grid-cols-2 sm:grid-cols-1 gap-5">
   <TextInput 
     id="title"
     label="Title"
@@ -43,6 +49,7 @@ function onChangeHandler(e)
     required={true}>
   </TextInput>
 
+  <div>
   <TextArea 
     id="description",
     label="Description"
@@ -53,6 +60,10 @@ function onChangeHandler(e)
     feedback={res.getErrors("description")} 
     required={true}>
   </TextArea>
+  {#if model.description != undefined}
+  <span class="text-right" class:text-error-500="{model.description.length>255}">{255-model.description.length}</span>
+  {/if}
+</div>
 </div>
 
 {/if}

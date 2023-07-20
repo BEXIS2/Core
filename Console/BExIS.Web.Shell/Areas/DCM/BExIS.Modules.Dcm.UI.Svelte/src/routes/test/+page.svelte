@@ -2,7 +2,7 @@
 
 import { SlideToggle } from '@skeletonlabs/skeleton';
 
-import type {FileInfo} from '@bexis2/bexis2-core-ui'
+import type {fileInfoType} from '@bexis2/bexis2-core-ui'
 import {Api} from '@bexis2/bexis2-core-ui'
 import { setApiConfig }  from '@bexis2/bexis2-core-ui'
 

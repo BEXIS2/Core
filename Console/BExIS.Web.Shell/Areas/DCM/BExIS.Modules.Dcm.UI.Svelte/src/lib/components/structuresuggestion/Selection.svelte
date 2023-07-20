@@ -4,29 +4,38 @@
 	// ui components
 	import { Spinner, DropdownKVP } from '@bexis2/bexis2-core-ui';
 	import { SlideToggle } from '@skeletonlabs/skeleton';
-	import MissingValues from '../structuresuggestion/MissingValues.svelte';
+	import MissingValues from './MissingValues.svelte';
 
 	//services
-	import { store, load } from './services.js';
+	import { store, load } from '$services/StructureSuggestionCaller';
+
+import Fa from 'svelte-fa'
+import { faSave, faTrash } from '@fortawesome/free-solid-svg-icons/index'
+
 
 	//types
-	import type { StructureSuggestionModel, Marker } from '../../models/StructureSuggestion';
+	import type { StructureSuggestionModel, Marker } from '$models/StructureSuggestion';
+	import { positionType } from "@bexis2/bexis2-core-ui";
 
-  export let model: StructureSuggestionModel;
+ export let model: StructureSuggestionModel;
+	$: model;
+	export let init:boolean = true;
 
 	let delimeter;
-
-	$: model;
-
 	let isDrag: boolean = false;
 	let state: boolean[][] = [];
-	let sel: Marker[] = [];
-	$: selection = sel;
+	let selection: Marker[] = [];
+	$: selection;
 	let cLength: number = 0;
 	let rLength: number = 0;
 	let selectionsupport: boolean = false;
+	let generate:boolean = true;
 
 	let selectedRowIndex: number = 0;
+
+	let errors:string[] = [];
+	$:errors;
+	
 
 	// currently only one requirement exit
 	// variable need to be selected
@@ -44,29 +53,17 @@
 
 	onMount(async () => {
 		console.log('start selection suggestion');
-		init();
-	});
-
-	async function init() {
 		console.log('load selection', model.id, model.file);
 		setTableInfos(model.preview, String.fromCharCode(model.delimeter));
-		setMarkers(model.markers);
+		setMarkers(model.markers,init);
 
 		delimeter = model.delimeter;
 
-		setTimeout(function () {
-			console.log('model after 100ms', model);
-			console.log('delimeter after 100ms', model.delimeter);
-			console.log('decimal after 100ms', model.decimal);
 
-			console.log('delimeter only', delimeter);
-		}, 100);
+		checkStatus();
 
-		console.log('init', model);
-		console.log('delimeter', model.delimeter);
-		console.log('decimal', model.decimal);
-		console.log('delimeter only', delimeter);
-	}
+	});
+
 
 	function setTableInfos(rows, delimeter) {
 		console.log('set table infos');
@@ -84,15 +81,17 @@
 		console.log('state', state);
 	}
 
-	function setMarkers(markers) {
+	function setMarkers(markers, init=false) {
 		for (var i = 0; i < markers.length; i++) {
 			let marker = markers[i];
 			console.log('marker', marker);
-			updateSelection(marker.type, marker.row - 1, marker.cells);
-
-			// check if varaible is set, then activet store
-			if (marker.type == MARKER_TYPE.VARIABLE) {
-				isValid = true;
+			if(init) // if data come from server index need to set -1
+			{
+				updateSelection(marker.type, marker.row-1, marker.cells);
+			}
+			else
+			{
+				updateSelection(marker.type, marker.row, marker.cells);
 			}
 		}
 	}
@@ -122,6 +121,7 @@
 			//left mouse click
 			if (e.which === 1 || e.button === 0) {
 				selectCell(c);
+
 			}
 
 			// right mouse click
@@ -136,13 +136,18 @@
 			//left mouse click
 			if (e.which === 1 || e.button === 0) {
 				selectCell(c);
+
 			}
 
 			// right mouse click
 			if (e.which === 3 || e.button === 2) {
 				deselectCell(c);
+
 			}
 		}
+
+		
+
 	};
 
 	const dbclickHandler = (c) => (e) => {
@@ -181,12 +186,17 @@
 				}
 			}
 		}
+
+		// clean all deactive selections
+		cleanSelection();
+		//check if selection is valid for save
+		checkStatus();
 	};
 
 	const selectRow = (r) => {
 		console.log('set true');
 		for (var i = 0; i < cLength; i++) {
-			console.log(i);
+			console.log("select row",cLength);
 			state[r][i] = true;
 		}
 	};
@@ -199,9 +209,16 @@
 		}
 	}
 
-	function cleanSelection() {
+	// set selection empty or a new set up
+	function resetSelection() {
 		selection = [];
 		isValid = false;
+	}
+
+	// remove every selection that has only false values in the array
+	function cleanSelection() {
+
+		selection = selection.filter(s=> s.cells.find(c=>c === true));
 	}
 
 	function getMarkerLayout(r) {
@@ -219,10 +236,6 @@
 		// get selected cells
 		let selectedCells = state[selectedRowIndex];
 
-		if (type == MARKER_TYPE.VARIABLE) {
-			isValid = true;
-		}
-
 		// if selectionsupport is true and one entry exist, means that the cells selection is the same
 		// like the stored one
 		if (selectionsupport && selection.length > 0) {
@@ -230,14 +243,20 @@
 		}
 
 		updateSelection(type, selectedRowIndex, selectedCells);
+
+		//check if selection is valid for save
+		checkStatus();
+
 	}
 
 	function updateSelection(type, index, cells) {
+
 		let obj = {
 			type: type,
 			row: index,
 			cells: cells
 		};
+
 
 		// if exist row, remove entry
 		let exist = selection.find((e) => e.row == obj.row);
@@ -254,10 +273,65 @@
 		// add obj to list and return new list
 		selection = [...selection, obj];
 
-    console.log("selection", selection)
+
+	}
+
+	// different thinks need to be done before save button is active
+	function checkStatus()
+	{
+		errors = [];
+		// minimum marker for variable and data need to exist
+		let variabelMarker = selection.find(s=> s.type == MARKER_TYPE.VARIABLE )
+		let dataMarker = selection.find(s=> s.type == MARKER_TYPE.DATA )
+
+		let selectionCount = selection.length;
+
+  if(selectionCount > 0) // only check if selection exist
+		{
+				if(!variabelMarker)
+				{
+					errors.push("the variables still need to be marked");
+				}
+
+				if(!dataMarker)
+				{
+					errors.push("the data still need to be marked");
+				}
+
+				let lastCount = 0;
+				for (let index = 0; index < selection.length; index++) {
+					const element = selection[index];
+					console.log(index, element)
+					let c = element.cells.filter(c=> c == true)?.length; // get length of all cells marked as true
+					if(index>0)// after first run, check count against the others 
+					{
+								if(c!=lastCount) {
+									let message ="selection mismatch, the rows must have the same number of marked cells  "
+									errors.push(message);
+									break;
+								}
+					} 
+				
+
+					lastCount = c;// last count set 
+
+				}
+		 	isValid = errors.length == 0?true:false;
+
+		}
+		else // no selection
+		{
+			isValid = false; // no selection, no errors,  not valid
+			errors = [];
+
+		}
+
 	}
 
 	async function save() {
+
+		generate = true;
+
 		model.markers = selection;
 
 		console.log('save selection', model);
@@ -267,13 +341,24 @@
 		if (res != false) {
 			console.log('selection', res);
 			dispatch('saved', model);
+			generate = false;
 		}
 	}
+
+ function changeDelimeter()
+	{
+			setTableInfos(model.preview, String.fromCharCode(model.delimeter));
+	}
+
 </script>
 
-{#if !model || state.length == 0}
+{#if !model || state.length == 0 || generate==false}
 	<!--if the model == false, access denied-->
-	<Spinner />
+	{#if !model || state.length == 0 || generate==false}
+		<div class="h-full w-full text-surface-700"><Spinner position={positionType.center} label="Loading Structure Suggestion based on: {model.file}"/></div>
+	{:else}
+		<div class="h-full w-full text-surface-700"><Spinner position={positionType.center} label="Generate Structure..."/></div>
+	{/if}
 {:else}
 	<!-- load page -->
 	<form on:submit|preventDefault={save}>
@@ -289,7 +374,8 @@
 					title="Delimeter"
 					bind:target={model.delimeter}
 					source={model.delimeters}
-					targetIsComplex={false}
+					complexTarget={false}
+					on:change={changeDelimeter}
 				/>
 			</div>
 			<div>
@@ -298,7 +384,7 @@
 					title="Decimal"
 					bind:target={model.decimal}
 					source={model.decimals}
-					targetIsComplex={false}
+					complexTarget={false}
 				/>
 			</div>
 			<div>
@@ -307,12 +393,12 @@
 					title="TextMarker"
 					bind:target={model.textMarker}
 					source={model.textMarkers}
-					targetIsComplex={false}
+					complexTarget={false}
 				/>
 			</div>
 
-			<div class="col-span-2 space-y-5">
-				<div>
+			<div class="col-span-2 space-y-5 ">
+
 					<button
 						class="btn variant-filled-error"
 						type="button"
@@ -339,15 +425,27 @@
 						type="button"
 						on:click={() => onclickHandler(MARKER_TYPE.DATA)}>Data</button
 					>
-					<button class="btn variant-ghost-surface" type="button" on:click={cleanSelection}>delete</button>
-					<button class="btn variant-ghost-surface" disabled={!isValid}>edit</button>
-					<!--<Fa icon={faTrashAlt}/> <Fa icon={faPenToSquare}/> -->
-				</div>
-				<div>
-					<SlideToggle name="selection support" bind:checked={selectionsupport}
-						>selection support</SlideToggle
-					>
-				</div>
+			
+					<div class="my-1 float-right">
+
+		
+						<button class="variant-ghost-warning btn text-3xl" type="button" on:click={resetSelection}><Fa icon={faTrash}/></button>
+						<button class="btn variant-ghost-surface text-3xl" disabled={!isValid}>
+							<Fa icon={faSave}/> </button>
+					</div>
+
+
+
+					<div >
+						<SlideToggle name="selection support" bind:checked={selectionsupport}
+							>selection support</SlideToggle
+						>
+						<div class="m-2 float-right text-sm">
+							{#each errors as error}
+							<label class="text-error-500">{error}</label>
+							{/each}
+							</div>
+					</div>
 				<div>
 					<!-- Missing Values-->
 					<MissingValues bind:list={model.missingValues} />
@@ -357,6 +455,7 @@
 					<label><b>Found:</b> {model.total - model.skipped}</label>
 					<label><b>Skipped:</b> {model.skipped}</label>
 				</div>
+
 			</div>
 
 			<!-- controls-->
@@ -399,13 +498,15 @@
 
 			<div class="col-span-3" />
 			<div>
-				<table class="table table-compact">
-					<tbody>
+
+				<table class="table table-compact"
+				 on:contextmenu={(e)=> e.preventDefault()} >
+					<tbody> 
 						{#each model.preview as row, r}
 							<tr>
 								{#each row.split(String.fromCharCode(model.delimeter)) as cell, c}
 									<td 
-                    class="hover:cursor-pointer select-none"
+										class="hover:cursor-pointer select-none"
 
 										on:dblclick={dbclickHandler(r)}
 										on:mousedown={mouseDownHandler(r, c)}
@@ -460,69 +561,3 @@
 		color: white;
 	}
   </style>
-
-<!-- 
-<style>
-	.table-container {
-		width: 100%;
-		overflow-x: scroll;
-	}
-
-	.content {
-		width: 100%;
-	}
-
-	.flipped,
-	.flipped .content {
-		transform: rotateX(180deg);
-		-ms-transform: rotateX(180deg); /* IE 9 */
-		-webkit-transform: rotateX(180deg); /* Safari and Chrome */
-	}
-
-	table,
-	tr,
-	td {
-		-webkit-touch-callout: none; /* iOS Safari */
-		-webkit-user-select: none; /* Safari */
-		-khtml-user-select: none; /* Konqueror HTML */
-		-moz-user-select: none; /* Old versions of Firefox */
-		-ms-user-select: none; /* Internet Explorer/Edge */
-		user-select: none;
-	}
-
-	tr:hover {
-		background-color: #efefef;
-		cursor: pointer;
-	}
-
-	tr:scope {
-		background-color: seagreen;
-	}
-
-	.selected {
-		background-color: lightgrey;
-	}
-
-	.variable {
-		background-color: var(--bs-danger);
-		color: white;
-	}
-
-	.unit {
-		background-color: var(--bs-success);
-		color: white;
-	}
-
-	.description {
-		background-color: var(--bs-warning);
-	}
-
-	.missing-values {
-		background-color: var(--bs-info);
-	}
-
-	.data {
-		background-color: var(--bs-primary);
-		color: white;
-	}
-</style> -->

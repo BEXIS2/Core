@@ -418,46 +418,47 @@ namespace BExIS.Utils.Upload
 
                         AsciiReader reader = new AsciiReader(sds, afri, new IOUtility());
                         reader.Position = position;
-                        Stream stream = reader.Open(filepath);
-
-                        // get a list of values for each row
-                        // e.g.
-                        // primarky keys id, name
-                        // 1 [1][David]
-                        // 2 [2][Javad]
-                        List<List<string>> tempList = reader.ReadValuesFromFile(stream, filename, datasetId, primaryKeys, packageSize);
-
-                        // convert List of Lists to list of strings
-                        // 1 [1][David] = 1David
-                        // 2 [2][Javad] = 2Javad
-                        foreach (List<string> l in tempList)
+                        using (Stream stream = reader.Open(filepath))
                         {
-                            string tempString = "";
-                            foreach (string s in l)
-                            {
-                                tempString += s;
-                            }
-                            if (!String.IsNullOrEmpty(tempString)) primaryValuesAsOneString.Add(tempString);
-                        }
 
-                        // add all primary keys pair into the hasttable
-                        foreach (string pKey in primaryValuesAsOneString)
-                        {
-                            if (pKey != "")
+                            // get a list of values for each row
+                            // e.g.
+                            // primarky keys id, name
+                            // 1 [1][David]
+                            // 2 [2][Javad]
+                            List<List<string>> tempList = reader.ReadValuesFromFile(stream, filename, datasetId, primaryKeys, packageSize);
+
+                            // convert List of Lists to list of strings
+                            // 1 [1][David] = 1David
+                            // 2 [2][Javad] = 2Javad
+                            foreach (List<string> l in tempList)
                             {
-                                try
+                                string tempString = "";
+                                foreach (string s in l)
                                 {
-                                    hashtable.Add(Utility.ComputeKey(pKey), "pKey");
+                                    tempString += s;
                                 }
-                                catch
+                                if (!String.IsNullOrEmpty(tempString)) primaryValuesAsOneString.Add(tempString);
+                            }
+
+                            // add all primary keys pair into the hasttable
+                            foreach (string pKey in primaryValuesAsOneString)
+                            {
+                                if (pKey != "")
                                 {
-                                    return false;
+                                    try
+                                    {
+                                        hashtable.Add(Utility.ComputeKey(pKey), "pKey");
+                                    }
+                                    catch
+                                    {
+                                        return false;
+                                    }
                                 }
                             }
-                        }
 
-                        position = reader.Position + 1;
-                        stream.Close();
+                            position = reader.Position + 1;
+                        }
                     }
                 } while (primaryValuesAsOneString.Count > 0);
 
@@ -480,47 +481,48 @@ namespace BExIS.Utils.Upload
 
                         ExcelReader reader = new ExcelReader(sds, new ExcelFileReaderInfo());
                         reader.Position = position;
-                        Stream stream = reader.Open(filepath);
-
-                        // get a list of values for each row
-                        // e.g.
-                        // primarky keys id, name
-                        // 1 [1][David]
-                        // 2 [2][Javad]
-                        List<List<string>> tempList = reader.ReadValuesFromFile(stream, filename, datasetId, primaryKeys, packageSize);
-
-                        // convert List of Lists to list of strings
-                        // 1 [1][David] = 1David
-                        // 2 [2][Javad] = 2Javad
-                        foreach (List<string> l in tempList)
+                        using (Stream stream = reader.Open(filepath))
                         {
-                            string tempString = "";
-                            foreach (string s in l)
-                            {
-                                tempString += s;
-                            }
-                            if (!String.IsNullOrEmpty(tempString)) primaryValuesAsOneString.Add(tempString);
-                        }
 
-                        // add all primary keys pair into the hasttable
-                        foreach (string pKey in primaryValuesAsOneString)
-                        {
-                            if (pKey != "")
+                            // get a list of values for each row
+                            // e.g.
+                            // primarky keys id, name
+                            // 1 [1][David]
+                            // 2 [2][Javad]
+                            List<List<string>> tempList = reader.ReadValuesFromFile(stream, filename, datasetId, primaryKeys, packageSize);
+
+                            // convert List of Lists to list of strings
+                            // 1 [1][David] = 1David
+                            // 2 [2][Javad] = 2Javad
+                            foreach (List<string> l in tempList)
                             {
-                                try
+                                string tempString = "";
+                                foreach (string s in l)
                                 {
-                                    hashtable.Add(Utility.ComputeKey(pKey), pKey);
+                                    tempString += s;
                                 }
-                                catch (Exception ex)
+                                if (!String.IsNullOrEmpty(tempString)) primaryValuesAsOneString.Add(tempString);
+                            }
+
+                            // add all primary keys pair into the hasttable
+                            foreach (string pKey in primaryValuesAsOneString)
+                            {
+                                if (pKey != "")
                                 {
-                                    stream.Close();
-                                    return false;
+                                    try
+                                    {
+                                        hashtable.Add(Utility.ComputeKey(pKey), pKey);
+                                    }
+                                    catch (Exception ex)
+                                    {
+                                        stream.Close();
+                                        return false;
+                                    }
                                 }
                             }
-                        }
 
-                        position = reader.Position + 1;
-                        stream.Close();
+                            position = reader.Position + 1;
+                        }
                     }
                 } while (primaryValuesAsOneString.Count > 0);
 

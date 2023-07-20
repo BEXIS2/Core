@@ -36,12 +36,12 @@ onMount(async () => {
 
 async function handleRemoveFile(e, index) {
 
-  console.log("handleRemoveFile",e,index);
+  //console.log("handleRemoveFile",e,index);
 
    files.splice(index, 1)
    files = [...files];
 
-   dispatch("success",{text:e.detail.text})
+   dispatch("warning",{text:e.detail.text})
 }
 
 async function handleSave(e) {
@@ -76,5 +76,5 @@ function setDescriptionValues(type)
 </div>
 {:else}
   <!-- spinner here -->
-  <Spinner  />
+  <Spinner textCss="text-surface-800" label="loading files list"  />
 {/if}

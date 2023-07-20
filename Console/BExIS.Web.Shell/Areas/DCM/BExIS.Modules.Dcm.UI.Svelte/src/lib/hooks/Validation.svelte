@@ -1,98 +1,52 @@
-<script>
-import {Spinner} from '@bexis2/bexis2-core-ui'
+<script lang="ts">
+	import { Spinner, ErrorMessage } from '@bexis2/bexis2-core-ui';
+	import ValidationResult from '$lib/components/validation/ValidationResult.svelte';
 
-import {getHookStart}  from '../../services/HookCaller'
-import { latestFileUploadDate, latestDataDescriptionDate } from '../../routes/edit/stores';
-import { onMount }from 'svelte'
+	import { getHookStart } from '../../services/HookCaller';
+	import { latestFileUploadDate, latestDataDescriptionDate, latestFileReaderDate } from '../../routes/edit/stores';
+	import { onMount } from 'svelte';
 
-// import Selection from '../../routes/structuresuggestion/Selection.svelte'
-
-
-export let id=0;
-export let version=1;
-export let status=0;
-export let displayName="";
-export let start="";
-export let description="";
-
-let model;
-
-// modal window for selection
-let open = false;
+	import type { ValidationModel } from '$models/ValidationModels';
 
 
-$:$latestFileUploadDate, reload()
-$:$latestDataDescriptionDate, reload()
+	export let id = 0;
+	export let version = 1;
+	export let status = 0;
+	export let displayName = '';
+	export let start = '';
+	export let description = '';
 
-onMount(async () => {
-  load();
-})
+	let model: ValidationModel;
+	$: model;
 
-async function load()
-{
-  //const res = await fetch(url);
-  model = await getHookStart(start,id,version);
-  console.log("validation",model);
+	$: $latestFileUploadDate, reload();
+	$: $latestDataDescriptionDate, reload();
+	$: $latestFileReaderDate, reload();
 
-}
+	onMount(async () => {
+		reload();
+	});
 
-async function reload()
-{
-  //console.log("run validation");
-  load();
+	async function reload() {
+		//const res = await fetch(url);
+		model = await getHookStart(start, id, version);
+		console.log('validation', model);
+	}
 
-} 
-
-const toggle = () => {
-    open = !open;
-  };
 
 </script>
-  
-  {#if model}
 
-    {#if model.isValid == true}
-          <aside class="alert variant-filled-success">
-            <div class="alert-message">
-              valid
-            </div>
-          </aside>
- 
-      {:else}
-          <aside class="alert variant-filled-error">
-            <div class="alert-message">
-              not valid
-            </div>
-          </aside>
+{#await reload()}
+	<div class="w-full h-full text-surface-600">
+		<Spinner label="...validate data" />
+	</div>
+{:then a}
+	{#if model &&  model.fileResults}
+		{#each model.fileResults as fileResult}
 
-          {#if model.fileErrors}
-            {#each model.fileErrors as fileerror}
-              <hr>
-              <b>{fileerror.file}</b>
-              <ul>
-                {#each fileerror.errors as error}
-                  <li>{error}</li>
-                {/each}
-              </ul>
-
-            {/each}
-          {/if}
-
-          <br/>
-          <button class="btn bg-primary-500" on:click={toggle}>open reader informations</button>
-          <!-- <Modal isOpen={open} {toggle} fullscreen="{true}">
-            <ModalHeader {toggle}>Setup filer reader information {model.isValid}</ModalHeader>
-            <ModalBody>  
-              <Selection id={id} on:saved={reload}/>
-            </ModalBody>
-          </Modal> -->
-          <p>modal missing</p>
-    {/if}
-  
-
-
-    {:else} <!-- while data is not loaded show a loading information -->
-
-    <Spinner color="info" size="sm" type ="grow" text-center />
-
-  {/if}
+			<ValidationResult bind:sortedErrors={fileResult.sortedErrors} bind:file={fileResult.file} />
+		{/each}
+	{/if}
+{:catch error}
+	<ErrorMessage {error} />
+{/await}

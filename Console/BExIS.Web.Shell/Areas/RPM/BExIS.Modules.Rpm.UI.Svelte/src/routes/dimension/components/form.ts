@@ -1,12 +1,12 @@
 import { create, test, enforce, only } from 'vest';
-import type { DimensionListItem } from "../models"; 
+import type { DimensionListItem } from '../models';
 
 type dataType = {
-	dimension:DimensionListItem,
-	dimensions: DimensionListItem[]
-}
+	dimension: DimensionListItem;
+	dimensions: DimensionListItem[];
+};
 
-const suite = create((data:dataType, fieldName) => {
+const suite = create((data: dataType, fieldName) => {
 	only(fieldName);
 
 	test('name', 'name is required', () => {
@@ -14,7 +14,10 @@ const suite = create((data:dataType, fieldName) => {
 	});
 
 	test('name', 'name is not unique', () => {
-		return data.dimensions.find(u => u.name.toLowerCase() === data.dimension.name.toLowerCase())== null || data.dimensions.find(u => u.name === data.dimension.name)?.id == data.dimension.id;
+		return (
+			data.dimensions.find((u) => u.name.toLowerCase() === data.dimension.name.toLowerCase()) ==
+				null || data.dimensions.find((u) => u.name === data.dimension.name)?.id == data.dimension.id
+		);
 	});
 
 	test('description', 'description is required', () => {

@@ -1,9 +1,9 @@
 <script lang="ts">
  import List from './List.svelte'
  import Form from './Form.svelte'
- import {Page} from '@bexis2/bexis2-core-ui';
+ import {Page, pageContentLayoutType} from '@bexis2/bexis2-core-ui';
 
- import type { Link } from "@bexis2/bexis2-core-ui";
+ import type { linkType } from "@bexis2/bexis2-core-ui";
 
  import { onMount } from 'svelte'; 
  import { fade } from 'svelte/transition'; 
@@ -18,15 +18,12 @@
 let entitytemplate:EntityTemplateModel;
 
 $:entitytemplates=[];
-$:systemkeys= [];
+// $:systemkeys= [];
 $:selected = entitytemplate;
 
 onMount(async () => {
-
-
- 
  entitytemplates = await getEntityTemplateList();
- systemkeys = await getSystemKeys();
+
 })
 
 
@@ -57,28 +54,27 @@ function onSaveHandler(e)
 
 }
 
-let links:Link[] = [{label:"manual",url:"https://github.com/BEXIS2/Documents/blob/master/Manuals/DCM/Manual.md"}]
+let links:linkType[] = [{label:"manual",url:"https://github.com/BEXIS2/Documents/blob/master/Manuals/DCM/Manual.md"}]
 
-console.log(links)
+//console.log(links)
 
 </script>
 
 <Page 
 title="Create a Dataset" 
 note="On this page you can create a dataset based on a template. please select on template and fill out the form." 
-{links} >
+{links} 
+contentLayoutType={pageContentLayoutType.full}>
 
 <div in:fade={{ delay: 500 }} out:fade={{ delay: 500 }}>
 {#if entitytemplates}
-<div class="w-full grid grid-cols-1 md:grid-cols-2 gap-5">
-  <div>
-    <List items={entitytemplates} on:select={handleSelect}/>
-  </div>
- <div >
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-3">
+
+  <List items={entitytemplates} on:select={handleSelect}/>
+
   {#if selected && isOpen}
     <Form bind:id={selected.id} on:cancel={()=>isOpen=false} on:save={(e)=>onSaveHandler(e)} />
   {/if}
- </div>
 </div>
 
 {:else}

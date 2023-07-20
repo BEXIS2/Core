@@ -3,8 +3,7 @@
 import Variable from './variable/Variable.svelte'
 import {Spinner} from '@bexis2/bexis2-core-ui';
 import {onMount} from 'svelte';
-import {getDataTypes,getUnits} from './services.js'
-
+import {getDataTypes,getUnits} from '$services/StructureSuggestionCaller'
 
 export let variables = [];
 
@@ -44,8 +43,10 @@ function checkValidationState()
   valid = variableValidationStates.every(v=>v===true)
 }
 
+
+
 </script>
-<div class="suggestion-container">
+<div class="suggestion-container" >
 
 {#if variables && datatypes && units && variableValidationStates}
     <!-- else content here -->
@@ -56,7 +57,7 @@ function checkValidationState()
     {/each}
   
 {:else}
-  <Spinner color="primary" size="sm" type ="grow" />
+  <Spinner label="loading suggested structure" />
 {/if}
 </div>
 

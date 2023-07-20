@@ -9,6 +9,7 @@ using BExIS.Modules.Rpm.UI.Models.Units;
 using BExIS.Modules.Rpm.UI.Models.Dimensions;
 using BExIS.Dlm.Entities.DataStructure;
 using System.Linq;
+using Telerik.Web.Mvc.UI.Html;
 
 namespace BExIS.Modules.Rpm.UI.Controllers
 {
@@ -104,7 +105,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                             unit.MeasurementSystem = (MeasurementSystem)Enum.Parse(typeof(MeasurementSystem), unitListItem.MeasurementSystem);
                             
                         }
-                        if (unitListItem.Datatypes.Count() > 0)
+                        if (unitListItem.Datatypes.Count > 0)
                         {
                             unit.AssociatedDataTypes = dataTypeManager.Repo.Get().Where(p => unitListItem.Datatypes.Select(d => d.Id).Contains(p.Id)).ToList();
                         }
@@ -131,7 +132,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                 using (UnitManager unitManager = new UnitManager())
                 {
                     Unit unit = unitManager.Repo.Get(id);
-                    if (unit != null)
+                    if (unit != null && !unit.DataContainers.Any())
                     {
                         unitManager.Delete(unit);
                         return Json(true, JsonRequestBehavior.AllowGet);
@@ -197,6 +198,13 @@ namespace BExIS.Modules.Rpm.UI.Controllers
         }
         private UnitListItem convertToUnitListItem(Unit unit)
         {
+            bool inuse = false;
+
+            if (unit.DataContainers.Any())
+                inuse = true;
+            else
+                inuse = false;
+
             UnitListItem unitListItem = new UnitListItem
             {
                 Id = unit.Id,
@@ -206,6 +214,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                 Dimension = convertToDimensionListItem(unit.Dimension),
                 Datatypes = convertToDataTypeListItem(unit.AssociatedDataTypes.ToList()),
                 MeasurementSystem = unit.MeasurementSystem.ToString(),
+                InUse = inuse,
             };
             return unitListItem;
         }
@@ -224,7 +233,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                 }
                 else
                 {
-                    if (!units.Where(p => p.Name.ToLower().Equals(unitListItem.Name.ToLower())).Any())
+                    if (units.Where(p => p.Name.ToLower().Equals(unitListItem.Name.ToLower())).Any())
                     {
                         if (unitListItem.Id != units.Where(p => p.Name.ToLower().Equals(unitListItem.Name.ToLower())).ToList().First().Id)
                         {
@@ -241,7 +250,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                 }
                 else
                 {
-                    if (!units.Where(p => p.Abbreviation.ToLower().Equals(unitListItem.Abbreviation.ToLower())).Any())
+                    if (units.Where(p => p.Abbreviation.ToLower().Equals(unitListItem.Abbreviation.ToLower())).Any())
                     {
                         if (unitListItem.Id != units.Where(p => p.Abbreviation.ToLower().Equals(unitListItem.Abbreviation.ToLower())).ToList().First().Id)
                         {

@@ -98,6 +98,9 @@ namespace Vaiona.Model.MTnt
         /// </summary>
         public List<string> MatchingRules { get; set; }
         public bool IsDefault { get; set; }
+
+        public string Header { get; set; }
+        public string Footer { get; set; }
         public string PolicyFileName { get; set; }
         public string TermsAndConditionsFileName { get; set; }
         public string ContactUsFileName { get; set; }
@@ -136,6 +139,29 @@ namespace Vaiona.Model.MTnt
                     return PathProvider.GetThemePath(this.Id, this.Theme, this.Id);
             }
         }
+
+        public string HeaderPath //effective path to policy content file
+        {
+            get
+            {
+                if (this.UseFallback == true && this.Fallback != null)
+                    return PathProvider.GetContentFilePath(this.Id, this.Header, Fallback.Id);
+                else
+                    return PathProvider.GetContentFilePath(this.Id, this.Header, this.Id);
+            }
+        }
+
+        public string FooterPath //effective path to policy content file
+        {
+            get
+            {
+                if (this.UseFallback == true && this.Fallback != null)
+                    return PathProvider.GetContentFilePath(this.Id, this.Footer, Fallback.Id);
+                else
+                    return PathProvider.GetContentFilePath(this.Id, this.Footer, this.Id);
+            }
+        }
+
 
         public string PolicyFileNamePath //effective path to policy content file
         {

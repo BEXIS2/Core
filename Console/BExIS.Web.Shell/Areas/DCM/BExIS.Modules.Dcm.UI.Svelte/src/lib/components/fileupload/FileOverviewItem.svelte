@@ -31,21 +31,19 @@ onMount(async ()=>{
 
 })
 
-async function handleRemoveFile() {
+async function handleRemoveFile(e) {
 
-  console.log("remove file")
+
 loading = true;
 
 //remove from server
 const res = await removeFile(remove,id,file);
-console.log("remove file",res)
   if(res == true)
   {
-    console.log("remove file")
     let message = file+" removed."
     dispatch("removed",{text:message})
   }
-
+  console.log("remove loading")
   loading = false;
 }
 
@@ -76,10 +74,18 @@ const res = await saveFileDescription(save,id, file, description );
     {/if}
 
     <div class="text-right">
-      <button class="btn" on:click={e => handleRemoveFile()}><Fa icon={faTrash}/></button>
-      {#if loading}<Spinner /> {/if}
+     
+      {#if loading}
+        <Spinner textCss="text-surface-500" />
+      {:else}
+        <button class="btn" on:click={(e) => handleRemoveFile(e)}><Fa icon={faTrash}/></button>
+      {/if}
     </div>
   
   </div>
 
 {/if}
+
+
+
+

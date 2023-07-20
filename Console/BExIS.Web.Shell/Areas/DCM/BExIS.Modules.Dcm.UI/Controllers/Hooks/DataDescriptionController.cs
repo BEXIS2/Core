@@ -12,6 +12,7 @@ using BExIS.Security.Entities.Authorization;
 using BExIS.Security.Services.Utilities;
 using BExIS.UI.Hooks;
 using BExIS.UI.Hooks.Caches;
+using BExIS.UI.Hooks.Logs;
 using BExIS.UI.Models;
 using BExIS.Utils.Config;
 using BExIS.Utils.Data.Upload;
@@ -89,13 +90,28 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                         }
                     }
                 }
+
+                // get values from template
+                using (var entityTemplateManager = new EntityTemplateManager())
+                using (var datasetManager = new DatasetManager())
+                {
+                    var dataset = datasetManager.GetDataset(id);
+                    if (dataset == null) throw new NullReferenceException(String.Format("Subject wih id {0} not exist",id));
+
+                    var template = entityTemplateManager.Repo.Get(dataset.EntityTemplate.Id);
+                    if (template == null) throw new NullReferenceException(String.Format("Template wih id {0} not exist", id));
+
+                    model.IsStructured = template.HasDatastructure;
+                    model.IsRestricted = template.DatastructureList.Any();
+                }
             }
 
-
+  
             HookManager hookManager = new HookManager();
             // load cache to check existing files
             EditDatasetDetailsCache cache = hookManager.LoadCache<EditDatasetDetailsCache>("dataset", "details", HookMode.edit, id);
 
+            
             // check if files in list also on server
             string path = Path.Combine(AppConfiguration.DataPath, "datasets", id.ToString(), "Temp");
             if (cache.Files != null)
@@ -119,6 +135,8 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
             // set modification date
             model.LastModification = cache.GetLastModificarion(typeof(DataDescriptionHook));
+
+            
 
 
             return Json(model, JsonRequestBehavior.AllowGet);
@@ -166,8 +184,11 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                     HookManager hookManager = new HookManager();
 
                     EditDatasetDetailsCache cache = hookManager.LoadCache<EditDatasetDetailsCache>("dataset", "details", HookMode.edit, id);
+                    EditDatasetDetailsLog log = hookManager.LoadCache<EditDatasetDetailsLog>("dataset", "details", HookMode.edit, id);
                     var message = String.Format("the data structure {0} was successfully deleted", structureId);
-                    cache.Messages.Add(new ResultMessage(DateTime.Now, message ));
+
+                    var username = BExISAuthorizeHelper.GetAuthorizedUserName(HttpContext);
+                    log.Messages.Add(new LogMessage(DateTime.Now, message,username,"Data description","delete" ));
 
                     cache.UpdateLastModificarion(typeof(DataDescriptionHook));
 
@@ -190,6 +211,121 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         {
             IOUtility iou = new IOUtility();
             return iou.IsSupportedAsciiFile(Path.GetExtension(file.Name));
+        }
+
+        [JsonNetFilter]
+        [HttpGet]
+        public JsonResult AvailableStructues(long id)
+        {
+            if (id <= 0) throw new ArgumentException("must be greater then 0", "id");
+
+            List<ListItem> tmp = new List<ListItem>();
+
+            using (var entityTemplateManager = new EntityTemplateManager())
+            using (var structureManager = new DataStructureManager())
+            using (var datasetManager = new DatasetManager())
+            {
+                var dataset = datasetManager.GetDataset(id);
+                if(dataset == null) return Json(new { success = false, message = "dataset not exit" });
+
+                var template = entityTemplateManager.Repo.Get(dataset.EntityTemplate.Id);
+                if (template == null) return Json(new { success = false, message = "template not exit" });
+
+                var structures = structureManager.StructuredDataStructureRepo.Get();
+
+                // get only subset of the structures restricted by the entity template.DatastructureList
+                if (template.HasDatastructure == true && template.DatastructureList.Any()) 
+                {
+                    foreach (var dsId in template.DatastructureList)
+                    {
+                        var ds = structures.Where(d => d.Id == dsId).FirstOrDefault();
+                        tmp.Add(new ListItem() { Id = ds.Id, Text = ds.Name, Group = "structure" });
+                    }
+                }
+                else if(template.HasDatastructure == true) // get all structures
+                {
+                    foreach (var ds in structures)
+                    {
+                        tmp.Add(new ListItem() { Id = ds.Id, Text = ds.Name, Group = "structure" });
+                    }
+                }
+
+            }
+      
+            return Json(tmp, JsonRequestBehavior.AllowGet);
+        }
+
+        [HttpPut]
+        public JsonResult Set(long id, long structureId)
+        {
+            if (id <= 0) throw new ArgumentException("must be greater then 0","id");
+            if (structureId <= 0) throw new ArgumentException("must be greater then 0", "structureId");
+
+            using (var structureManager = new DataStructureManager())
+            using (var datasetManager = new DatasetManager())
+            {
+                var hookManager = new HookManager();
+                EditDatasetDetailsCache cache = hookManager.LoadCache<EditDatasetDetailsCache>("dataset", "details", HookMode.edit, id);
+                EditDatasetDetailsLog log = hookManager.LoadLog<EditDatasetDetailsLog>("dataset", "details", HookMode.edit, id);
+                var username = BExISAuthorizeHelper.GetAuthorizedUserName(HttpContext);
+
+
+                var dataset = datasetManager.GetDataset(id);
+                if (dataset == null) throw new ArgumentNullException("dataset");
+
+                var structure = structureManager.StructuredDataStructureRepo.Get(structureId);
+                if (structure == null) throw new ArgumentNullException("structure");
+
+                dataset.DataStructure = structure;
+                datasetManager.UpdateDataset(dataset);
+
+                // update cache
+                // update modifikation date
+                cache.UpdateLastModificarion(typeof(DataDescriptionHook));
+
+                // store in messages
+                string message = String.Format("the structure {0} was successfully attached to the dataset {1}.", structure.Name, id);
+                log.Messages.Add(new LogMessage(DateTime.Now, new List<string>() { message }, username, "Data description","set"));
+
+                // save cache
+                hookManager.Save(cache,log, "dataset", "details", HookMode.edit, id);
+
+                return Json(true, JsonRequestBehavior.AllowGet);
+            }
+        }
+
+        public JsonResult Remove(long id)
+        {
+            if (id <= 0) throw new ArgumentException("must be greater then 0", "id");
+
+            using (var datasetManager = new DatasetManager())
+            {
+                var hookManager = new HookManager();
+                EditDatasetDetailsCache cache = hookManager.LoadCache<EditDatasetDetailsCache>("dataset", "details", HookMode.edit, id);
+                EditDatasetDetailsLog log = hookManager.LoadLog<EditDatasetDetailsLog>("dataset", "details", HookMode.edit, id);
+                var username = BExISAuthorizeHelper.GetAuthorizedUserName(HttpContext);
+
+
+                var dataset = datasetManager.GetDataset(id);
+                if (dataset == null) throw new ArgumentNullException("dataset");
+
+                dataset.DataStructure = null;
+                datasetManager.UpdateDataset(dataset);
+
+                // update cache
+                // update modifikation date
+                cache.UpdateLastModificarion(typeof(DataDescriptionHook));
+
+                // store in messages
+                string message = String.Format("structure was successfully removed from the dataset {0}.", id);
+                log.Messages.Add(new LogMessage(DateTime.Now, new List<string>() { message }, username, "Data description","remove"));
+
+                // save cache
+                hookManager.Save(cache, log, "dataset", "details", HookMode.edit, id);
+
+
+                return Json(true, JsonRequestBehavior.AllowGet);
+            }
         }
     }
 }

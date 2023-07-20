@@ -1,4 +1,5 @@
 ﻿using BExIS.App.Bootstrap.Attributes;
+using BExIS.App.Bootstrap.Helpers;
 using BExIS.Dlm.Entities.Data;
 using BExIS.Dlm.Entities.DataStructure;
 using BExIS.Dlm.Services.Data;
@@ -12,6 +13,7 @@ using BExIS.Security.Entities.Authorization;
 using BExIS.UI.Helpers;
 using BExIS.UI.Hooks;
 using BExIS.UI.Hooks.Caches;
+using BExIS.UI.Hooks.Logs;
 using BExIS.UI.Models;
 using System;
 using System.Collections.Generic;
@@ -103,7 +105,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                     model.TextMarker = AsciiFileReaderInfo.GetTextMarker(textMarker);
 
                 }
-                
+
             }
             else // allready exist, set it
             {
@@ -130,6 +132,25 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                         Type = "data",
                         Cells = cache.AsciiFileReaderInfo.Cells
                     });
+
+                // Unit
+                model.Markers.Add(
+                    new Marker()
+                    {
+                        Row = cache.AsciiFileReaderInfo.Unit,
+                        Type = "unit",
+                        Cells = cache.AsciiFileReaderInfo.Cells
+                    });
+
+                //description
+                model.Markers.Add(
+                    new Marker()
+                    {
+                        Row = cache.AsciiFileReaderInfo.Description,
+                        Type = "description",
+                        Cells = cache.AsciiFileReaderInfo.Cells
+                    });
+            
             }
 
             // get lists
@@ -165,8 +186,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                     );
 
 
-                // create variables
-
+                // create variable
                 foreach (var variable in model.Variables)
                 {
                     // if needed gerenate units??
@@ -204,7 +224,10 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                     // gerenate missing values and link them to each variable
                     foreach (var mv in model.MissingValues)
                     {
-                        var missingValue = missingValueManager.Create(mv.DisplayName, mv.Description, result);
+                        if (!string.IsNullOrEmpty(mv.DisplayName))
+                        {
+                            var missingValue = missingValueManager.Create(mv.DisplayName, mv.Description, result);
+                        }
                     }
 
                 }
@@ -229,6 +252,9 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
             HookManager hookManager = new HookManager();
             EditDatasetDetailsCache cache = hookManager.LoadCache<EditDatasetDetailsCache>("dataset", "details", HookMode.edit, model.Id);
+            EditDatasetDetailsLog log = hookManager.LoadLog<EditDatasetDetailsLog>("dataset", "details", HookMode.edit, model.Id);
+
+            var username = BExISAuthorizeHelper.GetAuthorizedUserName(HttpContext);
 
             // update Data description hook
 
@@ -243,13 +269,21 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             cache.AsciiFileReaderInfo.Variables = model.Markers.Where(m => m.Type.Equals("variable")).FirstOrDefault().Row + 1;// add 1 to store nit the index but the row
             cache.AsciiFileReaderInfo.Cells = model.Markers.Where(m => m.Type.Equals("variable")).FirstOrDefault().Cells;
 
+            // additional infotmations
+            // description
+            var descriptionMarker = model.Markers.Where(m => m.Type.Equals("description")).FirstOrDefault();
+            if(descriptionMarker != null) cache.AsciiFileReaderInfo.Description = descriptionMarker.Row + 1;// add 1 to store nit the index but the row
+            // units
+            var unitMarker = model.Markers.Where(m => m.Type.Equals("unit")).FirstOrDefault();
+            if (unitMarker != null) cache.AsciiFileReaderInfo.Unit = unitMarker.Row + 1;// add 1 to store nit the index but the row
+
             // update modifikation date
             cache.UpdateLastModificarion(typeof(DataDescriptionHook));
 
 
             // store in messages
             string message = String.Format("the structure {0} was successfully created and attached to the dataset {1}.", model.Title, model.Id);
-            cache.Messages.Add(new ResultMessage(DateTime.Now, new List<string>() { message }));
+            log.Messages.Add(new LogMessage(DateTime.Now, new List<string>() { message }, username,"Structure suggestion","store"));
 
             // save cache
             hookManager.SaveCache(cache, "dataset", "details", HookMode.edit, model.Id);
@@ -391,6 +425,45 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         }
 
         [JsonNetFilter]
+        public JsonResult GetStructures()
+        {
+            using (var structureManager = new DataStructureManager())
+            {
+                List<ListItem> list = new List<ListItem>();
+                var structures = structureManager.StructuredDataStructureRepo.Get();
+
+                if (structures.Any())
+                {
+                    foreach (var structure in structures)
+                    {
+                        list.Add(new ListItem(structure.Id, structure.Name));
+                    }
+                }
+
+                // get default missing values
+                return Json(list, JsonRequestBehavior.AllowGet);
+            }
+        }
+
+        [JsonNetFilter]
+        public JsonResult GetDisplayPattern()
+        {
+            List<ListItem> list = new List<ListItem>();
+            foreach(var displayPattern in DataTypeDisplayPattern.Pattern)
+            {
+                list.Add(new ListItem()
+                {
+                    Id = displayPattern.Id,
+                    Text = displayPattern.DisplayPattern,
+                    Group = displayPattern.Systemtype.ToString()
+                });
+            }
+
+            // get list of all display pattern
+            return Json(list, JsonRequestBehavior.AllowGet);
+        }
+
+        [JsonNetFilter]
         public JsonResult GetUnits()
         {
             using (var unitManager = new UnitManager())
@@ -402,12 +475,12 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 {
                     foreach (var unit in units)
                     {
-                        list.Add(new ListItem(unit.Id, unit.Name, "other"));
+                        list.Add(new ListItem(unit.Id, unit.Abbreviation, "other"));
                     }
                 }
 
                 // get default missing values
-                return Json(list, JsonRequestBehavior.AllowGet);
+                return Json(list.OrderBy(i=>i.Group), JsonRequestBehavior.AllowGet);
             }
         }
 
@@ -513,9 +586,9 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         private Dictionary<int,Type> suggestSystemTypes(string file, TextSeperator delimeter, DecimalCharacter decimalCharacter, List<string> missingValues,int datastart)
         {
             var settings = ModuleManager.GetModuleSettings("Dcm");
-            int min = Convert.ToInt32(settings.GetValueByKey("minToAnalyse"));
-            int max = Convert.ToInt32(settings.GetValueByKey("maxToAnalyse"));
-            int percentage = Convert.ToInt32(settings.GetValueByKey("precentageToAnalyse"));
+            int min = Convert.ToInt32(settings.GetEntryValue("minToAnalyse"));
+            int max = Convert.ToInt32(settings.GetEntryValue("maxToAnalyse"));
+            int percentage = Convert.ToInt32(settings.GetEntryValue("precentageToAnalyse"));
 
             StructureAnalyser structureAnalyser = new StructureAnalyser();
 
@@ -523,7 +596,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             long skipped = AsciiReader.Skipped(file);
 
             // rows only with data
-            var dataTotal = total - skipped - datastart;
+            var dataTotal = total - skipped - (datastart-1);
 
             long selection = structureAnalyser.GetNumberOfRowsToAnalyse(min, max, percentage, dataTotal);
 
@@ -549,16 +622,23 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             var list = new List<MissingValueModel>();
             // get default missing values
             var settings = ModuleManager.GetModuleSettings("rpm");
-            //var mv_list = settings.GetList("missingvalues");
+            var mv_list = settings.GetList("missingvalues");
 
-            //foreach (var mv in mv_list)
-            //{
-            //    list.Add(new MissingValueModel()
-            //    {
-            //        DisplayName = mv.GetAttribute("placeholder")?.Value.ToString(),
-            //        Description = mv.GetAttribute("description")?.Value.ToString()
-            //    });
-            //}
+            if (mv_list != null)
+            {
+                foreach (var mv in mv_list)
+                {
+                    list.Add(new MissingValueModel()
+                    {
+                        DisplayName = mv.GetAttribute("placeholder")?.Value.ToString(),
+                        Description = mv.GetAttribute("description")?.Value.ToString()
+                    });
+                }
+            }
+            else // create a empty list entry
+            {
+                list.Add(new MissingValueModel());
+            }
 
             return list;
         }

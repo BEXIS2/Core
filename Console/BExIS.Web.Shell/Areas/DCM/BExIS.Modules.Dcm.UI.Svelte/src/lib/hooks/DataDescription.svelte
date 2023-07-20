@@ -2,27 +2,26 @@
 
  import {getHookStart}  from '../../services/HookCaller'
  import { latestFileUploadDate, latestDataDescriptionDate } from '../../routes/edit/stores';
-
- import { onMount }from 'svelte'
+import {onMount} from 'svelte'
 
 import TimeDuration from '../../lib/components/utils/TimeDuration.svelte'
 import Generate from '../../lib/components/datadescription/Generate.svelte'
 import Show from '../../lib/components/datadescription/Show.svelte'
-import {Spinner} from '@bexis2/bexis2-core-ui'
+import {Spinner, ErrorMessage} from '@bexis2/bexis2-core-ui'
 
-import type {DataDescriptionModel} from '../../models/DataDescription'
+import type {DataDescriptionModel} from '$models/DataDescription'
 
 
- 
+
 export let id=0;
 export let version=1;
 export let hook;
  
-let m:DataDescriptionModel;
-$:model = m;
+let model:DataDescriptionModel;
+$:model;
 $:loading = false;
 
-$:$latestFileUploadDate, reload()
+$:$latestFileUploadDate, reloadByFileUpdate()
 $:$latestDataDescriptionDate, reload()
  
 onMount(async () => {
@@ -31,25 +30,37 @@ onMount(async () => {
 
 async function load()
 {
-  //console.log("datadscription",hook);
+  
   model = await getHookStart(hook.start,id,version);
+  console.log("load datadescription", model);
 }
 
 async function reload()
 {
-  //console.log("reload datadscription");
   load();
 } 
- 
- 
- </script>
- 
- {#if model}
-  {#if model.allFilesReadable==true}
 
-    {#if model.lastModification}
+async function reloadByFileUpdate()
+{
+  // only when strutcure is not set update model
+  if(model && model.structureId==0)
+  {
+    load();
+  }
+}
+
+ 
+</script>
+ 
+ {#await getHookStart(hook.start,id,version)}
+  <div class="w-full h-full text-surface-600">
+    <Spinner label="loading data description" />
+  </div>
+ {:then a}
+
+    {#if model && model.lastModification}
     
-    <TimeDuration milliseconds={new Date(model.lastModification)}/>
+    <TimeDuration milliseconds={Number(new Date(model.lastModification))}/>
     
     {/if}
 
@@ -58,14 +69,21 @@ async function reload()
       <!--show-->
       <Show {...model}></Show>
     {:else}
-      <!--generate-->
-      <Generate bind:files={model.readableFiles} {...model}></Generate>
+
+      {#if model && model.allFilesReadable==true}
+
+            <!--generate-->
+            <!-- <Generate bind:files={model.readableFiles} {...model} on:selected={()=> latestDataDescriptionDate.set(Date.now())} isRestricted={model.isRestricted}></Generate> -->
+            <Generate {id} {version} {model} {hook} on:selected={()=> latestDataDescriptionDate.set(Date.now())}></Generate>
+            
+        {:else}
+        <span>not available</span>
+      {/if}
+
     {/if}
 
-    {#if loading}
-      <Spinner/>
-    {/if}
-  {:else}
-    <span>not available</span>
-  {/if}
- {/if}
+  {:catch error}
+   
+  <ErrorMessage {error}/>
+
+{/await}

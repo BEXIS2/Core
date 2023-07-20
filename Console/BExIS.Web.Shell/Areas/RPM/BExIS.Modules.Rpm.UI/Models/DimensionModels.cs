@@ -26,12 +26,15 @@ namespace BExIS.Modules.Rpm.UI.Models.Dimensions
         /// </summary>
         public string Specification { get; set; }
 
+        public bool InUse { get; set; }
+
         public DimensionListItem()
         {
             Id = 0;
             Name = string.Empty;
             Description = string.Empty;
             Specification = string.Empty;
+            InUse = false;
         }
     }
 }

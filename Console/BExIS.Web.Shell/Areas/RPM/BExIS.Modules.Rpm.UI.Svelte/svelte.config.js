@@ -12,15 +12,16 @@ const config = {
 
 	kit: {
 		adapter: adapter({
-			pages:'../BExIS.Modules.Rpm.UI/Scripts/svelte',
-			assets:'../BExIS.Modules.Rpm.UI/Scripts/svelte',
-			fallback:null,
-			precompress:true,
-			preprocess:true,
-			strict:false
+			pages: '../BExIS.Modules.Rpm.UI/Scripts/svelte',
+			assets: '../BExIS.Modules.Rpm.UI/Scripts/svelte',
+			fallback: null,
+			precompress: true,
+			preprocess: true,
+			strict: false
 		}),
-		paths:{
-			base: process.env.NODE_ENV ==='production' ? '/rpm':'' // add module id here e.g. /dcm
+		paths: {
+			relative: true,
+			base: process.env.NODE_ENV === 'production' ? '/rpm' : '' // add module id here e.g. /dcm
 		}
 	}
 };
