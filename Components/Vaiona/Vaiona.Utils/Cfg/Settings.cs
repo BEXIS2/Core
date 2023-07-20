@@ -1,5 +1,7 @@
 ﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Vaiona.Utils.IO;
@@ -98,33 +100,46 @@ namespace Vaiona.Utils.Cfg
             }
         }
 
-        public object GetEntryValue(string entryKey)
+        public object GetValueByKey(string entryKey)
         {
-            Entry entry = jsonSettings.Entry.Where(p => p.Key.Equals(entryKey, StringComparison.InvariantCultureIgnoreCase)).FirstOrDefault();
+            Entry entry = jsonSettings.Entries.Where(p => p.Key.Equals(entryKey, StringComparison.InvariantCultureIgnoreCase)).FirstOrDefault();
             if (entry == null)
                 return null;
-            string value = entry.Value.ToString();
-            string type = entry.Type;
+            
+            EntryType type = entry.Type;
+            
 
-            // in the settings there are type that are not system types, like selection and list
-            if (type.Equals("selection")) return value;
+            switch (type)
+            {
+                case(EntryType.EntryList):
+                    var value = entry.Value as JArray;
+                    var list = new List<Entry>();
 
-            // try to convert value to type
-            var typedValue = Convert.ChangeType(value, (TypeCode)Enum.Parse(typeof(TypeCode), type));
-            return typedValue;
+                    foreach (var item in value)
+                    {
+                        list.Add(JsonConvert.DeserializeObject<Entry>(item.ToString()));
+                    }
+                    return list;
+
+                case (EntryType.JSON):
+                    return JsonConvert.DeserializeObject<Entry>(entry.Value.ToString());
+
+                default:
+                    return Convert.ChangeType(entry.Value.ToString(), (TypeCode)Enum.Parse(typeof(TypeCode), type.ToString()));
+            }
         }
 
-        public Item[] GetList(string entryKey)
-        {
-            Entry entry = jsonSettings.Entry.Where(p => 
-                p.Key.Equals("name", StringComparison.InvariantCultureIgnoreCase) && 
-                p.Value.ToString().Equals(entryKey, StringComparison.InvariantCultureIgnoreCase) &&
-                p.Type=="list").FirstOrDefault();
-            if (entry == null)
-                return null;
+        //public Item[] GetList(string entryKey)
+        //{
+        //    Entry entry = jsonSettings.Entry.Where(p => 
+        //        p.Key.Equals("name", StringComparison.InvariantCultureIgnoreCase) && 
+        //        p.Value.ToString().Equals(entryKey, StringComparison.InvariantCultureIgnoreCase) &&
+        //        p.Type=="list").FirstOrDefault();
+        //    if (entry == null)
+        //        return null;
 
-            return entry.Item;
-        }
+        //    return entry.Item;
+        //}
 
         private void onCatalogChanged(object source, FileSystemEventArgs e)
         {
