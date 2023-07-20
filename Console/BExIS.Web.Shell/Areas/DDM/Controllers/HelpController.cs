@@ -23,7 +23,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
         public ActionResult Index()
         {
 
-            string helpurl = ModuleManager.GetModuleSettings("DDM").GetEntryValue("help").ToString();
+            string helpurl = ModuleManager.GetModuleSettings("DDM").GetValueByKey("help").ToString();
 
             //add default link if not set
             if (String.IsNullOrEmpty(helpurl))
