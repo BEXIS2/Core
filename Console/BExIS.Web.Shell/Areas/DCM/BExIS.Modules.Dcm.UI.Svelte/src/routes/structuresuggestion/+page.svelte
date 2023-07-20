@@ -82,6 +82,25 @@
 	  selectionIsActive = true;
 			init = false;
 	}
+
+
+	// preview data consit also aboutd varaibles, unit, description
+	// get only data from preview data, for suggestion and varaible creation 
+	function getDataArea()
+	{
+			let dataOnly:string[][]=[];
+			
+			if(model && model.markers){
+				const dataMarker = model.markers.find(m=>m.type == 'data');
+				if(dataMarker){
+					for (let index = dataMarker.row; index < model.preview.length; index++) {
+						const row = model.preview[index];
+						dataOnly.push(row.split(String.fromCharCode(model.delimeter)))
+					}
+				}
+		}
+			return dataOnly;
+	}
 </script>
 
 <Page title="Structure Suggestion" note="generate a structure from a file." contentLayoutType={pageContentLayoutType.full} >
@@ -89,7 +108,7 @@
 		<Spinner label="the file {file} is currently being analyzed"/>
 	{:else if selectionIsActive}
 		<div transition:fade>
-			<Selection {model} on:saved={update} {init}/>
+			<Selection bind:model = {model} on:saved={update} {init}/>
 		</div>
 	{:else if model.variables.length > 0}
 		<div transition:fade>
@@ -106,7 +125,12 @@
 			</div>
 
 			<StructureAttributes {model} bind:valid={areAttributesValid} />
-			<Suggestion variables={model.variables} bind:valid={areVariablesValid} />
+			<Suggestion 
+					bind:variables={model.variables} 
+					bind:valid={areVariablesValid} 
+					bind:missingValues={model.missingValues} 
+					data={getDataArea()}
+					/>
 		</div>
 	{/if}
 </Page>

@@ -1,10 +1,10 @@
 <script lang="ts">
-	import { onMount, createEventDispatcher } from 'svelte';
+	import { onMount, afterUpdate, createEventDispatcher } from 'svelte';
 	import { TextInput, TextArea, MultiSelect } from '@bexis2/bexis2-core-ui';
 
 	//types
-	import type { ListItemType, listItemType } from '@bexis2/bexis2-core-ui';
-	import type { VariableModel } from '../types.ts';
+	import type { listItemType } from '@bexis2/bexis2-core-ui';
+	import type { VariableModel, missingValueType } from "$models/StructureSuggestion";
 
 	//stores
 	import { get } from 'svelte/store';
@@ -16,13 +16,15 @@
 	import Footer from './Footer.svelte';
 
 	import suite from './variable';
-
-
+	
 	export let variable: VariableModel;
+	$:variable;
+	export let data:string[];
 	export let index: number;
 
-	export let datatypes: ListItemType[];
-	export let units: ListItemType[];
+	export let datatypes: listItemType[];
+	export let units: listItemType[];
+	export let missingValues:missingValueType[];
 
 	export let isValid: boolean = false;
  $:isValid;
@@ -32,7 +34,7 @@
 	let loaded = false;
 
 	//displaypattern
-	let displayPattern: ListItemType[];
+	let displayPattern: listItemType[];
 	$: displayPattern;
 
 	function updateDisplayPattern(type) {
@@ -82,7 +84,6 @@
 	const dispatch = createEventDispatcher();
 
 	onMount(() => {
-		console.log('generate var -----------------');
 
 		datatypes = [...datatypes.filter((d) => d.id != variable.dataType.id)];
 		datatypes = [variable.dataType, ...datatypes];
@@ -91,22 +92,23 @@
 		units = [...variable.possibleUnits, ...units];
 
 		loaded = true;
-
 		// reset & reload validation
 		suite.reset();
 
 		setTimeout(async () => {
-
-			updateDisplayPattern(variable.dataType);
-
-			res = suite(variable);
-
-			setValidationState(res);
-
+						updateDisplayPattern(variable.dataType);
+						res = suite(variable);
+						setValidationState(res);
+					}, 10);
 			
+			});
 
-		}, 10);
-	});
+	afterUpdate(()=>{
+		res = suite(variable);
+		setValidationState(res);
+		console.log("u");
+	})
+
 
 	//change event: if input change check also validation only on the field
 	// e.target.id is the id of the input component
@@ -123,8 +125,6 @@
 	// *** is the id of the input component
 	function onSelectHandler(e, id) {
 
-		console.log(e,id);
-		console.log("variable.displayPattern",variable.displayPattern);
 		res = suite(variable, id);
 
 
@@ -141,12 +141,23 @@
 		// dispatch this event to the parent to check the save button
 		dispatch('var-change');
 	}
+
+	function next()
+	{
+		 dispatch('copy-next',index);
+	}
+
+	function all()
+	{
+		 dispatch('copy-all',index);
+	}
+
 </script>
 
-{#if loaded}
+
+{#if loaded && variable}
 	<div class="card">
 		<header class="card-header">
-			{isValid}
 			<Header
 				bind:isKey={variable.isKey}
 				bind:isOptional={variable.isOptional}
@@ -167,6 +178,12 @@
 						invalid={res.hasErrors('description')}
 						feedback={res.getErrors('description')}
 					/>
+
+				</div>
+				<div slot="description">
+					{#if data}
+						<b>Data preview: </b> {data.join(', ')}
+					{/if}
 				</div>
 			</Container>
 
@@ -216,7 +233,7 @@
 				</div>
 				<div slot="description">
 					{#if variable.dataType}
-					<DataTypeDescription type={variable.dataType.text} />
+						<DataTypeDescription type={variable.dataType.text} missingValues={missingValues} />
 					{/if}
 				</div>
 			</Container>
@@ -256,7 +273,15 @@
 			</Container>
 		</section>
 		<footer class="card-footer">
-			<Footer {...variable} />
+			<div class="flex">
+				<div class="grow"></div>
+				<div class=" flex-none text-right">
+					
+						<button type="button" class="chip variant-filled-surface" on:click={next}>copy to next</button>
+						<button type="button" class="chip variant-filled-surface" on:click={all}>copy to all</button>
+
+				</div>
+			</div>
 		</footer>
 	</div>
 {/if}

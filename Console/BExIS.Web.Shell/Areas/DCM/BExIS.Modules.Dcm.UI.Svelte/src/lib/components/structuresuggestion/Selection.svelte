@@ -15,6 +15,7 @@ import { faSave, faTrash } from '@fortawesome/free-solid-svg-icons/index'
 
 	//types
 	import type { StructureSuggestionModel, Marker } from '$models/StructureSuggestion';
+
 	import { positionType } from "@bexis2/bexis2-core-ui";
 
  export let model: StructureSuggestionModel;
@@ -37,17 +38,18 @@ import { faSave, faTrash } from '@fortawesome/free-solid-svg-icons/index'
 	$:errors;
 	
 
+const MARKER_TYPE = {
+    VARIABLE: 'variable',
+    DESCRIPTION: 'description',
+    UNIT: 'unit',
+    MISSING_VALUES: 'missing-values',
+    DATA: 'data'
+};
+
 	// currently only one requirement exit
 	// variable need to be selected
 	let isValid: boolean = false;
 
-	const MARKER_TYPE = {
-		VARIABLE: 'variable',
-		DESCRIPTION: 'description',
-		UNIT: 'unit',
-		MISSING_VALUES: 'missing-values',
-		DATA: 'data'
-	};
 
 	const dispatch = createEventDispatcher();
 
@@ -501,7 +503,8 @@ import { faSave, faTrash } from '@fortawesome/free-solid-svg-icons/index'
 
 				<table class="table table-compact"
 				 on:contextmenu={(e)=> e.preventDefault()} >
-					<tbody> 
+
+					<tbody>
 						{#each model.preview as row, r}
 							<tr>
 								{#each row.split(String.fromCharCode(model.delimeter)) as cell, c}
