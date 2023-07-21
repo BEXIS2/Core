@@ -1,6 +1,8 @@
 <script lang="ts">
 	import { onMount, afterUpdate, createEventDispatcher } from 'svelte';
+	// UI Components
 	import { TextInput, TextArea, MultiSelect } from '@bexis2/bexis2-core-ui';
+
 
 	//types
 	import type { listItemType } from '@bexis2/bexis2-core-ui';
@@ -27,6 +29,8 @@
 	export let missingValues:missingValueType[];
 
 	export let isValid: boolean = false;
+	export let last:boolean = false;
+
  $:isValid;
 	// validation
 	let res = suite.get();
@@ -37,7 +41,7 @@
 	let displayPattern: listItemType[];
 	$: displayPattern;
 
-	function updateDisplayPattern(type) {
+	function updateDisplayPattern(type, reset=true) {
 		// currently only date, date tim e and time is use with display pattern.
 		// however the serve only now datetime so we need to preselect the possible display pattern to date, time and datetime
 		let allDisplayPattern = get(displayPatternStore);
@@ -72,15 +76,17 @@
 	{
 		displayPattern = []
 	}
+// when type has change, reset value, but after copy do not reset
+// thats why reset need to set
+	if(reset)variable.displayPattern = undefined; 
 
-
-	variable.displayPattern = undefined;
 	if(displayPattern.length>0)
 	{
 		res = suite(variable, "displayPattern");
 	}
 
 }
+
 	const dispatch = createEventDispatcher();
 
 	onMount(() => {
@@ -103,11 +109,12 @@
 			
 			});
 
-	afterUpdate(()=>{
-		res = suite(variable);
-		setValidationState(res);
-		console.log("u");
-	})
+		afterUpdate(()=>{
+			updateDisplayPattern(variable.dataType, false);
+			res = suite(variable);
+			setValidationState(res);
+			console.log("u");
+		})
 
 
 	//change event: if input change check also validation only on the field
@@ -142,15 +149,6 @@
 		dispatch('var-change');
 	}
 
-	function next()
-	{
-		 dispatch('copy-next',index);
-	}
-
-	function all()
-	{
-		 dispatch('copy-all',index);
-	}
 
 </script>
 
@@ -275,12 +273,10 @@
 		<footer class="card-footer">
 			<div class="flex">
 				<div class="grow"></div>
-				<div class=" flex-none text-right">
-					
-						<button type="button" class="chip variant-filled-surface" on:click={next}>copy to next</button>
-						<button type="button" class="chip variant-filled-surface" on:click={all}>copy to all</button>
-
-				</div>
+				<div class=" flex-none text-right">	
+					<slot name="options"></slot>
+			
+						</div>
 			</div>
 		</footer>
 	</div>
