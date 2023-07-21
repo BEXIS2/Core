@@ -10,7 +10,7 @@
 	import { store, load } from '$services/StructureSuggestionCaller';
 
 import Fa from 'svelte-fa'
-import { faSave, faTrash } from '@fortawesome/free-solid-svg-icons/index'
+import { faSave, faXmark } from '@fortawesome/free-solid-svg-icons'
 
 
 	//types
@@ -431,8 +431,8 @@ const MARKER_TYPE = {
 					<div class="my-1 float-right">
 
 		
-						<button class="variant-ghost-warning btn text-3xl" type="button" on:click={resetSelection}><Fa icon={faTrash}/></button>
-						<button class="btn variant-ghost-surface text-3xl" disabled={!isValid}>
+						<button class="btn variant-filled-warning text-2xl" type="button" on:click={resetSelection}><Fa icon={faXmark}/></button>
+						<button class="btn variant-filled-primary text-2xl" disabled={!isValid}>
 							<Fa icon={faSave}/> </button>
 					</div>
 

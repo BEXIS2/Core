@@ -26,7 +26,7 @@ import { fade } from 'svelte/transition';
  // types
  import type { EntityTemplateModel } from '../../models/EntityTemplate'
  import type { listItemType } from '@bexis2/bexis2-core-ui'
- import type { ModalSettings,PopupSettings } from '@skeletonlabs/skeleton';
+ import type { ModalSettings } from '@skeletonlabs/skeleton';
  
 
  // help

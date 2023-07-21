@@ -4,8 +4,7 @@
 	import StructureAttributes from './StructureAttributes.svelte';
 
 	import Fa from 'svelte-fa';
-	import { faSave } from '@fortawesome/free-regular-svg-icons';
-	import { faArrowLeft } from '@fortawesome/free-solid-svg-icons';
+	import { faArrowLeft, faSave } from '@fortawesome/free-solid-svg-icons';
 
 	import { onMount } from 'svelte';
 	import { fade } from 'svelte/transition';
@@ -112,12 +111,14 @@
 		</div>
 	{:else if model.variables.length > 0}
 		<div transition:fade>
-			<div>
-				<button on:click={()=>back()}><Fa icon={faArrowLeft} /></button>
-
-				<div class="text-end">
-					<button
-						color="primary"
+			<div class="flex">
+				<div class="grow">
+					<button title="back" class="btn variant-filled-warning" on:click={()=>back()}><Fa icon={faArrowLeft} /></button>
+				</div>
+				<div class="flex-none text-end">
+					<button 
+					 title="save"
+						class="btn variant-filled-primary text-xl"
 						on:click={onSaveHandler}
 						disabled={!areVariablesValid || !areAttributesValid}><Fa icon={faSave} /></button
 					>
