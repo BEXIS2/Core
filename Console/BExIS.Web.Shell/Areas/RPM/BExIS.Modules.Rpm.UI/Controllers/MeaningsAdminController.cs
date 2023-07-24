@@ -1,7 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Net;
 using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Web;
 using System.Web.Http;
 using BExIS.App.Bootstrap.Attributes;
@@ -32,7 +35,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
         [HttpPost,HttpGet]
         [PostRoute("api/MeaningsAdmin/Create")]
         [GetRoute("api/MeaningsAdmin/Create")]
-        public JObject Create(HttpRequestMessage request)
+        public HttpResponseMessage Create(HttpRequestMessage request)
         {
             try
             {
@@ -52,11 +55,11 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                 List<string> variable = HttpContext.Current.Request.Form["Variable"] != null ? Convert.ToString(HttpContext.Current.Request.Form["Variable"]).Split(',').ToList<string>() : new List<string>();
 
                 JObject res = _meaningManager.addMeaning(Name, ShortName, Description, selectable, approved, variable, externalLink, related_meaning);
-                return res;
+                return (cretae_response(res));
             }
             catch
             {
-                return null;
+                return (cretae_response(null));
             }
         }
 
@@ -65,7 +68,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
         [HttpPost, HttpGet]
         [PostRoute("api/MeaningsAdmin/EditMeaning")]
         [GetRoute("api/MeaningsAdmin/EditMeaning")]
-        public JObject EditMeaning(HttpRequestMessage request)
+        public HttpResponseMessage EditMeaning(HttpRequestMessage request)
         {
             Meaning m = null;
             try
@@ -89,14 +92,14 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                 //if (related_meaning.Count== 0 )
                 //    related_meaning = _meaningManager.getMeaning(long.Parse(id)).ToObject<Meaning>();
                 JObject res = _meaningManager.editMeaning(id, Name, ShortName, Description, selectable, approved, variable, externalLink, related_meaning);
-                return res;
+                return (cretae_response(res));
 
                 JObject obj = _meaningManager.getMeaning(Int64.Parse(id));
                 m = JsonConvert.DeserializeObject<Meaning>(obj["Value"].ToString());
             }
             catch
             {
-                return null;
+                return (cretae_response(null));
             }
         }
 
@@ -104,16 +107,16 @@ namespace BExIS.Modules.Rpm.UI.Controllers
         [HttpPost,HttpGet]
         [PostRoute("api/MeaningsAdmin/Delete")]
         [GetRoute("api/MeaningsAdmin/Delete")]
-        public JObject Delete(HttpRequestMessage request)
+        public HttpResponseMessage Delete(HttpRequestMessage request)
         {
             try
             {
                 string id = this.Request.Content.ReadAsStringAsync().Result.ToString();
-                return _meaningManager.deleteMeaning(Int64.Parse(id));
+                return (cretae_response(_meaningManager.deleteMeaning(Int64.Parse(id)))); 
             }
             catch
             {
-                return null;
+                return cretae_response(null);
             }
         }
 
@@ -121,14 +124,14 @@ namespace BExIS.Modules.Rpm.UI.Controllers
         [HttpPost, HttpGet]
         [PostRoute("api/MeaningsAdmin/getVariables")]
         [GetRoute("api/MeaningsAdmin/getVariables")]
-        public JObject getVariables()
+        public HttpResponseMessage getVariables()
         {
             using (DataStructureManager dsm = new DataStructureManager())
             {
                 List<Variable> variables = (List<Variable>)dsm.VariableRepo.Get();
                 Dictionary<long, string> fooDict = variables.ToDictionary(f => f.Id, f => f.Label);
                 string json_string = JsonConvert.SerializeObject(fooDict);
-                return JObject.Parse(json_string);
+                return (cretae_response(JObject.Parse(json_string)));
             }
         }
 
@@ -136,13 +139,13 @@ namespace BExIS.Modules.Rpm.UI.Controllers
         [HttpPost, HttpGet]
         [PostRoute("api/MeaningsAdmin/updateRelatedManings")]
         [GetRoute("api/MeaningsAdmin/updateRelatedManings")]
-        public JObject updateRelatedManings (HttpRequestMessage request)
+        public HttpResponseMessage updateRelatedManings (HttpRequestMessage request)
         {
             try
             {
                 String parentID = Convert.ToString(HttpContext.Current.Request.Form["parentID"]);
                 String childID = Convert.ToString(HttpContext.Current.Request.Form["childID"]);
-                return _meaningManager.updateRelatedManings(parentID, childID);
+                return cretae_response(_meaningManager.updateRelatedManings(parentID, childID)); 
             }
             catch(Exception exc)
             {
@@ -157,7 +160,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
         [HttpPost, HttpGet]
         [PostRoute("api/MeaningsAdmin/createExternalLink")]
         [GetRoute("api/MeaningsAdmin/createExternalLink")]
-        public JObject createExternalLink(HttpRequestMessage request)
+        public HttpResponseMessage createExternalLink(HttpRequestMessage request)
         {
             try
             {
@@ -168,11 +171,11 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                 String type = Convert.ToString(HttpContext.Current.Request.Form["type"]);
 
                 JObject res = _meaningManager.addExternalLink(uri, name, type);
-                return res;
+                return (cretae_response(res));
             }
             catch
             {
-                return null;
+                return (cretae_response(null));
             }
         }
 
@@ -180,7 +183,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
         [HttpPost, HttpGet]
         [PostRoute("api/MeaningsAdmin/editExternalLinks")]
         [GetRoute("api/MeaningsAdmin/editExternalLinks")]
-        public JObject editExternalLinks(HttpRequestMessage request)
+        public HttpResponseMessage editExternalLinks(HttpRequestMessage request)
         {
             ExternalLink m = null;
             try
@@ -193,14 +196,14 @@ namespace BExIS.Modules.Rpm.UI.Controllers
 
                 string id = Convert.ToString(HttpContext.Current.Request.Form["id"]);
                 JObject res = _meaningManager.editExternalLink(id, URI, Name, Type);
-                return res;
+                return (cretae_response(res));
 
                 JObject obj = _meaningManager.getExternalLink(Int64.Parse(id));
                 m = JsonConvert.DeserializeObject<ExternalLink>(obj["Value"].ToString());
             }
             catch
             {
-                return null;
+                return (cretae_response(null));
             }
         }
 
@@ -208,18 +211,35 @@ namespace BExIS.Modules.Rpm.UI.Controllers
         [HttpPost, HttpGet]
         [PostRoute("api/MeaningsAdmin/deleteExternalLinks")]
         [GetRoute("api/MeaningsAdmin/deleteExternalLinks")]
-        public JObject deleteExternalLinks(HttpRequestMessage request)
+        public HttpResponseMessage deleteExternalLinks(HttpRequestMessage request)
         {
             try
             {
                 string id = this.Request.Content.ReadAsStringAsync().Result.ToString();
-                return _meaningManager.deleteExternalLink(Int64.Parse(id));
+                return cretae_response(_meaningManager.deleteExternalLink(Int64.Parse(id))); 
             }
             catch
             {
-                return null;
+                return (cretae_response(null));
             }
         }
 
+
+
+
+
+        private HttpResponseMessage cretae_response(JObject return_object)
+        {
+            if (return_object == null)
+                return Request.CreateErrorResponse(HttpStatusCode.BadRequest, "bad request / problem occured");
+            var response = Request.CreateResponse(HttpStatusCode.OK);
+            string resp = JsonConvert.SerializeObject(return_object);
+
+            response.Content = new StringContent(resp, System.Text.Encoding.UTF8, "application/json");
+            response.Content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
+
+            //set headers on the "response"
+            return response;
+        }
     }
 }

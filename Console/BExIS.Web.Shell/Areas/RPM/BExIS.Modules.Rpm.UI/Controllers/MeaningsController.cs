@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Web;
 using System.Web.Http;
 using BExIS.App.Bootstrap.Attributes;
@@ -33,38 +35,52 @@ namespace BExIS.Modules.Rpm.UI.Controllers
         [HttpPost,HttpGet]
         [PostRoute("api/Meanings/Index")]
         [GetRoute("api/Meanings/Index")]
-        public JObject Index()
+        public HttpResponseMessage Index()
         {
-            return _meaningManager.getMeanings();
+            return cretae_response( _meaningManager.getMeanings());
         }
 
         [BExISApiAuthorize]
         [HttpPost,HttpGet]
         [PostRoute("api/Meanings/Details")]
         [GetRoute("api/Meanings/Details")]
-        public JObject Details()
+        public HttpResponseMessage Details()
         {
             string id = this.Request.Content.ReadAsStringAsync().Result.ToString();
             Dictionary<string, string> dict = JsonConvert.DeserializeObject<Dictionary<string, string>>(id);
 
-            return  _meaningManager.getMeaning(long.Parse(dict["id"]));
+            return cretae_response(_meaningManager.getMeaning(long.Parse(dict["id"])));
         }
 
-        public JObject getExternalLinks()
+        public HttpResponseMessage getExternalLinks()
         {
-            return _meaningManager.getExternalLinks();
+            return cretae_response(_meaningManager.getExternalLinks());
         }
 
         [BExISApiAuthorize]
         [HttpPost, HttpGet]
         [PostRoute("api/Meanings/DetailExternalLinks")]
         [GetRoute("api/Meanings/DetailExternalLinks")]
-        public JObject DetailExternalLinks()
+        public HttpResponseMessage DetailExternalLinks()
         {
             string id = this.Request.Content.ReadAsStringAsync().Result.ToString();
             Dictionary<string, string> dict = JsonConvert.DeserializeObject<Dictionary<string, string>>(id);
 
-            return _meaningManager.getExternalLink(long.Parse(dict["id"]));
+            return cretae_response(_meaningManager.getExternalLink(long.Parse(dict["id"])));
+        }
+
+        private HttpResponseMessage cretae_response(JObject return_object)
+        {
+            if (return_object == null)
+                return Request.CreateErrorResponse(HttpStatusCode.BadRequest, "bad request / problem occured");
+            var response = Request.CreateResponse(HttpStatusCode.OK);
+            string resp = JsonConvert.SerializeObject(return_object);
+
+            response.Content = new StringContent(resp, System.Text.Encoding.UTF8, "application/json");
+            response.Content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
+
+            //set headers on the "response"
+            return response;
         }
     }
 }
