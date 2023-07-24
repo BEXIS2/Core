@@ -10,13 +10,14 @@
 	import { store, load } from '$services/StructureSuggestionCaller';
 
 import Fa from 'svelte-fa'
-import { faSave, faXmark } from '@fortawesome/free-solid-svg-icons'
+import { faSave, faXmark, faChevronRight } from '@fortawesome/free-solid-svg-icons'
 
 
 	//types
 	import type { StructureSuggestionModel, Marker } from '$models/StructureSuggestion';
 
 	import { positionType } from "@bexis2/bexis2-core-ui";
+	import Controls from './Controls.svelte';
 
  export let model: StructureSuggestionModel;
 	$: model;
@@ -238,7 +239,7 @@ const MARKER_TYPE = {
 		// get selected cells
 		let selectedCells = state[selectedRowIndex];
 
-		// if selectionsupport is true and one entry exist, means that the cells selection is the same
+		// if selections upport is true and one entry exist, means that the cells selection is the same
 		// like the stored one
 		if (selectionsupport && selection.length > 0) {
 			selectedCells = selection[0].cells;
@@ -347,10 +348,32 @@ const MARKER_TYPE = {
 		}
 	}
 
+	// if you change the delimeter you need to change/update also the table informations
  function changeDelimeter()
 	{
 			setTableInfos(model.preview, String.fromCharCode(model.delimeter));
 	}
+
+	// ROW Selection
+	const rowSelectionHandler = (r) => (e) => 
+	{
+		console.log(r, e.which, e.button)
+			//left mouse click
+			if (e.which === 1 || e.button === 0) {
+					clean();
+					console.log(r)
+					selectRow(r);
+					selectedRowIndex = r;
+			}
+
+
+			// right mouse click
+			if (e.which === 3 || e.button === 2) {
+				 clean();
+					
+			}
+	}
+
 
 </script>
 
@@ -461,42 +484,7 @@ const MARKER_TYPE = {
 			</div>
 
 			<!-- controls-->
-			<div class="col-span-1 card p-5 w-auto">
-				<h4 class="h4">Controls</h4>
-				<hr class="divide-x-8" />
-				<dl class="list-dl gap-0">
-					<div>
-						<span class="badge bg-primary-500" />
-						<span class="flex-auto">
-							<dt class="font-bold">Selection</dt>
-							<dd>left mouse button</dd>
-						</span>
-					</div>
-					<div>
-						<span class="badge bg-primary-500" />
-						<span class="flex-auto">
-							<dt class="font-bold">Drag</dt>
-							<dd>left mouse button down and drag</dd>
-						</span>
-					</div>
-
-					<div>
-						<span class="badge bg-primary-500" />
-						<span class="flex-auto">
-							<dt class="font-bold">Select Row</dt>
-							<dd>double click left mouse button</dd>
-						</span>
-					</div>
-					<div>
-						<span class="badge bg-primary-500" />
-						<span class="flex-auto">
-							<dt class="font-bold">Deselect</dt>
-							<dd>right mouse button click</dd>
-						</span>
-					</div>
-					<!-- ... -->
-				</dl>
-			</div>
+			<Controls/>
 
 			<div class="col-span-3" />
 			<div>
@@ -507,9 +495,16 @@ const MARKER_TYPE = {
 					<tbody>
 						{#each model.preview as row, r}
 							<tr>
+								<td class="p-100 hover:cursor-pointer select-none text-sm hover:border-surface-400 hover:border-solid hover:border-b-2 "
+								on:mousedown={rowSelectionHandler(r)}>
+								<div class="pt-1">
+									<Fa icon={faChevronRight} size="sm"></Fa>
+								</div>	
+							</td>
+
 								{#each row.split(String.fromCharCode(model.delimeter)) as cell, c}
 									<td 
-										class="hover:cursor-pointer select-none"
+										class="hover:cursor-pointer select-none hover:border-surface-400 hover:border-solid hover:border-b-2"
 
 										on:dblclick={dbclickHandler(r)}
 										on:mousedown={mouseDownHandler(r, c)}
