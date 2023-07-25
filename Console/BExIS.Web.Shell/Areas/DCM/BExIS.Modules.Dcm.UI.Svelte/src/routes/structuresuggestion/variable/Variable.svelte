@@ -18,6 +18,7 @@
 	import Footer from './Footer.svelte';
 
 	import suite from './variable';
+	import Message from '$lib/components/validation/Message.svelte';
 	
 	export let variable: VariableModel;
 	$:variable;
@@ -82,7 +83,7 @@
 
 	if(displayPattern.length>0)
 	{
-		res = suite(variable, "displayPattern");
+			res = suite(variable, "displayPattern");
 	}
 
 }
@@ -113,7 +114,8 @@
 			updateDisplayPattern(variable.dataType, false);
 			res = suite(variable);
 			setValidationState(res);
-			console.log("u");
+			// console.log("u",variable.name);
+			// console.log("--------------------");
 		})
 
 
@@ -125,6 +127,10 @@
 		setTimeout(async () => {
 			res = suite(variable, e.target.id);
 			setValidationState(res);
+
+			console.log(res);
+			console.log(res.isValid());
+
 		}, 100);
 	}
 
@@ -132,15 +138,18 @@
 	// *** is the id of the input component
 	function onSelectHandler(e, id) {
 
-		res = suite(variable, id);
+		setTimeout(async () => {
+			res = suite(variable, id);
+			
+			console.log(res);
+			console.log(res.isValid());
+			// update display patter and reset it if it changed
+			if (id == 'dataType') {
+				updateDisplayPattern(variable.dataType);
+			}
 
-
-		// update display patter and reset it if it changed
-		if (id == 'dataType') {
-			updateDisplayPattern(variable.dataType);
-		}
-
-		setValidationState(res);
+			setValidationState(res);
+		}, 100);
 	}
 
 	function setValidationState(res) {
@@ -154,14 +163,16 @@
 
 
 {#if loaded && variable}
-	<div class="card">
+	<div  class="card">
 		<header class="card-header">
 			<Header
 				bind:isKey={variable.isKey}
 				bind:isOptional={variable.isOptional}
 				name={variable.name}
 				{index}
+				bind:isValid={isValid}
 			/>
+
 		</header>
 		<section class="p-4">
 			<!--Description-->

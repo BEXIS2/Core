@@ -211,17 +211,18 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                                 {
 
                                     if (fileErrors.Any()) file.Errors = fileErrors;
-                                    
-                                    if(file.Errors.Any())
+
+                                    FileValidationResult result = new FileValidationResult();
+                                    result.File = file.Name;
+
+                                    if (file.Errors.Any())
                                     { 
-                                        FileValidationResult result = new FileValidationResult();
-                                        result.File = file.Name;
                                         file.Errors.ForEach(e => result.Errors.Add(e.ToHtmlString()));
                                         result.SortedErrors = SortFileErrors(file.Errors);
-                                        model.FileResults.Add(result);
-
                                         errors.AddRange(file.Errors); // set to global error list
                                     }
+
+                                    model.FileResults.Add(result);
                                 }
                                 
 

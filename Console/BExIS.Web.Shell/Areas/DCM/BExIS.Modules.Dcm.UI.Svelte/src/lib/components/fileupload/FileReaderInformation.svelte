@@ -64,7 +64,9 @@ function close()
 <Accordion>
 	<AccordionItem >
 		<svelte:fragment slot="summary">
-			<span class="variant-filled-surface text-{style}-500"><Fa icon={faCheck}></Fa></span>
+			{#if asciiFileReaderInfo}
+				<span class="variant-filled-surface text-{style}-500"><Fa icon={faCheck}></Fa></span>
+			{/if}
 		</svelte:fragment>
 		<svelte:fragment slot="lead">File Reader</svelte:fragment>
 		<svelte:fragment slot="content">
