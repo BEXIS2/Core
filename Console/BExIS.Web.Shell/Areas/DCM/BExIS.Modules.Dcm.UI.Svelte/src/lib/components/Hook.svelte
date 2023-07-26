@@ -8,45 +8,40 @@
 -->
 
 <script>
-export let status=0;
-export let displayName="";
-export let description="";
+	export let status = 0;
+	export let displayName = '';
+	export let description = '';
 
-const isEnabled = setEnable(status);
-const active = setActive(status);
+	const isEnabled = setEnable(status);
+	const active = setActive(status);
 
-// console.log(active);
+	// console.log(active);
 
-// let url = hosturl+start+"?id="+id+"&version="+version;
+	// let url = hosturl+start+"?id="+id+"&version="+version;
 
-function setEnable(status)
-{
-  if(status == 0 ||status == 1 ) // disabled || access denied
-  {
-    return false;
-  }
-    
-  return true; // every other status enable the hook
-}
+	function setEnable(status) {
+		if (status == 0 || status == 1) {
+			// disabled || access denied
+			return false;
+		}
 
-function setActive(status)
-{
-  if(status == 0 ||status == 1 || status==5) // disabled || access denied || inactive
-  {
-    return false;
-  }
-    
-  return true; // every other status enable the hook
-}
+		return true; // every other status enable the hook
+	}
 
+	function setActive(status) {
+		if (status == 0 || status == 1 || status == 5) {
+			// disabled || access denied || inactive
+			return false;
+		}
+
+		return true; // every other status enable the hook
+	}
 </script>
 
 {#if isEnabled}
-  
-  <div class="mb-3 hook-status-{status} hook" class:inactive={!active} title="{description}" on:click>
-    {displayName.toUpperCase()}
-  </div> 
-
+	<div class="mb-3 hook-status-{status} hook" class:inactive={!active} title={description} on:click>
+		{displayName.toUpperCase()}
+	</div>
 {/if}
 
 <!-- 

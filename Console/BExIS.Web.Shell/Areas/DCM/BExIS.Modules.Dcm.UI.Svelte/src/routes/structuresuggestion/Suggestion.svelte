@@ -7,8 +7,8 @@
 	import { Modal, modalStore } from '@skeletonlabs/skeleton';
 	import type { ModalSettings } from '@skeletonlabs/skeleton';
 
-  import Fa from 'svelte-fa/src/fa.svelte'
-  import {faShare, faShareFromSquare} from '@fortawesome/free-solid-svg-icons'
+	import Fa from 'svelte-fa/src/fa.svelte';
+	import { faShare, faShareFromSquare } from '@fortawesome/free-solid-svg-icons';
 
 	export let variables: VariableModel[] = [];
 	export let missingValues: missingValueType[] = [];
@@ -64,7 +64,6 @@
 			// TRUE if confirm pressed, FALSE if cancel pressed
 			response: (r: boolean) => {
 				if (r === true) {
-
 					if (variables.length >= i + 1) {
 						const v = variables[i];
 						const nextIndex = i + 1;
@@ -88,7 +87,6 @@
 			// TRUE if confirm pressed, FALSE if cancel pressed
 			response: (r: boolean) => {
 				if (r === true) {
-
 					if (variables.length >= i + 1) {
 						const v = variables[i];
 						const start = i + 1;
@@ -145,15 +143,23 @@
 				on:copy-next={copyNext}
 				on:copy-all={copyAll}
 			>
-      <svelte:fragment slot="options">
-        {#if (variables.length>0) && i < variables.length-1}
-        
-          <button type="button" title="copy to next" class="chip variant-filled-warning" on:click={()=>copyNext(i)}><Fa icon={faShare}/></button>
-          <button type="button" title="copy to all after this" class="chip variant-filled-warning" on:click={()=>copyAll(i)}><Fa icon={faShareFromSquare}/></button>
- 
-        {/if}
-      </svelte:fragment>
-      </Variable>
+				<svelte:fragment slot="options">
+					{#if variables.length > 0 && i < variables.length - 1}
+						<button
+							type="button"
+							title="copy to next"
+							class="chip variant-filled-warning"
+							on:click={() => copyNext(i)}><Fa icon={faShare} /></button
+						>
+						<button
+							type="button"
+							title="copy to all after this"
+							class="chip variant-filled-warning"
+							on:click={() => copyAll(i)}><Fa icon={faShareFromSquare} /></button
+						>
+					{/if}
+				</svelte:fragment>
+			</Variable>
 		{/each}
 	{:else}
 		<Spinner label="loading suggested structure" />

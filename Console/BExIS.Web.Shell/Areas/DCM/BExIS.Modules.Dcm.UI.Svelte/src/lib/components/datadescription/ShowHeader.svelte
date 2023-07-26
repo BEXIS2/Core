@@ -22,7 +22,8 @@
 		console.log('remove');
 		const res = await removeStructure(id);
 
-		console.log(res);
+		console.log('remove', res);
+
 		if (res == true) {
 			// update store
 			latestDataDescriptionDate.set(Date.now());

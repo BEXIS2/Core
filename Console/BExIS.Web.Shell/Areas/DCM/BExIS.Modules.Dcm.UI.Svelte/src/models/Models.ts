@@ -1,11 +1,10 @@
-
 export interface KvP {
- id: number;
- text: string;
+	id: number;
+	text: string;
 }
 
 export interface ListItem {
- id: number;
- text: string;
- group: string;
+	id: number;
+	text: string;
+	group: string;
 }

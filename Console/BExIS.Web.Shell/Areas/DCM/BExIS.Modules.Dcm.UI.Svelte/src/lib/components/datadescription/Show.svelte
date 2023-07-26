@@ -1,34 +1,34 @@
 <script lang="ts">
 	import type { VariableModel } from '$models/DataDescription';
-import Header from './ShowHeader.svelte'
-import { Table } from '@bexis2/bexis2-core-ui';
-import type { TableConfig } from '@bexis2/bexis2-core-ui';
+	import Header from './ShowHeader.svelte';
+	import { Table } from '@bexis2/bexis2-core-ui';
+	import type { TableConfig } from '@bexis2/bexis2-core-ui';
 	import { writable } from 'svelte/store';
 
-export let id; //enityid
-export let title;
-export let description;
-export let structureId;
-export let fileReaderExist; // if filereader not exist, need to set 
-export let readableFiles;   // if file reader not exist, select from this files to generate a suggestion
+	export let id; //enityid
+	export let title;
+	export let description;
+	export let structureId;
+	export let fileReaderExist; // if filereader not exist, need to set
+	export let readableFiles; // if file reader not exist, select from this files to generate a suggestion
 
-export let variables:VariableModel[] =[];
+	export let variables: VariableModel[] = [];
 
-const variableStore = writable<VariableModel[]>([]);
+	const variableStore = writable<VariableModel[]>([]);
 
-variableStore.set(variables);
+	variableStore.set(variables);
 
-const variableConfig: TableConfig<VariableModel> = {
+	const variableConfig: TableConfig<VariableModel> = {
 		id: 'variables',
 		data: variableStore,
 		height: 225
 	};
-
 </script>
+
 {#if readableFiles}
-	<Header {id} {structureId} {title} {description} {fileReaderExist} {readableFiles}></Header>
+	<Header {id} {structureId} {title} {description} {fileReaderExist} {readableFiles} />
 {/if}
 
 {#if variables}
-<Table config={variableConfig} />
+	<Table config={variableConfig} />
 {/if}
