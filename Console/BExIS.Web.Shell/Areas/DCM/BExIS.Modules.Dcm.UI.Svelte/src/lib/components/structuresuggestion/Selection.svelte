@@ -9,19 +9,18 @@
 	//services
 	import { store, load } from '$services/StructureSuggestionCaller';
 
-import Fa from 'svelte-fa'
-import { faSave, faXmark, faChevronRight } from '@fortawesome/free-solid-svg-icons'
-
+	import Fa from 'svelte-fa';
+	import { faSave, faXmark, faChevronRight } from '@fortawesome/free-solid-svg-icons';
 
 	//types
 	import type { StructureSuggestionModel, Marker } from '$models/StructureSuggestion';
 
-	import { positionType } from "@bexis2/bexis2-core-ui";
+	import { positionType } from '@bexis2/bexis2-core-ui';
 	import Controls from './Controls.svelte';
 
- export let model: StructureSuggestionModel;
+	export let model: StructureSuggestionModel;
 	$: model;
-	export let init:boolean = true;
+	export let init: boolean = true;
 
 	let delimeter;
 	let isDrag: boolean = false;
@@ -31,26 +30,24 @@ import { faSave, faXmark, faChevronRight } from '@fortawesome/free-solid-svg-ico
 	let cLength: number = 0;
 	let rLength: number = 0;
 	let selectionsupport: boolean = false;
-	let generate:boolean = true;
+	let generate: boolean = true;
 
 	let selectedRowIndex: number = 0;
 
-	let errors:string[] = [];
-	$:errors;
-	
+	let errors: string[] = [];
+	$: errors;
 
-const MARKER_TYPE = {
-    VARIABLE: 'variable',
-    DESCRIPTION: 'description',
-    UNIT: 'unit',
-    MISSING_VALUES: 'missing-values',
-    DATA: 'data'
-};
+	const MARKER_TYPE = {
+		VARIABLE: 'variable',
+		DESCRIPTION: 'description',
+		UNIT: 'unit',
+		MISSING_VALUES: 'missing-values',
+		DATA: 'data'
+	};
 
 	// currently only one requirement exit
 	// variable need to be selected
 	let isValid: boolean = false;
-
 
 	const dispatch = createEventDispatcher();
 
@@ -58,15 +55,12 @@ const MARKER_TYPE = {
 		console.log('start selection suggestion');
 		console.log('load selection', model.id, model.file);
 		setTableInfos(model.preview, String.fromCharCode(model.delimeter));
-		setMarkers(model.markers,init);
+		setMarkers(model.markers, init);
 
 		delimeter = model.delimeter;
 
-
 		checkStatus();
-
 	});
-
 
 	function setTableInfos(rows, delimeter) {
 		console.log('set table infos');
@@ -84,16 +78,14 @@ const MARKER_TYPE = {
 		console.log('state', state);
 	}
 
-	function setMarkers(markers, init=false) {
+	function setMarkers(markers, init = false) {
 		for (var i = 0; i < markers.length; i++) {
 			let marker = markers[i];
 			console.log('marker', marker);
-			if(init) // if data come from server index need to set -1
-			{
-				updateSelection(marker.type, marker.row-1, marker.cells);
-			}
-			else
-			{
+			if (init) {
+				// if data come from server index need to set -1
+				updateSelection(marker.type, marker.row - 1, marker.cells);
+			} else {
 				updateSelection(marker.type, marker.row, marker.cells);
 			}
 		}
@@ -124,7 +116,6 @@ const MARKER_TYPE = {
 			//left mouse click
 			if (e.which === 1 || e.button === 0) {
 				selectCell(c);
-
 			}
 
 			// right mouse click
@@ -139,18 +130,13 @@ const MARKER_TYPE = {
 			//left mouse click
 			if (e.which === 1 || e.button === 0) {
 				selectCell(c);
-
 			}
 
 			// right mouse click
 			if (e.which === 3 || e.button === 2) {
 				deselectCell(c);
-
 			}
 		}
-
-		
-
 	};
 
 	const dbclickHandler = (c) => (e) => {
@@ -199,7 +185,7 @@ const MARKER_TYPE = {
 	const selectRow = (r) => {
 		console.log('set true');
 		for (var i = 0; i < cLength; i++) {
-			console.log("select row",cLength);
+			console.log('select row', cLength);
 			state[r][i] = true;
 		}
 	};
@@ -220,8 +206,7 @@ const MARKER_TYPE = {
 
 	// remove every selection that has only false values in the array
 	function cleanSelection() {
-
-		selection = selection.filter(s=> s.cells.find(c=>c === true));
+		selection = selection.filter((s) => s.cells.find((c) => c === true));
 	}
 
 	function getMarkerLayout(r) {
@@ -249,17 +234,14 @@ const MARKER_TYPE = {
 
 		//check if selection is valid for save
 		checkStatus();
-
 	}
 
 	function updateSelection(type, index, cells) {
-
 		let obj = {
 			type: type,
 			row: index,
 			cells: cells
 		};
-
 
 		// if exist row, remove entry
 		let exist = selection.find((e) => e.row == obj.row);
@@ -275,64 +257,53 @@ const MARKER_TYPE = {
 
 		// add obj to list and return new list
 		selection = [...selection, obj];
-
-
 	}
 
 	// different thinks need to be done before save button is active
-	function checkStatus()
-	{
+	function checkStatus() {
 		errors = [];
 		// minimum marker for variable and data need to exist
-		let variabelMarker = selection.find(s=> s.type == MARKER_TYPE.VARIABLE )
-		let dataMarker = selection.find(s=> s.type == MARKER_TYPE.DATA )
+		let variabelMarker = selection.find((s) => s.type == MARKER_TYPE.VARIABLE);
+		let dataMarker = selection.find((s) => s.type == MARKER_TYPE.DATA);
 
 		let selectionCount = selection.length;
 
-  if(selectionCount > 0) // only check if selection exist
-		{
-				if(!variabelMarker)
-				{
-					errors.push("the variables still need to be marked");
+		if (selectionCount > 0) {
+			// only check if selection exist
+			if (!variabelMarker) {
+				errors.push('the variables still need to be marked');
+			}
+
+			if (!dataMarker) {
+				errors.push('the data still need to be marked');
+			}
+
+			let lastCount = 0;
+			for (let index = 0; index < selection.length; index++) {
+				const element = selection[index];
+				console.log(index, element);
+				let c = element.cells.filter((c) => c == true)?.length; // get length of all cells marked as true
+				if (index > 0) {
+					// after first run, check count against the others
+					if (c != lastCount) {
+						let message =
+							'selection mismatch, the rows must have the same number of marked cells  ';
+						errors.push(message);
+						break;
+					}
 				}
 
-				if(!dataMarker)
-				{
-					errors.push("the data still need to be marked");
-				}
-
-				let lastCount = 0;
-				for (let index = 0; index < selection.length; index++) {
-					const element = selection[index];
-					console.log(index, element)
-					let c = element.cells.filter(c=> c == true)?.length; // get length of all cells marked as true
-					if(index>0)// after first run, check count against the others 
-					{
-								if(c!=lastCount) {
-									let message ="selection mismatch, the rows must have the same number of marked cells  "
-									errors.push(message);
-									break;
-								}
-					} 
-				
-
-					lastCount = c;// last count set 
-
-				}
-		 	isValid = errors.length == 0?true:false;
-
-		}
-		else // no selection
-		{
+				lastCount = c; // last count set
+			}
+			isValid = errors.length == 0 ? true : false;
+		} // no selection
+		else {
 			isValid = false; // no selection, no errors,  not valid
 			errors = [];
-
 		}
-
 	}
 
 	async function save() {
-
 		generate = true;
 
 		model.markers = selection;
@@ -349,40 +320,41 @@ const MARKER_TYPE = {
 	}
 
 	// if you change the delimeter you need to change/update also the table informations
- function changeDelimeter()
-	{
-			setTableInfos(model.preview, String.fromCharCode(model.delimeter));
+	function changeDelimeter() {
+		setTableInfos(model.preview, String.fromCharCode(model.delimeter));
 	}
 
 	// ROW Selection
-	const rowSelectionHandler = (r) => (e) => 
-	{
-		console.log(r, e.which, e.button)
-			//left mouse click
-			if (e.which === 1 || e.button === 0) {
-					clean();
-					console.log(r)
-					selectRow(r);
-					selectedRowIndex = r;
-			}
+	const rowSelectionHandler = (r) => (e) => {
+		console.log(r, e.which, e.button);
+		//left mouse click
+		if (e.which === 1 || e.button === 0) {
+			clean();
+			console.log(r);
+			selectRow(r);
+			selectedRowIndex = r;
+		}
 
-
-			// right mouse click
-			if (e.which === 3 || e.button === 2) {
-				 clean();
-					
-			}
-	}
-
-
+		// right mouse click
+		if (e.which === 3 || e.button === 2) {
+			clean();
+		}
+	};
 </script>
 
-{#if !model || state.length == 0 || generate==false}
+{#if !model || state.length == 0 || generate == false}
 	<!--if the model == false, access denied-->
-	{#if !model || state.length == 0 || generate==false}
-		<div class="h-full w-full text-surface-700"><Spinner position={positionType.center} label="Loading Structure Suggestion based on: {model.file}"/></div>
+	{#if !model || state.length == 0 || generate == false}
+		<div class="h-full w-full text-surface-700">
+			<Spinner
+				position={positionType.center}
+				label="Loading Structure Suggestion based on: {model.file}"
+			/>
+		</div>
 	{:else}
-		<div class="h-full w-full text-surface-700"><Spinner position={positionType.center} label="Generate Structure..."/></div>
+		<div class="h-full w-full text-surface-700">
+			<Spinner position={positionType.center} label="Generate Structure..." />
+		</div>
 	{/if}
 {:else}
 	<!-- load page -->
@@ -422,55 +394,55 @@ const MARKER_TYPE = {
 				/>
 			</div>
 
-			<div class="col-span-2 space-y-5 ">
+			<div class="col-span-2 space-y-5">
+				<button
+					class="btn variant-filled-error"
+					type="button"
+					on:click={() => onclickHandler(MARKER_TYPE.VARIABLE)}>Variable</button
+				>
+				<button
+					class="btn variant-filled-success"
+					type="button"
+					on:click={() => onclickHandler(MARKER_TYPE.UNIT)}>Unit</button
+				>
+				<button
+					class="btn variant-filled-warning"
+					type="button"
+					on:click={() => onclickHandler(MARKER_TYPE.DESCRIPTION)}>Description</button
+				>
+				<button
+					class="btn variant-filled-secondary"
+					type="button"
+					color="info"
+					on:click={() => onclickHandler(MARKER_TYPE.MISSING_VALUES)}>Missing Values</button
+				>
+				<button
+					class="btn variant-filled-primary"
+					type="button"
+					on:click={() => onclickHandler(MARKER_TYPE.DATA)}>Data</button
+				>
 
+				<div class="my-1 float-right">
 					<button
-						class="btn variant-filled-error"
+						class="btn variant-filled-warning text-2xl"
 						type="button"
-						on:click={() => onclickHandler(MARKER_TYPE.VARIABLE)}>Variable</button
+						on:click={resetSelection}><Fa icon={faXmark} /></button
 					>
-					<button
-						class="btn variant-filled-success"
-						type="button"
-						on:click={() => onclickHandler(MARKER_TYPE.UNIT)}>Unit</button
-					>
-					<button
-						class="btn variant-filled-warning"
-						type="button"
-						on:click={() => onclickHandler(MARKER_TYPE.DESCRIPTION)}>Description</button
-					>
-					<button
-						class="btn variant-filled-secondary"
-						type="button"
-						color="info"
-						on:click={() => onclickHandler(MARKER_TYPE.MISSING_VALUES)}>Missing Values</button
-					>
-					<button
-						class="btn variant-filled-primary"
-						type="button"
-						on:click={() => onclickHandler(MARKER_TYPE.DATA)}>Data</button
-					>
-			
-					<div class="my-1 float-right">
+					<button class="btn variant-filled-primary text-2xl" disabled={!isValid}>
+						<Fa icon={faSave} />
+					</button>
+				</div>
 
-		
-						<button class="btn variant-filled-warning text-2xl" type="button" on:click={resetSelection}><Fa icon={faXmark}/></button>
-						<button class="btn variant-filled-primary text-2xl" disabled={!isValid}>
-							<Fa icon={faSave}/> </button>
-					</div>
-
-
-
-					<div >
-						<SlideToggle name="selection support" bind:checked={selectionsupport}
-							>selection support</SlideToggle
-						>
-						<div class="m-2 float-right text-sm">
-							{#each errors as error}
+				<div>
+					<SlideToggle name="selection support" bind:checked={selectionsupport}
+						>selection support</SlideToggle
+					>
+					<div class="m-2 float-right text-sm">
+						{#each errors as error}
 							<label class="text-error-500">{error}</label>
-							{/each}
-							</div>
+						{/each}
 					</div>
+				</div>
 				<div>
 					<!-- Missing Values-->
 					<MissingValues bind:list={model.missingValues} />
@@ -480,46 +452,47 @@ const MARKER_TYPE = {
 					<label><b>Found:</b> {model.total - model.skipped}</label>
 					<label><b>Skipped:</b> {model.skipped}</label>
 				</div>
-
 			</div>
 
 			<!-- controls-->
-			<Controls/>
+			<Controls />
 
 			<div class="col-span-3" />
 			<div>
-
-				<table class="table table-compact"
-				 on:contextmenu={(e)=> e.preventDefault()} >
-
+				<table class="table table-compact" on:contextmenu={(e) => e.preventDefault()}>
 					<tbody>
 						{#each model.preview as row, r}
 							<tr>
-								<td class="p-100 hover:cursor-pointer select-none text-sm hover:border-surface-400 hover:border-solid hover:border-b-2 "
-								on:mousedown={rowSelectionHandler(r)}>
-								<div class="pt-1">
-									<Fa icon={faChevronRight} size="sm"></Fa>
-								</div>	
-							</td>
+								<td
+									class="p-100 hover:cursor-pointer select-none text-sm hover:border-surface-400 hover:border-solid hover:border-b-2"
+									on:mousedown={rowSelectionHandler(r)}
+								>
+									<div class="pt-1">
+										<Fa icon={faChevronRight} size="sm" />
+									</div>
+								</td>
 
 								{#each row.split(String.fromCharCode(model.delimeter)) as cell, c}
-									<td 
+									<td
 										class="hover:cursor-pointer select-none hover:border-surface-400 hover:border-solid hover:border-b-2"
-
 										on:dblclick={dbclickHandler(r)}
 										on:mousedown={mouseDownHandler(r, c)}
 										on:mouseenter={mouseHandler(r, c)}
-                    
-										class:variant-soft-error={selection.find((e) => e.row === r && e.cells[c] === true)
-											?.type === MARKER_TYPE.VARIABLE}
-										class:variant-soft-success={selection.find((e) => e.row === r && e.cells[c] === true)?.type ===
-											MARKER_TYPE.UNIT}
-										class:variant-soft-warning={selection.find((e) => e.row === r && e.cells[c] === true)
-											?.type === MARKER_TYPE.DESCRIPTION}
-										class:variant-soft-secondary={selection.find((e) => e.row === r && e.cells[c] === true)
-											?.type === MARKER_TYPE.MISSING_VALUES}
-										class:variant-soft-primary={selection.find((e) => e.row === r && e.cells[c] === true)?.type ===
-											MARKER_TYPE.DATA}
+										class:variant-soft-error={selection.find(
+											(e) => e.row === r && e.cells[c] === true
+										)?.type === MARKER_TYPE.VARIABLE}
+										class:variant-soft-success={selection.find(
+											(e) => e.row === r && e.cells[c] === true
+										)?.type === MARKER_TYPE.UNIT}
+										class:variant-soft-warning={selection.find(
+											(e) => e.row === r && e.cells[c] === true
+										)?.type === MARKER_TYPE.DESCRIPTION}
+										class:variant-soft-secondary={selection.find(
+											(e) => e.row === r && e.cells[c] === true
+										)?.type === MARKER_TYPE.MISSING_VALUES}
+										class:variant-soft-primary={selection.find(
+											(e) => e.row === r && e.cells[c] === true
+										)?.type === MARKER_TYPE.DATA}
 										class:variant-ghost-surface={state[r][c]}
 									>
 										{cell}
@@ -535,7 +508,6 @@ const MARKER_TYPE = {
 {/if}
 
 <style>
-  
 	.variable {
 		background-color: blue;
 		color: white;
@@ -558,4 +530,4 @@ const MARKER_TYPE = {
 		background-color: var(--bs-primary);
 		color: white;
 	}
-  </style>
+</style>

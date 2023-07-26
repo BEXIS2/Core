@@ -3,11 +3,14 @@
 	import ValidationResult from '$lib/components/validation/ValidationResult.svelte';
 
 	import { getHookStart } from '../../services/HookCaller';
-	import { latestFileUploadDate, latestDataDescriptionDate, latestFileReaderDate } from '../../routes/edit/stores';
+	import {
+		latestFileUploadDate,
+		latestDataDescriptionDate,
+		latestFileReaderDate
+	} from '../../routes/edit/stores';
 	import { onMount } from 'svelte';
 
 	import type { ValidationModel } from '$models/ValidationModels';
-
 
 	export let id = 0;
 	export let version = 1;
@@ -29,11 +32,12 @@
 
 	async function reload() {
 		//const res = await fetch(url);
+		console.log('reload validation');
+
 		model = await getHookStart(start, id, version);
-		console.log('validation', model);
+
+		//console.log('validation', model);
 	}
-
-
 </script>
 
 {#await reload()}
@@ -41,8 +45,7 @@
 		<Spinner label="...validate data" />
 	</div>
 {:then a}
-  
-	{#if model &&  model.fileResults}
+	{#if model && model.fileResults}
 		{#each model.fileResults as fileResult}
 			<ValidationResult bind:sortedErrors={fileResult.sortedErrors} bind:file={fileResult.file} />
 		{/each}

@@ -1,22 +1,22 @@
-import type { fileInfoType } from "@bexis2/bexis2-core-ui";
+import type { fileInfoType } from '@bexis2/bexis2-core-ui';
 
 export interface DataDescriptionModel {
-    id: number;
-    structureId: number;
-    title: string;
-    description: string;
-    lastModification: string | null;
-    variables: VariableModel[];
-    allFilesReadable: boolean;
-    fileReaderExist: boolean;
-    readableFiles: fileInfoType[];
-    isRestricted:boolean;
-    isStructured
+	id: number;
+	structureId: number;
+	title: string;
+	description: string;
+	lastModification: string | null;
+	variables: VariableModel[];
+	allFilesReadable: boolean;
+	fileReaderExist: boolean;
+	readableFiles: fileInfoType[];
+	isRestricted: boolean;
+	isStructured;
 }
 
 export interface VariableModel {
-    id: number;
-    name: string;
-    unit: string;
-    dataType: string;
+	id: number;
+	name: string;
+	unit: string;
+	dataType: string;
 }
