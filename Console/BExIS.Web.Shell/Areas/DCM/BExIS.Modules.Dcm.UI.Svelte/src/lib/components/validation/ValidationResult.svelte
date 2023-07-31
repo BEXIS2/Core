@@ -1,5 +1,6 @@
 <script lang="ts">
-	import { ErrorType, type Check, type SortedError } from '$models/ValidationModels';
+	import type { Check } from '$models/ValidationModels';
+	import { errorType, type sortedError } from '$models/Models';
 	import { onMount } from 'svelte';
 
 	import Fa from 'svelte-fa';
@@ -7,16 +8,16 @@
 	import Message from './Message.svelte';
 
 	export let file;
-	export let sortedErrors: SortedError[];
+	export let sortedErrors: sortedError[];
 	$: sortedErrors;
 
-	let workflow: ErrorType[] = [
-		ErrorType.Dataset,
-		ErrorType.File,
-		ErrorType.FileReader,
-		ErrorType.Datastructure,
-		ErrorType.Value,
-		ErrorType.PrimaryKey
+	let workflow: errorType[] = [
+		errorType.Dataset,
+		errorType.File,
+		errorType.FileReader,
+		errorType.Datastructure,
+		errorType.Value,
+		errorType.PrimaryKey
 	];
 	let checks: Check[] = [];
 	$: checks;
@@ -30,7 +31,7 @@
 
 		for (let index = 0; index < workflow.length; index++) {
 			const type = workflow[index];
-			const name = ErrorType[type];
+			const name = errorType[type];
 			const errors = sortedErrors.filter((e) => e.type === type); // get list of sorted errors based on a type e.g. data structure or value
 			const style = getStyle(errors.length, faild);
 			let c: Check = { name, type, errors, style };
@@ -45,7 +46,7 @@
 			}
 		}
 
-		console.log('checks', checks);
+		//console.log('checks', checks);
 	});
 
 	function getStyle(count, faild) {

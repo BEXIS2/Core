@@ -3,6 +3,7 @@ using BExIS.App.Bootstrap.Helpers;
 using BExIS.Dlm.Entities.DataStructure;
 using BExIS.Dlm.Services.Data;
 using BExIS.IO;
+using BExIS.Modules.Dcm.UI.Helpers;
 using BExIS.Modules.Dcm.UI.Hooks;
 using BExIS.Modules.Dcm.UI.Models.Edit;
 using BExIS.UI.Hooks;
@@ -80,7 +81,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                     //check if if exist on server or not
                     if (file != null && !string.IsNullOrEmpty(file.Name) && System.IO.File.Exists(Path.Combine(path, file.Name)))
                     {
-                        if (isReadable(file)) countReadableFile++;
+                        if (EditHelper.IsReadable(file)) countReadableFile++;
                         model.FileUploader.ExistingFiles.Add(file); // if exist  add to model
                     }
                     else
@@ -264,11 +265,5 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         }
 
 
-
-        private bool isReadable(Cache.FileInfo file)
-        {
-            IOUtility iou = new IOUtility();
-            return iou.IsSupportedAsciiFile(Path.GetExtension(file.Name));
-        }
     }
 }

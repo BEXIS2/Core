@@ -23,6 +23,8 @@ namespace BExIS.Modules.Dcm.UI.Hooks
             // if status is open then check if data is available
             if(Status == HookStatus.Open) checkDataStatus(id, username);
 
+
+
         }
 
         private void checkPermissionStatus(long id, string username)

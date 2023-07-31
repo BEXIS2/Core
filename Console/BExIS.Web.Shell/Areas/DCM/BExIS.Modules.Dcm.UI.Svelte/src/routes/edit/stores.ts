@@ -8,5 +8,7 @@ export const latestDataDescriptionDate = writable(0);
 
 export const latestFileReaderDate = writable(0);
 
+export const latestSubmitDate = writable(0);
+
 const dic: { [key: string]: number } = { ['']: 0 };
 export const hooksStatus = writable(dic);

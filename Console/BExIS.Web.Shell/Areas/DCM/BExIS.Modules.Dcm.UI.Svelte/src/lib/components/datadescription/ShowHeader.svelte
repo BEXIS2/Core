@@ -35,9 +35,10 @@
 	}
 </script>
 
-<div class="show-datadescription-header-container grid grid-cols-2">
-	<div class="flex gap-3">
+<div class="show-datadescription-header-container flex">
+	<div class="flex-col gap-3 grow">
 		<h2 class="h2">{title} ({structureId})</h2>
+		<p>{description}</p>
 		{#if loading}
 			<div>
 				<Spinner textCss="text-surface-500" />
@@ -48,6 +49,5 @@
 		<div class="text-end flex-auto">
 			<button class="btn bg-warning-500" on:click={remove}><Fa icon={faTrash} /></button>
 		</div>
-		<p>{description}</p>
 	</div>
 </div>

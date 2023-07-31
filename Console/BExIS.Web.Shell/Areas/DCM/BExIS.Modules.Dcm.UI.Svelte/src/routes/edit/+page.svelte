@@ -1,6 +1,4 @@
 <script lang="ts">
-	import { onMount } from 'svelte';
-	import { fade } from 'svelte/transition';
 
 	import { getEdit, getHooks } from './services';
 	import { Spinner, Page, ErrorMessage, pageContentLayoutType } from '@bexis2/bexis2-core-ui';
@@ -8,19 +6,18 @@
 	import Header from './Header.svelte';
 	import Data from './Data.svelte';
 	import Hooks from './Hooks.svelte';
-	import Message from './MessagesContainer.svelte';
-	import Debug from '$lib/components/Debug.svelte';
+
 
 	import {
 		latestFileUploadDate,
 		latestDataDescriptionDate,
 		latestFileReaderDate,
+		latestSubmitDate,
 		hooksStatus
 	} from './stores';
 
 	import type { EditModel, HookModel, ViewModel } from './types';
-	import { isEditModel } from './types';
-	import Hook from '$lib/components/Hook.svelte';
+
 
 	// load attributes from div
 	let container;
@@ -68,15 +65,20 @@
 		updateHookStatus();
 	});
 
-	// latestDataDescriptionDate.subscribe((e) => {
-	// 	console.log('latestDataDescriptionDate');
-	// 	updateHookStatus();
-	// });
+	latestDataDescriptionDate.subscribe((e) => {
+		console.log('latestDataDescriptionDate');
+		updateHookStatus();
+	});
 
-	// latestFileReaderDate.subscribe((e) => {
-	// 	console.log('latestFileReaderDate');
-	// 	updateHookStatus();
-	// });
+	latestFileReaderDate.subscribe((e) => {
+		console.log('latestFileReaderDate');
+		updateHookStatus();
+	});
+
+	latestSubmitDate.subscribe((e) => {
+		console.log('latestSubmitDate');
+		updateHookStatus();
+	});
 
 	async function load() {
 		// get data from parent
@@ -95,7 +97,7 @@
 		// there is a need for a time delay to update the hook status
 		// if not exit, the first run faild because the hooks are not
 		setTimeout(async () => {
-			console.log('HOOKS ', model.hooks);
+			//console.log('HOOKS ', model.hooks);
 
 			// update store
 			updateStatus(model.hooks);
@@ -105,22 +107,67 @@
 
 			// get resultView
 			seperateViews(views);
+
 		}, 1000); /* <--- If this is enough greater than transition, it doesn't happen... */
 
 		console.log('model and hooks', model, hookStatusList);
 	}
 
 	async function updateHookStatus() {
-		let x = await getHooks(id);
-		setTimeout(async () => {
-			console.log('updateHookStatus', x);
 
-			model.hooks = x;
-			if (model.hooks) {
-				updateStatus(model.hooks);
-			}
-		}, 1000);
+				let wait = false;
+				let time = 1000;
+
+				console.log("updateHookStatus", model.hooks)
+
+				do
+				{
+
+						console.log("1.in timeout", model.hooks)
+
+						 // get status of hooks,  
+						 await getHooks(id).then((r)=>{
+							console.log('2.updateHookStatus', r);
+
+									model.hooks = r;
+									if (model.hooks) {
+											console.log("3.before update ",wait);
+
+
+												 updateStatus(model.hooks);
+											
+													console.log("4.wait ",wait)
+													console.log("5.while", model.hooks, model.hooks.filter(h=>h.status==6).length)
+													
+													if(model.hooks.filter(h=>h.status==6).length>0)
+													{
+															wait = true;
+															console.log(wait)
+													}
+													else
+													{
+															wait = false;
+															console.log(wait)
+
+													}
+
+											if(time<=10000){time = time*2} 
+											console.log("6.check status", time, wait)
+									}
+
+						});
+							
+						await sleep(time);
+
+					 console.log("end while",wait);
+					
+				}while(wait)
+    
 	}
+
+function sleep(milliseconds) {
+ return new Promise(resolve => setTimeout(resolve, milliseconds));
+}
 
 	// seperate dcm hooks from other hooks
 	// known hooks - metadata, fileupload, validation

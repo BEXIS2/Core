@@ -31,7 +31,8 @@ export enum HookStatus {
 	Open = 2,
 	Ready = 3,
 	Exist = 4,
-	Inactive = 5
+	Inactive = 5,
+	Waiting = 6
 }
 
 export enum HookMode {

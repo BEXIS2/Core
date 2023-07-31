@@ -32,6 +32,21 @@ export const getHooks = async (id) => {
 	}
 };
 
+// get Model for Edit page
+export const submit = async (id) => {
+	//console.log("edit",id);
+
+	try {
+		const response = await Api.post('/dcm/submit/submit',{id});
+		//console.log(response);
+
+		return response.data;
+	} catch (error) {
+		console.error('error', error);
+		throw error;
+	}
+};
+
 // load message from a dataset edit situation
 export const loadMessages = async (id) => {
 	try {

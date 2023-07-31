@@ -1,11 +1,11 @@
 <script lang="ts">
-	import { getHookStart } from '../../services/HookCaller';
+	import { getHookStart } from '$services/HookCaller';
 	import { latestFileUploadDate, latestDataDescriptionDate } from '../../routes/edit/stores';
 	import { onMount } from 'svelte';
 
-	import TimeDuration from '../../lib/components/utils/TimeDuration.svelte';
-	import Generate from '../../lib/components/datadescription/Generate.svelte';
-	import Show from '../../lib/components/datadescription/Show.svelte';
+	import TimeDuration from '$lib/components/utils/TimeDuration.svelte';
+	import Generate from '$lib/components/datadescription/Generate.svelte';
+	import Show from '$lib/components/datadescription/Show.svelte';
 	import { Spinner, ErrorMessage } from '@bexis2/bexis2-core-ui';
 
 	import type { DataDescriptionModel } from '$models/DataDescription';
@@ -27,7 +27,7 @@
 
 	async function load() {
 		model = await getHookStart(hook.start, id, version);
-		console.log('load datadescription', model);
+
 	}
 
 	async function reload() {
