@@ -211,7 +211,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                                 finally
                                 {
 
-                                    if (fileErrors.Any()) file.Errors = fileErrors;
+                                    if (fileErrors!=null) file.Errors = fileErrors;
 
                                     FileValidationResult result = new FileValidationResult();
                                     result.File = file.Name;

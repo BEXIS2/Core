@@ -11,7 +11,8 @@ export interface DataDescriptionModel {
 	fileReaderExist: boolean;
 	readableFiles: fileInfoType[];
 	isRestricted: boolean;
-	isStructured;
+	isStructured:boolean;
+	hasData:boolean;
 }
 
 export interface VariableModel {

@@ -2,6 +2,7 @@
 
 	import { getEdit, getHooks } from './services';
 	import { Spinner, Page, ErrorMessage, pageContentLayoutType } from '@bexis2/bexis2-core-ui';
+	import { Modal } from '@skeletonlabs/skeleton';
 
 	import Header from './Header.svelte';
 	import Data from './Data.svelte';
@@ -118,26 +119,26 @@
 				let wait = false;
 				let time = 1000;
 
-				console.log("updateHookStatus", model.hooks)
+				//console.log("updateHookStatus", model.hooks)
 
 				do
 				{
 
-						console.log("1.in timeout", model.hooks)
+						//console.log("1.in timeout", model.hooks)
 
 						 // get status of hooks,  
 						 await getHooks(id).then((r)=>{
-							console.log('2.updateHookStatus', r);
+							//console.log('2.updateHookStatus', r);
 
 									model.hooks = r;
 									if (model.hooks) {
-											console.log("3.before update ",wait);
+											//console.log("3.before update ",wait);
 
 
 												 updateStatus(model.hooks);
 											
-													console.log("4.wait ",wait)
-													console.log("5.while", model.hooks, model.hooks.filter(h=>h.status==6).length)
+													//console.log("4.wait ",wait)
+													//console.log("5.while", model.hooks, model.hooks.filter(h=>h.status==6).length)
 													
 													if(model.hooks.filter(h=>h.status==6).length>0)
 													{
@@ -152,7 +153,7 @@
 													}
 
 											if(time<=10000){time = time*2} 
-											console.log("6.check status", time, wait)
+											//console.log("6.check status", time, wait)
 									}
 
 						});
@@ -253,3 +254,5 @@ function sleep(milliseconds) {
 		<ErrorMessage {error} />
 	{/await}
 </Page>
+
+<Modal/>

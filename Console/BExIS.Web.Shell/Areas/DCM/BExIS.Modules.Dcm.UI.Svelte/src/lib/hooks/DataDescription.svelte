@@ -6,7 +6,7 @@
 	import TimeDuration from '$lib/components/utils/TimeDuration.svelte';
 	import Generate from '$lib/components/datadescription/Generate.svelte';
 	import Show from '$lib/components/datadescription/Show.svelte';
-	import { Spinner, ErrorMessage } from '@bexis2/bexis2-core-ui';
+	import { Spinner, ErrorMessage, positionType } from '@bexis2/bexis2-core-ui';
 
 	import type { DataDescriptionModel } from '$models/DataDescription';
 
@@ -27,7 +27,8 @@
 
 	async function load() {
 		model = await getHookStart(hook.start, id, version);
-
+  console.log("DataDescriptionModel",model);
+		
 	}
 
 	async function reload() {
@@ -44,7 +45,7 @@
 
 {#await getHookStart(hook.start, id, version)}
 	<div class="w-full h-full text-surface-600">
-		<Spinner label="loading data description" />
+		<Spinner label="loading data description" position="{positionType.start}" />
 	</div>
 {:then a}
 	{#if model && model.lastModification}
