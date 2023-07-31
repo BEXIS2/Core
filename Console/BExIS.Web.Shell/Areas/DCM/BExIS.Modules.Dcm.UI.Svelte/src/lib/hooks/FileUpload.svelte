@@ -8,7 +8,7 @@
 	import TimeDuration from '$lib/components/utils/TimeDuration.svelte';
 	import FileReaderInformation from '$lib/components/fileupload/FileReaderInformation.svelte';
 
-	import { latestFileUploadDate, latestFileReaderDate } from '../../routes/edit/stores';
+	import { latestFileUploadDate, latestFileReaderDate,latestSubmitDate } from '../../routes/edit/stores';
 
 	import type { FileUploadModel } from '$models/FileUpload';
 
@@ -25,6 +25,7 @@
 	let error = '';
 
 	$: $latestFileReaderDate, load();
+	$: $latestSubmitDate, reload();
 
 	let model: FileUploadModel;
 	$: model;

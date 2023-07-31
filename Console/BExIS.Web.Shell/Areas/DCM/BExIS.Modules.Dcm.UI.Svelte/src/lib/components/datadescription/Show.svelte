@@ -25,6 +25,7 @@
 	};
 </script>
 
+<div class="flex-col space-y-2">
 {#if readableFiles}
 	<Header {id} {structureId} {title} {description} {fileReaderExist} {readableFiles} />
 {/if}
@@ -32,3 +33,4 @@
 {#if variables}
 	<Table config={variableConfig} />
 {/if}
+</div>

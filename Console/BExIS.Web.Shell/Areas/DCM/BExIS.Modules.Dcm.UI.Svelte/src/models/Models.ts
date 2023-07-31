@@ -8,3 +8,22 @@ export interface ListItem {
 	text: string;
 	group: string;
 }
+
+export interface sortedError {
+	name: string;
+	count: number;
+	issue: string;
+	type: errorType;
+	errors: string[];
+}
+
+export enum errorType {
+	Dataset,
+	Datastructure,
+	Value,
+	MetadataAttribute,
+	Other,
+	FileReader,
+	PrimaryKey,
+	File
+}

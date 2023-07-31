@@ -5,6 +5,7 @@
 	import Validation from '$lib/hooks/Validation.svelte';
 	import FileUpload from '$lib/hooks/FileUpload.svelte';
 	import DataDescription from '$lib/hooks/DataDescription.svelte';
+	import Submit from '$lib/hooks/Submit.svelte';
 	import Metadata from '$lib/hooks/Metadata.svelte';
 	import { Spinner } from '@bexis2/bexis2-core-ui';
 	import Fa from 'svelte-fa/src/fa.svelte';
@@ -85,6 +86,17 @@
 				<Validation {id} {version} {...validationHook} />
 			</div>
 		</HookContainer>
+
+		<HookContainer {...submitHook} let:errorHandler let:successHandler let:warningHandler>
+			<div slot="view">
+				<Submit {id} {version} {...submitHook} 
+				 on:error={(e) => errorHandler(e)}
+					on:success={(e) => successHandler(e)}
+					on:warning={(e) => warningHandler(e)}
+					/>
+			</div>
+		</HookContainer>
+
 	</div>
 {:else}
 	<!-- while data is not loaded show a loading information -->

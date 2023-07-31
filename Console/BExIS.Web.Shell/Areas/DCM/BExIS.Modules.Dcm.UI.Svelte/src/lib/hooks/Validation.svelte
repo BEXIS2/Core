@@ -2,11 +2,12 @@
 	import { Spinner, ErrorMessage } from '@bexis2/bexis2-core-ui';
 	import ValidationResult from '$lib/components/validation/ValidationResult.svelte';
 
-	import { getHookStart } from '../../services/HookCaller';
+	import { getHookStart } from '$services/HookCaller';
 	import {
 		latestFileUploadDate,
 		latestDataDescriptionDate,
-		latestFileReaderDate
+		latestFileReaderDate,
+		latestSubmitDate
 	} from '../../routes/edit/stores';
 	import { onMount } from 'svelte';
 
@@ -25,6 +26,7 @@
 	$: $latestFileUploadDate, reload();
 	$: $latestDataDescriptionDate, reload();
 	$: $latestFileReaderDate, reload();
+	$: $latestSubmitDate, reload();
 
 	onMount(async () => {
 		reload();
@@ -32,7 +34,7 @@
 
 	async function reload() {
 		//const res = await fetch(url);
-		console.log('reload validation');
+		//console.log('reload validation');
 
 		model = await getHookStart(start, id, version);
 

@@ -1,4 +1,5 @@
-﻿using BExIS.Security.Entities.Authorization;
+﻿using BExIS.Dlm.Services.Data;
+using BExIS.Security.Entities.Authorization;
 using BExIS.UI.Hooks;
 
 namespace BExIS.Modules.Dcm.UI.Hooks
@@ -12,8 +13,17 @@ namespace BExIS.Modules.Dcm.UI.Hooks
 
         public override void Check(long id, string username)
         {
+
+
             // check status
             checkStatus(id, username);
+
+            // check if subject is checked in
+            // only check if status is open
+            checkAvailablity(id);
+
+
+
 
         }
 
@@ -35,6 +45,15 @@ namespace BExIS.Modules.Dcm.UI.Hooks
                 Status = HookStatus.Open;
             }
 
+        }
+
+        private void checkAvailablity(long id)
+        {
+            // check if subject is checked in
+            // only check if status is open
+          if (Status == HookStatus.Open)
+                using (var datasetManager = new DatasetManager())
+                    Status = datasetManager.IsDatasetCheckedIn(id) == true ? HookStatus.Open : HookStatus.Waiting;
         }
 
     }
