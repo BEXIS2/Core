@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { onMount, createEventDispatcher } from 'svelte';
 
-	import { FileUploader, Spinner, ErrorMessage } from '@bexis2/bexis2-core-ui';
+	import { FileUploader, Spinner, ErrorMessage, positionType } from '@bexis2/bexis2-core-ui';
 	import { getHookStart } from '$services/HookCaller';
 
 	import FileOverview from '$lib/components/fileupload/FileOverview.svelte';
@@ -25,7 +25,7 @@
 	let error = '';
 
 	$: $latestFileReaderDate, load();
-	$: $latestSubmitDate, reload();
+	$: $latestSubmitDate, load();
 
 	let model: FileUploadModel;
 	$: model;
@@ -70,7 +70,7 @@
 <div class="space-y-2">
 	{#await load()}
 		<div class="text-surface-800">
-			<Spinner label="loading File Uploader" />
+			<Spinner label="loading File Uploader" position="{positionType.start}" />
 		</div>
 	{:then result}
 		{#if model.lastModification}

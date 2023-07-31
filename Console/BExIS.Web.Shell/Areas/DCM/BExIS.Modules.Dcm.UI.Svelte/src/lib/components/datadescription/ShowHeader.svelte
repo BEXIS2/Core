@@ -8,14 +8,31 @@
 	import { removeStructure } from '$services/DataDescriptionCaller';
 	import { latestDataDescriptionDate } from '../../../routes/edit/stores';
 
+	import { modalStore } from '@skeletonlabs/skeleton';
+	import type { ModalSettings } from '@skeletonlabs/skeleton';
+
 	export let id;
 	export let structureId;
 	export let title;
 	export let description;
 	export let fileReaderExist;
+	export let hasData;
 	export let readableFiles: fileInfoType[] = [];
 
 	let loading = false;
+
+
+	const modal: ModalSettings = {
+		type: 'confirm',
+		title: 'Copy',
+		body: 'Are you sure you wish to remove the structure?',
+		// TRUE if confirm pressed, FALSE if cancel pressed
+		response: (r: boolean) => {
+			if (r === true) {
+					remove();
+			}
+		}
+	};
 
 	async function remove() {
 		loading = true;
@@ -46,8 +63,11 @@
 		{/if}
 	</div>
 	<div>
+
+		{#if hasData ===false}
 		<div class="text-end flex-auto">
-			<button class="btn bg-warning-500" on:click={remove}><Fa icon={faTrash} /></button>
+			<button class="btn bg-warning-500" on:click={()=>modalStore.trigger(modal)}><Fa icon={faTrash} /></button>
 		</div>
+		{/if}
 	</div>
 </div>

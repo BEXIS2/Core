@@ -25,11 +25,13 @@
 	}
 
 	function close() {
-		console.log('close selection');
+		console.log('close selection',$latestFileReaderDate);
 
 		latestFileReaderDate.set(Date.now());
 		drawerStore.close();
 		dispatch('close');
+		console.log('close selection after update',$latestFileReaderDate);
+
 	}
 </script>
 

@@ -5,6 +5,9 @@
 
 	import { hooksStatus } from '../../routes/edit/stores';
 
+	import Fa from 'svelte-fa'
+	import {faLock} from '@fortawesome/free-solid-svg-icons'
+
 	export let name;
 	export let displayName;
 	export let content = 9;
@@ -26,6 +29,9 @@
 				setStatus(h[name]);
 			}
 		});
+		error = [];
+		success = null;
+		warnings = [];
 	});
 
 	function errorHandler(e) {
@@ -64,13 +70,19 @@
 		else
 		{	
 			active = true; // every other status enable the hook
-
 		}
 
 		wait = status == 6?true:false // wait for somthing
 
+		if(wait) {resetAlerts()};
 	}
-
+ 
+	function resetAlerts()
+	{
+		error = [];
+		success = null;
+		warnings = [];
+	}
 
 </script>
 
@@ -80,11 +92,11 @@
 
 {#if visible && active}
 	
-	<div class="grid p-5 m-2 grid-cols-6 {color}">
-		<div class="flex gap-2 text-center">
+ <div class="flex p-5 m-2 gap-5">
+		<div class="flex-none w-48 ">
 			<h4 class="h5">{displayName}</h4>
 		</div>
-		<div class="col-span-5 grid gap-5">
+		<div class="grow space-y-2">
 			{#if error}
 				{#each error as item}
 					<Alert cssClass="variant-filled-error" message={item} />
@@ -98,13 +110,19 @@
 			{#if success}
 				<Alert cssClass="variant-filled-success" message={success} />
 			{/if}
+			<div class="h-full w-full">
 			 {#if !wait}
 					<slot name="view" {errorHandler} {successHandler} {warningHandler}>render view</slot>
 				{:else}
-				<div class="h-full w-full">
-					<Spinner label="please waiting"/>
-				</div>
+	
+					<div class="flex gap-2 text-surface-600 ">
+							<Fa icon={faLock} size="lg"/>
+							<span>this area is locked, because data is uploading</span>
+					</div>
+
 			{/if}
+		</div>
+
 		</div>
 	</div>
 

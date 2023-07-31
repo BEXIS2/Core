@@ -11,6 +11,7 @@
 	export let structureId;
 	export let fileReaderExist; // if filereader not exist, need to set
 	export let readableFiles; // if file reader not exist, select from this files to generate a suggestion
+	export let hasData;
 
 	export let variables: VariableModel[] = [];
 
@@ -27,7 +28,8 @@
 
 <div class="flex-col space-y-2">
 {#if readableFiles}
-	<Header {id} {structureId} {title} {description} {fileReaderExist} {readableFiles} />
+
+	<Header {id} {structureId} {title} {description} {fileReaderExist} {readableFiles} {hasData}/>
 {/if}
 
 {#if variables}

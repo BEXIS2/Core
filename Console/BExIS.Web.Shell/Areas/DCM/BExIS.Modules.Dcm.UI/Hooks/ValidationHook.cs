@@ -41,6 +41,8 @@ namespace BExIS.Modules.Dcm.UI.Hooks
                 // if everthing exist
                 Status = HookStatus.Open;
             }
+
+            checkAvailablity(id);
         }
 
         private void checkStatus(long id, string username)
@@ -70,6 +72,15 @@ namespace BExIS.Modules.Dcm.UI.Hooks
             // Update cache
 
             return false;
+        }
+
+        private void checkAvailablity(long id)
+        {
+            // check if subject is checked in
+            // only check if status is open
+            if (Status == HookStatus.Open)
+                using (var datasetManager = new DatasetManager())
+                    Status = datasetManager.IsDatasetCheckedIn(id) == true ? HookStatus.Open : HookStatus.Waiting;
         }
     }
 }
