@@ -55,7 +55,7 @@
 	<!--if structure not exist go to generate view otherwise show structure-->
 	{#if model && model.structureId > 0}
 		<!--show-->
-		<Show {...model} />
+		<Show {...model} on:error/>
 	{:else if model && model.allFilesReadable == true}
 		<!--generate-->
 		<!-- <Generate bind:files={model.readableFiles} {...model} on:selected={()=> latestDataDescriptionDate.set(Date.now())} isRestricted={model.isRestricted}></Generate> -->

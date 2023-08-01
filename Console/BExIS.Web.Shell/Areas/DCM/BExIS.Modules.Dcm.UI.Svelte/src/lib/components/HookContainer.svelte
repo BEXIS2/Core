@@ -36,7 +36,7 @@
 
 	function errorHandler(e) {
 		console.log('handle errors here');
-		console.log(e.detail.messages);
+		console.log(e.detail);
 		resetInformations();
 		error = e.detail.messages;
 	}
