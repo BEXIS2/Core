@@ -2,4 +2,6 @@
 	export let value: any[];
 </script>
 
-{value.name}
+{#if value != undefined && value.name != undefined}
+	{value.name}
+{/if}

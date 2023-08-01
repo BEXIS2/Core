@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import { slide, fade } from 'svelte/transition';
-	import { Modal, modalStore, Toast, toastStore } from '@skeletonlabs/skeleton';
+	import { Modal, modalStore, Toast } from '@skeletonlabs/skeleton';
 	import { Page, Table, ErrorMessage, helpStore } from '@bexis2/bexis2-core-ui';
 	import * as apiCalls from './services/apiCalls';
 	import Form from './components/form.svelte';
@@ -13,9 +13,13 @@
 	import Fa from 'svelte-fa';
 	import { faPlus, faXmark, faBan } from '@fortawesome/free-solid-svg-icons';
 
-	import type { ModalSettings, ToastSettings } from '@skeletonlabs/skeleton';
+	import type { ModalSettings } from '@skeletonlabs/skeleton';
 	import type { UnitListItem } from './models';
 	import type { helpItemType } from '@bexis2/bexis2-core-ui';
+
+	//notifications
+	import { notificationStore, notificationTypes } from '../components/notifications';
+	import Notification from '../components/Notification.svelte';
 
 	//help
 	import help from './help/help.json';
@@ -77,18 +81,15 @@
 	async function deleteUnit(id: number) {
 		let success: boolean = await apiCalls.DeleteUnit(id);
 		if (success != true) {
-			const toast: ToastSettings = {
-				classes: 'bg-error-300 border-solid border-2 border-error-500 shadow-md text-surface-900',
+			notificationStore.showNotification({
+				type: notificationTypes.error,
 				message: 'Can\'t delete Unit "' + unit.name + '" (' + unit.abbreviation + ').'
-			};
-			toastStore.trigger(toast);
+			});
 		} else {
-			const toast: ToastSettings = {
-				classes:
-					'bg-success-300 border-solid border-2 border-success-500 shadow-md text-surface-900',
+			notificationStore.showNotification({
+				type: notificationTypes.success,
 				message: 'Unit "' + unit.name + '" (' + unit.abbreviation + ') deleted.'
-			};
-			toastStore.trigger(toast);
+			});
 		}
 		reload();
 	}
@@ -192,4 +193,4 @@
 	</div>
 </Page>
 <Modal />
-<Toast position="t" />
+<Notification/>
