@@ -22,7 +22,6 @@
 	let showForm = false;
 	$: dimensions = ds;
 	$: tableStore.set(ds);
-	$: notificationStore;
 
 	onMount(async () => {});
 
@@ -167,4 +166,4 @@
 	</div>
 </Page>
 <Modal />
-<Toast position="t" buttonDismiss={notificationStore.getBtnStyle()} />
+<Toast position="t" />

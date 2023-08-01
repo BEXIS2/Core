@@ -9,7 +9,7 @@
 		{#each Array(rows) as _}
 			<tr class="w-full">
 				{#each Array(cols) as _}
-					<td><div class="placeholder animate-pulse h-9 w-30 m-3" /></td>
+					<td class="p-3"><div class="placeholder animate-pulse h-9 w-full" /></td>
 				{/each}
 			</tr>
 		{/each}

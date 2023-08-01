@@ -206,7 +206,7 @@ namespace BExIS.Dlm.Services.DataStructure
             using (IUnitOfWork uow = this.GetUnitOfWork())
             {
                 IRepository<Dimension> repo = uow.GetRepository<Dimension>();
-                //entity = repo.Reload(entity);
+                entity = repo.Reload(entity);
                 repo.Delete(entity);
                 uow.Commit();
             }
