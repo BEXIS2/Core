@@ -62,9 +62,9 @@
 			</div>
 		</HookContainer>
 
-		<HookContainer {...dataDescriptionHook}>
+		<HookContainer {...dataDescriptionHook} let:errorHandler >
 			<div slot="view">
-				<DataDescription {id} {version} hook={dataDescriptionHook} />
+				<DataDescription {id} {version} hook={dataDescriptionHook} 	on:error={(e) => errorHandler(e)}/>
 			</div>
 		</HookContainer>
 

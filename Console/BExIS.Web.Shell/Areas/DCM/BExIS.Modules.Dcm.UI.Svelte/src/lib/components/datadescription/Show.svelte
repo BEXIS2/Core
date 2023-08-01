@@ -24,12 +24,15 @@
 		data: variableStore,
 		height: 225
 	};
+
+
+
 </script>
 
 <div class="flex-col space-y-2">
 {#if readableFiles}
 
-	<Header {id} {structureId} {title} {description} {fileReaderExist} {readableFiles} {hasData}/>
+	<Header {id} {structureId} {title} {description} {fileReaderExist} {readableFiles} {hasData} on:error/>
 {/if}
 
 {#if variables}

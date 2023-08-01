@@ -191,7 +191,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 {
                     // if needed gerenate units??
                     // if needed gerenate Variabe Template??
-
+           
                     // get datatype
                     var dataType = datatypeManager.Repo.Get(variable.DataType.Id);
                     if (dataType == null) { }// create;
@@ -206,7 +206,10 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
                     // create var and add to structure
 
-                        // generate variables
+                    // get orderNo
+                    int orderNo = model.Variables.IndexOf(variable)+1;
+
+                    // generate variables
                     var result = variableManager.CreateVariable(
                         variable.Name,
                         dataType,
@@ -214,6 +217,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                         newStructure.Id,
                         variable.IsOptional,
                         variable.IsKey,
+                        orderNo,
                         0,
                         "",
                         "",

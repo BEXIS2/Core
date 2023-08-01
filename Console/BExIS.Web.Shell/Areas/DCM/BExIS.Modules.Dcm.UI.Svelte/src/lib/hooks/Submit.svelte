@@ -67,12 +67,6 @@ let canSubmit:boolean = false;
 		}
 	};
 
-	const goTo: ModalSettings = {
-		type: 'component',
-		component: 'goToComp'
-
-	};
-
  async function submitBt()
  {
 

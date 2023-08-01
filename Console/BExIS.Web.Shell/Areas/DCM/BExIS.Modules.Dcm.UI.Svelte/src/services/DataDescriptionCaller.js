@@ -38,5 +38,6 @@ export const removeStructure = async (id) => {
 		return response.data;
 	} catch (error) {
 		console.error(error);
+		throw error;
 	}
 };
