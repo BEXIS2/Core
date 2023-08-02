@@ -1,7 +1,7 @@
 import { Api } from '@bexis2/bexis2-core-ui';
 import type { EntityTemplateModel } from '../models/EntityTemplate';
 
-export const getEntityTemplate = async (id: bigint) => {
+export const getEntityTemplate = async (id: number) => {
 	try {
 		const response = await Api.get('/dcm/entitytemplates/Get?id=' + id);
 		return response.data;

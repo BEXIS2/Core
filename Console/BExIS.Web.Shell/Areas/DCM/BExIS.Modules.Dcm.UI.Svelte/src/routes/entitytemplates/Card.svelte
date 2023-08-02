@@ -19,22 +19,23 @@
 </script>
 
 <ContentContainer>
+
 	<header class="card-header">
-		<div class="grid grid-cols-2">
-			<div class="text-left">
+		<div class="flex">
+			<div class="grow text-left">
 				<h2 class="h2">{name}</h2>
-				<span class="text-sm">{metadataStructure.text}</span>
 			</div>
-			<div class="text-right">
+			<div class="grow-0 w-42 text-right">
 				{#if linkedSubjects.length > 0}
 					<span class="badge variant-filled-error">in use</span>
 				{/if}
+				<span class="badge variant-filled-surface">{metadataStructure.text}</span>
 				<span class="badge variant-filled-secondary">{entityType.text}</span>
 			</div>
 		</div>
 	</header>
 
-	<section class="p-4">
+	<div class="p-4 grow">
 		{#if description}<blockquote class="blockquote mb-5">{description}</blockquote>{/if}
 
 		<!--supported Filefomats-->
@@ -63,8 +64,9 @@
 				</ul>
 			</div>
 		{/if}
-	</section>
-	<footer class="card-footer">
-		<slot>no action setup</slot>
-	</footer>
+		</div>
+
+		<footer class="card-footer">
+			<slot>no action setup</slot>
+		</footer>
 </ContentContainer>
