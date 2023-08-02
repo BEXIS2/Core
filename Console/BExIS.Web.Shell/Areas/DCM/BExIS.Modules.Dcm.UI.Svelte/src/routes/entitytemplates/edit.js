@@ -13,7 +13,7 @@ const suite = create((data = {}, fieldName) => {
 		// if the for is in edit mode, find the selected one by id
 		const editedObj =
 			data.id > 0 ? get(entityTemplatesStore).find((e) => e.id == data.id) : { id: 0, name: '' };
-		console.log(editedObj.name);
+		//console.log(editedObj.name);
 		// get all names back, without the edited one
 		const listOfEntityTemplates = get(entityTemplatesStore).map((e) =>
 			e.name != editedObj.name ? e.name : ''

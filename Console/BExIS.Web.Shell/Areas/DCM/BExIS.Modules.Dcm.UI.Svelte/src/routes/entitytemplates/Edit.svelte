@@ -4,9 +4,9 @@
 	import { fade } from 'svelte/transition';
 
 	// ui Components
-	import Fa from 'svelte-fa/src/fa.svelte';
+	import Fa from 'svelte-fa';
 	import { DropdownKVP, MultiSelect, TextArea, TextInput, Spinner } from '@bexis2/bexis2-core-ui';
-	import { faSave, faTrash, faQuestion } from '@fortawesome/free-solid-svg-icons/index';
+	import { faSave, faXmark } from '@fortawesome/free-solid-svg-icons/index';
 	import { SlideToggle } from '@skeletonlabs/skeleton';
 	import ContentContainer from '../../lib/components/ContentContainer.svelte';
 	import { Modal, modalStore } from '@skeletonlabs/skeleton';
@@ -31,12 +31,11 @@
 	// help
 	import { editHelp } from './help';
 	import { helpStore } from '@bexis2/bexis2-core-ui';
-	import type { helpItemType, helpStoreType } from '@bexis2/bexis2-core-ui';
-
+	
 	//Set list of help items and clear selection
 	helpStore.setHelpItemList(editHelp);
 
-	export let id = 0;
+	export let id:number = 0;
 
 	export let hooks = [];
 	export let metadataStructures: listItemType[] = [];
@@ -44,7 +43,7 @@
 	let systemKeys;
 	export let entities = [];
 	export let groups = [];
-	export let filetypes = [];
+	export let filetypes:string[];
 
 	const dispatch = createEventDispatcher();
 
@@ -55,7 +54,11 @@
 
 	$: loaded = false;
 
+ let type=[];
+	$:type;
+
 	suite.reset();
+
 	onMount(async () => {
 		console.log('start entity template', id);
 		load();
@@ -65,8 +68,10 @@
 	async function load() {
 		entityTemplate = await getEntityTemplate(id);
 		console.log('load entity', entityTemplate);
+		console.log('load filetypes', filetypes);
 		updateSystemKeys('metadataStructure');
 
+	
 		// if id > 0 then run validation
 		if (id > 0) {
 			res = suite(entityTemplate);
@@ -232,16 +237,16 @@
 					<EntryContainer>
 						<div class="mt-7 space-y-5" on:mouseover={() => helpStore.show('hasDatastructure')}>
 							<SlideToggle
-								name="Use datastructures?"
+								name="Use data structures?"
 								bind:checked={entityTemplate.hasDatastructure}
 							>
-								Use datastructures?
+								Use data structures?
 							</SlideToggle>
 
 							{#if entityTemplate.hasDatastructure}
 								<MultiSelect
 									id="datastructures"
-									title="Limit the selection of datastrutcures"
+									title="Limit the selection of data strutcures"
 									source={dataStructures}
 									bind:target={entityTemplate.datastructureList}
 									itemId="key"
@@ -303,16 +308,17 @@
 						source={filetypes}
 						bind:target={entityTemplate.allowedFileTypes}
 						help={true}
+
 					/>
 				</EntryContainer>
 			</div>
 
-			<div class="py-5">
-				<button type="submit" class="btn variant-filled-surface" {disabled}
-					><Fa icon={faSave} /></button
+			<div class="py-5 grow text-right gap-2">
+				<button title="cancel" type="button" class="btn variant-filled-warning" on:click={onCancel}
+					><Fa icon={faXmark} /></button
 				>
-				<button type="button" class="btn variant-filled-warning" on:click={onCancel}
-					><Fa icon={faTrash} /></button
+				<button title="save" type="submit" class="btn variant-filled-primary" {disabled}
+					><Fa icon={faSave} /></button
 				>
 			</div>
 		</form>

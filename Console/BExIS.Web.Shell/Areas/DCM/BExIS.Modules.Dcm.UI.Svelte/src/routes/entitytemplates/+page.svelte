@@ -40,9 +40,6 @@
 
 	$: selectedEntityTemplate = 0;
 
-	let entitytemplates: EntityTemplateModel[];
-	$: entitytemplates;
-
 	async function load() {
 		hooks = await getHooks();
 		console.log('hooks', hooks);
@@ -52,8 +49,8 @@
 		groups = await getGroups();
 		filetypes = await getFileTypes();
 
-		entitytemplates = await getEntityTemplateList();
-		entityTemplatesStore.set(entitytemplates);
+		entityTemplatesStore.set(await getEntityTemplateList());
+
 	}
 
 	async function refresh(e: any) {
@@ -61,10 +58,14 @@
 		//console.log(newEnityTemplate);
 
 		//remove object from list & add to list again
-		entitytemplates = entitytemplates.filter((e) => {
+		$entityTemplatesStore = $entityTemplatesStore.filter((e) => {
 			return e.id !== newEnityTemplate.id;
 		});
-		entitytemplates = [...entitytemplates, newEnityTemplate];
+
+		$entityTemplatesStore = [...$entityTemplatesStore, newEnityTemplate];
+
+		// // update store
+		// entityTemplatesStore.set(entitytemplates);
 
 		// close the form to reset
 		isOpen = false;
@@ -87,7 +88,7 @@
 
 		//remove form from dom
 		isOpen = false;
-
+	
 		// reopen form with new object
 		setTimeout(async () => {
 			selectedEntityTemplate = e.detail;
@@ -119,13 +120,12 @@
 				/>
 			{:else}
 				<div class="w-screen">
-					<button type="button" on:click={create} class="btn variant-filled bg-secondary-400"
-						><Fa icon={faPlus} /></button
-					>
+					<button title="create" type="button" on:click={create} class="btn variant-filled-primary"
+						><Fa icon={faPlus} /></button>
 				</div>
 			{/if}
 
-			<Overview bind:entitytemplates on:edit={edit} />
+			<Overview bind:entitytemplates={$entityTemplatesStore} on:edit={edit} />
 		{:catch error}
 			<ErrorMessage {error} />
 		{/await}
