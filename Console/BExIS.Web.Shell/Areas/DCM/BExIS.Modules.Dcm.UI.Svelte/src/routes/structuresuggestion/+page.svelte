@@ -132,7 +132,6 @@
 					>
 				</div>
 			</div>
-
 			<StructureAttributes {model} bind:valid={areAttributesValid} />
 			<Suggestion
 				bind:variables={model.variables}
