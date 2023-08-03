@@ -1,4 +1,5 @@
-﻿using BExIS.Utils.Config;
+﻿using BExIS.App.Bootstrap.Attributes;
+using BExIS.Utils.Config;
 using BExIS.Utils.Route;
 using BExIS.Web.Shell.Models;
 using FluentBootstrap.Typography;
@@ -18,7 +19,7 @@ namespace BExIS.Web.Shell.Controllers.API
 {
     public class SettingsController : ApiController
     {
-        [HttpGet, GetRoute("api/settings")]
+        [HttpGet, GetRoute("api/settings"), BExISApiAuthorize]
         public async Task<HttpResponseMessage> GetSettings()
         {
             try
