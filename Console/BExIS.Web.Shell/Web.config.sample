@@ -42,7 +42,7 @@
 		<add key="WorkspacePath" value="{WORKSPACE}" />
 		<add key="DataPath" value="{DATA}" />
 		<add key="DefaultCulture" value="en-US" />
-		<add key="TenantId" value="bexis" />
+		<add key="TenantId" value="bexis2" />
 		<add key="ThemesPath" value="~/Themes/" />
 		<add key="DefaultThemeName" value="default" />
 		<add key="ActiveLayoutName" value="_Layout" />
