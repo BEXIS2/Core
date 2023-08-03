@@ -13,9 +13,10 @@
 
 	onMount(() => {
 		suite.reset();
-		if (model.title === '') {
-			model.title = model.id;
-		}
+
+		model.title = model.id;
+		res = suite(model, "title");
+		
 	});
 
 	//change event: if input change check also validation only on the field
@@ -46,14 +47,12 @@
 		<div>
 			<TextArea
 				id="description"
-				,
 				label="Description"
 				bind:value={model.description}
 				on:input={onChangeHandler}
 				valid={res.isValid('description')}
 				invalid={res.hasErrors('description')}
 				feedback={res.getErrors('description')}
-				required={true}
 			/>
 			{#if model.description != undefined}
 				<span class="text-right" class:text-error-500={model.description.length > 255}

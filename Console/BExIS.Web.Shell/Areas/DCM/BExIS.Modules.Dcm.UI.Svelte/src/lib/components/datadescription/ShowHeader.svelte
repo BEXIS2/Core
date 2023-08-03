@@ -68,8 +68,8 @@
 
 <div class="show-datadescription-header-container flex">
 	<div class="flex-col gap-3 grow">
-		<h2 class="h2">{title} ({structureId})</h2>
-		<p>{description}</p>
+		<h4 class="h4">{title} ({structureId})</h4>
+		{#if description} <p>{description}</p> {/if}
 		{#if loading}
 			<div>
 				<Spinner textCss="text-surface-500" />
@@ -80,7 +80,7 @@
 
 		{#if hasData ===false}
 		<div class="text-end flex-auto">
-			<button class="btn variant-filled-error" on:click={()=>modalStore.trigger(modal)}><Fa icon={faTrash} /></button>
+			<button title="remove" class="chip variant-filled-error" on:click={()=>modalStore.trigger(modal)}><Fa icon={faTrash} /></button>
 		</div>
 		{/if}
 	</div>
