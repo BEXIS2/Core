@@ -52,9 +52,6 @@
     <Reference Include="Ionic.Zip">
       <HintPath>..\..\..\Libraries\Ionic.Zip.dll</HintPath>
     </Reference>
-    <Reference Include="Lucifron.ReST.Library, Version=1.0.0.11, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\..\packages\Lucifron.ReST.Library.1.0.0.11\lib\net48\Lucifron.ReST.Library.dll</HintPath>
-    </Reference>
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="Microsoft.Win32.Primitives, Version=4.0.2.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>..\..\..\packages\Microsoft.Win32.Primitives.4.3.0\lib\net46\Microsoft.Win32.Primitives.dll</HintPath>
@@ -205,14 +202,14 @@
       <Private>True</Private>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Vaelastrasz.Library, Version=2.0.11.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\..\packages\Vaelastrasz.Library.2.0.11\lib\netstandard1.2\Vaelastrasz.Library.dll</HintPath>
+    <Reference Include="Vaelastrasz.Library, Version=2.0.13.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\..\packages\Vaelastrasz.Library.2.0.13\lib\netstandard1.2\Vaelastrasz.Library.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Api\ApiHelper.cs" />
     <Compile Include="BasicWebService.cs" />
-    <Compile Include="DataCiteDOI\DataCiteDoiHelper.cs" />
+    <Compile Include="DataCiteDOI\DataCiteDOIHelper.cs" />
     <Compile Include="Extensions\DataCiteDoiExtensions.cs" />
     <Compile Include="GBIF\GbifHelper.cs" />
     <Compile Include="Export\GBIFDataRepoConverter.cs" />
@@ -300,7 +297,6 @@
   <ItemGroup>
     <Content Include="DataCiteDOI\BexisDOIClient\BExISDOIClient.dll" />
     <Content Include="DataCiteDOI\BexisDOIClient\DOIModel.dll" />
-    <Content Include="LICENSE.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
