@@ -206,6 +206,12 @@ namespace BExIS.Security.Services.Utilities
             return $"User <b>\"{userName}\"</b>(Id: {userId}) has uploaded a file: <b>{filename}</b>.";
         }
 
+        public static string GetFilesUploaddMessage(long userId, string userName, string[] filenames)
+        {
+            var fnames = string.Join(",", filenames);
+            return $"User <b>\"{userName}\"</b>(Id: {userId}) has uploaded this files: <b>{ fnames }</b>.";
+        }
+
         public static string GetFileDownloadHeader(long datasetid, long version)
         {
             return $"File was downloaded (Id: {datasetid}, Version: {version})";
@@ -421,11 +427,13 @@ namespace BExIS.Security.Services.Utilities
             return $"Data upload started (Id: {datasetid})";
         }
 
-        public static string GetASyncStartUploadMessage(long datasetid, string title, int numberOfRows)
+        public static string GetASyncStartUploadMessage(long datasetid, string title, IEnumerable<string> files)
         {
+            string fNames = string.Join(",", files);
+
             StringBuilder stringBuilder = new StringBuilder();
             stringBuilder.AppendLine($"Your upload to the dataset <b>\"{title}\"</b> with id <b>(\"{datasetid}\")</b> has started. <br/>");
-            stringBuilder.AppendLine($"<b>\"{numberOfRows}\"</b> lines will be added/edited.");
+            stringBuilder.AppendLine($"<b>\"{fNames}\"</b> will be uploaded.");
 
             return stringBuilder.ToString();
         }

@@ -8,35 +8,68 @@
 	import { removeStructure } from '$services/DataDescriptionCaller';
 	import { latestDataDescriptionDate } from '../../../routes/edit/stores';
 
+	import { modalStore } from '@skeletonlabs/skeleton';
+	import type { ModalSettings } from '@skeletonlabs/skeleton';
+	import {createEventDispatcher} from 'svelte'
+
 	export let id;
 	export let structureId;
 	export let title;
 	export let description;
 	export let fileReaderExist;
+	export let hasData;
 	export let readableFiles: fileInfoType[] = [];
 
 	let loading = false;
+ const dispatch = createEventDispatcher();
+
+	const modal: ModalSettings = {
+		type: 'confirm',
+		title: 'Copy',
+		body: 'Are you sure you wish to remove the structure?',
+		// TRUE if confirm pressed, FALSE if cancel pressed
+		response: (r: boolean) => {
+			if (r === true) {
+					remove();
+			}
+		}
+	};
 
 	async function remove() {
 		loading = true;
 		console.log('remove');
-		const res = await removeStructure(id);
+		try{
 
-		console.log(res);
-		if (res == true) {
-			// update store
-			latestDataDescriptionDate.set(Date.now());
-		} else {
-			//show message
+			const res = await removeStructure(id);
+			console.log('remove', res);
+
+			if (res == true) {
+				// update store
+				latestDataDescriptionDate.set(Date.now());
+			} else {
+				let messages:string[] = []
+				messages.push("remove failed");
+				//show message
+				dispatch('error',{messages});
+			}
+
+		}
+		catch(err)
+		{
+			 let messages:string[] = []
+				messages.push("remove failed");
+				//show message
+				dispatch('error',{messages});
 		}
 
 		loading = false;
 	}
 </script>
 
-<div class="show-datadescription-header-container grid grid-cols-2">
-	<div class="flex gap-3">
+<div class="show-datadescription-header-container flex">
+	<div class="flex-col gap-3 grow">
 		<h2 class="h2">{title} ({structureId})</h2>
+		<p>{description}</p>
 		{#if loading}
 			<div>
 				<Spinner textCss="text-surface-500" />
@@ -44,9 +77,11 @@
 		{/if}
 	</div>
 	<div>
+
+		{#if hasData ===true}
 		<div class="text-end flex-auto">
-			<button class="btn bg-warning-500" on:click={remove}><Fa icon={faTrash} /></button>
+			<button class="btn bg-warning-500" on:click={()=>modalStore.trigger(modal)}><Fa icon={faTrash} /></button>
 		</div>
-		<p>{description}</p>
+		{/if}
 	</div>
 </div>

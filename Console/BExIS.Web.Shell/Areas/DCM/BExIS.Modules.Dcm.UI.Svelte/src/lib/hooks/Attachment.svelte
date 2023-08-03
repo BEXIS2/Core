@@ -1,12 +1,11 @@
 <script lang="ts">
-	import { FileUploader,ErrorMessage } from '@bexis2/bexis2-core-ui';
+	import { FileUploader, ErrorMessage } from '@bexis2/bexis2-core-ui';
 	import { getHookStart } from '$services/HookCaller';
 	import { onMount, createEventDispatcher } from 'svelte';
 	import FileOverview from '$lib/components/fileupload/FileOverview.svelte';
 	import TimeDuration from '$lib/components/utils/TimeDuration.svelte';
 	import { Spinner } from '@bexis2/bexis2-core-ui';
 	import type { FileUploadModel } from '$models/FileUpload';
-
 
 	export let id = 0;
 	export let version = 1;
@@ -39,7 +38,6 @@
 	}
 
 	async function reload(e) {
-
 		/* load data*/
 		load();
 	}

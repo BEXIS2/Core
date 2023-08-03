@@ -35,6 +35,13 @@ namespace BExIS.Modules.Dcm.UI.Models.Edit
         /// choose only from predefiend structres
         /// </summary>
         public bool IsRestricted { get; set; }
+
+        /// <summary>
+        /// choose only from predefiend structres
+        /// </summary>
+        public bool HasData { get; set; }
+
+
         public DataDescriptionModel()
         {
             Title = "";
@@ -46,6 +53,7 @@ namespace BExIS.Modules.Dcm.UI.Models.Edit
 
             IsStructured = false;
             IsRestricted = false;
+            HasData = false;
 
         }
 

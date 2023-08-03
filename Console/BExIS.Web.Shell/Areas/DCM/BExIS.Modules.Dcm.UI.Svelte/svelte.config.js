@@ -11,26 +11,23 @@ const config = {
 	preprocess: vitePreprocess(),
 	kit: {
 		adapter: adapter({
-			pages:'../BExIS.Modules.Dcm.UI/Scripts/svelte', // ../BExIS.Modules.Dcm.UI/Scripts/svelte
-			assets:'../BExIS.Modules.Dcm.UI/Scripts/svelte',// ../BExIS.Modules.Dcm.UI/Scripts/svelte
-			fallback:null,
-			precompress:true,
-			preprocess:true,
-			strict:false
+			pages: '../BExIS.Modules.Dcm.UI/Scripts/svelte', // ../BExIS.Modules.Dcm.UI/Scripts/svelte
+			assets: '../BExIS.Modules.Dcm.UI/Scripts/svelte', // ../BExIS.Modules.Dcm.UI/Scripts/svelte
+			fallback: null,
+			precompress: true,
+			preprocess: true,
+			strict: false
 		}),
-		paths:{
-			relative:true,
-			base: process.env.NODE_ENV ==='production' ? '/dcm':''// add module id here,
-
+		paths: {
+			relative: true,
+			base: process.env.NODE_ENV === 'production' ? '/dcm' : '' // add module id here,
 		},
 
 		alias: {
-				$models: './src/models',
-				$services: './src/services',
+			$models: './src/models',
+			$services: './src/services'
 		}
-
 	}
-	
 };
 
 export default config;

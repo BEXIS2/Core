@@ -9,7 +9,8 @@
         Open = 2, // Function behind the hook is ready for use
         Ready = 3, // Function behind the hook was successfully completed
         Exist = 4, // Data behind the hook exists
-        Inactive = 5 // hook not active for now
+        Inactive = 5, // hook not active for now
+        Waiting = 6 // because of other dependencies the hook needs to wait
     }
 
     public enum HookMode

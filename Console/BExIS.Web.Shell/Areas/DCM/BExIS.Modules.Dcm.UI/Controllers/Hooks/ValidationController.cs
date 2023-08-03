@@ -7,6 +7,7 @@ using BExIS.Dlm.Services.DataStructure;
 using BExIS.IO;
 using BExIS.IO.Transform.Input;
 using BExIS.IO.Transform.Validation.Exceptions;
+using BExIS.Modules.Dcm.UI.Helpers;
 using BExIS.Modules.Dcm.UI.Models.Edit;
 using BExIS.Security.Entities.Authorization;
 using BExIS.UI.Hooks;
@@ -210,18 +211,19 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                                 finally
                                 {
 
-                                    if (fileErrors.Any()) file.Errors = fileErrors;
-                                    
-                                    if(file.Errors.Any())
-                                    { 
-                                        FileValidationResult result = new FileValidationResult();
-                                        result.File = file.Name;
-                                        file.Errors.ForEach(e => result.Errors.Add(e.ToHtmlString()));
-                                        result.SortedErrors = SortFileErrors(file.Errors);
-                                        model.FileResults.Add(result);
+                                    if (fileErrors!=null) file.Errors = fileErrors;
 
+                                    FileValidationResult result = new FileValidationResult();
+                                    result.File = file.Name;
+
+                                    if (file.Errors.Any())
+                                    { 
+                                        file.Errors.ForEach(e => result.Errors.Add(e.ToHtmlString()));
+                                        result.SortedErrors = EditHelper.SortFileErrors(file.Errors);
                                         errors.AddRange(file.Errors); // set to global error list
                                     }
+
+                                    model.FileResults.Add(result);
                                 }
                                 
 
@@ -286,65 +288,6 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             return Json(model, JsonRequestBehavior.AllowGet);
         }
 
-        private List<SortedError> SortFileErrors(List<Error> errors)
-        {
-            if (errors.Count > 0)
-            {
-                // split up the error messages for a btter overview-- >
-                // set all value error with the same var name, datatypoe and issue-- >
-                // create a dictionary for error messages
-
-                // variable issues
-                var varNames = errors.Where(e => e.GetType().Equals(ErrorType.Value)).Select(e => e.getName()).Distinct();
-                var varIssues = errors.Where(e => e.GetType().Equals(ErrorType.Value)).Select(e => e.GetMessage()).Distinct();
-
-                List<SortedError> sortedErrors = new List<SortedError>();
-
-                foreach (string vn in varNames)
-                {
-                    foreach (string i in varIssues)
-                    {
-                        int c = errors.Where(e => e.getName().Equals(vn) && e.GetMessage().Equals(i)).Count();
-
-
-                        if (c > 0)
-                        {
-                            var errs = errors.Where(e => e.getName().Equals(vn) && e.GetMessage().Equals(i));
-                            List<string> errorMessages = new List<string>();
-                            errs.ToList().ForEach(e => errorMessages.Add(e.ToHtmlString()));
-                            sortedErrors.Add(new SortedError(vn, c, i, errs.FirstOrDefault().GetType(), errorMessages));
-                        }
-                    }
-                }
-
-                // others
-                var othersNames = errors.Where(e => e.GetType()!= ErrorType.Value).Select(e => e.getName()).Distinct();
-                var othersIssues = errors.Where(e => e.GetType()!=ErrorType.Value).Select(e => e.GetMessage()).Distinct();
-
-                foreach (string vn in othersNames)
-                {
-                    foreach (string i in othersIssues)
-                    {
-                        int c = errors.Where(e => e.getName().Equals(vn) && e.GetMessage().Equals(i)).Count();
-
-                        if (c > 0)
-                        {
-                            var errs = errors.Where(e => e.getName().Equals(vn) && e.GetMessage().Equals(i));
-                            List<string> errorMessages = new List<string>();
-                            errs.ToList().ForEach(e => errorMessages.Add(e.ToHtmlString()));
-                            sortedErrors.Add(new SortedError(vn, c, i, errs.FirstOrDefault().GetType(), errorMessages));
-                        }
-                    }
-                }
-
-
-                if (sortedErrors.Count > 0)
-                {
-                    return sortedErrors;
-                }
-            }
-
-            return new List<SortedError>();
-        }
+       
     }
 }

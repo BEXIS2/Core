@@ -21,6 +21,8 @@
 		DimensionListItem,
 		UnitValidationResult
 	} from '../models';
+	//notifications
+	import { notificationStore, notificationTypes } from '../../components/notifications';
 
 	// event
 	import { createEventDispatcher } from 'svelte';
@@ -53,11 +55,7 @@
 	$: dimensions = ds.map(({ id, name }) => ({ id: id, text: name }));
 	$: unit.dimension = listItem === undefined ? undefined : ds.find((d) => d.id === listItem?.id);
 
-	onMount(async () => {
-		if (unit.id == 0) {
-			suite.reset();
-		}
-	});
+	onMount(async () => {});
 
 	async function load() {
 		dt = await apiCalls.GetDataTypes();
@@ -79,9 +77,9 @@
 
 	async function submit() {
 		let result: UnitValidationResult = await apiCalls.EditUnit(unit);
-		console.log('UnitValidationResult', result);
+		let message: string;
 		if (result.validationResult.isValid != true) {
-			let message: string = "Can't save Unit";
+			message = "Can't save Unit";
 			if (result.unitListItem.name != '' && result.unitListItem.abbreviation != '') {
 				message +=
 					' "' + result.unitListItem.name + '" (' + result.unitListItem.abbreviation + ').';
@@ -94,25 +92,14 @@
 					message += '<li>' + validationItem.message + '</li>';
 				});
 			}
-			const toast: ToastSettings = {
-				classes: 'bg-error-300 border-solid border-2 border-error-500 shadow-md text-surface-900',
-				message: message
-			};
-			toastStore.trigger(toast);
+			notificationStore.showNotification({ type: notificationTypes.error, message: message });
 		} else {
-			const toast: ToastSettings = {
-				classes:
-					'bg-success-300 border-solid border-2 border-success-500 shadow-md text-surface-900',
-				message:
-					'Unit "' +
-					result.unitListItem.name +
-					'" (' +
-					result.unitListItem.abbreviation +
-					') saved.'
-			};
-			toastStore.trigger(toast);
+			message =
+				'Unit "' + result.unitListItem.name + '" (' + result.unitListItem.abbreviation + ') saved.';
+			notificationStore.showNotification({ type: notificationTypes.success, message: message });
+			suite.reset();
 			dispatch('save');
-		}		
+		}
 	}
 
 	function cancel() {
@@ -128,23 +115,23 @@
 <div class="card p-5 shadow-md my-3">
 	{#await load()}
 		<div class="grid grid-cols-2 gap-5">
-			<div class="pb-10">
+			<div class="pb-3">
 				<div class="h-9 placeholder animate-pulse" />
 			</div>
-			<div class="pb-10">
+			<div class="pb-3">
 				<div class="h-9 placeholder animate-pulse" />
 			</div>
-			<div class="pb-10 col-span-2">
+			<div class="pb-3 col-span-2">
 				<div class="h-14 placeholder animate-pulse" />
 			</div>
-			<div class="pb-10">
+			<div class="pb-3">
 				<div class="h-9 placeholder animate-pulse" />
 			</div>
-			<div class="pb-10">
+			<div class="pb-3">
 				<div class="h-9 placeholder animate-pulse" />
 			</div>
 
-			<div class="pb-10 col-span-2">
+			<div class="pb-3 col-span-2">
 				<div class="h-9 placeholder animate-pulse" />
 			</div>
 
@@ -156,7 +143,7 @@
 	{:then}
 		<form on:submit|preventDefault={submit}>
 			<div class="grid grid-cols-2 gap-5">
-				<div class="pb-10" title="Name">
+				<div class="pb-3" title="Name">
 					<TextInput
 						id="name"
 						label="Name"
@@ -170,7 +157,7 @@
 					/>
 				</div>
 				<!-- svelte-ignore a11y-mouse-events-have-key-events -->
-				<div class="pb-10" title="Abbreviation">
+				<div class="pb-3" title="Abbreviation">
 					<TextInput
 						id="abbreviation"
 						label="Abbreviation"
@@ -184,7 +171,7 @@
 					/>
 				</div>
 				<!-- svelte-ignore a11y-mouse-events-have-key-events -->
-				<div class="pb-10 col-span-2" title="Description">
+				<div class="pb-3 col-span-2" title="Description">
 					<TextArea
 						id="description"
 						label="Description"
@@ -198,7 +185,7 @@
 					/>
 				</div>
 
-				<div class="pb-10" title="Data Types">
+				<div class="pb-3" title="Data Types">
 					<MultiSelect
 						title="Data Types"
 						id="dataTypes"
@@ -257,7 +244,7 @@
 						</div>
 					{/if}
 				</div>
-				<div class="pb-10" title="Dimension">
+				<div class="pb-3" title="Dimension">
 					<DropdownKVP
 						id="dimension"
 						title="Dimension"
@@ -272,7 +259,7 @@
 							<table class="table table-compact bg-tertiary-200">
 								<tr class="bg-primary-300">
 									<th class="text-left">Name</th>
-									<th class="text-left">Dpecification</th>
+									<th class="text-left">Specification</th>
 									<th class="text-left">Description</th>
 								</tr>
 								<tr>
@@ -287,7 +274,7 @@
 
 				<!-- svelte-ignore a11y-mouse-events-have-key-events -->
 				<div
-					class="pb-10"
+					class="pb-3"
 					title="Measurement System"
 					on:mouseover={() => {
 						helpStore.show('measurementSystem');

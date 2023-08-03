@@ -1,99 +1,113 @@
 <script lang="ts">
-import { onMount, createEventDispatcher }from 'svelte'
+	import { onMount, createEventDispatcher } from 'svelte';
 
-import {FileUploader, Spinner, ErrorMessage} from '@bexis2/bexis2-core-ui';
-import {getHookStart}  from '$services/HookCaller'
+	import { FileUploader, Spinner, ErrorMessage, positionType } from '@bexis2/bexis2-core-ui';
+	import { getHookStart } from '$services/HookCaller';
 
-import FileOverview from '$lib/components/fileupload/FileOverview.svelte'
-import TimeDuration from '$lib/components/utils/TimeDuration.svelte'
-import FileReaderInformation from '$lib/components/fileupload/FileReaderInformation.svelte'
+	import FileOverview from '$lib/components/fileupload/FileOverview.svelte';
+	import TimeDuration from '$lib/components/utils/TimeDuration.svelte';
+	import FileReaderInformation from '$lib/components/fileupload/FileReaderInformation.svelte';
 
+	import { latestFileUploadDate, latestFileReaderDate,latestSubmitDate } from '../../routes/edit/stores';
 
-import { latestFileUploadDate, latestFileReaderDate } from '../../routes/edit/stores';
+	import type { FileUploadModel } from '$models/FileUpload';
 
-import type { FileUploadModel } from '$models/FileUpload'
+	export let id = 0;
+	export let version = 1;
+	export let hook;
 
-export let id=0;
-export let version=1;
-export let hook;
+	// action for fileupload
+	let start = '';
+	let save = '/dcm/fileupload/saveFileDescription';
+	let remove = '/dcm/fileupload/removefile';
+	let submit = '/dcm/fileupload/upload';
+	let context = 'fileupload';
+	let error = '';
 
+	$: $latestFileReaderDate, load();
+	$: $latestSubmitDate, load();
 
-// action for fileupload
-let start="";
-let save='/dcm/fileupload/saveFileDescription';
-let remove='/dcm/fileupload/removefile';
-let submit = "/dcm/fileupload/upload";
-let context = "fileupload";
-let error = "";
+	let model: FileUploadModel;
+	$: model;
 
-$:$latestFileReaderDate, load()
+	onMount(async () => {
+		load();
+	});
 
-let model:FileUploadModel;
-$:model;
+	$: loading = false;
 
-onMount(async () => {
-  load();
-})
+	const dispatch = createEventDispatcher();
 
-$:loading = false;
+	async function load() {
+		model = await getHookStart(hook.start, id, version);
+		start = hook.start;
 
-const dispatch = createEventDispatcher();
+		loading = false;
+	}
 
-async function load()
-{
-  model = await getHookStart(hook.start,id,version);
-  start = hook.start;
+	async function reload() {
+		/*update store*/
+		latestFileUploadDate.set(Date.now());
+		console.log('reload fileupload', $latestFileUploadDate);
 
-  loading = false;
+		/* load data*/
+		load();
+	}
 
-}
+	function success(e) {
+		console.log('success');
+		reload();
+		dispatch('success', { text: e.detail.text });
+	}
 
-async function reload() 
-{
-  /*update store*/
-  latestFileUploadDate.set(Date.now());
-
-  /* load data*/
-  load();
-}
-
-function success(e)
-{
-  console.log("success");
-  reload();
-  dispatch("success",{text:e.detail.text})
-}
-
-function warning(e)
-{
-  console.log("warning");
-  reload();
-  dispatch("warning",{text:e.detail.text})
-}
-
-
+	function warning(e) {
+		console.log('warning');
+		reload();
+		dispatch('warning', { text: e.detail.text });
+	}
 </script>
+
 <div class="space-y-2">
-{#await load()}
-  <div class="text-surface-800">
-    <Spinner label="loading File Uploader" />
-  </div>
+	{#await load()}
+		<div class="text-surface-800">
+			<Spinner label="loading File Uploader" position="{positionType.start}" />
+		</div>
+	{:then result}
+		{#if model.lastModification}
+			<TimeDuration milliseconds={new Date(model.lastModification)} />
+		{/if}
 
-{:then result}
+		<FileUploader
+			{id}
+			{version}
+			{context}
+			data={model.fileUploader}
+			{start}
+			{submit}
+			on:submited={reload}
+			on:submit={() => (loading = true)}
+			on:error
+			on:success
+		/>
 
-{#if model.lastModification}
-  <TimeDuration milliseconds={new Date(model.lastModification)}/>
-{/if}
+		{#if model.fileUploader.existingFiles}
+			<FileOverview
+				{id}
+				files={model.fileUploader.existingFiles}
+				descriptionType={model.fileUploader.descriptionType}
+				{save}
+				{remove}
+				on:success={success}
+				on:warning={warning}
+			/>
+		{/if}
 
-  <FileUploader {id} {version} {context} data={model.fileUploader} {start} {submit} on:submited={reload} on:submit={()=>loading=true } on:error on:success />
-
-{#if model.fileUploader.existingFiles}
-  <FileOverview {id} files={model.fileUploader.existingFiles} descriptionType={model.fileUploader.descriptionType} {save} {remove} on:success={success} on:warning={warning}/>
-{/if}
-
-<FileReaderInformation {id} bind:readableFiles={model.fileUploader.existingFiles} bind:asciiFileReaderInfo = {model.asciiFileReaderInfo}/>
-
-{:catch error} 
-  <ErrorMessage {error}/>
-{/await}
+		<FileReaderInformation
+			{id}
+			bind:readableFiles={model.fileUploader.existingFiles}
+			bind:asciiFileReaderInfo={model.asciiFileReaderInfo}
+		/>
+	{:catch error}
+		<ErrorMessage {error} />
+	{/await}
 </div>
