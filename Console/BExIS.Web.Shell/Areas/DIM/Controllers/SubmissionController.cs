@@ -577,7 +577,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
                         if (repository != null && repository.Name.ToLower() == "datacite")
                         {
                             string datasetUrl = new Uri(new Uri(Request.Url.GetLeftPart(UriPartial.Authority)), Url.Content("~/ddm/Data/ShowData/" + datasetVersion.Dataset.Id).ToString()).ToString();
-                            new DataCiteDoiHelper().sendRequest(datasetVersion, datasetUrl);
+                            new DataCiteDOIHelper().sendRequest(datasetVersion, datasetUrl);
 
                             string title = xmlDatasetHelper.GetInformationFromVersion(datasetVersion.Id, NameAttributeValues.title);
                             publicationManager.CreatePublication(datasetVersion, broker, repository, title, 0, zipfilepath, datasetUrl, "under review");
@@ -604,7 +604,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
                         if (repository != null && repository.Name.ToLower() == "datacite")
                         {
                             string datasetUrl = new Uri(new Uri(Request.Url.GetLeftPart(UriPartial.Authority)), Url.Content("~/ddm/Data/ShowData/" + datasetVersion.Dataset.Id).ToString()).ToString();
-                            new DataCiteDoiHelper().sendRequest(datasetVersion, datasetUrl);
+                            new DataCiteDOIHelper().sendRequest(datasetVersion, datasetUrl);
 
                             string title = xmlDatasetHelper.GetInformationFromVersion(datasetVersion.Id, NameAttributeValues.title);
                             publicationManager.CreatePublication(datasetVersion, broker, repository, title, 0, zipfilepath, datasetUrl, "under review");
