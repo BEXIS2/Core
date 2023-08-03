@@ -62,7 +62,7 @@
 					<span class="variant-filled-surface text-{style}-500"><Fa icon={faCheck} /></span>
 				{/if}
 			</svelte:fragment>
-			<svelte:fragment slot="lead">File Reader</svelte:fragment>
+			<svelte:fragment slot="lead">File Reader Information</svelte:fragment>
 			<svelte:fragment slot="content">
 				<FileReader {...asciiFileReaderInfo} />
 
@@ -75,7 +75,7 @@
 					isMulti={false}
 					complexTarget={true}
 					{loading}
-					placeholder="please select a file to set/update the reader information"
+					placeholder="please select a file to set/update the file reader information"
 				/>
 
 				{#if model}

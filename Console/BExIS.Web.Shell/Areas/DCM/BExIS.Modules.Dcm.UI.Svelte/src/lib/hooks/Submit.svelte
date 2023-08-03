@@ -62,7 +62,6 @@ let canSubmit:boolean = false;
 		response: (r: boolean) => {
 			if (r === true) {
 				submitBt()
-
 			}
 		}
 	};
