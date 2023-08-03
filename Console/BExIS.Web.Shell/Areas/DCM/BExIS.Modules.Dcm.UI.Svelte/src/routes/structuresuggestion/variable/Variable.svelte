@@ -22,6 +22,8 @@
 	export let variable: VariableModel;
 	$: variable;
 	export let data: string[];
+	$:data;
+	
 	export let index: number;
 
 	export let datatypes: listItemType[];
@@ -92,8 +94,10 @@
 		// reset & reload validation
 		suite.reset();
 
+		
+
 		setTimeout(async () => {
-			updateDisplayPattern(variable.dataType);
+eDisplayPattern(variable.dataType);
 			res = suite(variable);
 			setValidationState(res);
 		}, 10);
@@ -143,6 +147,25 @@
 		// dispatch this event to the parent to check the save button
 		dispatch('var-change');
 	}
+
+
+
+	function cutData(d)
+	{
+		console.log("CUT",d);
+		
+			for (let index = 0; index < d.length; index++) {
+				let v = d[index];
+
+				if(v.length>10)
+				{
+					 d[index] = v.slice(0, 10)+"...";
+				}
+			}
+			console.log("CUT",d);
+			return d;
+	}
+
 </script>
 
 {#if loaded && variable}
@@ -172,7 +195,7 @@
 				</div>
 				<div slot="description">
 					{#if data}
-						<b>Data preview: </b> {data.join(', ')}
+						<b>Data preview: </b> {cutData(data).join(', ')}
 					{/if}
 				</div>
 			</Container>

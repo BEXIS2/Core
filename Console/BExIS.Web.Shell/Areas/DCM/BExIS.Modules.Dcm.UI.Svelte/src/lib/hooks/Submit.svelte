@@ -56,13 +56,12 @@ let canSubmit:boolean = false;
 
 	const confirm: ModalSettings = {
 		type: 'confirm',
-		title: 'Copy',
+		title: 'Submit',
 		body: 'Are you sure you wish to the data?',
 		// TRUE if confirm pressed, FALSE if cancel pressed
 		response: (r: boolean) => {
 			if (r === true) {
 				submitBt()
-
 			}
 		}
 	};

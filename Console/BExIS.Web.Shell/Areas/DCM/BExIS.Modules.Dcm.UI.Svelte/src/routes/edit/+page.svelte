@@ -28,6 +28,8 @@
 
 	let title = '';
 
+	$:title;
+
 	let model: EditModel = {
 		id: 0,
 		versionId: 0,
@@ -36,6 +38,7 @@
 		hooks: [],
 		views: []
 	};
+
 
 	let hookStatusList: { [key: string]: number };
 	$: hookStatusList;
@@ -227,12 +230,15 @@ function sleep(milliseconds) {
 	let visible = false;
 </script>
 
-<Page title="Edit dataset: {model.title}" contentLayoutType={pageContentLayoutType.full}>
+
+<Page title="Edit: ({id} | {title})" contentLayoutType={pageContentLayoutType.full}>
 	{#await load()}
+
 		<div class="w-full h-full text-surface-600">
 			<Spinner label="loading edit page" />
 		</div>
 	{:then a}
+
 		{#if model && hookStatusList}
 			<!--if the model == true, load page-->
 			<!-- Header -->
@@ -250,9 +256,11 @@ function sleep(milliseconds) {
 				<Spinner textCss="text-surface-800" label="loading edit page" position="center" />
 			</div>
 		{/if}
+
 	{:catch error}
-		<ErrorMessage {error} />
+	<ErrorMessage {error} />
 	{/await}
+
 </Page>
 
 <Modal/>

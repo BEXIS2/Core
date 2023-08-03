@@ -91,7 +91,7 @@
 </script>
 
 {#if list && structures}
-	<div class="grid grid-cols-2 py-3">
+	<div class="flex">
 		<MultiSelect
 			id="SelectDataStructure"
 			title="Select a Datastructure or generate from File"
