@@ -78,9 +78,9 @@
 	</div>
 	<div>
 
-		{#if hasData ===true}
+		{#if hasData ===false}
 		<div class="text-end flex-auto">
-			<button class="btn bg-warning-500" on:click={()=>modalStore.trigger(modal)}><Fa icon={faTrash} /></button>
+			<button class="btn variant-filled-error" on:click={()=>modalStore.trigger(modal)}><Fa icon={faTrash} /></button>
 		</div>
 		{/if}
 	</div>

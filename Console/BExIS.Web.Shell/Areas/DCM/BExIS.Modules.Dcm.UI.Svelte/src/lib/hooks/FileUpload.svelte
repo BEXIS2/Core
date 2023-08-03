@@ -5,7 +5,7 @@
 	import { getHookStart } from '$services/HookCaller';
 
 	import FileOverview from '$lib/components/fileupload/FileOverview.svelte';
-	import TimeDuration from '$lib/components/utils/TimeDuration.svelte';
+
 	import FileReaderInformation from '$lib/components/fileupload/FileReaderInformation.svelte';
 
 	import { latestFileUploadDate, latestFileReaderDate,latestSubmitDate } from '../../routes/edit/stores';
@@ -43,6 +43,8 @@
 		start = hook.start;
 
 		loading = false;
+
+		dispatch('dateChanged', { lastModification: model.lastModification });
 	}
 
 	async function reload() {
@@ -65,6 +67,7 @@
 		reload();
 		dispatch('warning', { text: e.detail.text });
 	}
+
 </script>
 
 <div class="space-y-2">
@@ -73,9 +76,6 @@
 			<Spinner label="loading File Uploader" position="{positionType.start}" />
 		</div>
 	{:then result}
-		{#if model.lastModification}
-			<TimeDuration milliseconds={new Date(model.lastModification)} />
-		{/if}
 
 		<FileUploader
 			{id}

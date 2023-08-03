@@ -10,7 +10,7 @@
 	import { store, load } from '$services/StructureSuggestionCaller';
 
 	import Fa from 'svelte-fa';
-	import { faSave, faXmark, faChevronRight } from '@fortawesome/free-solid-svg-icons';
+	import { faSave, faXmark, faChevronRight, faArrowRotateLeft } from '@fortawesome/free-solid-svg-icons';
 
 	//types
 	import type { StructureSuggestionModel, Marker } from '$models/StructureSuggestion';
@@ -431,7 +431,7 @@
 				>
 
 				<button title="reset selection" class="btn variant-filled-warning text-lg" type="button" on:click={resetSelection}
-					><Fa icon={faXmark} /></button
+					><Fa icon={faArrowRotateLeft} /></button
 				>
 
 	  </div>

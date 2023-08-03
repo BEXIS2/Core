@@ -52,15 +52,15 @@
 </script>
 
 {#if type}
-	<div class="grid grid-cols-10">
-		<div class="self-center"><FileInfo {type} size="x-large" /></div>
+	<div class="flex gap-5">
+		<div class="self-center flex-none"><FileInfo {type} size="x-large" /></div>
 
-		<div class="{fileNameSpan} self-center">
+		<div class="{fileNameSpan} self-center grow">
 			{file}
 		</div>
 
 		{#if withDescription}
-			<div class="{fileNameSpan} self-center">
+			<div class="{fileNameSpan} self-center grow">
 				<TextInput bind:value={description} on:change={(e) => handleSaveFileDescription()} />
 			</div>
 		{:else}

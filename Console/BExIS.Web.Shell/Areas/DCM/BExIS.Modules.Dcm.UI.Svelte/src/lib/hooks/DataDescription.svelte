@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { getHookStart } from '$services/HookCaller';
 	import { latestFileUploadDate, latestDataDescriptionDate } from '../../routes/edit/stores';
-	import { onMount } from 'svelte';
+	import { onMount, createEventDispatcher } from 'svelte';
 
 	import TimeDuration from '$lib/components/utils/TimeDuration.svelte';
 	import Generate from '$lib/components/datadescription/Generate.svelte';
@@ -21,13 +21,16 @@
 	$: $latestFileUploadDate, reloadByFileUpdate();
 	$: $latestDataDescriptionDate, reload();
 
+	const dispatch = createEventDispatcher();
+
 	onMount(async () => {
 		load();
 	});
 
 	async function load() {
 		model = await getHookStart(hook.start, id, version);
-  console.log("DataDescriptionModel",model);
+
+  dispatch('dateChanged', { lastModification: model.lastModification });
 		
 	}
 
@@ -48,9 +51,6 @@
 		<Spinner label="loading data description" position="{positionType.start}" />
 	</div>
 {:then a}
-	{#if model && model.lastModification}
-		<TimeDuration milliseconds={Number(new Date(model.lastModification))} />
-	{/if}
 
 	<!--if structure not exist go to generate view otherwise show structure-->
 	{#if model && model.structureId > 0}
