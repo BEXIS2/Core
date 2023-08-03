@@ -39,7 +39,6 @@
 		model = null;
 		model = await getHookStart(start, id, version);
 
-		console.log('validation', model);
 	}
 </script>
 

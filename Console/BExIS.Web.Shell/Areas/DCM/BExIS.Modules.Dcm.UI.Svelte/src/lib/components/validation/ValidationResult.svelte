@@ -66,7 +66,7 @@
 	<div class="flex gap-1">
 		<h4 class="h4">{file}</h4>
 		{#if errorCount == 0}
-			<span class="badge-icon variant-filled-surface text-success-500"><Fa icon={faCheck} /></span>
+			<span class="text-success-500 px-1"><Fa icon={faCheck} /></span>
 		{/if}
 	</div>
 	<div class="flex space-x-2">

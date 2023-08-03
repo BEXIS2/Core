@@ -20,7 +20,7 @@
 </script>
 
 <div class="flex gap-5">
-	<b>Seperator / Decimal / Text Marker :</b>
+	<b>Separator | Decimal | Text Marker :</b>
 
 	<Item value={seperator ? String.fromCharCode(seperator) : null} />
 	/
@@ -28,7 +28,7 @@
 	/
 	<Item value={textMarker ? String.fromCharCode(textMarker) : null} />
 
-	<b>Variables / Data / Unit / Description : </b>
+	<b>Variables | Data | Unit | Description : </b>
 	<Item value={variables} />
 	/
 	<Item value={data?.toString()} />

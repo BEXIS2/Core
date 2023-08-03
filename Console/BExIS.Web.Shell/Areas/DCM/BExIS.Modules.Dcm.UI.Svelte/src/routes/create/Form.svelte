@@ -1,12 +1,12 @@
 <script>
 	import Fa from 'svelte-fa/src/index';
-	import { faTrashAlt, faSave } from '@fortawesome/free-solid-svg-icons';
+	import { faXmark, faAdd } from '@fortawesome/free-solid-svg-icons';
 
 	import { onMount } from 'svelte';
 	import { getCreate, create } from './services';
 
 	// ui components
-	import { Spinner } from '@bexis2/bexis2-core-ui';
+	import { Spinner, positionType } from '@bexis2/bexis2-core-ui';
 	import InputEntry from './InputEntry.svelte';
 	import ContentContainer from '$lib/components/ContentContainer.svelte';
 
@@ -29,18 +29,20 @@
 
 	onMount(async () => {
 		console.log('form');
-
 		const res = await getCreate(id);
 		console.log('res', res);
 		if (res != false) model = res;
 
 		filterInputs();
 		suite.reset();
+
+		console.log();
+		disabled = model.inputFields.length == 0 ? false : true;
 	});
 
 	async function handleSubmit() {
 		// check if form is valid
-		if (result.isValid()) {
+		if (result.isValid() || metadataFields.length === 0) {
 			onSaving = true;
 			console.log('before submit', model);
 			const res = await create(model);
@@ -88,7 +90,7 @@
 	{#if model}
 		<ContentContainer>
 			<div class="pb-10">
-				<h2 class="h2">Create a {model.name}</h2>
+				<h2 class="h2">New {model.name}</h2>
 				<p class="pt-5">{model.description}</p>
 			</div>
 
@@ -150,16 +152,22 @@
 					</ul>
 				{/if}
 
-				{#if onSaving}
-					<Spinner />
-				{/if}
+				<div class=" flex gap-1 pt-5 text-right">
 
-				<div class="pt-5">
-					<button type="submit" class="btn variant-filled-surface" {disabled}
-						><Fa icon={faSave} /></button
+					<div class="grow text-xs">
+						{#if onSaving}
+							<Spinner  position={positionType.end} />
+						{/if}
+				 </div>
+					<button
+						title="cancel"
+						type="button"
+						class="btn variant-filled-warning"
+						on:click={onCancel}><Fa icon={faXmark} /></button
 					>
-					<button type="button" class="btn variant-filled-warning" on:click={onCancel}
-						><Fa icon={faTrashAlt} /></button
+
+					<button title="create" type="submit" class="btn variant-filled-primary" {disabled}
+						><Fa icon={faAdd} /></button
 					>
 				</div>
 			</form>

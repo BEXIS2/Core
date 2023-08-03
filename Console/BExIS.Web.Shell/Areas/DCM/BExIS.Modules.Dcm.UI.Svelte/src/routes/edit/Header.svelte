@@ -9,14 +9,14 @@
 </script>
 
 <!-- Header -->
-<div class="flex p-5 m-2 gap-5">
+ <div class="flex px-5 m-2 gap-5">
 	<div class="flex-none w-48 ">
-		<h4 class="h4">Title</h4>
+			<!-- <h4 class="h4">Id | Title</h4> -->
 	</div>
 	<div class="w-64">
-		<TextInput bind:value={title} />
+		<!-- <b class="b">{id} | {title}</b> -->
 	</div>
-	<div class="grow text-right">
+	<div class="grow text-right bottom-10">
 		<button
 			class="btn variant-ringed-secondary"
 			on:click={() => window.open('/ddm/data/Showdata?id=' + id)}

@@ -22,9 +22,9 @@
 	}
 
 	/* format time in the following format
-mm:ss
-zero padded minutes, zero padded seconds, tenths of seconds
-*/
+	mm:ss
+	zero padded minutes, zero padded seconds, tenths of seconds
+	*/
 	function formatTime(milliseconds) {
 		// const hh = zeroPadded(Math.floor(milliseconds / 1000 / 60 / 24));
 		const mm = zeroPadded(Math.floor(milliseconds / 1000 / 60));
@@ -38,7 +38,7 @@ zero padded minutes, zero padded seconds, tenths of seconds
 	}
 </script>
 
-<div class="flex gap-1 pb-5">
+<div title="last modified" class="flex gap-1 pb-5">
 	<div class="self-center"><Fa icon={faHourglass} /></div>
 	<div class="self-center">
 		{#if diff}

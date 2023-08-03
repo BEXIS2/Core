@@ -8,6 +8,8 @@
 	import Fa from 'svelte-fa'
 	import {faLock} from '@fortawesome/free-solid-svg-icons'
 
+	import TimeDuration from '$lib/components/utils/TimeDuration.svelte';
+
 	export let name;
 	export let displayName;
 	export let content = 9;
@@ -18,6 +20,8 @@
 	$: error = [];
 	$: success = null;
 	$: warnings = [];
+
+	$: date = "";
 
 	$: active = false;
 	$: wait = false;
@@ -35,25 +39,28 @@
 	});
 
 	function errorHandler(e) {
-		console.log('handle errors here');
-		console.log(e.detail);
+
 		resetInformations();
 		error = e.detail.messages;
 	}
 
 	function successHandler(e) {
-		console.log('handle success here');
-		console.log(e.detail.text);
+
 		resetInformations();
 		success = e.detail.text;
 	}
 
 	function warningHandler(e) {
-		console.log('handle warnings here');
-		console.log(e.detail.text);
+
 		resetInformations();
 		warnings[0] = e.detail.text;
 	}
+
+
+	function dateHandler(e) {
+		date = e.detail.lastModification;
+	}
+
 
 	function resetInformations() {
 		error = [];
@@ -94,7 +101,12 @@
 	
  <div class="flex p-5 m-2 gap-5">
 		<div class="flex-none w-48 ">
-			<h4 class="h5">{displayName}</h4>
+			<h4 class="h4">{displayName}</h4>
+			<div class="text-sm py-2">
+			{#if date}
+				<TimeDuration milliseconds={new Date(date)} />
+			{/if}
+		</div>
 		</div>
 		<div class="grow space-y-2">
 			{#if error}
@@ -112,7 +124,7 @@
 			{/if}
 			<div class="h-full w-full">
 			 {#if !wait}
-					<slot name="view" {errorHandler} {successHandler} {warningHandler}>render view</slot>
+					<slot name="view" {errorHandler} {successHandler} {warningHandler} {dateHandler} >render view</slot>
 				{:else}
 	
 					<div class="flex gap-2 text-surface-600 ">

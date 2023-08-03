@@ -17,9 +17,9 @@ const suite = create((data = {}, fieldName) => {
 		return enforce(data.title).notInside(listOfStructures);
 	});
 
-	test('description', 'description is required', () => {
-		enforce(data.description).isNotBlank();
-	});
+	// test('description', 'description is required', () => {
+	// 	enforce(data.description).isNotBlank();
+	// });
 
 	test('description', 'description is too long. you only have 255 characters.', () => {
 		enforce(data.description).shorterThan(255);

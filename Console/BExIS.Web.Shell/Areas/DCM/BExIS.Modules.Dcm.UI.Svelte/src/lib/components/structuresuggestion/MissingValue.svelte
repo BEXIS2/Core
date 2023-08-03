@@ -1,5 +1,5 @@
-<script>
-	import Fa from 'svelte-fa/src/fa.svelte';
+<script lang="ts">
+	import Fa from 'svelte-fa';
 	import { TextInput } from '@bexis2/bexis2-core-ui';
 	import { createEventDispatcher } from 'svelte';
 	import { faTrashAlt } from '@fortawesome/free-regular-svg-icons';
@@ -28,9 +28,9 @@
 	<TextInput id="description" bind:value={description} on:change />
 
 	<div class="self-center text-xl mt-5">
-		<button type="button" on:click={remove}><Fa icon={faTrashAlt} /></button>
+		<button title="delete" type="button" on:click={remove}><Fa icon={faTrashAlt} /></button>
 		{#if last}
-			<button class="add" type="button" on:click={add}><Fa icon={faPlus} /></button>
+			<button title="add" class="add" type="button" on:click={add}><Fa icon={faPlus} /></button>
 		{/if}
 	</div>
 </div>
