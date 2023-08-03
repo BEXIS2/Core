@@ -35,7 +35,7 @@
 			</dataRepos>
 		</broker>
 		<broker>
-			<name>DOI</name>
+			<name>DataCiteDOI</name>
 			<metadatastandard></metadatastandard>
 			<primarydataformat></primarydataformat>
 			<server></server>
@@ -44,7 +44,7 @@
 			<link></link>
 			<dataRepos>
 				<dataRepo>
-					<name>DataCite</name>
+					<name>DataCiteDOI</name>
 					<url></url>
 				</dataRepo>
 			</dataRepos>
