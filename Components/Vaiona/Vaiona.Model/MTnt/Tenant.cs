@@ -39,6 +39,8 @@ namespace Vaiona.Model.MTnt
         /// </summary>
         public string Logo { get; set; }
 
+        public string Brand { get; set; }
+
         /// <summary>
         /// The icon should be located in /<tenant>/images/<name.ext> of /<default>/images/<name.ext> if not provided bt the manifest
         /// </summary>
@@ -116,6 +118,17 @@ namespace Vaiona.Model.MTnt
                     return PathProvider.GetImagePath(this.Id, this.Logo, Fallback.Id);
                 else
                     return PathProvider.GetImagePath(this.Id, this.Logo, this.Id); // The second this.Id argument is passed to allow the Client TenantPathProviders to have a chance of getting triggered.
+            }
+        }
+
+        public string BrandPath //effective path to logo
+        {
+            get
+            {
+                if (this.UseFallback == true && this.Fallback != null)
+                    return PathProvider.GetImagePath(this.Id, this.Brand, Fallback.Id);
+                else
+                    return PathProvider.GetImagePath(this.Id, this.Brand, this.Id); // The second this.Id argument is passed to allow the Client TenantPathProviders to have a chance of getting triggered.
             }
         }
         public string FavIconPath //effective path to FavIcon
