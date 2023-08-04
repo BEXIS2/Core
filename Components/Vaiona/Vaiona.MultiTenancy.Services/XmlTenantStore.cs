@@ -185,6 +185,18 @@ namespace Vaiona.MultiTenancy.Services
 
             try
             {
+                tenant.Brand = manifest.Element("Brand").Value;
+            }
+            catch
+            {
+                if (tenant.UseFallback == true && tenant.Fallback != null)
+                {
+                    tenant.Brand = defaultTenant.Brand;
+                }
+            }
+
+            try
+            {
                 tenant.FavIcon = manifest.Element("FavIcon").Value;
             }
             catch
