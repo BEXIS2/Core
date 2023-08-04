@@ -121,7 +121,7 @@ namespace Vaiona.Model.MTnt
             }
         }
 
-        public string BrandPath //effective path to logo
+        public string BrandPath //effective path to brand
         {
             get
             {
