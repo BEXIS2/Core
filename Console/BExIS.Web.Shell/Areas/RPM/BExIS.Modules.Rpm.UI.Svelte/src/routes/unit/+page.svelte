@@ -2,12 +2,11 @@
 	import { onMount } from 'svelte';
 	import { slide, fade } from 'svelte/transition';
 	import { Modal, modalStore, Toast } from '@skeletonlabs/skeleton';
-	import { Page, Table, ErrorMessage, helpStore } from '@bexis2/bexis2-core-ui';
+	import { Page, Table, ErrorMessage, helpStore, TablePlaceholder, notificationStore, notificationType} from '@bexis2/bexis2-core-ui';
 	import * as apiCalls from './services/apiCalls';
 	import Form from './components/form.svelte';
 	import TableElement from '../components/tableElement.svelte';
 	import TableElements from '../components/tableElements.svelte';
-	import TablePlaceholder from '../components/tablePlaceholder.svelte';
 	import TableOption from '../components/tableOptions.svelte';
 	import { writable, type Writable } from 'svelte/store';
 	import Fa from 'svelte-fa';
@@ -16,10 +15,6 @@
 	import type { ModalSettings } from '@skeletonlabs/skeleton';
 	import type { UnitListItem } from './models';
 	import type { helpItemType } from '@bexis2/bexis2-core-ui';
-
-	//notifications
-	import { notificationStore, notificationTypes } from '../components/notifications';
-	import Notification from '../components/Notification.svelte';
 
 	//help
 	import help from './help/help.json';
@@ -82,12 +77,12 @@
 		let success: boolean = await apiCalls.DeleteUnit(id);
 		if (success != true) {
 			notificationStore.showNotification({
-				type: notificationTypes.error,
+				notificationType: notificationType.error,
 				message: 'Can\'t delete Unit "' + unit.name + '" (' + unit.abbreviation + ').'
 			});
 		} else {
 			notificationStore.showNotification({
-				type: notificationTypes.success,
+				notificationType: notificationType.success,
 				message: 'Unit "' + unit.name + '" (' + unit.abbreviation + ') deleted.'
 			});
 		}
@@ -192,5 +187,3 @@
 		{/await}
 	</div>
 </Page>
-<Modal />
-<Notification/>
