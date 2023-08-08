@@ -6,6 +6,8 @@ using BExIS.Modules.Dcm.UI.Models.Edit;
 using BExIS.Security.Entities.Authorization;
 using BExIS.UI.Helpers;
 using BExIS.UI.Hooks;
+using System;
+using System.Collections.Generic;
 using System.Web.Mvc;
 
 namespace BExIS.Modules.Dcm.UI.Controllers
@@ -44,6 +46,9 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
             using (var datasetManager = new DatasetManager())
             {
+
+                if (datasetManager.IsDatasetCheckedIn(id) == false) throw new Exception("Dataset is in process, try again later");
+
                 // load dataset version
                 // if version number = 0 load latest version
                 DatasetVersion datasetVersion = null;
@@ -82,6 +87,43 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 }
 
                 return Json(model, JsonRequestBehavior.AllowGet);
+            }
+        }
+
+        /// <summary>
+        /// return hooks with new status, check was running again 
+        /// </summary>
+        /// <param name="id">subject id</param>
+        /// <param name="versionId">specific subject version based on version id</param>
+        /// <returns></returns>
+        [BExISEntityAuthorize(typeof(Dataset), "id", RightType.Write)]
+        [JsonNetFilter]
+        public JsonResult Hooks(long id, int version = 0)
+        {
+            List<Hook> Hooks = new List<Hook>();
+
+            using (var datasetManager = new DatasetManager())
+            {
+                var dataset = datasetManager.GetDataset(id);
+                // load all hooks for the edit view
+                HookManager hooksManager = new HookManager();
+                Hooks = hooksManager.GetHooksFor("dataset", "details", HookMode.edit);
+           
+
+                // run all checks
+                string userName = BExISAuthorizeHelper.GetAuthorizedUserName(HttpContext);
+
+                Hooks.ForEach(h => h.Check(id, userName));
+
+                // add informations disbaled hooks from the enity template
+                // based on the entity template, hooks can be disabled.
+                foreach (var hook in Hooks)
+                {
+                    if (dataset.EntityTemplate.DisabledHooks != null && dataset.EntityTemplate.DisabledHooks.Contains(hook.DisplayName))
+                        hook.Status = HookStatus.Disabled;
+                }
+
+                return Json(Hooks, JsonRequestBehavior.AllowGet);
             }
         }
     }

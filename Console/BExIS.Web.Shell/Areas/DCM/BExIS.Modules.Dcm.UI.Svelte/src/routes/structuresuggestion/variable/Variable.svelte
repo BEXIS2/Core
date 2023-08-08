@@ -1,10 +1,11 @@
 <script lang="ts">
-	import { onMount, createEventDispatcher } from 'svelte';
+	import { onMount, afterUpdate, createEventDispatcher } from 'svelte';
+	// UI Components
 	import { TextInput, TextArea, MultiSelect } from '@bexis2/bexis2-core-ui';
 
 	//types
-	import type { ListItem } from '@bexis2/bexis2-core-ui';
-	import type { VariableModel } from '../types.ts';
+	import type { listItemType } from '@bexis2/bexis2-core-ui';
+	import type { VariableModel, missingValueType } from '$models/StructureSuggestion';
 
 	//stores
 	import { get } from 'svelte/store';
@@ -16,51 +17,73 @@
 	import Footer from './Footer.svelte';
 
 	import suite from './variable';
+	import Message from '$lib/components/validation/Message.svelte';
 
 	export let variable: VariableModel;
+	$: variable;
+	export let data: string[];
+	$:data;
+	
 	export let index: number;
 
-	export let datatypes: ListItem[];
-	export let units: ListItem[];
+	export let datatypes: listItemType[];
+	export let units: listItemType[];
+	export let missingValues: missingValueType[];
 
 	export let isValid: boolean = false;
+	export let last: boolean = false;
 
+	$: isValid;
 	// validation
 	let res = suite.get();
 
 	let loaded = false;
 
 	//displaypattern
-	let displayPattern: ListItem[];
+	let displayPattern: listItemType[];
 	$: displayPattern;
 
-	function updateDisplayPattern(type) {
+	function updateDisplayPattern(type, reset = true) {
 		// currently only date, date tim e and time is use with display pattern.
 		// however the serve only now datetime so we need to preselect the possible display pattern to date, time and datetime
 		let allDisplayPattern = get(displayPatternStore);
 
-		if (type.text.toLowerCase() === 'date') {
-			// date without time
-                  displayPattern = allDisplayPattern.filter((m) => m.group.toLowerCase().includes(type.text) && (!m.text.toLowerCase().includes('h') || !m.text.toLowerCase().includes('s')));
+		if (type != undefined) {
+			if (type.text.toLowerCase() === 'date') {
+				// date without time
+				displayPattern = allDisplayPattern.filter(
+					(m) =>
+						m.group.toLowerCase().includes(type.text) &&
+						(!m.text.toLowerCase().includes('h') || !m.text.toLowerCase().includes('s'))
+				);
+			} else if (type.text.toLowerCase() === 'time') {
+				// time without date
+				displayPattern = allDisplayPattern.filter(
+					(m) =>
+						m.group.toLowerCase().includes(type.text) &&
+						(!m.text.toLowerCase().includes('d') || !m.text.toLowerCase().includes('y'))
+				);
+			} else if (type.text.toLowerCase() === 'datetime') {
+				// both
+				displayPattern = allDisplayPattern.filter((m) => m.group.toLowerCase().includes(type.text));
+			} else {
+				displayPattern = [];
+			}
+		} else {
+			displayPattern = [];
+		}
+		// when type has change, reset value, but after copy do not reset
+		// thats why reset need to set
+		if (reset) variable.displayPattern = undefined;
 
-		}else if (type.text.toLowerCase() === 'time') {
-			// time without date
-                  displayPattern = allDisplayPattern.filter((m) => m.group.toLowerCase().includes(type.text) && (!m.text.toLowerCase().includes('d') || !m.text.toLowerCase().includes('y')));
-
-		}else if( type.text.toLowerCase() === 'datetime')
-            {
-                  // both
-                  displayPattern = allDisplayPattern.filter((m) => m.group.toLowerCase().includes(type.text));
-            }
-
-		console.log(type, displayPattern);
+		if (displayPattern.length > 0) {
+			res = suite(variable, 'displayPattern');
+		}
 	}
 
 	const dispatch = createEventDispatcher();
 
 	onMount(() => {
-		console.log('generate var -----------------');
-
 		datatypes = [...datatypes.filter((d) => d.id != variable.dataType.id)];
 		datatypes = [variable.dataType, ...datatypes];
 
@@ -68,19 +91,24 @@
 		units = [...variable.possibleUnits, ...units];
 
 		loaded = true;
-
 		// reset & reload validation
 		suite.reset();
 
+		
+
 		setTimeout(async () => {
+eDisplayPattern(variable.dataType);
 			res = suite(variable);
-
 			setValidationState(res);
-
-			updateDisplayPattern(variable.dataType);
 		}, 10);
+	});
 
-		console.log('variable', variable);
+	afterUpdate(() => {
+		updateDisplayPattern(variable.dataType, false);
+		res = suite(variable);
+		setValidationState(res);
+		// console.log("u",variable.name);
+		// console.log("--------------------");
 	});
 
 	//change event: if input change check also validation only on the field
@@ -91,21 +119,27 @@
 		setTimeout(async () => {
 			res = suite(variable, e.target.id);
 			setValidationState(res);
-		}, 10);
+
+			console.log(res);
+			console.log(res.isValid());
+		}, 100);
 	}
 
 	//change event: if select change check also validation only on the field
 	// *** is the id of the input component
 	function onSelectHandler(e, id) {
-		//console.log(e);
-		res = suite(variable, id);
+		setTimeout(async () => {
+			res = suite(variable, id);
 
-		setValidationState(res);
+			console.log(res);
+			console.log(res.isValid());
+			// update display patter and reset it if it changed
+			if (id == 'dataType') {
+				updateDisplayPattern(variable.dataType);
+			}
 
-		if (id == 'dataType') {
-			console.log('update displaypattern');
-			updateDisplayPattern(variable.dataType);
-		}
+			setValidationState(res);
+		}, 100);
 	}
 
 	function setValidationState(res) {
@@ -113,9 +147,28 @@
 		// dispatch this event to the parent to check the save button
 		dispatch('var-change');
 	}
+
+
+
+	function cutData(d)
+	{
+		console.log("CUT",d);
+		
+			for (let index = 0; index < d.length; index++) {
+				let v = d[index];
+
+				if(v.length>10)
+				{
+					 d[index] = v.slice(0, 10)+"...";
+				}
+			}
+			console.log("CUT",d);
+			return d;
+	}
+
 </script>
 
-{#if loaded}
+{#if loaded && variable}
 	<div class="card">
 		<header class="card-header">
 			<Header
@@ -123,20 +176,27 @@
 				bind:isOptional={variable.isOptional}
 				name={variable.name}
 				{index}
+				bind:isValid
 			/>
 		</header>
 		<section class="p-4">
 			<!--Description-->
-			<Container pSize="8">
+			<Container>
 				<div slot="property">
 					<TextArea
 						id="description"
+						label="Description"
 						bind:value={variable.description}
 						on:input={onChangeHandler}
 						valid={res.isValid('description')}
 						invalid={res.hasErrors('description')}
 						feedback={res.getErrors('description')}
 					/>
+				</div>
+				<div slot="description">
+					{#if data}
+						<b>Data preview: </b> {cutData(data).join(', ')}
+					{/if}
 				</div>
 			</Container>
 
@@ -155,18 +215,18 @@
 						isMulti={false}
 						bind:target={variable.dataType}
 						placeholder="-- Please select --"
-						invalid={res.hasErrors('displayPattern')}
-						feedback={res.getErrors('displayPattern')}
+						invalid={res.hasErrors('dataType')}
+						feedback={res.getErrors('dataType')}
+						clearable={false}
 						on:change={(e) => onSelectHandler(e, 'dataType')}
-						on:clear={(e) => onSelectHandler(e, 'dataType')}
 					/>
 				</div>
 
 				<div slot="displaypattern">
 					<!--Show only when display pattern exists-->
-					{#if variable.possibleDisplayPattern != undefined && variable.possibleDisplayPattern.length > 0}
+					{#if displayPattern != undefined && displayPattern.length > 0}
 						<MultiSelect
-							id="displaypattern"
+							id="displayPattern"
 							title="Display Pattern"
 							source={displayPattern}
 							itemId="id"
@@ -175,17 +235,19 @@
 							complexSource={true}
 							complexTarget={true}
 							isMulti={false}
+							clearable={false}
 							bind:target={variable.displayPattern}
 							placeholder="-- Please select --"
 							invalid={res.hasErrors('displayPattern')}
 							feedback={res.getErrors('displayPattern')}
-							on:change={(e) => onSelectHandler(e, 'displaypattern')}
-							on:clear={(e) => onSelectHandler(e, 'displaypattern')}
+							on:change={(e) => onSelectHandler(e, 'displayPattern')}
 						/>
 					{/if}
 				</div>
 				<div slot="description">
-					<DataTypeDescription type={variable.dataType.text} />
+					{#if variable.dataType}
+						<DataTypeDescription type={variable.dataType.text} {missingValues} />
+					{/if}
 				</div>
 			</Container>
 
@@ -202,12 +264,12 @@
 						complexSource={true}
 						complexTarget={true}
 						isMulti={false}
+						clearable={false}
 						bind:target={variable.unit}
 						placeholder="-- Please select --"
 						invalid={res.hasErrors('unit')}
 						feedback={res.getErrors('unit')}
 						on:change={(e) => onSelectHandler(e, 'unit')}
-						on:clear={(e) => onSelectHandler(e, 'unit')}
 					/>
 				</div>
 				<div slot="description">
@@ -224,7 +286,12 @@
 			</Container>
 		</section>
 		<footer class="card-footer">
-			<Footer {...variable} />
+			<div class="flex">
+				<div class="grow" />
+				<div class=" flex-none text-right">
+					<slot name="options" />
+				</div>
+			</div>
 		</footer>
 	</div>
 {/if}

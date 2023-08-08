@@ -91,7 +91,8 @@
     <Compile Include="Hooks\HookEnums.cs" />
     <Compile Include="Hooks\HookManager.cs" />
     <Compile Include="Hooks\IHook.cs" />
-    <Compile Include="Hooks\ResultMessage.cs" />
+    <Compile Include="Hooks\LogMessage.cs" />
+    <Compile Include="Hooks\Logs\EditDatasetDetailsLog.cs" />
     <Compile Include="Hooks\View.cs" />
     <Compile Include="Models\DataTable.cs" />
     <Compile Include="Models\FileUploader.cs" />

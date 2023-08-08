@@ -1,60 +1,87 @@
-<script>
-import {Spinner} from '@bexis2/bexis2-core-ui';
+<script lang="ts">
+	import { Spinner } from '@bexis2/bexis2-core-ui';
+	import type { fileInfoType } from '@bexis2/bexis2-core-ui';
 
-import Fa from 'svelte-fa/src/fa.svelte'
-import { faTrash } from '@fortawesome/free-solid-svg-icons'
+	import Fa from 'svelte-fa';
+	import { faTrash } from '@fortawesome/free-solid-svg-icons';
 
-import { removeStructure} from '$services/DataDescriptionCaller'
-import { latestDataDescriptionDate } from '../../../routes/edit/stores';
+	import { removeStructure } from '$services/DataDescriptionCaller';
+	import { latestDataDescriptionDate } from '../../../routes/edit/stores';
 
-export let id;
-export let structureId;
-export let title;
-export let description;
+	import { modalStore } from '@skeletonlabs/skeleton';
+	import type { ModalSettings } from '@skeletonlabs/skeleton';
+	import {createEventDispatcher} from 'svelte'
 
-let loading = false;
+	export let id;
+	export let structureId;
+	export let title;
+	export let description;
+	export let fileReaderExist;
+	export let hasData;
+	export let readableFiles: fileInfoType[] = [];
 
-async function remove()
-{
- loading = true;
- console.log("remove")
- const res = await removeStructure(id);
+	let loading = false;
+ const dispatch = createEventDispatcher();
 
- console.log(res);
- if(res == true)
- {
-   // update store
-   latestDataDescriptionDate.set(Date.now());
- }
- else
- {
-   //show message
- }
+	const modal: ModalSettings = {
+		type: 'confirm',
+		title: 'Copy',
+		body: 'Are you sure you wish to remove the structure?',
+		// TRUE if confirm pressed, FALSE if cancel pressed
+		response: (r: boolean) => {
+			if (r === true) {
+					remove();
+			}
+		}
+	};
 
- loading = false;
+	async function remove() {
+		loading = true;
+		console.log('remove');
+		try{
 
-}
+			const res = await removeStructure(id);
+			console.log('remove', res);
 
+			if (res == true) {
+				// update store
+				latestDataDescriptionDate.set(Date.now());
+			} else {
+				let messages:string[] = []
+				messages.push("remove failed");
+				//show message
+				dispatch('error',{messages});
+			}
+
+		}
+		catch(err)
+		{
+			 let messages:string[] = []
+				messages.push("remove failed");
+				//show message
+				dispatch('error',{messages});
+		}
+
+		loading = false;
+	}
 </script>
 
-<div class="show-datadescription-header-container grid grid-cols-2">
+<div class="show-datadescription-header-container flex">
+	<div class="flex-col gap-3 grow">
+		<h4 class="h4">{title} ({structureId})</h4>
+		{#if description} <p>{description}</p> {/if}
+		{#if loading}
+			<div>
+				<Spinner textCss="text-surface-500" />
+			</div>
+		{/if}
+	</div>
+	<div>
 
-  <div class="flex gap-3">
-    <h2 class="h2">{title} ({structureId}) 
-      
-    </h2>
-    {#if loading}
-    <div>
-    <Spinner textCss="text-surface-500"/>
-    </div>
-    {/if}
- 
-  </div>
-  <div>
-   <div class="text-end">
-    <button class="btn bg-warning-500" on:click="{remove}"><Fa icon={faTrash}/></button>
-   </div>
-   <p>{description}</p>
-  </div>
+		{#if hasData ===false}
+		<div class="text-end flex-auto">
+			<button title="remove" class="chip variant-filled-error" on:click={()=>modalStore.trigger(modal)}><Fa icon={faTrash} /></button>
+		</div>
+		{/if}
+	</div>
 </div>
-

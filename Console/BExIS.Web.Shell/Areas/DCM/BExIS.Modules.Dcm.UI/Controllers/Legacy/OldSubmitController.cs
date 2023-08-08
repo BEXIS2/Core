@@ -28,7 +28,7 @@ using Vaiona.Web.Mvc.Models;
 
 namespace BExIS.Modules.Dcm.UI.Controllers
 {
-    public class SubmitController : BaseController
+    public class OldSubmitController : BaseController
     {
         //
         // GET: /Collect/Home/

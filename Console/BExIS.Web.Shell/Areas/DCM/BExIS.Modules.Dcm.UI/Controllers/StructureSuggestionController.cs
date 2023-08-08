@@ -1,4 +1,5 @@
 ﻿using BExIS.App.Bootstrap.Attributes;
+using BExIS.App.Bootstrap.Helpers;
 using BExIS.Dlm.Entities.Data;
 using BExIS.Dlm.Entities.DataStructure;
 using BExIS.Dlm.Services.Data;
@@ -12,6 +13,7 @@ using BExIS.Security.Entities.Authorization;
 using BExIS.UI.Helpers;
 using BExIS.UI.Hooks;
 using BExIS.UI.Hooks.Caches;
+using BExIS.UI.Hooks.Logs;
 using BExIS.UI.Models;
 using System;
 using System.Collections.Generic;
@@ -189,7 +191,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 {
                     // if needed gerenate units??
                     // if needed gerenate Variabe Template??
-
+           
                     // get datatype
                     var dataType = datatypeManager.Repo.Get(variable.DataType.Id);
                     if (dataType == null) { }// create;
@@ -204,7 +206,10 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
                     // create var and add to structure
 
-                        // generate variables
+                    // get orderNo
+                    int orderNo = model.Variables.IndexOf(variable)+1;
+
+                    // generate variables
                     var result = variableManager.CreateVariable(
                         variable.Name,
                         dataType,
@@ -212,6 +217,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                         newStructure.Id,
                         variable.IsOptional,
                         variable.IsKey,
+                        orderNo,
                         0,
                         "",
                         "",
@@ -222,7 +228,10 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                     // gerenate missing values and link them to each variable
                     foreach (var mv in model.MissingValues)
                     {
-                        var missingValue = missingValueManager.Create(mv.DisplayName, mv.Description, result);
+                        if (!string.IsNullOrEmpty(mv.DisplayName))
+                        {
+                            var missingValue = missingValueManager.Create(mv.DisplayName, mv.Description, result);
+                        }
                     }
 
                 }
@@ -247,6 +256,9 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
             HookManager hookManager = new HookManager();
             EditDatasetDetailsCache cache = hookManager.LoadCache<EditDatasetDetailsCache>("dataset", "details", HookMode.edit, model.Id);
+            EditDatasetDetailsLog log = hookManager.LoadLog<EditDatasetDetailsLog>("dataset", "details", HookMode.edit, model.Id);
+
+            var username = BExISAuthorizeHelper.GetAuthorizedUserName(HttpContext);
 
             // update Data description hook
 
@@ -267,7 +279,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             if(descriptionMarker != null) cache.AsciiFileReaderInfo.Description = descriptionMarker.Row + 1;// add 1 to store nit the index but the row
             // units
             var unitMarker = model.Markers.Where(m => m.Type.Equals("unit")).FirstOrDefault();
-            cache.AsciiFileReaderInfo.Unit = unitMarker.Row + 1;// add 1 to store nit the index but the row
+            if (unitMarker != null) cache.AsciiFileReaderInfo.Unit = unitMarker.Row + 1;// add 1 to store nit the index but the row
 
             // update modifikation date
             cache.UpdateLastModificarion(typeof(DataDescriptionHook));
@@ -275,7 +287,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
             // store in messages
             string message = String.Format("the structure {0} was successfully created and attached to the dataset {1}.", model.Title, model.Id);
-            cache.Messages.Add(new ResultMessage(DateTime.Now, new List<string>() { message }));
+            log.Messages.Add(new LogMessage(DateTime.Now, new List<string>() { message }, username,"Structure suggestion","store"));
 
             // save cache
             hookManager.SaveCache(cache, "dataset", "details", HookMode.edit, model.Id);
@@ -360,8 +372,8 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
                     VariableModel var = new VariableModel();
 
-                    var.Name = getValueFromMarkedRow(markerRows, model.Markers, "variable", (char)model.Delimeter, i);
-                    var.Description = getValueFromMarkedRow(markerRows, model.Markers, "description", (char)model.Delimeter, i);
+                    var.Name = getValueFromMarkedRow(markerRows, model.Markers, "variable", (char)model.Delimeter, i, AsciiFileReaderInfo.GetTextMarker((TextMarker)model.TextMarker));
+                    var.Description = getValueFromMarkedRow(markerRows, model.Markers, "description", (char)model.Delimeter, i, AsciiFileReaderInfo.GetTextMarker((TextMarker)model.TextMarker));
 
 
                     // check and get datatype
@@ -372,7 +384,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                     var.DataType = strutcureAnalyzer.SuggestDataType(var.SystemType).Select(d => new ListItem(d.Id, d.Name, "analysis results")).FirstOrDefault();
 
                     // get list of possible units
-                    var unitInput = getValueFromMarkedRow(markerRows, model.Markers, "unit", (char)model.Delimeter, i);
+                    var unitInput = getValueFromMarkedRow(markerRows, model.Markers, "unit", (char)model.Delimeter, i, AsciiFileReaderInfo.GetTextMarker((TextMarker)model.TextMarker));
                     strutcureAnalyzer.SuggestUnit(unitInput, var.DataType.Text).ForEach(u => var.PossibleUnits.Add(new ListItem(u.Id, u.Name, "analysis results")));
                     var.Unit = var.PossibleUnits.FirstOrDefault();
 
@@ -467,12 +479,12 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 {
                     foreach (var unit in units)
                     {
-                        list.Add(new ListItem(unit.Id, unit.Name, "other"));
+                        list.Add(new ListItem(unit.Id, unit.Abbreviation, "other"));
                     }
                 }
 
                 // get default missing values
-                return Json(list, JsonRequestBehavior.AllowGet);
+                return Json(list.OrderBy(i=>i.Group), JsonRequestBehavior.AllowGet);
             }
         }
 
@@ -588,7 +600,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             long skipped = AsciiReader.Skipped(file);
 
             // rows only with data
-            var dataTotal = total - skipped - datastart;
+            var dataTotal = total - skipped - (datastart-1);
 
             long selection = structureAnalyser.GetNumberOfRowsToAnalyse(min, max, percentage, dataTotal);
 
@@ -597,13 +609,17 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             return structureAnalyser.SuggestSystemTypes(rows, delimeter, decimalCharacter, missingValues);
         }
 
-        private string getValueFromMarkedRow(List<string> rows, List<Marker> markers, string type, char delimeter, int position)
+        private string getValueFromMarkedRow(List<string> rows, List<Marker> markers, string type, char delimeter, int position, char textMarker)
         {
             // check and get description
             int markerIndex = markers.FindIndex(m => m.Type.Equals(type));
             if (markerIndex > -1)
             {
-                return rows[markerIndex].Split(delimeter)[position];
+                var v = rows[markerIndex].Split(delimeter)[position]; // get value
+                //if text marker char is in the value, remove it
+                if (v.Contains(textMarker)) v = v.Trim(textMarker);
+
+                return v;
             }
 
             return "";

@@ -2,11 +2,13 @@
 using BExIS.IO.Transform.Validation.Exceptions;
 using System;
 using System.Collections.Generic;
+using Vaiona.Entities.Common;
 
 namespace BExIS.UI.Hooks.Caches
 {
     public class EditDatasetDetailsCache
     {
+
         /// <summary>
         /// if true that means metadata of teh current edit version is valid
         /// </summary>
@@ -40,12 +42,6 @@ namespace BExIS.UI.Hooks.Caches
         public List<FileInfo> Files { get; set; }
 
         /// <summary>
-        /// if something is done or any result from a hook should generate a Message to show the user the result of the hook
-        /// This list is the collection of all this messages
-        /// </summary>
-        public List<ResultMessage> Messages { get; set; }
-
-        /// <summary>
         /// this dictionary store the last modifications of the changed hooks
         /// string = hook name 
         /// DateTime = Last Modification
@@ -64,7 +60,6 @@ namespace BExIS.UI.Hooks.Caches
 
         public EditDatasetDetailsCache()
         {
-            Messages = new List<ResultMessage>();
             Files = new List<FileInfo>();
         }
 
@@ -134,6 +129,8 @@ namespace BExIS.UI.Hooks.Caches
         public int VariablesCount { get; set; }
         public int CurrentPackage { get; set; }
         public int CurrentPackageSize { get; set; }
+
+        public List<long> PrimaryKeys { get; set; }
     }
 
     public class FileInfo
@@ -158,7 +155,13 @@ namespace BExIS.UI.Hooks.Caches
         public List<Error> Errors{ get; set; }
 
         public FileInfo()
-        { }
+        {
+            Name = string.Empty;
+            Type = string.Empty; ;
+            Lenght = 0 ;
+            Description = string.Empty;
+            Errors = new List<Error>();
+        }
 
         public FileInfo(string name, string type, int length, string description)
         {

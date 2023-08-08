@@ -9,9 +9,9 @@
 		"skipLibCheck": true,
 		"sourceMap": true,
 		"strict": true,
-		"noImplicitAny": false,
+		"noImplicitAny": false
 	},
-	"exclude": ["node_modules","src"]
+	"exclude": ["node_modules", "src"]
 	// Path aliases are handled by https://kit.svelte.dev/docs/configuration#alias
 	//
 	// If you want to overwrite includes/excludes, make sure to copy over the relevant includes/excludes

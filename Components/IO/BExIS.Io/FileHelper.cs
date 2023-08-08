@@ -81,7 +81,7 @@ namespace BExIS.IO
             return false;
         }
 
-        public static bool WaitForFile(string fullPath)
+        public static bool WaitForFile(string fullPath, FileAccess fileAccess = FileAccess.ReadWrite)
         {
             int numTries = 0;
             while (true)
@@ -91,7 +91,7 @@ namespace BExIS.IO
                 {
                     // Attempt to open the file exclusively.
                     using (FileStream fs = new FileStream(fullPath,
-                        FileMode.Open, FileAccess.ReadWrite,
+                        FileMode.Open, fileAccess,
                         FileShare.None, 100))
                     {
                         fs.ReadByte();
@@ -102,14 +102,14 @@ namespace BExIS.IO
                 }
                 catch (Exception ex)
                 {
-                    if (numTries > 10)
+                    if (numTries > 1000000)
                     {
                         return false;
                     }
 
                     // Wait for the lock to be released
-                    System.Threading.Thread.Sleep(300);
-                    Console.WriteLine("Waiting : " + ex.Message);
+                    System.Threading.Thread.Sleep(10);
+                    //Console.WriteLine("Waiting : " + ex.Message);
                 }
             }
 
