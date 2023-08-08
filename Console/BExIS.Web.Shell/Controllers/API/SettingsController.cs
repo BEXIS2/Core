@@ -19,7 +19,7 @@ namespace BExIS.Web.Shell.Controllers.API
 {
     public class SettingsController : ApiController
     {
-        [HttpGet, GetRoute("api/settings"), BExISApiAuthorize]
+        [HttpGet, GetRoute("api/settings")]
         public async Task<HttpResponseMessage> GetSettings()
         {
             try
@@ -87,32 +87,32 @@ namespace BExIS.Web.Shell.Controllers.API
             }
         }
 
-        [HttpPut, PutRoute("api/settings")]
-        public async Task<HttpResponseMessage> PutSettings(List<UpdateSettingModel> model)
-        {
-            try
-            {
-                foreach (var item in model)
-                {
-                    var settings = ModuleManager.GetModuleSettings(item.Id);
+        //[HttpPut, PutRoute("api/settings")]
+        //public async Task<HttpResponseMessage> PutSettings(List<UpdateSettingModel> model)
+        //{
+        //    try
+        //    {
+        //        foreach (var item in model)
+        //        {
+        //            var settings = ModuleManager.GetModuleSettings(item.Id);
 
-                    var json = new JsonSettings()
-                    {
-                        Id = item.Id,
-                        Name = item.Name,
-                        Description = item.Description,
-                        Entries = item.Entries
-                    };
+        //            var json = new JsonSettings()
+        //            {
+        //                Id = item.Id,
+        //                Name = item.Name,
+        //                Description = item.Description,
+        //                Entries = item.Entries
+        //            };
 
-                    settings.Update(json);
-                }
+        //            settings.Update(json);
+        //        }
 
-                return Request.CreateResponse(HttpStatusCode.OK, "sdsfdf");
-            }
-            catch (Exception ex)
-            {
-                return Request.CreateResponse(HttpStatusCode.BadRequest, ex.Message);
-            }
-        }
+        //        return Request.CreateResponse(HttpStatusCode.OK, "sdsfdf");
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return Request.CreateResponse(HttpStatusCode.BadRequest, ex.Message);
+        //    }
+        //}
     }
 }
