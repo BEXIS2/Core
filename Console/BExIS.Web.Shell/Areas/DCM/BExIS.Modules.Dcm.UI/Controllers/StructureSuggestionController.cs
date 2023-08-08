@@ -191,7 +191,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 {
                     // if needed gerenate units??
                     // if needed gerenate Variabe Template??
-
+           
                     // get datatype
                     var dataType = datatypeManager.Repo.Get(variable.DataType.Id);
                     if (dataType == null) { }// create;
@@ -206,7 +206,10 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
                     // create var and add to structure
 
-                        // generate variables
+                    // get orderNo
+                    int orderNo = model.Variables.IndexOf(variable)+1;
+
+                    // generate variables
                     var result = variableManager.CreateVariable(
                         variable.Name,
                         dataType,
@@ -214,6 +217,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                         newStructure.Id,
                         variable.IsOptional,
                         variable.IsKey,
+                        orderNo,
                         0,
                         "",
                         "",
@@ -368,8 +372,8 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
                     VariableModel var = new VariableModel();
 
-                    var.Name = getValueFromMarkedRow(markerRows, model.Markers, "variable", (char)model.Delimeter, i);
-                    var.Description = getValueFromMarkedRow(markerRows, model.Markers, "description", (char)model.Delimeter, i);
+                    var.Name = getValueFromMarkedRow(markerRows, model.Markers, "variable", (char)model.Delimeter, i, AsciiFileReaderInfo.GetTextMarker((TextMarker)model.TextMarker));
+                    var.Description = getValueFromMarkedRow(markerRows, model.Markers, "description", (char)model.Delimeter, i, AsciiFileReaderInfo.GetTextMarker((TextMarker)model.TextMarker));
 
 
                     // check and get datatype
@@ -380,7 +384,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                     var.DataType = strutcureAnalyzer.SuggestDataType(var.SystemType).Select(d => new ListItem(d.Id, d.Name, "analysis results")).FirstOrDefault();
 
                     // get list of possible units
-                    var unitInput = getValueFromMarkedRow(markerRows, model.Markers, "unit", (char)model.Delimeter, i);
+                    var unitInput = getValueFromMarkedRow(markerRows, model.Markers, "unit", (char)model.Delimeter, i, AsciiFileReaderInfo.GetTextMarker((TextMarker)model.TextMarker));
                     strutcureAnalyzer.SuggestUnit(unitInput, var.DataType.Text).ForEach(u => var.PossibleUnits.Add(new ListItem(u.Id, u.Name, "analysis results")));
                     var.Unit = var.PossibleUnits.FirstOrDefault();
 
@@ -605,13 +609,17 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             return structureAnalyser.SuggestSystemTypes(rows, delimeter, decimalCharacter, missingValues);
         }
 
-        private string getValueFromMarkedRow(List<string> rows, List<Marker> markers, string type, char delimeter, int position)
+        private string getValueFromMarkedRow(List<string> rows, List<Marker> markers, string type, char delimeter, int position, char textMarker)
         {
             // check and get description
             int markerIndex = markers.FindIndex(m => m.Type.Equals(type));
             if (markerIndex > -1)
             {
-                return rows[markerIndex].Split(delimeter)[position];
+                var v = rows[markerIndex].Split(delimeter)[position]; // get value
+                //if text marker char is in the value, remove it
+                if (v.Contains(textMarker)) v = v.Trim(textMarker);
+
+                return v;
             }
 
             return "";

@@ -133,7 +133,7 @@ namespace BExIS.Modules.Rpm.UI.Helpers.SeedData
                     }
 
                     // set data type to created unit or add data type to existing unit
-                    List<string> Types = mapUnitsRow["DataTypes"].ToString().Split(' ').Distinct().ToList();
+                    List<string> Types = mapUnitsRow["DataTypes"].ToString().Split(',').Distinct().ToList();
 
                     // get existing unit or create
                     Unit existU = unitManager.Repo.Get(u => u.Name.ToLower().Equals(unit.Name.ToLower())).FirstOrDefault();

@@ -1,20 +1,20 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import { slide, fade } from 'svelte/transition';
-	import { Modal, Toast, modalStore, toastStore } from '@skeletonlabs/skeleton';
+	import { Modal, Toast, modalStore } from '@skeletonlabs/skeleton';
 	import { Page, Table, ErrorMessage, helpStore } from '@bexis2/bexis2-core-ui';
 	import * as apiCalls from './services/apiCalls';
 	import Form from './components/form.svelte';
-	import TableElement from '../components/tableElement.svelte';
-	import TableElements from '../components/tableElements.svelte';
 	import TablePlaceholder from '../components/tablePlaceholder.svelte';
 	import TableOption from '../components/tableOptions.svelte';
 	import { writable, type Writable } from 'svelte/store';
 	import Fa from 'svelte-fa';
 	import { faPlus, faXmark } from '@fortawesome/free-solid-svg-icons';
 
-	import type { ModalSettings, ToastSettings } from '@skeletonlabs/skeleton';
+	import type { ModalSettings } from '@skeletonlabs/skeleton';
 	import type { DimensionListItem } from './models';
+
+	import { notificationStore, notificationTypes } from '../components/notifications';
 
 	let ds: DimensionListItem[] = [];
 	const tableStore = writable<any[]>([]);
@@ -22,6 +22,7 @@
 	let showForm = false;
 	$: dimensions = ds;
 	$: tableStore.set(ds);
+	$: notificationStore;
 
 	onMount(async () => {});
 
@@ -70,18 +71,15 @@
 	async function deleteDimension(id: number) {
 		let success = await apiCalls.DeleteDimension(id);
 		if (success != true) {
-			const toast: ToastSettings = {
-				classes: 'bg-error-300 border-solid border-2 border-error-500 shadow-md text-surface-900',
+			notificationStore.showNotification({
+				type: notificationTypes.error,
 				message: 'Can\'t delete Dimension "' + dimension.name + '".'
-			};
-			toastStore.trigger(toast);
+			});
 		} else {
-			const toast: ToastSettings = {
-				classes:
-					'bg-success-300 border-solid border-2 border-success-500 shadow-md text-surface-900',
+			notificationStore.showNotification({
+				type: notificationTypes.success,
 				message: 'Dimension "' + dimension.name + '" deleted.'
-			};
-			toastStore.trigger(toast);
+			});
 		}
 		reload();
 	}
@@ -95,7 +93,7 @@
 </script>
 
 <Page help={true} title="Manage Dimensions">
-	<div class="p-5">
+	<div class="w-full">
 		<h1 class="h1">Dimensions</h1>
 
 		{#await reload()}
@@ -144,7 +142,7 @@
 				</div>
 			{/if}
 
-			<div class="w-max">
+			<div class="table table-compact w-full">
 				<Table
 					on:action={(obj) => editDimension(obj.detail.type)}
 					config={{
@@ -169,4 +167,4 @@
 	</div>
 </Page>
 <Modal />
-<Toast position="t" />
+<Toast position="t" buttonDismiss={notificationStore.getBtnStyle()} />

@@ -25,9 +25,9 @@ namespace BExIS.IO.Transform.Input
             Offset = 0;
             Orientation = Orientation.columnwise;
             Variables = 1;
-            Data = 4;
-            Unit = 2;
-            Description = 3;
+            Data = 2;
+            Unit = 0;
+            Description = 0;
             Cells = new List<bool>();
         }
 

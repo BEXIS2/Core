@@ -870,7 +870,8 @@ namespace BExIS.IO.Transform.Input
                         string line = "";
                         while ((line = streamReader.ReadLine()) != null)
                         {
-                            lineCount++;
+                            lineCount++; 
+
                             if (!string.IsNullOrWhiteSpace(line) && selectedRowsIndex.Contains(lineCount))
                             {
                                 selectedRows.Add(line);

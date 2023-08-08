@@ -2,11 +2,13 @@
 using BExIS.IO.Transform.Validation.Exceptions;
 using System;
 using System.Collections.Generic;
+using Vaiona.Entities.Common;
 
 namespace BExIS.UI.Hooks.Caches
 {
     public class EditDatasetDetailsCache
     {
+
         /// <summary>
         /// if true that means metadata of teh current edit version is valid
         /// </summary>
@@ -127,6 +129,8 @@ namespace BExIS.UI.Hooks.Caches
         public int VariablesCount { get; set; }
         public int CurrentPackage { get; set; }
         public int CurrentPackageSize { get; set; }
+
+        public List<long> PrimaryKeys { get; set; }
     }
 
     public class FileInfo

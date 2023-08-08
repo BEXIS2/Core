@@ -1,70 +1,55 @@
 <script>
-import MissingValue from './MissingValue.svelte'
-export let list=[]
+	import MissingValue from './MissingValue.svelte';
+	export let list = [];
 
-import {onMount} from 'svelte'
+	import { onMount } from 'svelte';
 
-onMount(()=>{
+	onMount(() => {
+		if (list.length === 0) {
+			add();
+		}
+	});
 
- 
-  if(list.length===0)
-  {
-   add();
-  }
-})
+	function remove(i) {
+		list = [...list.filter((m, index) => i !== index)];
 
-function remove(i)
-{
-  list = [...list.filter((m,index)=> i!==index)];
+		if (list.length === 0) {
+			add();
+		}
+	}
 
-  if(list.length===0)
-  {
-   add();
-  }
+	function add() {
+		console.log('list', list);
 
-}
+		let newMissingValue = {
+			displayName: '',
+			description: ''
+		};
 
-function add()
-{
-
-  console.log("list",list);
-
-  let newMissingValue = {
-   displayName:"",
-   description:""
-  }
-
-  list = [...list,newMissingValue];
-  console.log("list",list);
-}
-
-
+		list = [...list, newMissingValue];
+		console.log('list', list);
+	}
 </script>
 
- <label><b>Missing Values</b></label>
+<label><b>Missing Values</b></label>
 
 <div class="missing-values-container">
-{#if list}
- {#each list as item, i}
-   <!-- content here -->
-   <MissingValue 
-     bind:displayName={item.displayName} 
-     bind:description={item.description} 
-     on:add={add}
-     on:remove={()=>remove(i)}
-     last={list.length-1===i} 
-     />
- {/each}
-{/if}
-
+	{#if list}
+		{#each list as item, i}
+			<!-- content here -->
+			<MissingValue
+				bind:displayName={item.displayName}
+				bind:description={item.description}
+				on:add={add}
+				on:remove={() => remove(i)}
+				last={list.length - 1 === i}
+			/>
+		{/each}
+	{/if}
 </div>
 
-
-
 <style>
- .missing-values-container
- {
-  padding-bottom: 1em;
- }
-
+	.missing-values-container {
+		padding-bottom: 1em;
+	}
 </style>

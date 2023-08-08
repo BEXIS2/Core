@@ -9,17 +9,18 @@
 	//services
 	import { store, load } from '$services/StructureSuggestionCaller';
 
-import Fa from 'svelte-fa'
-import { faSave, faTrash } from '@fortawesome/free-solid-svg-icons/index'
-
+	import Fa from 'svelte-fa';
+	import { faSave, faXmark, faChevronRight, faArrowRotateLeft } from '@fortawesome/free-solid-svg-icons';
 
 	//types
 	import type { StructureSuggestionModel, Marker } from '$models/StructureSuggestion';
-	import { positionType } from "@bexis2/bexis2-core-ui";
 
- export let model: StructureSuggestionModel;
+	import { positionType } from '@bexis2/bexis2-core-ui';
+	import Controls from './Controls.svelte';
+
+	export let model: StructureSuggestionModel;
 	$: model;
-	export let init:boolean = true;
+	export let init: boolean = true;
 
 	let delimeter;
 	let isDrag: boolean = false;
@@ -28,18 +29,13 @@ import { faSave, faTrash } from '@fortawesome/free-solid-svg-icons/index'
 	$: selection;
 	let cLength: number = 0;
 	let rLength: number = 0;
-	let selectionsupport: boolean = false;
-	let generate:boolean = true;
+	let selectionsupport: boolean = true;
+	let generate: boolean = true;
 
 	let selectedRowIndex: number = 0;
 
-	let errors:string[] = [];
-	$:errors;
-	
-
-	// currently only one requirement exit
-	// variable need to be selected
-	let isValid: boolean = false;
+	let errors: string[] = [];
+	$: errors;
 
 	const MARKER_TYPE = {
 		VARIABLE: 'variable',
@@ -49,21 +45,22 @@ import { faSave, faTrash } from '@fortawesome/free-solid-svg-icons/index'
 		DATA: 'data'
 	};
 
+	// currently only one requirement exit
+	// variable need to be selected
+	let isValid: boolean = false;
+
 	const dispatch = createEventDispatcher();
 
 	onMount(async () => {
 		console.log('start selection suggestion');
 		console.log('load selection', model.id, model.file);
 		setTableInfos(model.preview, String.fromCharCode(model.delimeter));
-		setMarkers(model.markers,init);
+		setMarkers(model.markers, init);
 
 		delimeter = model.delimeter;
 
-
 		checkStatus();
-
 	});
-
 
 	function setTableInfos(rows, delimeter) {
 		console.log('set table infos');
@@ -81,16 +78,14 @@ import { faSave, faTrash } from '@fortawesome/free-solid-svg-icons/index'
 		console.log('state', state);
 	}
 
-	function setMarkers(markers, init=false) {
+	function setMarkers(markers, init = false) {
 		for (var i = 0; i < markers.length; i++) {
 			let marker = markers[i];
 			console.log('marker', marker);
-			if(init) // if data come from server index need to set -1
-			{
-				updateSelection(marker.type, marker.row-1, marker.cells);
-			}
-			else
-			{
+			if (init) {
+				// if data come from server index need to set -1
+				updateSelection(marker.type, marker.row - 1, marker.cells);
+			} else {
 				updateSelection(marker.type, marker.row, marker.cells);
 			}
 		}
@@ -121,7 +116,6 @@ import { faSave, faTrash } from '@fortawesome/free-solid-svg-icons/index'
 			//left mouse click
 			if (e.which === 1 || e.button === 0) {
 				selectCell(c);
-
 			}
 
 			// right mouse click
@@ -136,18 +130,13 @@ import { faSave, faTrash } from '@fortawesome/free-solid-svg-icons/index'
 			//left mouse click
 			if (e.which === 1 || e.button === 0) {
 				selectCell(c);
-
 			}
 
 			// right mouse click
 			if (e.which === 3 || e.button === 2) {
 				deselectCell(c);
-
 			}
 		}
-
-		
-
 	};
 
 	const dbclickHandler = (c) => (e) => {
@@ -196,7 +185,7 @@ import { faSave, faTrash } from '@fortawesome/free-solid-svg-icons/index'
 	const selectRow = (r) => {
 		console.log('set true');
 		for (var i = 0; i < cLength; i++) {
-			console.log("select row",cLength);
+			console.log('select row', cLength);
 			state[r][i] = true;
 		}
 	};
@@ -217,8 +206,7 @@ import { faSave, faTrash } from '@fortawesome/free-solid-svg-icons/index'
 
 	// remove every selection that has only false values in the array
 	function cleanSelection() {
-
-		selection = selection.filter(s=> s.cells.find(c=>c === true));
+		selection = selection.filter((s) => s.cells.find((c) => c === true));
 	}
 
 	function getMarkerLayout(r) {
@@ -236,7 +224,7 @@ import { faSave, faTrash } from '@fortawesome/free-solid-svg-icons/index'
 		// get selected cells
 		let selectedCells = state[selectedRowIndex];
 
-		// if selectionsupport is true and one entry exist, means that the cells selection is the same
+		// if selections upport is true and one entry exist, means that the cells selection is the same
 		// like the stored one
 		if (selectionsupport && selection.length > 0) {
 			selectedCells = selection[0].cells;
@@ -246,17 +234,14 @@ import { faSave, faTrash } from '@fortawesome/free-solid-svg-icons/index'
 
 		//check if selection is valid for save
 		checkStatus();
-
 	}
 
 	function updateSelection(type, index, cells) {
-
 		let obj = {
 			type: type,
 			row: index,
 			cells: cells
 		};
-
 
 		// if exist row, remove entry
 		let exist = selection.find((e) => e.row == obj.row);
@@ -272,64 +257,53 @@ import { faSave, faTrash } from '@fortawesome/free-solid-svg-icons/index'
 
 		// add obj to list and return new list
 		selection = [...selection, obj];
-
-
 	}
 
 	// different thinks need to be done before save button is active
-	function checkStatus()
-	{
+	function checkStatus() {
 		errors = [];
 		// minimum marker for variable and data need to exist
-		let variabelMarker = selection.find(s=> s.type == MARKER_TYPE.VARIABLE )
-		let dataMarker = selection.find(s=> s.type == MARKER_TYPE.DATA )
+		let variabelMarker = selection.find((s) => s.type == MARKER_TYPE.VARIABLE);
+		let dataMarker = selection.find((s) => s.type == MARKER_TYPE.DATA);
 
 		let selectionCount = selection.length;
 
-  if(selectionCount > 0) // only check if selection exist
-		{
-				if(!variabelMarker)
-				{
-					errors.push("the variables still need to be marked");
+		if (selectionCount > 0) {
+			// only check if selection exist
+			if (!variabelMarker) {
+				errors.push('the variables still need to be marked');
+			}
+
+			if (!dataMarker) {
+				errors.push('the data still need to be marked');
+			}
+
+			let lastCount = 0;
+			for (let index = 0; index < selection.length; index++) {
+				const element = selection[index];
+				console.log(index, element);
+				let c = element.cells.filter((c) => c == true)?.length; // get length of all cells marked as true
+				if (index > 0) {
+					// after first run, check count against the others
+					if (c != lastCount) {
+						let message =
+							'selection mismatch, the rows must have the same number of marked cells  ';
+						errors.push(message);
+						break;
+					}
 				}
 
-				if(!dataMarker)
-				{
-					errors.push("the data still need to be marked");
-				}
-
-				let lastCount = 0;
-				for (let index = 0; index < selection.length; index++) {
-					const element = selection[index];
-					console.log(index, element)
-					let c = element.cells.filter(c=> c == true)?.length; // get length of all cells marked as true
-					if(index>0)// after first run, check count against the others 
-					{
-								if(c!=lastCount) {
-									let message ="selection mismatch, the rows must have the same number of marked cells  "
-									errors.push(message);
-									break;
-								}
-					} 
-				
-
-					lastCount = c;// last count set 
-
-				}
-		 	isValid = errors.length == 0?true:false;
-
-		}
-		else // no selection
-		{
+				lastCount = c; // last count set
+			}
+			isValid = errors.length == 0 ? true : false;
+		} // no selection
+		else {
 			isValid = false; // no selection, no errors,  not valid
 			errors = [];
-
 		}
-
 	}
 
 	async function save() {
-
 		generate = true;
 
 		model.markers = selection;
@@ -345,49 +319,78 @@ import { faSave, faTrash } from '@fortawesome/free-solid-svg-icons/index'
 		}
 	}
 
- function changeDelimeter()
-	{
-			setTableInfos(model.preview, String.fromCharCode(model.delimeter));
+	// if you change the delimeter you need to change/update also the table informations
+	function changeDelimeter() {
+		setTableInfos(model.preview, String.fromCharCode(model.delimeter));
 	}
 
+	// ROW Selection
+	const rowSelectionHandler = (r) => (e) => {
+		console.log(r, e.which, e.button);
+		//left mouse click
+		if (e.which === 1 || e.button === 0) {
+			clean();
+			console.log(r);
+			selectRow(r);
+			selectedRowIndex = r;
+		}
+
+		// right mouse click
+		if (e.which === 3 || e.button === 2) {
+			clean();
+		}
+	};
 </script>
 
-{#if !model || state.length == 0 || generate==false}
+{#if !model || state.length == 0 || generate == false}
 	<!--if the model == false, access denied-->
-	{#if !model || state.length == 0 || generate==false}
-		<div class="h-full w-full text-surface-700"><Spinner position={positionType.center} label="Loading Structure Suggestion based on: {model.file}"/></div>
+	{#if !model || state.length == 0 || generate == false}
+		<div class="h-full w-full text-surface-700">
+			<Spinner
+				position={positionType.center}
+				label="Loading Structure Suggestion based on: {model.file}"
+			/>
+		</div>
 	{:else}
-		<div class="h-full w-full text-surface-700"><Spinner position={positionType.center} label="Generate Structure..."/></div>
+		<div class="h-full w-full text-surface-700">
+			<Spinner position={positionType.center} label="Generate Structure..." />
+		</div>
 	{/if}
 {:else}
-	<!-- load page -->
-	<form on:submit|preventDefault={save}>
-		<div
-			id="structure-suggestion-container"
-			class="grid grid-cols-3 gap-5"
-			on:mousedown={beginDrag}
-			on:mouseup={endDrag}
-		>
-			<div>
+
+<!-- load page -->
+<form on:submit|preventDefault={save}>
+
+<div
+	id="structure-suggestion-container"
+	class="flex-col gap-3"
+	on:mousedown={beginDrag}
+	on:mouseup={endDrag}
+>
+
+<div class="flex gap-5">
+	
+	<div id="edit" class="flex flex-col grow gap-2">
+
+		<div id="reader selections" class="flex flex-none gap-2 " >
+
 				<DropdownKVP
-					id="Delimeter"
-					title="Delimeter"
-					bind:target={model.delimeter}
-					source={model.delimeters}
-					complexTarget={false}
-					on:change={changeDelimeter}
-				/>
-			</div>
-			<div>
+						id="Delimeter"
+						title="Delimeter"
+						bind:target={model.delimeter}
+						source={model.delimeters}
+						complexTarget={false}
+						on:change={changeDelimeter}
+					/>
+
 				<DropdownKVP
-					id="Decimal"
-					title="Decimal"
-					bind:target={model.decimal}
-					source={model.decimals}
-					complexTarget={false}
-				/>
-			</div>
-			<div>
+						id="Decimal"
+						title="Decimal"
+						bind:target={model.decimal}
+						source={model.decimals}
+						complexTarget={false}
+					/>
+
 				<DropdownKVP
 					id="TextMarker"
 					title="TextMarker"
@@ -395,149 +398,126 @@ import { faSave, faTrash } from '@fortawesome/free-solid-svg-icons/index'
 					source={model.textMarkers}
 					complexTarget={false}
 				/>
+
+		</div>
+
+			<div id="markers" class="py-5 flex gap-1">
+
+				<button
+					class="btn variant-filled-error"
+					type="button"
+					on:click={() => onclickHandler(MARKER_TYPE.VARIABLE)}>Variable</button
+				>
+				<button
+					class="btn variant-filled-success"
+					type="button"
+					on:click={() => onclickHandler(MARKER_TYPE.UNIT)}>Unit</button
+				>
+				<button
+					class="btn variant-filled-warning"
+					type="button"
+					on:click={() => onclickHandler(MARKER_TYPE.DESCRIPTION)}>Description</button
+				>
+				<button
+					class="btn variant-filled-secondary"
+					type="button"
+					color="info"
+					on:click={() => onclickHandler(MARKER_TYPE.MISSING_VALUES)}>Missing Values</button
+				>
+				<button
+					class="btn variant-filled-primary"
+					type="button"
+					on:click={() => onclickHandler(MARKER_TYPE.DATA)}>Data</button
+				>
+
+				<button title="reset selection" class="btn variant-filled-warning text-lg" type="button" on:click={resetSelection}
+					><Fa icon={faArrowRotateLeft} /></button
+				>
+
+	  </div>
+
+			<div id="missing values" class="grow">
+				<!-- Missing Values-->
+				<MissingValues bind:list={model.missingValues} />
 			</div>
 
-			<div class="col-span-2 space-y-5 ">
-
-					<button
-						class="btn variant-filled-error"
-						type="button"
-						on:click={() => onclickHandler(MARKER_TYPE.VARIABLE)}>Variable</button
-					>
-					<button
-						class="btn variant-filled-success"
-						type="button"
-						on:click={() => onclickHandler(MARKER_TYPE.UNIT)}>Unit</button
-					>
-					<button
-						class="btn variant-filled-warning"
-						type="button"
-						on:click={() => onclickHandler(MARKER_TYPE.DESCRIPTION)}>Description</button
-					>
-					<button
-						class="btn variant-filled-secondary"
-						type="button"
-						color="info"
-						on:click={() => onclickHandler(MARKER_TYPE.MISSING_VALUES)}>Missing Values</button
-					>
-					<button
-						class="btn variant-filled-primary"
-						type="button"
-						on:click={() => onclickHandler(MARKER_TYPE.DATA)}>Data</button
-					>
-			
-					<div class="my-1 float-right">
-
-		
-						<button class="variant-ghost-warning btn text-3xl" type="button" on:click={resetSelection}><Fa icon={faTrash}/></button>
-						<button class="btn variant-ghost-surface text-3xl" disabled={!isValid}>
-							<Fa icon={faSave}/> </button>
-					</div>
-
-
-
-					<div >
-						<SlideToggle name="selection support" bind:checked={selectionsupport}
-							>selection support</SlideToggle
-						>
-						<div class="m-2 float-right text-sm">
-							{#each errors as error}
-							<label class="text-error-500">{error}</label>
-							{/each}
-							</div>
-					</div>
-				<div>
-					<!-- Missing Values-->
-					<MissingValues bind:list={model.missingValues} />
-				</div>
-				<div class="flex flex-auto gap-5">
-					<label><b>Total:</b> {model.total}</label>
-					<label><b>Found:</b> {model.total - model.skipped}</label>
-					<label><b>Skipped:</b> {model.skipped}</label>
-				</div>
-
+		<div class="flex ">
+			<div id="errors" class="m-2 text-sm grow text-right">
+				{#each errors as error}
+					<label class="text-error-500">{error}</label>
+				{/each}
 			</div>
-
-			<!-- controls-->
-			<div class="col-span-1 card p-5 w-auto">
-				<h4 class="h4">Controls</h4>
-				<hr class="divide-x-8" />
-				<dl class="list-dl gap-0">
-					<div>
-						<span class="badge bg-primary-500" />
-						<span class="flex-auto">
-							<dt class="font-bold">Selection</dt>
-							<dd>left mouse button</dd>
-						</span>
-					</div>
-					<div>
-						<span class="badge bg-primary-500" />
-						<span class="flex-auto">
-							<dt class="font-bold">Drag</dt>
-							<dd>left mouse button down and drag</dd>
-						</span>
-					</div>
-
-					<div>
-						<span class="badge bg-primary-500" />
-						<span class="flex-auto">
-							<dt class="font-bold">Select Row</dt>
-							<dd>double click left mouse button</dd>
-						</span>
-					</div>
-					<div>
-						<span class="badge bg-primary-500" />
-						<span class="flex-auto">
-							<dt class="font-bold">Deselect</dt>
-							<dd>right mouse button click</dd>
-						</span>
-					</div>
-					<!-- ... -->
-				</dl>
-			</div>
-
-			<div class="col-span-3" />
-			<div>
-
-				<table class="table table-compact"
-				 on:contextmenu={(e)=> e.preventDefault()} >
-					<tbody> 
-						{#each model.preview as row, r}
-							<tr>
-								{#each row.split(String.fromCharCode(model.delimeter)) as cell, c}
-									<td 
-										class="hover:cursor-pointer select-none"
-
-										on:dblclick={dbclickHandler(r)}
-										on:mousedown={mouseDownHandler(r, c)}
-										on:mouseenter={mouseHandler(r, c)}
-                    
-										class:variant-soft-error={selection.find((e) => e.row === r && e.cells[c] === true)
-											?.type === MARKER_TYPE.VARIABLE}
-										class:variant-soft-success={selection.find((e) => e.row === r && e.cells[c] === true)?.type ===
-											MARKER_TYPE.UNIT}
-										class:variant-soft-warning={selection.find((e) => e.row === r && e.cells[c] === true)
-											?.type === MARKER_TYPE.DESCRIPTION}
-										class:variant-soft-secondary={selection.find((e) => e.row === r && e.cells[c] === true)
-											?.type === MARKER_TYPE.MISSING_VALUES}
-										class:variant-soft-primary={selection.find((e) => e.row === r && e.cells[c] === true)?.type ===
-											MARKER_TYPE.DATA}
-										class:variant-ghost-surface={state[r][c]}
-									>
-										{cell}
-									</td>
-								{/each}
-							</tr>
-						{/each}
-					</tbody>
-				</table>
+				<div class="text-right">
+					<button title="save" class="btn variant-filled-primary text-lg" disabled={!isValid}>
+						<Fa icon={faSave} />
+					</button>
 			</div>
 		</div>
-	</form>
+	</div>
+
+	<div class="controls">	<Controls/></div>
+</div>
+
+<div id="preview data" class="flex-col py-5">
+		
+	<div id="data infos" class="flex flex-auto gap-5 pb-2">
+		<label><b>Total:</b> {model.total}</label>
+		<label><b>Found:</b> {model.total - model.skipped}</label>
+		<label><b>Skipped:</b> {model.skipped}</label>
+		<label class="grow text-right"><i>you see only the first 10 rows of the data</i> </label>
+	</div>
+
+	<table class="table table-compact" on:contextmenu={(e) => e.preventDefault()}>
+			<tbody>
+				{#each model.preview as row, r}
+					<tr>
+						<td
+							class="w-8 hover:cursor-pointer select-none text-sm hover:border-surface-400 hover:border-solid hover:border-b-2"
+							on:mousedown={rowSelectionHandler(r)}
+						>
+							<div class="pt-1">
+								<Fa icon={faChevronRight} size="sm" />
+							</div>
+						</td>
+
+						{#each row.split(String.fromCharCode(model.delimeter)) as cell, c}
+							<td
+								class="hover:cursor-pointer select-none hover:border-surface-400 hover:border-solid hover:border-b-2"
+								on:dblclick={dbclickHandler(r)}
+								on:mousedown={mouseDownHandler(r, c)}
+								on:mouseenter={mouseHandler(r, c)}
+								class:variant-soft-error={selection.find(
+									(e) => e.row === r && e.cells[c] === true
+								)?.type === MARKER_TYPE.VARIABLE}
+								class:variant-soft-success={selection.find(
+									(e) => e.row === r && e.cells[c] === true
+								)?.type === MARKER_TYPE.UNIT}
+								class:variant-soft-warning={selection.find(
+									(e) => e.row === r && e.cells[c] === true
+								)?.type === MARKER_TYPE.DESCRIPTION}
+								class:variant-soft-secondary={selection.find(
+									(e) => e.row === r && e.cells[c] === true
+								)?.type === MARKER_TYPE.MISSING_VALUES}
+								class:variant-soft-primary={selection.find(
+									(e) => e.row === r && e.cells[c] === true
+								)?.type === MARKER_TYPE.DATA}
+								class:variant-ghost-surface={state[r][c]}
+							>
+								{cell}
+							</td>
+						{/each}
+					</tr>
+				{/each}
+			</tbody>
+		</table>
+	</div>
+
+</div>
+
+</form>
 {/if}
 
 <style>
-  
 	.variable {
 		background-color: blue;
 		color: white;
@@ -560,4 +540,4 @@ import { faSave, faTrash } from '@fortawesome/free-solid-svg-icons/index'
 		background-color: var(--bs-primary);
 		color: white;
 	}
-  </style>
+</style>

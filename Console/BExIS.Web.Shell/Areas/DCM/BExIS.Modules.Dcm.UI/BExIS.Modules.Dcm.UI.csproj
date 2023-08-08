@@ -64,15 +64,9 @@
     <Compile Include="Controllers\Hooks\DataDescriptionController.cs" />
     <Compile Include="Controllers\Hooks\AttachmentUploadController.cs" />
     <Compile Include="Controllers\Hooks\FileUploadController.cs" />
+    <Compile Include="Controllers\Hooks\SubmitController.cs" />
     <Compile Include="Controllers\Legacy\AttachmentsController.cs" />
     <Compile Include="Controllers\Legacy\CreateDatasetController.cs" />
-    <Compile Include="Controllers\Legacy\EasyUploadController.cs" />
-    <Compile Include="Controllers\Legacy\EasyUploadSelectAFileController.cs" />
-    <Compile Include="Controllers\Legacy\EasyUploadSelectAreasController.cs" />
-    <Compile Include="Controllers\Legacy\EasyUploadSheetDataStructureController.cs" />
-    <Compile Include="Controllers\Legacy\EasyUploadSheetSelectMetaDataController.cs" />
-    <Compile Include="Controllers\Legacy\EasyUploadSummaryController.cs" />
-    <Compile Include="Controllers\Legacy\EasyUploadVerificationController.cs" />
     <Compile Include="Controllers\Hooks\EntityReferenceController.cs" />
     <Compile Include="Controllers\FormController.cs" />
     <Compile Include="Controllers\Legacy\HelpController.cs" />
@@ -83,12 +77,7 @@
     <Compile Include="Controllers\Legacy\ImportMetadataStructureSummaryController.cs" />
     <Compile Include="Controllers\Legacy\ManageMetadataStructureController.cs" />
     <Compile Include="Controllers\Legacy\PushController.cs" />
-    <Compile Include="Controllers\Legacy\SubmitController.cs" />
-    <Compile Include="Controllers\Legacy\SubmitGetFileInformationController.cs" />
-    <Compile Include="Controllers\Legacy\SubmitSelectAFileController.cs" />
-    <Compile Include="Controllers\Legacy\SubmitSpecifyDatasetController.cs" />
-    <Compile Include="Controllers\Legacy\SubmitSummaryController.cs" />
-    <Compile Include="Controllers\Legacy\SubmitValidationController.cs" />
+    <Compile Include="Controllers\Legacy\OldSubmitController.cs" />
     <Compile Include="Controllers\Hooks\MetadataController.cs" />
     <Compile Include="Controllers\API\LinkController.cs" />
     <Compile Include="Controllers\StructureSuggestionController.cs" />
@@ -99,12 +88,14 @@
     <Compile Include="DcmModule.cs" />
     <Compile Include="FileReaderInfoController.cs" />
     <Compile Include="Helpers\API\DataApiHelper.cs" />
+    <Compile Include="Helpers\EditHelper.cs" />
     <Compile Include="Helpers\EntityTemplateHelper.cs" />
     <Compile Include="Helpers\DataASyncUploadHelper.cs" />
     <Compile Include="Helpers\DcmSeedDataGenerator.cs" />
     <Compile Include="Helpers\EasyUploadSuggestion.cs" />
     <Compile Include="Helpers\EntityReferenceHelper.cs" />
     <Compile Include="Helpers\FormHelper.cs" />
+    <Compile Include="Helpers\SubmitHelper.cs" />
     <Compile Include="Helpers\SystemMetadataHelper.cs" />
     <Compile Include="Helpers\UploadUIHelper.cs" />
     <Compile Include="Hooks\AttachmentViewHook.cs" />
@@ -133,6 +124,7 @@
     <Compile Include="Models\Edit\DataDescriptionModel.cs" />
     <Compile Include="Models\Edit\EditModel.cs" />
     <Compile Include="Models\Edit\FileUploadModel.cs" />
+    <Compile Include="Models\Edit\SubmitModel.cs" />
     <Compile Include="Models\EntityReference\ReferenceModels.cs" />
     <Compile Include="Models\EntityTemplates\EntityTemplateModels.cs" />
     <Compile Include="Models\FileInfoModel.cs" />
@@ -618,9 +610,6 @@
     </Reference>
     <Reference Include="System.Data" />
     <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="System.Diagnostics.DiagnosticSource, Version=4.0.1.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
-      <HintPath>..\..\..\..\..\packages\System.Diagnostics.DiagnosticSource.4.3.0\lib\net46\System.Diagnostics.DiagnosticSource.dll</HintPath>
-    </Reference>
     <Reference Include="System.Diagnostics.Tracing, Version=4.1.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>..\..\..\..\..\packages\System.Diagnostics.Tracing.4.3.0\lib\net462\System.Diagnostics.Tracing.dll</HintPath>
       <Private>True</Private>
@@ -667,8 +656,8 @@
       <Private>True</Private>
       <Private>True</Private>
     </Reference>
-    <Reference Include="System.Net.Http, Version=4.1.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\..\..\..\..\packages\System.Net.Http.4.3.0\lib\net46\System.Net.Http.dll</HintPath>
+    <Reference Include="System.Net.Http, Version=4.1.1.3, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\..\..\..\..\packages\System.Net.Http.4.3.4\lib\net46\System.Net.Http.dll</HintPath>
       <Private>True</Private>
       <Private>True</Private>
     </Reference>

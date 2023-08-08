@@ -64,13 +64,13 @@
     {
       "key": "accountPartyTypes",
       "value": "personMember:organizationEmployment-projectMember-consortiaMember,personGuest",
-      "type": "string",
+      "type": "String",
       "description": "Example: PartyType1:PartyRelationshipTypeTitle1-PartyRelationshipTypeTitle2,PartyType2,PartyType3:PartyRelationshipTypeTitle1. Define the allow party type for account registeration and their relationship type. each party type could have zero or multi allowed relationship( they should be available in the database). if the relationship type has one 'partytypepair' -> load the allowed target of this 'partytypepair'         if  the relationship type has more than one 'partytypepair' -> load the allowed target of the 'partytypepair' which has 'partyrelationshiptypedefault==true'"
     },
     {
       "key": "ownerPartyRelationshipType",
       "value": "Owner",
-      "type": "string",
+      "type": "String",
       "description": ""
     },
     {
