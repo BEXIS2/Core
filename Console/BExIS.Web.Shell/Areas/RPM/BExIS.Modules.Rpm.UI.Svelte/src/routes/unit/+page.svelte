@@ -2,7 +2,7 @@
 	import { onMount } from 'svelte';
 	import { slide, fade } from 'svelte/transition';
 	import { Modal, modalStore, Toast } from '@skeletonlabs/skeleton';
-	import { Page, Table, ErrorMessage, helpStore, TablePlaceholder, notificationStore, notificationType} from '@bexis2/bexis2-core-ui';
+	import { Page, Table, ErrorMessage, helpStore, TablePlaceholder, notificationStore, notificationType, pageContentLayoutType} from '@bexis2/bexis2-core-ui';
 	import * as apiCalls from './services/apiCalls';
 	import Form from './components/form.svelte';
 	import TableElement from '../components/tableElement.svelte';
@@ -98,7 +98,6 @@
 </script>
 
 <Page help={true} title="Manage Units">
-	<div class="w-full">
 		<h1 class="h1">Units</h1>
 		{#await reload()}
 			<div class="grid w-full grid-cols-2 gap-5 my-4 pb-1 border-b border-primary-500">
@@ -185,6 +184,5 @@
 		{:catch error}
 			<ErrorMessage {error} />
 		{/await}
-	</div>
 </Page>
 <Modal/>
