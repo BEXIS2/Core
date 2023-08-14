@@ -57,7 +57,12 @@ namespace BExIS.Dlm.Entities.Meanings
                     {
                         repo.Put(meaning);
                         uow.Commit();
-                        string json_string = JsonConvert.SerializeObject(new KeyValuePair<string, string>("Success", JsonConvert.SerializeObject(meaning)));
+                        var xx = JsonConvert.SerializeObject(meaning, Formatting.Indented,
+                            new JsonSerializerSettings
+                            {
+                                ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore
+                            });
+                        string json_string = JsonConvert.SerializeObject(new KeyValuePair<string, string>("Success", JsonConvert.SerializeObject(xx)));
                         return JObject.Parse(json_string);
                     }
                 }
