@@ -21,7 +21,7 @@ export const editHelp = [
 			'Set the minimum required information for your Dataset.' +
 			'The user must fill this field(s) before the creation of a dataset can start. ' +
 			'The listed items (system keys) must be mapped against the selected metadata structure.' +
-			'That's why they are grouped in mapped and unmapped.'
+			'That is why they are grouped in mapped and unmapped.'
 	},
 	{
 		id: 'invalidSaveMode',
