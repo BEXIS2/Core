@@ -51,7 +51,7 @@ export const editHelp = [
 	},
 	{
 		id: 'hasDatastructure',
-		name: 'Options for data structures,
+		name: 'Options for data structures',
 		description:
 			'<u>1. active vs not active</u>' +
 			'<ul class="ul list-disc p-5"><li><b>active datastructure</b> - tabular data will be uploaded</li>' +
