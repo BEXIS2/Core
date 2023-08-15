@@ -62,7 +62,7 @@ namespace BExIS.Dlm.Entities.Meanings
                             {
                                 ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore
                             });
-                        string json_string = JsonConvert.SerializeObject(new KeyValuePair<string, string>("Success", JsonConvert.SerializeObject(xx)));
+                        string json_string = JsonConvert.SerializeObject(new KeyValuePair<string, string>("Success", xx));
                         return JObject.Parse(json_string);
                     }
                 }
@@ -164,13 +164,13 @@ namespace BExIS.Dlm.Entities.Meanings
                     repo.Put(meaning);
                     uow.Commit();
                     var merged = repo.Get(meaning.Id);
-                    string json_string = JsonConvert.SerializeObject(new KeyValuePair<string, string>("Success", 
-                        JsonConvert.SerializeObject(meaning.Id, Formatting.Indented, new JsonSerializerSettings
-                        {
-                            ReferenceLoopHandling = ReferenceLoopHandling.Serialize
-                        }
-                        ))
-                    );
+                    var xx = JsonConvert.SerializeObject(merged, Formatting.Indented,
+                            new JsonSerializerSettings
+                            {
+                                ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore
+                            });
+                    string json_string = JsonConvert.SerializeObject(new KeyValuePair<string, string>("Success", xx));
+
                     return JObject.Parse(json_string);
                 }
             }

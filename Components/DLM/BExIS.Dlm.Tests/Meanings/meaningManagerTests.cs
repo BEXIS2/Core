@@ -11,6 +11,8 @@ using BExIS.App.Testing;
 using BExIS.Utils.Config;
 using NUnit.Framework;
 using Newtonsoft.Json;
+using NHibernate.Mapping;
+using System.Security.Cryptography.X509Certificates;
 
 namespace BExIS.Dlm.Entities.Meanings.Tests
 {
@@ -72,6 +74,27 @@ namespace BExIS.Dlm.Entities.Meanings.Tests
             res["Key"].ToString().Should().NotBeNullOrEmpty();
             res["Key"].ToString().Should().Be("Success");
             NUnit.Framework.Assert.IsNotNull(res);
+
+            // trying to edit the inserdted command 
+            Name = "meaning name for unit test edited";
+            Name.Should().NotBeNull();
+            ShortName = "meaning name for unit test tedited";
+            ShortName.Should().NotBeNull();
+            Description = "meaning name for unit test edited";
+            Description.Should().NotBeNull();
+            selectable = (Selectable)Enum.Parse(typeof(Selectable), "0");
+            selectable.Should().NotBeNull();
+            approved = (Approved)Enum.Parse(typeof(Approved), "0");
+            approved.Should().NotBeNull();
+            var obj = JObject.Parse(res["Value"].ToString());
+            res = _meaningManager.editMeaning(obj["Id"].ToString(), Name, ShortName, Description, selectable, approved, variable, externalLink, related_meaning);
+            JObject.Parse(res["Value"].ToString())["Name"].ToString().Should().Be("meaning name for unit test edited");
+            JObject.Parse(res["Value"].ToString())["ShortName"].ToString().Should().Be("meaning name for unit test tedited");
+            JObject.Parse(res["Value"].ToString())["Description"].ToString().Should().Be("meaning name for unit test edited");
+            JObject.Parse(res["Value"].ToString())["Selectable"].ToString().Should().Be("0");
+            JObject.Parse(res["Value"].ToString())["Approved"].ToString().Should().Be("0");
+            NUnit.Framework.Assert.IsNotNull(res); 
+
         }
 
         [TestMethod()]
@@ -94,6 +117,24 @@ namespace BExIS.Dlm.Entities.Meanings.Tests
             res["Key"].ToString().Should().NotBeNullOrEmpty();
             res["Key"].ToString().Should().Be("Success");
             NUnit.Framework.Assert.IsNotNull(res);
+
+            //editing an external link
+            uri = Convert.ToString("htpp://testUri_edited_.com");
+            uri.Should().NotBeNullOrEmpty();
+
+            name = Convert.ToString("test name external link edited");
+            name.Should().NotBeNullOrEmpty();
+
+            type = Convert.ToString("test type external link edited");
+            type.Should().NotBeNullOrEmpty();
+
+            var obj = JObject.Parse(res["Value"].ToString());
+            res = _meaningManager.editExternalLink(obj["Id"].ToString(),uri,name,type );
+            JObject.Parse(res["Value"].ToString())["URI"].ToString().Should().Be("htpp://testUri_edited_.com");
+            JObject.Parse(res["Value"].ToString())["Name"].ToString().Should().Be("test name external link edited");
+            JObject.Parse(res["Value"].ToString())["Type"].ToString().Should().Be("test type external link edited");
+            NUnit.Framework.Assert.IsNotNull(res);
+
         }
 
     }
