@@ -93,9 +93,6 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                 //    related_meaning = _meaningManager.getMeaning(long.Parse(id)).ToObject<Meaning>();
                 JObject res = _meaningManager.editMeaning(id, Name, ShortName, Description, selectable, approved, variable, externalLink, related_meaning);
                 return (cretae_response(res));
-
-                JObject obj = _meaningManager.getMeaning(Int64.Parse(id));
-                m = JsonConvert.DeserializeObject<Meaning>(obj["Value"].ToString());
             }
             catch
             {
