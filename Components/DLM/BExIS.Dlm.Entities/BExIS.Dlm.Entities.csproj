@@ -67,7 +67,6 @@
     <Compile Include="Common\BaseUsage.cs" />
     <Compile Include="DataStructure\AggregateFunction.cs" />
     <Compile Include="DataStructure\Classifier.cs" />
-    <Compile Include="DataStructure\VariableConstraint.cs" />
     <Compile Include="DataStructure\Constraint.cs" />
     <Compile Include="DataStructure\ConversionMethod.cs" />
     <Compile Include="DataStructure\DataAttribute.cs" />
