@@ -81,7 +81,7 @@ namespace BExIS.Modules.Rpm.UI.Helpers
                     dimensionFeature = featureManager.Create("Dimension Management", "Dimension Management", dataPlanning);
 
                 if (!operationManager.Exists("RPM", "Dimension", "*"))
-                    operationManager.Create("RPM", "Dimension", "*", unitFeature);
+                    operationManager.Create("RPM", "Dimension", "*", dimensionFeature);
 
                 Feature dataTypeFeature = features.FirstOrDefault(f =>
                     f.Name.Equals("Data Type Management") &&
@@ -89,13 +89,25 @@ namespace BExIS.Modules.Rpm.UI.Helpers
                     f.Parent.Id.Equals(dataPlanning.Id));
 
                 if (dataTypeFeature == null)
-                    dataTypeFeature = featureManager.Create("Data Type Management", "Data Type Management", dataPlanning);
+                    dataTypeFeature = featureManager.Create("Data Type Management", "Data Type Management", dataPlanning);;
 
                 if (!operationManager.Exists("RPM", "Home", "*"))
                     operationManager.Create("RPM", "Home", "*", dataTypeFeature);
 
                 if (!operationManager.Exists("RPM", "Help", "*"))
                     operationManager.Create("RPM", "Help", "*");
+
+
+                Feature newDataTypeFeature = features.FirstOrDefault(f =>
+                    f.Name.Equals("New Data Type Management") &&
+                    f.Parent != null &&
+                    f.Parent.Id.Equals(dataPlanning.Id));
+
+                if (newDataTypeFeature == null)
+                    newDataTypeFeature = featureManager.Create("New Data Type Management", "New Data Type Management", dataPlanning);
+
+                if (!operationManager.Exists("RPM", "DataType", "*"))
+                    operationManager.Create("RPM", "DataType", "*", newDataTypeFeature);
 
 
                 Feature api = features.FirstOrDefault(f =>

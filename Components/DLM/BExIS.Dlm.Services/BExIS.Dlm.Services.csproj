@@ -142,6 +142,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Administration\ResearchPlanManager.cs" />
+    <Compile Include="DataStructure\ConstraintManager.cs" />
     <Compile Include="DataStructure\VariableManager.cs" />
     <Compile Include="DataStructure\MissingValueManager.cs" />
     <Compile Include="Data\DatasetManager.cs" />

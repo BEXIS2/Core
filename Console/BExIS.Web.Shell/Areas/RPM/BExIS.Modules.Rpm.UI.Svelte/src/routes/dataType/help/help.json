@@ -1,0 +1,59 @@
+{
+	"helpItems": [
+		{
+			"id": "create",
+			"name": "Create neẇ Unit",
+			"description": "Click here to ceate a new unit"
+		},
+		{
+			"id": "delete",
+			"name": "Delete Unit",
+			"description": "Click here to detete the unit"
+		},
+		{
+			"id": "edit",
+			"name": "Edit Unit",
+			"description": "Click here to edit the unit"
+		},
+		{
+			"id": "save",
+			"name": "Save Unit",
+			"description": "Click here to save the unit"
+		},
+		{
+			"id": "cancel",
+			"name": "Cancel",
+			"description": "Click here to cancel"
+		},
+		{
+			"id": "name",
+			"name": "Name",
+			"description": "Name of the unit. <li>Has to be unique.</li>"
+		},
+		{
+			"id": "description",
+			"name": "Description",
+			"description": "Description of th unit. <li>a shot overview how the unit shold be used.</li>"
+		},
+		{
+			"id": "abbreviation",
+			"name": "Abbreviation",
+			"description": "Abbreviation of the unit. <li>eg. m for meter, Kg for kilogramm etc.</li>"
+		},
+		{
+			"id": "dataTypes",
+			"name": "Data Types",
+			"description": "Type od the values <li>eg. number, text, boolean etc.</li>"
+		},
+		{
+			"id": "dimension",
+			"name": "Dimension",
+			"description": "<li>eg. length, weight, volume etc.</li>"
+		},
+		{
+			"id": "measurementSystem",
+			"name": "Measurement System",
+			"description": "Is the system where the unit belongs to <li>eg. Metric, Nautical etc.</li>"
+		}
+	]
+}

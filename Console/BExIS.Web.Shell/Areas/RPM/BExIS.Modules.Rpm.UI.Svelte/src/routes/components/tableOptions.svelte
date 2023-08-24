@@ -8,14 +8,14 @@
 </script>
 
 <tableOption>
-	<div class="w-18">
+	<div class="w-18" id = "{row.id}">
 		{#if row.inUse === false}
 			<!-- svelte-ignore a11y-mouse-events-have-key-events -->
 			<button
 				type="button"
 				class="chip variant-filled-primary shadow-md"
 				title="Edit Unit, {row.name}"
-				id="edit"
+				id="edit-{row.id}"
 				on:mouseover={() => {
 					helpStore.show('edit');
 				}}
@@ -31,7 +31,7 @@
 				type="button"
 				class="chip variant-filled-error shadow-md"
 				title="Delete Unit, {row.name}"
-				id="delete"
+				id="delete-{row.id}"
 				on:mouseover={() => {
 					helpStore.show('delete');
 				}}
