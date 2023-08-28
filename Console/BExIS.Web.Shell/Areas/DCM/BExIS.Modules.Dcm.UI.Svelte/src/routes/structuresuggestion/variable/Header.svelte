@@ -1,20 +1,28 @@
-<script>
+<script lang="ts">
 	import { SlideToggle } from '@skeletonlabs/skeleton';
 	import { Alert } from '@bexis2/bexis2-core-ui';
 	import Fa from 'svelte-fa';
-	import { faCheck } from '@fortawesome/free-solid-svg-icons';
-	import Variable from './Variable.svelte';
+	import { faCheck, faAngleUp, faAngleDown } from '@fortawesome/free-solid-svg-icons';
 
 	export let index;
 	export let name;
 	export let isKey;
 	export let isOptional;
 	export let isValid;
+	export let expand:boolean;
 </script>
 
 <div id={name} class="flex gap-5">
 	<div class="grow flex gap-2">
-		<h1 class="h1">{name}</h1>
+
+	<div class="cursor-pointer" on:click={() => expand = !expand}> 					<!--		<div class="cursor-pointer"  on:click={() => expand = !expand}> -->
+			{#if expand}<Fa icon={faAngleUp} />
+			{:else} <Fa icon={faAngleDown} />
+			{/if}
+		</div>
+
+		<h2 class="h2">{name}</h2>
+
 		<div class="text-success-500">
 			{#if isValid}<Fa icon={faCheck} />{/if}
 		</div>

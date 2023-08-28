@@ -269,8 +269,8 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             cache.AsciiFileReaderInfo.Decimal = (DecimalCharacter)model.Decimal;
             cache.AsciiFileReaderInfo.Seperator = (TextSeperator)model.Delimeter;
             cache.AsciiFileReaderInfo.TextMarker = (TextMarker)model.TextMarker;
-            cache.AsciiFileReaderInfo.Data = model.Markers.Where(m => m.Type.Equals("data")).FirstOrDefault().Row + 1; // add 1 to store nit the index but the row
-            cache.AsciiFileReaderInfo.Variables = model.Markers.Where(m => m.Type.Equals("variable")).FirstOrDefault().Row + 1;// add 1 to store nit the index but the row
+            cache.AsciiFileReaderInfo.Data = model.Markers.Where(m => m.Type.Equals("data")).FirstOrDefault().Row + 1; // add 1 to store not the index but the row
+            cache.AsciiFileReaderInfo.Variables = model.Markers.Where(m => m.Type.Equals("variable")).FirstOrDefault().Row + 1;// add 1 to store not the index but the row
             cache.AsciiFileReaderInfo.Cells = model.Markers.Where(m => m.Type.Equals("variable")).FirstOrDefault().Cells;
 
             // additional infotmations
@@ -611,8 +611,10 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
         private string getValueFromMarkedRow(List<string> rows, List<Marker> markers, string type, char delimeter, int position, char textMarker)
         {
-            // check and get description
-            int markerIndex = markers.FindIndex(m => m.Type.Equals(type));
+   
+            var marker = markers.FirstOrDefault(m => m.Type.Equals(type));
+            int markerIndex = marker != null?marker.Row:-1;
+
             if (markerIndex > -1)
             {
                 var v = rows[markerIndex].Split(delimeter)[position]; // get value

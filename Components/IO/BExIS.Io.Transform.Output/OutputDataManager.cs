@@ -88,7 +88,7 @@ namespace BExIS.IO.Transform.Output
 
                 //ascii allready exist
                 if (datasetVersion.ContentDescriptors.Count(p => p.Name.Equals(contentDescriptorTitle) &&
-                    p.URI.Contains(datasetVersion.Id.ToString())) > 0 &&
+                    p.URI.Contains("_"+versionNr.ToString()+"_")) > 0 &&
                     !withUnits)
                 {
                     #region FileStream exist
@@ -238,12 +238,13 @@ namespace BExIS.IO.Transform.Output
             try
             {
                 DatasetVersion datasetVersion = datasetManager.GetDatasetLatestVersion(id);
+                int versionNr = datasetManager.GetDatasetVersionNr(datasetVersion);
                 ExcelWriter writer = new ExcelWriter(createAsTemplate);
 
                 string path = "";
 
                 //excel allready exist
-                if (datasetVersion.ContentDescriptors.Count(p => p.Name.Equals(contentDescriptorTitle) && p.URI.Contains(datasetVersion.Id.ToString())) > 0 &&
+                if (datasetVersion.ContentDescriptors.Count(p => p.Name.Equals(contentDescriptorTitle) && p.URI.Contains("_"+versionNr+"_")) > 0 &&
                     data == null)
                 {
                     #region FileStream exist
@@ -276,7 +277,6 @@ namespace BExIS.IO.Transform.Output
                 }
 
                 long datastuctureId = datasetVersion.Dataset.DataStructure.Id;
-                int versionNr = datasetManager.GetDatasetVersionNr(datasetVersion);
                 if (createAsTemplate)
                 {
                     string[] columnNames = (from dc in data.Columns.Cast<DataColumn>()

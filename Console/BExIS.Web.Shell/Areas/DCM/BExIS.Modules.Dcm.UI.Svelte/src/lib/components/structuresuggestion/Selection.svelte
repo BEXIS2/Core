@@ -86,7 +86,7 @@
 				// if data come from server index need to set -1
 				updateSelection(marker.type, marker.row - 1, marker.cells);
 			} else {
-				updateSelection(marker.type, marker.row, marker.cells);
+				updateSelection(marker.type, marker.row , marker.cells);
 			}
 		}
 	}
