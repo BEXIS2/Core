@@ -54,7 +54,7 @@ namespace BExIS.Dlm.Services.DataStructure
         #endregion Data Readers
 
         #region domain 
-        public Constraint Create(DomainConstraint entity)
+        public DomainConstraint Create(DomainConstraint entity)
         {
             Contract.Requires(entity.Items != null);
             Contract.Requires(entity.Items.Count > 0);

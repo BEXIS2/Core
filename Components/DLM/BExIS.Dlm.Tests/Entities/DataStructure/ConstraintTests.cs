@@ -1,19 +1,27 @@
-﻿using BExIS.Dlm.Entities.DataStructure;
+﻿using BExIS.App.Testing;
+using BExIS.Dlm.Entities.DataStructure;
+using BExIS.Dlm.Services.DataStructure;
+using BExIS.Utils.Config;
 using FluentAssertions;
 using NUnit.Framework;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using Vaiona.Utils.Cfg;
 namespace BExIS.Dlm.Tests.Entities.DataStructure
 {
     [TestFixture()]
     public class ConstraintTests
     {
+        private TestSetupHelper helper = null;
+
         [OneTimeSetUp]
         /// It is called once prior to executing any of the tests in a fixture.
         /// Multiple methods can be marked. Order is not preserved. 
         /// Inheritance is supported, call sequence form the parents
         public void OneTimeSetUp()
         {
-            // because these tests are working on in-memory objects (datasets) only, there is no need to do the test app setup
+            helper = new TestSetupHelper(WebApiConfig.Register, false);
         }
 
         [SetUp]
@@ -34,24 +42,62 @@ namespace BExIS.Dlm.Tests.Entities.DataStructure
         /// Inheritance is supported, call sequence form the children
         /// Executes only if: counterpart OneTimeSetUp exists and executed successfully.
         public void OneTimeTearDown()
-        { }
+        {
+            helper.Dispose();
+        }
 
         [Test]
-        public void PatternConstraintRegExTest()
+        public void CreateConstraints()
         {
             string description = "created by a unit test.";
-            bool negated = false;
-            string matchingPhrase = "^[a-w]+$";
+            string name = "Test Range Constraint";
 
-            PatternConstraint constraint = new PatternConstraint(ConstraintProviderSource.Internal, "", AppConfiguration.Culture.Name, description, negated, null, null, null, matchingPhrase, true);
+            RangeConstraint rangeConstraint = new RangeConstraint( );
+            rangeConstraint.Name = name;
+            rangeConstraint.Description = description;
+            rangeConstraint.Lowerbound = 1;
+            rangeConstraint.Upperbound = 100;
 
-            constraint.IsSatisfied("abc").Should().Be(true, "should be true because : value = abc & regex= " + matchingPhrase);
-            constraint.IsSatisfied("123").Should().Be(false, "should be false because : value = 123 & regex= " + matchingPhrase + " is not matching.");
-            constraint.IsSatisfied("xyz").Should().Be(false, "should be false because : value = xyz & regex= " + matchingPhrase + " is not matching.");
-            constraint.IsSatisfied("xyza").Should().Be(false, "should be false because : value = xyza & regex= " + matchingPhrase + " is not matching.");
-            constraint.IsSatisfied("ab123").Should().Be(false, "should be false because : value = ab123 & regex= " + matchingPhrase + " is not matching.");
-            constraint.IsSatisfied("Abc").Should().Be(false, "should be false because : value = Abc & regex= " + matchingPhrase + " is not matching.");
+            using (ConstraintManager constraintManager = new ConstraintManager())
+            {
+                Assert.Throws<ArgumentNullException>(() => rangeConstraint = constraintManager.Create(rangeConstraint));
+            }
 
+            PatternConstraint patternConstraint = new PatternConstraint();
+            patternConstraint.Name = name;
+            patternConstraint.Description = description;
+            patternConstraint.MatchingPhrase = "[a-z]";
+
+            using (ConstraintManager constraintManager = new ConstraintManager())
+            {
+                Assert.Throws<ArgumentNullException>(() => patternConstraint = constraintManager.Create(patternConstraint));
+            }
+
+            DomainConstraint domainConstraint = new DomainConstraint();
+            domainConstraint.Name = name;
+            domainConstraint.Description = description;
+
+            using (ConstraintManager constraintManager = new ConstraintManager())
+            {
+                Assert.Throws<ArgumentNullException>(() => domainConstraint = constraintManager.Create(domainConstraint));
+            }
+        }
+
+        [Test]
+        public void GetConstraints()
+        {
+            RangeConstraint rangeConstraint = new RangeConstraint();
+            PatternConstraint patternConstraint = new PatternConstraint();
+            DomainConstraint domainConstraint = new DomainConstraint();
+            List<Constraint> constraints = new List<Constraint>();
+
+            using (ConstraintManager constraintManager = new ConstraintManager())
+            {
+                Assert.Throws<ArgumentNullException>(() => rangeConstraint = constraintManager.RangeConstraintRepo.Get().FirstOrDefault());
+                Assert.Throws<ArgumentNullException>(() => patternConstraint = constraintManager.PatternConstraintRepo.Get().FirstOrDefault());
+                Assert.Throws<ArgumentNullException>(() => domainConstraint = constraintManager.DomainConstraintRepo.Get().FirstOrDefault());
+                Assert.Throws<ArgumentNullException>(() => constraints = constraintManager.Repo.Get().ToList());
+            }
         }
     }
 }

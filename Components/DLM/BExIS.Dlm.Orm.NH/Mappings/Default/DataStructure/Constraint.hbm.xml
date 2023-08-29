@@ -32,6 +32,10 @@
       <column name="CultureId" />
     </property>
 
+	<property name="Name" type="String">
+		<column name="Name" />
+	</property>
+
     <property name="Description" type="String">
       <column name="Description" />
     </property>
