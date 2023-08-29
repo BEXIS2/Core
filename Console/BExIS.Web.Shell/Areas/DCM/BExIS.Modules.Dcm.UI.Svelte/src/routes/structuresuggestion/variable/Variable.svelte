@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { onMount, afterUpdate, createEventDispatcher } from 'svelte';
+	import { fade } from 'svelte/transition';
 	// UI Components
 	import { TextInput, TextArea, MultiSelect } from '@bexis2/bexis2-core-ui';
 
@@ -14,10 +15,10 @@
 	import DataTypeDescription from './DataTypeDescription.svelte';
 	import Container from './Container.svelte';
 	import Header from './Header.svelte';
-	import Footer from './Footer.svelte';
+	import Overview from './Overview.svelte';
 
 	import suite from './variable';
-	import Message from '$lib/components/validation/Message.svelte';
+
 
 	export let variable: VariableModel;
 	$: variable;
@@ -32,6 +33,9 @@
 
 	export let isValid: boolean = false;
 	export let last: boolean = false;
+
+	export let expand:boolean ;
+
 
 	$: isValid;
 	// validation
@@ -97,7 +101,7 @@
 		
 
 		setTimeout(async () => {
-eDisplayPattern(variable.dataType);
+			updateDisplayPattern(variable.dataType);
 			res = suite(variable);
 			setValidationState(res);
 		}, 10);
@@ -120,8 +124,8 @@ eDisplayPattern(variable.dataType);
 			res = suite(variable, e.target.id);
 			setValidationState(res);
 
-			console.log(res);
-			console.log(res.isValid());
+			//console.log(res);
+			//console.log(res.isValid());
 		}, 100);
 	}
 
@@ -131,8 +135,8 @@ eDisplayPattern(variable.dataType);
 		setTimeout(async () => {
 			res = suite(variable, id);
 
-			console.log(res);
-			console.log(res.isValid());
+			//console.log(res);
+			//console.log(res.isValid());
 			// update display patter and reset it if it changed
 			if (id == 'dataType') {
 				updateDisplayPattern(variable.dataType);
@@ -152,8 +156,7 @@ eDisplayPattern(variable.dataType);
 
 	function cutData(d)
 	{
-		console.log("CUT",d);
-		
+
 			for (let index = 0; index < d.length; index++) {
 				let v = d[index];
 
@@ -162,23 +165,27 @@ eDisplayPattern(variable.dataType);
 					 d[index] = v.slice(0, 10)+"...";
 				}
 			}
-			console.log("CUT",d);
+
 			return d;
 	}
 
 </script>
 
 {#if loaded && variable}
+	{#if expand}
 	<div class="card">
-		<header class="card-header">
+		<header id="header_{index}" class="card-header" >
 			<Header
+				{index}
+				name={variable.name}
 				bind:isKey={variable.isKey}
 				bind:isOptional={variable.isOptional}
-				name={variable.name}
-				{index}
 				bind:isValid
+				bind:expand
 			/>
 		</header>
+		
+			
 		<section class="p-4">
 			<!--Description-->
 			<Container>
@@ -285,6 +292,8 @@ eDisplayPattern(variable.dataType);
 				<div slot="description">...</div>
 			</Container>
 		</section>
+
+
 		<footer class="card-footer">
 			<div class="flex">
 				<div class="grow" />
@@ -294,4 +303,19 @@ eDisplayPattern(variable.dataType);
 			</div>
 		</footer>
 	</div>
+		{:else}
+		<Overview 
+			{index} 
+			name={variable.name} 
+			isOptional= {variable.isOptional} 
+			isKey={variable.isKey} 
+			bind:expand={expand}
+			{isValid}
+			unit={variable.unit.text}
+			datatype={variable.dataType.text}
+			description={variable.description}
+			datapreview={cutData(data).join(', ')}
+			/>
+		{/if}
+
 {/if}
