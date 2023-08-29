@@ -19,52 +19,52 @@
 	import { faPlus, faXmark } from '@fortawesome/free-solid-svg-icons';
 
 	import type { ModalSettings } from '@skeletonlabs/skeleton';
-	import type { DimensionListItem } from './models';
+	import type { DataTypeListItem } from './models';
 
-	let ds: DimensionListItem[] = [];
+	let dts: DataTypeListItem[] = [];
 	const tableStore = writable<any[]>([]);
-	let dimension: DimensionListItem;
+	let dataType: DataTypeListItem;
 	let showForm = false;
-	$: dimensions = ds;
-	$: tableStore.set(ds);
+	$: dataTypes = dts;
+	$: tableStore.set(dts);
 
 	onMount(async () => {});
 
 	async function reload(): Promise<void> {
 		showForm = false;
-		ds = await apiCalls.GetDimensions();
+		dts = await apiCalls.GetDataTypes();
 		clear();
 	}
 
 	async function clear() {
-		dimension = {
+		dataType = {
 			id: 0,
 			name: '',
 			description: '',
-			specification: '',
+			systemType:'',
 			inUse: false
 		};
 	}
 
-	function editDimension(type: any) {
-		dimension = dimensions.find((d) => d.id === type.id)!;
+	function editDataType(type: any) {
+		dataType = dataTypes.find((dt) => dt.id === type.id)!;
 		if (type.action == 'edit') {
 			showForm = true;
 		}
 		if (type.action == 'delete') {
 			const modal: ModalSettings = {
 				type: 'confirm',
-				title: 'Delete Unit',
+				title: 'Delete Data Type',
 				body:
-					'Are you sure you wish to delete Dimension "' +
-					dimension.name +
+					'Are you sure you wish to delete Data Type "' +
+					dataType.name +
 					'" (' +
-					dimension.specification +
+					dataType.systemType +
 					')?',
 				// TRUE if confirm pressed, FALSE if cancel pressed
 				response: (r: boolean) => {
 					if (r === true) {
-						deleteDimension(type.id);
+						deleteDataType(type.id);
 					}
 				}
 			};
@@ -72,17 +72,17 @@
 		}
 	}
 
-	async function deleteDimension(id: number) {
-		let success = await apiCalls.DeleteDimension(id);
+	async function deleteDataType(id: number) {
+		let success = await apiCalls.DeleteDataType(id);
 		if (success != true) {
 			notificationStore.showNotification({
 				notificationType: notificationType.error,
-				message: 'Can\'t delete Dimension "' + dimension.name + '".'
+				message: 'Can\'t delete Data Type "' + dataType.name + '".'
 			});
 		} else {
 			notificationStore.showNotification({
 				notificationType: notificationType.success,
-				message: 'Dimension "' + dimension.name + '" deleted.'
+				message: 'Data Type "' + dataType.name + '" deleted.'
 			});
 		}
 		reload();
@@ -96,9 +96,9 @@
 	}
 </script>
 
-<Page help={true} title="Manage Dimensions">
+<Page help={true} title="Manage Data Types">
 	<div class="w-full">
-		<h1 class="h1">Dimensions</h1>
+		<h1 class="h1">Data Types</h1>
 
 		{#await reload()}
 			<div class="grid w-full grid-cols-2 gap-5 my-4 pb-1 border-b border-primary-500">
@@ -116,10 +116,10 @@
 			<!-- svelte-ignore a11y-click-events-have-key-events -->
 			<div class="grid grid-cols-2 gap-5 my-4 pb-1 border-b border-primary-500">
 				<div class="h3 h-9">
-					{#if dimension.id < 1}
-						Create neẇ Dimension
+					{#if dataType.id < 1}
+						Create neẇ Data Type
 					{:else}
-						{dimension.name}
+						{dataType.name}
 					{/if}
 				</div>
 				<div class="text-right">
@@ -129,7 +129,7 @@
 							in:fade
 							out:fade
 							class="btn variant-filled-secondary shadow-md h-9 w-16"
-							title="Create neẇ Dimension"
+							title="Create neẇ Data Type"
 							id="create"
 							on:mouseover={() => {
 								helpStore.show('create');
@@ -142,15 +142,15 @@
 
 			{#if showForm}
 				<div in:slide out:slide>
-					<Form {dimension} {dimensions} on:cancel={toggleForm} on:save={reload} />
+					<Form {dataType} {dataTypes} on:cancel={toggleForm} on:save={reload} />
 				</div>
 			{/if}
 
 			<div class="table table-compact w-full">
 				<Table
-					on:action={(obj) => editDimension(obj.detail.type)}
+					on:action={(obj) => editDataType(obj.detail.type)}
 					config={{
-						id: 'dimensions',
+						id: 'dataTypes',
 						data: tableStore,
 						optionsComponent: TableOption,
 						columns: {
