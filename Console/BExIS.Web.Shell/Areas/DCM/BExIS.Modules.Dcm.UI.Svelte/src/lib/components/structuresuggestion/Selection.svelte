@@ -3,14 +3,14 @@
 
 	// ui components
 	import { Spinner, DropdownKVP } from '@bexis2/bexis2-core-ui';
-	import { SlideToggle } from '@skeletonlabs/skeleton';
+
 	import MissingValues from './MissingValues.svelte';
 
 	//services
-	import { store, load } from '$services/StructureSuggestionCaller';
+	import { store } from '$services/StructureSuggestionCaller';
 
 	import Fa from 'svelte-fa';
-	import { faSave, faXmark, faChevronRight, faArrowRotateLeft } from '@fortawesome/free-solid-svg-icons';
+	import { faSave, faChevronRight, faArrowRotateLeft } from '@fortawesome/free-solid-svg-icons';
 
 	//types
 	import type { StructureSuggestionModel, Marker } from '$models/StructureSuggestion';
@@ -481,6 +481,7 @@
 						</td>
 
 						{#each row.split(String.fromCharCode(model.delimeter)) as cell, c}
+
 							<td
 								class="hover:cursor-pointer select-none hover:border-surface-400 hover:border-solid hover:border-b-2"
 								on:dblclick={dbclickHandler(r)}
@@ -503,7 +504,7 @@
 								)?.type === MARKER_TYPE.DATA}
 								class:variant-ghost-surface={state[r][c]}
 							>
-								{cell}
+								{cell = cell.replaceAll(String.fromCharCode(model.textMarker),'')}
 							</td>
 						{/each}
 					</tr>
