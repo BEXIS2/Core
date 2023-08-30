@@ -1,6 +1,8 @@
 ﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
+using System;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using System.Runtime.Serialization;
 
 namespace Vaiona.Utils.Cfg
@@ -38,6 +40,14 @@ namespace Vaiona.Utils.Cfg
 
         [JsonProperty("type")]
         public EntryType Type { get; set; }
+
+        [JsonProperty("options", NullValueHandling=NullValueHandling.Ignore)]
+        public List<dynamic> Options { get; set; }
+
+        public Entry()
+        {
+            Options = new List<dynamic>();
+        }
     }
 
     [JsonConverter(typeof(StringEnumConverter))]
@@ -66,7 +76,6 @@ namespace Vaiona.Utils.Cfg
 
         [EnumMember(Value = "Boolean")]
         Boolean = 8,
-
     }
 
     //public class Item
