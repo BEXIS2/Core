@@ -1,4 +1,5 @@
 import { Api } from "@bexis2/bexis2-core-ui";
+import { ReadSettingModel } from "../models/settingModels";
 
 export const get = async () => {
     try {
@@ -27,8 +28,9 @@ export const getByModuleId = async (id:string) => {
     }
 };
 
-export const putByModuleId = async (id:string, model:any) => {
+export const putByModuleId = async (id:string, model:ReadSettingModel) => {
     try {
+        console.log(model);
         const response = await Api.put(`/api/settings/${id}`, model);
         return response;
     } catch (error) {
