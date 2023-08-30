@@ -4,6 +4,12 @@
   "description": "hier kommt der text!",
   "entries": [
     {
+      "key": "jsontest",
+      "value": { "data": {"account": "sven", "password": "123456", "host": "https://google.de"} },
+      "type": "JSON",
+      "description": "URL to manual"
+    },
+    {
       "key": "help",
       "value": "https://github.com/BEXIS2/Documents/blob/2.14.5/Manuals/SAM/Manual.md",
       "type": "String",
