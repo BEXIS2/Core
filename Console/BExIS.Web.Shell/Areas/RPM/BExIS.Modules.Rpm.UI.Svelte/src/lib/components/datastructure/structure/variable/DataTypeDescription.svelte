@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { missingValueType } from '$models/StructureSuggestion';
+	import type { missingValueType } from '$';
 
 	export let type;
 	export let missingValues: missingValueType[];

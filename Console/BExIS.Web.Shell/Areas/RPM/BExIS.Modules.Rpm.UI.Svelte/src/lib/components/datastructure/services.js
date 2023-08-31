@@ -5,10 +5,10 @@ import { Api } from '@bexis2/bexis2-core-ui';
 /****************/
 /* Create*/
 /****************/
-export const load = async (id, file, version) => {
+export const load = async (entityId, file, version) => {
 	try {
 		const response = await Api.get(
-			'/dcm/StructureSuggestion/load?id=' + id + '&&file=' + file + '&&version=' + version
+			'/rpm/DataStructure/load?entityId=' + entityId + '&&file=' + file + '&&version=' + version
 		);
 		return response.data;
 	} catch (error) {
@@ -18,7 +18,7 @@ export const load = async (id, file, version) => {
 
 export const getStructures = async () => {
 	try {
-		const response = await Api.get('/dcm/StructureSuggestion/GetStructures');
+		const response = await Api.get('/rpm/DataStructure/GetStructures');
 		return response.data;
 	} catch (error) {
 		console.error(error);
@@ -27,16 +27,16 @@ export const getStructures = async () => {
 
 export const getDisplayPattern = async () => {
 	try {
-		const response = await Api.get('/dcm/StructureSuggestion/GetDisplayPattern');
+		const response = await Api.get('/rpm/DataStructure/GetDisplayPattern');
 		return response.data;
 	} catch (error) {
 		console.error(error);
 	}
 };
 
-export const getDelimeters = async (id, file, version) => {
+export const getDelimeters = async () => {
 	try {
-		const response = await Api.get('/dcm/StructureSuggestion/GetDelimters');
+		const response = await Api.get('/rpm/DataStructure/GetDelimters');
 		return response.data;
 	} catch (error) {
 		console.error(error);
@@ -45,7 +45,7 @@ export const getDelimeters = async (id, file, version) => {
 
 export const generate = async (data) => {
 	try {
-		const response = await Api.post('/dcm/StructureSuggestion/generate', data);
+		const response = await Api.post('/rpm/DataStructure/generate', data);
 		return response.data;
 	} catch (error) {
 		console.error(error);
@@ -54,7 +54,7 @@ export const generate = async (data) => {
 
 export const store = async (data) => {
 	try {
-		const response = await Api.post('/dcm/StructureSuggestion/store', data);
+		const response = await Api.post('/rpm/DataStructure/store', data);
 		return response.data;
 	} catch (error) {
 		console.error(error);
@@ -63,7 +63,7 @@ export const store = async (data) => {
 
 export const save = async (data) => {
 	try {
-		const response = await Api.post('/dcm/StructureSuggestion/save', data);
+		const response = await Api.post('/rpm/DataStructure/save', data);
 		return response.data;
 	} catch (error) {
 		console.error(error);
@@ -72,7 +72,7 @@ export const save = async (data) => {
 
 export const getDataTypes = async () => {
 	try {
-		const response = await Api.get('/dcm/StructureSuggestion/getDataTypes');
+		const response = await Api.get('/rpm/DataStructure/getDataTypes');
 		return response.data;
 	} catch (error) {
 		console.error(error);
@@ -81,7 +81,7 @@ export const getDataTypes = async () => {
 
 export const getUnits = async () => {
 	try {
-		const response = await Api.get('/dcm/StructureSuggestion/getUnits');
+		const response = await Api.get('/rpm/DataStructure/getUnits');
 		return response.data;
 	} catch (error) {
 		console.error(error);
