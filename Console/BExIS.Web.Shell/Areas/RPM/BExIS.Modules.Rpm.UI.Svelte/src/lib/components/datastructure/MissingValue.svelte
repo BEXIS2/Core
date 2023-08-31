@@ -9,7 +9,7 @@
 	export let description = '';
 	export let last = true;
 
-	const dispatch = new createEventDispatcher();
+	const dispatch = createEventDispatcher();
 
 	function remove() {
 		dispatch('remove');

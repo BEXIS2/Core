@@ -6,15 +6,15 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 
-namespace BExIS.Modules.Dcm.UI.Models.StructureSuggestion
+namespace BExIS.Modules.Rpm.UI.Models.DataStructure
 {
-    public class StructureSuggestionModel
+    public class DataStructureCreationModel
     {
 
         /// <summary>
         ///  entity id
         /// </summary>
-        public long Id { get; set; }
+        public long EntityId { get; set; }
         /// <summary>
         /// title of the data structure
         /// </summary>
@@ -52,9 +52,9 @@ namespace BExIS.Modules.Dcm.UI.Models.StructureSuggestion
 
         public List<MissingValueModel> MissingValues { get; set; }
 
-        public StructureSuggestionModel()
+        public DataStructureCreationModel()
         {
-            Id = 0;
+            EntityId = 0;
             File = "";
             Title = "";
             Description = "";

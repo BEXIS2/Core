@@ -117,6 +117,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Controllers\ConstraintController.cs" />
+    <Compile Include="Controllers\DataStructureController.cs" />
     <Compile Include="Controllers\DataTypeController.cs" />
     <Compile Include="Controllers\DimensionController.cs" />
     <Compile Include="Controllers\UnitController.cs" />
@@ -128,6 +129,7 @@
     <Compile Include="IO\UnitIO.cs" />
     <Compile Include="IO\VariableTemplateIO.cs" />
     <Compile Include="Models\ConstraintModels.cs" />
+    <Compile Include="Models\DataStructure\DataStructureCreationModel.cs" />
     <Compile Include="Models\DataTypeModels.cs" />
     <Compile Include="Models\DimensionModels.cs" />
     <Compile Include="Models\Models.cs" />
@@ -150,6 +152,8 @@
     <Content Include="Views\Web.config" />
     <Content Include="Views\_ViewStart.cshtml" />
     <Content Include="Views\Dimension\Index.cshtml" />
+    <Content Include="Views\DataStructure\Index.cshtml" />
+    <Content Include="Views\DataStructure\Create.cshtml" />
     <None Include="web.Debug.config">
       <DependentUpon>web.config</DependentUpon>
     </None>
@@ -182,9 +186,17 @@
       <Project>{8b2ec2b0-6870-456b-be2d-b0fb4ea68d83}</Project>
       <Name>BExIS.IO.DataType.DisplayPattern</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\..\..\..\Components\IO\BExIS.IO.Transform.Input\BExIS.IO.Transform.Input.csproj">
+      <Project>{5c4c8570-a53b-4191-a414-de028aaaf36a}</Project>
+      <Name>BExIS.IO.Transform.Input</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\..\..\..\Components\IO\BExIS.IO.Transform.Output\BExIS.IO.Transform.Output.csproj">
       <Project>{455ec826-9a92-40ff-bd3b-388c288955ce}</Project>
       <Name>BExIS.IO.Transform.Output</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\..\..\Components\IO\BExIS.IO\BExIS.IO.csproj">
+      <Project>{e4795f06-20c2-4c4c-a720-9a79896384df}</Project>
+      <Name>BExIS.IO</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\..\..\..\Components\UI\BExIS.UI\BExIS.UI.csproj">
       <Project>{DE0AD99C-C559-422F-8132-CC4D7C46FF83}</Project>
@@ -233,6 +245,10 @@
     <ProjectReference Include="..\..\..\..\..\Components\XML\BExIS.Xml.Helpers\BExIS.Xml.Helpers.csproj">
       <Project>{252f7872-a69c-43a6-84b4-4d2abdbdd9ab}</Project>
       <Name>BExIS.Xml.Helpers</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\DCM\BExIS.Modules.Dcm.UI\BExIS.Modules.Dcm.UI.csproj">
+      <Project>{44DD2A5E-0D2F-4FAB-B297-4211441030B7}</Project>
+      <Name>BExIS.Modules.Dcm.UI</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup />

@@ -3,11 +3,11 @@
 
 	import { onMount } from 'svelte';
 
-	import type { StructureSuggestionModel } from '$models/StructureSuggestion';
+	import type { DataStructureCreationModel } from '$lib/components/structuresuggestion/types';
 
 	import type { asciiFileReaderInfoType, fileInfoType } from '@bexis2/bexis2-core-ui';
 
-	import { load } from '$services/StructureSuggestionCaller';
+	import { load } from '$lib/components/structuresuggestion/services';
 	import FileReaderSelectionModal from './FileReaderSelectionModal.svelte';
 	import FileReader from './FileReader.svelte';
 	import { Accordion, AccordionItem } from '@skeletonlabs/skeleton';
@@ -21,7 +21,7 @@
 
 	let target;
 	$: target;
-	let model: StructureSuggestionModel | null;
+	let model: DataStructureCreationModel | null;
 	$: model;
 	let list: string[] = [];
 	$: list, update(readableFiles);
