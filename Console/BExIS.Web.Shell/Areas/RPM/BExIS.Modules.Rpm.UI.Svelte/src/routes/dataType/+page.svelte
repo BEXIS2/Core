@@ -1,89 +1,88 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import { slide, fade } from 'svelte/transition';
-	import { Modal, modalStore, Toast } from '@skeletonlabs/skeleton';
-	import { Page, Table, ErrorMessage, helpStore, TablePlaceholder, notificationStore, notificationType, pageContentLayoutType} from '@bexis2/bexis2-core-ui';
+	import { Modal, modalStore } from '@skeletonlabs/skeleton';
+	import {
+		Page,
+		Table,
+		ErrorMessage,
+		helpStore,
+		TablePlaceholder,
+		notificationStore,
+		notificationType
+	} from '@bexis2/bexis2-core-ui';
 	import * as apiCalls from './services/apiCalls';
 	import Form from './components/form.svelte';
-	import TableElement from '../components/tableElement.svelte';
-	import TableElements from '../components/tableElements.svelte';
 	import TableOption from '../components/tableOptions.svelte';
 	import { writable, type Writable } from 'svelte/store';
 	import Fa from 'svelte-fa';
-	import { faPlus, faXmark, faBan } from '@fortawesome/free-solid-svg-icons';
+	import { faPlus, faXmark } from '@fortawesome/free-solid-svg-icons';
 
 	import type { ModalSettings } from '@skeletonlabs/skeleton';
-	import type { UnitListItem } from './models';
-	import type { helpItemType } from '@bexis2/bexis2-core-ui';
+	import type { DataTypeListItem } from './models';
 
-	//help
-	import help from './help/help.json';
-	let helpItems: helpItemType[] = help.helpItems;
-
-	let u: UnitListItem[] = [];
-	let unit: UnitListItem;
+	let dts: DataTypeListItem[] = [];
 	const tableStore = writable<any[]>([]);
+	let dataType: DataTypeListItem;
 	let showForm = false;
-	$: units = u;
-	$: tableStore.set(u);
+	$: dataTypes = dts;
+	$: tableStore.set(dts);
 
-	onMount(async () => {
-		helpStore.setHelpItemList(helpItems);
-		showForm = false;
-	});
+	onMount(async () => {});
 
-	async function reload() {
+	async function reload(): Promise<void> {
 		showForm = false;
-		u = await apiCalls.GetUnits();
+		dts = await apiCalls.GetDataTypes();
 		clear();
 	}
 
-	function clear() {
-		unit = {
+	async function clear() {
+		dataType = {
 			id: 0,
 			name: '',
 			description: '',
-			abbreviation: '',
-			dimension: undefined,
-			datatypes: [],
-			measurementSystem: '',
+			systemType:'',
 			inUse: false
 		};
 	}
 
-	function editUnit(type: any) {
-		unit = units.find((u) => u.id === type.id)!;
+	function editDataType(type: any) {
+		dataType = dataTypes.find((dt) => dt.id === type.id)!;
 		if (type.action == 'edit') {
 			showForm = true;
 		}
 		if (type.action == 'delete') {
-			const confirm: ModalSettings = {
+			const modal: ModalSettings = {
 				type: 'confirm',
-				title: 'Delete Unit',
+				title: 'Delete Data Type',
 				body:
-					'Are you sure you wish to delete Unit "' + unit.name + '" (' + unit.abbreviation + ')?',
+					'Are you sure you wish to delete Data Type "' +
+					dataType.name +
+					'" (' +
+					dataType.systemType +
+					')?',
 				// TRUE if confirm pressed, FALSE if cancel pressed
 				response: (r: boolean) => {
 					if (r === true) {
-						deleteUnit(type.id);
+						deleteDataType(type.id);
 					}
 				}
 			};
-			modalStore.trigger(confirm);
+			modalStore.trigger(modal);
 		}
 	}
 
-	async function deleteUnit(id: number) {
-		let success: boolean = await apiCalls.DeleteUnit(id);
+	async function deleteDataType(id: number) {
+		let success = await apiCalls.DeleteDataType(id);
 		if (success != true) {
 			notificationStore.showNotification({
 				notificationType: notificationType.error,
-				message: 'Can\'t delete Unit "' + unit.name + '" (' + unit.abbreviation + ').'
+				message: 'Can\'t delete Data Type "' + dataType.name + '".'
 			});
 		} else {
 			notificationStore.showNotification({
 				notificationType: notificationType.success,
-				message: 'Unit "' + unit.name + '" (' + unit.abbreviation + ') deleted.'
+				message: 'Data Type "' + dataType.name + '" deleted.'
 			});
 		}
 		reload();
@@ -97,8 +96,10 @@
 	}
 </script>
 
-<Page help={true} title="Manage Units">
-		<h1 class="h1">Units</h1>
+<Page help={true} title="Manage Data Types">
+	<div class="w-full">
+		<h1 class="h1">Data Types</h1>
+
 		{#await reload()}
 			<div class="grid w-full grid-cols-2 gap-5 my-4 pb-1 border-b border-primary-500">
 				<div class="h-9 w-96 placeholder animate-pulse" />
@@ -108,27 +109,27 @@
 					>
 				</div>
 			</div>
-
-			<div class="table-container w-full">
-				<TablePlaceholder cols={7} />
+			<div>
+				<TablePlaceholder cols={4} />
 			</div>
 		{:then}
 			<!-- svelte-ignore a11y-click-events-have-key-events -->
 			<div class="grid grid-cols-2 gap-5 my-4 pb-1 border-b border-primary-500">
 				<div class="h3 h-9">
-					{#if unit.id < 1}
-						<span in:fade={{ delay: 400 }} out:fade>Create neẇ Unit</span>
+					{#if dataType.id < 1}
+						Create neẇ Data Type
 					{:else}
-						<span in:fade={{ delay: 400 }} out:fade>{unit.name}</span>
+						{dataType.name}
 					{/if}
 				</div>
 				<div class="text-right">
 					{#if !showForm}
 						<!-- svelte-ignore a11y-mouse-events-have-key-events -->
 						<button
-							transition:fade
+							in:fade
+							out:fade
 							class="btn variant-filled-secondary shadow-md h-9 w-16"
-							title="Create neẇ Unit"
+							title="Create neẇ Data Type"
 							id="create"
 							on:mouseover={() => {
 								helpStore.show('create');
@@ -141,37 +142,20 @@
 
 			{#if showForm}
 				<div in:slide out:slide>
-					<Form {unit} {units} on:cancel={toggleForm} on:save={reload} />
+					<Form {dataType} {dataTypes} on:cancel={toggleForm} on:save={reload} />
 				</div>
 			{/if}
 
 			<div class="table table-compact w-full">
 				<Table
-					on:action={(obj) => editUnit(obj.detail.type)}
+					on:action={(obj) => editDataType(obj.detail.type)}
 					config={{
-						id: 'Units',
+						id: 'dataTypes',
 						data: tableStore,
 						optionsComponent: TableOption,
 						columns: {
 							id: {
-								disableFiltering: true,
 								exclude: true
-							},
-							datatypes: {
-								header: 'Data Types',
-								disableFiltering: true,
-								instructions: {
-									renderComponent: TableElements
-								}
-							},
-							dimension: {
-								disableFiltering: true,
-								instructions: {
-									renderComponent: TableElement
-								}
-							},
-							measurementSystem: {
-								header: 'Measurement System'
 							},
 							inUse: {
 								disableFiltering: true,
@@ -184,5 +168,6 @@
 		{:catch error}
 			<ErrorMessage {error} />
 		{/await}
+	</div>
 </Page>
 <Modal/>

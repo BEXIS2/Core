@@ -7,8 +7,8 @@
 	import { Modal, modalStore } from '@skeletonlabs/skeleton';
 	import type { ModalSettings } from '@skeletonlabs/skeleton';
 
-	import Fa from 'svelte-fa/src/fa.svelte';
-	import { faShare, faShareFromSquare } from '@fortawesome/free-solid-svg-icons';
+	import Fa from 'svelte-fa';
+	import { faShare, faShareFromSquare, faMaximize, faMinimize } from '@fortawesome/free-solid-svg-icons';
 
 	export let variables: VariableModel[] = [];
 	export let missingValues: missingValueType[] = [];
@@ -17,6 +17,8 @@
 	$: datatypes = null;
 	$: units = null;
 	$: variables;
+
+	let expandAll=true;
 
 	// validation array
 	let variableValidationStates = [];
@@ -103,16 +105,6 @@
 		modalStore.trigger(modal);
 	}
 
-	/*
-*
-    isKey: boolean;
-    isOptional: boolean;
-    dataType: ListItem;
-    unit: ListItem;
-    template: ListItem;
-    displayPattern: ListItem | undefined;
-*/
-
 	function updateVariableFromOther(from, to) {
 		if (from && to) {
 			to.description = from.description;
@@ -126,7 +118,16 @@
 	}
 </script>
 
-<div class="flex-col space-y-5 mt-5">
+<button class="btn variant-filled-secondary" on:click={()=> expandAll = !expandAll}>
+		{#if expandAll}
+			<Fa icon={faMinimize}/>
+	 {:else}
+		<Fa icon={faMaximize}/>
+		{/if}
+</button>
+
+<div class="flex-col space-y-2 mt-5">
+
 	{#if variables && datatypes && units && variableValidationStates && missingValues}
 		<!-- else content here -->
 		{#each variables as variable, i (variable.name)}
@@ -142,6 +143,7 @@
 				data={getColumnData(i)}
 				on:copy-next={copyNext}
 				on:copy-all={copyAll}
+				expand = {expandAll}
 			>
 				<svelte:fragment slot="options">
 					{#if variables.length > 0 && i < variables.length - 1}

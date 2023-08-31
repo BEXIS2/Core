@@ -15,7 +15,7 @@
 				type="button"
 				class="chip variant-filled-primary shadow-md"
 				title="Edit Unit, {row.name}"
-				id="edit"
+				id="edit-{row.id}"
 				on:mouseover={() => {
 					helpStore.show('edit');
 				}}
@@ -31,7 +31,7 @@
 				type="button"
 				class="chip variant-filled-error shadow-md"
 				title="Delete Unit, {row.name}"
-				id="delete"
+				id="delete-{row.id}"
 				on:mouseover={() => {
 					helpStore.show('delete');
 				}}
@@ -47,7 +47,7 @@
 				type="button"
 				class="chip variant-filled-primary shadow-md"
 				title="Edit Unit, {row.name}"
-				id="edit"
+				id="edit-{row.id}"
 				disabled
 			>
 				<Fa icon={faPen} />
@@ -57,7 +57,7 @@
 				type="button"
 				class="chip variant-filled-error shadow-md"
 				title="Delete Unit, {row.name}"
-				id="delete"
+				id="delete-{row.id}"
 				disabled
 			>
 				<Fa icon={faTrash} /></button
