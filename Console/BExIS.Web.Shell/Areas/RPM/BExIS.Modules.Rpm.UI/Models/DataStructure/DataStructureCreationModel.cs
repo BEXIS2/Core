@@ -6,7 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 
-namespace BExIS.Modules.Dcm.UI.Models.DataStructure
+namespace BExIS.Modules.Rpm.UI.Models.DataStructure
 {
     public class DataStructureCreationModel
     {

@@ -79,7 +79,7 @@
 </script>
 
 <Page
-	title="Structure Suggestion"
+	title="Data structure"
 	note="generate a structure from a file."
 	contentLayoutType={pageContentLayoutType.full}
 >

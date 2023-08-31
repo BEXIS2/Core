@@ -8,7 +8,7 @@ import { Api } from '@bexis2/bexis2-core-ui';
 export const load = async (entityId, file, version) => {
 	try {
 		const response = await Api.get(
-			'/dcm/DataStructure/load?entityId=' + entityId + '&&file=' + file + '&&version=' + version
+			'/rpm/DataStructure/load?entityId=' + entityId + '&&file=' + file + '&&version=' + version
 		);
 		return response.data;
 	} catch (error) {
@@ -18,7 +18,7 @@ export const load = async (entityId, file, version) => {
 
 export const getStructures = async () => {
 	try {
-		const response = await Api.get('/dcm/DataStructure/GetStructures');
+		const response = await Api.get('/rpm/DataStructure/GetStructures');
 		return response.data;
 	} catch (error) {
 		console.error(error);
@@ -27,7 +27,7 @@ export const getStructures = async () => {
 
 export const getDisplayPattern = async () => {
 	try {
-		const response = await Api.get('/dcm/DataStructure/GetDisplayPattern');
+		const response = await Api.get('/rpm/DataStructure/GetDisplayPattern');
 		return response.data;
 	} catch (error) {
 		console.error(error);
@@ -36,7 +36,7 @@ export const getDisplayPattern = async () => {
 
 export const getDelimeters = async () => {
 	try {
-		const response = await Api.get('/dcm/DataStructure/GetDelimters');
+		const response = await Api.get('/rpm/DataStructure/GetDelimters');
 		return response.data;
 	} catch (error) {
 		console.error(error);
@@ -45,7 +45,7 @@ export const getDelimeters = async () => {
 
 export const generate = async (data) => {
 	try {
-		const response = await Api.post('/dcm/DataStructure/generate', data);
+		const response = await Api.post('/rpm/DataStructure/generate', data);
 		return response.data;
 	} catch (error) {
 		console.error(error);
@@ -54,7 +54,7 @@ export const generate = async (data) => {
 
 export const store = async (data) => {
 	try {
-		const response = await Api.post('/dcm/DataStructure/store', data);
+		const response = await Api.post('/rpm/DataStructure/store', data);
 		return response.data;
 	} catch (error) {
 		console.error(error);
@@ -63,7 +63,7 @@ export const store = async (data) => {
 
 export const save = async (data) => {
 	try {
-		const response = await Api.post('/dcm/DataStructure/save', data);
+		const response = await Api.post('/rpm/DataStructure/save', data);
 		return response.data;
 	} catch (error) {
 		console.error(error);
@@ -72,7 +72,7 @@ export const save = async (data) => {
 
 export const getDataTypes = async () => {
 	try {
-		const response = await Api.get('/dcm/DataStructure/getDataTypes');
+		const response = await Api.get('/rpm/DataStructure/getDataTypes');
 		return response.data;
 	} catch (error) {
 		console.error(error);
@@ -81,7 +81,7 @@ export const getDataTypes = async () => {
 
 export const getUnits = async () => {
 	try {
-		const response = await Api.get('/dcm/DataStructure/getUnits');
+		const response = await Api.get('/rpm/DataStructure/getUnits');
 		return response.data;
 	} catch (error) {
 		console.error(error);

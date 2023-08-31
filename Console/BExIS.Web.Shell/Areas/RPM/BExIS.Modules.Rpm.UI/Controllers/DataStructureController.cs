@@ -8,7 +8,7 @@ using BExIS.IO;
 using BExIS.IO.DataType.DisplayPattern;
 using BExIS.IO.Transform.Input;
 using BExIS.Modules.Dcm.UI.Hooks;
-using BExIS.Modules.Dcm.UI.Models.DataStructure;
+using BExIS.Modules.Rpm.UI.Models.DataStructure;
 using BExIS.Security.Entities.Authorization;
 using BExIS.UI.Helpers;
 using BExIS.UI.Hooks;
@@ -24,15 +24,25 @@ using System.Web.Mvc;
 using Vaiona.Utils.Cfg;
 using Vaiona.Web.Mvc.Modularity;
 
-namespace BExIS.Modules.Dcm.UI.Controllers
+namespace BExIS.Modules.Rpm.UI.Controllers
 {
     public class DataStructureController : Controller
     {
-        // GET: Edit
-        [BExISEntityAuthorize(typeof(Dataset), "id", RightType.Write)]
-        public ActionResult Index(long entityId, string file, int version = 0)
+
+        public ActionResult Index()
         {
-            string module = "dcm";
+            string module = "rpm";
+
+
+            ViewData["app"] = SvelteHelper.GetApp(module);
+            ViewData["start"] = SvelteHelper.GetStart(module);
+
+            return View();
+        }
+
+        public ActionResult Create(long entityId, string file, int version = 0)
+        {
+            string module = "rpm";
 
             ViewData["id"] = entityId;
             ViewData["version"] = version;
@@ -40,7 +50,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             ViewData["app"] = SvelteHelper.GetApp(module);
             ViewData["start"] = SvelteHelper.GetStart(module);
 
-            return View();
+            return View("Create");
         }
 
         [JsonNetFilter]
