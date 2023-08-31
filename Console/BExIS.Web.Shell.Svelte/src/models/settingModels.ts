@@ -21,6 +21,7 @@ export class ReadEntryModel{
     value:any;
     type:string;
     description:string;
+    options:any[];
 
     constructor(json: any)
     {
@@ -28,5 +29,6 @@ export class ReadEntryModel{
         this.value = json.value;
         this.type = json.type;
         this.description = json.description;
+        this.options = json.options;
     }
 }

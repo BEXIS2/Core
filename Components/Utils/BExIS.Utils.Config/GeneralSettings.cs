@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using BExIS.Utils.Config.Configurations;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
@@ -27,6 +28,7 @@ namespace BExIS.Utils.Config
             base("Shell",
                 Path.Combine(AppConfiguration.WorkspaceGeneralRoot, "General.Settings.json"))
         {
+
         }
 
         public static GeneralSettings Get()
@@ -58,6 +60,14 @@ namespace BExIS.Utils.Config
 
                 default:
                     return Convert.ChangeType(value, (TypeCode)Enum.Parse(typeof(TypeCode), type.ToString()));
+            }
+        }
+
+        public static JwtConfiguration JwtConfiguration
+        {
+            get
+            {
+                return JsonConvert.DeserializeObject<JwtConfiguration>(GetValueByKey("jwt").ToString());
             }
         }
 
