@@ -2,62 +2,77 @@
   "id": "dcm",
   "name": "data collection",
   "description": "...",
-  "entry": [
+  "entries": [
     {
       "key": "help",
       "value": "https://github.com/BEXIS2/Documents/blob/2.14.5/Manuals/DCM/Manual.md",
+      "description": "URL to manual",
       "type": "String",
-      "description": "URL to manual"
+      "options": []
     },
     {
       "key": "celllimit",
-      "value": 100000,
-      "type": "Int32",
-      "description": "This number of cells determines the selection whether an upload of structured data should be executed directly or async. "
+      "value": -2000,
+      "description": "This number of cells determines the selection whether an upload of structured data should be executed directly or async. ",
+      "type": "Integer",
+      "options": []
     },
     {
       "key": "fileuploadDescription",
-      "value": "none",
-      "type": "selection",
+      "value": "required",
       "description": "If it is activated, it is possible to add a description text per file.",
-      "selection": [ "none", "active", "required" ]
+      "type": "String",
+      "options": [
+        "none",
+        "active",
+        "required"
+      ]
     },
     {
       "key": "allowMultiFileupload",
-      "value": "true",
+      "value": true,
+      "description": "Allow multiple files to be uploaded at the same time",
       "type": "Boolean",
-      "description": "Allow multiple files to be uploaded at the same time"
+      "options": []
     },
     {
       "key": "attachmentDescription",
-      "value": 0,
-      "type": "selection",
+      "value": "active",
       "description": "If it is activated, it is possible to add a description text per file.",
-      "selection": [ "none", "active", "required" ]
+      "type": "String",
+      "options": [
+        "none",
+        "active",
+        "required"
+      ]
     },
     {
       "key": "allowMultiAttachmentUpload",
-      "value": "true",
+      "value": false,
+      "description": "Allow multiple files to be uploaded at the same time.",
       "type": "Boolean",
-      "description": "Allow multiple files to be uploaded at the same time."
+      "options": []
     },
     {
       "key": "minToAnalyse",
-      "value": 100,
-      "type": "Int32",
-      "description": "Min number of rows to analyze strutcure."
+      "value": -100,
+      "description": "Min number of rows to analyze strutcure.",
+      "type": "Integer",
+      "options": []
     },
     {
       "key": "maxToAnalyse",
       "value": 10000,
-      "type": "Int32",
-      "description": "Max number of rows to analyze strutcure."
+      "description": "Max number of rows to analyze strutcure.",
+      "type": "Integer",
+      "options": []
     },
     {
       "key": "precentageToAnalyse",
       "value": 50,
-      "type": "Int32",
-      "description": "Percentage of rows to analyze strutcure."
+      "description": "Percentage of rows to analyze strutcure.",
+      "type": "Integer",
+      "options": []
     }
   ]
 }

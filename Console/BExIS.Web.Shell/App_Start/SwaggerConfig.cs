@@ -20,35 +20,30 @@ namespace BExIS.Web.Shell
             if (ConfigurationManager.AppSettings["SwaggerRootUrl"] != null)
                 rootUrl = ConfigurationManager.AppSettings["SwaggerRootUrl"].ToString();
 
-            GlobalConfiguration.Configuration
-                .EnableSwagger(c =>
-                    {
-                        c.SingleApiVersion("v1", "Bexis 2 API´s");
-                        c.ApiKey("Authorization")
-                        .Description("Filling bearer token here")
-                        .Name("Bearer")
-                        .In("header");
-                        c.PrettyPrint();
+            GlobalConfiguration.Configuration.EnableSwagger(c =>
+            {
+                c.SingleApiVersion("v1", "Bexis 2 APIs");
+                c.ApiKey("Authorization").Description("Filling bearer token here").Name("Bearer").In("header");
+                c.PrettyPrint();
 
-                        addXmlDocumentations(c);
+                c.BasicAuth("basic").Description("Basic HTTP Authentication");
 
-                        c.IgnoreObsoleteProperties();
-                        c.ResolveConflictingActions(apiDescriptions => apiDescriptions.First());
+                addXmlDocumentations(c);
+                
+                c.IgnoreObsoleteProperties();
+                c.ResolveConflictingActions(apiDescriptions => apiDescriptions.First());
                         //c.ApiKey("Authorization", "header", "Filling bearer token here");
-                        c.Schemes(new[] { "https" });
+                c.Schemes(new[] { "https" });
 
-                        if(!string.IsNullOrEmpty(rootUrl))c.RootUrl(r => rootUrl);
-
-                    })
-
-                .EnableSwaggerUi("apihelp/{*assetPath}", c =>
-                     {
-                         c.DocumentTitle("API´s");
-                         c.InjectJavaScript(thisAssembly, "BExIS.Web.Shell.Scripts.custom-swagger.js");
-                         c.BooleanValues(new[] { "0", "1" });
-                         c.EnableDiscoveryUrlSelector();
-                         c.EnableApiKeySupport("Authorization", "header");
-                     });
+                if (!string.IsNullOrEmpty(rootUrl)) c.RootUrl(r => rootUrl);
+            }).EnableSwaggerUi("apihelp/{*assetPath}", c =>
+            {
+                c.DocumentTitle("API´s");
+                c.InjectJavaScript(thisAssembly, "BExIS.Web.Shell.Scripts.custom-swagger.js");
+                c.BooleanValues(new[] { "0", "1" });
+                c.EnableDiscoveryUrlSelector();
+                c.EnableApiKeySupport("Authorization", "header");
+            });
         }
 
         private static void addXmlDocumentations(SwaggerDocsConfig c)
@@ -57,10 +52,10 @@ namespace BExIS.Web.Shell
             string path = string.Format(@"{0}\App_Data", System.AppDomain.CurrentDomain.BaseDirectory);
 
             // get all files from the direcory (app_data)
-            var files = Directory.EnumerateFiles(path,"*.xml");
+            var files = Directory.EnumerateFiles(path, "*.xml");
 
-            if (files != null) 
-            { 
+            if (files != null)
+            {
                 // add each file (xml documenation) to the swagger config
                 files.ToList().ForEach(f => c.IncludeXmlComments(f));
             }

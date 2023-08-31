@@ -2,17 +2,17 @@
   "id": "shell",
   "name": "...",
   "description": "The default landing page for the search in the form of <moduleId>, <controller>, <action>. The application's home page will redirect here.    The module must be avilable and active, otherwise another redirect happens to the home page, which causes a loop.     The designated action must be set to public in the feature permission mgmt, otherwise the request will be redirected to the login page.     The 'type' attribute must be compatible with the System.TypeCode case-sensitive.",
-  "JWT": {
-    "ValidateAudience": false,
-    "ValidateIssuer": false,
-    "ValidAudience": "http://localhost:3000",
-    "ValidIssuer": "https://localhost:7041",
-    "IssuerSigningKey": "JWTAuthenticationHIGHsecuredPasswordVVVp1OH7Xzyr",
-    "RequireExpirationTime": false,
-    "ValidateLifetime": false,
-    "ValidLifetime": 1
+  "jwt": {
+    "validateAudience": false,
+    "validateIssuer": false,
+    "validAudience": "http://localhost:3000",
+    "validIssuer": "https://localhost:7041",
+    "issuerSigningKey": "JWTAuthenticationHIGHsecuredPasswordVVVp1OH7Xzyr",
+    "requireExpirationTime": false,
+    "validateLifetime": false,
+    "validLifetime": 1
   },
-  "entry": [
+  "entries": [
     {
       "key": "applicationName",
       "value": "AppLocal",
@@ -21,7 +21,7 @@
     },
     {
       "key": "landingPage",
-      "value": "ddm, PublicSearch, index",
+      "value": "/",
       "type": "String",
       "description": "user is not logging in -> app goes to"
     },
