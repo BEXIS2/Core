@@ -5,9 +5,11 @@
 		MultiSelect,
 		DropdownKVP,
 		ErrorMessage,
-		helpStore
+		helpStore,
+		notificationStore,
+		notificationType
 	} from '@bexis2/bexis2-core-ui';
-	import { RadioGroup, RadioItem, toastStore, type ToastSettings } from '@skeletonlabs/skeleton';
+	import { RadioGroup, RadioItem } from '@skeletonlabs/skeleton';
 
 	import Fa from 'svelte-fa';
 	import { faXmark, faSave, faChevronUp, faChevronDown } from '@fortawesome/free-solid-svg-icons';
@@ -21,8 +23,6 @@
 		DimensionListItem,
 		UnitValidationResult
 	} from '../models';
-	//notifications
-	import { notificationStore, notificationTypes } from '../../components/notifications';
 
 	// event
 	import { createEventDispatcher } from 'svelte';
@@ -92,11 +92,17 @@
 					message += '<li>' + validationItem.message + '</li>';
 				});
 			}
-			notificationStore.showNotification({ type: notificationTypes.error, message: message });
+			notificationStore.showNotification({
+				notificationType: notificationType.error,
+				message: message
+			});
 		} else {
 			message =
 				'Unit "' + result.unitListItem.name + '" (' + result.unitListItem.abbreviation + ') saved.';
-			notificationStore.showNotification({ type: notificationTypes.success, message: message });
+			notificationStore.showNotification({
+				notificationType: notificationType.success,
+				message: message
+			});
 			suite.reset();
 			dispatch('save');
 		}

@@ -21,13 +21,18 @@ const suite = create((data = {}, fieldName) => {
 	});
 
 	console.log(data.dataType, data.dataType.text);
-	if (data.dataType && dataTypeWithDisplaypattern.includes(data.dataType.text)) {
+	
 		test('displayPattern', 'display pattern is required', () => {
-			console.log('display pattern test', data.displayPattern);
-			enforce(data.displayPattern).isNotNull();
-			enforce(data.displayPattern.text).isNotUndefined();
+			if (data.dataType && dataTypeWithDisplaypattern.includes(data.dataType.text)) {
+				console.log('display pattern test', data.displayPattern);
+				enforce(data.displayPattern).isNotNull();
+				enforce(data.displayPattern.text).isNotUndefined();
+			}
+			else
+			{
+				return true;
+			}
 		});
-	}
 
 	//console.log("before unit",data.unit);
 	test('unit', 'unit is required', () => {

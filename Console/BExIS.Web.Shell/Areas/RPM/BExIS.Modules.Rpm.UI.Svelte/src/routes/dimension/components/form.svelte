@@ -9,7 +9,7 @@
 	import * as apiCalls from '../services/apiCalls';
 
 	//notifications
-	import { notificationStore, notificationTypes } from '../../components/notifications';
+	import { notificationStore, notificationType } from '@bexis2/bexis2-core-ui';
 	// event
 	import { createEventDispatcher } from 'svelte';
 	const dispatch = createEventDispatcher();
@@ -30,6 +30,7 @@
 	onMount(async () => {
 		if (dimension.id == 0) {
 			suite.reset();
+			dimension.specification = 'L(0,0)M(0,0)T(0,0)I(0,0)Θ(0,0)N(0,0)J(0,0)';
 		}
 	});
 
@@ -64,10 +65,16 @@
 					message += '<li>' + validationItem.message + '</li>';
 				});
 			}
-			notificationStore.showNotification({ type: notificationTypes.error, message: message });
+			notificationStore.showNotification({
+				notificationType: notificationType.error,
+				message: message
+			});
 		} else {
 			message = 'Unit "' + result.dimensionListItem.name + '" saved.';
-			notificationStore.showNotification({ type: notificationTypes.success, message: message });
+			notificationStore.showNotification({
+				notificationType: notificationType.success,
+				message: message
+			});
 			suite.reset();
 			dispatch('save');
 		}
@@ -82,7 +89,7 @@
 {#if dimension}
 	<form on:submit|preventDefault={submit}>
 		<div class="grid grid-cols-2 gap-5">
-			<div class="pb-3 col-span-2">
+			<div class="pb-3">
 				<TextInput
 					id="name"
 					label="Name"
@@ -93,6 +100,19 @@
 					valid={res.isValid('name')}
 					invalid={res.hasErrors('name')}
 					feedback={res.getErrors('name')}
+				/>
+			</div>
+			<div class="pb-3">
+				<TextInput
+					id="specification"
+					label="Specification"
+					help={true}
+					required={true}
+					bind:value={dimension.specification}
+					on:input={onChangeHandler}
+					valid={res.isValid('specification')}
+					invalid={res.hasErrors('specification')}
+					feedback={res.getErrors('specification')}
 				/>
 			</div>
 			<div class="pb-3 col-span-2">
@@ -108,19 +128,7 @@
 					feedback={res.getErrors('description')}
 				/>
 			</div>
-			<div class="pb-3 col-span-2">
-				<TextInput
-					id="specification"
-					label="Specification"
-					help={true}
-					required={true}
-					bind:value={dimension.specification}
-					on:input={onChangeHandler}
-					valid={res.isValid('specification')}
-					invalid={res.hasErrors('specification')}
-					feedback={res.getErrors('specification')}
-				/>
-			</div>
+
 			<div class="py-5 text-right col-span-2">
 				<!-- svelte-ignore a11y-mouse-events-have-key-events -->
 				<button

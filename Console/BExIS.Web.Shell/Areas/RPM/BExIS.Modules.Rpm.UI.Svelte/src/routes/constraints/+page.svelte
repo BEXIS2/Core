@@ -1,11 +1,18 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import { slide, fade } from 'svelte/transition';
-	import { Modal, Toast, modalStore } from '@skeletonlabs/skeleton';
-	import { Page, Table, ErrorMessage, helpStore } from '@bexis2/bexis2-core-ui';
+	import { modalStore } from '@skeletonlabs/skeleton';
+	import {
+		Page,
+		Table,
+		ErrorMessage,
+		helpStore,
+		notificationStore,
+		notificationType,
+		TablePlaceholder
+	} from '@bexis2/bexis2-core-ui';
 	import * as apiCalls from './services/apiCalls';
-	import Form from './components/form.svelte';
-	import TablePlaceholder from '../components/tablePlaceholder.svelte';
+	//import Form from './components/form.svelte';
 	import TableOption from '../components/tableOptions.svelte';
 	import { writable, type Writable } from 'svelte/store';
 	import Fa from 'svelte-fa';
@@ -13,8 +20,6 @@
 
 	import type { ModalSettings } from '@skeletonlabs/skeleton';
 	import type { DimensionListItem } from './models';
-
-	import { notificationStore, notificationTypes } from '../components/notifications';
 
 	let ds: DimensionListItem[] = [];
 	const tableStore = writable<any[]>([]);
@@ -71,12 +76,12 @@
 		let success = await apiCalls.DeleteDimension(id);
 		if (success != true) {
 			notificationStore.showNotification({
-				type: notificationTypes.error,
+				notificationType: notificationType.error,
 				message: 'Can\'t delete Dimension "' + dimension.name + '".'
 			});
 		} else {
 			notificationStore.showNotification({
-				type: notificationTypes.success,
+				notificationType: notificationType.success,
 				message: 'Dimension "' + dimension.name + '" deleted.'
 			});
 		}
@@ -165,5 +170,3 @@
 		{/await}
 	</div>
 </Page>
-<Modal />
-<Toast position="t" />

@@ -149,7 +149,7 @@
 			<div class="w-full grid grid-cols-1 md:grid-cols-2 gap-4">
 				<TextInput
 					id="name"
-					label="Name"
+					label="Template Name"
 					bind:value={entityTemplate.name}
 					valid={res.isValid('name')}
 					invalid={res.hasErrors('name')}
@@ -162,7 +162,7 @@
 
 				<DropdownKVP
 					id="entityType"
-					title="Entity"
+					title="Entity Type"
 					required={true}
 					source={entities}
 					bind:target={entityTemplate.entityType}
@@ -183,7 +183,7 @@
 					feedback={res.getErrors('description')}
 					on:input={onChangeHandler}
 					required={true}
-					placeholder="Briefly describe in which cases this template should be used. Based on entity or usecase."
+					placeholder="Briefly describe in which cases this template should be used. Based on an entity or use case."
 					help={true}
 				/>
 			</div>
@@ -194,7 +194,7 @@
 
 					<DropdownKVP
 						id="metadataStructure"
-						title="Structure"
+						title="Metadata Schema"
 						bind:target={entityTemplate.metadataStructure}
 						source={metadataStructures}
 						valid={res.isValid('metadataStructure')}
@@ -210,7 +210,7 @@
 						<EntryContainer>
 							<MultiSelect
 								id="metadataFields"
-								title="Required input fields"
+								title="Required Fields"
 								source={systemKeys}
 								bind:target={entityTemplate.metadataFields}
 								itemId="id"
@@ -228,25 +228,25 @@
 							name="Invalid-save-mode"
 							bind:value={entityTemplate.metadataInvalidSaveMode}
 						>
-							Invalid save mode
+							Allow saving with empty required fields
 						</SlideToggle>
 					</EntryContainer>
 				</div>
 				<div class="flex flex-col space-y-4">
-					<h3 class="h3">Datastructure</h3>
+					<h3 class="h3">Data structure</h3>
 					<EntryContainer>
 						<div class="mt-7 space-y-5" on:mouseover={() => helpStore.show('hasDatastructure')}>
 							<SlideToggle
-								name="Use data structures?"
+								name="use_data_structure"
 								bind:checked={entityTemplate.hasDatastructure}
 							>
-								Use data structures?
+								 Allow to use data structures
 							</SlideToggle>
 
 							{#if entityTemplate.hasDatastructure}
 								<MultiSelect
 									id="datastructures"
-									title="Limit the selection of data strutcures"
+									title="Limit the selection of allowed data structures"
 									source={dataStructures}
 									bind:target={entityTemplate.datastructureList}
 									itemId="key"
@@ -260,12 +260,12 @@
 				</div>
 			</div>
 
-			<h3 class="h3">Group</h3>
+			<h3 class="h3">Adminstration</h3>
 			<div class="py-5 w-full grid grid-cols-1 md:grid-cols-2 gap-4">
 				<EntryContainer>
 					<MultiSelect
 						id="permissions"
-						title="Permission"
+						title="Set full permissions per default to the following groups:"
 						source={groups}
 						bind:target={entityTemplate.permissionGroups}
 						itemId="key"
@@ -278,7 +278,7 @@
 				<EntryContainer>
 					<MultiSelect
 						id="notification"
-						title="Notification"
+						title="Send notifications per default to the following groups:"
 						source={groups}
 						bind:target={entityTemplate.notificationGroups}
 						itemId="key"
@@ -289,12 +289,12 @@
 				</EntryContainer>
 			</div>
 
-			<h3 class="h3">Additional</h3>
+			<h3 class="h3">Dataset Settings</h3>
 			<div class="py-5 w-full grid xs:grid-cols-1 md:grid-cols-2 gap-4">
 				<EntryContainer>
 					<MultiSelect
 						id="disabledHooks"
-						title="Disabled hooks"
+						title="Disable dataset components"
 						source={hooks}
 						bind:target={entityTemplate.disabledHooks}
 						help={true}
@@ -304,7 +304,7 @@
 				<EntryContainer>
 					<MultiSelect
 						id="allowedFileTypes"
-						title="Allowed file types"
+						title="Allowed file types for file upload"
 						source={filetypes}
 						bind:target={entityTemplate.allowedFileTypes}
 						help={true}
