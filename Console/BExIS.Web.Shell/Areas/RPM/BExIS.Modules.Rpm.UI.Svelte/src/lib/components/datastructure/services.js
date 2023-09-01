@@ -3,6 +3,21 @@
 import { Api } from '@bexis2/bexis2-core-ui';
 
 /****************/
+/* Overview Data structures*/
+/****************/
+
+export const getDataStructures = async () => {
+	try {
+		const response = await Api.get('/rpm/DataStructure/DataStructures');
+		console.log("responce",response.data ,Date.now()/1000);
+		return response.data;
+
+	} catch (error) {
+		console.error(error);
+	}
+};
+
+/****************/
 /* Create*/
 /****************/
 export const load = async (entityId, file, version) => {

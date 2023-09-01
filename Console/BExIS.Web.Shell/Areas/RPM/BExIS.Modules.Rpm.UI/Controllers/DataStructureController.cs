@@ -7,7 +7,6 @@ using BExIS.Dlm.Services.DataStructure;
 using BExIS.IO;
 using BExIS.IO.DataType.DisplayPattern;
 using BExIS.IO.Transform.Input;
-using BExIS.Modules.Dcm.UI.Hooks;
 using BExIS.Modules.Rpm.UI.Models.DataStructure;
 using BExIS.Security.Entities.Authorization;
 using BExIS.UI.Helpers;
@@ -40,6 +39,75 @@ namespace BExIS.Modules.Rpm.UI.Controllers
             return View();
         }
 
+        [JsonNetFilter]
+        [HttpGet]
+        public JsonResult DataStructures()
+        {
+            List<DataStructureModel> tmp = new List<DataStructureModel>();
+            using (var dataStructureManger = new DataStructureManager())
+            using (var datasetManager = new DatasetManager())
+            {
+
+                foreach (var entity in dataStructureManger.StructuredDataStructureRepo.Get())
+                {
+                    List<long> linked = datasetManager.DatasetRepo.Query().Where(d => (d.DataStructure != null && d.DataStructure.Id.Equals(entity.Id))).Select(d => d.Id).ToList();
+
+                    tmp.Add(new DataStructureModel()
+                    {
+                        Id = entity.Id,
+                        Description = entity.Description,
+                        Title = entity.Name,
+                        LinkedTo = linked
+                    });
+                }
+            }
+
+            return Json(tmp.ToArray(), JsonRequestBehavior.AllowGet);
+        }
+
+        [HttpPost]
+        public JsonResult Upload()
+        {
+            if (Request.Files.Count > 0)
+            {
+
+                try
+                {
+                    //  Get all files from Request object
+                    HttpFileCollectionBase files = Request.Files;
+                    for (int i = 0; i < files.Count; i++)
+                    {
+                        var file = files[i];
+                        string fname = getFileName(file);
+                        //data/datasets/1/1/
+                        var dataPath = AppConfiguration.DataPath; //Path.Combine(AppConfiguration.WorkspaceRootPath, "Data");
+                        var user = BExISAuthorizeHelper.GetAuthorizedUserName(HttpContext);
+                        var storepath = Path.Combine(dataPath, "Temp", user);
+
+                        // if folder not exist
+                        if (!Directory.Exists(storepath)) Directory.CreateDirectory(storepath);
+
+                        var path = Path.Combine(storepath, fname);
+
+                        file.SaveAs(path);
+
+                    }
+                }
+                catch (Exception ex)
+                {
+                    throw new FileNotFoundException(ex.Message);
+                }
+
+                this.Response.StatusCode = 200;
+                return Json("File Uploaded Successfully!");
+            }
+            else
+            {
+                this.Response.StatusCode = 400;
+                return Json("No files selected.");
+            }
+        }
+
         public ActionResult Create(long entityId, string file, int version = 0)
         {
             string module = "rpm";
@@ -53,28 +121,42 @@ namespace BExIS.Modules.Rpm.UI.Controllers
             return View("Create");
         }
 
+   
+
+
         [JsonNetFilter]
-        public JsonResult Load(long entityId, string file, int version = 0)
+        public JsonResult Load(string file, long entityId = 0, int version = 0)
         {
-            // check incoming values
-            if (entityId <= 0) throw new ArgumentException(nameof(entityId));
 
-            // if filereader info allready exist, load the data from the cache otherwise, suggest it
-            HookManager hookManager = new HookManager();
-            EditDatasetDetailsCache cache = hookManager.LoadCache<EditDatasetDetailsCache>("dataset", "details", HookMode.edit, entityId);
+            EditDatasetDetailsCache cache = null;
 
-            // file can be incoming or set from editcache
-            if (string.IsNullOrEmpty(file)) // incoming file ist not set
+
+            // there are 2 usecases
+            // 1. From edit dataset
+            // 2. From Data structure
+            // in usecase 1 a entity exist and the file to read is find albe in AppConfiguration.DataPath, "Datasets", entityId.ToString(), "temp", file
+            // in usecase 2 not entity exist and the fils is findable under user temp
+            var filepath = "";
+            if (entityId == 0) filepath = Path.Combine(AppConfiguration.DataPath, "Temp", BExISAuthorizeHelper.GetAuthorizedUserName(this.HttpContext), file);
+            else
             {
-                if (cache.Files != null && cache.Files.Any()) // files added to the files list allready, 
+                // if filereader info allready exist, load the data from the cache otherwise, suggest it
+                HookManager hookManager = new HookManager();
+                cache = hookManager.LoadCache<EditDatasetDetailsCache>("dataset", "details", HookMode.edit, entityId);
+
+                // file can be incoming or set from editcache
+                if (string.IsNullOrEmpty(file)) // incoming file ist not set
                 {
-                    // use the first one
-                    file = cache.Files.First().Name;
+                    if (cache.Files != null && cache.Files.Any()) // files added to the files list allready, 
+                    {
+                        // use the first one
+                        file = cache.Files.First().Name;
+                    }
                 }
+
+                filepath = Path.Combine(AppConfiguration.DataPath, "Datasets", entityId.ToString(), "temp", file);
             }
 
-            //checi if file exist
-            var filepath = Path.Combine(AppConfiguration.DataPath, "Datasets", entityId.ToString(), "temp", file);
             if (!FileHelper.FileExist(filepath)) throw new FileNotFoundException(nameof(filepath));
 
             DataStructureCreationModel model = new DataStructureCreationModel();
@@ -88,81 +170,81 @@ namespace BExIS.Modules.Rpm.UI.Controllers
             model.Total = AsciiReader.Count(filepath);
             model.Skipped = AsciiReader.Skipped(filepath);
 
-
-            if (cache.AsciiFileReaderInfo == null) // file reader infos not exit, suggest it
-            {
-                if (model.Preview.Any())
+       
+                if (cache==null || cache.AsciiFileReaderInfo == null) // file reader infos not exit, suggest it
                 {
-                    // get delimeter
-                    TextSeperator textSeperator = structureAnalyser.SuggestDelimeter(model.Preview.First(), model.Preview.Last());
-                    model.Delimeter = AsciiFileReaderInfo.GetSeperator(textSeperator);
-
-                    // get decimal
-                    // the structure analyzer return a result or trigger a exception
-                    // catch the exception and set a default value -1 
-                    try
+                    if (model.Preview.Any())
                     {
-                        DecimalCharacter decimalCharacter = structureAnalyser.SuggestDecimal(model.Preview.First(), model.Preview.Last(), textSeperator);
-                        model.Decimal = AsciiFileReaderInfo.GetDecimalCharacter(decimalCharacter);
-                    }
-                    catch (Exception ex)
-                    {
-                        model.Decimal = -1;
-                    }
+                        // get delimeter
+                        TextSeperator textSeperator = structureAnalyser.SuggestDelimeter(model.Preview.First(), model.Preview.Last());
+                        model.Delimeter = AsciiFileReaderInfo.GetSeperator(textSeperator);
 
-                    // get textmarkers
-                    TextMarker textMarker = structureAnalyser.SuggestTextMarker(model.Preview.First(), model.Preview.Last());
-                    model.TextMarker = AsciiFileReaderInfo.GetTextMarker(textMarker);
+                        // get decimal
+                        // the structure analyzer return a result or trigger a exception
+                        // catch the exception and set a default value -1 
+                        try
+                        {
+                            DecimalCharacter decimalCharacter = structureAnalyser.SuggestDecimal(model.Preview.First(), model.Preview.Last(), textSeperator);
+                            model.Decimal = AsciiFileReaderInfo.GetDecimalCharacter(decimalCharacter);
+                        }
+                        catch (Exception ex)
+                        {
+                            model.Decimal = -1;
+                        }
+
+                        // get textmarkers
+                        TextMarker textMarker = structureAnalyser.SuggestTextMarker(model.Preview.First(), model.Preview.Last());
+                        model.TextMarker = AsciiFileReaderInfo.GetTextMarker(textMarker);
+
+                    }
 
                 }
+                else // allready exist, set it
+                {
 
-            }
-            else // allready exist, set it
-            {
+                    model.Decimal = (int)cache.AsciiFileReaderInfo.Decimal;
+                    model.Delimeter = (int)cache.AsciiFileReaderInfo.Seperator;
+                    model.TextMarker = (int)cache.AsciiFileReaderInfo.TextMarker;
 
-                model.Decimal = (int)cache.AsciiFileReaderInfo.Decimal;
-                model.Delimeter = (int)cache.AsciiFileReaderInfo.Seperator;
-                model.TextMarker = (int)cache.AsciiFileReaderInfo.TextMarker;
+                    // variables
+                    model.Markers.Add(
+                        new Marker()
+                        {
+                            Row = cache.AsciiFileReaderInfo.Variables,
+                            Type = "variable",
+                            Cells = cache.AsciiFileReaderInfo.Cells
 
-                // variables
-                model.Markers.Add(
-                    new Marker()
-                    {
-                        Row = cache.AsciiFileReaderInfo.Variables,
-                        Type = "variable",
-                        Cells = cache.AsciiFileReaderInfo.Cells
+                        });
 
-                    });
+                    // Data
+                    model.Markers.Add(
+                        new Marker()
+                        {
+                            Row = cache.AsciiFileReaderInfo.Data,
+                            Type = "data",
+                            Cells = cache.AsciiFileReaderInfo.Cells
+                        });
 
-                // Data
-                model.Markers.Add(
-                    new Marker()
-                    {
-                        Row = cache.AsciiFileReaderInfo.Data,
-                        Type = "data",
-                        Cells = cache.AsciiFileReaderInfo.Cells
-                    });
+                    // Unit
+                    model.Markers.Add(
+                        new Marker()
+                        {
+                            Row = cache.AsciiFileReaderInfo.Unit,
+                            Type = "unit",
+                            Cells = cache.AsciiFileReaderInfo.Cells
+                        });
 
-                // Unit
-                model.Markers.Add(
-                    new Marker()
-                    {
-                        Row = cache.AsciiFileReaderInfo.Unit,
-                        Type = "unit",
-                        Cells = cache.AsciiFileReaderInfo.Cells
-                    });
+                    //description
+                    model.Markers.Add(
+                        new Marker()
+                        {
+                            Row = cache.AsciiFileReaderInfo.Description,
+                            Type = "description",
+                            Cells = cache.AsciiFileReaderInfo.Cells
+                        });
 
-                //description
-                model.Markers.Add(
-                    new Marker()
-                    {
-                        Row = cache.AsciiFileReaderInfo.Description,
-                        Type = "description",
-                        Cells = cache.AsciiFileReaderInfo.Cells
-                    });
+                }
             
-            }
-
             // get lists
             model.Decimals = getDecimals();
             model.Delimeters = getDelimeters();
@@ -246,13 +328,15 @@ namespace BExIS.Modules.Rpm.UI.Controllers
 
 
                 // if id == 0 that means only create the strutcure and stop here
+                // otherwise the creation belongs to a dataset and the link to the dataset can be created
 
                 // store link to entity
-                var dataset = datasetManager.GetDataset(model.EntityId);
-                dataset.DataStructure = newStructure;
-                datasetManager.UpdateDataset(dataset);
-
-                
+                if (model.EntityId > 0)
+                {
+                    var dataset = datasetManager.GetDataset(model.EntityId);
+                    dataset.DataStructure = newStructure;
+                    datasetManager.UpdateDataset(dataset);
+                }
 
             }
 
@@ -292,7 +376,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
             if (unitMarker != null) cache.AsciiFileReaderInfo.Unit = unitMarker.Row + 1;// add 1 to store nit the index but the row
 
             // update modifikation date
-            cache.UpdateLastModificarion(typeof(DataDescriptionHook));
+            //cache.UpdateLastModificarion(typeof(DataDescriptionHook));
 
 
             // store in messages
@@ -315,7 +399,9 @@ namespace BExIS.Modules.Rpm.UI.Controllers
             if (model.Markers == null || !model.Markers.Any()) throw new ArgumentNullException(nameof(model));
             if (model.File == null) throw new ArgumentNullException(nameof(model.File));
 
-            string path = Path.Combine(AppConfiguration.DataPath, "Datasets", "" + model.EntityId, "temp", model.File);
+            string path = "";
+            if (model.EntityId==0 ) path = Path.Combine(AppConfiguration.DataPath, "Temp", BExISAuthorizeHelper.GetAuthorizedUserName(this.HttpContext), model.File);
+            else Path.Combine(AppConfiguration.DataPath, "Datasets", "" + model.EntityId, "temp", model.File);
 
             // get variable data
             // order rows by index
@@ -669,5 +755,19 @@ namespace BExIS.Modules.Rpm.UI.Controllers
 
             return !string.IsNullOrWhiteSpace(username) ? username : "DEFAULT";
         }
-    }
+
+            private string getFileName(HttpPostedFileBase file)
+            {
+                // Checking for Internet Explorer
+                if (Request.Browser.Browser.ToUpper() == "IE" || Request.Browser.Browser.ToUpper() == "INTERNETEXPLORER")
+                {
+                    string[] testfiles = file.FileName.Split(new char[] { '\\' });
+                    return testfiles[testfiles.Length - 1];
+                }
+                else
+                {
+                    return file.FileName;
+                }
+            }
+        }
 }

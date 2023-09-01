@@ -12,7 +12,7 @@
   <Exports>
     <Export tag="menubar" id="ManageDataStructures" order="1"
             title="Manage Data Structures" description="Edit, Create or Delet Data Structures" icon=""
-            controller="DataStructureSearch" action="" argument=""
+            controller="DataStructure" action="" argument=""
             extends="./menubarRoot/Plan"/>
     <Export tag="menubar" id="ManageUnits" order="2"
             title="Manage Units" description="Edit, Create or Delet Units" icon=""

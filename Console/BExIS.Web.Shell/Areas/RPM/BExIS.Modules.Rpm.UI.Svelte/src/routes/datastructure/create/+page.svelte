@@ -5,7 +5,7 @@
 	import { onMount } from 'svelte';
 	import { fade } from 'svelte/transition';
 
-	import { Spinner, Page } from '@bexis2/bexis2-core-ui';
+	import { Spinner, Page, ErrorMessage } from '@bexis2/bexis2-core-ui';
 	import {
 		generate,
 		save,
@@ -30,11 +30,10 @@
 	$: model;
 
 	let selectionIsActive = true;
-
-
 	let init: boolean = true;
 
-	onMount(async () => {
+	async function start()
+	{
 		// get data from parent
 		container = document.getElementById('datastructure');
 		entityId = container?.getAttribute('dataset');
@@ -55,7 +54,7 @@
 		displayPatternStore.set(displayPattern);
 
 		console.log('model', model);
-	});
+	}
 
 	async function update(e) {
 		console.log('update', e.detail);
@@ -83,14 +82,25 @@
 	note="generate a structure from a file."
 	contentLayoutType={pageContentLayoutType.full}
 >
-	{#if !model}
-		<Spinner label="the file {file} is currently being analyzed" />
-	{:else if selectionIsActive}
-		<div transition:fade>
-			<Selection bind:model on:saved={update} {init} />
-		</div>
-	{:else if model.variables.length > 0}
 
-			<Structure {model} on:back={back}></Structure>
-	{/if}
+ {#await start()}
+	  <Spinner label="the file {file} is currently being analyzed" /> 
+	{:then}
+
+		{#if model}
+			{#if selectionIsActive}
+				<div transition:fade>
+					<Selection bind:model on:saved={update} {init} />
+				</div>
+			{:else if model.variables.length > 0}
+
+					<Structure {model} on:back={back}></Structure>
+			{/if}
+		{/if}
+
+	{:catch error}
+		<ErrorMessage {error}/>
+
+	{/await}
+
 </Page>
