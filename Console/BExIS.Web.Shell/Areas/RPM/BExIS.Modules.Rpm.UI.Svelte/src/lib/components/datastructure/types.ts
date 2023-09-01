@@ -1,5 +1,12 @@
 import type { listItemType } from '@bexis2/bexis2-core-ui';
 
+export interface DataStructureModel {
+	id: number;
+	// title: string;
+	// description: string;
+	// linkedTo: number[];
+}
+
 export interface DataStructureCreationModel {
 	entityId: number;
 	title: string;

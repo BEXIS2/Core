@@ -129,6 +129,7 @@
     <Compile Include="IO\UnitIO.cs" />
     <Compile Include="IO\VariableTemplateIO.cs" />
     <Compile Include="Models\ConstraintModels.cs" />
+    <Compile Include="Models\DataStructure\DataStructureModel.cs" />
     <Compile Include="Models\DataStructure\DataStructureCreationModel.cs" />
     <Compile Include="Models\DataTypeModels.cs" />
     <Compile Include="Models\DimensionModels.cs" />
@@ -245,10 +246,6 @@
     <ProjectReference Include="..\..\..\..\..\Components\XML\BExIS.Xml.Helpers\BExIS.Xml.Helpers.csproj">
       <Project>{252f7872-a69c-43a6-84b4-4d2abdbdd9ab}</Project>
       <Name>BExIS.Xml.Helpers</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\DCM\BExIS.Modules.Dcm.UI\BExIS.Modules.Dcm.UI.csproj">
-      <Project>{44DD2A5E-0D2F-4FAB-B297-4211441030B7}</Project>
-      <Name>BExIS.Modules.Dcm.UI</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup />

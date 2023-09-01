@@ -1,96 +1,106 @@
 <script lang="ts">
-	import Structure from '$lib/components/datastructure/structure/Structure.svelte';
-	import Selection from '$lib/components/datastructure/Selection.svelte';
-
-	import { onMount } from 'svelte';
-	import { fade } from 'svelte/transition';
-
-	import { Spinner, Page } from '@bexis2/bexis2-core-ui';
 	import {
-		generate,
-		save,
-		load,
-		getDisplayPattern,
-		getStructures
-	} from '$lib/components/datastructure/services';
+		Page,
+		TablePlaceholder,
+		Table,
+		pageContentLayoutType,
+		ErrorMessage,
+		FileUploader,
+		notificationStore,
+		notificationType
+	} from '@bexis2/bexis2-core-ui';
 
 
-	import type { DataStructureCreationModel } from '$lib/components/datastructure/types';
-	import { displayPatternStore, structureStore } from '$lib/components/datastructure/store';
-	import { pageContentLayoutType } from '@bexis2/bexis2-core-ui';
+	import Fa from 'svelte-fa';
+	import { faPlus } from '@fortawesome/free-solid-svg-icons';
+
+	import { getDataStructures } from '$lib/components/datastructure/services';
+
+	import { writable } from 'svelte/store';
+
+	import type { DataStructureModel } from '$lib/components/datastructure/types';
+	import TableElements from '../components/tableElements.svelte';
+	import { goTo } from '$services/BaseCaller';
 
 
-	// load attributes from div
-	let container;
-	let entityId: number;
-	let version: number = 0;
-	let file: string;
 
-	let model: DataStructureCreationModel;
-	$: model;
+	// load data
+	let structures: DataStructureModel[];
+	const structuresStore = writable<DataStructureModel[]>([]);
 
-	let selectionIsActive = true;
+	$:structures, structuresStore.set(structures);
 
-
-	let init: boolean = true;
-
-	onMount(async () => {
-		// get data from parent
-		container = document.getElementById('datastructure');
-		entityId = container?.getAttribute('dataset');
-		version = container?.getAttribute('version');
-		file = container?.getAttribute('file');
-
-		console.log('start structure suggestion', entityId, version, file);
-
-		// load data from server
-		model = await load(entityId, file, 0);
-
-		// load sturctures for validation against existings
-		const structures = await getStructures();
-		structureStore.set(structures);
-
-		// load display pattern onces for all edit types
-		const displayPattern = await getDisplayPattern();
-		displayPatternStore.set(displayPattern);
-
-		console.log('model', model);
-	});
-
-	async function update(e) {
-		console.log('update', e.detail);
-		model = e.detail;
-
-		let res = await generate(e.detail);
-
-		if (res != false) {
-			model = res;
-			selectionIsActive = false;
-		}
+	async function reload() {
+		structures = await getDataStructures();
 	}
 
 
-	function back() {
-		selectionIsActive = true;
-		init = false;
+	let submit = "/rpm/datastructure/upload"
+
+	function success(e) {
+		console.log('success',e.detail.text, e.detail.files);
+		notificationStore.showNotification({
+				notificationType: notificationType.success,
+				message: e.detail.files[0]+" is uploaded"
+			})
+
+			goTo("/rpm/datastructure/create?entityid=0&&file="+e.detail.files[0])
 	}
 
+	function error(e) {
+		console.log('error',e);
+
+		notificationStore.showNotification({
+				notificationType: notificationType.error,
+				message: e.detail.messages.join(', ')
+			})
+	}
 
 </script>
 
 <Page
-	title="Data structure"
-	note="generate a structure from a file."
+	title="Data structures"
+	note="overview about the data structures in bexis2."
 	contentLayoutType={pageContentLayoutType.full}
 >
-	{#if !model}
-		<Spinner label="the file {file} is currently being analyzed" />
-	{:else if selectionIsActive}
-		<div transition:fade>
-			<Selection bind:model on:saved={update} {init} />
-		</div>
-	{:else if model.variables.length > 0}
+	{#await reload()}
+	 	<TablePlaceholder cols={4} rows={5}/>
+	{:then}
 
-			<Structure {model} on:back={back}></Structure>
-	{/if}
+	<FileUploader
+		id=0
+		version=0
+		context="data structure creation"
+		data= {{
+			accept:[".csv",".txt",".tsv"],
+			multiple:true,
+			existingFiles:[],
+			descriptionType:0,
+			maxSize:1024
+		}}
+		{submit}
+		on:error = {error}
+		on:success ={success}
+	/>
+
+	<Table
+				config={{
+					id: 'xyz',
+					data: structuresStore,
+					columns: {
+						linkedTo: {
+							header: 'Linked',
+							disableFiltering: true,
+							instructions: {
+								renderComponent: TableElements
+							}
+					}
+				}
+				}}
+			/> 
+
+	{:catch error}
+		<ErrorMessage {error} />
+	{/await}
+
 </Page>
