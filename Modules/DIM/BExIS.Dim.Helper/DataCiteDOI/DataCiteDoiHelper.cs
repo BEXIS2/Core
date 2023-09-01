@@ -26,7 +26,7 @@ using System.Runtime.CompilerServices;
 
 namespace BExIS.Dim.Helpers
 {
-    public class DataCiteDoiHelper
+    public class DataCiteDOIHelper
     {
         private long getPartyId(XElement e)
         {
@@ -39,7 +39,7 @@ namespace BExIS.Dim.Helpers
             return 0;
         }
 
-        public CreateDataCiteModel CreateDataCiteModel(DatasetVersion datasetVersion, List<DataCiteSettingsItem> mappings)
+        public CreateDataCiteModel CreateDataCiteModel(DatasetVersion datasetVersion, List<DataCiteDOISettingsItem> mappings)
         {
             var model = new CreateDataCiteModel();
 
@@ -78,7 +78,7 @@ namespace BExIS.Dim.Helpers
             return model;
         }
 
-        public Dictionary<string, string> CreatePlaceholders(DatasetVersion datasetVersion, List<DataCiteSettingsItem> placeholders)
+        public Dictionary<string, string> CreatePlaceholders(DatasetVersion datasetVersion, List<DataCiteDOISettingsItem> placeholders)
         {
             var _placeholders = new Dictionary<string, string>();
 

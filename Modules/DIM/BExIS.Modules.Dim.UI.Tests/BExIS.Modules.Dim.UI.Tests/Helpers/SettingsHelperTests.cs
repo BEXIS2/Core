@@ -53,12 +53,22 @@ namespace BExIS.Modules.Dim.UI.Tests.Helpers
 
         }
 
+        [Test()]
+        public void GetDataCiteDOICredentials()
+        {
+            //var appConfiguration = AppConfiguration.WorkspaceRootPath;
+            var settingsHelper = new SettingsHelper();
+
+
+            var credentials = settingsHelper.getDataCiteDOICredentials();
+        }
+
         //[Test()]
         public void ReadPlaceholders_ValidSettings_ReturnList()
         {
             var appConfiguration = AppConfiguration.WorkspaceRootPath;
             var settingsHelper = new SettingsHelper();
-            var datacitedoihelper = new DataCiteDoiHelper();
+            var datacitedoihelper = new DataCiteDOIHelper();
 
 
             var client = new RestClient(settingsHelper.GetValue("proxy"));

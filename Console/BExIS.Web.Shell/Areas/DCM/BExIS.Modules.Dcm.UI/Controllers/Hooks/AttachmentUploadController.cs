@@ -53,13 +53,13 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             var settings = ModuleManager.GetModuleSettings("dcm");
 
             // description
-            var descrType = settings.GetEntryValue("attachmentDescription").ToString();//
+            var descrType = settings.GetValueByKey("attachmentDescription").ToString();//
             model.FileUploader.DescriptionType = (DescriptionType)Enum.Parse(typeof(DescriptionType), descrType);
 
             // max size
             model.FileUploader.MaxSize = Session.GetTenant().MaximumUploadSize; // need to load from tenant
             //multifileupload
-            model.FileUploader.Multiple = Boolean.Parse(settings.GetEntryValue("allowMultiAttachmentUpload").ToString());
+            model.FileUploader.Multiple = Boolean.Parse(settings.GetValueByKey("allowMultiAttachmentUpload").ToString());
 
             #endregion
 

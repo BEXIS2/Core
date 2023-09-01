@@ -57,20 +57,20 @@ namespace BExIS.Modules.Sam.UI.Controllers.API
             }
         }
 
-        [HttpPost, GetRoute("api/users")]
-        public async Task<HttpResponseMessage> Post(CreateGroupModel model)
+        [HttpPost, PostRoute("api/users")]
+        public async Task<HttpResponseMessage> Post(CreateUserModel model)
         {
             try
             {
-                using (var groupManager = new GroupManager())
+                using (var userManager = new UserManager())
                 {
-                    var group = new Group()
-                    {
-                        Description = model.Description,
-                        Name = model.Name
+                    var user = new User()
+                    {  
+                        UserName = model.UserName,
+                        Email = model.Email
                     };
 
-                    var result = groupManager.CreateAsync(group);
+                    var result = userManager.CreateAsync(user);
 
                     return Request.CreateResponse(HttpStatusCode.OK);
                 }

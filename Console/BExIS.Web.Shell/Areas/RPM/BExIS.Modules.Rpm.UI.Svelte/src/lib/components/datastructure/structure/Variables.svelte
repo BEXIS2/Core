@@ -2,8 +2,8 @@
 	import Variable from './variable/Variable.svelte';
 	import { Spinner } from '@bexis2/bexis2-core-ui';
 	import { onMount } from 'svelte';
-	import { getDataTypes, getUnits } from '$services/StructureSuggestionCaller';
-	import type { VariableModel, missingValueType } from '$models/StructureSuggestion';
+	import { getDataTypes, getUnits } from '../services';
+	import type { VariableModel, missingValueType } from '../types';
 	import { Modal, modalStore } from '@skeletonlabs/skeleton';
 	import type { ModalSettings } from '@skeletonlabs/skeleton';
 

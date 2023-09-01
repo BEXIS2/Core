@@ -11,7 +11,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         public ActionResult Index()
         {
             // commentar
-            string helpurl = ModuleManager.GetModuleSettings("DCM").GetEntryValue("help").ToString();
+            string helpurl = ModuleManager.GetModuleSettings("DCM").GetValueByKey("help").ToString();
 
             return Redirect(helpurl);
         }

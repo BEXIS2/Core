@@ -1,20 +1,20 @@
-import { ListItem } from './Models';
+import type { listItemType } from '@bexis2/bexis2-core-ui';
 
-export interface StructureSuggestionModel {
-	id: number;
+export interface DataStructureCreationModel {
+	entityId: number;
 	title: string;
 	description: string;
 	file: string;
 	delimeter: number;
 	decimal: number;
 	textMarker: number;
-	delimeters: ListItem[];
-	decimals: ListItem[];
-	textMarkers: ListItem[];
+	delimeters: listItemType[];
+	decimals: listItemType[];
+	textMarkers: listItemType[];
 	preview: string[];
 	total: number;
 	skipped: number;
-	markers: Marker[];
+	markers: markerType[];
 	variables: VariableModel[];
 	missingValues: missingValueType[];
 }
@@ -24,7 +24,7 @@ export interface missingValueType {
 	description: string;
 }
 
-export interface Marker {
+export interface markerType {
 	type: string;
 	row: number;
 	cells: boolean[];
@@ -37,11 +37,11 @@ export interface VariableModel {
 	systemType: string;
 	isKey: boolean;
 	isOptional: boolean;
-	dataType: ListItem;
-	unit: ListItem;
-	template: ListItem;
-	displayPattern: ListItem | undefined;
-	possibleUnits: ListItem[];
-	possibleTemplates: ListItem[];
-	possibleDisplayPattern: ListItem[];
+	dataType: listItemType;
+	unit: listItemType;
+	template: listItemType;
+	displayPattern: listItemType | undefined;
+	possibleUnits: listItemType[];
+	possibleTemplates: listItemType[];
+	possibleDisplayPattern: listItemType[];
 }

@@ -327,7 +327,7 @@ namespace BExIS.Modules.Bam.UI.Controllers
             var settings = moduleInfo.Plugin.Settings;
 
             var result = new Dictionary<string, string[]>();
-            var accountPartyTypesStr = settings.GetEntryValue("AccountPartyTypes");
+            var accountPartyTypesStr = settings.GetValueByKey("AccountPartyTypes");
             if (accountPartyTypesStr == null || string.IsNullOrEmpty(accountPartyTypesStr.ToString()))
             {
                 return null;

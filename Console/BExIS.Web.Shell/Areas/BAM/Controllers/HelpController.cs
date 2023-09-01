@@ -17,7 +17,7 @@ namespace BExIS.Modules.Bam.UI.Controllers
         // GET: Help
         public ActionResult Index()
         {
-            string helpurl = ModuleManager.GetModuleSettings("BAM").GetEntryValue("help").ToString();
+            string helpurl = ModuleManager.GetModuleSettings("BAM").GetValueByKey("help").ToString();
 
             //add default link if not set
             if (String.IsNullOrEmpty(helpurl))

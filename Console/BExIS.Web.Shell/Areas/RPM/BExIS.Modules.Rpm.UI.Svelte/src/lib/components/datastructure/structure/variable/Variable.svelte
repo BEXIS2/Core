@@ -1,16 +1,16 @@
 <script lang="ts">
 	import { onMount, afterUpdate, createEventDispatcher } from 'svelte';
-	import { fade } from 'svelte/transition';
+
 	// UI Components
 	import { TextInput, TextArea, MultiSelect } from '@bexis2/bexis2-core-ui';
 
 	//types
 	import type { listItemType } from '@bexis2/bexis2-core-ui';
-	import type { VariableModel, missingValueType } from '$models/StructureSuggestion';
+	import type { VariableModel, missingValueType } from '../../types';
 
 	//stores
 	import { get } from 'svelte/store';
-	import { displayPatternStore } from '../store';
+	import { displayPatternStore } from '../../store';
 
 	import DataTypeDescription from './DataTypeDescription.svelte';
 	import Container from './Container.svelte';

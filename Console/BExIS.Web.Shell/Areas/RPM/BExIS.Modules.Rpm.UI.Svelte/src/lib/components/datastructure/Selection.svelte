@@ -7,25 +7,25 @@
 	import MissingValues from './MissingValues.svelte';
 
 	//services
-	import { store } from '$services/StructureSuggestionCaller';
+	import { store } from './services';
 
 	import Fa from 'svelte-fa';
 	import { faSave, faChevronRight, faArrowRotateLeft } from '@fortawesome/free-solid-svg-icons';
 
 	//types
-	import type { StructureSuggestionModel, Marker } from '$models/StructureSuggestion';
+	import type { DataStructureCreationModel, markerType } from './types';
 
 	import { positionType } from '@bexis2/bexis2-core-ui';
 	import Controls from './Controls.svelte';
 
-	export let model: StructureSuggestionModel;
+	export let model: DataStructureCreationModel;
 	$: model;
 	export let init: boolean = true;
 
 	let delimeter;
 	let isDrag: boolean = false;
 	let state: boolean[][] = [];
-	let selection: Marker[] = [];
+	let selection: markerType[] = [];
 	$: selection;
 	let cLength: number = 0;
 	let rLength: number = 0;
@@ -53,7 +53,7 @@
 
 	onMount(async () => {
 		console.log('start selection suggestion');
-		console.log('load selection', model.id, model.file);
+		console.log('load selection', model.entityId, model.file);
 		setTableInfos(model.preview, String.fromCharCode(model.delimeter));
 		setMarkers(model.markers, init);
 
@@ -308,13 +308,21 @@
 
 		model.markers = selection;
 
-		console.log('save selection', model);
-		let res = await store(model);
-		console.log(res);
-
-		if (res != false) {
-			console.log('selection', res);
-			dispatch('saved', model);
+		// if model id == 0, means subject id is not set and store to cache is not needed
+		if(model.id>0)
+		{
+		 console.log('save selection', model);
+			let res = await store(model);
+			console.log(res);
+			if (res != false) {
+				console.log('selection', res);
+				dispatch('saved', model);
+			 generate = false;
+			}
+		}
+		else
+		{
+		 dispatch('saved', model);
 			generate = false;
 		}
 	}

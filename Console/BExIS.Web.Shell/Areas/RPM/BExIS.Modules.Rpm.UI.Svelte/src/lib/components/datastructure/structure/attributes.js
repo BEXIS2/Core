@@ -1,6 +1,6 @@
 import { create, test, enforce, only } from 'vest';
 import { get } from 'svelte/store';
-import { structureStore } from './store';
+import { structureStore } from '../store';
 
 const suite = create((data = {}, fieldName) => {
 	only(fieldName);

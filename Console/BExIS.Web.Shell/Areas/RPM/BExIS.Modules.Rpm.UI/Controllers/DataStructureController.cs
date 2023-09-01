@@ -8,7 +8,7 @@ using BExIS.IO;
 using BExIS.IO.DataType.DisplayPattern;
 using BExIS.IO.Transform.Input;
 using BExIS.Modules.Dcm.UI.Hooks;
-using BExIS.Modules.Dcm.UI.Models.StructureSuggestion;
+using BExIS.Modules.Rpm.UI.Models.DataStructure;
 using BExIS.Security.Entities.Authorization;
 using BExIS.UI.Helpers;
 using BExIS.UI.Hooks;
@@ -24,34 +24,44 @@ using System.Web.Mvc;
 using Vaiona.Utils.Cfg;
 using Vaiona.Web.Mvc.Modularity;
 
-namespace BExIS.Modules.Dcm.UI.Controllers
+namespace BExIS.Modules.Rpm.UI.Controllers
 {
-    public class StructureSuggestionController : Controller
+    public class DataStructureController : Controller
     {
-        // GET: Edit
-        [BExISEntityAuthorize(typeof(Dataset), "id", RightType.Write)]
-        public ActionResult Index(long id, string file, int version = 0)
-        {
-            string module = "dcm";
 
-            ViewData["id"] = id;
-            ViewData["version"] = version;
-            ViewData["file"] = file;
+        public ActionResult Index()
+        {
+            string module = "rpm";
+
+
             ViewData["app"] = SvelteHelper.GetApp(module);
             ViewData["start"] = SvelteHelper.GetStart(module);
 
             return View();
         }
 
+        public ActionResult Create(long entityId, string file, int version = 0)
+        {
+            string module = "rpm";
+
+            ViewData["id"] = entityId;
+            ViewData["version"] = version;
+            ViewData["file"] = file;
+            ViewData["app"] = SvelteHelper.GetApp(module);
+            ViewData["start"] = SvelteHelper.GetStart(module);
+
+            return View("Create");
+        }
+
         [JsonNetFilter]
-        public JsonResult Load(long id, string file, int version = 0)
+        public JsonResult Load(long entityId, string file, int version = 0)
         {
             // check incoming values
-            if (id <= 0) throw new ArgumentException(nameof(id));
+            if (entityId <= 0) throw new ArgumentException(nameof(entityId));
 
             // if filereader info allready exist, load the data from the cache otherwise, suggest it
             HookManager hookManager = new HookManager();
-            EditDatasetDetailsCache cache = hookManager.LoadCache<EditDatasetDetailsCache>("dataset", "details", HookMode.edit, id);
+            EditDatasetDetailsCache cache = hookManager.LoadCache<EditDatasetDetailsCache>("dataset", "details", HookMode.edit, entityId);
 
             // file can be incoming or set from editcache
             if (string.IsNullOrEmpty(file)) // incoming file ist not set
@@ -64,13 +74,13 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             }
 
             //checi if file exist
-            var filepath = Path.Combine(AppConfiguration.DataPath, "Datasets", id.ToString(), "temp", file);
+            var filepath = Path.Combine(AppConfiguration.DataPath, "Datasets", entityId.ToString(), "temp", file);
             if (!FileHelper.FileExist(filepath)) throw new FileNotFoundException(nameof(filepath));
 
-            StructureSuggestionModel model = new StructureSuggestionModel();
+            DataStructureCreationModel model = new DataStructureCreationModel();
             StructureAnalyser structureAnalyser = new StructureAnalyser();
 
-            model.Id = id;
+            model.EntityId = entityId;
             model.File = file;
 
             // get first rows
@@ -162,10 +172,8 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             return Json(model, JsonRequestBehavior.AllowGet);
         }
 
-
-
         [JsonNetFilter]
-        public JsonResult Save(StructureSuggestionModel model)
+        public JsonResult Save(DataStructureCreationModel model)
         {
             if (model == null) throw new ArgumentNullException(nameof(model));
 
@@ -236,9 +244,11 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
                 }
 
-                // store link to entity
 
-                var dataset = datasetManager.GetDataset(model.Id);
+                // if id == 0 that means only create the strutcure and stop here
+
+                // store link to entity
+                var dataset = datasetManager.GetDataset(model.EntityId);
                 dataset.DataStructure = newStructure;
                 datasetManager.UpdateDataset(dataset);
 
@@ -250,13 +260,13 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         }
 
         [JsonNetFilter]
-        public JsonResult Store(StructureSuggestionModel model)
+        public JsonResult Store(DataStructureCreationModel model)
         {
             #region update cache
 
             HookManager hookManager = new HookManager();
-            EditDatasetDetailsCache cache = hookManager.LoadCache<EditDatasetDetailsCache>("dataset", "details", HookMode.edit, model.Id);
-            EditDatasetDetailsLog log = hookManager.LoadLog<EditDatasetDetailsLog>("dataset", "details", HookMode.edit, model.Id);
+            EditDatasetDetailsCache cache = hookManager.LoadCache<EditDatasetDetailsCache>("dataset", "details", HookMode.edit, model.EntityId);
+            EditDatasetDetailsLog log = hookManager.LoadLog<EditDatasetDetailsLog>("dataset", "details", HookMode.edit, model.EntityId);
 
             var username = BExISAuthorizeHelper.GetAuthorizedUserName(HttpContext);
 
@@ -286,34 +296,26 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
 
             // store in messages
-            string message = String.Format("the structure {0} was successfully created and attached to the dataset {1}.", model.Title, model.Id);
+            string message = String.Format("the structure {0} was successfully created and attached to the dataset {1}.", model.Title, model.EntityId);
             log.Messages.Add(new LogMessage(DateTime.Now, new List<string>() { message }, username,"Structure suggestion","store"));
 
             // save cache
-            hookManager.SaveCache(cache, "dataset", "details", HookMode.edit, model.Id);
+            hookManager.SaveCache(cache, "dataset", "details", HookMode.edit, model.EntityId);
             #endregion
 
 
             return Json(true, JsonRequestBehavior.AllowGet);
         }
 
-        /*
-             const MARKER_TYPE = {
-                VARIABLE: "variable",
-                DESCRIPTION: "description",
-                UNIT: "unit",
-                MISSING_VALUES:  "missing-values"
-            }
-             */
         [JsonNetFilter]
         [HttpPost]
-        public JsonResult Generate(StructureSuggestionModel model)
+        public JsonResult Generate(DataStructureCreationModel model)
         {
             if (model == null) throw new ArgumentNullException(nameof(model));
             if (model.Markers == null || !model.Markers.Any()) throw new ArgumentNullException(nameof(model));
             if (model.File == null) throw new ArgumentNullException(nameof(model.File));
 
-            string path = Path.Combine(AppConfiguration.DataPath, "Datasets", "" + model.Id, "temp", model.File);
+            string path = Path.Combine(AppConfiguration.DataPath, "Datasets", "" + model.EntityId, "temp", model.File);
 
             // get variable data
             // order rows by index
@@ -590,9 +592,9 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         private Dictionary<int,Type> suggestSystemTypes(string file, TextSeperator delimeter, DecimalCharacter decimalCharacter, List<string> missingValues,int datastart)
         {
             var settings = ModuleManager.GetModuleSettings("Dcm");
-            int min = Convert.ToInt32(settings.GetEntryValue("minToAnalyse"));
-            int max = Convert.ToInt32(settings.GetEntryValue("maxToAnalyse"));
-            int percentage = Convert.ToInt32(settings.GetEntryValue("precentageToAnalyse"));
+            int min = Convert.ToInt32(settings.GetValueByKey("minToAnalyse"));
+            int max = Convert.ToInt32(settings.GetValueByKey("maxToAnalyse"));
+            int percentage = Convert.ToInt32(settings.GetValueByKey("precentageToAnalyse"));
 
             StructureAnalyser structureAnalyser = new StructureAnalyser();
 
@@ -632,7 +634,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             var list = new List<MissingValueModel>();
             // get default missing values
             var settings = ModuleManager.GetModuleSettings("rpm");
-            var mv_list = settings.GetList("missingvalues");
+            var mv_list = settings.GetValueByKey("missingValues") as List<Vaiona.Utils.Cfg.Entry>;
 
             if (mv_list != null)
             {
@@ -640,8 +642,8 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 {
                     list.Add(new MissingValueModel()
                     {
-                        DisplayName = mv.GetAttribute("placeholder")?.Value.ToString(),
-                        Description = mv.GetAttribute("description")?.Value.ToString()
+                        DisplayName = mv.Value.ToString(),
+                        Description = mv.Description.ToString()
                     });
                 }
             }
@@ -649,6 +651,9 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             {
                 list.Add(new MissingValueModel());
             }
+
+            list.Add(new MissingValueModel());
+
 
             return list;
         }

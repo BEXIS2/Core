@@ -2,12 +2,22 @@
   "id": "dim",
   "name": "data dissemination",
   "description": "...",
-  "entry": [
+  "entries": [
     {
       "key": "help",
       "value": "https://github.com/BEXIS2/Documents/blob/2.14.5/Manuals/DIM/Manual.md",
       "type": "String",
       "description": "URL to manual"
+    },
+    {
+      "key": "dataCiteDOICredentials",
+      "value": {
+        "username": "test",
+        "password": "admin",
+        "host":  "https://google.de:123456"
+      },
+      "type": "JSON",
+      "description": "This are the credentials."
     }
   ]
 }

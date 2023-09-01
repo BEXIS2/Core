@@ -2093,7 +2093,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
             {
                 try
                 {
-                    var value = moduleSettings.GetEntryValue(item.Key);
+                    var value = moduleSettings.GetValueByKey(item.Key);
 
                     if (value != null)
                     {

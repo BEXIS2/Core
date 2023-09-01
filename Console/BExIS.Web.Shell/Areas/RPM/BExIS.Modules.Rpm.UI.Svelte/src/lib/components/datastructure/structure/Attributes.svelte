@@ -5,8 +5,7 @@
 	export let model;
 	export let valid = false;
 
-	import suite from './structureAttributes';
-	import { error } from '@sveltejs/kit';
+	import suite from './attributes';
 
 	// validation
 	let res = suite.get();
