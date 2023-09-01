@@ -17,6 +17,8 @@
 		<add name="ApplicationServices" connectionString="Server={SERVER};Port={PORT};Database={DATABASENAME};Userid={USER};Password={PASSWORD};Pooling=true;MinPoolSize=2;MaxPoolSize=100;ConnectionIdleLifetime=3600;" />
 	</connectionStrings>
 	<appSettings file="../Workspace/General/Configurations/Credentials.config">
+		<add key="JwtKey" value="35GadUCymdzSR6PY6SjLTpDWNS6snwZNrEvdCwfq" />
+		<add key="JwtIssuer" value="https://localhost:44345/" />
 		<add key="ClientValidationEnabled" value="true" />
 		<add key="UnobtrusiveJavaScriptEnabled" value="true" />
 		<add key="UseSchemaInDatabaseGeneration" value="False" />
