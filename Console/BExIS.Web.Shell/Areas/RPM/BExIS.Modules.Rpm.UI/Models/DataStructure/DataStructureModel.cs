@@ -22,13 +22,13 @@ namespace BExIS.Modules.Rpm.UI.Models.DataStructure
 
         public List<long> LinkedTo { get; set; }
 
-
         public DataStructureModel()
         {
             Id = 0;
             Title = String.Empty;
             Description = String.Empty;
             LinkedTo = new List<long>();
+
         }
     }
 

@@ -20,10 +20,11 @@ export const getDataStructures = async () => {
 /****************/
 /* Create*/
 /****************/
-export const load = async (entityId, file, version) => {
+export const load = async (file,entityId,version) => {
+	console.log(file,entityId,version);
 	try {
 		const response = await Api.get(
-			'/rpm/DataStructure/load?entityId=' + entityId + '&&file=' + file + '&&version=' + version
+			'/rpm/DataStructure/load?file=' + file + '&&entityId=' + entityId + '&&version=' + version
 		);
 		return response.data;
 	} catch (error) {
@@ -61,6 +62,34 @@ export const getDelimeters = async () => {
 export const generate = async (data) => {
 	try {
 		const response = await Api.post('/rpm/DataStructure/generate', data);
+		return response.data;
+	} catch (error) {
+		console.error(error);
+	}
+};
+
+
+export const empty = async () => {
+	try {
+		const response = await Api.get('/rpm/DataStructure/empty');
+		return response.data;
+	} catch (error) {
+		console.error(error);
+	}
+};
+
+export const copy = async (id) => {
+	try {
+		const response = await Api.get('/rpm/DataStructure/copy?id='+id);
+		return response.data;
+	} catch (error) {
+		console.error(error);
+	}
+};
+
+export const remove = async (id) => {
+	try {
+		const response = await Api.post('/rpm/DataStructure/delete',{id});
 		return response.data;
 	} catch (error) {
 		console.error(error);

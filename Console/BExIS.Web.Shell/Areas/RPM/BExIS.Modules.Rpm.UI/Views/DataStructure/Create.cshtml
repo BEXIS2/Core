@@ -8,6 +8,7 @@
     long id = 0;
     long version = 0;
     string file = "";
+    long structureId = 0;
 
     if (ViewData["id"] != null) { id = Convert.ToInt64(ViewData["id"]); }
 
@@ -15,8 +16,10 @@
 
     if (ViewData["file"] != null) { file = ViewData["file"].ToString(); }
 
+    if (ViewData["structureId"] != null) { structureId = Convert.ToInt64(ViewData["structureId"]); }
+
 }
 
-<div id="datastructure" dataset="@id" version="@version" file="@file">
+<div id="datastructure" dataset="@id" version="@version" file="@file" structure="@structureId">
     @Html.Partial("_sveltePage")
 </div>
