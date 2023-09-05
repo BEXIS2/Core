@@ -36,7 +36,7 @@
 
 		if (e.detail.value) {
 			open = true;
-			model = await load(id, e.detail.value, 0);
+			model = await load(e.detail.value, id, 0);
 			target = null;
 		}
 	}

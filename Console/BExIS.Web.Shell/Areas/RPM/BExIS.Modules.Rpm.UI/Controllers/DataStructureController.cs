@@ -57,7 +57,8 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                         Id = entity.Id,
                         Description = entity.Description,
                         Title = entity.Name,
-                        LinkedTo = linked
+                        LinkedTo = linked,
+                        
                     });
                 }
             }
@@ -108,13 +109,14 @@ namespace BExIS.Modules.Rpm.UI.Controllers
             }
         }
 
-        public ActionResult Create(long entityId, string file, int version = 0)
+        public ActionResult Create(string file, long entityId = 0, long structureId = 0, int version = 0)
         {
             string module = "rpm";
 
             ViewData["id"] = entityId;
             ViewData["version"] = version;
             ViewData["file"] = file;
+            ViewData["structureId"] = structureId;
             ViewData["app"] = SvelteHelper.GetApp(module);
             ViewData["start"] = SvelteHelper.GetStart(module);
 
@@ -129,7 +131,6 @@ namespace BExIS.Modules.Rpm.UI.Controllers
         {
 
             EditDatasetDetailsCache cache = null;
-
 
             // there are 2 usecases
             // 1. From edit dataset
@@ -493,6 +494,95 @@ namespace BExIS.Modules.Rpm.UI.Controllers
             // get default missing values
             return Json(model);
         }
+
+        [JsonNetFilter]
+        [HttpGet]
+        public JsonResult Empty()
+        {
+            DataStructureCreationModel model = new DataStructureCreationModel();
+
+            // get default missing values
+            return Json(model, JsonRequestBehavior.AllowGet);
+        }
+
+        [JsonNetFilter]
+        [HttpGet]
+        public JsonResult Copy(long id)
+        {
+            if (id <= 0) throw new NullReferenceException("id of the structure should be greater then 0");
+            DataStructureCreationModel model = new DataStructureCreationModel();
+
+            using (var structureManager = new DataStructureManager())
+            {
+                if (id > 0)
+                {
+                    var structure = structureManager.StructuredDataStructureRepo.Get(id);
+                    if (structure == null) throw new NullReferenceException("structure with id " + id);
+
+                    model.Title = structure.Name +" (copy)";
+                    model.Description = structure.Description;
+
+                    if (structure.Variables.Any())
+                    {
+                        foreach (var variable in structure.Variables)
+                        {
+                            var var = new VariableModel()
+                            {
+                                Id = variable.Id,
+                                Name = variable.Label,
+                                Description = variable.Description,
+                                DataType = new ListItem(variable.Id, variable.Label, "copied"),
+                                SystemType = variable.DataType.SystemType,
+                                Unit = new ListItem(variable.Unit.Id, variable.Unit.Name, "copied"),
+                                IsKey = variable.IsKey,
+                                IsOptional = variable.IsValueOptional
+
+                            };
+
+                            // get suggestes DisplayPattern / currently only for DateTime
+                            if (var.SystemType.Equals(typeof(DateTime).Name))
+                            {
+                                var.DisplayPattern = null; // here a suggesten of the display pattern is needed
+                                var displayPattern = DataTypeDisplayPattern.Pattern.Where(p => p.Systemtype.ToString().Equals(var.SystemType));
+                                displayPattern.ToList().ForEach(d => var.PossibleDisplayPattern.Add(new ListItem(d.Id, d.DisplayPattern)));
+                            };
+
+                            model.Variables.Add(var);
+                            
+                        }
+                    }
+                }
+            
+            }
+
+                // get default missing values
+                return Json(model, JsonRequestBehavior.AllowGet);
+        }
+
+        [JsonNetFilter]
+        [HttpPost]
+        public JsonResult Delete(long id)
+        {
+            if (id <= 0) throw new NullReferenceException("id of the structure should be greater then 0");
+
+
+            using (var structureManager = new DataStructureManager())
+            {
+                if (id > 0)
+                {
+                    var structure = structureManager.StructuredDataStructureRepo.Get(id);
+                    if (structure == null) throw new Exception("Structure with id " + id + " not exist.");
+                        
+                    structureManager.DeleteStructuredDataStructure(structure);
+                }
+
+            }
+
+            // get default missing values
+         
+            return Json(true);
+        }
+
 
 
         [JsonNetFilter]
