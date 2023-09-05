@@ -3,9 +3,9 @@
 
 	import Fa from 'svelte-fa';
 	import { faXmark } from '@fortawesome/free-solid-svg-icons';
-	import type { DataStructureCreationModel } from '$lib/components/datastructure/types';
+	import type { DataStructureCreationModel } from '@bexis2/bexis2-rpm-ui';
 
-	import Selection from '$lib/components/datastructure/Selection.svelte';
+	import {Selection} from '@bexis2/bexis2-rpm-ui';
 	import { latestFileReaderDate } from '../../../routes/edit/stores';
 
 	export let model: DataStructureCreationModel;

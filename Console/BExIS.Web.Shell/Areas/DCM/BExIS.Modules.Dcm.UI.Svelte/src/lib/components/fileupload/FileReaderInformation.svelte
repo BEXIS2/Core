@@ -3,11 +3,11 @@
 
 	import { onMount } from 'svelte';
 
-	import type { DataStructureCreationModel } from '$lib/components/structuresuggestion/types';
+	import type { DataStructureCreationModel } from '@bexis2/bexis2-rpm-ui';
 
 	import type { asciiFileReaderInfoType, fileInfoType } from '@bexis2/bexis2-core-ui';
 
-	import { load } from '$lib/components/structuresuggestion/services';
+	import { load } from './services';
 	import FileReaderSelectionModal from './FileReaderSelectionModal.svelte';
 	import FileReader from './FileReader.svelte';
 	import { Accordion, AccordionItem } from '@skeletonlabs/skeleton';
