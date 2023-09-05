@@ -47,6 +47,7 @@
   "type": "module",
   "dependencies": {
     "@bexis2/bexis2-core-ui": "0.2.25",
+    "@bexis2/bexis2-rpm-ui": "0.0.1",
     "@floating-ui/dom": "^1.4.1",
     "@fortawesome/free-solid-svg-icons": "^6.4.0",
     "@sveltejs/adapter-static": "^2.0.1",

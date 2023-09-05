@@ -15,7 +15,7 @@
 
 	function goToGenerate(file, id) {
 		// if its possible the file will be used to start structure analyze
-		goTo('/dcm/structuresuggestion/?id=' + id + '&file=' + file);
+		goTo('/rpm/datastructure/create?entityId=' + id + '&file=' + file);
 	}
 
 	export let id;
