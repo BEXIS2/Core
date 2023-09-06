@@ -225,7 +225,7 @@ namespace BExIS.Modules.Dim.UI.Helpers
                     creators = conceptManager.CreateMappingKey("Creators", "", "www.google.de",false,true, "data/attributes/creators", concept);
 
                 if (!keys.Any(k => k.XPath.Equals("data/attributes/creators/name")))
-                    conceptManager.CreateMappingKey("FullName", "", "", false, false, "data/attributes/creators/name", concept, creators);
+                    conceptManager.CreateMappingKey("Name", "", "", false, false, "data/attributes/creators/name", concept, creators);
 
                 if (!keys.Any(k => k.XPath.Equals("data/attributes/creators/givenName")))
                     conceptManager.CreateMappingKey("GivenName", "", "", false, false, "data/attributes/creators/givenName", concept,creators);

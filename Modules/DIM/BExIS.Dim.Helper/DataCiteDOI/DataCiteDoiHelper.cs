@@ -23,6 +23,7 @@ using BExIS.Dim.Helpers.Services;
 using System.Security.Policy;
 using Vaelastrasz.Library.Models;
 using System.Runtime.CompilerServices;
+using BExIS.Dlm.Services.Data;
 
 namespace BExIS.Dim.Helpers
 {
@@ -103,7 +104,12 @@ namespace BExIS.Dim.Helpers
 
                     case "VersionNumber":
 
-                        _placeholders.Add("{VersionNumber}", Convert.ToString(datasetVersion.VersionNo));
+                        using (var datasetManager = new DatasetManager())
+                        {
+                            var versionNumber = datasetManager.GetDatasetVersionNr(datasetVersion);
+                            _placeholders.Add("{VersionNumber}", Convert.ToString(versionNumber));
+
+                        }
                         break;
 
                     default:
