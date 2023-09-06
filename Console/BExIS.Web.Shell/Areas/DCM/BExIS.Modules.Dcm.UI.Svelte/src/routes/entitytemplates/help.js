@@ -1,13 +1,13 @@
 export const editHelp = [
 	{
 		id: 'name',
-		name: 'Name',
+		name: 'Template Name',
 		description: 'Enter a unique name for the entity template.'
 	},
 	{
 		id: 'entityType',
-		name: 'Entity',
-		description: 'This template belongs to which entity type?'
+		name: 'Entity Type',
+		description: 'This template belongs to which type of entity?'
 	},
 	{
 		id: 'description',
@@ -15,12 +15,17 @@ export const editHelp = [
 		description: 'Template description helps other people to choose the correct one.'
 	},
 	{
+		id: 'metadataStructure',
+		name: 'Metadata Schema',
+		description: 'Metadata schema the dataset is based on.'
+	},
+	{
 		id: 'metadataFields',
 		name: 'Metadata input fields',
 		description:
-			'Set the minimum required information for your Dataset.' +
+			'Set the minimum required information for your dataset.' +
 			'The user must fill this field(s) before the creation of a dataset can start. ' +
-			'The listed items (system keys) must be mapped against the selected metadata structure.' +
+			'The listed items (system keys) must be mapped against the selected metadata schema.' +
 			'That is why they are grouped in mapped and unmapped.'
 	},
 	{
@@ -41,12 +46,12 @@ export const editHelp = [
 	},
 	{
 		id: 'disabledHooks',
-		name: 'Disabled Hooks',
+		name: 'Disable dataset components',
 		description: 'Select components/features that should not be displayed during editing and display of a dataset.'
 	},
 	{
 		id: 'allowedFileTypes',
-		name: 'Allowed file types',
+		name: 'Restrict allowed file type for upload',
 		description: 'Select file types that are allowed during file upload.'
 	},
 	{
