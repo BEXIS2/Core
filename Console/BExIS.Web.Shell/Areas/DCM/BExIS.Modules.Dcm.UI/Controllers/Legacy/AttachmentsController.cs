@@ -139,13 +139,14 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                     dm.EditDatasetVersion(datasetVersion, null, null, null);
                     dm.CheckInDataset(dataset.Id, fileName, GetUsernameOrDefault(), ViewCreationBehavior.None);
 
-                   
+
                     var es = new EmailService();
 
-                es.Send(MessageHelper.GetAttachmentDeleteHeader(datasetId, typeof(Dataset).Name),
-                MessageHelper.GetAttachmentDeleteMessage(datasetId, fileName, GetUsernameOrDefault()),
-                GeneralSettings.SystemEmail
-                );
+                    es.Send(MessageHelper.GetAttachmentDeleteHeader(datasetId, typeof(Dataset).Name),
+                    MessageHelper.GetAttachmentDeleteMessage(datasetId, fileName, GetUsernameOrDefault()),
+                    GeneralSettings.SystemEmail
+                    );
+                }
             }
 
             return RedirectToAction("showdata", "data", new { area = "ddm", id = datasetId });
