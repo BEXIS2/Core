@@ -53,7 +53,7 @@ export class VariableModel {
 	possibleDisplayPattern: listItemType[];
 
 	public constructor() {
-		this.id = 0
+		this.id = -1
 		this.name = ""
 		this.description = ""
 		this.systemType = ""

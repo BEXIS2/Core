@@ -118,14 +118,28 @@
 		return to;
 	}
 
+ let inEdit:boolean = false;
+
 	function addFn()
 	{
-		 let newVariable:VariableModel = new VariableModel();
-			variables = [...variables, newVariable];
+
+			variables = [...variables, new VariableModel()];
+
 	}
 
 	function copyFn(i)
 	{
+
+		let copiedVariable = new VariableModel();
+		copiedVariable.name = variables[i].name+" (copied)";
+		copiedVariable.description = variables[i].description;
+		copiedVariable.dataType = variables[i].dataType;
+		copiedVariable.unit = variables[i].unit;
+		copiedVariable.template = variables[i].template;
+		copiedVariable.systemType = variables[i].systemType;
+
+		variables.splice(i+1, 0, copiedVariable);
+		variables = [...variables];
 
 	}
 
@@ -178,8 +192,7 @@
 
 	{#if variables && datatypes && units && variableValidationStates && missingValues}
 		<!-- else content here -->
-		{#each variables as variable, i (variable.name)}
-			<!-- content here -->
+		{#each variables as variable, i (i)}
 			<Variable
 				bind:variable
 				index={i}
