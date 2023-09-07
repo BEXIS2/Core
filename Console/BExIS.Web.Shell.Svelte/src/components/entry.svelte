@@ -71,8 +71,8 @@
 	{:else if entry.type.toLowerCase() === 'integer'}
 		<NumberInput label={entry.key} bind:value={entry.value} on:input />
 	{:else if entry.type.toLowerCase() === 'boolean'}
-		<SlideToggle label={entry.key} name="slider-label" size="sm" bind:checked={entry.value}
-			>({entry.value})</SlideToggle
+		<SlideToggle name="slider-label" size="sm" bind:checked={entry.value}
+			>{entry.key}</SlideToggle
 		>
 	{:else if entry.type.toLowerCase() === 'json'}
 		<CodeEditor
