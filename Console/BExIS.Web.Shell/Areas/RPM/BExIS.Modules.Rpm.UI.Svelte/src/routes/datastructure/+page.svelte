@@ -27,7 +27,7 @@
 	import { goTo } from '$services/BaseCaller';
 	import { remove	} from '$lib/components/datastructure/services';
 
-	import TableElements from '../components/tableElements.svelte';
+	import TableDatasets from './tableDatasets.svelte';
 	import TableOption from './tableOptions.svelte';
 
 // svelte
@@ -211,7 +211,7 @@ async function tableFn(type:any)
 							header: 'Linked',
 							disableFiltering: true,
 							instructions: {
-								renderComponent: TableElements
+								renderComponent: TableDatasets
 							}
 					}
 				}

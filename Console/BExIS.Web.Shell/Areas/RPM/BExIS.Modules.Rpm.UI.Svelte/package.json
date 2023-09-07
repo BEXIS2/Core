@@ -13,10 +13,10 @@
     "lint": "prettier --plugin-search-dir . --check . && eslint .",
     "format": "prettier --plugin-search-dir . --write .",
     "postinstall": "patch-package",
-    "package": "svelte-package",
     "build package": "svelte-kit sync && svelte-package --watch",
-    "init": "npm init --scope bexis2",
-    "publish": "npm publish --access public"
+    "1.npm - init": "npm init --scope bexis2",
+    "2.npm - package": "svelte-package",
+    "3.npm - publish": "npm publish --access public"
   },
   "devDependencies": {
     "@playwright/test": "^1.28.1",
