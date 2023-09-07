@@ -12,6 +12,10 @@
 	import { get } from 'svelte/store';
 	import { displayPatternStore } from '../../store';
 
+	// icons 
+	import Fa from 'svelte-fa';
+	import { faAdd,faTrash, faAngleUp, faAngleDown, faCopy } from '@fortawesome/free-solid-svg-icons';
+
 	import DataTypeDescription from './DataTypeDescription.svelte';
 	import Container from './Container.svelte';
 	import Header from './Header.svelte';
@@ -156,7 +160,6 @@
 
 	function cutData(d)
 	{
-
 			for (let index = 0; index < d.length; index++) {
 				let v = d[index];
 
@@ -171,8 +174,11 @@
 
 </script>
 
+<div id="variable-{variable.id}-container" class="flex gap-5">
 {#if loaded && variable}
+<div id="variable-{variable.id}-container-info" class="grow">
 	{#if expand}
+
 	<div class="card">
 		<header id="header_{index}" class="card-header" >
 			<Header
@@ -182,11 +188,21 @@
 				bind:isOptional={variable.isOptional}
 				bind:isValid
 				bind:expand
-			/>
+			>
+			<TextInput
+						id="name"
+						label="Name"
+						bind:value={variable.name}
+						on:input={onChangeHandler}
+						valid={res.isValid('name')}
+						invalid={res.hasErrors('name')}
+						feedback={res.getErrors('name')}
+					/>
+		</Header>
 		</header>
 		
 			
-		<section class="p-4">
+		<section class="py-2 px-10">
 			<!--Description-->
 			<Container>
 				<div slot="property">
@@ -317,5 +333,9 @@
 			datapreview={cutData(data).join(', ')}
 			/>
 		{/if}
-
+	</div>
+		<div id="variable-{variable.id}-container-options" class="flex-none w-24 space-y-2 content-center">
+			<slot name="list-options"/>
+		</div>
 {/if}
+</div>
