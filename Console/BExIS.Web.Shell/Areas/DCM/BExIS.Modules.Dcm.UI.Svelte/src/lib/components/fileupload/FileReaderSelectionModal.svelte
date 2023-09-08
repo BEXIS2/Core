@@ -13,10 +13,12 @@
 
 	import { Drawer, drawerStore } from '@skeletonlabs/skeleton';
 	import type { DrawerSettings } from '@skeletonlabs/skeleton';
+	import { error } from '@sveltejs/kit';
 
 	const dispatch = createEventDispatcher();
 
 	function open(): void {
+		console.log("open",model)
 		const drawerSettings: DrawerSettings = {
 			id: 'example-2',
 			meta: { foo: 'bar', fizz: 'buzz', age: 40 }
@@ -46,6 +48,6 @@
 			</div>
 		</div>
 
-		<Selection {model} on:saved={close} />
+		<Selection {model} on:saved={close} on:error={alert("error")} />
 	</div>
 </Drawer>

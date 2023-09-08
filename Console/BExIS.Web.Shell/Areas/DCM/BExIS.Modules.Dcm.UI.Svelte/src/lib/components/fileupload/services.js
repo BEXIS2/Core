@@ -10,6 +10,7 @@ export const load = async (file,entityId,version) => {
 		);
 		return response.data;
 	} catch (error) {
-		console.error(error);
+		console.error("ERROR : LOAD", error);
+		throw error;
 	}
 };
