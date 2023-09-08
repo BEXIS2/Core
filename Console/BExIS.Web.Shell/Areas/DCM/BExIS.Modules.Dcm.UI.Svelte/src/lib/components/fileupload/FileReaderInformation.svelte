@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { MultiSelect } from '@bexis2/bexis2-core-ui';
+	import { MultiSelect, notificationStore, notificationType } from '@bexis2/bexis2-core-ui';
 
 	import { onMount } from 'svelte';
 
@@ -19,7 +19,7 @@
 	export let readableFiles: fileInfoType[] = [];
 	export let asciiFileReaderInfo: asciiFileReaderInfoType;
 
-	let target;
+	export let target = "";
 	$: target;
 	let model: DataStructureCreationModel | null;
 	$: model;
@@ -36,8 +36,17 @@
 
 		if (e.detail.value) {
 			open = true;
-			model = await load(e.detail.value, id, 0);
-			target = null;
+			try{
+					model = await load(e.detail.value, id, 0);
+				target = null;
+			}
+			catch(error)
+			{
+				notificationStore.showNotification({
+						notificationType: notificationType.error,
+						message: "This file has not a proper structure, please try a other one."
+					})
+			}
 		}
 	}
 

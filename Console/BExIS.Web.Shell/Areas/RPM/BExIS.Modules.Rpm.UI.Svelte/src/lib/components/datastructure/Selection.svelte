@@ -308,8 +308,8 @@
 
 		model.markers = selection;
 
-		// if model id == 0, means subject id is not set and store to cache is not needed
-		if(model.id>0)
+		// if model entityid == 0, means subject id is not set and store to cache is not needed
+		if(model.entityId>0)
 		{
 		 console.log('save selection', model);
 			let res = await store(model);
