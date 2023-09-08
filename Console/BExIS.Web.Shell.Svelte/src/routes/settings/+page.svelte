@@ -1,40 +1,80 @@
-<script lang="ts">    
+<script lang="ts">
+	import { onMount } from 'svelte';
 
-    import { onMount } from 'svelte';
-    
-    import { setApiConfig }  from '@bexis2/bexis2-core-ui'
-    import { getModules }  from '../../services/moduleService'
-    import type { ReadModuleModel } from "../../models/moduleModels";
-    
-    let modules:Array<ReadModuleModel>;
-    
-    onMount(async () => {
-        setApiConfig("https://localhost:44345", "sdfsdfs", "sdfsdfsdf");
-        console.log("SUPI");
-        modules = await getModules();
-        console.log(modules);
-    })
-    
-    </script>
-    
-    {#if modules && modules.length > 0}
+	import Fa from 'svelte-fa';
+	import { faSave } from '@fortawesome/free-solid-svg-icons';
 
-        {#each modules as m} 
-            {#if m.id == 'RPM'}
-            <div>
-            <div>Id: {m.id}</div>
-            <div>Title: {m.title}</div>
-            <div>Description: {m.description}</div>
+	import { Page, notificationType, notificationStore } from '@bexis2/bexis2-core-ui';
+	import Entry from '../../components/entry.svelte';
+	import { get, putByModuleId } from '../../services/settingService';
+	import type { ReadSettingModel } from '$models/settingModels';
 
-            {#each m.settings['Settings'] as Setting}
-                <div>{Setting.Name}</div>
-            {/each}
-        </div>
+	import { Accordion, AccordionItem } from '@skeletonlabs/skeleton';
 
-            {/if}
-            <!-- <div>Settings: {JSON.stringify(m.settings)}</div> -->
-        
-        {/each}
-    {:else}
-    <div class="loading"></div>
-    {/if}
+	onMount(async () => {
+		// module = await getModuleByName('sam');
+	});
+
+	async function getSettings() {
+		const response = await get();
+		console.log(response);
+		if (response?.status == 200) {
+			return await response.data;
+		}
+
+		throw new Error('Something went wrong.');
+	}
+
+	export async function putSettingByModuleId(moduleId: string, model: ReadSettingModel) {
+		const response = await putByModuleId(moduleId, model);
+		if (response?.status == 200) {
+			notificationStore.showNotification({
+				notificationType: notificationType.success,
+				message: `The update of settings for module ${moduleId} succeeded.`
+			});
+			return await response.data;
+		} else {
+			notificationStore.showNotification({
+				notificationType: notificationType.error,
+				message: `The update of settings for module ${moduleId} failed.`
+			});
+		}
+
+		throw new Error('Something went wrong.');
+	}
+</script>
+
+<Page>
+	<div class="w-full">
+		{#await getSettings()}
+			<div id="spinner">... loading ...</div>
+		{:then data}
+			<Accordion />
+			{#each data as m}
+				<AccordionItem>
+					<svelte:fragment slot="lead">
+                        <i class="fa-solid fa-skull text-xl w-6 text-center" />
+                    </svelte:fragment>
+					<svelte:fragment slot="summary">
+                        <h1>{m.name} ({m.id})</h1>
+                    </svelte:fragment>
+					<svelte:fragment slot="content">
+						<form on:submit|preventDefault={() => putSettingByModuleId(m.id, m)}>
+							{#each m.entries as entry}
+								<Entry {entry} />
+							{/each}
+
+							<div class="py-5 text-right col-span-2">
+								<button class="btn variant-filled-primary h-9 w-16 shadow-md" type="submit">
+									<Fa icon={faSave} />
+								</button>
+							</div>
+						</form>
+					</svelte:fragment>
+				</AccordionItem>
+			{/each}
+		{:catch error}
+			<div id="spinner">{error}</div>
+		{/await}
+	</div>
+</Page>

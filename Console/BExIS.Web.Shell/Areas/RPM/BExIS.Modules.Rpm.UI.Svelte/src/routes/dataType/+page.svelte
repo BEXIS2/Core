@@ -64,7 +64,7 @@
 		if (type.action == 'delete') {
 			const modal: ModalSettings = {
 				type: 'confirm',
-				title: 'Delete Unit',
+				title: 'Delete Data Type',
 				body:
 					'Are you sure you wish to delete Data Type "' +
 					dataType.name +
@@ -139,7 +139,7 @@
 							in:fade
 							out:fade
 							class="btn variant-filled-secondary shadow-md h-9 w-16"
-							title="Create neẇ Unit"
+							title="Create neẇ Data Type"
 							id="create"
 							on:mouseover={() => {
 								helpStore.show('create');

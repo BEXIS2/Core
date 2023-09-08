@@ -13,7 +13,7 @@ namespace BExIS.Modules.Sam.UI.Controllers
     {
         public ActionResult Index()
         {
-            string helpurl = ModuleManager.GetModuleSettings("SAM").GetEntryValue("help").ToString();
+            string helpurl = ModuleManager.GetModuleSettings("SAM").GetValueByKey("help").ToString();
 
             //add default link if not set
             if (String.IsNullOrEmpty(helpurl))

@@ -1,21 +1,33 @@
 ﻿using BExIS.Dim.Helpers.Models;
+using BExIS.Modules.Dim.UI.Configurations;
 using BExIS.Xml.Helpers;
+using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Xml.Linq;
 using Vaiona.Utils.Cfg;
+using Vaiona.Web.Mvc.Modularity;
 
 namespace BExIS.Modules.Dim.UI.Helpers
 {
     public class SettingsHelper
     {
-        string filePath = "";
+        private ModuleSettings _settings;
+        private string filePath = "";
 
         public SettingsHelper()
         {
-            filePath = Path.Combine(AppConfiguration.GetModuleWorkspacePath("DIM"), "Dim.Settings.xml");
+            _settings = ModuleManager.GetModuleSettings("dim");
         }
+
+        public DataCiteDOICredentials getDataCiteDOICredentials()
+        {
+            var entry = _settings.GetValueByKey("dataCiteDOICredentials") as Entry;
+
+            return JsonConvert.DeserializeObject<DataCiteDOICredentials>(entry.Value);
+        }
+
 
         public bool KeyExist(string key)
         {
@@ -36,13 +48,13 @@ namespace BExIS.Modules.Dim.UI.Helpers
             return value;
         }
 
-        public List<DataCiteSettingsItem> GetDataCiteSettings(string name)
+        public List<DataCiteDOISettingsItem> GetDataCiteSettings(string name)
         {
             XDocument settings = XDocument.Load(filePath);
             List<XElement> mappings = XmlUtility.GetXElementByNodeName(name, settings).Descendants().ToList();
 
             //return mappings.Select(m => new DataCiteMapping(m.Attribute("name")?.Value, m.Attribute("type")?.Value, m.Attribute("value")?.Value, m.Attribute("partyAttributes")?.Value.Split(';').Select(part => part.Split('=')).Where(part => part.Length == 2).ToDictionary(sp => sp[0], sp => sp[1]))).ToList();
-            return mappings.Select(m => new DataCiteSettingsItem(m.Attribute("name")?.Value, m.Attribute("type")?.Value, m.Attribute("value")?.Value, m.Attribute("extra")?.Value)).ToList();
+            return mappings.Select(m => new DataCiteDOISettingsItem(m.Attribute("name")?.Value, m.Attribute("type")?.Value, m.Attribute("value")?.Value, m.Attribute("extra")?.Value)).ToList();
         }
 
         public string GetDataCiteProperty(string propertyName)

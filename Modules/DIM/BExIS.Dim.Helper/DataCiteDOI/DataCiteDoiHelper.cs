@@ -23,10 +23,11 @@ using BExIS.Dim.Helpers.Services;
 using System.Security.Policy;
 using Vaelastrasz.Library.Models;
 using System.Runtime.CompilerServices;
+using BExIS.Dlm.Services.Data;
 
 namespace BExIS.Dim.Helpers
 {
-    public class DataCiteDoiHelper
+    public class DataCiteDOIHelper
     {
         private long getPartyId(XElement e)
         {
@@ -39,7 +40,7 @@ namespace BExIS.Dim.Helpers
             return 0;
         }
 
-        public CreateDataCiteModel CreateDataCiteModel(DatasetVersion datasetVersion, List<DataCiteSettingsItem> mappings)
+        public CreateDataCiteModel CreateDataCiteModel(DatasetVersion datasetVersion, List<DataCiteDOISettingsItem> mappings)
         {
             var model = new CreateDataCiteModel();
 
@@ -78,7 +79,7 @@ namespace BExIS.Dim.Helpers
             return model;
         }
 
-        public Dictionary<string, string> CreatePlaceholders(DatasetVersion datasetVersion, List<DataCiteSettingsItem> placeholders)
+        public Dictionary<string, string> CreatePlaceholders(DatasetVersion datasetVersion, List<DataCiteDOISettingsItem> placeholders)
         {
             var _placeholders = new Dictionary<string, string>();
 
@@ -103,7 +104,12 @@ namespace BExIS.Dim.Helpers
 
                     case "VersionNumber":
 
-                        _placeholders.Add("{VersionNumber}", Convert.ToString(datasetVersion.VersionNo));
+                        using (var datasetManager = new DatasetManager())
+                        {
+                            var versionNumber = datasetManager.GetDatasetVersionNr(datasetVersion);
+                            _placeholders.Add("{VersionNumber}", Convert.ToString(versionNumber));
+
+                        }
                         break;
 
                     default:

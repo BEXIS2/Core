@@ -1,46 +1,42 @@
 ﻿using Newtonsoft.Json;
-using System.Runtime.CompilerServices;
 using Vaelastrasz.Library.Models;
 
 namespace BExIS.Modules.Dim.UI.Models
 {
-    public class CreateDataCiteDoiModel
+    public class CreateDataCiteDOIModel
     {
-        public long DatasetId { get; set; }
-        public long DatasetVersionId { get; set; }
-        public CreateDataCiteModel DataCiteModel { get; set; }
-        public string JSON => JsonConvert.SerializeObject(DataCiteModel, Formatting.Indented);
-
-        public CreateDataCiteDoiModel()
+        public CreateDataCiteDOIModel()
         {
             DatasetId = 0;
             DatasetVersionId = 0;
             DataCiteModel = new CreateDataCiteModel();
         }
 
-        public CreateDataCiteDoiModel(long datasetId, long datasetVersionId)
+        public CreateDataCiteDOIModel(long datasetId, long datasetVersionId)
         {
             DatasetId = datasetId;
             DatasetVersionId = datasetVersionId;
             DataCiteModel = new CreateDataCiteModel();
-
         }
 
-        public CreateDataCiteDoiModel(long datasetId, long datasetVersionId, CreateDataCiteModel dataCiteModel)
+        public CreateDataCiteDOIModel(long datasetId, long datasetVersionId, CreateDataCiteModel dataCiteModel)
         {
             DatasetId = datasetId;
             DatasetVersionId = datasetVersionId;
             DataCiteModel = dataCiteModel;
         }
+
+        public Vaelastrasz.Library.Models.CreateDataCiteModel DataCiteModel { get; set; }
+        public long DatasetId { get; set; }
+        public long DatasetVersionId { get; set; }
+        public string JSON => JsonConvert.SerializeObject(DataCiteModel, Formatting.Indented);
     }
 
-    public class ReadDataCiteDoiModel
+    public class ReadDataCiteDOIModel
     {
-
     }
 
-    public class UpdateDataCiteDoiModel
+    public class UpdateDataCiteDOIModel
     {
-
     }
 }

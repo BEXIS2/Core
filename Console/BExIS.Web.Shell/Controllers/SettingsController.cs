@@ -90,7 +90,7 @@ namespace BExIS.Web.Shell.Controllers
             if (settings == null) throw new ArgumentNullException("settings");
             if (string.IsNullOrEmpty(settings.Id)) throw new ArgumentNullException("id");
             if (string.IsNullOrEmpty(settings.Description)) throw new ArgumentNullException("Description");
-            if (settings.Entry == null) throw new ArgumentNullException("entry");
+            if (settings.Entries == null) throw new ArgumentNullException("entry");
 
             try
             {

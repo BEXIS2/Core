@@ -22,6 +22,9 @@ const config = {
 		paths: {
 			relative: true,
 			base: process.env.NODE_ENV === 'production' ? '/rpm' : '' // add module id here e.g. /dcm
+		},
+		alias: {
+			$services: './src/services'
 		}
 	}
 };

@@ -13,7 +13,7 @@ namespace BExIS.Dim.Helpers.Extensions
 {
     public static class DataCiteDoiExtensions
     {
-        public static CreateDataCiteModel UpdateCreateDataCiteModel(this CreateDataCiteModel model, List<DataCiteSettingsItem> mappings, Dictionary<string, string> placeholders)
+        public static CreateDataCiteModel UpdateCreateDataCiteModel(this CreateDataCiteModel model, List<DataCiteDOISettingsItem> mappings, Dictionary<string, string> placeholders)
         {
             foreach (var mapping in mappings)
             {

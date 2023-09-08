@@ -1,4 +1,7 @@
-﻿using System;
+﻿using BExIS.Utils.Config.Configurations;
+using Newtonsoft.Json;
+using System;
+using System.Collections.Generic;
 using System.Configuration;
 using System.IO;
 using System.Linq;
@@ -25,6 +28,7 @@ namespace BExIS.Utils.Config
             base("Shell",
                 Path.Combine(AppConfiguration.WorkspaceGeneralRoot, "General.Settings.json"))
         {
+
         }
 
         public static GeneralSettings Get()
@@ -41,15 +45,30 @@ namespace BExIS.Utils.Config
             return (generalSettings);
         }
 
-        public static object GetEntryValue(string entryKey)
+        public static object GetValueByKey(string entryKey)
         {
-            Entry entry = Get().jsonSettings.Entry.Where(p => p.Key.Equals(entryKey, StringComparison.InvariantCultureIgnoreCase)).FirstOrDefault();
+            Entry entry = Get().jsonSettings.Entries.Where(p => p.Key.Equals(entryKey, StringComparison.InvariantCultureIgnoreCase)).FirstOrDefault();
             if (entry == null)
                 return null;
             string value = entry.Value.ToString();
-            string type = entry.Type;
-            var typedValue = Convert.ChangeType(value, (TypeCode)Enum.Parse(typeof(TypeCode), type));
-            return typedValue;
+            EntryType type = entry.Type;
+
+            switch (type)
+            {
+                case (EntryType.EntryList):
+                    return JsonConvert.DeserializeObject<List<Entry>>(value);
+
+                default:
+                    return Convert.ChangeType(value, (TypeCode)Enum.Parse(typeof(TypeCode), type.ToString()));
+            }
+        }
+
+        public static JwtConfiguration JwtConfiguration
+        {
+            get
+            {
+                return JsonConvert.DeserializeObject<JwtConfiguration>(GetValueByKey("jwt").ToString());
+            }
         }
 
         public static string ApplicationName
@@ -58,7 +77,7 @@ namespace BExIS.Utils.Config
             {
                 try
                 {
-                    return (GetEntryValue("applicationName").ToString());
+                    return GetValueByKey("applicationName").ToString();
                 }
                 catch { return (string.Empty); }
             }
@@ -96,7 +115,7 @@ namespace BExIS.Utils.Config
             {
                 try
                 {
-                    return (GetEntryValue("systemEmail").ToString());
+                    return GetValueByKey("systemEmail").ToString();
                 }
                 catch { return (string.Empty); }
             }
@@ -108,7 +127,7 @@ namespace BExIS.Utils.Config
             {
                 try
                 {
-                    return (GetEntryValue("landingPage").ToString());
+                    return GetValueByKey("landingPage").ToString();
                 }
                 catch { return (string.Empty); }
             }
@@ -120,7 +139,7 @@ namespace BExIS.Utils.Config
             {
                 try
                 {
-                    return (GetEntryValue("landingPageForUsers").ToString());
+                    return GetValueByKey("landingPageForUsers").ToString();
                 }
                 catch { return (string.Empty); }
             }
@@ -132,7 +151,7 @@ namespace BExIS.Utils.Config
             {
                 try
                 {
-                    return (GetEntryValue("landingPageForUsersNoPermission").ToString());
+                    return GetValueByKey("landingPageForUsersNoPermission").ToString();
                 }
                 catch { return (string.Empty); }
             }
@@ -144,7 +163,7 @@ namespace BExIS.Utils.Config
             {
                 try
                 {
-                    return Convert.ToBoolean(GetEntryValue("sendExceptions"));
+                    return Convert.ToBoolean(GetValueByKey("sendExceptions"));
                 }
                 catch { return (false); }
             }
@@ -156,7 +175,7 @@ namespace BExIS.Utils.Config
             {
                 try
                 {
-                    return Convert.ToBoolean(GetEntryValue("usePersonEmailAttributeName"));
+                    return Convert.ToBoolean(GetValueByKey("usePersonEmailAttributeName"));
                 }
                 catch { return (false); }
             }
@@ -168,7 +187,7 @@ namespace BExIS.Utils.Config
             {
                 try
                 {
-                    return (GetEntryValue("personEmailAttributeName").ToString());
+                    return GetValueByKey("personEmailAttributeName").ToString();
                 }
                 catch { return (string.Empty); }
             }
@@ -180,7 +199,7 @@ namespace BExIS.Utils.Config
             {
                 try
                 {
-                    return Convert.ToBoolean(GetEntryValue("useMultiMediaModule"));
+                    return Convert.ToBoolean(GetValueByKey("useMultiMediaModule"));
                 }
                 catch { return (false); }
             }
@@ -192,7 +211,7 @@ namespace BExIS.Utils.Config
             {
                 try
                 {
-                    return (GetEntryValue("OwnerPartyRelationshipType").ToString());
+                    return GetValueByKey("OwnerPartyRelationshipType").ToString();
                 }
                 catch { return (string.Empty); }
             }
@@ -204,7 +223,7 @@ namespace BExIS.Utils.Config
             {
                 try
                 {
-                    return (GetEntryValue("faq").ToString());
+                    return GetValueByKey("faq").ToString();
                 }
                 catch { return (string.Empty); }
             }

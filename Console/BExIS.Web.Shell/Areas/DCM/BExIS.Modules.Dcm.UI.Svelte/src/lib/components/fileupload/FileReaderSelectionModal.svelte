@@ -3,12 +3,12 @@
 
 	import Fa from 'svelte-fa';
 	import { faXmark } from '@fortawesome/free-solid-svg-icons';
-	import type { StructureSuggestionModel } from '$models/StructureSuggestion';
+	import type { DataStructureCreationModel } from '@bexis2/bexis2-rpm-ui';
 
-	import Selection from '../structuresuggestion/Selection.svelte';
+	import {Selection} from '@bexis2/bexis2-rpm-ui';
 	import { latestFileReaderDate } from '../../../routes/edit/stores';
 
-	export let model: StructureSuggestionModel;
+	export let model: DataStructureCreationModel;
 	$: model, open();
 
 	import { Drawer, drawerStore } from '@skeletonlabs/skeleton';

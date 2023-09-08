@@ -62,7 +62,7 @@ namespace BExIS.Web.Shell.Models
         public string Authenticator { get; set; }
 
         [Required]
-        [Display(Name = "Email or Username")]
+        [Display(Name = "Email or UserName")]
         public string UserName { get; set; }
 
         [Required]
@@ -97,7 +97,7 @@ namespace BExIS.Web.Shell.Models
     public class RegisterViewModel
     {
         [Required]
-        [Display(Name = "Username")]
+        [Display(Name = "UserName")]
         [RegularExpression(@"^\S+(?:\s+\S+)*$", ErrorMessage = "Sorry, not a valid username. Please check there are no trailing spaces.")]
         public string UserName { get; set; }
 

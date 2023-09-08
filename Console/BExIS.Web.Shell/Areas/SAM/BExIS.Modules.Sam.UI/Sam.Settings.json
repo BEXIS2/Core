@@ -1,35 +1,55 @@
 {
   "id": "sam",
-  "name": "system administration",
-  "description": "...",
-  "entry": [
+  "name": "system administrations stuff",
+  "description": "hier kommt der text!",
+  "entries": [
+    {
+      "key": "jsontest",
+      "value": {
+        "data": {
+          "account": "sven",
+          "password": "123456",
+          "host": "https://google.de"
+        }
+      },
+      "description": "URL to manual",
+      "type": "JSON",
+      "options": []
+    },
     {
       "key": "help",
       "value": "https://github.com/BEXIS2/Documents/blob/2.14.5/Manuals/SAM/Manual.md",
+      "description": "URL to manual",
       "type": "String",
-      "description": "URL to manual"
+      "options": []
     },
     {
-      "key": "formerMemberRole",
-      "value": "test_old",
+      "key": "aaaaaaaaaaaaaaaaaaaaa",
+      "value": "test_oldtimes",
+      "description": "",
       "type": "String",
-      "description": ""
-
+      "options": []
+    },
+    {
+      "key": "asdbsadasd",
+      "value": false,
+      "description": "",
+      "type": "Boolean",
+      "options": []
     },
     {
       "key": "mailTextApplied",
       "value": "This implies that your access to some features in BExIS will be restricted. You have full access to your datasets and publications.",
+      "description": "...",
       "type": "String",
-      "description": "..."
-
+      "options": []
     },
     {
       "key": "mailTextRevoked",
       "value": "This implies that your previous access rights to features and datasets in BEXIS have been re-applied.",
+      "description": "...",
       "type": "String",
-      "description": "..."
-
+      "options": []
     }
-
   ]
 }

@@ -17,12 +17,14 @@
 		<add name="ApplicationServices" connectionString="Server={SERVER};Port={PORT};Database={DATABASENAME};Userid={USER};Password={PASSWORD};Pooling=true;MinPoolSize=2;MaxPoolSize=100;ConnectionIdleLifetime=3600;" />
 	</connectionStrings>
 	<appSettings file="../Workspace/General/Configurations/Credentials.config">
+		<add key="JwtKey" value="35GadUCymdzSR6PY6SjLTpDWNS6snwZNrEvdCwfq" />
+		<add key="JwtIssuer" value="https://localhost:44345/" />
 		<add key="ClientValidationEnabled" value="true" />
 		<add key="UnobtrusiveJavaScriptEnabled" value="true" />
 		<add key="UseSchemaInDatabaseGeneration" value="False" />
 		<add key="ThrowErrorWhenParialContentNotFound" value="False" />
 		<add key="ApplicationName" value="{APPLICATIONNAME}" />
-		<add key="ApplicationVersion" value="2.18" />
+		<add key="ApplicationVersion" value="2.18.1" />
 		<add key="SessionWarningDelaySecond" value="30" />
 		<!-- Keep it as false, there are some test data in the database-->
 		<add key="CreateDatabase" value="false" />
@@ -171,18 +173,6 @@
 				<assemblyIdentity name="Microsoft.Practices.ServiceLocation" publicKeyToken="31bf3856ad364e35" culture="neutral" />
 				<bindingRedirect oldVersion="0.0.0.0-1.3.0.0" newVersion="1.3.0.0" />
 			</dependentAssembly>
-			<dependentAssembly>
-				<assemblyIdentity name="System.Web.Helpers" publicKeyToken="31bf3856ad364e35" />
-				<bindingRedirect oldVersion="0.0.0.0-3.0.0.0" newVersion="3.0.0.0" />
-			</dependentAssembly>
-			<dependentAssembly>
-				<assemblyIdentity name="System.Web.WebPages" publicKeyToken="31bf3856ad364e35" />
-				<bindingRedirect oldVersion="0.0.0.0-3.0.0.0" newVersion="3.0.0.0" />
-			</dependentAssembly>
-			<dependentAssembly>
-				<assemblyIdentity name="System.Web.Mvc" publicKeyToken="31bf3856ad364e35" />
-				<bindingRedirect oldVersion="0.0.0.0-5.2.3.0" newVersion="5.2.3.0" />
-			</dependentAssembly>
 			<!--<dependentAssembly>
         <assemblyIdentity name="System.Web.WebPages.Razor" publicKeyToken="31bf3856ad364e35" culture="neutral" />
         <bindingRedirect oldVersion="0.0.0.0-3.0.0.0" newVersion="3.0.0.0" />
@@ -253,7 +243,7 @@
 			</dependentAssembly>
 			<dependentAssembly>
 				<assemblyIdentity name="System.Runtime.CompilerServices.Unsafe" publicKeyToken="b03f5f7f11d50a3a" culture="neutral" />
-				<bindingRedirect oldVersion="0.0.0.0-4.0.4.1" newVersion="4.0.4.1" />
+				<bindingRedirect oldVersion="0.0.0.0-6.0.0.0" newVersion="6.0.0.0" />
 			</dependentAssembly>
 			<dependentAssembly>
 				<assemblyIdentity name="Iesi.Collections" publicKeyToken="aa95f207798dfdb4" culture="neutral" />
@@ -274,6 +264,22 @@
 			<dependentAssembly>
 				<assemblyIdentity name="Microsoft.Web.Infrastructure" publicKeyToken="31bf3856ad364e35" culture="neutral" />
 				<bindingRedirect oldVersion="0.0.0.0-2.0.0.0" newVersion="2.0.0.0" />
+			</dependentAssembly>
+			<dependentAssembly>
+				<assemblyIdentity name="System.Web.Helpers" publicKeyToken="31bf3856ad364e35" />
+				<bindingRedirect oldVersion="1.0.0.0-3.0.0.0" newVersion="3.0.0.0" />
+			</dependentAssembly>
+			<dependentAssembly>
+				<assemblyIdentity name="System.Web.WebPages" publicKeyToken="31bf3856ad364e35" />
+				<bindingRedirect oldVersion="0.0.0.0-3.0.0.0" newVersion="3.0.0.0" />
+			</dependentAssembly>
+			<dependentAssembly>
+				<assemblyIdentity name="System.Web.Mvc" publicKeyToken="31bf3856ad364e35" />
+				<bindingRedirect oldVersion="0.0.0.0-5.2.3.0" newVersion="5.2.3.0" />
+			</dependentAssembly>
+			<dependentAssembly>
+				<assemblyIdentity name="System.Memory" publicKeyToken="cc7b13ffcd2ddd51" culture="neutral" />
+				<bindingRedirect oldVersion="0.0.0.0-4.0.1.2" newVersion="4.0.1.2" />
 			</dependentAssembly>
 		</assemblyBinding>
 	</runtime>

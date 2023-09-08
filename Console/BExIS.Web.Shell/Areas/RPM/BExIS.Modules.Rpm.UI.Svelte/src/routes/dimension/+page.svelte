@@ -139,7 +139,7 @@
 							in:fade
 							out:fade
 							class="btn variant-filled-secondary shadow-md h-9 w-16"
-							title="Create neẇ Unit"
+							title="Create neẇ Dimension"
 							id="create"
 							on:mouseover={() => {
 								helpStore.show('create');
@@ -160,7 +160,7 @@
 				<Table
 					on:action={(obj) => editDimension(obj.detail.type)}
 					config={{
-						id: 'Units',
+						id: 'dimensions',
 						data: tableStore,
 						optionsComponent: TableOption,
 						columns: {

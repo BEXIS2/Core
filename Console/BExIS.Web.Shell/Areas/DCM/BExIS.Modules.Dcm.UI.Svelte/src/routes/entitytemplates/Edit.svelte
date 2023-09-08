@@ -233,7 +233,7 @@
 					</EntryContainer>
 				</div>
 				<div class="flex flex-col space-y-4">
-					<h3 class="h3">Data structure</h3>
+					<h3 class="h3">Data Structure</h3>
 					<EntryContainer>
 						<div class="mt-7 space-y-5" on:mouseover={() => helpStore.show('hasDatastructure')}>
 							<SlideToggle
@@ -260,7 +260,7 @@
 				</div>
 			</div>
 
-			<h3 class="h3">Adminstration</h3>
+			<h3 class="h3">Administration</h3>
 			<div class="py-5 w-full grid grid-cols-1 md:grid-cols-2 gap-4">
 				<EntryContainer>
 					<MultiSelect
@@ -304,7 +304,7 @@
 				<EntryContainer>
 					<MultiSelect
 						id="allowedFileTypes"
-						title="Allowed file types for file upload"
+						title="Restrict allowed file types for file upload"
 						source={filetypes}
 						bind:target={entityTemplate.allowedFileTypes}
 						help={true}
