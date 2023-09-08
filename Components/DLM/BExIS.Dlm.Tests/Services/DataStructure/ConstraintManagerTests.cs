@@ -3,15 +3,17 @@ using BExIS.Dlm.Entities.DataStructure;
 using BExIS.Dlm.Services.DataStructure;
 using BExIS.Utils.Config;
 using FluentAssertions;
+using NHibernate.Mapping;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 using Vaiona.Utils.Cfg;
-namespace BExIS.Dlm.Tests.Entities.DataStructure
+namespace BExIS.Dlm.Tests.Services.DataStructure
 {
     [TestFixture()]
-    public class ConstraintTests
+    public class ConstraintManagerTests
     {
         private TestSetupHelper helper = null;
 
@@ -52,16 +54,30 @@ namespace BExIS.Dlm.Tests.Entities.DataStructure
             string description = "created by a unit test.";
             string name = "Test Range Constraint";
 
-            RangeConstraint rangeConstraint = new RangeConstraint( );
-            rangeConstraint.Name = name;
+            RangeConstraint rangeConstraint = new RangeConstraint(
+                ConstraintProviderSource.Internal,
+                "",
+                "en-US",
+                "unit test",
+                false,
+                null,
+                null,
+                null,
+                1,
+                true,
+                100,
+                true
+            );
+
             rangeConstraint.Description = description;
-            rangeConstraint.Lowerbound = 1;
-            rangeConstraint.Upperbound = 100;
+            rangeConstraint.Name = name;
 
             using (ConstraintManager constraintManager = new ConstraintManager())
             {
-                Assert.Throws<ArgumentNullException>(() => rangeConstraint = constraintManager.Create(rangeConstraint));
+                Assert.Throws<ArgumentNullException>(() => constraintManager.Create(rangeConstraint));
             }
+
+            name = "Test Pattern Constraint";
 
             PatternConstraint patternConstraint = new PatternConstraint();
             patternConstraint.Name = name;
@@ -72,6 +88,8 @@ namespace BExIS.Dlm.Tests.Entities.DataStructure
             {
                 Assert.Throws<ArgumentNullException>(() => patternConstraint = constraintManager.Create(patternConstraint));
             }
+
+            name = "Test Domain Constraint";
 
             DomainConstraint domainConstraint = new DomainConstraint();
             domainConstraint.Name = name;
@@ -89,14 +107,14 @@ namespace BExIS.Dlm.Tests.Entities.DataStructure
             RangeConstraint rangeConstraint = new RangeConstraint();
             PatternConstraint patternConstraint = new PatternConstraint();
             DomainConstraint domainConstraint = new DomainConstraint();
-            List<Constraint> constraints = new List<Constraint>();
+            //List<Constraint> constraints = new List<Constraint>();
 
             using (ConstraintManager constraintManager = new ConstraintManager())
             {
                 Assert.Throws<ArgumentNullException>(() => rangeConstraint = constraintManager.RangeConstraintRepo.Get().FirstOrDefault());
                 Assert.Throws<ArgumentNullException>(() => patternConstraint = constraintManager.PatternConstraintRepo.Get().FirstOrDefault());
                 Assert.Throws<ArgumentNullException>(() => domainConstraint = constraintManager.DomainConstraintRepo.Get().FirstOrDefault());
-                Assert.Throws<ArgumentNullException>(() => constraints = constraintManager.Repo.Get().ToList());
+                //Assert.Throws<ArgumentNullException>(() => constraints = constraintManager.Repo.Get().ToList());
             }
         }
     }

@@ -14,7 +14,7 @@
 			<button
 				type="button"
 				class="chip variant-filled-primary shadow-md"
-				title="Edit Unit, {row.name}"
+				title="Edit, {row.name}"
 				id="edit-{row.id}"
 				on:mouseover={() => {
 					helpStore.show('edit');
@@ -30,7 +30,7 @@
 			<button
 				type="button"
 				class="chip variant-filled-error shadow-md"
-				title="Delete Unit, {row.name}"
+				title="Delete, {row.name}"
 				id="delete-{row.id}"
 				on:mouseover={() => {
 					helpStore.show('delete');
@@ -43,12 +43,16 @@
 				<Fa icon={faTrash} /></button
 			>
 		{:else}
+			<!-- svelte-ignore a11y-mouse-events-have-key-events -->
 			<button
 				type="button"
 				class="chip variant-filled-primary shadow-md"
-				title="Edit Unit, {row.name}"
+				title="Edit, {row.name}"
 				id="edit"
 				disabled
+				on:mouseover={() => {
+					helpStore.show('edit');
+				}}
 			>
 				<Fa icon={faPen} />
 			</button>
@@ -56,9 +60,12 @@
 			<button
 				type="button"
 				class="chip variant-filled-error shadow-md"
-				title="Delete Unit, {row.name}"
+				title="Delete, {row.name}"
 				id="delete"
 				disabled
+				on:mouseover={() => {
+					helpStore.show('delete');
+				}}
 			>
 				<Fa icon={faTrash} /></button
 			>

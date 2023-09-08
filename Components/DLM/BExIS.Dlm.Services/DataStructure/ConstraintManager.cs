@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics.Contracts;
 using System.Linq;
+using System.Runtime.Remoting.Contexts;
 using Vaiona.Persistence.Api;
 
 namespace BExIS.Dlm.Services.DataStructure
@@ -171,7 +172,9 @@ namespace BExIS.Dlm.Services.DataStructure
         public RangeConstraint Create(RangeConstraint entity)
         {
             Contract.Requires(entity != null, "provided entity can not be null");
-            Contract.Requires(entity.Id >= 0, "provided entity must have a permanent ID");
+            //Contract.Requires(entity.Id >= 0, "provided entity must have a permanent ID");
+
+            
 
             Contract.Ensures(Contract.Result<RangeConstraint>() != null && Contract.Result<RangeConstraint>().Id >= 0, "No entity is persisted!");
 

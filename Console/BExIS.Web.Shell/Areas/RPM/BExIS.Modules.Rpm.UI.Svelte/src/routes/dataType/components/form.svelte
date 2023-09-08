@@ -56,7 +56,7 @@
 		let result: DataTypeValidationResult = await apiCalls.EditDataType(dataType);
 		let message: string;
 		if (result.validationResult.isValid != true) {
-			message = "Can't save Data Type";
+			message = "Can't save data type";
 			if (result.dataTypeListItem.name != '') {
 				message += ' "' + result.dataTypeListItem.name + '" .';
 			}
@@ -73,7 +73,7 @@
 				message: message
 			});
 		} else {
-			message = 'Unit "' + result.dataTypeListItem.name + '" saved.';
+			message = 'Data type "' + result.dataTypeListItem.name + '" saved.';
 			notificationStore.showNotification({
 				notificationType: notificationType.success,
 				message: message

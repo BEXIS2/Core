@@ -9,7 +9,10 @@
 		helpStore,
 		TablePlaceholder,
 		notificationStore,
-		notificationType
+		notificationType,
+
+		type helpItemType
+
 	} from '@bexis2/bexis2-core-ui';
 	import * as apiCalls from './services/apiCalls';
 	import Form from './components/form.svelte';
@@ -21,6 +24,10 @@
 	import type { ModalSettings } from '@skeletonlabs/skeleton';
 	import type { DimensionListItem } from './models';
 
+	//help
+	import help from './help/help.json';
+	let helpItems: helpItemType[] = help.helpItems;
+
 	let ds: DimensionListItem[] = [];
 	const tableStore = writable<any[]>([]);
 	let dimension: DimensionListItem;
@@ -28,7 +35,10 @@
 	$: dimensions = ds;
 	$: tableStore.set(ds);
 
-	onMount(async () => {});
+	onMount(async () => {
+		helpStore.setHelpItemList(helpItems);
+		showForm = false;
+	});
 
 	async function reload(): Promise<void> {
 		showForm = false;
