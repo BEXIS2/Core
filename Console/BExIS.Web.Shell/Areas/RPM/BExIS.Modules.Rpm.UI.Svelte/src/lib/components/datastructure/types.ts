@@ -37,7 +37,7 @@ export interface markerType {
 	cells: boolean[];
 }
 
-export interface VariableModel {
+export class VariableModel {
 	id: number;
 	name: string;
 	description: string;
@@ -51,4 +51,20 @@ export interface VariableModel {
 	possibleUnits: listItemType[];
 	possibleTemplates: listItemType[];
 	possibleDisplayPattern: listItemType[];
+
+	public constructor() {
+		this.id = -1
+		this.name = ""
+		this.description = ""
+		this.systemType = ""
+		this.isKey = false
+		this.isOptional = false
+		this.dataType = {id:0,text:"",group:""}
+		this.unit = {id:0,text:"",group:""}
+		this.template = {id:0,text:"",group:""}
+		this.displayPattern = {id:0,text:"",group:""}
+		this.possibleUnits = []
+		this.possibleTemplates = []
+		this.possibleDisplayPattern = []
+}
 }

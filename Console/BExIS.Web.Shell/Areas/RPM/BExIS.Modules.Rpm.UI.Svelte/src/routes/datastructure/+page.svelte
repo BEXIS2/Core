@@ -27,7 +27,7 @@
 	import { goTo } from '$services/BaseCaller';
 	import { remove	} from '$lib/components/datastructure/services';
 
-	import TableElements from '../components/tableElements.svelte';
+	import TableDatasets from './tableDatasets.svelte';
 	import TableOption from './tableOptions.svelte';
 
 // svelte
@@ -102,7 +102,7 @@ async function deleteFn(id)
 
 
 async function tableFn(type:any)
-{	
+{
 		// copy data data structure based on id
 		if (type.action == 'copy') {
 			copy(type.id)
@@ -111,7 +111,7 @@ async function tableFn(type:any)
 		// copy data data structure based on id
 		if (type.action == 'delete') {
 			console.log("delete");
-			
+
 			const confirm: ModalSettings = {
 				type: 'confirm',
 				title: 'Delete Structure',
@@ -121,7 +121,7 @@ async function tableFn(type:any)
 				response: (r: boolean) => {
 					if (r === true) {
 						deleteFn(type.id);
-					}	
+					}
 				}
 			};
 
@@ -175,8 +175,8 @@ async function tableFn(type:any)
 
 	{#if showOptions}
 	<div class="flex gap-10" in:slide out:slide>
-
-	<div class="w-3/4">
+	<div class="w-80">a) Upload a file to create a new data structure based on it</div>
+	<div class="grow">
 	<FileUploader
 		context="data structure creation"
 		data= {{
@@ -191,8 +191,10 @@ async function tableFn(type:any)
 		on:success ={success}
 	/>
 </div>
+</div>
+<div class="flex gap-10">
+<div class="w-80">b) or start with an empty data structure.</div>
 
-<span class="divider-vertical" />
 
 	<button class="btn variant-filled-primary grow" on:click="{addEmpty}" ><Fa icon={faPlus} /></button>
 </div>
@@ -209,12 +211,12 @@ async function tableFn(type:any)
 							header: 'Linked',
 							disableFiltering: true,
 							instructions: {
-								renderComponent: TableElements
+								renderComponent: TableDatasets
 							}
 					}
 				}
 				}}
-			/> 
+			/>
 
 	{:catch error}
 		<ErrorMessage {error} />

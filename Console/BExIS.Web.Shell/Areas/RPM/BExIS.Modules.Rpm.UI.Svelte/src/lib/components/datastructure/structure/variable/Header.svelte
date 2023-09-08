@@ -1,14 +1,14 @@
 <script lang="ts">
 	import { SlideToggle } from '@skeletonlabs/skeleton';
-	import { Alert } from '@bexis2/bexis2-core-ui';
+	import { Alert, TextInput } from '@bexis2/bexis2-core-ui';
 	import Fa from 'svelte-fa';
 	import { faCheck, faAngleUp, faAngleDown } from '@fortawesome/free-solid-svg-icons';
 
 	export let index;
-	export let name;
-	export let isKey;
-	export let isOptional;
-	export let isValid;
+	export let name:string;
+	export let isKey:boolean;
+	export let isOptional:boolean;
+	export let isValid:boolean;
 	export let expand:boolean;
 </script>
 
@@ -21,7 +21,9 @@
 			{/if}
 		</div>
 
-		<h2 class="h2">{name}</h2>
+		<div>
+					<slot></slot>
+		</div>
 
 		<div class="text-success-500">
 			{#if isValid}<Fa icon={faCheck} />{/if}
