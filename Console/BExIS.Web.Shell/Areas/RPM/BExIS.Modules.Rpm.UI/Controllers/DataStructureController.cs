@@ -129,7 +129,6 @@ namespace BExIS.Modules.Rpm.UI.Controllers
         [JsonNetFilter]
         public JsonResult Load(string file, long entityId = 0, int version = 0)
         {
-
             EditDatasetDetailsCache cache = null;
 
             // there are 2 usecases
