@@ -135,6 +135,9 @@ namespace BExIS.Modules.Dim.UI.Helpers
 
                 if (!operationManager.Exists("dim", "submission", "*")) operationManager.Create("DIM", "Submission", "*");
                 if (!operationManager.Exists("dim", "Publish", "*")) operationManager.Create("DIM", "Publish", "*");
+                if (!operationManager.Exists("dim", "mappingOut", "*")) operationManager.Create("DIM", "Publish", "*");
+                if (!operationManager.Exists("dim", "conceptOut", "*")) operationManager.Create("DIM", "Publish", "*");
+                if (!operationManager.Exists("dim", "linkElementTypeOut", "*")) operationManager.Create("DIM", "Publish", "*");
 
                 #endregion public available
 

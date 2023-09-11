@@ -1219,6 +1219,7 @@ namespace BExIS.Dim.Helpers.Mapping
 
         #endregion
 
+        #region concept
         /// <summary>
         /// Get Metadata of a dataset in a select concept structure
         /// </summary>
@@ -1543,8 +1544,6 @@ namespace BExIS.Dim.Helpers.Mapping
 
             return isValid;
         }
-
-        #region
 
         #endregion
 
