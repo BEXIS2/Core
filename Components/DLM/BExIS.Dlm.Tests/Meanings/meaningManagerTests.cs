@@ -39,7 +39,7 @@ namespace BExIS.Dlm.Entities.Meanings.Tests
         }
 
         [TestMethod()]
-        public void createTest()
+        public void createMeaning()
         {
             new TestSetupHelper(WebApiConfig.Register, false);
             ImeaningManagr _meaningManager = new meaningManager();
