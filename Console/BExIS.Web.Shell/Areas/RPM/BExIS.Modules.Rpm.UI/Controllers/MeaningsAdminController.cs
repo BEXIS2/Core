@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
@@ -11,6 +10,7 @@ using BExIS.App.Bootstrap.Attributes;
 using BExIS.Dlm.Entities.DataStructure;
 using BExIS.Dlm.Entities.Meanings;
 using BExIS.Dlm.Services.DataStructure;
+using BExIS.Dlm.Services.Meanings;
 using BExIS.Utils.Route;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -20,7 +20,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
     public class MeaningsAdminController : ApiController
     {
 
-        private readonly BExIS.Dlm.Entities.Meanings.ImeaningManagr _meaningManager;
+        private readonly ImeaningManagr _meaningManager;
         public MeaningsAdminController(ImeaningManagr _meaningManager)
         {
             this._meaningManager = _meaningManager;

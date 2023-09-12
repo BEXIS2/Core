@@ -6,13 +6,11 @@ using Newtonsoft.Json.Linq;
 using FluentAssertions;
 using BExIS.Dlm.Tests.Helpers;
 using BExIS.Dlm.Entities.DataStructure;
-using Vaiona.Persistence.Api;
 using BExIS.App.Testing;
 using BExIS.Utils.Config;
 using NUnit.Framework;
 using Newtonsoft.Json;
-using NHibernate.Mapping;
-using System.Security.Cryptography.X509Certificates;
+using BExIS.Dlm.Services.Meanings;
 
 namespace BExIS.Dlm.Entities.Meanings.Tests
 {

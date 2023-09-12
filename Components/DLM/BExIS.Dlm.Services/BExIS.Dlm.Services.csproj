@@ -128,6 +128,9 @@
     <Reference Include="NCalc, Version=1.4.3.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\..\packages\NCalc-Edge.1.4.3\lib\NCalc.dll</HintPath>
     </Reference>
+    <Reference Include="Newtonsoft.Json, Version=13.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\..\..\packages\Newtonsoft.Json.13.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
     <Reference Include="PostSharp, Version=4.3.48.0, Culture=neutral, PublicKeyToken=b13fd38b8f9c99d7, processorArchitecture=MSIL">
       <HintPath>..\..\..\packages\PostSharp.4.3.48\lib\net35-client\PostSharp.dll</HintPath>
       <Private>True</Private>
@@ -159,6 +162,8 @@
     <Compile Include="DataStructure\UnitManager.cs" />
     <Compile Include="DataStructure\ViewManager.cs" />
     <Compile Include="Helpers\DatasetConvertor.cs" />
+    <Compile Include="Meanings\ImeaningManagr.cs" />
+    <Compile Include="Meanings\meaningManager.cs" />
     <Compile Include="MetadataStructure\MetadataPackageManager.cs" />
     <Compile Include="MetadataStructure\MetadataAttributeManager.cs" />
     <Compile Include="MetadataStructure\MetadataStructureManager.cs" />

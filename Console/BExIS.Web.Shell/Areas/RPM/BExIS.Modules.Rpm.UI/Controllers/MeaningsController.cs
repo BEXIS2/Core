@@ -1,15 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections.Generic;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
-using System.Web;
 using System.Web.Http;
 using BExIS.App.Bootstrap.Attributes;
-using BExIS.Dlm.Entities.DataStructure;
-using BExIS.Dlm.Entities.Meanings;
-using BExIS.Dlm.Services.DataStructure;
+using BExIS.Dlm.Services.Meanings;
 using BExIS.Utils.Route;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -19,7 +14,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
     public class MeaningsController : ApiController
     {
 
-        private readonly BExIS.Dlm.Entities.Meanings.ImeaningManagr _meaningManager;
+        private readonly ImeaningManagr _meaningManager;
         public MeaningsController(ImeaningManagr _meaningManager)
         {
             this._meaningManager = _meaningManager;
