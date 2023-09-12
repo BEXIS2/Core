@@ -21,6 +21,7 @@ using System.Data;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Text;
 using System.Web.Http;
 using System.Web.Http.Description;
@@ -47,5 +48,47 @@ namespace BExIS.Modules.Dim.UI.Controllers
             }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="sourceElementId"></param>
+        /// <param name="sourceElementType"></param>
+        /// <param name="targetElementId"></param>
+        /// <param name="targetElementType"></param>
+        /// <returns></returns>
+        /// <remarks> 
+        /// </remarks>
+        [BExISApiAuthorize]
+
+        [GetRoute("api/Mapping/{sourceElementId}/{sourceElementType}/{targetElementId}/{targetElementType}")]
+        [HttpGet]
+        public HttpResponseMessage Get(long sourceElementId, int sourceElementType, long targetElementId, int targetElementType)
+        {
+
+            using (var mappingManager = new MappingManager())
+            {
+                var sourceLE = mappingManager.GetLinkElement(sourceElementId, (LinkElementType)sourceElementType);
+                var targetLE = mappingManager.GetLinkElement(targetElementId, (LinkElementType)targetElementType);
+
+                var tmp = new List<Mapping>();
+
+                var rootMapping = mappingManager.GetMapping(sourceLE, targetLE);
+                tmp.Add(rootMapping);
+
+                var complexMappings = mappingManager.GetChildMappingFromRoot(rootMapping.Id, 2);
+                tmp.AddRange(complexMappings);
+
+                var response = Request.CreateResponse(HttpStatusCode.OK);
+                string resp = JsonConvert.SerializeObject(tmp.OrderBy(m=>m.Id));
+
+
+                response.Content = new StringContent(resp, System.Text.Encoding.UTF8, "application/json");
+                response.Content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
+
+                //set headers on the "response"
+                return response;
+
+            }
+        }
     }
 }

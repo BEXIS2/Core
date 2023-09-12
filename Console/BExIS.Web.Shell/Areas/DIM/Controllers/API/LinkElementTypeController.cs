@@ -46,7 +46,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
                 tmp.Add(new LEType
                 {
                     Name = name,
-                    Number = i
+                    Id = i
                 });
             }
 
@@ -55,7 +55,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
 
         public class LEType
         {
-            public long Number { get; set; }
+            public long Id { get; set; }
             public string Name { get; set; }
         }
 
