@@ -56,7 +56,7 @@
 	let valueSingle: string = 'shell';
 </script>
 
-<Page>
+<Page fixLeft={false}>
 	<div slot="left">
 		{#await getSettings()}
 			<div id="spinner">... loading ...</div>
