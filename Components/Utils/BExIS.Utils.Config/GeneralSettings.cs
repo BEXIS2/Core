@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Configuration;
 using System.IO;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using Vaiona.IoC;
 using Vaiona.Utils.Cfg;
 
@@ -28,46 +29,19 @@ namespace BExIS.Utils.Config
             base("Shell",
                 Path.Combine(AppConfiguration.WorkspaceGeneralRoot, "General.Settings.json"))
         {
-
         }
 
-        public static GeneralSettings Get()
-        {
-            GeneralSettings generalSettings = null;
-            try
-            {
-                generalSettings = IoCFactory.Container.Resolve<GeneralSettings>() as GeneralSettings;
-            }
-            catch (Exception ex)
-            {
-                throw new Exception("Could not load general settings", ex);
-            }
-            return (generalSettings);
-        }
-
-        public static object GetValueByKey(string entryKey)
-        {
-            Entry entry = Get().jsonSettings.Entries.Where(p => p.Key.Equals(entryKey, StringComparison.InvariantCultureIgnoreCase)).FirstOrDefault();
-            if (entry == null)
-                return null;
-            string value = entry.Value.ToString();
-            EntryType type = entry.Type;
-
-            switch (type)
-            {
-                case (EntryType.EntryList):
-                    return JsonConvert.DeserializeObject<List<Entry>>(value);
-
-                default:
-                    return Convert.ChangeType(value, (TypeCode)Enum.Parse(typeof(TypeCode), type.ToString()));
-            }
-        }
-
-        public static JwtConfiguration JwtConfiguration
+        public static string ApplicationInfo
         {
             get
             {
-                return JsonConvert.DeserializeObject<JwtConfiguration>(GetValueByKey("jwt").ToString());
+                if (!string.IsNullOrWhiteSpace(ApplicationName))
+                {
+                    if (!string.IsNullOrWhiteSpace(ApplicationVersion))
+                        return (string.Format("{0} {1}", ApplicationName, ApplicationVersion));
+                    return (string.Format(ApplicationName));
+                }
+                return string.Empty;
             }
         }
 
@@ -95,29 +69,23 @@ namespace BExIS.Utils.Config
             }
         }
 
-        public static string ApplicationInfo
-        {
-            get
-            {
-                if (!string.IsNullOrWhiteSpace(ApplicationName))
-                {
-                    if (!string.IsNullOrWhiteSpace(ApplicationVersion))
-                        return (string.Format("{0} {1}", ApplicationName, ApplicationVersion));
-                    return (string.Format(ApplicationName));
-                }
-                return string.Empty;
-            }
-        }
-
-        public static string SystemEmail
+        public static string FAQ
         {
             get
             {
                 try
                 {
-                    return GetValueByKey("systemEmail").ToString();
+                    return GetValueByKey("faq").ToString();
                 }
                 catch { return (string.Empty); }
+            }
+        }
+
+        public static JwtConfiguration JwtConfiguration
+        {
+            get
+            {
+                return JsonConvert.DeserializeObject<JwtConfiguration>(GetValueByKey("jwt").ToString());
             }
         }
 
@@ -157,6 +125,30 @@ namespace BExIS.Utils.Config
             }
         }
 
+        public static string OwnerPartyRelationshipType
+        {
+            get
+            {
+                try
+                {
+                    return GetValueByKey("OwnerPartyRelationshipType").ToString();
+                }
+                catch { return (string.Empty); }
+            }
+        }
+
+        public static string PersonEmailAttributeName
+        {
+            get
+            {
+                try
+                {
+                    return GetValueByKey("personEmailAttributeName").ToString();
+                }
+                catch { return (string.Empty); }
+            }
+        }
+
         public static bool SendExceptions
         {
             get
@@ -169,25 +161,13 @@ namespace BExIS.Utils.Config
             }
         }
 
-        public static bool UsePersonEmailAttributeName
+        public static string SystemEmail
         {
             get
             {
                 try
                 {
-                    return Convert.ToBoolean(GetValueByKey("usePersonEmailAttributeName"));
-                }
-                catch { return (false); }
-            }
-        }
-
-        public static string PersonEmailAttributeName
-        {
-            get
-            {
-                try
-                {
-                    return GetValueByKey("personEmailAttributeName").ToString();
+                    return GetValueByKey("systemEmail").ToString();
                 }
                 catch { return (string.Empty); }
             }
@@ -205,29 +185,48 @@ namespace BExIS.Utils.Config
             }
         }
 
-        public static string OwnerPartyRelationshipType
+        public static bool UsePersonEmailAttributeName
         {
             get
             {
                 try
                 {
-                    return GetValueByKey("OwnerPartyRelationshipType").ToString();
+                    return Convert.ToBoolean(GetValueByKey("usePersonEmailAttributeName"));
                 }
-                catch { return (string.Empty); }
+                catch { return (false); }
             }
         }
 
-        public static string FAQ
+        public static GeneralSettings Get()
         {
-            get
+            GeneralSettings generalSettings = null;
+            try
             {
-                try
-                {
-                    return GetValueByKey("faq").ToString();
-                }
-                catch { return (string.Empty); }
+                generalSettings = IoCFactory.Container.Resolve<GeneralSettings>() as GeneralSettings;
             }
+            catch (Exception ex)
+            {
+                throw new Exception("Could not load general settings", ex);
+            }
+            return (generalSettings);
         }
 
+        public static object GetValueByKey(string entryKey)
+        {
+            Entry entry = Get().jsonSettings.Entries.Where(p => p.Key.Equals(entryKey, StringComparison.InvariantCultureIgnoreCase)).FirstOrDefault();
+            if (entry == null)
+                return null;
+            string value = entry.Value.ToString();
+            EntryType type = entry.Type;
+
+            switch (type)
+            {
+                case (EntryType.EntryList):
+                    return JsonConvert.DeserializeObject<List<Entry>>(value);
+
+                default:
+                    return Convert.ChangeType(value, (TypeCode)Enum.Parse(typeof(TypeCode), type.ToString()));
+            }
+        }
     }
 }
