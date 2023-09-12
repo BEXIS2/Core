@@ -1,17 +1,21 @@
 <script lang="ts">
 	export let value: any[];
+
+	console.log("value", value);
+	
+
 </script>
 
 <div>
 	{#if value != undefined}
-		{#if value.length > 1}
-			{#each value as elem}
-				{#if elem.name != undefined}
-					<li>{elem.name}</li>
+		{#if value.length > 0}
+		<ul class="list-none">
+				{#each value as elem}
+					{#if elem != undefined}
+						<li><a class="a" href="/ddm/show?id={elem}">{elem}</a></li>
 				{/if}
 			{/each}
-		{:else if value[0] != undefined && value[0].name != undefined}
-			<a href="/ddm/show?id={value[0].name}">{value[0].name}</a><br/>
-		{/if}
+		</ul>
+	{/if}
 	{/if}
 </div>

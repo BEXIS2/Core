@@ -21,7 +21,7 @@
     },
     {
       "key": "landingPage",
-      "value": "/",
+      "value": "ddm, publicsearch, index",
       "type": "String",
       "description": "user is not logging in -> app goes to"
     },

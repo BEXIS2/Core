@@ -135,6 +135,9 @@ namespace BExIS.Modules.Dim.UI.Helpers
 
                 if (!operationManager.Exists("dim", "submission", "*")) operationManager.Create("DIM", "Submission", "*");
                 if (!operationManager.Exists("dim", "Publish", "*")) operationManager.Create("DIM", "Publish", "*");
+                if (!operationManager.Exists("dim", "mappingOut", "*")) operationManager.Create("DIM", "Publish", "*");
+                if (!operationManager.Exists("dim", "conceptOut", "*")) operationManager.Create("DIM", "Publish", "*");
+                if (!operationManager.Exists("dim", "linkElementTypeOut", "*")) operationManager.Create("DIM", "Publish", "*");
 
                 #endregion public available
 
@@ -155,6 +158,8 @@ namespace BExIS.Modules.Dim.UI.Helpers
                 createDOIMappingConcept();
 
                 createGBIFDWCMappingConcept();
+
+                createFunctionConcept();
 
                 #endregion MAPPING
             }
@@ -635,7 +640,35 @@ namespace BExIS.Modules.Dim.UI.Helpers
             }
         }
 
+        private void createFunctionConcept()
+        {
+            using (var conceptManager = new ConceptManager())
+            {
+                // concept
+                // check if concept exist
+                var concept = conceptManager.MappingConceptRepo.Query(c => c.Name.Equals("Functions")).FirstOrDefault();
 
+                var keys = new List<MappingKey>();
+
+                if (concept == null) //if not create
+                    concept = conceptManager.CreateMappingConcept("Functions", "...", "", "");
+                else // if exist load available keys
+                {
+                    keys = conceptManager.MappingKeyRepo.Query(k => k.Concept.Id.Equals(concept.Id)).ToList();
+                }
+
+                // type
+                if (!keys.Any(k => k.XPath.Equals("test/function/a")))
+                    conceptManager.CreateMappingKey("Function A", "", "", false, false, "test/function/a", concept);
+
+                if (!keys.Any(k => k.XPath.Equals("test/function/b")))
+                    conceptManager.CreateMappingKey("Function B", "", "", false, false, "test/function/b", concept);
+
+                if (!keys.Any(k => k.XPath.Equals("test/function/c")))
+                    conceptManager.CreateMappingKey("Function C", "", "", false, false, "test/function/c", concept);
+
+            }
+        }
         private void createMappings()
         {
             try
