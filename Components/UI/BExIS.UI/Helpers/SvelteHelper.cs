@@ -120,9 +120,10 @@ namespace BExIS.UI.Helpers
         private static string getScript(string module, string key)
         {
             string appDomain = AppDomain.CurrentDomain.BaseDirectory;
+            string debugPathAdditionals = "";
 
 #if DEBUG
-            string debugPathAdditionals = (string.IsNullOrEmpty(module) || module.ToLower() == "shell") ? "/BExIS.Web.Shell" : "/BExIS.Modules." + module + ".UI";
+            debugPathAdditionals = (string.IsNullOrEmpty(module) || module.ToLower() == "shell") ? "/BExIS.Web.Shell" : "/BExIS.Modules." + module + ".UI";
 #endif
 
             string svelteBuildPath = (string.IsNullOrEmpty(module) || module.ToLower() == "shell") ? "/Scripts/svelte/" : $"/Areas/{module}{debugPathAdditionals}/Scripts/svelte/";
