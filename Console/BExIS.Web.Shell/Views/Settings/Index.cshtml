@@ -1,13 +1,9 @@
 ﻿@{
-    ViewBag.Title = "Index";
+    ViewBag.Title = "Settings";
     Layout = "~/Themes/Default/Layouts/_svelteLayout.cshtml";
 
 }
 
-@section scripts
-{
-    <script src="~/Scripts/svelte/settings.js"></script>
-
-}
-
-<div id="settings"> </div>
+<div id="settings">
+    @Html.Partial("_sveltePage")
+</div>

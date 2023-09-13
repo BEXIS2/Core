@@ -61,7 +61,7 @@
 		{#await getSettings()}
 			<div id="spinner">... loading ...</div>
 		{:then data}
-			<ListBox>
+			<ListBox active="variant-filled-primary">
 				{#each data as m}
 					<ListBoxItem bind:group={valueSingle} name="medium" value={m.id}
 						>{m.id} ({m.name})</ListBoxItem
