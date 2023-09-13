@@ -31,7 +31,7 @@ namespace BExIS.Utils.WebHelpers
             byte[] image = File.ReadAllBytes(path);
             string mime = MimeMapping.GetMimeMapping(path);
 
-            return new MvcHtmlString($"<link rel='shortcut icon' href='data:{mime};charset=utf-8;base64, {Convert.ToBase64String(image)}'/>");
+            return new MvcHtmlString($"<link rel='icon' href='data:{mime};charset=utf-8;base64, {Convert.ToBase64String(image)}'/>");
         }
 
         public static MvcHtmlString RenderHtml(this HtmlHelper htmlHelper, string path)

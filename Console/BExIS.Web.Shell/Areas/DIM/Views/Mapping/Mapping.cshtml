@@ -72,6 +72,7 @@
                 <div class="mapping-options col-xs-1">
                     @if (created == false)
                     {
+                    <span><input class="both-directions" name="both directions" type="checkbox" /> create this mapping in both directions </span>
                         <button class="createButton bx-button action" onclick="saveMapping(this, true)">Create</button>
                     }
                     else

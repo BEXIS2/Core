@@ -1,4 +1,8 @@
 ﻿
+using Newtonsoft.Json;
+using System;
+using System.Collections.Generic;
+
 namespace BExIS.IO.Transform.Input
 {
 
@@ -40,11 +44,30 @@ namespace BExIS.IO.Transform.Input
         public int Data { get; set; }
 
         /// <summary>
+        /// Row/Column in which the Unit are.
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>  
+        public int Unit { get; set; }
+
+        /// <summary>
+        /// Row/Column in which the Description are.
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>  
+        public int Description { get; set; }
+
+        /// <summary>
         /// Format of the Date
         /// </summary>
         /// <remarks></remarks>
         /// <seealso cref=""/>        
         public string Dateformat { get; set; }
+
+        public string ToJson()
+        {
+            return JsonConvert.SerializeObject(this);
+        }
 
         /// <summary>
         /// Get the DecimalCharacter as string

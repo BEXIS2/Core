@@ -8,11 +8,11 @@
   -->
   <entry key="landingPage" value="ddm, PublicSearch, index" type="String" />
   <!-- user is not logging in -> app goes to-->
-  <entry key="landingPageForUsers" value="ddm, Home, index" type="String" />
+  <entry key="landingPageForUsers" value="ddm,Home,index" type="String" />
   <!-- user logged in, but do not have permission to view the page; shell, home, nopermission is by default; Alternatives must be in a module NOT shell -->
   <entry key="landingPageForUsersNoPermission" value=" shell, home, nopermission" type="String" />
   <!-- landing page for users , when they logged in successfuly -->
   <entry key="faq" value="https://github.com/BEXIS2/Core/wiki/FAQ" type="string" />
 
-  <entry key="version" value="2.16" type="string" />
+  <entry key="version" value="2.18.1" type="string" />
 </settings>

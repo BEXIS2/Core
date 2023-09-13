@@ -1,79 +1,55 @@
 <script>
- import {Row, Col,Button} from 'sveltestrap';
+	import { host } from '@bexis2/bexis2-core-ui';
+	import Fa from 'svelte-fa';
+import {faPen} from '@fortawesome/free-solid-svg-icons'
 
- import { host } from '@bexis2/bexis2-core-ui/src/lib/index'
+	export let id;
+	export let version;
 
- 
- export let id;
- export let version;
+	export let status;
+	export let start;
 
- export let status;
- export let start;
+	let isEnabled = setEnable(status);
+	let url = host + start + '?id=' + id + '&version=' + version;
 
- let isEnabled = setEnable(status);
- let url = host+start+"?id="+id+"&version="+version;
-  
- function setEnable(status)
- {
-   if(status == 0 ||status == 1 ) // disabled || access denied
-   {
-     return false;
-   }
-     
-   return true; // every other status enable the hook
- }
+	function setEnable(status) {
+		if (status == 0 || status == 1) {
+			// disabled || access denied
+			return false;
+		}
 
-function clickEditMetadata() {
- 
- window.open(url, '_blank')?.focus();
-}
+		return true; // every other status enable the hook
+	}
 
-function clickEditVisibility() {
- 
-}
- 
-function clickEditStatus() {
- 
-}
+	function clickEditMetadata() {
+		window.open(url, '_blank')?.focus();
+	}
 
+	function clickEditVisibility() {}
+
+	function clickEditStatus() {}
 </script>
 
-<Row>
-  <Col  class="col-sm-2">
-   <Button on:click={clickEditMetadata}>Edit</Button>
-  </Col>
-  <Col class="col-sm-2">
-   <!--stats-->
-   <span>Last Modfied</span>
-  </Col>
-</Row>
-<br/>
-<Row>
- <Col  class="col-sm-2">
-  <b>Visibility</b> 
- </Col>
- <Col class="col-sm-2">
-  <!--stats-->
-  <span> not implemented</span>
- </Col>
- <Col class="col-sm-2">
-  <!--stats-->
-  <Button on:click={clickEditVisibility}>Edit</Button>
-
- </Col>
-</Row>
-<br/>
-<Row>
- <Col  class="col-sm-2">
-   <b>Status</b>
- </Col>
- <Col class="col-sm-2">
-  <!--stats-->
-  <span> not implemented</span>
-
- </Col>
- <Col class="col-sm-2">
-  <!--stats-->
-  <Button on:click={clickEditStatus}>Edit</Button>
- </Col>
-</Row>
+<div class="flex-col space-y-1">
+	<div class="flex gap-3 justify-left">	
+		<div class="flex-none w-20"><b>Metadata</b></div>
+		<button class="chip bg-secondary-500 text-white flex-none btn-sm" on:click={clickEditMetadata}><Fa icon={faPen}></Fa></button>
+		<div ><span>Last Modfied</span></div>
+	</div>
+	<div class="flex gap-3 justify-left">	
+		<b class="flex-none w-20">Visibility</b>
+		<!--stats-->
+		<span class="self-center"> not implemented</span>
+		<!--stats-->
+		<button class="chip bg-secondary-500 text-white btn-sm flex-none" on:click={clickEditVisibility}
+			><Fa icon={faPen}></Fa></button>
+	</div>
+	<div class="flex gap-3 justify-left">	
+		<b class="flex-none w-20">Status</b>
+		<!--stats-->
+		<span class="flex-none"> not implemented</span>
+		<!--stats-->
+		<button class="chip bg-secondary-500 text-white btn-sm flex-none" on:click={clickEditStatus}
+			><Fa icon={faPen}></Fa></button		>
+		</div>
+</div>

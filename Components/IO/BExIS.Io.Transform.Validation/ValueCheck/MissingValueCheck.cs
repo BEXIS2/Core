@@ -72,6 +72,7 @@ namespace BExIS.IO.Transform.Validation.ValueCheck
             {
                 foreach (var missingValue in missingValues)
                 {
+                    if(!string.IsNullOrEmpty(missingValue.DisplayName))
                     this.missingValues.Add(missingValue.DisplayName, missingValue.Placeholder);
                 }
             }

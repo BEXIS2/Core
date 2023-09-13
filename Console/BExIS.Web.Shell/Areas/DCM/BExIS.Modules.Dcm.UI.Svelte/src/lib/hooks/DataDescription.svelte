@@ -1,68 +1,74 @@
-<script>
+<script lang="ts">
+	import { getHookStart } from '$services/HookCaller';
+	import { latestFileUploadDate, latestDataDescriptionDate } from '../../routes/edit/stores';
+	import { onMount, createEventDispatcher } from 'svelte';
 
- import {getHookStart}  from '../../services/HookCaller'
- import { latestFileUploadDate, latestDataDescriptionDate } from '../../routes/edit/stores';
+	import TimeDuration from '$lib/components/utils/TimeDuration.svelte';
+	import Generate from '$lib/components/datadescription/Generate.svelte';
+	import Show from '$lib/components/datadescription/Show.svelte';
+	import { Spinner, ErrorMessage, positionType } from '@bexis2/bexis2-core-ui';
 
- import { onMount }from 'svelte'
+	import type { DataDescriptionModel } from '$models/DataDescription';
 
-import TimeDuration from '../../lib/components/utils/TimeDuration.svelte'
-import Generate from '../../lib/components/datadescription/Generate.svelte'
-import Show from '../../lib/components/datadescription/Show.svelte'
-import {Spinner} from 'sveltestrap'
+	export let id = 0;
+	export let version = 1;
+	export let hook;
 
+	let model: DataDescriptionModel;
+	$: model;
+	$: loading = false;
 
- 
-export let id=0;
-export let version=1;
-export let hook;
- 
-$:model = null;
-$:loading = false;
+	$: $latestFileUploadDate, reloadByFileUpdate();
+	$: $latestDataDescriptionDate, reload();
 
-$:$latestFileUploadDate, reload()
-$:$latestDataDescriptionDate, reload()
- 
-onMount(async () => {
-  load();
-})
+	const dispatch = createEventDispatcher();
 
-async function load()
-{
-  //console.log("datadscription",hook);
-  model = await getHookStart(hook.start,id,version);
-}
+	onMount(async () => {
+		load();
+	});
 
-async function reload()
-{
-  //console.log("reload datadscription");
-  load();
-} 
- 
- 
- </script>
- 
- {#if model}
-  {#if model.allFilesReadable==true}
+	async function load() {
+		model = await getHookStart(hook.start, id, version);
 
-    {#if model.lastModification}
-    
-    <TimeDuration milliseconds={new Date(model.lastModification)}/>
-    
-    {/if}
+  dispatch('dateChanged', { lastModification: model.lastModification });
+		
+	}
 
-    <!--if structure not exist go to generate view otherwise show structure-->
-    {#if model && model.structureId > 0} 
-      <!--show-->
-      <Show {...model}></Show>
-    {:else}
-      <!--generate-->
-      <Generate bind:files={model.readableFiles} {...model}></Generate>
-    {/if}
+	async function reload() {
+		load();
+	}
 
-    {#if loading}
-      <Spinner color="info" size="sm" type ="grow" text-center />
-    {/if}
-  {:else}
-    <span>not available</span>
-  {/if}
- {/if}
+	async function reloadByFileUpdate() {
+		// only when strutcure is not set update model
+		if (model && model.structureId == 0) {
+			load();
+		}
+	}
+</script>
+
+{#await getHookStart(hook.start, id, version)}
+	<div class="w-full h-full text-surface-600">
+		<Spinner label="loading data description" position="{positionType.start}" />
+	</div>
+{:then a}
+
+	<!--if structure not exist go to generate view otherwise show structure-->
+	{#if model && model.structureId > 0}
+		<!--show-->
+		<Show {...model} on:error/>
+	{:else if model && model.allFilesReadable == true}
+		<!--generate-->
+		<!-- <Generate bind:files={model.readableFiles} {...model} on:selected={()=> latestDataDescriptionDate.set(Date.now())} isRestricted={model.isRestricted}></Generate> -->
+		<Generate
+			{id}
+			{version}
+			{model}
+			{hook}
+			on:selected={() => latestDataDescriptionDate.set(Date.now())}
+		/>
+	{:else}
+		<span>not available</span>
+	{/if}
+{:catch error}
+	<ErrorMessage {error} />
+{/await}

@@ -1,9 +1,16 @@
+<script>
+	// The ordering of these imports is critical to your app working properly
+	//import '@skeletonlabs/skeleton/themes/theme-skeleton.css';
+	// import '@bexis2/bexis2-core-ui/dist/css/themes/theme-bexis2.css';
+	import '../../node_modules/@bexis2/bexis2-core-ui/dist/css/themes/theme-bexis2.css';
 
-<nav>
- <a href="/">Home</a>
- <a href="/create">Create</a>
- <a href="/entitytemplate">entitytemplate</a>
- <a href="/edit">Edit</a>
-</nav>
+	// If you have source.organizeImports set to true in VSCode, then it will auto change this ordering
+	import '@skeletonlabs/skeleton/styles/skeleton.css';
 
-<slot></slot>
+	// load generell skeleton changes for bexis2
+	// import "@bexis2/bexis2-core-ui/static/test.css";
+	//Most of your app wide CSS should be put in this file
+	import '../app.postcss';
+</script>
+
+<slot />

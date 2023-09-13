@@ -1,14 +1,15 @@
 <script>
- import ListItem from '../create/ListItem.svelte'
- export let items;
+	import ListItem from '../create/ListItem.svelte';
 
- import {createEventDispatcher} from 'svelte';
+	export let items;
 
- const dispatch = createEventDispatcher();
+	import { createEventDispatcher } from 'svelte';
 
+	const dispatch = createEventDispatcher();
 </script>
 
-{#each items as item, index}
-  <ListItem {...item} on:click={()=>dispatch("select",index)}/>
-{/each}
- 
+<div class="flex-col gap-1 pr-1 space-y-1">
+	{#each items as item, index}
+		<ListItem {...item} on:click={() => dispatch('select', index)} />
+	{/each}
+</div>

@@ -22,41 +22,30 @@
       "description": "Show -Create Variable Template- on data structure edit"
     },
     {
-      "key": "name",
-      "value": "missingvalues",
-      "type": "list",
-      "description": "placeholder... description...",
-      "item": [
+      "key": "missingValues",
+      "value": [
         {
-          "attribute": [
-            {
-              "key": "placeholder",
-              "value": "na",
-              "type": "String"
-            },
-            {
-              "key": "description",
-              "value": "not available",
-              "type": "String"
-            }
-          ]
+          "key": "missingValue",
+          "value": "na",
+          "type": "String",
+          "description": "not available"
         },
         {
-          "attribute": [
-            {
-              "key": "placeholder",
-              "value": "NM",
-              "type": "String"
-            },
-            {
-              "key": "description",
-              "value": "not measured",
-              "type": "String"
-            }
-          ]
+          "key": "missingValue",
+          "value": "nm",
+          "type": "String",
+          "description": "not measured"
+        },
+        {
+          "key": "missingValue",
+          "value": "no",
+          "type": "String",
+          "description": "not observed"
         }
-      ]
+      ],
+      "description": "...",
+      "type": "EntryList",
+      "options": []
     }
-
   ]
 }

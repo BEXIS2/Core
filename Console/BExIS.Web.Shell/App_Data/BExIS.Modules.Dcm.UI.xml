@@ -430,6 +430,11 @@
             Format of the Date
             </summary>
         </member>
+        <member name="P:BExIS.Modules.Dcm.UI.Models.Metadata.MetadataParameterModel.Id">
+            <summary>
+            Parameter Usage Id
+            </summary>
+        </member>
         <member name="T:BExIS.Modules.Dim.UI.Controllers.MetadataInController">
             <summary>
             This class is designed as a Web API to allow various client tools request metadata of a datasets and get the result in XML.

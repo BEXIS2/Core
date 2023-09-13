@@ -26,25 +26,30 @@ namespace BExIS.Modules.Dcm.UI.Hooks
                 EditDatasetDetailsCache cache = hookManager.LoadCache<EditDatasetDetailsCache>("dataset", "detailes", HookMode.edit, id);
 
                 // check if data strutcure exist
-                using (var datasetManager = new DatasetManager())
-                {
-                    var dataset = datasetManager.GetDataset(id);
-                    if (dataset == null && dataset.DataStructure == null) { Status = HookStatus.Disabled; return; }
-                }
+                //using (var datasetManager = new DatasetManager())
+                //{
+                //    var dataset = datasetManager.GetDataset(id);
+                //    if (dataset == null && dataset.DataStructure == null) { Status = HookStatus.Disabled; return; }
+                //}
 
-                // check if file not exist
-                if (cache.Files == null || cache.Files.Any() == false) { Status = HookStatus.Inactive; return; }
+                //// check if file not exist
+                //if (cache.Files == null || cache.Files.Any() == false) { Status = HookStatus.Inactive; return; }
 
-                // if file reader information exist
-                if (cache.ExcelFileReaderInfo == null && cache.AsciiFileReaderInfo == null) { Status = HookStatus.Inactive; return; }
+                //// if file reader information exist
+                //if (cache.ExcelFileReaderInfo == null && cache.AsciiFileReaderInfo == null) { Status = HookStatus.Inactive; return; }
 
-                // if file is not valid
-                if (cache.IsDataValid == false) { Status = HookStatus.Inactive; return; }
+                //// if file is not valid
+                //if (cache.IsDataValid == false) { Status = HookStatus.Inactive; return; }
 
                 // generate Validation hash - compare with stored
 
                 //if everthing exist
                 Status = HookStatus.Open;
+
+
+                // check if subject is checked in
+                // only check if status is open
+                checkAvailablity(id);
             }
         }
 
@@ -76,6 +81,15 @@ namespace BExIS.Modules.Dcm.UI.Hooks
             // copy cache the real place
 
             return false;
+        }
+
+        private void checkAvailablity(long id)
+        {
+            // check if subject is checked in
+            // only check if status is open
+            if (Status == HookStatus.Open)
+                using (var datasetManager = new DatasetManager())
+                    Status = datasetManager.IsDatasetCheckedIn(id) == true ? HookStatus.Open : HookStatus.Waiting;
         }
     }
 }

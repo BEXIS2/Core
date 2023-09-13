@@ -16,6 +16,7 @@ namespace BExIS.Modules.Dcm.UI.Models.Edit
 
         public List<VariableModel> Variables { get; set; }
 
+
         // this value is a flag to check wheter all files from upload is readable or not
         // if not the ui should hide data description at all
         public bool AllFilesReadable { get; set; }
@@ -24,6 +25,23 @@ namespace BExIS.Modules.Dcm.UI.Models.Edit
         /// allready uploaded files in the temp folder
         /// </summary>
         public List<FileInfo> ReadableFiles { get; set; }
+
+        /// <summary>
+        /// if true you should be aböle to select a structre frim the system or import from file
+        /// </summary>
+        public bool IsStructured { get; set; }
+
+        /// <summary>
+        /// choose only from predefiend structres
+        /// </summary>
+        public bool IsRestricted { get; set; }
+
+        /// <summary>
+        /// choose only from predefiend structres
+        /// </summary>
+        public bool HasData { get; set; }
+
+
         public DataDescriptionModel()
         {
             Title = "";
@@ -32,6 +50,10 @@ namespace BExIS.Modules.Dcm.UI.Models.Edit
 
             ReadableFiles = new List<FileInfo>();
             Variables = new List<VariableModel>();
+
+            IsStructured = false;
+            IsRestricted = false;
+            HasData = false;
 
         }
 

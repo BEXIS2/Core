@@ -39,6 +39,8 @@ namespace Vaiona.Model.MTnt
         /// </summary>
         public string Logo { get; set; }
 
+        public string Brand { get; set; }
+
         /// <summary>
         /// The icon should be located in /<tenant>/images/<name.ext> of /<default>/images/<name.ext> if not provided bt the manifest
         /// </summary>
@@ -98,6 +100,9 @@ namespace Vaiona.Model.MTnt
         /// </summary>
         public List<string> MatchingRules { get; set; }
         public bool IsDefault { get; set; }
+
+        public string Header { get; set; }
+        public string Footer { get; set; }
         public string PolicyFileName { get; set; }
         public string TermsAndConditionsFileName { get; set; }
         public string ContactUsFileName { get; set; }
@@ -113,6 +118,17 @@ namespace Vaiona.Model.MTnt
                     return PathProvider.GetImagePath(this.Id, this.Logo, Fallback.Id);
                 else
                     return PathProvider.GetImagePath(this.Id, this.Logo, this.Id); // The second this.Id argument is passed to allow the Client TenantPathProviders to have a chance of getting triggered.
+            }
+        }
+
+        public string BrandPath //effective path to brand
+        {
+            get
+            {
+                if (this.UseFallback == true && this.Fallback != null)
+                    return PathProvider.GetImagePath(this.Id, this.Brand, Fallback.Id);
+                else
+                    return PathProvider.GetImagePath(this.Id, this.Brand, this.Id); // The second this.Id argument is passed to allow the Client TenantPathProviders to have a chance of getting triggered.
             }
         }
         public string FavIconPath //effective path to FavIcon
@@ -136,6 +152,29 @@ namespace Vaiona.Model.MTnt
                     return PathProvider.GetThemePath(this.Id, this.Theme, this.Id);
             }
         }
+
+        public string HeaderPath //effective path to policy content file
+        {
+            get
+            {
+                if (this.UseFallback == true && this.Fallback != null)
+                    return PathProvider.GetContentFilePath(this.Id, this.Header, Fallback.Id);
+                else
+                    return PathProvider.GetContentFilePath(this.Id, this.Header, this.Id);
+            }
+        }
+
+        public string FooterPath //effective path to policy content file
+        {
+            get
+            {
+                if (this.UseFallback == true && this.Fallback != null)
+                    return PathProvider.GetContentFilePath(this.Id, this.Footer, Fallback.Id);
+                else
+                    return PathProvider.GetContentFilePath(this.Id, this.Footer, this.Id);
+            }
+        }
+
 
         public string PolicyFileNamePath //effective path to policy content file
         {

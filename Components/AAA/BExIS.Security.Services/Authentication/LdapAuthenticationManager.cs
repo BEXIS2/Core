@@ -53,11 +53,9 @@ namespace BExIS.Security.Services.Authentication
 
                         ldapUser = new User()
                         {
-                            Email = (attributes["mail"][0]).ToString(),
-                            UserName = (attributes[$"{_ldapConfiguration.UserIdentifier}"][0]).ToString(),
-                            IsEmailConfirmed = true,
-                            //HasPrivacyPolicyAccepted = true,
-                            //HasTermsAndConditionsAccepted = true
+                            Email = (attributes["mail"]?[0] ?? "").ToString(),
+                            UserName = username,
+                            IsEmailConfirmed = !string.IsNullOrEmpty((attributes["mail"]?[0] ?? "").ToString())
                         };
                     }
                     else

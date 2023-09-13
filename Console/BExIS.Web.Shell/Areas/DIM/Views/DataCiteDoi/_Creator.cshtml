@@ -1,0 +1,27 @@
+﻿@using BExIS.Modules.Dim.UI.Helpers
+@model Vaelastrasz.Library.Models.DataCite.DataCiteCreator
+
+<div class="form-horizontal well">
+    @using (Html.BeginCollectionItem("DataCiteModel.Data.Attributes.Creators"))
+    {
+        <div class="form-group">
+            @Html.LabelFor(m => m.GivenName, new { @class = "col-sm-2 control-label" })
+            <div class="col-sm-10">
+                @Html.TextBoxFor(m => m.GivenName, new { @class = "form-control" })
+            </div>
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(m => m.FamilyName, new { @class = "col-sm-2 control-label" })
+            <div class="col-sm-10">
+                @Html.TextBoxFor(m => m.FamilyName, new { @class = "form-control" })
+            </div>
+        </div>
+
+        <div class="list-group affiliation-list">
+            @Html.EditorFor(m => m.Affiliation)
+        </div>
+
+        <input type="button" class="btn btn-info btn-xs add affiliation" data-container-prefix="@ViewData["ContainerPrefix"]" value="Add Affiliation" />
+        <input type="button" class="btn btn-info btn-xs remove creator"/>
+    }
+</div>

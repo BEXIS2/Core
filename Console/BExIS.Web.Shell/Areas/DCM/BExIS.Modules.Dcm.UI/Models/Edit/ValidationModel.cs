@@ -1,4 +1,5 @@
-﻿using BExIS.UI.Models;
+﻿using BExIS.IO.Transform.Validation.Exceptions;
+using BExIS.UI.Models;
 using System;
 using System.Collections.Generic;
 
@@ -8,30 +9,28 @@ namespace BExIS.Modules.Dcm.UI.Models.Edit
     {
         public bool IsValid { get; set; }
 
-        public List<FileErrors> FileErrors { get; set; }
-
+        public List<FileValidationResult> FileResults { get; set; }
 
         public ValidationModel()
         {
             IsValid = false;
-            FileErrors = new List<FileErrors>();
+            FileResults = new List<FileValidationResult>();
         }
 
     }
 
 
-    public class FileErrors
+    public class FileValidationResult
     {
         public string File { get; set; }
         public List<string> Errors { get; set; }
-        public List<Tuple<string, int, string>> SortedErrors { get; set; }
+        public List<SortedError> SortedErrors { get; set; }
 
-        public FileErrors()
+        public FileValidationResult()
         {
             Errors = new List<string>();
-            SortedErrors = new List<Tuple<string, int, string>>();
+            SortedErrors = new List<SortedError>();
             File = "";
         }
-
     }
 }

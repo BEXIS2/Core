@@ -6,9 +6,12 @@
     List<Facet> listOfAllFacets = new List<Facet>();
 
     int rows = 0;
+	int cols = 0;
     string title = "No title";
     string row_width = "";
     string colclass = "";
+	int length = 20;
+	
 
 
     if ((IEnumerable<Facet>)Session["SelectAbleCategories"] != null)
@@ -19,25 +22,35 @@
 
         if (numOfFacets <= 10)
         {
-            row_width = 240 * 2 + "px;";
+            row_width = 240 * 3 + "px;";
             colclass = "col-xs-6";
+			rows = 3;
+			cols = 2;
+			length = 40;
         }
         else if (numOfFacets > 10 && numOfFacets <= 20)
         {
-            row_width = 240 * 3 + "px;";
+            row_width = 240 * 4 + "px;";
             colclass = "col-xs-4";
+			rows = 7;
+			cols = 3;
+			length = 40;
         }
         else
         if (numOfFacets > 20 && numOfFacets <= 60)
         {
-            row_width = 240 * 4 + "px;";
+            row_width = 240 * 5 + "px;";
             colclass = "col-xs-3";
+			rows = 10;
+			cols = 5;
         }
         else
         if (numOfFacets > 60)
         {
             row_width = 240 * 6 + "px;";
             colclass = "col-xs-2";
+			rows = 30;
+			cols = 5;
         }
 
     }
@@ -57,7 +70,10 @@
 
         <div class="bx-content">
 
-            <div id="search_moreCheckBox" class="row">
+            <div id="search_moreCheckBox" class="row" style="  display: grid;
+  grid-template-columns: repeat(@cols, 1fr);
+  grid-template-rows: repeat(@rows, 1fr);
+  grid-auto-flow: column;">
                 @if (listOfAllFacets != null)
                 {
                     if (listOfAllFacets.Count() > 0)
@@ -70,16 +86,16 @@
 
                             string displayedName;
 
-                            if (facet.Name.Length > 23)
+                            if (facet.Name.Length > length)
                             {
-                                displayedName = System.StringExtensions.Truncate(facet.Name, 20);
+                                displayedName = System.StringExtensions.Truncate(facet.Name, length);
                             }
                             else
                             {
                                 displayedName = facet.Name;
                             }
 
-                            <div title="@facet.Name.ToString()" class="@colclass">@Html.CheckBox(pos.ToString(), @Model.CriteriaComponent.ContainsFacet(facet), new { text = @facet.Name.ToString() }) @Html.Label(@facet.Name.ToString(), displayedName)</div>
+                            <div title="@facet.Name.ToString()" >@Html.CheckBox(pos.ToString(), @Model.CriteriaComponent.ContainsFacet(facet), new { text = @facet.Name.ToString() }) @Html.Label(@facet.Name.ToString(), displayedName)</div>
 
                         }
                     }
@@ -179,4 +195,8 @@
     #search_moreCheckBox td {
         width: 50%;
     }
+	.row:before {
+    display: none;
+    content: " ";
+}
 </style>

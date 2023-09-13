@@ -1,4 +1,5 @@
-﻿using BExIS.UI.Hooks.Caches;
+﻿using BExIS.IO.Transform.Input;
+using BExIS.UI.Hooks.Caches;
 using System;
 using System.Collections.Generic;
 
@@ -30,11 +31,6 @@ namespace BExIS.UI.Models
         /// max size of the file in ???
         /// </summary>
         public int MaxSize { get; set; }
-
-        /// <summary>
-        /// max size of the file in ???
-        /// </summary>
-        public DateTime? LastModification { get; set; }
 
         public FileUploader()
         {

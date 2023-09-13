@@ -52,6 +52,8 @@ namespace BExIS.Modules.Rpm.UI.Helpers
                 if (!operationManager.Exists("RPM", "DataStructureIO", "*"))
                     operationManager.Create("RPM", "DataStructureIO", "*", datastructureFeature);
 
+                if (!operationManager.Exists("RPM", "DataStructure", "*"))  operationManager.Create("RPM", "DataStructure", "*", datastructureFeature);
+
                 Feature atributeFeature = features.FirstOrDefault(f =>
                     f.Name.Equals("Variable Template Management") &&
                     f.Parent != null &&
@@ -73,6 +75,17 @@ namespace BExIS.Modules.Rpm.UI.Helpers
 
                 if (!operationManager.Exists("RPM", "Unit", "*"))
                     operationManager.Create("RPM", "Unit", "*", unitFeature);
+
+                Feature dimensionFeature = features.FirstOrDefault(f =>
+                   f.Name.Equals("Dimension Management") &&
+                   f.Parent != null &&
+                   f.Parent.Id.Equals(dataPlanning.Id));
+
+                if (dimensionFeature == null)
+                    dimensionFeature = featureManager.Create("Dimension Management", "Dimension Management", dataPlanning);
+
+                if (!operationManager.Exists("RPM", "Dimension", "*"))
+                    operationManager.Create("RPM", "Dimension", "*", unitFeature);
 
                 Feature dataTypeFeature = features.FirstOrDefault(f =>
                     f.Name.Equals("Data Type Management") &&

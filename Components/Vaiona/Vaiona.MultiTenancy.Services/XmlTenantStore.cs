@@ -185,6 +185,18 @@ namespace Vaiona.MultiTenancy.Services
 
             try
             {
+                tenant.Brand = manifest.Element("Brand").Value;
+            }
+            catch
+            {
+                if (tenant.UseFallback == true && tenant.Fallback != null)
+                {
+                    tenant.Brand = defaultTenant.Brand;
+                }
+            }
+
+            try
+            {
                 tenant.FavIcon = manifest.Element("FavIcon").Value;
             }
             catch
@@ -230,6 +242,30 @@ namespace Vaiona.MultiTenancy.Services
             {
                 if (tenant.UseFallback == true && tenant.Fallback != null)
                     tenant.LandingPage = defaultTenant.LandingPage;
+            }
+
+            try
+            {
+                tenant.Header = manifest.Element("Header").Value;
+            }
+            catch
+            {
+                if (tenant.UseFallback == true && tenant.Fallback != null)
+                {
+                    tenant.Header = defaultTenant.Header;
+                }
+            }
+
+            try
+            {
+                tenant.Footer = manifest.Element("Footer").Value;
+            }
+            catch
+            {
+                if (tenant.UseFallback == true && tenant.Fallback != null)
+                {
+                    tenant.Footer = defaultTenant.Footer;
+                }
             }
 
             try

@@ -105,7 +105,9 @@ namespace BExIS.Modules.Dcm.UI.Helpers
                 {
                     XmlDocument xmlDoc = new XmlDocument();
 
-                    if (entity.Extra != null) xmlDoc.LoadXml(entity.Extra.InnerXml);
+                    if (entity.Extra != null) 
+                        if(entity.Extra is XmlDocument) xmlDoc = entity.Extra as XmlDocument ;
+                        else xmlDoc.AppendChild(entity.Extra);
 
                     //update to Extra
                     XmlDatasetHelper xmlDatasetHelper = new XmlDatasetHelper();
@@ -164,7 +166,7 @@ namespace BExIS.Modules.Dcm.UI.Helpers
                 operationManager.Create("DCM", "Edit", "*");
                 operationManager.Create("DCM", "View", "*");
                 operationManager.Create("DCM", "Metadata", "*", DatasetCreationFeature);
-                operationManager.Create("DCM", "StructureSuggestion", "*", DatasetCreationFeature);
+         
 
                 #endregion Create Dataset Workflow
 

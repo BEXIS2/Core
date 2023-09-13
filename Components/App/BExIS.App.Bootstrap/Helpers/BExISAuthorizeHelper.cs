@@ -86,7 +86,7 @@ namespace BExIS.App.Bootstrap.Helpers
                                 if (!result)
                                 {
                                     response = new HttpResponseMessage(System.Net.HttpStatusCode.Forbidden);
-                                    response.Content = new StringContent("Username and/or Password are incorrect.");
+                                    response.Content = new StringContent("UserName and/or Password are incorrect.");
                                 }
 
                                 if (!featurePermissionManager.HasAccess(user.Id, featureId))

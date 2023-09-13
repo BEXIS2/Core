@@ -21,11 +21,6 @@ namespace BExIS.Dlm.Orm.NH.Utils
         {
         }
 
-        //public MaterializedViewHelper(string dbDialect)
-        //{
-        //    this.dbDialect = dbDialect;
-        //}
-
         public DataTable Retrieve(long datasetId)
         {
             StringBuilder mvBuilder = new StringBuilder();
@@ -382,8 +377,8 @@ namespace BExIS.Dlm.Orm.NH.Utils
             string fieldType = dbDataType(dataType);
             fieldType = !string.IsNullOrEmpty(fieldType) ? " AS " + fieldType : "";
 
-            string accessPathTemplate = @"xpath('/Content/Item[Property[@Name=""VariableId"" and @value=""{0}""]][1]/Property[@Name=""Value""]/@value', t.xmlvariablevalues)";
-            string accessPath = string.Format(accessPathTemplate, Id);
+            //string accessPathTemplate = @"xpath('/Content/Item[Property[@Name=""VariableId"" and @value=""{0}""]][1]/Property[@Name=""Value""]/@value', t.xmlvariablevalues)";
+            //string accessPath = string.Format(accessPathTemplate, Id);
 
             //            string fieldDef = $"CASE WHEN ({accessPath}::text = '{{\"\"}}'::text) THEN NULL WHEN ({accessPath}::text = '{{_null_null}}'::text) THEN NULL ELSE cast(({accessPath}::character varying[])[1] {fieldType}) END AS {this.BuildColumnName(Id).ToLower()}";
             string fieldDef = $"cast((t.values::character varying[])[{order}]  {fieldType}) AS {this.BuildColumnName(Id).ToLower()}";
@@ -404,9 +399,13 @@ namespace BExIS.Dlm.Orm.NH.Utils
                 { "double", "float8" },
                 { "int", "integer" },
                 { "integer", "integer" },
+                { "int16", "integer" },
                 { "int32", "integer" },
                 { "long", "bigint" },
                 { "int64", "bigint" },
+                { "uint16", "bigint" },
+                { "uint32", "bigint" },
+                { "uint64", "bigint" },
                 { "text", "" }, // not needed -> character varying()
                 { "string", "character varying" } //changed from 255 to unlimited to avoid data does not fit e.g. Sequence data
             };

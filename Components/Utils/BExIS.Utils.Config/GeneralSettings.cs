@@ -1,7 +1,11 @@
-﻿using System;
+﻿using BExIS.Utils.Config.Configurations;
+using Newtonsoft.Json;
+using System;
+using System.Collections.Generic;
 using System.Configuration;
 using System.IO;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using Vaiona.IoC;
 using Vaiona.Utils.Cfg;
 
@@ -27,29 +31,18 @@ namespace BExIS.Utils.Config
         {
         }
 
-        public static GeneralSettings Get()
+        public static string ApplicationInfo
         {
-            GeneralSettings generalSettings = null;
-            try
+            get
             {
-                generalSettings = IoCFactory.Container.Resolve<GeneralSettings>() as GeneralSettings;
+                if (!string.IsNullOrWhiteSpace(ApplicationName))
+                {
+                    if (!string.IsNullOrWhiteSpace(ApplicationVersion))
+                        return (string.Format("{0} {1}", ApplicationName, ApplicationVersion));
+                    return (string.Format(ApplicationName));
+                }
+                return string.Empty;
             }
-            catch (Exception ex)
-            {
-                throw new Exception("Could not load general settings", ex);
-            }
-            return (generalSettings);
-        }
-
-        public static object GetEntryValue(string entryKey)
-        {
-            Entry entry = Get().jsonSettings.Entry.Where(p => p.Key.Equals(entryKey, StringComparison.InvariantCultureIgnoreCase)).FirstOrDefault();
-            if (entry == null)
-                return null;
-            string value = entry.Value.ToString();
-            string type = entry.Type;
-            var typedValue = Convert.ChangeType(value, (TypeCode)Enum.Parse(typeof(TypeCode), type));
-            return typedValue;
         }
 
         public static string ApplicationName
@@ -58,7 +51,7 @@ namespace BExIS.Utils.Config
             {
                 try
                 {
-                    return (GetEntryValue("applicationName").ToString());
+                    return GetValueByKey("applicationName").ToString();
                 }
                 catch { return (string.Empty); }
             }
@@ -76,29 +69,23 @@ namespace BExIS.Utils.Config
             }
         }
 
-        public static string ApplicationInfo
-        {
-            get
-            {
-                if (!string.IsNullOrWhiteSpace(ApplicationName))
-                {
-                    if (!string.IsNullOrWhiteSpace(ApplicationVersion))
-                        return (string.Format("{0} {1}", ApplicationName, ApplicationVersion));
-                    return (string.Format(ApplicationName));
-                }
-                return string.Empty;
-            }
-        }
-
-        public static string SystemEmail
+        public static string FAQ
         {
             get
             {
                 try
                 {
-                    return (GetEntryValue("systemEmail").ToString());
+                    return GetValueByKey("faq").ToString();
                 }
                 catch { return (string.Empty); }
+            }
+        }
+
+        public static JwtConfiguration JwtConfiguration
+        {
+            get
+            {
+                return JsonConvert.DeserializeObject<JwtConfiguration>(GetValueByKey("jwt").ToString());
             }
         }
 
@@ -108,7 +95,7 @@ namespace BExIS.Utils.Config
             {
                 try
                 {
-                    return (GetEntryValue("landingPage").ToString());
+                    return GetValueByKey("landingPage").ToString();
                 }
                 catch { return (string.Empty); }
             }
@@ -120,7 +107,7 @@ namespace BExIS.Utils.Config
             {
                 try
                 {
-                    return (GetEntryValue("landingPageForUsers").ToString());
+                    return GetValueByKey("landingPageForUsers").ToString();
                 }
                 catch { return (string.Empty); }
             }
@@ -132,7 +119,31 @@ namespace BExIS.Utils.Config
             {
                 try
                 {
-                    return (GetEntryValue("landingPageForUsersNoPermission").ToString());
+                    return GetValueByKey("landingPageForUsersNoPermission").ToString();
+                }
+                catch { return (string.Empty); }
+            }
+        }
+
+        public static string OwnerPartyRelationshipType
+        {
+            get
+            {
+                try
+                {
+                    return GetValueByKey("OwnerPartyRelationshipType").ToString();
+                }
+                catch { return (string.Empty); }
+            }
+        }
+
+        public static string PersonEmailAttributeName
+        {
+            get
+            {
+                try
+                {
+                    return GetValueByKey("personEmailAttributeName").ToString();
                 }
                 catch { return (string.Empty); }
             }
@@ -144,31 +155,19 @@ namespace BExIS.Utils.Config
             {
                 try
                 {
-                    return Convert.ToBoolean(GetEntryValue("sendExceptions"));
+                    return Convert.ToBoolean(GetValueByKey("sendExceptions"));
                 }
                 catch { return (false); }
             }
         }
 
-        public static bool UsePersonEmailAttributeName
+        public static string SystemEmail
         {
             get
             {
                 try
                 {
-                    return Convert.ToBoolean(GetEntryValue("usePersonEmailAttributeName"));
-                }
-                catch { return (false); }
-            }
-        }
-
-        public static string PersonEmailAttributeName
-        {
-            get
-            {
-                try
-                {
-                    return (GetEntryValue("personEmailAttributeName").ToString());
+                    return GetValueByKey("systemEmail").ToString();
                 }
                 catch { return (string.Empty); }
             }
@@ -180,35 +179,54 @@ namespace BExIS.Utils.Config
             {
                 try
                 {
-                    return Convert.ToBoolean(GetEntryValue("useMultiMediaModule"));
+                    return Convert.ToBoolean(GetValueByKey("useMultiMediaModule"));
                 }
                 catch { return (false); }
             }
         }
 
-        public static string OwnerPartyRelationshipType
+        public static bool UsePersonEmailAttributeName
         {
             get
             {
                 try
                 {
-                    return (GetEntryValue("OwnerPartyRelationshipType").ToString());
+                    return Convert.ToBoolean(GetValueByKey("usePersonEmailAttributeName"));
                 }
-                catch { return (string.Empty); }
+                catch { return (false); }
             }
         }
 
-        public static string FAQ
+        public static GeneralSettings Get()
         {
-            get
+            GeneralSettings generalSettings = null;
+            try
             {
-                try
-                {
-                    return (GetEntryValue("faq").ToString());
-                }
-                catch { return (string.Empty); }
+                generalSettings = IoCFactory.Container.Resolve<GeneralSettings>() as GeneralSettings;
             }
+            catch (Exception ex)
+            {
+                throw new Exception("Could not load general settings", ex);
+            }
+            return (generalSettings);
         }
 
+        public static object GetValueByKey(string entryKey)
+        {
+            Entry entry = Get().jsonSettings.Entries.Where(p => p.Key.Equals(entryKey, StringComparison.InvariantCultureIgnoreCase)).FirstOrDefault();
+            if (entry == null)
+                return null;
+            string value = entry.Value.ToString();
+            EntryType type = entry.Type;
+
+            switch (type)
+            {
+                case (EntryType.EntryList):
+                    return JsonConvert.DeserializeObject<List<Entry>>(value);
+
+                default:
+                    return Convert.ChangeType(value, (TypeCode)Enum.Parse(typeof(TypeCode), type.ToString()));
+            }
+        }
     }
 }

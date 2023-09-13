@@ -1,37 +1,41 @@
-<script>
+<script lang="ts">
+	import type { VariableModel } from '$models/DataDescription';
+	import Header from './ShowHeader.svelte';
+	import { Table } from '@bexis2/bexis2-core-ui';
+	import type { TableConfig } from '@bexis2/bexis2-core-ui';
+	import { writable } from 'svelte/store';
+
+	export let id; //enityid
+	export let title;
+	export let description;
+	export let structureId;
+	export let fileReaderExist; // if filereader not exist, need to set
+	export let readableFiles; // if file reader not exist, select from this files to generate a suggestion
+	export let hasData;
+
+	export let variables: VariableModel[] = [];
+
+	const variableStore = writable<VariableModel[]>([]);
+
+	variableStore.set(variables);
+
+	const variableConfig: TableConfig<VariableModel> = {
+		id: 'variables',
+		data: variableStore,
+		height: 225
+	};
 
 
-
-import {Button, Table, Column} from 'sveltestrap';
-
-import Header from './ShowHeader.svelte'
-
-
-export let id; //enityid
-export let title;
-export let description;
-export let structureId;
-
-export let variables =[];
 
 </script>
 
-<Header {id} {structureId} {title} {description} ></Header>
+<div class="flex-col space-y-2">
+{#if readableFiles}
+
+	<Header {id} {structureId} {title} {description} {fileReaderExist} {readableFiles} {hasData} on:error/>
+{/if}
 
 {#if variables}
-
-<Table rows={variables} let:row>
-  <Column header="Id" width="1rem">
-    {row.id}
-  </Column>
-  <Column header="Name">
-    {row.name}
-  </Column>
-  <Column header="Unit" >
-    {row.unit}
-  </Column>
-  <Column header="Datatype">
-    {row.dataType}
-  </Column>
-</Table>
+	<Table config={variableConfig} />
 {/if}
+</div>

@@ -1,23 +1,38 @@
-# BEXIS - Shell - UI
+# create-svelte
 
-The Svelte Project contains all the pages for the BEXIS 2 Shell area.
+Everything you need to build a Svelte project, powered by [`create-svelte`](https://github.com/sveltejs/kit/tree/master/packages/create-svelte).
 
-## Components & Pages
+## Creating a project
 
-In general, all BEXIS 2 modules should export pages as Svelte components, because all components should be used within the pages. This achieves the best possible compiler results.
+If you're seeing this, you've probably already done this step. Congrats!
 
-Since we continue to use MVC + C# in the backend, we have a layout file as the standard layout in which, for example, the navigation and the footer can be found.
+```bash
+# create a new project in the current directory
+npm create svelte@latest
 
-These are the only components that come directly from the shell project and can be loaded as components.
+# create a new project in my-app
+npm create svelte@latest my-app
+```
 
-The following components are accessible
+## Developing
 
+Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
 
-## Components
+```bash
+npm run dev
 
-- Menu.Svelte
+# or start the server and open the app in a new browser tab
+npm run dev -- --open
+```
 
-## Pages
+## Building
 
-- UITest.Svelte
+To create a production version of your app:
 
+```bash
+npm run build
+```
+
+You can preview the production build with `npm run preview`.
+
+> To deploy your app, you may need to install an [adapter](https://kit.svelte.dev/docs/adapters) for your target environment.

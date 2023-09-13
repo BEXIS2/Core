@@ -35,7 +35,7 @@
 			</dataRepos>
 		</broker>
 		<broker>
-			<name>DOI</name>
+			<name>DataCiteDOI</name>
 			<metadatastandard></metadatastandard>
 			<primarydataformat></primarydataformat>
 			<server></server>
@@ -44,8 +44,23 @@
 			<link></link>
 			<dataRepos>
 				<dataRepo>
-					<name>DataCite</name>
+					<name>DataCiteDOI</name>
 					<url></url>
+				</dataRepo>
+			</dataRepos>
+		</broker>
+		<broker>
+			<name>GBIF</name>
+			<metadatastandard></metadatastandard>
+			<primarydataformat>text/csv</primarydataformat>
+			<server></server>
+			<user></user>
+			<password></password>
+			<link></link>
+			<dataRepos>
+				<dataRepo>
+					<name>GBIF</name>
+					<url>https://www.gbif.org/</url>
 				</dataRepo>
 			</dataRepos>
 		</broker>

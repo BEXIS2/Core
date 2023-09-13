@@ -1,0 +1,15 @@
+diff --git a/node_modules/@sveltejs/kit/src/exports/vite/index.js b/node_modules/@sveltejs/kit/src/exports/vite/index.js
+index a26ca5b..6544f58 100644
+--- a/node_modules/@sveltejs/kit/src/exports/vite/index.js
++++ b/node_modules/@sveltejs/kit/src/exports/vite/index.js
+@@ -794,8 +794,8 @@ function kit({ svelte_config }) {
+ 					);
+ 
+ 					// avoid making the manifest available to users
+-					fs.unlinkSync(`${out}/client/${vite_config.build.manifest}`);
+-					fs.unlinkSync(`${out}/server/${vite_config.build.manifest}`);
++					//fs.unlinkSync(`${out}/client/${vite_config.build.manifest}`);
++					//fs.unlinkSync(`${out}/server/${vite_config.build.manifest}`);
+ 
+ 					if (kit.adapter) {
+ 						const { adapt } = await import('../../core/adapt/index.js');

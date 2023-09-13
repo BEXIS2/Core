@@ -1,26 +1,42 @@
 <script>
-   import { Input, Label, FormGroup} from 'sveltestrap';	
+	import { TextInput, TextArea, Checkbox, DateInput, NumberInput } from '@bexis2/bexis2-core-ui';
 
-   export let type;
-   export let value;
-   export let label;
-   export let valid;
-   export let invalid;
-   export let feedback;
+	export let type;
+	export let value;
+	export let label;
+	export let valid;
+	export let invalid;
+	export let feedback;
+	export let required;
 </script>
 
-<FormGroup>
- <Label for="{label}">{label}</Label>
-{#if type=='Boolean'}
-    <Input {label} type="checkbox" bind:checked={value} {valid} {invalid} {feedback}/> 
-{:else if type=='String'}
-    <Input id={label} type="text" bind:value={value} {valid} {invalid} {feedback}  on:input/>
-{:else if type=='Text'}
-    <Input id={label} type="textarea" bind:value={value} {valid} {invalid} {feedback}  on:input/>
-{:else if type=='Int64' || type=='Int32'}
-    <Input type="number" bind:value={value} {valid} {invalid} {feedback} on:input/>
-{:else if type=='DateTime'} 
-    <Input type="date" bind:value={value} {valid} {invalid} {feedback} on:input/>
+{#if type == 'Boolean'}
+	<Checkbox
+		id={label}
+		{label}
+		bind:checked={value}
+		{required}
+		{valid}
+		{invalid}
+		{feedback}
+		on:input
+	/>
+{:else if type == 'String'}
+	<TextInput id={label} {label} bind:value {valid} {invalid} {feedback} {required} on:input />
+{:else if type == 'Text'}
+	<TextArea
+		id={label}
+		{label}
+		type="textarea"
+		bind:value
+		{valid}
+		{invalid}
+		{feedback}
+		{required}
+		on:input
+	/>
+{:else if type == 'Int64' || type == 'Int32'}
+	<NumberInput id={label} {label} bind:value {valid} {invalid} {feedback} {required} on:input />
+{:else if type == 'DateTime'}
+	<DateInput id={label} {label} bind:value {valid} {invalid} {feedback} {required} on:input />
 {/if}
-
-</FormGroup>

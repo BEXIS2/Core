@@ -1,37 +1,27 @@
 <script>
- import {Row, Col, Button, Input} from 'sveltestrap';
+	import { TextInput } from '@bexis2/bexis2-core-ui';
+	import Fa from 'svelte-fa/src/fa.svelte';
+	import { faEye } from '@fortawesome/free-solid-svg-icons';
 
- export let id;
- export let version; 
- export let title = "";
+	export let id;
+	export let version;
+	export let title = '';
+</script>
 
- </script>
- <!-- Header -->
- <Row>
-  <Col class="col-sm-2">
-   <div class="title-container">
-    <b>Title</b>
-  </div>
-   </Col>
-  <Col class="col-sm-4">
-   <Input value="{title}" />
-  </Col>
-  <Col class="col-sm-1 text-end">
-
-  </Col>
-  <Col class="col-sm-2 text-end">
-
-  </Col>
- </Row>
-
-
- <style>
-  .title-container
-  {
-    padding: 0 2rem 1rem 1rem;
-  }
- </style>
- 
- 
- 
- 
+<!-- Header -->
+ <div class="flex px-5 m-2 gap-5">
+	<div class="flex-none w-48 ">
+			<!-- <h4 class="h4">Id | Title</h4> -->
+	</div>
+	<div class="w-64">
+		<!-- <b class="b">{id} | {title}</b> -->
+	</div>
+	<div class="grow text-right bottom-10">
+		<button
+			class="btn variant-ringed-secondary"
+			on:click={() => window.open('/ddm/data/Showdata?id=' + id)}
+		>
+			<Fa icon={faEye} /></button
+		>
+	</div>
+</div>

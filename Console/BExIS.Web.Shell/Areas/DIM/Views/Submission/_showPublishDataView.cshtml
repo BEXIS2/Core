@@ -45,17 +45,26 @@
                             data: JSON.stringify(jsonObject),
                             success: function(data) {
 
-                                console.log(data);
+                                console.log("data",data);
 
                                 var isMetadataConvertable = data.isMetadataConvertable;
                                 var metadataValidMessage = data.metadataValidMessage;
                                 var isDataConvertable = data.isDataConvertable;
                                 var exist = data.Exist;
+                                var isConverterValid = data.isValid;
+                                var errors = data.errors;
 
+                                // reset message container
+                                $("#requirementsContainer").text("");
+
+                                if (!isConverterValid) {
+                                    console.log(errors);
+                                }
 
                                 if (isMetadataConvertable &&
                                     typeof metadataValidMessage === "undefined" &&
-                                    isDataConvertable) {
+                                    isDataConvertable &&
+                                    isConverterValid) {
 
                                     console.log("ok");
                                     console.log(isMetadataConvertable);
@@ -67,7 +76,8 @@
 
                                 } else if (isMetadataConvertable &&
                                     typeof metadataValidMessage !== "undefined" &&
-                                    isDataConvertable) {
+                                    isDataConvertable &&
+                                    isConverterValid) {
 
                                     if (typeof metadataValidMessage !== "undefined") {
                                         //alert(metadataValidMessage);
@@ -89,15 +99,33 @@
                                             message += "Metadata is not convertable. ";
                                         }
 
-                                        if (typeof metadataValidMessage !== "undefined") {
-                                            message += metadataValidMessage;
-                                        }
+                                        //if (typeof metadataValidMessage !== "undefined") {
+                                        //    message += metadataValidMessage;
+                                        //}
 
                                         if (!isDataConvertable) {
                                             message += "Data is not convertable. ";
                                         }
 
-                                        $("#requirementsContainer").text(message);
+                                        if (!isConverterValid) {
+
+
+                                            $("#requirementsContainer").text("");
+
+                                            var parent = document.querySelector("#requirementsContainer");
+                                            var ul = document.createElement('ul');
+
+                                            for (i = 0; i < errors.length; i++) {
+
+                                                var li = document.createElement('li');
+                                                li.appendChild(document.createTextNode(errors[i]));
+                                                ul.appendChild(li);
+
+                                                parent.appendChild(ul);
+                                            }
+                                        }
+
+                                        //$("#requirementsContainer").text(message);
                                         $("#requirementsContainer").css("color", "#f24c24");
                                     }
 
@@ -106,7 +134,7 @@
 
                             },
                             failure: function(errMsg) {
-                                alert(errMsg);
+                                //alert(errMsg);
                                 $("#preloader").removePreloader();
 
                             }
@@ -177,6 +205,7 @@
 
                 } else {
                     hasSuccessed = true;
+                    $("#requirementsContainer").html("");
                 }
                
                 //reload site
@@ -184,7 +213,7 @@
                     { datasetid: id },
                     function(site) {
 
-                        //alert("test");
+                        //alert(htmltext);
                         $("#publishContentContainer").replaceWith(site);
                         $("#requirementsContainer").html(htmltext);
 
@@ -204,49 +233,50 @@
     <div id="publishingOptionsContainer" style="text-align: -webkit-left;">
 
 
-    @if (Model.EditRights && Model.MetadataIsValid)
-    {
+        @if (Model.EditRights && Model.MetadataIsValid)
+        {
 
-        <table>
-            <tr>
-                <td style="width: 100px;">
-                    @(Html.Telerik().DropDownList()
+            <table>
+                <tr>
+                    <td style="width: 100px;">
+                        @(Html.Telerik().DropDownList()
                       .Placeholder("Select")
                       .Name("SelectDataRepository")
                       .HtmlAttributes(new { title = "Select a repository for publishing this dataset" })
                       .ClientEvents(events => events.OnChange("onSelectDataRepositoryDropDownChange"))
                       .BindTo(new SelectList(datarepolist)))
-                </td>
+                    </td>
 
-                <td style="width: 100px;">
-                    <button id="submitPublishBt" class="bx-button small function bx-disabled" onClick="onSubmitPublishBtClick(this)" disabled="disabled" title="Prepare Publication Package (NOTE: there is currently no direct submission in place)">Publish</button>
-                </td>
-
-                <td style="text-align: right">
-                    <span id="requirementsContainer" style="color:#f24c24">
-
-                    </span>
-                    <div id="preloader">
-
-                    </div>
-                </td>
-            </tr>
-        </table>
-    }
-    else
-    {
-        if (Model.MetadataIsValid == false)
-        {
-            <table>
-                <tr>
                     <td style="width: 100px;">
-                        It is not possible to publish the current version because the metadata is not valid. Only when the metadata is valid, publishing options are available.
+                        <button id="submitPublishBt" class="bx-button small function bx-disabled" onClick="onSubmitPublishBtClick(this)" disabled="disabled" title="Prepare Publication Package (NOTE: there is currently no direct submission in place)">Publish</button>
+                    </td>
+
+                    <td style="text-align: right">
+                        <span id="requirementsContainer" style="color:#f24c24">
+
+                        </span>
+                        <div id="preloader">
+
+                        </div>
                     </td>
                 </tr>
             </table>
         }
-    }
-        </div>
+        else
+        {
+            if (Model.MetadataIsValid == false)
+            {
+                <table>
+                    <tr>
+                        <td style="width: 100px;">
+                            It is not possible to publish the current version because the metadata is not valid. Only when the metadata is valid, publishing options are available.
+                        </td>
+                    </tr>
+                </table>
+            }
+
+        }
+    </div>
 
     <div>
         <table>

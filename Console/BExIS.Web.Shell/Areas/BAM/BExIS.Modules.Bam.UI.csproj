@@ -94,8 +94,8 @@
       <Private>True</Private>
       <Private>True</Private>
     </Reference>
-    <Reference Include="System.Runtime.CompilerServices.Unsafe, Version=4.0.4.1, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\..\..\..\packages\System.Runtime.CompilerServices.Unsafe.4.5.3\lib\net461\System.Runtime.CompilerServices.Unsafe.dll</HintPath>
+    <Reference Include="System.Runtime.CompilerServices.Unsafe, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\..\..\..\packages\System.Runtime.CompilerServices.Unsafe.6.0.0\lib\net461\System.Runtime.CompilerServices.Unsafe.dll</HintPath>
     </Reference>
     <Reference Include="System.Web.ApplicationServices" />
     <Reference Include="System.Web.DynamicData" />
@@ -143,17 +143,28 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Controllers\API\PartiesController.cs" />
+    <Compile Include="Controllers\API\PartyCustomAttributesController.cs" />
+    <Compile Include="Controllers\API\PartyRelationshipsController.cs" />
+    <Compile Include="Controllers\API\PartyRelationshipTypesController.cs" />
+    <Compile Include="Controllers\API\PartyTypesController.cs" />
     <Compile Include="Controllers\HelpController.cs" />
     <Compile Include="Controllers\PartyController.cs" />
     <Compile Include="Controllers\PartyServiceController.cs" />
     <Compile Include="Helpers\BAMSeedDataGenerator.cs" />
     <Compile Include="Helpers\Helper.cs" />
     <Compile Include="Models\AddRelationshipModel.cs" />
+    <Compile Include="Models\PartyCustomAttributeModels.cs" />
     <Compile Include="Models\PartyCustomAttributeValueModel.cs" />
     <Compile Include="Models\PartyGridViewModel.cs" />
     <Compile Include="Models\PartyModel.cs" />
+    <Compile Include="Models\PartyModels.cs" />
+    <Compile Include="Models\PartyRelationshipModels.cs" />
+    <Compile Include="Models\PartyRelationshipTypeModels.cs" />
+    <Compile Include="Models\PartyRelationshipTypePairModels.cs" />
     <Compile Include="Models\PartyTypeAccountModel.cs" />
     <Compile Include="BamModule.cs" />
+    <Compile Include="Models\PartyTypeModels.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -260,6 +271,10 @@
     <ProjectReference Include="..\..\..\..\Components\AAA\BExIS.Security.Services\BExIS.Security.Services.csproj">
       <Project>{681c8bc4-55f0-4f43-a685-90e246a88cb1}</Project>
       <Name>BExIS.Security.Services</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\..\Components\App\BExIS.App.Bootstrap\BExIS.App.Bootstrap.csproj">
+      <Project>{7D7FBF8E-37D7-4A4C-B40E-3F267E9B9760}</Project>
+      <Name>BExIS.App.Bootstrap</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\..\..\Components\DLM\BExIS.Dlm.Entities\BExIS.Dlm.Entities.csproj">
       <Project>{b4e7b1bf-01b4-40af-8d19-b8f362167261}</Project>

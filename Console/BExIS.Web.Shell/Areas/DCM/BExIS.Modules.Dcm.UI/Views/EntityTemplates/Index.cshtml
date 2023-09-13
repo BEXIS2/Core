@@ -1,15 +1,9 @@
 ﻿@{
-    ViewBag.Title = "Edit";
+    ViewBag.Title = "EntityTemplates";
     Layout = "~/Themes/Default/Layouts/_svelteLayout.cshtml";
 
 }
 
-<link href="~/Areas/DCM/BExIS.Modules.DCM.UI/Scripts/svelte/assets/entities.css" rel="stylesheet">
-
-@section scripts
-{
-   <script src="~/Areas/DCM/BExIS.Modules.DCM.UI/Scripts/svelte/entities.js"></script>
-}
-
-
-<div id="entities"></div>
+<div id="entitytemplates">
+    @Html.Partial("_sveltePage")
+</div>

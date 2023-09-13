@@ -555,6 +555,7 @@
                                 datasetManager = new DatasetManager();
                                 foreach (Dataset d in dataStructure.Datasets)
                                 {
+
                                     if (datasetManager.RowAny(d.Id))
                                     {
                                         this.inUse = true;

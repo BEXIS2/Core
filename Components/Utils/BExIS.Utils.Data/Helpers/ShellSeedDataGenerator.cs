@@ -22,6 +22,7 @@ namespace BExIS.Utils.Data.Helpers
                 var o3 = operationManager.Find("Shell", "Error", "*") ?? operationManager.Create("Shell", "Error", "*");
                 var o4 = operationManager.Find("Shell", "TermsAndConditions", "*") ?? operationManager.Create("Shell", "TermsAndConditions", "*");
                 var o5 = operationManager.Find("Shell", "PrivacyPolicy", "*") ?? operationManager.Create("Shell", "PrivacyPolicy", "*");
+                var o99 = operationManager.Find("Shell", "Header", "*") ?? operationManager.Create("Shell", "Header", "*");
                 var o6 = operationManager.Find("Shell", "Footer", "*") ?? operationManager.Create("Shell", "Footer", "*");
                 var o7 = operationManager.Find("Shell", "Ldap", "*") ?? operationManager.Create("Shell", "Ldap", "*");
                 var o8 = operationManager.Find("Shell", "Help", "*") ?? operationManager.Create("Shell", "Help", "*");
@@ -33,9 +34,9 @@ namespace BExIS.Utils.Data.Helpers
 
                 var o12 = operationManager.Find("Shell", "Settings", "*") ?? operationManager.Create("Shell", "Settings", "*", settings);
 
-                if (!versionManager.Exists("Shell", "2.14.5"))
+                if (!versionManager.Exists("Shell", "2.18"))
                 {
-                    versionManager.Create("Shell", "2.14.5");
+                    versionManager.Create("Shell", "2.18");
                 }
             }
         }

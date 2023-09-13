@@ -64,15 +64,9 @@
     <Compile Include="Controllers\Hooks\DataDescriptionController.cs" />
     <Compile Include="Controllers\Hooks\AttachmentUploadController.cs" />
     <Compile Include="Controllers\Hooks\FileUploadController.cs" />
+    <Compile Include="Controllers\Hooks\SubmitController.cs" />
     <Compile Include="Controllers\Legacy\AttachmentsController.cs" />
     <Compile Include="Controllers\Legacy\CreateDatasetController.cs" />
-    <Compile Include="Controllers\Legacy\EasyUploadController.cs" />
-    <Compile Include="Controllers\Legacy\EasyUploadSelectAFileController.cs" />
-    <Compile Include="Controllers\Legacy\EasyUploadSelectAreasController.cs" />
-    <Compile Include="Controllers\Legacy\EasyUploadSheetDataStructureController.cs" />
-    <Compile Include="Controllers\Legacy\EasyUploadSheetSelectMetaDataController.cs" />
-    <Compile Include="Controllers\Legacy\EasyUploadSummaryController.cs" />
-    <Compile Include="Controllers\Legacy\EasyUploadVerificationController.cs" />
     <Compile Include="Controllers\Hooks\EntityReferenceController.cs" />
     <Compile Include="Controllers\FormController.cs" />
     <Compile Include="Controllers\Legacy\HelpController.cs" />
@@ -83,15 +77,9 @@
     <Compile Include="Controllers\Legacy\ImportMetadataStructureSummaryController.cs" />
     <Compile Include="Controllers\Legacy\ManageMetadataStructureController.cs" />
     <Compile Include="Controllers\Legacy\PushController.cs" />
-    <Compile Include="Controllers\Legacy\SubmitController.cs" />
-    <Compile Include="Controllers\Legacy\SubmitGetFileInformationController.cs" />
-    <Compile Include="Controllers\Legacy\SubmitSelectAFileController.cs" />
-    <Compile Include="Controllers\Legacy\SubmitSpecifyDatasetController.cs" />
-    <Compile Include="Controllers\Legacy\SubmitSummaryController.cs" />
-    <Compile Include="Controllers\Legacy\SubmitValidationController.cs" />
+    <Compile Include="Controllers\Legacy\OldSubmitController.cs" />
     <Compile Include="Controllers\Hooks\MetadataController.cs" />
-    <Compile Include="Controllers\LinkController.cs" />
-    <Compile Include="Controllers\StructureSuggestionController.cs" />
+    <Compile Include="Controllers\API\LinkController.cs" />
     <Compile Include="Controllers\Views\MessagesController.cs" />
     <Compile Include="Controllers\TestController.cs" />
     <Compile Include="Controllers\Hooks\ValidationController.cs" />
@@ -99,12 +87,14 @@
     <Compile Include="DcmModule.cs" />
     <Compile Include="FileReaderInfoController.cs" />
     <Compile Include="Helpers\API\DataApiHelper.cs" />
+    <Compile Include="Helpers\EditHelper.cs" />
     <Compile Include="Helpers\EntityTemplateHelper.cs" />
     <Compile Include="Helpers\DataASyncUploadHelper.cs" />
     <Compile Include="Helpers\DcmSeedDataGenerator.cs" />
     <Compile Include="Helpers\EasyUploadSuggestion.cs" />
     <Compile Include="Helpers\EntityReferenceHelper.cs" />
     <Compile Include="Helpers\FormHelper.cs" />
+    <Compile Include="Helpers\SubmitHelper.cs" />
     <Compile Include="Helpers\SystemMetadataHelper.cs" />
     <Compile Include="Helpers\UploadUIHelper.cs" />
     <Compile Include="Hooks\AttachmentViewHook.cs" />
@@ -132,6 +122,8 @@
     <Compile Include="Models\EasyUploadSummaryModel.cs" />
     <Compile Include="Models\Edit\DataDescriptionModel.cs" />
     <Compile Include="Models\Edit\EditModel.cs" />
+    <Compile Include="Models\Edit\FileUploadModel.cs" />
+    <Compile Include="Models\Edit\SubmitModel.cs" />
     <Compile Include="Models\EntityReference\ReferenceModels.cs" />
     <Compile Include="Models\EntityTemplates\EntityTemplateModels.cs" />
     <Compile Include="Models\FileInfoModel.cs" />
@@ -147,6 +139,8 @@
     <Compile Include="Models\Metadata\MetadataCompoundAttributeModel.cs" />
     <Compile Include="Models\Metadata\MetadataInstanceModel.cs" />
     <Compile Include="Models\Metadata\MetadataPackageModel.cs" />
+    <Compile Include="Models\Metadata\MetadataParameterModel.cs" />
+    <Compile Include="Models\Metadata\UIComponentModel.cs" />
     <Compile Include="Models\PrimaryKeyViewModel.cs" />
     <Compile Include="Models\Push\SendBigFilesToServerModel.cs" />
     <Compile Include="Models\SelectAreasModel.cs" />
@@ -154,7 +148,6 @@
     <Compile Include="Models\SelectMetaDataModel.cs" />
     <Compile Include="Models\SelectSheetFormatModel.cs" />
     <Compile Include="Models\SelectVerificationModel.cs" />
-    <Compile Include="Models\StructureSuggestion\StructureSuggestionModel.cs" />
     <Compile Include="Models\SummaryModel.cs" />
     <Compile Include="Models\TestModel.cs" />
     <Compile Include="Models\UploadWizardParameters.cs" />
@@ -369,6 +362,7 @@
     <Content Include="Content\bootstrap-theme.min.css" />
     <Content Include="Content\bootstrap.css" />
     <Content Include="Content\bootstrap.min.css" />
+    <Content Include="Content\theme-skeleton.css" />
     <Content Include="Dcm.Manifest.xml">
       <SubType>Designer</SubType>
     </Content>
@@ -441,49 +435,6 @@
     <Content Include="Scripts\respond.matchmedia.addListener.js" />
     <Content Include="Scripts\respond.matchmedia.addListener.min.js" />
     <Content Include="Scripts\respond.min.js" />
-    <Content Include="Scripts\svelte\assets\create.css" />
-    <Content Include="Scripts\svelte\assets\edit.css" />
-    <Content Include="Scripts\svelte\assets\entities.css" />
-    <Content Include="Scripts\svelte\assets\hooks.js" />
-    <Content Include="Scripts\svelte\assets\index.js" />
-    <Content Include="Scripts\svelte\assets\index2.js" />
-    <Content Include="Scripts\svelte\assets\structuresuggestion.css" />
-    <Content Include="Scripts\svelte\build\about.html" />
-    <Content Include="Scripts\svelte\build\create.html" />
-    <Content Include="Scripts\svelte\build\edit.html" />
-    <Content Include="Scripts\svelte\build\favicon.png" />
-    <Content Include="Scripts\svelte\build\index.html" />
-    <Content Include="Scripts\svelte\build\_app\immutable\assets\_page-a732ef6e.css" />
-    <Content Include="Scripts\svelte\build\_app\immutable\chunks\0-23af8c74.js" />
-    <Content Include="Scripts\svelte\build\_app\immutable\chunks\1-5dc65ce2.js" />
-    <Content Include="Scripts\svelte\build\_app\immutable\chunks\2-464fe8b8.js" />
-    <Content Include="Scripts\svelte\build\_app\immutable\chunks\3-61a8d299.js" />
-    <Content Include="Scripts\svelte\build\_app\immutable\chunks\4-01d5bb01.js" />
-    <Content Include="Scripts\svelte\build\_app\immutable\chunks\5-67e9e456.js" />
-    <Content Include="Scripts\svelte\build\_app\immutable\chunks\index-c681bbd6.js" />
-    <Content Include="Scripts\svelte\build\_app\immutable\chunks\index-dee787e3.js" />
-    <Content Include="Scripts\svelte\build\_app\immutable\chunks\singletons-5eb4422a.js" />
-    <Content Include="Scripts\svelte\build\_app\immutable\chunks\_layout-7e4796dc.js" />
-    <Content Include="Scripts\svelte\build\_app\immutable\components\error.svelte-c1ca6a02.js" />
-    <Content Include="Scripts\svelte\build\_app\immutable\components\pages\about\_page.svelte-0027327e.js" />
-    <Content Include="Scripts\svelte\build\_app\immutable\components\pages\create\_page.svelte-2b7e1fbb.js" />
-    <Content Include="Scripts\svelte\build\_app\immutable\components\pages\edit\_page.svelte-45f0c974.js" />
-    <Content Include="Scripts\svelte\build\_app\immutable\components\pages\_layout.svelte-569b7d46.js" />
-    <Content Include="Scripts\svelte\build\_app\immutable\components\pages\_page.svelte-1b58d893.js" />
-    <Content Include="Scripts\svelte\build\_app\immutable\modules\pages\_layout.js-bf954bd4.js" />
-    <Content Include="Scripts\svelte\build\_app\immutable\start-fc1496a1.js" />
-    <Content Include="Scripts\svelte\create.js" />
-    <Content Include="Scripts\svelte\edit.js" />
-    <Content Include="Scripts\svelte\entities.js" />
-    <Content Include="Scripts\svelte\entries\fallbacks\error.svelte.js" />
-    <Content Include="Scripts\svelte\entries\pages\about\_page.svelte.js" />
-    <Content Include="Scripts\svelte\entries\pages\create\_page.svelte.js" />
-    <Content Include="Scripts\svelte\entries\pages\edit\_page.js" />
-    <Content Include="Scripts\svelte\entries\pages\edit\_page.svelte.js" />
-    <Content Include="Scripts\svelte\entries\pages\_layout.svelte.js" />
-    <Content Include="Scripts\svelte\entries\pages\_page.svelte.js" />
-    <Content Include="Scripts\svelte\index.js" />
-    <Content Include="Scripts\svelte\structuresuggestion.js" />
     <Content Include="Views\Help\Informations.xml" />
     <Content Include="Views\Web.config" />
     <Content Include="Views\_ViewStart.cshtml" />
@@ -562,9 +513,13 @@
     <Content Include="Scripts\jquery-2.1.4.min.map" />
     <Content Include="Views\EntityTemplates\Index.cshtml" />
     <Content Include="Views\Create\Index.cshtml" />
-    <Content Include="Views\StructureSuggestion\Index.cshtml" />
-    <Content Include="Scripts\svelte\build\vite-manifest.json" />
-    <Content Include="Scripts\svelte\build\_app\version.json" />
+    <Content Include="Views\Form\_bool.cshtml" />
+    <Content Include="Views\Form\_date.cshtml" />
+    <Content Include="Views\Form\_displayonly.cshtml" />
+    <Content Include="Views\Form\_integer.cshtml" />
+    <Content Include="Views\Form\_list.cshtml" />
+    <Content Include="Views\Form\_metadataParameterView.cshtml" />
+    <Content Include="Views\Form\_number.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -652,9 +607,6 @@
     </Reference>
     <Reference Include="System.Data" />
     <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="System.Diagnostics.DiagnosticSource, Version=4.0.1.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
-      <HintPath>..\..\..\..\..\packages\System.Diagnostics.DiagnosticSource.4.3.0\lib\net46\System.Diagnostics.DiagnosticSource.dll</HintPath>
-    </Reference>
     <Reference Include="System.Diagnostics.Tracing, Version=4.1.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>..\..\..\..\..\packages\System.Diagnostics.Tracing.4.3.0\lib\net462\System.Diagnostics.Tracing.dll</HintPath>
       <Private>True</Private>
@@ -701,8 +653,8 @@
       <Private>True</Private>
       <Private>True</Private>
     </Reference>
-    <Reference Include="System.Net.Http, Version=4.1.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\..\..\..\..\packages\System.Net.Http.4.3.0\lib\net46\System.Net.Http.dll</HintPath>
+    <Reference Include="System.Net.Http, Version=4.1.1.3, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\..\..\..\..\packages\System.Net.Http.4.3.4\lib\net46\System.Net.Http.dll</HintPath>
       <Private>True</Private>
       <Private>True</Private>
     </Reference>

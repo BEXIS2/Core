@@ -5,7 +5,7 @@
   </Description>
   <Assemblies>
     <Assembly fullName="BExIS.Ddm.Api" role="" />
-    <Assembly fullName="BExIS.Ddm.Model" role="" />
+    <!--<Assembly fullName="BExIS.Ddm.Model" role="" />-->
     <Assembly fullName="BExIS.Ddm.Providers.LuceneProvider" role="" />
   </Assemblies>
   <Dependencies>
@@ -28,7 +28,7 @@
             extends="./menubarRoot" />-->
 
     <Export tag="menubar" id="dashboard" order="1"
-        title="Dashboard" description="Quick Access to User Area" icon=""
+        title="My Data" description="Quick Access to User Area" icon=""
         controller="dashboard" action="index"
         extends="./menubarRoot" />
 

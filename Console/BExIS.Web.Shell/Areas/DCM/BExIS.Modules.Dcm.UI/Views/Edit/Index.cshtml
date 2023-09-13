@@ -2,31 +2,20 @@
     ViewBag.Title = "Edit";
     Layout = "~/Themes/Default/Layouts/_svelteLayout.cshtml";
 
-}
-
-<link href="~/Areas/DCM/BExIS.Modules.DCM.UI/Scripts/svelte/assets/edit.css" rel="stylesheet">
-
-
-@section scripts
-{
-    <script type="module" src="~/Areas/DCM/BExIS.Modules.DCM.UI/Scripts/svelte/edit.js"></script>
-
-}
-
-@{
     long id = 0;
     long version = 0;
 
-    if (ViewBag.id != null)
-    {
-        id = (long)ViewBag.id;
-    }
+    if (ViewData["id"] != null) { id = Convert.ToInt64(ViewData["id"]); }
 
-    if (ViewBag.version != null)
-    {
-        version = (long)ViewBag.version;
-    }
+    if (ViewData["version"] != null) { version = Convert.ToInt64(ViewData["version"]); }
 
 }
 
-<div id="edit" dataset="@id" version="@version"> </div>
+<script>
+    console.log("location in dcm", location);
+</script>
+
+<div id="edit" dataset="@id" version="@version">
+
+    @Html.Partial("_sveltePage")
+</div>

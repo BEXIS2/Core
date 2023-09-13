@@ -1,25 +1,22 @@
-<script lang="ts">
- import {ListView, FileUploader, type user, type FileUploaderModel} from '@bexis2/BEXIS2-core-ui/src/lib/index'
+<script>
+	import { Page } from '@bexis2/bexis2-core-ui';
 
-let u:user={
- name:"david"
-}
-
-let model:FileUploaderModel={
- accept:[""],
- descriptionType:1,
- existingFiles:[],
- lastModification: new Date(),
- maxSize:0,
- multiple:true
-}
-
+	// hide context menu
+	window.addEventListener(
+		'contextmenu',
+		function (e) {
+			// do something here...
+			e.preventDefault();
+		},
+		false
+	);
 </script>
 
-<h1>Welcome to SvelteKit {u.name}</h1>
-
-<ListView></ListView>
-<FileUploader data = {model}  />
-
-<h1>Hello and welcome to my site!</h1>
-<a href="/about">About my site</a>
+<Page title="Data Collection Module">
+	<div class="grid grid-flow-col gap-10">
+		<a class="btn variant-filled-secondary" href="./entitytemplates">entitytemplate</a>
+		<a class="btn variant-filled-secondary" href="./create">create</a>
+		<a class="btn variant-filled-secondary" href="./edit">edit</a>
+		<a class="btn variant-filled-secondary" href="./view">view</a>
+	</div>
+</Page>

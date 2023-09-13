@@ -2,7 +2,17 @@
   "id": "shell",
   "name": "...",
   "description": "The default landing page for the search in the form of <moduleId>, <controller>, <action>. The application's home page will redirect here.    The module must be avilable and active, otherwise another redirect happens to the home page, which causes a loop.     The designated action must be set to public in the feature permission mgmt, otherwise the request will be redirected to the login page.     The 'type' attribute must be compatible with the System.TypeCode case-sensitive.",
-  "entry": [
+  "jwt": {
+    "validateAudience": false,
+    "validateIssuer": false,
+    "validAudience": "http://localhost:3000",
+    "validIssuer": "https://localhost:7041",
+    "issuerSigningKey": "JWTAuthenticationHIGHsecuredPasswordVVVp1OH7Xzyr",
+    "requireExpirationTime": false,
+    "validateLifetime": false,
+    "validLifetime": 1
+  },
+  "entries": [
     {
       "key": "applicationName",
       "value": "AppLocal",
@@ -11,7 +21,7 @@
     },
     {
       "key": "landingPage",
-      "value": "ddm, PublicSearch, index",
+      "value": "ddm, publicsearch, index",
       "type": "String",
       "description": "user is not logging in -> app goes to"
     },
@@ -54,13 +64,13 @@
     {
       "key": "accountPartyTypes",
       "value": "personMember:organizationEmployment-projectMember-consortiaMember,personGuest",
-      "type": "string",
+      "type": "String",
       "description": "Example: PartyType1:PartyRelationshipTypeTitle1-PartyRelationshipTypeTitle2,PartyType2,PartyType3:PartyRelationshipTypeTitle1. Define the allow party type for account registeration and their relationship type. each party type could have zero or multi allowed relationship( they should be available in the database). if the relationship type has one 'partytypepair' -> load the allowed target of this 'partytypepair'         if  the relationship type has more than one 'partytypepair' -> load the allowed target of the 'partytypepair' which has 'partyrelationshiptypedefault==true'"
     },
     {
       "key": "ownerPartyRelationshipType",
       "value": "Owner",
-      "type": "string",
+      "type": "String",
       "description": ""
     },
     {

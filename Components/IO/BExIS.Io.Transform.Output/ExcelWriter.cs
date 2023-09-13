@@ -1279,7 +1279,7 @@ namespace BExIS.IO.Transform.Output
         /// <param name="row"></param>
         /// <param name="rowIndex"></param>
         /// <returns></returns>
-        protected override bool AddRow(DataRow row, long rowIndex)
+        protected override bool AddRow(DataRow row, long rowIndex, bool idInclude = false)
         {
             // column count
             int colCount = row.Table.Columns.Count;

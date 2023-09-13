@@ -1,4 +1,6 @@
 ﻿using BExIS.Security.Entities.Subjects;
+using Newtonsoft.Json;
+using System;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Web.Mvc;
@@ -76,6 +78,33 @@ namespace BExIS.Modules.Sam.UI.Models
 
     public class ReadGroupModel
     {
+        [JsonProperty("id")]
+        public long Id { get; set; }
+
+        [JsonProperty("name")]
+        public string Name { get; set; }
+
+        [JsonProperty("description")]
+        public string Description { get; set; }
+
+        [JsonProperty("creationDate")]
+        public DateTimeOffset CreationDate { get; set; }
+
+        [JsonProperty("modificationDate")]
+        public DateTimeOffset ModificationDate { get; set; }
+
+        public static ReadGroupModel Convert(Group group)
+        {
+            return new ReadGroupModel()
+            {
+                Id = group.Id,
+                Name = group.Name,
+                Description = group.Description,
+                CreationDate = DateTimeOffset.Now,
+                ModificationDate = DateTimeOffset.Now
+            };
+        }
+
     }
 
     public class UpdateGroupModel

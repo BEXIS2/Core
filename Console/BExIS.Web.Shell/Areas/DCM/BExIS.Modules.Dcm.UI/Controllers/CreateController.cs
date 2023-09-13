@@ -34,10 +34,10 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         // GET: Create
         public ActionResult Index()
         {
-            string pageId = "create";
+            string module = "DCM";
 
-            ViewData["PageId"] = pageId;
-            ViewData["PageScript"] = SvelteHelper.GetPageScript("DCM", pageId);
+            ViewData["app"] = SvelteHelper.GetApp(module);
+            ViewData["start"] = SvelteHelper.GetStart(module);
 
             return View();
         }
@@ -152,6 +152,11 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
                 // create empty Dataset
                 ResearchPlan rp = rpm.Repo.Get(1); // not used but needed
+
+                // check if something missing
+                if(rp == null) throw new ArgumentNullException(nameof(rp));
+                if(metadataStructure == null) throw new ArgumentNullException(nameof(metadataStructure));
+                if(entityTemplate == null) throw new ArgumentNullException(nameof(entityTemplate));
 
                 var ds = dm.CreateEmptyDataset(dataStructure, rp, metadataStructure, entityTemplate);
                 datasetId = ds.Id;

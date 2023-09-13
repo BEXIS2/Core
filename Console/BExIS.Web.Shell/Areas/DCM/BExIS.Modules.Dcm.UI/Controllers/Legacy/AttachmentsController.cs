@@ -1,7 +1,9 @@
 ﻿using BExIS.App.Bootstrap.Attributes;
+using BExIS.Dim.Entities.Mapping;
 using BExIS.Dlm.Entities.Data;
 using BExIS.Dlm.Services.Data;
 using BExIS.IO;
+using BExIS.Modules.Dcm.UI.Helpers;
 using BExIS.Modules.Dcm.UI.Models.Attachments;
 using BExIS.Security.Entities.Authorization;
 using BExIS.Security.Services.Authorization;
@@ -15,6 +17,7 @@ using System.IO;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
+using System.Xml;
 using Vaiona.Entities.Common;
 using Vaiona.Utils.Cfg;
 using Vaiona.Web.Extensions;
@@ -90,29 +93,60 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 var filePath = Path.Combine(AppConfiguration.DataPath, "Datasets", datasetId.ToString(), "Attachments", fileName);
                 FileHelper.Delete(filePath);
                 var dataset = dm.GetDataset(datasetId);
-                var datasetVersion = dm.GetDatasetLatestVersion(dataset);
-                var contentDescriptor = datasetVersion.ContentDescriptors.FirstOrDefault(item => item.Name == fileName);
-                if (contentDescriptor == null)
-                    throw new Exception("There is not any content descriptor having file name '" + fileName + "'. ");
 
-                datasetVersion.ContentDescriptors.Remove(contentDescriptor);
+                // get status of the latest version
+                DatasetVersion latestVersion = dm.GetDatasetLatestVersion(datasetId);
+                string status = DatasetStateInfo.NotValid.ToString();
+                if (latestVersion.StateInfo != null) status = latestVersion.StateInfo.State;
 
-                datasetVersion.ModificationInfo = new EntityAuditInfo()
+                if (dm.IsDatasetCheckedOutFor(datasetId, GetUsernameOrDefault()) || dm.CheckOutDataset(datasetId, GetUsernameOrDefault()))
                 {
-                    Performer = GetUsernameOrDefault(),
-                    Comment = "Attachment",
-                    ActionType = AuditActionType.Delete
-                };
+                    DatasetVersion datasetVersion = dm.GetDatasetWorkingCopy(datasetId);
 
-                dm.EditDatasetVersion(datasetVersion, null, null, null);
-                dm.CheckInDataset(dataset.Id, fileName, GetUsernameOrDefault(), ViewCreationBehavior.None);
+                    //set StateInfo of the previus version
+                    if (datasetVersion.StateInfo == null)
+                    {
+                        datasetVersion.StateInfo = new Vaiona.Entities.Common.EntityStateInfo()
+                        {
+                            State = status
+                        };
+                    }
+                    else
+                    {
+                        datasetVersion.StateInfo.State = status;
+                    }
 
-                var es = new EmailService();
+                    var contentDescriptor = datasetVersion.ContentDescriptors.FirstOrDefault(item => item.Name == fileName);
+                    if (contentDescriptor == null)
+                        throw new Exception("There is not any content descriptor having file name '" + fileName + "'. ");
 
-                es.Send(MessageHelper.GetAttachmentDeleteHeader(datasetId, typeof(Dataset).Name),
-                MessageHelper.GetAttachmentDeleteMessage(datasetId, fileName, GetUsernameOrDefault()),
-                GeneralSettings.SystemEmail
-                );
+                    datasetVersion.ContentDescriptors.Remove(contentDescriptor);
+
+                    datasetVersion.ModificationInfo = new EntityAuditInfo()
+                    {
+                        Performer = GetUsernameOrDefault(),
+                        Comment = "Attachment",
+                        ActionType = AuditActionType.Delete
+                    };
+
+                    // update metadata
+                    int v = 1;
+                    if (datasetVersion.Dataset.Versions != null && datasetVersion.Dataset.Versions.Count > 1) v = datasetVersion.Dataset.Versions.Count();
+                    datasetVersion.Metadata = setSystemValuesToMetadata(datasetId, v, datasetVersion.Dataset.MetadataStructure.Id, datasetVersion.Metadata, false);
+
+
+
+                    dm.EditDatasetVersion(datasetVersion, null, null, null);
+                    dm.CheckInDataset(dataset.Id, fileName, GetUsernameOrDefault(), ViewCreationBehavior.None);
+
+
+                    var es = new EmailService();
+
+                    es.Send(MessageHelper.GetAttachmentDeleteHeader(datasetId, typeof(Dataset).Name),
+                    MessageHelper.GetAttachmentDeleteMessage(datasetId, fileName, GetUsernameOrDefault()),
+                    GeneralSettings.SystemEmail
+                    );
+                }
             }
 
             return RedirectToAction("showdata", "data", new { area = "ddm", id = datasetId });
@@ -224,6 +258,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 var dataset = dm.GetDataset(datasetId);
                 // var datasetVersion = dm.GetDatasetLatestVersion(dataset);
 
+                // get status of the latest version
                 DatasetVersion latestVersion = dm.GetDatasetLatestVersion(datasetId);
                 string status = DatasetStateInfo.NotValid.ToString();
                 if (latestVersion.StateInfo != null) status = latestVersion.StateInfo.State;
@@ -266,6 +301,12 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                     };
 
                     string filenameList = string.Join(", ", attachments.Select(f => f.FileName).ToArray());
+
+                    // update metadata
+                    int v = 1;
+                    if (datasetVersion.Dataset.Versions != null && datasetVersion.Dataset.Versions.Count > 1) v = datasetVersion.Dataset.Versions.Count();
+                    datasetVersion.Metadata = setSystemValuesToMetadata(datasetId, v, datasetVersion.Dataset.MetadataStructure.Id, datasetVersion.Metadata, false);
+
 
                     dm.EditDatasetVersion(datasetVersion, null, null, null);
                     dm.CheckInDataset(dataset.Id, filenameList, GetUsernameOrDefault(), ViewCreationBehavior.None);
@@ -315,45 +356,20 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             return storePath;
         }
 
-        /*
-        private XmlDocument SetDescription(XmlNode extraField, string description)
+        private XmlDocument setSystemValuesToMetadata(long datasetid, long version, long metadataStructureId, XmlDocument metadata, bool newDataset)
         {
-            XmlNode newExtra;
-            var source = (XmlDocument)extraField;
-            if (source == null)
-            {
-                source = new XmlDocument();
-                source.LoadXml("<extra><fileDescription>" + description + "</fileDescription></extra>");
-            }
-            else
-            {
-                if (XmlUtility.GetXmlNodeByName(extraField, "fileDescription") == null)
-                {
-                    XmlNode t = XmlUtility.CreateNode("fileDescription", source);
-                    t.InnerText = description;
-                    source.DocumentElement.AppendChild(t);
-                }
-                else
-                {
-                    var descNodes = source.SelectNodes("/extra/fileDescription");
-                    descNodes[0].InnerText = description;
-                }
-            }
-            return source;
-        }
+            SystemMetadataHelper systemMetadataHelper = new SystemMetadataHelper();
 
-        private string GetDescription(XmlNode extra)
-        {
-            if ((XmlDocument)extra != null)
-            {
-                var descNode = extra.SelectNodes("/extra/fileDescription");
-                if (descNode != null)
-                {
-                    return descNode[0].InnerText;
-                }
-            }
-            return "";
-        }*/
+            Key[] myObjArray = { };
+
+            if (newDataset) myObjArray = new Key[] { Key.Id, Key.Version, Key.DateOfVersion, Key.DataCreationDate, Key.DataLastModified };
+            else myObjArray = new Key[] { Key.Id, Key.Version, Key.DateOfVersion, Key.DataLastModified };
+
+
+            var metadata_new = systemMetadataHelper.SetSystemValuesToMetadata(datasetid, version, metadataStructureId, metadata, myObjArray);
+
+            return metadata_new;
+        }
 
         public string GetUsernameOrDefault()
         {

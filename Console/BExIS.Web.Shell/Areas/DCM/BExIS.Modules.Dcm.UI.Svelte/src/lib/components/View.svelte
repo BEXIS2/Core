@@ -1,34 +1,29 @@
 <script lang="ts">
-import { onMount, onDestroy } from 'svelte'; 
-import { Spinner, Button } from 'sveltestrap';
-import { host } from '@bexis2/bexis2-core-ui/src/lib/index'
+	import { onMount, onDestroy } from 'svelte';
+	import { host } from '@bexis2/bexis2-core-ui';
 
- 
- //entity infos
- export let id:number;
- export let version:number;
- 
- //entity view infos
- export let name:string;
- export let displayName:string;
- export let start:string;
+	//entity infos
+	export let id: number;
+	export let version: number;
 
-$:ExtComponent = null;
+	//entity view infos
+	export let name: string;
+	export let displayName: string;
+	export let start: string;
 
-onMount(async () =>
-{
-  //load javascript from server
-  const urlscript = host+start+"?id="+id+"&&version="+version;
+	$: ExtComponent = null;
 
-  import(urlscript).then(resp => {
-  ExtComponent = resp.default;
-  });
+	onMount(async () => {
+		//load javascript from server
+		const urlscript = host + start + '?id=' + id + '&&version=' + version;
 
-})
-
+		import(urlscript).then((resp) => {
+			ExtComponent = resp.default;
+		});
+	});
 </script>
- 
+
 <div id="{name}_view">
-  <div id="{name}" dataset="{id}" version="{version}" />
-  <svelte:component this={ExtComponent}/>
+	<div id={name} dataset={id} {version} />
+	<svelte:component this={ExtComponent} />
 </div>

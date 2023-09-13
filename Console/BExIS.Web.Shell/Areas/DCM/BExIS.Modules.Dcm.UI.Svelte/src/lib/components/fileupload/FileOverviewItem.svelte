@@ -1,98 +1,78 @@
 <script>
-import {Fa} from 'svelte-fa/src/index.js'
+	import { Fa } from 'svelte-fa/src/index.js';
 
-import {FileInfo} from '@bexis2/bexis2-core-ui/src/lib/index'
-import { Spinner, Button, Input, Col, Row  } from 'sveltestrap';
-import { faTrash} from '@fortawesome/free-solid-svg-icons'
+	import { FileInfo, Spinner, TextInput } from '@bexis2/bexis2-core-ui';
+	import { faTrash } from '@fortawesome/free-solid-svg-icons';
 
-import {removeFile, saveFileDescription}  from '../../../routes/edit/services'
+	import { removeFile, saveFileDescription } from '../../../routes/edit/services';
 
-import { createEventDispatcher, onMount } from 'svelte';
+	import { createEventDispatcher, onMount } from 'svelte';
 
-export let id;
-export let file;
-export let type;
-export let description;
-export let withDescription;
-const dispatch = createEventDispatcher();
+	export let id;
+	export let file;
+	export let type;
+	export let description;
+	export let withDescription;
+	const dispatch = createEventDispatcher();
 
-// action to save description
-export let save;
-// action to remove file
-export let remove
+	// action to save description
+	export let save;
+	// action to remove file
+	export let remove;
 
-// set if its possible to generate a structure based on that file
-export let generateAble = false;
+	// set if its possible to generate a structure based on that file
+	export let generateAble = false;
 
-let loading = false;
+	let loading = false;
+	let fileNameSpan = 'col-span-7';
+	onMount(async () => {
+		fileNameSpan = withDescription ? 'col-span-4' : 'col-span-7';
+	});
 
-onMount(async ()=>{
- 
+	async function handleRemoveFile(e) {
+		loading = true;
 
-})
+		//remove from server
+		const res = await removeFile(remove, id, file);
+		if (res == true) {
+			let message = file + ' removed.';
+			dispatch('removed', { text: message });
+		}
+		console.log('remove loading');
+		loading = false;
+	}
 
-async function handleRemoveFile() {
-
-  console.log("remove file")
-loading = true;
-
-//remove from server
-const res = await removeFile(remove,id,file);
-console.log("remove file",res)
-  if(res == true)
-  {
-    console.log("remove file")
-    let message = file+" removed."
-    dispatch("removed",{text:message})
-  }
-
-  loading = false;
-}
-
-async function handleSaveFileDescription() {
-
-const res = await saveFileDescription(save,id, file, description );
-  if(true)
-  {
-    let message = "Description of "+file+" is updated."
-    dispatch("saved",{text:message})
-  }
-}
-
+	async function handleSaveFileDescription() {
+		const res = await saveFileDescription(save, id, file, description);
+		if (true) {
+			let message = 'Description of ' + file + ' is updated.';
+			dispatch('saved', { text: message });
+		}
+	}
 </script>
- {#if type}
-  <div class="file-overview-item row">
-  <Col xs="1"><FileInfo {type} size="x-large" />test</Col>
-  <Col > 
-      {file}
-  </Col>
-  {#if withDescription}
-    <Col xs="5"><Input  bind:value="{description}" placeholder="description" on:change={e => handleSaveFileDescription()}/></Col>
-  {/if}
-  <Col >
-    <div class="file-overview-item-options">
-      <div class="file-overview-item-option"><Button size="sm" on:click={e => handleRemoveFile()}><Fa icon={faTrash}/></Button></div>
-      <div class="file-overview-item-option">{#if loading}<Spinner color="info" size="sm" type ="grow" /> {/if}</div>    
-    </div>
-  </Col>
-  </div>
+
+{#if type}
+	<div class="flex gap-5">
+		<div class="self-center flex-none"><FileInfo {type} size="x-large" /></div>
+
+		<div class="{fileNameSpan} self-center grow">
+			{file}
+		</div>
+
+		{#if withDescription}
+			<div class="{fileNameSpan} self-center grow">
+				<TextInput bind:value={description} on:change={(e) => handleSaveFileDescription()} />
+			</div>
+		{:else}
+			<div />
+		{/if}
+
+		<div class="text-right">
+			{#if loading}
+				<Spinner textCss="text-surface-500" />
+			{:else}
+				<button class="btn" on:click={(e) => handleRemoveFile(e)}><Fa icon={faTrash} /></button>
+			{/if}
+		</div>
+	</div>
 {/if}
-<style>
- 
-
- .file-overview-item {
-  border-bottom: 1px solid var(--bg-grey);
-  color: var(--text-color);
-  padding: 0.5em 0;
- }
-
- .file-overview-item-options{
-    width:100%;
-  }
-
-.file-overview-item-option{
-    float: right;
-    padding-left: 3px;
-  }
-
-</style>

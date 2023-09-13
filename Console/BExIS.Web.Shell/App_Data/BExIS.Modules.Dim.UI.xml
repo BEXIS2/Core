@@ -496,18 +496,34 @@
         </member>
         <member name="M:BExIS.Modules.Dim.UI.Controllers.API.DatasetOutController.Get(System.Int64)">
              <summary>
-             Get metadata of the latest version of a dataset by id.
+             Get dataset informations of the latest version of a dataset by id.
              </summary>
             
              <param name="id">Identifier of a dataset</param>
         </member>
-        <member name="M:BExIS.Modules.Dim.UI.Controllers.API.DatasetOutController.Get(System.Int64,System.Int32)">
+        <member name="M:BExIS.Modules.Dim.UI.Controllers.API.DatasetOutController.Get(System.Int64,System.Int64)">
              <summary>
-             Get metadata of a specific version of a dataset by id and version number.
+             Get dataset informations of a specific version of a dataset by id and version id.
              </summary>
             
              <param name="id">Identifier of a dataset</param>
-             <param name="version">Version of a dataset</param>
+             <param name="versionId">Version Id of a dataset</param>
+        </member>
+        <member name="M:BExIS.Modules.Dim.UI.Controllers.API.DatasetOutController.Get(System.Int64,System.Int32)">
+             <summary>
+             Get dataset informations of a specific version of a dataset by id and version number.
+             </summary>
+            
+             <param name="id">Identifier of a dataset</param>
+             <param name="version_number">Version of a dataset</param>
+        </member>
+        <member name="M:BExIS.Modules.Dim.UI.Controllers.API.DatasetOutController.Get(System.Int64,System.String)">
+             <summary>
+             Get dataset informations of a specific version of a dataset by id and version name.
+             </summary>
+            
+             <param name="id">Identifier of a dataset</param>
+             <param name="version_name">Version name of a dataset</param>
         </member>
         <member name="T:BExIS.Modules.Dim.UI.Controllers.AttachmentOutController">
             <summary>
@@ -559,11 +575,38 @@
             <param name="variableId">Variable id</param>
             <returns></returns>
         </member>
+        <member name="T:BExIS.Modules.Dim.UI.Controllers.LinkElementTypeController">
+            <summary>
+            This class is designed as a Web API to allow various client tools request metadata of a datasets and get the result in XML.
+            </summary>
+        </member>
+        <member name="T:BExIS.Modules.Dim.UI.Controllers.ConceptOutController">
+            <summary>
+            This class is designed as a Web API to allow various client tools request metadata of a datasets and get the result in XML.
+            </summary>
+        </member>
+        <member name="T:BExIS.Modules.Dim.UI.Controllers.MappingOutController">
+            <summary>
+            This class is designed as a Web API to allow various client tools request metadata of a datasets and get the result in XML.
+            </summary>
+        </member>
+        <member name="M:BExIS.Modules.Dim.UI.Controllers.MappingOutController.Get(System.Int64,System.Int32,System.Int64,System.Int32)">
+            <summary>
+            
+            </summary>
+            <param name="sourceElementId"></param>
+            <param name="sourceElementType"></param>
+            <param name="targetElementId"></param>
+            <param name="targetElementType"></param>
+            <returns></returns>
+            <remarks> 
+            </remarks>
+        </member>
         <member name="M:BExIS.Modules.Dim.UI.Controllers.MetadataStatisticOutController.Post(BExIS.Modules.Dim.UI.Models.Api.PostApiMetadataStatisticModel)">
             <summary>
-            Get a list of unique metadata values, count and list of occurrence
+            Get a list of unique metadata values, count and list of occurrence for a given XPath.
             </summary>
-            <remarks>Data is directly returned from the database without (currently) any further permission check. Nested nodes are cuurently not supported.</remarks>
+            <remarks>Data is directly returned from the database. A valid token is needed to access also non-public dataset.</remarks>
             <returns>JSON object</returns>
         </member>
         <member name="T:BExIS.Modules.Dim.UI.Controllers.MetadataStructureOutController">
@@ -634,7 +677,7 @@
             </summary>
             <returns>List of ids</returns>
         </member>
-        <member name="M:BExIS.Modules.Dim.UI.Controllers.DataOutController.Get(System.Int32,System.String,System.String,System.String,System.String)">
+        <member name="M:BExIS.Modules.Dim.UI.Controllers.DataOutController.Get(System.Int32,System.String,System.String)">
             <summary>
             In addition to the id, it is possible to have projection and selection criteria passed to the action via query string parameters
             </summary>
@@ -648,12 +691,38 @@
             logical operators, nesting, precedence, and SOME functions should be supported.
             </remarks>
         </member>
-        <member name="M:BExIS.Modules.Dim.UI.Controllers.DataOutController.Get(System.Int64,System.Int32,System.String,System.String,System.String,System.String)">
+        <member name="M:BExIS.Modules.Dim.UI.Controllers.DataOutController.Get(System.Int64,System.Int64,System.String,System.String)">
             <summary>
-            In addition to the id, it is possible to have projection and selection criteria passed to the action via query string parameters
+            In addition to the id and version id, it is possible to have projection and selection criteria passed to the action via query string parameters
             </summary>
             <param name="id">Dataset Id</param>
-            <param name="version">Version number of the dataset</param>
+            <param name="versionId">Version Id of the dataset</param>
+            <returns></returns>
+            <remarks> The action accepts the following additional parameters via the query string
+            1: header: is a comman separated list of ids that determines which variables of the dataset version tuples should take part in the result set
+            2: filter: is a logical expression that filters the tuples of the chosen dataset. The expression should have been written against the variables of the dataset only.
+            logical operators, nesting, precedence, and SOME functions should be supported.
+            </remarks>
+        </member>
+        <member name="M:BExIS.Modules.Dim.UI.Controllers.DataOutController.Get(System.Int64,System.Int32,System.String,System.String)">
+            <summary>
+            In addition to the id and version number, it is possible to have projection and selection criteria passed to the action via query string parameters
+            </summary>
+            <param name="id">Dataset Id</param>
+            <param name="version_number">Version number of the dataset</param>
+            <returns></returns>
+            <remarks> The action accepts the following additional parameters via the query string
+            1: header: is a comman separated list of ids that determines which variables of the dataset version tuples should take part in the result set
+            2: filter: is a logical expression that filters the tuples of the chosen dataset. The expression should have been written against the variables of the dataset only.
+            logical operators, nesting, precedence, and SOME functions should be supported.
+            </remarks>
+        </member>
+        <member name="M:BExIS.Modules.Dim.UI.Controllers.DataOutController.Get(System.Int64,System.String,System.String,System.String)">
+            <summary>
+            In addition to the id and version name, it is possible to have projection and selection criteria passed to the action via query string parameters
+            </summary>
+            <param name="id">Dataset Id</param>
+            <param name="version_name">Version name of the dataset</param>
             <returns></returns>
             <remarks> The action accepts the following additional parameters via the query string
             1: header: is a comman separated list of ids that determines which variables of the dataset version tuples should take part in the result set
@@ -688,7 +757,7 @@
             </summary>
             <returns>XML with all metadata of the metadata schema</returns>
         </member>
-        <member name="M:BExIS.Modules.Dim.UI.Controllers.MetadataOutController.Get(System.Int32,System.String,System.Int32)">
+        <member name="M:BExIS.Modules.Dim.UI.Controllers.MetadataOutController.Get(System.Int32,BExIS.Modules.Dim.UI.Controllers.Format,System.String,System.Int32)">
              <summary>
              Get metadata for a dataset as XML (default) or JSON (internal, complete or simplified structure)
              </summary>
@@ -705,7 +774,77 @@
              
              </remarks>
              <param name="id">Dataset Id</param>
-             <param name="format">Based on the existing transformation options, the converted metadata can be obtained via format.</param>
+             <param name="format">Internal,External,Subset</param>
+             <param name="subsetType">Based on the existing concept mappings, the converted metadata can be obtained via subsetType.</param>
+             <param name="simplifiedJson">accept 0,1,2</param>
+             <returns>metadata as xml or json</returns>
+        </member>
+        <member name="M:BExIS.Modules.Dim.UI.Controllers.MetadataOutController.Get(System.Int64,System.Nullable{System.Int64},BExIS.Modules.Dim.UI.Controllers.Format,System.String,System.Int32)">
+             <summary>
+             Get metadata for a dataset as XML (default) or JSON (internal, complete or simplified structure)
+             </summary>
+             <remarks>
+            
+             ## format
+             Based on the existing transformation options, the converted metadata can be obtained via format.
+             
+             ## simplfiedJson
+             if you set the accept of the request to return a json, you can manipulate the json with this parameter. <br/>
+             0 = returns the metadata with full internal structure <br/>
+             1 = returns a simplified form of the structure with all fields and attributes <br/>
+             2 = returns the metadata in a simplified structure and does not add all fields and attributes that are empty. 
+             
+             </remarks>
+             <param name="id">Dataset Id</param>
+             <param name="versionId">Version Id</param>
+             <param name="format">Internal,External,Subset</param>
+             <param name="subsetType">Based on the existing concept mappings, the converted metadata can be obtained via subsetType.</param>
+             <param name="simplifiedJson">accept 0,1,2</param>
+             <returns>metadata as xml or json</returns>
+        </member>
+        <member name="M:BExIS.Modules.Dim.UI.Controllers.MetadataOutController.Get(System.Int64,System.Int32,BExIS.Modules.Dim.UI.Controllers.Format,System.String,System.Int32)">
+             <summary>
+             Get metadata for a dataset as XML (default) or JSON (internal, complete or simplified structure)
+             </summary>
+             <remarks>
+            
+             ## format
+             Based on the existing transformation options, the converted metadata can be obtained via format.
+             
+             ## simplfiedJson
+             if you set the accept of the request to return a json, you can manipulate the json with this parameter. <br/>
+             0 = returns the metadata with full internal structure <br/>
+             1 = returns a simplified form of the structure with all fields and attributes <br/>
+             2 = returns the metadata in a simplified structure and does not add all fields and attributes that are empty. 
+             
+             </remarks>
+             <param name="id">Dataset Id</param>
+             <param name="version_number">Version number</param>
+             <param name="format">Internal,External,Subset</param>
+             <param name="subsetType">Based on the existing concept mappings, the converted metadata can be obtained via subsetType.</param>
+             <param name="simplifiedJson">accept 0,1,2</param>
+             <returns>metadata as xml or json</returns>
+        </member>
+        <member name="M:BExIS.Modules.Dim.UI.Controllers.MetadataOutController.Get(System.Int64,System.String,BExIS.Modules.Dim.UI.Controllers.Format,System.String,System.Int32)">
+             <summary>
+             Get metadata for a dataset as XML (default) or JSON (internal, complete or simplified structure)
+             </summary>
+             <remarks>
+            
+             ## format
+             Based on the existing transformation options, the converted metadata can be obtained via format.
+             
+             ## simplfiedJson
+             if you set the accept of the request to return a json, you can manipulate the json with this parameter. <br/>
+             0 = returns the metadata with full internal structure <br/>
+             1 = returns a simplified form of the structure with all fields and attributes <br/>
+             2 = returns the metadata in a simplified structure and does not add all fields and attributes that are empty. 
+             
+             </remarks>
+             <param name="id">Dataset Id</param>
+             <param name="version_name">Version name</param>
+             <param name="format">Internal,External,Subset</param>
+             <param name="subsetType">Based on the existing concept mappings, the converted metadata can be obtained via subsetType.</param>
              <param name="simplifiedJson">accept 0,1,2</param>
              <returns>metadata as xml or json</returns>
         </member>
@@ -770,6 +909,61 @@
             <param name="root"></param>
             <param name="metadataRef"></param>
             <param name="mappingManager"></param>
+        </member>
+        <member name="T:BExIS.Modules.Dim.UI.Models.Api.ApiDatasetModel">
+            <summary>
+            Return model of Dataset API
+            </summary>
+        </member>
+        <member name="T:BExIS.Modules.Dim.UI.Models.Api.ApiDataStatisticModel">
+            <summary>
+            Return model of Data Statistic API
+            </summary>
+        </member>
+        <member name="T:BExIS.Modules.Dim.UI.Models.Api.PostApiMetadataStatisticModel">
+            <summary>
+            Return model of Metadata Statistic API
+            </summary>
+        </member>
+        <member name="P:BExIS.Modules.Dim.UI.Models.Api.PostApiMetadataStatisticModel.Xpath">
+            <summary>
+            Xpath e.g. Metadata/methods/methodsType/measurements/measurementsType/sampleAnalysis/
+            </summary>
+        </member>
+        <member name="P:BExIS.Modules.Dim.UI.Models.Api.PostApiMetadataStatisticModel.DatasetVersionIdsInclude">
+            <summary>
+            List of Dataset version IDs to include instead of dataset id (latests versions)
+            </summary>
+        </member>
+        <member name="P:BExIS.Modules.Dim.UI.Models.Api.PostApiMetadataStatisticModel.DatasetIdsInclude">
+            <summary>
+            List of Dataset IDs to include 
+            </summary>
+        </member>
+        <member name="P:BExIS.Modules.Dim.UI.Models.Api.PostApiMetadataStatisticModel.DatasetIdsExclude">
+            <summary>
+            List of Dataset IDs to exclude 
+            </summary>
+        </member>
+        <member name="P:BExIS.Modules.Dim.UI.Models.Api.PostApiMetadataStatisticModel.MetadatastructureIdsInclude">
+            <summary>
+            List of Metdata structure IDs to include 
+            </summary>
+        </member>
+        <member name="P:BExIS.Modules.Dim.UI.Models.Api.PostApiMetadataStatisticModel.MetadatastructureIdsExclude">
+            <summary>
+            List of Metdata structure IDs to exclude
+            </summary>
+        </member>
+        <member name="P:BExIS.Modules.Dim.UI.Models.Api.PostApiMetadataStatisticModel.RegexInclude">
+            <summary>
+            Regex to define text to include
+            </summary>
+        </member>
+        <member name="P:BExIS.Modules.Dim.UI.Models.Api.PostApiMetadataStatisticModel.RegexExclude">
+            <summary>
+            Regex to define text to exclude
+            </summary>
         </member>
         <member name="T:BExIS.Modules.Dim.UI.Models.DatasetModel">
             <summary>

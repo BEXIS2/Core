@@ -20,7 +20,7 @@ namespace BExIS.Modules.Dim.UI.Tests.Helpers
         [OneTimeSetUp]
         public void OneTimeSetUp()
         {
-            helper = new TestSetupHelper(WebApiConfig.Register, false);
+            //helper = new TestSetupHelper(WebApiConfig.Register, false);
         }
 
         [OneTimeTearDown]
@@ -28,7 +28,7 @@ namespace BExIS.Modules.Dim.UI.Tests.Helpers
         {
         }
 
-        //[Test()]
+        [Test()]
         public void ReadProxy_ValidSettings_ReturnString()
         {
             var appConfiguration = AppConfiguration.WorkspaceRootPath;
@@ -40,7 +40,7 @@ namespace BExIS.Modules.Dim.UI.Tests.Helpers
             Assert.That(1, Is.EqualTo(1));
         }
 
-        //[Test()]
+        [Test()]
         public void ReadMappings_ValidSettings_ReturnList()
         {
             var appConfiguration = AppConfiguration.WorkspaceRootPath;
@@ -53,12 +53,22 @@ namespace BExIS.Modules.Dim.UI.Tests.Helpers
 
         }
 
+        [Test()]
+        public void GetDataCiteDOICredentials()
+        {
+            //var appConfiguration = AppConfiguration.WorkspaceRootPath;
+            var settingsHelper = new SettingsHelper();
+
+
+            var credentials = settingsHelper.getDataCiteDOICredentials();
+        }
+
         //[Test()]
         public void ReadPlaceholders_ValidSettings_ReturnList()
         {
             var appConfiguration = AppConfiguration.WorkspaceRootPath;
             var settingsHelper = new SettingsHelper();
-            var datacitedoihelper = new DataCiteDoiHelper();
+            var datacitedoihelper = new DataCiteDOIHelper();
 
 
             var client = new RestClient(settingsHelper.GetValue("proxy"));

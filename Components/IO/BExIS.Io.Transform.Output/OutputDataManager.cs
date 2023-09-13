@@ -33,7 +33,7 @@ namespace BExIS.IO.Transform.Output
             }
         }
 
-        public string GenerateAsciiFile(long id, long versionId, string mimeType, bool withUnits)
+        public string GenerateAsciiFile(long id, long versionId, string mimeType, bool withUnits, bool internalId = false)
         {
             DatasetManager datasetManager = new DatasetManager();
             DataStructureManager datasetStructureManager = new DataStructureManager();
@@ -88,7 +88,7 @@ namespace BExIS.IO.Transform.Output
 
                 //ascii allready exist
                 if (datasetVersion.ContentDescriptors.Count(p => p.Name.Equals(contentDescriptorTitle) &&
-                    p.URI.Contains(datasetVersion.Id.ToString())) > 0 &&
+                    p.URI.Contains("_"+versionNr.ToString()+"_")) > 0 &&
                     !withUnits)
                 {
                     #region FileStream exist
@@ -105,7 +105,7 @@ namespace BExIS.IO.Transform.Output
                 }
 
                 // not exist, needs to generated - get data first as datatable
-                DataTable data = getData(id, versionId);
+                DataTable data = getData(id, versionId, internalId);
 
                 long datastuctureId = datasetVersion.Dataset.DataStructure.Id;
 
@@ -117,7 +117,7 @@ namespace BExIS.IO.Transform.Output
                 string[] units = null;
                 if (withUnits) units = getUnits(datastuctureId, null);
 
-                writer.AddData(data, path, datastuctureId, units);
+                writer.AddData(data, path, datastuctureId, units, internalId);
 
                 return path;
             }
@@ -238,12 +238,13 @@ namespace BExIS.IO.Transform.Output
             try
             {
                 DatasetVersion datasetVersion = datasetManager.GetDatasetLatestVersion(id);
+                int versionNr = datasetManager.GetDatasetVersionNr(datasetVersion);
                 ExcelWriter writer = new ExcelWriter(createAsTemplate);
 
                 string path = "";
 
                 //excel allready exist
-                if (datasetVersion.ContentDescriptors.Count(p => p.Name.Equals(contentDescriptorTitle) && p.URI.Contains(datasetVersion.Id.ToString())) > 0 &&
+                if (datasetVersion.ContentDescriptors.Count(p => p.Name.Equals(contentDescriptorTitle) && p.URI.Contains("_"+versionNr+"_")) > 0 &&
                     data == null)
                 {
                     #region FileStream exist
@@ -276,7 +277,6 @@ namespace BExIS.IO.Transform.Output
                 }
 
                 long datastuctureId = datasetVersion.Dataset.DataStructure.Id;
-                int versionNr = datasetManager.GetDatasetVersionNr(datasetVersion);
                 if (createAsTemplate)
                 {
                     string[] columnNames = (from dc in data.Columns.Cast<DataColumn>()
@@ -497,7 +497,7 @@ namespace BExIS.IO.Transform.Output
 
         #region get Data
 
-        private DataTable getData(long id, long versionId = 0)
+        private DataTable getData(long id, long versionId = 0, bool keepId = false)
         {
             DatasetManager dm = new DatasetManager();
 
@@ -509,11 +509,11 @@ namespace BExIS.IO.Transform.Output
                 // check if version is latest version
                 if (id != 0 && (versionId == 0 || dm.GetDatasetLatestVersionId(id).Equals(versionId)))
                 {
-                    DataTable data;
-
-                    data = dm.GetLatestDatasetVersionTuples(id);
-                    data.Strip();
-                    return data;
+                        DataTable data;
+                    
+                        data = dm.GetLatestDatasetVersionTuples(id);
+                        data.Strip(keepId);
+                        return data;
                 }
 
 

@@ -1,27 +1,34 @@
-# BEXIS 2.16 Release Notes
->Help URLs are now generated automatically based on the used relaese version. It is not needed from now on to always update the links in the workspace. Empty values in the settings file (default -> generated links) can be still overwritten with your own customized help links.
+# BEXIS2 x.y Release Notes
 
->For developer: API documentation is now generated automatically. Files need to be copied during build (debug & relaese) into the App_Data. Example changes can be found e.g. in the BExIS.Modules.Dim.UI.csproj file. At line 45 and changes in line 379 ([#973](https://github.com/BEXIS2/Core/issues/973))
+>**Database Update(s)**: [Update_Script_218to300.sql](https://github.com/BEXIS2/Core/blob/rc/database%20update%20scripts/Update_Script_218to300.sql](url)
 
-**Workspace changes:** https://github.com/BEXIS2/Workspace/compare/2.15...2.16
+>**API changes**:
 
-### Features
-- Metadata Statistic API: Draft version added supporting query by xpath and filtering by metadata structue and dataset ids ([#979](https://github.com/BEXIS2/Core/issues/979))([#986](https://github.com/BEXIS2/Core/issues/986))([#991](https://github.com/BEXIS2/Core/issues/991))
-  
-### Enhancements
-- Metadata Structure API: Add entity type ([#987](https://github.com/BEXIS2/Core/issues/971))
-- Primaray Data API: Improve error messages ([#858](https://github.com/BEXIS2/Core/issues/858))
-- Data Structure API: Extend by missing values and date pattern ([#974](https://github.com/BEXIS2/Core/issues/974))
-- Data Statistic API: Improve documentation ([#975](https://github.com/BEXIS2/Core/issues/975))
-- Former Member: Allow for dynamic email content via settings ([#976](https://github.com/BEXIS2/Core/issues/976))
-- Improve API documentation and automation of manual steps ([#973](https://github.com/BEXIS2/Core/issues/973))
-- Improve automation of build process ([#964](https://github.com/BEXIS2/Core/issues/964))
-- Add further publishing profiles ([#972](https://github.com/BEXIS2/Core/issues/972))
+## Tenant(s)
 
+In general, the system does not provide different tenants anymore. Instead, the workspace contains only one tenants called 'bexis2'.
+
+Additionally, to be more consistent, the configuration file (called 'manifest.xml') contains the new entry '<Brand>...</Brand>' which is used to enter the name of the image used within the menu bar. This is going to replace the wrong use of '<Logo>...</Logo>'. Please be aware of this update and react accordingly.
+
+For most instances, the favicon was not loaded correctly, because the referenced name of the file within 'manifest.xml' was not correct. Please be aware of that information as well and check/change the name within 'manifest.xml' of the active tenant.
+>**Database update**: [Update_Script_218to2181.sql](https://github.com/BEXIS2/Core/blob/rc/database%20update%20scripts/Update_Script_218to2.18.1.sql)
+
+
+
+**Workspace changes:** [2.18...2.18.1](https://github.com/BEXIS2/Workspace/compare/2.18...2.18.1)
 
 ### Bugs
-- Fix spaces in names during mapping cause JavaScript error ([#265](https://github.com/BEXIS2/Core/issues/265))
-- Fix no dataset download, if no primary data was uploaded ([#562](https://github.com/BEXIS2/Core/issues/562))
-- Fix metadata import via API works only with metadata structure id 1 ([#977](https://github.com/BEXIS2/Core/issues/977))
-- Fix metadata status not allways copied correct in a new version (e.g., during data import via API) ([#985](https://github.com/BEXIS2/Core/issues/985))
+- Fix Requests are sent to old owner after change (https://github.com/BEXIS2/Core/issues/1108)
+- Fix Metadata Edit: xsd element type "xs:boolean" always disabled (https://github.com/BEXIS2/Core/issues/1106)
+- Fix Download data: Fails with filter if special characters in dataset title (https://github.com/BEXIS2/Core/issues/1105)
+- Fix Tabular primary data display problem "Displaying items 0 - 0 of 0" (https://github.com/BEXIS2/Core/issues/1116)
+- Fix Leading empty line inside each metadata input field (https://github.com/BEXIS2/Core/issues/1117)
+- Darwin Core archive: Add documentation to dim manual enhancement (https://github.com/BEXIS2/Core/issues/1104)
+- Code cleanup: Remove duplicate folder & consolidation of hamdi1992/core:master and bexis2/core:rc (https://github.com/BEXIS2/Core/issues/1107) (https://github.com/BEXIS2/Core/issues/1066) -->
+
+
+
+
+
+
 

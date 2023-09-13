@@ -160,6 +160,9 @@ namespace BExIS.Dlm.Services.DataStructure
             using (IUnitOfWork uow = this.GetUnitOfWork())
             {
                 IRepository<Unit> repo = uow.GetRepository<Unit>();
+                //IRepository<DataType> dtRepo = uow.GetRepository<DataType>();
+                //List<long> dtIds = entity.AssociatedDataTypes.Select(d => d.Id).ToList();
+                //entity.AssociatedDataTypes = dtRepo.Query().Where(p => dtIds.Contains(p.Id)).ToList();
                 repo.Merge(entity);
                 var merged = repo.Get(entity.Id);
                 repo.Put(merged);
@@ -203,7 +206,7 @@ namespace BExIS.Dlm.Services.DataStructure
             using (IUnitOfWork uow = this.GetUnitOfWork())
             {
                 IRepository<Dimension> repo = uow.GetRepository<Dimension>();
-                //entity = repo.Reload(entity);
+                entity = repo.Reload(entity);
                 repo.Delete(entity);
                 uow.Commit();
             }

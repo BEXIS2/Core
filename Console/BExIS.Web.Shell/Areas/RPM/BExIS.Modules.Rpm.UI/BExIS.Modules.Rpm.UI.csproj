@@ -67,6 +67,9 @@
     <Reference Include="System.Net.Http.Formatting, Version=5.2.3.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\..\..\..\..\packages\Microsoft.AspNet.WebApi.Client.5.2.3\lib\net45\System.Net.Http.Formatting.dll</HintPath>
     </Reference>
+    <Reference Include="System.Runtime.CompilerServices.Unsafe, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\..\..\..\..\packages\System.Runtime.CompilerServices.Unsafe.6.0.0\lib\net461\System.Runtime.CompilerServices.Unsafe.dll</HintPath>
+    </Reference>
     <Reference Include="System.Web.ApplicationServices" />
     <Reference Include="System.Web.DynamicData" />
     <Reference Include="System.Web.Entity" />
@@ -118,6 +121,11 @@
   <ItemGroup>
     <Compile Include="Controllers\MeaningsController.cs" />
     <Compile Include="Controllers\MeaningsAdminController.cs" />
+    <Compile Include="Controllers\ConstraintController.cs" />
+    <Compile Include="Controllers\DataStructureController.cs" />
+    <Compile Include="Controllers\DataTypeController.cs" />
+    <Compile Include="Controllers\DimensionController.cs" />
+    <Compile Include="Controllers\UnitController.cs" />
     <Compile Include="Controllers\StructuresController.cs" />
     <Compile Include="Helpers\HtmlPrefixScopeExtentions.cs" />
     <Compile Include="Helpers\RPMSeedDataGenerator.cs" />
@@ -125,6 +133,13 @@
     <Compile Include="Helpers\SeedData\MappingReader.cs" />
     <Compile Include="IO\UnitIO.cs" />
     <Compile Include="IO\VariableTemplateIO.cs" />
+    <Compile Include="Models\ConstraintModels.cs" />
+    <Compile Include="Models\DataStructure\DataStructureModel.cs" />
+    <Compile Include="Models\DataStructure\DataStructureCreationModel.cs" />
+    <Compile Include="Models\DataTypeModels.cs" />
+    <Compile Include="Models\DimensionModels.cs" />
+    <Compile Include="Models\Models.cs" />
+    <Compile Include="Models\UnitModels.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RpmModule.cs" />
   </ItemGroup>
@@ -138,7 +153,13 @@
     <None Include="Properties\PublishProfiles\BexisServer_test.pubxml" />
     <None Include="Properties\PublishProfiles\FolderProfile.pubxml" />
     <Content Include="web.config" />
-    <Content Include="Views\LinksMeanings\Index.cshtml" />
+    <Content Include="Views\Unit\Index.cshtml" />
+    <Content Include="Views\Index.cshtml" />
+    <Content Include="Views\Web.config" />
+    <Content Include="Views\_ViewStart.cshtml" />
+    <Content Include="Views\Dimension\Index.cshtml" />
+    <Content Include="Views\DataStructure\Index.cshtml" />
+    <Content Include="Views\DataStructure\Create.cshtml" />
     <None Include="web.Debug.config">
       <DependentUpon>web.config</DependentUpon>
     </None>
@@ -171,9 +192,17 @@
       <Project>{8b2ec2b0-6870-456b-be2d-b0fb4ea68d83}</Project>
       <Name>BExIS.IO.DataType.DisplayPattern</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\..\..\..\Components\IO\BExIS.IO.Transform.Input\BExIS.IO.Transform.Input.csproj">
+      <Project>{5c4c8570-a53b-4191-a414-de028aaaf36a}</Project>
+      <Name>BExIS.IO.Transform.Input</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\..\..\..\Components\IO\BExIS.IO.Transform.Output\BExIS.IO.Transform.Output.csproj">
       <Project>{455ec826-9a92-40ff-bd3b-388c288955ce}</Project>
       <Name>BExIS.IO.Transform.Output</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\..\..\Components\IO\BExIS.IO\BExIS.IO.csproj">
+      <Project>{e4795f06-20c2-4c4c-a720-9a79896384df}</Project>
+      <Name>BExIS.IO</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\..\..\..\Components\UI\BExIS.UI\BExIS.UI.csproj">
       <Project>{DE0AD99C-C559-422F-8132-CC4D7C46FF83}</Project>
