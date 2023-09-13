@@ -68,7 +68,7 @@
 		/>
 	{:else if entry.type.toLowerCase() === 'string'}
 		<TextInput label={entry.key} bind:value={entry.value} on:input />
-	{:else if entry.type.toLowerCase() === 'integer'}
+	{:else if entry.type.toLowerCase().includes('int')}
 		<NumberInput label={entry.key} bind:value={entry.value} on:input />
 	{:else if entry.type.toLowerCase() === 'boolean'}
 		<SlideToggle active="bg-primary-500" name="slider-label" size="sm" bind:checked={entry.value}

@@ -91,37 +91,4 @@
 	{/await}
 
 	<div />
-
-	<!-- <div class="w-full">
-		{#await getSettings()}
-			<div id="spinner">... loading ...</div>
-		{:then data}
-			<Accordion />
-			{#each data as m}
-				<AccordionItem>
-					<svelte:fragment slot="lead">
-						<i class="fa-solid fa-skull text-xl w-6 text-center" />
-					</svelte:fragment>
-					<svelte:fragment slot="summary">
-						<h1>{m.name} ({m.id})</h1>
-					</svelte:fragment>
-					<svelte:fragment slot="content">
-						<form on:submit|preventDefault={() => putSettingByModuleId(m.id, m)}>
-							{#each m.entries as entry}
-								<Entry {entry} />
-							{/each}
-
-							<div class="py-5 text-right col-span-2">
-								<button class="btn variant-filled-primary h-9 w-16 shadow-md" type="submit">
-									<Fa icon={faSave} />
-								</button>
-							</div>
-						</form>
-					</svelte:fragment>
-				</AccordionItem>
-			{/each}
-		{:catch error}
-			<div id="spinner">{error}</div>
-		{/await}
-	</div> -->
 </Page>
