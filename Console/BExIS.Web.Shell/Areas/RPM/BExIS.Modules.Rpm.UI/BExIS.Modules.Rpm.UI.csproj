@@ -125,6 +125,7 @@
     <Compile Include="Controllers\DimensionController.cs" />
     <Compile Include="Controllers\UnitController.cs" />
     <Compile Include="Controllers\StructuresController.cs" />
+    <Compile Include="Controllers\VariableTemplateController.cs" />
     <Compile Include="Helpers\HtmlPrefixScopeExtentions.cs" />
     <Compile Include="Helpers\RPMSeedDataGenerator.cs" />
     <Compile Include="Helpers\SeedData\AttributeCreator.cs" />
@@ -251,7 +252,9 @@
       <Name>BExIS.Xml.Helpers</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="Views\VariableTemplate\" />
+  </ItemGroup>
   <ItemGroup>
     <Analyzer Include="..\..\..\..\..\packages\Microsoft.CodeAnalysis.VersionCheckAnalyzer.3.3.0\analyzers\dotnet\cs\Microsoft.CodeAnalysis.VersionCheckAnalyzer.resources.dll" />
     <Analyzer Include="..\..\..\..\..\packages\Microsoft.CodeAnalysis.VersionCheckAnalyzer.3.3.0\analyzers\dotnet\Microsoft.CodeAnalysis.VersionCheckAnalyzer.dll" />
