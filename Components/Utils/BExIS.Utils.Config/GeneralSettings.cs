@@ -224,6 +224,9 @@ namespace BExIS.Utils.Config
                 case (EntryType.EntryList):
                     return JsonConvert.DeserializeObject<List<Entry>>(value);
 
+                case (EntryType.JSON):
+                    return Convert.ChangeType(value, TypeCode.String);
+
                 default:
                     return Convert.ChangeType(value, (TypeCode)Enum.Parse(typeof(TypeCode), type.ToString()));
             }
