@@ -179,6 +179,8 @@
     <Content Include="Mappings\Default\MetadataStructure\MetadataParameterUsage.hbm.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="Mappings\Default\Meaning\ExternalLink.hbm.xml" />
+    <Content Include="Mappings\Default\Meaning\Meaning.hbm.xml" />
     <Content Include="Mappings\Default\MetadataStructure\MetadataNestedAttributeUsage.hbm.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
