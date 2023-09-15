@@ -6,7 +6,7 @@
 
 	//types
 	import type { listItemType } from '@bexis2/bexis2-core-ui';
-	import type { VariableModel, missingValueType } from '../../types';
+	import type { VariableInstanceModel, missingValueType } from '../../types';
 
 	//stores
 	import { get } from 'svelte/store';
@@ -24,7 +24,7 @@
 	import suite from './variable';
 
 
-	export let variable: VariableModel;
+	export let variable: VariableInstanceModel;
 	$: variable;
 	export let data: string[];
 	$:data;

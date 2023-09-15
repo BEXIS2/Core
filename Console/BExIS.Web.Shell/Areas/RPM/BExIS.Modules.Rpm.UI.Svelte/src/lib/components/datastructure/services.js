@@ -41,6 +41,15 @@ export const getStructures = async () => {
 	}
 };
 
+export const getVariableTemplates = async () => {
+	try {
+		const response = await Api.get('/rpm/VariableTemplate/GetVariableTemplates');
+		return response.data;
+	} catch (error) {
+		console.error(error);
+	}
+};
+
 export const getDisplayPattern = async () => {
 	try {
 		const response = await Api.get('/rpm/DataStructure/GetDisplayPattern');
@@ -126,6 +135,15 @@ export const getDataTypes = async () => {
 export const getUnits = async () => {
 	try {
 		const response = await Api.get('/rpm/DataStructure/getUnits');
+		return response.data;
+	} catch (error) {
+		console.error(error);
+	}
+};
+
+export const getUnitsWithDataTypes = async () => {
+	try {
+		const response = await Api.get('/rpm/variableTemplate/getUnits');
 		return response.data;
 	} catch (error) {
 		console.error(error);

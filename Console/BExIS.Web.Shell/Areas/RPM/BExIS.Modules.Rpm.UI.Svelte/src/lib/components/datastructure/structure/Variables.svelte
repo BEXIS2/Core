@@ -4,14 +4,14 @@
 	import { onMount } from 'svelte';
 	import { getDataTypes, getUnits } from '../services';
 	import type { missingValueType } from '../types';
-	import { VariableModel } from '../types';
+	import { VariableInstanceModel } from '../types';
 	import { Modal, modalStore } from '@skeletonlabs/skeleton';
 	import type { ModalSettings } from '@skeletonlabs/skeleton';
 
 	import Fa from 'svelte-fa';
 	import { faShare, faShareFromSquare, faMaximize, faMinimize, faAdd, faTrash, faCopy, faAngleUp, faAngleDown } from '@fortawesome/free-solid-svg-icons';
 
-	export let variables: VariableModel[] = [];
+	export let variables: VariableInstanceModel[] = [];
 	export let missingValues: missingValueType[] = [];
 	export let data: string[][];
 
@@ -123,14 +123,14 @@
 	function addFn()
 	{
 
-			variables = [...variables, new VariableModel()];
+			variables = [...variables, new VariableInstanceModel()];
 
 	}
 
 	function copyFn(i)
 	{
 
-		let copiedVariable = new VariableModel();
+		let copiedVariable = new VariableInstanceModel();
 		copiedVariable.name = variables[i].name+" (copied)";
 		copiedVariable.description = variables[i].description;
 		copiedVariable.dataType = variables[i].dataType;
