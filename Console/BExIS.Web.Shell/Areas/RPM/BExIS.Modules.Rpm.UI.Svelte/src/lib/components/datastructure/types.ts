@@ -22,7 +22,7 @@ export interface DataStructureCreationModel {
 	total: number;
 	skipped: number;
 	markers: markerType[];
-	variables: VariableModel[];
+	variables: VariableInstanceModel[];
 	missingValues: missingValueType[];
 }
 
@@ -37,34 +37,58 @@ export interface markerType {
 	cells: boolean[];
 }
 
-export class VariableModel {
-	id: number;
-	name: string;
-	description: string;
-	systemType: string;
+class VariableModel{
+				id: number;
+    name: string;
+    description: string;
+    systemType: string;
+    dataType: listItemType;
+    unit: listItemType;
+    displayPattern: listItemType | undefined;
+				missingValues: listItemType[];
+
+				public constructor() {
+					this.id = -1
+					this.name = ""
+					this.description = ""
+					this.systemType = ""
+					this.dataType = {id:0,text:"",group:""}
+					this.unit = {id:0,text:"",group:""}
+					this.displayPattern = {id:0,text:"",group:""}
+					this.missingValues = [];
+
+				}
+}
+
+
+export class VariableTemplateModel extends VariableModel{
+
+	approved: boolean;
+
+	public constructor() {
+		super()
+		this.approved = false
+	}
+}
+
+export class VariableInstanceModel extends VariableModel {
+
+	template: listItemType;
 	isKey: boolean;
 	isOptional: boolean;
-	dataType: listItemType;
-	unit: listItemType;
-	template: listItemType;
-	displayPattern: listItemType | undefined;
 	possibleUnits: listItemType[];
 	possibleTemplates: listItemType[];
 	possibleDisplayPattern: listItemType[];
 
+
 	public constructor() {
-		this.id = -1
-		this.name = ""
-		this.description = ""
-		this.systemType = ""
-		this.isKey = false
+		super();
 		this.isOptional = false
-		this.dataType = {id:0,text:"",group:""}
-		this.unit = {id:0,text:"",group:""}
 		this.template = {id:0,text:"",group:""}
-		this.displayPattern = {id:0,text:"",group:""}
+		this.isKey = false
 		this.possibleUnits = []
 		this.possibleTemplates = []
 		this.possibleDisplayPattern = []
+	}
 }
-}
+

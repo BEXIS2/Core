@@ -7,6 +7,7 @@ using BExIS.Dlm.Services.DataStructure;
 using BExIS.IO;
 using BExIS.IO.DataType.DisplayPattern;
 using BExIS.IO.Transform.Input;
+using BExIS.Modules.Rpm.UI.Models;
 using BExIS.Modules.Rpm.UI.Models.DataStructure;
 using BExIS.Security.Entities.Authorization;
 using BExIS.UI.Helpers;
@@ -448,7 +449,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
 
             // generate variables
             // reset list
-            model.Variables = new List<VariableModel>();
+            model.Variables = new List<VariableInstanceModel>();
             int cells = markerRows.First().Split((char)model.Delimeter).Count();
 
             var strutcureAnalyzer = new StructureAnalyser();
@@ -458,7 +459,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                 if (activeCells == null || activeCells[i]) // only create a var to the model if the cell is active or the list is null - means add everyone
                 {
 
-                    VariableModel var = new VariableModel();
+                    VariableInstanceModel var = new VariableInstanceModel();
 
                     var.Name = getValueFromMarkedRow(markerRows, model.Markers, "variable", (char)model.Delimeter, i, AsciiFileReaderInfo.GetTextMarker((TextMarker)model.TextMarker));
                     var.Description = getValueFromMarkedRow(markerRows, model.Markers, "description", (char)model.Delimeter, i, AsciiFileReaderInfo.GetTextMarker((TextMarker)model.TextMarker));
@@ -525,7 +526,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                     {
                         foreach (var variable in structure.Variables)
                         {
-                            var var = new VariableModel()
+                            var var = new VariableInstanceModel()
                             {
                                 Id = variable.Id,
                                 Name = variable.Label,
