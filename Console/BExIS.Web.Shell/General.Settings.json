@@ -1,22 +1,26 @@
 {
   "id": "shell",
-  "name": "...",
+  "name": "General",
   "description": "The default landing page for the search in the form of <moduleId>, <controller>, <action>. The application's home page will redirect here.    The module must be avilable and active, otherwise another redirect happens to the home page, which causes a loop.     The designated action must be set to public in the feature permission mgmt, otherwise the request will be redirected to the login page.     The 'type' attribute must be compatible with the System.TypeCode case-sensitive.",
-  "jwt": {
-    "validateAudience": false,
-    "validateIssuer": false,
-    "validAudience": "http://localhost:3000",
-    "validIssuer": "https://localhost:7041",
-    "issuerSigningKey": "JWTAuthenticationHIGHsecuredPasswordVVVp1OH7Xzyr",
-    "requireExpirationTime": false,
-    "validateLifetime": false,
-    "validLifetime": 1
-  },
   "entries": [
     {
       "key": "applicationName",
       "value": "AppLocal",
       "type": "String",
+      "description": "The application name is used in several places in the system. e.g. as title in the email"
+    },
+    {
+      "key": "jwt",
+      "value": {
+        "validateAudience": false,
+        "validateIssuer": false,
+        "validAudience": "http://localhost:3000",
+        "validIssuer": "https://localhost:7041",
+        "issuerSigningKey": "JWTAuthenticationHIGHsecuredPasswordVVVp1OH7Xzyr",
+        "validateLifetime": false,
+        "validLifetime": 1
+      },
+      "type": "JSON",
       "description": "The application name is used in several places in the system. e.g. as title in the email"
     },
     {

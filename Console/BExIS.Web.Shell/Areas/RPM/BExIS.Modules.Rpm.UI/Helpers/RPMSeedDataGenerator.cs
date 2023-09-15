@@ -1,5 +1,7 @@
 ﻿using BExIS.Dlm.Entities.Administration;
+using BExIS.Dlm.Entities.Meanings;
 using BExIS.Dlm.Services.Administration;
+using BExIS.Dlm.Services.Meanings;
 using BExIS.Modules.Rpm.UI.Helpers.SeedData;
 using BExIS.Security.Entities.Objects;
 using BExIS.Security.Services.Authorization;
@@ -116,6 +118,41 @@ namespace BExIS.Modules.Rpm.UI.Helpers
 
                 //set api public
                 featurePermissionManager.Create(null, api.Id, Security.Entities.Authorization.PermissionType.Grant);
+
+
+                //meanings features and security levels
+                Feature dataMeaning = features.FirstOrDefault(f =>
+                    f.Name.Equals("Data Meaning Manager") &&
+                    f.Parent != null &&
+                    f.Parent.Id.Equals(dataPlanning.Id));
+                if (dataMeaning == null)
+                    dataMeaning = featureManager.Create("Data Meaning", "Data Meaning Management", dataPlanning);
+                if (!operationManager.Exists("API", "MeaningsAdmin", "*"))
+                {
+                    operationManager.Create("API", "MeaningsAdmin", "*", dataMeaning);
+                }
+
+                Feature dataMeaning_pub = features.FirstOrDefault(f =>
+                    f.Name.Equals("Data Meaning (public)") &&
+                    f.Parent != null &&
+                    f.Parent.Id.Equals(dataPlanning.Id));
+                if (dataMeaning_pub == null)
+                    dataMeaning_pub = featureManager.Create("Data Meaning (public)", "Data Meaning Management", dataPlanning);
+                if (!operationManager.Exists("API", "Meanings", "*"))
+                {
+                    operationManager.Create("API", "Meanings", "*", dataMeaning_pub);
+                    featurePermissionManager.Create(null, dataMeaning_pub.Id, Security.Entities.Authorization.PermissionType.Grant);
+                }
+
+                using (meaningManager _meaningManager = new meaningManager())
+                {
+                    _meaningManager.addExternalLink("http://exampleURI_1", "Example 1", "entity");
+                    _meaningManager.addExternalLink("http://exampleURI_2", "Example 2", "entity");
+                    _meaningManager.addExternalLink("http://exampleURI_3", "Example 3", "entity");
+                    _meaningManager.addMeaning("Example 1 name", "Example 1 ShortName", "Example 1 description", Selectable.yes, Approved.yes, new List<string> { }, new List<string> { }, new List<string> { });
+                    _meaningManager.addMeaning("Example 2 name", "Example 2 ShortName", "Example 2 description", Selectable.yes, Approved.yes, new List<string> { }, new List<string> { }, new List<string> { });
+                    _meaningManager.addMeaning("Example 3 name", "Example 3 ShortName", "Example 3 description", Selectable.yes, Approved.yes, new List<string> { }, new List<string> { }, new List<string> { });
+                }
 
             }
             finally

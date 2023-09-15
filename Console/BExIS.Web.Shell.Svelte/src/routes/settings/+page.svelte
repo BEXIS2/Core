@@ -64,7 +64,7 @@
 			<ListBox active="variant-filled-primary">
 				{#each data as m}
 					<ListBoxItem bind:group={valueSingle} name="medium" value={m.id}
-						>{m.id} ({m.name})</ListBoxItem
+						>{m.name}</ListBoxItem
 					>
 				{/each}
 			</ListBox>
