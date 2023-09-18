@@ -25,7 +25,7 @@ namespace BExIS.Modules.Rpm.UI.Helpers
             model.Unit = new ListItem(variableTemplate.Unit.Id, variableTemplate.Unit.Name);
 
             // missing values 
-            variableTemplate.MissingValues.ToList().ForEach(m => model.MissingValues.Add(new ListItem(m.Id, m.Placeholder)));
+            variableTemplate.MissingValues?.ToList().ForEach(m => model.MissingValues.Add(new ListItem(m.Id, m.Placeholder)));
 
             //variableTemplate.VariableConstraints = _model.VariableConstraints;
 
