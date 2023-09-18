@@ -2,54 +2,107 @@
 	import { onMount } from 'svelte';
 	import { slide, fade } from 'svelte/transition';
 	import { Modal, modalStore, Toast } from '@skeletonlabs/skeleton';
-	import { Page, Table, ErrorMessage, helpStore, TablePlaceholder, type helpItemType, type listItemType, } from '@bexis2/bexis2-core-ui';
+	import { Page, Table, ErrorMessage, helpStore, TablePlaceholder, type helpItemType, type listItemType,  type TableConfig, notificationStore, notificationType } from '@bexis2/bexis2-core-ui';
 
 	import Fa from 'svelte-fa';
 	import { faPlus, faXmark, faBan } from '@fortawesome/free-solid-svg-icons';
 
  // Components
 	import VariableTemplate from './VariableTemplate.svelte'
+	import TableListItem from './table/tableListItem.svelte';
+	import TableListString from './table/tableListString.svelte';
+	import TableIsApproved from './table/tableIsApproved.svelte'
 
 	// types
-	import {VariableTemplateModel, type missingValueType} from '$lib/components/datastructure/types'
+	import {VariableTemplateModel, type missingValueType, type unitListItemType} from '$lib/components/datastructure/types'
 
  // services
-	import { getVariableTemplates, getDataTypes, getUnitsWithDataTypes, getDisplayPattern } from '$lib/components/datastructure/services'
-
+	import { getDataTypes, getUnitsWithDataTypes, getDisplayPattern } from '$lib/components/datastructure/services'
+ import { getVariableTemplates, remove } from './services'
+	
 	// data
 	import { variableTemplateHelp } from './help'
 	import { writable } from 'svelte/store';
-	import { displayPatternStore } from '$lib/components/datastructure/store';
+	//stores
+	import { displayPatternStore, unitStore, dataTypeStore} from '$lib/components/datastructure/store';
+ import {variableTemplatesStore} from './stores'
 
-	let vt: VariableTemplateModel[] = [];
+	let vt: VariableTemplateModel[] = [new VariableTemplateModel()];
 	let variableTemplate: VariableTemplateModel = new VariableTemplateModel();
 
-	const tableStore = writable<VariableTemplateModel[]>([]);
-	
 	let helpItems: helpItemType[] = variableTemplateHelp;
-
  let missingValues: missingValueType[] = [];
-
-	let datatypes:listItemType[] = [];
-	$: datatypes;
-	let units:listItemType[] = [];
-	$: units;
 	let showForm = false;
+
+	const tc: TableConfig<VariableTemplateModel> = {
+				id: 'VariableTemplates',
+				data: variableTemplatesStore,
+				columns: {
+							id: {
+								disableFiltering: true,
+								exclude: true
+							},
+						 approved: {
+								header: 'Approved',
+								instructions: {
+									renderComponent: TableIsApproved
+								},
+								disableFiltering: true,
+								exclude:true
+							},
+							dataType: {
+								header: 'Data Type',
+								disableFiltering: true,
+								instructions: {
+									renderComponent: TableListItem,
+									toFilterableValueFn:(value:listItemType) => value.text,
+									toStringFn: (d:listItemType) => d.text
+								}
+							},
+							systemType:{
+								exclude: true
+							},
+							unit: {
+								header: 'Unit',
+								instructions: {
+									renderComponent: TableListItem,
+									toStringFn:(value:listItemType) => value.text,
+									toFilterableValueFn:(value:listItemType) => value.text
+								}
+							},
+							displayPattern: {
+								header: 'Display Pattern',
+								
+								instructions: {
+									renderComponent: TableListItem,
+									toStringFn:(value:listItemType) => value.text,
+									toFilterableValueFn:(value:listItemType) => value.text
+								}
+							},
+							missingValues: {
+								instructions: {
+								renderComponent: TableListString
+								},
+								disableFiltering: true,
+								exclude: true
+							}
+						}
+			}
 
 	onMount(async () => {
 		helpStore.setHelpItemList(helpItems);
-		datatypes = await getDataTypes();
-		units = await getUnitsWithDataTypes();
 
-		
+		const datatypes = await getDataTypes();
+		dataTypeStore.set(datatypes)
+		const units = await getUnitsWithDataTypes();
+		unitStore.set(units)
+	
 		// load display pattern onces for all edit types
 		const displayPattern = await getDisplayPattern();
 		displayPatternStore.set(displayPattern);
 
-		console.log(units);
-		
-		
 		showForm = false;
+		
 	});
 
 
@@ -57,7 +110,18 @@
 		showForm = false;
 		vt = await getVariableTemplates();
 		console.log("variable templates",vt)
+		variableTemplatesStore.set(vt)
+		console.log("store",$variableTemplatesStore )
+	}
 
+	function onSuccessFn()
+	{
+		notificationStore.showNotification({
+				notificationType: notificationType.success,
+				message: 'Variable Template created.'
+			});
+			reload();
+			showForm = false;
 	}
 
 	function toggleForm() {
@@ -72,6 +136,34 @@
 		showForm = false;
 	}
 
+	function onFailFn()
+	{
+		notificationStore.showNotification({
+				notificationType: notificationType.error,
+				message: 'Can\'t save Variable Template.'
+			})
+	}
+
+async function deleteFn(id)
+{
+		const success = await remove(id);
+
+		if (success != true) {
+			notificationStore.showNotification({
+				notificationType: notificationType.error,
+				message: 'Can\'t delete Variable Template.'
+			});
+		} else {
+			notificationStore.showNotification({
+				notificationType: notificationType.success,
+				message: 'Variable Template deleted.'
+			});
+
+			reload();
+		}
+}
+
+
 </script>
 
 <Page help={true} title="Manage Variable Template">
@@ -84,9 +176,8 @@
 					><Fa icon={faPlus} /></button>
 			</div>
 		</div>
-
 		<div class="table-container w-full">
-			<TablePlaceholder cols={7} />
+			<TablePlaceholder cols={5} />
 		</div>
 	{:then}
 
@@ -118,18 +209,14 @@
 
 	{#if showForm}
 	<div in:slide out:slide>
-			<VariableTemplate variable = {variableTemplate} {units} {datatypes} {missingValues} on:cancel={()=>clear()}/>
+			<VariableTemplate variable = {variableTemplate} {missingValues} on:cancel={()=>clear()} on:success={onSuccessFn} on:fail={onFailFn}/>
 		</div>
 	{/if}
 
 	<div class="table table-compact w-full">
-		
-
+	
 		<Table
-			config={{
-				id: 'VariableTemplates',
-				data: tableStore
-			}}
+			config={tc}
 		/>
 	</div>
 

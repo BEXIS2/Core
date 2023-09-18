@@ -25,7 +25,7 @@
 	let entityId: number;
 	let datastructureId: number = 0;
 	let version: number = 0;
-	let file: string;
+	let file: string ;
 
 	let model: DataStructureCreationModel;
 	$: model;
@@ -36,10 +36,10 @@
 	async function start() {
 		// get data from parent
 		container = document.getElementById('datastructure');
-		entityId = container?.getAttribute('dataset');
-		version = container?.getAttribute('version');
-		file = container?.getAttribute('file');
-		datastructureId = container?.getAttribute('structure');
+		entityId = Number(container?.getAttribute('dataset'));
+		version = Number(container?.getAttribute('version'));
+		file = ""+container?.getAttribute('file');
+		datastructureId = Number(container?.getAttribute('structure'));
 
 		console.log('start structure suggestion', entityId, version, file, datastructureId);
 

@@ -42,32 +42,30 @@ class VariableModel{
     name: string;
     description: string;
     systemType: string;
-    dataType: listItemType;
-    unit: listItemType;
+    dataType: listItemType| undefined;
+    unit: unitListItemType| undefined;;
     displayPattern: listItemType | undefined;
 				missingValues: listItemType[];
+				approved: boolean;
 
 				public constructor() {
-					this.id = -1
+					this.id = 0
 					this.name = ""
 					this.description = ""
 					this.systemType = ""
-					this.dataType = {id:0,text:"",group:""}
-					this.unit = {id:0,text:"",group:""}
-					this.displayPattern = {id:0,text:"",group:""}
+					this.dataType = undefined//{id:0,text:"",group:""}
+					this.unit = undefined
+					this.displayPattern = undefined
 					this.missingValues = [];
-
+					this.approved = false;
 				}
 }
 
 
 export class VariableTemplateModel extends VariableModel{
 
-	approved: boolean;
-
 	public constructor() {
 		super()
-		this.approved = false
 	}
 }
 
@@ -82,7 +80,7 @@ export class VariableInstanceModel extends VariableModel {
 
 
 	public constructor() {
-		super();
+		super()
 		this.isOptional = false
 		this.template = {id:0,text:"",group:""}
 		this.isKey = false
@@ -92,3 +90,6 @@ export class VariableInstanceModel extends VariableModel {
 	}
 }
 
+export interface unitListItemType extends listItemType {
+		dataTypes:string[]	
+}

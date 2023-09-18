@@ -8,32 +8,41 @@
 	import type { listItemType } from '@bexis2/bexis2-core-ui';
 	import type {
 		VariableTemplateModel,
-		missingValueType
+		missingValueType,
+		unitListItemType
+
 	} from '$lib/components/datastructure/types';
 
 	//stores
 	import { get } from 'svelte/store';
-	import { displayPatternStore } from '$lib/components/datastructure/store';
+	import { dataTypeStore, displayPatternStore, unitStore } from '$lib/components/datastructure/store';
+
+// services
+import { update } from './services'
 
 	// icons
 	import Fa from 'svelte-fa';
 	import { faXmark, faSave, faChevronUp, faChevronDown } from '@fortawesome/free-solid-svg-icons';
 
-
 	import suite from './variableTemplate';
 	import MissingValues from '$lib/components/datastructure/MissingValues.svelte';
 
+ export let missingValues: missingValueType[];
 	export let variable: VariableTemplateModel;
 	$: variable;
 
-	export let datatypes: listItemType[];
-	export let units: listItemType[];
-	export let missingValues: missingValueType[];
+	let datatypes: listItemType[];
+	$:datatypes
+
+ let units: unitListItemType[];
+	$:units
 
 	export let isValid: boolean = false;
 	let help: boolean = true;
 
-	$: isValid;
+	let loading:boolean = false; // if true preloader of selection list unit and datatype will be displayed
+
+	$: isValid = res.isValid();
 	// validation
 	let res = suite.get();
 
@@ -42,6 +51,8 @@
 	//displaypattern
 	let displayPattern: listItemType[];
 	$: displayPattern;
+
+
 
 	function updateDisplayPattern(type, reset = true) {
 		// currently only date, date tim e and time is use with display pattern.
@@ -85,22 +96,27 @@
 
 	onMount(() => {
 		loaded = true;
+		console.log("variable", variable);
+		
 		// reset & reload validation
 		suite.reset();
 
+		datatypes = $dataTypeStore;
+		units = $unitStore;
+
+
 		setTimeout(async () => {
 			updateDisplayPattern(variable.dataType);
-			res = suite(variable);
-			setValidationState(res);
+			if(variable.id>0) {res = suite(variable,"");} // run validation only if start with an existing 
+			filterLists()
+
 		}, 10);
 	});
 
 	afterUpdate(() => {
 		updateDisplayPattern(variable.dataType, false);
-		res = suite(variable);
-		setValidationState(res);
-		// console.log("u",variable.name);
-		// console.log("--------------------");
+		res = suite(variable,"");
+
 	});
 
 	//change event: if input change check also validation only on the field
@@ -110,7 +126,6 @@
 		// otherwise the values are old
 		setTimeout(async () => {
 			res = suite(variable, e.target.id);
-			setValidationState(res);
 
 			//console.log(res);
 			//console.log(res.isValid());
@@ -120,41 +135,103 @@
 	//change event: if select change check also validation only on the field
 	// *** is the id of the input component
 	function onSelectHandler(e, id) {
+
+		loading = true;// active preloader of lists
+
 		setTimeout(async () => {
+			console.log(variable);
+			
 			res = suite(variable, id);
 
-			//console.log(res);
-			//console.log(res.isValid());
 			// update display patter and reset it if it changed
 			if (id == 'dataType') {
-				console.log("dataType");
-				
 				updateDisplayPattern(variable.dataType);
-				console.log("displaypatter", displayPattern);
-
+				res = suite(variable, "unit"); // validate unit because of the selection dependencys to the unit
 			}
 
-			setValidationState(res);
-		}, 100);
-	}
+			// if unit is changed, need to validate the datatypes again based on the suggestions
+			if (id == 'unit') {
+				res = suite(variable, "dataType");
+				updateDisplayPattern(variable.dataType);
+			}
 
-	function setValidationState(res) {
-		isValid = res.isValid();
-		// dispatch this event to the parent to check the save button
-		dispatch('var-change');
+			filterLists()
+
+			loading = false;// active preloader of lists
+
+			console.log("ERRORS",res.getErrors());
+			
+
+		}, 100);
+
+
 	}
 
 	function cancel()
 	{
+		suite.reset();
 		dispatch('cancel');
 	}
 
-	function submit()
+	async function submit()
 	{
+				var res = await update(variable);
+
+				if(res){dispatch('success');}
+				else {dispatch('fail')}
 
 	}
 
+	// this function change the group in the list based on the selections of other fields
+	function filterLists()
+	{
+		console.log("filter lists");
+		
+		// datatypes based on unit selection
+		updateDatatypes(variable.unit, $dataTypeStore)
+		//console.log("updated datatypes",datatypes);
+		
+		// units based on Datatype selection
+		updateUnits(variable.dataType, $unitStore)
+		//console.log("updated units",units);
+	}
+
+	function updateDatatypes(unit:unitListItemType | undefined, dts:listItemType[])
+	{
+			//console.log("-->", unit.text,unit.dataTypes);
+			
+		 let matchPhrase = ""+unit?.text;
+			let othersText = "others";
+
+			if(unit != null && unit != undefined && unit.dataTypes.length>0) // if unit exist
+			{
+						dts.forEach(element => {
+								element.group =	unit.dataTypes.includes(element.text)==true?matchPhrase:othersText
+						});
+
+						datatypes = [...dts.filter(d=>d.group!=othersText),...dts.filter(d=>d.group==othersText)]
+
+			}
+	}
+
+	function updateUnits(datatype:listItemType | undefined, _units:unitListItemType[])
+	{
+			let matchPhrase = ""+datatype?.text;
+			let othersText = "others";
+		
+			if(datatype && _units) // if datatype and units exist
+			{
+				  _units.forEach(unit => {
+							unit.group = unit.dataTypes.includes(datatype.text)==true?matchPhrase:othersText
+						});
+						units = [..._units.filter(d=>d.group!=othersText),..._units.filter(d=>d.group==othersText)];
+			}
+	}
+
 </script>
+
+
+
 <form on:submit|preventDefault={submit}>
 <div id="variable-{variable.id}-form" class="flex-colspace-y-5 card shadow-md p-5">
 
@@ -168,6 +245,7 @@
 			valid={res.isValid('name')}
 			invalid={res.hasErrors('name')}
 			feedback={res.getErrors('name')}
+			required={true}
 			{help}
 		/>
 	</div>
@@ -182,6 +260,7 @@
 			invalid={res.hasErrors('description')}
 			feedback={res.getErrors('description')}
 			{help}
+			required={true}
 		/>
 	</div>
 
@@ -192,7 +271,7 @@
 		<MultiSelect
 			id="unit"
 			title="Unit"
-			source={units}
+			bind:source={units}
 			itemId="id"
 			itemLabel="text"
 			itemGroup="group"
@@ -206,6 +285,8 @@
 			feedback={res.getErrors('unit')}
 			on:change={(e) => onSelectHandler(e, 'unit')}
 			{help}
+			{loading}
+			required={true}
 		/>
 		</div>
 		<div class="grow w-1/4">
@@ -213,7 +294,7 @@
 		<MultiSelect
 			id="dataType"
 			title="Data Type"
-			source={datatypes}
+			bind:source={datatypes}
 			itemId="id"
 			itemLabel="text"
 			itemGroup="group"
@@ -227,6 +308,8 @@
 			clearable={false}
 			on:change={(e) => onSelectHandler(e, 'dataType')}
 			{help}
+			{loading}
+			required={true}
 		/>
   </div>
 		<div class="grow w-1/4">
@@ -260,7 +343,7 @@
 		</div>
 
 		<!--Missing Values-->
-		<div id="missingvaluesContainer" on:mouseover={() => {
+		<div class="py-5" id="missingvaluesContainer" on:mouseover={() => {
 			helpStore.show('missingvaluesContainer');
 		}}>
    <MissingValues bind:list={variable.missingValues}></MissingValues>
@@ -280,11 +363,10 @@
 				type="submit"
 				class="btn variant-filled-primary h-9 w-16 shadow-md"
 				title="Save Variable Template, {variable.name}"
-				id="save">
+				id="save"
+				disabled={!isValid}>
 				<Fa icon={faSave} /></button>
-				
 		</div>
-
 </div>
 
 </form>
