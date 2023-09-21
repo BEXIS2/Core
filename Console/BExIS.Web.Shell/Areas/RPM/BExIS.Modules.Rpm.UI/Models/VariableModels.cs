@@ -14,9 +14,9 @@ namespace BExIS.Modules.Rpm.UI.Models
         public string SystemType { get; set; }
         public ListItem DataType { get; set; }
         public ListItem Unit { get; set; }
-        public ListItem DisplayPattern { get; set; }
 
-        public List<ListItem> MissingValues { get; set; }
+
+        public List<MissingValueItem> MissingValues { get; set; }
 
         public VariableModel()
         {
@@ -26,8 +26,7 @@ namespace BExIS.Modules.Rpm.UI.Models
             SystemType = "";
             DataType = new ListItem();
             Unit = new ListItem();
-            DisplayPattern = new ListItem(-1, "", "");
-            MissingValues = new List<ListItem>();
+            MissingValues = new List<MissingValueItem>();
         }
     }
 
@@ -38,6 +37,7 @@ namespace BExIS.Modules.Rpm.UI.Models
         public bool IsOptional { get; set; }
 
         public ListItem Template { get; set; }
+        public ListItem DisplayPattern { get; set; }
 
         public List<ListItem> PossibleUnits { get; set; }
         public List<ListItem> PossibleTemplates { get; set; }
@@ -47,6 +47,7 @@ namespace BExIS.Modules.Rpm.UI.Models
         public VariableInstanceModel()
         {
             Template = new ListItem();
+            DisplayPattern = new ListItem(-1, "", "");
             PossibleUnits = new List<ListItem>();
             PossibleTemplates = new List<ListItem>();
             PossibleDisplayPattern = new List<ListItem>();
@@ -56,11 +57,13 @@ namespace BExIS.Modules.Rpm.UI.Models
     public class VariableTemplateModel: VariableModel
     {
 
+        public Boolean InUse { get; set; }
         public Boolean Approved { get; set; }
 
         public VariableTemplateModel()
         {
             Approved = false;
+            InUse = false;
         }
     }
 
@@ -86,6 +89,28 @@ namespace BExIS.Modules.Rpm.UI.Models
             Text = value;
             Group = group;
             DataTypes = dataTypes;
+        }
+
+    }
+
+    public class MissingValueItem
+    {
+        public long Id { get; set; }
+        public string DisplayName { get; set; }
+        public string Description { get; set; }
+
+        public MissingValueItem()
+        {
+            Id = 0;
+            DisplayName = "";
+            Description = "";
+        }
+
+        public MissingValueItem(long _id,  string _displayName, string _description)
+        {
+            Id = _id;
+            DisplayName = _displayName;
+            Description = _description;
         }
 
     }

@@ -29,7 +29,7 @@ export const update = async (data:VariableTemplateModel) => {
 
 export const remove = async (id) => {
 	try {
-		const response = await Api.delete('/rpm/VariableTemplate/Delete', {id});
+		const response = await Api.delete('/rpm/VariableTemplate/Delete',{id});
 		return response.data;
 	} catch (error) {
 		console.error(error);

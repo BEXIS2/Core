@@ -1,6 +1,10 @@
-<script>
+<script lang="ts">
+
+ import type {missingValueType} from './types'
+
+
 	import MissingValue from './MissingValue.svelte';
-	export let list = [];
+	export let list:missingValueType[] = [];
 
 	import { onMount } from 'svelte';
 
@@ -21,7 +25,8 @@
 	function add() {
 		console.log('list', list);
 
-		let newMissingValue = {
+		let newMissingValue:missingValueType = {
+			id:0,
 			displayName: '',
 			description: ''
 		};

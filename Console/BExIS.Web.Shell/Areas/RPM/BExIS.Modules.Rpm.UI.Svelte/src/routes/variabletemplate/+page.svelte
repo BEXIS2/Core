@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import { slide, fade } from 'svelte/transition';
-	import { Modal, modalStore, Toast } from '@skeletonlabs/skeleton';
+	import { Modal, modalStore, Toast, type ModalSettings } from '@skeletonlabs/skeleton';
 	import { Page, Table, ErrorMessage, helpStore, TablePlaceholder, type helpItemType, type listItemType,  type TableConfig, notificationStore, notificationType } from '@bexis2/bexis2-core-ui';
 
 	import Fa from 'svelte-fa';
@@ -12,6 +12,7 @@
 	import TableListItem from './table/tableListItem.svelte';
 	import TableListString from './table/tableListString.svelte';
 	import TableIsApproved from './table/tableIsApproved.svelte'
+	import TableOptions from './table/tableOptions.svelte'
 
 	// types
 	import {VariableTemplateModel, type missingValueType, type unitListItemType} from '$lib/components/datastructure/types'
@@ -37,12 +38,21 @@
 	const tc: TableConfig<VariableTemplateModel> = {
 				id: 'VariableTemplates',
 				data: variableTemplatesStore,
+				optionsComponent: TableOptions,
 				columns: {
 							id: {
 								disableFiltering: true,
 								exclude: true
 							},
 						 approved: {
+								header: 'Approved',
+								instructions: {
+									renderComponent: TableIsApproved
+								},
+								disableFiltering: true,
+								exclude:true
+							},
+							inUse: {
 								header: 'Approved',
 								instructions: {
 									renderComponent: TableIsApproved
@@ -72,7 +82,6 @@
 							},
 							displayPattern: {
 								header: 'Display Pattern',
-								
 								instructions: {
 									renderComponent: TableListItem,
 									toStringFn:(value:listItemType) => value.text,
@@ -108,17 +117,21 @@
 
 	async function reload() {
 		showForm = false;
+		variableTemplate = new VariableTemplateModel();
 		vt = await getVariableTemplates();
 		console.log("variable templates",vt)
 		variableTemplatesStore.set(vt)
 		console.log("store",$variableTemplatesStore )
 	}
 
-	function onSuccessFn()
+	function onSuccessFn(id)
 	{
+
+		const message = id>0?'Variable Template updated.':'Variable Template created.'
+
 		notificationStore.showNotification({
 				notificationType: notificationType.success,
-				message: 'Variable Template created.'
+				message: message
 			});
 			reload();
 			showForm = false;
@@ -163,6 +176,28 @@ async function deleteFn(id)
 		}
 }
 
+function edit(type: any) {
+
+		if (type.action == 'edit') {
+			variableTemplate = $variableTemplatesStore.find((u) => u.id === type.id)!;
+			showForm = true;
+		}
+		if (type.action == 'delete') {
+			const confirm: ModalSettings = {
+				type: 'confirm',
+				title: 'Delete Variable Template',
+				body:
+					'Are you sure you wish to delete variable template "' + variableTemplate.name + '"?',
+				// TRUE if confirm pressed, FALSE if cancel pressed
+				response: (r: boolean) => {
+					if (r === true) {
+						deleteFn(type.id);
+					}
+				}
+			};
+			modalStore.trigger(confirm);
+		}
+	}
 
 </script>
 
@@ -209,13 +244,14 @@ async function deleteFn(id)
 
 	{#if showForm}
 	<div in:slide out:slide>
-			<VariableTemplate variable = {variableTemplate} {missingValues} on:cancel={()=>clear()} on:success={onSuccessFn} on:fail={onFailFn}/>
+			<VariableTemplate variable = {variableTemplate} {missingValues} on:cancel={()=>clear()} on:success={()=>onSuccessFn(variableTemplate.id)} on:fail={onFailFn}/>
 		</div>
 	{/if}
 
 	<div class="table table-compact w-full">
 	
 		<Table
+			on:action={(obj) => edit(obj.detail.type)}
 			config={tc}
 		/>
 	</div>
