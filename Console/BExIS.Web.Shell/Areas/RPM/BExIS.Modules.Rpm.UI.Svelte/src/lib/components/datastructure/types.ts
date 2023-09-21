@@ -27,6 +27,7 @@ export interface DataStructureCreationModel {
 }
 
 export interface missingValueType {
+	id:number;
 	displayName: string;
 	description: string;
 }
@@ -44,9 +45,9 @@ class VariableModel{
     systemType: string;
     dataType: listItemType| undefined;
     unit: unitListItemType| undefined;;
-    displayPattern: listItemType | undefined;
-				missingValues: listItemType[];
+				missingValues: missingValueType[];
 				approved: boolean;
+				inUse: boolean;
 
 				public constructor() {
 					this.id = 0
@@ -55,9 +56,9 @@ class VariableModel{
 					this.systemType = ""
 					this.dataType = undefined//{id:0,text:"",group:""}
 					this.unit = undefined
-					this.displayPattern = undefined
 					this.missingValues = [];
 					this.approved = false;
+					this.inUse = false;
 				}
 }
 
@@ -74,16 +75,17 @@ export class VariableInstanceModel extends VariableModel {
 	template: listItemType;
 	isKey: boolean;
 	isOptional: boolean;
+	displayPattern: listItemType | undefined;
 	possibleUnits: listItemType[];
 	possibleTemplates: listItemType[];
 	possibleDisplayPattern: listItemType[];
-
 
 	public constructor() {
 		super()
 		this.isOptional = false
 		this.template = {id:0,text:"",group:""}
 		this.isKey = false
+		this.displayPattern = undefined
 		this.possibleUnits = []
 		this.possibleTemplates = []
 		this.possibleDisplayPattern = []

@@ -53,45 +53,6 @@ import { update } from './services'
 	$: displayPattern;
 
 
-
-	function updateDisplayPattern(type, reset = true) {
-		// currently only date, date tim e and time is use with display pattern.
-		// however the serve only now datetime so we need to preselect the possible display pattern to date, time and datetime
-		let allDisplayPattern = get(displayPatternStore);
-
-		if (type != undefined) {
-			if (type.text.toLowerCase() === 'date') {
-				// date without time
-				displayPattern = allDisplayPattern.filter(
-					(m) =>
-						m.group.toLowerCase().includes(type.text) &&
-						(!m.text.toLowerCase().includes('h') || !m.text.toLowerCase().includes('s'))
-				);
-			} else if (type.text.toLowerCase() === 'time') {
-				// time without date
-				displayPattern = allDisplayPattern.filter(
-					(m) =>
-						m.group.toLowerCase().includes(type.text) &&
-						(!m.text.toLowerCase().includes('d') || !m.text.toLowerCase().includes('y'))
-				);
-			} else if (type.text.toLowerCase() === 'datetime') {
-				// both
-				displayPattern = allDisplayPattern.filter((m) => m.group.toLowerCase().includes(type.text));
-			} else {
-				displayPattern = [];
-			}
-		} else {
-			displayPattern = [];
-		}
-		// when type has change, reset value, but after copy do not reset
-		// thats why reset need to set
-		if (reset) variable.displayPattern = undefined;
-
-		if (displayPattern.length > 0) {
-			res = suite(variable, 'displayPattern');
-		}
-	}
-
 	const dispatch = createEventDispatcher();
 
 	onMount(() => {
@@ -106,18 +67,16 @@ import { update } from './services'
 
 
 		setTimeout(async () => {
-			updateDisplayPattern(variable.dataType);
+
 			if(variable.id>0) {res = suite(variable,"");} // run validation only if start with an existing 
 			filterLists()
 
 		}, 10);
 	});
 
-	afterUpdate(() => {
-		updateDisplayPattern(variable.dataType, false);
-		res = suite(variable,"");
-
-	});
+	// afterUpdate(() => {
+	// 	res = suite(variable,"");
+	// });
 
 	//change event: if input change check also validation only on the field
 	// e.target.id is the id of the input component
@@ -145,21 +104,19 @@ import { update } from './services'
 
 			// update display patter and reset it if it changed
 			if (id == 'dataType') {
-				updateDisplayPattern(variable.dataType);
 				res = suite(variable, "unit"); // validate unit because of the selection dependencys to the unit
 			}
 
 			// if unit is changed, need to validate the datatypes again based on the suggestions
 			if (id == 'unit') {
 				res = suite(variable, "dataType");
-				updateDisplayPattern(variable.dataType);
 			}
 
 			filterLists()
 
 			loading = false;// active preloader of lists
 
-			console.log("ERRORS",res.getErrors());
+			// console.log("ERRORS",res.getErrors());
 			
 
 		}, 100);
@@ -289,7 +246,7 @@ import { update } from './services'
 			required={true}
 		/>
 		</div>
-		<div class="grow w-1/4">
+		<div class="grow w-1/2">
 		<!--Data Type-->
 		<MultiSelect
 			id="dataType"
@@ -312,35 +269,8 @@ import { update } from './services'
 			required={true}
 		/>
   </div>
-		<div class="grow w-1/4">
-		{#if displayPattern != undefined && displayPattern.length > 0}
-			<MultiSelect
-				id="displayPattern"
-				title="Display Pattern"
-				source={displayPattern}
-				itemId="id"
-				itemLabel="text"
-				itemGroup="group"
-				complexSource={true}
-				complexTarget={true}
-				isMulti={false}
-				clearable={false}
-				bind:target={variable.displayPattern}
-				placeholder="-- Please select --"
-				invalid={res.hasErrors('displayPattern')}
-				feedback={res.getErrors('displayPattern')}
-				on:change={(e) => onSelectHandler(e, 'displayPattern')}
-				{help}
-			/>
-		{/if}
-		</div>
 	</div>
-	<!--Description-->
 
-		<!--Unit-->
-		<div class="w-1/2">
-		
-		</div>
 
 		<!--Missing Values-->
 		<div class="py-5" id="missingvaluesContainer" on:mouseover={() => {

@@ -3,7 +3,7 @@
 </script>
 
 <div>
-	<!-- {#if value != undefined && value != null}
+	{#if value != undefined && value != null}
 		{#if value.length > 1}
 			{#each value as elem}
 				{#if elem != undefined}
@@ -13,5 +13,5 @@
 		{:else if value[0] != undefined && value[0] != undefined}
 			{value[0]}
 		{/if}
-	{/if} -->
+	{/if}
 </div>

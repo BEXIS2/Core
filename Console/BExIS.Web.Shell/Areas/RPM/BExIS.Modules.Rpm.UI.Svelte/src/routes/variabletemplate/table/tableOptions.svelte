@@ -14,7 +14,7 @@
 			<button
 				type="button"
 				class="chip variant-filled-primary shadow-md"
-				title="Edit Unit, {row.name}"
+				title="Edit Variable Template, {row.name}"
 				id="edit-{row.id}"
 				on:mouseover={() => {
 					helpStore.show('edit');
@@ -30,7 +30,7 @@
 			<button
 				type="button"
 				class="chip variant-filled-error shadow-md"
-				title="Delete Unit, {row.name}"
+				title="Delete Variable Template, {row.name}"
 				id="delete-{row.id}"
 				on:mouseover={() => {
 					helpStore.show('delete');
@@ -46,7 +46,7 @@
 			<button
 				type="button"
 				class="chip variant-filled-primary shadow-md"
-				title="Edit Unit, {row.name}"
+				title="Edit Variable Template, {row.name}"
 				id="edit-{row.id}"
 				disabled
 			>
@@ -56,7 +56,7 @@
 			<button
 				type="button"
 				class="chip variant-filled-error shadow-md"
-				title="Delete Unit, {row.name}"
+				title="Delete Variable Template, {row.name}"
 				id="delete-{row.id}"
 				disabled
 			>

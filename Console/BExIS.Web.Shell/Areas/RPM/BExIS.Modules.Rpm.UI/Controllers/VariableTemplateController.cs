@@ -51,21 +51,33 @@ namespace BExIS.Modules.Rpm.UI.Controllers
             var variableTemplate = helper.ConvertTo(model);
 
             using (var variableManager = new VariableManager())
+            using (var missingValueManager = new MissingValueManager())
             {
 
                 if (variableTemplate.Id == 0)
                 {
-                    variableManager.CreateVariableTemplate(
+                    variableTemplate =  variableManager.CreateVariableTemplate(
                             variableTemplate.Label,
                             variableTemplate.DataType,
                             variableTemplate.Unit,
                             variableTemplate.Description,
-                            variableTemplate.DefaultValue,
-                            variableTemplate.DisplayPatternId);
+                            variableTemplate.DefaultValue);
                 }
                 else
                 {
-                    variableManager.UpdateVariableTemplate(variableTemplate);
+                    variableTemplate = variableManager.UpdateVariableTemplate(variableTemplate);
+                }
+
+                // update missing values
+                if (model.MissingValues.Any())
+                {
+                    foreach (var missingValueItem in model.MissingValues)
+                    {
+                        if (missingValueItem.Id > 0)
+                            missingValueManager.Repo.Get(missingValueItem.Id);
+                        else
+                            missingValueManager.Create(missingValueItem.DisplayName, missingValueItem.Description, variableTemplate);
+                    }
                 }
 
             }
@@ -74,16 +86,20 @@ namespace BExIS.Modules.Rpm.UI.Controllers
         }
 
         [JsonNetFilter]
-        [HttpPost]
+        [HttpDelete]
         public JsonResult Delete(long id)
         {
             if (id <= 0) throw new NullReferenceException("id of the structure should be greater then 0");
 
 
             using (var variableManager = new VariableManager())
+            using (var missingValueManager = new MissingValueManager())
             {
                 if (id > 0)
                 {
+                    var mvs = missingValueManager.Repo.Query(m => m.Variable.Id.Equals(id)).ToList();
+                    if (mvs != null && mvs.Any()) mvs.ForEach(m => missingValueManager.Delete(m));
+
                     variableManager.DeleteVariableTemplate(id);
                 }
 

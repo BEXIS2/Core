@@ -5,7 +5,7 @@ import { get } from 'svelte/store';
 const suite = create((data = {},fieldName) => {
 
 	only(fieldName);
-	const dataTypeWithDisplaypattern = ['date', 'time', 'datetime'];
+	// const dataTypeWithDisplaypattern = ['date', 'time', 'datetime'];
 
 	test('name', 'name is required', () => {
 		enforce(data.name).isNotBlank();
@@ -43,15 +43,15 @@ const suite = create((data = {},fieldName) => {
 		}
 	});
 
-	test('displayPattern', 'display pattern is required', () => {
-		if (data.dataType && dataTypeWithDisplaypattern.includes(data.dataType.text)) {
-			console.log('display pattern test', data.displayPattern);
-			enforce(data.displayPattern).isNotNull();
-			enforce(data.displayPattern.text).isNotUndefined();
-		} else {
-			return true;
-		}
-	});
+	// test('displayPattern', 'display pattern is required', () => {
+	// 	if (data.dataType && dataTypeWithDisplaypattern.includes(data.dataType.text)) {
+	// 		console.log('display pattern test', data.displayPattern);
+	// 		enforce(data.displayPattern).isNotNull();
+	// 		enforce(data.displayPattern.text).isNotUndefined();
+	// 	} else {
+	// 		return true;
+	// 	}
+	// });
 
 	//console.log("before unit",data.unit);
 	test('unit', 'unit is required', () => {
