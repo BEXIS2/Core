@@ -116,6 +116,7 @@ namespace BExIS.Modules.Dcm.UI.Models.Metadata
                 LowerBoundary = this.LowerBoundary,
                 PartyId = 0,
                 MappingSelectionField = false,
+                MetadataAttributeName = this.MetadataAttributeName,
                 Parameters = new List<MetadataParameterModel>()
             };
 
