@@ -21,6 +21,7 @@ using Vaiona.Web.Mvc.Modularity;
 using BExIS.Security.Services.Utilities;
 using System.Configuration;
 using Vaiona.Persistence.Api;
+using BExIS.Dlm.Entities.Data;
 
 namespace BExIS.Modules.Sam.UI.Controllers
 {
@@ -44,8 +45,8 @@ namespace BExIS.Modules.Sam.UI.Controllers
                     }
 
                     var es = new EmailService();
-                    es.Send(MessageHelper.GetSetPublicHeader(instanceId),
-                        MessageHelper.GetSetPublicMessage(getPartyNameOrDefault(), instanceId),
+                    es.Send(MessageHelper.GetSetPublicHeader(instanceId, typeof(Dataset).Name),
+                        MessageHelper.GetSetPublicMessage(getPartyNameOrDefault(), instanceId, typeof(Dataset).Name),
                         ConfigurationManager.AppSettings["SystemEmail"]
                         );
 
@@ -207,8 +208,8 @@ namespace BExIS.Modules.Sam.UI.Controllers
                 }
 
                 var es = new EmailService();
-                es.Send(MessageHelper.GetUnsetPublicHeader(instanceId),
-                    MessageHelper.GetUnsetPublicMessage(getPartyNameOrDefault(), instanceId),
+                es.Send(MessageHelper.GetUnsetPublicHeader(instanceId, typeof(Dataset).Name),
+                    MessageHelper.GetUnsetPublicMessage(getPartyNameOrDefault(), instanceId, typeof(Dataset).Name),
                     ConfigurationManager.AppSettings["SystemEmail"]
                     );
             }
