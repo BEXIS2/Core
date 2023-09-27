@@ -140,3 +140,12 @@ export const getUnitsWithDataTypes = async () => {
 		console.error(error);
 	}
 };
+
+export const getVariableTemplates = async () => {
+	try {
+		const response = await Api.get('/rpm/DataStructure/getVariableTemplates');
+		return response.data;
+	} catch (error) {
+		console.error(error);
+	}
+};

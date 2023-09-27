@@ -280,20 +280,59 @@ namespace BExIS.IO.Transform.Input
             }
         }
 
-        public List<Entites.VariableTemplate> SuggestTemplate(string name, long unitId)
+        public List<Entites.VariableTemplate> SuggestTemplate(string input, long unitId, long dataTypeId, double similarity = 0.8)
         {
-            if (string.IsNullOrEmpty(name)) throw new ArgumentNullException(nameof(name), "name should not be empty.");
+            if (string.IsNullOrEmpty(input)) throw new ArgumentNullException(nameof(input), "input should not be empty.");
 
-            List<Entites.VariableTemplate> result = new List<Entites.VariableTemplate>();
+            Dictionary<VariableTemplate, double> matches = new Dictionary<VariableTemplate, double>();
+            /*
+             * in the suggestion of the templates, there are 3 factors that must be considered. 
+             * all three are checked independently of each other and the results are sorted so that the most matches are at the top.
+             */
 
             using (var variableManager = new VariableManager())
             {
-                var template = variableManager.VariableTemplateRepo.Query(t => t.Unit.Id.Equals(unitId));
+                var allTemplates = variableManager.VariableTemplateRepo.Get();
+
+                // var template matches by name
+                var byNames = new List<VariableTemplate>();
+
+                foreach (var template in allTemplates)
+                {
+                    var ro = new RatcliffObershelp();
+                    var nameSimularity = ro.Similarity(input, template.Label);
+
+                    if (string.IsNullOrEmpty(input) || nameSimularity >= similarity)
+                    {
+                        matches.Add(template, nameSimularity);
+                    }
+                }
+
+                // var template matches with units
+                var byUnit = allTemplates.Where(t => t.Unit.Id.Equals(unitId)).ToList();
+
+                // var template matches with datatype
+                var byDatype = allTemplates.Where(t => t.DataType.Id.Equals(unitId)).ToList();
+
+                //add units results to matches
+                foreach (var item in byUnit)
+                {
+                    // if variableTemplate allready exist in the matches increase the value by 1
+                    if (matches.ContainsKey(item)) matches[item] += 1;
+                    else matches.Add(item, 1);
+                }
+
+                //add datatypes results to matches
+                foreach (var item in byDatype)
+                {
+                    // if variableTemplate allready exist in the matches increase the value by 0.5
+                    if (matches.ContainsKey(item)) matches[item] += 0.5;
+                    else matches.Add(item, 0.5);
+                }
+
             }
 
-            throw new NotImplementedException();
-
-            return result;
+            return matches.OrderByDescending(x => x.Value).Select(u => u.Key).ToList();
         }
 
         public List<string> GetRandowRows(List<string> rows, int numberOfRows)

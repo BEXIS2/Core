@@ -20,7 +20,7 @@ namespace BExIS.Modules.Rpm.UI.Helpers
             model.Name = variableTemplate.Label;
             model.Description = variableTemplate.Description;
             model.DataType = new ListItem(variableTemplate.DataType.Id, variableTemplate.DataType.Name);
-            model.Unit = new ListItem(variableTemplate.Unit.Id, variableTemplate.Unit.Name);
+            model.Unit = new UnitItem(variableTemplate.Unit.Id, variableTemplate.Unit.Name,variableTemplate.Unit.AssociatedDataTypes.Select(x => x.Name).ToList());
 
             // missing values 
             variableTemplate.MissingValues?.ToList().ForEach(m => model.MissingValues.Add(new MissingValueItem(m.Id, m.DisplayName, m.Description)));
@@ -74,9 +74,6 @@ namespace BExIS.Modules.Rpm.UI.Helpers
 
                 return variableTemplate;
             }
-
         }
-
-
     }
 }

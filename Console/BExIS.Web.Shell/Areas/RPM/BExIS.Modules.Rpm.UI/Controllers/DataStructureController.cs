@@ -474,7 +474,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
 
                     // get list of possible units
                     var unitInput = getValueFromMarkedRow(markerRows, model.Markers, "unit", (char)model.Delimeter, i, AsciiFileReaderInfo.GetTextMarker((TextMarker)model.TextMarker));
-                    strutcureAnalyzer.SuggestUnit(unitInput, var.DataType.Text).ForEach(u => var.PossibleUnits.Add(new ListItem(u.Id, u.Name, "analysis results")));
+                    strutcureAnalyzer.SuggestUnit(unitInput, var.DataType.Text).ForEach(u => var.PossibleUnits.Add(new UnitItem(u.Id, u.Name,u.AssociatedDataTypes.Select(x => x.Name).ToList(), "analysis results")));
                     var.Unit = var.PossibleUnits.FirstOrDefault();
 
 
@@ -486,6 +486,10 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                         displayPattern.ToList().ForEach(d => var.PossibleDisplayPattern.Add(new ListItem(d.Id, d.DisplayPattern)));
                     }
 
+                    // varaible template
+                    strutcureAnalyzer.SuggestTemplate(
+                        var.Name, var.Unit.Id, var.DataType.Id)
+                        .ForEach(t => var.PossibleTemplates.Add(new VariableTemplateItem(t.Id, t.Label,new List<string>() {t.Unit.Name}, t.Unit.AssociatedDataTypes.Select(x => x.Name).ToList(), "analysis results")));
 
                     model.Variables.Add(var);
                 }
@@ -533,7 +537,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                                 Description = variable.Description,
                                 DataType = new ListItem(variable.Id, variable.Label, "copied"),
                                 SystemType = variable.DataType.SystemType,
-                                Unit = new ListItem(variable.Unit.Id, variable.Unit.Name, "copied"),
+                                Unit = new UnitItem(variable.Unit.Id, variable.Unit.Abbreviation, variable.Unit.AssociatedDataTypes.Select(x => x.Name).ToList(),"copied"),
                                 IsKey = variable.IsKey,
                                 IsOptional = variable.IsValueOptional
 
@@ -651,18 +655,60 @@ namespace BExIS.Modules.Rpm.UI.Controllers
             using (var unitManager = new UnitManager())
             {
                 var units = unitManager.Repo.Get().ToList();
-                List<ListItem> list = new List<ListItem>();
+                List<UnitItem> list = new List<UnitItem>();
 
                 if (units.Any())
                 {
                     foreach (var unit in units)
                     {
-                        list.Add(new ListItem(unit.Id, unit.Abbreviation, "other"));
+                        list.Add(new UnitItem(
+                            unit.Id,
+                            unit.Abbreviation,
+                            unit.AssociatedDataTypes.Select(x => x.Name).ToList(),
+                            "other"
+                            ));
                     }
                 }
 
                 // get default missing values
-                return Json(list.OrderBy(i=>i.Group), JsonRequestBehavior.AllowGet);
+                return Json(list.OrderBy(i => i.Group), JsonRequestBehavior.AllowGet);
+            }
+        }
+
+        [JsonNetFilter]
+        public JsonResult GetVariableTemplates()
+        {
+            using (var variableManager = new VariableManager())
+            using (var unitManager = new UnitManager())
+            {
+                var variableTemplates = variableManager.VariableTemplateRepo.Get().ToList();
+                var units = unitManager.Repo.Get();
+                List<VariableTemplateItem> list = new List<VariableTemplateItem>();
+
+                if (variableTemplates.Any())
+                {
+                    foreach (var variableTemplate in variableTemplates)
+                    {
+                        List<string> dataTypes = new List<string>();
+                        
+                        var unit = units.FirstOrDefault(u=> u.Id.Equals(variableTemplate.Unit.Id));
+
+                        // get possible datatypes
+                        if (unit != null)
+                            dataTypes = unit.AssociatedDataTypes.Select(x => x.Name).ToList();
+
+                        VariableTemplateItem vti = new VariableTemplateItem();
+                        vti.Id = variableTemplate.Id;
+                        vti.Text = variableTemplate.Label;
+                        if (unit!=null) vti.Units = new List<string>() { unit.Abbreviation };
+                        vti.DataTypes = dataTypes;
+                        vti.Group = "other";
+                        list.Add(vti);
+                    }
+                }
+
+                // get default missing values
+                return Json(list.OrderBy(i => i.Group), JsonRequestBehavior.AllowGet);
             }
         }
 

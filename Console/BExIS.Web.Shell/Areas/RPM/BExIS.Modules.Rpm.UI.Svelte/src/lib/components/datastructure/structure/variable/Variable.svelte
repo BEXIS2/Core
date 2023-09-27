@@ -6,15 +6,28 @@
 
 	//types
 	import type { listItemType } from '@bexis2/bexis2-core-ui';
-	import type { VariableInstanceModel, missingValueType } from '../../types';
+	import {
+		VariableInstanceModel,
+		type missingValueType,
+		type unitListItemType,
+		type templateListItemType
+	} from '../../types';
 
 	//stores
 	import { get } from 'svelte/store';
-	import { displayPatternStore } from '../../store';
+	import { displayPatternStore, unitStore, dataTypeStore, templateStore } from '../../store';
 
-	// icons 
+	// icons
 	import Fa from 'svelte-fa';
-	import { faAdd,faTrash, faAngleUp, faAngleDown, faCopy } from '@fortawesome/free-solid-svg-icons';
+	import {
+		faAdd,
+		faTrash,
+		faAngleUp,
+		faAngleDown,
+		faCopy
+	} from '@fortawesome/free-solid-svg-icons';
+
+	import {updateDisplayPattern, updateGroup} from './helper'
 
 	import DataTypeDescription from './DataTypeDescription.svelte';
 	import Container from './Container.svelte';
@@ -23,23 +36,26 @@
 
 	import suite from './variable';
 
-
-	export let variable: VariableInstanceModel;
+	export let variable: VariableInstanceModel = new VariableInstanceModel();
 	$: variable;
 	export let data: string[];
-	$:data;
-	
+	$: data;
+
 	export let index: number;
 
-	export let datatypes: listItemType[];
-	export let units: listItemType[];
+	let datatypes: listItemType[] = []
+	$: datatypes;
+	let units: unitListItemType[] = [];
+	$: units;
+	let variableTemplates: templateListItemType[] = [];
+	$: variableTemplates;
+
 	export let missingValues: missingValueType[];
 
 	export let isValid: boolean = false;
 	export let last: boolean = false;
 
-	export let expand:boolean ;
-
+	export let expand: boolean;
 
 	$: isValid;
 	// validation
@@ -51,68 +67,47 @@
 	let displayPattern: listItemType[];
 	$: displayPattern;
 
-	function updateDisplayPattern(type, reset = true) {
-		// currently only date, date tim e and time is use with display pattern.
-		// however the serve only now datetime so we need to preselect the possible display pattern to date, time and datetime
-		let allDisplayPattern = get(displayPatternStore);
-
-		if (type != undefined) {
-			if (type.text.toLowerCase() === 'date') {
-				// date without time
-				displayPattern = allDisplayPattern.filter(
-					(m) =>
-						m.group.toLowerCase().includes(type.text) &&
-						(!m.text.toLowerCase().includes('h') || !m.text.toLowerCase().includes('s'))
-				);
-			} else if (type.text.toLowerCase() === 'time') {
-				// time without date
-				displayPattern = allDisplayPattern.filter(
-					(m) =>
-						m.group.toLowerCase().includes(type.text) &&
-						(!m.text.toLowerCase().includes('d') || !m.text.toLowerCase().includes('y'))
-				);
-			} else if (type.text.toLowerCase() === 'datetime') {
-				// both
-				displayPattern = allDisplayPattern.filter((m) => m.group.toLowerCase().includes(type.text));
-			} else {
-				displayPattern = [];
-			}
-		} else {
-			displayPattern = [];
-		}
-		// when type has change, reset value, but after copy do not reset
-		// thats why reset need to set
-		if (reset) variable.displayPattern = undefined;
-
-		if (displayPattern.length > 0) {
-			res = suite(variable, 'displayPattern');
-		}
-	}
 
 	const dispatch = createEventDispatcher();
 
 	onMount(() => {
-		datatypes = [...datatypes.filter((d) => d.id != variable.dataType.id)];
-		datatypes = [variable.dataType, ...datatypes];
 
-		units = [...units.filter((d) => !variable.possibleUnits.some((u) => u.id == d.id))];
-		units = [...variable.possibleUnits, ...units];
+		// set lists
+		datatypes = [...$dataTypeStore]
+		units = [...$unitStore]
+		variableTemplates = [...$templateStore]
 
 		loaded = true;
 		// reset & reload validation
 		suite.reset();
 
-		
-
 		setTimeout(async () => {
-			updateDisplayPattern(variable.dataType);
+
+			displayPattern = updateDisplayPattern(variable.dataType);
+
+		 // when type has change, reset value, but after copy do not reset
+		 // thats why reset need to set
+			variable.displayPattern = undefined;
+
+			if (displayPattern.length > 0) {
+				res = suite(variable, 'displayPattern');
+			}
+
 			res = suite(variable);
 			setValidationState(res);
+
+			console.log(variable);
+
+			if (variable.id > 0) {
+				res = suite(variable, '');
+			} // run validation only if start with an existing
+		
 		}, 10);
+
 	});
 
 	afterUpdate(() => {
-		updateDisplayPattern(variable.dataType, false);
+		displayPattern = updateDisplayPattern(variable.dataType, false);
 		res = suite(variable);
 		setValidationState(res);
 		// console.log("u",variable.name);
@@ -147,6 +142,8 @@
 			}
 
 			setValidationState(res);
+
+			updateLists();
 		}, 100);
 	}
 
@@ -156,186 +153,322 @@
 		dispatch('var-change');
 	}
 
+	function cutData(d) {
+		for (let index = 0; index < d.length; index++) {
+			let v = d[index];
+
+			if (v.length > 10) {
+				d[index] = v.slice(0, 10) + '...';
+			}
+		}
+
+		return d;
+	}
+
+	function updateLists() {
+		console.log('filter lists');
 
 
-	function cutData(d)
-	{
-			for (let index = 0; index < d.length; index++) {
-				let v = d[index];
+		// datatypes based on unit selection
+		datatypes = updateDatatypes(variable.unit, variable.template);
+		//console.log("updated datatypes",datatypes);
 
-				if(v.length>10)
-				{
-					 d[index] = v.slice(0, 10)+"...";
+		// // units based on Datatype selection
+		units = updateUnits(variable.dataType, variable.template);
+		// //console.log("updated units",units);
+
+		variableTemplates = updateTemplates(variable.unit);
+	}
+
+	function updateDatatypes(
+		unit: unitListItemType | undefined,
+		template: templateListItemType | undefined
+	) {
+		//console.log("-->", unit.text,unit.dataTypes);
+		let dts = $dataTypeStore.map(o=>({...o}));
+
+		let matchPhrase = '';
+
+		let othersText = 'other';
+
+		if (unit != null && unit != undefined && unit.dataTypes.length > 0) {
+			// if unit exist
+			matchPhrase = unit?.text;
+
+			for (let index = 0; index < dts.length; index++) {
+				const datatype = dts[index];
+				if (unit.dataTypes.includes(datatype.text) && !datatype.group.includes(matchPhrase)) {
+					datatype.group = updateGroup(datatype.group, matchPhrase);
 				}
 			}
+		}
 
-			return d;
+		// check templates
+		if (template && template.units) {
+			matchPhrase = template.text;
+
+			for (let index = 0; index < template.units.length; index++) {
+				// each unit in a template
+				const u = units.filter((u) => u.text == template.units[index])[0];
+				// console.log("t-unit",u);
+				
+				for (let index = 0; index < dts.length; index++) {
+					// each datatype
+					const datatype = dts[index];
+					if (u.dataTypes.includes(datatype.text) && !u.group.includes(matchPhrase)) {
+						// console.log(matchPhrase,datatype.text, u.text);
+						
+						datatype.group = updateGroup(datatype.group, matchPhrase);
+					}
+				}
+			}
+		}
+
+		// reorder
+		return  [
+			...dts.filter((d) => d.group != othersText),
+			...dts.filter((d) => d.group == othersText)
+		];
+	}
+
+	function updateUnits(
+		datatype: listItemType | undefined,
+		template: templateListItemType | undefined
+	) {
+
+		let _units = $unitStore.map(o=>({...o}));
+
+		let matchPhrase = '';
+		let othersText = 'other';
+
+		if (datatype && _units) {
+			matchPhrase = datatype?.text;
+			// if datatype and units exist
+			_units.forEach((unit) => {
+				if (unit.dataTypes.includes(datatype.text) == true) {
+					unit.group = matchPhrase;
+				}
+			});
+		}
+
+		// filter units based on template matches
+		if (template && template.units) {
+			for (let index = 0; index < template.units.length; index++) {
+				const u = template.units[index];
+				matchPhrase = template?.text;
+				_units.forEach((unit) => {
+					if (unit.text == u) {
+						unit.group = updateGroup(unit.group, matchPhrase);
+					}
+				});
+			}
+		}
+
+		return [
+			..._units.filter((d) => d.group != othersText),
+			..._units.filter((d) => d.group == othersText)
+		];
+	}
+
+	function updateTemplates(unit: unitListItemType | undefined) {
+		let _templates =  $templateStore.map(o=>({...o}));
+		let matchPhrase = '' + unit?.text;
+		let othersText = 'other';
+
+		if (unit && _templates) {
+			// if datatype and units exist
+			_templates.forEach((template) => {
+				template.group = template.units.includes(unit.text) == true ? matchPhrase : othersText;
+			});
+			return [
+				..._templates.filter((d) => d.group != othersText),
+				..._templates.filter((d) => d.group == othersText)
+			];
+		}
 	}
 
 </script>
 
 <div id="variable-{variable.id}-container" class="flex gap-5">
-{#if loaded && variable}
-<div id="variable-{variable.id}-container-info" class="grow">
-	{#if expand}
+	{#if loaded && variable}
+		<div id="variable-{variable.id}-container-info" class="grow">
+			{#if expand}
+				<div class="card">
+					<header id="header_{index}" class="card-header">
+						<Header
+							{index}
+							name={variable.name}
+							bind:isKey={variable.isKey}
+							bind:isOptional={variable.isOptional}
+							bind:isValid
+							bind:expand
+						>
+							<TextInput
+								id="name"
+								label="Name"
+								bind:value={variable.name}
+								on:input={onChangeHandler}
+								valid={res.isValid('name')}
+								invalid={res.hasErrors('name')}
+								feedback={res.getErrors('name')}
+							/>
+						</Header>
+					</header>
 
-	<div class="card">
-		<header id="header_{index}" class="card-header" >
-			<Header
-				{index}
-				name={variable.name}
-				bind:isKey={variable.isKey}
-				bind:isOptional={variable.isOptional}
-				bind:isValid
-				bind:expand
-			>
-			<TextInput
-						id="name"
-						label="Name"
-						bind:value={variable.name}
-						on:input={onChangeHandler}
-						valid={res.isValid('name')}
-						invalid={res.hasErrors('name')}
-						feedback={res.getErrors('name')}
-					/>
-		</Header>
-		</header>
-		
-			
-		<section class="py-2 px-10">
-			<!--Description-->
-			<Container>
-				<div slot="property">
-					<TextArea
-						id="description"
-						label="Description"
-						bind:value={variable.description}
-						on:input={onChangeHandler}
-						valid={res.isValid('description')}
-						invalid={res.hasErrors('description')}
-						feedback={res.getErrors('description')}
-					/>
-				</div>
-				<div slot="description">
-					{#if data}
-						<b>Data preview: </b> {cutData(data).join(', ')}
-					{/if}
-				</div>
-			</Container>
+					<section class="py-2 px-10">
+						<!--Description-->
+						<Container>
+							<div slot="property">
+								<TextArea
+									id="description"
+									label="Description"
+									bind:value={variable.description}
+									on:input={onChangeHandler}
+									valid={res.isValid('description')}
+									invalid={res.hasErrors('description')}
+									feedback={res.getErrors('description')}
+								/>
+							</div>
+							<div slot="description">
+								{#if data}
+									<b>Data preview: </b> {cutData(data).join(', ')}
+								{/if}
+							</div>
+						</Container>
 
-			<!--Datatype-->
-			<Container>
-				<div slot="property">
-					<MultiSelect
-						id="dataType"
-						title="Data Type"
-						source={datatypes}
-						itemId="id"
-						itemLabel="text"
-						itemGroup="group"
-						complexSource={true}
-						complexTarget={true}
-						isMulti={false}
-						bind:target={variable.dataType}
-						placeholder="-- Please select --"
-						invalid={res.hasErrors('dataType')}
-						feedback={res.getErrors('dataType')}
-						clearable={false}
-						on:change={(e) => onSelectHandler(e, 'dataType')}
-					/>
-				</div>
+						<!--Datatype-->
+						<Container>
+							<div slot="property">
+								<MultiSelect
+									id="dataType"
+									title="Data Type"
+									source={datatypes}
+									itemId="id"
+									itemLabel="text"
+									itemGroup="group"
+									complexSource={true}
+									complexTarget={true}
+									isMulti={false}
+									bind:target={variable.dataType}
+									placeholder="-- Please select --"
+									invalid={res.hasErrors('dataType')}
+									feedback={res.getErrors('dataType')}
+									clearable={false}
+									on:change={(e) => onSelectHandler(e, 'dataType')}
+								/>
+							</div>
 
-				<div slot="displaypattern">
-					<!--Show only when display pattern exists-->
-					{#if displayPattern != undefined && displayPattern.length > 0}
-						<MultiSelect
-							id="displayPattern"
-							title="Display Pattern"
-							source={displayPattern}
-							itemId="id"
-							itemLabel="text"
-							itemGroup="group"
-							complexSource={true}
-							complexTarget={true}
-							isMulti={false}
-							clearable={false}
-							bind:target={variable.displayPattern}
-							placeholder="-- Please select --"
-							invalid={res.hasErrors('displayPattern')}
-							feedback={res.getErrors('displayPattern')}
-							on:change={(e) => onSelectHandler(e, 'displayPattern')}
-						/>
-					{/if}
-				</div>
-				<div slot="description">
-					{#if variable.dataType}
-						<DataTypeDescription type={variable.dataType.text} {missingValues} />
-					{/if}
-				</div>
-			</Container>
+							<div slot="displaypattern">
+								<!--Show only when display pattern exists-->
+								{#if displayPattern != undefined && displayPattern.length > 0}
+									<MultiSelect
+										id="displayPattern"
+										title="Display Pattern"
+										source={displayPattern}
+										itemId="id"
+										itemLabel="text"
+										itemGroup="group"
+										complexSource={true}
+										complexTarget={true}
+										isMulti={false}
+										clearable={false}
+										bind:target={variable.displayPattern}
+										placeholder="-- Please select --"
+										invalid={res.hasErrors('displayPattern')}
+										feedback={res.getErrors('displayPattern')}
+										on:change={(e) => onSelectHandler(e, 'displayPattern')}
+									/>
+								{/if}
+							</div>
+							<div slot="description">
+								{#if variable.dataType}
+									<DataTypeDescription type={variable.dataType.text} {missingValues} />
+								{/if}
+							</div>
+						</Container>
 
-			<!--Unit-->
-			<Container>
-				<div slot="property">
-					<MultiSelect
-						id="unit"
-						title="Unit"
-						source={units}
-						itemId="id"
-						itemLabel="text"
-						itemGroup="group"
-						complexSource={true}
-						complexTarget={true}
-						isMulti={false}
-						clearable={false}
-						bind:target={variable.unit}
-						placeholder="-- Please select --"
-						invalid={res.hasErrors('unit')}
-						feedback={res.getErrors('unit')}
-						on:change={(e) => onSelectHandler(e, 'unit')}
-					/>
-				</div>
-				<div slot="description">
-					show all information about the units in a table Nothing found? Make a new suggestion.
-				</div>
-			</Container>
+						<!--Unit-->
+						<Container>
+							<div slot="property">
+								<MultiSelect
+									id="unit"
+									title="Unit"
+									source={units}
+									itemId="id"
+									itemLabel="text"
+									itemGroup="group"
+									complexSource={true}
+									complexTarget={true}
+									isMulti={false}
+									clearable={false}
+									bind:target={variable.unit}
+									placeholder="-- Please select --"
+									invalid={res.hasErrors('unit')}
+									feedback={res.getErrors('unit')}
+									on:change={(e) => onSelectHandler(e, 'unit')}
+								/>
+							</div>
+							<div slot="description">
+								show all information about the units in a table Nothing found? Make a new
+								suggestion.
+							</div>
+						</Container>
 
-			<!--Meaning-->
-			<Container>
-				<div slot="property">
-					<TextInput id="template" label="Variable Template" bind:value={variable.template.text} />
-				</div>
-				<div slot="description">...</div>
-			</Container>
-		</section>
+						<!--Meaning-->
+						<Container>
+							<div slot="property">
+								<MultiSelect
+									id="variableTemplate"
+									title="Template"
+									source={variableTemplates}
+									itemId="id"
+									itemLabel="text"
+									itemGroup="group"
+									complexSource={true}
+									complexTarget={true}
+									isMulti={false}
+									clearable={false}
+									bind:target={variable.template}
+									placeholder="-- Please select --"
+									invalid={res.hasErrors('variableTemplate')}
+									feedback={res.getErrors('variableTemplate')}
+									on:change={(e) => onSelectHandler(e, 'variableTemplate')}
+								/>
+							</div>
+							<div slot="description">...</div>
+						</Container>
+					</section>
 
-
-		<footer class="card-footer">
-			<div class="flex">
-				<div class="grow" />
-				<div class=" flex-none text-right">
-					<slot name="options" />
+					<footer class="card-footer">
+						<div class="flex">
+							<div class="grow" />
+							<div class=" flex-none text-right">
+								<slot name="options" />
+							</div>
+						</div>
+					</footer>
 				</div>
-			</div>
-		</footer>
-	</div>
-		{:else}
-		<Overview 
-			{index} 
-			name={variable.name} 
-			isOptional= {variable.isOptional} 
-			isKey={variable.isKey} 
-			bind:expand={expand}
-			{isValid}
-			unit={variable.unit.text}
-			datatype={variable.dataType.text}
-			description={variable.description}
-			datapreview={cutData(data).join(', ')}
-			/>
-		{/if}
-	</div>
-		<div id="variable-{variable.id}-container-options" class="flex-none w-24 space-y-2 content-center">
-			<slot name="list-options"/>
+			{:else}
+				<Overview
+					{index}
+					name={variable.name}
+					isOptional={variable.isOptional}
+					isKey={variable.isKey}
+					bind:expand
+					{isValid}
+					unit={variable.unit?.text}
+					datatype={variable.dataType?.text}
+					template={variable.template?.text}
+					description={variable.description}
+					datapreview={cutData(data).join(', ')}
+				/>
+			{/if}
 		</div>
-{/if}
+		<div
+			id="variable-{variable.id}-container-options"
+			class="flex-none w-24 space-y-2 content-center"
+		>
+			<slot name="list-options" />
+		</div>
+	{/if}
 </div>
