@@ -884,7 +884,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                             LoggerFactory.LogCustom(message);
 
                             var es = new EmailService();
-                            es.Send(MessageHelper.GetDownloadDatasetHeader(id, versionNr, ),
+                            es.Send(MessageHelper.GetDownloadDatasetHeader(id, versionNr),
                             MessageHelper.GetDownloadDatasetMessage(id, title, getPartyNameOrDefault(), ext, versionNr),
                                 GeneralSettings.SystemEmail
                                 );
