@@ -72,18 +72,18 @@ export class VariableTemplateModel extends VariableModel{
 
 export class VariableInstanceModel extends VariableModel {
 
-	template: listItemType;
+	template: templateListItemType| undefined;
 	isKey: boolean;
 	isOptional: boolean;
 	displayPattern: listItemType | undefined;
-	possibleUnits: listItemType[];
-	possibleTemplates: listItemType[];
+	possibleUnits: unitListItemType[];
+	possibleTemplates: templateListItemType[];
 	possibleDisplayPattern: listItemType[];
 
 	public constructor() {
 		super()
 		this.isOptional = false
-		this.template = {id:0,text:"",group:""}
+		this.template = undefined
 		this.isKey = false
 		this.displayPattern = undefined
 		this.possibleUnits = []
@@ -94,4 +94,9 @@ export class VariableInstanceModel extends VariableModel {
 
 export interface unitListItemType extends listItemType {
 		dataTypes:string[]	
+}
+
+export interface templateListItemType extends listItemType {
+	dataTypes:string[]
+	units:string[]	
 }

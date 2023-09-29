@@ -4,17 +4,17 @@
 	import { faCheck, faAngleUp, faAngleDown } from '@fortawesome/free-solid-svg-icons';
 	
 
-	export let index;
-	export let name;
-	export let isKey;
-	export let isOptional;
-	export let isValid;
-	export let expand;
- export let unit;
- export let datatype;
- export let template;
- export let description
- export let datapreview;
+	export let index:number;
+	export let name:string;
+	export let isKey:boolean;
+	export let isOptional:boolean;
+	export let isValid:boolean;
+	export let expand:boolean;
+  export let unit:string;
+  export let datatype:string;
+  export let template:string;
+  export let description:string;
+  export let datapreview:[];
 </script>
 
 <div class="card cursor-default">
@@ -44,6 +44,7 @@
     <div class="text-xs">Data Preview</div>
     {#if datapreview}<div>{datapreview}</div>{/if}
   </div>
+
 
     <div id="variable-{index}-content" class="flex-col space-y-2 w-52">
 

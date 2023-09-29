@@ -13,7 +13,7 @@ namespace BExIS.Modules.Rpm.UI.Models
         public string Description { get; set; }
         public string SystemType { get; set; }
         public ListItem DataType { get; set; }
-        public ListItem Unit { get; set; }
+        public UnitItem Unit { get; set; }
 
 
         public List<MissingValueItem> MissingValues { get; set; }
@@ -25,7 +25,7 @@ namespace BExIS.Modules.Rpm.UI.Models
             Description = "";
             SystemType = "";
             DataType = new ListItem();
-            Unit = new ListItem();
+            Unit = new UnitItem();
             MissingValues = new List<MissingValueItem>();
         }
     }
@@ -36,20 +36,20 @@ namespace BExIS.Modules.Rpm.UI.Models
         public bool IsKey { get; set; }
         public bool IsOptional { get; set; }
 
-        public ListItem Template { get; set; }
+        public VariableTemplateItem Template { get; set; }
         public ListItem DisplayPattern { get; set; }
 
-        public List<ListItem> PossibleUnits { get; set; }
-        public List<ListItem> PossibleTemplates { get; set; }
+        public List<UnitItem> PossibleUnits { get; set; }
+        public List<VariableTemplateItem> PossibleTemplates { get; set; }
         public List<ListItem> PossibleDisplayPattern { get; set; }
 
 
         public VariableInstanceModel()
         {
-            Template = new ListItem();
+            Template = new VariableTemplateItem();
             DisplayPattern = new ListItem(-1, "", "");
-            PossibleUnits = new List<ListItem>();
-            PossibleTemplates = new List<ListItem>();
+            PossibleUnits = new List<UnitItem>();
+            PossibleTemplates = new List<VariableTemplateItem>();
             PossibleDisplayPattern = new List<ListItem>();
         }
     }
@@ -89,6 +89,34 @@ namespace BExIS.Modules.Rpm.UI.Models
             Text = value;
             Group = group;
             DataTypes = dataTypes;
+        }
+
+    }
+
+    public class VariableTemplateItem
+    {
+        public long Id { get; set; }
+        public string Text { get; set; }
+        public string Group { get; set; }
+
+        public List<string> DataTypes { get; set; }
+        public List<string> Units { get; set; }
+
+        public VariableTemplateItem()
+        {
+            Id = 0;
+            Text = "";
+            Group = "";
+            DataTypes = new List<string>();
+        }
+
+        public VariableTemplateItem(long key, string value,  List<string> units, List<string> dataTypes, string group = "")
+        {
+            Id = key;
+            Text = value;
+            Group = group;
+            DataTypes = dataTypes;
+            Units = units;
         }
 
     }

@@ -27,7 +27,7 @@
     
     <Export tag="settings" id="ManageVariableTemplates" order="1"
             title="Manage Variable Templates" description="Edit, Create or Delet Variable Templates" icon=""
-            controller="DataAttribute" action="AttributeManager" argument=""
+            controller="VariableTemplate" action="" argument=""
             extends="./settingsRoot" />
     <Export tag="settings" id="ManageUnits" order="2"
             title="Manage Units" description="Edit, Create or Delet Units" icon=""
