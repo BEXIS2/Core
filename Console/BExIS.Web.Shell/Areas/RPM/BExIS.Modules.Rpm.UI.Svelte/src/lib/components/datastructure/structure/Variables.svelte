@@ -33,15 +33,18 @@
 		const datatypes = await getDataTypes();
 		dataTypeStore.set(datatypes);
 
+		
+
 		const units = await getUnits();
 		unitStore.set(units)
 		const variableTemplates = await getVariableTemplates();
 		templateStore.set(variableTemplates)
 
+		//console.log("---------",datatypes);
 		// console.log("datatypes",datatypes);
 		// console.log("units", units);
 		// console.log("missingValues", missingValues);
-		console.log("variableTemplates", variableTemplates);
+		// console.log("variableTemplates", variableTemplates);
 
 		fillVariableValdationStates(variables);
 

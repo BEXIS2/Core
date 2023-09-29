@@ -470,11 +470,11 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                         var.SystemType = systemTypes[i].Name;
 
                     // get list of possible datatypes
-                    var.DataType = strutcureAnalyzer.SuggestDataType(var.SystemType).Select(d => new ListItem(d.Id, d.Name, "analysis results")).FirstOrDefault();
+                    var.DataType = strutcureAnalyzer.SuggestDataType(var.SystemType).Select(d => new ListItem(d.Id, d.Name, "detect")).FirstOrDefault();
 
                     // get list of possible units
                     var unitInput = getValueFromMarkedRow(markerRows, model.Markers, "unit", (char)model.Delimeter, i, AsciiFileReaderInfo.GetTextMarker((TextMarker)model.TextMarker));
-                    strutcureAnalyzer.SuggestUnit(unitInput, var.DataType.Text).ForEach(u => var.PossibleUnits.Add(new UnitItem(u.Id, u.Name,u.AssociatedDataTypes.Select(x => x.Name).ToList(), "analysis results")));
+                    strutcureAnalyzer.SuggestUnit(unitInput, var.DataType.Text).ForEach(u => var.PossibleUnits.Add(new UnitItem(u.Id, u.Name,u.AssociatedDataTypes.Select(x => x.Name).ToList(), "detect")));
                     var.Unit = var.PossibleUnits.FirstOrDefault();
 
 
@@ -487,9 +487,11 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                     }
 
                     // varaible template
-                    strutcureAnalyzer.SuggestTemplate(
-                        var.Name, var.Unit.Id, var.DataType.Id)
-                        .ForEach(t => var.PossibleTemplates.Add(new VariableTemplateItem(t.Id, t.Label,new List<string>() {t.Unit.Name}, t.Unit.AssociatedDataTypes.Select(x => x.Name).ToList(), "analysis results")));
+                    var templates = strutcureAnalyzer.SuggestTemplate(var.Name, var.Unit.Id, var.DataType.Id);
+                        templates.ForEach(t => var.PossibleTemplates.Add(new VariableTemplateItem(t.Id, t.Label,new List<string>() {t.Unit.Name}, t.Unit.AssociatedDataTypes.Select(x => x.Name).ToList(), "detect")));
+
+                    if (var.PossibleTemplates.Any())
+                        var.Template = var.PossibleTemplates.FirstOrDefault();
 
                     model.Variables.Add(var);
                 }

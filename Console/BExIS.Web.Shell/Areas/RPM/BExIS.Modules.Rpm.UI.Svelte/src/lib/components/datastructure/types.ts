@@ -72,7 +72,7 @@ export class VariableTemplateModel extends VariableModel{
 
 export class VariableInstanceModel extends VariableModel {
 
-	template: templateListItemType| undefined;;
+	template: templateListItemType| undefined;
 	isKey: boolean;
 	isOptional: boolean;
 	displayPattern: listItemType | undefined;
@@ -86,7 +86,6 @@ export class VariableInstanceModel extends VariableModel {
 		this.template = undefined
 		this.isKey = false
 		this.displayPattern = undefined
-		this.template = undefined
 		this.possibleUnits = []
 		this.possibleTemplates = []
 		this.possibleDisplayPattern = []

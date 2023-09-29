@@ -36,7 +36,7 @@ namespace BExIS.Modules.Rpm.UI.Models
         public bool IsKey { get; set; }
         public bool IsOptional { get; set; }
 
-        public ListItem Template { get; set; }
+        public VariableTemplateItem Template { get; set; }
         public ListItem DisplayPattern { get; set; }
 
         public List<UnitItem> PossibleUnits { get; set; }
@@ -46,7 +46,7 @@ namespace BExIS.Modules.Rpm.UI.Models
 
         public VariableInstanceModel()
         {
-            Template = new ListItem();
+            Template = new VariableTemplateItem();
             DisplayPattern = new ListItem(-1, "", "");
             PossibleUnits = new List<UnitItem>();
             PossibleTemplates = new List<VariableTemplateItem>();

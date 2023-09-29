@@ -27,8 +27,8 @@
 		faCopy
 	} from '@fortawesome/free-solid-svg-icons';
 
-	import {updateDisplayPattern, updateGroup} from './helper'
-
+	import { updateDisplayPattern, updateGroup, updateDatatypes, updateUnits, updateTemplates } from './helper';
+ 
 	import DataTypeDescription from './DataTypeDescription.svelte';
 	import Container from './Container.svelte';
 	import Header from './Header.svelte';
@@ -43,18 +43,20 @@
 
 	export let index: number;
 
-	let datatypes: listItemType[] = []
+	let datatypes: listItemType[] = [];
 	$: datatypes;
 	let units: unitListItemType[] = [];
 	$: units;
 	let variableTemplates: templateListItemType[] = [];
 	$: variableTemplates;
 
-	export let missingValues: missingValueType[];
+	let suggestedDataType: listItemType | undefined;
+	let suggestedUnits: unitListItemType[] | undefined;
+	let suggestedTemplates: templateListItemType[];
 
+	export let missingValues: missingValueType[];
 	export let isValid: boolean = false;
 	export let last: boolean = false;
-
 	export let expand: boolean;
 
 	$: isValid;
@@ -67,26 +69,33 @@
 	let displayPattern: listItemType[];
 	$: displayPattern;
 
-
 	const dispatch = createEventDispatcher();
 
+	let x: listItemType = { id: 0, text: '', group: '' };
+
 	onMount(() => {
-
 		// set lists
-		datatypes = [...$dataTypeStore]
-		units = [...$unitStore]
-		variableTemplates = [...$templateStore]
+		setList();
 
-		loaded = true;
+		// set suggestions
+		//console.log("suggestions", variable);
+
+		suggestedDataType = variable.dataType;
+		suggestedUnits = variable.possibleUnits;
+		suggestedTemplates = variable.possibleTemplates;
+
+		//console.log("------------",datatypes, units,variableTemplates);
+		//console.log("SUGGESTIONS",suggestedDataType, suggestedUnits,suggestedTemplates);
+
 		// reset & reload validation
 		suite.reset();
 
 		setTimeout(async () => {
-
+			updateLists();
 			displayPattern = updateDisplayPattern(variable.dataType);
 
-		 // when type has change, reset value, but after copy do not reset
-		 // thats why reset need to set
+			// when type has change, reset value, but after copy do not reset
+			// thats why reset need to set
 			variable.displayPattern = undefined;
 
 			if (displayPattern.length > 0) {
@@ -96,22 +105,22 @@
 			res = suite(variable);
 			setValidationState(res);
 
-			console.log(variable);
+			//console.log(variable);
 
 			if (variable.id > 0) {
 				res = suite(variable, '');
 			} // run validation only if start with an existing
-		
-		}, 10);
 
+			loaded = true;
+		}, 10);
 	});
 
 	afterUpdate(() => {
 		displayPattern = updateDisplayPattern(variable.dataType, false);
 		res = suite(variable);
 		setValidationState(res);
-		// console.log("u",variable.name);
-		// console.log("--------------------");
+		//console.log("u",variable.name);
+		//console.log("--------------------");
 	});
 
 	//change event: if input change check also validation only on the field
@@ -134,8 +143,8 @@
 		setTimeout(async () => {
 			res = suite(variable, id);
 
-			//console.log(res);
-			//console.log(res.isValid());
+			////console.log(res);
+			////console.log(res.isValid());
 			// update display patter and reset it if it changed
 			if (id == 'dataType') {
 				updateDisplayPattern(variable.dataType);
@@ -165,126 +174,35 @@
 		return d;
 	}
 
-	function updateLists() {
-		console.log('filter lists');
+	// use the store to reset the lists for the dropdowns
+	/// reset means mostly reset the groups
+	function setList() {
+		datatypes = $dataTypeStore.map((o) => ({ ...o })); // set datatypes
+		units = $unitStore.map((o) => ({ ...o })); // set units
+		variableTemplates = $templateStore.map((o) => ({ ...o }));
+	}
 
+	function updateLists() {
+		//console.log('filter lists');
 
 		// datatypes based on unit selection
-		datatypes = updateDatatypes(variable.unit, variable.template);
+
+		//console.log("variable",variable);
+		datatypes = updateDatatypes(
+			variable.unit,
+			variable.template,
+			$dataTypeStore,
+			suggestedDataType,
+			$unitStore
+		);
+
 		//console.log("updated datatypes",datatypes);
 
-		// // units based on Datatype selection
-		units = updateUnits(variable.dataType, variable.template);
-		// //console.log("updated units",units);
+		// units based on Datatype selection
+		units = updateUnits(variable.dataType, variable.template, $unitStore, suggestedUnits);
+		//console.log("updated units",units);
 
-		variableTemplates = updateTemplates(variable.unit);
-	}
-
-	function updateDatatypes(
-		unit: unitListItemType | undefined,
-		template: templateListItemType | undefined
-	) {
-		//console.log("-->", unit.text,unit.dataTypes);
-		let dts = $dataTypeStore.map(o=>({...o}));
-
-		let matchPhrase = '';
-
-		let othersText = 'other';
-
-		if (unit != null && unit != undefined && unit.dataTypes.length > 0) {
-			// if unit exist
-			matchPhrase = unit?.text;
-
-			for (let index = 0; index < dts.length; index++) {
-				const datatype = dts[index];
-				if (unit.dataTypes.includes(datatype.text) && !datatype.group.includes(matchPhrase)) {
-					datatype.group = updateGroup(datatype.group, matchPhrase);
-				}
-			}
-		}
-
-		// check templates
-		if (template && template.units) {
-			matchPhrase = template.text;
-
-			for (let index = 0; index < template.units.length; index++) {
-				// each unit in a template
-				const u = units.filter((u) => u.text == template.units[index])[0];
-				// console.log("t-unit",u);
-				
-				for (let index = 0; index < dts.length; index++) {
-					// each datatype
-					const datatype = dts[index];
-					if (u.dataTypes.includes(datatype.text) && !u.group.includes(matchPhrase)) {
-						// console.log(matchPhrase,datatype.text, u.text);
-						
-						datatype.group = updateGroup(datatype.group, matchPhrase);
-					}
-				}
-			}
-		}
-
-		// reorder
-		return  [
-			...dts.filter((d) => d.group != othersText),
-			...dts.filter((d) => d.group == othersText)
-		];
-	}
-
-	function updateUnits(
-		datatype: listItemType | undefined,
-		template: templateListItemType | undefined
-	) {
-
-		let _units = $unitStore.map(o=>({...o}));
-
-		let matchPhrase = '';
-		let othersText = 'other';
-
-		if (datatype && _units) {
-			matchPhrase = datatype?.text;
-			// if datatype and units exist
-			_units.forEach((unit) => {
-				if (unit.dataTypes.includes(datatype.text) == true) {
-					unit.group = matchPhrase;
-				}
-			});
-		}
-
-		// filter units based on template matches
-		if (template && template.units) {
-			for (let index = 0; index < template.units.length; index++) {
-				const u = template.units[index];
-				matchPhrase = template?.text;
-				_units.forEach((unit) => {
-					if (unit.text == u) {
-						unit.group = updateGroup(unit.group, matchPhrase);
-					}
-				});
-			}
-		}
-
-		return [
-			..._units.filter((d) => d.group != othersText),
-			..._units.filter((d) => d.group == othersText)
-		];
-	}
-
-	function updateTemplates(unit: unitListItemType | undefined) {
-		let _templates =  $templateStore.map(o=>({...o}));
-		let matchPhrase = '' + unit?.text;
-		let othersText = 'other';
-
-		if (unit && _templates) {
-			// if datatype and units exist
-			_templates.forEach((template) => {
-				template.group = template.units.includes(unit.text) == true ? matchPhrase : othersText;
-			});
-			return [
-				..._templates.filter((d) => d.group != othersText),
-				..._templates.filter((d) => d.group == othersText)
-			];
-		}
+		variableTemplates = updateTemplates(variable.unit, $templateStore, suggestedTemplates);
 	}
 
 </script>
