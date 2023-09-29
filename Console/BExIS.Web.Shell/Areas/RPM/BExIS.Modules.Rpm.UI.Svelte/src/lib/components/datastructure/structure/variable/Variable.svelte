@@ -27,8 +27,14 @@
 		faCopy
 	} from '@fortawesome/free-solid-svg-icons';
 
-	import { updateDisplayPattern, updateGroup, updateDatatypes, updateUnits, updateTemplates } from './helper';
- 
+	import {
+		updateDisplayPattern,
+		updateGroup,
+		updateDatatypes,
+		updateUnits,
+		updateTemplates
+	} from './helper';
+
 	import DataTypeDescription from './DataTypeDescription.svelte';
 	import Container from './Container.svelte';
 	import Header from './Header.svelte';
@@ -74,12 +80,9 @@
 	let x: listItemType = { id: 0, text: '', group: '' };
 
 	onMount(() => {
-		// set lists
-		setList();
-
 		// set suggestions
 		//console.log("suggestions", variable);
-
+		setList();
 		suggestedDataType = variable.dataType;
 		suggestedUnits = variable.possibleUnits;
 		suggestedTemplates = variable.possibleTemplates;
@@ -91,7 +94,9 @@
 		suite.reset();
 
 		setTimeout(async () => {
+
 			updateLists();
+
 			displayPattern = updateDisplayPattern(variable.dataType);
 
 			// when type has change, reset value, but after copy do not reset
@@ -201,14 +206,13 @@
 		// units based on Datatype selection
 		units = updateUnits(variable.dataType, variable.template, $unitStore, suggestedUnits);
 		//console.log("updated units",units);
-
 		variableTemplates = updateTemplates(variable.unit, $templateStore, suggestedTemplates);
-	}
 
+	}
 </script>
 
 <div id="variable-{variable.id}-container" class="flex gap-5">
-	{#if loaded && variable}
+	{#if loaded && variable && $templateStore}
 		<div id="variable-{variable.id}-container-info" class="grow">
 			{#if expand}
 				<div class="card">

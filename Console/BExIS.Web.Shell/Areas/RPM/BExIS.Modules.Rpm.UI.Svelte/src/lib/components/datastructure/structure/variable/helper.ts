@@ -61,7 +61,7 @@ export function updateDatatypes(
   suggestedDataType:listItemType | undefined,
   units:unitListItemType[]
 ) {
-
+  const othersText = 'other';
   let dts:listItemType[] = dataTypeStore.map(o=>({...o})); // set datatypes
   
   if(suggestedDataType)
@@ -73,7 +73,7 @@ export function updateDatatypes(
 
   let matchPhrase = '';
 
-  const othersText = 'other';
+  
 
   if (unit != null && unit != undefined && unit.dataTypes.length > 0) {
 
@@ -174,6 +174,7 @@ export function updateTemplates(
 ) {
   let _templates: templateListItemType[] = templates.map((o) => ({ ...o }));
 
+  //if suggestedTemplates exist, filter list by
   if (suggestedTemplates) {
     // if suggestions exist please add them to the list
     _templates = templates
@@ -195,9 +196,11 @@ export function updateTemplates(
       }
 
     });
-    return [
-      ..._templates.filter((d) => d.group != othersText),
-      ..._templates.filter((d) => d.group == othersText)
-    ];
+  
   }
+
+  return [
+    ..._templates.filter((d) => d.group != othersText),
+    ..._templates.filter((d) => d.group == othersText)
+  ];
 }

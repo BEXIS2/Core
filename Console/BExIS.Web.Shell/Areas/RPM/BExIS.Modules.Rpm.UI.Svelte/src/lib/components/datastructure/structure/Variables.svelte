@@ -30,13 +30,13 @@
 	export let valid = true;
 
 	onMount(async () => {
+
 		const datatypes = await getDataTypes();
 		dataTypeStore.set(datatypes);
 
-		
-
 		const units = await getUnits();
 		unitStore.set(units)
+		
 		const variableTemplates = await getVariableTemplates();
 		templateStore.set(variableTemplates)
 
@@ -51,6 +51,9 @@
 	});
 
 	function fillVariableValdationStates(vars) {
+
+		variableValidationStates = [];
+		
 		for (let index = 0; index < vars.length; index++) {
 			variableValidationStates.push(false);
 		}
@@ -60,6 +63,7 @@
 	// this function triggered an check wheter save button can be active or not
 	function checkValidationState() {
 		valid = variableValidationStates.every((v) => v === true);
+		//console.log("TCL ~ file: Variables.svelte:63 ~ checkValidationState ~ variableValidationStates:", variableValidationStates)
 	}
 
 	function getColumnData(cellIndex) {
@@ -150,6 +154,7 @@
 		copiedVariable.unit = variables[i].unit;
 		copiedVariable.template = variables[i].template;
 		copiedVariable.systemType = variables[i].systemType;
+		copiedVariable.template = variables[i].template;
 
 
 		variables.splice(i+1, 0, copiedVariable);
