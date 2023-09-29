@@ -29,6 +29,8 @@
 
 	export let valid = true;
 
+	let ready:boolean = false;
+
 	onMount(async () => {
 
 		const datatypes = await getDataTypes();
@@ -47,6 +49,8 @@
 		// console.log("variableTemplates", variableTemplates);
 
 		fillVariableValdationStates(variables);
+
+		ready = true;
 
 	});
 
@@ -209,7 +213,7 @@
 
 <div class="flex-col space-y-2 mt-5">
 
-	{#if variables && $dataTypeStore && $unitStore && variableValidationStates && missingValues}
+	{#if variables && missingValues && ready}
 		<!-- else content here -->
 		{#each variables as variable, i (i)}
 			<Variable

@@ -310,7 +310,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                         variable.IsKey,
                         orderNo,
                         0,
-                        "",
+                        variable.Description,
                         "",
                         displayPattern
                         );

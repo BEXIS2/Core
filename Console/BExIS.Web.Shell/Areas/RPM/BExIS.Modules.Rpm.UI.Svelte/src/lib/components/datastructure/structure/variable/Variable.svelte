@@ -81,14 +81,11 @@
 
 	onMount(() => {
 		// set suggestions
-		//console.log("suggestions", variable);
 		setList();
 		suggestedDataType = variable.dataType;
 		suggestedUnits = variable.possibleUnits;
 		suggestedTemplates = variable.possibleTemplates;
 
-		//console.log("------------",datatypes, units,variableTemplates);
-		//console.log("SUGGESTIONS",suggestedDataType, suggestedUnits,suggestedTemplates);
 
 		// reset & reload validation
 		suite.reset();

@@ -63,7 +63,9 @@ export function updateDatatypes(
 ) {
   const othersText = 'other';
   let dts:listItemType[] = dataTypeStore.map(o=>({...o})); // set datatypes
+  console.log("TCL ~ file: helper.ts:66 ~ dts:", dts)
   
+  //suggestions
   if(suggestedDataType)
   {
     suggestedDataType.group = "detect"
@@ -72,9 +74,7 @@ export function updateDatatypes(
   }
 
   let matchPhrase = '';
-
-  
-
+  //unit
   if (unit != null && unit != undefined && unit.dataTypes.length > 0) {
 
     // if unit exist
@@ -83,8 +83,6 @@ export function updateDatatypes(
     for (let index = 0; index < dts.length; index++) {
       const datatype = dts[index];
       if (unit.dataTypes.includes(datatype.text) && !datatype.group.includes(matchPhrase)) {
-        //console.log(datatype.group,matchPhrase);
-        
         datatype.group = updateGroup(datatype.group, matchPhrase);
       }
     }
@@ -97,14 +95,11 @@ export function updateDatatypes(
     for (let index = 0; index < template.units.length; index++) {
       // each unit in a template
       const u = units.filter((u) => u.text == template.units[index])[0];
-      //console.log("t-unit",u);
       
       for (let index = 0; index < dts.length; index++) {
         // each datatype
         const datatype = dts[index];
         if (u && u.dataTypes.includes(datatype.text) && !datatype.group.includes(matchPhrase)) {
-          //console.log(datatype.group,matchPhrase);
-          // //console.log(matchPhrase,datatype.text, u.text);
           datatype.group = updateGroup(datatype.group, matchPhrase);
         }
       }
@@ -115,6 +110,7 @@ export function updateDatatypes(
   return  [
     ...dts.filter((d) => d.group != othersText),
     ...dts.filter((d) => d.group == othersText)
+   
   ];
 }
 
