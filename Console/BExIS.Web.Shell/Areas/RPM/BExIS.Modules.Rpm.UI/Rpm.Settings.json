@@ -2,7 +2,7 @@
   "id": "rpm",
   "name": "research plan",
   "description": "...",
-  "entry": [
+  "entries": [
     {
       "key": "help",
       "value": "https://github.com/BEXIS2/Documents/blob/2.14.5/Manuals/RPM/Manual.md",
@@ -29,18 +29,6 @@
           "value": "na",
           "type": "String",
           "description": "not available"
-        },
-        {
-          "key": "missingValue",
-          "value": "nm",
-          "type": "String",
-          "description": "not measured"
-        },
-        {
-          "key": "missingValue",
-          "value": "no",
-          "type": "String",
-          "description": "not observed"
         }
       ],
       "description": "...",

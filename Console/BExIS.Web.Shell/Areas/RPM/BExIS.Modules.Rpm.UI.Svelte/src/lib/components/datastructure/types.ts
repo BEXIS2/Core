@@ -22,11 +22,12 @@ export interface DataStructureCreationModel {
 	total: number;
 	skipped: number;
 	markers: markerType[];
-	variables: VariableModel[];
+	variables: VariableInstanceModel[];
 	missingValues: missingValueType[];
 }
 
 export interface missingValueType {
+	id:number;
 	displayName: string;
 	description: string;
 }
@@ -37,34 +38,65 @@ export interface markerType {
 	cells: boolean[];
 }
 
-export class VariableModel {
-	id: number;
-	name: string;
-	description: string;
-	systemType: string;
+class VariableModel{
+				id: number;
+    name: string;
+    description: string;
+    systemType: string;
+    dataType: listItemType| undefined;
+    unit: unitListItemType| undefined;;
+				missingValues: missingValueType[];
+				approved: boolean;
+				inUse: boolean;
+
+				public constructor() {
+					this.id = 0
+					this.name = ""
+					this.description = ""
+					this.systemType = ""
+					this.dataType = undefined//{id:0,text:"",group:""}
+					this.unit = undefined
+					this.missingValues = [];
+					this.approved = false;
+					this.inUse = false;
+				}
+}
+
+
+export class VariableTemplateModel extends VariableModel{
+
+	public constructor() {
+		super()
+	}
+}
+
+export class VariableInstanceModel extends VariableModel {
+
+	template: templateListItemType| undefined;
 	isKey: boolean;
 	isOptional: boolean;
-	dataType: listItemType;
-	unit: listItemType;
-	template: listItemType;
 	displayPattern: listItemType | undefined;
-	possibleUnits: listItemType[];
-	possibleTemplates: listItemType[];
+	possibleUnits: unitListItemType[];
+	possibleTemplates: templateListItemType[];
 	possibleDisplayPattern: listItemType[];
 
 	public constructor() {
-		this.id = -1
-		this.name = ""
-		this.description = ""
-		this.systemType = ""
-		this.isKey = false
+		super()
 		this.isOptional = false
-		this.dataType = {id:0,text:"",group:""}
-		this.unit = {id:0,text:"",group:""}
-		this.template = {id:0,text:"",group:""}
-		this.displayPattern = {id:0,text:"",group:""}
+		this.template = undefined
+		this.isKey = false
+		this.displayPattern = undefined
 		this.possibleUnits = []
 		this.possibleTemplates = []
 		this.possibleDisplayPattern = []
+	}
 }
+
+export interface unitListItemType extends listItemType {
+		dataTypes:string[]	
+}
+
+export interface templateListItemType extends listItemType {
+	dataTypes:string[]
+	units:string[]	
 }

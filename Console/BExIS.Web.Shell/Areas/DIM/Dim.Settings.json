@@ -14,10 +14,30 @@
       "value": {
         "username": "test",
         "password": "admin",
-        "host":  "https://google.de:123456"
+        "host": "https://"
       },
       "type": "JSON",
       "description": "This are the credentials."
+    },
+    {
+      "key": "dataCiteDOIPlaceholders",
+      "value": {
+        "DatasetId": "{DatasetId}",
+        "VersionId": "{VersionId}",
+        "VersionNumber": "{VersionNumber}",
+        "VersionName": "{VersionName}"
+      },
+      "type": "JSON",
+      "description": "These placeholders will be replaced automatically."
+    },
+    {
+      "key": "dataCiteDOIMappings",
+      "value": {
+        "URL": "{DatasetId}?version={VersionNumber}",
+        "Version": "{VersionName}"
+      },
+      "type": "JSON",
+      "description": "There are additional mappings for DOI DataCite."
     }
   ]
 }

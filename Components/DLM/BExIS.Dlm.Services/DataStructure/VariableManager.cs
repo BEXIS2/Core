@@ -93,7 +93,7 @@ namespace BExIS.Dlm.Services.DataStructure
         /// <param name="defaultValue"></param>
         /// <returns>VariableTemplate</returns>
         /// <exception cref="ArgumentNullException"></exception>
-        public VariableTemplate CreateVariableTemplate(string name, DataType dataType, Unit unit, bool isOptional, string description="",  string defaultValue="", int displayPatternId=0)
+        public VariableTemplate CreateVariableTemplate(string name, DataType dataType, Unit unit, string description="",  string defaultValue="")
         {
             // check incoming varaibles
             if (string.IsNullOrEmpty(name)) throw new ArgumentNullException(nameof(name), "Name is empty but is required.");
@@ -105,11 +105,8 @@ namespace BExIS.Dlm.Services.DataStructure
                 Description = description,
                 DataType = dataType,
                 DefaultValue = defaultValue,
-                Unit = unit,
-                IsValueOptional = isOptional,
-                DisplayPatternId = displayPatternId
-
-            };
+                Unit = unit
+              };
 
             using (IUnitOfWork uow = this.GetUnitOfWork())
             {
@@ -130,9 +127,21 @@ namespace BExIS.Dlm.Services.DataStructure
             using (IUnitOfWork uow = this.GetUnitOfWork())
             {
                 IRepository<VariableTemplate> repo = uow.GetRepository<VariableTemplate>();
-                repo.Merge(entity);
-
                 var merged = repo.Get(entity.Id);
+                
+                merged.Approved = entity.Approved;
+                merged.Description = entity.Description;
+                merged.DataType = entity.DataType;
+                merged.DefaultValue = entity.DefaultValue;
+                merged.Unit = entity.Unit;
+                merged.MissingValues = entity.MissingValues;
+                merged.DisplayPatternId = entity.DisplayPatternId;
+                merged.IsValueOptional = entity.IsValueOptional;
+                merged.VariableConstraints = entity.VariableConstraints;
+                merged.Label = entity.Label;
+                merged.MinCardinality = entity.MinCardinality;
+                merged.MaxCardinality = entity.MaxCardinality;
+
                 repo.Put(merged);
                 uow.Commit();
             }

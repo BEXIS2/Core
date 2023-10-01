@@ -18,5 +18,6 @@
 		<a class="btn variant-filled-secondary" href="./datastructure/create">create datastructure</a>
 		<a class="btn variant-filled-secondary" href="./unit">unit</a>
 		<a class="btn variant-filled-secondary" href="./dimension">dimension</a>
+		<a class="btn variant-filled-secondary" href="./variabletemplate">variabletemplate</a>
 	</div>
 </Page>

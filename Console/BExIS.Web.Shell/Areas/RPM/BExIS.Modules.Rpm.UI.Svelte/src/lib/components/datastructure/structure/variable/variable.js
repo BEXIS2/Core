@@ -7,6 +7,10 @@ const suite = create((data = {}, fieldName) => {
 	let dataTypeWithDisplaypattern = ['date', 'time', 'datetime'];
 
 	//only(fieldName);
+	test('name', 'name is required', () => {
+		enforce(data.name).isNotBlank();
+		//console.log("description");
+	});
 
 	test('description', 'description is required', () => {
 		enforce(data.description).isNotBlank();
@@ -18,13 +22,14 @@ const suite = create((data = {}, fieldName) => {
 
 		enforce(data.dataType).isNotNull();
 		enforce(data.dataType.text).isNotUndefined();
+		enforce(data.dataType.text).isNotEmpty();
+		
 	});
 
-	console.log(data.dataType, data.dataType.text);
-	
+
 		test('displayPattern', 'display pattern is required', () => {
 			if (data.dataType && dataTypeWithDisplaypattern.includes(data.dataType.text)) {
-				console.log('display pattern test', data.displayPattern);
+				//console.log('display pattern test', data.displayPattern);
 				enforce(data.displayPattern).isNotNull();
 				enforce(data.displayPattern.text).isNotUndefined();
 			}
@@ -40,6 +45,7 @@ const suite = create((data = {}, fieldName) => {
 
 		enforce(data.unit).isNotNull();
 		enforce(data.unit.text).isNotUndefined();
+		enforce(data.unit.text).isNotEmpty();
 	});
 });
 

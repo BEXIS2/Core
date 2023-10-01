@@ -40,7 +40,7 @@
       <column name="DefaultValue" />
     </property>
 
-    <many-to-one name="Unit" class="Unit" not-null="false" column="UnitRef" />
+    <many-to-one name="Unit" class="Unit" not-null="false" column="UnitRef" lazy="false"/>
     <many-to-one name="DataType" class="DataType" not-null="true" column="DataTypeRef"/>
     
 

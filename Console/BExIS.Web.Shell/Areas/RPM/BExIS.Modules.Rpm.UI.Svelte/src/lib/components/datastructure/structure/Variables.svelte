@@ -2,21 +2,24 @@
 	import Variable from './variable/Variable.svelte';
 	import { Spinner } from '@bexis2/bexis2-core-ui';
 	import { onMount } from 'svelte';
-	import { getDataTypes, getUnits } from '../services';
+	import { getDataTypes, getUnits, getVariableTemplates } from '../services';
 	import type { missingValueType } from '../types';
-	import { VariableModel } from '../types';
+	import { VariableInstanceModel } from '../types';
 	import { Modal, modalStore } from '@skeletonlabs/skeleton';
 	import type { ModalSettings } from '@skeletonlabs/skeleton';
 
 	import Fa from 'svelte-fa';
 	import { faShare, faShareFromSquare, faMaximize, faMinimize, faAdd, faTrash, faCopy, faAngleUp, faAngleDown } from '@fortawesome/free-solid-svg-icons';
 
-	export let variables: VariableModel[] = [];
+	// stores
+	
+	import { displayPatternStore, unitStore, dataTypeStore, templateStore} from '../store'
+
+	export let variables: VariableInstanceModel[] = [];
 	export let missingValues: missingValueType[] = [];
 	export let data: string[][];
 
-	$: datatypes = null;
-	$: units = null;
+
 	$: variables;
 
 	let expandAll=true;
@@ -26,18 +29,35 @@
 
 	export let valid = true;
 
-	onMount(async () => {
-		datatypes = await getDataTypes();
-		units = await getUnits();
+	let ready:boolean = false;
 
+	onMount(async () => {
+
+		const datatypes = await getDataTypes();
+		dataTypeStore.set(datatypes);
+
+		const units = await getUnits();
+		unitStore.set(units)
+		
+		const variableTemplates = await getVariableTemplates();
+		templateStore.set(variableTemplates)
+
+		//console.log("---------",datatypes);
 		// console.log("datatypes",datatypes);
 		// console.log("units", units);
-		// console.log("units", missingValues);
+		// console.log("missingValues", missingValues);
+		// console.log("variableTemplates", variableTemplates);
 
 		fillVariableValdationStates(variables);
+
+		ready = true;
+
 	});
 
 	function fillVariableValdationStates(vars) {
+
+		variableValidationStates = [];
+		
 		for (let index = 0; index < vars.length; index++) {
 			variableValidationStates.push(false);
 		}
@@ -47,6 +67,7 @@
 	// this function triggered an check wheter save button can be active or not
 	function checkValidationState() {
 		valid = variableValidationStates.every((v) => v === true);
+		//console.log("TCL ~ file: Variables.svelte:63 ~ checkValidationState ~ variableValidationStates:", variableValidationStates)
 	}
 
 	function getColumnData(cellIndex) {
@@ -123,20 +144,22 @@
 	function addFn()
 	{
 
-			variables = [...variables, new VariableModel()];
+			variables = [...variables, new VariableInstanceModel()];
 
 	}
 
 	function copyFn(i)
 	{
 
-		let copiedVariable = new VariableModel();
+		let copiedVariable = new VariableInstanceModel();
 		copiedVariable.name = variables[i].name+" (copied)";
 		copiedVariable.description = variables[i].description;
 		copiedVariable.dataType = variables[i].dataType;
 		copiedVariable.unit = variables[i].unit;
 		copiedVariable.template = variables[i].template;
 		copiedVariable.systemType = variables[i].systemType;
+		copiedVariable.template = variables[i].template;
+
 
 		variables.splice(i+1, 0, copiedVariable);
 		variables = [...variables];
@@ -190,15 +213,13 @@
 
 <div class="flex-col space-y-2 mt-5">
 
-	{#if variables && datatypes && units && variableValidationStates && missingValues}
+	{#if variables && missingValues && ready}
 		<!-- else content here -->
 		{#each variables as variable, i (i)}
 			<Variable
 				bind:variable
 				index={i}
 				on:var-change={checkValidationState}
-				{datatypes}
-				{units}
 				bind:isValid={variableValidationStates[i]}
 				bind:missingValues
 				data={getColumnData(i)}

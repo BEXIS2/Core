@@ -70,8 +70,8 @@ namespace BExIS.Modules.Sam.UI.Controllers
                             {
                                 //send email
                                 var es = new EmailService();
-                                es.Send(MessageHelper.GetDeleteDatasetHeader(id),
-                                    MessageHelper.GetDeleteDatasetMessage(id, user.Name),
+                                es.Send(MessageHelper.GetDeleteDatasetHeader(id, typeof(Dataset).Name),
+                                    MessageHelper.GetDeleteDatasetMessage(id, user.Name, typeof(Dataset).Name),
                                     GeneralSettings.SystemEmail
                                     );
 
@@ -88,8 +88,8 @@ namespace BExIS.Modules.Sam.UI.Controllers
                             ViewData.ModelState.AddModelError("", $@"You do not have the permission to delete the record.");
 
                             var es = new EmailService();
-                            es.Send(MessageHelper.GetTryToDeleteDatasetHeader(id),
-                                MessageHelper.GetTryToDeleteDatasetMessage(id, GetUsernameOrDefault()),
+                            es.Send(MessageHelper.GetTryToDeleteDatasetHeader(id, typeof(Dataset).Name),
+                                MessageHelper.GetTryToDeleteDatasetMessage(id, GetUsernameOrDefault(), typeof(Dataset).Name),
                                 GeneralSettings.SystemEmail
                                 );
                         }
@@ -99,8 +99,8 @@ namespace BExIS.Modules.Sam.UI.Controllers
                         ViewData.ModelState.AddModelError("", $@"This function can only be executed with a logged-in user.");
 
                         var es = new EmailService();
-                        es.Send(MessageHelper.GetTryToDeleteDatasetHeader(id),
-                            MessageHelper.GetTryToDeleteDatasetMessage(id, userName),
+                        es.Send(MessageHelper.GetTryToDeleteDatasetHeader(id, typeof(Dataset).Name),
+                            MessageHelper.GetTryToDeleteDatasetMessage(id, userName, typeof(Dataset).Name),
                             GeneralSettings.SystemEmail
                             );
                     }
@@ -285,8 +285,8 @@ namespace BExIS.Modules.Sam.UI.Controllers
                                 entityPermissionManager.Delete(typeof(Dataset), id);
 
                                 var es = new EmailService();
-                                es.Send(MessageHelper.GetPurgeDatasetHeader(id),
-                                    MessageHelper.GetPurgeDatasetMessage(id, user.Name),
+                                es.Send(MessageHelper.GetPurgeDatasetHeader(id, typeof(Dataset).Name),
+                                    MessageHelper.GetPurgeDatasetMessage(id, user.Name, typeof(Dataset).Name),
                                     GeneralSettings.SystemEmail
                                     );
 
@@ -301,8 +301,8 @@ namespace BExIS.Modules.Sam.UI.Controllers
                             ViewData.ModelState.AddModelError("", $@"You do not have the permission to purge the record.");
 
                             var es = new EmailService();
-                            es.Send(MessageHelper.GetTryToPurgeDatasetHeader(id),
-                                MessageHelper.GetTryToPurgeDatasetMessage(id, user.Name),
+                            es.Send(MessageHelper.GetTryToPurgeDatasetHeader(id, typeof(Dataset).Name),
+                                MessageHelper.GetTryToPurgeDatasetMessage(id, user.Name, typeof(Dataset).Name),
                                 GeneralSettings.SystemEmail
                                 );
                         }
@@ -311,8 +311,8 @@ namespace BExIS.Modules.Sam.UI.Controllers
                     {
                         ViewData.ModelState.AddModelError("", $@"This function can only be executed with a logged-in user.");
                         var es = new EmailService();
-                        es.Send(MessageHelper.GetTryToPurgeDatasetHeader(id),
-                            MessageHelper.GetTryToPurgeDatasetMessage(id, userName),
+                        es.Send(MessageHelper.GetTryToPurgeDatasetHeader(id, typeof(Dataset).Name),
+                            MessageHelper.GetTryToPurgeDatasetMessage(id, userName, typeof(Dataset).Name),
                             GeneralSettings.SystemEmail
                             );
                     }

@@ -54,7 +54,7 @@
       <one-to-many class="DataContainer"/>
     </set>
           
-    <set name="AssociatedDataTypes" table="Units_DataTypes" cascade="save-update"  lazy="true">
+    <set name="AssociatedDataTypes" table="Units_DataTypes" cascade="save-update" lazy="false">
       <key column="UnitRef"/>
       <many-to-many column="DataTypeRef" class="DataType"/>
     </set>

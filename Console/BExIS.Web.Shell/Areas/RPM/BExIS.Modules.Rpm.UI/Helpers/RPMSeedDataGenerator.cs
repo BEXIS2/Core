@@ -65,6 +65,9 @@ namespace BExIS.Modules.Rpm.UI.Helpers
                 if (!operationManager.Exists("RPM", "DataAttribute", "*"))
                     operationManager.Create("RPM", "DataAttribute", "*", atributeFeature);
 
+                if (!operationManager.Exists("RPM", "VariableTemplate", "*"))
+                    operationManager.Create("RPM", "VariableTemplate", "*", atributeFeature);
+
                 Feature unitFeature = features.FirstOrDefault(f =>
                     f.Name.Equals("Unit Management") &&
                     f.Parent != null &&
