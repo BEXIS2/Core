@@ -14,6 +14,7 @@
 	import { faAdd, faTrash } from '@fortawesome/free-solid-svg-icons';
 
 	export let entry: ReadEntryModel;
+	export let isChild = false;
 	let JSONValue: string;
 	let initialJSONValue: string;
 
@@ -89,7 +90,7 @@
 			{#each Object.values(entry.value) as e, index}
 				<div class="flex card p-2">
 					<div class="grow">
-						<svelte:self entry={e} />
+						<svelte:self entry={e} isChild={true}/>
 					</div>
 					<div>
 						<button class="btn variant-filled-error flex-none" on:click={() => removeItem(index)}
@@ -102,8 +103,10 @@
 			<button class="btn variant-filled-primary" on:click={addItem}>
 				<Fa icon={faAdd} />
 			</button>
-
-			<TextInput label="Description" bind:value={entry.description} on:input />
 		</div>
+	{/if}
+
+	{#if isChild}
+		<TextInput label="Description" bind:value={entry.description} on:input />
 	{/if}
 </div>
