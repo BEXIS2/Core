@@ -1,33 +1,11 @@
-﻿using BExIS.UI.Models;
+﻿using BExIS.Dlm.Entities.DataStructure;
+using BExIS.UI.Models;
 using System.Collections.Generic;
 
-namespace BExIS.Modules.Rpm.UI.Models.Dimensions
+namespace BExIS.Modules.Rpm.UI.Models
 {
     public class ConstraitListItem
     {
-
-        /// <summary>
-        /// Name of the Dimension
-        /// </summary>
-        public long Id { get; set; }
-
-        /// <summary>
-        /// Name of the Dimension
-        /// </summary>
-        public string Name { get; set; }
-
-        /// <summary>
-        /// Description of the Dimension
-        /// </summary>
-        public string Description { get; set; }
-
-        /// <summary>
-        /// Specification of the Dimension
-        /// </summary>
-        public string Specification { get; set; }
-
-        public bool InUse { get; set; }
-
         public ConstraitListItem()
         {
             Id = 0;
@@ -35,6 +13,96 @@ namespace BExIS.Modules.Rpm.UI.Models.Dimensions
             Description = string.Empty;
             Specification = string.Empty;
             InUse = false;
+        }
+
+        /// <summary>
+        /// Description of the Dimension
+        /// </summary>
+        public string Description { get; set; }
+
+        /// <summary>
+        /// Name of the Dimension
+        /// </summary>
+        public long Id { get; set; }
+
+        public bool InUse { get; set; }
+
+        /// <summary>
+        /// Name of the Dimension
+        /// </summary>
+        public string Name { get; set; }
+
+        /// <summary>
+        /// Specification of the Dimension
+        /// </summary>
+        public string Specification { get; set; }
+    }
+
+    public class ReadConstraintModel
+    {
+        public string Description { get; set; }
+        public long Id { get; set; }
+        public string Name { get; set; }
+
+        public static ReadConstraintModel Convert(Constraint constraint)
+        {
+            return new ReadConstraintModel()
+            {
+                Id = constraint.Id,
+                Name = constraint.Name,
+                Description = constraint.Description
+            };
+        }
+    }
+
+    public class ReadDomainConstraintModel
+    {
+        public string Description { get; set; }
+        public long Id { get; set; }
+        public string Name { get; set; }
+
+        public static ReadDomainConstraintModel Convert(DomainConstraint constraint)
+        {
+            return new ReadDomainConstraintModel()
+            {
+                Id = constraint.Id,
+                Name = constraint.Name,
+                Description = constraint.Description
+            };
+        }
+    }
+
+    public class ReadPatternConstraintModel
+    {
+        public string Description { get; set; }
+        public long Id { get; set; }
+        public string Name { get; set; }
+
+        public static ReadPatternConstraintModel Convert(PatternConstraint constraint)
+        {
+            return new ReadPatternConstraintModel()
+            {
+                Id = constraint.Id,
+                Name = constraint.Name,
+                Description = constraint.Description
+            };
+        }
+    }
+
+    public class ReadRangeConstraintModel
+    {
+        public string Description { get; set; }
+        public long Id { get; set; }
+        public string Name { get; set; }
+
+        public static ReadRangeConstraintModel Convert(RangeConstraint constraint)
+        {
+            return new ReadRangeConstraintModel()
+            {
+                Id = constraint.Id,
+                Name = constraint.Name,
+                Description = constraint.Description
+            };
         }
     }
 }
