@@ -272,7 +272,7 @@
 									placeholder="-- Please select --"
 									invalid={res.hasErrors('dataType')}
 									feedback={res.getErrors('dataType')}
-									clearable={false}
+									clearable={true}
 									on:change={(e) => onSelectHandler(e, 'dataType')}
 								/>
 							</div>
@@ -319,7 +319,7 @@
 									complexSource={true}
 									complexTarget={true}
 									isMulti={false}
-									clearable={false}
+									clearable={true}
 									bind:target={variable.unit}
 									placeholder="-- Please select --"
 									invalid={res.hasErrors('unit')}
@@ -346,7 +346,7 @@
 									complexSource={true}
 									complexTarget={true}
 									isMulti={false}
-									clearable={false}
+									clearable={true}
 									bind:target={variable.template}
 									placeholder="-- Please select --"
 									invalid={res.hasErrors('variableTemplate')}

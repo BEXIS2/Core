@@ -2,8 +2,15 @@
     ViewBag.Title = "Create";
     Layout = "~/Themes/Default/Layouts/_svelteLayout.cshtml";
 
+    bool isTemplateRequired = false;
+
+    if (ViewData["isTemplateRequired"] != null)
+    {
+        isTemplateRequired = (bool)ViewData["isTemplateRequired"];
+    }
+
 }
 
-<div id="create">
+<div id="create" isTemplateRequired="@isTemplateRequired">
     @Html.Partial("_sveltePage")
 </div>
