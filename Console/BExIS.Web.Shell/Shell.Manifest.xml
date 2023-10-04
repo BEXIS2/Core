@@ -45,7 +45,7 @@
 	<!--Settings-->
 	<Export tag="settings" id="apisettings" order="1"
         title="Application Settings" description="..." icon=""
-        controller="settings" action="index"
+        controller="settings" action=""
         extends="./settingsRoot" />
 
   </Exports>
