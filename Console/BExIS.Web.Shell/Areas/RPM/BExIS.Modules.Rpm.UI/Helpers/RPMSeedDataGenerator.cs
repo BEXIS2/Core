@@ -183,13 +183,13 @@ namespace BExIS.Modules.Rpm.UI.Helpers
             attributeCreator.CreateUnits(ref mappedUnits);
 
             //// read attributes from csv file
-            DataTable mappedAttributes = mappingReader.readAttributes(filePath);
+            DataTable mappedTemplates = mappingReader.readAttributes(filePath);
 
             // free memory
             mappedDataTypes.Clear();
             mappedDimensions.Clear();
             // create read attributes in bpp
-            //attributeCreator.CreateAttributes(ref mappedAttributes);
+            attributeCreator.CreateTemplates(ref mappedTemplates);
 
             createResearchPlan();
 
