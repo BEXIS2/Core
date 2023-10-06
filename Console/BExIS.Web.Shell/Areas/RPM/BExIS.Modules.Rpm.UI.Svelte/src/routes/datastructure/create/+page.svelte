@@ -40,9 +40,12 @@
 		version = Number(container?.getAttribute('version'));
 		file = ""+container?.getAttribute('file');
 		datastructureId = Number(container?.getAttribute('structure'));
+
+		// get isTemplateRequired from settings and add it to store
+		// is used by validation
 		const isTemplateRequired= Boolean(container?.getAttribute('isTemplateRequired'));
 		isTemplateRequiredStore.set(isTemplateRequired);
-		alert($isTemplateRequiredStore)
+
 
 
 		console.log('start structure suggestion', entityId, version, file, datastructureId);

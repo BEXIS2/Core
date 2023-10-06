@@ -30,9 +30,9 @@ namespace BExIS.IO.DataType.DisplayPattern
             new DataTypeDisplayPattern() {Id=16,Systemtype = DataTypeCode.DateTime,   Name = "yyyy-d-M",          ExcelPattern="yyyy-d-M",        DisplayPattern="yyyy-d-M",                  StringPattern = "yyyy-d-M",                 RegexPattern = null},
             new DataTypeDisplayPattern() {Id=17,Systemtype = DataTypeCode.DateTime,   Name = "yyyy-MM-dd",          ExcelPattern="yyyy-MM-dd",        DisplayPattern="yyyy-MM-dd",                  StringPattern = "yyyy-MM-dd",                 RegexPattern = null},
             new DataTypeDisplayPattern() {Id=18,Systemtype = DataTypeCode.DateTime,   Name = "yyyy-dd-MM",          ExcelPattern="yyyy-dd-MM",        DisplayPattern="yyyy-dd-MM",                  StringPattern = "yyyy-dd-MM",                 RegexPattern = null},
-            new DataTypeDisplayPattern() {Id=19,Systemtype = DataTypeCode.DateTime,   Name = "d/M/yyyy hh:mm:ss tt",ExcelPattern=@"d\/M\/yyyy hh:mm:ss tt",        DisplayPattern="d/M/yyyy hh:mm:ss tt",                  StringPattern = "d/M/yyyy hh:mm:ss tt",                 RegexPattern = null},
-            //new DataTypeDisplayPattern() {Systemtype = DataTypeCode.DateTime,   Name = "Year",              ExcelPattern="yyyy",                DisplayPattern="yyyy",                      StringPattern = "yyyy",                     RegexPattern = null},
-            //new DataTypeDisplayPattern() {Systemtype = DataTypeCode.DateTime,   Name = "Month",             ExcelPattern="MM",                  DisplayPattern="MM",                        StringPattern = "MM",                       RegexPattern = null}
+            new DataTypeDisplayPattern() {Id=19,Systemtype = DataTypeCode.DateTime,   Name = "d/M/yyyy hh:mm:ss tt",ExcelPattern=@"d\/M\/yyyy hh:mm:ss tt",        DisplayPattern="d/M/yyyy hh:mm:ss tt",                  StringPattern = "d/M/yyyy hh:mm:ss tt",RegexPattern = null},
+            new DataTypeDisplayPattern() {Id=20,Systemtype = DataTypeCode.DateTime,   Name = "Year",              ExcelPattern="yyyy",                DisplayPattern="yyyy",                      StringPattern = "yyyy",                     RegexPattern = null},
+            new DataTypeDisplayPattern() {Id=21, Systemtype = DataTypeCode.DateTime,   Name = "Month",             ExcelPattern="MM",                  DisplayPattern="MM",                        StringPattern = "MM",                       RegexPattern = null}
         };
 
         public DataTypeCode Systemtype { get; set; }
