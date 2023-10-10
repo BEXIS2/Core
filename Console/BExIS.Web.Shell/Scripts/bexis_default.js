@@ -11,15 +11,15 @@
 		//get height of the menu and add this to the margin of the content
 		var h = $(".navbar").height();
 		console.log("h = " + h);
-		$("#information-container").css("top", h);
-		$(".main-content").css("margin-top", h);
+		//$("#information-container").css("top", h);
+		//$(".main-content").css("margin-top", h);
 
 		$(window).resize(function () {
 
-			var h = $(".navbar").height();
-			console.log("h = " + h);
-			$("#information-container").css("top", h);
-			$(".main-content").css("margin-top", h);
+			//var h = $(".navbar").height();
+			//console.log("h = " + h);
+			//$("#information-container").css("top", h);
+			//$(".main-content").css("margin-top", h);
 		});
     }, 1000);
 

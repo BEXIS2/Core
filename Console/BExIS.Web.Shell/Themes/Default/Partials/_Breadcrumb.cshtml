@@ -2,25 +2,44 @@
 @{
     string title = ViewBag.Title;
 
-    if(title.Contains("-"))
+    if (title.Contains("-"))
     {
         title = title.Split('-').Last();
     }
 }
 
-<div>
+<div >
     <ol class="breadcrumb myBreadCrump">
-        <li class="crumb"><a class="anchor" href={'/'}>Home</a></li>
-        <li class="crumb"><a class="anchor" href=>@title</a></li>
+        @{
+            if (title != "Home")
+            {
+                <li><a class="anchor" href="/">Home</a></li>
+            }
+
+        }
+
+        <li class="">@title</li>
     </ol>
 </div>
-<hr />
+
 
 <style>
     .myBreadCrump {
         background-color: white !important;
-        padding-left: 0 !important;
-        padding-right: 0 !important;
-        padding-bottom: 0 !important
+        padding: 5pt;
+        color: #959595;
     }
+
+    .anchor {
+        --tw-text-opacity: 1;
+        text-decoration-line: underline;
+        color: #959595;
+    }
+
+    .anchor:hover {
+        --tw-text-opacity: 1;
+        color: rgb(52, 134, 121) ;
+        text-decoration-line: underline;
+    }
+
 </style>

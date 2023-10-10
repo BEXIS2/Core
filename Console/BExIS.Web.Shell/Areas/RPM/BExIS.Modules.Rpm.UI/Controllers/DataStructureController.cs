@@ -405,7 +405,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
 
             string path = "";
             if (model.EntityId==0 ) path = Path.Combine(AppConfiguration.DataPath, "Temp", BExISAuthorizeHelper.GetAuthorizedUserName(this.HttpContext), model.File);
-            else Path.Combine(AppConfiguration.DataPath, "Datasets", "" + model.EntityId, "temp", model.File);
+            else path = Path.Combine(AppConfiguration.DataPath, "Datasets", "" + model.EntityId, "temp", model.File);
 
             // get variable data
             // order rows by index
@@ -490,7 +490,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                     }
 
                     // varaible template
-                    var templates = strutcureAnalyzer.SuggestTemplate(var.Name, var.Unit.Id, var.DataType.Id);
+                    var templates = strutcureAnalyzer.SuggestTemplate(var.Name, var.Unit.Id, var.DataType.Id, 0.5);
                         templates.ForEach(t => var.PossibleTemplates.Add(new VariableTemplateItem(t.Id, t.Label,new List<string>() {t.Unit.Name}, t.Unit.AssociatedDataTypes.Select(x => x.Name).ToList(), "detect")));
 
                     if (var.PossibleTemplates.Any())
