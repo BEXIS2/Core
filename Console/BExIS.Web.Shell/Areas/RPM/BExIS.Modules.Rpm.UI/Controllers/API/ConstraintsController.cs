@@ -19,22 +19,23 @@ namespace BExIS.Modules.Rpm.UI.Controllers
         [HttpGet, GetRoute("api/constraints/{id}")]
         public async Task<HttpResponseMessage> GetById(long id)
         {
-            try
-            {
-                using (var constraintManager = new ConstraintManager())
-                {
-                    var constraint = await constraintManager.FindByIdAsync(id);
+            //try
+            //{
+            //    using (var constraintManager = new ConstraintManager())
+            //    {
+            //        var constraint = await constraintManager.FindByIdAsync(id);
 
-                    if (constraint == null)
-                        return Request.CreateResponse(HttpStatusCode.BadRequest, $"group with id: {id} does not exist.");
+            //        if (constraint == null)
+            //            return Request.CreateResponse(HttpStatusCode.BadRequest, $"group with id: {id} does not exist.");
 
-                    return Request.CreateResponse(HttpStatusCode.OK, ReadConstraintModel.Convert(constraint));
-                }
-            }
-            catch (Exception ex)
-            {
-                return Request.CreateErrorResponse(HttpStatusCode.InternalServerError, ex);
-            }
+            //        return Request.CreateResponse(HttpStatusCode.OK, ReadConstraintModel.Convert(constraint));
+            //    }
+            //}
+            //catch (Exception ex)
+            //{
+            //    
+            //}
+            throw new NotImplementedException();
         }
     }
 }
