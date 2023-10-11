@@ -144,6 +144,12 @@ namespace BExIS.Modules.Rpm.UI.Helpers
                     featurePermissionManager.Create(null, dataMeaning_pub.Id, Security.Entities.Authorization.PermissionType.Grant);
                 }
 
+                if (!operationManager.Exists("RPM", "Meanings", "*"))
+                {
+                    operationManager.Create("RPM", "Meanings", "*", dataMeaning_pub);
+                    
+                }
+
                 using (meaningManager _meaningManager = new meaningManager())
                 {
                     _meaningManager.addExternalLink("http://exampleURI_1", "Example 1", "entity");

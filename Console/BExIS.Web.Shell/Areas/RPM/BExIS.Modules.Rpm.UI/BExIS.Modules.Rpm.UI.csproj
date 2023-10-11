@@ -119,12 +119,14 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Controllers\MeaningsController.cs" />
-    <Compile Include="Controllers\MeaningsAdminController.cs" />
+    <Compile Include="Controllers\API\ConstraintsController.cs" />
+    <Compile Include="Controllers\API\MeaningsController.cs" />
+    <Compile Include="Controllers\API\MeaningsAdminController.cs" />
     <Compile Include="Controllers\ConstraintController.cs" />
     <Compile Include="Controllers\DataStructureController.cs" />
     <Compile Include="Controllers\DataTypeController.cs" />
     <Compile Include="Controllers\DimensionController.cs" />
+    <Compile Include="Controllers\MeaningsController.cs" />
     <Compile Include="Controllers\UnitController.cs" />
     <Compile Include="Controllers\StructuresController.cs" />
     <Compile Include="Controllers\VariableTemplateController.cs" />
@@ -257,7 +259,9 @@
       <Name>BExIS.Xml.Helpers</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="Views\Meanings\" />
+  </ItemGroup>
   <ItemGroup>
     <Analyzer Include="..\..\..\..\..\packages\Microsoft.CodeAnalysis.VersionCheckAnalyzer.3.3.0\analyzers\dotnet\cs\Microsoft.CodeAnalysis.VersionCheckAnalyzer.resources.dll" />
     <Analyzer Include="..\..\..\..\..\packages\Microsoft.CodeAnalysis.VersionCheckAnalyzer.3.3.0\analyzers\dotnet\Microsoft.CodeAnalysis.VersionCheckAnalyzer.dll" />
