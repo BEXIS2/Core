@@ -22,8 +22,8 @@ export class MeaningModel  {
 }
 
 export interface externalLinkType  {
-    id: string;
-    uRI: string;
+    id: number;
+    uri: string;
     name: string;
     type: string;
 }

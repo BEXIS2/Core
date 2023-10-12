@@ -3,7 +3,7 @@
  import ExternslLinks from './ExternslLinks.svelte';
 
 	// services
-	import { update } from './services';
+	import { update, create } from './services';
 
 	// icons
 	import Fa from 'svelte-fa';
@@ -60,7 +60,8 @@
 	}
 
 	async function submit() {
-		var res = await update(meaning);
+
+		var res = (meaning.id==0)?create(meaning):update(meaning);
 
 		if (res) {
 			dispatch('success');
