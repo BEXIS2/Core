@@ -25,9 +25,15 @@ namespace BExIS.Dlm.Services.Meanings
             Contract.Requires(meaning != null);
             try
             {
+                foreach (ExternalLink ext_link in meaning.ExternalLink)
+                {
+                    if (this.getExternalLink(ext_link.URI) == null)
+                    {
+                        this.addExternalLink(ext_link);
+                    }
+                }
                 using (IUnitOfWork uow = this.GetUnitOfWork())
                 {
-
                     IRepository<Meaning> repo = uow.GetRepository<Meaning>();
                     repo.Put(meaning);
                     uow.Commit();
@@ -382,6 +388,25 @@ namespace BExIS.Dlm.Services.Meanings
                 return null;
             }
         }
+
+        public ExternalLink getExternalLink(string uri)
+        {
+            try
+            {
+                using (IUnitOfWork uow = this.GetUnitOfWork())
+                {
+                    var repo = uow.GetReadOnlyRepository<ExternalLink>();
+                    ExternalLink externalLink = repo.Get().FirstOrDefault(x => x.URI == uri);
+                    return externalLink;
+                }
+            }
+            catch (Exception exc)
+            {
+                throw (exc);
+                return null;
+            }
+        }
+
         public List<ExternalLink> getExternalLinks()
         {
             try
