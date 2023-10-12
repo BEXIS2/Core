@@ -10,16 +10,16 @@ using Newtonsoft.Json;
 
 namespace BExIS.Dlm.Services.Meanings
 {
-    public class meaningManager : ImeaningManagr 
+    public class meaningManager_JSON : ImeaningManagr_JSON
     {
         // Track whether Dispose has been called.
         private bool disposedValue;
 
-        public meaningManager()
+        public meaningManager_JSON()
         {
         }
 
-        public Meaning addMeaning(Meaning meaning)
+        public JObject addMeaning(Meaning meaning)
         {
 
             Contract.Requires(meaning != null);
@@ -32,15 +32,16 @@ namespace BExIS.Dlm.Services.Meanings
                     repo.Put(meaning);
                     uow.Commit();
                 }
-                return meaning;
+                string json_string = JsonConvert.SerializeObject(new KeyValuePair<string, string>("Success", JsonConvert.SerializeObject(meaning)));
+                return JObject.Parse(json_string);
             }
             catch (Exception exc)
             {
-                throw (exc);
-                return null;
+                string json_string = JsonConvert.SerializeObject(new KeyValuePair<string, string>("Error", exc.Message));
+                return JObject.Parse(json_string);
             }
         }
-        public Meaning addMeaning(string Name, String ShortName, String Description, Selectable selectable, Approved approved, List<string> variables_id, List<string> ExternalLink, List<string> meaning_ids)
+        public JObject addMeaning(string Name, String ShortName, String Description, Selectable selectable, Approved approved, List<string> variables_id, List<string> ExternalLink, List<string> meaning_ids)
         {
             Contract.Requires(ExternalLink != null);
             try
@@ -61,17 +62,18 @@ namespace BExIS.Dlm.Services.Meanings
                             {
                                 ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore
                             });
-                        return meaning;
+                        string json_string = JsonConvert.SerializeObject(new KeyValuePair<string, string>("Success", xx));
+                        return JObject.Parse(json_string);
                     }
                 }
             }
             catch (Exception exc)
             {
-                throw (exc);
-                return null;
+                string json_string = JsonConvert.SerializeObject(new KeyValuePair<string, string>("Error", exc.Message));
+                return JObject.Parse(json_string);
             }
         }
-        public Boolean deleteMeaning(Meaning meaning)
+        public JObject deleteMeaning(Meaning meaning)
         {
             Contract.Requires(meaning != null);
             try
@@ -84,15 +86,16 @@ namespace BExIS.Dlm.Services.Meanings
                     repo.Delete(meaning);
                     uow.Commit();
                 }
-                return true;
+                string json_string = JsonConvert.SerializeObject(new KeyValuePair<string, bool>("Success", true));
+                return JObject.Parse(json_string);
             }
             catch (Exception exc)
             {
-                throw (exc);
-                return false;
+                string json_string = JsonConvert.SerializeObject(new KeyValuePair<string, string>("Error", exc.Message));
+                return JObject.Parse(json_string);
             }
         }
-        public List<Meaning> deleteMeaning(Int64 id)
+        public JObject deleteMeaning(Int64 id)
         {
             try
             {
@@ -102,16 +105,17 @@ namespace BExIS.Dlm.Services.Meanings
                     Meaning meaning = repo.Get().FirstOrDefault(x => id == x.Id);
                     repo.Delete(meaning);
                     uow.Commit();
-                    return this.getMeanings();
+                    string json_string = JsonConvert.SerializeObject(new KeyValuePair<string, string>("Success", JsonConvert.SerializeObject(this.getMeanings())));
+                    return JObject.Parse(json_string);
                 }
             }
             catch (Exception exc)
             {
-                throw (exc);
-                return null;
+                string json_string = JsonConvert.SerializeObject(new KeyValuePair<string, string>("Error", exc.Message));
+                return JObject.Parse(json_string);
             }
         }
-        public Meaning editMeaning(Meaning meaning)
+        public JObject editMeaning(Meaning meaning)
         {
             Contract.Requires(meaning != null);
             try
@@ -123,16 +127,17 @@ namespace BExIS.Dlm.Services.Meanings
                     var merged = repo.Get(meaning.Id);
                     repo.Put(merged);
                     uow.Commit();
-                    return  merged;
                 }
+                string json_string = JsonConvert.SerializeObject(new KeyValuePair<string, string>("Success", JsonConvert.SerializeObject(meaning)));
+                return JObject.Parse(json_string);
             }
             catch (Exception exc)
             {
-                throw (exc);
-                return null;
+                string json_string = JsonConvert.SerializeObject(new KeyValuePair<string, string>("Error", exc.Message));
+                return JObject.Parse(json_string);
             }
         }
-        public Meaning editMeaning(string id, string Name, String ShortName, String Description, Selectable selectable, Approved approved, List<string> variables_id, List<string> ExternalLink, List<string> meaning_ids)
+        public JObject editMeaning(string id, string Name, String ShortName, String Description, Selectable selectable, Approved approved, List<string> variables_id, List<string> ExternalLink, List<string> meaning_ids)
         {
             Contract.Requires(ExternalLink != null);
             try
@@ -159,16 +164,23 @@ namespace BExIS.Dlm.Services.Meanings
                     repo.Put(meaning);
                     uow.Commit();
                     var merged = repo.Get(meaning.Id);
-                    return merged;
+                    var xx = JsonConvert.SerializeObject(merged, Formatting.Indented,
+                            new JsonSerializerSettings
+                            {
+                                ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore
+                            });
+                    string json_string = JsonConvert.SerializeObject(new KeyValuePair<string, string>("Success", xx));
+
+                    return JObject.Parse(json_string);
                 }
             }
             catch (Exception exc)
             {
-                throw (exc);
-                return null;
+                string json_string = JsonConvert.SerializeObject(new KeyValuePair<string, string>("Error", exc.Message));
+                return JObject.Parse(json_string);
             }
         }
-        public Meaning getMeaning(Int64 id)
+        public JObject getMeaning(Int64 id)
         {
             try
             {
@@ -176,16 +188,17 @@ namespace BExIS.Dlm.Services.Meanings
                 {
                     var repo = uow.GetReadOnlyRepository<Meaning>();
                     Meaning Meanings = repo.Get().FirstOrDefault(x => x.Id == id);
-                    return Meanings;
+                    string json_string = JsonConvert.SerializeObject(new KeyValuePair<string, string>("Success", JsonConvert.SerializeObject(Meanings)));
+                    return JObject.Parse(json_string);
                 }
             }
             catch (Exception exc)
             {
-                throw (exc);
-                return null;
+                string json_string = JsonConvert.SerializeObject(new KeyValuePair<string, string>("Error", exc.Message));
+                return JObject.Parse(json_string);
             }
         }
-        public List<Meaning> getMeanings()
+        public JObject getMeanings()
         {
             try
             {
@@ -193,18 +206,23 @@ namespace BExIS.Dlm.Services.Meanings
                 {
                     var repo = uow.GetReadOnlyRepository<Meaning>();
                     List<Meaning> Meanings = repo.Get().ToList<Meaning>();
-                    //IDictionary<long, Meaning> fooDict = Meanings.ToDictionary(f => f.Id, f => f);
-                    return Meanings;
+                    IDictionary<long, Meaning> fooDict = Meanings.ToDictionary(f => f.Id, f => f);
+                    string json_string = JsonConvert.SerializeObject(new KeyValuePair<string, string>("Success", JsonConvert.SerializeObject(Meanings)));
+                    return JObject.Parse(json_string);
                 }
             }
             catch (Exception exc)
             {
-                throw (exc);
-                return null;
+                string json_string = JsonConvert.SerializeObject(new KeyValuePair<string, string>("Error", exc.Message));
+                return JObject.Parse(json_string);
             }
         }
+        public JObject editRelatedMeaning(Meaning m)
+        {
+            throw new NotImplementedException();
+        }
 
-        public List<Meaning> updateRelatedManings(string parentID, string childID)
+        public JObject updateRelatedManings(string parentID, string childID)
         {
             try
             {
@@ -222,17 +240,18 @@ namespace BExIS.Dlm.Services.Meanings
                     uow.Commit();
 
                     //IDictionary<long, Meaning> fooDict = Meanings.ToDictionary(f => f.Id, f => f);
-                    return repo.Get().ToList<Meaning>();
+                    string json_string = JsonConvert.SerializeObject(new KeyValuePair<string, string>("Success", JsonConvert.SerializeObject(repo.Get().ToList<Meaning>())));
+                    return JObject.Parse(json_string);
                 }
             }
             catch (Exception exc)
             {
-                throw (exc);
-                return null;
+                string json_string = JsonConvert.SerializeObject(new KeyValuePair<string, string>("Error", exc.Message));
+                return JObject.Parse(json_string);
             }
         }
 
-        public ExternalLink addExternalLink(ExternalLink externalLink)
+        public JObject addExternalLink(ExternalLink externalLink)
         {
             Contract.Requires(externalLink != null);
             try
@@ -243,16 +262,17 @@ namespace BExIS.Dlm.Services.Meanings
                     repo.Put(externalLink);
                     uow.Commit();
                 }
-                return externalLink;
+                string json_string = JsonConvert.SerializeObject(externalLink);
+                return JObject.Parse(json_string);
             }
             catch (Exception exc)
             {
-                throw (exc);
-                return null;
+                string json_string = JsonConvert.SerializeObject(new KeyValuePair<string, string>("error", exc.Message));
+                return JObject.Parse(json_string);
             }
         }
 
-        public ExternalLink addExternalLink(string uri, String name, String type)
+        public JObject addExternalLink(string uri, String name, String type)
         {
             Contract.Requires(uri != null);
             Contract.Requires(name != null);
@@ -267,17 +287,18 @@ namespace BExIS.Dlm.Services.Meanings
                     {
                         repo.Put(externalLink);
                         uow.Commit();
-                        return externalLink;
+                        string json_string = JsonConvert.SerializeObject(new KeyValuePair<string, string>("Success", JsonConvert.SerializeObject(externalLink)));
+                        return JObject.Parse(json_string);
                     }
                 }
             }
             catch (Exception exc)
             {
-                throw (exc);
-                return null;
+                string json_string = JsonConvert.SerializeObject(new KeyValuePair<string, string>("Error", exc.Message));
+                return JObject.Parse(json_string);
             }
         }
-        public Boolean deleteExternalLink(ExternalLink externalLink)
+        public JObject deleteExternalLink(ExternalLink externalLink)
         {
             Contract.Requires(externalLink != null);
             try
@@ -290,16 +311,17 @@ namespace BExIS.Dlm.Services.Meanings
                     repo.Delete(externalLink);
                     uow.Commit();
                 }
-                return true;
+                string json_string = JsonConvert.SerializeObject(new KeyValuePair<string, bool>("Success", true));
+                return JObject.Parse(json_string);
             }
             catch(Exception exc)
             {
-                throw (exc);
-                return false;
+                string json_string = JsonConvert.SerializeObject(new KeyValuePair<string, string>("Error", exc.Message));
+                return JObject.Parse(json_string);
             }
             
         }
-        public List<ExternalLink> deleteExternalLink(Int64 id)
+        public JObject deleteExternalLink(Int64 id)
         {
             try
             {
@@ -309,16 +331,17 @@ namespace BExIS.Dlm.Services.Meanings
                     ExternalLink externalLink = repo.Get().FirstOrDefault(x => id == x.Id);
                     repo.Delete(externalLink);
                     uow.Commit();
-                    return this.getExternalLinks();
+                    string json_string = JsonConvert.SerializeObject(new KeyValuePair<string, string>("Success", JsonConvert.SerializeObject(this.getExternalLinks())));
+                    return JObject.Parse(json_string);
                 }
             }
             catch (Exception exc)
             {
-                throw (exc);
-                return null;
+                string json_string = JsonConvert.SerializeObject(new KeyValuePair<string, string>("Error", exc.Message));
+                return JObject.Parse(json_string);
             }
         }
-        public ExternalLink editExternalLink(ExternalLink externalLink)
+        public JObject editExternalLink(ExternalLink externalLink)
         {
             Contract.Requires(externalLink != null);
             try
@@ -330,16 +353,17 @@ namespace BExIS.Dlm.Services.Meanings
                     var merged = repo.Get(externalLink.Id);
                     repo.Put(merged);
                     uow.Commit();
-                    return merged;
                 }
+                string json_string = JsonConvert.SerializeObject(new KeyValuePair<string, string>("Success", JsonConvert.SerializeObject(externalLink)));
+                return JObject.Parse(json_string);
             }
             catch(Exception exc)
             {
-                throw (exc);
-                return null;
+                string json_string = JsonConvert.SerializeObject(new KeyValuePair<string, string>("Error", exc.Message));
+                return JObject.Parse(json_string);
             }
         }
-        public ExternalLink editExternalLink(string id, string uri, String name, String type)
+        public JObject editExternalLink(string id, string uri, String name, String type)
         {
             Contract.Requires(uri != null);
             try
@@ -355,17 +379,18 @@ namespace BExIS.Dlm.Services.Meanings
                     externalLink.Type = type;
                     repo.Merge(externalLink);
                     uow.Commit();
-                    return externalLink;
+                    string json_string = JsonConvert.SerializeObject(new KeyValuePair<string, string>("Success", JsonConvert.SerializeObject(externalLink)));
+                    return JObject.Parse(json_string);
                 }
             }
             catch (Exception exc)
             {
-                throw (exc);
-                return null;
+                string json_string = JsonConvert.SerializeObject(new KeyValuePair<string, string>("Error", exc.Message));
+                return JObject.Parse(json_string);
             }
         }
 
-        public ExternalLink getExternalLink(Int64 id)
+        public JObject getExternalLink(Int64 id)
         {
             try
             {
@@ -373,16 +398,17 @@ namespace BExIS.Dlm.Services.Meanings
                 {
                     var repo = uow.GetReadOnlyRepository<ExternalLink>();
                     ExternalLink externalLink = repo.Get().FirstOrDefault(x => x.Id == id);
-                    return externalLink;
+                    string json_string = JsonConvert.SerializeObject(new KeyValuePair<string, string>("Success", JsonConvert.SerializeObject(externalLink)));
+                    return JObject.Parse(json_string);
                 }
             }
             catch (Exception exc)
             {
-                throw (exc);
-                return null;
+                string json_string = JsonConvert.SerializeObject(new KeyValuePair<string, string>("Error", exc.Message));
+                return JObject.Parse(json_string);
             }
         }
-        public List<ExternalLink> getExternalLinks()
+        public JObject getExternalLinks()
         {
             try
             {
@@ -390,13 +416,14 @@ namespace BExIS.Dlm.Services.Meanings
                 {
                     var repo = uow.GetReadOnlyRepository<ExternalLink>();
                     List<ExternalLink> externalLinks = repo.Get().ToList<ExternalLink>();
-                    return externalLinks;
+                    string json_string = JsonConvert.SerializeObject(new KeyValuePair<string, string>("Success", JsonConvert.SerializeObject(externalLinks)));
+                    return JObject.Parse(json_string);
                 }
             }
             catch (Exception exc)
             {
-                throw (exc);
-                return null;
+                string json_string = JsonConvert.SerializeObject(new KeyValuePair<string, string>("Error", exc.Message));
+                return JObject.Parse(json_string);
             }
         }
         

@@ -40,12 +40,12 @@ namespace BExIS.Modules.Rpm.UI.Api.Controllers
             try
             {
 
-                JObject res = _meaningManager.addMeaning(data);
+                Meaning res = _meaningManager.addMeaning(data);
                 return (cretae_response(res));
             }
             catch
             {
-                return (cretae_response(null));
+                return (cretae_response((Meaning)null));
             }
         }
 
@@ -59,12 +59,12 @@ namespace BExIS.Modules.Rpm.UI.Api.Controllers
             Meaning m = null;
             try
             {
-                JObject res = _meaningManager.editMeaning(data);
+                Meaning res = _meaningManager.editMeaning(data);
                 return (cretae_response(res));
             }
             catch
             {
-                return (cretae_response(null));
+                return (cretae_response((Meaning)null));
             }
         }
 
@@ -81,7 +81,7 @@ namespace BExIS.Modules.Rpm.UI.Api.Controllers
             }
             catch
             {
-                return cretae_response(null);
+                return cretae_response((Meaning)null);
             }
         }
 
@@ -94,9 +94,7 @@ namespace BExIS.Modules.Rpm.UI.Api.Controllers
             using (DataStructureManager dsm = new DataStructureManager())
             {
                 List<Variable> variables = (List<Variable>)dsm.VariableRepo.Get();
-                Dictionary<long, string> fooDict = variables.ToDictionary(f => f.Id, f => f.Label);
-                string json_string = JsonConvert.SerializeObject(fooDict);
-                return (cretae_response(JObject.Parse(json_string)));
+                return cretae_response(variables);
             }
         }
 
@@ -130,8 +128,8 @@ namespace BExIS.Modules.Rpm.UI.Api.Controllers
         {
             try
             {
-                JObject res = _meaningManager.addExternalLink(data);
-                return (cretae_response(res));
+                ExternalLink res = _meaningManager.addExternalLink(data);
+                return (cretae_response(_meaningManager.addExternalLink(data)));
             }
             catch
             {
@@ -150,13 +148,8 @@ namespace BExIS.Modules.Rpm.UI.Api.Controllers
             try
             {
 
-                JObject res = _meaningManager.editExternalLink(data);
+                ExternalLink res = _meaningManager.editExternalLink(data);
                 return (cretae_response(res));
-
-                JObject obj = _meaningManager.getExternalLink(data.Id);
-
-
-                m = JsonConvert.DeserializeObject<ExternalLink>(obj["Value"].ToString());
             }
             catch (Exception ex)
             {
@@ -182,7 +175,20 @@ namespace BExIS.Modules.Rpm.UI.Api.Controllers
             }
         }
 
-        private HttpResponseMessage cretae_response(JObject return_object)
+        private HttpResponseMessage cretae_response(Object return_object)
+        {
+            if (return_object == null)
+                return Request.CreateErrorResponse(HttpStatusCode.BadRequest, "bad request / problem occured");
+            var response = Request.CreateResponse(HttpStatusCode.OK);
+            string resp = JsonConvert.SerializeObject(return_object);
+
+            response.Content = new StringContent(resp, System.Text.Encoding.UTF8, "application/json");
+            response.Content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
+
+            //set headers on the "response"
+            return response;
+        }
+        private HttpResponseMessage cretae_response(List<Object> return_object)
         {
             if (return_object == null)
                 return Request.CreateErrorResponse(HttpStatusCode.BadRequest, "bad request / problem occured");

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
@@ -67,7 +68,21 @@ namespace BExIS.Modules.Rpm.UI.Api.Controllers
             return cretae_response(_meaningManager.getExternalLink(long.Parse(dict["id"])));
         }
 
-        private HttpResponseMessage cretae_response(JObject return_object)
+        private HttpResponseMessage cretae_response(object return_object)
+        {
+            if (return_object == null)
+                return Request.CreateErrorResponse(HttpStatusCode.BadRequest, "bad request / problem occured");
+            var response = Request.CreateResponse(HttpStatusCode.OK);
+            string resp = JsonConvert.SerializeObject(return_object);
+
+            response.Content = new StringContent(resp, System.Text.Encoding.UTF8, "application/json");
+            response.Content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
+
+            //set headers on the "response"
+            return response;
+        }
+
+        private HttpResponseMessage cretae_response(List<Object> return_object)
         {
             if (return_object == null)
                 return Request.CreateErrorResponse(HttpStatusCode.BadRequest, "bad request / problem occured");
