@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { Modal, modalStore, type ModalSettings } from '@skeletonlabs/skeleton';
-	import { getMeanings, remove } from './services';
+	import { getMeanings, remove, update } from './services';
 	import { MeaningModel, type ExternalLink } from './types';
 	import {
 		Page,
@@ -21,6 +21,7 @@
 	import TableExnternalLink from './table/tableExnternalLink.svelte';
 	import TableMeaning from './table/tableMeaning.svelte';
 	import TableOptions from './table/tableOptions.svelte';
+	import Meaning from './Meaning.svelte';
 
 	//stores
 	let meanings: MeaningModel[];
@@ -148,9 +149,34 @@
 			reload();
 		}
 	}
+
+
+	function onSuccessFn(id)
+	{
+
+		const message = id>0?'VMeaning updated.':'Meaning created.'
+
+		notificationStore.showNotification({
+				notificationType: notificationType.success,
+				message: message
+			});
+			reload();
+			showForm = false;
+	}
+
+
+	function onFailFn()
+	{
+		notificationStore.showNotification({
+				notificationType: notificationType.error,
+				message: 'Can\'t save Meaning.'
+			})
+	}
+
 </script>
 
 <Page help={false} title="Manage Meanings">
+
 	{#await reload()}
 		<div class="grid w-full grid-cols-2 gap-5 my-4 pb-1 border-b border-primary-500">
 			<div class="h-9 w-96 placeholder animate-pulse" />
@@ -167,10 +193,10 @@
 		<!-- svelte-ignore a11y-click-events-have-key-events -->
 		<div class="grid grid-cols-2 gap-5 my-4 pb-1 border-b border-primary-500">
 			<div class="h3 h-9">
-				{#if meaning.Id < 1}
+				{#if meaning.id < 1}
 					<span in:fade={{ delay: 400 }} out:fade>Create neẇ Meaning</span>
 				{:else}
-					<span in:fade={{ delay: 400 }} out:fade>{meaning.Name}</span>
+					<span in:fade={{ delay: 400 }} out:fade>{meaning.name}</span>
 				{/if}
 			</div>
 			<div class="text-right">
@@ -184,15 +210,14 @@
 						on:mouseover={() => {
 							helpStore.show('create');
 						}}
-						on:click={() => toggleForm()}><Fa icon={faPlus} /></button
-					>
+						on:click={() => toggleForm()}><Fa icon={faPlus} /></button>
 				{/if}
 			</div>
 		</div>
 
 		{#if showForm}
 			<div in:slide out:slide>
-				<!-- <VariableTemplate variable = {variableTemplate} {missingValues} on:cancel={()=>clear()} on:success={()=>onSuccessFn(variableTemplate.id)} on:fail={onFailFn}/> -->
+				 <Meaning {meaning}  on:cancel={()=>clear()} on:success={()=>onSuccessFn(meaning.id)} on:fail={onFailFn}/> 
 			</div>
 		{/if}
 

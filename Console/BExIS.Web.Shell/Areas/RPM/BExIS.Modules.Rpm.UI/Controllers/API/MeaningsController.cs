@@ -27,6 +27,7 @@ namespace BExIS.Modules.Rpm.UI.Api.Controllers
 
 
         [BExISApiAuthorize]
+        [JsonNetFilter]
         [HttpPost,HttpGet]
         [PostRoute("api/Meanings/Index")]
         [GetRoute("api/Meanings/Index")]
@@ -37,6 +38,7 @@ namespace BExIS.Modules.Rpm.UI.Api.Controllers
 
         [BExISApiAuthorize]
         [HttpPost,HttpGet]
+        [JsonNetFilter]
         [PostRoute("api/Meanings/Details")]
         [GetRoute("api/Meanings/Details")]
         public HttpResponseMessage Details()
@@ -54,6 +56,7 @@ namespace BExIS.Modules.Rpm.UI.Api.Controllers
 
         [BExISApiAuthorize]
         [HttpPost, HttpGet]
+        [JsonNetFilter]
         [PostRoute("api/Meanings/DetailExternalLinks")]
         [GetRoute("api/Meanings/DetailExternalLinks")]
         public HttpResponseMessage DetailExternalLinks()

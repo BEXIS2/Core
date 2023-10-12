@@ -1,38 +1,39 @@
 
 export class MeaningModel  {
-    Id:number;
-    Name: string;
-    ShortName: string;
-    Description: string;
-    Selectable: Selectable;
-    Approved: Approved;
-    ExternalLink: ExternalLink[];
-    Related_meaning: MeaningModel[];
+    id:number;
+    name: string;
+    shortName: string;
+    description: string;
+    selectable: selectableType;
+    approved: approvedType;
+    externalLink: externalLinkType[];
+    related_meaning: MeaningModel[];
 
     public constructor() {
-     this.Id=0
-     this.Name=""
-     this.ShortName=""
-     this.Approved=2
-     this.Description=""
-     this.Selectable=2
-     this.ExternalLink=[]
-     this.Related_meaning=[]
+     this.id=0
+     this.name=""
+     this.shortName=""
+     this.approved=2
+     this.description=""
+     this.selectable=2
+     this.externalLink=[]
+     this.related_meaning=[]
     }
 }
 
-export interface ExternalLink  {
-    URI: string;
-    Name: string;
-    Type: string;
+export interface externalLinkType  {
+    id: string;
+    uRI: string;
+    name: string;
+    type: string;
 }
 
-export enum Approved {
+export enum approvedType {
     yes = 1,
     No = 2
 }
 
-export enum Selectable {
+export enum selectableType {
     yes = 1,
     No = 2
 }

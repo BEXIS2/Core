@@ -27,6 +27,7 @@ namespace BExIS.Dlm.Services.Meanings
             {
                 using (IUnitOfWork uow = this.GetUnitOfWork())
                 {
+
                     IRepository<Meaning> repo = uow.GetRepository<Meaning>();
                     repo.Put(meaning);
                     uow.Commit();
@@ -270,6 +271,7 @@ namespace BExIS.Dlm.Services.Meanings
                 return JObject.Parse(json_string);
             }
         }
+
         public JObject addExternalLink(string uri, String name, String type)
         {
             Contract.Requires(uri != null);
@@ -425,9 +427,6 @@ namespace BExIS.Dlm.Services.Meanings
             }
         }
         
-
-
-
         protected virtual void Dispose(bool disposing)
         {
             if (!disposedValue)

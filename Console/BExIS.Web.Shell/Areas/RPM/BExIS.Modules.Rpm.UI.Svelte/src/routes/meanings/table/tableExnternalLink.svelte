@@ -1,11 +1,11 @@
 <script lang="ts">
-	import type { ExternalLink } from "../types";
+	import type { externalLinkType } from "../types";
 
-	export let value: ExternalLink[];
+	export let value: externalLinkType[];
 </script>
 
 {#each value as link}
-{#if link != undefined && link.Name != undefined}
-	<a href="{link.URI}">{link.Name}</a>
+{#if link != undefined && link.name != undefined}
+	<a href="{link.uRI}">{link.name}</a>
 {/if}
 {/each}

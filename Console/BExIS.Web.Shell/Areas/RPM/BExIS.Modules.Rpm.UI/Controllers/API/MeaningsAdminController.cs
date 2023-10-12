@@ -32,28 +32,15 @@ namespace BExIS.Modules.Rpm.UI.Api.Controllers
         }
 
         [BExISApiAuthorize]
+        [JsonNetFilter]
         [HttpPost]
         [PostRoute("api/MeaningsAdmin/Create")]
-        public HttpResponseMessage Create(HttpRequestMessage request)
+        public HttpResponseMessage Create(Meaning data)
         {
             try
             {
-                String Name = Convert.ToString(HttpContext.Current.Request.Form["Name"]);
 
-                String ShortName = Convert.ToString(HttpContext.Current.Request.Form["ShortName"]);
-                
-                String Description = Convert.ToString(HttpContext.Current.Request.Form["Description"]);
-
-                Selectable selectable = (Selectable)Enum.Parse(typeof(Selectable), Convert.ToString(HttpContext.Current.Request.Form["selectable"]));
-
-                Approved approved = (Approved)Enum.Parse(typeof(Approved), Convert.ToString(HttpContext.Current.Request.Form["approved"]));
-
-                List<string> externalLink = HttpContext.Current.Request.Form["externalLink[]"] != null ? Convert.ToString(HttpContext.Current.Request.Form["externalLink[]"]).Split(',').ToList<string>() : new List<string>();
-
-                List<string> related_meaning = HttpContext.Current.Request.Form["related_meaning"]!= null ? Convert.ToString(HttpContext.Current.Request.Form["related_meaning"]).Split(',').ToList<string>() : new List<string>();
-                List<string> variable = HttpContext.Current.Request.Form["Variable"] != null ? Convert.ToString(HttpContext.Current.Request.Form["Variable"]).Split(',').ToList<string>() : new List<string>();
-
-                JObject res = _meaningManager.addMeaning(Name, ShortName, Description, selectable, approved, variable, externalLink, related_meaning);
+                JObject res = _meaningManager.addMeaning(data);
                 return (cretae_response(res));
             }
             catch
@@ -64,32 +51,15 @@ namespace BExIS.Modules.Rpm.UI.Api.Controllers
 
 
         [BExISApiAuthorize]
+        [JsonNetFilter]
         [HttpPost]
         [PostRoute("api/MeaningsAdmin/EditMeaning")]
-        public HttpResponseMessage EditMeaning(HttpRequestMessage request)
+        public HttpResponseMessage EditMeaning(Meaning data)
         {
             Meaning m = null;
             try
             {
-                String Name = Convert.ToString(HttpContext.Current.Request.Form["Name"]);
-
-                String ShortName = Convert.ToString(HttpContext.Current.Request.Form["ShortName"]);
-
-                String Description = Convert.ToString(HttpContext.Current.Request.Form["Description"]);
-
-                Selectable selectable = (Selectable)Enum.Parse(typeof(Selectable), Convert.ToString(HttpContext.Current.Request.Form["selectable"]));
-
-                Approved approved = (Approved)Enum.Parse(typeof(Approved), Convert.ToString(HttpContext.Current.Request.Form["approved"]));
-
-                List<string> externalLink = HttpContext.Current.Request.Form["externalLink[]"] != null ? Convert.ToString(HttpContext.Current.Request.Form["externalLink[]"]).Split(',').ToList<string>() : new List<string>();
-
-                List<string> related_meaning = HttpContext.Current.Request.Form["related_meaning"] != null ? Convert.ToString(HttpContext.Current.Request.Form["related_meaning"]).Split(',').ToList<string>() : new List<string>();
-                List<string> variable = HttpContext.Current.Request.Form["Variable[]"] != null ? Convert.ToString(HttpContext.Current.Request.Form["Variable[]"]).Split(',').ToList<string>() : new List<string>();
-
-                string id = Convert.ToString(HttpContext.Current.Request.Form["id"]);
-                //if (related_meaning.Count== 0 )
-                //    related_meaning = _meaningManager.getMeaning(long.Parse(id)).ToObject<Meaning>();
-                JObject res = _meaningManager.editMeaning(id, Name, ShortName, Description, selectable, approved, variable, externalLink, related_meaning);
+                JObject res = _meaningManager.editMeaning(data);
                 return (cretae_response(res));
             }
             catch
@@ -99,6 +69,7 @@ namespace BExIS.Modules.Rpm.UI.Api.Controllers
         }
 
         [BExISApiAuthorize]
+        [JsonNetFilter]
         [HttpDelete,HttpPost]
         [DeleteRoute("api/MeaningsAdmin/Delete")]
         [PostRoute("api/MeaningsAdmin/Delete")]
@@ -115,6 +86,7 @@ namespace BExIS.Modules.Rpm.UI.Api.Controllers
         }
 
         [BExISApiAuthorize]
+        [JsonNetFilter]
         [HttpGet]
         [GetRoute("api/MeaningsAdmin/getVariables")]
         public HttpResponseMessage getVariables()
@@ -129,6 +101,7 @@ namespace BExIS.Modules.Rpm.UI.Api.Controllers
         }
 
         [BExISApiAuthorize]
+        [JsonNetFilter]
         [HttpPost]
         [PostRoute("api/MeaningsAdmin/updateRelatedManings")]
         public HttpResponseMessage updateRelatedManings (HttpRequestMessage request)
@@ -149,20 +122,15 @@ namespace BExIS.Modules.Rpm.UI.Api.Controllers
         // external links endpoints
 
         [BExISApiAuthorize]
+        [JsonNetFilter]
         [HttpPost, HttpGet]
         [PostRoute("api/MeaningsAdmin/createExternalLink")]
         [GetRoute("api/MeaningsAdmin/createExternalLink")]
-        public HttpResponseMessage createExternalLink(HttpRequestMessage request)
+        public HttpResponseMessage createExternalLink(ExternalLink data)
         {
             try
             {
-                String uri = Convert.ToString(HttpContext.Current.Request.Form["uri"]);
-
-                String name = Convert.ToString(HttpContext.Current.Request.Form["name"]);
-
-                String type = Convert.ToString(HttpContext.Current.Request.Form["type"]);
-
-                JObject res = _meaningManager.addExternalLink(uri, name, type);
+                JObject res = _meaningManager.addExternalLink(data);
                 return (cretae_response(res));
             }
             catch
@@ -172,34 +140,32 @@ namespace BExIS.Modules.Rpm.UI.Api.Controllers
         }
 
         [BExISApiAuthorize]
+        [JsonNetFilter]
         [HttpPost, HttpGet]
         [PostRoute("api/MeaningsAdmin/editExternalLinks")]
         [GetRoute("api/MeaningsAdmin/editExternalLinks")]
-        public HttpResponseMessage editExternalLinks(HttpRequestMessage request)
+        public HttpResponseMessage editExternalLinks(ExternalLink data)
         {
             ExternalLink m = null;
             try
             {
-                String URI = Convert.ToString(HttpContext.Current.Request.Form["URI"]);
 
-                String Name = Convert.ToString(HttpContext.Current.Request.Form["Name"]);
-
-                String Type = Convert.ToString(HttpContext.Current.Request.Form["Type"]);
-
-                string id = Convert.ToString(HttpContext.Current.Request.Form["id"]);
-                JObject res = _meaningManager.editExternalLink(id, URI, Name, Type);
+                JObject res = _meaningManager.editExternalLink(data);
                 return (cretae_response(res));
 
-                JObject obj = _meaningManager.getExternalLink(Int64.Parse(id));
+                JObject obj = _meaningManager.getExternalLink(data.Id);
+
+
                 m = JsonConvert.DeserializeObject<ExternalLink>(obj["Value"].ToString());
             }
-            catch
+            catch (Exception ex)
             {
                 return (cretae_response(null));
             }
         }
 
         [BExISApiAuthorize]
+        [JsonNetFilter]
         [HttpPost, HttpGet]
         [PostRoute("api/MeaningsAdmin/deleteExternalLinks")]
         [GetRoute("api/MeaningsAdmin/deleteExternalLinks")]
@@ -215,10 +181,6 @@ namespace BExIS.Modules.Rpm.UI.Api.Controllers
                 return (cretae_response(null));
             }
         }
-
-
-
-
 
         private HttpResponseMessage cretae_response(JObject return_object)
         {
