@@ -4,8 +4,12 @@
 	export let value: externalLinkType[];
 </script>
 
+<div>
 {#each value as link}
+
 {#if link != undefined && link.name != undefined}
-	<a href="{link.uRI}">{link.name}</a>
+	<li><a href="{link.uri}" target="blank">{link.name}</a></li>
 {/if}
+
 {/each}
+</div>

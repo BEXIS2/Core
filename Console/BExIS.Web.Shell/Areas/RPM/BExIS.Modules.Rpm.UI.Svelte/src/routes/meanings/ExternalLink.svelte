@@ -17,13 +17,10 @@ function remove() {
 		dispatch('remove');
 	}
 
-	function add() {
-		dispatch('add');
-	}
 
 </script>
 
-<div class="flex space-x-3 content-center">
+<div class="flex space-x-3 items-center">
 
  <TextInput id="link_name" bind:value={name} on:change placeholder="Name"/>
 
@@ -31,10 +28,8 @@ function remove() {
 
 	<TextInput id="link_uri" bind:value={uRI} on:change placeholder="Uri"/>
 
-	<div class="self-center text-xl mt-5 w-12">
+	<div class="self-center text-xl w-12">
 		<button title="delete" type="button" on:click={remove}><Fa icon={faTrashAlt} /></button>
-		{#if last}
-			<button title="add" class="add" type="button" on:click={add}><Fa icon={faPlus} /></button>
-		{/if}
+
 	</div>
 </div>

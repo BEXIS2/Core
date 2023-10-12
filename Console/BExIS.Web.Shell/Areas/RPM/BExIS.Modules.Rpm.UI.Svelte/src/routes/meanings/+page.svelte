@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { Modal, modalStore, type ModalSettings } from '@skeletonlabs/skeleton';
-	import { getMeanings, remove, update } from './services';
+	import { getMeanings, remove, update, getLinks } from './services';
 	import { MeaningModel, type externalLinkType } from './types';
 	import {
 		Page,
@@ -15,7 +15,7 @@
 
 	import Fa from 'svelte-fa';
 	import { faPlus} from '@fortawesome/free-solid-svg-icons';
-	import { meaningsStore } from './stores';
+	import { externalLinksStore, meaningsStore } from './stores';
 	import { fade, slide } from 'svelte/transition';
 	import TableIsApproved from './table/tableIsApproved.svelte';
 	import TableExnternalLink from './table/tableExnternalLink.svelte';
@@ -31,9 +31,15 @@
 
 	async function reload() {
 		showForm = false;
+		
+		// get meanings
 		meanings = await getMeanings();
+	 meaningsStore.set(meanings);
 
-		meaningsStore.set(meanings);
+		// get external links
+		const externalLinks = await getLinks();
+		externalLinksStore.set(externalLinks);
+
 		console.log('store', $meaningsStore);
 	}
 
@@ -105,19 +111,21 @@
 	}
 
 	function edit(type: any) {
+
+		console.log("🚀 ~ file: +page.svelte:113 ~ edit ~ type:", type)
 		if (type.action == 'edit') {
-			// variableTemplate = $variableTemplatesStore.find((u) => u.id === type.id)!;
+			 meaning = $meaningsStore.find((u) => u.id === type.id)!;
 			showForm = true;
 		}
 		if (type.action == 'delete') {
-		console.log("🚀 ~ file: +page.svelte:113 ~ edit ~ type:", type)
+
 
 			
 
 			const confirm: ModalSettings = {
 				type: 'confirm',
 				title: 'Delete Meaning',
-				body: 'Are you sure you wish to delete Meaning ' + meaning.Name + '?',
+				body: 'Are you sure you wish to delete Meaning ' + meaning.name + '?',
 				// TRUE if confirm pressed, FALSE if cancel pressed
 				response: (r: boolean) => {
 					if (r === true) {
@@ -153,7 +161,7 @@
 	function onSuccessFn(id)
 	{
 
-		const message = id>0?'VMeaning updated.':'Meaning created.'
+		const message = id>0?'Meaning updated.':'Meaning created.'
 
 		notificationStore.showNotification({
 				notificationType: notificationType.success,

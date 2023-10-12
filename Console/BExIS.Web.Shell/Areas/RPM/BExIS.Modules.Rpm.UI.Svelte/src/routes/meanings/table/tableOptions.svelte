@@ -20,14 +20,14 @@
 			<button
 				type="button"
 				class="chip variant-filled-primary shadow-md"
-				title="Edit Meaning, {row.Name}"
+				title="Edit Meaning, {row.name}"
 				id="edit-{row.Id}"
 				on:mouseover={() => {
 					helpStore.show('edit');
 				}}
 				on:click|preventDefault={() =>
 					dispatchFn({
-						type: { action: 'edit', id: row.Id }
+						type: { action: 'edit', id: row.id }
 					})}
 			>
 				<Fa icon={faPen} />
@@ -43,7 +43,7 @@
 				}}
 				on:click|preventDefault={() =>
 					dispatchFn({
-						type: { action: 'delete', id: row.Id }
+						type: { action: 'delete', id: row.id }
 					})}
 			>
 				<Fa icon={faTrash} /></button
@@ -52,7 +52,7 @@
 			<button
 				type="button"
 				class="chip variant-filled-primary shadow-md"
-				title="Edit Meaning, {row.Name}"
+				title="Edit Meaning, {row.name}"
 				id="edit-{row.Id}"
 				disabled
 			>
@@ -62,12 +62,11 @@
 			<button
 				type="button"
 				class="chip variant-filled-error shadow-md"
-				title="Delete Meaning, {row.Name}"
-				id="delete-{row.Id}"
+				title="Delete Meaning, {row.name}"
+				id="delete-{row.id}"
 				disabled
 			>
-				<Fa icon={faTrash} /></button
-			>
+				<Fa icon={faTrash} /></button>
 		{/if}
 	</div>
 </tableOption>

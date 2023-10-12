@@ -11,6 +11,15 @@ export const getMeanings = async () => {
 	}
 };
 
+export const getLinks = async () => {
+	try {
+		const response = await Api.get('/api/Meanings/getExternalLinks');
+		return response.data;
+	} catch (error) {
+		console.error(error);
+	}
+};
+
 export const remove = async (id) => {
 	try {
 		const response = await Api.delete('/api/MeaningsAdmin/delete?id='+id,null);
@@ -20,10 +29,20 @@ export const remove = async (id) => {
 	}
 };
 
-export const update = async (data:MeaningModel) => {
+export const create = async (data:MeaningModel) => {
 	try {
 
 		const response = await Api.post('/api/MeaningsAdmin/create',data);
+		return response.data;
+	} catch (error) {
+		console.error(error);
+	}
+};
+
+export const update = async (data:MeaningModel) => {
+	try {
+
+		const response = await Api.post('/api/MeaningsAdmin/EditMeaning',data);
 		return response.data;
 	} catch (error) {
 		console.error(error);
