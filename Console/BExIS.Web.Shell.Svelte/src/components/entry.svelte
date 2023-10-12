@@ -6,7 +6,8 @@
 		TextArea,
 		DateInput,
 		NumberInput,
-		MultiSelect
+		MultiSelect,
+		helpStore
 	} from '@bexis2/bexis2-core-ui';
 	import { SlideToggle } from '@skeletonlabs/skeleton';
 	import { onMount } from 'svelte';
@@ -68,15 +69,15 @@
 			isMulti={false}
 		/>
 	{:else if entry.type.toLowerCase() === 'string'}
-		<TextInput label={entry.key} bind:value={entry.value} on:input />
+		<TextInput id={entry.key} label={entry.key} bind:value={entry.value} on:input help={true} />
 	{:else if entry.type.toLowerCase().includes('int')}
-		<NumberInput label={entry.key} bind:value={entry.value} on:input />
+		<NumberInput id={entry.key} label={entry.key} bind:value={entry.value} on:input help={true} />
 	{:else if entry.type.toLowerCase() === 'boolean'}
 		<SlideToggle active="bg-primary-500" name="slider-label" size="sm" bind:checked={entry.value}
-			>{entry.key}</SlideToggle
-		>
+			>{entry.key}</SlideToggle>
 	{:else if entry.type.toLowerCase() === 'json'}
 		<CodeEditor
+			id={entry.key}
 			initialValue={initialJSONValue}
 			actions={false}
 			language="json"
@@ -85,7 +86,7 @@
 			on:save={() => (entry.value = JSON.parse(JSONValue))}
 		/>
 	{:else if entry.type === 'EntryList'}
-		<div class="my-3">
+		<div class="my-3" id={entry.key} on:mouseover={() => { helpStore.show(entry.key); }}>
 			<span class="h3">{entry.key}</span>
 			{#each Object.values(entry.value) as e, index}
 				<div class="flex card p-2">
@@ -94,8 +95,7 @@
 					</div>
 					<div>
 						<button class="btn variant-filled-error flex-none" on:click={() => removeItem(index)}
-							><Fa icon={faTrash} /></button
-						>
+							><Fa icon={faTrash} /></button>
 					</div>
 				</div>
 			{/each}
