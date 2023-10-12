@@ -28,6 +28,7 @@ namespace BExIS.Dlm.Services.Meanings
         ExternalLink editExternalLink(ExternalLink externalLink);
         ExternalLink editExternalLink(string id, string uri, String name, String type);
         ExternalLink getExternalLink(Int64 id);
+        ExternalLink getExternalLink(string uri);
         List<ExternalLink> getExternalLinks();
 
         #endregion
