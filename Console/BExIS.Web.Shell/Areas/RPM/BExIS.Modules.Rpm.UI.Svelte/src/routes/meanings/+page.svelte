@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { Modal, modalStore, type ModalSettings } from '@skeletonlabs/skeleton';
 	import { getMeanings, remove, update } from './services';
-	import { MeaningModel, type ExternalLink } from './types';
+	import { MeaningModel, type externalLinkType } from './types';
 	import {
 		Page,
 		Table,
@@ -31,8 +31,7 @@
 
 	async function reload() {
 		showForm = false;
-		const res = await getMeanings();
-		meanings = JSON.parse(res.Value);
+		meanings = await getMeanings();
 
 		meaningsStore.set(meanings);
 		console.log('store', $meaningsStore);
@@ -44,49 +43,49 @@
 				data: meaningsStore,
 				optionsComponent: TableOptions,
 				columns: {
-							Id: {
+							id: {
 								disableFiltering: true,
 								exclude: true
 							},
-							VersionNo: {
+							versionNo: {
 								disableFiltering: true,
 								exclude: true
 							},
-							ShortName: {
+							shortName: {
 								disableFiltering: true,
 								exclude: true
 							},
-						 Selectable: {
+						 selectable: {
 								instructions: {
 									renderComponent: TableIsApproved
 								},
 								disableFiltering: true
 							},
-							Approved: {
+							approved: {
 								disableFiltering: true,
 								instructions: {
 									renderComponent: TableIsApproved
 								}
 							},
-							ExternalLink: {
+							externalLink: {
 								header: 'External Link',
 								instructions: {
 									renderComponent: TableExnternalLink						
 								},
 								disableFiltering: true
 							},
-							Related_meaning: {
+							related_meaning: {
 								header: 'Related to',
 								instructions: {
 									renderComponent: TableMeaning,
 								},
 								disableFiltering: true
 							},
-							Extra:{
+							extra:{
 								exclude:true,
 								disableFiltering:true
 							},
-							Variable:{
+							variable:{
 								exclude:true,
 								disableFiltering:true
 							}

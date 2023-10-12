@@ -4,6 +4,7 @@ import type { MeaningModel, externalLinkType } from './types';
 export const getMeanings = async () => {
 	try {
 		const response = await Api.get('/api/Meanings/Index');
+		console.log("🚀 ~ file: services.ts:8 ~ getMeanings ~ response.data:", response.data)
 		return response.data;
 	} catch (error) {
 		console.error(error);
@@ -21,6 +22,7 @@ export const remove = async (id) => {
 
 export const update = async (data:MeaningModel) => {
 	try {
+
 		const response = await Api.post('/api/MeaningsAdmin/create',data);
 		return response.data;
 	} catch (error) {
