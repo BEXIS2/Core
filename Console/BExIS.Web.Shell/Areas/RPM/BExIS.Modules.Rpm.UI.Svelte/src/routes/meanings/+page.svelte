@@ -118,10 +118,6 @@
 			showForm = true;
 		}
 		if (type.action == 'delete') {
-
-
-			
-
 			const confirm: ModalSettings = {
 				type: 'confirm',
 				title: 'Delete Meaning',
@@ -142,18 +138,18 @@
 		const res = await remove(id);
 		console.log("🚀 ~ file: +page.svelte:135 ~ deleteFn ~ res:", res)
 
-		if (res.Key !="Success") {
-			notificationStore.showNotification({
-				notificationType: notificationType.error,
-				message: "Can't delete Meaning."
-			});
-		} else {
+		if (res) {
 			notificationStore.showNotification({
 				notificationType: notificationType.success,
 				message: 'Meaning deleted.'
 			});
 
 			reload();
+		} else {
+			notificationStore.showNotification({
+				notificationType: notificationType.error,
+				message: "Can't delete Meaning."
+			});
 		}
 	}
 
@@ -167,8 +163,10 @@
 				notificationType: notificationType.success,
 				message: message
 			});
-			reload();
+
 			showForm = false;
+			setTimeout(async () => {
+			reload();}, 10);
 	}
 
 

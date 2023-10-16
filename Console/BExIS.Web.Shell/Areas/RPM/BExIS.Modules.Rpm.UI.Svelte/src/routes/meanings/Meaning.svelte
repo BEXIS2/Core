@@ -25,6 +25,8 @@
 	let res = suite.get();
 	$: isValid = res.isValid();
 
+	let linksValid:boolean=true;
+
 	const dispatch = createEventDispatcher();
 
 	onMount(() => {
@@ -104,7 +106,7 @@
 		</div>
 
 		<div class="">
-			<ExternslLinks bind:list={meaning.externalLink}/>
+			<ExternslLinks bind:list={meaning.externalLink} bind:valid = {linksValid} />
 		</div>
 
 		<div class="py-5 text-right col-span-2">
@@ -122,10 +124,8 @@
 				class="btn variant-filled-primary h-9 w-16 shadow-md"
 				title="Save Meaning Template, {meaning.name}"
 				id="save"
-				disabled={!isValid}
-			>
-				<Fa icon={faSave} /></button
-			>
+				disabled={!isValid || !linksValid}>
+				<Fa icon={faSave} /></button>
 		</div>
 	</div>
 </form>
