@@ -1,5 +1,6 @@
 ﻿using BExIS.Dlm.Entities.DataStructure;
 using BExIS.UI.Models;
+using System;
 using System.Collections.Generic;
 
 namespace BExIS.Modules.Rpm.UI.Models
@@ -42,7 +43,11 @@ namespace BExIS.Modules.Rpm.UI.Models
     {
         public string Description { get; set; }
         public long Id { get; set; }
+
+        //public DateTime LastModificationDate { get; set; }
         public string Name { get; set; }
+
+        public int Version { get; set; }
 
         public static ReadConstraintModel Convert(Constraint constraint)
         {
@@ -50,58 +55,50 @@ namespace BExIS.Modules.Rpm.UI.Models
             {
                 Id = constraint.Id,
                 Name = constraint.Name,
-                Description = constraint.Description
+                Description = constraint.Description,
+                Version = constraint.VersionNo
             };
         }
     }
 
-    public class ReadDomainConstraintModel
+    public class ReadDomainConstraintModel : ReadConstraintModel
     {
-        public string Description { get; set; }
-        public long Id { get; set; }
-        public string Name { get; set; }
-
         public static ReadDomainConstraintModel Convert(DomainConstraint constraint)
         {
             return new ReadDomainConstraintModel()
             {
                 Id = constraint.Id,
                 Name = constraint.Name,
-                Description = constraint.Description
+                Description = constraint.Description,
+                Version = constraint.VersionNo
             };
         }
     }
 
-    public class ReadPatternConstraintModel
+    public class ReadPatternConstraintModel : ReadConstraintModel
     {
-        public string Description { get; set; }
-        public long Id { get; set; }
-        public string Name { get; set; }
-
         public static ReadPatternConstraintModel Convert(PatternConstraint constraint)
         {
             return new ReadPatternConstraintModel()
             {
                 Id = constraint.Id,
                 Name = constraint.Name,
-                Description = constraint.Description
+                Description = constraint.Description,
+                Version = constraint.VersionNo
             };
         }
     }
 
-    public class ReadRangeConstraintModel
+    public class ReadRangeConstraintModel : ReadConstraintModel
     {
-        public string Description { get; set; }
-        public long Id { get; set; }
-        public string Name { get; set; }
-
         public static ReadRangeConstraintModel Convert(RangeConstraint constraint)
         {
             return new ReadRangeConstraintModel()
             {
                 Id = constraint.Id,
                 Name = constraint.Name,
-                Description = constraint.Description
+                Description = constraint.Description,
+                Version = constraint.VersionNo
             };
         }
     }

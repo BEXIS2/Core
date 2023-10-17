@@ -1,5 +1,6 @@
 ﻿using BExIS.Dlm.Entities.DataStructure;
 using BExIS.Dlm.Services.TypeSystem;
+using BExIS.Security.Entities.Requests;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.Contracts;
@@ -11,50 +12,52 @@ namespace BExIS.Dlm.Services.DataStructure
 {
     public class ConstraintManager : IDisposable
     {
-        private IUnitOfWork uow = null;
+        private readonly IUnitOfWork _guow;
+        private bool _isDisposed;
 
         public ConstraintManager()
         {
-            uow = this.GetIsolatedUnitOfWork();
-            this.Repo = uow.GetReadOnlyRepository<Constraint>();
+            _guow = this.GetIsolatedUnitOfWork();
+            DomainConstraintRepository = _guow.GetReadOnlyRepository<DomainConstraint>();
+            PatternConstraintRepository = _guow.GetReadOnlyRepository<PatternConstraint>();
+            RangeConstraintRepository = _guow.GetReadOnlyRepository<RangeConstraint>();
+            ConstraintRepository = _guow.GetReadOnlyRepository<Constraint>();
         }
-
-        private bool isDisposed = false;
 
         ~ConstraintManager()
         {
             Dispose(true);
         }
 
+        public IReadOnlyRepository<Constraint> ConstraintRepository { get; }
+        public IQueryable<Constraint> Constraints => ConstraintRepository.Query();
+        public IReadOnlyRepository<DomainConstraint> DomainConstraintRepository { get; }
+        public IQueryable<DomainConstraint> DomainConstraints => DomainConstraintRepository.Query();
+        public IReadOnlyRepository<PatternConstraint> PatternConstraintRepository { get; }
+        public IQueryable<PatternConstraint> PatternConstraints => PatternConstraintRepository.Query();
+        public IReadOnlyRepository<RangeConstraint> RangeConstraintRepository { get; }
+        public IQueryable<RangeConstraint> RangeConstraints => RangeConstraintRepository.Query();
+
         public void Dispose()
         {
             Dispose(true);
         }
 
-        protected virtual void Dispose(bool disposing)
+        protected void Dispose(bool disposing)
         {
-            if (!isDisposed)
+            if (!_isDisposed)
             {
                 if (disposing)
                 {
-                    if (uow != null)
-                        uow.Dispose();
-                    isDisposed = true;
+                    if (_guow != null)
+                        _guow.Dispose();
+                    _isDisposed = true;
                 }
             }
         }
 
-        #region Data Readers
+        #region domain
 
-        // provide read only repos for the whole aggregate area
-        public IReadOnlyRepository<Constraint> Repo { get; private set; }
-        public IReadOnlyRepository<DomainConstraint> DomainConstraintRepo { get; private set; }
-        public IReadOnlyRepository<PatternConstraint> PatternConstraintRepo { get; private set; }
-        public IReadOnlyRepository<RangeConstraint> RangeConstraintRepo { get; private set; }
-
-        #endregion Data Readers
-
-        #region domain 
         public DomainConstraint Create(DomainConstraint entity)
         {
             Contract.Requires(entity.Items != null);
@@ -66,24 +69,6 @@ namespace BExIS.Dlm.Services.DataStructure
             {
                 IRepository<DomainConstraint> repo = uow.GetRepository<DomainConstraint>();
                 repo.Put(entity);
-                uow.Commit();
-            }
-            return (entity);
-        }
-
-        internal DomainConstraint Update(DomainConstraint entity)
-        {
-            Contract.Requires(entity != null, "provided entity can not be null");
-            Contract.Requires(entity.Id >= 0, "provided entity must have a permanent ID");
-
-            Contract.Ensures(Contract.Result<DomainConstraint>() != null && Contract.Result<DomainConstraint>().Id >= 0, "No entity is persisted!");
-
-            using (IUnitOfWork uow = this.GetUnitOfWork())
-            {
-                IRepository<DomainConstraint> repo = uow.GetRepository<DomainConstraint>();
-                repo.Merge(entity);
-                var merged = repo.Get(entity.Id);
-                repo.Put(merged);
                 uow.Commit();
             }
             return (entity);
@@ -104,11 +89,29 @@ namespace BExIS.Dlm.Services.DataStructure
                 // commit changes
                 uow.Commit();
             }
- 
+
             return (true);
         }
 
-        #endregion
+        internal DomainConstraint Update(DomainConstraint entity)
+        {
+            Contract.Requires(entity != null, "provided entity can not be null");
+            Contract.Requires(entity.Id >= 0, "provided entity must have a permanent ID");
+
+            Contract.Ensures(Contract.Result<DomainConstraint>() != null && Contract.Result<DomainConstraint>().Id >= 0, "No entity is persisted!");
+
+            using (IUnitOfWork uow = this.GetUnitOfWork())
+            {
+                IRepository<DomainConstraint> repo = uow.GetRepository<DomainConstraint>();
+                repo.Merge(entity);
+                var merged = repo.Get(entity.Id);
+                repo.Put(merged);
+                uow.Commit();
+            }
+            return (entity);
+        }
+
+        #endregion domain
 
         #region pattern
 
@@ -123,24 +126,6 @@ namespace BExIS.Dlm.Services.DataStructure
             {
                 IRepository<PatternConstraint> repo = uow.GetRepository<PatternConstraint>();
                 repo.Put(entity);
-                uow.Commit();
-            }
-            return (entity);
-        }
-
-        public PatternConstraint Update(PatternConstraint entity)
-        {
-            Contract.Requires(entity != null, "provided entity can not be null");
-            Contract.Requires(entity.Id >= 0, "provided entity must have a permanent ID");
-
-            Contract.Ensures(Contract.Result<PatternConstraint>() != null && Contract.Result<PatternConstraint>().Id >= 0, "No entity is persisted!");
-
-            using (IUnitOfWork uow = this.GetUnitOfWork())
-            {
-                IRepository<PatternConstraint> repo = uow.GetRepository<PatternConstraint>();
-                repo.Merge(entity);
-                var merged = repo.Get(entity.Id);
-                repo.Put(merged);
                 uow.Commit();
             }
             return (entity);
@@ -165,7 +150,25 @@ namespace BExIS.Dlm.Services.DataStructure
             return (true);
         }
 
-        #endregion
+        public PatternConstraint Update(PatternConstraint entity)
+        {
+            Contract.Requires(entity != null, "provided entity can not be null");
+            Contract.Requires(entity.Id >= 0, "provided entity must have a permanent ID");
+
+            Contract.Ensures(Contract.Result<PatternConstraint>() != null && Contract.Result<PatternConstraint>().Id >= 0, "No entity is persisted!");
+
+            using (IUnitOfWork uow = this.GetUnitOfWork())
+            {
+                IRepository<PatternConstraint> repo = uow.GetRepository<PatternConstraint>();
+                repo.Merge(entity);
+                var merged = repo.Get(entity.Id);
+                repo.Put(merged);
+                uow.Commit();
+            }
+            return (entity);
+        }
+
+        #endregion pattern
 
         #region range
 
@@ -174,8 +177,6 @@ namespace BExIS.Dlm.Services.DataStructure
             Contract.Requires(entity != null, "provided entity can not be null");
             //Contract.Requires(entity.Id >= 0, "provided entity must have a permanent ID");
 
-            
-
             Contract.Ensures(Contract.Result<RangeConstraint>() != null && Contract.Result<RangeConstraint>().Id >= 0, "No entity is persisted!");
 
             using (IUnitOfWork uow = this.GetUnitOfWork())
@@ -183,24 +184,6 @@ namespace BExIS.Dlm.Services.DataStructure
                 IRepository<RangeConstraint> repo = uow.GetRepository<RangeConstraint>();
 
                 repo.Put(entity);
-                uow.Commit();
-            }
-            return (entity);
-        }
-
-        public RangeConstraint Update(RangeConstraint entity)
-        {
-            Contract.Requires(entity != null, "provided entity can not be null");
-            Contract.Requires(entity.Id >= 0, "provided entity must have a permanent ID");
-
-            Contract.Ensures(Contract.Result<RangeConstraint>() != null && Contract.Result<RangeConstraint>().Id >= 0, "No entity is persisted!");
-
-            using (IUnitOfWork uow = this.GetUnitOfWork())
-            {
-                IRepository<RangeConstraint> repo = uow.GetRepository<RangeConstraint>();
-                repo.Merge(entity);
-                var merged = repo.Get(entity.Id);
-                repo.Put(merged);
                 uow.Commit();
             }
             return (entity);
@@ -225,6 +208,24 @@ namespace BExIS.Dlm.Services.DataStructure
             return (true);
         }
 
-        #endregion
+        public RangeConstraint Update(RangeConstraint entity)
+        {
+            Contract.Requires(entity != null, "provided entity can not be null");
+            Contract.Requires(entity.Id >= 0, "provided entity must have a permanent ID");
+
+            Contract.Ensures(Contract.Result<RangeConstraint>() != null && Contract.Result<RangeConstraint>().Id >= 0, "No entity is persisted!");
+
+            using (IUnitOfWork uow = this.GetUnitOfWork())
+            {
+                IRepository<RangeConstraint> repo = uow.GetRepository<RangeConstraint>();
+                repo.Merge(entity);
+                var merged = repo.Get(entity.Id);
+                repo.Put(merged);
+                uow.Commit();
+            }
+            return (entity);
+        }
+
+        #endregion range
     }
 }

@@ -22,7 +22,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers.API
             {
                 using (var constraintManager = new ConstraintManager())
                 {
-                    var constraints = constraintManager.Repo.Query().ToList();
+                    var constraints = constraintManager.Constraints.ToList();
                     var model = constraints.Select(u => ReadConstraintModel.Convert(u));
 
                     return Request.CreateResponse(HttpStatusCode.OK, model);
@@ -41,7 +41,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers.API
             {
                 using (var constraintManager = new ConstraintManager())
                 {
-                    var constraints = constraintManager.DomainConstraintRepo.Query().ToList();
+                    var constraints = constraintManager.DomainConstraints.ToList();
                     var model = constraints.Select(u => ReadDomainConstraintModel.Convert(u));
 
                     return Request.CreateResponse(HttpStatusCode.OK, model);
@@ -60,7 +60,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers.API
             {
                 using (var constraintManager = new ConstraintManager())
                 {
-                    var constraints = constraintManager.PatternConstraintRepo.Query().ToList();
+                    var constraints = constraintManager.PatternConstraints.ToList();
                     var model = constraints.Select(u => ReadPatternConstraintModel.Convert(u));
 
                     return Request.CreateResponse(HttpStatusCode.OK, model);
@@ -79,7 +79,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers.API
             {
                 using (var constraintManager = new ConstraintManager())
                 {
-                    var constraints = constraintManager.RangeConstraintRepo.Query().ToList();
+                    var constraints = constraintManager.RangeConstraints.ToList();
                     var model = constraints.Select(u => ReadRangeConstraintModel.Convert(u));
 
                     return Request.CreateResponse(HttpStatusCode.OK, model);
