@@ -70,7 +70,6 @@
     </Reference>
     <Reference Include="Microsoft.Web.Infrastructure, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\..\..\..\packages\Microsoft.Web.Infrastructure.2.0.0\lib\net40\Microsoft.Web.Infrastructure.dll</HintPath>
-      <Private>True</Private>
     </Reference>
     <Reference Include="Microsoft.Win32.Primitives, Version=4.0.2.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>..\..\..\..\packages\Microsoft.Win32.Primitives.4.3.0\lib\net46\Microsoft.Win32.Primitives.dll</HintPath>
@@ -494,6 +493,9 @@
     <Compile Include="Controllers\API\DatasetOutController.cs" />
     <Compile Include="Controllers\API\AttachmentOutController.cs" />
     <Compile Include="Controllers\API\DataStatisticOutController.cs" />
+    <Compile Include="Controllers\API\LinkElementTypeController.cs" />
+    <Compile Include="Controllers\API\ConceptOutController.cs" />
+    <Compile Include="Controllers\API\MappingOutController.cs" />
     <Compile Include="Controllers\API\MetadataStatisticOutController.cs" />
     <Compile Include="Controllers\API\MetadataStructureOutController.cs" />
     <Compile Include="Controllers\DataCiteDOIController.cs" />

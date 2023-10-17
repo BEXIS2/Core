@@ -959,10 +959,6 @@
     <Content Include="Scripts\respond.matchmedia.addListener.js" />
     <Content Include="Scripts\respond.matchmedia.addListener.min.js" />
     <Content Include="Scripts\respond.min.js" />
-    <Content Include="Scripts\svelte\menu.css" />
-    <Content Include="Scripts\svelte\menu.js" />
-    <Content Include="Scripts\svelte\settings.css" />
-    <Content Include="Scripts\svelte\settings.js" />
     <Content Include="Scripts\session.warning.js" />
     <Content Include="Shell.Manifest.xml" />
     <Content Include="Themes\Default\Styles\awesome\css\font-awesome.css" />
@@ -1107,7 +1103,6 @@
     <Content Include="Views\Home\NoPermission.cshtml" />
     <Content Include="Web.config.sample" />
     <Content Include="Views\Shared\EditorTemplates\Collection.cshtml" />
-    <Content Include="Scripts\svelte\settings.js.map" />
     <Content Include="Views\Settings\Index.cshtml" />
     <Content Include="Themes\Default\Layouts\_svelteLayout.cshtml" />
     <Content Include="Views\Shared\_sveltePage.cshtml" />
@@ -1119,6 +1114,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Areas\" />
+    <Folder Include="Scripts\svelte\" />
     <Folder Include="Views\Help\" />
   </ItemGroup>
   <ItemGroup>

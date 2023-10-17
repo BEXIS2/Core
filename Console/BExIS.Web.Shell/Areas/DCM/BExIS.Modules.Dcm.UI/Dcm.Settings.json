@@ -12,9 +12,9 @@
     },
     {
       "key": "celllimit",
-      "value": -2000,
+      "value": 2000,
       "description": "This number of cells determines the selection whether an upload of structured data should be executed directly or async. ",
-      "type": "Integer",
+      "type": "Int32",
       "options": []
     },
     {
@@ -55,23 +55,23 @@
     },
     {
       "key": "minToAnalyse",
-      "value": -100,
+      "value": 100,
       "description": "Min number of rows to analyze strutcure.",
-      "type": "Integer",
+      "type": "Int32",
       "options": []
     },
     {
       "key": "maxToAnalyse",
       "value": 10000,
       "description": "Max number of rows to analyze strutcure.",
-      "type": "Integer",
+      "type": "Int32",
       "options": []
     },
     {
       "key": "precentageToAnalyse",
       "value": 50,
       "description": "Percentage of rows to analyze strutcure.",
-      "type": "Integer",
+      "type": "Int32",
       "options": []
     }
   ]

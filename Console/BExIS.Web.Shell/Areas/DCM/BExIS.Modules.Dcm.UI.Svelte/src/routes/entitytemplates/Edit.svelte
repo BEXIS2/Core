@@ -265,7 +265,7 @@
 				<EntryContainer>
 					<MultiSelect
 						id="permissions"
-						title="Set full permissions per default to the following groups:"
+						title="Set full permissions per default to the following groups"
 						source={groups}
 						bind:target={entityTemplate.permissionGroups}
 						itemId="key"
@@ -278,7 +278,7 @@
 				<EntryContainer>
 					<MultiSelect
 						id="notification"
-						title="Send notifications per default to the following groups:"
+						title="Send notifications per default to the following groups"
 						source={groups}
 						bind:target={entityTemplate.notificationGroups}
 						itemId="key"

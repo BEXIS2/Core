@@ -47,7 +47,7 @@ namespace BExIS.Modules.Rpm.UI.Classes
                 try
                 {
                     variableManager = new VariableManager();
-                    return variableManager.CreateVariableTemplate(variableTemplate.Label, variableTemplate.DataType, variableTemplate.Unit, variableTemplate.IsValueOptional, variableTemplate.Description = "", variableTemplate.DefaultValue, variableTemplate.DisplayPatternId);
+                    return variableManager.CreateVariableTemplate(variableTemplate.Label, variableTemplate.DataType, variableTemplate.Unit, variableTemplate.Description = "", variableTemplate.DefaultValue);
                 }
                 finally
                 {

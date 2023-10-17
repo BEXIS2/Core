@@ -48,7 +48,7 @@ namespace BExIS.Modules.Rpm.UI.Models.DataStructure
         public int Skipped { get; set; }
         public List<Marker> Markers { get; set; }
 
-        public List<VariableModel> Variables { get; set; }
+        public List<VariableInstanceModel> Variables { get; set; }
 
         public List<MissingValueModel> MissingValues { get; set; }
 
@@ -66,7 +66,7 @@ namespace BExIS.Modules.Rpm.UI.Models.DataStructure
             Decimals = new List<ListItem>();
             TextMarkers = new List<ListItem>();
             Markers = new List<Marker>();
-            Variables = new List<VariableModel>();
+            Variables = new List<VariableInstanceModel>();
         }
     }
 
@@ -96,60 +96,4 @@ namespace BExIS.Modules.Rpm.UI.Models.DataStructure
         }
     }
 
-    public class VariableModel
-    {
-        public long Id { get; set; }
-        public string Name { get; set; }
-        public string Description { get; set; }
-        public string SystemType { get; set; }
-
-        // this variable is part of the primary key 
-        public bool IsKey { get; set; }
-        public bool IsOptional { get; set; }
-
-        public ListItem DataType { get; set; }
-        public ListItem Unit { get; set; }
-        public ListItem Template { get; set; }
-        public ListItem DisplayPattern { get; set; }
-
-        ///// <summary>
-        ///// List of possible Datatypes based on the result of the strutcure Analyzer 
-        ///// </summary>
-        //public List<KvP> PossibleDataTypes { get; set; }
-
-        /// <summary>
-        /// List of possible units based on the result of the strutcure Analyzer 
-        /// </summary>
-        public List<ListItem> PossibleUnits { get; set; }
-
-        /// <summary>
-        /// List of possible Templates based on the result of the strutcure Analyzer 
-        /// </summary>
-        public List<ListItem> PossibleTemplates { get; set; }
-
-        /// <summary>
-        /// List of possible Templates based on the result of the strutcure Analyzer 
-        /// </summary>
-        public List<ListItem> PossibleDisplayPattern { get; set; }
-
-        public VariableModel()
-        {
-            Id = 0;
-            Name = "";
-            Description = "";
-            SystemType = "";
-            DataType = new ListItem();
-            Unit = new ListItem();
-            Template = new ListItem();
-            DisplayPattern = new ListItem(-1,"","");
-
-            IsKey = false;
-            IsOptional = false;
-
-            //PossibleDataTypes = new List<KvP>();
-            PossibleUnits = new List<ListItem>();
-            PossibleTemplates = new List<ListItem>();
-            PossibleDisplayPattern = new List<ListItem>();
-       }
-    }
 }

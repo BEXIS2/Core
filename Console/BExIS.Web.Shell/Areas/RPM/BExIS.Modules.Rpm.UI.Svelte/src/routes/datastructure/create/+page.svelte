@@ -17,7 +17,7 @@
 	} from '$lib/components/datastructure/services';
 
 	import type { DataStructureCreationModel } from '$lib/components/datastructure/types';
-	import { displayPatternStore, structureStore } from '$lib/components/datastructure/store';
+	import { displayPatternStore, structureStore,isTemplateRequiredStore  } from '$lib/components/datastructure/store';
 	import { pageContentLayoutType } from '@bexis2/bexis2-core-ui';
 
 	// load attributes from div
@@ -25,7 +25,7 @@
 	let entityId: number;
 	let datastructureId: number = 0;
 	let version: number = 0;
-	let file: string;
+	let file: string ;
 
 	let model: DataStructureCreationModel;
 	$: model;
@@ -36,10 +36,17 @@
 	async function start() {
 		// get data from parent
 		container = document.getElementById('datastructure');
-		entityId = container?.getAttribute('dataset');
-		version = container?.getAttribute('version');
-		file = container?.getAttribute('file');
-		datastructureId = container?.getAttribute('structure');
+		entityId = Number(container?.getAttribute('dataset'));
+		version = Number(container?.getAttribute('version'));
+		file = ""+container?.getAttribute('file');
+		datastructureId = Number(container?.getAttribute('structure'));
+
+		// get isTemplateRequired from settings and add it to store
+		// is used by validation
+		const isTemplateRequired= Boolean(container?.getAttribute('isTemplateRequired'));
+		isTemplateRequiredStore.set(isTemplateRequired);
+
+
 
 		console.log('start structure suggestion', entityId, version, file, datastructureId);
 

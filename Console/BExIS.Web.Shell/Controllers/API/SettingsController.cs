@@ -68,20 +68,40 @@ namespace BExIS.Web.Shell.Controllers.API
         {
             try
             {
-                var settings = ModuleManager.GetModuleSettings(moduleId);
-
-                var json = new JsonSettings()
+                if (moduleId == "shell")
                 {
-                    Id = moduleId,
-                    Name = model.Name,
-                    Description = model.Description,
-                    Entries = model.Entries
-                };
+                    GeneralSettings settings = GeneralSettings.Get();
 
-                settings.Update(json);
+                    var json = new JsonSettings()
+                    {
+                        Id = moduleId,
+                        Name = model.Name,
+                        Description = model.Description,
+                        Entries = model.Entries
+                    };
 
-                return Request.CreateResponse(HttpStatusCode.OK, model);
-            }catch(Exception ex)
+                    settings.Update(json);
+
+                    return Request.CreateResponse(HttpStatusCode.OK, ReadSettingModel.Convert(settings.GetAsJsonModel()));
+                }
+                else
+                {
+                    ModuleSettings settings = ModuleManager.GetModuleSettings(moduleId);
+
+                    var json = new JsonSettings()
+                    {
+                        Id = moduleId,
+                        Name = model.Name,
+                        Description = model.Description,
+                        Entries = model.Entries
+                    };
+
+                    settings.Update(json);
+
+                    return Request.CreateResponse(HttpStatusCode.OK, ReadSettingModel.Convert(settings.GetAsJsonModel()));
+                }
+            }
+            catch (Exception ex)
             {
                 return Request.CreateResponse(HttpStatusCode.BadRequest, ex.Message);
             }

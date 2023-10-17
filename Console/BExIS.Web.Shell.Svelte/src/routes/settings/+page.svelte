@@ -4,12 +4,13 @@
 	import Fa from 'svelte-fa';
 	import { faSave } from '@fortawesome/free-solid-svg-icons';
 
-	import { Page, notificationType, notificationStore } from '@bexis2/bexis2-core-ui';
+	import { Page, notificationType, notificationStore, helpStore } from '@bexis2/bexis2-core-ui';
+	import type { helpItemType } from '@bexis2/bexis2-core-ui';
 	import Entry from '../../components/entry.svelte';
-	import { get, putByModuleId } from '../../services/settingService';
+	import { get, getByModuleId, putByModuleId } from '../../services/settingService';
 	import type { ReadSettingModel } from '$models/settingModels';
 
-	import { Accordion, AccordionItem } from '@skeletonlabs/skeleton';
+	import { ListBox, ListBoxItem } from '@skeletonlabs/skeleton';
 
 	onMount(async () => {
 		// module = await getModuleByName('sam');
@@ -19,7 +20,26 @@
 		const response = await get();
 		console.log(response);
 		if (response?.status == 200) {
-			return await response.data;
+			var modules = await response.data;
+			
+			if(modules.length > 0)
+			{
+				module = modules[0].id;
+			}
+
+			return modules;
+		}
+
+		throw new Error('Something went wrong.');
+	}
+
+	async function getSettingsByModuleId(moduleId) {
+		const response = await getByModuleId(moduleId);
+		console.log(response);
+		if (response?.status == 200) {
+			var settings = await response.data;
+			helpStore.setHelpItemList(settings.entries.map((e) => ({id: e.key, name: e.key, description: e.description} as helpItemType)));
+			return settings;
 		}
 
 		throw new Error('Something went wrong.');
@@ -42,39 +62,43 @@
 
 		throw new Error('Something went wrong.');
 	}
+
+	let module: string;
 </script>
 
-<Page>
-	<div class="w-full">
+<Page help={true} fixLeft={false}>
+	<div slot="left">
 		{#await getSettings()}
 			<div id="spinner">... loading ...</div>
 		{:then data}
-			<Accordion />
-			{#each data as m}
-				<AccordionItem>
-					<svelte:fragment slot="lead">
-                        <i class="fa-solid fa-skull text-xl w-6 text-center" />
-                    </svelte:fragment>
-					<svelte:fragment slot="summary">
-                        <h1>{m.name} ({m.id})</h1>
-                    </svelte:fragment>
-					<svelte:fragment slot="content">
-						<form on:submit|preventDefault={() => putSettingByModuleId(m.id, m)}>
-							{#each m.entries as entry}
-								<Entry {entry} />
-							{/each}
-
-							<div class="py-5 text-right col-span-2">
-								<button class="btn variant-filled-primary h-9 w-16 shadow-md" type="submit">
-									<Fa icon={faSave} />
-								</button>
-							</div>
-						</form>
-					</svelte:fragment>
-				</AccordionItem>
-			{/each}
+			<ListBox active="variant-filled-primary">
+				{#each data as m}
+					<ListBoxItem bind:group={module} name="medium" value={m.id}
+						>{m.name}</ListBoxItem
+					>
+				{/each}
+			</ListBox>
 		{:catch error}
 			<div id="spinner">{error}</div>
 		{/await}
 	</div>
+	{#await getSettingsByModuleId(module)}
+		<div id="spinner">... loading ...</div>
+	{:then data}
+		<form on:submit|preventDefault={() => putSettingByModuleId(data.id, data)}>
+			{#each data.entries as entry}
+				<Entry {entry} />
+			{/each}
+
+			<div class="py-5 text-right col-span-2">
+				<button class="btn variant-filled-primary h-9 w-16 shadow-md" type="submit">
+					<Fa icon={faSave} />
+				</button>
+			</div>
+		</form>
+	{:catch error}
+		<div id="spinner">{error}</div>
+	{/await}
+
+	<div />
 </Page>

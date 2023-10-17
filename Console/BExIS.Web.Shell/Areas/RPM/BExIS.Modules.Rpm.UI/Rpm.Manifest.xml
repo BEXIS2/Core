@@ -27,8 +27,9 @@
     
     <Export tag="settings" id="ManageVariableTemplates" order="1"
             title="Manage Variable Templates" description="Edit, Create or Delet Variable Templates" icon=""
-            controller="DataAttribute" action="AttributeManager" argument=""
+            controller="VariableTemplate" action="" argument=""
             extends="./settingsRoot" />
+
     <Export tag="settings" id="ManageUnits" order="2"
             title="Manage Units" description="Edit, Create or Delet Units" icon=""
             controller="Unit" action="UnitManager" argument=""
@@ -37,6 +38,10 @@
             title="Manage Data Types" description="Edit, Create or Delet Data Types" icon=""
             controller="Home" action="DataTypeManager" argument=""
             extends="./settingsRoot" />
+	<Export tag="settings" id="ManageMeanings" order="2"
+		  title="Manage Meanings" description="Edit, Create or Delet Meanings" icon=""
+		  controller="Meanings" action="" argument=""
+		  extends="./settingsRoot" />
 
     <Export tag="internalApi" id="DataStructureEdit"
             title="DataStructure Edit" description="" icon=""

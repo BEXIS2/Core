@@ -1,5 +1,7 @@
 ﻿using BExIS.Dlm.Services.DataStructure;
 using BExIS.Modules.Rpm.UI.Models;
+using BExIS.Modules.Rpm.UI.Models.Dimensions;
+using BExIS.Security.Entities.Subjects;
 using BExIS.Security.Services.Subjects;
 using BExIS.Utils.Route;
 using System;
@@ -57,7 +59,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers.API
         public async Task<HttpResponseMessage> GetPatternConstraints()
         {
             try
-            {
+        {
                 using (var constraintManager = new ConstraintManager())
                 {
                     var constraints = constraintManager.PatternConstraints.ToList();
@@ -82,13 +84,6 @@ namespace BExIS.Modules.Rpm.UI.Controllers.API
                     var constraints = constraintManager.RangeConstraints.ToList();
                     var model = constraints.Select(u => ReadRangeConstraintModel.Convert(u));
 
-                    return Request.CreateResponse(HttpStatusCode.OK, model);
-                }
-            }
-            catch (Exception ex)
-            {
-                return Request.CreateErrorResponse(HttpStatusCode.InternalServerError, ex);
-            }
         }
     }
 }

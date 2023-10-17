@@ -24,12 +24,6 @@ namespace BExIS.Web.Shell.Controllers
 {
     public class SettingsController : Controller
     {
-        public ActionResult Index()
-        {
-
-            return View();
-        }
-
         [HttpGet]
         public JsonResult Get()
         {
@@ -63,20 +57,30 @@ namespace BExIS.Web.Shell.Controllers
             return Json(modules, JsonRequestBehavior.AllowGet);
         }
 
+        public ActionResult Index()
+        {
+            string module = "Shell";
+
+            ViewData["app"] = SvelteHelper.GetApp(module);
+            ViewData["start"] = SvelteHelper.GetStart(module);
+
+            return View();
+        }
+
         // GET: Settings
         [HttpGet]
         [JsonNetFilter]
         public JsonResult Load(string id)
         {
             if (id == "shell")
-            { 
+            {
                 return Json(GeneralSettings.Get().GetAsJsonModel(), JsonRequestBehavior.AllowGet);
             }
 
             if (ModuleManager.IsActive(id))
             {
                 var moduleSettings = ModuleManager.GetModuleSettings(id);
-                
+
                 return Json(moduleSettings.GetAsJsonModel(), JsonRequestBehavior.AllowGet);
             }
 
@@ -96,7 +100,6 @@ namespace BExIS.Web.Shell.Controllers
             {
                 if (settings.Id == "shell")
                 {
-
                     GeneralSettings.Get().Update(settings);
                 }
 

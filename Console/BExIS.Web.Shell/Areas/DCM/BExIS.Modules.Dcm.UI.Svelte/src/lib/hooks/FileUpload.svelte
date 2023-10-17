@@ -30,6 +30,9 @@
 	let model: FileUploadModel;
 	$: model;
 
+
+	let fileReaderSelectedFile=""
+
 	onMount(async () => {
 		load();
 	});
@@ -66,6 +69,7 @@
 		console.log('warning');
 		reload();
 		dispatch('warning', { text: e.detail.text });
+		fileReaderSelectedFile="";
 	}
 
 </script>
@@ -104,6 +108,7 @@
 
 		<FileReaderInformation
 			{id}
+			bind:target = {fileReaderSelectedFile}
 			bind:readableFiles={model.fileUploader.existingFiles}
 			bind:asciiFileReaderInfo={model.asciiFileReaderInfo}
 		/>

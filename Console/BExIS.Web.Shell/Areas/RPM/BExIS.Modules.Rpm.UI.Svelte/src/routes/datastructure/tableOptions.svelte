@@ -1,10 +1,15 @@
 <script lang="ts">
-	import Fa from 'svelte-fa/src/fa.svelte';
+	import Fa from 'svelte-fa';
 	import { faCopy, faTrash } from '@fortawesome/free-solid-svg-icons';
 	import { helpStore } from '@bexis2/bexis2-core-ui';
 
 	export let row: any;
 	export let dispatchFn: any;
+
+	let disableBtn:boolean = row.linkedTo.length>0?true:false;
+
+console.log("row",row)
+
 </script>
 
 <tableOption>
@@ -39,6 +44,7 @@
 					dispatchFn({
 						type: { action: 'delete', id: row.id, title: row.title }
 					})}
+					disabled={disableBtn}
 			>
 				<Fa icon={faTrash} /></button
 			>

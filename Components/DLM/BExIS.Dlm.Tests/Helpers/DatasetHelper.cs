@@ -78,11 +78,11 @@ namespace BExIS.Dlm.Tests.Helpers
                 var boolType = dataTypeManager.Create("Bool", "Bool", TypeCode.Boolean);
                 var dateTimeType = dataTypeManager.Create("DateTime", "DateTime", TypeCode.DateTime);
 
-                var varTemplate1 = variableManager.CreateVariableTemplate("att1UT", intType, unit, false, "Attribute for Unit testing");
-                var varTemplate2 = variableManager.CreateVariableTemplate("att2UT", strType, unit, false, "Attribute for Unit testing");
-                var varTemplate3 = variableManager.CreateVariableTemplate("att3UT", doubleType, unit, false, "Attribute for Unit testing");
-                var varTemplate4 = variableManager.CreateVariableTemplate("att4UT", boolType, unit, false, "Attribute for Unit testing");
-                var varTemplate5 = variableManager.CreateVariableTemplate("att5UT", dateTimeType, unit, false, "Attribute for Unit testing");
+                var varTemplate1 = variableManager.CreateVariableTemplate("att1UT", intType, unit, "Attribute for Unit testing");
+                var varTemplate2 = variableManager.CreateVariableTemplate("att2UT", strType, unit, "Attribute for Unit testing");
+                var varTemplate3 = variableManager.CreateVariableTemplate("att3UT", doubleType, unit,  "Attribute for Unit testing");
+                var varTemplate4 = variableManager.CreateVariableTemplate("att4UT", boolType, unit,  "Attribute for Unit testing");
+                var varTemplate5 = variableManager.CreateVariableTemplate("att5UT", dateTimeType, unit,  "Attribute for Unit testing");
 
                 StructuredDataStructure dataStructure = dsManager.CreateStructuredDataStructure("dsForTesting", "DS for unit testing", "", "", Dlm.Entities.DataStructure.DataStructureCategory.Generic);
 

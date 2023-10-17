@@ -1,8 +1,45 @@
-﻿<div>
-    <ol class="breadcrumb">
-        <li><a href="#">Home</a></li>
-        <li><a href="#">Private</a></li>
-        <li><a href="#">Pictures</a></li>
-        <li class="active">Vacation</li>
+﻿
+@{
+    string title = ViewBag.Title;
+
+    if (title.Contains("-"))
+    {
+        title = title.Split('-').Last();
+    }
+}
+
+<div >
+    <ol class="breadcrumb myBreadCrump">
+        @{
+            if (title != "Home")
+            {
+                <li><a class="anchor" href="/">Home</a></li>
+            }
+
+        }
+
+        <li class="">@title</li>
     </ol>
 </div>
+
+
+<style>
+    .myBreadCrump {
+        background-color: white !important;
+        padding: 5pt;
+        color: #959595;
+    }
+
+    .anchor {
+        --tw-text-opacity: 1;
+        text-decoration-line: underline;
+        color: #959595;
+    }
+
+    .anchor:hover {
+        --tw-text-opacity: 1;
+        color: rgb(52, 134, 121) ;
+        text-decoration-line: underline;
+    }
+
+</style>

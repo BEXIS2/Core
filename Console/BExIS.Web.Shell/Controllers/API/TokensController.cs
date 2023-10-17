@@ -1,6 +1,7 @@
 ﻿using BExIS.App.Bootstrap.Attributes;
 using BExIS.Security.Entities.Subjects;
 using BExIS.Security.Services.Subjects;
+using BExIS.Utils.Config;
 using BExIS.Utils.Route;
 using Microsoft.IdentityModel.Tokens;
 using System;
@@ -28,17 +29,15 @@ namespace BExIS.Web.Shell.Controllers.API
         {
             try
             {
+                var jwtConfiguration = GeneralSettings.JwtConfiguration;
+
                 using (var userManager = new UserManager())
                 {
                     var user = ControllerContext.RouteData.Values["user"] as User;
 
                     if (user != null)
                     {
-                        var key = ConfigurationManager.AppSettings["JwtKey"];
-
-                        var issuer = ConfigurationManager.AppSettings["JwtIssuer"];
-
-                        var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(key));
+                        var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtConfiguration.IssuerSigningKey));
                         var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
 
                         //Create a List of Claims, Keep claims name short
@@ -50,11 +49,13 @@ namespace BExIS.Web.Shell.Controllers.API
                         };
 
                         //Create Security Token object by giving required parameters
-                        var token = new JwtSecurityToken(issuer, //Issure
-                                        issuer,  //Audience
-                                        permClaims,
-                                        expires: DateTime.Now.AddDays(1),
-                                        signingCredentials: credentials);
+                        var token = new JwtSecurityToken(jwtConfiguration.ValidIssuer,
+                            jwtConfiguration.ValidAudience,
+                            permClaims,
+                            notBefore: DateTime.Now,
+                            expires: jwtConfiguration.ValidLifetime > 0 ? DateTime.Now.AddHours(jwtConfiguration.ValidLifetime) : DateTime.MaxValue,
+                            signingCredentials: credentials);
+
                         var jwt_token = new JwtSecurityTokenHandler().WriteToken(token);
 
                         return Request.CreateResponse(HttpStatusCode.OK, jwt_token);

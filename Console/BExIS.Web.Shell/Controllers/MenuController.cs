@@ -42,8 +42,8 @@ namespace BExIS.Web.Shell.Controllers
             if (Session.GetTenant() != null)
             { 
                 string name = Session.GetTenant().ShortName;
-                string mime = MimeMapping.GetMimeMapping(Session.GetTenant().LogoPath);
-                byte[] image = System.IO.File.ReadAllBytes(Session.GetTenant().LogoPath);
+                string mime = MimeMapping.GetMimeMapping(Session.GetTenant().Brand);
+                byte[] image = System.IO.File.ReadAllBytes(Session.GetTenant().BrandPath);
                 string data = Convert.ToBase64String(image);
                 menu.Logo = new Logo(name, mime, data, 40);
             }

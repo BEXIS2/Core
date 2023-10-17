@@ -4,19 +4,6 @@
   "description": "hier kommt der text!",
   "entries": [
     {
-      "key": "jsontest",
-      "value": {
-        "data": {
-          "account": "sven",
-          "password": "123456",
-          "host": "https://google.de"
-        }
-      },
-      "description": "URL to manual",
-      "type": "JSON",
-      "options": []
-    },
-    {
       "key": "help",
       "value": "https://github.com/BEXIS2/Documents/blob/2.14.5/Manuals/SAM/Manual.md",
       "description": "URL to manual",
@@ -24,29 +11,43 @@
       "options": []
     },
     {
-      "key": "aaaaaaaaaaaaaaaaaaaaa",
-      "value": "test_oldtimes",
-      "description": "",
+      "key": "formerMemberRole",
+      "value": "alumni",
+      "description": "...",
       "type": "String",
       "options": []
     },
     {
-      "key": "asdbsadasd",
-      "value": false,
-      "description": "",
-      "type": "Boolean",
+      "key": "mailTextTitle",
+      "value": "Dear",
+      "description": "...",
+      "type": "String",
       "options": []
     },
     {
-      "key": "mailTextApplied",
+      "key": "mailTextSubject",
+      "value": "",
+      "description": "...",
+      "type": "String",
+      "options": []
+    },
+    {
+      "key": "mailTextMainApplied",
       "value": "This implies that your access to some features in BExIS will be restricted. You have full access to your datasets and publications.",
       "description": "...",
       "type": "String",
       "options": []
     },
     {
-      "key": "mailTextRevoked",
+      "key": "mailTextMainRevoked",
       "value": "This implies that your previous access rights to features and datasets in BEXIS have been re-applied.",
+      "description": "...",
+      "type": "String",
+      "options": []
+    },
+    {
+      "key": "mailTextClosing",
+      "value": "Sincerely yours, System Team",
       "description": "...",
       "type": "String",
       "options": []

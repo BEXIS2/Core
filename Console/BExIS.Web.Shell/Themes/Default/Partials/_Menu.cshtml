@@ -14,7 +14,7 @@
 }
 
 <div class="navbar navbar-default navbar-fixed-top" style="z-index: 1337">
-    <div class="container-fluid" id="menubar" style="background-color: #eff7f6">
+    <div class="container-fluid shadow-md" id="menubar" style="background-color: #eff7f6; height: 60px; padding: 8px 12px;">
         <!-- Brand and toggle get grouped for better mobile display -->
         <div class="navbar-header">
             <button type="button" data-target="#navbarCollapse" data-toggle="collapse" class="navbar-toggle">
@@ -76,3 +76,11 @@
         </div>
     </div>
 </div>
+
+<style>
+    .shadow-md {
+        --tw-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+        --tw-shadow-colored: 0 4px 6px -1px var(--tw-shadow-color), 0 2px 4px -2px var(--tw-shadow-color);
+        box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
+    }
+</style>
