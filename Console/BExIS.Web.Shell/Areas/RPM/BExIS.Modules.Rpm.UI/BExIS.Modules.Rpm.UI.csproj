@@ -169,6 +169,7 @@
     <Content Include="Views\VariableTemplate\Index.cshtml" />
     <Content Include="Views\Meanings\Index.cshtml" />
     <Content Include="Views\DataType\Index.cshtml" />
+    <Content Include="Views\LinksMeanings\Index.cshtml" />
     <None Include="web.Debug.config">
       <DependentUpon>web.config</DependentUpon>
     </None>
