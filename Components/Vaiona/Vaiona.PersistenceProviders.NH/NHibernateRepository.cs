@@ -20,104 +20,6 @@ namespace Vaiona.PersistenceProviders.NH
         {
         }
 
-        //needs more tests
-        public TEntity Merge(TEntity entity)
-        {
-            //session.Lock(entity, LockMode.None);
-            //UoW.Session.Merge<TEntity>(entity);
-            if (UoW is NHibernateUnitOfWork)
-                ((NHibernateUnitOfWork)UoW).Session.Merge<TEntity>(entity);
-            return (entity);
-        }
-
-        /// <summary>
-        /// In Stateless Mode, it only INSERTs the entity
-        /// </summary>
-        /// <param name="entity"></param>
-        /// <returns></returns>
-        public bool Put(TEntity entity)
-        {
-            lock (UoW)
-            {
-                //session.Lock(entity, LockMode.None);
-                applyStateInfo(entity);
-                applyAuditInfo(entity);
-                //UoW.Session.SaveOrUpdate(entity);
-                if (UoW is NHibernateUnitOfWork)
-                {
-                    ISession session = ((NHibernateUnitOfWork)UoW).Session;
-                    // best effort to lock the row for writing, but it my fail on objects that carry a bag/set/collection of child entities.
-                    // This locking mechanism needs to be revised.
-                    try
-                    {
-                        if (!IsTransient(entity))
-                            session.Lock(entity, LockMode.UpgradeNoWait);
-                    }
-                    catch (Exception ex) // do nothing for now!
-                    { }
-                    finally
-                    {
-                        session.SaveOrUpdate(entity);
-                    }
-                    return true;
-                }
-                else if (UoW is NHibernateBulkUnitOfWork)
-                {   // check to see whether the entity is a new object to be inserted or an existing one to be updated. 
-                    // the stateless session does not keep track of the entities!
-                    ((NHibernateBulkUnitOfWork)UoW).Session.Insert(entity);
-                    return (true);
-                }
-                return (false);
-            }
-        }
-
-        public bool Put(IEnumerable<TEntity> entities)
-        {
-            lock (UoW)
-            {
-                if (UoW is NHibernateUnitOfWork)
-                {
-                    return putStatefull(((NHibernateUnitOfWork)UoW).Session, entities);
-                }
-                else if (UoW is NHibernateBulkUnitOfWork)
-                {
-                    return putStateless(((NHibernateBulkUnitOfWork)UoW).Session, entities);
-                }
-                return (false);
-            }
-        }
-
-        private bool putStateless(IStatelessSession session, IEnumerable<TEntity> entities)
-        {
-            try
-            {
-                foreach (var entity in entities)
-                {
-                    applyStateInfo(entity);
-                    applyAuditInfo(entity);
-                    session.Insert(entity);
-                }
-                return true;
-            }
-            catch { return false; }
-        }
-        private bool putStatefull(ISession session, IEnumerable<TEntity> entities)
-        {
-            try
-            {
-                foreach (var entity in entities)
-                {
-                    applyStateInfo(entity);
-                    applyAuditInfo(entity);
-                    if (!IsTransient(entity))
-                        session.Lock(entity, LockMode.Read);
-                    session.SaveOrUpdate(entity);
-                }
-                return true;
-            }
-            catch { return false; }
-        }
-
         public bool Delete(TEntity entity)
         {
             lock (UoW)
@@ -150,6 +52,25 @@ namespace Vaiona.PersistenceProviders.NH
             }
         }
 
+        public bool Delete(long entityId)
+        {
+            lock (UoW)
+            {
+                try
+                {
+                    string queryString = string.Format("DELETE FROM {0} e WHERE e.Id = :id", typeof(TEntity).Name);
+                    Dictionary<string, object> parameters = new Dictionary<string, object>();
+                    parameters.Add("id", entityId);
+                    this.Execute(queryString, parameters);
+                }
+                catch (Exception ex)
+                {
+                    return false;
+                }
+                return (true);
+            }
+        }
+
         public bool Delete(IEnumerable<Int64> entityIds)
         {
             lock (UoW)
@@ -168,6 +89,7 @@ namespace Vaiona.PersistenceProviders.NH
                 return (true);
             }
         }
+
         /// <summary>
         /// Use this only for delete or update in bulk mode
         /// </summary>
@@ -218,6 +140,73 @@ namespace Vaiona.PersistenceProviders.NH
             }
         }
 
+        //needs more tests
+        public TEntity Merge(TEntity entity)
+        {
+            //session.Lock(entity, LockMode.None);
+            //UoW.Session.Merge<TEntity>(entity);
+            if (UoW is NHibernateUnitOfWork)
+                ((NHibernateUnitOfWork)UoW).Session.Merge<TEntity>(entity);
+            return (entity);
+        }
+
+        /// <summary>
+        /// In Stateless Mode, it only INSERTs the entity
+        /// </summary>
+        /// <param name="entity"></param>
+        /// <returns></returns>
+        public bool Put(TEntity entity)
+        {
+            lock (UoW)
+            {
+                //session.Lock(entity, LockMode.None);
+                applyStateInfo(entity);
+                applyAuditInfo(entity);
+                //UoW.Session.SaveOrUpdate(entity);
+                if (UoW is NHibernateUnitOfWork)
+                {
+                    ISession session = ((NHibernateUnitOfWork)UoW).Session;
+                    // best effort to lock the row for writing, but it my fail on objects that carry a bag/set/collection of child entities.
+                    // This locking mechanism needs to be revised.
+                    try
+                    {
+                        if (!IsTransient(entity))
+                            session.Lock(entity, LockMode.UpgradeNoWait);
+                    }
+                    catch (Exception ex) // do nothing for now!
+                    { }
+                    finally
+                    {
+                        session.SaveOrUpdate(entity);
+                    }
+                    return true;
+                }
+                else if (UoW is NHibernateBulkUnitOfWork)
+                {   // check to see whether the entity is a new object to be inserted or an existing one to be updated.
+                    // the stateless session does not keep track of the entities!
+                    ((NHibernateBulkUnitOfWork)UoW).Session.Insert(entity);
+                    return (true);
+                }
+                return (false);
+            }
+        }
+
+        public bool Put(IEnumerable<TEntity> entities)
+        {
+            lock (UoW)
+            {
+                if (UoW is NHibernateUnitOfWork)
+                {
+                    return putStatefull(((NHibernateUnitOfWork)UoW).Session, entities);
+                }
+                else if (UoW is NHibernateBulkUnitOfWork)
+                {
+                    return putStateless(((NHibernateBulkUnitOfWork)UoW).Session, entities);
+                }
+                return (false);
+            }
+        }
+
         private void applyAuditInfo(TEntity entity)
         {
             // check unsaved-value-check to know whether object is new or updated. use this info for state management
@@ -229,6 +218,38 @@ namespace Vaiona.PersistenceProviders.NH
         {
             // check unsaved-value-check to know whether object is new or updated. use this info for state management
             // throw new NotImplementedException();
+        }
+
+        private bool putStatefull(ISession session, IEnumerable<TEntity> entities)
+        {
+            try
+            {
+                foreach (var entity in entities)
+                {
+                    applyStateInfo(entity);
+                    applyAuditInfo(entity);
+                    if (!IsTransient(entity))
+                        session.Lock(entity, LockMode.Read);
+                    session.SaveOrUpdate(entity);
+                }
+                return true;
+            }
+            catch { return false; }
+        }
+
+        private bool putStateless(IStatelessSession session, IEnumerable<TEntity> entities)
+        {
+            try
+            {
+                foreach (var entity in entities)
+                {
+                    applyStateInfo(entity);
+                    applyAuditInfo(entity);
+                    session.Insert(entity);
+                }
+                return true;
+            }
+            catch { return false; }
         }
     }
 }

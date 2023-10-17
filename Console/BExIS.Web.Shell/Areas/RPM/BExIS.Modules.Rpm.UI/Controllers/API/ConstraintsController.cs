@@ -17,6 +17,47 @@ namespace BExIS.Modules.Rpm.UI.Controllers.API
 {
     public class ConstraintsController : ApiController
     {
+        [HttpDelete, DeleteRoute("api/constraints/{constraintId}")]
+        public async Task<HttpResponseMessage> DeleteConstraintById(long constraintId)
+        {
+            try
+            {
+                using (var constraintManager = new ConstraintManager())
+                {
+                    var constraint = constraintManager.FindById(constraintId);
+
+                    return Request.CreateResponse(HttpStatusCode.OK, constraintManager.DeleteById(constraintId));
+                }
+            }
+            catch (Exception ex)
+            {
+                return Request.CreateErrorResponse(HttpStatusCode.InternalServerError, ex);
+            }
+        }
+
+        [HttpGet, GetRoute("api/constraints/{constraintId}")]
+        public async Task<HttpResponseMessage> GetConstraintById(long constraintId)
+        {
+            try
+            {
+                using (var constraintManager = new ConstraintManager())
+                {
+                    var constraint = constraintManager.FindById(constraintId);
+
+                    if (constraint == null)
+                        return Request.CreateResponse(HttpStatusCode.BadRequest);
+
+                    var model = ReadConstraintModel.Convert(constraint);
+
+                    return Request.CreateResponse(HttpStatusCode.OK, model);
+                }
+            }
+            catch (Exception ex)
+            {
+                return Request.CreateErrorResponse(HttpStatusCode.InternalServerError, ex);
+            }
+        }
+
         [HttpGet, GetRoute("api/constraints")]
         public async Task<HttpResponseMessage> GetConstraints()
         {
