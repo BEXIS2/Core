@@ -8,6 +8,7 @@ export const getMeanings = async () => {
 		return response.data;
 	} catch (error) {
 		console.error(error);
+		throw error;
 	}
 };
 
@@ -17,6 +18,7 @@ export const getLinks = async () => {
 		return response.data;
 	} catch (error) {
 		console.error(error);
+		throw error;
 	}
 };
 
@@ -26,6 +28,7 @@ export const remove = async (id) => {
 		return response.data;
 	} catch (error) {
 		console.error(error);
+		throw error;
 	}
 };
 
@@ -36,6 +39,7 @@ export const create = async (data:MeaningModel) => {
 		return response.data;
 	} catch (error) {
 		console.error(error);
+		throw error;
 	}
 };
 
@@ -46,6 +50,7 @@ export const update = async (data:MeaningModel) => {
 		return response.data;
 	} catch (error) {
 		console.error(error);
+		throw error;
 	}
 };
 
@@ -55,5 +60,6 @@ export const createLink = async (data:externalLinkType) => {
 		return response.data;
 	} catch (error) {
 		console.error(error);
+		throw error;
 	}
 };
