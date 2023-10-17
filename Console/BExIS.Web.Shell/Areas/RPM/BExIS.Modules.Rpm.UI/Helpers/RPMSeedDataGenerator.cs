@@ -144,9 +144,9 @@ namespace BExIS.Modules.Rpm.UI.Helpers
                     featurePermissionManager.Create(null, dataMeaning_pub.Id, Security.Entities.Authorization.PermissionType.Grant);
                 }
 
-                if (!operationManager.Exists("RPM", "Meanings", "*"))
+                if (!operationManager.Exists("RPM", "Meaning", "*"))
                 {
-                    operationManager.Create("RPM", "Meanings", "*", dataMeaning_pub);
+                    operationManager.Create("RPM", "Meaning", "*", dataMeaning_pub);
                     
                 }
 

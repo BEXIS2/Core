@@ -63,9 +63,10 @@
 
 	async function submit() {
 
-		var res = (meaning.id==0)?create(meaning):update(meaning);
+		var s = await (meaning.id==0)?create(meaning):update(meaning);
+		console.log("🚀 ~ file: Meaning.svelte:67 ~ submit ~ res:", res)
 
-		if (res) {
+		if ((await s).status === 200) {
 			dispatch('success');
 		} else {
 			dispatch('fail');

@@ -11,7 +11,7 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Newtonsoft.Json.Serialization;
 
-namespace BExIS.Modules.Rpm.UI.Api.Controllers
+namespace BExIS.Modules.Rpm.UI.Controllers
 {
     public class MeaningsController : ApiController
     {
@@ -28,7 +28,7 @@ namespace BExIS.Modules.Rpm.UI.Api.Controllers
         }
 
 
-        [BExISApiAuthorize]
+        [BExISAuthorize]
         [JsonNetFilter]
         [HttpPost,HttpGet]
         [PostRoute("api/Meanings/Index")]

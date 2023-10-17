@@ -114,6 +114,7 @@
 
 		console.log("🚀 ~ file: +page.svelte:113 ~ edit ~ type:", type)
 		if (type.action == 'edit') {
+			showForm = false;
 			 meaning = $meaningsStore.find((u) => u.id === type.id)!;
 			showForm = true;
 		}
@@ -166,7 +167,8 @@
 
 			showForm = false;
 			setTimeout(async () => {
-			reload();}, 10);
+			reload();
+		}, 10);
 	}
 
 

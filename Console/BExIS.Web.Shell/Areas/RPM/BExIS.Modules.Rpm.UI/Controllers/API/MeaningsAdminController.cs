@@ -16,7 +16,7 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Newtonsoft.Json.Serialization;
 
-namespace BExIS.Modules.Rpm.UI.Api.Controllers
+namespace BExIS.Modules.Rpm.UI.Controllers
 {
     public class MeaningsAdminController : ApiController
     {

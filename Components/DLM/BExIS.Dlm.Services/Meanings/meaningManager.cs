@@ -25,11 +25,14 @@ namespace BExIS.Dlm.Services.Meanings
             Contract.Requires(meaning != null);
             try
             {
-                foreach (ExternalLink ext_link in meaning.ExternalLink)
+                if (meaning.ExternalLink != null)
                 {
-                    if (this.getExternalLink(ext_link.URI) == null)
+                    foreach (ExternalLink ext_link in meaning.ExternalLink)
                     {
-                        this.addExternalLink(ext_link);
+                        if (this.getExternalLink(ext_link.URI) == null)
+                        {
+                            if(ext_link.Id==0) this.addExternalLink(ext_link);
+                        }
                     }
                 }
                 using (IUnitOfWork uow = this.GetUnitOfWork())
@@ -122,6 +125,17 @@ namespace BExIS.Dlm.Services.Meanings
             Contract.Requires(meaning != null);
             try
             {
+                if (meaning.ExternalLink != null)
+                {
+                    foreach (ExternalLink ext_link in meaning.ExternalLink)
+                    {
+                        if (this.getExternalLink(ext_link.URI) == null)
+                        {
+                            if (ext_link.Id == 0) this.addExternalLink(ext_link);
+                        }
+                    }
+                }
+
                 using (IUnitOfWork uow = this.GetUnitOfWork())
                 {
                     IRepository<Meaning> repo = uow.GetRepository<Meaning>();
