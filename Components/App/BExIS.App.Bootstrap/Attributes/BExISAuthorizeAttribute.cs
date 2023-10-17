@@ -32,6 +32,7 @@ namespace BExIS.App.Bootstrap.Attributes
                 {
                     // ignored
                 }
+
                 var controllerName = filterContext.ActionDescriptor.ControllerDescriptor.ControllerName;
                 var actionName = filterContext.ActionDescriptor.ActionName;
 

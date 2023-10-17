@@ -12,12 +12,14 @@ const suite = create((data = {},fieldName) => {
 
 	test('link_name', 'name allready exist.', () => {
 
+		const existingLinks = get(externalLinksStore).map(e=>e.name);
 		// if the form is in edit mode, find the selected one by id
 		const editedObj =
-			data.id > 0 ? get(externalLinksStore).find((e) => e.id == data.id) : { id: 0, name: '' };
+		data.id > 0 ? get(externalLinksStore).find((e) => e.id == data.id) : { id: 0, name: '' };
+
 		//console.log(editedObj.name);
 		// get all names back, without the edited one
-		 const list = get(externalLinksStore).map((e) => (e.name.toLowerCase() != editedObj?.name.toLowerCase() ? e.name : ''));
+		 const list = editedObj?existingLinks.filter(l=>l!= editedObj.name):existingLinks;
 
 		 enforce(data.name).notInside(list);
 	});

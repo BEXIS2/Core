@@ -2,8 +2,9 @@
 	import type { externalLinkType } from './types';
 	import { externalLinksStore } from './stores';
 
-	import Link from './ExternalLink.svelte';
+	import Link from './ExternalLinkForm.svelte';
 	export let list: externalLinkType[] = [];
+	$:list
 
 	import { onMount } from 'svelte';
 	import { MultiSelect } from '@bexis2/bexis2-core-ui';
@@ -11,6 +12,8 @@
 	import Fa from 'svelte-fa';
 
 	import { faAdd, faCheck } from '@fortawesome/free-solid-svg-icons';
+	import ExternalLinkView from './ExternalLinkView.svelte';
+	import ExternalLinkForm from './ExternalLinkForm.svelte';
 
 	let selectableLinks: externalLinkType[] = [];
 	$: selectableLinks;
@@ -19,26 +22,44 @@
 	export let valid:boolean = false;
 	let linkValidationStates:any = [];
 
+	let newLinks:externalLinkType[];
+	$:newLinks;
+	let existingLinks:externalLinkType[];
+	$:existingLinks;
+
+	let loading = false;
+
 	onMount(() => {
 		//set selectableLinks
 		updateSelectableLinks();
-		fillLinkValidationStates(list)
+		setLists();
 
-		if (list.length === 0) {
-		
-			add();
-		}
+
+		//fillLinkValidationStates(newLinks)
+
+
 	});
 
-	function remove(i) {
-		list = [...list.filter((m, index) => i !== index)];
+	function remove(i:number, type:string) {
 
-		if (list.length === 0) {
-			add();
+		if(type=="new")
+		{	
+				newLinks = newLinks.filter((m, index) => i !== index)
 		}
+		else
+		{
+			 existingLinks = existingLinks.filter((m, index) => i !== index)
+		}
+		list = [...newLinks,... existingLinks];
+
+
+		// remove item result from array of validation states from 
+		linkValidationStates = [...linkValidationStates.splice(i,1)];
 
 		updateSelectableLinks();
-		checkValidationState();
+
+		//checkValidationState();
+
 	}
 
 	function add() {
@@ -51,7 +72,11 @@
 			uri: ''
 		};
 
-		list = [...list, newLink];
+	
+		newLinks = [...newLinks, newLink];
+		list = [...newLinks,...existingLinks]
+		linkValidationStates = [...linkValidationStates,true];
+
 		console.log('list', list);
 	}
 
@@ -61,10 +86,20 @@
 	}
 
 	function onSelectHandler(e) {
-		list = [...list, selectedExternalLink];
 
+		loading = true;
+
+		existingLinks = [...existingLinks, selectedExternalLink];
+		selectedExternalLink = undefined;
+
+		// selection needs to filter
 		updateSelectableLinks()
-		selectedExternalLink = null;
+
+
+
+		list = [...newLinks,...existingLinks];
+
+		loading = false;
 	}
 
 function fillLinkValidationStates(l) {
@@ -82,8 +117,15 @@ function checkValidationState() {
 	
 valid = linkValidationStates.every((v) => v === true);
 console.log("🚀 ~ file: ExternslLinks.svelte:83 ~ checkValidationState ~ linkValidationStates:", linkValidationStates)
-//console.log("TCL ~ file: Variables.svelte:63 ~ checkValidationState ~ linkValidationStates:", linkValidationStates)
+
 }
+
+function setLists()
+{
+		newLinks = list.filter(l=>l.id==0)
+		existingLinks = list.filter(l=>l.id>0)
+}
+
 </script>
 
 
@@ -93,23 +135,42 @@ console.log("🚀 ~ file: ExternslLinks.svelte:83 ~ checkValidationState ~ linkV
 	<label class="flex gap-3"><b>External Links</b>
 	{#if valid}<span class="text-success-500"><Fa icon="{faCheck}"/></span>{/if}
 	</label> 
+	<div class="card p-5">
+		<b>New</b>
+		{#if newLinks}
+			{#each newLinks as link, id}
+				<!-- content here -->
+				<ExternalLinkForm
+					{id}
+					index = {id}
+					bind:link={link}
+					bind:isValid={linkValidationStates[id]}
+					on:remove={() => remove(id,"new")}
+					on:link-change={checkValidationState}
+					last={list.length - 1 === id}
+				/>
+			{/each}
+	{/if}
+	</div>
 
-	{#if list}
-		{#each list as link, index}
+<div class="card p-5">
+	<b>Existing</b>
+
+	{#if existingLinks}
+		{#each existingLinks as link, id}
 			<!-- content here -->
-			<Link
-				{index}
-				{link}
-				
-				bind:isValid={linkValidationStates[index]}
-				on:remove={() => remove(index)}
+			<ExternalLinkView
+			 {id}
+				index = {id}
+				bind:link={link}
+				bind:isValid={linkValidationStates[id]}
+				on:remove={() => remove(id,"exist")}
 				on:link-change={checkValidationState}
-				last={list.length - 1 === index}
+				last={list.length - 1 === id}
 			/>
 		{/each}
 	{/if}
-
-
+</div>
 </div>
 <div class="flex items-center gap-3 w-1/2">
 	<div class="grow">
@@ -125,6 +186,7 @@ console.log("🚀 ~ file: ExternslLinks.svelte:83 ~ checkValidationState ~ linkV
 			isMulti={false}
 			placeholder="-- Please select --"
 			on:change={(e) => onSelectHandler(e)}
+			{loading}
 		/>
 	</div>
 	<span class="span w-14 text-center">or</span>

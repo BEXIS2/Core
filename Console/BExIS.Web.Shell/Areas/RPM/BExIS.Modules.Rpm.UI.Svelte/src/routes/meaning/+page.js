@@ -1,4 +1,4 @@
-import { setApiConfig } from '@bexis2/bexis2-core-ui';
+import { host, setApiConfig } from '@bexis2/bexis2-core-ui';
 
 /** @type {import('./$types').PageLoad} */
 export function load() {
@@ -6,6 +6,8 @@ export function load() {
 		console.log('dev');
 		setApiConfig('https://localhost:44345', 'davidschoene', '123456');
 	}
+
+	console.log(host);
 
 	return {};
 }
