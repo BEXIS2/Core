@@ -1,5 +1,6 @@
 ﻿using BExIS.Dlm.Entities.DataStructure;
 using BExIS.Dlm.Services.TypeSystem;
+using BExIS.Security.Entities.Objects;
 using BExIS.Security.Entities.Requests;
 using System;
 using System.Collections.Generic;
@@ -41,6 +42,24 @@ namespace BExIS.Dlm.Services.DataStructure
         public void Dispose()
         {
             Dispose(true);
+        }
+
+        public Constraint FindById(long constraintId)
+        {
+            using (var uow = this.GetUnitOfWork())
+            {
+                var constraintRepository = uow.GetReadOnlyRepository<Constraint>();
+                return constraintRepository.Get(constraintId);
+            }
+        }
+
+        public Constraint FindByName(string constraintName)
+        {
+            using (var uow = this.GetUnitOfWork())
+            {
+                var constraintRepository = uow.GetReadOnlyRepository<Constraint>();
+                return constraintRepository.Query(m => m.Name.ToLowerInvariant() == constraintName.ToLowerInvariant()).FirstOrDefault();
+            }
         }
 
         protected void Dispose(bool disposing)
