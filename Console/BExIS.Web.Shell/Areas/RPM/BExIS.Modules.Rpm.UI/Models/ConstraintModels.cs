@@ -39,6 +39,24 @@ namespace BExIS.Modules.Rpm.UI.Models
         public string Specification { get; set; }
     }
 
+    public class CreateConstraintModel
+    {
+        public string Description { get; set; }
+        public string Name { get; set; }
+    }
+
+    public class CreateDomainConstraintModel : CreateConstraintModel
+    {
+    }
+
+    public class CreatePatternConstraintModel : CreateConstraintModel
+    {
+    }
+
+    public class CreateRangeConstraintModel : CreateConstraintModel
+    {
+    }
+
     public class ReadConstraintModel
     {
         public string Description { get; set; }
@@ -63,6 +81,8 @@ namespace BExIS.Modules.Rpm.UI.Models
 
     public class ReadDomainConstraintModel : ReadConstraintModel
     {
+        public List<DomainItem> DomainItems { get; set; }
+
         public static ReadDomainConstraintModel Convert(DomainConstraint constraint)
         {
             return new ReadDomainConstraintModel()
@@ -70,13 +90,16 @@ namespace BExIS.Modules.Rpm.UI.Models
                 Id = constraint.Id,
                 Name = constraint.Name,
                 Description = constraint.Description,
-                Version = constraint.VersionNo
+                Version = constraint.VersionNo,
+                DomainItems = constraint.Items
             };
         }
     }
 
     public class ReadPatternConstraintModel : ReadConstraintModel
     {
+        public string Pattern { get; set; }
+
         public static ReadPatternConstraintModel Convert(PatternConstraint constraint)
         {
             return new ReadPatternConstraintModel()
@@ -84,7 +107,8 @@ namespace BExIS.Modules.Rpm.UI.Models
                 Id = constraint.Id,
                 Name = constraint.Name,
                 Description = constraint.Description,
-                Version = constraint.VersionNo
+                Version = constraint.VersionNo,
+                Pattern = constraint.MatchingPhrase
             };
         }
     }
@@ -101,5 +125,25 @@ namespace BExIS.Modules.Rpm.UI.Models
                 Version = constraint.VersionNo
             };
         }
+    }
+
+    public class UpdateConstraintModel
+    {
+        public string Description { get; set; }
+        public string Name { get; set; }
+    }
+
+    public class UpdateDomainConstraintModel : UpdateConstraintModel
+    {
+        public List<DomainItem> DomainItems { get; set; }
+    }
+
+    public class UpdatePatternConstraintModel : UpdateConstraintModel
+    {
+        public string Pattern { get; set; }
+    }
+
+    public class UpdateRangeConstraintModel
+    {
     }
 }
