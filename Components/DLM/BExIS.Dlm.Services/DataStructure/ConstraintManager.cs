@@ -62,6 +62,15 @@ namespace BExIS.Dlm.Services.DataStructure
             }
         }
 
+        public T FindById<T>(long constraintId) where T : Constraint
+        {
+            using (var uow = this.GetUnitOfWork())
+            {
+                var constraintRepository = uow.GetReadOnlyRepository<T>();
+                return constraintRepository.Get(constraintId);
+            }
+        }
+
         public Constraint FindByName(string constraintName)
         {
             using (var uow = this.GetUnitOfWork())
