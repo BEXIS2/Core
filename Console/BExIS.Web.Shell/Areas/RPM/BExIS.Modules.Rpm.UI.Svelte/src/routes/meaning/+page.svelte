@@ -29,8 +29,6 @@
 
 	let showForm = false;
 
-	// data
-import { meaningHelp } from './help'
 
 	async function reload() {
 		showForm = false;

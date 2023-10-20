@@ -14,7 +14,7 @@
 	import { TextArea, TextInput, helpStore } from '@bexis2/bexis2-core-ui';
 
 	// data
-	import { list } from './help';
+	import { helpInfoList } from './help';
 
 	export let meaning: MeaningModel;
 	$: meaning;
@@ -36,7 +36,7 @@
 		loaded = true;
 
 		// set help
-		helpStore.setHelpItemList(list);
+		helpStore.setHelpItemList(helpInfoList);
 
 		console.log('meaning', meaning);
 
