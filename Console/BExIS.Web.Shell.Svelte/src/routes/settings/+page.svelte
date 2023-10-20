@@ -4,7 +4,8 @@
 	import Fa from 'svelte-fa';
 	import { faSave } from '@fortawesome/free-solid-svg-icons';
 
-	import { Page, notificationType, notificationStore } from '@bexis2/bexis2-core-ui';
+	import { Page, notificationType, notificationStore, helpStore } from '@bexis2/bexis2-core-ui';
+	import type { helpItemType } from '@bexis2/bexis2-core-ui';
 	import Entry from '../../components/entry.svelte';
 	import { get, getByModuleId, putByModuleId } from '../../services/settingService';
 	import type { ReadSettingModel } from '$models/settingModels';
@@ -19,7 +20,14 @@
 		const response = await get();
 		console.log(response);
 		if (response?.status == 200) {
-			return await response.data;
+			var modules = await response.data;
+			
+			if(modules.length > 0)
+			{
+				module = modules[0].id;
+			}
+
+			return modules;
 		}
 
 		throw new Error('Something went wrong.');
@@ -29,7 +37,9 @@
 		const response = await getByModuleId(moduleId);
 		console.log(response);
 		if (response?.status == 200) {
-			return await response.data;
+			var settings = await response.data;
+			helpStore.setHelpItemList(settings.entries.map((e) => ({id: e.key, name: e.key, description: e.description} as helpItemType)));
+			return settings;
 		}
 
 		throw new Error('Something went wrong.');
@@ -53,17 +63,17 @@
 		throw new Error('Something went wrong.');
 	}
 
-	let valueSingle: string = 'shell';
+	let module: string;
 </script>
 
-<Page fixLeft={false}>
+<Page help={true} fixLeft={false}>
 	<div slot="left">
 		{#await getSettings()}
 			<div id="spinner">... loading ...</div>
 		{:then data}
 			<ListBox active="variant-filled-primary">
 				{#each data as m}
-					<ListBoxItem bind:group={valueSingle} name="medium" value={m.id}
+					<ListBoxItem bind:group={module} name="medium" value={m.id}
 						>{m.name}</ListBoxItem
 					>
 				{/each}
@@ -72,7 +82,7 @@
 			<div id="spinner">{error}</div>
 		{/await}
 	</div>
-	{#await getSettingsByModuleId(valueSingle)}
+	{#await getSettingsByModuleId(module)}
 		<div id="spinner">... loading ...</div>
 	{:then data}
 		<form on:submit|preventDefault={() => putSettingByModuleId(data.id, data)}>

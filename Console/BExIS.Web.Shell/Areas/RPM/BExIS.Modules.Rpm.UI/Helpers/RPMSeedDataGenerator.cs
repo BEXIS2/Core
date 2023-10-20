@@ -144,15 +144,13 @@ namespace BExIS.Modules.Rpm.UI.Helpers
                     featurePermissionManager.Create(null, dataMeaning_pub.Id, Security.Entities.Authorization.PermissionType.Grant);
                 }
 
-                using (meaningManager _meaningManager = new meaningManager())
+                if (!operationManager.Exists("RPM", "Meaning", "*"))
                 {
-                    _meaningManager.addExternalLink("http://exampleURI_1", "Example 1", "entity");
-                    _meaningManager.addExternalLink("http://exampleURI_2", "Example 2", "entity");
-                    _meaningManager.addExternalLink("http://exampleURI_3", "Example 3", "entity");
-                    _meaningManager.addMeaning("Example 1 name", "Example 1 ShortName", "Example 1 description", Selectable.yes, Approved.yes, new List<string> { }, new List<string> { }, new List<string> { });
-                    _meaningManager.addMeaning("Example 2 name", "Example 2 ShortName", "Example 2 description", Selectable.yes, Approved.yes, new List<string> { }, new List<string> { }, new List<string> { });
-                    _meaningManager.addMeaning("Example 3 name", "Example 3 ShortName", "Example 3 description", Selectable.yes, Approved.yes, new List<string> { }, new List<string> { }, new List<string> { });
+                    operationManager.Create("RPM", "Meaning", "*", dataMeaning_pub);
+                    operationManager.Create("RPM", "ExternalLink", "*", dataMeaning_pub);
+
                 }
+
 
             }
             finally
@@ -183,13 +181,13 @@ namespace BExIS.Modules.Rpm.UI.Helpers
             attributeCreator.CreateUnits(ref mappedUnits);
 
             //// read attributes from csv file
-            DataTable mappedAttributes = mappingReader.readAttributes(filePath);
+            DataTable mappedTemplates = mappingReader.readAttributes(filePath);
 
             // free memory
             mappedDataTypes.Clear();
             mappedDimensions.Clear();
             // create read attributes in bpp
-            //attributeCreator.CreateAttributes(ref mappedAttributes);
+            attributeCreator.CreateTemplates(ref mappedTemplates);
 
             createResearchPlan();
 

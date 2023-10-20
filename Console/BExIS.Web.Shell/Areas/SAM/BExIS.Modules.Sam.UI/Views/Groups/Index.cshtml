@@ -1,9 +1,237 @@
-﻿@{
-    ViewBag.Title = "Groups";
-    Layout = "~/Themes/Default/Layouts/_svelteLayout.cshtml";
+﻿﻿@using BExIS.Modules.Sam.UI.Models
+@using Telerik.Web.Mvc
+@using Telerik.Web.Mvc.UI
 
+@{
+    ViewBag.Title = "Manage Groups";
 }
 
-<div id="groups">
-    @Html.Partial("_sveltePage")
-</div>
+@section Information
+{
+    With this interface you are able to manage groups. New groups can be added with the "Create" button. Existing groups can be edited (properties, members, delete) using the "Edit" button.
+    <p>
+        <a href="/SAM/Help/Index/#_Toc451422047" class="bx-informationLink" title="go to help" target="_blank">More</a>
+    </p>
+}
+
+<style>
+    .t-window-content {
+        height: auto !important;
+        width: auto !important;
+    }
+
+    #grid_users {
+        width: 80vw !important;
+    }
+</style>
+
+<button id="button_createGroup" type="button" class="bx-button function">Create Group</button>
+@(Html.Telerik().Grid<GroupGridRowModel>()
+      .Name("grid_groups")
+      .Columns(columns =>
+      {
+          columns.Bound(g => g.Id);
+          columns.Bound(g => g.Name);
+          columns.Bound(g => g.Description);
+          columns.Template(@<text>
+                <button type="button" class="bx bx-grid-function bx-edit"></button>
+                <button type="button" class="bx bx-grid-function bx-users"></button>
+                <button type="button" class="bx bx-grid-function bx-trash"></button>
+        </text>)
+       .ClientTemplate(
+           "<button type=\"button\" class=\"bx bx-grid-function bx-edit\" value=\"<#= Id #>\" title=\"Edit Group: <#= Name #>\"></button>" +
+           "<button type=\"button\" class=\"bx bx-grid-function bx-users\" value=\"<#= Name #>\" title=\"Edit Membership(s): <#= Name #>\"></button>" +
+           "<button type=\"button\" class=\"bx bx-grid-function bx-trash\" value=\"<#= Id #>\" title=\"Delete Group: <#= Name #>\"></button>")
+       .Width(110);
+})
+.ClientEvents(events =>
+{
+   events.OnDataBound("grid_groups_onDataBound");
+})
+.DataBinding(dataBinding => dataBinding
+   .Ajax()
+   .Select("Groups_Select", "Groups")
+)
+.Filterable()
+.Pageable(pageable =>
+{
+   pageable.PageSize(50, new[] { 10, 20, 50, 100 });
+   pageable.Style(GridPagerStyles.NextPreviousAndNumeric | GridPagerStyles.PageSizeDropDown);
+   pageable.Position(GridPagerPosition.Bottom);
+})
+.Sortable(sortable => sortable.OrderBy(order => order.Add(c => c.Id).Descending())))
+
+@section Scripts
+{
+    <script src="@Url.Content("~/Scripts/2013.2.611/telerik.common.min.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Scripts/2013.2.611/telerik.draganddrop.min.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Scripts/2013.2.611/telerik.window.min.js")" type="text/javascript"></script>
+
+    <script type="text/javascript">
+
+        function grid_users_onDataBound() {
+            addTooltips();
+            resetAllTelerikIconTitles();
+
+            $("input[name='selectedUsers']:checkbox")
+                .click(function () {
+                    if ($(this).is(':checked')) {
+                        $.post('@Url.Action("AddUserToGroup", "Groups", new { area = "sam" })', { UserId: $(this).data('userid'), GroupName: $(this).data('groupname') }, function (data) {
+                            $("#grid_users .t-refresh").trigger('click');
+                        });
+                    } else {
+                        $.post('@Url.Action("RemoveUserFromGroup", "Groups", new { area = "sam" })', { UserId: $(this).data('userid'), GroupName: $(this).data('groupname') }, function (data) {
+                            $("#grid_users .t-refresh").trigger('click');
+                        });
+                    }
+                });
+        }
+
+        $('#button_createGroup')
+            .click(function () {
+                $.ajax({
+                    type: 'GET',
+                    url: '@Url.Action("Create", "Groups")',
+                    dataType: 'html',
+                    success: function (htmlData) {
+                        var windowElement = $.telerik.window.create({
+                            title: "Create Group",
+                            html: "<div id='content_createGroup' class='bx-window'>" + htmlData + "</div>",
+                            contentUrl: "",
+                            actions: ["Close"],
+                            modal: true,
+                            width: 500,
+                            height: 500,
+                            resizable: false,
+                            draggable: true,
+                            scrollable: false,
+                            onClose: function () {
+                                $("#window_createGroup").data('tWindow').destroy();
+                                $("#grid_groups .t-refresh").trigger('click');
+                            }
+                        });
+
+                        windowElement.attr('id', 'window_createGroup');
+                        var window = $(windowElement).data('tWindow');
+                        window.center().open();
+
+                        resetAllTelerikIconTitles();
+                    }
+                });
+            });
+
+        $(document).on("click", "#button_createGroup_cancel", function () {
+            $('#window_createGroup').data('tWindow').close();
+        });
+
+        $(document).on("click", "#button_updateGroup_cancel", function () {
+            $('#window_updateGroup').data('tWindow').close();
+        });
+
+        function createGroup_onSuccess(data) {
+            if (data.success) {
+                $('#window_createGroup').data('tWindow').close();
+            }
+        }
+
+        function createGroup_onCancel() {
+            $('#window_createGroup').data('tWindow').close();
+        }
+
+        function updateGroup_onSuccess(data) {
+            if (data.success) {
+                $('#window_updateGroup').data('tWindow').close();
+            }
+        }
+
+        function updateGroup_onCancel() {
+            $('#window_updateGroup').data('tWindow').close();
+        }
+
+        function grid_groups_onDataBound() {
+            addTooltips();
+            resetAllTelerikIconTitles();
+
+            $('.bx-edit')
+                .click(function () {
+                    var title = $(this).attr("title");
+                    $.ajax({
+                        type: 'GET',
+                        url: '@Url.Action("Update", "Groups")',
+                        data: { GroupId: $(this).attr("value") },
+                        dataType: 'html',
+                        success: function (htmlData) {
+                            var windowElement = $.telerik.window.create({
+                                title: title,
+                                html: "<div id='content_updateGroup' class='bx-window'>" + htmlData + "</div>",
+                                contentUrl: "",
+                                actions: ["Close"],
+                                modal: true,
+                                width: 500,
+                                height: 500,
+                                resizable: false,
+                                draggable: true,
+                                scrollable: false,
+                                onClose: function () {
+                                    $("#window_updateGroup").data('tWindow').destroy();
+                                    $("#grid_groups .t-refresh").trigger('click');
+                                }
+                            });
+
+                            windowElement.attr('id', 'window_updateGroup');
+                            var window = $(windowElement).data('tWindow');
+                            window.center().open();
+
+                            resetAllTelerikIconTitles();
+                        }
+                    });
+                });
+
+            $('.bx-users')
+                .click(function () {
+                    var title = $(this).attr("title");
+                    $.ajax({
+                        type: 'GET',
+                        url: '@Url.Action("Users", "Groups")',
+                        data: { GroupName: $(this).attr("value") },
+                        dataType: 'html',
+                        success: function (htmlData) {
+                            var windowElement = $.telerik.window.create({
+                                title: title,
+                                html: "<div id='content_users' class='bx-window'>" + htmlData + "</div>",
+                                contentUrl: "",
+                                actions: ["Close"],
+                                modal: true,
+                                width: 500,
+                                height: 500,
+                                resizable: false,
+                                draggable: true,
+                                scrollable: false,
+                                onClose: function () {
+                                    $("#window_users").data('tWindow').destroy();
+                                    $("#grid_users .t-refresh").trigger('click');
+                                }
+                            });
+
+                            windowElement.attr('id', 'window_users');
+                            var window = $(windowElement).data('tWindow');
+                            window.center().open();
+
+                            resetAllTelerikIconTitles();
+                        }
+                    });
+                });
+
+            $('.bx-trash')
+                .click(function () {
+                    var result = confirm('Are you sure you want to delete this group (Id:' + $(this).attr("value") + ')?');
+
+                    if (result) {
+                        $.post('@Url.Action("Delete", "Groups")', { GroupId: $(this).attr("value") }, function (e) {
+                            $("#grid_groups .t-refresh").trigger('click');
+                        });
+                    }
+                });
+        }
+    </script>
+}

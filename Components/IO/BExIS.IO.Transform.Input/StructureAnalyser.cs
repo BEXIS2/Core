@@ -280,7 +280,7 @@ namespace BExIS.IO.Transform.Input
             }
         }
 
-        public List<Entites.VariableTemplate> SuggestTemplate(string input, long unitId, long dataTypeId, double similarity = 0.8)
+        public List<Entites.VariableTemplate> SuggestTemplate(string input, long unitId, long dataTypeId, double similarity = 0.5)
         {
             if (string.IsNullOrEmpty(input)) throw new ArgumentNullException(nameof(input), "input should not be empty.");
 
@@ -300,7 +300,7 @@ namespace BExIS.IO.Transform.Input
                 foreach (var template in allTemplates)
                 {
                     var ro = new RatcliffObershelp();
-                    var nameSimularity = ro.Similarity(input, template.Label);
+                    var nameSimularity = ro.Similarity(input.ToLower(), template.Label.ToLower());
 
                     if (string.IsNullOrEmpty(input) || nameSimularity >= similarity)
                     {
@@ -326,7 +326,7 @@ namespace BExIS.IO.Transform.Input
                 foreach (var item in byDatype)
                 {
                     // if variableTemplate allready exist in the matches increase the value by 0.5
-                    if (matches.ContainsKey(item)) matches[item] += 0.5;
+                    if (matches.ContainsKey(item)) matches[item] += 1;
                     else matches.Add(item, 0.5);
                 }
 

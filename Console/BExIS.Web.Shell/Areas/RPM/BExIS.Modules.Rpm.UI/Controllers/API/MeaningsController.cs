@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
@@ -8,6 +9,7 @@ using BExIS.Dlm.Services.Meanings;
 using BExIS.Utils.Route;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using Newtonsoft.Json.Serialization;
 
 namespace BExIS.Modules.Rpm.UI.Controllers
 {
@@ -26,7 +28,8 @@ namespace BExIS.Modules.Rpm.UI.Controllers
         }
 
 
-        [BExISApiAuthorize]
+        [BExISAuthorize]
+        [JsonNetFilter]
         [HttpPost,HttpGet]
         [PostRoute("api/Meanings/Index")]
         [GetRoute("api/Meanings/Index")]
@@ -37,6 +40,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
 
         [BExISApiAuthorize]
         [HttpPost,HttpGet]
+        [JsonNetFilter]
         [PostRoute("api/Meanings/Details")]
         [GetRoute("api/Meanings/Details")]
         public HttpResponseMessage Details()
@@ -54,6 +58,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
 
         [BExISApiAuthorize]
         [HttpPost, HttpGet]
+        [JsonNetFilter]
         [PostRoute("api/Meanings/DetailExternalLinks")]
         [GetRoute("api/Meanings/DetailExternalLinks")]
         public HttpResponseMessage DetailExternalLinks()
@@ -64,12 +69,34 @@ namespace BExIS.Modules.Rpm.UI.Controllers
             return cretae_response(_meaningManager.getExternalLink(long.Parse(dict["id"])));
         }
 
-        private HttpResponseMessage cretae_response(JObject return_object)
+        private HttpResponseMessage cretae_response(object return_object)
         {
             if (return_object == null)
                 return Request.CreateErrorResponse(HttpStatusCode.BadRequest, "bad request / problem occured");
             var response = Request.CreateResponse(HttpStatusCode.OK);
-            string resp = JsonConvert.SerializeObject(return_object);
+
+            var serializerSettings = new JsonSerializerSettings();
+            serializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
+            string resp = JsonConvert.SerializeObject(return_object, serializerSettings);
+            //string resp = JsonConvert.SerializeObject(return_object);
+
+            response.Content = new StringContent(resp, System.Text.Encoding.UTF8, "application/json");
+            response.Content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
+
+            //set headers on the "response"
+            return response;
+        }
+
+        private HttpResponseMessage cretae_response(List<Object> return_object)
+        {
+            if (return_object == null)
+                return Request.CreateErrorResponse(HttpStatusCode.BadRequest, "bad request / problem occured");
+            var response = Request.CreateResponse(HttpStatusCode.OK);
+
+            var serializerSettings = new JsonSerializerSettings();
+            serializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
+            string resp = JsonConvert.SerializeObject(return_object, serializerSettings);
+            //string resp = JsonConvert.SerializeObject(return_object);
 
             response.Content = new StringContent(resp, System.Text.Encoding.UTF8, "application/json");
             response.Content.Headers.ContentType = new MediaTypeHeaderValue("application/json");

@@ -32,7 +32,7 @@ export const variableTemplateHelp =[
 		{
 			"id": "description",
 			"name": "Description",
-			"description": "Description of th Variable Template. <li>a shot overview how the Variable Template shold be used.</li>"
+			"description": "Description of th Variable Template. <li>a short overview how the Variable Template shold be used.</li>"
 		},
 		{
 			"id": "dataType",

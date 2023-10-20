@@ -59,18 +59,14 @@ namespace BExIS.Dlm.Entities.Meanings.Tests
             List<string> variable = dataStructure.Variables.ToList<Variable>().Select(c => c.Id.ToString()).ToList<string>();
             variable.Should().NotBeEmpty();
 
-            _meaningManager.getExternalLinks()["Key"].ToString().Should().NotBeNullOrEmpty();
-            _meaningManager.getExternalLinks()["Key"].ToString().Should().Be("Success");
-            List<string> externalLink = JsonConvert.DeserializeObject<List<ExternalLink>>(_meaningManager.getExternalLinks()["Value"].ToString()).Select(c => c.Id.ToString()).ToList<string>();
+            _meaningManager.getExternalLinks().ToString().Should().NotBeNullOrEmpty();
+            List<string> externalLink = _meaningManager.getExternalLinks().Select(c => c.Id.ToString()).ToList<string>();
 
-            _meaningManager.getMeanings()["Key"].ToString().Should().NotBeNullOrEmpty();
-            _meaningManager.getMeanings()["Key"].ToString().Should().Be("Success");
-            List<string> related_meaning = JsonConvert.DeserializeObject<List<Meaning>>(_meaningManager.getExternalLinks()["Value"].ToString()).Select(c => c.Id.ToString()).ToList<string>();
+            _meaningManager.getMeanings().Should().NotBeNullOrEmpty();
+            List<string> related_meaning = _meaningManager.getMeanings().Select(c => c.Id.ToString()).ToList<string>();
 
 
-            JObject res = _meaningManager.addMeaning(Name, ShortName, Description, selectable, approved, variable, externalLink, related_meaning);
-            res["Key"].ToString().Should().NotBeNullOrEmpty();
-            res["Key"].ToString().Should().Be("Success");
+            Meaning res = _meaningManager.addMeaning(Name, ShortName, Description, selectable, approved, variable, externalLink, related_meaning);
             NUnit.Framework.Assert.IsNotNull(res);
 
             // trying to edit the inserdted command 
@@ -84,13 +80,13 @@ namespace BExIS.Dlm.Entities.Meanings.Tests
             selectable.Should().NotBeNull();
             approved = (Approved)Enum.Parse(typeof(Approved), "0");
             approved.Should().NotBeNull();
-            var obj = JObject.Parse(res["Value"].ToString());
-            res = _meaningManager.editMeaning(obj["Id"].ToString(), Name, ShortName, Description, selectable, approved, variable, externalLink, related_meaning);
-            JObject.Parse(res["Value"].ToString())["Name"].ToString().Should().Be("meaning name for unit test edited");
-            JObject.Parse(res["Value"].ToString())["ShortName"].ToString().Should().Be("meaning name for unit test tedited");
-            JObject.Parse(res["Value"].ToString())["Description"].ToString().Should().Be("meaning name for unit test edited");
-            JObject.Parse(res["Value"].ToString())["Selectable"].ToString().Should().Be("0");
-            JObject.Parse(res["Value"].ToString())["Approved"].ToString().Should().Be("0");
+            var obj = res;
+            res = _meaningManager.editMeaning(res.Id.ToString(), Name, ShortName, Description, selectable, approved, variable, externalLink, related_meaning);
+            res.Name.ToString().Should().Be("meaning name for unit test edited");
+            res.ShortName.Should().Be("meaning name for unit test tedited");
+            res.Description.Should().Be("meaning name for unit test edited");
+            res.Selectable.Should().Be("0");
+            res.Approved.Should().Be("0");
             NUnit.Framework.Assert.IsNotNull(res); 
 
         }
@@ -111,9 +107,7 @@ namespace BExIS.Dlm.Entities.Meanings.Tests
             String type = Convert.ToString("test type external link ");
             type.Should().NotBeNullOrEmpty();
 
-            JObject res = _meaningManager.addExternalLink(uri, name, type);
-            res["Key"].ToString().Should().NotBeNullOrEmpty();
-            res["Key"].ToString().Should().Be("Success");
+            ExternalLink res = _meaningManager.addExternalLink(uri, name, type);
             NUnit.Framework.Assert.IsNotNull(res);
 
             //editing an external link
@@ -126,11 +120,10 @@ namespace BExIS.Dlm.Entities.Meanings.Tests
             type = Convert.ToString("test type external link edited");
             type.Should().NotBeNullOrEmpty();
 
-            var obj = JObject.Parse(res["Value"].ToString());
-            res = _meaningManager.editExternalLink(obj["Id"].ToString(),uri,name,type );
-            JObject.Parse(res["Value"].ToString())["URI"].ToString().Should().Be("htpp://testUri_edited_.com");
-            JObject.Parse(res["Value"].ToString())["Name"].ToString().Should().Be("test name external link edited");
-            JObject.Parse(res["Value"].ToString())["Type"].ToString().Should().Be("test type external link edited");
+            res = _meaningManager.editExternalLink(res.Id.ToString(),uri,name,type );
+            res.URI.Should().Be("htpp://testUri_edited_.com");
+            res.Name.Should().Be("test name external link edited");
+            res.Type.Should().Be("test type external link edited");
             NUnit.Framework.Assert.IsNotNull(res);
 
         }

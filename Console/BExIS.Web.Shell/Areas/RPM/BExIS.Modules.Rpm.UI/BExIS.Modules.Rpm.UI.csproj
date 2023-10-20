@@ -119,12 +119,15 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Controllers\MeaningsController.cs" />
-    <Compile Include="Controllers\MeaningsAdminController.cs" />
+    <Compile Include="Controllers\API\ConstraintsController.cs" />
+    <Compile Include="Controllers\API\MeaningsController.cs" />
+    <Compile Include="Controllers\API\MeaningsAdminController.cs" />
     <Compile Include="Controllers\ConstraintController.cs" />
     <Compile Include="Controllers\DataStructureController.cs" />
     <Compile Include="Controllers\DataTypeController.cs" />
     <Compile Include="Controllers\DimensionController.cs" />
+    <Compile Include="Controllers\ExternalLinkController.cs" />
+    <Compile Include="Controllers\MeaningController.cs" />
     <Compile Include="Controllers\UnitController.cs" />
     <Compile Include="Controllers\StructuresController.cs" />
     <Compile Include="Controllers\VariableTemplateController.cs" />
@@ -164,6 +167,7 @@
     <Content Include="Views\DataStructure\Index.cshtml" />
     <Content Include="Views\DataStructure\Create.cshtml" />
     <Content Include="Views\VariableTemplate\Index.cshtml" />
+    <Content Include="Views\Meaning\Index.cshtml" />
     <None Include="web.Debug.config">
       <DependentUpon>web.config</DependentUpon>
     </None>

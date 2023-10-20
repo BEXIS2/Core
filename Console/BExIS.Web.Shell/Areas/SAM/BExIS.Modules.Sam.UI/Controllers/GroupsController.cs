@@ -138,8 +138,8 @@ namespace BExIS.Modules.Sam.UI.Controllers
         {
             string module = "SAM";
 
-            ViewData["app"] = SvelteHelper.GetApp(module);
-            ViewData["start"] = SvelteHelper.GetStart(module);
+            //ViewData["app"] = SvelteHelper.GetApp(module);
+            //ViewData["start"] = SvelteHelper.GetStart(module);
 
             return View();
         }

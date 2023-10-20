@@ -11,7 +11,10 @@ namespace BExIS.Dlm.Entities.Meanings
     {
         private bool disposedValue;
 
-        public Meaning() { }
+        public Meaning() {
+            ExternalLink = new List<ExternalLink>();
+        
+        }
 
         public Meaning(Meaning meaning)
         {

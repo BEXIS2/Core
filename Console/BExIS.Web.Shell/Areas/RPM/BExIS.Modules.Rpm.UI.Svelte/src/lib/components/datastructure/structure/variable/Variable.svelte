@@ -41,6 +41,7 @@
 	import Overview from './Overview.svelte';
 
 	import suite from './variable';
+	import VariableTemplate from '../../../../../routes/variabletemplate/VariableTemplate.svelte';
 
 	export let variable: VariableInstanceModel = new VariableInstanceModel();
 	$: variable;
@@ -85,8 +86,6 @@
 		suggestedDataType = variable.dataType;
 		suggestedUnits = variable.possibleUnits;
 		suggestedTemplates = variable.possibleTemplates;
-
-
 		// reset & reload validation
 		suite.reset();
 
@@ -258,6 +257,7 @@
 						<!--Datatype-->
 						<Container>
 							<div slot="property">
+
 								<MultiSelect
 									id="dataType"
 									title="Data Type"
@@ -272,7 +272,7 @@
 									placeholder="-- Please select --"
 									invalid={res.hasErrors('dataType')}
 									feedback={res.getErrors('dataType')}
-									clearable={false}
+									clearable={true}
 									on:change={(e) => onSelectHandler(e, 'dataType')}
 								/>
 							</div>
@@ -309,9 +309,22 @@
 						<!--Unit-->
 						<Container>
 							<div slot="property">
+								<div class="flex w-full gap-1 py-1">
+									<div class="grow ">
+											Unit
+									</div>
+									{#if suggestedUnits && suggestedUnits.length>1}
+									{#each suggestedUnits?.slice(0,3) as u}
+											<button class="badge" 
+											class:variant-ghost-success={u == variable.unit}  
+											class:variant-filled-success={u != variable.unit}
+											on:click={()=> variable.unit = u }>{u.text}</button>
+									{/each}
+								{/if}
+							</div>
 								<MultiSelect
 									id="unit"
-									title="Unit"
+									title=""
 									source={units}
 									itemId="id"
 									itemLabel="text"
@@ -319,7 +332,7 @@
 									complexSource={true}
 									complexTarget={true}
 									isMulti={false}
-									clearable={false}
+									clearable={true}
 									bind:target={variable.unit}
 									placeholder="-- Please select --"
 									invalid={res.hasErrors('unit')}
@@ -336,9 +349,20 @@
 						<!--Meaning-->
 						<Container>
 							<div slot="property">
+								<div class="flex w-full gap-1 py-1">
+										<div class="grow ">
+												Template
+										</div>
+									{#each suggestedTemplates.slice(0,3) as t}
+											<button class="badge" 
+											class:variant-ghost-success={t == variable.template}  
+											class:variant-filled-success={t != variable.template}
+											on:click={()=> variable.template = t }>{t.text}</button>
+									{/each}
+								</div>
 								<MultiSelect
 									id="variableTemplate"
-									title="Template"
+									title=""
 									source={variableTemplates}
 									itemId="id"
 									itemLabel="text"
@@ -346,13 +370,14 @@
 									complexSource={true}
 									complexTarget={true}
 									isMulti={false}
-									clearable={false}
+									clearable={true}
 									bind:target={variable.template}
 									placeholder="-- Please select --"
 									invalid={res.hasErrors('variableTemplate')}
 									feedback={res.getErrors('variableTemplate')}
 									on:change={(e) => onSelectHandler(e, 'variableTemplate')}
 								/>
+							
 							</div>
 							<div slot="description">...</div>
 						</Container>

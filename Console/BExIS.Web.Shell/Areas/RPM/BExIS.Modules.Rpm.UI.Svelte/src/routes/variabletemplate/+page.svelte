@@ -23,7 +23,7 @@
 	
 	// data
 	import { variableTemplateHelp } from './help'
-	import { writable } from 'svelte/store';
+
 	//stores
 	import { displayPatternStore, unitStore, dataTypeStore} from '$lib/components/datastructure/store';
  import {variableTemplatesStore} from './stores'
@@ -231,7 +231,7 @@ function edit(type: any) {
 				<button
 					transition:fade
 					class="btn variant-filled-secondary shadow-md h-9 w-16"
-					title="Create neẇ Unit"
+					title="Create neẇ Variable Template"
 					id="create"
 					on:mouseover={() => {
 						helpStore.show('create');
