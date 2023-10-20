@@ -2,6 +2,7 @@
 using BExIS.UI.Models;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace BExIS.Modules.Rpm.UI.Models
 {
@@ -79,9 +80,24 @@ namespace BExIS.Modules.Rpm.UI.Models
         }
     }
 
+    public class ReadDomainConstraintItemModel
+    {
+        public string Key { get; set; }
+        public string Value { get; set; }
+
+        public static ReadDomainConstraintItemModel Convert(DomainItem item)
+        {
+            return new ReadDomainConstraintItemModel()
+            {
+                Key = item.Key,
+                Value = item.Value
+            };
+        }
+    }
+
     public class ReadDomainConstraintModel : ReadConstraintModel
     {
-        public List<DomainItem> DomainItems { get; set; }
+        public List<ReadDomainConstraintItemModel> Items { get; set; }
 
         public static ReadDomainConstraintModel Convert(DomainConstraint constraint)
         {
@@ -91,7 +107,7 @@ namespace BExIS.Modules.Rpm.UI.Models
                 Name = constraint.Name,
                 Description = constraint.Description,
                 Version = constraint.VersionNo,
-                DomainItems = constraint.Items
+                Items = constraint.Items.Select(i => ReadDomainConstraintItemModel.Convert(i)).ToList()
             };
         }
     }

@@ -13,6 +13,7 @@ using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
 using System.Web.Http;
+using Telerik.Web.Mvc.Extensions;
 using Vaiona.Web.Mvc.Modularity;
 
 namespace BExIS.Modules.Rpm.UI.Controllers.API
@@ -81,7 +82,21 @@ namespace BExIS.Modules.Rpm.UI.Controllers.API
         {
             try
             {
-                return null;
+                using (var constraintManager = new ConstraintManager())
+                {
+                    var constraint = constraintManager.FindById<DomainConstraint>(id);
+
+                    if (constraint == null || model == null)
+                        return Request.CreateResponse(HttpStatusCode.BadRequest);
+
+                    if (!string.IsNullOrEmpty(model.Name))
+                        constraint.Name = model.Name;
+
+                    if (!string.IsNullOrEmpty(model.Description))
+                        constraint.Description = model.Description;
+
+                    return Request.CreateResponse(HttpStatusCode.OK, model);
+                }
             }
             catch (Exception ex)
             {
