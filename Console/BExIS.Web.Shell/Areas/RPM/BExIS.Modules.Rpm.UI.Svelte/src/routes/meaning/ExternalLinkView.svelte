@@ -5,7 +5,7 @@
 
 	import { createEventDispatcher} from 'svelte';
 
-	import type { externalLinkType } from "./types";
+	import type { externalLinkType } from "$lib/components/meaning/types";
 
 export let id:number;
 export let index:number;
@@ -47,7 +47,6 @@ function remove() {
 
 	disabled={true}
 	/>
-
 
 	<div class="flex text-xl w-12 gap-2">
 		<button title="remove" type="button" on:click={remove}><Fa class="text-error-500" icon={faXmark} /></button>

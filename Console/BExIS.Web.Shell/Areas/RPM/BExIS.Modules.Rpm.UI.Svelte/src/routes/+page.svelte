@@ -20,5 +20,6 @@
 		<a class="btn variant-filled-secondary" href="./dimension">dimension</a>
 		<a class="btn variant-filled-secondary" href="./variabletemplate">variabletemplate</a>
 		<a class="btn variant-filled-secondary" href="./meaning">meanings</a>
+		<a class="btn variant-filled-secondary" href="./externallink">externallink</a>
 	</div>
 </Page>

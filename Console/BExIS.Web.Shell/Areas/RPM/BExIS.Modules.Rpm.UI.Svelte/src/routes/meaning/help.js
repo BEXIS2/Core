@@ -1,4 +1,4 @@
-export const meaningHelp =[
+export const helpInfoList =[
  {
   "id": "create",
   "name": "Create neẇ Meaning",

@@ -147,7 +147,8 @@ namespace BExIS.Modules.Rpm.UI.Helpers
                 if (!operationManager.Exists("RPM", "Meaning", "*"))
                 {
                     operationManager.Create("RPM", "Meaning", "*", dataMeaning_pub);
-                    
+                    operationManager.Create("RPM", "ExternalLink", "*", dataMeaning_pub);
+
                 }
 
 

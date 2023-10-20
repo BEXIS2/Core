@@ -2,26 +2,23 @@
 	import Fa from 'svelte-fa';
 	import { faPen, faTrash } from '@fortawesome/free-solid-svg-icons';
 	import { helpStore } from '@bexis2/bexis2-core-ui';
+	import type { externalLinkType } from '$lib/components/meaning/types';
 
-	export let row: any;
-
+	export let row: externalLinkType;
 	export let dispatchFn: any;
 
-	
-
-	let inUse = false;
 
 </script>
 
 <tableOption>
 	<div class="w-18">
-		{#if inUse === false}
+		<!-- {#if inUse === false} -->
 			<!-- svelte-ignore a11y-mouse-events-have-key-events -->
 			<button
 				type="button"
 				class="chip variant-filled-primary shadow-md"
-				title="Edit Meaning, {row.name}"
-				id="edit-{row.Id}"
+				title="Edit External Link, {row.name}"
+				id="edit-{row.id}"
 				on:mouseover={() => {
 					helpStore.show('edit');
 				}}
@@ -36,8 +33,8 @@
 			<button
 				type="button"
 				class="chip variant-filled-error shadow-md"
-				title="Delete Meaning, {row.Name}"
-				id="delete-{row.Id}"
+				title="Delete External Link, {row.name}"
+				id="delete-{row.id}"
 				on:mouseover={() => {
 					helpStore.show('delete');
 				}}
@@ -48,12 +45,12 @@
 			>
 				<Fa icon={faTrash} /></button
 			>
-		{:else}
+		<!-- {:else}
 			<button
 				type="button"
 				class="chip variant-filled-primary shadow-md"
-				title="Edit Meaning, {row.name}"
-				id="edit-{row.id}"
+				title="Edit External Link, {row.name}"
+				id="edit-{row.Id}"
 				disabled
 			>
 				<Fa icon={faPen} />
@@ -62,11 +59,11 @@
 			<button
 				type="button"
 				class="chip variant-filled-error shadow-md"
-				title="Delete Meaning, {row.name}"
+				title="Delete External Link, {row.name}"
 				id="delete-{row.id}"
 				disabled
 			>
 				<Fa icon={faTrash} /></button>
-		{/if}
+		{/if} -->
 	</div>
 </tableOption>

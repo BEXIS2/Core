@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { externalLinkType } from "../types";
+	import type { externalLinkType } from "$lib/components/meaning/types";
 
 	export let value: externalLinkType[];
 </script>

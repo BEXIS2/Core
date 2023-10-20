@@ -23,7 +23,7 @@
 	
 	// data
 	import { variableTemplateHelp } from './help'
-	import { writable } from 'svelte/store';
+
 	//stores
 	import { displayPatternStore, unitStore, dataTypeStore} from '$lib/components/datastructure/store';
  import {variableTemplatesStore} from './stores'

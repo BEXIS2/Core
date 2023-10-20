@@ -1,5 +1,5 @@
 import { Api } from '@bexis2/bexis2-core-ui';
-import type { MeaningModel, externalLinkType } from './types';
+import type { MeaningModel, externalLinkType } from '$lib/components/meaning/types';
 
 export const getMeanings = async () => {
 	try {

@@ -42,6 +42,10 @@
 		  title="Manage Meanings" description="Edit, Create or Delete Meanings" icon=""
 		  controller="Meaning" action="" argument=""
 		  extends="./settingsRoot" />
+	  <Export tag="settings" id="ManageExternalLinks" order="4"
+		  title="Manage External Links" description="Edit, Create or Delete External Links" icon=""
+		  controller="ExternalLink" action="" argument=""
+		  extends="./settingsRoot" />
 
     <Export tag="internalApi" id="DataStructureEdit"
             title="DataStructure Edit" description="" icon=""
