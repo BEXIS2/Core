@@ -8,8 +8,8 @@
 	import suite from './externalLinkForm';
 	import type { externalLinkType } from "./types";
 
-export let id:number;
-export let index:number;
+export let id:number = 0;
+export let index:number = 1;
 export let link:externalLinkType;
 export let last = true;
 
@@ -81,7 +81,7 @@ function setValidationState(res) {
 
 </script>
 
-<div id="{""+index}" class="flex space-x-3 items-center">
+<div id="{""+index}" class="flex space-x-3 items-baseline">
 
 
  <TextInput 

@@ -126,6 +126,7 @@
     <Compile Include="Controllers\DataStructureController.cs" />
     <Compile Include="Controllers\DataTypeController.cs" />
     <Compile Include="Controllers\DimensionController.cs" />
+    <Compile Include="Controllers\ExternalLinkController.cs" />
     <Compile Include="Controllers\MeaningController.cs" />
     <Compile Include="Controllers\UnitController.cs" />
     <Compile Include="Controllers\StructuresController.cs" />

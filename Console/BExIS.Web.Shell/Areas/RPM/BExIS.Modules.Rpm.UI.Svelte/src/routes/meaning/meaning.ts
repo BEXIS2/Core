@@ -1,5 +1,5 @@
 import { create, test, enforce, only } from 'vest';
-import { meaningsStore, externalLinksStore } from './stores';
+import { meaningsStore } from '$lib/components/meaning/stores';
 import { get } from 'svelte/store';
 
 const suite = create((data = {},fieldName) => {

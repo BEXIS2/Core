@@ -1,8 +1,7 @@
 <script lang="ts">
-	import type { externalLinkType } from './types';
-	import { externalLinksStore } from './stores';
+	import type { externalLinkType } from '$lib/components/meaning/types';
+	import { externalLinksStore } from '$lib/components/meaning/stores';
 
-	import Link from './ExternalLinkForm.svelte';
 	export let list: externalLinkType[] = [];
 	$:list
 
@@ -13,7 +12,7 @@
 
 	import { faAdd, faCheck } from '@fortawesome/free-solid-svg-icons';
 	import ExternalLinkView from './ExternalLinkView.svelte';
-	import ExternalLinkForm from './ExternalLinkForm.svelte';
+	import ExternalLinkForm from '$lib/components/meaning/ExternalLinkForm.svelte';
 
 	let selectableLinks: externalLinkType[] = [];
 	$: selectableLinks;
