@@ -306,7 +306,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
 
         [JsonNetFilter]
         [HttpGet]
-        public async Task<HttpResponseMessage> GetRangeConstraints()
+        public JsonResult GetRangeConstraints()
         {
             try
             {
