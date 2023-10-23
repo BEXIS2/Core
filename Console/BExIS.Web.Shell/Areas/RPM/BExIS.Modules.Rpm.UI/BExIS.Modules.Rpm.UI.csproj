@@ -122,7 +122,7 @@
     <Compile Include="Controllers\API\ConstraintsController.cs" />
     <Compile Include="Controllers\API\MeaningsController.cs" />
     <Compile Include="Controllers\API\MeaningsAdminController.cs" />
-    <Compile Include="Controllers\ConstraintController.cs" />
+    <Compile Include="Controllers\ConstraintsController.cs" />
     <Compile Include="Controllers\DataStructureController.cs" />
     <Compile Include="Controllers\DataTypeController.cs" />
     <Compile Include="Controllers\DimensionController.cs" />
