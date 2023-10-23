@@ -1,5 +1,5 @@
 ﻿using BExIS.App.Testing;
-using BExIS.Modules.Rpm.UI.Controllers.API;
+using BExIS.Modules.Rpm.UI.Controllers;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
