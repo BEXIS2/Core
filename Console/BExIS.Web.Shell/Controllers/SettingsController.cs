@@ -4,6 +4,7 @@ using BExIS.UI.Helpers;
 using BExIS.UI.Models;
 using BExIS.Utils;
 using BExIS.Utils.Config;
+using BExIS.Utils.Route;
 using BExIS.Web.Shell.Models;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -12,6 +13,9 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Net.Http;
+using System.Net;
+using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
 using System.Xml;
@@ -19,42 +23,56 @@ using System.Xml.Linq;
 using Vaiona.IoC;
 using Vaiona.Utils.Cfg;
 using Vaiona.Web.Mvc.Modularity;
+using ModuleSettings = Vaiona.Web.Mvc.Modularity.ModuleSettings;
 
 namespace BExIS.Web.Shell.Controllers
 {
     public class SettingsController : Controller
     {
+        [JsonNetFilter]
         [HttpGet]
-        public JsonResult Get()
+        public JsonResult GetSettings()
         {
-            List<object> modules = new List<object>();
-
-            // add shell
-            ModulModel module = new ModulModel();
-            module.Id = "shell";
-            module.Title = "Website";
-            module.Description = "Website";
-            modules.Add(module);
-
-            foreach (var m in ModuleManager.ModuleInfos.Where(m => ModuleManager.IsActive(m.Id)))
+            try
             {
-                module = new ModulModel();
-                module.Id = m.Id;
+                List<ReadSettingModel> model = new List<ReadSettingModel>
+                {
+                    // add shell
+                    ReadSettingModel.Convert(GeneralSettings.Get().GetAsJsonModel())
+                };
 
-                // get displayname from manifest file root node
-                var xmldoc = m.Manifest.ManifestDoc;
+                foreach (var m in ModuleManager.ModuleInfos.Where(m => ModuleManager.IsActive(m.Id)))
+                {
+                    model.Add(ReadSettingModel.Convert(ModuleManager.GetModuleSettings(m.Id).GetAsJsonModel()));
+                }
 
-                if (xmldoc.Attribute("displayName") != null)
-                    module.Title = xmldoc.Attribute("displayName").Value;
-                else
-                    module.Title = m.Id;
-
-                module.Description = m.Manifest.Description;
-
-                modules.Add(module);
+                return Json(model, JsonRequestBehavior.AllowGet);
             }
+            catch (Exception ex)
+            {
+                throw;
+            }
+        }
 
-            return Json(modules, JsonRequestBehavior.AllowGet);
+        [JsonNetFilter]
+        [HttpGet]
+        public JsonResult GetSettingsByModuleId(string moduleId)
+        {
+            try
+            {
+                ReadSettingModel model = null;
+
+                if (moduleId == "shell")
+                {
+                    return Json(ReadSettingModel.Convert(GeneralSettings.Get().GetAsJsonModel()), JsonRequestBehavior.AllowGet);
+                }
+
+                return Json(ReadSettingModel.Convert(ModuleManager.GetModuleSettings(moduleId).GetAsJsonModel()), JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
         }
 
         public ActionResult Index()
@@ -67,53 +85,48 @@ namespace BExIS.Web.Shell.Controllers
             return View();
         }
 
-        // GET: Settings
-        [HttpGet]
         [JsonNetFilter]
-        public JsonResult Load(string id)
+        [HttpPut]
+        public JsonResult PutSettingsByModuleId(string moduleId, UpdateSettingModel model)
         {
-            if (id == "shell")
-            {
-                return Json(GeneralSettings.Get().GetAsJsonModel(), JsonRequestBehavior.AllowGet);
-            }
-
-            if (ModuleManager.IsActive(id))
-            {
-                var moduleSettings = ModuleManager.GetModuleSettings(id);
-
-                return Json(moduleSettings.GetAsJsonModel(), JsonRequestBehavior.AllowGet);
-            }
-
-            return Json(false, JsonRequestBehavior.AllowGet);
-        }
-
-        [HttpPost]
-        public JsonResult Save(JsonSettings settings)
-        {
-            //check incoming values
-            if (settings == null) throw new ArgumentNullException("settings");
-            if (string.IsNullOrEmpty(settings.Id)) throw new ArgumentNullException("id");
-            if (string.IsNullOrEmpty(settings.Description)) throw new ArgumentNullException("Description");
-            if (settings.Entries == null) throw new ArgumentNullException("entry");
-
             try
             {
-                if (settings.Id == "shell")
+                if (moduleId == "shell")
                 {
-                    GeneralSettings.Get().Update(settings);
-                }
+                    GeneralSettings settings = GeneralSettings.Get();
 
-                if (ModuleManager.IsActive(settings.Id))
+                    var json = new JsonSettings()
+                    {
+                        Id = moduleId,
+                        Name = model.Name,
+                        Description = model.Description,
+                        Entries = model.Entries
+                    };
+
+                    settings.Update(json);
+
+                    return Json(ReadSettingModel.Convert(settings.GetAsJsonModel()), JsonRequestBehavior.AllowGet);
+                }
+                else
                 {
-                    var moduleSettings = ModuleManager.GetModuleSettings(settings.Id);
-                    moduleSettings.Update(settings);
-                }
+                    ModuleSettings settings = ModuleManager.GetModuleSettings(moduleId);
 
-                return Json(true);
+                    var json = new JsonSettings()
+                    {
+                        Id = moduleId,
+                        Name = model.Name,
+                        Description = model.Description,
+                        Entries = model.Entries
+                    };
+
+                    settings.Update(json);
+
+                    return Json(ReadSettingModel.Convert(settings.GetAsJsonModel()), JsonRequestBehavior.AllowGet);
+                }
             }
             catch (Exception ex)
             {
-                throw ex;
+                throw;
             }
         }
     }
