@@ -9,9 +9,9 @@
 }
 
 <div >
-    <ol class="breadcrumb myBreadCrump">
+    <ol class="breadcrumb myBreadCrumb">
         @{
-            if (title != "Home")
+            if (title.ToLower().Trim() != "home")
             {
                 <li><a class="anchor" href="/">Home</a></li>
             }
@@ -24,7 +24,7 @@
 
 
 <style>
-    .myBreadCrump {
+    .myBreadCrumb {
         background-color: white !important;
         padding: 5pt;
         color: #959595;

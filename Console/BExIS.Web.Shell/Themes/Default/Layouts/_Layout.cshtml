@@ -21,10 +21,8 @@
     </style>
 
     @Styles.Render("~/Content/css")
-    @Scripts.Render("~/bundles/modernizr")
+    @*@Scripts.Render("~/bundles/modernizr")*@
     @Styles.Render("~/bundles/general_bexis")
-
-    @Scripts.Render("~/bundles/modernizr")
 
     @Scripts.Render("~/bundles/jquery")
     @Scripts.Render("~/bundles/jqueryval")
@@ -46,10 +44,10 @@
         @*pass the ModuleManger.ExportTree to the layout's menu view, it must be populated by now!*@
         @Html.RenderAuto("Menu")
 
-        <div id="information-container" class="container-fluid">
+        <div id="information-container" class="container-fluid" style="display:none">
             @*<a href="#information" data-toggle="collapse" style="color: white">@ViewBag.Title <i class="fa fa-angle-double-down"></i></a>*@
             <div class="collapse" id="information">
-                <div class="container" style="padding: 0pt 48pt 24pt 48pt; text-align: justify;">
+                <div class="container" style="padding: 0pt; text-align: justify;">
                     @RenderSection("Information", false)
                 </div>
             </div>
