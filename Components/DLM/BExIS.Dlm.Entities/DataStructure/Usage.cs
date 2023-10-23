@@ -1,4 +1,5 @@
 ﻿using BExIS.Dlm.Entities.Common;
+using BExIS.Dlm.Entities.Meanings;
 using System.Collections.Generic;
 
 /// <summary>
@@ -51,6 +52,7 @@ namespace BExIS.Dlm.Entities.DataStructure
         public virtual ICollection<Constraint> VariableConstraints { get; set; }
 
         public virtual ICollection<MissingValue> MissingValues { get; set; } // 0..1
+        public virtual ICollection<Meaning> Meanings { get; set; } // 0..1
 
         public virtual int DisplayPatternId { get; set; }
     }

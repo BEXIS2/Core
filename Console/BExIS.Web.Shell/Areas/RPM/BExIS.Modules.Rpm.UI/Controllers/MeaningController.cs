@@ -29,7 +29,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
         [HttpGet]
         public JsonResult Get()
         {
-            using (var _meaningManager = new meaningManager())
+            using (var _meaningManager = new MeaningManager())
             {
                 List<Meaning> res = _meaningManager.getMeanings();
                 return Json(res, JsonRequestBehavior.AllowGet);
@@ -45,7 +45,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
         {
             try { 
 
-                using (var _meaningManager = new meaningManager())
+                using (var _meaningManager = new MeaningManager())
                 {
                     Meaning res = _meaningManager.addMeaning(data);
                     return Json(res);
@@ -67,7 +67,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
         {
             try
             {
-                using (var _meaningManager = new meaningManager())
+                using (var _meaningManager = new MeaningManager())
                 {
                     Meaning res = _meaningManager.editMeaning(data);
                     return Json(res);
@@ -88,7 +88,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
             try
             {
 
-                using (var _meaningManager = new meaningManager())
+                using (var _meaningManager = new MeaningManager())
                 {
                     _meaningManager.deleteMeaning(id);
                     return Json(true);
@@ -111,7 +111,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
         [HttpGet]
         public JsonResult GetLinks()
         {
-            using (var _meaningManager = new meaningManager())
+            using (var _meaningManager = new MeaningManager())
             {
                 List<ExternalLink> res = _meaningManager.getExternalLinks();
                 return Json(res, JsonRequestBehavior.AllowGet);
@@ -126,7 +126,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
             try
             {
 
-                using (var _meaningManager = new meaningManager())
+                using (var _meaningManager = new MeaningManager())
                 {
                     ExternalLink res = _meaningManager.addExternalLink(data);
                     return Json(res);
@@ -146,7 +146,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
         {
             try
             {
-                using (var _meaningManager = new meaningManager())
+                using (var _meaningManager = new MeaningManager())
                 {
                     ExternalLink res = _meaningManager.editExternalLink(data);
                     return Json(res);
@@ -169,7 +169,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
             try
             {
 
-                using (var _meaningManager = new meaningManager())
+                using (var _meaningManager = new MeaningManager())
                 {
                     _meaningManager.deleteExternalLink(id);
                     return Json(true);

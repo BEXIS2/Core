@@ -323,7 +323,7 @@ namespace BExIS.IO.Transform.Input
             }
             if (fri.VariablesStartRow <= 0)
             {
-                this.ErrorMessages.Add(new Error(ErrorType.Other, "Startrow of Variable can´t be 0"));
+                this.ErrorMessages.Add(new Error(ErrorType.Other, "Startrow of Variables can´t be 0"));
             }
             if (fri.DataStartRow <= 0)
             {

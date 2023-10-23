@@ -40,7 +40,7 @@ namespace BExIS.Dlm.Entities.Meanings.Tests
         public void createMeaning()
         {
             new TestSetupHelper(WebApiConfig.Register, false);
-            ImeaningManagr _meaningManager = new meaningManager();
+            ImeaningManagr _meaningManager = new MeaningManager();
 
             String Name = "meaning name for unit test";
             Name.Should().NotBeNull();
@@ -96,7 +96,7 @@ namespace BExIS.Dlm.Entities.Meanings.Tests
         {
             new TestSetupHelper(WebApiConfig.Register, false);
 
-            ImeaningManagr _meaningManager = new meaningManager();
+            ImeaningManagr _meaningManager = new MeaningManager();
 
             String uri = Convert.ToString("htpp://testUri.com");
             uri.Should().NotBeNullOrEmpty();

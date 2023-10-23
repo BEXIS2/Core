@@ -29,7 +29,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
         public MeaningsAdminController()
         {
             if (this._meaningManager == null)
-               this._meaningManager = new meaningManager();
+               this._meaningManager = new MeaningManager();
         }
 
         [BExISApiAuthorize]

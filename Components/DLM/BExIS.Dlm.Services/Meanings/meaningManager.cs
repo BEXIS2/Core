@@ -10,12 +10,12 @@ using Newtonsoft.Json;
 
 namespace BExIS.Dlm.Services.Meanings
 {
-    public class meaningManager : ImeaningManagr 
+    public class MeaningManager : ImeaningManagr 
     {
         // Track whether Dispose has been called.
         private bool disposedValue;
 
-        public meaningManager()
+        public MeaningManager()
         {
         }
 
@@ -171,7 +171,7 @@ namespace BExIS.Dlm.Services.Meanings
                     meaning.Related_meaning = related_meanings;
                     meaning.Selectable = selectable;
                     meaning.ShortName = ShortName;
-                    meaning.Variable = variables;
+                    meaning.Variables = variables;
                     meaning.ExternalLink = externalLinks;
                     meaning.Description = Description;
                     meaning.Approved = approved;

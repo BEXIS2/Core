@@ -484,7 +484,7 @@ namespace BExIS.IO.Transform.Input
                         }
                         else
                         {
-                            errors.Add(new Error(ErrorType.Datastructure, "Error with name of Variable"));
+                            errors.Add(new Error(ErrorType.Datastructure, "Error with name of Variables"));
                         }
                     }
                 }//for
