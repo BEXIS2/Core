@@ -4,9 +4,11 @@ using BExIS.Dlm.Entities.Data;
 using BExIS.Dlm.Entities.DataStructure;
 using BExIS.Dlm.Services.Data;
 using BExIS.Dlm.Services.DataStructure;
+using BExIS.Dlm.Services.Meanings;
 using BExIS.IO;
 using BExIS.IO.DataType.DisplayPattern;
 using BExIS.IO.Transform.Input;
+using BExIS.Modules.Rpm.UI.Helpers;
 using BExIS.Modules.Rpm.UI.Models;
 using BExIS.Modules.Rpm.UI.Models.DataStructure;
 using BExIS.Security.Entities.Authorization;
@@ -491,7 +493,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
 
                     // varaible template
                     var templates = strutcureAnalyzer.SuggestTemplate(var.Name, var.Unit.Id, var.DataType.Id, 0.5);
-                        templates.ForEach(t => var.PossibleTemplates.Add(new VariableTemplateItem(t.Id, t.Label,new List<string>() {t.Unit.Name}, t.Unit.AssociatedDataTypes.Select(x => x.Name).ToList(), "detect")));
+                        templates.ForEach(t => var.PossibleTemplates.Add(new VariableTemplateItem(t.Id, t.Label,new List<string>() {t.Unit.Name}, t.Unit.AssociatedDataTypes.Select(x => x.Name).ToList(),t.Meanings.Select(x => x.Name).ToList(),null, "detect")));
 
                     if (var.PossibleTemplates.Any())
                         var.Template = var.PossibleTemplates.FirstOrDefault();
@@ -695,7 +697,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                     foreach (var variableTemplate in variableTemplates)
                     {
                         List<string> dataTypes = new List<string>();
-                        
+               
                         var unit = units.FirstOrDefault(u=> u.Id.Equals(variableTemplate.Unit.Id));
 
                         // get possible datatypes
@@ -707,6 +709,10 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                         vti.Text = variableTemplate.Label;
                         if (unit!=null) vti.Units = new List<string>() { unit.Abbreviation };
                         vti.DataTypes = dataTypes;
+
+                        // meanings
+                        vti.Meanings = variableTemplate.Meanings.ToList().Select(m=>m.Name).ToList();
+
                         vti.Group = "other";
                         list.Add(vti);
                     }
@@ -715,6 +721,17 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                 // get default missing values
                 return Json(list.OrderBy(i => i.Group), JsonRequestBehavior.AllowGet);
             }
+        }
+
+        [JsonNetFilter]
+        public JsonResult GetMeanings()
+        {
+            VariableHelper helper = new VariableHelper();
+            List<MeaningItem> list = helper.GetMeanings();
+
+            // get default missing values
+            return Json(list.OrderBy(i => i.Group), JsonRequestBehavior.AllowGet);
+
         }
 
         private List<ListItem> getDelimeters()

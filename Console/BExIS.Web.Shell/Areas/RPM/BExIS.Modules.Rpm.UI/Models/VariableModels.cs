@@ -103,6 +103,8 @@ namespace BExIS.Modules.Rpm.UI.Models
 
         public List<string> DataTypes { get; set; }
         public List<string> Units { get; set; }
+        public List<string> Meanings { get; set; }
+        public List<string> Constraints { get; set; }
 
         public VariableTemplateItem()
         {
@@ -110,15 +112,20 @@ namespace BExIS.Modules.Rpm.UI.Models
             Text = "";
             Group = "";
             DataTypes = new List<string>();
+            Units = new List<string>();
+            Meanings = new List<string>();
+            Constraints = new List<string>();
         }
 
-        public VariableTemplateItem(long key, string value,  List<string> units, List<string> dataTypes, string group = "")
+        public VariableTemplateItem(long key, string value,  List<string> units, List<string> dataTypes,List<string> meanings, List<string> constraints = null, string group = "")
         {
             Id = key;
             Text = value;
             Group = group;
             DataTypes = dataTypes;
             Units = units;
+            Meanings = meanings;
+            Constraints = constraints;
         }
 
     }

@@ -141,22 +141,12 @@ namespace BExIS.Modules.Rpm.UI.Controllers
         [JsonNetFilter]
         public JsonResult GetMeanings()
         {
-            using (var meaningsManager = new MeaningManager())
-            {
-                var meanings = meaningsManager.getMeanings();
-                List<MeaningItem> list = new List<MeaningItem>();
+            VariableHelper helper = new VariableHelper();
+            List<MeaningItem> list = helper.GetMeanings();
 
-                if (meanings.Any())
-                {
-                    foreach (var item in meanings)
-                    {
-                        list.Add(new MeaningItem(item.Id, item.Name));
-                    }
-                }
+            // get default missing values
+            return Json(list.OrderBy(i => i.Group), JsonRequestBehavior.AllowGet);
 
-                // get default missing values
-                return Json(list.OrderBy(i => i.Group), JsonRequestBehavior.AllowGet);
-            }
         }
     }
 }

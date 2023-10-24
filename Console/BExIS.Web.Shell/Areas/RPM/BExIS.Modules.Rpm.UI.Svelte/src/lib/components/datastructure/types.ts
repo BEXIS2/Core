@@ -84,6 +84,7 @@ export class VariableInstanceModel extends VariableModel {
 
 	public constructor() {
 		super()
+		this.meanings = []
 		this.isOptional = false
 		this.template = undefined
 		this.isKey = false
@@ -101,4 +102,6 @@ export interface unitListItemType extends listItemType {
 export interface templateListItemType extends listItemType {
 	dataTypes:string[]
 	units:string[]	
+	meanings:string[]
+	constraints:string[]	
 }
