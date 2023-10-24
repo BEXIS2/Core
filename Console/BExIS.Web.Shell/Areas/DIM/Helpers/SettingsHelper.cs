@@ -21,20 +21,42 @@ namespace BExIS.Modules.Dim.UI.Helpers
             _settings = ModuleManager.GetModuleSettings("dim");
         }
 
-        public DataCiteDOICredentials getDataCiteDOICredentials()
+        public DataCiteDOICredentials GetDataCiteDOICredentials()
         {
             var entry = _settings.GetValueByKey("dataCiteDOICredentials") as Entry;
 
             return JsonConvert.DeserializeObject<DataCiteDOICredentials>(entry.Value);
         }
 
+        public DataCiteDOIPlaceholders GetDataCiteDOIMappings()
+        {
+            var entry = _settings.GetValueByKey("dataCiteDOIMappings") as Entry;
 
-        public bool KeyExist(string key)
+            return JsonConvert.DeserializeObject<DataCiteDOIMappings>(entry.Value);
+        }
+
+        public DataCiteDOIPlaceholders GetDataCiteDOIPlaceholders()
+        {
+            var entry = _settings.GetValueByKey("dataCiteDOIPlaceholders") as Entry;
+
+            return JsonConvert.DeserializeObject<DataCiteDOIPlaceholders>(entry.Value);
+        }
+
+        public string GetDataCiteProperty(string propertyName)
         {
             XDocument settings = XDocument.Load(filePath);
-            XElement element = XmlUtility.GetXElementByAttribute("entry", "name", key.ToLower(), settings);
+            List<XElement> datacite = settings.Elements("datacite").ToList();
 
-            return element != null ? true : false;
+            return datacite.Select(m => m.Attribute(propertyName).Value).FirstOrDefault();
+        }
+
+        public List<DataCiteDOISettingsItem> GetDataCiteSettings(string name)
+        {
+            XDocument settings = XDocument.Load(filePath);
+            List<XElement> mappings = XmlUtility.GetXElementByNodeName(name, settings).Descendants().ToList();
+
+            //return mappings.Select(m => new DataCiteMapping(m.Attribute("name")?.Value, m.Attribute("type")?.Value, m.Attribute("value")?.Value, m.Attribute("partyAttributes")?.Value.Split(';').Select(part => part.Split('=')).Where(part => part.Length == 2).ToDictionary(sp => sp[0], sp => sp[1]))).ToList();
+            return mappings.Select(m => new DataCiteDOISettingsItem(m.Attribute("name")?.Value, m.Attribute("type")?.Value, m.Attribute("value")?.Value, m.Attribute("extra")?.Value)).ToList();
         }
 
         public string GetValue(string key)
@@ -48,21 +70,12 @@ namespace BExIS.Modules.Dim.UI.Helpers
             return value;
         }
 
-        public List<DataCiteDOISettingsItem> GetDataCiteSettings(string name)
+        public bool KeyExist(string key)
         {
             XDocument settings = XDocument.Load(filePath);
-            List<XElement> mappings = XmlUtility.GetXElementByNodeName(name, settings).Descendants().ToList();
+            XElement element = XmlUtility.GetXElementByAttribute("entry", "name", key.ToLower(), settings);
 
-            //return mappings.Select(m => new DataCiteMapping(m.Attribute("name")?.Value, m.Attribute("type")?.Value, m.Attribute("value")?.Value, m.Attribute("partyAttributes")?.Value.Split(';').Select(part => part.Split('=')).Where(part => part.Length == 2).ToDictionary(sp => sp[0], sp => sp[1]))).ToList();
-            return mappings.Select(m => new DataCiteDOISettingsItem(m.Attribute("name")?.Value, m.Attribute("type")?.Value, m.Attribute("value")?.Value, m.Attribute("extra")?.Value)).ToList();
-        }
-
-        public string GetDataCiteProperty(string propertyName)
-        {
-            XDocument settings = XDocument.Load(filePath);
-            List<XElement> datacite = settings.Elements("datacite").ToList();
-
-            return datacite.Select(m => m.Attribute(propertyName).Value).FirstOrDefault();
+            return element != null ? true : false;
         }
     }
 }

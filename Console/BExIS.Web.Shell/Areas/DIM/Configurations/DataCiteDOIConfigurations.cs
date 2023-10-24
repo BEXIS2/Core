@@ -8,21 +8,37 @@ namespace BExIS.Modules.Dim.UI.Configurations
 {
     public class DataCiteDOICredentials
     {
+        [JsonProperty("host")]
+        public string Host { get; set; }
+
+        [JsonProperty("password")]
+        public string Password { get; set; }
+
         [JsonProperty("username")]
         public string Username { get; set; }
-        [JsonProperty("password")]
-
-        public string Password { get; set; }
-        [JsonProperty("host")]
-
-        public string Host { get; set; }
     }
 
-    public class DataCiteDOIConfigurastionItem
+    public class DataCiteDOIMappings
     {
-        public string Name { get; set; }
-        public string Type { get; set; }
-        public string Value { get; set; }
-        public string Extra { get; set; }
+        [JsonProperty("url")]
+        public string URL { get; set; }
+
+        [JsonProperty("version")]
+        public string Version { get; set; }
+    }
+
+    public class DataCiteDOIPlaceholders
+    {
+        [JsonProperty("datasetId")]
+        public string DatasetId { get; set; }
+
+        [JsonProperty("versionId")]
+        public string VersionId { get; set; }
+
+        [JsonProperty("versionName")]
+        public string VersionName { get; set; }
+
+        [JsonProperty("versionNumber")]
+        public string VersionNumber { get; set; }
     }
 }
