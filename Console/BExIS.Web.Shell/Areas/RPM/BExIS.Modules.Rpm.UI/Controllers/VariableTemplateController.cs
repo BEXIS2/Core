@@ -63,7 +63,8 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                             variableTemplate.DataType,
                             variableTemplate.Unit,
                             variableTemplate.Description,
-                            variableTemplate.DefaultValue);
+                            variableTemplate.DefaultValue,
+                            variableTemplate.Meanings);
                 }
                 else
                 {
