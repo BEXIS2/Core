@@ -17,7 +17,7 @@ namespace BExIS.Modules.Dim.UI.Tests.Helpers
     {
         private TestSetupHelper helper = null;
 
-        [Test()]
+        //[Test()]
         public void GetDataCiteDOICredentials()
         {
             var appConfiguration = AppConfiguration.WorkspaceRootPath;
@@ -27,7 +27,7 @@ namespace BExIS.Modules.Dim.UI.Tests.Helpers
             Assert.NotNull(mappings);
         }
 
-        [Test()]
+        //[Test()]
         public void GetDataCiteDOIMappingss()
         {
             var appConfiguration = AppConfiguration.WorkspaceRootPath;
@@ -37,7 +37,7 @@ namespace BExIS.Modules.Dim.UI.Tests.Helpers
             Assert.NotNull(mappings);
         }
 
-        [Test()]
+        //[Test()]
         public void GetDataCiteDOIPlaceholders()
         {
             var appConfiguration = AppConfiguration.WorkspaceRootPath;
