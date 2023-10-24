@@ -148,19 +148,24 @@ namespace BExIS.Modules.Rpm.UI.Models
     public class MeaningItem
     {
         public long Id { get; set; }
-        public string Name { get; set; }
+        public string Text { get; set; }
+        public string Group { get; set; }
+
 
         public MeaningItem()
         {
             Id = 0;
-            Name = "";
+            Text = "";
+            Group = "";
 
         }
 
-        public MeaningItem(long _id, string _name)
+        public MeaningItem(long _id, string _name, string _group="")
         {
             Id = _id;
-            Name = _name;
+            Text = _name;
+            Group = _group;
+
         }
 
     }

@@ -12,6 +12,7 @@ export const getMeanings = async () => {
 	}
 };
 
+
 export const getLinks = async () => {
 	try {
 		const response = await Api.get('/rpm/Meaning/getlinks');

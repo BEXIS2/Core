@@ -1,6 +1,8 @@
 ﻿using BExIS.App.Testing;
 using BExIS.Dlm.Entities.DataStructure;
+using BExIS.Dlm.Entities.Meanings;
 using BExIS.Dlm.Services.DataStructure;
+using BExIS.Dlm.Services.Meanings;
 using BExIS.Utils.Config;
 using FluentAssertions;
 using NUnit.Framework;
@@ -34,10 +36,13 @@ namespace BExIS.Dlm.Tests.Services.DataStructure
         {
             using (IUnitOfWork uow = this.GetUnitOfWork())
             {
+                IRepository<Meaning> repoM = uow.GetRepository<Meaning>();
                 IRepository<VariableTemplate> repoVT = uow.GetRepository<VariableTemplate>();
                 IRepository<VariableInstance> repoVI = uow.GetRepository<VariableInstance>();
                 IRepository<StructuredDataStructure> repoSDS = uow.GetRepository<StructuredDataStructure>();
 
+
+                repoM.Get().ToList().ForEach(m => repoM.Delete(m));
                 repoVT.Get().ToList().ForEach(v => repoVT.Delete(v));
                 repoVI.Get().ToList().ForEach(v => repoVI.Delete(v));
 
@@ -73,7 +78,6 @@ namespace BExIS.Dlm.Tests.Services.DataStructure
                     "TestVariableTemplate",
                     dataType,
                     unit,
-                    false,
                     "TestVariableTemplate Description",
                     "xyz"
                     );
@@ -112,7 +116,6 @@ namespace BExIS.Dlm.Tests.Services.DataStructure
                     "",
                     dataType,
                     unit,
-                    false,
                     "TestVariableTemplate Description",
                     "xyz"
                     )
@@ -141,7 +144,6 @@ namespace BExIS.Dlm.Tests.Services.DataStructure
                     "TestVariableTemplate",
                     null,
                     unit,
-                    false,
                     "TestVariableTemplate Description",
                     "xyz"
                     )
@@ -151,6 +153,46 @@ namespace BExIS.Dlm.Tests.Services.DataStructure
                 Assert.That(ex.ParamName, Is.EqualTo("dataType"));
             }
         }
+
+        [Test()]
+        public void CreateVariableTemplate_WithNewMeaning_VariableTemplate()
+        {
+            using (var variableManager = new VariableManager())
+            using (var dataTypeManager = new DataTypeManager())
+            using (var unitManager = new UnitManager())
+            using (var meaningManager = new MeaningManager())
+            {
+                //Arrange
+                var unit = unitManager.Repo.Get().FirstOrDefault();
+                Assert.IsNotNull(unit, "unit not exist");
+
+                var dataType = dataTypeManager.Repo.Get().FirstOrDefault();
+                Assert.IsNotNull(dataType, "datatype not exist");
+
+
+                var meaning = new Meaning();
+                meaning.Name = "Test";
+                meaning.Description = "Test";
+                meaning.Selectable = Selectable.yes;
+                meaning = meaningManager.addMeaning(meaning);
+
+
+                var result =  variableManager.CreateVariableTemplate(
+                    "TestVariableTemplate",
+                    dataType,
+                    unit,
+                    "TestVariableTemplate Description",
+                    "xyz",
+                    new List<Meaning>() { meaning }
+                    );
+               
+
+                //Assert
+                Assert.NotNull(result);
+            }
+        }
+
+        
 
         [Test()]
         public void UpdateVariableTemplate_ValidParameters_UpdatedVariableTemplate()
@@ -171,7 +213,6 @@ namespace BExIS.Dlm.Tests.Services.DataStructure
                     "TestVariableTemplate",
                     dataType,
                     unit,
-                    false,
                     "TestVariableTemplate Description",
                     "xyz"
                     );
@@ -248,7 +289,6 @@ namespace BExIS.Dlm.Tests.Services.DataStructure
                     "TestVariableTemplate",
                     dataType,
                     unit,
-                    false,
                     "TestVariableTemplate Description",
                     "xyz"
                     );
@@ -260,6 +300,45 @@ namespace BExIS.Dlm.Tests.Services.DataStructure
                 //Assert
 
                 Assert.IsTrue(result);
+            }
+        }
+
+        [Test()]
+        public void DeleteVariableTemplate_WithMeaning_true()
+        {
+            using (var variableManager = new VariableManager())
+            using (var dataTypeManager = new DataTypeManager())
+            using (var unitManager = new UnitManager())
+            using (var meaningManager = new MeaningManager())
+            {
+                //Arrange
+                var unit = unitManager.Repo.Get().FirstOrDefault();
+                Assert.IsNotNull(unit, "unit not exist");
+
+                var dataType = dataTypeManager.Repo.Get().FirstOrDefault();
+                Assert.IsNotNull(dataType, "datatype not exist");
+
+                var meaning = new Meaning();
+                meaning.Name = "Test";
+                meaning.Description = "Test";
+                meaning.Selectable = Selectable.yes;
+                meaning = meaningManager.addMeaning(meaning);
+
+
+                var varTemp = variableManager.CreateVariableTemplate(
+                    "TestVariableTemplate",
+                    dataType,
+                    unit,
+                    "TestVariableTemplate Description",
+                    "xyz",
+                    new List<Meaning>() { meaning }
+                    );
+
+                // act        
+                var result = variableManager.DeleteVariableTemplate(varTemp.Id);
+
+                //Assert
+                Assert.That(result, Is.EqualTo(true));
             }
         }
 
@@ -283,7 +362,6 @@ namespace BExIS.Dlm.Tests.Services.DataStructure
                     "TestVariableTemplate",
                     dataType,
                     unit,
-                    false,
                     "TestVariableTemplate Description",
                     "xyz"
                     );
@@ -336,7 +414,6 @@ namespace BExIS.Dlm.Tests.Services.DataStructure
                     "TestVariableTemplate",
                     dataType,
                     unit,
-                    false,
                     "TestVariableTemplate Description",
                     "xyz"
                     );
@@ -389,7 +466,6 @@ namespace BExIS.Dlm.Tests.Services.DataStructure
                     "TestVariableTemplate",
                     dataType,
                     unit,
-                    false,
                     "TestVariableTemplate Description",
                     "xyz"
                     );
@@ -412,6 +488,7 @@ namespace BExIS.Dlm.Tests.Services.DataStructure
                     dataStructure.Id,
                     true,
                     false,
+                    1,
                     variableTemplate.Id
                     ));
 
@@ -441,7 +518,6 @@ namespace BExIS.Dlm.Tests.Services.DataStructure
                     "TestVariableTemplate",
                     dataType,
                     unit,
-                    false,
                     "TestVariableTemplate Description",
                     "xyz"
                     );
@@ -464,6 +540,7 @@ namespace BExIS.Dlm.Tests.Services.DataStructure
                    dataStructure.Id,
                    true,
                    false,
+                   1,
                    variableTemplate.Id
                    ));
 
@@ -494,7 +571,6 @@ namespace BExIS.Dlm.Tests.Services.DataStructure
                     "TestVariableTemplate",
                     dataType,
                     unit,
-                    false,
                     "TestVariableTemplate Description",
                     "xyz"
                     );
@@ -508,6 +584,7 @@ namespace BExIS.Dlm.Tests.Services.DataStructure
                    0,
                    true,
                    false,
+                   1,
                    variableTemplate.Id
                    ));
 
@@ -550,7 +627,8 @@ namespace BExIS.Dlm.Tests.Services.DataStructure
                    unit,
                    dataStructure.Id,
                    true,
-                   false
+                   false,
+                   1
                    );
 
                 //Assert
@@ -580,7 +658,6 @@ namespace BExIS.Dlm.Tests.Services.DataStructure
                     "TestVariableTemplate",
                     dataType,
                     unit,
-                    false,
                     "TestVariableTemplate Description",
                     "xyz"
                     );
@@ -603,6 +680,7 @@ namespace BExIS.Dlm.Tests.Services.DataStructure
                     dataStructure.Id,
                     true,
                     false,
+                    1,
                     variableTemplate.Id
                     );
 
@@ -645,7 +723,6 @@ namespace BExIS.Dlm.Tests.Services.DataStructure
                     "TestVariableTemplate",
                     dataType,
                     unit,
-                    false,
                     "TestVariableTemplate Description",
                     "xyz"
                     );
@@ -667,7 +744,8 @@ namespace BExIS.Dlm.Tests.Services.DataStructure
                     variableTemplate.Unit,
                     dataStructure.Id,
                     true,
-                    false,
+                    true,
+                    1,
                     variableTemplate.Id
                     );
 

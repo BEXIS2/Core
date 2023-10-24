@@ -1,5 +1,7 @@
 ﻿using BExIS.Dlm.Entities.DataStructure;
+using BExIS.Dlm.Entities.Meanings;
 using System;
+using System.Collections.Generic;
 using Vaiona.Persistence.Api;
 
 namespace BExIS.Dlm.Services.DataStructure
@@ -93,7 +95,7 @@ namespace BExIS.Dlm.Services.DataStructure
         /// <param name="defaultValue"></param>
         /// <returns>VariableTemplate</returns>
         /// <exception cref="ArgumentNullException"></exception>
-        public VariableTemplate CreateVariableTemplate(string name, DataType dataType, Unit unit, string description="",  string defaultValue="")
+        public VariableTemplate CreateVariableTemplate(string name, DataType dataType, Unit unit, string description="",  string defaultValue="", List<Meaning> meanings = null)
         {
             // check incoming varaibles
             if (string.IsNullOrEmpty(name)) throw new ArgumentNullException(nameof(name), "Name is empty but is required.");
@@ -107,6 +109,8 @@ namespace BExIS.Dlm.Services.DataStructure
                 DefaultValue = defaultValue,
                 Unit = unit
               };
+
+            if (meanings != null) e.Meanings = meanings;
 
             using (IUnitOfWork uow = this.GetUnitOfWork())
             {
@@ -141,6 +145,7 @@ namespace BExIS.Dlm.Services.DataStructure
                 merged.Label = entity.Label;
                 merged.MinCardinality = entity.MinCardinality;
                 merged.MaxCardinality = entity.MaxCardinality;
+                merged.Meanings = entity.Meanings;
 
                 repo.Put(merged);
                 uow.Commit();
@@ -160,6 +165,14 @@ namespace BExIS.Dlm.Services.DataStructure
                 IRepository<VariableTemplate> repo = uow.GetRepository<VariableTemplate>();
 
                 var entity = repo.Get(id);
+
+                if (entity?.Meanings.Count > 0)
+                {
+                    entity.Meanings = new List<Meaning>();
+                    repo.Put(entity);
+                    uow.Commit();
+                }
+
                 repo.Delete(entity);
 
                 uow.Commit();
@@ -170,6 +183,12 @@ namespace BExIS.Dlm.Services.DataStructure
 
         // add constraint
         // remove constraint
+
+        // add meanings
+
+
+
+        // remove meanings
 
         #endregion
 

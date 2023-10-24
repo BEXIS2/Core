@@ -46,6 +46,7 @@ class VariableModel{
     dataType: listItemType| undefined;
     unit: unitListItemType| undefined;;
 				missingValues: missingValueType[];
+				meanings: listItemType[];
 				approved: boolean;
 				inUse: boolean;
 
@@ -57,6 +58,7 @@ class VariableModel{
 					this.dataType = undefined//{id:0,text:"",group:""}
 					this.unit = undefined
 					this.missingValues = [];
+					this.meanings = []
 					this.approved = false;
 					this.inUse = false;
 				}

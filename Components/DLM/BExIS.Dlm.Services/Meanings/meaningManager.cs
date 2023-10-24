@@ -29,7 +29,7 @@ namespace BExIS.Dlm.Services.Meanings
                 {
                     foreach (ExternalLink ext_link in meaning.ExternalLink)
                     {
-                        if (this.getExternalLink(ext_link.URI) == null)
+                        if (!string.IsNullOrEmpty(ext_link.Name) && !string.IsNullOrEmpty(ext_link.URI) && this.getExternalLink(ext_link.URI) == null)
                         {
                             if(ext_link.Id==0) this.addExternalLink(ext_link);
                         }

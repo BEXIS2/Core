@@ -94,8 +94,6 @@
 		// selection needs to filter
 		updateSelectableLinks()
 
-
-
 		list = [...newLinks,...existingLinks];
 
 		loading = false;
