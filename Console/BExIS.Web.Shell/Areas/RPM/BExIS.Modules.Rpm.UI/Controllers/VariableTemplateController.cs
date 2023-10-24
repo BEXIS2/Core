@@ -1,5 +1,6 @@
 ﻿using BExIS.App.Bootstrap.Attributes;
 using BExIS.Dlm.Services.DataStructure;
+using BExIS.Dlm.Services.Meanings;
 using BExIS.Modules.Rpm.UI.Helpers;
 using BExIS.Modules.Rpm.UI.Models;
 using BExIS.UI.Helpers;
@@ -52,6 +53,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
 
             using (var variableManager = new VariableManager())
             using (var missingValueManager = new MissingValueManager())
+            using (var meaningManager = new MeaningManager())
             {
 
                 if (variableTemplate.Id == 0)
@@ -79,7 +81,6 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                             missingValueManager.Create(missingValueItem.DisplayName, missingValueItem.Description, variableTemplate);
                     }
                 }
-
             }
             
             return Json(true);
@@ -128,6 +129,27 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                             unit.AssociatedDataTypes.Select(x => x.Name).ToList(),
                             "other"
                             ));
+                    }
+                }
+
+                // get default missing values
+                return Json(list.OrderBy(i => i.Group), JsonRequestBehavior.AllowGet);
+            }
+        }
+
+        [JsonNetFilter]
+        public JsonResult GetMeanings()
+        {
+            using (var meaningsManager = new MeaningManager())
+            {
+                var meanings = meaningsManager.getMeanings();
+                List<MeaningItem> list = new List<MeaningItem>();
+
+                if (meanings.Any())
+                {
+                    foreach (var item in meanings)
+                    {
+                        list.Add(new MeaningItem(item.Id, item.Name));
                     }
                 }
 

@@ -10,12 +10,12 @@ using Newtonsoft.Json;
 
 namespace BExIS.Dlm.Services.Meanings
 {
-    public class meaningManager : ImeaningManagr 
+    public class MeaningManager : ImeaningManagr 
     {
         // Track whether Dispose has been called.
         private bool disposedValue;
 
-        public meaningManager()
+        public MeaningManager()
         {
         }
 
@@ -29,7 +29,7 @@ namespace BExIS.Dlm.Services.Meanings
                 {
                     foreach (ExternalLink ext_link in meaning.ExternalLink)
                     {
-                        if (this.getExternalLink(ext_link.URI) == null)
+                        if (!string.IsNullOrEmpty(ext_link.Name) && !string.IsNullOrEmpty(ext_link.URI) && this.getExternalLink(ext_link.URI) == null)
                         {
                             if(ext_link.Id==0) this.addExternalLink(ext_link);
                         }
@@ -60,7 +60,12 @@ namespace BExIS.Dlm.Services.Meanings
                     List<ExternalLink> externalLinks = uow.GetRepository<ExternalLink>().Get().Where(x => ExternalLink.Contains(x.Id.ToString())).ToList<ExternalLink>();
                     
                     IRepository<Meaning> repo = uow.GetRepository<Meaning>();
-                    List<Meaning> related_meanings = (List<Meaning>)repo.Get().Where(x => meaning_ids.Contains(x.Id.ToString())).ToList<Meaning>();
+                    List<Meaning> related_meanings = new List<Meaning>();
+                    if (meaning_ids != null)
+                    {
+                        related_meanings = (List<Meaning>)repo.Get().Where(x => meaning_ids.Contains(x.Id.ToString())).ToList<Meaning>();
+                    }
+
                     using (Meaning meaning = new Meaning(Name, ShortName, Description, selectable, approved, externalLinks, variables, related_meanings))
                     {
                         repo.Put(meaning);
@@ -171,7 +176,7 @@ namespace BExIS.Dlm.Services.Meanings
                     meaning.Related_meaning = related_meanings;
                     meaning.Selectable = selectable;
                     meaning.ShortName = ShortName;
-                    meaning.Variable = variables;
+                    meaning.Variables = variables;
                     meaning.ExternalLink = externalLinks;
                     meaning.Description = Description;
                     meaning.Approved = approved;

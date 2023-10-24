@@ -149,3 +149,5 @@ export const getVariableTemplates = async () => {
 		console.error(error);
 	}
 };
+
+

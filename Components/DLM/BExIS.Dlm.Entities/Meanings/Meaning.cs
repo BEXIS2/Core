@@ -22,7 +22,7 @@ namespace BExIS.Dlm.Entities.Meanings
             this.ShortName = meaning.ShortName;
             this.Description = meaning.Description;
             this.Selectable = meaning.Selectable;
-            this.Variable = meaning.Variable;
+            this.Variables = meaning.Variables;
             this.ExternalLink = meaning.ExternalLink;
             this.Related_meaning = meaning.Related_meaning;
         }
@@ -34,7 +34,7 @@ namespace BExIS.Dlm.Entities.Meanings
             this.Description = description;
             this.Selectable = Selectable;
             this.Approved = approved;
-            this.Variable = Variable;
+            this.Variables = Variable;
             this.ExternalLink = ExternalLink;
             this.Related_meaning = meaning;
         }
@@ -54,7 +54,7 @@ namespace BExIS.Dlm.Entities.Meanings
         public virtual IEnumerable<ExternalLink> ExternalLink { get; set; }
 
         [Required(ErrorMessage = "Must not be Empty")]
-        public virtual IEnumerable<Variable> Variable { get; set; }
+        public virtual IEnumerable<Variable> Variables { get; set; }
 
         public virtual IEnumerable<Meaning> Related_meaning { get; set; }
 

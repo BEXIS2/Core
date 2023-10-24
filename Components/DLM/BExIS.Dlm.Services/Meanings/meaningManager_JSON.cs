@@ -156,7 +156,7 @@ namespace BExIS.Dlm.Services.Meanings
                     meaning.Related_meaning = related_meanings;
                     meaning.Selectable = selectable;
                     meaning.ShortName = ShortName;
-                    meaning.Variable = variables;
+                    meaning.Variables = variables;
                     meaning.ExternalLink = externalLinks;
                     meaning.Description = Description;
                     meaning.Approved = approved;

@@ -17,6 +17,7 @@ namespace BExIS.Modules.Rpm.UI.Models
 
 
         public List<MissingValueItem> MissingValues { get; set; }
+        public List<MeaningItem> Meanings { get; set; }
 
         public VariableModel()
         {
@@ -27,6 +28,7 @@ namespace BExIS.Modules.Rpm.UI.Models
             DataType = new ListItem();
             Unit = new UnitItem();
             MissingValues = new List<MissingValueItem>();
+            Meanings = new List<MeaningItem>();
         }
     }
 
@@ -139,6 +141,31 @@ namespace BExIS.Modules.Rpm.UI.Models
             Id = _id;
             DisplayName = _displayName;
             Description = _description;
+        }
+
+    }
+
+    public class MeaningItem
+    {
+        public long Id { get; set; }
+        public string Text { get; set; }
+        public string Group { get; set; }
+
+
+        public MeaningItem()
+        {
+            Id = 0;
+            Text = "";
+            Group = "";
+
+        }
+
+        public MeaningItem(long _id, string _name, string _group="")
+        {
+            Id = _id;
+            Text = _name;
+            Group = _group;
+
         }
 
     }

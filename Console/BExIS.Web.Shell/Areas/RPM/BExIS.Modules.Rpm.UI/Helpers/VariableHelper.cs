@@ -1,5 +1,6 @@
 ﻿using BExIS.Dlm.Entities.DataStructure;
 using BExIS.Dlm.Services.DataStructure;
+using BExIS.Dlm.Services.Meanings;
 using BExIS.IO.DataType.DisplayPattern;
 using BExIS.Modules.Rpm.UI.Models;
 using BExIS.Modules.Rpm.UI.Models.DataStructure;
@@ -38,7 +39,8 @@ namespace BExIS.Modules.Rpm.UI.Helpers
                 }
             }
 
-            //variableTemplate.VariableConstraints = _model.VariableConstraints;
+
+            variableTemplate.Meanings?.ToList().ForEach(m => model.Meanings.Add(new MeaningItem(m.Id, m.Name)));
 
             return model;
         }
@@ -47,6 +49,7 @@ namespace BExIS.Modules.Rpm.UI.Helpers
         {
             using (var unitManager = new UnitManager())
             using (var dataTypeManager = new DataTypeManager())
+            using (var meaningManager = new MeaningManager())
             {
 
                 var variableTemplate = new VariableTemplate();
@@ -70,7 +73,14 @@ namespace BExIS.Modules.Rpm.UI.Helpers
                 variableTemplate.DataType = dataType;
                 variableTemplate.Unit = unit;
 
-                //variableTemplate.VariableConstraints = _model.VariableConstraints;
+                if (_model.Meanings.Any())
+                {
+                    foreach (var item in _model.Meanings)
+                    {
+                        var meaning = meaningManager.getMeaning(item.Id);
+                        variableTemplate.Meanings.Add(meaning);
+                    }
+                }
 
                 return variableTemplate;
             }

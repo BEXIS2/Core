@@ -92,7 +92,7 @@
 								exclude:true,
 								disableFiltering:true
 							},
-							variable:{
+							variables:{
 								exclude:true,
 								disableFiltering:true
 							}

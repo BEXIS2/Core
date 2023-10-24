@@ -33,14 +33,14 @@
 		</ContentProviders>
 	</MapItem>
 
-	<MapItem ContentKey="Information">
+	<!--<MapItem ContentKey="Information">
 		<ContentProviders>
 			<ContentProvider View="_Information" Type="View" Enabled="true">
 				<Parameters>
 				</Parameters>
 			</ContentProvider>
 		</ContentProviders>
-	</MapItem>
+	</MapItem>-->
 
 	<MapItem ContentKey="LogOnStatus">
 		<ContentProviders>
