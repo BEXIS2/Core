@@ -198,6 +198,7 @@
     <Compile Include="Helpers\DatasetHelper.cs" />
     <Compile Include="Meanings\meaningManagerTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Services\DataStructure\DataStructureManagerTests.cs" />
     <Compile Include="Services\DataStructure\VariableManagerTests.cs" />
     <Compile Include="Services\DataStructure\UnitManagerTests.cs" />
     <Compile Include="Services\Data\DatasetManagerTests.cs" />

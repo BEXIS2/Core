@@ -60,7 +60,12 @@ namespace BExIS.Dlm.Services.Meanings
                     List<ExternalLink> externalLinks = uow.GetRepository<ExternalLink>().Get().Where(x => ExternalLink.Contains(x.Id.ToString())).ToList<ExternalLink>();
                     
                     IRepository<Meaning> repo = uow.GetRepository<Meaning>();
-                    List<Meaning> related_meanings = (List<Meaning>)repo.Get().Where(x => meaning_ids.Contains(x.Id.ToString())).ToList<Meaning>();
+                    List<Meaning> related_meanings = new List<Meaning>();
+                    if (meaning_ids != null)
+                    {
+                        related_meanings = (List<Meaning>)repo.Get().Where(x => meaning_ids.Contains(x.Id.ToString())).ToList<Meaning>();
+                    }
+
                     using (Meaning meaning = new Meaning(Name, ShortName, Description, selectable, approved, externalLinks, variables, related_meanings))
                     {
                         repo.Put(meaning);
