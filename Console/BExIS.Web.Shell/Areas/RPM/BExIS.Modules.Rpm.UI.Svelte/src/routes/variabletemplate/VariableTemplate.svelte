@@ -27,7 +27,6 @@ import { update } from './services'
 
 	import suite from './variableTemplate';
 	import MissingValues from '$lib/components/datastructure/MissingValues.svelte';
-	import { list } from 'postcss';
 
  export let missingValues: missingValueType[];
 	export let variable: VariableTemplateModel;

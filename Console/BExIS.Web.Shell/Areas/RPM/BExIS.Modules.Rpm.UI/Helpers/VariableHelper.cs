@@ -85,5 +85,25 @@ namespace BExIS.Modules.Rpm.UI.Helpers
                 return variableTemplate;
             }
         }
+
+        public List<MeaningItem> GetMeanings()
+        {
+            using (var meaningsManager = new MeaningManager())
+            {
+                var meanings = meaningsManager.getMeanings();
+                List<MeaningItem> list = new List<MeaningItem>();
+
+                if (meanings.Any())
+                {
+                    foreach (var item in meanings)
+                    {
+                        list.Add(new MeaningItem(item.Id, item.Name));
+                    }
+                }
+
+                return list;
+            }
+         }
+
     }
 }

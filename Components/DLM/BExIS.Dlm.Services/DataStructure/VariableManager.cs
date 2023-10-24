@@ -95,7 +95,7 @@ namespace BExIS.Dlm.Services.DataStructure
         /// <param name="defaultValue"></param>
         /// <returns>VariableTemplate</returns>
         /// <exception cref="ArgumentNullException"></exception>
-        public VariableTemplate CreateVariableTemplate(string name, DataType dataType, Unit unit, string description="",  string defaultValue="", List<Meaning> meanings = null)
+        public VariableTemplate CreateVariableTemplate(string name, DataType dataType, Unit unit, string description="",  string defaultValue="", ICollection<Meaning> meanings = null)
         {
             // check incoming varaibles
             if (string.IsNullOrEmpty(name)) throw new ArgumentNullException(nameof(name), "Name is empty but is required.");

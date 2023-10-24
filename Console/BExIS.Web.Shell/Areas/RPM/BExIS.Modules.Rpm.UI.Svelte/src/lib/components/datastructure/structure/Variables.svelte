@@ -2,7 +2,7 @@
 	import Variable from './variable/Variable.svelte';
 	import { Spinner } from '@bexis2/bexis2-core-ui';
 	import { onMount } from 'svelte';
-	import { getDataTypes, getUnits, getVariableTemplates } from '../services';
+	import { getDataTypes, getUnits, getVariableTemplates, getMeanings } from '../services';
 	import type { missingValueType } from '../types';
 	import { VariableInstanceModel } from '../types';
 	import { Modal, modalStore } from '@skeletonlabs/skeleton';
@@ -13,7 +13,7 @@
 
 	// stores
 	
-	import { displayPatternStore, unitStore, dataTypeStore, templateStore} from '../store'
+	import { displayPatternStore, unitStore, dataTypeStore, templateStore, meaningsStore} from '../store'
 
 	export let variables: VariableInstanceModel[] = [];
 	export let missingValues: missingValueType[] = [];
@@ -41,6 +41,9 @@
 		
 		const variableTemplates = await getVariableTemplates();
 		templateStore.set(variableTemplates)
+
+		const meanings = await getMeanings();
+		meaningsStore.set(meanings);
 
 		//console.log("---------",datatypes);
 		// console.log("datatypes",datatypes);
