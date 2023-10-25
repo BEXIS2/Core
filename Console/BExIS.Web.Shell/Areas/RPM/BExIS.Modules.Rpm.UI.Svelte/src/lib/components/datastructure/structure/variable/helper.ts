@@ -63,7 +63,7 @@ export function updateDatatypes(
 ) {
   const othersText = 'other';
   let dts:listItemType[] = dataTypeStore.map(o=>({...o})); // set datatypes
-  console.log("TCL ~ file: helper.ts:66 ~ dts:", dts)
+  //console.log("TCL ~ file: helper.ts:66 ~ dts:", dts)
   
   //suggestions
   if(suggestedDataType)

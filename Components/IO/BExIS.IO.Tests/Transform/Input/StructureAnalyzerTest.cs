@@ -95,7 +95,7 @@ namespace BExIS.IO.Tests.Transform.Input
             var result = Assert.Throws<ArgumentNullException> (()=> structureAnalyser.SuggestDelimeter("", ""));
 
             //Assert
-            Assert.AreEqual(result.Message, "row has no content to suggest.\r\nParametername: rowA");
+            Assert.AreEqual(result.ParamName, "rowA");
         }
 
         [TestCase("a,b,c", "2.23,2.342")]
@@ -164,9 +164,9 @@ namespace BExIS.IO.Tests.Transform.Input
 
             //Act
             var result = Assert.Throws<ArgumentNullException>(() => structureAnalyser.SuggestDecimal("", "", TextSeperator.tab));
-            
+
             //Assert
-            Assert.AreEqual(result.Message, "row has no content to suggest.\r\nParametername: rowA");
+            Assert.AreEqual(result.ParamName, "rowA");
         }
 
         #endregion
@@ -215,7 +215,7 @@ namespace BExIS.IO.Tests.Transform.Input
             var result = Assert.Throws<ArgumentNullException>(() => structureAnalyser.SuggestTextMarker("", ""));
 
             //Assert
-            Assert.AreEqual(result.Message, "row has no content to suggest.\r\nParametername: rowA");
+            Assert.AreEqual(result.ParamName, "rowA");
         }
 
         #endregion
@@ -254,6 +254,46 @@ namespace BExIS.IO.Tests.Transform.Input
 
             var v6 = result[5];
             Assert.That(v6.Equals(typeof(Int64)));
+
+        }
+        [Test]
+        public void SuggestSystemTypes_WithTestData_ResultWithCorrectTypes()
+        {
+            List<string> rows = new List<string>();
+            rows.Add("1;1039;Villiger;09/19/22");
+            rows.Add("1;1039;villager;09/19/22");
+            rows.Add("1;1324;villager;09/19/22");
+            rows.Add("1;1155;villager;09/19/22");
+            rows.Add("1;1344;villager;09/19/22");
+            rows.Add("1;1380;villager;09/19/22");
+            rows.Add("1;1072;villager;09/19/22");
+            rows.Add("1;1151;villager;09/19/22");
+            rows.Add("1;1070;villager;09/19/22");
+            rows.Add("1;1069;villager;09/19/22");
+            rows.Add("1;1173;villager;09/19/22");
+            rows.Add("1;1143;villager;09/19/22");
+
+            //Arrange
+            StructureAnalyser structureAnalyser = new StructureAnalyser();
+
+            //Act
+            var result = structureAnalyser.SuggestSystemTypes(rows, TextSeperator.semicolon, DecimalCharacter.comma, new List<string>());
+
+            //Assert
+            Assert.NotNull(result);
+
+            var v1 = result[0];
+            Assert.That(v1.Equals(typeof(UInt32)));
+
+            var v2 = result[1];
+            Assert.That(v2.Equals(typeof(UInt32)));
+
+            var v3 = result[2];
+            Assert.That(v3.Equals(typeof(String)));
+
+            var v4 = result[3];
+            Assert.That(v4.Equals(typeof(DateTime)));
+
 
         }
 
