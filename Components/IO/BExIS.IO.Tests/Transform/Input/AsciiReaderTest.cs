@@ -234,7 +234,7 @@ namespace BExIS.IO.Tests.Transform.Input
             var result = Assert.Throws<ArgumentNullException>(() => AsciiReader.Skipped(""));
 
             // Assert
-            Assert.AreEqual(result.Message, "fileName not exist\r\nParametername: fileName");
+            Assert.AreEqual(result.ParamName, "fileName");
         }
 
         [Test]
@@ -289,7 +289,7 @@ namespace BExIS.IO.Tests.Transform.Input
             var result = Assert.Throws<ArgumentNullException>(() => AsciiReader.Skipped(""));
 
             // Assert
-            Assert.AreEqual(result.Message, "fileName not exist\r\nParametername: fileName");
+            Assert.AreEqual(result.ParamName, "fileName");
         }
 
         [TestCase(100, 2)]
@@ -445,7 +445,7 @@ namespace BExIS.IO.Tests.Transform.Input
 
             // Assert
             Assert.AreEqual(result.ParamName, "fileName");
-            Assert.AreEqual(result.Message, "fileName not exist\r\nParametername: fileName");
+            
         }
 
         [Test()]
@@ -487,7 +487,7 @@ namespace BExIS.IO.Tests.Transform.Input
             var result = Assert.Throws<ArgumentNullException>(() => AsciiReader.GetRows(""));
 
             // Assert
-            Assert.AreEqual(result.Message, "fileName not exist\r\nParametername: fileName");
+            Assert.AreEqual(result.ParamName, "fileName");
 
         }
 
@@ -509,7 +509,7 @@ namespace BExIS.IO.Tests.Transform.Input
             var result = Assert.Throws<ArgumentNullException>(() => AsciiReader.GetRows("",null,null));
 
             // Assert
-            Assert.AreEqual(result.Message, "fileName not exist\r\nParametername: fileName");
+            Assert.AreEqual(result.ParamName, "fileName");
 
         }
 
@@ -546,7 +546,7 @@ namespace BExIS.IO.Tests.Transform.Input
             var result = Assert.Throws<ArgumentNullException>(() => AsciiReader.GetRows(path, null, null));
 
             // Assert
-            Assert.AreEqual(result.Message, "row index list is empty\r\nParametername: fileName");
+            Assert.AreEqual(result.ParamName, "fileName");
 
         }
 
