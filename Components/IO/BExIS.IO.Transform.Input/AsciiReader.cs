@@ -852,7 +852,7 @@ namespace BExIS.IO.Transform.Input
                 long c = 0;
                 do // run random index till int not exist in the selectRowsIndex
                 {
-                    c = Convert.ToInt64(rand.Next(Convert.ToInt32(dataStart), Convert.ToInt32(total)+1));
+                    c = Convert.ToInt64(rand.Next(Convert.ToInt32(dataStart), Convert.ToInt32(total)));
                 }
                 while (selectedRowsIndex.Contains(c));
 
@@ -870,12 +870,14 @@ namespace BExIS.IO.Transform.Input
                         string line = "";
                         while ((line = streamReader.ReadLine()) != null)
                         {
-                            lineCount++; 
+                           
 
                             if (!string.IsNullOrWhiteSpace(line) && selectedRowsIndex.Contains(lineCount))
                             {
                                 selectedRows.Add(line);
                             }
+
+                            lineCount++;
                         }
                     }
                 }
