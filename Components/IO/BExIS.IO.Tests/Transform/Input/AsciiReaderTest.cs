@@ -407,17 +407,19 @@ namespace BExIS.IO.Tests.Transform.Input
                 data.ForEach(x => sw.WriteLine(x));
             }
 
-            int startdata = 4; // get from user selection
+            
             var total = AsciiReader.Count(path); //11
             var skipped = AsciiReader.Skipped(path);//3
-            var dataCount = total - skipped - startdata + 1; // 4
+            int startdata = 4; // get from user selection
+            var dataCount = total - startdata - skipped + 1; // 4
+            
 
             Assert.AreEqual(total, 11);
             Assert.AreEqual(skipped, 3);
             Assert.AreEqual(dataCount, 5);
 
             // Act
-            var result = AsciiReader.GetRandowRows(path, total, dataCount, startdata);
+            var result = AsciiReader.GetRandowRows(path, total, dataCount, startdata+skipped);
 
             // Assert
             Assert.NotNull(result);
