@@ -1566,8 +1566,8 @@ Global
 		{455EC826-9A92-40FF-BD3B-388C288955CE} = {A83D7DBD-986A-482F-A24C-EA581E3FD8F2}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
-		EnterpriseLibraryConfigurationToolBinariesPath = packages\Unity.2.1.505.0\lib\NET35;packages\Unity.2.1.505.2\lib\NET35
 		SolutionGuid = {9B6E4921-8EBA-487D-A098-3E473A0EAC64}
+		EnterpriseLibraryConfigurationToolBinariesPath = packages\Unity.2.1.505.0\lib\NET35;packages\Unity.2.1.505.2\lib\NET35
 	EndGlobalSection
 	GlobalSection(SubversionScc) = preSolution
 		Svn-Managed = True

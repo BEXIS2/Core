@@ -46,8 +46,6 @@
 		const isTemplateRequired= Boolean(container?.getAttribute('isTemplateRequired'));
 		isTemplateRequiredStore.set(isTemplateRequired);
 
-
-
 		console.log('start structure suggestion', entityId, version, file, datastructureId);
 
 		// 2 Usecases,
@@ -65,6 +63,7 @@
 			// copy structure
 			model = await copy(datastructureId);
 			selectionIsActive = false;
+			
 		} else {
 			console.log("empty structure");
 			model = await empty(); // empty structure

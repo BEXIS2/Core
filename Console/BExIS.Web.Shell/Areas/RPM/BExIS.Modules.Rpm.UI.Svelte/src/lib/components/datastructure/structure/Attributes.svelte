@@ -14,7 +14,7 @@
 		suite.reset();
 
 		model.title = model.id;
-		res = suite(model, "title");
+		res = suite(model, "");
 		
 	});
 
