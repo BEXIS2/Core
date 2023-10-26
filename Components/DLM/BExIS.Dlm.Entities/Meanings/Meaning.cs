@@ -22,19 +22,19 @@ namespace BExIS.Dlm.Entities.Meanings
             this.ShortName = meaning.ShortName;
             this.Description = meaning.Description;
             this.Selectable = meaning.Selectable;
-            this.Variables = meaning.Variables;
+            //this.Variables = meaning.Variables;
             this.ExternalLink = meaning.ExternalLink;
             this.Related_meaning = meaning.Related_meaning;
         }
 
-        public Meaning(String name, String shortName, String description, Selectable Selectable, Approved approved, IEnumerable<ExternalLink> ExternalLink, IList<Variable> Variable, IList<Meaning> meaning)
+        public Meaning(String name, String shortName, String description, Selectable Selectable, Approved approved, IEnumerable<ExternalLink> ExternalLink, IList<Meaning> meaning)
         {
             this.Name = name;
             this.ShortName = shortName;
             this.Description = description;
             this.Selectable = Selectable;
             this.Approved = approved;
-            this.Variables = Variable;
+            //this.Variables = Variable;
             this.ExternalLink = ExternalLink;
             this.Related_meaning = meaning;
         }
@@ -53,8 +53,8 @@ namespace BExIS.Dlm.Entities.Meanings
         [Required(ErrorMessage = "Must not be Empty")]
         public virtual IEnumerable<ExternalLink> ExternalLink { get; set; }
 
-        [Required(ErrorMessage = "Must not be Empty")]
-        public virtual IEnumerable<Variable> Variables { get; set; }
+        //[Required(ErrorMessage = "Must not be Empty")]
+        //public virtual IEnumerable<Variable> Variables { get; set; }
 
         public virtual IEnumerable<Meaning> Related_meaning { get; set; }
 

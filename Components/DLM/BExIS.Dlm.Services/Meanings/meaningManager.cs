@@ -49,14 +49,14 @@ namespace BExIS.Dlm.Services.Meanings
                 return null;
             }
         }
-        public Meaning addMeaning(string Name, String ShortName, String Description, Selectable selectable, Approved approved, List<string> variables_id, List<string> ExternalLink, List<string> meaning_ids)
+        public Meaning addMeaning(string Name, String ShortName, String Description, Selectable selectable, Approved approved, List<string> ExternalLink, List<string> meaning_ids)
         {
             Contract.Requires(ExternalLink != null);
             try
             {
                 using (IUnitOfWork uow = this.GetUnitOfWork())
                 {
-                    List<Variable> variables = uow.GetRepository<Variable>().Get().Where(x => variables_id.Contains(x.Id.ToString())).ToList<Variable>();
+                    //List<Variable> variables = uow.GetRepository<Variable>().Get().Where(x => variables_id.Contains(x.Id.ToString())).ToList<Variable>();
                     List<ExternalLink> externalLinks = uow.GetRepository<ExternalLink>().Get().Where(x => ExternalLink.Contains(x.Id.ToString())).ToList<ExternalLink>();
                     
                     IRepository<Meaning> repo = uow.GetRepository<Meaning>();
@@ -66,7 +66,7 @@ namespace BExIS.Dlm.Services.Meanings
                         related_meanings = (List<Meaning>)repo.Get().Where(x => meaning_ids.Contains(x.Id.ToString())).ToList<Meaning>();
                     }
 
-                    using (Meaning meaning = new Meaning(Name, ShortName, Description, selectable, approved, externalLinks, variables, related_meanings))
+                    using (Meaning meaning = new Meaning(Name, ShortName, Description, selectable, approved, externalLinks, related_meanings))
                     {
                         repo.Put(meaning);
                         uow.Commit();
@@ -157,7 +157,7 @@ namespace BExIS.Dlm.Services.Meanings
                 return null;
             }
         }
-        public Meaning editMeaning(string id, string Name, String ShortName, String Description, Selectable selectable, Approved approved, List<string> variables_id, List<string> ExternalLink, List<string> meaning_ids)
+        public Meaning editMeaning(string id, string Name, String ShortName, String Description, Selectable selectable, Approved approved, List<string> ExternalLink, List<string> meaning_ids)
         {
             Contract.Requires(ExternalLink != null);
             try
@@ -166,7 +166,7 @@ namespace BExIS.Dlm.Services.Meanings
                 {
                     IRepository<Meaning> repo = uow.GetRepository<Meaning>();
 
-                    List<Variable> variables = uow.GetRepository<Variable>().Get().Where(x => variables_id.Contains(x.Id.ToString())).ToList<Variable>();
+                    //List<Variable> variables = uow.GetRepository<Variable>().Get().Where(x => variables_id.Contains(x.Id.ToString())).ToList<Variable>();
                     List < ExternalLink >externalLinks = uow.GetRepository<ExternalLink>().Get().Where(x => ExternalLink.Contains(x.Id.ToString())).ToList<ExternalLink>();
                     List<Meaning> related_meanings = repo.Get().Where(x => meaning_ids.Contains(x.Id.ToString())).ToList<Meaning>(); 
 
@@ -176,7 +176,7 @@ namespace BExIS.Dlm.Services.Meanings
                     meaning.Related_meaning = related_meanings;
                     meaning.Selectable = selectable;
                     meaning.ShortName = ShortName;
-                    meaning.Variables = variables;
+                    //meaning.Variables = variables;
                     meaning.ExternalLink = externalLinks;
                     meaning.Description = Description;
                     meaning.Approved = approved;
