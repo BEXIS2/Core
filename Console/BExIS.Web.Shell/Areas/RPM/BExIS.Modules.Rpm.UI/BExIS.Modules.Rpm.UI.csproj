@@ -168,6 +168,7 @@
     <Content Include="Views\DataStructure\Create.cshtml" />
     <Content Include="Views\VariableTemplate\Index.cshtml" />
     <Content Include="Views\Meaning\Index.cshtml" />
+    <Content Include="Views\ExternalLink\Index.cshtml" />
     <None Include="web.Debug.config">
       <DependentUpon>web.config</DependentUpon>
     </None>
