@@ -7,8 +7,8 @@
 	import { Page, notificationType, notificationStore, helpStore } from '@bexis2/bexis2-core-ui';
 	import type { helpItemType } from '@bexis2/bexis2-core-ui';
 	import Entry from '../../components/entry.svelte';
-	import { get, getByModuleId, putByModuleId } from '../../services/settingService';
-	import type { ReadSettingModel } from '$models/settingModels';
+	import { get, getByModuleId, putByModuleId } from '../../services/settingManager';
+	import type { ReadSettingModel, UpdateSettingModel } from '$models/settingModels';
 
 	import { ListBox, ListBoxItem } from '@skeletonlabs/skeleton';
 
@@ -45,7 +45,7 @@
 		throw new Error('Something went wrong.');
 	}
 
-	export async function putSettingByModuleId(moduleId: string, model: ReadSettingModel) {
+	export async function putSettingByModuleId(moduleId: string, model: UpdateSettingModel) {
 		const response = await putByModuleId(moduleId, model);
 		if (response?.status == 200) {
 			notificationStore.showNotification({
@@ -63,7 +63,7 @@
 		throw new Error('Something went wrong.');
 	}
 
-	let module: string;
+	let module: string = "shell";
 </script>
 
 <Page help={true} fixLeft={false}>
