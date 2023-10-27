@@ -55,11 +55,19 @@ namespace BExIS.Modules.Rpm.UI.Controllers
             {
                 using (var constraintManager = new ConstraintManager())
                 {
-                    var constraints = constraintManager.Constraints.ToList();
-                    var model = constraints.Select(u => ReadConstraintModel.Convert(u));
+                    List<DomainConstraint> domainConstraints = constraintManager.DomainConstraints.Where(c => c.DataContainer != null).ToList();
+                    List<ReadConstraintModel> domainConstraintsModel  = domainConstraints.Select(u => ReadConstraintModel.Convert(u)).ToList();
+
+                    List<PatternConstraint> patternConstraints = constraintManager.PatternConstraints.Where(c => c.DataContainer != null).ToList();
+                    List<ReadConstraintModel> patternConstraintsModel = patternConstraints.Select(u => ReadConstraintModel.Convert(u)).ToList();
+
+                    List<RangeConstraint> rangeConstraints = constraintManager.RangeConstraints.Where(c => c.DataContainer != null).ToList();
+                    List<ReadConstraintModel> rangeConstraintsModel = rangeConstraints.Select(u => ReadConstraintModel.Convert(u)).ToList();
+
+                    List<ReadConstraintModel>constraints = domainConstraintsModel.Concat(patternConstraintsModel).Concat(rangeConstraintsModel).OrderBy(c => c.Id).ToList();
 
                     Response.StatusCode = 200;
-                    return Json(model, JsonRequestBehavior.AllowGet);
+                    return Json(constraints, JsonRequestBehavior.AllowGet);
                 }
             }
             catch (Exception ex)
@@ -306,7 +314,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
 
         [JsonNetFilter]
         [HttpGet]
-        public async Task<HttpResponseMessage> GetRangeConstraints()
+        public JsonResult GetRangeConstraints()
         {
             try
             {
@@ -340,5 +348,12 @@ namespace BExIS.Modules.Rpm.UI.Controllers
         }
 
         #endregion range
+
+        [JsonNetFilter]
+        [HttpGet]
+        public JsonResult GetConstraintTypes()
+        {
+            return Json(Enum.GetNames(typeof(ConstraintType)), JsonRequestBehavior.AllowGet);
+        }
     }
 }

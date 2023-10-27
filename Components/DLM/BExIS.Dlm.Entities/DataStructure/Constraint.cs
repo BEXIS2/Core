@@ -712,7 +712,7 @@ namespace BExIS.Dlm.Entities.DataStructure
             CultureId = cultureId;
             Description = description;
             Negated = negated;
-            Context = context != null ? context : "Default";
+            Context = context ?? "Default";
             MessageTemplate = messageTemplate;
             NegatedMessageTemplate = negatedMessageTemplate;
             Operator = comparisonOperator;

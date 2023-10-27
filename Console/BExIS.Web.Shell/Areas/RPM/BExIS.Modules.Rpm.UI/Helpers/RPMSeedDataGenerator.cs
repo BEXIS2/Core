@@ -90,6 +90,17 @@ namespace BExIS.Modules.Rpm.UI.Helpers
                 if (!operationManager.Exists("RPM", "Dimension", "*"))
                     operationManager.Create("RPM", "Dimension", "*", dimensionFeature);
 
+                Feature constraintsFeature = features.FirstOrDefault(f =>
+                   f.Name.Equals("Constraint Management") &&
+                   f.Parent != null &&
+                   f.Parent.Id.Equals(dataPlanning.Id));
+
+                if (constraintsFeature == null)
+                    constraintsFeature = featureManager.Create("Constraint Management", "Constraint Management", dataPlanning);
+
+                if (!operationManager.Exists("RPM", "Constraints", "*"))
+                    operationManager.Create("RPM", "Constraints", "*", constraintsFeature);
+
                 Feature dataTypeFeature = features.FirstOrDefault(f =>
                     f.Name.Equals("Data Type Management") &&
                     f.Parent != null &&

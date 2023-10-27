@@ -6,39 +6,6 @@ using System.Linq;
 
 namespace BExIS.Modules.Rpm.UI.Models
 {
-    public class ConstraitListItem
-    {
-        public ConstraitListItem()
-        {
-            Id = 0;
-            Name = string.Empty;
-            Description = string.Empty;
-            Specification = string.Empty;
-            InUse = false;
-        }
-
-        /// <summary>
-        /// Description of the Dimension
-        /// </summary>
-        public string Description { get; set; }
-
-        /// <summary>
-        /// Name of the Dimension
-        /// </summary>
-        public long Id { get; set; }
-
-        public bool InUse { get; set; }
-
-        /// <summary>
-        /// Name of the Dimension
-        /// </summary>
-        public string Name { get; set; }
-
-        /// <summary>
-        /// Specification of the Dimension
-        /// </summary>
-        public string Specification { get; set; }
-    }
 
     public class CreateConstraintModel
     {
@@ -60,22 +27,64 @@ namespace BExIS.Modules.Rpm.UI.Models
 
     public class ReadConstraintModel
     {
-        public string Description { get; set; }
         public long Id { get; set; }
-
-        //public DateTime LastModificationDate { get; set; }
-        public string Name { get; set; }
-
         public int Version { get; set; }
+        public string Name { get; set; }
+        public string Description { get; set; }
+        public string FormalDescription { get; set; }
+        public string Type { get; set; }
+        public bool InUse { get; set; }
 
         public static ReadConstraintModel Convert(Constraint constraint)
         {
             return new ReadConstraintModel()
             {
                 Id = constraint.Id,
-                Name = constraint.Name,
+                Version = constraint.VersionNo,
+                Name = constraint.Name ?? "Constraint No. " + constraint.Id,
                 Description = constraint.Description,
-                Version = constraint.VersionNo
+                FormalDescription = constraint.FormalDescription,
+                Type = "",
+                InUse = constraint.DataContainer != null && constraint.DataContainer.Id > 0
+            };
+        }
+        public static ReadConstraintModel Convert(DomainConstraint constraint)
+        {
+            return new ReadConstraintModel()
+            {
+                Id = constraint.Id,
+                Version = constraint.VersionNo,
+                Name = constraint.Name ?? "Constraint No. " + constraint.Id,
+                Description = constraint.Description,
+                FormalDescription = constraint.FormalDescription,
+                Type = ConstraintType.Domain.ToString(),
+                InUse = constraint.DataContainer != null && constraint.DataContainer.Id > 0
+            };
+        }
+        public static ReadConstraintModel Convert(PatternConstraint constraint)
+        {
+            return new ReadConstraintModel()
+            {
+                Id = constraint.Id,
+                Version = constraint.VersionNo,
+                Name = constraint.Name ?? "Constraint No. " + constraint.Id,
+                Description = constraint.Description,
+                FormalDescription = constraint.FormalDescription,
+                Type = ConstraintType.Pattern.ToString(),
+                InUse = constraint.DataContainer != null && constraint.DataContainer.Id > 0
+            };
+        }
+        public static ReadConstraintModel Convert(RangeConstraint constraint)
+        {
+            return new ReadConstraintModel()
+            {
+                Id = constraint.Id,
+                Version = constraint.VersionNo,
+                Name = constraint.Name ?? "Constraint No. " + constraint.Id,
+                Description = constraint.Description,
+                FormalDescription = constraint.FormalDescription,
+                Type = ConstraintType.Range.ToString(),
+                InUse = constraint.DataContainer != null && constraint.DataContainer.Id > 0
             };
         }
     }
@@ -161,5 +170,12 @@ namespace BExIS.Modules.Rpm.UI.Models
 
     public class UpdateRangeConstraintModel
     {
+    }
+
+    public enum ConstraintType
+    {
+        Domain,
+        Range,
+        Pattern
     }
 }

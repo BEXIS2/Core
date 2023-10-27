@@ -38,10 +38,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
         [HttpGet]
         public JsonResult GetSystemTypes()
         {
-            using (DataTypeManager dataTypeManager = new DataTypeManager())
-            {
-                return Json(Enum.GetNames(typeof(TypeCode)), JsonRequestBehavior.AllowGet);
-            }
+            return Json(Enum.GetNames(typeof(TypeCode)), JsonRequestBehavior.AllowGet);
         }
 
         [JsonNetFilter]
@@ -128,11 +125,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
         }
         private DataTypeListItem convertToDataTypeListItem(DataType dataType)
         {
-            bool inuse = false;
-            if(dataType.DataContainers.Any())
-                inuse = true;
-            else
-                inuse = false;
+            bool inuse = dataType.DataContainers.Any();
 
             DataTypeListItem dataTypeListItem = new DataTypeListItem
             {

@@ -139,7 +139,7 @@
 							in:fade
 							out:fade
 							class="btn variant-filled-secondary shadow-md h-9 w-16"
-							title="Create neẇ Data Type"
+							title="Create new Data Type"
 							id="create"
 							on:mouseover={() => {
 								helpStore.show('create');
