@@ -1,4 +1,5 @@
 ﻿using BExIS.Dlm.Entities.DataStructure;
+using BExIS.Dlm.Entities.Meanings;
 using BExIS.Dlm.Services.DataStructure;
 using BExIS.Dlm.Services.Meanings;
 using BExIS.IO.DataType.DisplayPattern;
@@ -104,6 +105,39 @@ namespace BExIS.Modules.Rpm.UI.Helpers
                 return list;
             }
          }
+
+        public VariableTemplateItem ConvertTo(VariableTemplate variableTemplate, string group="")
+        {
+            VariableTemplateItem item = new VariableTemplateItem();
+            item.Id = variableTemplate.Id;
+            item.Text = variableTemplate.Label;
+            item.Units = new List<string>() { variableTemplate.Unit.Name };
+            item.DataTypes = variableTemplate.Unit.AssociatedDataTypes.Select(x => x.Name).ToList();
+            item.Meanings = variableTemplate.Meanings.Select(x => x.Name).ToList();
+            item.Group = group;
+
+            return item;
+
+        }
+
+        public List<MeaningItem> ConvertTo(ICollection<Meaning> meanings)
+        {
+            List<MeaningItem> list = new List<MeaningItem>();
+            meanings.ToList().ForEach(m => list.Add(ConvertTo(m)));
+
+            return list;
+
+        }
+
+        public MeaningItem ConvertTo(Meaning meaning)
+        {
+            MeaningItem item = new MeaningItem();
+            item.Id = meaning.Id;
+            item.Text = meaning.Name;
+
+            return item;
+
+        }
 
     }
 }

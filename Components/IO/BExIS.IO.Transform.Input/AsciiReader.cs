@@ -863,19 +863,18 @@ namespace BExIS.IO.Transform.Input
             {
                 using (var file = File.Open(fileName, FileMode.Open, FileAccess.Read))
                 {
-                    var lineCount = 0;
+                    var lineCount = 1;
 
                     using (StreamReader streamReader = new StreamReader(file, Encoding.UTF8))
                     {
                         string line = "";
                         while ((line = streamReader.ReadLine()) != null)
                         {
-                            lineCount++; 
-
                             if (!string.IsNullOrWhiteSpace(line) && selectedRowsIndex.Contains(lineCount))
                             {
                                 selectedRows.Add(line);
                             }
+                            lineCount++;
                         }
                     }
                 }

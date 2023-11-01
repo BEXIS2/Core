@@ -142,8 +142,6 @@
 		return to;
 	}
 
- let inEdit:boolean = false;
-
 	function addFn()
 	{
 
@@ -213,6 +211,13 @@
 		<Fa icon={faMaximize}/>
 		{/if}
 </button>
+
+{#each variableValidationStates as v, i}
+	{#if v==false}
+	 {variables[i].name}, 
+	{/if}
+{/each}
+
 
 <div class="flex-col space-y-2 mt-5">
 

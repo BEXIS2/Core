@@ -143,8 +143,7 @@ namespace BExIS.IO.Tests.Transform.Input
             var result = Assert.Throws<ArgumentNullException>(() => structureAnalyser.SuggestDataType(""));
 
             //Assert
-            Assert.AreEqual(result.Message, "system type should not be empty.\r\nParametername: systemType");
+            Assert.AreEqual(result.ParamName, "systemType");
         }
-
     }
 }

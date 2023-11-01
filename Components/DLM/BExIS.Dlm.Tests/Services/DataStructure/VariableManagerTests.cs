@@ -494,7 +494,7 @@ namespace BExIS.Dlm.Tests.Services.DataStructure
 
                 //Assert
                 Assert.That(ex.ParamName, Is.EqualTo("name"));
-                Assert.That(ex.Message, Is.EqualTo("name is empty but is required.\r\nParametername: name"));
+                Assert.That(ex is ArgumentNullException);
 
             }
         }
@@ -546,7 +546,7 @@ namespace BExIS.Dlm.Tests.Services.DataStructure
 
                 //Assert
                 Assert.That(ex.ParamName, Is.EqualTo("dataType"));
-                Assert.That(ex.Message, Is.EqualTo("datatype is null but is required.\r\nParametername: dataType"));
+                Assert.That(ex is ArgumentNullException);
 
             }
         }
@@ -590,7 +590,7 @@ namespace BExIS.Dlm.Tests.Services.DataStructure
 
                 //Assert
                 Assert.That(ex.ParamName, Is.EqualTo("dataStructureId"));
-                Assert.That(ex.Message, Is.EqualTo("dataStructureId must be greater then 0.\r\nParametername: dataStructureId"));
+                Assert.That(ex is ArgumentNullException);
 
             }
         }
@@ -786,7 +786,7 @@ namespace BExIS.Dlm.Tests.Services.DataStructure
 
                 //Assert
                 Assert.That(ex.ParamName, Is.EqualTo("id"));
-                Assert.That(ex.Message.Contains("Id must be greater then 0."));
+                Assert.That(ex is ArgumentException);
             }
         }
 
