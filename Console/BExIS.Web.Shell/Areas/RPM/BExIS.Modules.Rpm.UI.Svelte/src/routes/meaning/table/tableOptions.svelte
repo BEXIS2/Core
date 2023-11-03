@@ -4,7 +4,7 @@
 	import { helpStore } from '@bexis2/bexis2-core-ui';
 
 	export let row: any;
-	console.log("🚀 ~ file: tableOptions.svelte:7 ~ row:", row)
+
 	export let dispatchFn: any;
 
 	
@@ -53,7 +53,7 @@
 				type="button"
 				class="chip variant-filled-primary shadow-md"
 				title="Edit Meaning, {row.name}"
-				id="edit-{row.Id}"
+				id="edit-{row.id}"
 				disabled
 			>
 				<Fa icon={faPen} />

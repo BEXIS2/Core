@@ -75,7 +75,7 @@ namespace BExIS.IO.Transform.Input
             }
             if (this.Info.Variables <= 0)
             {
-                this.ErrorMessages.Add(new Error(ErrorType.Other, "Startrow of Variable can´t be 0"));
+                this.ErrorMessages.Add(new Error(ErrorType.Other, "Startrow of Variables can´t be 0"));
             }
             if (this.Info.Data <= 0)
             {
@@ -140,7 +140,7 @@ namespace BExIS.IO.Transform.Input
             }
             if (this.Info.Variables <= 0)
             {
-                this.ErrorMessages.Add(new Error(ErrorType.Other, "Startrow of Variable can´t be 0"));
+                this.ErrorMessages.Add(new Error(ErrorType.Other, "Startrow of Variables can´t be 0"));
             }
             if (this.Info.Data <= 0)
             {
@@ -217,7 +217,7 @@ namespace BExIS.IO.Transform.Input
             }
             if (this.Info.Variables <= 0)
             {
-                this.ErrorMessages.Add(new Error(ErrorType.Other, "Startrow of Variable can´t be 0"));
+                this.ErrorMessages.Add(new Error(ErrorType.Other, "Startrow of Variables can´t be 0"));
             }
             if (this.Info.Data <= 0)
             {
@@ -330,7 +330,7 @@ namespace BExIS.IO.Transform.Input
             }
             if (this.Info.Variables <= 0)
             {
-                this.ErrorMessages.Add(new Error(ErrorType.Other, "Startrow of Variable can´t be 0"));
+                this.ErrorMessages.Add(new Error(ErrorType.Other, "Startrow of Variables can´t be 0"));
             }
             if (this.Info.Data <= 0)
             {
@@ -447,7 +447,7 @@ namespace BExIS.IO.Transform.Input
             }
             if (this.Info.Variables <= 0)
             {
-                this.ErrorMessages.Add(new Error(ErrorType.FileReader, "Startrow of Variable can´t be 0"));
+                this.ErrorMessages.Add(new Error(ErrorType.FileReader, "Startrow of Variables can´t be 0"));
             }
             if (this.Info.Data <= 0)
             {
@@ -863,19 +863,18 @@ namespace BExIS.IO.Transform.Input
             {
                 using (var file = File.Open(fileName, FileMode.Open, FileAccess.Read))
                 {
-                    var lineCount = 0;
+                    var lineCount = 1;
 
                     using (StreamReader streamReader = new StreamReader(file, Encoding.UTF8))
                     {
                         string line = "";
                         while ((line = streamReader.ReadLine()) != null)
                         {
-                            lineCount++; 
-
                             if (!string.IsNullOrWhiteSpace(line) && selectedRowsIndex.Contains(lineCount))
                             {
                                 selectedRows.Add(line);
                             }
+                            lineCount++;
                         }
                     }
                 }

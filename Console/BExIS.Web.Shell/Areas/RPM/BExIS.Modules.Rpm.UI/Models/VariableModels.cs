@@ -17,6 +17,7 @@ namespace BExIS.Modules.Rpm.UI.Models
 
 
         public List<MissingValueItem> MissingValues { get; set; }
+        public List<MeaningItem> Meanings { get; set; }
 
         public VariableModel()
         {
@@ -27,6 +28,7 @@ namespace BExIS.Modules.Rpm.UI.Models
             DataType = new ListItem();
             Unit = new UnitItem();
             MissingValues = new List<MissingValueItem>();
+            Meanings = new List<MeaningItem>();
         }
     }
 
@@ -101,6 +103,8 @@ namespace BExIS.Modules.Rpm.UI.Models
 
         public List<string> DataTypes { get; set; }
         public List<string> Units { get; set; }
+        public List<string> Meanings { get; set; }
+        public List<string> Constraints { get; set; }
 
         public VariableTemplateItem()
         {
@@ -108,15 +112,20 @@ namespace BExIS.Modules.Rpm.UI.Models
             Text = "";
             Group = "";
             DataTypes = new List<string>();
+            Units = new List<string>();
+            Meanings = new List<string>();
+            Constraints = new List<string>();
         }
 
-        public VariableTemplateItem(long key, string value,  List<string> units, List<string> dataTypes, string group = "")
+        public VariableTemplateItem(long key, string value,  List<string> units, List<string> dataTypes,List<string> meanings, List<string> constraints = null, string group = "")
         {
             Id = key;
             Text = value;
             Group = group;
             DataTypes = dataTypes;
             Units = units;
+            Meanings = meanings;
+            Constraints = constraints;
         }
 
     }
@@ -139,6 +148,31 @@ namespace BExIS.Modules.Rpm.UI.Models
             Id = _id;
             DisplayName = _displayName;
             Description = _description;
+        }
+
+    }
+
+    public class MeaningItem
+    {
+        public long Id { get; set; }
+        public string Text { get; set; }
+        public string Group { get; set; }
+
+
+        public MeaningItem()
+        {
+            Id = 0;
+            Text = "";
+            Group = "";
+
+        }
+
+        public MeaningItem(long _id, string _name, string _group="")
+        {
+            Id = _id;
+            Text = _name;
+            Group = _group;
+
         }
 
     }

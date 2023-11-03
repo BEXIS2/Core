@@ -76,7 +76,8 @@
 		<SlideToggle active="bg-primary-500" name="slider-label" size="sm" bind:checked={entry.value}
 			>{entry.key}</SlideToggle>
 	{:else if entry.type.toLowerCase() === 'json'}
-		<CodeEditor
+		<CodeEditor 
+			title={entry.key}
 			id={entry.key}
 			initialValue={initialJSONValue}
 			actions={false}

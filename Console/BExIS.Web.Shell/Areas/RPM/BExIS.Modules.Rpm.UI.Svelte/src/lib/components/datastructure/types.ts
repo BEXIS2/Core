@@ -46,6 +46,7 @@ class VariableModel{
     dataType: listItemType| undefined;
     unit: unitListItemType| undefined;;
 				missingValues: missingValueType[];
+				meanings: listItemType[];
 				approved: boolean;
 				inUse: boolean;
 
@@ -57,6 +58,7 @@ class VariableModel{
 					this.dataType = undefined//{id:0,text:"",group:""}
 					this.unit = undefined
 					this.missingValues = [];
+					this.meanings = []
 					this.approved = false;
 					this.inUse = false;
 				}
@@ -82,6 +84,7 @@ export class VariableInstanceModel extends VariableModel {
 
 	public constructor() {
 		super()
+		this.meanings = []
 		this.isOptional = false
 		this.template = undefined
 		this.isKey = false
@@ -99,4 +102,6 @@ export interface unitListItemType extends listItemType {
 export interface templateListItemType extends listItemType {
 	dataTypes:string[]
 	units:string[]	
+	meanings:string[]
+	constraints:string[]	
 }

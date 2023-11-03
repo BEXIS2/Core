@@ -44,10 +44,10 @@
 		  <many-to-many column="MeaningsChildrenRef" class="Meaning"/>
 	  </set>
 
-	  <set name="Variable" table="Meanings_Variables" inverse="false" lazy="false" fetch="select" cascade="save-update"  >
-		  <key column="id"/>
-		  <many-to-many class="BExIS.Dlm.Entities.DataStructure.Variable" column="Variable"/>
-	  </set>
+	  <!--<set name="Variables" table="Meanings_Variables" inverse="true" lazy="false" fetch="select" cascade="save-update"  >
+		  <key column="MeaningRef"/>
+		  <many-to-many class="BExIS.Dlm.Entities.DataStructure.Variable" column="VariableRef"/>
+	  </set>-->
 	  
 	  
 	  <!--

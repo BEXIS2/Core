@@ -131,6 +131,14 @@
       <Project>{76702A4F-D6E5-416F-BD81-58447514AF05}</Project>
       <Name>BExIS.Modules.Rpm.UI</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\AAA\BExIS.Security.Entities\BExIS.Security.Entities.csproj">
+      <Project>{C230693B-D780-438B-B26C-82257642DD5C}</Project>
+      <Name>BExIS.Security.Entities</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\AAA\BExIS.Security.Services\BExIS.Security.Services.csproj">
+      <Project>{681C8BC4-55F0-4F43-A685-90E246A88CB1}</Project>
+      <Name>BExIS.Security.Services</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\App\BExIS.App.Testing\BExIS.App.Testing.csproj">
       <Project>{0fcf7de1-e8f2-484c-8638-ef759b11d8a2}</Project>
       <Name>BExIS.App.Testing</Name>
@@ -191,6 +199,8 @@
     <Compile Include="Helpers\DatasetHelper.cs" />
     <Compile Include="Meanings\meaningManagerTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Services\DataStructure\DataStructureManagerTests.cs" />
+    <Compile Include="Services\DataStructure\VariableManagerTests.cs" />
     <Compile Include="Services\DataStructure\UnitManagerTests.cs" />
     <Compile Include="Services\Data\DatasetManagerTests.cs" />
     <Compile Include="Services\Data\DatasetManager_GetDatasetIdsTests.cs" />
@@ -198,6 +208,7 @@
     <Compile Include="Services\Data\DataTupleTests.cs" />
     <Compile Include="Services\Data\DatasetManager_GetDatasetVersionEffectiveDataTuplesTest.cs" />
     <Compile Include="Services\Data\DatasetManager_GetDataTuplesTest.cs" />
+    <Compile Include="Services\Data\EntityTemplateManagerTests.cs" />
     <Compile Include="Services\Helpers\ExtendedPropertyHelperTests.cs" />
     <Compile Include="Services\MetadataStructure\MetadataAttributeManagerTests.cs" />
     <Compile Include="Services\MetadataStructure\MetadataStructureManagerTests.cs" />

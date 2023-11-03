@@ -104,7 +104,7 @@ const suite = create((data = {}, fieldName) => {
 		(res) => res.hasErrors('variableTemplate'),
 		() => {
 			test('variableTemplate', 'unit not match with the template', () => {
-				console.log('🚀 ~ file: variable.ts:100 ~ test ~ data.template:', data.template);
+				//console.log('🚀 ~ file: variable.ts:100 ~ test ~ data.template:', data.template);
 				if (!isTemplateRequired && (!data.template || data.template.id == 0)) {
 					return true;
 				}

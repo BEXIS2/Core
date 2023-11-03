@@ -1,8 +1,9 @@
-<script>
+<script lang="ts">
 	import { TextInput, TextArea } from '@bexis2/bexis2-core-ui';
 	import { onMount } from 'svelte';
+	import type {DataStructureModel} from '../types';
 
-	export let model;
+	export let model:DataStructureModel;
 	export let valid = false;
 
 	import suite from './attributes';
@@ -13,8 +14,8 @@
 	onMount(() => {
 		suite.reset();
 
-		model.title = model.id;
-		res = suite(model, "title");
+		model.title = ""+model.id;
+		res = suite(model, "");
 		
 	});
 

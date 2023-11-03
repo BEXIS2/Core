@@ -1,8 +1,9 @@
 <script lang="ts">
-	import { onMount, afterUpdate, createEventDispatcher } from 'svelte';
+	import { onMount, createEventDispatcher } from 'svelte';
 
 	// UI Components
 	import { TextInput, TextArea, MultiSelect, helpStore } from '@bexis2/bexis2-core-ui';
+
 
 	//types
 	import type { listItemType } from '@bexis2/bexis2-core-ui';
@@ -14,15 +15,15 @@
 	} from '$lib/components/datastructure/types';
 
 	//stores
-	import { get } from 'svelte/store';
-	import { dataTypeStore, displayPatternStore, unitStore } from '$lib/components/datastructure/store';
+	import { dataTypeStore, unitStore } from '$lib/components/datastructure/store';
+	import { meaningsStore } from './stores';
 
 // services
 import { update } from './services'
 
 	// icons
 	import Fa from 'svelte-fa';
-	import { faXmark, faSave, faChevronUp, faChevronDown } from '@fortawesome/free-solid-svg-icons';
+	import { faXmark, faSave} from '@fortawesome/free-solid-svg-icons';
 
 	import suite from './variableTemplate';
 	import MissingValues from '$lib/components/datastructure/MissingValues.svelte';
@@ -278,6 +279,22 @@ import { update } from './services'
 		}}>
    <MissingValues bind:list={variable.missingValues}></MissingValues>
 	 </div>
+
+		<MultiSelect
+		id="links"
+		title="Meanings"
+		bind:source={$meaningsStore}
+		itemId="id"
+		itemLabel="text"
+		itemGroup="group"
+		complexSource={true}
+		complexTarget={true}
+		bind:target={variable.meanings}
+		isMulti={true}
+		placeholder="-- Please select --"
+		{loading}
+	/>
+
 
 		<div class="py-5 text-right col-span-2">
 			<!-- svelte-ignore a11y-mouse-events-have-key-events -->

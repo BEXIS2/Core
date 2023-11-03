@@ -16,7 +16,7 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Newtonsoft.Json.Serialization;
 
-namespace BExIS.Modules.Rpm.UI.Api.Controllers
+namespace BExIS.Modules.Rpm.UI.Controllers
 {
     public class MeaningsAdminController : ApiController
     {
@@ -29,7 +29,7 @@ namespace BExIS.Modules.Rpm.UI.Api.Controllers
         public MeaningsAdminController()
         {
             if (this._meaningManager == null)
-               this._meaningManager = new meaningManager();
+               this._meaningManager = new MeaningManager();
         }
 
         [BExISApiAuthorize]
@@ -129,6 +129,13 @@ namespace BExIS.Modules.Rpm.UI.Api.Controllers
         {
             try
             {
+                if (data == null) throw new NullReferenceException("external link should not be null.");
+                if (string.IsNullOrEmpty(data.Name)) throw new NullReferenceException("Name of external link should not be null or empty.");
+                if (string.IsNullOrEmpty(data.URI)) throw new NullReferenceException("Uri of external link should not be null or empty.");
+
+                data.Name = data.Name.Trim();
+                data.URI = data.URI.Trim();
+
                 ExternalLink res = _meaningManager.addExternalLink(data);
                 return (cretae_response(_meaningManager.addExternalLink(data)));
             }

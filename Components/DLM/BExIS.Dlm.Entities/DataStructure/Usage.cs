@@ -1,4 +1,5 @@
 ﻿using BExIS.Dlm.Entities.Common;
+using BExIS.Dlm.Entities.Meanings;
 using System.Collections.Generic;
 
 /// <summary>
@@ -51,6 +52,7 @@ namespace BExIS.Dlm.Entities.DataStructure
         public virtual ICollection<Constraint> VariableConstraints { get; set; }
 
         public virtual ICollection<MissingValue> MissingValues { get; set; } // 0..1
+        public virtual ICollection<Meaning> Meanings { get; set; } // 0..1
 
         public virtual int DisplayPatternId { get; set; }
     }
@@ -75,6 +77,7 @@ namespace BExIS.Dlm.Entities.DataStructure
             MinCardinality = 0; // to make the parameter optional by default
             MaxCardinality = 1; // this must always remain 1
             MissingValues = new List<MissingValue>();
+            Meanings = new List<Meaning>();
             DisplayPatternId = -1;
         }
 
@@ -87,6 +90,7 @@ namespace BExIS.Dlm.Entities.DataStructure
 
         public VariableTemplate()
         {
+            Meanings = new List<Meaning>();
             MinCardinality = 0; // to make the parameter optional by default
             MaxCardinality = 1; // this must always remain 1
 

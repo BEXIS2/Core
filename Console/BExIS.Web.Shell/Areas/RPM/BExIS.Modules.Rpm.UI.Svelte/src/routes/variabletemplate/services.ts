@@ -35,3 +35,12 @@ export const remove = async (id) => {
 		console.error(error);
 	}
 };
+
+export const getMeanings = async () => {
+	try {
+		const response = await Api.get('/rpm/variableTemplate/getMeanings');
+		return response.data;
+	} catch (error) {
+		console.error(error);
+	}
+};

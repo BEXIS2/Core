@@ -1,5 +1,7 @@
 ﻿using BExIS.Dlm.Entities.DataStructure;
+using BExIS.Dlm.Entities.Meanings;
 using BExIS.Dlm.Services.DataStructure;
+using BExIS.Dlm.Services.Meanings;
 using BExIS.IO.DataType.DisplayPattern;
 using BExIS.Modules.Rpm.UI.Models;
 using BExIS.Modules.Rpm.UI.Models.DataStructure;
@@ -38,7 +40,8 @@ namespace BExIS.Modules.Rpm.UI.Helpers
                 }
             }
 
-            //variableTemplate.VariableConstraints = _model.VariableConstraints;
+
+            variableTemplate.Meanings?.ToList().ForEach(m => model.Meanings.Add(new MeaningItem(m.Id, m.Name)));
 
             return model;
         }
@@ -47,6 +50,7 @@ namespace BExIS.Modules.Rpm.UI.Helpers
         {
             using (var unitManager = new UnitManager())
             using (var dataTypeManager = new DataTypeManager())
+            using (var meaningManager = new MeaningManager())
             {
 
                 var variableTemplate = new VariableTemplate();
@@ -70,10 +74,70 @@ namespace BExIS.Modules.Rpm.UI.Helpers
                 variableTemplate.DataType = dataType;
                 variableTemplate.Unit = unit;
 
-                //variableTemplate.VariableConstraints = _model.VariableConstraints;
+                if (_model.Meanings.Any())
+                {
+                    foreach (var item in _model.Meanings)
+                    {
+                        var meaning = meaningManager.getMeaning(item.Id);
+                        variableTemplate.Meanings.Add(meaning);
+                    }
+                }
 
                 return variableTemplate;
             }
         }
+
+        public List<MeaningItem> GetMeanings()
+        {
+            using (var meaningsManager = new MeaningManager())
+            {
+                var meanings = meaningsManager.getMeanings();
+                List<MeaningItem> list = new List<MeaningItem>();
+
+                if (meanings.Any())
+                {
+                    foreach (var item in meanings)
+                    {
+                        list.Add(new MeaningItem(item.Id, item.Name));
+                    }
+                }
+
+                return list;
+            }
+         }
+
+        public VariableTemplateItem ConvertTo(VariableTemplate variableTemplate, string group="")
+        {
+            VariableTemplateItem item = new VariableTemplateItem();
+            item.Id = variableTemplate.Id;
+            item.Text = variableTemplate.Label;
+            item.Units = new List<string>() { variableTemplate.Unit.Name };
+            item.DataTypes = variableTemplate.Unit.AssociatedDataTypes.Select(x => x.Name).ToList();
+            item.Meanings = variableTemplate.Meanings.Select(x => x.Name).ToList();
+            item.Group = group;
+
+            return item;
+
+        }
+
+        public List<MeaningItem> ConvertTo(ICollection<Meaning> meanings)
+        {
+            List<MeaningItem> list = new List<MeaningItem>();
+            meanings.ToList().ForEach(m => list.Add(ConvertTo(m)));
+
+            return list;
+
+        }
+
+        public MeaningItem ConvertTo(Meaning meaning)
+        {
+            MeaningItem item = new MeaningItem();
+            item.Id = meaning.Id;
+            item.Text = meaning.Name;
+
+            return item;
+
+        }
+
     }
 }

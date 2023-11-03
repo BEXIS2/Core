@@ -4,9 +4,11 @@ using BExIS.Dlm.Entities.Data;
 using BExIS.Dlm.Entities.DataStructure;
 using BExIS.Dlm.Services.Data;
 using BExIS.Dlm.Services.DataStructure;
+using BExIS.Dlm.Services.Meanings;
 using BExIS.IO;
 using BExIS.IO.DataType.DisplayPattern;
 using BExIS.IO.Transform.Input;
+using BExIS.Modules.Rpm.UI.Helpers;
 using BExIS.Modules.Rpm.UI.Models;
 using BExIS.Modules.Rpm.UI.Models.DataStructure;
 using BExIS.Security.Entities.Authorization;
@@ -312,7 +314,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                         variable.IsOptional,
                         variable.IsKey,
                         orderNo,
-                        0,
+                        variable.Template.Id,
                         variable.Description,
                         "",
                         displayPattern
@@ -456,6 +458,8 @@ namespace BExIS.Modules.Rpm.UI.Controllers
             int cells = markerRows.First().Split((char)model.Delimeter).Count();
 
             var strutcureAnalyzer = new StructureAnalyser();
+            VariableHelper helper = new VariableHelper();
+
 
             for (int i = 0; i < cells; i++)
             {
@@ -491,7 +495,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
 
                     // varaible template
                     var templates = strutcureAnalyzer.SuggestTemplate(var.Name, var.Unit.Id, var.DataType.Id, 0.5);
-                        templates.ForEach(t => var.PossibleTemplates.Add(new VariableTemplateItem(t.Id, t.Label,new List<string>() {t.Unit.Name}, t.Unit.AssociatedDataTypes.Select(x => x.Name).ToList(), "detect")));
+                        templates.ForEach(t => var.PossibleTemplates.Add(helper.ConvertTo(t, "detect")));
 
                     if (var.PossibleTemplates.Any())
                         var.Template = var.PossibleTemplates.FirstOrDefault();
@@ -520,6 +524,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
         {
             if (id <= 0) throw new NullReferenceException("id of the structure should be greater then 0");
             DataStructureCreationModel model = new DataStructureCreationModel();
+            VariableHelper helper = new VariableHelper();
 
             using (var structureManager = new DataStructureManager())
             {
@@ -542,11 +547,15 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                                 Description = variable.Description,
                                 DataType = new ListItem(variable.DataType.Id, variable.DataType.Name, "copied"),
                                 SystemType = variable.DataType.SystemType,
-                                Unit = new UnitItem(variable.Unit.Id, variable.Unit.Abbreviation, variable.Unit.AssociatedDataTypes.Select(x => x.Name).ToList(),"copied"),
+                                Unit = new UnitItem(variable.Unit.Id, variable.Unit.Abbreviation, variable.Unit.AssociatedDataTypes.Select(x => x.Name).ToList(), "copied"),
                                 IsKey = variable.IsKey,
-                                IsOptional = variable.IsValueOptional
-
+                                IsOptional = variable.IsValueOptional,
+                                Meanings = helper.ConvertTo(variable.Meanings)
                             };
+
+                            // add template if exist
+                            if (variable.VariableTemplate != null) var.Template = helper.ConvertTo(variable.VariableTemplate, "copied");
+
 
                             // get suggestes DisplayPattern / currently only for DateTime
                             if (var.SystemType.Equals(typeof(DateTime).Name))
@@ -695,7 +704,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                     foreach (var variableTemplate in variableTemplates)
                     {
                         List<string> dataTypes = new List<string>();
-                        
+               
                         var unit = units.FirstOrDefault(u=> u.Id.Equals(variableTemplate.Unit.Id));
 
                         // get possible datatypes
@@ -707,6 +716,10 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                         vti.Text = variableTemplate.Label;
                         if (unit!=null) vti.Units = new List<string>() { unit.Abbreviation };
                         vti.DataTypes = dataTypes;
+
+                        // meanings
+                        vti.Meanings = variableTemplate.Meanings.ToList().Select(m=>m.Name).ToList();
+
                         vti.Group = "other";
                         list.Add(vti);
                     }
@@ -715,6 +728,17 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                 // get default missing values
                 return Json(list.OrderBy(i => i.Group), JsonRequestBehavior.AllowGet);
             }
+        }
+
+        [JsonNetFilter]
+        public JsonResult GetMeanings()
+        {
+            VariableHelper helper = new VariableHelper();
+            List<MeaningItem> list = helper.GetMeanings();
+
+            // get default missing values
+            return Json(list.OrderBy(i => i.Group), JsonRequestBehavior.AllowGet);
+
         }
 
         private List<ListItem> getDelimeters()

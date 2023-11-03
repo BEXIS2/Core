@@ -48,7 +48,7 @@
   },
   "type": "module",
   "dependencies": {
-    "@bexis2/bexis2-core-ui": "0.2.27",
+    "@bexis2/bexis2-core-ui": "latest",
     "@floating-ui/dom": "^1.2.8",
     "@sveltejs/adapter-static": "^2.0.1",
     "@sveltejs/package": "^2.2.2",

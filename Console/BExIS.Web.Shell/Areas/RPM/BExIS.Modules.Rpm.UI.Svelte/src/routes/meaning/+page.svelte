@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { Modal, modalStore, type ModalSettings } from '@skeletonlabs/skeleton';
 	import { getMeanings, remove, update, getLinks } from './services';
-	import { MeaningModel, type externalLinkType } from './types';
+	import { MeaningModel, type externalLinkType } from '$lib/components/meaning/types';
 	import {
 		Page,
 		Table,
@@ -15,7 +15,7 @@
 
 	import Fa from 'svelte-fa';
 	import { faPlus} from '@fortawesome/free-solid-svg-icons';
-	import { externalLinksStore, meaningsStore } from './stores';
+	import { externalLinksStore, meaningsStore } from '$lib/components/meaning/stores';
 	import { fade, slide } from 'svelte/transition';
 	import TableIsApproved from './table/tableIsApproved.svelte';
 	import TableExnternalLink from './table/tableExnternalLink.svelte';
@@ -28,6 +28,7 @@
 	let meaning: MeaningModel = new MeaningModel();
 
 	let showForm = false;
+
 
 	async function reload() {
 		showForm = false;
@@ -91,7 +92,7 @@
 								exclude:true,
 								disableFiltering:true
 							},
-							variable:{
+							variables:{
 								exclude:true,
 								disableFiltering:true
 							}
@@ -112,8 +113,9 @@
 
 	function edit(type: any) {
 
-		console.log("🚀 ~ file: +page.svelte:113 ~ edit ~ type:", type)
+
 		if (type.action == 'edit') {
+			showForm = false;
 			 meaning = $meaningsStore.find((u) => u.id === type.id)!;
 			showForm = true;
 		}
@@ -166,7 +168,8 @@
 
 			showForm = false;
 			setTimeout(async () => {
-			reload();}, 10);
+			reload();
+		}, 10);
 	}
 
 
@@ -180,7 +183,7 @@
 
 </script>
 
-<Page help={false} title="Manage Meanings">
+<Page help={true} title="Manage Meanings">
 
 	{#await reload()}
 		<div class="grid w-full grid-cols-2 gap-5 my-4 pb-1 border-b border-primary-500">

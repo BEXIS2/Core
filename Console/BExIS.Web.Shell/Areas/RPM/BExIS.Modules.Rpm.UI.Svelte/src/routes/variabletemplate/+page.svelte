@@ -19,14 +19,14 @@
 
  // services
 	import { getDataTypes, getUnitsWithDataTypes, getDisplayPattern } from '$lib/components/datastructure/services'
- import { getVariableTemplates, remove } from './services'
+ import { getVariableTemplates, remove, getMeanings } from './services'
 	
 	// data
 	import { variableTemplateHelp } from './help'
-	import { writable } from 'svelte/store';
+
 	//stores
 	import { displayPatternStore, unitStore, dataTypeStore} from '$lib/components/datastructure/store';
- import {variableTemplatesStore} from './stores'
+ import {variableTemplatesStore, meaningsStore} from './stores'
 
 	let vt: VariableTemplateModel[] = [new VariableTemplateModel()];
 	let variableTemplate: VariableTemplateModel = new VariableTemplateModel();
@@ -94,6 +94,13 @@
 								},
 								disableFiltering: true,
 								exclude: true
+							},
+							meanings: {
+								instructions: {
+								renderComponent: TableListString
+								},
+								disableFiltering: true,
+								exclude: true
 							}
 						}
 			}
@@ -106,6 +113,10 @@
 		const units = await getUnitsWithDataTypes();
 		unitStore.set(units)
 	
+		const meanings = await getMeanings();
+		meaningsStore.set(meanings)
+	
+
 		// load display pattern onces for all edit types
 		const displayPattern = await getDisplayPattern();
 		displayPatternStore.set(displayPattern);

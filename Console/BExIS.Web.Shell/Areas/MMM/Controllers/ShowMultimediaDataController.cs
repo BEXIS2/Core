@@ -275,7 +275,7 @@ namespace IDIV.Modules.Mmm.UI.Controllers
                                 // set system key values
                                 int v = 1;
                                 if (workingCopy.Dataset.Versions != null && workingCopy.Dataset.Versions.Count > 1) v = workingCopy.Dataset.Versions.Count();
-                                workingCopy.Metadata = setSystemValuesToMetadata(v, workingCopy.Dataset.MetadataStructure.Id, workingCopy.Metadata);
+                                workingCopy.Metadata = setSystemValuesToMetadata(v, workingCopy.Dataset.Id, workingCopy.Dataset.MetadataStructure.Id, workingCopy.Metadata);
 
                                 datasetManager.EditDatasetVersion(workingCopy, null, null, null);
 
@@ -968,7 +968,7 @@ namespace IDIV.Modules.Mmm.UI.Controllers
             return new Measurement();
         }
 
-        private XmlDocument setSystemValuesToMetadata(long version, long metadataStructureId, XmlDocument metadata)
+        private XmlDocument setSystemValuesToMetadata(long version,long datasetId, long metadataStructureId, XmlDocument metadata)
         {
             SystemMetadataHelper SystemMetadataHelper = new SystemMetadataHelper();
 
@@ -976,7 +976,7 @@ namespace IDIV.Modules.Mmm.UI.Controllers
 
             myObjArray = new Key[] { Key.Id, Key.Version, Key.DateOfVersion, Key.DataLastModified };
 
-            metadata = SystemMetadataHelper.SetSystemValuesToMetadata(metadataStructureId, version, metadataStructureId, metadata, myObjArray);
+            metadata = SystemMetadataHelper.SetSystemValuesToMetadata(datasetId, version, metadataStructureId, metadata, myObjArray);
 
             return metadata;
         }

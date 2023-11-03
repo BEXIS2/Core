@@ -149,3 +149,14 @@ export const getVariableTemplates = async () => {
 		console.error(error);
 	}
 };
+
+
+export const getMeanings = async () => {
+	try {
+		const response = await Api.get('/rpm/DataStructure/getMeanings');
+		return response.data;
+	} catch (error) {
+		console.error(error);
+	}
+};
+

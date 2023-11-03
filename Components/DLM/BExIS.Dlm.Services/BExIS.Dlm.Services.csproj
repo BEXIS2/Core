@@ -166,7 +166,7 @@
     <Compile Include="Helpers\DatasetConvertor.cs" />
     <Compile Include="Meanings\ImeaningManagr.cs" />
     <Compile Include="Meanings\ImeaningManagr_JSON.cs" />
-    <Compile Include="Meanings\meaningManager.cs" />
+    <Compile Include="Meanings\MeaningManager.cs" />
     <Compile Include="Meanings\meaningManager_JSON.cs" />
     <Compile Include="MetadataStructure\MetadataPackageManager.cs" />
     <Compile Include="MetadataStructure\MetadataAttributeManager.cs" />

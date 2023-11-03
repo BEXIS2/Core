@@ -1,6 +1,6 @@
 <script lang="ts">
-	import type { MeaningModel } from './types';
- import ExternslLinks from './ExternslLinks.svelte';
+	import type { MeaningModel } from '$lib/components/meaning/types';
+	import ExternslLinks from './ExternslLinks.svelte';
 
 	// services
 	import { update, create } from './services';
@@ -11,7 +11,10 @@
 
 	import suite from './meaning';
 	import { onMount, createEventDispatcher } from 'svelte';
-	import { TextArea, TextInput } from '@bexis2/bexis2-core-ui';
+	import { TextArea, TextInput, helpStore } from '@bexis2/bexis2-core-ui';
+
+	// data
+	import { helpInfoList } from './help';
 
 	export let meaning: MeaningModel;
 	$: meaning;
@@ -25,12 +28,16 @@
 	let res = suite.get();
 	$: isValid = res.isValid();
 
-	let linksValid:boolean=true;
+	let linksValid: boolean = true;
 
 	const dispatch = createEventDispatcher();
 
 	onMount(() => {
 		loaded = true;
+
+		// set help
+		helpStore.setHelpItemList(helpInfoList);
+
 		console.log('meaning', meaning);
 
 		// reset & reload validation
@@ -62,10 +69,10 @@
 	}
 
 	async function submit() {
+		var s = (await (meaning.id == 0)) ? create(meaning) : update(meaning);
+		console.log('🚀 ~ file: Meaning.svelte:67 ~ submit ~ res:', res);
 
-		var res = (meaning.id==0)?create(meaning):update(meaning);
-
-		if (res) {
+		if ((await s).status === 200) {
 			dispatch('success');
 		} else {
 			dispatch('fail');
@@ -106,7 +113,7 @@
 		</div>
 
 		<div class="">
-			<ExternslLinks bind:list={meaning.externalLink} bind:valid = {linksValid} />
+			<ExternslLinks bind:list={meaning.externalLink} bind:valid={linksValid} />
 		</div>
 
 		<div class="py-5 text-right col-span-2">
@@ -124,8 +131,10 @@
 				class="btn variant-filled-primary h-9 w-16 shadow-md"
 				title="Save Meaning Template, {meaning.name}"
 				id="save"
-				disabled={!isValid || !linksValid}>
-				<Fa icon={faSave} /></button>
+				disabled={!isValid || !linksValid}
+			>
+				<Fa icon={faSave} /></button
+			>
 		</div>
 	</div>
 </form>

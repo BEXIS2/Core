@@ -55,12 +55,12 @@ namespace BExIS.Modules.Rpm.UI.Helpers
                 if (!operationManager.Exists("RPM", "DataStructure", "*"))  operationManager.Create("RPM", "DataStructure", "*", datastructureFeature);
 
                 Feature atributeFeature = features.FirstOrDefault(f =>
-                    f.Name.Equals("Variable Template Management") &&
+                    f.Name.Equals("Variables Template Management") &&
                     f.Parent != null &&
                     f.Parent.Id.Equals(dataPlanning.Id));
 
                 if (atributeFeature == null)
-                    atributeFeature = featureManager.Create("Variable Template Management", "Variable Template Management", dataPlanning); ;
+                    atributeFeature = featureManager.Create("Variables Template Management", "Variables Template Management", dataPlanning); ;
 
                 if (!operationManager.Exists("RPM", "DataAttribute", "*"))
                     operationManager.Create("RPM", "DataAttribute", "*", atributeFeature);
@@ -167,10 +167,11 @@ namespace BExIS.Modules.Rpm.UI.Helpers
                     featurePermissionManager.Create(null, dataMeaning_pub.Id, Security.Entities.Authorization.PermissionType.Grant);
                 }
 
-                if (!operationManager.Exists("RPM", "Meanings", "*"))
+                if (!operationManager.Exists("RPM", "Meaning", "*"))
                 {
-                    operationManager.Create("RPM", "Meanings", "*", dataMeaning_pub);
-                    
+                    operationManager.Create("RPM", "Meaning", "*", dataMeaning_pub);
+                    operationManager.Create("RPM", "ExternalLink", "*", dataMeaning_pub);
+
                 }
 
 

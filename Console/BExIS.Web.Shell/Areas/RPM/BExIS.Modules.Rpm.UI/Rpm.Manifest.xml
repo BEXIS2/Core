@@ -32,15 +32,19 @@
 
     <Export tag="settings" id="ManageUnits" order="2"
             title="Manage Units" description="Edit, Create or Delet Units" icon=""
-            controller="Unit" action="UnitManager" argument=""
+            controller="Unit" action="" argument=""
             extends="./settingsRoot" />
     <Export tag="settings" id="ManageDataTypes" order="3"
             title="Manage Data Types" description="Edit, Create or Delet Data Types" icon=""
-            controller="Home" action="DataTypeManager" argument=""
+            controller="DataType" action="" argument=""
             extends="./settingsRoot" />
-	<Export tag="settings" id="ManageMeanings" order="2"
-		  title="Manage Meanings" description="Edit, Create or Delet Meanings" icon=""
-		  controller="Meanings" action="" argument=""
+	<Export tag="settings" id="ManageMeanings" order="4"
+		  title="Manage Meanings" description="Edit, Create or Delete Meanings" icon=""
+		  controller="Meaning" action="" argument=""
+		  extends="./settingsRoot" />
+	  <Export tag="settings" id="ManageExternalLinks" order="4"
+		  title="Manage External Links" description="Edit, Create or Delete External Links" icon=""
+		  controller="ExternalLink" action="" argument=""
 		  extends="./settingsRoot" />
 
     <Export tag="internalApi" id="DataStructureEdit"

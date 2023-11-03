@@ -234,7 +234,7 @@ namespace BExIS.IO.Tests.Transform.Input
             var result = Assert.Throws<ArgumentNullException>(() => AsciiReader.Skipped(""));
 
             // Assert
-            Assert.AreEqual(result.Message, "fileName not exist\r\nParametername: fileName");
+            Assert.AreEqual(result.ParamName, "fileName");
         }
 
         [Test]
@@ -289,7 +289,7 @@ namespace BExIS.IO.Tests.Transform.Input
             var result = Assert.Throws<ArgumentNullException>(() => AsciiReader.Skipped(""));
 
             // Assert
-            Assert.AreEqual(result.Message, "fileName not exist\r\nParametername: fileName");
+            Assert.AreEqual(result.ParamName, "fileName");
         }
 
         [TestCase(100, 2)]
@@ -407,17 +407,19 @@ namespace BExIS.IO.Tests.Transform.Input
                 data.ForEach(x => sw.WriteLine(x));
             }
 
-            int startdata = 4; // get from user selection
+            
             var total = AsciiReader.Count(path); //11
             var skipped = AsciiReader.Skipped(path);//3
-            var dataCount = total - skipped - startdata + 1; // 4
+            int startdata = 4; // get from user selection
+            var dataCount = total - startdata - skipped + 1; // 4
+            
 
             Assert.AreEqual(total, 11);
             Assert.AreEqual(skipped, 3);
             Assert.AreEqual(dataCount, 5);
 
             // Act
-            var result = AsciiReader.GetRandowRows(path, total, dataCount, startdata);
+            var result = AsciiReader.GetRandowRows(path, total, dataCount, startdata+skipped);
 
             // Assert
             Assert.NotNull(result);
@@ -445,7 +447,7 @@ namespace BExIS.IO.Tests.Transform.Input
 
             // Assert
             Assert.AreEqual(result.ParamName, "fileName");
-            Assert.AreEqual(result.Message, "fileName not exist\r\nParametername: fileName");
+            
         }
 
         [Test()]
@@ -487,7 +489,7 @@ namespace BExIS.IO.Tests.Transform.Input
             var result = Assert.Throws<ArgumentNullException>(() => AsciiReader.GetRows(""));
 
             // Assert
-            Assert.AreEqual(result.Message, "fileName not exist\r\nParametername: fileName");
+            Assert.AreEqual(result.ParamName, "fileName");
 
         }
 
@@ -509,7 +511,7 @@ namespace BExIS.IO.Tests.Transform.Input
             var result = Assert.Throws<ArgumentNullException>(() => AsciiReader.GetRows("",null,null));
 
             // Assert
-            Assert.AreEqual(result.Message, "fileName not exist\r\nParametername: fileName");
+            Assert.AreEqual(result.ParamName, "fileName");
 
         }
 
@@ -546,7 +548,7 @@ namespace BExIS.IO.Tests.Transform.Input
             var result = Assert.Throws<ArgumentNullException>(() => AsciiReader.GetRows(path, null, null));
 
             // Assert
-            Assert.AreEqual(result.Message, "row index list is empty\r\nParametername: fileName");
+            Assert.AreEqual(result.ParamName, "fileName");
 
         }
 

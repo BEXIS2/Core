@@ -14,22 +14,11 @@
 	} from '../../types';
 
 	//stores
-	import { get } from 'svelte/store';
-	import { displayPatternStore, unitStore, dataTypeStore, templateStore } from '../../store';
 
-	// icons
-	import Fa from 'svelte-fa';
-	import {
-		faAdd,
-		faTrash,
-		faAngleUp,
-		faAngleDown,
-		faCopy
-	} from '@fortawesome/free-solid-svg-icons';
+	import { displayPatternStore, unitStore, dataTypeStore, templateStore, meaningsStore } from '../../store';
 
 	import {
 		updateDisplayPattern,
-		updateGroup,
 		updateDatatypes,
 		updateUnits,
 		updateTemplates
@@ -41,7 +30,6 @@
 	import Overview from './Overview.svelte';
 
 	import suite from './variable';
-	import VariableTemplate from '../../../../../routes/variabletemplate/VariableTemplate.svelte';
 
 	export let variable: VariableInstanceModel = new VariableInstanceModel();
 	$: variable;
@@ -56,6 +44,9 @@
 	$: units;
 	let variableTemplates: templateListItemType[] = [];
 	$: variableTemplates;
+
+	let meanings: listItemType[] = [];
+	$: meanings;
 
 	let suggestedDataType: listItemType | undefined;
 	let suggestedUnits: unitListItemType[] | undefined;
@@ -141,14 +132,18 @@
 	//change event: if select change check also validation only on the field
 	// *** is the id of the input component
 	function onSelectHandler(e, id) {
+
 		setTimeout(async () => {
 			res = suite(variable, id);
 
-			////console.log(res);
-			////console.log(res.isValid());
 			// update display patter and reset it if it changed
 			if (id == 'dataType') {
 				updateDisplayPattern(variable.dataType);
+			}
+
+			if (id == 'variableTemplate') {
+				variable.meanings = updateMeanings(variable, e.detail)
+				console.log("🚀 ~ file: Variable.svelte:149 ~ setTimeout ~ variable.meanings:", variable.meanings)
 			}
 
 			setValidationState(res);
@@ -181,6 +176,7 @@
 		datatypes = $dataTypeStore.map((o) => ({ ...o })); // set datatypes
 		units = $unitStore.map((o) => ({ ...o })); // set units
 		variableTemplates = $templateStore.map((o) => ({ ...o }));
+		meanings = $meaningsStore.map((o) => ({ ...o }));
 	}
 
 	function updateLists() {
@@ -204,6 +200,25 @@
 		//console.log("updated units",units);
 		variableTemplates = updateTemplates(variable.unit, $templateStore, suggestedTemplates);
 
+	}
+
+	function updateMeanings(_variable:VariableInstanceModel, _variableTemplate:templateListItemType):listItemType[]
+	{
+		console.log("🚀 ~ file: Variable.svelte:208 ~ _variableTemplate:", _variableTemplate)
+		console.log("🚀 ~ file: Variable.svelte:209 ~ _variableTemplate.meanings:", _variableTemplate.meanings)
+		if(_variableTemplate && _variableTemplate.meanings)
+			{
+					if(_variable.meanings)
+					{
+						return [..._variable.meanings,...$meaningsStore.filter(m=>_variableTemplate.meanings.includes(m.text))]
+					}
+					else
+					{
+						 return [...$meaningsStore.filter(m=>_variableTemplate.meanings.includes(m.text))]
+					}
+			}
+
+			return []
 	}
 </script>
 
@@ -381,6 +396,38 @@
 							</div>
 							<div slot="description">...</div>
 						</Container>
+
+						<Container>
+							<div slot="property">
+								<div class="flex w-full gap-1 py-1">
+										<div class="grow ">
+												Meanings
+										</div>
+								</div>
+								<MultiSelect
+									id="meanings"
+									title=""
+									source={meanings}
+									itemId="id"
+									itemLabel="text"
+									itemGroup="group"
+									complexSource={true}
+									complexTarget={true}
+									isMulti={true}
+									clearable={true}
+									bind:target={variable.meanings}
+									placeholder="-- Please select --"
+									invalid={res.hasErrors('meanings')}
+									feedback={res.getErrors('meanings')}
+									on:change={(e) => onSelectHandler(e, 'meanings')}
+								/>
+							
+							</div>
+							<div slot="description">...</div>
+						</Container>
+
+
+
 					</section>
 
 					<footer class="card-footer">

@@ -48,12 +48,12 @@ namespace BExIS.Dlm.Services.Meanings
             {
                 using (IUnitOfWork uow = this.GetUnitOfWork())
                 {
-                    List<Variable> variables = uow.GetRepository<Variable>().Get().Where(x => variables_id.Contains(x.Id.ToString())).ToList<Variable>();
+                    //List<Variable> variables = uow.GetRepository<Variable>().Get().Where(x => variables_id.Contains(x.Id.ToString())).ToList<Variable>();
                     List<ExternalLink> externalLinks = uow.GetRepository<ExternalLink>().Get().Where(x => ExternalLink.Contains(x.Id.ToString())).ToList<ExternalLink>();
                     
                     IRepository<Meaning> repo = uow.GetRepository<Meaning>();
                     List<Meaning> related_meanings = (List<Meaning>)repo.Get().Where(x => meaning_ids.Contains(x.Id.ToString())).ToList<Meaning>();
-                    using (Meaning meaning = new Meaning(Name, ShortName, Description, selectable, approved, externalLinks, variables, related_meanings))
+                    using (Meaning meaning = new Meaning(Name, ShortName, Description, selectable, approved, externalLinks,  related_meanings))
                     {
                         repo.Put(meaning);
                         uow.Commit();
@@ -156,7 +156,7 @@ namespace BExIS.Dlm.Services.Meanings
                     meaning.Related_meaning = related_meanings;
                     meaning.Selectable = selectable;
                     meaning.ShortName = ShortName;
-                    meaning.Variable = variables;
+                    //meaning.Variables = variables;
                     meaning.ExternalLink = externalLinks;
                     meaning.Description = Description;
                     meaning.Approved = approved;

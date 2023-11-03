@@ -125,7 +125,8 @@
     <Compile Include="Controllers\DataStructureController.cs" />
     <Compile Include="Controllers\DataTypeController.cs" />
     <Compile Include="Controllers\DimensionController.cs" />
-    <Compile Include="Controllers\MeaningsController.cs" />
+    <Compile Include="Controllers\ExternalLinkController.cs" />
+    <Compile Include="Controllers\MeaningController.cs" />
     <Compile Include="Controllers\UnitController.cs" />
     <Compile Include="Controllers\StructuresController.cs" />
     <Compile Include="Controllers\VariableTemplateController.cs" />
@@ -169,6 +170,8 @@
     <Content Include="Views\Meanings\Index.cshtml" />
     <Content Include="Views\DataType\Index.cshtml" />
     <Content Include="Views\LinksMeanings\Index.cshtml" />
+    <Content Include="Views\Meaning\Index.cshtml" />
+    <Content Include="Views\ExternalLink\Index.cshtml" />
     <None Include="web.Debug.config">
       <DependentUpon>web.config</DependentUpon>
     </None>
