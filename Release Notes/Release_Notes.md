@@ -1,4 +1,7 @@
-# BEXIS2 x.y Release Notes
+# BEXIS2 3.0 Release Notes
+
+Workspace changes: 
+- updated EntityReferenceConfig.Xml: removed: IsCompiledBy & Compiles; description revision (if used compile before you should add again)
 
 >**Database Update(s)**: [Update_Script_218to300.sql](https://github.com/BEXIS2/Core/blob/rc/database%20update%20scripts/Update_Script_218to300.sql](url)
 
