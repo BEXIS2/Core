@@ -167,7 +167,6 @@
     <Content Include="Views\DataStructure\Index.cshtml" />
     <Content Include="Views\DataStructure\Create.cshtml" />
     <Content Include="Views\VariableTemplate\Index.cshtml" />
-    <Content Include="Views\Meanings\Index.cshtml" />
     <Content Include="Views\DataType\Index.cshtml" />
     <Content Include="Views\LinksMeanings\Index.cshtml" />
     <Content Include="Views\Meaning\Index.cshtml" />
