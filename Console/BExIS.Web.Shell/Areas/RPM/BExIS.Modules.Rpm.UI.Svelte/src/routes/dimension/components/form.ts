@@ -53,8 +53,6 @@ const suite = create((data: dataType, fieldName) => {
 				data.dimension.specification = regexTest.output;
 				regexTest.check = true;
 			}
-			console.log('regexTest.output', regexTest.output);
-			console.log('regexTest.regex', regexTest.regex);
 			return regexTest.check;
 		}
 	);

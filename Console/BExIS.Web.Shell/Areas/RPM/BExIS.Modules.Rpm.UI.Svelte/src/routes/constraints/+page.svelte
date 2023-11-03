@@ -12,80 +12,40 @@
 		TablePlaceholder
 	} from '@bexis2/bexis2-core-ui';
 	import * as apiCalls from './services/apiCalls';
-	//import Form from './components/form.svelte';
+	import Form from './components/form.svelte';
 	import TableOption from '../components/tableOptions.svelte';
 	import { writable, type Writable } from 'svelte/store';
 	import Fa from 'svelte-fa';
 	import { faPlus, faXmark } from '@fortawesome/free-solid-svg-icons';
 
 	import type { ModalSettings } from '@skeletonlabs/skeleton';
-	import type { DimensionListItem } from './models';
+	import type { ConstraintListItem } from './models';
 
-	let ds: DimensionListItem[] = [];
+	let cs: ConstraintListItem[] = [];
 	const tableStore = writable<any[]>([]);
-	let dimension: DimensionListItem;
+	let constraint: ConstraintListItem;
 	let showForm = false;
-	$: dimensions = ds;
-	$: tableStore.set(ds);
-
+	$: constraints = cs;
+	$: tableStore.set(cs);
+	
 	onMount(async () => {});
 
 	async function reload(): Promise<void> {
 		showForm = false;
-		ds = await apiCalls.GetDimensions();
+		cs = await apiCalls.GetDimensions();
 		clear();
 	}
 
 	async function clear() {
-		dimension = {
+		constraint = {
 			id: 0,
+			version: 0,
 			name: '',
 			description: '',
-			specification: '',
+			formalDescription: '',
+			type:'',
 			inUse: false
 		};
-	}
-
-	function editDimension(type: any) {
-		dimension = dimensions.find((d) => d.id === type.id)!;
-		if (type.action == 'edit') {
-			showForm = true;
-		}
-		if (type.action == 'delete') {
-			const modal: ModalSettings = {
-				type: 'confirm',
-				title: 'Delete Unit',
-				body:
-					'Are you sure you wish to delete Dimension "' +
-					dimension.name +
-					'" (' +
-					dimension.specification +
-					')?',
-				// TRUE if confirm pressed, FALSE if cancel pressed
-				response: (r: boolean) => {
-					if (r === true) {
-						deleteDimension(type.id);
-					}
-				}
-			};
-			modalStore.trigger(modal);
-		}
-	}
-
-	async function deleteDimension(id: number) {
-		let success = await apiCalls.DeleteDimension(id);
-		if (success != true) {
-			notificationStore.showNotification({
-				notificationType: notificationType.error,
-				message: 'Can\'t delete Dimension "' + dimension.name + '".'
-			});
-		} else {
-			notificationStore.showNotification({
-				notificationType: notificationType.success,
-				message: 'Dimension "' + dimension.name + '" deleted.'
-			});
-		}
-		reload();
 	}
 
 	function toggleForm() {
@@ -96,9 +56,9 @@
 	}
 </script>
 
-<Page help={true} title="Manage Dimensions">
+<Page help={true} title="Manage Constraints">
 	<div class="w-full">
-		<h1 class="h1">Dimensions</h1>
+		<h1 class="h1">Constraints</h1>
 
 		{#await reload()}
 			<div class="grid w-full grid-cols-2 gap-5 my-4 pb-1 border-b border-primary-500">
@@ -116,10 +76,10 @@
 			<!-- svelte-ignore a11y-click-events-have-key-events -->
 			<div class="grid grid-cols-2 gap-5 my-4 pb-1 border-b border-primary-500">
 				<div class="h3 h-9">
-					{#if dimension.id < 1}
-						Create neẇ Dimension
+					{#if constraint.id < 1}
+						Create new Constraint
 					{:else}
-						{dimension.name}
+						{constraint.name}
 					{/if}
 				</div>
 				<div class="text-right">
@@ -129,32 +89,34 @@
 							in:fade
 							out:fade
 							class="btn variant-filled-secondary shadow-md h-9 w-16"
-							title="Create neẇ Unit"
+							title="Create new Constraint"
 							id="create"
 							on:mouseover={() => {
 								helpStore.show('create');
 							}}
-							on:click={() => toggleForm()}><Fa icon={faPlus} /></button
-						>
+							on:click={() => toggleForm()}><Fa icon={faPlus} /></button>
 					{/if}
 				</div>
 			</div>
 
 			{#if showForm}
 				<div in:slide out:slide>
-					<Form {dimension} {dimensions} on:cancel={toggleForm} on:save={reload} />
+					<Form {constraint} {constraints} on:cancel={toggleForm} on:save={reload} />
 				</div>
 			{/if}
 
 			<div class="table table-compact w-full">
 				<Table
-					on:action={(obj) => editDimension(obj.detail.type)}
+					
 					config={{
-						id: 'Units',
+						id: 'constraints',
 						data: tableStore,
 						optionsComponent: TableOption,
 						columns: {
 							id: {
+								exclude: true
+							},
+							version: {
 								exclude: true
 							},
 							inUse: {
