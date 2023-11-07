@@ -3,11 +3,10 @@
 	export let row;
 </script>
 
-<!-- <input 
+<input 
 	type="checkbox" 
 	name="isApproved" 
 	id={row.id} 
 	checked={value} 
 	disabled 
-/> -->
-<b>{value}</b>
+/>

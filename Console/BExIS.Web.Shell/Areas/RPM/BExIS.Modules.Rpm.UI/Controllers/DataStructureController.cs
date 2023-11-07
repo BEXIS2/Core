@@ -847,7 +847,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
 
                 if (variableTemplates.Any())
                 {
-                    foreach (var variableTemplate in variableTemplates)
+                    foreach (var variableTemplate in variableTemplates.Where(t=>t.Approved))
                     {
                         List<string> dataTypes = new List<string>();
                
