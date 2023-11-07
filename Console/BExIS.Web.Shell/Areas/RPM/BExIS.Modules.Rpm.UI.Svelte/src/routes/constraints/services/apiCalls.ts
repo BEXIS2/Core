@@ -1,9 +1,9 @@
 import { Api } from '@bexis2/bexis2-core-ui';
-import type { DimensionListItem } from '../models';
+import type { ConstraintListItem } from '../models';
 
 export const GetDimensions = async () => {
 	try {
-		const response = await Api.get('/rpm/dimension/GetDimensions');
+		const response = await Api.get('/rpm/constraints/GetConstraints');
 		return response.data;
 	} catch (error) {
 		console.error(error);
@@ -11,19 +11,9 @@ export const GetDimensions = async () => {
 	}
 };
 
-export const EditDimension = async (dimensionListItem: DimensionListItem) => {
+export const GetConstraintTypes = async () => {
 	try {
-		const response = await Api.post('/rpm/dimension/EditDimension', dimensionListItem);
-		return response.data;
-	} catch (error) {
-		console.error(error);
-		throw error;
-	}
-};
-
-export const DeleteDimension = async (id: number) => {
-	try {
-		const response = await Api.post('/rpm/dimension/DeleteDimension', { id });
+		const response = await Api.get('/rpm/constraints/GetConstraintTypes');
 		return response.data;
 	} catch (error) {
 		console.error(error);

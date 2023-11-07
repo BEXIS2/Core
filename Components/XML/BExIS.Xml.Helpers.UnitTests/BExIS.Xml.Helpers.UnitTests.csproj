@@ -191,7 +191,7 @@
       <Name>BExIS.Dlm.Entities</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\DLM\BExIS.Dlm.Services\BExIS.Dlm.Services.csproj">
-      <Project>{C4CA0A99-0AF3-4372-A9B7-B9073599BD8B}</Project>
+      <Project>{c4ca0a99-0af3-4372-a9b7-b9073599bd8b}</Project>
       <Name>BExIS.Dlm.Services</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\JSON\BEXIS.JSON.Helpers\BEXIS.JSON.Helpers.csproj">

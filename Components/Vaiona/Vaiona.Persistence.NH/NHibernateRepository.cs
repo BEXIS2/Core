@@ -10,11 +10,42 @@ namespace Vaiona.Persistence.NH
     /// <typeparam name="TEntity"></typeparam>
     public class NHibernateRepository<TEntity> : NHibernateReadonlyRepository<TEntity>, IRepository<TEntity> where TEntity : class
     {
-        public IUnitOfWork UnitOfWork { get { return (this.UoW as IUnitOfWork); } }
-
         internal NHibernateRepository(NHibernateUnitOfWork uow)
             : base(uow)
         {
+        }
+
+        public IUnitOfWork UnitOfWork
+        { get { return (this.UoW as IUnitOfWork); } }
+
+        public bool Delete(TEntity entity)
+        {
+            UoW.Session.Delete(entity);
+            return (true);
+        }
+
+        public bool Delete(IEnumerable<TEntity> entities)
+        {
+            foreach (var entity in entities)
+            {
+                UoW.Session.Delete(entity);
+            }
+            return (true);
+        }
+
+        public bool Delete(IEnumerable<long> entityId)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool Delete(long entityId)
+        {
+            throw new NotImplementedException();
+        }
+
+        public int Execute(string queryString, Dictionary<string, object> parameters, bool isNativeOrORM = false, int timeout = 100)
+        {
+            throw new NotImplementedException();
         }
 
         public bool IsTransient(object proxy)
@@ -29,6 +60,7 @@ namespace Vaiona.Persistence.NH
             UoW.Session.Merge<TEntity>(entity);
             return (entity);
         }
+
         public bool Put(TEntity entity)
         {
             //session.Lock(entity, LockMode.None);
@@ -50,21 +82,6 @@ namespace Vaiona.Persistence.NH
             return (true);
         }
 
-        public bool Delete(TEntity entity)
-        {
-            UoW.Session.Delete(entity);
-            return (true);
-        }
-
-        public bool Delete(IEnumerable<TEntity> entities)
-        {
-            foreach (var entity in entities)
-            {
-                UoW.Session.Delete(entity);
-            }
-            return (true);
-        }
-
         private void applyAuditInfo(TEntity entity)
         {
             // check unsaved-value-check to know whether object is new or updated. use this info for state management
@@ -76,16 +93,6 @@ namespace Vaiona.Persistence.NH
         {
             // check unsaved-value-check to know whether object is new or updated. use this info for state management
             // throw new NotImplementedException();
-        }
-
-        public bool Delete(IEnumerable<long> entityId)
-        {
-            throw new NotImplementedException();
-        }
-
-        public int Execute(string queryString, Dictionary<string, object> parameters, bool isNativeOrORM = false, int timeout = 100)
-        {
-            throw new NotImplementedException();
         }
     }
 }

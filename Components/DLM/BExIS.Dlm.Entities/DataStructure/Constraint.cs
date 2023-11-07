@@ -36,6 +36,11 @@ namespace BExIS.Dlm.Entities.DataStructure
         public virtual string CultureId { get; set; }
 
         /// <summary>
+        /// A free form name of the constraint
+        /// </summary>
+        public virtual string Name { get; set; }
+
+        /// <summary>
         /// A free form description of the constraint
         /// </summary>
         public virtual string Description { get; set; }
@@ -707,7 +712,7 @@ namespace BExIS.Dlm.Entities.DataStructure
             CultureId = cultureId;
             Description = description;
             Negated = negated;
-            Context = context != null ? context : "Default";
+            Context = context ?? "Default";
             MessageTemplate = messageTemplate;
             NegatedMessageTemplate = negatedMessageTemplate;
             Operator = comparisonOperator;

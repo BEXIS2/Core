@@ -1,14 +1,16 @@
 import type { ValidationResult } from '../../models';
 
-export interface DimensionListItem {
+export interface ConstraintListItem {
 	id: number;
+	version: number;
 	name: string;
 	description: string;
-	specification: string;
+	formalDescription: string;
+	type:string;
 	inUse: boolean;
 }
 
-export interface DimensionValidationResult {
+export interface ConstraintValidationResult {
 	validationResult: ValidationResult;
-	dimensionListItem: DimensionListItem;
+	dimensionListItem: ConstraintListItem;
 }

@@ -1,35 +1,31 @@
 import { create, test, enforce, only } from 'vest';
-import type { DimensionListItem } from '../models';
+import type { ConstraintListItem } from '../models';
 
 type dataType = {
-	dimension: DimensionListItem;
-	dimensions: DimensionListItem[];
+	constraint: ConstraintListItem;
+	constraints: ConstraintListItem[];
 };
 
 const suite = create((data: dataType, fieldName) => {
 	only(fieldName);
 
 	test('name', 'name is required', () => {
-		enforce(data.dimension.name).isNotBlank();
+		enforce(data.constraint.name).isNotBlank();
 	});
 
 	test('name', 'name is not unique', () => {
 		return (
-			data.dimensions.find((u) => u.name.toLowerCase() === data.dimension.name.toLowerCase()) ==
-				null || data.dimensions.find((u) => u.name === data.dimension.name)?.id == data.dimension.id
+			data.constraints.find((u) => u.name.toLowerCase() === data.constraint.name.toLowerCase()) ==
+				null || data.constraints.find((u) => u.name === data.constraint.name)?.id == data.constraint.id
 		);
 	});
 
 	test('description', 'description is required', () => {
-		enforce(data.dimension.description).isNotBlank();
+		enforce(data.constraint.description).isNotBlank();
 	});
 
 	test('description', 'description is to short, it must be larger then 10 chars', () => {
-		enforce(data.dimension.description).longerThan(10);
-	});
-
-	test('specification', 'specification is required', () => {
-		enforce(data.dimension.specification).isNotBlank();
+		enforce(data.constraint.description).longerThan(10);
 	});
 });
 
