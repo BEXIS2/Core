@@ -28,19 +28,6 @@ CREATE TABLE IF NOT EXISTS public.entitytemplates (
 ALTER TABLE
     IF EXISTS public.entitytemplates OWNER to postgres;
 
-CREATE TABLE IF NOT EXISTS public.externallink (
-    id bigint NOT NULL,
-    versionno integer NOT NULL,
-    uri character varying(255) COLLATE pg_catalog."default",
-    name character varying(255) COLLATE pg_catalog."default",
-    type character varying(255) COLLATE pg_catalog."default",
-    externallinkref bigint,
-    CONSTRAINT externallink_pkey PRIMARY KEY (id),
-    CONSTRAINT fk_6978e301 FOREIGN KEY (externallinkref) REFERENCES public.meanings (id) MATCH SIMPLE ON UPDATE NO ACTION ON DELETE NO ACTION
-) TABLESPACE pg_default;
-
-ALTER TABLE
-    IF EXISTS public.externallink OWNER to postgres;
 
 CREATE TABLE IF NOT EXISTS public.variable_constraints (
     constraintref bigint NOT NULL,
@@ -66,6 +53,22 @@ CREATE TABLE IF NOT EXISTS public.meanings (
 
 ALTER TABLE
     IF EXISTS public.meanings OWNER to postgres;
+
+CREATE TABLE IF NOT EXISTS public.externallink (
+    id bigint NOT NULL,
+    versionno integer NOT NULL,
+    uri character varying(255) COLLATE pg_catalog."default",
+    name character varying(255) COLLATE pg_catalog."default",
+    type character varying(255) COLLATE pg_catalog."default",
+    externallinkref bigint,
+    CONSTRAINT externallink_pkey PRIMARY KEY (id),
+    CONSTRAINT fk_6978e301 FOREIGN KEY (externallinkref) REFERENCES public.meanings (id) MATCH SIMPLE ON UPDATE NO ACTION ON DELETE NO ACTION
+) TABLESPACE pg_default;
+
+ALTER TABLE
+    IF EXISTS public.externallink OWNER to postgres;
+
+
 
 CREATE TABLE IF NOT EXISTS public.meaning_meaning (
     meaningsparentref bigint NOT NULL,
@@ -104,10 +107,6 @@ CREATE TABLE IF NOT EXISTS public.accessrules (
 ALTER TABLE
     IF EXISTS public.accessrules OWNER to postgres;
 
-
-
-ALTER TABLE
-    IF EXISTS public.variables DROP COLUMN IF EXISTS dataattributeref;
 
 ALTER TABLE
     IF EXISTS public.variables
@@ -243,7 +242,186 @@ ALTER SEQUENCE public.entitytemplates_id_seq OWNER TO postgres;
 /********************** DATA CHANGES  *********************************************************/
 /**********************************************************************************************/
 
-/** Update Operations **/
+/*Update features*/
+/*Settings*/
+INSERT INTO public.features(
+versionno, extra, description, name, parentref)
+SELECT 1, null, '', 'Settings', null
+WHERE NOT EXISTS (SELECT * FROM public.features WHERE name='Settings');
+/*Entity Template Management*/
+INSERT INTO public.features(
+versionno, extra, description, name, parentref)
+SELECT 1, null, '', 'Entity Template Management', 
+(
+    Select id from features where name = 'Data Collection'
+)
+WHERE NOT EXISTS (SELECT * FROM public.features WHERE name='Entity Template Management');
+/*Dimension Management*/
+INSERT INTO public.features(
+versionno, extra, description, name, parentref)
+SELECT 1, null, '', 'Dimension Management', 
+(
+    Select id from features where name = 'Data Planing'
+)
+WHERE NOT EXISTS (SELECT * FROM public.features WHERE name='Dimension Management');
+/*Data Meaning*/
+INSERT INTO public.features(
+versionno, extra, description, name, parentref)
+SELECT 1, null, '', 'Data Meaning', 
+(
+    Select id from features where name = 'Data Planing'
+)
+WHERE NOT EXISTS (SELECT * FROM public.features WHERE name='Data Meaning');
+/*Data Meaning (public)*/
+
+INSERT INTO public.features(
+versionno, extra, description, name, parentref)
+SELECT 1, null, '', 'Data Meaning (public)', 
+(
+    Select id from features where name = 'Data Planing'
+)
+WHERE NOT EXISTS (SELECT * FROM public.features WHERE name='Data Meaning (public)');
+
+/* Update Operations */
+/*  ADD **/
+/* Shell Ldap **/
+INSERT INTO public.operations (versionno, extra, module, controller, action, featureref)
+SELECT 1, NULL, 'Shell', 'Ldap', '*', null
+WHERE NOT EXISTS (SELECT * FROM public.operations WHERE module='Shell' AND controller='Ldap');
+/* Shell Menu **/
+INSERT INTO public.operations (versionno, extra, module, controller, action, featureref)
+SELECT 1, NULL, 'Shell', 'Menu', '*', null
+WHERE NOT EXISTS (SELECT * FROM public.operations WHERE module='Shell' AND controller='Menu');
+/* Shell Settings **/
+INSERT INTO public.operations (versionno, extra, module, controller, action, featureref)
+SELECT 1, NULL, 'Shell', 'Settings', '*', (Select id from features where name = 'Settings' AND parentref = (
+Select id from features where name = 'BExIS'))
+WHERE NOT EXISTS (SELECT * FROM public.operations WHERE module='Shell' AND controller='Settings');
+/* DCM	Create **/
+INSERT INTO public.operations (versionno, extra, module, controller, action, featureref)
+SELECT 1, NULL, 'DCM', 'Create', '*', (Select id from features where name = 'Data Creation' AND parentref = (
+Select id from features where name = 'Data Collection'))
+WHERE NOT EXISTS (SELECT * FROM public.operations WHERE module='DCM' AND controller='Create');
+/* DCM	Edit **/
+INSERT INTO public.operations (versionno, extra, module, controller, action, featureref)
+SELECT 1, NULL, 'DCM', 'Edit', '*', null
+WHERE NOT EXISTS (SELECT * FROM public.operations WHERE module='DCM' AND controller='Edit');
+/* DCM	View **/
+INSERT INTO public.operations (versionno, extra, module, controller, action, featureref)
+SELECT 1, NULL, 'DCM', 'View', '*', null
+WHERE NOT EXISTS (SELECT * FROM public.operations WHERE module='DCM' AND controller='View');
+/* DCM	Metadata **/
+INSERT INTO public.operations (versionno, extra, module, controller, action, featureref)
+SELECT 1, NULL, 'DCM', 'Metadata', '*', (Select id from features where name = 'Data Creation' AND parentref = (
+Select id from features where name = 'Data Collection'))
+WHERE NOT EXISTS (SELECT * FROM public.operations WHERE module='DCM' AND controller='Metadata');
+/* Api	File */
+INSERT INTO public.operations (versionno, extra, module, controller, action, featureref)
+SELECT 1, NULL, 'API', 'File', '*', (Select id from features where name = 'Data Upload' AND parentref = (
+Select id from features where name = 'Data Collection'))
+WHERE NOT EXISTS (SELECT * FROM public.operations WHERE module='API' AND controller='File');
+/* DCM	FileUpload **/
+INSERT INTO public.operations (versionno, extra, module, controller, action, featureref)
+SELECT 1, NULL, 'DCM', 'FileUpload', '*', (Select id from features where name = 'Data Upload' AND parentref = (
+Select id from features where name = 'Data Collection'))
+WHERE NOT EXISTS (SELECT * FROM public.operations WHERE module='DCM' AND controller='FileUpload');
+/* DCM	AttachmentUpload **/
+INSERT INTO public.operations (versionno, extra, module, controller, action, featureref)
+SELECT 1, NULL, 'DCM', 'AttachmentUpload', '*', (Select id from features where name = 'Data Upload' AND parentref = (
+Select id from features where name = 'Data Collection'))
+WHERE NOT EXISTS (SELECT * FROM public.operations WHERE module='DCM' AND controller='AttachmentUpload');
+/* DCM	Validation **/
+INSERT INTO public.operations (versionno, extra, module, controller, action, featureref)
+SELECT 1, NULL, 'DCM', 'Validation', '*', (Select id from features where name = 'Data Upload' AND parentref = (
+Select id from features where name = 'Data Collection'))
+WHERE NOT EXISTS (SELECT * FROM public.operations WHERE module='DCM' AND controller='Validation');
+/* DCM	Messages **/
+INSERT INTO public.operations (versionno, extra, module, controller, action, featureref)
+SELECT 1, NULL, 'DCM', 'Messages', '*', (Select id from features where name = 'Data Upload' AND parentref = (
+Select id from features where name = 'Data Collection'))
+WHERE NOT EXISTS (SELECT * FROM public.operations WHERE module='DCM' AND controller='Messages');
+/* DCM	DataDescription **/
+INSERT INTO public.operations (versionno, extra, module, controller, action, featureref)
+SELECT 1, NULL, 'DCM', 'DataDescription', '*', (Select id from features where name = 'Data Upload' AND parentref = (
+Select id from features where name = 'Data Collection'))
+WHERE NOT EXISTS (SELECT * FROM public.operations WHERE module='DCM' AND controller='DataDescription');
+/* DCM	EntityTemplates **/
+INSERT INTO public.operations (versionno, extra, module, controller, action, featureref)
+SELECT 1, NULL, 'DCM', 'EntityTemplates', '*', (Select id from features where name = 'Entity Template Management' AND parentref = (
+Select id from features where name = 'Data Collection'))
+WHERE NOT EXISTS (SELECT * FROM public.operations WHERE module='DCM' AND controller='EntityTemplates');
+/* RPM	DataStructure **/
+INSERT INTO public.operations (versionno, extra, module, controller, action, featureref)
+SELECT 1, NULL, 'RPM', 'DataStructure', '*', (Select id from features where name = 'Datastructure Management' AND parentref = (
+Select id from features where name = 'Data Planning'))
+WHERE NOT EXISTS (SELECT * FROM public.operations WHERE module='RPM' AND controller='DataStructure');
+/* RPM	VariableTemplate **/
+INSERT INTO public.operations (versionno, extra, module, controller, action, featureref)
+SELECT 1, NULL, 'RPM', 'VariableTemplate', '*', (Select id from features where name = 'Variables Template Management' AND parentref = (
+Select id from features where name = 'Data Planning'))
+WHERE NOT EXISTS (SELECT * FROM public.operations WHERE module='RPM' AND controller='VariableTemplate');
+/* RPM	Dimension **/
+INSERT INTO public.operations (versionno, extra, module, controller, action, featureref)
+SELECT 1, NULL, 'RPM', 'Dimension', '*', (Select id from features where name = 'Unit Management' AND parentref = (
+Select id from features where name = 'Data Planning'))
+WHERE NOT EXISTS (SELECT * FROM public.operations WHERE module='RPM' AND controller='Dimension');
+/* API	MeaningsAdmin **/
+INSERT INTO public.operations (versionno, extra, module, controller, action, featureref)
+SELECT 1, NULL, 'API', 'MeaningsAdmin', '*', (Select id from features where name = 'Data Meaning' AND parentref = (
+Select id from features where name = 'Data Planning'))
+WHERE NOT EXISTS (SELECT * FROM public.operations WHERE module='API' AND controller='MeaningsAdmin');
+/* API	Meanings **/
+INSERT INTO public.operations (versionno, extra, module, controller, action, featureref)
+SELECT 1, NULL, 'API', 'Meanings', '*', (Select id from features where name = 'Data Meaning (public)' AND parentref = (
+Select id from features where name = 'Data Planning'))
+WHERE NOT EXISTS (SELECT * FROM public.operations WHERE module='API' AND controller='Meanings');
+/* RPM	Meaning **/
+INSERT INTO public.operations (versionno, extra, module, controller, action, featureref)
+SELECT 1, NULL, 'RPM', 'Meaning', '*', (Select id from features where name = 'Data Meaning (public)' AND parentref = (
+Select id from features where name = 'Data Planning'))
+WHERE NOT EXISTS (SELECT * FROM public.operations WHERE module='RPM' AND controller='Meaning');
+/* RPM	ExternalLink **/
+INSERT INTO public.operations (versionno, extra, module, controller, action, featureref)
+SELECT 1, NULL, 'RPM', 'ExternalLink', '*', (Select id from features where name = 'Data Meaning (public)' AND parentref = (
+Select id from features where name = 'Data Planning'))
+WHERE NOT EXISTS (SELECT * FROM public.operations WHERE module='RPM' AND controller='ExternalLink');
+/* DIM	Publish **/ 
+INSERT INTO public.operations (versionno, extra, module, controller, action, featureref)
+SELECT 1, NULL, 'DIM', 'Publish', '*', null
+WHERE NOT EXISTS (SELECT * FROM public.operations WHERE module='DIM' AND controller='Publish');
+
+/** REMOVE **/
+/** DCM	SubmitChooseUpdateMethod **/
+DELETE FROM public.operations Where module = 'DCM' and controller = 'SubmitChooseUpdateMethod';
+/** DCM	SubmitGetFileInformation **/
+DELETE FROM public.operations Where module = 'DCM' and controller = 'SubmitGetFileInformation';
+/** DCM	SubmitSelectAFile **/
+DELETE FROM public.operations Where module = 'DCM' and controller = 'SubmitSelectAFile';
+/** DCM	SubmitSpecifyDataset **/
+DELETE FROM public.operations Where module = 'DCM' and controller = 'SubmitSpecifyDataset';
+/** DCM	SubmitSummary **/
+DELETE FROM public.operations Where module = 'DCM' and controller = 'SubmitSummary';
+/** DCM	SubmitValidation **/
+DELETE FROM public.operations Where module = 'DCM' and controller = 'SubmitValidation';
+/** DCM	Push **/
+DELETE FROM public.operations Where module = 'DCM' and controller = 'Push';
+/** DCM	EasyUpload **/
+DELETE FROM public.operations Where module = 'DCM' and controller = 'EasyUpload';
+/** DCM	EasyUploadSelectAFile **/
+DELETE FROM public.operations Where module = 'DCM' and controller = 'EasyUploadSelectAFile';
+/** DCM	EasyUploadSelectAreas **/
+DELETE FROM public.operations Where module = 'DCM' and controller = 'EasyUploadSelectAreas';
+/** DCM	EasyUploadSheetDataStructure **/
+DELETE FROM public.operations Where module = 'DCM' and controller = 'EasyUploadSheetDataStructure';
+/** DCM	EasyUploadSheetSelectMetaData **/
+DELETE FROM public.operations Where module = 'DCM' and controller = 'EasyUploadSheetSelectMetaData';
+/** DCM	EasyUploadSummary **/
+DELETE FROM public.operations Where module = 'DCM' and controller = 'EasyUploadSummary';
+/** DCM	EasyUploadVerification **/
+DELETE FROM public.operations Where module = 'DCM' and controller = 'EasyUploadVerification';
+
+
+
 
 /** Entity Templates **/
 /* add template for unstructured */
@@ -263,18 +441,31 @@ Update Datasets SET entitytemplateref=2 where datastructureref in (select id fro
 
 /** Variable Templates & Variables Update from DataContainer **/
 /** create variable Templates  -type = VAR_TEMPL**/
-SELECT id, discriminator, versionno, extra, state, statetimestamp, statecomment, c_actiontype, c_performer, c_comment, c_timestamp, m_actiontype, m_performer, m_comment, m_timestamp, name, shortname, description, ismultivalue, isbuiltin, scope, entityselectionpredicate, containertype, measurementscale, datatyperef, unitref, methodologyref, classifierref
-	FROM public.datacontainers Where discriminator like 'DA';
 
-/** update variable
- - set datatyperef from data container
- - update type of variable :  VAR_INST or VAR_TEMPL
-**/
+/*  set all existing varaibles type to VAR_INST */
+Update public.variables
+set variablestype = 'VAR_INST';
+
+/*  add all da to VAR_TEMPL */
+INSERT INTO public.variables(
+		versionno, extra, label, description, dataattributeref, unitref, datatyperef, variablestype, approved)
+Select	versionno, extra, name, description, id, unitref, datatyperef, 'VAR_TEMPL', true
+From public.datacontainers Where discriminator like 'DA';
+	
+
+/*  set all templates to variables */
+update variables as x
+SET vartemplateref = b.id
+from  variables b
+where x.dataattributeref = b.dataattributeref and b.variablestype = 'VAR_TEMPL';
 
 
 /** update Constraints **/
 
 /***Link constraints to varaibles*/
+
+
+/* Seed data dwc terms as meanings */
 
 /**********************************************************************************************/
 /********************** SCHEMA CHANGES AFTER DATA  ********************************************/
@@ -298,6 +489,11 @@ ALTER TABLE
     IF EXISTS public.datasets
 ADD
     COLUMN entitytemplateref bigint NOT NULL;
+
+
+/* drop all varaible links to dataattributeref*/
+ALTER TABLE
+    IF EXISTS public.variables DROP COLUMN IF EXISTS dataattributeref;
 
 
 END;
