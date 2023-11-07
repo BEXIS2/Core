@@ -27,6 +27,7 @@ import { update } from './services'
 
 	import suite from './variableTemplate';
 	import MissingValues from '$lib/components/datastructure/MissingValues.svelte';
+	import { SlideToggle } from '@skeletonlabs/skeleton';
 
  export let missingValues: missingValueType[];
 	export let variable: VariableTemplateModel;
@@ -223,6 +224,8 @@ import { update } from './services'
 	</div>
 
 	</div>
+	
+
 
 	<div class="flex gap-5">
 		<div class="grow w-1/2">
@@ -294,7 +297,9 @@ import { update } from './services'
 		placeholder="-- Please select --"
 		{loading}
 	/>
-
+	<div class="flex gap-5 py-5">
+			<SlideToggle name="Approved" bind:checked={variable.approved} on:change>{"Approved"}</SlideToggle>
+	</div>
 
 		<div class="py-5 text-right col-span-2">
 			<!-- svelte-ignore a11y-mouse-events-have-key-events -->
@@ -315,5 +320,6 @@ import { update } from './services'
 				<Fa icon={faSave} /></button>
 		</div>
 </div>
+
 
 </form>
