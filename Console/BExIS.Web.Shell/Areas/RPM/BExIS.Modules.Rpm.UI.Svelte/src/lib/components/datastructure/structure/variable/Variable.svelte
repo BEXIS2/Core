@@ -56,6 +56,7 @@
 	export let isValid: boolean = false;
 	export let last: boolean = false;
 	export let expand: boolean;
+	export let blockDataRelevant:boolean;
 
 	$: isValid;
 	// validation
@@ -244,6 +245,7 @@
 								valid={res.isValid('name')}
 								invalid={res.hasErrors('name')}
 								feedback={res.getErrors('name')}
+								disabled={blockDataRelevant}
 							/>
 						</Header>
 					</header>
@@ -289,6 +291,7 @@
 									feedback={res.getErrors('dataType')}
 									clearable={true}
 									on:change={(e) => onSelectHandler(e, 'dataType')}
+									disabled={blockDataRelevant}
 								/>
 							</div>
 
@@ -388,9 +391,10 @@
 									clearable={true}
 									bind:target={variable.template}
 									placeholder="-- Please select --"
-									invalid={res.hasErrors('variableTemplate')}
+									invalid={res.hasErrors('variableTemplate') && !blockDataRelevant}
 									feedback={res.getErrors('variableTemplate')}
 									on:change={(e) => onSelectHandler(e, 'variableTemplate')}
+									disabled={blockDataRelevant}
 								/>
 							
 							</div>

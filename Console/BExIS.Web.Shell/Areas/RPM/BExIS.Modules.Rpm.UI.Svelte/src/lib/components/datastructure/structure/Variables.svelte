@@ -18,7 +18,7 @@
 	export let variables: VariableInstanceModel[] = [];
 	export let missingValues: missingValueType[] = [];
 	export let data: string[][];
-
+ export let dataExist:boolean;
 
 	$: variables;
 
@@ -44,12 +44,6 @@
 
 		const meanings = await getMeanings();
 		meaningsStore.set(meanings);
-
-		//console.log("---------",datatypes);
-		// console.log("datatypes",datatypes);
-		// console.log("units", units);
-		// console.log("missingValues", missingValues);
-		// console.log("variableTemplates", variableTemplates);
 
 		fillVariableValdationStates(variables);
 
@@ -234,6 +228,7 @@
 				on:copy-next={copyNext}
 				on:copy-all={copyAll}
 				expand = {expandAll}
+				blockDataRelevant = {dataExist}
 			>
 				<svelte:fragment slot="options">
 					{#if variables.length > 0 && i < variables.length - 1}
@@ -254,7 +249,7 @@
 					{/if}
 				</svelte:fragment>
 				<svelte:fragment slot="list-options">
-			
+			 {#if !dataExist}
 						<button id="delete-{i}" class="chip variant-filled-error" on:click={()=>deleteFn(i)}><Fa icon="{faTrash}"></Fa></button>
 
 						{#if i > 0}
@@ -269,12 +264,16 @@
 						{:else}
 							<button id="down-{i}" class="chip variant-filled-surface" disabled on:click={()=>downFn(i)}><Fa icon="{faAngleDown}"></Fa></button>
 						{/if}
-				</svelte:fragment>
+				{/if}
+					</svelte:fragment>
+
 			</Variable>
 		{/each}
 		<div class="flex content-end px-6">
 			<div class="grow"></div> 
-			<button class="chip variant-filled-primary flex-none" on:click="{addFn}"><Fa icon="{faAdd}"></Fa> </button>
+			{#if !dataExist}
+					<button class="chip variant-filled-primary flex-none" on:click="{addFn}"><Fa icon="{faAdd}"></Fa> </button>
+			{/if}
 		</div>
 	{:else}
 		<Spinner label="loading suggested structure" />

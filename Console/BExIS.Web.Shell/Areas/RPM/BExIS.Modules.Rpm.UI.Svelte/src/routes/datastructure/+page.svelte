@@ -79,6 +79,12 @@ function copy(id)
 	goTo("/rpm/datastructure/create?structureId="+id+"&&file=")
 }
 
+
+function edit(id)
+{
+	goTo("/rpm/datastructure/edit?structureId="+id)
+}
+
 async function deleteFn(id)
 {
 		const success = await remove(id);
@@ -103,9 +109,15 @@ async function deleteFn(id)
 
 async function tableFn(type:any)
 {
+			// edit data data structure based on id
+			if (type.action == 'edit') {
+					edit(type.id)
+				}
+
+
 		// copy data data structure based on id
 		if (type.action == 'copy') {
-			copy(type.id)
+				copy(type.id)
 		}
 
 		// copy data data structure based on id

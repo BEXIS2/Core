@@ -12,11 +12,11 @@
 	let res = suite.get();
 
 	onMount(() => {
-		suite.reset();
+		suite.reset(); // reset tests
+		model.title = ""+model.id; // set default title
+		res = suite(model, ""); // run validation
+		valid = res.isValid(); // set result 
 
-		model.title = ""+model.id;
-		res = suite(model, "");
-		
 	});
 
 	//change event: if input change check also validation only on the field

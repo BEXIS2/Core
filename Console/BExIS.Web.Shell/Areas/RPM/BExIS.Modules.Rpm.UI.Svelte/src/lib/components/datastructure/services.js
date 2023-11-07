@@ -17,6 +17,15 @@ export const getDataStructures = async () => {
 	}
 };
 
+export const get = async (id) => {
+	try {
+		const response = await Api.get('/rpm/DataStructure/get?id='+id);
+		return response.data;
+	} catch (error) {
+		console.error(error);
+	}
+};
+
 /****************/
 /* Create*/
 /****************/
@@ -105,6 +114,15 @@ export const store = async (data) => {
 	}
 };
 
+export const create = async (data) => {
+	try {
+		const response = await Api.post('/rpm/DataStructure/create', data);
+		return response.data;
+	} catch (error) {
+		console.error(error);
+	}
+};
+
 export const save = async (data) => {
 	try {
 		const response = await Api.post('/rpm/DataStructure/save', data);
@@ -159,4 +177,3 @@ export const getMeanings = async () => {
 		console.error(error);
 	}
 };
-

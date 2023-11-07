@@ -70,6 +70,36 @@ namespace BExIS.Modules.Rpm.UI.Models.DataStructure
         }
     }
 
+    public class DataStructureEditModel
+    {
+        public long Id { get; set; }
+
+        /// <summary>
+        /// title of the data structure
+        /// </summary>
+        public string Title { get; set; }
+        /// <summary>
+        /// description of the data structure
+        /// </summary>
+        public string Description { get; set; }
+
+        public List<string> Preview { get; set; }
+
+        public List<VariableInstanceModel> Variables { get; set; }
+
+        public List<MissingValueModel> MissingValues { get; set; }
+
+        public DataStructureEditModel()
+        {
+            Id = 0;
+            Title = "";
+            Description = "";
+            Preview = new List<string>();
+            MissingValues = new List<MissingValueModel>();
+            Variables = new List<VariableInstanceModel>();
+        }
+    }
+
     public class MissingValueModel
     {
         public string DisplayName { get; set; }
