@@ -1,5 +1,5 @@
 <script lang="ts">
-	import Structure from '$lib/components/datastructure/structure/Structure.svelte';
+	import Structure from '$lib/components/datastructure/structure/CreateStructure.svelte';
 	import Selection from '$lib/components/datastructure/Selection.svelte';
 
 	import { onMount } from 'svelte';

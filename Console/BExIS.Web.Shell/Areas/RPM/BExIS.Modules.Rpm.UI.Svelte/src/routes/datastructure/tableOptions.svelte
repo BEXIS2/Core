@@ -1,6 +1,6 @@
 <script lang="ts">
 	import Fa from 'svelte-fa';
-	import { faCopy, faTrash } from '@fortawesome/free-solid-svg-icons';
+	import { faCopy, faTrash, faPen } from '@fortawesome/free-solid-svg-icons';
 	import { helpStore } from '@bexis2/bexis2-core-ui';
 
 	export let row: any;
@@ -20,7 +20,7 @@ console.log("row",row)
 				type="button"
 				class="chip variant-filled-primary shadow-md"
 				title="Copy Structure, {row.title}"
-				id="edit-{row.id}"
+				id="copy-{row.id}"
 				on:mouseover={() => {
 					helpStore.show('copy');
 				}}
@@ -31,6 +31,22 @@ console.log("row",row)
 			>
 				<Fa icon={faCopy} />
 			</button>
+			<!-- svelte-ignore a11y-mouse-events-have-key-events -->
+					<button
+					type="button"
+					class="chip variant-filled-primary shadow-md"
+					title="Edit Structure, {row.title}"
+					id="edit-{row.id}"
+					on:mouseover={() => {
+						helpStore.show('copy');
+					}}
+					on:click|preventDefault={() =>
+						dispatchFn({
+							type: { action: 'edit', id: row.id, title: row.title }
+						})}
+				>
+					<Fa icon={faPen} />
+				</button>
 			<!-- svelte-ignore a11y-mouse-events-have-key-events -->
 			<button
 				type="button"
