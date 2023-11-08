@@ -9,11 +9,11 @@
 	import type { ModalSettings } from '@skeletonlabs/skeleton';
 
 	import Fa from 'svelte-fa';
-	import { faShare, faShareFromSquare, faMaximize, faMinimize, faAdd, faTrash, faCopy, faAngleUp, faAngleDown } from '@fortawesome/free-solid-svg-icons';
+	import { faShare, faShareFromSquare, faMaximize, faMinimize, faAdd, faTrash, faCopy, faAngleUp, faAngleDown, faAnglesDown, faAnglesUp } from '@fortawesome/free-solid-svg-icons';
 
 	// stores
 	
-	import { displayPatternStore, unitStore, dataTypeStore, templateStore, meaningsStore} from '../store'
+	import { unitStore, dataTypeStore, templateStore, meaningsStore} from '../store'
 
 	export let variables: VariableInstanceModel[] = [];
 	export let missingValues: missingValueType[] = [];
@@ -200,22 +200,42 @@
 
 </script>
 
-<button class="btn variant-filled-secondary" on:click={()=> expandAll = !expandAll}>
-		{#if expandAll}
-			<Fa icon={faMinimize}/>
-	 {:else}
-		<Fa icon={faMaximize}/>
-		{/if}
-</button>
+<div class="p-2">
+<div class="flex gap-2 items-baseline"> 
 
-{#each variableValidationStates as v, i}
-	{#if v==false && variables[i] != undefined}
-	 {variables[i].name}, 
+	<button class="btn variant-filled-secondary" on:click={()=> expandAll = !expandAll}>
+			{#if expandAll}
+				<Fa icon={faAnglesUp}/>
+			{:else}
+			<Fa icon={faAnglesDown}/>
+			{/if}
+	</button>
+
+<div class="pr-32 w-auto">
+	{#if !valid}
+		<span class="text-sm">Variables with errors:</span>
+
+
+			{#each variableValidationStates as v, i}
+					{#if v==false && variables[i] != undefined}
+			
+									<a class="chip variant-filled-error m-1" href="#{i}">
+										{#if variables[i].name !=""}
+											{variables[i].name}
+										{:else}
+											{i+1}
+										{/if}
+									</a>
+
+					{/if}
+		
+			{/each}
+
 	{/if}
-{/each}
+</div>
 
-
-<div class="flex-col space-y-2 mt-5">
+</div>
+<div class="flex-col space-y-2 mt-1">
 
 	{#if variables && missingValues && ready}
 		<!-- else content here -->
@@ -280,6 +300,7 @@
 	{:else}
 		<Spinner label="loading suggested structure" />
 	{/if}
+</div>
 </div>
 
 <Modal />
