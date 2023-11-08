@@ -42,7 +42,7 @@ namespace BExIS.UI.Helpers
         {
             string appDomain = AppDomain.CurrentDomain.BaseDirectory;
             string svelteBuildPath = "/Areas/" + module + "/BExIS.Modules." + module + ".UI/Scripts/svelte/";
-            string manifestJson = "vite-manifest.json";
+            string manifestJson = ".vite/manifest.json";
             string key = "src/routes/" + pageId + "/+page.css";
 
             string manifestJsonPath = appDomain + svelteBuildPath + manifestJson;
@@ -68,7 +68,7 @@ namespace BExIS.UI.Helpers
         {
             string appDomain = AppDomain.CurrentDomain.BaseDirectory;
             string svelteBuildPath = "/Areas/" + module + "/BExIS.Modules." + module + ".UI/Scripts/svelte/";
-            string manifestJson = "vite-manifest.json";
+            string manifestJson = ".vite/manifest.json";
             string key = "src/routes/" + pageId + "/+page.svelte";
 
             string manifestJsonPath = appDomain + svelteBuildPath + manifestJson;
@@ -97,7 +97,7 @@ namespace BExIS.UI.Helpers
         {
             string appDomain = AppDomain.CurrentDomain.BaseDirectory;
             string svelteBuildPath = "/Areas/" + module + "/BExIS.Modules." + module + ".UI/Scripts/svelte/";
-            string manifestJson = "vite-manifest.json";
+            string manifestJson = ".vite/manifest.json";
             //string key = "src/routes/+layout.js";
 
             string manifestJsonPath = appDomain + svelteBuildPath + manifestJson;
@@ -127,7 +127,7 @@ namespace BExIS.UI.Helpers
 #endif
 
             string svelteBuildPath = (string.IsNullOrEmpty(module) || module.ToLower() == "shell") ? "/Scripts/svelte/" : $"/Areas/{module}{debugPathAdditionals}/Scripts/svelte/";
-            string manifestJson = "vite-manifest.json";
+            string manifestJson = ".vite/manifest.json";
             //string key = "src/routes/" + pageId + "/+page.svelte";
 
             string manifestJsonPath = appDomain + svelteBuildPath + manifestJson;
