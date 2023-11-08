@@ -640,14 +640,14 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                                 Meanings = helper.ConvertTo(variable.Meanings)
                             };
 
+   
                             // add template if exist
                             if (variable.VariableTemplate != null) var.Template = helper.ConvertTo(variable.VariableTemplate, "copied");
-
 
                             // get suggestes DisplayPattern / currently only for DateTime
                             if (var.SystemType.Equals(typeof(DateTime).Name))
                             {
-                                var.DisplayPattern = null; // here a suggesten of the display pattern is needed
+                                if (variable.DisplayPatternId >= 0) var.DisplayPattern = new ListItem(variable.DisplayPatternId, DataTypeDisplayPattern.Get(variable.DisplayPatternId).DisplayPattern);
                                 var displayPattern = DataTypeDisplayPattern.Pattern.Where(p => p.Systemtype.ToString().Equals(var.SystemType));
                                 displayPattern.ToList().ForEach(d => var.PossibleDisplayPattern.Add(new ListItem(d.Id, d.DisplayPattern)));
                             };
@@ -716,7 +716,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                                 Id = variable.Id,
                                 Name = variable.Label,
                                 Description = variable.Description,
-                                DataType = new ListItem(variable.DataType.Id, variable.DataType.Name, "copied"),
+                                DataType = new ListItem(variable.DataType.Id, variable.DataType.Name),
                                 SystemType = variable.DataType.SystemType,
                                 Unit = new UnitItem(variable.Unit.Id, variable.Unit.Abbreviation, variable.Unit.AssociatedDataTypes.Select(x => x.Name).ToList(), "copied"),
                                 IsKey = variable.IsKey,
@@ -731,7 +731,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                             // get suggestes DisplayPattern / currently only for DateTime
                             if (var.SystemType.Equals(typeof(DateTime).Name))
                             {
-                                var.DisplayPattern = null; // here a suggesten of the display pattern is needed
+                                var.DisplayPattern = new ListItem(variable.DisplayPatternId, DataTypeDisplayPattern.Get(variable.DisplayPatternId).DisplayPattern) ; // here a suggesten of the display pattern is needed
                                 var displayPattern = DataTypeDisplayPattern.Pattern.Where(p => p.Systemtype.ToString().Equals(var.SystemType));
                                 displayPattern.ToList().ForEach(d => var.PossibleDisplayPattern.Add(new ListItem(d.Id, d.DisplayPattern)));
                             };

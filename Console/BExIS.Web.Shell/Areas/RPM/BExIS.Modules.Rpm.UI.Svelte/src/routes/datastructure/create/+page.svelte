@@ -62,6 +62,7 @@
 			console.log("copy structure");
 			// copy structure
 			model = await copy(datastructureId);
+			console.log("🚀 ~ file: +page.svelte:65 ~ start ~ model:", model)
 			selectionIsActive = false;
 			
 		} else {
@@ -78,7 +79,7 @@
 		const displayPattern = await getDisplayPattern();
 		displayPatternStore.set(displayPattern);
 
-		console.log('model', model);
+
 	}
 
 	async function update(e) {
@@ -118,5 +119,5 @@
 		{/if}
 	{:catch error}
 		<ErrorMessage {error} />
-	{/await}
+	{/await} 
 </Page>
