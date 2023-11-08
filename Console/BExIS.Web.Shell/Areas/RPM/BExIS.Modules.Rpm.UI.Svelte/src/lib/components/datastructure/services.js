@@ -90,6 +90,8 @@ export const empty = async () => {
 export const copy = async (id) => {
 	try {
 		const response = await Api.get('/rpm/DataStructure/copy?id='+id);
+
+		console.log("🚀 ~ file: services.js:95 ~ copy ~ response.data:", response.data)
 		return response.data;
 	} catch (error) {
 		console.error(error);

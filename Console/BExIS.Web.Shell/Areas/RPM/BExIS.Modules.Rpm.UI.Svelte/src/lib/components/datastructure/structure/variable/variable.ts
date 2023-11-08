@@ -75,8 +75,6 @@ const suite = create((data = {}, fieldName) => {
 
 			test('unit', 'unit not match with the template', () => {
 				
-				console.log("🚀 ~ file: variable.ts:79 ~ test ~ isTemplateRequired:", isTemplateRequired)
-				console.log("🚀 ~ file: variable.ts:80 ~ test ~ data.template:", data.template)
 				if (!isTemplateRequired && (!data.template || data.template.id == 0)) {
 					return true;
 				}

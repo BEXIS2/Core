@@ -154,6 +154,7 @@
 		copiedVariable.template = variables[i].template;
 		copiedVariable.systemType = variables[i].systemType;
 		copiedVariable.template = variables[i].template;
+		copiedVariable.displayPattern = variables[i].displayPattern;
 
 
 		variables.splice(i+1, 0, copiedVariable);
@@ -174,6 +175,7 @@
 				response: (r: boolean) => {
 					
 		 			variables = variables.filter(v=>v != deleteVar);
+		 			console.log("🚀 ~ file: Variables.svelte:177 ~ deleteVar:", deleteVar)
 				}
 			};
 			modalStore.trigger(confirm);
@@ -207,7 +209,7 @@
 </button>
 
 {#each variableValidationStates as v, i}
-	{#if v==false}
+	{#if v==false && variables[i] != undefined}
 	 {variables[i].name}, 
 	{/if}
 {/each}
