@@ -13,7 +13,9 @@
 		"lint": "prettier --plugin-search-dir . --check . && eslint .",
 		"format": "prettier --plugin-search-dir . --write .",
 		"postinstall": "patch-package",
-		"install local bexis2-core-ui": "npm install C:/Projects/github.com/BEXIS2/bexis2-core-ui"
+		"install local bexis2-core-ui": "npm install C:/Projects/github.com/BEXIS2/bexis2-core-ui",
+		"reinstall packages": "npm install --force",
+		"check packages": "npm outdated"
 	},
 	"devDependencies": {
 		"@codemirror/lang-html": "^6.4.5",

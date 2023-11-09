@@ -2,31 +2,26 @@
 using BExIS.Security.Entities.Subjects;
 using BExIS.Security.Services.Subjects;
 using BExIS.Utils.Config;
-using BExIS.Utils.Route;
 using BExIS.Web.Shell.Models;
 using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Collections.Generic;
-using System.Configuration;
 using System.IdentityModel.Tokens.Jwt;
+using System.Linq;
 using System.Net;
-using System.Net.Http;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
-using System.Web.Http;
+using System.Web;
+using System.Web.Mvc;
+using Vaiona.Web.Mvc.Modularity;
 
-namespace BExIS.Web.Shell.Controllers.API
+namespace BExIS.Web.Shell.Controllers
 {
-    public class TokensController : ApiController
+    public class TokensController : Controller
     {
-        // GET api/Token/
-        /// <summary>
-        /// Get the token based on basic authentication
-        /// </summary>
-        /// <returns>Token</returns>
-        [HttpGet, GetRoute("api/tokens"), BExISApiAuthorize]
-        public async Task<HttpResponseMessage> Get()
+        [HttpGet, JsonNetFilter]
+        public async Task<JsonResult> GetToken()
         {
             try
             {
@@ -34,8 +29,7 @@ namespace BExIS.Web.Shell.Controllers.API
 
                 using (var userManager = new UserManager())
                 {
-                    var user = ControllerContext.RouteData.Values["user"] as User;
-
+                    var user = await userManager.FindByNameAsync(HttpContext.User.Identity.Name);
                     if (user != null)
                     {
                         var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtConfiguration.IssuerSigningKey));
@@ -59,16 +53,22 @@ namespace BExIS.Web.Shell.Controllers.API
 
                         var jwt_token = new JwtSecurityTokenHandler().WriteToken(token);
 
-                        return Request.CreateResponse(HttpStatusCode.OK, new ReadJwtModel() { Jwt = jwt_token });
+                        return Json(jwt_token, JsonRequestBehavior.AllowGet);
                     }
 
-                    return Request.CreateResponse(HttpStatusCode.BadRequest);
+                    return Json(false);
                 }
             }
             catch (Exception ex)
             {
-                return Request.CreateResponse(HttpStatusCode.BadRequest);
+                throw;
             }
+        }
+
+        // GET: Tokens
+        public ActionResult Index()
+        {
+            return View();
         }
     }
 }
