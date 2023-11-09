@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNet.Identity;
+﻿using BExIS.Utils.Config;
+using Microsoft.AspNet.Identity;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.Owin;
 using Microsoft.Owin.Security;
@@ -19,6 +20,8 @@ namespace BExIS.Security.Services.Utilities
         // For more information on configuring authentication, please visit http://go.microsoft.com/fwlink/?LinkId=301864
         public static void Configure(IAppBuilder app)
         {
+            var jwtConfiguration = GeneralSettings.JwtConfiguration;
+
             DataProtectionProvider = app.GetDataProtectionProvider();
 
             app.UseCookieAuthentication(new CookieAuthenticationOptions
@@ -35,51 +38,14 @@ namespace BExIS.Security.Services.Utilities
                     AuthenticationMode = AuthenticationMode.Active,
                     TokenValidationParameters = new TokenValidationParameters()
                     {
-                        ValidateIssuer = true,
-                        ValidateAudience = true,
-                        ValidateIssuerSigningKey = true,
-                        ValidIssuer = ConfigurationManager.AppSettings["JwtIssuer"], //some string, normally web url,  
-                        ValidAudience = ConfigurationManager.AppSettings["JwtIssuer"],
-                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(ConfigurationManager.AppSettings["JwtKey"]))
+                        ValidateIssuer = jwtConfiguration.ValidateIssuer,
+                        ValidateAudience = jwtConfiguration.ValidateAudience,
+                        ValidateIssuerSigningKey = jwtConfiguration.ValidateIssuerSigningKey,
+                        ValidIssuer = jwtConfiguration.ValidIssuer,
+                        ValidAudience = jwtConfiguration.ValidAudience,
+                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtConfiguration.IssuerSigningKey))
                     }
                 });
-
-            // Uncomment the following lines to enable logging in with third party login providers
-            //app.UseMicrosoftAccountAuthentication(
-            //    clientId: "",
-            //    clientSecret: "");
-
-            //app.UseTwitterAuthentication(
-            //   consumerKey: "dfgdfgdfgd",
-            //   consumerSecret: "dfgdfffffffg");
-
-            //app.UseLdapAuthentication(new LdapAuthenticationOptions());
-
-            //app.UseFacebookAuthentication(
-            //   appId: "134998043776447",
-            //   appSecret: "c8b3b4a0878ebe70f9494f93202e203b"
-            //);
-
-            //app.UseGoogleAuthentication(new GoogleOAuth2AuthenticationOptions()
-            //{
-            //    ClientId = "587369244487-4cd2h297b0gispb44lvvbns8ohlvm2fj.apps.googleusercontent.com",
-            //    ClientSecret = "lm7FGNTY0Bz_Y3rh0apf2T6F"
-            //});
-
-            //app.UseOrcidAuthentication(new OrcidAuthenticationOptions()
-            //{
-            //    Endpoints = new OrcidAuthenticationEndpoints
-            //    {
-            //        ApiEndpoint = "https://pub.sandbox.orcid.org/v1.2/0000-0003-0514-2115/orcid-profile",
-            //        TokenEndpoint = "https://sandbox.orcid.org/oauth/token",
-            //        AuthorizationEndpoint = h"https://sandbox.orcid.org/oauth/authorize?client_idttps://sandbox.orcid.org/oauth/authorize?client_id="
-            //                        + clientId + "&response_type=code&scope="
-            //                        + "/read-limited" + "&redirect_uri="
-            //                        + "http://localhost:55247/Acces"
-            //    },
-            //    ClientId = clientId,
-            //    ClientSecret = clientSecret
-            //});
         }
     }
 }
