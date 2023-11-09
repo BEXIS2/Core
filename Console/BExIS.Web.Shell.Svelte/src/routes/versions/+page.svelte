@@ -3,7 +3,7 @@
 import { onMount } from 'svelte';
 
 import { setApiConfig }  from '@bexis2/bexis2-core-ui'
-import { getVersions }  from '../../services/versionService'
+import { getVersions }  from '../../services/versionManager'
 import type { ReadVersionsModel } from "../../models/versionModels";
 
 let versions:ReadVersionsModel;
