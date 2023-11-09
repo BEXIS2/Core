@@ -47,7 +47,10 @@ namespace BExIS.Modules.Rpm.UI.Helpers.SeedData
                             template.Label,
                             template.DataType,
                             template.Unit,
-                            template.Description
+                            template.Description,
+                            "",
+                            null,
+                            true
                             );
 
      

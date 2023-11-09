@@ -9,16 +9,16 @@
 	import type { ModalSettings } from '@skeletonlabs/skeleton';
 
 	import Fa from 'svelte-fa';
-	import { faShare, faShareFromSquare, faMaximize, faMinimize, faAdd, faTrash, faCopy, faAngleUp, faAngleDown } from '@fortawesome/free-solid-svg-icons';
+	import { faShare, faShareFromSquare, faMaximize, faMinimize, faAdd, faTrash, faCopy, faAngleUp, faAngleDown, faAnglesDown, faAnglesUp } from '@fortawesome/free-solid-svg-icons';
 
 	// stores
 	
-	import { displayPatternStore, unitStore, dataTypeStore, templateStore, meaningsStore} from '../store'
+	import { unitStore, dataTypeStore, templateStore, meaningsStore} from '../store'
 
 	export let variables: VariableInstanceModel[] = [];
 	export let missingValues: missingValueType[] = [];
 	export let data: string[][];
-
+ export let dataExist:boolean;
 
 	$: variables;
 
@@ -44,12 +44,6 @@
 
 		const meanings = await getMeanings();
 		meaningsStore.set(meanings);
-
-		//console.log("---------",datatypes);
-		// console.log("datatypes",datatypes);
-		// console.log("units", units);
-		// console.log("missingValues", missingValues);
-		// console.log("variableTemplates", variableTemplates);
 
 		fillVariableValdationStates(variables);
 
@@ -160,6 +154,7 @@
 		copiedVariable.template = variables[i].template;
 		copiedVariable.systemType = variables[i].systemType;
 		copiedVariable.template = variables[i].template;
+		copiedVariable.displayPattern = variables[i].displayPattern;
 
 
 		variables.splice(i+1, 0, copiedVariable);
@@ -180,6 +175,7 @@
 				response: (r: boolean) => {
 					
 		 			variables = variables.filter(v=>v != deleteVar);
+		 			console.log("🚀 ~ file: Variables.svelte:177 ~ deleteVar:", deleteVar)
 				}
 			};
 			modalStore.trigger(confirm);
@@ -204,22 +200,42 @@
 
 </script>
 
-<button class="btn variant-filled-secondary" on:click={()=> expandAll = !expandAll}>
-		{#if expandAll}
-			<Fa icon={faMinimize}/>
-	 {:else}
-		<Fa icon={faMaximize}/>
-		{/if}
-</button>
+<div class="p-2">
+<div class="flex gap-2 items-baseline"> 
 
-{#each variableValidationStates as v, i}
-	{#if v==false}
-	 {variables[i].name}, 
+	<button class="btn variant-filled-secondary" on:click={()=> expandAll = !expandAll}>
+			{#if expandAll}
+				<Fa icon={faAnglesUp}/>
+			{:else}
+			<Fa icon={faAnglesDown}/>
+			{/if}
+	</button>
+
+<div class="pr-32 w-auto">
+	{#if !valid}
+		<span class="text-sm">Variables with errors:</span>
+
+
+			{#each variableValidationStates as v, i}
+					{#if v==false && variables[i] != undefined}
+			
+									<a class="chip variant-filled-error m-1" href="#{i}">
+										{#if variables[i].name !=""}
+											{variables[i].name}
+										{:else}
+											{i+1}
+										{/if}
+									</a>
+
+					{/if}
+		
+			{/each}
+
 	{/if}
-{/each}
+</div>
 
-
-<div class="flex-col space-y-2 mt-5">
+</div>
+<div class="flex-col space-y-2 mt-1">
 
 	{#if variables && missingValues && ready}
 		<!-- else content here -->
@@ -234,6 +250,7 @@
 				on:copy-next={copyNext}
 				on:copy-all={copyAll}
 				expand = {expandAll}
+				blockDataRelevant = {dataExist}
 			>
 				<svelte:fragment slot="options">
 					{#if variables.length > 0 && i < variables.length - 1}
@@ -254,7 +271,7 @@
 					{/if}
 				</svelte:fragment>
 				<svelte:fragment slot="list-options">
-			
+			 {#if !dataExist}
 						<button id="delete-{i}" class="chip variant-filled-error" on:click={()=>deleteFn(i)}><Fa icon="{faTrash}"></Fa></button>
 
 						{#if i > 0}
@@ -269,16 +286,21 @@
 						{:else}
 							<button id="down-{i}" class="chip variant-filled-surface" disabled on:click={()=>downFn(i)}><Fa icon="{faAngleDown}"></Fa></button>
 						{/if}
-				</svelte:fragment>
+				{/if}
+					</svelte:fragment>
+
 			</Variable>
 		{/each}
 		<div class="flex content-end px-6">
 			<div class="grow"></div> 
-			<button class="chip variant-filled-primary flex-none" on:click="{addFn}"><Fa icon="{faAdd}"></Fa> </button>
+			{#if !dataExist}
+					<button class="chip variant-filled-primary flex-none" on:click="{addFn}"><Fa icon="{faAdd}"></Fa> </button>
+			{/if}
 		</div>
 	{:else}
 		<Spinner label="loading suggested structure" />
 	{/if}
+</div>
 </div>
 
 <Modal />

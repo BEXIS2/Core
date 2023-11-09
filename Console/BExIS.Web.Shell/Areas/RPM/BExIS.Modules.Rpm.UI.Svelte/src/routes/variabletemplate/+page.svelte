@@ -50,7 +50,7 @@
 									renderComponent: TableIsApproved
 								},
 								disableFiltering: true,
-								exclude:true
+								exclude:false
 							},
 							inUse: {
 								header: 'Approved',

@@ -19,7 +19,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
         // GET: VariableTemplate
         public ActionResult Index()
         {
-            string module = "rpm";
+            string module = "Rpm";
 
             ViewData["app"] = SvelteHelper.GetApp(module);
             ViewData["start"] = SvelteHelper.GetStart(module);
@@ -64,7 +64,8 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                             variableTemplate.Unit,
                             variableTemplate.Description,
                             variableTemplate.DefaultValue,
-                            variableTemplate.Meanings);
+                            variableTemplate.Meanings,
+                            variableTemplate.Approved);
                 }
                 else
                 {

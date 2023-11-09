@@ -56,6 +56,7 @@
 	export let isValid: boolean = false;
 	export let last: boolean = false;
 	export let expand: boolean;
+	export let blockDataRelevant:boolean;
 
 	$: isValid;
 	// validation
@@ -84,12 +85,11 @@
 
 			updateLists();
 
-			displayPattern = updateDisplayPattern(variable.dataType);
+			//displayPattern = updateDisplayPattern(variable.dataType, true);
 
 			// when type has change, reset value, but after copy do not reset
 			// thats why reset need to set
-			variable.displayPattern = undefined;
-
+		
 			if (displayPattern.length > 0) {
 				res = suite(variable, 'displayPattern');
 			}
@@ -110,9 +110,10 @@
 	afterUpdate(() => {
 		displayPattern = updateDisplayPattern(variable.dataType, false);
 		res = suite(variable);
+
+
 		setValidationState(res);
-		//console.log("u",variable.name);
-		//console.log("--------------------");
+
 	});
 
 	//change event: if input change check also validation only on the field
@@ -122,10 +123,8 @@
 		// otherwise the values are old
 		setTimeout(async () => {
 			res = suite(variable, e.target.id);
-			setValidationState(res);
+				setValidationState(res);
 
-			//console.log(res);
-			//console.log(res.isValid());
 		}, 100);
 	}
 
@@ -143,7 +142,6 @@
 
 			if (id == 'variableTemplate') {
 				variable.meanings = updateMeanings(variable, e.detail)
-				console.log("🚀 ~ file: Variable.svelte:149 ~ setTimeout ~ variable.meanings:", variable.meanings)
 			}
 
 			setValidationState(res);
@@ -204,9 +202,7 @@
 
 	function updateMeanings(_variable:VariableInstanceModel, _variableTemplate:templateListItemType):listItemType[]
 	{
-		console.log("🚀 ~ file: Variable.svelte:208 ~ _variableTemplate:", _variableTemplate)
-		console.log("🚀 ~ file: Variable.svelte:209 ~ _variableTemplate.meanings:", _variableTemplate.meanings)
-		if(_variableTemplate && _variableTemplate.meanings)
+			if(_variableTemplate && _variableTemplate.meanings)
 			{
 					if(_variable.meanings)
 					{
@@ -244,6 +240,7 @@
 								valid={res.isValid('name')}
 								invalid={res.hasErrors('name')}
 								feedback={res.getErrors('name')}
+								disabled={blockDataRelevant}
 							/>
 						</Header>
 					</header>
@@ -289,6 +286,7 @@
 									feedback={res.getErrors('dataType')}
 									clearable={true}
 									on:change={(e) => onSelectHandler(e, 'dataType')}
+									disabled={blockDataRelevant}
 								/>
 							</div>
 
@@ -388,9 +386,10 @@
 									clearable={true}
 									bind:target={variable.template}
 									placeholder="-- Please select --"
-									invalid={res.hasErrors('variableTemplate')}
+									invalid={res.hasErrors('variableTemplate') && !blockDataRelevant}
 									feedback={res.getErrors('variableTemplate')}
 									on:change={(e) => onSelectHandler(e, 'variableTemplate')}
+									disabled={blockDataRelevant}
 								/>
 							
 							</div>

@@ -17,6 +17,15 @@ export const getDataStructures = async () => {
 	}
 };
 
+export const get = async (id) => {
+	try {
+		const response = await Api.get('/rpm/DataStructure/get?id='+id);
+		return response.data;
+	} catch (error) {
+		console.error(error);
+	}
+};
+
 /****************/
 /* Create*/
 /****************/
@@ -81,6 +90,8 @@ export const empty = async () => {
 export const copy = async (id) => {
 	try {
 		const response = await Api.get('/rpm/DataStructure/copy?id='+id);
+
+		console.log("🚀 ~ file: services.js:95 ~ copy ~ response.data:", response.data)
 		return response.data;
 	} catch (error) {
 		console.error(error);
@@ -99,6 +110,15 @@ export const remove = async (id) => {
 export const store = async (data) => {
 	try {
 		const response = await Api.post('/rpm/DataStructure/store', data);
+		return response.data;
+	} catch (error) {
+		console.error(error);
+	}
+};
+
+export const create = async (data) => {
+	try {
+		const response = await Api.post('/rpm/DataStructure/create', data);
 		return response.data;
 	} catch (error) {
 		console.error(error);
@@ -159,4 +179,3 @@ export const getMeanings = async () => {
 		console.error(error);
 	}
 };
-
