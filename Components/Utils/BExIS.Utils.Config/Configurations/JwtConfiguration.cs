@@ -21,6 +21,9 @@ namespace BExIS.Utils.Config.Configurations
         [JsonProperty("validateIssuer")]
         public bool ValidateIssuer { get; set; }
 
+        [JsonProperty("validateIssuerSigningKey")]
+        public bool ValidateIssuerSigningKey { get; set; }
+
         [JsonProperty("validateLifetime")]
         public bool ValidateLifetime { get; set; }
 
