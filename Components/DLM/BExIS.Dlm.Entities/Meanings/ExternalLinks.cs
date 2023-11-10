@@ -9,15 +9,13 @@ namespace BExIS.Dlm.Entities.Meanings
     {
         private bool disposedValue;
 
-        [RegularExpression(@"^http://.*", ErrorMessage = "URI must start with http://")] // to change : Prefix: uri suite.
+        [Required(ErrorMessage = "Must not be Empty")]
         public virtual string URI { get; set; }
         [Required(ErrorMessage = "Must not be Empty")]
         public virtual string Name { get; set; }
         [Required(ErrorMessage = "Must not be Empty")]
         public virtual ExternalLinkType Type { get; set; }
-        [Required(ErrorMessage = "Must not be Empty")]
         public virtual ExternalLink Prefix { get; set; }
-
         public virtual PrefixCategory prefixCategory { get; set; }
 
         public ExternalLink(string uRI, string label, ExternalLinkType type, ExternalLink Prefix, PrefixCategory prefixCategory)

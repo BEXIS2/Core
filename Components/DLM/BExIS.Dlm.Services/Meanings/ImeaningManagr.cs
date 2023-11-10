@@ -2,6 +2,7 @@
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace BExIS.Dlm.Services.Meanings
 {
@@ -30,7 +31,12 @@ namespace BExIS.Dlm.Services.Meanings
         ExternalLink getExternalLink(Int64 id);
         ExternalLink getExternalLink(string uri);
         List<ExternalLink> getExternalLinks();
-
+        List<ExternalLink> getPrefixes();
+        string getPrefixfromUri(string uri);
+        string getfullUri(ExternalLink externalLink);
+        string getFormattedLinkUri(ExternalLink externalLink);
+        string getViewLinkUri(ExternalLink externalLink);
+        Boolean updatePreviousLinks();
         #endregion
 
         #region Prefix Category manager
