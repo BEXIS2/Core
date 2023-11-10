@@ -1,11 +1,20 @@
 import { Api } from '@bexis2/bexis2-core-ui';
-import type { MeaningModel, externalLinkType } from '$lib/components/meaning/types';
+import { MeaningModel, type externalLinkType } from '$lib/components/meaning/types';
 
 export const getMeanings = async () => {
 	try {
 		const response = await Api.get('/rpm/Meaning/get');
 		console.log("🚀 ~ file: services.ts:8 ~ getMeanings ~ response.data:", response.data)
-		return response.data;
+
+		const list:MeaningModel[] = [];
+
+		for (let index = 0; index < response.data.length; index++) {
+			list.push(new MeaningModel(response.data[index]));
+		}
+
+
+		return list;
+
 	} catch (error) {
 		console.error(error);
 		throw error;

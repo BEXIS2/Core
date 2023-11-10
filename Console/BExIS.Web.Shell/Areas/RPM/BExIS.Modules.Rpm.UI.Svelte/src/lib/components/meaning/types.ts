@@ -2,22 +2,30 @@
 export class MeaningModel  {
     id:number;
     name: string;
-    shortName: string;
     description: string;
     selectable: selectableType;
     approved: approvedType;
     externalLink: externalLinkType[];
     related_meaning: MeaningModel[];
 
-    public constructor() {
-     this.id=0
-     this.name=""
-     this.shortName=""
-     this.approved=2
-     this.description=""
-     this.selectable=2
-     this.externalLink=[]
-     this.related_meaning=[]
+    public constructor(data:any) {
+
+        this.approved=2
+        this.description=""
+        this.selectable=2
+        this.externalLink=[]
+        this.related_meaning=[]
+
+        if(data)
+        {
+            this.id = data.id,
+            this.name = data.name
+        }
+        else
+        {
+            this.id=0
+            this.name=""
+        }
     }
 }
 
