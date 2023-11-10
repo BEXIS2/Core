@@ -18,7 +18,7 @@ namespace BExIS.Dlm.Services.Meanings
         public meaningManager()
         {
         }
-
+        #region meanings
         public Meaning addMeaning(Meaning meaning)
         {
 
@@ -209,7 +209,6 @@ namespace BExIS.Dlm.Services.Meanings
                 return null;
             }
         }
-
         public List<Meaning> updateRelatedManings(string parentID, string childID)
         {
             try
@@ -237,7 +236,9 @@ namespace BExIS.Dlm.Services.Meanings
                 return null;
             }
         }
+        #endregion
 
+        #region external link
         public ExternalLink addExternalLink(ExternalLink externalLink)
         {
             Contract.Requires(externalLink != null);
@@ -257,8 +258,7 @@ namespace BExIS.Dlm.Services.Meanings
                 return null;
             }
         }
-
-        public ExternalLink addExternalLink(string uri, String name, String type)
+        public ExternalLink addExternalLink(string uri, String name, ExternalLinkType type, ExternalLink Prefix, PrefixCategory prefixCategory)
         {
             Contract.Requires(uri != null);
             Contract.Requires(name != null);
@@ -269,7 +269,7 @@ namespace BExIS.Dlm.Services.Meanings
                 {
 
                     IRepository<ExternalLink> repo = uow.GetRepository<ExternalLink>();
-                    using (ExternalLink externalLink = new ExternalLink(uri, name,  type))
+                    using (ExternalLink externalLink = new ExternalLink(uri, name, type, Prefix, prefixCategory))
                     {
                         repo.Put(externalLink);
                         uow.Commit();
@@ -286,6 +286,10 @@ namespace BExIS.Dlm.Services.Meanings
         public Boolean deleteExternalLink(ExternalLink externalLink)
         {
             Contract.Requires(externalLink != null);
+            if (externalLink.Type == ExternalLinkType.prefix)
+                Contract.Requires(externalLink.Prefix == null);
+            if (externalLink.Type == ExternalLinkType.link)
+                Contract.Requires(externalLink.Prefix != null);
             try
             {
                 using (IUnitOfWork uow = this.GetUnitOfWork())
@@ -345,7 +349,7 @@ namespace BExIS.Dlm.Services.Meanings
                 return null;
             }
         }
-        public ExternalLink editExternalLink(string id, string uri, String name, String type)
+        public ExternalLink editExternalLink(string id, string uri, String name, ExternalLinkType type, ExternalLink Prefix, PrefixCategory prefixCategory)
         {
             Contract.Requires(uri != null);
             try
@@ -359,6 +363,8 @@ namespace BExIS.Dlm.Services.Meanings
                     externalLink.URI = uri;
                     externalLink.Name = name;
                     externalLink.Type = type;
+                    externalLink.Prefix = Prefix;
+                    externalLink.prefixCategory = prefixCategory;
                     repo.Merge(externalLink);
                     uow.Commit();
                     return externalLink;
@@ -370,7 +376,6 @@ namespace BExIS.Dlm.Services.Meanings
                 return null;
             }
         }
-
         public ExternalLink getExternalLink(Int64 id)
         {
             try
@@ -388,7 +393,6 @@ namespace BExIS.Dlm.Services.Meanings
                 return null;
             }
         }
-
         public ExternalLink getExternalLink(string uri)
         {
             try
@@ -406,7 +410,6 @@ namespace BExIS.Dlm.Services.Meanings
                 return null;
             }
         }
-
         public List<ExternalLink> getExternalLinks()
         {
             try
@@ -424,7 +427,191 @@ namespace BExIS.Dlm.Services.Meanings
                 return null;
             }
         }
-        
+        #endregion
+
+        #region PrefixCategory
+        public PrefixCategory addPrefixCategory(PrefixCategory prefixCategory)
+        {
+            Contract.Requires(prefixCategory != null);
+            try
+            {
+                using (IUnitOfWork uow = this.GetUnitOfWork())
+                {
+                    IRepository<PrefixCategory> repo = uow.GetRepository<PrefixCategory>();
+                    repo.Put(prefixCategory);
+                    uow.Commit();
+                }
+                return prefixCategory;
+            }
+            catch (Exception exc)
+            {
+                throw (exc);
+                return null;
+            }
+        }
+        public PrefixCategory addPrefixCategory(string Name, string Description)
+        {
+            Contract.Requires(Name != null);
+            Contract.Requires(Description != null);
+            try
+            {
+                using (IUnitOfWork uow = this.GetUnitOfWork())
+                {
+
+                    IRepository<PrefixCategory> repo = uow.GetRepository<PrefixCategory>();
+                    using (PrefixCategory prefixCategory = new PrefixCategory(Name,Description))
+                    {
+                        repo.Put(prefixCategory);
+                        uow.Commit();
+                        return prefixCategory;
+                    }
+                }
+            }
+            catch (Exception exc)
+            {
+                throw (exc);
+                return null;
+            }
+        }
+        public Boolean deletePrefixCategory(PrefixCategory prefixCategory)
+        {
+            Contract.Requires(prefixCategory != null);
+            try
+            {
+                using (IUnitOfWork uow = this.GetUnitOfWork())
+                {
+                    IRepository<PrefixCategory> repo = uow.GetRepository<PrefixCategory>();
+
+                    prefixCategory = repo.Reload(prefixCategory);
+                    repo.Delete(prefixCategory);
+                    uow.Commit();
+                }
+                return true;
+            }
+            catch (Exception exc)
+            {
+                throw (exc);
+                return false;
+            }
+
+        }
+        public List<PrefixCategory> deletePrefixCategory(Int64 id)
+        {
+            try
+            {
+                using (IUnitOfWork uow = this.GetUnitOfWork())
+                {
+                    IRepository<PrefixCategory> repo = uow.GetRepository<PrefixCategory>();
+                    PrefixCategory prefixCategory = repo.Get().FirstOrDefault(x => id == x.Id);
+                    repo.Delete(prefixCategory);
+                    uow.Commit();
+                    return this.getPrefixCategory();
+                }
+            }
+            catch (Exception exc)
+            {
+                throw (exc);
+                return null;
+            }
+        }
+        public PrefixCategory editPrefixCategory(PrefixCategory prefixCategory)
+        {
+            Contract.Requires(prefixCategory != null);
+            try
+            {
+                using (IUnitOfWork uow = this.GetUnitOfWork())
+                {
+                    IRepository<PrefixCategory> repo = uow.GetRepository<PrefixCategory>();
+                    repo.Merge(prefixCategory);
+                    var merged = repo.Get(prefixCategory.Id);
+                    repo.Put(merged);
+                    uow.Commit();
+                    return merged;
+                }
+            }
+            catch (Exception exc)
+            {
+                throw (exc);
+                return null;
+            }
+        }
+        public PrefixCategory editPrefixCategory(string id, string Name, string Description)
+        {
+            Contract.Requires(Name != null);
+            Contract.Requires(Description != null);
+            try
+            {
+                using (IUnitOfWork uow = this.GetUnitOfWork())
+                {
+                    IRepository<PrefixCategory> repo = uow.GetRepository<PrefixCategory>();
+
+                    PrefixCategory prefixCategory = repo.Get().FirstOrDefault(x => id == x.Id.ToString());
+
+                    prefixCategory.Name = Name;
+                    prefixCategory.Description = Description;
+                    repo.Merge(prefixCategory);
+                    uow.Commit();
+                    return prefixCategory;
+                }
+            }
+            catch (Exception exc)
+            {
+                throw (exc);
+                return null;
+            }
+        }
+        public PrefixCategory getPrefixCategory(Int64 id)
+        {
+            try
+            {
+                using (IUnitOfWork uow = this.GetUnitOfWork())
+                {
+                    var repo = uow.GetReadOnlyRepository<PrefixCategory>();
+                    PrefixCategory prefixCategory = repo.Get().FirstOrDefault(x => x.Id == id);
+                    return prefixCategory;
+                }
+            }
+            catch (Exception exc)
+            {
+                throw (exc);
+                return null;
+            }
+        }
+        public PrefixCategory getPrefixCategory(string Name)
+        {
+            try
+            {
+                using (IUnitOfWork uow = this.GetUnitOfWork())
+                {
+                    var repo = uow.GetReadOnlyRepository<PrefixCategory>();
+                    PrefixCategory prefixCategory = repo.Get().FirstOrDefault(x => x.Name == Name);
+                    return prefixCategory;
+                }
+            }
+            catch (Exception exc)
+            {
+                throw (exc);
+                return null;
+            }
+        }
+        public List<PrefixCategory> getPrefixCategory()
+        {
+            try
+            {
+                using (IUnitOfWork uow = this.GetUnitOfWork())
+                {
+                    var repo = uow.GetReadOnlyRepository<PrefixCategory>();
+                    List<PrefixCategory> prefixCategorys = repo.Get().ToList<PrefixCategory>();
+                    return prefixCategorys;
+                }
+            }
+            catch (Exception exc)
+            {
+                throw (exc);
+                return null;
+            }
+        }
+        #endregion
         protected virtual void Dispose(bool disposing)
         {
             if (!disposedValue)
@@ -439,13 +626,6 @@ namespace BExIS.Dlm.Services.Meanings
                 disposedValue = true;
             }
         }
-
-        // // TODO: override finalizer only if 'Dispose(bool disposing)' has code to free unmanaged resources
-        // ~meaningManagr()
-        // {
-        //     // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
-        //     Dispose(disposing: false);
-        // }
 
         public void Dispose()
         {

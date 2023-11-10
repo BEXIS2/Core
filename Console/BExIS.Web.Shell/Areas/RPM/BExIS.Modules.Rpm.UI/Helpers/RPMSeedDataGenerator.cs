@@ -152,9 +152,9 @@ namespace BExIS.Modules.Rpm.UI.Helpers
 
                 using (meaningManager _meaningManager = new meaningManager())
                 {
-                    _meaningManager.addExternalLink("http://exampleURI_1", "Example 1", "entity");
-                    _meaningManager.addExternalLink("http://exampleURI_2", "Example 2", "entity");
-                    _meaningManager.addExternalLink("http://exampleURI_3", "Example 3", "entity");
+                    _meaningManager.addExternalLink("http://exampleURI_1", "Example 1", ExternalLinkType.link,null, null);
+                    _meaningManager.addExternalLink("http://exampleURI_2", "Example 2", ExternalLinkType.link, null, null);
+                    _meaningManager.addExternalLink("http://exampleURI_3", "Example 3", ExternalLinkType.link, null, null);
                     _meaningManager.addMeaning("Example 1 name", "Example 1 ShortName", "Example 1 description", Selectable.yes, Approved.yes, new List<string> { }, new List<string> { }, new List<string> { });
                     _meaningManager.addMeaning("Example 2 name", "Example 2 ShortName", "Example 2 description", Selectable.yes, Approved.yes, new List<string> { }, new List<string> { }, new List<string> { });
                     _meaningManager.addMeaning("Example 3 name", "Example 3 ShortName", "Example 3 description", Selectable.yes, Approved.yes, new List<string> { }, new List<string> { }, new List<string> { });

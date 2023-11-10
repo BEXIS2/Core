@@ -272,7 +272,7 @@ namespace BExIS.Dlm.Services.Meanings
             }
         }
 
-        public JObject addExternalLink(string uri, String name, String type)
+        public JObject addExternalLink(string uri, String name, ExternalLinkType type, ExternalLink Prefix, PrefixCategory prefixCategory)
         {
             Contract.Requires(uri != null);
             Contract.Requires(name != null);
@@ -283,7 +283,7 @@ namespace BExIS.Dlm.Services.Meanings
                 {
 
                     IRepository<ExternalLink> repo = uow.GetRepository<ExternalLink>();
-                    using (ExternalLink externalLink = new ExternalLink(uri, name,  type))
+                    using (ExternalLink externalLink = new ExternalLink(uri, name, type, Prefix, prefixCategory))
                     {
                         repo.Put(externalLink);
                         uow.Commit();
@@ -363,7 +363,7 @@ namespace BExIS.Dlm.Services.Meanings
                 return JObject.Parse(json_string);
             }
         }
-        public JObject editExternalLink(string id, string uri, String name, String type)
+        public JObject editExternalLink(string id, string uri, String name, ExternalLinkType type, ExternalLink Prefix, PrefixCategory prefixCategory)
         {
             Contract.Requires(uri != null);
             try
@@ -377,6 +377,8 @@ namespace BExIS.Dlm.Services.Meanings
                     externalLink.URI = uri;
                     externalLink.Name = name;
                     externalLink.Type = type;
+                    externalLink.Prefix = Prefix;
+                    externalLink.prefixCategory = prefixCategory;
                     repo.Merge(externalLink);
                     uow.Commit();
                     string json_string = JsonConvert.SerializeObject(new KeyValuePair<string, string>("Success", JsonConvert.SerializeObject(externalLink)));

@@ -11,6 +11,9 @@ using BExIS.Utils.Config;
 using NUnit.Framework;
 using Newtonsoft.Json;
 using BExIS.Dlm.Services.Meanings;
+using BExIS.Dlm.Services.DataStructure;
+using System.Security.Cryptography;
+using Vaiona.Persistence.Api;
 
 namespace BExIS.Dlm.Entities.Meanings.Tests
 {
@@ -42,19 +45,25 @@ namespace BExIS.Dlm.Entities.Meanings.Tests
             new TestSetupHelper(WebApiConfig.Register, false);
             ImeaningManagr _meaningManager = new meaningManager();
 
-            String Name = "meaning name for unit test";
+            String Name = "meaning name for unit test_";
             Name.Should().NotBeNull();
-            String ShortName = "meaning name for unit test";
+            String ShortName = "meaning name for unit test_";
             ShortName.Should().NotBeNull();
-            String Description = "meaning name for unit test";
+            String Description = "meaning name for unit test_";
             Description.Should().NotBeNull();
             Selectable selectable = (Selectable)Enum.Parse(typeof(Selectable), "1");
             selectable.Should().NotBeNull();
             Approved approved = (Approved)Enum.Parse(typeof(Approved), "1");
             approved.Should().NotBeNull();
 
-            DatasetHelper dsHelper = new DatasetHelper();
-            StructuredDataStructure dataStructure = dsHelper.CreateADataStructure();
+            DataStructureManager dsm = new DataStructureManager();
+            var structureRepo = dsm.GetUnitOfWork().GetReadOnlyRepository<StructuredDataStructure>();
+            StructuredDataStructure dataStructure = structureRepo.Query(p => p.Name.ToLower().Equals("dsfortesting")).FirstOrDefault();
+            if (structureRepo.Query(p => p.Name.ToLower().Equals("dsfortesting")).Count() <= 0)
+            {
+                DatasetHelper dsHelper = new DatasetHelper();
+                dataStructure = dsHelper.CreateADataStructure();
+            }
             dataStructure.Should().NotBeNull();
             List<string> variable = dataStructure.Variables.ToList<Variable>().Select(c => c.Id.ToString()).ToList<string>();
             variable.Should().NotBeEmpty();
@@ -85,8 +94,8 @@ namespace BExIS.Dlm.Entities.Meanings.Tests
             res.Name.ToString().Should().Be("meaning name for unit test edited");
             res.ShortName.Should().Be("meaning name for unit test tedited");
             res.Description.Should().Be("meaning name for unit test edited");
-            res.Selectable.Should().Be("0");
-            res.Approved.Should().Be("0");
+            res.Selectable.Should().Be(0);
+            res.Approved.Should().Be(0);
             NUnit.Framework.Assert.IsNotNull(res); 
 
         }
@@ -98,34 +107,59 @@ namespace BExIS.Dlm.Entities.Meanings.Tests
 
             ImeaningManagr _meaningManager = new meaningManager();
 
-            String uri = Convert.ToString("htpp://testUri.com");
+            string Name = Convert.ToString("prefix category unit");
+            Name.Should().NotBeNullOrEmpty();
+            string Description = Convert.ToString("prefix category unit description");
+            Description.Should().NotBeNullOrEmpty();
+            PrefixCategory prefixCategory = new PrefixCategory(Name, Description);
+
+
+            String uri = Convert.ToString("http://darwinprefix.com");
             uri.Should().NotBeNullOrEmpty();
 
-            String name = Convert.ToString("test name external link");
+            String name = Convert.ToString("darwin prefix");
             name.Should().NotBeNullOrEmpty();
 
-            String type = Convert.ToString("test type external link ");
-            type.Should().NotBeNullOrEmpty();
+            ExternalLinkType type = ExternalLinkType.prefix;
+            type.Should().Be(1);
 
-            ExternalLink res = _meaningManager.addExternalLink(uri, name, type);
-            NUnit.Framework.Assert.IsNotNull(res);
+            ExternalLink prefix = null;
+            prefix.Should().BeNull();
+
+            ExternalLink res_prefix_parent = _meaningManager.addExternalLink(uri, name, type, prefix, _meaningManager.getPrefixCategory(prefixCategory.Id));
+            NUnit.Framework.Assert.IsNotNull(res_prefix_parent);
+
+            uri = Convert.ToString("http://darwinprefix.com/water");
+            uri.Should().NotBeNullOrEmpty();
+
+            name = Convert.ToString("darwin water");
+            name.Should().NotBeNullOrEmpty();
+
+            type = ExternalLinkType.link;
+            type.Should().Be(2);
+
+            prefix = res_prefix_parent;
+            prefix.Should().NotBeNull();
+
+            ExternalLink res_link_prefix = _meaningManager.addExternalLink(uri, name, type, prefix, null);
+            NUnit.Framework.Assert.IsNotNull(res_link_prefix);
 
             //editing an external link
-            uri = Convert.ToString("htpp://testUri_edited_.com");
+            uri = Convert.ToString("htpp://testUri_edited_aquadiva.com");
             uri.Should().NotBeNullOrEmpty();
 
-            name = Convert.ToString("test name external link edited");
+            name = Convert.ToString("test name external link edited water groumds");
             name.Should().NotBeNullOrEmpty();
 
-            type = Convert.ToString("test type external link edited");
-            type.Should().NotBeNullOrEmpty();
+            type = ExternalLinkType.link;
+            type.Should().NotBeNull();
 
-            res = _meaningManager.editExternalLink(res.Id.ToString(),uri,name,type );
-            res.URI.Should().Be("htpp://testUri_edited_.com");
-            res.Name.Should().Be("test name external link edited");
-            res.Type.Should().Be("test type external link edited");
-            NUnit.Framework.Assert.IsNotNull(res);
-
+            res_link_prefix = _meaningManager.editExternalLink(res_link_prefix.Id.ToString(),uri,name,type,prefix,null );
+            res_link_prefix.URI.Should().Be("htpp://testUri_edited_aquadiva.com");
+            res_link_prefix.Name.Should().Be("test name external link edited water groumds");
+            res_link_prefix.Type.Should().Be(2);
+            res_link_prefix.Prefix.Should().Equals(res_prefix_parent);
+            NUnit.Framework.Assert.IsNotNull(res_link_prefix);
         }
 
     }

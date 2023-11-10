@@ -50,6 +50,11 @@ namespace BExIS.Modules.Rpm.UI.Api.Controllers
             return cretae_response(_meaningManager.getMeaning(long.Parse(dict["id"])));
         }
 
+        [BExISApiAuthorize]
+        [HttpPost, HttpGet]
+        [JsonNetFilter]
+        [PostRoute("api/Meanings/getExternalLinks")]
+        [GetRoute("api/Meanings/getExternalLinks")]
         public HttpResponseMessage getExternalLinks()
         {
             return cretae_response(_meaningManager.getExternalLinks());
@@ -68,6 +73,29 @@ namespace BExIS.Modules.Rpm.UI.Api.Controllers
             return cretae_response(_meaningManager.getExternalLink(long.Parse(dict["id"])));
         }
 
+
+        [BExISApiAuthorize]
+        [HttpPost, HttpGet]
+        [JsonNetFilter]
+        [PostRoute("api/Meanings/getPrefixCategory")]
+        [GetRoute("api/Meanings/getPrefixCategory")]
+        public HttpResponseMessage getPrefixCategory()
+        {
+            return cretae_response(_meaningManager.getPrefixCategory());
+        }
+
+        [BExISApiAuthorize]
+        [HttpPost, HttpGet]
+        [JsonNetFilter]
+        [PostRoute("api/Meanings/DetailPrefixCategory")]
+        [GetRoute("api/Meanings/DetailPrefixCategory")]
+        public HttpResponseMessage DetailPrefixCategory()
+        {
+            string id = this.Request.Content.ReadAsStringAsync().Result.ToString();
+            Dictionary<string, string> dict = JsonConvert.DeserializeObject<Dictionary<string, string>>(id);
+
+            return cretae_response(_meaningManager.getPrefixCategory(long.Parse(dict["id"])));
+        }
         private HttpResponseMessage cretae_response(object return_object)
         {
             if (return_object == null)

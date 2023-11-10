@@ -31,6 +31,34 @@ namespace BExIS.Modules.Rpm.UI.Api.Controllers
                this._meaningManager = new meaningManager();
         }
 
+        private HttpResponseMessage cretae_response(Object return_object)
+        {
+            if (return_object == null)
+                return Request.CreateErrorResponse(HttpStatusCode.BadRequest, "bad request / problem occured");
+            var response = Request.CreateResponse(HttpStatusCode.OK);
+            string resp = JsonConvert.SerializeObject(return_object);
+
+            response.Content = new StringContent(resp, System.Text.Encoding.UTF8, "application/json");
+            response.Content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
+
+            //set headers on the "response"
+            return response;
+        }
+        private HttpResponseMessage cretae_response(List<Object> return_object)
+        {
+            if (return_object == null)
+                return Request.CreateErrorResponse(HttpStatusCode.BadRequest, "bad request / problem occured");
+            var response = Request.CreateResponse(HttpStatusCode.OK);
+            string resp = JsonConvert.SerializeObject(return_object);
+
+            response.Content = new StringContent(resp, System.Text.Encoding.UTF8, "application/json");
+            response.Content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
+
+            //set headers on the "response"
+            return response;
+        }
+
+        #region meanings
         [BExISApiAuthorize]
         [JsonNetFilter]
         [HttpPost]
@@ -56,7 +84,6 @@ namespace BExIS.Modules.Rpm.UI.Api.Controllers
         [PostRoute("api/MeaningsAdmin/EditMeaning")]
         public HttpResponseMessage EditMeaning(Meaning data)
         {
-            Meaning m = null;
             try
             {
                 Meaning res = _meaningManager.editMeaning(data);
@@ -70,9 +97,9 @@ namespace BExIS.Modules.Rpm.UI.Api.Controllers
 
         [BExISApiAuthorize]
         [JsonNetFilter]
-        [HttpDelete,HttpPost]
-        [DeleteRoute("api/MeaningsAdmin/Delete")]
+        [HttpPost,HttpDelete]
         [PostRoute("api/MeaningsAdmin/Delete")]
+        [DeleteRoute("api/MeaningsAdmin/Delete")]
         public HttpResponseMessage Delete( long id)
         {
             try
@@ -115,10 +142,9 @@ namespace BExIS.Modules.Rpm.UI.Api.Controllers
                 return null;
             }
         }
+        #endregion
 
-
-        // external links endpoints
-
+        #region external links
         [BExISApiAuthorize]
         [JsonNetFilter]
         [HttpPost, HttpGet]
@@ -159,15 +185,37 @@ namespace BExIS.Modules.Rpm.UI.Api.Controllers
 
         [BExISApiAuthorize]
         [JsonNetFilter]
-        [HttpPost, HttpGet]
+        [HttpPost, HttpDelete]
         [PostRoute("api/MeaningsAdmin/deleteExternalLinks")]
-        [GetRoute("api/MeaningsAdmin/deleteExternalLinks")]
-        public HttpResponseMessage deleteExternalLinks(HttpRequestMessage request)
+        [DeleteRoute("api/MeaningsAdmin/deleteExternalLinks")]
+        public HttpResponseMessage deleteExternalLinks(long id)
         {
             try
             {
-                string id = this.Request.Content.ReadAsStringAsync().Result.ToString();
-                return cretae_response(_meaningManager.deleteExternalLink(Int64.Parse(id))); 
+                Int64.TryParse( this.Request.Content.ReadAsStringAsync().Result.ToString(), out id);
+                return cretae_response(_meaningManager.deleteExternalLink(id));
+            }
+            catch
+            {
+                return (cretae_response(null));
+            }
+        }
+        #endregion
+
+        #region PrefixCategory
+        // external links endpoints
+
+        [BExISApiAuthorize]
+        [JsonNetFilter]
+        [HttpPost, HttpGet]
+        [PostRoute("api/MeaningsAdmin/createPrefixCategory")]
+        [GetRoute("api/MeaningsAdmin/createEPrefixCategory")]
+        public HttpResponseMessage createPrefixCategory(PrefixCategory data)
+        {
+            try
+            {
+                PrefixCategory res = _meaningManager.addPrefixCategory(data);
+                return (cretae_response(res));
             }
             catch
             {
@@ -175,31 +223,43 @@ namespace BExIS.Modules.Rpm.UI.Api.Controllers
             }
         }
 
-        private HttpResponseMessage cretae_response(Object return_object)
+        [BExISApiAuthorize]
+        [JsonNetFilter]
+        [HttpPost, HttpGet]
+        [PostRoute("api/MeaningsAdmin/editPrefixCategory")]
+        [GetRoute("api/MeaningsAdmin/editPrefixCategory")]
+        public HttpResponseMessage editPrefixCategory(PrefixCategory data)
         {
-            if (return_object == null)
-                return Request.CreateErrorResponse(HttpStatusCode.BadRequest, "bad request / problem occured");
-            var response = Request.CreateResponse(HttpStatusCode.OK);
-            string resp = JsonConvert.SerializeObject(return_object);
+            ExternalLink m = null;
+            try
+            {
 
-            response.Content = new StringContent(resp, System.Text.Encoding.UTF8, "application/json");
-            response.Content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
-
-            //set headers on the "response"
-            return response;
+                PrefixCategory res = _meaningManager.editPrefixCategory(data);
+                return (cretae_response(res));
+            }
+            catch (Exception ex)
+            {
+                return (cretae_response(null));
+            }
         }
-        private HttpResponseMessage cretae_response(List<Object> return_object)
+
+        [BExISApiAuthorize]
+        [JsonNetFilter]
+        [HttpPost, HttpDelete]
+        [PostRoute("api/MeaningsAdmin/deletePrefixCategory")]
+        [DeleteRoute("api/MeaningsAdmin/deletePrefixCategory")]
+        public HttpResponseMessage deletePrefixCategory(long id)
         {
-            if (return_object == null)
-                return Request.CreateErrorResponse(HttpStatusCode.BadRequest, "bad request / problem occured");
-            var response = Request.CreateResponse(HttpStatusCode.OK);
-            string resp = JsonConvert.SerializeObject(return_object);
-
-            response.Content = new StringContent(resp, System.Text.Encoding.UTF8, "application/json");
-            response.Content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
-
-            //set headers on the "response"
-            return response;
+            try
+            {
+                return cretae_response(_meaningManager.deletePrefixCategory(id));
+            }
+            catch
+            {
+                return (cretae_response(null));
+            }
         }
+        #endregion
+
     }
 }
