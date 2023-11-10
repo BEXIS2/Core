@@ -50,52 +50,50 @@
 				data: meaningsStore,
 				optionsComponent: TableOptions,
 				columns: {
-							id: {
-								disableFiltering: true,
-								exclude: true
-							},
-							versionNo: {
-								disableFiltering: true,
-								exclude: true
-							},
-							shortName: {
-								disableFiltering: true,
-								exclude: true
-							},
-						 selectable: {
-								instructions: {
-									renderComponent: TableIsApproved
-								},
-								disableFiltering: true
-							},
-							approved: {
+						approved: {
 								disableFiltering: true,
 								instructions: {
 									renderComponent: TableIsApproved
-								}
+								},	
+								exclude: false
+							},
+							description: {
+								disableFiltering: true,
+								exclude: true
 							},
 							externalLink: {
 								header: 'External Link',
 								instructions: {
 									renderComponent: TableExnternalLink						
 								},
-								disableFiltering: true
+								disableFiltering: true,
+								exclude: false
+							},
+							id: {
+								disableFiltering: true,
+								exclude: false
+							},
+							name: {
+								disableFiltering: false,
+								exclude: false
 							},
 							related_meaning: {
 								header: 'Related to',
 								instructions: {
 									renderComponent: TableMeaning,
 								},
-								disableFiltering: true
+								disableFiltering: true,
+								exclude: false
 							},
-							extra:{
-								exclude:true,
-								disableFiltering:true
-							},
-							variables:{
-								exclude:true,
-								disableFiltering:true
+						 selectable: {
+								instructions: {
+									renderComponent: TableIsApproved
+								},
+								disableFiltering: true,
+								exclude: false
 							}
+							
+							
 						}
 			}
 
