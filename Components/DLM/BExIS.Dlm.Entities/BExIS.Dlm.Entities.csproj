@@ -97,6 +97,8 @@
     <Compile Include="Data\VariableValueCollection.cs" />
     <Compile Include="Data\Dataset.cs" />
     <Compile Include="Data\DataTuple.cs" />
+    <Compile Include="Meanings\ExternalLinkType.cs" />
+    <Compile Include="Meanings\PrefixCategory.cs" />
     <Compile Include="MetadataStrcuture\MetadataParameterUsage.cs" />
     <Compile Include="Meanings\ExternalLinks.cs" />
     <Compile Include="Meanings\Meaning.cs" />

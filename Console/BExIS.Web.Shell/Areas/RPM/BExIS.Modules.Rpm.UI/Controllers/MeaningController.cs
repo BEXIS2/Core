@@ -26,7 +26,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
 
         [BExISAuthorize]
         [JsonNetFilter]
-        [HttpGet]
+        [System.Web.Http.HttpGet]
         public JsonResult Get()
         {
             using (var _meaningManager = new MeaningManager())
@@ -40,17 +40,17 @@ namespace BExIS.Modules.Rpm.UI.Controllers
 
         [BExISAuthorizeAttribute]
         [JsonNetFilter]
-        [HttpPost]
+        [System.Web.Http.HttpPost]
         public JsonResult Create(Meaning data)
         {
-            try { 
+            try {
 
                 using (var _meaningManager = new MeaningManager())
                 {
                     Meaning res = _meaningManager.addMeaning(data);
                     return Json(res);
                 }
-                    
+
             }
             catch(Exception ex)
             {
@@ -58,11 +58,11 @@ namespace BExIS.Modules.Rpm.UI.Controllers
             }
         }
 
- 
+
 
         [BExISAuthorizeAttribute]
         [JsonNetFilter]
-        [HttpPost]
+        [System.Web.Http.HttpPost]
         public JsonResult Update(Meaning data)
         {
             try
@@ -82,7 +82,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
 
         [BExISAuthorizeAttribute]
         [JsonNetFilter]
-        [HttpDelete]
+        [System.Web.Http.HttpDelete]
         public JsonResult Delete(long id)
         {
             try
@@ -108,7 +108,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
 
         [BExISAuthorize]
         [JsonNetFilter]
-        [HttpGet]
+        [System.Web.Http.HttpGet]
         public JsonResult GetLinks()
         {
             using (var _meaningManager = new MeaningManager())
@@ -120,7 +120,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
 
         [BExISAuthorizeAttribute]
         [JsonNetFilter]
-        [HttpPost]
+        [System.Web.Http.HttpPost]
         public JsonResult CreateLink(ExternalLink data)
         {
             try
@@ -141,7 +141,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
 
         [BExISAuthorizeAttribute]
         [JsonNetFilter]
-        [HttpPost]
+        [System.Web.Http.HttpPost]
         public JsonResult UpdateExternalLink(ExternalLink data)
         {
             try
@@ -163,7 +163,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
 
         [BExISAuthorizeAttribute]
         [JsonNetFilter]
-        [HttpDelete]
+        [System.Web.Http.HttpDelete]
         public JsonResult DeleteLink(long id)
         {
             try
@@ -184,5 +184,70 @@ namespace BExIS.Modules.Rpm.UI.Controllers
 
         #endregion;
 
+        /*
+        [BExISApiAuthorize]
+        [HttpPost, HttpGet]
+        [JsonNetFilter]
+        [PostRoute("api/Meanings/DetailExternalLinks")]
+        [GetRoute("api/Meanings/DetailExternalLinks")]
+        public HttpResponseMessage DetailExternalLinks()
+        {
+            string id = this.Request.Content.ReadAsStringAsync().Result.ToString();
+            Dictionary<string, string> dict = JsonConvert.DeserializeObject<Dictionary<string, string>>(id);
+
+            return cretae_response(_meaningManager.getExternalLink(long.Parse(dict["id"])));
+        }
+
+
+        [BExISApiAuthorize]
+        [HttpPost, HttpGet]
+        [JsonNetFilter]
+        [PostRoute("api/Meanings/getPrefixCategory")]
+        [GetRoute("api/Meanings/getPrefixCategory")]
+        public HttpResponseMessage getPrefixCategory()
+        {
+            return cretae_response(_meaningManager.getPrefixCategory());
+        }
+
+        [BExISApiAuthorize]
+        [HttpPost, HttpGet]
+        [JsonNetFilter]
+        [PostRoute("api/Meanings/DetailPrefixCategory")]
+        [GetRoute("api/Meanings/DetailPrefixCategory")]
+        public HttpResponseMessage DetailPrefixCategory()
+        {
+            string id = this.Request.Content.ReadAsStringAsync().Result.ToString();
+            Dictionary<string, string> dict = JsonConvert.DeserializeObject<Dictionary<string, string>>(id);
+
+            return cretae_response(_meaningManager.getPrefixCategory(long.Parse(dict["id"])));
+        }
+        private HttpResponseMessage cretae_response(object return_object)
+        {
+            if (return_object == null)
+                return Request.CreateErrorResponse(HttpStatusCode.BadRequest, "bad request / problem occured");
+            var response = Request.CreateResponse(HttpStatusCode.OK);
+            string resp = JsonConvert.SerializeObject(return_object);
+
+            response.Content = new StringContent(resp, System.Text.Encoding.UTF8, "application/json");
+            response.Content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
+
+            //set headers on the "response"
+            return response;
+        }
+
+        private HttpResponseMessage cretae_response(List<Object> return_object)
+        {
+            if (return_object == null)
+                return Request.CreateErrorResponse(HttpStatusCode.BadRequest, "bad request / problem occured");
+            var response = Request.CreateResponse(HttpStatusCode.OK);
+            string resp = JsonConvert.SerializeObject(return_object);
+
+            response.Content = new StringContent(resp, System.Text.Encoding.UTF8, "application/json");
+            response.Content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
+
+            //set headers on the "response"
+            return response;
+        }
+        */
     }
 }

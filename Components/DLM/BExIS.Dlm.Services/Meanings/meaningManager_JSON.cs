@@ -50,7 +50,7 @@ namespace BExIS.Dlm.Services.Meanings
                 {
                     //List<Variable> variables = uow.GetRepository<Variable>().Get().Where(x => variables_id.Contains(x.Id.ToString())).ToList<Variable>();
                     List<ExternalLink> externalLinks = uow.GetRepository<ExternalLink>().Get().Where(x => ExternalLink.Contains(x.Id.ToString())).ToList<ExternalLink>();
-                    
+
                     IRepository<Meaning> repo = uow.GetRepository<Meaning>();
                     List<Meaning> related_meanings = (List<Meaning>)repo.Get().Where(x => meaning_ids.Contains(x.Id.ToString())).ToList<Meaning>();
                     using (Meaning meaning = new Meaning(Name, ShortName, Description, selectable, approved, externalLinks,  related_meanings))
@@ -148,7 +148,7 @@ namespace BExIS.Dlm.Services.Meanings
 
                     List<Variable> variables = uow.GetRepository<Variable>().Get().Where(x => variables_id.Contains(x.Id.ToString())).ToList<Variable>();
                     List < ExternalLink >externalLinks = uow.GetRepository<ExternalLink>().Get().Where(x => ExternalLink.Contains(x.Id.ToString())).ToList<ExternalLink>();
-                    List<Meaning> related_meanings = repo.Get().Where(x => meaning_ids.Contains(x.Id.ToString())).ToList<Meaning>(); 
+                    List<Meaning> related_meanings = repo.Get().Where(x => meaning_ids.Contains(x.Id.ToString())).ToList<Meaning>();
 
                     Meaning meaning = repo.Get().FirstOrDefault(x => id == x.Id.ToString());
 
@@ -272,7 +272,7 @@ namespace BExIS.Dlm.Services.Meanings
             }
         }
 
-        public JObject addExternalLink(string uri, String name, String type)
+        public JObject addExternalLink(string uri, String name, ExternalLinkType type, ExternalLink Prefix, PrefixCategory prefixCategory)
         {
             Contract.Requires(uri != null);
             Contract.Requires(name != null);
@@ -283,7 +283,7 @@ namespace BExIS.Dlm.Services.Meanings
                 {
 
                     IRepository<ExternalLink> repo = uow.GetRepository<ExternalLink>();
-                    using (ExternalLink externalLink = new ExternalLink(uri, name,  type))
+                    using (ExternalLink externalLink = new ExternalLink(uri, name, type, Prefix, prefixCategory))
                     {
                         repo.Put(externalLink);
                         uow.Commit();
@@ -314,12 +314,12 @@ namespace BExIS.Dlm.Services.Meanings
                 string json_string = JsonConvert.SerializeObject(new KeyValuePair<string, bool>("Success", true));
                 return JObject.Parse(json_string);
             }
-            catch(Exception exc)
+            catch (Exception exc)
             {
                 string json_string = JsonConvert.SerializeObject(new KeyValuePair<string, string>("Error", exc.Message));
                 return JObject.Parse(json_string);
             }
-            
+
         }
         public JObject deleteExternalLink(Int64 id)
         {
@@ -357,13 +357,13 @@ namespace BExIS.Dlm.Services.Meanings
                 string json_string = JsonConvert.SerializeObject(new KeyValuePair<string, string>("Success", JsonConvert.SerializeObject(externalLink)));
                 return JObject.Parse(json_string);
             }
-            catch(Exception exc)
+            catch (Exception exc)
             {
                 string json_string = JsonConvert.SerializeObject(new KeyValuePair<string, string>("Error", exc.Message));
                 return JObject.Parse(json_string);
             }
         }
-        public JObject editExternalLink(string id, string uri, String name, String type)
+        public JObject editExternalLink(string id, string uri, String name, ExternalLinkType type, ExternalLink Prefix, PrefixCategory prefixCategory)
         {
             Contract.Requires(uri != null);
             try
@@ -377,6 +377,8 @@ namespace BExIS.Dlm.Services.Meanings
                     externalLink.URI = uri;
                     externalLink.Name = name;
                     externalLink.Type = type;
+                    externalLink.Prefix = Prefix;
+                    externalLink.prefixCategory = prefixCategory;
                     repo.Merge(externalLink);
                     uow.Commit();
                     string json_string = JsonConvert.SerializeObject(new KeyValuePair<string, string>("Success", JsonConvert.SerializeObject(externalLink)));
@@ -426,7 +428,7 @@ namespace BExIS.Dlm.Services.Meanings
                 return JObject.Parse(json_string);
             }
         }
-        
+
         protected virtual void Dispose(bool disposing)
         {
             if (!disposedValue)
