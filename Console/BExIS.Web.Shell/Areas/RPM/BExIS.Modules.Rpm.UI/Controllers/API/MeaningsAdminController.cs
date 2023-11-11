@@ -200,6 +200,16 @@ namespace BExIS.Modules.Rpm.UI.Api.Controllers
                 return (cretae_response(null));
             }
         }
+
+        [BExISApiAuthorize]
+        [JsonNetFilter]
+        [HttpPost, HttpDelete]
+        [PostRoute("api/MeaningsAdmin/updatePreviousLinks")]
+        [DeleteRoute("api/MeaningsAdmin/updatePreviousLinks")]
+        public HttpResponseMessage updatePreviousLinks()
+        {
+            return cretae_response(_meaningManager.updatePreviousLinks());
+        }
         #endregion
 
         #region PrefixCategory

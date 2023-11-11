@@ -3,8 +3,11 @@ using BExIS.Dlm.Entities.Meanings;
 using BExIS.Dlm.Services.Meanings;
 using BExIS.UI.Helpers;
 using BExIS.Utils.Route;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Net.Http;
+using System.Web.Helpers;
 using System.Web.Mvc;
 
 namespace BExIS.Modules.Rpm.UI.Controllers
@@ -168,7 +171,6 @@ namespace BExIS.Modules.Rpm.UI.Controllers
         {
             try
             {
-
                 using (var _meaningManager = new MeaningManager())
                 {
                     _meaningManager.deleteExternalLink(id);
@@ -184,70 +186,78 @@ namespace BExIS.Modules.Rpm.UI.Controllers
 
         #endregion;
 
-        /*
-        [BExISApiAuthorize]
-        [HttpPost, HttpGet]
+        #region category prefix
+
+        [BExISAuthorize]
         [JsonNetFilter]
-        [PostRoute("api/Meanings/DetailExternalLinks")]
-        [GetRoute("api/Meanings/DetailExternalLinks")]
-        public HttpResponseMessage DetailExternalLinks()
+        [System.Web.Http.HttpGet]
+        public JsonResult GetPrefixCategory()
         {
-            string id = this.Request.Content.ReadAsStringAsync().Result.ToString();
-            Dictionary<string, string> dict = JsonConvert.DeserializeObject<Dictionary<string, string>>(id);
-
-            return cretae_response(_meaningManager.getExternalLink(long.Parse(dict["id"])));
+            using (var _meaningManager = new MeaningManager())
+            {
+                List<PrefixCategory> res = _meaningManager.getPrefixCategory();
+                return Json(res, JsonRequestBehavior.AllowGet);
+            }
         }
 
-
-        [BExISApiAuthorize]
-        [HttpPost, HttpGet]
+        [BExISAuthorize]
         [JsonNetFilter]
-        [PostRoute("api/Meanings/getPrefixCategory")]
-        [GetRoute("api/Meanings/getPrefixCategory")]
-        public HttpResponseMessage getPrefixCategory()
+        [System.Web.Http.HttpGet]
+        public JsonResult createPrefixCategory(PrefixCategory data)
         {
-            return cretae_response(_meaningManager.getPrefixCategory());
+            try
+            {
+                using (var _meaningManager = new MeaningManager())
+                {
+                    PrefixCategory res = _meaningManager.addPrefixCategory(data);
+                    return Json(res, JsonRequestBehavior.AllowGet);
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("External link was not generated.", ex);
+            }
         }
 
-        [BExISApiAuthorize]
-        [HttpPost, HttpGet]
+        [BExISAuthorizeAttribute]
         [JsonNetFilter]
-        [PostRoute("api/Meanings/DetailPrefixCategory")]
-        [GetRoute("api/Meanings/DetailPrefixCategory")]
-        public HttpResponseMessage DetailPrefixCategory()
+        [System.Web.Http.HttpPost]
+        public JsonResult UpdatePrefixCategory(PrefixCategory data)
         {
-            string id = this.Request.Content.ReadAsStringAsync().Result.ToString();
-            Dictionary<string, string> dict = JsonConvert.DeserializeObject<Dictionary<string, string>>(id);
-
-            return cretae_response(_meaningManager.getPrefixCategory(long.Parse(dict["id"])));
-        }
-        private HttpResponseMessage cretae_response(object return_object)
-        {
-            if (return_object == null)
-                return Request.CreateErrorResponse(HttpStatusCode.BadRequest, "bad request / problem occured");
-            var response = Request.CreateResponse(HttpStatusCode.OK);
-            string resp = JsonConvert.SerializeObject(return_object);
-
-            response.Content = new StringContent(resp, System.Text.Encoding.UTF8, "application/json");
-            response.Content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
-
-            //set headers on the "response"
-            return response;
+            ExternalLink m = null;
+            try
+            {
+                using (var _meaningManager = new MeaningManager())
+                {
+                    PrefixCategory res = _meaningManager.editPrefixCategory(data);
+                    return Json(res);
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("External link was not generated.", ex);
+            }
         }
 
-        private HttpResponseMessage cretae_response(List<Object> return_object)
+        [BExISAuthorizeAttribute]
+        [JsonNetFilter]
+        [System.Web.Http.HttpDelete]
+        public JsonResult DeletePrefixCategory(long id)
         {
-            if (return_object == null)
-                return Request.CreateErrorResponse(HttpStatusCode.BadRequest, "bad request / problem occured");
-            var response = Request.CreateResponse(HttpStatusCode.OK);
-            string resp = JsonConvert.SerializeObject(return_object);
-
-            response.Content = new StringContent(resp, System.Text.Encoding.UTF8, "application/json");
-            response.Content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
-
-            //set headers on the "response"
-            return response;
+            ExternalLink m = null;
+            try
+            {
+                using (var _meaningManager = new MeaningManager())
+                {
+                    List<PrefixCategory> res = _meaningManager.deletePrefixCategory(id);
+                    return Json(res);
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("External link was not generated.", ex);
+            }
         }
-        */
+        #endregion
     }
 }
