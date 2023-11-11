@@ -9,7 +9,7 @@ namespace BExIS.Dlm.Entities.Meanings
     {
         private bool disposedValue;
 
-        [RegularExpression(@"^http://.*", ErrorMessage = "URI must start with http://")] // to change : Prefix: uri suite.
+        [Required(ErrorMessage = "Must not be Empty")]
         public virtual string URI { get; set; }
         [Required(ErrorMessage = "Must not be Empty")]
         public virtual string Name { get; set; }

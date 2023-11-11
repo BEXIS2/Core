@@ -7,6 +7,7 @@ using BExIS.Dlm.Entities.DataStructure;
 using Newtonsoft.Json.Linq;
 using BExIS.Dlm.Entities.Meanings;
 using Newtonsoft.Json;
+using System.Security.Policy;
 
 namespace BExIS.Dlm.Services.Meanings
 {
@@ -262,6 +263,20 @@ namespace BExIS.Dlm.Services.Meanings
         public ExternalLink addExternalLink(ExternalLink externalLink)
         {
             Contract.Requires(externalLink != null);
+            Contract.Requires(externalLink.URI != null);
+            Contract.Requires(externalLink.Name != null);
+            Contract.Requires(externalLink.Type != null);
+            if (externalLink.Type == ExternalLinkType.prefix)
+            {
+                Contract.Requires(externalLink.Prefix == null);
+                Contract.Requires(externalLink.prefixCategory != null);
+            }
+            if (externalLink.Type == ExternalLinkType.link)
+            {
+                Contract.Requires(externalLink.Prefix != null);
+                Contract.Requires(externalLink.prefixCategory == null);
+                externalLink.URI = getFormattedLinkUri(externalLink);
+            }
             try
             {
                 using (IUnitOfWork uow = this.GetUnitOfWork())
@@ -283,6 +298,16 @@ namespace BExIS.Dlm.Services.Meanings
             Contract.Requires(uri != null);
             Contract.Requires(name != null);
             Contract.Requires(type != null);
+            if (type == ExternalLinkType.prefix)
+            {
+                Contract.Requires(Prefix == null);
+                Contract.Requires(prefixCategory != null);
+            }
+            if (type == ExternalLinkType.link)
+            {
+                Contract.Requires(Prefix != null);
+                Contract.Requires(prefixCategory == null);
+            }
             try
             {
                 using (IUnitOfWork uow = this.GetUnitOfWork())
@@ -291,6 +316,7 @@ namespace BExIS.Dlm.Services.Meanings
                     IRepository<ExternalLink> repo = uow.GetRepository<ExternalLink>();
                     using (ExternalLink externalLink = new ExternalLink(uri, name, type, Prefix, prefixCategory))
                     {
+                        if (type == ExternalLinkType.link) externalLink.URI = getFormattedLinkUri(externalLink);
                         repo.Put(externalLink);
                         uow.Commit();
                         return externalLink;
@@ -446,6 +472,45 @@ namespace BExIS.Dlm.Services.Meanings
                 throw (exc);
                 return null;
             }
+        }
+        public List<ExternalLink> getPrefixes()
+        {
+            return getExternalLinks().Where(p => p.Prefix == null).ToList<ExternalLink>();
+        }
+        public string getPrefixfromUri(string uri)
+        {
+            return getPrefixes().Where(p => uri.ToLower().Contains(p.URI.ToLower())).FirstOrDefault().URI;
+        }
+        public string getfullUri(ExternalLink externalLink)
+        {
+            return externalLink.URI.Replace(externalLink.Prefix.Name, externalLink.Prefix.URI);
+        }
+        public string getFormattedLinkUri(ExternalLink externalLink)
+        {
+            return externalLink.URI.Replace(externalLink.Prefix.URI, externalLink.Prefix.Name);
+        }
+        public string getViewLinkUri(ExternalLink externalLink)
+        {
+            return externalLink.URI.Replace(externalLink.Prefix.Name, externalLink.Prefix.URI);
+        }
+        public Boolean updatePreviousLinks()
+        {
+            foreach (ExternalLink pref in getPrefixes())
+            {
+                foreach (ExternalLink link in getExternalLinks().Where(p => p.Prefix != null))
+                {
+                    try
+                    {
+                        if (link.URI.ToLower().Contains(pref.URI.ToLower()))
+                            pref.URI.ToLower().Replace(pref.URI.ToLower(), pref.Name);
+                    }
+                    catch (Exception ex)
+                    {
+                        return false;
+                    }
+                }
+            }
+            return true;
         }
         #endregion
 
