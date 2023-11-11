@@ -13,7 +13,10 @@
 
 	onMount(() => {
 		suite.reset(); // reset tests
-		model.title = ""+model.id; // set default title
+		if(model.id)
+		{
+			model.title = ""+model.id; // set default title
+		}
 		res = suite(model, ""); // run validation
 		valid = res.isValid(); // set result 
 

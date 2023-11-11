@@ -27,6 +27,8 @@ namespace BExIS.Utils.Data.Helpers
                 var o7 = operationManager.Find("Shell", "Ldap", "*") ?? operationManager.Create("Shell", "Ldap", "*");
                 var o8 = operationManager.Find("Shell", "Help", "*") ?? operationManager.Create("Shell", "Help", "*");
                 var o9 = operationManager.Find("Api", "Token", "*") ?? operationManager.Create("Api", "Token", "*");
+                var o98 = operationManager.Find("Shell", "Tokens", "*") ?? operationManager.Create("Shell", "Tokens", "*");
+
 
                 var o10 = operationManager.Find("Shell", "Menu", "*") ?? operationManager.Create("Shell", "Menu", "*");
                 var o11 = operationManager.Find("Shell", "UiTest", "*") ?? operationManager.Create("Shell", "Help", "*");

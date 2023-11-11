@@ -374,6 +374,7 @@
     <Compile Include="Controllers\SettingsController.cs" />
     <Compile Include="Controllers\TermsAndConditionsController.cs" />
     <Compile Include="Controllers\TestController.cs" />
+    <Compile Include="Controllers\TokensController.cs" />
     <Compile Include="Controllers\UiTestController.cs" />
     <Compile Include="GlimpseSecurityPolicy.cs" />
     <Compile Include="Global.asax.cs">
@@ -387,6 +388,7 @@
     <Compile Include="Models\EntitySelectorModel.cs" />
     <Compile Include="Models\ManageModels.cs" />
     <Compile Include="Models\SettingModels.cs" />
+    <Compile Include="Models\TokenModels.cs" />
     <Compile Include="Models\UiTestModel.cs" />
     <Compile Include="Models\VersionModels.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -1115,6 +1117,8 @@
     <Folder Include="Areas\" />
     <Folder Include="Scripts\svelte\" />
     <Folder Include="Views\Help\" />
+    <Folder Include="Views\Jwt\" />
+    <Folder Include="Views\Tokens\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\Home\About.cshtml" />

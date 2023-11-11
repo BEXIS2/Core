@@ -3,6 +3,7 @@ using BExIS.Security.Entities.Subjects;
 using BExIS.Security.Services.Subjects;
 using BExIS.Utils.Config;
 using BExIS.Utils.Route;
+using BExIS.Web.Shell.Models;
 using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Collections.Generic;
@@ -58,7 +59,7 @@ namespace BExIS.Web.Shell.Controllers.API
 
                         var jwt_token = new JwtSecurityTokenHandler().WriteToken(token);
 
-                        return Request.CreateResponse(HttpStatusCode.OK, jwt_token);
+                        return Request.CreateResponse(HttpStatusCode.OK, new ReadJwtModel() { Jwt = jwt_token });
                     }
 
                     return Request.CreateResponse(HttpStatusCode.BadRequest);

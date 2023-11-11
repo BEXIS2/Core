@@ -4,7 +4,7 @@
 	import Fa from 'svelte-fa';
 	import { faCheck, faAngleUp, faAngleDown } from '@fortawesome/free-solid-svg-icons';
 
-	export let index;
+	export let index=0;
 	export let name:string;
 	export let isKey:boolean;
 	export let isOptional:boolean;
@@ -12,7 +12,7 @@
 	export let expand:boolean;
 </script>
 
-<div id={name} class="flex gap-5">
+<div id="{index}" class="flex gap-5">
 	<div class="grow flex gap-2">
 
 	<div class="cursor-pointer" on:click={() => expand = !expand}> 					<!--		<div class="cursor-pointer"  on:click={() => expand = !expand}> -->
