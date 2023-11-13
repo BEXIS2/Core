@@ -22,18 +22,36 @@ namespace BExIS.Dlm.Services.Meanings
 
         #region External Links manager
         ExternalLink addExternalLink(ExternalLink externalLink);
-        ExternalLink addExternalLink(string uri, String name, String type);
+        ExternalLink addExternalLink(string uri, String name, ExternalLinkType type, ExternalLink Prefix, PrefixCategory prefixCategory);
         Boolean deleteExternalLink(ExternalLink externalLink);
         List<ExternalLink> deleteExternalLink(Int64 id);
         ExternalLink editExternalLink(ExternalLink externalLink);
-        ExternalLink editExternalLink(string id, string uri, String name, String type);
+        ExternalLink editExternalLink(string id, string uri, String name, ExternalLinkType type, ExternalLink Prefix, PrefixCategory prefixCategory);
         ExternalLink getExternalLink(Int64 id);
         ExternalLink getExternalLink(string uri);
         List<ExternalLink> getExternalLinks();
+        List<ExternalLink> getPrefixes();
+        string getPrefixfromUri(string uri);
+        string getfullUri(ExternalLink externalLink);
+        string getFormattedLinkUri(ExternalLink externalLink);
+        string getViewLinkUri(ExternalLink externalLink);
+        Boolean updatePreviousLinks();
+
+        #endregion
+
+        #region Prefix Category manager
+        PrefixCategory addPrefixCategory(PrefixCategory externalLink);
+        PrefixCategory addPrefixCategory(string Name, String Description);
+        Boolean deletePrefixCategory(PrefixCategory prefixCategory);
+        List<PrefixCategory> deletePrefixCategory(Int64 id);
+        PrefixCategory editPrefixCategory(PrefixCategory prefixCategory);
+        PrefixCategory editPrefixCategory(string id, string Name, String Description);
+        PrefixCategory getPrefixCategory(Int64 id);
+        PrefixCategory getPrefixCategory(string Name);
+        List<PrefixCategory> getPrefixCategory();
 
         #endregion
 
 
     }
 }
-

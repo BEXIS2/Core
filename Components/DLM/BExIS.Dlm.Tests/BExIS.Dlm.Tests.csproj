@@ -188,7 +188,7 @@
       <Name>BExIS.Dlm.Entities</Name>
     </ProjectReference>
     <ProjectReference Include="..\BExIS.Dlm.Services\BExIS.Dlm.Services.csproj">
-      <Project>{c4ca0a99-0af3-4372-a9b7-b9073599bd8b}</Project>
+      <Project>{C4CA0A99-0AF3-4372-A9B7-B9073599BD8B}</Project>
       <Name>BExIS.Dlm.Services</Name>
     </ProjectReference>
   </ItemGroup>

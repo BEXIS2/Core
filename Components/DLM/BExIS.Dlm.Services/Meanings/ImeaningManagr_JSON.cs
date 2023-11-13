@@ -23,11 +23,11 @@ namespace BExIS.Dlm.Services.Meanings
 
         #region External Links manager
         JObject addExternalLink(ExternalLink externalLink);
-        JObject addExternalLink(string uri, String name, String type);
+        JObject addExternalLink(string uri, String name, ExternalLinkType type, ExternalLink Prefix, PrefixCategory prefixCategory);
         JObject deleteExternalLink(ExternalLink externalLink);
         JObject deleteExternalLink(Int64 id);
         JObject editExternalLink(ExternalLink externalLink);
-        JObject editExternalLink(string id, string uri, String name, String type);
+        JObject editExternalLink(string id, string uri, String name, ExternalLinkType type, ExternalLink Prefix, PrefixCategory prefixCategory);
         JObject getExternalLink(Int64 id);
         JObject getExternalLinks();
 
@@ -36,4 +36,3 @@ namespace BExIS.Dlm.Services.Meanings
 
     }
 }
-
