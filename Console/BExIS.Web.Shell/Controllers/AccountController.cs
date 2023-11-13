@@ -18,6 +18,13 @@ namespace BExIS.Web.Shell.Controllers
 {
     public class AccountController : Controller
     {
+        public ActionResult ClearSession()
+        {
+            AuthenticationManager.SignOut(DefaultAuthenticationTypes.ApplicationCookie);
+
+            return RedirectToAction("SessionTimeout", "Home", new { area = "" });
+        }
+
         //
         // GET: /Account/ConfirmEmail
         public async Task<ActionResult> ConfirmEmail(long userId, string code)
@@ -212,13 +219,6 @@ namespace BExIS.Web.Shell.Controllers
             return View();
         }
 
-        public ActionResult ClearSession()
-        {
-            AuthenticationManager.SignOut(DefaultAuthenticationTypes.ApplicationCookie);
-
-            return RedirectToAction("SessionTimeout", "Home", new { area = "" });
-        }
-
         //
         // POST: /Account/Login
         [HttpPost]
@@ -290,6 +290,30 @@ namespace BExIS.Web.Shell.Controllers
 
         //
         // GET: /Account/Register
+
+        public async Task<ActionResult> Profile()
+        {
+            var identityUserService = new IdentityUserService();
+            var userManager = new UserManager();
+
+            try
+            {
+                long userId = 0;
+                long.TryParse(this.User.Identity.GetUserId(), out userId);
+
+                var user = identityUserService.FindById(userId);
+
+                user = identityUserService.FindById(userId);
+                var token = "";
+
+                return View(model: new ReadJwtModel() { Jwt = token });
+            }
+            finally
+            {
+                identityUserService.Dispose();
+                userManager.Dispose();
+            }
+        }
 
         public ActionResult Register()
         {
@@ -412,7 +436,6 @@ namespace BExIS.Web.Shell.Controllers
                 var policyUrl = Url.Action("Index", "PrivacyPolicy", null, Request.Url.Scheme);
                 var termsUrl = Url.Action("Index", "TermsAndConditions", null, Request.Url.Scheme);
 
-
                 var applicationName = GeneralSettings.ApplicationName;
 
                 await identityUserService.SendEmailAsync(userId, subject,
@@ -428,35 +451,6 @@ namespace BExIS.Web.Shell.Controllers
             finally
             {
                 identityUserService.Dispose();
-            }
-        }
-
-        public async Task<ActionResult> Profile()
-        {
-            var identityUserService = new IdentityUserService();
-            var userManager = new UserManager();
-
-            try
-            {
-                long userId = 0;
-                long.TryParse(this.User.Identity.GetUserId(), out userId);
-
-                var user = identityUserService.FindById(userId);
-
-                if (string.IsNullOrEmpty(user.Token))
-                {
-                    await userManager.SetTokenAsync(user);
-                }
-
-                user = identityUserService.FindById(userId);
-                var token = await userManager.GetTokenAsync(user);
-
-                return View(model: token);
-            }
-            finally
-            {
-                identityUserService.Dispose();
-                userManager.Dispose();
             }
         }
 

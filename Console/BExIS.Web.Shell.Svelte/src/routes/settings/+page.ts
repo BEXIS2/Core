@@ -5,7 +5,7 @@ import {setApiConfig} from '@bexis2/bexis2-core-ui';
 export async function load() {
 
 	if (import.meta.env.DEV) {
-		// setApiConfig('https://dev.bexis2.uni-jena.de/', 'admin', '123456');
+		// setApiConfig('https://dev.bexis2.uni-jena.de/', 'Admin', '123456');
 		setApiConfig('https://localhost:44345/', 'sventhiel', 'proq3dm6');
 
 	}

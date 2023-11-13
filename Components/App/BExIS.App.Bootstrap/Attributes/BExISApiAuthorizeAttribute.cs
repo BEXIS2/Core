@@ -4,7 +4,9 @@ using BExIS.Security.Services.Objects;
 using BExIS.Security.Services.Subjects;
 using System;
 using System.Linq;
+using System.Net;
 using System.Net.Http;
+using System.Text;
 using System.Web.Http;
 using System.Web.Http.Controllers;
 
@@ -12,7 +14,7 @@ namespace BExIS.App.Bootstrap.Attributes
 {
     public class BExISApiAuthorizeAttribute : AuthorizeAttribute
     {
-        public override void OnAuthorization(HttpActionContext actionContext)
+        public override async void OnAuthorization(HttpActionContext actionContext)
         {
             try
             {
@@ -21,28 +23,27 @@ namespace BExIS.App.Bootstrap.Attributes
                 using (var userManager = new UserManager())
                 using (var identityUserService = new IdentityUserService())
                 {
+                    // 0. User
                     User user = null;
 
-                    // User
-                    switch(actionContext.Request.Headers.Authorization.Scheme.ToLower())
-                    {
-                        case "basic":
-                            var basic = actionContext.Request.Headers.Authorization?.ToString().Substring("basic ".Length).Trim();
-                            if (basic == null)
-                            {
-                                actionContext.Response = new HttpResponseMessage(System.Net.HttpStatusCode.Forbidden);
-                                actionContext.Response.Content = new StringContent("The basic authentication information is not valid.");
-                                return;
-                            }
+                    // 1. principal
+                    var principal = actionContext.ControllerContext.RequestContext.Principal;
 
-                            var name = System.Text.Encoding.UTF8.GetString(Convert.FromBase64String(basic)).Split(':')[0];
+                    // 1.1. check basic auth in case of principal is empty!
+                    if (principal == null || principal.Identity == null || !principal.Identity.IsAuthenticated)
+                    {
+                        if (actionContext.Request.Headers.Authorization.Scheme.ToLower() == "basic")
+                        {
+                            string basicParameter = actionContext.Request.Headers.Authorization.Parameter;
+
+                            var name = System.Text.Encoding.UTF8.GetString(Convert.FromBase64String(basicParameter)).Split(':')[0];
                             if (name.Contains('@'))
                             {
-                                user = userManager.FindByEmailAsync(name).Result;
+                                user = await userManager.FindByEmailAsync(name);
                             }
                             else
                             {
-                                user = userManager.FindByNameAsync(name).Result;
+                                user = await userManager.FindByNameAsync(name);
                             }
 
                             if (user == null)
@@ -52,41 +53,29 @@ namespace BExIS.App.Bootstrap.Attributes
                                 return;
                             }
 
-                            var result = identityUserService.CheckPasswordAsync(user, System.Text.Encoding.UTF8.GetString(Convert.FromBase64String(basic)).Split(':')[1]).Result;
+                            var result = await identityUserService.CheckPasswordAsync(user, System.Text.Encoding.UTF8.GetString(Convert.FromBase64String(basicParameter)).Split(':')[1]);
+
                             if (!result)
                             {
                                 actionContext.Response = new HttpResponseMessage(System.Net.HttpStatusCode.Forbidden);
                                 actionContext.Response.Content = new StringContent("The username and/or password are incorrect.");
                                 return;
                             }
+                        }
+                    }
+                    else
+                    {
+                        user = await userManager.FindByNameAsync(principal.Identity.Name);
 
-                            break;
-                        case "bearer":
-                            var token = actionContext.Request.Headers.Authorization?.ToString().Substring("bearer ".Length).Trim();
-                            if (token == null)
-                            {
-                                actionContext.Response = new HttpResponseMessage(System.Net.HttpStatusCode.Forbidden);
-                                actionContext.Response.Content = new StringContent("The token is not valid.");
-                                return;
-                            }
-
-                            var users = userManager.Users.Where(u => u.Token == token);
-                            if (users.Count() != 1)
-                            {
-                                actionContext.Response = new HttpResponseMessage(System.Net.HttpStatusCode.Forbidden);
-                                actionContext.Response.Content = new StringContent("The token is not valid.");
-                                return;
-                            }
-
-                            user = users.First();
-
-                            break;
-                        default:
+                        if (user == null)
+                        {
                             actionContext.Response = new HttpResponseMessage(System.Net.HttpStatusCode.Forbidden);
+                            actionContext.Response.Content = new StringContent("The system denied the access.");
                             return;
+                        }
                     }
 
-                    // Feature & Operation
+                    // 3. features & operations
                     var areaName = "Api";
                     var controllerName = actionContext.ActionDescriptor.ControllerDescriptor.ControllerName;
                     var actionName = actionContext.ActionDescriptor.ActionName;
@@ -115,7 +104,6 @@ namespace BExIS.App.Bootstrap.Attributes
             }
             catch (Exception ex)
             {
-
             }
         }
     }

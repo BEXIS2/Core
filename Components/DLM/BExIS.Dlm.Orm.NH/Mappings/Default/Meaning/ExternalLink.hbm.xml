@@ -3,26 +3,31 @@
 
 	<class xmlns="urn:nhibernate-mapping-2.2" name="ExternalLink" table="ExternalLink">
 
-    <id name="Id" type="Int64">
-      <generator class="native" />
-    </id>
+		<id name="Id" type="Int64">
+			<generator class="native" />
+		</id>
 
-    <version name="VersionNo" type="Int32">
-      <column name="VersionNo" />
-    </version>
+		<version name="VersionNo" type="Int32">
+			<column name="VersionNo" />
+		</version>
 
-    <property name="URI" type="String">
-      <column name="URI" />
-    </property>
-    
-    <property name="Name" type="String">
-      <column name="Name" />
-    </property>
-    
-    <property name="Type" type="String">
-      <column name="Type" />
-    </property>
-<!--
+		<property name="URI" type="String">
+			<column name="URI" />
+		</property>
+
+		<property name="Name" type="String">
+			<column name="Name" />
+		</property>
+
+		<property name="Type" type="BExIS.Dlm.Entities.Meanings.ExternalLinkType, BExIS.Dlm.Entities">
+			<column name="Type" />
+		</property>
+
+		<many-to-one name="Prefix" column="Prefix" class="BExIS.Dlm.Entities.Meanings.ExternalLink, BExIS.Dlm.Entities" />
+
+		<many-to-one name="prefixCategory" column="prefixCategory" class="BExIS.Dlm.Entities.Meanings.PrefixCategory, BExIS.Dlm.Entities" />
+
+		<!--
 	<many-to-one name="Meaning" class="Meaning" not-null="false" column="externalLinkref"/>
 -->
 

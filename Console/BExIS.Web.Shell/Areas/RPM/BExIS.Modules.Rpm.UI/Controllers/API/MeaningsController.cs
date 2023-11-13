@@ -69,6 +69,27 @@ namespace BExIS.Modules.Rpm.UI.Controllers
             return cretae_response(_meaningManager.getExternalLink(long.Parse(dict["id"])));
         }
 
+        [BExISApiAuthorize]
+        [HttpPost, HttpGet]
+        [JsonNetFilter]
+        [PostRoute("api/Meanings/getPrefixes")]
+        [GetRoute("api/Meanings/getPrefixes")]
+        public HttpResponseMessage getPrefixes()
+        {
+            return cretae_response(_meaningManager.getPrefixes());
+        }
+
+        [BExISApiAuthorize]
+        [HttpPost, HttpGet]
+        [JsonNetFilter]
+        [PostRoute("api/Meanings/getPrefixfromUri")]
+        [GetRoute("api/Meanings/getPrefixfromUri")]
+        public HttpResponseMessage getPrefixfromUri()
+        {
+            string uri = this.Request.Content.ReadAsStringAsync().Result.ToString();
+            return cretae_response(_meaningManager.getPrefixfromUri(uri));
+        }
+
         private HttpResponseMessage cretae_response(object return_object)
         {
             if (return_object == null)

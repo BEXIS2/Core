@@ -46,6 +46,7 @@
 	}
 
 	export async function putSettingByModuleId(moduleId: string, model: UpdateSettingModel) {
+		console.log(model);
 		const response = await putByModuleId(moduleId, model);
 		if (response?.status == 200) {
 			notificationStore.showNotification({
@@ -82,7 +83,7 @@
 			<div id="spinner">{error}</div>
 		{/await}
 	</div>
-	{#await getSettingsByModuleId(module)}
+	<!-- {#await getSettingsByModuleId(module)}
 		<div id="spinner">... loading ...</div>
 	{:then data}
 		<form on:submit|preventDefault={() => putSettingByModuleId(data.id, data)}>
@@ -98,7 +99,7 @@
 		</form>
 	{:catch error}
 		<div id="spinner">{error}</div>
-	{/await}
+	{/await} -->
 
 	<div />
 </Page>
