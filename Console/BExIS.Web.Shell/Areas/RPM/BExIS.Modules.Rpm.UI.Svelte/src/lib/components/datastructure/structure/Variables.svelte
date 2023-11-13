@@ -212,6 +212,7 @@
 	</button>
 
 <div class="pr-32 w-auto">
+	{valid}
 	{#if !valid}
 		<span class="text-sm">Variables with errors:</span>
 
