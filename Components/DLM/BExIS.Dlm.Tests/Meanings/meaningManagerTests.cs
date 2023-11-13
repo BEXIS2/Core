@@ -75,6 +75,8 @@ namespace BExIS.Dlm.Entities.Meanings.Tests
             Description.Should().NotBeNullOrEmpty();
             PrefixCategory prefixCategory = new PrefixCategory(Name, Description);
 
+            prefixCategory = _meaningManager.addPrefixCategory(prefixCategory);
+
             String uri = Convert.ToString("htpp://testUri.com");
             String name = Convert.ToString("test name external link");
             ExternalLinkType type = ExternalLinkType.prefix;
@@ -102,7 +104,7 @@ namespace BExIS.Dlm.Entities.Meanings.Tests
             NUnit.Framework.Assert.That(res.Name.Equals("test name external link edited"));
             NUnit.Framework.Assert.That(res.Type.Equals(ExternalLinkType.link));
             NUnit.Framework.Assert.That(res.Prefix.Equals(res));
-            NUnit.Framework.Assert.That(res.prefixCategory.Equals(null));
+            NUnit.Framework.Assert.IsNull(res.prefixCategory);
 
 
         }
