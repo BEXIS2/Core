@@ -1,4 +1,13 @@
 /** @type {import('tailwindcss').Config} */
+// @ts-check
+import { join } from 'path';
+
+// 1. Import the Skeleton plugin
+import { skeleton } from '@skeletonlabs/tw-plugin';
+
+//add theme 
+import { bexis2Theme } from './src/lib/themes/theme-bexis2';
+
 module.exports = {
 	darkMode: 'class',
 	content: ['./src/**/*.{html,js,svelte,ts}', 
@@ -10,5 +19,10 @@ module.exports = {
 	plugins: [
 		require('@tailwindcss/forms'),
 		require('@tailwindcss/typography'),
-		...require('@skeletonlabs/skeleton/tailwind/skeleton.cjs')({intellisense:false})],
+		skeleton({
+			themes: {
+				custom: [ bexis2Theme ]
+			}
+		})
+	]
 }
