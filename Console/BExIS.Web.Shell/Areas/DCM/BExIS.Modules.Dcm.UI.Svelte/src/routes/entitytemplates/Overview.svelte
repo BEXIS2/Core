@@ -9,7 +9,8 @@
 	// ui components
 	import { Spinner } from '@bexis2/bexis2-core-ui';
 	import Card from './Card.svelte';
-	import { Modal, modalStore } from '@skeletonlabs/skeleton';
+	import { Modal, getModalStore } from '@skeletonlabs/skeleton';
+	const modalStore = getModalStore();
 
 	//services
 	import { positionType } from '@bexis2/bexis2-core-ui';

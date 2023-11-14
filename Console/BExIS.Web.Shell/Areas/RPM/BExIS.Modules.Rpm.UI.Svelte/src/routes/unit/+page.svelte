@@ -1,7 +1,8 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import { slide, fade } from 'svelte/transition';
-	import { Modal, modalStore, Toast } from '@skeletonlabs/skeleton';
+	import { Modal, getModalStore, Toast } from '@skeletonlabs/skeleton';
+	const modalStore = getModalStore();
 	import { Page, Table, ErrorMessage, helpStore, TablePlaceholder, notificationStore, notificationType, pageContentLayoutType} from '@bexis2/bexis2-core-ui';
 	import * as apiCalls from './services/apiCalls';
 	import Form from './components/form.svelte';

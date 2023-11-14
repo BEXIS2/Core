@@ -1,5 +1,7 @@
 <script lang="ts">
-	import { Modal, modalStore, type ModalSettings } from '@skeletonlabs/skeleton';
+	import { Modal, getModalStore, type ModalSettings } from '@skeletonlabs/skeleton';
+	const modalStore = getModalStore();
+	
 	import { getLinks, remove } from './services';
 	import type { externalLinkType } from '$lib/components/meaning/types';
 

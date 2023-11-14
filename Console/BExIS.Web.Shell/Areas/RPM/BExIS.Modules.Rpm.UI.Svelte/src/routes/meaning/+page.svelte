@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Modal, modalStore, type ModalSettings } from '@skeletonlabs/skeleton';
+	import { Modal, getModalStore, type ModalSettings } from '@skeletonlabs/skeleton';
 	import { getMeanings, remove, update, getLinks } from './services';
 	import { MeaningModel, type externalLinkType } from '$lib/components/meaning/types';
 	import {
@@ -25,10 +25,12 @@
 
 	//stores
 	let meanings: MeaningModel[];
-	let meaning: MeaningModel = new MeaningModel();
+	let meaning: MeaningModel = new MeaningModel(null);
 
 	let showForm = false;
 
+	// modal
+	const modalStore = getModalStore();
 
 	async function reload() {
 		showForm = false;

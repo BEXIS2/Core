@@ -6,8 +6,9 @@
  import type { SubmitModel, submitResponceType } from '$models/SubmitModels';
 	import GoToView from '$lib/components/submit/GoTo.svelte'
 
-	import { Modal, modalStore } from '@skeletonlabs/skeleton';
-	import type { ModalSettings, ModalComponent } from '@skeletonlabs/skeleton';
+	import { Modal, getModalStore } from '@skeletonlabs/skeleton';
+	const modalStore = getModalStore();
+	import type { ModalSettings } from '@skeletonlabs/skeleton';
 
 
 	import {

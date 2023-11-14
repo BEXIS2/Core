@@ -5,7 +5,7 @@
 	import { getDataTypes, getUnits, getVariableTemplates, getMeanings } from '../services';
 	import type { missingValueType } from '../types';
 	import { VariableInstanceModel } from '../types';
-	import { Modal, modalStore } from '@skeletonlabs/skeleton';
+	import { Modal, getModalStore } from '@skeletonlabs/skeleton';
 	import type { ModalSettings } from '@skeletonlabs/skeleton';
 
 	import Fa from 'svelte-fa';
@@ -30,6 +30,8 @@
 	export let valid = true;
 
 	let ready:boolean = false;
+
+	const modalStore = getModalStore();
 
 	onMount(async () => {
 

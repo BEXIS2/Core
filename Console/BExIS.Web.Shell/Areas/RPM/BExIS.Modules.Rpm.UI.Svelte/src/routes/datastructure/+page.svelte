@@ -18,7 +18,7 @@
 	import { faPlus, faXmark } from '@fortawesome/free-solid-svg-icons';
 
 	// types & stores
-	import { modalStore, type ModalSettings, Modal } from '@skeletonlabs/skeleton';
+	import { getModalStore, type ModalSettings, Modal } from '@skeletonlabs/skeleton';
 	import type { DataStructureModel } from '$lib/components/datastructure/types';
 	import { writable } from 'svelte/store';
 
@@ -37,6 +37,8 @@ import { fade, slide } from 'svelte/transition'
 	// load data
 	let structures: DataStructureModel[];
 	const structuresStore = writable<DataStructureModel[]>([]);
+
+	const modalStore = getModalStore();
 
 	let showOptions:boolean = false;
 
