@@ -11,9 +11,10 @@
 	export let model: DataStructureCreationModel;
 	$: model, open();
 
-	import { Drawer, drawerStore } from '@skeletonlabs/skeleton';
+	import { Drawer, getDrawerStore } from '@skeletonlabs/skeleton';
+	const drawerStore = getDrawerStore();
 	import type { DrawerSettings } from '@skeletonlabs/skeleton';
-	import { error } from '@sveltejs/kit';
+
 
 	const dispatch = createEventDispatcher();
 

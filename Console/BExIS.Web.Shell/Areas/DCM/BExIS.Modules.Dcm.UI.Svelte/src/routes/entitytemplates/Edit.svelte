@@ -9,7 +9,8 @@
 	import { faSave, faXmark } from '@fortawesome/free-solid-svg-icons/index';
 	import { SlideToggle } from '@skeletonlabs/skeleton';
 	import ContentContainer from '../../lib/components/ContentContainer.svelte';
-	import { Modal, modalStore } from '@skeletonlabs/skeleton';
+	import { Modal, getModalStore } from '@skeletonlabs/skeleton';
+	const modalStore = getModalStore();
 
 	import EntryContainer from './EntryContainer.svelte';
 

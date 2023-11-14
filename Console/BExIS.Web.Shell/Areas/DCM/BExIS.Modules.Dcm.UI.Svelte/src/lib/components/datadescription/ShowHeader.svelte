@@ -8,7 +8,8 @@
 	import { removeStructure } from '$services/DataDescriptionCaller';
 	import { latestDataDescriptionDate } from '../../../routes/edit/stores';
 
-	import { modalStore } from '@skeletonlabs/skeleton';
+	import { getModalStore } from '@skeletonlabs/skeleton';
+	const modalStore = getModalStore();
 	import type { ModalSettings } from '@skeletonlabs/skeleton';
 	import {createEventDispatcher} from 'svelte'
 
