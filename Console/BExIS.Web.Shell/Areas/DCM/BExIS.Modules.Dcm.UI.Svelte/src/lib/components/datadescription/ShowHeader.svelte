@@ -11,7 +11,7 @@
 	import { getModalStore } from '@skeletonlabs/skeleton';
 	const modalStore = getModalStore();
 	import type { ModalSettings } from '@skeletonlabs/skeleton';
-	import {createEventDispatcher} from 'svelte'
+	import { createEventDispatcher } from 'svelte';
 
 	export let id;
 	export let structureId;
@@ -22,7 +22,7 @@
 	export let readableFiles: fileInfoType[] = [];
 
 	let loading = false;
- const dispatch = createEventDispatcher();
+	const dispatch = createEventDispatcher();
 
 	const modal: ModalSettings = {
 		type: 'confirm',
@@ -31,7 +31,7 @@
 		// TRUE if confirm pressed, FALSE if cancel pressed
 		response: (r: boolean) => {
 			if (r === true) {
-					remove();
+				remove();
 			}
 		}
 	};
@@ -39,8 +39,7 @@
 	async function remove() {
 		loading = true;
 		console.log('remove');
-		try{
-
+		try {
 			const res = await removeStructure(id);
 			console.log('remove', res);
 
@@ -48,19 +47,16 @@
 				// update store
 				latestDataDescriptionDate.set(Date.now());
 			} else {
-				let messages:string[] = []
-				messages.push("remove failed");
+				let messages: string[] = [];
+				messages.push('remove failed');
 				//show message
-				dispatch('error',{messages});
+				dispatch('error', { messages });
 			}
-
-		}
-		catch(err)
-		{
-			 let messages:string[] = []
-				messages.push("remove failed");
-				//show message
-				dispatch('error',{messages});
+		} catch (err) {
+			let messages: string[] = [];
+			messages.push('remove failed');
+			//show message
+			dispatch('error', { messages });
 		}
 
 		loading = false;
@@ -78,11 +74,14 @@
 		{/if}
 	</div>
 	<div>
-
-		{#if hasData ===false}
-		<div class="text-end flex-auto">
-			<button title="remove" class="chip variant-filled-error" on:click={()=>modalStore.trigger(modal)}><Fa icon={faTrash} /></button>
-		</div>
+		{#if hasData === false}
+			<div class="text-end flex-auto">
+				<button
+					title="remove"
+					class="chip variant-filled-error"
+					on:click={() => modalStore.trigger(modal)}><Fa icon={faTrash} /></button
+				>
+			</div>
 		{/if}
 	</div>
 </div>

@@ -37,7 +37,7 @@ export const submit = async (id) => {
 	//console.log("edit",id);
 
 	try {
-		const response = await Api.post('/dcm/submit/submit',{id});
+		const response = await Api.post('/dcm/submit/submit', { id });
 		//console.log(response);
 
 		return response.data;

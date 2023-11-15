@@ -65,18 +65,18 @@
 		{#each entitytemplates as item, i (item.id)}
 			<Card {...item}>
 				<div class="flex h-full justify-end">
-				<div class="grow text-right gap-2">
-					<button
-					 title="delete"
-						class="btn variant-filled-error"
-						disabled={item.linkedSubjects.length > 0}
-						on:click={() => deletionConfirmation(i, item.id)}><Fa icon={faTrash} /></button
-					>
+					<div class="grow text-right gap-2">
+						<button
+							title="delete"
+							class="btn variant-filled-error"
+							disabled={item.linkedSubjects.length > 0}
+							on:click={() => deletionConfirmation(i, item.id)}><Fa icon={faTrash} /></button
+						>
 
-					<button title="edit" class="btn variant-filled-primary" on:click={() => edit(item.id)}
-						><Fa icon={faPen} /></button
-					>
-				</div>
+						<button title="edit" class="btn variant-filled-primary" on:click={() => edit(item.id)}
+							><Fa icon={faPen} /></button
+						>
+					</div>
 				</div>
 			</Card>
 		{/each}

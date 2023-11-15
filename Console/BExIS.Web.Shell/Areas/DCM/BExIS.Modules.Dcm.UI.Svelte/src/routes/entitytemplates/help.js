@@ -37,7 +37,8 @@ export const editHelp = [
 	{
 		id: 'permissions',
 		name: 'Permissions',
-		description: 'Select the group(s) that will automatically get full access after creating the dataset.'
+		description:
+			'Select the group(s) that will automatically get full access after creating the dataset.'
 	},
 	{
 		id: 'notification',
@@ -47,7 +48,8 @@ export const editHelp = [
 	{
 		id: 'disabledHooks',
 		name: 'Disable dataset components',
-		description: 'Select components/features that should not be displayed during editing and display of a dataset.'
+		description:
+			'Select components/features that should not be displayed during editing and display of a dataset.'
 	},
 	{
 		id: 'allowedFileTypes',

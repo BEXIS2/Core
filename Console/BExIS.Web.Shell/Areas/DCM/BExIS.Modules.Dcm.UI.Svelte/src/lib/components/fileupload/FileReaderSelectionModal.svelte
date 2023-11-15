@@ -5,7 +5,7 @@
 	import { faXmark } from '@fortawesome/free-solid-svg-icons';
 	import type { DataStructureCreationModel } from '@bexis2/bexis2-rpm-ui';
 
-	import {Selection} from '@bexis2/bexis2-rpm-ui';
+	import { Selection } from '@bexis2/bexis2-rpm-ui';
 	import { latestFileReaderDate } from '../../../routes/edit/stores';
 
 	export let model: DataStructureCreationModel;
@@ -15,11 +15,10 @@
 	const drawerStore = getDrawerStore();
 	import type { DrawerSettings } from '@skeletonlabs/skeleton';
 
-
 	const dispatch = createEventDispatcher();
 
 	function open(): void {
-		console.log("open",model)
+		console.log('open', model);
 		const drawerSettings: DrawerSettings = {
 			id: 'example-2',
 			meta: { foo: 'bar', fizz: 'buzz', age: 40 }
@@ -28,13 +27,12 @@
 	}
 
 	function close() {
-		console.log('close selection',$latestFileReaderDate);
+		console.log('close selection', $latestFileReaderDate);
 
 		latestFileReaderDate.set(Date.now());
 		drawerStore.close();
 		dispatch('close');
-		console.log('close selection after update',$latestFileReaderDate);
-
+		console.log('close selection after update', $latestFileReaderDate);
 	}
 </script>
 
@@ -49,6 +47,6 @@
 			</div>
 		</div>
 
-		<Selection {model} on:saved={close} on:error={alert("error")} />
+		<Selection {model} on:saved={close} on:error={alert('error')} />
 	</div>
 </Drawer>

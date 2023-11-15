@@ -5,7 +5,7 @@ import { join } from 'path';
 
 // 1. Import the Skeleton plugin
 import { skeleton } from '@skeletonlabs/tw-plugin';
-import { bexis2Theme } from './src/lib/themes/theme-bexis2.ts'
+import { bexis2Theme } from './src/lib/themes/theme-bexis2';
 
 module.exports = {
 	darkMode: 'class',
