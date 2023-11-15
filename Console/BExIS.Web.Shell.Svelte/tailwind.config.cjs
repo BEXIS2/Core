@@ -6,7 +6,7 @@ import { join } from 'path';
 import { skeleton } from '@skeletonlabs/tw-plugin';
 
 //add theme 
-import { bexis2Theme } from './src/themes/theme-bexis2';
+import { bexis2theme } from './node_modules/@bexis2/bexis2-core-ui/dist/themes/theme-bexis2';
 
 
 module.exports = {
@@ -22,7 +22,7 @@ module.exports = {
 		require('@tailwindcss/typography'),
 		skeleton({
 			themes: {
-				custom: [ bexis2Theme ]
+				custom: [ bexis2theme ]
 			}
 		})
 	]
