@@ -36,6 +36,12 @@ export interface externalLinkType  {
     type: string;
 }
 
+export interface prefixCategoryType  {
+    id: number;
+    name: string;
+    description: string;
+}
+
 export enum approvedType {
     yes = 1,
     No = 2

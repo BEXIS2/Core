@@ -2,8 +2,8 @@
 	import { Modal, getModalStore, type ModalSettings } from '@skeletonlabs/skeleton';
 	const modalStore = getModalStore();
 	
-	import { getLinks, remove } from './services';
-	import type { externalLinkType } from '$lib/components/meaning/types';
+	import { getPrefixCategories, remove } from './services';
+	import type { prefixCategoryType } from '$lib/components/meaning/types';
 
 	import {
 		Page,
@@ -16,18 +16,19 @@
 		notificationType
 	} from '@bexis2/bexis2-core-ui';
 
-	import { externalLinksStore } from '$lib/components/meaning/stores';
+	import { prefixCategoryStore } from '$lib/components/meaning/stores';
 
-	let externalLinks: externalLinkType[] = [];
-	let externalLink: externalLinkType = { id: 0, name: '', type: '', uri: '' };
+	let prefixCategories: prefixCategoryType[] = [];
+	let prefixCategory: prefixCategoryType = { id: 0, name: '', description: ''};
+
 
 	import TableOptions from './table/tableOptions.svelte';
 
 	import Fa from 'svelte-fa';
 	import { faPlus } from '@fortawesome/free-solid-svg-icons';
 	import { fade, slide } from 'svelte/transition';
-	import ExternalLinkForm from './ExternalLink.svelte';
-	import TableUri from './table/tableUri.svelte';
+	import PrefixCategoryForm from './PrefixCategory.svelte';
+
 
 	let showForm = false;
 
@@ -35,43 +36,38 @@
 		showForm = false;
 
 		// get external links
-		externalLinks = await getLinks();
-  externalLink = { id: 0, name: '', type: '', uri: '' };
-		externalLinksStore.set(externalLinks);
+		prefixCategories = await getPrefixCategories();
+  console.log("🚀 ~ file: +page.svelte:39 ~ reload ~ prefixCategories:", prefixCategories)
+  prefixCategory = { id: 0, name: '', description: ''};
+		prefixCategoryStore.set(prefixCategories);
 
-		console.log('store', $externalLinksStore);
+		console.log('store', $prefixCategoryStore);
 	}
 
-	const m: TableConfig<externalLinkType> = {
+	const m: TableConfig<prefixCategoryType> = {
 		id: 'ExternalLinks',
-		data: externalLinksStore,
+		data: prefixCategoryStore,
 		optionsComponent: TableOptions,
-		columns: {
+		columns:{
 			id: {
 				fixedWidth: 100
-			},
-			extra: {
-				disableFiltering: true,
-				disableSorting: true,
-				exclude: true
 			},
 			versionNo: {
 				disableFiltering: true,
 				disableSorting: true,
 				exclude: true
 			},
-			uri: {
-				header: 'Uri',
-				instructions: {
-					renderComponent: TableUri
-				},
+			extra: {
 				disableFiltering: true,
-				disableSorting:true
+				disableSorting: true,
+				exclude: true
 			},
 			optionsColumn: {
 				fixedWidth: 100
 			}
+
 		}
+
 	};
 
 	function toggleForm() {
@@ -82,7 +78,7 @@
 	}
 
 	function clear() {
-		externalLink = { id: 0, name: '', type: '', uri: '' };
+		prefixCategory = { id: 0, name: '', description: '' };
 		showForm = false;
 	}
 
@@ -91,7 +87,7 @@
 
 		if (type.action == 'edit') {
 			showForm = false;
-			externalLink = $externalLinksStore.find((u) => u.id === type.id)!;
+			prefixCategory = $prefixCategoryStore.find((u) => u.id === type.id)!;
 			showForm = true;
 		}
 
@@ -99,8 +95,8 @@
 			console.log('🚀 ~ file: +page.svelte:97 ~ edit ~ type.action:', type.action);
 			const confirm: ModalSettings = {
 				type: 'confirm',
-				title: 'Delete External Link',
-				body: 'Are you sure you wish to delete external link ' + externalLink.name + '?',
+				title: 'Delete Prefix Category',
+				body: 'Are you sure you wish to delete Prefix Category ' + prefixCategory.name + '?',
 				// TRUE if confirm pressed, FALSE if cancel pressed
 				response: (r: boolean) => {
 					if (r === true) {
@@ -120,20 +116,20 @@
 		if (res) {
 			notificationStore.showNotification({
 				notificationType: notificationType.success,
-				message: 'External Link deleted.'
+				message: 'Prefix Category deleted.'
 			});
 
 			reload();
 		} else {
 			notificationStore.showNotification({
 				notificationType: notificationType.error,
-				message: "Can't delete external link."
+				message: "Can't delete Prefix Category."
 			});
 		}
 	}
 
 	function onSuccessFn(id: number) {
-		const message = id > 0 ? 'External link updated.' : 'External link created.';
+		const message = id > 0 ? 'Prefix Category updated.' : 'Prefix Category created.';
 
 		notificationStore.showNotification({
 			notificationType: notificationType.success,
@@ -141,6 +137,7 @@
 		});
 
 		showForm = false;
+		
 		setTimeout(async () => {
 			reload();
 		}, 10);
@@ -149,7 +146,7 @@
 	function onFailFn() {
 		notificationStore.showNotification({
 			notificationType: notificationType.error,
-			message: "Can't save external Link."
+			message: "Can't save Prefix Category."
 		});
 	}
 </script>
@@ -171,10 +168,10 @@
 		<!-- svelte-ignore a11y-click-events-have-key-events -->
 		<div class="grid grid-cols-2 gap-5 my-4 pb-1 border-b border-primary-500">
 			<div class="h3 h-9">
-				{#if externalLink.id < 1}
-					<span in:fade={{ delay: 400 }} out:fade>Create neẇ External link</span>
+				{#if prefixCategory.id < 1}
+					<span in:fade={{ delay: 400 }} out:fade>Create neẇ Prefix Category</span>
 				{:else}
-					<span in:fade={{ delay: 400 }} out:fade>{externalLink.name}</span>
+					<span in:fade={{ delay: 400 }} out:fade>{prefixCategory.name}</span>
 				{/if}
 			</div>
 			<div class="text-right">
@@ -183,7 +180,7 @@
 					<button
 						transition:fade
 						class="btn variant-filled-secondary shadow-md h-9 w-16"
-						title="Create neẇ External Link"
+						title="Create neẇ Prefix Category"
 						id="create"
 						on:mouseover={() => {
 							helpStore.show('create');
@@ -196,10 +193,10 @@
 
 		{#if showForm}
 			<div in:slide out:slide>
-				<ExternalLinkForm
-					link={externalLink}
+				<PrefixCategoryForm
+					{prefixCategory}
 					on:cancel={() => clear()}
-					on:success={() => onSuccessFn(externalLink.id)}
+					on:success={() => onSuccessFn(prefixCategory.id)}
 					on:fail={onFailFn}
 				/>
 			</div>
