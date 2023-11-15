@@ -93,6 +93,9 @@
 								},
 								disableFiltering: true,
 								exclude: false
+							},
+							optionsColumn: {
+								fixedWidth: 100
 							}
 							
 							

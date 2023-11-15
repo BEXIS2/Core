@@ -109,5 +109,90 @@ namespace BExIS.Modules.Rpm.UI.Controllers
 
         #endregion;
 
+        #region prefix category
+
+        // GET: ExternalLink
+        public ActionResult PrefixCategory()
+        {
+            string module = "rpm";
+
+            ViewData["app"] = SvelteHelper.GetApp(module);
+            ViewData["start"] = SvelteHelper.GetStart(module);
+
+            return View("PrefixCategory");
+        }
+
+        [BExISAuthorize]
+        [JsonNetFilter]
+        [HttpGet]
+        public JsonResult GetPrefixCategories()
+        {
+            using (var _meaningManager = new MeaningManager())
+            {
+                List<PrefixCategory> res = _meaningManager.getPrefixCategory();
+                return Json(res, JsonRequestBehavior.AllowGet);
+            }
+        }
+
+        [BExISAuthorize]
+        [JsonNetFilter]
+        [HttpPost]
+        public JsonResult CreatePrefixCategories(PrefixCategory data)
+        {
+            if (data == null) throw new NullReferenceException("prefix category should not be null.");
+            if (string.IsNullOrEmpty(data.Name)) throw new NullReferenceException("Name of prefix category should not be null or empty.");
+
+            using (var _meaningManager = new MeaningManager())
+            {
+                _meaningManager.addPrefixCategory(data);
+                return Json(true);
+            }
+
+            return Json(false);
+        }
+
+        [BExISAuthorize]
+        [JsonNetFilter]
+        [HttpPost]
+        public JsonResult updatePrefixCategories(PrefixCategory data)
+        {
+            try
+            {
+                using (var _meaningManager = new MeaningManager())
+                {
+                    PrefixCategory res = _meaningManager.editPrefixCategory(data);
+                    return Json(res);
+                }
+
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Prefix Category was not generated.", ex);
+            }
+        }
+
+        [BExISAuthorizeAttribute]
+        [JsonNetFilter]
+        [HttpDelete]
+        public JsonResult DeletePrefixCategory(long id)
+        {
+            try
+            {
+
+                using (var _meaningManager = new MeaningManager())
+                {
+                    _meaningManager.deletePrefixCategory(id);
+                    return Json(true);
+                }
+
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Prefix Category was not generated.", ex);
+            }
+        }
+
+        #endregion
+
     }
 }
