@@ -49,7 +49,7 @@
       <many-to-many column="ConstraintRef" class="Constraint"/>
     </set>
 
-	<set name="Meanings" table="Meanings_Variables" inverse="false" lazy="false" fetch="select" cascade="save-update"  >
+	<set name="Meanings" table="rpm_meanings_variables" inverse="false" lazy="false" fetch="select" cascade="save-update"  >
 		<key column="VariableRef"/>
 		<many-to-many class="BExIS.Dlm.Entities.Meanings.Meaning" column="MeaningRef"/>
 	</set>
