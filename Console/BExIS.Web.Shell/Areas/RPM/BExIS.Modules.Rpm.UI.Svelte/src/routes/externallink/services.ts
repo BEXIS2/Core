@@ -4,7 +4,6 @@ import type { externalLinkType } from '$lib/components/meaning/types';
 export const getLinks = async () => {
 	try {
 		const response = await Api.get('/rpm/ExternalLink/get');
-		console.log("🚀 ~ file: services.ts:8 ~ getLinks ~ response.data:", response.data)
 		return response.data;
 	} catch (error) {
 		console.error(error);
