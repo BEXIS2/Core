@@ -33,7 +33,9 @@ export interface externalLinkType  {
     id: number;
     uri: string;
     name: string;
-    type: string;
+    type: externalLinkTypeEnum;
+    prefix: externalLinkType
+    prefixCategory:prefixCategoryType
 }
 
 export interface prefixCategoryType  {
@@ -50,4 +52,15 @@ export enum approvedType {
 export enum selectableType {
     yes = 1,
     No = 2
+}
+
+export enum externalLinkTypeEnum {
+
+    prefix = 1,
+    link = 2,
+    entity = 3,
+    characteristics = 4,
+    vocabulary = 5,
+    relationship = 6
+    
 }
