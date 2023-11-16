@@ -21,6 +21,7 @@
 		console.log(response);
 		if (response?.status == 200) {
 			var modules = await response.data;
+			console.log("🚀 ~ file: +page.svelte:24 ~ getSettings ~ modules:", modules)
 			
 			if(modules.length > 0)
 			{
@@ -75,15 +76,14 @@
 			<ListBox active="variant-filled-primary">
 				{#each data as m}
 					<ListBoxItem bind:group={module} name="medium" value={m.id}
-						>{m.name}</ListBoxItem
-					>
+						>{m.name}</ListBoxItem>
 				{/each}
 			</ListBox>
 		{:catch error}
 			<div id="spinner">{error}</div>
 		{/await}
 	</div>
-	<!-- {#await getSettingsByModuleId(module)}
+	{#await getSettingsByModuleId(module)}
 		<div id="spinner">... loading ...</div>
 	{:then data}
 		<form on:submit|preventDefault={() => putSettingByModuleId(data.id, data)}>
@@ -99,7 +99,7 @@
 		</form>
 	{:catch error}
 		<div id="spinner">{error}</div>
-	{/await} -->
+	{/await}
 
 	<div />
 </Page>
