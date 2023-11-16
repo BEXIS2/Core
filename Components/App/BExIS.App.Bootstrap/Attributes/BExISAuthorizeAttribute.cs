@@ -14,6 +14,7 @@ using System.Web.Mvc;
 using System.Web.Routing;
 using System.Web.Http.Results;
 using System.Threading.Tasks;
+using BExIS.App.Bootstrap.Extensions;
 
 namespace BExIS.App.Bootstrap.Attributes
 {
@@ -35,31 +36,29 @@ namespace BExIS.App.Bootstrap.Attributes
 
                     if (operation == null)
                     {
-                        filterContext.Result = new HttpStatusCodeResult(HttpStatusCode.Unauthorized);
-                        return;
+                        filterContext.SetResponse(HttpStatusCode.Forbidden);
+                        //filterContext.Result = new HttpStatusCodeResult(HttpStatusCode.Unauthorized);
                     }
-
-                    var feature = operation.Feature;
-                    if (feature != null)
+                    else
                     {
-                        User user = await BExISAuthorizeHelper.GetUserFromAuthorizationAsync(filterContext.HttpContext);
-
-                        if (user == null)
-                        {
-                            filterContext.Result = new HttpStatusCodeResult(HttpStatusCode.Unauthorized);
-                            return;
-                        }
-
+                        var feature = operation.Feature;
                         if (feature != null && !featurePermissionManager.Exists(null, feature.Id))
                         {
-                            if (!featurePermissionManager.HasAccess(user.Id, feature.Id))
+                            User user = await BExISAuthorizeHelper.GetUserFromAuthorizationAsync(filterContext.HttpContext);
+
+                            if (user == null)
                             {
-                                filterContext.Result = new HttpStatusCodeResult(HttpStatusCode.Unauthorized);
-                                return;
+                                filterContext.SetResponse(HttpStatusCode.Unauthorized);
+                            }
+                            else
+                            {
+                                if (!featurePermissionManager.HasAccess(user.Id, feature.Id))
+                                {
+                                    filterContext.SetResponse(HttpStatusCode.Forbidden);
+                                }
                             }
                         }
                     }
-                    //var principal = filterContext.HttpContext.ControllerContext.RequestContext.Principal;
                 }
             }
             catch (Exception e)
