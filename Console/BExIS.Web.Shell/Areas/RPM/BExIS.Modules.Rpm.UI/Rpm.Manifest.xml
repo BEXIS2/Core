@@ -14,6 +14,7 @@
             title="Manage Data Structures" description="Edit, Create or Delet Data Structures" icon=""
             controller="DataStructure" action="" argument=""
             extends="./menubarRoot/Plan"/>
+	  
     <Export tag="menubar" id="ManageUnits" order="2"
             title="Manage Units" description="Edit, Create or Delet Units" icon=""
             controller="Unit" action="" argument=""
@@ -42,9 +43,15 @@
 		  title="Manage Meanings" description="Edit, Create or Delete Meanings" icon=""
 		  controller="Meaning" action="" argument=""
 		  extends="./settingsRoot" />
+	  
 	  <Export tag="settings" id="ManageExternalLinks" order="4"
 		  title="Manage External Links" description="Edit, Create or Delete External Links" icon=""
 		  controller="ExternalLink" action="" argument=""
+		  extends="./settingsRoot" />
+	  
+	  <Export tag="settings" id="ManagePrefixCategory" order="4"
+		  title="Manage Prefix Category" description="Edit, Create or Delete Prefix Categories" icon=""
+		  controller="ExternalLink" action="PrefixCategory" argument=""
 		  extends="./settingsRoot" />
 
     <Export tag="internalApi" id="DataStructureEdit"
