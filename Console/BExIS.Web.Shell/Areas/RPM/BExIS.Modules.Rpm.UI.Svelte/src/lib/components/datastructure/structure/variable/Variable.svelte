@@ -220,10 +220,10 @@
 
 <div id="variable-{variable.id}-container" class="flex gap-5">
 	{#if loaded && variable && $templateStore}
-		<div id="variable-{variable.id}-container-info" class="grow">
+		<div id="variable-{variable.id}-container-info" class="grow ">
 			{#if expand}
 				<div class="card">
-					<header id="header_{index}" class="card-header">
+					<header id="header_{index}" class="card-header ">
 						<Header
 							{index}
 							name={variable.name}

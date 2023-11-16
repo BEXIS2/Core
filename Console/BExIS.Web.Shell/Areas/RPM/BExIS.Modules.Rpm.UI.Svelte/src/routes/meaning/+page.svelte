@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Modal, modalStore, type ModalSettings } from '@skeletonlabs/skeleton';
+	import { Modal, getModalStore, type ModalSettings } from '@skeletonlabs/skeleton';
 	import { getMeanings, remove, update, getLinks } from './services';
 	import { MeaningModel, type externalLinkType } from '$lib/components/meaning/types';
 	import {
@@ -25,10 +25,12 @@
 
 	//stores
 	let meanings: MeaningModel[];
-	let meaning: MeaningModel = new MeaningModel();
+	let meaning: MeaningModel = new MeaningModel(null);
 
 	let showForm = false;
 
+	// modal
+	const modalStore = getModalStore();
 
 	async function reload() {
 		showForm = false;
@@ -50,52 +52,53 @@
 				data: meaningsStore,
 				optionsComponent: TableOptions,
 				columns: {
-							id: {
-								disableFiltering: true,
-								exclude: true
-							},
-							versionNo: {
-								disableFiltering: true,
-								exclude: true
-							},
-							shortName: {
-								disableFiltering: true,
-								exclude: true
-							},
-						 selectable: {
-								instructions: {
-									renderComponent: TableIsApproved
-								},
-								disableFiltering: true
-							},
-							approved: {
+						approved: {
 								disableFiltering: true,
 								instructions: {
 									renderComponent: TableIsApproved
-								}
+								},	
+								exclude: false
+							},
+							description: {
+								disableFiltering: true,
+								exclude: true
 							},
 							externalLink: {
 								header: 'External Link',
 								instructions: {
 									renderComponent: TableExnternalLink						
 								},
-								disableFiltering: true
+								disableFiltering: true,
+								exclude: false
+							},
+							id: {
+								disableFiltering: true,
+								exclude: false
+							},
+							name: {
+								disableFiltering: false,
+								exclude: false
 							},
 							related_meaning: {
 								header: 'Related to',
 								instructions: {
 									renderComponent: TableMeaning,
 								},
-								disableFiltering: true
+								disableFiltering: true,
+								exclude: false
 							},
-							extra:{
-								exclude:true,
-								disableFiltering:true
+						 selectable: {
+								instructions: {
+									renderComponent: TableIsApproved
+								},
+								disableFiltering: true,
+								exclude: false
 							},
-							variables:{
-								exclude:true,
-								disableFiltering:true
+							optionsColumn: {
+								fixedWidth: 100
 							}
+							
+							
 						}
 			}
 

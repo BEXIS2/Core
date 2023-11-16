@@ -62,13 +62,25 @@
 			</div>
 		</HookContainer>
 
-		<HookContainer {...dataDescriptionHook} let:errorHandler let:dateHandler >
+		<HookContainer {...dataDescriptionHook} let:errorHandler let:dateHandler>
 			<div slot="view">
-				<DataDescription {id} {version} hook={dataDescriptionHook} 	on:error={(e) => errorHandler(e)} on:dateChanged={(e) => dateHandler(e)}/>
+				<DataDescription
+					{id}
+					{version}
+					hook={dataDescriptionHook}
+					on:error={(e) => errorHandler(e)}
+					on:dateChanged={(e) => dateHandler(e)}
+				/>
 			</div>
 		</HookContainer>
 
-		<HookContainer {...fileUploadHook} let:errorHandler let:successHandler let:warningHandler let:dateHandler>
+		<HookContainer
+			{...fileUploadHook}
+			let:errorHandler
+			let:successHandler
+			let:warningHandler
+			let:dateHandler
+		>
 			<div slot="view">
 				<FileUpload
 					{id}
@@ -90,14 +102,16 @@
 
 		<HookContainer {...submitHook} let:errorHandler let:successHandler let:warningHandler>
 			<div slot="view">
-				<Submit {id} {version} {...submitHook} 
-				 on:error={(e) => errorHandler(e)}
+				<Submit
+					{id}
+					{version}
+					{...submitHook}
+					on:error={(e) => errorHandler(e)}
 					on:success={(e) => successHandler(e)}
 					on:warning={(e) => warningHandler(e)}
-					/>
+				/>
 			</div>
 		</HookContainer>
-
 	</div>
 {:else}
 	<!-- while data is not loaded show a loading information -->

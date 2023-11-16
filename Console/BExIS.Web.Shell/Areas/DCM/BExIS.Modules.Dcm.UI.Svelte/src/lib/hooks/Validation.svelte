@@ -1,5 +1,5 @@
 <script lang="ts">
-	import {Spinner, ErrorMessage, positionType } from '@bexis2/bexis2-core-ui';
+	import { Spinner, ErrorMessage, positionType } from '@bexis2/bexis2-core-ui';
 
 	import ValidationResult from '$lib/components/validation/ValidationResult.svelte';
 
@@ -21,7 +21,7 @@
 	export let start = '';
 	export let description = '';
 
-	let model: ValidationModel|null;
+	let model: ValidationModel | null;
 	$: model;
 
 	$: $latestFileUploadDate, reload();
@@ -35,16 +35,15 @@
 
 	async function reload() {
 		//const res = await fetch(url);
-		console.log("reload validation");
+		console.log('reload validation');
 		model = null;
 		model = await getHookStart(start, id, version);
-
 	}
 </script>
 
 {#await reload()}
 	<div class="w-full h-full text-surface-600">
-		<Spinner label="validating data" position="{positionType.start}"/>
+		<Spinner label="validating data" position={positionType.start} />
 	</div>
 {:then a}
 	{#if model && model.fileResults}

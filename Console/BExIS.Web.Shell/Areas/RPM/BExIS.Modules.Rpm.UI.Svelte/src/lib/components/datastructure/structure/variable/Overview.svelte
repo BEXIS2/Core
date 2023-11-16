@@ -1,7 +1,8 @@
 <script lang="ts">
 
 	import Fa from 'svelte-fa';
-	import { faCheck, faAngleUp, faAngleDown } from '@fortawesome/free-solid-svg-icons';
+	import { faCheck, faAngleUp, faAngleDown, faXmark } from '@fortawesome/free-solid-svg-icons';
+	import Status from './Status.svelte';
 	
 
 	export let index:number;
@@ -29,10 +30,8 @@
     </div>
 
     <h2 class="h2">{name}</h2>
-
-    <div class="text-success-500">
-     {#if isValid}<Fa icon={faCheck} />{/if}
-    </div>
+    <Status {isValid}></Status>
+   
    </div>
 
    <div id="variable-{index}-description " class="flex-col text-left grow">
@@ -42,7 +41,10 @@
 
    <div id="variable-{index}-dataprev " class="flex-col text-left w-52">
     <div class="text-xs">Data Preview</div>
-    {#if datapreview}<div>{datapreview}</div>{/if}
+    {#if datapreview}<div>{datapreview}</div>
+    {:else}
+      <div>( no data available )</div>
+    {/if}
   </div>
 
 

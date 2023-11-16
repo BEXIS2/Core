@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import { slide, fade } from 'svelte/transition';
-	import { Modal, modalStore } from '@skeletonlabs/skeleton';
+	import { Modal, getModalStore } from '@skeletonlabs/skeleton';
 	import {
 		Page,
 		Table,
@@ -23,6 +23,9 @@
 
 	import type { ModalSettings } from '@skeletonlabs/skeleton';
 	import type { DimensionListItem } from './models';
+
+// modal
+const modalStore = getModalStore();
 
 	//help
 	import help from './help/help.json';

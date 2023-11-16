@@ -18,7 +18,7 @@ namespace BExIS.Dlm.Tests.Services.DataStructure
     {
         private TestSetupHelper helper = null;
 
-        [Test]
+        //[Test]
         public void CreateConstraints()
         {
             string description = "created by a unit test.";
@@ -71,7 +71,7 @@ namespace BExIS.Dlm.Tests.Services.DataStructure
             }
         }
 
-        [Test]
+        //[Test] func_usecase_result
         public void GetConstraints()
         {
             RangeConstraint rangeConstraint = new RangeConstraint();

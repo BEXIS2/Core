@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <hibernate-mapping xmlns="urn:nhibernate-mapping-2.2" assembly="BExIS.Dlm.Entities" namespace="BExIS.Dlm.Entities.Meanings">
 
-  <class xmlns="urn:nhibernate-mapping-2.2" name="Meaning" table="Meanings" dynamic-update="true">
+  <class xmlns="urn:nhibernate-mapping-2.2" name="Meaning" table="rpm_meanings" dynamic-update="true">
 
     <id name="Id" type="Int64">
       <generator class="native" />
@@ -31,31 +31,17 @@
 	 <column name="Selectable"/>
 	</property>
 
-	  <bag  name="ExternalLink" inverse="false" lazy="true" fetch="select" >
-		  <key>
-			  <column name="ExternalLinkref" />
-		  </key>
-		  <one-to-many class="ExternalLink" />
-	  </bag >
+	  <set name="ExternalLink" table="rpm_meaning_externallink" inverse="false" lazy="true" fetch="select" cascade="save-update" >
+		  <key column="MeaningsRef"/>
+		  <many-to-many column="ExternalLinkref" class="ExternalLink"/>
+	  </set>
 
 
-	  <set name="Related_meaning" table="meaning_meaning" inverse="false" lazy="true" fetch="select" cascade="save-update" >
+	  <set name="Related_meaning" table="rpm_meaning_meaning" inverse="false" lazy="true" fetch="select" cascade="save-update" >
 		  <key column="MeaningsParentRef"/>
 		  <many-to-many column="MeaningsChildrenRef" class="Meaning"/>
 	  </set>
 
-	  <!--<set name="Variables" table="Meanings_Variables" inverse="true" lazy="false" fetch="select" cascade="save-update"  >
-		  <key column="MeaningRef"/>
-		  <many-to-many class="BExIS.Dlm.Entities.DataStructure.Variable" column="VariableRef"/>
-	  </set>-->
-	  
-	  
-	  <!--
-		<set name="variable" table="meanings_Variables" inverse="false" lazy="true" fetch="select" cascade="none" >
-		  <key column="id"/>
-		  <many-to-many column="MeaningsParentRef" class="Variable"/>
-	  </set>
-	  -->
 	  
   </class>
 	

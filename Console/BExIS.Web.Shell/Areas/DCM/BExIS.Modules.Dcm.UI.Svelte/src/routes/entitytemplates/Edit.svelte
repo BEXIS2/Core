@@ -9,7 +9,8 @@
 	import { faSave, faXmark } from '@fortawesome/free-solid-svg-icons/index';
 	import { SlideToggle } from '@skeletonlabs/skeleton';
 	import ContentContainer from '../../lib/components/ContentContainer.svelte';
-	import { Modal, modalStore } from '@skeletonlabs/skeleton';
+	import { Modal, getModalStore } from '@skeletonlabs/skeleton';
+	const modalStore = getModalStore();
 
 	import EntryContainer from './EntryContainer.svelte';
 
@@ -31,11 +32,11 @@
 	// help
 	import { editHelp } from './help';
 	import { helpStore } from '@bexis2/bexis2-core-ui';
-	
+
 	//Set list of help items and clear selection
 	helpStore.setHelpItemList(editHelp);
 
-	export let id:number = 0;
+	export let id: number = 0;
 
 	export let hooks = [];
 	export let metadataStructures: listItemType[] = [];
@@ -43,7 +44,7 @@
 	let systemKeys;
 	export let entities = [];
 	export let groups = [];
-	export let filetypes:string[];
+	export let filetypes: string[];
 
 	const dispatch = createEventDispatcher();
 
@@ -54,8 +55,8 @@
 
 	$: loaded = false;
 
- let type=[];
-	$:type;
+	let type = [];
+	$: type;
 
 	suite.reset();
 
@@ -71,7 +72,6 @@
 		console.log('load filetypes', filetypes);
 		updateSystemKeys('metadataStructure');
 
-	
 		// if id > 0 then run validation
 		if (id > 0) {
 			res = suite(entityTemplate);
@@ -236,11 +236,8 @@
 					<h3 class="h3">Data Structure</h3>
 					<EntryContainer>
 						<div class="mt-7 space-y-5" on:mouseover={() => helpStore.show('hasDatastructure')}>
-							<SlideToggle
-								name="use_data_structure"
-								bind:checked={entityTemplate.hasDatastructure}
-							>
-								 Allow to use data structures
+							<SlideToggle name="use_data_structure" bind:checked={entityTemplate.hasDatastructure}>
+								Allow to use data structures
 							</SlideToggle>
 
 							{#if entityTemplate.hasDatastructure}
@@ -308,7 +305,6 @@
 						source={filetypes}
 						bind:target={entityTemplate.allowedFileTypes}
 						help={true}
-
 					/>
 				</EntryContainer>
 			</div>

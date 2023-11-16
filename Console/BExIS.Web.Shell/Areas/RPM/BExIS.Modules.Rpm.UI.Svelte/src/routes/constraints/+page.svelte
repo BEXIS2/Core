@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import { slide, fade } from 'svelte/transition';
-	import { modalStore } from '@skeletonlabs/skeleton';
+	import { getModalStore } from '@skeletonlabs/skeleton';
 	import {
 		Page,
 		Table,
@@ -21,6 +21,7 @@
 	import type { ModalSettings } from '@skeletonlabs/skeleton';
 	import type { ConstraintListItem } from './models';
 
+	const modalStore = getModalStore();
 	let cs: ConstraintListItem[] = [];
 	const tableStore = writable<any[]>([]);
 	let constraint: ConstraintListItem;

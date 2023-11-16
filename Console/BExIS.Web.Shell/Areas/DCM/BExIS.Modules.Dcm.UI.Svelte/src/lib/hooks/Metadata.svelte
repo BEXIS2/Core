@@ -1,7 +1,7 @@
 <script>
 	import { host } from '@bexis2/bexis2-core-ui';
 	import Fa from 'svelte-fa';
-import {faPen} from '@fortawesome/free-solid-svg-icons'
+	import { faPen } from '@fortawesome/free-solid-svg-icons';
 
 	export let id;
 	export let version;
@@ -31,25 +31,29 @@ import {faPen} from '@fortawesome/free-solid-svg-icons'
 </script>
 
 <div class="flex-col space-y-1">
-	<div class="flex gap-3 justify-left">	
+	<div class="flex gap-3 justify-left">
 		<div class="flex-none w-20"><b>Metadata</b></div>
-		<button class="chip bg-secondary-500 text-white flex-none btn-sm" on:click={clickEditMetadata}><Fa icon={faPen}></Fa></button>
-		<div ><span>Last Modfied</span></div>
+		<button class="chip bg-secondary-500 text-white flex-none btn-sm" on:click={clickEditMetadata}
+			><Fa icon={faPen} /></button
+		>
+		<div><span>Last Modfied</span></div>
 	</div>
-	<div class="flex gap-3 justify-left">	
+	<div class="flex gap-3 justify-left">
 		<b class="flex-none w-20">Visibility</b>
 		<!--stats-->
 		<span class="self-center"> not implemented</span>
 		<!--stats-->
 		<button class="chip bg-secondary-500 text-white btn-sm flex-none" on:click={clickEditVisibility}
-			><Fa icon={faPen}></Fa></button>
+			><Fa icon={faPen} /></button
+		>
 	</div>
-	<div class="flex gap-3 justify-left">	
+	<div class="flex gap-3 justify-left">
 		<b class="flex-none w-20">Status</b>
 		<!--stats-->
 		<span class="flex-none"> not implemented</span>
 		<!--stats-->
 		<button class="chip bg-secondary-500 text-white btn-sm flex-none" on:click={clickEditStatus}
-			><Fa icon={faPen}></Fa></button		>
-		</div>
+			><Fa icon={faPen} /></button
+		>
+	</div>
 </div>

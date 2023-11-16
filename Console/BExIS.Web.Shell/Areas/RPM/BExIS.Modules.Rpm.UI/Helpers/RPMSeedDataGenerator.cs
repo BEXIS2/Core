@@ -19,7 +19,7 @@ namespace BExIS.Modules.Rpm.UI.Helpers
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Reliability", "CA2000:Objekte verwerfen, bevor Bereich verloren geht", Justification = "<Ausstehend>")]
         public void GenerateSeedData()
         {
-
+            #region security
             FeatureManager featureManager = null;
             FeaturePermissionManager featurePermissionManager = new FeaturePermissionManager();
             OperationManager operationManager = new OperationManager();
@@ -174,7 +174,6 @@ namespace BExIS.Modules.Rpm.UI.Helpers
 
                 }
 
-
             }
             finally
             {
@@ -182,6 +181,8 @@ namespace BExIS.Modules.Rpm.UI.Helpers
                 featurePermissionManager.Dispose();
                 operationManager.Dispose();
             }
+
+            #endregion
 
             //create seed data from csv files
             MappingReader mappingReader = new MappingReader();
@@ -214,26 +215,8 @@ namespace BExIS.Modules.Rpm.UI.Helpers
 
             createResearchPlan();
 
-            //createEmlDatasetAdv();
-            //createABCD();
+            // Add seeddata or Meanings and Externel Links Maybe
 
-
-            //ImportSchema("Basic ABCD", "ABCD_2.06.XSD","Dataset","BExIS.Dlm.Entities.Data.Dataset");
-            //ImportSchema("Basic Eml", "eml.xsd","dataset","BExIS.Dlm.Entities.Data.Dataset");
-
-            //DataStructureManager dsm = null;
-            //try
-            //{
-            //    dsm = new DataStructureManager();
-            //    foreach (StructuredDataStructure sds in dsm.StructuredDataStructureRepo.Get())
-            //    {
-            //        DataStructureIO.convertOrder(sds);
-            //    }
-            //}
-            //finally
-            //{
-            //    dsm.Dispose();
-            //}
         }
 
         private static void createResearchPlan()

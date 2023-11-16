@@ -22,5 +22,6 @@
 		<a class="btn variant-filled-secondary" href="./variabletemplate">variabletemplate</a>
 		<a class="btn variant-filled-secondary" href="./meaning">meanings</a>
 		<a class="btn variant-filled-secondary" href="./externallink">externallink</a>
+		<a class="btn variant-filled-secondary" href="./externallink/prefixcategory">prefixcategory</a>
 	</div>
 </Page>
