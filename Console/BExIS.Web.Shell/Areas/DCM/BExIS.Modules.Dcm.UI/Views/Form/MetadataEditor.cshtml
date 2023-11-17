@@ -71,6 +71,7 @@
     #endregion
 
 }
+@{ #if DEBUG }
 
 @section scripts
 {
@@ -79,6 +80,19 @@
 
 }
 <link href="@Url.Content("~/Areas/DCM/BExIS.Modules.DCM.UI/Content/bexis-metadata.css")" rel="stylesheet" type="text/css" />
+
+@{ #else }
+@section scripts
+{
+
+    <script src="@Url.Content("~/Areas/DCM/Scripts/Form.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Areas/DCM/Scripts/minimap/minimap.js")" type="text/javascript"></script>
+}
+<link href="@Url.Content("~/Areas/DCM/Content/bexis-metadata.css")" rel="stylesheet" type="text/css" />
+@{ #endif }
+
+
+
 
 @section Information
 {
