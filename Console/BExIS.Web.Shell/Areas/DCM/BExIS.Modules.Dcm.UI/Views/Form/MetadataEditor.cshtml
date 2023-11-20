@@ -8,6 +8,7 @@
 @using Telerik.Web.Mvc.UI;
 @using Vaiona.Web.Mvc.Modularity
 @using System.Text.RegularExpressions
+@using BExIS.Utils.Extensions
 
 @{
 
@@ -70,28 +71,24 @@
 
     #endregion
 
+    // because of the different folder structure from server and local, we need to change the path
+    // e.g. debug -> dcm/BExIS.Modules.Dcm.UI/scripts/.... || server -> dcm/scripts/
+    string debugPath = "";
+
+    if (Html.IsDebug())
+    {
+        debugPath = "BExIS.Modules.Dcm.UI/";
+    }
+
 }
-@{ #if DEBUG }
 
 @section scripts
 {
-    <script src="@Url.Content("~/Areas/DCM/BExIS.Modules.DCM.UI/Scripts/Form.js")" type="text/javascript"></script>
-    <script src="@Url.Content("~/Areas/DCM/BExIS.Modules.DCM.UI/Scripts/minimap/minimap.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Areas/DCM/" + debugPath + "Scripts/Form.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Areas/DCM/" + debugPath + "Scripts/minimap/minimap.js")" type="text/javascript"></script>
 
 }
-<link href="@Url.Content("~/Areas/DCM/BExIS.Modules.DCM.UI/Content/bexis-metadata.css")" rel="stylesheet" type="text/css" />
-
-@{ #else }
-@section scripts
-{
-
-    <script src="@Url.Content("~/Areas/DCM/Scripts/Form.js")" type="text/javascript"></script>
-    <script src="@Url.Content("~/Areas/DCM/Scripts/minimap/minimap.js")" type="text/javascript"></script>
-}
-<link href="@Url.Content("~/Areas/DCM/Content/bexis-metadata.css")" rel="stylesheet" type="text/css" />
-@{ #endif }
-
-
+<link href="@Url.Content("~/Areas/DCM/" + debugPath + "Content/bexis-metadata.css")" rel="stylesheet" type="text/css" />
 
 
 @section Information

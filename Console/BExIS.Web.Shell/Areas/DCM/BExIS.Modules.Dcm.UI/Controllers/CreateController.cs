@@ -199,8 +199,6 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                     }
                 }
 
-
-
                 #endregion
 
 
