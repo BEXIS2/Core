@@ -103,7 +103,38 @@
         datasetHooks.Add(dataDescriptionHook);
     }
 
+    string addPath = "";
+
+
+    #if DEBUG
+    addPath="debug";
+    #endif
+
+    #if RELEASE
+    addPath="release";
+    #endif
+
+    if (HttpContext.Current.IsDebuggingEnabled)
+    {
+        addPath = "2_debug";
+    }
+    else
+    {
+        addPath = "2_release";
+    }
+
 }
+
+<h1>@addPath</h1>
+
+@*@if (!Html.IsDebug())
+{
+    <h1>DEBUG</h1>
+}
+else
+{
+    <h1>RELASE</h1>
+}*@
 
 @section Information
 {
@@ -119,25 +150,15 @@
 }
 
 @*load sctipts from dcm for the metadata. *@
-@{ #if DEBUG }
+
 
 @section scripts
 {
     <script src="@Url.Content("~/Areas/DCM/BExIS.Modules.DCM.UI/Scripts/Form.js")" type="text/javascript"></script>
-    <script src="@Url.Content("~/Areas/DCM/BExIS.Modules.DCM.UI/Scripts/minimap/minimap.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Areas/DCM/Scripts/minimap/minimap.js")" type="text/javascript"></script>
 
 }
 <link href="@Url.Content("~/Areas/DCM/BExIS.Modules.DCM.UI/Content/bexis-metadata.css")" rel="stylesheet" type="text/css" />
-
-@{ #else }
-@section scripts
-{
-
-    <script src="@Url.Content("~/Areas/DCM/Scripts/Form.js")" type="text/javascript"></script>
-    <script src="@Url.Content("~/Areas/DCM/Scripts/minimap/minimap.js")" type="text/javascript"></script>
-}
-<link href="@Url.Content("~/Areas/DCM/Content/bexis-metadata.css")" rel="stylesheet" type="text/css" />
-@{ #endif }
 
 
 <link href="@Url.Content("~/Areas/DDM/Content/ddm.css")" rel="stylesheet" type="text/css" />
