@@ -129,6 +129,7 @@
     <Compile Include="Controllers\TestController.cs" />
     <Compile Include="DdmModule.cs" />
     <Compile Include="Helpers\DdmSeedDataGenerator.cs" />
+    <Compile Include="Helpers\DDMViewExtentions.cs" />
     <Compile Include="Helpers\GridHelper.cs" />
     <Compile Include="Helpers\HtmlPrefixScopeExtentions.cs" />
     <Compile Include="Helpers\SearchUIHelper.cs" />
