@@ -89,9 +89,11 @@ namespace BExIS.Modules.Dcm.UI.Helpers
 
                     #region Progress Informations
 
-                    Cache.UpdateSetup.CurrentPackage = 0;
-                    Cache.UpdateSetup.CurrentPackageSize = 0;
-
+                    if (Cache.UpdateSetup != null)
+                    {
+                        Cache.UpdateSetup.CurrentPackage = 0;
+                        Cache.UpdateSetup.CurrentPackageSize = 0;
+                    }
                     #endregion Progress Informations
 
                     string folder = "Temp"; // folder name inside dataset - temp or attachments
@@ -423,7 +425,7 @@ namespace BExIS.Modules.Dcm.UI.Helpers
 
                                 foreach (var file in Cache.Files)
                                 {
-                                    SaveFileInContentDiscriptor(workingCopy, file, storepath);
+                                    SaveFileInContentDiscriptor(workingCopy, file, Path.Combine(getpath, file.Name));
                                 }
                             }
 

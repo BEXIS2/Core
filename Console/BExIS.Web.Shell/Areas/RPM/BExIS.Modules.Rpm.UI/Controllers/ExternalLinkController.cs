@@ -1,10 +1,13 @@
 ﻿using BExIS.App.Bootstrap.Attributes;
 using BExIS.Dlm.Entities.Meanings;
 using BExIS.Dlm.Services.Meanings;
+using BExIS.Modules.Rpm.UI.Models;
 using BExIS.UI.Helpers;
+using BExIS.UI.Models;
 using BExIS.Utils.Route;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Web.Mvc;
 
 namespace BExIS.Modules.Rpm.UI.Controllers
@@ -104,6 +107,20 @@ namespace BExIS.Modules.Rpm.UI.Controllers
             catch (Exception ex)
             {
                 throw new Exception("External link was not generated.", ex);
+            }
+        }
+
+        [BExISAuthorize]
+        [JsonNetFilter]
+        [HttpGet]
+        public JsonResult GetPrefixCategoriesAsList()
+        {
+            using (var _meaningManager = new MeaningManager())
+            {
+                List<PrefixCategoryListItem> list = new List<PrefixCategoryListItem>();
+                List<PrefixCategory> res = _meaningManager.getPrefixCategory();
+                if (res.Any()) res.ForEach(x => list.Add(new PrefixCategoryListItem(x.Id, x.Name, x.Description)));
+                return Json(res, JsonRequestBehavior.AllowGet);
             }
         }
 

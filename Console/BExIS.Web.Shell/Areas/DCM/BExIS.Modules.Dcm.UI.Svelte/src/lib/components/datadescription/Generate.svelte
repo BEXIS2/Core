@@ -18,6 +18,11 @@
 		goTo('/rpm/datastructure/create?entityId=' + id + '&file=' + file);
 	}
 
+	function goToCreate() {
+		// if its possible the file will be used to start structure analyze
+		goTo('/rpm/datastructure/create?');
+	}
+
 	export let id;
 	export let version;
 	export let hook;
@@ -57,7 +62,8 @@
 		//console.log("select item",item)
 
 		if (item.group === 'options') {
-			//console.log("go to create a datastructure");
+			//console.log("go to create a datastructure")
+			goToCreate();
 		} else if (item.group === 'file') {
 			loading = true;
 			goToGenerate(e.detail.text, model.id);

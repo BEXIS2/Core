@@ -615,24 +615,20 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                     // get latest or other datasetversion
                     DatasetVersion dsv = dm.GetDatasetVersion(versionId);
                     bool latestVersion = versionId == dm.GetDatasetLatestVersionId(datasetID);
+                    //TITLE
+                    string title = dsv.Title;
+
+                    // TODO: refactor Download Right not existing, so i set it to read
+                    bool downloadAccess = entityPermissionManager.HasEffectiveRight(HttpContext.User.Identity.Name, typeof(Dataset), datasetID, RightType.Read);
+
                     if (dsv.Dataset.DataStructure != null)
                     {
                         StructuredDataStructure sds = dsm.StructuredDataStructureRepo.Get(dsv.Dataset.DataStructure.Id);
                         DataStructure ds = dsm.AllTypesDataStructureRepo.Get(dsv.Dataset.DataStructure.Id);
 
-                        // TODO: refactor Download Right not existing, so i set it to read
-                        bool downloadAccess = entityPermissionManager.HasEffectiveRight(HttpContext.User.Identity.Name, typeof(Dataset), datasetID, RightType.Read);
-
-                        //TITLE
-                        string title = dsv.Title;
-
+                    
                         if (ds.Self.GetType() == typeof(StructuredDataStructure))
                         {
-                            //ToDO Javad: 18.07.2017 -> replaced to the new API for fast retrieval of the latest version
-                            //
-                            //List<AbstractTuple> dataTuples = dm.GetDatasetVersionEffectiveTuples(dsv, 0, 100);
-                            //DataTable table = SearchUIHelper.ConvertPrimaryDataToDatatable(dsv, dataTuples);
-
                             DataTable table = null;
                             // Count "Data" changes between current and latest version
                             int numberNewerDataVersions = dm.GetDatasetVersions(datasetID).Where(x => x.Id > versionId).Count(x => x.ModificationInfo.Comment.Contains("Data"));
@@ -674,27 +670,23 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                                 ));
                         }
 
-                        if (ds.Self.GetType() == typeof(UnStructuredDataStructure))
-                        {
-                            if (this.IsAccessible("MMM", "ShowMultimediaData", "multimediaData") && GeneralSettings.UseMultiMediaModule)
-                                return RedirectToAction("multimediaData", "ShowMultimediaData", new RouteValueDictionary { { "area", "MMM" }, { "datasetID", datasetID }, { "versionId", versionId } });
-                            else
-                                return
-                                    PartialView(ShowPrimaryDataModel.Convert(datasetID,
-                                    versionId,
-                                    title,
-                                    ds,
-                                    SearchUIHelper.GetContantDescriptorFromKey(dsv, "unstructuredData"),
-                                    downloadAccess,
-                                    iOUtility.GetSupportedAsciiFiles(),
-                                    latestVersion,
-                                    hasUserRights(datasetID, RightType.Write)
-                                    ));
-                        }
                     }
                     else
                     {
-                        ModelState.AddModelError(string.Empty, "The dataset has no data structure.");
+                        if (this.IsAccessible("MMM", "ShowMultimediaData", "multimediaData") && GeneralSettings.UseMultiMediaModule)
+                            return RedirectToAction("multimediaData", "ShowMultimediaData", new RouteValueDictionary { { "area", "MMM" }, { "datasetID", datasetID }, { "versionId", versionId } });
+                        else
+                            return
+                                PartialView(ShowPrimaryDataModel.Convert(datasetID,
+                                versionId,
+                                title,
+                                null,
+                                SearchUIHelper.GetContantDescriptorFromKey(dsv, "unstructuredData"),
+                                downloadAccess,
+                                iOUtility.GetSupportedAsciiFiles(),
+                                latestVersion,
+                                hasUserRights(datasetID, RightType.Write)
+                                ));
                     }
                 }
                 else
