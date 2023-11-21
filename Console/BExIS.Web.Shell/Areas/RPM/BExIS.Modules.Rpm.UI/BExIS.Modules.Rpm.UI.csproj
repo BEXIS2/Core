@@ -171,6 +171,7 @@
     <Content Include="Views\LinksMeanings\Index.cshtml" />
     <Content Include="Views\Meaning\Index.cshtml" />
     <Content Include="Views\ExternalLink\Index.cshtml" />
+    <Content Include="Views\Constraint\Index.cshtml" />
     <None Include="web.Debug.config">
       <DependentUpon>web.config</DependentUpon>
     </None>
