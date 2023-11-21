@@ -9,38 +9,52 @@
 	import type { ModalSettings } from '@skeletonlabs/skeleton';
 
 	import Fa from 'svelte-fa';
-	import { faShare, faShareFromSquare, faMaximize, faMinimize, faAdd, faTrash, faCopy, faAngleUp, faAngleDown } from '@fortawesome/free-solid-svg-icons';
+	import {
+		faShare,
+		faShareFromSquare,
+		faMaximize,
+		faMinimize,
+		faAdd,
+		faTrash,
+		faCopy,
+		faAngleUp,
+		faAngleDown
+	} from '@fortawesome/free-solid-svg-icons';
 
 	// stores
-	
-	import { displayPatternStore, unitStore, dataTypeStore, templateStore, meaningsStore} from '../store'
+
+	import {
+		displayPatternStore,
+		unitStore,
+		dataTypeStore,
+		templateStore,
+		meaningsStore
+	} from '../store';
 
 	export let variables: VariableInstanceModel[] = [];
 	export let missingValues: missingValueType[] = [];
 	export let data: string[][];
 
-
 	$: variables;
 
-	let expandAll=true;
+	let expandAll = true;
 
 	// validation array
-	let variableValidationStates:any = [];
+	let variableValidationStates: any = [];
 
 	export let valid = true;
 
-	let ready:boolean = false;
+	let ready: boolean = false;
 
 	onMount(async () => {
-
 		const datatypes = await getDataTypes();
 		dataTypeStore.set(datatypes);
 
 		const units = await getUnits();
-		unitStore.set(units)
-		
+		unitStore.set(units);
+
 		const variableTemplates = await getVariableTemplates();
-		templateStore.set(variableTemplates)
+		templateStore.set(variableTemplates);
 
 		const meanings = await getMeanings();
 		meaningsStore.set(meanings);
@@ -54,13 +68,11 @@
 		fillVariableValdationStates(variables);
 
 		ready = true;
-
 	});
 
 	function fillVariableValdationStates(vars) {
-
 		variableValidationStates = [];
-		
+
 		for (let index = 0; index < vars.length; index++) {
 			variableValidationStates.push(false);
 		}
@@ -142,18 +154,13 @@
 		return to;
 	}
 
-	function addFn()
-	{
-
-			variables = [...variables, new VariableInstanceModel()];
-
+	function addFn() {
+		variables = [...variables, new VariableInstanceModel()];
 	}
 
-	function copyFn(i)
-	{
-
+	function copyFn(i) {
 		let copiedVariable = new VariableInstanceModel();
-		copiedVariable.name = variables[i].name+" (copied)";
+		copiedVariable.name = variables[i].name + ' (copied)';
 		copiedVariable.description = variables[i].description;
 		copiedVariable.dataType = variables[i].dataType;
 		copiedVariable.unit = variables[i].unit;
@@ -161,66 +168,53 @@
 		copiedVariable.systemType = variables[i].systemType;
 		copiedVariable.template = variables[i].template;
 
-
-		variables.splice(i+1, 0, copiedVariable);
+		variables.splice(i + 1, 0, copiedVariable);
 		variables = [...variables];
-
 	}
 
-	function deleteFn(i)
-	{
+	function deleteFn(i) {
 		const deleteVar = variables[i];
 
-			const confirm: ModalSettings = {
-				type: 'confirm',
-				title: 'Delete Unit',
-				body:
-					'Are you sure you wish to delete the variable "' + deleteVar.name +'"?',
-				// TRUE if confirm pressed, FALSE if cancel pressed
-				response: (r: boolean) => {
-					
-		 			variables = variables.filter(v=>v != deleteVar);
-				}
-			};
-			modalStore.trigger(confirm);
-		
+		const confirm: ModalSettings = {
+			type: 'confirm',
+			title: 'Delete Unit',
+			body: 'Are you sure you wish to delete the variable "' + deleteVar.name + '"?',
+			// TRUE if confirm pressed, FALSE if cancel pressed
+			response: (r: boolean) => {
+				variables = variables.filter((v) => v != deleteVar);
+			}
+		};
+		modalStore.trigger(confirm);
 	}
 
-	function upFn(i)
-	{
-		  const varTemp = variables[i];
-				variables[i] = variables[i-1];
-				variables[i-1] = varTemp;
-
+	function upFn(i) {
+		const varTemp = variables[i];
+		variables[i] = variables[i - 1];
+		variables[i - 1] = varTemp;
 	}
 
-	function downFn(i)
-	{
-				const varTemp = variables[i];
-				variables[i] = variables[i+1];
-				variables[i+1] = varTemp;
-		 
+	function downFn(i) {
+		const varTemp = variables[i];
+		variables[i] = variables[i + 1];
+		variables[i + 1] = varTemp;
 	}
-
 </script>
 
-<button class="btn variant-filled-secondary" on:click={()=> expandAll = !expandAll}>
-		{#if expandAll}
-			<Fa icon={faMinimize}/>
-	 {:else}
-		<Fa icon={faMaximize}/>
-		{/if}
+<button class="btn variant-filled-secondary" on:click={() => (expandAll = !expandAll)}>
+	{#if expandAll}
+		<Fa icon={faMinimize} />
+	{:else}
+		<Fa icon={faMaximize} />
+	{/if}
 </button>
 
 {#each variableValidationStates as v, i}
-	{#if v==false}
-	 {variables[i].name}, 
+	{#if v == false}
+		{variables[i].name},
 	{/if}
 {/each}
 
-
 <div class="flex-col space-y-2 mt-5">
-
 	{#if variables && missingValues && ready}
 		<!-- else content here -->
 		{#each variables as variable, i (i)}
@@ -233,7 +227,7 @@
 				data={getColumnData(i)}
 				on:copy-next={copyNext}
 				on:copy-all={copyAll}
-				expand = {expandAll}
+				expand={expandAll}
 			>
 				<svelte:fragment slot="options">
 					{#if variables.length > 0 && i < variables.length - 1}
@@ -245,7 +239,7 @@
 							on:click={() => copyNext(i)}><Fa icon={faShare} /></button
 						>
 						<button
-						 id="copy-all-{i}"
+							id="copy-all-{i}"
 							type="button"
 							title="copy to all after this"
 							class="chip variant-filled-warning"
@@ -254,27 +248,46 @@
 					{/if}
 				</svelte:fragment>
 				<svelte:fragment slot="list-options">
-			
-						<button id="delete-{i}" class="chip variant-filled-error" on:click={()=>deleteFn(i)}><Fa icon="{faTrash}"></Fa></button>
+					<button id="delete-{i}" class="chip variant-filled-error" on:click={() => deleteFn(i)}
+						><Fa icon={faTrash} /></button
+					>
 
-						{#if i > 0}
-						<button id="up-{i}" class="chip variant-filled-surface" on:click={()=>upFn(i)}><Fa icon="{faAngleUp}"></Fa></button>
-						{:else}
-						<button id="up-{i}" class="chip variant-filled-surface disbaled" disabled on:click={()=>upFn(i)}><Fa icon="{faAngleUp}"></Fa></button>
-						{/if}
+					{#if i > 0}
+						<button id="up-{i}" class="chip variant-filled-surface" on:click={() => upFn(i)}
+							><Fa icon={faAngleUp} /></button
+						>
+					{:else}
+						<button
+							id="up-{i}"
+							class="chip variant-filled-surface disbaled"
+							disabled
+							on:click={() => upFn(i)}><Fa icon={faAngleUp} /></button
+						>
+					{/if}
 
-						<button id="copy-{i}" class="chip variant-filled-primary" on:click={()=>copyFn(i)}><Fa icon="{faCopy}"></Fa></button>
-						{#if variables.length > 0 && i < variables.length - 1}
-							<button id="down-{i}" class="chip variant-filled-surface" on:click={()=>downFn(i)}><Fa icon="{faAngleDown}"></Fa></button>
-						{:else}
-							<button id="down-{i}" class="chip variant-filled-surface" disabled on:click={()=>downFn(i)}><Fa icon="{faAngleDown}"></Fa></button>
-						{/if}
+					<button id="copy-{i}" class="chip variant-filled-primary" on:click={() => copyFn(i)}
+						><Fa icon={faCopy} /></button
+					>
+					{#if variables.length > 0 && i < variables.length - 1}
+						<button id="down-{i}" class="chip variant-filled-surface" on:click={() => downFn(i)}
+							><Fa icon={faAngleDown} /></button
+						>
+					{:else}
+						<button
+							id="down-{i}"
+							class="chip variant-filled-surface"
+							disabled
+							on:click={() => downFn(i)}><Fa icon={faAngleDown} /></button
+						>
+					{/if}
 				</svelte:fragment>
 			</Variable>
 		{/each}
 		<div class="flex content-end px-6">
-			<div class="grow"></div> 
-			<button class="chip variant-filled-primary flex-none" on:click="{addFn}"><Fa icon="{faAdd}"></Fa> </button>
+			<div class="grow" />
+			<button class="chip variant-filled-primary flex-none" on:click={addFn}
+				><Fa icon={faAdd} />
+			</button>
 		</div>
 	{:else}
 		<Spinner label="loading suggested structure" />

@@ -27,7 +27,7 @@ export interface DataStructureCreationModel {
 }
 
 export interface missingValueType {
-	id:number;
+	id: number;
 	displayName: string;
 	description: string;
 }
@@ -38,43 +38,40 @@ export interface markerType {
 	cells: boolean[];
 }
 
-class VariableModel{
-				id: number;
-    name: string;
-    description: string;
-    systemType: string;
-    dataType: listItemType| undefined;
-    unit: unitListItemType| undefined;;
-				missingValues: missingValueType[];
-				meanings: listItemType[];
-				approved: boolean;
-				inUse: boolean;
-
-				public constructor() {
-					this.id = 0
-					this.name = ""
-					this.description = ""
-					this.systemType = ""
-					this.dataType = undefined//{id:0,text:"",group:""}
-					this.unit = undefined
-					this.missingValues = [];
-					this.meanings = []
-					this.approved = false;
-					this.inUse = false;
-				}
-}
-
-
-export class VariableTemplateModel extends VariableModel{
+class VariableModel {
+	id: number;
+	name: string;
+	description: string;
+	systemType: string;
+	dataType: listItemType | undefined;
+	unit: unitListItemType | undefined;
+	missingValues: missingValueType[];
+	meanings: listItemType[];
+	approved: boolean;
+	inUse: boolean;
 
 	public constructor() {
-		super()
+		this.id = 0;
+		this.name = '';
+		this.description = '';
+		this.systemType = '';
+		this.dataType = undefined; //{id:0,text:"",group:""}
+		this.unit = undefined;
+		this.missingValues = [];
+		this.meanings = [];
+		this.approved = false;
+		this.inUse = false;
+	}
+}
+
+export class VariableTemplateModel extends VariableModel {
+	public constructor() {
+		super();
 	}
 }
 
 export class VariableInstanceModel extends VariableModel {
-
-	template: templateListItemType| undefined;
+	template: templateListItemType | undefined;
 	isKey: boolean;
 	isOptional: boolean;
 	displayPattern: listItemType | undefined;
@@ -83,25 +80,25 @@ export class VariableInstanceModel extends VariableModel {
 	possibleDisplayPattern: listItemType[];
 
 	public constructor() {
-		super()
-		this.meanings = []
-		this.isOptional = false
-		this.template = undefined
-		this.isKey = false
-		this.displayPattern = undefined
-		this.possibleUnits = []
-		this.possibleTemplates = []
-		this.possibleDisplayPattern = []
+		super();
+		this.meanings = [];
+		this.isOptional = false;
+		this.template = undefined;
+		this.isKey = false;
+		this.displayPattern = undefined;
+		this.possibleUnits = [];
+		this.possibleTemplates = [];
+		this.possibleDisplayPattern = [];
 	}
 }
 
 export interface unitListItemType extends listItemType {
-		dataTypes:string[]	
+	dataTypes: string[];
 }
 
 export interface templateListItemType extends listItemType {
-	dataTypes:string[]
-	units:string[]	
-	meanings:string[]
-	constraints:string[]	
+	dataTypes: string[];
+	units: string[];
+	meanings: string[];
+	constraints: string[];
 }

@@ -34,7 +34,7 @@
 
 		// get external links
 		externalLinks = await getLinks();
-  externalLink = { id: 0, name: '', type: '', uri: '' };
+		externalLink = { id: 0, name: '', type: '', uri: '' };
 		externalLinksStore.set(externalLinks);
 
 		console.log('store', $externalLinksStore);
@@ -66,7 +66,7 @@
 					renderComponent: TableUri
 				},
 				disableFiltering: true,
-				disableSorting:true
+				disableSorting: true
 			}
 		}
 	};

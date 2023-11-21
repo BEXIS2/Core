@@ -10,9 +10,7 @@
 		TablePlaceholder,
 		notificationStore,
 		notificationType,
-
 		type helpItemType
-
 	} from '@bexis2/bexis2-core-ui';
 	import * as apiCalls from './services/apiCalls';
 	import Form from './components/form.svelte';
@@ -51,7 +49,7 @@
 			id: 0,
 			name: '',
 			description: '',
-			systemType:'',
+			systemType: '',
 			inUse: false
 		};
 	}
@@ -180,4 +178,4 @@
 		{/await}
 	</div>
 </Page>
-<Modal/>
+<Modal />

@@ -5,24 +5,25 @@
 	import { faCheck, faAngleUp, faAngleDown } from '@fortawesome/free-solid-svg-icons';
 
 	export let index;
-	export let name:string;
-	export let isKey:boolean;
-	export let isOptional:boolean;
-	export let isValid:boolean;
-	export let expand:boolean;
+	export let name: string;
+	export let isKey: boolean;
+	export let isOptional: boolean;
+	export let isValid: boolean;
+	export let expand: boolean;
 </script>
 
 <div id={name} class="flex gap-5">
 	<div class="grow flex gap-2">
-
-	<div class="cursor-pointer" on:click={() => expand = !expand}> 					<!--		<div class="cursor-pointer"  on:click={() => expand = !expand}> -->
+		<div class="cursor-pointer" on:click={() => (expand = !expand)}>
+			<!--		<div class="cursor-pointer"  on:click={() => expand = !expand}> -->
 			{#if expand}<Fa icon={faAngleUp} />
-			{:else} <Fa icon={faAngleDown} />
+			{:else}
+				<Fa icon={faAngleDown} />
 			{/if}
 		</div>
 
 		<div>
-					<slot></slot>
+			<slot />
 		</div>
 
 		<div class="text-success-500">

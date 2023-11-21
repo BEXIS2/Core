@@ -22,6 +22,16 @@ namespace BExIS.Modules.Rpm.UI.Controllers
 {
     public class ConstraintsController : Controller
     {
+        public ActionResult Index()
+        {
+            string module = "RPM";
+
+            ViewData["app"] = SvelteHelper.GetApp(module);
+            ViewData["start"] = SvelteHelper.GetStart(module);
+
+            return View();
+        }
+
         [JsonNetFilter]
         [HttpPost]
         public JsonResult DeleteConstraint(long Id)

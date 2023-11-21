@@ -7,7 +7,7 @@ export interface ConstraintListItem {
 	description: string;
 	formalDescription: string;
 	type: string;
-	negated : boolean;
+	negated: boolean;
 	inUse: boolean;
 }
 
@@ -17,7 +17,7 @@ export interface DomainConstraintListItem {
 	name: string;
 	description: string;
 	formalDescription: string;
-	domain: string; 
+	domain: string;
 	negated: boolean;
 	inUse: boolean;
 }
@@ -65,4 +65,3 @@ export interface PatternConstraintValidationResult {
 	validationResult: ValidationResult;
 	dimensionListItem: PatternConstraintListItem;
 }
-

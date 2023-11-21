@@ -1,5 +1,10 @@
 import { Api } from '@bexis2/bexis2-core-ui';
-import type { ConstraintListItem, DomainConstraintListItem, PatternConstraintListItem, RangeConstraintListItem } from '../models';
+import type {
+	ConstraintListItem,
+	DomainConstraintListItem,
+	PatternConstraintListItem,
+	RangeConstraintListItem
+} from '../models';
 
 export const GetConstraints = async () => {
 	try {
@@ -11,9 +16,9 @@ export const GetConstraints = async () => {
 	}
 };
 
-export const DeleteConstraint = async (id :number) => {
+export const DeleteConstraint = async (id: number) => {
 	try {
-		const response = await Api.post('/rpm/constraints/DeleteConstraint' , {id});
+		const response = await Api.post('/rpm/constraints/DeleteConstraint', { id });
 		return response.data;
 	} catch (error) {
 		console.error(error);
@@ -21,9 +26,9 @@ export const DeleteConstraint = async (id :number) => {
 	}
 };
 
-export const GetDomainConstraint = async (id :number) => {
+export const GetDomainConstraint = async (id: number) => {
 	try {
-		const response = await Api.post('/rpm/constraints/GetDomainConstraint' , {id});
+		const response = await Api.post('/rpm/constraints/GetDomainConstraint', { id });
 		return response.data;
 	} catch (error) {
 		console.error(error);
@@ -31,9 +36,9 @@ export const GetDomainConstraint = async (id :number) => {
 	}
 };
 
-export const GetRangeConstraint = async (id :number) => {
+export const GetRangeConstraint = async (id: number) => {
 	try {
-		const response = await Api.post('/rpm/constraints/GetRangeConstraint' , {id});
+		const response = await Api.post('/rpm/constraints/GetRangeConstraint', { id });
 		return response.data;
 	} catch (error) {
 		console.error(error);
@@ -41,16 +46,15 @@ export const GetRangeConstraint = async (id :number) => {
 	}
 };
 
-export const GetPatternConstraint = async (id :number) => {
+export const GetPatternConstraint = async (id: number) => {
 	try {
-		const response = await Api.post('/rpm/constraints/GetPatternConstraint' , {id});
+		const response = await Api.post('/rpm/constraints/GetPatternConstraint', { id });
 		return response.data;
 	} catch (error) {
 		console.error(error);
 		throw error;
 	}
 };
-
 
 export const EditConstraint = async (constraint: ConstraintListItem) => {
 	try {

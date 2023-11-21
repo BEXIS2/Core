@@ -27,7 +27,7 @@
 	let showForm = false;
 	$: constraints = cs;
 	$: tableStore.set(cs);
-	
+
 	onMount(async () => {});
 
 	async function reload(): Promise<void> {
@@ -43,7 +43,7 @@
 			name: '',
 			description: '',
 			formalDescription: '',
-			type:'',
+			type: '',
 			negated: false,
 			inUse: false
 		};
@@ -62,14 +62,11 @@
 			showForm = true;
 		}
 		if (type.action == 'delete') {
-			console.log("Delete");
+			console.log('Delete');
 			const modal: ModalSettings = {
 				type: 'confirm',
 				title: 'Delete Constraint',
-				body:
-					'Are you sure you wish to delete Data Type "' +
-					constraint.name +
-					'?',
+				body: 'Are you sure you wish to delete Constraint "' + constraint.name + '?',
 				// TRUE if confirm pressed, FALSE if cancel pressed
 				response: (r: boolean) => {
 					if (r === true) {
@@ -135,7 +132,8 @@
 							on:mouseover={() => {
 								helpStore.show('create');
 							}}
-							on:click={() => toggleForm()}><Fa icon={faPlus} /></button>
+							on:click={() => toggleForm()}><Fa icon={faPlus} /></button
+						>
 					{/if}
 				</div>
 			</div>
@@ -148,7 +146,7 @@
 
 			<div class="table table-compact w-full">
 				<Table
-				on:action={(obj) => editConstraint(obj.detail.type)}				
+					on:action={(obj) => editConstraint(obj.detail.type)}
 					config={{
 						id: 'constraints',
 						data: tableStore,
@@ -177,4 +175,4 @@
 		{/await}
 	</div>
 </Page>
-<Modal/>
+<Modal />
