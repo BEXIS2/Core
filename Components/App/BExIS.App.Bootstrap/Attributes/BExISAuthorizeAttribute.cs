@@ -20,7 +20,7 @@ namespace BExIS.App.Bootstrap.Attributes
 {
     public class BExISAuthorizeAttribute : AuthorizeAttribute
     {
-        public override async void OnAuthorization(AuthorizationContext filterContext)
+        public override void OnAuthorization(AuthorizationContext filterContext)
         {
             try
             {
@@ -44,7 +44,7 @@ namespace BExIS.App.Bootstrap.Attributes
                         var feature = operation.Feature;
                         if (feature != null && !featurePermissionManager.Exists(null, feature.Id))
                         {
-                            User user = await BExISAuthorizeHelper.GetUserFromAuthorizationAsync(filterContext.HttpContext);
+                            User user = BExISAuthorizeHelper.GetUserFromAuthorizationAsync(filterContext.HttpContext).Result;
 
                             if (user == null)
                             {
