@@ -14,7 +14,7 @@ namespace BExIS.App.Bootstrap.Attributes
 {
     public class BExISApiAuthorizeAttribute : AuthorizeAttribute
     {
-        public override async void OnAuthorization(HttpActionContext actionContext)
+        public override void OnAuthorization(HttpActionContext actionContext)
         {
             try
             {
@@ -52,11 +52,11 @@ namespace BExIS.App.Bootstrap.Attributes
                                 var name = System.Text.Encoding.UTF8.GetString(Convert.FromBase64String(basicParameter)).Split(':')[0];
                                 if (name.Contains('@'))
                                 {
-                                    user = await userManager.FindByEmailAsync(name);
+                                    user = userManager.FindByEmailAsync(name).Result;
                                 }
                                 else
                                 {
-                                    user = await userManager.FindByNameAsync(name);
+                                    user = userManager.FindByNameAsync(name).Result;
                                 }
 
                                 if (user == null)
@@ -66,7 +66,7 @@ namespace BExIS.App.Bootstrap.Attributes
                                     return;
                                 }
 
-                                var result = await identityUserService.CheckPasswordAsync(user, System.Text.Encoding.UTF8.GetString(Convert.FromBase64String(basicParameter)).Split(':')[1]);
+                                var result = identityUserService.CheckPasswordAsync(user, System.Text.Encoding.UTF8.GetString(Convert.FromBase64String(basicParameter)).Split(':')[1]).Result;
 
                                 if (!result)
                                 {
@@ -78,7 +78,7 @@ namespace BExIS.App.Bootstrap.Attributes
                         }
                         else
                         {
-                            user = await userManager.FindByNameAsync(principal.Identity.Name);
+                            user = userManager.FindByNameAsync(principal.Identity.Name).Result;
 
                             if (user == null)
                             {
