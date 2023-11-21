@@ -14,31 +14,34 @@ using BExIS.Utils.Route;
 using System.Net.Http;
 using System.Net;
 using System.Threading.Tasks;
+using BExIS.Modules.Rpm.UI.Models.DataTypes;
+using BExIS.Utils.NH.Querying;
+using System.Xml;
 
 namespace BExIS.Modules.Rpm.UI.Controllers
 {
     public class ConstraintsController : Controller
     {
         [JsonNetFilter]
-        [HttpDelete]
-        public JsonResult DeleteConstraintById(long constraintId)
+        [HttpPost]
+        public JsonResult DeleteConstraint(long Id)
         {
             try
             {
                 using (var constraintManager = new ConstraintManager())
                 {
-                    var constraint = constraintManager.FindById(constraintId);
+                    var constraint = constraintManager.FindById(Id);
 
-                    var isDeleted = constraintManager.DeleteById(constraintId);
+                    var isDeleted = constraintManager.DeleteById(Id);
 
                     if (isDeleted)
                     {
                         Response.StatusCode = 200;
-                        return Json("The constraint was deleted successfully.");
+                        return Json(true);
                     }
 
                     Response.StatusCode = 400;
-                    return Json("An error has occurred.");
+                    return Json(false);
                 }
             }
             catch (Exception ex)
@@ -55,16 +58,22 @@ namespace BExIS.Modules.Rpm.UI.Controllers
             {
                 using (var constraintManager = new ConstraintManager())
                 {
-                    List<DomainConstraint> domainConstraints = constraintManager.DomainConstraints.Where(c => c.DataContainer != null).ToList();
-                    List<ReadConstraintModel> domainConstraintsModel  = domainConstraints.Select(u => ReadConstraintModel.Convert(u)).ToList();
+                    List<DomainConstraint> domainConstraints = new List<DomainConstraint>();
+                    List<DomainConstraint> dcs = constraintManager.DomainConstraints.Where(c => c.DataContainer == null).ToList();
+                    foreach (DomainConstraint dc in dcs) 
+                    {
+                        dc.Materialize();
+                        domainConstraints.Add(dc);
+                    }
+                    List<ReadConstraintModel> domainConstraintsModel = domainConstraints.Select(u => ReadConstraintModel.Convert(u)).ToList();
 
-                    List<PatternConstraint> patternConstraints = constraintManager.PatternConstraints.Where(c => c.DataContainer != null).ToList();
+                    List<PatternConstraint> patternConstraints = constraintManager.PatternConstraints.Where(c => c.DataContainer == null).ToList();
                     List<ReadConstraintModel> patternConstraintsModel = patternConstraints.Select(u => ReadConstraintModel.Convert(u)).ToList();
 
-                    List<RangeConstraint> rangeConstraints = constraintManager.RangeConstraints.Where(c => c.DataContainer != null).ToList();
+                    List<RangeConstraint> rangeConstraints = constraintManager.RangeConstraints.Where(c => c.DataContainer == null).ToList();
                     List<ReadConstraintModel> rangeConstraintsModel = rangeConstraints.Select(u => ReadConstraintModel.Convert(u)).ToList();
 
-                    List<ReadConstraintModel>constraints = domainConstraintsModel.Concat(patternConstraintsModel).Concat(rangeConstraintsModel).OrderBy(c => c.Id).ToList();
+                    List<ReadConstraintModel> constraints = domainConstraintsModel.Concat(patternConstraintsModel).Concat(rangeConstraintsModel).OrderBy(c => c.Id).ToList();
 
                     Response.StatusCode = 200;
                     return Json(constraints, JsonRequestBehavior.AllowGet);
@@ -76,52 +85,41 @@ namespace BExIS.Modules.Rpm.UI.Controllers
             }
         }
 
-        public ActionResult Index()
+        [JsonNetFilter]
+        [HttpPost]
+        public JsonResult GetDomainConstraint(long Id)
         {
-            string module = "RPM";
+            try
+            {
+                using (var constraintManager = new ConstraintManager())
+                {
+                    DomainConstraint constraint = constraintManager.DomainConstraints.Where(c => c.Id == Id).FirstOrDefault();
+                    constraint.Materialize();
+                    ReadDomainConstraintModel domainConstraintModel = ReadDomainConstraintModel.Convert(constraint);
 
-            ViewData["app"] = SvelteHelper.GetApp(module);
-            ViewData["start"] = SvelteHelper.GetStart(module);
-
-            return View();
+                    Response.StatusCode = 200;
+                    return Json(domainConstraintModel, JsonRequestBehavior.AllowGet);
+                }
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
         }
-
-        #region domain
 
         [JsonNetFilter]
         [HttpPost]
-        public JsonResult CreateDomainConstraint(CreateDomainConstraintModel model)
-        {
-            try
-            {
-                return null;
-            }
-            catch (Exception ex)
-            {
-                throw;
-            }
-        }
-
-        [JsonNetFilter]
-        [HttpGet]
-        public JsonResult GetDomainConstraintById(long id)
+        public JsonResult GetRangeConstraint(long Id)
         {
             try
             {
                 using (var constraintManager = new ConstraintManager())
                 {
-                    var constraint = constraintManager.FindById<DomainConstraint>(id);
-
-                    if (constraint == null)
-                    {
-                        Response.StatusCode = 400;
-                        return Json("An error has occurred.");
-                    }
-
-                    var model = ReadDomainConstraintModel.Convert(constraint);
+                    RangeConstraint constraint = constraintManager.RangeConstraints.Where(c => c.Id == Id).FirstOrDefault();
+                    ReadRangeConstraintModel rangeConstraintModel = ReadRangeConstraintModel.Convert(constraint);
 
                     Response.StatusCode = 200;
-                    return Json(model, JsonRequestBehavior.AllowGet);
+                    return Json(rangeConstraintModel, JsonRequestBehavior.AllowGet);
                 }
             }
             catch (Exception ex)
@@ -129,100 +127,20 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                 throw;
             }
         }
-
-        [JsonNetFilter]
-        [HttpGet]
-        public JsonResult GetDomainConstraints()
-        {
-            try
-            {
-                using (var constraintManager = new ConstraintManager())
-                {
-                    var constraints = constraintManager.DomainConstraints.ToList();
-                    var model = constraints.Select(u => ReadDomainConstraintModel.Convert(u));
-
-                    Response.StatusCode = 200;
-                    return Json(model, JsonRequestBehavior.AllowGet);
-                }
-            }
-            catch (Exception ex)
-            {
-                throw;
-            }
-        }
-
-        [JsonNetFilter]
-        [HttpPut]
-        public JsonResult UpdateDomainConstraint(long id, UpdateDomainConstraintModel model)
-        {
-            try
-            {
-                using (var constraintManager = new ConstraintManager())
-                {
-                    var constraint = constraintManager.FindById<DomainConstraint>(id);
-
-                    if (constraint == null || model == null)
-                    {
-                        Response.StatusCode = 400;
-                        return Json("An error has occurred.");
-                    }
-
-                    //if (!string.IsNullOrEmpty(model.Name))
-                    //    constraint.Name = model.Name;
-
-                    //if (!string.IsNullOrEmpty(model.Description))
-                    //    constraint.Description = model.Description;
-
-                    //return Request.CreateResponse(HttpStatusCode.OK, model);
-
-                    Response.StatusCode = 200;
-                    return Json("An error has occurred.");
-                }
-            }
-            catch (Exception ex)
-            {
-                throw;
-            }
-        }
-
-        #endregion domain
-
-        #region pattern
 
         [JsonNetFilter]
         [HttpPost]
-        public async Task<HttpResponseMessage> CreatePatternConstraint(CreatePatternConstraintModel model)
-        {
-            try
-            {
-                return null;
-            }
-            catch (Exception ex)
-            {
-                throw;
-            }
-        }
-
-        [JsonNetFilter]
-        [HttpGet]
-        public JsonResult GetPatternConstraintById(long id)
+        public JsonResult GetPatternConstraint(long Id)
         {
             try
             {
                 using (var constraintManager = new ConstraintManager())
                 {
-                    var constraint = constraintManager.FindById<DomainConstraint>(id);
-
-                    if (constraint == null)
-                    {
-                        Response.StatusCode = 400;
-                        return Json("An error has occurred.");
-                    }
-
-                    var model = ReadDomainConstraintModel.Convert(constraint);
+                    PatternConstraint constraint = constraintManager.PatternConstraints.Where(c => c.Id == Id).FirstOrDefault();
+                    ReadPatternConstraintModel patternConstraintModel = ReadPatternConstraintModel.Convert(constraint);
 
                     Response.StatusCode = 200;
-                    return Json(model, JsonRequestBehavior.AllowGet);
+                    return Json(patternConstraintModel, JsonRequestBehavior.AllowGet);
                 }
             }
             catch (Exception ex)
@@ -230,130 +148,285 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                 throw;
             }
         }
-
-        [JsonNetFilter]
-        [HttpGet]
-        public JsonResult GetPatternConstraints()
-        {
-            try
-            {
-                using (var constraintManager = new ConstraintManager())
-                {
-                    var constraints = constraintManager.PatternConstraints.ToList();
-                    var model = constraints.Select(u => ReadPatternConstraintModel.Convert(u));
-
-                    Response.StatusCode = 200;
-                    return Json(model, JsonRequestBehavior.AllowGet);
-                }
-            }
-            catch (Exception ex)
-            {
-                throw;
-            }
-        }
-
-        [JsonNetFilter]
-        [HttpPut]
-        public JsonResult UpdatePatternConstraint(long id, UpdatePatternConstraintModel model)
-        {
-            try
-            {
-                return null;
-            }
-            catch (Exception ex)
-            {
-                throw;
-            }
-        }
-
-        #endregion pattern
-
-        #region range
 
         [JsonNetFilter]
         [HttpPost]
-        public async Task<HttpResponseMessage> CreateRangeConstraint(CreateRangeConstraintModel model)
+        public JsonResult EditDomainConstraint(EditDomainConstraintModel domainConstraint)
         {
-            try
+            ValidationResult validationResult = new ValidationResult
             {
-                return null;
-            }
-            catch (Exception ex)
+                IsValid = false,
+                ValidationItems = new List<ValidationItem>(),
+            };
+            object result = new
             {
-                throw;
-            }
-        }
+                validationResult,
+                domainConstraint,
+            };
 
-        [JsonNetFilter]
-        [HttpGet]
-        public JsonResult GetRangeConstraintById(long id)
-        {
-            try
+            if (domainConstraint != null)
             {
-                using (var constraintManager = new ConstraintManager())
+                using (ConstraintManager constraintManager = new ConstraintManager())
                 {
-                    var constraint = constraintManager.FindById<RangeConstraint>(id);
+                    List<DomainConstraint> constraints = constraintManager.DomainConstraints.Where(c => c.DataContainer == null).ToList();
+                    validationResult = ConstraintValidation(constraints, domainConstraint);
 
-                    if (constraint == null)
+                    if (validationResult.IsValid)
                     {
-                        Response.StatusCode = 400;
-                        return Json("An error has occurred.");
+                        DomainConstraint dc = new DomainConstraint();
+
+                        if (domainConstraint.Id == 0)
+                        {
+                            dc = new DomainConstraint()
+                            {
+                                Id = domainConstraint.Id,
+                                Name = domainConstraint.Name,
+                                Description = domainConstraint.Description,
+                                Negated = domainConstraint.Negated,
+                                Items = DomainConverter.convertDomainToDomainItems(domainConstraint.Domain),
+                        };
+                            dc = constraintManager.Create(dc);
+                        }
+                        else
+                        {
+                            dc = constraintManager.DomainConstraintRepository.Get(domainConstraint.Id);
+                            dc.Name = domainConstraint.Name;
+                            dc.Description = domainConstraint.Description;
+                            dc.Negated = domainConstraint.Negated;
+                            dc.Items = DomainConverter.convertDomainToDomainItems(domainConstraint.Domain);
+    
+                            dc = constraintManager.Update(dc);
+                        }
+                        domainConstraint = new EditDomainConstraintModel()
+                        {
+                            Id = dc.Id,
+                            Version = dc.VersionNo,
+                            Name = dc.Name,
+                            Description = dc.Description,
+                            Negated = dc.Negated,
+                            Domain = DomainConverter.convertDomainItemsToDomain(dc.Items),
+                            InUse = false
+                        };
+
                     }
-
-                    var model = ReadRangeConstraintModel.Convert(constraint);
-
-                    Response.StatusCode = 200;
-                    return Json(model, JsonRequestBehavior.AllowGet);
+                    result = new
+                    {
+                        validationResult,
+                        domainConstraint,
+                    };
                 }
             }
-            catch (Exception ex)
-            {
-                throw;
-            }
+            return Json(result, JsonRequestBehavior.AllowGet);
         }
 
         [JsonNetFilter]
-        [HttpGet]
-        public JsonResult GetRangeConstraints()
+        [HttpPost]
+        public JsonResult EditRangeConstraint(EditRangeConstraintModel rangeConstraint)
         {
-            try
+            ValidationResult validationResult = new ValidationResult
             {
-                using (var constraintManager = new ConstraintManager())
+                IsValid = false,
+                ValidationItems = new List<ValidationItem>(),
+            };
+            object result = new
+            {
+                validationResult,
+                rangeConstraint,
+            };
+
+            if (rangeConstraint != null)
+            {
+                using (ConstraintManager constraintManager = new ConstraintManager())
                 {
-                    var constraints = constraintManager.RangeConstraints.ToList();
-                    var model = constraints.Select(u => ReadRangeConstraintModel.Convert(u));
+                    List<RangeConstraint> constraints = constraintManager.RangeConstraints.Where(c => c.DataContainer == null).ToList();
+                    validationResult = ConstraintValidation(constraints, rangeConstraint);
 
-                    Response.StatusCode = 200;
-                    return Json(model, JsonRequestBehavior.AllowGet);
+                    if (validationResult.IsValid)
+                    {
+                        RangeConstraint rc = null;
+
+                        if (rangeConstraint.Id == 0)
+                        {
+                            rc = new RangeConstraint()
+                            {
+                                Id = rangeConstraint.Id,
+                                Name = rangeConstraint.Name,
+                                Description = rangeConstraint.Description,
+                                Negated = rangeConstraint.Negated,
+                                Lowerbound = rangeConstraint.Lowerbound,
+                                Upperbound = rangeConstraint.Upperbound,
+                                LowerboundIncluded = rangeConstraint.LowerboundIncluded,
+                                UpperboundIncluded = rangeConstraint.UpperboundIncluded
+                            };
+                            rc = constraintManager.Create(rc);
+                        }
+                        else
+                        {
+                            rc = constraintManager.RangeConstraints.Where(c => c.Id == rangeConstraint.Id).FirstOrDefault();
+                            rc.Name = rangeConstraint.Name;
+                            rc.Description = rangeConstraint.Description;
+                            rc.Negated = rangeConstraint.Negated;
+                            rc.Lowerbound = rangeConstraint.Lowerbound;
+                            rc.Upperbound = rangeConstraint.Upperbound;
+                            rc.LowerboundIncluded = rangeConstraint.LowerboundIncluded;
+                            rc.UpperboundIncluded = rangeConstraint.UpperboundIncluded;
+
+                            rc = constraintManager.Update(rc);
+                        }
+
+                        rangeConstraint = new EditRangeConstraintModel() 
+                        { 
+                            Name = rc.Name,
+                            Description = rc.Description,
+                            Negated = rc.Negated,
+                            Lowerbound = rc.Lowerbound,
+                            Upperbound = rc.Upperbound,
+                            LowerboundIncluded = rc.LowerboundIncluded,
+                            UpperboundIncluded = rc.UpperboundIncluded,
+                            InUse = false
+                        };
+
+                    }
+                    result = new
+                    {
+                        validationResult,
+                        rangeConstraint,
+                    };
                 }
             }
-            catch (Exception ex)
-            {
-                throw;
-            }
+            return Json(result, JsonRequestBehavior.AllowGet);
         }
 
-        [JsonNetFilter]
-        [HttpPut]
-        public async Task<HttpResponseMessage> UpdateRangeConstraint(long id, UpdatePatternConstraintModel model)
+        public JsonResult EditPatternConstraint(EditPatternConstraintModel patternConstraint)
         {
-            try
+            ValidationResult validationResult = new ValidationResult
             {
-                return null;
-            }
-            catch (Exception ex)
+                IsValid = false,
+                ValidationItems = new List<ValidationItem>(),
+            };
+            object result = new
             {
-                throw;
-            }
-        }
+                validationResult,
+                patternConstraint,
+            };
 
-        #endregion range
+            if (patternConstraint != null)
+            {
+                using (ConstraintManager constraintManager = new ConstraintManager())
+                {
+                    List<PatternConstraint> constraints = constraintManager.PatternConstraints.Where(c => c.DataContainer == null).ToList();
+                    validationResult = ConstraintValidation(constraints, patternConstraint);
+
+                    if (validationResult.IsValid)
+                    {
+                        PatternConstraint pc = null;
+
+                        if (patternConstraint.Id == 0)
+                        {
+                            pc = new PatternConstraint()
+                            {
+                                Id = patternConstraint.Id,
+                                Name = patternConstraint.Name,
+                                Description = patternConstraint.Description,
+                                Negated = patternConstraint.Negated,
+                                MatchingPhrase = patternConstraint.pattern
+                            };
+                            pc = constraintManager.Create(pc);
+                        }
+                        else
+                        {
+                            pc = constraints.Where(c => c.Id.Equals(patternConstraint.Id)).FirstOrDefault();
+                            pc.Name = patternConstraint.Name;
+                            pc.Description = patternConstraint.Description;
+                            pc.Negated = patternConstraint.Negated;
+                            pc.MatchingPhrase = patternConstraint.pattern;
+
+                            pc = constraintManager.Update(pc);
+                        }
+                        patternConstraint = new EditPatternConstraintModel()
+                        {
+                            Id = pc.Id,
+                            Version = pc.VersionNo,
+                            Name = pc.Name,
+                            Description = pc.Description,
+                            Negated = pc.Negated,
+                            pattern = pc.MatchingPhrase,
+                            InUse = false
+                        };
+
+                    }
+                    result = new
+                    {
+                        validationResult,
+                        patternConstraint,
+                    };
+                }
+            }
+            return Json(result, JsonRequestBehavior.AllowGet);
+        }
 
         [JsonNetFilter]
         [HttpGet]
         public JsonResult GetConstraintTypes()
         {
             return Json(Enum.GetNames(typeof(ConstraintType)), JsonRequestBehavior.AllowGet);
+        }
+
+        private ValidationResult ConstraintValidation(List<Constraint> constraints, EditConstraintModel constaint)
+        {
+            ValidationResult result = new ValidationResult();
+
+            if (constaint != null && constraints != null)
+            {
+                if (string.IsNullOrEmpty(constaint.Name))
+                {
+                    result.IsValid = false;
+                    result.ValidationItems.Add(new ValidationItem { Name = "Name", Message = "Name is Null or Empty" });
+                }
+                else
+                {
+                    if (constraints.Where(p => p.Name.ToLower().Equals(constaint.Name.ToLower())).Any())
+                    {
+                        if (constaint.Id != constraints.Where(p => p.Name.ToLower().Equals(constaint.Name.ToLower())).ToList().First().Id)
+                        {
+                            result.IsValid = false;
+                            result.ValidationItems.Add(new ValidationItem { Name = "Name", Message = "Name already exist" });
+                        }
+                    }
+                }
+            }                
+            return result;
+        }
+
+        private ValidationResult ConstraintValidation( List<DomainConstraint> constraints, EditDomainConstraintModel constaint)
+        {
+
+            ValidationResult result = ConstraintValidation(constraints.Cast<Constraint>().ToList(), (EditConstraintModel)constaint);
+            if (String.IsNullOrEmpty(constaint.Domain))
+            {
+                result.IsValid = false;
+                result.ValidationItems.Add(new ValidationItem { Name = "Domain", Message = "Domain is not defined" });
+            }
+            return result;
+        }
+
+        private ValidationResult ConstraintValidation(List<RangeConstraint> constraints, EditRangeConstraintModel constaint)
+        {
+
+            ValidationResult result = ConstraintValidation(constraints.Cast<Constraint>().ToList(), (EditConstraintModel)constaint);
+            if (constaint.Lowerbound >= constaint.Upperbound)
+            {
+                result.IsValid = false;
+                result.ValidationItems.Add(new ValidationItem { Name = "Boundery", Message = "Lowerbound is bigger then Upperbound" });
+            }
+            return result;
+        }
+
+        private ValidationResult ConstraintValidation(List<PatternConstraint> constraints, EditPatternConstraintModel constaint)
+        {
+
+            ValidationResult result = ConstraintValidation(constraints.Cast<Constraint>().ToList(), (EditConstraintModel)constaint);
+            return result;
         }
     }
 }

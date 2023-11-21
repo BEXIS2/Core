@@ -1,8 +1,9 @@
 <script lang="ts">
     import { CodeEditor, TextInput } from '@bexis2/bexis2-core-ui';
 	import { slide } from 'svelte/transition';
+	import type { PatternConstraintListItem } from '../models';
 
-    export let patternConstraint: any;
+    export let patternConstraint: PatternConstraintListItem;
 
 	let example: string = '';
 	$: result = createRegex(patternConstraint.pattern, example);
@@ -23,6 +24,7 @@
 		
 	}
 </script>
+{#if patternConstraint}
 <div class="grid grid-cols-3 gap-5" in:slide out:slide>
     <div class="pb-3">
         <!-- svelte-ignore a11y-label-has-associated-control -->
@@ -50,3 +52,4 @@
         {result}										
     </div>
 </div>
+{/if}
