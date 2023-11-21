@@ -28,7 +28,7 @@
 		// get data from parent
 		container = document.getElementById('datastructure');
 		datastructureId = Number(container?.getAttribute('structure'));
-		dataExist = Boolean(container?.getAttribute('dataExist'));
+		dataExist = (container?.getAttribute('dataExist')?.toLocaleLowerCase() === 'true');
 
 		// get isTemplateRequired from settings and add it to store
 		// is used by validation
