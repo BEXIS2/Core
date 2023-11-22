@@ -472,3 +472,88 @@ ul.bx-list-multi {
     overflow-x: hidden;
     max-height: 500px;
 }
+
+
+/* Toggle */
+.bx2-toggle {
+    position: absolute;
+    margin-left: -9999px;
+    visibility: hidden;
+}
+
+.bx2-toggle + label {
+    display: block;
+    position: relative;
+    cursor: pointer;
+    outline: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+input.bx2-toggle-round-flat + label {
+/*    padding: 2px;*/
+    width: 48px;
+    height: 24px;
+    background-color: rgb(216, 216, 216);
+    -webkit-border-radius: 60px;
+    -moz-border-radius: 60px;
+    -ms-border-radius: 60px;
+    -o-border-radius: 60px;
+    border-radius: 60px;
+    -webkit-transition: background 0.4s;
+    -moz-transition: background 0.4s;
+    -o-transition: background 0.4s;
+    transition: background 0.4s;
+}
+
+    input.bx2-toggle-round-flat + label:before, input.bx2-toggle-round-flat + label:after {
+        display: block;
+        position: absolute;
+        content: "";
+    }
+
+    input.bx2-toggle-round-flat + label:before {
+  /*      top: 2px;
+        left: 2px;
+        bottom: 2px;
+        right: 2px;*/
+        background-color: rgb(216, 216, 216);
+        -webkit-border-radius: 60px;
+        -moz-border-radius: 60px;
+        -ms-border-radius: 60px;
+        -o-border-radius: 60px;
+        border-radius: 60px;
+        -webkit-transition: background 0.4s;
+        -moz-transition: background 0.4s;
+        -o-transition: background 0.4s;
+        transition: background 0.4s;
+    }
+
+    input.bx2-toggle-round-flat + label:after {
+        top: 2px;
+        left: 2px;
+        bottom: 2px;
+        width: 19.2px;
+        height: 19.2px;
+        background-color: #fff; /*var(--bexis2-gray-2);*/
+        -webkit-border-radius: 52px;
+        -moz-border-radius: 52px;
+        -ms-border-radius: 52px;
+        -o-border-radius: 52px;
+        border-radius: 52px;
+        -webkit-transition: margin 0.4s, background 0.4s;
+        -moz-transition: margin 0.4s, background 0.4s;
+        -o-transition: margin 0.4s, background 0.4s;
+        transition: margin 0.4s, background 0.4s;
+    }
+
+    input.bx2-toggle-round-flat:checked + label {
+        background-color: var(--highlight-color)
+    }
+
+    input.bx2-toggle-round-flat:checked + label:after {
+        margin-left: 24px;
+        background-color: #fff;
+    }
