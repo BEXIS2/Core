@@ -132,9 +132,6 @@
 				patternConstraint = await apiCalls.GetPatternConstraint(constraint.id);
 			}
 		}
-		console.log('domainConstraint', domainConstraint);
-		console.log('rangeConstraint', rangeConstraint);
-		console.log('patternConstraint', patternConstraint);
 	}
 
 	function fileParser(event: any) {
