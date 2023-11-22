@@ -16,7 +16,8 @@ const suite = create((data: dataType, fieldName) => {
 	test('name', 'name is not unique', () => {
 		return (
 			data.constraints.find((u) => u.name.toLowerCase() === data.constraint.name.toLowerCase()) ==
-				null || data.constraints.find((u) => u.name === data.constraint.name)?.id == data.constraint.id
+				null ||
+			data.constraints.find((u) => u.name === data.constraint.name)?.id == data.constraint.id
 		);
 	});
 

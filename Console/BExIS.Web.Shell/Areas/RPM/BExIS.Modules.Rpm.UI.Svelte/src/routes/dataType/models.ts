@@ -1,11 +1,11 @@
 import type { ValidationResult } from '../../models';
 
 export interface DataTypeListItem {
-    id: number;
-    name: string;
-    description: string;
-    systemType: string;
-    inUse: boolean;
+	id: number;
+	name: string;
+	description: string;
+	systemType: string;
+	inUse: boolean;
 }
 
 export interface DataTypeValidationResult {

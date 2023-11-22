@@ -4,7 +4,16 @@
 	import Fa from 'svelte-fa';
 	import { faSave, faXmark, faArrowUpFromBracket } from '@fortawesome/free-solid-svg-icons';
 
-	import type { ConstraintListItem, ConstraintValidationResult} from '../models';
+	import type {
+		ConstraintListItem,
+		ConstraintValidationResult,
+		DomainConstraintListItem,
+		RangeConstraintListItem,
+		PatternConstraintListItem,
+		DomainConstraintValidationResult,
+		RangeConstraintValidationResult,
+		PatternConstraintValidationResult
+	} from '../models';
 	import { onMount } from 'svelte';
 	import * as apiCalls from '../services/apiCalls';
 	import { fade, slide } from 'svelte/transition';
@@ -22,7 +31,7 @@
 	// validation
 	import suite from './form';
 	import { FileButton } from '@skeletonlabs/skeleton';
-	
+	import type { ValidationResult } from '../../../models';
 
 	// load form result object
 	let res = suite.get();
@@ -34,15 +43,13 @@
 	export let constraint: ConstraintListItem;
 	export let constraints: ConstraintListItem[];
 
-	let domainConstraint: any;
-	let rangeConstraint: any;
-	let patternConstraint: any;
-	$: getConstraintByType(constraint.type);
+	let domainConstraint: DomainConstraintListItem;
+	let rangeConstraint: RangeConstraintListItem;
+	let patternConstraint: PatternConstraintListItem;
+	$: setConstraintByType(constraint);
 	let ct: string[] = [];
 	$: constraintTypes = ct.map((c) => ({ id: c, text: c }));
 
-	
-	
 	onMount(async () => {
 		ct = await apiCalls.GetConstraintTypes();
 		if (constraint.id == 0) {
@@ -50,44 +57,88 @@
 		}
 	});
 
-	function getConstraintByType(type: string){
-		domainConstraint = type != "Domain" ? domainConstraint : {
-			id: constraint.id,
-			version: constraint.version,
-			name: constraint.name,
-			description: constraint.description,
-			formalDescription: constraint.formalDescription,
-			domain: domainConstraint != undefined ? domainConstraint.domain : "",
-			inUse: false
-		};
-		rangeConstraint = type != "Range" ? rangeConstraint : {
-			id: constraint.id,
-			version: constraint.version,
-			name: constraint.name,
-			description: constraint.description,
-			formalDescription: constraint.formalDescription,
-			lowerbound: rangeConstraint != undefined ? rangeConstraint.lowerbound : "",
-			upperbound: rangeConstraint != undefined ? rangeConstraint.upperbound : "",
-			lowerboundIncluded: rangeConstraint != undefined ? rangeConstraint.lowerboundIncluded : "",
-			upperboundIncluded: rangeConstraint != undefined ? rangeConstraint.upperboundIncluded : "",
-			inUse: false
-		};
+	async function setConstraintByType(constraint: ConstraintListItem) {
+		if (constraint.type == 'Domain') {
+			if (domainConstraint == undefined) {
+				domainConstraint = {
+					id: constraint.id,
+					version: constraint.version,
+					name: constraint.name,
+					description: constraint.description,
+					formalDescription: constraint.formalDescription,
+					domain: '',
+					negated: constraint.negated,
+					inUse: constraint.inUse
+				};
+				if (domainConstraint.id != 0) {
+					domainConstraint = await apiCalls.GetDomainConstraint(constraint.id);
+				}
+			} else {
+				domainConstraint.name = constraint.name;
+				domainConstraint.description = constraint.description;
+			}
+			if (domainConstraint.id != constraint.id) {
+				domainConstraint = await apiCalls.GetDomainConstraint(constraint.id);
+			}
+		}
 
-		patternConstraint = type != "Pattern" ? patternConstraint : {
-			id: constraint.id,
-			version: constraint.version,
-			name: constraint.name,
-			description: constraint.description,
-			formalDescription: constraint.formalDescription,
-			pattern: patternConstraint != undefined ? patternConstraint.pattern : "",
-			inUse: false
-		};
+		if (constraint.type == 'Range') {
+			if (rangeConstraint == undefined) {
+				rangeConstraint = {
+					id: constraint.id,
+					version: constraint.version,
+					name: constraint.name,
+					description: constraint.description,
+					formalDescription: constraint.formalDescription,
+					lowerbound: 0,
+					upperbound: 0,
+					lowerboundIncluded: true,
+					upperboundIncluded: true,
+					negated: constraint.negated,
+					inUse: constraint.inUse
+				};
+				if (rangeConstraint.id != 0) {
+					rangeConstraint = await apiCalls.GetRangeConstraint(constraint.id);
+				}
+			} else {
+				rangeConstraint.name = constraint.name;
+				rangeConstraint.description = constraint.description;
+			}
+			if (rangeConstraint.id != constraint.id) {
+				rangeConstraint = await apiCalls.GetRangeConstraint(constraint.id);
+			}
+		}
 
+		if (constraint.type == 'Pattern') {
+			if (patternConstraint == undefined) {
+				patternConstraint = {
+					id: constraint.id,
+					version: constraint.version,
+					name: constraint.name,
+					description: constraint.description,
+					formalDescription: constraint.formalDescription,
+					pattern: '',
+					negated: constraint.negated,
+					inUse: constraint.inUse
+				};
+				if (patternConstraint.id != 0) {
+					patternConstraint = await apiCalls.GetPatternConstraint(constraint.id);
+				}
+			} else {
+				patternConstraint.name = constraint.name;
+				patternConstraint.description = constraint.description;
+			}
+			if (patternConstraint.id != constraint.id) {
+				patternConstraint = await apiCalls.GetPatternConstraint(constraint.id);
+			}
+		}
+		console.log('domainConstraint', domainConstraint);
+		console.log('rangeConstraint', rangeConstraint);
+		console.log('patternConstraint', patternConstraint);
 	}
 
 	function fileParser(event: any) {
-		if(event.target != null)
-		{
+		if (event.target != null) {
 			const fs = event.target.files;
 			for (let f of fs) {
 				papa.parse(f, {
@@ -99,11 +150,10 @@
 				});
 			}
 		}
-    }
+	}
 
-	function joinRows(data: any) :string
-	{
-		return data.join('\n').trim().replaceAll('\t','')
+	function joinRows(data: any): string {
+		return data.join('\n').trim().replaceAll('\t', '');
 	}
 
 	//change event: if input change check also validation only on the field
@@ -119,7 +169,52 @@
 	}
 
 	async function submit() {
+		let message: string;
+		let result: ConstraintValidationResult;
 
+		switch (constraint.type) {
+			case 'Domain':
+				result = await apiCalls.EditDomainConstraint(domainConstraint);
+
+			case 'Range':
+				result = await apiCalls.EditRangeConstraint(rangeConstraint);
+
+			case 'Pattern':
+				result = await apiCalls.EditPatternConstraint(patternConstraint);
+			default:
+				let vr: ValidationResult = { isValid: true, validationItems: [{ name: '', message: '' }] };
+				result = {
+					validationResult: vr,
+					constraintListItem: constraint
+				};
+		}
+
+		if (result.validationResult.isValid != true) {
+			message = "Can't save Constraint";
+			if (result.constraintListItem.name != '') {
+				message += ' "' + result.constraintListItem.name + '" .';
+			}
+			if (
+				result.validationResult.validationItems != undefined &&
+				result.validationResult.validationItems.length > 0
+			) {
+				result.validationResult.validationItems.forEach((validationItem) => {
+					message += '<li>' + validationItem.message + '</li>';
+				});
+			}
+			notificationStore.showNotification({
+				notificationType: notificationType.error,
+				message: message
+			});
+		} else {
+			message = 'Constraint "' + result.constraintListItem.name + '" saved.';
+			notificationStore.showNotification({
+				notificationType: notificationType.success,
+				message: message
+			});
+			suite.reset();
+			dispatch('save');
+		}
 	}
 
 	function cancel() {
@@ -163,7 +258,7 @@
 				<!-- svelte-ignore a11y-label-has-associated-control -->
 				<label>Formal Description</label>
 				<p>
-					{#if constraint.formalDescription && constraint.formalDescription !=""}
+					{#if constraint.formalDescription && constraint.formalDescription != ''}
 						{constraint.formalDescription}
 					{:else}
 						Will be generate by the System
@@ -172,36 +267,47 @@
 			</div>
 
 			<div class="pb-3" title="Type">
-				<DropdownKVP
-					id="constraintTypes"
-					title="constraint Type"
-					bind:target={constraint.type}
-					source={constraintTypes}
-					required={true}
-					complexTarget={false}
-					help={true}
-				/>
-			</div>
-			
-			<div class="pb-3 text-right mt-7" title="Type">
-				{#if constraint.type == 'Domain'}
-				<div in:fade out:fade>
-				<!-- svelte-ignore missing-declaration -->
-					<FileButton id="uploadCsv" title="Upload CSV" button="btn variant-filled-secondary h-9 w-16 shadow-md" name="uploadCsv" on:change={fileParser}><Fa icon={faArrowUpFromBracket} /></FileButton>
-				</div>
+				{#if constraint.id == 0}
+					<DropdownKVP
+						id="constraintTypes"
+						title="Constraint Type"
+						bind:target={constraint.type}
+						source={constraintTypes}
+						required={true}
+						complexTarget={false}
+						help={true}
+					/>
+				{:else}
+					<label>Constraint Type</label>
+					<p>{constraint.type}</p>
 				{/if}
 			</div>
 
-			{#if constraint.type && constraint.type != ""}
-			<div class="pb-3 col-span-2">
-				{#if constraint.type == 'Domain'} 
-					<DomainForm {domainConstraint}/>
-				{:else if constraint.type == 'Range'}
-					<RangeForm {rangeConstraint}/>
-				{:else if constraint.type == 'Pattern'}
-					<PatternForm {patternConstraint}/>
+			<div class="pb-3 text-right mt-7" title="Type">
+				{#if constraint.type == 'Domain'}
+					<div in:fade out:fade>
+						<!-- svelte-ignore missing-declaration -->
+						<FileButton
+							id="uploadCsv"
+							title="Upload CSV"
+							button="btn variant-filled-secondary h-9 w-16 shadow-md"
+							name="uploadCsv"
+							on:change={fileParser}><Fa icon={faArrowUpFromBracket} /></FileButton
+						>
+					</div>
 				{/if}
 			</div>
+
+			{#if constraint.type && constraint.type != ''}
+				<div class="pb-3 col-span-2">
+					{#if constraint.type == 'Domain'}
+						<DomainForm {domainConstraint} />
+					{:else if constraint.type == 'Range'}
+						<RangeForm {rangeConstraint} />
+					{:else if constraint.type == 'Pattern'}
+						<PatternForm {patternConstraint} />
+					{/if}
+				</div>
 			{/if}
 
 			<div class="py-5 text-right col-span-2">
