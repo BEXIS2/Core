@@ -26,6 +26,15 @@ export interface DataStructureCreationModel {
 	missingValues: missingValueType[];
 }
 
+export interface DataStructureEditModel {
+	id:number
+	title: string;
+	description: string;
+	preview: string[];
+	variables: VariableInstanceModel[];
+	missingValues: missingValueType[];
+}
+
 export interface missingValueType {
 	id: number;
 	displayName: string;

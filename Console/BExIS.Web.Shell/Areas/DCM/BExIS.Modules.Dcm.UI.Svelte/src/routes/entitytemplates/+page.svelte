@@ -50,7 +50,6 @@
 		filetypes = await getFileTypes();
 
 		entityTemplatesStore.set(await getEntityTemplateList());
-
 	}
 
 	async function refresh(e: any) {
@@ -88,7 +87,7 @@
 
 		//remove form from dom
 		isOpen = false;
-	
+
 		// reopen form with new object
 		setTimeout(async () => {
 			selectedEntityTemplate = e.detail;
@@ -121,7 +120,8 @@
 			{:else}
 				<div class="w-screen">
 					<button title="create" type="button" on:click={create} class="btn variant-filled-primary"
-						><Fa icon={faPlus} /></button>
+						><Fa icon={faPlus} /></button
+					>
 				</div>
 			{/if}
 

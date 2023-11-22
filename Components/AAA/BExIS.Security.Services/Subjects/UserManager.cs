@@ -604,11 +604,6 @@ namespace BExIS.Security.Services.Subjects
 
         #endregion IUserSecurityStampStore
 
-        public Task<string> GetTokenAsync(User user)
-        {
-            return Task.FromResult(user.Token);
-        }
-
         public Task SetTokenAsync(User user)
         {
             user.Token = generate(64);

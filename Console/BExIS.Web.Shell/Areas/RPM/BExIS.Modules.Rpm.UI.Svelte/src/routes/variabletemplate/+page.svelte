@@ -1,7 +1,8 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import { slide, fade } from 'svelte/transition';
-	import { Modal, modalStore, Toast, type ModalSettings } from '@skeletonlabs/skeleton';
+	import { Modal, getModalStore, Toast, type ModalSettings } from '@skeletonlabs/skeleton';
+	const modalStore = getModalStore();
 	import {
 		Page,
 		Table,
@@ -16,7 +17,7 @@
 	} from '@bexis2/bexis2-core-ui';
 
 	import Fa from 'svelte-fa';
-	import { faPlus, faXmark, faBan } from '@fortawesome/free-solid-svg-icons';
+	import { faPlus } from '@fortawesome/free-solid-svg-icons';
 
 	// Components
 	import VariableTemplate from './VariableTemplate.svelte';
@@ -73,7 +74,7 @@
 					renderComponent: TableIsApproved
 				},
 				disableFiltering: true,
-				exclude: true
+				exclude: false
 			},
 			inUse: {
 				header: 'Approved',

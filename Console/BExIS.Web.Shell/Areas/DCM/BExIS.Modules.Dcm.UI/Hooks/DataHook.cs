@@ -39,7 +39,7 @@ namespace BExIS.Modules.Dcm.UI.Hooks
             using (var datasetManager = new DatasetManager())
             {
                 var dataset = datasetManager.GetDataset(id);
-                if (dataset == null || dataset.DataStructure == null) { Status = HookStatus.Disabled; return; }
+                if (dataset == null && dataset.DataStructure == null) { Status = HookStatus.Disabled; return; }
                 else Status = HookStatus.Open;
 
             }

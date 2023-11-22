@@ -2,6 +2,7 @@
 using BExIS.App.Bootstrap.Helpers;
 using BExIS.Dlm.Entities.Data;
 using BExIS.Dlm.Entities.DataStructure;
+using BExIS.Dlm.Entities.Meanings;
 using BExIS.Dlm.Services.Data;
 using BExIS.Dlm.Services.DataStructure;
 using BExIS.Dlm.Services.Meanings;
@@ -129,7 +130,24 @@ namespace BExIS.Modules.Rpm.UI.Controllers
             return View("Create");
         }
 
-   
+        public ActionResult Edit(long structureId = 0)
+        {
+            string module = "rpm";
+            DataStructureHelper structureHelper = new DataStructureHelper();
+
+            ViewData["structureId"] = structureId;
+            ViewData["app"] = SvelteHelper.GetApp(module);
+            ViewData["start"] = SvelteHelper.GetStart(module);
+
+            // get from settings, if template is required or not
+            bool isTemplateRequired = (bool)ModuleManager.GetModuleSettings("RPM").GetValueByKey("isTemplateRequired");
+            ViewData["isTemplateRequired"] = isTemplateRequired;
+
+            ViewData["dataExist"] = structureHelper.InUseAndDataExist(structureId);
+            
+            return View("Edit");
+        }
+
 
 
         [JsonNetFilter]
@@ -261,7 +279,8 @@ namespace BExIS.Modules.Rpm.UI.Controllers
         }
 
         [JsonNetFilter]
-        public JsonResult Save(DataStructureCreationModel model)
+        [HttpPost]
+        public JsonResult Create(DataStructureCreationModel model)
         {
             if (model == null) throw new ArgumentNullException(nameof(model));
 
@@ -344,6 +363,108 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                     datasetManager.UpdateDataset(dataset);
                 }
 
+            }
+
+            return Json(true, JsonRequestBehavior.AllowGet);
+        }
+
+        [JsonNetFilter]
+        [HttpPost]
+        public JsonResult Save(DataStructureEditModel model)
+        {
+            if (model == null) throw new ArgumentNullException(nameof(model));
+            if (model.Id <=0) throw new ArgumentNullException(nameof(model.Id));
+
+            using (var structureManager = new DataStructureManager())
+            using (var variableManager = new VariableManager())
+            using (var meaningManager = new MeaningManager())
+            using (var unitManager = new UnitManager())
+            using (var datatypeManager = new DataTypeManager())
+            using (var datasetManager = new DatasetManager())
+            using (var missingValueManager = new MissingValueManager())
+            {
+                // create strutcure
+                StructuredDataStructure structure = structureManager.StructuredDataStructureRepo.Get(model.Id);
+                if(structure == null) throw new NullReferenceException("Structure not exist with id: "+model.Id );
+
+                structure.Name = model.Title;
+                structure.Description = model.Description;
+                structure = structureManager.UpdateStructuredDataStructure(structure);
+
+                // update variable
+                foreach (var variable in model.Variables)
+                {
+
+                    // get datatype
+                    var dataType = datatypeManager.Repo.Get(variable.DataType.Id);
+                    if (dataType == null) { }// create;
+
+                    // get unit
+                    var unit = unitManager.Repo.Get(variable.Unit.Id);
+                    if (unit == null) { }// create;
+
+                    // set displayPattern
+                    int displayPattern = -1;
+                    if (variable.DisplayPattern != null) displayPattern = Convert.ToInt32(variable.DisplayPattern.Id);
+
+                    // create var and add to structure
+
+                    // get orderNo
+                    int orderNo = model.Variables.IndexOf(variable) + 1;
+                    VariableInstance updatedVariable = new VariableInstance();
+                    // update variable
+                    if (variable.Id > 0)
+                    {
+                        updatedVariable = variableManager.GetVariable(variable.Id);
+
+                        updatedVariable.Description = variable.Description;
+                        updatedVariable.Unit = unit;
+                        updatedVariable.DisplayPatternId = displayPattern;
+                        updatedVariable.OrderNo = orderNo;
+                        updatedVariable.VariableTemplate = variableManager.GetVariableTemplate(variable.Template.Id);
+                    }
+                    else // create
+                    {
+
+                        updatedVariable = variableManager.CreateVariable(
+                            variable.Name,
+                            dataType,
+                            unit,
+                            structure.Id,
+                            variable.IsOptional,
+                            variable.IsKey,
+                            orderNo,
+                            variable.Template.Id,
+                            variable.Description,
+                            "",
+                            displayPattern
+                            );
+
+                        structure = structureManager.AddVariable(structure.Id, updatedVariable.Id);
+
+                    }
+
+                    // update meanings
+                    foreach (var meaning in variable.Meanings)
+                    {
+                        Meaning m = meaningManager.getMeaning(meaning.Id);
+                        if(!updatedVariable.Meanings.Contains(m))updatedVariable.Meanings.Add(m);   
+                    }
+
+                    // update constraints
+
+                }
+
+                // order vars based on orderNo
+                structure.Variables.OrderBy(v => v.OrderNo);
+
+                structureManager.UpdateStructuredDataStructure(structure);
+
+                // compare all vars from model with from db
+                // delete all not existing variables from db
+                var varids = model.Variables.Select(v => v.Id);
+                var removeVars = structure.Variables.Where(v => !varids.Contains(v.Id));
+                removeVars.ToList().ForEach(v => structureManager.RemoveVariableUsage(v.Id));
             }
 
             return Json(true, JsonRequestBehavior.AllowGet);
@@ -553,14 +674,14 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                                 Meanings = helper.ConvertTo(variable.Meanings)
                             };
 
+   
                             // add template if exist
                             if (variable.VariableTemplate != null) var.Template = helper.ConvertTo(variable.VariableTemplate, "copied");
-
 
                             // get suggestes DisplayPattern / currently only for DateTime
                             if (var.SystemType.Equals(typeof(DateTime).Name))
                             {
-                                var.DisplayPattern = null; // here a suggesten of the display pattern is needed
+                                if (variable.DisplayPatternId >= 0) var.DisplayPattern = new ListItem(variable.DisplayPatternId, DataTypeDisplayPattern.Get(variable.DisplayPatternId).DisplayPattern);
                                 var displayPattern = DataTypeDisplayPattern.Pattern.Where(p => p.Systemtype.ToString().Equals(var.SystemType));
                                 displayPattern.ToList().ForEach(d => var.PossibleDisplayPattern.Add(new ListItem(d.Id, d.DisplayPattern)));
                             };
@@ -573,10 +694,11 @@ namespace BExIS.Modules.Rpm.UI.Controllers
             
             }
 
-                // get default missing values
-                return Json(model, JsonRequestBehavior.AllowGet);
+            // get default missing values
+            return Json(model, JsonRequestBehavior.AllowGet);
         }
 
+ 
         [JsonNetFilter]
         [HttpPost]
         public JsonResult Delete(long id)
@@ -601,6 +723,64 @@ namespace BExIS.Modules.Rpm.UI.Controllers
             return Json(true);
         }
 
+        [HttpGet]
+        [JsonNetFilter]
+        public JsonResult Get(long id)
+        {
+            if (id <= 0) throw new NullReferenceException("id of the structure should be greater then 0");
+            DataStructureEditModel model = new DataStructureEditModel();
+            VariableHelper helper = new VariableHelper();
+
+            using (var structureManager = new DataStructureManager())
+            {
+                if (id > 0)
+                {
+                    var structure = structureManager.StructuredDataStructureRepo.Get(id);
+                    if (structure == null) throw new NullReferenceException("structure with id " + id);
+                    model.Id = structure.Id;
+                    model.Title = structure.Name;
+                    model.Description = structure.Description;
+
+                    if (structure.Variables.Any())
+                    {
+                        foreach (var variable in structure.Variables)
+                        {
+                            var var = new VariableInstanceModel()
+                            {
+                                Id = variable.Id,
+                                Name = variable.Label,
+                                Description = variable.Description,
+                                DataType = new ListItem(variable.DataType.Id, variable.DataType.Name),
+                                SystemType = variable.DataType.SystemType,
+                                Unit = new UnitItem(variable.Unit.Id, variable.Unit.Abbreviation, variable.Unit.AssociatedDataTypes.Select(x => x.Name).ToList(), "copied"),
+                                IsKey = variable.IsKey,
+                                IsOptional = variable.IsValueOptional,
+                                Meanings = helper.ConvertTo(variable.Meanings)
+                            };
+
+                            // add template if exist
+                            if (variable.VariableTemplate != null) var.Template = helper.ConvertTo(variable.VariableTemplate, "copied");
+
+
+                            // get suggestes DisplayPattern / currently only for DateTime
+                            if (var.SystemType.Equals(typeof(DateTime).Name))
+                            {
+                                var.DisplayPattern = new ListItem(variable.DisplayPatternId, DataTypeDisplayPattern.Get(variable.DisplayPatternId).DisplayPattern) ; // here a suggesten of the display pattern is needed
+                                var displayPattern = DataTypeDisplayPattern.Pattern.Where(p => p.Systemtype.ToString().Equals(var.SystemType));
+                                displayPattern.ToList().ForEach(d => var.PossibleDisplayPattern.Add(new ListItem(d.Id, d.DisplayPattern)));
+                            };
+
+                            model.Variables.Add(var);
+
+                        }
+                    }
+                }
+
+            }
+
+            // get default missing values
+            return Json(model, JsonRequestBehavior.AllowGet);
+        }
 
 
         [JsonNetFilter]
@@ -701,7 +881,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
 
                 if (variableTemplates.Any())
                 {
-                    foreach (var variableTemplate in variableTemplates)
+                    foreach (var variableTemplate in variableTemplates.Where(t=>t.Approved))
                     {
                         List<string> dataTypes = new List<string>();
                

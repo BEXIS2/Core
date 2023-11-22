@@ -5,8 +5,8 @@
 
 	import { hooksStatus } from '../../routes/edit/stores';
 
-	import Fa from 'svelte-fa'
-	import {faLock} from '@fortawesome/free-solid-svg-icons'
+	import Fa from 'svelte-fa';
+	import { faLock } from '@fortawesome/free-solid-svg-icons';
 
 	import TimeDuration from '$lib/components/utils/TimeDuration.svelte';
 
@@ -21,7 +21,7 @@
 	$: success = null;
 	$: warnings = [];
 
-	$: date = "";
+	$: date = '';
 
 	$: active = false;
 	$: wait = false;
@@ -39,28 +39,23 @@
 	});
 
 	function errorHandler(e) {
-
 		resetInformations();
 		error = e.detail.messages;
 	}
 
 	function successHandler(e) {
-
 		resetInformations();
 		success = e.detail.text;
 	}
 
 	function warningHandler(e) {
-
 		resetInformations();
 		warnings[0] = e.detail.text;
 	}
 
-
 	function dateHandler(e) {
 		date = e.detail.lastModification;
 	}
-
 
 	function resetInformations() {
 		error = [];
@@ -73,24 +68,22 @@
 		if (status == 0 || status == 1 || status == 5) {
 			// disabled || access denied || inactive
 			active = false;
-		}
-		else
-		{	
+		} else {
 			active = true; // every other status enable the hook
 		}
 
-		wait = status == 6?true:false // wait for somthing
+		wait = status == 6 ? true : false; // wait for somthing
 
-		if(wait) {resetAlerts()};
+		if (wait) {
+			resetAlerts();
+		}
 	}
- 
-	function resetAlerts()
-	{
+
+	function resetAlerts() {
 		error = [];
 		success = null;
 		warnings = [];
 	}
-
 </script>
 
 <!-- {$hooksStatus[name]}
@@ -98,15 +91,14 @@
 {active} -->
 
 {#if visible && active}
-	
- <div class="flex p-5 m-2 gap-5">
-		<div class="flex-none w-48 ">
+	<div class="flex p-5 m-2 gap-5">
+		<div class="flex-none w-48">
 			<h4 class="h4">{displayName}</h4>
 			<div class="text-sm py-2">
-			{#if date}
-				<TimeDuration milliseconds={new Date(date)} />
-			{/if}
-		</div>
+				{#if date}
+					<TimeDuration milliseconds={new Date(date)} />
+				{/if}
+			</div>
 		</div>
 		<div class="grow space-y-2">
 			{#if error}
@@ -123,19 +115,17 @@
 				<Alert cssClass="variant-filled-success" message={success} />
 			{/if}
 			<div class="h-full w-full">
-			 {#if !wait}
-					<slot name="view" {errorHandler} {successHandler} {warningHandler} {dateHandler} >render view</slot>
+				{#if !wait}
+					<slot name="view" {errorHandler} {successHandler} {warningHandler} {dateHandler}
+						>render view</slot
+					>
 				{:else}
-	
-					<div class="flex gap-2 text-surface-600 ">
-							<Fa icon={faLock} size="lg"/>
-							<span>this area is locked, because data is uploading</span>
+					<div class="flex gap-2 text-surface-600">
+						<Fa icon={faLock} size="lg" />
+						<span>this area is locked, because data is uploading</span>
 					</div>
-
-			{/if}
-		</div>
-
+				{/if}
+			</div>
 		</div>
 	</div>
-
 {/if}

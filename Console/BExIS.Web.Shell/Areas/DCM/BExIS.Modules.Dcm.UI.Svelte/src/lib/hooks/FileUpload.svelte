@@ -8,7 +8,11 @@
 
 	import FileReaderInformation from '$lib/components/fileupload/FileReaderInformation.svelte';
 
-	import { latestFileUploadDate, latestFileReaderDate,latestSubmitDate } from '../../routes/edit/stores';
+	import {
+		latestFileUploadDate,
+		latestFileReaderDate,
+		latestSubmitDate
+	} from '../../routes/edit/stores';
 
 	import type { FileUploadModel } from '$models/FileUpload';
 
@@ -30,8 +34,7 @@
 	let model: FileUploadModel;
 	$: model;
 
-
-	let fileReaderSelectedFile=""
+	let fileReaderSelectedFile = '';
 
 	onMount(async () => {
 		load();
@@ -69,18 +72,16 @@
 		console.log('warning');
 		reload();
 		dispatch('warning', { text: e.detail.text });
-		fileReaderSelectedFile="";
+		fileReaderSelectedFile = '';
 	}
-
 </script>
 
 <div class="space-y-2">
 	{#await load()}
 		<div class="text-surface-800">
-			<Spinner label="loading File Uploader" position="{positionType.start}" />
+			<Spinner label="loading File Uploader" position={positionType.start} />
 		</div>
 	{:then result}
-
 		<FileUploader
 			{id}
 			{version}
@@ -108,7 +109,7 @@
 
 		<FileReaderInformation
 			{id}
-			bind:target = {fileReaderSelectedFile}
+			bind:target={fileReaderSelectedFile}
 			bind:readableFiles={model.fileUploader.existingFiles}
 			bind:asciiFileReaderInfo={model.asciiFileReaderInfo}
 		/>

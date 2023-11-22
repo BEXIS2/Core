@@ -15,15 +15,14 @@
 
 	//stores
 
-	import {
-		displayPatternStore,
-		unitStore,
-		dataTypeStore,
-		templateStore,
-		meaningsStore
-	} from '../../store';
+	import { displayPatternStore, unitStore, dataTypeStore, templateStore, meaningsStore } from '../../store';
 
-	import { updateDisplayPattern, updateDatatypes, updateUnits, updateTemplates } from './helper';
+	import {
+		updateDisplayPattern,
+		updateDatatypes,
+		updateUnits,
+		updateTemplates
+	} from './helper';
 
 	import DataTypeDescription from './DataTypeDescription.svelte';
 	import Container from './Container.svelte';
@@ -57,6 +56,7 @@
 	export let isValid: boolean = false;
 	export let last: boolean = false;
 	export let expand: boolean;
+	export let blockDataRelevant:boolean;
 
 	$: isValid;
 	// validation
@@ -82,14 +82,14 @@
 		suite.reset();
 
 		setTimeout(async () => {
+
 			updateLists();
 
-			displayPattern = updateDisplayPattern(variable.dataType);
+			//displayPattern = updateDisplayPattern(variable.dataType, true);
 
 			// when type has change, reset value, but after copy do not reset
 			// thats why reset need to set
-			variable.displayPattern = undefined;
-
+		
 			if (displayPattern.length > 0) {
 				res = suite(variable, 'displayPattern');
 			}
@@ -110,9 +110,10 @@
 	afterUpdate(() => {
 		displayPattern = updateDisplayPattern(variable.dataType, false);
 		res = suite(variable);
+
+
 		setValidationState(res);
-		//console.log("u",variable.name);
-		//console.log("--------------------");
+
 	});
 
 	//change event: if input change check also validation only on the field
@@ -122,16 +123,15 @@
 		// otherwise the values are old
 		setTimeout(async () => {
 			res = suite(variable, e.target.id);
-			setValidationState(res);
+				setValidationState(res);
 
-			//console.log(res);
-			//console.log(res.isValid());
 		}, 100);
 	}
 
 	//change event: if select change check also validation only on the field
 	// *** is the id of the input component
 	function onSelectHandler(e, id) {
+
 		setTimeout(async () => {
 			res = suite(variable, id);
 
@@ -141,11 +141,7 @@
 			}
 
 			if (id == 'variableTemplate') {
-				variable.meanings = updateMeanings(variable, e.detail);
-				console.log(
-					'🚀 ~ file: Variable.svelte:149 ~ setTimeout ~ variable.meanings:',
-					variable.meanings
-				);
+				variable.meanings = updateMeanings(variable, e.detail)
 			}
 
 			setValidationState(res);
@@ -201,38 +197,33 @@
 		units = updateUnits(variable.dataType, variable.template, $unitStore, suggestedUnits);
 		//console.log("updated units",units);
 		variableTemplates = updateTemplates(variable.unit, $templateStore, suggestedTemplates);
+
 	}
 
-	function updateMeanings(
-		_variable: VariableInstanceModel,
-		_variableTemplate: templateListItemType
-	): listItemType[] {
-		console.log('🚀 ~ file: Variable.svelte:208 ~ _variableTemplate:', _variableTemplate);
-		console.log(
-			'🚀 ~ file: Variable.svelte:209 ~ _variableTemplate.meanings:',
-			_variableTemplate.meanings
-		);
-		if (_variableTemplate && _variableTemplate.meanings) {
-			if (_variable.meanings) {
-				return [
-					..._variable.meanings,
-					...$meaningsStore.filter((m) => _variableTemplate.meanings.includes(m.text))
-				];
-			} else {
-				return [...$meaningsStore.filter((m) => _variableTemplate.meanings.includes(m.text))];
+	function updateMeanings(_variable:VariableInstanceModel, _variableTemplate:templateListItemType):listItemType[]
+	{
+			if(_variableTemplate && _variableTemplate.meanings)
+			{
+					if(_variable.meanings)
+					{
+						return [..._variable.meanings,...$meaningsStore.filter(m=>_variableTemplate.meanings.includes(m.text))]
+					}
+					else
+					{
+						 return [...$meaningsStore.filter(m=>_variableTemplate.meanings.includes(m.text))]
+					}
 			}
-		}
 
-		return [];
+			return []
 	}
 </script>
 
 <div id="variable-{variable.id}-container" class="flex gap-5">
 	{#if loaded && variable && $templateStore}
-		<div id="variable-{variable.id}-container-info" class="grow">
+		<div id="variable-{variable.id}-container-info" class="grow ">
 			{#if expand}
 				<div class="card">
-					<header id="header_{index}" class="card-header">
+					<header id="header_{index}" class="card-header ">
 						<Header
 							{index}
 							name={variable.name}
@@ -249,6 +240,7 @@
 								valid={res.isValid('name')}
 								invalid={res.hasErrors('name')}
 								feedback={res.getErrors('name')}
+								disabled={blockDataRelevant}
 							/>
 						</Header>
 					</header>
@@ -277,6 +269,7 @@
 						<!--Datatype-->
 						<Container>
 							<div slot="property">
+
 								<MultiSelect
 									id="dataType"
 									title="Data Type"
@@ -293,6 +286,7 @@
 									feedback={res.getErrors('dataType')}
 									clearable={true}
 									on:change={(e) => onSelectHandler(e, 'dataType')}
+									disabled={blockDataRelevant}
 								/>
 							</div>
 
@@ -329,18 +323,18 @@
 						<Container>
 							<div slot="property">
 								<div class="flex w-full gap-1 py-1">
-									<div class="grow">Unit</div>
-									{#if suggestedUnits && suggestedUnits.length > 1}
-										{#each suggestedUnits?.slice(0, 3) as u}
-											<button
-												class="badge"
-												class:variant-ghost-success={u == variable.unit}
-												class:variant-filled-success={u != variable.unit}
-												on:click={() => (variable.unit = u)}>{u.text}</button
-											>
-										{/each}
-									{/if}
-								</div>
+									<div class="grow ">
+											Unit
+									</div>
+									{#if suggestedUnits && suggestedUnits.length>1}
+									{#each suggestedUnits?.slice(0,3) as u}
+											<button class="badge" 
+											class:variant-ghost-success={u == variable.unit}  
+											class:variant-filled-success={u != variable.unit}
+											on:click={()=> variable.unit = u }>{u.text}</button>
+									{/each}
+								{/if}
+							</div>
 								<MultiSelect
 									id="unit"
 									title=""
@@ -369,14 +363,14 @@
 						<Container>
 							<div slot="property">
 								<div class="flex w-full gap-1 py-1">
-									<div class="grow">Template</div>
-									{#each suggestedTemplates.slice(0, 3) as t}
-										<button
-											class="badge"
-											class:variant-ghost-success={t == variable.template}
+										<div class="grow ">
+												Template
+										</div>
+									{#each suggestedTemplates.slice(0,3) as t}
+											<button class="badge" 
+											class:variant-ghost-success={t == variable.template}  
 											class:variant-filled-success={t != variable.template}
-											on:click={() => (variable.template = t)}>{t.text}</button
-										>
+											on:click={()=> variable.template = t }>{t.text}</button>
 									{/each}
 								</div>
 								<MultiSelect
@@ -392,10 +386,12 @@
 									clearable={true}
 									bind:target={variable.template}
 									placeholder="-- Please select --"
-									invalid={res.hasErrors('variableTemplate')}
+									invalid={res.hasErrors('variableTemplate') && !blockDataRelevant}
 									feedback={res.getErrors('variableTemplate')}
 									on:change={(e) => onSelectHandler(e, 'variableTemplate')}
+									disabled={blockDataRelevant}
 								/>
+							
 							</div>
 							<div slot="description">...</div>
 						</Container>
@@ -403,7 +399,9 @@
 						<Container>
 							<div slot="property">
 								<div class="flex w-full gap-1 py-1">
-									<div class="grow">Meanings</div>
+										<div class="grow ">
+												Meanings
+										</div>
 								</div>
 								<MultiSelect
 									id="meanings"
@@ -422,9 +420,13 @@
 									feedback={res.getErrors('meanings')}
 									on:change={(e) => onSelectHandler(e, 'meanings')}
 								/>
+							
 							</div>
 							<div slot="description">...</div>
 						</Container>
+
+
+
 					</section>
 
 					<footer class="card-footer">

@@ -21,6 +21,7 @@
 		console.log(response);
 		if (response?.status == 200) {
 			var modules = await response.data;
+			console.log("🚀 ~ file: +page.svelte:24 ~ getSettings ~ modules:", modules)
 			
 			if(modules.length > 0)
 			{
@@ -46,6 +47,7 @@
 	}
 
 	export async function putSettingByModuleId(moduleId: string, model: UpdateSettingModel) {
+		console.log(model);
 		const response = await putByModuleId(moduleId, model);
 		if (response?.status == 200) {
 			notificationStore.showNotification({
@@ -74,8 +76,7 @@
 			<ListBox active="variant-filled-primary">
 				{#each data as m}
 					<ListBoxItem bind:group={module} name="medium" value={m.id}
-						>{m.name}</ListBoxItem
-					>
+						>{m.name}</ListBoxItem>
 				{/each}
 			</ListBox>
 		{:catch error}

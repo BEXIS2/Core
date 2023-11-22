@@ -1,4 +1,4 @@
-import type {errorType, sortedError} from './Models'
+import type { errorType, sortedError } from './Models';
 
 export interface ValidationModel {
 	isValid: boolean;
@@ -10,8 +10,6 @@ export interface FileValidationResult {
 	errors: string[];
 	sortedErrors: sortedError[];
 }
-
-
 
 export interface Check {
 	name: string;

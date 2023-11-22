@@ -130,6 +130,8 @@
     <Compile Include="Controllers\UnitController.cs" />
     <Compile Include="Controllers\StructuresController.cs" />
     <Compile Include="Controllers\VariableTemplateController.cs" />
+    <Compile Include="Helpers\DataStructureHelper.cs" />
+    <Compile Include="Helpers\MeaningHelper.cs" />
     <Compile Include="Helpers\HtmlPrefixScopeExtentions.cs" />
     <Compile Include="Helpers\RPMSeedDataGenerator.cs" />
     <Compile Include="Helpers\SeedData\AttributeCreator.cs" />
@@ -144,6 +146,7 @@
     <Compile Include="Models\DimensionModels.cs" />
     <Compile Include="Models\Models.cs" />
     <Compile Include="Models\DataTypeModels.cs" />
+    <Compile Include="Models\MeaningModels.cs" />
     <Compile Include="Models\UnitModels.cs" />
     <Compile Include="Models\VariableModels.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -171,7 +174,8 @@
     <Content Include="Views\LinksMeanings\Index.cshtml" />
     <Content Include="Views\Meaning\Index.cshtml" />
     <Content Include="Views\ExternalLink\Index.cshtml" />
-    <Content Include="Views\Constraints\Index.cshtml" />
+    <Content Include="Views\DataStructure\Edit.cshtml" />
+    <Content Include="Views\ExternalLink\PrefixCategory.cshtml" />
     <None Include="web.Debug.config">
       <DependentUpon>web.config</DependentUpon>
     </None>

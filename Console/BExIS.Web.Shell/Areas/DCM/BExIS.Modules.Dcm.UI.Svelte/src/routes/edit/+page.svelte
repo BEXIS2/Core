@@ -1,5 +1,4 @@
 <script lang="ts">
-
 	import { getEdit, getHooks } from './services';
 	import { Spinner, Page, ErrorMessage, pageContentLayoutType } from '@bexis2/bexis2-core-ui';
 	import { Modal } from '@skeletonlabs/skeleton';
@@ -7,7 +6,6 @@
 	import Header from './Header.svelte';
 	import Data from './Data.svelte';
 	import Hooks from './Hooks.svelte';
-
 
 	import {
 		latestFileUploadDate,
@@ -19,7 +17,6 @@
 
 	import type { EditModel, HookModel, ViewModel } from './types';
 
-
 	// load attributes from div
 	let container;
 	let id: number = 0;
@@ -28,7 +25,7 @@
 
 	let title = '';
 
-	$:title;
+	$: title;
 
 	let model: EditModel = {
 		id: 0,
@@ -38,7 +35,6 @@
 		hooks: [],
 		views: []
 	};
-
 
 	let hookStatusList: { [key: string]: number };
 	$: hookStatusList;
@@ -111,67 +107,57 @@
 
 			// get resultView
 			seperateViews(views);
-
 		}, 1000); /* <--- If this is enough greater than transition, it doesn't happen... */
 
 		console.log('model and hooks', model, hookStatusList);
 	}
 
 	async function updateHookStatus() {
+		let wait = false;
+		let time = 1000;
 
-				let wait = false;
-				let time = 1000;
+		//console.log("updateHookStatus", model.hooks)
 
-				//console.log("updateHookStatus", model.hooks)
+		do {
+			//console.log("1.in timeout", model.hooks)
 
-				do
-				{
+			// get status of hooks,
+			await getHooks(id).then((r) => {
+				//console.log('2.updateHookStatus', r);
 
-						//console.log("1.in timeout", model.hooks)
+				model.hooks = r;
+				if (model.hooks) {
+					//console.log("3.before update ",wait);
 
-						 // get status of hooks,  
-						 await getHooks(id).then((r)=>{
-							//console.log('2.updateHookStatus', r);
+					updateStatus(model.hooks);
 
-									model.hooks = r;
-									if (model.hooks) {
-											//console.log("3.before update ",wait);
+					//console.log("4.wait ",wait)
+					//console.log("5.while", model.hooks, model.hooks.filter(h=>h.status==6).length)
 
+					if (model.hooks.filter((h) => h.status == 6).length > 0) {
+						wait = true;
+						console.log(wait);
+					} else {
+						wait = false;
+						console.log(wait);
+					}
 
-												 updateStatus(model.hooks);
-											
-													//console.log("4.wait ",wait)
-													//console.log("5.while", model.hooks, model.hooks.filter(h=>h.status==6).length)
-													
-													if(model.hooks.filter(h=>h.status==6).length>0)
-													{
-															wait = true;
-															console.log(wait)
-													}
-													else
-													{
-															wait = false;
-															console.log(wait)
+					if (time <= 10000) {
+						time = time * 2;
+					}
+					//console.log("6.check status", time, wait)
+				}
+			});
 
-													}
+			await sleep(time);
 
-											if(time<=10000){time = time*2} 
-											//console.log("6.check status", time, wait)
-									}
-
-						});
-							
-						await sleep(time);
-
-					 console.log("end while",wait);
-					
-				}while(wait)
-    
+			console.log('end while', wait);
+		} while (wait);
 	}
 
-function sleep(milliseconds) {
- return new Promise(resolve => setTimeout(resolve, milliseconds));
-}
+	function sleep(milliseconds) {
+		return new Promise((resolve) => setTimeout(resolve, milliseconds));
+	}
 
 	// seperate dcm hooks from other hooks
 	// known hooks - metadata, fileupload, validation
@@ -230,15 +216,12 @@ function sleep(milliseconds) {
 	let visible = false;
 </script>
 
-
 <Page title="Edit: ({id} | {title})" contentLayoutType={pageContentLayoutType.full}>
 	{#await load()}
-
 		<div class="w-full h-full text-surface-600">
 			<Spinner label="loading edit page" />
 		</div>
 	{:then a}
-
 		{#if model && hookStatusList}
 			<!--if the model == true, load page-->
 			<!-- Header -->
@@ -256,11 +239,9 @@ function sleep(milliseconds) {
 				<Spinner textCss="text-surface-800" label="loading edit page" position="center" />
 			</div>
 		{/if}
-
 	{:catch error}
-	<ErrorMessage {error} />
+		<ErrorMessage {error} />
 	{/await}
-
 </Page>
 
-<Modal/>
+<Modal />

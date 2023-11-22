@@ -153,12 +153,11 @@
 				{/if}
 
 				<div class=" flex gap-1 pt-5 text-right">
-
 					<div class="grow text-xs">
 						{#if onSaving}
-							<Spinner  position={positionType.end} />
+							<Spinner position={positionType.end} />
 						{/if}
-				 </div>
+					</div>
 					<button
 						title="cancel"
 						type="button"

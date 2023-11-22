@@ -19,7 +19,7 @@
 	export let readableFiles: fileInfoType[] = [];
 	export let asciiFileReaderInfo: asciiFileReaderInfoType;
 
-	export let target = "";
+	export let target = '';
 	$: target;
 	let model: DataStructureCreationModel | null;
 	$: model;
@@ -36,16 +36,14 @@
 
 		if (e.detail.value) {
 			open = true;
-			try{
-					model = await load(e.detail.value, id, 0);
+			try {
+				model = await load(e.detail.value, id, 0);
 				target = null;
-			}
-			catch(error)
-			{
+			} catch (error) {
 				notificationStore.showNotification({
-						notificationType: notificationType.error,
-						message: "This file has not a proper structure, please try a other one."
-					})
+					notificationType: notificationType.error,
+					message: 'This file has not a proper structure, please try a other one.'
+				});
 			}
 		}
 	}

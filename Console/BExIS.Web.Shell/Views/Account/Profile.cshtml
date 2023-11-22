@@ -1,7 +1,10 @@
-﻿@model string
+﻿@model BExIS.Web.Shell.Models.ReadJwtModel
 
 @{
     ViewBag.Title = "Profile";
 }
 
-@Html.DisplayFor(m => m)
+<div class="col-md-6" style="word-wrap: break-word">
+    @Html.LabelFor(m => m.Jwt)
+    @Html.DisplayFor(m => m.Jwt)
+</div>

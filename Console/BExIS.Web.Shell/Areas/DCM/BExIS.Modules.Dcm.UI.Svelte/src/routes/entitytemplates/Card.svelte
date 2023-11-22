@@ -19,7 +19,6 @@
 </script>
 
 <ContentContainer>
-
 	<header class="card-header">
 		<div class="flex">
 			<div class="grow text-left">
@@ -64,9 +63,9 @@
 				</ul>
 			</div>
 		{/if}
-		</div>
+	</div>
 
-		<footer class="card-footer">
-			<slot>no action setup</slot>
-		</footer>
+	<footer class="card-footer">
+		<slot>no action setup</slot>
+	</footer>
 </ContentContainer>

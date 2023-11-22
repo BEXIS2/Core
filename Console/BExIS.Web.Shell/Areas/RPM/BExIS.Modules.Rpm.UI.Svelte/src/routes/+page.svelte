@@ -13,13 +13,15 @@
 </script>
 
 <Page title="Research Planning Module">
-	<div class="grid grid-flow-col gap-10">
+	<div class="grid grid-cols-5 gap-10">
 		<a class="btn variant-filled-secondary" href="./datastructure">datastructure</a>
 		<a class="btn variant-filled-secondary" href="./datastructure/create">create datastructure</a>
+		<a class="btn variant-filled-secondary" href="./datastructure/edit">edit datastructure</a>
 		<a class="btn variant-filled-secondary" href="./unit">unit</a>
 		<a class="btn variant-filled-secondary" href="./dimension">dimension</a>
 		<a class="btn variant-filled-secondary" href="./variabletemplate">variabletemplate</a>
 		<a class="btn variant-filled-secondary" href="./meaning">meanings</a>
 		<a class="btn variant-filled-secondary" href="./externallink">externallink</a>
+		<a class="btn variant-filled-secondary" href="./externallink/prefixcategory">prefixcategory</a>
 	</div>
 </Page>

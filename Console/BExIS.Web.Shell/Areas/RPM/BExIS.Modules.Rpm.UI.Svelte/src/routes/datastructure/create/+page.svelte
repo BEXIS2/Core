@@ -1,5 +1,5 @@
 <script lang="ts">
-	import Structure from '$lib/components/datastructure/structure/Structure.svelte';
+	import Structure from '$lib/components/datastructure/structure/CreateStructure.svelte';
 	import Selection from '$lib/components/datastructure/Selection.svelte';
 
 	import { onMount } from 'svelte';
@@ -66,6 +66,7 @@
 			console.log('copy structure');
 			// copy structure
 			model = await copy(datastructureId);
+			console.log("🚀 ~ file: +page.svelte:65 ~ start ~ model:", model)
 			selectionIsActive = false;
 		} else {
 			console.log('empty structure');
@@ -81,7 +82,7 @@
 		const displayPattern = await getDisplayPattern();
 		displayPatternStore.set(displayPattern);
 
-		console.log('model', model);
+
 	}
 
 	async function update(e) {
@@ -121,5 +122,5 @@
 		{/if}
 	{:catch error}
 		<ErrorMessage {error} />
-	{/await}
+	{/await} 
 </Page>

@@ -1,4 +1,5 @@
-﻿using BExIS.Security.Services.Versions;
+﻿using BExIS.App.Bootstrap.Attributes;
+using BExIS.Security.Services.Versions;
 using BExIS.Utils.Route;
 using BExIS.Web.Shell.Models;
 using BExIS.Xml.Helpers;
@@ -16,33 +17,15 @@ namespace BExIS.Web.Shell.Controllers.API
 {
     public class VersionsController : ApiController
     {
-        [HttpGet, GetRoute("api/versions/")]
-        public async Task<HttpResponseMessage> GetVersions()
+        [HttpGet, GetRoute("api/versions/database")]
+        public async Task<HttpResponseMessage> GetVersionFromDatabase()
         {
             try
             {
-                // Site
-                var versionSite = ConfigurationManager.AppSettings["ApplicationVersion"];
-
-                // Database
                 using (var versionManager = new VersionManager())
                 {
                     var versionDatabase = versionManager.GetLatestVersion().Value;
-
-                    // Workspace
-                    string filePath = Path.Combine(AppConfiguration.WorkspaceGeneralRoot, "General.Settings.xml");
-                    XDocument settings = XDocument.Load(filePath);
-                    XElement entry = XmlUtility.GetXElementByAttribute("entry", "key", "version", settings);
-                    var versionWorkspace = entry.Attribute("value")?.Value;
-
-                    var model = new ReadVersionsModel()
-                    {
-                        Site = versionSite,
-                        Database = versionDatabase,
-                        Workspace = versionWorkspace
-                    };
-
-                    return Request.CreateResponse(HttpStatusCode.OK, model);
+                    return Request.CreateResponse(HttpStatusCode.OK, versionDatabase);
                 }
             }
             catch (Exception ex)
@@ -86,15 +69,33 @@ namespace BExIS.Web.Shell.Controllers.API
             }
         }
 
-        [HttpGet, GetRoute("api/versions/database")]
-        public async Task<HttpResponseMessage> GetVersionFromDatabase()
+        [HttpGet, GetRoute("api/versions/")]
+        public async Task<HttpResponseMessage> GetVersions()
         {
             try
             {
+                // Site
+                var versionSite = ConfigurationManager.AppSettings["ApplicationVersion"];
+
+                // Database
                 using (var versionManager = new VersionManager())
                 {
                     var versionDatabase = versionManager.GetLatestVersion().Value;
-                    return Request.CreateResponse(HttpStatusCode.OK, versionDatabase);
+
+                    // Workspace
+                    string filePath = Path.Combine(AppConfiguration.WorkspaceGeneralRoot, "General.Settings.xml");
+                    XDocument settings = XDocument.Load(filePath);
+                    XElement entry = XmlUtility.GetXElementByAttribute("entry", "key", "version", settings);
+                    var versionWorkspace = entry.Attribute("value")?.Value;
+
+                    var model = new ReadVersionsModel()
+                    {
+                        Site = versionSite,
+                        Database = versionDatabase,
+                        Workspace = versionWorkspace
+                    };
+
+                    return Request.CreateResponse(HttpStatusCode.OK, model);
                 }
             }
             catch (Exception ex)

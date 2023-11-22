@@ -172,6 +172,9 @@
     <Content Include="Mappings\Default\Data\DataTupleVersion.hbm.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="Mappings\Default\Meaning\PrefixCategory.hbm.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="Mappings\Default\MetadataStructure\DataContainer.MetadataAttribute.Parameter.hbm.xml">
       <SubType>Designer</SubType>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
@@ -179,8 +182,12 @@
     <Content Include="Mappings\Default\MetadataStructure\MetadataParameterUsage.hbm.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Mappings\Default\Meaning\ExternalLink.hbm.xml" />
-    <Content Include="Mappings\Default\Meaning\Meaning.hbm.xml" />
+    <Content Include="Mappings\Default\Meaning\ExternalLink.hbm.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Mappings\Default\Meaning\Meaning.hbm.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="Mappings\Default\MetadataStructure\MetadataNestedAttributeUsage.hbm.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

@@ -1,7 +1,9 @@
 <script lang="ts">
-	import { Modal, modalStore, type ModalSettings } from '@skeletonlabs/skeleton';
+	import { Modal, getModalStore, type ModalSettings } from '@skeletonlabs/skeleton';
+	const modalStore = getModalStore();
+	
 	import { getLinks, remove } from './services';
-	import type { externalLinkType } from '$lib/components/meaning/types';
+	import type { externalLinkType, prefixCategoryType } from '$lib/components/meaning/types';
 
 	import {
 		Page,
@@ -34,7 +36,7 @@
 
 		// get external links
 		externalLinks = await getLinks();
-		externalLink = { id: 0, name: '', type: '', uri: '' };
+  externalLink = { id: 0, name: '', type: '', uri: '' };
 		externalLinksStore.set(externalLinks);
 
 		console.log('store', $externalLinksStore);
@@ -46,9 +48,7 @@
 		optionsComponent: TableOptions,
 		columns: {
 			id: {
-				disableFiltering: true,
-				disableSorting: true,
-				exclude: true
+				fixedWidth: 100
 			},
 			extra: {
 				disableFiltering: true,
@@ -66,7 +66,36 @@
 					renderComponent: TableUri
 				},
 				disableFiltering: true,
-				disableSorting: true
+				disableSorting:true
+			},
+			type: {
+				disableFiltering: true,
+				disableSorting: true,
+				exclude: true
+			},
+			prefix: {
+				instructions: {
+					toStringFn: 
+					 ((pc: externalLinkType) =>	pc?.name	),
+					toSortableValueFn: 
+					((pc: externalLinkType) =>	pc?.name	),
+					toFilterableValueFn: 
+					((pc: externalLinkType) =>	pc?.name	)
+				}
+
+			},
+			prefixcategory: {
+				instructions: {
+					toStringFn: 
+					 ((pc: prefixCategoryType) =>	pc?.name	),
+					toSortableValueFn: 
+					((pc: prefixCategoryType) =>	pc?.name	),
+					toFilterableValueFn: 
+					((pc: prefixCategoryType) =>	pc?.name	)
+				}
+			},
+			optionsColumn: {
+				fixedWidth: 100
 			}
 		}
 	};

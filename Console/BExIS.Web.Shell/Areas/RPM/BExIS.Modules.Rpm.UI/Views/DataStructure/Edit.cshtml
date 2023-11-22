@@ -1,0 +1,18 @@
+﻿@{
+    ViewBag.Title = "Edit Structure";
+    Layout = "~/Themes/Default/Layouts/_svelteLayout.cshtml";
+
+}
+
+@{
+
+    long structureId = 0;
+    bool dataExist = false;
+
+    if (ViewData["structureId"] != null) { structureId = Convert.ToInt64(ViewData["structureId"]); }
+    if (ViewData["dataExist"] != null) { dataExist = Convert.ToBoolean(ViewData["dataExist"]); }
+}
+
+<div id="datastructure" structure="@structureId" dataExist="@dataExist">
+    @Html.Partial("_sveltePage")
+</div>
