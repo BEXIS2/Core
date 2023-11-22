@@ -10,9 +10,7 @@
 		TablePlaceholder,
 		notificationStore,
 		notificationType,
-
 		type helpItemType
-
 	} from '@bexis2/bexis2-core-ui';
 	import * as apiCalls from './services/apiCalls';
 	import Form from './components/form.svelte';
@@ -183,4 +181,4 @@ const modalStore = getModalStore();
 		{/await}
 	</div>
 </Page>
-<Modal/>
+<Modal />

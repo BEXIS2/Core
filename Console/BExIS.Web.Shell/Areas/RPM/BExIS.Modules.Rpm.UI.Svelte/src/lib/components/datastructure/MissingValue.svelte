@@ -22,10 +22,10 @@
 
 <div class="flex space-x-3 content-center">
 	<!-- <Label>Name:</Label>  -->
-	<TextInput id="name" bind:value={displayName} on:change placeholder="Missing Value"/>
+	<TextInput id="name" bind:value={displayName} on:change placeholder="Missing Value" />
 
 	<!-- <Label>Description:</Label>  -->
-	<TextInput id="description" bind:value={description} on:change placeholder="Description"/>
+	<TextInput id="description" bind:value={description} on:change placeholder="Description" />
 
 	<div class="self-center text-xl mt-5">
 		<button title="delete" type="button" on:click={remove}><Fa icon={faTrashAlt} /></button>

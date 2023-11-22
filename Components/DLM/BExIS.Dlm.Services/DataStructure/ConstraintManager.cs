@@ -130,13 +130,13 @@ namespace BExIS.Dlm.Services.DataStructure
             return (true);
         }
 
-        internal DomainConstraint Update(DomainConstraint entity)
+        public DomainConstraint Update(DomainConstraint entity)
         {
             Contract.Requires(entity != null, "provided entity can not be null");
             Contract.Requires(entity.Id >= 0, "provided entity must have a permanent ID");
 
             Contract.Ensures(Contract.Result<DomainConstraint>() != null && Contract.Result<DomainConstraint>().Id >= 0, "No entity is persisted!");
-
+            entity.Dematerialize();
             using (IUnitOfWork uow = this.GetUnitOfWork())
             {
                 IRepository<DomainConstraint> repo = uow.GetRepository<DomainConstraint>();
