@@ -122,7 +122,7 @@ namespace BExIS.UI.Hooks
         public T LoadCache<T>(string _entity, string _place, HookMode _mode, long id) where T : new()
         {
 
-       
+
             //check incoming values
             if (string.IsNullOrEmpty(_entity)) throw new ArgumentNullException(nameof(_entity));
             if (string.IsNullOrEmpty(_place)) throw new ArgumentNullException(nameof(_place));

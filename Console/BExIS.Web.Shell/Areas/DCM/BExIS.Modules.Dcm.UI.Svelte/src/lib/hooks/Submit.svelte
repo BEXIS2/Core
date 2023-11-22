@@ -18,6 +18,7 @@
 
 	import { onMount, createEventDispatcher } from 'svelte';
 	import { goto } from '$app/navigation';
+	import PlaceHolderHookContent from './placeholder/PlaceHolderHookContent.svelte';
 
 	export let id = 0;
 	export let version = 1;
@@ -103,9 +104,7 @@
 </script>
 
 {#await reload()}
-	<div class="w-full h-full text-surface-600">
-		<Spinner label="loading" position={positionType.start} />
-	</div>
+	<PlaceHolderHookContent/>
 {:then m}
 	<div class="flex-col">
 		<button

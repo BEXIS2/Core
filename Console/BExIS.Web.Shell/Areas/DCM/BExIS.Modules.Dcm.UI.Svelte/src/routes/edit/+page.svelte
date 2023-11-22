@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { getEdit, getHooks } from './services';
-	import { Spinner, Page, ErrorMessage, pageContentLayoutType } from '@bexis2/bexis2-core-ui';
+	import { Page, ErrorMessage, pageContentLayoutType } from '@bexis2/bexis2-core-ui';
 	import { Modal } from '@skeletonlabs/skeleton';
 
 	import Header from './Header.svelte';
@@ -16,6 +16,7 @@
 	} from './stores';
 
 	import type { EditModel, HookModel, ViewModel } from './types';
+	import Placeholder from './PlaceholderPage.svelte';
 
 	// load attributes from div
 	let container;
@@ -217,16 +218,11 @@
 </script>
 
 <Page title="Edit: ({id} | {title})" contentLayoutType={pageContentLayoutType.full}>
+	<Header {id} {version} {title} />
 	{#await load()}
-		<div class="w-full h-full text-surface-600">
-			<Spinner label="loading edit page" />
-		</div>
+			<Placeholder/>
 	{:then a}
 		{#if model && hookStatusList}
-			<!--if the model == true, load page-->
-			<!-- Header -->
-			<Header {id} {version} {title} />
-
 			<!-- Data Module Hooks -->
 			<Data bind:hooks={datasethooks} {id} {version} />
 
@@ -234,10 +230,7 @@
 
 			<Hooks bind:hooks={addtionalhooks} {id} {version} />
 		{:else}
-			<!-- access denied -->
-			<div class="h-screen">
-				<Spinner textCss="text-surface-800" label="loading edit page" position="center" />
-			</div>
+			<Placeholder/>
 		{/if}
 	{:catch error}
 		<ErrorMessage {error} />
