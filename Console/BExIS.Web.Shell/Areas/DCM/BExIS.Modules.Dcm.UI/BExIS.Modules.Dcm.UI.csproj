@@ -66,7 +66,6 @@
     <Compile Include="Controllers\Hooks\FileUploadController.cs" />
     <Compile Include="Controllers\Hooks\SubmitController.cs" />
     <Compile Include="Controllers\Legacy\AttachmentsController.cs" />
-    <Compile Include="Controllers\Legacy\CreateDatasetController.cs" />
     <Compile Include="Controllers\Hooks\EntityReferenceController.cs" />
     <Compile Include="Controllers\FormController.cs" />
     <Compile Include="Controllers\Legacy\HelpController.cs" />
