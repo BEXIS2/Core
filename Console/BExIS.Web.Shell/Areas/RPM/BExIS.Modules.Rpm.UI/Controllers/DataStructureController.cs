@@ -440,6 +440,8 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                             displayPattern
                             );
 
+                        variable.Id = updatedVariable.Id;
+
                         structure = structureManager.AddVariable(structure.Id, updatedVariable.Id);
 
                     }
