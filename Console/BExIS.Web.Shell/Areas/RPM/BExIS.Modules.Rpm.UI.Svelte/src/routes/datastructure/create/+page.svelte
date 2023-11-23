@@ -17,7 +17,11 @@
 	} from '$lib/components/datastructure/services';
 
 	import type { DataStructureCreationModel } from '$lib/components/datastructure/types';
-	import { displayPatternStore, structureStore,isTemplateRequiredStore  } from '$lib/components/datastructure/store';
+	import {
+		displayPatternStore,
+		structureStore,
+		isTemplateRequiredStore
+	} from '$lib/components/datastructure/store';
 	import { pageContentLayoutType } from '@bexis2/bexis2-core-ui';
 
 	// load attributes from div
@@ -25,7 +29,7 @@
 	let entityId: number;
 	let datastructureId: number = 0;
 	let version: number = 0;
-	let file: string ;
+	let file: string;
 
 	let model: DataStructureCreationModel;
 	$: model;
@@ -38,12 +42,12 @@
 		container = document.getElementById('datastructure');
 		entityId = Number(container?.getAttribute('dataset'));
 		version = Number(container?.getAttribute('version'));
-		file = ""+container?.getAttribute('file');
+		file = '' + container?.getAttribute('file');
 		datastructureId = Number(container?.getAttribute('structure'));
 
 		// get isTemplateRequired from settings and add it to store
 		// is used by validation
-		const isTemplateRequired= Boolean(container?.getAttribute('isTemplateRequired'));
+		const isTemplateRequired = Boolean(container?.getAttribute('isTemplateRequired'));
 		isTemplateRequiredStore.set(isTemplateRequired);
 
 		console.log('start structure suggestion', entityId, version, file, datastructureId);
@@ -54,19 +58,18 @@
 		// check if file is empty or not
 
 		// load data from server
-		if (file!="") {
-			console.log("file exist",file, entityId, 0);
-			
+		if (file != '') {
+			console.log('file exist', file, entityId, 0);
+
 			model = await load(file, entityId, 0);
 		} else if (datastructureId > 0) {
-			console.log("copy structure");
+			console.log('copy structure');
 			// copy structure
 			model = await copy(datastructureId);
 			console.log("🚀 ~ file: +page.svelte:65 ~ start ~ model:", model)
 			selectionIsActive = false;
-			
 		} else {
-			console.log("empty structure");
+			console.log('empty structure');
 			model = await empty(); // empty structure
 			selectionIsActive = false;
 		}

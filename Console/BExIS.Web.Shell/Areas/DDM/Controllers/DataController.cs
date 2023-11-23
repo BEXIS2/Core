@@ -157,7 +157,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
 
                 if (researcobject != null)
                 {
-                    DatasetVersion dsv;
+                    DatasetVersion dsv = null;
                     ShowDataModel model = new ShowDataModel();
 
                     string title = "";
@@ -317,6 +317,14 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                         userName = HttpContext.User.Identity.Name;
 
                     model.Hooks.ForEach(h => h.Check(id, userName));
+
+                    // add informations disbaled hooks from the enity template
+                    // based on the entity template, hooks can be disabled.
+                    foreach (var hook in model.Hooks)
+                    {
+                        if (dsv != null && dsv.Dataset.EntityTemplate.DisabledHooks != null && dsv.Dataset.EntityTemplate.DisabledHooks.Contains(hook.DisplayName))
+                            hook.Status = HookStatus.Disabled;
+                    }
 
                     if (asPartial) return PartialView(model);
 

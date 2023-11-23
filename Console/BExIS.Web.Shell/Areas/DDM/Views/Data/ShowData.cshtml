@@ -142,16 +142,25 @@
 }
 <link href="@Url.Content("~/Areas/DCM/" + debugPath + "Content/bexis-metadata.css")" rel="stylesheet" type="text/css" />
 
-
 <link href="@Url.Content("~/Areas/DDM/Content/ddm.css")" rel="stylesheet" type="text/css" />
-
 
 @if (Model != null && ((Model.IsPublic == true || User.Identity.Name != "") || check_public_metadata == "false"))
 {
     <div id="showData">
-        <div>
-            <h1>@Model.Title <a class="bx bx-edit" href="/dcm/edit?id=@Model.Id"></a></h1>
+        <div class="datasetview_header">
+            <div class="datasetview_header-title">
+                <h1>@Model.Title </h1>
+            </div>
+
+            <div class="datasetview_header-toggle" onclick="toogleToEdit()">
+                <div class="switch">
+                    <input id="bx2-toggle" class="bx2-toggle bx2-toggle-round-flat" type="checkbox">
+                    <label for="bx2-toggle"></label>
+                </div>
+            </div>
         </div>
+
+
 
         @if (ViewData["Message"].ToString() != "")
         {
@@ -485,7 +494,14 @@
    function selectVersion(datasetId, versionNumber) {
         var redirectURL = '@Url.Action("Show", "Data")';
         window.location.href = redirectURL + "/" + datasetId + "?version=" + versionNumber;
+        }
+
+   function toogleToEdit() {
+        
+       window.location.href = "/dcm/edit?id=@Model.Id";
+
     }
+
     </script>
 
 }
@@ -501,5 +517,23 @@ else
 <style>
     a:hover, a {
         text-decoration: none;
+    }
+
+    .datasetview_header {
+        width: 100%;
+        min-height: 40px;
+    }
+
+    .datasetview_header-title {
+        float: left;
+    }
+
+    .datasetview_header-title h1 {
+        margin-top: 2px;
+    }
+
+    .datasetview_header-toggle {
+        padding: 2px;
+        float: right;
     }
 </style>

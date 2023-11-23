@@ -7,10 +7,7 @@
 
 	export let dispatchFn: any;
 
-	
-
 	let inUse = false;
-
 </script>
 
 <tableOption>
@@ -66,7 +63,8 @@
 				id="delete-{row.id}"
 				disabled
 			>
-				<Fa icon={faTrash} /></button>
+				<Fa icon={faTrash} /></button
+			>
 		{/if}
 	</div>
 </tableOption>

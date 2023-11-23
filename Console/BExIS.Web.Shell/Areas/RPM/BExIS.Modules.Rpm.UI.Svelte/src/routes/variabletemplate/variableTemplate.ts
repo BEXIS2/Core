@@ -2,8 +2,7 @@ import { create, test, enforce, only } from 'vest';
 import { variableTemplatesStore } from './stores';
 import { get } from 'svelte/store';
 
-const suite = create((data = {},fieldName) => {
-
+const suite = create((data = {}, fieldName) => {
 	only(fieldName);
 	// const dataTypeWithDisplaypattern = ['date', 'time', 'datetime'];
 
@@ -17,9 +16,9 @@ const suite = create((data = {},fieldName) => {
 			data.id > 0 ? get(variableTemplatesStore).find((e) => e.id == data.id) : { id: 0, name: '' };
 		//console.log(editedObj.name);
 		// get all names back, without the edited one
-		 const list = get(variableTemplatesStore).map((e) => (e.name != editedObj?.name ? e.name : ''));
+		const list = get(variableTemplatesStore).map((e) => (e.name != editedObj?.name ? e.name : ''));
 
-		 enforce(data.name).notInside(list);
+		enforce(data.name).notInside(list);
 	});
 
 	test('description', 'description is required', () => {
@@ -62,4 +61,3 @@ const suite = create((data = {},fieldName) => {
 });
 
 export default suite;
-

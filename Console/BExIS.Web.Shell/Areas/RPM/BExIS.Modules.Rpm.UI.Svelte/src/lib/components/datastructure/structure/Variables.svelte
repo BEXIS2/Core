@@ -18,7 +18,7 @@
 	export let variables: VariableInstanceModel[] = [];
 	export let missingValues: missingValueType[] = [];
 	export let data: string[][];
- export let dataExist:boolean;
+ export let dataExist:boolean = false;
 
 	$: variables;
 
@@ -214,7 +214,6 @@
 	</button>
 
 <div class="pr-32 w-auto">
-	{valid}
 	{#if !valid}
 		<span class="text-sm">Variables with errors:</span>
 
