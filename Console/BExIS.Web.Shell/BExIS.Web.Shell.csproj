@@ -1111,6 +1111,8 @@
     <Content Include="Views\Header\Index.cshtml" />
     <Content Include="Views\Footer\Index.cshtml" />
     <Content Include="Views\Header\Content.cshtml" />
+    <Content Include="Views\Tokens\Create.cshtml" />
+    <Content Include="Views\Tokens\Read.cshtml" />
     <None Include="Web.config" />
   </ItemGroup>
   <ItemGroup>
@@ -1118,7 +1120,6 @@
     <Folder Include="Scripts\svelte\" />
     <Folder Include="Views\Help\" />
     <Folder Include="Views\Jwt\" />
-    <Folder Include="Views\Tokens\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\Home\About.cshtml" />

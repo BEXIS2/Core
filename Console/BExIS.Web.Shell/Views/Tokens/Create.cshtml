@@ -1,0 +1,25 @@
+﻿@using Telerik.Web.Mvc.UI
+@using Vaiona.Web.Mvc.Modularity
+
+@model BExIS.Web.Shell.Models.CreateJwtModel
+
+@using (Html.BeginForm("Create", "Tokens", new AjaxOptions { HttpMethod = "POST" }))
+{
+    @Html.ValidationSummary(true)
+
+    <table class="bx-table-form">
+        <tr>
+            <td>
+                @Html.LabelFor(m => m.Validity)
+            </td>
+            <td>
+                @Html.TextBoxFor(m => m.Validity, new { @class = "t-input bx-input" })
+                @Html.ValidationMessageFor(m => m.Validity)
+            </td>
+        </tr>
+    </table>
+
+    <div class="bx-footer right">
+        <button style="margin-right: 1px" type="submit" class="bx-button action">Create</button>
+    </div>
+}
