@@ -7,10 +7,10 @@
 @{
 
     long structureId = 0;
-    bool dataExist = false;
+    string dataExist = "false";
 
     if (ViewData["structureId"] != null) { structureId = Convert.ToInt64(ViewData["structureId"]); }
-    if (ViewData["dataExist"] != null) { dataExist = Convert.ToBoolean(ViewData["dataExist"]); }
+    if (ViewData["dataExist"] != null) { dataExist = ViewData["dataExist"].ToString(); }
 }
 
 <div id="datastructure" structure="@structureId" dataExist="@dataExist">

@@ -66,7 +66,6 @@
 			console.log('copy structure');
 			// copy structure
 			model = await copy(datastructureId);
-			console.log("🚀 ~ file: +page.svelte:65 ~ start ~ model:", model)
 			selectionIsActive = false;
 		} else {
 			console.log('empty structure');
