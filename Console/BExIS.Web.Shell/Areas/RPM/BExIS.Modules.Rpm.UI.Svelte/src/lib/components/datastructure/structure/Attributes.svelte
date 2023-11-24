@@ -13,7 +13,7 @@
 
 	onMount(() => {
 		suite.reset(); // reset tests
-		if(model.id)
+		if(model.id && model.title==="")
 		{
 			model.title = ""+model.id; // set default title
 		}

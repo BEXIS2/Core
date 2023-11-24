@@ -57,21 +57,21 @@
 	export let last: boolean = false;
 	export let expand: boolean;
 	export let blockDataRelevant:boolean;
-
+	
 	$: isValid;
 	// validation
 	let res = suite.get();
-
+	
 	let loaded = false;
-
+	
 	//displaypattern
 	let displayPattern: listItemType[];
 	$: displayPattern;
-
+	
 	const dispatch = createEventDispatcher();
-
+	
 	let x: listItemType = { id: 0, text: '', group: '' };
-
+	
 	onMount(() => {
 		// set suggestions
 		setList();
@@ -80,11 +80,12 @@
 		suggestedTemplates = variable.possibleTemplates;
 		// reset & reload validation
 		suite.reset();
-
+		
 		setTimeout(async () => {
-
+			
 			updateLists();
-
+			
+			console.log("🚀 ~ file: Variable.svelte:60 ~ blockDataRelevant:", blockDataRelevant)
 			//displayPattern = updateDisplayPattern(variable.dataType, true);
 
 			// when type has change, reset value, but after copy do not reset
@@ -231,6 +232,7 @@
 							bind:isOptional={variable.isOptional}
 							bind:isValid
 							bind:expand
+							{blockDataRelevant}
 						>
 							<TextInput
 								id="name"

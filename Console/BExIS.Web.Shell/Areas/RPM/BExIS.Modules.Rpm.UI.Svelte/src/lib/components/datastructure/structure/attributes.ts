@@ -14,10 +14,8 @@ const suite = create((data = {}, fieldName) => {
 		const listOfStructures = get(structureStore).map((e) => e.text);
 		const editedObj =
 		data.id > 0 ? get(structureStore).find((e) => e.id == data.id) : { id: 0, text: '' };
-		console.log("🚀 ~ file: attributes.js:17 ~ test ~ data:", data)
 
 		const list = editedObj?listOfStructures.filter(l=>l!= editedObj.text):listOfStructures;
-		console.log("🚀 ~ file: attributes.js:20 ~ test ~ list:", list)
 
 		enforce(data.title).notInside(list);
 
