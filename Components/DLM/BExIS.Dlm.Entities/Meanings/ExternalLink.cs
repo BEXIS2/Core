@@ -9,20 +9,18 @@ namespace BExIS.Dlm.Entities.Meanings
     {
         private bool disposedValue;
 
-        [Required(ErrorMessage = "Must not be Empty")]
+        [Required(ErrorMessage = "Must not be Empty"), Key,Url]
         public virtual string URI { get; set; }
         [Required(ErrorMessage = "Must not be Empty")]
         public virtual string Name { get; set; }
-        [Required(ErrorMessage = "Must not be Empty")]
+        [Required(ErrorMessage = "Must not be Empty"), Key]
         public virtual ExternalLinkType Type { get; set; }
-        [Required(ErrorMessage = "Must not be Empty")]
         public virtual ExternalLink Prefix { get; set; }
-
         public virtual PrefixCategory prefixCategory { get; set; }
 
         public ExternalLink(string uRI, string label, ExternalLinkType type, ExternalLink Prefix, PrefixCategory prefixCategory)
         {
-            URI = uRI ?? throw new ArgumentNullException(nameof(uRI));
+            this.URI = uRI ?? throw new ArgumentNullException(nameof(uRI));
             this.Name = label ?? throw new ArgumentNullException(nameof(label));
             this.Type = type;
             this.Prefix = Prefix;
@@ -38,9 +36,11 @@ namespace BExIS.Dlm.Entities.Meanings
             this.prefixCategory = ExternalLink.prefixCategory;
         }
 
-        public ExternalLink() { }
+        public ExternalLink() {
+            this.prefixCategory= new PrefixCategory();
+        }
 
-        protected virtual void Dispose(bool disposing)
+        protected  void Dispose(bool disposing)
         {
             if (!disposedValue)
             {
@@ -66,6 +66,11 @@ namespace BExIS.Dlm.Entities.Meanings
     public enum ExternalLinkType
     {
         prefix = 1,
-        link = 2
+        relation = 2,
+        entitity = 3,
+        Class = 4,
+        Charachteristic = 5,
+        property = 6,
+        dictionary = 7,
     }
 }

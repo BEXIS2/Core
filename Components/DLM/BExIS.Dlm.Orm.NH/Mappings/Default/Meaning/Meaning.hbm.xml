@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <hibernate-mapping xmlns="urn:nhibernate-mapping-2.2" assembly="BExIS.Dlm.Entities" namespace="BExIS.Dlm.Entities.Meanings">
 
-  <class xmlns="urn:nhibernate-mapping-2.2" name="Meaning" table="rpm_meanings" dynamic-update="true">
+  <class xmlns="urn:nhibernate-mapping-2.2" name="Meaning" table="rpm_Meaning" dynamic-update="true">
 
     <id name="Id" type="Int64">
       <generator class="native" />
@@ -31,18 +31,19 @@
 	 <column name="Selectable"/>
 	</property>
 
-	  <set name="ExternalLink" table="rpm_meaning_externallink" inverse="false" lazy="true" fetch="select" cascade="save-update" >
-		  <key column="MeaningsRef"/>
-		  <many-to-many column="ExternalLinkref" class="ExternalLink"/>
-	  </set>
-
-
-	  <set name="Related_meaning" table="rpm_meaning_meaning" inverse="false" lazy="true" fetch="select" cascade="save-update" >
-		  <key column="MeaningsParentRef"/>
-		  <many-to-many column="MeaningsChildrenRef" class="Meaning"/>
-	  </set>
-
+	  <list name="Related_meaning" table="rpm_meaning_meaning" inverse="false" lazy="false" fetch="select" cascade="save-update" >
+		  <key column="MeaningParentRef"></key>
+		  <index column="id"></index>
+		  <many-to-many class="BExIS.Dlm.Entities.Meanings.Meaning" column="MeaningchildrenRef"/>
+	  </list>
 	  
+	  <list name="ExternalLinks" table="rpm_meanings_MeaningEntry" inverse="false" lazy="false" fetch="select" cascade="save-update" >
+		  <key column="MeaningRef"></key>
+		  <index column="id"></index>
+		  <many-to-many class="BExIS.Dlm.Entities.Meanings.MeaningEntry" column="MeaningEntryRef"/>
+	  </list>
+
+
   </class>
 	
 </hibernate-mapping>

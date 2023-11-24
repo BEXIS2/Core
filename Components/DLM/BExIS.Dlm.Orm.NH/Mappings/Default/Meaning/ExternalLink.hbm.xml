@@ -23,13 +23,10 @@
 			<column name="Type" />
 		</property>
 
-		<many-to-one name="Prefix" column="Prefix" class="BExIS.Dlm.Entities.Meanings.ExternalLink, BExIS.Dlm.Entities" />
+		<!-- Map the parent link -->
+		<many-to-one name="Prefix" column="Prefix" class="ExternalLink" />
 
-		<many-to-one name="prefixCategory" column="prefixCategory" class="BExIS.Dlm.Entities.Meanings.PrefixCategory, BExIS.Dlm.Entities" />
-
-		<!--
-	<many-to-one name="Meaning" class="Meaning" not-null="false" column="externalLinkref"/>
--->
+		<many-to-one name="prefixCategory" column="prefixCategory" class="PrefixCategory" />
 
 	</class>
 </hibernate-mapping>
