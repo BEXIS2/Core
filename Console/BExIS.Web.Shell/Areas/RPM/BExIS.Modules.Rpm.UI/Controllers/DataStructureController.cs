@@ -9,6 +9,7 @@ using BExIS.Dlm.Services.Meanings;
 using BExIS.IO;
 using BExIS.IO.DataType.DisplayPattern;
 using BExIS.IO.Transform.Input;
+using BExIS.IO.Transform.Output;
 using BExIS.Modules.Rpm.UI.Helpers;
 using BExIS.Modules.Rpm.UI.Models;
 using BExIS.Modules.Rpm.UI.Models.DataStructure;
@@ -1104,18 +1105,49 @@ namespace BExIS.Modules.Rpm.UI.Controllers
             return !string.IsNullOrWhiteSpace(username) ? username : "DEFAULT";
         }
 
-            private string getFileName(HttpPostedFileBase file)
+        private string getFileName(HttpPostedFileBase file)
+        {
+            // Checking for Internet Explorer
+            if (Request.Browser.Browser.ToUpper() == "IE" || Request.Browser.Browser.ToUpper() == "INTERNETEXPLORER")
             {
-                // Checking for Internet Explorer
-                if (Request.Browser.Browser.ToUpper() == "IE" || Request.Browser.Browser.ToUpper() == "INTERNETEXPLORER")
-                {
-                    string[] testfiles = file.FileName.Split(new char[] { '\\' });
-                    return testfiles[testfiles.Length - 1];
-                }
-                else
-                {
-                    return file.FileName;
-                }
+                string[] testfiles = file.FileName.Split(new char[] { '\\' });
+                return testfiles[testfiles.Length - 1];
+            }
+            else
+            {
+                return file.FileName;
             }
         }
+
+        public FileResult downloadTemplate(long id)
+        {
+            DataStructureHelper _h = new DataStructureHelper();
+            _h.ConvertExcelToCsv();
+
+            if (id != 0)
+            {
+                DataStructureManager dataStructureManager = null;
+                try
+                {
+                    dataStructureManager = new DataStructureManager();
+
+                    StructuredDataStructure dataStructure = new StructuredDataStructure();
+                    dataStructure = dataStructureManager.StructuredDataStructureRepo.Get(id);
+
+                    if (dataStructure != null)
+                    {
+                        ExcelTemplateProvider provider = new ExcelTemplateProvider("BExISppTemplate_Clean.xlsx");
+
+                        string path = Path.Combine(AppConfiguration.DataPath, provider.CreateTemplate(dataStructure));
+                        return File(path, MimeMapping.GetMimeMapping(path), Path.GetFileName(path));
+                    }
+                }
+                finally
+                {
+                    dataStructureManager.Dispose();
+                }
+            }
+            return File(Path.Combine(AppConfiguration.GetModuleWorkspacePath("RPM"), "Template", "BExISppTemplate_Clean.xlsx"), "application/xlsm", "Template_" + id + "_No_Data_Structure.xlsx");
+        }
+    }
 }

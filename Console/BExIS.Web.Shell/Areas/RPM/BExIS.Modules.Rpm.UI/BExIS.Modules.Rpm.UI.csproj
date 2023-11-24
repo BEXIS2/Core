@@ -60,6 +60,12 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\..\packages\Newtonsoft.Json.13.0.1\lib\netstandard2.0\Newtonsoft.Json.dll</HintPath>
     </Reference>
+    <Reference Include="Sylvan.Data.Csv, Version=1.3.5.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\..\..\..\packages\Sylvan.Data.Csv.1.3.5\lib\netstandard2.0\Sylvan.Data.Csv.dll</HintPath>
+    </Reference>
+    <Reference Include="Sylvan.Data.Excel, Version=0.4.18.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\..\..\..\packages\Sylvan.Data.Excel.0.4.18\lib\netstandard2.0\Sylvan.Data.Excel.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Data.DataSetExtensions" />
@@ -214,7 +220,7 @@
       <Name>BExIS.IO.Transform.Input</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\..\..\..\Components\IO\BExIS.IO.Transform.Output\BExIS.IO.Transform.Output.csproj">
-      <Project>{455ec826-9a92-40ff-bd3b-388c288955ce}</Project>
+      <Project>{455EC826-9A92-40FF-BD3B-388C288955CE}</Project>
       <Name>BExIS.IO.Transform.Output</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\..\..\..\Components\IO\BExIS.IO\BExIS.IO.csproj">
