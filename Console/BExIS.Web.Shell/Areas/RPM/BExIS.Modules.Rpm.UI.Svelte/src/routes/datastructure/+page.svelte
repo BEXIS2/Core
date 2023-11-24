@@ -87,6 +87,11 @@ function edit(id)
 	goTo("/rpm/datastructure/edit?structureId="+id)
 }
 
+function download(id)
+{
+	goTo("/rpm/datastructure/downloadTemplate?id="+id)
+}
+
 async function deleteFn(id)
 {
 		const success = await remove(id);
@@ -118,9 +123,15 @@ async function tableFn(type:any)
 
 
 		// copy data data structure based on id
+		if (type.action == 'download') {
+				download(type.id)
+		}
+
+		// copy data data structure based on id
 		if (type.action == 'copy') {
 				copy(type.id)
 		}
+
 
 		// copy data data structure based on id
 		if (type.action == 'delete') {
@@ -227,9 +238,14 @@ async function tableFn(type:any)
 							instructions: {
 								renderComponent: TableDatasets
 							}
+						},
+
+						optionsColumn: {
+							fixedWidth: 180
+						}
 					}
 				}
-				}}
+				}
 			/>
 
 	{:catch error}

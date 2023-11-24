@@ -176,8 +176,9 @@
 				// TRUE if confirm pressed, FALSE if cancel pressed
 				response: (r: boolean) => {
 					
+					if(r){
 		 			variables = variables.filter(v=>v != deleteVar);
-		 			console.log("🚀 ~ file: Variables.svelte:177 ~ deleteVar:", deleteVar)
+					}
 				}
 			};
 			modalStore.trigger(confirm);

@@ -1,10 +1,14 @@
 ﻿using BExIS.Dlm.Entities.Data;
 using BExIS.Dlm.Services.Data;
 using BExIS.Dlm.Services.DataStructure;
+using Sylvan.Data.Csv;
+using Sylvan.Data.Excel;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Web;
+using Vaiona.Utils.Cfg;
 
 namespace BExIS.Modules.Rpm.UI.Helpers
 {
@@ -27,6 +31,21 @@ namespace BExIS.Modules.Rpm.UI.Helpers
                 }
             }
             return false;
+        }
+
+        public string ConvertExcelToCsv()
+        {
+            string path = Path.Combine(AppConfiguration.GetModuleWorkspacePath("RPM"), "Template");
+            string excel = Path.Combine(path, "BExISppTemplate_Clean.xlsx");
+            string csv = Path.Combine(path, "data.csv");
+
+            using (var excelReader = ExcelDataReader.Create(excel))
+            using (var csvWriter = CsvDataWriter.Create(csv))
+            {
+                csvWriter.Write(excelReader);
+            }
+
+            return "";
         }
     }
 }

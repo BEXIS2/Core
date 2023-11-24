@@ -64,6 +64,7 @@
 	title="Data structure"
 	note="generate a structure from a file."
 	contentLayoutType={pageContentLayoutType.full}
+	help={true}
 >
 	{#await start()}
 		<Spinner label="the structure is loading" />

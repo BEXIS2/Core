@@ -331,8 +331,8 @@
 									{#if suggestedUnits && suggestedUnits.length>1}
 									{#each suggestedUnits?.slice(0,3) as u}
 											<button class="badge" 
-											class:variant-ghost-success={u == variable.unit}  
-											class:variant-filled-success={u != variable.unit}
+											class:variant-filled-success={u == variable.unit}  
+											class:variant-ghost-success={u != variable.unit}
 											on:click={()=> variable.unit = u }>{u.text}</button>
 									{/each}
 								{/if}
@@ -370,8 +370,8 @@
 										</div>
 									{#each suggestedTemplates.slice(0,3) as t}
 											<button class="badge" 
-											class:variant-ghost-success={t == variable.template}  
-											class:variant-filled-success={t != variable.template}
+											class:variant-filled-success={t == variable.template}  
+											class:variant-ghost-success={t != variable.template}
 											on:click={()=> variable.template = t }>{t.text}</button>
 									{/each}
 								</div>
