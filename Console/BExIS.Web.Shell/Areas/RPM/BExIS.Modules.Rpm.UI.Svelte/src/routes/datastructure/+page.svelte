@@ -227,9 +227,14 @@ async function tableFn(type:any)
 							instructions: {
 								renderComponent: TableDatasets
 							}
+						},
+
+						optionsColumn: {
+							fixedWidth: 140
+						}
 					}
 				}
-				}}
+				}
 			/>
 
 	{:catch error}
