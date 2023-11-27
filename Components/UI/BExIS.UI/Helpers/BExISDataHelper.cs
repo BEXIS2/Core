@@ -2,7 +2,7 @@
 using System.ComponentModel;
 using System.Data;
 
-namespace BExIS.Web.Shell.Helpers
+namespace BExIS.UI.Helpers
 {
     public static class BexisDataHelper
     {

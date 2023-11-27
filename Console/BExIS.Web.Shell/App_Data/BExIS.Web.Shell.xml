@@ -478,22 +478,6 @@
             conversation management is done using the global filter  PersistenceContextProviderAttribute.
             </summary>
         </member>
-        <member name="M:BExIS.Web.Shell.Helpers.BexisDataHelper.ToDataTable``1(System.Collections.Generic.IList{``0})">
-             <summary>
-            
-             </summary>
-             <typeparam name="T"></typeparam>
-             <param name="data"></param>
-             <returns></returns>
-        </member>
-        <member name="M:BExIS.Web.Shell.Helpers.BexisDataHelper.ToDataTable``1(System.Collections.Generic.IList{``0},System.Collections.Generic.List{System.String})">
-             <summary>
-            
-             </summary>
-             <typeparam name="T"></typeparam>
-             <param name="data"></param>
-             <returns></returns>
-        </member>
         <member name="M:BExIS.Web.Shell.Helpers.MenuHelper.MenuBar(System.String)">
             <summary>
             defaul menubar load with bar name like 

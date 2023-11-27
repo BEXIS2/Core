@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Data;
 
-namespace BExIS.Web.Shell.Models
+namespace BExIS.UI.Models
 {
     public class EntitySelectorModel
     {
