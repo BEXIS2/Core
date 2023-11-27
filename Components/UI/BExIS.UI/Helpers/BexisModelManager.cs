@@ -1,7 +1,7 @@
-﻿using BExIS.Web.Shell.Models;
+﻿using BExIS.UI.Models;
 using System.Collections.Generic;
 
-namespace BExIS.Web.Shell.Helpers
+namespace BExIS.UI.Helpers
 {
     public static class BexisModelManager
     {

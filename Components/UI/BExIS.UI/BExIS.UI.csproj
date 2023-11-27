@@ -58,6 +58,7 @@
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Data" />
     <Reference Include="System.Runtime.CompilerServices.Unsafe, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>..\..\..\packages\System.Runtime.CompilerServices.Unsafe.6.0.0\lib\net461\System.Runtime.CompilerServices.Unsafe.dll</HintPath>
     </Reference>
@@ -80,6 +81,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="EntityViewerHelper.cs" />
+    <Compile Include="Helpers\BExISDataHelper.cs" />
+    <Compile Include="Helpers\BexisModelManager.cs" />
     <Compile Include="Helpers\BexisUIHelper.cs" />
     <Compile Include="Helpers\ErrorHelper.cs" />
     <Compile Include="Helpers\SvelteHelper.cs" />
@@ -95,6 +98,7 @@
     <Compile Include="Hooks\Logs\EditDatasetDetailsLog.cs" />
     <Compile Include="Hooks\View.cs" />
     <Compile Include="Models\DataTable.cs" />
+    <Compile Include="Models\EntitySelectorModel.cs" />
     <Compile Include="Models\FileUploader.cs" />
     <Compile Include="Models\ListItem.cs" />
     <Compile Include="Models\Menu.cs" />

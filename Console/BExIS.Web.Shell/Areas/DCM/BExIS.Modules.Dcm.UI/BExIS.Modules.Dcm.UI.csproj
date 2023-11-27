@@ -916,10 +916,6 @@
       <Project>{cac933a2-6849-4c61-82b4-cbf4052210cc}</Project>
       <Name>BExIS.Dim.Services</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\..\BExIS.Web.Shell.csproj">
-      <Project>{e5128814-4541-45c8-a9e6-6c91a7e3d1e2}</Project>
-      <Name>BExIS.Web.Shell</Name>
-    </ProjectReference>
     <ProjectReference Include="..\..\DIM\BExIS.Modules.Dim.UI.csproj">
       <Project>{9BFFFD11-03C6-47DF-9CC9-F458A9A49377}</Project>
       <Name>BExIS.Modules.Dim.UI</Name>

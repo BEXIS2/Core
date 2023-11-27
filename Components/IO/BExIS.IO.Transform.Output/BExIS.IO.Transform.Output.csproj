@@ -73,6 +73,7 @@
     <Compile Include="AsciiWriter.cs" />
     <Compile Include="DataWriter.cs" />
     <Compile Include="ExcelHelper.cs" />
+    <Compile Include="ExcelTemplateProvider.cs" />
     <Compile Include="ExcelWriter.cs" />
     <Compile Include="OutputDatasetManager.cs" />
     <Compile Include="OutputDataStructureManager.cs" />

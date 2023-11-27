@@ -128,6 +128,7 @@
     <Compile Include="Controllers\SearchIndexController.cs" />
     <Compile Include="Controllers\TestController.cs" />
     <Compile Include="DdmModule.cs" />
+    <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="Helpers\DdmSeedDataGenerator.cs" />
     <Compile Include="Helpers\GridHelper.cs" />
     <Compile Include="Helpers\HtmlPrefixScopeExtentions.cs" />

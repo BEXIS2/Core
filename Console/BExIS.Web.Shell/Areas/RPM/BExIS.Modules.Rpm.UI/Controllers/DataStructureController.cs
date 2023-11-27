@@ -423,6 +423,8 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                         updatedVariable.DisplayPatternId = displayPattern;
                         updatedVariable.OrderNo = orderNo;
                         updatedVariable.VariableTemplate = variableManager.GetVariableTemplate(variable.Template.Id);
+                        updatedVariable.IsKey = variable.IsKey;
+                        updatedVariable.IsValueOptional = variable.IsOptional;
                     }
                     else // create
                     {

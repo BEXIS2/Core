@@ -89,7 +89,6 @@ namespace BExIS.IO.Transform.Output
             try
             {
                 dataStructureManager = new DataStructureManager();
-                //List<Variable> variables = getOrderedVariables(dataStructure);
 
                 string rgxPattern = "[<>?\":|\\\\/*]";
                 string rgxReplace = "-";
@@ -98,6 +97,8 @@ namespace BExIS.IO.Transform.Output
                 string filename = filename = dataStructure.Id + "_" + rgx.Replace(dataStructure.Name, rgxReplace) + ".xlsx";
 
                 string path = Path.Combine("DataStructures", dataStructure.Id.ToString());
+
+                // create excel template based on structure 
 
                 CreateTemplate(dataStructure.Variables.Select(p => p.Id).ToList(), path, filename);
 
@@ -149,6 +150,7 @@ namespace BExIS.IO.Transform.Output
             {
                 dataStructureManager.Dispose();
             }
+
         }
 
         /// <summary>
@@ -169,9 +171,6 @@ namespace BExIS.IO.Transform.Output
 
             SpreadsheetDocument template = SpreadsheetDocument.Open(Path.Combine(AppConfiguration.GetModuleWorkspacePath("RPM"), "Template", _fileName), true);
             SpreadsheetDocument dataStructureFile = SpreadsheetDocument.Create(Path.Combine(AppConfiguration.DataPath, path, filename), template.DocumentType);
-            //dataStructureFile = SpreadsheetDocument.Open(Path.Combine(AppConfiguration.GetModuleWorkspacePath("RPM"), "Template", filename), true);
-
-
 
             foreach (OpenXmlPart part in template.GetPartsOfType<OpenXmlPart>())
             {
@@ -180,7 +179,6 @@ namespace BExIS.IO.Transform.Output
 
             template.Close();
 
-            //uint iExcelIndex = 164;
             List<StyleIndexStruct> styleIndex = new List<StyleIndexStruct>();
             ExcelHelper.UpdateStylesheet(dataStructureFile.WorkbookPart.WorkbookStylesPart.Stylesheet, out styleIndex);
 
@@ -191,6 +189,11 @@ namespace BExIS.IO.Transform.Output
                                                             .Query(p => variableIds.Contains(p.Id))
                                                             .OrderBy(p => p.OrderNo)
                                                             .ToList();
+
+            var workbookPart = dataStructureFile.WorkbookPart;
+
+
+            // go throw each varaible and add a cell
             foreach (VariableInstance var in variables)
             {
                 DataContainerManager CM = null;
@@ -202,68 +205,27 @@ namespace BExIS.IO.Transform.Output
                     string columnIndex = GetClomunIndex(indexVar);
 
                     string cellRef = columnIndex + 1;
-                    Cell cell = new Cell()
-                    {
-                        CellReference = cellRef,
-                        StyleIndex = (UInt32Value)1U,
-                        DataType = CellValues.String,
-                        CellValue = new CellValue(var.Label)
-                    };
-                    rows.ElementAt(0).AppendChild(cell);
 
-                    string unit = "";
+                    rows.ElementAt(0).AppendChild(generateCell(cellRef, var.Label, workbookPart, "ff9700", true,false,true));
 
-                    if (var.Unit != null)
-                    {
-                        unit = var.Unit.Name;
-                    }
-
+                    //unit
+                    string unit = var.Unit != null ? var.Unit.Name : "";
                     cellRef = columnIndex + 2;
-                    cell = new Cell()
-                    {
-                        CellReference = cellRef,
-                        StyleIndex = (UInt32Value)2U,
-                        DataType = CellValues.String,
-                        CellValue = new CellValue(unit)
-                    };
-                    rows.ElementAt(1).AppendChild(cell);
+                    rows.ElementAt(1).AppendChild(generateCell(cellRef, unit, workbookPart, "ffd599"));
 
-                    string dataType = "";
-
-                    if (var.DataType != null)
-                    {
-                        dataType = var.DataType.Name;
-                    }
-
+                    // datatype
+                    string dataType = var.DataType != null ? var.DataType.Name : "";
                     cellRef = columnIndex + 3;
-                    cell = new Cell()
-                    {
-                        CellReference = cellRef,
-                        StyleIndex = (UInt32Value)2U,
-                        DataType = CellValues.String,
-                        CellValue = new CellValue(dataType)
-                    };
-                    rows.ElementAt(2).AppendChild(cell);
+                    rows.ElementAt(2).AppendChild(generateCell(cellRef, dataType, workbookPart, "ffd599"));
 
+                    // optional
                     cellRef = columnIndex + 4;
-                    cell = new Cell()
-                    {
-                        CellReference = cellRef,
-                        StyleIndex = (UInt32Value)2U,
-                        DataType = CellValues.String,
-                        CellValue = new CellValue(var.IsValueOptional?"optional":"mandatory")
-                    };
-                    rows.ElementAt(3).AppendChild(cell);
+                    rows.ElementAt(3).AppendChild(generateCell(cellRef, var.IsValueOptional ? "optional" : "mandatory", workbookPart, "ffd599"));
 
+                    // is key
                     cellRef = columnIndex + 5;
-                    cell = new Cell()
-                    {
-                        CellReference = cellRef,
-                        StyleIndex = (UInt32Value)3U,
-                        DataType = CellValues.String,
-                        CellValue = new CellValue(var.IsKey ? "key" : "")
-                    };
-                    rows.ElementAt(4).AppendChild(cell);
+                    rows.ElementAt(4).AppendChild(generateCell(cellRef, var.IsKey ? "key" : "", workbookPart, "ffd599", false, true));
+
 
                 }
                 finally
@@ -277,6 +239,26 @@ namespace BExIS.IO.Transform.Output
             dataStructureFile.Close();
 
             return dataStructureFile;
+        }
+
+        private Cell generateCell(string cellRef, string value, WorkbookPart workbookPart,string rgb, bool first = false, bool last = false, bool bold = false)
+        {
+            Cell cell = new Cell()
+            {
+                CellReference = cellRef,
+                //StyleIndex = (UInt32Value)1U,
+                DataType = CellValues.String,
+                CellValue = new CellValue(value)
+            };
+
+            // sett cellformat
+            CellFormat cellFormat = cell.StyleIndex != null ? GetCellFormat(workbookPart, cell.StyleIndex).CloneNode(true) as CellFormat : new CellFormat();
+            cellFormat.FillId = InsertFill(workbookPart, GenerateFill(rgb));
+            if(first || last) cellFormat.BorderId = InsertBorder(workbookPart, GenerateBottomBorder());
+            if(bold) cellFormat.FontId = InsertFont(workbookPart, GenerateFont());
+            cell.StyleIndex = InsertCellFormat(workbookPart, cellFormat);
+
+            return cell;
         }
 
         /// <summary>
@@ -401,5 +383,85 @@ namespace BExIS.IO.Transform.Output
             }
         }
 
+
+        #region styles
+
+        public Border GenerateBottomBorder()
+        {
+            Border border2 = new Border();
+
+            BottomBorder bottomBorder2 = new BottomBorder() { Style = BorderStyleValues.Thin };
+            Color color1 = new Color() { Indexed = (UInt32Value)64U };
+
+            bottomBorder2.Append(color1);
+            border2.Append(bottomBorder2);
+
+            return border2;
+        }
+
+        public Font GenerateFont()
+        {
+            Font font = new Font(new Bold());
+
+
+            return font;
+        }
+
+        public Fill GenerateFill(string rgb)
+        {
+            Fill fill = new Fill();
+
+            PatternFill patternFill = new PatternFill() { PatternType = PatternValues.Solid };
+            ForegroundColor foregroundColor1 = new ForegroundColor() { Rgb = rgb };
+            BackgroundColor backgroundColor1 = new BackgroundColor() { Rgb = rgb };
+
+            patternFill.Append(foregroundColor1);
+            patternFill.Append(backgroundColor1);
+
+            fill.Append(patternFill);
+
+            return fill;
+        }
+
+        public uint InsertBorder(WorkbookPart workbookPart, Border border)
+        {
+            Borders borders = workbookPart.WorkbookStylesPart.Stylesheet.Elements<Borders>().First();
+            borders.Append(border);
+            return (uint)borders.Count++;
+        }
+
+        public uint InsertFill(WorkbookPart workbookPart, Fill fill)
+        {
+            Fills fills = workbookPart.WorkbookStylesPart.Stylesheet.Elements<Fills>().First();
+            fills.Append(fill);
+            return (uint)fills.Count++;
+        }
+
+        public Cell GetCell(WorksheetPart workSheetPart, string cellAddress)
+        {
+            return workSheetPart.Worksheet.Descendants<Cell>()
+                                        .SingleOrDefault(c => cellAddress.Equals(c.CellReference));
+        }
+
+        public CellFormat GetCellFormat(WorkbookPart workbookPart, uint styleIndex)
+        {
+            return workbookPart.WorkbookStylesPart.Stylesheet.Elements<CellFormats>().First().Elements<CellFormat>().ElementAt((int)styleIndex);
+        }
+
+        public uint InsertCellFormat(WorkbookPart workbookPart, CellFormat cellFormat)
+        {
+            CellFormats cellFormats = workbookPart.WorkbookStylesPart.Stylesheet.Elements<CellFormats>().First();
+            cellFormats.Append(cellFormat);
+            return (uint)cellFormats.Count++;
+        }
+
+        public uint InsertFont(WorkbookPart workbookPart, Font font)
+        {
+            var fonts = workbookPart.WorkbookStylesPart.Stylesheet.Elements<Fonts>().First();
+            fonts.Append(font);
+            return (uint)fonts.Count++;
+        }
+
+        #endregion
     }
 }
