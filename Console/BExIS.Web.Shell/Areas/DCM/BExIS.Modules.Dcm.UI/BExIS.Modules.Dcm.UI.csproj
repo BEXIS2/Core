@@ -68,7 +68,6 @@
     <Compile Include="Controllers\Legacy\AttachmentsController.cs" />
     <Compile Include="Controllers\Hooks\EntityReferenceController.cs" />
     <Compile Include="Controllers\FormController.cs" />
-    <Compile Include="Controllers\Legacy\CreateDatasetController.cs" />
     <Compile Include="Controllers\Legacy\HelpController.cs" />
     <Compile Include="Controllers\Legacy\ImportMetadataStructureController.cs" />
     <Compile Include="Controllers\Legacy\ImportMetadataStructureReadSourceController.cs" />
@@ -714,7 +713,7 @@
     </Reference>
     <Reference Include="System.ServiceModel" />
     <Reference Include="System.Text.RegularExpressions, Version=4.1.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\..\..\..\..\packages\System.Text.RegularExpressions.4.3.0\lib\net463\System.Text.RegularExpressions.dll</HintPath>
+      <HintPath>..\..\..\..\..\packages\System.Text.RegularExpressions.4.3.1\lib\net463\System.Text.RegularExpressions.dll</HintPath>
       <Private>True</Private>
       <Private>True</Private>
     </Reference>
