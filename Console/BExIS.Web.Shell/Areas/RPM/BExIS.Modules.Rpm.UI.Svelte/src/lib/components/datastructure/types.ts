@@ -56,6 +56,7 @@ class VariableModel {
 	unit: unitListItemType | undefined;
 	missingValues: missingValueType[];
 	meanings: listItemType[];
+	constraints: listItemType[];
 	approved: boolean;
 	inUse: boolean;
 
@@ -68,6 +69,7 @@ class VariableModel {
 		this.unit = undefined;
 		this.missingValues = [];
 		this.meanings = [];
+		this.constraints = [];
 		this.approved = false;
 		this.inUse = false;
 	}

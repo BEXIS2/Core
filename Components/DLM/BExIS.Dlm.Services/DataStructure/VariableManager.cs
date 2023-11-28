@@ -95,7 +95,7 @@ namespace BExIS.Dlm.Services.DataStructure
         /// <param name="defaultValue"></param>
         /// <returns>VariableTemplate</returns>
         /// <exception cref="ArgumentNullException"></exception>
-        public VariableTemplate CreateVariableTemplate(string name, DataType dataType, Unit unit, string description = "", string defaultValue = "", ICollection<Meaning> meanings = null, bool approved = false)
+        public VariableTemplate CreateVariableTemplate(string name, DataType dataType, Unit unit, string description = "", string defaultValue = "", ICollection<Meaning> meanings = null, ICollection<Constraint> constraints = null, bool approved = false)
         {
             // check incoming varaibles
             if (string.IsNullOrEmpty(name)) throw new ArgumentNullException(nameof(name), "Name is empty but is required.");
@@ -108,10 +108,12 @@ namespace BExIS.Dlm.Services.DataStructure
                 DataType = dataType,
                 DefaultValue = defaultValue,
                 Unit = unit,
-                Approved = approved
-              };
+                Approved = approved,
+           
+            };
 
             if (meanings != null) e.Meanings = meanings;
+            if (constraints != null) e.VariableConstraints = constraints;
 
             using (IUnitOfWork uow = this.GetUnitOfWork())
             {
@@ -147,6 +149,7 @@ namespace BExIS.Dlm.Services.DataStructure
                 merged.MinCardinality = entity.MinCardinality;
                 merged.MaxCardinality = entity.MaxCardinality;
                 merged.Meanings = entity.Meanings;
+                merged.VariableConstraints = entity.VariableConstraints;
 
                 repo.Put(merged);
                 uow.Commit();

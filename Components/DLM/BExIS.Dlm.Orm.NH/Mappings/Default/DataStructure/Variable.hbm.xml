@@ -44,7 +44,7 @@
     <many-to-one name="DataType" class="DataType" not-null="true" column="DataTypeRef"/>
     
 
-    <set name="VariableConstraints" inverse="true" table="Variable_Constraints" lazy="true" cascade="save-update">
+    <set name="VariableConstraints" inverse="false" table="Variable_Constraints" lazy="true" cascade="save-update">
       <key column="VariableRef"/>
       <many-to-many column="ConstraintRef" class="Constraint"/>
     </set>
