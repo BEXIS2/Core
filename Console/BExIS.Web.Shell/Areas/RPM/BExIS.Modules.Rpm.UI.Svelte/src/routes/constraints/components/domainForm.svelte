@@ -5,20 +5,14 @@
 	import { writable } from 'svelte/store';
 
 	export let domainConstraint: DomainConstraintListItem;
-	const domainItemsTableStore = writable<{ key: string; value: string }[]>([]);
+	const domainItemsTableStore = writable<string[]>([]);
 	$: domainItemsTableStore.set(setDomainItems(domainConstraint.domain));
 
-	function setDomainItems(domain: string): { key: string; value: string }[] {
-		let dis: { key: string; value: string }[] = [];
+	function setDomainItems(domain: string): string[] {
+		let dis: string[] = [];
 		let lines = domain.split('\n');
-		let columns: string[];
 		lines.forEach(function (value) {
-			columns = value.split(',');
-			if (columns.length == 1) {
-				dis.push({ key: columns[0].trim(), value: columns[0].trim() });
-			} else if (columns.length == 2) {
-				dis.push({ key: columns[0].trim(), value: columns[1].trim() });
-			}
+				dis.push(value);
 		});
 		return dis;
 	}
@@ -50,15 +44,13 @@
 				<table class="table w-full table-compact bg-tertiary-200 h-80">
 					<thead>
 						<tr class="bg-primary-300">
-							<th class="!p-2">Key</th>
-							<th class="!p-2">Value</th>
+							<th class="!p-2">Domain List</th>
 						</tr>
 					</thead>
 					<tbody>
 						{#each $domainItemsTableStore as domainItem}
 							<tr>
-								<td>{domainItem.key}</td>
-								<td>{domainItem.value}</td>
+								<td>{domainItem}</td>
 							</tr>
 						{/each}
 					</tbody>
