@@ -15,7 +15,7 @@
 	} from '$lib/components/datastructure/types';
 
 	//stores
-	import { dataTypeStore, unitStore } from '$lib/components/datastructure/store';
+	import { dataTypeStore, unitStore, constraintsStore } from '$lib/components/datastructure/store';
 	import { meaningsStore } from './stores';
 
 // services
@@ -192,7 +192,7 @@ import { update } from './services'
 
 
 <form on:submit|preventDefault={submit}>
-<div id="variable-{variable.id}-form" class="flex-colspace-y-5 card shadow-md p-5">
+<div id="variable-{variable.id}-form" class="flex-colspace-y-5 card shadow-md p-5 ">
 
 	<div class="flex gap-5">
 		<div class="grow">
@@ -297,6 +297,22 @@ import { update } from './services'
 		placeholder="-- Please select --"
 		{loading}
 	/>
+
+	<MultiSelect
+		id="constraints"
+		title="Constraints"
+		bind:source={$constraintsStore}
+		itemId="id"
+		itemLabel="text"
+		itemGroup="group"
+		complexSource={true}
+		complexTarget={true}
+		bind:target={variable.constraints}
+		isMulti={true}
+		placeholder="-- Please select --"
+		{loading}
+	/>
+
 	<div class="flex gap-5 py-5">
 			<SlideToggle name="Approved" bind:checked={variable.approved} on:change>{"Approved"}</SlideToggle>
 	</div>

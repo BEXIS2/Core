@@ -18,6 +18,7 @@ namespace BExIS.Modules.Rpm.UI.Models
 
         public List<MissingValueItem> MissingValues { get; set; }
         public List<MeaningItem> Meanings { get; set; }
+        public List<ListItem> Constraints { get; set; }
 
         public VariableModel()
         {
@@ -29,6 +30,7 @@ namespace BExIS.Modules.Rpm.UI.Models
             Unit = new UnitItem();
             MissingValues = new List<MissingValueItem>();
             Meanings = new List<MeaningItem>();
+            Constraints = new List<ListItem>();
         }
     }
 

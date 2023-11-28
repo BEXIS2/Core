@@ -28,7 +28,10 @@ namespace BExIS.Modules.Rpm.UI.Helpers
             // missing values 
             variableTemplate.MissingValues?.ToList().ForEach(m => model.MissingValues.Add(new MissingValueItem(m.Id, m.DisplayName, m.Description)));
 
-            if(variableTemplate.Id>0)
+            // constraints
+            variableTemplate.VariableConstraints?.ToList().ForEach(c => model.Constraints.Add(new ListItem(c.Id, c.Name, getConstraintType(c))));
+
+            if (variableTemplate.Id>0)
             using (var variableManager = new VariableManager())
             using (var missingValueManager = new MissingValueManager())
             {
@@ -52,6 +55,7 @@ namespace BExIS.Modules.Rpm.UI.Helpers
             using (var unitManager = new UnitManager())
             using (var dataTypeManager = new DataTypeManager())
             using (var meaningManager = new MeaningManager())
+            using (var constraintManager = new ConstraintManager())
             {
 
                 var variableTemplate = new VariableTemplate();
@@ -85,6 +89,16 @@ namespace BExIS.Modules.Rpm.UI.Helpers
                     }
                 }
 
+                // constraints
+                if (_model.Constraints.Any())
+                {
+                    foreach (var item in _model.Constraints)
+                    {
+                        var c = constraintManager.ConstraintRepository.Get(item.Id);
+                        variableTemplate.VariableConstraints.Add(c);
+                    }
+                }
+
                 return variableTemplate;
             }
         }
@@ -107,6 +121,25 @@ namespace BExIS.Modules.Rpm.UI.Helpers
                 return list;
             }
          }
+
+        public List<ListItem> GetConstraints()
+        {
+            using (var constraintManager = new ConstraintManager())
+            {
+                var constraints = constraintManager.Constraints.Where(c =>c.DataContainer==null);
+                List<ListItem> list = new List<ListItem>();
+
+                if (constraints.Any())
+                {
+                    foreach (var item in constraints)
+                    {
+                        list.Add(new ListItem(item.Id, item.Name, getConstraintType(item)));
+                    }
+                }
+
+                return list;
+            }
+        }
 
         public VariableTemplateItem ConvertTo(VariableTemplate variableTemplate, string group="")
         {
@@ -141,5 +174,13 @@ namespace BExIS.Modules.Rpm.UI.Helpers
 
         }
 
+        private string getConstraintType(Constraint c)
+        {
+            if (c is DomainConstraint) return "Domain";
+            if (c is RangeConstraint) return "Range";
+            if (c is PatternConstraint) return "Pattern";
+
+            return string.Empty;
+        }
     }
 }

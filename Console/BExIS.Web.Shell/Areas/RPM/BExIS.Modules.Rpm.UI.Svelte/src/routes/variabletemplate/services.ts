@@ -14,6 +14,7 @@ export const getVariableTemplates = async () => {
 		return response.data;
 	} catch (error) {
 		console.error(error);
+		throw error;
 	}
 };
 
@@ -23,6 +24,7 @@ export const update = async (data: VariableTemplateModel) => {
 		return response.data;
 	} catch (error) {
 		console.error(error);
+		throw error;
 	}
 };
 
@@ -32,6 +34,7 @@ export const remove = async (id) => {
 		return response.data;
 	} catch (error) {
 		console.error(error);
+		throw error;
 	}
 };
 
@@ -41,5 +44,16 @@ export const getMeanings = async () => {
 		return response.data;
 	} catch (error) {
 		console.error(error);
+		throw error;
+	}
+};
+
+export const getConstraints = async () => {
+	try {
+		const response = await Api.get('/rpm/variableTemplate/GetConstraints');
+		return response.data;
+	} catch (error) {
+		console.error(error);
+		throw error;
 	}
 };
