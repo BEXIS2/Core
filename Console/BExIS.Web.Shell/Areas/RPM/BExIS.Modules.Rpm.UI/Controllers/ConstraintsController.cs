@@ -178,7 +178,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
             {
                 using (ConstraintManager constraintManager = new ConstraintManager())
                 {
-                    List<DomainConstraint> constraints = constraintManager.DomainConstraints.Where(c => c.DataContainer == null).ToList();
+                    List<Constraint> constraints = constraintManager.Constraints.Where(c => c.DataContainer == null).ToList();
                     validationResult = ConstraintValidation(constraints, domainConstraint);
 
                     if (validationResult.IsValid)
@@ -248,7 +248,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
             {
                 using (ConstraintManager constraintManager = new ConstraintManager())
                 {
-                    List<RangeConstraint> constraints = constraintManager.RangeConstraints.Where(c => c.DataContainer == null).ToList();
+                    List<Constraint> constraints = constraintManager.Constraints.Where(c => c.DataContainer == null).ToList();
                     validationResult = ConstraintValidation(constraints, rangeConstraint);
 
                     if (validationResult.IsValid)
@@ -324,7 +324,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
             {
                 using (ConstraintManager constraintManager = new ConstraintManager())
                 {
-                    List<PatternConstraint> constraints = constraintManager.PatternConstraints.Where(c => c.DataContainer == null).ToList();
+                    List<Constraint> constraints = constraintManager.Constraints.Where(c => c.DataContainer == null).ToList();
                     validationResult = ConstraintValidation(constraints, patternConstraint);
 
                     if (validationResult.IsValid)
@@ -345,7 +345,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                         }
                         else
                         {
-                            pc = constraints.Where(c => c.Id.Equals(patternConstraint.Id)).FirstOrDefault();
+                            pc = constraintManager.PatternConstraints.Where(c => c.Id.Equals(patternConstraint.Id)).FirstOrDefault();
                             pc.Name = patternConstraint.Name;
                             pc.Description = patternConstraint.Description;
                             pc.Negated = patternConstraint.Negated;
@@ -408,7 +408,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
             return result;
         }
 
-        private ValidationResult ConstraintValidation( List<DomainConstraint> constraints, EditDomainConstraintModel constaint)
+        private ValidationResult ConstraintValidation( List<Constraint> constraints, EditDomainConstraintModel constaint)
         {
 
             ValidationResult result = ConstraintValidation(constraints.Cast<Constraint>().ToList(), (EditConstraintModel)constaint);
@@ -420,7 +420,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
             return result;
         }
 
-        private ValidationResult ConstraintValidation(List<RangeConstraint> constraints, EditRangeConstraintModel constaint)
+        private ValidationResult ConstraintValidation(List<Constraint> constraints, EditRangeConstraintModel constaint)
         {
 
             ValidationResult result = ConstraintValidation(constraints.Cast<Constraint>().ToList(), (EditConstraintModel)constaint);
@@ -432,7 +432,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
             return result;
         }
 
-        private ValidationResult ConstraintValidation(List<PatternConstraint> constraints, EditPatternConstraintModel constaint)
+        private ValidationResult ConstraintValidation(List<Constraint> constraints, EditPatternConstraintModel constaint)
         {
 
             ValidationResult result = ConstraintValidation(constraints.Cast<Constraint>().ToList(), (EditConstraintModel)constaint);

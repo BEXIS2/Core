@@ -158,6 +158,22 @@ namespace BExIS.Modules.Rpm.UI.Models
 
             foreach (string row in rows)
             {
+                domainItems.Add(new DomainItem()
+                {
+                    Key = row.Trim(),
+                    Value = row.Trim()
+                });
+            }
+            return domainItems;
+        }
+
+        public static List<DomainItem> convertDomainToDomainItemsKVP(string domain)
+        {
+            List<DomainItem> domainItems = new List<DomainItem>();
+            List<string> rows = domain.Split(Environment.NewLine.ToCharArray()).ToList();
+
+            foreach (string row in rows)
+            {
                 List<string> columns = row.Split(',').ToList();
                 if (columns.Count == 1)
                 {
@@ -184,14 +200,20 @@ namespace BExIS.Modules.Rpm.UI.Models
             string domain = "";
             foreach (DomainItem domainItem in domainItems)
             {
-
+            
                 if (domainItem.Key == domainItem.Value)
                 {
-                    domain += domainItem.Value + "\n";
+                    if(domainItem != domainItems.Last())
+                        domain += domainItem.Value + "\n";
+                    else 
+                        domain += domainItem.Value;
                 }
                 else
                 {
-                    domain += domainItem.Key + "," + domainItem.Value + "\n";
+                    if (domainItem.Key != domainItem.Value)
+                        domain += domainItem.Key + "," + domainItem.Value + "\n";
+                    else
+                        domain += domainItem.Key + "," + domainItem.Value;
                 }
             }
             return domain;
