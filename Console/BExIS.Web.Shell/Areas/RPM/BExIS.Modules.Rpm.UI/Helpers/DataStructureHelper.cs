@@ -1,6 +1,8 @@
 ﻿using BExIS.Dlm.Entities.Data;
+using BExIS.Dlm.Entities.DataStructure;
 using BExIS.Dlm.Services.Data;
 using BExIS.Dlm.Services.DataStructure;
+using BExIS.Modules.Rpm.UI.Models.DataStructure;
 using Sylvan.Data.Csv;
 using Sylvan.Data.Excel;
 using System;
@@ -46,6 +48,21 @@ namespace BExIS.Modules.Rpm.UI.Helpers
             }
 
             return "";
+        }
+
+        public List<MissingValue> ConvertTo(List<MissingValueModel> MissingValues)
+        {
+            List<MissingValue> list = new List<MissingValue>();
+            foreach (var mv in MissingValues)
+            {
+                list.Add(new MissingValue()
+                {
+                    DisplayName = mv.DisplayName,
+                    Description = mv.Description,
+                });
+            }
+
+            return list;
         }
     }
 }

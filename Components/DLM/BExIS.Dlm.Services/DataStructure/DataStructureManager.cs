@@ -138,16 +138,25 @@ namespace BExIS.Dlm.Services.DataStructure
             {
                 IRepository<StructuredDataStructure> repo = uow.GetRepository<StructuredDataStructure>();
                 IRepository<VariableInstance> variableRepo = uow.GetRepository<VariableInstance>();
+                //IRepository<MissingValue> missinValuesRepo = uow.GetRepository<MissingValue>();
 
-                variableRepo.Evict();
+                //variableRepo.Evict();
 
                 entity = repo.Reload(entity);
 
                 // delete associated variables and thier parameters
                 foreach (var usage in entity.Variables)
                 {
-                    var localVar = variableRepo.Reload(usage);
-                    variableRepo.Delete(localVar);
+                    // remove missing values first
+                    //if (localVar.MissingValues.Any())
+                    //{
+                    //    localVar.MissingValues.ToList().ForEach(m => {
+                    //        localVar.MissingValues.Remove(m);
+                    //        missinValuesRepo.Delete(m);
+                    //        });
+                    //}
+                    entity.Variables.Remove(usage);
+                    variableRepo.Delete(usage);
                 }
 
                 //uow.Commit(); //  should not be needed

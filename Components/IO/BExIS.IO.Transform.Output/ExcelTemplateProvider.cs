@@ -316,7 +316,6 @@ namespace BExIS.IO.Transform.Output
         {
 
             //if (index <= 25) return alphabet[index].ToString();
-            //return "";
             int residual = 0;
             string column = "";
             bool firstRun = true;

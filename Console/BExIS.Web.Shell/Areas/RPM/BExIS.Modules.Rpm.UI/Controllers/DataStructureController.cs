@@ -291,6 +291,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
             using (var datatypeManager = new DataTypeManager())
             using (var datasetManager = new DatasetManager())
             using (var missingValueManager = new MissingValueManager())
+            using (var constraintManager = new ConstraintManager())
             {
                 // create strutcure
                 StructuredDataStructure newStructure = structureManager.CreateStructuredDataStructure(
@@ -301,6 +302,8 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                         DataStructureCategory.Generic
                     );
 
+                DataStructureHelper helper = new DataStructureHelper();
+                VariableHelper variableHelper = new VariableHelper();
 
                 // create variable
                 foreach (var variable in model.Variables)
@@ -325,6 +328,14 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                     // get orderNo
                     int orderNo = model.Variables.IndexOf(variable)+1;
 
+                    // list missing values
+                    List<MissingValue> missingValues = new List<MissingValue>();
+                    if (model.MissingValues.Any())
+                    {
+                        missingValues = helper.ConvertTo(model.MissingValues);
+                    }
+
+
                     // generate variables
                     var result = variableManager.CreateVariable(
                         variable.Name,
@@ -337,19 +348,12 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                         variable.Template.Id,
                         variable.Description,
                         "",
-                        displayPattern
+                        displayPattern,
+                        missingValues, // add also missing values that came from varaible it self
+                        variable.Constraints.Select(co => co.Id).ToList()
                         );
 
-
-                    // gerenate missing values and link them to each variable
-                    foreach (var mv in model.MissingValues)
-                    {
-                        if (!string.IsNullOrEmpty(mv.DisplayName))
-                        {
-                            var missingValue = missingValueManager.Create(mv.DisplayName, mv.Description, result);
-                        }
-                    }
-
+                    newStructure = structureManager.AddVariable(newStructure.Id, result.Id);
                 }
 
 
@@ -383,6 +387,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
             using (var datatypeManager = new DataTypeManager())
             using (var datasetManager = new DatasetManager())
             using (var missingValueManager = new MissingValueManager())
+            using (var constraintsManager = new ConstraintManager())
             {
                 // create strutcure
                 StructuredDataStructure structure = structureManager.StructuredDataStructureRepo.Get(model.Id);
@@ -413,6 +418,8 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                     // get orderNo
                     int orderNo = model.Variables.IndexOf(variable) + 1;
                     VariableInstance updatedVariable = new VariableInstance();
+                    VariableHelper variableHelper = new VariableHelper();
+
                     // update variable
                     if (variable.Id > 0)
                     {
@@ -425,6 +432,10 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                         updatedVariable.VariableTemplate = variableManager.GetVariableTemplate(variable.Template.Id);
                         updatedVariable.IsKey = variable.IsKey;
                         updatedVariable.IsValueOptional = variable.IsOptional;
+                        updatedVariable.VariableConstraints = variableHelper.ConvertTo(variable.Constraints);
+                        updatedVariable.MissingValues = variableHelper.ConvertTo(variable.MissingValues);
+
+
                     }
                     else // create
                     {
@@ -440,7 +451,9 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                             variable.Template.Id,
                             variable.Description,
                             "",
-                            displayPattern
+                            displayPattern,
+                            variableHelper.ConvertTo(variable.MissingValues),
+                            variable.Constraints.Select(co => co.Id).ToList()
                             );
 
                         variable.Id = updatedVariable.Id;
@@ -449,14 +462,21 @@ namespace BExIS.Modules.Rpm.UI.Controllers
 
                     }
 
-                    // update meanings
-                    foreach (var meaning in variable.Meanings)
-                    {
-                        Meaning m = meaningManager.getMeaning(meaning.Id);
-                        if(!updatedVariable.Meanings.Contains(m))updatedVariable.Meanings.Add(m);   
-                    }
+                    //// update meanings
+                    //foreach (var meaning in variable.Meanings)
+                    //{
+                    //    Meaning m = meaningManager.getMeaning(meaning.Id);
+                    //    if(!updatedVariable.Meanings.Contains(m))updatedVariable.Meanings.Add(m);   
+                    //}
 
-                    // update constraints
+                    //// update constraints
+                    //foreach (var constraint in variable.Constraints)
+                    //{
+                    //    Constraint c = constraintsManager.ConstraintRepository.Get(constraint.Id);
+                    //    if (!updatedVariable.VariableConstraints.Contains(c)) updatedVariable.VariableConstraints.Add(c);
+                    //}
+
+                    //updatedVariable = variableManager.UpdateVariable(updatedVariable);
 
                 }
 
@@ -667,37 +687,10 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                     {
                         foreach (var variable in structure.Variables)
                         {
-                            var var = new VariableInstanceModel()
-                            {
-                                Id = variable.Id,
-                                Name = variable.Label,
-                                Description = variable.Description,
-                                DataType = new ListItem(variable.DataType.Id, variable.DataType.Name, "copied"),
-                                SystemType = variable.DataType.SystemType,
-                                Unit = new UnitItem(variable.Unit.Id, variable.Unit.Abbreviation, variable.Unit.AssociatedDataTypes.Select(x => x.Name).ToList(), "copied"),
-                                IsKey = variable.IsKey,
-                                IsOptional = variable.IsValueOptional,
-                                Meanings = helper.ConvertTo(variable.Meanings)
-                            };
-
-   
-                            // add template if exist
-                            if (variable.VariableTemplate != null) var.Template = helper.ConvertTo(variable.VariableTemplate, "copied");
-
-                            // get suggestes DisplayPattern / currently only for DateTime
-                            if (var.SystemType.Equals(typeof(DateTime).Name))
-                            {
-                                if (variable.DisplayPatternId >= 0) var.DisplayPattern = new ListItem(variable.DisplayPatternId, DataTypeDisplayPattern.Get(variable.DisplayPatternId).DisplayPattern);
-                                var displayPattern = DataTypeDisplayPattern.Pattern.Where(p => p.Systemtype.ToString().Equals(var.SystemType));
-                                displayPattern.ToList().ForEach(d => var.PossibleDisplayPattern.Add(new ListItem(d.Id, d.DisplayPattern)));
-                            };
-
-                            model.Variables.Add(var);
-                            
+                            model.Variables.Add(helper.Copy(variable));
                         }
                     }
                 }
-            
             }
 
             // get default missing values
@@ -713,6 +706,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
 
 
             using (var structureManager = new DataStructureManager())
+            using (var variableManager = new VariableManager())
             {
                 if (id > 0)
                 {
@@ -721,11 +715,9 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                         
                     structureManager.DeleteStructuredDataStructure(structure);
                 }
-
             }
 
             // get default missing values
-         
             return Json(true);
         }
 
@@ -751,33 +743,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                     {
                         foreach (var variable in structure.Variables)
                         {
-                            var var = new VariableInstanceModel()
-                            {
-                                Id = variable.Id,
-                                Name = variable.Label,
-                                Description = variable.Description,
-                                DataType = new ListItem(variable.DataType.Id, variable.DataType.Name),
-                                SystemType = variable.DataType.SystemType,
-                                Unit = new UnitItem(variable.Unit.Id, variable.Unit.Abbreviation, variable.Unit.AssociatedDataTypes.Select(x => x.Name).ToList(), "copied"),
-                                IsKey = variable.IsKey,
-                                IsOptional = variable.IsValueOptional,
-                                Meanings = helper.ConvertTo(variable.Meanings)
-                            };
-
-                            // add template if exist
-                            if (variable.VariableTemplate != null) var.Template = helper.ConvertTo(variable.VariableTemplate, "copied");
-
-
-                            // get suggestes DisplayPattern / currently only for DateTime
-                            if (var.SystemType.Equals(typeof(DateTime).Name))
-                            {
-                                var.DisplayPattern = new ListItem(variable.DisplayPatternId, DataTypeDisplayPattern.Get(variable.DisplayPatternId).DisplayPattern) ; // here a suggesten of the display pattern is needed
-                                var displayPattern = DataTypeDisplayPattern.Pattern.Where(p => p.Systemtype.ToString().Equals(var.SystemType));
-                                displayPattern.ToList().ForEach(d => var.PossibleDisplayPattern.Add(new ListItem(d.Id, d.DisplayPattern)));
-                            };
-
-                            model.Variables.Add(var);
-
+                            model.Variables.Add(helper.ConvertTo(variable));
                         }
                     }
                 }
@@ -923,6 +889,16 @@ namespace BExIS.Modules.Rpm.UI.Controllers
             List<MeaningItem> list = helper.GetMeanings();
 
             // get default missing values
+            return Json(list.OrderBy(i => i.Group), JsonRequestBehavior.AllowGet);
+
+        }
+
+        [JsonNetFilter]
+        public JsonResult GetConstraints()
+        {
+            VariableHelper helper = new VariableHelper();
+            List<ListItem> list = helper.GetConstraints();
+
             return Json(list.OrderBy(i => i.Group), JsonRequestBehavior.AllowGet);
 
         }
