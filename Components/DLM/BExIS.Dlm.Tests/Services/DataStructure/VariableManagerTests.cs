@@ -596,6 +596,266 @@ namespace BExIS.Dlm.Tests.Services.DataStructure
         }
 
         [Test()]
+        public void CreateVariable_WithMissingValues_Variable()
+        {
+            using (var variableManager = new VariableManager())
+            using (var datastructureManager = new DataStructureManager())
+            using (var dataTypeManager = new DataTypeManager())
+            using (var unitManager = new UnitManager())
+            using (var missingValueManager = new MissingValueManager())
+            {
+                //Arrange
+                var dataType = dataTypeManager.Repo.Get().FirstOrDefault();
+                Assert.IsNotNull(dataType, "datatype not exist");
+
+                var unit = unitManager.Repo.Get().FirstOrDefault();
+                Assert.IsNotNull(unit, "unit not exist");
+
+                //Variable Template
+                var variableTemplate = variableManager.CreateVariableTemplate(
+                    "TestVariableTemplate",
+                    dataType,
+                    unit,
+                    "TestVariableTemplate Description",
+                    "xyz"
+                    );
+
+                // Datastructure
+                var dataStructure = datastructureManager.CreateStructuredDataStructure(
+                    "Test Structure",
+                    "Test StrutcureDescription",
+                    null,
+                    null,
+                    DataStructureCategory.Generic,
+                    null
+                    );
+
+                // generate list of missing values
+                List<MissingValue> missingValues = new List<MissingValue>();
+                var ms = new MissingValue() {
+                    DisplayName = "test",
+                    Description = "test",
+                    Placeholder = "test"
+                };
+
+                missingValues.Add(ms);
+
+                //Act
+                var variable = variableManager.CreateVariable(
+                    "TestVariable",
+                    dataType,
+                    unit,
+                    dataStructure.Id,
+                    true,
+                    true,
+                    1,
+                    0,
+                    "",
+                    "",
+                    0,
+                    missingValues
+                    );
+
+                //Assert
+                Assert.IsNotNull(variable);
+                Assert.That(variable.Id > 0);
+                Assert.That(variable.MissingValues.Any());
+
+                var variableFromDB = variableManager.GetVariable(variable.Id);
+
+                var msl = missingValueManager.Repo.Get().Where(x => x.Id == variable.MissingValues.First().Id).FirstOrDefault();
+
+                Assert.IsNotNull(msl);
+
+                Assert.AreSame(variable, variableFromDB);
+                Assert.That(variableFromDB.MissingValues.Count>0);
+
+            }
+        }
+
+        [Test()]
+        public void CreateVariable_WithConstraints_Variable()
+        {
+            using (var variableManager = new VariableManager())
+            using (var datastructureManager = new DataStructureManager())
+            using (var dataTypeManager = new DataTypeManager())
+            using (var unitManager = new UnitManager())
+            using (var constraintManager = new ConstraintManager())
+            {
+                //Arrange
+                var dataType = dataTypeManager.Repo.Get().FirstOrDefault();
+                Assert.IsNotNull(dataType, "datatype not exist");
+
+                var unit = unitManager.Repo.Get().FirstOrDefault();
+                Assert.IsNotNull(unit, "unit not exist");
+
+                //Variable Template
+                var variableTemplate = variableManager.CreateVariableTemplate(
+                    "TestVariableTemplate",
+                    dataType,
+                    unit,
+                    "TestVariableTemplate Description",
+                    "xyz"
+                    );
+
+                // Datastructure
+                var dataStructure = datastructureManager.CreateStructuredDataStructure(
+                    "Test Structure",
+                    "Test StrutcureDescription",
+                    null,
+                    null,
+                    DataStructureCategory.Generic,
+                    null
+                    );
+
+                // generate a constraint
+                List<Constraint> constraints = new List<Constraint>();
+
+                var c = new DomainConstraint();
+                c.Name = "test";
+                c.Description = "test description";
+                c.Items.Add(new DomainItem() { Key="a", Value="a" });
+
+                c = constraintManager.Create(c);
+                constraints.Add(c);
+
+                //Act
+                var variable = variableManager.CreateVariable(
+                    "TestVariable",
+                    dataType,
+                    unit,
+                    dataStructure.Id,
+                    true,
+                    true,
+                    1,
+                    0,
+                    "",
+                    "",
+                    0,
+                    null,
+                    constraints.Select(co => co.Id).ToList()
+                    ); ;
+
+                //Assert
+                Assert.IsNotNull(variable);
+                Assert.That(variable.Id > 0);
+                Assert.That(variable.VariableConstraints.Any());
+
+                var variableFromDB = variableManager.GetVariable(variable.Id);
+
+                var cons = constraintManager.ConstraintRepository.Get().Where(x => x.Id == variable.VariableConstraints.First().Id).FirstOrDefault();
+
+                Assert.IsNotNull(cons);
+
+                Assert.AreSame(variable, variableFromDB);
+                Assert.That(variableFromDB.VariableConstraints.Count > 0);
+
+            }
+        }
+
+        [Test()]
+        public void CreateVariable_2VarsWithSameConstraints_Variable()
+        {
+            using (var variableManager = new VariableManager())
+            using (var datastructureManager = new DataStructureManager())
+            using (var dataTypeManager = new DataTypeManager())
+            using (var unitManager = new UnitManager())
+            using (var constraintManager = new ConstraintManager())
+            {
+                //Arrange
+                var dataType = dataTypeManager.Repo.Get().FirstOrDefault();
+                Assert.IsNotNull(dataType, "datatype not exist");
+
+                var unit = unitManager.Repo.Get().FirstOrDefault();
+                Assert.IsNotNull(unit, "unit not exist");
+
+                //Variable Template
+                var variableTemplate = variableManager.CreateVariableTemplate(
+                    "TestVariableTemplate",
+                    dataType,
+                    unit,
+                    "TestVariableTemplate Description",
+                    "xyz"
+                    );
+
+                // Datastructure
+                var dataStructure = datastructureManager.CreateStructuredDataStructure(
+                    "Test Structure",
+                    "Test StrutcureDescription",
+                    null,
+                    null,
+                    DataStructureCategory.Generic,
+                    null
+                    );
+
+                // generate a constraint
+                List<Constraint> constraints = new List<Constraint>();
+
+                var c = new DomainConstraint();
+                c.Name = "test";
+                c.Description = "test description";
+                c.Items.Add(new DomainItem() { Key = "a", Value = "a" });
+
+                c = constraintManager.Create(c);
+                constraints.Add(c);
+
+                //Act
+                var variable = variableManager.CreateVariable(
+                    "TestVariable",
+                    dataType,
+                    unit,
+                    dataStructure.Id,
+                    true,
+                    true,
+                    1,
+                    0,
+                    "",
+                    "",
+                    0,
+                    null,
+                    constraints.Select(co => co.Id).ToList()
+                    );
+
+                dataStructure = datastructureManager.AddVariable(dataStructure.Id, variable.Id);
+
+
+                var variable2 = variableManager.CreateVariable(
+                   "TestVariable",
+                   dataType,
+                   unit,
+                   dataStructure.Id,
+                   true,
+                   true,
+                   1,
+                   0,
+                   "",
+                   "",
+                   0,
+                   null,
+                   constraints.Select(co => co.Id).ToList()
+                   );
+
+                dataStructure = datastructureManager.AddVariable(dataStructure.Id, variable2.Id);
+
+
+                //Assert
+                Assert.IsNotNull(variable);
+                Assert.That(variable.Id > 0);
+                Assert.That(variable.VariableConstraints.Any());
+
+                var variableFromDB = variableManager.GetVariable(variable.Id);
+
+                var cons = constraintManager.ConstraintRepository.Get().Where(x => x.Id == variable.VariableConstraints.First().Id).FirstOrDefault();
+
+                Assert.IsNotNull(cons);
+
+                Assert.AreSame(variable, variableFromDB);
+                Assert.That(variableFromDB.VariableConstraints.Count > 0);
+
+            }
+        }
+
+        [Test()]
         public void CreateVariable_WithoutVariableTemplate_Variable()
         {
             using (var variableManager = new VariableManager())

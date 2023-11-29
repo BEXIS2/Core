@@ -100,9 +100,6 @@ namespace BExIS.Modules.Rpm.UI.Controllers
             {
                 if (id > 0)
                 {
-                    var mvs = missingValueManager.Repo.Query(m => m.Variable.Id.Equals(id)).ToList();
-                    if (mvs != null && mvs.Any()) mvs.ForEach(m => missingValueManager.Delete(m));
-
                     variableManager.DeleteVariableTemplate(id);
                 }
 

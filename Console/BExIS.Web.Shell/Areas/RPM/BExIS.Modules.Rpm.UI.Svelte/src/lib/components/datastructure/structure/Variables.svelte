@@ -2,7 +2,7 @@
 	import Variable from './variable/Variable.svelte';
 	import { Spinner } from '@bexis2/bexis2-core-ui';
 	import { onMount } from 'svelte';
-	import { getDataTypes, getUnits, getVariableTemplates, getMeanings } from '../services';
+	
 	import type { missingValueType } from '../types';
 	import { VariableInstanceModel } from '../types';
 	import { Modal, getModalStore } from '@skeletonlabs/skeleton';
@@ -11,9 +11,10 @@
 	import Fa from 'svelte-fa';
 	import { faShare, faShareFromSquare, faMaximize, faMinimize, faAdd, faTrash, faCopy, faAngleUp, faAngleDown, faAnglesDown, faAnglesUp } from '@fortawesome/free-solid-svg-icons';
 
+// services
+	import { getDataTypes, getUnits, getVariableTemplates, getMeanings, getConstraints } from '../services';
 	// stores
-	
-	import { unitStore, dataTypeStore, templateStore, meaningsStore} from '../store'
+	import { unitStore, dataTypeStore, templateStore, meaningsStore, constraintsStore} from '../store'
 
 	export let variables: VariableInstanceModel[] = [];
 	export let missingValues: missingValueType[] = [];
@@ -46,6 +47,9 @@
 
 		const meanings = await getMeanings();
 		meaningsStore.set(meanings);
+
+		const constraints = await getConstraints();
+		constraintsStore.set(constraints);
 
 		fillVariableValdationStates(variables);
 

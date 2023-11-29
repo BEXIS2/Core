@@ -51,7 +51,7 @@ namespace BExIS.Modules.Rpm.UI.Models
         public VariableInstanceModel()
         {
             Template = new VariableTemplateItem();
-            DisplayPattern = new ListItem(-1, "", "");
+            DisplayPattern = new ListItem(-1, "", "", "");
             PossibleUnits = new List<UnitItem>();
             PossibleTemplates = new List<VariableTemplateItem>();
             PossibleDisplayPattern = new List<ListItem>();
