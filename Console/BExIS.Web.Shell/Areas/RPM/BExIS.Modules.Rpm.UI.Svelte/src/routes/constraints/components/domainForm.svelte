@@ -4,7 +4,45 @@
 	import type { DomainConstraintListItem } from '../models';
 	import { writable } from 'svelte/store';
 
+	import { createEventDispatcher, onMount } from 'svelte';
+	const dispatch = createEventDispatcher();
+
+	import suite from './domainForm';
+
 	export let domainConstraint: DomainConstraintListItem;
+
+	// load form result object
+	let res = suite.get();
+
+	// use to actived save if form is valid
+	$: disabled = !res.isValid();
+	$: dispatch(String(disabled));
+
+	//change event: if input change check also validation only on the field
+	// e.target.id is the id of the input component
+	function onChangeHandler(e: any) {
+		//console.log("input changed", e)
+		// add some delay so the entityTemplate is updated
+		// otherwise the values are old
+		setTimeout(async () => {
+			// check changed field
+			res = suite(domainConstraint , e);
+		}, 10);
+	}
+
+	onMount(async () => {
+		if (domainConstraint.id == 0) {
+			suite.reset();
+		}
+		else{
+			setTimeout(async () => {	
+				res = suite(domainConstraint, "");
+			}, 10);
+		}
+		
+
+	});
+
 	const domainItemsTableStore = writable<string[]>([]);
 	$: domainItemsTableStore.set(setDomainItems(domainConstraint.domain));
 

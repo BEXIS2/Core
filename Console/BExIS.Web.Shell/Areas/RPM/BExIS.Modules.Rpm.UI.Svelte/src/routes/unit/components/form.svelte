@@ -55,7 +55,17 @@
 	$: dimensions = ds.map(({ id, name }) => ({ id: id, text: name }));
 	$: unit.dimension = listItem === undefined ? undefined : ds.find((d) => d.id === listItem?.id);
 
-	onMount(async () => {});
+	onMount(async () => {
+		if (unit.id == 0) {
+			suite.reset();
+		}
+		else{
+			setTimeout(async () => {	
+				res = suite({ unit: unit, units: units }, "");
+			}, 10);
+		}
+
+	});
 
 	async function load() {
 		dt = await apiCalls.GetDataTypes();

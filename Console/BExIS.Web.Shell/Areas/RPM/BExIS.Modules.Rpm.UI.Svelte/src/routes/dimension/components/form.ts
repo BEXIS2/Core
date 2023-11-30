@@ -21,8 +21,8 @@ const suite = create((data: dataType, fieldName) => {
 
 	test('name', 'name is not unique', () => {
 		return (
-			data.dimensions.find((u) => u.name.toLowerCase() === data.dimension.name.toLowerCase()) ==
-				null || data.dimensions.find((u) => u.name === data.dimension.name)?.id == data.dimension.id
+			data.dimensions.find((u) => u.name.toLowerCase().trim() === data.dimension.name.toLowerCase().trim()) == null || 
+			data.dimensions.filter((u) => u.name.toLowerCase().trim() === data.dimension.name.toLowerCase().trim() && u.id != data.dimension.id).length == 0
 		);
 	});
 
