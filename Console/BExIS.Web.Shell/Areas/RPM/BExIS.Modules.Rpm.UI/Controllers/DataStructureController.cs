@@ -433,8 +433,12 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                         updatedVariable.IsKey = variable.IsKey;
                         updatedVariable.IsValueOptional = variable.IsOptional;
                         updatedVariable.VariableConstraints = variableHelper.ConvertTo(variable.Constraints);
-                        updatedVariable.MissingValues = variableHelper.ConvertTo(variable.MissingValues);
 
+                        // update missingValues
+                        List<long> dbMVs = updatedVariable.MissingValues.Select(mv => mv.Id).ToList();
+                        List<MissingValueItem> newMVs = variable.MissingValues.Where(mv => !dbMVs.Contains(mv.Id)).ToList();
+                        if(newMVs.Any())
+                        updatedVariable.MissingValues.ToList().AddRange(variableHelper.ConvertTo(newMVs));
 
                     }
                     else // create
@@ -461,22 +465,6 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                         structure = structureManager.AddVariable(structure.Id, updatedVariable.Id);
 
                     }
-
-                    //// update meanings
-                    //foreach (var meaning in variable.Meanings)
-                    //{
-                    //    Meaning m = meaningManager.getMeaning(meaning.Id);
-                    //    if(!updatedVariable.Meanings.Contains(m))updatedVariable.Meanings.Add(m);   
-                    //}
-
-                    //// update constraints
-                    //foreach (var constraint in variable.Constraints)
-                    //{
-                    //    Constraint c = constraintsManager.ConstraintRepository.Get(constraint.Id);
-                    //    if (!updatedVariable.VariableConstraints.Contains(c)) updatedVariable.VariableConstraints.Add(c);
-                    //}
-
-                    //updatedVariable = variableManager.UpdateVariable(updatedVariable);
 
                 }
 
