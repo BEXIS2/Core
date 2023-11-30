@@ -66,11 +66,14 @@ namespace BExIS.Dlm.Entities.Meanings
     public enum ExternalLinkType
     {
         prefix = 1,
-        relation = 2,
-        entitity = 3,
-        Class = 4,
-        Charachteristic = 5,
-        property = 6,
-        dictionary = 7,
+        link = 2,
+        [Display(Name = "entity - class")]
+        entity = 3,
+        [Display(Name = "characteristics - property")]
+        characteristics = 4,
+        [Display(Name = "vocabulary - dictionary")]
+        vocabulary = 5,
+        [Display(Name = "relationship - connection")]
+        relationship = 6
     }
 }

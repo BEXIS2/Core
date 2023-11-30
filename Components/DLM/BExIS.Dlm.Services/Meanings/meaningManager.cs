@@ -73,7 +73,7 @@ namespace BExIS.Dlm.Services.Meanings
                     {
                         related_meanings = (List<Meaning>)repo.Get().Where(x => meaning_ids.Contains(x.Id.ToString())).ToList<Meaning>();
                     }
-                    
+
                     using (Meaning meaning = new Meaning(Name, ShortName, Description, selectable, approved, externalLinks, related_meanings))
                     {
                         repo.Put(meaning);
@@ -284,7 +284,7 @@ namespace BExIS.Dlm.Services.Meanings
         public IEnumerable<MeaningEntry> GetWrongMappings(IEnumerable<MeaningEntry> mapping)
         {
             return mapping
-                .Where(pair => pair.MappingRelation.Type != ExternalLinkType.relation);
+                .Where(pair => pair.MappingRelation.Type != ExternalLinkType.relationship);
         }
         public IEnumerable<MeaningEntry> GetWrongMappings(IEnumerable<string> mapping)
         {
@@ -362,7 +362,7 @@ namespace BExIS.Dlm.Services.Meanings
                 Contract.Requires(Prefix == null);
                 Contract.Requires(prefixCategory != null);
             }
-            else 
+            else
             {
                 Contract.Requires(prefixCategory == null);
             }
@@ -570,11 +570,11 @@ namespace BExIS.Dlm.Services.Meanings
         }
         ExternalLink GetOrCreateExternalLink(ExternalLink externalLink_)
         {
-            if (!string.IsNullOrEmpty(externalLink_.Name) && !string.IsNullOrEmpty(externalLink_.URI) && this.getExternalLink(externalLink_.URI) == null) 
+            if (!string.IsNullOrEmpty(externalLink_.Name) && !string.IsNullOrEmpty(externalLink_.URI) && this.getExternalLink(externalLink_.URI) == null)
                 return this.addExternalLink(externalLink_.URI, externalLink_.Name, externalLink_.Type, externalLink_.Prefix, externalLink_.prefixCategory);
             else return this.getExternalLink(externalLink_.URI);
         }
-        public ExternalLink GetOrCreateExternalLink(string id,string name, string uri, ExternalLinkType type, ExternalLink Prefix, PrefixCategory prefixCategory)
+        public ExternalLink GetOrCreateExternalLink(string id, string name, string uri, ExternalLinkType type, ExternalLink Prefix, PrefixCategory prefixCategory)
         {
             if (!string.IsNullOrEmpty(name) && !string.IsNullOrEmpty(uri) && this.getExternalLink(uri) == null) return this.addExternalLink(uri, name, type, Prefix, prefixCategory);
             else return this.getExternalLink(uri);

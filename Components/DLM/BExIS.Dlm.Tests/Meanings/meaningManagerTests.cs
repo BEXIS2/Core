@@ -38,7 +38,7 @@ namespace BExIS.Dlm.Entities.Meanings.Tests
             DatasetHelper dsHelper = new DatasetHelper();
             dsHelper.PurgeAllDataStructures();
             helper.Dispose();
-            delete_all_test_data();
+            _delete_all_test_data();
         }
 
         [Test()]
@@ -64,7 +64,7 @@ namespace BExIS.Dlm.Entities.Meanings.Tests
         }
 
         [Test()]
-        public void createExternalLink()
+        public void _CreateExternalLink()
         {
             //Arrange
             ImeaningManagr _meaningManager = new MeaningManager();
@@ -93,15 +93,15 @@ namespace BExIS.Dlm.Entities.Meanings.Tests
             //editing a prefix to external link external link
             uri = Convert.ToString("htpp://testUri_edited_.com");
             name = Convert.ToString("test name external link edited");
-            type = ExternalLinkType.dictionary;
+            type = ExternalLinkType.vocabulary;
 
             //Act
-            res = _meaningManager.editExternalLink(res.Id.ToString(),uri,name,type , res, null);
+            res = _meaningManager.editExternalLink(res.Id.ToString(), uri, name, type, res, null);
 
             //Assert
             NUnit.Framework.Assert.That(res.URI.Equals("htpp://testUri_edited_.com"));
             NUnit.Framework.Assert.That(res.Name.Equals("test name external link edited"));
-            NUnit.Framework.Assert.That(res.Type.Equals(ExternalLinkType.dictionary));
+            NUnit.Framework.Assert.That(res.Type.Equals(ExternalLinkType.vocabulary));
             NUnit.Framework.Assert.That(res.Prefix.Equals(res));
             NUnit.Framework.Assert.IsNull(res.prefixCategory);
 
@@ -109,32 +109,32 @@ namespace BExIS.Dlm.Entities.Meanings.Tests
         }
 
         [Test()]
-        public void CreateMeaning()
+        public void _CreateMeaning()
         {
             ImeaningManagr _meaningManager = new MeaningManager();
 
             //create 3 external links : 1 type:relation and 2 with different types
             String uri = Convert.ToString("http://ad:hasconnection");
             String name = Convert.ToString("hasconnection");
-            ExternalLinkType type = ExternalLinkType.relation;
+            ExternalLinkType type = ExternalLinkType.relationship;
             ExternalLink prefix = null;
             ExternalLink externalLinkRelation = _meaningManager.addExternalLink(uri, name, type, prefix, null);
 
             uri = Convert.ToString("http://ad:water");
             name = Convert.ToString("water");
-            type = ExternalLinkType.Class;
+            type = ExternalLinkType.link;
             prefix = null;
             ExternalLink externalLinkClass = _meaningManager.addExternalLink(uri, name, type, prefix, null);
 
             uri = Convert.ToString("http://ad:soil");
             name = Convert.ToString("soil");
-            type = ExternalLinkType.entitity;
+            type = ExternalLinkType.entity;
             prefix = null;
             ExternalLink externalLinkEntity = _meaningManager.addExternalLink(uri, name, type, prefix, null);
 
             uri = Convert.ToString("http://ad:haschildren");
             name = Convert.ToString("has children");
-            type = ExternalLinkType.relation;
+            type = ExternalLinkType.relationship;
             prefix = null;
             ExternalLink externalLinkRelation2 = _meaningManager.addExternalLink(uri, name, type, prefix, null);
 
@@ -169,10 +169,10 @@ namespace BExIS.Dlm.Entities.Meanings.Tests
         }
 
         [Test()]
-        public void EditMeaning()
+        public void _EditMeaning()
         {
 
-            this.CreateMeaning();
+            this._CreateMeaning();
             ImeaningManagr _meaningManager = new MeaningManager();
 
             Meaning meaning = _meaningManager.getMeanings().FirstOrDefault();
@@ -197,32 +197,32 @@ namespace BExIS.Dlm.Entities.Meanings.Tests
         }
 
         [Test()]
-        public void CreteMeaningWithParents()
+        public void _CreteMeaningWithParents()
         {
             ImeaningManagr _meaningManager = new MeaningManager();
 
             //create 3 external links : 1 type:relation and 2 with different types
             String uri = Convert.ToString("http://ad:hasconnection");
             String name = Convert.ToString("hasconnection");
-            ExternalLinkType type = ExternalLinkType.relation;
+            ExternalLinkType type = ExternalLinkType.relationship;
             ExternalLink prefix = null;
             ExternalLink externalLinkRelation = _meaningManager.addExternalLink(uri, name, type, prefix, null);
 
             uri = Convert.ToString("http://ad:water");
             name = Convert.ToString("water");
-            type = ExternalLinkType.Class;
+            type = ExternalLinkType.entity;
             prefix = null;
             ExternalLink externalLinkClass = _meaningManager.addExternalLink(uri, name, type, prefix, null);
 
             uri = Convert.ToString("http://ad:soil");
             name = Convert.ToString("soil");
-            type = ExternalLinkType.entitity;
+            type = ExternalLinkType.entity;
             prefix = null;
             ExternalLink externalLinkEntity = _meaningManager.addExternalLink(uri, name, type, prefix, null);
 
             uri = Convert.ToString("http://ad:haschildren");
             name = Convert.ToString("has children");
-            type = ExternalLinkType.relation;
+            type = ExternalLinkType.relationship;
             prefix = null;
             ExternalLink externalLinkRelation2 = _meaningManager.addExternalLink(uri, name, type, prefix, null);
 
@@ -282,7 +282,7 @@ namespace BExIS.Dlm.Entities.Meanings.Tests
         }
 
         [Test()]
-        public void CreateExternalLinkSetWithPrefixes()
+        public void _CreateExternalLinkSetWithPrefixes()
         {
             ImeaningManagr _meaningManager = new MeaningManager();
 
@@ -314,8 +314,8 @@ namespace BExIS.Dlm.Entities.Meanings.Tests
             name = Convert.ToString("darwin water");
             name.Should().NotBeNullOrEmpty();
 
-            type = ExternalLinkType.dictionary;
-            type.Should().Be(7);
+            type = ExternalLinkType.vocabulary;
+            type.Should().Be(5);
 
             prefix = res_prefix_parent;
             prefix.Should().NotBeNull();
@@ -330,13 +330,13 @@ namespace BExIS.Dlm.Entities.Meanings.Tests
             name = Convert.ToString("test name external link edited water groumds");
             name.Should().NotBeNullOrEmpty();
 
-            type = ExternalLinkType.dictionary;
+            type = ExternalLinkType.vocabulary;
             type.Should().NotBeNull();
 
             res_link_prefix = _meaningManager.editExternalLink(res_link_prefix.Id.ToString(), uri, name, type, prefix, null);
             res_link_prefix.URI.Should().Be("htpp://testUri_edited_aquadiva.com");
             res_link_prefix.Name.Should().Be("test name external link edited water groumds");
-            res_link_prefix.Type.Should().Be(7);
+            res_link_prefix.Type.Should().Be(5);
             res_link_prefix.Prefix.Should().Equals(res_prefix_parent);
             NUnit.Framework.Assert.IsNotNull(res_link_prefix);
 
@@ -345,7 +345,7 @@ namespace BExIS.Dlm.Entities.Meanings.Tests
         }
 
         [Test]
-        public void delete_all_test_data()
+        public void _delete_all_test_data()
         {
             ImeaningManagr _meaningManager = new MeaningManager();
             foreach (Meaning m in _meaningManager.getMeanings().Where(x => x.Related_meaning?.Count() != 0).Where(x => x.Related_meaning != null))
