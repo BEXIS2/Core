@@ -125,21 +125,21 @@ namespace BExIS.Dlm.Services.DataStructure
         /// <param name="entity">The data structure object to be deleted.</param>
         /// <returns>True if the data structure is deleted, False otherwise.</returns>
         /// <remarks>Database exceptions are not handled intentionally, so that if the data structure is related to some datasets, a proper exception will be thrown.</remarks>
+        //public bool DeleteStructuredDataStructure(StructuredDataStructure entity)
+        //{
+        //    Contract.Requires(entity != null);
+        //    Contract.Requires(entity.Id >= 0);
+
+        //    return DeleteStructuredDataStructure(entity);
+        //}
+
         public bool DeleteStructuredDataStructure(StructuredDataStructure entity)
         {
-            Contract.Requires(entity != null);
             Contract.Requires(entity.Id >= 0);
 
-            return DeleteStructuredDataStructure(entity.Id);
-        }
-
-        public bool DeleteStructuredDataStructure(long id)
-        {
-            Contract.Requires(id >= 0);
-
             IReadOnlyRepository<Dataset> datasetRepo = this.GetUnitOfWork().GetReadOnlyRepository<Dataset>();
-            if (datasetRepo.Query(p => p.DataStructure.Id == id).Count() > 0)
-                throw new Exception(string.Format("Data structure {0} is used by datasets. Deletion Failed", id));
+            if (datasetRepo.Query(p => p.DataStructure.Id == entity.Id).Count() > 0)
+                throw new Exception(string.Format("Data structure {0} is used by datasets. Deletion Failed", entity.Id));
 
             using (IUnitOfWork uow = this.GetUnitOfWork())
             {
@@ -148,13 +148,15 @@ namespace BExIS.Dlm.Services.DataStructure
                 //IRepository<MissingValue> missinValuesRepo = uow.GetRepository<MissingValue>();
 
                 //variableRepo.Evict();
-                var entity = repo.Get(id);
+                variableRepo.Evict();
 
+                entity = repo.Reload(entity);
                 // delete associated variables and thier parameters
-                var varIds = entity?.Variables?.Select(v => v.Id);
-                entity.Variables = null;
-
-                //varIds?.ToList().ForEach(v => variableRepo.Delete(v));
+                foreach (var usage in entity.Variables)
+                {
+                    var localVar = variableRepo.Reload(usage);           
+                    variableRepo.Delete(localVar);
+                }
 
                 //uow.Commit(); //  should not be needed
                 repo.Delete(entity);
