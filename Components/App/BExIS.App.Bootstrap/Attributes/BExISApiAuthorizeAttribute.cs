@@ -14,7 +14,7 @@ namespace BExIS.App.Bootstrap.Attributes
 {
     public class BExISApiAuthorizeAttribute : AuthorizeAttribute
     {
-        public override async void OnAuthorization(HttpActionContext actionContext)
+        public override void OnAuthorization(HttpActionContext actionContext)
         {
             try
             {
@@ -23,7 +23,17 @@ namespace BExIS.App.Bootstrap.Attributes
                 using (var userManager = new UserManager())
                 using (var identityUserService = new IdentityUserService())
                 {
-                    // 0. User
+                    var areaName = "Api";
+                    var controllerName = actionContext.ActionDescriptor.ControllerDescriptor.ControllerName;
+                    var actionName = actionContext.ActionDescriptor.ActionName;
+                    var operation = operationManager.Find(areaName, controllerName, "*");
+
+                    if (operation == null)
+                    {
+                        actionContext.Response = new HttpResponseMessage(HttpStatusCode.Forbidden);
+                        return;
+                    }
+
                     User user = null;
 
                     // 1. principal
@@ -36,28 +46,28 @@ namespace BExIS.App.Bootstrap.Attributes
                         {
                             string basicParameter = actionContext.Request.Headers.Authorization.Parameter;
 
-                            var name = System.Text.Encoding.UTF8.GetString(Convert.FromBase64String(basicParameter)).Split(':')[0];
+                            var name = Encoding.UTF8.GetString(Convert.FromBase64String(basicParameter)).Split(':')[0];
                             if (name.Contains('@'))
                             {
-                                user = await userManager.FindByEmailAsync(name);
+                                user = userManager.FindByEmailAsync(name).Result;
                             }
                             else
                             {
-                                user = await userManager.FindByNameAsync(name);
+                                user = userManager.FindByNameAsync(name).Result;
                             }
 
                             if (user == null)
                             {
-                                actionContext.Response = new HttpResponseMessage(System.Net.HttpStatusCode.Forbidden);
+                                actionContext.Response = new HttpResponseMessage(HttpStatusCode.Forbidden);
                                 actionContext.Response.Content = new StringContent("There is no user with the given username.");
                                 return;
                             }
 
-                            var result = await identityUserService.CheckPasswordAsync(user, System.Text.Encoding.UTF8.GetString(Convert.FromBase64String(basicParameter)).Split(':')[1]);
+                            var result = identityUserService.CheckPasswordAsync(user, Encoding.UTF8.GetString(Convert.FromBase64String(basicParameter)).Split(':')[1]).Result;
 
                             if (!result)
                             {
-                                actionContext.Response = new HttpResponseMessage(System.Net.HttpStatusCode.Forbidden);
+                                actionContext.Response = new HttpResponseMessage(HttpStatusCode.Forbidden);
                                 actionContext.Response.Content = new StringContent("The username and/or password are incorrect.");
                                 return;
                             }
@@ -65,26 +75,14 @@ namespace BExIS.App.Bootstrap.Attributes
                     }
                     else
                     {
-                        user = await userManager.FindByNameAsync(principal.Identity.Name);
+                        user = userManager.FindByNameAsync(principal.Identity.Name).Result;
 
                         if (user == null)
                         {
-                            actionContext.Response = new HttpResponseMessage(System.Net.HttpStatusCode.Forbidden);
+                            actionContext.Response = new HttpResponseMessage(HttpStatusCode.Forbidden);
                             actionContext.Response.Content = new StringContent("The system denied the access.");
                             return;
                         }
-                    }
-
-                    // 3. features & operations
-                    var areaName = "Api";
-                    var controllerName = actionContext.ActionDescriptor.ControllerDescriptor.ControllerName;
-                    var actionName = actionContext.ActionDescriptor.ActionName;
-                    var operation = operationManager.Find(areaName, controllerName, "*");
-
-                    if (operation == null)
-                    {
-                        actionContext.Response = new HttpResponseMessage(System.Net.HttpStatusCode.Forbidden);
-                        return;
                     }
 
                     var feature = operation.Feature;
@@ -92,7 +90,7 @@ namespace BExIS.App.Bootstrap.Attributes
                     {
                         if (!featurePermissionManager.HasAccess(user.Id, feature.Id))
                         {
-                            actionContext.Response = new HttpResponseMessage(System.Net.HttpStatusCode.Forbidden);
+                            actionContext.Response = new HttpResponseMessage(HttpStatusCode.Forbidden);
                             actionContext.Response.Content = new StringContent("The system denied the access.");
                             return;
                         }

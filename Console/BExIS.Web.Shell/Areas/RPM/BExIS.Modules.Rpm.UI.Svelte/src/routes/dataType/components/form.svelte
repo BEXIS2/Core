@@ -4,7 +4,7 @@
 	import Fa from 'svelte-fa';
 	import { faSave, faXmark } from '@fortawesome/free-solid-svg-icons';
 
-	import type { DataTypeListItem, DataTypeValidationResult} from '../models';
+	import type { DataTypeListItem, DataTypeValidationResult } from '../models';
 	import { onMount } from 'svelte';
 	import * as apiCalls from '../services/apiCalls';
 	import { fade, slide } from 'svelte/transition';
@@ -27,11 +27,10 @@
 	// init unit
 	export let dataType: DataTypeListItem;
 	export let dataTypes: DataTypeListItem[];
-	
+
 	let st: string[] = [];
 	$: systemTypes = st.map((s) => ({ id: s, text: s }));
 	$: console.log('System Types', systemTypes);
-	
 
 	onMount(async () => {
 		st = await apiCalls.GetSystemTypes();

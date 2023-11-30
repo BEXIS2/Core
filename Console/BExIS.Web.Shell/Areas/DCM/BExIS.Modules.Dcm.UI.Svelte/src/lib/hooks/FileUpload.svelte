@@ -15,6 +15,8 @@
 	} from '../../routes/edit/stores';
 
 	import type { FileUploadModel } from '$models/FileUpload';
+	import PlaceholderHook from './placeholder/PlaceholderHook.svelte';
+	import PlaceHolderHookContent from './placeholder/PlaceHolderHookContent.svelte';
 
 	export let id = 0;
 	export let version = 1;
@@ -78,9 +80,7 @@
 
 <div class="space-y-2">
 	{#await load()}
-		<div class="text-surface-800">
-			<Spinner label="loading File Uploader" position={positionType.start} />
-		</div>
+		<PlaceHolderHookContent />
 	{:then result}
 		<FileUploader
 			{id}

@@ -39,6 +39,18 @@ namespace BExIS.Dlm.Services.DataStructure
         public IReadOnlyRepository<RangeConstraint> RangeConstraintRepository { get; }
         public IQueryable<RangeConstraint> RangeConstraints => RangeConstraintRepository.Query();
 
+        /// <summary>
+        /// return all constraints Materialize
+        /// </summary>
+        /// <returns></returns>
+        public List<Constraint> Get()
+        {
+            var list = ConstraintRepository.Get().ToList();
+            list.ToList().ForEach(c => c.Materialize());
+
+            return list;
+        }
+
         public bool DeleteById(long constraintId)
         {
             using (var uow = this.GetUnitOfWork())
@@ -130,13 +142,13 @@ namespace BExIS.Dlm.Services.DataStructure
             return (true);
         }
 
-        internal DomainConstraint Update(DomainConstraint entity)
+        public DomainConstraint Update(DomainConstraint entity)
         {
             Contract.Requires(entity != null, "provided entity can not be null");
             Contract.Requires(entity.Id >= 0, "provided entity must have a permanent ID");
 
             Contract.Ensures(Contract.Result<DomainConstraint>() != null && Contract.Result<DomainConstraint>().Id >= 0, "No entity is persisted!");
-
+            entity.Dematerialize();
             using (IUnitOfWork uow = this.GetUnitOfWork())
             {
                 IRepository<DomainConstraint> repo = uow.GetRepository<DomainConstraint>();

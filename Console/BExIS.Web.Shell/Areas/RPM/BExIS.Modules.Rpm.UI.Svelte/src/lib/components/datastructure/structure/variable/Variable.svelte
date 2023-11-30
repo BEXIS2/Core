@@ -15,7 +15,7 @@
 
 	//stores
 
-	import { displayPatternStore, unitStore, dataTypeStore, templateStore, meaningsStore } from '../../store';
+	import { displayPatternStore, unitStore, dataTypeStore, templateStore, meaningsStore, constraintsStore } from '../../store';
 
 	import {
 		updateDisplayPattern,
@@ -30,6 +30,7 @@
 	import Overview from './Overview.svelte';
 
 	import suite from './variable';
+	import ConstraintsDescription from './ConstraintsDescription.svelte';
 
 	export let variable: VariableInstanceModel = new VariableInstanceModel();
 	$: variable;
@@ -48,6 +49,9 @@
 	let meanings: listItemType[] = [];
 	$: meanings;
 
+	let constraints: listItemType[] = [];
+	$: constraints;
+
 	let suggestedDataType: listItemType | undefined;
 	let suggestedUnits: unitListItemType[] | undefined;
 	let suggestedTemplates: templateListItemType[];
@@ -57,21 +61,21 @@
 	export let last: boolean = false;
 	export let expand: boolean;
 	export let blockDataRelevant:boolean;
-
+	
 	$: isValid;
 	// validation
 	let res = suite.get();
-
+	
 	let loaded = false;
-
+	
 	//displaypattern
 	let displayPattern: listItemType[];
 	$: displayPattern;
-
+	
 	const dispatch = createEventDispatcher();
-
+	
 	let x: listItemType = { id: 0, text: '', group: '' };
-
+	
 	onMount(() => {
 		// set suggestions
 		setList();
@@ -80,11 +84,12 @@
 		suggestedTemplates = variable.possibleTemplates;
 		// reset & reload validation
 		suite.reset();
-
+		
 		setTimeout(async () => {
-
+			
 			updateLists();
-
+			
+			console.log("🚀 ~ file: Variable.svelte:60 ~ blockDataRelevant:", blockDataRelevant)
 			//displayPattern = updateDisplayPattern(variable.dataType, true);
 
 			// when type has change, reset value, but after copy do not reset
@@ -142,6 +147,7 @@
 
 			if (id == 'variableTemplate') {
 				variable.meanings = updateMeanings(variable, e.detail)
+				variable.constraints = updateConstraints(variable,e.detail)
 			}
 
 			setValidationState(res);
@@ -175,6 +181,7 @@
 		units = $unitStore.map((o) => ({ ...o })); // set units
 		variableTemplates = $templateStore.map((o) => ({ ...o }));
 		meanings = $meaningsStore.map((o) => ({ ...o }));
+		constraints = $constraintsStore.map((o) => ({ ...o }));
 	}
 
 	function updateLists() {
@@ -216,6 +223,24 @@
 
 			return []
 	}
+
+	function updateConstraints(_variable:VariableInstanceModel, _variableTemplate:templateListItemType):listItemType[]
+	{
+			if(_variableTemplate && _variableTemplate.constraints)
+			{
+					if(_variable.constraints)
+					{
+						return [..._variable.constraints,...$constraintsStore.filter(m=>_variableTemplate.constraints.includes(m.text))]
+					}
+					else
+					{
+						 return [...$constraintsStore.filter(m=>_variableTemplate.constraints.includes(m.text))]
+					}
+			}
+
+			return []
+	}
+
 </script>
 
 <div id="variable-{variable.id}-container" class="flex gap-5">
@@ -231,6 +256,7 @@
 							bind:isOptional={variable.isOptional}
 							bind:isValid
 							bind:expand
+							{blockDataRelevant}
 						>
 							<TextInput
 								id="name"
@@ -329,8 +355,8 @@
 									{#if suggestedUnits && suggestedUnits.length>1}
 									{#each suggestedUnits?.slice(0,3) as u}
 											<button class="badge" 
-											class:variant-ghost-success={u == variable.unit}  
-											class:variant-filled-success={u != variable.unit}
+											class:variant-filled-success={u == variable.unit}  
+											class:variant-ghost-success={u != variable.unit}
 											on:click={()=> variable.unit = u }>{u.text}</button>
 									{/each}
 								{/if}
@@ -368,8 +394,8 @@
 										</div>
 									{#each suggestedTemplates.slice(0,3) as t}
 											<button class="badge" 
-											class:variant-ghost-success={t == variable.template}  
-											class:variant-filled-success={t != variable.template}
+											class:variant-filled-success={t == variable.template}  
+											class:variant-ghost-success={t != variable.template}
 											on:click={()=> variable.template = t }>{t.text}</button>
 									{/each}
 								</div>
@@ -425,6 +451,36 @@
 							<div slot="description">...</div>
 						</Container>
 
+						<Container>
+							<div slot="property">
+								<div class="flex w-full gap-1 py-1">
+										<div class="grow ">
+												Constraints
+										</div>
+								</div>
+								<MultiSelect
+									id="constraints"
+									title=""
+									source={constraints}
+									itemId="id"
+									itemLabel="text"
+									itemGroup="group"
+									complexSource={true}
+									complexTarget={true}
+									isMulti={true}
+									clearable={true}
+									bind:target={variable.constraints}
+									placeholder="-- Please select --"
+									invalid={res.hasErrors('constraints')}
+									feedback={res.getErrors('constraints')}
+									on:change={(e) => onSelectHandler(e, 'constraints')}
+								/>
+							
+							</div>
+							<div slot="description">
+								<ConstraintsDescription bind:list={variable.constraints} />
+							</div>
+						</Container>
 
 
 					</section>
@@ -456,8 +512,7 @@
 		</div>
 		<div
 			id="variable-{variable.id}-container-options"
-			class="flex-none w-24 space-y-2 content-center"
-		>
+			class="flex-none w-24 space-y-2 content-center"		>
 			<slot name="list-options" />
 		</div>
 	{/if}

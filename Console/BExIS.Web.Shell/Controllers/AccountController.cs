@@ -3,10 +3,17 @@ using BExIS.Security.Services.Authentication;
 using BExIS.Security.Services.Subjects;
 using BExIS.Security.Services.Utilities;
 using BExIS.Utils.Config;
+using BExIS.Utils.Config.Configurations;
 using BExIS.Web.Shell.Models;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
+using Microsoft.IdentityModel.Tokens;
 using Microsoft.Owin.Security;
+using System.Collections.Generic;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Text;
+using System;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
@@ -293,26 +300,7 @@ namespace BExIS.Web.Shell.Controllers
 
         public async Task<ActionResult> Profile()
         {
-            var identityUserService = new IdentityUserService();
-            var userManager = new UserManager();
-
-            try
-            {
-                long userId = 0;
-                long.TryParse(this.User.Identity.GetUserId(), out userId);
-
-                var user = identityUserService.FindById(userId);
-
-                user = identityUserService.FindById(userId);
-                var token = "";
-
-                return View(model: new ReadJwtModel() { Jwt = token });
-            }
-            finally
-            {
-                identityUserService.Dispose();
-                userManager.Dispose();
-            }
+            return View();
         }
 
         public ActionResult Register()
@@ -370,14 +358,13 @@ namespace BExIS.Web.Shell.Controllers
             }
         }
 
-        //
-        // GET: /Account/ResetPassword
-
         public ActionResult ResetPassword(string code)
         {
             return code == null ? View("Error") : View();
         }
 
+        //
+        // GET: /Account/ResetPassword
         //
         // POST: /Account/ResetPassword
         [HttpPost]

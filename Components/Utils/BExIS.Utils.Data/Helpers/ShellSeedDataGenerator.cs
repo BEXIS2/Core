@@ -6,6 +6,11 @@ namespace BExIS.Utils.Data.Helpers
 {
     public class ShellSeedDataGenerator : IModuleSeedDataGenerator
     {
+        public void Dispose()
+        {
+            // throw new NotImplementedException();
+        }
+
         public void GenerateSeedData()
         {
             // Features
@@ -26,26 +31,20 @@ namespace BExIS.Utils.Data.Helpers
                 var o6 = operationManager.Find("Shell", "Footer", "*") ?? operationManager.Create("Shell", "Footer", "*");
                 var o7 = operationManager.Find("Shell", "Ldap", "*") ?? operationManager.Create("Shell", "Ldap", "*");
                 var o8 = operationManager.Find("Shell", "Help", "*") ?? operationManager.Create("Shell", "Help", "*");
-                var o9 = operationManager.Find("Api", "Token", "*") ?? operationManager.Create("Api", "Token", "*");
-                var o98 = operationManager.Find("Shell", "Tokens", "*") ?? operationManager.Create("Shell", "Tokens", "*");
 
+                var o9 = operationManager.Find("Api", "Tokens", "*") ?? operationManager.Create("Api", "Tokens", "*");
+                var o98 = operationManager.Find("Shell", "Tokens", "*") ?? operationManager.Create("Shell", "Tokens", "*");
 
                 var o10 = operationManager.Find("Shell", "Menu", "*") ?? operationManager.Create("Shell", "Menu", "*");
                 var o11 = operationManager.Find("Shell", "UiTest", "*") ?? operationManager.Create("Shell", "Help", "*");
 
-
                 var o12 = operationManager.Find("Shell", "Settings", "*") ?? operationManager.Create("Shell", "Settings", "*", settings);
 
-                if (!versionManager.Exists("Shell", "2.18"))
+                if (!versionManager.Exists("Shell", "2.18.2"))
                 {
-                    versionManager.Create("Shell", "2.18");
+                    versionManager.Create("Shell", "2.18.2");
                 }
             }
-        }
-
-        public void Dispose()
-        {
-            // throw new NotImplementedException();
         }
     }
 }
