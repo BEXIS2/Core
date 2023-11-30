@@ -3,7 +3,7 @@
 	const modalStore = getModalStore();
 	
 	import { getLinks, remove } from './services';
-	import type { externalLinkType } from '$lib/components/meaning/types';
+	import type { externalLinkType, prefixCategoryType } from '$lib/components/meaning/types';
 
 	import {
 		Page,
@@ -67,6 +67,32 @@
 				},
 				disableFiltering: true,
 				disableSorting:true
+			},
+			type: {
+				disableFiltering: true,
+				disableSorting: true,
+				exclude: true
+			},
+			prefix: {
+				instructions: {
+					toStringFn: 
+					 ((pc: externalLinkType) =>	pc?.name	),
+					toSortableValueFn: 
+					((pc: externalLinkType) =>	pc?.name	),
+					toFilterableValueFn: 
+					((pc: externalLinkType) =>	pc?.name	)
+				}
+
+			},
+			prefixcategory: {
+				instructions: {
+					toStringFn: 
+					 ((pc: prefixCategoryType) =>	pc?.name	),
+					toSortableValueFn: 
+					((pc: prefixCategoryType) =>	pc?.name	),
+					toFilterableValueFn: 
+					((pc: prefixCategoryType) =>	pc?.name	)
+				}
 			},
 			optionsColumn: {
 				fixedWidth: 100

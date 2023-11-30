@@ -28,19 +28,21 @@ namespace BExIS.Modules.Rpm.UI.Helpers
             // missing values 
             variableTemplate.MissingValues?.ToList().ForEach(m => model.MissingValues.Add(new MissingValueItem(m.Id, m.DisplayName, m.Description)));
 
-            if(variableTemplate.Id>0)
-            using (var variableManager = new VariableManager())
-            using (var missingValueManager = new MissingValueManager())
-            {
-                model.InUse = variableManager.VariableInstanceRepo.Query().Any(v => v.VariableTemplate.Id.Equals(variableTemplate.Id));
+            // constraints
+            variableTemplate.VariableConstraints?.ToList().ForEach(c => model.Constraints.Add(new ListItem(c.Id, c.Name, getConstraintType(c),c.FormalDescription)));
 
-                var mvs = missingValueManager.Repo.Query(m => m.Variable.Id.Equals(variableTemplate.Id));
-                if(mvs != null && mvs.Any())
-                {
-                    mvs.ToList().ForEach(mv => model.MissingValues.Add(new MissingValueItem(mv.Id, mv.DisplayName, mv.Description)));
-                }
-            }
+            //if (variableTemplate.Id>0)
+            //using (var variableManager = new VariableManager())
+            //using (var missingValueManager = new MissingValueManager())
+            //{
+            //    model.InUse = variableManager.VariableInstanceRepo.Query().Any(v => v.VariableTemplate.Id.Equals(variableTemplate.Id));
 
+            //    var mvs = missingValueManager.Repo.Query(m => m.Variable.Id.Equals(variableTemplate.Id));
+            //    if(mvs != null && mvs.Any())
+            //    {
+            //        mvs.ToList().ForEach(mv => model.MissingValues.Add(new MissingValueItem(mv.Id, mv.DisplayName, mv.Description)));
+            //    }
+            //}
 
             variableTemplate.Meanings?.ToList().ForEach(m => model.Meanings.Add(new MeaningItem(m.Id, m.Name)));
 
@@ -52,6 +54,7 @@ namespace BExIS.Modules.Rpm.UI.Helpers
             using (var unitManager = new UnitManager())
             using (var dataTypeManager = new DataTypeManager())
             using (var meaningManager = new MeaningManager())
+            using (var constraintManager = new ConstraintManager())
             {
 
                 var variableTemplate = new VariableTemplate();
@@ -85,6 +88,16 @@ namespace BExIS.Modules.Rpm.UI.Helpers
                     }
                 }
 
+                // constraints
+                if (_model.Constraints.Any())
+                {
+                    foreach (var item in _model.Constraints)
+                    {
+                        var c = constraintManager.ConstraintRepository.Get(item.Id);
+                        variableTemplate.VariableConstraints.Add(c);
+                    }
+                }
+
                 return variableTemplate;
             }
         }
@@ -107,6 +120,25 @@ namespace BExIS.Modules.Rpm.UI.Helpers
                 return list;
             }
          }
+
+        public List<ListItem> GetConstraints()
+        {
+            using (var constraintManager = new ConstraintManager())
+            {
+                var constraints = constraintManager.Get().Where(c =>c.DataContainer==null);
+                List<ListItem> list = new List<ListItem>();
+
+                if (constraints.Any())
+                {
+                    foreach (var item in constraints)
+                    {
+                        list.Add(new ListItem(item.Id, item.Name, getConstraintType(item), item.FormalDescription));
+                    }
+                }
+
+                return list;
+            }
+        }
 
         public VariableTemplateItem ConvertTo(VariableTemplate variableTemplate, string group="")
         {
@@ -141,5 +173,140 @@ namespace BExIS.Modules.Rpm.UI.Helpers
 
         }
 
+        public List<ListItem> ConvertTo(ICollection<Constraint> constraints)
+        {
+            List<ListItem> list = new List<ListItem>();
+            constraints.ToList().ForEach(m => list.Add(ConvertTo(m)));
+
+            return list;
+
+        }
+
+        public ListItem ConvertTo(Constraint constraint)
+        {
+            constraint.Materialize();
+
+            ListItem item = new ListItem();
+            item.Id = constraint.Id;
+            item.Text = constraint.Name;
+            item.Group = getConstraintType(constraint);
+            item.Description = constraint.FormalDescription;
+
+            return item;
+
+        }
+
+        public List<Constraint> ConvertTo(ICollection<ListItem> constraints)
+        {
+            List<Constraint> list = new List<Constraint>();
+
+            using (var constraintManager = new ConstraintManager())
+            {
+                List<long> ids = constraints.Select(c => c.Id).ToList();
+                list = constraintManager.ConstraintRepository.Query(c => ids.Contains(c.Id)).ToList();
+                return list;
+            }
+
+        }
+
+        public VariableInstanceModel ConvertTo(VariableInstance variable)
+        {
+            var var = new VariableInstanceModel()
+            {
+                Id = variable.Id,
+                Name = variable.Label,
+                Description = variable.Description,
+                DataType = new ListItem(variable.DataType.Id, variable.DataType.Name),
+                SystemType = variable.DataType.SystemType,
+                Unit = new UnitItem(variable.Unit.Id, variable.Unit.Abbreviation, variable.Unit.AssociatedDataTypes.Select(x => x.Name).ToList(), "copied"),
+                IsKey = variable.IsKey,
+                IsOptional = variable.IsValueOptional,
+                Meanings = ConvertTo(variable.Meanings),
+                Constraints = ConvertTo(variable.VariableConstraints)
+            };
+
+            // add template if exist
+            if (variable.VariableTemplate != null) var.Template = ConvertTo(variable.VariableTemplate, "copied");
+
+            // get suggestes DisplayPattern / currently only for DateTime
+            if (var.SystemType.Equals(typeof(DateTime).Name))
+            {
+                if (variable.DisplayPatternId >= 0) var.DisplayPattern = new ListItem(variable.DisplayPatternId, DataTypeDisplayPattern.Get(variable.DisplayPatternId).DisplayPattern);
+                var displayPattern = DataTypeDisplayPattern.Pattern.Where(p => p.Systemtype.ToString().Equals(var.SystemType));
+                displayPattern.ToList().ForEach(d => var.PossibleDisplayPattern.Add(new ListItem(d.Id, d.DisplayPattern)));
+            };
+
+            //
+
+            return var;
+        }
+
+        public VariableInstanceModel Copy(VariableInstance variable)
+        {
+            var var = new VariableInstanceModel()
+            {
+                Id = variable.Id,
+                Name = variable.Label,
+                Description = variable.Description,
+                DataType = new ListItem(variable.DataType.Id, variable.DataType.Name, "copied"),
+                SystemType = variable.DataType.SystemType,
+                Unit = new UnitItem(variable.Unit.Id, variable.Unit.Abbreviation, variable.Unit.AssociatedDataTypes.Select(x => x.Name).ToList(), "copied"),
+                IsKey = variable.IsKey,
+                IsOptional = variable.IsValueOptional,
+                Meanings = ConvertTo(variable.Meanings),
+                Constraints = ConvertTo(variable.VariableConstraints)
+            };
+
+
+            // add template if exist
+            if (variable.VariableTemplate != null) var.Template = ConvertTo(variable.VariableTemplate, "copied");
+
+            // get suggestes DisplayPattern / currently only for DateTime
+            if (var.SystemType.Equals(typeof(DateTime).Name))
+            {
+                if (variable.DisplayPatternId >= 0) var.DisplayPattern = new ListItem(variable.DisplayPatternId, DataTypeDisplayPattern.Get(variable.DisplayPatternId).DisplayPattern);
+                var displayPattern = DataTypeDisplayPattern.Pattern.Where(p => p.Systemtype.ToString().Equals(var.SystemType));
+                displayPattern.ToList().ForEach(d => var.PossibleDisplayPattern.Add(new ListItem(d.Id, d.DisplayPattern)));
+            };
+
+            return var;
+        }
+
+        public List<MissingValue> ConvertTo(List<MissingValueModel> MissingValues)
+        {
+            List<MissingValue> list = new List<MissingValue>();
+            foreach (var mv in MissingValues)
+            {
+                list.Add(new MissingValue()
+                {
+                    DisplayName = mv.DisplayName,
+                    Description = mv.Description,
+                });
+            }
+
+            return list;
+        }
+
+        public List<MissingValue> ConvertTo(ICollection<MissingValueItem> items)
+        {
+            List<MissingValue> list = new List<MissingValue>();
+
+            using (var missingValueManager = new MissingValueManager())
+            {
+                List<long> ids = items.Select(m => m.Id).ToList();
+                missingValueManager.Repo.Query(m => ids.Contains(m.Id));
+                return list;
+            }
+
+        }
+
+        private string getConstraintType(Constraint c)
+        {
+            if (c is DomainConstraint) return "Domain";
+            if (c is RangeConstraint) return "Range";
+            if (c is PatternConstraint) return "Pattern";
+
+            return string.Empty;
+        }
     }
 }

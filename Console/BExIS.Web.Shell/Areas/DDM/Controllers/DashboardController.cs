@@ -389,11 +389,6 @@ namespace BExIS.Modules.Ddm.UI.Controllers
         {
             ViewBag.Title = PresentationModel.GetViewTitleForTenant("Dashboard", this.Session.GetTenant());
 
-            DataTable model = new DataTable();
-
-            ViewData["PageSize"] = 10;
-            ViewData["CurrentPage"] = 1;
-
             #region header
 
             List<HeaderItem> headerItems = new List<HeaderItem>();
@@ -468,9 +463,13 @@ namespace BExIS.Modules.Ddm.UI.Controllers
 
             #endregion header
 
-            model = CreateDataTable(headerItems);
+            using (DataTable model = CreateDataTable(headerItems))
+            { 
+                ViewData["PageSize"] = 10;
+                ViewData["CurrentPage"] = 1;
 
-            return PartialView("_myDatasetGridView", model);
+                return PartialView("_myDatasetGridView", model);
+            }
         }
 
         /// <summary>

@@ -8,7 +8,7 @@
     <many-to-one name="Indexer" class="VariableInstance" not-null="false" column="IndexerRef"/>
     
 
-    <set name="Variables" inverse="true"  order-by="orderno asc" lazy="false">
+    <set name="Variables" order-by="orderno asc" lazy="false" cascade="save-update">
       <key column="DataStructureRef" not-null="false"/>
       <one-to-many class="VariableInstance" />
     </set>

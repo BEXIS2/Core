@@ -13,6 +13,7 @@
 	import { onMount } from 'svelte';
 
 	import type { ValidationModel } from '$models/ValidationModels';
+	import PlaceHolderHookContent from './placeholder/PlaceHolderHookContent.svelte';
 
 	export let id = 0;
 	export let version = 1;
@@ -42,9 +43,7 @@
 </script>
 
 {#await reload()}
-	<div class="w-full h-full text-surface-600">
-		<Spinner label="validating data" position={positionType.start} />
-	</div>
+	<PlaceHolderHookContent/>
 {:then a}
 	{#if model && model.fileResults}
 		{#each model.fileResults as fileResult}

@@ -19,6 +19,7 @@ namespace BExIS.IO.Transform.Input
     /// <summary>
     /// this class is used to read and validate ascii files
     /// </summary>
+    ///test
     /// <remarks></remarks>
     public class AsciiReader : DataReader
     {

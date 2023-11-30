@@ -9,6 +9,6 @@ export const unitStore = writable<unitListItemType[]>([]);
 export const templateStore = writable<templateListItemType[]>([]);
 export const isTemplateRequiredStore = writable<boolean>(false);
 export const meaningsStore = writable<listItemType[]>([]);
-
+export const constraintsStore = writable<listItemType[]>([]);
 
 export const x = writable(1);

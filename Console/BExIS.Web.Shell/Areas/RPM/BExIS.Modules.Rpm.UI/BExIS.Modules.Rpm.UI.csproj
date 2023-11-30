@@ -60,6 +60,12 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\..\packages\Newtonsoft.Json.13.0.1\lib\netstandard2.0\Newtonsoft.Json.dll</HintPath>
     </Reference>
+    <Reference Include="Sylvan.Data.Csv, Version=1.3.5.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\..\..\..\packages\Sylvan.Data.Csv.1.3.5\lib\netstandard2.0\Sylvan.Data.Csv.dll</HintPath>
+    </Reference>
+    <Reference Include="Sylvan.Data.Excel, Version=0.4.18.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\..\..\..\packages\Sylvan.Data.Excel.0.4.18\lib\netstandard2.0\Sylvan.Data.Excel.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Data.DataSetExtensions" />
@@ -131,6 +137,7 @@
     <Compile Include="Controllers\StructuresController.cs" />
     <Compile Include="Controllers\VariableTemplateController.cs" />
     <Compile Include="Helpers\DataStructureHelper.cs" />
+    <Compile Include="Helpers\MeaningHelper.cs" />
     <Compile Include="Helpers\HtmlPrefixScopeExtentions.cs" />
     <Compile Include="Helpers\RPMSeedDataGenerator.cs" />
     <Compile Include="Helpers\SeedData\AttributeCreator.cs" />
@@ -145,6 +152,7 @@
     <Compile Include="Models\DimensionModels.cs" />
     <Compile Include="Models\Models.cs" />
     <Compile Include="Models\DataTypeModels.cs" />
+    <Compile Include="Models\MeaningModels.cs" />
     <Compile Include="Models\UnitModels.cs" />
     <Compile Include="Models\VariableModels.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -174,6 +182,7 @@
     <Content Include="Views\ExternalLink\Index.cshtml" />
     <Content Include="Views\DataStructure\Edit.cshtml" />
     <Content Include="Views\ExternalLink\PrefixCategory.cshtml" />
+    <Content Include="Views\Constraints\Index.cshtml" />
     <None Include="web.Debug.config">
       <DependentUpon>web.config</DependentUpon>
     </None>

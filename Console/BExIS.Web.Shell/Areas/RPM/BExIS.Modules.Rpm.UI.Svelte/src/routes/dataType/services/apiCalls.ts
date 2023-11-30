@@ -33,7 +33,7 @@ export const EditDataType = async (dataTypeListItem: DataTypeListItem) => {
 
 export const DeleteDataType = async (id: number) => {
 	try {
-		const response = await Api.post('/rpm/dataType/DeleteDataType', {id});
+		const response = await Api.post('/rpm/dataType/DeleteDataType', { id });
 		return response.data;
 	} catch (error) {
 		console.error(error);

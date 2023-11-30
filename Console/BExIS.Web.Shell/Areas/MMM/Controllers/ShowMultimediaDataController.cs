@@ -512,6 +512,7 @@ namespace IDIV.Modules.Mmm.UI.Controllers
                     {
                         Name = contentDescriptor.Name,
                         Path = contentDescriptor.URI,
+                        MimeType = contentDescriptor.MimeType
                     };
             }
             catch

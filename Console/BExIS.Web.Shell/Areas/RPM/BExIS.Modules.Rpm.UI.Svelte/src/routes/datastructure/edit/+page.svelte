@@ -28,7 +28,10 @@
 		// get data from parent
 		container = document.getElementById('datastructure');
 		datastructureId = Number(container?.getAttribute('structure'));
-		dataExist = Boolean(container?.getAttribute('dataExist'));
+		dataExist = (container?.getAttribute('dataExist')?.toLocaleLowerCase() === 'true');
+		console.log("🚀 ~ file: +page.svelte:32 ~ start ~ container?.getAttribute('dataExist'):", container?.getAttribute('dataExist'))
+
+		console.log("🚀 ~ file: +page.svelte:32 ~ start ~ dataExist:", dataExist)
 
 		// get isTemplateRequired from settings and add it to store
 		// is used by validation
@@ -37,8 +40,6 @@
 
 		console.log('edit structure',datastructureId);
 
-
-			console.log("copy structure");
 			// copy structure
 			model = await get(datastructureId);
 
@@ -50,7 +51,7 @@
 		const displayPattern = await getDisplayPattern();
 		displayPatternStore.set(displayPattern);
 
-		console.log('model', model);
+		// console.log('model', model);
 	}
 
 	
@@ -63,6 +64,7 @@
 	title="Data structure"
 	note="generate a structure from a file."
 	contentLayoutType={pageContentLayoutType.full}
+	help={true}
 >
 	{#await start()}
 		<Spinner label="the structure is loading" />

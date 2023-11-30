@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <hibernate-mapping xmlns="urn:nhibernate-mapping-2.2" assembly="BExIS.Dlm.Entities" namespace="BExIS.Dlm.Entities.Meanings">
 
-  <class xmlns="urn:nhibernate-mapping-2.2" name="Meaning" table="rpm_Meaning" dynamic-update="true">
+  <class xmlns="urn:nhibernate-mapping-2.2" name="Meaning" table="rpm_meanings" dynamic-update="true">
 
     <id name="Id" type="Int64">
       <generator class="native" />

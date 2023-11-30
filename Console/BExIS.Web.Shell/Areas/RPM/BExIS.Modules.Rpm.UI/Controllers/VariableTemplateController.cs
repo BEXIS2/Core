@@ -65,6 +65,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                             variableTemplate.Description,
                             variableTemplate.DefaultValue,
                             variableTemplate.Meanings,
+                            variableTemplate.VariableConstraints,
                             variableTemplate.Approved);
                 }
                 else
@@ -94,15 +95,11 @@ namespace BExIS.Modules.Rpm.UI.Controllers
         {
             if (id <= 0) throw new NullReferenceException("id of the structure should be greater then 0");
 
-
             using (var variableManager = new VariableManager())
             using (var missingValueManager = new MissingValueManager())
             {
                 if (id > 0)
                 {
-                    var mvs = missingValueManager.Repo.Query(m => m.Variable.Id.Equals(id)).ToList();
-                    if (mvs != null && mvs.Any()) mvs.ForEach(m => missingValueManager.Delete(m));
-
                     variableManager.DeleteVariableTemplate(id);
                 }
 
@@ -146,6 +143,16 @@ namespace BExIS.Modules.Rpm.UI.Controllers
             List<MeaningItem> list = helper.GetMeanings();
 
             // get default missing values
+            return Json(list.OrderBy(i => i.Group), JsonRequestBehavior.AllowGet);
+
+        }
+
+        [JsonNetFilter]
+        public JsonResult GetConstraints()
+        {
+            VariableHelper helper = new VariableHelper();
+            List<ListItem> list = helper.GetConstraints();
+
             return Json(list.OrderBy(i => i.Group), JsonRequestBehavior.AllowGet);
 
         }

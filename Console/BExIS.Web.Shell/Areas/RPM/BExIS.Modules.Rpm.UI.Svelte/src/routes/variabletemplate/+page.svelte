@@ -37,9 +37,9 @@
 	import {
 		getDataTypes,
 		getUnitsWithDataTypes,
-		getDisplayPattern
+		getDisplayPattern,
 	} from '$lib/components/datastructure/services';
-	import { getVariableTemplates, remove, getMeanings } from './services';
+	import { getVariableTemplates, remove, getMeanings, getConstraints } from './services';
 
 	// data
 	import { variableTemplateHelp } from './help';
@@ -48,7 +48,8 @@
 	import {
 		displayPatternStore,
 		unitStore,
-		dataTypeStore
+		dataTypeStore,
+		constraintsStore
 	} from '$lib/components/datastructure/store';
 	import { variableTemplatesStore, meaningsStore } from './stores';
 
@@ -125,6 +126,13 @@
 				},
 				disableFiltering: true,
 				exclude: true
+			},
+			constraints: {
+				instructions: {
+					renderComponent: TableListString
+				},
+				disableFiltering: true,
+				exclude: true
 			}
 		}
 	};
@@ -134,11 +142,15 @@
 
 		const datatypes = await getDataTypes();
 		dataTypeStore.set(datatypes);
+
 		const units = await getUnitsWithDataTypes();
 		unitStore.set(units);
 
 		const meanings = await getMeanings();
 		meaningsStore.set(meanings);
+
+		const constraints = await getConstraints();
+		constraintsStore.set(constraints);
 
 		// load display pattern onces for all edit types
 		const displayPattern = await getDisplayPattern();

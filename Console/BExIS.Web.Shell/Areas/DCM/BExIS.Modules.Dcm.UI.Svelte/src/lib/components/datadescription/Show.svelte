@@ -22,7 +22,12 @@
 	const variableConfig: TableConfig<VariableModel> = {
 		id: 'variables',
 		data: variableStore,
-		height: 225
+		height: 225,
+		columns:{
+			id:{
+				fixedWidth:100
+			}
+		}
 	};
 </script>
 

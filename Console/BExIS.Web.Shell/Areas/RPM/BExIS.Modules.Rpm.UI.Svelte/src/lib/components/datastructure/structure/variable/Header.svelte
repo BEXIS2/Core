@@ -11,6 +11,7 @@
 	export let isOptional: boolean;
 	export let isValid: boolean;
 	export let expand: boolean;
+	export let blockDataRelevant:boolean;
 </script>
 
 <div id={index} class="flex gap-5">
@@ -51,12 +52,12 @@
 	</div>
 	<div class="flex-none flex-col text-right">
 		<div>
-			<SlideToggle size="sm" name="isKey" bind:checked={isKey} active="bg-primary-500"
+			<SlideToggle size="sm" name="isKey" bind:checked={isKey} active="bg-primary-500" disabled={blockDataRelevant}
 				>Mark as part of primary keys</SlideToggle
 			>
 		</div>
 		<div>
-			<SlideToggle size="sm" name="isOptional" active="bg-primary-500" bind:checked={isOptional}
+			<SlideToggle size="sm" name="isOptional" active="bg-primary-500" bind:checked={isOptional} disabled={blockDataRelevant}
 				>Value can be optional</SlideToggle
 			>
 		</div>

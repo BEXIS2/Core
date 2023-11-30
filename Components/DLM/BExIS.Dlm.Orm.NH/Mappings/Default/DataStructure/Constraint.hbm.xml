@@ -1,5 +1,5 @@
 <hibernate-mapping xmlns="urn:nhibernate-mapping-2.2" assembly="BExIS.Dlm.Entities" namespace="BExIS.Dlm.Entities.DataStructure">
-  <class xmlns="urn:nhibernate-mapping-2.2" name="Constraint" table="Constraints" dynamic-update="true">
+  <class xmlns="urn:nhibernate-mapping-2.2" name="Constraint" table="Constraints" abstract="true" dynamic-update="true">
     <!-- Mapping BaseEntity properties -->
     
     <id name="Id" type="Int64">
