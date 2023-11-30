@@ -6,12 +6,6 @@ type dataType = {
 	dataTypes: DataTypeListItem[];
 };
 
-interface regexTestType {
-	regex: RegExp;
-	output?: string;
-	check: boolean;
-}
-
 const suite = create((data: dataType, fieldName) => {
 	only(fieldName);
 
@@ -21,8 +15,8 @@ const suite = create((data: dataType, fieldName) => {
 
 	test('name', 'name is not unique', () => {
 		return (
-			data.dataTypes.find((u) => u.name.toLowerCase() === data.dataType.name.toLowerCase()) ==
-				null || data.dataTypes.find((u) => u.name === data.dataType.name)?.id == data.dataType.id
+			data.dataTypes.find((u) => u.name.toLowerCase().trim() === data.dataType.name.toLowerCase().trim()) == null ||
+			data.dataTypes.filter((u) => u.name.toLowerCase().trim() === data.dataType.name.toLowerCase().trim() && u.id != data.dataType.id).length == 0
 		);
 	});
 

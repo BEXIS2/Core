@@ -10,9 +10,6 @@
 		DomainConstraintListItem,
 		RangeConstraintListItem,
 		PatternConstraintListItem,
-		DomainConstraintValidationResult,
-		RangeConstraintValidationResult,
-		PatternConstraintValidationResult
 	} from '../models';
 	import { onMount } from 'svelte';
 	import * as apiCalls from '../services/apiCalls';
@@ -54,6 +51,11 @@
 		ct = await apiCalls.GetConstraintTypes();
 		if (constraint.id == 0) {
 			suite.reset();
+		}
+		else{
+			setTimeout(async () => {	
+				res = suite({ constraint: constraint, constraints: constraints }, "");
+			}, 10);
 		}
 	});
 
@@ -155,7 +157,7 @@
 
 	//change event: if input change check also validation only on the field
 	// e.target.id is the id of the input component
-	function onChangeHandler(e: any) {
+	function onChangeHandler(e:any) {
 		//console.log("input changed", e)
 		// add some delay so the entityTemplate is updated
 		// otherwise the values are old
@@ -168,22 +170,29 @@
 	async function submit() {
 		let message: string;
 		let result: ConstraintValidationResult;
-
+		console.log('constraint.type',constraint.type)
 		switch (constraint.type) {
 			case 'Domain':
 				result = await apiCalls.EditDomainConstraint(domainConstraint);
+				console.log('Domain',result)
+				break; 
 
 			case 'Range':
 				result = await apiCalls.EditRangeConstraint(rangeConstraint);
+				console.log('Range',result)
+				break; 
 
-			case 'Pattern':
+			case 'Pattern':	
 				result = await apiCalls.EditPatternConstraint(patternConstraint);
+				console.log('Pattern',result)
+				break; 
 			default:
-				let vr: ValidationResult = { isValid: true, validationItems: [{ name: '', message: '' }] };
+				let vr: ValidationResult = { isValid: false, validationItems: [{ name: 'Constraint Type', message: 'no Constraint Type is chosen' }] };
 				result = {
 					validationResult: vr,
 					constraintListItem: constraint
 				};
+				break; 
 		}
 
 		if (result.validationResult.isValid != true) {
@@ -298,11 +307,11 @@
 			{#if constraint.type && constraint.type != ''}
 				<div class="pb-3 col-span-2">
 					{#if constraint.type == 'Domain'}
-						<DomainForm {domainConstraint} />
+						<DomainForm {domainConstraint} on:true={() => {disabled = true;}} on:false={() => {disabled = false;}} />
 					{:else if constraint.type == 'Range'}
-						<RangeForm {rangeConstraint} />
+						<RangeForm {rangeConstraint} on:true={() => {disabled = true;}} on:false={() => {disabled = false;}} />
 					{:else if constraint.type == 'Pattern'}
-						<PatternForm {patternConstraint} />
+						<PatternForm {patternConstraint} on:true={() => {disabled = true;}} on:false={() => {disabled = false;}} />
 					{/if}
 				</div>
 			{/if}

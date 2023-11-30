@@ -51,17 +51,3 @@ export interface ConstraintValidationResult {
 	validationResult: ValidationResult;
 	constraintListItem: ConstraintListItem;
 }
-
-export interface DomainConstraintValidationResult {
-	validationResult: ValidationResult;
-	dimensionListItem: DomainConstraintListItem;
-}
-
-export interface RangeConstraintValidationResult {
-	validationResult: ValidationResult;
-	dimensionListItem: RangeConstraintListItem;
-}
-export interface PatternConstraintValidationResult {
-	validationResult: ValidationResult;
-	dimensionListItem: PatternConstraintListItem;
-}

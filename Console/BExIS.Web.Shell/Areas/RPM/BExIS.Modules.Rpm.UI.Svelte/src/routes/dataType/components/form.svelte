@@ -37,6 +37,11 @@
 		if (dataType.id == 0) {
 			suite.reset();
 		}
+		else{
+			setTimeout(async () => {	
+				res = suite({ dataType: dataType, dataTypes: dataTypes }, "");
+			}, 10);
+		}
 	});
 
 	//change event: if input change check also validation only on the field
