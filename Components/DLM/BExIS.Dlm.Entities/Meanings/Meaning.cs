@@ -48,11 +48,8 @@ namespace BExIS.Dlm.Entities.Meanings
         public virtual Selectable Selectable { get; set; }
         [Required(ErrorMessage = "Must not be Empty")]
         public virtual Approved Approved { get; set; }
-
         public virtual IEnumerable<MeaningEntry> ExternalLinks { get; set; }
-
         public virtual IEnumerable<Meaning> Related_meaning { get; set; }
-
         protected  void Dispose(bool disposing)
         {
             if (!disposedValue)

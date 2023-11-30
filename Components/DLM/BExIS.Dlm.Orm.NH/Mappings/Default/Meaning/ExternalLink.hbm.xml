@@ -28,5 +28,7 @@
 
 		<many-to-one name="prefixCategory" column="prefixCategory" class="PrefixCategory" />
 
+		
+
 	</class>
 </hibernate-mapping>

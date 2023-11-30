@@ -1,24 +1,16 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <hibernate-mapping xmlns="urn:nhibernate-mapping-2.2" assembly="BExIS.Dlm.Entities" namespace="BExIS.Dlm.Entities.Meanings">
-
 	<class xmlns="urn:nhibernate-mapping-2.2" name="MeaningEntry" table="rpm_MeaningEntry"  dynamic-update="true">
 
 		<id name="Id" column="Id">
 			<generator class="native" />
 		</id>
 
-		<!-- MappingRelation mapping
-		<many-to-one name="MappingRelation" column="MappingRelation" class="BExIS.Dlm.Entities.Meanings.ExternalLink, BExIS.Dlm.Entities" />
+		<many-to-one name="MappingRelation" column="MappingRelationRef" class="ExternalLink" />
 
-		<list name="MappedLinks" cascade="save-update">
-			<key column="MappedLinks_id"></key>
-			<index column="id"></index>
-			<one-to-many class="ExternalLink"/>
-		</list>
- -->
-		<bag name="MappedLinks"  table="rpm_MeaningEntry_Externallinks" cascade="all-delete-orphan">
-			<key column="MappedLinks_id" />
-			<one-to-many class="ExternalLink" />
+		<bag name="MappedLinks" table="rpm_MeaningEntry_MappedLinks" cascade="all-delete-orphan" lazy="true" inverse="true">
+			<key  column="MeaningEntryRef"></key>
+			<many-to-many class="ExternalLink" column="ExternalLink_mapped_linkRef"/>
 		</bag>
 
 	</class>
