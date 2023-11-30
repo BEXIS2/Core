@@ -130,9 +130,16 @@ namespace BExIS.Dlm.Services.DataStructure
             Contract.Requires(entity != null);
             Contract.Requires(entity.Id >= 0);
 
+            return DeleteStructuredDataStructure(entity.Id);
+        }
+
+        public bool DeleteStructuredDataStructure(long id)
+        {
+            Contract.Requires(id >= 0);
+
             IReadOnlyRepository<Dataset> datasetRepo = this.GetUnitOfWork().GetReadOnlyRepository<Dataset>();
-            if (datasetRepo.Query(p => p.DataStructure.Id == entity.Id).Count() > 0)
-                throw new Exception(string.Format("Data structure {0} is used by datasets. Deletion Failed", entity.Id));
+            if (datasetRepo.Query(p => p.DataStructure.Id == id).Count() > 0)
+                throw new Exception(string.Format("Data structure {0} is used by datasets. Deletion Failed", id));
 
             using (IUnitOfWork uow = this.GetUnitOfWork())
             {
@@ -141,23 +148,13 @@ namespace BExIS.Dlm.Services.DataStructure
                 //IRepository<MissingValue> missinValuesRepo = uow.GetRepository<MissingValue>();
 
                 //variableRepo.Evict();
-
-                entity = repo.Reload(entity);
+                var entity = repo.Get(id);
 
                 // delete associated variables and thier parameters
-                foreach (var usage in entity.Variables)
-                {
-                    // remove missing values first
-                    //if (localVar.MissingValues.Any())
-                    //{
-                    //    localVar.MissingValues.ToList().ForEach(m => {
-                    //        localVar.MissingValues.Remove(m);
-                    //        missinValuesRepo.Delete(m);
-                    //        });
-                    //}
-                    entity.Variables.Remove(usage);
-                    variableRepo.Delete(usage);
-                }
+                var varIds = entity?.Variables?.Select(v => v.Id);
+                entity.Variables = null;
+
+                //varIds?.ToList().ForEach(v => variableRepo.Delete(v));
 
                 //uow.Commit(); //  should not be needed
                 repo.Delete(entity);
