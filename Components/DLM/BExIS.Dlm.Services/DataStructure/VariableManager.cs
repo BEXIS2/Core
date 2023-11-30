@@ -324,7 +324,10 @@ namespace BExIS.Dlm.Services.DataStructure
 
                 var datastructure = datastructureRepo.Get(dataStructureId);
                 var variableTemplate = variableTemplateRepo.Get(variableTemplateId);
-                var cons = constraintRepo.Query().Where(c => constraints.Contains(c.Id)).ToList();
+                List<Constraint> cons = new List<Constraint>();
+
+                if(constraints!=null && constraints.Any())
+                    cons = constraintRepo.Query().Where(c => constraints.Contains(c.Id))?.ToList();
 
                 e.DataStructure = datastructure;
                 e.VariableTemplate = variableTemplate;
