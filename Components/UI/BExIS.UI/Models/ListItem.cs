@@ -29,11 +29,12 @@ namespace BExIS.UI.Models
             Description = description;
         }
 
-        public ListItem(long key, string value, string group = "")
+        public ListItem(long key, string value, string group)
         {
             Id = key;
             Text = value;
             Group = group;
+            Description = "";
         }
 
     }
