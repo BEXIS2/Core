@@ -78,6 +78,9 @@ class VariableModel {
 export class VariableTemplateModel extends VariableModel {
 	public constructor() {
 		super();
+		this.meanings = [];
+		this.constraints = [];
+		this.missingValues = []
 	}
 }
 
@@ -93,6 +96,8 @@ export class VariableInstanceModel extends VariableModel {
 	public constructor() {
 		super();
 		this.meanings = [];
+		this.constraints = [];
+		this.missingValues = []
 		this.isOptional = false;
 		this.template = undefined;
 		this.isKey = false;
