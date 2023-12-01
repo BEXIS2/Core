@@ -49,6 +49,7 @@
 		meaningsStore.set(meanings);
 
 		const constraints = await getConstraints();
+		console.log("🚀 ~ file: Variables.svelte:53 ~ onMount ~ constraints:", constraints)
 		constraintsStore.set(constraints);
 
 		fillVariableValdationStates(variables);
@@ -57,7 +58,7 @@
 
 	});
 
-	function fillVariableValdationStates(vars) {
+	function fillVariableValdationStates(vars:[]) {
 
 		variableValidationStates = [];
 		
@@ -73,7 +74,7 @@
 		//console.log("TCL ~ file: Variables.svelte:63 ~ checkValidationState ~ variableValidationStates:", variableValidationStates)
 	}
 
-	function getColumnData(cellIndex) {
+	function getColumnData(cellIndex:number) {
 		let cValues: string[] = [];
 		for (let index = 0; index < data.length; index++) {
 			const c = data[index][cellIndex];
@@ -83,7 +84,7 @@
 	}
 
 	// copy data from varaible on index i to the next one
-	function copyNext(i) {
+	function copyNext(i:number) {
 		const modal: ModalSettings = {
 			type: 'confirm',
 			title: 'Copy',
@@ -106,7 +107,7 @@
 	}
 
 	// copy data from varaible on index i to all next
-	function copyAll(i) {
+	function copyAll(i:number) {
 		const modal: ModalSettings = {
 			type: 'confirm',
 			title: 'Copy',
@@ -144,12 +145,19 @@
 
 	function addFn()
 	{
+			
+			console.log("🚀 ~ file: Variables.svelte:149 ~ variables:", variables)
 
-			variables = [...variables, new VariableInstanceModel()];
+
+				console.log("🚀 ~ file: Variables.svelte:149 ~ variables:", variables)
+				var v = new VariableInstanceModel();
+				variables = [...variables, v];
+				console.log("after addin new var in to the array",variables )
+
 
 	}
 
-	function copyFn(i)
+	function copyFn(i:number)
 	{
 
 		let copiedVariable = new VariableInstanceModel();
@@ -161,6 +169,8 @@
 		copiedVariable.systemType = variables[i].systemType;
 		copiedVariable.template = variables[i].template;
 		copiedVariable.displayPattern = variables[i].displayPattern;
+		copiedVariable.constraints = variables[i].constraints;
+		copiedVariable.missingValues = variables[i].missingValues;
 
 
 		variables.splice(i+1, 0, copiedVariable);
@@ -168,7 +178,7 @@
 
 	}
 
-	function deleteFn(i)
+	function deleteFn(i:number)
 	{
 		const deleteVar = variables[i];
 
@@ -189,7 +199,7 @@
 		
 	}
 
-	function upFn(i)
+	function upFn(i:number)
 	{
 		  const varTemp = variables[i];
 				variables[i] = variables[i-1];
@@ -197,7 +207,7 @@
 
 	}
 
-	function downFn(i)
+	function downFn(i:number)
 	{
 				const varTemp = variables[i];
 				variables[i] = variables[i+1];

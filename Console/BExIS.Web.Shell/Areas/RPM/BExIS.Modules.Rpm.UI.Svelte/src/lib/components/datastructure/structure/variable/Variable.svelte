@@ -74,7 +74,7 @@
 	
 	const dispatch = createEventDispatcher();
 	
-	let x: listItemType = { id: 0, text: '', group: '' };
+	let x: listItemType = { id: 0, text: '', group: '', description:'' };
 	
 	onMount(() => {
 		// set suggestions
@@ -87,6 +87,7 @@
 		
 		setTimeout(async () => {
 			
+			console.log("🚀 ~ file: Variable.svelte:91 ~ setTimeout ~ updateLists:")
 			updateLists();
 			
 			console.log("🚀 ~ file: Variable.svelte:60 ~ blockDataRelevant:", blockDataRelevant)
@@ -99,7 +100,7 @@
 				res = suite(variable, 'displayPattern');
 			}
 
-			res = suite(variable);
+			res = suite(variable,"");
 			setValidationState(res);
 
 			//console.log(variable);
@@ -114,7 +115,7 @@
 
 	afterUpdate(() => {
 		displayPattern = updateDisplayPattern(variable.dataType, false);
-		res = suite(variable);
+		res = suite(variable,"");
 
 
 		setValidationState(res);
@@ -178,10 +179,15 @@
 	/// reset means mostly reset the groups
 	function setList() {
 		datatypes = $dataTypeStore.map((o) => ({ ...o })); // set datatypes
+		console.log("🚀 ~ file: Variable.svelte:182 ~ setList ~ $dataTypeStore:", $dataTypeStore)
 		units = $unitStore.map((o) => ({ ...o })); // set units
+		console.log("🚀 ~ file: Variable.svelte:184 ~ setList ~ $unitStore:", $unitStore)
 		variableTemplates = $templateStore.map((o) => ({ ...o }));
+		console.log("🚀 ~ file: Variable.svelte:186 ~ setList ~ $templateStore:", $templateStore)
 		meanings = $meaningsStore.map((o) => ({ ...o }));
+		console.log("🚀 ~ file: Variable.svelte:188 ~ setList ~ $meaningsStore:", $meaningsStore)
 		constraints = $constraintsStore.map((o) => ({ ...o }));
+		console.log("🚀 ~ file: Variable.svelte:190 ~ setList ~ $constraintsStore:", $constraintsStore)
 	}
 
 	function updateLists() {
