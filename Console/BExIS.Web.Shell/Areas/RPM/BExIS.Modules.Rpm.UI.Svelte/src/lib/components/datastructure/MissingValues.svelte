@@ -3,10 +3,11 @@
 
 	import MissingValue from './MissingValue.svelte';
 	export let list: missingValueType[] = [];
-
+	
 	import { onMount } from 'svelte';
-
+	
 	onMount(() => {
+		console.log("🚀 ~ file: MissingValues.svelte:6 ~ list:", list)
 		if (list.length === 0) {
 			add();
 		}
