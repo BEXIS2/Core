@@ -176,7 +176,7 @@ namespace BExIS.Modules.Ddm.UI.Models
                 DataType dt = variable.DataType;
 
                 // add display pattern to DisplayFormatObject;
-                DataTypeDisplayPattern ddp = DataTypeDisplayPattern.Materialize(dt.Extra);
+                DataTypeDisplayPattern ddp = DataTypeDisplayPattern.Get(variable.DisplayPatternId);
                 if (ddp != null)
                 {
                     format = ddp.StringPattern;
