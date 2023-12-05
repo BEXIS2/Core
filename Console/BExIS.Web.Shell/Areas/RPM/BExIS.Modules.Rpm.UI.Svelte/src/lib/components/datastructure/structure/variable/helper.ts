@@ -145,9 +145,12 @@ export function updateUnits(
 		}
 	}
 
+	const matches = _units.filter((d) => d.group != othersText)
+	const othersList = _units.filter((d) => d.group == othersText)
+
 	return [
-		..._units.filter((d) => d.group != othersText),
-		..._units.filter((d) => d.group == othersText)
+		...matches,
+		...othersList
 	];
 }
 

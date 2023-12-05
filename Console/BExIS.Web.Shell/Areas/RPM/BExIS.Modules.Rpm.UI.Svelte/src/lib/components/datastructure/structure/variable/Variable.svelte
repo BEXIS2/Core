@@ -178,16 +178,17 @@
 	// use the store to reset the lists for the dropdowns
 	/// reset means mostly reset the groups
 	function setList() {
-		datatypes = $dataTypeStore.map((o) => ({ ...o })); // set datatypes
-		console.log("🚀 ~ file: Variable.svelte:182 ~ setList ~ $dataTypeStore:", $dataTypeStore)
-		units = $unitStore.map((o) => ({ ...o })); // set units
-		console.log("🚀 ~ file: Variable.svelte:184 ~ setList ~ $unitStore:", $unitStore)
-		variableTemplates = $templateStore.map((o) => ({ ...o }));
-		console.log("🚀 ~ file: Variable.svelte:186 ~ setList ~ $templateStore:", $templateStore)
-		meanings = $meaningsStore.map((o) => ({ ...o }));
-		console.log("🚀 ~ file: Variable.svelte:188 ~ setList ~ $meaningsStore:", $meaningsStore)
-		constraints = $constraintsStore.map((o) => ({ ...o }));
-		console.log("🚀 ~ file: Variable.svelte:190 ~ setList ~ $constraintsStore:", $constraintsStore)
+
+		datatypes = $dataTypeStore.map((o) => ({ ...o })).sort(); // set datatypes
+
+		units = $unitStore.map((o) => ({ ...o })).sort(); // set units
+
+		variableTemplates = $templateStore.map((o) => ({ ...o })).sort();
+
+		meanings = $meaningsStore.map((o) => ({ ...o })).sort();
+
+		constraints = $constraintsStore.map((o) => ({ ...o })).sort();
+
 	}
 
 	function updateLists() {
@@ -208,8 +209,11 @@
 
 		// units based on Datatype selection
 		units = updateUnits(variable.dataType, variable.template, $unitStore, suggestedUnits);
+		units.sort();
+
 		//console.log("updated units",units);
 		variableTemplates = updateTemplates(variable.unit, $templateStore, suggestedTemplates);
+		variableTemplates.sort();
 
 	}
 
@@ -361,8 +365,8 @@
 									{#if suggestedUnits && suggestedUnits.length>1}
 									{#each suggestedUnits?.slice(0,3) as u}
 											<button class="badge" 
-											class:variant-filled-success={u == variable.unit}  
-											class:variant-ghost-success={u != variable.unit}
+											class:variant-filled-primary={u.text == variable.unit?.text}  
+											class:variant-ghost-primary={u.text != variable.unit?.text}
 											on:click={()=> variable.unit = u }>{u.text}</button>
 									{/each}
 								{/if}
@@ -400,8 +404,8 @@
 										</div>
 									{#each suggestedTemplates.slice(0,3) as t}
 											<button class="badge" 
-											class:variant-filled-success={t == variable.template}  
-											class:variant-ghost-success={t != variable.template}
+											class:variant-filled-primary={t.text == variable.template?.text}  
+											class:variant-ghost-primary={t.text != variable.template?.text}
 											on:click={()=> variable.template = t }>{t.text}</button>
 									{/each}
 								</div>

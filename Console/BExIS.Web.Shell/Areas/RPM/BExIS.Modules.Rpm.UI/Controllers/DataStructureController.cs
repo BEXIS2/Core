@@ -1053,9 +1053,6 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                 list.Add(new MissingValueModel());
             }
 
-            list.Add(new MissingValueModel());
-
-
             return list;
         }
 
