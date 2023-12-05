@@ -215,7 +215,7 @@ namespace BExIS.IO.Transform.Input
 
                         if (dataType != null && dataType.Extra != null)
                         {
-                            DataTypeDisplayPattern dp = DataTypeDisplayPattern.Get(variable.DisplayPatternId);
+                            DataTypeDisplayPattern dp = variable.DisplayPatternId>0?DataTypeDisplayPattern.Get(variable.DisplayPatternId):null;
                             if (dp != null && !string.IsNullOrEmpty(dp.StringPattern)) value = IOUtility.ConvertToDateUS(row[i], dp.StringPattern);
                             else value = IOUtility.ConvertDateToCulture(row[i]);
                         }
