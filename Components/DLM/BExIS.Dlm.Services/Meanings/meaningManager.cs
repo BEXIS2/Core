@@ -99,6 +99,7 @@ namespace BExIS.Dlm.Services.Meanings
             Contract.Requires(meaning != null);
             try
             {
+                updateMeaningEntry();
                 using (IUnitOfWork uow = this.GetUnitOfWork())
                 {
 
@@ -107,7 +108,7 @@ namespace BExIS.Dlm.Services.Meanings
                     repo.Delete(meaning);
                     uow.Commit();
                 }
-                updateMeaningEntry();
+
                 return true;
             }
             catch (Exception exc)

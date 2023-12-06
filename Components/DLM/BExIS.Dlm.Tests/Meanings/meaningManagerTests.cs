@@ -344,8 +344,8 @@ namespace BExIS.Dlm.Entities.Meanings.Tests
             //return res_link_prefix;
         }
 
-        [Test]
-        public void _delete_all_test_data()
+
+        private void _delete_all_test_data()
         {
             ImeaningManagr _meaningManager = new MeaningManager();
             foreach (Meaning m in _meaningManager.getMeanings().Where(x => x.Related_meaning?.Count() != 0).Where(x => x.Related_meaning != null))
