@@ -46,7 +46,7 @@
 			formalDescription: '',
 			type: '',
 			negated: false,
-			inUse: true,
+			inUse: false,
 			variableIDs: [],
 		};
 	}
