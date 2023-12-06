@@ -27,7 +27,7 @@
 
 	// validation
 	import suite from './form';
-	import { FileButton } from '@skeletonlabs/skeleton';
+	import { FileButton, getModalStore, type ModalSettings } from '@skeletonlabs/skeleton';
 	import type { ValidationResult } from '../../../models';
 
 	// load form result object
@@ -46,6 +46,8 @@
 	$: setConstraintByType(constraint);
 	let ct: string[] = [];
 	$: constraintTypes = ct.map((c) => ({ id: c, text: c }));
+	const modalStore = getModalStore();
+	let warning: string = 'Changing the Contstrait may cause inconsistencies in Datasets.';
 
 	onMount(async () => {
 		ct = await apiCalls.GetConstraintTypes();
@@ -70,7 +72,9 @@
 					formalDescription: constraint.formalDescription,
 					domain: '',
 					negated: constraint.negated,
-					inUse: constraint.inUse
+					inUse: constraint.inUse,
+					type: constraint.type,
+					variableIDs: constraint.variableIDs,
 				};
 				if (domainConstraint.id != 0) {
 					domainConstraint = await apiCalls.GetDomainConstraint(constraint.id);
@@ -97,7 +101,9 @@
 					lowerboundIncluded: true,
 					upperboundIncluded: true,
 					negated: constraint.negated,
-					inUse: constraint.inUse
+					inUse: constraint.inUse,
+					type: constraint.type,
+					variableIDs: constraint.variableIDs,
 				};
 				if (rangeConstraint.id != 0) {
 					rangeConstraint = await apiCalls.GetRangeConstraint(constraint.id);
@@ -121,7 +127,9 @@
 					formalDescription: constraint.formalDescription,
 					pattern: '',
 					negated: constraint.negated,
-					inUse: constraint.inUse
+					inUse: constraint.inUse,
+					type: constraint.type,
+					variableIDs: constraint.variableIDs,
 				};
 				if (patternConstraint.id != 0) {
 					patternConstraint = await apiCalls.GetPatternConstraint(constraint.id);
@@ -167,10 +175,29 @@
 		}, 10);
 	}
 
-	async function submit() {
+	function submit() {
+		if(constraint.inUse){
+			const modal: ModalSettings = {
+				type: 'confirm',
+				title: 'Save Constraint',
+				body: warning,
+				// TRUE if confirm pressed, FALSE if cancel pressed
+				response: (r: boolean) => {
+					if (r === true) {
+						save();
+					}
+				}
+			};
+			modalStore.trigger(modal);
+		}
+		else{
+			save();
+		}		
+	}
+
+	async function save() {
 		let message: string;
 		let result: ConstraintValidationResult;
-		console.log('constraint.type',constraint.type)
 		switch (constraint.type) {
 			case 'Domain':
 				result = await apiCalls.EditDomainConstraint(domainConstraint);
@@ -230,6 +257,11 @@
 </script>
 
 {#if constraint && constraintTypes}
+	{#if constraint.inUse}
+	<div class="btn w-full mb-1 variant-ghost-warning text-center">
+		{warning}
+	</div>
+	{/if}
 	<form on:submit|preventDefault={submit}>
 		<div class="grid grid-cols-2 gap-5">
 			<div class="pb-3">

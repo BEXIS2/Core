@@ -424,7 +424,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
         {
 
             ValidationResult result = ConstraintValidation(constraints.Cast<Constraint>().ToList(), (EditConstraintModel)constaint);
-            if (constaint.Lowerbound >= constaint.Upperbound)
+            if (constaint.Lowerbound > constaint.Upperbound)
             {
                 result.IsValid = false;
                 result.ValidationItems.Add(new ValidationItem { Name = "Boundery", Message = "Lowerbound is bigger then Upperbound" });
