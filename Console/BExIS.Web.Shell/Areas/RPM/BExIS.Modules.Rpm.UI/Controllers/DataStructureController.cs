@@ -615,7 +615,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
 
                     // get list of possible units
                     var unitInput = getValueFromMarkedRow(markerRows, model.Markers, "unit", (char)model.Delimeter, i, AsciiFileReaderInfo.GetTextMarker((TextMarker)model.TextMarker));
-                    strutcureAnalyzer.SuggestUnit(unitInput, var.DataType.Text).ForEach(u => var.PossibleUnits.Add(new UnitItem(u.Id, u.Name,u.AssociatedDataTypes.Select(x => x.Name).ToList(), "detect")));
+                    strutcureAnalyzer.SuggestUnit(unitInput, var.DataType.Text).ForEach(u => var.PossibleUnits.Add(new UnitItem(u.Id, u.Abbreviation,u.AssociatedDataTypes.Select(x => x.Name).ToList(), "detect")));
                     var.Unit = var.PossibleUnits.FirstOrDefault();
                     if (var.Unit == null) var.Unit = new UnitItem();
 
@@ -760,7 +760,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                 }
 
                 // get default missing values
-                return Json(list, JsonRequestBehavior.AllowGet);
+                return Json(list.OrderBy(l=>l.Text), JsonRequestBehavior.AllowGet);
             }
         }
 
@@ -781,7 +781,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                 }
 
                 // get default missing values
-                return Json(list, JsonRequestBehavior.AllowGet);
+                return Json(list.OrderBy(l => l.Text), JsonRequestBehavior.AllowGet);
             }
         }
 
@@ -800,7 +800,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
             }
 
             // get list of all display pattern
-            return Json(list, JsonRequestBehavior.AllowGet);
+            return Json(list.OrderBy(l => l.Text), JsonRequestBehavior.AllowGet);
         }
 
         [JsonNetFilter]
@@ -825,7 +825,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                 }
 
                 // get default missing values
-                return Json(list.OrderBy(i => i.Group), JsonRequestBehavior.AllowGet);
+                return Json(list.OrderBy(l => l.Text), JsonRequestBehavior.AllowGet);
             }
         }
 
@@ -866,7 +866,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                 }
 
                 // get default missing values
-                return Json(list.OrderBy(i => i.Group), JsonRequestBehavior.AllowGet);
+                return Json(list.OrderBy(l => l.Text), JsonRequestBehavior.AllowGet);
             }
         }
 
@@ -877,7 +877,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
             List<MeaningItem> list = helper.GetMeanings();
 
             // get default missing values
-            return Json(list.OrderBy(i => i.Group), JsonRequestBehavior.AllowGet);
+            return Json(list.OrderBy(l => l.Text), JsonRequestBehavior.AllowGet);
 
         }
 
@@ -887,7 +887,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
             VariableHelper helper = new VariableHelper();
             List<ListItem> list = helper.GetConstraints();
 
-            return Json(list.OrderBy(i => i.Group), JsonRequestBehavior.AllowGet);
+            return Json(list.OrderBy(l => l.Text), JsonRequestBehavior.AllowGet);
 
         }
 

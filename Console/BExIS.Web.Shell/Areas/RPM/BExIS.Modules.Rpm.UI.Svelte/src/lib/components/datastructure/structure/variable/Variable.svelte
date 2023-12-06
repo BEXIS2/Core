@@ -182,6 +182,7 @@
 		datatypes = $dataTypeStore.map((o) => ({ ...o })).sort(); // set datatypes
 
 		units = $unitStore.map((o) => ({ ...o })).sort(); // set units
+		console.log("🚀 ~ file: Variable.svelte:185 ~ setList ~ units:", units)
 
 		variableTemplates = $templateStore.map((o) => ({ ...o })).sort();
 

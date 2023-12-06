@@ -119,6 +119,7 @@
 			showForm = false;
 			externalLink = $externalLinksStore.find((u) => u.id === type.id)!;
 			showForm = true;
+			window.scrollTo({ top: 60, behavior: 'smooth' })
 		}
 
 		if (type.action == 'delete') {
