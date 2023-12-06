@@ -46,7 +46,8 @@
 			formalDescription: '',
 			type: '',
 			negated: false,
-			inUse: false
+			inUse: true,
+			variableIDs: [],
 		};
 	}
 
@@ -58,12 +59,11 @@
 	}
 
 	function editConstraint(type: any) {
-		constraint = constraints.find((c) => c.id === type.id)!;
+		constraint = {...constraints.find((c) => c.id === type.id)!};
 		if (type.action == 'edit') {
 			showForm = true;
 		}
 		if (type.action == 'delete') {
-			console.log('Delete');
 			const modal: ModalSettings = {
 				type: 'confirm',
 				title: 'Delete Constraint',
@@ -159,11 +159,18 @@
 							version: {
 								exclude: true
 							},
+							formalDescription: {
+								header: 'Formal Description',
+							},
 							negated: {
 								disableFiltering: true,
 								exclude: true
 							},
 							inUse: {
+								disableFiltering: true,
+								exclude: true
+							},
+							variableIDs: {
 								disableFiltering: true,
 								exclude: true
 							}

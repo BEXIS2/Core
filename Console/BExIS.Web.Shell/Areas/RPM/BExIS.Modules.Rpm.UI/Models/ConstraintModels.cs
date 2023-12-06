@@ -16,6 +16,7 @@ namespace BExIS.Modules.Rpm.UI.Models
         public string Type { get; set; }
         public bool Negated { get; set; }
         public bool InUse { get; set; }
+        public List<long> VariableIDs { get; set; }
 
         public static ReadConstraintModel Convert(Constraint constraint, string type = "")
         {
@@ -28,7 +29,8 @@ namespace BExIS.Modules.Rpm.UI.Models
                 FormalDescription = constraint.FormalDescription,
                 Type = type,
                 Negated = constraint.Negated,
-                InUse = constraint.DataContainer != null && constraint.DataContainer.Id > 0
+                InUse = constraint.DataContainer != null && constraint.DataContainer.Id > 0 || constraint.VariableConstraints.Any(),
+                VariableIDs = constraint.VariableConstraints.Select(v => v.Id).ToList()
             };
         }
 
@@ -62,7 +64,9 @@ namespace BExIS.Modules.Rpm.UI.Models
                 Description = string.IsNullOrEmpty(constraint.Description) ? "Constraint " + constraint.Id : constraint.Description,
                 FormalDescription = constraint.FormalDescription,
                 Negated = constraint.Negated,
-                InUse = constraint.DataContainer != null && constraint.DataContainer.Id > 0,
+                Type = ConstraintType.Domain.ToString(),
+                InUse = constraint.DataContainer != null && constraint.DataContainer.Id > 0 || constraint.VariableConstraints.Any(),
+                VariableIDs = constraint.VariableConstraints.Select(v => v.Id).ToList(),
                 Domain = DomainConverter.convertDomainItemsToDomain(constraint.Items)
             };
         }
@@ -82,7 +86,9 @@ namespace BExIS.Modules.Rpm.UI.Models
                 Description = string.IsNullOrEmpty(constraint.Description) ? "Constraint " + constraint.Id : constraint.Description,
                 FormalDescription = constraint.FormalDescription,
                 Negated = constraint.Negated,
-                InUse = constraint.DataContainer != null && constraint.DataContainer.Id > 0,
+                Type = ConstraintType.Pattern.ToString(),
+                InUse = constraint.DataContainer != null && constraint.DataContainer.Id > 0 || constraint.VariableConstraints.Any(),
+                VariableIDs = constraint.VariableConstraints.Select(v => v.Id).ToList(),
                 Pattern = constraint.MatchingPhrase
             };
         }
@@ -106,7 +112,9 @@ namespace BExIS.Modules.Rpm.UI.Models
                 Description = string.IsNullOrEmpty(constraint.Description) ? "Constraint " + constraint.Id : constraint.Description,
                 FormalDescription = constraint.FormalDescription,
                 Negated = constraint.Negated,
-                InUse = constraint.DataContainer != null && constraint.DataContainer.Id > 0,
+                Type = ConstraintType.Range.ToString(),
+                InUse = constraint.DataContainer != null && constraint.DataContainer.Id > 0 || constraint.VariableConstraints.Any(),
+                VariableIDs = constraint.VariableConstraints.Select(v => v.Id).ToList(),
                 Lowerbound = constraint.Lowerbound,
                 Upperbound = constraint.Upperbound,
                 LowerboundIncluded = constraint.LowerboundIncluded,
