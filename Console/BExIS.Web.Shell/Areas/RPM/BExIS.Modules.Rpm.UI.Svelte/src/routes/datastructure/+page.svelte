@@ -119,6 +119,7 @@ async function tableFn(type:any)
 			// edit data data structure based on id
 			if (type.action == 'edit') {
 					edit(type.id)
+					window.scrollTo({ top: 0, behavior: 'smooth' })
 				}
 
 
