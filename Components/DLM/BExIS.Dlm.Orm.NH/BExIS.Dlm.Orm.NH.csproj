@@ -172,6 +172,7 @@
     <Content Include="Mappings\Default\Data\DataTupleVersion.hbm.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="Mappings\Default\Meaning\MeaningEntry.hbm.xml" />
     <Content Include="Mappings\Default\Meaning\PrefixCategory.hbm.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

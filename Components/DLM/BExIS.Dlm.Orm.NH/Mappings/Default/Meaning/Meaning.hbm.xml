@@ -30,19 +30,47 @@
 	<property name="Selectable" type="BExIS.Dlm.Entities.Meanings.Selectable, BExIS.Dlm.Entities">
 	 <column name="Selectable"/>
 	</property>
-
-	  <set name="ExternalLink" table="rpm_meaning_externallink" inverse="false" lazy="true" fetch="select" cascade="save-update" >
-		  <key column="MeaningsRef"/>
-		  <many-to-many column="ExternalLinkref" class="ExternalLink"/>
-	  </set>
-
-
-	  <set name="Related_meaning" table="rpm_meaning_meaning" inverse="false" lazy="true" fetch="select" cascade="save-update" >
-		  <key column="MeaningsParentRef"/>
-		  <many-to-many column="MeaningsChildrenRef" class="Meaning"/>
-	  </set>
-
 	  
+	  <bag name="Related_meaning" inverse="true" cascade="all" table="rpm_Meaning_Related_meaning">
+		  <key column="MeaningRef" />
+		  <many-to-many class="Meaning" column="ParentMeaningRef">
+		  </many-to-many>
+	  </bag>
+
+	  <!-- Add mapping for ExternalLinks -->
+
+	  <bag name="ExternalLinks" table="rpm_Meanings_MeaningEntry" cascade="all" lazy="true">
+		  <key column="MeaningRef" />
+		  <many-to-many class="MeaningEntry" column="MeaningEntryRef"/>
+	  </bag>
+	  
+	  <!-- 	  
+	  	  <bag name="ExternalLinks"  cascade="save-update"  lazy="true" table="rpm_MeaningEntry">
+		  <key column="MeaningRef" />
+		  <many-to-many class="MeaningEntry">
+			  <column name ="MeaningEntryRef"></column>
+		  </many-to-many>
+	  </bag>
+	  
+	  <bag name="ExternalLinks" cascade="all-delete-orphan" >
+		  <key column="MeaningRef"></key>
+		  <one-to-many class="MeaningEntry" />
+	  </bag>
+	  
+	  
+	  <list name="Related_meaning" table="rpm_meaning_meaning" inverse ="true" cascade="save-update" >
+		  <key column="MeaningParentRef"></key>
+		  <index column="id"></index>
+		  <many-to-many class="BExIS.Dlm.Entities.Meanings.Meaning" column="MeaningchildrenRef"/>
+	  </list>
+	  
+	  <list name="ExternalLinks" table="rpm_meanings_MeaningEntry" cascade="save-update,delete-orphan" >
+		  <key column="MeaningRef"></key>
+		  <index column="id"></index>
+		  <many-to-many class="BExIS.Dlm.Entities.Meanings.MeaningEntry" column="MeaningEntryRef"/>
+	  </list>
+-->
+
   </class>
 	
 </hibernate-mapping>
