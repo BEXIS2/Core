@@ -60,6 +60,7 @@ namespace BExIS.Dlm.Entities.Meanings.Tests
 
             //Assert
             NUnit.Framework.Assert.IsNotNull(res);
+            _delete_all_test_data();
 
         }
 
@@ -105,71 +106,11 @@ namespace BExIS.Dlm.Entities.Meanings.Tests
             NUnit.Framework.Assert.That(res.Prefix.Equals(res));
             NUnit.Framework.Assert.IsNull(res.prefixCategory);
 
-
+            _delete_all_test_data();
         }
 
         [Test()]
-        public void _CreateMeaning()
-        {
-            ImeaningManagr _meaningManager = new MeaningManager();
-
-            //create 3 external links : 1 type:relation and 2 with different types
-            String uri = Convert.ToString("http://ad:hasconnection");
-            String name = Convert.ToString("hasconnection");
-            ExternalLinkType type = ExternalLinkType.relationship;
-            ExternalLink prefix = null;
-            ExternalLink externalLinkRelation = _meaningManager.addExternalLink(uri, name, type, prefix, null);
-
-            uri = Convert.ToString("http://ad:water");
-            name = Convert.ToString("water");
-            type = ExternalLinkType.link;
-            prefix = null;
-            ExternalLink externalLinkClass = _meaningManager.addExternalLink(uri, name, type, prefix, null);
-
-            uri = Convert.ToString("http://ad:soil");
-            name = Convert.ToString("soil");
-            type = ExternalLinkType.entity;
-            prefix = null;
-            ExternalLink externalLinkEntity = _meaningManager.addExternalLink(uri, name, type, prefix, null);
-
-            uri = Convert.ToString("http://ad:haschildren");
-            name = Convert.ToString("has children");
-            type = ExternalLinkType.relationship;
-            prefix = null;
-            ExternalLink externalLinkRelation2 = _meaningManager.addExternalLink(uri, name, type, prefix, null);
-
-            MeaningEntry mapping1 = new MeaningEntry();
-            mapping1.MappingRelation = externalLinkRelation;
-            mapping1.MappedLinks = new List<ExternalLink> { externalLinkClass, externalLinkEntity };
-
-            MeaningEntry mapping2 = new MeaningEntry();
-            mapping2.MappingRelation = externalLinkRelation2;
-            mapping2.MappedLinks = new List<ExternalLink> { externalLinkEntity };
-
-            List<MeaningEntry> entries_annotations = new List<MeaningEntry>() { mapping1, mapping2 };
-
-            String Name = "meaning name for unit test_";
-            Name.Should().NotBeNull();
-            String ShortName = "meaning name for unit test_";
-            ShortName.Should().NotBeNull();
-            String Description = "meaning name for unit test_";
-            Description.Should().NotBeNull();
-            Selectable selectable = (Selectable)Enum.Parse(typeof(Selectable), "1");
-            selectable.Should().NotBeNull();
-            Approved approved = (Approved)Enum.Parse(typeof(Approved), "1");
-            approved.Should().NotBeNull();
-
-            Meaning meaning = new Meaning(Name, ShortName, Description, selectable, approved, entries_annotations, null);
-
-            meaning = _meaningManager.addMeaning(meaning);
-            NUnit.Framework.Assert.IsNotNull(meaning);
-
-            _meaningManager.Dispose();
-            //return meaning;
-        }
-
-        [Test()]
-        public void _EditMeaning()
+        public void _CreateEditMeaning()
         {
 
             this._CreateMeaning();
@@ -194,6 +135,8 @@ namespace BExIS.Dlm.Entities.Meanings.Tests
 
             meaning = _meaningManager.editMeaning(meaning);
             _meaningManager.Dispose();
+            _delete_all_test_data();
+
         }
 
         [Test()]
@@ -278,7 +221,7 @@ namespace BExIS.Dlm.Entities.Meanings.Tests
             NUnit.Framework.Assert.IsNotNull(childmeaning);
 
             _meaningManager.Dispose();
-            //return childmeaning;
+            _delete_all_test_data();
         }
 
         [Test()]
@@ -341,11 +284,69 @@ namespace BExIS.Dlm.Entities.Meanings.Tests
             NUnit.Framework.Assert.IsNotNull(res_link_prefix);
 
             _meaningManager.Dispose();
-            //return res_link_prefix;
+            _delete_all_test_data();
+
         }
 
-        [Test]
-        public void _delete_all_test_data()
+        private void _CreateMeaning()
+        {
+            ImeaningManagr _meaningManager = new MeaningManager();
+
+            //create 3 external links : 1 type:relation and 2 with different types
+            String uri = Convert.ToString("http://ad:hasconnection");
+            String name = Convert.ToString("hasconnection");
+            ExternalLinkType type = ExternalLinkType.relationship;
+            ExternalLink prefix = null;
+            ExternalLink externalLinkRelation = _meaningManager.addExternalLink(uri, name, type, prefix, null);
+
+            uri = Convert.ToString("http://ad:water");
+            name = Convert.ToString("water");
+            type = ExternalLinkType.link;
+            prefix = null;
+            ExternalLink externalLinkClass = _meaningManager.addExternalLink(uri, name, type, prefix, null);
+
+            uri = Convert.ToString("http://ad:soil");
+            name = Convert.ToString("soil");
+            type = ExternalLinkType.entity;
+            prefix = null;
+            ExternalLink externalLinkEntity = _meaningManager.addExternalLink(uri, name, type, prefix, null);
+
+            uri = Convert.ToString("http://ad:haschildren");
+            name = Convert.ToString("has children");
+            type = ExternalLinkType.relationship;
+            prefix = null;
+            ExternalLink externalLinkRelation2 = _meaningManager.addExternalLink(uri, name, type, prefix, null);
+
+            MeaningEntry mapping1 = new MeaningEntry();
+            mapping1.MappingRelation = externalLinkRelation;
+            mapping1.MappedLinks = new List<ExternalLink> { externalLinkClass, externalLinkEntity };
+
+            MeaningEntry mapping2 = new MeaningEntry();
+            mapping2.MappingRelation = externalLinkRelation2;
+            mapping2.MappedLinks = new List<ExternalLink> { externalLinkEntity };
+
+            List<MeaningEntry> entries_annotations = new List<MeaningEntry>() { mapping1, mapping2 };
+
+            String Name = "meaning name for unit test_";
+            Name.Should().NotBeNull();
+            String ShortName = "meaning name for unit test_";
+            ShortName.Should().NotBeNull();
+            String Description = "meaning name for unit test_";
+            Description.Should().NotBeNull();
+            Selectable selectable = (Selectable)Enum.Parse(typeof(Selectable), "1");
+            selectable.Should().NotBeNull();
+            Approved approved = (Approved)Enum.Parse(typeof(Approved), "1");
+            approved.Should().NotBeNull();
+
+            Meaning meaning = new Meaning(Name, ShortName, Description, selectable, approved, entries_annotations, null);
+
+            meaning = _meaningManager.addMeaning(meaning);
+            NUnit.Framework.Assert.IsNotNull(meaning);
+
+            _meaningManager.Dispose();
+        }
+
+        private void _delete_all_test_data()
         {
             ImeaningManagr _meaningManager = new MeaningManager();
             foreach (Meaning m in _meaningManager.getMeanings().Where(x => x.Related_meaning?.Count() != 0).Where(x => x.Related_meaning != null))
