@@ -220,6 +220,7 @@
 		if (type.action == 'edit') {
 			variableTemplate = $variableTemplatesStore.find((u) => u.id === type.id)!;
 			showForm = true;
+			window.scrollTo({ top: 60, behavior: 'smooth' })
 		}
 		if (type.action == 'delete') {
 			const confirm: ModalSettings = {

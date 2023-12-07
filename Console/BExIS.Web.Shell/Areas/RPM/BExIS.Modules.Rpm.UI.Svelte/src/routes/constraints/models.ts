@@ -1,3 +1,4 @@
+import type Variable from '$lib/components/datastructure/structure/variable/Variable.svelte';
 import type { ValidationResult } from '../../models';
 
 export interface ConstraintListItem {
@@ -9,6 +10,7 @@ export interface ConstraintListItem {
 	type: string;
 	negated: boolean;
 	inUse: boolean;
+	variableIDs: number[];
 }
 
 export interface DomainConstraintListItem {
@@ -17,9 +19,11 @@ export interface DomainConstraintListItem {
 	name: string;
 	description: string;
 	formalDescription: string;
+	type: string
 	domain: string;
 	negated: boolean;
 	inUse: boolean;
+	variableIDs: number[];
 }
 
 export interface RangeConstraintListItem {
@@ -28,12 +32,14 @@ export interface RangeConstraintListItem {
 	name: string;
 	description: string;
 	formalDescription: string;
+	type: string
 	lowerbound: number;
 	upperbound: number;
 	lowerboundIncluded: boolean;
 	upperboundIncluded: boolean;
 	negated: boolean;
 	inUse: boolean;
+	variableIDs: number[];
 }
 
 export interface PatternConstraintListItem {
@@ -42,26 +48,14 @@ export interface PatternConstraintListItem {
 	name: string;
 	description: string;
 	formalDescription: string;
+	type: string
 	pattern: string;
 	negated: boolean;
 	inUse: boolean;
+	variableIDs: number[];
 }
 
 export interface ConstraintValidationResult {
 	validationResult: ValidationResult;
 	constraintListItem: ConstraintListItem;
-}
-
-export interface DomainConstraintValidationResult {
-	validationResult: ValidationResult;
-	dimensionListItem: DomainConstraintListItem;
-}
-
-export interface RangeConstraintValidationResult {
-	validationResult: ValidationResult;
-	dimensionListItem: RangeConstraintListItem;
-}
-export interface PatternConstraintValidationResult {
-	validationResult: ValidationResult;
-	dimensionListItem: PatternConstraintListItem;
 }

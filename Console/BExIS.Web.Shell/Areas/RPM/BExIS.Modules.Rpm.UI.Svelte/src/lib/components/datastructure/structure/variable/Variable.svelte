@@ -74,7 +74,7 @@
 	
 	const dispatch = createEventDispatcher();
 	
-	let x: listItemType = { id: 0, text: '', group: '' };
+	let x: listItemType = { id: 0, text: '', group: '', description:'' };
 	
 	onMount(() => {
 		// set suggestions
@@ -87,6 +87,7 @@
 		
 		setTimeout(async () => {
 			
+			console.log("🚀 ~ file: Variable.svelte:91 ~ setTimeout ~ updateLists:")
 			updateLists();
 			
 			console.log("🚀 ~ file: Variable.svelte:60 ~ blockDataRelevant:", blockDataRelevant)
@@ -99,7 +100,7 @@
 				res = suite(variable, 'displayPattern');
 			}
 
-			res = suite(variable);
+			res = suite(variable,"");
 			setValidationState(res);
 
 			//console.log(variable);
@@ -114,7 +115,7 @@
 
 	afterUpdate(() => {
 		displayPattern = updateDisplayPattern(variable.dataType, false);
-		res = suite(variable);
+		res = suite(variable,"");
 
 
 		setValidationState(res);
@@ -177,11 +178,18 @@
 	// use the store to reset the lists for the dropdowns
 	/// reset means mostly reset the groups
 	function setList() {
-		datatypes = $dataTypeStore.map((o) => ({ ...o })); // set datatypes
-		units = $unitStore.map((o) => ({ ...o })); // set units
-		variableTemplates = $templateStore.map((o) => ({ ...o }));
-		meanings = $meaningsStore.map((o) => ({ ...o }));
-		constraints = $constraintsStore.map((o) => ({ ...o }));
+
+		datatypes = $dataTypeStore.map((o) => ({ ...o })).sort(); // set datatypes
+
+		units = $unitStore.map((o) => ({ ...o })).sort(); // set units
+		console.log("🚀 ~ file: Variable.svelte:185 ~ setList ~ units:", units)
+
+		variableTemplates = $templateStore.map((o) => ({ ...o })).sort();
+
+		meanings = $meaningsStore.map((o) => ({ ...o })).sort();
+
+		constraints = $constraintsStore.map((o) => ({ ...o })).sort();
+
 	}
 
 	function updateLists() {
@@ -202,8 +210,11 @@
 
 		// units based on Datatype selection
 		units = updateUnits(variable.dataType, variable.template, $unitStore, suggestedUnits);
+		units.sort();
+
 		//console.log("updated units",units);
 		variableTemplates = updateTemplates(variable.unit, $templateStore, suggestedTemplates);
+		variableTemplates.sort();
 
 	}
 
@@ -355,8 +366,8 @@
 									{#if suggestedUnits && suggestedUnits.length>1}
 									{#each suggestedUnits?.slice(0,3) as u}
 											<button class="badge" 
-											class:variant-filled-success={u == variable.unit}  
-											class:variant-ghost-success={u != variable.unit}
+											class:variant-filled-primary={u.text == variable.unit?.text}  
+											class:variant-ghost-primary={u.text != variable.unit?.text}
 											on:click={()=> variable.unit = u }>{u.text}</button>
 									{/each}
 								{/if}
@@ -394,8 +405,8 @@
 										</div>
 									{#each suggestedTemplates.slice(0,3) as t}
 											<button class="badge" 
-											class:variant-filled-success={t == variable.template}  
-											class:variant-ghost-success={t != variable.template}
+											class:variant-filled-primary={t.text == variable.template?.text}  
+											class:variant-ghost-primary={t.text != variable.template?.text}
 											on:click={()=> variable.template = t }>{t.text}</button>
 									{/each}
 								</div>

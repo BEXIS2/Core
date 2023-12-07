@@ -98,10 +98,12 @@ namespace Vaiona.Utils.Cfg
                 case(EntryType.EntryList):
                     var value = entry.Value as JArray;
                     var list = new List<Entry>();
-
-                    foreach (var item in value)
+                    if (value != null)
                     {
-                        list.Add(JsonConvert.DeserializeObject<Entry>(item.ToString()));
+                        foreach (var item in value)
+                        {
+                            list.Add(JsonConvert.DeserializeObject<Entry>(item.ToString()));
+                        }
                     }
                     return list;
 

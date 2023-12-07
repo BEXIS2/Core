@@ -99,6 +99,7 @@ namespace BExIS.Dlm.Services.Meanings
             Contract.Requires(meaning != null);
             try
             {
+                updateMeaningEntry();
                 using (IUnitOfWork uow = this.GetUnitOfWork())
                 {
 

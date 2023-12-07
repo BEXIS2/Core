@@ -32,6 +32,11 @@
 			suite.reset();
 			dimension.specification = 'L(0,0)M(0,0)T(0,0)I(0,0)Θ(0,0)N(0,0)J(0,0)';
 		}
+		else{
+			setTimeout(async () => {	
+				res = suite({ dimension: dimension, dimensions: dimensions }, "");
+			}, 10);
+		}
 	});
 
 	//change event: if input change check also validation only on the field

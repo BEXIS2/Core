@@ -10,9 +10,6 @@
 		DomainConstraintListItem,
 		RangeConstraintListItem,
 		PatternConstraintListItem,
-		DomainConstraintValidationResult,
-		RangeConstraintValidationResult,
-		PatternConstraintValidationResult
 	} from '../models';
 	import { onMount } from 'svelte';
 	import * as apiCalls from '../services/apiCalls';
@@ -30,7 +27,7 @@
 
 	// validation
 	import suite from './form';
-	import { FileButton } from '@skeletonlabs/skeleton';
+	import { FileButton, getModalStore, type ModalSettings } from '@skeletonlabs/skeleton';
 	import type { ValidationResult } from '../../../models';
 
 	// load form result object
@@ -49,11 +46,18 @@
 	$: setConstraintByType(constraint);
 	let ct: string[] = [];
 	$: constraintTypes = ct.map((c) => ({ id: c, text: c }));
+	const modalStore = getModalStore();
+	let warning: string = 'Changing the Contstrait may cause inconsistencies in Datasets.';
 
 	onMount(async () => {
 		ct = await apiCalls.GetConstraintTypes();
 		if (constraint.id == 0) {
 			suite.reset();
+		}
+		else{
+			setTimeout(async () => {	
+				res = suite({ constraint: constraint, constraints: constraints }, "");
+			}, 10);
 		}
 	});
 
@@ -68,7 +72,9 @@
 					formalDescription: constraint.formalDescription,
 					domain: '',
 					negated: constraint.negated,
-					inUse: constraint.inUse
+					inUse: constraint.inUse,
+					type: constraint.type,
+					variableIDs: constraint.variableIDs,
 				};
 				if (domainConstraint.id != 0) {
 					domainConstraint = await apiCalls.GetDomainConstraint(constraint.id);
@@ -95,7 +101,9 @@
 					lowerboundIncluded: true,
 					upperboundIncluded: true,
 					negated: constraint.negated,
-					inUse: constraint.inUse
+					inUse: constraint.inUse,
+					type: constraint.type,
+					variableIDs: constraint.variableIDs,
 				};
 				if (rangeConstraint.id != 0) {
 					rangeConstraint = await apiCalls.GetRangeConstraint(constraint.id);
@@ -119,7 +127,9 @@
 					formalDescription: constraint.formalDescription,
 					pattern: '',
 					negated: constraint.negated,
-					inUse: constraint.inUse
+					inUse: constraint.inUse,
+					type: constraint.type,
+					variableIDs: constraint.variableIDs,
 				};
 				if (patternConstraint.id != 0) {
 					patternConstraint = await apiCalls.GetPatternConstraint(constraint.id);
@@ -155,7 +165,7 @@
 
 	//change event: if input change check also validation only on the field
 	// e.target.id is the id of the input component
-	function onChangeHandler(e: any) {
+	function onChangeHandler(e:any) {
 		//console.log("input changed", e)
 		// add some delay so the entityTemplate is updated
 		// otherwise the values are old
@@ -165,25 +175,51 @@
 		}, 10);
 	}
 
-	async function submit() {
+	function submit() {
+		if(constraint.inUse){
+			const modal: ModalSettings = {
+				type: 'confirm',
+				title: 'Save Constraint',
+				body: warning,
+				// TRUE if confirm pressed, FALSE if cancel pressed
+				response: (r: boolean) => {
+					if (r === true) {
+						save();
+					}
+				}
+			};
+			modalStore.trigger(modal);
+		}
+		else{
+			save();
+		}		
+	}
+
+	async function save() {
 		let message: string;
 		let result: ConstraintValidationResult;
-
 		switch (constraint.type) {
 			case 'Domain':
 				result = await apiCalls.EditDomainConstraint(domainConstraint);
+				console.log('Domain',result)
+				break; 
 
 			case 'Range':
 				result = await apiCalls.EditRangeConstraint(rangeConstraint);
+				console.log('Range',result)
+				break; 
 
-			case 'Pattern':
+			case 'Pattern':	
 				result = await apiCalls.EditPatternConstraint(patternConstraint);
+				console.log('Pattern',result)
+				break; 
 			default:
-				let vr: ValidationResult = { isValid: true, validationItems: [{ name: '', message: '' }] };
+				let vr: ValidationResult = { isValid: false, validationItems: [{ name: 'Constraint Type', message: 'no Constraint Type is chosen' }] };
 				result = {
 					validationResult: vr,
 					constraintListItem: constraint
 				};
+				break; 
 		}
 
 		if (result.validationResult.isValid != true) {
@@ -221,6 +257,11 @@
 </script>
 
 {#if constraint && constraintTypes}
+	{#if constraint.inUse}
+	<div class="btn w-full mb-1 variant-ghost-warning text-center">
+		{warning}
+	</div>
+	{/if}
 	<form on:submit|preventDefault={submit}>
 		<div class="grid grid-cols-2 gap-5">
 			<div class="pb-3">
@@ -298,11 +339,11 @@
 			{#if constraint.type && constraint.type != ''}
 				<div class="pb-3 col-span-2">
 					{#if constraint.type == 'Domain'}
-						<DomainForm {domainConstraint} />
+						<DomainForm {domainConstraint} on:true={() => {disabled = true;}} on:false={() => {disabled = false;}} />
 					{:else if constraint.type == 'Range'}
-						<RangeForm {rangeConstraint} />
+						<RangeForm {rangeConstraint} on:true={() => {disabled = true;}} on:false={() => {disabled = false;}} />
 					{:else if constraint.type == 'Pattern'}
-						<PatternForm {patternConstraint} />
+						<PatternForm {patternConstraint} on:true={() => {disabled = true;}} on:false={() => {disabled = false;}} />
 					{/if}
 				</div>
 			{/if}

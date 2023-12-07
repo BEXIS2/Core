@@ -254,7 +254,7 @@ namespace BExIS.Dlm.Services.DataStructure
                 IRepository<VariableInstance> varRepo = uow.GetRepository<VariableInstance>();
                 var variable = varRepo.Get(variableId);
 
-                List<MissingValue> missingValues = variable.MissingValues.ToList();
+                List<MissingValue> missingValues = variable.MissingValues!=null? variable.MissingValues.ToList(): new List<MissingValue>();
 
                 switch (typeCode)
                 {

@@ -433,8 +433,12 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                         updatedVariable.IsKey = variable.IsKey;
                         updatedVariable.IsValueOptional = variable.IsOptional;
                         updatedVariable.VariableConstraints = variableHelper.ConvertTo(variable.Constraints);
-                        updatedVariable.MissingValues = variableHelper.ConvertTo(variable.MissingValues);
 
+                        // update missingValues
+                        List<long> dbMVs = updatedVariable.MissingValues.Select(mv => mv.Id).ToList();
+                        List<MissingValueItem> newMVs = variable.MissingValues.Where(mv => !dbMVs.Contains(mv.Id)).ToList();
+                        if(newMVs.Any())
+                        updatedVariable.MissingValues.ToList().AddRange(variableHelper.ConvertTo(newMVs));
 
                     }
                     else // create
@@ -461,22 +465,6 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                         structure = structureManager.AddVariable(structure.Id, updatedVariable.Id);
 
                     }
-
-                    //// update meanings
-                    //foreach (var meaning in variable.Meanings)
-                    //{
-                    //    Meaning m = meaningManager.getMeaning(meaning.Id);
-                    //    if(!updatedVariable.Meanings.Contains(m))updatedVariable.Meanings.Add(m);   
-                    //}
-
-                    //// update constraints
-                    //foreach (var constraint in variable.Constraints)
-                    //{
-                    //    Constraint c = constraintsManager.ConstraintRepository.Get(constraint.Id);
-                    //    if (!updatedVariable.VariableConstraints.Contains(c)) updatedVariable.VariableConstraints.Add(c);
-                    //}
-
-                    //updatedVariable = variableManager.UpdateVariable(updatedVariable);
 
                 }
 
@@ -627,7 +615,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
 
                     // get list of possible units
                     var unitInput = getValueFromMarkedRow(markerRows, model.Markers, "unit", (char)model.Delimeter, i, AsciiFileReaderInfo.GetTextMarker((TextMarker)model.TextMarker));
-                    strutcureAnalyzer.SuggestUnit(unitInput, var.DataType.Text).ForEach(u => var.PossibleUnits.Add(new UnitItem(u.Id, u.Name,u.AssociatedDataTypes.Select(x => x.Name).ToList(), "detect")));
+                    strutcureAnalyzer.SuggestUnit(unitInput, var.DataType.Text).ForEach(u => var.PossibleUnits.Add(new UnitItem(u.Id, u.Abbreviation,u.AssociatedDataTypes.Select(x => x.Name).ToList(), "detect")));
                     var.Unit = var.PossibleUnits.FirstOrDefault();
                     if (var.Unit == null) var.Unit = new UnitItem();
 
@@ -772,7 +760,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                 }
 
                 // get default missing values
-                return Json(list, JsonRequestBehavior.AllowGet);
+                return Json(list.OrderBy(l=>l.Text), JsonRequestBehavior.AllowGet);
             }
         }
 
@@ -793,7 +781,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                 }
 
                 // get default missing values
-                return Json(list, JsonRequestBehavior.AllowGet);
+                return Json(list.OrderBy(l => l.Text), JsonRequestBehavior.AllowGet);
             }
         }
 
@@ -812,7 +800,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
             }
 
             // get list of all display pattern
-            return Json(list, JsonRequestBehavior.AllowGet);
+            return Json(list.OrderBy(l => l.Text), JsonRequestBehavior.AllowGet);
         }
 
         [JsonNetFilter]
@@ -837,7 +825,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                 }
 
                 // get default missing values
-                return Json(list.OrderBy(i => i.Group), JsonRequestBehavior.AllowGet);
+                return Json(list.OrderBy(l => l.Text), JsonRequestBehavior.AllowGet);
             }
         }
 
@@ -878,7 +866,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                 }
 
                 // get default missing values
-                return Json(list.OrderBy(i => i.Group), JsonRequestBehavior.AllowGet);
+                return Json(list.OrderBy(l => l.Text), JsonRequestBehavior.AllowGet);
             }
         }
 
@@ -889,7 +877,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
             List<MeaningItem> list = helper.GetMeanings();
 
             // get default missing values
-            return Json(list.OrderBy(i => i.Group), JsonRequestBehavior.AllowGet);
+            return Json(list.OrderBy(l => l.Text), JsonRequestBehavior.AllowGet);
 
         }
 
@@ -899,7 +887,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
             VariableHelper helper = new VariableHelper();
             List<ListItem> list = helper.GetConstraints();
 
-            return Json(list.OrderBy(i => i.Group), JsonRequestBehavior.AllowGet);
+            return Json(list.OrderBy(l => l.Text), JsonRequestBehavior.AllowGet);
 
         }
 
@@ -1064,9 +1052,6 @@ namespace BExIS.Modules.Rpm.UI.Controllers
             {
                 list.Add(new MissingValueModel());
             }
-
-            list.Add(new MissingValueModel());
-
 
             return list;
         }

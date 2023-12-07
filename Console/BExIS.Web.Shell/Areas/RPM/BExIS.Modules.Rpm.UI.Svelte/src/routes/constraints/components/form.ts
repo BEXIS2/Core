@@ -6,6 +6,8 @@ type dataType = {
 	constraints: ConstraintListItem[];
 };
 
+
+
 const suite = create((data: dataType, fieldName) => {
 	only(fieldName);
 
@@ -15,9 +17,8 @@ const suite = create((data: dataType, fieldName) => {
 
 	test('name', 'name is not unique', () => {
 		return (
-			data.constraints.find((u) => u.name.toLowerCase() === data.constraint.name.toLowerCase()) ==
-				null ||
-			data.constraints.find((u) => u.name === data.constraint.name)?.id == data.constraint.id
+			data.constraints.find((u) => u.name.toLowerCase().trim() === data.constraint.name.toLowerCase().trim()) == null ||
+			data.constraints.filter((u) => u.name.toLowerCase().trim() === data.constraint.name.toLowerCase().trim() && u.id != data.constraint.id).length == 0
 		);
 	});
 
@@ -25,9 +26,26 @@ const suite = create((data: dataType, fieldName) => {
 		enforce(data.constraint.description).isNotBlank();
 	});
 
-	test('description', 'description is to short, it must be larger then 10 chars', () => {
-		enforce(data.constraint.description).longerThan(10);
-	});
+	// test('constraintTypes', 'no Constraint Type is chosen', () => {
+	// 		switch (data.constraint.type) {
+	// 			case 'Domain':
+	// 				return true;
+	
+	// 			case 'Range':
+	// 				return true;
+	
+	// 			case 'Pattern':	
+	// 				return true;
+
+	// 			default:
+	// 				return false;
+	// 			}
+
+	// });
+
+	// test('description', 'description is to short, it must be larger then 10 chars', () => {
+	// 	enforce(data.constraint.description).longerThan(10);
+	// });
 });
 
 export default suite;

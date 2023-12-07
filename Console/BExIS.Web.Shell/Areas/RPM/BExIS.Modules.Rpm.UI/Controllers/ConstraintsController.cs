@@ -161,7 +161,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
 
         [JsonNetFilter]
         [HttpPost]
-        public JsonResult EditDomainConstraint(EditDomainConstraintModel domainConstraint)
+        public JsonResult EditDomainConstraint(EditDomainConstraintModel constraintListItem)
         {
             ValidationResult validationResult = new ValidationResult
             {
@@ -171,43 +171,43 @@ namespace BExIS.Modules.Rpm.UI.Controllers
             object result = new
             {
                 validationResult,
-                domainConstraint,
+                constraintListItem,
             };
 
-            if (domainConstraint != null)
+            if (constraintListItem != null)
             {
                 using (ConstraintManager constraintManager = new ConstraintManager())
                 {
                     List<Constraint> constraints = constraintManager.Constraints.Where(c => c.DataContainer == null).ToList();
-                    validationResult = ConstraintValidation(constraints, domainConstraint);
+                    validationResult = ConstraintValidation(constraints, constraintListItem);
 
                     if (validationResult.IsValid)
                     {
                         DomainConstraint dc = new DomainConstraint();
 
-                        if (domainConstraint.Id == 0)
+                        if (constraintListItem.Id == 0)
                         {
                             dc = new DomainConstraint()
                             {
-                                Id = domainConstraint.Id,
-                                Name = domainConstraint.Name,
-                                Description = domainConstraint.Description,
-                                Negated = domainConstraint.Negated,
-                                Items = DomainConverter.convertDomainToDomainItems(domainConstraint.Domain),
+                                Id = constraintListItem.Id,
+                                Name = constraintListItem.Name,
+                                Description = constraintListItem.Description,
+                                Negated = constraintListItem.Negated,
+                                Items = DomainConverter.convertDomainToDomainItems(constraintListItem.Domain),
                         };
                             dc = constraintManager.Create(dc);
                         }
                         else
                         {
-                            dc = constraintManager.DomainConstraintRepository.Get(domainConstraint.Id);
-                            dc.Name = domainConstraint.Name;
-                            dc.Description = domainConstraint.Description;
-                            dc.Negated = domainConstraint.Negated;
-                            dc.Items = DomainConverter.convertDomainToDomainItems(domainConstraint.Domain);
+                            dc = constraintManager.DomainConstraintRepository.Get(constraintListItem.Id);
+                            dc.Name = constraintListItem.Name;
+                            dc.Description = constraintListItem.Description;
+                            dc.Negated = constraintListItem.Negated;
+                            dc.Items = DomainConverter.convertDomainToDomainItems(constraintListItem.Domain);
     
                             dc = constraintManager.Update(dc);
                         }
-                        domainConstraint = new EditDomainConstraintModel()
+                        constraintListItem = new EditDomainConstraintModel()
                         {
                             Id = dc.Id,
                             Version = dc.VersionNo,
@@ -222,7 +222,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                     result = new
                     {
                         validationResult,
-                        domainConstraint,
+                        constraintListItem,
                     };
                 }
             }
@@ -231,7 +231,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
 
         [JsonNetFilter]
         [HttpPost]
-        public JsonResult EditRangeConstraint(EditRangeConstraintModel rangeConstraint)
+        public JsonResult EditRangeConstraint(EditRangeConstraintModel constraintListItem)
         {
             ValidationResult validationResult = new ValidationResult
             {
@@ -241,50 +241,50 @@ namespace BExIS.Modules.Rpm.UI.Controllers
             object result = new
             {
                 validationResult,
-                rangeConstraint,
+                constraintListItem,
             };
 
-            if (rangeConstraint != null)
+            if (constraintListItem != null)
             {
                 using (ConstraintManager constraintManager = new ConstraintManager())
                 {
                     List<Constraint> constraints = constraintManager.Constraints.Where(c => c.DataContainer == null).ToList();
-                    validationResult = ConstraintValidation(constraints, rangeConstraint);
+                    validationResult = ConstraintValidation(constraints, constraintListItem);
 
                     if (validationResult.IsValid)
                     {
                         RangeConstraint rc = null;
 
-                        if (rangeConstraint.Id == 0)
+                        if (constraintListItem.Id == 0)
                         {
                             rc = new RangeConstraint()
                             {
-                                Id = rangeConstraint.Id,
-                                Name = rangeConstraint.Name,
-                                Description = rangeConstraint.Description,
-                                Negated = rangeConstraint.Negated,
-                                Lowerbound = rangeConstraint.Lowerbound,
-                                Upperbound = rangeConstraint.Upperbound,
-                                LowerboundIncluded = rangeConstraint.LowerboundIncluded,
-                                UpperboundIncluded = rangeConstraint.UpperboundIncluded
+                                Id = constraintListItem.Id,
+                                Name = constraintListItem.Name,
+                                Description = constraintListItem.Description,
+                                Negated = constraintListItem.Negated,
+                                Lowerbound = constraintListItem.Lowerbound,
+                                Upperbound = constraintListItem.Upperbound,
+                                LowerboundIncluded = constraintListItem.LowerboundIncluded,
+                                UpperboundIncluded = constraintListItem.UpperboundIncluded
                             };
                             rc = constraintManager.Create(rc);
                         }
                         else
                         {
-                            rc = constraintManager.RangeConstraints.Where(c => c.Id == rangeConstraint.Id).FirstOrDefault();
-                            rc.Name = rangeConstraint.Name;
-                            rc.Description = rangeConstraint.Description;
-                            rc.Negated = rangeConstraint.Negated;
-                            rc.Lowerbound = rangeConstraint.Lowerbound;
-                            rc.Upperbound = rangeConstraint.Upperbound;
-                            rc.LowerboundIncluded = rangeConstraint.LowerboundIncluded;
-                            rc.UpperboundIncluded = rangeConstraint.UpperboundIncluded;
+                            rc = constraintManager.RangeConstraints.Where(c => c.Id == constraintListItem.Id).FirstOrDefault();
+                            rc.Name = constraintListItem.Name;
+                            rc.Description = constraintListItem.Description;
+                            rc.Negated = constraintListItem.Negated;
+                            rc.Lowerbound = constraintListItem.Lowerbound;
+                            rc.Upperbound = constraintListItem.Upperbound;
+                            rc.LowerboundIncluded = constraintListItem.LowerboundIncluded;
+                            rc.UpperboundIncluded = constraintListItem.UpperboundIncluded;
 
                             rc = constraintManager.Update(rc);
                         }
 
-                        rangeConstraint = new EditRangeConstraintModel() 
+                        constraintListItem = new EditRangeConstraintModel() 
                         { 
                             Name = rc.Name,
                             Description = rc.Description,
@@ -300,14 +300,14 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                     result = new
                     {
                         validationResult,
-                        rangeConstraint,
+                        constraintListItem,
                     };
                 }
             }
             return Json(result, JsonRequestBehavior.AllowGet);
         }
 
-        public JsonResult EditPatternConstraint(EditPatternConstraintModel patternConstraint)
+        public JsonResult EditPatternConstraint(EditPatternConstraintModel constraintListItem)
         {
             ValidationResult validationResult = new ValidationResult
             {
@@ -317,43 +317,43 @@ namespace BExIS.Modules.Rpm.UI.Controllers
             object result = new
             {
                 validationResult,
-                patternConstraint,
+                constraintListItem,
             };
 
-            if (patternConstraint != null)
+            if (constraintListItem != null)
             {
                 using (ConstraintManager constraintManager = new ConstraintManager())
                 {
                     List<Constraint> constraints = constraintManager.Constraints.Where(c => c.DataContainer == null).ToList();
-                    validationResult = ConstraintValidation(constraints, patternConstraint);
+                    validationResult = ConstraintValidation(constraints, constraintListItem);
 
                     if (validationResult.IsValid)
                     {
                         PatternConstraint pc = null;
 
-                        if (patternConstraint.Id == 0)
+                        if (constraintListItem.Id == 0)
                         {
                             pc = new PatternConstraint()
                             {
-                                Id = patternConstraint.Id,
-                                Name = patternConstraint.Name,
-                                Description = patternConstraint.Description,
-                                Negated = patternConstraint.Negated,
-                                MatchingPhrase = patternConstraint.pattern
+                                Id = constraintListItem.Id,
+                                Name = constraintListItem.Name,
+                                Description = constraintListItem.Description,
+                                Negated = constraintListItem.Negated,
+                                MatchingPhrase = constraintListItem.pattern
                             };
                             pc = constraintManager.Create(pc);
                         }
                         else
                         {
-                            pc = constraintManager.PatternConstraints.Where(c => c.Id.Equals(patternConstraint.Id)).FirstOrDefault();
-                            pc.Name = patternConstraint.Name;
-                            pc.Description = patternConstraint.Description;
-                            pc.Negated = patternConstraint.Negated;
-                            pc.MatchingPhrase = patternConstraint.pattern;
+                            pc = constraintManager.PatternConstraints.Where(c => c.Id.Equals(constraintListItem.Id)).FirstOrDefault();
+                            pc.Name = constraintListItem.Name;
+                            pc.Description = constraintListItem.Description;
+                            pc.Negated = constraintListItem.Negated;
+                            pc.MatchingPhrase = constraintListItem.pattern;
 
                             pc = constraintManager.Update(pc);
                         }
-                        patternConstraint = new EditPatternConstraintModel()
+                        constraintListItem = new EditPatternConstraintModel()
                         {
                             Id = pc.Id,
                             Version = pc.VersionNo,
@@ -368,7 +368,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                     result = new
                     {
                         validationResult,
-                        patternConstraint,
+                        constraintListItem,
                     };
                 }
             }
@@ -424,7 +424,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
         {
 
             ValidationResult result = ConstraintValidation(constraints.Cast<Constraint>().ToList(), (EditConstraintModel)constaint);
-            if (constaint.Lowerbound >= constaint.Upperbound)
+            if (constaint.Lowerbound > constaint.Upperbound)
             {
                 result.IsValid = false;
                 result.ValidationItems.Add(new ValidationItem { Name = "Boundery", Message = "Lowerbound is bigger then Upperbound" });
