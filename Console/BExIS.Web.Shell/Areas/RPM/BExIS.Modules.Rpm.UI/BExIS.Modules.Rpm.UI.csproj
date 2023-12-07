@@ -132,6 +132,7 @@
     <Compile Include="Controllers\DataTypeController.cs" />
     <Compile Include="Controllers\DimensionController.cs" />
     <Compile Include="Controllers\ExternalLinkController.cs" />
+    <Compile Include="Controllers\HelpController.cs" />
     <Compile Include="Controllers\MeaningController.cs" />
     <Compile Include="Controllers\UnitController.cs" />
     <Compile Include="Controllers\StructuresController.cs" />
@@ -230,6 +231,10 @@
     <ProjectReference Include="..\..\..\..\..\Components\UI\BExIS.UI\BExIS.UI.csproj">
       <Project>{DE0AD99C-C559-422F-8132-CC4D7C46FF83}</Project>
       <Name>BExIS.UI</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\..\..\Components\Utils\BExIS.Utils.Config\BExIS.Utils.Config.csproj">
+      <Project>{6EAD7D02-02F7-42FF-85E4-90BB892D3846}</Project>
+      <Name>BExIS.Utils.Config</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\..\..\..\Components\Utils\BExIS.Utils.NH\BExIS.Utils.NH.csproj">
       <Project>{0F1EC13E-D685-4F4D-A438-52797B0E53A0}</Project>
