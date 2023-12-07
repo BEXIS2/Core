@@ -124,9 +124,8 @@
 				<div class="text-right">
 					{#if !showForm}
 						<!-- svelte-ignore a11y-mouse-events-have-key-events -->
-						<button
-							in:fade
-							out:fade
+						<button							
+
 							class="btn variant-filled-secondary shadow-md h-9 w-16"
 							title="Create new Constraint"
 							id="create"
@@ -135,6 +134,11 @@
 							}}
 							on:click={() => toggleForm()}><Fa icon={faPlus} /></button
 						>
+					{:else if constraint.creationDate && constraint.lastModified}
+						<div>
+							<p>Created: {constraint.creationDate}</p>
+							<p>Last modified: {constraint.lastModified}</p>
+						</div>
 					{/if}
 				</div>
 			</div>
@@ -173,7 +177,15 @@
 							variableIDs: {
 								disableFiltering: true,
 								exclude: true
-							}
+							},
+							creationDate: {
+								disableFiltering: true,
+								exclude: true
+							},
+							lastModified: {
+								disableFiltering: true,
+								exclude: true
+							},
 						}
 					}}
 				/>

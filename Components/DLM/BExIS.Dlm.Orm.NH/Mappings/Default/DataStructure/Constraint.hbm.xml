@@ -55,7 +55,19 @@
     <property name="NegatedMessageTemplate" type="String">
       <column name="NegatedMessageTemplate" />
     </property>
-
+	  
+	<property name="CreationDate" type="DateTime">
+      <column name="CreationDate" />
+    </property>
+	  
+	<property name="LastModified" type="DateTime">
+      <column name="LastModified" />
+    </property>
+	  
+	<property name="LastModifiedUserRef" type="Int64">
+      <column name="LastModifiedUserRef" />
+    </property>
+	
     <many-to-one name="DataContainer" class="DataContainer" not-null="false" column="DataContainerRef"/>
     <!--Intentionally commented; Two FK to two different entities that make them null-able! also I am not sure whether they are really needed. 22.02.12 Javad-->
     <!--<many-to-one name="ExtendedPropery" class="ExtendedPropery" not-null="false" column="ExtendedProperyRef"/>-->
