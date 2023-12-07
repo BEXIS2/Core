@@ -111,7 +111,10 @@ namespace Vaiona.Utils.Cfg
                     return JsonConvert.DeserializeObject<Entry>(entry.Value.ToString());
 
                 default:
-                    return Convert.ChangeType(entry.Value.ToString(), (TypeCode)Enum.Parse(typeof(TypeCode), type.ToString()));
+                    {
+                        string entryValue = entry.Value != null ? entry.Value.ToString() : "";
+                        return Convert.ChangeType(entryValue, (TypeCode)Enum.Parse(typeof(TypeCode), type.ToString()));
+                    }
             }
         }
 
