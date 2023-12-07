@@ -33,6 +33,7 @@ namespace BExIS.Modules.Dcm.UI.Helpers
                 {
                     model.StructureId = dataset.DataStructure.Id;
                     model.StructureTitle = dataset.DataStructure.Name;
+                    model.HasStructrue = true;
                 }
                 // load cache to get informations about the current upload workflow
                 EditDatasetDetailsCache cache = hookManager.LoadCache<EditDatasetDetailsCache>("dataset", "details", HookMode.edit, id);

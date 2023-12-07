@@ -13,7 +13,8 @@
 		latestFileUploadDate,
 		latestDataDescriptionDate,
 		latestFileReaderDate,
-		latestSubmitDate
+		latestSubmitDate,
+		latestValidationDate
 	} from '../../routes/edit/stores';
 
 	import { onMount, createEventDispatcher } from 'svelte';
@@ -35,7 +36,7 @@
 	$: $latestFileUploadDate, reload();
 	$: $latestDataDescriptionDate, reload();
 	$: $latestFileReaderDate, reload();
-	// $: $latestSubmitDate, reload();
+	$: $latestValidationDate, reload();
 
 	let canSubmit: boolean = false;
 	$: canSubmit;
@@ -47,7 +48,7 @@ let isSubmiting: boolean = false;
 	});
 
 	async function reload() {
-		//console.log('reload submit');
+		console.log('reload submit');
 		model = await getHookStart(start, id, version);
 		canSubmit = activateSubmit();
 

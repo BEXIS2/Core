@@ -138,61 +138,69 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                                                 string readerInfo = cache.AsciiFileReaderInfo != null ? cache.AsciiFileReaderInfo.ToJson() : "";
                                                 string incomingHash = HashHelper.CreateMD5Hash(file.Name, file.Lenght.ToString(), datastructureId.ToString(), readerInfo);
 
-                                                // if a validation is allready run and the file has not changed, skip validation
-                                                if (file.ValidationHash != incomingHash)
+                                            // if a validation is allready run and the file has not changed, skip validation
+                                            if (file.ValidationHash != incomingHash)
+                                            {
+                                                if (ext.Equals(".xlsm")) // excel Template
                                                 {
-                                                    if (ext.Equals(".xlsm")) // excel Template
-                                                    {
-                                                        //ExcelReader reader = new ExcelReader(sds, new ExcelFileReaderInfo());
-                                                        //Stream = reader.Open(filePath);
-                                                        //reader.ValidateTemplateFile(Stream, fileName, id);
-                                                        //file.Errors = reader.ErrorMessages;
-                                                        //cache.UpdateSetup.RowsCount = reader.NumberOfRows;
-                                                        //throw new NotImplementedException("validation with .xlsm is not supported yet");
-                                                        fileErrors.Add(new Error(ErrorType.File, "Validation with .xlsm is not supported yet.", "File"));
-                                                    }
-                                                    else
-                                                    if (iOUtility.IsSupportedExcelFile(ext)) // Excel
-                                                    {
-                                                        //ExcelReader reader = new ExcelReader(sds, (ExcelFileReaderInfo)cache.ExcelFileReaderInfo);
-                                                        //Stream = reader.Open(filePath);
-                                                        //reader.ValidateFile(Stream, fileName, id);
-                                                        //file.Errors = reader.ErrorMessages;
-                                                        //cache.UpdateSetup.RowsCount = reader.NumberOfRows;
-                                                        //throw new NotImplementedException("validation with .xlsx is not supported yet");
-                                                        fileErrors.Add(new Error(ErrorType.File, "Validation with .xlsm is not supported yet.", "File"));
-                                                    }
-                                                    else
-                                                    if (iOUtility.IsSupportedAsciiFile(ext)) // asccii
-                                                    {
-                                                        AsciiReader reader = new AsciiReader(sds, (AsciiFileReaderInfo)cache.AsciiFileReaderInfo);
-
-                                                        // current validation direction
-                                                        // check data structure
-                                                        // check values
-                                                        // check primary key
-
-                                                        using (Stream = reader.Open(filePath))
-                                                        {
-                                                            //validate
-                                                            reader.ValidateFile(Stream, fileName, id); // structure and values
-                                                            fileErrors = reader.ErrorMessages;
-                                                            cache.UpdateSetup.RowsCount = reader.NumberOfRows;
-                                                        }
-
-                                                        if (fileErrors == null || fileErrors.Count == 0)
-                                                        {
-                                                            //check against primary key
-                                                            var unique = uploadWizardHelper.IsUnique(id, ext, fileName, filePath, (AsciiFileReaderInfo)cache.AsciiFileReaderInfo, datastructureId);
-                                                            if (!unique)
-                                                            {
-                                                                fileErrors.Add(new Error(ErrorType.PrimaryKey, "the data in the file violate the primary key set.", "Primary Key"));
-                                                            }
-                                                        }
-                                                    }
-
-                                                    file.ValidationHash = incomingHash;
+                                                    //ExcelReader reader = new ExcelReader(sds, new ExcelFileReaderInfo());
+                                                    //Stream = reader.Open(filePath);
+                                                    //reader.ValidateTemplateFile(Stream, fileName, id);
+                                                    //file.Errors = reader.ErrorMessages;
+                                                    //cache.UpdateSetup.RowsCount = reader.NumberOfRows;
+                                                    //throw new NotImplementedException("validation with .xlsm is not supported yet");
+                                                    fileErrors.Add(new Error(ErrorType.File, "Validation with .xlsm is not supported yet.", "File"));
                                                 }
+                                                else
+                                                if (iOUtility.IsSupportedExcelFile(ext)) // Excel
+                                                {
+                                                    //ExcelReader reader = new ExcelReader(sds, (ExcelFileReaderInfo)cache.ExcelFileReaderInfo);
+                                                    //Stream = reader.Open(filePath);
+                                                    //reader.ValidateFile(Stream, fileName, id);
+                                                    //file.Errors = reader.ErrorMessages;
+                                                    //cache.UpdateSetup.RowsCount = reader.NumberOfRows;
+                                                    //throw new NotImplementedException("validation with .xlsx is not supported yet");
+                                                    fileErrors.Add(new Error(ErrorType.File, "Validation with .xlsm is not supported yet.", "File"));
+                                                }
+                                                else
+                                                if (iOUtility.IsSupportedAsciiFile(ext)) // asccii
+                                                {
+                                                    AsciiReader reader = new AsciiReader(sds, (AsciiFileReaderInfo)cache.AsciiFileReaderInfo);
+
+                                                    // current validation direction
+                                                    // check data structure
+                                                    // check values
+                                                    // check primary key
+
+                                                    using (Stream = reader.Open(filePath))
+                                                    {
+                                                        //validate
+                                                        reader.ValidateFile(Stream, fileName, id); // structure and values
+                                                        fileErrors = reader.ErrorMessages;
+                                                        cache.UpdateSetup.RowsCount = reader.NumberOfRows;
+                                                    }
+
+                                                    if (fileErrors == null || fileErrors.Count == 0)
+                                                    {
+                                                        //check against primary key
+                                                        var unique = uploadWizardHelper.IsUnique(id, ext, fileName, filePath, (AsciiFileReaderInfo)cache.AsciiFileReaderInfo, datastructureId);
+                                                        if (!unique)
+                                                        {
+                                                            fileErrors.Add(new Error(ErrorType.PrimaryKey, "the data in the file violate the primary key set.", "Primary Key"));
+                                                        }
+                                                    }
+                                                }
+
+                                                file.ValidationHash = incomingHash;
+                                            }
+                                            else
+                                            {
+                                                var cacheFile = cache.Files.Where(f => f.Name.Equals(file.Name)).FirstOrDefault();
+                                                if (cacheFile != null && cacheFile.Errors.Any())
+                                                {
+                                                    fileErrors.AddRange(cacheFile.Errors); 
+                                                }
+                                            }
                                                 
 
                                             }

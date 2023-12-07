@@ -962,6 +962,7 @@
           <SaveServerSettingsInUserFile>True</SaveServerSettingsInUserFile>
         </WebProjectProperties>
       </FlavorProperties>
+      <UserProperties dcm_1settings_1json__JsonSchema="" />
     </VisualStudio>
   </ProjectExtensions>
   <PropertyGroup>
