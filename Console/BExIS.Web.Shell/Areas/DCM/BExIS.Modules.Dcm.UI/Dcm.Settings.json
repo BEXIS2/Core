@@ -5,8 +5,8 @@
   "entries": [
     {
       "key": "help",
-      "value": "https://github.com/BEXIS2/Documents/blob/2.14.5/Manuals/DCM/Manual.md",
-      "description": "URL to manual",
+      "value": "",
+      "description": "URL to manual, if empty it links to the latest manual from bexis 2.",
       "type": "String",
       "options": []
     },

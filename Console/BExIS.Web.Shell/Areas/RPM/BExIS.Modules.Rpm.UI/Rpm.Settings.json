@@ -5,9 +5,9 @@
   "entries": [
     {
       "key": "help",
-      "value": "https://github.com/BEXIS2/Documents/blob/2.14.5/Manuals/RPM/Manual.md",
+      "value": "",
       "type": "String",
-      "description": "URL to manual"
+      "description": "URL to manual, if empty it links to the latest manual from bexis 2."
     },
     {
       "key": "optionalDefault",
