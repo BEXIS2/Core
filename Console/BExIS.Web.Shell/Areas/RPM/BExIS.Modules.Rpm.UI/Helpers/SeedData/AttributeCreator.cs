@@ -50,6 +50,7 @@ namespace BExIS.Modules.Rpm.UI.Helpers.SeedData
                             template.Description,
                             "",
                             null,
+                            null,
                             true
                             );
 

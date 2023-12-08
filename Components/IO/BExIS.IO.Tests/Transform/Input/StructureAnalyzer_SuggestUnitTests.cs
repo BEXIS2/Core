@@ -58,7 +58,7 @@ namespace BExIS.IO.Tests.Transform.Input
 
         }
 
-        [TestCase("double", 1, 124)] // datatype, id, count
+        [TestCase("double", 1, 125)] // datatype, id, count
         [TestCase("string", 1, 3)] // datatype, id, count
         public void SuggestUnit_InputIsEmptyButDatatypeExist_ReturnUnit(string dataType, long firstId, int count)
         {

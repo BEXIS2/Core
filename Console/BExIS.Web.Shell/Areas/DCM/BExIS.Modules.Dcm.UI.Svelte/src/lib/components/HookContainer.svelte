@@ -86,10 +86,6 @@
 	}
 </script>
 
-<!-- {$hooksStatus[name]}
-{status}
-{active} -->
-
 {#if visible && active}
 	<div class="flex p-5 m-2 gap-5">
 		<div class="flex-none w-48">

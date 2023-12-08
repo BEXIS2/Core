@@ -56,6 +56,7 @@ class VariableModel {
 	unit: unitListItemType | undefined;
 	missingValues: missingValueType[];
 	meanings: listItemType[];
+	constraints: listItemType[];
 	approved: boolean;
 	inUse: boolean;
 
@@ -68,6 +69,7 @@ class VariableModel {
 		this.unit = undefined;
 		this.missingValues = [];
 		this.meanings = [];
+		this.constraints = [];
 		this.approved = false;
 		this.inUse = false;
 	}
@@ -76,6 +78,9 @@ class VariableModel {
 export class VariableTemplateModel extends VariableModel {
 	public constructor() {
 		super();
+		this.meanings = [];
+		this.constraints = [];
+		this.missingValues = []
 	}
 }
 
@@ -91,6 +96,8 @@ export class VariableInstanceModel extends VariableModel {
 	public constructor() {
 		super();
 		this.meanings = [];
+		this.constraints = [];
+		this.missingValues = []
 		this.isOptional = false;
 		this.template = undefined;
 		this.isKey = false;

@@ -128,6 +128,8 @@ namespace BExIS.Modules.Rpm.UI.Helpers
                     operationManager.Create("RPM", "DataType", "*", newDataTypeFeature);
 
 
+
+
                 Feature api = features.FirstOrDefault(f =>
                     f.Name.Equals("API") &&
                     f.Parent != null &&
@@ -173,6 +175,8 @@ namespace BExIS.Modules.Rpm.UI.Helpers
                     operationManager.Create("RPM", "ExternalLink", "*", dataMeaning_pub);
 
                 }
+
+                if (!operationManager.Exists("RPM", "Help", "*"))operationManager.Create("RPM", "Help", "*");
 
             }
             finally

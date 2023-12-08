@@ -39,6 +39,18 @@ namespace BExIS.Dlm.Services.DataStructure
         public IReadOnlyRepository<RangeConstraint> RangeConstraintRepository { get; }
         public IQueryable<RangeConstraint> RangeConstraints => RangeConstraintRepository.Query();
 
+        /// <summary>
+        /// return all constraints Materialize
+        /// </summary>
+        /// <returns></returns>
+        public List<Constraint> Get()
+        {
+            var list = ConstraintRepository.Get().ToList();
+            list.ToList().ForEach(c => c.Materialize());
+
+            return list;
+        }
+
         public bool DeleteById(long constraintId)
         {
             using (var uow = this.GetUnitOfWork())

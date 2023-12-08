@@ -9,7 +9,7 @@ namespace BExIS.Dlm.Entities.DataStructure
         public virtual string DisplayName { get; set; }
         public virtual string Placeholder { get; set; }
         public virtual string Description { get; set; }
-        public virtual Variable Variable { get; set; }
+
 
         #endregion Attributes
 

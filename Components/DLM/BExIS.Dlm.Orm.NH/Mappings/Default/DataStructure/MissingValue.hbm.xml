@@ -19,8 +19,6 @@
       <column name="description" />
     </property>
 
-    <many-to-one name="Variable" column="variableRef" not-null="true" />
-
     <!-- Associations -->
   </class>
 </hibernate-mapping>

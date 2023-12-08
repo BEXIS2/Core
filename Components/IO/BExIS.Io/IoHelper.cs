@@ -23,8 +23,8 @@ namespace BExIS.IO
 
     public enum DecimalCharacter
     {
-        point,
-        comma
+        point = 46,
+        comma = 44,
     }
 
     public enum Orientation

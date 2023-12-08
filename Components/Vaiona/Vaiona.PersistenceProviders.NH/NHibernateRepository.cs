@@ -187,6 +187,7 @@ namespace Vaiona.PersistenceProviders.NH
                     ((NHibernateBulkUnitOfWork)UoW).Session.Insert(entity);
                     return (true);
                 }
+
                 return (false);
             }
         }

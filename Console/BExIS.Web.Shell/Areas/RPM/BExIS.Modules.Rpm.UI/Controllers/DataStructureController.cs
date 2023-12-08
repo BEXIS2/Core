@@ -9,6 +9,7 @@ using BExIS.Dlm.Services.Meanings;
 using BExIS.IO;
 using BExIS.IO.DataType.DisplayPattern;
 using BExIS.IO.Transform.Input;
+using BExIS.IO.Transform.Output;
 using BExIS.Modules.Rpm.UI.Helpers;
 using BExIS.Modules.Rpm.UI.Models;
 using BExIS.Modules.Rpm.UI.Models.DataStructure;
@@ -290,6 +291,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
             using (var datatypeManager = new DataTypeManager())
             using (var datasetManager = new DatasetManager())
             using (var missingValueManager = new MissingValueManager())
+            using (var constraintManager = new ConstraintManager())
             {
                 // create strutcure
                 StructuredDataStructure newStructure = structureManager.CreateStructuredDataStructure(
@@ -300,6 +302,8 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                         DataStructureCategory.Generic
                     );
 
+                DataStructureHelper helper = new DataStructureHelper();
+                VariableHelper variableHelper = new VariableHelper();
 
                 // create variable
                 foreach (var variable in model.Variables)
@@ -324,6 +328,14 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                     // get orderNo
                     int orderNo = model.Variables.IndexOf(variable)+1;
 
+                    // list missing values
+                    List<MissingValue> missingValues = new List<MissingValue>();
+                    if (model.MissingValues.Any())
+                    {
+                        missingValues = helper.ConvertTo(model.MissingValues);
+                    }
+
+
                     // generate variables
                     var result = variableManager.CreateVariable(
                         variable.Name,
@@ -336,19 +348,12 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                         variable.Template.Id,
                         variable.Description,
                         "",
-                        displayPattern
+                        displayPattern,
+                        missingValues, // add also missing values that came from varaible it self
+                        variable.Constraints.Select(co => co.Id).ToList()
                         );
 
-
-                    // gerenate missing values and link them to each variable
-                    foreach (var mv in model.MissingValues)
-                    {
-                        if (!string.IsNullOrEmpty(mv.DisplayName))
-                        {
-                            var missingValue = missingValueManager.Create(mv.DisplayName, mv.Description, result);
-                        }
-                    }
-
+                    newStructure = structureManager.AddVariable(newStructure.Id, result.Id);
                 }
 
 
@@ -382,6 +387,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
             using (var datatypeManager = new DataTypeManager())
             using (var datasetManager = new DatasetManager())
             using (var missingValueManager = new MissingValueManager())
+            using (var constraintsManager = new ConstraintManager())
             {
                 // create strutcure
                 StructuredDataStructure structure = structureManager.StructuredDataStructureRepo.Get(model.Id);
@@ -412,16 +418,29 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                     // get orderNo
                     int orderNo = model.Variables.IndexOf(variable) + 1;
                     VariableInstance updatedVariable = new VariableInstance();
+                    VariableHelper variableHelper = new VariableHelper();
+
                     // update variable
                     if (variable.Id > 0)
                     {
                         updatedVariable = variableManager.GetVariable(variable.Id);
 
                         updatedVariable.Description = variable.Description;
+                        updatedVariable.DataType = dataType;
                         updatedVariable.Unit = unit;
                         updatedVariable.DisplayPatternId = displayPattern;
                         updatedVariable.OrderNo = orderNo;
                         updatedVariable.VariableTemplate = variableManager.GetVariableTemplate(variable.Template.Id);
+                        updatedVariable.IsKey = variable.IsKey;
+                        updatedVariable.IsValueOptional = variable.IsOptional;
+                        updatedVariable.VariableConstraints = variableHelper.ConvertTo(variable.Constraints);
+
+                        // update missingValues
+                        List<long> dbMVs = updatedVariable.MissingValues.Select(mv => mv.Id).ToList();
+                        List<MissingValueItem> newMVs = variable.MissingValues.Where(mv => !dbMVs.Contains(mv.Id)).ToList();
+                        if(newMVs.Any())
+                        updatedVariable.MissingValues.ToList().AddRange(variableHelper.ConvertTo(newMVs));
+
                     }
                     else // create
                     {
@@ -437,21 +456,16 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                             variable.Template.Id,
                             variable.Description,
                             "",
-                            displayPattern
+                            displayPattern,
+                            variableHelper.ConvertTo(variable.MissingValues),
+                            variable.Constraints.Select(co => co.Id).ToList()
                             );
+
+                        variable.Id = updatedVariable.Id;
 
                         structure = structureManager.AddVariable(structure.Id, updatedVariable.Id);
 
                     }
-
-                    // update meanings
-                    foreach (var meaning in variable.Meanings)
-                    {
-                        Meaning m = meaningManager.getMeaning(meaning.Id);
-                        if(!updatedVariable.Meanings.Contains(m))updatedVariable.Meanings.Add(m);   
-                    }
-
-                    // update constraints
 
                 }
 
@@ -602,8 +616,9 @@ namespace BExIS.Modules.Rpm.UI.Controllers
 
                     // get list of possible units
                     var unitInput = getValueFromMarkedRow(markerRows, model.Markers, "unit", (char)model.Delimeter, i, AsciiFileReaderInfo.GetTextMarker((TextMarker)model.TextMarker));
-                    strutcureAnalyzer.SuggestUnit(unitInput, var.DataType.Text).ForEach(u => var.PossibleUnits.Add(new UnitItem(u.Id, u.Name,u.AssociatedDataTypes.Select(x => x.Name).ToList(), "detect")));
+                    strutcureAnalyzer.SuggestUnit(unitInput, var.DataType.Text).ForEach(u => var.PossibleUnits.Add(new UnitItem(u.Id, u.Abbreviation,u.AssociatedDataTypes.Select(x => x.Name).ToList(), "detect")));
                     var.Unit = var.PossibleUnits.FirstOrDefault();
+                    if (var.Unit == null) var.Unit = new UnitItem();
 
 
                     // get suggestes DisplayPattern / currently only for DateTime
@@ -661,37 +676,10 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                     {
                         foreach (var variable in structure.Variables)
                         {
-                            var var = new VariableInstanceModel()
-                            {
-                                Id = variable.Id,
-                                Name = variable.Label,
-                                Description = variable.Description,
-                                DataType = new ListItem(variable.DataType.Id, variable.DataType.Name, "copied"),
-                                SystemType = variable.DataType.SystemType,
-                                Unit = new UnitItem(variable.Unit.Id, variable.Unit.Abbreviation, variable.Unit.AssociatedDataTypes.Select(x => x.Name).ToList(), "copied"),
-                                IsKey = variable.IsKey,
-                                IsOptional = variable.IsValueOptional,
-                                Meanings = helper.ConvertTo(variable.Meanings)
-                            };
-
-   
-                            // add template if exist
-                            if (variable.VariableTemplate != null) var.Template = helper.ConvertTo(variable.VariableTemplate, "copied");
-
-                            // get suggestes DisplayPattern / currently only for DateTime
-                            if (var.SystemType.Equals(typeof(DateTime).Name))
-                            {
-                                if (variable.DisplayPatternId >= 0) var.DisplayPattern = new ListItem(variable.DisplayPatternId, DataTypeDisplayPattern.Get(variable.DisplayPatternId).DisplayPattern);
-                                var displayPattern = DataTypeDisplayPattern.Pattern.Where(p => p.Systemtype.ToString().Equals(var.SystemType));
-                                displayPattern.ToList().ForEach(d => var.PossibleDisplayPattern.Add(new ListItem(d.Id, d.DisplayPattern)));
-                            };
-
-                            model.Variables.Add(var);
-                            
+                            model.Variables.Add(helper.Copy(variable));
                         }
                     }
                 }
-            
             }
 
             // get default missing values
@@ -707,6 +695,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
 
 
             using (var structureManager = new DataStructureManager())
+            using (var variableManager = new VariableManager())
             {
                 if (id > 0)
                 {
@@ -715,11 +704,9 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                         
                     structureManager.DeleteStructuredDataStructure(structure);
                 }
-
             }
 
             // get default missing values
-         
             return Json(true);
         }
 
@@ -745,33 +732,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                     {
                         foreach (var variable in structure.Variables)
                         {
-                            var var = new VariableInstanceModel()
-                            {
-                                Id = variable.Id,
-                                Name = variable.Label,
-                                Description = variable.Description,
-                                DataType = new ListItem(variable.DataType.Id, variable.DataType.Name),
-                                SystemType = variable.DataType.SystemType,
-                                Unit = new UnitItem(variable.Unit.Id, variable.Unit.Abbreviation, variable.Unit.AssociatedDataTypes.Select(x => x.Name).ToList(), "copied"),
-                                IsKey = variable.IsKey,
-                                IsOptional = variable.IsValueOptional,
-                                Meanings = helper.ConvertTo(variable.Meanings)
-                            };
-
-                            // add template if exist
-                            if (variable.VariableTemplate != null) var.Template = helper.ConvertTo(variable.VariableTemplate, "copied");
-
-
-                            // get suggestes DisplayPattern / currently only for DateTime
-                            if (var.SystemType.Equals(typeof(DateTime).Name))
-                            {
-                                var.DisplayPattern = new ListItem(variable.DisplayPatternId, DataTypeDisplayPattern.Get(variable.DisplayPatternId).DisplayPattern) ; // here a suggesten of the display pattern is needed
-                                var displayPattern = DataTypeDisplayPattern.Pattern.Where(p => p.Systemtype.ToString().Equals(var.SystemType));
-                                displayPattern.ToList().ForEach(d => var.PossibleDisplayPattern.Add(new ListItem(d.Id, d.DisplayPattern)));
-                            };
-
-                            model.Variables.Add(var);
-
+                            model.Variables.Add(helper.ConvertTo(variable));
                         }
                     }
                 }
@@ -800,7 +761,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                 }
 
                 // get default missing values
-                return Json(list, JsonRequestBehavior.AllowGet);
+                return Json(list.OrderBy(l=>l.Text), JsonRequestBehavior.AllowGet);
             }
         }
 
@@ -821,7 +782,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                 }
 
                 // get default missing values
-                return Json(list, JsonRequestBehavior.AllowGet);
+                return Json(list.OrderBy(l => l.Text), JsonRequestBehavior.AllowGet);
             }
         }
 
@@ -840,7 +801,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
             }
 
             // get list of all display pattern
-            return Json(list, JsonRequestBehavior.AllowGet);
+            return Json(list.OrderBy(l => l.Text), JsonRequestBehavior.AllowGet);
         }
 
         [JsonNetFilter]
@@ -865,7 +826,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                 }
 
                 // get default missing values
-                return Json(list.OrderBy(i => i.Group), JsonRequestBehavior.AllowGet);
+                return Json(list.OrderBy(l => l.Text), JsonRequestBehavior.AllowGet);
             }
         }
 
@@ -899,6 +860,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
 
                         // meanings
                         vti.Meanings = variableTemplate.Meanings.ToList().Select(m=>m.Name).ToList();
+                        vti.Constraints = variableTemplate.VariableConstraints.ToList().Select(m=>m.Name).ToList();
 
                         vti.Group = "other";
                         list.Add(vti);
@@ -906,7 +868,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                 }
 
                 // get default missing values
-                return Json(list.OrderBy(i => i.Group), JsonRequestBehavior.AllowGet);
+                return Json(list.OrderBy(l => l.Text), JsonRequestBehavior.AllowGet);
             }
         }
 
@@ -917,7 +879,17 @@ namespace BExIS.Modules.Rpm.UI.Controllers
             List<MeaningItem> list = helper.GetMeanings();
 
             // get default missing values
-            return Json(list.OrderBy(i => i.Group), JsonRequestBehavior.AllowGet);
+            return Json(list.OrderBy(l => l.Text), JsonRequestBehavior.AllowGet);
+
+        }
+
+        [JsonNetFilter]
+        public JsonResult GetConstraints()
+        {
+            VariableHelper helper = new VariableHelper();
+            List<ListItem> list = helper.GetConstraints();
+
+            return Json(list.OrderBy(l => l.Text), JsonRequestBehavior.AllowGet);
 
         }
 
@@ -1083,9 +1055,6 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                 list.Add(new MissingValueModel());
             }
 
-            list.Add(new MissingValueModel());
-
-
             return list;
         }
 
@@ -1101,18 +1070,49 @@ namespace BExIS.Modules.Rpm.UI.Controllers
             return !string.IsNullOrWhiteSpace(username) ? username : "DEFAULT";
         }
 
-            private string getFileName(HttpPostedFileBase file)
+        private string getFileName(HttpPostedFileBase file)
+        {
+            // Checking for Internet Explorer
+            if (Request.Browser.Browser.ToUpper() == "IE" || Request.Browser.Browser.ToUpper() == "INTERNETEXPLORER")
             {
-                // Checking for Internet Explorer
-                if (Request.Browser.Browser.ToUpper() == "IE" || Request.Browser.Browser.ToUpper() == "INTERNETEXPLORER")
-                {
-                    string[] testfiles = file.FileName.Split(new char[] { '\\' });
-                    return testfiles[testfiles.Length - 1];
-                }
-                else
-                {
-                    return file.FileName;
-                }
+                string[] testfiles = file.FileName.Split(new char[] { '\\' });
+                return testfiles[testfiles.Length - 1];
+            }
+            else
+            {
+                return file.FileName;
             }
         }
+
+        public FileResult downloadTemplate(long id)
+        {
+            DataStructureHelper _h = new DataStructureHelper();
+            _h.ConvertExcelToCsv();
+
+            if (id != 0)
+            {
+                DataStructureManager dataStructureManager = null;
+                try
+                {
+                    dataStructureManager = new DataStructureManager();
+
+                    StructuredDataStructure dataStructure = new StructuredDataStructure();
+                    dataStructure = dataStructureManager.StructuredDataStructureRepo.Get(id);
+
+                    if (dataStructure != null)
+                    {
+                        ExcelTemplateProvider provider = new ExcelTemplateProvider("BExISppTemplate_Clean.xlsx");
+
+                        string path = Path.Combine(AppConfiguration.DataPath, provider.CreateTemplate(dataStructure));
+                        return File(path, MimeMapping.GetMimeMapping(path), Path.GetFileName(path));
+                    }
+                }
+                finally
+                {
+                    dataStructureManager.Dispose();
+                }
+            }
+            return File(Path.Combine(AppConfiguration.GetModuleWorkspacePath("RPM"), "Template", "BExISppTemplate_Clean.xlsx"), "application/xlsm", "Template_" + id + "_No_Data_Structure.xlsx");
+        }
+    }
 }

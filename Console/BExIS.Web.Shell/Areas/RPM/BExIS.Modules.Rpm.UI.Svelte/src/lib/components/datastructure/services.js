@@ -179,3 +179,14 @@ export const getMeanings = async () => {
 		console.error(error);
 	}
 };
+
+export const getConstraints = async () => {
+	try {
+		const response = await Api.get('/rpm/DataStructure/GetConstraints');
+		return response.data;
+	} catch (error) {
+		console.error(error);
+		throw error;
+	}
+};
+

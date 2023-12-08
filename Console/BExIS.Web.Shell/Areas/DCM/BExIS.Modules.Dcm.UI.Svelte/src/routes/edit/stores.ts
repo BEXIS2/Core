@@ -8,6 +8,8 @@ export const latestDataDescriptionDate = writable(0);
 
 export const latestFileReaderDate = writable(0);
 
+export const latestValidationDate = writable(0);
+
 export const latestSubmitDate = writable(0);
 
 const dic: { [key: string]: number } = { ['']: 0 };

@@ -19,10 +19,5 @@
       <column name="Description" />
     </property>
 
-		
-<!--
-	<many-to-one name="Meaning" class="Meaning" not-null="false" column="externalLinkref"/>
--->
-
 	</class>
 </hibernate-mapping>

@@ -8,11 +8,13 @@
 		latestFileUploadDate,
 		latestDataDescriptionDate,
 		latestFileReaderDate,
-		latestSubmitDate
+		latestSubmitDate,
+		latestValidationDate
 	} from '../../routes/edit/stores';
 	import { onMount } from 'svelte';
 
 	import type { ValidationModel } from '$models/ValidationModels';
+	import PlaceHolderHookContent from './placeholder/PlaceHolderHookContent.svelte';
 
 	export let id = 0;
 	export let version = 1;
@@ -38,13 +40,15 @@
 		console.log('reload validation');
 		model = null;
 		model = await getHookStart(start, id, version);
+		console.log("🚀 ~ file: Validation.svelte:43 ~ reload ~ model:", model)
+
+		latestValidationDate.set(Date.now());
+		
 	}
 </script>
 
 {#await reload()}
-	<div class="w-full h-full text-surface-600">
-		<Spinner label="validating data" position={positionType.start} />
-	</div>
+	<PlaceHolderHookContent/>
 {:then a}
 	{#if model && model.fileResults}
 		{#each model.fileResults as fileResult}

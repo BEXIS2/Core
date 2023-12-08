@@ -66,7 +66,6 @@
     <Compile Include="Controllers\Hooks\FileUploadController.cs" />
     <Compile Include="Controllers\Hooks\SubmitController.cs" />
     <Compile Include="Controllers\Legacy\AttachmentsController.cs" />
-    <Compile Include="Controllers\Legacy\CreateDatasetController.cs" />
     <Compile Include="Controllers\Hooks\EntityReferenceController.cs" />
     <Compile Include="Controllers\FormController.cs" />
     <Compile Include="Controllers\Legacy\HelpController.cs" />
@@ -714,7 +713,7 @@
     </Reference>
     <Reference Include="System.ServiceModel" />
     <Reference Include="System.Text.RegularExpressions, Version=4.1.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\..\..\..\..\packages\System.Text.RegularExpressions.4.3.0\lib\net463\System.Text.RegularExpressions.dll</HintPath>
+      <HintPath>..\..\..\..\..\packages\System.Text.RegularExpressions.4.3.1\lib\net463\System.Text.RegularExpressions.dll</HintPath>
       <Private>True</Private>
       <Private>True</Private>
     </Reference>
@@ -760,8 +759,8 @@
     <Reference Include="Telerik.Web.Mvc, Version=2013.2.611.340, Culture=neutral, PublicKeyToken=29ac1a93ec063d92, processorArchitecture=MSIL">
       <HintPath>..\..\..\..\..\packages\TelerikMvcExtensions.2013.2.611\lib\net40\Telerik.Web.Mvc.dll</HintPath>
     </Reference>
-    <Reference Include="WebActivator, Version=1.2.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\..\..\..\packages\WebActivator.1.2.0.0\lib\NETFramework40\WebActivator.dll</HintPath>
+    <Reference Include="WebActivatorEx, Version=2.0.0.0, Culture=neutral, PublicKeyToken=7b26dc2a43f6a0d4, processorArchitecture=MSIL">
+      <HintPath>..\..\..\..\..\packages\WebActivatorEx.2.2.0\lib\net40\WebActivatorEx.dll</HintPath>
     </Reference>
     <Reference Include="WebMatrix.Data, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\..\..\..\..\packages\Microsoft.AspNet.WebPages.Data.3.2.3\lib\net45\WebMatrix.Data.dll</HintPath>
@@ -916,10 +915,6 @@
       <Project>{cac933a2-6849-4c61-82b4-cbf4052210cc}</Project>
       <Name>BExIS.Dim.Services</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\..\BExIS.Web.Shell.csproj">
-      <Project>{e5128814-4541-45c8-a9e6-6c91a7e3d1e2}</Project>
-      <Name>BExIS.Web.Shell</Name>
-    </ProjectReference>
     <ProjectReference Include="..\..\DIM\BExIS.Modules.Dim.UI.csproj">
       <Project>{9BFFFD11-03C6-47DF-9CC9-F458A9A49377}</Project>
       <Name>BExIS.Modules.Dim.UI</Name>
@@ -967,6 +962,7 @@
           <SaveServerSettingsInUserFile>True</SaveServerSettingsInUserFile>
         </WebProjectProperties>
       </FlavorProperties>
+      <UserProperties dcm_1settings_1json__JsonSchema="" />
     </VisualStudio>
   </ProjectExtensions>
   <PropertyGroup>

@@ -9,7 +9,7 @@ namespace BExIS.Dlm.Entities.Meanings
     {
         private bool disposedValue;
 
-        [Required(ErrorMessage = "Must not be Empty")]
+        [Required(ErrorMessage = "Must not be Empty"), Key]
         public virtual String Name { get; set; }
         [Required(ErrorMessage = "Must not be Empty")]
         public virtual String Description { get; set; }

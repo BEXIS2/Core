@@ -380,12 +380,9 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
-    <Compile Include="Helpers\BExISDataHelper.cs" />
-    <Compile Include="Helpers\BexisModelManager.cs" />
     <Compile Include="Helpers\CustomViewEngine.cs" />
     <Compile Include="Helpers\MenuHelper.cs" />
     <Compile Include="Models\AccountModels.cs" />
-    <Compile Include="Models\EntitySelectorModel.cs" />
     <Compile Include="Models\ManageModels.cs" />
     <Compile Include="Models\SettingModels.cs" />
     <Compile Include="Models\TokenModels.cs" />
@@ -1111,6 +1108,8 @@
     <Content Include="Views\Header\Index.cshtml" />
     <Content Include="Views\Footer\Index.cshtml" />
     <Content Include="Views\Header\Content.cshtml" />
+    <Content Include="Views\Tokens\Create.cshtml" />
+    <Content Include="Views\Tokens\Read.cshtml" />
     <None Include="Web.config" />
   </ItemGroup>
   <ItemGroup>
@@ -1118,7 +1117,6 @@
     <Folder Include="Scripts\svelte\" />
     <Folder Include="Views\Help\" />
     <Folder Include="Views\Jwt\" />
-    <Folder Include="Views\Tokens\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\Home\About.cshtml" />

@@ -145,9 +145,13 @@ export function updateUnits(
 		}
 	}
 
+	const matches = _units.filter((d) => d.group != othersText)
+	console.log("🚀 ~ file: helper.ts:149 ~ matches:", matches)
+	const othersList = _units.filter((d) => d.group == othersText)
+
 	return [
-		..._units.filter((d) => d.group != othersText),
-		..._units.filter((d) => d.group == othersText)
+		...matches,
+		...othersList
 	];
 }
 

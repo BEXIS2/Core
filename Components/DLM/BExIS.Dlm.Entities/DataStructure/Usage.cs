@@ -79,6 +79,8 @@ namespace BExIS.Dlm.Entities.DataStructure
             MissingValues = new List<MissingValue>();
             Meanings = new List<Meaning>();
             DisplayPatternId = -1;
+            VariableConstraints = new List<Constraint>();
+
         }
 
     }
@@ -93,7 +95,8 @@ namespace BExIS.Dlm.Entities.DataStructure
             Meanings = new List<Meaning>();
             MinCardinality = 0; // to make the parameter optional by default
             MaxCardinality = 1; // this must always remain 1
-
+            VariableConstraints = new List<Constraint>();
+            Meanings = new List<Meaning>();
         }
     }
 }

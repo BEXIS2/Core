@@ -13,11 +13,13 @@
 		latestFileUploadDate,
 		latestDataDescriptionDate,
 		latestFileReaderDate,
-		latestSubmitDate
+		latestSubmitDate,
+		latestValidationDate
 	} from '../../routes/edit/stores';
 
 	import { onMount, createEventDispatcher } from 'svelte';
 	import { goto } from '$app/navigation';
+	import PlaceHolderHookContent from './placeholder/PlaceHolderHookContent.svelte';
 
 	export let id = 0;
 	export let version = 1;
@@ -34,17 +36,19 @@
 	$: $latestFileUploadDate, reload();
 	$: $latestDataDescriptionDate, reload();
 	$: $latestFileReaderDate, reload();
-	// $: $latestSubmitDate, reload();
+	$: $latestValidationDate, reload();
 
 	let canSubmit: boolean = false;
 	$: canSubmit;
+
+let isSubmiting: boolean = false;
 
 	onMount(async () => {
 		reload();
 	});
 
 	async function reload() {
-		//console.log('reload submit');
+		console.log('reload submit');
 		model = await getHookStart(start, id, version);
 		canSubmit = activateSubmit();
 
@@ -64,6 +68,7 @@
 	};
 
 	async function submitBt() {
+		isSubmiting = true;
 		const res: submitResponceType = await submit(id);
 
 		//console.log("submit",res);
@@ -76,6 +81,7 @@
 			}
 			// update store
 			latestSubmitDate.set(Date.now());
+			isSubmiting = false;
 		}
 	}
 
@@ -103,17 +109,21 @@
 </script>
 
 {#await reload()}
-	<div class="w-full h-full text-surface-600">
-		<Spinner label="loading" position={positionType.start} />
-	</div>
+	<PlaceHolderHookContent/>
 {:then m}
-	<div class="flex-col">
+	<div class="flex gap-3 items-center">
+
 		<button
 			type="button"
 			class="btn variant-filled-primary"
-			disabled={!canSubmit}
+			disabled={!canSubmit || isSubmiting}
 			on:click={() => modalStore.trigger(confirm)}>Submit</button
 		>
+		{#if isSubmiting}
+		<div class="flex-none">
+			<Spinner/>
+		</div>
+		{/if}
 	</div>
 {:catch error}
 	<ErrorMessage {error} />

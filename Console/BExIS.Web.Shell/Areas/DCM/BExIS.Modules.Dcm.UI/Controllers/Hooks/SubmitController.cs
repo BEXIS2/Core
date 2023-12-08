@@ -85,7 +85,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             asyncUploadHelper.User = BExISAuthorizeHelper.GetUserFromAuthorization(HttpContext);
             asyncUploadHelper.RunningASync = true;
 
-            if (asyncUploadHelper.RunningASync) //async
+            if (asyncUploadHelper.RunningASync && model.HasStructrue) //async
             {
                 Task.Run(() => asyncUploadHelper.FinishUpload(id, AuditActionType.Edit, model.StructureId));
 

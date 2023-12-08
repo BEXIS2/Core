@@ -173,7 +173,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
                                     dataStatisticModel.DataTypeName = vs.DataType.Name;
                                     dataStatisticModel.DataTypeSystemType = vs.DataType.SystemType;
 
-                                    DataTypeDisplayPattern dtdp = DataTypeDisplayPattern.Get(vs.DisplayPatternId);
+                                    DataTypeDisplayPattern dtdp = vs.DisplayPatternId>0?DataTypeDisplayPattern.Get(vs.DisplayPatternId):null;
                                     string displayPattern = "";
                                     if (dtdp != null) displayPattern = dtdp.StringPattern;
 

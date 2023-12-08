@@ -98,10 +98,12 @@ namespace Vaiona.Utils.Cfg
                 case(EntryType.EntryList):
                     var value = entry.Value as JArray;
                     var list = new List<Entry>();
-
-                    foreach (var item in value)
+                    if (value != null)
                     {
-                        list.Add(JsonConvert.DeserializeObject<Entry>(item.ToString()));
+                        foreach (var item in value)
+                        {
+                            list.Add(JsonConvert.DeserializeObject<Entry>(item.ToString()));
+                        }
                     }
                     return list;
 
@@ -109,7 +111,10 @@ namespace Vaiona.Utils.Cfg
                     return JsonConvert.DeserializeObject<Entry>(entry.Value.ToString());
 
                 default:
-                    return Convert.ChangeType(entry.Value.ToString(), (TypeCode)Enum.Parse(typeof(TypeCode), type.ToString()));
+                    {
+                        string entryValue = entry.Value != null ? entry.Value.ToString() : "";
+                        return Convert.ChangeType(entryValue, (TypeCode)Enum.Parse(typeof(TypeCode), type.ToString()));
+                    }
             }
         }
 

@@ -23,33 +23,44 @@ namespace BExIS.Modules.Dcm.UI.Hooks
             if (Status != HookStatus.AccessDenied)
             {
                 HookManager hookManager = new HookManager();
-                EditDatasetDetailsCache cache = hookManager.LoadCache<EditDatasetDetailsCache>("dataset", "detailes", HookMode.edit, id);
+                EditDatasetDetailsCache cache = hookManager.LoadCache<EditDatasetDetailsCache>("dataset", "details", HookMode.edit, id);
 
-                // check if data strutcure exist
-                //using (var datasetManager = new DatasetManager())
-                //{
-                //    var dataset = datasetManager.GetDataset(id);
-                //    if (dataset == null && dataset.DataStructure == null) { Status = HookStatus.Disabled; return; }
-                //}
+                //check if data strutcure exist
+                using (var datasetManager = new DatasetManager())
+                using (var entityTemplateManager = new EntityTemplateManager())
+                {
+                    //if everthing exist
+                    Status = HookStatus.Open;
 
-                //// check if file not exist
-                //if (cache.Files == null || cache.Files.Any() == false) { Status = HookStatus.Inactive; return; }
+                    var dataset = datasetManager.GetDataset(id);
+                    if (dataset == null && dataset.DataStructure == null) { Status = HookStatus.Disabled; return; }
 
-                //// if file reader information exist
-                //if (cache.ExcelFileReaderInfo == null && cache.AsciiFileReaderInfo == null) { Status = HookStatus.Inactive; return; }
-
-                //// if file is not valid
-                //if (cache.IsDataValid == false) { Status = HookStatus.Inactive; return; }
-
-                // generate Validation hash - compare with stored
-
-                //if everthing exist
-                Status = HookStatus.Open;
+                    // if dataset.DataStructure == null but template say has structure
+                    var template = entityTemplateManager.Repo.Get(dataset.EntityTemplate.Id);
+                    if (dataset == null || template == null || (template.HasDatastructure == true && dataset.DataStructure == null)) { Status = HookStatus.Disabled; return; }
 
 
-                // check if subject is checked in
-                // only check if status is open
-                checkAvailablity(id);
+                    //// check if file not exist
+                    if (cache.Files == null || cache.Files.Any() == false) { Status = HookStatus.Inactive; return; }
+
+
+
+                    // if dataset has structre && file is not valid
+                    if (template.HasDatastructure == true)
+                    {
+                        if (cache.IsDataValid == false) { Status = HookStatus.Inactive; return; }
+
+                        // if file reader information exist
+                        if (cache.ExcelFileReaderInfo == null && cache.AsciiFileReaderInfo == null) { Status = HookStatus.Inactive; return; }
+
+                    }
+                    // generate Validation hash - compare with stored
+
+
+                    // check if subject is checked in
+                    // only check if status is open
+                    checkAvailablity(id);
+                }
             }
         }
 
