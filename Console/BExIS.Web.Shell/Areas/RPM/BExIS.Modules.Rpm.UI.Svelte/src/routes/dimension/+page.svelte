@@ -58,7 +58,7 @@ const modalStore = getModalStore();
 	}
 
 	function editDimension(type: any) {
-		dimension = dimensions.find((d) => d.id === type.id)!;
+		dimension = {...dimensions.find((d) => d.id === type.id)!};
 		if (type.action == 'edit') {
 			showForm = true;
 		}
