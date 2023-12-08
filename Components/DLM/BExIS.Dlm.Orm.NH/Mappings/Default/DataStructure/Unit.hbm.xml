@@ -61,6 +61,7 @@
 
     <many-to-one name="Dimension" class="BExIS.Dlm.Entities.DataStructure.Dimension" not-null="true" column="DimensionRef"/>
 
+	<many-to-one name="ExternalLink" class="BExIS.Dlm.Entities.Meanings.ExternalLink" not-null="false" column="ExternalLinkRef"/>
 
   </class>
 
