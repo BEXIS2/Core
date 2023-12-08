@@ -57,7 +57,7 @@ const modalStore = getModalStore();
 	}
 
 	function editDataType(type: any) {
-		dataType = dataTypes.find((dt) => dt.id === type.id)!;
+		dataType = {...dataTypes.find((dt) => dt.id === type.id)!};
 		if (type.action == 'edit') {
 			showForm = true;
 		}

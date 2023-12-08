@@ -65,6 +65,12 @@ namespace BExIS.Dlm.Entities.DataStructure
         /// </summary>
         public virtual string NegatedMessageTemplate { get; set; }
 
+        public virtual DateTime CreationDate { get; set; }
+
+        public virtual DateTime LastModified { get; set; }
+
+        public virtual long LastModifiedUserRef { get; set; }
+
         #endregion
 
         #region Associations

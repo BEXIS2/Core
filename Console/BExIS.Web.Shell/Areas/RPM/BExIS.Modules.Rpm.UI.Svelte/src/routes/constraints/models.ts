@@ -11,6 +11,8 @@ export interface ConstraintListItem {
 	negated: boolean;
 	inUse: boolean;
 	variableIDs: number[];
+	creationDate?: string;
+	lastModified?: string;
 }
 
 export interface DomainConstraintListItem {
@@ -19,7 +21,6 @@ export interface DomainConstraintListItem {
 	name: string;
 	description: string;
 	formalDescription: string;
-	type: string
 	domain: string;
 	negated: boolean;
 	inUse: boolean;
@@ -32,7 +33,6 @@ export interface RangeConstraintListItem {
 	name: string;
 	description: string;
 	formalDescription: string;
-	type: string
 	lowerbound: number;
 	upperbound: number;
 	lowerboundIncluded: boolean;
@@ -48,7 +48,6 @@ export interface PatternConstraintListItem {
 	name: string;
 	description: string;
 	formalDescription: string;
-	type: string
 	pattern: string;
 	negated: boolean;
 	inUse: boolean;

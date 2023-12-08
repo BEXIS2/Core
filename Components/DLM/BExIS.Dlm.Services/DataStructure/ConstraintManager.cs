@@ -113,6 +113,9 @@ namespace BExIS.Dlm.Services.DataStructure
             Contract.Requires(entity.Items.Count > 0);
 
             Contract.Ensures(Contract.Result<DomainConstraint>() != null && Contract.Result<DomainConstraint>().Id >= 0);
+            
+            entity.CreationDate = DateTime.Parse(DateTime.Now.ToString(), System.Globalization.CultureInfo.InvariantCulture);
+            entity.LastModified = DateTime.Parse(DateTime.Now.ToString(), System.Globalization.CultureInfo.InvariantCulture);
             entity.Dematerialize();
             using (IUnitOfWork uow = this.GetUnitOfWork())
             {
@@ -148,6 +151,8 @@ namespace BExIS.Dlm.Services.DataStructure
             Contract.Requires(entity.Id >= 0, "provided entity must have a permanent ID");
 
             Contract.Ensures(Contract.Result<DomainConstraint>() != null && Contract.Result<DomainConstraint>().Id >= 0, "No entity is persisted!");
+            
+            entity.LastModified = DateTime.Parse(DateTime.Now.ToString(), System.Globalization.CultureInfo.InvariantCulture);
             entity.Dematerialize();
             using (IUnitOfWork uow = this.GetUnitOfWork())
             {
@@ -171,6 +176,8 @@ namespace BExIS.Dlm.Services.DataStructure
 
             Contract.Ensures(Contract.Result<PatternConstraint>() != null && Contract.Result<PatternConstraint>().Id >= 0, "No entity is persisted!");
 
+            entity.CreationDate = DateTime.Parse(DateTime.Now.ToString(), System.Globalization.CultureInfo.InvariantCulture);
+            entity.LastModified = DateTime.Parse(DateTime.Now.ToString(), System.Globalization.CultureInfo.InvariantCulture);
             using (IUnitOfWork uow = this.GetUnitOfWork())
             {
                 IRepository<PatternConstraint> repo = uow.GetRepository<PatternConstraint>();
@@ -206,6 +213,7 @@ namespace BExIS.Dlm.Services.DataStructure
 
             Contract.Ensures(Contract.Result<PatternConstraint>() != null && Contract.Result<PatternConstraint>().Id >= 0, "No entity is persisted!");
 
+            entity.LastModified = DateTime.Parse(DateTime.Now.ToString(), System.Globalization.CultureInfo.InvariantCulture);
             using (IUnitOfWork uow = this.GetUnitOfWork())
             {
                 IRepository<PatternConstraint> repo = uow.GetRepository<PatternConstraint>();
@@ -228,6 +236,8 @@ namespace BExIS.Dlm.Services.DataStructure
 
             Contract.Ensures(Contract.Result<RangeConstraint>() != null && Contract.Result<RangeConstraint>().Id >= 0, "No entity is persisted!");
 
+            entity.CreationDate = DateTime.Parse(DateTime.Now.ToString(), System.Globalization.CultureInfo.InvariantCulture);
+            entity.LastModified = DateTime.Parse(DateTime.Now.ToString(), System.Globalization.CultureInfo.InvariantCulture);
             using (IUnitOfWork uow = this.GetUnitOfWork())
             {
                 IRepository<RangeConstraint> repo = uow.GetRepository<RangeConstraint>();
@@ -264,6 +274,7 @@ namespace BExIS.Dlm.Services.DataStructure
 
             Contract.Ensures(Contract.Result<RangeConstraint>() != null && Contract.Result<RangeConstraint>().Id >= 0, "No entity is persisted!");
 
+            entity.LastModified = DateTime.Parse(DateTime.Now.ToString(), System.Globalization.CultureInfo.InvariantCulture);
             using (IUnitOfWork uow = this.GetUnitOfWork())
             {
                 IRepository<RangeConstraint> repo = uow.GetRepository<RangeConstraint>();
