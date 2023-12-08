@@ -134,8 +134,8 @@
 							}}
 							on:click={() => toggleForm()}><Fa icon={faPlus} /></button
 						>
-					{:else if constraint.creationDate && constraint.lastModified}
-						<div>
+					{:else if (constraint.creationDate && constraint.lastModified) && (constraint.creationDate != '' && constraint.lastModified != '')}
+						<div class="text-sm">
 							<p>Created: {constraint.creationDate}</p>
 							<p>Last modified: {constraint.lastModified}</p>
 						</div>

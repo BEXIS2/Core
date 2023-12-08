@@ -33,9 +33,9 @@ namespace BExIS.Modules.Rpm.UI.Models
                 Negated = constraint.Negated,
                 InUse = constraint.DataContainer != null && constraint.DataContainer.Id > 0 || constraint.VariableConstraints.Any(),
                 VariableIDs = constraint.VariableConstraints.Select(v => v.Id).ToList(),
-                CreationDate = constraint.CreationDate.ToString("f"),
-                LastModified = constraint.LastModified.ToString("f")
-
+                CreationDate = constraint.CreationDate != null ? constraint.CreationDate.ToString("MMMM d, HH:mm:ss") : "",
+                LastModified = constraint.LastModified != null ? constraint.LastModified.ToString("MMMM d, HH:mm:ss") : "",
+ 
             };
         }
 
