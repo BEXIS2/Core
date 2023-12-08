@@ -107,8 +107,8 @@ namespace BExIS.Dlm.Services.Meanings
                     //meaning = repo.Reload(meaning);
                     repo.Delete(meaning);
                     uow.Commit();
+                    updateMeaningEntry();
                 }
-
                 return true;
             }
             catch (Exception exc)
