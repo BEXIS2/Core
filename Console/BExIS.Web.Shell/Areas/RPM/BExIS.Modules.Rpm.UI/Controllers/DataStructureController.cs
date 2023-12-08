@@ -860,6 +860,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
 
                         // meanings
                         vti.Meanings = variableTemplate.Meanings.ToList().Select(m=>m.Name).ToList();
+                        vti.Constraints = variableTemplate.VariableConstraints.ToList().Select(m=>m.Name).ToList();
 
                         vti.Group = "other";
                         list.Add(vti);

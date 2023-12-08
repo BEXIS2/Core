@@ -73,17 +73,17 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                     variableTemplate = variableManager.UpdateVariableTemplate(variableTemplate);
                 }
 
-                // update missing values
-                if (model.MissingValues.Any())
-                {
-                    foreach (var missingValueItem in model.MissingValues)
-                    {
-                        if (missingValueItem.Id > 0)
-                            missingValueManager.Repo.Get(missingValueItem.Id);
-                        else
-                            missingValueManager.Create(missingValueItem.DisplayName, missingValueItem.Description, variableTemplate);
-                    }
-                }
+                //// update missing values
+                //if (model.MissingValues.Any())
+                //{
+                //    foreach (var missingValueItem in model.MissingValues)
+                //    {
+                //        if (missingValueItem.Id > 0)
+                //            missingValueManager.Repo.Get(missingValueItem.Id);
+                //        else
+                //            missingValueManager.Create(missingValueItem.DisplayName, missingValueItem.Description, variableTemplate);
+                //    }
+                //}
             }
             
             return Json(true);

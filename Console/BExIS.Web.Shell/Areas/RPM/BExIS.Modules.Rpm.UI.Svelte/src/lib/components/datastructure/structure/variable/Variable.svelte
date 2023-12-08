@@ -87,11 +87,10 @@
 		
 		setTimeout(async () => {
 			
-			console.log("🚀 ~ file: Variable.svelte:91 ~ setTimeout ~ updateLists:")
+	
 			updateLists();
 			
-			console.log("🚀 ~ file: Variable.svelte:60 ~ blockDataRelevant:", blockDataRelevant)
-			//displayPattern = updateDisplayPattern(variable.dataType, true);
+		 //displayPattern = updateDisplayPattern(variable.dataType, true);
 
 			// when type has change, reset value, but after copy do not reset
 			// thats why reset need to set
@@ -142,6 +141,8 @@
 			res = suite(variable, id);
 
 			// update display patter and reset it if it changed
+			console.log("🚀 ~ file: Variable.svelte:145 ~ setTimeout ~ id:", id, e.detail)
+
 			if (id == 'dataType') {
 				updateDisplayPattern(variable.dataType);
 			}
@@ -182,7 +183,6 @@
 		datatypes = $dataTypeStore.map((o) => ({ ...o })).sort(); // set datatypes
 
 		units = $unitStore.map((o) => ({ ...o })).sort(); // set units
-		console.log("🚀 ~ file: Variable.svelte:185 ~ setList ~ units:", units)
 
 		variableTemplates = $templateStore.map((o) => ({ ...o })).sort();
 
@@ -237,6 +237,7 @@
 
 	function updateConstraints(_variable:VariableInstanceModel, _variableTemplate:templateListItemType):listItemType[]
 	{
+
 			if(_variableTemplate && _variableTemplate.constraints)
 			{
 					if(_variable.constraints)
@@ -485,6 +486,7 @@
 									invalid={res.hasErrors('constraints')}
 									feedback={res.getErrors('constraints')}
 									on:change={(e) => onSelectHandler(e, 'constraints')}
+									disabled={blockDataRelevant}
 								/>
 							
 							</div>
