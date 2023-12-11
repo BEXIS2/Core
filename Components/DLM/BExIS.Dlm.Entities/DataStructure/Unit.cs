@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using Vaiona.Entities.Common;
+using BExIS.Dlm.Entities.Meanings;
 
 /// <summary>
 ///
@@ -89,6 +90,13 @@ namespace BExIS.Dlm.Entities.DataStructure
         /// <remarks></remarks>
         /// <seealso cref=""/>        
         public virtual ICollection<DataType> AssociatedDataTypes { get; set; } // datatype controls the relationship
+
+        /// <summary>
+        ///
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>  
+        public virtual ExternalLink ExternalLink { get; set; }
 
         #endregion
 
