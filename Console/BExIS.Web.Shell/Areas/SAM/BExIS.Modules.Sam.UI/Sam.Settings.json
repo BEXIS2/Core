@@ -1,56 +1,62 @@
 {
   "id": "sam",
-  "name": "System Administration",
-  "description": "hier kommt der text!",
+  "name": "User Administration",
+  "description": "",
   "entries": [
     {
       "key": "help",
+      "title": "Help URL",
       "value": "",
-      "description": "URL to manual, if empty it links to the latest manual from bexis 2.",
       "type": "String",
-      "options": []
+      "description": "URL to the manual. If empty, it links to the latest manual from BEXIS2"
     },
     {
       "key": "formerMemberRole",
+      "title": "Former Member Role/Group",
       "value": "alumni",
-      "description": "...",
       "type": "String",
-      "options": []
+      "options": [],
+      "description": "The role/group that is assigned to a user when he/she is no longer a member of the project."
     },
     {
       "key": "mailTextTitle",
+      "title": "Former Member Mail: Title",
       "value": "Dear",
-      "description": "...",
       "type": "String",
-      "options": []
+      "options": [],
+      "description": "Title for mails"
     },
     {
       "key": "mailTextSubject",
+      "title": "Former Member Mail: Subject",
       "value": "",
-      "description": "...",
       "type": "String",
-      "options": []
+      "options": [],
+      "description": "Subject for mails"
     },
     {
       "key": "mailTextMainApplied",
+      "title": "Former Member Mail: Main Text (applied)",
       "value": "This implies that your access to some features in BExIS will be restricted. You have full access to your datasets and publications.",
-      "description": "...",
       "type": "String",
-      "options": []
+      "options": [],
+      "description": "Main text for former members mails (applied)."
     },
     {
       "key": "mailTextMainRevoked",
+      "title": "Former Member Mail: Main Text (revoked)",
       "value": "This implies that your previous access rights to features and datasets in BEXIS have been re-applied.",
-      "description": "...",
       "type": "String",
-      "options": []
+      "options": [],
+      "description": "Main text for former members mails (revoked)."
     },
     {
       "key": "mailTextClosing",
+      "title": "Former Member Mail: Closing",
       "value": "Sincerely yours, System Team",
-      "description": "...",
       "type": "String",
-      "options": []
+      "options": [],
+      "description": "Closing for former members mails"
     }
   ]
 }

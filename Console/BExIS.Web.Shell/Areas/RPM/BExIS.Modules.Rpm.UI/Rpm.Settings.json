@@ -1,34 +1,39 @@
 {
   "id": "rpm",
-  "name": "Research Plan",
+  "name": "Data structure",
   "description": "...",
   "entries": [
     {
       "key": "help",
+      "title": "Help URL",
       "value": "",
       "type": "String",
-      "description": "URL to manual, if empty it links to the latest manual from bexis 2."
+      "description": "URL to the manual. If empty, it links to the latest manual from BEXIS2"
     },
     {
       "key": "optionalDefault",
+      "title": "Set optional as default",
       "value": true,
       "type": "Boolean",
-      "description": "..."
+      "description": "If true, all variables are optional by default"
     },
     {
       "key": "showCreateVariableTemplate",
+      "title": "Show -Create Variable Template- on data structure edit",
       "value": true,
       "type": "Boolean",
       "description": "Show -Create Variable Template- on data structure edit"
     },
     {
       "key": "isTemplateRequired",
+      "title": "Link variables to templates",
       "value": true,
       "type": "Boolean",
-      "description": "During data structure creation, variables are created. Is it mandatory to link these variables to templates?"
+      "description": "During data structure creation, variables are created. Is it mandatory to link these variables to templates."
     },
     {
       "key": "missingValues",
+      "title": "Missing values",
       "value": [
         {
           "key": "missingValue",

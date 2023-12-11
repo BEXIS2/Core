@@ -1,16 +1,18 @@
 {
   "id": "bam",
-  "name": "Business Administration",
+  "name": "Administration",
   "description": "...",
   "entries": [
     {
       "key": "help",
+      "title": "Help URL",
       "value": "",
       "type": "String",
-      "description": "URL to manual, if empty it links to the latest manual from bexis 2."
+      "description": "URL to the manual. If empty, it links to the latest manual from BEXIS2"
     },
     {
       "key": "AccountPartyTypes",
+      "title": "Party Types for Account",
       "value": "Person",
       "type": "String",
       "description": "Defined AccountPartyTypes value in web config format is like PartyType1:PartyTypePairTitle1-PartyTypePairTitle2,PartyType2"

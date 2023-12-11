@@ -1,13 +1,14 @@
 {
   "id": "vim",
-  "name": "Visualisation",
+  "name": "Visualization",
   "description": "stats about datasets",
   "entries": [
     {
       "key": "help",
-      "value": "https://github.com/BEXIS2/Documents/blob/2.14.5/Manuals/DIM/Manual.md",
+      "title": "Help URL",
+      "value": "",
       "type": "String",
-      "description": "URL to manual"
-    }
+      "description": "URL to the manual. If empty, it links to the latest manual from BEXIS2"
+  }
   ]
 }
