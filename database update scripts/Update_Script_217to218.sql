@@ -692,12 +692,12 @@ WHERE NOT EXISTS (SELECT * FROM public.mappingkeys WHERE name='surName' and pare
 INSERT INTO public.dim_brokers(
 	versionno,  name, primarydataformat, link)
 	Select 1, 'GBIF', 'text/csv','https://www.gbif.org/' 
-	WHERE NOT EXISTS (Select id from public.dim_brokers where name='GBIF' )
+	WHERE NOT EXISTS (Select id from public.dim_brokers where name='GBIF' );
 	
 INSERT INTO public.dim_repositories(
 	versionno,name, url, brokerref)
 	Select 1,'GBIF','https://www.gbif.org/', (Select id from public.dim_brokers where name='GBIF' )
-		WHERE NOT EXISTS (Select id from public.dim_repositories where name='GBIF' AND brokerref = (Select id from public.dim_brokers where name='GBIF' ) )
+		WHERE NOT EXISTS (Select id from public.dim_repositories where name='GBIF' AND brokerref = (Select id from public.dim_brokers where name='GBIF' ) );
 
 
 -- END insert DATA

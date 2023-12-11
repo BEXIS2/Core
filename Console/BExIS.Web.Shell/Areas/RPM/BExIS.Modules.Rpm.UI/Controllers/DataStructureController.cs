@@ -426,6 +426,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                         updatedVariable = variableManager.GetVariable(variable.Id);
 
                         updatedVariable.Description = variable.Description;
+                        updatedVariable.DataType = dataType;
                         updatedVariable.Unit = unit;
                         updatedVariable.DisplayPatternId = displayPattern;
                         updatedVariable.OrderNo = orderNo;

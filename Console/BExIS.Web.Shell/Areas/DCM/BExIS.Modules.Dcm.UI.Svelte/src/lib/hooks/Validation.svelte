@@ -8,7 +8,8 @@
 		latestFileUploadDate,
 		latestDataDescriptionDate,
 		latestFileReaderDate,
-		latestSubmitDate
+		latestSubmitDate,
+		latestValidationDate
 	} from '../../routes/edit/stores';
 	import { onMount } from 'svelte';
 
@@ -39,6 +40,10 @@
 		console.log('reload validation');
 		model = null;
 		model = await getHookStart(start, id, version);
+		console.log("🚀 ~ file: Validation.svelte:43 ~ reload ~ model:", model)
+
+		latestValidationDate.set(Date.now());
+		
 	}
 </script>
 
