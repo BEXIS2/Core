@@ -27,7 +27,7 @@ namespace BExIS.Dlm.Entities.Meanings
             this.Related_meaning = meaning.Related_meaning;
         }
 
-        public Meaning(String name, String shortName, String description, Selectable Selectable, Approved approved, IEnumerable<MeaningEntry> externalLink, IEnumerable<Meaning> meaning)
+        public Meaning(String name, String shortName, String description, Selectable Selectable, Approved approved, IList<MeaningEntry> externalLink, IList<Meaning> meaning)
         {
             this.Name = name;
             this.ShortName = shortName;
@@ -48,8 +48,8 @@ namespace BExIS.Dlm.Entities.Meanings
         public virtual Selectable Selectable { get; set; }
         [Required(ErrorMessage = "Must not be Empty")]
         public virtual Approved Approved { get; set; }
-        public virtual IEnumerable<MeaningEntry> ExternalLinks { get; set; }
-        public virtual IEnumerable<Meaning> Related_meaning { get; set; }
+        public virtual IList<MeaningEntry> ExternalLinks { get; set; }
+        public virtual IList<Meaning> Related_meaning { get; set; }
         protected  void Dispose(bool disposing)
         {
             if (!disposedValue)

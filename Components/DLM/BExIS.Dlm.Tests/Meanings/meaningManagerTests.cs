@@ -17,12 +17,7 @@ namespace BExIS.Dlm.Entities.Meanings.Tests
     public class MeaningManagerTests
     {
         private TestSetupHelper helper = null;
-
-        [SetUp]
-        public void SetUp()
-        {
-
-        }
+        private ImeaningManagr _meaningManager = null;
 
         [OneTimeSetUp]
         public void OneTimeSetUp()
@@ -34,321 +29,189 @@ namespace BExIS.Dlm.Entities.Meanings.Tests
         [OneTimeTearDown]
         public void OneTimeTearDown()
         {
-
-            DatasetHelper dsHelper = new DatasetHelper();
-            dsHelper.PurgeAllDataStructures();
-            helper.Dispose();
-            _delete_all_test_data();
+            helper?.Dispose();
         }
 
-        [Test()]
-        public void create_simpleMeaning_returnMeaning()
+        //////////////////////////////////////////
+        /// setups before every test function
+        //////////////////////////////////////////
+        [SetUp]
+        public void SetUp()
         {
-            //Arrange
-            ImeaningManagr _meaningManager = new MeaningManager();
-
-            Meaning meaning = new Meaning();
-            meaning.Name = "meaning name for unit test";
-            meaning.ShortName = "meaning name for unit test";
-            meaning.Description = "meaning name for unit test";
-            meaning.Selectable = (Selectable)Enum.Parse(typeof(Selectable), "1");
-            meaning.Approved = (Approved)Enum.Parse(typeof(Approved), "1");
-
-            //Act
-            Meaning res = _meaningManager.addMeaning(meaning);
-
-
-            //Assert
-            NUnit.Framework.Assert.IsNotNull(res);
-            _delete_all_test_data();
-
+            _meaningManager = new MeaningManager();
         }
-
-        [Test()]
-        public void _CreateExternalLink()
+        [TearDown]
+        public void CleanUp()
         {
-            //Arrange
-            ImeaningManagr _meaningManager = new MeaningManager();
-            string Name = Convert.ToString("prefix category unit");
+            _meaningManager.Dispose();
+        }
+        //////////////////////////////////////////
+        /// create and edit prefix categories
+        //////////////////////////////////////////
+        [Test(), Order(1)]
+        public void _createPrefixCategory_returnPrefixCategory()
+        {
+            string Name = Convert.ToString("prefix category Name 1");
             Name.Should().NotBeNullOrEmpty();
-            string Description = Convert.ToString("prefix category unit description");
+            string Description = Convert.ToString("prefix category Name description 1");
             Description.Should().NotBeNullOrEmpty();
             PrefixCategory prefixCategory = new PrefixCategory(Name, Description);
 
             prefixCategory = _meaningManager.addPrefixCategory(prefixCategory);
+            NUnit.Framework.Assert.IsNotNull(prefixCategory);
+        }
+        [Test(), Order(2)]
+        public void _editPrefixCategory_returnPrefixCategory()
+        {
+            PrefixCategory prefixCategory = _meaningManager.getPrefixCategory().FirstOrDefault();
+            string Old_name = prefixCategory.Name;
+            prefixCategory.Name = Convert.ToString("prefix category Name 1 edited");
+            prefixCategory.Description = Convert.ToString("prefix category Name description 1 edited");
+            prefixCategory = _meaningManager.editPrefixCategory(prefixCategory);
+            NUnit.Framework.Assert.IsNotNull(prefixCategory);
+            _meaningManager.getPrefixCategory(Old_name).Should().BeNull();
+            _meaningManager.getPrefixCategory(Old_name).Should().BeNull();
+        }
+        //////////////////////////////////////////
+        /// create and edit External Links 
+        //////////////////////////////////////////
+        [Test(), Order(3)]
+        public void _createExternalLinkasPrefix_returnExternalLink()
+        {
+            String uri = Convert.ToString("http://aquadiva.com");
+            String name = Convert.ToString("AquaDiva Prefix");
 
-            String uri = Convert.ToString("htpp://testUri.com");
-            String name = Convert.ToString("test name external link");
-            ExternalLinkType type = ExternalLinkType.prefix;
-
-            ExternalLink res = _meaningManager.addExternalLink(uri, name, type, null, _meaningManager.getPrefixCategory(prefixCategory.Id));
+            ExternalLink el1 = _meaningManager.addExternalLink(uri, name, ExternalLinkType.prefix, null, _meaningManager.getPrefixCategory(Convert.ToString("prefix category Name 1 edited")));
+            NUnit.Framework.Assert.IsNotNull(el1);
+        }
+        [Test(), Order(4)]
+        public void _createExternalLinkEntityasChildren_returnExternalLink()
+        {
+            String uri = Convert.ToString("http://aquadiva.com/water");
+            String name = Convert.ToString("water");
+            ExternalLink prefix = _meaningManager.getPrefixes().FirstOrDefault(x => x.Name == "AquaDiva Prefix");
+            ExternalLink el1 = _meaningManager.addExternalLink(uri, name, ExternalLinkType.entity, prefix, null);
+            NUnit.Framework.Assert.IsNotNull(el1);
+        }
+        [Test(), Order(5)]
+        public void _createExternalLinkCharac_returnExternalLink()
+        {
+            String uri = Convert.ToString("http://aquadiva.com/PH");
+            String name = Convert.ToString("PH");
+            ExternalLink el1 = _meaningManager.addExternalLink(uri, name, ExternalLinkType.characteristics, null, null);
+            NUnit.Framework.Assert.IsNotNull(el1);
+        }
+        [Test(), Order(6)]
+        public void _createExternalLinkAsRelation_returnExternalLink()
+        {
+            String uri = Convert.ToString("http://RelationURL/hasSynonym");
+            String name = Convert.ToString("hasSynonym");
+            ExternalLink el1 = _meaningManager.addExternalLink(uri, name, ExternalLinkType.relationship, null, null);
+            NUnit.Framework.Assert.IsNotNull(el1);
+        }
+        [Test(), Order(7)]
+        public void _createExternalLinkAsVocaB_returnExternalLink()
+        {
+            String uri = Convert.ToString("http://vocabURL/deepwater");
+            String name = Convert.ToString("deepwater");
+            ExternalLink el1 = _meaningManager.addExternalLink(uri, name, ExternalLinkType.vocabulary, null, null);
+            NUnit.Framework.Assert.IsNotNull(el1);
+        }
+        [Test(), Order(8)]
+        public void _editExternalLinkAsEnt_returnExternalLink()
+        {
+            ExternalLink el1 = _meaningManager.getExternalLinks().FirstOrDefault(x => _meaningManager.getViewLinkUri(x) == "http://aquadiva.com/water");
+            string Old_URI = el1.URI;
+            el1.URI = "http://aquadiva.com/groundwater";
+            el1.Name = Convert.ToString("groundwater");
+            el1 = _meaningManager.editExternalLink(el1);
+            NUnit.Framework.Assert.IsNotNull(el1);
+            _meaningManager.getExternalLink(Old_URI).Should().BeNull();
+            _meaningManager.getExternalLink(Old_URI).Should().BeNull();
+        }
+        //////////////////////////////////////////
+        /// create and edit Meanings  
+        //////////////////////////////////////////
+        [Test(), Order(9)]
+        public void _createMeaningParent_returnMeaning()
+        {
+            Meaning meaning = new Meaning();
+            meaning.Name = "Parent meaning name";
+            meaning.ShortName = "Parent meaning name";
+            meaning.Description = "Parent meaning description";
+            meaning.Selectable = (Selectable)Enum.Parse(typeof(Selectable), "1");
+            meaning.Approved = (Approved)Enum.Parse(typeof(Approved), "1");
+            Meaning res = _meaningManager.addMeaning(meaning);
+            NUnit.Framework.Assert.IsNotNull(res);
+        }
+        [Test(), Order(10)]
+        public void _createMeaningChild_returnMeaning()
+        {
+            Meaning meaning = new Meaning();
+            meaning.Name = "1 Child meaning name";
+            meaning.ShortName = "1 Child meaning name";
+            meaning.Description = "1 Child meaning description";
+            meaning.Selectable = (Selectable)Enum.Parse(typeof(Selectable), "1");
+            meaning.Approved = (Approved)Enum.Parse(typeof(Approved), "1");
+            Meaning parent = _meaningManager.getMeanings().FirstOrDefault(x => x.Name == "Parent meaning name");
+            Meaning res = _meaningManager.addMeaning(meaning);
             NUnit.Framework.Assert.IsNotNull(res);
 
-            //creating another prefix to be edited an external link
-            uri = Convert.ToString("htpp://testUri_edited_.com");
-            name = Convert.ToString("test name external link edited");
-            type = ExternalLinkType.prefix;
-            res = _meaningManager.addExternalLink(uri, name, type, null, _meaningManager.getPrefixCategory(prefixCategory.Id));
+            meaning = new Meaning();
+            meaning.Name = "2 Child meaning name";
+            meaning.ShortName = "2 Child meaning name";
+            meaning.Description = "2 Child meaning description";
+            meaning.Selectable = (Selectable)Enum.Parse(typeof(Selectable), "1");
+            meaning.Approved = (Approved)Enum.Parse(typeof(Approved), "1");
+            parent = _meaningManager.getMeanings().FirstOrDefault(x => x.Name == "Parent meaning name");
+            res = _meaningManager.addMeaning(meaning);
             NUnit.Framework.Assert.IsNotNull(res);
-
-            //editing a prefix to external link external link
-            uri = Convert.ToString("htpp://testUri_edited_.com");
-            name = Convert.ToString("test name external link edited");
-            type = ExternalLinkType.vocabulary;
-
-            //Act
-            res = _meaningManager.editExternalLink(res.Id.ToString(), uri, name, type, res, null);
-
-            //Assert
-            NUnit.Framework.Assert.That(res.URI.Equals("htpp://testUri_edited_.com"));
-            NUnit.Framework.Assert.That(res.Name.Equals("test name external link edited"));
-            NUnit.Framework.Assert.That(res.Type.Equals(ExternalLinkType.vocabulary));
-            NUnit.Framework.Assert.That(res.Prefix.Equals(res));
-            NUnit.Framework.Assert.IsNull(res.prefixCategory);
-
-            _delete_all_test_data();
         }
-
-        [Test()]
-        public void _CreateEditMeaning()
+        [Test(), Order(11)]
+        public void _edit2EmptyMeaningTo1SharedMeaningEntries_returnMeaning()
         {
+            Meaning meaning1 = _meaningManager.getMeanings().FirstOrDefault(x => x.Name == "1 Child meaning name");
 
-            this._CreateMeaning();
-            ImeaningManagr _meaningManager = new MeaningManager();
+            ExternalLink relation = _meaningManager.getExternalLink("http://vocabURL/hasSynonym");
+            ExternalLink ent = _meaningManager.getExternalLink("http://aquadiva.com/groundwater");
+            ExternalLink voc = _meaningManager.getExternalLink("http://vocabURL/deepwater");
+            ExternalLink charac = _meaningManager.getExternalLink("http://aquadiva.com/PH");
 
-            Meaning meaning = _meaningManager.getMeanings().FirstOrDefault();
+            // 1st mapping
+            MeaningEntry me1 = new MeaningEntry();
+            me1.MappingRelation = relation;
+            me1.MappedLinks = new List<ExternalLink> { ent, voc };
+            // 2nd mapping
+            MeaningEntry me2 = new MeaningEntry();
+            me2.MappingRelation = relation;
+            me2.MappedLinks = new List<ExternalLink> { ent, charac };
 
-            NUnit.Framework.Assert.IsNotNull(meaning);
+            meaning1.ExternalLinks = new List<MeaningEntry>() { me1, me2 }; ;
+            meaning1 = _meaningManager.editMeaning(meaning1);
+            NUnit.Framework.Assert.IsNotNull(meaning1);
+            _meaningManager.getMeaning(meaning1.Id).ExternalLinks.Should().NotBeEmpty();
 
-            meaning.Name = "meaning name for unit test edited";
-            meaning.Name.Should().NotBeNull();
-            meaning.ShortName = "meaning name for unit test tedited";
-            meaning.ShortName.Should().NotBeNull();
-            meaning.Description = "meaning name for unit test edited";
-            meaning.Description.Should().NotBeNull();
-            meaning.Selectable = (Selectable)Enum.Parse(typeof(Selectable), "0");
-            meaning.Selectable.Should().NotBeNull();
-            meaning.Approved = (Approved)Enum.Parse(typeof(Approved), "0");
-            meaning.Approved.Should().NotBeNull();
-            meaning.ExternalLinks = new List<MeaningEntry>();
-            meaning.Related_meaning = new List<Meaning>();
-
-            meaning = _meaningManager.editMeaning(meaning);
-            _meaningManager.Dispose();
-            _delete_all_test_data();
-
+            Meaning meaning2 = _meaningManager.getMeanings().FirstOrDefault(x => x.Name == "2 Child meaning name");
+            meaning2.ExternalLinks = new List<MeaningEntry>() { me1 }; ;
+            meaning2 = _meaningManager.editMeaning(meaning2);
+            NUnit.Framework.Assert.IsNotNull(meaning2);
+            _meaningManager.getMeaning(meaning2.Id).ExternalLinks.Should().NotBeEmpty();
         }
-
-        [Test()]
-        public void _CreteMeaningWithParents()
+        [Test(), Order(12)]
+        public void deleteMeaningSharingMeaningEntriesWithOtherMeaning_returnMeaning()
         {
-            ImeaningManagr _meaningManager = new MeaningManager();
-
-            //create 3 external links : 1 type:relation and 2 with different types
-            String uri = Convert.ToString("http://ad:hasconnection");
-            String name = Convert.ToString("hasconnection");
-            ExternalLinkType type = ExternalLinkType.relationship;
-            ExternalLink prefix = null;
-            ExternalLink externalLinkRelation = _meaningManager.addExternalLink(uri, name, type, prefix, null);
-
-            uri = Convert.ToString("http://ad:water");
-            name = Convert.ToString("water");
-            type = ExternalLinkType.entity;
-            prefix = null;
-            ExternalLink externalLinkClass = _meaningManager.addExternalLink(uri, name, type, prefix, null);
-
-            uri = Convert.ToString("http://ad:soil");
-            name = Convert.ToString("soil");
-            type = ExternalLinkType.entity;
-            prefix = null;
-            ExternalLink externalLinkEntity = _meaningManager.addExternalLink(uri, name, type, prefix, null);
-
-            uri = Convert.ToString("http://ad:haschildren");
-            name = Convert.ToString("has children");
-            type = ExternalLinkType.relationship;
-            prefix = null;
-            ExternalLink externalLinkRelation2 = _meaningManager.addExternalLink(uri, name, type, prefix, null);
-
-            MeaningEntry mapping1 = new MeaningEntry();
-            mapping1.MappingRelation = externalLinkRelation;
-            mapping1.MappedLinks = new List<ExternalLink> { externalLinkClass, externalLinkEntity };
-
-            MeaningEntry mapping2 = new MeaningEntry();
-            mapping2.MappingRelation = externalLinkRelation2;
-            mapping2.MappedLinks = new List<ExternalLink> { externalLinkEntity };
-
-            List<MeaningEntry> entries_annotations = new List<MeaningEntry>() { mapping1, mapping2 };
-
-            String Name = "meaning name for unit test_";
-            Name.Should().NotBeNull();
-            String ShortName = "meaning name for unit test_";
-            ShortName.Should().NotBeNull();
-            String Description = "meaning name for unit test_";
-            Description.Should().NotBeNull();
-            Selectable selectable = (Selectable)Enum.Parse(typeof(Selectable), "1");
-            selectable.Should().NotBeNull();
-            Approved approved = (Approved)Enum.Parse(typeof(Approved), "1");
-            approved.Should().NotBeNull();
-
-            Meaning meaning = new Meaning(Name, ShortName, Description, selectable, approved, entries_annotations, null);
-
-            meaning = _meaningManager.addMeaning(meaning);
-            NUnit.Framework.Assert.IsNotNull(meaning);
-
-            Meaning childmeaning = new Meaning();
-            // trying to edit the inserdted command 
-            childmeaning.Name = "meaning name for unit test edited";
-            childmeaning.Name.Should().NotBeNull();
-            childmeaning.ShortName = "meaning name for unit test tedited";
-            childmeaning.ShortName.Should().NotBeNull();
-            childmeaning.Description = "meaning name for unit test edited";
-            childmeaning.Description.Should().NotBeNull();
-            childmeaning.Selectable = (Selectable)Enum.Parse(typeof(Selectable), "0");
-            childmeaning.Selectable.Should().NotBeNull();
-            childmeaning.Approved = (Approved)Enum.Parse(typeof(Approved), "0");
-            childmeaning.Approved.Should().NotBeNull();
-            childmeaning.ExternalLinks = new List<MeaningEntry>();
-            childmeaning.Related_meaning = new List<Meaning>() { meaning };
-
-            childmeaning = _meaningManager.addMeaning(childmeaning);
-            childmeaning.Name.ToString().Should().Be("meaning name for unit test edited");
-            childmeaning.ShortName.Should().Be("meaning name for unit test tedited");
-            childmeaning.Description.Should().Be("meaning name for unit test edited");
-            childmeaning.Selectable.Should().Be(0);
-            childmeaning.Approved.Should().Be(0);
-            childmeaning.ExternalLinks.Count().Should().Be(0);
-            childmeaning.Related_meaning.Count().Should().Be(1);
-            NUnit.Framework.Assert.IsNotNull(childmeaning);
-
-            _meaningManager.Dispose();
-            _delete_all_test_data();
+            Meaning meaning1 = _meaningManager.getMeanings().FirstOrDefault(x => x.Name == "1 Child meaning name");
+            Boolean res = _meaningManager.deleteMeaning(meaning1);
+            res.Should().BeTrue();
+            Meaning meaning2 = _meaningManager.getMeanings().FirstOrDefault(x => x.Name == "2 Child meaning name");
+            meaning2.ExternalLinks.Should().NotBeEmpty();
         }
-
-        [Test()]
-        public void _CreateExternalLinkSetWithPrefixes()
+        //////////////////////////////////////////
+        /// Delete all test data   
+        //////////////////////////////////////////
+        [Test(), Order(13)]
+        public void _delete_all_test_data()
         {
-            ImeaningManagr _meaningManager = new MeaningManager();
-
-            string Name = Convert.ToString("prefix category unit");
-            Name.Should().NotBeNullOrEmpty();
-            string Description = Convert.ToString("prefix category unit description");
-            Description.Should().NotBeNullOrEmpty();
-            PrefixCategory prefixCategory = new PrefixCategory(Name, Description);
-
-
-            String uri = Convert.ToString("http://darwinprefix.com");
-            uri.Should().NotBeNullOrEmpty();
-
-            String name = Convert.ToString("darwin prefix");
-            name.Should().NotBeNullOrEmpty();
-
-            ExternalLinkType type = ExternalLinkType.prefix;
-            type.Should().Be(1);
-
-            ExternalLink prefix = null;
-            prefix.Should().BeNull();
-
-            ExternalLink res_prefix_parent = _meaningManager.addExternalLink(uri, name, type, prefix, _meaningManager.getPrefixCategory(prefixCategory.Id));
-            NUnit.Framework.Assert.IsNotNull(res_prefix_parent);
-
-            uri = Convert.ToString("http://darwinprefix.com/water");
-            uri.Should().NotBeNullOrEmpty();
-
-            name = Convert.ToString("darwin water");
-            name.Should().NotBeNullOrEmpty();
-
-            type = ExternalLinkType.vocabulary;
-            type.Should().Be(5);
-
-            prefix = res_prefix_parent;
-            prefix.Should().NotBeNull();
-
-            ExternalLink res_link_prefix = _meaningManager.addExternalLink(uri, name, type, prefix, null);
-            NUnit.Framework.Assert.IsNotNull(res_link_prefix);
-
-            //editing an external link
-            uri = Convert.ToString("htpp://testUri_edited_aquadiva.com");
-            uri.Should().NotBeNullOrEmpty();
-
-            name = Convert.ToString("test name external link edited water groumds");
-            name.Should().NotBeNullOrEmpty();
-
-            type = ExternalLinkType.vocabulary;
-            type.Should().NotBeNull();
-
-            res_link_prefix = _meaningManager.editExternalLink(res_link_prefix.Id.ToString(), uri, name, type, prefix, null);
-            res_link_prefix.URI.Should().Be("htpp://testUri_edited_aquadiva.com");
-            res_link_prefix.Name.Should().Be("test name external link edited water groumds");
-            res_link_prefix.Type.Should().Be(5);
-            res_link_prefix.Prefix.Should().Equals(res_prefix_parent);
-            NUnit.Framework.Assert.IsNotNull(res_link_prefix);
-
-            _meaningManager.Dispose();
-            _delete_all_test_data();
-
-        }
-
-        private void _CreateMeaning()
-        {
-            ImeaningManagr _meaningManager = new MeaningManager();
-
-            //create 3 external links : 1 type:relation and 2 with different types
-            String uri = Convert.ToString("http://ad:hasconnection");
-            String name = Convert.ToString("hasconnection");
-            ExternalLinkType type = ExternalLinkType.relationship;
-            ExternalLink prefix = null;
-            ExternalLink externalLinkRelation = _meaningManager.addExternalLink(uri, name, type, prefix, null);
-
-            uri = Convert.ToString("http://ad:water");
-            name = Convert.ToString("water");
-            type = ExternalLinkType.link;
-            prefix = null;
-            ExternalLink externalLinkClass = _meaningManager.addExternalLink(uri, name, type, prefix, null);
-
-            uri = Convert.ToString("http://ad:soil");
-            name = Convert.ToString("soil");
-            type = ExternalLinkType.entity;
-            prefix = null;
-            ExternalLink externalLinkEntity = _meaningManager.addExternalLink(uri, name, type, prefix, null);
-
-            uri = Convert.ToString("http://ad:haschildren");
-            name = Convert.ToString("has children");
-            type = ExternalLinkType.relationship;
-            prefix = null;
-            ExternalLink externalLinkRelation2 = _meaningManager.addExternalLink(uri, name, type, prefix, null);
-
-            MeaningEntry mapping1 = new MeaningEntry();
-            mapping1.MappingRelation = externalLinkRelation;
-            mapping1.MappedLinks = new List<ExternalLink> { externalLinkClass, externalLinkEntity };
-
-            MeaningEntry mapping2 = new MeaningEntry();
-            mapping2.MappingRelation = externalLinkRelation2;
-            mapping2.MappedLinks = new List<ExternalLink> { externalLinkEntity };
-
-            List<MeaningEntry> entries_annotations = new List<MeaningEntry>() { mapping1, mapping2 };
-
-            String Name = "meaning name for unit test_";
-            Name.Should().NotBeNull();
-            String ShortName = "meaning name for unit test_";
-            ShortName.Should().NotBeNull();
-            String Description = "meaning name for unit test_";
-            Description.Should().NotBeNull();
-            Selectable selectable = (Selectable)Enum.Parse(typeof(Selectable), "1");
-            selectable.Should().NotBeNull();
-            Approved approved = (Approved)Enum.Parse(typeof(Approved), "1");
-            approved.Should().NotBeNull();
-
-            Meaning meaning = new Meaning(Name, ShortName, Description, selectable, approved, entries_annotations, null);
-
-            meaning = _meaningManager.addMeaning(meaning);
-            NUnit.Framework.Assert.IsNotNull(meaning);
-
-            _meaningManager.Dispose();
-        }
-
-        private void _delete_all_test_data()
-        {
-            ImeaningManagr _meaningManager = new MeaningManager();
             foreach (Meaning m in _meaningManager.getMeanings().Where(x => x.Related_meaning?.Count() != 0).Where(x => x.Related_meaning != null))
             {
                 _meaningManager.deleteMeaning(m);
@@ -365,7 +228,6 @@ namespace BExIS.Dlm.Entities.Meanings.Tests
             {
                 _meaningManager.deleteExternalLink(el);
             }
-            _meaningManager.Dispose();
         }
     }
 }
