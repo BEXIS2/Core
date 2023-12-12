@@ -5,12 +5,14 @@
   "entries": [
     {
       "key": "applicationName",
+      "title": "Application Name",
       "value": "AppLocal",
       "type": "String",
       "description": "The application name is used in several places in the system. e.g. as title in the email"
     },
     {
       "key": "jwt",
+      "title": "JWT",
       "value": {
         "validateAudience": false,
         "validateIssuer": false,
@@ -25,66 +27,77 @@
     },
     {
       "key": "landingPage",
+      "title": "Landing Page",
       "value": "ddm, publicsearch, index",
       "type": "String",
       "description": "user is not logging in -> app goes to"
     },
     {
       "key": "landingPageForUsers",
+      "title": "Landing Page for Users",
       "value": "ddm, Home, index",
       "type": "String",
       "description": "user logged in, but do not have permission to view the page; shell, home, nopermission is by default; Alternatives must be in a module NOT shell"
     },
     {
       "key": "landingPageForUsersNoPermission",
+      "title": "Landing Page for Users with no Permission",
       "value": "shell, home, nopermission",
       "type": "String",
       "description": "landing page for users , when they logged in successfuly"
     },
     {
       "key": "faq",
+      "title": "FAQ",
       "value": "https://github.com/BEXIS2/Core/wiki/FAQ",
       "type": "String",
       "description": "landing page for users , when they logged in successfuly"
     },
     {
       "key": "systemEmail",
+      "title": "System E-Mail Address",
       "value": "david.schoene@uni-jena.de",
       "type": "String",
       "description": "All administrative information will be sent to this email."
     },
     {
       "key": "sendExceptions",
+      "title": "Send Exceptions?",
       "value": true,
       "type": "Boolean",
       "description": "If this flag is set to true, all exceptions will be forwarded to SystemEmail."
     },
     {
       "key": "useMultimediaModule",
+      "title": "Use Multimedia Module?",
       "value": true,
       "type": "Boolean",
       "description": "This flag truns on/off the Multimedia Module."
     },
     {
-      "key": "accountPartyTypes",
+      "key": "accountPartytypes",
+      "title": "Account Party Types",
       "value": "personMember:organizationEmployment-projectMember-consortiaMember,personGuest",
       "type": "String",
       "description": "Example: PartyType1:PartyRelationshipTypeTitle1-PartyRelationshipTypeTitle2,PartyType2,PartyType3:PartyRelationshipTypeTitle1. Define the allow party type for account registeration and their relationship type. each party type could have zero or multi allowed relationship( they should be available in the database). if the relationship type has one 'partytypepair' -> load the allowed target of this 'partytypepair'         if  the relationship type has more than one 'partytypepair' -> load the allowed target of the 'partytypepair' which has 'partyrelationshiptypedefault==true'"
     },
     {
       "key": "ownerPartyRelationshipType",
+      "title": "Owner Party Relationshiptype",
       "value": "Owner",
       "type": "String",
       "description": ""
     },
     {
       "key": "usePersonEmailAttributeName",
+      "title": "Use Person E-Mail Attribute Name",
       "value": false,
       "type": "Boolean",
       "description": ""
     },
     {
       "key": "personEmailAttributeName",
+      "title": "Person E-Mail Attribute Name",
       "value": "Email",
       "type": "String",
       "description": "david.schoene@uni-jena.de"
