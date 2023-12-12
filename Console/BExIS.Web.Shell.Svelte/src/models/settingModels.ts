@@ -34,6 +34,7 @@ export class UpdateSettingModel {
 
 export class ReadEntryModel{
     key:string;
+    title:string;
     value:any;
     type:string;
     description:string;
@@ -42,6 +43,7 @@ export class ReadEntryModel{
     constructor(json: any)
     {
         this.key = json.key;
+        this.title = json.title;
         this.value = json.value;
         this.type = json.type;
         this.description = json.description;
