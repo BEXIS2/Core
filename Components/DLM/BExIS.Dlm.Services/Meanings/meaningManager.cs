@@ -30,11 +30,14 @@ namespace BExIS.Dlm.Services.Meanings
             Contract.Requires(GetWrongMappings(meaning.ExternalLinks).Count() == 0);
             try
             {
-                var externalLinksDictionary = (IEnumerable<MeaningEntry>)meaning.ExternalLinks.Select(entry => new MeaningEntry
+                var externalLinksDictionary = meaning.ExternalLinks.Select(entry => new MeaningEntry
                 {
                     MappingRelation = GetOrCreateExternalLink(entry.MappingRelation),
                     MappedLinks = entry.MappedLinks.Select(value => GetOrCreateExternalLink(value)).ToList()
                 }).ToList();
+
+                List<MeaningEntry> meaningEntries = (List<MeaningEntry>)meaning.ExternalLinks;
+
                 meaning.ExternalLinks = externalLinksDictionary;
                 using (IUnitOfWork uow = this.GetUnitOfWork())
                 {
@@ -51,7 +54,7 @@ namespace BExIS.Dlm.Services.Meanings
                 return null;
             }
         }
-        public Meaning addMeaning(string Name, String ShortName, String Description, Selectable selectable, Approved approved, IEnumerable<MeaningEntry> externalLinks, List<string> meaning_ids)
+        public Meaning addMeaning(string Name, String ShortName, String Description, Selectable selectable, Approved approved, List<MeaningEntry> externalLinks, List<string> meaning_ids)
         {
             Contract.Requires(externalLinks != null);
             Contract.Requires(GetWrongMappings(externalLinks).Count() == 0);
@@ -61,7 +64,7 @@ namespace BExIS.Dlm.Services.Meanings
                 {
                     IRepository<Meaning> repo = uow.GetRepository<Meaning>();
 
-                    var externalLinksDictionary = (IEnumerable<MeaningEntry>)externalLinks.Select(entry => new MeaningEntry
+                    var externalLinksDictionary = externalLinks.Select(entry => new MeaningEntry
                     {
                         MappingRelation = GetOrCreateExternalLink(entry.MappingRelation),
                         MappedLinks = entry.MappedLinks.Select(value => GetOrCreateExternalLink(value)).ToList()
@@ -99,16 +102,15 @@ namespace BExIS.Dlm.Services.Meanings
             Contract.Requires(meaning != null);
             try
             {
-                updateMeaningEntry();
                 using (IUnitOfWork uow = this.GetUnitOfWork())
                 {
-
                     IRepository<Meaning> repo = uow.GetRepository<Meaning>();
-                    //meaning = repo.Reload(meaning);
+                    meaning = repo.Reload(meaning);
+                    meaning.ExternalLinks.Clear();
                     repo.Delete(meaning);
                     uow.Commit();
-                    updateMeaningEntry();
                 }
+                updateMeaningEntry();
                 return true;
             }
             catch (Exception exc)
@@ -125,6 +127,8 @@ namespace BExIS.Dlm.Services.Meanings
                 {
                     IRepository<Meaning> repo = uow.GetRepository<Meaning>();
                     Meaning meaning = repo.Get().FirstOrDefault(x => id == x.Id);
+                    meaning = repo.Reload(meaning);
+                    meaning.ExternalLinks.Clear();
                     repo.Delete(meaning);
                     uow.Commit();
                     updateMeaningEntry();
@@ -147,7 +151,6 @@ namespace BExIS.Dlm.Services.Meanings
                 {
                     IRepository<Meaning> repo = uow.GetRepository<Meaning>();
                     var org = repo.Get(meaning.Id);
-                    uow.GetRepository<MeaningEntry>().Delete(org.ExternalLinks);
                     repo.Merge(meaning);
                     var merged = repo.Get(meaning.Id);
                     uow.Commit();
@@ -161,7 +164,7 @@ namespace BExIS.Dlm.Services.Meanings
                 return null;
             }
         }
-        public Meaning editMeaning(string id, string Name, String ShortName, String Description, Selectable selectable, Approved approved, IEnumerable<MeaningEntry> externalLinks, List<string> meaning_ids)
+        public Meaning editMeaning(string id, string Name, String ShortName, String Description, Selectable selectable, Approved approved, List<MeaningEntry> externalLinks, List<string> meaning_ids)
         {
             Contract.Requires(externalLinks != null);
             try
@@ -170,7 +173,7 @@ namespace BExIS.Dlm.Services.Meanings
                 {
                     IRepository<Meaning> repo = uow.GetRepository<Meaning>();
 
-                    var externalLinksDictionary = (IEnumerable<MeaningEntry>)externalLinks.Select(entry => new MeaningEntry
+                    var externalLinksDictionary = externalLinks.Select(entry => new MeaningEntry
                     {
                         MappingRelation = GetOrCreateExternalLink(entry.MappingRelation),
                         MappedLinks = entry.MappedLinks.Select(value => GetOrCreateExternalLink(value)).ToList()
@@ -184,7 +187,6 @@ namespace BExIS.Dlm.Services.Meanings
                     meaning.Related_meaning = related_meanings;
                     meaning.Selectable = selectable;
                     meaning.ShortName = ShortName;
-                    //meaning.Variables = variables;
                     meaning.ExternalLinks = externalLinks;
                     meaning.Description = Description;
                     meaning.Approved = approved;
@@ -260,8 +262,6 @@ namespace BExIS.Dlm.Services.Meanings
                 using (IUnitOfWork uow = this.GetUnitOfWork())
                 {
                     IRepository<Meaning> repo = uow.GetRepository<Meaning>();
-
-
                     Meaning parentMeaning = repo.Get().FirstOrDefault(x => x.Id.ToString() == parentID);
                     Meaning childMeaning = repo.Get().FirstOrDefault(x => x.Id.ToString() == childID);
                     List<Meaning> relatedMeaning = parentMeaning.Related_meaning.ToList<Meaning>();
@@ -269,9 +269,6 @@ namespace BExIS.Dlm.Services.Meanings
                     parentMeaning.Related_meaning = relatedMeaning;
                     repo.Put(parentMeaning);
                     uow.Commit();
-
-                    //IDictionary<long, Meaning> fooDict = Meanings.ToDictionary(f => f.Id, f => f);
-                    updateMeaningEntry();
                     return repo.Get().ToList<Meaning>();
                 }
             }
@@ -281,7 +278,6 @@ namespace BExIS.Dlm.Services.Meanings
                 return null;
             }
         }
-
         public IEnumerable<MeaningEntry> GetWrongMappings(IEnumerable<MeaningEntry> mapping)
         {
             return mapping
@@ -314,7 +310,6 @@ namespace BExIS.Dlm.Services.Meanings
                 throw (exc);
             }
         }
-
         #endregion
 
         #region external link
@@ -548,7 +543,9 @@ namespace BExIS.Dlm.Services.Meanings
         }
         public string getViewLinkUri(ExternalLink externalLink)
         {
-            return externalLink.URI.Replace(externalLink.Prefix.Name, externalLink.Prefix.URI);
+            if (externalLink.Prefix != null)
+                return externalLink.URI.Replace(externalLink.Prefix.Name, externalLink.Prefix.URI);
+            else return externalLink.URI;
         }
         public Boolean updatePreviousLinks()
         {

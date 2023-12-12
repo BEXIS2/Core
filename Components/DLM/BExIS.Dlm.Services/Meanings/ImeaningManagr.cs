@@ -9,11 +9,11 @@ namespace BExIS.Dlm.Services.Meanings
     {
         #region Meaning manager class
         Meaning addMeaning(Meaning meaning);
-        Meaning addMeaning(string Name, String ShortName, String Description, Selectable selectable, Approved approved, IEnumerable<MeaningEntry> externalLinks, List<string> meaning_ids);
+        Meaning addMeaning(string Name, String ShortName, String Description, Selectable selectable, Approved approved, List<MeaningEntry> externalLinks, List<string> meaning_ids);
         Boolean deleteMeaning(Meaning meaning);
         List<Meaning> deleteMeaning(Int64 id);
         Meaning editMeaning(Meaning meaning);
-        Meaning editMeaning(string id, string Name, String ShortName, String Description, Selectable selectable, Approved approved, IEnumerable<MeaningEntry> externalLinks, List<string> meaning_ids);
+        Meaning editMeaning(string id, string Name, String ShortName, String Description, Selectable selectable, Approved approved, List<MeaningEntry> externalLinks, List<string> meaning_ids);
         Meaning getMeaning(Int64 id);
         List<Meaning> getMeanings();
         List<Meaning> updateRelatedManings(string parentID, string childID);
