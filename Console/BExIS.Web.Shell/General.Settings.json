@@ -44,14 +44,14 @@
       "title": "Landing Page for Users with no Permission",
       "value": "shell, home, nopermission",
       "type": "String",
-      "description": "landing page for users , when they logged in successfuly"
+      "description": "landing page for users , when they logged in successfully"
     },
     {
       "key": "faq",
       "title": "FAQ",
       "value": "https://github.com/BEXIS2/Core/wiki/FAQ",
       "type": "String",
-      "description": "landing page for users , when they logged in successfuly"
+      "description": "landing page for users , when they logged in successfully"
     },
     {
       "key": "systemEmail",
