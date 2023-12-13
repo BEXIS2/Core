@@ -1,13 +1,13 @@
 export const helpInfoList = [
 	{
 		id: 'create',
-		name: 'Create neẇ external link',
-		description: 'Click here to ceate a new external link'
+		name: 'Create new external link',
+		description: 'Click here to create a new external link'
 	},
 	{
 		id: 'delete',
 		name: 'Delete external link',
-		description: 'Click here to detete the external link'
+		description: 'Click here to delete the external link'
 	},
 	{
 		id: 'edit',
