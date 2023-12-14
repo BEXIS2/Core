@@ -1,3 +1,4 @@
+import type { listItemType } from "@bexis2/bexis2-core-ui";
 
 export class MeaningModel  {
     id:number;
@@ -29,13 +30,30 @@ export class MeaningModel  {
     }
 }
 
-export interface externalLinkType  {
+export class externalLinkType  {
     id: number;
     uri: string;
     name: string;
-    type: externalLinkTypeEnum;
-    prefix: externalLinkType
-    prefixCategory:prefixCategoryType
+    type: listItemType|undefined;
+    prefix: prefixListItemType|undefined
+    prefixCategory:prefixCategoryType|undefined
+
+    public constructor() {
+
+        this.id=0
+        this.uri=""
+        this.name=""
+        this.type=undefined
+        this.prefix=undefined
+        this.prefixCategory=undefined
+    }
+}
+
+export interface prefixListItemType  {
+    id: number;
+    text: string;
+    description: string;
+    url: string;
 }
 
 export interface prefixCategoryType  {

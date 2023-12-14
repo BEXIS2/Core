@@ -1,7 +1,10 @@
 ﻿using BExIS.App.Bootstrap.Attributes;
 using BExIS.Dlm.Entities.Meanings;
 using BExIS.Dlm.Services.Meanings;
+using BExIS.Modules.Rpm.UI.Helpers;
+using BExIS.Modules.Rpm.UI.Models;
 using BExIS.UI.Helpers;
+using BExIS.UI.Models;
 using BExIS.Utils.Route;
 using Newtonsoft.Json;
 using System;
@@ -117,21 +120,24 @@ namespace BExIS.Modules.Rpm.UI.Controllers
             using (var _meaningManager = new MeaningManager())
             {
                 List<ExternalLink> res = _meaningManager.getExternalLinks();
-                return Json(res, JsonRequestBehavior.AllowGet);
+                List<ExternalLinkModel> links = new List<ExternalLinkModel>();
+                res.ForEach(l => links.Add(MeaningsHelper.ConvertTo(l)));
+                return Json(links, JsonRequestBehavior.AllowGet);
             }
         }
+
 
         [BExISAuthorizeAttribute]
         [JsonNetFilter]
         [System.Web.Http.HttpPost]
-        public JsonResult CreateLink(ExternalLink data)
+        public JsonResult CreateLink(ExternalLinkModel data)
         {
             try
             {
-
                 using (var _meaningManager = new MeaningManager())
                 {
-                    ExternalLink res = _meaningManager.addExternalLink(data);
+                    var link = MeaningsHelper.ConvertTo(data);
+                    ExternalLink res = _meaningManager.addExternalLink(link);
                     return Json(res);
                 }
 
@@ -145,13 +151,14 @@ namespace BExIS.Modules.Rpm.UI.Controllers
         [BExISAuthorizeAttribute]
         [JsonNetFilter]
         [System.Web.Http.HttpPost]
-        public JsonResult UpdateExternalLink(ExternalLink data)
+        public JsonResult UpdateExternalLink(ExternalLinkModel data)
         {
             try
             {
                 using (var _meaningManager = new MeaningManager())
                 {
-                    ExternalLink res = _meaningManager.editExternalLink(data);
+                    var link = MeaningsHelper.ConvertTo(data);
+                    ExternalLink res = _meaningManager.editExternalLink(link);
                     return Json(res);
                 }
 
@@ -183,6 +190,8 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                 throw new Exception("External link was not generated.", ex);
             }
         }
+
+
 
         #endregion;
 

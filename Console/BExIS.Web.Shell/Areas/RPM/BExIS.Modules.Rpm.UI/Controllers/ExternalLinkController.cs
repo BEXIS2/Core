@@ -1,6 +1,7 @@
 ﻿using BExIS.App.Bootstrap.Attributes;
 using BExIS.Dlm.Entities.Meanings;
 using BExIS.Dlm.Services.Meanings;
+using BExIS.Modules.Rpm.UI.Helpers;
 using BExIS.Modules.Rpm.UI.Models;
 using BExIS.UI.Helpers;
 using BExIS.UI.Models;
@@ -36,27 +37,82 @@ namespace BExIS.Modules.Rpm.UI.Controllers
             using (var _meaningManager = new MeaningManager())
             {
                 List<ExternalLink> res = _meaningManager.getExternalLinks();
+                List<ExternalLinkModel> links = new List<ExternalLinkModel>();
+                res.ForEach(l => links.Add(MeaningsHelper.ConvertTo(l)));
+                return Json(links, JsonRequestBehavior.AllowGet);
+            }
+        }
+
+        [BExISAuthorize]
+        [JsonNetFilter]
+        [System.Web.Http.HttpGet]
+        public JsonResult GetLinkListItems()
+        {
+            using (var _meaningManager = new MeaningManager())
+            {
+
+                List<ExternalLink> res = _meaningManager.getExternalLinks();
+                List<ListItem> items = new List<ListItem>();
+                res.ForEach(l => items.Add(MeaningsHelper.ConvertToListItem(l)));
+
                 return Json(res, JsonRequestBehavior.AllowGet);
             }
+        }
+
+
+        [BExISAuthorize]
+        [JsonNetFilter]
+        [System.Web.Http.HttpGet]
+        public JsonResult GetPrefixListItems()
+        {
+            using (var _meaningManager = new MeaningManager())
+            {
+
+                List<ExternalLink> res = _meaningManager.getPrefixes();
+                List<PrefixListItem> items = new List<PrefixListItem>();
+                res.ForEach(l => items.Add(MeaningsHelper.ConvertToPrefixListItem(l)));
+
+                return Json(items, JsonRequestBehavior.AllowGet);
+            }
+        }
+
+        [BExISAuthorize]
+        [JsonNetFilter]
+        [System.Web.Http.HttpGet]
+        public JsonResult GetLinkTypes()
+        {
+            var types = Enum.GetValues(typeof(ExternalLinkType));
+            List<ListItem> items = new List<ListItem>();
+
+            foreach (var type in types)
+            {
+                ListItem item = new ListItem();
+                item.Id = (Int32)type;
+                item.Text = type.ToString();
+                items.Add(item);
+            }
+
+            return Json(items, JsonRequestBehavior.AllowGet);
         }
 
         [BExISAuthorizeAttribute]
         [JsonNetFilter]
         [HttpPost]
-        public JsonResult Create(ExternalLink data)
+        public JsonResult Create(ExternalLinkModel data)
         {
             try
             {
                 if (data == null) throw new NullReferenceException("external link should not be null.");
                 if (string.IsNullOrEmpty(data.Name)) throw new NullReferenceException("Name of external link should not be null or empty.");
-                if (string.IsNullOrEmpty(data.URI)) throw new NullReferenceException("Uri of external link should not be null or empty.");
+                if (string.IsNullOrEmpty(data.Uri)) throw new NullReferenceException("Uri of external link should not be null or empty.");
 
                 data.Name = data.Name.Trim();
-                data.URI  = data.URI.Trim();
+                data.Uri  = data.Uri.Trim();
 
                 using (var _meaningManager = new MeaningManager())
                 {
-                    ExternalLink res = _meaningManager.addExternalLink(data);
+                    var link = MeaningsHelper.ConvertTo(data);
+                    ExternalLink res = _meaningManager.addExternalLink(link);
                     return Json(res);
                 }
 
@@ -70,13 +126,16 @@ namespace BExIS.Modules.Rpm.UI.Controllers
         [BExISAuthorizeAttribute]
         [JsonNetFilter]
         [HttpPost]
-        public JsonResult Update(ExternalLink data)
+        public JsonResult Update(ExternalLinkModel data)
         {
             try
             {
+                ExternalLink link = null;
+
                 using (var _meaningManager = new MeaningManager())
                 {
-                    ExternalLink res = _meaningManager.editExternalLink(data);
+                    link = MeaningsHelper.ConvertTo(data);
+                    ExternalLink res = _meaningManager.editExternalLink(link);
                     return Json(res);
                 }
 
@@ -120,7 +179,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                 List<PrefixCategoryListItem> list = new List<PrefixCategoryListItem>();
                 List<PrefixCategory> res = _meaningManager.getPrefixCategory();
                 if (res.Any()) res.ForEach(x => list.Add(new PrefixCategoryListItem(x.Id, x.Name, x.Description)));
-                return Json(res, JsonRequestBehavior.AllowGet);
+                return Json(list, JsonRequestBehavior.AllowGet);
             }
         }
 

@@ -14,14 +14,22 @@ using static System.Net.Mime.MediaTypeNames;
 
 namespace BExIS.Dlm.Services.Meanings
 {
-    public class MeaningManager : ImeaningManagr
+    public class MeaningManager : ImeaningManagr, IDisposable
     {
         // Track whether Dispose has been called.
         private bool disposedValue;
+        private bool isDisposed = false;
+        private IUnitOfWork guow = null;
 
         public MeaningManager()
         {
         }
+
+        ~MeaningManager()
+        {
+            Dispose(true);
+        }
+
         #region meanings
         public Meaning addMeaning(Meaning meaning)
         {
@@ -367,13 +375,13 @@ namespace BExIS.Dlm.Services.Meanings
                 using (IUnitOfWork uow = this.GetUnitOfWork())
                 {
                     IRepository<ExternalLink> repo = uow.GetRepository<ExternalLink>();
-                    using (ExternalLink externalLink = new ExternalLink(uri, name, type, Prefix, prefixCategory))
-                    {
+                    ExternalLink externalLink = new ExternalLink(uri, name, type, Prefix, prefixCategory);
+                 
                         if (Prefix != null) externalLink.URI = getFormattedLinkUri(externalLink);
                         repo.Put(externalLink);
                         uow.Commit();
                         return externalLink;
-                    }
+                    
                 }
             }
             catch (Exception exc)
@@ -429,23 +437,7 @@ namespace BExIS.Dlm.Services.Meanings
         public ExternalLink editExternalLink(ExternalLink externalLink)
         {
             Contract.Requires(externalLink != null);
-            try
-            {
-                using (IUnitOfWork uow = this.GetUnitOfWork())
-                {
-                    IRepository<ExternalLink> repo = uow.GetRepository<ExternalLink>();
-                    repo.Merge(externalLink);
-                    var merged = repo.Get(externalLink.Id);
-                    repo.Put(merged);
-                    uow.Commit();
-                    return merged;
-                }
-            }
-            catch (Exception exc)
-            {
-                throw (exc);
-                return null;
-            }
+            return editExternalLink(externalLink.Id.ToString(), externalLink.URI, externalLink.Name, externalLink.Type, externalLink.Prefix, externalLink.prefixCategory);
         }
         public ExternalLink editExternalLink(string id, string uri, String name, ExternalLinkType type, ExternalLink Prefix, PrefixCategory prefixCategory)
         {
