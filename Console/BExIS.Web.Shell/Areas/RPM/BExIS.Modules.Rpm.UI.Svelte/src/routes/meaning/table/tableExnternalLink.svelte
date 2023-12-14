@@ -1,13 +1,13 @@
 <script lang="ts">
-	import type { externalLinkType } from '$lib/components/meaning/types';
+	import type { meaningEntryType } from '$lib/components/meaning/types';
 
-	export let value: externalLinkType[];
+	export let value: meaningEntryType[];
 </script>
 
 <div>
 	{#each value as link}
-		{#if link != undefined && link.name != undefined}
-			<li><a href={link.uri} target="blank">{link.name}</a></li>
+		{#if link != undefined && link.mappingRelation != undefined}
+			<li>{link.mappingRelation.text} | {link.mappedLinks.map(m=>m.text).join(",")}</li>
 		{/if}
 	{/each}
 </div>

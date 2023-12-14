@@ -11,6 +11,88 @@ namespace BExIS.Modules.Rpm.UI.Helpers
 {
     public class MeaningsHelper
     {
+        public static MeaningModel ConvertTo(Meaning meaning)
+        {
+            if (meaning == null) return null;
+            MeaningModel model = new MeaningModel();
+            model.Id = meaning.Id;
+            model.Name = meaning.Name;
+            model.Description = meaning.Description;
+            model.Approved = meaning.Approved;
+            model.Selectable = meaning.Selectable;
+
+            if (meaning.Related_meaning != null && meaning.Related_meaning.Any())
+            {
+                meaning.Related_meaning.ToList().ForEach(x => model.Related_meaning.Add(ConvertTo(x)));
+            }
+
+            if (meaning.ExternalLinks != null && meaning.ExternalLinks.Any())
+            {
+                meaning.ExternalLinks.ToList().ForEach(x => model.ExternalLinks.Add(ConvertTo(x)));
+            }
+
+            return model;
+        }
+
+        public static Meaning ConvertTo(MeaningModel model)
+        { 
+            Meaning meaning = new Meaning();
+            meaning.Name = model.Name;
+            meaning.Description = model.Description;
+            meaning.Approved = model.Approved;
+            meaning.Selectable = model.Selectable;
+
+            if (meaning.Related_meaning != null && meaning.Related_meaning.Any())
+            {
+                using (var meaningManager = new MeaningManager())
+                {
+                    var ids = model.Related_meaning.Select(m => m.Id);
+
+                    meaning.Related_meaning = meaningManager.getMeanings().Where(m=> ids.Contains(m.Id)).ToList();
+                }
+            }
+
+            if (meaning.ExternalLinks != null && meaning.ExternalLinks.Any())
+            {
+                model.ExternalLinks.ToList().ForEach(x => meaning.ExternalLinks.Add(ConvertTo(x)));
+            }
+
+            return meaning;
+        }
+
+        public static MeaningEntry ConvertTo(MeaningEntryModel model)
+        {
+            MeaningEntry entry = new MeaningEntry();
+
+            using (var meaningManager = new MeaningManager())
+            {
+                if(model.MappingRelation!=null)
+                 entry.MappingRelation = meaningManager.getExternalLink(model.MappingRelation.Id);
+
+                if (entry.MappedLinks.Any())
+                {
+                    var ids = model.MappedLinks.Select(m => m.Id);
+
+                    entry.MappedLinks = meaningManager.getExternalLinks().Where(e => ids.Contains(e.Id)).ToList();
+                }
+            }
+            return entry;
+        }
+
+
+        public static MeaningEntryModel ConvertTo(MeaningEntry entry)
+        {
+            MeaningEntryModel model = new MeaningEntryModel();
+            model.MappingRelation = ConvertToListItem(entry.MappingRelation);
+
+            if (entry.MappedLinks.Any())
+            {
+                entry.MappedLinks.ToList().ForEach(m=> model.MappedLinks.Add(ConvertToListItem(m)));
+            }
+
+            return model;
+        }
+
         public static PrefixCategoryListItem ConvertTo(PrefixCategory prefixCategory)
         { 
             if (prefixCategory == null)

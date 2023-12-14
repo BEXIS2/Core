@@ -62,7 +62,7 @@ namespace BExIS.Dlm.Services.Meanings
                 return null;
             }
         }
-        public Meaning addMeaning(string Name, String ShortName, String Description, Selectable selectable, Approved approved, List<MeaningEntry> externalLinks, List<string> meaning_ids)
+        public Meaning addMeaning(string Name, String ShortName, String Description, bool selectable, bool approved, List<MeaningEntry> externalLinks, List<string> meaning_ids)
         {
             Contract.Requires(externalLinks != null);
             Contract.Requires(GetWrongMappings(externalLinks).Count() == 0);
@@ -85,18 +85,18 @@ namespace BExIS.Dlm.Services.Meanings
                         related_meanings = (List<Meaning>)repo.Get().Where(x => meaning_ids.Contains(x.Id.ToString())).ToList<Meaning>();
                     }
 
-                    using (Meaning meaning = new Meaning(Name, ShortName, Description, selectable, approved, externalLinks, related_meanings))
-                    {
-                        repo.Put(meaning);
-                        uow.Commit();
-                        var xx = JsonConvert.SerializeObject(meaning, Formatting.Indented,
-                            new JsonSerializerSettings
-                            {
-                                ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore
-                            });
-                        updateMeaningEntry();
-                        return meaning;
-                    }
+                    Meaning meaning = new Meaning(Name, ShortName, Description, selectable, approved, externalLinks, related_meanings);
+                  
+                    repo.Put(meaning);
+                    uow.Commit();
+                    var xx = JsonConvert.SerializeObject(meaning, Formatting.Indented,
+                        new JsonSerializerSettings
+                        {
+                            ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore
+                        });
+                    updateMeaningEntry();
+                    return meaning;
+                    
                 }
             }
             catch (Exception exc)
@@ -172,7 +172,7 @@ namespace BExIS.Dlm.Services.Meanings
                 return null;
             }
         }
-        public Meaning editMeaning(string id, string Name, String ShortName, String Description, Selectable selectable, Approved approved, List<MeaningEntry> externalLinks, List<string> meaning_ids)
+        public Meaning editMeaning(string id, string Name, String ShortName, String Description, bool selectable, bool approved, List<MeaningEntry> externalLinks, List<string> meaning_ids)
         {
             Contract.Requires(externalLinks != null);
             try

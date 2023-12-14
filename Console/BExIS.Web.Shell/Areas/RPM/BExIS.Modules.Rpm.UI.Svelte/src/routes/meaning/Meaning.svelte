@@ -1,5 +1,6 @@
 <script lang="ts">
-	import type { MeaningModel } from '$lib/components/meaning/types';
+	import  { type MeaningModel } from '$lib/components/meaning/types';
+	import { SlideToggle } from '@skeletonlabs/skeleton';
 	import ExternslLinks from './ExternslLinks.svelte';
 
 	// services
@@ -11,7 +12,8 @@
 
 	import suite from './meaning';
 	import { onMount, createEventDispatcher } from 'svelte';
-	import { TextArea, TextInput, helpStore } from '@bexis2/bexis2-core-ui';
+	import { TextArea, TextInput, helpStore, DropdownKVP } from '@bexis2/bexis2-core-ui';
+
 
 	// data
 	import { helpInfoList } from './help';
@@ -33,6 +35,7 @@
 	const dispatch = createEventDispatcher();
 
 	onMount(() => {
+		
 		loaded = true;
 
 		// set help
@@ -110,10 +113,16 @@
 					required={false}
 				/>
 			</div>
+		
+		</div>
+		<div class="flex-col gap-3">
+			<div><SlideToggle active="bg-secondary-500" size="sm" id="approved" name="Approved" bind:checked={meaning.approved} on:change>Approved</SlideToggle></div>
+			<div><SlideToggle active="bg-secondary-500" size="sm" id="selectable" name="Selectable" bind:checked={meaning.selectable} on:change>Selectable</SlideToggle>	</div>
+	
 		</div>
 
 		<div class="">
-			<ExternslLinks bind:list={meaning.externalLink} bind:valid={linksValid} />
+			<!-- <ExternslLinks bind:list={meaning.externalLinks} bind:valid={linksValid} /> -->
 		</div>
 
 		<div class="py-5 text-right col-span-2">
