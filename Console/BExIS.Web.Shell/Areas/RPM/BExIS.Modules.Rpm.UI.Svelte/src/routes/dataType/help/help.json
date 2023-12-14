@@ -2,13 +2,13 @@
 	"helpItems": [
 		{
 			"id": "create",
-			"name": "Create neẇ Data Type",
-			"description": "Click here to ceate a new data type"
+			"name": "Create new Data Type",
+			"description": "Click here to create a new data type"
 		},
 		{
 			"id": "delete",
 			"name": "Delete Data Type",
-			"description": "Click here to detete the data type"
+			"description": "Click here to delete the data type"
 		},
 		{
 			"id": "edit",
@@ -17,7 +17,7 @@
 		},
 		{
 			"id": "save",
-			"name": "Save UnData Typeit",
+			"name": "Save Data Type",
 			"description": "Click here to save the data type"
 		},
 		{
@@ -33,12 +33,12 @@
 		{
 			"id": "description",
 			"name": "Description",
-			"description": "Description of th data type. <li>A shot overview how the data type shold be used.</li>"
+			"description": "Description of the data type. <li>A short overview how the data type should be used.</li>"
 		},
 		{
 			"id": "systemType",
 			"name": "System Type",
-			"description": "System type of th data type. <li>The system internal data type like integer, string etc. </li>"
+			"description": "System type of the data type. <li>The system internal data type like integer, string etc. </li>"
 		}
 	]
 }

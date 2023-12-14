@@ -2,6 +2,8 @@
 
 Workspace changes: 
 - updated EntityReferenceConfig.Xml: removed: IsCompiledBy & Compiles; description revision (if used compile before you should add again)
+- all settings.xml are converted to JSON. Transfer your individual settings via the new Settings UI after the update of the code and workspace
+
 
 >**Database Update(s)**: [Update_Script_218to300.sql](https://github.com/BEXIS2/Core/blob/rc/database%20update%20scripts/Update_Script_218to300.sql](url)
 

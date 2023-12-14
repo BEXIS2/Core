@@ -13,7 +13,7 @@
     {
       "key": "AccountPartyTypes",
       "title": "Party Types for Account",
-      "value": "Person",
+      "value": "personMember:organizationEmployment-projectMember-consortiaMember,personGuest",
       "type": "String",
       "description": "Defined AccountPartyTypes value in web config format is like PartyType1:PartyTypePairTitle1-PartyTypePairTitle2,PartyType2"
     }

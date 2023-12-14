@@ -86,7 +86,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                         hook.Status = HookStatus.Disabled;
                 }
 
-                return Json(model, JsonRequestBehavior.AllowGet);
+                ; return Json(model, JsonRequestBehavior.AllowGet);
             }
         }
 

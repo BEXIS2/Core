@@ -11,48 +11,6 @@
       "description": "URL to the manual. If empty, it links to the latest manual from BEXIS2"
     },
     {
-      "key": "show_primary_data_tab",
-      "title": "Show primary data",
-      "value": true,
-      "type": "Boolean",
-      "description": "Show primary data"
-    },
-    {
-      "key": "show_data_structure_tab",
-      "title": "Show data structure",
-      "value": true,
-      "type": "Boolean",
-      "description": "Show data structure"
-    },
-    {
-      "key": "show_link_tab",
-      "title": "Show links",
-      "value": true,
-      "type": "Boolean",
-      "description": "Show links"
-    },
-    {
-      "key": "show_permission",
-      "title": "Show permissions",
-      "value": true,
-      "type": "Boolean",
-      "description": "Show permissions"
-    },
-    {
-      "key": "show_publish",
-      "title": "Show publish",
-      "value": true,
-      "type": "Boolean",
-      "description": "Show publish"
-    },
-    {
-      "key": "show_attachments_tab",
-      "title": "Show attachments",
-      "value": true,
-      "type": "Boolean",
-      "description": "Show attachments"
-    },
-    {
       "key": "check_public_metadata",
       "title": "Check public metadata for not-logged in users",
       "value": false,
