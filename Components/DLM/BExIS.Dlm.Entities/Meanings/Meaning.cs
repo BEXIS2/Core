@@ -7,9 +7,9 @@ using Vaiona.Entities.Common;
 
 namespace BExIS.Dlm.Entities.Meanings
 {
-    public class Meaning : BaseEntity , IDisposable
+    public class Meaning : BaseEntity
     {
-        private bool disposedValue;
+ 
 
         public Meaning() {
             this.ExternalLinks = new List<MeaningEntry>();
@@ -27,7 +27,7 @@ namespace BExIS.Dlm.Entities.Meanings
             this.Related_meaning = meaning.Related_meaning;
         }
 
-        public Meaning(String name, String shortName, String description, Selectable Selectable, Approved approved, IList<MeaningEntry> externalLink, IList<Meaning> meaning)
+        public Meaning(String name, String shortName, String description, bool Selectable, bool approved, IList<MeaningEntry> externalLink, IList<Meaning> meaning)
         {
             this.Name = name;
             this.ShortName = shortName;
@@ -45,49 +45,12 @@ namespace BExIS.Dlm.Entities.Meanings
         [Required(ErrorMessage = "Must not be Empty")]
         public virtual String Description { get; set; }
         [Required(ErrorMessage = "Must not be Empty")]
-        public virtual Selectable Selectable { get; set; }
+        public virtual Boolean Selectable { get; set; }
         [Required(ErrorMessage = "Must not be Empty")]
-        public virtual Approved Approved { get; set; }
+        public virtual Boolean Approved { get; set; }
         public virtual IList<MeaningEntry> ExternalLinks { get; set; }
         public virtual IList<Meaning> Related_meaning { get; set; }
-        protected  void Dispose(bool disposing)
-        {
-            if (!disposedValue)
-            {
-                if (disposing)
-                {
-                    // TODO: dispose managed state (managed objects)
-                }
 
-                // TODO: free unmanaged resources (unmanaged objects) and override finalizer
-                // TODO: set large fields to null
-                disposedValue = true;
-            }
-        }
-
-        // // TODO: override finalizer only if 'Dispose(bool disposing)' has code to free unmanaged resources
-        // ~Meaning()
-        // {
-        //     // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
-        //     Dispose(disposing: false);
-        // }
-
-        public void Dispose()
-        {
-            // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
-            Dispose(disposing: true);
-            GC.SuppressFinalize(this);
-        }
     }
 
-    public enum Approved
-    {
-        yes = 1
-        , No = 2
-    }
-    public enum Selectable
-    {
-        yes = 1
-        , No = 2
-    }
 }

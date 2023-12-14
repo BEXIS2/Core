@@ -23,11 +23,11 @@
 	 <column name="Description" />
 	</property>
 
-	<property name="Approved" type="BExIS.Dlm.Entities.Meanings.Approved, BExIS.Dlm.Entities">
+	<property name="Approved" type="Boolean">
 	 <column name="Approved"/>
 	</property>
 
-	<property name="Selectable" type="BExIS.Dlm.Entities.Meanings.Selectable, BExIS.Dlm.Entities">
+	<property name="Selectable" type="Boolean">
 	 <column name="Selectable"/>
 	</property>
 	  

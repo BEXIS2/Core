@@ -173,7 +173,7 @@ namespace BExIS.Dlm.Tests.Services.DataStructure
                 var meaning = new Meaning();
                 meaning.Name = "Test";
                 meaning.Description = "Test";
-                meaning.Selectable = Selectable.yes;
+                meaning.Selectable = true;
                 meaning = meaningManager.addMeaning(meaning);
 
 
@@ -321,7 +321,7 @@ namespace BExIS.Dlm.Tests.Services.DataStructure
                 var meaning = new Meaning();
                 meaning.Name = "Test";
                 meaning.Description = "Test";
-                meaning.Selectable = Selectable.yes;
+                meaning.Selectable = true;
                 meaning = meaningManager.addMeaning(meaning);
 
 

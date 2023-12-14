@@ -9,6 +9,7 @@ using BExIS.Utils.Route;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net.Http;
 using System.Web.Helpers;
 using System.Web.Mvc;
@@ -38,7 +39,14 @@ namespace BExIS.Modules.Rpm.UI.Controllers
             using (var _meaningManager = new MeaningManager())
             {
                 List<Meaning> res = _meaningManager.getMeanings();
-                return Json(res, JsonRequestBehavior.AllowGet);
+                List<MeaningModel> resModel = new List<MeaningModel>();
+
+                if (res.Any())
+                {
+                    res.ForEach(m => resModel.Add(MeaningsHelper.ConvertTo(m)));
+                }
+                
+                return Json(resModel, JsonRequestBehavior.AllowGet);
             }
 
         }
@@ -47,13 +55,15 @@ namespace BExIS.Modules.Rpm.UI.Controllers
         [BExISAuthorizeAttribute]
         [JsonNetFilter]
         [System.Web.Http.HttpPost]
-        public JsonResult Create(Meaning data)
+        public JsonResult Create(MeaningModel data)
         {
             try {
 
                 using (var _meaningManager = new MeaningManager())
                 {
-                    Meaning res = _meaningManager.addMeaning(data);
+                    Meaning m = MeaningsHelper.ConvertTo(data);
+                    Meaning res = _meaningManager.addMeaning(m);
+                    
                     return Json(res);
                 }
 
@@ -69,13 +79,14 @@ namespace BExIS.Modules.Rpm.UI.Controllers
         [BExISAuthorizeAttribute]
         [JsonNetFilter]
         [System.Web.Http.HttpPost]
-        public JsonResult Update(Meaning data)
+        public JsonResult Update(MeaningModel data)
         {
             try
             {
                 using (var _meaningManager = new MeaningManager())
                 {
-                    Meaning res = _meaningManager.editMeaning(data);
+                    Meaning m = MeaningsHelper.ConvertTo(data);
+                    Meaning res = _meaningManager.editMeaning(m);
                     return Json(res);
                 }
 
