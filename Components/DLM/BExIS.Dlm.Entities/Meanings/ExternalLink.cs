@@ -5,9 +5,9 @@ using Vaiona.Entities.Common;
 
 namespace BExIS.Dlm.Entities.Meanings
 {
-    public class ExternalLink : BaseEntity, IDisposable
+    public class ExternalLink : BaseEntity
     {
-        private bool disposedValue;
+        //private bool disposedValue;
 
         [Required(ErrorMessage = "Must not be Empty"), Key,Url]
         public virtual string URI { get; set; }
@@ -40,27 +40,27 @@ namespace BExIS.Dlm.Entities.Meanings
             this.prefixCategory= new PrefixCategory();
         }
 
-        protected  void Dispose(bool disposing)
-        {
-            if (!disposedValue)
-            {
-                if (disposing)
-                {
-                    // TODO: dispose managed state (managed objects)
-                }
+        //protected  void Dispose(bool disposing)
+        //{
+        //    if (!disposedValue)
+        //    {
+        //        if (disposing)
+        //        {
+        //            // TODO: dispose managed state (managed objects)
+        //        }
 
-                // TODO: free unmanaged resources (unmanaged objects) and override finalizer
-                // TODO: set large fields to null
-                disposedValue = true;
-            }
-        }
+        //        // TODO: free unmanaged resources (unmanaged objects) and override finalizer
+        //        // TODO: set large fields to null
+        //        disposedValue = true;
+        //    }
+        //}
 
-        public void Dispose()
-        {
-            // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
-            Dispose(disposing: true);
-            GC.SuppressFinalize(this);
-        }
+        //public void Dispose()
+        //{
+        //    // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
+        //    Dispose(disposing: true);
+        //    GC.SuppressFinalize(this);
+        //}
     }
 
     public enum ExternalLinkType
