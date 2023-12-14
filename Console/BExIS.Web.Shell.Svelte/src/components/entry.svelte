@@ -48,9 +48,10 @@
 			...entry.value,
 			new ReadEntryModel({
 				key: entry.value[0].key,
+				title: entry.value[0].title,
 				type: entry.value[0].type,
-				value: '...',
-				description: '...'
+				value: '',
+				description: ''
 			})
 		];
 	}
@@ -66,11 +67,11 @@
 			isMulti={false}
 		/>
 	{:else if entry.type.toLowerCase() === 'string'}
-		<TextInput id={entry.key} label="{entry.title} (key: {entry.key})" bind:value={entry.value} on:input help={true} />
+		<TextInput id={entry.key} placeholder="{entry.key}" label="{entry.title} (key: {entry.key})" bind:value={entry.value} on:input help={true} />
 	{:else if entry.type.toLowerCase().includes('int')}
 		<NumberInput id={entry.key} label="{entry.title} (key: {entry.key})" bind:value={entry.value} on:input help={true} />
 	{:else if entry.type.toLowerCase() === 'boolean'}
-		<SlideToggle active="bg-primary-500" name="slider-label" size="sm" bind:checked={entry.value}
+		<SlideToggle active="bg-primary-500" id={entry.key} name="slider-label" size="sm" bind:checked={entry.value}
 			>{entry.title} (key: {entry.key})</SlideToggle>
 	{:else if entry.type.toLowerCase() === 'json'}
 		<CodeEditor 
@@ -92,13 +93,15 @@
 						<svelte:self entry={e} isChild={true}/>
 					</div>
 					<div>
-						<button class="btn variant-filled-error flex-none" on:click={() => removeItem(index)}
+						{#if Object.values(entry.value).length > 1}
+						<button class="btn variant-filled-error flex-none" type="button" on:click={() => removeItem(index)}
 							><Fa icon={faTrash} /></button>
+						{/if}
 					</div>
 				</div>
 			{/each}
 
-			<button class="btn variant-filled-primary" on:click={addItem}>
+			<button class="btn variant-filled-primary" type="button" on:click={addItem}>
 				<Fa icon={faAdd} />
 			</button>
 		</div>
