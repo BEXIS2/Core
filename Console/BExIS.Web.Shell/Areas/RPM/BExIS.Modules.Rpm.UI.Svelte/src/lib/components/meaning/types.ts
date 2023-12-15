@@ -37,13 +37,13 @@ export class MeaningModel  {
 }
 
 export class meaningEntryType  {
-    mappingRelation: listItemType|undefined;
+    mappingRelation: listItemType;
     mappedLinks: listItemType[];
 
 
     public constructor() {
 
-        this.mappingRelation=undefined
+        this.mappingRelation={id:-1,text:"",group:""};
         this.mappedLinks=[]
     }
 }

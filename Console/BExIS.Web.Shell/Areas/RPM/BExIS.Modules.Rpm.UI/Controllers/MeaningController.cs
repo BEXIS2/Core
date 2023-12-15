@@ -137,6 +137,23 @@ namespace BExIS.Modules.Rpm.UI.Controllers
             }
         }
 
+        [BExISAuthorize]
+        [JsonNetFilter]
+        [System.Web.Http.HttpGet]
+        public JsonResult GetLinkListItems()
+        {
+            using (var _meaningManager = new MeaningManager())
+            {
+
+                List<ExternalLink> res = _meaningManager.getExternalLinks();
+                List<ListItem> items = new List<ListItem>();
+                res.ForEach(l => items.Add(MeaningsHelper.ConvertToListItem(l)));
+
+                return Json(res, JsonRequestBehavior.AllowGet);
+            }
+        }
+
+
 
         [BExISAuthorizeAttribute]
         [JsonNetFilter]

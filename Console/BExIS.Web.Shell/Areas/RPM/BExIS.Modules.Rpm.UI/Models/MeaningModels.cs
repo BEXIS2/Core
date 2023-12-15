@@ -33,6 +33,12 @@ namespace BExIS.Modules.Rpm.UI.Models
     {
         public ListItem MappingRelation { get; set; }
         public List<ListItem> MappedLinks { get; set; }
+
+        public MeaningEntryModel()
+        {
+            MappingRelation = new ListItem();
+            MappedLinks = new List<ListItem>();
+        }
     }
 
     public class ExternalLinkModel

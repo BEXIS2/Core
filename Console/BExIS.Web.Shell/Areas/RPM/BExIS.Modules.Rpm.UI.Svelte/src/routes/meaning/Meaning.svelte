@@ -17,6 +17,7 @@
 
 	// data
 	import { helpInfoList } from './help';
+	import MeaningEntries from './MeaningEntries.svelte';
 
 	export let meaning: MeaningModel;
 	$: meaning;
@@ -72,6 +73,7 @@
 	}
 
 	async function submit() {
+		console.log("🚀 ~ file: Meaning.svelte:77 ~ submit ~ meaning:", meaning)
 		var s = (await (meaning.id == 0)) ? create(meaning) : update(meaning);
 		console.log('🚀 ~ file: Meaning.svelte:67 ~ submit ~ res:', res);
 
@@ -122,7 +124,7 @@
 		</div>
 
 		<div class="">
-			<!-- <ExternslLinks bind:list={meaning.externalLinks} bind:valid={linksValid} /> -->
+			<MeaningEntries bind:entries={meaning.externalLinks} />
 		</div>
 
 		<div class="py-5 text-right col-span-2">
