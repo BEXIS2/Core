@@ -18,6 +18,7 @@
 	import DomainForm from './domainForm.svelte';
 	import RangeForm from './rangeForm.svelte';
 	import PatternForm from './patternForm.svelte';
+	import Warning from './warning.svelte';
 
 	//notifications
 	import { notificationStore, notificationType } from '@bexis2/bexis2-core-ui';
@@ -73,7 +74,6 @@
 					domain: '',
 					negated: constraint.negated,
 					inUse: constraint.inUse,
-					type: constraint.type,
 					variableIDs: constraint.variableIDs,
 				};
 				if (domainConstraint.id != 0) {
@@ -102,7 +102,6 @@
 					upperboundIncluded: true,
 					negated: constraint.negated,
 					inUse: constraint.inUse,
-					type: constraint.type,
 					variableIDs: constraint.variableIDs,
 				};
 				if (rangeConstraint.id != 0) {
@@ -128,7 +127,6 @@
 					pattern: '',
 					negated: constraint.negated,
 					inUse: constraint.inUse,
-					type: constraint.type,
 					variableIDs: constraint.variableIDs,
 				};
 				if (patternConstraint.id != 0) {
@@ -201,18 +199,16 @@
 		switch (constraint.type) {
 			case 'Domain':
 				result = await apiCalls.EditDomainConstraint(domainConstraint);
-				console.log('Domain',result)
 				break; 
 
 			case 'Range':
 				result = await apiCalls.EditRangeConstraint(rangeConstraint);
-				console.log('Range',result)
 				break; 
 
 			case 'Pattern':	
 				result = await apiCalls.EditPatternConstraint(patternConstraint);
-				console.log('Pattern',result)
-				break; 
+				break;
+
 			default:
 				let vr: ValidationResult = { isValid: false, validationItems: [{ name: 'Constraint Type', message: 'no Constraint Type is chosen' }] };
 				result = {
@@ -221,7 +217,7 @@
 				};
 				break; 
 		}
-
+		
 		if (result.validationResult.isValid != true) {
 			message = "Can't save Constraint";
 			if (result.constraintListItem.name != '') {
@@ -258,9 +254,7 @@
 
 {#if constraint && constraintTypes}
 	{#if constraint.inUse}
-	<div class="btn w-full mb-1 variant-ghost-warning text-center">
-		{warning}
-	</div>
+		<Warning {constraint}/>
 	{/if}
 	<form on:submit|preventDefault={submit}>
 		<div class="grid grid-cols-2 gap-5">

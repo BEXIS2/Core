@@ -229,4 +229,16 @@ namespace BExIS.Modules.Rpm.UI.Models
             return domain;
         }
     }
+
+    public class DatasetInfo
+    {
+        public long Id { get; set; }
+        public string Name { get; set; }
+
+        public DatasetInfo() 
+        { 
+            Id = 0;
+            Name = string.Empty;
+        }
+    }
 }
