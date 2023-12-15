@@ -1,43 +1,39 @@
 {
-  "id": "dim",
-  "name": "Data Dissemination",
-  "description": "...",
-  "entries": [
-    {
-      "key": "help",
-      "value": "",
-      "type": "String",
-      "description": "URL to manual, if empty it links to the latest manual from bexis 2."
-    },
-    {
-      "key": "dataCiteDOICredentials",
-      "value": {
-        "username": "test",
-        "password": "admin",
-        "host": "https://"
-      },
-      "type": "JSON",
-      "description": "This are the credentials."
-    },
-    {
-      "key": "dataCiteDOIPlaceholders",
-      "value": {
-        "DatasetId": "{DatasetId}",
-        "VersionId": "{VersionId}",
-        "VersionNumber": "{VersionNumber}",
-        "VersionName": "{VersionName}"
-      },
-      "type": "JSON",
-      "description": "These placeholders will be replaced automatically."
-    },
-    {
-      "key": "dataCiteDOIMappings",
-      "value": {
-        "URL": "{DatasetId}?version={VersionNumber}",
-        "Version": "{VersionName}"
-      },
-      "type": "JSON",
-      "description": "There are additional mappings for DOI DataCite."
-    }
-  ]
+    "description": "...",
+    "id": "dim",
+    "name": "Data Dissemination",
+    "entries": [
+        {
+            "key": "help",
+            "title": "Help URL",
+            "value": "",
+            "type": "String",
+            "description": "URL to the manual. If empty, it links to the latest manual from BEXIS2"
+        },
+        {
+
+            "key": "dataCiteDOICredentials",
+            "title": "DataCite DOI Credentials",
+            "options": [],
+            "type": "JSON",
+            "value": {},
+            "description": "This are the credentials."
+        },
+        {
+            "key": "dataCiteDOIPlaceholders",
+            "title": "DataCite DOI Placeholders",
+            "options": [],
+            "type": "JSON",
+            "value": {},
+            "description": "These placeholders will be replaced automatically."
+        },
+        {
+            "key": "dataCiteDOIMappings",
+            "title": "DataCite DOI Mappings",
+            "options": [],
+            "type": "JSON",
+            "value": {},
+            "description": "There are additional mappings for DOI DataCite."
+        }
+    ]
 }

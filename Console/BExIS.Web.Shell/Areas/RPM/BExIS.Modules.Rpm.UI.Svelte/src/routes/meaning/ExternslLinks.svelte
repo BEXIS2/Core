@@ -1,8 +1,8 @@
 <script lang="ts">
-	import type { externalLinkType } from '$lib/components/meaning/types';
+	import {  meaningEntryType } from '$lib/components/meaning/types';
 	import { externalLinksStore } from '$lib/components/meaning/stores';
 
-	export let list: externalLinkType[] = [];
+	export let list: meaningEntryType[] = [];
 	$: list;
 
 	import { onMount } from 'svelte';
@@ -14,16 +14,16 @@
 	import ExternalLinkView from './ExternalLinkView.svelte';
 	import ExternalLinkForm from '$lib/components/meaning/ExternalLinkForm.svelte';
 
-	let selectableLinks: externalLinkType[] = [];
+	let selectableLinks: meaningEntryType[] = [];
 	$: selectableLinks;
 
-	let selectedExternalLink: externalLinkType;
+	let meaningEntry: meaningEntryType|undefined;
 	export let valid: boolean = false;
 	let linkValidationStates: any = [];
 
-	let newLinks: externalLinkType[];
+	let newLinks: meaningEntryType[];
 	$: newLinks;
-	let existingLinks: externalLinkType[];
+	let existingLinks: meaningEntryType[];
 	$: existingLinks;
 
 	let loading = false;
@@ -55,12 +55,7 @@
 	function add() {
 		console.log('list', list);
 
-		let newLink: externalLinkType = {
-			id: 0,
-			name: '',
-			type: '',
-			uri: ''
-		};
+		let newLink: meaningEntryType = new meaningEntryType();
 
 		newLinks = [...newLinks, newLink];
 		list = [...newLinks, ...existingLinks];
@@ -70,14 +65,14 @@
 	}
 
 	function updateSelectableLinks() {
-		selectableLinks = $externalLinksStore.filter((e) => !list.find((i) => i.uri == e.uri));
+		// selectableLinks = $externalLinksStore.filter((e) => !list.find((i) => i.uri == e.uri));
 	}
 
 	function onSelectHandler(e) {
 		loading = true;
 
-		existingLinks = [...existingLinks, selectedExternalLink];
-		selectedExternalLink = undefined;
+		// existingLinks = [...existingLinks, meaningEntry];
+		// meaningEntry = undefined;
 
 		// selection needs to filter
 		updateSelectableLinks();
@@ -121,7 +116,7 @@
 		{#if newLinks}
 			{#each newLinks as link, id}
 				<!-- content here -->
-				<ExternalLinkForm
+				<!-- <ExternalLinkForm
 					{id}
 					index={id}
 					bind:link
@@ -129,7 +124,7 @@
 					on:remove={() => remove(id, 'new')}
 					on:link-change={checkValidationState}
 					last={list.length - 1 === id}
-				/>
+				/> -->
 			{/each}
 		{/if}
 	</div>
@@ -163,7 +158,6 @@
 			itemGroup="type"
 			complexSource={true}
 			complexTarget={true}
-			bind:target={selectedExternalLink}
 			isMulti={false}
 			placeholder="-- Please select --"
 			on:change={(e) => onSelectHandler(e)}

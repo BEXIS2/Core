@@ -3,14 +3,11 @@
 	import {
 		TextInput,
 		CodeEditor,
-		TextArea,
-		DateInput,
 		NumberInput,
 		MultiSelect,
 		helpStore
 	} from '@bexis2/bexis2-core-ui';
 	import { SlideToggle } from '@skeletonlabs/skeleton';
-	import { onMount } from 'svelte';
 	import Fa from 'svelte-fa';
 	import { faAdd, faTrash } from '@fortawesome/free-solid-svg-icons';
 
@@ -51,9 +48,10 @@
 			...entry.value,
 			new ReadEntryModel({
 				key: entry.value[0].key,
+				title: entry.value[0].title,
 				type: entry.value[0].type,
-				value: '...',
-				description: '...'
+				value: '',
+				description: ''
 			})
 		];
 	}
@@ -69,15 +67,15 @@
 			isMulti={false}
 		/>
 	{:else if entry.type.toLowerCase() === 'string'}
-		<TextInput id={entry.key} label={entry.key} bind:value={entry.value} on:input help={true} />
+		<TextInput id={entry.key} placeholder="{entry.key}" label="{entry.title} (key: {entry.key})" bind:value={entry.value} on:input help={true} />
 	{:else if entry.type.toLowerCase().includes('int')}
-		<NumberInput id={entry.key} label={entry.key} bind:value={entry.value} on:input help={true} />
+		<NumberInput id={entry.key} label="{entry.title} (key: {entry.key})" bind:value={entry.value} on:input help={true} />
 	{:else if entry.type.toLowerCase() === 'boolean'}
-		<SlideToggle active="bg-primary-500" name="slider-label" size="sm" bind:checked={entry.value}
-			>{entry.key}</SlideToggle>
+		<SlideToggle active="bg-primary-500" id={entry.key} name="slider-label" size="sm" bind:checked={entry.value}
+			>{entry.title} (key: {entry.key})</SlideToggle>
 	{:else if entry.type.toLowerCase() === 'json'}
 		<CodeEditor 
-			title={entry.key}
+			title="{entry.title} (key: {entry.key})"
 			id={entry.key}
 			initialValue={initialJSONValue}
 			actions={false}
@@ -88,20 +86,22 @@
 		/>
 	{:else if entry.type === 'EntryList'}
 		<div class="my-3" id={entry.key} on:mouseover={() => { helpStore.show(entry.key); }}>
-			<span class="h3">{entry.key}</span>
+			<span class="h3">{entry.title} (key: {entry.key})</span>
 			{#each Object.values(entry.value) as e, index}
 				<div class="flex card p-2">
 					<div class="grow">
 						<svelte:self entry={e} isChild={true}/>
 					</div>
 					<div>
-						<button class="btn variant-filled-error flex-none" on:click={() => removeItem(index)}
+						{#if Object.values(entry.value).length > 1}
+						<button class="btn variant-filled-error flex-none" type="button" on:click={() => removeItem(index)}
 							><Fa icon={faTrash} /></button>
+						{/if}
 					</div>
 				</div>
 			{/each}
 
-			<button class="btn variant-filled-primary" on:click={addItem}>
+			<button class="btn variant-filled-primary" type="button" on:click={addItem}>
 				<Fa icon={faAdd} />
 			</button>
 		</div>

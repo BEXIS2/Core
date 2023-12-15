@@ -3,12 +3,12 @@
 		{
 			"id": "create",
 			"name": "Create neẇ Unit",
-			"description": "Click here to ceate a new unit"
+			"description": "Click here to create a new unit"
 		},
 		{
 			"id": "delete",
 			"name": "Delete Unit",
-			"description": "Click here to detete the unit"
+			"description": "Click here to delete the unit"
 		},
 		{
 			"id": "edit",
@@ -33,17 +33,17 @@
 		{
 			"id": "description",
 			"name": "Description",
-			"description": "Description of th unit. <li>a shot overview how the unit shold be used.</li>"
+			"description": "Description of the unit. <li>a short overview how the unit should be used.</li>"
 		},
 		{
 			"id": "abbreviation",
 			"name": "Abbreviation",
-			"description": "Abbreviation of the unit. <li>eg. m for meter, Kg for kilogramm etc.</li>"
+			"description": "Abbreviation of the unit. <li>eg., m for meter, Kg for kg etc.</li>"
 		},
 		{
 			"id": "dataTypes",
 			"name": "Data Types",
-			"description": "Type od the values <li>eg. number, text, boolean etc.</li>"
+			"description": "Type of the values <li>eg. number, text, boolean etc.</li>"
 		},
 		{
 			"id": "dimension",

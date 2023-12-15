@@ -513,6 +513,7 @@
     <Compile Include="Helpers\MappingHelper.cs" />
     <Compile Include="Helpers\ReleationshipHelper.cs" />
     <Compile Include="Helpers\SettingsHelper.cs" />
+    <Compile Include="Hooks\PublishHook.cs" />
     <Compile Include="Models\AdminModel.cs" />
     <Compile Include="Models\Api\ApiModels.cs" />
     <Compile Include="Models\DataCiteDOIModels.cs" />
@@ -892,6 +893,10 @@
     <ProjectReference Include="..\..\..\..\Components\JSON\BEXIS.JSON.Helpers\BEXIS.JSON.Helpers.csproj">
       <Project>{C4D68AC5-84FA-4A97-9E64-9F11623DADC9}</Project>
       <Name>BEXIS.JSON.Helpers</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\..\Components\UI\BExIS.UI\BExIS.UI.csproj">
+      <Project>{DE0AD99C-C559-422F-8132-CC4D7C46FF83}</Project>
+      <Name>BExIS.UI</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\..\..\Components\Utils\BExIS.Utils.Config\BExIS.Utils.Config.csproj">
       <Project>{6EAD7D02-02F7-42FF-85E4-90BB892D3846}</Project>

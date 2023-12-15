@@ -19,11 +19,11 @@ export const getEdit = async (id) => {
 
 // get Model for Edit page
 export const getHooks = async (id) => {
-	//console.log("edit",id);
+			console.log("getHooks",id);
 
 	try {
 		const response = await Api.get('/dcm/edit/hooks?id=' + id);
-		//console.log(response);
+		console.log(response);
 
 		return response.data;
 	} catch (error) {
