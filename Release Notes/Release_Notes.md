@@ -9,6 +9,8 @@ Workspace changes:
 
 >**API changes**:
 
+
+
 ## Tenant(s)
 
 In general, the system does not provide different tenants anymore. Instead, the workspace contains only one tenants called 'bexis2'.
