@@ -37,6 +37,7 @@ namespace BExIS.Modules.Rpm.UI.Helpers
         public static Meaning ConvertTo(MeaningModel model)
         { 
             Meaning meaning = new Meaning();
+            meaning.Id = model.Id;
             meaning.Name = model.Name;
             meaning.Description = model.Description;
             meaning.Approved = model.Approved;
@@ -52,7 +53,7 @@ namespace BExIS.Modules.Rpm.UI.Helpers
                 }
             }
 
-            if (meaning.ExternalLinks != null && meaning.ExternalLinks.Any())
+            if (model.ExternalLinks != null && model.ExternalLinks.Any())
             {
                 model.ExternalLinks.ToList().ForEach(x => meaning.ExternalLinks.Add(ConvertTo(x)));
             }
@@ -69,7 +70,7 @@ namespace BExIS.Modules.Rpm.UI.Helpers
                 if(model.MappingRelation!=null)
                  entry.MappingRelation = meaningManager.getExternalLink(model.MappingRelation.Id);
 
-                if (entry.MappedLinks.Any())
+                if (model.MappedLinks.Any())
                 {
                     var ids = model.MappedLinks.Select(m => m.Id);
 

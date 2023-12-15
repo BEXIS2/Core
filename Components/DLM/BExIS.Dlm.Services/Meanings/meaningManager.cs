@@ -62,7 +62,7 @@ namespace BExIS.Dlm.Services.Meanings
                 return null;
             }
         }
-        public Meaning addMeaning(string Name, String ShortName, String Description, bool selectable, bool approved, List<MeaningEntry> externalLinks, List<string> meaning_ids)
+        public Meaning addMeaning(string Name, String ShortName, String Description, bool selectable, bool approved, List<MeaningEntry> externalLinks, List<long> meaning_ids)
         {
             Contract.Requires(externalLinks != null);
             Contract.Requires(GetWrongMappings(externalLinks).Count() == 0);
@@ -82,7 +82,7 @@ namespace BExIS.Dlm.Services.Meanings
                     List<Meaning> related_meanings = new List<Meaning>();
                     if (meaning_ids != null)
                     {
-                        related_meanings = (List<Meaning>)repo.Get().Where(x => meaning_ids.Contains(x.Id.ToString())).ToList<Meaning>();
+                        related_meanings = (List<Meaning>)repo.Get().Where(x => meaning_ids.Contains(x.Id)).ToList<Meaning>();
                     }
 
                     Meaning meaning = new Meaning(Name, ShortName, Description, selectable, approved, externalLinks, related_meanings);
@@ -149,30 +149,12 @@ namespace BExIS.Dlm.Services.Meanings
                 return null;
             }
         }
+
         public Meaning editMeaning(Meaning meaning)
         {
-            Contract.Requires(GetWrongMappings(meaning.ExternalLinks).Count() == 0);
-            Contract.Requires(meaning != null);
-            try
-            {
-                using (IUnitOfWork uow = this.GetUnitOfWork())
-                {
-                    IRepository<Meaning> repo = uow.GetRepository<Meaning>();
-                    var org = repo.Get(meaning.Id);
-                    repo.Merge(meaning);
-                    var merged = repo.Get(meaning.Id);
-                    uow.Commit();
-                    updateMeaningEntry();
-                    return (merged);
-                }
-            }
-            catch (Exception exc)
-            {
-                throw (exc);
-                return null;
-            }
+            return editMeaning(meaning.Id, meaning.Name, meaning.ShortName, meaning.Description, meaning.Selectable, meaning.Approved, meaning.ExternalLinks.ToList(), meaning.Related_meaning?.Select(m => m.Id).ToList());
         }
-        public Meaning editMeaning(string id, string Name, String ShortName, String Description, bool selectable, bool approved, List<MeaningEntry> externalLinks, List<string> meaning_ids)
+        public Meaning editMeaning(long id, string Name, String ShortName, String Description, bool selectable, bool approved, List<MeaningEntry> externalLinks, List<long> meaning_ids)
         {
             Contract.Requires(externalLinks != null);
             try
@@ -187,9 +169,9 @@ namespace BExIS.Dlm.Services.Meanings
                         MappedLinks = entry.MappedLinks.Select(value => GetOrCreateExternalLink(value)).ToList()
                     }).ToList();
                     externalLinks = externalLinksDictionary;
-                    List<Meaning> related_meanings = repo.Get().Where(x => meaning_ids.Contains(x.Id.ToString())).ToList<Meaning>();
+                    List<Meaning> related_meanings = repo.Get().Where(x => meaning_ids.Contains(x.Id)).ToList<Meaning>();
 
-                    Meaning meaning = repo.Get().FirstOrDefault(x => id == x.Id.ToString());
+                    Meaning meaning = repo.Get().FirstOrDefault(x => id == x.Id);
 
                     meaning.Name = Name;
                     meaning.Related_meaning = related_meanings;
@@ -323,37 +305,7 @@ namespace BExIS.Dlm.Services.Meanings
         #region external link
         public ExternalLink addExternalLink(ExternalLink externalLink)
         {
-            Contract.Requires(externalLink != null);
-            Contract.Requires(externalLink.URI != null);
-            Contract.Requires(externalLink.Name != null);
-            Contract.Requires(externalLink.Type != null);
-            if (this.getExternalLink(externalLink?.URI) != null) return this.getExternalLink(externalLink?.URI);
-            if (externalLink.Type == ExternalLinkType.prefix)
-            {
-                Contract.Requires(externalLink.Prefix == null);
-                Contract.Requires(externalLink.prefixCategory != null);
-            }
-            else
-            {
-                Contract.Requires(externalLink.Prefix != null);
-                Contract.Requires(externalLink.prefixCategory == null);
-                externalLink.URI = getFormattedLinkUri(externalLink);
-            }
-            try
-            {
-                using (IUnitOfWork uow = this.GetUnitOfWork())
-                {
-                    IRepository<ExternalLink> repo = uow.GetRepository<ExternalLink>();
-                    repo.Put(externalLink);
-                    uow.Commit();
-                }
-                return externalLink;
-            }
-            catch (Exception exc)
-            {
-                throw (exc);
-                return null;
-            }
+            return addExternalLink(externalLink.URI, externalLink.Name, externalLink.Type, externalLink.Prefix, externalLink.prefixCategory);
         }
         public ExternalLink addExternalLink(string uri, String name, ExternalLinkType type, ExternalLink Prefix, PrefixCategory prefixCategory)
         {

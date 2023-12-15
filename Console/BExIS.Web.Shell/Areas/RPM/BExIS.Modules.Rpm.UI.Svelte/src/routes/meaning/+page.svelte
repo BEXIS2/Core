@@ -69,7 +69,7 @@
 									renderComponent: TableExnternalLink						
 								},
 								disableFiltering: true,
-								exclude: false
+								exclude: true
 							},
 							id: {
 								disableFiltering: true,

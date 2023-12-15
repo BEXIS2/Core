@@ -38,6 +38,7 @@
 	import ExternalLinkForm from './ExternalLink.svelte';
 	import TableUri from './table/tableUri.svelte';
 	import { goTo } from '$services/BaseCaller';
+	import UrlPreview from './UrlPreview.svelte';
 
 	let showForm = false;
 
