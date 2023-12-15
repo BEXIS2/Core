@@ -89,6 +89,7 @@ export const EditRangeConstraint = async (constraint: RangeConstraintListItem) =
 export const EditPatternConstraint = async (constraint: PatternConstraintListItem) => {
 	try {
 		const response = await Api.post('/rpm/constraints/EditPatternConstraint', constraint);
+		console.log('PatternConstraint', response.data);
 		return response.data;
 	} catch (error) {
 		console.error(error);
@@ -99,6 +100,16 @@ export const EditPatternConstraint = async (constraint: PatternConstraintListIte
 export const GetConstraintTypes = async () => {
 	try {
 		const response = await Api.get('/rpm/constraints/GetConstraintTypes');
+		return response.data;
+	} catch (error) {
+		console.error(error);
+		throw error;
+	}
+};
+
+export const GetDatasetsByConstreint = async (id: number) => {
+	try {
+		const response = await Api.post('/rpm/constraints/GetDatasetsByConstreint', { id });
 		return response.data;
 	} catch (error) {
 		console.error(error);

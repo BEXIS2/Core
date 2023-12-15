@@ -17,6 +17,10 @@ using System.Threading.Tasks;
 using BExIS.Modules.Rpm.UI.Models.DataTypes;
 using BExIS.Utils.NH.Querying;
 using System.Xml;
+using Telerik.Web.Mvc.Extensions;
+using BExIS.Dlm.Entities.Data;
+using BExIS.Dlm.Services.Data;
+using System.Web.Http.Results;
 
 namespace BExIS.Modules.Rpm.UI.Controllers
 {
@@ -157,6 +161,43 @@ namespace BExIS.Modules.Rpm.UI.Controllers
             {
                 throw;
             }
+        }
+
+        [JsonNetFilter]
+        [HttpPost]
+        public JsonResult GetDatasetsByConstreint(long Id)
+        {
+            List<DatasetInfo> datasetInfos = new List<DatasetInfo>();
+            if (Id > 0)
+            {
+                using (ConstraintManager constraintManager = new ConstraintManager())
+                {
+                    Constraint constraint = constraintManager.Constraints.Where(c => c.Id == Id).FirstOrDefault();
+
+                    using (DataStructureManager dataStructureManager = new DataStructureManager())
+                    {
+                        List<StructuredDataStructure> dataStructures = dataStructureManager.StructuredDataStructureRepo.Get().Where(d => d.Variables.Where(v => v.VariableConstraints.Contains(constraint)).ToList().Count > 0).ToList();
+
+                        if (dataStructures != null && dataStructures.Count > 0)
+                        {
+                            dataStructures.Distinct();
+                            foreach (StructuredDataStructure dataStructure in dataStructures)
+                            {
+                                if (dataStructure.Datasets != null && dataStructure.Datasets.Count > 0)
+                                {
+                                    foreach (Dataset dataset in dataStructure.Datasets)
+                                    {
+                                        datasetInfos.Add(new DatasetInfo() { Id = dataset.Id, Name = dataset.Versions.OrderBy(dv => dv.Id).Last().Title });
+
+                                    }
+                                }
+                                datasetInfos.Distinct();
+                            }
+                        }
+                    }
+                }
+            }
+            return Json(datasetInfos, JsonRequestBehavior.AllowGet);
         }
 
         [JsonNetFilter]
@@ -307,6 +348,9 @@ namespace BExIS.Modules.Rpm.UI.Controllers
             return Json(result, JsonRequestBehavior.AllowGet);
         }
 
+
+        [JsonNetFilter]
+        [HttpPost]
         public JsonResult EditPatternConstraint(EditPatternConstraintModel constraintListItem)
         {
             ValidationResult validationResult = new ValidationResult

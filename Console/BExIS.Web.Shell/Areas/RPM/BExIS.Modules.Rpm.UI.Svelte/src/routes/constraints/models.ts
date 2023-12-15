@@ -58,3 +58,8 @@ export interface ConstraintValidationResult {
 	validationResult: ValidationResult;
 	constraintListItem: ConstraintListItem;
 }
+
+export interface DatasetInfo {
+    id: number;
+    name: string;
+}

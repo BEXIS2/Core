@@ -46,7 +46,7 @@
 
 	function createRegex(p: string, e: string): string {
 		try {
-			let regex = new RegExp(p);
+			let regex = new RegExp(p, 'g');
 			let r = e.match(regex)?.toString();
 			r = r == undefined || '' ? 'No Match' : r;
 			return r;
