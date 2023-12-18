@@ -32,7 +32,7 @@ From this release, semantic versioning is used. The version number is composed o
 - Improvements and setting up of Jenkins pipeline for development and deployment
 - Unit tests were added to most of the refactored backend functions
 - Revision of initial seed data for units, dimensions and data types
-- JWT support for authentication
+- JWT support for authentication ([#1276](https://github.com/BEXIS2/Core/issues/1276))
 
 ### General Frontend
 - Replacing Bootstrap by [TailwindCSS](https://tailwindcss.com/) and the UI framework [Skeleton](https://www.skeleton.dev/) for all refactored UI components
@@ -44,8 +44,11 @@ From this release, semantic versioning is used. The version number is composed o
 - Introduction of show/hide-able components (e.g., attachments, links, permissions) via entity templates instead of a global setting.
 - Dashboard: Rename to "My Data" ([#333](https://github.com/BEXIS2/Core/issues/333))
 
+### Bugfixes
+- Fixed: Wrong metadata system value for id, if file deleted in dataset ([#1346](https://github.com/BEXIS2/Core/issues/1346))
 
-### Dataset creation, data description and upload
+
+### Refactoring dataset creation, data description and upload
 - Introduction of Entity Templates (see **Entity Templates**)
 - Extended / changes Variable Concept (see **Variable Concept**)
 - The different upload workflows have been combined to one. The user can freely decide which step he like to start. Create data structure or upload file. Validation is triggered automatically once the file or the data structure has changed.
