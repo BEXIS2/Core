@@ -63,13 +63,13 @@
 								disableFiltering: true,
 								exclude: true
 							},
-							externalLink: {
+							externalLinks: {
 								header: 'External Link',
 								instructions: {
 									renderComponent: TableExnternalLink						
 								},
 								disableFiltering: true,
-								exclude: false
+								exclude: true
 							},
 							id: {
 								disableFiltering: true,
@@ -85,7 +85,7 @@
 									renderComponent: TableMeaning,
 								},
 								disableFiltering: true,
-								exclude: false
+								exclude: true
 							},
 						 selectable: {
 								instructions: {
@@ -110,7 +110,7 @@
 	}
 
 	function clear() {
-		meaning = new MeaningModel();
+		meaning = new MeaningModel(null);
 		showForm = false;
 	}
 

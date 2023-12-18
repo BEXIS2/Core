@@ -3,12 +3,12 @@
 		{
 			"id": "create",
 			"name": "Create neẇ Dimension",
-			"description": "Click here to ceate a new dimension"
+			"description": "Click here to create a new dimension"
 		},
 		{
 			"id": "delete",
 			"name": "Delete Dimension",
-			"description": "Click here to detete the dimension"
+			"description": "Click here to delete the dimension"
 		},
 		{
 			"id": "edit",
@@ -33,7 +33,7 @@
 		{
 			"id": "description",
 			"name": "Description",
-			"description": "Description of the dimension. <li>a shot overview how the unit shold be used.</li>"
+			"description": "Description of the dimension. <li>a shot overview how the unit should be used.</li>"
 		},
 		{
 			"id": "specification",

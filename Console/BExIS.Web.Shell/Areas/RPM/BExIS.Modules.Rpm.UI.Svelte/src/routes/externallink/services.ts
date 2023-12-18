@@ -11,6 +11,36 @@ export const getLinks = async () => {
 	}
 };
 
+export const getLinkTypes = async () => {
+	try {
+		const response = await Api.get('/rpm/ExternalLink/getLinkTypes');
+		return response.data;
+	} catch (error) {
+		console.error(error);
+		throw error;
+	}
+};
+
+export const getPrefixCategoriesAsList = async () => {
+	try {
+		const response = await Api.get('/rpm/ExternalLink/GetPrefixCategoriesAsList');
+		return response.data;
+	} catch (error) {
+		console.error(error);
+		throw error;
+	}
+};
+
+export const getPrefixListItems = async () => {
+	try {
+		const response = await Api.get('/rpm/ExternalLink/GetPrefixListItems');
+		return response.data;
+	} catch (error) {
+		console.error(error);
+		throw error;
+	}
+};
+
 export const remove = async (id) => {
 	try {
 		const response = await Api.delete('/rpm/ExternalLink/delete?id='+id,null);
@@ -23,7 +53,8 @@ export const remove = async (id) => {
 
 export const create = async (data:externalLinkType) => {
 	try {
-
+		
+		console.log("🚀 ~ file: services.ts:38 ~ create ~ data:", data)
 		const response = await Api.post('/rpm/ExternalLink/create',data);
 		return response;
 	} catch (error) {

@@ -59,29 +59,25 @@
 	let messageView: ViewModel;
 	$: messageView;
 
-	//$:$latestFileUploadDate, updateHookStatus();
-
 	latestFileUploadDate.subscribe((e) => {
-		console.log('latestFileUploadDate');
-		updateHookStatus();
-	});
+				updateHookStatus();
+			});
 
-	latestDataDescriptionDate.subscribe((e) => {
-		console.log('latestDataDescriptionDate');
-		updateHookStatus();
-	});
+			latestDataDescriptionDate.subscribe((e) => {
+				updateHookStatus();
+			});
 
-	latestFileReaderDate.subscribe((e) => {
-		console.log('latestFileReaderDate');
-		updateHookStatus();
-	});
+			latestFileReaderDate.subscribe((e) => {
+				updateHookStatus();
+			});
 
-	latestSubmitDate.subscribe((e) => {
-		console.log('latestSubmitDate');
-		updateHookStatus();
-	});
+			latestSubmitDate.subscribe((e) => {
+				updateHookStatus();
+			});
 
 	async function load() {
+		console.log('LOAD EDIT', Date.now);
+
 		// get data from parent
 		container = document.getElementById('edit');
 		id = Number(container?.getAttribute('dataset'));
@@ -89,71 +85,65 @@
 
 		// load model froms server
 		model = await getEdit(id);
-		console.log('edit model ', model);
 		hooks = model.hooks;
 		views = model.views;
 		title = model.title;
 		version = model.version;
-
-		// there is a need for a time delay to update the hook status
-		// if not exit, the first run faild because the hooks are not
-		setTimeout(async () => {
-			//console.log('HOOKS ', model.hooks);
-
+		
+		// // there is a need for a time delay to update the hook status
+		// // if not exit, the first run faild because the hooks are not
+		// setTimeout(async () => {
+			
+			console.log("🚀 ~ file: +page.svelte:89 ~ load ~ hooks:", hooks)
 			// update store
-			updateStatus(model.hooks);
+			if (model.hooks) {
+				updateStatus(model.hooks);
 
-			// seperate dcm hooks from other hooks
-			seperateHooks(hooks);
+				// seperate dcm hooks from other hooks
+				seperateHooks(model.hooks);
 
-			// get resultView
-			seperateViews(views);
-		}, 1000); /* <--- If this is enough greater than transition, it doesn't happen... */
+				// get resultView
+				seperateViews(views);
 
-		console.log('model and hooks', model, hookStatusList);
+			}
+
+			
+		// }, 1000); /* <--- If this is enough greater than transition, it doesn't happen... */
+
 	}
 
 	async function updateHookStatus() {
 		let wait = false;
 		let time = 1000;
 
-		//console.log("updateHookStatus", model.hooks)
+		if(id>0)
+		{
+			do {
 
-		do {
-			//console.log("1.in timeout", model.hooks)
-
-			// get status of hooks,
-			await getHooks(id).then((r) => {
-				//console.log('2.updateHookStatus', r);
+				// get status of hooks,
+				const r = await getHooks(id);
 
 				model.hooks = r;
 				if (model.hooks) {
-					//console.log("3.before update ",wait);
 
 					updateStatus(model.hooks);
 
-					//console.log("4.wait ",wait)
-					//console.log("5.while", model.hooks, model.hooks.filter(h=>h.status==6).length)
-
 					if (model.hooks.filter((h) => h.status == 6).length > 0) {
 						wait = true;
-						console.log(wait);
 					} else {
 						wait = false;
-						console.log(wait);
 					}
 
 					if (time <= 10000) {
 						time = time * 2;
 					}
-					//console.log("6.check status", time, wait)
 				}
-			});
 
-			await sleep(time);
+				await sleep(time);
+				console.log("test")
 
-			console.log('end while', wait);
-		} while (wait);
+			} while (wait);
+		}
 	}
 
 	function sleep(milliseconds) {
@@ -191,13 +181,9 @@
 				additionalViews.push(element);
 			}
 		});
-
-		// console.log(messageView)
-		// console.log(additionalViews)
 	}
 
 	function updateStatus(_hooks: HookModel[]) {
-		console.log('updateStatus', _hooks);
 		let dic: { [key: string]: number } = { ['']: 0 };
 
 		if (_hooks !== undefined) {
@@ -205,9 +191,7 @@
 				dic[hook.name] = hook.status;
 			});
 
-			//console.log("cuurent Hookstatus",$hooksStatus);
 			hooksStatus.set(dic);
-			//console.log("update Hookstatus",$hooksStatus);
 		}
 
 		hookStatusList = $hooksStatus;
@@ -220,9 +204,9 @@
 <Page title="Edit: ({id} | {title})" contentLayoutType={pageContentLayoutType.full}>
 	<Header {id} {version} {title} />
 	{#await load()}
-			<Placeholder/>
+		<Placeholder />
 	{:then a}
-		{#if model && hookStatusList}
+		{#if model && model.hooks && datasethooks && addtionalhooks && hookStatusList}
 			<!-- Data Module Hooks -->
 			<Data bind:hooks={datasethooks} {id} {version} />
 
@@ -230,7 +214,7 @@
 
 			<Hooks bind:hooks={addtionalhooks} {id} {version} />
 		{:else}
-			<Placeholder/>
+			<Placeholder />
 		{/if}
 	{:catch error}
 		<ErrorMessage {error} />

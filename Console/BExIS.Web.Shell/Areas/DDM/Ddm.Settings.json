@@ -5,63 +5,31 @@
   "entries": [
     {
       "key": "help",
+      "title": "Help URL",
       "value": "",
       "type": "String",
-      "description": "URL to manual, if empty it links to the latest manual from bexis 2."
-    },
-    {
-      "key": "show_primary_data_tab",
-      "value": true,
-      "type": "Boolean",
-      "description": "Show primary data"
-    },
-    {
-      "key": "show_data_structure_tab",
-      "value": true,
-      "type": "Boolean",
-      "description": "Show data structure"
-    },
-    {
-      "key": "show_link_tab",
-      "value": true,
-      "type": "Boolean",
-      "description": "Show links"
-    },
-    {
-      "key": "show_permission_tab",
-      "value": true,
-      "type": "Boolean",
-      "description": "Show permissions"
-    },
-    {
-      "key": "show_publish_tab",
-      "value": true,
-      "type": "Boolean",
-      "description": "Show publish"
-    },
-    {
-      "key": "show_attachments_tab",
-      "value": true,
-      "type": "Boolean",
-      "description": "Show attachments"
+      "description": "URL to the manual. If empty, it links to the latest manual from BEXIS2"
     },
     {
       "key": "check_public_metadata",
+      "title": "Check public metadata for not-logged in users",
       "value": false,
       "type": "Boolean",
-      "description": "Set true to enable to only show metadata for not-loggedin users, if the dataset is public."
+      "description": "Set true to enable to only show metadata for not-logged in users, if the dataset is public."
     },
     {
       "key": "reduce_versions_select_logged_in",
+      "title": "Reduce versions select for logged in users",
       "value": true,
       "type": "Boolean",
-      "description": ".."
+      "description": "Set true to reduce the versions select for logged in users."
     },
     {
       "key": "restrict_latest_version_logged_in",
+      "title": "Restrict to latest version for logged in users",
       "value": false,
       "type": "Boolean",
-      "description": ".."
+      "description": "Set true to restrict the version select to the latest version for logged in users."
     }
   ]
 }

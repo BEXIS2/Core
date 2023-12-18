@@ -1,26 +1,28 @@
 {
   "id": "dcm",
-  "name": "Data Collection",
+  "name": "Dataset Creation",
   "description": "...",
   "entries": [
     {
       "key": "help",
+      "title": "Help URL",
       "value": "",
-      "description": "URL to manual, if empty it links to the latest manual from bexis 2.",
       "type": "String",
-      "options": []
+      "description": "URL to the manual. If empty, it links to the latest manual from BEXIS2"
     },
     {
       "key": "celllimit",
+      "title": "Number of cells for direct upload instead of async",
       "value": 2000,
-      "description": "This number of cells determines the selection whether an upload of structured data should be executed directly or async. ",
+      "description": "This number of cells determines whether an upload of structured data should be executed directly or async.",
       "type": "Int32",
       "options": []
     },
     {
       "key": "fileuploadDescription",
+      "title": "File upload description",
       "value": "required",
-      "description": "If it is activated, it is possible to add a description text per file.",
+      "description": "If it is activated, adding a description per file is possible.",
       "type": "String",
       "options": [
         "none",
@@ -30,15 +32,17 @@
     },
     {
       "key": "allowMultiFileupload",
+      "title": "Multiple file upload",
       "value": true,
-      "description": "Allow multiple files to be uploaded at the same time",
+      "description": "Allow multiple files to be uploaded at the same time.",
       "type": "Boolean",
       "options": []
     },
     {
       "key": "attachmentDescription",
+      "title": "Attachment description",
       "value": "active",
-      "description": "If it is activated, it is possible to add a description text per file.",
+      "description": "If it is activated, adding a description per file is possible.",
       "type": "String",
       "options": [
         "none",
@@ -48,6 +52,7 @@
     },
     {
       "key": "allowMultiAttachmentUpload",
+      "title": "Multiple attachment upload",
       "value": false,
       "description": "Allow multiple files to be uploaded at the same time.",
       "type": "Boolean",
@@ -55,22 +60,25 @@
     },
     {
       "key": "minToAnalyse",
+      "title": "File Analyze: Minimum row number",
       "value": 100,
-      "description": "Min number of rows to analyze strutcure.",
+      "description": "Min number of rows to analyze structure.",
       "type": "Int32",
       "options": []
     },
     {
       "key": "maxToAnalyse",
+      "title": "File Analyze: Maximum row number",
       "value": 10000,
-      "description": "Max number of rows to analyze strutcure.",
+      "description": "Max number of rows to analyze structure.",
       "type": "Int32",
       "options": []
     },
     {
       "key": "precentageToAnalyse",
+      "title": "File Analyze: Percentage of rows",
       "value": 50,
-      "description": "Percentage of rows to analyze strutcure.",
+      "description": "Percentage of rows to analyze structure.",
       "type": "Int32",
       "options": []
     }

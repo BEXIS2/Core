@@ -61,7 +61,7 @@ export const editHelp = [
 		name: 'Options for data structures',
 		description:
 			'<u>1. active vs not active</u>' +
-			'<ul class="ul list-disc p-5"><li><b>active datastructure</b> - tabular data will be uploaded</li>' +
+			'<ul class="ul list-disc p-5"><li><b>active data structure</b> - tabular data will be uploaded</li>' +
 			'<li><b>deactivate</b> - files will be uploaded directly and will not be processed further. Select features that should not be displayed during editing and display.</li></ul>' +
 			'<u>2. selection or not</u>' +
 			'<ul class="ul list-disc p-5"><li> If you activate data structure, you can define a selection of data structures from the system.</li>' +

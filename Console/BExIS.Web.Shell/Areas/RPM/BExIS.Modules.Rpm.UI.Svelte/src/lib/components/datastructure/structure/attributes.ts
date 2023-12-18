@@ -22,7 +22,12 @@ const suite = create((data = {}, fieldName) => {
 	});
 
 	test('description', 'description is too long. you only have 255 characters.', () => {
-		enforce(data.description).shorterThan(255);
+
+		if(data.description) // count if exist
+		{
+			enforce(data.description).shorterThan(255);
+		}
+		return true;// if null or undefined
 	});
 });
 

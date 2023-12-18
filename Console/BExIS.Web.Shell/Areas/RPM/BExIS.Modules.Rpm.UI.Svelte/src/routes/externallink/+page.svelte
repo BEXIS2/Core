@@ -2,8 +2,8 @@
 	import { Modal, getModalStore, type ModalSettings } from '@skeletonlabs/skeleton';
 	const modalStore = getModalStore();
 	
-	import { getLinks, remove } from './services';
-	import type { externalLinkType, prefixCategoryType } from '$lib/components/meaning/types';
+	import { getLinks, remove, getLinkTypes, getPrefixCategoriesAsList, getPrefixListItems } from './services';
+	import  { externalLinkType, type prefixCategoryType, type prefixListItemType } from '$lib/components/meaning/types';
 
 	import {
 		Page,
@@ -13,13 +13,22 @@
 		TablePlaceholder,
 		type TableConfig,
 		notificationStore,
-		notificationType
+		notificationType,
+
+		type listItemType
+
 	} from '@bexis2/bexis2-core-ui';
 
-	import { externalLinksStore } from '$lib/components/meaning/stores';
+	import { 
+		externalLinksStore, 
+		externalLinkTypesStore, 
+		prefixCategoryStore,
+		prefixesStore
+	 }
+		 from '$lib/components/meaning/stores';
 
 	let externalLinks: externalLinkType[] = [];
-	let externalLink: externalLinkType = { id: 0, name: '', type: '', uri: '' };
+	let externalLink: externalLinkType = new externalLinkType();
 
 	import TableOptions from './table/tableOptions.svelte';
 
@@ -28,6 +37,8 @@
 	import { fade, slide } from 'svelte/transition';
 	import ExternalLinkForm from './ExternalLink.svelte';
 	import TableUri from './table/tableUri.svelte';
+	import { goTo } from '$services/BaseCaller';
+	import UrlPreview from './UrlPreview.svelte';
 
 	let showForm = false;
 
@@ -36,8 +47,19 @@
 
 		// get external links
 		externalLinks = await getLinks();
-  externalLink = { id: 0, name: '', type: '', uri: '' };
+  externalLink = new externalLinkType();
 		externalLinksStore.set(externalLinks);
+		console.log("🚀 ~ file: +page.svelte:50 ~ reload ~ externalLinks:", externalLinks)
+
+		const externalLinkTypes = await getLinkTypes();
+		externalLinkTypesStore.set(externalLinkTypes);
+
+		const prefixCategoryAsList = await getPrefixCategoriesAsList();
+		prefixCategoryStore.set(prefixCategoryAsList);
+
+		const prefixesAsList = await getPrefixListItems();
+		prefixesStore.set(prefixesAsList);
+		console.log("🚀 ~ file: +page.svelte:60 ~ reload ~ prefixesAsList:", prefixesAsList)
 
 		console.log('store', $externalLinksStore);
 	}
@@ -48,54 +70,46 @@
 		optionsComponent: TableOptions,
 		columns: {
 			id: {
-				fixedWidth: 100
-			},
-			extra: {
-				disableFiltering: true,
-				disableSorting: true,
-				exclude: true
-			},
-			versionNo: {
-				disableFiltering: true,
-				disableSorting: true,
-				exclude: true
+				fixedWidth: 30
 			},
 			uri: {
 				header: 'Uri',
-				instructions: {
-					renderComponent: TableUri
-				},
 				disableFiltering: true,
-				disableSorting:true
+				disableSorting:true,
+				exclude:false
 			},
 			type: {
-				disableFiltering: true,
-				disableSorting: true,
-				exclude: true
+				instructions: {
+					toStringFn: 
+					 ((pc: listItemType) =>	pc?.text	),
+					toSortableValueFn: 
+					((pc: listItemType) =>	pc?.text	),
+					toFilterableValueFn: 
+					((pc: listItemType) =>	pc?.text	)
+				}
 			},
 			prefix: {
 				instructions: {
 					toStringFn: 
-					 ((pc: externalLinkType) =>	pc?.name	),
+					 ((pc: prefixListItemType) =>	pc!=null?pc.text:""	),
 					toSortableValueFn: 
-					((pc: externalLinkType) =>	pc?.name	),
+					((pc: prefixListItemType) =>	pc!=null?pc.text:""	),
 					toFilterableValueFn: 
-					((pc: externalLinkType) =>	pc?.name	)
+					((pc: prefixListItemType) =>	pc!=null?pc.text:""	)
 				}
-
 			},
-			prefixcategory: {
+			prefixCategory: {
 				instructions: {
 					toStringFn: 
-					 ((pc: prefixCategoryType) =>	pc?.name	),
+					 ((pc: prefixCategoryType) =>	pc!=null?pc.name:""	),
 					toSortableValueFn: 
-					((pc: prefixCategoryType) =>	pc?.name	),
+					((pc: prefixCategoryType) =>	pc!=null?pc.name:""	),
 					toFilterableValueFn: 
-					((pc: prefixCategoryType) =>	pc?.name	)
+					((pc: prefixCategoryType) =>	pc!=null?pc.name:""	)
 				}
 			},
 			optionsColumn: {
-				fixedWidth: 100
+				fixedWidth: 140
 			}
 		}
 	};
@@ -113,7 +127,6 @@
 	}
 
 	function edit(type: any) {
-		console.log('🚀 ~ file: +page.svelte:88 ~ edit ~ type:', type);
 
 		if (type.action == 'edit') {
 			showForm = false;
@@ -122,8 +135,20 @@
 			window.scrollTo({ top: 60, behavior: 'smooth' })
 		}
 
+		
+		if (type.action == 'link') {
+
+				let u = type.url;
+				// add protocol if not exist
+				if(!u.startsWith("http")){ 
+					
+					u = "https://"+u;
+				}
+				window.open(type.url);
+		}
+
 		if (type.action == 'delete') {
-			console.log('🚀 ~ file: +page.svelte:97 ~ edit ~ type.action:', type.action);
+
 			const confirm: ModalSettings = {
 				type: 'confirm',
 				title: 'Delete External Link',

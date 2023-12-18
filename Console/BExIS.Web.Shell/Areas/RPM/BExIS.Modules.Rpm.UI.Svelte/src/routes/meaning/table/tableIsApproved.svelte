@@ -1,8 +1,13 @@
 <script lang="ts">
-	export let value: number;
-	export let row;
+	import type { MeaningModel } from "$lib/components/meaning/types";
 
-	const v = value == 1 ? 'yes' : 'no';
+	export let value:boolean;
+	export let row:MeaningModel;
 </script>
 
-{v}
+<input 
+	type="checkbox" 
+	id={row.id.toString()} 
+	checked={value} 
+	disabled 
+/>

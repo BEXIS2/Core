@@ -6,11 +6,11 @@
 	import { createEventDispatcher, onMount, afterUpdate } from 'svelte';
 
 	import suite from './externalLinkForm';
-	import type { externalLinkType } from './types';
+	import type { meaningEntryType } from './types';
 
 	export let id: number = 0;
 	export let index: number = 1;
-	export let link: externalLinkType;
+	export let link: meaningEntryType;
 	export let last = true;
 
 	export let isValid: boolean = false;
