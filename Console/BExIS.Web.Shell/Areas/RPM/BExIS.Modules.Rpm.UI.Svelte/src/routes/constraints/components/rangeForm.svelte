@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { CodeEditor, NumberInput, TextInput } from '@bexis2/bexis2-core-ui';
+	import { CodeEditor, NumberInput, TextInput, helpStore } from '@bexis2/bexis2-core-ui';
 	import { slide } from 'svelte/transition';
 	import type { RangeConstraintListItem } from '../models';
 	import { createEventDispatcher, onMount } from 'svelte';
@@ -50,16 +50,25 @@
 			<div>
 				<!-- svelte-ignore a11y-label-has-associated-control -->
 				<label>Negated</label>
-				<input id="negated" type="checkbox" bind:checked={rangeConstraint.negated} />
+				<!-- svelte-ignore a11y-mouse-events-have-key-events -->
+				<input id="negated" type="checkbox" 
+				bind:checked={rangeConstraint.negated} 
+				on:mouseover={() => {
+					helpStore.show('negated');
+				}}/>
 			</div>
 		</div>
 		<div class="pb-5">
 			<!-- svelte-ignore a11y-label-has-associated-control -->
 			<label>Include</label>
+			<!-- svelte-ignore a11y-mouse-events-have-key-events -->
 			<input
 				id="includeLowerbound"
 				type="checkbox"
 				bind:checked={rangeConstraint.lowerboundIncluded}
+				on:mouseover={() => {
+					helpStore.show('includeLowerbound');
+				}}
 			/>
 		</div>
 		<div class="pb-5 col-span-4">
@@ -77,10 +86,14 @@
 		<div class="pb-5">
 			<!-- svelte-ignore a11y-label-has-associated-control -->
 			<label>Include</label>
+			<!-- svelte-ignore a11y-mouse-events-have-key-events -->
 			<input
 				id="includeUpperbound"
 				type="checkbox"
 				bind:checked={rangeConstraint.upperboundIncluded}
+				on:mouseover={() => {
+					helpStore.show('includeUpperbound');
+				}}
 			/>
 		</div>
 		<div class="pb-5 col-span-4">

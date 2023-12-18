@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { CodeEditor, TextInput } from '@bexis2/bexis2-core-ui';
+	import { CodeEditor, TextInput, helpStore } from '@bexis2/bexis2-core-ui';
 	import { slide } from 'svelte/transition';
 	import type { PatternConstraintListItem } from '../models';
 	import { createEventDispatcher, onMount } from 'svelte';
@@ -58,7 +58,11 @@
 
 {#if patternConstraint}
 	<div class="grid grid-cols-3 gap-5" in:slide out:slide>
-		<div class="pb-3">
+		<!-- svelte-ignore a11y-mouse-events-have-key-events -->
+		<div class="pb-3" 
+		on:mouseover={() => {
+			helpStore.show('pattern');
+		}}>
 			<!-- svelte-ignore a11y-label-has-associated-control -->
 			<label>Regex Expression</label>
 			<CodeEditor
@@ -73,7 +77,11 @@
 		<div class="pb-3">
 			<TextInput id="example" label="Example" help={true} bind:value={example} />
 		</div>
-		<div class="pb-3">
+		<!-- svelte-ignore a11y-mouse-events-have-key-events -->
+		<div class="pb-3"
+		on:mouseover={() => {
+			helpStore.show('result');
+		}}>
 			<!-- svelte-ignore a11y-label-has-associated-control -->
 			<label>Result</label>
 			{result}
