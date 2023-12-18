@@ -165,44 +165,57 @@ namespace BExIS.Modules.Rpm.UI.Models
         {
             List<DomainItem> domainItems = new List<DomainItem>();
             List<string> rows = domain.Split(Environment.NewLine.ToCharArray()).ToList();
+            DomainItem domainItem = new DomainItem();
 
             foreach (string row in rows)
             {
-                domainItems.Add(new DomainItem()
+                if (!String.IsNullOrEmpty(row))
                 {
-                    Key = row.Trim(),
-                    Value = row.Trim()
-                });
+                    domainItem = new DomainItem()
+                    {
+                        Key = row.Trim(),
+                        Value = row.Trim()
+                    };
+                    if (domainItems.Where(di => di.Key.Equals(domainItem.Key)).ToList().Count == 0)
+                        domainItems.Add(domainItem);
+                }
             }
-            return domainItems;
+            return domainItems.Distinct().ToList();
         }
 
         public static List<DomainItem> convertDomainToDomainItemsKVP(string domain)
         {
             List<DomainItem> domainItems = new List<DomainItem>();
             List<string> rows = domain.Split(Environment.NewLine.ToCharArray()).ToList();
+            DomainItem domainItem = new DomainItem();
 
             foreach (string row in rows)
             {
                 List<string> columns = row.Split(',').ToList();
-                if (columns.Count == 1)
+                if (columns.Count >= 1 && !String.IsNullOrEmpty(columns[0]))
                 {
-                    domainItems.Add(new DomainItem()
+                    if (columns.Count == 1)
                     {
-                        Key = columns[0].Trim(),
-                        Value = columns[0].Trim()
-                    });
-                }
-                else if (columns.Count == 2)
-                {
-                    domainItems.Add(new DomainItem()
+                        domainItem = new DomainItem()
+                        {
+                            Key = columns[0].Trim(),
+                            Value = columns[0].Trim()
+                        };
+                    }
+                    else if (columns.Count == 2)
                     {
-                        Key = columns[0].Trim(),
-                        Value = columns[1].Trim()
-                    });
+                        domainItem = new DomainItem()
+                        {
+                            Key = columns[0].Trim(),
+                            Value = columns[1].Trim()
+                        };
+                    }
+
+                    if (domainItems.Where(di => di.Key.Equals(domainItem.Key)).ToList().Count == 0)
+                        domainItems.Add(domainItem);
                 }
-            }
-            return domainItems;
+            }           
+            return domainItems.Distinct().ToList();
         }
 
         public static string convertDomainItemsToDomain(List<DomainItem> domainItems)
