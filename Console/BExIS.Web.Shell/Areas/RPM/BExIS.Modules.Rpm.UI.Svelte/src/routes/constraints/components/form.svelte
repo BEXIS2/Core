@@ -310,22 +310,29 @@
 						help={true}
 					/>
 				{:else}
-					<label>Constraint Type</label>
+					<!-- svelte-ignore a11y-mouse-events-have-key-events -->
+					<!-- svelte-ignore a11y-label-has-associated-control -->
+					<label on:mouseover={() => {
+						helpStore.show('constraintTypes');
+					}}>Constraint Type</label>
 					<p>{constraint.type}</p>
 				{/if}
 			</div>
 
-			<div class="pb-3 text-right mt-7" title="Type">
-				{#if constraint.type == 'Domain'}
+			<div class="pb-3 text-right mt-7" title="Upload CSV">
+				{#if constraint.type == 'Domain'}				
 					<div in:fade out:fade>
-						<!-- svelte-ignore missing-declaration -->
+						<!-- svelte-ignore a11y-mouse-events-have-key-events -->
 						<FileButton
 							id="uploadCsv"
 							title="Upload CSV"
 							button="btn variant-filled-secondary h-9 w-16 shadow-md"
 							name="uploadCsv"
-							on:change={fileParser}><Fa icon={faArrowUpFromBracket} /></FileButton
-						>
+							on:change={fileParser}><Fa icon={faArrowUpFromBracket} 
+							on:mouseover={() => {
+								helpStore.show('uploadCsv');
+							}}/>
+							</FileButton>
 					</div>
 				{/if}
 			</div>

@@ -1,0 +1,99 @@
+{
+	"helpItems": [
+		{
+			"id": "create",
+			"name": "Create new Constraint",
+			"description": "Click here to create a new constraint"
+		},
+		{
+			"id": "delete",
+			"name": "Delete Constraint",
+			"description": "Click here to delete the constraint"
+		},
+		{
+			"id": "edit",
+			"name": "Edit Constraint",
+			"description": "Click here to edit the constraint"
+		},
+		{
+			"id": "save",
+			"name": "Save Constraint",
+			"description": "Click here to save the constraint"
+		},
+		{
+			"id": "cancel",
+			"name": "Cancel",
+			"description": "Click here to cancel"
+		},
+		{
+			"id": "name",
+			"name": "Name",
+			"description": "Name of the constraint. <li>Has to be unique.</li>"
+		},
+		{
+			"id": "description",
+			"name": "Description",
+			"description": "Description of the constraint. <li>A short overview how the constraint should be used.</li>"
+		},
+		{
+			"id": "constraintTypes",
+			"name": "Constraint Types",
+			"description": "The Type of the constraint. <li>Domain</li> <li>Range</li> <li>Pattern</li>"
+		},
+		{
+			"id": "uploadCsv",
+			"name": "Upload CSV",
+			"description": "Uploade a CSV file to fill the Domain list"
+		},
+		{
+			"id": "domain",
+			"name": "Domain List",
+			"description": "Put here your dmain entries (one by line)"
+		},
+		{
+			"id": "domainList",
+			"name": "Domain Preview",
+			"description": "A preview of the domain list"
+		},
+		{
+			"id": "negated",
+			"name": "Negated",
+			"description": "Negates the Range"
+		},
+		{
+			"id": "includeLowerbound",
+			"name": "Include Lower Bound",
+			"description": "Includes the lower bound value"
+		},
+		{
+			"id": "lowerbound",
+			"name": "Lower Bound",
+			"description": "the lower bound value"
+		},
+		{
+			"id": "includeUpperbound",
+			"name": "Include Upper Bound",
+			"description": "Includes the lower bound value"
+		},
+		{
+			"id": "upperbound",
+			"name": "Upper Bound",
+			"description": "the upper bound value"
+		},
+		{
+			"id": "pattern",
+			"name": "Regex Pattern",
+			"description": "use Regex to descripe a pattern"
+		},
+		{
+			"id": "example",
+			"name": "Example",
+			"description": "A example string to test the pattern"
+		},
+		{
+			"id": "result",
+			"name": "Result",
+			"description": "Shows the result of pattern executed on the example"
+		}
+	]
+}
