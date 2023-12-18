@@ -15,7 +15,7 @@
 
 	//stores
 
-	import { displayPatternStore, unitStore, dataTypeStore, templateStore, meaningsStore, constraintsStore } from '../../store';
+	import { unitStore, dataTypeStore, templateStore, meaningsStore, constraintsStore } from '../../store';
 
 	import {
 		updateDisplayPattern,
@@ -99,7 +99,7 @@
 				res = suite(variable, 'displayPattern');
 			}
 
-			res = suite(variable,"");
+			//res = suite(variable,"");
 			setValidationState(res);
 
 			//console.log(variable);
@@ -113,10 +113,10 @@
 	});
 
 	afterUpdate(() => {
+
 		displayPattern = updateDisplayPattern(variable.dataType, false);
+		console.log("🚀 ~ file: Variable.svelte:119 ~ afterUpdate ~ variable:", variable)
 		res = suite(variable,"");
-
-
 		setValidationState(res);
 
 	});
@@ -141,7 +141,6 @@
 			res = suite(variable, id);
 
 			// update display patter and reset it if it changed
-			console.log("🚀 ~ file: Variable.svelte:145 ~ setTimeout ~ id:", id, e.detail)
 
 			if (id == 'dataType') {
 				updateDisplayPattern(variable.dataType);
@@ -149,7 +148,14 @@
 
 			if (id == 'variableTemplate') {
 				variable.meanings = updateMeanings(variable, e.detail)
-				variable.constraints = updateConstraints(variable,e.detail)
+				variable.constraints = updateConstraints(variable,e.detail?.constraints)
+			}
+
+			if (id == 'meanings') {
+				
+				var last = e.detail[e.detail.length-1]
+				variable.constraints = updateConstraints(variable,last.constraints)
+
 			}
 
 			setValidationState(res);
@@ -193,9 +199,6 @@
 	}
 
 	function updateLists() {
-		//console.log('filter lists');
-
-		// datatypes based on unit selection
 
 		//console.log("variable",variable);
 		datatypes = updateDatatypes(
@@ -235,32 +238,33 @@
 			return []
 	}
 
-	function updateConstraints(_variable:VariableInstanceModel, _variableTemplate:templateListItemType):listItemType[]
+	function updateConstraints(_variable:VariableInstanceModel, constraints:string[]):listItemType[]
 	{
-
-			if(_variableTemplate && _variableTemplate.constraints)
+		if(constraints)
+		{
+				// get names of ids 
+			if(_variable.constraints)
 			{
-					if(_variable.constraints)
-					{
-						return [..._variable.constraints,...$constraintsStore.filter(m=>_variableTemplate.constraints.includes(m.text))]
+						return [..._variable.constraints,...$constraintsStore.filter(m=>constraints.includes(m.text))]
 					}
 					else
 					{
-						 return [...$constraintsStore.filter(m=>_variableTemplate.constraints.includes(m.text))]
+						return [...$constraintsStore.filter(m=>constraints.includes(m.text))]
 					}
 			}
 
 			return []
 	}
 
+
 </script>
 
 <div id="variable-{variable.id}-container" class="flex gap-5">
 	{#if loaded && variable && $templateStore}
-		<div id="variable-{variable.id}-container-info" class="grow ">
+		<div id="variable-{variable.id}-container-info" class="grow">
 			{#if expand}
 				<div class="card">
-					<header id="header_{index}" class="card-header ">
+					<header id="header_{index}" class="card-header">
 						<Header
 							{index}
 							name={variable.name}
@@ -307,7 +311,6 @@
 						<!--Datatype-->
 						<Container>
 							<div slot="property">
-
 								<MultiSelect
 									id="dataType"
 									title="Data Type"
@@ -361,18 +364,18 @@
 						<Container>
 							<div slot="property">
 								<div class="flex w-full gap-1 py-1">
-									<div class="grow ">
-											Unit
-									</div>
-									{#if suggestedUnits && suggestedUnits.length>1}
-									{#each suggestedUnits?.slice(0,3) as u}
-											<button class="badge" 
-											class:variant-filled-primary={u.text == variable.unit?.text}  
-											class:variant-ghost-primary={u.text != variable.unit?.text}
-											on:click={()=> variable.unit = u }>{u.text}</button>
-									{/each}
-								{/if}
-							</div>
+									<div class="grow">Unit</div>
+									{#if suggestedUnits && suggestedUnits.length > 1}
+										{#each suggestedUnits?.slice(0, 3) as u}
+											<button
+												class="badge"
+												class:variant-filled-primary={u.text == variable.unit?.text}
+												class:variant-ghost-primary={u.text != variable.unit?.text}
+												on:click={() => (variable.unit = u)}>{u.text}</button
+											>
+										{/each}
+									{/if}
+								</div>
 								<MultiSelect
 									id="unit"
 									title=""
@@ -401,14 +404,14 @@
 						<Container>
 							<div slot="property">
 								<div class="flex w-full gap-1 py-1">
-										<div class="grow ">
-												Template
-										</div>
-									{#each suggestedTemplates.slice(0,3) as t}
-											<button class="badge" 
-											class:variant-filled-primary={t.text == variable.template?.text}  
+									<div class="grow">Template</div>
+									{#each suggestedTemplates.slice(0, 3) as t}
+										<button
+											class="badge"
+											class:variant-filled-primary={t.text == variable.template?.text}
 											class:variant-ghost-primary={t.text != variable.template?.text}
-											on:click={()=> variable.template = t }>{t.text}</button>
+											on:click={() => (variable.template = t)}>{t.text}</button
+										>
 									{/each}
 								</div>
 								<MultiSelect
@@ -429,7 +432,6 @@
 									on:change={(e) => onSelectHandler(e, 'variableTemplate')}
 									disabled={blockDataRelevant}
 								/>
-							
 							</div>
 							<div slot="description">...</div>
 						</Container>
@@ -437,9 +439,7 @@
 						<Container>
 							<div slot="property">
 								<div class="flex w-full gap-1 py-1">
-										<div class="grow ">
-												Meanings
-										</div>
+									<div class="grow">Meanings</div>
 								</div>
 								<MultiSelect
 									id="meanings"
@@ -458,7 +458,6 @@
 									feedback={res.getErrors('meanings')}
 									on:change={(e) => onSelectHandler(e, 'meanings')}
 								/>
-							
 							</div>
 							<div slot="description">...</div>
 						</Container>
@@ -466,9 +465,7 @@
 						<Container>
 							<div slot="property">
 								<div class="flex w-full gap-1 py-1">
-										<div class="grow ">
-												Constraints
-										</div>
+									<div class="grow">Constraints</div>
 								</div>
 								<MultiSelect
 									id="constraints"
@@ -488,14 +485,11 @@
 									on:change={(e) => onSelectHandler(e, 'constraints')}
 									disabled={blockDataRelevant}
 								/>
-							
 							</div>
 							<div slot="description">
 								<ConstraintsDescription bind:list={variable.constraints} />
 							</div>
 						</Container>
-
-
 					</section>
 
 					<footer class="card-footer">
@@ -525,7 +519,8 @@
 		</div>
 		<div
 			id="variable-{variable.id}-container-options"
-			class="flex-none w-24 space-y-2 content-center"		>
+			class="flex-none w-24 space-y-2 content-center"
+		>
 			<slot name="list-options" />
 		</div>
 	{/if}

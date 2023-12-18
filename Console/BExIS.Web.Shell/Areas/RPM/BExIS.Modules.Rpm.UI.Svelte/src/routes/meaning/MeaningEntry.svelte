@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { MultiSelect, type listItemType} from '@bexis2/bexis2-core-ui';
-	import type { externalLinkType, meaningEntryType } from '$lib/components/meaning/types';
+	import type { meaningEntryType } from '$lib/components/meaning/types';
 
 	export let entry: meaningEntryType;
  export let releationList:listItemType[]=[];
@@ -9,7 +9,6 @@
  function onChangeFn()
  {
    console.log(entry);
-   
  }
 
 </script>

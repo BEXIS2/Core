@@ -43,12 +43,12 @@
     <many-to-one name="Unit" class="Unit" not-null="false" column="UnitRef" lazy="false"/>
     <many-to-one name="DataType" class="DataType" not-null="true" column="DataTypeRef"/>
 
-	<set name="VariableConstraints" inverse="false" table="Variable_Constraints" lazy="true" cascade="save-update">
+	<set name="VariableConstraints" inverse="false" table="Variable_Constraints" lazy="false">
       <key column="VariableRef"/>
       <many-to-many column="ConstraintRef" class="Constraint"/>
     </set>
 
-	<set name="Meanings" table="rpm_meanings_variables" inverse="false" lazy="false" fetch="select" cascade="save-update"  >
+	<set name="Meanings" table="rpm_meanings_variables" inverse="false" lazy="false" fetch="select"   >
 		<key column="VariableRef"/>
 		<many-to-many class="BExIS.Dlm.Entities.Meanings.Meaning" column="MeaningRef"/>
 	</set>

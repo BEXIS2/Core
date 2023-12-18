@@ -48,7 +48,6 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                 
                 return Json(resModel, JsonRequestBehavior.AllowGet);
             }
-
         }
 
 
@@ -152,6 +151,17 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                 return Json(res, JsonRequestBehavior.AllowGet);
             }
         }
+
+        [JsonNetFilter]
+        public JsonResult GetConstraints()
+        {
+            VariableHelper helper = new VariableHelper();
+            List<ListItem> list = helper.GetConstraints();
+
+            return Json(list.OrderBy(l => l.Text), JsonRequestBehavior.AllowGet);
+
+        }
+
 
 
 

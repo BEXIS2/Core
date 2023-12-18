@@ -14,6 +14,7 @@ namespace BExIS.Dlm.Entities.Meanings
         public Meaning() {
             this.ExternalLinks = new List<MeaningEntry>();
             this.Related_meaning = new List<Meaning>();
+            this.Constraints = new List<Constraint>();
         }
 
         public Meaning(Meaning meaning)
@@ -25,9 +26,10 @@ namespace BExIS.Dlm.Entities.Meanings
             this.Approved = meaning.Approved;
             this.ExternalLinks = meaning.ExternalLinks;
             this.Related_meaning = meaning.Related_meaning;
+            this.Constraints = meaning.Constraints;
         }
 
-        public Meaning(String name, String shortName, String description, bool Selectable, bool approved, IList<MeaningEntry> externalLink, IList<Meaning> meaning)
+        public Meaning(String name, String shortName, String description, bool Selectable, bool approved, IList<MeaningEntry> externalLink, IList<Meaning> meaning, ICollection<Constraint> constraints)
         {
             this.Name = name;
             this.ShortName = shortName;
@@ -36,6 +38,7 @@ namespace BExIS.Dlm.Entities.Meanings
             this.Approved = approved;
             this.ExternalLinks = externalLink;
             this.Related_meaning = meaning;
+            this.Constraints = constraints;
         }
 
         [Required(ErrorMessage = "Must not be Empty"),Key]
@@ -50,6 +53,8 @@ namespace BExIS.Dlm.Entities.Meanings
         public virtual Boolean Approved { get; set; }
         public virtual IList<MeaningEntry> ExternalLinks { get; set; }
         public virtual IList<Meaning> Related_meaning { get; set; }
+
+        public virtual ICollection<Constraint> Constraints { get; set; }
 
     }
 

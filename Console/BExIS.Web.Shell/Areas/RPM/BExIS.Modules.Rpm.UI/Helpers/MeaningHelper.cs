@@ -1,4 +1,6 @@
-﻿using BExIS.Dlm.Entities.Meanings;
+﻿using BExIS.Dlm.Entities.DataStructure;
+using BExIS.Dlm.Entities.Meanings;
+using BExIS.Dlm.Services.DataStructure;
 using BExIS.Dlm.Services.Meanings;
 using BExIS.Modules.Rpm.UI.Models;
 using BExIS.UI.Models;
@@ -17,7 +19,7 @@ namespace BExIS.Modules.Rpm.UI.Helpers
             MeaningModel model = new MeaningModel();
             model.Id = meaning.Id;
             model.Name = meaning.Name;
-            model.Description = meaning.Description;
+            if(meaning.Description!=null) model.Description = meaning.Description;
             model.Approved = meaning.Approved;
             model.Selectable = meaning.Selectable;
 
@@ -30,6 +32,12 @@ namespace BExIS.Modules.Rpm.UI.Helpers
             {
                 meaning.ExternalLinks.ToList().ForEach(x => model.ExternalLinks.Add(ConvertTo(x)));
             }
+
+            if (meaning.Constraints != null && meaning.Constraints.Any())
+            {
+                meaning.Constraints.ToList().ForEach(x => model.Constraints.Add(ConvertTo(x)));
+            }
+
 
             return model;
         }
@@ -56,6 +64,16 @@ namespace BExIS.Modules.Rpm.UI.Helpers
             if (model.ExternalLinks != null && model.ExternalLinks.Any())
             {
                 model.ExternalLinks.ToList().ForEach(x => meaning.ExternalLinks.Add(ConvertTo(x)));
+            }
+
+            if (model.Constraints != null && model.Constraints.Any())
+            {
+                using (var constraintManager = new ConstraintManager())
+                {
+                    var ids = model.Constraints.Select(m => m.Id);
+                    var cs = constraintManager.ConstraintRepository.Query(c => ids.Contains(c.Id)).ToList();
+                    meaning.Constraints = cs;
+                }
             }
 
             return meaning;
@@ -92,6 +110,16 @@ namespace BExIS.Modules.Rpm.UI.Helpers
             }
 
             return model;
+        }
+
+        public static ListItem ConvertTo(Constraint constraint)
+        {
+            ListItem item = new ListItem();
+            item.Id = constraint.Id;
+            item.Text = constraint.Name;
+            item.Group = getConstraintType(constraint);
+            item.Description = constraint.FormalDescription;
+            return item;
         }
 
         public static PrefixCategoryListItem ConvertTo(PrefixCategory prefixCategory)
@@ -199,6 +227,15 @@ namespace BExIS.Modules.Rpm.UI.Helpers
                 Group = link.prefixCategory?.Name,
                 Url = link.URI
             };
+        }
+
+        private static string getConstraintType(Constraint c)
+        {
+            if (c is DomainConstraint) return "Domain";
+            if (c is RangeConstraint) return "Range";
+            if (c is PatternConstraint) return "Pattern";
+
+            return string.Empty;
         }
     }
 }
