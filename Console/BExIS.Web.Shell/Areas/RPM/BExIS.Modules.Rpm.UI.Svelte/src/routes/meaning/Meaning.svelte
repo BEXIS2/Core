@@ -1,7 +1,6 @@
 <script lang="ts">
-	import  { type MeaningModel } from '$lib/components/meaning/types';
+
 	import { SlideToggle } from '@skeletonlabs/skeleton';
-	import ExternslLinks from './ExternslLinks.svelte';
 
 	// services
 	import { update, create } from './services';
@@ -12,12 +11,15 @@
 
 	import suite from './meaning';
 	import { onMount, createEventDispatcher } from 'svelte';
-	import { TextArea, TextInput, helpStore, DropdownKVP } from '@bexis2/bexis2-core-ui';
+	import { TextArea, TextInput, helpStore, DropdownKVP, MultiSelect } from '@bexis2/bexis2-core-ui';
 
 
 	// data
 	import { helpInfoList } from './help';
 	import MeaningEntries from './MeaningEntries.svelte';
+	import type { MeaningModel } from '$lib/components/meaning/types';
+	import { constraintsStore } from '$lib/components/meaning/stores';
+	import ConstraintsDescription from '$lib/components/datastructure/structure/variable/ConstraintsDescription.svelte';
 
 	export let meaning: MeaningModel;
 	$: meaning;
@@ -86,7 +88,7 @@
 </script>
 
 <form on:submit|preventDefault={submit}>
-	<div id="meaning-{meaning.id}-form" class="flex-colspace-y-5 card shadow-md p-5">
+	<div id="meaning-{meaning.id}-form" class="flex-col space-y-5 card shadow-md p-5">
 		<div class="flex gap-5">
 			<div class="grow">
 				<TextInput
@@ -117,16 +119,39 @@
 			</div>
 		
 		</div>
-		<div class="flex-col gap-3">
-			<div><SlideToggle active="bg-secondary-500" size="sm" id="approved" name="Approved" bind:checked={meaning.approved} on:change>Approved</SlideToggle></div>
-			<div><SlideToggle active="bg-secondary-500" size="sm" id="selectable" name="Selectable" bind:checked={meaning.selectable} on:change>Selectable</SlideToggle>	</div>
 	
-		</div>
 
-		<div class="">
+		<div class="py-5">
 			<MeaningEntries bind:entries={meaning.externalLinks} />
 		</div>
 
+		<div class="flex gap-3 items-center">
+			<div><SlideToggle active="bg-secondary-500" size="sm" id="approved" name="Approved" bind:checked={meaning.approved} on:change>Approved</SlideToggle></div>
+			<div><SlideToggle active="bg-secondary-500" size="sm" id="selectable" name="Selectable" bind:checked={meaning.selectable} on:change>Selectable</SlideToggle>	</div>
+		</div>
+		<div class="flex gap-5 items-center">
+		<div class="w-1/2">
+			<MultiSelect
+									id="constraints"
+									title="Constraints"
+									source={$constraintsStore}
+									itemId="id"
+									itemLabel="text"
+									itemGroup="group"
+									complexSource={true}
+									complexTarget={true}
+									isMulti={true}
+									clearable={true}
+									bind:target={meaning.constraints}
+									placeholder="-- Please select --"
+									invalid={res.hasErrors('constraints')}
+									feedback={res.getErrors('constraints')}
+								/>
+		</div>
+		<div class="w-1/2">
+				<ConstraintsDescription bind:list={meaning.constraints} />
+		</div>
+	</div>
 		<div class="py-5 text-right col-span-2">
 			<!-- svelte-ignore a11y-mouse-events-have-key-events -->
 			<button

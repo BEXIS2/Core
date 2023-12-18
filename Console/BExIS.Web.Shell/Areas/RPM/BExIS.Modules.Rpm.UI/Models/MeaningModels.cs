@@ -16,6 +16,7 @@ namespace BExIS.Modules.Rpm.UI.Models
         public virtual bool Approved { get; set; }
         public virtual IList<MeaningEntryModel> ExternalLinks { get; set; }
         public virtual IList<MeaningModel> Related_meaning { get; set; }
+        public virtual IList<ListItem> Constraints { get; set; }
 
         public MeaningModel()
         {
@@ -26,6 +27,7 @@ namespace BExIS.Modules.Rpm.UI.Models
             Approved = false;
             ExternalLinks = new List<MeaningEntryModel>();
             Related_meaning = new List<MeaningModel>();
+            Constraints = new List<ListItem>();
         }
     }
 

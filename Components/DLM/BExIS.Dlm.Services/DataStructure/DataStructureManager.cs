@@ -1,5 +1,6 @@
 ﻿using BExIS.Dlm.Entities.Data;
 using BExIS.Dlm.Entities.DataStructure;
+using BExIS.Dlm.Entities.Meanings;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.Contracts;
@@ -227,6 +228,8 @@ namespace BExIS.Dlm.Services.DataStructure
             using (IUnitOfWork uow = this.GetUnitOfWork())
             {
                 IRepository<StructuredDataStructure> repo = uow.GetRepository<StructuredDataStructure>();
+                IRepository<VariableInstance> variableRepo = uow.GetRepository<VariableInstance>();
+
                 repo.Merge(entity);
                 var merged = repo.Get(entity.Id);
                 repo.Put(merged);
@@ -441,8 +444,8 @@ namespace BExIS.Dlm.Services.DataStructure
             {
                 IRepository<VariableInstance> repo = uow.GetRepository<VariableInstance>();
                 var usage = repo.Get(id);
-                repo.Delete(usage);
 
+                repo.Delete(usage);
                 uow.Commit();
             }
         }

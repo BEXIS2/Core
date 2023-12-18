@@ -5,5 +5,4 @@
 
 <div>
 	<a href={value} target="blank">{value}</a>
-
 </div>
