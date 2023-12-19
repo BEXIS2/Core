@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { CodeEditor, Table } from '@bexis2/bexis2-core-ui';
+	import { CodeEditor, Table, helpStore } from '@bexis2/bexis2-core-ui';
 	import { slide } from 'svelte/transition';
 	import type { DomainConstraintListItem } from '../models';
 	import { writable } from 'svelte/store';
@@ -58,7 +58,11 @@
 
 {#if domainConstraint}
 	<div class="grid grid-cols-3 gap-5 h-80" in:slide out:slide>
-		<div class="pb-3">
+		<!-- svelte-ignore a11y-mouse-events-have-key-events -->
+		<div class="pb-3"
+		on:mouseover={() => {
+			helpStore.show('domain');
+		}}>
 			<CodeEditor
 				id="domain"
 				initialValue={domainConstraint.domain}
@@ -77,9 +81,13 @@
 				}}
 			/>
 		</div>
+
 		<div class="pb-3 h-80">
 			<div id="itemstable" class="table-container h-80">
-				<table class="table w-full table-compact bg-tertiary-200 h-80">
+				<!-- svelte-ignore a11y-mouse-events-have-key-events -->
+				<table class="table w-full table-compact bg-tertiary-200 h-80" on:mouseover={() => {
+					helpStore.show('domainList');
+				}}>
 					<thead>
 						<tr class="bg-primary-300">
 							<th class="!p-2">Domain List</th>

@@ -1,11 +1,15 @@
 ﻿using BExIS.App.Bootstrap.Attributes;
 using BExIS.Dlm.Entities.Meanings;
 using BExIS.Dlm.Services.Meanings;
+using BExIS.Modules.Rpm.UI.Helpers;
+using BExIS.Modules.Rpm.UI.Models;
 using BExIS.UI.Helpers;
+using BExIS.UI.Models;
 using BExIS.Utils.Route;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net.Http;
 using System.Web.Helpers;
 using System.Web.Mvc;
@@ -35,22 +39,30 @@ namespace BExIS.Modules.Rpm.UI.Controllers
             using (var _meaningManager = new MeaningManager())
             {
                 List<Meaning> res = _meaningManager.getMeanings();
-                return Json(res, JsonRequestBehavior.AllowGet);
-            }
+                List<MeaningModel> resModel = new List<MeaningModel>();
 
+                if (res.Any())
+                {
+                    res.ForEach(m => resModel.Add(MeaningsHelper.ConvertTo(m)));
+                }
+                
+                return Json(resModel, JsonRequestBehavior.AllowGet);
+            }
         }
 
 
         [BExISAuthorizeAttribute]
         [JsonNetFilter]
         [System.Web.Http.HttpPost]
-        public JsonResult Create(Meaning data)
+        public JsonResult Create(MeaningModel data)
         {
             try {
 
                 using (var _meaningManager = new MeaningManager())
                 {
-                    Meaning res = _meaningManager.addMeaning(data);
+                    Meaning m = MeaningsHelper.ConvertTo(data);
+                    Meaning res = _meaningManager.addMeaning(m);
+                    
                     return Json(res);
                 }
 
@@ -66,13 +78,14 @@ namespace BExIS.Modules.Rpm.UI.Controllers
         [BExISAuthorizeAttribute]
         [JsonNetFilter]
         [System.Web.Http.HttpPost]
-        public JsonResult Update(Meaning data)
+        public JsonResult Update(MeaningModel data)
         {
             try
             {
                 using (var _meaningManager = new MeaningManager())
                 {
-                    Meaning res = _meaningManager.editMeaning(data);
+                    Meaning m = MeaningsHelper.ConvertTo(data);
+                    Meaning res = _meaningManager.editMeaning(m);
                     return Json(res);
                 }
 
@@ -117,21 +130,52 @@ namespace BExIS.Modules.Rpm.UI.Controllers
             using (var _meaningManager = new MeaningManager())
             {
                 List<ExternalLink> res = _meaningManager.getExternalLinks();
+                List<ExternalLinkModel> links = new List<ExternalLinkModel>();
+                res.ForEach(l => links.Add(MeaningsHelper.ConvertTo(l)));
+                return Json(links, JsonRequestBehavior.AllowGet);
+            }
+        }
+
+        [BExISAuthorize]
+        [JsonNetFilter]
+        [System.Web.Http.HttpGet]
+        public JsonResult GetLinkListItems()
+        {
+            using (var _meaningManager = new MeaningManager())
+            {
+
+                List<ExternalLink> res = _meaningManager.getExternalLinks();
+                List<ListItem> items = new List<ListItem>();
+                res.ForEach(l => items.Add(MeaningsHelper.ConvertToListItem(l)));
+
                 return Json(res, JsonRequestBehavior.AllowGet);
             }
         }
 
+        [JsonNetFilter]
+        public JsonResult GetConstraints()
+        {
+            VariableHelper helper = new VariableHelper();
+            List<ListItem> list = helper.GetConstraints();
+
+            return Json(list.OrderBy(l => l.Text), JsonRequestBehavior.AllowGet);
+
+        }
+
+
+
+
         [BExISAuthorizeAttribute]
         [JsonNetFilter]
         [System.Web.Http.HttpPost]
-        public JsonResult CreateLink(ExternalLink data)
+        public JsonResult CreateLink(ExternalLinkModel data)
         {
             try
             {
-
                 using (var _meaningManager = new MeaningManager())
                 {
-                    ExternalLink res = _meaningManager.addExternalLink(data);
+                    var link = MeaningsHelper.ConvertTo(data);
+                    ExternalLink res = _meaningManager.addExternalLink(link);
                     return Json(res);
                 }
 
@@ -145,13 +189,14 @@ namespace BExIS.Modules.Rpm.UI.Controllers
         [BExISAuthorizeAttribute]
         [JsonNetFilter]
         [System.Web.Http.HttpPost]
-        public JsonResult UpdateExternalLink(ExternalLink data)
+        public JsonResult UpdateExternalLink(ExternalLinkModel data)
         {
             try
             {
                 using (var _meaningManager = new MeaningManager())
                 {
-                    ExternalLink res = _meaningManager.editExternalLink(data);
+                    var link = MeaningsHelper.ConvertTo(data);
+                    ExternalLink res = _meaningManager.editExternalLink(link);
                     return Json(res);
                 }
 
@@ -183,6 +228,8 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                 throw new Exception("External link was not generated.", ex);
             }
         }
+
+
 
         #endregion;
 

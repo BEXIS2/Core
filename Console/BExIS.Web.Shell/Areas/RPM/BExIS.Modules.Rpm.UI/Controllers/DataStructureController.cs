@@ -433,14 +433,14 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                         updatedVariable.VariableTemplate = variableManager.GetVariableTemplate(variable.Template.Id);
                         updatedVariable.IsKey = variable.IsKey;
                         updatedVariable.IsValueOptional = variable.IsOptional;
-                        updatedVariable.VariableConstraints = variableHelper.ConvertTo(variable.Constraints);
+                        updatedVariable.VariableConstraints = variableHelper.ConvertTo(variable.Constraints, constraintsManager);
+                        updatedVariable.Meanings = variableHelper.ConvertTo(variable.Meanings, meaningManager);
 
                         // update missingValues
                         List<long> dbMVs = updatedVariable.MissingValues.Select(mv => mv.Id).ToList();
                         List<MissingValueItem> newMVs = variable.MissingValues.Where(mv => !dbMVs.Contains(mv.Id)).ToList();
                         if(newMVs.Any())
                         updatedVariable.MissingValues.ToList().AddRange(variableHelper.ConvertTo(newMVs));
-
                     }
                     else // create
                     {
@@ -458,7 +458,8 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                             "",
                             displayPattern,
                             variableHelper.ConvertTo(variable.MissingValues),
-                            variable.Constraints.Select(co => co.Id).ToList()
+                            variable.Constraints.Select(co => co.Id).ToList(),
+                            variable.Meanings.Select(co => co.Id).ToList()
                             );
 
                         variable.Id = updatedVariable.Id;

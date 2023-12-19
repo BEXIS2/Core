@@ -136,6 +136,8 @@ namespace BExIS.Dlm.Services.DataStructure
             using (IUnitOfWork uow = this.GetUnitOfWork())
             {
                 IRepository<VariableTemplate> repo = uow.GetRepository<VariableTemplate>();
+                IRepository<Constraint> constraintsRepo = uow.GetRepository<Constraint>();
+                IRepository<Meaning> meaningsRepo = uow.GetRepository<Meaning>();
                 var merged = repo.Get(entity.Id);
                 
                 merged.Approved = entity.Approved;
@@ -146,12 +148,30 @@ namespace BExIS.Dlm.Services.DataStructure
                 merged.MissingValues = entity.MissingValues;
                 merged.DisplayPatternId = entity.DisplayPatternId;
                 merged.IsValueOptional = entity.IsValueOptional;
-                merged.VariableConstraints = entity.VariableConstraints;
+         
                 merged.Label = entity.Label;
                 merged.MinCardinality = entity.MinCardinality;
                 merged.MaxCardinality = entity.MaxCardinality;
                 merged.Meanings = entity.Meanings;
-                merged.VariableConstraints = entity.VariableConstraints;
+
+                // add only constraints if new
+                // clean list 
+                merged.VariableConstraints = new List<Constraint>();
+
+                if (entity.VariableConstraints.Any()){ // if some exist
+                    var ids = entity.VariableConstraints.Select(c => c.Id); // get ids
+                    merged.VariableConstraints = constraintsRepo.Query(c => ids.Contains(c.Id)).ToList();// Load as Query from db
+                }
+
+                // add only meanings if new
+                // clean list 
+                merged.Meanings = new List<Meaning>();
+
+                if (entity.Meanings.Any())
+                { // if some exist
+                    var ids = entity.Meanings.Select(c => c.Id); // get ids
+                    merged.Meanings = meaningsRepo.Query(c => ids.Contains(c.Id)).ToList(); // Load as Query from db
+                }
 
                 repo.Put(merged);
                 uow.Commit();
@@ -230,10 +250,6 @@ namespace BExIS.Dlm.Services.DataStructure
             if (dataStructureId <= 0) throw new ArgumentNullException(nameof(dataStructureId), "dataStructureId must be greater then 0.");
             if (variableTemplateId <= 0) throw new ArgumentNullException(nameof(variableTemplateId), "variableTemplateId must be greater then 0.");
 
-
-
-
-
             using (IUnitOfWork uow = this.GetUnitOfWork())
             {
                 IRepository<VariableInstance> repo = uow.GetRepository<VariableInstance>();
@@ -285,7 +301,7 @@ namespace BExIS.Dlm.Services.DataStructure
         /// <param name="displayPatternId"></param>
         /// <returns></returns>
         /// <exception cref="ArgumentNullException"></exception>
-        public VariableInstance CreateVariable(string name, DataType dataType, Unit unit, long dataStructureId, bool isOptional, bool isKey, int orderNo, long variableTemplateId = 0, string description = "", string defaultValue = "",int displayPatternId = 0, List<MissingValue> missingValues = null, List<long> constraints = null)
+        public VariableInstance CreateVariable(string name, DataType dataType, Unit unit, long dataStructureId, bool isOptional, bool isKey, int orderNo, long variableTemplateId = 0, string description = "", string defaultValue = "",int displayPatternId = 0, List<MissingValue> missingValues = null, List<long> constraints = null, List<long> meanings = null)
         {
             // check incoming varaibles
             if (string.IsNullOrEmpty(name)) throw new ArgumentNullException(nameof(name), "name is empty but is required.");
@@ -321,6 +337,7 @@ namespace BExIS.Dlm.Services.DataStructure
                 IRepository<VariableTemplate> variableTemplateRepo = uow.GetRepository<VariableTemplate>();
                 IRepository<StructuredDataStructure> datastructureRepo = uow.GetRepository<StructuredDataStructure>();
                 IRepository<Constraint> constraintRepo = uow.GetRepository<Constraint>();
+                IRepository<Meaning> meaningRepo = uow.GetRepository<Meaning>();
 
                 var datastructure = datastructureRepo.Get(dataStructureId);
                 var variableTemplate = variableTemplateRepo.Get(variableTemplateId);
@@ -329,9 +346,14 @@ namespace BExIS.Dlm.Services.DataStructure
                 if(constraints!=null && constraints.Any())
                     cons = constraintRepo.Query().Where(c => constraints.Contains(c.Id))?.ToList();
 
+                List<Meaning> means = new List<Meaning>();
+                if (meanings != null && meanings.Any())
+                    means = meaningRepo.Query().Where(c => meanings.Contains(c.Id))?.ToList();
+
                 e.DataStructure = datastructure;
                 e.VariableTemplate = variableTemplate;
                 e.VariableConstraints = cons;
+                e.Meanings = means;
 
                 repo.Put(e);
                 uow.Commit();

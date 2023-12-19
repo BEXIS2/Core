@@ -167,6 +167,7 @@ export const getVariableTemplates = async () => {
 		return response.data;
 	} catch (error) {
 		console.error(error);
+		throw error;
 	}
 };
 
@@ -177,6 +178,8 @@ export const getMeanings = async () => {
 		return response.data;
 	} catch (error) {
 		console.error(error);
+		throw error;
+	
 	}
 };
 

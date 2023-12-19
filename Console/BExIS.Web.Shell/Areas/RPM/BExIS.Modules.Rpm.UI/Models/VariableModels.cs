@@ -160,21 +160,23 @@ namespace BExIS.Modules.Rpm.UI.Models
         public string Text { get; set; }
         public string Group { get; set; }
 
+        public List<string> Constraints { get; set; }
 
         public MeaningItem()
         {
             Id = 0;
             Text = "";
             Group = "";
+            Constraints = new List<string>();
 
         }
 
-        public MeaningItem(long _id, string _name, string _group="")
+        public MeaningItem(long _id, string _name, string _group="", List<string> _constraints = null)
         {
             Id = _id;
             Text = _name;
             Group = _group;
-
+            Constraints = _constraints==null?new List<string>():_constraints;
         }
 
     }
