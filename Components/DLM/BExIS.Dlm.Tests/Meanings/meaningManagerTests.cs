@@ -139,8 +139,8 @@ namespace BExIS.Dlm.Entities.Meanings.Tests
             meaning.Name = "Parent meaning name";
             meaning.ShortName = "Parent meaning name";
             meaning.Description = "Parent meaning description";
-            meaning.Selectable = (Selectable)Enum.Parse(typeof(Selectable), "1");
-            meaning.Approved = (Approved)Enum.Parse(typeof(Approved), "1");
+            meaning.Selectable = false;
+            meaning.Approved = false;
             Meaning res = _meaningManager.addMeaning(meaning);
             NUnit.Framework.Assert.IsNotNull(res);
         }
@@ -151,8 +151,8 @@ namespace BExIS.Dlm.Entities.Meanings.Tests
             meaning.Name = "1 Child meaning name";
             meaning.ShortName = "1 Child meaning name";
             meaning.Description = "1 Child meaning description";
-            meaning.Selectable = (Selectable)Enum.Parse(typeof(Selectable), "1");
-            meaning.Approved = (Approved)Enum.Parse(typeof(Approved), "1");
+            meaning.Selectable = false;
+            meaning.Approved = false;
             Meaning parent = _meaningManager.getMeanings().FirstOrDefault(x => x.Name == "Parent meaning name");
             Meaning res = _meaningManager.addMeaning(meaning);
             NUnit.Framework.Assert.IsNotNull(res);
@@ -161,8 +161,8 @@ namespace BExIS.Dlm.Entities.Meanings.Tests
             meaning.Name = "2 Child meaning name";
             meaning.ShortName = "2 Child meaning name";
             meaning.Description = "2 Child meaning description";
-            meaning.Selectable = (Selectable)Enum.Parse(typeof(Selectable), "1");
-            meaning.Approved = (Approved)Enum.Parse(typeof(Approved), "1");
+            meaning.Selectable = false;
+            meaning.Approved = false;
             parent = _meaningManager.getMeanings().FirstOrDefault(x => x.Name == "Parent meaning name");
             res = _meaningManager.addMeaning(meaning);
             NUnit.Framework.Assert.IsNotNull(res);

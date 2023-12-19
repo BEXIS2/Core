@@ -189,7 +189,7 @@ namespace BExIS.Utils.WebHelpers
             }
 
             if (childAccess)
-                return new MvcHtmlString($"<li class='dropdown'><a href='#' class='dropdown-toggle' data-toggle='dropdown' role='button' aria-haspopup='true' aria-expanded='false'><i class='fa fa-cog'></i></a><ul class='dropdown-menu seetings-menu'>" + sb.ToString() + $"</ul></li>");
+                return new MvcHtmlString($"<li class='dropdown'><a href='#' class='dropdown-toggle' data-toggle='dropdown' role='button' aria-haspopup='true' aria-expanded='false'><i class='fa fa-cog'></i></a><ul class='dropdown-menu seetings-menu' style='max-height: 90vh;overflow-y: scroll;'>" + sb.ToString() + $"</ul></li>");
             else
                 return new MvcHtmlString("");
         }

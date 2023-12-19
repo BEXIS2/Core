@@ -1,4 +1,6 @@
-﻿using BExIS.Dlm.Entities.Meanings;
+﻿using BExIS.Dlm.Entities.DataStructure;
+using BExIS.Dlm.Entities.Meanings;
+using BExIS.Dlm.Services.DataStructure;
 using BExIS.Dlm.Services.Meanings;
 using BExIS.Modules.Rpm.UI.Models;
 using BExIS.UI.Models;
@@ -11,6 +13,115 @@ namespace BExIS.Modules.Rpm.UI.Helpers
 {
     public class MeaningsHelper
     {
+        public static MeaningModel ConvertTo(Meaning meaning)
+        {
+            if (meaning == null) return null;
+            MeaningModel model = new MeaningModel();
+            model.Id = meaning.Id;
+            model.Name = meaning.Name;
+            if(meaning.Description!=null) model.Description = meaning.Description;
+            model.Approved = meaning.Approved;
+            model.Selectable = meaning.Selectable;
+
+            if (meaning.Related_meaning != null && meaning.Related_meaning.Any())
+            {
+                meaning.Related_meaning.ToList().ForEach(x => model.Related_meaning.Add(ConvertTo(x)));
+            }
+
+            if (meaning.ExternalLinks != null && meaning.ExternalLinks.Any())
+            {
+                meaning.ExternalLinks.ToList().ForEach(x => model.ExternalLinks.Add(ConvertTo(x)));
+            }
+
+            if (meaning.Constraints != null && meaning.Constraints.Any())
+            {
+                meaning.Constraints.ToList().ForEach(x => model.Constraints.Add(ConvertTo(x)));
+            }
+
+
+            return model;
+        }
+
+        public static Meaning ConvertTo(MeaningModel model)
+        { 
+            Meaning meaning = new Meaning();
+            meaning.Id = model.Id;
+            meaning.Name = model.Name;
+            meaning.Description = model.Description;
+            meaning.Approved = model.Approved;
+            meaning.Selectable = model.Selectable;
+
+            if (meaning.Related_meaning != null && meaning.Related_meaning.Any())
+            {
+                using (var meaningManager = new MeaningManager())
+                {
+                    var ids = model.Related_meaning.Select(m => m.Id);
+
+                    meaning.Related_meaning = meaningManager.getMeanings().Where(m=> ids.Contains(m.Id)).ToList();
+                }
+            }
+
+            if (model.ExternalLinks != null && model.ExternalLinks.Any())
+            {
+                model.ExternalLinks.ToList().ForEach(x => meaning.ExternalLinks.Add(ConvertTo(x)));
+            }
+
+            if (model.Constraints != null && model.Constraints.Any())
+            {
+                using (var constraintManager = new ConstraintManager())
+                {
+                    var ids = model.Constraints.Select(m => m.Id);
+                    var cs = constraintManager.ConstraintRepository.Query(c => ids.Contains(c.Id)).ToList();
+                    meaning.Constraints = cs;
+                }
+            }
+
+            return meaning;
+        }
+
+        public static MeaningEntry ConvertTo(MeaningEntryModel model)
+        {
+            MeaningEntry entry = new MeaningEntry();
+
+            using (var meaningManager = new MeaningManager())
+            {
+                if(model.MappingRelation!=null)
+                 entry.MappingRelation = meaningManager.getExternalLink(model.MappingRelation.Id);
+
+                if (model.MappedLinks.Any())
+                {
+                    var ids = model.MappedLinks.Select(m => m.Id);
+
+                    entry.MappedLinks = meaningManager.getExternalLinks().Where(e => ids.Contains(e.Id)).ToList();
+                }
+            }
+            return entry;
+        }
+
+
+        public static MeaningEntryModel ConvertTo(MeaningEntry entry)
+        {
+            MeaningEntryModel model = new MeaningEntryModel();
+            model.MappingRelation = ConvertToListItem(entry.MappingRelation);
+
+            if (entry.MappedLinks.Any())
+            {
+                entry.MappedLinks.ToList().ForEach(m=> model.MappedLinks.Add(ConvertToListItem(m)));
+            }
+
+            return model;
+        }
+
+        public static ListItem ConvertTo(Constraint constraint)
+        {
+            ListItem item = new ListItem();
+            item.Id = constraint.Id;
+            item.Text = constraint.Name;
+            item.Group = getConstraintType(constraint);
+            item.Description = constraint.FormalDescription;
+            return item;
+        }
+
         public static PrefixCategoryListItem ConvertTo(PrefixCategory prefixCategory)
         { 
             if (prefixCategory == null)
@@ -116,6 +227,15 @@ namespace BExIS.Modules.Rpm.UI.Helpers
                 Group = link.prefixCategory?.Name,
                 Url = link.URI
             };
+        }
+
+        private static string getConstraintType(Constraint c)
+        {
+            if (c is DomainConstraint) return "Domain";
+            if (c is RangeConstraint) return "Range";
+            if (c is PatternConstraint) return "Pattern";
+
+            return string.Empty;
         }
     }
 }

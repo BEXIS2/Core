@@ -106,14 +106,15 @@ namespace BExIS.Modules.Rpm.UI.Helpers
         {
             using (var meaningsManager = new MeaningManager())
             {
-                var meanings = meaningsManager.getMeanings();
+                var meanings = meaningsManager.getMeanings(); // get meanings from db
                 List<MeaningItem> list = new List<MeaningItem>();
 
                 if (meanings.Any())
                 {
-                    foreach (var item in meanings)
+                    // use only the meanings that are selectable and approved
+                    foreach (var item in meanings.Where(m=> (m.Selectable==true && m.Approved==true)))
                     {
-                        list.Add(new MeaningItem(item.Id, item.Name));
+                        list.Add(new MeaningItem(item.Id, item.Name,"", item.Constraints.Select(c=>c.Name).ToList()));
                     }
                 }
 
@@ -145,10 +146,13 @@ namespace BExIS.Modules.Rpm.UI.Helpers
             VariableTemplateItem item = new VariableTemplateItem();
             item.Id = variableTemplate.Id;
             item.Text = variableTemplate.Label;
-            item.Units = new List<string>() { variableTemplate.Unit.Name };
+            item.Units = new List<string>() { variableTemplate.Unit.Abbreviation };
             item.DataTypes = variableTemplate.Unit.AssociatedDataTypes.Select(x => x.Name).ToList();
             item.Meanings = variableTemplate.Meanings.Select(x => x.Name).ToList();
             item.Group = group;
+
+            if(variableTemplate.VariableConstraints.Any())
+                item.Constraints = variableTemplate.VariableConstraints.Select(x => x.Name).ToList();
 
             return item;
 
@@ -196,17 +200,21 @@ namespace BExIS.Modules.Rpm.UI.Helpers
 
         }
 
-        public List<Constraint> ConvertTo(ICollection<ListItem> constraints)
+        public List<Constraint> ConvertTo(ICollection<ListItem> constraints, ConstraintManager constraintManager)
         {
             List<Constraint> list = new List<Constraint>();
+            List<long> ids = constraints.Select(c => c.Id).ToList();
+            list = constraintManager.ConstraintRepository.Query(c => ids.Contains(c.Id)).ToList();
+            return list;
 
-            using (var constraintManager = new ConstraintManager())
-            {
-                List<long> ids = constraints.Select(c => c.Id).ToList();
-                list = constraintManager.ConstraintRepository.Query(c => ids.Contains(c.Id)).ToList();
-                return list;
-            }
+        }
 
+        public List<Meaning> ConvertTo(List<MeaningItem> meanings, MeaningManager meaningManager)
+        {
+            List<Meaning> list = new List<Meaning>();
+            List<long> ids = meanings.Select(c => c.Id).ToList();
+            list = meaningManager.getMeanings().Where(c => ids.Contains(c.Id)).ToList();
+            return list;
         }
 
         public VariableInstanceModel ConvertTo(VariableInstance variable)

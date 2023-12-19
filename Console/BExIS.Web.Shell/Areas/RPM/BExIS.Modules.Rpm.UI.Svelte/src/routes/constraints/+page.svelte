@@ -9,7 +9,10 @@
 		helpStore,
 		notificationStore,
 		notificationType,
-		TablePlaceholder
+		TablePlaceholder,
+
+		type helpItemType
+
 	} from '@bexis2/bexis2-core-ui';
 	import * as apiCalls from './services/apiCalls';
 	import Form from './components/form.svelte';
@@ -29,7 +32,15 @@
 	$: constraints = cs;
 	$: tableStore.set(cs);
 
+	//help
+	import help from './help/help.json';
+	let helpItems: helpItemType[] = help.helpItems;
+
 	onMount(async () => {});
+	{
+		helpStore.setHelpItemList(helpItems);
+		showForm = false;
+	}
 
 	async function reload(): Promise<void> {
 		showForm = false;

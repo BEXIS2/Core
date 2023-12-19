@@ -128,6 +128,10 @@ namespace BExIS.Modules.Rpm.UI.Controllers
             // get from settings, if template is required or not
             bool isTemplateRequired = (bool)ModuleManager.GetModuleSettings("RPM").GetValueByKey("isTemplateRequired");
             ViewData["isTemplateRequired"] = isTemplateRequired;
+
+            bool isMeaningRequired = (bool)ModuleManager.GetModuleSettings("RPM").GetValueByKey("isMeaningRequired");
+            ViewData["isMeaningRequired"] = isMeaningRequired;
+
             return View("Create");
         }
 
@@ -143,6 +147,9 @@ namespace BExIS.Modules.Rpm.UI.Controllers
             // get from settings, if template is required or not
             bool isTemplateRequired = (bool)ModuleManager.GetModuleSettings("RPM").GetValueByKey("isTemplateRequired");
             ViewData["isTemplateRequired"] = isTemplateRequired;
+
+            bool isMeaningRequired = (bool)ModuleManager.GetModuleSettings("RPM").GetValueByKey("isMeaningRequired");
+            ViewData["isMeaningRequired"] = isMeaningRequired;
 
             ViewData["dataExist"] = structureHelper.InUseAndDataExist(structureId);
             
@@ -433,14 +440,14 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                         updatedVariable.VariableTemplate = variableManager.GetVariableTemplate(variable.Template.Id);
                         updatedVariable.IsKey = variable.IsKey;
                         updatedVariable.IsValueOptional = variable.IsOptional;
-                        updatedVariable.VariableConstraints = variableHelper.ConvertTo(variable.Constraints);
+                        updatedVariable.VariableConstraints = variableHelper.ConvertTo(variable.Constraints, constraintsManager);
+                        updatedVariable.Meanings = variableHelper.ConvertTo(variable.Meanings, meaningManager);
 
                         // update missingValues
                         List<long> dbMVs = updatedVariable.MissingValues.Select(mv => mv.Id).ToList();
                         List<MissingValueItem> newMVs = variable.MissingValues.Where(mv => !dbMVs.Contains(mv.Id)).ToList();
                         if(newMVs.Any())
                         updatedVariable.MissingValues.ToList().AddRange(variableHelper.ConvertTo(newMVs));
-
                     }
                     else // create
                     {
@@ -458,13 +465,13 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                             "",
                             displayPattern,
                             variableHelper.ConvertTo(variable.MissingValues),
-                            variable.Constraints.Select(co => co.Id).ToList()
+                            variable.Constraints.Select(co => co.Id).ToList(),
+                            variable.Meanings.Select(co => co.Id).ToList()
                             );
 
                         variable.Id = updatedVariable.Id;
 
                         structure = structureManager.AddVariable(structure.Id, updatedVariable.Id);
-
                     }
 
                 }
@@ -472,13 +479,16 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                 // order vars based on orderNo
                 structure.Variables.OrderBy(v => v.OrderNo);
 
-                structureManager.UpdateStructuredDataStructure(structure);
-
+        
                 // compare all vars from model with from db
                 // delete all not existing variables from db
                 var varids = model.Variables.Select(v => v.Id);
                 var removeVars = structure.Variables.Where(v => !varids.Contains(v.Id));
-                removeVars.ToList().ForEach(v => structureManager.RemoveVariableUsage(v.Id));
+                //removeVars.ToList().ForEach(v => variableManager.DeleteVariable(v.Id));
+                removeVars.ToList().ForEach(v => structure.Variables.Remove(v));
+
+                structureManager.UpdateStructuredDataStructure(structure);
+
             }
 
             return Json(true, JsonRequestBehavior.AllowGet);

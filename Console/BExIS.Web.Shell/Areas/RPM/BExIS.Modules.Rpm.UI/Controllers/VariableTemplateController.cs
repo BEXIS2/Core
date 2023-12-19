@@ -36,7 +36,13 @@ namespace BExIS.Modules.Rpm.UI.Controllers
             using (var variableManager = new VariableManager())
             {
                 var variableTemplates = variableManager.VariableTemplateRepo.Get();
+              
                 variableTemplates.ToList().ForEach(vt => tmp.Add(helper.ConvertTo(vt)));
+
+                // set templates in use
+                List<long> inUse = variableManager.VariableInstanceRepo.Query(v => v.VariableTemplate != null).Select(v => v.VariableTemplate.Id).ToList();
+                tmp.ToList().ForEach(vt => vt.InUse = inUse.Contains(vt.Id));
+
             }
 
             return Json(tmp.ToArray(), JsonRequestBehavior.AllowGet);

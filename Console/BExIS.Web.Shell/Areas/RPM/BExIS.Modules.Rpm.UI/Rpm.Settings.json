@@ -32,6 +32,13 @@
       "description": "During data structure creation, variables are created. Is it mandatory to link these variables to templates."
     },
     {
+      "key": "isMeaningRequired",
+      "title": "Link variables to meanings",
+      "value": true,
+      "type": "Boolean",
+      "description": "During data structure creation, variables are created. Is it mandatory to link these variables to meanings."
+    },
+    {
       "key": "missingValues",
       "title": "Missing values",
       "value": [

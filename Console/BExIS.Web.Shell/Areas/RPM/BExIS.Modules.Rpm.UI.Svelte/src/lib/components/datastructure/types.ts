@@ -76,11 +76,12 @@ class VariableModel {
 }
 
 export class VariableTemplateModel extends VariableModel {
+
 	public constructor() {
 		super();
 		this.meanings = [];
 		this.constraints = [];
-		this.missingValues = []
+		this.missingValues = [];
 	}
 }
 
@@ -116,5 +117,9 @@ export interface templateListItemType extends listItemType {
 	dataTypes: string[];
 	units: string[];
 	meanings: string[];
+	constraints: string[];
+}
+
+export interface meaningListItemType extends listItemType {
 	constraints: string[];
 }

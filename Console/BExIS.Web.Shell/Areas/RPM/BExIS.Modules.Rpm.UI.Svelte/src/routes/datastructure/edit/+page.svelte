@@ -11,7 +11,7 @@
 	} from '$lib/components/datastructure/services';
 
 	import type { DataStructureEditModel } from '$lib/components/datastructure/types';
-	import { displayPatternStore, structureStore,isTemplateRequiredStore  } from '$lib/components/datastructure/store';
+	import { displayPatternStore, structureStore,isTemplateRequiredStore,isMeaningRequiredStore  } from '$lib/components/datastructure/store';
 	import { pageContentLayoutType } from '@bexis2/bexis2-core-ui';
 
 	// load attributes from div
@@ -37,6 +37,11 @@
 		// is used by validation
 		const isTemplateRequired= container?.getAttribute('isTemplateRequired') == 'true';
 		isTemplateRequiredStore.set(isTemplateRequired);
+
+				// get isTemplateRequired from settings and add it to store
+		// is used by validation
+		const isMeaningRequired = Boolean(container?.getAttribute('isMeaningRequired'));
+		isMeaningRequiredStore.set(isMeaningRequired);
 
 		console.log('edit structure',datastructureId);
 

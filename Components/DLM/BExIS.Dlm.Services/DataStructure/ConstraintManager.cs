@@ -114,8 +114,8 @@ namespace BExIS.Dlm.Services.DataStructure
 
             Contract.Ensures(Contract.Result<DomainConstraint>() != null && Contract.Result<DomainConstraint>().Id >= 0);
             
-            entity.CreationDate = DateTime.Parse(DateTime.Now.ToString(), System.Globalization.CultureInfo.InvariantCulture);
-            entity.LastModified = DateTime.Parse(DateTime.Now.ToString(), System.Globalization.CultureInfo.InvariantCulture);
+            entity.CreationDate = DateTime.Now;
+            entity.LastModified = DateTime.Now;
             entity.Dematerialize();
             using (IUnitOfWork uow = this.GetUnitOfWork())
             {

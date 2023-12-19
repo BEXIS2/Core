@@ -7,3 +7,4 @@ export const externalLinksStore = writable<externalLinkType[]>([]);
 export const prefixCategoryStore = writable<prefixCategoryType[]>([]);
 export const externalLinkTypesStore = writable<listItemType[]>([]);
 export const prefixesStore = writable<prefixListItemType[]>([]);
+export const constraintsStore = writable<listItemType[]>([]);

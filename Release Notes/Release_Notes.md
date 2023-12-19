@@ -1,37 +1,64 @@
-# BEXIS2 3.0 Release Notes
+# BEXIS2 3.0.0-beta Release Notes
 
-Workspace changes: 
-- updated EntityReferenceConfig.Xml: removed: IsCompiledBy & Compiles; description revision (if used compile before you should add again)
+_**Please note that this is a beta version.** It is not recommended to use this version in production._
+
+BEXIS2 version 3.0.0 is a major release. It contains a lot of changes in the background as well as in the UI. The most important changes are listed below.
+
+From this release, semantic versioning is used. The version number is composed of three numbers: major.minor.patch. The major version number is increased if there are breaking changes. The minor version number is increased if new features are added. The patch version number is increased if bugs are fixed.
+
+## Instructions for updating from 2.18.2 to 3.0.0-beta
+
+### Workspace changes:
 - all settings.xml are converted to JSON. Transfer your individual settings via the new Settings UI after the update of the code and workspace
+- updated EntityReferenceConfig.Xml:
+  - removed: IsCompiledBy & Compiles;
+  - description revision (if used compile before you should add again)
+- Workspace changes: [2.18.2..3.0.0.](https://github.com/BEXIS2/Workspace/compare/2.18.1...3.0.0.)
 
 
->**Database Update(s)**: [Update_Script_218to300.sql](https://github.com/BEXIS2/Core/blob/rc/database%20update%20scripts/Update_Script_218to300.sql](url)
+### Database Update(s):
+- very important: **backup your database before you start the update**
+- the underlying database structure has changed and extended. Data will be migrated, but a few SQL statements need to be adjusted
+  - please create your **entity templates** and update according to your datasets and entity template IDs after the update with the provided SQL
 
->**API changes**:
+- [Update_Script_218to300.sql](https://github.com/BEXIS2/Core/blob/rc/database%20update%20scripts/Update_Script_218to300.sql)
 
-## Tenant(s)
-
-In general, the system does not provide different tenants anymore. Instead, the workspace contains only one tenants called 'bexis2'.
-
-Additionally, to be more consistent, the configuration file (called 'manifest.xml') contains the new entry '<Brand>...</Brand>' which is used to enter the name of the image used within the menu bar. This is going to replace the wrong use of '<Logo>...</Logo>'. Please be aware of this update and react accordingly.
-
-For most instances, the favicon was not loaded correctly, because the referenced name of the file within 'manifest.xml' was not correct. Please be aware of that information as well and check/change the name within 'manifest.xml' of the active tenant.
->**Database update**: [Update_Script_218to2181.sql](https://github.com/BEXIS2/Core/blob/rc/database%20update%20scripts/Update_Script_218to2.18.1.sql)
-
-**Workspace changes:** [2.18.1...2.18.2](https://github.com/BEXIS2/Workspace/compare/2.18.1...2.18.2)
-
-### Bugs
-- Fix Requests are sent to old owner after change (https://github.com/BEXIS2/Core/issues/1108)
-- Fix Metadata Edit: xsd element type "xs:boolean" always disabled (https://github.com/BEXIS2/Core/issues/1106)
-- Fix Download data: Fails with filter if special characters in dataset title (https://github.com/BEXIS2/Core/issues/1105)
-- Fix Tabular primary data display problem "Displaying items 0 - 0 of 0" (https://github.com/BEXIS2/Core/issues/1116)
-- Fix Leading empty line inside each metadata input field (https://github.com/BEXIS2/Core/issues/1117)
-- Darwin Core archive: Add documentation to dim manual enhancement (https://github.com/BEXIS2/Core/issues/1104)
-- Code cleanup: Remove duplicate folder & consolidation of hamdi1992/core:master and bexis2/core:rc (https://github.com/BEXIS2/Core/issues/1107) (https://github.com/BEXIS2/Core/issues/1066) -->
+### API changes:
 
 
+### General Backend
+- Update of the .net framework to 4.8, nhibernate 5.3, and other libraries
+- Integration of the Vaiona library into the code
+- Improvements and setting up of Jenkins pipeline for development and deployment
+- Unit tests were added to most of the refactored backend functions
+- Revision of initial seed data for units, dimensions and data types
+- JWT support for authentication ([#1276](https://github.com/BEXIS2/Core/issues/1276))
+
+### General Frontend
+- Replacing Bootstrap by [TailwindCSS](https://tailwindcss.com/) and the UI framework [Skeleton](https://www.skeleton.dev/) for all refactored UI components
+- Creation of BEXIS2 Core UI NPM Packages for centralized maintenance of certain frequently used UI components like forms and tables. (help, page, forms …) ([npm](https://www.npmjs.com/package/@bexis2/bexis2-core-ui), [BEXIS2 Core UI Website](https://bexis2.github.io/bexis2-core-ui/))
+- Basic setup for E2E tests with playwright ([see here](https://github.com/BEXIS2/bexis2-core-ui-tests))
+- Refactoring and enhancement of UI Elements related to the menu, settings, entity templates, data description, and upload workflow have been refactored to Svelte. The remaining parts of the UI follow step by step.
+- Replacing of the header – content dividing block by a breadcrumb
+- Settings for modules to adjust, e.g., values or default text have a UI and can be changed without server access. This covers only settings which does not require a server restart.
+- Introduction of show/hide-able components (e.g., attachments, links, permissions) via entity templates instead of a global setting.
+- Dashboard: Rename to "My Data" ([#333](https://github.com/BEXIS2/Core/issues/333))
+
+### Bugfixes
+- Fixed: Wrong metadata system value for id, if file deleted in dataset ([#1346](https://github.com/BEXIS2/Core/issues/1346))
 
 
+### Refactoring dataset creation, data description and upload
+- Introduction of Entity Templates (see **Entity Templates**)
+- Extended / changes Variable Concept (see **Variable Concept**)
+- The different upload workflows have been combined to one. The user can freely decide which step he like to start. Create data structure or upload file. Validation is triggered automatically once the file or the data structure has changed.
+- Increased level of detail for validation errors
+- Data structures can be detected after uploading a file. The data type is analyzed using a random sample (value changeable in the settings). Descriptions can be read. Units can be read and will be mapped to existing units. Missing values can be added for each column.
+- Variable Templates are now treated as templates and no longer actively linked and used once selected for a variable. Instead, all information is copied to a variable.
+- Data structures are now optional. The unstructured type (for files) has been removed in favor of forcing information to be added in the metadata / not replicated.
+- Excel upload is in the current version not possible, but it will re-introduced in the future.
+- Excel Macros within the data structure are not supported anymore. The data structure is now a simple Excel file.
+- The upload of files is now possible via drag and drop. The upload of multiple files is possible.
 
-
-
+### DOI
+- DOI registration at DataCite is now possible via the UI. DOI support is only available for instances having an account at DataCite.

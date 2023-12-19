@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
+using System;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
 
@@ -47,11 +48,6 @@ namespace Vaiona.Utils.Cfg
 
     public class Entry
     {
-        public Entry()
-        {
-            Options = new List<dynamic>();
-        }
-
         [JsonProperty("description")]
         public string Description { get; set; }
 
@@ -59,7 +55,7 @@ namespace Vaiona.Utils.Cfg
         public string Key { get; set; }
 
         [JsonProperty("options", NullValueHandling = NullValueHandling.Ignore)]
-        public List<dynamic> Options { get; set; }
+        public List<string> Options { get; set; }
 
         [JsonProperty("title")]
         public string Title { get; set; }

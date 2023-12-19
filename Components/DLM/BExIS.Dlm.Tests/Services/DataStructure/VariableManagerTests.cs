@@ -173,7 +173,7 @@ namespace BExIS.Dlm.Tests.Services.DataStructure
                 var meaning = new Meaning();
                 meaning.Name = "Test";
                 meaning.Description = "Test";
-                meaning.Selectable = Selectable.yes;
+                meaning.Selectable = true;
                 meaning = meaningManager.addMeaning(meaning);
 
 
@@ -321,7 +321,7 @@ namespace BExIS.Dlm.Tests.Services.DataStructure
                 var meaning = new Meaning();
                 meaning.Name = "Test";
                 meaning.Description = "Test";
-                meaning.Selectable = Selectable.yes;
+                meaning.Selectable = true;
                 meaning = meaningManager.addMeaning(meaning);
 
 
@@ -1012,6 +1012,193 @@ namespace BExIS.Dlm.Tests.Services.DataStructure
                 //Act
                 var result = variableManager.DeleteVariable(variable.Id);
 
+
+                //Assert
+                Assert.IsTrue(result);
+
+            }
+        }
+        [Test]
+        public void DeleteVariable_WithMeaningAndConstraints_ReturnTrue()
+        {
+            using (var variableManager = new VariableManager())
+            using (var datastructureManager = new DataStructureManager())
+            using (var dataTypeManager = new DataTypeManager())
+            using (var unitManager = new UnitManager())
+            using (var meaningManager = new MeaningManager())
+            using (var constraintManager = new ConstraintManager())
+            {
+                //Arrange
+                var dataType = dataTypeManager.Repo.Get().FirstOrDefault();
+                Assert.IsNotNull(dataType, "datatype not exist");
+
+                var unit = unitManager.Repo.Get().FirstOrDefault();
+                Assert.IsNotNull(unit, "unit not exist");
+
+                //Variable Template
+                var variableTemplate = variableManager.CreateVariableTemplate(
+                    "TestVariableTemplate",
+                    dataType,
+                    unit,
+                    "TestVariableTemplate Description",
+                    "xyz"
+                    );
+
+                // Datastructure
+                var dataStructure = datastructureManager.CreateStructuredDataStructure(
+                    "Test Structure",
+                    "Test StrutcureDescription",
+                    null,
+                    null,
+                    DataStructureCategory.Generic,
+                    null
+                    );
+
+                //meaning
+                var meaning = meaningManager.addMeaning(
+                    "TestMeaning",
+                    "",
+                    "",
+                    true,
+                    true,
+                    new List<MeaningEntry>(),
+                    new List<long>(),
+                    new List<long>()
+                    );
+
+                List<long> meaningIds = new List<long>();
+                meaningIds.Add(meaning.Id);
+
+                //constraint
+                var constraint = constraintManager.Create(new DomainConstraint()
+                {
+                    Name = "TestConstraint",
+                    Description = ""
+                });
+                List<long> constraintIds = new List<long>();
+                constraintIds.Add(constraint.Id);
+
+                var variable = variableManager.CreateVariable(
+                    "TestVariable",
+                    variableTemplate.DataType,
+                    variableTemplate.Unit,
+                    dataStructure.Id,
+                    true,
+                    true,
+                    1,
+                    variableTemplate.Id,
+                    "",
+                    "",
+                    0,
+                    null,
+                    constraintIds,
+                    meaningIds);
+
+                //Act
+                var result = variableManager.DeleteVariable(variable.Id);
+
+
+                //Assert
+                Assert.IsTrue(result);
+
+            }
+        }
+
+        [Test]
+        public void DeleteVariable_ConstraintsBindedMultiTimes_ReturnTrue()
+        {
+            using (var variableManager = new VariableManager())
+            using (var datastructureManager = new DataStructureManager())
+            using (var dataTypeManager = new DataTypeManager())
+            using (var unitManager = new UnitManager())
+            using (var meaningManager = new MeaningManager())
+            using (var constraintManager = new ConstraintManager())
+            {
+                //Arrange
+                var dataType = dataTypeManager.Repo.Get().FirstOrDefault();
+                Assert.IsNotNull(dataType, "datatype not exist");
+
+                var unit = unitManager.Repo.Get().FirstOrDefault();
+                Assert.IsNotNull(unit, "unit not exist");
+
+                //Variable Template
+                var variableTemplate = variableManager.CreateVariableTemplate(
+                    "TestVariableTemplate",
+                    dataType,
+                    unit,
+                    "TestVariableTemplate Description",
+                    "xyz"
+                    );
+
+                // Datastructure
+                var dataStructure = datastructureManager.CreateStructuredDataStructure(
+                    "Test Structure",
+                    "Test StrutcureDescription",
+                    null,
+                    null,
+                    DataStructureCategory.Generic,
+                    null
+                    );
+
+                //meaning
+                var meaning = meaningManager.addMeaning(
+                    "TestMeaning",
+                    "",
+                    "",
+                    true,
+                    true,
+                    new List<MeaningEntry>(),
+                    new List<long>(),
+                    new List<long>()
+                    );
+
+                List<long> meaningIds = new List<long>();
+                meaningIds.Add(meaning.Id);
+
+                //constraint
+                var constraint = constraintManager.Create(new DomainConstraint()
+                {
+                    Name = "domainTest",
+                    Description = "domainTest"
+                });
+                List<long> constraintIds = new List<long>();
+                constraintIds.Add(constraint.Id);
+
+                var variable = variableManager.CreateVariable(
+                    "TestVariable",
+                    variableTemplate.DataType,
+                    variableTemplate.Unit,
+                    dataStructure.Id,
+                    true,
+                    true,
+                    1,
+                    variableTemplate.Id,
+                    "",
+                    "",
+                    0,
+                    null,
+                    constraintIds,
+                    meaningIds
+                    );
+
+                var variable2 = variableManager.CreateVariable(
+                    "TestVariable2",
+                    variableTemplate.DataType,
+                    variableTemplate.Unit,
+                    dataStructure.Id,
+                    true,
+                    true,
+                    1,
+                    variableTemplate.Id,
+                    "",
+                    "",
+                    0,
+                    null,
+                    constraintIds,
+                    meaningIds);
+
+                //Act
+                var result = variableManager.DeleteVariable(variable.Id);
 
                 //Assert
                 Assert.IsTrue(result);

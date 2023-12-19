@@ -23,13 +23,18 @@
 	 <column name="Description" />
 	</property>
 
-	<property name="Approved" type="BExIS.Dlm.Entities.Meanings.Approved, BExIS.Dlm.Entities">
+	<property name="Approved" type="Boolean">
 	 <column name="Approved"/>
 	</property>
 
-	<property name="Selectable" type="BExIS.Dlm.Entities.Meanings.Selectable, BExIS.Dlm.Entities">
+	<property name="Selectable" type="Boolean">
 	 <column name="Selectable"/>
 	</property>
+
+	  <set name="Constraints" inverse="false" table="rpm_meaning_constraints" lazy="true" cascade="save-update">
+		  <key column="MeaningRef"/>
+		  <many-to-many column="ConstraintRef" class="BExIS.Dlm.Entities.DataStructure.Constraint"/>
+	  </set>
 	  
 	  <bag name="Related_meaning" inverse="true" cascade="all" table="rpm_Meaning_Related_meaning">
 		  <key column="MeaningRef" />

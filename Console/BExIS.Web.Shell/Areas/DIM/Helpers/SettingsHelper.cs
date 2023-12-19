@@ -2,9 +2,11 @@
 using BExIS.Modules.Dim.UI.Configurations;
 using BExIS.Xml.Helpers;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Web.Helpers;
 using System.Xml.Linq;
 using Vaiona.Utils.Cfg;
 using Vaiona.Web.Mvc.Modularity;
@@ -28,7 +30,7 @@ namespace BExIS.Modules.Dim.UI.Helpers
             return JsonConvert.DeserializeObject<DataCiteDOICredentials>(entry.Value);
         }
 
-        public DataCiteDOIPlaceholders GetDataCiteDOIMappings()
+        public DataCiteDOIMappings GetDataCiteDOIMappings()
         {
             var entry = _settings.GetValueByKey("dataCiteDOIMappings") as Entry;
 
