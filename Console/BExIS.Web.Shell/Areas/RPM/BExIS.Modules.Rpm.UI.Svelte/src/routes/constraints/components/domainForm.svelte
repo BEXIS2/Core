@@ -50,7 +50,10 @@
 		let dis: string[] = [];
 		let lines = domain.split('\n');
 		lines.forEach(function (value) {
+			if(value != undefined && value != '' && dis.filter((di) => di === value).length == 0)	
+			{
 				dis.push(value);
+			}
 		});
 		return dis;
 	}
