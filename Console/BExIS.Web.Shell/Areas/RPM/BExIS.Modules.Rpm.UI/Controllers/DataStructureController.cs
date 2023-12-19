@@ -465,7 +465,6 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                         variable.Id = updatedVariable.Id;
 
                         structure = structureManager.AddVariable(structure.Id, updatedVariable.Id);
-
                     }
 
                 }
@@ -473,13 +472,16 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                 // order vars based on orderNo
                 structure.Variables.OrderBy(v => v.OrderNo);
 
-                structureManager.UpdateStructuredDataStructure(structure);
-
+        
                 // compare all vars from model with from db
                 // delete all not existing variables from db
                 var varids = model.Variables.Select(v => v.Id);
                 var removeVars = structure.Variables.Where(v => !varids.Contains(v.Id));
-                removeVars.ToList().ForEach(v => structureManager.RemoveVariableUsage(v.Id));
+                //removeVars.ToList().ForEach(v => variableManager.DeleteVariable(v.Id));
+                removeVars.ToList().ForEach(v => structure.Variables.Remove(v));
+
+                structureManager.UpdateStructuredDataStructure(structure);
+
             }
 
             return Json(true, JsonRequestBehavior.AllowGet);
