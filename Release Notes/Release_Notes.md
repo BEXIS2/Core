@@ -18,9 +18,7 @@ Additionally, to be more consistent, the configuration file (called 'manifest.xm
 For most instances, the favicon was not loaded correctly, because the referenced name of the file within 'manifest.xml' was not correct. Please be aware of that information as well and check/change the name within 'manifest.xml' of the active tenant.
 >**Database update**: [Update_Script_218to2181.sql](https://github.com/BEXIS2/Core/blob/rc/database%20update%20scripts/Update_Script_218to2.18.1.sql)
 
-
-
-**Workspace changes:** [2.18...2.18.1](https://github.com/BEXIS2/Workspace/compare/2.18...2.18.1)
+**Workspace changes:** [2.18.1...2.18.2](https://github.com/BEXIS2/Workspace/compare/2.18.1...2.18.2)
 
 ### Bugs
 - Fix Requests are sent to old owner after change (https://github.com/BEXIS2/Core/issues/1108)
