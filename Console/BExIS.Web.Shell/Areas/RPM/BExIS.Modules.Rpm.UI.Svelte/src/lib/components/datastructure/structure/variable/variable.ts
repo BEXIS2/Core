@@ -1,5 +1,5 @@
 import { create, test, enforce, only, skipWhen } from 'vest';
-import { isTemplateRequiredStore } from '../../store';
+import { isTemplateRequiredStore, isMeaningRequiredStore } from '../../store';
 import { get } from 'svelte/store';
 
 const suite = create((data = {}, fieldName) => {
@@ -8,7 +8,7 @@ const suite = create((data = {}, fieldName) => {
 
 	const dataTypeWithDisplaypattern = ['date', 'time', 'datetime'];
 	const isTemplateRequired = get(isTemplateRequiredStore);
-
+	const isMeaningRequired = get(isMeaningRequiredStore);
 	//only(fieldName);
 	test('name', 'name is required', () => {
 		enforce(data.name).isNotBlank();
@@ -80,7 +80,6 @@ const suite = create((data = {}, fieldName) => {
 					return true;
 				}
 				
-				console.log("🚀 ~ file: variable.ts:84 ~ test ~ data:", data)
 				if (data.template.units.includes(data.unit.text)) {
 					return true;
 				} else {
@@ -101,6 +100,18 @@ const suite = create((data = {}, fieldName) => {
 		enforce(data.template).isNotNull();
 		enforce(data.template.text).isNotUndefined();
 		enforce(data.template.text).isNotEmpty();
+	});
+
+	// Meanings
+	test('Meanings', 'meanings are required', () => {
+		//console.log("unit",data.unit);
+
+		if (!isMeaningRequiredStore) {
+			return true;
+		}
+
+		enforce(data.meanings).isNotNull();
+		enforce(data.meanings.size).greaterThan(0);
 	});
 
 	skipWhen(
