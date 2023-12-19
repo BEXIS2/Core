@@ -19,16 +19,18 @@ export class ReadSettingModel {
 export class UpdateSettingModel {
     name:string;
     description:string;
-    entries:Array<ReadEntryModel>
+    entries:Array<UpdateEntryModel>;
 
     constructor(json: any)
     {
         this.name = json.name;
-        this.description = json.description;
+        this.description = json.description
 
-        json.entries.forEach(function (entry) {
-            this.entries.push(entry)
-          });
+        this.entries = new Array<UpdateEntryModel>();
+
+        json.entries.forEach(entry => {
+            this.entries.push(new UpdateEntryModel(entry));
+        })
     }
 }
 
@@ -38,7 +40,7 @@ export class ReadEntryModel{
     value:any;
     type:string;
     description:string;
-    options:any[];
+    options:string[];
 
     constructor(json: any)
     {
@@ -48,5 +50,24 @@ export class ReadEntryModel{
         this.type = json.type;
         this.description = json.description;
         this.options = json.options;
+    }
+}
+
+export class UpdateEntryModel{
+    key:string;
+    title:string;
+    value:any;
+    type:string;
+    description:string;
+    options:string[];
+
+    constructor(json: any)
+    {
+        this.key = json.key;
+        this.title = json.title;
+        this.type = json.type;
+        this.description = json.description;
+        this.options = json.options;
+        this.value = JSON.stringify(json.value);
     }
 }

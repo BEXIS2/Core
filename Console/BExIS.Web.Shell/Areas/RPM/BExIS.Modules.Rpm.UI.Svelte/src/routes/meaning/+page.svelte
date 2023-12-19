@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { Modal, getModalStore, type ModalSettings } from '@skeletonlabs/skeleton';
-	import { getMeanings, remove, update, getLinks } from './services';
+	import { getMeanings,getConstraints, remove, update, getLinks } from './services';
 	import { MeaningModel, type externalLinkType } from '$lib/components/meaning/types';
 	import {
 		Page,
@@ -15,7 +15,7 @@
 
 	import Fa from 'svelte-fa';
 	import { faPlus} from '@fortawesome/free-solid-svg-icons';
-	import { externalLinksStore, meaningsStore } from '$lib/components/meaning/stores';
+	import { externalLinksStore, meaningsStore, constraintsStore } from '$lib/components/meaning/stores';
 	import { fade, slide } from 'svelte/transition';
 	import TableIsApproved from './table/tableIsApproved.svelte';
 	import TableExnternalLink from './table/tableExnternalLink.svelte';
@@ -39,6 +39,10 @@
 		meanings = await getMeanings();
 	 meaningsStore.set(meanings);
 
+		// get constraints
+		const constraints = await getConstraints();
+	 constraintsStore.set(constraints);
+
 		// get external links
 		const externalLinks = await getLinks();
 		externalLinksStore.set(externalLinks);
@@ -61,7 +65,7 @@
 							},
 							description: {
 								disableFiltering: true,
-								exclude: true
+								exclude: false
 							},
 							externalLinks: {
 								header: 'External Link',
@@ -72,6 +76,7 @@
 								exclude: true
 							},
 							id: {
+								fixedWidth: 60,
 								disableFiltering: true,
 								exclude: false
 							},
@@ -93,6 +98,10 @@
 								},
 								disableFiltering: true,
 								exclude: false
+							},
+							constraints: {
+								disableFiltering: true,
+								exclude: true
 							},
 							optionsColumn: {
 								fixedWidth: 100

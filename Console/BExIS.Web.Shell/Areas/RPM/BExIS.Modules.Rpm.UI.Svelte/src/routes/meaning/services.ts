@@ -32,6 +32,16 @@ export const getLinks = async () => {
 	}
 };
 
+export const getConstraints = async () => {
+	try {
+		const response = await Api.get('/rpm/Meaning/getConstraints');
+		return response.data;
+	} catch (error) {
+		console.error(error);
+		throw error;
+	}
+};
+
 export const remove = async (id) => {
 	try {
 		const response = await Api.delete('/rpm/Meaning/delete?id='+id,null);

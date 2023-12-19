@@ -192,7 +192,7 @@ import { update } from './services'
 
 
 <form on:submit|preventDefault={submit}>
-<div id="variable-{variable.id}-form" class="flex-colspace-y-5 card shadow-md p-5 ">
+<div id="variable-{variable.id}-form" class="flex-col space-y-5 card shadow-md p-5 ">
 
 	<div class="flex gap-5">
 		<div class="grow">
@@ -225,8 +225,6 @@ import { update } from './services'
 
 	</div>
 	
-
-
 	<div class="flex gap-5">
 		<div class="grow w-1/2">
 		<MultiSelect
@@ -277,12 +275,13 @@ import { update } from './services'
 
 
 		<!--Missing Values-->
-		<div class="py-5" id="missingvaluesContainer" on:mouseover={() => {
+		<div id="missingvaluesContainer" on:mouseover={() => {
 			helpStore.show('missingvaluesContainer');
 		}}>
    <MissingValues bind:list={variable.missingValues}></MissingValues>
 	 </div>
 
+	<div>
 		<MultiSelect
 		id="links"
 		title="Meanings"
@@ -297,7 +296,8 @@ import { update } from './services'
 		placeholder="-- Please select --"
 		{loading}
 	/>
-
+</div>
+<div>
 	<MultiSelect
 		id="constraints"
 		title="Constraints"
@@ -312,8 +312,9 @@ import { update } from './services'
 		placeholder="-- Please select --"
 		{loading}
 	/>
+</div>
 
-	<div class="flex gap-5 py-5">
+	<div class="flex gap-5">
 			<SlideToggle name="Approved" bind:checked={variable.approved} on:change>{"Approved"}</SlideToggle>
 	</div>
 
@@ -336,6 +337,5 @@ import { update } from './services'
 				<Fa icon={faSave} /></button>
 		</div>
 </div>
-
 
 </form>

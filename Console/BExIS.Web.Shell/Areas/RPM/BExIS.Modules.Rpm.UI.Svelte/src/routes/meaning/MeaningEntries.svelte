@@ -13,14 +13,14 @@
 	let releationList = $externalLinksStore.filter(
 		(e) => e.type?.id == externalLinkTypeEnum.relationship
 	).map((l)=> {
-		return {id:l.id,text:l.name,group:""}
+		return {id:l.id,text:l.name,group:"",description:""}
 	})
 
 	console.log('🚀 ~ file: MeaningEntry.svelte:10 ~ releationList:', releationList);
 	let othersList = $externalLinksStore.filter(
 		(e) => e.type?.id != externalLinkTypeEnum.relationship && e.type?.id != externalLinkTypeEnum.prefix
 	).map((l)=> {
-		return {id:l.id,text:l.name,group:l.type?.text}
+		return {id:l.id,text:l.name,group:l.type?.text, description:""}
 	});
 	console.log('🚀 ~ file: MeaningEntry.svelte:12 ~ othersList:', othersList);
 

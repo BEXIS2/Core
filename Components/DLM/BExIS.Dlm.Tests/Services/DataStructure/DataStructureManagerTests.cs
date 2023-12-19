@@ -37,6 +37,5 @@ namespace BExIS.Dlm.Tests.Services.DataStructure
 
         }
 
-       
     }
 }

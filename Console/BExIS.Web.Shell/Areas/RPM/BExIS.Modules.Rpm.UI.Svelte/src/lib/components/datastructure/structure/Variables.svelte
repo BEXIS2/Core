@@ -49,7 +49,6 @@
 		meaningsStore.set(meanings);
 
 		const constraints = await getConstraints();
-		console.log("🚀 ~ file: Variables.svelte:53 ~ onMount ~ constraints:", constraints)
 		constraintsStore.set(constraints);
 
 		fillVariableValdationStates(variables);
@@ -145,16 +144,8 @@
 
 	function addFn()
 	{
-			
-			console.log("🚀 ~ file: Variables.svelte:149 ~ variables:", variables)
-
-
-				console.log("🚀 ~ file: Variables.svelte:149 ~ variables:", variables)
 				var v = new VariableInstanceModel();
 				variables = [...variables, v];
-				console.log("after addin new var in to the array",variables )
-
-
 	}
 
 	function copyFn(i:number)
