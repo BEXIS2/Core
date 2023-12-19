@@ -115,7 +115,6 @@
 	afterUpdate(() => {
 
 		displayPattern = updateDisplayPattern(variable.dataType, false);
-		console.log("🚀 ~ file: Variable.svelte:119 ~ afterUpdate ~ variable:", variable)
 		res = suite(variable,"");
 		setValidationState(res);
 

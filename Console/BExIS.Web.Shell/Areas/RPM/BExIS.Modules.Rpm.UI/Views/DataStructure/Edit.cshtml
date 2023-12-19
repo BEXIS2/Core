@@ -8,11 +8,15 @@
 
     long structureId = 0;
     string dataExist = "false";
+    string isTemplateRequired = "false";
+    string isMeaningRequired = "false";
 
     if (ViewData["structureId"] != null) { structureId = Convert.ToInt64(ViewData["structureId"]); }
     if (ViewData["dataExist"] != null) { dataExist = ViewData["dataExist"].ToString(); }
+    if (ViewData["isTemplateRequired"] != null) { isTemplateRequired = ViewData["isTemplateRequired"].ToString(); }
+    if (ViewData["isMeaningRequired"] != null) { isMeaningRequired = ViewData["isMeaningRequired"].ToString(); }
 }
 
-<div id="datastructure" structure="@structureId" dataExist="@dataExist">
+<div id="datastructure" structure="@structureId" dataExist="@dataExist" isTemplateRequired="@isTemplateRequired" isMeaningRequired="@isMeaningRequired">
     @Html.Partial("_sveltePage")
 </div>
