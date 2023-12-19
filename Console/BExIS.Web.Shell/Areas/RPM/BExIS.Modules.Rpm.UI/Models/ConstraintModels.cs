@@ -33,8 +33,8 @@ namespace BExIS.Modules.Rpm.UI.Models
                 Negated = constraint.Negated,
                 InUse = constraint.DataContainer != null && constraint.DataContainer.Id > 0 || constraint.VariableConstraints.Any(),
                 VariableIDs = constraint.VariableConstraints.Select(v => v.Id).ToList(),
-                CreationDate = constraint.CreationDate != null ? constraint.CreationDate.ToString("MMMM d, HH:mm:ss") : "",
-                LastModified = constraint.LastModified != null ? constraint.LastModified.ToString("MMMM d, HH:mm:ss") : "",
+                CreationDate = constraint.CreationDate != null ? constraint.CreationDate.ToString("MMMM d, HH:mm:ss", System.Globalization.CultureInfo.InvariantCulture) : "",
+                LastModified = constraint.LastModified != null ? constraint.LastModified.ToString("MMMM d, HH:mm:ss", System.Globalization.CultureInfo.InvariantCulture) : "",
  
             };
         }
