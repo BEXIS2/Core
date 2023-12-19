@@ -128,6 +128,10 @@ namespace BExIS.Modules.Rpm.UI.Controllers
             // get from settings, if template is required or not
             bool isTemplateRequired = (bool)ModuleManager.GetModuleSettings("RPM").GetValueByKey("isTemplateRequired");
             ViewData["isTemplateRequired"] = isTemplateRequired;
+
+            bool isMeaningRequired = (bool)ModuleManager.GetModuleSettings("RPM").GetValueByKey("isMeaningRequired");
+            ViewData["isMeaningRequired"] = isMeaningRequired;
+
             return View("Create");
         }
 
@@ -143,6 +147,9 @@ namespace BExIS.Modules.Rpm.UI.Controllers
             // get from settings, if template is required or not
             bool isTemplateRequired = (bool)ModuleManager.GetModuleSettings("RPM").GetValueByKey("isTemplateRequired");
             ViewData["isTemplateRequired"] = isTemplateRequired;
+
+            bool isMeaningRequired = (bool)ModuleManager.GetModuleSettings("RPM").GetValueByKey("isMeaningRequired");
+            ViewData["isMeaningRequired"] = isMeaningRequired;
 
             ViewData["dataExist"] = structureHelper.InUseAndDataExist(structureId);
             

@@ -20,7 +20,8 @@
 	import {
 		displayPatternStore,
 		structureStore,
-		isTemplateRequiredStore
+		isTemplateRequiredStore,
+		isMeaningRequiredStore
 	} from '$lib/components/datastructure/store';
 	import { pageContentLayoutType } from '@bexis2/bexis2-core-ui';
 
@@ -49,6 +50,12 @@
 		// is used by validation
 		const isTemplateRequired = Boolean(container?.getAttribute('isTemplateRequired'));
 		isTemplateRequiredStore.set(isTemplateRequired);
+
+		// get isTemplateRequired from settings and add it to store
+		// is used by validation
+		const isMeaningRequired = Boolean(container?.getAttribute('isMeaningRequired'));
+		console.log("🚀 ~ file: +page.svelte:57 ~ start ~ isMeaningRequired:", isMeaningRequired)
+		isMeaningRequiredStore.set(isMeaningRequired);
 
 		console.log('start structure suggestion', entityId, version, file, datastructureId);
 
