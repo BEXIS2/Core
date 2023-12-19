@@ -10,49 +10,56 @@
     <!--<Dependency moduleId="dcm" version="*.*.*" />-->
   </Dependencies>
   <Exports>
-    <Export tag="menubar" id="ManageDataStructures" order="1"
-            title="Manage Data Structures" description="Edit, Create or Delet Data Structures" icon=""
-            controller="DataStructure" action="" argument=""
-            extends="./menubarRoot/Plan"/>
-	  
-    <Export tag="menubar" id="ManageUnits" order="2"
-            title="Manage Units" description="Edit, Create or Delet Units" icon=""
-            controller="Unit" action="" argument=""
-            extends="./menubarRoot/Plan"/>
     
     <Export tag="lunchbar" id="helpRpm" order="4"
-        title="Data Structure" description="Data Planning Help Manual" icon=""
-        controller="Help" action="index"
-        extends="./lunchbarRoot/help"
-            />
+            title="Data Structure" description="Data Planning Help Manual" icon=""
+            controller="Help" action="index"
+            extends="./lunchbarRoot/help"/>
+
+	<Export tag="settings" id="ManageDataStructures" order="1"
+            title="Manage Data Structures" description="Edit, Create or Delet Data Structures" icon=""
+            controller="DataStructure" action="" argument=""
+            extends="./settingsRoot" />
     
-    <Export tag="settings" id="ManageVariableTemplates" order="1"
+    <Export tag="settings" id="ManageVariableTemplates" order="2"
             title="Manage Variable Templates" description="Edit, Create or Delet Variable Templates" icon=""
             controller="VariableTemplate" action="" argument=""
             extends="./settingsRoot" />
 
-    <Export tag="settings" id="ManageUnits" order="2"
+    <Export tag="settings" id="ManageUnits" order="3"
             title="Manage Units" description="Edit, Create or Delet Units" icon=""
             controller="Unit" action="" argument=""
             extends="./settingsRoot" />
-    <Export tag="settings" id="ManageDataTypes" order="3"
+	  
+	<Export tag="settings" id="ManageConstraints" order="4"
+            title="Manage Constraints" description="Edit, Create or Delet Constraints" icon=""
+            controller="Constraints" action="" argument=""
+            extends="./settingsRoot" />
+	  
+    <Export tag="settings" id="ManageDataTypes" order="5"
             title="Manage Data Types" description="Edit, Create or Delet Data Types" icon=""
             controller="DataType" action="" argument=""
             extends="./settingsRoot" />
-	<Export tag="settings" id="ManageMeanings" order="4"
-		  title="Manage Meanings" description="Edit, Create or Delete Meanings" icon=""
-		  controller="Meaning" action="" argument=""
-		  extends="./settingsRoot" />
 	  
-	  <Export tag="settings" id="ManageExternalLinks" order="4"
-		  title="Manage External Links" description="Edit, Create or Delete External Links" icon=""
-		  controller="ExternalLink" action="" argument=""
-		  extends="./settingsRoot" />
+	<Export tag="settings" id="ManageDimensions" order="6"
+			title="Manage Dimensions" description="Edit, Create or Delet Dimensions" icon=""
+			controller="Dimension" action="" argument=""
+			extends="./settingsRoot" />
 	  
-	  <Export tag="settings" id="ManagePrefixCategory" order="4"
-		  title="Manage Prefix Category" description="Edit, Create or Delete Prefix Categories" icon=""
-		  controller="ExternalLink" action="PrefixCategory" argument=""
-		  extends="./settingsRoot" />
+	<Export tag="settings" id="ManageMeanings" order="7"
+		    title="Manage Meanings" description="Edit, Create or Delete Meanings" icon=""
+		    controller="Meaning" action="" argument=""
+		    extends="./settingsRoot" />
+	  
+	  <Export tag="settings" id="ManageExternalLinks" order="8"
+		    title="Manage External Links" description="Edit, Create or Delete External Links" icon=""
+		    controller="ExternalLink" action="" argument=""
+		    extends="./settingsRoot" />
+	  
+	  <Export tag="settings" id="ManagePrefixCategory" order="9"
+		    title="Manage Prefix Category" description="Edit, Create or Delete Prefix Categories" icon=""
+		    controller="ExternalLink" action="PrefixCategory" argument=""
+		    extends="./settingsRoot" />
 
     <Export tag="internalApi" id="DataStructureEdit"
             title="DataStructure Edit" description="" icon=""

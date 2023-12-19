@@ -1,26 +1,14 @@
-﻿using BExIS.App.Bootstrap;
-using BExIS.App.Bootstrap.Attributes;
+﻿using BExIS.App.Bootstrap.Attributes;
 using BExIS.UI.Helpers;
 using BExIS.UI.Models;
-using BExIS.Utils;
 using BExIS.Utils.Config;
-using BExIS.Utils.Route;
 using BExIS.Web.Shell.Models;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.IO;
 using System.Linq;
-using System.Net.Http;
-using System.Net;
-using System.Threading.Tasks;
-using System.Web;
 using System.Web.Mvc;
-using System.Xml;
-using System.Xml.Linq;
-using Vaiona.IoC;
 using Vaiona.Utils.Cfg;
 using Vaiona.Web.Mvc.Modularity;
 using ModuleSettings = Vaiona.Web.Mvc.Modularity.ModuleSettings;
@@ -85,12 +73,28 @@ namespace BExIS.Web.Shell.Controllers
             return View();
         }
 
-        [JsonNetFilter]
         [HttpPut]
         public JsonResult PutSettingsByModuleId(string moduleId, UpdateSettingModel model)
         {
             try
             {
+                foreach (var entry in model.Entries)
+                {
+                    if (entry.Value == null)
+                        continue;
+
+                    switch (entry.Type)
+                    {
+                        case EntryType.EntryList:
+                            entry.Value = JsonConvert.DeserializeObject<List<Vaiona.Utils.Cfg.Entry>>(entry.Value);
+                            break;
+
+                        default:
+                            entry.Value = JsonConvert.DeserializeObject(entry.Value);
+                            break;
+                    }
+                }
+
                 if (moduleId == "shell")
                 {
                     GeneralSettings settings = GeneralSettings.Get();

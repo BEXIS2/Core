@@ -21,7 +21,6 @@ export const getByModuleId = async (id:string) => {
 
 export const putByModuleId = async (id:string, model:UpdateSettingModel) => {
     try {
-        console.log(model);
         const response = await Api.put(`/Settings/PutSettingsByModuleId?moduleId=${id}`, model);
         return response;
     } catch (error) {
