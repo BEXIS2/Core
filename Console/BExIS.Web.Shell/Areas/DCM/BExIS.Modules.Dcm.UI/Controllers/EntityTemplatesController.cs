@@ -200,7 +200,12 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 tmp.Add(hook.DisplayName);
             }
 
-            return Json(tmp, JsonRequestBehavior.AllowGet);
+            foreach (var hook in hookManager.GetHooksFor("dataset", "details", HookMode.view))
+            {
+                tmp.Add(hook.DisplayName);
+            }
+
+            return Json(tmp.Distinct(), JsonRequestBehavior.AllowGet);
         }
 
         [JsonNetFilter]

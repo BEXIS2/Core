@@ -11,7 +11,7 @@ namespace BExIS.Modules.Dim.UI.Hooks
     {
         public PublishHook()
         {
-            Start = "dim/publish/start";
+            Start = "/dim/publish/start";
         }
 
         public override void Check(long id, string username)
@@ -31,6 +31,8 @@ namespace BExIS.Modules.Dim.UI.Hooks
 
             // if one fail then access is denied
             if(hasAccess == false || hasRights == false) Status = HookStatus.AccessDenied;
+
+            Status = HookStatus.Open;
         }
 
     }
