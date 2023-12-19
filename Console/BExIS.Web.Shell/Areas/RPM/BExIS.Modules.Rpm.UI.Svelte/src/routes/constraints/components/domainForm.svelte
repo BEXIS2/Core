@@ -50,14 +50,17 @@
 		let dis: string[] = [];
 		let lines = domain.split('\n');
 		lines.forEach(function (value) {
+			if(value != undefined && value != '' && dis.filter((di) => di === value).length == 0)	
+			{
 				dis.push(value);
+			}
 		});
 		return dis;
 	}
 </script>
 
 {#if domainConstraint}
-	<div class="grid grid-cols-3 gap-5 h-80" in:slide out:slide>
+	<div class="grid grid-cols-2 gap-5 h-80" in:slide out:slide>
 		<!-- svelte-ignore a11y-mouse-events-have-key-events -->
 		<div class="pb-3"
 		on:mouseover={() => {
@@ -103,6 +106,5 @@
 				</table>
 			</div>
 		</div>
-		<div class="pb-3 w-48">put help here</div>
 	</div>
 {/if}
