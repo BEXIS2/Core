@@ -8,7 +8,7 @@
 	import type { helpItemType } from '@bexis2/bexis2-core-ui';
 	import Entry from '../../components/entry.svelte';
 	import { get, getByModuleId, putByModuleId } from '../../services/settingManager';
-	import type { ReadSettingModel, UpdateSettingModel } from '$models/settingModels';
+	import { UpdateSettingModel } from '$models/settingModels';
 
 	import { ListBox, ListBoxItem } from '@skeletonlabs/skeleton';
 
@@ -86,7 +86,7 @@
 	{#await getSettingsByModuleId(module)}
 		<div id="spinner">... loading ...</div>
 	{:then data}
-		<form on:submit|preventDefault={() => putSettingByModuleId(data.id, data)}>
+		<form on:submit|preventDefault={() => putSettingByModuleId(data.id, new UpdateSettingModel(data))}>
 			{#each data.entries as entry}
 				<Entry {entry} />
 			{/each}
