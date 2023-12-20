@@ -66,7 +66,7 @@
 	}
 
 	function goToEdit() {
-		goTo("/rpm/datastructure/edit?structureId="+id)
+		goTo("/rpm/datastructure/edit?structureId="+structureId)
 	}
 </script>
 
