@@ -31,6 +31,7 @@
 
 	import suite from './variable';
 	import ConstraintsDescription from './ConstraintsDescription.svelte';
+	import MeaningsDescription from './MeaningsDescription.svelte';
 
 	export let variable: VariableInstanceModel = new VariableInstanceModel();
 	$: variable;
@@ -458,7 +459,9 @@
 									on:change={(e) => onSelectHandler(e, 'meanings')}
 								/>
 							</div>
-							<div slot="description">...</div>
+							<div slot="description">
+								<MeaningsDescription bind:list={variable.meanings}/>
+							</div>
 						</Container>
 
 						<Container>
