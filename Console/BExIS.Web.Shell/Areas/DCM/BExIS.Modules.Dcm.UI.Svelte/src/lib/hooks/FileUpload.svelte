@@ -58,7 +58,6 @@
 	async function reload() {
 		/*update store*/
 		latestFileUploadDate.set(Date.now());
-		console.log('reload fileupload', $latestFileUploadDate);
 
 		/* load data*/
 		load();

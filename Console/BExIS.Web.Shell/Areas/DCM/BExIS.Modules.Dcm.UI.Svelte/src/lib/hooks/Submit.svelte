@@ -33,18 +33,18 @@
 	let model: SubmitModel;
 	$: model;
 
-	$: $latestFileUploadDate, reload();
-	$: $latestDataDescriptionDate, reload();
-	$: $latestFileReaderDate, reload();
-	$: $latestValidationDate, reload();
-
 	let canSubmit: boolean = false;
 	$: canSubmit;
 
 let isSubmiting: boolean = false;
 
 	onMount(async () => {
-		reload();
+
+		latestFileUploadDate.subscribe(s=>{if(s>0){reload()}})
+		latestDataDescriptionDate.subscribe(s=>{if(s>0){reload()}})
+		latestFileReaderDate.subscribe(s=>{if(s>0){reload()}})
+		latestValidationDate.subscribe(s=>{if(s>0){reload()}})
+
 	});
 
 	async function reload() {

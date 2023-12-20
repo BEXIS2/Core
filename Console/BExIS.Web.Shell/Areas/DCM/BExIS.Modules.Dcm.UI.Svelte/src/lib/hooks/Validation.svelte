@@ -26,28 +26,42 @@
 	let model: ValidationModel | null;
 	$: model;
 
-	$: $latestFileUploadDate, reload();
-	$: $latestDataDescriptionDate, reload();
-	$: $latestFileReaderDate, reload();
-	$: $latestSubmitDate, reload();
 
 	onMount(async () => {
-		reload();
+
+			latestFileUploadDate.subscribe(s=>{if(s>0){
+				
+				console.log("🚀 ~ file: Validation.svelte:37 ~ onMount ~ latestFileUploadDate:", $latestFileUploadDate)
+				reload("latestFileUploadDate")
+			}})
+			latestDataDescriptionDate.subscribe(s=>{if(s>0){
+				console.log("🚀 ~ file: Validation.svelte:41 ~ onMount ~ latestDataDescriptionDate:", $latestDataDescriptionDate)
+				reload("latestDataDescriptionDate")
+			}})
+			latestFileReaderDate.subscribe(s=>{if(s>0){
+				console.log("🚀 ~ file: Validation.svelte:45 ~ onMount ~ latestFileReaderDate:", $latestFileReaderDate)
+				reload("latestFileReaderDate")
+			}})
+			latestSubmitDate.subscribe(s=>{if(s>0){
+				console.log("🚀 ~ file: Validation.svelte:49 ~ onMount ~ latestSubmitDate:", $latestSubmitDate)
+				reload("latestSubmitDate")
+			}})
+
 	});
 
-	async function reload() {
+	async function reload(type) {
 		//const res = await fetch(url);
-
+		
 		model = null;
 		model = await getHookStart(start, id, version);
-		console.log("🚀 ~ file: Validation.svelte:43 ~ reload ~ model:", model)
-
+		
 		latestValidationDate.set(Date.now());
+		console.log("🚀 ~ file: Validation.svelte:53 ~ reload ~ type:", type)
 		
 	}
 </script>
 
-{#await reload()}
+{#await reload("await")}
 	<PlaceHolderHookContent/>
 {:then a}
 	{#if model && model.fileResults}
