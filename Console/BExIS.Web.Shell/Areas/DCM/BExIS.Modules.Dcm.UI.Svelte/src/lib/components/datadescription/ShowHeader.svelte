@@ -3,7 +3,7 @@
 	import type { fileInfoType } from '@bexis2/bexis2-core-ui';
 
 	import Fa from 'svelte-fa';
-	import { faTrash } from '@fortawesome/free-solid-svg-icons';
+	import { faTrash, faEdit } from '@fortawesome/free-solid-svg-icons';
 
 	import { removeStructure } from '$services/DataDescriptionCaller';
 	import { latestDataDescriptionDate } from '../../../routes/edit/stores';
@@ -12,6 +12,8 @@
 	const modalStore = getModalStore();
 	import type { ModalSettings } from '@skeletonlabs/skeleton';
 	import { createEventDispatcher } from 'svelte';
+	import { goTo } from '$services/BaseCaller';
+
 
 	export let id;
 	export let structureId;
@@ -19,6 +21,7 @@
 	export let description;
 	export let fileReaderExist;
 	export let hasData;
+	export let enableEdit;
 	export let readableFiles: fileInfoType[] = [];
 
 	let loading = false;
@@ -61,6 +64,10 @@
 
 		loading = false;
 	}
+
+	function goToEdit() {
+		goTo("/rpm/datastructure/edit?structureId="+id)
+	}
 </script>
 
 <div class="show-datadescription-header-container flex">
@@ -74,14 +81,20 @@
 		{/if}
 	</div>
 	<div>
+		<div class="flex gap-2 text-end flex-auto"></div>
+		{#if enableEdit}
+			<button title="edit" class="chip variant-filled-secondary" on:click={goToEdit}
+				><Fa icon={faEdit} /></button
+			>
+		{/if}
 		{#if hasData === false}
-			<div class="text-end flex-auto">
+			
 				<button
 					title="remove"
 					class="chip variant-filled-error"
 					on:click={() => modalStore.trigger(modal)}><Fa icon={faTrash} /></button
 				>
-			</div>
+
 		{/if}
 	</div>
 </div>

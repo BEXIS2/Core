@@ -9,6 +9,9 @@ using BExIS.IO.Transform.Input;
 using BExIS.Modules.Dcm.UI.Hooks;
 using BExIS.Modules.Dcm.UI.Models.Edit;
 using BExIS.Security.Entities.Authorization;
+using BExIS.Security.Services.Authorization;
+using BExIS.Security.Services.Objects;
+using BExIS.Security.Services.Subjects;
 using BExIS.Security.Services.Utilities;
 using BExIS.UI.Hooks;
 using BExIS.UI.Hooks.Caches;
@@ -92,6 +95,10 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                         //if data structure is there,  check also if data is there
                         model.HasData = datasetManager.RowAny(model.Id);
                     }
+
+                    // set enable edit rights for strtucture
+
+                    model.EnableEdit = hasEditRights(this.HttpContext);
                 }
 
                 // get values from template
@@ -139,7 +146,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             // set modification date
             model.LastModification = cache.GetLastModificarion(typeof(DataDescriptionHook));
 
-
+            
 
 
             return Json(model, JsonRequestBehavior.AllowGet);
@@ -334,6 +341,30 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 return Json(true, JsonRequestBehavior.AllowGet); 
             }
         }
-        
+
+        private bool hasEditRights(HttpContextBase context)
+        {
+            using (var featurePermissionManager = new FeaturePermissionManager())
+            using (var operationManager = new OperationManager())
+            {
+                var operation = operationManager.Find("rpm", "datastructure", "*");
+                var user = BExISAuthorizeHelper.GetUserFromAuthorizationAsync(context).Result;
+
+                var feature = operation.Feature;
+
+                //if opration has no feature and is public
+                if (operation.Feature == null) return true;
+
+                // if feature is public
+                if (featurePermissionManager.Exists(null, feature.Id)) return true;
+
+                // feature and user exist
+                if (feature != null && !featurePermissionManager.Exists(null, feature.Id))
+                    if (featurePermissionManager.HasAccess(user.Id, feature.Id))
+                        return true;
+
+                return false;
+            }
+        }
     }
 }

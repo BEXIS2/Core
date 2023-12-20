@@ -37,9 +37,14 @@ namespace BExIS.Modules.Dcm.UI.Models.Edit
         public bool IsRestricted { get; set; }
 
         /// <summary>
-        /// choose only from predefiend structres
+        /// data in combination with this structure exist
         /// </summary>
         public bool HasData { get; set; }
+
+        /// <summary>
+        /// current user has editright
+        /// </summary>
+        public bool EnableEdit { get; set; }
 
 
         public DataDescriptionModel()
@@ -54,6 +59,7 @@ namespace BExIS.Modules.Dcm.UI.Models.Edit
             IsStructured = false;
             IsRestricted = false;
             HasData = false;
+            EnableEdit = false;
 
         }
 
