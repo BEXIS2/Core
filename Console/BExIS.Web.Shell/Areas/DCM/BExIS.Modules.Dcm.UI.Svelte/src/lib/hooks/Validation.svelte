@@ -37,7 +37,7 @@
 
 	async function reload() {
 		//const res = await fetch(url);
-		console.log('reload validation');
+
 		model = null;
 		model = await getHookStart(start, id, version);
 		console.log("🚀 ~ file: Validation.svelte:43 ~ reload ~ model:", model)
