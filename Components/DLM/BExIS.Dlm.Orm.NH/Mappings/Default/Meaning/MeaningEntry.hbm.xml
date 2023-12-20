@@ -8,7 +8,7 @@
 
 		<many-to-one name="MappingRelation" class="ExternalLink"/>
 
-		<bag name="MappedLinks" table="rpm_MeaningEntry_MappedLinks" lazy="true">
+		<bag name="MappedLinks" table="rpm_MeaningEntry_MappedLinks" lazy="true" cascade="save-update">
 			<key  column="MeaningEntryRef"></key>
 			<many-to-many class="ExternalLink" column="ExternalLink_mapped_linkRef"/>
 		</bag>
