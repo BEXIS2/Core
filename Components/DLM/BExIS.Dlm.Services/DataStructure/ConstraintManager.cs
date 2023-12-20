@@ -116,6 +116,7 @@ namespace BExIS.Dlm.Services.DataStructure
             
             entity.CreationDate = DateTime.Now;
             entity.LastModified = DateTime.Now;
+
             entity.Dematerialize();
             using (IUnitOfWork uow = this.GetUnitOfWork())
             {

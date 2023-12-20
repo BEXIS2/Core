@@ -106,7 +106,7 @@ const suite = create((data = {}, fieldName) => {
 	test('meanings', 'meanings are required', () => {
 		//console.log("unit",data.unit);
 
-		if (!isMeaningRequiredStore) {
+		if (!isMeaningRequired) {
 			return true;
 		}
 
