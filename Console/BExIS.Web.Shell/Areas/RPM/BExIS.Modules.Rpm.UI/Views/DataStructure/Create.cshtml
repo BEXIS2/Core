@@ -21,6 +21,6 @@
     if (ViewData["isMeaningRequired"] != null) { isMeaningRequired = ViewData["isMeaningRequired"].ToString(); }
 
 }
-<div id="datastructure" structure="@structureId" isTemplateRequired="@isTemplateRequired" isMeaningRequired="@isMeaningRequired">
+<div id="datastructure" structure="@structureId" file="@file" isTemplateRequired="@isTemplateRequired" isMeaningRequired="@isMeaningRequired">
     @Html.Partial("_sveltePage")
 </div>

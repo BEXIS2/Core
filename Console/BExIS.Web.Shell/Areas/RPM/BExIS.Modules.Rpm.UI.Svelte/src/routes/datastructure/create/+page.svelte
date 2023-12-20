@@ -65,6 +65,7 @@
 		// check if file is empty or not
 
 		// load data from server
+		console.log("🚀 ~ file: +page.svelte:69 ~ start ~ file:", file)
 		if (file != '') {
 			console.log('file exist', file, entityId, 0);
 
