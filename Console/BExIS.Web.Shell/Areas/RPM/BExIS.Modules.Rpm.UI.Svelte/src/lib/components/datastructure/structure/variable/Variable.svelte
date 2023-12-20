@@ -187,13 +187,9 @@
 	function setList() {
 
 		datatypes = $dataTypeStore.map((o) => ({ ...o })).sort(); // set datatypes
-
 		units = $unitStore.map((o) => ({ ...o })).sort(); // set units
-
 		variableTemplates = $templateStore.map((o) => ({ ...o })).sort();
-
 		meanings = $meaningsStore.map((o) => ({ ...o })).sort();
-
 		constraints = $constraintsStore.map((o) => ({ ...o })).sort();
 
 	}

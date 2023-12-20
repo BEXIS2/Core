@@ -103,15 +103,14 @@ const suite = create((data = {}, fieldName) => {
 	});
 
 	// Meanings
-	test('Meanings', 'meanings are required', () => {
+	test('meanings', 'meanings are required', () => {
 		//console.log("unit",data.unit);
 
 		if (!isMeaningRequiredStore) {
 			return true;
 		}
 
-		enforce(data.meanings).isNotNull();
-		enforce(data.meanings.size).greaterThan(0);
+		enforce(data.meanings.length).greaterThan(0);
 	});
 
 	skipWhen(
