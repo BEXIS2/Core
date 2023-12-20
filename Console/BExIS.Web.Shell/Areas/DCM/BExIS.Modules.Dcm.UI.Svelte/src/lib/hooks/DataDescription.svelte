@@ -31,7 +31,7 @@
 
 	async function load() {
 		model = await getHookStart(hook.start, id, version);
-
+	
 		dispatch('dateChanged', { lastModification: model.lastModification });
 	}
 

@@ -48,12 +48,12 @@
 
 		// get isTemplateRequired from settings and add it to store
 		// is used by validation
-		const isTemplateRequired = Boolean(container?.getAttribute('isTemplateRequired'));
+		const isTemplateRequired = container?.getAttribute('isTemplateRequired')?.toLocaleLowerCase()=="true"?true:false;
 		isTemplateRequiredStore.set(isTemplateRequired);
 
 		// get isTemplateRequired from settings and add it to store
 		// is used by validation
-		const isMeaningRequired = Boolean(container?.getAttribute('isMeaningRequired'));
+		const isMeaningRequired = container?.getAttribute('isMeaningRequired')?.toLocaleLowerCase()=="true"?true:false;
 		console.log("🚀 ~ file: +page.svelte:57 ~ start ~ isMeaningRequired:", isMeaningRequired)
 		isMeaningRequiredStore.set(isMeaningRequired);
 
@@ -65,6 +65,7 @@
 		// check if file is empty or not
 
 		// load data from server
+		console.log("🚀 ~ file: +page.svelte:69 ~ start ~ file:", file)
 		if (file != '') {
 			console.log('file exist', file, entityId, 0);
 

@@ -31,6 +31,7 @@
 
 	import suite from './variable';
 	import ConstraintsDescription from './ConstraintsDescription.svelte';
+	import MeaningsDescription from './MeaningsDescription.svelte';
 
 	export let variable: VariableInstanceModel = new VariableInstanceModel();
 	$: variable;
@@ -186,13 +187,9 @@
 	function setList() {
 
 		datatypes = $dataTypeStore.map((o) => ({ ...o })).sort(); // set datatypes
-
 		units = $unitStore.map((o) => ({ ...o })).sort(); // set units
-
 		variableTemplates = $templateStore.map((o) => ({ ...o })).sort();
-
 		meanings = $meaningsStore.map((o) => ({ ...o })).sort();
-
 		constraints = $constraintsStore.map((o) => ({ ...o })).sort();
 
 	}
@@ -458,7 +455,9 @@
 									on:change={(e) => onSelectHandler(e, 'meanings')}
 								/>
 							</div>
-							<div slot="description">...</div>
+							<div slot="description">
+								<MeaningsDescription bind:list={variable.meanings}/>
+							</div>
 						</Container>
 
 						<Container>

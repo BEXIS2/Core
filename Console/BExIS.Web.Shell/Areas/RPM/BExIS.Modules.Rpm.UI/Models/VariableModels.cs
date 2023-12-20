@@ -161,6 +161,7 @@ namespace BExIS.Modules.Rpm.UI.Models
         public string Group { get; set; }
 
         public List<string> Constraints { get; set; }
+        public List<MeaningEntryItem> Links { get; set; }
 
         public MeaningItem()
         {
@@ -168,16 +169,28 @@ namespace BExIS.Modules.Rpm.UI.Models
             Text = "";
             Group = "";
             Constraints = new List<string>();
+            Links = new List<MeaningEntryItem>();
 
         }
 
-        public MeaningItem(long _id, string _name, string _group="", List<string> _constraints = null)
+        public MeaningItem(long _id, string _name, string _group = "", List<string> _constraints = null, List<MeaningEntryItem> _links = null)
         {
             Id = _id;
             Text = _name;
             Group = _group;
             Constraints = _constraints==null?new List<string>():_constraints;
+            Links = _links==null?new List<MeaningEntryItem>():_links;
+
         }
 
     }
+
+    public class MeaningEntryItem
+    {
+        public string label { get; set; }
+        public string prefix { get; set; }
+        public string releation { get; set; }
+        public string link { get; set; }
+    }
+
 }
