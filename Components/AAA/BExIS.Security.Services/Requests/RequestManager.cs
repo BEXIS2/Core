@@ -2,10 +2,10 @@
 using BExIS.Security.Entities.Objects;
 using BExIS.Security.Entities.Requests;
 using BExIS.Security.Entities.Subjects;
-using BExIS.Utils.Config;
 using System;
 using System.Linq;
 using Vaiona.Persistence.Api;
+using Vaiona.Web.Mvc.Modularity;
 
 namespace BExIS.Security.Services.Requests
 {
@@ -13,8 +13,6 @@ namespace BExIS.Security.Services.Requests
     {
         private readonly IUnitOfWork _guow;
         private bool _isDisposed;
-
-
 
         public RequestManager()
         {
@@ -70,11 +68,13 @@ namespace BExIS.Security.Services.Requests
                         PartyRepository.Query(m => m.Name == key.ToString() && m.PartyType.Id == dataset_partyType.Id)
                             .FirstOrDefault();
 
-                    if (dataset_party != null)
+                    var ownerPartyRelationshipType = ModuleManager.GetModuleSettings("bam").GetValueByKey<string>("OwnerPartyRelationshipType");
+
+                    if (dataset_party != null && ownerPartyRelationshipType != null)
                     {
                         var partyRelationship =
                             partyRelationshipRepository.Query(
-                                    m => m.PartyRelationshipType.Title == GeneralSettings.OwnerPartyRelationshipType && m.TargetParty.Id == dataset_party.Id)
+                                    m => m.PartyRelationshipType.Title == ownerPartyRelationshipType && m.TargetParty.Id == dataset_party.Id)
                                 .FirstOrDefault();
 
                         if (partyRelationship != null)
