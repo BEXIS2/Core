@@ -49,6 +49,7 @@ let isSubmiting: boolean = false;
 
 	async function reload() {
 		console.log('reload submit');
+		canSubmit = false;
 		model = await getHookStart(start, id, version);
 		canSubmit = activateSubmit();
 
