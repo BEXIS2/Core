@@ -125,18 +125,6 @@ namespace BExIS.Utils.Config
             }
         }
 
-        public static string OwnerPartyRelationshipType
-        {
-            get
-            {
-                try
-                {
-                    return GetValueByKey("OwnerPartyRelationshipType").ToString();
-                }
-                catch { return (string.Empty); }
-            }
-        }
-
         public static string PersonEmailAttributeName
         {
             get
