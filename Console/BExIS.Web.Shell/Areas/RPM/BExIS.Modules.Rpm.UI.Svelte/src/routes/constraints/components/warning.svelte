@@ -16,7 +16,7 @@
 	});
 </script>
 
-<div class="w-full mb-1 variant-ghost-warning text-center">
+<div class="w-full mb-1 variant-ghost-warning text-center card">
     Changing the Contsraint may cause inconsistencies in following Datasets.
     <!-- <ul>
         {#each datasets as dataset}
