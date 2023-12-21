@@ -1,6 +1,7 @@
 ﻿using BExIS.Security.Entities.Authorization;
 using BExIS.Security.Entities.Objects;
 using BExIS.Security.Entities.Subjects;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -275,10 +276,14 @@ namespace BExIS.Security.Services.Authorization
             }
         }
 
-        public Dictionary<long, bool> HasAccess(IEnumerable<Subject> subjects, long featureId)
+        public Dictionary<long?, bool> GetAccessList(IEnumerable<Subject> subjects, long featureId)
         {
-            Dictionary<long, bool> accessDictionary = new Dictionary<long, bool>();
+            Dictionary<long?, bool> accessDictionary = new Dictionary<long?, bool>();
 
+            // check anonymous rights
+            accessDictionary.Add(null, HasAccess(null, featureId));
+
+            // check user rights
             foreach (var subject in subjects)
             {
                 if (subject != null)
