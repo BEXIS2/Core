@@ -149,6 +149,8 @@
 			if (id == 'variableTemplate') {
 				variable.meanings = updateMeanings(variable, e.detail)
 				variable.constraints = updateConstraints(variable,e.detail?.constraints)
+
+
 			}
 
 			if (id == 'meanings') {
@@ -162,24 +164,6 @@
 
 			updateLists();
 		}, 100);
-	}
-
-	function setValidationState(res) {
-		isValid = res.isValid();
-		// dispatch this event to the parent to check the save button
-		dispatch('var-change');
-	}
-
-	function cutData(d) {
-		for (let index = 0; index < d.length; index++) {
-			let v = d[index];
-
-			if (v.length > 10) {
-				d[index] = v.slice(0, 10) + '...';
-			}
-		}
-
-		return d;
 	}
 
 	// use the store to reset the lists for the dropdowns
@@ -250,6 +234,46 @@
 			}
 
 			return []
+	}
+
+	function updateConstraintsFromMeaningOfATemplate(_variableTemplate:templateListItemType)
+	{
+				// add constraints from selected meanings
+				if(_variableTemplate?.meanings)
+				{
+						// get meanings from store and grab all constraints
+						let constraintsFromMeanings:string[] = [];
+						// get all meanings from store that are in the template
+						let meanings = $meaningsStore.filter(m=> _variableTemplate?.meanings.includes(m.text));
+
+						for (let index = 0; index < meanings.length; index++) {
+							const meaning = meanings[index];
+							if(meaning.constraints){
+									meaning.constraints.each((c) =>	constraintsFromMeanings.push(c));
+								}
+						}
+				}
+
+	}
+
+
+	
+	function setValidationState(res) {
+		isValid = res.isValid();
+		// dispatch this event to the parent to check the save button
+		dispatch('var-change');
+	}
+
+	function cutData(d) {
+		for (let index = 0; index < d.length; index++) {
+			let v = d[index];
+
+			if (v.length > 10) {
+				d[index] = v.slice(0, 10) + '...';
+			}
+		}
+
+		return d;
 	}
 
 

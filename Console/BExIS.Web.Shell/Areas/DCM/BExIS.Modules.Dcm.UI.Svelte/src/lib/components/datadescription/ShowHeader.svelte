@@ -3,7 +3,7 @@
 	import type { fileInfoType } from '@bexis2/bexis2-core-ui';
 
 	import Fa from 'svelte-fa';
-	import { faTrash, faEdit } from '@fortawesome/free-solid-svg-icons';
+	import { faTrash, faEdit, faDownload } from '@fortawesome/free-solid-svg-icons';
 
 	import { removeStructure } from '$services/DataDescriptionCaller';
 	import { latestDataDescriptionDate } from '../../../routes/edit/stores';
@@ -65,8 +65,12 @@
 		loading = false;
 	}
 
-	function goToEdit() {
+	function goToEditFn() {
 		goTo("/rpm/datastructure/edit?structureId="+structureId)
+	}
+
+	function downloadFn() {
+		goTo("/rpm/datastructure/downloadTemplate?id="+structureId)
 	}
 </script>
 
@@ -81,12 +85,16 @@
 		{/if}
 	</div>
 	<div>
-		<div class="flex gap-2 text-end flex-auto"></div>
+		<div class="flex gap-2 text-end flex-auto">
+		<button title="download" class="chip variant-filled-secondary" on:click={downloadFn}
+			><Fa icon={faDownload} /></button
+		>
 		{#if enableEdit}
-			<button title="edit" class="chip variant-filled-secondary" on:click={goToEdit}
+			<button title="edit" class="chip variant-filled-secondary" on:click={goToEditFn}
 				><Fa icon={faEdit} /></button
 			>
 		{/if}
+	
 		{#if hasData === false}
 			
 				<button
@@ -96,5 +104,6 @@
 				>
 
 		{/if}
+		</div>
 	</div>
 </div>
