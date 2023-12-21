@@ -193,6 +193,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Entities\DataStructure\PatternConstraintTests.cs" />
     <Compile Include="Entities\DataStructure\RangeConstraintTests.cs" />
     <Compile Include="Services\DataStructure\ConstraintManagerTests.cs" />
     <Compile Include="Entities\Data\DatasetTests.cs" />

@@ -329,10 +329,11 @@ namespace BExIS.Dlm.Entities.DataStructure
         {
             defaultMessageTemplate = "Provided value does not match the pattern. The value should match {0} {1}.";
             defaultNegatedMessageTemplate = "Provided value matches the pattern, but the constraint is negated. The value should not match {0} {1}.";
+            CaseSensitive = true;
         }
 
         public PatternConstraint(ConstraintProviderSource provider, string constraintSelectionPredicate, string cultureId
-            , string description, bool negated, string context, string messageTemplate, string negatedMessageTemplate, string matchingPhrase, bool caseSensitive)
+            , string description, bool negated, string context, string messageTemplate, string negatedMessageTemplate, string matchingPhrase, bool caseSensitive=true)
         {
             Contract.Requires(!string.IsNullOrWhiteSpace(matchingPhrase));
 
@@ -362,6 +363,7 @@ namespace BExIS.Dlm.Entities.DataStructure
             else
                 return (Negated ^ (Regex.IsMatch(data.ToString(), MatchingPhrase)));
         }
+
 
         #endregion
     }

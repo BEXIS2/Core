@@ -431,7 +431,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                     if (variable.Id > 0)
                     {
                         updatedVariable = variableManager.GetVariable(variable.Id);
-
+                        updatedVariable.Label = variable.Name;
                         updatedVariable.Description = variable.Description;
                         updatedVariable.DataType = dataType;
                         updatedVariable.Unit = unit;

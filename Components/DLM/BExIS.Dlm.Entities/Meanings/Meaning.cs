@@ -27,6 +27,7 @@ namespace BExIS.Dlm.Entities.Meanings
             this.ExternalLinks = meaning.ExternalLinks;
             this.Related_meaning = meaning.Related_meaning;
             this.Constraints = meaning.Constraints;
+            this.Id = meaning.Id;
         }
 
         public Meaning(String name, String shortName, String description, bool Selectable, bool approved, IList<MeaningEntry> externalLink, IList<Meaning> meaning, ICollection<Constraint> constraints)

@@ -33,14 +33,15 @@
 
 		console.log("🚀 ~ file: +page.svelte:32 ~ start ~ dataExist:", dataExist)
 
-		// get isTemplateRequired from settings and add it to store
+// get isTemplateRequired from settings and add it to store
 		// is used by validation
-		const isTemplateRequired= container?.getAttribute('isTemplateRequired') == 'true';
+		const isTemplateRequired = container?.getAttribute('isTemplateRequired')?.toLocaleLowerCase()=="true"?true:false;
 		isTemplateRequiredStore.set(isTemplateRequired);
 
-				// get isTemplateRequired from settings and add it to store
+		// get isTemplateRequired from settings and add it to store
 		// is used by validation
-		const isMeaningRequired = Boolean(container?.getAttribute('isMeaningRequired'));
+		const isMeaningRequired = container?.getAttribute('isMeaningRequired')?.toLocaleLowerCase()=="true"?true:false;
+		console.log("🚀 ~ file: +page.svelte:57 ~ start ~ isMeaningRequired:", isMeaningRequired)
 		isMeaningRequiredStore.set(isMeaningRequired);
 
 		console.log('edit structure',datastructureId);

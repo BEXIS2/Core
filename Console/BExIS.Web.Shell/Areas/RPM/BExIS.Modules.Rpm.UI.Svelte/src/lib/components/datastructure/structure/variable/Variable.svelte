@@ -149,6 +149,8 @@
 			if (id == 'variableTemplate') {
 				variable.meanings = updateMeanings(variable, e.detail)
 				variable.constraints = updateConstraints(variable,e.detail?.constraints)
+
+
 			}
 
 			if (id == 'meanings') {
@@ -164,36 +166,14 @@
 		}, 100);
 	}
 
-	function setValidationState(res) {
-		isValid = res.isValid();
-		// dispatch this event to the parent to check the save button
-		dispatch('var-change');
-	}
-
-	function cutData(d) {
-		for (let index = 0; index < d.length; index++) {
-			let v = d[index];
-
-			if (v.length > 10) {
-				d[index] = v.slice(0, 10) + '...';
-			}
-		}
-
-		return d;
-	}
-
 	// use the store to reset the lists for the dropdowns
 	/// reset means mostly reset the groups
 	function setList() {
 
 		datatypes = $dataTypeStore.map((o) => ({ ...o })).sort(); // set datatypes
-
 		units = $unitStore.map((o) => ({ ...o })).sort(); // set units
-
 		variableTemplates = $templateStore.map((o) => ({ ...o })).sort();
-
 		meanings = $meaningsStore.map((o) => ({ ...o })).sort();
-
 		constraints = $constraintsStore.map((o) => ({ ...o })).sort();
 
 	}
@@ -254,6 +234,24 @@
 			}
 
 			return []
+	}
+	
+	function setValidationState(res) {
+		isValid = res.isValid();
+		// dispatch this event to the parent to check the save button
+		dispatch('var-change');
+	}
+
+	function cutData(d) {
+		for (let index = 0; index < d.length; index++) {
+			let v = d[index];
+
+			if (v.length > 10) {
+				d[index] = v.slice(0, 10) + '...';
+			}
+		}
+
+		return d;
 	}
 
 

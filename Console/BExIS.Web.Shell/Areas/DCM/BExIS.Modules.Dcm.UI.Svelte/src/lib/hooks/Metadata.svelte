@@ -39,7 +39,7 @@
 
 <div class="flex-col space-y-1">
 	<div class="flex gap-3 justify-left">
-		<button class="chip variant-outline-secondary flex-none" on:click={editFn}
+		<button class="chip variant-filled-secondary flex-none" on:click={editFn}
 			><Fa icon={faPen} /></button>
 
 		<!-- <button class="chip variant-outline-secondary flex-none " on:click={copyFn}

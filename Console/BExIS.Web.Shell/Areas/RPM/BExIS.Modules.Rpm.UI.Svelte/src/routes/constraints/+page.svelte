@@ -16,7 +16,7 @@
 	} from '@bexis2/bexis2-core-ui';
 	import * as apiCalls from './services/apiCalls';
 	import Form from './components/form.svelte';
-	import TableOption from '../components/tableOptions.svelte';
+	import TableOption from './components/tableOptions.svelte';
 	import { writable, type Writable } from 'svelte/store';
 	import Fa from 'svelte-fa';
 	import { faPlus, faXmark } from '@fortawesome/free-solid-svg-icons';
