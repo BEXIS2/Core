@@ -1,19 +1,17 @@
 {
-  "id": "bam",
-  "name": "Administration",
   "description": "...",
   "entries": [
     {
+      "description": "URL to the manual. If empty, it links to the latest manual from BEXIS2",
       "key": "help",
       "title": "Help URL",
-      "value": "",
       "type": "String",
-      "description": "URL to the manual. If empty, it links to the latest manual from BEXIS2"
+      "value": ""
     },
     {
-      "key": "AccountPartyRelationshipTypes",
-      "title": "Party Types for Account",
       "description": "Defined AccountPartyTypes value in web config format is like PartyType1:PartyTypePairTitle1-PartyTypePairTitle2,PartyType2",
+      "key": "AccountPartyRelationshipTypes",
+      "title": "Party Relationship Types for Account",
       "type": "JSON",
       "value": [
         {
@@ -25,6 +23,15 @@
           ]
         }
       ]
+    },
+    {
+      "description": "Define a party relationship type for the concept of an owner.",
+      "key": "OwnerPartyRelationshipType",
+      "title": "Party Relationship Type for Owner",
+      "type": "String",
+      "value": "Owner"
     }
-  ]
+  ],
+  "id": "bam",
+  "name": "Administration"
 }
