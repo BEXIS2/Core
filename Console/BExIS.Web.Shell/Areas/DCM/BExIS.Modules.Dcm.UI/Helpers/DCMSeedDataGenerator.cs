@@ -286,14 +286,35 @@ namespace BExIS.Modules.Dcm.UI.Helpers
 
                 {
                     EntityTemplate entityTemplate = new EntityTemplate();
-                    entityTemplate.Name = "File";
-                    entityTemplate.Description = "Upload files without Datastructure";
+                    entityTemplate.Name = "file";
+                    entityTemplate.Description = "Upload files without data structure";
 
                     // set metadatastructure
                     var metadataStructure = metadataStructureManager.Repo.Get().Where(m => m.Name.Equals("Basic ABCD")).FirstOrDefault();
                     entityTemplate.MetadataStructure = metadataStructure;
                     // default input fields , title, descritpion
                     entityTemplate.MetadataFields = new List<int>() { 4, 1 };
+
+                    // set entity 
+                    entityTemplate.EntityType = entity;
+
+                    entityTemplateManager.Create(entityTemplate);
+
+                }
+
+                if (!entityTemplateManager.Repo.Get().Any(d => d.Name.Equals("Tabular data")))
+
+                {
+                    EntityTemplate entityTemplate = new EntityTemplate();
+                    entityTemplate.Name = "Tabular data";
+                    entityTemplate.Description = "Upload files with data structure";
+
+                    // set metadatastructure
+                    var metadataStructure = metadataStructureManager.Repo.Get().Where(m => m.Name.Equals("Basic ABCD")).FirstOrDefault();
+                    entityTemplate.MetadataStructure = metadataStructure;
+                    // default input fields , title, descritpion
+                    entityTemplate.MetadataFields = new List<int>() { 4, 1 };
+                    entityTemplate.HasDatastructure = true;
 
                     // set entity 
                     entityTemplate.EntityType = entity;
