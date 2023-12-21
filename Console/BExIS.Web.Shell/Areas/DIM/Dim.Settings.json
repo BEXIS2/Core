@@ -29,16 +29,20 @@
       "type": "JSON",
       "value": [
         {
-          "DatasetId": "{DatasetId}"
+          "key": "DatasetId",
+          "Value": "{DatasetId}"
         },
         {
-          "VersionId": "{VersionId}"
+          "key": "VersionId",
+          "Value": "{VersionId}"
         },
         {
-          "VersionNumber": "{VersionNumber}"
+          "key": "VersionNumber",
+          "Value": "{VersionNumber}"
         },
         {
-          "VersionName": "{VersionName}"
+          "key": "VersionName",
+          "Value": "{VersionName}"
         }
       ],
       "description": "These placeholders will be replaced automatically."
@@ -48,10 +52,16 @@
       "title": "DataCite DOI Mappings",
       "options": [],
       "type": "JSON",
-      "value": {
-        "URL": "{DatasetId}?version={VersionNumber}",
-        "Version": "{VersionName}"
-      },
+      "value": [
+        {
+          "key": "URL",
+          "Value": "{DatasetId}?version={VersionNumber}"
+        },
+        {
+          "key": "Version",
+          "Value": "{VersionName}"
+        }
+      ],
       "description": "There are additional mappings for DOI DataCite."
     }
   ]
