@@ -34,15 +34,16 @@ namespace BExIS.Modules.Bam.UI.Helpers
             }
         }
 
-        public string GetValue(string key)
+        public T GetValue<T>(string key) where T : class
         {
-            XDocument settings = XDocument.Load(filePath);
-            XElement element = XmlUtility.GetXElementByAttribute("entry", "name", key.ToLower(), settings);
-
-            string value = "";
-            value = element.Attribute("value")?.Value;
-
-            return value;
+            try
+            {
+                return _settings.GetValueByKey<T>(key);
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
         }
 
         public bool KeyExist(string key)
