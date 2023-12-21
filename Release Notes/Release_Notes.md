@@ -21,7 +21,7 @@ From this release, semantic versioning is used. The version number is composed o
 - the underlying database structure has changed and extended. Data will be migrated, but a few SQL statements need to be adjusted
   - please create your **entity templates** and update them according to your datasets and entity template IDs after the update with the provided SQL
 
-- [Update_Script_218to300.sql](https://github.com/BEXIS2/Core/blob/rc/database%20update%20scripts/Update_Script_2182to3.sqls)
+- [Update_Script_218to300.sql](https://github.com/BEXIS2/Core/blob/rc/database%20update%20scripts/Update_Script_2182to3.sql)
 
 
 ## Changes
