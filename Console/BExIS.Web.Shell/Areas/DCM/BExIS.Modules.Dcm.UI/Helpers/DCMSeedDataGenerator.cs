@@ -310,11 +310,12 @@ namespace BExIS.Modules.Dcm.UI.Helpers
                     entityTemplate.Description = "Upload files with data structure";
 
                     // set metadatastructure
-                    var metadataStructure = metadataStructureManager.Repo.Get().Where(m => m.Name.Equals("Basic ABCD")).FirstOrDefault();
+                    var metadataStructure = metadataStructureManager.Repo.Get().Where(m => m.Name.Equals("GBIF")).FirstOrDefault();
                     entityTemplate.MetadataStructure = metadataStructure;
                     // default input fields , title, descritpion
                     entityTemplate.MetadataFields = new List<int>() { 4, 1 };
                     entityTemplate.HasDatastructure = true;
+                    entityTemplate.DatastructureList = new List<long>();
 
                     // set entity
                     entityTemplate.EntityType = entity;
