@@ -235,28 +235,6 @@
 
 			return []
 	}
-
-	function updateConstraintsFromMeaningOfATemplate(_variableTemplate:templateListItemType)
-	{
-				// add constraints from selected meanings
-				if(_variableTemplate?.meanings)
-				{
-						// get meanings from store and grab all constraints
-						let constraintsFromMeanings:string[] = [];
-						// get all meanings from store that are in the template
-						let meanings = $meaningsStore.filter(m=> _variableTemplate?.meanings.includes(m.text));
-
-						for (let index = 0; index < meanings.length; index++) {
-							const meaning = meanings[index];
-							if(meaning.constraints){
-									meaning.constraints.each((c) =>	constraintsFromMeanings.push(c));
-								}
-						}
-				}
-
-	}
-
-
 	
 	function setValidationState(res) {
 		isValid = res.isValid();
