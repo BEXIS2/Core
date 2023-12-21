@@ -105,7 +105,7 @@ namespace BExIS.Modules.Dcm.UI.Helpers
                 {
                     XmlDocument xmlDoc = new XmlDocument();
 
-                    if (entity.Extra != null) 
+                    if (entity.Extra != null)
                         if(entity.Extra is XmlDocument) xmlDoc = entity.Extra as XmlDocument ;
                         else xmlDoc.AppendChild(entity.Extra);
 
@@ -166,7 +166,7 @@ namespace BExIS.Modules.Dcm.UI.Helpers
                 operationManager.Create("DCM", "Edit", "*");
                 operationManager.Create("DCM", "View", "*");
                 operationManager.Create("DCM", "Metadata", "*", DatasetCreationFeature);
-         
+
 
                 #endregion Create Dataset Workflow
 
@@ -286,7 +286,7 @@ namespace BExIS.Modules.Dcm.UI.Helpers
 
                 {
                     EntityTemplate entityTemplate = new EntityTemplate();
-                    entityTemplate.Name = "file";
+                    entityTemplate.Name = "File";
                     entityTemplate.Description = "Upload files without data structure";
 
                     // set metadatastructure
@@ -295,7 +295,7 @@ namespace BExIS.Modules.Dcm.UI.Helpers
                     // default input fields , title, descritpion
                     entityTemplate.MetadataFields = new List<int>() { 4, 1 };
 
-                    // set entity 
+                    // set entity
                     entityTemplate.EntityType = entity;
 
                     entityTemplateManager.Create(entityTemplate);
@@ -316,7 +316,7 @@ namespace BExIS.Modules.Dcm.UI.Helpers
                     entityTemplate.MetadataFields = new List<int>() { 4, 1 };
                     entityTemplate.HasDatastructure = true;
 
-                    // set entity 
+                    // set entity
                     entityTemplate.EntityType = entity;
 
                     entityTemplateManager.Create(entityTemplate);
