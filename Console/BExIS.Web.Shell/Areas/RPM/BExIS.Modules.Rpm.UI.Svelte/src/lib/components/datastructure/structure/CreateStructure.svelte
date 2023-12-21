@@ -51,8 +51,9 @@
 	}
 
 	function back() {
-		dispatch('back');
+		goTo(document.referrer);
 	}
+
 </script>
 
 <div>
