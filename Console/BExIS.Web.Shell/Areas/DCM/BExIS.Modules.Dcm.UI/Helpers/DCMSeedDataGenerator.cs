@@ -316,6 +316,7 @@ namespace BExIS.Modules.Dcm.UI.Helpers
                     entityTemplate.MetadataFields = new List<int>() { 4, 1 };
                     entityTemplate.HasDatastructure = true;
                     entityTemplate.DatastructureList = new List<long>();
+                    entityTemplate.AllowedFileTypes = new List<string> { ".csv" };
 
                     // set entity
                     entityTemplate.EntityType = entity;

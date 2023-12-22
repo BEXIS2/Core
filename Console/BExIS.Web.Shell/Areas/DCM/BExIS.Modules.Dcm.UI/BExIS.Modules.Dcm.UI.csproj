@@ -68,6 +68,7 @@
     <Compile Include="Controllers\Legacy\AttachmentsController.cs" />
     <Compile Include="Controllers\Hooks\EntityReferenceController.cs" />
     <Compile Include="Controllers\FormController.cs" />
+    <Compile Include="Controllers\Legacy\CreateDatasetController.cs" />
     <Compile Include="Controllers\Legacy\HelpController.cs" />
     <Compile Include="Controllers\Legacy\ImportMetadataStructureController.cs" />
     <Compile Include="Controllers\Legacy\ImportMetadataStructureReadSourceController.cs" />
@@ -442,7 +443,6 @@
     </Content>
     <Content Include="Views\Shared\_errorMessages.cshtml" />
     <Content Include="Views\Shared\_summaryErrorMessages.cshtml" />
-    <Content Include="Views\CreateDataset\Index.cshtml" />
     <Content Include="Views\Form\MetadataEditor.cshtml" />
     <Content Include="Views\Form\_metadataAttributeView.cshtml" />
     <Content Include="Views\Form\_metadataCompoundAttributeUsageView.cshtml" />
@@ -469,27 +469,8 @@
     <Content Include="Views\Submit\_taskListView.cshtml" />
     <Content Include="Views\Submit\_uploadWizardNav.cshtml" />
     <Content Include="Views\Submit\_useTemplateView.cshtml" />
-    <Content Include="Views\SubmitChooseUpdateMethod\ChooseUpdateMethod.cshtml" />
-    <Content Include="Views\SubmitGetFileInformation\GetFileInformation.cshtml" />
-    <Content Include="Views\SubmitGetFileInformation\_txtFormularView.cshtml" />
-    <Content Include="Views\SubmitGetFileInformation\_xlsFormularView.cshtml" />
-    <Content Include="Views\SubmitSpecifyDataset\SpecifyDataset.cshtml" />
-    <Content Include="Views\SubmitSpecifyDataset\_selectADatasetId.cshtml" />
-    <Content Include="Views\SubmitSummary\Summary.cshtml" />
-    <Content Include="Views\SubmitUnstructuredData\UnstructuredData.cshtml" />
-    <Content Include="Views\SubmitValidation\Validation.cshtml" />
     <Content Include="Views\Shared\_EntitySelectorInWindowView.cshtml" />
     <Content Include="Views\Shared\_EntitySelectorView.cshtml" />
-    <Content Include="Views\SubmitSelectAFile\SelectAFile.cshtml" />
-    <Content Include="Views\EasyUploadSelectAFile\SelectAFile.cshtml" />
-    <Content Include="Views\EasyUploadSheetDataStructure\SheetDataStructure.cshtml" />
-    <Content Include="Views\EasyUploadSheetSelectMetaData\SheetSelectMetaData.cshtml" />
-    <Content Include="Views\EasyUploadSummary\EasyUploadSummary.cshtml" />
-    <Content Include="Views\EasyUploadVerification\Verification.cshtml" />
-    <Content Include="Views\EasyUpload\UploadWizard.cshtml" />
-    <Content Include="Views\EasyUpload\_taskListView.cshtml" />
-    <Content Include="Views\EasyUpload\_uploadWizardNav.cshtml" />
-    <Content Include="Views\EasyUploadSelectAreas\SelectAreas.cshtml" />
     <Content Include="Views\Test\Index.cshtml" />
     <Content Include="Views\Form\MetadataEditorOffline.cshtml" />
     <Content Include="Views\Form\_metadataCompoundAttributeViewOffline.cshtml" />
@@ -497,7 +478,6 @@
     <Content Include="Views\Form\_metadataAttributeViewOffline.cshtml" />
     <Content Include="Views\Attachments\Index.cshtml" />
     <Content Include="Views\Attachments\_datasetAttachements.cshtml" />
-    <Content Include="Views\EasyUploadVerification\Row.cshtml" />
     <Content Include="Views\EntityReference\Index.cshtml" />
     <Content Include="Views\EntityReference\_create.cshtml" />
     <Content Include="Views\EntityReference\Show.cshtml" />

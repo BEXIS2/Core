@@ -1,4 +1,4 @@
-BEGIN;
+BEGIN TRANSACTION;
 
 /**********************************************************************************************/
 /********************** SCHEMA CHANGES BEFORE DATA ********************************************/
@@ -28,6 +28,35 @@ CREATE TABLE IF NOT EXISTS public.entitytemplates (
 ALTER TABLE
     IF EXISTS public.entitytemplates OWNER to postgres;
 
+CREATE SEQUENCE IF NOT EXISTS public.entitytemplates_id_seq INCREMENT 1 START 1 MINVALUE 1 MAXVALUE 9223372036854775807 CACHE 1 OWNED BY entitytemplates.id;
+
+ALTER SEQUENCE public.entitytemplates_id_seq OWNER TO postgres;
+
+ALTER TABLE IF EXISTS public.entitytemplates
+    ALTER COLUMN id SET DEFAULT nextval('entitytemplates_id_seq'::regclass);
+
+
+
+CREATE TABLE IF NOT EXISTS public.accessrules
+(
+    id bigint NOT NULL,
+    versionno integer NOT NULL,
+    securitykey character varying(255) COLLATE pg_catalog."default",
+    securityobjecttype integer,
+    rulebody character varying(255) COLLATE pg_catalog."default",
+    displayname character varying(255) COLLATE pg_catalog."default",
+    parentref bigint,
+    CONSTRAINT accessrules_pkey PRIMARY KEY (id),
+    CONSTRAINT fk_accessruleentitys_parentaccessruleentity FOREIGN KEY (parentref)
+        REFERENCES public.accessrules (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION
+)
+
+TABLESPACE pg_default;
+
+ALTER TABLE IF EXISTS public.accessrules
+    OWNER to postgres;
 
 CREATE TABLE IF NOT EXISTS public.variable_constraints (
     constraintref bigint NOT NULL,
@@ -40,73 +69,7 @@ CREATE TABLE IF NOT EXISTS public.variable_constraints (
 ALTER TABLE
     IF EXISTS public.variable_constraints OWNER to postgres;
 
-CREATE TABLE IF NOT EXISTS public.meanings (
-    id bigint NOT NULL,
-    versionno integer NOT NULL,
-    name character varying(255) COLLATE pg_catalog."default",
-    shortname character varying(255) COLLATE pg_catalog."default",
-    description character varying(255) COLLATE pg_catalog."default",
-    approved integer,
-    selectable integer,
-    CONSTRAINT meanings_pkey PRIMARY KEY (id)
-) TABLESPACE pg_default;
-
-ALTER TABLE
-    IF EXISTS public.meanings OWNER to postgres;
-
-CREATE TABLE IF NOT EXISTS public.externallink (
-    id bigint NOT NULL,
-    versionno integer NOT NULL,
-    uri character varying(255) COLLATE pg_catalog."default",
-    name character varying(255) COLLATE pg_catalog."default",
-    type character varying(255) COLLATE pg_catalog."default",
-    externallinkref bigint,
-    CONSTRAINT externallink_pkey PRIMARY KEY (id),
-    CONSTRAINT fk_6978e301 FOREIGN KEY (externallinkref) REFERENCES public.meanings (id) MATCH SIMPLE ON UPDATE NO ACTION ON DELETE NO ACTION
-) TABLESPACE pg_default;
-
-ALTER TABLE
-    IF EXISTS public.externallink OWNER to postgres;
-
-
-
-CREATE TABLE IF NOT EXISTS public.meaning_meaning (
-    meaningsparentref bigint NOT NULL,
-    meaningschildrenref bigint NOT NULL,
-    CONSTRAINT meaning_meaning_pkey PRIMARY KEY (meaningsparentref, meaningschildrenref),
-    CONSTRAINT fk_516f2fd8 FOREIGN KEY (meaningschildrenref) REFERENCES public.meanings (id) MATCH SIMPLE ON UPDATE NO ACTION ON DELETE NO ACTION,
-    CONSTRAINT fk_d0cc9d49 FOREIGN KEY (meaningsparentref) REFERENCES public.meanings (id) MATCH SIMPLE ON UPDATE NO ACTION ON DELETE NO ACTION
-) TABLESPACE pg_default;
-
-ALTER TABLE
-    IF EXISTS public.meaning_meaning OWNER to postgres;
-
-CREATE TABLE IF NOT EXISTS public.meanings_variables (
-    variableref bigint NOT NULL,
-    meaningref bigint NOT NULL,
-    CONSTRAINT meanings_variables_pkey PRIMARY KEY (meaningref, variableref),
-    CONSTRAINT fk_a7c43e6c FOREIGN KEY (variableref) REFERENCES public.variables (id) MATCH SIMPLE ON UPDATE NO ACTION ON DELETE NO ACTION,
-    CONSTRAINT fk_c5170336 FOREIGN KEY (meaningref) REFERENCES public.meanings (id) MATCH SIMPLE ON UPDATE NO ACTION ON DELETE NO ACTION
-) TABLESPACE pg_default;
-
-ALTER TABLE
-    IF EXISTS public.meanings_variables OWNER to postgres;
-
-CREATE TABLE IF NOT EXISTS public.accessrules (
-    id bigint NOT NULL,
-    versionno integer NOT NULL,
-    securitykey character varying(255) COLLATE pg_catalog."default",
-    securityobjecttype integer,
-    rulebody character varying(255) COLLATE pg_catalog."default",
-    displayname character varying(255) COLLATE pg_catalog."default",
-    parentref bigint,
-    CONSTRAINT accessrules_pkey PRIMARY KEY (id),
-    CONSTRAINT fk_accessruleentitys_parentaccessruleentity FOREIGN KEY (parentref) REFERENCES public.accessrules (id) MATCH SIMPLE ON UPDATE NO ACTION ON DELETE NO ACTION
-) TABLESPACE pg_default;
-
-ALTER TABLE
-    IF EXISTS public.accessrules OWNER to postgres;
-
+/* VARIABLES */
 
 ALTER TABLE
     IF EXISTS public.variables
@@ -116,7 +79,7 @@ ALTER COLUMN
 ALTER TABLE
     IF EXISTS public.variables
 ADD
-    COLUMN approved boolean;
+    COLUMN approved boolean DEFAULT true;
 
 ALTER TABLE
     IF EXISTS public.variables
@@ -176,6 +139,282 @@ DROP INDEX IF EXISTS public.idx_dataattributeref_variables;
 
 DROP INDEX IF EXISTS public.idx_datastructureref_variables;
 
+/**END VARIABLES */
+
+/**meanings**/
+
+CREATE TABLE IF NOT EXISTS public.rpm_prefixcategory
+(
+    id bigint NOT NULL,
+    versionno integer NOT NULL,
+    name character varying(255) COLLATE pg_catalog."default",
+    description character varying(255) COLLATE pg_catalog."default",
+    CONSTRAINT rpm_prefixcategory_pkey PRIMARY KEY (id)
+)
+
+TABLESPACE pg_default;
+
+ALTER TABLE IF EXISTS public.rpm_prefixcategory
+    OWNER to postgres;
+
+CREATE TABLE IF NOT EXISTS public.rpm_meaning_externallink
+(
+    meaningsref bigint NOT NULL,
+    externallinkref bigint NOT NULL,
+    CONSTRAINT rpm_meaning_externallink_pkey PRIMARY KEY (meaningsref, externallinkref)
+)
+
+TABLESPACE pg_default;
+
+ALTER TABLE IF EXISTS public.rpm_meaning_externallink
+    OWNER to postgres;
+
+/*  External LINKS */
+
+CREATE TABLE IF NOT EXISTS public.rpm_externallink
+(
+    id bigint NOT NULL,
+    versionno integer NOT NULL,
+    uri character varying(255) COLLATE pg_catalog."default",
+    name character varying(255) COLLATE pg_catalog."default",
+    type integer,
+    prefix bigint,
+    prefixcategory bigint
+);
+
+CREATE SEQUENCE IF NOT EXISTS public.rpm_externallink_id_seq INCREMENT 1 START 1 MINVALUE 1 MAXVALUE 9223372036854775807 CACHE 1 OWNED BY rpm_externallink.id;
+
+ALTER SEQUENCE public.rpm_externallink_id_seq OWNER TO postgres;
+
+ALTER TABLE IF EXISTS public.rpm_externallink
+    OWNER to postgres;
+	
+
+ALTER TABLE IF EXISTS public.rpm_externallink
+    ALTER COLUMN id SET DEFAULT nextval('rpm_externallink_id_seq'::regclass);
+	
+
+ALTER TABLE IF EXISTS public.rpm_externallink
+ 	ADD CONSTRAINT rpm_externallink_pkey PRIMARY KEY (id);
+
+ALTER TABLE IF EXISTS public.rpm_externallink	
+	ADD CONSTRAINT fk_a4adc10f FOREIGN KEY (prefix)
+        REFERENCES public.rpm_externallink (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION;	
+
+ALTER TABLE IF EXISTS public.rpm_externallink
+    ADD CONSTRAINT fk_cc3bd9e2 FOREIGN KEY (prefixcategory)
+    REFERENCES public.rpm_prefixcategory (id) MATCH SIMPLE
+    ON UPDATE NO ACTION
+    ON DELETE NO ACTION;
+
+/* end  External LINKS */
+
+/* MEANING ENTRY */
+
+CREATE TABLE IF NOT EXISTS public.rpm_meaningentry
+(
+    id bigint NOT NULL,
+    mappingrelation bigint,
+    CONSTRAINT rpm_meaningentry_pkey PRIMARY KEY (id),
+    CONSTRAINT fk_a9af26db FOREIGN KEY (mappingrelation)
+        REFERENCES public.rpm_externallink (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION
+);
+
+ALTER TABLE IF EXISTS public.rpm_meaningentry
+    OWNER to postgres;
+	
+CREATE SEQUENCE IF NOT EXISTS public.rpm_meaningentry_id_seq
+    INCREMENT 1
+    START 1
+    MINVALUE 1
+    MAXVALUE 9223372036854775807
+    CACHE 1
+    OWNED BY rpm_meaningentry.id;
+	
+ALTER TABLE IF EXISTS public.rpm_meaningentry
+    ALTER COLUMN id SET DEFAULT nextval('rpm_meaningentry_id_seq'::regclass);
+
+
+ALTER SEQUENCE public.rpm_meaningentry_id_seq
+    OWNER TO postgres;
+
+/* end MEANING ENTRY  */
+
+CREATE SEQUENCE IF NOT EXISTS public.accessrules_id_seq INCREMENT 1 START 1 MINVALUE 1 MAXVALUE 9223372036854775807 CACHE 1 OWNED BY accessrules.id;
+
+ALTER SEQUENCE public.accessrules_id_seq OWNER TO postgres;
+	
+CREATE TABLE IF NOT EXISTS public.rpm_meanings
+(
+    id bigint NOT NULL,
+    versionno integer NOT NULL,
+    name character varying(255) COLLATE pg_catalog."default",
+    shortname character varying(255) COLLATE pg_catalog."default",
+    description character varying(255) COLLATE pg_catalog."default",
+    approved boolean,
+    selectable boolean,
+    CONSTRAINT rpm_meanings_pkey PRIMARY KEY (id)
+)
+
+TABLESPACE pg_default;
+
+ALTER TABLE IF EXISTS public.rpm_meanings
+    OWNER to postgres;
+
+CREATE TABLE IF NOT EXISTS public.rpm_meaning_constraints
+(
+    meaningref bigint NOT NULL,
+    constraintref bigint NOT NULL,
+    CONSTRAINT rpm_meaning_constraints_pkey PRIMARY KEY (meaningref, constraintref),
+    CONSTRAINT fk_2c15262f FOREIGN KEY (constraintref)
+        REFERENCES public.constraints (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION,
+    CONSTRAINT fk_82e106c9 FOREIGN KEY (meaningref)
+        REFERENCES public.rpm_meanings (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION
+)
+
+TABLESPACE pg_default;
+
+ALTER TABLE IF EXISTS public.rpm_meaning_constraints
+    OWNER to postgres;
+
+
+CREATE TABLE IF NOT EXISTS public.rpm_meaning_meaning
+(
+    meaningsparentref bigint NOT NULL,
+    meaningschildrenref bigint NOT NULL,
+    CONSTRAINT rpm_meaning_meaning_pkey PRIMARY KEY (meaningsparentref, meaningschildrenref)
+)
+
+TABLESPACE pg_default;
+
+ALTER TABLE IF EXISTS public.rpm_meaning_meaning
+    OWNER to postgres;
+
+CREATE TABLE IF NOT EXISTS public.rpm_meaning_related_meaning
+(
+    meaningref bigint NOT NULL,
+    parentmeaningref bigint NOT NULL,
+    CONSTRAINT fk_a3ef456 FOREIGN KEY (meaningref)
+        REFERENCES public.rpm_meanings (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION,
+    CONSTRAINT fk_d0f1340d FOREIGN KEY (parentmeaningref)
+        REFERENCES public.rpm_meanings (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION
+)
+
+TABLESPACE pg_default;
+
+ALTER TABLE IF EXISTS public.rpm_meaning_related_meaning
+    OWNER to postgres;
+
+CREATE TABLE IF NOT EXISTS public.rpm_meaningentry
+(
+    id bigint NOT NULL,
+    mappingrelation bigint,
+    CONSTRAINT rpm_meaningentry_pkey PRIMARY KEY (id),
+    CONSTRAINT fk_a9af26db FOREIGN KEY (mappingrelation)
+        REFERENCES public.rpm_externallink (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION
+)
+
+TABLESPACE pg_default;
+
+ALTER TABLE IF EXISTS public.rpm_meaningentry
+    OWNER to postgres;
+
+CREATE TABLE IF NOT EXISTS public.rpm_meaningentry_mappedlinks
+(
+    meaningentryref bigint NOT NULL,
+    externallink_mapped_linkref bigint NOT NULL,
+    CONSTRAINT fk_45a06b73 FOREIGN KEY (externallink_mapped_linkref)
+        REFERENCES public.rpm_externallink (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION,
+    CONSTRAINT fk_75241888 FOREIGN KEY (meaningentryref)
+        REFERENCES public.rpm_meaningentry (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION
+)
+
+TABLESPACE pg_default;
+
+ALTER TABLE IF EXISTS public.rpm_meaningentry_mappedlinks
+    OWNER to postgres;
+
+CREATE TABLE IF NOT EXISTS public.rpm_meanings_meaningentry
+(
+    meaningref bigint NOT NULL,
+    meaningentryref bigint NOT NULL,
+    CONSTRAINT fk_5b58106d FOREIGN KEY (meaningref)
+        REFERENCES public.rpm_meanings (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION,
+    CONSTRAINT fk_ce0176f7 FOREIGN KEY (meaningentryref)
+        REFERENCES public.rpm_meaningentry (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION
+)
+
+TABLESPACE pg_default;
+
+ALTER TABLE IF EXISTS public.rpm_meanings_meaningentry
+    OWNER to postgres;
+
+CREATE TABLE IF NOT EXISTS public.rpm_meanings_variables
+(
+    variableref bigint NOT NULL,
+    meaningref bigint NOT NULL,
+    CONSTRAINT rpm_meanings_variables_pkey PRIMARY KEY (variableref, meaningref),
+    CONSTRAINT fk_5428fd5b FOREIGN KEY (meaningref)
+        REFERENCES public.rpm_meanings (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION,
+    CONSTRAINT fk_98f6228e FOREIGN KEY (variableref)
+        REFERENCES public.variables (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION
+)
+
+TABLESPACE pg_default;
+
+ALTER TABLE IF EXISTS public.rpm_meanings_variables
+    OWNER to postgres;
+
+/* -- */
+
+/*end Meanings */
+
+CREATE TABLE IF NOT EXISTS public.variable_constraints
+(
+    constraintref bigint NOT NULL,
+    variableref bigint NOT NULL,
+    CONSTRAINT variable_constraints_pkey PRIMARY KEY (variableref, constraintref),
+    CONSTRAINT fk_17300cc1 FOREIGN KEY (variableref)
+        REFERENCES public.variables (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION,
+    CONSTRAINT fk_8ba3b117 FOREIGN KEY (constraintref)
+        REFERENCES public.constraints (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION
+)
+
+TABLESPACE pg_default;
+
+ALTER TABLE IF EXISTS public.variable_constraints
+    OWNER to postgres;
+
 ALTER TABLE
     IF EXISTS public.datasets
 ALTER COLUMN
@@ -221,21 +460,106 @@ ALTER TABLE
 ADD
     CONSTRAINT fk_f9a7e19e FOREIGN KEY (unitref) REFERENCES public.units (id) MATCH SIMPLE ON UPDATE NO ACTION ON DELETE NO ACTION;
 
-CREATE SEQUENCE IF NOT EXISTS public.meanings_id_seq INCREMENT 1 START 1 MINVALUE 1 MAXVALUE 9223372036854775807 CACHE 1 OWNED BY meanings.id;
+/* Constraints */
 
-ALTER SEQUENCE public.meanings_id_seq OWNER TO postgres;
+ALTER TABLE IF EXISTS public.constraints
+    ALTER COLUMN datacontainerref DROP NOT NULL;
 
-CREATE SEQUENCE IF NOT EXISTS public.externallink_id_seq INCREMENT 1 START 1 MINVALUE 1 MAXVALUE 9223372036854775807 CACHE 1 OWNED BY externallink.id;
+ALTER TABLE IF EXISTS public.constraints
+    ADD COLUMN creationdate timestamp without time zone;
 
-ALTER SEQUENCE public.externallink_id_seq OWNER TO postgres;
+ALTER TABLE IF EXISTS public.constraints
+    ADD COLUMN lastmodified timestamp without time zone;
 
-CREATE SEQUENCE IF NOT EXISTS public.accessrules_id_seq INCREMENT 1 START 1 MINVALUE 1 MAXVALUE 9223372036854775807 CACHE 1 OWNED BY accessrules.id;
+ALTER TABLE IF EXISTS public.constraints
+    ADD COLUMN lastmodifieduserref bigint;
 
-ALTER SEQUENCE public.accessrules_id_seq OWNER TO postgres;
+ALTER TABLE IF EXISTS public.constraints
+    ADD COLUMN name character varying(255) COLLATE pg_catalog."default";
+ALTER TABLE IF EXISTS public.constraints DROP CONSTRAINT IF EXISTS fkb6093b2ee5c7912c;
 
-CREATE SEQUENCE IF NOT EXISTS public.entitytemplates_id_seq INCREMENT 1 START 1 MINVALUE 1 MAXVALUE 9223372036854775807 CACHE 1 OWNED BY entitytemplates.id;
+ALTER TABLE IF EXISTS public.constraints
+    ADD CONSTRAINT fk_fd8e6a17 FOREIGN KEY (datacontainerref)
+    REFERENCES public.datacontainers (id) MATCH SIMPLE
+    ON UPDATE NO ACTION
+    ON DELETE NO ACTION;
 
-ALTER SEQUENCE public.entitytemplates_id_seq OWNER TO postgres;
+
+/* TABLE DROPS*/ 
+DROP TABLE IF EXISTS public.parameters CASCADE;
+
+/* SEQUENCE */
+
+
+
+CREATE SEQUENCE IF NOT EXISTS public.rpm_prefixcategory_id_seq
+    INCREMENT 1
+    START 1
+    MINVALUE 1
+    MAXVALUE 9223372036854775807
+    CACHE 1
+    OWNED BY rpm_prefixcategory.id;
+
+ALTER SEQUENCE public.rpm_prefixcategory_id_seq
+    OWNER TO postgres;
+
+CREATE SEQUENCE IF NOT EXISTS public.rpm_meanings_id_seq
+    INCREMENT 1
+    START 1
+    MINVALUE 1
+    MAXVALUE 9223372036854775807
+    CACHE 1
+    OWNED BY rpm_meanings.id;
+
+ALTER SEQUENCE public.rpm_meanings_id_seq
+    OWNER TO postgres;
+
+
+
+
+DROP SEQUENCE IF EXISTS public.parameters_id_seq;
+
+CREATE SEQUENCE IF NOT EXISTS public.entitytemplates_id_seq
+    INCREMENT 1
+    START 1
+    MINVALUE 1
+    MAXVALUE 9223372036854775807
+    CACHE 1
+    OWNED BY entitytemplates.id;
+
+ALTER SEQUENCE public.entitytemplates_id_seq
+    OWNER TO postgres;
+
+CREATE SEQUENCE IF NOT EXISTS public.accessrules_id_seq
+    INCREMENT 1
+    START 1
+    MINVALUE 1
+    MAXVALUE 9223372036854775807
+    CACHE 1
+    OWNED BY accessrules.id;
+
+ALTER SEQUENCE public.accessrules_id_seq
+    OWNER TO postgres;
+
+
+ALTER TABLE IF EXISTS public.rpm_meanings
+    ALTER COLUMN id SET DEFAULT nextval('rpm_meanings_id_seq'::regclass);
+
+
+ALTER TABLE IF EXISTS public.rpm_prefixcategory
+    ALTER COLUMN id SET DEFAULT nextval('rpm_prefixcategory_id_seq'::regclass);
+
+/* UNITS */
+
+ALTER TABLE IF EXISTS public.units
+    ADD COLUMN externallinkref bigint;
+
+/** DROP COLUMNS */
+ALTER TABLE IF EXISTS public.datacontainers DROP COLUMN IF EXISTS classifierref;
+
+COMMIT;
+
+BEGIN TRANSACTION;
 
 
 /**********************************************************************************************/
@@ -264,23 +588,42 @@ SELECT 1, null, '', 'Dimension Management',
     Select id from features where name = 'Data Planing'
 )
 WHERE NOT EXISTS (SELECT * FROM public.features WHERE name='Dimension Management');
+
+/*Constraint Management*/
+INSERT INTO public.features(
+versionno, extra, description, name, parentref)
+SELECT 1, null, '', 'Constraint Management', 
+(
+    Select id from features where name = 'Data Planing'
+)
+WHERE NOT EXISTS (SELECT * FROM public.features WHERE name='Constraint Management');
+
+/*Data Type Management*/
+INSERT INTO public.features(
+versionno, extra, description, name, parentref)
+SELECT 1, null, '', 'Data Type Management', 
+(
+    Select id from features where name = 'Data Planing'
+)
+WHERE NOT EXISTS (SELECT * FROM public.features WHERE name='Data Type Management');
+
 /*Data Meaning*/
 INSERT INTO public.features(
 versionno, extra, description, name, parentref)
-SELECT 1, null, '', 'Data Meaning', 
+SELECT 1, null, '', 'Meaning', 
 (
     Select id from features where name = 'Data Planing'
 )
-WHERE NOT EXISTS (SELECT * FROM public.features WHERE name='Data Meaning');
-/*Data Meaning (public)*/
+WHERE NOT EXISTS (SELECT * FROM public.features WHERE name='Meaning');
+/*Meaning API*/
 
 INSERT INTO public.features(
 versionno, extra, description, name, parentref)
-SELECT 1, null, '', 'Data Meaning (public)', 
+SELECT 1, null, '', 'Meaning API', 
 (
     Select id from features where name = 'Data Planing'
 )
-WHERE NOT EXISTS (SELECT * FROM public.features WHERE name='Data Meaning (public)');
+WHERE NOT EXISTS (SELECT * FROM public.features WHERE name='Meaning API');
 
 /* Update Operations */
 /*  ADD **/
@@ -292,6 +635,18 @@ WHERE NOT EXISTS (SELECT * FROM public.operations WHERE module='Shell' AND contr
 INSERT INTO public.operations (versionno, extra, module, controller, action, featureref)
 SELECT 1, NULL, 'Shell', 'Menu', '*', null
 WHERE NOT EXISTS (SELECT * FROM public.operations WHERE module='Shell' AND controller='Menu');
+/* Shell Header **/
+INSERT INTO public.operations (versionno, extra, module, controller, action, featureref)
+SELECT 1, NULL, 'Shell', 'Header', '*', null
+WHERE NOT EXISTS (SELECT * FROM public.operations WHERE module='Shell' AND controller='Header');
+/* Shell Tokens **/
+INSERT INTO public.operations (versionno, extra, module, controller, action, featureref)
+SELECT 1, NULL, 'Shell', 'Tokens', '*', null
+WHERE NOT EXISTS (SELECT * FROM public.operations WHERE module='Shell' AND controller='Tokens');
+/* API Tokens **/
+INSERT INTO public.operations (versionno, extra, module, controller, action, featureref)
+SELECT 1, NULL, 'Api', 'Tokens', '*', null
+WHERE NOT EXISTS (SELECT * FROM public.operations WHERE module='Api' AND controller='Tokens');
 /* Shell Settings **/
 INSERT INTO public.operations (versionno, extra, module, controller, action, featureref)
 SELECT 1, NULL, 'Shell', 'Settings', '*', (Select id from features where name = 'Settings' AND parentref = (
@@ -365,24 +720,39 @@ INSERT INTO public.operations (versionno, extra, module, controller, action, fea
 SELECT 1, NULL, 'RPM', 'Dimension', '*', (Select id from features where name = 'Unit Management' AND parentref = (
 Select id from features where name = 'Data Planning'))
 WHERE NOT EXISTS (SELECT * FROM public.operations WHERE module='RPM' AND controller='Dimension');
+/* RPM	Constraints **/
+INSERT INTO public.operations (versionno, extra, module, controller, action, featureref)
+SELECT 1, NULL, 'RPM', 'Constraints', '*', (Select id from features where name = 'Constraints Management' AND parentref = (
+Select id from features where name = 'Data Planning'))
+WHERE NOT EXISTS (SELECT * FROM public.operations WHERE module='RPM' AND controller='Constraints');
+/* RPM	Constraints **/
+INSERT INTO public.operations (versionno, extra, module, controller, action, featureref)
+SELECT 1, NULL, 'RPM', 'Constraints', '*', (Select id from features where name = 'Constraints Management' AND parentref = (
+Select id from features where name = 'Data Planning'))
+WHERE NOT EXISTS (SELECT * FROM public.operations WHERE module='RPM' AND controller='Constraints');
+/* RPM	Data Type **/
+INSERT INTO public.operations (versionno, extra, module, controller, action, featureref)
+SELECT 1, NULL, 'RPM', 'DataType', '*', (Select id from features where name = 'Data Type Management' AND parentref = (
+Select id from features where name = 'Data Planning'))
+WHERE NOT EXISTS (SELECT * FROM public.operations WHERE module='RPM' AND controller='DataType');
 /* API	MeaningsAdmin **/
 INSERT INTO public.operations (versionno, extra, module, controller, action, featureref)
-SELECT 1, NULL, 'API', 'MeaningsAdmin', '*', (Select id from features where name = 'Data Meaning' AND parentref = (
+SELECT 1, NULL, 'API', 'MeaningsAdmin', '*', (Select id from features where name = 'Meaning' AND parentref = (
 Select id from features where name = 'Data Planning'))
 WHERE NOT EXISTS (SELECT * FROM public.operations WHERE module='API' AND controller='MeaningsAdmin');
 /* API	Meanings **/
 INSERT INTO public.operations (versionno, extra, module, controller, action, featureref)
-SELECT 1, NULL, 'API', 'Meanings', '*', (Select id from features where name = 'Data Meaning (public)' AND parentref = (
+SELECT 1, NULL, 'API', 'Meanings', '*', (Select id from features where name = 'Meaning API' AND parentref = (
 Select id from features where name = 'Data Planning'))
 WHERE NOT EXISTS (SELECT * FROM public.operations WHERE module='API' AND controller='Meanings');
 /* RPM	Meaning **/
 INSERT INTO public.operations (versionno, extra, module, controller, action, featureref)
-SELECT 1, NULL, 'RPM', 'Meaning', '*', (Select id from features where name = 'Data Meaning (public)' AND parentref = (
+SELECT 1, NULL, 'RPM', 'Meaning', '*', (Select id from features where name = 'Meaning' AND parentref = (
 Select id from features where name = 'Data Planning'))
 WHERE NOT EXISTS (SELECT * FROM public.operations WHERE module='RPM' AND controller='Meaning');
 /* RPM	ExternalLink **/
 INSERT INTO public.operations (versionno, extra, module, controller, action, featureref)
-SELECT 1, NULL, 'RPM', 'ExternalLink', '*', (Select id from features where name = 'Data Meaning (public)' AND parentref = (
+SELECT 1, NULL, 'RPM', 'ExternalLink', '*', (Select id from features where name = 'Meaning' AND parentref = (
 Select id from features where name = 'Data Planning'))
 WHERE NOT EXISTS (SELECT * FROM public.operations WHERE module='RPM' AND controller='ExternalLink');
 /* DIM	Publish **/ 
@@ -419,20 +789,21 @@ DELETE FROM public.operations Where module = 'DCM' and controller = 'EasyUploadS
 DELETE FROM public.operations Where module = 'DCM' and controller = 'EasyUploadSummary';
 /** DCM	EasyUploadVerification **/
 DELETE FROM public.operations Where module = 'DCM' and controller = 'EasyUploadVerification';
-
+/** API TOKEN **/
+DELETE FROM public.operations Where module = 'Api' and controller = 'Token';
 
 
 
 /** Entity Templates **/
 /* add template for unstructured */
 INSERT INTO public.entitytemplates(
-	id, versionno, extra, name, description, metadatainvalidsavemode, hasdatastructure, entityref, metadatastructureref)
-	VALUES (1, 1, null, 'File', 'Use this template if you want to upload files only', true, false,1,1);
+	id, versionno, extra, name, description, metadatainvalidsavemode, hasdatastructure, entityref, metadatastructureref,jsondatastructurelist, jsonallowedfiletypes, jsondisabledhooks, jsonnotificationgroups, jsonpermissiongroups, jsonmetadatafields)
+	VALUES (1, 1, null, 'File', 'Use this template if you want to upload files only', true, false,1,1,"","","","","","");
 
 /* add template for structured */
 INSERT INTO public.entitytemplates(
-	id, versionno, extra, name, description, metadatainvalidsavemode, hasdatastructure, entityref, metadatastructureref)
-	VALUES (2, 1, null, 'Data', 'Use this template if you want to upload data', true, true,1,1);
+	id, versionno, extra, name, description, metadatainvalidsavemode, hasdatastructure, entityref, metadatastructureref,jsondatastructurelist, jsonallowedfiletypes, jsondisabledhooks, jsonnotificationgroups, jsonpermissiongroups, jsonmetadatafields)
+	VALUES (2, 1, null, 'Data', 'Use this template if you want to upload data', true, true,1,2,"","","","","","");
 
 /* update datasets */
 Update Datasets SET entitytemplateref=1 where datastructureref in (select id from datastructures where datastructuretype like 'UnS');
@@ -452,6 +823,11 @@ INSERT INTO public.variables(
 Select	versionno, extra, name, description, id, unitref, datatyperef, 'VAR_TEMPL', true
 From public.datacontainers Where discriminator like 'DA';
 	
+/* set VAR_INST Datatype based on VAR_TEMPL*/
+update variables as x
+SET datatyperef = b.datatyperef
+from  variables as b
+where x.vartemplateref = b.id ;
 
 /*  set all templates to variables */
 update variables as x
@@ -463,10 +839,24 @@ where x.dataattributeref = b.dataattributeref and b.variablestype = 'VAR_TEMPL';
 /** update Constraints **/
 
 /***Link constraints to varaibles*/
+/* fill coupling table variables_constraint*/
+INSERT INTO variable_constraints(constraintref,variableref)
+Select c.id, v.id
+From constraints as c, variables as v
+WHERE c.datacontainerref = v.dataattributeref;
+
+/* set name and remove datacontainer*/
+UPDATE constraints as c
+SET name = c.id, datacontainerref = null
+where datacontainerref in (Select id from public.datacontainers Where discriminator like 'DA');
+
+/* delete all data container with discimrinator */
+DELETE from public.datacontainers Where discriminator like 'DA';
 
 
-/* Seed data dwc terms as meanings */
+COMMIT;
 
+BEGIN TRANSACTION;
 
 /**********************************************************************************************/
 /********************** SCHEMA CHANGES AFTER DATA  ********************************************/
@@ -477,19 +867,19 @@ where x.dataattributeref = b.dataattributeref and b.variablestype = 'VAR_TEMPL';
 ALTER TABLE
     IF EXISTS public.variables
 ALTER COLUMN 
-    datatyperef bigint NOT NULL;
+    datatyperef SET NOT NULL;
 
 /** set type in variable to not null**/
 ALTER TABLE
     IF EXISTS public.variables
 ALTER
-    COLUMN variablestype character varying(255) COLLATE pg_catalog."default" NOT NULL;
+    COLUMN variablestype SET NOT NULL;
 
 /** set entitytemplateref in datasets to not null**/
 ALTER TABLE
     IF EXISTS public.datasets
-ADD
-    COLUMN entitytemplateref bigint NOT NULL;
+ALTER
+    COLUMN entitytemplateref SET NOT NULL;
 
 
 /* drop all varaible links to dataattributeref*/
@@ -497,4 +887,11 @@ ALTER TABLE
     IF EXISTS public.variables DROP COLUMN IF EXISTS dataattributeref;
 
 
-END;
+
+-- Insert version
+INSERT INTO public.versions(
+	versionno, extra, module, value, date)
+	VALUES (1, null, 'Shell', '3.0.0-beta',NOW());
+
+
+commit;
