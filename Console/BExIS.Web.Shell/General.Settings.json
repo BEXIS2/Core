@@ -28,7 +28,7 @@
     {
       "key": "landingPage",
       "title": "Landing Page",
-      "value": "ddm, publicsearch, index",
+      "value": "shell, home, demo",
       "type": "String",
       "description": "user is not logging in -> app goes to"
     },

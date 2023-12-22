@@ -97,6 +97,13 @@ namespace BExIS.Web.Shell.Controllers
         }
 
         [DoesNotNeedDataAccess]
+        public ActionResult Demo()
+        {
+
+            return View();
+        }
+
+        [DoesNotNeedDataAccess]
         public ActionResult Nopermission()
         {
             return View("NoPermission");

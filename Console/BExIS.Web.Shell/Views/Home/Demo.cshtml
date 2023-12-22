@@ -1,0 +1,92 @@
+﻿
+@{
+    ViewBag.Title = "Demo";
+}
+
+<div class="jumbotron">
+    <h1>Welcome to the BEXIS 2 demo.</h1>
+    <p>
+        The Bexis 2 demo can be explored in 3 ways.
+    </p>
+</div>
+
+
+<div>
+    <div class="row">
+        <div class="col-sm-6 col-md-4">
+            <div class="thumbnail">
+                <div class="caption">
+                    <h2>Without Registration</h2>
+                    <p>As a non-registered user, you can view the publicly provided dataset.</p>
+                    <br />
+
+                    <p><a href="/ddm/publicsearch/index" class="btn btn-primary" role="button">Public Search</a></p>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-6 col-md-4">
+            <div class="thumbnail">
+                <div class="caption">
+                    <h2>With prepared users</h2>
+
+                    <table>
+                        <thead>
+                            <tr>
+                                <td><b>Role</b></td>
+                                <td><b>User</b></td>
+                                <td><b>Password</b></td>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Scientist</td>
+                                <td>scientist</td>
+                                <td>scientist</td>
+                            </tr>
+                            <tr>
+                                <td>Data Manager</td>
+                                <td>datamanager</td>
+                                <td>datamanager</td>
+                            </tr>
+                            <tr>
+                                <td>Administrator</td>
+                                <td>administrator</td>
+                                <td>administrator</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <br />
+                    <p>
+                        The system is reset once a week. Data that was created with this account no longer exists afterwards!
+                    </p>
+                    <br />
+                    <p><a href="/Account/Login" class="btn btn-primary" role="button">Login</a></p>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-6 col-md-4">
+            <div class="thumbnail">
+                <div class="caption">
+                    <h2>Register yourself</h2>
+                    <p>
+                        You can register yourself. After successful activation, features rights must be granted by the administrator.
+                    </p>
+                    <p>
+                        Please write an email to bexis-support@uni-jena.de and describe briefly what you want to test, so that we can activate the appropriate functions for you.
+                    </p>
+                    <p>
+                        The system is reset once a week. Thus, the user accounts are no longer available and you have to register again!
+                    </p>
+                    <br />
+
+                    <p><a href="/Account/Register" class="btn btn-primary" role="button">Register</a></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<div>
+    <p>In the instance, there is test data that was provided to us by running instances.</p>
+</div>
