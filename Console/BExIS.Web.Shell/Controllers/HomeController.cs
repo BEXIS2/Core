@@ -59,7 +59,10 @@ namespace BExIS.Web.Shell.Controllers
                     // this.IsAccessible not possible for shell
                     if (checkPermission(landingPage) == false)
                     {
-                        landingPage = this.Session.GetTenant().LandingPageTuple;
+                        landingPage = new Tuple<string, string, string>(
+                            GeneralSettings.LandingPage.Split(',')[0].Trim(), //module id
+                            GeneralSettings.LandingPage.Split(',')[1].Trim(), //controller
+                            GeneralSettings.LandingPage.Split(',')[2].Trim());//action
                     }
 
                     // Default forward, if no other path given for no permission page
@@ -72,7 +75,16 @@ namespace BExIS.Web.Shell.Controllers
             // use defined landing page without login
             else
             {
-                landingPage = this.Session.GetTenant().LandingPageTuple;
+                landingPage = new Tuple<string, string, string>(
+                            GeneralSettings.LandingPage.Split(',')[0].Trim(), //module id
+                            GeneralSettings.LandingPage.Split(',')[1].Trim(), //controller
+                            GeneralSettings.LandingPage.Split(',')[2].Trim());//action
+
+                // Default forward, if no other path given for no permission page
+                if (landingPage.Item1.ToLower() == "shell" && landingPage.Item2.ToLower() == "home")
+                {
+                    return View(landingPage.Item3);
+                }
             }
 
             //if the landingPage is null and the action is not accessible forward to shell/home/index
