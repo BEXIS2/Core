@@ -121,11 +121,11 @@ namespace BExIS.Modules.Rpm.UI.Helpers
                     f.Parent != null &&
                     f.Parent.Id.Equals(dataPlanning.Id));
 
-                if (newDataTypeFeature == null)
-                    newDataTypeFeature = featureManager.Create("New Data Type Management", "New Data Type Management", dataPlanning);
+                //if (newDataTypeFeature == null)
+                    //newDataTypeFeature = featureManager.Create("New Data Type Management", "New Data Type Management", dataPlanning);
 
                 if (!operationManager.Exists("RPM", "DataType", "*"))
-                    operationManager.Create("RPM", "DataType", "*", newDataTypeFeature);
+                    operationManager.Create("RPM", "DataType", "*", dataTypeFeature);
 
 
 
@@ -147,22 +147,22 @@ namespace BExIS.Modules.Rpm.UI.Helpers
 
                 //meanings features and security levels
                 Feature dataMeaning = features.FirstOrDefault(f =>
-                    f.Name.Equals("Data Meaning Manager") &&
+                    f.Name.Equals("Meaning Manager") &&
                     f.Parent != null &&
                     f.Parent.Id.Equals(dataPlanning.Id));
                 if (dataMeaning == null)
-                    dataMeaning = featureManager.Create("Data Meaning", "Data Meaning Management", dataPlanning);
+                    dataMeaning = featureManager.Create("Meaning", "Meaning Management", dataPlanning);
                 if (!operationManager.Exists("API", "MeaningsAdmin", "*"))
                 {
                     operationManager.Create("API", "MeaningsAdmin", "*", dataMeaning);
                 }
 
                 Feature dataMeaning_pub = features.FirstOrDefault(f =>
-                    f.Name.Equals("Data Meaning (public)") &&
+                    f.Name.Equals("Meaning API") &&
                     f.Parent != null &&
                     f.Parent.Id.Equals(dataPlanning.Id));
                 if (dataMeaning_pub == null)
-                    dataMeaning_pub = featureManager.Create("Data Meaning (public)", "Data Meaning Management", dataPlanning);
+                    dataMeaning_pub = featureManager.Create("Meaning API", "Meaning Management", dataPlanning);
                 if (!operationManager.Exists("API", "Meanings", "*"))
                 {
                     operationManager.Create("API", "Meanings", "*", dataMeaning_pub);
@@ -171,9 +171,12 @@ namespace BExIS.Modules.Rpm.UI.Helpers
 
                 if (!operationManager.Exists("RPM", "Meaning", "*"))
                 {
-                    operationManager.Create("RPM", "Meaning", "*", dataMeaning_pub);
-                    operationManager.Create("RPM", "ExternalLink", "*", dataMeaning_pub);
+                    operationManager.Create("RPM", "Meaning", "*", dataMeaning);
+                }
 
+                if (!operationManager.Exists("RPM", "ExternalLink", "*"))
+                {
+                    operationManager.Create("RPM", "ExternalLink", "*", dataMeaning);
                 }
 
                 if (!operationManager.Exists("RPM", "Help", "*"))operationManager.Create("RPM", "Help", "*");
