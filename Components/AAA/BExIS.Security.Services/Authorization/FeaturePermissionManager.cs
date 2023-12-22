@@ -276,12 +276,9 @@ namespace BExIS.Security.Services.Authorization
             }
         }
 
-        public Dictionary<long?, bool> GetAccessList(IEnumerable<Subject> subjects, long featureId)
+        public Dictionary<long, bool> GetAccessList(IEnumerable<Subject> subjects, long featureId)
         {
-            Dictionary<long?, bool> accessDictionary = new Dictionary<long?, bool>();
-
-            // check anonymous rights
-            accessDictionary.Add(null, HasAccess(null, featureId));
+            Dictionary<long, bool> accessDictionary = new Dictionary<long, bool>();
 
             // check user rights
             foreach (var subject in subjects)
