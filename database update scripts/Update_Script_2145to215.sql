@@ -54,7 +54,7 @@ ALTER TABLE public.variable_constraints
 	
 ALter table variables add column vartemplateref bigint;
 ALter table variables add column datepattern character varying(255);
-ALter table variables add column datatyperef bigint NOT NULL;
+
 
 ALter table variables ADD CONSTRAINT fk_2abad2e6 FOREIGN KEY (vartemplateref)
         REFERENCES public.variables (id) MATCH SIMPLE

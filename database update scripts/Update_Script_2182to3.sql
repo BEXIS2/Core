@@ -1,4 +1,4 @@
-BEGIN;
+BEGIN TRANSACTION;
 
 /**********************************************************************************************/
 /********************** SCHEMA CHANGES BEFORE DATA ********************************************/
@@ -27,6 +27,10 @@ CREATE TABLE IF NOT EXISTS public.entitytemplates (
 
 ALTER TABLE
     IF EXISTS public.entitytemplates OWNER to postgres;
+
+CREATE SEQUENCE IF NOT EXISTS public.entitytemplates_id_seq INCREMENT 1 START 1 MINVALUE 1 MAXVALUE 9223372036854775807 CACHE 1 OWNED BY entitytemplates.id;
+
+ALTER SEQUENCE public.entitytemplates_id_seq OWNER TO postgres;
 
 ALTER TABLE IF EXISTS public.entitytemplates
     ALTER COLUMN id SET DEFAULT nextval('entitytemplates_id_seq'::regclass);
@@ -486,9 +490,7 @@ DROP TABLE IF EXISTS public.parameters CASCADE;
 
 /* SEQUENCE */
 
-CREATE SEQUENCE IF NOT EXISTS public.entitytemplates_id_seq INCREMENT 1 START 1 MINVALUE 1 MAXVALUE 9223372036854775807 CACHE 1 OWNED BY entitytemplates.id;
 
-ALTER SEQUENCE public.entitytemplates_id_seq OWNER TO postgres;
 
 CREATE SEQUENCE IF NOT EXISTS public.rpm_prefixcategory_id_seq
     INCREMENT 1
@@ -555,7 +557,9 @@ ALTER TABLE IF EXISTS public.units
 /** DROP COLUMNS */
 ALTER TABLE IF EXISTS public.datacontainers DROP COLUMN IF EXISTS classifierref;
 
+COMMIT;
 
+BEGIN TRANSACTION;
 
 
 /**********************************************************************************************/
@@ -793,13 +797,13 @@ DELETE FROM public.operations Where module = 'Api' and controller = 'Token';
 /** Entity Templates **/
 /* add template for unstructured */
 INSERT INTO public.entitytemplates(
-	id, versionno, extra, name, description, metadatainvalidsavemode, hasdatastructure, entityref, metadatastructureref)
-	VALUES (1, 1, null, 'File', 'Use this template if you want to upload files only', true, false,1,1);
+	id, versionno, extra, name, description, metadatainvalidsavemode, hasdatastructure, entityref, metadatastructureref,jsondatastructurelist, jsonallowedfiletypes, jsondisabledhooks, jsonnotificationgroups, jsonpermissiongroups, jsonmetadatafields)
+	VALUES (1, 1, null, 'File', 'Use this template if you want to upload files only', true, false,1,1,"","","","","","");
 
 /* add template for structured */
 INSERT INTO public.entitytemplates(
-	id, versionno, extra, name, description, metadatainvalidsavemode, hasdatastructure, entityref, metadatastructureref)
-	VALUES (2, 1, null, 'Data', 'Use this template if you want to upload data', true, true,1,2);
+	id, versionno, extra, name, description, metadatainvalidsavemode, hasdatastructure, entityref, metadatastructureref,jsondatastructurelist, jsonallowedfiletypes, jsondisabledhooks, jsonnotificationgroups, jsonpermissiongroups, jsonmetadatafields)
+	VALUES (2, 1, null, 'Data', 'Use this template if you want to upload data', true, true,1,2,"","","","","","");
 
 /* update datasets */
 Update Datasets SET entitytemplateref=1 where datastructureref in (select id from datastructures where datastructuretype like 'UnS');
@@ -847,8 +851,12 @@ SET name = c.id, datacontainerref = null
 where datacontainerref in (Select id from public.datacontainers Where discriminator like 'DA');
 
 /* delete all data container with discimrinator */
-DELETE from public.datacontainers Where discriminator like 'DA'
+DELETE from public.datacontainers Where discriminator like 'DA';
 
+
+COMMIT;
+
+BEGIN TRANSACTION;
 
 /**********************************************************************************************/
 /********************** SCHEMA CHANGES AFTER DATA  ********************************************/
@@ -886,4 +894,4 @@ INSERT INTO public.versions(
 	VALUES (1, null, 'Shell', '3.0.0-beta',NOW());
 
 
-END;
+commit;
