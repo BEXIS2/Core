@@ -541,9 +541,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 {
                     TaskManager = (CreateTaskmanager)Session["CreateDatasetTaskmanager"];
 
-                    if (TaskManager.Bus.ContainsKey(CreateTaskmanager.DATASTRUCTURE_ID)
-                        && TaskManager.Bus.ContainsKey(CreateTaskmanager.RESEARCHPLAN_ID)
-                        && TaskManager.Bus.ContainsKey(CreateTaskmanager.METADATASTRUCTURE_ID))
+                    if (TaskManager.Bus.ContainsKey(CreateTaskmanager.METADATASTRUCTURE_ID))
                     {
                         // for e new dataset
                         if (!TaskManager.Bus.ContainsKey(CreateTaskmanager.ENTITY_ID))
