@@ -482,7 +482,6 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>UploadLocalization.zh-CN.resx</DependentUpon>
     </Compile>
-    <Compile Include="Configurations\DataCiteDOIConfigurations.cs" />
     <Compile Include="Controllers\AdminController.cs" />
     <Compile Include="Controllers\API\DataQualityOutController.cs" />
     <Compile Include="Controllers\API\DatasetOutController.cs" />
@@ -1224,7 +1223,7 @@
   </ProjectExtensions>
   <PropertyGroup>
     <PostBuildEvent>mkdir "$(SolutionDir)Console\Workspace\Modules\DIM"
-C:\Windows\System32\xcopy "$(ProjectDir)Dim.Settings.xml" "$(SolutionDir)Console\Workspace\Modules\DIM" /C /Y /I
+C:\Windows\System32\xcopy "$(ProjectDir)Dim.Settings.json" "$(SolutionDir)Console\Workspace\Modules\DIM" /C /Y /I
 C:\Windows\System32\xcopy "$(ProjectDir)\App_Data\submissionConfig.xml" "$(SolutionDir)Console\Workspace\Modules\DIM" /C /Y /I
 C:\Windows\System32\xcopy "$(ProjectDir)\bin\BExIS.Modules.Dim.UI.xml" "$(SolutionDir)Console\BExIS.Web.Shell\App_Data" /C /Y /I</PostBuildEvent>
   </PropertyGroup>

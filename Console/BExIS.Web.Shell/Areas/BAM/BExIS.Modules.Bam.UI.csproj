@@ -143,6 +143,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Configurations\AccountPartyRelationshipType.cs" />
     <Compile Include="Controllers\API\PartiesController.cs" />
     <Compile Include="Controllers\API\PartyCustomAttributesController.cs" />
     <Compile Include="Controllers\API\PartyRelationshipsController.cs" />
@@ -153,6 +154,7 @@
     <Compile Include="Controllers\PartyServiceController.cs" />
     <Compile Include="Helpers\BAMSeedDataGenerator.cs" />
     <Compile Include="Helpers\Helper.cs" />
+    <Compile Include="Helpers\SettingsHelper.cs" />
     <Compile Include="Models\AddRelationshipModel.cs" />
     <Compile Include="Models\PartyCustomAttributeModels.cs" />
     <Compile Include="Models\PartyCustomAttributeValueModel.cs" />

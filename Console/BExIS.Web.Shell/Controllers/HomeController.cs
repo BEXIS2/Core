@@ -1,4 +1,5 @@
-﻿using BExIS.Security.Services.Authorization;
+﻿using BExIS.App.Bootstrap.Attributes;
+using BExIS.Security.Services.Authorization;
 using BExIS.Security.Services.Objects;
 using BExIS.Security.Services.Subjects;
 using BExIS.Security.Services.Versions;
@@ -87,6 +88,23 @@ namespace BExIS.Web.Shell.Controllers
         public ActionResult Nopermission()
         {
             return View("NoPermission");
+        }
+
+        [JsonNetFilter]
+        [HttpGet]
+        public JsonResult GetApplicationName()
+        {
+            try
+            {
+                var generalSettings = new GeneralSettings();
+                var applicationName = generalSettings.GetApplicationName();
+
+                return Json(applicationName, JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception ex)
+            {
+                return Json("BEXIS2", JsonRequestBehavior.AllowGet);
+            }
         }
 
         [DoesNotNeedDataAccess]

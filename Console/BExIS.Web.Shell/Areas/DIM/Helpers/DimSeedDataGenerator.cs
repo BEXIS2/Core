@@ -22,12 +22,12 @@ using Vaiona.Web.Mvc.Modularity;
 
 namespace BExIS.Modules.Dim.UI.Helpers
 {
-
-
-
     public class DimSeedDataGenerator : IModuleSeedDataGenerator
     {
-
+        public void Dispose()
+        {
+            // nothing to do for now...
+        }
 
         public void GenerateSeedData()
         {
@@ -177,6 +177,52 @@ namespace BExIS.Modules.Dim.UI.Helpers
             //ImportPartyTypes();
         }
 
+        private static List<XElement> getXElements(string nodename, XDocument metadataRef)
+        {
+            if (!nodename.Contains("/"))
+            {
+                return XmlUtility.GetXElementByNodeName(nodename, metadataRef).ToList();
+            }
+            else
+            {
+                List<XElement> tmp = new List<XElement>();
+                tmp.Add(metadataRef.XPathSelectElement(nodename));
+                return tmp;
+            }
+        }
+
+        private static void ImportPartyTypes()
+        {
+            //PartyTypeManager partyTypeManager = new PartyTypeManager();
+            //var filePath = Path.Combine(AppConfiguration.GetModuleWorkspacePath("BAM"), "partyTypes.xml");
+            //XDocument xDoc = XDocument.Load(filePath);
+            //XmlDocument xmlDoc = new XmlDocument();
+            //xmlDoc.Load(xDoc.CreateReader());
+            //var partyTypesNodeList = xmlDoc.SelectNodes("//PartyTypes");
+            //if (partyTypesNodeList.Count > 0)
+            //    foreach (XmlNode partyTypeNode in partyTypesNodeList[0].ChildNodes)
+            //    {
+            //        var title = partyTypeNode.Attributes["Name"].Value;
+            //        //If there is not such a party type
+            //        if (partyTypeManager.Repo.Get(item => item.Title == title).Count == 0)
+            //        {
+            //            //
+            //            var partyType = partyTypeManager.Create(title, "Imported from partyTypes.xml", null);
+            //            partyTypeManager.AddStatusType(partyType, "Create", "", 0);
+            //            foreach (XmlNode customAttrNode in partyTypeNode.ChildNodes)
+            //            {
+            //                var customAttrType = customAttrNode.Attributes["type"] == null ? "String" : customAttrNode.Attributes["type"].Value;
+            //                var description = customAttrNode.Attributes["description"] == null ? "" : customAttrNode.Attributes["description"].Value;
+            //                var validValues = customAttrNode.Attributes["validValues"] == null ? "" : customAttrNode.Attributes["validValues"].Value;
+            //                var isValueOptional = customAttrNode.Attributes["isValueOptional"] == null ? true : Convert.ToBoolean(customAttrNode.Attributes["isValueOptional"].Value);
+            //                partyTypeManager.CreatePartyCustomAttribute(partyType, customAttrType, customAttrNode.Attributes["Name"].Value, description, validValues, isValueOptional);
+            //            }
+            //        }
+            //        //edit add other custom attr
+
+            //    }
+        }
+
         private void createDOIMappingConcept()
         {
             using (var conceptManager = new ConceptManager())
@@ -188,14 +234,14 @@ namespace BExIS.Modules.Dim.UI.Helpers
                 var keys = new List<MappingKey>();
 
                 if (concept == null) //if not create
-                    concept = conceptManager.CreateMappingConcept("DataCiteDoi", "The concept is needed to create a DIO via DataCite.", "https://schema.datacite.org/meta/kernel-4.4/","");
+                    concept = conceptManager.CreateMappingConcept("DataCiteDoi", "The concept is needed to create a DIO via DataCite.", "https://schema.datacite.org/meta/kernel-4.4/", "");
                 else // if exist load available keys
                 {
                     keys = conceptManager.MappingKeyRepo.Query(k => k.Concept.Id.Equals(concept.Id)).ToList();
                 }
 
                 // type
-                if(!keys.Any(k=>k.XPath.Equals("data/type")))
+                if (!keys.Any(k => k.XPath.Equals("data/type")))
                     conceptManager.CreateMappingKey("Type", "", "", false, false, "data/type", concept);
 
                 // event
@@ -227,16 +273,16 @@ namespace BExIS.Modules.Dim.UI.Helpers
                 // creator(s)
                 MappingKey creators = null;
                 if (!keys.Any(k => k.XPath.Equals("data/attributes/creators")))
-                    creators = conceptManager.CreateMappingKey("Creators", "", "www.google.de",false,true, "data/attributes/creators", concept);
+                    creators = conceptManager.CreateMappingKey("Creators", "", "www.google.de", false, true, "data/attributes/creators", concept);
 
                 if (!keys.Any(k => k.XPath.Equals("data/attributes/creators/name")))
                     conceptManager.CreateMappingKey("Name", "", "", false, false, "data/attributes/creators/name", concept, creators);
 
                 if (!keys.Any(k => k.XPath.Equals("data/attributes/creators/givenName")))
-                    conceptManager.CreateMappingKey("GivenName", "", "", false, false, "data/attributes/creators/givenName", concept,creators);
+                    conceptManager.CreateMappingKey("GivenName", "", "", false, false, "data/attributes/creators/givenName", concept, creators);
 
                 if (!keys.Any(k => k.XPath.Equals("data/attributes/creators/familyName")))
-                   conceptManager.CreateMappingKey("FamilyName", "", "", false, false, "data/attributes/creators/familyName", concept, creators);
+                    conceptManager.CreateMappingKey("FamilyName", "", "", false, false, "data/attributes/creators/familyName", concept, creators);
 
                 if (!keys.Any(k => k.XPath.Equals("data/attributes/creators/nameType")))
                     conceptManager.CreateMappingKey("NameType", "", "", false, false, "data/attributes/creators/nameType", concept, creators);
@@ -277,6 +323,35 @@ namespace BExIS.Modules.Dim.UI.Helpers
             }
         }
 
+        private void createFunctionConcept()
+        {
+            using (var conceptManager = new ConceptManager())
+            {
+                // concept
+                // check if concept exist
+                var concept = conceptManager.MappingConceptRepo.Query(c => c.Name.Equals("Functions")).FirstOrDefault();
+
+                var keys = new List<MappingKey>();
+
+                if (concept == null) //if not create
+                    concept = conceptManager.CreateMappingConcept("Functions", "...", "", "");
+                else // if exist load available keys
+                {
+                    keys = conceptManager.MappingKeyRepo.Query(k => k.Concept.Id.Equals(concept.Id)).ToList();
+                }
+
+                // type
+                if (!keys.Any(k => k.XPath.Equals("test/function/a")))
+                    conceptManager.CreateMappingKey("Function A", "", "", false, false, "test/function/a", concept);
+
+                if (!keys.Any(k => k.XPath.Equals("test/function/b")))
+                    conceptManager.CreateMappingKey("Function B", "", "", false, false, "test/function/b", concept);
+
+                if (!keys.Any(k => k.XPath.Equals("test/function/c")))
+                    conceptManager.CreateMappingKey("Function C", "", "", false, false, "test/function/c", concept);
+            }
+        }
+
         private void createGBIFDWCMappingConcept()
         {
             using (var conceptManager = new ConceptManager())
@@ -306,13 +381,13 @@ namespace BExIS.Modules.Dim.UI.Helpers
                 //title
                 if (!keys.Any(k => k.Name.Equals("title")))
                     conceptManager.CreateMappingKey(
-                        "title", 
+                        "title",
                         "A description of the resource that is being documented that is long enough to differentiate it from other similar resources. Multiple titles may be provided, particularly " +
                         "when trying to express the title in more than one language (use the \"xml: lang\" attribute to indicate the language if not English/en). E.g. Vernal pool amphibian density data, Isla Vista, 1990-1996.",
-                        "https://sbclter.msi.ucsb.edu/external/InformationManagement/EML_211_schema/docs/eml-2.1.1/eml-resource.html#title", 
-                        false, 
+                        "https://sbclter.msi.ucsb.edu/external/InformationManagement/EML_211_schema/docs/eml-2.1.1/eml-resource.html#title",
                         false,
-                        "eml/dataset/title", 
+                        false,
+                        "eml/dataset/title",
                         concept);
 
                 //creator
@@ -321,10 +396,10 @@ namespace BExIS.Modules.Dim.UI.Helpers
                     creator = conceptManager.CreateMappingKey(
                         "creator",
                         "The resource creator is the person or organization responsible for creating the resource itself. See section “People and Organizations” for more details.",
-                        "https://sbclter.msi.ucsb.edu/external/InformationManagement/EML_211_schema/docs/eml-2.1.1/eml-resource.html#creator", 
+                        "https://sbclter.msi.ucsb.edu/external/InformationManagement/EML_211_schema/docs/eml-2.1.1/eml-resource.html#creator",
                         false,
-                        true, 
-                        "eml/dataset/creator", 
+                        true,
+                        "eml/dataset/creator",
                         concept);
 
                 // creator/givenName
@@ -593,9 +668,42 @@ namespace BExIS.Modules.Dim.UI.Helpers
                         false,
                         "eml/dataset/contact/individualName/surName",
                         concept, contact);
+            }
+        }
 
+        private LinkElement createLinkELementIfNotExist(
+            MappingManager mappingManager,
+            long id,
+            string name,
+            LinkElementType type,
+            LinkElementComplexity complexity)
+        {
+            LinkElement element = mappingManager.GetLinkElement(id, name, type);
 
-       
+            if (element == null)
+            {
+                element = mappingManager.CreateLinkElement(
+                    id,
+                    type,
+                    complexity,
+                    name,
+                    ""
+                    );
+            }
+
+            return element;
+        }
+
+        private void createMappings()
+        {
+            try
+            {
+                createSystemKeyMappings();
+                createPartyTypeMappings();
+            }
+            catch (Exception exception)
+            {
+                throw exception;
             }
         }
 
@@ -640,49 +748,72 @@ namespace BExIS.Modules.Dim.UI.Helpers
             }
         }
 
-        private void createFunctionConcept()
-        {
-            using (var conceptManager = new ConceptManager())
-            {
-                // concept
-                // check if concept exist
-                var concept = conceptManager.MappingConceptRepo.Query(c => c.Name.Equals("Functions")).FirstOrDefault();
-
-                var keys = new List<MappingKey>();
-
-                if (concept == null) //if not create
-                    concept = conceptManager.CreateMappingConcept("Functions", "...", "", "");
-                else // if exist load available keys
-                {
-                    keys = conceptManager.MappingKeyRepo.Query(k => k.Concept.Id.Equals(concept.Id)).ToList();
-                }
-
-                // type
-                if (!keys.Any(k => k.XPath.Equals("test/function/a")))
-                    conceptManager.CreateMappingKey("Function A", "", "", false, false, "test/function/a", concept);
-
-                if (!keys.Any(k => k.XPath.Equals("test/function/b")))
-                    conceptManager.CreateMappingKey("Function B", "", "", false, false, "test/function/b", concept);
-
-                if (!keys.Any(k => k.XPath.Equals("test/function/c")))
-                    conceptManager.CreateMappingKey("Function C", "", "", false, false, "test/function/c", concept);
-
-            }
-        }
-        private void createMappings()
-        {
-            try
-            {
-                createSystemKeyMappings();
-                createPartyTypeMappings();
-            }
-            catch (Exception exception)
-            {
-                throw exception;
-            }
-        }
-
         #region createSystemKeyMappings
+
+        /// <summary>
+        /// Map a system key to xml node
+        /// </summary>
+        /// <param name="simpleNodeName"></param>
+        /// <param name="simpleType"></param>
+        /// <param name="complexNodeName"></param>
+        /// <param name="complexType"></param>
+        /// <param name="key"></param>
+        /// <param name="root"></param>
+        /// <param name="metadataRef"></param>
+        /// <param name="mappingManager"></param>
+        private void createFromKeyMapping(
+            string simpleNodeName, LinkElementType simpleType,
+            string complexNodeName, LinkElementType complexType,
+            Key key,
+            Mapping root,
+            XDocument metadataRef,
+            MappingManager mappingManager)
+        {
+            LinkElement le = createLinkELementIfNotExist(mappingManager, Convert.ToInt64(key),
+                    key.ToString(), LinkElementType.Key, LinkElementComplexity.Simple);
+
+            if (simpleNodeName.Equals(complexNodeName))
+            {
+                IEnumerable<XElement> elements = getXElements(simpleNodeName, metadataRef);
+
+                foreach (XElement xElement in elements)
+                {
+                    string sId = xElement.Attribute("id").Value;
+                    string name = xElement.Attribute("name").Value;
+                    LinkElement tmp = createLinkELementIfNotExist(mappingManager, Convert.ToInt64(sId), name,
+                        simpleType, LinkElementComplexity.Simple);
+
+                    Mapping tmpMapping = MappingHelper.CreateIfNotExistMapping(le, tmp, 1, null, root, mappingManager);
+                    MappingHelper.CreateIfNotExistMapping(le, tmp, 2, null, tmpMapping, mappingManager);
+                }
+            }
+            else
+            {
+                IEnumerable<XElement> complexElements = getXElements(complexNodeName, metadataRef);
+
+                foreach (var complex in complexElements)
+                {
+                    string sIdComplex = complex.Attribute("id").Value;
+                    string nameComplex = complex.Attribute("name").Value;
+                    LinkElement tmpComplexElement = createLinkELementIfNotExist(mappingManager, Convert.ToInt64(sIdComplex), nameComplex,
+                        complexType, LinkElementComplexity.Complex);
+
+                    Mapping complexMapping = MappingHelper.CreateIfNotExistMapping(le, tmpComplexElement, 1, null, root, mappingManager);
+
+                    IEnumerable<XElement> simpleElements = XmlUtility.GetAllChildren(complex).Where(s => s.Name.LocalName.Equals(simpleNodeName));
+
+                    foreach (XElement xElement in simpleElements)
+                    {
+                        string sId = xElement.Attribute("id").Value;
+                        string name = xElement.Attribute("name").Value;
+                        LinkElement tmp = createLinkELementIfNotExist(mappingManager, Convert.ToInt64(sId), name,
+                            simpleType, LinkElementComplexity.Simple);
+
+                        MappingHelper.CreateIfNotExistMapping(le, tmp, 2, null, complexMapping, mappingManager);
+                    }
+                }
+            }
+        }
 
         private void createSystemKeyMappings()
         {
@@ -880,74 +1011,88 @@ namespace BExIS.Modules.Dim.UI.Helpers
             }
         }
 
-        /// <summary>
-        /// Map a system key to xml node
-        /// </summary>
-        /// <param name="simpleNodeName"></param>
-        /// <param name="simpleType"></param>
-        /// <param name="complexNodeName"></param>
-        /// <param name="complexType"></param>
-        /// <param name="key"></param>
-        /// <param name="root"></param>
-        /// <param name="metadataRef"></param>
-        /// <param name="mappingManager"></param>
-        private void createFromKeyMapping(
-            string simpleNodeName, LinkElementType simpleType,
-            string complexNodeName, LinkElementType complexType,
-            Key key,
-            Mapping root,
-            XDocument metadataRef,
-            MappingManager mappingManager)
-        {
-            LinkElement le = createLinkELementIfNotExist(mappingManager, Convert.ToInt64(key),
-                    key.ToString(), LinkElementType.Key, LinkElementComplexity.Simple);
-
-            if (simpleNodeName.Equals(complexNodeName))
-            {
-                IEnumerable<XElement> elements = getXElements(simpleNodeName, metadataRef);
-
-                foreach (XElement xElement in elements)
-                {
-                    string sId = xElement.Attribute("id").Value;
-                    string name = xElement.Attribute("name").Value;
-                    LinkElement tmp = createLinkELementIfNotExist(mappingManager, Convert.ToInt64(sId), name,
-                        simpleType, LinkElementComplexity.Simple);
-
-                    Mapping tmpMapping = MappingHelper.CreateIfNotExistMapping(le, tmp, 1, null, root, mappingManager);
-                    MappingHelper.CreateIfNotExistMapping(le, tmp, 2, null, tmpMapping, mappingManager);
-                }
-            }
-            else
-            {
-                IEnumerable<XElement> complexElements = getXElements(complexNodeName, metadataRef);
-
-                foreach (var complex in complexElements)
-                {
-                    string sIdComplex = complex.Attribute("id").Value;
-                    string nameComplex = complex.Attribute("name").Value;
-                    LinkElement tmpComplexElement = createLinkELementIfNotExist(mappingManager, Convert.ToInt64(sIdComplex), nameComplex,
-                        complexType, LinkElementComplexity.Complex);
-
-                    Mapping complexMapping = MappingHelper.CreateIfNotExistMapping(le, tmpComplexElement, 1, null, root, mappingManager);
-
-                    IEnumerable<XElement> simpleElements = XmlUtility.GetAllChildren(complex).Where(s => s.Name.LocalName.Equals(simpleNodeName));
-
-                    foreach (XElement xElement in simpleElements)
-                    {
-                        string sId = xElement.Attribute("id").Value;
-                        string name = xElement.Attribute("name").Value;
-                        LinkElement tmp = createLinkELementIfNotExist(mappingManager, Convert.ToInt64(sId), name,
-                            simpleType, LinkElementComplexity.Simple);
-
-                        MappingHelper.CreateIfNotExistMapping(le, tmp, 2, null, complexMapping, mappingManager);
-                    }
-                }
-            }
-        }
-
         #endregion createSystemKeyMappings
 
         #region createPartyTypeMappings
+
+        private void createFromPartyReleationMapping(
+            string simpleNodeName, LinkElementType simpleType,
+            string complexNodeName, LinkElementType complexType,
+            PartyRelationshipType partyReleationType,
+            Mapping root,
+            XDocument metadataRef,
+            MappingManager mappingManager, TransformationRule transformationRule = null)
+        {
+            //create ruleif not exist
+            if (transformationRule == null) transformationRule = new TransformationRule();
+
+            //create complex elements if not exits
+            LinkElement le = createLinkELementIfNotExist(mappingManager, Convert.ToInt64(partyReleationType.Id),
+                    partyReleationType.Title, LinkElementType.PartyRelationshipType, LinkElementComplexity.Simple);
+
+            XElement complex = getXElements(complexNodeName, metadataRef).FirstOrDefault();
+
+            string sIdComplex = complex.Attribute("id").Value;
+            string nameComplex = complex.Attribute("name").Value;
+            LinkElement tmpComplexElement = createLinkELementIfNotExist(mappingManager, Convert.ToInt64(sIdComplex), nameComplex,
+                complexType, LinkElementComplexity.Complex);
+
+            //map complex
+            Mapping complexMapping = MappingHelper.CreateIfNotExistMapping(le, tmpComplexElement, 1, new TransformationRule(), root, mappingManager);
+
+            IEnumerable<XElement> simpleElements = XmlUtility.GetAllChildren(complex).Where(s => s.Name.LocalName.Equals(simpleNodeName));
+
+            LinkElement simpleLe = le;
+
+            foreach (XElement xElement in simpleElements)
+            {
+                string sId = xElement.Attribute("id").Value;
+                string name = xElement.Attribute("name").Value;
+                LinkElement tmp = createLinkELementIfNotExist(mappingManager, Convert.ToInt64(sId), name,
+                    simpleType, LinkElementComplexity.Simple);
+
+                MappingHelper.CreateIfNotExistMapping(simpleLe, tmp, 2, transformationRule, complexMapping, mappingManager);
+            }
+        }
+
+        private void createFromPartyTypeMapping(
+            string simpleNodeName, LinkElementType simpleType,
+            string complexNodeName, LinkElementType complexType,
+            PartyCustomAttribute partyCustomAttr,
+            PartyType partyType,
+            Mapping root,
+            XDocument metadataRef,
+            MappingManager mappingManager, TransformationRule transformationRule = null)
+        {
+            if (transformationRule == null) transformationRule = new TransformationRule();
+
+            LinkElement le = createLinkELementIfNotExist(mappingManager, Convert.ToInt64(partyType.Id),
+                    partyType.Title, LinkElementType.PartyType, LinkElementComplexity.Complex);
+
+            XElement complex = getXElements(complexNodeName, metadataRef).FirstOrDefault();
+
+            string sIdComplex = complex.Attribute("id").Value;
+            string nameComplex = complex.Attribute("name").Value;
+            LinkElement tmpComplexElement = createLinkELementIfNotExist(mappingManager, Convert.ToInt64(sIdComplex), nameComplex,
+                complexType, LinkElementComplexity.Complex);
+
+            Mapping complexMapping = MappingHelper.CreateIfNotExistMapping(le, tmpComplexElement, 1, new TransformationRule(), root, mappingManager);
+
+            IEnumerable<XElement> simpleElements = XmlUtility.GetAllChildren(complex).Where(s => s.Name.LocalName.Equals(simpleNodeName));
+
+            LinkElement simpleLe = createLinkELementIfNotExist(mappingManager, Convert.ToInt64(partyCustomAttr.Id),
+            partyCustomAttr.Name, LinkElementType.PartyCustomType, LinkElementComplexity.Simple);
+
+            foreach (XElement xElement in simpleElements)
+            {
+                string sId = xElement.Attribute("id").Value;
+                string name = xElement.Attribute("name").Value;
+                LinkElement tmp = createLinkELementIfNotExist(mappingManager, Convert.ToInt64(sId), name,
+                    simpleType, LinkElementComplexity.Simple);
+
+                MappingHelper.CreateIfNotExistMapping(simpleLe, tmp, 2, transformationRule, complexMapping, mappingManager);
+            }
+        }
 
         private void createPartyTypeMappings()
         {
@@ -1218,7 +1363,7 @@ namespace BExIS.Modules.Dim.UI.Helpers
                         }
 
                         // add releationship type mapping
-                        PartyRelationshipType partyRelationshipType = partyReleationships.FirstOrDefault(p => p.Title.Equals(GeneralSettings.OwnerPartyRelationshipType));
+                        PartyRelationshipType partyRelationshipType = partyReleationships.FirstOrDefault(p => p.Title.Equals(ModuleManager.GetModuleSettings("bam").GetValueByKey<string>("OwnerPartyRelationshipType")));
                         if (partyRelationshipType != null)
                         {
                             createToPartyReleationMapping(
@@ -1356,7 +1501,7 @@ namespace BExIS.Modules.Dim.UI.Helpers
                         #region owner relationship
 
                         //Metadata/creator/creatorType/individualName
-                        PartyRelationshipType partyRelationshipType = partyReleationships.FirstOrDefault(p => p.Title.Equals(GeneralSettings.OwnerPartyRelationshipType));
+                        PartyRelationshipType partyRelationshipType = partyReleationships.FirstOrDefault(p => p.Title.Equals(ModuleManager.GetModuleSettings("bam").GetValueByKey<string>("OwnerPartyRelationshipType")));
                         if (partyRelationshipType != null)
                         {
                             createToPartyReleationMapping(
@@ -1426,84 +1571,6 @@ namespace BExIS.Modules.Dim.UI.Helpers
             }
         }
 
-        private void createToPartyTypeMapping(
-            string simpleNodeName, LinkElementType simpleType,
-            string complexNodeName, LinkElementType complexType,
-            PartyCustomAttribute partyCustomAttr,
-            PartyType partyType,
-            Mapping root,
-            XDocument metadataRef,
-            MappingManager mappingManager, TransformationRule transformationRule = null)
-        {
-            if (transformationRule == null) transformationRule = new TransformationRule();
-
-            LinkElement le = createLinkELementIfNotExist(mappingManager, Convert.ToInt64(partyType.Id),
-                    partyType.Title, LinkElementType.PartyType, LinkElementComplexity.Complex);
-
-            XElement complex = getXElements(complexNodeName, metadataRef).FirstOrDefault();
-
-            string sIdComplex = complex.Attribute("id").Value;
-            string nameComplex = complex.Attribute("name").Value;
-            LinkElement tmpComplexElement = createLinkELementIfNotExist(mappingManager, Convert.ToInt64(sIdComplex), nameComplex,
-                complexType, LinkElementComplexity.Complex);
-
-            Mapping complexMapping = MappingHelper.CreateIfNotExistMapping(tmpComplexElement, le, 1, new TransformationRule(), root, mappingManager);
-
-            IEnumerable<XElement> simpleElements = XmlUtility.GetAllChildren(complex).Where(s => s.Name.LocalName.Equals(simpleNodeName));
-
-            LinkElement simpleLe = createLinkELementIfNotExist(mappingManager, Convert.ToInt64(partyCustomAttr.Id),
-            partyCustomAttr.Name, LinkElementType.PartyCustomType, LinkElementComplexity.Simple);
-
-            foreach (XElement xElement in simpleElements)
-            {
-                string sId = xElement.Attribute("id").Value;
-                string name = xElement.Attribute("name").Value;
-                LinkElement tmp = createLinkELementIfNotExist(mappingManager, Convert.ToInt64(sId), name,
-                    simpleType, LinkElementComplexity.Simple);
-
-                MappingHelper.CreateIfNotExistMapping(tmp, simpleLe, 2, transformationRule, complexMapping, mappingManager);
-            }
-        }
-
-        private void createFromPartyTypeMapping(
-            string simpleNodeName, LinkElementType simpleType,
-            string complexNodeName, LinkElementType complexType,
-            PartyCustomAttribute partyCustomAttr,
-            PartyType partyType,
-            Mapping root,
-            XDocument metadataRef,
-            MappingManager mappingManager, TransformationRule transformationRule = null)
-        {
-            if (transformationRule == null) transformationRule = new TransformationRule();
-
-            LinkElement le = createLinkELementIfNotExist(mappingManager, Convert.ToInt64(partyType.Id),
-                    partyType.Title, LinkElementType.PartyType, LinkElementComplexity.Complex);
-
-            XElement complex = getXElements(complexNodeName, metadataRef).FirstOrDefault();
-
-            string sIdComplex = complex.Attribute("id").Value;
-            string nameComplex = complex.Attribute("name").Value;
-            LinkElement tmpComplexElement = createLinkELementIfNotExist(mappingManager, Convert.ToInt64(sIdComplex), nameComplex,
-                complexType, LinkElementComplexity.Complex);
-
-            Mapping complexMapping = MappingHelper.CreateIfNotExistMapping(le, tmpComplexElement, 1, new TransformationRule(), root, mappingManager);
-
-            IEnumerable<XElement> simpleElements = XmlUtility.GetAllChildren(complex).Where(s => s.Name.LocalName.Equals(simpleNodeName));
-
-            LinkElement simpleLe = createLinkELementIfNotExist(mappingManager, Convert.ToInt64(partyCustomAttr.Id),
-            partyCustomAttr.Name, LinkElementType.PartyCustomType, LinkElementComplexity.Simple);
-
-            foreach (XElement xElement in simpleElements)
-            {
-                string sId = xElement.Attribute("id").Value;
-                string name = xElement.Attribute("name").Value;
-                LinkElement tmp = createLinkELementIfNotExist(mappingManager, Convert.ToInt64(sId), name,
-                    simpleType, LinkElementComplexity.Simple);
-
-                MappingHelper.CreateIfNotExistMapping(simpleLe, tmp, 2, transformationRule, complexMapping, mappingManager);
-            }
-        }
-
         private void createToPartyReleationMapping(
             string simpleNodeName, LinkElementType simpleType,
             string complexNodeName, LinkElementType complexType,
@@ -1541,20 +1608,19 @@ namespace BExIS.Modules.Dim.UI.Helpers
             }
         }
 
-        private void createFromPartyReleationMapping(
-            string simpleNodeName, LinkElementType simpleType,
+        private void createToPartyTypeMapping(
+                    string simpleNodeName, LinkElementType simpleType,
             string complexNodeName, LinkElementType complexType,
-            PartyRelationshipType partyReleationType,
+            PartyCustomAttribute partyCustomAttr,
+            PartyType partyType,
             Mapping root,
             XDocument metadataRef,
             MappingManager mappingManager, TransformationRule transformationRule = null)
         {
-            //create ruleif not exist
             if (transformationRule == null) transformationRule = new TransformationRule();
 
-            //create complex elements if not exits
-            LinkElement le = createLinkELementIfNotExist(mappingManager, Convert.ToInt64(partyReleationType.Id),
-                    partyReleationType.Title, LinkElementType.PartyRelationshipType, LinkElementComplexity.Simple);
+            LinkElement le = createLinkELementIfNotExist(mappingManager, Convert.ToInt64(partyType.Id),
+                    partyType.Title, LinkElementType.PartyType, LinkElementComplexity.Complex);
 
             XElement complex = getXElements(complexNodeName, metadataRef).FirstOrDefault();
 
@@ -1563,12 +1629,12 @@ namespace BExIS.Modules.Dim.UI.Helpers
             LinkElement tmpComplexElement = createLinkELementIfNotExist(mappingManager, Convert.ToInt64(sIdComplex), nameComplex,
                 complexType, LinkElementComplexity.Complex);
 
-            //map complex
-            Mapping complexMapping = MappingHelper.CreateIfNotExistMapping(le, tmpComplexElement, 1, new TransformationRule(), root, mappingManager);
+            Mapping complexMapping = MappingHelper.CreateIfNotExistMapping(tmpComplexElement, le, 1, new TransformationRule(), root, mappingManager);
 
             IEnumerable<XElement> simpleElements = XmlUtility.GetAllChildren(complex).Where(s => s.Name.LocalName.Equals(simpleNodeName));
 
-            LinkElement simpleLe = le;
+            LinkElement simpleLe = createLinkELementIfNotExist(mappingManager, Convert.ToInt64(partyCustomAttr.Id),
+            partyCustomAttr.Name, LinkElementType.PartyCustomType, LinkElementComplexity.Simple);
 
             foreach (XElement xElement in simpleElements)
             {
@@ -1577,80 +1643,11 @@ namespace BExIS.Modules.Dim.UI.Helpers
                 LinkElement tmp = createLinkELementIfNotExist(mappingManager, Convert.ToInt64(sId), name,
                     simpleType, LinkElementComplexity.Simple);
 
-                MappingHelper.CreateIfNotExistMapping(simpleLe, tmp, 2, transformationRule, complexMapping, mappingManager);
+                MappingHelper.CreateIfNotExistMapping(tmp, simpleLe, 2, transformationRule, complexMapping, mappingManager);
             }
         }
 
         #endregion createPartyTypeMappings
-
-        private LinkElement createLinkELementIfNotExist(
-            MappingManager mappingManager,
-            long id,
-            string name,
-            LinkElementType type,
-            LinkElementComplexity complexity)
-        {
-            LinkElement element = mappingManager.GetLinkElement(id, name, type);
-
-            if (element == null)
-            {
-                element = mappingManager.CreateLinkElement(
-                    id,
-                    type,
-                    complexity,
-                    name,
-                    ""
-                    );
-            }
-
-            return element;
-        }
-
-        private static List<XElement> getXElements(string nodename, XDocument metadataRef)
-        {
-            if (!nodename.Contains("/"))
-            {
-                return XmlUtility.GetXElementByNodeName(nodename, metadataRef).ToList();
-            }
-            else
-            {
-                List<XElement> tmp = new List<XElement>();
-                tmp.Add(metadataRef.XPathSelectElement(nodename));
-                return tmp;
-            }
-        }
-
-        private static void ImportPartyTypes()
-        {
-            //PartyTypeManager partyTypeManager = new PartyTypeManager();
-            //var filePath = Path.Combine(AppConfiguration.GetModuleWorkspacePath("BAM"), "partyTypes.xml");
-            //XDocument xDoc = XDocument.Load(filePath);
-            //XmlDocument xmlDoc = new XmlDocument();
-            //xmlDoc.Load(xDoc.CreateReader());
-            //var partyTypesNodeList = xmlDoc.SelectNodes("//PartyTypes");
-            //if (partyTypesNodeList.Count > 0)
-            //    foreach (XmlNode partyTypeNode in partyTypesNodeList[0].ChildNodes)
-            //    {
-            //        var title = partyTypeNode.Attributes["Name"].Value;
-            //        //If there is not such a party type
-            //        if (partyTypeManager.Repo.Get(item => item.Title == title).Count == 0)
-            //        {
-            //            //
-            //            var partyType = partyTypeManager.Create(title, "Imported from partyTypes.xml", null);
-            //            partyTypeManager.AddStatusType(partyType, "Create", "", 0);
-            //            foreach (XmlNode customAttrNode in partyTypeNode.ChildNodes)
-            //            {
-            //                var customAttrType = customAttrNode.Attributes["type"] == null ? "String" : customAttrNode.Attributes["type"].Value;
-            //                var description = customAttrNode.Attributes["description"] == null ? "" : customAttrNode.Attributes["description"].Value;
-            //                var validValues = customAttrNode.Attributes["validValues"] == null ? "" : customAttrNode.Attributes["validValues"].Value;
-            //                var isValueOptional = customAttrNode.Attributes["isValueOptional"] == null ? true : Convert.ToBoolean(customAttrNode.Attributes["isValueOptional"].Value);
-            //                partyTypeManager.CreatePartyCustomAttribute(partyType, customAttrType, customAttrNode.Attributes["Name"].Value, description, validValues, isValueOptional);
-            //            }
-            //        }
-            //        //edit add other custom attr
-
-            //    }
-        }
 
         private bool Exist(string name, LinkElementType type)
         {
@@ -1683,11 +1680,6 @@ namespace BExIS.Modules.Dim.UI.Helpers
             }
 
             return false;
-        }
-
-        public void Dispose()
-        {
-            // nothing to do for now...
         }
     }
 }

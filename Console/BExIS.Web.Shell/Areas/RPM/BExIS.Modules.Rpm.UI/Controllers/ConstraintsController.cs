@@ -180,7 +180,6 @@ namespace BExIS.Modules.Rpm.UI.Controllers
 
                         if (dataStructures != null && dataStructures.Count > 0)
                         {
-                            dataStructures.Distinct();
                             foreach (StructuredDataStructure dataStructure in dataStructures)
                             {
                                 if (dataStructure.Datasets != null && dataStructure.Datasets.Count > 0)
