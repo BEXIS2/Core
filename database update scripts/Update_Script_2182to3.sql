@@ -878,4 +878,12 @@ ALTER
 ALTER TABLE
     IF EXISTS public.variables DROP COLUMN IF EXISTS dataattributeref;
 
+
+
+-- Insert version
+INSERT INTO public.versions(
+	versionno, extra, module, value, date)
+	VALUES (1, null, 'Shell', '3.0.0-beta',NOW());
+
+
 END;
