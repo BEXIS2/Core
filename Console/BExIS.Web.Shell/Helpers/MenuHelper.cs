@@ -142,11 +142,11 @@ namespace BExIS.Web.Shell.Helpers
                 menuItem.Title = userName;
 
                 //create profile link
-                MenuItem profile = new MenuItem("Profile", "bam/partyservice/edit", "bam");
+                MenuItem profile = new MenuItem("Profile", "/bam/partyservice/edit", "bam");
                 menuItem.Items.Add(profile);
 
                 //create token link
-                MenuItem token = new MenuItem("Token", "account/profile", "shell");
+                MenuItem token = new MenuItem("Token", "/account/profile", "shell");
                 menuItem.Items.Add(token);
 
                 //create api link
@@ -154,7 +154,7 @@ namespace BExIS.Web.Shell.Helpers
                 menuItem.Items.Add(api);
 
                 //create logoff link
-                MenuItem logoff = new MenuItem("LogOFF", "account/logoff", "shell");
+                MenuItem logoff = new MenuItem("Log Off", "/account/logoff", "shell");
                 menuItem.Items.Add(logoff);
 
                 menuItems.Add(menuItem);
