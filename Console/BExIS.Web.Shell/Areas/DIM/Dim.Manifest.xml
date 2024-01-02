@@ -61,7 +61,8 @@
 	<Hooks>
 		<Hook
 			name="Publish"
-			mode="edit"
+			displayName ="Publish"
+			mode="view"
 			entity="dataset"
 			place="details"
 			module="dim"

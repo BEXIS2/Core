@@ -168,7 +168,7 @@ namespace BExIS.Modules.Sam.UI.Controllers
 
                 var subjectIds = subjects.Select(s => s.Id);
                 var userPermissionDic = featurePermissionManager.GetPermissionType(subjectIds, feature.Id);
-                var userHasAccessDic = featurePermissionManager.HasAccess(subjects, feature.Id);
+                var userHasAccessDic = featurePermissionManager.GetAccessList(subjects, feature.Id);
 
                 foreach (var item in userPermissionDic)
                 {

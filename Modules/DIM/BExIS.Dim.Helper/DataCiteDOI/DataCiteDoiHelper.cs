@@ -24,23 +24,13 @@ using System.Security.Policy;
 using Vaelastrasz.Library.Models;
 using System.Runtime.CompilerServices;
 using BExIS.Dlm.Services.Data;
+using BExIS.Dim.Helpers.Configurations;
 
 namespace BExIS.Dim.Helpers
 {
     public class DataCiteDOIHelper
     {
-        private long getPartyId(XElement e)
-        {
-            if (e.Attributes().Any(x => x.Name.LocalName.Equals("partyid")))
-            {
-                return Convert.ToInt64(e.Attribute("partyid").Value);
-            }
-            if (e.Parent != null) return getPartyId(e.Parent);
-
-            return 0;
-        }
-
-        public CreateDataCiteModel CreateDataCiteModel(DatasetVersion datasetVersion, List<DataCiteDOISettingsItem> mappings)
+        public CreateDataCiteModel CreateDataCiteModel(DatasetVersion datasetVersion, List<DataCiteDOIMapping> mappings)
         {
             var model = new CreateDataCiteModel();
 
@@ -53,39 +43,47 @@ namespace BExIS.Dim.Helpers
 
             foreach (var mapping in mappings)
             {
-                switch (mapping.Name)
+                switch (mapping.Key)
                 {
                     #region URL
+
                     case "URL":
 
                         model.Data.Attributes.URL = $"{HttpContext.Current.Request.Url.GetLeftPart(UriPartial.Authority)}/ddm/Data/ShowData/";
                         break;
-                    #endregion
+
+                    #endregion URL
 
                     #region Version
+
                     case "Version":
 
                         var dataCiteVersionService = new DataCiteVersionService();
-                        model.Data.Attributes.Version = dataCiteVersionService.GetVersion(datasetVersion, mapping.Type, mapping.Value);
+                        model.Data.Attributes.Version = dataCiteVersionService.GetVersion(datasetVersion, mapping.Value, mapping.Value);
                         break;
-                    #endregion
+
+                    #endregion Version
 
                     default:
                         break;
-
                 }
             }
 
             return model;
         }
 
-        public Dictionary<string, string> CreatePlaceholders(DatasetVersion datasetVersion, List<DataCiteDOISettingsItem> placeholders)
+        public string CreateDOI(Dictionary<string, string> placeholders)
+        {
+            return null;
+        }
+
+        public Dictionary<string, string> CreatePlaceholders(DatasetVersion datasetVersion, List<DataCiteDOIPlaceholder> placeholders)
         {
             var _placeholders = new Dictionary<string, string>();
 
             foreach (var placeholder in placeholders)
             {
-                switch (placeholder.Name)
+                switch (placeholder.Key)
                 {
                     case "DatasetId":
 
@@ -108,7 +106,6 @@ namespace BExIS.Dim.Helpers
                         {
                             var versionNumber = datasetManager.GetDatasetVersionNr(datasetVersion);
                             _placeholders.Add("{VersionNumber}", Convert.ToString(versionNumber));
-
                         }
                         break;
 
@@ -120,63 +117,13 @@ namespace BExIS.Dim.Helpers
             return _placeholders;
         }
 
-        public string CreateDOI(Dictionary<string, string> placeholders)
-        {
-            return null;
-        }
-
-        private bool sendMetadata(DatasetVersion datasetVersion, string datasetUrl, long version, string doi)
-        {
-            //
-            // authors
-            var authors = MappingUtils.GetValuesFromMetadata((int)Key.Author, LinkElementType.Key, datasetVersion.Dataset.MetadataStructure.Id, XmlUtility.ToXDocument(datasetVersion.Metadata));
-            var creators = MappingUtils.GetXElementFromMetadata((int)Key.Author, LinkElementType.Key, datasetVersion.Dataset.MetadataStructure.Id, XmlUtility.ToXDocument(datasetVersion.Metadata));
-
-            //
-            // titles
-            var titles = MappingUtils.GetValuesFromMetadata((int)Key.Title, LinkElementType.Key, datasetVersion.Dataset.MetadataStructure.Id, XmlUtility.ToXDocument(datasetVersion.Metadata));
-
-            //
-            // subjects
-            var subjects = MappingUtils.GetValuesFromMetadata((int)Key.Subject, LinkElementType.Key, datasetVersion.Dataset.MetadataStructure.Id, XmlUtility.ToXDocument(datasetVersion.Metadata));
-
-            //
-            // descriptions
-            var descriptions = MappingUtils.GetValuesFromMetadata((int)Key.Description, LinkElementType.Key, datasetVersion.Dataset.MetadataStructure.Id, XmlUtility.ToXDocument(datasetVersion.Metadata));
-
-            var client = new RestClient("");
-            client.Authenticator = new JwtAuthenticator("");
-
-            var dataCiteModel = new CreateDataCiteModel()
-            {
-                //Type = DataCiteType.DOIs,
-                //Creators = authors.Select(a => new DataCiteCreator(a, DataCiteCreatorType.Personal)).ToList(),
-                //Titles = titles.Select(t => new DataCiteTitle(t)).ToList(),
-                ////Subjects = subjects.Select(s => new DataCiteSubject(s)).ToList(),
-                //Version = $"{version}",
-                //Dates = new List<DataCiteDate>() { new DataCiteDate($"{DateTime.UtcNow.Year}", DataCiteDateType.Issued) },
-                //Doi = doi,
-                //Event = DataCiteEventType.Hide,
-                //ResourceTypeGeneral = DataCiteResourceType.Dataset,
-                //PublicationYear = DateTime.UtcNow.Year,
-                //Publisher = ConfigurationManager.AppSettings["doiPublisher"],
-                //URL = $"{datasetUrl}?version={version}",
-                //Descriptions = descriptions.Select(d => new DataCiteDescription(d, null, DataCiteDescriptionType.Abstract)).ToList()
-            };
-
-            var request = new RestRequest($"api/dois", Method.POST).AddJsonBody(dataCiteModel);
-            var response = client.Execute(request);
-
-            return response.StatusCode == System.Net.HttpStatusCode.OK || response.StatusCode == System.Net.HttpStatusCode.Created;
-        }
-
         public string issueDoi(DatasetVersion datasetVersion, string datasetUrl, long versionNo)
         {
             // BExISDOIClient.BExISDOIClient doiClient = new BExISDOIClient.BExISDOIClient();
             // bool testmode = Convert.ToBoolean(ConfigurationManager.AppSettings["doiTestmode"]);
             string token = ConfigurationManager.AppSettings["doiToken"];
 
-            // string doiProvider = doiClient.getProviderList(token).Where(t => t.ToLower().Equals(ConfigurationManager.AppSettings["doiProvider"].ToLower())).FirstOrDefault();           
+            // string doiProvider = doiClient.getProviderList(token).Where(t => t.ToLower().Equals(ConfigurationManager.AppSettings["doiProvider"].ToLower())).FirstOrDefault();
             // string doi = doiClient.getDoi(doiProvider, testmode, testmode, "DS" + datasetVersion.Dataset.Id + "VN" + versionNo + "DV" + datasetVersion.Id, token);
             // string url = datasetUrl + "?version=" + versionNo;
 
@@ -206,6 +153,43 @@ namespace BExIS.Dim.Helpers
             //    return doi;
             return null;
         }
+
+        public void sendRequest(DatasetVersion datasetVersion, string datasetUrl)
+        {
+            EmailService es = new EmailService();
+            List<string> tmp = null;
+            List<string> emails = new List<string>();
+            string title = new XmlDatasetHelper().GetInformationFromVersion(datasetVersion.Id, NameAttributeValues.title);
+            string subject = "DOI Request for Dataset " + title + "(" + datasetVersion.Dataset.Id + ")";
+            string body = "<p>A DOI was reqested for dataset <a href=\"" + datasetUrl + "\">" + title + "(" + datasetVersion.Dataset.Id + ")</a>, by " + HttpContext.Current.User.Identity.Name + ".</p>";
+
+            tmp = new List<string>();
+            tmp = MappingUtils.GetValuesFromMetadata((int)Key.Email, LinkElementType.Key, datasetVersion.Dataset.MetadataStructure.Id, XmlUtility.ToXDocument(datasetVersion.Metadata));
+
+            foreach (string s in tmp)
+            {
+                var email = s.Trim();
+                if (!string.IsNullOrEmpty(email) && !emails.Contains(email))
+                {
+                    emails.Add(email);
+                }
+            }
+            es.Send(subject, body, emails);
+
+            es.Send(subject, body, ConfigurationManager.AppSettings["SystemEmail"]);
+        }
+
+        private long getPartyId(XElement e)
+        {
+            if (e.Attributes().Any(x => x.Name.LocalName.Equals("partyid")))
+            {
+                return Convert.ToInt64(e.Attribute("partyid").Value);
+            }
+            if (e.Parent != null) return getPartyId(e.Parent);
+
+            return 0;
+        }
+
         private string postMetadata(DatasetVersion datasetVersion, BExISDOIClient.BExISDOIClient doiClient, string doiProvider, string doi, long versionNo, string token, bool testmode = true)
         {
             XmlDocument doiMetadata = new XmlDocument();
@@ -342,31 +326,49 @@ namespace BExIS.Dim.Helpers
             return doiClient.postMetadata(doiProvider, testmode, testmode, doiMetadata, doi, token);
         }
 
-        public void sendRequest(DatasetVersion datasetVersion, string datasetUrl)
+        private bool sendMetadata(DatasetVersion datasetVersion, string datasetUrl, long version, string doi)
         {
-            EmailService es = new EmailService();
-            List<string> tmp = null;
-            List<string> emails = new List<string>();
-            string title = new XmlDatasetHelper().GetInformationFromVersion(datasetVersion.Id, NameAttributeValues.title);
-            string subject = "DOI Request for Dataset " + title + "(" + datasetVersion.Dataset.Id + ")";
-            string body = "<p>A DOI was reqested for dataset <a href=\"" + datasetUrl + "\">" + title + "(" + datasetVersion.Dataset.Id + ")</a>, by " + HttpContext.Current.User.Identity.Name + ".</p>";
+            //
+            // authors
+            var authors = MappingUtils.GetValuesFromMetadata((int)Key.Author, LinkElementType.Key, datasetVersion.Dataset.MetadataStructure.Id, XmlUtility.ToXDocument(datasetVersion.Metadata));
+            var creators = MappingUtils.GetXElementFromMetadata((int)Key.Author, LinkElementType.Key, datasetVersion.Dataset.MetadataStructure.Id, XmlUtility.ToXDocument(datasetVersion.Metadata));
 
-            tmp = new List<string>();
-            tmp = MappingUtils.GetValuesFromMetadata((int)Key.Email, LinkElementType.Key, datasetVersion.Dataset.MetadataStructure.Id, XmlUtility.ToXDocument(datasetVersion.Metadata));
+            //
+            // titles
+            var titles = MappingUtils.GetValuesFromMetadata((int)Key.Title, LinkElementType.Key, datasetVersion.Dataset.MetadataStructure.Id, XmlUtility.ToXDocument(datasetVersion.Metadata));
 
+            //
+            // subjects
+            var subjects = MappingUtils.GetValuesFromMetadata((int)Key.Subject, LinkElementType.Key, datasetVersion.Dataset.MetadataStructure.Id, XmlUtility.ToXDocument(datasetVersion.Metadata));
 
-            foreach (string s in tmp)
+            //
+            // descriptions
+            var descriptions = MappingUtils.GetValuesFromMetadata((int)Key.Description, LinkElementType.Key, datasetVersion.Dataset.MetadataStructure.Id, XmlUtility.ToXDocument(datasetVersion.Metadata));
+
+            var client = new RestClient("");
+            client.Authenticator = new JwtAuthenticator("");
+
+            var dataCiteModel = new CreateDataCiteModel()
             {
-                var email = s.Trim();
-                if (!string.IsNullOrEmpty(email) && !emails.Contains(email))
-                {
-                    emails.Add(email);
-                }
+                //Type = DataCiteType.DOIs,
+                //Creators = authors.Select(a => new DataCiteCreator(a, DataCiteCreatorType.Personal)).ToList(),
+                //Titles = titles.Select(t => new DataCiteTitle(t)).ToList(),
+                ////Subjects = subjects.Select(s => new DataCiteSubject(s)).ToList(),
+                //Version = $"{version}",
+                //Dates = new List<DataCiteDate>() { new DataCiteDate($"{DateTime.UtcNow.Year}", DataCiteDateType.Issued) },
+                //Doi = doi,
+                //Event = DataCiteEventType.Hide,
+                //ResourceTypeGeneral = DataCiteResourceType.Dataset,
+                //PublicationYear = DateTime.UtcNow.Year,
+                //Publisher = ConfigurationManager.AppSettings["doiPublisher"],
+                //URL = $"{datasetUrl}?version={version}",
+                //Descriptions = descriptions.Select(d => new DataCiteDescription(d, null, DataCiteDescriptionType.Abstract)).ToList()
+            };
 
-            }
-            es.Send(subject, body, emails);
+            var request = new RestRequest($"api/dois", Method.POST).AddJsonBody(dataCiteModel);
+            var response = client.Execute(request);
 
-            es.Send(subject, body, ConfigurationManager.AppSettings["SystemEmail"]);
+            return response.StatusCode == System.Net.HttpStatusCode.OK || response.StatusCode == System.Net.HttpStatusCode.Created;
         }
     }
 }

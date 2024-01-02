@@ -20,18 +20,18 @@
 	$: model;
 	$: loading = false;
 
-	$: $latestFileUploadDate, reloadByFileUpdate();
-	$: $latestDataDescriptionDate, reload();
 
 	const dispatch = createEventDispatcher();
 
 	onMount(async () => {
 		load();
+		latestFileUploadDate.subscribe(s=>{if(s>0){reloadByFileUpdate()}})
+		latestDataDescriptionDate.subscribe(s=>{if(s>0){reload()}})
 	});
 
 	async function load() {
 		model = await getHookStart(hook.start, id, version);
-
+	
 		dispatch('dateChanged', { lastModification: model.lastModification });
 	}
 

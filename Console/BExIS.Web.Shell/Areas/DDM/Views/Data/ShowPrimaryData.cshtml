@@ -7,29 +7,11 @@
 
 @{
 
-    string lable_upload = "Upload";
-
-    if (Model !=null && Model.DataStructureType == DataStructureType.Structured && Model.Data != null)
-    {
-        if (Model.Data.Rows.Count > 0)
-        {
-            lable_upload = "Update or Append";
-        }
-    }
-
 }
 
 <div class="ShowData_Main">
     @if (@Model != null)
     {
-    <div class="row">
-        <div class="col-md-2 col-xs-2">
-            @if (Model.HasEditRight)
-            {
-                @Html.ActionLink(@lable_upload, "UploadWizard", "Submit", new { area = "DCM", type = @Model.DataStructureType, datasetid = @Model.DatasetId }, new { @class = "bx-button function", @style = "float:left" })
-            }
-        </div>
-    </div>
 
     <div class="ShowDataContent">
 

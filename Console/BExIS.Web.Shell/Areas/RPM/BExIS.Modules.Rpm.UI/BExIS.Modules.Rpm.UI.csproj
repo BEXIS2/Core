@@ -166,7 +166,11 @@
     <Content Include="Rpm.Settings.json" />
     <None Include="packages.config" />
     <None Include="Properties\PublishProfiles\BexisServer_demo.pubxml" />
+    <None Include="Properties\PublishProfiles\BexisServer_dev.pubxml" />
+    <None Include="Properties\PublishProfiles\BexisServer_master.pubxml" />
+    <None Include="Properties\PublishProfiles\BexisServer_rc.pubxml" />
     <None Include="Properties\PublishProfiles\BexisServer_test.pubxml" />
+    <None Include="Properties\PublishProfiles\BexisServer_train.pubxml" />
     <None Include="Properties\PublishProfiles\FolderProfile.pubxml" />
     <Content Include="web.config" />
     <Content Include="Views\Unit\Index.cshtml" />

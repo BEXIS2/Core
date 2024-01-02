@@ -1,39 +1,68 @@
 {
-    "description": "...",
-    "id": "dim",
-    "name": "Data Dissemination",
-    "entries": [
+  "description": "...",
+  "id": "dim",
+  "name": "Data Dissemination",
+  "entries": [
+    {
+      "key": "help",
+      "title": "Help URL",
+      "value": "",
+      "type": "String",
+      "description": "URL to the manual. If empty, it links to the latest manual from BEXIS2"
+    },
+    {
+      "key": "dataCiteDOICredentials",
+      "title": "DataCite DOI Credentials",
+      "options": [],
+      "type": "JSON",
+      "value": {
+        "username": "test",
+        "password": "admin",
+        "host": "https://"
+      },
+      "description": "This are the credentials."
+    },
+    {
+      "key": "dataCiteDOIPlaceholders",
+      "title": "DataCite DOI Placeholders",
+      "options": [],
+      "type": "JSON",
+      "value": [
         {
-            "key": "help",
-            "title": "Help URL",
-            "value": "",
-            "type": "String",
-            "description": "URL to the manual. If empty, it links to the latest manual from BEXIS2"
+          "key": "DatasetId",
+          "Value": "{DatasetId}"
         },
         {
-
-            "key": "dataCiteDOICredentials",
-            "title": "DataCite DOI Credentials",
-            "options": [],
-            "type": "JSON",
-            "value": {},
-            "description": "This are the credentials."
+          "key": "VersionId",
+          "Value": "{VersionId}"
         },
         {
-            "key": "dataCiteDOIPlaceholders",
-            "title": "DataCite DOI Placeholders",
-            "options": [],
-            "type": "JSON",
-            "value": {},
-            "description": "These placeholders will be replaced automatically."
+          "key": "VersionNumber",
+          "Value": "{VersionNumber}"
         },
         {
-            "key": "dataCiteDOIMappings",
-            "title": "DataCite DOI Mappings",
-            "options": [],
-            "type": "JSON",
-            "value": {},
-            "description": "There are additional mappings for DOI DataCite."
+          "key": "VersionName",
+          "Value": "{VersionName}"
         }
-    ]
+      ],
+      "description": "These placeholders will be replaced automatically."
+    },
+    {
+      "key": "dataCiteDOIMappings",
+      "title": "DataCite DOI Mappings",
+      "options": [],
+      "type": "JSON",
+      "value": [
+        {
+          "key": "URL",
+          "Value": "{DatasetId}?version={VersionNumber}"
+        },
+        {
+          "key": "Version",
+          "Value": "{VersionName}"
+        }
+      ],
+      "description": "There are additional mappings for DOI DataCite."
+    }
+  ]
 }

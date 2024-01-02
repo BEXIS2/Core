@@ -13,6 +13,7 @@ export interface DataDescriptionModel {
 	isRestricted: boolean;
 	isStructured: boolean;
 	hasData: boolean;
+	enableEdit: boolean
 }
 
 export interface VariableModel {

@@ -173,9 +173,10 @@ namespace BExIS.Dlm.Services.Meanings
 
                     var externalLinksDictionary = externalLinks.Select(entry => new MeaningEntry
                     {
-                        MappingRelation = GetOrCreateExternalLink(entry.MappingRelation),
+                        MappingRelation = GetOrCreateExternalLink(entry?.MappingRelation),
                         MappedLinks = entry.MappedLinks.Select(value => GetOrCreateExternalLink(value)).ToList()
                     }).ToList();
+
                     externalLinks = externalLinksDictionary;
                     List<Meaning> related_meanings = new List<Meaning>();
                     if (meaning_ids != null)
@@ -526,9 +527,10 @@ namespace BExIS.Dlm.Services.Meanings
         }
         ExternalLink GetOrCreateExternalLink(ExternalLink externalLink_)
         {
-            if (!string.IsNullOrEmpty(externalLink_.Name) && !string.IsNullOrEmpty(externalLink_.URI) && this.getExternalLink(externalLink_.URI) == null)
+            Contract.Requires(externalLink_ != null);
+            if (!string.IsNullOrEmpty(externalLink_?.Name) && !string.IsNullOrEmpty(externalLink_?.URI) && this.getExternalLink(externalLink_?.URI) == null)
                 return this.addExternalLink(externalLink_.URI, externalLink_.Name, externalLink_.Type, externalLink_.Prefix, externalLink_.prefixCategory);
-            else return this.getExternalLink(externalLink_.URI);
+            else return this.getExternalLink(externalLink_?.URI);
         }
         public ExternalLink GetOrCreateExternalLink(string id, string name, string uri, ExternalLinkType type, ExternalLink Prefix, PrefixCategory prefixCategory)
         {

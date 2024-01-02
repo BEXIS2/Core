@@ -144,45 +144,6 @@
                             <button class="bx-button function bx-disabled" disabled="disabled" title="You can only download the metadata of the latest version directly.">Download Metadata </button>
                         }
 
-                        @if (Model.EditRight && Model.EditAccessRight && Model.LatestVersion)
-                        {
-                            <button onclick="edit()" class="bx-button function">Edit</button>
-
-                            if (copy.IsComplete())
-                            {
-                                @Html.ActionLink("Copy", copy.ActionName, copy.ControllerName, new { area = copy.AreaName, id = @Model.DatasetId, type = "DatasetId" }, new { @class = "bx-button function", @id = @Model.DatasetId })
-                            }
-                        }
-                        else
-                        {
-                            string tooltip = "";
-
-                            if (!Model.EditRight)
-                            {
-                                tooltip += " You do not have permission to edit or copy this dataset.";
-                            }
-
-                            if (!Model.EditAccessRight)
-                            {
-                                tooltip += " You do not have permission for this function.";
-                            }
-
-                            if (!Model.LatestVersion)
-                            {
-                                tooltip += "You can only edit and copy from the latest version.";
-                            }
-
-                            if ((!Model.EditAccessRight && !Model.EditRight) == false)
-                            {
-                                <button onclick="edit()" class="bx-button function bx-disabled" disabled="disabled" title="@tooltip">Edit</button>
-
-                                if (copy.IsComplete())
-                                {
-                                    <button class="bx-button function bx-disabled" disabled="disabled" title="@tooltip">Copy</button>
-                                }
-                            }
-                        }
-
                         @Html.CheckBox("showAll", @showOptional, new { OnChange = "switchVisibilityOfOptionalElements()", Name = "showAll", Id = "showAll" })
 
                         <b>show all fields</b>

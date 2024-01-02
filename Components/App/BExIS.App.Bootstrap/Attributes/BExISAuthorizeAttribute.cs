@@ -42,7 +42,7 @@ namespace BExIS.App.Bootstrap.Attributes
                     else
                     {
                         var feature = operation.Feature;
-                        if (feature != null && !featurePermissionManager.Exists(null, feature.Id))
+                        if (feature != null && !featurePermissionManager.HasAccess(null, feature.Id))
                         {
                             User user = BExISAuthorizeHelper.GetUserFromAuthorizationAsync(filterContext.HttpContext).Result;
 

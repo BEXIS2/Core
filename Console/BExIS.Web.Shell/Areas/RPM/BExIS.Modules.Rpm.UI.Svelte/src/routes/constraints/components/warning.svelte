@@ -5,24 +5,24 @@
 		DatasetInfo,
 	} from '../models';
 	import { GetDatasetsByConstreint } from '../services/apiCalls';
-	import { each } from 'svelte/internal';
 
     export let constraint: ConstraintListItem;
     let ds: DatasetInfo[] = [];
     $: datasets = ds;
+    $: console.log('Datasets',datasets)
 
     onMount(async () => {
-		ds = await GetDatasetsByConstreint(constraint.id);		
+		//ds = await GetDatasetsByConstreint(constraint.id);		
 	});
 </script>
 
-<div class="btn w-full mb-1 variant-ghost-warning text-center">
+<div class="w-full mb-1 variant-ghost-warning text-center card">
     Changing the Contsraint may cause inconsistencies in following Datasets.
-    <ul>
+    <!-- <ul>
         {#each datasets as dataset}
             <li>
                 {dataset.name}, {dataset.id}
             </li>
         {/each}
-    </ul>
+    </ul> -->
 </div>

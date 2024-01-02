@@ -21,6 +21,7 @@ namespace BExIS.Dlm.Entities.Meanings
         {
             this.MappingRelation = meaning.MappingRelation;
             this.MappedLinks = meaning.MappedLinks;
+            this.Id = meaning.Id;
         }
 
         public MeaningEntry( ExternalLink mapping_relation, IList<ExternalLink> MappedLinks)

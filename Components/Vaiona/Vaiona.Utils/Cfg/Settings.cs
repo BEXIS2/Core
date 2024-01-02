@@ -10,10 +10,8 @@ namespace Vaiona.Utils.Cfg
 {
     public class Settings
     {
-        protected JsonSettings jsonSettings;
-
         protected string id;
-
+        protected JsonSettings jsonSettings;
         protected string settingsFullPath;
 
         private FileSystemWatcher watcher;
@@ -53,6 +51,47 @@ namespace Vaiona.Utils.Cfg
          * @sventhiel:
          * There is no situation in which that function will return false.
          */
+
+        public T GetValueByKey<T>(string entryKey) where T : class
+        {
+            Entry entry = jsonSettings.Entries.Where(p => p.Key.Equals(entryKey, StringComparison.InvariantCultureIgnoreCase)).FirstOrDefault();
+            if (entry == null)
+                return null;
+
+            return JsonConvert.DeserializeObject<T>(entry.Value.ToString());
+        }
+
+        public object GetValueByKey(string entryKey)
+        {
+            Entry entry = jsonSettings.Entries.Where(p => p.Key.Equals(entryKey, StringComparison.InvariantCultureIgnoreCase)).FirstOrDefault();
+            if (entry == null)
+                return null;
+
+            EntryType type = entry.Type;
+
+            switch (type)
+            {
+                case (EntryType.EntryList):
+                    var value = entry.Value as JArray;
+                    var list = new List<Entry>();
+                    if (value != null)
+                    {
+                        foreach (var item in value)
+                        {
+                            list.Add(JsonConvert.DeserializeObject<Entry>(item.ToString()));
+                        }
+                    }
+                    return list;
+
+                case (EntryType.JSON):
+                    return JsonConvert.DeserializeObject(entry.Value.ToString());
+
+                default:
+                    string entryValue = entry.Value != null ? entry.Value.ToString() : "";
+                    return Convert.ChangeType(entryValue, (TypeCode)Enum.Parse(typeof(TypeCode), type.ToString()));
+            }
+        }
+
         public bool Update(JsonSettings _jsonSettings)
         {
             jsonSettings = _jsonSettings;
@@ -60,9 +99,9 @@ namespace Vaiona.Utils.Cfg
             try
             {
                 /*
-                 * @sventhiel: 
+                 * @sventhiel:
                  * Re-evaluate if this part is necessary, because "File.CreateText" will overwrite the content anyway.
-                 * 
+                 *
                  * if (File.Exists(settingsFullPath))
                  * File.Delete(settingsFullPath);
                  */
@@ -84,60 +123,8 @@ namespace Vaiona.Utils.Cfg
             }
         }
 
-        public object GetValueByKey(string entryKey)
-        {
-            Entry entry = jsonSettings.Entries.Where(p => p.Key.Equals(entryKey, StringComparison.InvariantCultureIgnoreCase)).FirstOrDefault();
-            if (entry == null)
-                return null;
-            
-            EntryType type = entry.Type;
-            
-
-            switch (type)
-            {
-                case(EntryType.EntryList):
-                    var value = entry.Value as JArray;
-                    var list = new List<Entry>();
-                    if (value != null)
-                    {
-                        foreach (var item in value)
-                        {
-                            list.Add(JsonConvert.DeserializeObject<Entry>(item.ToString()));
-                        }
-                    }
-                    return list;
-
-                case (EntryType.JSON):
-                    return JsonConvert.DeserializeObject<Entry>(entry.Value.ToString());
-
-                default:
-                    {
-                        string entryValue = entry.Value != null ? entry.Value.ToString() : "";
-                        return Convert.ChangeType(entryValue, (TypeCode)Enum.Parse(typeof(TypeCode), type.ToString()));
-                    }
-            }
-        }
-
-        //public Item[] GetList(string entryKey)
-        //{
-        //    Entry entry = jsonSettings.Entry.Where(p => 
-        //        p.Key.Equals("name", StringComparison.InvariantCultureIgnoreCase) && 
-        //        p.Value.ToString().Equals(entryKey, StringComparison.InvariantCultureIgnoreCase) &&
-        //        p.Type=="list").FirstOrDefault();
-        //    if (entry == null)
-        //        return null;
-
-        //    return entry.Item;
-        //}
-
-        private void onCatalogChanged(object source, FileSystemEventArgs e)
-        {
-            loadSettings();
-        }
-
         private void loadSettings()
         {
-            
             try
             {
                 FileHelper.WaitForFile(settingsFullPath);
@@ -145,16 +132,20 @@ namespace Vaiona.Utils.Cfg
                 {
                     JsonSerializer serializer = new JsonSerializer();
                     jsonSettings = (JsonSettings)serializer.Deserialize(stream, typeof(JsonSettings));
-
                 }
             }
             catch (Exception ex)
             {
                 // do nothing
-                // there seem to be situations where the settings file should be opened twice at almost the same time. 
+                // there seem to be situations where the settings file should be opened twice at almost the same time.
                 // it is also surprising that the wait function does not change anything.
                 // The catch exits because there will be no problems if the error is ignored, since the settings are loaded anyway and the result is the same.
             }
+        }
+
+        private void onCatalogChanged(object source, FileSystemEventArgs e)
+        {
+            loadSettings();
         }
     }
 }

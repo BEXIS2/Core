@@ -12,6 +12,7 @@
 	export let fileReaderExist; // if filereader not exist, need to set
 	export let readableFiles; // if file reader not exist, select from this files to generate a suggestion
 	export let hasData;
+	export let enableEdit;
 
 	export let variables: VariableModel[] = [];
 
@@ -41,6 +42,7 @@
 			{fileReaderExist}
 			{readableFiles}
 			{hasData}
+			{enableEdit}
 			on:error
 		/>
 	{/if}

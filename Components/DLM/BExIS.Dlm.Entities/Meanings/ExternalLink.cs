@@ -34,6 +34,7 @@ namespace BExIS.Dlm.Entities.Meanings
             this.Type = ExternalLink.Type;
             this.Prefix = ExternalLink.Prefix;
             this.prefixCategory = ExternalLink.prefixCategory;
+            this.Id = ExternalLink.Id;
         }
 
         public ExternalLink() {

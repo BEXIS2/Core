@@ -47,6 +47,7 @@
 
 		const meanings = await getMeanings();
 		meaningsStore.set(meanings);
+		console.log("🚀 ~ file: Variables.svelte:50 ~ onMount ~ meanings:", meanings)
 
 		const constraints = await getConstraints();
 		constraintsStore.set(constraints);

@@ -19,7 +19,7 @@
 	export let readableFiles: fileInfoType[] = [];
 	export let asciiFileReaderInfo: asciiFileReaderInfoType;
 
-	export let target = '';
+	export let target:string|undefined = undefined;
 	$: target;
 	let model: DataStructureCreationModel | null;
 	$: model;
@@ -38,7 +38,7 @@
 			open = true;
 			try {
 				model = await load(e.detail.value, id, 0);
-				target = null;
+				target = undefined;
 			} catch (error) {
 				notificationStore.showNotification({
 					notificationType: notificationType.error,
@@ -51,19 +51,21 @@
 	function update(files) {
 		loading = true;
 		list = files.map((f) => f.name);
-		target = null;
+		target = undefined;
 		loading = false;
 	}
 
+
 	// after closing the selection window reset values
 	function close() {
+		open = false;
 		model = null;
 	}
 </script>
 
 <div class="card shadow-sm border-{style}-600 border-solid border">
 	<Accordion>
-		<AccordionItem>
+		<AccordionItem  {open}>
 			<svelte:fragment slot="summary">
 				{#if asciiFileReaderInfo}
 					<span class="variant-filled-surface text-{style}-500"><Fa icon={faCheck} /></span>
@@ -76,7 +78,7 @@
 				<MultiSelect
 					id="fileselection"
 					title=""
-					bind:target
+					bind:target = {target}
 					source={list}
 					on:change={selectFile}
 					isMulti={false}
