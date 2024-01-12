@@ -1,66 +1,80 @@
-name: 🐞 Bug Report
-description: You discovered something that does not work as desired/expected? Please report that bug!
-labels: 'type: bug report'
-assignees: sventhiel
+name: "🐛 Bug Report"
+description: Create a new ticket for a bug.
+title: "🐛 [BUG] - <title>"
+labels: [
+  "bug"
+]
 body:
-- type: markdown
-  attributes:
-    value: |
-      Please provide as much information as possible about the bug. Beside text, you are able to add images/screenshots as well.
-- type: checkboxes
-  attributes:
-    label: "Is there an existing issue for this?"
-    description: "Please check the existing issues first, to see if an issue already exists for the bug you encountered ([Core/issues](https://github.com/BEXIS2/Core/issues?q=is%3Aissue))."
-    options:
-    - label: "I searched for a similar issue and didn't find a suitable one."
+  - type: textarea
+    id: description
+    attributes:
+      label: "Description"
+      description: Please enter an explicit description of your issue
+      placeholder: Short and explicit description of your incident...
+    validations:
       required: true
-- type: textarea
-  attributes:
-    label: "What is going wrong?" 
-    description: "Please provide a clear and concise description of what the bug is."
-  validations:
-    required: true
-- type: textarea
-  attributes:
-    label: "How is it supposed to work?"
-    description: "Because you think the system does not act propery, please add a clear and concise description of what you expected to happen."
-  validations:
-    required: false
-- type: textarea
-  attributes:
-    label: "How can it be reproduced?"
-    description: "In order to exclude the coincidence and for better understanding of the problem, please give us more information about how it could be reproduced."
-    placeholder: |
-      1. Go to '...'
-      2. Click on '....'
-      3. Scroll down to '....'
-      4. See error
-  validations:
-    required: false
-- type: textarea
-  attributes:
-    label: "Do you get any exceptions?"
-    description: "It may happen that you are facing an exception. If so, please share a screenshot of it with us."
-  validations:
-    required: false
-- type: textarea
-  attributes:
-    label: "What kind of system do you use?"
-    description: "It may happen that certain things do not work only under special environmental conditions/toolings."
-    placeholder: |
-      - Browser (Chrome, Firefox, Edge,...)
-      - Internet Connectivity (UMTS, LTE, DSL,...)
-      - Device (Smartphone, Tablet, Laptop,...)
-  validations:
-    required: false
-- type: textarea
-  attributes:
-    label: "Which task(s) is/are related to this issue?"
-    description: "If you have already (small) tasks in mind to fix the bug, please let us know by adding items similar to the placeholder ones. Otherwise we are going to add proper tasks for it later on."
-    placeholder: |
-      - [ ] add try-catch block
-      - [ ] add exception handling
-      - [ ] change assignment of variables
-      - [ ] ...
-  validations:
-    required: false
+  - type: input
+    id: reprod-url
+    attributes:
+      label: "Reproduction URL"
+      description: Please enter your GitHub URL to provide a reproduction of the issue
+      placeholder: ex. https://github.com/USERNAME/REPO-NAME
+    validations:
+      required: true
+  - type: textarea
+    id: reprod
+    attributes:
+      label: "Reproduction steps"
+      description: Please enter an explicit description of your issue
+      value: |
+        1. Go to '...'
+        2. Click on '....'
+        3. Scroll down to '....'
+        4. See error
+      render: bash
+    validations:
+      required: true
+  - type: textarea
+    id: screenshot
+    attributes:
+      label: "Screenshots"
+      description: If applicable, add screenshots to help explain your problem.
+      value: |
+        ![DESCRIPTION](LINK.png)
+      render: bash
+    validations:
+      required: false
+  - type: textarea
+    id: logs
+    attributes:
+      label: "Logs"
+      description: Please copy and paste any relevant log output. This will be automatically formatted into code, so no need for backticks.
+      render: bash
+    validations:
+      required: false
+  - type: dropdown
+    id: browsers
+    attributes:
+      label: "Browsers"
+      description: What browsers are you seeing the problem on ?
+      multiple: true
+      options:
+        - Firefox
+        - Chrome
+        - Safari
+        - Microsoft Edge
+        - Opera
+    validations:
+      required: false
+  - type: dropdown
+    id: os
+    attributes:
+      label: "OS"
+      description: What is the impacted environment ?
+      multiple: true
+      options:
+        - Windows
+        - Linux
+        - Mac
+    validations:
+      required: false
