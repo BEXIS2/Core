@@ -1,6 +1,6 @@
 name: 🐞 Bug Report
 description: You discovered something that does not work as desired/expected? Please report that bug!
-labels: 'type: Bug Report'
+labels: 'Type: Bug Report'
 assignees: 
   - sventhiel
   - geofranzi
