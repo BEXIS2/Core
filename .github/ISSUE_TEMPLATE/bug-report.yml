@@ -9,7 +9,7 @@ body:
 - type: markdown
   attributes:
     value: |
-      Please provide as much information as possible about the bug. Beside text, you are able to add images/screenshots as well.
+      Thanks ❤️ for taking the time to fill out this bug report form! Please provide as much information as possible about the bug. Beside text, you are able to add images/screenshots as well.
 - type: checkboxes
   attributes:
     label: "Is there an existing issue for this?"
