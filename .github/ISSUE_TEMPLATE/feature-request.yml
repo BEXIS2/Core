@@ -1,1 +1,44 @@
-
+---
+name: 🛠️ Feature Request
+description: Do you miss a functionality/feature within the system completely? Please share your thoughts/ideas!
+labels: 'Type: Feature Request'
+assignees: 
+  - sventhiel
+  - geofranzi
+  - DavidBlaa
+body:
+- type: markdown
+  attributes:
+    value: |
+      **Thanks :heart: for taking the time to fill out this feature request form!**
+- type: checkboxes
+  attributes:
+    label: "Is there an existing feature request for this?"
+    description: "Please check the existing issues first, to see if a similar feature request already exists ([Core/issues](https://github.com/BEXIS2/Core/issues?q=is%3Aissue))."
+    options:
+    - label: "I searched for a similar feature request and didn't find a suitable one."
+      required: true
+- type: textarea
+  attributes:
+    label: "What is your feature request all about?" 
+    description: "Please provide a clear and concise description of what the new feature is all about."
+  validations:
+    required: true
+- type: textarea
+  attributes:
+    label: "How could/should a solution look like?"
+    description: "After a first description of your idea, this part is most important. Please provide further information on how the feature should be integrated in the system."
+  validations:
+    required: true
+- type: textarea
+  attributes:
+    label: "Are there alternatives to your first suggested solution?"
+    description: "Some ideas are great, but hard to implement/integrate. If possible, please offer another simpler version of your feature. This might increase the chance of implementation/integration."
+  validations:
+    required: false
+- type: textarea
+  attributes:
+    label: "Do you have further comments/remarks?"
+    description: "In case you would like to share additional stuff, please use the following text area."
+  validations:
+    required: false
