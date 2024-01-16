@@ -26,6 +26,21 @@
       "description": "The application name is used in several places in the system. e.g. as title in the email"
     },
     {
+      "key": "smtp",
+      "title": "SMTP",
+      "value": {
+        "validateAudience": false,
+        "validateIssuer": false,
+        "validAudience": "http://localhost:3000",
+        "validIssuer": "https://localhost:7041",
+        "issuerSigningKey": "JWTAuthenticationHIGHsecuredPasswordVVVp1OH7Xzyr",
+        "validateLifetime": false,
+        "validLifetime": 1
+      },
+      "type": "JSON",
+      "description": "The application name is used in several places in the system. e.g. as title in the email"
+    },
+    {
       "key": "landingPage",
       "title": "Landing Page",
       "value": "ddm, publicsearch, index",
