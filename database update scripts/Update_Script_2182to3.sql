@@ -79,32 +79,32 @@ ALTER COLUMN
 ALTER TABLE
     IF EXISTS public.variables
 ADD
-    COLUMN approved boolean DEFAULT true;
+    COLUMN IF NOT EXISTS approved boolean DEFAULT true;
 
 ALTER TABLE
     IF EXISTS public.variables
 ADD
-    COLUMN datatyperef bigint;
+    COLUMN IF NOT EXISTS datatyperef bigint;
 
 ALTER TABLE
     IF EXISTS public.variables
 ADD
-    COLUMN displaypatternid integer;
+    COLUMN IF NOT EXISTS displaypatternid integer;
 
 ALTER TABLE
     IF EXISTS public.variables
 ADD
-    COLUMN iskey boolean;
+    COLUMN IF NOT EXISTS iskey boolean;
 
 ALTER TABLE
     IF EXISTS public.variables
 ADD
-    COLUMN variablestype character varying(255) COLLATE pg_catalog."default";
+    COLUMN IF NOT EXISTS variablestype character varying(255) COLLATE pg_catalog."default";
 
 ALTER TABLE
     IF EXISTS public.variables
 ADD
-    COLUMN vartemplateref bigint;
+    COLUMN IF NOT EXISTS vartemplateref bigint;
 
 ALTER TABLE
     IF EXISTS public.variables DROP CONSTRAINT IF EXISTS fk1a5c9d114fe09c0d;
@@ -115,21 +115,28 @@ ALTER TABLE
 ALTER TABLE
     IF EXISTS public.variables DROP CONSTRAINT IF EXISTS fk1a5c9d1190fe2254;
 
+/* Add constraints */
+
+ALTER TABLE IF EXISTS public.variables DROP CONSTRAINT IF EXISTS fk_2abad2e6;
+
 ALTER TABLE
     IF EXISTS public.variables
 ADD
     CONSTRAINT fk_2abad2e6 FOREIGN KEY (vartemplateref) REFERENCES public.variables (id) MATCH SIMPLE ON UPDATE NO ACTION ON DELETE NO ACTION;
 
+ALTER TABLE IF EXISTS public.variables DROP CONSTRAINT IF EXISTS fk_35a1bc0a;
 ALTER TABLE
     IF EXISTS public.variables
 ADD
-    CONSTRAINT fk_35a1bc0a FOREIGN KEY (unitref) REFERENCES public.units (id) MATCH SIMPLE ON UPDATE NO ACTION ON DELETE NO ACTION;
+    CONSTRAINT  fk_35a1bc0a FOREIGN KEY (unitref) REFERENCES public.units (id) MATCH SIMPLE ON UPDATE NO ACTION ON DELETE NO ACTION;
 
+ALTER TABLE IF EXISTS public.variables DROP CONSTRAINT IF EXISTS fk_7f919d88;
 ALTER TABLE
     IF EXISTS public.variables
 ADD
     CONSTRAINT fk_7f919d88 FOREIGN KEY (datastructureref) REFERENCES public.datastructures (id) MATCH SIMPLE ON UPDATE NO ACTION ON DELETE NO ACTION;
 
+ALTER TABLE IF EXISTS public.variables DROP CONSTRAINT IF EXISTS fk_990c0cd5;
 ALTER TABLE
     IF EXISTS public.variables
 ADD
@@ -193,21 +200,6 @@ ALTER TABLE IF EXISTS public.rpm_externallink
 ALTER TABLE IF EXISTS public.rpm_externallink
     ALTER COLUMN id SET DEFAULT nextval('rpm_externallink_id_seq'::regclass);
 	
-
-ALTER TABLE IF EXISTS public.rpm_externallink
- 	ADD CONSTRAINT rpm_externallink_pkey PRIMARY KEY (id);
-
-ALTER TABLE IF EXISTS public.rpm_externallink	
-	ADD CONSTRAINT fk_a4adc10f FOREIGN KEY (prefix)
-        REFERENCES public.rpm_externallink (id) MATCH SIMPLE
-        ON UPDATE NO ACTION
-        ON DELETE NO ACTION;	
-
-ALTER TABLE IF EXISTS public.rpm_externallink
-    ADD CONSTRAINT fk_cc3bd9e2 FOREIGN KEY (prefixcategory)
-    REFERENCES public.rpm_prefixcategory (id) MATCH SIMPLE
-    ON UPDATE NO ACTION
-    ON DELETE NO ACTION;
 
 /* end  External LINKS */
 
@@ -421,16 +413,6 @@ ALTER COLUMN
     datastructureref DROP NOT NULL;
 
 ALTER TABLE
-    IF EXISTS public.datasets
-ADD
-    COLUMN entitytemplateref bigint;
-
-ALTER TABLE
-    IF EXISTS public.datasets
-ADD
-    CONSTRAINT fk_d593bd3c FOREIGN KEY (entitytemplateref) REFERENCES public.entitytemplates (id) MATCH SIMPLE ON UPDATE NO ACTION ON DELETE NO ACTION;
-
-ALTER TABLE
     IF EXISTS public.datacontainers DROP COLUMN IF EXISTS classifierref;
 
 ALTER TABLE
@@ -445,39 +427,27 @@ ALTER TABLE
 ALTER TABLE
     IF EXISTS public.datacontainers DROP CONSTRAINT IF EXISTS fk3beb06af68222;
 
-ALTER TABLE
-    IF EXISTS public.datacontainers
-ADD
-    CONSTRAINT fk_5e17ebf9 FOREIGN KEY (datatyperef) REFERENCES public.datatypes (id) MATCH SIMPLE ON UPDATE NO ACTION ON DELETE NO ACTION;
-
-ALTER TABLE
-    IF EXISTS public.datacontainers
-ADD
-    CONSTRAINT fk_7330dbef FOREIGN KEY (methodologyref) REFERENCES public.methodologies (id) MATCH SIMPLE ON UPDATE NO ACTION ON DELETE NO ACTION;
-
-ALTER TABLE
-    IF EXISTS public.datacontainers
-ADD
-    CONSTRAINT fk_f9a7e19e FOREIGN KEY (unitref) REFERENCES public.units (id) MATCH SIMPLE ON UPDATE NO ACTION ON DELETE NO ACTION;
-
 /* Constraints */
 
 ALTER TABLE IF EXISTS public.constraints
     ALTER COLUMN datacontainerref DROP NOT NULL;
 
 ALTER TABLE IF EXISTS public.constraints
-    ADD COLUMN creationdate timestamp without time zone;
+    ADD COLUMN IF NOT EXISTS creationdate timestamp without time zone;
 
 ALTER TABLE IF EXISTS public.constraints
-    ADD COLUMN lastmodified timestamp without time zone;
+    ADD COLUMN IF NOT EXISTS lastmodified timestamp without time zone;
 
 ALTER TABLE IF EXISTS public.constraints
-    ADD COLUMN lastmodifieduserref bigint;
+    ADD COLUMN IF NOT EXISTS lastmodifieduserref bigint;
+
 
 ALTER TABLE IF EXISTS public.constraints
-    ADD COLUMN name character varying(255) COLLATE pg_catalog."default";
+    ADD COLUMN IF NOT EXISTS name character varying(255) COLLATE pg_catalog."default";
+	
 ALTER TABLE IF EXISTS public.constraints DROP CONSTRAINT IF EXISTS fkb6093b2ee5c7912c;
 
+ALTER TABLE IF EXISTS public.constraints DROP CONSTRAINT IF EXISTS fk_fd8e6a17;
 ALTER TABLE IF EXISTS public.constraints
     ADD CONSTRAINT fk_fd8e6a17 FOREIGN KEY (datacontainerref)
     REFERENCES public.datacontainers (id) MATCH SIMPLE
@@ -552,7 +522,7 @@ ALTER TABLE IF EXISTS public.rpm_prefixcategory
 /* UNITS */
 
 ALTER TABLE IF EXISTS public.units
-    ADD COLUMN externallinkref bigint;
+    ADD  COLUMN IF NOT EXISTS externallinkref bigint;
 
 /** DROP COLUMNS */
 ALTER TABLE IF EXISTS public.datacontainers DROP COLUMN IF EXISTS classifierref;
@@ -798,12 +768,12 @@ DELETE FROM public.operations Where module = 'Api' and controller = 'Token';
 /* add template for unstructured */
 INSERT INTO public.entitytemplates(
 	id, versionno, extra, name, description, metadatainvalidsavemode, hasdatastructure, entityref, metadatastructureref,jsondatastructurelist, jsonallowedfiletypes, jsondisabledhooks, jsonnotificationgroups, jsonpermissiongroups, jsonmetadatafields)
-	VALUES (1, 1, null, 'File', 'Use this template if you want to upload files only', true, false,1,1,"","","","","","");
+	VALUES (1, 1, null, 'File', 'Use this template if you want to upload files only', true, false,1,1,'[]','[]','[]','[]','[]','[]');
 
 /* add template for structured */
 INSERT INTO public.entitytemplates(
 	id, versionno, extra, name, description, metadatainvalidsavemode, hasdatastructure, entityref, metadatastructureref,jsondatastructurelist, jsonallowedfiletypes, jsondisabledhooks, jsonnotificationgroups, jsonpermissiongroups, jsonmetadatafields)
-	VALUES (2, 1, null, 'Data', 'Use this template if you want to upload data', true, true,1,2,"","","","","","");
+	VALUES (2, 1, null, 'Data', 'Use this template if you want to upload data', true, true,1,2,'[]','[]','[]','[]','[]','[]');
 
 /* update datasets */
 Update Datasets SET entitytemplateref=1 where datastructureref in (select id from datastructures where datastructuretype like 'UnS');
