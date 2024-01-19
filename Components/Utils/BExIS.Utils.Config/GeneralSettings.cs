@@ -51,6 +51,18 @@ namespace BExIS.Utils.Config
             }
         }
 
+        public SmtpConfiguration GetSmtpConfiguration()
+        {
+            try
+            {
+                return GetValueByKey<SmtpConfiguration>("smtp");
+            }
+            catch (Exception ex)
+            {
+                return new SmtpConfiguration();
+            }
+        }
+
 
         public static string ApplicationInfo
         {
@@ -107,6 +119,14 @@ namespace BExIS.Utils.Config
             get
             {
                 return JsonConvert.DeserializeObject<JwtConfiguration>(GetValueByKey("jwt").ToString());
+            }
+        }
+
+        public static SmtpConfiguration SmtpConfiguration
+        {
+            get
+            {
+                return JsonConvert.DeserializeObject<SmtpConfiguration>(GetValueByKey("smtp").ToString());
             }
         }
 
