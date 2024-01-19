@@ -29,13 +29,15 @@
       "key": "smtp",
       "title": "SMTP",
       "value": {
-        "validateAudience": false,
-        "validateIssuer": false,
-        "validAudience": "http://localhost:3000",
-        "validIssuer": "https://localhost:7041",
-        "issuerSigningKey": "JWTAuthenticationHIGHsecuredPasswordVVVp1OH7Xzyr",
-        "validateLifetime": false,
-        "validLifetime": 1
+        "HostName": "smtp.uni-jena.de",
+        "HostPort": 587,
+        "HostAnonymous": false,
+        "HostSecureSocketOptions": 1,
+        "HostCertificateRevocation": false,
+        "AccountName": "<account_name>",
+        "AccountPassword": "<account_password>",
+        "FromName": "<from_name>",
+        "FromAddress": "<from_address>"
       },
       "type": "JSON",
       "description": "The application name is used in several places in the system. e.g. as title in the email"
