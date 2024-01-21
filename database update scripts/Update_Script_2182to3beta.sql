@@ -194,6 +194,9 @@ CREATE SEQUENCE IF NOT EXISTS public.rpm_externallink_id_seq INCREMENT 1 START 1
 ALTER SEQUENCE public.rpm_externallink_id_seq OWNER TO postgres;
 
 ALTER TABLE IF EXISTS public.rpm_externallink
+ 	ADD CONSTRAINT rpm_externallink_pkey PRIMARY KEY (id);
+
+ALTER TABLE IF EXISTS public.rpm_externallink
     OWNER to postgres;
 	
 
@@ -407,10 +410,19 @@ TABLESPACE pg_default;
 ALTER TABLE IF EXISTS public.variable_constraints
     OWNER to postgres;
 
+-- Dataset
+
 ALTER TABLE
     IF EXISTS public.datasets
 ALTER COLUMN
     datastructureref DROP NOT NULL;
+
+ALTER TABLE
+    IF EXISTS public.datasets
+ADD
+    COLUMN entitytemplateref bigint;
+
+-- data container
 
 ALTER TABLE
     IF EXISTS public.datacontainers DROP COLUMN IF EXISTS classifierref;
@@ -820,6 +832,12 @@ UPDATE constraints as c
 SET name = c.id, datacontainerref = null
 where datacontainerref in (Select id from public.datacontainers Where discriminator like 'DA');
 
+
+
+/* drop all varaible links to dataattributeref*/
+ALTER TABLE
+    IF EXISTS public.variables DROP COLUMN IF EXISTS dataattributeref;
+
 /* delete all data container with discimrinator */
 DELETE from public.datacontainers Where discriminator like 'DA';
 
@@ -850,13 +868,6 @@ ALTER TABLE
     IF EXISTS public.datasets
 ALTER
     COLUMN entitytemplateref SET NOT NULL;
-
-
-/* drop all varaible links to dataattributeref*/
-ALTER TABLE
-    IF EXISTS public.variables DROP COLUMN IF EXISTS dataattributeref;
-
-
 
 -- Insert version
 INSERT INTO public.versions(
