@@ -1,7 +1,7 @@
 <script lang="ts">
 	import Structure from '$lib/components/datastructure/structure/EditStructure.svelte';
 
-	import { Spinner, Page, ErrorMessage } from '@bexis2/bexis2-core-ui';
+	import { Spinner, Page, ErrorMessage, type helpItemType, helpStore } from '@bexis2/bexis2-core-ui';
 	import {
 		generate,
 		save,
@@ -14,6 +14,11 @@
 	import { displayPatternStore, structureStore,isTemplateRequiredStore,isMeaningRequiredStore  } from '$lib/components/datastructure/store';
 	import { pageContentLayoutType } from '@bexis2/bexis2-core-ui';
 
+	//help
+	import { dataStructureHelp } from '../help';
+	let helpItems: helpItemType[] = dataStructureHelp;
+
+
 	// load attributes from div
 	let container;
 	let datastructureId: number = 0;
@@ -25,6 +30,8 @@
 	let dataExist:boolean = false;
 
 	async function start() {
+
+		helpStore.setHelpItemList(helpItems);
 		// get data from parent
 		container = document.getElementById('datastructure');
 		datastructureId = Number(container?.getAttribute('structure'));
@@ -68,7 +75,7 @@
 
 <Page
 	title="Data structure"
-	note="generate a structure from a file."
+	note="This page allows you to create and edit data structures."
 	contentLayoutType={pageContentLayoutType.full}
 	help={true}
 >

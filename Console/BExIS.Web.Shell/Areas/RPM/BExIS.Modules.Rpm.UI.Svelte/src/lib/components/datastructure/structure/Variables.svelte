@@ -1,6 +1,6 @@
 <script lang="ts">
 	import Variable from './variable/Variable.svelte';
-	import { Spinner } from '@bexis2/bexis2-core-ui';
+	import { Spinner, helpStore } from '@bexis2/bexis2-core-ui';
 	import { onMount } from 'svelte';
 	
 	import type { missingValueType } from '../types';
@@ -212,7 +212,9 @@
 <div class="p-2">
 <div class="flex gap-2 items-baseline"> 
 
-	<button class="btn variant-filled-secondary" on:click={()=> expandAll = !expandAll}>
+	<button id="variables-expander" class="btn variant-filled-secondary" 
+	on:mouseover={() => helpStore.show('variables-expander')}
+	on:click={()=> expandAll = !expandAll}>
 			{#if expandAll}
 				<Fa icon={faAnglesUp}/>
 			{:else}
@@ -223,8 +225,6 @@
 <div class="pr-32 w-auto">
 	{#if !valid}
 		<span class="text-sm">Variables with errors:</span>
-
-
 			{#each variableValidationStates as v, i}
 					{#if v==false && variables[i] != undefined}
 			
@@ -235,11 +235,8 @@
 											{i+1}
 										{/if}
 									</a>
-
 					{/if}
-		
 			{/each}
-
 	{/if}
 </div>
 
@@ -268,6 +265,7 @@
 							type="button"
 							title="copy to next"
 							class="chip variant-filled-warning"
+							on:mouseover={() => helpStore.show('copy-next')}
 							on:click={() => copyNext(i)}><Fa icon={faShare} /></button
 						>
 						<button
@@ -275,25 +273,38 @@
 							type="button"
 							title="copy to all after this"
 							class="chip variant-filled-warning"
+							on:mouseover={() => helpStore.show('copy-all')}
 							on:click={() => copyAll(i)}><Fa icon={faShareFromSquare} /></button
 						>
 					{/if}
 				</svelte:fragment>
 				<svelte:fragment slot="list-options">
 			 {#if !dataExist}
-						<button id="delete-{i}" class="chip variant-filled-error" on:click={()=>deleteFn(i)}><Fa icon="{faTrash}"></Fa></button>
+						<button id="delete-{i}" class="chip variant-filled-error"
+						 on:mouseover={() => helpStore.show('delete-var')}
+						 on:click={()=>deleteFn(i)}><Fa icon="{faTrash}"></Fa></button>
 
 						{#if i > 0}
-						<button id="up-{i}" class="chip variant-filled-surface" on:click={()=>upFn(i)}><Fa icon="{faAngleUp}"></Fa></button>
+						<button id="up-{i}" class="chip variant-filled-surface"
+						on:mouseover={() => helpStore.show('up-var')} 
+						on:click={()=>upFn(i)}><Fa icon="{faAngleUp}"></Fa></button>
 						{:else}
-						<button id="up-{i}" class="chip variant-filled-surface disbaled" disabled on:click={()=>upFn(i)}><Fa icon="{faAngleUp}"></Fa></button>
+						<button id="up-{i}" class="chip variant-filled-surface disbaled" disabled 
+						on:mouseover={() => helpStore.show('up-var')} 
+						on:click={()=>upFn(i)}><Fa icon="{faAngleUp}"></Fa></button>
 						{/if}
 
-						<button id="copy-{i}" class="chip variant-filled-primary" on:click={()=>copyFn(i)}><Fa icon="{faCopy}"></Fa></button>
+						<button id="copy-{i}" class="chip variant-filled-primary" 
+						on:mouseover={() => helpStore.show('copy-var')} 
+						on:click={()=>copyFn(i)}><Fa icon="{faCopy}"></Fa></button>
 						{#if variables.length > 0 && i < variables.length - 1}
-							<button id="down-{i}" class="chip variant-filled-surface" on:click={()=>downFn(i)}><Fa icon="{faAngleDown}"></Fa></button>
+							<button id="down-{i}" class="chip variant-filled-surface" 
+							on:mouseover={() => helpStore.show('down-var')} 
+							on:click={()=>downFn(i)}><Fa icon="{faAngleDown}"></Fa></button>
 						{:else}
-							<button id="down-{i}" class="chip variant-filled-surface" disabled on:click={()=>downFn(i)}><Fa icon="{faAngleDown}"></Fa></button>
+							<button id="down-{i}" class="chip variant-filled-surface" disabled 
+							on:mouseover={() => helpStore.show('down-var')} 
+							on:click={()=>downFn(i)}><Fa icon="{faAngleDown}"></Fa></button>
 						{/if}
 				{/if}
 					</svelte:fragment>

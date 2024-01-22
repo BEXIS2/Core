@@ -2,7 +2,7 @@
 	import { onMount, createEventDispatcher } from 'svelte';
 
 	// ui components
-	import { Spinner, DropdownKVP } from '@bexis2/bexis2-core-ui';
+	import { Spinner, DropdownKVP, helpStore } from '@bexis2/bexis2-core-ui';
 
 	import MissingValues from './MissingValues.svelte';
 
@@ -374,68 +374,86 @@
 				<div id="edit" class="flex flex-col grow gap-2">
 					<div id="reader selections" class="flex flex-none gap-2">
 						<DropdownKVP
-							id="Delimeter"
+							id="delimeter"
 							title="Delimeter"
 							bind:target={model.delimeter}
 							source={model.delimeters}
 							complexTarget={false}
 							on:change={changeDelimeter}
+							help={true}
 						/>
 
 						<DropdownKVP
-							id="Decimal"
+							id="decimal"
 							title="Decimal"
 							bind:target={model.decimal}
 							source={model.decimals}
 							complexTarget={false}
+							help={true}
+
 						/>
 
 						<DropdownKVP
-							id="TextMarker"
+							id="textMarker"
 							title="TextMarker"
 							bind:target={model.textMarker}
 							source={model.textMarkers}
 							complexTarget={false}
+							help={true}
 						/>
 					</div>
 
 					<div id="markers" class="py-5 flex gap-1">
 						<button
 							class="btn variant-filled-error"
+							id="selectVar"
 							type="button"
-							on:click={() => onclickHandler(MARKER_TYPE.VARIABLE)}>Variable</button
+							on:click={() => onclickHandler(MARKER_TYPE.VARIABLE)}
+							on:mouseover={() => helpStore.show('selectVar')}
+							>Variable</button
 						>
 						<button
 							class="btn variant-filled-success"
 							type="button"
+							id="selectUnit"
+							on:mouseover={() => helpStore.show('selectUnit')}
 							on:click={() => onclickHandler(MARKER_TYPE.UNIT)}>Unit</button
 						>
 						<button
 							class="btn variant-filled-warning"
 							type="button"
+							id="selectDescription"
+							on:mouseover={() => helpStore.show('selectDescription')}
+
 							on:click={() => onclickHandler(MARKER_TYPE.DESCRIPTION)}>Description</button
 						>
 						<button
 							class="btn variant-filled-secondary"
 							type="button"
 							color="info"
+							id="selectMissingValues"
+							on:mouseover={() => helpStore.show('selectMissingValues')}
 							on:click={() => onclickHandler(MARKER_TYPE.MISSING_VALUES)}>Missing Values</button
 						>
 						<button
 							class="btn variant-filled-primary"
 							type="button"
+							id="selectData"
+							on:mouseover={() => helpStore.show('selectData')}
 							on:click={() => onclickHandler(MARKER_TYPE.DATA)}>Data</button
 						>
 
 						<button
 							title="reset selection"
+							id="resetSelection"
 							class="btn variant-filled-warning text-lg"
 							type="button"
+							on:mouseover={() => helpStore.show('resetSelection')}
 							on:click={resetSelection}><Fa icon={faArrowRotateLeft} /></button
 						>
 					</div>
 
-					<div id="missing values" class="grow">
+					<div id="missingvalues" class="grow" >
 						<!-- Missing Values-->
 						<MissingValues bind:list={model.missingValues} />
 					</div>
