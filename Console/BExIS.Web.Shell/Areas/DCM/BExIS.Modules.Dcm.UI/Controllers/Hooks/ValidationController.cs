@@ -16,6 +16,7 @@ using BExIS.UI.Hooks.Logs;
 using BExIS.Utils.Helpers;
 using BExIS.Utils.Upload;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -62,7 +63,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             if(log==null) log = new EditDatasetDetailsLog();
 
             var username = BExISAuthorizeHelper.GetAuthorizedUserName(HttpContext);
-
+            Hashtable primaryKeyHashTable = new Hashtable();
 
             //2. Files
             if (cache.Files == null || cache.Files.Any() == false)
@@ -183,7 +184,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                                                     if (fileErrors == null || fileErrors.Count == 0)
                                                     {
                                                         //check against primary key
-                                                        var unique = uploadWizardHelper.IsUnique(id, ext, fileName, filePath, (AsciiFileReaderInfo)cache.AsciiFileReaderInfo, datastructureId);
+                                                        var unique = uploadWizardHelper.IsUnique(id, ext, fileName, filePath, (AsciiFileReaderInfo)cache.AsciiFileReaderInfo, datastructureId, ref primaryKeyHashTable);
                                                         if (!unique)
                                                         {
                                                             fileErrors.Add(new Error(ErrorType.PrimaryKey, "the data in the file violate the primary key set.", "Primary Key"));
@@ -240,15 +241,6 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
                         #endregion
                     }
-                    //}
-                    //catch (Exception ex)
-                    //{
-                    //    errors.Add(new Error(ErrorType.Other, ex.Message));
-                    //    FileErrors fileErrors = new FileErrors();
-                    //    fileErrors.SortedErrors = SortFileErrors(errors);
-                    //    model.FileErrors.Add(fileErrors);
-
-                    //}
 
                     // if the validation is done, prepare the model 
                     if (cache.Files.Any()) //if any file exits update model 

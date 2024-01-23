@@ -533,6 +533,161 @@ namespace BExIS.Utils.Upload
         }
 
         /// <summary>
+        /// test unique of primary keys in a FileStream
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>
+        /// <param name="taskManager"></param>
+        /// <param name="datasetId"></param>
+        /// <param name="primaryKeys"></param>
+        /// <param name="ext"></param>
+        /// <param name="filename"></param>
+        /// <returns></returns>
+        public bool IsUnique(long datasetId, string ext, string filename, string filepath, FileReaderInfo info, long datastructureId,ref Hashtable hashtable)
+        {
+            if(hashtable==null) hashtable=new Hashtable();
+            Hashtable test = new Hashtable();
+            List<string> testString = new List<string>();
+
+            List<string> primaryValuesAsOneString = new List<string>();
+
+            int packageSize = 1000;
+            int position = 1;
+
+            if (ext.Equals(".txt") || ext.Equals(".csv") || ext.Equals(".tsv"))
+            {
+                #region csv
+
+                do
+                {
+                    primaryValuesAsOneString = new List<string>();
+
+                    using (DataStructureManager datastructureManager = new DataStructureManager())
+                    {
+                        StructuredDataStructure sds = datastructureManager.StructuredDataStructureRepo.Get(datastructureId);
+                        List<long> primaryKeys = sds.Variables.Where(v => v.IsKey).Select(v => v.Id).ToList();
+
+                        AsciiFileReaderInfo afri = (AsciiFileReaderInfo)info;
+
+                        AsciiReader reader = new AsciiReader(sds, afri, new IOUtility());
+                        reader.Position = position;
+                        using (Stream stream = reader.Open(filepath))
+                        {
+
+                            // get a list of values for each row
+                            // e.g.
+                            // primarky keys id, name
+                            // 1 [1][David]
+                            // 2 [2][Javad]
+                            List<List<string>> tempList = reader.ReadValuesFromFile(stream, filename, datasetId, primaryKeys, packageSize);
+
+                            // convert List of Lists to list of strings
+                            // 1 [1][David] = 1David
+                            // 2 [2][Javad] = 2Javad
+                            foreach (List<string> l in tempList)
+                            {
+                                string tempString = "";
+                                foreach (string s in l)
+                                {
+                                    tempString += s;
+                                }
+                                if (!String.IsNullOrEmpty(tempString)) primaryValuesAsOneString.Add(tempString);
+                            }
+
+                            // add all primary keys pair into the hasttable
+                            foreach (string pKey in primaryValuesAsOneString)
+                            {
+                                if (pKey != "")
+                                {
+                                    try
+                                    {
+                                        hashtable.Add(Utility.ComputeKey(pKey), "pKey");
+                                    }
+                                    catch
+                                    {
+                                        return false;
+                                    }
+                                }
+                            }
+
+                            position = reader.Position + 1;
+                        }
+                    }
+                } while (primaryValuesAsOneString.Count > 0);
+
+                #endregion csv
+            }
+
+            if (ext.Equals(".xlsm"))
+            {
+                #region excel template
+
+                do
+                {
+                    //reset
+                    primaryValuesAsOneString = new List<string>();
+
+                    using (DataStructureManager datastructureManager = new DataStructureManager())
+                    {
+                        StructuredDataStructure sds = datastructureManager.StructuredDataStructureRepo.Get(datastructureId);
+                        List<long> primaryKeys = sds.Variables.Where(v => v.IsKey).Select(v => v.Id).ToList();
+
+                        ExcelReader reader = new ExcelReader(sds, new ExcelFileReaderInfo());
+                        reader.Position = position;
+                        using (Stream stream = reader.Open(filepath))
+                        {
+
+                            // get a list of values for each row
+                            // e.g.
+                            // primarky keys id, name
+                            // 1 [1][David]
+                            // 2 [2][Javad]
+                            List<List<string>> tempList = reader.ReadValuesFromFile(stream, filename, datasetId, primaryKeys, packageSize);
+
+                            // convert List of Lists to list of strings
+                            // 1 [1][David] = 1David
+                            // 2 [2][Javad] = 2Javad
+                            foreach (List<string> l in tempList)
+                            {
+                                string tempString = "";
+                                foreach (string s in l)
+                                {
+                                    tempString += s;
+                                }
+                                if (!String.IsNullOrEmpty(tempString)) primaryValuesAsOneString.Add(tempString);
+                            }
+
+                            // add all primary keys pair into the hasttable
+                            foreach (string pKey in primaryValuesAsOneString)
+                            {
+                                if (pKey != "")
+                                {
+                                    try
+                                    {
+                                        hashtable.Add(Utility.ComputeKey(pKey), pKey);
+                                    }
+                                    catch (Exception ex)
+                                    {
+                                        stream.Close();
+                                        return false;
+                                    }
+                                }
+                            }
+
+                            position = reader.Position + 1;
+                        }
+                    }
+                } while (primaryValuesAsOneString.Count > 0);
+
+                #endregion excel template
+            }
+
+            return true;
+        }
+
+
+
+        /// <summary>
         /// test unique of primary keys in a string[][] as data
         /// </summary>
         /// <remarks></remarks>

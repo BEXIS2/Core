@@ -99,7 +99,7 @@
 
 		<Hook
 			name="datadescription"
-			displayName ="Data Description"
+			displayName ="Data Structure"
 			mode="view"
 			entity="dataset"
 			place="details"
