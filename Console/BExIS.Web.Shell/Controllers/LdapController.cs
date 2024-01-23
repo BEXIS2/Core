@@ -1,11 +1,15 @@
 ﻿using BExIS.Security.Entities.Subjects;
 using BExIS.Security.Services.Authentication;
 using BExIS.Security.Services.Subjects;
+using BExIS.UI.Helpers;
+using BExIS.Utils.Config;
+using BExIS.Utils.Config.Configurations;
 using BExIS.Web.Shell.Models;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin.Security;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Web;
@@ -15,6 +19,13 @@ namespace BExIS.Web.Shell.Controllers
 {
     public class LdapController : Controller
     {
+        private List<LdapConfiguration> _ldapConfigurations;
+
+        public LdapController()
+        {
+            _ldapConfigurations = GeneralSettings.LdapConfigurations;
+        }
+
         // GET: Ldap
         public ActionResult Login(string returnUrl)
         {
