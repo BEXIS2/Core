@@ -30,6 +30,9 @@ using System.Web.Http;
 using System.Web.Http.Description;
 using Vaiona.Entities.Common;
 using Vaiona.Web.Mvc.Modularity;
+using BExIS.Modules.Dcm.UI.Helpers;
+using System.Xml;
+using BExIS.Dim.Entities.Mapping;
 
 namespace BExIS.Modules.Dcm.UI.Controllers
 {
@@ -203,6 +206,9 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                         if (datasetManager.IsDatasetCheckedOutFor(dataset.Id, user.UserName) || datasetManager.CheckOutDataset(dataset.Id, user.UserName))
                         {
                             workingCopy = datasetManager.GetDatasetWorkingCopy(dataset.Id);
+                            // update metadata based on system keys mappings
+                            workingCopy.Metadata = setSystemValuesToMetadata(workingCopy.Id, datasetManager.GetDatasetVersionCount(workingCopy.Id) + 1, workingCopy.Dataset.MetadataStructure.Id, workingCopy.Metadata);
+
 
                             List<DataTuple> datatuples = new List<DataTuple>();
 
@@ -476,6 +482,9 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                                 datasetManager.EditDatasetVersion(workingCopy, splittedDatatuples["new"], splittedDatatuples["edit"], null);
                             }
 
+                            // update metadata based on system keys mappings
+                            workingCopy.Metadata = setSystemValuesToMetadata(workingCopy.Id, datasetManager.GetDatasetVersionCount(workingCopy.Id) + 1, workingCopy.Dataset.MetadataStructure.Id, workingCopy.Metadata, true);
+
                             ////set modification
                             workingCopy.ModificationInfo = new EntityAuditInfo()
                             {
@@ -535,6 +544,20 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         public void Delete(int id)
         {
             throw new HttpResponseException(HttpStatusCode.NotFound);
+        }
+
+        private XmlDocument setSystemValuesToMetadata(long datasetid, long version, long metadataStructureId, XmlDocument metadata, bool updateData = false)
+        {
+            SystemMetadataHelper SystemMetadataHelper = new SystemMetadataHelper();
+
+            Key[] myObjArray = { };
+
+            if(updateData)myObjArray = new Key[] { Key.Id, Key.Version, Key.DateOfVersion, Key.DataLastModified };
+            else myObjArray = new Key[] { Key.Id, Key.Version, Key.DataCreationDate, Key.DataLastModified };
+
+            metadata = SystemMetadataHelper.SetSystemValuesToMetadata(datasetid, version, metadataStructureId, metadata, myObjArray);
+
+            return metadata;
         }
     }
 }
