@@ -48,10 +48,12 @@ let isSubmiting: boolean = false;
 	});
 
 	async function reload() {
-		console.log('reload submit');
+		console.log('reload submit',start, id, version);
+		
 		canSubmit = false;
 		model = await getHookStart(start, id, version);
 		canSubmit = activateSubmit();
+		console.log("reload submit")
 
 		return model;
 	}

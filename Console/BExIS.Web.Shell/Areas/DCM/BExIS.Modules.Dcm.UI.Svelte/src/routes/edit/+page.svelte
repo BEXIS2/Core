@@ -12,7 +12,10 @@
 		latestDataDescriptionDate,
 		latestFileReaderDate,
 		latestSubmitDate,
-		hooksStatus
+		hooksStatus,
+
+		latestValidationDate
+
 	} from './stores';
 
 	import type { EditModel, HookModel, ViewModel } from './types';
@@ -59,7 +62,7 @@
 	let messageView: ViewModel;
 	$: messageView;
 
-	latestFileUploadDate.subscribe((e) => {
+	 latestFileUploadDate.subscribe((e) => {
 				updateHookStatus();
 			});
 
@@ -68,6 +71,10 @@
 			});
 
 			latestFileReaderDate.subscribe((e) => {
+				updateHookStatus();
+			});
+
+			latestValidationDate.subscribe((e) => {
 				updateHookStatus();
 			});
 

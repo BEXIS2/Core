@@ -137,7 +137,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                                                 // the hash value need to be abot: name, lenght, structure id, ascci reader info;
                                                 // if something has changed also validation need to repeat
                                                 string readerInfo = cache.AsciiFileReaderInfo != null ? cache.AsciiFileReaderInfo.ToJson() : "";
-                                                string incomingHash = HashHelper.CreateMD5Hash(file.Name, file.Lenght.ToString(), datastructureId.ToString(), readerInfo);
+                                                string incomingHash = HashHelper.CreateMD5Hash(file.Name, file.Lenght.ToString(), datastructureId.ToString(), readerInfo, cache.Files.Count.ToString());
 
                                             // if a validation is allready run and the file has not changed, skip validation
                                             if (file.ValidationHash != incomingHash)
