@@ -66,8 +66,18 @@ let isSubmiting: boolean = false;
 		response: (r: boolean) => {
 			if (r === true) {
 				submitBt();
+				modalStore.trigger(next);
+				dispatch('success', { text: 'The import of your data has been started.' });
 			}
 		}
+	};
+
+	const next: ModalSettings = {
+		type: 'alert',
+		title: 'The import of your data has been started.',
+		body: 'The editing of your dataset will be disabled until completion.  You will be informed via email once completed. Please check the result and your provided metadata.',
+		buttonTextCancel:'ok'
+		// TRUE if confirm pressed, FALSE if cancel pressed
 	};
 
 	async function submitBt() {
