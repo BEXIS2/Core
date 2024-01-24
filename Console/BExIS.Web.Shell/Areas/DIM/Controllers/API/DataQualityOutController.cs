@@ -110,7 +110,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
                     return request;
                 }
 
-                User user = userManager.Users.Where(u => u.Token.Equals(token)).FirstOrDefault();
+                User user = ControllerContext.RouteData.Values["user"] as User;
 
                 if (isPublic || user != null)
                 {

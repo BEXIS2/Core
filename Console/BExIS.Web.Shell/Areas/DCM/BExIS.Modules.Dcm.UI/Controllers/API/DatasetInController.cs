@@ -65,17 +65,9 @@ namespace BExIS.Modules.Dcm.UI.Controllers.API
                 {
                     #region security
 
-                    string token = this.Request.Headers.Authorization?.Parameter;
+                    user = ControllerContext.RouteData.Values["user"] as User;
 
-                    if (String.IsNullOrEmpty(token))
-                    {
-                        request.Content = new StringContent("Bearer token not exist.");
-
-                        return request;
-                    }
-
-                    user = userManager.Users.Where(u => u.Token.Equals(token)).FirstOrDefault();
-
+        
                     if (user == null)
                     {
                         request.Content = new StringContent("Token is not valid.");

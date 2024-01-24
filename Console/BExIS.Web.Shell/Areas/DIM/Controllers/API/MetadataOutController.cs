@@ -365,24 +365,15 @@ namespace BExIS.Modules.Dim.UI.Controllers
                     // If dataset is not public check if a valid token is provided
                     if (isPublic == false)
                     {
-                        string token = this.Request.Headers.Authorization?.Parameter;
                         User user = null;
+                        user = ControllerContext.RouteData.Values["user"] as User;
 
-                        if (!String.IsNullOrEmpty(token))
+                        // If user is registered pass
+                        if (user == null)
                         {
-                            user = userManager.Users.Where(u => u.Token.Equals(token)).FirstOrDefault();
+                            return Request.CreateErrorResponse(HttpStatusCode.Forbidden, "The dataset is not public and the token is not valid.");
+                        }
 
-                            // If user is registered pass
-                            if (user == null)
-                            { 
-                                return Request.CreateErrorResponse(HttpStatusCode.Forbidden, "The dataset is not public and the token is not valid.");
-                            }
-                        }
-                        else
-                        {
-                            return Request.CreateErrorResponse(HttpStatusCode.Forbidden, "The dataset is not public and a token is not provided.");
-                        }
-                    }
 
                     if (dataset == null)
                         return Request.CreateErrorResponse(HttpStatusCode.PreconditionFailed, "The dataset with the id (" + id + ") does not exist.");

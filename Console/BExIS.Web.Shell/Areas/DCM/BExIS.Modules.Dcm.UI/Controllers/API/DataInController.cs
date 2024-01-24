@@ -83,12 +83,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             {
                 #region security
 
-                string token = this.Request.Headers.Authorization?.Parameter;
-
-                if (String.IsNullOrEmpty(token))
-                    return Request.CreateErrorResponse(HttpStatusCode.PreconditionFailed, "Bearer token not exist.");
-
-                user = userManager.Users.Where(u => u.Token.Equals(token)).FirstOrDefault();
+                user = ControllerContext.RouteData.Values["user"] as User;
 
                 if (user == null)
                     return Request.CreateErrorResponse(HttpStatusCode.Unauthorized, "Token is not valid.");
@@ -299,12 +294,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             {
                 #region security
 
-                string token = this.Request.Headers.Authorization?.Parameter;
-
-                if (String.IsNullOrEmpty(token))
-                    return Request.CreateErrorResponse(HttpStatusCode.PreconditionFailed, "Bearer token not exist.");
-
-                user = userManager.Users.Where(u => u.Token.Equals(token)).FirstOrDefault();
+                user = ControllerContext.RouteData.Values["user"] as User;
 
                 if (user == null)
                     return Request.CreateErrorResponse(HttpStatusCode.Unauthorized, "Token is not valid.");
