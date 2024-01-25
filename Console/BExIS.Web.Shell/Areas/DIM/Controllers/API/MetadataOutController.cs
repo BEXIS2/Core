@@ -373,7 +373,11 @@ namespace BExIS.Modules.Dim.UI.Controllers
                         {
                             return Request.CreateErrorResponse(HttpStatusCode.Forbidden, "The dataset is not public and the token is not valid.");
                         }
-
+                        //else
+                        //{
+                        //    return Request.CreateErrorResponse(HttpStatusCode.Forbidden, "The dataset is not public and a token is not provided.");
+                        //}
+                    }
 
                     if (dataset == null)
                         return Request.CreateErrorResponse(HttpStatusCode.PreconditionFailed, "The dataset with the id (" + id + ") does not exist.");
