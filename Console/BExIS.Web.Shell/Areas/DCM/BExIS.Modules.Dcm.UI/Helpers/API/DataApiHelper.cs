@@ -129,7 +129,7 @@ namespace BExIS.Modules.Dcm.UI.Helper.API
                 // primary Key check is only available by put api , so in this case it must be a putapiModel
                 // and need to convert to it to get the primary keys lsit
 
-                PutDataApiModel data = (PutDataApiModel)_data;
+                DataApiModel data = (DataApiModel)_data;
                 string[] pks = null;
                 //if (data != null) pks = data.PrimaryKeys;
 
