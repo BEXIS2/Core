@@ -152,12 +152,16 @@
                 <h1>@Model.Title </h1>
             </div>
 
+           @if (Model.HasEditRight)
+           {
             <div class="datasetview_header-toggle" onclick="toogleToEdit()">
                 <div class="switch">
                     <input id="bx2-toggle" class="bx2-toggle bx2-toggle-round-flat" type="checkbox">
                     <label for="bx2-toggle"></label>
                 </div>
             </div>
+            <span class="datasetview_header-toggle-text">switch to edit</span>
+           }
         </div>
 
 
@@ -531,7 +535,11 @@ else
     .datasetview_header-title h1 {
         margin-top: 2px;
     }
-
+    .datasetview_header-toggle-text {
+        padding: 5px;
+        float: right;
+        color: rgb(98, 98, 98);
+    }
     .datasetview_header-toggle {
         padding: 2px;
         float: right;

@@ -281,6 +281,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                         ResearchPlanId = researchPlanId,
                         ViewAccess = entityPermissionManager.HasEffectiveRight(HttpContext.User.Identity.Name, typeof(Dataset), id, RightType.Read),
                         GrantAccess = entityPermissionManager.HasEffectiveRight(HttpContext.User.Identity.Name, typeof(Dataset), id, RightType.Grant),
+                        HasEditRight = entityPermissionManager.HasEffectiveRight(HttpContext.User.Identity.Name, typeof(Dataset), id, RightType.Write),
                         DataStructureType = dataStructureType,
                         DownloadAccess = downloadAccess,
                         RequestExist = requestExist,
