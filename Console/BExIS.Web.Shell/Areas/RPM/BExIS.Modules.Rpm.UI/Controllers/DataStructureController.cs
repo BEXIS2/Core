@@ -855,27 +855,6 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                 {
                     foreach (var variableTemplate in variableTemplates.Where(t=>t.Approved))
                     {
-                        //List<string> dataTypes = new List<string>();
-
-                        //var unit = units.FirstOrDefault(u=> u.Id.Equals(variableTemplate.Unit.Id));
-
-                        //// get possible datatypes
-                        //if (unit != null)
-                        //    dataTypes = unit.AssociatedDataTypes.Select(x => x.Name).ToList();
-
-                        //VariableTemplateItem vti = new VariableTemplateItem();
-                        //vti.Id = variableTemplate.Id;
-                        //vti.Text = variableTemplate.Label;
-                        //if (unit!=null) vti.Units = new List<string>() { unit.Abbreviation };
-                        //vti.DataTypes = dataTypes;
-
-                        //// meanings
-                        //vti.Meanings = variableTemplate.Meanings.ToList().Select(m=>m.Name).ToList();
-                        //vti.Constraints = variableTemplate.VariableConstraints.ToList().Select(m=>m.Name).ToList();
-
-                        //vti.Group = "other";
-                        //list.Add(vti);
-
                         list.Add(_helper.ConvertTo(variableTemplate, "other"));
                     }
                 }
