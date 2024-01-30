@@ -147,11 +147,19 @@ namespace BExIS.Utils.Config
             {
                 try
                 {
-                    return JsonConvert.DeserializeObject<List<LdapConfiguration>>(GetValueByKey("ldaps").ToString());
+                    var ldapConfigurations = new List<LdapConfiguration>();
+                    List<Entry> ldaps = (List<Entry>)GetValueByKey("ldaps");
+
+                    foreach ( var ldap in ldaps )
+                    {
+                        ldapConfigurations.Add(JsonConvert.DeserializeObject<LdapConfiguration>(ldap.Value.ToString()));
+                    }
+
+                    return ldapConfigurations;
                 }
                 catch(Exception ex)
                 {
-                    return null;
+                    return new List<LdapConfiguration>();
                 }
             }
         }

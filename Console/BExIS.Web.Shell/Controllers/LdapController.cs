@@ -27,15 +27,20 @@ namespace BExIS.Web.Shell.Controllers
         }
 
         // GET: Ldap
-        public ActionResult Login(string returnUrl)
+        public ActionResult Login(string name, string returnUrl)
         {
             ViewBag.ReturnUrl = returnUrl;
+            var model = new LdapLoginViewModel()
+            {
+                Name = name
+            };
+
             return View();
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Login(LoginViewModel model, string returnUrl)
+        public async Task<ActionResult> Login(LdapLoginViewModel model, string returnUrl)
         {
             var ldapAuthenticationManager = new LdapAuthenticationManager();
             var userManager = new UserManager();
@@ -44,60 +49,45 @@ namespace BExIS.Web.Shell.Controllers
 
             try
             {
-                var user = await userManager.FindByNameAsync(model.UserName);
-
-                if (user != null)
+                // first, check always username and password at the corresponding ldap server
+                var result = ldapAuthenticationManager.ValidateUser(model.Name, model.UserName, model.Password);
+                switch (result)
                 {
-                    if (user.Logins.Any(l => l.LoginProvider == "Ldap"))
-                    {
-                        if (string.IsNullOrEmpty(user.Email))
-                        {
-                            ViewBag.ReturnUrl = returnUrl;
-                            return View("Confirm", LoginConfirmModel.Convert(user));
-                        }
+                    // credentials are valid
+                    case SignInStatus.Success:
+                        var user = await userManager.FindByNameAsync(model.UserName);
 
-                        if (!await identityUserService.IsEmailConfirmedAsync(user.Id))
+                        if (user != null)
                         {
-                            ViewBag.ErrorMessage = "You must have a confirmed email address to log in.";
-                            return View("Error");
-                        }
+                            if (string.IsNullOrEmpty(user.Email))
+                            {
+                                ViewBag.ReturnUrl = returnUrl;
+                                return View("Confirm", LdapLoginConfirmModel.Convert(user, model.Name));
+                            }
 
-                        SignInStatus result = ldapAuthenticationManager.ValidateUser(model.UserName, model.Password);
-                        switch (result)
+                            if (!await identityUserService.IsEmailConfirmedAsync(user.Id))
+                            {
+                                ViewBag.ErrorMessage = "You must have a confirmed email address to log in.";
+                                return View("Error");
+                            }
+
+                            var identity = await identityUserService.CreateIdentityAsync(user, DefaultAuthenticationTypes.ApplicationCookie);
+                            AuthenticationManager.SignIn(new AuthenticationProperties() { IsPersistent = true }, identity);
+                            return RedirectToLocal(returnUrl);
+                        }
+                        else
                         {
-                            case SignInStatus.Success:
-                                var identity = await identityUserService.CreateIdentityAsync(user, DefaultAuthenticationTypes.ApplicationCookie);
-                                AuthenticationManager.SignIn(new AuthenticationProperties() { IsPersistent = true }, identity);
-                                return RedirectToLocal(returnUrl);
-
-                            default:
-                                ModelState.AddModelError("", "Invalid login attempt.");
-                                return View(model);
-                        }
-                    }
-                    else
-                    {
-                        ModelState.AddModelError("", "Invalid login attempt.");
-                        return View(model);
-                    }
-                }
-                else
-                {
-                    var result = ldapAuthenticationManager.ValidateUser(model.UserName, model.Password);
-                    switch (result)
-                    {
-                        case SignInStatus.Success:
                             var ldapUser = new User() { Name = model.UserName, SecurityStamp = Guid.NewGuid().ToString() };
                             await userManager.CreateAsync(ldapUser);
-                            await userManager.AddLoginAsync(ldapUser, new UserLoginInfo("Ldap", ""));
+                            await userManager.AddLoginAsync(ldapUser, new UserLoginInfo(model.Name, ""));
 
                             ViewBag.ReturnUrl = returnUrl;
-                            return View("Confirm", LoginConfirmModel.Convert(ldapUser));
+                            return View("Confirm", LdapLoginConfirmModel.Convert(ldapUser, model.Name));
+                        }
 
-                        default:
-                            ModelState.AddModelError("", "Invalid login attempt.");
-                            return View(model);
-                    }
+                    default:
+                        ModelState.AddModelError("", "Invalid login attempt.");
+                        return View(model);
                 }
             }
             finally
@@ -110,7 +100,7 @@ namespace BExIS.Web.Shell.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult> Confirm(LoginConfirmModel model, string returnUrl)
+        public async Task<ActionResult> Confirm(LdapLoginConfirmModel model, string returnUrl)
         {
             var userManager = new UserManager();
             var identityUserService = new IdentityUserService();
@@ -122,11 +112,17 @@ namespace BExIS.Web.Shell.Controllers
                     return View(model);
                 }
 
+                if(userManager.FindByEmailAsync(model.Email).Result != null)
+                {
+                    ModelState.AddModelError("email", "The email is already in use.");
+                    return View(model);
+                }
+
                 var user = await userManager.FindByIdAsync(model.Id);
 
                 if (user != null)
                 {
-                    if (user.Logins.Any(l => l.LoginProvider == "Ldap"))
+                    if (user.Logins.Any(l => l.LoginProvider.Equals(model.Name, StringComparison.InvariantCultureIgnoreCase)))
                     {
                         //user.HasPrivacyPolicyAccepted = model.PrivacyPolicy;
                         user.HasTermsAndConditionsAccepted = model.TermsAndConditions;
