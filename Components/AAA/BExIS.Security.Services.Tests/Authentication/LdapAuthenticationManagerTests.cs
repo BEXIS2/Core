@@ -48,7 +48,7 @@ namespace BExIS.Security.Services.Tests.Authentication
         {
             LdapAuthenticationManager ldapAuthenticationManager = new LdapAuthenticationManager();
 
-            var x = ldapAuthenticationManager.ValidateUser("username", "password");
+            var x = ldapAuthenticationManager.ValidateUser("ldap", "username", "password");
 
             Console.WriteLine(x.ToString());
         }
