@@ -99,6 +99,7 @@
 				}
 			},
 			prefixCategory: {
+				header:"Prefix category",
 				instructions: {
 					toStringFn: 
 					 ((pc: prefixCategoryType) =>	pc!=null?pc.name:""	),
