@@ -29,16 +29,63 @@
       "key": "smtp",
       "title": "SMTP",
       "value": {
-        "validateAudience": false,
-        "validateIssuer": false,
-        "validAudience": "http://localhost:3000",
-        "validIssuer": "https://localhost:7041",
-        "issuerSigningKey": "JWTAuthenticationHIGHsecuredPasswordVVVp1OH7Xzyr",
-        "validateLifetime": false,
-        "validLifetime": 1
+        "hostName": "smtp.uni-jena.de",
+        "hostPort": 587,
+        "hostAnonymous": false,
+        "hostSecureSocketOptions": 1,
+        "hostCertificateRevocation": false,
+        "accountName": "<account_name>",
+        "accountPassword": "<account_password>",
+        "fromName": "<from_name>",
+        "fromAddress": "<from_address>"
       },
       "type": "JSON",
       "description": "The application name is used in several places in the system. e.g. as title in the email"
+    },
+    {
+      "key": "ldaps",
+      "title": "LDAP Configurations",
+      "value": [
+        {
+          "key": "ldap",
+          "title": "LDAP",
+          "value": {
+            "host": "ldap1.uni-jena.de",
+            "name": "LDAP",
+            "port": 636,
+            "version": 3,
+            "ssl": true,
+            "authType": 1,
+            "scope": 0,
+            "baseDn": "ou=users,dc=uni-jena,dc=de",
+            "identifier": "uid",
+            "enabled": true
+          },
+          "type": "JSON",
+          "description": "ldap configuration"
+        },
+        {
+          "key": "ldap",
+          "title": "LDAP",
+          "value": {
+            "host": "",
+            "name": "",
+            "port": 636,
+            "version": 3,
+            "ssl": true,
+            "authType": 1,
+            "scope": 0,
+            "baseDn": "",
+            "identifier": "",
+            "enabled": false
+          },
+          "type": "JSON",
+          "description": "ldap configuration"
+        }
+      ],
+      "description": "...",
+      "type": "EntryList",
+      "options": []
     },
     {
       "key": "landingPage",

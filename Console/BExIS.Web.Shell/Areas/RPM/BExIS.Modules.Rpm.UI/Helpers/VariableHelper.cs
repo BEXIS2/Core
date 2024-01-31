@@ -169,18 +169,29 @@ namespace BExIS.Modules.Rpm.UI.Helpers
 
         public VariableTemplateItem ConvertTo(VariableTemplate variableTemplate, string group="")
         {
-            VariableTemplateItem item = new VariableTemplateItem();
-            item.Id = variableTemplate.Id;
-            item.Text = variableTemplate.Label;
-            item.Units = new List<string>() { variableTemplate.Unit.Abbreviation };
-            item.DataTypes = variableTemplate.Unit.AssociatedDataTypes.Select(x => x.Name).ToList();
-            item.Meanings = variableTemplate.Meanings.Select(x => x.Name).ToList();
-            item.Group = group;
+            using (var unitManager = new UnitManager()) // may not effective because this function will called a lot at once
+            {
+                VariableTemplateItem item = new VariableTemplateItem();
+                item.Id = variableTemplate.Id;
+                item.Text = variableTemplate.Label;
+                item.DataTypes = variableTemplate.Unit.AssociatedDataTypes.Select(x => x.Name).ToList();
+                item.Meanings = variableTemplate.Meanings.Select(x => x.Name).ToList();
+                item.Group = group;
 
-            if(variableTemplate.VariableConstraints.Any())
-                item.Constraints = variableTemplate.VariableConstraints.Select(x => x.Name).ToList();
+                if (variableTemplate.VariableConstraints.Any())
+                    item.Constraints = variableTemplate.VariableConstraints.Select(x => x.Name).ToList();
 
-            return item;
+                // set units also from dimensions
+                item.Units = new List<string>() { variableTemplate.Unit.Abbreviation }; // add unit
+                if (variableTemplate.Unit.Dimension != null) // if dimension exist add all units belong to this dimension
+                {
+                    var dimension = unitManager.DimensionRepo.Get(variableTemplate.Unit.Dimension.Id);
+                    dimension.Units.ToList().ForEach(u => item.Units.Add(u.Abbreviation));
+                    item.Units.Distinct();
+                }
+
+                return item;
+            }
 
         }
 

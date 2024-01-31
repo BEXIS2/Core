@@ -1,39 +1,44 @@
 ﻿@model BExIS.Web.Shell.Models.ExternalLoginListViewModel
 @using System.Configuration
 @using Microsoft.Owin.Security
+@using BExIS.Utils.Config
 
 <h4>Use different service for log in.</h4>
 <hr />
 
 @{
     var loginProviders = Context.GetOwinContext().Authentication.GetExternalAuthenticationTypes();
-    if (!loginProviders.Any() && ConfigurationManager.AppSettings["Ldap_Enabled"].ToLowerInvariant() != "true")
+    if (!loginProviders.Any() && GeneralSettings.LdapConfigurations.All(l => l.Enabled == false))
     {
-    <div>
-        <p>
-            There are no external authentication services configured. See <a href="http://go.microsoft.com/fwlink/?LinkId=403804">this article</a>
-            for details on setting up this ASP.NET application to support logging in via external services.
-        </p>
-    </div>
+        <div>
+            <p>
+                There are no external authentication services configured. See <a href="http://go.microsoft.com/fwlink/?LinkId=403804">this article</a>
+                for details on setting up this ASP.NET application to support logging in via external services.
+            </p>
+        </div>
     }
     else
     {
         using (Html.BeginForm("ExternalLogin", "Account", new { ReturnUrl = Model.ReturnUrl }))
         {
-    @Html.AntiForgeryToken()
-    <div id="socialLoginList">
-        <p>
-            @if (ConfigurationManager.AppSettings["Ldap_Enabled"].ToLowerInvariant() == "true")
+            @Html.AntiForgeryToken()
+            <div id="socialLoginList">
+                <p>
+                    @foreach (var ldap in GeneralSettings.LdapConfigurations)
                     {
-            @Html.ActionLink("Ldap", "Login", "Ldap", null, new { @class = "btn btn-default" })
+                        if (ldap.Enabled)
+                        {
+                            @Html.ActionLink(ldap.Name, "Login", "Ldap", new { name = ldap.Name }, new { @class = "btn btn-default" })
+
+                        }
                     }
 
-            @foreach (var p in loginProviders)
+                    @foreach (var p in loginProviders)
                     {
-            <button type="submit" class="btn btn-default" id="@p.AuthenticationType" name="provider" value="@p.AuthenticationType" title="Mit Ihrem @p.Caption-Konto anmelden">@p.AuthenticationType</button>
+                        <button type="submit" class="btn btn-default" id="@p.AuthenticationType" name="provider" value="@p.AuthenticationType" title="Mit Ihrem @p.Caption-Konto anmelden">@p.AuthenticationType</button>
                     }
-        </p>
-    </div>
+                </p>
+            </div>
         }
     }
 }
