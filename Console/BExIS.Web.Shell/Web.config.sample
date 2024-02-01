@@ -16,7 +16,7 @@
 		<!-- This is a new (13.09.2017) connection string with parameteres compatible with Npgsql 3.2.5. Javad. -->
 		<add name="ApplicationServices" connectionString="Server={SERVER};Port={PORT};Database={DATABASENAME};Userid={USER};Password={PASSWORD};Pooling=true;MinPoolSize=2;MaxPoolSize=100;ConnectionIdleLifetime=3600;" />
 	</connectionStrings>
-	<appSettings file="../Workspace/General/Configurations/Credentials.config">
+	<appSettings>
 		<add key="ClientValidationEnabled" value="true" />
 		<add key="UnobtrusiveJavaScriptEnabled" value="true" />
 		<add key="UseSchemaInDatabaseGeneration" value="False" />
