@@ -626,9 +626,13 @@ namespace BExIS.Modules.Rpm.UI.Controllers
 
                     // get list of possible units
                     var unitInput = getValueFromMarkedRow(markerRows, model.Markers, "unit", (char)model.Delimeter, i, AsciiFileReaderInfo.GetTextMarker((TextMarker)model.TextMarker));
-                    strutcureAnalyzer.SuggestUnit(unitInput, var.DataType.Text).ForEach(u => var.PossibleUnits.Add(new UnitItem(u.Id, u.Abbreviation,u.AssociatedDataTypes.Select(x => x.Name).ToList(), "detect")));
+                    strutcureAnalyzer.SuggestUnit(unitInput,var.Name, var.DataType.Text).ForEach(u => var.PossibleUnits.Add(new UnitItem(u.Id, u.Abbreviation,u.AssociatedDataTypes.Select(x => x.Name).ToList(), "detect")));
                     var.Unit = var.PossibleUnits.FirstOrDefault();
-                    if (var.Unit == null) var.Unit = new UnitItem();
+                    if (var.Unit == null) // if suggestion return null then set to unit none
+                    {
+                        strutcureAnalyzer.SuggestUnit("none", var.Name, var.DataType.Text).ForEach(u => var.PossibleUnits.Add(new UnitItem(u.Id, u.Abbreviation, u.AssociatedDataTypes.Select(x => x.Name).ToList(), "detect")));
+                        var.Unit = var.PossibleUnits.FirstOrDefault();
+                    }
 
 
                     // get suggestes DisplayPattern / currently only for DateTime

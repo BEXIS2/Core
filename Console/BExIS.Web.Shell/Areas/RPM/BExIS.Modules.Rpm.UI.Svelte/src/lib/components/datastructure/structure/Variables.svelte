@@ -280,33 +280,32 @@
 				</svelte:fragment>
 				<svelte:fragment slot="list-options">
 			 {#if !dataExist}
-						<button id="delete-{i}" class="chip variant-filled-error"
+						<button id="delete-{i}" title="delete" class="chip variant-filled-error"
 						 on:mouseover={() => helpStore.show('delete-var')}
 						 on:click={()=>deleteFn(i)}><Fa icon="{faTrash}"></Fa></button>
 
 						{#if i > 0}
-						<button id="up-{i}" class="chip variant-filled-surface"
+						<button id="up-{i}" title="up" class="chip variant-filled-surface"
 						on:mouseover={() => helpStore.show('up-var')} 
 						on:click={()=>upFn(i)}><Fa icon="{faAngleUp}"></Fa></button>
 						{:else}
-						<button id="up-{i}" class="chip variant-filled-surface disbaled" disabled 
+						<button id="up-{i}" title="up" class="chip variant-filled-surface disbaled" disabled 
 						on:mouseover={() => helpStore.show('up-var')} 
 						on:click={()=>upFn(i)}><Fa icon="{faAngleUp}"></Fa></button>
 						{/if}
 
-						<button id="copy-{i}" class="chip variant-filled-primary" 
-						on:mouseover={() => helpStore.show('copy-var')} 
-						on:click={()=>copyFn(i)}><Fa icon="{faCopy}"></Fa></button>
+	
 						{#if variables.length > 0 && i < variables.length - 1}
-							<button id="down-{i}" class="chip variant-filled-surface" 
+							<button id="down-{i}" title="down" class="chip variant-filled-surface" 
 							on:mouseover={() => helpStore.show('down-var')} 
 							on:click={()=>downFn(i)}><Fa icon="{faAngleDown}"></Fa></button>
 						{:else}
-							<button id="down-{i}" class="chip variant-filled-surface" disabled 
+							<button id="down-{i}" title="down" class="chip variant-filled-surface" disabled 
 							on:mouseover={() => helpStore.show('down-var')} 
 							on:click={()=>downFn(i)}><Fa icon="{faAngleDown}"></Fa></button>
 						{/if}
 				{/if}
+
 					</svelte:fragment>
 
 			</Variable>
@@ -314,7 +313,7 @@
 		<div class="flex content-end px-6">
 			<div class="grow"></div> 
 			{#if !dataExist}
-					<button class="chip variant-filled-primary flex-none" on:click="{addFn}"><Fa icon="{faAdd}"></Fa> </button>
+					<button title="add" class="chip variant-filled-primary flex-none" on:click="{addFn}"><Fa icon="{faAdd}"></Fa> </button>
 			{/if}
 		</div>
 	{:else}

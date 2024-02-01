@@ -241,7 +241,7 @@ namespace BExIS.IO.Transform.Input
         /// <param name="similarity"></param>
         /// <returns></returns>
         /// <exception cref="ArgumentNullException"></exception>
-        public List<Entites.Unit> SuggestUnit(string input, string dataType, double similarity = 0.8)
+        public List<Entites.Unit> SuggestUnit(string input, string variable, string dataType, double similarity = 0.8)
         {
             if (string.IsNullOrEmpty(input) && string.IsNullOrEmpty(dataType)) throw new ArgumentNullException("input and data type should not be empty.");
            
@@ -266,9 +266,19 @@ namespace BExIS.IO.Transform.Input
                 foreach (var unit in units)
                 {
                     var ro = new RatcliffObershelp();
+                    var varSimularity = ro.Similarity(variable, unit.Name);
+                    var varAbbrSimularity = ro.Similarity(variable, unit.Abbreviation);
                     var nameSimularity = ro.Similarity(input, unit.Name);
                     var abbrSimularity = ro.Similarity(input, unit.Abbreviation);
-                    var highest = Math.Max(nameSimularity, abbrSimularity);
+
+                    // compare highest for var
+                    var highestVariable = Math.Max(nameSimularity, abbrSimularity);
+
+                    // compare highest for var
+                    var highestInput = Math.Max(nameSimularity, abbrSimularity);
+
+                    // highest from both
+                    var highest = Math.Max(highestVariable, highestInput);
 
                     if (string.IsNullOrEmpty(input) || highest >= similarity)
                     {
@@ -291,6 +301,7 @@ namespace BExIS.IO.Transform.Input
              */
 
             using (var variableManager = new VariableManager())
+            using (var unitManager = new UnitManager())
             {
                 var allTemplates = variableManager.VariableTemplateRepo.Get();
 
@@ -311,6 +322,11 @@ namespace BExIS.IO.Transform.Input
                 // var template matches with units
                 var byUnit = allTemplates.Where(t => t.Unit.Id.Equals(unitId)).ToList();
 
+                var unit = unitManager.Repo.Get(unitId);
+                List<VariableTemplate> byDimension = new List<VariableTemplate>();
+                if (unit != null && unit.Dimension!=null)
+                    byDimension = allTemplates.Where(t => t.Unit.Dimension.Id.Equals(unit.Dimension.Id)).ToList();
+
                 // var template matches with datatype
                 var byDatype = allTemplates.Where(t => t.DataType.Id.Equals(unitId)).ToList();
 
@@ -320,6 +336,14 @@ namespace BExIS.IO.Transform.Input
                     // if variableTemplate allready exist in the matches increase the value by 1
                     if (matches.ContainsKey(item)) matches[item] += 1;
                     else matches.Add(item, 1);
+                }
+
+                //add dimenions results to matches
+                foreach (var item in byDimension)
+                {
+                    // if variableTemplate allready exist in the matches increase the value by 1
+                    if (matches.ContainsKey(item)) matches[item] += 1;
+                    else matches.Add(item, 0.9);
                 }
 
                 //add datatypes results to matches

@@ -393,8 +393,7 @@
 								/>
 							</div>
 							<div slot="description">
-								show all information about the units in a table Nothing found? Make a new
-								suggestion.
+	
 							</div>
 						</Container>
 

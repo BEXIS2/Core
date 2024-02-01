@@ -141,8 +141,12 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 using (var mappingManager = new MappingManager())
                 {
                     var source = mappingManager.LinkElementRepo.Get().Where(l => l.Type.Equals(LinkElementType.System)).FirstOrDefault();
-                    var target = mappingManager.LinkElementRepo.Get().Where(l => l.ElementId.Equals(metadataStructureId) && l.Type.Equals(LinkElementType.MetadataStructure)).FirstOrDefault();  
-                    var rootMapping = mappingManager.GetMapping(source, target);
+                    var target = mappingManager.LinkElementRepo.Get().Where(l => l.ElementId.Equals(metadataStructureId) && l.Type.Equals(LinkElementType.MetadataStructure)).FirstOrDefault();
+                    Mapping rootMapping = null;
+
+                    if (target != null && source != null)
+                        rootMapping = mappingManager.GetMapping(source, target);
+
                     IEnumerable<string> sources = new List<string>();
                     if (rootMapping != null) // root mapping to system keys exist
                     {
