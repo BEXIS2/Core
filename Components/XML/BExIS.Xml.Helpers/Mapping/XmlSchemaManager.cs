@@ -1850,13 +1850,19 @@ namespace BExIS.Xml.Helpers.Mapping
             }
 
             root.AppendChild(routes);
-
+            string path = "";
             if (direction == 0)
+            {
                 mappingFileNameExport = "MappingFile_intern_" + sourceName + "_to_extern_" + DestinationName + ".xml";
+                path = Path.Combine(AppConfiguration.GetModuleWorkspacePath("DIM"), mappingFileNameExport);
+            }
             else
+            {
                 mappingFileNameImport = "MappingFile_extern_" + sourceName + "_to_intern_" + DestinationName + ".xml";
+                path = Path.Combine(AppConfiguration.GetModuleWorkspacePath("DIM"), mappingFileNameImport);
+            }
 
-            string path = Path.Combine(AppConfiguration.GetModuleWorkspacePath("DIM"), mappingFileNameExport);
+             
             if(File.Exists(path)) File.Delete(path);
             mappingFile.Save(path);
 
