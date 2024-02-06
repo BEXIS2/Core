@@ -422,12 +422,12 @@ namespace BExIS.Modules.Ddm.UI.Helpers
                             dr["DataType"] = "n/a";
 
                         if (sdvu.MissingValues != null)
-                            dr["MissingValues"] = String.Join(",", sdvu.MissingValues.Select(m=> m.DisplayName).ToArray());
+                            dr["MissingValues"] = String.Join(", ", sdvu.MissingValues.Select(m=> m.DisplayName).ToArray());
                         else
                             dr["MissingValues"] = "n/a";
 
                         if (sdvu.Meanings != null)
-                            dr["Meanings"] = String.Join(",", sdvu.Meanings.Select(m => m.Name).ToArray());
+                            dr["Meanings"] = String.Join(", ", sdvu.Meanings.Select(m => m.Name).ToArray());
                         else
                             dr["Meanings"] = "n/a";
 
