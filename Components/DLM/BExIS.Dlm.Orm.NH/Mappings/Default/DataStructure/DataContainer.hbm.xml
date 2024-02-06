@@ -100,7 +100,7 @@
     </property>
 
     <!-- Mapping entity associations-->
-    <many-to-one name="DataType" class="DataType" not-null="true" column="DataTypeRef"/>
+    <many-to-one name="DataType" class="DataType" not-null="true" column="DataTypeRef" lazy="false"/>
     <many-to-one name="Unit" class="Unit" not-null="false" column="UnitRef"/>
     <many-to-one name="Methodology" class="Methodology" not-null="false" column="MethodologyRef"/>
 
