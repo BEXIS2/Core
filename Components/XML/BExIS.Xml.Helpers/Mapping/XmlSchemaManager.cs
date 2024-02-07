@@ -1076,7 +1076,8 @@ namespace BExIS.Xml.Helpers.Mapping
                 {
                     foreach (var attr in ct.Attributes)
                     {
-                          createMetadataParameterUsage(metadataCompountAttr, attr, dataTypeManager, metadataAttributeManager);
+                          var metadataParameteUsage = createMetadataParameterUsage(metadataCompountAttr, attr, dataTypeManager, metadataAttributeManager);
+                          addMetadataParameterToMappingFile( attr as XmlSchemaAttribute, currentInternalXPath, currentExternalXPath);
                     }
                 }
 
@@ -1157,7 +1158,7 @@ namespace BExIS.Xml.Helpers.Mapping
 
             try
             {
-                MetadataAttribute attribute = createMetadataAttribute(element);
+                MetadataAttribute attribute = createMetadataAttribute(element, internalXPath,externalXPath);
 
                 if (attribute != null)
                 {
@@ -1337,7 +1338,7 @@ namespace BExIS.Xml.Helpers.Mapping
                 }
                 else
                 {
-                    attribute = createMetadataAttribute(element);
+                    attribute = createMetadataAttribute(element, internalXPath, externalXPath);
                 }
 
                 if (attribute != null)
@@ -1431,7 +1432,7 @@ namespace BExIS.Xml.Helpers.Mapping
         }
 
 
-        private MetadataAttribute createMetadataAttribute(XmlSchemaElement element)
+        private MetadataAttribute createMetadataAttribute(XmlSchemaElement element, string currentInternalXPath, string currentExternalXPath)
         {
             UnitManager unitManager = new UnitManager();
             MetadataAttributeManager metadataAttributeManager = new MetadataAttributeManager();
@@ -1551,11 +1552,16 @@ namespace BExIS.Xml.Helpers.Mapping
 
                         // Add attributes as metadata packages
 
+                        string internalPath = currentInternalXPath + "/" + element.Name + "/" + temp.Name;
+                        string externalPath = currentExternalXPath + "/" + element.Name;
+
                         if (type.Attributes.Count > 0)
                         {
                             foreach (var attr in type.Attributes)
                             {
                                 createMetadataParameterUsage(temp, attr, dataTypeManager, metadataAttributeManager);
+                                addMetadataParameterToMappingFile(attr as XmlSchemaAttribute, internalPath, externalPath);
+
                             }
                         }
 
@@ -1564,6 +1570,8 @@ namespace BExIS.Xml.Helpers.Mapping
                             foreach (DictionaryEntry attr in type.AttributeUses)
                             {
                                 createMetadataParameterUsage(temp, attr.Value, dataTypeManager, metadataAttributeManager);
+                                addMetadataParameterToMappingFile( attr.Value as XmlSchemaAttribute, internalPath, externalPath);
+
                             }
                         }
 
@@ -1884,7 +1892,7 @@ namespace BExIS.Xml.Helpers.Mapping
                 }
                 else
                 {
-                    attribute = createMetadataAttribute(element);
+                    attribute = createMetadataAttribute(element, internalXPath, externalXPath);
                 }
 
                 #region generate  MappingRoute
@@ -1903,6 +1911,13 @@ namespace BExIS.Xml.Helpers.Mapping
             {
                 metadataAttributeManager.Dispose();
             }
+        }
+
+        private void addMetadataParameterToMappingFile(XmlSchemaAttribute attr, string internalXPath, string externalXPath)
+        {
+            addParameterToExportMappingFile(mappingFileInternalToExternal, internalXPath, externalXPath,attr.Name);
+            addParameterToImportMappingFile(mappingFileExternalToInternal, externalXPath, internalXPath, attr.Name);
+
         }
 
         private XmlMapper addToImportMappingFile(XmlMapper mapper, string sourceXPath, string destinationXPath, decimal max, string name, string nameType)
@@ -1945,6 +1960,36 @@ namespace BExIS.Xml.Helpers.Mapping
             }
 
             xmr.Destination = new Destination(childDestinationXPath, sequence);
+
+            mapper.Routes.Add(xmr);
+
+            return mapper;
+        }
+
+        private XmlMapper addParameterToImportMappingFile(XmlMapper mapper, string sourceXPath, string destinationXPath, string name)
+        {
+            string childSourceXPath = sourceXPath + "/@" + name;
+            string childDestinationXPath = destinationXPath + "/@" + name;
+
+            XmlMappingRoute xmr = new XmlMappingRoute();
+
+            xmr.Source = new Source(childSourceXPath);
+            xmr.Destination = new Destination(childDestinationXPath, "");
+
+            mapper.Routes.Add(xmr);
+
+            return mapper;
+        }
+
+        private XmlMapper addParameterToExportMappingFile(XmlMapper mapper, string sourceXPath, string destinationXPath, string name)
+        {
+            string childSourceXPath = sourceXPath + "/@" + name;
+            string childDestinationXPath = destinationXPath + "/@" + name;
+
+            XmlMappingRoute xmr = new XmlMappingRoute();
+
+            xmr.Source = new Source(childSourceXPath);
+            xmr.Destination = new Destination(childDestinationXPath,"");
 
             mapper.Routes.Add(xmr);
 
