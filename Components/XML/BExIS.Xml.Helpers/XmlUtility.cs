@@ -14,52 +14,83 @@ namespace BExIS.Xml.Helpers
     {
         public static string GetXPathToNode(XmlNode node)
         {
+            string xPath = "";
             if (node == null) return string.Empty;
 
-            if (node.ParentNode == null && node.NodeType.Equals(System.Xml.XmlNodeType.Document))
-                return string.Empty;
+            if (node.NodeType == System.Xml.XmlNodeType.Attribute)
+            {
+                XmlAttribute attr = node as XmlAttribute;
+                if (attr.OwnerElement == null)
+                    return "";
+                xPath = GetXPathToNode(attr.OwnerElement);
+                return xPath + "/@" + attr.Name;
 
-            string xPath = GetXPathToNode(node.ParentNode);
-            if (xPath == "")
-                return node.LocalName;
-            else
-                return xPath + "/" + node.LocalName;
+            }
+
+            if (node.NodeType == System.Xml.XmlNodeType.Element)
+            {
+                if (node.ParentNode == null && node.NodeType.Equals(System.Xml.XmlNodeType.Document))
+                    return string.Empty;
+
+                xPath = GetXPathToNode(node.ParentNode);
+                if (xPath == "")
+                    return node.LocalName;
+                else
+                    return xPath + "/" + node.LocalName;
+            }
+
+            return string.Empty;
         }
 
         public static string GetDirectXPathToNode(XmlNode node)
         {
             if (node == null) return string.Empty;
 
-            if (node.ParentNode == null && node.NodeType.Equals(System.Xml.XmlNodeType.Document))
-                return "";
-
-            string xPath = GetDirectXPathToNode(node.ParentNode);
-            if (xPath == "")
-                return node.LocalName;
-            else
+            if (node.NodeType == System.Xml.XmlNodeType.Attribute)
             {
-                int index = 1;
-                string nodeName = node.Name;
-                List<XmlNode> tmpChilds = new List<XmlNode>();
+                XmlAttribute attr = node as XmlAttribute;
+                if (attr.OwnerElement == null)
+                    return "";
+                string xPath = GetDirectXPathToNode(attr.OwnerElement);
+                return xPath + "/@" + attr.Name;
 
-                // finde same childs
-                if (node.ParentNode != null && node.ParentNode.ChildNodes.Count > 1)
-                {
-                    for (int i = 0; i < node.ParentNode.ChildNodes.Count; i++)
-                    {
-                        XmlNode tmpNode = node.ParentNode.ChildNodes[i];
-                        if (tmpNode.Name.Equals(node.Name))
-                            tmpChilds.Add(tmpNode);
-                    }
-                }
-
-                if (tmpChilds.Count > 0)
-                {
-                    index = tmpChilds.IndexOf(node) + 1;
-                }
-
-                return xPath + "/" + node.LocalName + "[" + index + "]";
             }
+
+            if (node.NodeType == System.Xml.XmlNodeType.Element)
+            {
+                if (node.ParentNode == null && node.NodeType.Equals(System.Xml.XmlNodeType.Document))
+                    return "";
+
+                string xPath = GetDirectXPathToNode(node.ParentNode);
+                if (xPath == "")
+                    return node.LocalName;
+                else
+                {
+                    int index = 1;
+                    string nodeName = node.Name;
+                    List<XmlNode> tmpChilds = new List<XmlNode>();
+
+                    // finde same childs
+                    if (node.ParentNode != null && node.ParentNode.ChildNodes.Count > 1)
+                    {
+                        for (int i = 0; i < node.ParentNode.ChildNodes.Count; i++)
+                        {
+                            XmlNode tmpNode = node.ParentNode.ChildNodes[i];
+                            if (tmpNode.Name.Equals(node.Name))
+                                tmpChilds.Add(tmpNode);
+                        }
+                    }
+
+                    if (tmpChilds.Count > 0)
+                    {
+                        index = tmpChilds.IndexOf(node) + 1;
+                    }
+
+                    return xPath + "/" + node.LocalName + "[" + index + "]";
+                }
+            }
+
+            return string.Empty;
         }
 
         /// <summary>

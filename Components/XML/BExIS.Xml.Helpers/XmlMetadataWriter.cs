@@ -899,6 +899,7 @@ namespace BExIS.Xml.Helpers
             _tempXDoc = metadataXml;
 
             XElement parent = Get(parentXpath);
+            XElement destination = parent;
 
             if (parent != null)
             {
@@ -909,34 +910,39 @@ namespace BExIS.Xml.Helpers
                     if (attributeRole != null)
                     {
                         XElement attribute = Get(attributeTypeName, number, attributeRole);
-                        if(value!=null) attribute.SetValue(value.ToString());
+                        if (value != null) attribute.SetValue(value.ToString());
 
-                        if (xmlAttrs != null)
+                        destination = attribute;
+
+                    }
+
+                }
+            }
+
+            if (xmlAttrs != null)
+            {
+                foreach (var kvp in xmlAttrs)
+                {
+                    //create or replace
+                    if (destination.Attributes().Any(a => a.Name.ToString().Equals(kvp.Key)))
+                    {
+                        XAttribute xattribute = destination.Attributes().FirstOrDefault(a => a.Name.ToString().Equals(kvp.Key));
+
+                        //replace
+                        if (xattribute != null) xattribute.Value = kvp.Value;
+                        //create
+                        else
                         {
-                            foreach (var kvp in xmlAttrs)
-                            {
-                                //create or replace
-                                if (attribute.Attributes().Any(a => a.Name.ToString().Equals(kvp.Key)))
-                                {
-                                    XAttribute xattribute = attribute.Attributes().FirstOrDefault(a => a.Name.ToString().Equals(kvp.Key));
-
-                                    //replace
-                                    if (xattribute != null) xattribute.Value = kvp.Value;
-                                    //create
-                                    else
-                                    {
-                                        attribute.Add(new XAttribute(kvp.Key, kvp.Value));
-                                    }
-                                }
-                                else
-                                {
-                                    attribute.Add(new XAttribute(kvp.Key, kvp.Value));
-                                }
-                            }
+                            destination.Add(new XAttribute(kvp.Key, kvp.Value));
                         }
+                    }
+                    else
+                    {
+                        destination.Add(new XAttribute(kvp.Key, kvp.Value));
                     }
                 }
             }
+        
 
             return _tempXDoc;
         }
