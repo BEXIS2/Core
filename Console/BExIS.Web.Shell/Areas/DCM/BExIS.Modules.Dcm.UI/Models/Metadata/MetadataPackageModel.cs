@@ -16,6 +16,7 @@ namespace BExIS.Modules.Dcm.UI.Models.Metadata
         {
             ErrorList = new List<Error>();
             metadataStructureUsageHelper = new MetadataStructureUsageHelper();
+            MetadataParameterModels = new List<MetadataParameterModel>();
         }
 
         public void ConvertMetadataAttributeModels(BaseUsage source, long metadataStructureId, int stepId)
@@ -36,6 +37,55 @@ namespace BExIS.Modules.Dcm.UI.Models.Metadata
                             if (metadataStructureUsageHelper.IsSimple(usage))
                             {
                                 MetadataAttributeModels.Add(FormHelper.CreateMetadataAttributeModel(usage, mpu, metadataStructureId, Number, stepId));
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        public void ConvertMetadataParameterModels(BaseUsage source, long metadataStructureId, long stepId)
+        {
+            Source = source;
+
+            if (Source is MetadataAttributeUsage)
+            {
+
+                MetadataAttributeUsage mau = (MetadataAttributeUsage)Source;
+
+                if (mau.MetadataAttribute.Self is MetadataCompoundAttribute)
+                {
+                    MetadataCompoundAttribute mca = (MetadataCompoundAttribute)mau.MetadataAttribute.Self;
+
+                    if (mca != null)
+                    {
+                        foreach (MetadataParameterUsage usage in mca.MetadataParameterUsages)
+                        {
+
+                            var metadataParameterModel = FormHelper.CreateMetadataParameterModel(usage, mau, metadataStructureId, Number, stepId);
+                            MetadataParameterModels.Add(metadataParameterModel);
+
+                        }
+                    }
+                }
+            }
+
+            if (Source is MetadataNestedAttributeUsage)
+            {
+                MetadataNestedAttributeUsage mnau = (MetadataNestedAttributeUsage)Source;
+                if (mnau.Member.Self is MetadataCompoundAttribute)
+                {
+                    MetadataCompoundAttribute mca = (MetadataCompoundAttribute)mnau.Member.Self;
+
+                    if (mca != null)
+                    {
+                        foreach (MetadataNestedAttributeUsage usage in mca.MetadataNestedAttributeUsages)
+                        {
+                            if (metadataStructureUsageHelper.IsSimple(usage))
+                            {
+                                var metadataParameterModel = FormHelper.CreateMetadataParameterModel(usage, mnau, metadataStructureId, Number, stepId);
+                                MetadataParameterModels.Add(metadataParameterModel);
+
                             }
                         }
                     }

@@ -35,6 +35,7 @@
     string styleClass = "Metadata-Level-" + lvl;
     string headerClass = "Metadata-Level-Header-" + lvl;
 
+
     if (ViewData.Keys.Contains("Locked"))
     {
         locked = (bool)ViewData["Locked"];
@@ -57,12 +58,18 @@
         ViewData.Add("Xpath", Model.XPath);
     }
 
+    string test = "";
+    if(Model.Model.MetadataParameterModels!=null)
+    {
+        test = Model.Model.MetadataParameterModels.Count().ToString();
+    }
+
 }
 
-<div id="@stepId" name="@Model.UsageName" number="@Model.Number" class="metadataCompountAttributeUsage @styleClass" partyid="@Model.Model.PartyId" >
+<div id="@stepId" name="@Model.UsageName" number="@Model.Number" class="metadataCompountAttributeUsage @styleClass" partyid="@Model.Model.PartyId">
+
     @if (@Model != null && !(hideOptional && Model.IsEmpty() && locked))
     {
-
         <div class="header @headerClass ">
             <div id="@id_label_container" class="labelContainer" onclick="showHideClick(this)">
                 @if (Model.Activated)
@@ -79,7 +86,7 @@
                     }
                 </b>
 
-                @if (Model.Model.MinCardinality > 0  && !locked)
+                @if (Model.Model.MinCardinality > 0 && !locked)
                 {
                     <b title="Required" style="color: red">*</b>
                 }
@@ -87,7 +94,7 @@
 
             @if (Model.Activated)
             {
-            
+
                 if (!Model.Choice)
                 {
                     <div id="help_@id_button_view" class="help" style="display: none; margin-right: 200px;">@Html.Raw(Model.Model.Discription)</div>
@@ -232,42 +239,55 @@
 
         if (Model.Activated)
         {
-            <div id="@id_container" class="contentContainer">
+<div id="@id_container" class="contentContainer">
 
-                @if (Model.Choice && Model.ChoiceMax <= 1)
+    @if (Model.Choice && Model.ChoiceMax <= 1)
+    {
+        <div id="choiceContainer" class="complexAttributesContainer">
+            @foreach (var element in Model.Childrens)
+            {
+                if (element.Activated)
                 {
-                    <div id="choiceContainer" class="complexAttributesContainer">
-                        @foreach (var element in Model.Childrens)
-                        {
-                            if (element.Activated)
-                            {
-                                @Html.Partial("_metadataCompoundAttributeView", element);
-                            }
-                        }
-                    </div>
+                    @Html.Partial("_metadataCompoundAttributeView", element);
                 }
-                else
+            }
+        </div>
+    }
+    else
+    {
+
+        if (Model.Model.MetadataParameterModels.Any())
+        {
+            <div class="simpleParametersContainer ">
+                @foreach (var parameter in Model.Model.MetadataParameterModels)
                 {
-                    if (Model.Model.MetadataAttributeModels.Any())
-                    {
-                        <div class="simpleAttributesContainer">
-                            @foreach (var element in Model.Model.MetadataAttributeModels)
-                            {
-                                @Html.Partial("_metadataAttributeView", element, ViewData);
-                            }
-                        </div>
-                    }
-
-                    <div class="complexAttributesContainer">
-                        @foreach (var element in Model.Childrens)
-                        {
-                            <div style="width: 100%; height: 1px; background-color: white"></div>
-                            @Html.Partial("_metadataCompoundAttributeView", element);
-
-                        }
+                    <div class="metadataAttributeInput simpleParameterContainer">
+                        @Html.Partial("_metadataParameterView", parameter)
                     </div>
                 }
             </div>
+        }
+
+        if (Model.Model.MetadataAttributeModels.Any())
+        {
+            <div class="simpleAttributesContainer">
+                @foreach (var element in Model.Model.MetadataAttributeModels)
+                {
+                    @Html.Partial("_metadataAttributeView", element, ViewData);
+                }
+            </div>
+        }
+
+        <div class="complexAttributesContainer">
+            @foreach (var element in Model.Childrens)
+            {
+                <div style="width: 100%; height: 1px; background-color: white"></div>
+                @Html.Partial("_metadataCompoundAttributeView", element);
+
+            }
+        </div>
+    }
+</div>
         }
     }
 </div>
