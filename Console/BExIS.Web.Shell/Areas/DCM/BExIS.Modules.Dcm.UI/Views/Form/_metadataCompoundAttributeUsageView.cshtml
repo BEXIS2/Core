@@ -261,9 +261,12 @@
             <div class="simpleParametersContainer ">
                 @foreach (var parameter in Model.Model.MetadataParameterModels)
                 {
-                    <div class="metadataAttributeInput simpleParameterContainer">
-                        @Html.Partial("_metadataParameterView", parameter)
-                    </div>
+                    if (parameter != null)
+                    {
+                        <div class="metadataAttributeInput simpleParameterContainer">
+                            @Html.Partial("_metadataParameterView", parameter)
+                        </div>
+                    }
                 }
             </div>
         }

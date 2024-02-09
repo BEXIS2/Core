@@ -1176,7 +1176,7 @@ namespace BExIS.Xml.Helpers.Mapping
                         max = int.MaxValue;
 
                     if (packageUsage.MetadataAttributeUsages.Where(p => p.MetadataAttribute == attribute).Count() <= 0)
-                        metadataPackageManager.AddMetadataAtributeUsage(packageUsage, attribute, element.Name, attribute.Description, min, max);
+                        metadataPackageManager.AddMetadataAtributeUsage(packageUsage, attribute, element.Name, attribute.Description, min, max, element.DefaultValue);
 
                     #region generate  MappingRoute
 
@@ -1228,7 +1228,7 @@ namespace BExIS.Xml.Helpers.Mapping
                         min = 0;
                     }
 
-                    metadataPackageManager.AddMetadataAtributeUsage(package, compoundAttribute, element.Name, GetDescription(element.Annotation), min, max);
+                    metadataPackageManager.AddMetadataAtributeUsage(package, compoundAttribute, element.Name, GetDescription(element.Annotation), min, max, element.DefaultValue);
                 }
             }
             finally
@@ -1300,6 +1300,7 @@ namespace BExIS.Xml.Helpers.Mapping
                     MaxCardinality = max,
                     Master = parent,
                     Member = compoundAttribute,
+                    DefaultValue = element.DefaultValue
                 };
 
                 if (extra.DocumentElement != null) usage.Extra = extra;
@@ -1407,7 +1408,8 @@ namespace BExIS.Xml.Helpers.Mapping
                         MinCardinality = min,
                         MaxCardinality = max,
                         Master = compoundAttribute,
-                        Member = attribute
+                        Member = attribute,
+                        DefaultValue = element.DefaultValue
                     };
 
                     if (extra.DocumentElement != null) u1.Extra = extra;
@@ -1506,6 +1508,10 @@ namespace BExIS.Xml.Helpers.Mapping
                 {
                     XmlSchemaComplexType type = (XmlSchemaComplexType)element.ElementSchemaType;
         
+                    // load type if exist sepearte in the xsd 
+                    var t = ComplexTypes.FirstOrDefault(c => c.Name.Equals(type.Name));
+                    if (t!=null) type = t;
+
                     string name = GetTypeOfName(element.Name);
                     string description = "";
 
@@ -1665,14 +1671,16 @@ namespace BExIS.Xml.Helpers.Mapping
             string parameterUsageName = "";
             string description = "";
             List<Constraint> constraints = new List<Constraint>();
-
+            MetadataParameter parameter;
+            string defaultValue = "";
 
             if (xmlAttribute is XmlSchemaAttribute)
             {
                 var x = ((XmlSchemaAttribute)xmlAttribute);
                 if (!string.IsNullOrEmpty(x.Name)) parameterUsageName = x.Name;
+                if (!string.IsNullOrEmpty(x.DefaultValue)) defaultValue = x.DefaultValue;
 
-                xmlAttribute = x.AttributeSchemaType as XmlSchemaSimpleType;
+                xmlAttribute = x;
 
                 // if xmlAttribute is null, load type from SimpleTypeList by SchemaTypeNameDefault
                 if (xmlAttribute == null && !string.IsNullOrEmpty(x.SchemaTypeName.Name))
@@ -1684,19 +1692,24 @@ namespace BExIS.Xml.Helpers.Mapping
                 if (xmlAttribute == null && !string.IsNullOrEmpty(x.RefName.Name))
                 {
                     xmlAttribute = SimpleTypes.Where(t => t.Name.Equals(x.SchemaTypeName.Name)).FirstOrDefault();
-                }
+                }// if xmlAttribute is null, load type from SimpleTypeList by SchemaTypeNameDefault
+
 
             }
 
-            if (xmlAttribute is XmlSchemaSimpleType)
+            XmlSchemaSimpleType xmlSchemaSimpleType = null;
+
+            if (xmlAttribute is XmlSchemaSimpleType) xmlSchemaSimpleType = (XmlSchemaSimpleType)xmlAttribute;
+            else if (xmlAttribute is XmlSchemaAttribute) xmlSchemaSimpleType = ((XmlSchemaAttribute)xmlAttribute).AttributeSchemaType;
+
+            if (xmlSchemaSimpleType != null)
             {
-                var x = ((XmlSchemaSimpleType)xmlAttribute);
-                if (string.IsNullOrEmpty(parameterUsageName) && x.Name!=null) parameterUsageName  = x.Name;
+                
+                if (string.IsNullOrEmpty(parameterUsageName) && xmlSchemaSimpleType.Name != null) parameterUsageName = xmlSchemaSimpleType.Name;
 
-                if(x.Annotation!= null) description = GetDescription(x.Annotation);
-             
+                if (xmlSchemaSimpleType.Annotation != null) description = GetDescription(xmlSchemaSimpleType.Annotation);
 
-                var parameter = createMetadataParameter(metadataAttribute,  parameterUsageName, description, x.Datatype);
+                parameter = createMetadataParameter(metadataAttribute, parameterUsageName, description, xmlSchemaSimpleType.Datatype);
                 if (parameter != null)
                 {
                     // if not exist then create in db
@@ -1705,7 +1718,7 @@ namespace BExIS.Xml.Helpers.Mapping
                         // create
                         parameter = metadataAttributeManager.Create(parameter);
 
-                        constraints = convertToConstraints(x.Content, parameter);
+                        constraints = convertToConstraints(xmlSchemaSimpleType.Content, parameter);
                         parameter.Constraints = constraints;
 
                         createdParametersDic.Add(parameter.Id, parameter.Name);
@@ -1714,10 +1727,39 @@ namespace BExIS.Xml.Helpers.Mapping
                     if (parameter != null)
                     {
                         // create parameter Usage beweteen MetadataAttribute and Parameter
-                        metadataAttributeManager.AddParameterUsage(metadataAttribute, parameter);
+                        metadataAttributeManager.AddParameterUsage(metadataAttribute, parameter, true, defaultValue);
                     }
                 }
+                
 
+            }
+            else // catch all ref attributes with only name info and without type info in schema
+                 // as default set to string with no restictions & optional
+            {
+                if (xmlAttribute is XmlSchemaAttribute)
+                {
+                    var xAttr = ((XmlSchemaAttribute)xmlAttribute);
+
+                    if (!String.IsNullOrEmpty(xAttr.Name)) parameterUsageName = xAttr.Name;
+                    else if (xAttr.RefName != null && !String.IsNullOrEmpty(xAttr.RefName.Name)) parameterUsageName = xAttr.RefName.Name;
+                    else if (xAttr.QualifiedName != null && !String.IsNullOrEmpty(xAttr.QualifiedName.Name)) parameterUsageName = xAttr.QualifiedName.Name;
+                    parameter = createMetadataParameter(metadataAttribute, parameterUsageName, "", null);
+
+                    // if not exist then create in db
+                    if (parameter.Id == 0)
+                    {
+                        // create
+                        parameter = metadataAttributeManager.Create(parameter);
+
+                        createdParametersDic.Add(parameter.Id, parameter.Name);
+                    }
+
+                    if (parameter != null)
+                    {
+                        // create parameter Usage beweteen MetadataAttribute and Parameter 
+                        metadataAttributeManager.AddParameterUsage(metadataAttribute, parameter, false, xAttr.DefaultValue);
+                    }
+                }
             }
 
             return null;
@@ -1727,8 +1769,8 @@ namespace BExIS.Xml.Helpers.Mapping
             if (string.IsNullOrEmpty(name)) return null;
      
 
-            string datatype = type?.ValueType.Name;
-            string typeCodename = type?.TypeCode.ToString();
+            string datatype = type==null?"string":type?.ValueType.Name;
+            string typeCodename = type == null ? "string": type?.TypeCode.ToString();
             DataType dataType = GetDataType(datatype, typeCodename);
 
             MetadataParameter parameter = getExistingMetadataParameter(name); ;
@@ -1742,6 +1784,7 @@ namespace BExIS.Xml.Helpers.Mapping
                     Name = name,
                     Description = description,
                     DataType = dataType,
+                    
                 };
 
             }

@@ -128,7 +128,7 @@ namespace BExIS.Dlm.Services.MetadataStructure
 
         #region Associations
 
-        public MetadataAttributeUsage AddMetadataAtributeUsage(MetadataPackage package, MetadataAttribute attribute, string label, string description, int minCardinality, int maxCardinality)
+        public MetadataAttributeUsage AddMetadataAtributeUsage(MetadataPackage package, MetadataAttribute attribute, string label, string description, int minCardinality, int maxCardinality, string defaultValue)
         {
             Contract.Requires(package != null && package.Id >= 0);
             Contract.Requires(attribute != null && attribute.Id >= 0);
@@ -163,6 +163,7 @@ namespace BExIS.Dlm.Services.MetadataStructure
                     Description = description,
                     MinCardinality = minCardinality,
                     MaxCardinality = maxCardinality,
+                    DefaultValue = defaultValue
                 };
                 package.MetadataAttributeUsages.Add(usage);
                 attribute.UsedIn.Add(usage);
