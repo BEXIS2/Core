@@ -520,6 +520,7 @@ namespace BExIS.Xml.Helpers
             string id = "";
             string roleId = "";
             long metadataAttrId = 0;
+            string defaultValue = attributeUsage.DefaultValue==null?"": attributeUsage.DefaultValue;
             ICollection<MetadataParameterUsage> parameters =  new List<MetadataParameterUsage>();
 
             if (attributeUsage is MetadataAttributeUsage)
@@ -565,6 +566,7 @@ namespace BExIS.Xml.Helpers
                     element.SetAttributeValue("roleId", roleId);
                     element.SetAttributeValue("id", id);
                     element.SetAttributeValue("number", i + 1);
+                    element.SetValue(defaultValue);
 
                     // add parameters
                     addParameters(element, parameters);

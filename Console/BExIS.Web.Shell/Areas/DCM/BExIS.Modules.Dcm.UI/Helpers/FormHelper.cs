@@ -250,13 +250,14 @@ namespace BExIS.Modules.Dcm.UI.Helpers
                         DataType = metadataParameter.DataType.Name,
                         SystemType = metadataParameter.DataType.SystemType,
                         DisplayPattern = displayPattern,
-                        //MinCardinality = metadataParameter.MinCardinality,
+                        MinCardinality = parameter.MinCardinality,
                         //MaxCardinality = metadataParameter.MaxCardinality,
                         NumberOfSourceInPackage = 1,
                         DomainList = domainConstraintList,
                         ParentStepId = parentStepId,
                         LowerBoundary = lowerBoundary,
-                        UpperBoundary = upperBoundary
+                        UpperBoundary = upperBoundary,
+                        DefaultValue = parameter.DefaultValue
                     };
                 }
 

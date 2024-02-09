@@ -29,6 +29,7 @@ namespace BExIS.Modules.Dcm.UI.Models.Metadata
         public String DataType { get; set; }
         public String SystemType { get; set; }
         public string DisplayPattern { get; set; }
+        public string DefaultValue { get; set; }
         public int NumberOfSourceInPackage { get; set; }
         public List<object> DomainList { get; set; }
         public List<Error> Errors { get; set; }

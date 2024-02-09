@@ -3205,6 +3205,16 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                             //if (metadataAttrModel.Errors.Count > 0)
                             //    step.stepStatus = StepStatus.error;
                         }
+
+                        foreach (var metadataParameterModel in stepModelHelper.Model.MetadataParameterModels)
+                        {
+                            metadataParameterModel.Errors = validateParameter(metadataParameterModel);
+
+                            if (metadataParameterModel.Errors != null) tmp.AddRange(metadataParameterModel.Errors);
+
+                            //if (metadataAttrModel.Errors.Count > 0)
+                            //    step.stepStatus = StepStatus.error;
+                        }
                     }
                     // else check for required elements
                     else
@@ -3245,6 +3255,13 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 foreach (var m in pModel.MetadataAttributeModels)
                 {
                     var temp = validateAttribute(m);
+                    if (temp != null)
+                        errorList.AddRange(temp);
+                }
+
+                foreach (var m in pModel.MetadataParameterModels)
+                {
+                    var temp = validateParameter(m);
                     if (temp != null)
                         errorList.AddRange(temp);
                 }

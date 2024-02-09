@@ -30,6 +30,7 @@ namespace BExIS.Modules.Dcm.UI.Models.Metadata
         public int MaxCardinality { get; set; }
         public String DataType { get; set; }
         public String SystemType { get; set; }
+        public String DefaultValue { get; set; }
         public string DisplayPattern { get; set; }
         public int NumberOfSourceInPackage { get; set; }
         public List<object> DomainList { get; set; }

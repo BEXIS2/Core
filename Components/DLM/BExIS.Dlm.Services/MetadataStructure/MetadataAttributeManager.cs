@@ -306,7 +306,7 @@ namespace BExIS.Dlm.Services.MetadataStructure
         /// <param name="label"></param>
         /// <param name="description"></param>
         /// <returns></returns>
-        public MetadataParameterUsage AddParameterUsage(MetadataAttribute attribute, MetadataParameter parameter)
+        public MetadataParameterUsage AddParameterUsage(MetadataAttribute attribute, MetadataParameter parameter, bool required, string defaultValue)
         {
             if(parameter == null || parameter.Id <= 0) throw new ArgumentNullException("parameter","parameter should not be null.") ;
             if(attribute == null || attribute.Id <= 0) throw new ArgumentNullException("attribute", "attribute should not be null.");
@@ -323,7 +323,7 @@ namespace BExIS.Dlm.Services.MetadataStructure
                 attributesRepo.Reload(attribute);
                 attributesRepo.LoadIfNot(attribute.MetadataParameterUsages);
 
-
+                int min = required ? 1 : 0;
 
                 MetadataParameterUsage usage = new MetadataParameterUsage()
                 {
@@ -331,7 +331,9 @@ namespace BExIS.Dlm.Services.MetadataStructure
                     Member = parameter,
                     // if there is no label provided, use the attribute name and a sequence number calculated by the number of occurrences of that attribute in the current structure
                     Label = parameter.Name,
-                    Description = description
+                    Description = description,
+                    MinCardinality = min,
+                    DefaultValue = defaultValue
                 };
 
                //attribute.MetadataParameterUsages.Add(usage);
