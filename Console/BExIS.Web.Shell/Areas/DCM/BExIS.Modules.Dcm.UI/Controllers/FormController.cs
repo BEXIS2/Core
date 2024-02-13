@@ -3060,7 +3060,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
             model.Value = value;
             model.AttributeNumber = number;
-            //model.Errors = validateParameter(model);
+            model.Errors = validateParameter(model);
 
             //create para
             KeyValuePair<string, string> parameter = new KeyValuePair<string, string>(metadataParameterUsage.Label, value);
@@ -3148,40 +3148,40 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         private List<Error> validateParameter(MetadataParameterModel aModel)
         {
             var errors = new List<Error>();
-            //optional check
-            if (aModel.MinCardinality > 0 && (aModel.Value == null || String.IsNullOrEmpty(aModel.Value.ToString())))
-                errors.Add(new Error(ErrorType.MetadataAttribute, "is required", new object[] { aModel.DisplayName, aModel.Value, aModel.AttributeNumber, aModel.ParentModelNumber, aModel.Parent.Label }));
-            else
-                if (aModel.MinCardinality > 0 && String.IsNullOrEmpty(aModel.Value.ToString()))
-                errors.Add(new Error(ErrorType.MetadataAttribute, "is required", new object[] { aModel.DisplayName, aModel.Value, aModel.AttributeNumber, aModel.ParentModelNumber, aModel.Parent.Label }));
-
-            //check datatype
-            if (aModel.Value != null && !String.IsNullOrEmpty(aModel.Value.ToString()))
+            if (aModel != null)
             {
-                if (!DataTypeUtility.IsTypeOf(aModel.Value, aModel.SystemType))
-                {
-                    errors.Add(new Error(ErrorType.MetadataAttribute, "Value can´t convert to the type: " + aModel.SystemType + ".", new object[] { aModel.DisplayName, aModel.Value, aModel.AttributeNumber, aModel.ParentModelNumber, aModel.Parent.Label }));
-                }
+                //optional check
+                if (aModel.MinCardinality > 0 && (aModel.Value == null || String.IsNullOrEmpty(aModel.Value.ToString())))
+                    errors.Add(new Error(ErrorType.MetadataAttribute, "is required", new object[] { aModel.DisplayName, aModel.Value, aModel.AttributeNumber, aModel.ParentModelNumber, aModel.Parent.Label }));
                 else
-                {
-                    var type = Type.GetType("System." + aModel.SystemType);
-                    var value = Convert.ChangeType(aModel.Value, type);
+                    if (aModel.MinCardinality > 0 && String.IsNullOrEmpty(aModel.Value.ToString()))
+                    errors.Add(new Error(ErrorType.MetadataAttribute, "is required", new object[] { aModel.DisplayName, aModel.Value, aModel.AttributeNumber, aModel.ParentModelNumber, aModel.Parent.Label }));
 
-                    // check Constraints
-                    foreach (var constraint in aModel.GetMetadataParameter().Constraints)
+                //check datatype
+                if (aModel.Value != null && !String.IsNullOrEmpty(aModel.Value.ToString()))
+                {
+                    if (!DataTypeUtility.IsTypeOf(aModel.Value, aModel.SystemType))
                     {
-                        if (value != null && !constraint.IsSatisfied(value))
+                        errors.Add(new Error(ErrorType.MetadataAttribute, "Value can´t convert to the type: " + aModel.SystemType + ".", new object[] { aModel.DisplayName, aModel.Value, aModel.AttributeNumber, aModel.ParentModelNumber, aModel.Parent.Label }));
+                    }
+                    else
+                    {
+                        var type = Type.GetType("System." + aModel.SystemType);
+                        var value = Convert.ChangeType(aModel.Value, type);
+
+                        // check Constraints
+                        foreach (var constraint in aModel.GetMetadataParameter().Constraints)
                         {
-                            errors.Add(new Error(ErrorType.MetadataAttribute, constraint.ErrorMessage, new object[] { aModel.DisplayName, aModel.Value, aModel.AttributeNumber, aModel.ParentModelNumber, aModel.Parent.Label }));
+                            if (value != null && !constraint.IsSatisfied(value))
+                            {
+                                errors.Add(new Error(ErrorType.MetadataAttribute, constraint.ErrorMessage, new object[] { aModel.DisplayName, aModel.Value, aModel.AttributeNumber, aModel.ParentModelNumber, aModel.Parent.Label }));
+                            }
                         }
                     }
                 }
             }
 
-            if (errors.Count == 0)
-                return null;
-            else
-                return errors;
+            return errors;
         }
 
         private void ValidateModels(List<StepModelHelper> stepModelHelpers)
@@ -3208,10 +3208,12 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
                         foreach (var metadataParameterModel in stepModelHelper.Model.MetadataParameterModels)
                         {
-                            metadataParameterModel.Errors = validateParameter(metadataParameterModel);
+                            if (metadataParameterModel !=null )
+                            {
+                                metadataParameterModel.Errors = validateParameter(metadataParameterModel);
 
-                            if (metadataParameterModel.Errors != null) tmp.AddRange(metadataParameterModel.Errors);
-
+                                if (metadataParameterModel.Errors != null) tmp.AddRange(metadataParameterModel.Errors);
+                            }
                             //if (metadataAttrModel.Errors.Count > 0)
                             //    step.stepStatus = StepStatus.error;
                         }

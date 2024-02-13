@@ -521,6 +521,7 @@ namespace BExIS.Xml.Helpers
             string roleId = "";
             long metadataAttrId = 0;
             string defaultValue = attributeUsage.DefaultValue==null?"": attributeUsage.DefaultValue;
+            string fixedValue = attributeUsage.FixedValue==null?"": attributeUsage.FixedValue;
             ICollection<MetadataParameterUsage> parameters =  new List<MetadataParameterUsage>();
 
             if (attributeUsage is MetadataAttributeUsage)
@@ -567,6 +568,8 @@ namespace BExIS.Xml.Helpers
                     element.SetAttributeValue("id", id);
                     element.SetAttributeValue("number", i + 1);
                     element.SetValue(defaultValue);
+
+                    if (!string.IsNullOrEmpty(fixedValue)) element.SetValue(fixedValue);
 
                     // add parameters
                     addParameters(element, parameters);
@@ -665,7 +668,10 @@ namespace BExIS.Xml.Helpers
         {
             foreach (var parameterUsage in parameterUsages)
             {
-                current.SetAttributeValue(parameterUsage.Label, parameterUsage.DefaultValue);
+                if(!string.IsNullOrEmpty(parameterUsage.FixedValue))
+                    current.SetAttributeValue(parameterUsage.Label, parameterUsage.FixedValue);
+                else
+                    current.SetAttributeValue(parameterUsage.Label, parameterUsage.DefaultValue);
             }
 
             return current;

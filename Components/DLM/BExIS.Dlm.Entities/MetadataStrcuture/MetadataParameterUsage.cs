@@ -46,6 +46,7 @@ namespace BExIS.Dlm.Entities.MetadataStructure
         public MetadataParameterUsage()
         {
             DefaultValue = "";
+            FixedValue = "";
         }
 
     }

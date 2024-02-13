@@ -31,6 +31,7 @@ namespace BExIS.Modules.Dcm.UI.Models.Metadata
         public String DataType { get; set; }
         public String SystemType { get; set; }
         public String DefaultValue { get; set; }
+        public String FixedValue { get; set; }
         public string DisplayPattern { get; set; }
         public int NumberOfSourceInPackage { get; set; }
         public List<object> DomainList { get; set; }
@@ -43,6 +44,8 @@ namespace BExIS.Modules.Dcm.UI.Models.Metadata
         public string ConstraintDescription { get; set; }
 
         public bool IsEmpty = true;
+
+        public bool Locked = false;
 
         private object _value;
 

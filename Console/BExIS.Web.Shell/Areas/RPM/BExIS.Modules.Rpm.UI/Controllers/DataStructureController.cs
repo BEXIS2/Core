@@ -355,6 +355,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                         variable.Template.Id,
                         variable.Description,
                         "",
+                        "",
                         displayPattern,
                         missingValues, // add also missing values that came from varaible it self
                         variable.Constraints.Select(co => co.Id).ToList()
@@ -462,6 +463,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                             orderNo,
                             variable.Template.Id,
                             variable.Description,
+                            "",
                             "",
                             displayPattern,
                             variableHelper.ConvertTo(variable.MissingValues),

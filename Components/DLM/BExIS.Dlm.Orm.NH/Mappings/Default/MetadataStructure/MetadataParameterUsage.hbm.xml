@@ -37,6 +37,10 @@
 		  <column name="DefaultValue"  />
 	  </property>
 
+	  <property name="FixedValue" type="String">
+		  <column name="FixedValue"  />
+	  </property>
+
     <many-to-one name="Master" class="MetadataAttribute" not-null="true" column="MetadataAttributeRef" />
 
     <many-to-one name="Member"   class="MetadataParameter" not-null="true" column="MetadataParameterRef" lazy="false" />

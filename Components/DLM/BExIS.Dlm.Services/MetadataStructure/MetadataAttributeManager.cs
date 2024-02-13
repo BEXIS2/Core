@@ -306,7 +306,7 @@ namespace BExIS.Dlm.Services.MetadataStructure
         /// <param name="label"></param>
         /// <param name="description"></param>
         /// <returns></returns>
-        public MetadataParameterUsage AddParameterUsage(MetadataAttribute attribute, MetadataParameter parameter, bool required, string defaultValue)
+        public MetadataParameterUsage AddParameterUsage(MetadataAttribute attribute, MetadataParameter parameter, bool required, string defaultValue, string fixedValue)
         {
             if(parameter == null || parameter.Id <= 0) throw new ArgumentNullException("parameter","parameter should not be null.") ;
             if(attribute == null || attribute.Id <= 0) throw new ArgumentNullException("attribute", "attribute should not be null.");
@@ -333,7 +333,8 @@ namespace BExIS.Dlm.Services.MetadataStructure
                     Label = parameter.Name,
                     Description = description,
                     MinCardinality = min,
-                    DefaultValue = defaultValue
+                    DefaultValue = defaultValue,
+                    FixedValue = fixedValue
                 };
 
                //attribute.MetadataParameterUsages.Add(usage);

@@ -1176,7 +1176,7 @@ namespace BExIS.Xml.Helpers.Mapping
                         max = int.MaxValue;
 
                     if (packageUsage.MetadataAttributeUsages.Where(p => p.MetadataAttribute == attribute).Count() <= 0)
-                        metadataPackageManager.AddMetadataAtributeUsage(packageUsage, attribute, element.Name, attribute.Description, min, max, element.DefaultValue);
+                        metadataPackageManager.AddMetadataAtributeUsage(packageUsage, attribute, element.Name, attribute.Description, min, max, element.DefaultValue, element.FixedValue);
 
                     #region generate  MappingRoute
 
@@ -1228,7 +1228,7 @@ namespace BExIS.Xml.Helpers.Mapping
                         min = 0;
                     }
 
-                    metadataPackageManager.AddMetadataAtributeUsage(package, compoundAttribute, element.Name, GetDescription(element.Annotation), min, max, element.DefaultValue);
+                    metadataPackageManager.AddMetadataAtributeUsage(package, compoundAttribute, element.Name, GetDescription(element.Annotation), min, max, element.DefaultValue, element.FixedValue);
                 }
             }
             finally
@@ -1300,7 +1300,8 @@ namespace BExIS.Xml.Helpers.Mapping
                     MaxCardinality = max,
                     Master = parent,
                     Member = compoundAttribute,
-                    DefaultValue = element.DefaultValue
+                    DefaultValue = element.DefaultValue,
+                    FixedValue = element.FixedValue
                 };
 
                 if (extra.DocumentElement != null) usage.Extra = extra;
@@ -1409,7 +1410,8 @@ namespace BExIS.Xml.Helpers.Mapping
                         MaxCardinality = max,
                         Master = compoundAttribute,
                         Member = attribute,
-                        DefaultValue = element.DefaultValue
+                        DefaultValue = element.DefaultValue,
+                        FixedValue = element.FixedValue
                     };
 
                     if (extra.DocumentElement != null) u1.Extra = extra;
@@ -1673,12 +1675,14 @@ namespace BExIS.Xml.Helpers.Mapping
             List<Constraint> constraints = new List<Constraint>();
             MetadataParameter parameter;
             string defaultValue = "";
+            string fixedValue = "";
 
             if (xmlAttribute is XmlSchemaAttribute)
             {
                 var x = ((XmlSchemaAttribute)xmlAttribute);
                 if (!string.IsNullOrEmpty(x.Name)) parameterUsageName = x.Name;
                 if (!string.IsNullOrEmpty(x.DefaultValue)) defaultValue = x.DefaultValue;
+                if (!string.IsNullOrEmpty(x.FixedValue)) defaultValue = x.FixedValue;
 
                 xmlAttribute = x;
 
@@ -1727,7 +1731,7 @@ namespace BExIS.Xml.Helpers.Mapping
                     if (parameter != null)
                     {
                         // create parameter Usage beweteen MetadataAttribute and Parameter
-                        metadataAttributeManager.AddParameterUsage(metadataAttribute, parameter, true, defaultValue);
+                        metadataAttributeManager.AddParameterUsage(metadataAttribute, parameter, true, defaultValue, fixedValue);
                     }
                 }
                 
@@ -1757,7 +1761,7 @@ namespace BExIS.Xml.Helpers.Mapping
                     if (parameter != null)
                     {
                         // create parameter Usage beweteen MetadataAttribute and Parameter 
-                        metadataAttributeManager.AddParameterUsage(metadataAttribute, parameter, false, xAttr.DefaultValue);
+                        metadataAttributeManager.AddParameterUsage(metadataAttribute, parameter, false, xAttr.DefaultValue, xAttr.FixedValue);
                     }
                 }
             }

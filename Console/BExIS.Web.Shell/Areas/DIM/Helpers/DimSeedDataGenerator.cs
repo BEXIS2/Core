@@ -264,7 +264,7 @@ namespace BExIS.Modules.Dim.UI.Helpers
                     {
                         link.Name = l;
                         link.URI = l;
-                        link.Type = ExternalLinkType.link;
+                        link.Type = ExternalLinkType.vocabulary;
                         link.Prefix = prefix;
                         link.prefixCategory = null;
 
