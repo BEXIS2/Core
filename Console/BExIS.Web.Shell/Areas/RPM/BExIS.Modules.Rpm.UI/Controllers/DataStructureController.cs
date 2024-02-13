@@ -358,7 +358,8 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                         "",
                         displayPattern,
                         missingValues, // add also missing values that came from varaible it self
-                        variable.Constraints.Select(co => co.Id).ToList()
+                        variable.Constraints.Select(co => co.Id).ToList(),
+                        variable.Meanings.Select(m => m.Id).ToList()
                         );
 
                     newStructure = structureManager.AddVariable(newStructure.Id, result.Id);
