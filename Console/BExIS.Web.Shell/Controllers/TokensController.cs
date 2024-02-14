@@ -3,6 +3,7 @@ using BExIS.Security.Entities.Subjects;
 using BExIS.Security.Services.Subjects;
 using BExIS.Utils.Config;
 using BExIS.Web.Shell.Models;
+using Exceptionless;
 using Microsoft.AspNet.Identity;
 using Microsoft.IdentityModel.Tokens;
 using System;
@@ -107,6 +108,9 @@ namespace BExIS.Web.Shell.Controllers
                             signingCredentials: credentials);
 
                         var jwt_token = new JwtSecurityTokenHandler().WriteToken(token);
+
+                        ExceptionlessClient.Default.SubmitLog("Get Token", $"{user.Name} requested a JWT.", Exceptionless.Logging.LogLevel.Info);
+
 
                         return View("GetToken", model: new ReadJwtModel() { Jwt = jwt_token });
                     }
