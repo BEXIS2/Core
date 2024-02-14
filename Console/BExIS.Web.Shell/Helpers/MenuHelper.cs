@@ -146,7 +146,7 @@ namespace BExIS.Web.Shell.Helpers
                 menuItem.Items.Add(profile);
 
                 //create token link
-                MenuItem token = new MenuItem("Token", "/tokens/create", "shell");
+                MenuItem token = new MenuItem("Token", "/tokens/gettoken", "shell");
                 menuItem.Items.Add(token);
 
                 //create api link
