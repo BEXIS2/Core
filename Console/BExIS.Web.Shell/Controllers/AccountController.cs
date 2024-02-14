@@ -20,6 +20,7 @@ using System.Web.Mvc;
 using Vaiona.Web.Extensions;
 using Vaiona.Web.Mvc.Models;
 using Vaiona.Web.Mvc.Modularity;
+using Exceptionless;
 
 namespace BExIS.Web.Shell.Controllers
 {
@@ -344,6 +345,8 @@ namespace BExIS.Web.Shell.Controllers
                         );
 
                     ViewBag.Message = "Before you can log in to complete your registration, please check your email and verify your email address. If you did not receive an email, please also check your spam folder.";
+
+                    ExceptionlessClient.Default.SubmitLog("Account Registration", $"{user.Name} has registered sucessfully.", Exceptionless.Logging.LogLevel.Info);
 
                     return View("Info");
                 }
