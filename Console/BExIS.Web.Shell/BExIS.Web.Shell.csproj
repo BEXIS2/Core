@@ -1115,6 +1115,7 @@
     <Content Include="Views\Header\Content.cshtml" />
     <Content Include="Views\Tokens\Create.cshtml" />
     <Content Include="Views\Tokens\Read.cshtml" />
+    <Content Include="Views\Tokens\GetToken.cshtml" />
     <None Include="Web.config" />
   </ItemGroup>
   <ItemGroup>

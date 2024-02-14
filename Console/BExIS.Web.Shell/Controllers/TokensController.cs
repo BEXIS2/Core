@@ -75,8 +75,8 @@ namespace BExIS.Web.Shell.Controllers
             }
         }
 
-        [HttpGet, JsonNetFilter]
-        public async Task<JsonResult> GetToken()
+        [HttpGet]
+        public async Task<ActionResult> GetToken()
         {
             try
             {
@@ -108,15 +108,15 @@ namespace BExIS.Web.Shell.Controllers
 
                         var jwt_token = new JwtSecurityTokenHandler().WriteToken(token);
 
-                        return Json(jwt_token, JsonRequestBehavior.AllowGet);
+                        return View("GetToken", model: new ReadJwtModel() { Jwt = jwt_token });
                     }
 
-                    return Json(false);
+                    return View("NotAuthorized");
                 }
             }
             catch (Exception ex)
             {
-                throw;
+                return View("Error");
             }
         }
 
