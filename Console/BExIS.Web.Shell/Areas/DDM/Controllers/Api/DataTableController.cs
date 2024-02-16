@@ -2,6 +2,7 @@
 using BExIS.Dlm.Entities.Data;
 using BExIS.Dlm.Entities.DataStructure;
 using BExIS.Dlm.Services.Data;
+using BExIS.IO.DataType.DisplayPattern;
 using BExIS.IO.Transform.Output;
 using BExIS.Modules.Ddm.UI.Helpers;
 using BExIS.Security.Entities.Authorization;
@@ -137,107 +138,55 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                         }
                         DataTable dt = null;
 
-                        if (isLatestVersion)
+                        if (datasetVersion.Dataset.DataStructure != null)
                         {
-                            #region get data from the latest version of a dataset
+                            // currently the primary data is loaded from the matView, for whatever reason the variables are
+                            // defined with id as column name and not with the direct name of the columns.
+                            // Therefore, there must be a transformation so that the query matches the columns.
+                            // e.g.ScientificName - var61
+                            StructuredDataStructure sds = (StructuredDataStructure)dataset.DataStructure.Self;
+                            var varsAsKVP = DataTableHelper.variablesAsKVP(sds.Variables);
 
-                            string title = datasetVersion.Title;
+                            // add missing values & displaypattern
+                            recieveModel.Columns = getColumns(sds);
 
+                            FilterExpression filter = DataTableHelper.ConvertTo(gridcommand.Filter, varsAsKVP);
+                            OrderByExpression orderBy = DataTableHelper.ConvertTo(gridcommand.OrderBy, varsAsKVP);
 
-                            // check the data sturcture type ...
-                            if (datasetVersion.Dataset.DataStructure != null)
+                            if (isLatestVersion)
                             {
-                                // currently the primary data is loaded from the matView, for whatever reason the variables are
-                                // defined with id as column name and not with the direct name of the columns.
-                                // Therefore, there must be a transformation so that the query matches the columns.
-                                // e.g.ScientificName - var61
-                                StructuredDataStructure sds = (StructuredDataStructure)dataset.DataStructure.Self;
-                                var varsAsKVP = DataTableHelper.variablesAsKVP(sds.Variables);
-
-                                FilterExpression filter = DataTableHelper.ConvertTo(gridcommand.Filter,varsAsKVP);
-                                OrderByExpression orderBy = DataTableHelper.ConvertTo(gridcommand.OrderBy,varsAsKVP);
-
                                 // apply selection and projection
                                 long count = datasetManager.GetDataTuplesCount(datasetVersion.Id);
+                                recieveModel.Count = count;
 
-                                if (count > 0)
+                                if(count==0) return Request.CreateErrorResponse(HttpStatusCode.BadRequest, "There is no data for the dataset.");
+
+                                dt = datasetManager.GetLatestDatasetVersionTuples(id, filter, orderBy, null, pageNumber, pageSize);
+                                dt.Strip();
+
+                                // replace column name to caption
+                                for (int i = 0; i < dt.Columns.Count; i++)
                                 {
-                                    dt = datasetManager.GetLatestDatasetVersionTuples(id, filter, orderBy, null, pageNumber, pageSize);
-                                    dt.Strip();
-
-                                    // replace column name to caption
-                                    for (int i = 0; i < dt.Columns.Count; i++)
-                                    {
-                                        var c = dt.Columns[i];
-                                        c.ColumnName = c.Caption;
-                                    }
-
-
+                                    var c = dt.Columns[i];
+                                    c.ColumnName = c.Caption;
                                 }
-                                else
-                                {
-                                    return Request.CreateErrorResponse(HttpStatusCode.BadRequest, "There is no data for the dataset.");
-                                }
-
-
-                                #endregion get data from the latest version of a dataset
-
-                                //return model;
                             }
                             else
-                            {
-                                return Request.CreateErrorResponse(HttpStatusCode.BadRequest, "The data of this dataset is not structured.");
+                            {  
+                                int count = datasetManager.GetDatasetVersionEffectiveTuples(datasetVersion).Count;
+                                recieveModel.Count = count;
+
+                                if (count == 0) return Request.CreateErrorResponse(HttpStatusCode.BadRequest, "There is no data for the dataset.");
+
+                                dt = datasetManager.GetDatasetVersionTuples(datasetVersion.Id, pageNumber, pageSize);
+                                dt.Strip();
 
                             }
                         }
-
                         else
                         {
-                            #region load data of a older version of a dataset
+                            return Request.CreateErrorResponse(HttpStatusCode.BadRequest, "The data of this dataset is not structured.");
 
-                            datasetVersion = datasetManager.GetDatasetVersion(versionId);
-
-                            string title = datasetVersion.Title;
-
-                            // check the data sturcture type ...
-                            if (datasetVersion.Dataset.DataStructure.Self is StructuredDataStructure)
-                            {
-                                //FilterExpression filter = null;
-                                //OrderByExpression orderBy = null;
-
-                                // apply selection and projection
-                                int count = datasetManager.GetDatasetVersionEffectiveTuples(datasetVersion).Count;
-
-                                if (count > 0) // has primary data
-                                {
-
-                                    dt = datasetManager.GetDatasetVersionTuples(datasetVersion.Id, pageNumber, pageSize);
-
-                                    dt.Strip();
-
-                                    //if (!string.IsNullOrEmpty(selection))
-                                    //{
-                                    //    dt = OutputDataManager.SelectionOnDataTable(dt, selection);
-                                    //}
-
-                                    //if (!string.IsNullOrEmpty(projection))
-                                    //{
-                                    //    // make the header names upper case to make them case insensitive
-                                    //    dt = OutputDataManager.ProjectionOnDataTable(dt, projection.ToUpper().Split(','));
-                                    //}
-                                }
-                                else // has no primary data
-                                {
-                                    return Request.CreateErrorResponse(HttpStatusCode.BadRequest, "There is no data for the dataset version.");
-                                }
-
-                            }
-                            else // return files of the unstructure dataset
-                            {
-                                return Request.CreateErrorResponse(HttpStatusCode.BadRequest, "The data is not structured.");
-                            }
-
-                            #endregion load data of a older version of a dataset
                         }
 
 
@@ -296,6 +245,34 @@ namespace BExIS.Modules.Ddm.UI.Controllers
             string JSONString = string.Empty;
             JSONString = JsonConvert.SerializeObject(table);
             return JSONString;
+        }
+
+        private List<DataTableColumn> getColumns(StructuredDataStructure datastrutcure)
+        {
+            List<DataTableColumn> tmp = new List<DataTableColumn>();
+
+            foreach (var variable in datastrutcure.Variables)
+            {
+                DataTableColumn column = new DataTableColumn();
+                column.Header = variable.Label;
+
+                // set display Pattern
+                if (variable.DisplayPatternId > 0)
+                {
+                    var displayPattern = DataTypeDisplayPattern.Get(variable.DisplayPatternId);
+                    column.Instructions.DisplayPattern = displayPattern.DisplayPattern;
+                }
+
+                // missing values
+                if (variable.MissingValues.Any())
+                {
+                    variable.MissingValues.ToList().ForEach(x => column.Instructions.MissingValues.Add(x.Placeholder, x.DisplayName));
+                }
+
+                tmp.Add(column);
+            }
+                
+            return tmp;
         }
 
     }

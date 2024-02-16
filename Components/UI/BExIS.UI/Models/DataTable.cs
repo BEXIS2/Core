@@ -27,10 +27,10 @@ namespace BExIS.UI.Models
 
     public class DataTableRecieveModel
     {
-        public int Count { get; set; }
+        public long Count { get; set; }
         public DataTable Data { get; set; }
 
-        public DataTableColumn Columns  { get; set; }
+        public List<DataTableColumn> Columns  { get; set; }
 
         public DataTableSendModel SendModel { get; set; }
 
@@ -39,7 +39,7 @@ namespace BExIS.UI.Models
             Count = 0;
             Data = new DataTable();
             SendModel = new DataTableSendModel();
-            Columns = new DataTableColumn();
+            Columns = new List<DataTableColumn>();
         }
     }
 
@@ -52,6 +52,13 @@ namespace BExIS.UI.Models
         public Boolean exclude { get; set; }// false by default
 
         public DataTableInstruction Instructions { get; set; }
+
+        public DataTableColumn()
+        {
+            Header = string.Empty;
+            exclude = false;
+            Instructions = new DataTableInstruction();
+        }
     }
 
     public class DataTableInstruction
@@ -59,7 +66,11 @@ namespace BExIS.UI.Models
         public Dictionary<object,string> MissingValues { get; set; }
         public string  DisplayPattern { get; set; }
 
-
+        public DataTableInstruction()
+        {
+            MissingValues = new Dictionary<object, string>();
+            DisplayPattern = string.Empty;
+        }
     }
 
     public class DataTableFilter
