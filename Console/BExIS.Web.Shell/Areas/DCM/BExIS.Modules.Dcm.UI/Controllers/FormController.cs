@@ -168,6 +168,8 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                     TaskManager = loadTaskManager(metadataStructureId, dataStructureId, -1, metadata, "", TaskManager, ref Model);
 
                     TaskManager.AddToBus(CreateTaskmanager.ENTITY_ID, entityId);
+
+                    Session["ViewDatasetTaskmanager"] = TaskManager;
                 }
             }
 

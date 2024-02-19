@@ -410,7 +410,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
                 //    DatasetVersion = datasetVersion,
                 //};
 
-                if (datasetVersion.ContentDescriptors.Count(p => p.Name.Equals(name)) > 0)
+                if (datasetVersion.ContentDescriptors.Count(p => p.Name.Equals(name) && p.MimeType.Equals(mimeType)) > 0)
                 {
                     // remove the one contentdesciptor
                     foreach (ContentDescriptor cd in datasetVersion.ContentDescriptors)
