@@ -313,7 +313,8 @@ namespace BExIS.Modules.Dim.UI.Controllers
 
                                 if (FileHelper.FileExist(path))
                                 {
-                                    zip.AddFile(path, "");
+                                    if(!zip.Any(entry => entry.FileName.EndsWith(name)))
+                                        zip.AddFile(path, "");
                                 }
                             }
                         }
@@ -415,7 +416,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
                     // remove the one contentdesciptor
                     foreach (ContentDescriptor cd in datasetVersion.ContentDescriptors)
                     {
-                        if (cd.Name == name)
+                        if (cd.Name.Equals(name) && cd.MimeType.Equals(mimeType))
                         {
                             cd.URI = dynamicPath;
                             dm.UpdateContentDescriptor(cd);
