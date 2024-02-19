@@ -26,6 +26,8 @@ using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Web.Http;
+using System.Web.Http.Description;
+using System.Web.Http.ModelBinding;
 using System.Web.UI.WebControls;
 using Telerik.Web.Mvc;
 
@@ -49,37 +51,32 @@ namespace BExIS.Modules.Ddm.UI.Controllers
 
 
         /// <summary>
-
+        /// this api is used to process server side table functions. 
         /// </summary>
         /// <returns></returns>
         /// <remarks> 
         /// </remarks>
         [BExISApiAuthorize]
         //[Route("api/Data")]
-        [GetRoute("api/DataTable")]
-        [HttpGet]
-        public HttpResponseMessage Get(DataTableSendModel gridcommand)
+        [Route("api/DataTable")]
+        [HttpPost]
+        [ResponseType(typeof(DataTableRecieveModel))]
+        public HttpResponseMessage Get([FromBody] DataTableSendModel command)
         {
-            if (gridcommand.Id <= 0)
+            if (command.Id <= 0)
                 return Request.CreateErrorResponse(HttpStatusCode.PreconditionFailed, "Id should be greater then 0");
 
-            // filter data
-
-            // get missing values 
-            return getData(gridcommand);
-
-
-
+            return getData(command);
         }
-        private HttpResponseMessage getData(DataTableSendModel gridcommand)
+        private HttpResponseMessage getData(DataTableSendModel command)
         {
-            long id = gridcommand.Id;
-            long versionId = gridcommand.Version;
-            int pageNumber = gridcommand.Offset / gridcommand.Limit;
-            int pageSize = gridcommand.Limit;
+            long id = command.Id;
+            long versionId = command.Version;
+            int pageNumber = command.Offset / command.Limit;
+            int pageSize = command.Limit;
 
             DataTableRecieveModel recieveModel = new DataTableRecieveModel();
-            recieveModel.SendModel = gridcommand;
+            recieveModel.SendModel = command;
 
             if (id <= 0)
                 return Request.CreateErrorResponse(HttpStatusCode.PreconditionFailed, "Id should be greater then 0");
@@ -150,8 +147,8 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                             // add missing values & displaypattern
                             recieveModel.Columns = getColumns(sds);
 
-                            FilterExpression filter = DataTableHelper.ConvertTo(gridcommand.Filter, varsAsKVP);
-                            OrderByExpression orderBy = DataTableHelper.ConvertTo(gridcommand.OrderBy, varsAsKVP);
+                            FilterExpression filter = DataTableHelper.ConvertTo(command.Filter, varsAsKVP);
+                            OrderByExpression orderBy = DataTableHelper.ConvertTo(command.OrderBy, varsAsKVP);
 
                             if (isLatestVersion)
                             {
