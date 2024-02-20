@@ -63,6 +63,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
             TaskManager = (CreateTaskmanager)Session["CreateDatasetTaskmanager"];
 
+            FormHelper.ClearCache();
             //var newMetadata = TaskManager.Bus[CreateTaskmanager.METADATA_XML];
 
             var stepInfoModelHelpers = new List<StepModelHelper>();
@@ -145,6 +146,8 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             var Model = new MetadataEditorModel();
 
             TaskManager = (CreateTaskmanager)Session["CreateDatasetTaskmanager"];
+
+            FormHelper.ClearCache();
 
             // if dataset exist load metadata and metadata sturtcure id
             if (entityId > -1)
@@ -255,6 +258,8 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         {
             var loadFromExternal = true;
             long metadataStructureId = -1;
+
+            FormHelper.ClearCache();
 
             //load metadata from session if exist
             var metadata = Session[sessionKeyForMetadata] != null
@@ -516,6 +521,8 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             ViewData["Locked"] = locked;
             ViewData["ShowOptional"] = show;
             ViewData["EntityId"] = entityId;
+
+            FormHelper.ClearCache();
 
             ViewBag.Title = PresentationModel.GetViewTitleForTenant("Create Dataset", this.Session.GetTenant());
             TaskManager = (CreateTaskmanager)Session["CreateDatasetTaskmanager"];
