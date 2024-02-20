@@ -17,6 +17,7 @@ using BExIS.Utils.Route;
 using BExIS.Xml.Helpers;
 using Microsoft.AspNet.Identity;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -68,6 +69,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
 
             return getData(command);
         }
+
         private HttpResponseMessage getData(DataTableSendModel command)
         {
             long id = command.Id;
@@ -76,7 +78,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
             int pageSize = command.Limit;
 
             DataTableRecieveModel recieveModel = new DataTableRecieveModel();
-            recieveModel.SendModel = command;
+            recieveModel.Send = command;
 
             if (id <= 0)
                 return Request.CreateErrorResponse(HttpStatusCode.PreconditionFailed, "Id should be greater then 0");
@@ -148,7 +150,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                             recieveModel.Columns = getColumns(sds);
 
                             FilterExpression filter = DataTableHelper.ConvertTo(command.Filter, varsAsKVP);
-                            OrderByExpression orderBy = DataTableHelper.ConvertTo(command.OrderBy, varsAsKVP);
+                            OrderByExpression orderBy = DataTableHelper.ConvertTo(command.Order, varsAsKVP);
 
                             if (isLatestVersion)
                             {
@@ -196,6 +198,10 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                             var response = Request.CreateResponse();
 
                             string json = JsonConvert.SerializeObject(recieveModel);
+                                //new JsonSerializerSettings
+                                //{
+                                //    ContractResolver = new CamelCasePropertyNamesContractResolver()
+                                //});
 
 
                             response.Content = new StringContent(json, System.Text.Encoding.UTF8, "application/json");

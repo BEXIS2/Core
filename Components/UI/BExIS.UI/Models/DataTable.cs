@@ -12,7 +12,7 @@ namespace BExIS.UI.Models
         public int Offset { get; set; }
         public int Limit { get; set; }
         public List<DataTableFilter> Filter { get; set; }
-        public List<DataTableOrderBy> OrderBy { get; set; }
+        public List<DataTableOrderBy> Order { get; set; }
 
 
         public DataTableSendModel() {
@@ -21,7 +21,7 @@ namespace BExIS.UI.Models
             Offset = 0; 
             Limit = 100;
             Filter = new List<DataTableFilter>();
-            OrderBy = new List<DataTableOrderBy>();
+            Order = new List<DataTableOrderBy>();
         }
     }
 
@@ -32,13 +32,13 @@ namespace BExIS.UI.Models
 
         public List<DataTableColumn> Columns  { get; set; }
 
-        public DataTableSendModel SendModel { get; set; }
+        public DataTableSendModel Send { get; set; }
 
         public DataTableRecieveModel()
         {
             Count = 0;
             Data = new DataTable();
-            SendModel = new DataTableSendModel();
+            Send = new DataTableSendModel();
             Columns = new List<DataTableColumn>();
         }
     }
@@ -49,14 +49,14 @@ namespace BExIS.UI.Models
     {
         public string Header { get; set; }// key by default
 
-        public Boolean exclude { get; set; }// false by default
+        public Boolean Exclude { get; set; }// false by default
 
         public DataTableInstruction Instructions { get; set; }
 
         public DataTableColumn()
         {
             Header = string.Empty;
-            exclude = false;
+            Exclude = false;
             Instructions = new DataTableInstruction();
         }
     }
