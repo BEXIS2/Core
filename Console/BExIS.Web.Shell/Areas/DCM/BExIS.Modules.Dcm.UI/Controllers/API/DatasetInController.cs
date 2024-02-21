@@ -1,4 +1,5 @@
 ﻿using BExIS.App.Bootstrap.Attributes;
+using BExIS.Dim.Entities.Mapping;
 using BExIS.Dlm.Entities.Administration;
 using BExIS.Dlm.Entities.Data;
 using BExIS.Dlm.Entities.DataStructure;
@@ -19,8 +20,10 @@ using System.Linq;
 using System.Net.Http;
 using System.Web.Http;
 using System.Web.Http.Description;
+using System.Xml;
 using System.Xml.Linq;
 using Vaiona.Entities.Common;
+using BExIS.Modules.Dcm.UI.Helpers;
 
 namespace BExIS.Modules.Dcm.UI.Controllers.API
 {
@@ -62,17 +65,9 @@ namespace BExIS.Modules.Dcm.UI.Controllers.API
                 {
                     #region security
 
-                    string token = this.Request.Headers.Authorization?.Parameter;
+                    user = ControllerContext.RouteData.Values["user"] as User;
 
-                    if (String.IsNullOrEmpty(token))
-                    {
-                        request.Content = new StringContent("Bearer token not exist.");
-
-                        return request;
-                    }
-
-                    user = userManager.Users.Where(u => u.Token.Equals(token)).FirstOrDefault();
-
+        
                     if (user == null)
                     {
                         request.Content = new StringContent("Token is not valid.");
@@ -156,6 +151,9 @@ namespace BExIS.Modules.Dcm.UI.Controllers.API
                         workingCopy.Metadata = xmlDatasetHelper.SetInformation(workingCopy, workingCopy.Metadata, NameAttributeValues.description, dataset.Description);
                         workingCopy.Description = dataset.Description;
 
+                        // update metadata based on system mappings
+                        workingCopy.Metadata = setSystemValuesToMetadata(datasetId, 1, dataset.MetadataStructureId, workingCopy.Metadata, true);
+
 
                         ////set modification
                         workingCopy.ModificationInfo = new EntityAuditInfo()
@@ -197,6 +195,20 @@ namespace BExIS.Modules.Dcm.UI.Controllers.API
         [DeleteRoute("api/Dataset")]
         public void Delete(int id)
         {
+        }
+
+        private XmlDocument setSystemValuesToMetadata(long datasetid, long version, long metadataStructureId, XmlDocument metadata, bool newDataset)
+        {
+            SystemMetadataHelper SystemMetadataHelper = new SystemMetadataHelper();
+
+            Key[] myObjArray = { };
+
+            if (newDataset) myObjArray = new Key[] { Key.Id, Key.Version, Key.DateOfVersion, Key.MetadataCreationDate, Key.MetadataLastModfied };
+            else myObjArray = new Key[] { Key.Id, Key.Version, Key.DateOfVersion, Key.MetadataLastModfied };
+
+            metadata = SystemMetadataHelper.SetSystemValuesToMetadata(datasetid, version, metadataStructureId, metadata, myObjArray);
+
+            return metadata;
         }
     }
 }

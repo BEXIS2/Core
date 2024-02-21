@@ -433,13 +433,17 @@ namespace BExIS.Xml.Helpers.Mapping
                         {
                         }
 
-                        //destinationParentNode = createMissingNodes(destinationParentXPath, currentParentXPath, destinationParentNode, destinationDoc);
-
-                        ////check if nodes in destination not exist, create them
-                        //string destinationParentXPath = route.GetDestinationParentXPath();
-                        //string currentParentXPath = XmlUtility.GetDirectXPathToNode(destinationParentNode);
                     }
                 }
+
+                if (sourceNode.Attributes!=null && sourceNode.Attributes.Count>0)
+                {
+                    foreach (XmlAttribute childAttr in sourceNode.Attributes)
+                    {
+                        destinationDoc = mapNode(destinationDoc, destinationPNode, childAttr);
+                    }
+                 }
+                
 
                 if (sourceNode.HasChildNodes)
                 {
@@ -470,6 +474,16 @@ namespace BExIS.Xml.Helpers.Mapping
             Array.Reverse(sourceSplitWidthIndex);
 
             string[] destinationSplit = destination.Split('/');
+
+            // remove attributes from array add add it to the end
+            var first = sourceSplitWidthIndex[0];
+            bool isAttr = false;
+            if (first.Contains("@"))
+            {
+                sourceSplitWidthIndex = sourceSplitWidthIndex.Skip(1).ToArray();
+                destinationSplit = destinationSplit.Skip(1).ToArray();
+                isAttr = true;
+            }
 
             // XFType\F\yType\Y\XType\x
             Array.Reverse(destinationSplit);
@@ -503,6 +517,13 @@ namespace BExIS.Xml.Helpers.Mapping
 
             Array.Reverse(destinationSplit);
 
+            if (isAttr)
+            {
+                Array.Resize(ref destinationSplit, destinationSplit.Length + 1);
+                destinationSplit[destinationSplit.Length - 1] = first;
+            }
+
+
             // XFType[2]\F[1]\yType[4]\Y[1]\XType[2]\x[1]
             return String.Join("/", destinationSplit); ;
         }
@@ -523,6 +544,17 @@ namespace BExIS.Xml.Helpers.Mapping
 
             // XFType\F\yType\Y\XType\x
             Array.Reverse(destinationSplit);
+
+            // remove attributes from array add add it to the end
+            var first = sourceSplitWidthIndex[0];
+            bool isAttr = false;
+            if (first.Contains("@"))
+            {
+                sourceSplitWidthIndex = sourceSplitWidthIndex.Skip(1).ToArray();
+                destinationSplit = destinationSplit.Skip(1).ToArray();
+                isAttr = true;
+            }
+
             int j = 0;
             for (int i = 0; i < sourceSplitWidthIndex.Length; i = i + 2)
             {
@@ -553,8 +585,14 @@ namespace BExIS.Xml.Helpers.Mapping
 
             Array.Reverse(destinationSplit);
 
+            if (isAttr)
+            {
+                Array.Resize(ref destinationSplit, destinationSplit.Length + 1);
+                destinationSplit[destinationSplit.Length - 1] = first;
+            }
+
             // f[1]\y[2]\x[1]
-            return String.Join("/", destinationSplit); ;
+            return String.Join("/", destinationSplit);
         }
 
         // add required attributes

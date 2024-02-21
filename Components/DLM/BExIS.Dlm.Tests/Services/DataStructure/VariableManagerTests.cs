@@ -177,14 +177,15 @@ namespace BExIS.Dlm.Tests.Services.DataStructure
                 meaning = meaningManager.addMeaning(meaning);
 
 
-                var result =  variableManager.CreateVariableTemplate(
+                var result = variableManager.CreateVariableTemplate(
                     "TestVariableTemplate",
                     dataType,
                     unit,
                     "TestVariableTemplate Description",
                     "xyz",
+                    "",
                     new List<Meaning>() { meaning }
-                    );
+                    ); ;
                
 
                 //Assert
@@ -331,6 +332,7 @@ namespace BExIS.Dlm.Tests.Services.DataStructure
                     unit,
                     "TestVariableTemplate Description",
                     "xyz",
+                    "",
                     new List<Meaning>() { meaning }
                     );
 
@@ -652,6 +654,7 @@ namespace BExIS.Dlm.Tests.Services.DataStructure
                     0,
                     "",
                     "",
+                    "",
                     0,
                     missingValues
                     );
@@ -729,6 +732,7 @@ namespace BExIS.Dlm.Tests.Services.DataStructure
                     true,
                     1,
                     0,
+                    "",
                     "",
                     "",
                     0,
@@ -811,6 +815,7 @@ namespace BExIS.Dlm.Tests.Services.DataStructure
                     0,
                     "",
                     "",
+                    "",
                     0,
                     null,
                     constraints.Select(co => co.Id).ToList()
@@ -830,7 +835,7 @@ namespace BExIS.Dlm.Tests.Services.DataStructure
                    0,
                    "",
                    "",
-                   0,
+                   "", 0,
                    null,
                    constraints.Select(co => co.Id).ToList()
                    );
@@ -1089,6 +1094,7 @@ namespace BExIS.Dlm.Tests.Services.DataStructure
                     variableTemplate.Id,
                     "",
                     "",
+                    "",
                     0,
                     null,
                     constraintIds,
@@ -1175,7 +1181,7 @@ namespace BExIS.Dlm.Tests.Services.DataStructure
                     variableTemplate.Id,
                     "",
                     "",
-                    0,
+                    "", 0,
                     null,
                     constraintIds,
                     meaningIds
@@ -1190,6 +1196,7 @@ namespace BExIS.Dlm.Tests.Services.DataStructure
                     true,
                     1,
                     variableTemplate.Id,
+                    "",
                     "",
                     "",
                     0,

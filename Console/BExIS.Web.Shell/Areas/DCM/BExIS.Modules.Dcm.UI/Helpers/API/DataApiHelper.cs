@@ -1,4 +1,5 @@
-﻿using BExIS.Dlm.Entities.Data;
+﻿using BExIS.Dim.Entities.Mapping;
+using BExIS.Dlm.Entities.Data;
 using BExIS.Dlm.Entities.DataStructure;
 using BExIS.Dlm.Services.Data;
 using BExIS.Dlm.Services.DataStructure;
@@ -20,8 +21,10 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Xml;
 using Vaiona.Entities.Common;
 using Vaiona.Utils.Cfg;
+using BExIS.Modules.Dcm.UI.Helpers;
 
 namespace BExIS.Modules.Dcm.UI.Helper.API
 {
@@ -126,7 +129,7 @@ namespace BExIS.Modules.Dcm.UI.Helper.API
                 // primary Key check is only available by put api , so in this case it must be a putapiModel
                 // and need to convert to it to get the primary keys lsit
 
-                PutDataApiModel data = (PutDataApiModel)_data;
+                DataApiModel data = (DataApiModel)_data;
                 string[] pks = null;
                 //if (data != null) pks = data.PrimaryKeys;
 
@@ -235,6 +238,13 @@ namespace BExIS.Modules.Dcm.UI.Helper.API
                 {
                     workingCopy = datasetManager.GetDatasetWorkingCopy(id);
 
+                    bool isUpdatingData = false; // if data exist, set to true
+                    if(datatupleFromDatabaseIds.Count>0)isUpdatingData = true;
+
+                    // update metadata based on system keys mappings
+                    workingCopy.Metadata = setSystemValuesToMetadata(workingCopy.Id, datasetManager.GetDatasetVersionCount(workingCopy.Id) + 1, workingCopy.Dataset.MetadataStructure.Id, workingCopy.Metadata, isUpdatingData);
+
+
                     ////set modification
                     workingCopy.ModificationInfo = new EntityAuditInfo()
                     {
@@ -326,6 +336,20 @@ namespace BExIS.Modules.Dcm.UI.Helper.API
             {
                 Debug.WriteLine("end of upload");
             }
+        }
+
+        private XmlDocument setSystemValuesToMetadata(long datasetid, long version, long metadataStructureId, XmlDocument metadata, bool updateData = false)
+        {
+            SystemMetadataHelper SystemMetadataHelper = new SystemMetadataHelper();
+
+            Key[] myObjArray = { };
+
+            if (updateData) myObjArray = new Key[] { Key.Id, Key.Version, Key.DateOfVersion, Key.DataLastModified };
+            else myObjArray = new Key[] { Key.Id, Key.Version, Key.DataCreationDate, Key.DataLastModified };
+
+            metadata = SystemMetadataHelper.SetSystemValuesToMetadata(datasetid, version, metadataStructureId, metadata, myObjArray);
+
+            return metadata;
         }
     }
 }

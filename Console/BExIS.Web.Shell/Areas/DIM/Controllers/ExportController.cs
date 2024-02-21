@@ -313,7 +313,8 @@ namespace BExIS.Modules.Dim.UI.Controllers
 
                                 if (FileHelper.FileExist(path))
                                 {
-                                    zip.AddFile(path, "");
+                                    if(!zip.Any(entry => entry.FileName.EndsWith(name)))
+                                        zip.AddFile(path, "");
                                 }
                             }
                         }
@@ -410,12 +411,12 @@ namespace BExIS.Modules.Dim.UI.Controllers
                 //    DatasetVersion = datasetVersion,
                 //};
 
-                if (datasetVersion.ContentDescriptors.Count(p => p.Name.Equals(name)) > 0)
+                if (datasetVersion.ContentDescriptors.Count(p => p.Name.Equals(name) && p.MimeType.Equals(mimeType)) > 0)
                 {
                     // remove the one contentdesciptor
                     foreach (ContentDescriptor cd in datasetVersion.ContentDescriptors)
                     {
-                        if (cd.Name == name)
+                        if (cd.Name.Equals(name) && cd.MimeType.Equals(mimeType))
                         {
                             cd.URI = dynamicPath;
                             dm.UpdateContentDescriptor(cd);

@@ -128,6 +128,10 @@ namespace BExIS.Modules.Rpm.UI.Controllers
             // get from settings, if template is required or not
             bool isTemplateRequired = (bool)ModuleManager.GetModuleSettings("RPM").GetValueByKey("isTemplateRequired");
             ViewData["isTemplateRequired"] = isTemplateRequired;
+
+            bool isMeaningRequired = (bool)ModuleManager.GetModuleSettings("RPM").GetValueByKey("isMeaningRequired");
+            ViewData["isMeaningRequired"] = isMeaningRequired;
+
             return View("Create");
         }
 
@@ -143,6 +147,9 @@ namespace BExIS.Modules.Rpm.UI.Controllers
             // get from settings, if template is required or not
             bool isTemplateRequired = (bool)ModuleManager.GetModuleSettings("RPM").GetValueByKey("isTemplateRequired");
             ViewData["isTemplateRequired"] = isTemplateRequired;
+
+            bool isMeaningRequired = (bool)ModuleManager.GetModuleSettings("RPM").GetValueByKey("isMeaningRequired");
+            ViewData["isMeaningRequired"] = isMeaningRequired;
 
             ViewData["dataExist"] = structureHelper.InUseAndDataExist(structureId);
             
@@ -348,9 +355,11 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                         variable.Template.Id,
                         variable.Description,
                         "",
+                        "",
                         displayPattern,
                         missingValues, // add also missing values that came from varaible it self
-                        variable.Constraints.Select(co => co.Id).ToList()
+                        variable.Constraints.Select(co => co.Id).ToList(),
+                        variable.Meanings.Select(m => m.Id).ToList()
                         );
 
                     newStructure = structureManager.AddVariable(newStructure.Id, result.Id);
@@ -424,7 +433,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                     if (variable.Id > 0)
                     {
                         updatedVariable = variableManager.GetVariable(variable.Id);
-
+                        updatedVariable.Label = variable.Name;
                         updatedVariable.Description = variable.Description;
                         updatedVariable.DataType = dataType;
                         updatedVariable.Unit = unit;
@@ -455,6 +464,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                             orderNo,
                             variable.Template.Id,
                             variable.Description,
+                            "",
                             "",
                             displayPattern,
                             variableHelper.ConvertTo(variable.MissingValues),
@@ -619,9 +629,13 @@ namespace BExIS.Modules.Rpm.UI.Controllers
 
                     // get list of possible units
                     var unitInput = getValueFromMarkedRow(markerRows, model.Markers, "unit", (char)model.Delimeter, i, AsciiFileReaderInfo.GetTextMarker((TextMarker)model.TextMarker));
-                    strutcureAnalyzer.SuggestUnit(unitInput, var.DataType.Text).ForEach(u => var.PossibleUnits.Add(new UnitItem(u.Id, u.Abbreviation,u.AssociatedDataTypes.Select(x => x.Name).ToList(), "detect")));
+                    strutcureAnalyzer.SuggestUnit(unitInput,var.Name, var.DataType.Text).ForEach(u => var.PossibleUnits.Add(new UnitItem(u.Id, u.Abbreviation,u.AssociatedDataTypes.Select(x => x.Name).ToList(), "detect")));
                     var.Unit = var.PossibleUnits.FirstOrDefault();
-                    if (var.Unit == null) var.Unit = new UnitItem();
+                    if (var.Unit == null) // if suggestion return null then set to unit none
+                    {
+                        strutcureAnalyzer.SuggestUnit("none", var.Name, var.DataType.Text).ForEach(u => var.PossibleUnits.Add(new UnitItem(u.Id, u.Abbreviation, u.AssociatedDataTypes.Select(x => x.Name).ToList(), "detect")));
+                        var.Unit = var.PossibleUnits.FirstOrDefault();
+                    }
 
 
                     // get suggestes DisplayPattern / currently only for DateTime
@@ -839,6 +853,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
             using (var variableManager = new VariableManager())
             using (var unitManager = new UnitManager())
             {
+                var _helper = new VariableHelper();
                 var variableTemplates = variableManager.VariableTemplateRepo.Get().ToList();
                 var units = unitManager.Repo.Get();
                 List<VariableTemplateItem> list = new List<VariableTemplateItem>();
@@ -847,26 +862,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                 {
                     foreach (var variableTemplate in variableTemplates.Where(t=>t.Approved))
                     {
-                        List<string> dataTypes = new List<string>();
-               
-                        var unit = units.FirstOrDefault(u=> u.Id.Equals(variableTemplate.Unit.Id));
-
-                        // get possible datatypes
-                        if (unit != null)
-                            dataTypes = unit.AssociatedDataTypes.Select(x => x.Name).ToList();
-
-                        VariableTemplateItem vti = new VariableTemplateItem();
-                        vti.Id = variableTemplate.Id;
-                        vti.Text = variableTemplate.Label;
-                        if (unit!=null) vti.Units = new List<string>() { unit.Abbreviation };
-                        vti.DataTypes = dataTypes;
-
-                        // meanings
-                        vti.Meanings = variableTemplate.Meanings.ToList().Select(m=>m.Name).ToList();
-                        vti.Constraints = variableTemplate.VariableConstraints.ToList().Select(m=>m.Name).ToList();
-
-                        vti.Group = "other";
-                        list.Add(vti);
+                        list.Add(_helper.ConvertTo(variableTemplate, "other"));
                     }
                 }
 

@@ -112,9 +112,9 @@ namespace BExIS.Modules.Rpm.UI.Helpers
                 if (meanings.Any())
                 {
                     // use only the meanings that are selectable and approved
-                    foreach (var item in meanings.Where(m=> (m.Selectable==true && m.Approved==true)))
+                    foreach (Meaning meaning in meanings.Where(m=> (m.Selectable==true && m.Approved==true)))
                     {
-                        list.Add(new MeaningItem(item.Id, item.Name,"", item.Constraints.Select(c=>c.Name).ToList()));
+                        list.Add(ConvertTo(meaning, meaningsManager));
                     }
                 }
 
@@ -141,38 +141,85 @@ namespace BExIS.Modules.Rpm.UI.Helpers
             }
         }
 
+        public List<MeaningEntryItem> ConvertTo(MeaningEntry entry, MeaningManager meaningManager)
+        {
+            List<MeaningEntryItem> items = new List<MeaningEntryItem>();
+
+            if (entry != null)
+            {
+                if (entry.MappedLinks.Any())
+                {
+                    foreach (var l in entry.MappedLinks)
+                    {
+                        string label = l.Name;
+                        if (l.Prefix != null) label = l.Prefix.Name + ":" + l.Name;
+
+                        items.Add(new MeaningEntryItem()
+                        {
+                            label = label,
+                            releation = entry.MappingRelation?.Name,
+                            link = meaningManager.getfullUri(l)
+                        });
+                    }
+                }
+            }
+
+            return items;
+        }
+
         public VariableTemplateItem ConvertTo(VariableTemplate variableTemplate, string group="")
         {
-            VariableTemplateItem item = new VariableTemplateItem();
-            item.Id = variableTemplate.Id;
-            item.Text = variableTemplate.Label;
-            item.Units = new List<string>() { variableTemplate.Unit.Abbreviation };
-            item.DataTypes = variableTemplate.Unit.AssociatedDataTypes.Select(x => x.Name).ToList();
-            item.Meanings = variableTemplate.Meanings.Select(x => x.Name).ToList();
-            item.Group = group;
+            using (var unitManager = new UnitManager()) // may not effective because this function will called a lot at once
+            {
+                VariableTemplateItem item = new VariableTemplateItem();
+                item.Id = variableTemplate.Id;
+                item.Text = variableTemplate.Label;
+                item.DataTypes = variableTemplate.Unit.AssociatedDataTypes.Select(x => x.Name).ToList();
+                item.Meanings = variableTemplate.Meanings.Select(x => x.Name).ToList();
+                item.Group = group;
 
-            if(variableTemplate.VariableConstraints.Any())
-                item.Constraints = variableTemplate.VariableConstraints.Select(x => x.Name).ToList();
+                if (variableTemplate.VariableConstraints.Any())
+                    item.Constraints = variableTemplate.VariableConstraints.Select(x => x.Name).ToList();
 
-            return item;
+                // set units also from dimensions
+                item.Units = new List<string>() { variableTemplate.Unit.Abbreviation }; // add unit
+                if (variableTemplate.Unit.Dimension != null) // if dimension exist add all units belong to this dimension
+                {
+                    var dimension = unitManager.DimensionRepo.Get(variableTemplate.Unit.Dimension.Id);
+                    dimension.Units.ToList().ForEach(u => item.Units.Add(u.Abbreviation));
+                    item.Units.Distinct();
+                }
+
+                return item;
+            }
 
         }
 
         public List<MeaningItem> ConvertTo(ICollection<Meaning> meanings)
         {
-            List<MeaningItem> list = new List<MeaningItem>();
-            meanings.ToList().ForEach(m => list.Add(ConvertTo(m)));
-
+            using (var meaningManager = new MeaningManager())
+            {
+                List<MeaningItem> list = new List<MeaningItem>();
+                meanings.ToList().ForEach(m => list.Add(ConvertTo(m, meaningManager)));
             return list;
+
+            }
 
         }
 
-        public MeaningItem ConvertTo(Meaning meaning)
+        public MeaningItem ConvertTo(Meaning meaning, MeaningManager meaningsManager)
         {
             MeaningItem item = new MeaningItem();
             item.Id = meaning.Id;
             item.Text = meaning.Name;
 
+            //links
+            List<MeaningEntryItem> links = new List<MeaningEntryItem>();
+            meaning.ExternalLinks.ToList().ForEach(l => links.AddRange(ConvertTo(l, meaningsManager)));
+            item.Links = links;
+            if (meaning.Constraints.Any())
+                item.Constraints = meaning.Constraints.Select(c => c.Name).ToList();
+ 
             return item;
 
         }

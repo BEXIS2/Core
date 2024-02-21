@@ -11,6 +11,7 @@ using System.Security.Policy;
 using Vaiona.Utils.Cfg;
 using System.Collections;
 using static System.Net.Mime.MediaTypeNames;
+using System.IO;
 
 namespace BExIS.Dlm.Services.Meanings
 {
@@ -173,9 +174,10 @@ namespace BExIS.Dlm.Services.Meanings
 
                     var externalLinksDictionary = externalLinks.Select(entry => new MeaningEntry
                     {
-                        MappingRelation = GetOrCreateExternalLink(entry.MappingRelation),
+                        MappingRelation = GetOrCreateExternalLink(entry?.MappingRelation),
                         MappedLinks = entry.MappedLinks.Select(value => GetOrCreateExternalLink(value)).ToList()
                     }).ToList();
+
                     externalLinks = externalLinksDictionary;
                     List<Meaning> related_meanings = new List<Meaning>();
                     if (meaning_ids != null)
@@ -485,7 +487,7 @@ namespace BExIS.Dlm.Services.Meanings
         }
         public List<ExternalLink> getPrefixes()
         {
-            return getExternalLinks().Where(p => p.Prefix == null).ToList<ExternalLink>();
+            return getExternalLinks().Where(p => p.Prefix == null && p.Type.Equals(ExternalLinkType.prefix)).ToList<ExternalLink>();
         }
         public string getPrefixfromUri(string uri)
         {
@@ -493,7 +495,11 @@ namespace BExIS.Dlm.Services.Meanings
         }
         public string getfullUri(ExternalLink externalLink)
         {
-            return externalLink.URI.Replace(externalLink.Prefix.Name, externalLink.Prefix.URI);
+            string url = externalLink.URI; ;
+            if (externalLink.Prefix != null)
+                url = Path.Combine(externalLink.Prefix.URI, externalLink.URI);
+
+            return url;
         }
         public string getFormattedLinkUri(ExternalLink externalLink)
         {
@@ -526,9 +532,10 @@ namespace BExIS.Dlm.Services.Meanings
         }
         ExternalLink GetOrCreateExternalLink(ExternalLink externalLink_)
         {
-            if (!string.IsNullOrEmpty(externalLink_.Name) && !string.IsNullOrEmpty(externalLink_.URI) && this.getExternalLink(externalLink_.URI) == null)
+            Contract.Requires(externalLink_ != null);
+            if (!string.IsNullOrEmpty(externalLink_?.Name) && !string.IsNullOrEmpty(externalLink_?.URI) && this.getExternalLink(externalLink_?.URI) == null)
                 return this.addExternalLink(externalLink_.URI, externalLink_.Name, externalLink_.Type, externalLink_.Prefix, externalLink_.prefixCategory);
-            else return this.getExternalLink(externalLink_.URI);
+            else return this.getExternalLink(externalLink_?.URI);
         }
         public ExternalLink GetOrCreateExternalLink(string id, string name, string uri, ExternalLinkType type, ExternalLink Prefix, PrefixCategory prefixCategory)
         {

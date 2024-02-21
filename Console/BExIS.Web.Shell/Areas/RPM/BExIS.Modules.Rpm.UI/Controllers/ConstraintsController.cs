@@ -173,26 +173,40 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                 using (ConstraintManager constraintManager = new ConstraintManager())
                 {
                     Constraint constraint = constraintManager.Constraints.Where(c => c.Id == Id).FirstOrDefault();
+                    constraint.Materialize();
+                    List<Variable> variables = constraint.VariableConstraints.ToList();
 
-                    using (DataStructureManager dataStructureManager = new DataStructureManager())
+                    if (variables != null && variables.Count > 0)
                     {
-                        List<StructuredDataStructure> dataStructures = dataStructureManager.StructuredDataStructureRepo.Get().Where(d => d.Variables.Where(v => v.VariableConstraints.Contains(constraint)).ToList().Count > 0).ToList();
-
-                        if (dataStructures != null && dataStructures.Count > 0)
+                        using (DataStructureManager dataStructureManager = new DataStructureManager())
                         {
-                            dataStructures.Distinct();
-                            foreach (StructuredDataStructure dataStructure in dataStructures)
+                            List<StructuredDataStructure> structuredDataStructures = dataStructureManager.StructuredDataStructureRepo.Get().ToList();
+                            foreach (Variable constraintVariable in variables)
                             {
-                                if (dataStructure.Datasets != null && dataStructure.Datasets.Count > 0)
+                                if (structuredDataStructures != null && structuredDataStructures.Count > 0)
                                 {
-                                    foreach (Dataset dataset in dataStructure.Datasets)
+                                    foreach(StructuredDataStructure structuredDataStructure in structuredDataStructures)
                                     {
-                                        datasetInfos.Add(new DatasetInfo() { Id = dataset.Id, Name = dataset.Versions.OrderBy(dv => dv.Id).Last().Title });
-
+                                        foreach(Variable structureVariable in structuredDataStructure.Variables)
+                                        {
+                                            if (structureVariable.Id == constraintVariable.Id)
+                                            {
+                                                if (structuredDataStructure.Datasets != null && structuredDataStructure.Datasets.Count > 0)
+                                                {
+                                                    foreach (Dataset dataset in structuredDataStructure.Datasets)
+                                                    {
+                                                        string Name = String.IsNullOrEmpty(dataset.Versions.OrderBy(dv => dv.Id).Last().Title) ? "no Title" : dataset.Versions.OrderBy(dv => dv.Id).Last().Title;
+                                                        datasetInfos.Add(new DatasetInfo() { Id = dataset.Id, Name = Name });
+                                                    }
+                                                    datasetInfos = datasetInfos.Distinct().ToList();
+                                                }
+                                                break;
+                                            }
+                                        }
                                     }
                                 }
-                                datasetInfos.Distinct();
                             }
+                            
                         }
                     }
                 }

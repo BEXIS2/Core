@@ -281,6 +281,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                         ResearchPlanId = researchPlanId,
                         ViewAccess = entityPermissionManager.HasEffectiveRight(HttpContext.User.Identity.Name, typeof(Dataset), id, RightType.Read),
                         GrantAccess = entityPermissionManager.HasEffectiveRight(HttpContext.User.Identity.Name, typeof(Dataset), id, RightType.Grant),
+                        HasEditRight = entityPermissionManager.HasEffectiveRight(HttpContext.User.Identity.Name, typeof(Dataset), id, RightType.Write),
                         DataStructureType = dataStructureType,
                         DownloadAccess = downloadAccess,
                         RequestExist = requestExist,
@@ -2048,7 +2049,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
 
                     long partyId = partyManager.Parties.Where(p => p.PartyType.Id.Equals(datasetPartyType.Id) && p.Name.Equals(datasetId.ToString())).FirstOrDefault().Id;
 
-                    var ownerPartyRelationshipType = partyRelationshipTypeManager.PartyRelationshipTypes.Where(pt => pt.Title.Equals(GeneralSettings.OwnerPartyRelationshipType)).FirstOrDefault();
+                    var ownerPartyRelationshipType = partyRelationshipTypeManager.PartyRelationshipTypes.Where(pt => pt.Title.Equals(ModuleManager.GetModuleSettings("bam").GetValueByKey("OwnerPartyRelationshipType").ToString())).FirstOrDefault();
                     if (ownerPartyRelationshipType == null) return false;
 
                     var ownerRelationships = partyManager.PartyRelationships.Where(p =>

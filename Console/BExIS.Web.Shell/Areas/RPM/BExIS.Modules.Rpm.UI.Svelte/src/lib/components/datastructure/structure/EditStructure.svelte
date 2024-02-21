@@ -24,7 +24,7 @@
 	}
 
 	function back() {
-		goTo('/rpm/datastructure');
+		goTo(document.referrer);
 	}
 </script>
 

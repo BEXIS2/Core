@@ -1,5 +1,5 @@
 ﻿@using BExIS.Web.Shell.Models
-@model BExIS.Web.Shell.Models.LoginViewModel
+@model BExIS.Web.Shell.Models.LdapLoginViewModel
 @{
     ViewBag.Title = "Log in";
 }
@@ -17,9 +17,10 @@
 <div class="row">
     <div class="col-md-8">
         <section id="loginForm">
-            @using (Html.BeginForm("Login", "Ldap", new { ReturnUrl = ViewBag.ReturnUrl }, FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
+            @using (Html.BeginForm("Login", "Ldap", new { Name = ViewBag.Name, ReturnUrl = ViewBag.ReturnUrl }, FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
             {
             @Html.AntiForgeryToken()
+            @Html.HiddenFor(m => m.Name)
             <h4>Use your local account to login</h4>
             <hr />
             @Html.ValidationSummary(true, "", new { @class = "text-danger" })

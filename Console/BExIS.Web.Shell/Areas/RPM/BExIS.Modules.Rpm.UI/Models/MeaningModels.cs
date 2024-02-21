@@ -47,10 +47,9 @@ namespace BExIS.Modules.Rpm.UI.Models
     {
         public long Id { get; set; }
         public string Name { get; set; }
-
+        public ListItem Prefix { get; set; }
         public string Uri { get; set; }
         public ListItem Type { get; set; }
-        public ListItem Prefix { get; set; }
         public PrefixCategoryListItem PrefixCategory { get; set; }
 
         public ExternalLinkModel()

@@ -23,49 +23,8 @@
 }
 <table>
     <tr>
-        @if (Model.UploadAccess)
-        {
-        <td style="width:50%;border-top: #9B9B9B solid thin; border-bottom: #9B9B9B solid thin; padding: 12pt 0 12pt 0; vertical-align: top;padding-left:20px">
-            <div id="upload_files">
-                <h3></h3>
-                <div class="push_Header stepper">
-                    <h3>Attach files to this dataset</h3>
-                </div>
-                <div class="push_Description stepper">
-                    <p>You can select one or multiple files. Please provide a short description for your selected file(s).</p>
-                    <p>
-                        Note:  Depending on your network connection the upload may take some time. Please stay patient.
-                    </p>
-                    <p>Maximum file size: @mbMax MB</p>
-                    <p>Maximum file name length: @maxFileNameLength </p>
-                </div>
 
-                @using (Html.BeginForm("ProcessSubmit", "Attachments", new { area = "Dcm", datasetId = datasetId },
-FormMethod.Post, new { id = "uploadForm", enctype = "multipart/form-data" }))
-                {
-                    <div style="display:inline-block;width:50%">
-                        <span style="font-weight:bold">Description:</span><br />
-                        <textarea style="max-width: 100%; min-width: 80%;" name="description" rows="4"></textarea>
-                    </div>
-                    <div style="display:inline-block;width:40%">
-                        <span style="font-weight:bold">Files:</span><br />
-                        @(Html.Telerik().Upload()
-                           .Name("attachments-upload")
-                           .Multiple(true)
-                           .ShowFileList(true)
-                           .ClientEvents(events => events
-                                   .OnSelect("Push_OnSelect")
-                                   .OnRemove("Push_OnRemove")
-                               ))  
-                    <br />
-                        <button id="push_submitBt" type="submit" value="Upload" class="bx-button function bx-disabled" disabled="disabled">Upload</button>
-                   </div>  
-                }
-            </div>
-
-        </td>
-        <td style="width: 20pt; border: none"></td> }
-        <td style="border-top: #9B9B9B solid thin; border-bottom: #9B9B9B solid thin; padding: 12pt 0 12pt 0;min-width:300px; vertical-align: top; padding-left: 20px;">
+        <td style=""min-width:300px; vertical-align: top; padding-left: 20px;">
             <div id="view_files">
                 <div id="FileList" class="bx-trunc-parent">
                     <h3>Files</h3>

@@ -100,6 +100,7 @@
 				}
 			},
 			prefixCategory: {
+				header:"Prefix category",
 				instructions: {
 					toStringFn: (pc: prefixCategoryType) => (pc != null ? pc.name : ''),
 					toSortableValueFn: (pc: prefixCategoryType) => (pc != null ? pc.name : ''),

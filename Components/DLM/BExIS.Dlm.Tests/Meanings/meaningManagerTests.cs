@@ -178,13 +178,9 @@ namespace BExIS.Dlm.Entities.Meanings.Tests
             ExternalLink charac = _meaningManager.getExternalLink("http://aquadiva.com/PH");
 
             // 1st mapping
-            MeaningEntry me1 = new MeaningEntry();
-            me1.MappingRelation = relation;
-            me1.MappedLinks = new List<ExternalLink> { ent, voc };
+            MeaningEntry me1 = new MeaningEntry(relation, new List<ExternalLink> { ent, voc });
             // 2nd mapping
-            MeaningEntry me2 = new MeaningEntry();
-            me2.MappingRelation = relation;
-            me2.MappedLinks = new List<ExternalLink> { ent, charac };
+            MeaningEntry me2 = new MeaningEntry(relation, new List<ExternalLink> { ent, charac });
 
             meaning1.ExternalLinks = new List<MeaningEntry>() { me1, me2 }; ;
             meaning1 = _meaningManager.editMeaning(meaning1);

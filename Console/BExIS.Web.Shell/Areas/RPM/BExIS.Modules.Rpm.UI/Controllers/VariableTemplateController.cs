@@ -70,6 +70,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                             variableTemplate.Unit,
                             variableTemplate.Description,
                             variableTemplate.DefaultValue,
+                            variableTemplate.FixedValue,
                             variableTemplate.Meanings,
                             variableTemplate.VariableConstraints,
                             variableTemplate.Approved);

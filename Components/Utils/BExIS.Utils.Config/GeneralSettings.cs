@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.Configuration;
 using System.IO;
 using System.Linq;
-using System.Runtime.CompilerServices;
+using System.Runtime;
 using Vaiona.IoC;
 using Vaiona.Utils.Cfg;
 
@@ -21,14 +21,58 @@ namespace BExIS.Utils.Config
     ///         <item>Some web.config items such as databse connection string and the IoC condif items are needed before this object is instantiated, thgose config items can not leave web.config.</item>
     ///     </list>
     /// </remarks>
-    public class GeneralSettings : Vaiona.Utils.Cfg.Settings
+    public class GeneralSettings : Settings
     {
-        // GeneralSettings.Get().GetValue("key");
-
-        public GeneralSettings() :
-            base("Shell",
-                Path.Combine(AppConfiguration.WorkspaceGeneralRoot, "General.Settings.json"))
+        public GeneralSettings() : base("Shell",Path.Combine(AppConfiguration.WorkspaceGeneralRoot, "General.Settings.json"))
         {
+        }
+
+        public string GetApplicationName()
+        {
+            try
+            {
+                return GetValueByKey("applicationName").ToString();
+            }
+            catch (Exception ex)
+            {
+                return "BEXIS2";
+            }
+        }
+
+        public JwtConfiguration GetJwtConfiguration()
+        {
+            try
+            {
+                return GetValueByKey<JwtConfiguration>("jwt");
+            }
+            catch (Exception ex)
+            {
+                return new JwtConfiguration();
+            }
+        }
+
+        public SmtpConfiguration GetSmtpConfiguration()
+        {
+            try
+            {
+                return GetValueByKey<SmtpConfiguration>("smtp");
+            }
+            catch (Exception ex)
+            {
+                return new SmtpConfiguration();
+            }
+        }
+
+        public List<LdapConfiguration> GetLdapConfigurations()
+        {
+            try
+            {
+                return GetValueByKey<List<LdapConfiguration>>("ldaps");
+            }
+            catch (Exception ex)
+            {
+                return new List<LdapConfiguration>();
+            }
         }
 
         public static string ApplicationInfo
@@ -89,6 +133,37 @@ namespace BExIS.Utils.Config
             }
         }
 
+        public static SmtpConfiguration SmtpConfiguration
+        {
+            get
+            {
+                return JsonConvert.DeserializeObject<SmtpConfiguration>(GetValueByKey("smtp").ToString());
+            }
+        }
+
+        public static List<LdapConfiguration> LdapConfigurations
+        {
+            get
+            {
+                try
+                {
+                    var ldapConfigurations = new List<LdapConfiguration>();
+                    List<Entry> ldaps = (List<Entry>)GetValueByKey("ldaps");
+
+                    foreach ( var ldap in ldaps )
+                    {
+                        ldapConfigurations.Add(JsonConvert.DeserializeObject<LdapConfiguration>(ldap.Value.ToString()));
+                    }
+
+                    return ldapConfigurations;
+                }
+                catch(Exception ex)
+                {
+                    return new List<LdapConfiguration>();
+                }
+            }
+        }
+
         public static string LandingPage
         {
             get
@@ -120,18 +195,6 @@ namespace BExIS.Utils.Config
                 try
                 {
                     return GetValueByKey("landingPageForUsersNoPermission").ToString();
-                }
-                catch { return (string.Empty); }
-            }
-        }
-
-        public static string OwnerPartyRelationshipType
-        {
-            get
-            {
-                try
-                {
-                    return GetValueByKey("OwnerPartyRelationshipType").ToString();
                 }
                 catch { return (string.Empty); }
             }

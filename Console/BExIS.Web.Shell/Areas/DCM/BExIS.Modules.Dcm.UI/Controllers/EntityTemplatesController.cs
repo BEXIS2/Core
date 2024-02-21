@@ -141,28 +141,32 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 using (var mappingManager = new MappingManager())
                 {
                     var source = mappingManager.LinkElementRepo.Get().Where(l => l.Type.Equals(LinkElementType.System)).FirstOrDefault();
-                    var target = mappingManager.LinkElementRepo.Get().Where(l => l.ElementId.Equals(metadataStructureId) && l.Type.Equals(LinkElementType.MetadataStructure)).FirstOrDefault();  
-                    var rootMapping = mappingManager.GetMapping(source, target);
+                    var target = mappingManager.LinkElementRepo.Get().Where(l => l.ElementId.Equals(metadataStructureId) && l.Type.Equals(LinkElementType.MetadataStructure)).FirstOrDefault();
+                    Mapping rootMapping = null;
+
+                    if (target != null && source != null)
+                        rootMapping = mappingManager.GetMapping(source, target);
+
+                    IEnumerable<string> sources = new List<string>();
                     if (rootMapping != null) // root mapping to system keys exist
                     {
                         var childMappings = mappingManager.GetChildMappingFromRoot(rootMapping.Id, 1);
-                        var sources = childMappings.Select(m => m.Source.Name);
-                       
+                        sources = childMappings.Select(m => m.Source.Name);
+                    }
 
-                        foreach (var key in Enum.GetValues(typeof(Key)))
+                    foreach (var key in Enum.GetValues(typeof(Key)))
+                    {
+                        var mapped = "mapped";
+                        if (!sources.Contains(key.ToString())) mapped = "unmapped";
+
+                        ListItem item = new ListItem()
                         {
-                            var mapped = "mapped";
-                            if (!sources.Contains(key.ToString())) mapped = "unmapped";
+                            Id = Convert.ToInt64(key),
+                            Text = key.ToString(),
+                            Group = mapped
+                        };
 
-                            ListItem item = new ListItem()
-                            {
-                                Id = Convert.ToInt64(key),
-                                Text = key.ToString(),
-                                Group = mapped
-                            };
-
-                            tmp.Add(item);
-                        }
+                        tmp.Add(item);
                     }
                 }
             }
@@ -200,7 +204,12 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 tmp.Add(hook.DisplayName);
             }
 
-            return Json(tmp, JsonRequestBehavior.AllowGet);
+            foreach (var hook in hookManager.GetHooksFor("dataset", "details", HookMode.view))
+            {
+                tmp.Add(hook.DisplayName);
+            }
+
+            return Json(tmp.Distinct(), JsonRequestBehavior.AllowGet);
         }
 
         [JsonNetFilter]

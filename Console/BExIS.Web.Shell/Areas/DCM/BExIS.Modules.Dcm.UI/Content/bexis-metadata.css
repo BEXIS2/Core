@@ -78,6 +78,17 @@ Green 05  #eff7f6
     width:auto;
 }
 
+.simpleParametersContainer {
+    padding: 10px;
+    background-color: var(--bg-color-level-5)
+}
+
+.simpleParametersContainer {
+    padding: 10px 10px 20px 10px;
+    border-bottom: var(--bg-color-level-2) 1px solid;
+}
+
+
 .simpleAttributesContainer
 {
     text-align:center;

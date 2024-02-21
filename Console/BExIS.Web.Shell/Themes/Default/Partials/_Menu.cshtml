@@ -51,7 +51,7 @@
                             <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">@User.Identity.GetUserName()<span class="caret"></span></a>
                             <ul class='dropdown-menu'>
                                 <li>@Html.ActionLink("Profile", "Edit", "PartyService", new { area = "bam" }, null)</li>
-                                <li>@Html.ActionLink("Token", "Create", "Tokens", new { area = "" }, null)</li>
+                                <li>@Html.ActionLink("Token", "GetToken", "Tokens", new { area = "" }, null)</li>
                                 <li><a href="@Url.Content("~/apihelp/index")" target="_blank">Api</a></li>
                                 <li><a href="javascript:document.getElementById('form_logoff').submit()">Log Off</a></li>
                             </ul>

@@ -3,7 +3,7 @@
 	import { latestFileUploadDate, latestDataDescriptionDate } from '../../routes/edit/stores';
 	import { onMount, createEventDispatcher } from 'svelte';
 
-	import TimeDuration from '$lib/components/utils/TimeDuration.svelte';
+
 	import Generate from '$lib/components/datadescription/Generate.svelte';
 	import Show from '$lib/components/datadescription/Show.svelte';
 	import { Spinner, ErrorMessage, positionType } from '@bexis2/bexis2-core-ui';
@@ -20,18 +20,18 @@
 	$: model;
 	$: loading = false;
 
-	$: $latestFileUploadDate, reloadByFileUpdate();
-	$: $latestDataDescriptionDate, reload();
 
 	const dispatch = createEventDispatcher();
 
 	onMount(async () => {
 		load();
+		latestFileUploadDate.subscribe(s=>{if(s>0){reloadByFileUpdate()}})
+		latestDataDescriptionDate.subscribe(s=>{if(s>0){reload()}})
 	});
 
 	async function load() {
 		model = await getHookStart(hook.start, id, version);
-
+	
 		dispatch('dateChanged', { lastModification: model.lastModification });
 	}
 

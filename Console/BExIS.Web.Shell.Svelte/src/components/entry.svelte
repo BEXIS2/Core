@@ -59,43 +59,66 @@
 
 <div class="pb-10">
 	{#if entry.options && entry.options.length >= 1}
-		<MultiSelect
-			id={entry.key}
-			title={entry.key}
-			source={entry.options}
-			bind:target={entry.value}
-			isMulti={false}
-		/>
+		<div id={entry.key} on:mouseover={() => helpStore.show(entry.key)}>
+			<MultiSelect
+				id={entry.key}
+				title={entry.key}
+				source={entry.options}
+				bind:target={entry.value}
+				isMulti={false}
+			/>
+		</div>
 	{:else if entry.type.toLowerCase() === 'string'}
-		<TextInput id={entry.key} placeholder="{entry.key}" label="{entry.title} (key: {entry.key})" bind:value={entry.value} on:input help={true} />
-	{:else if entry.type.toLowerCase().includes('int')}
-		<NumberInput id={entry.key} label="{entry.title} (key: {entry.key})" bind:value={entry.value} on:input help={true} />
-	{:else if entry.type.toLowerCase() === 'boolean'}
-		<SlideToggle active="bg-primary-500" id={entry.key} name="slider-label" size="sm" bind:checked={entry.value}
-			>{entry.title} (key: {entry.key})</SlideToggle>
-	{:else if entry.type.toLowerCase() === 'json'}
-		<CodeEditor 
-			title="{entry.title} (key: {entry.key})"
+		<TextInput
 			id={entry.key}
-			initialValue={initialJSONValue}
-			actions={false}
-			language="json"
-			toggle={false}
-			bind:value={JSONValue}
-			on:save={() => (entry.value = JSON.parse(JSONValue))}
+			placeholder={entry.key}
+			label="{entry.title} (key: {entry.key})"
+			bind:value={entry.value}
+			on:input
+			help={true}
 		/>
+	{:else if entry.type.toLowerCase().includes('int')}
+		<NumberInput
+			id={entry.key}
+			label="{entry.title} (key: {entry.key})"
+			bind:value={entry.value}
+			on:input
+			help={true}
+		/>
+	{:else if entry.type.toLowerCase() === 'boolean'}
+		<div id={entry.key} on:mouseover={() => helpStore.show(entry.key)}>
+			<SlideToggle active="bg-primary-500" name="slider-label" size="sm" bind:checked={entry.value}
+				>{entry.title} (key: {entry.key})</SlideToggle
+			>
+		</div>
+	{:else if entry.type.toLowerCase() === 'json'}
+		<div id={entry.key} on:mouseover={() => helpStore.show(entry.key)}>
+			<CodeEditor
+				title="{entry.title} (key: {entry.key})"
+				id={entry.key}
+				initialValue={initialJSONValue}
+				actions={false}
+				language="json"
+				toggle={false}
+				bind:value={JSONValue}
+				on:save={() => (entry.value = JSON.parse(JSONValue))}
+			/>
+		</div>
 	{:else if entry.type === 'EntryList'}
-		<div class="my-3" id={entry.key} on:mouseover={() => { helpStore.show(entry.key); }}>
+		<div class="my-3" id={entry.key} on:mouseover={() => helpStore.show(entry.key)}>
 			<span class="h3">{entry.title} (key: {entry.key})</span>
 			{#each Object.values(entry.value) as e, index}
 				<div class="flex card p-2">
 					<div class="grow">
-						<svelte:self entry={e} isChild={true}/>
+						<svelte:self entry={e} isChild={true} />
 					</div>
 					<div>
 						{#if Object.values(entry.value).length > 1}
-						<button class="btn variant-filled-error flex-none" type="button" on:click={() => removeItem(index)}
-							><Fa icon={faTrash} /></button>
+							<button
+								class="btn variant-filled-error flex-none"
+								type="button"
+								on:click={() => removeItem(index)}><Fa icon={faTrash} /></button
+							>
 						{/if}
 					</div>
 				</div>

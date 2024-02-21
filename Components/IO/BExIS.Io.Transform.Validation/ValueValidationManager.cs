@@ -69,6 +69,7 @@ namespace BExIS.IO.Transform.Validation
         public object CheckValue(string value, int row, ref List<Error> errors)
         {
             object temp = value;
+            errors = new List<Error>();
 
             if (this.NullOrOptionalCheck != null)
             {

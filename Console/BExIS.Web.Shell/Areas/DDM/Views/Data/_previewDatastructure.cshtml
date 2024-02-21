@@ -34,14 +34,9 @@
 @if (@Model.Item1 != null)
 {
 <div style="text-align:left">
-    @if (!String.IsNullOrEmpty(Model.Item3))
-    {
-    <div><h2 style="display:inline; margin-right:20px;"><a href="@Model.Item3" title="Edit data structure">@Model.Item1.Self.Name (@Model.Item1.Self.Id)</a></h2><a class="bx bx-grid-function bx-edit" style="margin-bottom:9px;" href="@Model.Item3" target="_blank" title="Edit data structure"> </a></div>
-    }
-    else
-    {
-        <h2>@Model.Item1.Self.Name (@Model.Item1.Self.Id)</h2>
-    }
+
+    <h2>@Model.Item1.Self.Name (@Model.Item1.Self.Id)</h2>
+    
     <p>@Model.Item1.Self.Description</p>
 </div>
     

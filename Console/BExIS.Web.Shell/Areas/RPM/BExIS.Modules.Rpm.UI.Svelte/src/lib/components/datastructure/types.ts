@@ -121,4 +121,12 @@ export interface templateListItemType extends listItemType {
 
 export interface meaningListItemType extends listItemType {
 	constraints: string[];
+	links:meaningEntryItemType[]
+}
+
+export interface meaningEntryItemType{
+	label: string;
+	prefix: string;
+	releation: string;
+	link: string;
 }

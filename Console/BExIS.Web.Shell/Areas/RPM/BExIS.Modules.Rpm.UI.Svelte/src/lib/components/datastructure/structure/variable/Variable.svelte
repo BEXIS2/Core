@@ -15,15 +15,14 @@
 
 	//stores
 
-	import {
-		unitStore,
-		dataTypeStore,
-		templateStore,
-		meaningsStore,
-		constraintsStore
-	} from '../../store';
+	import { unitStore, dataTypeStore, templateStore, meaningsStore, constraintsStore } from '../../store';
 
-	import { updateDisplayPattern, updateDatatypes, updateUnits, updateTemplates } from './helper';
+	import {
+		updateDisplayPattern,
+		updateDatatypes,
+		updateUnits,
+		updateTemplates
+	} from './helper';
 
 	import DataTypeDescription from './DataTypeDescription.svelte';
 	import Container from './Container.svelte';
@@ -32,6 +31,7 @@
 
 	import suite from './variable';
 	import ConstraintsDescription from './ConstraintsDescription.svelte';
+	import MeaningsDescription from './MeaningsDescription.svelte';
 
 	export let variable: VariableInstanceModel = new VariableInstanceModel();
 	$: variable;
@@ -61,22 +61,22 @@
 	export let isValid: boolean = false;
 	export let last: boolean = false;
 	export let expand: boolean;
-	export let blockDataRelevant: boolean;
-
+	export let blockDataRelevant:boolean;
+	
 	$: isValid;
 	// validation
 	let res = suite.get();
-
+	
 	let loaded = false;
-
+	
 	//displaypattern
 	let displayPattern: listItemType[];
 	$: displayPattern;
-
+	
 	const dispatch = createEventDispatcher();
-
-	let x: listItemType = { id: 0, text: '', group: '', description: '' };
-
+	
+	let x: listItemType = { id: 0, text: '', group: '', description:'' };
+	
 	onMount(() => {
 		// set suggestions
 		setList();
@@ -85,15 +85,17 @@
 		suggestedTemplates = variable.possibleTemplates;
 		// reset & reload validation
 		suite.reset();
-
+		
 		setTimeout(async () => {
+			
+	
 			updateLists();
-
-			//displayPattern = updateDisplayPattern(variable.dataType, true);
+			
+		 //displayPattern = updateDisplayPattern(variable.dataType, true);
 
 			// when type has change, reset value, but after copy do not reset
 			// thats why reset need to set
-
+		
 			if (displayPattern.length > 0) {
 				res = suite(variable, 'displayPattern');
 			}
@@ -112,10 +114,11 @@
 	});
 
 	afterUpdate(() => {
+
 		displayPattern = updateDisplayPattern(variable.dataType, false);
-		console.log('🚀 ~ file: Variable.svelte:119 ~ afterUpdate ~ variable:', variable);
-		res = suite(variable, '');
+		res = suite(variable,"");
 		setValidationState(res);
+
 	});
 
 	//change event: if input change check also validation only on the field
@@ -125,13 +128,15 @@
 		// otherwise the values are old
 		setTimeout(async () => {
 			res = suite(variable, e.target.id);
-			setValidationState(res);
+				setValidationState(res);
+
 		}, 100);
 	}
 
 	//change event: if select change check also validation only on the field
 	// *** is the id of the input component
 	function onSelectHandler(e, id) {
+
 		setTimeout(async () => {
 			res = suite(variable, id);
 
@@ -142,13 +147,17 @@
 			}
 
 			if (id == 'variableTemplate') {
-				variable.meanings = updateMeanings(variable, e.detail);
-				variable.constraints = updateConstraints(variable, e.detail?.constraints);
+				variable.meanings = updateMeanings(variable, e.detail)
+				variable.constraints = updateConstraints(variable,e.detail?.constraints)
+
+
 			}
 
 			if (id == 'meanings') {
-				var last = e.detail[e.detail.length - 1];
-				variable.constraints = updateConstraints(variable, last.constraints);
+				
+				var last = e.detail[e.detail.length-1]
+				variable.constraints = updateConstraints(variable,last.constraints)
+
 			}
 
 			setValidationState(res);
@@ -157,39 +166,20 @@
 		}, 100);
 	}
 
-	function setValidationState(res) {
-		isValid = res.isValid();
-		// dispatch this event to the parent to check the save button
-		dispatch('var-change');
-	}
-
-	function cutData(d) {
-		for (let index = 0; index < d.length; index++) {
-			let v = d[index];
-
-			if (v.length > 10) {
-				d[index] = v.slice(0, 10) + '...';
-			}
-		}
-
-		return d;
-	}
-
 	// use the store to reset the lists for the dropdowns
 	/// reset means mostly reset the groups
 	function setList() {
+
 		datatypes = $dataTypeStore.map((o) => ({ ...o })).sort(); // set datatypes
-
 		units = $unitStore.map((o) => ({ ...o })).sort(); // set units
-
 		variableTemplates = $templateStore.map((o) => ({ ...o })).sort();
-
 		meanings = $meaningsStore.map((o) => ({ ...o })).sort();
-
 		constraints = $constraintsStore.map((o) => ({ ...o })).sort();
+
 	}
 
 	function updateLists() {
+
 		//console.log("variable",variable);
 		datatypes = updateDatatypes(
 			variable.unit,
@@ -208,44 +198,63 @@
 		//console.log("updated units",units);
 		variableTemplates = updateTemplates(variable.unit, $templateStore, suggestedTemplates);
 		variableTemplates.sort();
+
 	}
 
-	function updateMeanings(
-		_variable: VariableInstanceModel,
-		_variableTemplate: templateListItemType
-	): listItemType[] {
-		if (_variableTemplate && _variableTemplate.meanings) {
-			if (_variable.meanings) {
-				return [
-					..._variable.meanings,
-					...$meaningsStore.filter((m) => _variableTemplate.meanings.includes(m.text))
-				];
-			} else {
-				return [...$meaningsStore.filter((m) => _variableTemplate.meanings.includes(m.text))];
+	function updateMeanings(_variable:VariableInstanceModel, _variableTemplate:templateListItemType):listItemType[]
+	{
+			if(_variableTemplate && _variableTemplate.meanings)
+			{
+					if(_variable.meanings)
+					{
+						return [..._variable.meanings,...$meaningsStore.filter(m=>_variableTemplate.meanings.includes(m.text))]
+					}
+					else
+					{
+						 return [...$meaningsStore.filter(m=>_variableTemplate.meanings.includes(m.text))]
+					}
+			}
+
+			return []
+	}
+
+	function updateConstraints(_variable:VariableInstanceModel, constraints:string[]):listItemType[]
+	{
+		if(constraints)
+		{
+				// get names of ids 
+			if(_variable.constraints)
+			{
+						return [..._variable.constraints,...$constraintsStore.filter(m=>constraints.includes(m.text))]
+					}
+					else
+					{
+						return [...$constraintsStore.filter(m=>constraints.includes(m.text))]
+					}
+			}
+
+			return []
+	}
+	
+	function setValidationState(res) {
+		isValid = res.isValid();
+		// dispatch this event to the parent to check the save button
+		dispatch('var-change');
+	}
+
+	function cutData(d) {
+		for (let index = 0; index < d.length; index++) {
+			let v = d[index];
+
+			if (v.length > 10) {
+				d[index] = v.slice(0, 10) + '...';
 			}
 		}
 
-		return [];
+		return d;
 	}
 
-	function updateConstraints(
-		_variable: VariableInstanceModel,
-		constraints: string[]
-	): listItemType[] {
-		if (constraints) {
-			// get names of ids
-			if (_variable.constraints) {
-				return [
-					..._variable.constraints,
-					...$constraintsStore.filter((m) => constraints.includes(m.text))
-				];
-			} else {
-				return [...$constraintsStore.filter((m) => constraints.includes(m.text))];
-			}
-		}
 
-		return [];
-	}
 </script>
 
 <div id="variable-{variable.id}-container" class="flex gap-5">
@@ -384,8 +393,7 @@
 								/>
 							</div>
 							<div slot="description">
-								show all information about the units in a table Nothing found? Make a new
-								suggestion.
+	
 							</div>
 						</Container>
 
@@ -448,7 +456,9 @@
 									on:change={(e) => onSelectHandler(e, 'meanings')}
 								/>
 							</div>
-							<div slot="description">...</div>
+							<div slot="description">
+								<MeaningsDescription bind:list={variable.meanings}/>
+							</div>
 						</Container>
 
 						<Container>

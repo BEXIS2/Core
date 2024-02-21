@@ -16,6 +16,7 @@
 	import { goTo } from '$services/BaseCaller';
 
 	import type { DataStructureCreationModel } from '../types';
+	import { helpStore } from '@bexis2/bexis2-core-ui';
 	export let model: DataStructureCreationModel;
 	$: model;
 
@@ -51,21 +52,26 @@
 	}
 
 	function back() {
-		dispatch('back');
+		goTo(document.referrer);
 	}
+
 </script>
 
 <div>
 	<div transition:fade class="flex">
 		<div class="grow">
-			<button title="back" class="btn variant-filled-warning" on:click={() => back()}
+			<button id="back" title="back" class="btn variant-filled-warning" 
+			on:mouseover={() => helpStore.show('back')}
+			on:click={() => back()}
 				><Fa icon={faArrowLeft} /></button
 			>
 		</div>
 		<div class="flex-none text-end">
 			<button
+			 id="save"
 				title="save"
 				class="btn variant-filled-primary text-xl"
+				on:mouseover={() => helpStore.show('save')}
 				on:click={onSaveHandler}
 				disabled={!areVariablesValid || !areAttributesValid}><Fa icon={faSave} /></button
 			>

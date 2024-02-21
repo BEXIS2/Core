@@ -1,7 +1,7 @@
 <script lang="ts">
-	import Fa from 'svelte-fa/src/fa.svelte';
 	import { faPen, faTrash } from '@fortawesome/free-solid-svg-icons';
 	import { helpStore } from '@bexis2/bexis2-core-ui';
+	import Fa from 'svelte-fa';
 
 	export let row: any;
 	export let dispatchFn: any;

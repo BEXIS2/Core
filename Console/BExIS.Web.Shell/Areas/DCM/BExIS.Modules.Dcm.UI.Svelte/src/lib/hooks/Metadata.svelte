@@ -1,7 +1,7 @@
 <script>
 	import { host } from '@bexis2/bexis2-core-ui';
 	import Fa from 'svelte-fa';
-	import { faPen } from '@fortawesome/free-solid-svg-icons';
+	import { faPen, faCopy } from '@fortawesome/free-solid-svg-icons';
 
 	export let id;
 	export let version;
@@ -21,39 +21,28 @@
 		return true; // every other status enable the hook
 	}
 
-	function clickEditMetadata() {
+	function editFn() {
 		window.open(url, '_blank')?.focus();
 	}
+
+	// function copyFn() {
+	// 	const copyurl = "/dcm/metadata/copy"+ '?id=' + id + '&version=' + version;
+	// 	window.open(copyurl, '_blank')?.focus();
+	// }
 
 	function clickEditVisibility() {}
 
 	function clickEditStatus() {}
+
+
 </script>
 
 <div class="flex-col space-y-1">
 	<div class="flex gap-3 justify-left">
-		<div class="flex-none w-20"><b>Metadata</b></div>
-		<button class="chip bg-secondary-500 text-white flex-none btn-sm" on:click={clickEditMetadata}
-			><Fa icon={faPen} /></button
-		>
-		<div><span>Last Modfied</span></div>
-	</div>
-	<div class="flex gap-3 justify-left">
-		<b class="flex-none w-20">Visibility</b>
-		<!--stats-->
-		<span class="self-center"> not implemented</span>
-		<!--stats-->
-		<button class="chip bg-secondary-500 text-white btn-sm flex-none" on:click={clickEditVisibility}
-			><Fa icon={faPen} /></button
-		>
-	</div>
-	<div class="flex gap-3 justify-left">
-		<b class="flex-none w-20">Status</b>
-		<!--stats-->
-		<span class="flex-none"> not implemented</span>
-		<!--stats-->
-		<button class="chip bg-secondary-500 text-white btn-sm flex-none" on:click={clickEditStatus}
-			><Fa icon={faPen} /></button
-		>
+		<button class="chip variant-filled-secondary flex-none" on:click={editFn}
+			><Fa icon={faPen} /></button>
+
+		<!-- <button class="chip variant-outline-secondary flex-none " on:click={copyFn}
+			><Fa icon={faCopy} /></button> -->
 	</div>
 </div>

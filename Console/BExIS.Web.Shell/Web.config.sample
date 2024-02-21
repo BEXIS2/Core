@@ -16,15 +16,13 @@
 		<!-- This is a new (13.09.2017) connection string with parameteres compatible with Npgsql 3.2.5. Javad. -->
 		<add name="ApplicationServices" connectionString="Server={SERVER};Port={PORT};Database={DATABASENAME};Userid={USER};Password={PASSWORD};Pooling=true;MinPoolSize=2;MaxPoolSize=100;ConnectionIdleLifetime=3600;" />
 	</connectionStrings>
-	<appSettings file="../Workspace/General/Configurations/Credentials.config">
-		<add key="JwtKey" value="35GadUCymdzSR6PY6SjLTpDWNS6snwZNrEvdCwfq" />
-		<add key="JwtIssuer" value="https://localhost:44345/" />
+	<appSettings>
 		<add key="ClientValidationEnabled" value="true" />
 		<add key="UnobtrusiveJavaScriptEnabled" value="true" />
 		<add key="UseSchemaInDatabaseGeneration" value="False" />
 		<add key="ThrowErrorWhenParialContentNotFound" value="False" />
 		<add key="ApplicationName" value="{APPLICATIONNAME}" />
-		<add key="ApplicationVersion" value="2.18.1" />
+		<add key="ApplicationVersion" value="3.0.0-beta" />
 		<add key="SessionWarningDelaySecond" value="30" />
 		<!-- Keep it as false, there are some test data in the database-->
 		<add key="CreateDatabase" value="false" />
@@ -68,12 +66,6 @@
 		<add key="IsExceptionLoggingEnable" value="true" />
 		<add key="microsoft.visualstudio.teamsystems.aspnetdevserver:/" value="1204;True;6700;1;-8587979243650517162" />
 		<add key="microsoft.visualstudio.teamsystems.backupinfo" value="1;web.config.backup" />
-		<!-- Example: PartyType1:PartyRelationshipTypeTitle1-PartyRelationshipTypeTitle2,PartyType2,PartyType3:PartyRelationshipTypeTitle1
-          Define the allow party type for account registeration and their relationship type. each party type could have zero or multi allowed relationship( they should be available in the database)
-          if the relationship type has one 'partytypepair' -> load the allowed target of this 'partytypepair'
-          if  the relationship type has more than one 'partytypepair' -> load the allowed target of the 'partytypepair' which has "partyrelationshiptypedefault==true" -->
-		<add key="AccountPartyTypes" value="personMember:organizationEmployment-projectMember-consortiaMember,personGuest" />
-		<add key="OwnerPartyRelationshipType" value="Owner" />
 		<!-- Allow to use the user email within the party person; change party email on changed user email -->
 		<add key="usePersonEmailAttributeName" value="false" />
 		<add key="PersonEmailAttributeName" value="Email" />

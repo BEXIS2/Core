@@ -6,8 +6,8 @@
 
 @{
     string id = Model.Id + "_" + Model.Parent.Id + "_" + Model.Number + "_" + Model.ParentModelNumber + "_" + Model.NumberOfSourceInPackage + "_" + Model.ParentStepId;
-    string idByXpath = ((string)ViewData["Xpath"]).Replace("//", "_").Replace('[', '_').Replace(']', '_') + Model.DisplayName + "_" + Model.NumberOfSourceInPackage;  // Replace special character by underscore
-    string xpath = ((string)ViewData["Xpath"]) + "//" + Model.DisplayName + "[1]//" + Model.MetadataAttributeName + "[" + Model.NumberOfSourceInPackage + "]";
+    string idByXpath = ((string)ViewData["Xpath"]).Replace("//", "_").Replace('[', '_').Replace(']', '_') + Model.DisplayName + "_" + Model.Number;  // Replace special character by underscore
+    string xpath = ((string)ViewData["Xpath"]) + "//" + Model.DisplayName + "[1]//" + Model.MetadataAttributeName + "[" + Model.Number + "]";
     string idInput = id + "_Input";
     string idAdd = id + "_Add";
     string idRemove = id + "_Remove";
@@ -73,6 +73,8 @@
     {
         autoCompleteType = "PartyCustomType";
     }
+
+    locked = Model.Locked;
 }
 
 @if (Model.Number > 1)
@@ -88,12 +90,14 @@
     if (!locked && Model.Locked)
     {
         locked = Model.Locked;
-        ViewData["locked"] = Model.Locked;
+        //ViewData["locked"] = Model.Locked;
 
     }
 
     lockedClass = "bx-disabled";
 }
+
+
 
 @if (ViewData.Keys.Contains("ShowOptional"))
 {
@@ -201,7 +205,6 @@
 
                                             OnLoad = "OnKeyUpTextInput(this)"
                                         })
-
                             }
                             else
                             {
