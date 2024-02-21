@@ -213,9 +213,14 @@ namespace BExIS.Modules.Rpm.UI.Helpers
             item.Id = meaning.Id;
             item.Text = meaning.Name;
 
+            meaning = meaningsManager.getMeaning(meaning.Id);
+
             //links
             List<MeaningEntryItem> links = new List<MeaningEntryItem>();
-            meaning.ExternalLinks.ToList().ForEach(l => links.AddRange(ConvertTo(l, meaningsManager)));
+            if (meaning.ExternalLinks.Any())
+            {
+                meaning.ExternalLinks.ToList().ForEach(l => links.AddRange(ConvertTo(l, meaningsManager)));
+            }
             item.Links = links;
             if (meaning.Constraints.Any())
                 item.Constraints = meaning.Constraints.Select(c => c.Name).ToList();

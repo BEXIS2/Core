@@ -629,14 +629,35 @@ namespace BExIS.Modules.Rpm.UI.Controllers
 
                     // get list of possible units
                     var unitInput = getValueFromMarkedRow(markerRows, model.Markers, "unit", (char)model.Delimeter, i, AsciiFileReaderInfo.GetTextMarker((TextMarker)model.TextMarker));
-                    strutcureAnalyzer.SuggestUnit(unitInput,var.Name, var.DataType.Text).ForEach(u => var.PossibleUnits.Add(new UnitItem(u.Id, u.Abbreviation,u.AssociatedDataTypes.Select(x => x.Name).ToList(), "detect")));
-                    var.Unit = var.PossibleUnits.FirstOrDefault();
+
+                    // here we need 2 workflows
+                    // 1. if unit is not empty -> start from unit
+                    // 2. if unit is empty start from template
+
+                    List<VariableTemplate> templates = new List<VariableTemplate>();
+
+                    if (!string.IsNullOrEmpty(unitInput))
+                    {
+                        strutcureAnalyzer.SuggestUnit(unitInput, var.Name, var.DataType.Text).ForEach(u => var.PossibleUnits.Add(new UnitItem(u.Id, u.Abbreviation, u.AssociatedDataTypes.Select(x => x.Name).ToList(), "detect")));
+                        var.Unit = var.PossibleUnits.FirstOrDefault();
+                        templates = strutcureAnalyzer.SuggestTemplate(var.Name, var.Unit.Id, var.DataType.Id);
+
+                    }
+                    else
+                    { 
+                        templates = strutcureAnalyzer.SuggestTemplate(var.Name, 0, var.DataType.Id);
+                        templates.Select(t => t.Unit).Distinct().ToList().ForEach(u => var.PossibleUnits.Add(new UnitItem(u.Id, u.Abbreviation, u.AssociatedDataTypes.Select(x => x.Name).ToList(), "detect")));
+                        var.Unit = var.PossibleUnits.FirstOrDefault();
+                    }
+
+
+
+                    // fallback if unit is null
                     if (var.Unit == null) // if suggestion return null then set to unit none
                     {
                         strutcureAnalyzer.SuggestUnit("none", var.Name, var.DataType.Text).ForEach(u => var.PossibleUnits.Add(new UnitItem(u.Id, u.Abbreviation, u.AssociatedDataTypes.Select(x => x.Name).ToList(), "detect")));
                         var.Unit = var.PossibleUnits.FirstOrDefault();
                     }
-
 
                     // get suggestes DisplayPattern / currently only for DateTime
                     if (var.SystemType.Equals(typeof(DateTime).Name))
@@ -647,11 +668,22 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                     }
 
                     // varaible template
-                    var templates = strutcureAnalyzer.SuggestTemplate(var.Name, var.Unit.Id, var.DataType.Id, 0.5);
-                        templates.ForEach(t => var.PossibleTemplates.Add(helper.ConvertTo(t, "detect")));
+                    templates.ForEach(t => var.PossibleTemplates.Add(helper.ConvertTo(t, "detect")));
 
                     if (var.PossibleTemplates.Any())
                         var.Template = var.PossibleTemplates.FirstOrDefault();
+
+                    // set meanings,constraints and description from template
+                    if (var.Template?.Id == 0) var.Template = null;
+                    if (var.Template != null)
+                    {
+                       
+
+                        var t = templates.Where(tx => tx.Id.Equals(var.Template.Id)).FirstOrDefault();
+                        var.Meanings = helper.ConvertTo(t.Meanings);
+                        var.Constraints = helper.ConvertTo(t.VariableConstraints);
+                        if (string.IsNullOrEmpty(var.Description)) var.Description = t.Description;
+                    }
 
                     model.Variables.Add(var);
                 }

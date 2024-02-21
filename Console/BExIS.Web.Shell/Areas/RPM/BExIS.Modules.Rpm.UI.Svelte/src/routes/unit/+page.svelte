@@ -53,7 +53,11 @@
 	}
 
 	function editUnit(type: any) {
+
 		unit = {...units.find((u) => u.id === type.id)!};
+		console.log("🚀 ~ editUnit ~ unit:", unit)
+
+
 		if (type.action == 'edit') {
 			showForm = true;
 		}

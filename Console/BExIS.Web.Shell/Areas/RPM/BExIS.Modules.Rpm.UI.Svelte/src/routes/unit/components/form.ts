@@ -35,9 +35,14 @@ const suite = create((data: dataType, fieldName) => {
 		enforce(data.unit.description).isNotBlank();
 	});
 
-	// test('description', 'description is to short, it must be larger then 10 chars', () => {
-	// 	enforce(data.unit.description).longerThan(10);
-	// });
+
+
+	test('test', 'measurementSystem is required', () => {
+		console.log("🚀 ~ test ~ data.unit.measurementSystem:", data.unit.measurementSystem)
+		enforce(data.unit.measurementSystem).isNotBlank();
+	});
+		
+
 
 	// test('datatype', 'at least one dataype is required', () => {
 	// 	console.log('datatype', 'check');

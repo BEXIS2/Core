@@ -86,6 +86,7 @@
 	}
 
 	async function submit() {
+		console.log("🚀 ~ submit ~ unit:", unit)
 		let result: UnitValidationResult = await apiCalls.EditUnit(unit);
 		let message: string;
 		if (result.validationResult.isValid != true) {
@@ -297,12 +298,12 @@
 					}}
 				>
 					<label for={unit.measurementSystem} class="text-sm">Measurement System</label>
-					<RadioGroup help={true}>
-						{#each measurementSystems as item}
+					<RadioGroup help={true} id="test">
+						{#each measurementSystems as item, i}
 							<RadioItem
 								bind:group={unit.measurementSystem}
 								name="measurementSystem"
-								id="measurementSystem"
+								id="measurementSystem+{i}"
 								value={item}>{item}</RadioItem
 							>
 						{/each}
