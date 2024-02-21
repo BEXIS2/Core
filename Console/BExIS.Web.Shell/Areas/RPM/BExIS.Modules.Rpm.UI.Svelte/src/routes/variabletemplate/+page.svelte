@@ -37,7 +37,7 @@
 	import {
 		getDataTypes,
 		getUnitsWithDataTypes,
-		getDisplayPattern,
+		getDisplayPattern
 	} from '$lib/components/datastructure/services';
 	import { getVariableTemplates, remove, getMeanings, getConstraints } from './services';
 
@@ -220,7 +220,7 @@
 		if (type.action == 'edit') {
 			variableTemplate = $variableTemplatesStore.find((u) => u.id === type.id)!;
 			showForm = true;
-			window.scrollTo({ top: 60, behavior: 'smooth' })
+			window.scrollTo({ top: 60, behavior: 'smooth' });
 		}
 		if (type.action == 'delete') {
 			const confirm: ModalSettings = {

@@ -1,9 +1,10 @@
-import { create, test, enforce, only } from 'vest';
+import { create, test, enforce, only, each } from 'vest';
 import type { UnitListItem } from '../models';
 
 type dataType = {
 	unit: UnitListItem;
 	units: UnitListItem[];
+	measurementSystems: string[];
 };
 
 const suite = create((data: dataType, fieldName) => {
@@ -15,8 +16,13 @@ const suite = create((data: dataType, fieldName) => {
 
 	test('name', 'name is not unique', () => {
 		return (
-			data.units.find((u) => u.name.toLowerCase().trim() === data.unit.name.toLowerCase().trim()) == null ||
-			data.units.filter((u) => u.name.toLowerCase().trim() === data.unit.name.toLowerCase().trim() && u.id != data.unit.id).length == 0
+			data.units.find((u) => u.name.toLowerCase().trim() === data.unit.name.toLowerCase().trim()) ==
+				null ||
+			data.units.filter(
+				(u) =>
+					u.name.toLowerCase().trim() === data.unit.name.toLowerCase().trim() &&
+					u.id != data.unit.id
+			).length == 0
 		);
 	});
 
@@ -27,7 +33,11 @@ const suite = create((data: dataType, fieldName) => {
 	test('abbreviation', 'abbreviation is not unique', () => {
 		return (
 			data.units.find((u) => u.abbreviation.trim() === data.unit.abbreviation.trim()) == null ||
-			data.units.filter((u) => u.abbreviation.toLowerCase().trim() === data.unit.abbreviation.toLowerCase().trim() && u.id != data.unit.id).length == 0
+			data.units.filter(
+				(u) =>
+					u.abbreviation.toLowerCase().trim() === data.unit.abbreviation.toLowerCase().trim() &&
+					u.id != data.unit.id
+			).length == 0
 		);
 	});
 
@@ -35,14 +45,23 @@ const suite = create((data: dataType, fieldName) => {
 		enforce(data.unit.description).isNotBlank();
 	});
 
-
-
-	test('test', 'measurementSystem is required', () => {
-		console.log("🚀 ~ test ~ data.unit.measurementSystem:", data.unit.measurementSystem)
-		enforce(data.unit.measurementSystem).isNotBlank();
+	each(data.measurementSystems, (measurementSystem) => {
+		test(measurementSystem, 'measurementSystem is required', () => {
+			console.log(
+				'(' +
+					data.measurementSystems.find((ms) => ms.trim() === data.unit.measurementSystem.trim()) !=
+					null + ')'
+			);
+			return (
+				data.measurementSystems.find((ms) => ms.trim() === data.unit.measurementSystem.trim()) !=
+				null
+			);
+		});
 	});
-		
 
+	// test('description', 'description is to short, it must be larger then 10 chars', () => {
+	// 	enforce(data.unit.description).longerThan(10);
+	// });
 
 	// test('datatype', 'at least one dataype is required', () => {
 	// 	console.log('datatype', 'check');

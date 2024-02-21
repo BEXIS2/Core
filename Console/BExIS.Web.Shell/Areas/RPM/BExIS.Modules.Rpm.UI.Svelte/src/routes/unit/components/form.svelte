@@ -58,13 +58,11 @@
 	onMount(async () => {
 		if (unit.id == 0) {
 			suite.reset();
-		}
-		else{
-			setTimeout(async () => {	
-				res = suite({ unit: unit, units: units }, "");
+		} else {
+			setTimeout(async () => {
+				res = suite({ unit: unit, units: units, measurementSystems: measurementSystems }, '');
 			}, 10);
 		}
-
 	});
 
 	async function load() {
@@ -81,12 +79,14 @@
 		// otherwise the values are old
 		setTimeout(async () => {
 			// check changed field
-			res = suite({ unit: unit, units: units }, e.target.id);
+			res = suite(
+				{ unit: unit, units: units, measurementSystems: measurementSystems },
+				e.target.id
+			);
 		}, 10);
 	}
 
 	async function submit() {
-		console.log("🚀 ~ submit ~ unit:", unit)
 		let result: UnitValidationResult = await apiCalls.EditUnit(unit);
 		let message: string;
 		if (result.validationResult.isValid != true) {
@@ -298,12 +298,20 @@
 					}}
 				>
 					<label for={unit.measurementSystem} class="text-sm">Measurement System</label>
-					<RadioGroup help={true} id="test">
-						{#each measurementSystems as item, i}
+					<RadioGroup help={true} id="measurementSystems">
+						{#each measurementSystems as item}
 							<RadioItem
+								on:change={() => {
+									setTimeout(async () => {
+										res = suite(
+											{ unit: unit, units: units, measurementSystems: measurementSystems },
+											measurementSystems
+										);
+									}, 10);
+								}}
 								bind:group={unit.measurementSystem}
-								name="measurementSystem"
-								id="measurementSystem+{i}"
+								name={item}
+								id={item}
 								value={item}>{item}</RadioItem
 							>
 						{/each}

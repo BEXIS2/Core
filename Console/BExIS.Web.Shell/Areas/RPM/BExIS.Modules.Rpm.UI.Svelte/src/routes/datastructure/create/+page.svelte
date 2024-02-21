@@ -105,8 +105,6 @@
 		// load display pattern onces for all edit types
 		const displayPattern = await getDisplayPattern();
 		displayPatternStore.set(displayPattern);
-
-
 	}
 
 	async function update(e) {
@@ -148,5 +146,5 @@
 		{/if}
 	{:catch error}
 		<ErrorMessage {error} />
-	{/await} 
+	{/await}
 </Page>
