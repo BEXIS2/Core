@@ -74,13 +74,11 @@ const suite = create((data = {}, fieldName) => {
 			});
 
 			test('unit', 'unit not match with the template', () => {
-				
-				
 				if (!isTemplateRequired && (!data.template || data.template.id == 0)) {
 					return true;
 				}
-				
-				console.log("🚀 ~ file: variable.ts:84 ~ test ~ data:", data)
+
+				console.log('🚀 ~ file: variable.ts:84 ~ test ~ data:', data);
 				if (data.template.units.includes(data.unit.text)) {
 					return true;
 				} else {

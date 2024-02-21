@@ -27,7 +27,7 @@ export interface DataStructureCreationModel {
 }
 
 export interface DataStructureEditModel {
-	id:number
+	id: number;
 	title: string;
 	description: string;
 	preview: string[];
@@ -76,7 +76,6 @@ class VariableModel {
 }
 
 export class VariableTemplateModel extends VariableModel {
-
 	public constructor() {
 		super();
 		this.meanings = [];
@@ -98,7 +97,7 @@ export class VariableInstanceModel extends VariableModel {
 		super();
 		this.meanings = [];
 		this.constraints = [];
-		this.missingValues = []
+		this.missingValues = [];
 		this.isOptional = false;
 		this.template = undefined;
 		this.isKey = false;

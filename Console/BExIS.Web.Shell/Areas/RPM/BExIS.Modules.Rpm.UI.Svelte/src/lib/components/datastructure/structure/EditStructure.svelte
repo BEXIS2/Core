@@ -14,14 +14,13 @@
 
 	import type { DataStructureEditModel } from '../types';
 	export let model: DataStructureEditModel;
-	export let dataExist:boolean = false;
+	export let dataExist: boolean = false;
 	$: model;
 
 	async function onSaveHandler() {
 		const res = await save(model);
 		console.log('save', res);
 		goTo('/rpm/datastructure');
-		
 	}
 
 	function back() {

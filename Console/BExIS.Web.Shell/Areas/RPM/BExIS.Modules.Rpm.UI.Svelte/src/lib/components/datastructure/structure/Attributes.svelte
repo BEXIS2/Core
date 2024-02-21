@@ -1,9 +1,9 @@
 <script lang="ts">
 	import { TextInput, TextArea } from '@bexis2/bexis2-core-ui';
 	import { onMount } from 'svelte';
-	import type {DataStructureModel} from '../types';
+	import type { DataStructureModel } from '../types';
 
-	export let model:DataStructureModel;
+	export let model: DataStructureModel;
 	export let valid = false;
 
 	import suite from './attributes';
@@ -13,13 +13,11 @@
 
 	onMount(() => {
 		suite.reset(); // reset tests
-		if(model.id && model.title==="")
-		{
-			model.title = ""+model.id; // set default title
+		if (model.id && model.title === '') {
+			model.title = '' + model.id; // set default title
 		}
-		res = suite(model, ""); // run validation
-		valid = res.isValid(); // set result 
-
+		res = suite(model, ''); // run validation
+		valid = res.isValid(); // set result
 	});
 
 	//change event: if input change check also validation only on the field

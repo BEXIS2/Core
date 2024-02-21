@@ -10,9 +10,7 @@
 		notificationStore,
 		notificationType,
 		TablePlaceholder,
-
 		type helpItemType
-
 	} from '@bexis2/bexis2-core-ui';
 	import * as apiCalls from './services/apiCalls';
 	import Form from './components/form.svelte';
@@ -58,7 +56,7 @@
 			type: '',
 			negated: false,
 			inUse: false,
-			variableIDs: [],
+			variableIDs: []
 		};
 	}
 
@@ -70,7 +68,7 @@
 	}
 
 	function editConstraint(type: any) {
-		constraint = {...constraints.find((c) => c.id === type.id)!};
+		constraint = { ...constraints.find((c) => c.id === type.id)! };
 		if (type.action == 'edit') {
 			showForm = true;
 		}
@@ -135,8 +133,7 @@
 				<div class="text-right">
 					{#if !showForm}
 						<!-- svelte-ignore a11y-mouse-events-have-key-events -->
-						<button							
-
+						<button
 							class="btn variant-filled-secondary shadow-md h-9 w-16"
 							title="Create new Constraint"
 							id="create"
@@ -145,7 +142,7 @@
 							}}
 							on:click={() => toggleForm()}><Fa icon={faPlus} /></button
 						>
-					{:else if (constraint.creationDate && constraint.lastModified) && (constraint.creationDate != '' && constraint.lastModified != '')}
+					{:else if constraint.creationDate && constraint.lastModified && constraint.creationDate != '' && constraint.lastModified != ''}
 						<div class="text-sm">
 							<p>Created: {constraint.creationDate}</p>
 							<p>Last modified: {constraint.lastModified}</p>
@@ -175,7 +172,7 @@
 								exclude: true
 							},
 							formalDescription: {
-								header: 'Formal Description',
+								header: 'Formal Description'
 							},
 							negated: {
 								disableFiltering: true,
@@ -196,7 +193,7 @@
 							lastModified: {
 								disableFiltering: true,
 								exclude: true
-							},
+							}
 						}
 					}}
 				/>

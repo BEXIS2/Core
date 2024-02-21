@@ -5,15 +5,11 @@ const suite = create((data: RangeConstraintListItem, fieldName) => {
 	only(fieldName);
 
 	test('lowerbound', 'lowerbound is greater then upperbound', () => {
-		return (
-			data.lowerbound <= data.upperbound
-		);
+		return data.lowerbound <= data.upperbound;
 	});
 
 	test('upperbound', 'upperbound is less then lowerbound', () => {
-		return (
-			data.upperbound >= data.lowerbound
-		);
+		return data.upperbound >= data.lowerbound;
 	});
 });
 

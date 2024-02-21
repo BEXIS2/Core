@@ -7,26 +7,23 @@
 	export let row: externalLinkType;
 	export let dispatchFn: any;
 
-
-	let enableLink=false;
-	let url = "";
-	if(row.uri !=""){
+	let enableLink = false;
+	let url = '';
+	if (row.uri != '') {
 		url = row.uri; // set url
 		enableLink = true;
 
-		if (row.prefix)// if prefix exist, add prefix to url
-		{
-			 url = ""+row.prefix.url+row.uri;
-		} 
-
+		if (row.prefix) {
+			// if prefix exist, add prefix to url
+			url = '' + row.prefix.url + row.uri;
+		}
 	}
-
 </script>
 
 <tableOption>
 	<div class="w-18">
-			<!-- svelte-ignore a11y-mouse-events-have-key-events -->
-			<button
+		<!-- svelte-ignore a11y-mouse-events-have-key-events -->
+		<button
 			type="button"
 			class="chip variant-filled-primary shadow-md"
 			title="Link, {row.name}"
@@ -36,7 +33,7 @@
 			}}
 			on:click|preventDefault={() =>
 				dispatchFn({
-					type: { action: 'link',url: url }
+					type: { action: 'link', url: url }
 				})}
 		>
 			<Fa icon={faLink} />
@@ -57,7 +54,7 @@
 		>
 			<Fa icon={faPen} />
 		</button>
-		
+
 		<!-- svelte-ignore a11y-mouse-events-have-key-events -->
 		<button
 			type="button"
@@ -74,6 +71,5 @@
 		>
 			<Fa icon={faTrash} /></button
 		>
-
 	</div>
 </tableOption>

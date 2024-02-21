@@ -9,9 +9,8 @@ import { Api } from '@bexis2/bexis2-core-ui';
 export const getDataStructures = async () => {
 	try {
 		const response = await Api.get('/rpm/DataStructure/DataStructures');
-		console.log("responce",response.data ,Date.now()/1000);
+		console.log('responce', response.data, Date.now() / 1000);
 		return response.data;
-
 	} catch (error) {
 		console.error(error);
 	}
@@ -19,7 +18,7 @@ export const getDataStructures = async () => {
 
 export const get = async (id) => {
 	try {
-		const response = await Api.get('/rpm/DataStructure/get?id='+id);
+		const response = await Api.get('/rpm/DataStructure/get?id=' + id);
 		return response.data;
 	} catch (error) {
 		console.error(error);
@@ -29,8 +28,8 @@ export const get = async (id) => {
 /****************/
 /* Create*/
 /****************/
-export const load = async (file,entityId,version) => {
-	console.log(file,entityId,version);
+export const load = async (file, entityId, version) => {
+	console.log(file, entityId, version);
 	try {
 		const response = await Api.get(
 			'/rpm/DataStructure/load?file=' + file + '&&entityId=' + entityId + '&&version=' + version
@@ -77,7 +76,6 @@ export const generate = async (data) => {
 	}
 };
 
-
 export const empty = async () => {
 	try {
 		const response = await Api.get('/rpm/DataStructure/empty');
@@ -89,9 +87,9 @@ export const empty = async () => {
 
 export const copy = async (id) => {
 	try {
-		const response = await Api.get('/rpm/DataStructure/copy?id='+id);
+		const response = await Api.get('/rpm/DataStructure/copy?id=' + id);
 
-		console.log("🚀 ~ file: services.js:95 ~ copy ~ response.data:", response.data)
+		console.log('🚀 ~ file: services.js:95 ~ copy ~ response.data:', response.data);
 		return response.data;
 	} catch (error) {
 		console.error(error);
@@ -100,7 +98,7 @@ export const copy = async (id) => {
 
 export const remove = async (id) => {
 	try {
-		const response = await Api.post('/rpm/DataStructure/delete',{id});
+		const response = await Api.post('/rpm/DataStructure/delete', { id });
 		return response.data;
 	} catch (error) {
 		console.error(error);
@@ -171,7 +169,6 @@ export const getVariableTemplates = async () => {
 	}
 };
 
-
 export const getMeanings = async () => {
 	try {
 		const response = await Api.get('/rpm/DataStructure/getMeanings');
@@ -179,7 +176,6 @@ export const getMeanings = async () => {
 	} catch (error) {
 		console.error(error);
 		throw error;
-	
 	}
 };
 
@@ -192,4 +188,3 @@ export const getConstraints = async () => {
 		throw error;
 	}
 };
-

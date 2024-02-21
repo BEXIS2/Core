@@ -11,7 +11,11 @@
 	} from '$lib/components/datastructure/services';
 
 	import type { DataStructureEditModel } from '$lib/components/datastructure/types';
-	import { displayPatternStore, structureStore,isTemplateRequiredStore  } from '$lib/components/datastructure/store';
+	import {
+		displayPatternStore,
+		structureStore,
+		isTemplateRequiredStore
+	} from '$lib/components/datastructure/store';
 	import { pageContentLayoutType } from '@bexis2/bexis2-core-ui';
 
 	// load attributes from div
@@ -22,26 +26,29 @@
 	$: model;
 
 	let init: boolean = true;
-	let dataExist:boolean = false;
+	let dataExist: boolean = false;
 
 	async function start() {
 		// get data from parent
 		container = document.getElementById('datastructure');
 		datastructureId = Number(container?.getAttribute('structure'));
-		dataExist = (container?.getAttribute('dataExist')?.toLocaleLowerCase() === 'true');
-		console.log("🚀 ~ file: +page.svelte:32 ~ start ~ container?.getAttribute('dataExist'):", container?.getAttribute('dataExist'))
+		dataExist = container?.getAttribute('dataExist')?.toLocaleLowerCase() === 'true';
+		console.log(
+			"🚀 ~ file: +page.svelte:32 ~ start ~ container?.getAttribute('dataExist'):",
+			container?.getAttribute('dataExist')
+		);
 
-		console.log("🚀 ~ file: +page.svelte:32 ~ start ~ dataExist:", dataExist)
+		console.log('🚀 ~ file: +page.svelte:32 ~ start ~ dataExist:', dataExist);
 
 		// get isTemplateRequired from settings and add it to store
 		// is used by validation
-		const isTemplateRequired= container?.getAttribute('isTemplateRequired') == 'true';
+		const isTemplateRequired = container?.getAttribute('isTemplateRequired') == 'true';
 		isTemplateRequiredStore.set(isTemplateRequired);
 
-		console.log('edit structure',datastructureId);
+		console.log('edit structure', datastructureId);
 
-			// copy structure
-			model = await get(datastructureId);
+		// copy structure
+		model = await get(datastructureId);
 
 		// load sturctures for validation against existings
 		const structures = await getStructures();
@@ -54,7 +61,6 @@
 		// console.log('model', model);
 	}
 
-	
 	function back() {
 		init = false;
 	}
@@ -70,7 +76,7 @@
 		<Spinner label="the structure is loading" />
 	{:then}
 		{#if model}
-				<Structure {model} {dataExist} on:back={back} />
+			<Structure {model} {dataExist} on:back={back} />
 		{/if}
 	{:catch error}
 		<ErrorMessage {error} />

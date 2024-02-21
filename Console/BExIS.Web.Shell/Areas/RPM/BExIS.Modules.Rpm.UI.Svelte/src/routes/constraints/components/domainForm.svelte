@@ -26,21 +26,18 @@
 		// otherwise the values are old
 		setTimeout(async () => {
 			// check changed field
-			res = suite(domainConstraint , e);
+			res = suite(domainConstraint, e);
 		}, 10);
 	}
 
 	onMount(async () => {
 		if (domainConstraint.id == 0) {
 			suite.reset();
-		}
-		else{
-			setTimeout(async () => {	
-				res = suite(domainConstraint, "");
+		} else {
+			setTimeout(async () => {
+				res = suite(domainConstraint, '');
 			}, 10);
 		}
-		
-
 	});
 
 	const domainItemsTableStore = writable<string[]>([]);
@@ -50,7 +47,7 @@
 		let dis: string[] = [];
 		let lines = domain.split('\n');
 		lines.forEach(function (value) {
-				dis.push(value);
+			dis.push(value);
 		});
 		return dis;
 	}
@@ -59,10 +56,12 @@
 {#if domainConstraint}
 	<div class="grid grid-cols-3 gap-5 h-80" in:slide out:slide>
 		<!-- svelte-ignore a11y-mouse-events-have-key-events -->
-		<div class="pb-3"
-		on:mouseover={() => {
-			helpStore.show('domain');
-		}}>
+		<div
+			class="pb-3"
+			on:mouseover={() => {
+				helpStore.show('domain');
+			}}
+		>
 			<CodeEditor
 				id="domain"
 				initialValue={domainConstraint.domain}
@@ -85,9 +84,12 @@
 		<div class="pb-3 h-80">
 			<div id="itemstable" class="table-container h-80">
 				<!-- svelte-ignore a11y-mouse-events-have-key-events -->
-				<table class="table w-full table-compact bg-tertiary-200 h-80" on:mouseover={() => {
-					helpStore.show('domainList');
-				}}>
+				<table
+					class="table w-full table-compact bg-tertiary-200 h-80"
+					on:mouseover={() => {
+						helpStore.show('domainList');
+					}}
+				>
 					<thead>
 						<tr class="bg-primary-300">
 							<th class="!p-2">Domain List</th>
