@@ -22,6 +22,7 @@ using BExIS.Dlm.Entities.Data;
 using BExIS.Dlm.Services.Data;
 using System.Web.Http.Results;
 
+
 namespace BExIS.Modules.Rpm.UI.Controllers
 {
     public class ConstraintsController : Controller
@@ -495,6 +496,35 @@ namespace BExIS.Modules.Rpm.UI.Controllers
 
             ValidationResult result = ConstraintValidation(constraints.Cast<Constraint>().ToList(), (EditConstraintModel)constaint);
             return result;
+        }
+
+        [JsonNetFilter]
+        [HttpPost]
+        public JsonResult GetStruturedDatasetsByUserPermission(long Id)
+        {
+            List<DatasetInfo> datasetInfos = new List<DatasetInfo>();
+
+            using (DataStructureManager dataStructureManager = new DataStructureManager())
+            {
+                List<long> dataStructuresIds = dataStructureManager.StructuredDataStructureRepo.Get().Select( sds => sds.Id).ToList();
+
+                using (DatasetManager datasetManager = new DatasetManager())
+                {
+                    List<Dataset> datasets = new List<Dataset>();
+                    datasets = datasetManager.DatasetRepo.Get().Where(ds => dataStructuresIds.Contains(ds.DataStructure.Id)).ToList();
+                    foreach (Dataset ds in datasets)
+                    {
+                        DatasetInfo dsi = new DatasetInfo()
+                        {
+                            Id = ds.Id,
+                            Name = String.IsNullOrEmpty(ds.Versions.OrderBy(dv => dv.Id).Last().Title) ? "no Title" : ds.Versions.OrderBy(dv => dv.Id).Last().Title,
+                            
+                        };
+                        datasetInfos.Add(dsi);
+                    }
+                }
+            }
+            return Json(datasetInfos, JsonRequestBehavior.AllowGet);
         }
     }
 }
