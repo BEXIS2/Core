@@ -22,6 +22,7 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using System.Text;
 using System.Web.Http;
 
 namespace BExIS.Modules.Dim.UI.Controllers
@@ -367,7 +368,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
 
                             var response = Request.CreateResponse();
 
-                            using (StreamReader sr = new StreamReader(apifilePath))
+                            using (StreamReader sr = new StreamReader(apifilePath, Encoding.Default, true))
                             {
                                 response.Content = new StringContent(sr.ReadToEnd());
                                 //response.Content = new ObjectContent(typeof(DatasetModel), model, new DatasetModelCsvFormatter(model.DataTable.TableName));

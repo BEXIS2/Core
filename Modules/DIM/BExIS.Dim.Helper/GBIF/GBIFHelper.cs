@@ -64,7 +64,7 @@ namespace BExIS.Dim.Helpers.GBIF
                 DWTerms dwterms = new DWTerms(); ;
 
                 // load dc terms
-                using (StreamReader r = new StreamReader(dwtermsFilePath))
+                using (StreamReader r = new StreamReader(dwtermsFilePath, Encoding.Default, true))
                 {
                     string json = r.ReadToEnd();
                     dwterms = JsonConvert.DeserializeObject<DWTerms>(json);
