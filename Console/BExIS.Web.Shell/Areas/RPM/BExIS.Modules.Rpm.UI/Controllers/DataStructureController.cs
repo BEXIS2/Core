@@ -342,7 +342,8 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                         missingValues = helper.ConvertTo(model.MissingValues);
                     }
 
-
+                    long varTempId = variable.Template != null? variable.Template.Id:0;
+      
                     // generate variables
                     var result = variableManager.CreateVariable(
                         variable.Name,
@@ -352,7 +353,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                         variable.IsOptional,
                         variable.IsKey,
                         orderNo,
-                        variable.Template.Id,
+                        varTempId,
                         variable.Description,
                         "",
                         "",
@@ -636,14 +637,20 @@ namespace BExIS.Modules.Rpm.UI.Controllers
 
                     List<VariableTemplate> templates = new List<VariableTemplate>();
 
-                    if (!string.IsNullOrEmpty(unitInput))
+                    if (!string.IsNullOrEmpty(unitInput)) // has unit input
                     {
                         strutcureAnalyzer.SuggestUnit(unitInput, var.Name, var.DataType.Text).ForEach(u => var.PossibleUnits.Add(new UnitItem(u.Id, u.Abbreviation, u.AssociatedDataTypes.Select(x => x.Name).ToList(), "detect")));
                         var.Unit = var.PossibleUnits.FirstOrDefault();
-                        templates = strutcureAnalyzer.SuggestTemplate(var.Name, var.Unit.Id, var.DataType.Id);
+                        if (var.Unit != null) templates = strutcureAnalyzer.SuggestTemplate(var.Name, var.Unit.Id, var.DataType.Id); // unit exist
+                        else // unit not exist
+                        {
+                            templates = strutcureAnalyzer.SuggestTemplate(var.Name, 0, var.DataType.Id);
+                            templates.Select(t => t.Unit).Distinct().ToList().ForEach(u => var.PossibleUnits.Add(new UnitItem(u.Id, u.Abbreviation, u.AssociatedDataTypes.Select(x => x.Name).ToList(), "detect")));
+                            var.Unit = var.PossibleUnits.FirstOrDefault();
+                        }
 
                     }
-                    else
+                    else // no unit input
                     { 
                         templates = strutcureAnalyzer.SuggestTemplate(var.Name, 0, var.DataType.Id);
                         templates.Select(t => t.Unit).Distinct().ToList().ForEach(u => var.PossibleUnits.Add(new UnitItem(u.Id, u.Abbreviation, u.AssociatedDataTypes.Select(x => x.Name).ToList(), "detect")));
