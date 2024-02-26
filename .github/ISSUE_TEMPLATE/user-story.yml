@@ -19,7 +19,6 @@ body:
     - label: "I searched for a similar feature request and didn't find a suitable one."
       required: true
 - type: textarea
-    id: user-story-description
     attributes:
       label: User story description?
       description: Please describe the user story in detail here.
