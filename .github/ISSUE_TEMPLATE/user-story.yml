@@ -24,10 +24,9 @@ body:
       A user story should comply with the following criteria
 - type: markdown
   attributes:
-    value: "**Independent** - Requirements should be as independent of each other as possible, so that they can be implemented in the correct order"
-- type: markdown
-  attributes:
-    value: "**Negotiable** - Requirements should be open to discussion regarding implementation."
+    value: | 
+      **Independent** - Requirements should be as independent of each other as possible, so that they can be implemented in the correct order.
+      **Negotiable** - Requirements should be open to discussion regarding implementation.
 - type: textarea
   attributes:
     label: User story description?
