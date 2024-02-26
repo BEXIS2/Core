@@ -53,6 +53,46 @@
       "description": "...",
       "type": "EntryList",
       "options": []
+    },
+    {
+      "key": "minToAnalyse",
+      "title": "File Analyze: Minimum row number",
+      "value": 100,
+      "description": "Min number of rows to analyze structure.",
+      "type": "Int32",
+      "options": []
+    },
+    {
+      "key": "maxToAnalyse",
+      "title": "File Analyze: Maximum row number",
+      "value": 10000,
+      "description": "Max number of rows to analyze structure.",
+      "type": "Int32",
+      "options": []
+    },
+    {
+      "key": "precentageToAnalyse",
+      "title": "File Analyze: Percentage of rows",
+      "value": 50,
+      "description": "Percentage of rows to analyze structure.",
+      "type": "Int32",
+      "options": []
+    },
+    {
+      "key": "similarityThreshold",
+      "title": "Similarity Threshold",
+      "value": "0.6",
+      "description": "During the analysis of a file to create a data structure, templates and units are checked against the input using algorithms. the threshold specifies the minimum value that must be reached for the objects to be marked as suggestions.",
+      "type": "String",
+      "options": []
+    },
+    {
+      "key": "setByTemplate",
+      "title": "Template Support",
+      "value": true,
+      "description": "if the template support is activated, then empty unit & datatype fields with information from the template are set when the data structure is created.",
+      "type": "Boolean",
+      "options": []
     }
   ]
 }

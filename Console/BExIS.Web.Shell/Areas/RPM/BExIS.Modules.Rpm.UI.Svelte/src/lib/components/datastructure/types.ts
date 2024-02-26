@@ -52,8 +52,8 @@ class VariableModel {
 	name: string;
 	description: string;
 	systemType: string;
-	dataType: listItemType | undefined;
-	unit: unitListItemType | undefined;
+	dataType: listItemType | undefined | "";
+	unit: unitListItemType | undefined | "";
 	missingValues: missingValueType[];
 	meanings: listItemType[];
 	constraints: listItemType[];
@@ -113,6 +113,7 @@ export interface unitListItemType extends listItemType {
 }
 
 export interface templateListItemType extends listItemType {
+	description:string;
 	dataTypes: string[];
 	units: string[];
 	meanings: string[];

@@ -177,6 +177,7 @@ namespace BExIS.Modules.Rpm.UI.Helpers
                 item.DataTypes = variableTemplate.Unit.AssociatedDataTypes.Select(x => x.Name).ToList();
                 item.Meanings = variableTemplate.Meanings.Select(x => x.Name).ToList();
                 item.Group = group;
+                item.Description = variableTemplate.Description;
 
                 if (variableTemplate.VariableConstraints.Any())
                     item.Constraints = variableTemplate.VariableConstraints.Select(x => x.Name).ToList();

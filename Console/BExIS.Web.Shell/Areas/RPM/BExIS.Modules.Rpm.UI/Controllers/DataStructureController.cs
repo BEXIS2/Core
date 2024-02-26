@@ -554,6 +554,10 @@ namespace BExIS.Modules.Rpm.UI.Controllers
             if (model.Markers == null || !model.Markers.Any()) throw new ArgumentNullException(nameof(model));
             if (model.File == null) throw new ArgumentNullException(nameof(model.File));
 
+            // get similarity Threshold from settings
+            var settings = ModuleManager.GetModuleSettings("Rpm");
+            double similarityThreshold = Convert.ToDouble(settings.GetValueByKey("similarityThreshold"));
+
             string path = "";
             if (model.EntityId==0 ) path = Path.Combine(AppConfiguration.DataPath, "Temp", BExISAuthorizeHelper.GetAuthorizedUserName(this.HttpContext), model.File);
             else path = Path.Combine(AppConfiguration.DataPath, "Datasets", "" + model.EntityId, "temp", model.File);
@@ -639,12 +643,12 @@ namespace BExIS.Modules.Rpm.UI.Controllers
 
                     if (!string.IsNullOrEmpty(unitInput)) // has unit input
                     {
-                        strutcureAnalyzer.SuggestUnit(unitInput, var.Name, var.DataType.Text).ForEach(u => var.PossibleUnits.Add(new UnitItem(u.Id, u.Abbreviation, u.AssociatedDataTypes.Select(x => x.Name).ToList(), "detect")));
+                        strutcureAnalyzer.SuggestUnit(unitInput, var.Name, var.DataType.Text, similarityThreshold).ForEach(u => var.PossibleUnits.Add(new UnitItem(u.Id, u.Abbreviation, u.AssociatedDataTypes.Select(x => x.Name).ToList(), "detect")));
                         var.Unit = var.PossibleUnits.FirstOrDefault();
                         if (var.Unit != null) templates = strutcureAnalyzer.SuggestTemplate(var.Name, var.Unit.Id, var.DataType.Id); // unit exist
                         else // unit not exist
                         {
-                            templates = strutcureAnalyzer.SuggestTemplate(var.Name, 0, var.DataType.Id);
+                            templates = strutcureAnalyzer.SuggestTemplate(var.Name, 0, var.DataType.Id, similarityThreshold);
                             templates.Select(t => t.Unit).Distinct().ToList().ForEach(u => var.PossibleUnits.Add(new UnitItem(u.Id, u.Abbreviation, u.AssociatedDataTypes.Select(x => x.Name).ToList(), "detect")));
                             var.Unit = var.PossibleUnits.FirstOrDefault();
                         }
@@ -652,7 +656,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                     }
                     else // no unit input
                     { 
-                        templates = strutcureAnalyzer.SuggestTemplate(var.Name, 0, var.DataType.Id);
+                        templates = strutcureAnalyzer.SuggestTemplate(var.Name, 0, var.DataType.Id, similarityThreshold);
                         templates.Select(t => t.Unit).Distinct().ToList().ForEach(u => var.PossibleUnits.Add(new UnitItem(u.Id, u.Abbreviation, u.AssociatedDataTypes.Select(x => x.Name).ToList(), "detect")));
                         var.Unit = var.PossibleUnits.FirstOrDefault();
                     }
@@ -662,7 +666,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                     // fallback if unit is null
                     if (var.Unit == null) // if suggestion return null then set to unit none
                     {
-                        strutcureAnalyzer.SuggestUnit("none", var.Name, var.DataType.Text).ForEach(u => var.PossibleUnits.Add(new UnitItem(u.Id, u.Abbreviation, u.AssociatedDataTypes.Select(x => x.Name).ToList(), "detect")));
+                        strutcureAnalyzer.SuggestUnit("none", var.Name, var.DataType.Text,1).ForEach(u => var.PossibleUnits.Add(new UnitItem(u.Id, u.Abbreviation, u.AssociatedDataTypes.Select(x => x.Name).ToList(), "detect")));
                         var.Unit = var.PossibleUnits.FirstOrDefault();
                     }
 
@@ -1032,7 +1036,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
         /// <returns></returns>
         private Dictionary<int,Type> suggestSystemTypes(string file, TextSeperator delimeter, DecimalCharacter decimalCharacter, List<string> missingValues,int datastart)
         {
-            var settings = ModuleManager.GetModuleSettings("Dcm");
+            var settings = ModuleManager.GetModuleSettings("Rpm");
             int min = Convert.ToInt32(settings.GetValueByKey("minToAnalyse"));
             int max = Convert.ToInt32(settings.GetValueByKey("maxToAnalyse"));
             int percentage = Convert.ToInt32(settings.GetValueByKey("precentageToAnalyse"));
