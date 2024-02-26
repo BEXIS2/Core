@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { onMount, afterUpdate, createEventDispatcher } from 'svelte';
+	import { get } from 'svelte/store';
 
 	// UI Components
 	import { TextInput, TextArea, MultiSelect } from '@bexis2/bexis2-core-ui';
@@ -15,7 +16,7 @@
 
 	//stores
 
-	import { unitStore, dataTypeStore, templateStore, meaningsStore, constraintsStore } from '../../store';
+	import { unitStore, dataTypeStore, templateStore, meaningsStore, constraintsStore, setByTemplateStore } from '../../store';
 
 	import {
 		updateDisplayPattern,
@@ -74,6 +75,7 @@
 	$: displayPattern;
 	
 	const dispatch = createEventDispatcher();
+	const setByTemplate = get(setByTemplateStore);
 	
 	let x: listItemType = { id: 0, text: '', group: '', description:'' };
 	
@@ -149,27 +151,30 @@
 			console.log(id,e.detail,variable);
 			if (id == 'variableTemplate') {
 
-
-				if(variable.dataType == undefined || variable.dataType == "")
+				if(setByTemplate) // if true, update unit & datatype based on settings
 				{
-						variable.dataType = updateDataType(e.detail);
-				}
+						if(variable.dataType == undefined || variable.dataType == "")
+						{
+								variable.dataType = updateDataType(e.detail);
+						}
 
-				if(variable.unit == undefined || variable.unit == "")
-				{
-					console.log("🚀 ~ onChange ~ e.detail:", e.detail)
-					variable.unit = updateUnit(e.detail);
-					console.log("🚀 ~ e.detail ~ variable.unit:", variable.unit)
-				}
+						if(variable.unit == undefined || variable.unit == "")
+						{
+							console.log("🚀 ~ onChange ~ e.detail:", e.detail)
+							variable.unit = updateUnit(e.detail);
+							console.log("🚀 ~ e.detail ~ variable.unit:", variable.unit)
+						}
 
-				if(variable.description == undefined || variable.description == "" )
-				{
-					variable.description = e.detail.description
+						if(variable.description == undefined || variable.description == "" )
+						{
+							variable.description = e.detail.description
+						}
 				}
 
 				variable.meanings = updateMeanings(variable, e.detail)
 				variable.constraints = updateConstraints(variable,e.detail?.constraints)
 			}
+		
 
 			if (id == 'meanings') {
 				

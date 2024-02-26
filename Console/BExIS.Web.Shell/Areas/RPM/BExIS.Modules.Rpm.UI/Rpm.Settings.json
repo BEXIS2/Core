@@ -80,10 +80,10 @@
     },
     {
       "key": "similarityThreshold",
-      "title": "Similarity Threshold",
-      "value": "0.6",
-      "description": "During the analysis of a file to create a data structure, templates and units are checked against the input using algorithms. the threshold specifies the minimum value that must be reached for the objects to be marked as suggestions.",
-      "type": "String",
+      "title": "Similarity Threshold (0-100%)",
+      "value": "60",
+      "description": "During the analysis of a file to create a data structure, templates and units are checked against the input using algorithms. the threshold specifies the minimum value that must be reached for the objects to be marked as suggestions. Set 0-100%",
+      "type": "Int32",
       "options": []
     },
     {

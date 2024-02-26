@@ -132,6 +132,9 @@ namespace BExIS.Modules.Rpm.UI.Controllers
             bool isMeaningRequired = (bool)ModuleManager.GetModuleSettings("RPM").GetValueByKey("isMeaningRequired");
             ViewData["isMeaningRequired"] = isMeaningRequired;
 
+            bool setByTemplate = (bool)ModuleManager.GetModuleSettings("RPM").GetValueByKey("setByTemplate");
+            ViewData["setByTemplate"] = setByTemplate;
+
             return View("Create");
         }
 
@@ -150,6 +153,9 @@ namespace BExIS.Modules.Rpm.UI.Controllers
 
             bool isMeaningRequired = (bool)ModuleManager.GetModuleSettings("RPM").GetValueByKey("isMeaningRequired");
             ViewData["isMeaningRequired"] = isMeaningRequired;
+
+            bool setByTemplate = (bool)ModuleManager.GetModuleSettings("RPM").GetValueByKey("setByTemplate");
+            ViewData["setByTemplate"] = setByTemplate;
 
             ViewData["dataExist"] = structureHelper.InUseAndDataExist(structureId);
             
@@ -556,7 +562,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
 
             // get similarity Threshold from settings
             var settings = ModuleManager.GetModuleSettings("Rpm");
-            double similarityThreshold = Convert.ToDouble(settings.GetValueByKey("similarityThreshold"));
+            double similarityThreshold = Convert.ToDouble(settings.GetValueByKey("similarityThreshold"))/100;
 
             string path = "";
             if (model.EntityId==0 ) path = Path.Combine(AppConfiguration.DataPath, "Temp", BExISAuthorizeHelper.GetAuthorizedUserName(this.HttpContext), model.File);

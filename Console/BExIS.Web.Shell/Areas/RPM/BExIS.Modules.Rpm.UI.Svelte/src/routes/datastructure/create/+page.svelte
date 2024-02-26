@@ -21,7 +21,8 @@
 		displayPatternStore,
 		structureStore,
 		isTemplateRequiredStore,
-		isMeaningRequiredStore
+		isMeaningRequiredStore,
+		setByTemplateStore
 	} from '$lib/components/datastructure/store';
 	import { pageContentLayoutType } from '@bexis2/bexis2-core-ui';
 
@@ -68,13 +69,15 @@
 		const isTemplateRequired = container?.getAttribute('isTemplateRequired')?.toLocaleLowerCase()=="true"?true:false;
 		isTemplateRequiredStore.set(isTemplateRequired);
 
-		// get isTemplateRequired from settings and add it to store
+		// get isMeaningRequired from settings and add it to store
 		// is used by validation
 		const isMeaningRequired = container?.getAttribute('isMeaningRequired')?.toLocaleLowerCase()=="true"?true:false;
-		console.log("🚀 ~ file: +page.svelte:57 ~ start ~ isMeaningRequired:", isMeaningRequired)
 		isMeaningRequiredStore.set(isMeaningRequired);
-
-		console.log('start structure suggestion', entityId, version, file, datastructureId);
+		
+		// get setByTemplate from settings and add it to store
+		// is used by createion of variables
+		const setByTemplate = container?.getAttribute('setByTemplate')?.toLocaleLowerCase()=="true"?true:false;
+		setByTemplateStore.set(setByTemplate);
 
 		// 2 Usecases,
 		// 1. generate from file, selection needed -> load file
