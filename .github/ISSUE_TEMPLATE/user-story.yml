@@ -1,5 +1,5 @@
 name: 📄 User Story
-description: You discovered something that does not work as desired/expected? Please report that bug!
+description: Use the user story to describe the desired functionality of a system from the user's point of view.
 labels: 'Type: User Story'
 projects: [BEXIS2/8]
 assignees: 
@@ -10,14 +10,8 @@ body:
 - type: markdown
   attributes:
     value: |
-      Thanks ❤️ for taking the time to fill out this user story request form!
-- type: checkboxes
-  attributes:
-    label: "Is there an existing feature request for this?"
-    description: "Please check the existing issues first, to see if a similar feature request already exists ([Core/issues](https://github.com/BEXIS2/Core/issues?q=is%3Aissue))."
-    options:
-    - label: "I searched for a similar feature request and didn't find a suitable one."
-      required: true
+      ## A user story is a tool for describing the desired functionality of a system from the user's perspective ##
+
 - type: markdown
   attributes:
     value: |
@@ -35,16 +29,23 @@ body:
   attributes:
     label: User story
     description: Please describe the user story in detail here.
-    placeholder: Tell us what you see!
+    placeholder: |
+      - As a (role) I want (functionality) to achieve (benefit).
+      - In order to (receive benefit) as a (role), I can (goal/desire).
+      - As (user role), I can (what) so that (why).
+      - As (who) (when) (where), I (want) because (why).
+      - As (persona), I want (what) so that (why).
   validations:
     required: true
 - type: textarea
   attributes:
     label: Acceptance criterias
-    description: Please enter your acceptance criterias here.
+    description: Acceptance criteria should be formulated clearly, unambiguously and simply. They serve as a benchmark against which the completion of user stories is measured.
     placeholder: |
-      - [ ] a
-      - [ ] b
-      - [ ] c
+      As a visitor to an online store, I would like to collect various items in a shopping cart in order to buy them in one process and receive them via delivery service.
+      - [ ] If the visitor presses the "Add to shopping cart" button in the online store, the number of items in their shopping cart should increase by the selected product quantity.
+      - [ ] If the online store visitor adds an item to the shopping cart that is already there, the number of items should increase accordingly and the same item should not be added a second time.
+      - [ ]  Visitors to the online store can only place an order if they have filled in all mandatory fields (name, address, e-mail, telephone number, payment method)
+    value: ""
   validations:
     required: true
