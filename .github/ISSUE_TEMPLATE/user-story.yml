@@ -47,6 +47,6 @@ body:
       - [ ] a
       - [ ] b
       - [ ] c
-    value: ""
+    value: "..."
   validations:
     required: true
