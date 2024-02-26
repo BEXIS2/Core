@@ -1,0 +1,28 @@
+name: :sunrise_over_mountains: Epic
+description: Major goal which includes subtasks
+labels: 'Type: Epic'
+projects: [BEXIS2/8]
+assignees: 
+  - sventhiel
+  - geofranzi
+  - DavidBlaa
+body:
+- type: markdown
+  attributes:
+    value: |
+      Thanks ❤️ for taking the time to fill out this user story request form!
+- type: checkboxes
+  attributes:
+    label: "Is there an existing epic request for this?"
+    description: "Please check the existing issues first, to see if a similar epic request already exists ([Core/issues](https://github.com/BEXIS2/Core/issues?q=is%3Aissue))."
+    options:
+    - label: "I searched for a similar epic request and didn't find a suitable one."
+      required: true
+- type: textarea
+  attributes:
+    label: Description?
+    description: Please describe the epic request in detail here.
+    placeholder: Tell us what you see!
+    value: "A bug happened!"
+  validations:
+    required: true
