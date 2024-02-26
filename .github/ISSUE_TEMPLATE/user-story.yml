@@ -46,6 +46,5 @@ body:
       - [ ] If the visitor presses the "Add to shopping cart" button in the online store, the number of items in their shopping cart should increase by the selected product quantity.
       - [ ] If the online store visitor adds an item to the shopping cart that is already there, the number of items should increase accordingly and the same item should not be added a second time.
       - [ ]  Visitors to the online store can only place an order if they have filled in all mandatory fields (name, address, e-mail, telephone number, payment method)
-    value: ""
   validations:
     required: true
