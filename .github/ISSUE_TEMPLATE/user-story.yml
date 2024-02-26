@@ -10,7 +10,7 @@ body:
 - type: markdown
   attributes:
     value: |
-      ## A user story is a tool for describing the desired functionality of a system from the user's perspective ##
+      **A user story is a tool for describing the desired functionality of a system from the user's perspective**
 
 - type: markdown
   attributes:
@@ -33,8 +33,6 @@ body:
       - As a (role) I want (functionality) to achieve (benefit).
       - In order to (receive benefit) as a (role), I can (goal/desire).
       - As (user role), I can (what) so that (why).
-      - As (who) (when) (where), I (want) because (why).
-      - As (persona), I want (what) so that (why).
   validations:
     required: true
 - type: textarea
@@ -42,9 +40,7 @@ body:
     label: Acceptance criterias
     description: Acceptance criteria should be formulated clearly, unambiguously and simply. They serve as a benchmark against which the completion of user stories is measured.
     placeholder: |
-      As a visitor to an online store, I would like to collect various items in a shopping cart in order to buy them in one process and receive them via delivery service.
       - [ ] If the visitor presses the "Add to shopping cart" button in the online store, the number of items in their shopping cart should increase by the selected product quantity.
       - [ ] If the online store visitor adds an item to the shopping cart that is already there, the number of items should increase accordingly and the same item should not be added a second time.
-      - [ ]  Visitors to the online store can only place an order if they have filled in all mandatory fields (name, address, e-mail, telephone number, payment method)
   validations:
     required: true
