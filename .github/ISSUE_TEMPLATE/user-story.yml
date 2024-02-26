@@ -21,15 +21,17 @@ body:
 - type: markdown
   attributes:
     value: |
-      Thanks ❤️ for taking the time to fill out this user story request form!
+      A user story should comply with the following criteria
 - type: markdown
   attributes:
     label: "Independent"
     description: "Requirements should be as independent of each other as possible, so that they can be implemented in the correct order"
+    value: ""
 - type: markdown
   attributes:
     label: "Negotiable"
     description: "Requirements should be open to discussion regarding implementation."
+    value: ""
 - type: textarea
   attributes:
     label: User story description?
