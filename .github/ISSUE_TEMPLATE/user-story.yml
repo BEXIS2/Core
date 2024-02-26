@@ -36,7 +36,6 @@ body:
     label: User story
     description: Please describe the user story in detail here.
     placeholder: Tell us what you see!
-    value: "Please enter the user story here!"
   validations:
     required: true
 - type: textarea
@@ -47,6 +46,5 @@ body:
       - [ ] a
       - [ ] b
       - [ ] c
-    value: "..."
   validations:
     required: true
