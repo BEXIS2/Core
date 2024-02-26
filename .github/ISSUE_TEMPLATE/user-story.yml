@@ -27,11 +27,26 @@ body:
     value: | 
       **Independent** - Requirements should be as independent of each other as possible, so that they can be implemented in the correct order.
       **Negotiable** - Requirements should be open to discussion regarding implementation.
+      **Valuable** - Requirements should always generate (self-contained) added value for the community
+      **Estimable** - Every requirement must be appreciated. If the team is unable to provide an estimate, it should be discussed again or refined
+      **Small** - The size of the requirement should be defined in such a way that it can be implemented in a sprint. 
+      **Testable** - A good requirement contains acceptance criteria from the user's point of view and can be tested by the product owner/stakeholder.
 - type: textarea
   attributes:
-    label: User story description?
+    label: User story
     description: Please describe the user story in detail here.
     placeholder: Tell us what you see!
-    value: "A bug happened!"
+    value: "Please enter the user story here!"
+  validations:
+    required: true
+- type: textarea
+  attributes:
+    label: Acceptance criterias
+    description: Please enter your acceptance criterias here.
+    placeholder: |
+      - [ ] a
+      - [ ] b
+      - [ ] c
+    value: ""
   validations:
     required: true
