@@ -10,11 +10,6 @@ body:
 - type: markdown
   attributes:
     value: |
-      **A user story is a tool for describing the desired functionality of a system from the user's perspective**
-
-- type: markdown
-  attributes:
-    value: |
       A user story should comply with the following criteria
 - type: markdown
   attributes:
