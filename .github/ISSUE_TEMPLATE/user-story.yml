@@ -33,9 +33,9 @@ body:
 - type: textarea
   attributes:
     label: Acceptance criterias
-    description: Acceptance criteria should be formulated clearly, unambiguously and simply. They serve as a benchmark against which the completion of user stories is measured.
+    description: Acceptance criteria are specific conditions that a software product or feature must fulfill in order to meet customer requirements and needs.
     placeholder: |
-      - [ ] If the visitor presses the "Add to shopping cart" button in the online store, the number of items in their shopping cart should increase by the selected product quantity.
-      - [ ] If the online store visitor adds an item to the shopping cart that is already there, the number of items should increase accordingly and the same item should not be added a second time.
+      - [ ] checklist
+      - descripe a Szenario
   validations:
     required: true
