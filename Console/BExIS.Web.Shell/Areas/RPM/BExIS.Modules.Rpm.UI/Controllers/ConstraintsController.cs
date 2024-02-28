@@ -21,7 +21,11 @@ using Telerik.Web.Mvc.Extensions;
 using BExIS.Dlm.Entities.Data;
 using BExIS.Dlm.Services.Data;
 using System.Web.Http.Results;
-
+using BExIS.Security.Services.Authorization;
+using BExIS.Security.Entities.Subjects;
+using BExIS.Security.Services.Subjects;
+using BExIS.Security.Services.Objects;
+using BExIS.Security.Entities.Objects;
 
 namespace BExIS.Modules.Rpm.UI.Controllers
 {
@@ -499,28 +503,59 @@ namespace BExIS.Modules.Rpm.UI.Controllers
         }
 
         [JsonNetFilter]
-        [HttpPost]
-        public JsonResult GetStruturedDatasetsByUserPermission(long Id)
+        [HttpGet]
+        public JsonResult GetStruturedDatasetsByUserPermission()
         {
+            string username = null;
+            User user = null;
+            int rights = 0;
+            Entity entity = null;
             List<DatasetInfo> datasetInfos = new List<DatasetInfo>();
+            List<Dataset> datasets = new List<Dataset>();
 
-            using (DataStructureManager dataStructureManager = new DataStructureManager())
+            using (UserManager userManager = new UserManager())
             {
-                List<long> dataStructuresIds = dataStructureManager.StructuredDataStructureRepo.Get().Select( sds => sds.Id).ToList();
-
-                using (DatasetManager datasetManager = new DatasetManager())
+                try
                 {
-                    List<Dataset> datasets = new List<Dataset>();
-                    datasets = datasetManager.DatasetRepo.Get().Where(ds => dataStructuresIds.Contains(ds.DataStructure.Id)).ToList();
-                    foreach (Dataset ds in datasets)
+                    username = HttpContext.User.Identity.Name;
+                    user = userManager.FindByNameAsync(username).Result;
+                }
+                catch
+                {
+                    user = null;
+                }
+            }
+
+            if (user != null)
+            {
+                using (DataStructureManager dataStructureManager = new DataStructureManager())
+                {
+                    List<long> dataStructuresIds = dataStructureManager.StructuredDataStructureRepo.Get().Select(sds => sds.Id).ToList();
+
+                    using (DatasetManager datasetManager = new DatasetManager())
                     {
-                        DatasetInfo dsi = new DatasetInfo()
+                        datasets = datasetManager.DatasetRepo.Get().Where(ds => dataStructuresIds.Contains(ds.DataStructure.Id)).ToList();
+
+                        if (entity != null)
                         {
-                            Id = ds.Id,
-                            Name = String.IsNullOrEmpty(ds.Versions.OrderBy(dv => dv.Id).Last().Title) ? "no Title" : ds.Versions.OrderBy(dv => dv.Id).Last().Title,
-                            
-                        };
-                        datasetInfos.Add(dsi);
+                            using (EntityPermissionManager entityPermissionManager = new EntityPermissionManager())
+                            {
+                                foreach (Dataset ds in datasets)
+                                {
+                                    rights = entityPermissionManager.GetEffectiveRights(user?.Id, ds.EntityTemplate.EntityType.Id, ds.Id);
+                                    if (rights > 0)
+                                    {
+                                        DatasetInfo dsi = new DatasetInfo()
+                                        {
+                                            Id = ds.Id,
+                                            Name = String.IsNullOrEmpty(ds.Versions.OrderBy(dv => dv.Id).Last().Title) ? "no Title" : ds.Versions.OrderBy(dv => dv.Id).Last().Title,
+                                            Description = String.IsNullOrEmpty(ds.Versions.OrderBy(dv => dv.Id).Last().Description) ? "no Description" : ds.Versions.OrderBy(dv => dv.Id).Last().Description,
+                                        };
+                                    datasetInfos.Add(dsi);
+                                    }
+                                }
+                            }
+                        }
                     }
                 }
             }

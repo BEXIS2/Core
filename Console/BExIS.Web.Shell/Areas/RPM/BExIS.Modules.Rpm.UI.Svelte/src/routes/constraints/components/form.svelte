@@ -51,6 +51,7 @@
 	let warning: string = 'Changing the Contstrait may cause inconsistencies in Datasets.';
 
 	onMount(async () => {
+		await apiCalls.GetStruturedDatasetsByUserPermission();
 		ct = await apiCalls.GetConstraintTypes();
 		if (constraint.id == 0) {
 			suite.reset();

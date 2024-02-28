@@ -247,11 +247,13 @@ namespace BExIS.Modules.Rpm.UI.Models
     {
         public long Id { get; set; }
         public string Name { get; set; }
+        public string Description { get; set; }
 
         public DatasetInfo() 
         { 
             Id = 0;
             Name = string.Empty;
+            Description = string.Empty;
         }
     }
 }
