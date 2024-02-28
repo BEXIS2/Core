@@ -95,6 +95,7 @@ else
                         <td id="Type">@type</td>
                         <td id="Name">@fi.Name</td>
                         <td id="Size">@fileSize</td>
+                        <td id="description">@fi.Description</td>
                     </tr>
                     <tr>
                         @switch (type)
@@ -102,6 +103,7 @@ else
                             case "video":
                                 imgList += Server.UrlEncode(fi.Path) + ",";
                                 <td class="mmm-media" path="@Server.UrlEncode(fi.Path)" type="@type"></td>
+                                <td id="description">@fi.Description</td>
                                 <td class="mmm-mediaInfo">
                                     <table>
                                         <tr>
@@ -136,6 +138,7 @@ else
 
                             case "audio":
                                 <td class="mmm-media" path="@Server.UrlEncode(fi.Path)" type="@type"></td>
+                                <td id="description">@fi.Description</td>
                                 <td class="mmm-mediaInfo">
                                     <table>
                                         <tr>
@@ -167,6 +170,7 @@ else
                             case "image":
                                 imgList += Server.UrlEncode(fi.Path) + ",";
                                 <td class="mmm-media" path="@Server.UrlEncode(fi.Path)" type="@type"></td>
+                                <td id="description">@fi.Description</td>
                                 <td class="mmm-mediaInfo">
                                     <table>
                                         <tr>
@@ -257,6 +261,7 @@ else
                                 else
                                 {
                                     <td class="mmm-media" path="@Server.UrlEncode(fi.Path)" type="@type"></td>
+                                    <td id="description">@fi.Description</td>
                                     <td class="mmm-mediaInfo">
                                         <table>
                                             <tr>
@@ -274,6 +279,7 @@ else
 
                             default:
                                 <td class="mmm-media" path="@Server.UrlEncode(fi.Path)" type="@type"></td>
+                                <td id="description">@fi.Description</td>
                                 <td class="mmm-mediaInfo">
                                     <table>
                                         <tr>
