@@ -12,9 +12,9 @@ using System.Web.Http;
 
 namespace BExIS.Web.Shell.Controllers.API
 {
-    public class NamesController : ApiController
+    public class PersonNameComponentsController : ApiController
     {
-        [HttpPost, PostRoute("api/names")]
+        [HttpPost, PostRoute("api/personNameComponents")]
         public async Task<HttpResponseMessage> Post([FromBody]string name)
         {
             try
