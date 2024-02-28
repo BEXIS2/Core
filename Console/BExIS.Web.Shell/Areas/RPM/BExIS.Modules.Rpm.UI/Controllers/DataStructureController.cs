@@ -132,6 +132,9 @@ namespace BExIS.Modules.Rpm.UI.Controllers
             bool isMeaningRequired = (bool)ModuleManager.GetModuleSettings("RPM").GetValueByKey("isMeaningRequired");
             ViewData["isMeaningRequired"] = isMeaningRequired;
 
+            bool setByTemplate = (bool)ModuleManager.GetModuleSettings("RPM").GetValueByKey("setByTemplate");
+            ViewData["setByTemplate"] = setByTemplate;
+
             return View("Create");
         }
 
@@ -150,6 +153,9 @@ namespace BExIS.Modules.Rpm.UI.Controllers
 
             bool isMeaningRequired = (bool)ModuleManager.GetModuleSettings("RPM").GetValueByKey("isMeaningRequired");
             ViewData["isMeaningRequired"] = isMeaningRequired;
+
+            bool setByTemplate = (bool)ModuleManager.GetModuleSettings("RPM").GetValueByKey("setByTemplate");
+            ViewData["setByTemplate"] = setByTemplate;
 
             ViewData["dataExist"] = structureHelper.InUseAndDataExist(structureId);
             
@@ -342,7 +348,8 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                         missingValues = helper.ConvertTo(model.MissingValues);
                     }
 
-
+                    long varTempId = variable.Template != null? variable.Template.Id:0;
+      
                     // generate variables
                     var result = variableManager.CreateVariable(
                         variable.Name,
@@ -352,12 +359,14 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                         variable.IsOptional,
                         variable.IsKey,
                         orderNo,
-                        variable.Template.Id,
+                        varTempId,
                         variable.Description,
+                        "",
                         "",
                         displayPattern,
                         missingValues, // add also missing values that came from varaible it self
-                        variable.Constraints.Select(co => co.Id).ToList()
+                        variable.Constraints.Select(co => co.Id).ToList(),
+                        variable.Meanings.Select(m => m.Id).ToList()
                         );
 
                     newStructure = structureManager.AddVariable(newStructure.Id, result.Id);
@@ -463,6 +472,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                             variable.Template.Id,
                             variable.Description,
                             "",
+                            "",
                             displayPattern,
                             variableHelper.ConvertTo(variable.MissingValues),
                             variable.Constraints.Select(co => co.Id).ToList(),
@@ -550,6 +560,10 @@ namespace BExIS.Modules.Rpm.UI.Controllers
             if (model.Markers == null || !model.Markers.Any()) throw new ArgumentNullException(nameof(model));
             if (model.File == null) throw new ArgumentNullException(nameof(model.File));
 
+            // get similarity Threshold from settings
+            var settings = ModuleManager.GetModuleSettings("Rpm");
+            double similarityThreshold = Convert.ToDouble(settings.GetValueByKey("similarityThreshold"))/100;
+
             string path = "";
             if (model.EntityId==0 ) path = Path.Combine(AppConfiguration.DataPath, "Temp", BExISAuthorizeHelper.GetAuthorizedUserName(this.HttpContext), model.File);
             else path = Path.Combine(AppConfiguration.DataPath, "Datasets", "" + model.EntityId, "temp", model.File);
@@ -626,10 +640,41 @@ namespace BExIS.Modules.Rpm.UI.Controllers
 
                     // get list of possible units
                     var unitInput = getValueFromMarkedRow(markerRows, model.Markers, "unit", (char)model.Delimeter, i, AsciiFileReaderInfo.GetTextMarker((TextMarker)model.TextMarker));
-                    strutcureAnalyzer.SuggestUnit(unitInput, var.DataType.Text).ForEach(u => var.PossibleUnits.Add(new UnitItem(u.Id, u.Abbreviation,u.AssociatedDataTypes.Select(x => x.Name).ToList(), "detect")));
-                    var.Unit = var.PossibleUnits.FirstOrDefault();
-                    if (var.Unit == null) var.Unit = new UnitItem();
 
+                    // here we need 2 workflows
+                    // 1. if unit is not empty -> start from unit
+                    // 2. if unit is empty start from template
+
+                    List<VariableTemplate> templates = new List<VariableTemplate>();
+
+                    if (!string.IsNullOrEmpty(unitInput)) // has unit input
+                    {
+                        strutcureAnalyzer.SuggestUnit(unitInput, var.Name, var.DataType.Text, similarityThreshold).ForEach(u => var.PossibleUnits.Add(new UnitItem(u.Id, u.Abbreviation, u.AssociatedDataTypes.Select(x => x.Name).ToList(), "detect")));
+                        var.Unit = var.PossibleUnits.FirstOrDefault();
+                        if (var.Unit != null) templates = strutcureAnalyzer.SuggestTemplate(var.Name, var.Unit.Id, var.DataType.Id); // unit exist
+                        else // unit not exist
+                        {
+                            templates = strutcureAnalyzer.SuggestTemplate(var.Name, 0, var.DataType.Id, similarityThreshold);
+                            templates.Select(t => t.Unit).Distinct().ToList().ForEach(u => var.PossibleUnits.Add(new UnitItem(u.Id, u.Abbreviation, u.AssociatedDataTypes.Select(x => x.Name).ToList(), "detect")));
+                            var.Unit = var.PossibleUnits.FirstOrDefault();
+                        }
+
+                    }
+                    else // no unit input
+                    { 
+                        templates = strutcureAnalyzer.SuggestTemplate(var.Name, 0, var.DataType.Id, similarityThreshold);
+                        templates.Select(t => t.Unit).Distinct().ToList().ForEach(u => var.PossibleUnits.Add(new UnitItem(u.Id, u.Abbreviation, u.AssociatedDataTypes.Select(x => x.Name).ToList(), "detect")));
+                        var.Unit = var.PossibleUnits.FirstOrDefault();
+                    }
+
+
+
+                    // fallback if unit is null
+                    if (var.Unit == null) // if suggestion return null then set to unit none
+                    {
+                        strutcureAnalyzer.SuggestUnit("none", var.Name, var.DataType.Text,1).ForEach(u => var.PossibleUnits.Add(new UnitItem(u.Id, u.Abbreviation, u.AssociatedDataTypes.Select(x => x.Name).ToList(), "detect")));
+                        var.Unit = var.PossibleUnits.FirstOrDefault();
+                    }
 
                     // get suggestes DisplayPattern / currently only for DateTime
                     if (var.SystemType.Equals(typeof(DateTime).Name))
@@ -640,11 +685,22 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                     }
 
                     // varaible template
-                    var templates = strutcureAnalyzer.SuggestTemplate(var.Name, var.Unit.Id, var.DataType.Id, 0.5);
-                        templates.ForEach(t => var.PossibleTemplates.Add(helper.ConvertTo(t, "detect")));
+                    templates.ForEach(t => var.PossibleTemplates.Add(helper.ConvertTo(t, "detect")));
 
                     if (var.PossibleTemplates.Any())
                         var.Template = var.PossibleTemplates.FirstOrDefault();
+
+                    // set meanings,constraints and description from template
+                    if (var.Template?.Id == 0) var.Template = null;
+                    if (var.Template != null)
+                    {
+                       
+
+                        var t = templates.Where(tx => tx.Id.Equals(var.Template.Id)).FirstOrDefault();
+                        var.Meanings = helper.ConvertTo(t.Meanings);
+                        var.Constraints = helper.ConvertTo(t.VariableConstraints);
+                        if (string.IsNullOrEmpty(var.Description)) var.Description = t.Description;
+                    }
 
                     model.Variables.Add(var);
                 }
@@ -846,6 +902,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
             using (var variableManager = new VariableManager())
             using (var unitManager = new UnitManager())
             {
+                var _helper = new VariableHelper();
                 var variableTemplates = variableManager.VariableTemplateRepo.Get().ToList();
                 var units = unitManager.Repo.Get();
                 List<VariableTemplateItem> list = new List<VariableTemplateItem>();
@@ -854,26 +911,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                 {
                     foreach (var variableTemplate in variableTemplates.Where(t=>t.Approved))
                     {
-                        List<string> dataTypes = new List<string>();
-               
-                        var unit = units.FirstOrDefault(u=> u.Id.Equals(variableTemplate.Unit.Id));
-
-                        // get possible datatypes
-                        if (unit != null)
-                            dataTypes = unit.AssociatedDataTypes.Select(x => x.Name).ToList();
-
-                        VariableTemplateItem vti = new VariableTemplateItem();
-                        vti.Id = variableTemplate.Id;
-                        vti.Text = variableTemplate.Label;
-                        if (unit!=null) vti.Units = new List<string>() { unit.Abbreviation };
-                        vti.DataTypes = dataTypes;
-
-                        // meanings
-                        vti.Meanings = variableTemplate.Meanings.ToList().Select(m=>m.Name).ToList();
-                        vti.Constraints = variableTemplate.VariableConstraints.ToList().Select(m=>m.Name).ToList();
-
-                        vti.Group = "other";
-                        list.Add(vti);
+                        list.Add(_helper.ConvertTo(variableTemplate, "other"));
                     }
                 }
 
@@ -1004,7 +1042,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
         /// <returns></returns>
         private Dictionary<int,Type> suggestSystemTypes(string file, TextSeperator delimeter, DecimalCharacter decimalCharacter, List<string> missingValues,int datastart)
         {
-            var settings = ModuleManager.GetModuleSettings("Dcm");
+            var settings = ModuleManager.GetModuleSettings("Rpm");
             int min = Convert.ToInt32(settings.GetValueByKey("minToAnalyse"));
             int max = Convert.ToInt32(settings.GetValueByKey("maxToAnalyse"));
             int percentage = Convert.ToInt32(settings.GetValueByKey("precentageToAnalyse"));

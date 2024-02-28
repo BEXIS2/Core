@@ -1076,7 +1076,8 @@ namespace BExIS.Xml.Helpers.Mapping
                 {
                     foreach (var attr in ct.Attributes)
                     {
-                          createMetadataParameterUsage(metadataCompountAttr, attr, dataTypeManager, metadataAttributeManager);
+                          var metadataParameteUsage = createMetadataParameterUsage(metadataCompountAttr, attr, dataTypeManager, metadataAttributeManager);
+                          addMetadataParameterToMappingFile( attr as XmlSchemaAttribute, currentInternalXPath, currentExternalXPath);
                     }
                 }
 
@@ -1157,7 +1158,7 @@ namespace BExIS.Xml.Helpers.Mapping
 
             try
             {
-                MetadataAttribute attribute = createMetadataAttribute(element);
+                MetadataAttribute attribute = createMetadataAttribute(element, internalXPath,externalXPath);
 
                 if (attribute != null)
                 {
@@ -1175,7 +1176,7 @@ namespace BExIS.Xml.Helpers.Mapping
                         max = int.MaxValue;
 
                     if (packageUsage.MetadataAttributeUsages.Where(p => p.MetadataAttribute == attribute).Count() <= 0)
-                        metadataPackageManager.AddMetadataAtributeUsage(packageUsage, attribute, element.Name, attribute.Description, min, max);
+                        metadataPackageManager.AddMetadataAtributeUsage(packageUsage, attribute, element.Name, attribute.Description, min, max, element.DefaultValue, element.FixedValue);
 
                     #region generate  MappingRoute
 
@@ -1227,7 +1228,7 @@ namespace BExIS.Xml.Helpers.Mapping
                         min = 0;
                     }
 
-                    metadataPackageManager.AddMetadataAtributeUsage(package, compoundAttribute, element.Name, GetDescription(element.Annotation), min, max);
+                    metadataPackageManager.AddMetadataAtributeUsage(package, compoundAttribute, element.Name, GetDescription(element.Annotation), min, max, element.DefaultValue, element.FixedValue);
                 }
             }
             finally
@@ -1299,6 +1300,8 @@ namespace BExIS.Xml.Helpers.Mapping
                     MaxCardinality = max,
                     Master = parent,
                     Member = compoundAttribute,
+                    DefaultValue = element.DefaultValue,
+                    FixedValue = element.FixedValue
                 };
 
                 if (extra.DocumentElement != null) usage.Extra = extra;
@@ -1337,7 +1340,7 @@ namespace BExIS.Xml.Helpers.Mapping
                 }
                 else
                 {
-                    attribute = createMetadataAttribute(element);
+                    attribute = createMetadataAttribute(element, internalXPath, externalXPath);
                 }
 
                 if (attribute != null)
@@ -1406,7 +1409,9 @@ namespace BExIS.Xml.Helpers.Mapping
                         MinCardinality = min,
                         MaxCardinality = max,
                         Master = compoundAttribute,
-                        Member = attribute
+                        Member = attribute,
+                        DefaultValue = element.DefaultValue,
+                        FixedValue = element.FixedValue
                     };
 
                     if (extra.DocumentElement != null) u1.Extra = extra;
@@ -1431,7 +1436,7 @@ namespace BExIS.Xml.Helpers.Mapping
         }
 
 
-        private MetadataAttribute createMetadataAttribute(XmlSchemaElement element)
+        private MetadataAttribute createMetadataAttribute(XmlSchemaElement element, string currentInternalXPath, string currentExternalXPath)
         {
             UnitManager unitManager = new UnitManager();
             MetadataAttributeManager metadataAttributeManager = new MetadataAttributeManager();
@@ -1505,6 +1510,10 @@ namespace BExIS.Xml.Helpers.Mapping
                 {
                     XmlSchemaComplexType type = (XmlSchemaComplexType)element.ElementSchemaType;
         
+                    // load type if exist sepearte in the xsd 
+                    var t = ComplexTypes.FirstOrDefault(c => c.Name.Equals(type.Name));
+                    if (t!=null) type = t;
+
                     string name = GetTypeOfName(element.Name);
                     string description = "";
 
@@ -1551,11 +1560,16 @@ namespace BExIS.Xml.Helpers.Mapping
 
                         // Add attributes as metadata packages
 
+                        string internalPath = currentInternalXPath + "/" + element.Name + "/" + temp.Name;
+                        string externalPath = currentExternalXPath + "/" + element.Name;
+
                         if (type.Attributes.Count > 0)
                         {
                             foreach (var attr in type.Attributes)
                             {
                                 createMetadataParameterUsage(temp, attr, dataTypeManager, metadataAttributeManager);
+                                addMetadataParameterToMappingFile(attr as XmlSchemaAttribute, internalPath, externalPath);
+
                             }
                         }
 
@@ -1564,6 +1578,8 @@ namespace BExIS.Xml.Helpers.Mapping
                             foreach (DictionaryEntry attr in type.AttributeUses)
                             {
                                 createMetadataParameterUsage(temp, attr.Value, dataTypeManager, metadataAttributeManager);
+                                addMetadataParameterToMappingFile( attr.Value as XmlSchemaAttribute, internalPath, externalPath);
+
                             }
                         }
 
@@ -1657,14 +1673,18 @@ namespace BExIS.Xml.Helpers.Mapping
             string parameterUsageName = "";
             string description = "";
             List<Constraint> constraints = new List<Constraint>();
-
+            MetadataParameter parameter;
+            string defaultValue = "";
+            string fixedValue = "";
 
             if (xmlAttribute is XmlSchemaAttribute)
             {
                 var x = ((XmlSchemaAttribute)xmlAttribute);
                 if (!string.IsNullOrEmpty(x.Name)) parameterUsageName = x.Name;
+                if (!string.IsNullOrEmpty(x.DefaultValue)) defaultValue = x.DefaultValue;
+                if (!string.IsNullOrEmpty(x.FixedValue)) defaultValue = x.FixedValue;
 
-                xmlAttribute = x.AttributeSchemaType as XmlSchemaSimpleType;
+                xmlAttribute = x;
 
                 // if xmlAttribute is null, load type from SimpleTypeList by SchemaTypeNameDefault
                 if (xmlAttribute == null && !string.IsNullOrEmpty(x.SchemaTypeName.Name))
@@ -1676,19 +1696,24 @@ namespace BExIS.Xml.Helpers.Mapping
                 if (xmlAttribute == null && !string.IsNullOrEmpty(x.RefName.Name))
                 {
                     xmlAttribute = SimpleTypes.Where(t => t.Name.Equals(x.SchemaTypeName.Name)).FirstOrDefault();
-                }
+                }// if xmlAttribute is null, load type from SimpleTypeList by SchemaTypeNameDefault
+
 
             }
 
-            if (xmlAttribute is XmlSchemaSimpleType)
+            XmlSchemaSimpleType xmlSchemaSimpleType = null;
+
+            if (xmlAttribute is XmlSchemaSimpleType) xmlSchemaSimpleType = (XmlSchemaSimpleType)xmlAttribute;
+            else if (xmlAttribute is XmlSchemaAttribute) xmlSchemaSimpleType = ((XmlSchemaAttribute)xmlAttribute).AttributeSchemaType;
+
+            if (xmlSchemaSimpleType != null)
             {
-                var x = ((XmlSchemaSimpleType)xmlAttribute);
-                if (string.IsNullOrEmpty(parameterUsageName) && x.Name!=null) parameterUsageName  = x.Name;
+                
+                if (string.IsNullOrEmpty(parameterUsageName) && xmlSchemaSimpleType.Name != null) parameterUsageName = xmlSchemaSimpleType.Name;
 
-                if(x.Annotation!= null) description = GetDescription(x.Annotation);
-             
+                if (xmlSchemaSimpleType.Annotation != null) description = GetDescription(xmlSchemaSimpleType.Annotation);
 
-                var parameter = createMetadataParameter(metadataAttribute,  parameterUsageName, description, x.Datatype);
+                parameter = createMetadataParameter(metadataAttribute, parameterUsageName, description, xmlSchemaSimpleType.Datatype);
                 if (parameter != null)
                 {
                     // if not exist then create in db
@@ -1697,7 +1722,7 @@ namespace BExIS.Xml.Helpers.Mapping
                         // create
                         parameter = metadataAttributeManager.Create(parameter);
 
-                        constraints = convertToConstraints(x.Content, parameter);
+                        constraints = convertToConstraints(xmlSchemaSimpleType.Content, parameter);
                         parameter.Constraints = constraints;
 
                         createdParametersDic.Add(parameter.Id, parameter.Name);
@@ -1706,10 +1731,39 @@ namespace BExIS.Xml.Helpers.Mapping
                     if (parameter != null)
                     {
                         // create parameter Usage beweteen MetadataAttribute and Parameter
-                        metadataAttributeManager.AddParameterUsage(metadataAttribute, parameter);
+                        metadataAttributeManager.AddParameterUsage(metadataAttribute, parameter, true, defaultValue, fixedValue);
                     }
                 }
+                
 
+            }
+            else // catch all ref attributes with only name info and without type info in schema
+                 // as default set to string with no restictions & optional
+            {
+                if (xmlAttribute is XmlSchemaAttribute)
+                {
+                    var xAttr = ((XmlSchemaAttribute)xmlAttribute);
+
+                    if (!String.IsNullOrEmpty(xAttr.Name)) parameterUsageName = xAttr.Name;
+                    else if (xAttr.RefName != null && !String.IsNullOrEmpty(xAttr.RefName.Name)) parameterUsageName = xAttr.RefName.Name;
+                    else if (xAttr.QualifiedName != null && !String.IsNullOrEmpty(xAttr.QualifiedName.Name)) parameterUsageName = xAttr.QualifiedName.Name;
+                    parameter = createMetadataParameter(metadataAttribute, parameterUsageName, "", null);
+
+                    // if not exist then create in db
+                    if (parameter.Id == 0)
+                    {
+                        // create
+                        parameter = metadataAttributeManager.Create(parameter);
+
+                        createdParametersDic.Add(parameter.Id, parameter.Name);
+                    }
+
+                    if (parameter != null)
+                    {
+                        // create parameter Usage beweteen MetadataAttribute and Parameter 
+                        metadataAttributeManager.AddParameterUsage(metadataAttribute, parameter, false, xAttr.DefaultValue, xAttr.FixedValue);
+                    }
+                }
             }
 
             return null;
@@ -1719,8 +1773,8 @@ namespace BExIS.Xml.Helpers.Mapping
             if (string.IsNullOrEmpty(name)) return null;
      
 
-            string datatype = type?.ValueType.Name;
-            string typeCodename = type?.TypeCode.ToString();
+            string datatype = type==null?"string":type?.ValueType.Name;
+            string typeCodename = type == null ? "string": type?.TypeCode.ToString();
             DataType dataType = GetDataType(datatype, typeCodename);
 
             MetadataParameter parameter = getExistingMetadataParameter(name); ;
@@ -1734,6 +1788,7 @@ namespace BExIS.Xml.Helpers.Mapping
                     Name = name,
                     Description = description,
                     DataType = dataType,
+                    
                 };
 
             }
@@ -1850,13 +1905,19 @@ namespace BExIS.Xml.Helpers.Mapping
             }
 
             root.AppendChild(routes);
-
+            string path = "";
             if (direction == 0)
+            {
                 mappingFileNameExport = "MappingFile_intern_" + sourceName + "_to_extern_" + DestinationName + ".xml";
+                path = Path.Combine(AppConfiguration.GetModuleWorkspacePath("DIM"), mappingFileNameExport);
+            }
             else
+            {
                 mappingFileNameImport = "MappingFile_extern_" + sourceName + "_to_intern_" + DestinationName + ".xml";
+                path = Path.Combine(AppConfiguration.GetModuleWorkspacePath("DIM"), mappingFileNameImport);
+            }
 
-            string path = Path.Combine(AppConfiguration.GetModuleWorkspacePath("DIM"), mappingFileNameExport);
+             
             if(File.Exists(path)) File.Delete(path);
             mappingFile.Save(path);
 
@@ -1878,7 +1939,7 @@ namespace BExIS.Xml.Helpers.Mapping
                 }
                 else
                 {
-                    attribute = createMetadataAttribute(element);
+                    attribute = createMetadataAttribute(element, internalXPath, externalXPath);
                 }
 
                 #region generate  MappingRoute
@@ -1897,6 +1958,13 @@ namespace BExIS.Xml.Helpers.Mapping
             {
                 metadataAttributeManager.Dispose();
             }
+        }
+
+        private void addMetadataParameterToMappingFile(XmlSchemaAttribute attr, string internalXPath, string externalXPath)
+        {
+            addParameterToExportMappingFile(mappingFileInternalToExternal, internalXPath, externalXPath,attr.Name);
+            addParameterToImportMappingFile(mappingFileExternalToInternal, externalXPath, internalXPath, attr.Name);
+
         }
 
         private XmlMapper addToImportMappingFile(XmlMapper mapper, string sourceXPath, string destinationXPath, decimal max, string name, string nameType)
@@ -1939,6 +2007,36 @@ namespace BExIS.Xml.Helpers.Mapping
             }
 
             xmr.Destination = new Destination(childDestinationXPath, sequence);
+
+            mapper.Routes.Add(xmr);
+
+            return mapper;
+        }
+
+        private XmlMapper addParameterToImportMappingFile(XmlMapper mapper, string sourceXPath, string destinationXPath, string name)
+        {
+            string childSourceXPath = sourceXPath + "/@" + name;
+            string childDestinationXPath = destinationXPath + "/@" + name;
+
+            XmlMappingRoute xmr = new XmlMappingRoute();
+
+            xmr.Source = new Source(childSourceXPath);
+            xmr.Destination = new Destination(childDestinationXPath, "");
+
+            mapper.Routes.Add(xmr);
+
+            return mapper;
+        }
+
+        private XmlMapper addParameterToExportMappingFile(XmlMapper mapper, string sourceXPath, string destinationXPath, string name)
+        {
+            string childSourceXPath = sourceXPath + "/@" + name;
+            string childDestinationXPath = destinationXPath + "/@" + name;
+
+            XmlMappingRoute xmr = new XmlMappingRoute();
+
+            xmr.Source = new Source(childSourceXPath);
+            xmr.Destination = new Destination(childDestinationXPath,"");
 
             mapper.Routes.Add(xmr);
 

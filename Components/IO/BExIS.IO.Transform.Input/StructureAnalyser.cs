@@ -241,7 +241,7 @@ namespace BExIS.IO.Transform.Input
         /// <param name="similarity"></param>
         /// <returns></returns>
         /// <exception cref="ArgumentNullException"></exception>
-        public List<Entites.Unit> SuggestUnit(string input, string dataType, double similarity = 0.8)
+        public List<Entites.Unit> SuggestUnit(string input, string variable, string dataType, double similarity = 0.7)
         {
             if (string.IsNullOrEmpty(input) && string.IsNullOrEmpty(dataType)) throw new ArgumentNullException("input and data type should not be empty.");
            
@@ -266,9 +266,19 @@ namespace BExIS.IO.Transform.Input
                 foreach (var unit in units)
                 {
                     var ro = new RatcliffObershelp();
+                    var varSimularity = ro.Similarity(variable, unit.Name);
+                    var varAbbrSimularity = ro.Similarity(variable, unit.Abbreviation);
                     var nameSimularity = ro.Similarity(input, unit.Name);
                     var abbrSimularity = ro.Similarity(input, unit.Abbreviation);
-                    var highest = Math.Max(nameSimularity, abbrSimularity);
+
+                    // compare highest for var
+                    var highestVariable = Math.Max(varSimularity, varAbbrSimularity);
+
+                    // compare highest for var
+                    var highestInput = Math.Max(nameSimularity, abbrSimularity);
+
+                    // highest from both
+                    var highest = Math.Max(highestVariable, highestInput);
 
                     if (string.IsNullOrEmpty(input) || highest >= similarity)
                     {
@@ -280,23 +290,31 @@ namespace BExIS.IO.Transform.Input
             }
         }
 
-        public List<Entites.VariableTemplate> SuggestTemplate(string input, long unitId, long dataTypeId, double similarity = 0.5)
+        public List<Entites.VariableTemplate> SuggestTemplate(string input, long unitId, long dataTypeId, double similarity = 0.7)
         {
             if (string.IsNullOrEmpty(input)) throw new ArgumentNullException(nameof(input), "input should not be empty.");
 
             Dictionary<VariableTemplate, double> matches = new Dictionary<VariableTemplate, double>();
             /*
-             * in the suggestion of the templates, there are 3 factors that must be considered. 
+             * in the suggestion of the templates, there are 5 factors that must be considered. 
              * all three are checked independently of each other and the results are sorted so that the most matches are at the top.
+             * 
+             * name
+             * meaning
+             * unit
+             * dimension
+             * datatype
              */
 
             using (var variableManager = new VariableManager())
+            using (var unitManager = new UnitManager())
             {
                 var allTemplates = variableManager.VariableTemplateRepo.Get();
 
                 // var template matches by name
                 var byNames = new List<VariableTemplate>();
 
+                // name
                 foreach (var template in allTemplates)
                 {
                     var ro = new RatcliffObershelp();
@@ -308,28 +326,63 @@ namespace BExIS.IO.Transform.Input
                     }
                 }
 
-                // var template matches with units
-                var byUnit = allTemplates.Where(t => t.Unit.Id.Equals(unitId)).ToList();
-
-                // var template matches with datatype
-                var byDatype = allTemplates.Where(t => t.DataType.Id.Equals(unitId)).ToList();
-
-                //add units results to matches
-                foreach (var item in byUnit)
+                // meaning
+                foreach (var template in allTemplates)
                 {
-                    // if variableTemplate allready exist in the matches increase the value by 1
-                    if (matches.ContainsKey(item)) matches[item] += 1;
-                    else matches.Add(item, 1);
+                    if (template.Meanings.Any())
+                    {
+                        foreach (var meaning in template.Meanings)
+                        {
+                            var ro = new RatcliffObershelp();
+                            var nameSimularity = ro.Similarity(input.ToLower(), meaning.Name.ToLower());
+
+                            if (string.IsNullOrEmpty(input) || nameSimularity >= similarity)
+                            {
+                                if (matches.ContainsKey(template)) matches[template] += nameSimularity;
+                                else matches.Add(template, nameSimularity);
+                            }
+                        }
+                    }
                 }
 
-                //add datatypes results to matches
-                foreach (var item in byDatype)
+                if (unitId > 0)
                 {
-                    // if variableTemplate allready exist in the matches increase the value by 0.5
-                    if (matches.ContainsKey(item)) matches[item] += 1;
-                    else matches.Add(item, 0.5);
-                }
+                    // var template matches with units
+                    var byUnit = allTemplates.Where(t => t.Unit.Id.Equals(unitId)).ToList();
 
+                    var unit = unitManager.Repo.Get(unitId);
+                    List<VariableTemplate> byDimension = new List<VariableTemplate>();
+                    if (unit != null && unit.Dimension != null)
+                        byDimension = allTemplates.Where(t => t.Unit.Dimension.Id.Equals(unit.Dimension.Id)).ToList();
+
+    
+                    //add units results to matches
+                    foreach (var item in byUnit)
+                    {
+                        // if variableTemplate allready exist in the matches increase the value by 1
+                        if (matches.ContainsKey(item)) matches[item] += 1;
+                        else matches.Add(item, 1);
+                    }
+
+                    //add dimenions results to matches
+                    foreach (var item in byDimension)
+                    {
+                        // if variableTemplate allready exist in the matches increase the value by 1
+                        if (matches.ContainsKey(item)) matches[item] += 0.9;
+                        else matches.Add(item, 0.9);
+                    }
+
+                    // var template matches with datatype
+                    var byDatype = allTemplates.Where(t => t.DataType.Id.Equals(dataTypeId)).ToList();
+
+                    //add datatypes results to matches
+                    foreach (var item in byDatype)
+                    {
+                        // if variableTemplate allready exist in the matches increase the value by 0.5
+                        if (matches.ContainsKey(item)) matches[item] += 0.5;
+                        else matches.Add(item, 0.5);
+                    }
+                }
             }
 
             return matches.OrderByDescending(x => x.Value).Select(u => u.Key).ToList();

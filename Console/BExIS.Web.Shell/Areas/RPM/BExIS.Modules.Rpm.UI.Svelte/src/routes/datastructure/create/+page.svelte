@@ -5,7 +5,7 @@
 	import { onMount } from 'svelte';
 	import { fade } from 'svelte/transition';
 
-	import { Spinner, Page, ErrorMessage } from '@bexis2/bexis2-core-ui';
+	import { Spinner, Page, ErrorMessage, type helpItemType, helpStore } from '@bexis2/bexis2-core-ui';
 	import {
 		generate,
 		save,
@@ -21,9 +21,15 @@
 		displayPatternStore,
 		structureStore,
 		isTemplateRequiredStore,
-		isMeaningRequiredStore
+		isMeaningRequiredStore,
+		setByTemplateStore
 	} from '$lib/components/datastructure/store';
 	import { pageContentLayoutType } from '@bexis2/bexis2-core-ui';
+
+	//help
+		import { dataStructureHelp } from '../help';
+		let helpItems: helpItemType[] = dataStructureHelp;
+
 
 	// load attributes from div
 	let container;
@@ -38,7 +44,14 @@
 	let selectionIsActive = true;
 	let init: boolean = true;
 
+	let loadingMessage="the structure is loading";
+	
+
 	async function start() {
+
+	
+		helpStore.setHelpItemList(helpItems);
+
 		// get data from parent
 		container = document.getElementById('datastructure');
 		entityId = Number(container?.getAttribute('dataset'));
@@ -46,18 +59,25 @@
 		file = '' + container?.getAttribute('file');
 		datastructureId = Number(container?.getAttribute('structure'));
 
+		if(file){
+			loadingMessage ="the file "+file+" is currently being analyzed";
+		}
+
+
 		// get isTemplateRequired from settings and add it to store
 		// is used by validation
 		const isTemplateRequired = container?.getAttribute('isTemplateRequired')?.toLocaleLowerCase()=="true"?true:false;
 		isTemplateRequiredStore.set(isTemplateRequired);
 
-		// get isTemplateRequired from settings and add it to store
+		// get isMeaningRequired from settings and add it to store
 		// is used by validation
 		const isMeaningRequired = container?.getAttribute('isMeaningRequired')?.toLocaleLowerCase()=="true"?true:false;
-		console.log("🚀 ~ file: +page.svelte:57 ~ start ~ isMeaningRequired:", isMeaningRequired)
 		isMeaningRequiredStore.set(isMeaningRequired);
-
-		console.log('start structure suggestion', entityId, version, file, datastructureId);
+		
+		// get setByTemplate from settings and add it to store
+		// is used by createion of variables
+		const setByTemplate = container?.getAttribute('setByTemplate')?.toLocaleLowerCase()=="true"?true:false;
+		setByTemplateStore.set(setByTemplate);
 
 		// 2 Usecases,
 		// 1. generate from file, selection needed -> load file
@@ -88,8 +108,6 @@
 		// load display pattern onces for all edit types
 		const displayPattern = await getDisplayPattern();
 		displayPatternStore.set(displayPattern);
-
-
 	}
 
 	async function update(e) {
@@ -112,11 +130,13 @@
 
 <Page
 	title="Data structure"
-	note="generate a structure from a file."
+	note="This page allows you to create and edit a selected data structure."
 	contentLayoutType={pageContentLayoutType.full}
+	help={true}
 >
+
 	{#await start()}
-		<Spinner label="the file {file} is currently being analyzed" />
+		<Spinner label="{loadingMessage}" />
 	{:then}
 		{#if model}
 			{#if selectionIsActive}
@@ -129,5 +149,5 @@
 		{/if}
 	{:catch error}
 		<ErrorMessage {error} />
-	{/await} 
+	{/await}
 </Page>

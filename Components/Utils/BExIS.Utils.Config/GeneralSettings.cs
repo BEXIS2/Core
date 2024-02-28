@@ -51,6 +51,29 @@ namespace BExIS.Utils.Config
             }
         }
 
+        public SmtpConfiguration GetSmtpConfiguration()
+        {
+            try
+            {
+                return GetValueByKey<SmtpConfiguration>("smtp");
+            }
+            catch (Exception ex)
+            {
+                return new SmtpConfiguration();
+            }
+        }
+
+        public List<LdapConfiguration> GetLdapConfigurations()
+        {
+            try
+            {
+                return GetValueByKey<List<LdapConfiguration>>("ldaps");
+            }
+            catch (Exception ex)
+            {
+                return new List<LdapConfiguration>();
+            }
+        }
 
         public static string ApplicationInfo
         {
@@ -107,6 +130,37 @@ namespace BExIS.Utils.Config
             get
             {
                 return JsonConvert.DeserializeObject<JwtConfiguration>(GetValueByKey("jwt").ToString());
+            }
+        }
+
+        public static SmtpConfiguration SmtpConfiguration
+        {
+            get
+            {
+                return JsonConvert.DeserializeObject<SmtpConfiguration>(GetValueByKey("smtp").ToString());
+            }
+        }
+
+        public static List<LdapConfiguration> LdapConfigurations
+        {
+            get
+            {
+                try
+                {
+                    var ldapConfigurations = new List<LdapConfiguration>();
+                    List<Entry> ldaps = (List<Entry>)GetValueByKey("ldaps");
+
+                    foreach ( var ldap in ldaps )
+                    {
+                        ldapConfigurations.Add(JsonConvert.DeserializeObject<LdapConfiguration>(ldap.Value.ToString()));
+                    }
+
+                    return ldapConfigurations;
+                }
+                catch(Exception ex)
+                {
+                    return new List<LdapConfiguration>();
+                }
             }
         }
 

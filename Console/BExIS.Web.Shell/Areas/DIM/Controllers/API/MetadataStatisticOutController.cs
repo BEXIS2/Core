@@ -37,24 +37,20 @@ namespace BExIS.Modules.Dim.UI.Controllers
 
             using (UserManager userManager = new UserManager())
             {
-                 
-                // check if a token is given and if the user is logged in to allow also access to non-public datasets
-                string token = this.Request.Headers.Authorization?.Parameter;
-                if (!String.IsNullOrEmpty(token))
+
+                user = ControllerContext.RouteData.Values["user"] as User;
+
+                // If user is registered, include also non-public datasets
+                if (user != null)
                 {
-                    user = userManager.Users.Where(u => u.Token.Equals(token)).FirstOrDefault();
-                    
-                    // If user is registered, include also non-public datasets
-                    if (user != null)
-                    {
-                        publicOnly = false;
-                    }
-                    // Return error, if token is provided, but not valid
-                    else
-                    {
-                        return Request.CreateErrorResponse(HttpStatusCode.Forbidden, "Token is not valid.");
-                    }
+                    publicOnly = false;
                 }
+                // Return error, if token is provided, but not valid
+                else
+                {
+                    return Request.CreateErrorResponse(HttpStatusCode.Forbidden, "Token is not valid.");
+                }
+                
 
                 // Check input values to prevent SQL injection 
                 string errorMessage = "";

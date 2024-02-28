@@ -9,7 +9,9 @@ using BExIS.Dlm.Services.Administration;
 using BExIS.Dlm.Services.Data;
 using BExIS.Dlm.Services.DataStructure;
 using BExIS.Dlm.Services.MetadataStructure;
+using BExIS.Modules.Dcm.UI.Helpers;
 using BExIS.Modules.Dcm.UI.Models.Create;
+using BExIS.Modules.Dcm.UI.Models.EntityTemplate;
 using BExIS.Security.Entities.Authorization;
 using BExIS.Security.Entities.Subjects;
 using BExIS.Security.Services.Authorization;
@@ -233,10 +235,37 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
                 if (entityTemplate.PermissionGroups != null)
                 {
-                    foreach (var groupId in entityTemplate.PermissionGroups)
+                    // full
+                    foreach (var groupId in entityTemplate.PermissionGroups.Full)
                     {
                         var group = gm.Groups.Where(g => g.Id.Equals(groupId)).FirstOrDefault();
                         entityPermissionManager.Create<Group>(group.Name, entityTemplate.EntityType.Name, typeof(Dataset), ds.Id, Enum.GetValues(typeof(RightType)).Cast<RightType>().ToList());
+                    }
+
+
+                    // ViewEditGrant
+                    foreach (var groupId in entityTemplate.PermissionGroups.ViewEditGrant)
+                    {
+                        var group = gm.Groups.Where(g => g.Id.Equals(groupId)).FirstOrDefault();
+                        var l = new List<RightType>() { RightType.Read, RightType.Write, RightType.Grant };
+
+                        entityPermissionManager.Create<Group>(group.Name, entityTemplate.EntityType.Name, typeof(Dataset), ds.Id, l);
+                    }
+
+                    // ViewEdit
+                    foreach (var groupId in entityTemplate.PermissionGroups.ViewEdit)
+                    {
+                        var group = gm.Groups.Where(g => g.Id.Equals(groupId)).FirstOrDefault();
+                        var l = new List<RightType>() { RightType.Read, RightType.Write };
+                        entityPermissionManager.Create<Group>(group.Name, entityTemplate.EntityType.Name, typeof(Dataset), ds.Id,l);
+                    }
+
+                    // View
+                    foreach (var groupId in entityTemplate.PermissionGroups.View)
+                    {
+                        var group = gm.Groups.Where(g => g.Id.Equals(groupId)).FirstOrDefault();
+                        var l = new List<RightType>() { RightType.Read};
+                        entityPermissionManager.Create<Group>(group.Name, entityTemplate.EntityType.Name, typeof(Dataset), ds.Id,l);
                     }
                 }
 
@@ -278,6 +307,22 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             }
 
             return Json(new { success = true, id = datasetId });
+        }
+
+        [JsonNetFilter]
+        [HttpGet]
+        public JsonResult GetEntityTemplateList()
+        {
+            List<EntityTemplateModel> entityTemplateModels = new List<EntityTemplateModel>();
+            using (var entityTemplateManager = new EntityTemplateManager())
+            {
+                foreach (var e in entityTemplateManager.Repo.Get())
+                {
+                    entityTemplateModels.Add(EntityTemplateHelper.ConvertTo(e));
+                }
+
+                return Json(entityTemplateModels, JsonRequestBehavior.AllowGet);
+            }
         }
 
         #region helper

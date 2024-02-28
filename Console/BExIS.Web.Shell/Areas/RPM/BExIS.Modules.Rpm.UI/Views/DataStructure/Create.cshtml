@@ -12,15 +12,16 @@
 
     string isTemplateRequired = "false";
     string isMeaningRequired = "false";
+    string setByTemplate = "false";
 
     if (ViewData["id"] != null) { id = Convert.ToInt64(ViewData["id"]); }
     if (ViewData["version"] != null) { version = Convert.ToInt64(ViewData["version"]); }
     if (ViewData["file"] != null) { file = ViewData["file"].ToString(); }
     if (ViewData["structureId"] != null) { structureId = Convert.ToInt64(ViewData["structureId"]); }
     if (ViewData["isTemplateRequired"] != null) { isTemplateRequired = ViewData["isTemplateRequired"].ToString(); }
-    if (ViewData["isMeaningRequired"] != null) { isMeaningRequired = ViewData["isMeaningRequired"].ToString(); }
+    if (ViewData["setByTemplate"] != null) { setByTemplate = ViewData["setByTemplate"].ToString(); }
 
 }
-<div id="datastructure" structure="@structureId" dataset="@id" file="@file" isTemplateRequired="@isTemplateRequired" isMeaningRequired="@isMeaningRequired">
+<div id="datastructure" structure="@structureId" dataset="@id" file="@file" isTemplateRequired="@isTemplateRequired" isMeaningRequired="@isMeaningRequired" setByTemplate="@setByTemplate">
     @Html.Partial("_sveltePage")
 </div>

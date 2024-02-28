@@ -329,10 +329,16 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Indexer
 
             foreach (var variable in structuredDataStructure.Variables)
             {
-                tmp.Add(variable.VariableTemplate.Label);
+                if (variable.VariableTemplate != null)
+                {
+                    tmp.Add(variable.VariableTemplate.Label);
+                    if (!string.IsNullOrEmpty(variable.VariableTemplate.Description) && variable.VariableTemplate.Description != "Unknown")
+                        tmp.Add(variable.VariableTemplate.Description);
+                }
+
                 tmp.Add(variable.Label);
-                if (!string.IsNullOrEmpty(variable.VariableTemplate.Description) && variable.VariableTemplate.Description != "Unknown")
-                    tmp.Add(variable.VariableTemplate.Description);
+                tmp.Add(variable.Description);
+
             }
 
             return tmp;

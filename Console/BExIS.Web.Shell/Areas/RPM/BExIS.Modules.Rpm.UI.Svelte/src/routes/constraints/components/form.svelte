@@ -9,7 +9,7 @@
 		ConstraintValidationResult,
 		DomainConstraintListItem,
 		RangeConstraintListItem,
-		PatternConstraintListItem,
+		PatternConstraintListItem
 	} from '../models';
 	import { onMount } from 'svelte';
 	import * as apiCalls from '../services/apiCalls';
@@ -55,10 +55,9 @@
 		ct = await apiCalls.GetConstraintTypes();
 		if (constraint.id == 0) {
 			suite.reset();
-		}
-		else{
-			setTimeout(async () => {	
-				res = suite({ constraint: constraint, constraints: constraints }, "");
+		} else {
+			setTimeout(async () => {
+				res = suite({ constraint: constraint, constraints: constraints }, '');
 			}, 10);
 		}
 	});
@@ -75,7 +74,7 @@
 					domain: '',
 					negated: constraint.negated,
 					inUse: constraint.inUse,
-					variableIDs: constraint.variableIDs,
+					variableIDs: constraint.variableIDs
 				};
 				if (domainConstraint.id != 0) {
 					domainConstraint = await apiCalls.GetDomainConstraint(constraint.id);
@@ -103,7 +102,7 @@
 					upperboundIncluded: true,
 					negated: constraint.negated,
 					inUse: constraint.inUse,
-					variableIDs: constraint.variableIDs,
+					variableIDs: constraint.variableIDs
 				};
 				if (rangeConstraint.id != 0) {
 					rangeConstraint = await apiCalls.GetRangeConstraint(constraint.id);
@@ -128,7 +127,7 @@
 					pattern: '',
 					negated: constraint.negated,
 					inUse: constraint.inUse,
-					variableIDs: constraint.variableIDs,
+					variableIDs: constraint.variableIDs
 				};
 				if (patternConstraint.id != 0) {
 					patternConstraint = await apiCalls.GetPatternConstraint(constraint.id);
@@ -164,7 +163,7 @@
 
 	//change event: if input change check also validation only on the field
 	// e.target.id is the id of the input component
-	function onChangeHandler(e:any) {
+	function onChangeHandler(e: any) {
 		//console.log("input changed", e)
 		// add some delay so the entityTemplate is updated
 		// otherwise the values are old
@@ -175,7 +174,7 @@
 	}
 
 	function submit() {
-		if(constraint.inUse){
+		if (constraint.inUse) {
 			const modal: ModalSettings = {
 				type: 'confirm',
 				title: 'Save Constraint',
@@ -188,10 +187,9 @@
 				}
 			};
 			modalStore.trigger(modal);
-		}
-		else{
+		} else {
 			save();
-		}		
+		}
 	}
 
 	async function save() {
@@ -200,25 +198,28 @@
 		switch (constraint.type) {
 			case 'Domain':
 				result = await apiCalls.EditDomainConstraint(domainConstraint);
-				break; 
+				break;
 
 			case 'Range':
 				result = await apiCalls.EditRangeConstraint(rangeConstraint);
-				break; 
+				break;
 
-			case 'Pattern':	
+			case 'Pattern':
 				result = await apiCalls.EditPatternConstraint(patternConstraint);
 				break;
 
 			default:
-				let vr: ValidationResult = { isValid: false, validationItems: [{ name: 'Constraint Type', message: 'no Constraint Type is chosen' }] };
+				let vr: ValidationResult = {
+					isValid: false,
+					validationItems: [{ name: 'Constraint Type', message: 'no Constraint Type is chosen' }]
+				};
 				result = {
 					validationResult: vr,
 					constraintListItem: constraint
 				};
-				break; 
+				break;
 		}
-		
+
 		if (result.validationResult.isValid != true) {
 			message = "Can't save Constraint";
 			if (result.constraintListItem.name != '') {
@@ -255,7 +256,7 @@
 
 {#if constraint && constraintTypes}
 	{#if constraint.inUse}
-		<Warning {constraint}/>
+		<Warning {constraint} />
 	{/if}
 	<form on:submit|preventDefault={submit}>
 		<div class="grid grid-cols-2 gap-5">
@@ -313,15 +314,17 @@
 				{:else}
 					<!-- svelte-ignore a11y-mouse-events-have-key-events -->
 					<!-- svelte-ignore a11y-label-has-associated-control -->
-					<label on:mouseover={() => {
-						helpStore.show('constraintTypes');
-					}}>Constraint Type</label>
+					<label
+						on:mouseover={() => {
+							helpStore.show('constraintTypes');
+						}}>Constraint Type</label
+					>
 					<p>{constraint.type}</p>
 				{/if}
 			</div>
 
 			<div class="pb-3 text-right mt-7" title="Upload CSV">
-				{#if constraint.type == 'Domain'}				
+				{#if constraint.type == 'Domain'}
 					<div in:fade out:fade>
 						<!-- svelte-ignore a11y-mouse-events-have-key-events -->
 						<FileButton
@@ -329,11 +332,14 @@
 							title="Upload CSV"
 							button="btn variant-filled-secondary h-9 w-16 shadow-md"
 							name="uploadCsv"
-							on:change={fileParser}><Fa icon={faArrowUpFromBracket} 
-							on:mouseover={() => {
-								helpStore.show('uploadCsv');
-							}}/>
-							</FileButton>
+							on:change={fileParser}
+							><Fa
+								icon={faArrowUpFromBracket}
+								on:mouseover={() => {
+									helpStore.show('uploadCsv');
+								}}
+							/>
+						</FileButton>
 					</div>
 				{/if}
 			</div>
@@ -341,11 +347,35 @@
 			{#if constraint.type && constraint.type != ''}
 				<div class="pb-3 col-span-2">
 					{#if constraint.type == 'Domain'}
-						<DomainForm {domainConstraint} on:true={() => {disabled = true;}} on:false={() => {disabled = false;}} />
+						<DomainForm
+							{domainConstraint}
+							on:true={() => {
+								disabled = true;
+							}}
+							on:false={() => {
+								disabled = false;
+							}}
+						/>
 					{:else if constraint.type == 'Range'}
-						<RangeForm {rangeConstraint} on:true={() => {disabled = true;}} on:false={() => {disabled = false;}} />
+						<RangeForm
+							{rangeConstraint}
+							on:true={() => {
+								disabled = true;
+							}}
+							on:false={() => {
+								disabled = false;
+							}}
+						/>
 					{:else if constraint.type == 'Pattern'}
-						<PatternForm {patternConstraint} on:true={() => {disabled = true;}} on:false={() => {disabled = false;}} />
+						<PatternForm
+							{patternConstraint}
+							on:true={() => {
+								disabled = true;
+							}}
+							on:false={() => {
+								disabled = false;
+							}}
+						/>
 					{/if}
 				</div>
 			{/if}

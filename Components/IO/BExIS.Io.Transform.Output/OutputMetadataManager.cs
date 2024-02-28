@@ -258,11 +258,11 @@ namespace BExIS.IO.Transform.Output
             {
                 datasetVersion = dm.GetDatasetVersion(datasetVersion.Id);
 
-                if (datasetVersion.ContentDescriptors.Count(p => p.Name.Equals(name)) > 0)
+                if (datasetVersion.ContentDescriptors.Count(p => p.Name.Equals(name) && p.MimeType.Equals(mimeType)) > 0)
                 {   // remove the one contentdesciptor
                     foreach (ContentDescriptor cd in datasetVersion.ContentDescriptors)
                     {
-                        if (cd.Name == name)
+                        if (cd.Name == name && cd.MimeType.Equals(mimeType))
                         {
                             cd.URI = dynamicPath;
                             dm.UpdateContentDescriptor(cd);

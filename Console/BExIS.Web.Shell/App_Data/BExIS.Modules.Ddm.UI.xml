@@ -1,0 +1,370 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>BExIS.Modules.Ddm.UI</name>
+    </assembly>
+    <members>
+        <member name="T:BExIS.Modules.Ddm.UI.Controllers.DataTableController">
+            <summary>
+            This class is designed as a Web API to allow various client tools request datasets or a view on data sets and get the result in
+            either of XML, JSON, or CSV formats.
+            </summary>
+            <remarks>
+            This class is designed as a Web API to allow various client tools request datasets or a view on data sets and get the result in
+            either of XML, JSON, or CSV formats.
+            The design follows the RESTFull pattern mentioned in http://www.asp.net/web-api/overview/older-versions/creating-a-web-api-that-supports-crud-operations
+            CSV formatter is implemented in the DataTupleCsvFormatter class in the Models folder.
+            The formatter is registered in the WebApiConfig as an automatic formatter, so if the clinet sets the request's Mime type to text/csv, this formatter will be automatically engaged.
+            text/xml and text/json return XML and JSON content accordingly.
+            </remarks>
+        </member>
+        <!-- Badly formed XML comment ignored for member "M:BExIS.Modules.Ddm.UI.Controllers.DataTableController.Get(BExIS.UI.Models.DataTableSendModel)" -->
+        <member name="M:BExIS.Modules.Ddm.UI.Controllers.DashboardController.ShowMyDatasets(System.String,BExIS.Security.Entities.Authorization.RightType,System.String)">
+            <summary>
+            create the model of My Dataset table
+            </summary>
+            <remarks></remarks>
+            <seealso cref="M:BExIS.Modules.Ddm.UI.Controllers.DashboardController._CustomMyDatasetBinding"/>
+            <param name="entityname">Name of entity</param>
+            <param name="rightType">Type of right (write, delete, grant, read)</param>
+            <param name="onlyTable">Return only table without header</param>
+            <returns>model</returns>
+        </member>
+        <member name="M:BExIS.Modules.Ddm.UI.Controllers.DashboardController.ShowMyDatasets_old">
+            <summary>
+            create the model of My Dataset table
+            </summary>
+            <remarks></remarks>
+            <seealso cref="M:BExIS.Modules.Ddm.UI.Controllers.DashboardController._CustomMyDatasetBinding"/>
+            <param>NA</param>
+            <returns>model</returns>
+        </member>
+        <member name="M:BExIS.Modules.Ddm.UI.Controllers.DashboardController.ShowMyDatasetsInFullPage">
+            <summary>
+            create the model of My Dataset table
+            </summary>
+            <remarks></remarks>
+            <seealso cref="M:BExIS.Modules.Ddm.UI.Controllers.DashboardController._CustomMyDatasetBinding"/>
+            <param>NA</param>
+            <returns>model</returns>
+        </member>
+        <member name="M:BExIS.Modules.Ddm.UI.Controllers.DataController.ShowMetaData(System.Int64,System.String,System.Int64,System.Int64,System.Int64,System.String,System.Boolean,System.String)">
+             <summary>
+            
+             </summary>
+             <remarks></remarks>
+             <seealso cref="!:"/>
+             <param name="datasetID"></param>
+             <returns>model</returns>
+        </member>
+        <member name="M:BExIS.Modules.Ddm.UI.Controllers.HomeController.Index">
+             <summary>
+             is called when the Search View is selected
+            
+             </summary>
+             <param name="model">from type SearchDataModel</param>
+             <returns></returns>
+        </member>
+        <member name="M:BExIS.Modules.Ddm.UI.Controllers.HomeController.Index(System.String,System.String,System.String)">
+            <summary>
+            This action is called when the search button is pressed
+            </summary>
+            <param name="autoComplete">search input as string</param>
+            <param name="FilterList">selected filter</param>
+            <param name="searchType"></param>
+            <param name="model"></param>
+            <returns></returns>
+        </member>
+        <member name="M:BExIS.Modules.Ddm.UI.Controllers.HomeController.FilterByDropDownList(System.String,System.String)">
+            <summary>
+            Is called when the user select a other filter
+            </summary>
+            <param name="SelectedFilter">selected filter</param>
+            <param name="searchType"></param>
+            <param name="model"></param>
+            <returns></returns>
+        </member>
+        <member name="M:BExIS.Modules.Ddm.UI.Controllers.HomeController._AutoCompleteAjaxLoading(System.String)">
+            <summary>
+            Is called when the user write a letter in Autocomplete User Component
+            </summary>
+            <param name="model"></param>
+            <returns></returns>
+        </member>
+        <member name="M:BExIS.Modules.Ddm.UI.Controllers.HomeController.ChangeSearchValuesACBySearchType(System.String)">
+            <summary>
+            Is called when the user change the SearchType
+            </summary>
+            <param name="value">consist the searchType</param>
+            <param name="model"></param>
+            <returns></returns>
+        </member>
+        <member name="M:BExIS.Modules.Ddm.UI.Controllers.HomeController.CheckedTreeViewItem(System.String,System.String)">
+            <summary>
+            Is called when a user select a facet in the treeview by using the checkox
+            </summary>
+            <param name="SelectedItem"> name of the selected item</param>
+            <param name="Parent">name of the parent from the selected item</param>
+            <param name="IsChecked">show the status of the checkbox (true = selected/false=deselected)</param>
+            <param name="model"></param>
+            <returns></returns>
+        </member>
+        <member name="M:BExIS.Modules.Ddm.UI.Controllers.HomeController.OnSelectTreeViewItem(System.String,System.String)">
+            <summary>
+            Is called when a user select a category in the treeview by select the item
+            </summary>
+            <param name="SelectedItem"> name of the selected item</param>
+            <param name="Parent">name of the parent from the selected item</param>
+            <param name="IsChecked">show the status of the checkbox (true = selected/false=deselected)</param>
+            <param name="model"></param>
+            <returns></returns>
+        </member>
+        <member name="M:BExIS.Modules.Ddm.UI.Controllers.HomeController.AddFacetsToSearch">
+            <summary>
+            Add a selected Facets to the Search Values
+            </summary>
+            <param name="model"></param>
+            <returns></returns>
+        </member>
+        <member name="M:BExIS.Modules.Ddm.UI.Controllers.HomeController.ShowMoreWindow(System.String)">
+            <summary>
+            When the user click on the more button in the treeview
+            a window pops up an show all categories from the main categorie
+            </summary>
+            <param name="parent">name of the parent where the more button is inside</param>
+            <param name="model"></param>
+            <returns></returns>
+        </member>
+        <member name="M:BExIS.Modules.Ddm.UI.Controllers.HomeController.OnClickBreadCrumbItem(System.String,System.String)">
+             <summary>
+             Is called when the user click on the labels in the breadcrumb view
+            
+             </summary>
+             <param name="value">selected value</param>
+             <param name="parent">patrent of selected value</param>
+             <param name="model"></param>
+             <returns></returns>
+        </member>
+        <member name="M:BExIS.Modules.Ddm.UI.Controllers.HomeController.RemoveFromPropertiesDic(System.String,System.String,BExIS.Utils.Models.SearchCriteria)">
+            <summary>
+            Remove a property from the Dictionary
+            </summary>
+            <example>
+            grassland: all | yes | no
+            grassland is name
+            value is (all | yes | no)
+            </example>
+            <param name="name">Name of the property</param>
+            <param name="value">Value of the property</param>
+        </member>
+        <member name="M:BExIS.Modules.Ddm.UI.Controllers.PublicSearchController.FilterByDropDownList(System.String,System.String)">
+            <summary>
+            Is called when the user select a other filter
+            </summary>
+            <param name="SelectedFilter">selected filter</param>
+            <param name="searchType"></param>
+            <param name="model"></param>
+            <returns></returns>
+        </member>
+        <member name="M:BExIS.Modules.Ddm.UI.Controllers.PublicSearchController._AutoCompleteAjaxLoading(System.String)">
+            <summary>
+            Is called when the user write a letter in Autocomplete User Component
+            </summary>
+            <param name="model"></param>
+            <returns></returns>
+        </member>
+        <member name="M:BExIS.Modules.Ddm.UI.Controllers.PublicSearchController.ChangeSearchValuesACBySearchType(System.String)">
+            <summary>
+            Is called when the user change the SearchType
+            </summary>
+            <param name="value">consist the searchType</param>
+            <param name="model"></param>
+            <returns></returns>
+        </member>
+        <member name="M:BExIS.Modules.Ddm.UI.Controllers.PublicSearchController.CheckedTreeViewItem(System.String,System.String)">
+            <summary>
+            Is called when a user select a facet in the treeview by using the checkox
+            </summary>
+            <param name="SelectedItem"> name of the selected item</param>
+            <param name="Parent">name of the parent from the selected item</param>
+            <param name="IsChecked">show the status of the checkbox (true = selected/false=deselected)</param>
+            <param name="model"></param>
+            <returns></returns>
+        </member>
+        <member name="M:BExIS.Modules.Ddm.UI.Controllers.PublicSearchController.OnSelectTreeViewItem(System.String,System.String)">
+            <summary>
+            Is called when a user select a category in the treeview by select the item
+            </summary>
+            <param name="SelectedItem"> name of the selected item</param>
+            <param name="Parent">name of the parent from the selected item</param>
+            <param name="IsChecked">show the status of the checkbox (true = selected/false=deselected)</param>
+            <param name="model"></param>
+            <returns></returns>
+        </member>
+        <member name="M:BExIS.Modules.Ddm.UI.Controllers.PublicSearchController.AddFacetsToSearch">
+            <summary>
+            Add a selected Facets to the Search Values
+            </summary>
+            <param name="model"></param>
+            <returns></returns>
+        </member>
+        <member name="M:BExIS.Modules.Ddm.UI.Controllers.PublicSearchController.ShowMoreWindow(System.String)">
+            <summary>
+            When the user click on the more button in the treeview 
+            a window pops up an show all categories from the main categorie
+            </summary>
+            <param name="parent">name of the parent where the more button is inside</param>
+            <param name="model"></param>
+            <returns></returns>
+        </member>
+        <member name="M:BExIS.Modules.Ddm.UI.Controllers.PublicSearchController.OnClickBreadCrumbItem(System.String,System.String)">
+            <summary>
+            Is called when the user click on the labels in the breadcrumb view
+            
+            </summary>
+            <param name="value">selected value</param>
+            <param name="parent">patrent of selected value</param>
+            <param name="model"></param>
+            <returns></returns>
+        </member>
+        <member name="M:BExIS.Modules.Ddm.UI.Controllers.PublicSearchController.RemoveFromPropertiesDic(System.String,System.String,BExIS.Utils.Models.SearchCriteria)">
+            <summary>
+            Remove a property from the Dictionary 
+            </summary>
+            <example>
+            grassland: all | yes | no
+            grassland is name
+            value is (all | yes | no)
+            </example>
+            <param name="name">Name of the property</param>
+            <param name="value">Value of the property</param>
+        </member>
+        <member name="T:BExIS.Modules.Ddm.UI.Controllers.SearchIndexController">
+            <summary>
+            This Search Index API is only for internal comminication
+            
+            </summary>
+        </member>
+        <member name="M:BExIS.Modules.Ddm.UI.Controllers.SearchIndexController.ReIndex">
+            <summary>
+            Reindex full search
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:BExIS.Modules.Ddm.UI.Controllers.SearchIndexController.Get(System.String)">
+            <summary>
+            free text search over the index
+            </summary>
+            <param name="value">search value</param>
+            <returns></returns>
+        </member>
+        <member name="M:BExIS.Modules.Ddm.UI.Helpers.GridHelper.CastVariableValue(System.Object,System.String)">
+            <summary>
+            Cast a value to a systemtype
+            </summary>
+            <param name="value"></param>
+            <param name="systemType"></param>
+            <returns></returns>
+        </member>
+        <member name="M:BExIS.Modules.Ddm.UI.Helpers.GridHelper.Convert(System.Collections.Generic.List{Telerik.Web.Mvc.IFilterDescriptor})">
+            <summary>
+            Convert a List of IFilterdesciptors to a FilterExpression
+            </summary>
+            <param name="filterDescriptors"></param>
+            <returns></returns>
+        </member>
+        <member name="M:BExIS.Modules.Ddm.UI.Helpers.GridHelper.Convert(Telerik.Web.Mvc.Infrastructure.Implementation.FilterDescriptorCollection)">
+            <summary>
+            Convert a FilterDescriptorCollection to FilterExpression
+            </summary>
+            <param name="filterDescriptors"></param>
+            <returns></returns>
+        </member>
+        <member name="M:BExIS.Modules.Ddm.UI.Helpers.GridHelper.convert(Telerik.Web.Mvc.IFilterDescriptor)">
+            <summary>
+            Convert a FilterDesriptor to a FilterExpression
+            </summary>
+            <param name="filterDescriptor"></param>
+            <returns></returns>
+        </member>
+        <member name="M:BExIS.Modules.Ddm.UI.Helpers.GridHelper.Convert(System.String[])">
+            <summary>
+            Convert a list of column names to a Projection Expression
+            </summary>
+            <param name="columns"></param>
+            <returns></returns>
+        </member>
+        <member name="M:BExIS.Modules.Ddm.UI.Helpers.SearchUIHelper.ConvertTupleIntoDataRow(System.Data.DataTable,BExIS.Dlm.Entities.Data.AbstractTuple,BExIS.Dlm.Entities.DataStructure.StructuredDataStructure)">
+            <summary>
+            This function convert a datatuple into datarow for a datatable to show on the client side
+            the grid in the client side (in client mode) has unknow problem with value 0 and null
+            So every empty cell get the max value of the specific Systemtype.
+            On the client side this values replaced with ""
+            </summary>
+            <param name="dt"></param>
+            <param name="t"></param>
+            <returns></returns>
+        </member>
+        <member name="T:BExIS.Modules.Ddm.UI.Models.ShowMetadataModel">
+            <summary>
+            model of showing Metadata
+            </summary>
+            <remarks></remarks>        
+        </member>
+        <member name="M:BExIS.Modules.Ddm.UI.Models.ShowMetadataModel.#ctor">
+            <summary>
+            Show metadata model required
+            </summary>
+            <remarks></remarks>
+            <seealso cref="!:BExIS.Web.Shell\Areas\ddm\Views\Data\ShowMetaData.cshtml"/>
+            <param>NA</param>       
+        </member>
+        <member name="T:BExIS.Modules.Ddm.UI.Models.PackageUsageModel">
+            <summary>
+            
+            </summary>
+            <remarks></remarks>        
+        </member>
+        <member name="P:BExIS.Modules.Ddm.UI.Models.PackageUsageModel.Attributes">
+            <summary>
+            List of Packages
+            </summary>
+            <remarks></remarks>
+            <seealso cref="!:"/>        
+        </member>
+        <member name="M:BExIS.Modules.Ddm.UI.Models.PackageUsageModel.#ctor">
+            <summary>
+            PackageUsage includes the name and a list of Packages
+            </summary>
+            <remarks></remarks>
+            <seealso cref="!:"/>   
+        </member>
+        <member name="T:BExIS.Modules.Ddm.UI.Models.PackageModel">
+            <summary>
+            
+            </summary>
+            <remarks></remarks>        
+        </member>
+        <member name="F:BExIS.Modules.Ddm.UI.Models.PackageModel.Attributes">
+            <summary>
+            AttribueUsages is a dictionary
+            </summary>
+            <remarks></remarks>
+            <seealso cref="!:"/>        
+        </member>
+        <member name="M:BExIS.Modules.Ddm.UI.Models.PackageModel.#ctor">
+            <summary>
+            Create a new dictionary called AttributeUsages
+            </summary>
+            <remarks></remarks>
+            <seealso cref="!:"/>        
+        </member>
+        <member name="M:BExIS.Modules.Ddm.UI.Models.ShowPrimaryDataModel.CompareValues(BExIS.Dlm.Entities.DataStructure.StructuredDataStructure)">
+            <summary>
+            List of used datatypes and
+            the maxvalue of the datatypes
+            </summary>
+            <returns></returns>
+        </member>
+    </members>
+</doc>

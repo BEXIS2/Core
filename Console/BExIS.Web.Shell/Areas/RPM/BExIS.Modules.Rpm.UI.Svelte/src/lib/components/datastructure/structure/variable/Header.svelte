@@ -53,7 +53,7 @@
 	<div class="flex-none flex-col text-right">
 		<div>
 			<SlideToggle size="sm" name="isKey" bind:checked={isKey} active="bg-primary-500" disabled={blockDataRelevant}
-				>Mark as part of primary keys</SlideToggle
+				>Mark a part of primary key</SlideToggle
 			>
 		</div>
 		<div>

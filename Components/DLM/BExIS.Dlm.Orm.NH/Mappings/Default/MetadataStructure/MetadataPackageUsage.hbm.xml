@@ -35,6 +35,6 @@
 
     <many-to-one name="MetadataStructure" class="MetadataStructure" not-null="true" column="MetadataStructureRef" />
 
-    <many-to-one name="MetadataPackage"   class="MetadataPackage"   not-null="true" column="MetadataPackageRef" />
+    <many-to-one name="MetadataPackage"   class="MetadataPackage"   not-null="true" column="MetadataPackageRef" lazy="false" />
   </class>
 </hibernate-mapping>

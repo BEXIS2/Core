@@ -104,5 +104,17 @@
                 </table>
             </td>
         </tr>
+        @foreach (var parameter in Model.Parameters)
+        {
+            <tr>
+                <td>
+                    <!--offset-->
+                </td>
+                <td class="metadataAttributeInput">
+                    @Html.Partial("_metadataParameterViewOffline", parameter)
+                </td>
+                <td></td>
+            </tr>
+        }
     </table>
 </div>

@@ -135,6 +135,9 @@ namespace BExIS.IO.Transform.Output
         public UnitElement unit { get; set; }
         public DataTypeElement dataType { get; set; }
 
+        public List<MissingValueElement> missingValues { get; set; }
+        public List<MeaningElement> meanings { get; set; }
+
         public VariableElement(Variable variable)
         {
 
@@ -144,6 +147,11 @@ namespace BExIS.IO.Transform.Output
             isOptional = variable.IsValueOptional;
             unit = new UnitElement(variable.Unit.Id);
             dataType = new DataTypeElement(variable.DataType.Id);
+            if(variable.MissingValues.Any())
+               variable.MissingValues.ToList().ForEach(m=> missingValues.Add(new MissingValueElement(m.DisplayName,m.Description, m.Placeholder)));
+
+            if (variable.Meanings.Any())
+                variable.Meanings.ToList().ForEach(m => meanings.Add(new MeaningElement(m.Name, m.Description)));
         }
 
     }
@@ -192,6 +200,34 @@ namespace BExIS.IO.Transform.Output
             Specification = specification;
         }
 
+    }
+
+    public class MissingValueElement
+    {
+        public string DisplayName { get; set; }
+        public string Description { get; set; }
+        public string Placeholder { get; set; }
+
+        public MissingValueElement(string displayname, string description, string placeholder)
+        {
+            DisplayName = displayname;
+            Description = description;
+            Placeholder = placeholder;
+        }
+    }
+
+    public class MeaningElement
+    {
+        public string Name { get; set; }
+        public string Description { get; set; }
+
+
+        public MeaningElement(string name, string description)
+        {
+            Description = description;  
+            Name = name;    
+
+        }
     }
 
     public class DataTypeElement
@@ -299,10 +335,10 @@ namespace BExIS.IO.Transform.Output
             return JsonConvert.SerializeObject(new DataStructureDataTable(id));
         }
 
-        public static string GetVariableListAsJson(long id)
-        {
-            return JsonConvert.SerializeObject(new DataStructureDataList(id), Newtonsoft.Json.Formatting.Indented);
-        }
+        //public static string GetVariableListAsJson(long id)
+        //{
+        //    return JsonConvert.SerializeObject(new DataStructureDataList(id), Newtonsoft.Json.Formatting.Indented);
+        //}
 
         public static DataStructureDataList GetVariableList(long id)
         {

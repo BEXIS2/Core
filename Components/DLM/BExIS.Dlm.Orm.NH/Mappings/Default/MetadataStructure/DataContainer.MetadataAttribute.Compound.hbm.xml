@@ -1,13 +1,13 @@
 <hibernate-mapping xmlns="urn:nhibernate-mapping-2.2" assembly="BExIS.Dlm.Entities" namespace="BExIS.Dlm.Entities.MetadataStructure">
   <subclass name="MetadataCompoundAttribute" extends="MetadataAttribute" discriminator-value="CMA" dynamic-update="true">
 
-    <set name="MetadataNestedAttributeUsages" inverse="true" order-by="Id" cascade="all-delete-orphan">
+    <set name="MetadataNestedAttributeUsages" inverse="true" order-by="Id" cascade="all-delete-orphan" lazy="false">
       <!-- should delete the usage but not the target package-->
       <!--cascade only insert, update, set null in case of delete-->
       <key>
         <column name="MetadataCompoundAttributeRef" />
       </key>
-      <one-to-many class="MetadataNestedAttributeUsage" />
+      <one-to-many class="MetadataNestedAttributeUsage"/>
     </set>
 
 

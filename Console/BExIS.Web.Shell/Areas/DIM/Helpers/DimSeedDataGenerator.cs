@@ -2,8 +2,10 @@
 using BExIS.Dim.Entities.Publication;
 using BExIS.Dim.Helpers;
 using BExIS.Dim.Services;
+using BExIS.Dlm.Entities.Meanings;
 using BExIS.Dlm.Entities.MetadataStructure;
 using BExIS.Dlm.Entities.Party;
+using BExIS.Dlm.Services.Meanings;
 using BExIS.Dlm.Services.MetadataStructure;
 using BExIS.Modules.Dim.UI.Helper;
 using BExIS.Security.Entities.Objects;
@@ -162,6 +164,12 @@ namespace BExIS.Modules.Dim.UI.Helpers
                 createFunctionConcept();
 
                 #endregion MAPPING
+
+                #region meanings for GBIFDWC 
+
+                createMeaningsForGBIFDWC();
+
+                #endregion
             }
             catch (Exception ex)
             {
@@ -175,6 +183,116 @@ namespace BExIS.Modules.Dim.UI.Helpers
             }
 
             //ImportPartyTypes();
+        }
+
+        private void createMeaningsForGBIFDWC()
+        {
+
+            using (var meaningManager = new MeaningManager())
+            {
+                ExternalLink prefix = new ExternalLink();
+                ExternalLink releation = new ExternalLink();
+
+
+                // prefix
+                if (!meaningManager.getPrefixes().Any(p => p.Name.Equals("dwc")))
+                {
+                    prefix.Name = "dwc";
+                    prefix.URI = "http://rs.tdwg.org/dwc/terms/";
+                    prefix.Type = ExternalLinkType.prefix;
+                    prefix.Prefix = null;
+                    prefix.prefixCategory = null;
+
+                    prefix = meaningManager.addExternalLink(prefix);
+                }
+                else {
+                    prefix = meaningManager.getPrefixes().FirstOrDefault(p => p.Name.Equals("dwc"));
+                }
+
+                // releation (hasDwcTerm)
+                if (!meaningManager.getExternalLinks().Any(p => p.Name.Equals("hasDwcTerm")))
+                {
+                    releation.Name = "hasDwcTerm";
+                    releation.URI = "na";
+                    releation.Type = ExternalLinkType.relationship;
+                    releation.Prefix = null;
+                    releation.prefixCategory = null;
+
+                    releation = meaningManager.addExternalLink(releation);
+                }
+                else
+                {
+                    releation = meaningManager.getPrefixes().FirstOrDefault(p => p.Name.Equals("hasDwcTerm"));
+                }
+
+
+                // links & meanings
+                List<string> links = new List<string>();
+                links.Add("occurrenceID");
+                links.Add("basisOfRecord");
+                links.Add("scientificName");
+                links.Add("eventDate");
+                links.Add("countryCode");
+                links.Add("taxonRank");
+                links.Add("kingdom");
+                links.Add("decimalLatitude");
+                links.Add("decimalLongitude");
+                links.Add("geodeticDatum");
+                links.Add("coordinateUncertaintyInMeters");
+                links.Add("individualCount");
+                links.Add("organismQuantity");
+                links.Add("organismQuantityType");
+                links.Add("informationWithheld");
+                links.Add("dataGeneralizations");
+                links.Add("eventTime");
+                links.Add("country");
+                links.Add("eventID");
+                links.Add("eventDate");
+                links.Add("samplingProtocol");
+                links.Add("samplingSizeUnit");
+                links.Add("samplingSizeValue");
+                links.Add("parentEventID");
+                links.Add("samplingEffort");
+                links.Add("locationID");
+                links.Add("footprintWKT");
+                links.Add("occurrenceStatus");
+
+                foreach (var l in links)
+                {
+                    ExternalLink link = new ExternalLink();
+                    if (!meaningManager.getExternalLinks().Any(p => p.Name.Equals(l)))
+                    {
+                        link.Name = l;
+                        link.URI = l;
+                        link.Type = ExternalLinkType.vocabulary;
+                        link.Prefix = prefix;
+                        link.prefixCategory = null;
+
+                        link = meaningManager.addExternalLink(link);
+
+                        if (link.Id > 0)
+                        {
+                            // create meaning
+                            var linkList = new List<ExternalLink>();
+                            linkList.Add(link);
+
+
+                            Meaning meaning = new Meaning();
+                            if (meaningManager.getMeanings().Any(m => m.Name.Equals(l)))
+                            {
+                                meaning = meaningManager.getMeanings().FirstOrDefault(m => m.Name.Equals(l));
+                            }
+                            
+                            meaning.Name = l;
+                            meaning.Selectable = true;
+                            meaning.Approved = true;
+                            meaning.ExternalLinks.Add(new MeaningEntry(releation, linkList));
+
+                            meaningManager.addMeaning(meaning);
+                        }
+                    }
+                }
+            }
         }
 
         private static List<XElement> getXElements(string nodename, XDocument metadataRef)
@@ -1363,7 +1481,7 @@ namespace BExIS.Modules.Dim.UI.Helpers
                         }
 
                         // add releationship type mapping
-                        PartyRelationshipType partyRelationshipType = partyReleationships.FirstOrDefault(p => p.Title.Equals(ModuleManager.GetModuleSettings("bam").GetValueByKey<string>("OwnerPartyRelationshipType")));
+                        PartyRelationshipType partyRelationshipType = partyReleationships.FirstOrDefault(p => p.Title.Equals(ModuleManager.GetModuleSettings("bam").GetValueByKey("OwnerPartyRelationshipType")));
                         if (partyRelationshipType != null)
                         {
                             createToPartyReleationMapping(
@@ -1501,7 +1619,7 @@ namespace BExIS.Modules.Dim.UI.Helpers
                         #region owner relationship
 
                         //Metadata/creator/creatorType/individualName
-                        PartyRelationshipType partyRelationshipType = partyReleationships.FirstOrDefault(p => p.Title.Equals(ModuleManager.GetModuleSettings("bam").GetValueByKey<string>("OwnerPartyRelationshipType")));
+                        PartyRelationshipType partyRelationshipType = partyReleationships.FirstOrDefault(p => p.Title.Equals(ModuleManager.GetModuleSettings("bam").GetValueByKey("OwnerPartyRelationshipType")));
                         if (partyRelationshipType != null)
                         {
                             createToPartyReleationMapping(

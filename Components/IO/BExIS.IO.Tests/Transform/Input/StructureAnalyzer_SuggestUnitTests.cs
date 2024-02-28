@@ -50,7 +50,7 @@ namespace BExIS.IO.Tests.Transform.Input
             StructureAnalyser structureAnalyser = new StructureAnalyser();
 
             //Act
-            var result = structureAnalyser.SuggestUnit(input,"");
+            var result = structureAnalyser.SuggestUnit(input,input,"");
 
             //Assert
             Assert.NotNull(result, "result should not be null.");
@@ -67,7 +67,7 @@ namespace BExIS.IO.Tests.Transform.Input
             StructureAnalyser structureAnalyser = new StructureAnalyser();
 
             //Act
-            var result = structureAnalyser.SuggestUnit("", dataType);
+            var result = structureAnalyser.SuggestUnit("","", dataType);
 
             //Assert
             Assert.NotNull(result, "result should not be null.");

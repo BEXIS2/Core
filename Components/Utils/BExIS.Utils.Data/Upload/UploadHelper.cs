@@ -393,6 +393,25 @@ namespace BExIS.Utils.Upload
         public bool IsUnique(long datasetId, string ext, string filename, string filepath, FileReaderInfo info, long datastructureId)
         {
             Hashtable hashtable = new Hashtable();
+
+            return IsUnique(datasetId, ext, filename, filepath, info, datastructureId, ref hashtable);
+
+        }
+
+        /// <summary>
+        /// test unique of primary keys in a FileStream
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>
+        /// <param name="taskManager"></param>
+        /// <param name="datasetId"></param>
+        /// <param name="primaryKeys"></param>
+        /// <param name="ext"></param>
+        /// <param name="filename"></param>
+        /// <returns></returns>
+        public bool IsUnique(long datasetId, string ext, string filename, string filepath, FileReaderInfo info, long datastructureId,ref Hashtable hashtable)
+        {
+            if(hashtable==null) hashtable=new Hashtable();
             Hashtable test = new Hashtable();
             List<string> testString = new List<string>();
 
@@ -531,6 +550,8 @@ namespace BExIS.Utils.Upload
 
             return true;
         }
+
+
 
         /// <summary>
         /// test unique of primary keys in a string[][] as data

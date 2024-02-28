@@ -20,12 +20,14 @@ namespace BExIS.Modules.Dcm.UI.Models.Metadata
         public int MaxCardinality { get; set; }
 
         public List<MetadataAttributeModel> MetadataAttributeModels { get; set; }
+        public List<MetadataParameterModel> MetadataParameterModels { get; set; }
         public List<MetadataInstanceModel> Instance { get; set; }
 
         public AbstractMetadataStepModel()
         {
             Instance = new List<MetadataInstanceModel>();
             MetadataAttributeModels = new List<MetadataAttributeModel>();
+            MetadataParameterModels = new List<MetadataParameterModel>();
         }
 
         public void ConvertInstance(XDocument metadata, string xpath)

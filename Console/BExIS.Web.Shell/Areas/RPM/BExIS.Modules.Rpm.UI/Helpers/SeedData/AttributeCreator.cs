@@ -49,6 +49,7 @@ namespace BExIS.Modules.Rpm.UI.Helpers.SeedData
                             template.Unit,
                             template.Description,
                             "",
+                            "",
                             null,
                             null,
                             true
