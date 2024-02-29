@@ -235,10 +235,37 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
                 if (entityTemplate.PermissionGroups != null)
                 {
-                    foreach (var groupId in entityTemplate.PermissionGroups)
+                    // full
+                    foreach (var groupId in entityTemplate.PermissionGroups.Full)
                     {
                         var group = gm.Groups.Where(g => g.Id.Equals(groupId)).FirstOrDefault();
                         entityPermissionManager.Create<Group>(group.Name, entityTemplate.EntityType.Name, typeof(Dataset), ds.Id, Enum.GetValues(typeof(RightType)).Cast<RightType>().ToList());
+                    }
+
+
+                    // ViewEditGrant
+                    foreach (var groupId in entityTemplate.PermissionGroups.ViewEditGrant)
+                    {
+                        var group = gm.Groups.Where(g => g.Id.Equals(groupId)).FirstOrDefault();
+                        var l = new List<RightType>() { RightType.Read, RightType.Write, RightType.Grant };
+
+                        entityPermissionManager.Create<Group>(group.Name, entityTemplate.EntityType.Name, typeof(Dataset), ds.Id, l);
+                    }
+
+                    // ViewEdit
+                    foreach (var groupId in entityTemplate.PermissionGroups.ViewEdit)
+                    {
+                        var group = gm.Groups.Where(g => g.Id.Equals(groupId)).FirstOrDefault();
+                        var l = new List<RightType>() { RightType.Read, RightType.Write };
+                        entityPermissionManager.Create<Group>(group.Name, entityTemplate.EntityType.Name, typeof(Dataset), ds.Id,l);
+                    }
+
+                    // View
+                    foreach (var groupId in entityTemplate.PermissionGroups.View)
+                    {
+                        var group = gm.Groups.Where(g => g.Id.Equals(groupId)).FirstOrDefault();
+                        var l = new List<RightType>() { RightType.Read};
+                        entityPermissionManager.Create<Group>(group.Name, entityTemplate.EntityType.Name, typeof(Dataset), ds.Id,l);
                     }
                 }
 

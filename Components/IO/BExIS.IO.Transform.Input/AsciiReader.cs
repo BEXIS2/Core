@@ -85,7 +85,7 @@ namespace BExIS.IO.Transform.Input
 
             if (this.ErrorMessages.Count == 0)
             {
-                using (StreamReader streamReader = new StreamReader(file, encoding))
+                using (StreamReader streamReader = new StreamReader(file, encoding, true))
                 {
                     string line;
                     int index = fri.Variables;
@@ -150,7 +150,7 @@ namespace BExIS.IO.Transform.Input
 
             if (this.ErrorMessages.Count == 0)
             {
-                using (StreamReader streamReader = new StreamReader(file, encoding))
+                using (StreamReader streamReader = new StreamReader(file, encoding, true))
                 {
                     string line;
                     int index = fri.Variables;
@@ -227,7 +227,7 @@ namespace BExIS.IO.Transform.Input
 
             if (this.ErrorMessages.Count == 0)
             {
-                using (StreamReader streamReader = new StreamReader(file, encoding))
+                using (StreamReader streamReader = new StreamReader(file, encoding, true))
                 {
                     string line;
                     int index = 1;
@@ -342,7 +342,7 @@ namespace BExIS.IO.Transform.Input
             {
                 Stopwatch totalTime = Stopwatch.StartNew();
 
-                using (StreamReader streamReader = new StreamReader(file, encoding))
+                using (StreamReader streamReader = new StreamReader(file, encoding, true))
                 {
                     string line;
                     //int index = fri.Variables;
@@ -457,7 +457,7 @@ namespace BExIS.IO.Transform.Input
 
             if (this.ErrorMessages.Count == 0)
             {
-                using (StreamReader streamReader = new StreamReader(file, encoding))
+                using (StreamReader streamReader = new StreamReader(file, encoding, true))
                 {
                     string line;
                     int index = 1;
@@ -580,7 +580,7 @@ namespace BExIS.IO.Transform.Input
 
                 using (var file = File.Open(fileName, FileMode.Open, FileAccess.Read))
                 {
-                    using (StreamReader streamReader = new StreamReader(file))
+                    using (StreamReader streamReader = new StreamReader(file, Encoding.Default, true))
                     {
                         return countLinesMaybe(file);
                     }
@@ -613,7 +613,7 @@ namespace BExIS.IO.Transform.Input
             {
                 using (var file = File.Open(fileName, FileMode.Open, FileAccess.Read))
                 {
-                    using (StreamReader streamReader = new StreamReader(file))
+                    using (StreamReader streamReader = new StreamReader(file, Encoding.Default, true))
                     {
                         string line;
                         while ((line = streamReader.ReadLine()) != null)
@@ -715,7 +715,7 @@ namespace BExIS.IO.Transform.Input
                 using (var file = File.Open(fileName, FileMode.Open, FileAccess.Read))
                 {
 
-                    using (StreamReader streamReader = new StreamReader(file, Encoding.UTF8))
+                    using (StreamReader streamReader = new StreamReader(file, Encoding.Default,true))
                     {
                         string line = "";
                         while ((line = streamReader.ReadLine()) != null)
@@ -761,7 +761,7 @@ namespace BExIS.IO.Transform.Input
                 using (var file = File.Open(fileName, FileMode.Open, FileAccess.Read))
                 {
 
-                    using (StreamReader streamReader = new StreamReader(file, Encoding.UTF8))
+                    using (StreamReader streamReader = new StreamReader(file, Encoding.Default, true))
                     {
                         // skipp all empty rows
                         string line;
@@ -866,7 +866,7 @@ namespace BExIS.IO.Transform.Input
                 {
                     var lineCount = 1;
 
-                    using (StreamReader streamReader = new StreamReader(file, Encoding.UTF8))
+                    using (StreamReader streamReader = new StreamReader(file, Encoding.Default, true))
                     {
                         string line = "";
                         while ((line = streamReader.ReadLine()) != null)

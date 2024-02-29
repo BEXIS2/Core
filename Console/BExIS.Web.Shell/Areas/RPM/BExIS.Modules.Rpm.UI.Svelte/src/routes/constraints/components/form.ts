@@ -6,8 +6,6 @@ type dataType = {
 	constraints: ConstraintListItem[];
 };
 
-
-
 const suite = create((data: dataType, fieldName) => {
 	only(fieldName);
 
@@ -17,8 +15,14 @@ const suite = create((data: dataType, fieldName) => {
 
 	test('name', 'name is not unique', () => {
 		return (
-			data.constraints.find((u) => u.name.toLowerCase().trim() === data.constraint.name.toLowerCase().trim()) == null ||
-			data.constraints.filter((u) => u.name.toLowerCase().trim() === data.constraint.name.toLowerCase().trim() && u.id != data.constraint.id).length == 0
+			data.constraints.find(
+				(u) => u.name.toLowerCase().trim() === data.constraint.name.toLowerCase().trim()
+			) == null ||
+			data.constraints.filter(
+				(u) =>
+					u.name.toLowerCase().trim() === data.constraint.name.toLowerCase().trim() &&
+					u.id != data.constraint.id
+			).length == 0
 		);
 	});
 
@@ -30,11 +34,11 @@ const suite = create((data: dataType, fieldName) => {
 	// 		switch (data.constraint.type) {
 	// 			case 'Domain':
 	// 				return true;
-	
+
 	// 			case 'Range':
 	// 				return true;
-	
-	// 			case 'Pattern':	
+
+	// 			case 'Pattern':
 	// 				return true;
 
 	// 			default:

@@ -15,8 +15,14 @@ const suite = create((data: dataType, fieldName) => {
 
 	test('name', 'name is not unique', () => {
 		return (
-			data.dataTypes.find((u) => u.name.toLowerCase().trim() === data.dataType.name.toLowerCase().trim()) == null ||
-			data.dataTypes.filter((u) => u.name.toLowerCase().trim() === data.dataType.name.toLowerCase().trim() && u.id != data.dataType.id).length == 0
+			data.dataTypes.find(
+				(u) => u.name.toLowerCase().trim() === data.dataType.name.toLowerCase().trim()
+			) == null ||
+			data.dataTypes.filter(
+				(u) =>
+					u.name.toLowerCase().trim() === data.dataType.name.toLowerCase().trim() &&
+					u.id != data.dataType.id
+			).length == 0
 		);
 	});
 

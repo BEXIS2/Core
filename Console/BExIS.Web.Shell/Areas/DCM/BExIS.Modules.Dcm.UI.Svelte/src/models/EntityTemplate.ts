@@ -13,6 +13,13 @@ export interface EntityTemplateModel {
 	allowedFileTypes: string[];
 	disabledHooks: string[];
 	notificationGroups: number[];
-	permissionGroups: number[];
+	permissionGroups: permissionsType;
 	linkedSubjects: ListItem[];
+}
+
+export interface permissionsType {
+	full: number[];
+	viewEditGrant: number[];
+	viewEdit: number[];
+	view: number[];
 }

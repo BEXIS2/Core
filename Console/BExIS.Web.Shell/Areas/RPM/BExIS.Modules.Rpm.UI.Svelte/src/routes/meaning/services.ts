@@ -4,23 +4,20 @@ import { MeaningModel, type externalLinkType } from '$lib/components/meaning/typ
 export const getMeanings = async () => {
 	try {
 		const response = await Api.get('/rpm/Meaning/get');
-		console.log("🚀 ~ file: services.ts:8 ~ getMeanings ~ response.data:", response.data)
+		console.log('🚀 ~ file: services.ts:8 ~ getMeanings ~ response.data:', response.data);
 
-		const list:MeaningModel[] = [];
+		const list: MeaningModel[] = [];
 
 		for (let index = 0; index < response.data.length; index++) {
 			list.push(new MeaningModel(response.data[index]));
 		}
 
-
 		return list;
-
 	} catch (error) {
 		console.error(error);
 		throw error;
 	}
 };
-
 
 export const getLinks = async () => {
 	try {
@@ -44,7 +41,7 @@ export const getConstraints = async () => {
 
 export const remove = async (id) => {
 	try {
-		const response = await Api.delete('/rpm/Meaning/delete?id='+id,null);
+		const response = await Api.delete('/rpm/Meaning/delete?id=' + id, null);
 		return response.data;
 	} catch (error) {
 		console.error(error);
@@ -52,10 +49,9 @@ export const remove = async (id) => {
 	}
 };
 
-export const create = async (data:MeaningModel) => {
+export const create = async (data: MeaningModel) => {
 	try {
-
-		const response = await Api.post('/rpm/Meaning/create',data);
+		const response = await Api.post('/rpm/Meaning/create', data);
 		return response;
 	} catch (error) {
 		console.error(error);
@@ -63,10 +59,9 @@ export const create = async (data:MeaningModel) => {
 	}
 };
 
-export const update = async (data:MeaningModel) => {
+export const update = async (data: MeaningModel) => {
 	try {
-
-		const response = await Api.post('/rpm/Meaning/update',data);
+		const response = await Api.post('/rpm/Meaning/update', data);
 		return response;
 	} catch (error) {
 		console.error(error);
@@ -74,9 +69,9 @@ export const update = async (data:MeaningModel) => {
 	}
 };
 
-export const createLink = async (data:externalLinkType) => {
+export const createLink = async (data: externalLinkType) => {
 	try {
-		const response = await Api.post('/rpm/meaning/createLink',data);
+		const response = await Api.post('/rpm/meaning/createLink', data);
 		return response.data;
 	} catch (error) {
 		console.error(error);

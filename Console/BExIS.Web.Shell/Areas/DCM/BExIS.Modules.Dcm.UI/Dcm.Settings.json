@@ -57,30 +57,6 @@
       "description": "Allow multiple files to be uploaded at the same time.",
       "type": "Boolean",
       "options": []
-    },
-    {
-      "key": "minToAnalyse",
-      "title": "File Analyze: Minimum row number",
-      "value": 100,
-      "description": "Min number of rows to analyze structure.",
-      "type": "Int32",
-      "options": []
-    },
-    {
-      "key": "maxToAnalyse",
-      "title": "File Analyze: Maximum row number",
-      "value": 10000,
-      "description": "Max number of rows to analyze structure.",
-      "type": "Int32",
-      "options": []
-    },
-    {
-      "key": "precentageToAnalyse",
-      "title": "File Analyze: Percentage of rows",
-      "value": 50,
-      "description": "Percentage of rows to analyze structure.",
-      "type": "Int32",
-      "options": []
     }
   ]
 }

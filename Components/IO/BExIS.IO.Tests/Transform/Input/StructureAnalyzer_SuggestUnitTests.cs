@@ -42,7 +42,7 @@ namespace BExIS.IO.Tests.Transform.Input
         [TestCase("mole per kilogram", 4)]
         [TestCase("none", 1)]
         [TestCase("m^2", 8)]
-        [TestCase("µmol", 54)]
+        [TestCase("µmol", 4)]
         public void SuggestUnit_AbbrOrNameAsInputDatatypeEmpty_ReturnUnit(string input, long id)
         {
 

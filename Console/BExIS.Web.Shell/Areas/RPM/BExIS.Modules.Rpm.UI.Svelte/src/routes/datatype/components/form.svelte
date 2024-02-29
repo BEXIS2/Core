@@ -36,10 +36,9 @@
 		st = await apiCalls.GetSystemTypes();
 		if (dataType.id == 0) {
 			suite.reset();
-		}
-		else{
-			setTimeout(async () => {	
-				res = suite({ dataType: dataType, dataTypes: dataTypes }, "");
+		} else {
+			setTimeout(async () => {
+				res = suite({ dataType: dataType, dataTypes: dataTypes }, '');
 			}, 10);
 		}
 	});

@@ -38,7 +38,7 @@
 </head>
 
 <body>
-
+    @Html.RenderAuto("Header")
     <div id="informationContainer">
 
         @*pass the ModuleManger.ExportTree to the layout's menu view, it must be populated by now!*@
@@ -55,44 +55,44 @@
     </div>
 
     <div class="container-fluid">
-            @Html.RenderAuto("Breadcrumb")
+        @Html.RenderAuto("Breadcrumb")
     </div>
 
-<div class="main-content container-fluid" style=" width: 100%;">
-    <table style="table-layout: fixed;">
-        <tr>
+    <div class="main-content container-fluid" style=" width: 100%;">
+        <table style="table-layout: fixed;">
+            <tr>
 
-            @if (IsSectionDefined("LeftPane"))
-            {
-                <td style="border-top: #9B9B9B solid thin; border-bottom: #9B9B9B solid thin; padding: 12pt 0 12pt 0; width: 250px; max-width: 350px; vertical-align: top;">
+                @if (IsSectionDefined("LeftPane"))
+                {
+                    <td style="border-top: #9B9B9B solid thin; border-bottom: #9B9B9B solid thin; padding: 12pt 0 12pt 0; width: 250px; max-width: 350px; vertical-align: top;">
+                        <div>
+                            @RenderSection("LeftPane", false)
+                        </div>
+                    </td>
+                    <td style="width: 20pt; border: none" />
+                }
+
+                <td style="border-top: #9B9B9B solid thin; border-bottom: #9B9B9B solid thin; padding: 12pt 0 12pt 0; vertical-align: top;">
                     <div>
-                        @RenderSection("LeftPane", false)
+                        @RenderBody()
                     </div>
                 </td>
-                <td style="width: 20pt; border: none" />
-            }
 
-            <td style="border-top: #9B9B9B solid thin; border-bottom: #9B9B9B solid thin; padding: 12pt 0 12pt 0; vertical-align: top;">
-                <div>
-                    @RenderBody()
-                </div>
-            </td>
+                @if (IsSectionDefined("RightPane"))
+                {
+                    <td style="width: 20pt; border: none" />
 
-            @if (IsSectionDefined("RightPane"))
-            {
-                <td style="width: 20pt; border: none" />
+                    <td style="border-top: #9B9B9B solid thin; border-bottom: #9B9B9B solid thin; padding: 12pt 0 12pt 0; width: 250px; max-width: 350px; vertical-align: top;">
+                        <div>
+                            @RenderSection("RightPane", false)
+                        </div>
+                    </td>
+                }
+            </tr>
+        </table>
+    </div>
 
-                <td style="border-top: #9B9B9B solid thin; border-bottom: #9B9B9B solid thin; padding: 12pt 0 12pt 0; width: 250px; max-width: 350px; vertical-align: top;">
-                    <div>
-                        @RenderSection("RightPane", false)
-                    </div>
-                </td>
-            }
-        </tr>
-    </table>
-</div>
-
-@(Html.Telerik().ScriptRegistrar()
+    @(Html.Telerik().ScriptRegistrar()
             .DefaultGroup(group => group.Combined(true).Compress(true)
             //.DefaultPath("~/Scripts/2013.2.611/")
             )

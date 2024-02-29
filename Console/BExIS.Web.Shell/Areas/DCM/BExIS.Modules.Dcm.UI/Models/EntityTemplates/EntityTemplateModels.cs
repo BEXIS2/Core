@@ -1,4 +1,5 @@
-﻿using BExIS.UI.Models;
+﻿using BExIS.Dlm.Entities.Data;
+using BExIS.UI.Models;
 using System.Collections.Generic;
 
 namespace BExIS.Modules.Dcm.UI.Models.EntityTemplate
@@ -71,7 +72,7 @@ namespace BExIS.Modules.Dcm.UI.Models.EntityTemplate
         /// add this groups to the permissions
         /// when a email is sended to the owner or admin send also to this groups
         /// </summary>
-        public virtual List<long> PermissionGroups { get; set; }
+        public virtual PermissionsType PermissionGroups { get; set; }
 
         /// <summary>
         /// list of all suject that are created withthis template
@@ -89,7 +90,7 @@ namespace BExIS.Modules.Dcm.UI.Models.EntityTemplate
             DisabledHooks = new List<string>();
             DatastructureList = new List<long>();
             MetadataFields = new List<int>();
-            PermissionGroups = new List<long>();
+            PermissionGroups = new PermissionsType();
             NotificationGroups = new List<long>();
             MetadataInvalidSaveMode = false;
             HasDatastructure = false;

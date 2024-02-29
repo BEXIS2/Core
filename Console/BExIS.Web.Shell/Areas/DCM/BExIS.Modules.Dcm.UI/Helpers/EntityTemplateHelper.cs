@@ -94,7 +94,7 @@ namespace BExIS.Modules.Dcm.UI.Helpers
             model.DisabledHooks = entityTemplate.DisabledHooks != null ? entityTemplate.DisabledHooks : new List<string>(); ;
             model.DatastructureList = entityTemplate.DatastructureList != null ? entityTemplate.DatastructureList : new List<long>();
             model.AllowedFileTypes = entityTemplate.AllowedFileTypes != null ? entityTemplate.AllowedFileTypes : new List<string>();
-            model.PermissionGroups = entityTemplate.PermissionGroups != null ? entityTemplate.PermissionGroups : new List<long>();
+            model.PermissionGroups = entityTemplate.PermissionGroups != null ? entityTemplate.PermissionGroups : new PermissionsType();
             model.NotificationGroups = entityTemplate.NotificationGroups != null ? entityTemplate.NotificationGroups : new List<long>();
             model.MetadataFields = entityTemplate.MetadataFields != null ? entityTemplate.MetadataFields : new List<int>();
 
