@@ -509,7 +509,6 @@ namespace BExIS.Modules.Rpm.UI.Controllers
             string username = null;
             User user = null;
             int rights = 0;
-            Entity entity = null;
             List<DatasetInfo> datasetInfos = new List<DatasetInfo>();
             List<Dataset> datasets = new List<Dataset>();
 
@@ -518,7 +517,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                 try
                 {
                     username = HttpContext.User.Identity.Name;
-                    user = userManager.FindByNameAsync(username).Result;
+                    user = userManager.FindByNameAsync("majoho").Result;
                 }
                 catch
                 {
@@ -535,27 +534,25 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                     using (DatasetManager datasetManager = new DatasetManager())
                     {
                         datasets = datasetManager.DatasetRepo.Get().Where(ds => dataStructuresIds.Contains(ds.DataStructure.Id)).ToList();
-
-                        if (entity != null)
+                        
+                        using (EntityPermissionManager entityPermissionManager = new EntityPermissionManager())
                         {
-                            using (EntityPermissionManager entityPermissionManager = new EntityPermissionManager())
+                            foreach (Dataset ds in datasets)
                             {
-                                foreach (Dataset ds in datasets)
+                                rights = entityPermissionManager.GetEffectiveRights(user?.Id, ds.EntityTemplate.EntityType.Id, ds.Id);
+                                if (rights > 0)
                                 {
-                                    rights = entityPermissionManager.GetEffectiveRights(user?.Id, ds.EntityTemplate.EntityType.Id, ds.Id);
-                                    if (rights > 0)
+                                    DatasetInfo dsi = new DatasetInfo()
                                     {
-                                        DatasetInfo dsi = new DatasetInfo()
-                                        {
-                                            Id = ds.Id,
-                                            Name = String.IsNullOrEmpty(ds.Versions.OrderBy(dv => dv.Id).Last().Title) ? "no Title" : ds.Versions.OrderBy(dv => dv.Id).Last().Title,
-                                            Description = String.IsNullOrEmpty(ds.Versions.OrderBy(dv => dv.Id).Last().Description) ? "no Description" : ds.Versions.OrderBy(dv => dv.Id).Last().Description,
-                                        };
-                                    datasetInfos.Add(dsi);
-                                    }
+                                        Id = ds.Id,
+                                        Name = String.IsNullOrEmpty(ds.Versions.OrderBy(dv => dv.Id).Last().Title) ? "no Title" : ds.Versions.OrderBy(dv => dv.Id).Last().Title,
+                                        Description = String.IsNullOrEmpty(ds.Versions.OrderBy(dv => dv.Id).Last().Description) ? "no Description" : ds.Versions.OrderBy(dv => dv.Id).Last().Description,
+                                    };
+                                datasetInfos.Add(dsi);
                                 }
                             }
                         }
+                        
                     }
                 }
             }

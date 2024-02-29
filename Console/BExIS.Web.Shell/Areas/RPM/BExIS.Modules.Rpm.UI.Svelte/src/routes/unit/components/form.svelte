@@ -60,7 +60,7 @@
 			suite.reset();
 		} else {
 			setTimeout(async () => {
-				res = suite({ unit: unit, units: units, measurementSystems: measurementSystems }, '');
+				res = suite({ unit: unit, units: units, measurementSystems: measurementSystems }, "");
 			}, 10);
 		}
 	});
@@ -69,6 +69,14 @@
 		dt = await apiCalls.GetDataTypes();
 		ms = await apiCalls.GetMeasurementSystems();
 		ds = await apiCalls.GetDimensions();
+
+		if (unit.id == 0) {
+			suite.reset();
+		} else {
+			setTimeout(async () => {
+				res = suite({ unit: unit, units: units, measurementSystems: measurementSystems }, "");
+			}, 10);
+		}
 	}
 
 	//change event: if input change check also validation only on the field

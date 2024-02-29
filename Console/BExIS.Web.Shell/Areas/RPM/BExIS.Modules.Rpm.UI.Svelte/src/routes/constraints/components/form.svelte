@@ -2,7 +2,7 @@
 	import { TextInput, TextArea, DropdownKVP, helpStore, CodeEditor } from '@bexis2/bexis2-core-ui';
 
 	import Fa from 'svelte-fa';
-	import { faSave, faXmark, faArrowUpFromBracket } from '@fortawesome/free-solid-svg-icons';
+	import { faSave, faXmark } from '@fortawesome/free-solid-svg-icons';
 
 	import type {
 		ConstraintListItem,
@@ -14,7 +14,6 @@
 	import { onMount } from 'svelte';
 	import * as apiCalls from '../services/apiCalls';
 	import { fade, slide } from 'svelte/transition';
-	import papa from 'papaparse';
 	import DomainForm from './domainForm.svelte';
 	import RangeForm from './rangeForm.svelte';
 	import PatternForm from './patternForm.svelte';
@@ -51,7 +50,6 @@
 	let warning: string = 'Changing the Contstrait may cause inconsistencies in Datasets.';
 
 	onMount(async () => {
-		await apiCalls.GetStruturedDatasetsByUserPermission();
 		ct = await apiCalls.GetConstraintTypes();
 		if (constraint.id == 0) {
 			suite.reset();
@@ -141,26 +139,7 @@
 			}
 		}
 	}
-
-	function fileParser(event: any) {
-		if (event.target != null) {
-			const fs = event.target.files;
-			for (let f of fs) {
-				papa.parse(f, {
-					skipEmptyLines: true,
-					header: false,
-					complete: function (r) {
-						domainConstraint.domain = joinRows(r.data);
-					}
-				});
-			}
-		}
-	}
-
-	function joinRows(data: any): string {
-		return data.join('\n').trim().replaceAll('\t', '');
-	}
-
+	
 	//change event: if input change check also validation only on the field
 	// e.target.id is the id of the input component
 	function onChangeHandler(e: any) {
@@ -320,27 +299,6 @@
 						}}>Constraint Type</label
 					>
 					<p>{constraint.type}</p>
-				{/if}
-			</div>
-
-			<div class="pb-3 text-right mt-7" title="Upload CSV">
-				{#if constraint.type == 'Domain'}
-					<div in:fade out:fade>
-						<!-- svelte-ignore a11y-mouse-events-have-key-events -->
-						<FileButton
-							id="uploadCsv"
-							title="Upload CSV"
-							button="btn variant-filled-secondary h-9 w-16 shadow-md"
-							name="uploadCsv"
-							on:change={fileParser}
-							><Fa
-								icon={faArrowUpFromBracket}
-								on:mouseover={() => {
-									helpStore.show('uploadCsv');
-								}}
-							/>
-						</FileButton>
-					</div>
 				{/if}
 			</div>
 
