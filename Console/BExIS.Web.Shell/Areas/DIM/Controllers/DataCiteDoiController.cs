@@ -35,19 +35,19 @@ using System.Threading.Tasks;
 using Vaelastrasz.Library.Models;
 using Vaiona.Logging;
 using Vaelastrasz.Library.Configurations;
-using BExIS.Dim.Helpers.Configurations;
+using BExIS.Dim.Helpers.DataCite;
 
 namespace BExIS.Modules.Dim.UI.Controllers
 {
     public class DataCiteDOIController : BaseController
     {
         private Vaelastrasz.Library.Configurations.Configuration _configuration;
-        private DataCiteDOICredentials _credentials;
+        private DataCiteCredentials _credentials;
 
         public DataCiteDOIController()
         {
             var settingsHelper = new SettingsHelper();
-            _credentials = settingsHelper.GetDataCiteDOICredentials();
+            _credentials = settingsHelper.GetDataCiteCredentials();
             _configuration = new Vaelastrasz.Library.Configurations.Configuration(_credentials.Username, _credentials.Password, _credentials.Host);
         }
 
@@ -291,9 +291,9 @@ namespace BExIS.Modules.Dim.UI.Controllers
                 var datasetVersion = datasetManager.GetDatasetVersion(model.DatasetVersionId);
 
                 var settingsHelper = new SettingsHelper();
-                var datacitedoihelper = new DataCiteDOIHelper();
+                var datacitehelper = new DataCiteHelper();
 
-                var placeholders = datacitedoihelper.CreatePlaceholders(datasetVersion, settingsHelper.GetDataCiteDOIPlaceholders());
+                var placeholders = datacitehelper.CreatePlaceholders(datasetVersion, settingsHelper.GetDataCitePlaceholders());
 
                 var client = new RestClient(_credentials.Host);
                 client.Authenticator = new HttpBasicAuthenticator(_credentials.Username, _credentials.Password);

@@ -206,8 +206,9 @@
   <ItemGroup>
     <Compile Include="Api\ApiHelper.cs" />
     <Compile Include="BasicWebService.cs" />
-    <Compile Include="Configurations\DataCiteDOIConfigurations.cs" />
     <Compile Include="DataCiteDOI\DataCiteDOIHelper.cs" />
+    <Compile Include="DataCite\DataCiteConfigurations.cs" />
+    <Compile Include="DataCite\DataCiteHelper.cs" />
     <Compile Include="Extensions\DataCiteDoiExtensions.cs" />
     <Compile Include="GBIF\GbifHelper.cs" />
     <Compile Include="Export\GBIFDataRepoConverter.cs" />

@@ -5,9 +5,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BExIS.Dim.Helpers.Configurations
+namespace BExIS.Dim.Helpers.DataCite
 {
-    public class DataCiteDOICredentials
+    public class DataCiteCredentials
     {
         [JsonProperty("host")]
         public string Host { get; set; }
@@ -19,7 +19,7 @@ namespace BExIS.Dim.Helpers.Configurations
         public string Username { get; set; }
     }
 
-    public class DataCiteDOIMapping
+    public class DataCiteMapping
     {
         [JsonProperty("key")]
         public string Key { get; set; }
@@ -28,7 +28,7 @@ namespace BExIS.Dim.Helpers.Configurations
         public string Value { get; set; }
     }
 
-    public class DataCiteDOIPlaceholder
+    public class DataCitePlaceholder
     {
         [JsonProperty("key")]
         public string Key { get; set; }

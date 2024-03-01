@@ -24,13 +24,13 @@ using System.Security.Policy;
 using Vaelastrasz.Library.Models;
 using System.Runtime.CompilerServices;
 using BExIS.Dlm.Services.Data;
-using BExIS.Dim.Helpers.Configurations;
+using BExIS.Dim.Helpers.DataCite;
 
 namespace BExIS.Dim.Helpers
 {
     public class DataCiteDOIHelper
     {
-        public CreateDataCiteModel CreateDataCiteModel(DatasetVersion datasetVersion, List<DataCiteDOIMapping> mappings)
+        public CreateDataCiteModel CreateDataCiteModel(DatasetVersion datasetVersion, List<DataCiteMapping> mappings)
         {
             var model = new CreateDataCiteModel();
 
@@ -77,7 +77,7 @@ namespace BExIS.Dim.Helpers
             return null;
         }
 
-        public Dictionary<string, string> CreatePlaceholders(DatasetVersion datasetVersion, List<DataCiteDOIPlaceholder> placeholders)
+        public Dictionary<string, string> CreatePlaceholders(DatasetVersion datasetVersion, List<DataCitePlaceholder> placeholders)
         {
             var _placeholders = new Dictionary<string, string>();
 

@@ -1,4 +1,4 @@
-﻿using BExIS.Dim.Helpers.Configurations;
+﻿using BExIS.Dim.Helpers.DataCite;
 using BExIS.Dim.Helpers.Models;
 using BExIS.Xml.Helpers;
 using Newtonsoft.Json;
@@ -24,11 +24,11 @@ namespace BExIS.Modules.Dim.UI.Helpers
             _settings = ModuleManager.GetModuleSettings("dim");
         }
 
-        public DataCiteDOICredentials GetDataCiteDOICredentials()
+        public DataCiteCredentials GetDataCiteCredentials()
         {
             try
             {
-                return _settings.GetValueByKey<DataCiteDOICredentials>("dataCiteDOICredentials");
+                return _settings.GetValueByKey<DataCiteCredentials>("dataCiteDOICredentials");
             }
             catch (Exception ex)
             {
@@ -36,11 +36,11 @@ namespace BExIS.Modules.Dim.UI.Helpers
             }
         }
 
-        public List<DataCiteDOIMapping> GetDataCiteDOIMappings()
+        public List<DataCiteMapping> GetDataCiteMappings()
         {
             try
             {
-                return _settings.GetValueByKey<List<DataCiteDOIMapping>>("dataCiteDOIMappings");
+                return _settings.GetValueByKey<List<DataCiteMapping>>("dataCiteDOIMappings");
             }
             catch (Exception ex)
             {
@@ -48,11 +48,11 @@ namespace BExIS.Modules.Dim.UI.Helpers
             }
         }
 
-        public List<DataCiteDOIPlaceholder> GetDataCiteDOIPlaceholders()
+        public List<DataCitePlaceholder> GetDataCitePlaceholders()
         {
             try
             {
-                return _settings.GetValueByKey<List<DataCiteDOIPlaceholder>>("dataCiteDOIPlaceholders");
+                return _settings.GetValueByKey<List<DataCitePlaceholder>>("dataCiteDOIPlaceholders");
             }
             catch (Exception ex)
             {
