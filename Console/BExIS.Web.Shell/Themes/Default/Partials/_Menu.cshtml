@@ -23,7 +23,7 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
             </button>
-            @if (string.IsNullOrEmpty(Html.GetTenant().BrandPath))
+            @if(!string.IsNullOrEmpty(Html.GetTenant().Brand))
             {
                 <a href="@Url.Action("Index", "Home", new { area = "" })" class="navbar-brand">
                     @Html.Brand(Html.GetTenant().BrandPath, Html.GetTenant().ShortName)
