@@ -23,7 +23,7 @@ namespace BExIS.Modules.Dim.UI.Tests.Helpers
             var appConfiguration = AppConfiguration.WorkspaceRootPath;
             var settingsHelper = new SettingsHelper();
 
-            var mappings = settingsHelper.GetDataCiteDOICredentials();
+            var mappings = settingsHelper.GetDataCiteCredentials();
             Assert.NotNull(mappings);
         }
 
@@ -33,7 +33,7 @@ namespace BExIS.Modules.Dim.UI.Tests.Helpers
             var appConfiguration = AppConfiguration.WorkspaceRootPath;
             var settingsHelper = new SettingsHelper();
 
-            var mappings = settingsHelper.GetDataCiteDOIMappings();
+            var mappings = settingsHelper.GetDataCiteMappings();
             Assert.NotNull(mappings);
         }
 
@@ -43,7 +43,7 @@ namespace BExIS.Modules.Dim.UI.Tests.Helpers
             var appConfiguration = AppConfiguration.WorkspaceRootPath;
             var settingsHelper = new SettingsHelper();
 
-            var mappings = settingsHelper.GetDataCiteDOIPlaceholders();
+            var mappings = settingsHelper.GetDataCitePlaceholders();
             Assert.NotNull(mappings);
         }
 
