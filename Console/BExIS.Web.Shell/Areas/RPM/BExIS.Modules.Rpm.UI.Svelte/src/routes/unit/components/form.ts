@@ -47,11 +47,6 @@ const suite = create((data: dataType, fieldName) => {
 
 	each(data.measurementSystems, (measurementSystem) => {
 		test(measurementSystem, 'measurementSystem is required', () => {
-			console.log(
-				'(' +
-					data.measurementSystems.find((ms) => ms.trim() === data.unit.measurementSystem.trim()) !=
-					null + ')'
-			);
 			return (
 				data.measurementSystems.find((ms) => ms.trim() === data.unit.measurementSystem.trim()) !=
 				null
