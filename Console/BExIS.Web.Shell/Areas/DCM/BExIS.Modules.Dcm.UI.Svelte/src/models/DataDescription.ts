@@ -21,4 +21,5 @@ export interface VariableModel {
 	name: string;
 	unit: string;
 	dataType: string;
+	isKey:boolean;
 }

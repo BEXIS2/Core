@@ -13,7 +13,7 @@
 
 	const dispatch = createEventDispatcher();
 
-	import { create } from '../services';
+	import { create} from '../services';
 	import { goTo } from '$services/BaseCaller';
 	import { get } from 'svelte/store';
 
@@ -24,27 +24,21 @@
 
 	$:isPKSet = false;
 
-	$:model, checkPK();
+	$:model, updatePks();
 
-function checkPK()
-{
-	 console.log("checkPK", isPKSet, model.variables);
-	 console.log("result", areVariablesValid, areAttributesValid, !((enforcePrimaryKey && isPKSet) ||  !enforcePrimaryKey));
-	 console.log("result", (!areVariablesValid || !areAttributesValid || !((enforcePrimaryKey && isPKSet) ||  !enforcePrimaryKey)));
-		
-		let pktemp = false;
+	function updatePks()
+	{
+			let pktemp = false;
+			model.variables?.forEach(v=> {
+				if(v.isKey == true) 
+				{
+					pktemp = true;
+				}
+			})
 
-		model.variables?.forEach(v=> {
+			isPKSet = pktemp;
 
-			if(v.isKey == true) 
-			{
-				pktemp = true;
-			}
-		})
-
-		isPKSet = pktemp;
-
-}
+	}
 
 
 	async function onSaveHandler() {
@@ -82,6 +76,7 @@ function checkPK()
 		goTo(document.referrer);
 	}
 
+
 </script>
 
 <div>
@@ -93,14 +88,14 @@ function checkPK()
 				><Fa icon={faArrowLeft} /></button
 			>
 		</div>
-		<div class="flex-none text-end">
+			<div class="flex-none text-end">
 			<button
 			 id="save"
 				title="save"
 				class="btn variant-filled-primary text-xl"
 				on:mouseover={() => helpStore.show('save')}
 				on:click={onSaveHandler}
-				disabled={!areVariablesValid || !areAttributesValid || !((enforcePrimaryKey && isPKSet) ||  !enforcePrimaryKey)  }><Fa icon={faSave} /></button
+				disabled={!areVariablesValid || !areAttributesValid || !((enforcePrimaryKey && isPKSet) ||  !enforcePrimaryKey) }><Fa icon={faSave} /></button
 			>
 		</div>
 	</div>

@@ -5,6 +5,7 @@
 	import { faCheck, faAngleUp, faAngleDown, faXmark } from '@fortawesome/free-solid-svg-icons';
  import Status from './Status.svelte';
 	import { changeablePrimaryKeyStore } from '../../store';
+	import { get } from 'svelte/store';
 
 	export let index = 0;
 	export let name: string;
@@ -56,12 +57,12 @@
 	</div>
 	<div class="flex-none flex-col text-right">
 		<div>
-			<SlideToggle size="sm" name="isKey" bind:checked={isKey} active="bg-primary-500" disabled={blockDataRelevant}
+			<SlideToggle size="sm" name="isKey" bind:checked={isKey} active="bg-primary-500" disabled={(blockDataRelevant && !changeablePrimaryKey)}
 				>Mark a part of primary key</SlideToggle
 			>
 		</div>
 		<div>
-			<SlideToggle size="sm" name="isOptional" active="bg-primary-500" bind:checked={isOptional} disabled={(blockDataRelevant && !changeablePrimaryKey)}
+			<SlideToggle size="sm" name="isOptional" active="bg-primary-500" bind:checked={isOptional} disabled={blockDataRelevant}
 				>Value can be optional</SlideToggle
 			>
 		</div>

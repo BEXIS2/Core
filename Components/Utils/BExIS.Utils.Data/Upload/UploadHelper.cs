@@ -598,6 +598,7 @@ namespace BExIS.Utils.Upload
             return true;
         }
 
+
         /// <summary>
         /// test unique of primary keys on a dataset
         /// </summary>
@@ -746,8 +747,7 @@ namespace BExIS.Utils.Upload
                 {
                     throw new Exception("Dataset is not checked in.");
                 }
-
-                return true;
+                                return true;
             }
         }
 
