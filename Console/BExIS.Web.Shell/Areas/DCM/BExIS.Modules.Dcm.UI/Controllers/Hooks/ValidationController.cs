@@ -107,6 +107,12 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                                 cache.UpdateSetup.VariablesCount = sds.Variables.Count;
                             }
 
+                            // check against primary key in db
+                            // this check happens outside of the files,
+                            var unique = false;
+                            if(cache.Files.Any()) uploadWizardHelper.IsUnique(id, ref primaryKeyHashTable);
+
+
                             // read all files
                             foreach (var file in cache.Files)
                             {
@@ -183,8 +189,9 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
                                                     if (fileErrors == null || fileErrors.Count == 0)
                                                     {
-                                                        //check against primary key
-                                                        var unique = uploadWizardHelper.IsUnique(id, ext, fileName, filePath, (AsciiFileReaderInfo)cache.AsciiFileReaderInfo, datastructureId, ref primaryKeyHashTable);
+                                                        
+                                                        //check against primary key local file
+                                                        unique = uploadWizardHelper.IsUnique(id, ext, fileName, filePath, (AsciiFileReaderInfo)cache.AsciiFileReaderInfo, datastructureId, ref primaryKeyHashTable);
                                                         if (!unique)
                                                         {
                                                             fileErrors.Add(new Error(ErrorType.PrimaryKey, "the data in the file violate the primary key set.", "Primary Key"));
@@ -287,7 +294,5 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
             return Json(model, JsonRequestBehavior.AllowGet);
         }
-
-       
     }
 }

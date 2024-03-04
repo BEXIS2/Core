@@ -3,7 +3,9 @@
 	import Header from './ShowHeader.svelte';
 	import { Table } from '@bexis2/bexis2-core-ui';
 	import type { TableConfig } from '@bexis2/bexis2-core-ui';
+	import { dataset_dev } from 'svelte/internal';
 	import { writable } from 'svelte/store';
+	import NameTableCol from './NameTableCol.svelte';
 
 	export let id; //enityid
 	export let title;
@@ -19,6 +21,7 @@
 	const variableStore = writable<VariableModel[]>([]);
 
 	variableStore.set(variables);
+	console.log("🚀 ~ variables:", variables)
 
 	const variableConfig: TableConfig<VariableModel> = {
 		id: 'variables',
@@ -27,6 +30,15 @@
 		columns:{
 			id:{
 				fixedWidth:100
+			},
+			name:{
+				instructions: {
+					renderComponent: NameTableCol
+				}
+			},
+			isKeys:{
+				exclude:true,
+				disableFiltering:true
 			}
 		}
 	};
