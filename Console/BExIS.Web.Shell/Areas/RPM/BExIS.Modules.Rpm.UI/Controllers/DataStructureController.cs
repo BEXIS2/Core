@@ -135,6 +135,13 @@ namespace BExIS.Modules.Rpm.UI.Controllers
             bool setByTemplate = (bool)ModuleManager.GetModuleSettings("RPM").GetValueByKey("setByTemplate");
             ViewData["setByTemplate"] = setByTemplate;
 
+            bool changeablePrimaryKey = (bool)ModuleManager.GetModuleSettings("RPM").GetValueByKey("changeablePrimaryKey");
+            ViewData["changeablePrimaryKey"] = changeablePrimaryKey;
+
+            bool enforcePrimaryKey = (bool)ModuleManager.GetModuleSettings("RPM").GetValueByKey("enforcePrimaryKey");
+            ViewData["enforcePrimaryKey"] = enforcePrimaryKey;
+
+
             return View("Create");
         }
 

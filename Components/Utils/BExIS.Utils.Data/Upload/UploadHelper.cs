@@ -607,17 +607,19 @@ namespace BExIS.Utils.Upload
         /// <param name="primaryKeys"></param>
         /// <returns></returns>
         ////[MeasurePerformance]
-        public Boolean IsUnique(long datasetId, List<long> primaryKeys)
+        public Boolean IsUnique(long datasetId, ref Hashtable hashtable)
         {
-            DatasetManager datasetManager = new DatasetManager();
-            try
-            {
-                Hashtable hashtable = new Hashtable();
 
+            using (DataStructureManager datastructureManager = new DataStructureManager())
+            using (DatasetManager datasetManager = new DatasetManager())
+            {
                 // load data
 
                 Dataset dataset = datasetManager.GetDataset(datasetId);
                 DatasetVersion datasetVersion;
+
+                StructuredDataStructure sds = datastructureManager.StructuredDataStructureRepo.Get(dataset.DataStructure.Id);
+                List<long> primaryKeys = sds.Variables.Where(v => v.IsKey).Select(v => v.Id).ToList();
 
                 List<long> dataTupleIds = new List<long>();
 
@@ -670,10 +672,7 @@ namespace BExIS.Utils.Upload
 
                 return true;
             }
-            finally
-            {
-                datasetManager.Dispose();
-            }
+
         }
 
         /// <summary>

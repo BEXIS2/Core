@@ -6,17 +6,43 @@
 	import Attributes from './Attributes.svelte';
 	import Variables from './Variables.svelte';
 
-	let areVariablesValid = false;
-	let areAttributesValid = false;
+
+
 
 	import { save } from '../services';
 	import { goTo } from '$services/BaseCaller';
+	import { get } from 'svelte/store';
 
 	import type { DataStructureEditModel } from '../types';
+	import { enforcePrimaryKeyStore } from '../store';
+	import { Alert } from '@bexis2/bexis2-core-ui';
+
+
 	export let model: DataStructureEditModel;
 	export let dataExist: boolean = false;
-	$: model;
 
+
+	let areVariablesValid = false;
+	let areAttributesValid = false;
+	let enforcePrimaryKey: boolean = get(enforcePrimaryKeyStore);
+	let isPKSet: boolean = false;
+
+	$: model, checkPK();
+
+	function checkPK()
+	{
+			model.variables?.forEach(v=> {
+
+				if(v.isKey == true) 
+				{
+					isPKSet = true;
+						return;
+				}
+			})
+
+			isPKSet = false;
+	}
+	
 	async function onSaveHandler() {
 		const res = await save(model);
 		console.log('save', res);
@@ -26,6 +52,7 @@
 	function back() {
 		goTo(document.referrer);
 	}
+
 </script>
 
 <div>
@@ -40,11 +67,17 @@
 				title="save"
 				class="btn variant-filled-primary text-xl"
 				on:click={onSaveHandler}
-				disabled={!areVariablesValid || !areAttributesValid}><Fa icon={faSave} /></button
+				disabled={!areVariablesValid || !areAttributesValid || !((enforcePrimaryKey && isPKSet) ||  !enforcePrimaryKey)  }><Fa icon={faSave} /></button
 			>
 		</div>
 	</div>
+	{#if enforcePrimaryKey}
+		<Alert message="please select a primary key" cssClass="variant-filled-warning"></Alert>
+	{/if}
 	<Attributes {model} bind:valid={areAttributesValid} />
+	{#if enforcePrimaryKey && model.variables.length>0}
+			<Alert message="please select a primary key" cssClass="variant-filled-warning"></Alert>
+	{/if}
 	<Variables
 		bind:variables={model.variables}
 		bind:valid={areVariablesValid}
