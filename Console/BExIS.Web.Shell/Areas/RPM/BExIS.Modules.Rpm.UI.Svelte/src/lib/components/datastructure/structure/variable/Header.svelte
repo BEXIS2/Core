@@ -4,6 +4,7 @@
 	import Fa from 'svelte-fa';
 	import { faCheck, faAngleUp, faAngleDown, faXmark } from '@fortawesome/free-solid-svg-icons';
  import Status from './Status.svelte';
+	import { changeablePrimaryKeyStore } from '../../store';
 
 	export let index = 0;
 	export let name: string;
@@ -12,6 +13,9 @@
 	export let isValid: boolean;
 	export let expand: boolean;
 	export let blockDataRelevant:boolean;
+
+	let changeablePrimaryKey: boolean = get(changeablePrimaryKeyStore);
+
 </script>
 
 <div id={index} class="flex gap-5">
@@ -57,7 +61,7 @@
 			>
 		</div>
 		<div>
-			<SlideToggle size="sm" name="isOptional" active="bg-primary-500" bind:checked={isOptional} disabled={blockDataRelevant}
+			<SlideToggle size="sm" name="isOptional" active="bg-primary-500" bind:checked={isOptional} disabled={(blockDataRelevant && !changeablePrimaryKey)}
 				>Value can be optional</SlideToggle
 			>
 		</div>
