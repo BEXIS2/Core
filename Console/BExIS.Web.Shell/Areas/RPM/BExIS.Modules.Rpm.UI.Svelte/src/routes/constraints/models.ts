@@ -60,7 +60,7 @@ export interface ConstraintValidationResult {
 }
 
 export interface DatasetInfo {
-	id: number;
-	name: string;
-	description: string;
+	id?: number;
+	name?: string;
+	description?: string;
 }

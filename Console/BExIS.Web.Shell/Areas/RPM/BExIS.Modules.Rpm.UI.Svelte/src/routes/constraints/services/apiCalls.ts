@@ -120,7 +120,6 @@ export const GetDatasetsByConstreint = async (id: number) => {
 export const GetStruturedDatasetsByUserPermission = async () => {
 	try {
 		const response = await Api.get('/rpm/constraints/GetStruturedDatasetsByUserPermission');
-		console.log('Datasets', response.data)
 		return response.data;
 	} catch (error) {
 		console.error(error);

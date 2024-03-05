@@ -270,13 +270,16 @@
 			<div class="pb-3 col-span-2">
 				<!-- svelte-ignore a11y-label-has-associated-control -->
 				<label>Formal Description</label>
-				<p>
+				
 					{#if constraint.formalDescription && constraint.formalDescription != ''}
+					<p class="ml-2">
 						{constraint.formalDescription}
+					</p>
 					{:else}
+					<p class="ml-2 text-surface-600">
 						Will be generate by the System
+					</p>
 					{/if}
-				</p>
 			</div>
 
 			<div class="pb-3" title="Type">
@@ -298,7 +301,7 @@
 							helpStore.show('constraintTypes');
 						}}>Constraint Type</label
 					>
-					<p>{constraint.type}</p>
+					<p class="ml-2">{constraint.type}</p>
 				{/if}
 			</div>
 

@@ -54,28 +54,28 @@
 	$: measurementSystems = ms;
 	$: dimensions = ds.map(({ id, name }) => ({ id: id, text: name }));
 	$: unit.dimension = listItem === undefined ? undefined : ds.find((d) => d.id === listItem?.id);
+	$: measurementSystems, setValidation();
 
 	onMount(async () => {
-		if (unit.id == 0) {
-			suite.reset();
-		} else {
-			setTimeout(async () => {
-				res = suite({ unit: unit, units: units, measurementSystems: measurementSystems }, "");
-			}, 10);
-		}
+		setValidation();
 	});
 
 	async function load() {
-		dt = await apiCalls.GetDataTypes();
 		ms = await apiCalls.GetMeasurementSystems();
+		dt = await apiCalls.GetDataTypes();
 		ds = await apiCalls.GetDimensions();
+	}
 
-		if (unit.id == 0) {
-			suite.reset();
-		} else {
-			setTimeout(async () => {
-				res = suite({ unit: unit, units: units, measurementSystems: measurementSystems }, "");
-			}, 10);
+	function setValidation()
+	{
+		if (measurementSystems!= undefined && measurementSystems.length > 0){
+			if (unit.id == 0) {
+				suite.reset();
+			} else{
+				setTimeout(async () => {
+					res = suite({ unit: unit, units: units, measurementSystems: measurementSystems }, '');
+				}, 10);
+			}
 		}
 	}
 

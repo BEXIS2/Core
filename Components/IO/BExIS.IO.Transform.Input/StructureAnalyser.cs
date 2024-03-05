@@ -543,10 +543,6 @@ namespace BExIS.IO.Transform.Input
         /// <exception cref="ArgumentNullException"></exception>
         public long GetNumberOfRowsToAnalyse(int min, int max, int percentage, long totaldata)
         {
-            //var settings = ModuleManager.GetModuleSettings("Dcm");
-            //int min = Convert.ToInt32(settings.GetEntryValue("minToAnalyse"));
-            //int max = Convert.ToInt32(settings.GetEntryValue("maxToAnalyse"));
-            //int percentage = Convert.ToInt32(settings.GetEntryValue("precentageToAnalyse"));
 
             if (min == 0) throw new ArgumentNullException(nameof(min), "min should be greater then 0");
             if (max == 0) throw new ArgumentNullException(nameof(max), "max should be greater then 0");

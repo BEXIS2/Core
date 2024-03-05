@@ -6,10 +6,11 @@
 	import * as apiCalls from '../services/apiCalls';
 	import { createEventDispatcher, onMount } from 'svelte';
 	import suite from './domainForm';
-	import { Drawer, FileButton, getDrawerStore, type DrawerSettings } from '@skeletonlabs/skeleton';
+	import { Drawer, FileButton, getDrawerStore, type DrawerSettings, type DrawerStore } from '@skeletonlabs/skeleton';
 	import Fa from 'svelte-fa';
 	import { faArrowUpFromBracket, faFileImport } from '@fortawesome/free-solid-svg-icons';
 	import papa from 'papaparse';
+	import DatasetImport from './datasetImport.svelte';
 
 
 	export let domainConstraint: DomainConstraintListItem;
@@ -20,9 +21,14 @@
 	let ds: DatasetInfo[] = [];
 	$: datasets = ds;
 	
-	const drawerStore = getDrawerStore();
-	const drawerSettings: DrawerSettings = {position: 'right'}; 
-	
+	let drawerStore: any;
+	drawerStore = $drawerStore ? $drawerStore : getDrawerStore();
+	$: domainConstraint, $drawerStore.meta.dataset = undefined;
+	$: console.log('domainConstraint', domainConstraint);
+	let drawerSettings: DrawerSettings;
+	$: drawerSettings = {position: 'right', width: 'w-5/12', meta: { datasets: datasets, dataset: dataset }};
+	$: dataset = $drawerStore.meta && $drawerStore.meta.dataset ? $drawerStore.meta.dataset : null;
+
 	// load form result object
 	let res = suite.get();
 
@@ -92,7 +98,7 @@
 
 {#if domainConstraint}
 	<div class="grid grid-cols-2 gap-x-5 h-96" in:slide out:slide>
-		<div class="mt-0 py-1 text-right mt-7" title="Import">
+		<div class="py-1 text-right" title="Import">
 			<!-- svelte-ignore a11y-mouse-events-have-key-events -->
 			<div class="inline-block" on:mouseover={() => {
 				helpStore.show('uploadCsv');
@@ -191,18 +197,7 @@
 	</div>
 {/if}
 {#if datasets.length > 0}
-<Drawer>
-	<MultiSelect
-	title="Datasets"
-	id="datasets"
-	bind:target={dataset}
-	source={datasets}
-	itemId="id"
-	itemLabel="name"
-	complexSource={true}
-	complexTarget={false}
-	required={false}
-	help={true}
-/>
-</Drawer>
+	<Drawer>
+		<DatasetImport {drawerStore}/>
+	</Drawer>
 {/if}
