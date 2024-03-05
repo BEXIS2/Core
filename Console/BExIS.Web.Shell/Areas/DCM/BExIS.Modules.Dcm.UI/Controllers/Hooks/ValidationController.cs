@@ -107,6 +107,22 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                                 cache.UpdateSetup.VariablesCount = sds.Variables.Count;
                             }
 
+                            // check data and primary key usecases before reading files
+                            // 1. no data, no pk -> (check for duplicates, all vars are the primary key) - is checked by UploadHelper.IsUnique fn
+                            // 2. exist data & no pk -> force pk - info : change data or structure pk
+                            bool hasData = false;
+                            bool hasPrimaryKey = false;
+                            hasData = datasetManager.RowCount(id) > 0?true:false;
+                            hasPrimaryKey = sds.Variables.Where(v => v.IsKey.Equals(true)).Any();
+
+                            if(hasData && !hasPrimaryKey)
+                            errors.Add(new Error(ErrorType.Datastructure, "Updating data is only possible with a primary key. Please set the primary in the data structure.", "Datastructure"));
+
+                            // in file:
+                            // 3. exist data & pk but not unique -> info : change data or structure pk - is checked by uploadWizardHelper.IsUnique fn
+
+
+
                             // check against primary key in db
                             // this check happens outside of the files,
                             var unique = false;
@@ -143,7 +159,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                                                 // the hash value need to be abot: name, lenght, structure id, ascci reader info;
                                                 // if something has changed also validation need to repeat
                                                 string readerInfo = cache.AsciiFileReaderInfo != null ? cache.AsciiFileReaderInfo.ToJson() : "";
-                                                string incomingHash = HashHelper.CreateMD5Hash(file.Name, file.Lenght.ToString(), datastructureId.ToString(), readerInfo, cache.Files.Count.ToString());
+                                                string incomingHash = HashHelper.CreateMD5Hash(file.Name, file.Lenght.ToString(), datastructureId.ToString(), readerInfo, cache.Files.Count.ToString(), sds.Variables.Where(v => v.IsKey.Equals(true)));
 
                                             // if a validation is allready run and the file has not changed, skip validation
                                             if (file.ValidationHash != incomingHash)

@@ -431,7 +431,16 @@ namespace BExIS.Utils.Upload
                     using (DataStructureManager datastructureManager = new DataStructureManager())
                     {
                         StructuredDataStructure sds = datastructureManager.StructuredDataStructureRepo.Get(datastructureId);
-                        List<long> primaryKeys = sds.Variables.Where(v => v.IsKey).Select(v => v.Id).ToList();
+
+                        // get list of primary keys
+                        // if no keys is set, get all variables as primary key 
+                        // duplicates are not allowd
+                        List<long> primaryKeys = new List<long>();
+                            
+                        if(sds.Variables.Any(v=>v.IsKey.Equals(true)))
+                            primaryKeys = sds.Variables.Where(v => v.IsKey).Select(v => v.Id).ToList();
+                        else
+                            primaryKeys = sds.Variables.Select(v => v.Id).ToList();
 
                         AsciiFileReaderInfo afri = (AsciiFileReaderInfo)info;
 
@@ -439,7 +448,6 @@ namespace BExIS.Utils.Upload
                         reader.Position = position;
                         using (Stream stream = reader.Open(filepath))
                         {
-
                             // get a list of values for each row
                             // e.g.
                             // primarky keys id, name
