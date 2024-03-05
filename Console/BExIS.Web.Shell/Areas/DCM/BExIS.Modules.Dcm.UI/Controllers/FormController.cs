@@ -3154,6 +3154,14 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 }
             }
 
+            // check parameters
+            if (aModel.Parameters.Any())
+            {
+                foreach (var p in aModel.Parameters) {
+                    p.Errors = validateParameter(p);
+                }
+            }
+
             if (errors.Count == 0)
                 return null;
             else
