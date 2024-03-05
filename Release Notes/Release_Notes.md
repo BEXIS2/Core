@@ -14,6 +14,9 @@ BEXIS2 version 3.0.0 is a major release. It contains a lot of changes in the bac
 - the update script from version 2.18 to 3.0.0-beta has been revised, and errors were fixed.
 - [Update_Script_218to300.sql](https://github.com/BEXIS2/Core/blob/rc/database%20update%20scripts/Update_Script_2182to3.sql)
 
+### New Settings:
+- Data Structure - Enforce Primary Key (bool): To set a primary key during the creation of a data structure is/is not mandatory.
+- Data Structure - Primary Key changeable (bool): Once data is uploaded, it is/is not possible to change the primary key. The new key is only saved if a validation is passed against all linked datasets.
 
 ## Changes
 
