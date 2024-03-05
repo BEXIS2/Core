@@ -1,4 +1,8 @@
 <script lang="ts">
+
+ import Fa from 'svelte-fa';
+	import { faKey} from '@fortawesome/free-solid-svg-icons';
+
 	export let value;
 	export let row;
 
@@ -8,5 +12,5 @@
 
 {value}
 {#if row.original.isKeys}
-<b class="text-error-500">*</b>
+	<span class="text-error-500"><Fa icon={faKey}/></span>
 {/if}

@@ -1,5 +1,6 @@
 ﻿using BExIS.App.Bootstrap.Attributes;
 using BExIS.Dcm.CreateDatasetWizard;
+using BExIS.Dcm.UploadWizard;
 using BExIS.Dcm.Wizard;
 using BExIS.Dim.Entities.Mapping;
 using BExIS.Dim.Helpers.Mapping;
@@ -165,6 +166,11 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                         TaskManager = new CreateTaskmanager();
                         // set button functions
                         setDefaultAdditionalFunctions(TaskManager);
+                    }
+
+                    if (dataset.EntityTemplate != null)
+                    {
+                        TaskManager.AddToBus(CreateTaskmanager.SAVE_WITH_ERRORS, dataset.EntityTemplate.MetadataInvalidSaveMode);
                     }
 
                     //load taskmanager based onb metadata structure and maybe existing metadata
@@ -527,7 +533,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             ViewBag.Title = PresentationModel.GetViewTitleForTenant("Create Dataset", this.Session.GetTenant());
             TaskManager = (CreateTaskmanager)Session["CreateDatasetTaskmanager"];
 
-            TaskManager?.AddToBus(CreateTaskmanager.SAVE_WITH_ERRORS, true);
+            //TaskManager?.AddToBus(CreateTaskmanager.SAVE_WITH_ERRORS, true);
 
             var stepInfoModelHelpers = new List<StepModelHelper>();
 

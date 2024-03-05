@@ -226,7 +226,7 @@
 						<div id="invalidSaveMode" />
 						<SlideToggle
 							name="Invalid-save-mode"
-							bind:value={entityTemplate.metadataInvalidSaveMode}
+							bind:checked={entityTemplate.metadataInvalidSaveMode}
 						>
 							Allow saving with empty required fields
 						</SlideToggle>
