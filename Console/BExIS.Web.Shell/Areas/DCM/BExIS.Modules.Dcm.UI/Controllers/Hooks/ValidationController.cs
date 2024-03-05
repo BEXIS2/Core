@@ -112,6 +112,8 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                             // 2. exist data & no pk -> force pk - info : change data or structure pk
                             bool hasData = false;
                             bool hasPrimaryKey = false;
+
+
                             hasData = datasetManager.RowCount(id) > 0?true:false;
                             hasPrimaryKey = sds.Variables.Where(v => v.IsKey.Equals(true)).Any();
 
@@ -121,6 +123,10 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                             // in file:
                             // 3. exist data & pk but not unique -> info : change data or structure pk - is checked by uploadWizardHelper.IsUnique fn
 
+
+                            // generate string vor validation has based on primary keys
+                            var pks = sds.Variables.Where(v => v.IsKey.Equals(true))?.Select(v => v.Id);
+                            string varIdsAsString = pks == null ? "" : string.Join(",", pks.ToArray());
 
 
                             // check against primary key in db
@@ -159,7 +165,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                                                 // the hash value need to be abot: name, lenght, structure id, ascci reader info;
                                                 // if something has changed also validation need to repeat
                                                 string readerInfo = cache.AsciiFileReaderInfo != null ? cache.AsciiFileReaderInfo.ToJson() : "";
-                                                string incomingHash = HashHelper.CreateMD5Hash(file.Name, file.Lenght.ToString(), datastructureId.ToString(), readerInfo, cache.Files.Count.ToString(), sds.Variables.Where(v => v.IsKey.Equals(true)));
+                                                string incomingHash = HashHelper.CreateMD5Hash(file.Name, file.Lenght.ToString(), datastructureId.ToString(), readerInfo, cache.Files.Count.ToString(), varIdsAsString);
 
                                             // if a validation is allready run and the file has not changed, skip validation
                                             if (file.ValidationHash != incomingHash)
