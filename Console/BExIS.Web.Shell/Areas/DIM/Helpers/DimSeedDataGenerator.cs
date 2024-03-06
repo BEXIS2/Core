@@ -169,6 +169,9 @@ namespace BExIS.Modules.Dim.UI.Helpers
 
                 createMeaningsForGBIFDWC();
 
+                createReleationships();
+
+
                 #endregion
             }
             catch (Exception ex)
@@ -290,6 +293,56 @@ namespace BExIS.Modules.Dim.UI.Helpers
 
                             meaningManager.addMeaning(meaning);
                         }
+                    }
+                }
+            }
+        }
+
+        private void createReleationships()
+        {
+
+            using (var meaningManager = new MeaningManager())
+            {
+                ExternalLink prefix = new ExternalLink();
+                ExternalLink releation = new ExternalLink();
+
+
+                // prefix
+                string n = "i-adopt";
+                if (!meaningManager.getPrefixes().Any(p => p.Name.Equals(n)))
+                {
+                    prefix.Name = n;
+                    prefix.URI = "https://i-adopt.github.io/#/";
+                    prefix.Type = ExternalLinkType.prefix;
+                    prefix.Prefix = null;
+                    prefix.prefixCategory = null;
+
+                    prefix = meaningManager.addExternalLink(prefix);
+                }
+                else
+                {
+                    prefix = meaningManager.getPrefixes().FirstOrDefault(p => p.Name.Equals(n));
+                }
+
+
+                List<string> releationshiptypes = new List<string>();
+                releationshiptypes.Add("hasContextObject");
+                releationshiptypes.Add("hasMatrix");
+                releationshiptypes.Add("hasObjectOfInterest");
+                releationshiptypes.Add("hasProperty");
+
+                foreach (var c in releationshiptypes)
+                {
+                    if (!meaningManager.getExternalLinks().Any(p => p.Name.Equals(c)))
+                    {
+                        releation = new ExternalLink();
+                        releation.Name = c;
+                        releation.URI = c;
+                        releation.Type = ExternalLinkType.relationship;
+                        releation.Prefix = prefix;
+                        releation.prefixCategory = null;
+
+                        releation = meaningManager.addExternalLink(releation);
                     }
                 }
             }

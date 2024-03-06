@@ -15,6 +15,89 @@ SELECT label, description, 1, true,true
 FROM variables
 WHERE variablestype = 'VAR_TEMPL';
 
+
+-- add seeddata
+DO
+$do$
+DECLARE
+
+dwclinks text[] := ARRAY[
+'occurrenceID',
+'basisOfRecord',
+'scientificName',
+'eventDate',
+'countryCode',
+'taxonRank',
+'kingdom',
+'decimalLatitude',
+'decimalLongitude',
+'geodeticDatum',
+'coordinateUncertaintyInMeters',
+'individualCount',
+'organismQuantity',
+'organismQuantityType',
+'informationWithheld',
+'dataGeneralizations',
+'eventTime',
+'country',
+'eventID',
+'eventDate',
+'samplingProtocol',
+'samplingSizeUnit',
+'samplingSizeValue',
+'parentEventID',
+'samplingEffort',
+'locationID',
+'footprintWKT',
+'occurrenceStatus'         
+];
+
+releationshipTypes text[] := ARRAY[
+'hasContextObject',
+'hasObjectOfInterest',
+'hasMatrix',
+'hasProperty'   
+];
+
+begin
+
+-- dwc
+INSERT INTO public.rpm_externallink(name, uri, type, prefix, prefixcategory, versionno)
+SELECT 'dwc','http://rs.tdwg.org/dwc/terms/',1, null, null,1
+WHERE NOT EXISTS (SELECT * FROM public.rpm_externallink WHERE name='dwc');
+
+INSERT INTO public.rpm_externallink(name, uri, type, prefix, prefixcategory, versionno)
+SELECT 'hasDwcTerm','na', 6, null, null,1
+WHERE NOT EXISTS (SELECT * FROM public.rpm_externallink WHERE name='hasDwcTerm');
+
+for i in array_lower(dwclinks, 1)..array_upper(dwclinks, 1) loop
+
+RAISE NOTICE 'name: %',dwclinks[i];
+
+INSERT INTO public.rpm_externallink(name, uri, type, prefix, prefixcategory, versionno)
+SELECT dwclinks[i],dwclinks[i], 5, 1, null,1
+WHERE NOT EXISTS (SELECT * FROM public.rpm_externallink WHERE name=dwclinks[i]);
+
+end loop;
+
+
+-- releationships
+INSERT INTO public.rpm_externallink(name, uri, type, prefix, prefixcategory, versionno)
+SELECT 'i-adopt','https://i-adopt.github.io/#/',1, null, null,1
+WHERE NOT EXISTS (SELECT * FROM public.rpm_externallink WHERE name='i-adopt');
+
+for i in array_lower(releationshipTypes, 1)..array_upper(releationshipTypes, 1) loop
+
+INSERT INTO public.rpm_externallink(name, uri, type, prefix, prefixcategory, versionno)
+SELECT releationshipTypes[i],releationshipTypes[i], 6, 30, null,1
+WHERE NOT EXISTS (SELECT * FROM public.rpm_externallink WHERE name=releationshipTypes[i]);
+
+end loop;
+
+END
+$do$;
+
+
 -- list of display pattern
 -- xpath('Extra/DisplayPattern/Name:text)
 DO
@@ -64,18 +147,11 @@ where v.datatyperef in (Select id from datatypes where systemtype = 'DateTime' a
 -- Select id, datatyperef, displaypatternid from variables where datatyperef in (3,4,13);
 
 END
-$do$
-
-
-
+$do$;
 
 -- Insert version
 INSERT INTO public.versions(
 	versionno, extra, module, value, date)
 	VALUES (1, null, 'Shell', '3.0.0',NOW());
-
-
-
-
 
 commit;
