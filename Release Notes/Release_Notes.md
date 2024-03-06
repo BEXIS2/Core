@@ -2,18 +2,19 @@
 
 This release focused on fixing found bugs or already identified necessary changes in version 3.0.0-beta. Thanks to all testing version 3.0.0-beta!
 
-## Instructions for updating from 3.0.0-beta to 3.0.1
+## Instructions for updating from 3.0.0-beta to 3.1.0
 - DWC terms via RPM ...
 
 ### Workspace changes:
 - ???
-- Workspace changes: [2.18.2..3.0.0-beta](https://github.com/BEXIS2/Workspace/compare/3.0.0-beta..3.0.0)
+- Workspace changes: [2.18.2..3.0.0-beta](https://github.com/BEXIS2/Workspace/compare/3.0.0-beta..3.1.0)
 - ??? credential file
 
 ### Database Update(s):
 - the update script from version 2.18 to 3.0.0-beta has been revised, and errors were fixed.
 - [Update_Script_218to300.sql](https://github.com/BEXIS2/Core/blob/rc/database%20update%20scripts/Update_Script_2182to3.sql)
 - Update script version 3.0.0-beta to 3.1.0: ????
+
 ### New Settings:
 - Data Structure - Enforce Primary Key (bool): To set a primary key during the creation of a data structure is/is not mandatory.
 - Data Structure - Primary Key changeable (bool): Once data is uploaded, it is/is not possible to change the primary key. The new key is only saved if a validation is passed against all linked datasets.
