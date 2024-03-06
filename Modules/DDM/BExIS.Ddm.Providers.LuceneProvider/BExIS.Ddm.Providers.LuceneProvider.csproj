@@ -165,6 +165,10 @@
       <Project>{29A7BE0F-A17C-4AE8-8CA1-15FE4DD74129}</Project>
       <Name>Vaiona.IoC</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\..\Components\Vaiona\Vaiona.Logging\Vaiona.Logging.csproj">
+      <Project>{E8B37581-1CAC-463D-903B-B4BEE8B2B0E3}</Project>
+      <Name>Vaiona.Logging</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\..\Components\Vaiona\Vaiona.Persistence.Api\Vaiona.Persistence.Api.csproj">
       <Project>{640bf81d-354a-4bf0-85fc-f0ad587cf8a2}</Project>
       <Name>Vaiona.Persistence.Api</Name>

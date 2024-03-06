@@ -19,6 +19,7 @@ using BExIS.UI.Hooks;
 using BExIS.UI.Hooks.Caches;
 using BExIS.UI.Hooks.Logs;
 using BExIS.UI.Models;
+using BExIS.Utils.Upload;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -135,6 +136,13 @@ namespace BExIS.Modules.Rpm.UI.Controllers
             bool setByTemplate = (bool)ModuleManager.GetModuleSettings("RPM").GetValueByKey("setByTemplate");
             ViewData["setByTemplate"] = setByTemplate;
 
+            bool changeablePrimaryKey = (bool)ModuleManager.GetModuleSettings("RPM").GetValueByKey("changeablePrimaryKey");
+            ViewData["changeablePrimaryKey"] = changeablePrimaryKey;
+
+            bool enforcePrimaryKey = (bool)ModuleManager.GetModuleSettings("RPM").GetValueByKey("enforcePrimaryKey");
+            ViewData["enforcePrimaryKey"] = enforcePrimaryKey;
+
+
             return View("Create");
         }
 
@@ -157,8 +165,16 @@ namespace BExIS.Modules.Rpm.UI.Controllers
             bool setByTemplate = (bool)ModuleManager.GetModuleSettings("RPM").GetValueByKey("setByTemplate");
             ViewData["setByTemplate"] = setByTemplate;
 
+            bool changeablePrimaryKey = (bool)ModuleManager.GetModuleSettings("RPM").GetValueByKey("changeablePrimaryKey");
+            ViewData["changeablePrimaryKey"] = changeablePrimaryKey;
+
+            bool enforcePrimaryKey = (bool)ModuleManager.GetModuleSettings("RPM").GetValueByKey("enforcePrimaryKey");
+            ViewData["enforcePrimaryKey"] = enforcePrimaryKey;
+
             ViewData["dataExist"] = structureHelper.InUseAndDataExist(structureId);
             
+
+
             return View("Edit");
         }
 
@@ -774,6 +790,30 @@ namespace BExIS.Modules.Rpm.UI.Controllers
 
             // get default missing values
             return Json(true);
+        }
+
+
+        [JsonNetFilter]
+        [HttpPost]
+        public JsonResult CheckPrimaryKeySet(long id, long[] primaryKeys)
+        {
+            if (id <= 0) throw new ArgumentNullException("id");
+            if (primaryKeys == null) primaryKeys = new long[0];
+
+            UploadHelper helper = new UploadHelper();
+
+            using (var datasetManager = new DatasetManager())
+            {
+                List<long> datasetIds = datasetManager.DatasetRepo.Query(d => d.DataStructure.Id.Equals(id))?.Select(d => d.Id).ToList();
+
+                foreach (long dsid in datasetIds)
+                {
+                    if(!helper.IsUnique2(dsid, primaryKeys.ToList()))
+                        return Json(false, JsonRequestBehavior.AllowGet);
+                }
+            }
+
+            return Json(true, JsonRequestBehavior.AllowGet);
         }
 
         [HttpGet]

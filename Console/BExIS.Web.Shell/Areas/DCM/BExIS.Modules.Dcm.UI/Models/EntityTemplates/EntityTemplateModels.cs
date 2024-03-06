@@ -92,7 +92,7 @@ namespace BExIS.Modules.Dcm.UI.Models.EntityTemplate
             MetadataFields = new List<int>();
             PermissionGroups = new PermissionsType();
             NotificationGroups = new List<long>();
-            MetadataInvalidSaveMode = false;
+            MetadataInvalidSaveMode = true;
             HasDatastructure = false;
 
             LinkedSubjects = new List<ListItem>();

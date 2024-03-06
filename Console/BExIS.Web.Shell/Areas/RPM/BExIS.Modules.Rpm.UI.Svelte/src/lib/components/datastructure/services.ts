@@ -76,6 +76,15 @@ export const generate = async (data) => {
 	}
 };
 
+export const checkPrimaryKeySet = async (id:number, primaryKeys:number[]) => {
+	try {
+		const response = await Api.post('/rpm/DataStructure/checkPrimaryKeySet', {id,primaryKeys});
+		return response.data;
+	} catch (error) {
+		console.error(error);
+	}
+};
+
 export const empty = async () => {
 	try {
 		const response = await Api.get('/rpm/DataStructure/empty');

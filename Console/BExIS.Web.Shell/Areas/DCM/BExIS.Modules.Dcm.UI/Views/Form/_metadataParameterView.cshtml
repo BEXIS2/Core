@@ -131,7 +131,7 @@
 
                     <input class="bx-input @errorClass" id="@idInput" idbyxpath="@idByXpath" name="@idInput" title="" value="@value" xpath="@xpath" onchange="OnChangeParameter(this)" />
                 }
-                <div id="error_@idInput" class="error">@errorMessage</div>
+          
 
             }
         }
@@ -163,6 +163,7 @@
             @Html.Partial("_date", uiComponentModel)
         }
 
+        <div id="error_@idInput" class="error">@errorMessage</div>
 
     </div>
 

@@ -9,7 +9,6 @@
 	import { Spinner, ErrorMessage, positionType } from '@bexis2/bexis2-core-ui';
 
 	import type { DataDescriptionModel } from '$models/DataDescription';
-	import PlaceholderHook from './placeholder/PlaceholderHook.svelte';
 	import PlaceHolderHookContent from './placeholder/PlaceHolderHookContent.svelte';
 
 	export let id = 0;

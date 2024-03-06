@@ -12,6 +12,7 @@ using Lucene.Net.Search;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Vaiona.Logging;
 using SearchCriteria = BExIS.Utils.Models.SearchCriteria;
 using SearchCriterion = BExIS.Utils.Models.SearchCriterion;
 using SearchModel = BExIS.Utils.Models.SearchModel;
@@ -365,8 +366,52 @@ namespace BExIS.Ddm.Providers.LuceneProvider
                             foreach (String value in sco.Values)
                             {
                                 String encodedValue = value;
-                                Query query = new TermQuery(new Term(fieldName, encodedValue));
-                                bexisSearchingFacet.Add(query, Occur.SHOULD);
+                                string[] list_values = encodedValue.Split(new string[] { " - " }, StringSplitOptions.None);
+                                if (list_values.Length == 2)
+                                {
+                                    try
+                                    {
+                                        DateTime dateValue_;
+                                        DateTime.TryParse(list_values[0], out dateValue_);
+                                        DateTime dateValue__;
+                                        DateTime.TryParse(list_values[1], out dateValue__);
+                                        if ((dateValue_ != DateTime.MinValue) && (dateValue__ != DateTime.MinValue))
+                                        {
+                                            Query rangeQuery = new TermRangeQuery(fieldName, Lucene.Net.Documents.DateTools.DateToString(dateValue_, Lucene.Net.Documents.DateTools.Resolution.SECOND),
+                                                Lucene.Net.Documents.DateTools.DateToString(dateValue__, Lucene.Net.Documents.DateTools.Resolution.SECOND), true, true);
+                                            if (sco.ValueSearchOperation == "AND")
+                                                bexisSearchingFacet.Add(rangeQuery, Occur.MUST);
+                                            else bexisSearchingFacet.Add(rangeQuery, Occur.SHOULD);
+                                        }
+                                        else
+                                        {
+                                            double out_;
+                                            double.TryParse(encodedValue.Split('-')[0].Trim(), out out_);
+                                            double out__;
+                                            double.TryParse(encodedValue.Split('-')[1].Trim(), out out__);
+                                            if ((out_ != null) && (out__ != null))
+                                            {
+                                                Query rangeQuery = NumericRangeQuery.NewDoubleRange(fieldName, out_, out__, true, true);
+                                                if (sco.ValueSearchOperation == "AND")
+                                                    bexisSearchingFacet.Add(rangeQuery, Occur.MUST);
+                                                else bexisSearchingFacet.Add(rangeQuery, Occur.SHOULD);
+                                            }
+                                        }
+                                    }
+                                    catch (Exception excep)
+                                    {
+                                        LoggerFactory.GetFileLogger().LogCustom(excep.Message);
+                                        LoggerFactory.GetFileLogger().LogCustom(excep.InnerException.Message);
+                                    }
+                                }
+                                else
+                                {
+                                    Query query = new TermQuery(new Term(fieldName, encodedValue));
+                                    if (sco.ValueSearchOperation == "AND")
+                                        bexisSearchingFacet.Add(query, Occur.MUST);
+                                    else bexisSearchingFacet.Add(query, Occur.SHOULD);
+                                }
+
                             }
                             ((BooleanQuery)bexisSearching).Add(bexisSearchingFacet, Occur.MUST);
                         }
