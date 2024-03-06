@@ -57,6 +57,10 @@ update variables as v
 set displaypatternid = array_position(displaypattern,(select unnest(xpath('Extra/DisplayPattern/Name/text()',extra))::text from datatypes where id = v.datatyperef))
 where v.datatyperef in (Select id from datatypes where systemtype = 'DateTime' and extra is not null);
 
+update variables as v
+set displaypatternid = 0
+where v.datatyperef in (Select id from datatypes where systemtype = 'DateTime' and extra is null);
+
 -- Select id, datatyperef, displaypatternid from variables where datatyperef in (3,4,13);
 
 END
