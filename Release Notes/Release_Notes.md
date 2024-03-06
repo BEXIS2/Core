@@ -14,6 +14,9 @@ BEXIS2 version 3.0.0 is a major release. It contains a lot of changes in the bac
 - the update script from version 2.18 to 3.0.0-beta has been revised, and errors were fixed.
 - [Update_Script_218to300.sql](https://github.com/BEXIS2/Core/blob/rc/database%20update%20scripts/Update_Script_2182to3.sql)
 
+### New Settings:
+- Data Structure - Enforce Primary Key (bool): To set a primary key during the creation of a data structure is/is not mandatory.
+- Data Structure - Primary Key changeable (bool): Once data is uploaded, it is/is not possible to change the primary key. The new key is only saved if a validation is passed against all linked datasets.
 
 ## Changes
 
@@ -37,7 +40,10 @@ BEXIS2 version 3.0.0 is a major release. It contains a lot of changes in the bac
 - Add DWC terms as seed data as meanings #1510 
 - Add help within create & edit data structure #1490 
 - Update constraints with warning #1420
-
+- File upload: Add description to file and show under view #1570
+- Several small improvements #1545
+- Entity templates: Extend setting defaults permission by other options #1575
+ 
 ### Bugfixes
 - Fix missing measurement system validation when creating and editing a unit Type #1598
 - Fix missing entity ref in datasets or other entity instance dependencies #1600
@@ -59,6 +65,7 @@ BEXIS2 version 3.0.0 is a major release. It contains a lot of changes in the bac
 - Fix manual metadata and data is not linked #1540 
 - Fix Swagger API view is not working #1536 
 - Fix the name of the version view model (VersionsModel -> ReadVersionsModel) #1530 
+
 
 
 
