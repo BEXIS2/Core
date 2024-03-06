@@ -36,12 +36,12 @@ namespace BExIS.IO.Tests.Transform.Input
         {
         }
 
-        [TestCase("mol/kg",4)]
-        [TestCase("mol-kg",4)] // no excact but near to mol/kg
-        [TestCase("mlo/kg",4)] // gramma mistake but near to mol/kg
-        [TestCase("mole per kilogram", 4)]
+        [TestCase("nmol/g",3)]
+        [TestCase("nmol-g",3)] // no excact but near to mol/kg
+        [TestCase("nmlo/g",3)] // gramma mistake but near to mol/kg
+        [TestCase("micromol per gram", 4)]
         [TestCase("none", 1)]
-        [TestCase("m^2", 8)]
+        [TestCase("m^2", 5)]
         [TestCase("µmol", 4)]
         public void SuggestUnit_AbbrOrNameAsInputDatatypeEmpty_ReturnUnit(string input, long id)
         {
@@ -58,8 +58,8 @@ namespace BExIS.IO.Tests.Transform.Input
 
         }
 
-        [TestCase("double", 1, 125)] // datatype, id, count
-        [TestCase("string", 1, 3)] // datatype, id, count
+        [TestCase("double", 1, 62)] // datatype, id, count
+        [TestCase("string", 1, 1)] // datatype, id, count
         public void SuggestUnit_InputIsEmptyButDatatypeExist_ReturnUnit(string dataType, long firstId, int count)
         {
 

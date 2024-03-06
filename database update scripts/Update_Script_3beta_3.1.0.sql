@@ -152,6 +152,6 @@ $do$;
 -- Insert version
 INSERT INTO public.versions(
 	versionno, extra, module, value, date)
-	VALUES (1, null, 'Shell', '3.0.0',NOW());
+	VALUES (1, null, 'Shell', '3.1.0',NOW());
 
 commit;
