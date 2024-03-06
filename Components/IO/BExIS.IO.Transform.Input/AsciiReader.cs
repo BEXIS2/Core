@@ -23,7 +23,7 @@ namespace BExIS.IO.Transform.Input
     /// <remarks></remarks>
     public class AsciiReader : DataReader
     {
-        public Encoding Encoding = Encoding.UTF8;
+        private Encoding Encoding = Encoding.UTF8;
         private AsciiFileReaderInfo fileReaderInfo;
 
         public AsciiReader(StructuredDataStructure structuredDatastructure, AsciiFileReaderInfo fileReaderInfo) : base(structuredDatastructure, fileReaderInfo)
@@ -49,8 +49,6 @@ namespace BExIS.IO.Transform.Input
         /// <param ="fileName">Full path of the FileStream</param>
         public override FileStream Open(string fileName)
         {
-            // get Encoding first
-            setEncoding(fileName);
 
             if (File.Exists(fileName))
                 return File.Open(fileName, FileMode.Open, FileAccess.Read);
@@ -64,6 +62,11 @@ namespace BExIS.IO.Transform.Input
 
             this.FileStream = file;
             AsciiFileReaderInfo fri = (AsciiFileReaderInfo)Info;
+
+            // get Encoding first
+            if (fri != null && fri.EncodingType != null)
+                Encoding = AsciiFileReaderInfo.GetEncoding(fri.EncodingType);
+
 
             // Check params
             if (this.FileStream == null)
@@ -129,6 +132,11 @@ namespace BExIS.IO.Transform.Input
             this.FileName = fileName;
             this.DatasetId = datasetId;
             AsciiFileReaderInfo fri = (AsciiFileReaderInfo)Info;
+
+            // get Encoding first
+            if (fri != null && fri.EncodingType != null)
+                Encoding = AsciiFileReaderInfo.GetEncoding(fri.EncodingType);
+
 
             // Check params
             if (this.FileStream == null)
@@ -206,6 +214,11 @@ namespace BExIS.IO.Transform.Input
             this.FileName = fileName;
             this.DatasetId = datasetId;
             AsciiFileReaderInfo fri = (AsciiFileReaderInfo)Info;
+
+            // get Encoding first
+            if (fri != null && fri.EncodingType != null)
+                Encoding = AsciiFileReaderInfo.GetEncoding(fri.EncodingType);
+
 
             // Check params
             if (this.FileStream == null)
@@ -317,6 +330,11 @@ namespace BExIS.IO.Transform.Input
             this.FileName = fileName;
             this.DatasetId = datasetId;
             AsciiFileReaderInfo fri = (AsciiFileReaderInfo)Info;
+
+            // get Encoding first
+            if (fri != null && fri.EncodingType != null)
+                Encoding = AsciiFileReaderInfo.GetEncoding(fri.EncodingType);
+
 
             List<List<string>> listOfSelectedvalues = new List<List<string>>();
 
@@ -436,6 +454,11 @@ namespace BExIS.IO.Transform.Input
             this.FileName = fileName;
             this.DatasetId = datasetId;
             AsciiFileReaderInfo fri = (AsciiFileReaderInfo)Info;
+
+            // get Encoding first
+            if (fri != null && fri.EncodingType != null)
+                Encoding = AsciiFileReaderInfo.GetEncoding(fri.EncodingType);
+
 
             // Check params
             if (this.FileStream == null)
@@ -705,7 +728,7 @@ namespace BExIS.IO.Transform.Input
         }
 
 
-        public static List<string> GetRows(string fileName, int number=0)
+        public static List<string> GetRows(string fileName, Encoding encoding, int number=0 )
         {
             if (string.IsNullOrEmpty(fileName)) throw new ArgumentNullException(nameof(fileName), "fileName not exist");
      
@@ -715,7 +738,7 @@ namespace BExIS.IO.Transform.Input
                 using (var file = File.Open(fileName, FileMode.Open, FileAccess.Read))
                 {
 
-                    using (StreamReader streamReader = new StreamReader(file, Encoding.UTF8, true))
+                    using (StreamReader streamReader = new StreamReader(file, encoding, true))
                     {
                         string line = "";
                         while ((line = streamReader.ReadLine()) != null)
@@ -749,7 +772,7 @@ namespace BExIS.IO.Transform.Input
         /// <returns></returns>
         /// <exception cref="ArgumentNullException"></exception>
         /// <exception cref="FileNotFoundException"></exception>
-        public static List<string> GetRows(string fileName, List<int> indexList, List<bool> activeCells=null, TextSeperator delimeter = TextSeperator.tab)
+        public static List<string> GetRows(string fileName, Encoding encoding, List<int> indexList, List<bool> activeCells=null, TextSeperator delimeter = TextSeperator.tab)
         {
             if (string.IsNullOrEmpty(fileName)) throw new ArgumentNullException(nameof(fileName), "fileName not exist");
             if (indexList == null || !indexList.Any()) throw new ArgumentNullException(nameof(fileName), "row index list is empty");
@@ -761,7 +784,7 @@ namespace BExIS.IO.Transform.Input
                 using (var file = File.Open(fileName, FileMode.Open, FileAccess.Read))
                 {
 
-                    using (StreamReader streamReader = new StreamReader(file, Encoding.UTF8, true))
+                    using (StreamReader streamReader = new StreamReader(file, encoding, true))
                     {
                         // skipp all empty rows
                         string line;

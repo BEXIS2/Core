@@ -15,9 +15,11 @@ export interface DataStructureCreationModel {
 	delimeter: number;
 	decimal: number;
 	textMarker: number;
+	fileEncoding: number;
 	delimeters: listItemType[];
 	decimals: listItemType[];
 	textMarkers: listItemType[];
+	encodings: listItemType[];
 	preview: string[];
 	total: number;
 	skipped: number;

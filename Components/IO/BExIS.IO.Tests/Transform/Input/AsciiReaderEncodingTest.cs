@@ -1,4 +1,5 @@
-﻿using NUnit.Framework;
+﻿using BExIS.IO.Transform.Input;
+using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -181,6 +182,36 @@ namespace BExIS.IO.Tests.Transform.Input
             }
 
             Assert.That(incoming, Is.EquivalentTo(lines));
+        }
+
+        [Test]
+        public void GetEncoding_ByEndocingType_EncodingIsWindowsFormat()
+        {
+            // Arrange
+            EncodingType et = EncodingType.Windows;
+
+            // Act
+            Encoding encoding = AsciiFileReaderInfo.GetEncoding(et);
+
+            Encoding source = Encoding.GetEncoding(1252);
+            //Assert
+
+            Assert.AreEqual(encoding, source);
+        }
+
+        [Test]
+        public void GetEncoding_ByEndocingType_EncodingIsUTF8Format()
+        {
+            // Arrange
+            EncodingType et = EncodingType.UTF8;
+
+            // Act
+            Encoding encoding = AsciiFileReaderInfo.GetEncoding(et);
+
+            Encoding source = Encoding.UTF8;
+            //Assert
+
+            Assert.AreEqual(encoding, source);
         }
     }
 }

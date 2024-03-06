@@ -99,7 +99,9 @@
 		if (file != '') {
 			console.log('file exist', file, entityId, 0);
 
-			model = await load(file, entityId, 0);
+			model = await load(file, entityId, 65001, 0);
+			console.log("🚀 ~ start ~ model:", model)
+			
 		} else if (datastructureId > 0) {
 			console.log('copy structure');
 			// copy structure

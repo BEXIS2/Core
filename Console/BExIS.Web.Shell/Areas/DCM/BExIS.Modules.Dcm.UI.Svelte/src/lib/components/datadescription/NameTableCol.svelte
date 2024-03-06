@@ -10,7 +10,9 @@
 
 </script>
 
+<div class="flex gap-2">
 {value}
 {#if row.original.isKeys}
 	<span class="text-error-500"><Fa icon={faKey}/></span>
 {/if}
+</div>

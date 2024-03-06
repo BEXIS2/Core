@@ -7,7 +7,8 @@
 	import MissingValues from './MissingValues.svelte';
 
 	//services
-	import { store } from './services';
+	import { store, load } from './services';
+	
 
 	import Fa from 'svelte-fa';
 	import { faSave, faChevronRight, faArrowRotateLeft } from '@fortawesome/free-solid-svg-icons';
@@ -345,6 +346,14 @@
 			clean();
 		}
 	};
+
+	async function onChangeEncodingHandler(e)
+	{
+			const encoding = e;
+			console.log("🚀 ~ e.detail:", e)
+			model = await load(model.file, model.entityId,encoding,0);
+	}
+
 </script>
 
 {#if !model || state.length == 0 || generate == false}
@@ -400,6 +409,16 @@
 							source={model.textMarkers}
 							complexTarget={false}
 							help={true}
+						/>
+
+						<DropdownKVP
+							id="encoding"
+							title="Encoding"
+							bind:target={model.fileEncoding}
+							source={model.encodings}
+							complexTarget={false}
+							help={true}
+							on:change={onChangeEncodingHandler(model.fileEncoding)}
 						/>
 					</div>
 

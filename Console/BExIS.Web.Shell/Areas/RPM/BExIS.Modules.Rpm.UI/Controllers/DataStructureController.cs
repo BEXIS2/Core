@@ -24,6 +24,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Web;
 using System.Web.Mvc;
 using Vaiona.Utils.Cfg;
@@ -181,7 +182,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
 
 
         [JsonNetFilter]
-        public JsonResult Load(string file, long entityId = 0, int version = 0)
+        public JsonResult Load(string file, EncodingType encoding = EncodingType.UTF8, long entityId = 0, long version = 0)
         {
             EditDatasetDetailsCache cache = null;
 
@@ -220,7 +221,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
             model.File = file;
 
             // get first rows
-            model.Preview = AsciiReader.GetRows(filepath, 10);
+            model.Preview = AsciiReader.GetRows(filepath,AsciiFileReaderInfo.GetEncoding(encoding), 10);
             model.Total = AsciiReader.Count(filepath);
             model.Skipped = AsciiReader.Skipped(filepath);
 
@@ -250,6 +251,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                         TextMarker textMarker = structureAnalyser.SuggestTextMarker(model.Preview.First(), model.Preview.Last());
                         model.TextMarker = AsciiFileReaderInfo.GetTextMarker(textMarker);
 
+                        model.FileEncoding = (int)encoding;
                     }
 
                 }
@@ -259,6 +261,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                     model.Decimal = (int)cache.AsciiFileReaderInfo.Decimal;
                     model.Delimeter = (int)cache.AsciiFileReaderInfo.Seperator;
                     model.TextMarker = (int)cache.AsciiFileReaderInfo.TextMarker;
+                    model.FileEncoding = (int)cache.AsciiFileReaderInfo.EncodingType;
 
                     // variables
                     model.Markers.Add(
@@ -304,6 +307,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
             model.Delimeters = getDelimeters();
             model.TextMarkers = getTextMarkers();
             model.MissingValues = getDefaultMissingValues();
+            model.Encodings = getEncodings();
 
             return Json(model, JsonRequestBehavior.AllowGet);
         }
@@ -543,6 +547,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
             cache.AsciiFileReaderInfo.Data = model.Markers.Where(m => m.Type.Equals("data")).FirstOrDefault().Row + 1; // add 1 to store not the index but the row
             cache.AsciiFileReaderInfo.Variables = model.Markers.Where(m => m.Type.Equals("variable")).FirstOrDefault().Row + 1;// add 1 to store not the index but the row
             cache.AsciiFileReaderInfo.Cells = model.Markers.Where(m => m.Type.Equals("variable")).FirstOrDefault().Cells;
+            cache.AsciiFileReaderInfo.EncodingType = (EncodingType)model.FileEncoding;
 
             // additional infotmations
             // description
@@ -596,7 +601,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
             List<bool> activeCells = model.Markers.FirstOrDefault().Cells.Contains(false)?model.Markers.FirstOrDefault().Cells:null;
 
             // contains marker rows in order of model.Markers rows index
-            List<string> markerRows = AsciiReader.GetRows(path, rowIndexes, activeCells,AsciiFileReaderInfo.GetSeperator(""+(char)model.Delimeter));
+            List<string> markerRows = AsciiReader.GetRows(path,Encoding.UTF8, rowIndexes, activeCells,AsciiFileReaderInfo.GetSeperator(""+(char)model.Delimeter));
 
             // missingvalues
             List<string> missingValues = new List<string>();
@@ -849,7 +854,6 @@ namespace BExIS.Modules.Rpm.UI.Controllers
             return Json(model, JsonRequestBehavior.AllowGet);
         }
 
-
         [JsonNetFilter]
         public JsonResult GetDataTypes()
         {
@@ -1066,6 +1070,22 @@ namespace BExIS.Modules.Rpm.UI.Controllers
             kvP.Text = AsciiFileReaderInfo.GetTextMarkerAsString(TextMarker.doubleQuotes);
 
             list.Add(kvP);
+
+
+            return list;
+        }
+        private List<ListItem> getEncodings()
+        {
+
+            List<ListItem> list = new List<ListItem>();
+
+            foreach (EncodingType type in Enum.GetValues(typeof(EncodingType)))
+            {
+                ListItem kvP = new ListItem();
+                kvP.Id = (int)type;
+                kvP.Text = type.ToString();
+                list.Add(kvP);
+            }
 
 
             return list;

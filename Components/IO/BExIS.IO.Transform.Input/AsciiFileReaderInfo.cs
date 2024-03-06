@@ -1,6 +1,7 @@
 ﻿
 using Newtonsoft.Json;
 using System.Collections.Generic;
+using System.Text;
 /// <summary>
 ///
 /// </summary>        
@@ -13,7 +14,7 @@ namespace BExIS.IO.Transform.Input
     public class AsciiFileReaderInfo : FileReaderInfo
     {
         public List<bool> Cells { get; set; }
-
+        public EncodingType EncodingType { get; set; }
 
         /// <summary>
         /// 
@@ -29,6 +30,8 @@ namespace BExIS.IO.Transform.Input
             Unit = 0;
             Description = 0;
             Cells = new List<bool>();
+            EncodingType = EncodingType.UTF8;
+            
         }
 
         /// <summary>
@@ -223,5 +226,26 @@ namespace BExIS.IO.Transform.Input
             }
         }
 
+        /// <summary>
+        /// Get Encoding based on the EncodingType enum type
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>
+        /// <param name="tmarker">EncodingType enum</param>
+        /// <returns>Encoding</returns>
+        public static Encoding GetEncoding(EncodingType e)
+        {
+            return Encoding.GetEncoding((int)e);
+        }
+
+ 
+
+    }
+
+    public enum EncodingType
+    { 
+        Ascii = 20127,
+        UTF8 = 65001,
+        Windows = 1252
     }
 }

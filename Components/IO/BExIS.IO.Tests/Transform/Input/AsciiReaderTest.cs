@@ -486,7 +486,7 @@ namespace BExIS.IO.Tests.Transform.Input
         public void GetRows__FileNameEmpty_ArgumentNullException()
         {
             // Act
-            var result = Assert.Throws<ArgumentNullException>(() => AsciiReader.GetRows(""));
+            var result = Assert.Throws<ArgumentNullException>(() => AsciiReader.GetRows("",Encoding.UTF8));
 
             // Assert
             Assert.AreEqual(result.ParamName, "fileName");
@@ -497,7 +497,7 @@ namespace BExIS.IO.Tests.Transform.Input
         public void GetRows__FileNotExist_FileNotFoundException()
         {
             // Act
-            var result = Assert.Throws<FileNotFoundException>(() => AsciiReader.GetRows("c:/data/notexist.txt"));
+            var result = Assert.Throws<FileNotFoundException>(() => AsciiReader.GetRows("c:/data/notexist.txt", Encoding.UTF8));
 
             // Assert
             Assert.AreEqual(result.Message, "file not found");
@@ -508,7 +508,7 @@ namespace BExIS.IO.Tests.Transform.Input
         public void GetRows_FileNameEmpty_ArgumentNullException()
         {
             // Act
-            var result = Assert.Throws<ArgumentNullException>(() => AsciiReader.GetRows("",null,null));
+            var result = Assert.Throws<ArgumentNullException>(() => AsciiReader.GetRows("",Encoding.UTF8));
 
             // Assert
             Assert.AreEqual(result.ParamName, "fileName");
@@ -519,7 +519,7 @@ namespace BExIS.IO.Tests.Transform.Input
         public void GetRows_FileNotExist_FileNotFoundException()
         {
             // Act
-            var result = Assert.Throws<FileNotFoundException>(() => AsciiReader.GetRows("c:/data/notexist.txt", new List<int>() {0}, null));
+            var result = Assert.Throws<FileNotFoundException>(() => AsciiReader.GetRows("c:/data/notexist.txt", Encoding.UTF8, new List<int>() {0}, null));
 
             // Assert
             Assert.AreEqual(result.Message, "file not found");
@@ -574,7 +574,7 @@ namespace BExIS.IO.Tests.Transform.Input
 
 
             // Act
-            var result =  AsciiReader.GetRows(path, wantedRows);
+            var result =  AsciiReader.GetRows(path,Encoding.UTF8, wantedRows);
 
             // Assert
             Assert.NotNull(result);
@@ -607,7 +607,7 @@ namespace BExIS.IO.Tests.Transform.Input
 
 
             // Act
-            var result = AsciiReader.GetRows(path, wantedRows,activeCells,TextSeperator.comma);
+            var result = AsciiReader.GetRows(path, Encoding.UTF8, wantedRows,activeCells,TextSeperator.comma);
 
             // Assert
             Assert.NotNull(result);

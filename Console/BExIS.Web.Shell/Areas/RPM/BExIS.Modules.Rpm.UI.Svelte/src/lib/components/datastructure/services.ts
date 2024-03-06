@@ -28,11 +28,11 @@ export const get = async (id) => {
 /****************/
 /* Create*/
 /****************/
-export const load = async (file, entityId, version) => {
+export const load = async (file:string,entityId:number,encoding:number, version:number) => {
 	console.log(file, entityId, version);
 	try {
 		const response = await Api.get(
-			'/rpm/DataStructure/load?file=' + file + '&&entityId=' + entityId + '&&version=' + version
+			'/rpm/DataStructure/load?file=' + file +'&&encoding='+encoding+ '&&entityId=' + entityId + '&&version=' + version
 		);
 		return response.data;
 	} catch (error) {
@@ -197,3 +197,4 @@ export const getConstraints = async () => {
 		throw error;
 	}
 };
+
