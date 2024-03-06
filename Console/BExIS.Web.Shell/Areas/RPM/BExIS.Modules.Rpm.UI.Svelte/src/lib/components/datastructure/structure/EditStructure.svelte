@@ -100,7 +100,7 @@ function updatePks()
 		{
 			notificationStore.showNotification({
 				notificationType: notificationType.error,
-				message: 'Primary key set is not unique'
+				message: 'The selected primary key was checked against the existing data of the datasets and is not unique, therefore the structure cannot be saved.'
 			})
 		}
 
@@ -151,6 +151,12 @@ function updatePks()
 	{#if enforcePrimaryKey && model.variables.length>0 && currentPks.length==0}
 			<Alert message="please select a primary key" cssClass="variant-filled-warning"></Alert>
 	{/if}
+	{#if model.variables.length && currentPks.length}
+		<Alert cssClass="variant-filled-warning">
+				By selecting all variables as primary key, it is not possible to change lines during an update. At least one column must remain as a value.
+			</Alert>
+	{/if}
+
 	<Variables
 		bind:variables={model.variables}
 		bind:valid={areVariablesValid}

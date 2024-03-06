@@ -22,6 +22,7 @@ using System.IO;
 using System.Linq;
 using System.Web.Mvc;
 using Vaiona.Utils.Cfg;
+using Vaiona.Web.Mvc.Modularity;
 
 namespace BExIS.Modules.Dcm.UI.Controllers
 {
@@ -56,6 +57,9 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             HookManager hookManager = new HookManager();
             IOUtility iOUtility = new IOUtility();
             List<Error> errors = new List<Error>();
+
+            // load from settings
+            bool enforcePrimaryKey = (bool)ModuleManager.GetModuleSettings("RPM").GetValueByKey("enforcePrimaryKey");
 
             // load cache to get informations about the current upload workflow
             EditDatasetDetailsCache cache = hookManager.LoadCache<EditDatasetDetailsCache>("dataset", "details", HookMode.edit, id );
@@ -117,7 +121,10 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                             hasData = datasetManager.RowCount(id) > 0?true:false;
                             hasPrimaryKey = sds.Variables.Where(v => v.IsKey.Equals(true)).Any();
 
-                            if(hasData && !hasPrimaryKey)
+                            if (enforcePrimaryKey && !hasPrimaryKey)
+                                errors.Add(new Error(ErrorType.Datastructure, "Primary key is not yet set in the data structure.", "Datastructure"));
+
+                            if (hasData && !hasPrimaryKey)
                             errors.Add(new Error(ErrorType.Datastructure, "Updating data is only possible with a primary key. Please set the primary in the data structure.", "Datastructure"));
 
                             // in file:
@@ -216,7 +223,10 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                                                         unique = uploadWizardHelper.IsUnique(id, ext, fileName, filePath, (AsciiFileReaderInfo)cache.AsciiFileReaderInfo, datastructureId, ref primaryKeyHashTable);
                                                         if (!unique)
                                                         {
-                                                            fileErrors.Add(new Error(ErrorType.PrimaryKey, "the data in the file violate the primary key set.", "Primary Key"));
+                                                            if(hasPrimaryKey)
+                                                                fileErrors.Add(new Error(ErrorType.PrimaryKey, "The data in the file violate the primary key set.", "Primary Key"));
+                                                            else
+                                                                fileErrors.Add(new Error(ErrorType.PrimaryKey, "Duplicate lines were found in the data, therefore it is not possible to save the data in the system", "Primary Key"));
                                                         }
                                                     }
                                                 }

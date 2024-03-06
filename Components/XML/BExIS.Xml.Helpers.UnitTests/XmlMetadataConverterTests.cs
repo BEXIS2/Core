@@ -104,7 +104,7 @@ namespace BExIS.Xml.Helpers.UnitTests
             XmlDocument metadataOriginal = new XmlDocument();
             metadataOriginal.Load(metadataOriginalXMlPath);
 
-            using (StreamReader r = new StreamReader(metadataInputPath, Encoding.Default, true))
+            using (StreamReader r = new StreamReader(metadataInputPath, Encoding.UTF8, true))
             {
                 XmlMetadataConverter metadataConverter = new XmlMetadataConverter();
 
@@ -244,7 +244,7 @@ namespace BExIS.Xml.Helpers.UnitTests
             string path = AppDomain.CurrentDomain.BaseDirectory;
             string metadataInputPath = Path.Combine(path, metadataInput);
 
-            using (StreamReader r = new StreamReader(metadataInputPath, Encoding.Default, true))
+            using (StreamReader r = new StreamReader(metadataInputPath, Encoding.UTF8, true))
             {
                 XmlMetadataConverter metadataConverter = new XmlMetadataConverter();
 
