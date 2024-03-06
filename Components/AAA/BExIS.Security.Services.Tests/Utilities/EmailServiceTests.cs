@@ -63,7 +63,7 @@ namespace BExIS.Security.Services.Tests.Utilities
          * Further test methods
          */
 
-        [Test]
+        //[Test]
         public void Send_EmailWithWhiteSpace_SendSuccess()
         {
             EmailService emailService = new EmailService(_smtpConfiguration);

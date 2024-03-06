@@ -351,7 +351,8 @@
 	{
 			const encoding = e;
 			console.log("🚀 ~ e.detail:", e)
-			model = await load(model.file, model.entityId,encoding,0);
+			const m = await load(model.file, model.entityId,encoding,0);
+			model.preview = m.preview;
 	}
 
 </script>
