@@ -27,7 +27,7 @@ namespace BExIS.IO.Tests.Transform.Input
             const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789ÄÜÖ";
 
             filepath = Path.Combine(AppConfiguration.DataPath, "EncodingWindowsFormat_testfile.txt");
-            filepathUnits = Path.Combine("units.csv");
+            filepathUnits = Path.Combine("App_Data/units.csv");
             filepathUTF8 = Path.Combine(AppConfiguration.DataPath, "EncodingUTF8Format_testfile.txt");
 
             lines = new List<string>();
