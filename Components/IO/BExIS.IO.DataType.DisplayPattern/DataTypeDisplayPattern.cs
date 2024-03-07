@@ -37,7 +37,7 @@ namespace BExIS.IO.DataType.DisplayPattern
 
         public DataTypeCode Systemtype { get; set; }
 
-        public int Id { get; set; }
+        public int Id { get; set; }oh
         public string Name { get; set; }
 
         public string DisplayPattern { get; set; }
