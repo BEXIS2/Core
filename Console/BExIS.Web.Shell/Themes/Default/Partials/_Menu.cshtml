@@ -13,8 +13,8 @@
 
 }
 
-<div class="navbar navbar-default navbar-fixed-top" style="z-index: 1337">
-    <div class="container-fluid shadow-md" id="menubar" style="background-color: #eff7f6; height: 60px; padding: 8px 12px;">
+<div class="navbar navbar-default" style="z-index: 1337">
+    <div class="container-fluid shadow-md" id="menubar" style="background-color: #eff7f6; padding: 8px 12px;">
         <!-- Brand and toggle get grouped for better mobile display -->
         <div class="navbar-header">
             <button type="button" data-target="#navbarCollapse" data-toggle="collapse" class="navbar-toggle">
@@ -23,9 +23,12 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
             </button>
-            <a href="@Url.Action("Index", "Home", new {area = ""})" class="navbar-brand">
-                @Html.Brand(Html.GetTenant().BrandPath, Html.GetTenant().ShortName)
-            </a>
+            @if(!string.IsNullOrEmpty(Html.GetTenant().Brand))
+            {
+                <a href="@Url.Action("Index", "Home", new { area = "" })" class="navbar-brand">
+                    @Html.Brand(Html.GetTenant().BrandPath, Html.GetTenant().ShortName)
+                </a>
+            }
         </div>
         <!-- Collect the nav links, forms, and other content for toggling -->
         <div id="navbarCollapse" class="collapse navbar-collapse">
@@ -51,7 +54,7 @@
                             <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">@User.Identity.GetUserName()<span class="caret"></span></a>
                             <ul class='dropdown-menu'>
                                 <li>@Html.ActionLink("Profile", "Edit", "PartyService", new { area = "bam" }, null)</li>
-                                <li>@Html.ActionLink("Token", "Create", "Tokens", new { area = "" }, null)</li>
+                                <li>@Html.ActionLink("Token", "GetToken", "Tokens", new { area = "" }, null)</li>
                                 <li><a href="@Url.Content("~/apihelp/index")" target="_blank">Api</a></li>
                                 <li><a href="javascript:document.getElementById('form_logoff').submit()">Log Off</a></li>
                             </ul>

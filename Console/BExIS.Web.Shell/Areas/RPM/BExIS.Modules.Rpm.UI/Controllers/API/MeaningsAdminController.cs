@@ -147,9 +147,7 @@ namespace BExIS.Modules.Rpm.UI.Api.Controllers
         #region external links
         [BExISApiAuthorize]
         [JsonNetFilter]
-        [HttpPost, HttpGet]
-        [PostRoute("api/MeaningsAdmin/createExternalLink")]
-        [GetRoute("api/MeaningsAdmin/createExternalLink")]
+        [HttpPost, PostRoute("api/MeaningsAdmin/createExternalLink")]
         public HttpResponseMessage createExternalLink(ExternalLink data)
         {
             try
@@ -165,9 +163,7 @@ namespace BExIS.Modules.Rpm.UI.Api.Controllers
 
         [BExISApiAuthorize]
         [JsonNetFilter]
-        [HttpPost, HttpGet]
-        [PostRoute("api/MeaningsAdmin/editExternalLinks")]
-        [GetRoute("api/MeaningsAdmin/editExternalLinks")]
+        [HttpPut, PutRoute("api/MeaningsAdmin/editExternalLinks")]
         public HttpResponseMessage editExternalLinks(ExternalLink data)
         {
             ExternalLink m = null;
@@ -185,8 +181,6 @@ namespace BExIS.Modules.Rpm.UI.Api.Controllers
 
         [BExISApiAuthorize]
         [JsonNetFilter]
-        [HttpPost, HttpDelete]
-        [PostRoute("api/MeaningsAdmin/deleteExternalLinks")]
         [DeleteRoute("api/MeaningsAdmin/deleteExternalLinks")]
         public HttpResponseMessage deleteExternalLinks(long id)
         {
@@ -203,9 +197,7 @@ namespace BExIS.Modules.Rpm.UI.Api.Controllers
 
         [BExISApiAuthorize]
         [JsonNetFilter]
-        [HttpPost, HttpDelete]
-        [PostRoute("api/MeaningsAdmin/updatePreviousLinks")]
-        [DeleteRoute("api/MeaningsAdmin/updatePreviousLinks")]
+        [HttpPut, PutRoute("api/MeaningsAdmin/updatePreviousLinks")]
         public HttpResponseMessage updatePreviousLinks()
         {
             return cretae_response(_meaningManager.updatePreviousLinks());
@@ -217,9 +209,7 @@ namespace BExIS.Modules.Rpm.UI.Api.Controllers
 
         [BExISApiAuthorize]
         [JsonNetFilter]
-        [HttpPost, HttpGet]
-        [PostRoute("api/MeaningsAdmin/createPrefixCategory")]
-        [GetRoute("api/MeaningsAdmin/createEPrefixCategory")]
+        [HttpPost, PostRoute("api/MeaningsAdmin/createPrefixCategory")]
         public HttpResponseMessage createPrefixCategory(PrefixCategory data)
         {
             try
@@ -235,9 +225,7 @@ namespace BExIS.Modules.Rpm.UI.Api.Controllers
 
         [BExISApiAuthorize]
         [JsonNetFilter]
-        [HttpPost, HttpGet]
-        [PostRoute("api/MeaningsAdmin/editPrefixCategory")]
-        [GetRoute("api/MeaningsAdmin/editPrefixCategory")]
+        [HttpPut, PutRoute("api/MeaningsAdmin/editPrefixCategory")]
         public HttpResponseMessage editPrefixCategory(PrefixCategory data)
         {
             ExternalLink m = null;
@@ -255,9 +243,7 @@ namespace BExIS.Modules.Rpm.UI.Api.Controllers
 
         [BExISApiAuthorize]
         [JsonNetFilter]
-        [HttpPost, HttpDelete]
-        [PostRoute("api/MeaningsAdmin/deletePrefixCategory")]
-        [DeleteRoute("api/MeaningsAdmin/deletePrefixCategory")]
+        [HttpDelete, DeleteRoute("api/MeaningsAdmin/deletePrefixCategory")]
         public HttpResponseMessage deletePrefixCategory(long id)
         {
             try

@@ -100,7 +100,7 @@
 	<div class="flex">
 		<MultiSelect
 			id="SelectDataStructure"
-			title="Select a Datastructure or generate from File"
+			title="Generate based on an uploaded file, select an existing one, or create a new"
 			itemId="id"
 			itemLabel="text"
 			itemGroup="group"

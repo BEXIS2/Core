@@ -506,11 +506,16 @@ namespace IDIV.Modules.Mmm.UI.Controllers
             try
             {
                 if (contentDescriptor.Name.ToLower().Equals("unstructureddata"))
-                    return getFileInfo(contentDescriptor.URI);
+                {
+                    var fileInfo = getFileInfo(contentDescriptor.URI);
+                    fileInfo.Description = contentDescriptor.Description;
+                    return fileInfo;
+                }
                 else
                     return new FileInformation()
                     {
                         Name = contentDescriptor.Name,
+                        Description = contentDescriptor.Description,
                         Path = contentDescriptor.URI,
                         MimeType = contentDescriptor.MimeType
                     };

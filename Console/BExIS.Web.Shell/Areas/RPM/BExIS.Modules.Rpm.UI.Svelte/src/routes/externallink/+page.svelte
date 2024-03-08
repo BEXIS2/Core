@@ -1,9 +1,19 @@
 <script lang="ts">
 	import { Modal, getModalStore, type ModalSettings } from '@skeletonlabs/skeleton';
 	const modalStore = getModalStore();
-	
-	import { getLinks, remove, getLinkTypes, getPrefixCategoriesAsList, getPrefixListItems } from './services';
-	import  { externalLinkType, type prefixCategoryType, type prefixListItemType } from '$lib/components/meaning/types';
+
+	import {
+		getLinks,
+		remove,
+		getLinkTypes,
+		getPrefixCategoriesAsList,
+		getPrefixListItems
+	} from './services';
+	import {
+		externalLinkType,
+		type prefixCategoryType,
+		type prefixListItemType
+	} from '$lib/components/meaning/types';
 
 	import {
 		Page,
@@ -14,18 +24,15 @@
 		type TableConfig,
 		notificationStore,
 		notificationType,
-
 		type listItemType
-
 	} from '@bexis2/bexis2-core-ui';
 
-	import { 
-		externalLinksStore, 
-		externalLinkTypesStore, 
+	import {
+		externalLinksStore,
+		externalLinkTypesStore,
 		prefixCategoryStore,
 		prefixesStore
-	 }
-		 from '$lib/components/meaning/stores';
+	} from '$lib/components/meaning/stores';
 
 	let externalLinks: externalLinkType[] = [];
 	let externalLink: externalLinkType = new externalLinkType();
@@ -47,9 +54,9 @@
 
 		// get external links
 		externalLinks = await getLinks();
-  externalLink = new externalLinkType();
+		externalLink = new externalLinkType();
 		externalLinksStore.set(externalLinks);
-		console.log("🚀 ~ file: +page.svelte:50 ~ reload ~ externalLinks:", externalLinks)
+		console.log('🚀 ~ file: +page.svelte:50 ~ reload ~ externalLinks:', externalLinks);
 
 		const externalLinkTypes = await getLinkTypes();
 		externalLinkTypesStore.set(externalLinkTypes);
@@ -59,7 +66,7 @@
 
 		const prefixesAsList = await getPrefixListItems();
 		prefixesStore.set(prefixesAsList);
-		console.log("🚀 ~ file: +page.svelte:60 ~ reload ~ prefixesAsList:", prefixesAsList)
+		console.log('🚀 ~ file: +page.svelte:60 ~ reload ~ prefixesAsList:', prefixesAsList);
 
 		console.log('store', $externalLinksStore);
 	}
@@ -75,37 +82,29 @@
 			uri: {
 				header: 'Uri',
 				disableFiltering: true,
-				disableSorting:true,
-				exclude:false
+				disableSorting: true,
+				exclude: false
 			},
 			type: {
 				instructions: {
-					toStringFn: 
-					 ((pc: listItemType) =>	pc?.text	),
-					toSortableValueFn: 
-					((pc: listItemType) =>	pc?.text	),
-					toFilterableValueFn: 
-					((pc: listItemType) =>	pc?.text	)
+					toStringFn: (pc: listItemType) => pc?.text,
+					toSortableValueFn: (pc: listItemType) => pc?.text,
+					toFilterableValueFn: (pc: listItemType) => pc?.text
 				}
 			},
 			prefix: {
 				instructions: {
-					toStringFn: 
-					 ((pc: prefixListItemType) =>	pc!=null?pc.text:""	),
-					toSortableValueFn: 
-					((pc: prefixListItemType) =>	pc!=null?pc.text:""	),
-					toFilterableValueFn: 
-					((pc: prefixListItemType) =>	pc!=null?pc.text:""	)
+					toStringFn: (pc: prefixListItemType) => (pc != null ? pc.text : ''),
+					toSortableValueFn: (pc: prefixListItemType) => (pc != null ? pc.text : ''),
+					toFilterableValueFn: (pc: prefixListItemType) => (pc != null ? pc.text : '')
 				}
 			},
 			prefixCategory: {
+				header:"Prefix category",
 				instructions: {
-					toStringFn: 
-					 ((pc: prefixCategoryType) =>	pc!=null?pc.name:""	),
-					toSortableValueFn: 
-					((pc: prefixCategoryType) =>	pc!=null?pc.name:""	),
-					toFilterableValueFn: 
-					((pc: prefixCategoryType) =>	pc!=null?pc.name:""	)
+					toStringFn: (pc: prefixCategoryType) => (pc != null ? pc.name : ''),
+					toSortableValueFn: (pc: prefixCategoryType) => (pc != null ? pc.name : ''),
+					toFilterableValueFn: (pc: prefixCategoryType) => (pc != null ? pc.name : '')
 				}
 			},
 			optionsColumn: {
@@ -127,28 +126,23 @@
 	}
 
 	function edit(type: any) {
-
 		if (type.action == 'edit') {
 			showForm = false;
 			externalLink = $externalLinksStore.find((u) => u.id === type.id)!;
 			showForm = true;
-			window.scrollTo({ top: 60, behavior: 'smooth' })
+			window.scrollTo({ top: 60, behavior: 'smooth' });
 		}
 
-		
 		if (type.action == 'link') {
-
-				let u = type.url;
-				// add protocol if not exist
-				if(!u.startsWith("http")){ 
-					
-					u = "https://"+u;
-				}
-				window.open(type.url);
+			let u = type.url;
+			// add protocol if not exist
+			if (!u.startsWith('http')) {
+				u = 'https://' + u;
+			}
+			window.open(type.url);
 		}
 
 		if (type.action == 'delete') {
-
 			const confirm: ModalSettings = {
 				type: 'confirm',
 				title: 'Delete External Link',

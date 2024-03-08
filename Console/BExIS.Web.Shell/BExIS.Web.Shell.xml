@@ -1,0 +1,491 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>BExIS.Web.Shell</name>
+    </assembly>
+    <members>
+        <member name="T:Resources.EditorLocalization">
+            <summary>
+              Eine stark typisierte Ressourcenklasse zum Suchen von lokalisierten Zeichenfolgen usw.
+            </summary>
+        </member>
+        <member name="P:Resources.EditorLocalization.ResourceManager">
+            <summary>
+              Gibt die von dieser Klasse verwendete zwischengespeicherte ResourceManager-Instanz zurück.
+            </summary>
+        </member>
+        <member name="P:Resources.EditorLocalization.Culture">
+            <summary>
+              Überschreibt die CurrentUICulture-Eigenschaft des aktuellen Threads für alle
+              Ressourcenlookups, die diese stark typisierte Ressourcenklasse verwenden.
+            </summary>
+        </member>
+        <member name="P:Resources.EditorLocalization.Bold">
+            <summary>
+              Sucht eine lokalisierte Zeichenfolge, die Bold ähnelt.
+            </summary>
+        </member>
+        <member name="P:Resources.EditorLocalization.Close">
+            <summary>
+              Sucht eine lokalisierte Zeichenfolge, die Close ähnelt.
+            </summary>
+        </member>
+        <member name="P:Resources.EditorLocalization.CreateLink">
+            <summary>
+              Sucht eine lokalisierte Zeichenfolge, die Insert hyperlink ähnelt.
+            </summary>
+        </member>
+        <member name="P:Resources.EditorLocalization.DeleteFile">
+            <summary>
+              Sucht eine lokalisierte Zeichenfolge, die Are you sure you want to delete {0}? ähnelt.
+            </summary>
+        </member>
+        <member name="P:Resources.EditorLocalization.DirectoryNotFound">
+            <summary>
+              Sucht eine lokalisierte Zeichenfolge, die A directory with this name was not found. ähnelt.
+            </summary>
+        </member>
+        <member name="P:Resources.EditorLocalization.EmptyFolder">
+            <summary>
+              Sucht eine lokalisierte Zeichenfolge, die Empty Folder ähnelt.
+            </summary>
+        </member>
+        <member name="P:Resources.EditorLocalization.FontName">
+            <summary>
+              Sucht eine lokalisierte Zeichenfolge, die Select font family ähnelt.
+            </summary>
+        </member>
+        <member name="P:Resources.EditorLocalization.FontNameInherit">
+            <summary>
+              Sucht eine lokalisierte Zeichenfolge, die (inherited font) ähnelt.
+            </summary>
+        </member>
+        <member name="P:Resources.EditorLocalization.FontSize">
+            <summary>
+              Sucht eine lokalisierte Zeichenfolge, die Select font size ähnelt.
+            </summary>
+        </member>
+        <member name="P:Resources.EditorLocalization.FontSizeInherit">
+            <summary>
+              Sucht eine lokalisierte Zeichenfolge, die (inherited size) ähnelt.
+            </summary>
+        </member>
+        <member name="P:Resources.EditorLocalization.FormatBlock">
+            <summary>
+              Sucht eine lokalisierte Zeichenfolge, die Select block type ähnelt.
+            </summary>
+        </member>
+        <member name="P:Resources.EditorLocalization.Indent">
+            <summary>
+              Sucht eine lokalisierte Zeichenfolge, die Indent ähnelt.
+            </summary>
+        </member>
+        <member name="P:Resources.EditorLocalization.Insert">
+            <summary>
+              Sucht eine lokalisierte Zeichenfolge, die Insert ähnelt.
+            </summary>
+        </member>
+        <member name="P:Resources.EditorLocalization.InsertHtml">
+            <summary>
+              Sucht eine lokalisierte Zeichenfolge, die Insert HTML ähnelt.
+            </summary>
+        </member>
+        <member name="P:Resources.EditorLocalization.InsertImage">
+            <summary>
+              Sucht eine lokalisierte Zeichenfolge, die Insert image ähnelt.
+            </summary>
+        </member>
+        <member name="P:Resources.EditorLocalization.InsertOrderedList">
+            <summary>
+              Sucht eine lokalisierte Zeichenfolge, die Insert ordered list ähnelt.
+            </summary>
+        </member>
+        <member name="P:Resources.EditorLocalization.InsertUnorderedList">
+            <summary>
+              Sucht eine lokalisierte Zeichenfolge, die Insert unordered list ähnelt.
+            </summary>
+        </member>
+        <member name="P:Resources.EditorLocalization.InvalidFileType">
+            <summary>
+              Sucht eine lokalisierte Zeichenfolge, die The selected file {0} is not valid. Supported file types are {1}. ähnelt.
+            </summary>
+        </member>
+        <member name="P:Resources.EditorLocalization.Italic">
+            <summary>
+              Sucht eine lokalisierte Zeichenfolge, die Italic ähnelt.
+            </summary>
+        </member>
+        <member name="P:Resources.EditorLocalization.JustifyCenter">
+            <summary>
+              Sucht eine lokalisierte Zeichenfolge, die Center text ähnelt.
+            </summary>
+        </member>
+        <member name="P:Resources.EditorLocalization.JustifyFull">
+            <summary>
+              Sucht eine lokalisierte Zeichenfolge, die Justify ähnelt.
+            </summary>
+        </member>
+        <member name="P:Resources.EditorLocalization.JustifyLeft">
+            <summary>
+              Sucht eine lokalisierte Zeichenfolge, die Align text left ähnelt.
+            </summary>
+        </member>
+        <member name="P:Resources.EditorLocalization.JustifyRight">
+            <summary>
+              Sucht eine lokalisierte Zeichenfolge, die Align text right ähnelt.
+            </summary>
+        </member>
+        <member name="P:Resources.EditorLocalization.OpenInNewWindow">
+            <summary>
+              Sucht eine lokalisierte Zeichenfolge, die Open link in new window ähnelt.
+            </summary>
+        </member>
+        <member name="P:Resources.EditorLocalization.Or">
+            <summary>
+              Sucht eine lokalisierte Zeichenfolge, die or ähnelt.
+            </summary>
+        </member>
+        <member name="P:Resources.EditorLocalization.OrderBy">
+            <summary>
+              Sucht eine lokalisierte Zeichenfolge, die Arrange by: ähnelt.
+            </summary>
+        </member>
+        <member name="P:Resources.EditorLocalization.OrderByName">
+            <summary>
+              Sucht eine lokalisierte Zeichenfolge, die Name ähnelt.
+            </summary>
+        </member>
+        <member name="P:Resources.EditorLocalization.OrderBySize">
+            <summary>
+              Sucht eine lokalisierte Zeichenfolge, die Size ähnelt.
+            </summary>
+        </member>
+        <member name="P:Resources.EditorLocalization.Outdent">
+            <summary>
+              Sucht eine lokalisierte Zeichenfolge, die Outdent ähnelt.
+            </summary>
+        </member>
+        <member name="P:Resources.EditorLocalization.OverwriteFile">
+            <summary>
+              Sucht eine lokalisierte Zeichenfolge, die A file with name {0} already exists in the current directory. Do you want to overwrite it? ähnelt.
+            </summary>
+        </member>
+        <member name="P:Resources.EditorLocalization.Strikethrough">
+            <summary>
+              Sucht eine lokalisierte Zeichenfolge, die Strikethrough ähnelt.
+            </summary>
+        </member>
+        <member name="P:Resources.EditorLocalization.Style">
+            <summary>
+              Sucht eine lokalisierte Zeichenfolge, die Styles ähnelt.
+            </summary>
+        </member>
+        <member name="P:Resources.EditorLocalization.Tooltip">
+            <summary>
+              Sucht eine lokalisierte Zeichenfolge, die Tooltip ähnelt.
+            </summary>
+        </member>
+        <member name="P:Resources.EditorLocalization.Underline">
+            <summary>
+              Sucht eine lokalisierte Zeichenfolge, die Underline ähnelt.
+            </summary>
+        </member>
+        <member name="P:Resources.EditorLocalization.Unlink">
+            <summary>
+              Sucht eine lokalisierte Zeichenfolge, die Remove hyperlink ähnelt.
+            </summary>
+        </member>
+        <member name="P:Resources.EditorLocalization.UploadFile">
+            <summary>
+              Sucht eine lokalisierte Zeichenfolge, die Upload ähnelt.
+            </summary>
+        </member>
+        <member name="P:Resources.EditorLocalization.WebAddress">
+            <summary>
+              Sucht eine lokalisierte Zeichenfolge, die Web address ähnelt.
+            </summary>
+        </member>
+        <member name="T:Resources.GridLocalization">
+            <summary>
+              Eine stark typisierte Ressourcenklasse zum Suchen von lokalisierten Zeichenfolgen usw.
+            </summary>
+        </member>
+        <member name="P:Resources.GridLocalization.ResourceManager">
+            <summary>
+              Gibt die von dieser Klasse verwendete zwischengespeicherte ResourceManager-Instanz zurück.
+            </summary>
+        </member>
+        <member name="P:Resources.GridLocalization.Culture">
+            <summary>
+              Überschreibt die CurrentUICulture-Eigenschaft des aktuellen Threads für alle
+              Ressourcenlookups, die diese stark typisierte Ressourcenklasse verwenden.
+            </summary>
+        </member>
+        <member name="P:Resources.GridLocalization.AddNew">
+            <summary>
+              Sucht eine lokalisierte Zeichenfolge, die Add new record ähnelt.
+            </summary>
+        </member>
+        <member name="P:Resources.GridLocalization.Cancel">
+            <summary>
+              Sucht eine lokalisierte Zeichenfolge, die Cancel ähnelt.
+            </summary>
+        </member>
+        <member name="P:Resources.GridLocalization.CancelChanges">
+            <summary>
+              Sucht eine lokalisierte Zeichenfolge, die Cancel changes ähnelt.
+            </summary>
+        </member>
+        <member name="P:Resources.GridLocalization.Delete">
+            <summary>
+              Sucht eine lokalisierte Zeichenfolge, die Delete ähnelt.
+            </summary>
+        </member>
+        <member name="P:Resources.GridLocalization.DeleteConfirmation">
+            <summary>
+              Sucht eine lokalisierte Zeichenfolge, die Are you sure you want to delete this record? ähnelt.
+            </summary>
+        </member>
+        <member name="P:Resources.GridLocalization.DisplayingItems">
+            <summary>
+              Sucht eine lokalisierte Zeichenfolge, die Displaying items {0} - {1} of {2} ähnelt.
+            </summary>
+        </member>
+        <member name="P:Resources.GridLocalization.Edit">
+            <summary>
+              Sucht eine lokalisierte Zeichenfolge, die Edit ähnelt.
+            </summary>
+        </member>
+        <member name="P:Resources.GridLocalization.Filter">
+            <summary>
+              Sucht eine lokalisierte Zeichenfolge, die Filter ähnelt.
+            </summary>
+        </member>
+        <member name="P:Resources.GridLocalization.FilterAnd">
+            <summary>
+              Sucht eine lokalisierte Zeichenfolge, die And ähnelt.
+            </summary>
+        </member>
+        <member name="P:Resources.GridLocalization.FilterBoolIsFalse">
+            <summary>
+              Sucht eine lokalisierte Zeichenfolge, die is false ähnelt.
+            </summary>
+        </member>
+        <member name="P:Resources.GridLocalization.FilterBoolIsTrue">
+            <summary>
+              Sucht eine lokalisierte Zeichenfolge, die is true ähnelt.
+            </summary>
+        </member>
+        <member name="P:Resources.GridLocalization.FilterClear">
+            <summary>
+              Sucht eine lokalisierte Zeichenfolge, die Clear Filter ähnelt.
+            </summary>
+        </member>
+        <member name="P:Resources.GridLocalization.FilterDateEq">
+            <summary>
+              Sucht eine lokalisierte Zeichenfolge, die Is equal to ähnelt.
+            </summary>
+        </member>
+        <member name="P:Resources.GridLocalization.FilterDateGe">
+            <summary>
+              Sucht eine lokalisierte Zeichenfolge, die Is after or equal to ähnelt.
+            </summary>
+        </member>
+        <member name="P:Resources.GridLocalization.FilterDateGt">
+            <summary>
+              Sucht eine lokalisierte Zeichenfolge, die Is after ähnelt.
+            </summary>
+        </member>
+        <member name="P:Resources.GridLocalization.FilterDateLe">
+            <summary>
+              Sucht eine lokalisierte Zeichenfolge, die Is before or equal to ähnelt.
+            </summary>
+        </member>
+        <member name="P:Resources.GridLocalization.FilterDateLt">
+            <summary>
+              Sucht eine lokalisierte Zeichenfolge, die Is before ähnelt.
+            </summary>
+        </member>
+        <member name="P:Resources.GridLocalization.FilterDateNe">
+            <summary>
+              Sucht eine lokalisierte Zeichenfolge, die Is not equal to ähnelt.
+            </summary>
+        </member>
+        <member name="P:Resources.GridLocalization.FilterEnumEq">
+            <summary>
+              Sucht eine lokalisierte Zeichenfolge, die Is equal to ähnelt.
+            </summary>
+        </member>
+        <member name="P:Resources.GridLocalization.FilterEnumNe">
+            <summary>
+              Sucht eine lokalisierte Zeichenfolge, die Is not equal to ähnelt.
+            </summary>
+        </member>
+        <member name="P:Resources.GridLocalization.FilterForeignKeyEq">
+            <summary>
+              Sucht eine lokalisierte Zeichenfolge, die Is equal to ähnelt.
+            </summary>
+        </member>
+        <member name="P:Resources.GridLocalization.FilterForeignKeyNe">
+            <summary>
+              Sucht eine lokalisierte Zeichenfolge, die Is not equal to ähnelt.
+            </summary>
+        </member>
+        <member name="P:Resources.GridLocalization.FilterNumberEq">
+            <summary>
+              Sucht eine lokalisierte Zeichenfolge, die Is equal to ähnelt.
+            </summary>
+        </member>
+        <member name="P:Resources.GridLocalization.FilterNumberGe">
+            <summary>
+              Sucht eine lokalisierte Zeichenfolge, die Is greater than or equal to ähnelt.
+            </summary>
+        </member>
+        <member name="P:Resources.GridLocalization.FilterNumberGt">
+            <summary>
+              Sucht eine lokalisierte Zeichenfolge, die Is greater than ähnelt.
+            </summary>
+        </member>
+        <member name="P:Resources.GridLocalization.FilterNumberLe">
+            <summary>
+              Sucht eine lokalisierte Zeichenfolge, die Is less than or equal to ähnelt.
+            </summary>
+        </member>
+        <member name="P:Resources.GridLocalization.FilterNumberLt">
+            <summary>
+              Sucht eine lokalisierte Zeichenfolge, die Is less than ähnelt.
+            </summary>
+        </member>
+        <member name="P:Resources.GridLocalization.FilterNumberNe">
+            <summary>
+              Sucht eine lokalisierte Zeichenfolge, die Is not equal to ähnelt.
+            </summary>
+        </member>
+        <member name="P:Resources.GridLocalization.FilterOr">
+            <summary>
+              Sucht eine lokalisierte Zeichenfolge, die Or ähnelt.
+            </summary>
+        </member>
+        <member name="P:Resources.GridLocalization.FilterSelectValue">
+            <summary>
+              Sucht eine lokalisierte Zeichenfolge, die -Select value- ähnelt.
+            </summary>
+        </member>
+        <member name="P:Resources.GridLocalization.FilterShowRows">
+            <summary>
+              Sucht eine lokalisierte Zeichenfolge, die Show rows with value that ähnelt.
+            </summary>
+        </member>
+        <member name="P:Resources.GridLocalization.FilterStringEndsWith">
+            <summary>
+              Sucht eine lokalisierte Zeichenfolge, die Ends with ähnelt.
+            </summary>
+        </member>
+        <member name="P:Resources.GridLocalization.FilterStringEq">
+            <summary>
+              Sucht eine lokalisierte Zeichenfolge, die Is equal to ähnelt.
+            </summary>
+        </member>
+        <member name="P:Resources.GridLocalization.FilterStringNe">
+            <summary>
+              Sucht eine lokalisierte Zeichenfolge, die Is not equal to ähnelt.
+            </summary>
+        </member>
+        <member name="P:Resources.GridLocalization.FilterStringNotSubstringOf">
+            <summary>
+              Sucht eine lokalisierte Zeichenfolge, die Does not contain ähnelt.
+            </summary>
+        </member>
+        <member name="P:Resources.GridLocalization.FilterStringStartsWith">
+            <summary>
+              Sucht eine lokalisierte Zeichenfolge, die Starts with ähnelt.
+            </summary>
+        </member>
+        <member name="P:Resources.GridLocalization.FilterStringSubstringOf">
+            <summary>
+              Sucht eine lokalisierte Zeichenfolge, die Contains ähnelt.
+            </summary>
+        </member>
+        <member name="P:Resources.GridLocalization.GroupHint">
+            <summary>
+              Sucht eine lokalisierte Zeichenfolge, die Drag a column header and drop it here to group by that column ähnelt.
+            </summary>
+        </member>
+        <member name="P:Resources.GridLocalization.Insert">
+            <summary>
+              Sucht eine lokalisierte Zeichenfolge, die Insert ähnelt.
+            </summary>
+        </member>
+        <member name="P:Resources.GridLocalization.NoRecords">
+            <summary>
+              Sucht eine lokalisierte Zeichenfolge, die No records to display. ähnelt.
+            </summary>
+        </member>
+        <member name="P:Resources.GridLocalization.Page">
+            <summary>
+              Sucht eine lokalisierte Zeichenfolge, die Page  ähnelt.
+            </summary>
+        </member>
+        <member name="P:Resources.GridLocalization.PageOf">
+            <summary>
+              Sucht eine lokalisierte Zeichenfolge, die of {0} ähnelt.
+            </summary>
+        </member>
+        <member name="P:Resources.GridLocalization.Refresh">
+            <summary>
+              Sucht eine lokalisierte Zeichenfolge, die Refresh ähnelt.
+            </summary>
+        </member>
+        <member name="P:Resources.GridLocalization.SaveChanges">
+            <summary>
+              Sucht eine lokalisierte Zeichenfolge, die Save changes ähnelt.
+            </summary>
+        </member>
+        <member name="P:Resources.GridLocalization.Select">
+            <summary>
+              Sucht eine lokalisierte Zeichenfolge, die Select ähnelt.
+            </summary>
+        </member>
+        <member name="P:Resources.GridLocalization.SortedAsc">
+            <summary>
+              Sucht eine lokalisierte Zeichenfolge, die sorted ascending ähnelt.
+            </summary>
+        </member>
+        <member name="P:Resources.GridLocalization.SortedDesc">
+            <summary>
+              Sucht eine lokalisierte Zeichenfolge, die sorted descending ähnelt.
+            </summary>
+        </member>
+        <member name="P:Resources.GridLocalization.UnGroup">
+            <summary>
+              Sucht eine lokalisierte Zeichenfolge, die ungroup ähnelt.
+            </summary>
+        </member>
+        <member name="P:Resources.GridLocalization.Update">
+            <summary>
+              Sucht eine lokalisierte Zeichenfolge, die Update ähnelt.
+            </summary>
+        </member>
+        <member name="M:BExIS.Web.Shell.Controllers.API.TokensController.Get">
+            <summary>
+            Get the token based on basic authentication
+            </summary>
+            <returns>Token</returns>
+        </member>
+        <member name="M:BExIS.Web.Shell.MvcApplication.Application_EndRequest">
+            <summary>
+            the function is called on any http request, which include static resources too!
+            conversation management is done using the global filter  PersistenceContextProviderAttribute.
+            </summary>
+        </member>
+        <member name="M:BExIS.Web.Shell.Helpers.MenuHelper.MenuBar(System.String)">
+            <summary>
+            defaul menubar load with bar name like 
+            menubarRoot
+            Accountbar
+            </summary>
+            <param name="menuBar"></param>
+            <returns></returns>
+        </member>
+    </members>
+</doc>

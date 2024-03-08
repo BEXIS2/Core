@@ -120,6 +120,9 @@ namespace BExIS.Modules.Dcm.UI.Helpers
             //check if its linked with a system field
             locked = MappingUtils.ExistSystemFieldMappings(current.Id, type);
 
+            // check if a fixed value should block the attribute for changing
+            if (locked == false && !string.IsNullOrEmpty(current.FixedValue))locked = true;            
+
             // check if a mapping for parties exits
             partyMappingExist = MappingUtils.ExistMappingWithParty(current.Id, type);
 
@@ -200,7 +203,7 @@ namespace BExIS.Modules.Dcm.UI.Helpers
                 string constraintsDescription = "";
                 double lowerBoundary = 0;
                 double upperBoundary = 0;
-
+                bool locked = false;
 
                 if (parameter is MetadataParameterUsage)
                 {
@@ -232,7 +235,8 @@ namespace BExIS.Modules.Dcm.UI.Helpers
                     string displayPattern = "";
                     if (dtdp != null) displayPattern = dtdp.StringPattern;
 
-
+                    // check if a fixed value should block the attribute for changing
+                    if (locked == false && !string.IsNullOrEmpty(parameter.FixedValue)) locked = true;
 
                     return new MetadataParameterModel
                     {
@@ -250,13 +254,16 @@ namespace BExIS.Modules.Dcm.UI.Helpers
                         DataType = metadataParameter.DataType.Name,
                         SystemType = metadataParameter.DataType.SystemType,
                         DisplayPattern = displayPattern,
-                        //MinCardinality = metadataParameter.MinCardinality,
+                        MinCardinality = parameter.MinCardinality,
                         //MaxCardinality = metadataParameter.MaxCardinality,
                         NumberOfSourceInPackage = 1,
                         DomainList = domainConstraintList,
                         ParentStepId = parentStepId,
                         LowerBoundary = lowerBoundary,
-                        UpperBoundary = upperBoundary
+                        UpperBoundary = upperBoundary,
+                        DefaultValue = parameter.DefaultValue,
+                        FixedValue = parameter.FixedValue,
+                        Locked = locked
                     };
                 }
 

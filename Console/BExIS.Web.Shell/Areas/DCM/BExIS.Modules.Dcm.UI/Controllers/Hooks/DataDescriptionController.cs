@@ -87,7 +87,8 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                                 Id = variable.Id,
                                 Name = variable.Label,
                                 DataType = variable.DataType.Name,
-                                Unit = variable.Unit.Name
+                                Unit = variable.Unit.Name,
+                                IsKeys = variable.IsKey
                             });
 
                         }

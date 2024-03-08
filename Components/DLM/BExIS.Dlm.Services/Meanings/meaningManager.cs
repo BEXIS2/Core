@@ -11,6 +11,7 @@ using System.Security.Policy;
 using Vaiona.Utils.Cfg;
 using System.Collections;
 using static System.Net.Mime.MediaTypeNames;
+using System.IO;
 
 namespace BExIS.Dlm.Services.Meanings
 {
@@ -486,7 +487,7 @@ namespace BExIS.Dlm.Services.Meanings
         }
         public List<ExternalLink> getPrefixes()
         {
-            return getExternalLinks().Where(p => p.Prefix == null).ToList<ExternalLink>();
+            return getExternalLinks().Where(p => p.Prefix == null && p.Type.Equals(ExternalLinkType.prefix)).ToList<ExternalLink>();
         }
         public string getPrefixfromUri(string uri)
         {
@@ -494,7 +495,11 @@ namespace BExIS.Dlm.Services.Meanings
         }
         public string getfullUri(ExternalLink externalLink)
         {
-            return externalLink.URI.Replace(externalLink.Prefix.Name, externalLink.Prefix.URI);
+            string url = externalLink.URI; ;
+            if (externalLink.Prefix != null)
+                url = Path.Combine(externalLink.Prefix.URI, externalLink.URI);
+
+            return url;
         }
         public string getFormattedLinkUri(ExternalLink externalLink)
         {

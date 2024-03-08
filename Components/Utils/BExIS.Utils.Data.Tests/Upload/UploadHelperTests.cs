@@ -30,44 +30,36 @@ namespace BExIS.Utils.Data.Tests
         public void OneTimeSetUp()
         {
             helper = new TestSetupHelper(WebApiConfig.Register, false);
-            var dm = new DatasetManager();
-            var rsm = new ResearchPlanManager();
-            var mdm = new MetadataStructureManager();
-            var etm = new EntityTemplateManager();
             dsHelper = new DatasetHelper();
 
-            try
+            using (var dm = new DatasetManager())
+            using (var rsm = new ResearchPlanManager())
+            using (var mdm = new MetadataStructureManager())
+            using (var etm = new EntityTemplateManager())
             {
-                //dsHelper.PurgeAllDatasets();
-                //dsHelper.PurgeAllDataStructures();
-                //dsHelper.PurgeAllResearchPlans();
+                    // generate Data
+                    StructuredDataStructure dataStructure = dsHelper.CreateADataStructure();
+                    dataStructure.Should().NotBeNull("Failed to meet a precondition: a data strcuture is required.");
 
-                // generate Data
-                StructuredDataStructure dataStructure = dsHelper.CreateADataStructure();
-                dataStructure.Should().NotBeNull("Failed to meet a precondition: a data strcuture is required.");
+                    var rp = dsHelper.CreateResearchPlan();
+                    rp.Should().NotBeNull("Failed to meet a precondition: a research plan is required.");
 
-                var rp = dsHelper.CreateResearchPlan();
-                rp.Should().NotBeNull("Failed to meet a precondition: a research plan is required.");
+                    var mds = mdm.Repo.Query().First();
+                    mds.Should().NotBeNull("Failed to meet a precondition: a metadata strcuture is required.");
 
-                var mds = mdm.Repo.Query().First();
-                mds.Should().NotBeNull("Failed to meet a precondition: a metadata strcuture is required.");
+                    var et = etm.Repo.Query().First();
+                    et.Should().NotBeNull("Failed to meet a precondition: a entity template is required.");
 
-                var et = etm.Repo.Query().First();
-                et.Should().NotBeNull("Failed to meet a precondition: a entity template is required.");
+                    Dataset dataset = dm.CreateEmptyDataset(dataStructure, rp, mds, et);
+                    datasetId = dataset.Id;
 
-                Dataset dataset = dm.CreateEmptyDataset(dataStructure, rp, mds, et);
-                datasetId = dataset.Id;
+                    // add datatuples
+                    dataset = dsHelper.GenerateTuplesWithRandomValuesForDataset(dataset, dataStructure, numberOfTuples, username);
+                    dm.CheckInDataset(dataset.Id, "for testing  datatuples with versions", username, ViewCreationBehavior.None);
 
-                // add datatuples
-                dataset = dsHelper.GenerateTuplesWithRandomValuesForDataset(dataset, dataStructure, numberOfTuples, username);
-                dm.CheckInDataset(dataset.Id, "for testing  datatuples with versions", username, ViewCreationBehavior.None);
+                    dm.SyncView(dataset.Id, ViewCreationBehavior.Create | ViewCreationBehavior.Refresh);
 
-                dm.SyncView(dataset.Id, ViewCreationBehavior.Create | ViewCreationBehavior.Refresh);
-            }
-            finally
-            {
-                etm.Dispose(); ;
-                dm.CheckInDataset(datasetId, "for testing  datatuples with versions", username, ViewCreationBehavior.None);
+                    dm.CheckInDataset(datasetId, "for testing  datatuples with versions", username, ViewCreationBehavior.None);
             }
         }
 

@@ -1,5 +1,4 @@
 <script lang="ts">
-
 	import { SlideToggle } from '@skeletonlabs/skeleton';
 
 	// services
@@ -12,7 +11,6 @@
 	import suite from './meaning';
 	import { onMount, createEventDispatcher } from 'svelte';
 	import { TextArea, TextInput, helpStore, DropdownKVP, MultiSelect } from '@bexis2/bexis2-core-ui';
-
 
 	// data
 	import { helpInfoList } from './help';
@@ -38,7 +36,6 @@
 	const dispatch = createEventDispatcher();
 
 	onMount(() => {
-		
 		loaded = true;
 
 		// set help
@@ -75,7 +72,7 @@
 	}
 
 	async function submit() {
-		console.log("🚀 ~ file: Meaning.svelte:77 ~ submit ~ meaning:", meaning)
+		console.log('🚀 ~ file: Meaning.svelte:77 ~ submit ~ meaning:', meaning);
 		var s = (await (meaning.id == 0)) ? create(meaning) : update(meaning);
 		console.log('🚀 ~ file: Meaning.svelte:67 ~ submit ~ res:', res);
 
@@ -117,41 +114,57 @@
 					required={false}
 				/>
 			</div>
-		
 		</div>
-	
 
 		<div class="py-5">
 			<MeaningEntries bind:entries={meaning.externalLinks} />
 		</div>
 
 		<div class="flex gap-3 items-center">
-			<div><SlideToggle active="bg-secondary-500" size="sm" id="approved" name="Approved" bind:checked={meaning.approved} on:change>Approved</SlideToggle></div>
-			<div><SlideToggle active="bg-secondary-500" size="sm" id="selectable" name="Selectable" bind:checked={meaning.selectable} on:change>Selectable</SlideToggle>	</div>
+			<div>
+				<SlideToggle
+					active="bg-secondary-500"
+					size="sm"
+					id="approved"
+					name="Approved"
+					bind:checked={meaning.approved}
+					on:change>Approved</SlideToggle
+				>
+			</div>
+			<div>
+				<SlideToggle
+					active="bg-secondary-500"
+					size="sm"
+					id="selectable"
+					name="Selectable"
+					bind:checked={meaning.selectable}
+					on:change>Selectable</SlideToggle
+				>
+			</div>
 		</div>
 		<div class="flex gap-5 items-center">
-		<div class="w-1/2">
-			<MultiSelect
-									id="constraints"
-									title="Constraints"
-									source={$constraintsStore}
-									itemId="id"
-									itemLabel="text"
-									itemGroup="group"
-									complexSource={true}
-									complexTarget={true}
-									isMulti={true}
-									clearable={true}
-									bind:target={meaning.constraints}
-									placeholder="-- Please select --"
-									invalid={res.hasErrors('constraints')}
-									feedback={res.getErrors('constraints')}
-								/>
-		</div>
-		<div class="w-1/2">
+			<div class="w-1/2">
+				<MultiSelect
+					id="constraints"
+					title="Constraints"
+					source={$constraintsStore}
+					itemId="id"
+					itemLabel="text"
+					itemGroup="group"
+					complexSource={true}
+					complexTarget={true}
+					isMulti={true}
+					clearable={true}
+					bind:target={meaning.constraints}
+					placeholder="-- Please select --"
+					invalid={res.hasErrors('constraints')}
+					feedback={res.getErrors('constraints')}
+				/>
+			</div>
+			<div class="w-1/2">
 				<ConstraintsDescription bind:list={meaning.constraints} />
+			</div>
 		</div>
-	</div>
 		<div class="py-5 text-right col-span-2">
 			<!-- svelte-ignore a11y-mouse-events-have-key-events -->
 			<button

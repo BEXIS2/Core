@@ -51,13 +51,12 @@
 
 	async function reload(type) {
 		//const res = await fetch(url);
-		
+		console.log("validation start");
 		model = null;
 		model = await getHookStart(start, id, version);
-		
+		console.log("validation end", model?.isValid);
 		latestValidationDate.set(Date.now());
-		console.log("🚀 ~ file: Validation.svelte:53 ~ reload ~ type:", type)
-		
+
 	}
 </script>
 

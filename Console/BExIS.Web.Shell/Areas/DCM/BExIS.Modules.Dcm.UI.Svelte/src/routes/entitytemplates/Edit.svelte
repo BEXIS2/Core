@@ -226,7 +226,7 @@
 						<div id="invalidSaveMode" />
 						<SlideToggle
 							name="Invalid-save-mode"
-							bind:value={entityTemplate.metadataInvalidSaveMode}
+							bind:checked={entityTemplate.metadataInvalidSaveMode}
 						>
 							Allow saving with empty required fields
 						</SlideToggle>
@@ -258,13 +258,14 @@
 			</div>
 
 			<h3 class="h3">Administration</h3>
+			<p class="p">Set permissions per default to the following groups</p>
 			<div class="py-5 w-full grid grid-cols-1 md:grid-cols-2 gap-4">
 				<EntryContainer>
 					<MultiSelect
-						id="permissions"
-						title="Set full permissions per default to the following groups"
+						id="permissionsFull"
+						title="Full"
 						source={groups}
-						bind:target={entityTemplate.permissionGroups}
+						bind:target={entityTemplate.permissionGroups.full}
 						itemId="key"
 						itemLabel="value"
 						complexSource={true}
@@ -272,6 +273,47 @@
 					/>
 				</EntryContainer>
 
+				<EntryContainer>
+					<MultiSelect
+						id="permissionsViewEditGrant"
+						title="View, Edit and Grant"
+						source={groups}
+						bind:target={entityTemplate.permissionGroups.viewEditGrant}
+						itemId="key"
+						itemLabel="value"
+						complexSource={true}
+						help={true}
+					/>
+				</EntryContainer>
+
+				<EntryContainer>
+					<MultiSelect
+						id="permissionsViewEdit"
+						title="View and Edit"
+						source={groups}
+						bind:target={entityTemplate.permissionGroups.viewEdit}
+						itemId="key"
+						itemLabel="value"
+						complexSource={true}
+						help={true}
+					/>
+				</EntryContainer>
+
+				<EntryContainer>
+					<MultiSelect
+						id="permissionsView"
+						title="View"
+						source={groups}
+						bind:target={entityTemplate.permissionGroups.view}
+						itemId="key"
+						itemLabel="value"
+						complexSource={true}
+						help={true}
+					/>
+				</EntryContainer>
+			</div>
+				<h3 class="h3">Notifications</h3>
+				<div class="py-5 w-full grid grid-cols-1 md:grid-cols-2 gap-4">
 				<EntryContainer>
 					<MultiSelect
 						id="notification"

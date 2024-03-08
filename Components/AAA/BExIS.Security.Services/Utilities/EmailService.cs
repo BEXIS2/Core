@@ -1,4 +1,5 @@
 ﻿using BExIS.Utils.Config;
+using BExIS.Utils.Config.Configurations;
 using MailKit.Net.Smtp;
 using MailKit.Security;
 using Microsoft.AspNet.Identity;
@@ -14,8 +15,16 @@ namespace BExIS.Security.Services.Utilities
 {
     public class EmailService : IIdentityMessageService
     {
+        private SmtpConfiguration _smtpConfiguration;
+
+        public EmailService(SmtpConfiguration smtpConfiguration)
+        {
+            _smtpConfiguration = smtpConfiguration;
+        }
+
         public EmailService()
         {
+            _smtpConfiguration = GeneralSettings.SmtpConfiguration;
         }
 
         public void Send(MimeMessage message)
@@ -26,17 +35,17 @@ namespace BExIS.Security.Services.Utilities
                 {
                     // 2021-03-16 by Sven
                     // Because of trouble for specific server certificates, the system rejects handshakes.
-                    client.CheckCertificateRevocation = bool.Parse(ConfigurationManager.AppSettings["Email_Host_CertificateRevocation"]);
+                    client.CheckCertificateRevocation = _smtpConfiguration.HostCertificateRevocation;
 
                     // @2020-01-18 by Sven
                     // With this line, the service should accept every certificate.
                     client.ServerCertificateValidationCallback = (s, c, h, e) => { return true; };
 
-                    client.Connect(ConfigurationManager.AppSettings["Email_Host_Name"], int.Parse(ConfigurationManager.AppSettings["Email_Host_Port"]), (SecureSocketOptions)int.Parse(ConfigurationManager.AppSettings["Email_Host_SecureSocketOptions"]));
+                    client.Connect(_smtpConfiguration.HostName, _smtpConfiguration.HostPort, (SecureSocketOptions)_smtpConfiguration.HostSecureSocketOptions);
 
-                    if (!bool.Parse(ConfigurationManager.AppSettings["Email_Host_Anonymous"]))
+                    if (!_smtpConfiguration.HostAnonymous)
                     {
-                        client.Authenticate(ConfigurationManager.AppSettings["Email_Account_Name"], ConfigurationManager.AppSettings["Email_Account_Password"]);
+                        client.Authenticate(_smtpConfiguration.AccountName, _smtpConfiguration.AccountPassword);
                     }
 
                     client.Send(message);
@@ -52,13 +61,12 @@ namespace BExIS.Security.Services.Utilities
 
         public void Send(string subject, string body, List<string> destinations, List<string> ccs = null, List<string> bccs = null, List<string> replyTos = null, List<FileInfo> attachments = null)
         {
-
             List<string> _destinations = new List<string>();
             List<string> _ccs = new List<string>();
             List<string> _bccs = new List<string>();
             List<string> _replyTos = new List<string>();
-            string _emailFromName = ConfigurationManager.AppSettings["Email_From_Name"].Trim();
-            string _emailFromAddress = ConfigurationManager.AppSettings["Email_From_Address"].Trim();
+            string _emailFromName = _smtpConfiguration.FromName;
+            string _emailFromAddress = _smtpConfiguration.FromAddress;
 
             // clear all mails from white space
             #region clear emails
@@ -123,7 +131,7 @@ namespace BExIS.Security.Services.Utilities
         {
             using (var mimeMessage = new MimeMessage())
             {
-                mimeMessage.From.Add(new MailboxAddress(ConfigurationManager.AppSettings["Email_From_Name"], ConfigurationManager.AppSettings["Email_From_Address"]));
+                mimeMessage.From.Add(new MailboxAddress(_smtpConfiguration.FromName, _smtpConfiguration.FromAddress));
                 mimeMessage.To.Add(new MailboxAddress(message.Destination.Trim(), message.Destination.Trim()));
                 mimeMessage.Subject = GeneralSettings.ApplicationName + " - " + message.Subject;
                 mimeMessage.Body = new TextPart(MimeKit.Text.TextFormat.Html) { Text = message.Body };
@@ -136,7 +144,7 @@ namespace BExIS.Security.Services.Utilities
         {
             using (var mimeMessage = new MimeMessage())
             {
-                mimeMessage.From.Add(new MailboxAddress(ConfigurationManager.AppSettings["Email_From_Name"], ConfigurationManager.AppSettings["Email_From_Address"]));
+                mimeMessage.From.Add(new MailboxAddress(_smtpConfiguration.FromName, _smtpConfiguration.FromAddress));
                 mimeMessage.To.Add(new MailboxAddress(message.Destination, message.Destination));
                 mimeMessage.Subject = GeneralSettings.ApplicationName + " - " + message.Subject;
                 mimeMessage.Body = new TextPart(MimeKit.Text.TextFormat.Html) { Text = message.Body };

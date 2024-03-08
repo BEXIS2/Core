@@ -435,7 +435,7 @@ namespace BExIS.IO.Tests.Transform.Input
             var testData = dgh.GenerateRowsWithRandomValuesBasedOnDatastructure(dataStructure, ",", 1000, true);
 
             //generate file to read
-            Encoding encoding = Encoding.Default;
+            Encoding encoding = Encoding.UTF8;
             string path = Path.Combine(AppConfiguration.DataPath, "testdataforvalidation.txt");
             if (File.Exists(path))
             {

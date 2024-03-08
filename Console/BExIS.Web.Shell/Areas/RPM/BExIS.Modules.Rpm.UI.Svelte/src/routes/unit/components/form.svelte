@@ -54,23 +54,29 @@
 	$: measurementSystems = ms;
 	$: dimensions = ds.map(({ id, name }) => ({ id: id, text: name }));
 	$: unit.dimension = listItem === undefined ? undefined : ds.find((d) => d.id === listItem?.id);
+	$: measurementSystems, setValidation();
 
 	onMount(async () => {
-		if (unit.id == 0) {
-			suite.reset();
-		}
-		else{
-			setTimeout(async () => {	
-				res = suite({ unit: unit, units: units }, "");
-			}, 10);
-		}
-
+		setValidation();
 	});
 
 	async function load() {
-		dt = await apiCalls.GetDataTypes();
 		ms = await apiCalls.GetMeasurementSystems();
+		dt = await apiCalls.GetDataTypes();
 		ds = await apiCalls.GetDimensions();
+	}
+
+	function setValidation()
+	{
+		if (measurementSystems!= undefined && measurementSystems.length > 0){
+			if (unit.id == 0) {
+				suite.reset();
+			} else{
+				setTimeout(async () => {
+					res = suite({ unit: unit, units: units, measurementSystems: measurementSystems }, '');
+				}, 10);
+			}
+		}
 	}
 
 	//change event: if input change check also validation only on the field
@@ -81,7 +87,10 @@
 		// otherwise the values are old
 		setTimeout(async () => {
 			// check changed field
-			res = suite({ unit: unit, units: units }, e.target.id);
+			res = suite(
+				{ unit: unit, units: units, measurementSystems: measurementSystems },
+				e.target.id
+			);
 		}, 10);
 	}
 
@@ -297,12 +306,20 @@
 					}}
 				>
 					<label for={unit.measurementSystem} class="text-sm">Measurement System</label>
-					<RadioGroup help={true}>
+					<RadioGroup help={true} id="measurementSystems">
 						{#each measurementSystems as item}
 							<RadioItem
+								on:change={() => {
+									setTimeout(async () => {
+										res = suite(
+											{ unit: unit, units: units, measurementSystems: measurementSystems },
+											measurementSystems
+										);
+									}, 10);
+								}}
 								bind:group={unit.measurementSystem}
-								name="measurementSystem"
-								id="measurementSystem"
+								name={item}
+								id={item}
 								value={item}>{item}</RadioItem
 							>
 						{/each}

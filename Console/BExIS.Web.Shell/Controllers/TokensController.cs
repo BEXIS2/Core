@@ -3,6 +3,7 @@ using BExIS.Security.Entities.Subjects;
 using BExIS.Security.Services.Subjects;
 using BExIS.Utils.Config;
 using BExIS.Web.Shell.Models;
+using Exceptionless;
 using Microsoft.AspNet.Identity;
 using Microsoft.IdentityModel.Tokens;
 using System;
@@ -75,8 +76,8 @@ namespace BExIS.Web.Shell.Controllers
             }
         }
 
-        [HttpGet, JsonNetFilter]
-        public async Task<JsonResult> GetToken()
+        [HttpGet]
+        public async Task<ActionResult> GetToken()
         {
             try
             {
@@ -108,15 +109,18 @@ namespace BExIS.Web.Shell.Controllers
 
                         var jwt_token = new JwtSecurityTokenHandler().WriteToken(token);
 
-                        return Json(jwt_token, JsonRequestBehavior.AllowGet);
+                        ExceptionlessClient.Default.SubmitLog("Get Token", $"{user.Name} requested a JWT.", Exceptionless.Logging.LogLevel.Info);
+
+
+                        return View("GetToken", model: new ReadJwtModel() { Jwt = jwt_token });
                     }
 
-                    return Json(false);
+                    return View("NotAuthorized");
                 }
             }
             catch (Exception ex)
             {
-                throw;
+                return View("Error");
             }
         }
 

@@ -124,6 +124,10 @@ namespace BExIS.IO.Tests
         {
             List<DateTimeHelperUTObject> cases = new List<DateTimeHelperUTObject>();
 
+            cases.Add(new DateTimeHelperUTObject("5/10/2014 12:00:00 AM", "d/M/yyyy hh:mm:ss tt", "10/5/2014 12:00:00 AM", true));
+            cases.Add(new DateTimeHelperUTObject("7/1/2023 2:00:00 AM", "d/M/yyyy h:mm:ss tt", "1/7/2023 2:00:00 AM", true));
+
+
             cases.Add(new DateTimeHelperUTObject("3/2/2019 7:31", "M/d/yyyy h:m", "3/2/2019 7:31:00 AM", true));
             cases.Add(new DateTimeHelperUTObject("03/02/2019 7:31", "MM/dd/yyyy h:m", "3/2/2019 7:31:00 AM", true));
 
@@ -176,7 +180,6 @@ namespace BExIS.IO.Tests
 
             cases.Add(new DateTimeHelperUTObject("2006-2-2", "yyyy-d-M", "2/2/2006 12:00:00 AM", true));
             cases.Add(new DateTimeHelperUTObject("2006-02-02", "yyyy-dd-MM", "2/2/2006 12:00:00 AM", true));
-            cases.Add(new DateTimeHelperUTObject("5/10/2014 12:00:00 AM", "d/M/yyyy hh:mm:ss tt", "10/5/2014 12:00:00 AM", true));
             cases.Add(new DateTimeHelperUTObject("5/10/2014 12:00:00 AM", "M/d/yyyy hh:mm:ss tt", "5/10/2014 12:00:00 AM", true));
 
             return cases;

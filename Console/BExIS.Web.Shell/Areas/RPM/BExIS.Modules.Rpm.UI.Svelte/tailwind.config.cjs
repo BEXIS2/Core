@@ -25,9 +25,7 @@ module.exports = {
 		// ...require('@skeletonlabs/skeleton/tailwind/skeleton.cjs')({ intellisense: false })
 		skeleton({
 			themes: {
-				custom: [
-					bexis2theme
-				]
+				custom: [bexis2theme]
 			}
 		})
 	]

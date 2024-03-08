@@ -1,4 +1,5 @@
-﻿using NUnit.Framework;
+﻿using BExIS.IO.Transform.Input;
+using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -12,6 +13,7 @@ namespace BExIS.IO.Tests.Transform.Input
     {
         private string filepath;
         private string filepathUTF8;
+        private string filepathUnits;
         private Encoding windows;
         private List<string> lines;
 
@@ -91,6 +93,7 @@ namespace BExIS.IO.Tests.Transform.Input
             Assert.That(incoming, Is.EquivalentTo(lines));
         }
 
+
         [Test]
         public void encoding_detectEcodingByEveryRow_EncodingIsWindowsFormat()
         {
@@ -121,6 +124,9 @@ namespace BExIS.IO.Tests.Transform.Input
             Assert.That(incoming, Is.EquivalentTo(lines));
         }
 
+
+        
+
         [Test]
         public void encoding_detectEcodingByReadFileFirst_EncodingIsUTF8Format()
         {
@@ -148,6 +154,36 @@ namespace BExIS.IO.Tests.Transform.Input
             }
 
             Assert.That(incoming, Is.EquivalentTo(lines));
+        }
+
+        [Test]
+        public void GetEncoding_ByEndocingType_EncodingIsWindowsFormat()
+        {
+            // Arrange
+            EncodingType et = EncodingType.Windows;
+
+            // Act
+            Encoding encoding = AsciiFileReaderInfo.GetEncoding(et);
+
+            Encoding source = Encoding.GetEncoding(1252);
+            //Assert
+
+            Assert.AreEqual(encoding, source);
+        }
+
+        [Test]
+        public void GetEncoding_ByEndocingType_EncodingIsUTF8Format()
+        {
+            // Arrange
+            EncodingType et = EncodingType.UTF8;
+
+            // Act
+            Encoding encoding = AsciiFileReaderInfo.GetEncoding(et);
+
+            Encoding source = Encoding.UTF8;
+            //Assert
+
+            Assert.AreEqual(encoding, source);
         }
     }
 }

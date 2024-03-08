@@ -499,6 +499,7 @@
     <Content Include="Views\Form\_list.cshtml" />
     <Content Include="Views\Form\_metadataParameterView.cshtml" />
     <Content Include="Views\Form\_number.cshtml" />
+    <Content Include="Views\Form\_metadataParameterViewOffline.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

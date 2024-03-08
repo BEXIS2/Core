@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { onMount, afterUpdate, createEventDispatcher } from 'svelte';
+	import { get } from 'svelte/store';
 
 	// UI Components
 	import { TextInput, TextArea, MultiSelect } from '@bexis2/bexis2-core-ui';
@@ -15,7 +16,7 @@
 
 	//stores
 
-	import { unitStore, dataTypeStore, templateStore, meaningsStore, constraintsStore } from '../../store';
+	import { unitStore, dataTypeStore, templateStore, meaningsStore, constraintsStore, setByTemplateStore } from '../../store';
 
 	import {
 		updateDisplayPattern,
@@ -74,6 +75,7 @@
 	$: displayPattern;
 	
 	const dispatch = createEventDispatcher();
+	const setByTemplate = get(setByTemplateStore);
 	
 	let x: listItemType = { id: 0, text: '', group: '', description:'' };
 	
@@ -146,19 +148,41 @@
 				updateDisplayPattern(variable.dataType);
 			}
 
+			console.log(id,e.detail,variable);
 			if (id == 'variableTemplate') {
+
+				if(setByTemplate) // if true, update unit & datatype based on settings
+				{
+						if(variable.dataType == undefined || variable.dataType == "")
+						{
+								variable.dataType = updateDataType(e.detail);
+						}
+
+						if(variable.unit == undefined || variable.unit == "")
+						{
+							console.log("🚀 ~ onChange ~ e.detail:", e.detail)
+							variable.unit = updateUnit(e.detail);
+							console.log("🚀 ~ e.detail ~ variable.unit:", variable.unit)
+						}
+
+						if(variable.description == undefined || variable.description == "" )
+						{
+							variable.description = e.detail.description
+						}
+				}
+
 				variable.meanings = updateMeanings(variable, e.detail)
 				variable.constraints = updateConstraints(variable,e.detail?.constraints)
-
-
 			}
+		
 
 			if (id == 'meanings') {
 				
 				var last = e.detail[e.detail.length-1]
 				variable.constraints = updateConstraints(variable,last.constraints)
-
+				
 			}
+			// console.log("🚀 ~ update var ~ variable:", variable)
 
 			setValidationState(res);
 
@@ -199,6 +223,36 @@
 		variableTemplates = updateTemplates(variable.unit, $templateStore, suggestedTemplates);
 		variableTemplates.sort();
 
+	}
+
+	function updateUnit( _variableTemplate:templateListItemType):unitListItemType|undefined
+	{
+		console.log("🚀 ~e.details _variableTemplate.units:", _variableTemplate.units)
+			if(_variableTemplate.units)
+			{
+					  var firstUnit = _variableTemplate.units[0];
+						 var us = [...$unitStore.filter(u=>u.text == firstUnit)]
+							if(us != undefined){ 
+								var u = us[0];
+								return u;
+							}
+			}
+
+			return undefined;
+	}
+			
+
+	function updateDataType( _variableTemplate:templateListItemType):listItemType|undefined
+	{
+			if(_variableTemplate.units)
+			{
+						 var ds = [...$dataTypeStore.filter(d=>_variableTemplate.dataTypes.includes(d.text))]
+							if(ds != undefined){ 
+								return ds[0];
+							}
+			}
+
+			return undefined;
 	}
 
 	function updateMeanings(_variable:VariableInstanceModel, _variableTemplate:templateListItemType):listItemType[]
@@ -393,8 +447,7 @@
 								/>
 							</div>
 							<div slot="description">
-								show all information about the units in a table Nothing found? Make a new
-								suggestion.
+	
 							</div>
 						</Container>
 

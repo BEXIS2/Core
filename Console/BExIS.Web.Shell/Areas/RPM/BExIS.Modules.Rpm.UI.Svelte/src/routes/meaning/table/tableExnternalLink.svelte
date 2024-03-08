@@ -7,7 +7,7 @@
 <div>
 	{#each value as link}
 		{#if link != undefined && link.mappingRelation != undefined}
-			<li>{link.mappingRelation.text} | {link.mappedLinks.map(m=>m.text).join(",")}</li>
+			<li>{link.mappingRelation.text} | {link.mappedLinks.map((m) => m.text).join(',')}</li>
 		{/if}
 	{/each}
 </div>

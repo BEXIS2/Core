@@ -1,10 +1,11 @@
-﻿@model BExIS.Web.Shell.Models.LoginConfirmModel
+﻿@model BExIS.Web.Shell.Models.LdapLoginConfirmModel
 
 @using (Html.BeginForm("Confirm", "Ldap", FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
 {
 @Html.AntiForgeryToken()
 
 @Html.HiddenFor(m => m.Id)
+@Html.HiddenFor(m => m.Name)
 
 <div class="form-group">
     @Html.LabelFor(m => m.Email, new { @class = "col-md-2 control-label" })

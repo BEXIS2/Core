@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
+using System.Windows.Forms.VisualStyles;
 
 namespace BExIS.Modules.Rpm.UI.Models
 {
@@ -102,6 +103,7 @@ namespace BExIS.Modules.Rpm.UI.Models
         public long Id { get; set; }
         public string Text { get; set; }
         public string Group { get; set; }
+        public string Description { get; set; }
 
         public List<string> DataTypes { get; set; }
         public List<string> Units { get; set; }
@@ -113,13 +115,14 @@ namespace BExIS.Modules.Rpm.UI.Models
             Id = 0;
             Text = "";
             Group = "";
+            Description = "";
             DataTypes = new List<string>();
             Units = new List<string>();
             Meanings = new List<string>();
             Constraints = new List<string>();
         }
 
-        public VariableTemplateItem(long key, string value,  List<string> units, List<string> dataTypes,List<string> meanings, List<string> constraints = null, string group = "")
+        public VariableTemplateItem(long key, string value,  List<string> units, List<string> dataTypes,List<string> meanings, List<string> constraints = null, string group = "", string description="")
         {
             Id = key;
             Text = value;
@@ -128,6 +131,7 @@ namespace BExIS.Modules.Rpm.UI.Models
             Units = units;
             Meanings = meanings;
             Constraints = constraints;
+            Description = description;
         }
 
     }

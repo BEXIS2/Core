@@ -101,7 +101,7 @@ namespace BExIS.Dim.Helpers.Export
                                     "datastructure", ".txt");
                                 string datastructureFilePath = AsciiWriter.CreateFile(dynamicPathOfDS);
 
-                                string json = OutputDataStructureManager.GetVariableListAsJson(dataStructureId);
+                                string json = OutputDataStructureManager.GetDataStructureAsJson(dataStructureId);
 
                                 AsciiWriter.AllTextToFile(datastructureFilePath, json);
                             }
