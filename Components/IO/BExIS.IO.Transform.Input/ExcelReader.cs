@@ -221,7 +221,7 @@ namespace BExIS.IO.Transform.Input
         /// <param name="sds">StructuredDataStructure of a dataset</param>
         /// <param name="datasetId">Datasetid of a dataset</param>
         /// <returns>List of DataTuples</returns>
-        [MeasurePerformance]
+        //[MeasurePerformance]
         public List<DataTuple> ReadTemplateFile(Stream file, string fileName, long datasetId, int packageSize)
         {
             this.FileStream = file;
