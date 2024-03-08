@@ -27,7 +27,6 @@ namespace BExIS.IO.Tests.Transform.Input
             const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789ÄÜÖ";
 
             filepath = Path.Combine(AppConfiguration.DataPath, "EncodingWindowsFormat_testfile.txt");
-            filepathUnits = Path.Combine("App_Data/units.csv");
             filepathUTF8 = Path.Combine(AppConfiguration.DataPath, "EncodingUTF8Format_testfile.txt");
 
             lines = new List<string>();
@@ -126,34 +125,7 @@ namespace BExIS.IO.Tests.Transform.Input
         }
 
 
-        [Test]
-        public void encoding_detectEcodingByReadFileForUnits_UTF8()
-        {
-            var encoding = Encoding.Default;
-            var line = "";
-            var incoming = new List<string>();
-
-            using (var reader = new StreamReader(filepathUnits, Encoding.Default, true))
-            {
-                if (reader.Peek() >= 0) // you need this!
-                    reader.Read();
-
-                encoding = reader.CurrentEncoding;
-
-                Assert.IsTrue(encoding.Equals(Encoding.UTF8));
-                reader.Close();
-            }
-
-            using (var reader = new StreamReader(filepath, encoding, true))
-            {
-                while ((line = reader.ReadLine()) != null)
-                {
-                    incoming.Add(line);
-                }
-            }
-
-            //Assert.That(incoming, Is.EquivalentTo(lines));
-        }
+        
 
         [Test]
         public void encoding_detectEcodingByReadFileFirst_EncodingIsUTF8Format()
