@@ -151,7 +151,7 @@ function updatePks()
 	{#if enforcePrimaryKey && model.variables.length>0 && currentPks.length==0}
 			<Alert message="please select a primary key" cssClass="variant-filled-warning"></Alert>
 	{/if}
-	{#if model.variables.length && currentPks.length}
+	{#if model.variables.length == currentPks.length}
 		<Alert cssClass="variant-filled-warning">
 				By selecting all variables as primary key, it is not possible to change lines during an update. At least one column must remain as a value.
 			</Alert>
