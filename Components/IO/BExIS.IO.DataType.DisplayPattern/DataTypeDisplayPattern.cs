@@ -32,7 +32,9 @@ namespace BExIS.IO.DataType.DisplayPattern
             new DataTypeDisplayPattern() {Id=18,Systemtype = DataTypeCode.DateTime,   Name = "yyyy-dd-MM",          ExcelPattern="yyyy-dd-MM",        DisplayPattern="yyyy-dd-MM",                  StringPattern = "yyyy-dd-MM",                 RegexPattern = null},
             new DataTypeDisplayPattern() {Id=19,Systemtype = DataTypeCode.DateTime,   Name = "d/M/yyyy hh:mm:ss tt",ExcelPattern=@"d\/M\/yyyy hh:mm:ss tt",        DisplayPattern="d/M/yyyy hh:mm:ss tt",                  StringPattern = "d/M/yyyy hh:mm:ss tt",RegexPattern = null},
             new DataTypeDisplayPattern() {Id=20,Systemtype = DataTypeCode.DateTime,   Name = "Year",              ExcelPattern="yyyy",                DisplayPattern="yyyy",                      StringPattern = "yyyy",                     RegexPattern = null},
-            new DataTypeDisplayPattern() {Id=21, Systemtype = DataTypeCode.DateTime,   Name = "Month",             ExcelPattern="MM",                  DisplayPattern="MM",                        StringPattern = "MM",                       RegexPattern = null}
+            new DataTypeDisplayPattern() {Id=21, Systemtype = DataTypeCode.DateTime,   Name = "Month",             ExcelPattern="MM",                  DisplayPattern="MM",                        StringPattern = "MM",                       RegexPattern = null},
+            new DataTypeDisplayPattern() {Id=22, Systemtype = DataTypeCode.DateTime,   Name = "d/M/yyyy h:mm:ss tt",             ExcelPattern=@"d\/M\/yyyy hh:mm:ss tt",                  DisplayPattern="d/M/yyyy h:mm:ss tt",                        StringPattern = "d/M/yyyy h:mm:ss tt", RegexPattern = null},
+            new DataTypeDisplayPattern() {Id=23, Systemtype = DataTypeCode.DateTime,   Name = "M/d/yyyy h:mm:ss tt",             ExcelPattern=@"M\/d\/yyyy hh:mm:ss tt",                  DisplayPattern="M/d/yyyy h:mm:ss tt",                        StringPattern = "M/d/yyyy h:mm:ss tt", RegexPattern = null}
         };
 
         public DataTypeCode Systemtype { get; set; }
