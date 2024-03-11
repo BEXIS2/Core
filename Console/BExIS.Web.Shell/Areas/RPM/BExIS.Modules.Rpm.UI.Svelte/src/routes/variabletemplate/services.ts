@@ -10,7 +10,7 @@ import { Api } from '@bexis2/bexis2-core-ui';
 export const getVariableTemplates = async () => {
 	try {
 		const response = await Api.get('/rpm/VariableTemplate/GetVariableTemplates');
-		console.log("🚀 ~ file: services.ts:15 ~ getVariableTemplates ~ response:", response)
+		console.log('🚀 ~ file: services.ts:15 ~ getVariableTemplates ~ response:', response);
 		return response.data;
 	} catch (error) {
 		console.error(error);

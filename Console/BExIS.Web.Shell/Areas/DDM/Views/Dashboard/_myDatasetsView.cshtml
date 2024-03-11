@@ -35,7 +35,11 @@
                     <span class="bx fa-check"></span>
                 }            </td>
             <td class="dt-body-center">
-                <a class="bx bx-grid-function bx-show" href="/ddm/Data/Show/@m.Id" target="_blank" title="View details"> </a>
+                <a class="bx bx-grid-function bx-show" href="/ddm/Data/Show/@m.Id" target="_blank" title="View details" style="text-decoration: none;"> </a>
+                @if (m.IsOwn)
+                {
+                    <a class="bx bx-grid-function bx-edit" href="/dcm/edit/?id=@m.Id" target="_blank" title="Edit "  style="text-decoration: none;"> </a>
+                }
             </td>
         </tr>
         }

@@ -18,7 +18,7 @@ export class MeaningModel {
 			this.selectable = data.selectable;
 			this.externalLinks = data.externalLinks;
 			this.related_meaning = data.related_meaning;
-            this.constraints = data.constraints;
+			this.constraints = data.constraints;
 		} else {
 			this.id = 0;
 			this.name = '';

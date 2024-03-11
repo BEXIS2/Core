@@ -286,6 +286,17 @@ namespace BExIS.IO.Transform.Output
             // append contents
             for (int i = 0; i < colCount; i++)
             {
+                // get column name -> var1234 where 1234 is varaible id
+                // and set variableId to get the right varaible from the structure
+                long varId = 0;
+                var column = row.Table.Columns[i]; // get column
+                string cName = column?.ColumnName; // get column name
+                if (!string.IsNullOrEmpty(cName) && cName.StartsWith("var")) {
+                    string replacedCName = cName.Replace("var", "");
+                    Int64.TryParse(replacedCName, out varId); // convert string to id
+                 }
+
+
                 // get value as string
                 string value = row[i].ToString();
 
@@ -293,7 +304,8 @@ namespace BExIS.IO.Transform.Output
                 int j = internalId ? i-1:i;
                 if (j >= 0)
                 {
-                    VariableInstance variable = dataStructure.Variables.ElementAt(j);
+
+                    VariableInstance variable = varId==0? dataStructure.Variables.Where(v => v.Label.Equals(cName)).FirstOrDefault() : dataStructure.Variables.Where(v=>v.Id.Equals(varId)).FirstOrDefault();
 
                     if (variable != null)
                     {

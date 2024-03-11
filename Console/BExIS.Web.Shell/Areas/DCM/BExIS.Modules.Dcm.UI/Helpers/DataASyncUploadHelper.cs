@@ -594,6 +594,7 @@ namespace BExIS.Modules.Dcm.UI.Helpers
                     MimeType = mimeType,
                     URI = dynamicStorePath,
                     DatasetVersion = datasetVersion,
+                    Description = file.Description
                 };
 
                 // add current contentdesciptor to list

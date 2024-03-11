@@ -89,5 +89,17 @@ namespace BExIS.IO.Tests.Transform.Input
                 throw ex;
             }
         }
+
+        [Test]
+        public void ConvertExcelToCsv()
+        {
+            // Arrange
+
+            // Act
+
+            // Assert
+
+
+        }
     }
 }

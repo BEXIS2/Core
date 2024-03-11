@@ -8,8 +8,8 @@
 	import { onMount } from 'svelte';
 	import { fade } from 'svelte/transition';
 
-	import { setApiConfig, Spinner } from '@bexis2/bexis2-core-ui';
-	import { getEntityTemplateList, getSystemKeys } from '$services/EntityTemplateCaller';
+	import { Spinner } from '@bexis2/bexis2-core-ui';
+	import { getEntityTemplateList } from './services';
 	import { goTo } from '$services/BaseCaller';
 
 	import type { EntityTemplateModel } from '$models/EntityTemplate';

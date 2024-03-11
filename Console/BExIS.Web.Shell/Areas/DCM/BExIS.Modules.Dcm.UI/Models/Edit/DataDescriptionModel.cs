@@ -71,6 +71,7 @@ namespace BExIS.Modules.Dcm.UI.Models.Edit
         public string Name { get; set; }
         public string Unit { get; set; }
         public string DataType { get; set; }
+        public bool IsKeys { get; set; }
 
     }
 }

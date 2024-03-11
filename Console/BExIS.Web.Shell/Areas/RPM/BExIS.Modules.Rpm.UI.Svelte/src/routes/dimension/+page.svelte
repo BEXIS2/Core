@@ -22,8 +22,8 @@
 	import type { ModalSettings } from '@skeletonlabs/skeleton';
 	import type { DimensionListItem } from './models';
 
-// modal
-const modalStore = getModalStore();
+	// modal
+	const modalStore = getModalStore();
 
 	//help
 	import help from './help/help.json';
@@ -58,7 +58,7 @@ const modalStore = getModalStore();
 	}
 
 	function editDimension(type: any) {
-		dimension = {...dimensions.find((d) => d.id === type.id)!};
+		dimension = { ...dimensions.find((d) => d.id === type.id)! };
 		if (type.action == 'edit') {
 			showForm = true;
 		}

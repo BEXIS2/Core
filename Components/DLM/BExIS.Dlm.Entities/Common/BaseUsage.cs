@@ -41,7 +41,12 @@ namespace BExIS.Dlm.Entities.Common
         public virtual string DefaultValue { get; set; }
 
         /// <summary>
-        ///
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>        
+        public virtual string FixedValue { get; set; }
+
+        /// <summary>
         /// </summary>
         /// <remarks></remarks>
         /// <seealso cref=""/>        

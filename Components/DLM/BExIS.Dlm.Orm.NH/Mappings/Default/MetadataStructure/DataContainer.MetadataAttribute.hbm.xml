@@ -12,7 +12,7 @@
       <one-to-many class="MetadataAttributeUsage" />
     </set>
 
-	  <set name="MetadataParameterUsages" inverse="true" order-by="Id" cascade="all-delete-orphan">
+	  <set name="MetadataParameterUsages" inverse="true" order-by="Id" cascade="all-delete-orphan" lazy="false">
 		  <!--cascade only insert, update, set null in case of delete-->
 		  <key>
 			  <column name="MetadataAttributeRef" />

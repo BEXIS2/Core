@@ -131,11 +131,16 @@ namespace BExIS.Dlm.Entities.Data
         /// when a email is sended to the owner or admin send also to this groups
         /// </summary>
         public virtual string JsonPermissionGroups { get; set; }
-        public virtual List<long> PermissionGroups
+        public virtual PermissionsType PermissionGroups
         {
             get
             {
-                return JsonConvert.DeserializeObject<List<long>>(JsonPermissionGroups);
+                try{
+                    return JsonConvert.DeserializeObject<PermissionsType>(JsonPermissionGroups);
+                }
+                catch {
+                    return new PermissionsType();
+                }
             }
             set
             {
@@ -151,7 +156,7 @@ namespace BExIS.Dlm.Entities.Data
             DisabledHooks = new List<string>();
             DatastructureList = new List<long>();
             MetadataFields = new List<int>();
-            PermissionGroups = new List<long>();
+            PermissionGroups = new PermissionsType();
             NotificationGroups = new List<long>();
 
 
@@ -173,7 +178,7 @@ namespace BExIS.Dlm.Entities.Data
             DisabledHooks = new List<string>();
             DatastructureList = new List<long>();
             MetadataFields = new List<int>();
-            PermissionGroups = new List<long>();
+            PermissionGroups = new PermissionsType();
             NotificationGroups = new List<long>();
 
             JsonAllowedFileTypes = "";
@@ -182,6 +187,23 @@ namespace BExIS.Dlm.Entities.Data
             JsonMetadataFields = "";
             JsonPermissionGroups = "";
             JsonNotificationGroups = "";
+        }
+
+    }
+
+    public class PermissionsType
+    {
+        public List<long> Full { get; set; }
+        public List<long> ViewEditGrant { get; set; }
+        public List<long> ViewEdit { get; set; }
+        public List<long> View { get; set; }
+
+        public PermissionsType()
+        { 
+            Full = new List<long>();
+            ViewEditGrant = new List<long>();
+            View = new List<long>();
+            ViewEdit = new List<long>();
         }
 
     }

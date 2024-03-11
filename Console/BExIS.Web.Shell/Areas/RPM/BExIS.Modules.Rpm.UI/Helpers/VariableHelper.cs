@@ -169,18 +169,30 @@ namespace BExIS.Modules.Rpm.UI.Helpers
 
         public VariableTemplateItem ConvertTo(VariableTemplate variableTemplate, string group="")
         {
-            VariableTemplateItem item = new VariableTemplateItem();
-            item.Id = variableTemplate.Id;
-            item.Text = variableTemplate.Label;
-            item.Units = new List<string>() { variableTemplate.Unit.Abbreviation };
-            item.DataTypes = variableTemplate.Unit.AssociatedDataTypes.Select(x => x.Name).ToList();
-            item.Meanings = variableTemplate.Meanings.Select(x => x.Name).ToList();
-            item.Group = group;
+            using (var unitManager = new UnitManager()) // may not effective because this function will called a lot at once
+            {
+                VariableTemplateItem item = new VariableTemplateItem();
+                item.Id = variableTemplate.Id;
+                item.Text = variableTemplate.Label;
+                item.DataTypes = variableTemplate.Unit.AssociatedDataTypes.Select(x => x.Name).ToList();
+                item.Meanings = variableTemplate.Meanings.Select(x => x.Name).ToList();
+                item.Group = group;
+                item.Description = variableTemplate.Description;
 
-            if(variableTemplate.VariableConstraints.Any())
-                item.Constraints = variableTemplate.VariableConstraints.Select(x => x.Name).ToList();
+                if (variableTemplate.VariableConstraints.Any())
+                    item.Constraints = variableTemplate.VariableConstraints.Select(x => x.Name).ToList();
 
-            return item;
+                // set units also from dimensions
+                item.Units = new List<string>() { variableTemplate.Unit.Abbreviation }; // add unit
+                if (variableTemplate.Unit.Dimension != null) // if dimension exist add all units belong to this dimension
+                {
+                    var dimension = unitManager.DimensionRepo.Get(variableTemplate.Unit.Dimension.Id);
+                    dimension.Units.ToList().ForEach(u => item.Units.Add(u.Abbreviation));
+                    item.Units.Distinct();
+                }
+
+                return item;
+            }
 
         }
 
@@ -202,9 +214,14 @@ namespace BExIS.Modules.Rpm.UI.Helpers
             item.Id = meaning.Id;
             item.Text = meaning.Name;
 
+            meaning = meaningsManager.getMeaning(meaning.Id);
+
             //links
             List<MeaningEntryItem> links = new List<MeaningEntryItem>();
-            meaning.ExternalLinks.ToList().ForEach(l => links.AddRange(ConvertTo(l, meaningsManager)));
+            if (meaning.ExternalLinks.Any())
+            {
+                meaning.ExternalLinks.ToList().ForEach(l => links.AddRange(ConvertTo(l, meaningsManager)));
+            }
             item.Links = links;
             if (meaning.Constraints.Any())
                 item.Constraints = meaning.Constraints.Select(c => c.Name).ToList();

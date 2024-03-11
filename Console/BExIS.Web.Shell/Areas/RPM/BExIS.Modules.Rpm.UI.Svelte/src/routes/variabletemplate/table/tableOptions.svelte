@@ -9,27 +9,24 @@
 
 <tableOption>
 	<div class="w-18">
-
-					<!-- svelte-ignore a11y-mouse-events-have-key-events -->
-					<button
-					type="button"
-					class="chip variant-filled-primary shadow-md"
-					title="Edit Variable Template, {row.name}"
-					id="edit-{row.id}"
-					on:mouseover={() => {
-						helpStore.show('edit');
-					}}
-					on:click|preventDefault={() =>
-						dispatchFn({
-							type: { action: 'edit', id: row.id }
-						})}
-				>			
-				<Fa icon={faPen} />
-			</button>
+		<!-- svelte-ignore a11y-mouse-events-have-key-events -->
+		<button
+			type="button"
+			class="chip variant-filled-primary shadow-md"
+			title="Edit Variable Template, {row.name}"
+			id="edit-{row.id}"
+			on:mouseover={() => {
+				helpStore.show('edit');
+			}}
+			on:click|preventDefault={() =>
+				dispatchFn({
+					type: { action: 'edit', id: row.id }
+				})}
+		>
+			<Fa icon={faPen} />
+		</button>
 
 		{#if row.inUse === false}
-
-
 			<!-- svelte-ignore a11y-mouse-events-have-key-events -->
 			<button
 				type="button"

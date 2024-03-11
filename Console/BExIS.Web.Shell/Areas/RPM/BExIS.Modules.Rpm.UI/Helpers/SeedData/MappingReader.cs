@@ -35,7 +35,7 @@ namespace BExIS.Modules.Rpm.UI.Helpers.SeedData
             mappedVariables.Columns.Add("UnitId", typeof(long));
             mappedVariables.Columns.Add("VarUnitId", typeof(long));
 
-            System.IO.StreamReader file = new System.IO.StreamReader(mappingFile, System.Text.Encoding.Default);
+            System.IO.StreamReader file = new System.IO.StreamReader(mappingFile, System.Text.Encoding.UTF8);
 
             int l = 1;
             string readLine;
@@ -234,7 +234,7 @@ namespace BExIS.Modules.Rpm.UI.Helpers.SeedData
 
             if (File.Exists(filePath + "\\attributes.csv") && File.Exists(filePath + "\\datatypes.csv") && File.Exists(filePath + "\\units.csv"))
             {
-                using (StreamReader reader = new StreamReader(filePath + "\\attributes.csv"))
+                using (StreamReader reader = new StreamReader(filePath + "\\attributes.csv", Encoding.UTF8, true))
                 {
                     string line = "";
                     //jump over the first row
@@ -315,7 +315,7 @@ namespace BExIS.Modules.Rpm.UI.Helpers.SeedData
 
             if (File.Exists(filePath + "\\units.csv") && File.Exists(filePath + "\\dimensions.csv"))
             {
-                using (StreamReader reader = new StreamReader(filePath + "\\units.csv"))
+                using (StreamReader reader = new StreamReader(filePath + "\\units.csv",Encoding.UTF8, true))
                 {
                     UnitManager unitmanager = null;
                     try
@@ -375,7 +375,7 @@ namespace BExIS.Modules.Rpm.UI.Helpers.SeedData
 
             if (File.Exists(filePath + "\\dimensions.csv"))
             {
-                using (StreamReader reader = new StreamReader(filePath + "\\dimensions.csv"))
+                using (StreamReader reader = new StreamReader(filePath + "\\dimensions.csv", Encoding.UTF8, true))
                 {
                     string line = "";
                     //jump over the first row
@@ -419,7 +419,7 @@ namespace BExIS.Modules.Rpm.UI.Helpers.SeedData
             if (File.Exists(filePath + "\\datatypes.csv"))
             {
 
-                using (StreamReader reader = new StreamReader(filePath + "\\datatypes.csv"))
+                using (StreamReader reader = new StreamReader(filePath + "\\datatypes.csv", Encoding.UTF8, true))
                 {
                     string line = "";
                     //jump over the first row

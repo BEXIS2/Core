@@ -6,6 +6,7 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 using System;
 using System.Web;
+using System.Web.Http;
 using System.Web.Mvc;
 using System.Web.Optimization;
 using System.Web.Routing;
@@ -26,6 +27,14 @@ namespace BExIS.Web.Shell
 
         protected void Application_Start()
         {
+            // Json Settings
+            JsonConvert.DefaultSettings = () => new JsonSerializerSettings
+            {
+                Formatting = Formatting.Indented,
+                ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
+                ContractResolver = new CamelCasePropertyNamesContractResolver()
+            };
+
             // Extension of the view search engine by the case that the UI project with view can be found one directory lower.
             // This extension allows to store a complete module with libraries and Ui project in a parent directory.
             var tmp = new CustomViewEngine();
@@ -42,6 +51,8 @@ namespace BExIS.Web.Shell
 
             app = BExIS.App.Bootstrap.Application.GetInstance(RunStage.Production);
             app.Start(WebApiConfig.Register, true);
+
+
 
             BundleConfig.RegisterBundles(BundleTable.Bundles);
         }

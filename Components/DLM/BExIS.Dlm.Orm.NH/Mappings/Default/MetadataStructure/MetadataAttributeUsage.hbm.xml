@@ -33,7 +33,15 @@
       <column name="Description" sql-type="text" />
     </property>
 
-    <many-to-one name="MetadataPackage" class="MetadataPackage" not-null="true" column="MetadataPackageRef" />
+	<property name="DefaultValue" type="String">
+		<column name="DefaultValue"  />
+	</property>
+
+	<property name="FixedValue" type="String">
+		<column name="FixedValue"  />
+	</property>
+
+    <many-to-one name="MetadataPackage" class="MetadataPackage" not-null="true" column="MetadataPackageRef" lazy="false"/>
 
     <many-to-one name="MetadataAttribute" class="MetadataAttribute" not-null="true" column="MetadataAttributeRef" lazy="false" />
   </class>

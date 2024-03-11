@@ -30,19 +30,15 @@ namespace BExIS.Modules.Rpm.UI.Controllers
 
         [BExISAuthorize]
         [JsonNetFilter]
-        [HttpPost,HttpGet]
-        [PostRoute("api/Meanings/Index")]
-        [GetRoute("api/Meanings/Index")]
+        [HttpGet, GetRoute("api/Meanings/Index")]
         public HttpResponseMessage Index()
         {
             return cretae_response( _meaningManager.getMeanings());
         }
 
         [BExISApiAuthorize]
-        [HttpPost,HttpGet]
         [JsonNetFilter]
-        [PostRoute("api/Meanings/Details")]
-        [GetRoute("api/Meanings/Details")]
+        [HttpGet, GetRoute("api/Meanings/Details")]
         public HttpResponseMessage Details()
         {
             string id = this.Request.Content.ReadAsStringAsync().Result.ToString();
@@ -57,10 +53,8 @@ namespace BExIS.Modules.Rpm.UI.Controllers
         }
 
         [BExISApiAuthorize]
-        [HttpPost, HttpGet]
         [JsonNetFilter]
-        [PostRoute("api/Meanings/DetailExternalLinks")]
-        [GetRoute("api/Meanings/DetailExternalLinks")]
+        [HttpGet, GetRoute("api/Meanings/DetailExternalLinks")]
         public HttpResponseMessage DetailExternalLinks()
         {
             string id = this.Request.Content.ReadAsStringAsync().Result.ToString();
@@ -70,20 +64,16 @@ namespace BExIS.Modules.Rpm.UI.Controllers
         }
 
         [BExISApiAuthorize]
-        [HttpPost, HttpGet]
         [JsonNetFilter]
-        [PostRoute("api/Meanings/getPrefixes")]
-        [GetRoute("api/Meanings/getPrefixes")]
+        [HttpGet, GetRoute("api/Meanings/getPrefixes")]
         public HttpResponseMessage getPrefixes()
         {
             return cretae_response(_meaningManager.getPrefixes());
         }
 
         [BExISApiAuthorize]
-        [HttpPost, HttpGet]
         [JsonNetFilter]
-        [PostRoute("api/Meanings/getPrefixfromUri")]
-        [GetRoute("api/Meanings/getPrefixfromUri")]
+        [HttpGet, GetRoute("api/Meanings/getPrefixfromUri")]
         public HttpResponseMessage getPrefixfromUri()
         {
             string uri = this.Request.Content.ReadAsStringAsync().Result.ToString();

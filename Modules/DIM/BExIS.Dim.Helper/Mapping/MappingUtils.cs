@@ -1147,12 +1147,15 @@ namespace BExIS.Dim.Helpers.Mapping
 
         public static bool HasTarget(int key, long metadataStrutcureId, out LinkElement target)
         {
+            target = null;
             using (MappingManager mappingManager = new MappingManager())
             using (var metadataAttributeManager = new MetadataAttributeManager())
             {
                 // get link elements for mapping source and target 
                 var systemLink = mappingManager.GetLinkElement(0, LinkElementType.System);
                 var metadataLink = mappingManager.GetLinkElement(metadataStrutcureId, LinkElementType.MetadataStructure);
+                
+                if(systemLink == null || metadataLink == null) return false;
 
                 // get mapping based on source and target link elements
                 var rootMapping = mappingManager.GetMapping(systemLink, metadataLink);
@@ -1175,7 +1178,6 @@ namespace BExIS.Dim.Helpers.Mapping
                 }
             }
 
-            target = null;
             return false;
         }
 

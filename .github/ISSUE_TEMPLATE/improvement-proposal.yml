@@ -1,0 +1,38 @@
+---
+name: 🚀 Improvement Proposal
+description: Do you think an existing feature could be improved? Please share your thoughts/ideas! Beside text, you are able to add images/screenshots as well.
+labels: 'Type: Improvement Proposal'
+assignees: 
+  - sventhiel
+  - geofranzi
+  - DavidBlaa
+body:
+- type: markdown
+  attributes:
+    value: |
+      **Thanks :heart: for taking the time to fill out this improvement proposal form!**
+- type: checkboxes
+  attributes:
+    label: "Is there an existing issue for this?"
+    description: "Please check the existing issues first, to see if a similar improvement proposal already exists ([Core/issues](https://github.com/BEXIS2/Core/issues?q=is%3Aissue))."
+    options:
+    - label: "I searched for a similar issue and didn't find a suitable one."
+      required: true
+- type: textarea
+  attributes:
+    label: "What is your improvement proposal all about?" 
+    description: "Please provide a clear and concise description of the existing feature."
+  validations:
+    required: true
+- type: textarea
+  attributes:
+    label: "How does the current implementation works and what is wrong about it?"
+    description: "After a first description of your idea, this part is most important. Please provide further information on how the feature should be integrated in the system."
+  validations:
+    required: true
+- type: textarea
+  attributes:
+    label: "How should the (part of the) feature be implemented?"
+    description: "Some ideas are great, but hard to implement/integrate. If possible, please offer another simpler version of your feature. This might increase the chance of implementation/integration."
+  validations:
+    required: true

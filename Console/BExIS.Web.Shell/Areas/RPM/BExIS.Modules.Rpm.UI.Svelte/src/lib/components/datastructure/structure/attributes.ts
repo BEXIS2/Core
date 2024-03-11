@@ -10,24 +10,21 @@ const suite = create((data = {}, fieldName) => {
 	});
 
 	test('title', 'title allready exist', () => {
-
 		const listOfStructures = get(structureStore).map((e) => e.text);
 		const editedObj =
-		data.id > 0 ? get(structureStore).find((e) => e.id == data.id) : { id: 0, text: '' };
+			data.id > 0 ? get(structureStore).find((e) => e.id == data.id) : { id: 0, text: '' };
 
-		const list = editedObj?listOfStructures.filter(l=>l!= editedObj.text):listOfStructures;
+		const list = editedObj ? listOfStructures.filter((l) => l != editedObj.text) : listOfStructures;
 
 		enforce(data.title).notInside(list);
-
 	});
 
 	test('description', 'description is too long. you only have 255 characters.', () => {
-
-		if(data.description) // count if exist
-		{
+		if (data.description) {
+			// count if exist
 			enforce(data.description).shorterThan(255);
 		}
-		return true;// if null or undefined
+		return true; // if null or undefined
 	});
 });
 

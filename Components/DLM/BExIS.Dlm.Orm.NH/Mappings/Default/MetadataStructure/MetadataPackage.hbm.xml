@@ -73,7 +73,7 @@
       <column name="IsEnabled" />
     </property>
 
-    <set name="MetadataAttributeUsages" inverse="true" order-by="Id" cascade="all-delete-orphan">
+    <set name="MetadataAttributeUsages" inverse="true" order-by="Id" cascade="all-delete-orphan" lazy="false">
       <!-- should delete the usage but not the target package-->
       <!--cascade only insert, update, set null in case of delete-->
       <key>

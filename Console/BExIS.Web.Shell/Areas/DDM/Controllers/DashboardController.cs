@@ -354,7 +354,8 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                         rowArray[3] = type;
                     }
 
-                    rowArray[7] = true;
+                    //
+                    rowArray[7] = entityPermissionManager.HasEffectiveRight(HttpContext.User.Identity.Name, typeof(Dataset), dsv.Dataset.Id, RightType.Write); ;
 
                     model.Add(new MyDatasetsModel(
                        (long)rowArray[0],

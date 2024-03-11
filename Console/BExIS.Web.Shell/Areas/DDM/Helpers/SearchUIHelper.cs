@@ -369,6 +369,8 @@ namespace BExIS.Modules.Ddm.UI.Helpers
             //dt.Columns.Add("Parameters");      
             dt.Columns.Add("DataType");
             dt.Columns.Add("Category");
+            dt.Columns.Add("MissingValues");
+            dt.Columns.Add("Meanings");
             dt.Columns.Add("Optional");
             dt.Columns.Add("VariableId");
 
@@ -418,6 +420,16 @@ namespace BExIS.Modules.Ddm.UI.Helpers
                             dr["DataType"] = sdvu.DataType.Name;
                         else
                             dr["DataType"] = "n/a";
+
+                        if (sdvu.MissingValues != null)
+                            dr["MissingValues"] = String.Join(", ", sdvu.MissingValues.Select(m=> m.DisplayName).ToArray());
+                        else
+                            dr["MissingValues"] = "n/a";
+
+                        if (sdvu.Meanings != null)
+                            dr["Meanings"] = String.Join(", ", sdvu.Meanings.Select(m => m.Name).ToArray());
+                        else
+                            dr["Meanings"] = "n/a";
 
                         dt.Rows.Add(dr);
                     }

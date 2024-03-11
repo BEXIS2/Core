@@ -30,6 +30,9 @@ using System.Web.Http;
 using System.Web.Http.Description;
 using Vaiona.Entities.Common;
 using Vaiona.Web.Mvc.Modularity;
+using BExIS.Modules.Dcm.UI.Helpers;
+using System.Xml;
+using BExIS.Dim.Entities.Mapping;
 
 namespace BExIS.Modules.Dcm.UI.Controllers
 {
@@ -49,227 +52,14 @@ namespace BExIS.Modules.Dcm.UI.Controllers
     {
         private XmlDatasetHelper xmlDatasetHelper = new XmlDatasetHelper();
 
-        // POST: api/data
-        /// <summary>
-        /// append data to a dataset
-        /// </summary>
-        /// <param name="data"></param>
-        [BExISApiAuthorize]
-        [PostRoute("api/Data")]
-        public async Task<HttpResponseMessage> Post([FromBody] PushDataApiModel data)
-        {
-            var settings = ModuleManager.GetModuleSettings("Dcm");
-
-            var request = Request.CreateResponse();
-            User user = null;
-            string error = "";
-
-            DatasetManager datasetManager = new DatasetManager();
-            UserManager userManager = new UserManager();
-            EntityPermissionManager entityPermissionManager = new EntityPermissionManager();
-            DataStructureManager dataStructureManager = new DataStructureManager();
-
-            DatasetVersion workingCopy = new DatasetVersion();
-            List<DataTuple> rows = new List<DataTuple>();
-
-            //load from apiConfig
-            int cellLimit = 100000;
-            Int32.TryParse(settings.GetValueByKey("celllimit").ToString(), out cellLimit);
-
-            try
-            {
-                #region security
-
-                string token = this.Request.Headers.Authorization?.Parameter;
-
-                if (String.IsNullOrEmpty(token))
-                    return Request.CreateErrorResponse(HttpStatusCode.PreconditionFailed, "Bearer token not exist.");
-
-                user = userManager.Users.Where(u => u.Token.Equals(token)).FirstOrDefault();
-
-                if (user == null)
-                    return Request.CreateErrorResponse(HttpStatusCode.Unauthorized, "Token is not valid.");
-
-                //check permissions
-
-                //entity permissions
-                if (data.DatasetId > 0)
-                {
-                    Dataset d = datasetManager.GetDataset(data.DatasetId);
-                    if (d == null)
-                        return Request.CreateErrorResponse(HttpStatusCode.PreconditionFailed, "the dataset with the id (" + data.DatasetId + ") does not exist.");
-
-                    if (!entityPermissionManager.HasEffectiveRight(user.Name, typeof(Dataset), data.DatasetId, RightType.Write))
-                        return Request.CreateErrorResponse(HttpStatusCode.Unauthorized, "The token is not authorized to write into the dataset.");
-                }
-
-                #endregion security
-
-                #region incomming values check
-
-                // check incomming values
-
-                if (data.DatasetId == 0) error += "dataset id should be greater then 0.";
-                //if (data.UpdateMethod == null) error += "update method is not set";
-                if (data.Columns == null) error += "cloumns should not be null. ";
-                if (data.Data == null) error += "data is empty. ";
-
-                if (!string.IsNullOrEmpty(error))
-                    return Request.CreateErrorResponse(HttpStatusCode.PreconditionFailed, error);
-
-                #endregion incomming values check
-
-                Dataset dataset = datasetManager.GetDataset(data.DatasetId);
-                if (dataset == null)
-                {
-                    return Request.CreateErrorResponse(HttpStatusCode.ExpectationFailed, "Dataset not exist.");
-                }
-
-                DatasetVersion dsv = datasetManager.GetDatasetLatestVersion(dataset);
-                string title = dsv.Title;
-
-                if ((data.Data.Count() * data.Columns.Count()) > cellLimit)
-                {
-                    #region async upload with big data
-
-                    // if dataste is not in the dataset
-
-                    DataApiHelper helper = new DataApiHelper(dataset, user, data, title, UploadMethod.Append);
-                    Task.Run(() => helper.Run());
-
-                    #endregion async upload with big data
-
-                    Debug.WriteLine("end of api call");
-
-                    return Request.CreateResponse(HttpStatusCode.OK, "Data has been successfully received and is being processed. For larger data, as in this case, we will keep you informed by mail about the next steps.");
-                }
-                else
-                {
-                    #region direct upload
-
-                    var es = new EmailService();
-
-                    try
-                    {
-                        //load strutcured data structure
-                        StructuredDataStructure dataStructure = dataStructureManager.StructuredDataStructureRepo.Get(dataset.DataStructure.Id);
-                        List<Error> errors = new List<Error>();
-                        if (dataStructure == null)
-                            return Request.CreateErrorResponse(HttpStatusCode.ExpectationFailed, "The Datastructure does not exist.");
-
-                        APIDataReader reader = new APIDataReader(dataStructure, new ApiFileReaderInfo());
-
-                        List<VariableIdentifier> source = new List<VariableIdentifier>();
-                        reader.SetSubmitedVariableIdentifiers(data.Columns.ToList());
-                        //validate datastructure
-                        foreach (string c in data.Columns)
-                        {
-                            source.Add(new VariableIdentifier() { name = c });
-                        }
-
-                        errors = reader.ValidateComparisonWithDatatsructure(source);
-                        if (errors != null && errors.Count > 0)
-                        {
-                            StringBuilder sb = new StringBuilder("The Datastructure is not valid.");
-
-                            foreach (var e in errors)
-                            {
-                                sb.AppendLine(e.ToHtmlString());
-                            }
-
-                            return Request.CreateErrorResponse(HttpStatusCode.ExpectationFailed, sb.ToString());
-                        }
-
-                        errors = new List<Error>();
-                        // validate rows
-                        for (int i = 0; i < data.Data.Length; i++)
-                        {
-                            string[] row = data.Data[i];
-                            errors.AddRange(reader.ValidateRow(row.ToList(), i));
-                        }
-
-                        if (errors != null && errors.Count > 0)
-                        {
-                            StringBuilder sb = new StringBuilder("The Data is not valid.");
-
-                            foreach (var e in errors)
-                            {
-                                sb.AppendLine(e.ToHtmlString());
-                            }
-
-                            return Request.CreateErrorResponse(HttpStatusCode.ExpectationFailed, sb.ToString());
-                        }
-
-                        if (datasetManager.IsDatasetCheckedOutFor(dataset.Id, user.UserName) || datasetManager.CheckOutDataset(dataset.Id, user.UserName))
-                        {
-                            workingCopy = datasetManager.GetDatasetWorkingCopy(dataset.Id);
-
-                            List<DataTuple> datatuples = new List<DataTuple>();
-
-                            for (int i = 0; i < data.Data.Length; i++)
-                            {
-                                string[] row = data.Data[i];
-
-                                datatuples.Add(reader.ReadRow(row.ToList(), i));
-                            }
-
-                            if (datatuples.Count > 0)
-                            {
-                                ////set modification
-                                workingCopy.ModificationInfo = new EntityAuditInfo()
-                                {
-                                    Performer = user.UserName,
-                                    Comment = "Data",
-                                    ActionType = AuditActionType.Edit
-                                };
-
-                                datasetManager.EditDatasetVersion(workingCopy, datatuples, null, null);
-                            }
-
-                            datasetManager.CheckInDataset(dataset.Id, data.Data.Length + " rows via api.", user.UserName);
-
-                            //send email
-                            es.Send(MessageHelper.GetUpdateDatasetHeader(dataset.Id),
-                                MessageHelper.GetUpdateDatasetMessage(dataset.Id, title, user.DisplayName, typeof(Dataset).Name),
-                                new List<string>() { user.Email },
-                                       new List<string>() { GeneralSettings.SystemEmail }
-                                );
-                        }
-
-                        return Request.CreateResponse(HttpStatusCode.OK, "Data successfully uploaded.");
-                    }
-                    catch (Exception ex)
-                    {
-                        //ToDo send email to user
-                        es.Send(MessageHelper.GetPushApiUploadFailHeader(dataset.Id, title),
-                                   MessageHelper.GetPushApiUploadFailMessage(dataset.Id, user.UserName, new string[] { "Upload failed: " + ex.Message }),
-                                   new List<string>() { user.Email },
-                                   new List<string>() { GeneralSettings.SystemEmail }
-                                   );
-
-                        return Request.CreateResponse(HttpStatusCode.InternalServerError, ex.Message);
-                    }
-
-                    #endregion direct upload
-                }
-            }
-            finally
-            {
-                datasetManager.Dispose();
-                entityPermissionManager.Dispose();
-                dataStructureManager.Dispose();
-                userManager.Dispose();
-                request.Dispose();
-            }
-        }
-
+        
         // PUT: api/data/5
         /// <summary>
         /// append and update data to an existing dataset
         /// </summary>
         [BExISApiAuthorize]
         [PutRoute("api/Data")]
-        public async Task<HttpResponseMessage> Put([FromBody] PutDataApiModel data)
+        public async Task<HttpResponseMessage> Put([FromBody] DataApiModel data)
         {
             var settings = ModuleManager.GetModuleSettings("Dcm");
 
@@ -293,12 +83,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             {
                 #region security
 
-                string token = this.Request.Headers.Authorization?.Parameter;
-
-                if (String.IsNullOrEmpty(token))
-                    return Request.CreateErrorResponse(HttpStatusCode.PreconditionFailed, "Bearer token not exist.");
-
-                user = userManager.Users.Where(u => u.Token.Equals(token)).FirstOrDefault();
+                user = ControllerContext.RouteData.Values["user"] as User;
 
                 if (user == null)
                     return Request.CreateErrorResponse(HttpStatusCode.Unauthorized, "Token is not valid.");
@@ -377,26 +162,28 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
                         #region primary key check
 
-                        //prepare  primary keys ids from the exiting dataset
-                        List<VariableInstance> variables = dataStructure.Variables.Where(v=>v.IsKey).ToList();
-
+                        List<VariableInstance> pkVariables = new List<VariableInstance>();
+                        pkVariables = dataStructure.Variables.Where(v => v.IsKey).ToList();
 
                         // prepare pk index list from data
-                        int[] primaryKeyIndexes = new int[variables.Count];
-                        for (int i = 0; i < variables.Count; i++)
+                        int[] primaryKeyIndexes = new int[pkVariables.Count];
+                        for (int i = 0; i <= dataStructure.Variables.Count-1; i++)
                         {
-                            string pk = variables.ElementAt(i).Label;
-                            primaryKeyIndexes[i] = data.Columns.ToList().IndexOf(pk);
+                            var variable = dataStructure.Variables.ElementAt(i);
+                            if (variable.IsKey)
+                            {
+                                primaryKeyIndexes[i] = data.Columns.ToList().IndexOf(variable.Label);
+                            }
                         }
 
                         //check primary with data : uniqueness
-                        bool IsUniqueInDb = uploadHelper.IsUnique2(dataset.Id, variables.Select(v=>v.Id).ToList()); // may can removed
+                        //bool IsUniqueInDb = uploadHelper.IsUnique2(dataset.Id, variables.Select(v=>v.Id).ToList()); // may can removed
                         bool IsUniqueInData = uploadHelper.IsUnique(primaryKeyIndexes, data.Data);
 
-                        if (!IsUniqueInDb || !IsUniqueInData)
+                        if (!IsUniqueInData)
                         {
                             StringBuilder sb = new StringBuilder("Error/s in Primary Keys selection:<br>");
-                            if (!IsUniqueInDb) sb.AppendLine("The selected key is not unique in the data in the dataset.");
+                            //if (!IsUniqueInDb) sb.AppendLine("The selected key is not unique in the data in the dataset.");
                             if (!IsUniqueInData) sb.AppendLine("The selected key is not unique in the received data.");
 
                             return Request.CreateResponse(HttpStatusCode.ExpectationFailed, sb.ToString());
@@ -472,9 +259,12 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
                             if (datatuples.Count > 0)
                             {
-                                var splittedDatatuples = uploadHelper.GetSplitDatatuples(datatuples, variables.Select(v=>v.Id).ToList(), workingCopy, ref datatupleFromDatabaseIds);
+                                var splittedDatatuples = uploadHelper.GetSplitDatatuples(datatuples, pkVariables.Select(v=>v.Id).ToList(), workingCopy, ref datatupleFromDatabaseIds);
                                 datasetManager.EditDatasetVersion(workingCopy, splittedDatatuples["new"], splittedDatatuples["edit"], null);
                             }
+
+                            // update metadata based on system keys mappings
+                            workingCopy.Metadata = setSystemValuesToMetadata(workingCopy.Id, datasetManager.GetDatasetVersionCount(workingCopy.Id) + 1, workingCopy.Dataset.MetadataStructure.Id, workingCopy.Metadata, true);
 
                             ////set modification
                             workingCopy.ModificationInfo = new EntityAuditInfo()
@@ -535,6 +325,20 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         public void Delete(int id)
         {
             throw new HttpResponseException(HttpStatusCode.NotFound);
+        }
+
+        private XmlDocument setSystemValuesToMetadata(long datasetid, long version, long metadataStructureId, XmlDocument metadata, bool updateData = false)
+        {
+            SystemMetadataHelper SystemMetadataHelper = new SystemMetadataHelper();
+
+            Key[] myObjArray = { };
+
+            if(updateData)myObjArray = new Key[] { Key.Id, Key.Version, Key.DateOfVersion, Key.DataLastModified };
+            else myObjArray = new Key[] { Key.Id, Key.Version, Key.DataCreationDate, Key.DataLastModified };
+
+            metadata = SystemMetadataHelper.SetSystemValuesToMetadata(datasetid, version, metadataStructureId, metadata, myObjArray);
+
+            return metadata;
         }
     }
 }

@@ -68,7 +68,7 @@
       <column name="LastModifiedUserRef" />
     </property>
 	
-    <many-to-one name="DataContainer" class="DataContainer" not-null="false" column="DataContainerRef"/>
+    <many-to-one name="DataContainer" class="DataContainer" not-null="false" column="DataContainerRef" lazy="false"/>
     <!--Intentionally commented; Two FK to two different entities that make them null-able! also I am not sure whether they are really needed. 22.02.12 Javad-->
     <!--<many-to-one name="ExtendedPropery" class="ExtendedPropery" not-null="false" column="ExtendedProperyRef"/>-->
 

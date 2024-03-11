@@ -121,8 +121,16 @@ namespace BExIS.Modules.Ddm.UI.Helpers
                 operationManager.Create("DDM", "RequestsManage", "*", RequestsManage);
                 operationManager.Create("DDM", "RequestsSend", "*", RequestsSend);
 
-                #endregion
 
+                #endregion
+                Feature DataTable = features.FirstOrDefault(f =>
+                   f.Name.Equals("Api") &&
+                   f.Parent != null &&
+                   f.Parent.Id.Equals(DataDiscovery.Id));
+
+                if (RequestsManage == null) RequestsManage = featureManager.Create("Api", "Api", DataDiscovery);
+
+                operationManager.Create("Api", "DataTable", "*", DataTable);
                 #endregion
 
 

@@ -10,6 +10,9 @@
     string idInput = id + "_Input";
 
     string displayName = "";
+    bool hasErrors = false;
+    string errorMessage = "";
+    string errorClass = "";
 
     // Add before every uppercase word empty space (e.g. LastNameTEST -> Last Name TEST)
     displayName = Regex.Replace(Model.DisplayName, "((?<=[a-z])[A-Z])", " $1");
@@ -32,10 +35,21 @@
     displayName = char.ToUpper(displayName[0]) + displayName.Substring(1).Replace("_", " ");
     bool locked = false;
 
-    if (ViewData.ContainsKey("locked"))
+    if (ViewData.Keys.Contains("Locked") || Model.Locked)
     {
-        locked = (bool)ViewData["locked"];
+        // check global locked
+        if (ViewData.Keys.Contains("Locked")) { locked = (bool)ViewData["Locked"]; }
+        // check attr locked
+        if (!locked && Model.Locked)
+        {
+            locked = Model.Locked;
+            //ViewData["locked"] = Model.Locked;
+
+        }
+
+        //lockedClass = "bx-disabled";
     }
+
 
     UIComponentModel uiComponentModel = new UIComponentModel(MetadataAttrType.Parameter)
     {
@@ -50,90 +64,115 @@
         Discription = Model.Discription,
         ParentId = Model.Parent.Id
     };
+
+    if (Model.Errors != null && Model.Errors.Count() > 0)
+    {
+        hasErrors = true;
+    }
+
+    if (hasErrors == true)
+    {
+        errorClass = "bx-input-error";
+        foreach (var item in Model.Errors)
+        {
+            if (Model.Errors.First().Equals(item))
+            {
+                errorMessage = item.GetMessage();
+            }
+            else
+            {
+                errorMessage += ", " + item.GetMessage();
+            }
+        }
+    }
 }
 
+<div id="@id" onload="metadataAttributeOnLoad(this, @hasErrors)">
+    <div class="bx-parameter-label">
 
-
-<div class="bx-parameter-label">
-
-    @if (Model.MinCardinality > 0)
-    {
-        <b title="This field is required" style="color:red">*</b>
-        <b title="@Model.Discription">@displayName</b>
-    }
-    else
-    {
-        <span title="@Model.Discription">@displayName</span>
-    }
-
-</div>
-<div class="bx-paremeter-input">
-
-
-    @if (Model.SystemType.Equals(TypeCode.String.ToString()))
-    {
-        if (locked)
+        @if (Model.MinCardinality > 0)
         {
-            <div class="bx-input bx-disabled bx-disabled-parameter">
-                @if (Model.Value != null)
-                {
-                    @Html.DisplayWithLinksFor(m => m.Value)
-                }
-            </div>
+            <b title="@Model.Discription">@displayName</b>
+            <b title="This field is required" style="color:red">*</b>
+
         }
         else
         {
-            if (Model.DomainList.Count > 0) // dropdown
-            {
-                uiComponentModel.OnChangeAction = "OnChangeParameterDropDown";
-                @Html.Partial("_list", uiComponentModel)
+            <span title="@Model.Discription">@displayName</span>
+        }
 
+    </div>
+    <div class="bx-paremeter-input">
+
+
+        @if (Model.SystemType.Equals(TypeCode.String.ToString()))
+        {
+            if (locked)
+            {
+                <div class="bx-input bx-disabled bx-disabled-parameter">
+                    @if (Model.Value != null)
+                    {
+                        @Html.DisplayWithLinksFor(m => m.Value)
+                    }
+                </div>
             }
-            else // input
+            else
             {
-                string value = "";
-                if (@Model.Value != null) { value = @Model.Value.ToString();}
+                if (Model.DomainList.Count > 0) // dropdown
+                {
+                    uiComponentModel.OnChangeAction = "OnChangeParameterDropDown";
+                    @Html.Partial("_list", uiComponentModel)
 
-                <input class="bx-input" id="@idInput" idbyxpath="@idByXpath" name="@idInput" title="" value="@value" xpath="@xpath" onchange="OnChangeParameter(this)" />
+                }
+                else // input
+                {
+                    string value = "";
+                    if (@Model.Value != null) { value = @Model.Value.ToString(); }
+
+                    <input class="bx-input @errorClass" id="@idInput" idbyxpath="@idByXpath" name="@idInput" title="" value="@value" xpath="@xpath" onchange="OnChangeParameter(this)" />
+                }
+          
+
             }
         }
-    }
 
-    @if (Model.SystemType.Equals(TypeCode.Int32.ToString()) ||
-                Model.SystemType.Equals(TypeCode.Int64.ToString()) ||
-                Model.SystemType.Equals(TypeCode.Int16.ToString()) ||
-                Model.SystemType.Equals(TypeCode.UInt16.ToString()) ||
-                Model.SystemType.Equals(TypeCode.UInt32.ToString()) ||
-                Model.SystemType.Equals(TypeCode.UInt64.ToString()))
-    {
-        @Html.Partial("_integer", uiComponentModel)
-    }
+        @if (Model.SystemType.Equals(TypeCode.Int32.ToString()) ||
+                    Model.SystemType.Equals(TypeCode.Int64.ToString()) ||
+                    Model.SystemType.Equals(TypeCode.Int16.ToString()) ||
+                    Model.SystemType.Equals(TypeCode.UInt16.ToString()) ||
+                    Model.SystemType.Equals(TypeCode.UInt32.ToString()) ||
+                    Model.SystemType.Equals(TypeCode.UInt64.ToString()))
+        {
+            @Html.Partial("_integer", uiComponentModel)
+        }
 
-    @if (Model.SystemType.Equals(TypeCode.Decimal.ToString()) ||
-            Model.SystemType.Equals(TypeCode.Double.ToString()) ||
-            Model.SystemType.Equals(TypeCode.Single.ToString()))
-    {
-        @Html.Partial("_number", uiComponentModel)
-    }
+        @if (Model.SystemType.Equals(TypeCode.Decimal.ToString()) ||
+                Model.SystemType.Equals(TypeCode.Double.ToString()) ||
+                Model.SystemType.Equals(TypeCode.Single.ToString()))
+        {
+            @Html.Partial("_number", uiComponentModel)
+        }
 
-    @if (Model.SystemType.Equals(TypeCode.Boolean.ToString()))
-    {
-        @Html.Partial("_bool", uiComponentModel)
-    }
+        @if (Model.SystemType.Equals(TypeCode.Boolean.ToString()))
+        {
+            @Html.Partial("_bool", uiComponentModel)
+        }
 
-    @if (Model.SystemType.Equals(TypeCode.DateTime.ToString()))
-    {
-        @Html.Partial("_date", uiComponentModel)
-    }
+        @if (Model.SystemType.Equals(TypeCode.DateTime.ToString()))
+        {
+            @Html.Partial("_date", uiComponentModel)
+        }
 
+        <div id="error_@idInput" class="error">@errorMessage</div>
 
+    </div>
+
+    <div>
+        @if (!string.IsNullOrEmpty(Model.Discription))
+        {
+            <button type="button" title="@Html.Raw(Regex.Replace(Model.Discription, "<(.|\\n)*?>", string.Empty))" class="bx-function bx-disabled bx-info fa fa-info" onclick="showHelp('help_@idInput');"></button>
+        }
+    </div>
 </div>
-<div>
-    @if (!string.IsNullOrEmpty(Model.Discription))
-    {
-        <button type="button" title="@Html.Raw(Regex.Replace(Model.Discription, "<(.|\\n)*?>", string.Empty))" class="bx-function bx-disabled bx-info fa fa-info" onclick="showHelp('help_@idInput');"></button>
-    }
-</div>
-
 
 

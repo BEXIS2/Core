@@ -72,6 +72,8 @@
   <ItemGroup>
     <Compile Include="AppConfigHelper.cs" />
     <Compile Include="Configurations\JwtConfiguration.cs" />
+    <Compile Include="Configurations\LdapConfiguration.cs" />
+    <Compile Include="Configurations\SmtpConfiguration.cs" />
     <Compile Include="GeneralSettings.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="WebApiConfig.cs" />

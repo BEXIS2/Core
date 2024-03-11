@@ -355,8 +355,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 Name = fileName,
                 MimeType = MimeMapping.GetMimeMapping(fileName),
                 URI = Path.Combine("Datasets", datasetVersion.Dataset.Id.ToString(), "Attachments", fileName),
-                DatasetVersion = datasetVersion,
-                Description = ""
+                DatasetVersion = datasetVersion
             };
             // replace the URI and description in case they have a same name
             if (datasetVersion.ContentDescriptors.Count(p => p.Name.Equals(originalDescriptor.Name)) > 0)

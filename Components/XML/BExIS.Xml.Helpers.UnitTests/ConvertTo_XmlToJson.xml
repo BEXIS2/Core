@@ -231,7 +231,7 @@
 							<TelephoneNumbers type="MetadataAttributeUsage" name="TelephoneNumbers" id="48">
 								<TelephoneNumbersType type="MetadataAttribute" name="TelephoneNumbersType" roleId="48" id="55" number="1">
 									<TelephoneNumber type="MetadataAttributeUsage" name="TelephoneNumber" id="41">
-										<TelephoneNumber type="MetadataAttribute" name="TelephoneNumber" roleId="41" id="53" number="1" preferred="">
+										<TelephoneNumber type="MetadataAttribute" name="TelephoneNumber" roleId="41" id="53" number="1" preferred="false">
 											<Number type="MetadataAttributeUsage" name="Number" id="38">
 												<NumberType type="MetadataAttribute" name="NumberType" roleId="38" id="50" number="1" />
 											</Number>

@@ -73,6 +73,8 @@
     {
         autoCompleteType = "PartyCustomType";
     }
+
+    locked = Model.Locked;
 }
 
 @if (Model.Number > 1)
@@ -88,12 +90,14 @@
     if (!locked && Model.Locked)
     {
         locked = Model.Locked;
-        ViewData["locked"] = Model.Locked;
+        //ViewData["locked"] = Model.Locked;
 
     }
 
     lockedClass = "bx-disabled";
 }
+
+
 
 @if (ViewData.Keys.Contains("ShowOptional"))
 {
@@ -201,7 +205,6 @@
 
                                             OnLoad = "OnKeyUpTextInput(this)"
                                         })
-
                             }
                             else
                             {

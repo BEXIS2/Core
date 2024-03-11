@@ -1,0 +1,25 @@
+name: 🌄 Epic
+description: Epics or epic stories are defined as large user stories that are difficult to estimate in this form or would be almost impossible to complete within one iteration.
+labels: 'Type: Epic'
+projects: [BEXIS2/8]
+assignees: 
+  - sventhiel
+  - geofranzi
+  - DavidBlaa
+body:
+
+- type: textarea
+  attributes:
+    label: Description
+    description: Please describe a requirement for the system here.
+  validations:
+    required: true
+- type: textarea
+  attributes:
+    label: User Stories
+    description: If already available, user stories can be entered here.
+    placeholder: |
+      - As a (role) I want (functionality) to achieve (benefit).
+      - ...
+  validations:
+    required: false

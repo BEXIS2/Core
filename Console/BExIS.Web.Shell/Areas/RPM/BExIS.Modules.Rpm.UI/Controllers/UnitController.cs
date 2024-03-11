@@ -270,6 +270,16 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                     validationResult.IsValid = false;
                     validationResult.ValidationItems.Add(new ValidationItem { Name = "Dimension", Message = "Select an Dimension" });
                 }
+                if (String.IsNullOrEmpty(unitListItem.MeasurementSystem))
+                {
+                    validationResult.IsValid = false;
+                    validationResult.ValidationItems.Add(new ValidationItem { Name = "Measurement System", Message = "Select an Measurement System" });
+                }
+                else if(!Enum.IsDefined(typeof(MeasurementSystem), unitListItem.MeasurementSystem))
+                {
+                    validationResult.IsValid = false;
+                    validationResult.ValidationItems.Add(new ValidationItem { Name = "Measurement System", Message = "Wrong Measurement System" });
+                }
                 return validationResult;
             }
             return null;

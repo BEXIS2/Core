@@ -3,6 +3,7 @@ using BExIS.Dlm.Entities.Meanings;
 using BExIS.Dlm.Services.TypeSystem;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using Vaiona.Persistence.Api;
 
@@ -97,7 +98,7 @@ namespace BExIS.Dlm.Services.DataStructure
         /// <param name="defaultValue"></param>
         /// <returns>VariableTemplate</returns>
         /// <exception cref="ArgumentNullException"></exception>
-        public VariableTemplate CreateVariableTemplate(string name, DataType dataType, Unit unit, string description = "", string defaultValue = "", ICollection<Meaning> meanings = null, ICollection<Constraint> constraints = null, bool approved = false)
+        public VariableTemplate CreateVariableTemplate(string name, DataType dataType, Unit unit, string description = "", string defaultValue = "",String fixedValue="", ICollection<Meaning> meanings = null, ICollection<Constraint> constraints = null, bool approved = false)
         {
             // check incoming varaibles
             if (string.IsNullOrEmpty(name)) throw new ArgumentNullException(nameof(name), "Name is empty but is required.");
@@ -143,6 +144,7 @@ namespace BExIS.Dlm.Services.DataStructure
                 merged.Approved = entity.Approved;
                 merged.Description = entity.Description;
                 merged.DataType = entity.DataType;
+                merged.FixedValue = entity.FixedValue;
                 merged.DefaultValue = entity.DefaultValue;
                 merged.Unit = entity.Unit;
                 merged.MissingValues = entity.MissingValues;
@@ -268,6 +270,7 @@ namespace BExIS.Dlm.Services.DataStructure
                     DataType = variableTemplate.DataType,
                     Unit = variableTemplate.Unit,
                     DefaultValue = variableTemplate.DefaultValue,
+                    FixedValue = variableTemplate.FixedValue,
                     IsValueOptional = variableTemplate.IsValueOptional,
                     DisplayPatternId = displayPatternId
                 };
@@ -301,7 +304,7 @@ namespace BExIS.Dlm.Services.DataStructure
         /// <param name="displayPatternId"></param>
         /// <returns></returns>
         /// <exception cref="ArgumentNullException"></exception>
-        public VariableInstance CreateVariable(string name, DataType dataType, Unit unit, long dataStructureId, bool isOptional, bool isKey, int orderNo, long variableTemplateId = 0, string description = "", string defaultValue = "",int displayPatternId = 0, List<MissingValue> missingValues = null, List<long> constraints = null, List<long> meanings = null)
+        public VariableInstance CreateVariable(string name, DataType dataType, Unit unit, long dataStructureId, bool isOptional, bool isKey, int orderNo, long variableTemplateId = 0, string description = "", string defaultValue = "", string fixedValue = "", int displayPatternId = 0, List<MissingValue> missingValues = null, List<long> constraints = null, List<long> meanings = null)
         {
             // check incoming varaibles
             if (string.IsNullOrEmpty(name)) throw new ArgumentNullException(nameof(name), "name is empty but is required.");
@@ -323,6 +326,7 @@ namespace BExIS.Dlm.Services.DataStructure
                 Description = description,
                 DataType = dataType,
                 DefaultValue = defaultValue,
+                FixedValue = fixedValue,
                 Unit = unit,
                 IsValueOptional = isOptional,
                 IsKey = isKey,
