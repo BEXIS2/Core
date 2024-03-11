@@ -14,5 +14,10 @@ namespace BExIS.Dim.Entities.Submissions
         public string Url { get; set; }
 
         public List<Agent> Agents { get; set; }
+
+        public Repository() 
+        {
+            Agents = new List<Agent>();
+        }
     }
 }
