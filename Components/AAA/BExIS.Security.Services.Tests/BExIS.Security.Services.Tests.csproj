@@ -158,10 +158,6 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\Console\BExIS.Web.Shell\BExIS.Web.Shell.csproj">
-      <Project>{e5128814-4541-45c8-a9e6-6c91a7e3d1e2}</Project>
-      <Name>BExIS.Web.Shell</Name>
-    </ProjectReference>
     <ProjectReference Include="..\..\App\BExIS.App.Bootstrap\BExIS.App.Bootstrap.csproj">
       <Project>{7d7fbf8e-37d7-4a4c-b40e-3f267e9b9760}</Project>
       <Name>BExIS.App.Bootstrap</Name>
