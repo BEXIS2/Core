@@ -45,5 +45,40 @@ namespace BExIS.Dim.Services.Submissions
                 }
             }
         }
+
+        public void Create(Submission submission)
+        {
+            using (var uow = this.GetUnitOfWork())
+            {
+                var decisionRepository = uow.GetRepository<Submission>();
+                decisionRepository.Put(submission);
+                uow.Commit();
+            }
+        }
+
+        public void Delete(Submission submission)
+        {
+            using (var uow = this.GetUnitOfWork())
+            {
+                var decisionRepository = uow.GetRepository<Submission>();
+                decisionRepository.Delete(submission);
+                uow.Commit();
+            }
+        }
+
+        public void DeleteById(long submissionId)
+        {
+            using (var uow = this.GetUnitOfWork())
+            {
+                var decisionRepository = uow.GetRepository<Submission>();
+                decisionRepository.Delete(submissionId);
+                uow.Commit();
+            }
+        }
+
+        public Submission FindById(long submissionId)
+        {
+            return SubmissionRepository.Get(submissionId);
+        }
     }
 }
