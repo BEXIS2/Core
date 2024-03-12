@@ -615,7 +615,7 @@ namespace BExIS.Utils.Upload
         /// <param name="datasetId"></param>
         /// <param name="primaryKeys"></param>
         /// <returns></returns>
-        ////[MeasurePerformance]
+        //[MeasurePerformance]
         public Boolean IsUnique(long datasetId, ref Hashtable hashtable)
         {
 
@@ -692,7 +692,7 @@ namespace BExIS.Utils.Upload
         /// <param name="datasetId"></param>
         /// <param name="primaryKeys"></param>
         /// <returns></returns>
-        ////[MeasurePerformance]
+        //[MeasurePerformance]
         public Boolean IsUnique2(long datasetId, List<long> primaryKeys)
         {
             using (DatasetManager datasetManager = new DatasetManager())

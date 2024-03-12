@@ -356,7 +356,7 @@ namespace BExIS.Dlm.Services.Data
         /// <param name="comment">A free form text to describe what has changed with this check-in</param>
         /// <param name="username">The username that performs the check-in, which should be the same as the check-out username</param>
         /// <remarks>Does not support simultaneous check-ins</remarks>
-        [MeasurePerformance]
+        //[MeasurePerformance]
         public void CheckInDataset(Int64 datasetId, string comment, string username, ViewCreationBehavior viewCreationBehavior = ViewCreationBehavior.Create | ViewCreationBehavior.Refresh)
         {
             checkInDataset(datasetId, comment, username, false, viewCreationBehavior, "");
@@ -1002,7 +1002,7 @@ namespace BExIS.Dlm.Services.Data
         /// </summary>
         /// <param name="datasetVersion">The object representing the data set version requested</param>
         /// <returns>The list of identifiers of the specified version</returns>
-        [MeasurePerformance]
+        //[MeasurePerformance]
         public List<Int64> GetDatasetVersionEffectiveTupleIds(DatasetVersion datasetVersion)
         {
             return getDatasetVersionEffectiveTupleIds(datasetVersion);
@@ -1627,7 +1627,7 @@ namespace BExIS.Dlm.Services.Data
         /// <param name="deletedTuples">The list of existing tuples to be deleted from the working copy.</param>
         /// <param name="unchangedTuples">to be removed</param>
         /// <returns>The working copy having the changes applied on it.</returns>
-        [MeasurePerformance]
+        //[MeasurePerformance]
         public DatasetVersion EditDatasetVersion(DatasetVersion workingCopyDatasetVersion,
             List<DataTuple> createdTuples, ICollection<DataTuple> editedTuples, ICollection<long> deletedTuples, ICollection<DataTuple> unchangedTuples = null
             //,ICollection<ExtendedPropertyValue> extendedPropertyValues, ICollection<ContentDescriptor> contentDescriptors
