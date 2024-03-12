@@ -74,9 +74,6 @@ namespace BExIS.Security.Services.Subjects
                         return Groups.OrderBy(orderbyClause).Skip((pageNumber - 1) * pageSize).Take(pageSize).ToList();
                     }
 
-                    count = count = Groups.Count();
-
-                    // without filter and order
                     return Groups.Skip((pageNumber - 1) * pageSize).Take(pageSize).ToList();
                 }
             }

@@ -15,7 +15,7 @@ namespace BExIS.Dim.Services.Submissions
 
         public IReadOnlyRepository<Repository> RepositoryRepository { get; }
 
-        public IQueryable<Repository> Agents => RepositoryRepository.Query();
+        public IQueryable<Repository> Repositories => RepositoryRepository.Query();
 
         public RepositoryManager()
         {

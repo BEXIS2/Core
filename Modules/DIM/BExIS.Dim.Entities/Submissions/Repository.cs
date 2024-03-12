@@ -11,7 +11,7 @@ namespace BExIS.Dim.Entities.Submissions
     {
         public string Name { get; set; }
         public string Description { get; set; }
-        public string Url { get; set; }
+        public string Endpoint { get; set; }
 
         public List<Agent> Agents { get; set; }
 

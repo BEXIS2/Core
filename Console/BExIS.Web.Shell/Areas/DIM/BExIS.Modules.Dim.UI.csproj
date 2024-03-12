@@ -502,6 +502,7 @@
     <Compile Include="Controllers\API\MetadataOutController.cs" />
     <Compile Include="Controllers\PublishController.cs" />
     <Compile Include="Controllers\SubmissionController.cs" />
+    <Compile Include="Controllers\SubmissionsController.cs" />
     <Compile Include="Controllers\TestController.cs" />
     <Compile Include="DimModule.cs" />
     <Compile Include="Helpers\ConfigurationsHelper.cs" />
@@ -523,6 +524,9 @@
     <Compile Include="Models\Mapping\MappingModel.cs" />
     <Compile Include="Models\MetadataStructureModel.cs" />
     <Compile Include="Models\ShowPublishDataModel.cs" />
+    <Compile Include="Models\Submissions\AgentModels.cs" />
+    <Compile Include="Models\Submissions\RepositoryModels.cs" />
+    <Compile Include="Models\Submissions\SubmissionModels.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -851,6 +855,7 @@
     <Folder Include="Scripts\Models\Mapping\" />
     <Folder Include="Views\Api\" />
     <Folder Include="Views\Shared\" />
+    <Folder Include="Views\Submissions\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

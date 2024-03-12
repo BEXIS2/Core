@@ -25,8 +25,8 @@
 			<column name="Description" />
 		</property>
 
-		<property name="Url" type="string">
-			<column name="Url" />
+		<property name="Endpoint" type="string">
+			<column name="Endpoint" />
 		</property>
 
 		<set name="Agents" inverse="true" cascade="all-delete-orphan" lazy="true">
