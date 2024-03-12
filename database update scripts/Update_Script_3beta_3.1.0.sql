@@ -9,11 +9,42 @@ SELECT id, 1
 FROM datatypes;
 
 
+ALTER TABLE rpm_meanings
+ALTER COLUMN description 
+TYPE TEXT;
+
 -- create meanings from all var temps
 INSERT INTO rpm_meanings (name, description, versionno, approved, selectable)
 SELECT label, description, 1, true,true
 FROM variables
 WHERE variablestype = 'VAR_TEMPL';
+
+-- add intentions
+ALTER TABLE public.requests
+    ALTER COLUMN intention TYPE text COLLATE pg_catalog."default";
+
+-- 
+ALTER TABLE IF EXISTS public.variables
+	 ALTER COLUMN approved DROP DEFAULT;
+
+-- add default & fixed value
+ALTER TABLE IF EXISTS public.metadataattributeusages
+    ADD COLUMN defaultvalue character varying(255) COLLATE pg_catalog."default";
+
+ALTER TABLE IF EXISTS public.metadataattributeusages
+    ADD COLUMN fixedvalue character varying(255) COLLATE pg_catalog."default";
+
+				ALTER TABLE IF EXISTS public.metadatanestedattributeusages
+    ADD COLUMN defaultvalue character varying(255) COLLATE pg_catalog."default";
+
+ALTER TABLE IF EXISTS public.metadatanestedattributeusages
+    ADD COLUMN fixedvalue character varying(255) COLLATE pg_catalog."default";
+
+ALTER TABLE IF EXISTS public.metadataparameterusages
+    ADD COLUMN defaultvalue character varying(255) COLLATE pg_catalog."default";
+
+ALTER TABLE IF EXISTS public.metadataparameterusages
+    ADD COLUMN fixedvalue character varying(255) COLLATE pg_catalog."default";
 
 
 -- add seeddata

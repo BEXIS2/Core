@@ -2,18 +2,15 @@
 
 This release focused on fixing found bugs or already identified necessary changes in version 3.0.0-beta. Thanks to all testing version 3.0.0-beta!
 
-## Instructions for updating from 3.0.0-beta to 3.1.0
-- DWC terms via RPM ...
-
 ### Workspace changes:
-- ???
-- Workspace changes: [2.18.2..3.0.0-beta](https://github.com/BEXIS2/Workspace/compare/3.0.0-beta..3.1.0)
-- ??? credential file
+- Workspace changes: [3.0.0-beta..3.1.0](https://github.com/BEXIS2/Workspace/compare/3.0.0-beta..3.1.0)
+- please take care that the credentials file in the workspace is no longer needed, instead the smtp settings are entered in the general settings.json. please enter your credentials there.
 
 ### Database Update(s):
 - the update script from version 2.18 to 3.0.0-beta has been revised, and errors were fixed.
 - [Update_Script_218to300.sql](https://github.com/BEXIS2/Core/blob/rc/database%20update%20scripts/Update_Script_2182to3.sql)
-- Update script version 3.0.0-beta to 3.1.0: ????
+- Update script version 3.0.0-beta to 3.1.0:
+- [Update_Script_3beta_3.1.0.sql](https://github.com/BEXIS2/Core/blob/rc/database%20update%20scripts/Update_Script_3beta_3.1.0.sql)
 
 ### New Settings:
 - Data Structure - Enforce Primary Key (bool): To set a primary key during the creation of a data structure is/is not mandatory.
