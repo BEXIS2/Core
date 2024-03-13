@@ -1,4 +1,5 @@
 ﻿using BExIS.Dlm.Entities.Data;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,17 +11,19 @@ namespace BExIS.Dim.Entities.Submissions
 {
     public class Submission : BaseEntity
     {
-        public Agent Agent { get; set; }
-        public DatasetVersion DatasetVersion { get; set; }
-        public SubmissionStatus Status { get; set; }
-        public DateTimeOffset CreationDate { get; set; }
-        public DateTimeOffset LastModificationDate { get; set; }
+        public virtual Agent Agent { get; set; }
+        public virtual DatasetVersion DatasetVersion { get; set; }
+        public virtual SubmissionStatus Status { get; set; }
+        public virtual DateTimeOffset CreationDate { get; set; }
+        public virtual DateTimeOffset LastModificationDate { get; set; }
+
+        public virtual JObject MyProperty { get; set; }
     }
 
     public enum SubmissionStatus
     {
         Pending,
-        Denied,
-        Accepted
+        Accepted,
+        Rejected
     }
 }

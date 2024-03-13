@@ -25,6 +25,7 @@ using Vaelastrasz.Library.Models;
 using System.Runtime.CompilerServices;
 using BExIS.Dlm.Services.Data;
 using BExIS.Dim.Helpers.DataCite;
+using Vaelastrasz.Library.Types;
 
 namespace BExIS.Dim.Helpers
 {

@@ -9,11 +9,11 @@ namespace BExIS.Dim.Entities.Submissions
 {
     public class Agent : BaseEntity
     {
-        public string Name { get; set; }
-        public string Username { get; set; }
-        public string Password { get; set; }
-        public Repository Repository { get; set; }
-        public List<Submission> Submissions { get; set; }
+        public virtual string Name { get; set; }
+        public virtual string Username { get; set; }
+        public virtual string Password { get; set; }
+        public virtual Repository Repository { get; set; }
+        public virtual List<Submission> Submissions { get; set; }
 
         public Agent()
         {

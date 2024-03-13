@@ -89,22 +89,24 @@ namespace BExIS.Dim.Services.Submissions
             }
         }
 
-        public void Create(Submission submission)
+        public Submission Create(Submission submission)
         {
             using (var uow = this.GetUnitOfWork())
             {
-                var decisionRepository = uow.GetRepository<Submission>();
-                decisionRepository.Put(submission);
+                var submissionRepository = uow.GetRepository<Submission>();
+                submissionRepository.Put(submission);
                 uow.Commit();
             }
+
+            return submission;
         }
 
         public void Delete(Submission submission)
         {
             using (var uow = this.GetUnitOfWork())
             {
-                var decisionRepository = uow.GetRepository<Submission>();
-                decisionRepository.Delete(submission);
+                var submissionRepository = uow.GetRepository<Submission>();
+                submissionRepository.Delete(submission);
                 uow.Commit();
             }
         }
@@ -113,8 +115,8 @@ namespace BExIS.Dim.Services.Submissions
         {
             using (var uow = this.GetUnitOfWork())
             {
-                var decisionRepository = uow.GetRepository<Submission>();
-                decisionRepository.Delete(submissionId);
+                var submissionRepository = uow.GetRepository<Submission>();
+                submissionRepository.Delete(submissionId);
                 uow.Commit();
             }
         }
@@ -122,6 +124,28 @@ namespace BExIS.Dim.Services.Submissions
         public Submission FindById(long submissionId)
         {
             return SubmissionRepository.Get(submissionId);
+        }
+
+        public Submission Update(Submission submission)
+        {
+            try
+            {
+                using (var uow = this.GetUnitOfWork())
+                {
+                    var repo = uow.GetRepository<Submission>();
+                    repo.Merge(submission);
+                    var merged = repo.Get(submission.Id);
+                    repo.Put(merged);
+                    uow.Commit();
+
+                    return merged;
+                }
+            }
+            catch(Exception)
+            {
+                return null;
+            }
+
         }
     }
 }
