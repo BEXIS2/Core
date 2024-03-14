@@ -11,6 +11,7 @@ namespace BExIS.UI.Models
         public long Version { get; set; }
         public int Offset { get; set; }
         public int Limit { get; set; }
+        public string Q { get; set; }
         public List<DataTableFilter> Filter { get; set; }
         public List<DataTableOrderBy> Order { get; set; }
 
@@ -22,6 +23,7 @@ namespace BExIS.UI.Models
             Limit = 100;
             Filter = new List<DataTableFilter>();
             Order = new List<DataTableOrderBy>();
+            Q = string.Empty;
         }
     }
 
