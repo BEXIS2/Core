@@ -12,7 +12,9 @@
 		"test:unit": "vitest",
 		"lint": "prettier --plugin-search-dir . --check . && eslint .",
 		"format": "prettier --plugin-search-dir . --write .",
-		"postinstall": "patch-package"
+		"postinstall": "patch-package",
+        "check outdated": "npm outdated",
+        "upgrade all": "ncu --upgrade"
 	},
 	"devDependencies": {
         "@playwright/test": "^1.28.1",
