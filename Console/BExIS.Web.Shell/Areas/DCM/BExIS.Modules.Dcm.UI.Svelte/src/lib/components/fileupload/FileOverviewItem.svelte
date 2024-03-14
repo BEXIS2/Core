@@ -1,5 +1,5 @@
 <script>
-	import { Fa } from 'svelte-fa/src/index.js';
+	import { Fa } from 'svelte-fa';
 
 	import { FileInfo, Spinner, TextInput } from '@bexis2/bexis2-core-ui';
 	import { faTrash } from '@fortawesome/free-solid-svg-icons';

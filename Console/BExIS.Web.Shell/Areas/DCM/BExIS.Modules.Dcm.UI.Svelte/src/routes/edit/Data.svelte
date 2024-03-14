@@ -8,7 +8,7 @@
 	import Submit from '$lib/hooks/Submit.svelte';
 	import Metadata from '$lib/hooks/Metadata.svelte';
 	import { Spinner } from '@bexis2/bexis2-core-ui';
-	import Fa from 'svelte-fa/src/fa.svelte';
+	import Fa from 'svelte-fa';
 	import { faAngleRight } from '@fortawesome/free-solid-svg-icons';
 
 	// models
