@@ -90,7 +90,7 @@ namespace BExIS.UI.Helpers
 
         public static string GetStart(string module)
         {
-            return getScript(module, "node_modules/@sveltejs/kit/src/runtime/client/start.js");
+            return getScript(module, "node_modules/@sveltejs/kit/src/runtime/client/entry.js");
         }
 
         private static string getCss(string module, string key)
