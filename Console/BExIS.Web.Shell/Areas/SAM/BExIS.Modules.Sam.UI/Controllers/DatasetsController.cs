@@ -43,7 +43,7 @@ namespace BExIS.Modules.Sam.UI.Controllers
         /// <remarks>When a dataset is deleted, it is consodered as non-exisiting, but for the sake or provenance, citation, history, etc, it is not removed froom the database.
         /// The function to recover a deleted dataset, will not be provided.</remarks>
         /// <returns></returns>
-        [MeasurePerformance]
+        //[MeasurePerformance]
         public ActionResult Delete(long id)
         {
             using (var datasetManager = new DatasetManager())
@@ -256,7 +256,7 @@ namespace BExIS.Modules.Sam.UI.Controllers
         /// <param name="id">the identifier of the dataset to be purged.</param>
         /// <remarks>This operation is not revocerable.</remarks>
         /// <returns></returns>
-        [MeasurePerformance]
+        //[MeasurePerformance]
         public ActionResult Purge(long id)
         {
             ViewBag.Title = PresentationModel.GetViewTitleForTenant("Purge", Session.GetTenant());

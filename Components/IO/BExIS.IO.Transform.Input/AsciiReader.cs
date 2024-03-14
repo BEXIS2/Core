@@ -202,7 +202,7 @@ namespace BExIS.IO.Transform.Input
         /// <param name="datasetId">Id of the dataset</param>
         /// <param name="packageSize"></param>
         /// <returns>List of datatuples</returns>
-        [MeasurePerformance]
+        //[MeasurePerformance]
         public List<DataTuple> ReadFile(Stream file, string fileName, long datasetId, int packageSize)
         {
             // clear list of datatuples
