@@ -29,6 +29,11 @@
 			<column name="LastModificationDate" />
 		</property>
 
+		<property name="Content" type="DateTime">
+			<column name="Content" />
+		</property>
+
+
 		<many-to-one name="DatasetVersion" column="DatasetVersionRef" class="BExIS.Dlm.Entities.Data.DatasetVersion, BExIS.Dlm.Entities" />
 
 		<many-to-one name="Agent" column="AgentRef" class="BExIS.Dim.Entities.Submissions.Agent, BExIS.Dim.Entities" />

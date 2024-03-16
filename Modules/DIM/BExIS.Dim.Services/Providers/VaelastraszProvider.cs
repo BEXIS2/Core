@@ -1,4 +1,5 @@
-﻿using BExIS.Dim.Entities.Submissions;
+﻿using BExIS.Dim.Entities.Contents;
+using BExIS.Dim.Entities.Submissions;
 using BExIS.Dim.Services.Submissions;
 using BExIS.Dlm.Entities.Data;
 using BExIS.Dlm.Services.Data;
@@ -52,6 +53,7 @@ namespace BExIS.Dim.Services.Providers
                     var submission = new Submission()
                     {
                         DatasetVersion = datasetManager.GetDatasetVersion(datasetVersionId),
+                        Content = new DataCiteContent()
                     };
 
                     return submissionManager.Create(submission);

@@ -1,4 +1,5 @@
-﻿using BExIS.Dlm.Entities.Data;
+﻿using BExIS.Dim.Entities.Contents;
+using BExIS.Dlm.Entities.Data;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
@@ -17,7 +18,7 @@ namespace BExIS.Dim.Entities.Submissions
         public virtual DateTimeOffset CreationDate { get; set; }
         public virtual DateTimeOffset LastModificationDate { get; set; }
 
-        public virtual JObject MyProperty { get; set; }
+        public virtual ISubmissionContent Content { get; set; }
     }
 
     public enum SubmissionStatus
