@@ -15,6 +15,7 @@ using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 using System.Web;
+using System.Web.Http.Results;
 using System.Web.Mvc;
 using Vaiona.Web.Mvc.Modularity;
 
@@ -123,6 +124,55 @@ namespace BExIS.Web.Shell.Controllers
                 return View("Error");
             }
         }
+
+        [HttpGet]
+        public async Task<ActionResult> Get()
+        {
+            try
+            {
+                var jwtConfiguration = GeneralSettings.JwtConfiguration;
+
+                using (var userManager = new UserManager())
+                {
+                    var user = await userManager.FindByNameAsync(HttpContext.User.Identity.Name);
+                    if (user != null)
+                    {
+                        var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtConfiguration.IssuerSigningKey));
+                        var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
+
+                        //Create a List of Claims, Keep claims name short
+                        var permClaims = new List<Claim>
+                        {
+                            new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+                            new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
+                            new Claim(ClaimTypes.Name, user.UserName)
+                        };
+
+                        //Create Security Token object by giving required parameters
+                        var token = new JwtSecurityToken(jwtConfiguration.ValidIssuer,
+                            jwtConfiguration.ValidAudience,
+                            permClaims,
+                            notBefore: DateTime.Now,
+                            expires: jwtConfiguration.ValidLifetime > 0 ? DateTime.Now.AddMinutes(jwtConfiguration.ValidLifetime) : DateTime.MaxValue,
+                            signingCredentials: credentials);
+
+                        var jwt_token = new JwtSecurityTokenHandler().WriteToken(token);
+
+                        ExceptionlessClient.Default.SubmitLog("Get Token", $"{user.Name} requested a JWT.", Exceptionless.Logging.LogLevel.Info);
+
+                        return Json(jwt_token, JsonRequestBehavior.AllowGet);
+
+                    }
+
+                    return Json("NotAuthorized", JsonRequestBehavior.AllowGet);
+                }
+            }
+            catch (Exception ex)
+            {
+                return Json("NotAuthorized", JsonRequestBehavior.AllowGet);
+            }
+        }
+        
 
         // GET: Tokens
         public ActionResult Index()

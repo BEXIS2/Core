@@ -51,6 +51,8 @@
 	function errorHandler(e) {
 		console.log('error event in data');
 	}
+
+
 </script>
 
 {#if hooks}
@@ -62,8 +64,8 @@
 			</div>
 		</HookContainer>
 
-		<HookContainer {...dataDescriptionHook} let:errorHandler let:dateHandler>
-			<div slot="view">
+		<HookContainer {...dataDescriptionHook} let:dateHandler >
+			<div>
 				<DataDescription
 					{id}
 					{version}
@@ -81,7 +83,7 @@
 			let:warningHandler
 			let:dateHandler
 		>
-			<div slot="view">
+			<div >
 				<FileUpload
 					{id}
 					{version}
@@ -95,13 +97,13 @@
 		</HookContainer>
 
 		<HookContainer {...validationHook}>
-			<div slot="view">
+			<div >
 				<Validation {id} {version} {...validationHook} />
 			</div>
 		</HookContainer>
 
 		<HookContainer {...submitHook} let:errorHandler let:successHandler let:warningHandler>
-			<div slot="view">
+			<div >
 				<Submit
 					{id}
 					{version}

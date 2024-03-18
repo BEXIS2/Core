@@ -37,7 +37,6 @@
 		"codemirror": "^6.0.1",
 		"eslint": "^8.57.0",
 		"eslint-config-prettier": "^9.1.0",
-		"eslint-plugin-svelte3": "^4.0.0",
 		"postcss": "^8.4.35",
 		"prettier": "^3.2.5",
 		"prettier-plugin-svelte": "^3.2.2",
@@ -52,7 +51,7 @@
 	},
 	"type": "module",
 	"dependencies": {
-		"@bexis2/bexis2-core-ui": "0.4.0",
+		"@bexis2/bexis2-core-ui": "0.4.2",
 		"@sveltejs/adapter-static": "^3.0.1",
 		"patch-package": "^8.0.0",
 		"svelte-collapsible": "^0.3.0",
