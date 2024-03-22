@@ -30,6 +30,12 @@ body:
       - As (user role), I can (what) so that (why).
   validations:
     required: true
+- type: markdown
+  attributes:
+    label: Success Criterias
+    value: | 
+       Create scenarios or checklists in relation to different user groups such as users or data managers.
+
 - type: textarea
   attributes:
     label: User
@@ -48,12 +54,4 @@ body:
       - descripe a Szenario
   validations:
     required: false
-- type: textarea
-  attributes:
-    label: Administrator
-    description: Acceptance criteria are specific conditions that a software product or feature must fulfill in order to meet customer requirements and needs.
-    placeholder: |
-      - [ ] checklist
-      - descripe a Szenario
-  validations:
-    required: false
+
