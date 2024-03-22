@@ -34,7 +34,7 @@ body:
   attributes:
       value: | 
         ## Success Criterias ##
-        Create scenarios or checklists in relation to different user groups such as users or data managers.
+        Create scenarios or checklists for users or data managers.
 
 - type: textarea
   attributes:
@@ -42,6 +42,7 @@ body:
     description: Acceptance criteria are specific conditions that a software product or feature must fulfill in order to meet customer requirements and needs.
     placeholder: |
       - [ ] checklist
+      or
       - descripe a Szenario
   validations:
     required: false
@@ -51,6 +52,7 @@ body:
     description: Acceptance criteria are specific conditions that a software product or feature must fulfill in order to meet customer requirements and needs.
     placeholder: |
       - [ ] checklist
+      or
       - descripe a Szenario
   validations:
     required: false
