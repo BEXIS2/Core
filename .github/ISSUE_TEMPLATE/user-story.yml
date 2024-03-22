@@ -32,9 +32,9 @@ body:
     required: true
 - type: markdown
   attributes:
-    label: Success Criterias
-    value: | 
-       Create scenarios or checklists in relation to different user groups such as users or data managers.
+      value: | 
+      ## Success Criterias ##
+      Create scenarios or checklists in relation to different user groups such as users or data managers.
 
 - type: textarea
   attributes:
