@@ -48,9 +48,9 @@ body:
       - descripe a Szenario
   validations:
     required: false
-- type: Admin
+- type: textarea
   attributes:
-    label: Data Manager
+    label: Administrator
     description: Acceptance criteria are specific conditions that a software product or feature must fulfill in order to meet customer requirements and needs.
     placeholder: |
       - [ ] checklist
