@@ -1,5 +1,5 @@
 <script>
-	import Fa from 'svelte-fa/src/index';
+	import Fa from 'svelte-fa';
 	import { faXmark, faAdd } from '@fortawesome/free-solid-svg-icons';
 
 	import { onMount } from 'svelte';

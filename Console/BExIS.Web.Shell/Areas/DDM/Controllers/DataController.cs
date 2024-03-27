@@ -648,7 +648,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                                 try
                                 {
                                     long count = dm.RowCount(datasetID, null);
-                                    if (count > 0) table = dm.GetLatestDatasetVersionTuples(datasetID, null, null, null, 0, 10);
+                                    if (count > 0) table = dm.GetLatestDatasetVersionTuples(datasetID, null, null, null,"", 0, 10);
                                     else ModelState.AddModelError(string.Empty, "<span style=\"color: black;\"> There is no primary data available/uploaded. </span><br/><br/> <span style=\"font-weight: normal;color: black;\">Please note that the data may have been uploaded to another repository and is referenced here in the metadata.</span>");
                                 }
                                 catch
@@ -741,7 +741,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                         FilterExpression filter = TelerikGridHelper.Convert(command.FilterDescriptors.ToList());
                         OrderByExpression orderBy = TelerikGridHelper.Convert(command.SortDescriptors.ToList());
 
-                        table = dm.GetLatestDatasetVersionTuples(datasetId, filter, orderBy, null, command.Page - 1, command.PageSize);
+                        table = dm.GetLatestDatasetVersionTuples(datasetId, filter, orderBy, null,"", command.Page - 1, command.PageSize);
                         ViewData["gridTotal"] = dm.RowCount(datasetId, filter);
                     }
                     // get primarydata from other version with tuples
@@ -1283,7 +1283,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
 
                 long count = datasetManager.RowCount(datasetId, filter);
 
-                DataTable table = datasetManager.GetLatestDatasetVersionTuples(datasetId, filter, orderBy, projection, 0, (int)count);
+                DataTable table = datasetManager.GetLatestDatasetVersionTuples(datasetId, filter, orderBy, projection, "", 0, (int)count);
 
                 if (projection == null) table.Strip();
 

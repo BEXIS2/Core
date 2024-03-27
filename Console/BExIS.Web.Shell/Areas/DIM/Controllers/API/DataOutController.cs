@@ -279,7 +279,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
 
                                 if (count > 0)
                                 {
-                                    dt = datasetManager.GetLatestDatasetVersionTuples(id, null, null, null, 0, (int)count);
+                                    dt = datasetManager.GetLatestDatasetVersionTuples(id, null, null, null, "", 0, (int)count);
                                     dt.Strip();
 
                                     if (!string.IsNullOrEmpty(selection))
