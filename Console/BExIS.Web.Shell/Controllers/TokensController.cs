@@ -153,7 +153,7 @@ namespace BExIS.Web.Shell.Controllers
                             jwtConfiguration.ValidAudience,
                             permClaims,
                             notBefore: DateTime.Now,
-                            expires: jwtConfiguration.ValidLifetime > 0 ? DateTime.Now.AddMinutes(jwtConfiguration.ValidLifetime) : DateTime.MaxValue,
+                            expires: jwtConfiguration.ValidLifetime > 0 ? DateTime.Now.AddHours(jwtConfiguration.ValidLifetime) : DateTime.MaxValue,
                             signingCredentials: credentials);
 
                         var jwt_token = new JwtSecurityTokenHandler().WriteToken(token);

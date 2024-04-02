@@ -49,7 +49,8 @@ namespace BExIS.UI.Models
 
     public class DataTableColumn
     {
-        public string Header { get; set; }// key by default
+        public string Column { get; set; }// key by default
+        public string Key { get; set; }// key in data array by default
 
         public Boolean Exclude { get; set; }// false by default
 
@@ -57,7 +58,8 @@ namespace BExIS.UI.Models
 
         public DataTableColumn()
         {
-            Header = string.Empty;
+            Column = string.Empty;
+            Key = string.Empty;
             Exclude = false;
             Instructions = new DataTableInstruction();
         }

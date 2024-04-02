@@ -257,7 +257,8 @@ namespace BExIS.Modules.Ddm.UI.Controllers
             foreach (var variable in datastrutcure.Variables)
             {
                 DataTableColumn column = new DataTableColumn();
-                column.Header = variable.Label;
+                column.Column = variable.Label;
+                column.Key = variable.Label.ToLower();
 
                 // set display Pattern
                 if (variable.DisplayPatternId > 0)
