@@ -59,7 +59,8 @@
 	<!-- if hooks list is loaded render hooks -->
 	<div class="grid divide-y">
 		<HookContainer {...metadataHook}>
-			<div slot="view">
+
+			<div>
 				<Metadata {id} {version} {...metadataHook} />
 			</div>
 		</HookContainer>
