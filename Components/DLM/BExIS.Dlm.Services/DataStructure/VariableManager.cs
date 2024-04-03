@@ -601,7 +601,7 @@ namespace BExIS.Dlm.Services.DataStructure
                     case TypeCode.String:
                         try
                         {
-                            int temp = DateTime.Now.GetHashCode();
+                            int temp = DateTime.Now.Ticks.GetHashCode();
                             return temp.ToString(format);
                         }
                         catch
