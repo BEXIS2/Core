@@ -92,7 +92,7 @@ namespace BExIS.UI.Models
 
     public enum DataTableFilterType
     {
-	    ie, // Is equal to
+	    e, // Is equal to
 	    ne, // Is not equal to
 	    gt, // Greater than
 	    lt, // Less than
@@ -101,7 +101,14 @@ namespace BExIS.UI.Models
 	    c, // Contains
 	    nc, // Does not contain
 	    sw, // Starts with
-	    ew // Ends with
+	    ew, // Ends with
+        o, // on (date)
+        sf, // starting with (date)
+        a, // after (date)
+        u, // unitl  (date)
+        b, // before  (date)
+        no // not on  (date)
+
     }
 
     public enum DataTableOrderType
