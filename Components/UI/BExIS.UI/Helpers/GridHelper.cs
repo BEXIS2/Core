@@ -261,6 +261,15 @@ namespace BExIS.UI.Helpers
                             Value = fd.Value
                         };
                     }
+                case DataTableFilterType.no:
+                    {
+                        return new FilterDateTimeItemExpression()
+                        {
+                            Field = new Field() { DataType = DataType.DateTime, Name = label },
+                            Operator = DateTimeOperator.Operation.NotEquals,
+                            Value = fd.Value
+                        };
+                    }
             }
 
             return null;
