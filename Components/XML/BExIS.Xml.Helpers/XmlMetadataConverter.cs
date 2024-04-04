@@ -440,7 +440,7 @@ namespace BExIS.Xml.Helpers
             string sourceKey = XmlUtility.GetXPathToNode(sourceNode);
             string sourceXPath = XmlUtility.GetDirectXPathToNode(sourceNode); // from incoming json
 
-            if (mappings.ContainsKey(sourceKey))//&& !string.IsNullOrEmpty(sourceNode.InnerText)) // should be a simple element
+            if (mappings.ContainsKey(sourceKey) && !string.IsNullOrEmpty(sourceKey))//&& !string.IsNullOrEmpty(sourceNode.InnerText)) // should be a simple element
             {
                 string targetXPath = mappings[sourceKey];
 

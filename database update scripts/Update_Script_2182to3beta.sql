@@ -876,17 +876,4 @@ INSERT INTO public.versions(
 	versionno, extra, module, value, date)
 	VALUES (1, null, 'Shell', '3.0.0-beta',NOW());
 
-
--- additonal messages
-DO $$
-begin
-raise notice '------------------------ ATTENTION PLEASE --------------------------------------';
-raise notice 'the following updates have to be done manually:';
-raise notice '- Set display patterns for Data types that are about date and or time';
-raise notice '- Primary key in variable for each data structure';
-raise notice '---------------------------------------------------------------------------------';
-
-end;
-$$;
-
 commit;

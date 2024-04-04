@@ -160,7 +160,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
 
                                 if(count==0) return Request.CreateErrorResponse(HttpStatusCode.BadRequest, "There is no data for the dataset.");
 
-                                dt = datasetManager.GetLatestDatasetVersionTuples(id, filter, orderBy, null, pageNumber, pageSize);
+                                dt = datasetManager.GetLatestDatasetVersionTuples(id, filter, orderBy, null, command.Q, pageNumber, pageSize);
                                 dt.Strip();
 
                                 // replace column name to caption
@@ -257,7 +257,8 @@ namespace BExIS.Modules.Ddm.UI.Controllers
             foreach (var variable in datastrutcure.Variables)
             {
                 DataTableColumn column = new DataTableColumn();
-                column.Header = variable.Label;
+                column.Column = variable.Label;
+                column.Key = variable.Label.ToLower();
 
                 // set display Pattern
                 if (variable.DisplayPatternId > 0)

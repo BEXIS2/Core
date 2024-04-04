@@ -39,7 +39,7 @@ namespace BExIS.Web.Shell.Controllers
             Menu menu = new Menu();
 
             // load logo
-            if (Session.GetTenant() != null)
+            if (Session.GetTenant() != null && !string.IsNullOrEmpty(Session.GetTenant().Brand))
             { 
                 string name = Session.GetTenant().ShortName;
                 string mime = MimeMapping.GetMimeMapping(Session.GetTenant().Brand);

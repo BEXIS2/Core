@@ -23,6 +23,7 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Xml;
+using Vaiona.Logging;
 using Vaiona.Persistence.Api;
 
 /// <summary>
@@ -412,20 +413,18 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Indexer
 
                 foreach (string metadataElementName in metadataElementNames)
                 {
-                    XmlNodeList elemList = metadataDoc.SelectNodes(metadataElementName);
-                    if (elemList != null)
+                    if (!String.IsNullOrEmpty(metadataElementName))
                     {
-                        for (int i = 0; i < elemList.Count; i++)
+                        XmlNodeList elemList = metadataDoc.SelectNodes(metadataElementName);
+                        if (elemList != null)
                         {
-                            string eleme = elemList[i].InnerText;
-                            if (!elemList[i].InnerText.Trim().Equals(""))
+                            for (int i = 0; i < elemList.Count; i++)
                             {
-                                dataset.Add(new Field("facet_" + lucene_name, elemList[i].InnerText,
-                                    Lucene.Net.Documents.Field.Store.YES, Field.Index.NOT_ANALYZED));
-                                dataset.Add(new Field("ng_all", elemList[i].InnerText,
-                                    Lucene.Net.Documents.Field.Store.YES, Field.Index.ANALYZED));
-                                writeAutoCompleteIndex(docId, lucene_name, elemList[i].InnerText);
-                                writeAutoCompleteIndex(docId, "ng_all", elemList[i].InnerText);
+                                string eleme = elemList[i].InnerText;
+                                if (!elemList[i].InnerText.Trim().Equals(""))
+                                {
+                                    dataset = write_data_facet(facet, elemList[i].InnerText.Trim(), dataset, docId, metadataElementName);
+                                }
                             }
                         }
                     }
@@ -856,6 +855,58 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Indexer
                 }
             }
         }
+
+        private Document write_data_facet(XmlNode facet, object val, Document dataset, string docId, string variable_node_Label)
+        {
+            if (facet.Attributes.GetNamedItem("primitive_type")?.Value.ToLower() == "string")
+            {
+                dataset.Add(new Field("facet_" + facet.Attributes.GetNamedItem("lucene_name").Value, val.ToString(),
+                    Lucene.Net.Documents.Field.Store.YES, Field.Index.NOT_ANALYZED));
+                dataset.Add(new Field("ng_all", val.ToString(),
+                    Lucene.Net.Documents.Field.Store.YES, Field.Index.ANALYZED));
+                writeAutoCompleteIndex(docId, facet.Attributes.GetNamedItem("lucene_name").Value, val.ToString());
+                writeAutoCompleteIndex(docId, "ng_all", val.ToString());
+            }
+            else
+            {
+                if (facet.Attributes.GetNamedItem("primitive_type")?.Value.ToLower() == "date")
+                {
+
+                    DateTime dateValue = DateTime.MinValue;
+                    DateTime dateValue_ = dateValue;
+
+                    DateTime.TryParse(val.ToString(), out dateValue);
+                    if ((dateValue != dateValue_) && (!string.IsNullOrEmpty(val.ToString())))
+                    {
+                        Field newField_ = new Field("facet_" + facet.Attributes.GetNamedItem("lucene_name").Value, DateTools.DateToString(dateValue, DateTools.Resolution.DAY), Field.Store.YES, Field.Index.ANALYZED);
+                        dataset.Add(newField_);
+                    }
+                    else
+                    {
+                        Debug_EMpty_nodes(variable_node_Label, " ", docId);
+                    }
+                }
+                else if ((facet.Attributes.GetNamedItem("primitive_type").Value.ToLower().Contains("int")) ||
+                    (facet.Attributes.GetNamedItem("primitive_type").Value.ToLower().Contains("double")) ||
+                    (facet.Attributes.GetNamedItem("primitive_type").Value.ToLower().Contains("decimal")) ||
+                    (facet.Attributes.GetNamedItem("primitive_type").Value.ToLower().Contains("number")))
+                {
+                    NumericField newField_ = new NumericField("facet_" + facet.Attributes.GetNamedItem("lucene_name").Value, Field.Store.YES, true).SetDoubleValue(double.Parse(val.ToString()));
+                    if (!string.IsNullOrEmpty(val.ToString()))
+                        dataset.Add(newField_);
+                    else
+                    {
+                        Debug_EMpty_nodes(variable_node_Label, " ", docId);
+                    }
+                }
+            }
+            return dataset;
+        }
+        private void Debug_EMpty_nodes(string Extracted_node_path, string type, string datasetId)
+        {
+            LoggerFactory.GetFileLogger().LogCustom("==> Dataset ID: " + datasetId + " has Empty value for the " + type + " named : " + Extracted_node_path);
+        }
+
 
 
         /// <summary>

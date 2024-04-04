@@ -1,8 +1,6 @@
 <script lang="ts">
 	import Structure from '$lib/components/datastructure/structure/CreateStructure.svelte';
 	import Selection from '$lib/components/datastructure/Selection.svelte';
-
-	import { onMount } from 'svelte';
 	import { fade } from 'svelte/transition';
 
 	import { Spinner, Page, ErrorMessage, type helpItemType, helpStore } from '@bexis2/bexis2-core-ui';
@@ -22,7 +20,9 @@
 		structureStore,
 		isTemplateRequiredStore,
 		isMeaningRequiredStore,
-		setByTemplateStore
+		setByTemplateStore,
+		enforcePrimaryKeyStore,
+		changeablePrimaryKeyStore
 	} from '$lib/components/datastructure/store';
 	import { pageContentLayoutType } from '@bexis2/bexis2-core-ui';
 
@@ -79,6 +79,16 @@
 		const setByTemplate = container?.getAttribute('setByTemplate')?.toLocaleLowerCase()=="true"?true:false;
 		setByTemplateStore.set(setByTemplate);
 
+		// get enforcePrimaryKey from settings and add it to store
+		// save structure only if pk is set
+		const enforcePrimaryKey = container?.getAttribute('enforcePrimaryKey')?.toLocaleLowerCase()=="true"?true:false;
+		enforcePrimaryKeyStore.set(enforcePrimaryKey);
+
+	// get changeablePrimaryKey from settings and add it to store
+	// save structure only if pk is set
+	const changeablePrimaryKey = container?.getAttribute('changeablePrimaryKey')?.toLocaleLowerCase()=="true"?true:false;
+	changeablePrimaryKeyStore.set(changeablePrimaryKey);
+
 		// 2 Usecases,
 		// 1. generate from file, selection needed -> load file
 		// 2. create empty datastructure -> jump direct to generate
@@ -89,7 +99,9 @@
 		if (file != '') {
 			console.log('file exist', file, entityId, 0);
 
-			model = await load(file, entityId, 0);
+			model = await load(file, entityId, 65001, 0);
+			console.log("🚀 ~ start ~ model:", model)
+			
 		} else if (datastructureId > 0) {
 			console.log('copy structure');
 			// copy structure

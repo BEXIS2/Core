@@ -37,7 +37,7 @@
 		<!-- if hooks list is loaded render hooks -->
 
 		<HookContainer {...attachmentHook} let:errorHandler let:successHandler color={hookColor}>
-			<div slot="view">
+			<div >
 				<Attachments
 					{id}
 					{version}
@@ -50,7 +50,7 @@
 
 		{#each addtionalhooks as hook}
 			<HookContainer {...hook} color={hookColor}>
-				<div slot="view">
+				<div >
 					<Hook {id} {version} {...hook} />
 				</div>
 			</HookContainer>

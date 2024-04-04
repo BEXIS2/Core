@@ -1,9 +1,11 @@
 ﻿using BExIS.Dlm.Entities.DataStructure;
 using BExIS.IO;
+using BExIS.IO.Transform.Input;
 using BExIS.UI.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Web;
 
 namespace BExIS.Modules.Rpm.UI.Models.DataStructure
@@ -31,10 +33,13 @@ namespace BExIS.Modules.Rpm.UI.Models.DataStructure
         public int Delimeter { get; set; }
         public int Decimal { get; set; }
         public int TextMarker { get; set; }
+        public int FileEncoding { get; set; }
 
         public List<ListItem> Delimeters { get; set; }
         public List<ListItem> Decimals { get; set; }
         public List<ListItem> TextMarkers { get; set; }
+        public List<ListItem> Encodings { get; set; }
+
         public List<string> Preview { get; set; }
 
         /// <summary>
@@ -67,6 +72,7 @@ namespace BExIS.Modules.Rpm.UI.Models.DataStructure
             TextMarkers = new List<ListItem>();
             Markers = new List<Marker>();
             Variables = new List<VariableInstanceModel>();
+            FileEncoding = (int)EncodingType.UTF8;
         }
     }
 

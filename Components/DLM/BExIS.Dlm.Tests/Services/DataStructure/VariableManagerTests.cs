@@ -189,7 +189,7 @@ namespace BExIS.Dlm.Tests.Services.DataStructure
                
 
                 //Assert
-                Assert.NotNull(result);
+                Assert.That(result, Is.Not.Null);
             }
         }
 

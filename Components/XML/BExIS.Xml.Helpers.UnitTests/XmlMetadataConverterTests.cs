@@ -104,7 +104,7 @@ namespace BExIS.Xml.Helpers.UnitTests
             XmlDocument metadataOriginal = new XmlDocument();
             metadataOriginal.Load(metadataOriginalXMlPath);
 
-            using (StreamReader r = new StreamReader(metadataInputPath, Encoding.Default, true))
+            using (StreamReader r = new StreamReader(metadataInputPath))
             {
                 XmlMetadataConverter metadataConverter = new XmlMetadataConverter();
 
@@ -119,8 +119,8 @@ namespace BExIS.Xml.Helpers.UnitTests
                 Assert.IsNotNull(metadataOut);
 
                 // check content
-                string aText = metadataOut.InnerText;
-                string bText = metadataOriginal.InnerText;
+                string aText = metadataOriginal.InnerText;
+                string bText = metadataOut.InnerText;
 
                 Assert.AreEqual(aText, bText, "the content between output and original xml is not equal");
 
@@ -244,7 +244,7 @@ namespace BExIS.Xml.Helpers.UnitTests
             string path = AppDomain.CurrentDomain.BaseDirectory;
             string metadataInputPath = Path.Combine(path, metadataInput);
 
-            using (StreamReader r = new StreamReader(metadataInputPath, Encoding.Default, true))
+            using (StreamReader r = new StreamReader(metadataInputPath, Encoding.UTF8, true))
             {
                 XmlMetadataConverter metadataConverter = new XmlMetadataConverter();
 

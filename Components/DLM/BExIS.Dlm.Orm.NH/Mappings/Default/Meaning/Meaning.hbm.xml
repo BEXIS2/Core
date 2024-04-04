@@ -19,7 +19,7 @@
 	 <column name="ShortName" />
 	</property>
 
-	<property name="Description" type="String">
+	<property name="Description" type="StringClob">
 	 <column name="Description" />
 	</property>
 

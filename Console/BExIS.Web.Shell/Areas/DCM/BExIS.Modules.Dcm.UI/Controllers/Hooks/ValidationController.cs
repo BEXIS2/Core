@@ -22,6 +22,7 @@ using System.IO;
 using System.Linq;
 using System.Web.Mvc;
 using Vaiona.Utils.Cfg;
+using Vaiona.Web.Mvc.Modularity;
 
 namespace BExIS.Modules.Dcm.UI.Controllers
 {
@@ -56,6 +57,9 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             HookManager hookManager = new HookManager();
             IOUtility iOUtility = new IOUtility();
             List<Error> errors = new List<Error>();
+
+            // load from settings
+            bool enforcePrimaryKey = (bool)ModuleManager.GetModuleSettings("RPM").GetValueByKey("enforcePrimaryKey");
 
             // load cache to get informations about the current upload workflow
             EditDatasetDetailsCache cache = hookManager.LoadCache<EditDatasetDetailsCache>("dataset", "details", HookMode.edit, id );
@@ -107,6 +111,37 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                                 cache.UpdateSetup.VariablesCount = sds.Variables.Count;
                             }
 
+                            // check data and primary key usecases before reading files
+                            // 1. no data, no pk -> (check for duplicates, all vars are the primary key) - is checked by UploadHelper.IsUnique fn
+                            // 2. exist data & no pk -> force pk - info : change data or structure pk
+                            bool hasData = false;
+                            bool hasPrimaryKey = false;
+
+
+                            hasData = datasetManager.RowCount(id) > 0?true:false;
+                            hasPrimaryKey = sds.Variables.Where(v => v.IsKey.Equals(true)).Any();
+
+                            if (enforcePrimaryKey && !hasPrimaryKey)
+                                errors.Add(new Error(ErrorType.Datastructure, "Primary key is not yet set in the data structure.", "Datastructure"));
+
+                            if (hasData && !hasPrimaryKey)
+                            errors.Add(new Error(ErrorType.Datastructure, "Updating data is only possible with a primary key. Please set the primary in the data structure.", "Datastructure"));
+
+                            // in file:
+                            // 3. exist data & pk but not unique -> info : change data or structure pk - is checked by uploadWizardHelper.IsUnique fn
+
+
+                            // generate string vor validation has based on primary keys
+                            var pks = sds.Variables.Where(v => v.IsKey.Equals(true))?.Select(v => v.Id);
+                            string varIdsAsString = pks == null ? "" : string.Join(",", pks.ToArray());
+
+
+                            // check against primary key in db
+                            // this check happens outside of the files,
+                            var unique = false;
+                            if(cache.Files.Any()) uploadWizardHelper.IsUnique(id, ref primaryKeyHashTable);
+
+
                             // read all files
                             foreach (var file in cache.Files)
                             {
@@ -137,7 +172,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                                                 // the hash value need to be abot: name, lenght, structure id, ascci reader info;
                                                 // if something has changed also validation need to repeat
                                                 string readerInfo = cache.AsciiFileReaderInfo != null ? cache.AsciiFileReaderInfo.ToJson() : "";
-                                                string incomingHash = HashHelper.CreateMD5Hash(file.Name, file.Lenght.ToString(), datastructureId.ToString(), readerInfo, cache.Files.Count.ToString());
+                                                string incomingHash = HashHelper.CreateMD5Hash(file.Name, file.Lenght.ToString(), datastructureId.ToString(), readerInfo, cache.Files.Count.ToString(), varIdsAsString);
 
                                             // if a validation is allready run and the file has not changed, skip validation
                                             if (file.ValidationHash != incomingHash)
@@ -183,11 +218,15 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
                                                     if (fileErrors == null || fileErrors.Count == 0)
                                                     {
-                                                        //check against primary key
-                                                        var unique = uploadWizardHelper.IsUnique(id, ext, fileName, filePath, (AsciiFileReaderInfo)cache.AsciiFileReaderInfo, datastructureId, ref primaryKeyHashTable);
+                                                        
+                                                        //check against primary key local file
+                                                        unique = uploadWizardHelper.IsUnique(id, ext, fileName, filePath, (AsciiFileReaderInfo)cache.AsciiFileReaderInfo, datastructureId, ref primaryKeyHashTable);
                                                         if (!unique)
                                                         {
-                                                            fileErrors.Add(new Error(ErrorType.PrimaryKey, "the data in the file violate the primary key set.", "Primary Key"));
+                                                            if(hasPrimaryKey)
+                                                                fileErrors.Add(new Error(ErrorType.PrimaryKey, "The data in the file violate the primary key set.", "Primary Key"));
+                                                            else
+                                                                fileErrors.Add(new Error(ErrorType.PrimaryKey, "Duplicate lines were found in the data, therefore it is not possible to save the data in the system", "Primary Key"));
                                                         }
                                                     }
                                                 }
@@ -287,7 +326,5 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
             return Json(model, JsonRequestBehavior.AllowGet);
         }
-
-       
     }
 }

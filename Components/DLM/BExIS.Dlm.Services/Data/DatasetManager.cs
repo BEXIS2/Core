@@ -356,7 +356,7 @@ namespace BExIS.Dlm.Services.Data
         /// <param name="comment">A free form text to describe what has changed with this check-in</param>
         /// <param name="username">The username that performs the check-in, which should be the same as the check-out username</param>
         /// <remarks>Does not support simultaneous check-ins</remarks>
-        [MeasurePerformance]
+        //[MeasurePerformance]
         public void CheckInDataset(Int64 datasetId, string comment, string username, ViewCreationBehavior viewCreationBehavior = ViewCreationBehavior.Create | ViewCreationBehavior.Refresh)
         {
             checkInDataset(datasetId, comment, username, false, viewCreationBehavior, "");
@@ -978,9 +978,9 @@ namespace BExIS.Dlm.Services.Data
             return null;
         }
 
-        public DataTable GetLatestDatasetVersionTuples(long datasetId, FilterExpression filter, OrderByExpression orderBy, ProjectionExpression projection, int pageNumber = 0, int pageSize = 0)
+        public DataTable GetLatestDatasetVersionTuples(long datasetId, FilterExpression filter, OrderByExpression orderBy, ProjectionExpression projection,string searchquery, int pageNumber = 0, int pageSize = 0)
         {
-            return queryMaterializedView(datasetId, filter, orderBy, projection, pageNumber, pageSize);
+            return queryMaterializedView(datasetId, filter, orderBy, projection, searchquery, pageNumber, pageSize);
         }
 
         /// <summary>
@@ -1002,7 +1002,7 @@ namespace BExIS.Dlm.Services.Data
         /// </summary>
         /// <param name="datasetVersion">The object representing the data set version requested</param>
         /// <returns>The list of identifiers of the specified version</returns>
-        [MeasurePerformance]
+        //[MeasurePerformance]
         public List<Int64> GetDatasetVersionEffectiveTupleIds(DatasetVersion datasetVersion)
         {
             return getDatasetVersionEffectiveTupleIds(datasetVersion);
@@ -1627,7 +1627,7 @@ namespace BExIS.Dlm.Services.Data
         /// <param name="deletedTuples">The list of existing tuples to be deleted from the working copy.</param>
         /// <param name="unchangedTuples">to be removed</param>
         /// <returns>The working copy having the changes applied on it.</returns>
-        [MeasurePerformance]
+        //[MeasurePerformance]
         public DatasetVersion EditDatasetVersion(DatasetVersion workingCopyDatasetVersion,
             List<DataTuple> createdTuples, ICollection<DataTuple> editedTuples, ICollection<long> deletedTuples, ICollection<DataTuple> unchangedTuples = null
             //,ICollection<ExtendedPropertyValue> extendedPropertyValues, ICollection<ContentDescriptor> contentDescriptors
@@ -3082,10 +3082,10 @@ namespace BExIS.Dlm.Services.Data
             }
         }
 
-        private DataTable queryMaterializedView(long datasetId, FilterExpression filter, OrderByExpression orderBy, ProjectionExpression projection, int pageNumber = 0, int pageSize = 0)
+        private DataTable queryMaterializedView(long datasetId,FilterExpression filter, OrderByExpression orderBy, ProjectionExpression projection,string searchquery,  int pageNumber = 0, int pageSize = 0)
         {
             MaterializedViewHelper mvHelper = new MaterializedViewHelper();
-            return mvHelper.Retrieve(datasetId, filter, orderBy, projection, pageNumber, pageSize);
+            return mvHelper.Retrieve(datasetId, searchquery, filter, orderBy, projection, pageNumber, pageSize);
         }
 
         // in some cases maybe another attribute of the user is used like its ID, email or the IP address

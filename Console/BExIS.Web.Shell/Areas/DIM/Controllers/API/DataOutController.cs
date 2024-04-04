@@ -279,7 +279,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
 
                                 if (count > 0)
                                 {
-                                    dt = datasetManager.GetLatestDatasetVersionTuples(id, null, null, null, 0, (int)count);
+                                    dt = datasetManager.GetLatestDatasetVersionTuples(id, null, null, null, "", 0, (int)count);
                                     dt.Strip();
 
                                     if (!string.IsNullOrEmpty(selection))
@@ -368,7 +368,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
 
                             var response = Request.CreateResponse();
 
-                            using (StreamReader sr = new StreamReader(apifilePath, Encoding.Default, true))
+                            using (StreamReader sr = new StreamReader(apifilePath, Encoding.UTF8, true))
                             {
                                 response.Content = new StringContent(sr.ReadToEnd());
                                 //response.Content = new ObjectContent(typeof(DatasetModel), model, new DatasetModelCsvFormatter(model.DataTable.TableName));

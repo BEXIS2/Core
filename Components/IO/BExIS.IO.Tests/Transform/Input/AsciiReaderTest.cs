@@ -131,7 +131,7 @@ namespace BExIS.IO.Tests.Transform.Input
             var testData = dgh.GenerateRowsWithRandomValuesBasedOnDatastructureWithErrors(dataStructure, ",", 1000000, true);
             IEnumerable<string> vairableNames = dataStructure.Variables.Select(v => v.Label);
             //generate file to read
-            Encoding encoding = Encoding.Default;
+            Encoding encoding = Encoding.UTF8;
             string path = Path.Combine(AppConfiguration.DataPath, "testdataforvalidation.txt");
             if (File.Exists(path))
             {
@@ -190,7 +190,7 @@ namespace BExIS.IO.Tests.Transform.Input
             IEnumerable<string> vairableNames = dataStructure.Variables.Select(v => v.Label);
 
             //generate file to read
-            Encoding encoding = Encoding.Default;
+            Encoding encoding = Encoding.UTF8;
             string path = Path.Combine(AppConfiguration.DataPath, "testdataforvalidation.txt");
             if (File.Exists(path))
             {
@@ -250,7 +250,7 @@ namespace BExIS.IO.Tests.Transform.Input
             rows.Add("abcd2");
 
             //generate file to read
-            Encoding encoding = Encoding.Default;
+            Encoding encoding = Encoding.UTF8;
             string path = Path.Combine(AppConfiguration.DataPath, "test_skipped.txt");
             if (File.Exists(path))
             {
@@ -303,7 +303,7 @@ namespace BExIS.IO.Tests.Transform.Input
             var testData = dgh.GenerateRowsWithRandomValuesBasedOnDatastructure(dataStructure, ",", total, true);
             IEnumerable<string> vairableNames = dataStructure.Variables.Select(v => v.Label);
             //generate file to read
-            Encoding encoding = Encoding.Default;
+            Encoding encoding = Encoding.UTF8;
             string path = Path.Combine(AppConfiguration.DataPath, "testdataforvalidation.txt");
             if (File.Exists(path))
             {
@@ -341,7 +341,7 @@ namespace BExIS.IO.Tests.Transform.Input
   
 
             //generate file to read
-            Encoding encoding = Encoding.Default;
+            Encoding encoding = Encoding.UTF8;
             string path = Path.Combine(AppConfiguration.DataPath, "test_getrows_indexlistempty.txt");
             if (File.Exists(path))
             {
@@ -389,7 +389,7 @@ namespace BExIS.IO.Tests.Transform.Input
 
 
             //generate file to read
-            Encoding encoding = Encoding.Default;
+            Encoding encoding = Encoding.UTF8;
             string path = Path.Combine(AppConfiguration.DataPath, "test_getrows_indexlistempty.txt");
             if (File.Exists(path))
             {
@@ -486,7 +486,7 @@ namespace BExIS.IO.Tests.Transform.Input
         public void GetRows__FileNameEmpty_ArgumentNullException()
         {
             // Act
-            var result = Assert.Throws<ArgumentNullException>(() => AsciiReader.GetRows(""));
+            var result = Assert.Throws<ArgumentNullException>(() => AsciiReader.GetRows("",Encoding.UTF8));
 
             // Assert
             Assert.AreEqual(result.ParamName, "fileName");
@@ -497,7 +497,7 @@ namespace BExIS.IO.Tests.Transform.Input
         public void GetRows__FileNotExist_FileNotFoundException()
         {
             // Act
-            var result = Assert.Throws<FileNotFoundException>(() => AsciiReader.GetRows("c:/data/notexist.txt"));
+            var result = Assert.Throws<FileNotFoundException>(() => AsciiReader.GetRows("c:/data/notexist.txt", Encoding.UTF8));
 
             // Assert
             Assert.AreEqual(result.Message, "file not found");
@@ -508,7 +508,7 @@ namespace BExIS.IO.Tests.Transform.Input
         public void GetRows_FileNameEmpty_ArgumentNullException()
         {
             // Act
-            var result = Assert.Throws<ArgumentNullException>(() => AsciiReader.GetRows("",null,null));
+            var result = Assert.Throws<ArgumentNullException>(() => AsciiReader.GetRows("",Encoding.UTF8));
 
             // Assert
             Assert.AreEqual(result.ParamName, "fileName");
@@ -519,7 +519,7 @@ namespace BExIS.IO.Tests.Transform.Input
         public void GetRows_FileNotExist_FileNotFoundException()
         {
             // Act
-            var result = Assert.Throws<FileNotFoundException>(() => AsciiReader.GetRows("c:/data/notexist.txt", new List<int>() {0}, null));
+            var result = Assert.Throws<FileNotFoundException>(() => AsciiReader.GetRows("c:/data/notexist.txt", Encoding.UTF8, new List<int>() {0}, null));
 
             // Assert
             Assert.AreEqual(result.Message, "file not found");
@@ -531,7 +531,7 @@ namespace BExIS.IO.Tests.Transform.Input
         {
             //Arrange
             //generate file to read
-            Encoding encoding = Encoding.Default;
+            Encoding encoding = Encoding.UTF8;
             string path = Path.Combine(AppConfiguration.DataPath, "test_getrows_indexlistempty.txt");
             if (File.Exists(path))
             {
@@ -560,7 +560,7 @@ namespace BExIS.IO.Tests.Transform.Input
             var wantedRows = new List<int>(){1,3};
 
             //generate file to read
-            Encoding encoding = Encoding.Default;
+            Encoding encoding = Encoding.UTF8;
             string path = Path.Combine(AppConfiguration.DataPath, "test_getrows_indexlistempty.txt");
             if (File.Exists(path))
             {
@@ -574,7 +574,7 @@ namespace BExIS.IO.Tests.Transform.Input
 
 
             // Act
-            var result =  AsciiReader.GetRows(path, wantedRows);
+            var result =  AsciiReader.GetRows(path,Encoding.UTF8, wantedRows);
 
             // Assert
             Assert.NotNull(result);
@@ -593,7 +593,7 @@ namespace BExIS.IO.Tests.Transform.Input
             var activeCells = new List<bool>() { false,true,false  };
 
             //generate file to read
-            Encoding encoding = Encoding.Default;
+            Encoding encoding = Encoding.UTF8;
             string path = Path.Combine(AppConfiguration.DataPath, "test_getsubsetrows_indexlistempty.txt");
             if (File.Exists(path))
             {
@@ -607,7 +607,7 @@ namespace BExIS.IO.Tests.Transform.Input
 
 
             // Act
-            var result = AsciiReader.GetRows(path, wantedRows,activeCells,TextSeperator.comma);
+            var result = AsciiReader.GetRows(path, Encoding.UTF8, wantedRows,activeCells,TextSeperator.comma);
 
             // Assert
             Assert.NotNull(result);

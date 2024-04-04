@@ -140,7 +140,7 @@ namespace BExIS.IO
                 }
             }
 
-            return null;
+            return "";
         }
 
         /// <summary>
