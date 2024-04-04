@@ -506,7 +506,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
             {
                 try
                 {
-                    username = "majoho";// HttpContext.User.Identity.Name;
+                    username = HttpContext.User.Identity.Name;
                     user = userManager.FindByNameAsync(username).Result;
                 }
                 catch
@@ -605,7 +605,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
             {
                 try
                 {
-                    username = "majoho";// HttpContext.User.Identity.Name;
+                    username = HttpContext.User.Identity.Name;
                     user = userManager.FindByNameAsync(username).Result;
                 }
                 catch

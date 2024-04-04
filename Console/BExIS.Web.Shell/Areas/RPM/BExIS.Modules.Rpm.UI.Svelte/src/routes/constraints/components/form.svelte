@@ -49,11 +49,23 @@
 	const modalStore = getModalStore();
 	let warning: string = 'Changing the Contstrait may cause inconsistencies in Datasets.';
 
+	//change event: if input change check also validation only on the field
+	// e.target.id is the id of the input component
+	function onChangeHandler(e: any) {
+		//console.log("input changed", e)
+		// add some delay so the entityTemplate is updated
+		// otherwise the values are old
+		setTimeout(async () => {
+			// check changed field
+			res = suite({ constraint: constraint, constraints: constraints }, e);
+		}, 10);
+	}
+
 	onMount(async () => {
 		ct = await apiCalls.GetConstraintTypes();
-		if (constraint.id == 0) {
-			suite.reset();
-		} else {
+		suite.reset();
+		if (constraint.id > 0) 
+		{
 			setTimeout(async () => {
 				res = suite({ constraint: constraint, constraints: constraints }, '');
 			}, 10);
@@ -138,18 +150,6 @@
 				patternConstraint = await apiCalls.GetPatternConstraint(constraint.id);
 			}
 		}
-	}
-	
-	//change event: if input change check also validation only on the field
-	// e.target.id is the id of the input component
-	function onChangeHandler(e: any) {
-		//console.log("input changed", e)
-		// add some delay so the entityTemplate is updated
-		// otherwise the values are old
-		setTimeout(async () => {
-			// check changed field
-			res = suite({ constraint: constraint, constraints: constraints }, e.target.id);
-		}, 10);
 	}
 
 	function submit() {

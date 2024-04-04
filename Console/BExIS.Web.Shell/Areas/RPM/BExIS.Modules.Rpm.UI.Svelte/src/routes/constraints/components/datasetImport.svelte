@@ -21,6 +21,7 @@
     let datasets: DatasetInfo[] = [];
     let dataStructure: DatastructureInfo = { id:0, name:'', description:'', columnInfos:[] };
     let data: object[]= [];
+    let disable = true
 
     $: $drawerStore.meta, updateData();
     $: dataset, updateStore();
@@ -39,10 +40,13 @@
     function updateStore() {
         if(dataset)
         {
-            if(dataset.columnId == undefined || (meta.dataset && dataset.id != meta.dataset.id))
-                dataset.columnId = 0;
+            load(dataset);
 
-            load(dataset);   
+            if(dataset.columnId == undefined || (meta.dataset && dataset.id != meta.dataset.id))
+                dataset.columnId = 0;            
+            
+            if(dataset.columnId && dataset.columnId > 0)
+                disable = false;
         }
         meta.dataset = dataset;           
         $drawerStore.meta = { ...meta };
@@ -185,6 +189,19 @@
                 }}
                 on:click={() => cancel()}><Fa icon={faXmark} /></button
             >
+            {#if disable}
+            <!-- svelte-ignore a11y-mouse-events-have-key-events -->
+            <button
+                type="submit"
+                class="btn variant-filled-primary h-9 w-16 shadow-md"
+                title=""
+                id="save"
+                disabled
+                on:mouseover={() => {
+                    helpStore.show('save');
+                }}><Fa icon={faArrowUpFromBracket} /></button
+            >
+            {:else}          
             <!-- svelte-ignore a11y-mouse-events-have-key-events -->
             <button
                 type="submit"
@@ -195,6 +212,7 @@
                     helpStore.show('save');
                 }}><Fa icon={faArrowUpFromBracket} /></button
             >
+            {/if}       
         </div>
         
     </form>

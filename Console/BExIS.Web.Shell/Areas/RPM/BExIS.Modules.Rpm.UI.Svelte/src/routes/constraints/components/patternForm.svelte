@@ -9,6 +9,10 @@
 
 	export let patternConstraint: PatternConstraintListItem;
 
+	let example: string = '';
+
+	$: result = createRegex(patternConstraint.pattern, example);
+
 	// load form result object
 	let res = suite.get();
 
@@ -38,10 +42,8 @@
 		}
 	});
 
-	let example: string = '';
-	$: result = createRegex(patternConstraint.pattern, example);
-
 	function createRegex(p: string, e: string): string {
+		disabled = false;
 		try {
 			let regex = new RegExp(p, 'g');
 			let r = e.match(regex)?.toString();

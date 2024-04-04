@@ -4,16 +4,17 @@
 	import type { DatasetInfo, DomainConstraintListItem } from '../models';
 	import { writable } from 'svelte/store';
 	import * as apiCalls from '../services/apiCalls';
-	import { onMount } from 'svelte';
+	import { createEventDispatcher, onMount } from 'svelte';
 	import suite from './domainForm';
 	import { Drawer, FileButton, getDrawerStore, type DrawerSettings, type DrawerStore } from '@skeletonlabs/skeleton';
 	import Fa from 'svelte-fa';
 	import { faArrowUpFromBracket, faFileImport } from '@fortawesome/free-solid-svg-icons';
 	import papa from 'papaparse';
 	import DatasetImport from './datasetImport.svelte';
-	import { each } from 'svelte/internal';
 
 	export let domainConstraint: DomainConstraintListItem;
+
+	const dispatch = createEventDispatcher();
 
 	let drawerStore: any;
 	let ds: DatasetInfo[] = [];
@@ -29,6 +30,7 @@
 	$: domainConstraint, $drawerStore.meta.dataset = undefined, $drawerStore.meta.import = false;
 	$: $drawerStore.meta.import, importDomainItems();
 	$: domainItemsTableStore.set(setDomainItems(domainConstraint.domain));
+	$: dispatch(String(disabled));
 
 	// load form result object
 	let res = suite.get();
@@ -69,6 +71,7 @@
 				dis.push(line);
 			}
 		});
+		disabled = false;
 		return dis;
 	}
 
@@ -76,6 +79,7 @@
 	{
 		if($drawerStore.meta.import && $drawerStore.meta.dataset && $drawerStore.meta.dataset.id > 0)
 		{
+			$drawerStore.meta.import = false;
 			let data: string[] = [];
 			let column = await apiCalls.GetData($drawerStore.meta.dataset.id, 0, $drawerStore.meta.dataset.columnId);
 
@@ -85,7 +89,6 @@
 				data.push(value[0][1]);
 			};
 			domainConstraint.domain = joinRows(data);
-			$drawerStore.meta.import = false;
 		} 
 	}
 
@@ -153,7 +156,7 @@
 						type="button"
 						class="btn variant-filled-secondary h-9 w-16 shadow-md"
 						name="importDs"
-						{disabled}
+						disabled
 						on:mouseover={() => {
 							helpStore.show('importDs');
 						}}
