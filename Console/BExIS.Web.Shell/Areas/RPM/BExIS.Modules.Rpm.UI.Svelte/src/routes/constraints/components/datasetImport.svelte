@@ -1,54 +1,75 @@
 <script lang="ts">
-	import { MultiSelect, Page, helpStore } from "@bexis2/bexis2-core-ui";
-    import type { DatasetInfo } from "../models";
+	import { MultiSelect, helpStore } from "@bexis2/bexis2-core-ui";
+    import type { ColumnInfo, DatasetImportInfo, DatasetInfo, DatastructureInfo } from "../models";
     import Fa from 'svelte-fa';
-	import { faXmark, faSave } from '@fortawesome/free-solid-svg-icons';
-	import type { DrawerStore } from "@skeletonlabs/skeleton";
+	import { faXmark, faSave, faArrowUpFromBracket } from '@fortawesome/free-solid-svg-icons';
+	import { RadioItem, RadioGroup, type DrawerStore } from "@skeletonlabs/skeleton";
 	import { createEventDispatcher, onMount } from "svelte";
+	import * as apiCalls from '../services/apiCalls';
 
     export let drawerStore: DrawerStore;
 
-    let data: {
+    type Undefinedable<T> = T | undefined;
+
+    let meta: {
         datasets: DatasetInfo[];
-        dataset?: DatasetInfo;
+        dataset?: DatasetImportInfo;
+        import: boolean;
     }
 
-    let dataset: DatasetInfo;
-    let datasets: DatasetInfo[];
-    $: datasets = data && data.datasets ? data.datasets : [] ;
+    let dataset: Undefinedable<DatasetImportInfo>;
+    let datasets: DatasetInfo[] = [];
+    let dataStructure: DatastructureInfo = { id:0, name:'', description:'', columnInfos:[] };
+    let data: object[]= [];
 
+    $: $drawerStore.meta, updateData();
+    $: dataset, updateStore();
+    
     onMount(async () => {
-		updateData();
 	});
 
-
     function updateData() {
-        if(!data || !data.dataset || $drawerStore.meta.dataset && data.dataset.id != $drawerStore.meta.dataset.id)
-        {
-            data = { ...$drawerStore.meta };
-            if(data.dataset)
-            {
-                dataset = data.dataset;
-            }
-        }
+        meta = { ...$drawerStore.meta };
+        if(meta.dataset)  
+            dataset = meta.dataset;
+        if(meta.datasets != datasets)
+            datasets = meta.datasets;
 	}
 
     function updateStore() {
-        if(!$drawerStore.meta.dataset || data.dataset && data.dataset.id != $drawerStore.meta.dataset.id)
+        if(dataset)
         {
-            data.dataset = dataset;
-            $drawerStore.meta = { ...data };
+            if(dataset.columnId == undefined || (meta.dataset && dataset.id != meta.dataset.id))
+                dataset.columnId = 0;
+
+            load(dataset);   
         }
+        meta.dataset = dataset;           
+        $drawerStore.meta = { ...meta };
 	}
 
-    function getCol()
+    async function load(ds: DatasetImportInfo)
     {
-        console.log("getCol()")
+        if(ds && ds.datastructureId && ds.datastructureId != dataStructure.id)
+        {
+            dataStructure = await apiCalls.GetDatastructure(ds.datastructureId);
+            data = await apiCalls.GetData(ds.id);
+        }
+    }
+
+    async function getCol()
+    {
+        meta.import = true;
+        $drawerStore.meta = { ...meta };
+        drawerStore.close()
     }
 
     function cancel(){
-        data.dataset = undefined;
-        $drawerStore.meta = { ...data };
+        dataset = undefined;
+        meta.dataset = undefined;
+        dataStructure = { id:0, name:'', description:'', columnInfos:[] };
+        data = [];
+        $drawerStore.meta = { ...meta };
         drawerStore.close()
     }
 
@@ -79,7 +100,6 @@
                     complexSource={true}
                     complexTarget={true}
                     isMulti={false}
-                    on:change={() => updateStore()}
                 />
             </div>
             {#if dataset}
@@ -91,6 +111,56 @@
                 <lable>Description</lable>
                 <p class="ml-2">{dataset.description}</p>
             </div>
+                {#if dataStructure}
+                <div class="overflow-x-scroll h-96 mt-2">
+                    <table class="table table-compact bg-tertiary-500/30">
+                        <tr class="bg-primary-300">
+                            {#each dataStructure.columnInfos as columnInfo}
+                                {#if dataset.columnId == columnInfo.id}
+                                <th class="text-left bg-secondary-300 px-1">
+                                
+                                    <RadioItem class="overflow-x-hidden"
+                                        on:change={() => {
+                                        }}
+                                        bind:group={dataset.columnId}
+                                        name={columnInfo.name}
+                                        id={columnInfo.id}
+                                        value={columnInfo.id}>{columnInfo.name}</RadioItem
+                                    >
+                                </th>
+                                {:else}
+                                <th class="text-left px-1">
+                                
+                                    <RadioItem class="overflow-x-hidden"
+                                        on:change={() => {
+                                        }}
+                                        bind:group={dataset.columnId}
+                                        name={columnInfo.name}
+                                        id={columnInfo.id}
+                                        value={columnInfo.id}>{columnInfo.name}</RadioItem
+                                    >
+                                </th>
+                                {/if}
+                            {/each}
+                        </tr>
+                        {#each Object.entries(data) as [rowNr, row]}
+                        <tr>
+                            {#each Object.entries(row) as [varNr, valule]}
+                                {#if "var"+dataset.columnId == varNr}
+                                <td class="text-center bg-secondary-300/30 px-1">
+                                    {valule}
+                                </td>
+                                {:else}
+                                <td class="text-center px-1">
+                                    {valule}
+                                </td>
+                                {/if}
+                            {/each}
+                        </tr>
+                        {/each}
+                    </table>                    
+                </div>
+                {/if}
             {:else}
             <div class="pb-3">
                 <lable>Name</lable>
@@ -123,7 +193,7 @@
                 id="save"
                 on:mouseover={() => {
                     helpStore.show('save');
-                }}><Fa icon={faSave} /></button
+                }}><Fa icon={faArrowUpFromBracket} /></button
             >
         </div>
         

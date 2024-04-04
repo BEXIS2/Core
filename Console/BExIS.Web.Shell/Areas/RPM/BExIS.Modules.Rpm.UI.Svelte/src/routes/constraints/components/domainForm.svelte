@@ -4,37 +4,37 @@
 	import type { DatasetInfo, DomainConstraintListItem } from '../models';
 	import { writable } from 'svelte/store';
 	import * as apiCalls from '../services/apiCalls';
-	import { createEventDispatcher, onMount } from 'svelte';
+	import { onMount } from 'svelte';
 	import suite from './domainForm';
 	import { Drawer, FileButton, getDrawerStore, type DrawerSettings, type DrawerStore } from '@skeletonlabs/skeleton';
 	import Fa from 'svelte-fa';
 	import { faArrowUpFromBracket, faFileImport } from '@fortawesome/free-solid-svg-icons';
 	import papa from 'papaparse';
 	import DatasetImport from './datasetImport.svelte';
-
+	import { each } from 'svelte/internal';
 
 	export let domainConstraint: DomainConstraintListItem;
 
-	const dispatch = createEventDispatcher();
-	let datasets: DatasetInfo[] = [];
-	let dataset: DatasetInfo;
-	let ds: DatasetInfo[] = [];
-	$: datasets = ds;
-	
 	let drawerStore: any;
-	drawerStore = $drawerStore ? $drawerStore : getDrawerStore();
-	$: domainConstraint, $drawerStore.meta.dataset = undefined;
-	$: console.log('domainConstraint', domainConstraint);
+	let ds: DatasetInfo[] = [];
 	let drawerSettings: DrawerSettings;
-	$: drawerSettings = {position: 'right', width: 'w-5/12', meta: { datasets: datasets, dataset: dataset }};
-	$: dataset = $drawerStore.meta && $drawerStore.meta.dataset ? $drawerStore.meta.dataset : null;
+
+	const domainItemsTableStore = writable<string[]>([]);
+	
+	drawerStore = $drawerStore ? $drawerStore : getDrawerStore();
+	$drawerStore.meta = $drawerStore.meta ? $drawerStore.meta : { datasets: undefined, dataset: undefined, import: false};
+	
+	$: $drawerStore.meta.datasets = ds;
+	$: drawerSettings = {position: 'right', width: 'w-6/12', meta: $drawerStore.meta};
+	$: domainConstraint, $drawerStore.meta.dataset = undefined, $drawerStore.meta.import = false;
+	$: $drawerStore.meta.import, importDomainItems();
+	$: domainItemsTableStore.set(setDomainItems(domainConstraint.domain));
 
 	// load form result object
 	let res = suite.get();
 
 	// use to actived save if form is valid
 	$: disabled = !res.isValid();
-	$: dispatch(String(disabled));
 
 	//change event: if input change check also validation only on the field
 	// e.target.id is the id of the input component
@@ -60,19 +60,33 @@
 		}
 	});
 
-	const domainItemsTableStore = writable<string[]>([]);
-	$: domainItemsTableStore.set(setDomainItems(domainConstraint.domain));
-
 	function setDomainItems(domain: string): string[] {
 		let dis: string[] = [];
 		let lines = domain.split('\n');
-		lines.forEach(function (value) {
-			if(value != undefined && value != '' && dis.filter((di) => di === value).length == 0)	
+		lines.forEach(function (line) {
+			if(line != undefined && line != '' && dis.filter((di) => di === line).length == 0)	
 			{
-				dis.push(value);
+				dis.push(line);
 			}
 		});
 		return dis;
+	}
+
+	async function importDomainItems()
+	{
+		if($drawerStore.meta.import && $drawerStore.meta.dataset && $drawerStore.meta.dataset.id > 0)
+		{
+			let data: string[] = [];
+			let column = await apiCalls.GetData($drawerStore.meta.dataset.id, 0, $drawerStore.meta.dataset.columnId);
+
+			for(const [rowNr, row] of Object.entries(column)) 
+			{
+				let value: string[][] = (Object.entries(row as object) as string[][])
+				data.push(value[0][1]);
+			};
+			domainConstraint.domain = joinRows(data);
+			$drawerStore.meta.import = false;
+		} 
 	}
 
 	function fileParser(event: any) {
@@ -117,7 +131,7 @@
 			</div>
 			<div class="inline-block">
 				<!-- svelte-ignore a11y-mouse-events-have-key-events -->
-				{#if datasets.length > 0}
+				{#if ds.length > 0}
 					<button
 						id="importDs"
 						title="Import from Dataset"
@@ -153,7 +167,7 @@
 		<div class="pb-3 row-span-2">
 			<div id="itemstable" class="table-container h-96">
 				<!-- svelte-ignore a11y-mouse-events-have-key-events -->
-				<table class="table w-full table-compact bg-tertiary-200 h-80" on:mouseover={() => {
+				<table class="table w-full table-compact bg-tertiary-500/30 max-h-80" on:mouseover={() => {
 					helpStore.show('domainList');
 				}}>
 					<thead>
@@ -196,7 +210,7 @@
 		</div>		
 	</div>
 {/if}
-{#if datasets.length > 0}
+{#if ds.length > 0}
 	<Drawer>
 		<DatasetImport {drawerStore}/>
 	</Drawer>
