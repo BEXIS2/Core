@@ -2,7 +2,7 @@
 	import { TextInput, TextArea, DropdownKVP, helpStore, CodeEditor } from '@bexis2/bexis2-core-ui';
 
 	import Fa from 'svelte-fa';
-	import { faSave, faXmark, faArrowUpFromBracket } from '@fortawesome/free-solid-svg-icons';
+	import { faSave, faXmark } from '@fortawesome/free-solid-svg-icons';
 
 	import type {
 		ConstraintListItem,
@@ -14,7 +14,6 @@
 	import { onMount } from 'svelte';
 	import * as apiCalls from '../services/apiCalls';
 	import { fade, slide } from 'svelte/transition';
-	import papa from 'papaparse';
 	import DomainForm from './domainForm.svelte';
 	import RangeForm from './rangeForm.svelte';
 	import PatternForm from './patternForm.svelte';
@@ -50,11 +49,23 @@
 	const modalStore = getModalStore();
 	let warning: string = 'Changing the Contstrait may cause inconsistencies in Datasets.';
 
+	//change event: if input change check also validation only on the field
+	// e.target.id is the id of the input component
+	function onChangeHandler(e: any) {
+		//console.log("input changed", e)
+		// add some delay so the entityTemplate is updated
+		// otherwise the values are old
+		setTimeout(async () => {
+			// check changed field
+			res = suite({ constraint: constraint, constraints: constraints }, e);
+		}, 10);
+	}
+
 	onMount(async () => {
 		ct = await apiCalls.GetConstraintTypes();
-		if (constraint.id == 0) {
-			suite.reset();
-		} else {
+		suite.reset();
+		if (constraint.id > 0) 
+		{
 			setTimeout(async () => {
 				res = suite({ constraint: constraint, constraints: constraints }, '');
 			}, 10);
@@ -139,37 +150,6 @@
 				patternConstraint = await apiCalls.GetPatternConstraint(constraint.id);
 			}
 		}
-	}
-
-	function fileParser(event: any) {
-		if (event.target != null) {
-			const fs = event.target.files;
-			for (let f of fs) {
-				papa.parse(f, {
-					skipEmptyLines: true,
-					header: false,
-					complete: function (r) {
-						domainConstraint.domain = joinRows(r.data);
-					}
-				});
-			}
-		}
-	}
-
-	function joinRows(data: any): string {
-		return data.join('\n').trim().replaceAll('\t', '');
-	}
-
-	//change event: if input change check also validation only on the field
-	// e.target.id is the id of the input component
-	function onChangeHandler(e: any) {
-		//console.log("input changed", e)
-		// add some delay so the entityTemplate is updated
-		// otherwise the values are old
-		setTimeout(async () => {
-			// check changed field
-			res = suite({ constraint: constraint, constraints: constraints }, e.target.id);
-		}, 10);
 	}
 
 	function submit() {
@@ -290,13 +270,16 @@
 			<div class="pb-3 col-span-2">
 				<!-- svelte-ignore a11y-label-has-associated-control -->
 				<label>Formal Description</label>
-				<p>
+				
 					{#if constraint.formalDescription && constraint.formalDescription != ''}
+					<p class="ml-2">
 						{constraint.formalDescription}
+					</p>
 					{:else}
+					<p class="ml-2 text-surface-600">
 						Will be generate by the System
+					</p>
 					{/if}
-				</p>
 			</div>
 
 			<div class="pb-3" title="Type">
@@ -318,28 +301,7 @@
 							helpStore.show('constraintTypes');
 						}}>Constraint Type</label
 					>
-					<p>{constraint.type}</p>
-				{/if}
-			</div>
-
-			<div class="pb-3 text-right mt-7" title="Upload CSV">
-				{#if constraint.type == 'Domain'}
-					<div in:fade out:fade>
-						<!-- svelte-ignore a11y-mouse-events-have-key-events -->
-						<FileButton
-							id="uploadCsv"
-							title="Upload CSV"
-							button="btn variant-filled-secondary h-9 w-16 shadow-md"
-							name="uploadCsv"
-							on:change={fileParser}
-							><Fa
-								icon={faArrowUpFromBracket}
-								on:mouseover={() => {
-									helpStore.show('uploadCsv');
-								}}
-							/>
-						</FileButton>
-					</div>
+					<p class="ml-2">{constraint.type}</p>
 				{/if}
 			</div>
 

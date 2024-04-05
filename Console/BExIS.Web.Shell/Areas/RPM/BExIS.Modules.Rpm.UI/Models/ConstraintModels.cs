@@ -243,15 +243,52 @@ namespace BExIS.Modules.Rpm.UI.Models
         }
     }
 
-    public class DatasetInfo
+    public class Info
     {
         public long Id { get; set; }
         public string Name { get; set; }
+        public string Description { get; set; }
+
+        public Info()
+        {
+            Id = 0;
+            Name = string.Empty;
+            Description = string.Empty;
+        }
+    }
+
+    public class DatasetInfo : Info
+    {
+        public long DatastructureId { get; set; }
 
         public DatasetInfo() 
         { 
-            Id = 0;
-            Name = string.Empty;
+            DatastructureId = 0;
+        }
+    }
+
+    public class DatastructureInfo : Info
+    {
+        public List<ColumnInfo> ColumnInfos = new List<ColumnInfo>();
+        public DatastructureInfo()
+        {
+            ColumnInfos = new List<ColumnInfo>();
+        }
+    }
+
+    public class ColumnInfo : Info
+    {
+        public long VariableId { get; set; }
+        public string Unit { get; set; }
+        public string DataType { get; set; }
+        public int OrderNo { get; set; }
+
+        public ColumnInfo()
+        {
+            VariableId = 0;
+            Unit = string.Empty;
+            DataType = string.Empty;
+            OrderNo = 0;
         }
     }
 }

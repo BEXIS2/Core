@@ -59,7 +59,26 @@ export interface ConstraintValidationResult {
 	constraintListItem: ConstraintListItem;
 }
 
-export interface DatasetInfo {
+export interface Info {
 	id: number;
 	name: string;
+	description: string;
+}
+
+export interface DatasetInfo extends Info {
+	datastructureId?: number;
+}
+
+export interface DatasetImportInfo extends DatasetInfo{
+	columnId?: number;
+}
+
+export interface DatastructureInfo extends Info {
+    columnInfos: ColumnInfo[];
+}
+
+export interface ColumnInfo extends Info {
+    orderNr: number;
+	unit: string;
+    dataType: string;
 }
