@@ -115,8 +115,9 @@
 
 {#if domainConstraint}
 	<div class="grid grid-cols-2 gap-x-5 h-96" in:slide out:slide>
-		<div class="py-1 text-right" title="Import">
+		<div class="py-1 text-right" title="Upload File">
 			<!-- svelte-ignore a11y-mouse-events-have-key-events -->
+			<!-- svelte-ignore a11y-no-static-element-interactions -->
 			<div class="inline-block" on:mouseover={() => {
 				helpStore.show('uploadCsv');
 			}}>
@@ -189,6 +190,7 @@
 			</div>
 		</div>
 		<!-- svelte-ignore a11y-mouse-events-have-key-events -->
+		<!-- svelte-ignore a11y-no-static-element-interactions -->
 		<div class="pb-3"
 		on:mouseover={() => {
 			helpStore.show('domain');

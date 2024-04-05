@@ -6,6 +6,7 @@
 	import { RadioItem, RadioGroup, type DrawerStore } from "@skeletonlabs/skeleton";
 	import { createEventDispatcher, onMount } from "svelte";
 	import * as apiCalls from '../services/apiCalls';
+	import { slide } from "svelte/transition";
 
     export let drawerStore: DrawerStore;
 
@@ -82,6 +83,7 @@
 <div class="w-9/10 m-5 left-1/20">
     <div class="mb-2">
         <!-- svelte-ignore a11y-click-events-have-key-events -->
+        <!-- svelte-ignore a11y-no-static-element-interactions -->
         <span class="text-surface-600" on:click={() => drawerStore.close()}>
             <Fa icon={faXmark} />
         </span>
@@ -116,37 +118,38 @@
                 <p class="ml-2">{dataset.description}</p>
             </div>
                 {#if dataStructure}
-                <div class="overflow-x-scroll h-96 mt-2">
-                    <table class="table table-compact bg-tertiary-500/30">
-                        <tr class="bg-primary-300">
-                            {#each dataStructure.columnInfos as columnInfo}
-                                {#if dataset.columnId == columnInfo.id}
-                                <th class="text-left bg-secondary-300 px-1">
-                                
-                                    <RadioItem class="overflow-x-hidden"
-                                        on:change={() => {
-                                        }}
-                                        bind:group={dataset.columnId}
-                                        name={columnInfo.name}
-                                        id={columnInfo.id}
-                                        value={columnInfo.id}>{columnInfo.name}</RadioItem
-                                    >
-                                </th>
-                                {:else}
-                                <th class="text-left px-1">
-                                
-                                    <RadioItem class="overflow-x-hidden"
-                                        on:change={() => {
-                                        }}
-                                        bind:group={dataset.columnId}
-                                        name={columnInfo.name}
-                                        id={columnInfo.id}
-                                        value={columnInfo.id}>{columnInfo.name}</RadioItem
-                                    >
-                                </th>
-                                {/if}
-                            {/each}
-                        </tr>
+                <div class="overflow-x-scroll h-96 mt-2" in:slide out:slide>
+                    <table class="table table-compact bg-tertiary-500/30" in:slide out:slide>
+                            <tr class="bg-primary-300 h-10">
+                                {#each dataStructure.columnInfos as columnInfo}
+                                    {#if dataset.columnId == columnInfo.id}
+                                    <th class="text-left bg-secondary-300 px-1">
+                                    
+                                        <RadioItem class="clip rounded variant-soft-secondary overflow-hidden w-full shadow-md"
+                                            on:change={() => {
+                                            }}
+                                            bind:group={dataset.columnId}
+                                            name={columnInfo.name}
+                                            id={columnInfo.id}
+                                            value={columnInfo.id}>{columnInfo.name}
+                                            </RadioItem
+                                        >
+                                    </th>
+                                    {:else}
+                                    <th class="text-left px-1">
+                                    
+                                        <RadioItem class="clip rounded variant-filled-primary overflow-hidden w-full shadow-md"
+                                            on:change={() => {
+                                            }}
+                                            bind:group={dataset.columnId}
+                                            name={columnInfo.name}
+                                            id={columnInfo.id}
+                                            value={columnInfo.id}>{columnInfo.name}</RadioItem
+                                        >
+                                    </th>
+                                    {/if}
+                                {/each}
+                            </tr>
                         {#each Object.entries(data) as [rowNr, row]}
                         <tr>
                             {#each Object.entries(row) as [varNr, valule]}
@@ -162,7 +165,8 @@
                             {/each}
                         </tr>
                         {/each}
-                    </table>                    
+                    </table>
+                    <lable class="text-right">Click on the header to select a column.</lable>                                
                 </div>
                 {/if}
             {:else}

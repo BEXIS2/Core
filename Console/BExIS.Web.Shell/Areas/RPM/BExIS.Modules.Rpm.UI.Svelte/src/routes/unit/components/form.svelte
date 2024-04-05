@@ -231,6 +231,7 @@
 									<div class="text-right">
 										<!-- svelte-ignore a11y-click-events-have-key-events -->
 										<!-- svelte-ignore a11y-mouse-events-have-key-events -->
+										<!-- svelte-ignore a11y-no-static-element-interactions -->
 										<div
 											transition:fade
 											class="badge variant-filled-tertiary rounded-xl shadow-md w-7 h-7"
@@ -298,6 +299,7 @@
 				</div>
 
 				<!-- svelte-ignore a11y-mouse-events-have-key-events -->
+				<!-- svelte-ignore a11y-no-static-element-interactions -->
 				<div
 					class="pb-3"
 					title="Measurement System"

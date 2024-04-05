@@ -58,6 +58,7 @@
 {#if patternConstraint}
 	<div class="grid grid-cols-3 gap-5" in:slide out:slide>
 		<!-- svelte-ignore a11y-mouse-events-have-key-events -->
+		<!-- svelte-ignore a11y-no-static-element-interactions -->
 		<div
 			class="pb-3"
 			on:mouseover={() => {
@@ -79,6 +80,7 @@
 			<TextInput id="example" label="Example" help={true} bind:value={example} />
 		</div>
 		<!-- svelte-ignore a11y-mouse-events-have-key-events -->
+		<!-- svelte-ignore a11y-no-static-element-interactions -->
 		<div
 			class="pb-3"
 			on:mouseover={() => {
