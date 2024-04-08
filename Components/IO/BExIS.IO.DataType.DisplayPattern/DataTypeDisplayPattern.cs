@@ -54,7 +54,7 @@ namespace BExIS.IO.DataType.DisplayPattern
         public static DataTypeDisplayPattern Get(int id)
         {
 
-            if (id <= 0) return null;
+            if (id < 0) return null;
 
             return displayPatterns.Where(p => p.Id.Equals(id)).FirstOrDefault();
         }

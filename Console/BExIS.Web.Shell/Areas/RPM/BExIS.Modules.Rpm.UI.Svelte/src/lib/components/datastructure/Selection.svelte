@@ -495,7 +495,7 @@
 				<div class="controls"><Controls /></div>
 			</div>
 
-			<div id="preview data" class="flex-col py-5">
+			<div id="preview data" class="flex-col py-5 ">
 				<div id="data infos" class="flex flex-auto gap-5 pb-2">
 					<label><b>Total:</b> {model.total}</label>
 					<label><b>Found:</b> {model.total - model.skipped}</label>
@@ -503,6 +503,7 @@
 					<label class="grow text-right"><i>you see only the first 10 rows of the data</i> </label>
 				</div>
 
+				<div class="overflow-x-auto">
 				<table class="table table-compact" on:contextmenu={(e) => e.preventDefault()}>
 					<tbody>
 						{#each model.preview as row, r}
@@ -546,6 +547,7 @@
 						{/each}
 					</tbody>
 				</table>
+			</div>
 			</div>
 		</div>
 	</form>
