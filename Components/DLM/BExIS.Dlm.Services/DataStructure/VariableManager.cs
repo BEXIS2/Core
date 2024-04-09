@@ -606,7 +606,7 @@ namespace BExIS.Dlm.Services.DataStructure
 
                             while (placeholders.Contains(temp.ToString(format)))
                             {
-                                temp = temp++;
+                                temp += 1;
                             }
 
                             return temp.ToString(format);
