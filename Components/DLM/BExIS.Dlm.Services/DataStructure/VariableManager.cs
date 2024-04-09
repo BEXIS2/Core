@@ -602,6 +602,13 @@ namespace BExIS.Dlm.Services.DataStructure
                         try
                         {
                             int temp = DateTime.Now.Ticks.GetHashCode();
+                            List<string> placeholders = missingValues.Select(mv => mv.Placeholder).ToList();
+
+                            while (placeholders.Contains(temp.ToString(format)))
+                            {
+                                temp = temp++;
+                            }
+
                             return temp.ToString(format);
                         }
                         catch
