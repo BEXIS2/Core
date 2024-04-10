@@ -31,6 +31,7 @@ using System.Web.Http.Description;
 using System.Web.Http.ModelBinding;
 using System.Web.UI.WebControls;
 using Telerik.Web.Mvc;
+using Telerik.Web.Mvc.Extensions;
 
 namespace BExIS.Modules.Ddm.UI.Controllers
 {
@@ -258,7 +259,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
             {
                 DataTableColumn column = new DataTableColumn();
                 column.Column = variable.Label;
-                column.Key = variable.Label.ToLower();
+                column.Key = variable.Label.ToCamelCase();
 
                 // set display Pattern
                 if (variable.DisplayPatternId > 0)
