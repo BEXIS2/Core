@@ -213,6 +213,22 @@ namespace BExIS.Modules.Rpm.UI.Controllers
         [HttpPost]
         public JsonResult EditDomainConstraint(EditDomainConstraintModel constraintListItem)
         {
+            string username = null;
+            User user = null;
+
+            using (UserManager userManager = new UserManager())
+            {
+                try
+                {
+                    username = HttpContext.User.Identity.Name;
+                    user = userManager.FindByNameAsync(username).Result;
+                }
+                catch
+                {
+                    user = null;
+                }
+            }
+
             ValidationResult validationResult = new ValidationResult
             {
                 IsValid = false,
@@ -244,7 +260,15 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                                 Description = constraintListItem.Description,
                                 Negated = constraintListItem.Negated,
                                 Items = DomainConverter.convertDomainToDomainItems(constraintListItem.Domain),
+                                ConstraintSelectionPredicate = constraintListItem.SelectionPredicate != null ? constraintListItem.SelectionPredicate.GetJson() : null,
                             };
+
+                            if (!String.IsNullOrEmpty(constraintListItem.Provider))
+                                dc.Provider = (ConstraintProviderSource)Enum.Parse(typeof(ConstraintProviderSource), constraintListItem.Provider);
+
+                            if (user != null)
+                                dc.LastModifiedUserRef = user.Id;
+
                             dc = constraintManager.Create(dc);
                         }
                         else
@@ -254,9 +278,17 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                             dc.Description = constraintListItem.Description;
                             dc.Negated = constraintListItem.Negated;
                             dc.Items = DomainConverter.convertDomainToDomainItems(constraintListItem.Domain);
+                            dc.ConstraintSelectionPredicate = constraintListItem.SelectionPredicate != null ? constraintListItem.SelectionPredicate.GetJson() : null;
+
+                            if (!String.IsNullOrEmpty(constraintListItem.Provider))
+                                dc.Provider = (ConstraintProviderSource)Enum.Parse(typeof(ConstraintProviderSource), constraintListItem.Provider);
+
+                            if (user != null)
+                                dc.LastModifiedUserRef = user.Id;
 
                             dc = constraintManager.Update(dc);
                         }
+                        ConstraintSelectionPredicate selectionPredicate = new ConstraintSelectionPredicate();
                         constraintListItem = new EditDomainConstraintModel()
                         {
                             Id = dc.Id,
@@ -265,6 +297,8 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                             Description = dc.Description,
                             Negated = dc.Negated,
                             Domain = DomainConverter.convertDomainItemsToDomain(dc.Items),
+                            Provider = dc.Provider != null ? dc.Provider.ToString() : null,
+                            SelectionPredicate = dc.ConstraintSelectionPredicate != null ? selectionPredicate.Materialise(dc.ConstraintSelectionPredicate) : null,
                             InUse = false
                         };
 
@@ -283,6 +317,22 @@ namespace BExIS.Modules.Rpm.UI.Controllers
         [HttpPost]
         public JsonResult EditRangeConstraint(EditRangeConstraintModel constraintListItem)
         {
+            string username = null;
+            User user = null;
+
+            using (UserManager userManager = new UserManager())
+            {
+                try
+                {
+                    username = HttpContext.User.Identity.Name;
+                    user = userManager.FindByNameAsync(username).Result;
+                }
+                catch
+                {
+                    user = null;
+                }
+            }
+
             ValidationResult validationResult = new ValidationResult
             {
                 IsValid = false,
@@ -318,6 +368,10 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                                 LowerboundIncluded = constraintListItem.LowerboundIncluded,
                                 UpperboundIncluded = constraintListItem.UpperboundIncluded
                             };
+
+                            if (user != null)
+                                rc.LastModifiedUserRef = user.Id;
+
                             rc = constraintManager.Create(rc);
                         }
                         else
@@ -330,6 +384,9 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                             rc.Upperbound = constraintListItem.Upperbound;
                             rc.LowerboundIncluded = constraintListItem.LowerboundIncluded;
                             rc.UpperboundIncluded = constraintListItem.UpperboundIncluded;
+
+                            if (user != null)
+                                rc.LastModifiedUserRef = user.Id;
 
                             rc = constraintManager.Update(rc);
                         }
@@ -362,6 +419,22 @@ namespace BExIS.Modules.Rpm.UI.Controllers
         [HttpPost]
         public JsonResult EditPatternConstraint(EditPatternConstraintModel constraintListItem)
         {
+            string username = null;
+            User user = null;
+
+            using (UserManager userManager = new UserManager())
+            {
+                try
+                {
+                    username = HttpContext.User.Identity.Name;
+                    user = userManager.FindByNameAsync(username).Result;
+                }
+                catch
+                {
+                    user = null;
+                }
+            }
+
             ValidationResult validationResult = new ValidationResult
             {
                 IsValid = false,
@@ -394,6 +467,10 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                                 Negated = constraintListItem.Negated,
                                 MatchingPhrase = constraintListItem.pattern
                             };
+
+                            if (user != null)
+                                pc.LastModifiedUserRef = user.Id;
+
                             pc = constraintManager.Create(pc);
                         }
                         else
@@ -403,6 +480,9 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                             pc.Description = constraintListItem.Description;
                             pc.Negated = constraintListItem.Negated;
                             pc.MatchingPhrase = constraintListItem.pattern;
+
+                            if (user != null)
+                                pc.LastModifiedUserRef = user.Id;
 
                             pc = constraintManager.Update(pc);
                         }
@@ -487,7 +567,6 @@ namespace BExIS.Modules.Rpm.UI.Controllers
 
         private ValidationResult ConstraintValidation(List<Dlm.Entities.DataStructure.Constraint> constraints, EditPatternConstraintModel constaint)
         {
-
             ValidationResult result = ConstraintValidation(constraints.Cast<Dlm.Entities.DataStructure.Constraint>().ToList(), (EditConstraintModel)constaint);
             return result;
         }
@@ -537,6 +616,8 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                                         Id = ds.Id,
                                         Name = String.IsNullOrEmpty(ds.Versions.OrderBy(dv => dv.Id).Last().Title) ? "no Title" : ds.Versions.OrderBy(dv => dv.Id).Last().Title,
                                         Description = String.IsNullOrEmpty(ds.Versions.OrderBy(dv => dv.Id).Last().Description) ? "no Description" : ds.Versions.OrderBy(dv => dv.Id).Last().Description,
+                                        DatasetVersionId = ds.Versions.OrderBy(dv => dv.Id).Last().Id,
+                                        DatasetVersionNumber = ds.Versions.OrderBy(dv => dv.Id).Last().VersionNo,
                                         DatastructureId = ds.DataStructure.Id,
                                     };
                                     datasetInfos.Add(dsi);
@@ -652,6 +733,13 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                 }
             }
             return Json(dt, JsonRequestBehavior.AllowGet);
+        }
+
+        [JsonNetFilter]
+        [HttpGet]
+        public JsonResult GetProvider()
+        {
+            return Json(Enum.GetNames(typeof(ConstraintProviderSource)).ToList(), JsonRequestBehavior.AllowGet);
         }
     }
 }

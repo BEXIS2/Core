@@ -146,3 +146,13 @@ export const GetData = async (id: number, pagesize: number = 10, variableid: num
 		throw error;
 	}
 };
+
+export const GetProvider = async () => {
+	try {
+		const response = await Api.get('/rpm/constraints/GetProvider');
+		return response.data;
+	} catch (error) {
+		console.error(error);
+		throw error;
+	}
+};
