@@ -15,43 +15,21 @@ export interface ConstraintListItem {
 	lastModified?: string;
 }
 
-export interface DomainConstraintListItem {
-	id: number;
-	version: number;
-	name: string;
-	description: string;
-	formalDescription: string;
-	domain: string;
-	negated: boolean;
-	inUse: boolean;
-	variableIDs: number[];
+export interface DomainConstraintListItem extends ConstraintListItem {
+    domain: string;
+    provider: string;
+    selectionPredicate?: ConstraintSelectionPredicate;
 }
 
-export interface RangeConstraintListItem {
-	id: number;
-	version: number;
-	name: string;
-	description: string;
-	formalDescription: string;
+export interface RangeConstraintListItem extends ConstraintListItem {
 	lowerbound: number;
 	upperbound: number;
 	lowerboundIncluded: boolean;
 	upperboundIncluded: boolean;
-	negated: boolean;
-	inUse: boolean;
-	variableIDs: number[];
 }
 
-export interface PatternConstraintListItem {
-	id: number;
-	version: number;
-	name: string;
-	description: string;
-	formalDescription: string;
+export interface PatternConstraintListItem extends ConstraintListItem {
 	pattern: string;
-	negated: boolean;
-	inUse: boolean;
-	variableIDs: number[];
 }
 
 export interface ConstraintValidationResult {
@@ -66,11 +44,13 @@ export interface Info {
 }
 
 export interface DatasetInfo extends Info {
-	datastructureId?: number;
+    datasetVersionId: number;
+    datasetVersionNumber: number;
+    datastructureId: number;
 }
 
 export interface DatasetImportInfo extends DatasetInfo{
-	columnId?: number;
+	varId?: number;
 }
 
 export interface DatastructureInfo extends Info {
@@ -81,4 +61,13 @@ export interface ColumnInfo extends Info {
     orderNr: number;
 	unit: string;
     dataType: string;
+}
+
+export interface ConstraintSelectionPredicate {
+    datasetId: number;
+    datasetVersionId: number;
+    datasetVersionNumber: number;
+    tagId: number;
+    variableId: number;
+    url: string;
 }

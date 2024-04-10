@@ -43,10 +43,10 @@
         {
             load(dataset);
 
-            if(dataset.columnId == undefined || (meta.dataset && dataset.id != meta.dataset.id))
-                dataset.columnId = 0;            
+            if(dataset.varId == undefined || (meta.dataset && dataset.id != meta.dataset.id))
+                dataset.varId = 0;            
             
-            if(dataset.columnId && dataset.columnId > 0)
+            if(dataset.varId && dataset.varId > 0)
                 disable = false;
         }
         meta.dataset = dataset;           
@@ -122,13 +122,13 @@
                     <table class="table table-compact bg-tertiary-500/30" in:slide out:slide>
                             <tr class="bg-primary-300 h-10">
                                 {#each dataStructure.columnInfos as columnInfo}
-                                    {#if dataset.columnId == columnInfo.id}
+                                    {#if dataset.varId == columnInfo.id}
                                     <th class="text-left bg-secondary-300 px-1">
                                     
                                         <RadioItem class="clip rounded variant-soft-secondary overflow-hidden w-full shadow-md"
                                             on:change={() => {
                                             }}
-                                            bind:group={dataset.columnId}
+                                            bind:group={dataset.varId}
                                             name={columnInfo.name}
                                             id={columnInfo.id}
                                             value={columnInfo.id}>{columnInfo.name}
@@ -141,7 +141,7 @@
                                         <RadioItem class="clip rounded variant-filled-primary overflow-hidden w-full shadow-md"
                                             on:change={() => {
                                             }}
-                                            bind:group={dataset.columnId}
+                                            bind:group={dataset.varId}
                                             name={columnInfo.name}
                                             id={columnInfo.id}
                                             value={columnInfo.id}>{columnInfo.name}</RadioItem
@@ -153,7 +153,7 @@
                         {#each Object.entries(data) as [rowNr, row]}
                         <tr>
                             {#each Object.entries(row) as [varNr, valule]}
-                                {#if "var"+dataset.columnId == varNr}
+                                {#if "var"+dataset.varId == varNr}
                                 <td class="text-center bg-secondary-300/30 px-1">
                                     {valule}
                                 </td>

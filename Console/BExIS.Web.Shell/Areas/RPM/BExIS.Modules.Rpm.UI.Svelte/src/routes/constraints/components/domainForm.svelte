@@ -11,6 +11,7 @@
 	import { faArrowUpFromBracket, faFileImport } from '@fortawesome/free-solid-svg-icons';
 	import papa from 'papaparse';
 	import DatasetImport from './datasetImport.svelte';
+	import { variableTemplateHelp } from '../../variabletemplate/help';
 
 	export let domainConstraint: DomainConstraintListItem;
 
@@ -81,7 +82,11 @@
 		{
 			$drawerStore.meta.import = false;
 			let data: string[] = [];
-			let column = await apiCalls.GetData($drawerStore.meta.dataset.id, 0, $drawerStore.meta.dataset.columnId);
+			let column = await apiCalls.GetData($drawerStore.meta.dataset.id, 0, $drawerStore.meta.dataset.varId);
+			let provider: string[] = await apiCalls.GetProvider();
+			
+			domainConstraint.provider = provider[0];
+			domainConstraint.selectionPredicate = { datasetId: $drawerStore.meta.dataset.id, datasetVersionId:  $drawerStore.meta.dataset.datasetVersionId, datasetVersionNumber: $drawerStore.meta.dataset.datasetVersionNumber, tagId: 0, variableId: $drawerStore.meta.dataset.varId, url:'' };
 
 			for(const [rowNr, row] of Object.entries(column)) 
 			{

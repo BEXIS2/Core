@@ -81,10 +81,13 @@
 					name: constraint.name,
 					description: constraint.description,
 					formalDescription: constraint.formalDescription,
+					type: constraint.type,
 					domain: '',
 					negated: constraint.negated,
 					inUse: constraint.inUse,
-					variableIDs: constraint.variableIDs
+					variableIDs: constraint.variableIDs,
+					provider: '',
+					selectionPredicate: undefined,
 				};
 				if (domainConstraint.id != 0) {
 					domainConstraint = await apiCalls.GetDomainConstraint(constraint.id);
@@ -106,6 +109,7 @@
 					name: constraint.name,
 					description: constraint.description,
 					formalDescription: constraint.formalDescription,
+					type: constraint.type,
 					lowerbound: 0,
 					upperbound: 0,
 					lowerboundIncluded: true,
@@ -113,6 +117,7 @@
 					negated: constraint.negated,
 					inUse: constraint.inUse,
 					variableIDs: constraint.variableIDs
+					
 				};
 				if (rangeConstraint.id != 0) {
 					rangeConstraint = await apiCalls.GetRangeConstraint(constraint.id);
@@ -134,6 +139,7 @@
 					name: constraint.name,
 					description: constraint.description,
 					formalDescription: constraint.formalDescription,
+					type: constraint.type,
 					pattern: '',
 					negated: constraint.negated,
 					inUse: constraint.inUse,

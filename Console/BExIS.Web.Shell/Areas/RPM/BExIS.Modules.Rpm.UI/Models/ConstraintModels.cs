@@ -1,8 +1,11 @@
-﻿using BExIS.Dlm.Entities.DataStructure;
+﻿using BExIS.Dlm.Entities.Data;
+using BExIS.Dlm.Entities.DataStructure;
 using BExIS.UI.Models;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Policy;
 
 namespace BExIS.Modules.Rpm.UI.Models
 {
@@ -58,9 +61,14 @@ namespace BExIS.Modules.Rpm.UI.Models
     public class ReadDomainConstraintModel : ReadConstraintModel
     {
         public string Domain { get; set; }
+        public string Provider { get; set; }
+        public ConstraintSelectionPredicate SelectionPredicate { get; set; }
+
 
         public static ReadDomainConstraintModel Convert(DomainConstraint constraint)
         {
+            ConstraintSelectionPredicate selectionPredicate = new ConstraintSelectionPredicate();
+
             return new ReadDomainConstraintModel()
             {
                 Id = constraint.Id,
@@ -71,8 +79,10 @@ namespace BExIS.Modules.Rpm.UI.Models
                 Negated = constraint.Negated,
                 InUse = constraint.DataContainer != null && constraint.DataContainer.Id > 0 || constraint.VariableConstraints.Any(),
                 VariableIDs = constraint.VariableConstraints.Select(v => v.Id).ToList(),
-                Domain = DomainConverter.convertDomainItemsToDomain(constraint.Items)
-            };
+                Domain = DomainConverter.convertDomainItemsToDomain(constraint.Items),
+                Provider = constraint.Provider != null ? constraint.Provider.ToString() : null,
+                SelectionPredicate = constraint.ConstraintSelectionPredicate != null ? selectionPredicate.Materialise(constraint.ConstraintSelectionPredicate) : null,
+        };
         }
     }
 
@@ -144,6 +154,8 @@ namespace BExIS.Modules.Rpm.UI.Models
     public class EditDomainConstraintModel : EditConstraintModel
     {
         public string Domain { get; set; }
+        public string Provider { get; set; }
+        public ConstraintSelectionPredicate SelectionPredicate { get; set; }
     }
 
     public class EditRangeConstraintModel : EditConstraintModel
@@ -259,10 +271,14 @@ namespace BExIS.Modules.Rpm.UI.Models
 
     public class DatasetInfo : Info
     {
+        public long DatasetVersionId { get; set; }
+        public long DatasetVersionNumber { get; set; }
         public long DatastructureId { get; set; }
 
         public DatasetInfo() 
-        { 
+        {
+            DatasetVersionId = 0;
+            DatasetVersionNumber = 0;
             DatastructureId = 0;
         }
     }
