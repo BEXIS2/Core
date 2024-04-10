@@ -1,6 +1,7 @@
 ﻿using BExIS.Dlm.Entities.Data;
 using BExIS.Dlm.Entities.DataStructure;
 using BExIS.IO.Transform.Validation.DSValidation;
+using DocumentFormat.OpenXml.Spreadsheet;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -250,19 +251,7 @@ namespace BExIS.IO.Transform.Output
 
                     if (vv != null && vv.Value != null)
                     {
-                        // checking for display pattern
-                        string format = GetStringFormat(variable.DisplayPatternId);
-                        if (!string.IsNullOrEmpty(format))
-                        {
-                            value = GetFormatedValue(vv.Value, dataType, format);
-                        }
-                        else value = vv.Value.ToString();
-
-                        // check if the value is a missing value and should be replaced
-                        if (variable.MissingValues.Any(mv => mv.Placeholder.Equals(value)))
-                        {
-                            value = variable.MissingValues.FirstOrDefault(mv => mv.Placeholder.Equals(value)).DisplayName;
-                        }
+                        value = formatValue(vv.Value, variable.DataType, variable.DisplayPatternId, GetStringFormat(variable.DisplayPatternId), variable.MissingValues);
 
                         // Add value to row
                         line[i] = escapeValue(value);
@@ -309,22 +298,7 @@ namespace BExIS.IO.Transform.Output
 
                     if (variable != null)
                     {
-                        string originalValue = value; //prepare to check against the missing values 
-                        //checking for display pattern
-                        Dlm.Entities.DataStructure.DataType dataType = variable.DataType;
-                        string format = GetStringFormat(variable.DisplayPatternId);
-                        if (!string.IsNullOrEmpty(format))
-                        {
-                            value = GetFormatedValue(value, dataType, format);
-                        }
-                        else value = value.ToString();
-
-                        // checking for missing values against the original value
-                        if (variable.MissingValues.Any(mv => mv.Placeholder.Equals(originalValue)))
-                        {
-                            value = variable.MissingValues.FirstOrDefault(mv => mv.Placeholder.Equals(originalValue)).DisplayName;
-                        }
-
+                        value = formatValue(value, variable.DataType, variable.DisplayPatternId, GetStringFormat(variable.DisplayPatternId), variable.MissingValues);
                     }
                     // add value to row
                     line[j] = escapeValue(value);
@@ -351,19 +325,7 @@ namespace BExIS.IO.Transform.Output
 
                 if (variable != null)
                 {
-                    //checking for display pattern
-                    Dlm.Entities.DataStructure.DataType dataType = variable.DataType;
-                    string format = GetStringFormat(variable.DisplayPatternId);
-                    if (!string.IsNullOrEmpty(format))
-                    {
-                        value = GetFormatedValue(value, dataType, format);
-                    }
-                    else value = value.ToString();
-
-                    if (variable.MissingValues.Any(mv => mv.Placeholder.Equals(value)))
-                    {
-                        value = variable.MissingValues.FirstOrDefault(mv => mv.Placeholder.Equals(value)).DisplayName;
-                    }
+                    value = formatValue(value, variable.DataType, variable.DisplayPatternId, GetStringFormat(variable.DisplayPatternId), variable.MissingValues);
                 }
                 newRow.Add(value);
             }
@@ -405,6 +367,34 @@ namespace BExIS.IO.Transform.Output
                 value = "\"" + value.Replace("\"", "\"\"") + "\"";
             }
             return value;
+        }
+
+        /// <summary>
+        /// convert value to format or replace as missing value
+        /// </summary>
+        /// <param name="v"></param>
+        /// <param name="dataType"></param>
+        /// <param name="displayPatternId"></param>
+        /// <param name="format"></param>
+        /// <param name="missingValues"></param>
+        /// <returns></returns>
+        private string formatValue(object v, Dlm.Entities.DataStructure.DataType dataType, long displayPatternId, string format, ICollection<MissingValue> missingValues )
+        {
+            string originalValue = v.ToString(); //prepare to check against the missing values 
+                                          //checking for display pattern
+            if (!string.IsNullOrEmpty(format))
+            {
+                v = GetFormatedValue(v, dataType, format);
+            }
+            else v = v.ToString();
+
+            // checking for missing values against the original value
+            if (missingValues.Any(mv => mv.Placeholder.Equals(originalValue)))
+            {
+                v = missingValues.FirstOrDefault(mv => mv.Placeholder.Equals(originalValue)).DisplayName;
+            }
+
+            return v.ToString();
         }
 
         #endregion helper
