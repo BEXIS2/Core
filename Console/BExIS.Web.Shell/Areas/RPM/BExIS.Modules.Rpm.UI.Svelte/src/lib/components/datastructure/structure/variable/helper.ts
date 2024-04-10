@@ -5,7 +5,7 @@ import type { templateListItemType, unitListItemType } from '../../types';
 
 export function updateDisplayPattern(type, reset = true) {
 	// currently only date, date tim e and time is use with display pattern.
-	// however the serve only now datetime so we need to preselect the possible display pattern to date, time and datetime
+	// however the serve only now date time so we need to preselect the possible display pattern to date, time and date time
 	const allDisplayPattern = get(displayPatternStore);
 	let displayPattern: listItemType[];
 

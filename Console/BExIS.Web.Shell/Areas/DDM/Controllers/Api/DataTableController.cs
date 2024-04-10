@@ -157,12 +157,12 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                             {
                                 // apply selection and projection
                                 long count = datasetManager.GetDataTuplesCount(datasetVersion.Id);
-                                recieveModel.Count = count;
-
                                 if(count==0) return Request.CreateErrorResponse(HttpStatusCode.BadRequest, "There is no data for the dataset.");
 
                                 dt = datasetManager.GetLatestDatasetVersionTuples(id, filter, orderBy, null, command.Q, pageNumber, pageSize);
                                 dt.Strip();
+
+                                recieveModel.Count = datasetManager.RowCount(id, filter); // row count after filter
 
                                 // replace column name to caption
                                 for (int i = 0; i < dt.Columns.Count; i++)

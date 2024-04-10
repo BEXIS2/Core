@@ -309,6 +309,7 @@ namespace BExIS.IO.Transform.Output
 
                     if (variable != null)
                     {
+                        string originalValue = value; //prepare to check against the missing values 
                         //checking for display pattern
                         Dlm.Entities.DataStructure.DataType dataType = variable.DataType;
                         string format = GetStringFormat(variable.DisplayPatternId);
@@ -318,11 +319,10 @@ namespace BExIS.IO.Transform.Output
                         }
                         else value = value.ToString();
 
-                        // checking for missing values
-                        if (variable.MissingValues.Any(mv => mv.Placeholder.Equals(value)))
+                        // checking for missing values against the original value
+                        if (variable.MissingValues.Any(mv => mv.Placeholder.Equals(originalValue)))
                         {
-
-                            value = variable.MissingValues.FirstOrDefault(mv => mv.Placeholder.Equals(value)).DisplayName;
+                            value = variable.MissingValues.FirstOrDefault(mv => mv.Placeholder.Equals(originalValue)).DisplayName;
                         }
 
                     }

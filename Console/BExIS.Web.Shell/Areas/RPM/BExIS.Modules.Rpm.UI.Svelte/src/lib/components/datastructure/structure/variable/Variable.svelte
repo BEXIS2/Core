@@ -125,7 +125,7 @@
 
 	//change event: if input change check also validation only on the field
 	// e.target.id is the id of the input component
-	function onChangeHandler(e) {
+	function onChangeHandler(e:any) {
 		// add some delay so the entityTemplate is updated
 		// otherwise the values are old
 		setTimeout(async () => {
@@ -137,7 +137,7 @@
 
 	//change event: if select change check also validation only on the field
 	// *** is the id of the input component
-	function onSelectHandler(e, id) {
+	function onSelectHandler(e:any, id:string) {
 
 		setTimeout(async () => {
 			res = suite(variable, id);
@@ -160,9 +160,7 @@
 
 						if(variable.unit == undefined || variable.unit == "")
 						{
-							console.log("🚀 ~ onChange ~ e.detail:", e.detail)
 							variable.unit = updateUnit(e.detail);
-							console.log("🚀 ~ e.detail ~ variable.unit:", variable.unit)
 						}
 
 						if(variable.description == undefined || variable.description == "" )
@@ -290,13 +288,13 @@
 			return []
 	}
 	
-	function setValidationState(res) {
+	function setValidationState(res:any) {
 		isValid = res.isValid();
 		// dispatch this event to the parent to check the save button
 		dispatch('var-change');
 	}
 
-	function cutData(d) {
+	function cutData(d:any) {
 		for (let index = 0; index < d.length; index++) {
 			let v = d[index];
 
