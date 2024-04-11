@@ -238,6 +238,7 @@ namespace BExIS.Modules.Dcm.UI.Helpers
                 operationManager.Create("DCM", "EntityReference", "*");
                 //Attachments
                 operationManager.Create("DCM", "Attachments", "*");
+                operationManager.Create("DCM", "Test", "*");
 
                 #endregion public available
 
