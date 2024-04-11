@@ -596,19 +596,17 @@ namespace BExIS.Modules.Rpm.UI.Controllers
 
             if (user != null)
             {
-                using (DataStructureManager dataStructureManager = new DataStructureManager())
-                {
-                    List<long> dataStructuresIds = dataStructureManager.StructuredDataStructureRepo.Get().Select(sds => sds.Id).ToList();
 
                     using (DatasetManager datasetManager = new DatasetManager())
                     {
-                        datasets = datasetManager.DatasetRepo.Get().Where(ds => dataStructuresIds.Contains(ds.DataStructure.Id)).ToList();
+                        datasets = datasetManager.DatasetRepo.Get().Where(ds => ds.DataStructure != null).ToList();
 
                         using (EntityPermissionManager entityPermissionManager = new EntityPermissionManager())
                         {
                             foreach (Dataset ds in datasets)
                             {
                                 rights = entityPermissionManager.GetEffectiveRights(user?.Id, ds.EntityTemplate.EntityType.Id, ds.Id);
+
                                 if (rights > 0)
                                 {
                                     DatasetInfo dsi = new DatasetInfo()
@@ -626,7 +624,6 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                         }
 
                     }
-                }
             }
             return Json(datasetInfos, JsonRequestBehavior.AllowGet);
         }
