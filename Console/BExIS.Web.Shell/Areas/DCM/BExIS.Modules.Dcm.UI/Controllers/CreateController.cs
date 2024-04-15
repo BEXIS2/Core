@@ -23,6 +23,7 @@ using BExIS.Xml.Helpers;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.IO;
 using System.Linq;
 using System.Web.Mvc;
@@ -42,6 +43,140 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             ViewData["start"] = SvelteHelper.GetStart(module);
 
             return View();
+        }
+
+        public ActionResult Copy(long id)
+        {
+            if (id <= 0) throw new ArgumentException("Id of copied dataset must be greater than 0.");
+
+            using (DatasetManager dm = new DatasetManager())
+            using (ResearchPlanManager rpm = new ResearchPlanManager())
+            using (EntityTemplateManager entityTemplateManager = new EntityTemplateManager())
+            using (EntityPermissionManager entityPermissionManager = new EntityPermissionManager())
+            using (MetadataStructureManager msm = new MetadataStructureManager())
+            using (DataStructureManager dsm = new DataStructureManager())
+            using (GroupManager gm = new GroupManager())
+            {
+                // create Entity based on entity template
+
+
+                var datasetToCopy = dm.GetDataset(id);
+                var datasetVersionToCopy = dm.GetDatasetLatestVersion(datasetToCopy.Id);
+                var entityTemplate = datasetToCopy.EntityTemplate;
+
+
+                if (datasetToCopy == null) throw new ArgumentException("dataset not exist.");
+                if (datasetToCopy.EntityTemplate == null) throw new ArgumentException("enitytemplate not exist.");
+
+                // check if something missing
+                var ds = dm.CreateEmptyDataset(datasetToCopy.DataStructure, datasetToCopy.ResearchPlan, datasetToCopy.MetadataStructure, datasetToCopy.EntityTemplate);
+
+
+                #region  update version
+
+                if (dm.IsDatasetCheckedOutFor(ds.Id, GetUsernameOrDefault()) || dm.CheckOutDataset(ds.Id, GetUsernameOrDefault()))
+                {
+                    DatasetVersion workingCopy = dm.GetDatasetWorkingCopy(ds.Id);
+
+                    workingCopy.Metadata = datasetVersionToCopy.Metadata;
+
+                    // set title if exist
+                    workingCopy.Title = datasetVersionToCopy.Title + "_copy";
+                    workingCopy.Description = datasetVersionToCopy.Description;
+
+                    //set status - not valid
+                    workingCopy = setStateInfo(workingCopy, false);
+
+                    //set modification - create
+                    workingCopy = setModificationInfo(workingCopy, true, GetUsernameOrDefault(), "Metadata");
+
+                    // save version in database
+                    dm.EditDatasetVersion(workingCopy, null, null, null);
+                    // close check out
+                    dm.CheckInDataset(ds.Id, "", GetUsernameOrDefault(), ViewCreationBehavior.None);
+                }
+
+                #endregion
+
+                #region  add permissions
+
+
+                if (entityTemplate.PermissionGroups != null)
+                {
+                    // full
+                    foreach (var groupId in entityTemplate.PermissionGroups.Full)
+                    {
+                        var group = gm.Groups.Where(g => g.Id.Equals(groupId)).FirstOrDefault();
+                        entityPermissionManager.Create<Group>(group.Name, entityTemplate.EntityType.Name, typeof(Dataset), ds.Id, Enum.GetValues(typeof(RightType)).Cast<RightType>().ToList());
+                    }
+
+
+                    // ViewEditGrant
+                    foreach (var groupId in entityTemplate.PermissionGroups.ViewEditGrant)
+                    {
+                        var group = gm.Groups.Where(g => g.Id.Equals(groupId)).FirstOrDefault();
+                        var l = new List<RightType>() { RightType.Read, RightType.Write, RightType.Grant };
+
+                        entityPermissionManager.Create<Group>(group.Name, entityTemplate.EntityType.Name, typeof(Dataset), ds.Id, l);
+                    }
+
+                    // ViewEdit
+                    foreach (var groupId in entityTemplate.PermissionGroups.ViewEdit)
+                    {
+                        var group = gm.Groups.Where(g => g.Id.Equals(groupId)).FirstOrDefault();
+                        var l = new List<RightType>() { RightType.Read, RightType.Write };
+                        entityPermissionManager.Create<Group>(group.Name, entityTemplate.EntityType.Name, typeof(Dataset), ds.Id, l);
+                    }
+
+                    // View
+                    foreach (var groupId in entityTemplate.PermissionGroups.View)
+                    {
+                        var group = gm.Groups.Where(g => g.Id.Equals(groupId)).FirstOrDefault();
+                        var l = new List<RightType>() { RightType.Read };
+                        entityPermissionManager.Create<Group>(group.Name, entityTemplate.EntityType.Name, typeof(Dataset), ds.Id, l);
+                    }
+                }
+
+                if (GetUsernameOrDefault() != "DEFAULT")
+                {
+                    entityPermissionManager.Create<User>(GetUsernameOrDefault(), entityTemplate.EntityType.Name, typeof(Dataset), ds.Id, Enum.GetValues(typeof(RightType)).Cast<RightType>().ToList());
+                }
+
+
+                #endregion
+
+                #region  send notifications
+
+                List<string> destinations = new List<string>();
+                // add system email
+                destinations.Add(GeneralSettings.SystemEmail);
+
+                if (entityTemplate.NotificationGroups != null)
+                {
+                    // add emails from groups
+                    foreach (var groupId in entityTemplate.NotificationGroups)
+                    {
+                        var group = gm.Groups.Where(g => g.Id.Equals(groupId)).FirstOrDefault();
+                        destinations.AddRange(group.Users.Select(u => u.Email));
+                    }
+                }
+                // remove dubplicates
+                destinations = destinations.Distinct().ToList();
+
+                var es = new EmailService();
+                es.Send(MessageHelper.GetCreateDatasetHeader(ds.Id, entityTemplate.Name),
+                    MessageHelper.GetCreateDatasetMessage(ds.Id, datasetVersionToCopy.Title + "_copy", GetUsernameOrDefault(), entityTemplate.Name),
+                    destinations
+                    );
+
+
+                //   #endregion
+
+                return Redirect("/dcm/edit?id=" + ds.Id);
+
+
+                #endregion
+            }
         }
 
         /// <summary>
@@ -202,7 +337,6 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 }
 
                 #endregion
-
 
                 #region  update version
 

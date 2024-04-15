@@ -116,3 +116,43 @@ export const GetDatasetsByConstreint = async (id: number) => {
 		throw error;
 	}
 };
+
+export const GetStruturedDatasetsByUserPermission = async () => {
+	try {
+		const response = await Api.get('/rpm/constraints/GetStruturedDatasetsByUserPermission');
+		return response.data;
+	} catch (error) {
+		console.error(error);
+		throw error;
+	}
+};
+
+export const GetDatastructure = async (id: number) => {
+	try {
+		const response = await Api.post('/rpm/constraints/GetDatastructure', { id });
+		return response.data;
+	} catch (error) {
+		console.error(error);
+		throw error;
+	}
+};
+
+export const GetData = async (id: number, pagesize: number = 10, variableid: number = 0) => {
+	try {
+		const response = await Api.post('/rpm/constraints/GetData', { id,  pagesize, variableid } );
+		return response.data;
+	} catch (error) {
+		console.error(error);
+		throw error;
+	}
+};
+
+export const GetProvider = async () => {
+	try {
+		const response = await Api.get('/rpm/constraints/GetProvider');
+		return response.data;
+	} catch (error) {
+		console.error(error);
+		throw error;
+	}
+};

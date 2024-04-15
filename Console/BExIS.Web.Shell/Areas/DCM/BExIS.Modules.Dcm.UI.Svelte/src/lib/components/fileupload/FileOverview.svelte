@@ -1,5 +1,5 @@
 <script lang="ts">
-	import Fa from 'svelte-fa/src/fa.svelte';
+	import Fa from 'svelte-fa';
 	import FileOverviewItem from './FileOverviewItem.svelte';
 
 	import { Spinner } from '@bexis2/bexis2-core-ui';

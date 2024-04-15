@@ -602,7 +602,7 @@ namespace BExIS.Dim.Helpers.Mapping
                         resultObject.PartyId = partyId;
 
                         //get mask from first mapping
-                        mask = mappings.FirstOrDefault().TransformationRule.Mask;
+                        mask = mappings.FirstOrDefault().TransformationRule?.Mask;
 
                         var allMappedAttrValues = partyManager.PartyCustomAttributeValueRepository.Query(y =>
                             y.Party.Id.Equals(partyId) && elementIds.Contains(y.CustomAttribute.Id)).ToList();

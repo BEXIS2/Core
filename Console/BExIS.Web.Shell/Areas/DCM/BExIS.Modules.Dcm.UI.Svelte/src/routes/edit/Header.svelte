@@ -1,6 +1,6 @@
 <script>
 	import { TextInput } from '@bexis2/bexis2-core-ui';
-	import Fa from 'svelte-fa/src/fa.svelte';
+	import Fa from 'svelte-fa';
 	import { faEye } from '@fortawesome/free-solid-svg-icons';
 	import { SlideToggle } from '@skeletonlabs/skeleton';
 

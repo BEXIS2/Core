@@ -94,6 +94,11 @@
 			"id": "result",
 			"name": "Result",
 			"description": "Shows the result of pattern executed on the example"
+		},
+		{
+			"id": "importDs",
+			"name": "Import from dataset",
+			"description": "Import a column here from a dataset on which you have read rights or which is publicly available."
 		}
 	]
 }

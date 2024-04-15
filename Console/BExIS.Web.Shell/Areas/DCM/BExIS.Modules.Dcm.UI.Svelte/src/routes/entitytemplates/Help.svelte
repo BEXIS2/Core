@@ -2,7 +2,7 @@
 	import type { PopupSettings } from '@skeletonlabs/skeleton';
 	import { popup } from '@skeletonlabs/skeleton';
 
-	import Fa from 'svelte-fa/src/fa.svelte';
+	import Fa from 'svelte-fa';
 	import { faQuestion } from '@fortawesome/free-solid-svg-icons/index';
 
 	export let title: string;

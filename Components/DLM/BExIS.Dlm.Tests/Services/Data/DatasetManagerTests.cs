@@ -274,7 +274,7 @@ namespace BExIS.Dlm.Tests.Services.Data
                 dm.GetDatasetLatestVersionEffectiveTupleCount(dataset.Id).Should().Be(numberOfTuples);
 
                 // pass this filter to get a subset of dataset X
-                var dst = dm.GetLatestDatasetVersionTuples(dataset.Id, fex, null, null, 1, 10);
+                var dst = dm.GetLatestDatasetVersionTuples(dataset.Id, fex, null, null,"", 1, 10);
                 dst.Should().NotBeNull();
                 dst.Rows.Count.Should().BeLessOrEqualTo(10);
 
@@ -343,7 +343,7 @@ namespace BExIS.Dlm.Tests.Services.Data
                 dm.GetDatasetLatestVersionEffectiveTupleCount(dataset.Id).Should().Be(numberOfTuples);
 
                 // pass this filter to get a subset of dataset X
-                var dst = dm.GetLatestDatasetVersionTuples(dataset.Id, null, null, projectionExpression, 1, 3);
+                var dst = dm.GetLatestDatasetVersionTuples(dataset.Id, null, null, projectionExpression,"", 1, 3);
                 dst.Should().NotBeNull();
                 dst.Rows.Count.Should().BeLessOrEqualTo(3);
                 dst.Columns.Count.Should().BeLessOrEqualTo(3, "Projection failed, wrong number of columns");

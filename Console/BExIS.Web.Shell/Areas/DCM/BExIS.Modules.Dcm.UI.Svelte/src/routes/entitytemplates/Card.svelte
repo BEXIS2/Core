@@ -1,5 +1,5 @@
 <script>
-	import Fa from 'svelte-fa/src/fa.svelte';
+	import Fa from 'svelte-fa';
 	import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons/index';
 
 	import { createEventDispatcher } from 'svelte';

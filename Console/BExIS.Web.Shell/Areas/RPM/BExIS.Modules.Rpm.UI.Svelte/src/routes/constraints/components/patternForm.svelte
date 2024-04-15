@@ -9,6 +9,10 @@
 
 	export let patternConstraint: PatternConstraintListItem;
 
+	let example: string = '';
+
+	$: result = createRegex(patternConstraint.pattern, example);
+
 	// load form result object
 	let res = suite.get();
 
@@ -38,10 +42,8 @@
 		}
 	});
 
-	let example: string = '';
-	$: result = createRegex(patternConstraint.pattern, example);
-
 	function createRegex(p: string, e: string): string {
+		disabled = false;
 		try {
 			let regex = new RegExp(p, 'g');
 			let r = e.match(regex)?.toString();
@@ -56,6 +58,7 @@
 {#if patternConstraint}
 	<div class="grid grid-cols-3 gap-5" in:slide out:slide>
 		<!-- svelte-ignore a11y-mouse-events-have-key-events -->
+		<!-- svelte-ignore a11y-no-static-element-interactions -->
 		<div
 			class="pb-3"
 			on:mouseover={() => {
@@ -77,6 +80,7 @@
 			<TextInput id="example" label="Example" help={true} bind:value={example} />
 		</div>
 		<!-- svelte-ignore a11y-mouse-events-have-key-events -->
+		<!-- svelte-ignore a11y-no-static-element-interactions -->
 		<div
 			class="pb-3"
 			on:mouseover={() => {
