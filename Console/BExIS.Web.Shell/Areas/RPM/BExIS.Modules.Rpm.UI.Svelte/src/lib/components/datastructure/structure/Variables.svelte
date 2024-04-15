@@ -56,6 +56,11 @@
 
 		ready = true;
 
+		if(variables.length >100)
+		{
+			expandAll = false;
+		}
+
 	});
 
 	function fillVariableValdationStates(vars:[]) {

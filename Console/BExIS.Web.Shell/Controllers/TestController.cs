@@ -31,6 +31,16 @@ namespace BExIS.Web.Shell.Controllers
             return View();
         }
 
+        public ActionResult TestRedirectToSvelte(long id)
+        {
+            return Redirect("/dcm/edit?id=" + id);
+        }
+
+        public ActionResult TestRedirectToSvelte2(long id)
+        {
+            return RedirectToAction("","edit",new {area="dcm", id });
+        }
+
         public ActionResult AddRequest()
         {
             var requestManager = new RequestManager();
