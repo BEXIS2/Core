@@ -582,6 +582,7 @@ namespace BExIS.Dlm.Services.DataStructure
                     case TypeCode.DateTime:
                         try
                         {
+
                             List<string> placeholders = missingValues.Select(mv => mv.Placeholder).ToList();
 
                             DateTime temp = DateTime.MaxValue.AddHours(-1);
@@ -600,7 +601,14 @@ namespace BExIS.Dlm.Services.DataStructure
                     case TypeCode.String:
                         try
                         {
-                            int temp = DateTime.Now.GetHashCode();
+                            int temp = DateTime.Now.Ticks.GetHashCode();
+                            List<string> placeholders = missingValues.Select(mv => mv.Placeholder).ToList();
+
+                            while (placeholders.Contains(temp.ToString(format)))
+                            {
+                                temp += 1;
+                            }
+
                             return temp.ToString(format);
                         }
                         catch

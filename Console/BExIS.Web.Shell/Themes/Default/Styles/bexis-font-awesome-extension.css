@@ -575,6 +575,10 @@ a.bx-grid-function,
     content: "\f041";
 }
 
+.fa-table:before {
+    content: "\f0ce";
+}
+
 .fa-adjust:before {
     content: "\f042";
 }

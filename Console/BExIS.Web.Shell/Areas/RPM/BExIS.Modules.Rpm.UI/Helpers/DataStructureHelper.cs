@@ -26,7 +26,7 @@ namespace BExIS.Modules.Rpm.UI.Helpers
 
                 foreach (Dataset d in dataStructure.Datasets)
                 {
-                    if (datasetManager.RowCount(d.Id, null) > 0)
+                    if (datasetManager.RowAny(d.Id) && datasetManager.RowCount(d.Id, null) > 0)
                     {
                         return true;
                     }

@@ -196,6 +196,7 @@ namespace BExIS.Modules.Dcm.UI.Helpers
                 operationManager.Create("DCM", "Metadata", "*", DatasetUploadFeature);
                 operationManager.Create("DCM", "Messages", "*", DatasetUploadFeature);
                 operationManager.Create("DCM", "DataDescription", "*", DatasetUploadFeature);
+                operationManager.Create("DCM", "Test", "*", DatasetUploadFeature);
 
 
                 #endregion Update Dataset Workflow
@@ -237,6 +238,7 @@ namespace BExIS.Modules.Dcm.UI.Helpers
                 operationManager.Create("DCM", "EntityReference", "*");
                 //Attachments
                 operationManager.Create("DCM", "Attachments", "*");
+                operationManager.Create("DCM", "Test", "*");
 
                 #endregion public available
 

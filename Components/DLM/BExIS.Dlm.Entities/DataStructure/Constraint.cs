@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics.Contracts;
 using System.Linq;
@@ -26,9 +27,9 @@ namespace BExIS.Dlm.Entities.DataStructure
         public virtual ConstraintProviderSource Provider { get; set; }
 
         /// <summary>
-        /// If the constraint is defined externally, the provider is supposed to have all the information needed to access the external source in order to obtain the required constraint attributes.
+        /// If the constraint is defined internaly/externally, the provider is supposed to have all the information needed to access the external source in order to obtain the required constraint attributes.
         /// </summary>
-        public virtual string ConstraintSelectionPredicate { get; set; } // only for external providers
+        public virtual string ConstraintSelectionPredicate { get; set; }
 
         /// <summary>
         /// the culture the constraint applies to. i.e., a Regex to match a taxon name in German may differ from its equivalent in English, ...
@@ -851,7 +852,8 @@ namespace BExIS.Dlm.Entities.DataStructure
     /// </summary>
     public enum ConstraintProviderSource
     {
-        Internal, External
+        Internal = 0, 
+        External = 1,
     }
 
     /// <summary>
@@ -877,4 +879,47 @@ namespace BExIS.Dlm.Entities.DataStructure
     {
         Absolute, Ratio,
     }
+
+    public class ConstraintSelectionPredicate
+    {
+        public long DatasetId { get; set; }
+        public long DatasetVersionId { get; set; }
+        public long DatasetVersionNumber { get; set; }
+        public long TagId { get; set; }
+        public long VariableId { get; set; }
+        public string Url { get; set; }
+
+        public ConstraintSelectionPredicate Materialise(string Json)
+        {
+            try
+            {
+                ConstraintSelectionPredicate constraintSelectionPredicate = JsonConvert.DeserializeObject<ConstraintSelectionPredicate>(Json);
+                DatasetId = constraintSelectionPredicate.DatasetId;
+                DatasetVersionId = constraintSelectionPredicate.DatasetVersionId;
+                DatasetVersionNumber = constraintSelectionPredicate.DatasetVersionNumber;
+                TagId = constraintSelectionPredicate.TagId;
+                VariableId = constraintSelectionPredicate.VariableId;
+                Url = constraintSelectionPredicate.Url;
+
+                return this;
+            }
+            catch 
+            { 
+                return null;
+            }
+        }
+
+        public string GetJson()
+        {
+            try
+            {
+                return JsonConvert.SerializeObject(this);
+            }
+            catch 
+            { 
+                return null;
+            }
+        }
+    }
+
 }

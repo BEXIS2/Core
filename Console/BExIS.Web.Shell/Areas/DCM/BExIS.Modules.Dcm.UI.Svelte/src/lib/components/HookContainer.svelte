@@ -112,7 +112,7 @@
 			{/if}
 			<div class="h-full w-full">
 				{#if !wait}
-					<slot name="view" {errorHandler} {successHandler} {warningHandler} {dateHandler}
+					<slot {errorHandler} {successHandler} {warningHandler} {dateHandler}
 						>render view</slot
 					>
 				{:else}

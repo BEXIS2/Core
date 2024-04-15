@@ -94,7 +94,7 @@ namespace BExIS.UI.Helpers
                             Value = fd.Value
                         };
                     }
-                case DataTableFilterType.ie: // can be a string or a number
+                case DataTableFilterType.e: // can be a string or a number
                     {
                         int convertedInt;
                         double convertedDouble;
@@ -214,6 +214,61 @@ namespace BExIS.UI.Helpers
                         {
                             throw new Exception("Value is not a number");
                         }
+                    }
+                case DataTableFilterType.o:
+                    {
+
+                        return new FilterDateTimeItemExpression()
+                        {
+                            Field = new Field() { DataType = DataType.DateTime, Name = label },
+                            Operator = DateTimeOperator.Operation.Equals,
+                            Value = fd.Value
+                        };
+                    }
+                case DataTableFilterType.sf:
+                    {
+                        return new FilterDateTimeItemExpression()
+                        {
+                            Field = new Field() { DataType = DataType.DateTime, Name = label },
+                            Operator = DateTimeOperator.Operation.GreaterThanOrEqual,
+                            Value = fd.Value
+                        };
+                    }
+                case DataTableFilterType.a:
+                    {
+                        return new FilterDateTimeItemExpression()
+                        {
+                            Field = new Field() { DataType = DataType.DateTime, Name = label },
+                            Operator = DateTimeOperator.Operation.GreaterThan,
+                            Value = fd.Value
+                        };
+                    }
+                case DataTableFilterType.u:
+                    {
+                        return new FilterDateTimeItemExpression()
+                        {
+                            Field = new Field() { DataType = DataType.DateTime, Name = label },
+                            Operator = DateTimeOperator.Operation.LessThanOrEqual,
+                            Value = fd.Value
+                        };
+                    }
+                case DataTableFilterType.b:
+                    {
+                        return new FilterDateTimeItemExpression()
+                        {
+                            Field = new Field() { DataType = DataType.DateTime, Name = label },
+                            Operator = DateTimeOperator.Operation.LessThan,
+                            Value = fd.Value
+                        };
+                    }
+                case DataTableFilterType.no:
+                    {
+                        return new FilterDateTimeItemExpression()
+                        {
+                            Field = new Field() { DataType = DataType.DateTime, Name = label },
+                            Operator = DateTimeOperator.Operation.NotEquals,
+                            Value = fd.Value
+                        };
                     }
             }
 

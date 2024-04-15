@@ -978,9 +978,9 @@ namespace BExIS.Dlm.Services.Data
             return null;
         }
 
-        public DataTable GetLatestDatasetVersionTuples(long datasetId, FilterExpression filter, OrderByExpression orderBy, ProjectionExpression projection, int pageNumber = 0, int pageSize = 0)
+        public DataTable GetLatestDatasetVersionTuples(long datasetId, FilterExpression filter, OrderByExpression orderBy, ProjectionExpression projection,string searchquery, int pageNumber = 0, int pageSize = 0)
         {
-            return queryMaterializedView(datasetId, filter, orderBy, projection, pageNumber, pageSize);
+            return queryMaterializedView(datasetId, filter, orderBy, projection, searchquery, pageNumber, pageSize);
         }
 
         /// <summary>
@@ -3082,10 +3082,10 @@ namespace BExIS.Dlm.Services.Data
             }
         }
 
-        private DataTable queryMaterializedView(long datasetId, FilterExpression filter, OrderByExpression orderBy, ProjectionExpression projection, int pageNumber = 0, int pageSize = 0)
+        private DataTable queryMaterializedView(long datasetId,FilterExpression filter, OrderByExpression orderBy, ProjectionExpression projection,string searchquery,  int pageNumber = 0, int pageSize = 0)
         {
             MaterializedViewHelper mvHelper = new MaterializedViewHelper();
-            return mvHelper.Retrieve(datasetId, filter, orderBy, projection, pageNumber, pageSize);
+            return mvHelper.Retrieve(datasetId, searchquery, filter, orderBy, projection, pageNumber, pageSize);
         }
 
         // in some cases maybe another attribute of the user is used like its ID, email or the IP address

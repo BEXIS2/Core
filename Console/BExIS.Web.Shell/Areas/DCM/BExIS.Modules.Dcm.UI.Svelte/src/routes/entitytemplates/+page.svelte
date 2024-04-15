@@ -4,7 +4,7 @@
 	import { positionType, ErrorMessage } from '@bexis2/bexis2-core-ui';
 
 	// ui components
-	import Fa from 'svelte-fa/src/fa.svelte';
+	import Fa from 'svelte-fa';
 	import { faPlus } from '@fortawesome/free-solid-svg-icons';
 	import Overview from './Overview.svelte';
 	import Edit from './Edit.svelte';

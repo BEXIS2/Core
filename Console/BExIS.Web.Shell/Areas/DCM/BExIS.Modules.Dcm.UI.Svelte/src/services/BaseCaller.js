@@ -14,3 +14,16 @@ export const goTo = async (url, intern = true) => {
 		window.open(url, '_blank')?.focus();
 	}
 };
+
+
+import { Api } from '@bexis2/bexis2-core-ui';
+
+export const getToken = async () => {
+	try {
+		const response = await Api.get('/tokens/get');
+		return response.data;
+	} catch (error) {
+		console.error(error);
+		throw error;
+	}
+};

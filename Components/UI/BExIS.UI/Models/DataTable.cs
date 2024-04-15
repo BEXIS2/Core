@@ -11,6 +11,7 @@ namespace BExIS.UI.Models
         public long Version { get; set; }
         public int Offset { get; set; }
         public int Limit { get; set; }
+        public string Q { get; set; }
         public List<DataTableFilter> Filter { get; set; }
         public List<DataTableOrderBy> Order { get; set; }
 
@@ -22,6 +23,7 @@ namespace BExIS.UI.Models
             Limit = 100;
             Filter = new List<DataTableFilter>();
             Order = new List<DataTableOrderBy>();
+            Q = string.Empty;
         }
     }
 
@@ -47,7 +49,8 @@ namespace BExIS.UI.Models
 
     public class DataTableColumn
     {
-        public string Header { get; set; }// key by default
+        public string Column { get; set; }// key by default
+        public string Key { get; set; }// key in data array by default
 
         public Boolean Exclude { get; set; }// false by default
 
@@ -55,7 +58,8 @@ namespace BExIS.UI.Models
 
         public DataTableColumn()
         {
-            Header = string.Empty;
+            Column = string.Empty;
+            Key = string.Empty;
             Exclude = false;
             Instructions = new DataTableInstruction();
         }
@@ -88,7 +92,7 @@ namespace BExIS.UI.Models
 
     public enum DataTableFilterType
     {
-	    ie, // Is equal to
+	    e, // Is equal to
 	    ne, // Is not equal to
 	    gt, // Greater than
 	    lt, // Less than
@@ -97,7 +101,14 @@ namespace BExIS.UI.Models
 	    c, // Contains
 	    nc, // Does not contain
 	    sw, // Starts with
-	    ew // Ends with
+	    ew, // Ends with
+        o, // on (date)
+        sf, // starting with (date)
+        a, // after (date)
+        u, // unitl  (date)
+        b, // before  (date)
+        no // not on  (date)
+
     }
 
     public enum DataTableOrderType
