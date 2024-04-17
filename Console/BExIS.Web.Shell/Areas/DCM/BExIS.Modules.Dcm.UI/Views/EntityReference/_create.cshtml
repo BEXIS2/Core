@@ -1,5 +1,5 @@
 ﻿@model BExIS.Modules.Dcm.UI.Models.EntityReference.CreateSimpleReferenceModel
-
+@using BExIS.Utils.Extensions
 @{
     ViewBag.Title = ViewData["Title"];
 
@@ -11,96 +11,103 @@
     }
 
     title += " (" + Model.SourceId + ")";
+
+    string debugPath = "";
+
+    if (Html.IsDebug())
+    {
+        debugPath = "BExIS.Modules.Dcm.UI/";
+    }
 }
 
-<script src="@Url.Content("~/Areas/DCM/BExIS.Modules.DCM.UI/Scripts/entity.reference.js")" type="text/javascript"></script>
+<script src="@Url.Content("~/Areas/DCM/" + debugPath + "Scripts/entity.reference.js")" type="text/javascript"></script>
 
 <div id="content_createEnityReference">
 
     @using (Ajax.BeginForm("Create", "EntityReference", new AjaxOptions { HttpMethod = "POST", UpdateTargetId = "content_createEnityReference", OnSuccess = "createEntityReference_OnSuccess" }))
     {
-    @Html.ValidationSummary(true)
+        @Html.ValidationSummary(true)
 
-    @Html.HiddenFor(m => m.SourceId);
-    @Html.HiddenFor(m => m.SourceTypeId);
-    @Html.HiddenFor(m => m.SourceVersion);
+        @Html.HiddenFor(m => m.SourceId);
+        @Html.HiddenFor(m => m.SourceTypeId);
+        @Html.HiddenFor(m => m.SourceVersion);
 
-    @Html.ValidationSummary(false, "")
+        @Html.ValidationSummary(false, "")
 
-    <table class="bx-table-form">
-        <tr>
-            <td>
-                Type
-            </td>
-            <td>
-                @Html.DropDownListFor(m => m.TargetType, null, "Select a type", new { @class = "bx-dropdown" })
-                @Html.ValidationMessageFor(m => m.TargetType)
-            </td>
-        </tr>
-        <tr>
-            <td>
-                <div class="row">
-                    <div class="col-xs-8">
-                        Title
+        <table class="bx-table-form">
+            <tr>
+                <td>
+                    Type
+                </td>
+                <td>
+                    @Html.DropDownListFor(m => m.TargetType, null, "Select a type", new { @class = "bx-dropdown" })
+                    @Html.ValidationMessageFor(m => m.TargetType)
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <div class="row">
+                        <div class="col-xs-8">
+                            Title
+                        </div>
+                        <div id="target_preloader" class="col-xs-2"></div>
                     </div>
-                    <div id="target_preloader" class="col-xs-2"></div>
-                </div>
-            </td>
-            <td>
+                </td>
+                <td>
 
-                @Html.DropDownListFor(m => m.Target, null, "Select a entity", new { @disabled = "true" })
-                @Html.ValidationMessageFor(m => m.Target)
-            </td>
-        </tr>
-        <tr>
-            <td>
-                Version
-            </td>
-            <td>
-                @Html.DropDownListFor(m => m.TargetVersion, null, "Select a version of this entity", new { @class = "bx-dropdown" })
-                @Html.ValidationMessageFor(m => m.TargetVersion)
-            </td>
-        </tr>
-        <tr id="help_ref_type" style="display:none;">
-            <td></td>
-            <td>
-                @foreach (var item in ViewData["ReferenceTypeHelp"] as SelectList)
+                    @Html.DropDownListFor(m => m.Target, null, "Select a entity", new { @disabled = "true" })
+                    @Html.ValidationMessageFor(m => m.Target)
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    Version
+                </td>
+                <td>
+                    @Html.DropDownListFor(m => m.TargetVersion, null, "Select a version of this entity", new { @class = "bx-dropdown" })
+                    @Html.ValidationMessageFor(m => m.TargetVersion)
+                </td>
+            </tr>
+            <tr id="help_ref_type" style="display:none;">
+                <td></td>
+                <td>
+                    @foreach (var item in ViewData["ReferenceTypeHelp"] as SelectList)
                     {
-                <div class="help" style="display: block">- <b>@item.Value</b>: @item.Text</div>
+                        <div class="help" style="display: block">- <b>@item.Value</b>: @item.Text</div>
                     }
-            </td>
-        </tr>
-        <tr>
-            <td>
-                Reference Type
-            </td>
-            <td>
-                @Html.DropDownListFor(m => m.ReferenceType, null, "Select a reference type", new { @class = "bx-dropdown" })
-                @Html.ValidationMessageFor(m => m.ReferenceType)
-            </td>
-            <td>
-                <button type="button" title="" class="bx-function bx-disabled bx-info fa fa-info" onclick="show_hide_help();"></button>
-            </td>
-        </tr>
-        <tr>
-            <td>
-                Comment
-            </td>
-            <td>
-                @Html.TextAreaFor(m => m.Context, new { @class = "bx-input" })
-                @Html.ValidationMessageFor(m => m.Target)
-            </td>
-    </table>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    Reference Type
+                </td>
+                <td>
+                    @Html.DropDownListFor(m => m.ReferenceType, null, "Select a reference type", new { @class = "bx-dropdown" })
+                    @Html.ValidationMessageFor(m => m.ReferenceType)
+                </td>
+                <td>
+                    <button type="button" title="" class="bx-function bx-disabled bx-info fa fa-info" onclick="show_hide_help();"></button>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    Comment
+                </td>
+                <td>
+                    @Html.TextAreaFor(m => m.Context, new { @class = "bx-input" })
+                    @Html.ValidationMessageFor(m => m.Target)
+                </td>
+        </table>
 
-    <div class="bx-footer right">
-        @if (ViewContext.ViewData.ModelState != null && ViewContext.ViewData.ModelState.IsValid && (ViewData["Init"] == null || ((bool)ViewData["Init"]) != true))
+        <div class="bx-footer right">
+            @if (ViewContext.ViewData.ModelState != null && ViewContext.ViewData.ModelState.IsValid && (ViewData["Init"] == null || ((bool)ViewData["Init"]) != true))
             {
-        <b class="bx-success">saved</b>
+                <b class="bx-success">saved</b>
             }
 
-        <button style="margin-right: 1px" type="submit" id="button_createEntityreference_save" class="bx-button action">Save</button>
-        <button style="margin-left: 1px" type="button" id="button_createEntityreference_cancel" class="bx-button action">Cancel</button>
-    </div>
+            <button style="margin-right: 1px" type="submit" id="button_createEntityreference_save" class="bx-button action">Save</button>
+            <button style="margin-left: 1px" type="button" id="button_createEntityreference_cancel" class="bx-button action">Cancel</button>
+        </div>
     }
 </div>
 
