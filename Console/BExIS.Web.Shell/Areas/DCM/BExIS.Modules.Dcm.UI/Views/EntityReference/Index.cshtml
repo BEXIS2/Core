@@ -1,10 +1,20 @@
-﻿@{
+﻿@using BExIS.Utils.Extensions
+
+@{
     ViewBag.Title = "Index";
+
+    string debugPath = "";
+
+    if (Html.IsDebug())
+    {
+        debugPath = "BExIS.Modules.Dcm.UI/";
+    }
 }
 
 <h2>Index</h2>
 
 @section scripts
 {
-    <script src="@Url.Content("~/Areas/DCM/BExIS.Modules.DCM.UI/Scripts/entity.reference.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Areas/DCM/" + debugPath + "Scripts/entity.reference.js")" type="text/javascript"></script>
+
 }
