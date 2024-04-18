@@ -28,3 +28,4 @@ This release focused on updating UI libraries, fixing bugs, adding new constrain
 - Fix missing values for dates are not replaced in the primary data view (within the new primary data view) ([#641](https://github.com/BEXIS2/Core/issues/641))
 - Fix date display patterns are not replaced in Data Out API ([#1549](https://github.com/BEXIS2/Core/issues/1549))
 - Fix Structure API - Error when a variable has no variable template ([#1664](https://github.com/BEXIS2/Core/issues/1664))
+- Fix Link dataset: can't select a dataset to be linked ([#1568](https://github.com/BEXIS2/Core/issues/1568))
