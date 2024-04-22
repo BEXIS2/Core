@@ -10,11 +10,11 @@ body:
 - type: markdown
   attributes:
     value: |
-      A user story should comply with the following criteria
+      A user story should comply with the following criteria.
 - type: markdown
   attributes:
     value: | 
-      **Independent** - Requirements should be as independent of each other as possible, so that they can be implemented in the correct order.
+      **Independent** - Requirements should be as independent of each other as possible so that they can be implemented in the correct order.
       **Negotiable** - Requirements should be open to discussion regarding implementation.
       **Valuable** - Requirements should always generate (self-contained) added value for the community
       **Estimable** - Every requirement must be appreciated. If the team is unable to provide an estimate, it should be discussed again or refined
@@ -30,12 +30,32 @@ body:
       - As (user role), I can (what) so that (why).
   validations:
     required: true
+- type: markdown
+  attributes:
+      value: | 
+        ## Success Criterias ##
+        Create scenarios with checklists or checklists for users with certain permission or data managers.
+
 - type: textarea
   attributes:
-    label: Acceptance criterias
+    label: User
     description: Acceptance criteria are specific conditions that a software product or feature must fulfill in order to meet customer requirements and needs.
     placeholder: |
       - [ ] checklist
-      - descripe a Szenario
+      or
+      - describe scenarios (e.g., users with [view, edit, download, grant] permission, not logged-in users, ...)
+      - [ ] checklist
   validations:
-    required: true
+    required: false
+- type: textarea
+  attributes:
+    label: Data Manager 
+    description: Acceptance criteria are specific conditions that a software product or feature must fulfill in order to meet customer requirements and needs.
+    placeholder: |
+      - [ ] checklist
+      or
+      - describe scenarios
+      - [ ] checklist
+  validations:
+    required: false
+
