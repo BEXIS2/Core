@@ -153,6 +153,9 @@ namespace BExIS.Xml.Helpers
 
                 try
                 {
+                    var dataset = dm.GetDataset(id);
+                    if (dataset.Status == DatasetStatus.Deleted) return String.Empty;
+
                     var dsv = dm.GetDatasetLatestVersion(id);
 
                     return dsv.Title;
