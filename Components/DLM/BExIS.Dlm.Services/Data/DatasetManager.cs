@@ -2908,7 +2908,7 @@ namespace BExIS.Dlm.Services.Data
             if (!IsDatasetCheckedIn(datasetId))
                 throw new Exception($"Dataset '{datasetId}' must be in the checked-in status.");
 
-            if (!(dataset.DataStructure.Self is StructuredDataStructure))
+            if (!(dataset.DataStructure != null))
             {
                 if (throwExceptionOnUnstructured)
                     throw new Exception($"Dataset '{datasetId}' is not structured.");

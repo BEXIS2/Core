@@ -152,7 +152,7 @@
                 <h1>@Model.Title </h1>
             </div>
 
-           @if (Model.HasEditRight)
+           @if (Model.HasEditRight && ViewData["state"].ToString() != "hidden")
            {
             <div class="datasetview_header-toggle" onclick="toogleToEdit()">
                 <div class="switch">

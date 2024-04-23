@@ -1,4 +1,5 @@
 ﻿using BExIS.App.Bootstrap.Attributes;
+using BExIS.App.Bootstrap.Helpers;
 using BExIS.Security.Entities.Subjects;
 using BExIS.Security.Services.Subjects;
 using BExIS.Utils.Config;
@@ -86,7 +87,8 @@ namespace BExIS.Web.Shell.Controllers
 
                 using (var userManager = new UserManager())
                 {
-                    var user = await userManager.FindByNameAsync(HttpContext.User.Identity.Name);
+                    var user = BExISAuthorizeHelper.GetUserFromAuthorizationAsync(HttpContext).Result;
+
                     if (user != null)
                     {
                         var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtConfiguration.IssuerSigningKey));
@@ -134,7 +136,7 @@ namespace BExIS.Web.Shell.Controllers
 
                 using (var userManager = new UserManager())
                 {
-                    var user = await userManager.FindByNameAsync(HttpContext.User.Identity.Name);
+                    var user = BExISAuthorizeHelper.GetUserFromAuthorizationAsync(HttpContext).Result;
                     if (user != null)
                     {
                         var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtConfiguration.IssuerSigningKey));

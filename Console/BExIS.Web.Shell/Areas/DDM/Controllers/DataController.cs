@@ -49,6 +49,7 @@ using BExIS.Security.Entities.Objects;
 using BExIS.Security.Entities.Subjects;
 using BExIS.Dlm.Services.MetadataStructure;
 using System.Web.UI.WebControls;
+using System.Security.Cryptography;
 
 namespace BExIS.Modules.Ddm.UI.Controllers
 
@@ -619,66 +620,64 @@ namespace BExIS.Modules.Ddm.UI.Controllers
 
             try
             {
-                if (dm.IsDatasetCheckedIn(datasetID))
-                {
-                    // get latest or other datasetversion
-                    DatasetVersion dsv = dm.GetDatasetVersion(versionId);
-                    bool latestVersion = versionId == dm.GetDatasetLatestVersionId(datasetID);
-                    //TITLE
-                    string title = dsv.Title;
+                var dataset = dm.GetDataset(datasetID);
+                Boolean latest = true;
+                string title = "";
 
-                    // TODO: refactor Download Right not existing, so i set it to read
+                if (dataset.Status != DatasetStatus.CheckedOut)
+                {
+                    DataTable table = null;
+                    DatasetVersion dsv = null;
+                    StructuredDataStructure sds = null;
+
+                    if (dataset.Status == DatasetStatus.CheckedIn) // checi if version is latest
+                    {
+                        dsv = dm.GetDatasetVersion(versionId);
+                        latest = versionId == dm.GetDatasetLatestVersionId(datasetID);
+                        title = dsv.Title;
+                    }
+
                     bool downloadAccess = entityPermissionManager.HasEffectiveRight(HttpContext.User.Identity.Name, typeof(Dataset), datasetID, RightType.Read);
 
-                    if (dsv.Dataset.DataStructure != null)
+                    if (dataset.DataStructure != null)
                     {
-                        StructuredDataStructure sds = dsm.StructuredDataStructureRepo.Get(dsv.Dataset.DataStructure.Id);
-                        DataStructure ds = dsm.AllTypesDataStructureRepo.Get(dsv.Dataset.DataStructure.Id);
+                        sds = dsm.StructuredDataStructureRepo.Get(dataset.DataStructure.Id);
 
-                    
-                        if (ds.Self.GetType() == typeof(StructuredDataStructure))
+                        // if deleted or latest show latest data,
+                        if (dataset.Status == DatasetStatus.Deleted || (dataset.Status == DatasetStatus.CheckedIn && latest))
                         {
-                            DataTable table = null;
-                            // Count "Data" changes between current and latest version
-                            int numberNewerDataVersions = dm.GetDatasetVersions(datasetID).Where(x => x.Id > versionId).Count(x => x.ModificationInfo.Comment.Contains("Data"));
-
-                            // use MV for latest version and all older versions, if no data has been changed (only metadata)
-                            if (latestVersion || numberNewerDataVersions == 0)
+                            try
                             {
-                                try
-                                {
-                                    long count = dm.RowCount(datasetID, null);
-                                    if (count > 0) table = dm.GetLatestDatasetVersionTuples(datasetID, null, null, null,"", 0, 10);
-                                    else ModelState.AddModelError(string.Empty, "<span style=\"color: black;\"> There is no primary data available/uploaded. </span><br/><br/> <span style=\"font-weight: normal;color: black;\">Please note that the data may have been uploaded to another repository and is referenced here in the metadata.</span>");
-                                }
-                                catch
-                                {
-                                    ModelState.AddModelError(string.Empty, "The data is not available, please ask the administrator for a synchronization.");
-                                }
-
-                                ViewData["gridTotal"] = dm.RowCount(dsv.Dataset.Id, null);
+                                long count = dm.RowCount(datasetID, null);
+                                if (count > 0) table = dm.GetLatestDatasetVersionTuples(datasetID, null, null, null, "", 0, 10);
+                                else ModelState.AddModelError(string.Empty, "<span style=\"color: black;\"> There is no primary data available/uploaded. </span><br/><br/> <span style=\"font-weight: normal;color: black;\">Please note that the data may have been uploaded to another repository and is referenced here in the metadata.</span>");
                             }
-                            else
+                            catch
                             {
-                                table = dm.GetDatasetVersionTuples(versionId, 0, 10);
-                                ViewData["gridTotal"] = dm.GetDatasetVersionEffectiveTuples(dsv).Count;
+                                ModelState.AddModelError(string.Empty, "The data is not available, please ask the administrator for a synchronization.");
                             }
-
-                            sds.Variables = sds.Variables.OrderBy(v => v.OrderNo).ToList();
-
-                            return PartialView(ShowPrimaryDataModel.Convert(
-                                datasetID,
-                                versionId,
-                                title,
-                                sds,
-                                table,
-                                downloadAccess,
-                                iOUtility.GetSupportedAsciiFiles(),
-                                latestVersion,
-                                hasUserRights(datasetID, RightType.Write)
-                                ));
+                        }
+                        else
+                        {
+                            table = dm.GetDatasetVersionTuples(versionId, 0, 10);
+                            ViewData["gridTotal"] = dm.GetDatasetVersionEffectiveTuples(dsv).Count;
                         }
 
+                        ViewData["gridTotal"] = dm.RowCount(dataset.Id, null);
+
+                        sds.Variables = sds.Variables.OrderBy(v => v.OrderNo).ToList();
+
+                        return PartialView(ShowPrimaryDataModel.Convert(
+                            datasetID,
+                            versionId,
+                            title,
+                            sds,
+                            table,
+                            downloadAccess,
+                            iOUtility.GetSupportedAsciiFiles(),
+                            latest,
+                            hasUserRights(datasetID, RightType.Write)
+                            ));
                     }
                     else
                     {
@@ -693,14 +692,10 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                                 SearchUIHelper.GetContantDescriptorFromKey(dsv, "unstructuredData"),
                                 downloadAccess,
                                 iOUtility.GetSupportedAsciiFiles(),
-                                latestVersion,
+                                latest,
                                 hasUserRights(datasetID, RightType.Write)
                                 ));
                     }
-                }
-                else
-                {
-                    ModelState.AddModelError(string.Empty, "The dataset is currently being processed and is therefore locked.");
                 }
 
                 return PartialView(null);
@@ -728,31 +723,42 @@ namespace BExIS.Modules.Ddm.UI.Controllers
 
             try
             {
-                if (dm.IsDatasetCheckedIn(datasetId))
+                var dataset  = dm.GetDataset(datasetId);
+                Boolean latest = true;
+
+                if (dataset.Status != DatasetStatus.CheckedOut)
                 {
-                    DatasetVersion dsv = dm.GetDatasetVersion(versionId);
-                    long latestDatasetVersionId = dm.GetDatasetLatestVersionId(datasetId);
-
                     DataTable table = null;
-
-                    // get primarydata from latest version with table
-                    if (versionId == latestDatasetVersionId)
+                    DatasetVersion dsv = null;
+                    if (dataset.Status == DatasetStatus.CheckedIn) // checi if version is latest
                     {
+                        dsv = dm.GetDatasetVersion(versionId);
+                        long latestDatasetVersionId = dm.GetDatasetLatestVersionId(datasetId);
+                        if (versionId == latestDatasetVersionId) latest = true;
+                    }
+
+                    // if deleted or latest show latest data,
+                    if (dataset.Status == DatasetStatus.Deleted || (dataset.Status == DatasetStatus.CheckedIn && latest))
+                    {
+                        // get primarydata from latest version with table
+
                         FilterExpression filter = TelerikGridHelper.Convert(command.FilterDescriptors.ToList());
                         OrderByExpression orderBy = TelerikGridHelper.Convert(command.SortDescriptors.ToList());
 
-                        table = dm.GetLatestDatasetVersionTuples(datasetId, filter, orderBy, null,"", command.Page - 1, command.PageSize);
+                        table = dm.GetLatestDatasetVersionTuples(datasetId, filter, orderBy, null, "", command.Page - 1, command.PageSize);
                         ViewData["gridTotal"] = dm.RowCount(datasetId, filter);
                     }
-                    // get primarydata from other version with tuples
                     else
                     {
-                        table = dm.GetDatasetVersionTuples(versionId, command.Page - 1, command.PageSize);
-                        ViewData["gridTotal"] = dm.GetDatasetVersionEffectiveTuples(dsv).Count;
-                    }
+                        if (!latest)
+                        {
+                            table = dm.GetDatasetVersionTuples(versionId, command.Page - 1, command.PageSize);
+                            ViewData["gridTotal"] = dm.GetDatasetVersionEffectiveTuples(dsv).Count;
+                        }
 
-                    model = new GridModel(table);
-                    model.Total = Convert.ToInt32(ViewData["gridTotal"]); // (int)Session["gridTotal"];
+                        model = new GridModel(table);
+                        model.Total = Convert.ToInt32(ViewData["gridTotal"]); // (int)Session["gridTotal"];
+                    }
                 }
                 else
                 {
@@ -1455,13 +1461,13 @@ namespace BExIS.Modules.Ddm.UI.Controllers
 
             try
             {
-                long id = datasetID;
-                if (dm.IsDatasetCheckedIn(id))
+                using (var uow = this.GetUnitOfWork())
                 {
-                    DatasetVersion ds = dm.GetDatasetLatestVersion(id);
-                    if (ds != null)
+                    Dataset dataset = dm.GetDataset(datasetID);
+
+                    if (dataset != null)
                     {
-                        StructuredDataStructure sds = dsm.StructuredDataStructureRepo.Get(ds.Dataset.DataStructure.Id);
+                        StructuredDataStructure sds = dsm.StructuredDataStructureRepo.Get(dataset.DataStructure.Id);
                         dsm.StructuredDataStructureRepo.LoadIfNot(sds.Variables);
                         //StructuredDataStructure sds = (StructuredDataStructure)(ds.Dataset.DataStructure.Self);
                         SearchUIHelper suh = new SearchUIHelper();
@@ -1469,10 +1475,6 @@ namespace BExIS.Modules.Ddm.UI.Controllers
 
                         return View(new GridModel(table));
                     }
-                }
-                else
-                {
-                    ModelState.AddModelError(String.Empty, "Dataset is just in processing.");
                 }
             }
             finally
