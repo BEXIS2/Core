@@ -220,6 +220,17 @@ namespace Vaiona.Model.MTnt
             }
         }
 
+        public string LandingPageFileNamePath //effective path to imprint content file
+        {
+            get
+            {
+                if (this.UseFallback == true && this.Fallback != null)
+                    return PathProvider.GetContentFilePath(this.Id, this.LandingPage, Fallback.Id);
+                else
+                    return PathProvider.GetContentFilePath(this.Id, this.LandingPage, this.Id);
+            }
+        }
+
         public List<string> AllowedFileExtensions { get; set; }
 
         public int MaximumUploadSize { get; set; }

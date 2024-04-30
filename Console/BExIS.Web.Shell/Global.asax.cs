@@ -90,8 +90,8 @@ namespace BExIS.Web.Shell
 
             // if the tenant has no landing page, set the application's default landing page for it.
 
-            var landingPage = GeneralSettings.LandingPage;
-            tenant.LandingPage = landingPage; // checks and sets
+            //var landingPage = GeneralSettings.LandingPage;
+            //tenant.LandingPage = landingPage; // checks and sets
 
             this.Session.SetTenant(tenant);
         }
