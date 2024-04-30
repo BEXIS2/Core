@@ -479,6 +479,12 @@
             </summary>
             <returns>Token</returns>
         </member>
+        <member name="M:BExIS.Web.Shell.Controllers.HomeController.Start">
+            <summary>
+            use this action to load the landingpage from the tenants folder
+            </summary>
+            <returns></returns>
+        </member>
         <member name="M:BExIS.Web.Shell.MvcApplication.Application_EndRequest">
             <summary>
             the function is called on any http request, which include static resources too!
