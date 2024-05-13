@@ -49,7 +49,6 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="DataRepository.cs" />
     <Compile Include="Mapping\LinkElement.cs" />
     <Compile Include="Mapping\LinkElementTypes.cs" />
     <Compile Include="Mapping\Mapping.cs" />
@@ -62,6 +61,8 @@
     <Compile Include="Publication\MetadataStructureToRepository.cs" />
     <Compile Include="Publication\Publication.cs" />
     <Compile Include="Publication\Repository.cs" />
+    <Compile Include="Submissions\Agent.cs" />
+    <Compile Include="Submissions\Submission.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\Components\DLM\BExIS.Dlm.Entities\BExIS.Dlm.Entities.csproj">
