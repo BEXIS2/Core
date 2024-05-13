@@ -31,5 +31,10 @@
     <many-to-one class="Broker" name="Broker" column="BrokerRef">
     </many-to-one>
 
+	  <set name="Agents" inverse="true" cascade="all-delete-orphan" lazy="true">
+		  <key column="RepositoryRef" />
+		  <one-to-many class="BExIS.Dim.Entities.Submissions.Agent, BExIS.Dim.Entities" />
+	  </set>
+
   </class>
 </hibernate-mapping>
