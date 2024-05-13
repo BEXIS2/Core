@@ -83,6 +83,8 @@
     <Content Include="Mappings\Default\Publication\Repository.hbm.xml">
       <SubType>Designer</SubType>
     </Content>
+    <Content Include="Mappings\Default\Submissions\Agent.hbm.xml" />
+    <Content Include="Mappings\Default\Submissions\Submission.hbm.xml" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
