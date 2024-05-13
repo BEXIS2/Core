@@ -187,6 +187,8 @@
     <Compile Include="MappingManager.cs" />
     <Compile Include="PublicationManager.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Submissions\AgentManager.cs" />
+    <Compile Include="Submissions\SubmissionManager.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\Components\DLM\BExIS.Dlm.Entities\BExIS.Dlm.Entities.csproj">
