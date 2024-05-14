@@ -283,8 +283,9 @@
         }
         @if (@Model != null)
         {
-            if (ViewData.ModelState.IsValid)
-            {
+            <div id="tab-container" style="display:none">
+                @if (ViewData.ModelState.IsValid)
+                {
                 <ul class="nav nav-tabs">
                     <!--load hooks in tab header-->
                     <!--dataset hooks-->
@@ -354,11 +355,12 @@
                     }
                 </div>
 
-            }
-            else
-            {
+                }
+                else
+                {
                 @Html.ValidationSummary(true);
-            }
+                }
+            </div>
         }
     </div>
     <script type="text/javascript">
@@ -388,7 +390,9 @@
 
 		$("#preloaderContainer").preloader(20, "Loading...");
         //load active hook
-        prefetch('@activeHook.Name', '@activeHook.Start',@Model.Id,@Model.Version)
+        console.log("document ready start prefetch")
+        initfetch('@activeHook.Name', '@activeHook.Start',@Model.Id,@Model.Version)
+        console.log("document ready end prefetch")
 
 		$("#preloaderContainer").removePreloader();
 
@@ -403,19 +407,37 @@
 		}
 	}
 
+    function initfetch(hook, action, id, version) {
+        var url = window.location.origin + "/" + action;
+
+        var loaded = $("#" + hook).attr("loaded");
+
+        if (loaded == undefined) {
+
+            console.log("load content");
+            // set preloader
+            $("#" + hook).preloader(20, "Loading...");
+
+            $.get(url, { id, version }, function (data) {
+
+                const tabcontainer = document.getElementById('tab-container');
+                tabcontainer.style.display = 'block'; // Show the div
+
+                $("#" + hook).html(data)
+                // remove preloader
+                $("#" + hook).attr("loaded", "true");
+
+            });
+        }
+
+    }
+
     //tab strip
     function prefetch(hook,action,id,version)
     {
         var url = window.location.origin+"/" + action;
 
-        //console.log(hook);
-        console.log(url);
-        //console.log(id);
-        //console.log(version);
-
         var loaded = $("#" + hook).attr("loaded");
-
-        console.log(loaded);
 
         if (loaded == undefined) {
 
