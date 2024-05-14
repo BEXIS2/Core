@@ -57,6 +57,22 @@
       "description": "Allow multiple files to be uploaded at the same time.",
       "type": "Boolean",
       "options": []
+    },
+    {
+      "key": "useExternalMetadataForm",
+      "title": "Use external metadata form",
+      "value": false,
+      "description": "...",
+      "type": "Boolean",
+      "options": []
+    },
+    {
+      "key": "externalMetadataFormUrl",
+      "title": "External metadata form destination url",
+      "value": "",
+      "description": "...",
+      "type": "String",
+      "options": []
     }
   ]
 }
