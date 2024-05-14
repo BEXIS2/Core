@@ -77,6 +77,14 @@ namespace BExIS.Dlm.Services.DataStructure
         #endregion
 
         #region StructuredDataStructure
+        /// <summary>
+        /// Return a KeyValuePair of all structured data structures
+        /// </summary>
+        /// <returns></returns>
+        public List<KeyValuePair<long, string>> GetStructuredDataStructuresAsKVP()
+        {
+            return StructuredDataStructureRepo.Query().Select(s => new KeyValuePair<long, string>(s.Id, s.Name)).ToList();
+        }
 
         /// <summary>
         /// Creates a structured data structure <seealso cref="StructuredDataStructure"/> and persists the entity in the database.

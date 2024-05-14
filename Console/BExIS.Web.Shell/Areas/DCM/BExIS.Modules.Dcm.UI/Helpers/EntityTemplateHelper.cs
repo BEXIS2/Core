@@ -106,16 +106,14 @@ namespace BExIS.Modules.Dcm.UI.Helpers
             using (var datasetManager = new DatasetManager())
             {
                 long etId = entityTemplate.Id;
-                var datasetsetWithThisTemplate = datasetManager.DatasetRepo.Query().Where(d => d.EntityTemplate.Id.Equals(etId));
+                var datasetsetIdsWithThisTemplate = datasetManager.DatasetRepo.Query().Where(d => d.EntityTemplate.Id.Equals(etId)).Select(d=>d.Id).ToList();
+                var dsvs = datasetManager.GetDatasetLatestVersions(datasetsetIdsWithThisTemplate);
 
                 // get throw all the subjects that are linked to the entitytemplate
-                foreach (var ds in datasetsetWithThisTemplate.ToList())
-                {
-                    if (ds == null) continue; // dataset not exist
-                    DatasetVersion dsv = null;
-                    if(datasetManager.IsDatasetCheckedIn(ds.Id))dsv = datasetManager.GetDatasetLatestVersion(ds.Id); // set version if its not checked out
+                foreach(var dsv in dsvs)
+                {              
                     var l = new ListItem();
-                    l.Id = ds.Id; 
+                    l.Id = dsv.Dataset.Id; 
                     l.Text = dsv != null?dsv.Title.ToString():"Dataset is checked out."; // if a version is available, get the title
                     l.Group = entityTemplate.EntityType.Name; // add entity name 
                     model.LinkedSubjects.Add(l);

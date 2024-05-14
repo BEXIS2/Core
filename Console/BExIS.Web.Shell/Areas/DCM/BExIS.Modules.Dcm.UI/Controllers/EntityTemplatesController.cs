@@ -180,13 +180,6 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         public JsonResult DataStructures()
         {
             List<KeyValuePair<long, string>> tmp = new List<KeyValuePair<long, string>>();
-            using (var dataStructureManager = new DataStructureManager())
-            {
-                foreach (var structure in dataStructureManager.StructuredDataStructureRepo.Get())
-                {
-                    tmp.Add(new KeyValuePair<long, string>(structure.Id, structure.Name));
-                }
-            }
 
             return Json(tmp, JsonRequestBehavior.AllowGet);
         }
