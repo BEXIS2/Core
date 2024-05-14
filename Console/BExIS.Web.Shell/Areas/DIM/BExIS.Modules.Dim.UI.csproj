@@ -483,6 +483,7 @@
       <DependentUpon>UploadLocalization.zh-CN.resx</DependentUpon>
     </Compile>
     <Compile Include="Controllers\AdminController.cs" />
+    <Compile Include="Controllers\AgentsController.cs" />
     <Compile Include="Controllers\API\DataQualityOutController.cs" />
     <Compile Include="Controllers\API\DatasetOutController.cs" />
     <Compile Include="Controllers\API\AttachmentOutController.cs" />
@@ -502,6 +503,7 @@
     <Compile Include="Controllers\API\MetadataOutController.cs" />
     <Compile Include="Controllers\PublishController.cs" />
     <Compile Include="Controllers\SubmissionController.cs" />
+    <Compile Include="Controllers\SubmissionsController.cs" />
     <Compile Include="Controllers\TestController.cs" />
     <Compile Include="DimModule.cs" />
     <Compile Include="Helpers\ConfigurationsHelper.cs" />
@@ -523,6 +525,8 @@
     <Compile Include="Models\Mapping\MappingModel.cs" />
     <Compile Include="Models\MetadataStructureModel.cs" />
     <Compile Include="Models\ShowPublishDataModel.cs" />
+    <Compile Include="Models\Submissions\AgentModels.cs" />
+    <Compile Include="Models\Submissions\SubmissionModels.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -839,6 +843,12 @@
     <Content Include="Views\DataCiteDoi\Create.cshtml" />
     <Content Include="Views\DataCiteDoi\_Creator.cshtml" />
     <Content Include="Views\DataCiteDoi\_Affiliation.cshtml" />
+    <Content Include="Views\Submissions\Index.cshtml" />
+    <Content Include="Views\Agents\_Create.cshtml" />
+    <Content Include="Views\Agents\Index.cshtml" />
+    <Content Include="Views\Agents\_Update.cshtml" />
+    <Content Include="Views\Submissions\_Create.cshtml" />
+    <Content Include="Views\Submissions\_Update.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

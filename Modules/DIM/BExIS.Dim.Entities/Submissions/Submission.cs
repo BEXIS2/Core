@@ -1,4 +1,6 @@
-﻿using BExIS.Dlm.Entities.Data;
+﻿using BExIS.Dim.Entities.Responses;
+using BExIS.Dlm.Entities.Data;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,7 +17,7 @@ namespace BExIS.Dim.Entities.Submissions
         public virtual SubmissionStatus Status { get; set; }
         public virtual DateTimeOffset CreationDate { get; set; }
         public virtual DateTimeOffset LastModificationDate { get; set; }
-        public virtual string Content { get; set; }
+        public virtual string Response { get; set; }
     }
 
     public enum SubmissionStatus

@@ -42,6 +42,9 @@
     <ErrorReport>prompt</ErrorReport>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Newtonsoft.Json, Version=13.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\..\..\packages\Newtonsoft.Json.13.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Runtime.CompilerServices.Unsafe, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
@@ -61,6 +64,8 @@
     <Compile Include="Publication\MetadataStructureToRepository.cs" />
     <Compile Include="Publication\Publication.cs" />
     <Compile Include="Publication\Repository.cs" />
+    <Compile Include="Responses\IResponse.cs" />
+    <Compile Include="Responses\VaelastraszResponse.cs" />
     <Compile Include="Submissions\Agent.cs" />
     <Compile Include="Submissions\Submission.cs" />
   </ItemGroup>

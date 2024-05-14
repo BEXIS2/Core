@@ -1,11 +1,13 @@
 ﻿using BExIS.Dim.Entities.Submissions;
 using BExIS.Dlm.Entities.Party;
+using BExIS.Utils.NH.Querying;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Vaiona.Persistence.Api;
+using System.Linq.Dynamic.Core;
 
 namespace BExIS.Dim.Services.Submissions
 {
@@ -26,14 +28,18 @@ namespace BExIS.Dim.Services.Submissions
             AgentRepository = _guow.GetReadOnlyRepository<Agent>();
         }
 
-        public void Create(Agent agent)
+        public Agent Create(Agent agent)
         {
             using (var uow = this.GetUnitOfWork())
             {
                 var entityRequestRepository = uow.GetRepository<Agent>();
                 entityRequestRepository.Put(agent);
                 uow.Commit();
+
+                return agent;
             }
+
+            return null;
         }
 
         public void Delete(Agent agent)
@@ -49,6 +55,52 @@ namespace BExIS.Dim.Services.Submissions
         public Agent FindById(long id)
         {
             return AgentRepository.Get(id);
+        }
+
+        public List<Agent> Find(FilterExpression filter, OrderByExpression orderBy, int pageNumber, int pageSize, out int count)
+        {
+            var orderbyClause = orderBy?.ToLINQ();
+            var whereClause = filter?.ToLINQ();
+            count = 0;
+            try
+            {
+                using (IUnitOfWork uow = this.GetUnitOfWork())
+                {
+                    if (whereClause != null && orderBy != null)
+                    {
+                        var l = Agents.Where(whereClause);
+                        var x = l.OrderBy(orderbyClause);
+                        var y = x.Skip((pageNumber - 1) * pageSize);
+                        var z = y.Take(pageSize);
+
+                        count = l.Count();
+
+                        return z.ToList();
+                    }
+                    else if (whereClause != null)
+                    {
+                        var filtered = Agents.Where(whereClause);
+                        count = filtered.Count();
+
+                        return filtered.Skip((pageNumber - 1) * pageSize).Take(pageSize).ToList();
+                    }
+
+                    if (orderBy != null)
+                    {
+                        count = Agents.Count();
+                        return Agents.OrderBy(orderbyClause).Skip((pageNumber - 1) * pageSize).Take(pageSize).ToList();
+                    }
+
+                    count = count = Agents.Count();
+
+                    // without filter and order
+                    return Agents.Skip((pageNumber - 1) * pageSize).Take(pageSize).ToList();
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(string.Format("Could not retrieve filtered groups."), ex);
+            }
         }
 
         public void Update(Agent entity)
