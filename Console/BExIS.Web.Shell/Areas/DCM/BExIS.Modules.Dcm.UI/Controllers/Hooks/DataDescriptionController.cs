@@ -242,22 +242,22 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 var template = entityTemplateManager.Repo.Get(dataset.EntityTemplate.Id);
                 if (template == null) return Json(new { success = false, message = "template not exit" });
 
-                var structures = structureManager.StructuredDataStructureRepo.Get();
+                var structures = structureManager.GetStructuredDataStructuresAsKVP();
 
                 // get only subset of the structures restricted by the entity template.DatastructureList
                 if (template.HasDatastructure == true && template.DatastructureList.Any())
                 {
                     foreach (var dsId in template.DatastructureList)
                     {
-                        var ds = structures.Where(d => d.Id == dsId).FirstOrDefault();
-                        tmp.Add(new ListItem() { Id = ds.Id, Text = ds.Name, Group = "structure" });
+                        var ds = structures.Where(d => d.Key == dsId).FirstOrDefault();
+                        tmp.Add(new ListItem() { Id = ds.Key, Text = ds.Value, Group = "structure" });
                     }
                 }
                 else if (template.HasDatastructure == true) // get all structures
                 {
                     foreach (var ds in structures)
                     {
-                        tmp.Add(new ListItem() { Id = ds.Id, Text = ds.Name, Group = "structure" });
+                        tmp.Add(new ListItem() { Id = ds.Key, Text = ds.Value, Group = "structure" });
                     }
                 }
 

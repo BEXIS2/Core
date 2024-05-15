@@ -289,11 +289,11 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             {
                 List<ListViewItem> temp = new List<ListViewItem>();
 
-                foreach (DataStructure datasStructure in dsm.StructuredDataStructureRepo.Get())
+                foreach (var datasStructure in dsm.GetStructuredDataStructuresAsKVP())
                 {
-                    string title = datasStructure.Name;
+                    string title = datasStructure.Value;
 
-                    temp.Add(new ListViewItem(datasStructure.Id, title));
+                    temp.Add(new ListViewItem(datasStructure.Key, title));
                 }
 
                 return temp.OrderBy(p => p.Title).ToList();

@@ -873,13 +873,13 @@ namespace BExIS.Modules.Rpm.UI.Controllers
             using (var structureManager = new DataStructureManager())
             {
                 List<ListItem> list = new List<ListItem>();
-                var structures = structureManager.StructuredDataStructureRepo.Get();
+                var structures = structureManager.GetStructuredDataStructuresAsKVP();
 
                 if (structures.Any())
                 {
                     foreach (var structure in structures)
                     {
-                        list.Add(new ListItem(structure.Id, structure.Name));
+                        list.Add(new ListItem(structure.Key, structure.Value));
                     }
                 }
 
