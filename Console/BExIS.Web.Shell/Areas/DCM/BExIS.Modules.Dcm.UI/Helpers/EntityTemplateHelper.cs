@@ -83,7 +83,7 @@ namespace BExIS.Modules.Dcm.UI.Helpers
             }
         }
 
-        public static EntityTemplateModel ConvertTo(EntityTemplate entityTemplate)
+        public static EntityTemplateModel ConvertTo(EntityTemplate entityTemplate, bool withLinkedSubjects = true)
         {
             EntityTemplateModel model = new EntityTemplateModel();
             model.Id = entityTemplate.Id;
@@ -100,26 +100,32 @@ namespace BExIS.Modules.Dcm.UI.Helpers
 
             model.MetadataStructure = new ListItem(entityTemplate.MetadataStructure.Id, entityTemplate.MetadataStructure.Name);
             model.EntityType = new ListItem(entityTemplate.EntityType.Id, entityTemplate.EntityType.Name);
+       
+          
+                // check if subject are allready created, and list them for the view
+                using (var datasetManager = new DatasetManager())
+                {
+                    long etId = entityTemplate.Id;
+                    var datasetsetIdsWithThisTemplate = datasetManager.DatasetRepo.Query().Where(d => d.EntityTemplate.Id.Equals(etId)).Select(d => d.Id).ToList();
+                     model.InUse = datasetsetIdsWithThisTemplate.Count > 0 ? true : false; // set in use if count greater then 0
 
+                    if (withLinkedSubjects) // load linked subject - not needed in create
+                    {
+                        var dsvs = datasetManager.GetDatasetLatestVersions(datasetsetIdsWithThisTemplate);
 
-            // check if subject are allready created, and list them for the view
-            using (var datasetManager = new DatasetManager())
-            {
-                long etId = entityTemplate.Id;
-                var datasetsetIdsWithThisTemplate = datasetManager.DatasetRepo.Query().Where(d => d.EntityTemplate.Id.Equals(etId)).Select(d=>d.Id).ToList();
-                var dsvs = datasetManager.GetDatasetLatestVersions(datasetsetIdsWithThisTemplate);
-
-                // get throw all the subjects that are linked to the entitytemplate
-                foreach(var dsv in dsvs)
-                {              
-                    var l = new ListItem();
-                    l.Id = dsv.Dataset.Id; 
-                    l.Text = dsv != null?dsv.Title.ToString():"Dataset is checked out."; // if a version is available, get the title
-                    l.Group = entityTemplate.EntityType.Name; // add entity name 
-                    model.LinkedSubjects.Add(l);
+                        // get throw all the subjects that are linked to the entitytemplate
+                        foreach (var dsv in dsvs)
+                        {
+                            var l = new ListItem();
+                            l.Id = dsv.Dataset.Id;
+                            l.Text = dsv != null ? dsv.Title.ToString() : "Dataset is checked out."; // if a version is available, get the title
+                            l.Group = entityTemplate.EntityType.Name; // add entity name 
+                            model.LinkedSubjects.Add(l);
+                        }
+                    }
                 }
-            }
-
+            
+            
 
             return model;
 

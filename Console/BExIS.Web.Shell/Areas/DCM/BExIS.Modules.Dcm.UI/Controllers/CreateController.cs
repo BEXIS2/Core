@@ -452,7 +452,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             {
                 foreach (var e in entityTemplateManager.Repo.Get())
                 {
-                    entityTemplateModels.Add(EntityTemplateHelper.ConvertTo(e));
+                    entityTemplateModels.Add(EntityTemplateHelper.ConvertTo(e, false));
                 }
 
                 return Json(entityTemplateModels, JsonRequestBehavior.AllowGet);

@@ -79,6 +79,8 @@ namespace BExIS.Modules.Dcm.UI.Models.EntityTemplate
         /// </summary>
         public virtual List<ListItem> LinkedSubjects { get; set; }
 
+        public bool InUse { get; set; }
+
         public EntityTemplateModel()
         {
             Id = 0;
@@ -96,6 +98,7 @@ namespace BExIS.Modules.Dcm.UI.Models.EntityTemplate
             HasDatastructure = false;
 
             LinkedSubjects = new List<ListItem>();
+            InUse = false;
         }
 
         public class KvP
