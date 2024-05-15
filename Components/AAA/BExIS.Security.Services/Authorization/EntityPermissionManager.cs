@@ -173,9 +173,9 @@ namespace BExIS.Security.Services.Authorization
                     return false;
 
                 if (subject == null)
-                    return entityPermissionRepository.Get(p => p.Subject == null && p.Entity.Id == entity.Id && p.Key == key).Count == 1;
+                    return entityPermissionRepository.Query(p => p.Subject == null && p.Entity.Id == entity.Id && p.Key == key).Count() == 1;
 
-                return entityPermissionRepository.Get(p => p.Subject.Id == subject.Id && p.Entity.Id == entity.Id && p.Key == key).Count == 1;
+                return entityPermissionRepository.Query(p => p.Subject.Id == subject.Id && p.Entity.Id == entity.Id && p.Key == key).Count() == 1;
             }
         }
 
@@ -185,7 +185,7 @@ namespace BExIS.Security.Services.Authorization
             using (var uow = this.GetUnitOfWork())
             {
                 var entityPermissionRepository = uow.GetRepository<EntityPermission>();
-                var permission = entityPermissionRepository.Get(p => p.Subject == null && p.Entity.Id == entityId && p.Key == key);
+                var permission = entityPermissionRepository.Query(p => p.Subject == null && p.Entity.Id == entityId && p.Key == key).ToList();
 
                 bool isPublic = false;
                 DateTime publicationDate = DateTime.MinValue;
@@ -205,7 +205,7 @@ namespace BExIS.Security.Services.Authorization
             using (var uow = this.GetUnitOfWork())
             {
                 var entityPermissionRepository = uow.GetRepository<EntityPermission>();
-                return subjectId == null ? entityPermissionRepository.Get(p => p.Subject == null && p.Entity.Id == entityId && p.Key == key).Count == 1 : entityPermissionRepository.Get(p => p.Subject.Id == subjectId && p.Entity.Id == entityId && p.Key == key).Count == 1;
+                return subjectId == null ? entityPermissionRepository.Query(p => p.Subject == null && p.Entity.Id == entityId && p.Key == key).Count() == 1 : entityPermissionRepository.Query(p => p.Subject.Id == subjectId && p.Entity.Id == entityId && p.Key == key).Count() == 1;
             }
         }
 
@@ -214,7 +214,7 @@ namespace BExIS.Security.Services.Authorization
             using (var uow = this.GetUnitOfWork())
             {
                 var entityPermissionRepository = uow.GetRepository<EntityPermission>();
-                return subjectId == null ? entityPermissionRepository.Get(p => p.Subject == null && p.Entity.Id == entityId && p.Key == key && (p.Rights & (int)rightType) > 0).Count == 1 : entityPermissionRepository.Get(p => p.Subject.Id == subjectId && p.Entity.Id == entityId && p.Key == key && (p.Rights & (int)rightType) > 0).Count == 1;
+                return subjectId == null ? entityPermissionRepository.Query(p => p.Subject == null && p.Entity.Id == entityId && p.Key == key && (p.Rights & (int)rightType) > 0).Count() == 1 : entityPermissionRepository.Query(p => p.Subject.Id == subjectId && p.Entity.Id == entityId && p.Key == key && (p.Rights & (int)rightType) > 0).Count() == 1;
             }
         }
 
@@ -223,7 +223,7 @@ namespace BExIS.Security.Services.Authorization
             using (var uow = this.GetUnitOfWork())
             {
                 var entityPermissionRepository = uow.GetRepository<EntityPermission>();
-                return subjectId == null ? entityPermissionRepository.Get(p => p.Subject == null && p.Entity.Id == entityId && p.Key == instanceId).FirstOrDefault() : entityPermissionRepository.Get(p => p.Subject.Id == subjectId && p.Entity.Id == entityId && p.Key == instanceId).FirstOrDefault();
+                return subjectId == null ? entityPermissionRepository.Query(p => p.Subject == null && p.Entity.Id == entityId && p.Key == instanceId).FirstOrDefault() : entityPermissionRepository.Query(p => p.Subject.Id == subjectId && p.Entity.Id == entityId && p.Key == instanceId).FirstOrDefault();
             }
         }
 
@@ -355,7 +355,7 @@ namespace BExIS.Security.Services.Authorization
 
             var rights = new List<int>
                 {
-                    entityPermissionRepository.Get(m => m.Subject == null && eids.Contains(m.Entity.Id) && m.Key == key).FirstOrDefault()?.Rights ?? 0
+                    entityPermissionRepository.Query(m => m.Subject == null && eids.Contains(m.Entity.Id) && m.Key == key).FirstOrDefault()?.Rights ?? 0
                 };
 
             if (subject is User)
@@ -383,12 +383,12 @@ namespace BExIS.Security.Services.Authorization
                 var user = subject as User;
                 var subjectIds = new List<long>() { user.Id };
                 subjectIds.AddRange(user.Groups.Select(g => g.Id).ToList());
-                rights.AddRange(entityPermissionRepository.Get(m => subjectIds.Contains(m.Subject.Id) && eids.Contains(m.Entity.Id) && m.Key == key).Select(e => e.Rights).ToList());
+                rights.AddRange(entityPermissionRepository.Query(m => subjectIds.Contains(m.Subject.Id) && eids.Contains(m.Entity.Id) && m.Key == key).Select(e => e.Rights).ToList());
             }
 
             if (subject is Group)
             {
-                rights.Add(entityPermissionRepository.Get(m => m.Subject.Id == subject.Id && eids.Contains(m.Entity.Id) && m.Key == key).FirstOrDefault()?.Rights ?? 0);
+                rights.Add(entityPermissionRepository.Query(m => m.Subject.Id == subject.Id && eids.Contains(m.Entity.Id) && m.Key == key).FirstOrDefault()?.Rights ?? 0);
             }
 
             return rights.Aggregate(0, (left, right) => left | right);
@@ -480,11 +480,11 @@ namespace BExIS.Security.Services.Authorization
         {
             if (subject == null)
             {
-                return entityPermissionRepository.Get(m => m.Subject == null && m.Entity.Id == entity.Id && m.Key == key).FirstOrDefault()?.Rights ?? 0;
+                return entityPermissionRepository.Query(m => m.Subject == null && m.Entity.Id == entity.Id && m.Key == key).FirstOrDefault()?.Rights ?? 0;
             }
             if (entity == null)
                 return 0;
-            return entityPermissionRepository.Get(m => m.Subject.Id == subject.Id && m.Entity.Id == entity.Id && m.Key == key).FirstOrDefault()?.Rights ?? 0;
+            return entityPermissionRepository.Query(m => m.Subject.Id == subject.Id && m.Entity.Id == entity.Id && m.Key == key).FirstOrDefault()?.Rights ?? 0;
         }
 
         public int GetRights(long? subjectId, long entityId, long key)
@@ -555,7 +555,7 @@ namespace BExIS.Security.Services.Authorization
 
                 if (subject == null)
                 {
-                    return (entityPermissionRepository.Get(m => m.Subject == null && entities.Select(e => e.Id).Contains(m.Entity.Id) && m.Key == key).FirstOrDefault()?.Rights & (int)rightType) > 0;
+                    return (entityPermissionRepository.Query(m => m.Subject == null && entities.Select(e => e.Id).Contains(m.Entity.Id) && m.Key == key).FirstOrDefault()?.Rights & (int)rightType) > 0;
                 }
                 if (entities.Count != 1)
                     return false;
@@ -620,7 +620,7 @@ namespace BExIS.Security.Services.Authorization
                 if (entityIds.Count != 1)
                     return false;
 
-                return subjectId == null ? (entityPermissionRepository.Get(p => p.Subject == null && entityIds.Contains(p.Entity.Id) && p.Key == key).FirstOrDefault()?.Rights & (int)rightType) > 0 : (entityPermissionRepository.Get(p => (p.Subject.Id == subjectId || p.Subject == null) && entityIds.Contains(p.Entity.Id) && p.Key == key).FirstOrDefault()?.Rights & (int)rightType) > 0;
+                return subjectId == null ? (entityPermissionRepository.Query(p => p.Subject == null && entityIds.Contains(p.Entity.Id) && p.Key == key).FirstOrDefault()?.Rights & (int)rightType) > 0 : (entityPermissionRepository.Query(p => (p.Subject.Id == subjectId || p.Subject == null) && entityIds.Contains(p.Entity.Id) && p.Key == key).FirstOrDefault()?.Rights & (int)rightType) > 0;
             }
         }
 
