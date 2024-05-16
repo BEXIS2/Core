@@ -16,6 +16,8 @@ using BExIS.Security.Services.Subjects;
 using System.Web.UI.WebControls;
 using System.Data;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.StartPanel;
+using BExIS.Utils.Models;
+using System.Linq.Expressions;
 
 namespace BExIS.Modules.Rpm.UI.Controllers
 {
@@ -677,7 +679,8 @@ namespace BExIS.Modules.Rpm.UI.Controllers
             User user = null;
             int rights = 0;
 
-            DataTable dt = null;
+            DataTable dt = new DataTable();
+            DataTable tempDt = new DataTable();
 
             using (UserManager userManager = new UserManager())
             {
@@ -694,35 +697,107 @@ namespace BExIS.Modules.Rpm.UI.Controllers
 
             if (user != null)
             {
-                
-                using (DatasetManager datasetManager = new DatasetManager())
+                using (EntityPermissionManager entityPermissionManager = new EntityPermissionManager())
                 {
-                    Dataset dataset = datasetManager.DatasetRepo.Get(Id);
-
-                    using (EntityPermissionManager entityPermissionManager = new EntityPermissionManager())
+                    using (DatasetManager datasetManager = new DatasetManager())
                     {
-                        rights = entityPermissionManager.GetEffectiveRights(user?.Id, dataset.EntityTemplate.EntityType.Id, dataset.Id);
-                        if (rights > 0)
+                        Dataset dataset = datasetManager.DatasetRepo.Get(Id);
+
+                        StructuredDataStructure dataStructure = new StructuredDataStructure();
+
+                        using (DataStructureManager dataStructureManager = new DataStructureManager())
                         {
-                            if (pageSize > 0)
-                            {
-                                dt = datasetManager.GetLatestDatasetVersionTuples(dataset.Id, 0, pageSize);
-                                dt.Strip();
-                            }
-                            else if (variableId > 0 && pageSize == 0)
-                            {
-                                dt = datasetManager.GetLatestDatasetVersionTuples(dataset.Id, 0, pageSize);
-                                dt.Strip();
+                            dataStructure = dataStructureManager.StructuredDataStructureRepo.Get(dataset.DataStructure.Id);
 
-                                string columnName = "var" + variableId;
 
-                                while (dt.Columns[0] != dt.Columns[dt.Columns.Count - 1])
+                            rights = entityPermissionManager.GetEffectiveRights(user?.Id, dataset.EntityTemplate.EntityType.Id, dataset.Id);
+                            if (rights > 0 && dataStructure != null && dataStructure.Id != 0)
+                            {
+                                if (pageSize > 0)
                                 {
-                                    if (dt.Columns[0].ColumnName != columnName)
-                                        dt.Columns.RemoveAt(0);
+                                    try
+                                    {
+                                        dt = datasetManager.GetLatestDatasetVersionTuples(dataset.Id, 0, pageSize);
+                                    }
+                                    catch
+                                    {
+                                        return Json(dt, JsonRequestBehavior.AllowGet);
+                                    }
+                                    dt.Strip();
 
-                                    if (dt.Columns[dt.Columns.Count - 1].ColumnName != columnName)
-                                        dt.Columns.RemoveAt(dt.Columns.Count - 1);
+                                    tempDt = dt.Clone();
+                                    foreach (DataColumn column in tempDt.Columns)
+                                    {
+                                        column.DataType = typeof(string);
+                                    }
+
+                                    foreach (DataRow row in dt.Rows)
+                                    {
+                                        tempDt.ImportRow(row);
+                                    }
+
+                                    VariableInstance variable = new VariableInstance();
+                                    for (int i = 0; i < tempDt.Columns.Count; i++)
+                                    {
+                                        variable = dataStructure.Variables.Where(v => ("var" + v.Id).Equals(tempDt.Columns[i].ColumnName)).FirstOrDefault();
+                                        for (int j = 0; j < tempDt.Rows.Count; j++)
+                                        {
+                                            foreach (MissingValue missingValue in variable.MissingValues)
+                                            {
+                                                if (tempDt.Rows[j].ItemArray[i].ToString() == missingValue.Placeholder)
+                                                {
+                                                    tempDt.Rows[j].SetField(i,missingValue.DisplayName);
+                                                    break;
+                                                }
+                                            }
+                                        }
+                                    }
+                                    dt = tempDt.Copy();
+
+                                }
+                                else if (variableId > 0 && pageSize == 0)
+                                {
+                                     try
+                                    {
+                                        dt = datasetManager.GetLatestDatasetVersionTuples(dataset.Id, 0, pageSize);
+                                    }
+                                    catch
+                                    {
+                                        return Json(dt, JsonRequestBehavior.AllowGet);
+                                    }
+                                    dt.Strip();
+
+                                    string columnName = "var" + variableId;
+
+                                    while (dt.Columns[0] != dt.Columns[dt.Columns.Count - 1])
+                                    {
+                                        if (dt.Columns[0].ColumnName != columnName)
+                                            dt.Columns.RemoveAt(0);
+
+                                        if (dt.Columns[dt.Columns.Count - 1].ColumnName != columnName)
+                                            dt.Columns.RemoveAt(dt.Columns.Count - 1);
+                                    }
+
+                                    VariableInstance variable = new VariableInstance();                                    
+                                    
+                                    variable = dataStructure.Variables.Where(v => ("var" + v.Id).Equals(dt.Columns[0].ColumnName)).FirstOrDefault();
+
+                                    int i = 0;
+
+                                    do
+                                    {
+
+                                        foreach (MissingValue missingValue in variable.MissingValues)
+                                        {
+                                            if (dt.Rows[i].ItemArray[0].ToString() == missingValue.Placeholder)
+                                            {
+                                                dt.Rows.Remove(dt.Rows[i]);
+                                                i--;
+                                                break;
+                                            }
+                                        }
+                                        i++;
+                                    } while (dt.Rows[i] != dt.Rows[dt.Rows.Count - 1]);                                    
                                 }
                             }
                         }
