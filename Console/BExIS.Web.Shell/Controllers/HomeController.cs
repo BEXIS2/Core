@@ -144,6 +144,13 @@ namespace BExIS.Web.Shell.Controllers
             }
         }
 
+        [JsonNetFilter]
+        [HttpGet]
+        public ActionResult Breadcrumb()
+        {
+            return View("");
+        }
+
         [DoesNotNeedDataAccess]
         public ActionResult SessionTimeout()
         {

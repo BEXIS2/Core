@@ -6,6 +6,8 @@
     {
         title = title.Split('-').Last();
     }
+
+
 }
 
 <div >
@@ -13,7 +15,7 @@
         @{
             if (title.ToLower().Trim() != "home")
             {
-                <li><a class="anchor" href="/">Home</a></li>
+                <li><a id="home" class="anchor" href="/"></a></li>
             }
 
         }
@@ -21,6 +23,33 @@
         <li class="">@title</li>
     </ol>
 </div>
+
+
+<script type="text/javascript">
+
+    $(document).ready(function () {
+        $.ajax({
+            url: '/Home/GetApplicationName', // URL of the MVC controller action
+            type: 'GET',  // Specify GET method for retrieving data
+            success: function (response) {
+          
+                const element = document.getElementById('home');
+                if (response === '') {
+                    element.innerText = "Home"
+                }
+                else {
+                    element.innerText = response;
+                }
+            },
+            error: function (error) {
+                // Handle any errors during the request
+                const element = document.getElementById('home');
+                element.innerText = "Home"
+            }
+        });
+    });
+ 
+</script>
 
 
 <style>
