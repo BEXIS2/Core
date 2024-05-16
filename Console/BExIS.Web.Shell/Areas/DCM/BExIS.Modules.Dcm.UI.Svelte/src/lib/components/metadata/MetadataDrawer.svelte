@@ -25,7 +25,7 @@ onMount(() => {
  
 async function open(){
 	token = await getToken();
-	console.log("🚀 ~ open ~ token:", token)
+	url = url+"?id="+id+"&auth="+token;
 	const drawerSettings: DrawerSettings = {
 			id: 'external-form',
 			meta: { foo: 'bar', fizz: 'buzz', age: 40 }
@@ -33,6 +33,12 @@ async function open(){
 		drawerStore.open(drawerSettings);
 	}
 
+	
+ window.addEventListener('message', function(event) {
+			 console.log("message", event.data)
+				if(event.data ==='saved'){	close();}
+
+ });
 
 	function close() {
 		drawerStore.close();
@@ -51,7 +57,6 @@ async function open(){
 			</div>
 		</div>
   
-
   	<IFrame app="test" {url} on:close={close}></IFrame>
  
  

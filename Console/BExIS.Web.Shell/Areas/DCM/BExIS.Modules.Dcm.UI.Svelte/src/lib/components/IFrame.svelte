@@ -16,15 +16,17 @@ import {onMount, afterUpdate, onDestroy} from 'svelte';
  onDestroy(() => {
   console.log(`Destroyed ${app}`);
  });
- </script>
+
  
+ </script>
+
+
  <iframe
    title="{app}"
    id='microapp-{app}'
    frameborder='0'
    scrolling='no'
-   src={url}
- ></iframe>
+   src={url}></iframe>
  
 
  <style>

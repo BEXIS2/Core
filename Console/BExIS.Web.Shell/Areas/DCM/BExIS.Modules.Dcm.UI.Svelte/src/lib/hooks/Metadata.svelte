@@ -50,7 +50,7 @@
 
 		if(model.useExternalMetadataForm)	{	
 			open = true;
-			window.open(defaultFormUrl, '_blank')		}
+		}
 		else{	window.open(defaultFormUrl, '_blank')?.focus();} // default form 		
 	}
 
@@ -71,8 +71,8 @@
 		<button class="chip variant-filled-secondary flex-none" on:click={editFn}
 			><Fa icon={faPen} /></button>
 	</div>
-	{#if open}
-		<MetadataDrawer {id} url={model.externalMetadataFormUrl} on:close={() => open = false}></MetadataDrawer>
-	{/if}
-
+	
 </div>
+{#if open}
+		<MetadataDrawer {id} url={model.externalMetadataFormUrl} on:close={() => open = false}></MetadataDrawer>
+{/if}
