@@ -110,11 +110,12 @@ Green 05  #eff7f6
 .bx-metadataFormTextInput {
     width: 100%;
     max-width: 490px;
+    border: var(--border-width-field) solid var(--border-color-field);
 }
 
 .bx-metadata-form-input-small {
-   
-    font-size:smaller;
+    font-size: smaller;
+    border: var(--border-width-field) solid var(--border-color-field);
 }
 
 

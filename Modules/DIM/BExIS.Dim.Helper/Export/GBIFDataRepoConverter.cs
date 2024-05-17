@@ -13,9 +13,11 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Xml;
 using Vaiona.Utils.Cfg;
+using Vaiona.Web.Mvc.Modularity;
 
 namespace BExIS.Dim.Helpers.Export
 {
@@ -33,13 +35,18 @@ namespace BExIS.Dim.Helpers.Export
             using (var conceptManager = new ConceptManager())
             using (ZipFile zip = new ZipFile())
             {
+                string dwcStorePath = ModuleManager.GetModuleSettings("DIM").GetValueByKey("gbifCollectionArea").ToString();
+
+
                 var datasetversion = datasetManager.GetDatasetVersion(datasetVersionId);
                 var dataset = datasetversion.Dataset;
                 var versionNumber = datasetManager.GetDatasetVersionNr(datasetVersionId);
 
-                string datasetsPath = Path.Combine(AppConfiguration.DataPath, "Datasets");
-                string subpath = Path.Combine(dataset.Id.ToString(), "publish", "gbif");
-                string folder = Path.Combine(datasetsPath, subpath);
+                // setup folder to store the dwc zip
+                // if starts with / it means it should store under {DATA}/ dwcStorePath
+                // if starts with Char then it means the full Folepath is defined 
+
+                string folder = Regex.Match(dwcStorePath, "^([A-Z]:\\|/)").Success ? dwcStorePath :Path.Combine(AppConfiguration.DataPath, dwcStorePath);
 
                 FileHelper.CreateDicrectoriesIfNotExist(folder);
 
@@ -48,7 +55,6 @@ namespace BExIS.Dim.Helpers.Export
                 string zipfilepath = Path.Combine(folder, zipfilename);
 
                 if (File.Exists(zipfilepath)) return zipfilepath;
-
 
                 if (!Directory.Exists(folder)) Directory.CreateDirectory(folder);
 
@@ -75,6 +81,8 @@ namespace BExIS.Dim.Helpers.Export
                     if (File.Exists(metaFilePath)) zip.AddFile(metaFilePath, "");
 
                     zip.Save(zipfilepath);
+
+                    
 
                     return zipfilepath;
 
@@ -106,6 +114,8 @@ namespace BExIS.Dim.Helpers.Export
                 string folder = Path.Combine(datasetsPath, subpath);
 
                 FileHelper.CreateDicrectoriesIfNotExist(folder);
+                GbifHelper helper = new GbifHelper();
+
 
                 var concept = conceptManager.MappingConceptRepo.Get().Where(c => c.Name.Equals(_dataRepo.Name)).FirstOrDefault();
 
@@ -126,7 +136,7 @@ namespace BExIS.Dim.Helpers.Export
                     // if concept is linked to a xsd, generate metadata and validaed it against the schema
                     if (!string.IsNullOrEmpty(concept.XSD))
                     {
-                        GbifHelper helper = new GbifHelper();
+                        
                         string xsdPath = Path.Combine(AppConfiguration.WorkspaceRootPath, concept.XSD);
 
                         string metadataPath = helper.GenerateResourceMetadata(concept.Id, metadataStructureId, datasetversion.Metadata, folder, xsdPath);
@@ -139,16 +149,17 @@ namespace BExIS.Dim.Helpers.Export
 
                 }
 
-                // in V2 file for structure exist
-                // in data structure - dcw terms
-                string dwtermsFilePath = Path.Combine(AppConfiguration.DataPath, "DataStructures", dataStructureId.ToString(), "dw_terms.json");
+                //// in V2 file for structure exist
+                //// in data structure - dcw terms
+                //string dwtermsFilePath = Path.Combine(AppConfiguration.DataPath, "DataStructures", dataStructureId.ToString(), "dw_terms.json");
 
-                if (!File.Exists(dwtermsFilePath))
-                    errors.Add("dw_terms.json file not exist.");
+                //if (!File.Exists(dwtermsFilePath))
+                //    errors.Add("dw_terms.json file not exist.");
 
-                // check all needed dw terms mapped for the type
-
-
+                //// check all needed dw terms mapped for the type
+       
+                // in V3 read from structre
+                helper.ValidateDWCTerms(dataStructureId, GbifDataType.samplingEvent, out errors);
 
                 //check if data exist
                 if (datasetManager.GetDataTuplesCount(datasetVersionId)<=0)

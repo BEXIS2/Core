@@ -271,6 +271,10 @@
       <Project>{63fcacaa-9534-4fdd-a082-78dcc06baf28}</Project>
       <Name>Vaiona.Utils</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\..\Components\Vaiona\Vaiona.Web.Mvc.Modularity\Vaiona.Web.Mvc.Modularity.csproj">
+      <Project>{705F8751-E58A-453E-A7FD-0C310FD3CAE8}</Project>
+      <Name>Vaiona.Web.Mvc.Modularity</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\..\Components\XML\BExIS.Xml.Helpers\BExIS.Xml.Helpers.csproj">
       <Project>{252f7872-a69c-43a6-84b4-4d2abdbdd9ab}</Project>
       <Name>BExIS.Xml.Helpers</Name>

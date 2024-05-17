@@ -63,6 +63,14 @@
         }
       ],
       "description": "There are additional mappings for DOI DataCite."
+    },
+    {
+      "key": "gbifCollectionArea",
+      "title": "gbifCollectionArea",
+      "options": [],
+      "type": "String",
+      "value": "export/gbif",
+      "description": "All created darwin core archive dataset exports are saved in this specified directory. It starts from the predifiend Data folder as default. It is also possible to specify a sequential folder path. default: {Data}/export/gbif"
     }
   ]
 }
