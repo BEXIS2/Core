@@ -1,4 +1,4 @@
-﻿using BExIS.Dim.Entities.Publication;
+﻿using BExIS.Dim.Entities.Publications;
 using BExIS.Dlm.Entities.Data;
 using System;
 using System.Collections.Generic;
