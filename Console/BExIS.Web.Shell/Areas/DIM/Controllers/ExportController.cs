@@ -19,6 +19,7 @@ using BExIS.Utils.Extensions;
 using BExIS.Xml.Helpers;
 using Ionic.Zip;
 using System;
+using System.Data;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -54,9 +55,9 @@ namespace BExIS.Modules.Dim.UI.Controllers
 
                 Repository dataRepo = new Repository();
                 dataRepo.Name = "generic";
-                dataRepo.Broker = broker;
+                broker.Repository = dataRepo;
 
-                GenericDataRepoConverter dataRepoConverter = new GenericDataRepoConverter(dataRepo);
+                GenericDataRepoConverter dataRepoConverter = new GenericDataRepoConverter(broker);
                 Tuple<string, string> tmp = new Tuple<string, string>(dataRepoConverter.Convert(datasetVersionId), "application/zip");
 
                 return File(tmp.Item1, tmp.Item2, Path.GetFileName(tmp.Item1));

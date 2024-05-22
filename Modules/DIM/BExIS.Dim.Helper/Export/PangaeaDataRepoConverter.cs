@@ -185,10 +185,10 @@ namespace BExIS.Dim.Helpers.Export
             return pangaeaMetadata;
         }
 
-        public PangaeaDataRepoConverter(Repository datarepo)
+        public PangaeaDataRepoConverter(Broker broker)
         {
-            _dataRepo = datarepo;
-            _broker = datarepo.Broker;
+            _dataRepo = broker.Repository;
+            _broker = broker;
         }
     }
 

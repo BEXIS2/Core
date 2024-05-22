@@ -25,6 +25,10 @@
     <property name="Server" type="string">
       <column name="Server" />
     </property>
+	  
+	<property name="Type" type="string">
+		<column name="Type" />
+	</property>
 
     <property name="UserName" type="string">
       <column name="UserName" />
@@ -45,5 +49,9 @@
     <property name="Link" type="string">
       <column name="Link" />
     </property>
+	  <!-- Associations -->
+
+	  <many-to-one class="Repository" name="Repository" column="RepositoryRef">
+	  </many-to-one>
   </class>
 </hibernate-mapping>

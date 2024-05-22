@@ -79,6 +79,13 @@ namespace BExIS.Dim.Entities.Publication
         /// <seealso cref=""/>        
         public virtual Repository Repository { get; set; }
 
+        /// <summary>
+        /// inverse map
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>        
+        public virtual string Response { get; set; }
+
         #endregion 
 
         #region Methods

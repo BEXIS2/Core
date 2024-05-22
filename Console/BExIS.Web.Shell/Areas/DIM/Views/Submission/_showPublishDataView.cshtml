@@ -4,7 +4,7 @@
 @model BExIS.Modules.Dim.UI.Models.ShowPublishDataModel
 
 @{
-    List<string> datarepolist = Model.Brokers;
+    List<BExIS.UI.Models.ListItem> datarepolist = Model.Brokers;
 }
 <script type="text/javascript">
 
@@ -16,24 +16,21 @@
 
         function onSelectDataRepositoryDropDownChange(e) {
 
-            var datarepo = e.value;
-            var id = '@Model.DatasetId';
-            //alert(e.value);
+            console.log(e.value)
 
+            var id = '@Model.DatasetId';
+   
             if(e.value !="")
             {
-
-            
-
-                $.post('@Url.Action("LoadDataRepoRequirementView", "Submission")',
-                    { datarepo: e.value, datasetid: id },
+                $.post('@Url.Action("LoadRequirementView", "Submission")',
+                    { brokerId: e.value, datasetid: id },
                     function(response) {
                         //$("#requirementsContainer").html(response);
                     
                         $("#preloader").preloader(14, "Please wait...");
 
                         var jsonObject = {
-                            "datarepo": e.value,
+                            "brokerId": e.value,
                             "datasetid": id
                         };
 
@@ -140,6 +137,8 @@
                             }
                         });
                     })
+
+                $("#selectedBrokerId").attr("brokerid", e.value);
             }
             else
             {
@@ -147,26 +146,29 @@
                 $("#submitPublishBt").addClass("bx-disabled");
             }
 
+            
+
         }
 
         function onSubmitPublishBtClick(e) {
 
             $("#preloader").preloader(14, "Publishing data...");
 
-            var id = @Model.DatasetId;
+            var id = '@Model.DatasetId';
 
-            //get selected value
-            var input = $(".t-dropdown .t-input").text();
+            var brokerid = document.getElementById("selectedBrokerId").getAttribute("brokerid");
 
             //alert(input);
-            sendDataToDataRepo(id, input);
+            sendDataToDataRepo(id, brokerid);
 
         }
 
     function prepareData(id,input) {
 
+        console.log("prepareData", id, input);
+
         $.post('@Url.Action("PrepareData", "Submission", new RouteValueDictionary {{"area", "dim"}})',
-                { datasetid: id, datarepo: input },
+            { datasetVersionId: id, brokerId: input },
                 function(response) {
                     //alert("prepare data copmplete");
                     $("#publishContentContainer").replaceWith(response);
@@ -178,10 +180,12 @@
 
     function sendDataToDataRepo(id,input) {
 
+        console.log("sendDataToDataRepo", id, input);
+
         //alert("start send data to repo ");
 
         $.post('@Url.Action("SendDataToDataRepo", "Submission", new RouteValueDictionary {{"area", "dim"}})',
-            { datasetid: id, datarepo: input },
+            { brokerId: input, datasetId: id },
             function(response) {
 
                // alert("end send data to repo ");
@@ -193,7 +197,6 @@
                     //alert(response);
                     //var obj = jQuery.parseJSON(response);
                     var message = $("#requirementsContainer").text();
-
                     var htmltext = "<p>" + message + "</p><p><br/>" + response + "</p>";
 
                     //alert(response);
@@ -231,7 +234,7 @@
 
 <div id="publishContentContainer" style="min-height: 200px">
     <div id="publishingOptionsContainer" style="text-align: -webkit-left;">
-
+        <span id="selectedBrokerId" style="display:none"></span>
 
         @if (Model.EditRights && Model.MetadataIsValid)
         {
@@ -244,7 +247,7 @@
                       .Name("SelectDataRepository")
                       .HtmlAttributes(new { title = "Select a repository for publishing this dataset" })
                       .ClientEvents(events => events.OnChange("onSelectDataRepositoryDropDownChange"))
-                      .BindTo(new SelectList(datarepolist)))
+                      .BindTo(new SelectList(datarepolist,"Id","Text")))
                     </td>
 
                     <td style="width: 100px;">

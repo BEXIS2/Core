@@ -526,7 +526,6 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="App_Data\submissionConfig.xml" />
     <Content Include="Content\2013.2.611\Black\editor.png" />
     <Content Include="Content\2013.2.611\Black\imagebrowser.png" />
     <Content Include="Content\2013.2.611\Black\loading.gif" />
@@ -779,6 +778,7 @@
     <Content Include="Content\bootstrap.min.css.map" />
     <Content Include="Content\bootstrap-theme.min.css.map" />
     <Content Include="Dim.Settings.json" />
+    <Content Include="App_Data\submissionConfig.json" />
     <None Include="Properties\PublishProfiles\BexisServer_demo.pubxml" />
     <None Include="Properties\PublishProfiles\BexisServer_dev.pubxml" />
     <None Include="Properties\PublishProfiles\BexisServer_master.pubxml" />
@@ -1224,7 +1224,7 @@
   <PropertyGroup>
     <PostBuildEvent>mkdir "$(SolutionDir)Console\Workspace\Modules\DIM"
 C:\Windows\System32\xcopy "$(ProjectDir)Dim.Settings.json" "$(SolutionDir)Console\Workspace\Modules\DIM" /C /Y /I
-C:\Windows\System32\xcopy "$(ProjectDir)\App_Data\submissionConfig.xml" "$(SolutionDir)Console\Workspace\Modules\DIM" /C /Y /I
+C:\Windows\System32\xcopy "$(ProjectDir)\App_Data\submissionConfig.json" "$(SolutionDir)Console\Workspace\Modules\DIM" /C /Y /I
 C:\Windows\System32\xcopy "$(ProjectDir)\bin\BExIS.Modules.Dim.UI.xml" "$(SolutionDir)Console\BExIS.Web.Shell\App_Data" /C /Y /I</PostBuildEvent>
   </PropertyGroup>
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

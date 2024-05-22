@@ -347,16 +347,14 @@ namespace BExIS.Dim.Services
         /// <param name="url">A free text describing the purpose, usage, and/or the domain of the data structure usage.</param>
         /// <param name="broker"></param>
         ///
-        public Repository CreateRepository(string name, string url, Broker broker)
+        public Repository CreateRepository(string name, string url)
         {
             Contract.Requires(!string.IsNullOrWhiteSpace(name));
-            Contract.Requires(broker != null);
 
             Repository e = new Repository()
             {
                 Name = name,
-                Url = url,
-                Broker = broker
+                Url = url
             };
 
             using (IUnitOfWork uow = this.GetUnitOfWork())

@@ -26,10 +26,5 @@
     </property>
     
     
-    <!-- Associations -->
-
-    <many-to-one class="Broker" name="Broker" column="BrokerRef">
-    </many-to-one>
-
   </class>
 </hibernate-mapping>
