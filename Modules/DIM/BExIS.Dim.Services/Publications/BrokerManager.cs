@@ -41,5 +41,56 @@ namespace BExIS.Dim.Services.Publications
                 }
             }
         }
+
+        public bool Delete(Broker broker)
+        {
+            try
+            {
+                using (var uow = this.GetUnitOfWork())
+                {
+                    var brokerRepository = uow.GetRepository<Broker>();
+                    brokerRepository.Delete(broker);
+                    uow.Commit();
+                }
+
+                return true;
+            }
+            catch(Exception ex)
+            {
+                return false;
+            }
+
+        }
+
+        public bool DeleteById(long brokerId)
+        {
+            return Delete(BrokerRepository.Get(brokerId));
+        }
+
+        public Broker FindById(long id)
+        {
+            return BrokerRepository.Get(id);
+        }
+
+        public bool Update(Broker entity)
+        {
+            try
+            {
+                using (var uow = this.GetUnitOfWork())
+                {
+                    var repo = uow.GetRepository<Broker>();
+                    repo.Merge(entity);
+                    var merged = repo.Get(entity.Id);
+                    repo.Put(merged);
+                    uow.Commit();
+                }
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                return false;
+            }
+        }
     }
 }
