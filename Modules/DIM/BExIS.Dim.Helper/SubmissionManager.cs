@@ -42,7 +42,7 @@ namespace BExIS.Dim.Helpers
 
                     for (int i = 0; i < Brokers.Count(); i++)
                     {
-                        Brokers.Add(createBroker(Brokers.ElementAt(i), publicationManager));
+                        createBroker(Brokers.ElementAt(i), publicationManager);
                     }
 
                 }
