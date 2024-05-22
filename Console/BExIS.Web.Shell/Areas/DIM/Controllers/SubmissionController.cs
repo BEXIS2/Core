@@ -111,6 +111,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
                         repo = publicationManager.RepositoryRepo.Get(pub.Repository.Id);
 
                     }
+
                     string dataRepoName = repo == null ? "" : repo.Name;
 
                     List<string> repos =

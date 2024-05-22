@@ -114,7 +114,7 @@ namespace BExIS.Dim.Services
             publication.ResearchObjectId = researchObjectId;
             publication.Broker = broker;
             publication.DatasetVersion = datasetVersion;
-            publication.Repository = null;
+            publication.Repository = broker.Repository;
             publication.Timestamp = DateTime.Now;
             publication.Status = status;
             publication.FilePath = filePath;
