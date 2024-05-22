@@ -57,10 +57,8 @@
 
 
 
-	<Child on:test></Child>
-
-		<!-- {#if serverTableConfig}
+	 {#if serverTableConfig}
 			<Table config={serverTableConfig} />
-		{/if} -->
+		{/if}
 
 
