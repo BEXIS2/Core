@@ -45,6 +45,10 @@
 			<column name="Status" />
 		</property>
 
+		<property name="Response" type="string">
+			<column name="Response" />
+		</property>
+
 		<!-- Associations -->
 
 		<many-to-one class="BExIS.Dlm.Entities.Data.DatasetVersion" name="DatasetVersion" column="DatasetVersionRef">

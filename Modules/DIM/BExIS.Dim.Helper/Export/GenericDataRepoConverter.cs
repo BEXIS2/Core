@@ -218,10 +218,10 @@ namespace BExIS.Dim.Helpers.Export
             }
         }
 
-        public GenericDataRepoConverter(Repository datarepo)
+        public GenericDataRepoConverter(Broker broker)
         {
-            _dataRepo = datarepo;
-            _broker = datarepo.Broker;
+            _dataRepo = broker.Repository;
+            _broker = broker;
         }
     }
 }

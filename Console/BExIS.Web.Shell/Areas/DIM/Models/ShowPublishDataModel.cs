@@ -1,11 +1,12 @@
-﻿using System;
+﻿using BExIS.UI.Models;
+using System;
 using System.Collections.Generic;
 
 namespace BExIS.Modules.Dim.UI.Models
 {
     public class ShowPublishDataModel
     {
-        public List<string> Brokers;
+        public List<ListItem> Brokers;
         public long DatasetId;
         public bool EditRights;
         public bool DownloadRights;
@@ -15,7 +16,7 @@ namespace BExIS.Modules.Dim.UI.Models
 
         public ShowPublishDataModel()
         {
-            Brokers = new List<string>();
+            Brokers = new List<ListItem>();
             Publications = new List<PublicationModel>();
             DatasetId = 0;
             EditRights = false;
@@ -28,7 +29,6 @@ namespace BExIS.Modules.Dim.UI.Models
     {
         public long DatasetVersionId { get; set; }
         public int DatasetVersionNr { get; set; }
-
         public BrokerModel Broker { get; set; }
         public string DataRepo { get; set; }
         public string FilePath { get; set; }

@@ -864,7 +864,7 @@
             Other mosules who consume the API results of a module, should only expect .NET types, DLM types, json, xml, CSV, or Html.
             </summary>
         </member>
-        <member name="M:BExIS.Modules.Dim.UI.Controllers.SubmissionController.PrepareData(System.Int64,System.Int64,System.String,System.String)">
+        <member name="M:BExIS.Modules.Dim.UI.Controllers.SubmissionController.PrepareData(System.Int64,System.Int64)">
             <summary>
             prepare data for the broker and repo
             and return a tuple
