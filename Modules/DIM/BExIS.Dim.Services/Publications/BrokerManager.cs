@@ -42,6 +42,23 @@ namespace BExIS.Dim.Services.Publications
             }
         }
 
+        public Broker Create(Broker broker)
+        {
+            try
+            {
+                using (var uow = this.GetUnitOfWork())
+                {
+                    var entityRequestRepository = uow.GetRepository<Broker>();
+                    entityRequestRepository.Put(broker);
+                    uow.Commit();
+                }
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
+        }
+
         public bool Delete(Broker broker)
         {
             try

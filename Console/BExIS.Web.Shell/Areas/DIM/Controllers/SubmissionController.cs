@@ -779,6 +779,8 @@ namespace BExIS.Modules.Dim.UI.Controllers
             bool isValid = false;
             List<string> errorsList = new List<string>();
 
+            // [TODO] Add Broker Validation for DataCite
+
             switch (broker.Name.ToLower())
             {
                 case "gbif":
