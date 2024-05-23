@@ -52,6 +52,8 @@ namespace BExIS.Dim.Services.Publications
                     entityRequestRepository.Put(broker);
                     uow.Commit();
                 }
+
+                return broker;
             }
             catch (Exception ex)
             {
