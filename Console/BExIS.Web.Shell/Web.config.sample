@@ -91,6 +91,7 @@
 			</assemblies>
 		</compilation>
 		<authentication mode="None" />
+                <httpCookies requireSSL="true" httpOnlyCookies="true"/>
 		<httpRuntime targetFramework="4.5.2" maxRequestLength="1048576" executionTimeout="480" />
 		<pages controlRenderingCompatibilityVersion="4.0">
 			<namespaces>
