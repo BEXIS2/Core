@@ -1,5 +1,5 @@
 ﻿using BExIS.Dim.Entities.Mapping;
-using BExIS.Dim.Entities.Publication;
+using BExIS.Dim.Entities.Publications;
 using BExIS.Dim.Helpers.Mapping;
 using BExIS.Dim.Helpers.Models;
 using BExIS.Dim.Services;

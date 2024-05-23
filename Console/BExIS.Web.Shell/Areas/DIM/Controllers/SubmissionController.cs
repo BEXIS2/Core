@@ -1,5 +1,5 @@
 ﻿using BExIS.App.Bootstrap.Attributes;
-using BExIS.Dim.Entities.Publication;
+using BExIS.Dim.Entities.Publications;
 using BExIS.Dim.Helpers;
 using BExIS.Dim.Helpers.Export;
 using BExIS.Dim.Helpers.GFBIO;
@@ -778,6 +778,8 @@ namespace BExIS.Modules.Dim.UI.Controllers
         {
             bool isValid = false;
             List<string> errorsList = new List<string>();
+
+            // [TODO] Add Broker Validation for DataCite
 
             switch (broker.Name.ToLower())
             {

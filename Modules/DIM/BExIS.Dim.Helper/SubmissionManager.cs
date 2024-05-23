@@ -1,6 +1,6 @@
 ﻿
 
-using BExIS.Dim.Entities.Publication;
+using BExIS.Dim.Entities.Publications;
 using BExIS.Dim.Services;
 using BExIS.IO;
 using BExIS.Xml.Helpers;
