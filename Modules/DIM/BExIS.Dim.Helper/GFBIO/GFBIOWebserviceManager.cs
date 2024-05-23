@@ -1,4 +1,4 @@
-﻿using BExIS.Dim.Entities.Publication;
+﻿using BExIS.Dim.Entities.Publications;
 using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.Linq;

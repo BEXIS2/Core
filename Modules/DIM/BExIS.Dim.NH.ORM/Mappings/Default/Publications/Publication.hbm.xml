@@ -1,4 +1,4 @@
-<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2" assembly="BExIS.Dim.Entities" namespace="BExIS.Dim.Entities.Publication">
+<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2" assembly="BExIS.Dim.Entities" namespace="BExIS.Dim.Entities.Publications">
 	<class xmlns="urn:nhibernate-mapping-2.2" name="Publication" table="DIM_Publications">
 		<!-- Mapping BaseEntity properties -->
 
