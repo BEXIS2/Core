@@ -1,5 +1,5 @@
 ﻿using BExIS.Dim.Entities.Mapping;
-using BExIS.Dim.Entities.Publication;
+using BExIS.Dim.Entities.Publications;
 using BExIS.Dim.Helpers;
 using BExIS.Dim.Helpers.Mapping;
 using BExIS.Dim.Services;
@@ -318,7 +318,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
             using (DatasetManager datasetManager = new DatasetManager())
             using (PublicationManager publicationManager = new PublicationManager())
             {
-                Broker broker = publicationManager.RepositoryRepo.Get().Where(b => b.Name.ToLower() == "datacitedoi").FirstOrDefault().Broker;
+                Broker broker = publicationManager.BrokerRepo.Get().Where(b => b.Name.ToLower() == "datacitedoi").FirstOrDefault();
                 List<Publication> publications = publicationManager.GetPublication().Where(p => p.Broker.Name.ToLower().Equals(broker.Name.ToLower())).ToList();
 
                 foreach (Publication p in publications)

@@ -48,9 +48,7 @@
 
 </script>
 <Page>
-
-	{#if serverTableConfig}
-				<Table config={serverTableConfig} />
+		{#if serverTableConfig}
+			<Table config={serverTableConfig} />
 		{/if}
-
 </Page>

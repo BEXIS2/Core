@@ -1,4 +1,4 @@
-﻿using BExIS.Dim.Entities.Publication;
+﻿using BExIS.Dim.Entities.Publications;
 using BExIS.Dim.Services;
 using BExIS.Dlm.Entities.Data;
 using BExIS.Dlm.Services.Data;
@@ -71,10 +71,10 @@ namespace BExIS.Dim.Helpers.Export
             return true; //throw new NotImplementedException();
         }
 
-        public PensoftDataRepoConverter(Repository datarepo)
+        public PensoftDataRepoConverter(Broker broker)
         {
-            _dataRepo = datarepo;
-            _broker = datarepo.Broker;
+            _dataRepo = broker.Repository;
+            _broker = broker;
         }
     }
 }

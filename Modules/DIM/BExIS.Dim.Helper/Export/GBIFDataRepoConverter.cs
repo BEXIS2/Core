@@ -1,5 +1,5 @@
 ﻿using BExIS.Dim.Entities.Mapping;
-using BExIS.Dim.Entities.Publication;
+using BExIS.Dim.Entities.Publications;
 using BExIS.Dim.Helpers.GBIF;
 using BExIS.Dim.Helpers.Mapping;
 using BExIS.Dim.Helpers.Models;
@@ -24,7 +24,8 @@ namespace BExIS.Dim.Helpers.Export
     public class GBIFDataRepoConverter : IDataRepoConverter
     {
         private Repository _dataRepo { get; set; }
-        private Broker _broker { get; set; }
+
+        private GbifDataType _type { get; set; }
 
         public string Convert(long datasetVersionId)
         {
@@ -77,7 +78,7 @@ namespace BExIS.Dim.Helpers.Export
                     if (File.Exists(datapath)) zip.AddFile(datapath, "");
 
                     // generate meta file
-                    string metaFilePath = helper.GenerateMeta(GbifDataType.samplingEvent, dataset.DataStructure.Id, folder, Path.GetFileName(datapath));
+                    string metaFilePath = helper.GenerateMeta(_type, dataset.DataStructure.Id, folder, Path.GetFileName(datapath));
                     if (File.Exists(metaFilePath)) zip.AddFile(metaFilePath, "");
 
                     zip.Save(zipfilepath);
@@ -106,6 +107,10 @@ namespace BExIS.Dim.Helpers.Export
             {
                 var datasetversion = datasetManager.GetDatasetVersion(datasetVersionId);
                 long datasetId = datasetversion.Dataset.Id;
+
+                if (datasetversion.Dataset.DataStructure == null) errors.Add("no data structure exist for this entity.");
+
+
                 dataStructureId = datasetversion.Dataset.DataStructure.Id;
                 metadataStructureId = datasetversion.Dataset.MetadataStructure.Id;
 
@@ -159,7 +164,7 @@ namespace BExIS.Dim.Helpers.Export
                 //// check all needed dw terms mapped for the type
        
                 // in V3 read from structre
-                helper.ValidateDWCTerms(dataStructureId, GbifDataType.samplingEvent, out errors);
+                helper.ValidateDWCTerms(dataStructureId, _type, out errors);
 
                 //check if data exist
                 if (datasetManager.GetDataTuplesCount(datasetVersionId)<=0)
@@ -173,10 +178,10 @@ namespace BExIS.Dim.Helpers.Export
 
         }
 
-        public GBIFDataRepoConverter(Repository datarepo)
+        public GBIFDataRepoConverter(Broker _broker, GbifDataType type)
         {
-            _dataRepo = datarepo;
-            _broker = datarepo.Broker;
+            _dataRepo = _broker.Repository;
+            _type = type;
         }
     }
 }

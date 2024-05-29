@@ -1,4 +1,4 @@
-﻿using BExIS.Dim.Entities.Publication;
+﻿using BExIS.Dim.Entities.Publications;
 using BExIS.Dim.Services;
 using BExIS.Dlm.Entities.Data;
 using BExIS.Dlm.Entities.DataStructure;
@@ -218,10 +218,10 @@ namespace BExIS.Dim.Helpers.Export
             }
         }
 
-        public GenericDataRepoConverter(Repository datarepo)
+        public GenericDataRepoConverter(Broker broker)
         {
-            _dataRepo = datarepo;
-            _broker = datarepo.Broker;
+            _dataRepo = broker.Repository;
+            _broker = broker;
         }
     }
 }

@@ -3,7 +3,7 @@ using System;
 using Vaiona.Entities.Common;
 
 
-namespace BExIS.Dim.Entities.Publication
+namespace BExIS.Dim.Entities.Publications
 {
     /// <summary>
     ///
@@ -78,6 +78,13 @@ namespace BExIS.Dim.Entities.Publication
         /// <remarks></remarks>
         /// <seealso cref=""/>        
         public virtual Repository Repository { get; set; }
+
+        /// <summary>
+        /// inverse map
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>        
+        public virtual string Response { get; set; }
 
         #endregion 
 

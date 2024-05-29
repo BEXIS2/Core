@@ -1,4 +1,4 @@
-﻿<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2" assembly="BExIS.Dim.Entities" namespace="BExIS.Dim.Entities.Publication">
+﻿<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2" assembly="BExIS.Dim.Entities" namespace="BExIS.Dim.Entities.Publications">
   <class xmlns="urn:nhibernate-mapping-2.2" name="Repository" table="DIM_Repositories">
     <!-- Mapping BaseEntity properties -->
 
@@ -26,10 +26,5 @@
     </property>
     
     
-    <!-- Associations -->
-
-    <many-to-one class="Broker" name="Broker" column="BrokerRef">
-    </many-to-one>
-
   </class>
 </hibernate-mapping>

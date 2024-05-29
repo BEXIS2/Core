@@ -91,6 +91,7 @@
 			</assemblies>
 		</compilation>
 		<authentication mode="None" />
+                <httpCookies requireSSL="true" httpOnlyCookies="true"/>
 		<httpRuntime targetFramework="4.5.2" maxRequestLength="1048576" executionTimeout="480" />
 		<pages controlRenderingCompatibilityVersion="4.0">
 			<namespaces>
@@ -150,6 +151,7 @@
 			<customHeaders>
 				<!-- Remove header to impreove security -->
 				<remove name="X-Powered-By" />
+				<add name="Content-Security-Policy" value="default-src 'self'; connect-src *; font-src *; frame-src *; img-src * data:; media-src *; object-src *; script-src * 'unsafe-inline' 'unsafe-eval'; style-src * 'unsafe-inline';"/>
 			</customHeaders>
 		</httpProtocol>
 		<!-- reset the cache after one day -->
