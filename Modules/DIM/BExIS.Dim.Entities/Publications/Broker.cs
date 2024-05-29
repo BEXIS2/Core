@@ -1,4 +1,5 @@
-﻿using Vaiona.Entities.Common;
+﻿using System.Collections.Generic;
+using Vaiona.Entities.Common;
 
 namespace BExIS.Dim.Entities.Publications
 {
@@ -13,6 +14,8 @@ namespace BExIS.Dim.Entities.Publications
         public virtual string PrimaryDataFormat { get; set; }
         public virtual string Link { get; set; }
         public virtual Repository Repository { get; set; }
+
+        public virtual List<Publication> Publications { get; set; }
 
     }
 }
