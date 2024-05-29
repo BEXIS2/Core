@@ -92,4 +92,11 @@ namespace BExIS.Dim.Entities.Publications
 
         #endregion
     }
+
+    public enum PublicationStatus
+    {
+        Open = 0,
+        Accepted = 1,
+        Rejected = 2
+    }
 }
