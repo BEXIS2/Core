@@ -183,8 +183,8 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ConceptManager.cs" />
-    <Compile Include="MappingManager.cs" />
+    <Compile Include="Mappings\ConceptManager.cs" />
+    <Compile Include="Mappings\MappingManager.cs" />
     <Compile Include="PublicationManager.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Publications\BrokerManager.cs" />

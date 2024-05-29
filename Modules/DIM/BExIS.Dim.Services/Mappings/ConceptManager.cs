@@ -1,31 +1,29 @@
-﻿using BExIS.Dim.Entities.Mapping;
+﻿using BExIS.Dim.Entities.Mappings;
 using System;
-using System.Collections.Generic;
-using System.Diagnostics;
 using System.Diagnostics.Contracts;
 using System.Linq;
 using Vaiona.Persistence.Api;
 
-namespace BExIS.Dim.Services
+namespace BExIS.Dim.Services.Mappings
 {
     public class ConceptManager : IDisposable
     {
         private IUnitOfWork guow = null;
+        private bool isDisposed = false;
+
         public ConceptManager()
         {
             guow = this.GetIsolatedUnitOfWork();
             this.MappingConceptRepo = guow.GetReadOnlyRepository<MappingConcept>();
             this.MappingKeyRepo = guow.GetReadOnlyRepository<MappingKey>();
-
         }
 
-        public IQueryable<MappingConcept> MappingConcepts => MappingConceptRepo.Query();
-
-        private bool isDisposed = false;
         ~ConceptManager()
         {
             Dispose(true);
         }
+
+        public IQueryable<MappingConcept> MappingConcepts => MappingConceptRepo.Query();
 
         public void Dispose()
         {
@@ -49,15 +47,15 @@ namespace BExIS.Dim.Services
 
         // provide read only repos for the whole aggregate area
         public IReadOnlyRepository<MappingConcept> MappingConceptRepo { get; private set; }
+
         public IReadOnlyRepository<MappingKey> MappingKeyRepo { get; private set; }
 
-        #endregion
+        #endregion Data Readers
 
         #region Concept
 
-        public MappingConcept CreateMappingConcept( string name, string description, string url, string xsd)
+        public MappingConcept CreateMappingConcept(string name, string description, string url, string xsd)
         {
-
             MappingConcept concept = new MappingConcept();
             concept.Name = name;
             concept.Description = description;
@@ -69,27 +67,9 @@ namespace BExIS.Dim.Services
                 IRepository<MappingConcept> repo = uow.GetRepository<MappingConcept>();
                 repo.Put(concept);
                 uow.Commit();
-
             }
 
             return (concept);
-        }
-
-        public bool UpdateMappingConcept(MappingConcept entity)
-        {
-            Contract.Requires(entity != null);
-            Contract.Requires(entity.Id >= 0);
-
-            using (IUnitOfWork uow = this.GetUnitOfWork())
-            {
-                IRepository<MappingConcept> repo = uow.GetRepository<MappingConcept>();
-
-                repo.Put(entity);
-
-                uow.Commit();
-            }
-            // if any problem was detected during the commit, an exception will be thrown!
-            return (true);
         }
 
         public bool DeleteMappingConcept(MappingConcept entity)
@@ -109,13 +89,29 @@ namespace BExIS.Dim.Services
             return (true);
         }
 
-        #endregion
+        public bool UpdateMappingConcept(MappingConcept entity)
+        {
+            Contract.Requires(entity != null);
+            Contract.Requires(entity.Id >= 0);
+
+            using (IUnitOfWork uow = this.GetUnitOfWork())
+            {
+                IRepository<MappingConcept> repo = uow.GetRepository<MappingConcept>();
+
+                repo.Put(entity);
+
+                uow.Commit();
+            }
+            // if any problem was detected during the commit, an exception will be thrown!
+            return (true);
+        }
+
+        #endregion Concept
 
         #region Key
 
-        public MappingKey CreateMappingKey(string name, string description, string url, bool optional, bool isComplex, string xpath= "", MappingConcept concept = null, MappingKey parent = null)
+        public MappingKey CreateMappingKey(string name, string description, string url, bool optional, bool isComplex, string xpath = "", MappingConcept concept = null, MappingKey parent = null)
         {
-
             MappingKey entity = new MappingKey();
             entity.Name = name;
             entity.Description = description;
@@ -131,30 +127,10 @@ namespace BExIS.Dim.Services
                 IRepository<MappingKey> repo = uow.GetRepository<MappingKey>();
                 repo.Put(entity);
                 uow.Commit();
-
             }
 
             return (entity);
         }
-
-        public bool UpdateMappingKey(MappingKey entity)
-        {
-            Contract.Requires(entity != null);
-            Contract.Requires(entity.Id >= 0);
-
-            using (IUnitOfWork uow = this.GetUnitOfWork())
-            {
-                IRepository<MappingKey> repo = uow.GetRepository<MappingKey>();
-                repo.Merge(entity);
-                var merged = repo.Get(entity.Id);
-                repo.Put(merged);
-                uow.Commit();
-
-            }
-            // if any problem was detected during the commit, an exception will be thrown!
-            return (true);
-        }
-
 
         public bool DeleteMappingKey(MappingKey entity)
         {
@@ -173,7 +149,23 @@ namespace BExIS.Dim.Services
             return (true);
         }
 
-        #endregion
+        public bool UpdateMappingKey(MappingKey entity)
+        {
+            Contract.Requires(entity != null);
+            Contract.Requires(entity.Id >= 0);
 
+            using (IUnitOfWork uow = this.GetUnitOfWork())
+            {
+                IRepository<MappingKey> repo = uow.GetRepository<MappingKey>();
+                repo.Merge(entity);
+                var merged = repo.Get(entity.Id);
+                repo.Put(merged);
+                uow.Commit();
+            }
+            // if any problem was detected during the commit, an exception will be thrown!
+            return (true);
+        }
+
+        #endregion Key
     }
 }

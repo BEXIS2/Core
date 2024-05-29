@@ -1,4 +1,4 @@
-﻿namespace BExIS.Dim.Entities.Mapping
+﻿namespace BExIS.Dim.Entities.Mappings
 {
     public class MappingPartyResultElemenet
     {

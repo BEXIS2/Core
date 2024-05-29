@@ -1,4 +1,4 @@
-﻿<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2" assembly="BExIS.Dim.Entities" namespace="BExIS.Dim.Entities.Mapping">
+﻿<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2" assembly="BExIS.Dim.Entities" namespace="BExIS.Dim.Entities.Mappings">
   <class xmlns="urn:nhibernate-mapping-2.2" name="Mapping" table="dim_mappings">
     <!-- Mapping BaseEntity properties -->
 
@@ -21,15 +21,15 @@
       <column name="Level" />
     </property>
 
-    <many-to-one class="BExIS.Dim.Entities.Mapping.LinkElement" name="Source" column="SourceRef" lazy="false">
+    <many-to-one class="BExIS.Dim.Entities.Mappings.LinkElement" name="Source" column="SourceRef" lazy="false">
     </many-to-one>
-    <many-to-one class="BExIS.Dim.Entities.Mapping.LinkElement" name="Target" column="TargetRef" lazy="false">
-    </many-to-one>
-
-    <many-to-one class="BExIS.Dim.Entities.Mapping.TransformationRule" name="TransformationRule" column="TransformationRuleRef" lazy="false">
+    <many-to-one class="BExIS.Dim.Entities.Mappings.LinkElement" name="Target" column="TargetRef" lazy="false">
     </many-to-one>
 
-    <many-to-one class="BExIS.Dim.Entities.Mapping.Mapping" name="Parent" column="ParentRef">
+    <many-to-one class="BExIS.Dim.Entities.Mappings.TransformationRule" name="TransformationRule" column="TransformationRuleRef" lazy="false">
+    </many-to-one>
+
+    <many-to-one class="BExIS.Dim.Entities.Mappings.Mapping" name="Parent" column="ParentRef">
     </many-to-one>
     
   </class>

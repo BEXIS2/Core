@@ -1,14 +1,11 @@
 ﻿using BExIS.App.Bootstrap.Attributes;
-using BExIS.Dim.Entities.Mapping;
-using BExIS.Dim.Helpers.Mapping;
-using BExIS.Dim.Services;
+using BExIS.Dim.Entities.Mappings;
+using BExIS.Dim.Helpers.Mappings;
+using BExIS.Dim.Services.Mappings;
 using BExIS.Dlm.Entities.Data;
 using BExIS.Dlm.Services.Data;
-using BExIS.Dlm.Services.DataStructure;
 using BExIS.IO.Transform.Output;
-using BExIS.Security.Entities.Requests;
 using BExIS.Security.Entities.Subjects;
-using BExIS.Security.Entities.Versions;
 using BExIS.Security.Services.Authorization;
 using BExIS.Security.Services.Objects;
 using BExIS.Security.Services.Subjects;
@@ -23,9 +20,7 @@ using System.Net;
 using System.Net.Http;
 using System.Text;
 using System.Web.Http;
-using System.Web.Http.Description;
 using System.Xml;
-using Vaiona.Persistence.Api;
 
 namespace BExIS.Modules.Dim.UI.Controllers
 {

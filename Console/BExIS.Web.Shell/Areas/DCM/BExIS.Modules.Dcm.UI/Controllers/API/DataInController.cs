@@ -32,7 +32,7 @@ using Vaiona.Entities.Common;
 using Vaiona.Web.Mvc.Modularity;
 using BExIS.Modules.Dcm.UI.Helpers;
 using System.Xml;
-using BExIS.Dim.Entities.Mapping;
+using BExIS.Dim.Entities.Mappings;
 
 namespace BExIS.Modules.Dcm.UI.Controllers
 {

@@ -1,4 +1,4 @@
-﻿<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2" assembly="BExIS.Dim.Entities" namespace="BExIS.Dim.Entities.Mapping">
+﻿<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2" assembly="BExIS.Dim.Entities" namespace="BExIS.Dim.Entities.Mappings">
   <class xmlns="urn:nhibernate-mapping-2.2" name="LinkElement" table="dim_linkelements">
     <!-- Mapping BaseEntity properties -->
 
@@ -35,11 +35,11 @@
       <column name="ElementId" />
     </property>
 
-    <property name="Type" type="BExIS.Dim.Entities.Mapping.LinkElementType, BExIS.Dim.Entities ">
+    <property name="Type" type="BExIS.Dim.Entities.Mappings.LinkElementType, BExIS.Dim.Entities ">
       <column name="Type" />
     </property>
 
-    <property name="Complexity" type="BExIS.Dim.Entities.Mapping.LinkElementComplexity, BExIS.Dim.Entities ">
+    <property name="Complexity" type="BExIS.Dim.Entities.Mappings.LinkElementComplexity, BExIS.Dim.Entities ">
       <column name="Complexity" />
     </property>
 

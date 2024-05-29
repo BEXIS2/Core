@@ -1,24 +1,25 @@
-﻿using BExIS.Dim.Entities.Publications;
+﻿using BExIS.Dim.Entities.Mappings;
+using BExIS.Dim.Entities.Publications;
 using BExIS.Dim.Helpers.Export;
+using BExIS.Dim.Helpers.Mappings;
 using BExIS.Dim.Helpers.Models;
-using BExIS.Dim.Services;
+using BExIS.Dim.Services.Mappings;
 using BExIS.Dlm.Services.Data;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Web.Configuration;
+using Vaiona.Utils.Cfg;
 
 namespace BExIS.Dim.Helpers.Vaelastrasz
 {
     public class VaelastraszConverter : IDataRepoConverter
     {
         private List<VaelastraszConfigurationItem> _mappings;
-        private List<VaelastraszConfigurationItem> _placeholders;
+        private Dictionary<string, string> _placeholders;
         private Broker _broker;
 
-        public VaelastraszConverter(Broker broker, List<VaelastraszConfigurationItem> mappings, List<VaelastraszConfigurationItem> placeholders)
+        public VaelastraszConverter(Broker broker, List<VaelastraszConfigurationItem> mappings, Dictionary<string, string> placeholders)
         {
             _broker = broker;
             _mappings = mappings;
@@ -39,12 +40,25 @@ namespace BExIS.Dim.Helpers.Vaelastrasz
                 {
                     errors = new List<string>();
 
-                    var datasetversion = datasetManager.GetDatasetVersion(datasetVersionId);
-
                     var concept = conceptManager.MappingConcepts.Where(c => string.Equals(c.Name, _broker.Repository.Name, StringComparison.CurrentCultureIgnoreCase)).FirstOrDefault();
                     if (concept == null)
                     {
                         errors.Add("The concept mapping does not exist.");
+                        return false;
+                    }
+
+                    var datasetVersion = datasetManager.GetDatasetVersion(datasetVersionId);
+
+                    if(datasetVersion == null)
+                    {
+                        errors.Add("The dataset version does not exist.");
+                        return false;
+                    }
+
+                    var metadataStructureId = datasetVersion.Dataset.MetadataStructure.Id;
+
+                    if (MappingUtils.IsMapped(metadataStructureId, LinkElementType.MetadataStructure, concept.Id, LinkElementType.MappingConcept, out errors) == false)
+                    {
                         return false;
                     }
 

@@ -208,7 +208,6 @@
     <Compile Include="BasicWebService.cs" />
     <Compile Include="Configurations\DataCiteDOIConfigurations.cs" />
     <Compile Include="DataCiteDOI\DataCiteDOIHelper.cs" />
-    <Compile Include="Extensions\DataCiteDoiExtensions.cs" />
     <Compile Include="GBIF\GbifHelper.cs" />
     <Compile Include="Export\GBIFDataRepoConverter.cs" />
     <Compile Include="Export\PangaeaDataRepoConverter.cs" />
@@ -217,14 +216,15 @@
     <Compile Include="Export\PensoftDataRepoConverter.cs" />
     <Compile Include="GFBIO\GFBIOSubmissionHelper.cs" />
     <Compile Include="GFBIO\GFBIOWebserviceManager.cs" />
-    <Compile Include="Mapping\MappingUtils.cs" />
+    <Compile Include="Mappings\MappingUtils.cs" />
     <Compile Include="Models\GbifModels.cs" />
     <Compile Include="Models\PangeaModels.cs" />
     <Compile Include="Models\VaelastraszModels.cs" />
-    <Compile Include="Services\DataCiteVersionService.cs" />
     <Compile Include="SubmissionManager.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Vaelastrasz\VaelastraszConverter.cs" />
+    <Compile Include="Vaelastrasz\VaelastraszExtensions.cs" />
+    <Compile Include="Vaelastrasz\VaelastraszHelper.cs" />
     <Compile Include="WebServiceHelper.cs" />
   </ItemGroup>
   <ItemGroup>

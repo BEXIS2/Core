@@ -1,4 +1,4 @@
-﻿namespace BExIS.Dim.Entities.Mapping
+﻿namespace BExIS.Dim.Entities.Mappings
 {
     //if you want to add keys here, please talk to david schöne
     // and then you will get a range of ids to set

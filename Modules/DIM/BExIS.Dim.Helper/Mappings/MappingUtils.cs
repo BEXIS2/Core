@@ -1,5 +1,5 @@
-﻿using BExIS.Dim.Entities.Mapping;
-using BExIS.Dim.Services;
+﻿using BExIS.Dim.Entities.Mappings;
+using BExIS.Dim.Services.Mappings;
 using BExIS.Dlm.Entities.Party;
 using BExIS.Dlm.Services.MetadataStructure;
 using BExIS.Dlm.Services.Party;
@@ -10,14 +10,11 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
+using System.Xml;
 using System.Xml.Linq;
 using Vaiona.Persistence.Api;
-using BExIS.Dim.Entities.Mapping;
-using BExIS.Security.Services.Objects;
-using BExIS.Security.Services.Authorization;
-using System.Xml;
 
-namespace BExIS.Dim.Helpers.Mapping
+namespace BExIS.Dim.Helpers.Mappings
 {
     public class MappingUtils
     {
@@ -29,7 +26,7 @@ namespace BExIS.Dim.Helpers.Mapping
         {
             try
             {
-                IList<Entities.Mapping.Mapping> mapping = CachedMappings();
+                IList<Mapping> mapping = CachedMappings();
                 return mapping.Where(m =>
                           m.Target.ElementId.Equals(targetId) &&
                           m.Target.Type.Equals(targetType) &&
@@ -43,11 +40,11 @@ namespace BExIS.Dim.Helpers.Mapping
             }
         }
 
-        public static List<Entities.Mapping.Mapping> GetMappings(long sourceId, LinkElementType sourceType, long targetId, LinkElementType targetType)
+        public static List<Mapping> GetMappings(long sourceId, LinkElementType sourceType, long targetId, LinkElementType targetType)
         {
             try
             {
-                IList<Entities.Mapping.Mapping> mapping = CachedMappings();
+                IList<Mapping> mapping = CachedMappings();
                 var mapping_result = mapping.Where(m =>
                            m.Target.ElementId.Equals(targetId) &&
                            m.Target.Type.Equals(targetType) &&
@@ -61,7 +58,7 @@ namespace BExIS.Dim.Helpers.Mapping
                 }
                 else
                 {
-                    return new List<Entities.Mapping.Mapping>();
+                    return new List<Mapping>();
                 }
             }
             catch (Exception ex)
@@ -70,11 +67,11 @@ namespace BExIS.Dim.Helpers.Mapping
             }
         }
 
-        public static List<Entities.Mapping.Mapping> GetMappings(long parentMappingId)
+        public static List<Mapping> GetMappings(long parentMappingId)
         {
             try
             {
-                IList<Entities.Mapping.Mapping> mapping = CachedMappings();
+                IList<Mapping> mapping = CachedMappings();
                 var mapping_result = mapping.Where(m =>
                             m.Parent!=null && 
                             m.Parent.Id.Equals(parentMappingId)
@@ -82,7 +79,7 @@ namespace BExIS.Dim.Helpers.Mapping
 
                 if (mapping_result.Any()) return mapping_result;
 
-                return new List<Entities.Mapping.Mapping>();
+                return new List<Mapping>();
             }
             catch (Exception ex)
             {
@@ -90,11 +87,11 @@ namespace BExIS.Dim.Helpers.Mapping
             }
         }
 
-        public static List<Entities.Mapping.Mapping> GetMappingsWhereSource(long sourceId, LinkElementType sourceType)
+        public static List<Mapping> GetMappingsWhereSource(long sourceId, LinkElementType sourceType)
         {
             try
             {
-                IList<Entities.Mapping.Mapping> mapping = CachedMappings();
+                IList<Mapping> mapping = CachedMappings();
                 var mapping_result = mapping.Where(m =>
                             m.Source.ElementId.Equals(sourceId) &&
                             m.Source.Type.Equals(sourceType)
@@ -102,7 +99,7 @@ namespace BExIS.Dim.Helpers.Mapping
 
                 if (mapping_result.Any()) return mapping_result;
 
-                return new List<Entities.Mapping.Mapping>();
+                return new List<Mapping>();
             }
             catch (Exception ex)
             {
@@ -110,11 +107,11 @@ namespace BExIS.Dim.Helpers.Mapping
             }
         }
 
-        public static List<Entities.Mapping.Mapping> GetMappingsWhereSource(long sourceId, LinkElementType sourceType, int level)
+        public static List<Mapping> GetMappingsWhereSource(long sourceId, LinkElementType sourceType, int level)
         {
             try
             {
-                IList<Entities.Mapping.Mapping> mapping = CachedMappings();
+                IList<Mapping> mapping = CachedMappings();
                 var mapping_result = mapping.Where(m =>
                             m.Source.ElementId.Equals(sourceId) &&
                             m.Source.Type.Equals(sourceType) &&
@@ -123,7 +120,7 @@ namespace BExIS.Dim.Helpers.Mapping
 
                 if (mapping_result.Any()) return mapping_result;
 
-                return new List<Entities.Mapping.Mapping>();
+                return new List<Mapping>();
             }
             catch (Exception ex)
             {
@@ -131,13 +128,13 @@ namespace BExIS.Dim.Helpers.Mapping
             }
         }
 
-        public static List<Entities.Mapping.Mapping> GetMappingsWhereTarget(long targetId, LinkElementType targetType)
+        public static List<Mapping> GetMappingsWhereTarget(long targetId, LinkElementType targetType)
         {
             try
             {
                 using (IUnitOfWork uow = (new object()).GetUnitOfWork())
                 {
-                    var mappings = uow.GetReadOnlyRepository<BExIS.Dim.Entities.Mapping.Mapping>().Get() // this get is here because the expression is not supported by NH!
+                    var mappings = uow.GetReadOnlyRepository<BExIS.Dim.Entities.Mappings.Mapping>().Get() // this get is here because the expression is not supported by NH!
                         .Where(m =>
                             m.Target.ElementId.Equals(targetId) &&
                             m.Target.Type.Equals(targetType)
@@ -145,7 +142,7 @@ namespace BExIS.Dim.Helpers.Mapping
 
                     if (mappings.Any()) return mappings;
 
-                    return new List<Entities.Mapping.Mapping>();
+                    return new List<Mapping>();
                 }
             }
             catch (Exception ex)
@@ -162,7 +159,7 @@ namespace BExIS.Dim.Helpers.Mapping
         {
             try
             {
-                IList<Entities.Mapping.Mapping> mapping = CachedMappings();
+                IList<Mapping> mapping = CachedMappings();
                 return mapping.Where(m =>
                         m.Target.ElementId.Equals(targetId) &&
                         m.Target.Type.Equals(targetType) &&
@@ -186,7 +183,7 @@ namespace BExIS.Dim.Helpers.Mapping
         {
             try
             {
-                IList<Entities.Mapping.Mapping> mapping = CachedMappings();
+                IList<Mapping> mapping = CachedMappings();
                 return mapping.Where(m =>
                             m.Parent != null &&
                             m.Parent.Source.Type.Equals(LinkElementType.Entity) &&
@@ -211,7 +208,7 @@ namespace BExIS.Dim.Helpers.Mapping
         {
             try
             {
-                IList<Entities.Mapping.Mapping> mapping = CachedMappings();
+                IList<Mapping> mapping = CachedMappings();
                 return mapping.Where(m =>
                             m.Parent != null &&
                             m.Source.ElementId.Equals(entityId) &&
@@ -236,7 +233,7 @@ namespace BExIS.Dim.Helpers.Mapping
                 // all mapped attributes are LinkElementType.PartyCustomType in this case
                 List<MappingEntityResultElement> tmp = new List<MappingEntityResultElement>();
 
-                IList<Entities.Mapping.Mapping> mapping = CachedMappings();
+                IList<Mapping> mapping = CachedMappings();
                 var mapping_result = mapping.Where(m =>
                         m.Target.ElementId.Equals(targetElementId) &&
                         m.Target.Type.Equals(targetType) &&
@@ -251,7 +248,7 @@ namespace BExIS.Dim.Helpers.Mapping
             }
         }
 
-        private static List<MappingEntityResultElement> getAllValuesFromEntites(IEnumerable<Entities.Mapping.Mapping> mappings, string value)
+        private static List<MappingEntityResultElement> getAllValuesFromEntites(IEnumerable<Mapping> mappings, string value)
         {
             List<MappingEntityResultElement> tmp = new List<MappingEntityResultElement>();
             EntityManager entityManager = new EntityManager();
@@ -318,7 +315,7 @@ namespace BExIS.Dim.Helpers.Mapping
                 // all mapped attributes are LinkElementType.PartyCustomType in this case
 
                 List<MappingPartyResultElemenet> tmp = new List<MappingPartyResultElemenet>();
-                IList<Entities.Mapping.Mapping> mapping = CachedMappings();
+                IList<Mapping> mapping = CachedMappings();
                 var mapping_result = mapping.Where(m =>
                         m.Target.ElementId.Equals(targetElementId) &&
                         m.Target.Type.Equals(targetType) &&
@@ -337,7 +334,7 @@ namespace BExIS.Dim.Helpers.Mapping
         {
             try
             {
-                IList<Entities.Mapping.Mapping> mapping = CachedMappings();
+                IList<Mapping> mapping = CachedMappings();
                 return mapping.Where(m =>
                             m.Target.ElementId.Equals(targetId) &&
                             m.Target.Type.Equals(targetType) &&
@@ -365,7 +362,7 @@ namespace BExIS.Dim.Helpers.Mapping
             try
             {
                 //if party is the parent
-                IList<Entities.Mapping.Mapping> mapping = CachedMappings();
+                IList<Mapping> mapping = CachedMappings();
                 bool mappingsWhenPartyIsParent = mapping.Where(m =>
                         m.Target.ElementId.Equals(targetId) &&
                         m.Target.Type.Equals(targetType) &&
@@ -402,7 +399,7 @@ namespace BExIS.Dim.Helpers.Mapping
         {
             try
             {
-                IList<Entities.Mapping.Mapping> mapping = CachedMappings();
+                IList<Mapping> mapping = CachedMappings();
                 bool mappings_result = mapping.Where(m =>
                              m.Target.ElementId.Equals(targetId) &&
                              m.Target.Type.Equals(targetType) &&
@@ -432,7 +429,7 @@ namespace BExIS.Dim.Helpers.Mapping
         {
             try
             {
-                IList<Entities.Mapping.Mapping> mapping = CachedMappings();
+                IList<Mapping> mapping = CachedMappings();
                 return mapping.Where(m =>
                             m.Target.ElementId.Equals(targetId) &&
                             m.Target.Type.Equals(targetType) &&
@@ -459,7 +456,7 @@ namespace BExIS.Dim.Helpers.Mapping
         {
             try
             {
-                IList<Entities.Mapping.Mapping> mapping = CachedMappings();
+                IList<Mapping> mapping = CachedMappings();
                 bool mappings_result = mapping.Where(m =>
                             m.Target.ElementId.Equals(targetId) &&
                             m.Target.Type.Equals(targetType) &&
@@ -497,7 +494,7 @@ namespace BExIS.Dim.Helpers.Mapping
         {
             try
             {
-                IList<Entities.Mapping.Mapping> mapping = CachedMappings();
+                IList<Mapping> mapping = CachedMappings();
                 bool mappings_result = mapping.Where(m =>
                             m.Target.ElementId.Equals(targetId) &&
                             m.Target.Type.Equals(targetType) &&
@@ -526,7 +523,7 @@ namespace BExIS.Dim.Helpers.Mapping
         {
             try
             {
-                IList<Entities.Mapping.Mapping> mapping = CachedMappings();
+                IList<Mapping> mapping = CachedMappings();
                 return mapping.Where(m =>
                             m.Target.ElementId.Equals(targetId) &&
                             m.Target.Type.Equals(targetType) &&
@@ -546,7 +543,7 @@ namespace BExIS.Dim.Helpers.Mapping
         /// </summary>
         /// <param name="mappings"></param>
         /// <returns></returns>
-        private static List<MappingPartyResultElemenet> getAllValuesFromSystem(IEnumerable<Entities.Mapping.Mapping> mappings, string value)
+        private static List<MappingPartyResultElemenet> getAllValuesFromSystem(IEnumerable<Mapping> mappings, string value)
         {
             using (MappingManager _mappingManager = new MappingManager())
             using (PartyTypeManager partyTypeManager = new PartyTypeManager())
@@ -556,7 +553,7 @@ namespace BExIS.Dim.Helpers.Mapping
 
                 IEnumerable<long> parentIds = mappings.Where(m => m.Parent != null).Select(m => m.Parent.Id).Distinct();
 
-                IEnumerable<Entities.Mapping.Mapping> selectedMappings;
+                IEnumerable<Mapping> selectedMappings;
 
                 // all Masks are the same
                 string mask = "";
@@ -565,7 +562,7 @@ namespace BExIS.Dim.Helpers.Mapping
 
                 foreach (var pId in parentIds)
                 {
-                    Entities.Mapping.Mapping parentMapping = _mappingManager.GetMapping(pId);
+                    Mapping parentMapping = _mappingManager.GetMapping(pId);
 
                     selectedMappings =
                         mappings.Where(m => m.Parent != null && m.Parent.Id.Equals(pId));
@@ -640,7 +637,7 @@ namespace BExIS.Dim.Helpers.Mapping
                 {
                     string value = "";
 
-                    IList<Entities.Mapping.Mapping> mapping = CachedMappings();
+                    IList<Mapping> mapping = CachedMappings();
                     var mapping_result = mapping.Where(m =>
                                 m.Target.ElementId.Equals(targetElementId) &&
                                 m.Target.Type.Equals(targetElementType) &&
@@ -705,7 +702,7 @@ namespace BExIS.Dim.Helpers.Mapping
                     List<MappingPartyResultElemenet> tmp = new List<MappingPartyResultElemenet>();
 
                     //Select all mappings where the target is mapped to a party custom attr with the party id
-                    IList<Entities.Mapping.Mapping> mapping = CachedMappings();
+                    IList<Mapping> mapping = CachedMappings();
                     var mapping_result = mapping.Where(m =>
                                 m.Target.ElementId.Equals(targetElementId) &&
                                 m.Target.Type.Equals(targetElementType) &&
@@ -743,7 +740,7 @@ namespace BExIS.Dim.Helpers.Mapping
 
             try
             {
-                IList<Entities.Mapping.Mapping> mapping = CachedMappings();
+                IList<Mapping> mapping = CachedMappings();
                 return mapping.Where(m =>
                             m.Target.ElementId.Equals(id) &&
                             m.Target.Type.Equals(type) &&
@@ -768,20 +765,20 @@ namespace BExIS.Dim.Helpers.Mapping
         /// <param name="type"></param>
         /// <returns></returns>
         ///
-        public static IList<Entities.Mapping.Mapping> CachedMappings()
+        public static IList<Mapping> CachedMappings()
         {
             // System.Web.HttpContext may not existing during the async upload, so check wheter the context exist
             if (System.Web.HttpContext.Current != null && System.Web.HttpContext.Current.Session != null)
             {
                 if (System.Web.HttpContext.Current.Session["mappings"] != null)
                 {
-                    return (IList<Entities.Mapping.Mapping>)System.Web.HttpContext.Current.Session["mappings"];
+                    return (IList<Mapping>)System.Web.HttpContext.Current.Session["mappings"];
                 }
                 else
                 {
                     using (IUnitOfWork uow = (new object()).GetUnitOfWork())
                     {
-                        var mappings = uow.GetReadOnlyRepository<BExIS.Dim.Entities.Mapping.Mapping>().Get();
+                        var mappings = uow.GetReadOnlyRepository<BExIS.Dim.Entities.Mappings.Mapping>().Get();
                         System.Web.HttpContext.Current.Session["mappings"] = mappings;
                         return mappings;
                     }
@@ -791,7 +788,7 @@ namespace BExIS.Dim.Helpers.Mapping
             {
                 using (IUnitOfWork uow = (new object()).GetUnitOfWork())
                 {
-                    return uow.GetReadOnlyRepository<BExIS.Dim.Entities.Mapping.Mapping>().Get();
+                    return uow.GetReadOnlyRepository<BExIS.Dim.Entities.Mappings.Mapping>().Get();
                 }
             }
         }
@@ -847,7 +844,7 @@ namespace BExIS.Dim.Helpers.Mapping
                     // x -> z1,z2,z3 (split)
                     // x1,x2,x3 -> z (join)
 
-                    Entities.Mapping.Mapping m = mappings.FirstOrDefault();
+                    Mapping m = mappings.FirstOrDefault();
 
                     if (m != null)
                     {
@@ -914,7 +911,7 @@ namespace BExIS.Dim.Helpers.Mapping
                         string mask = "";
 
                         //load all mapping that belongs to the parent mapping with id -> parentId
-                        IEnumerable<Entities.Mapping.Mapping> tmpMappingsSubset = mappings.Where(m => m.Parent.Id.Equals(parentId));
+                        IEnumerable<Mapping> tmpMappingsSubset = mappings.Where(m => m.Parent.Id.Equals(parentId));
 
                         // if there is only one mapping belong to the parent, add each xelement as one entry
                         if (tmpMappingsSubset.Count() == 1)
@@ -1018,7 +1015,7 @@ namespace BExIS.Dim.Helpers.Mapping
                     // x -> z1,z2,z3 (split)
                     // x1,x2,x3 -> z (join)
 
-                    Entities.Mapping.Mapping m = mappings.FirstOrDefault();
+                    Mapping m = mappings.FirstOrDefault();
 
                     if (m != null &&
                         (m.Source.Type.Equals(LinkElementType.MetadataAttributeUsage) ||
@@ -1052,7 +1049,7 @@ namespace BExIS.Dim.Helpers.Mapping
                         string mask = "";
 
                         //load all maaping that belongs to the parent mapping with id -> parentId
-                        IEnumerable<Entities.Mapping.Mapping> tmpMappings = mappings.Where(m => m.Parent.Id.Equals(parentId));
+                        IEnumerable<Mapping> tmpMappings = mappings.Where(m => m.Parent.Id.Equals(parentId));
 
                         foreach (var m in tmpMappings)
                         {
@@ -1082,7 +1079,7 @@ namespace BExIS.Dim.Helpers.Mapping
         }
 
 
-        private static IEnumerable<XElement> getXElementsFromAMapping(Entities.Mapping.Mapping m, XDocument metadata)
+        private static IEnumerable<XElement> getXElementsFromAMapping(Mapping m, XDocument metadata)
         {
             Dictionary<string, string> AttrDic = new Dictionary<string, string>();
             List<XElement> elements = new List<XElement>();
@@ -1492,7 +1489,7 @@ namespace BExIS.Dim.Helpers.Mapping
             var complexMappings = GetMappings(root.Id);
 
             // get all simple mappings
-            List<Entities.Mapping.Mapping> simpleMappings = new List<Entities.Mapping.Mapping>();
+            List<Mapping> simpleMappings = new List<Mapping>();
             complexMappings.ForEach(c => simpleMappings.AddRange(GetMappings(c.Id)));
 
             
@@ -1551,7 +1548,7 @@ namespace BExIS.Dim.Helpers.Mapping
 
         #region Helpers
 
-        private static Entities.Mapping.Mapping getRootMapping(Entities.Mapping.Mapping mapping)
+        private static Mapping getRootMapping(Mapping mapping)
         {
             if (mapping.Parent == null) return mapping;
 

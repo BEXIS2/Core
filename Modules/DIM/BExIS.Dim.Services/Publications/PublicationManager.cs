@@ -25,7 +25,7 @@ namespace BExIS.Dim.Services.Publications
         }
 
         public IReadOnlyRepository<Publication> PublicationRepository { get; }
-        public IQueryable<Publication> Requests => PublicationRepository.Query();
+        public IQueryable<Publication> Publications => PublicationRepository.Query();
 
         public void Dispose()
         {

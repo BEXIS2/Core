@@ -22,7 +22,7 @@ namespace BExIS.Dim.Services.Publications
         }
 
         public IReadOnlyRepository<Broker> BrokerRepository { get; }
-        public IQueryable<Broker> Requests => BrokerRepository.Query();
+        public IQueryable<Broker> Brokers => BrokerRepository.Query();
 
         public void Dispose()
         {

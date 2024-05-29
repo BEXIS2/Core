@@ -50,13 +50,13 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DataRepository.cs" />
-    <Compile Include="Mapping\LinkElement.cs" />
-    <Compile Include="Mapping\LinkElementTypes.cs" />
-    <Compile Include="Mapping\Mapping.cs" />
-    <Compile Include="Mapping\MappingKey.cs" />
-    <Compile Include="Mapping\MappingConcept.cs" />
-    <Compile Include="Mapping\MappingResultElemenet.cs" />
-    <Compile Include="Mapping\TransformationRule.cs" />
+    <Compile Include="Mappings\LinkElement.cs" />
+    <Compile Include="Mappings\LinkElementTypes.cs" />
+    <Compile Include="Mappings\Mapping.cs" />
+    <Compile Include="Mappings\MappingConcept.cs" />
+    <Compile Include="Mappings\MappingKey.cs" />
+    <Compile Include="Mappings\MappingResultElemenet.cs" />
+    <Compile Include="Mappings\TransformationRule.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Publications\Broker.cs" />
     <Compile Include="Publications\MetadataStructureToRepository.cs" />

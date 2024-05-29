@@ -884,7 +884,7 @@
             <param name="id"></param>
             <returns></returns>
         </member>
-        <member name="M:BExIS.Modules.Dim.UI.Helpers.DimSeedDataGenerator.createFromKeyMapping(System.String,BExIS.Dim.Entities.Mapping.LinkElementType,System.String,BExIS.Dim.Entities.Mapping.LinkElementType,BExIS.Dim.Entities.Mapping.Key,BExIS.Dim.Entities.Mapping.Mapping,System.Xml.Linq.XDocument,BExIS.Dim.Services.MappingManager)">
+        <member name="M:BExIS.Modules.Dim.UI.Helpers.DimSeedDataGenerator.createFromKeyMapping(System.String,BExIS.Dim.Entities.Mappings.LinkElementType,System.String,BExIS.Dim.Entities.Mappings.LinkElementType,BExIS.Dim.Entities.Mappings.Key,BExIS.Dim.Entities.Mappings.Mapping,System.Xml.Linq.XDocument,BExIS.Dim.Services.Mappings.MappingManager)">
             <summary>
             Map a system key to xml node
             </summary>
@@ -897,7 +897,7 @@
             <param name="metadataRef"></param>
             <param name="mappingManager"></param>
         </member>
-        <member name="M:BExIS.Modules.Dim.UI.Helpers.DimSeedDataGenerator.createToKeyMapping(System.String,BExIS.Dim.Entities.Mapping.LinkElementType,System.String,BExIS.Dim.Entities.Mapping.LinkElementType,BExIS.Dim.Entities.Mapping.Key,BExIS.Dim.Entities.Mapping.Mapping,System.Xml.Linq.XDocument,BExIS.Dim.Services.MappingManager,BExIS.Dim.Entities.Mapping.TransformationRule)">
+        <member name="M:BExIS.Modules.Dim.UI.Helpers.DimSeedDataGenerator.createToKeyMapping(System.String,BExIS.Dim.Entities.Mappings.LinkElementType,System.String,BExIS.Dim.Entities.Mappings.LinkElementType,BExIS.Dim.Entities.Mappings.Key,BExIS.Dim.Entities.Mappings.Mapping,System.Xml.Linq.XDocument,BExIS.Dim.Services.Mappings.MappingManager,BExIS.Dim.Entities.Mappings.TransformationRule)">
             <summary>
             Map a node from xml to system key
             </summary>

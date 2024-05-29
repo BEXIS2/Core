@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Vaiona.Entities.Common;
 
-namespace BExIS.Dim.Entities.Mapping
+namespace BExIS.Dim.Entities.Mappings
 {
     public class MappingKey
     {

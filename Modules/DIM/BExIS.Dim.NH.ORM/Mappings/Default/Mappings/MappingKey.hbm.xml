@@ -1,4 +1,4 @@
-<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2" assembly="BExIS.Dim.Entities" namespace="BExIS.Dim.Entities.Mapping">
+<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2" assembly="BExIS.Dim.Entities" namespace="BExIS.Dim.Entities.Mappings">
   <class xmlns="urn:nhibernate-mapping-2.2" name="MappingKey" table="dim_mappingkeys" dynamic-update="true">
     <!-- Mapping BaseEntity properties -->
 
@@ -31,14 +31,14 @@
 		  <column name="IsComplex" />
 	  </property>
 
-	  <many-to-one name="Concept" class="BExIS.Dim.Entities.Mapping.MappingConcept, BExIS.Dim.Entities" not-null="true" column="Concept" index="idx_Concept_MappingKeys" />
+	  <many-to-one name="Concept" class="BExIS.Dim.Entities.Mappings.MappingConcept, BExIS.Dim.Entities" not-null="true" column="Concept" index="idx_Concept_MappingKeys" />
 	  
 	  <set name="Children" cascade="save-update" inverse="true">
 		  <key column="ParentRef" not-null="false"/>
-		  <one-to-many class="BExIS.Dim.Entities.Mapping.MappingKey, BExIS.Dim.Entities"/>
+		  <one-to-many class="BExIS.Dim.Entities.Mappings.MappingKey, BExIS.Dim.Entities"/>
 	  </set>
 
-	  <many-to-one name="Parent" column="ParentRef" class="BExIS.Dim.Entities.Mapping.MappingKey, BExIS.Security.Entities" />
+	  <many-to-one name="Parent" column="ParentRef" class="BExIS.Dim.Entities.Mappings.MappingKey, BExIS.Security.Entities" />
 	  
   </class>
 
