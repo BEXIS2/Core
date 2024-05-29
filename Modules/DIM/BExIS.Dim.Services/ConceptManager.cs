@@ -18,6 +18,9 @@ namespace BExIS.Dim.Services
             this.MappingKeyRepo = guow.GetReadOnlyRepository<MappingKey>();
 
         }
+
+        public IQueryable<MappingConcept> MappingConcepts => MappingConceptRepo.Query();
+
         private bool isDisposed = false;
         ~ConceptManager()
         {

@@ -188,6 +188,8 @@
     <Compile Include="PublicationManager.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Publications\BrokerManager.cs" />
+    <Compile Include="Publications\PublicationManager.cs" />
+    <Compile Include="Publications\RepositoryManager.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\Components\DLM\BExIS.Dlm.Entities\BExIS.Dlm.Entities.csproj">

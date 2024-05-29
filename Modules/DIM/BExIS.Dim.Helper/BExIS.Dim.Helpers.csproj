@@ -218,12 +218,13 @@
     <Compile Include="GFBIO\GFBIOSubmissionHelper.cs" />
     <Compile Include="GFBIO\GFBIOWebserviceManager.cs" />
     <Compile Include="Mapping\MappingUtils.cs" />
-    <Compile Include="Models\DataCiteModels.cs" />
     <Compile Include="Models\GbifModels.cs" />
     <Compile Include="Models\PangeaModels.cs" />
+    <Compile Include="Models\VaelastraszModels.cs" />
     <Compile Include="Services\DataCiteVersionService.cs" />
     <Compile Include="SubmissionManager.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Vaelastrasz\VaelastraszConverter.cs" />
     <Compile Include="WebServiceHelper.cs" />
   </ItemGroup>
   <ItemGroup>

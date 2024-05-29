@@ -1,28 +1,31 @@
 ﻿using BExIS.Dim.Entities.Publications;
 using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 using Vaiona.Persistence.Api;
 
 namespace BExIS.Dim.Services.Publications
 {
-    public class BrokerManager : IDisposable
+    public class PublicationManager : IDisposable
     {
         private readonly IUnitOfWork _guow;
         private bool _isDisposed;
 
-        public BrokerManager()
+        public PublicationManager()
         {
             _guow = this.GetIsolatedUnitOfWork();
-            BrokerRepository = _guow.GetReadOnlyRepository<Broker>();
+            PublicationRepository = _guow.GetReadOnlyRepository<Publication>();
         }
 
-        ~BrokerManager()
+        ~PublicationManager()
         {
             Dispose(true);
         }
 
-        public IReadOnlyRepository<Broker> BrokerRepository { get; }
-        public IQueryable<Broker> Requests => BrokerRepository.Query();
+        public IReadOnlyRepository<Publication> PublicationRepository { get; }
+        public IQueryable<Publication> Requests => PublicationRepository.Query();
 
         public void Dispose()
         {
@@ -42,18 +45,18 @@ namespace BExIS.Dim.Services.Publications
             }
         }
 
-        public Broker Create(Broker broker)
+        public Publication Create(Publication publication)
         {
             try
             {
                 using (var uow = this.GetUnitOfWork())
                 {
-                    var entityRequestRepository = uow.GetRepository<Broker>();
-                    entityRequestRepository.Put(broker);
+                    var publicationRepository = uow.GetRepository<Publication>();
+                    publicationRepository.Put(publication);
                     uow.Commit();
                 }
 
-                return broker;
+                return publication;
             }
             catch (Exception ex)
             {
@@ -61,45 +64,45 @@ namespace BExIS.Dim.Services.Publications
             }
         }
 
-        public bool Delete(Broker broker)
+        public bool Delete(Publication publication)
         {
             try
             {
                 using (var uow = this.GetUnitOfWork())
                 {
-                    var brokerRepository = uow.GetRepository<Broker>();
-                    brokerRepository.Delete(broker);
+                    var publicationRepository = uow.GetRepository<Publication>();
+                    publicationRepository.Delete(publication);
                     uow.Commit();
                 }
 
                 return true;
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 return false;
             }
 
         }
 
-        public bool DeleteById(long brokerId)
+        public bool DeleteById(long publicationId)
         {
-            return Delete(BrokerRepository.Get(brokerId));
+            return Delete(PublicationRepository.Get(publicationId));
         }
 
-        public Broker FindById(long brokerId)
+        public Publication FindById(long publicationId)
         {
-            return BrokerRepository.Get(brokerId);
+            return PublicationRepository.Get(publicationId);
         }
 
-        public bool Update(Broker broker)
+        public bool Update(Publication publication)
         {
             try
             {
                 using (var uow = this.GetUnitOfWork())
                 {
-                    var repo = uow.GetRepository<Broker>();
-                    repo.Merge(broker);
-                    var merged = repo.Get(broker.Id);
+                    var repo = uow.GetRepository<Publication>();
+                    repo.Merge(publication);
+                    var merged = repo.Get(publication.Id);
                     repo.Put(merged);
                     uow.Commit();
                 }
