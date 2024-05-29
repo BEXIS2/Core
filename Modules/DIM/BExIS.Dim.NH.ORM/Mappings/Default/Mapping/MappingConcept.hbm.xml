@@ -1,5 +1,5 @@
 <hibernate-mapping xmlns="urn:nhibernate-mapping-2.2" assembly="BExIS.Dim.Entities" namespace="BExIS.Dim.Entities.Mapping">
-  <class xmlns="urn:nhibernate-mapping-2.2" name="MappingConcept" table="MappingConcepts" dynamic-update="true">
+  <class xmlns="urn:nhibernate-mapping-2.2" name="MappingConcept" table="dim_mappingconcepts" dynamic-update="true">
     <!-- Mapping BaseEntity properties -->
     
     <id name="Id" type="Int64">

@@ -1,5 +1,5 @@
 ﻿<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2" assembly="BExIS.Dim.Entities" namespace="BExIS.Dim.Entities.Mapping">
-  <class xmlns="urn:nhibernate-mapping-2.2" name="TransformationRule" table="DIM_TransformationRules">
+  <class xmlns="urn:nhibernate-mapping-2.2" name="TransformationRule" table="dim_transformationrules">
     <!-- Mapping BaseEntity properties -->
 
     <id name="Id" type="Int64">
