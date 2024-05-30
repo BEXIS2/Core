@@ -1,7 +1,7 @@
 <script lang="ts">
 	import List from './List.svelte';
 	import Form from './Form.svelte';
-	import { ErrorMessage, Page, pageContentLayoutType } from '@bexis2/bexis2-core-ui';
+	import { Api, ErrorMessage, Page, host, pageContentLayoutType } from '@bexis2/bexis2-core-ui';
 
 	import type { linkType } from '@bexis2/bexis2-core-ui';
 
@@ -23,6 +23,7 @@
 
 	async function load() {
 		entitytemplates = await getEntityTemplateList();
+		
 	}
 	function handleSelect(e) {
 		console.log('on select');
