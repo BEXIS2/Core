@@ -423,7 +423,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
 
                 structure.Name = model.Title;
                 structure.Description = model.Description;
-                structure = structureManager.UpdateStructuredDataStructure(structure);
+                //structure = structureManager.UpdateStructuredDataStructure(structure);
 
                 // update variable
                 foreach (var variable in model.Variables)

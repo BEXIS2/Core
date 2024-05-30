@@ -75,7 +75,10 @@ function updatePks()
 	async function onSaveHandler() {
 		const res = await save(model);
 		console.log('save', res);
-		goTo('/rpm/datastructure');
+		console.log("🚀 ~ back ~ goTo(document.referrer);:",document.referrer)
+
+		goTo(document.referrer);
+
 	}
 
 	function back() {

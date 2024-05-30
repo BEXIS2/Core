@@ -132,7 +132,7 @@
 		}
 	}
 
-	// this function change the group in the list based on the selections of other fields
+		// this function change the group in the list based on the selections of other fields
 	function filterLists() {
 		console.log('filter lists');
 
