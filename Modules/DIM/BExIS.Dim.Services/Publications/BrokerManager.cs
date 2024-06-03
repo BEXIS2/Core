@@ -1,6 +1,7 @@
 ﻿using BExIS.Dim.Entities.Publications;
 using System;
 using System.Linq;
+using System.Threading.Tasks;
 using Vaiona.Persistence.Api;
 
 namespace BExIS.Dim.Services.Publications
@@ -84,6 +85,12 @@ namespace BExIS.Dim.Services.Publications
         public bool DeleteById(long brokerId)
         {
             return Delete(BrokerRepository.Get(brokerId));
+        }
+
+        public Task<Broker> FindByIdAsync(long brokerId)
+        {
+            return Task.FromResult(BrokerRepository.Get(brokerId));
+
         }
 
         public Broker FindById(long brokerId)

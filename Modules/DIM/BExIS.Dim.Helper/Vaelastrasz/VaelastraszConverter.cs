@@ -57,7 +57,7 @@ namespace BExIS.Dim.Helpers.Vaelastrasz
 
                     var metadataStructureId = datasetVersion.Dataset.MetadataStructure.Id;
 
-                    if (MappingUtils.IsMapped(metadataStructureId, LinkElementType.MetadataStructure, concept.Id, LinkElementType.MappingConcept, out errors) == false)
+                    if (!MappingUtils.IsMapped(metadataStructureId, LinkElementType.MetadataStructure, concept.Id, LinkElementType.MappingConcept, out errors))
                     {
                         return false;
                     }

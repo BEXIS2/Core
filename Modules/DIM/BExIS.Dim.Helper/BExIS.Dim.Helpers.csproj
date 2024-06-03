@@ -206,8 +206,6 @@
   <ItemGroup>
     <Compile Include="Api\ApiHelper.cs" />
     <Compile Include="BasicWebService.cs" />
-    <Compile Include="Configurations\DataCiteDOIConfigurations.cs" />
-    <Compile Include="DataCiteDOI\DataCiteDOIHelper.cs" />
     <Compile Include="GBIF\GbifHelper.cs" />
     <Compile Include="Export\GBIFDataRepoConverter.cs" />
     <Compile Include="Export\PangaeaDataRepoConverter.cs" />
@@ -222,9 +220,9 @@
     <Compile Include="Models\VaelastraszModels.cs" />
     <Compile Include="SubmissionManager.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Vaelastrasz\VaelastraszConfigurations.cs" />
     <Compile Include="Vaelastrasz\VaelastraszConverter.cs" />
     <Compile Include="Vaelastrasz\VaelastraszExtensions.cs" />
-    <Compile Include="Vaelastrasz\VaelastraszHelper.cs" />
     <Compile Include="WebServiceHelper.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -296,10 +294,6 @@
   <ItemGroup>
     <None Include="app.config" />
     <None Include="packages.config" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="DataCiteDOI\BexisDOIClient\BExISDOIClient.dll" />
-    <Content Include="DataCiteDOI\BexisDOIClient\DOIModel.dll" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

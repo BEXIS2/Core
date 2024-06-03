@@ -18,22 +18,12 @@ namespace BExIS.Modules.Dim.UI.Tests.Helpers
         private TestSetupHelper helper = null;
 
         //[Test()]
-        public void GetDataCiteDOICredentials()
+        public void GetVaelastraszMappings()
         {
             var appConfiguration = AppConfiguration.WorkspaceRootPath;
             var settingsHelper = new SettingsHelper();
 
-            var mappings = settingsHelper.GetDataCiteDOICredentials();
-            Assert.NotNull(mappings);
-        }
-
-        //[Test()]
-        public void GetDataCiteDOIMappingss()
-        {
-            var appConfiguration = AppConfiguration.WorkspaceRootPath;
-            var settingsHelper = new SettingsHelper();
-
-            var mappings = settingsHelper.GetDataCiteDOIMappings();
+            var mappings = settingsHelper.GetVaelastraszMappings();
             Assert.NotNull(mappings);
         }
 

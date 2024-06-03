@@ -1,7 +1,5 @@
 ﻿using BExIS.Dim.Entities.Mappings;
 using BExIS.Dim.Entities.Publications;
-using BExIS.Dim.Helpers;
-using BExIS.Dim.Helpers.Configurations;
 using BExIS.Dim.Helpers.Mappings;
 using BExIS.Dim.Services;
 using BExIS.Dim.Services.Mappings;
@@ -33,13 +31,11 @@ namespace BExIS.Modules.Dim.UI.Controllers
     public class DataCiteDOIController : BaseController
     {
         private Vaelastrasz.Library.Configurations.Configuration _configuration;
-        private DataCiteDOICredentials _credentials;
 
         public DataCiteDOIController()
         {
             var settingsHelper = new SettingsHelper();
-            _credentials = settingsHelper.GetDataCiteDOICredentials();
-            _configuration = new Vaelastrasz.Library.Configurations.Configuration(_credentials.Username, _credentials.Password, _credentials.Host);
+            //_configuration = new Vaelastrasz.Library.Configurations.Configuration(_credentials.Username, _credentials.Password, _credentials.Host);
         }
 
         public ActionResult _denyDoi(long datasetVersionId)
@@ -227,7 +223,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
                 {
                     var datasetVersion = datasetManager.GetDatasetVersion(datasetVersionId);
 
-                    var dataCiteDOIHelper = new DataCiteDOIHelper();
+                    //var dataCiteDOIHelper = new DataCiteDOIHelper();
                     var settingsHelper = new SettingsHelper();
                     var placeholders = new Dictionary<string, string>(); //<dataCiteDOIHelper.CreatePlaceholders(datasetVersion, settingsHelper.GetDataCiteDOISettings("placeholders"));
 
@@ -282,9 +278,9 @@ namespace BExIS.Modules.Dim.UI.Controllers
                 var datasetVersion = datasetManager.GetDatasetVersion(model.DatasetVersionId);
 
                 var settingsHelper = new SettingsHelper();
-                var datacitedoihelper = new DataCiteDOIHelper();
+                //var datacitedoihelper = new DataCiteDOIHelper();
 
-                var placeholders = datacitedoihelper.CreatePlaceholders(datasetVersion, settingsHelper.GetDataCiteDOIPlaceholders());
+                var placeholders = new List<string>();// datacitedoihelper.CreatePlaceholders(datasetVersion, settingsHelper.GetDataCiteDOIPlaceholders());
 
                 var client = new RestClient(_credentials.Host);
                 client.Authenticator = new HttpBasicAuthenticator(_credentials.Username, _credentials.Password);

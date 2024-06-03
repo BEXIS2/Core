@@ -6,7 +6,13 @@ using System.Threading.Tasks;
 
 namespace BExIS.Dim.Helpers.Vaelastrasz
 {
-    internal class VaelastraszHelper
+    public class VaelastraszMapping
     {
+
+    }
+
+    public class VaelastraszPlaceholder
+    {
+
     }
 }

@@ -1,6 +1,8 @@
 ﻿using BExIS.Dim.Entities.Publications;
+using BExIS.Dlm.Entities.Data;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -89,9 +91,47 @@ namespace BExIS.Dim.Services.Publications
             return Delete(PublicationRepository.Get(publicationId));
         }
 
+        public bool ExistsById(long publicationId)
+        {
+            return false;
+        }
+
+
+        public Task<Publication> FindByIdAsync(long publicationId)
+        {
+            return Task.FromResult(PublicationRepository.Get(publicationId));
+
+        }
         public Publication FindById(long publicationId)
         {
             return PublicationRepository.Get(publicationId);
+        }
+
+        public async Task<(byte[] FileContents, string ContentType, string FileName)> GetFileByIdAsync(long publicationId)
+        {
+            var publication = FindById(publicationId);
+
+            if (publication == null)
+                throw new ArgumentException("Publication does not exist", nameof(publicationId));
+
+            switch (publication.Broker.Name.ToLower())
+            {
+                case "pangaea":
+                    {
+                        PangaeaDataRepoConverter dataRepoConverter = new PangaeaDataRepoConverter(_broker);
+
+                        tmp = new Tuple<string, string>(dataRepoConverter.Convert(datasetVersionId), "text/txt");
+                        return tmp;
+                    }
+
+                default:
+                    break;
+            }
+
+            if (!File.Exists(filePath))
+            {
+                throw new FileNotFoundException("File not found.", filePath);
+            }
         }
 
         public bool Update(Publication publication)
