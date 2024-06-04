@@ -21,11 +21,10 @@
       <column name="Name" />
     </property>
 
-
     <property name="Server" type="string">
       <column name="Server" />
     </property>
-	  
+
 	<property name="Type" type="string">
 		<column name="Type" />
 	</property>

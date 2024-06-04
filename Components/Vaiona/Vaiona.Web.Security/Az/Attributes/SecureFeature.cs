@@ -17,7 +17,6 @@ namespace Vaiona.Web.Security.Az.Attributes
     {
         public SecureFeatureInfoAttribute(string key = "", string parentKey = "", string dispalyName = "")
         {
-
         }
     }
 
@@ -31,9 +30,10 @@ namespace Vaiona.Web.Security.Az.Attributes
         public string ParentFeatureKey { get; set; }
         public bool FetchAccessRuleFromDB { get; set; }
 
-        public string FullKey { get { return (string.Format("{0}.{1}", ParentFeatureKey, FeatureKey)); } }
+        public string FullKey
+        { get { return (string.Format("{0}.{1}", ParentFeatureKey, FeatureKey)); } }
 
-        //private static MemoryCache ruleCache = new MemoryCache("RuleCache");       
+        //private static MemoryCache ruleCache = new MemoryCache("RuleCache");
 
         public SecureFeatureAttribute()
             : this("", "", "", true)
@@ -60,16 +60,16 @@ namespace Vaiona.Web.Security.Az.Attributes
         }
 
         /// <summary>
-        /// This is an authorization system for actions of an MVC application. in the security system all parts of action identification e.g. Area, Controller and Action 
+        /// This is an authorization system for actions of an MVC application. in the security system all parts of action identification e.g. Area, Controller and Action
         /// are considered.
         /// If a controller does not belong to an area, then "Shell" is used as default.
-        /// Although the default behavior of the system is to use Area, Controller and Action names to form the security hierarchy, 
-        /// developer can introduce specific names for actions (as security key) and their parents to establish a custom hierarchy with custom names. 
+        /// Although the default behavior of the system is to use Area, Controller and Action names to form the security hierarchy,
+        /// developer can introduce specific names for actions (as security key) and their parents to establish a custom hierarchy with custom names.
         /// and also hierarchies with more than 3 levels are allowed
-        /// Every level of features can have their own acces rules. i.e. Area of "Members" can be authorized just for "Admins". 
+        /// Every level of features can have their own acces rules. i.e. Area of "Members" can be authorized just for "Admins".
         /// and Controller "Credit" under that area is secured for "Accountants" an so on.
-        /// Security admin can set the access grant policy to Maximun, Minimum or Normal using the config key "AccessRuleMergeOption". 
-        /// Maximum access, fetchs all the access rules of the action and all its parents and join them ba an "OR", the same for 
+        /// Security admin can set the access grant policy to Maximun, Minimum or Normal using the config key "AccessRuleMergeOption".
+        /// Maximum access, fetchs all the access rules of the action and all its parents and join them ba an "OR", the same for
         /// Minimum but with "AND". in case of normal, only the direct access rule that is defined for the action applies.
         /// If there is no rule defined then the final Grant| Deny is defined by a configuration key named "GrantAccessOnNoRule".
         /// Finally the security admin is able to turn off or on the whole authorization system by setting the config key "SkipAuthorization".
@@ -81,7 +81,7 @@ namespace Vaiona.Web.Security.Az.Attributes
         /// is cached for later use and returned to the caller (Telerik menu here)
         /// 4: The permission cache is per user, so it is persisted in a session level variable and gets invalidated using a config based sliding policy "AutorizationResultCacheTime".
         /// Also all user level permissions get invalidated upon log-off and log-in.
-        /// 
+        ///
         /// ps: On first run, in order to create database table(s), set the config key CreateDatabase to true, set the db connection info in the Vaiona.Model.Persistence.NH project's MsSql2008Dialect.hibernate.cfg.xml file
         /// also you need to config the app to use the ASP.NET Membership and Role providers
         /// </summary>
@@ -239,8 +239,8 @@ namespace Vaiona.Web.Security.Az.Attributes
                     //                .Select(x => x.RuleBody)
                     //                .Aggregate((current, next) => '(' + current + ") | (" + next + ')');
 
-
                     break;
+
                 case AccessRuleMergeOption.MinimumRight:
                     foreach (var rule in rules.Where(p => !string.IsNullOrWhiteSpace(p.RuleBody)))
                     {
@@ -248,9 +248,11 @@ namespace Vaiona.Web.Security.Az.Attributes
                     }
                     AccessRule = AccessRule.Trim(" & ".ToCharArray());
                     break;
+
                 case AccessRuleMergeOption.Normal:
                     AccessRule = rules.Last().RuleBody; // fetches more than required, but is the NH.Linq issue
                     break;
+
                 default:
                     break;
             }
@@ -269,4 +271,3 @@ namespace Vaiona.Web.Security.Az.Attributes
     //{
     //}
 }
-

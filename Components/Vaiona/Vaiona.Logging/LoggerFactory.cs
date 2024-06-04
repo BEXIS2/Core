@@ -12,9 +12,10 @@ namespace Vaiona.Logging
         {
             return FileLogger.GetInstance();
         }
+
         /// <summary>
-        /// based on configuration info and provided logType, choose one of the concrete loggers, 
-        /// search for the specific logType (e.g., Performance.Logging), then for General (General.Logging), and then for the no named registration in the IoC            
+        /// based on configuration info and provided logType, choose one of the concrete loggers,
+        /// search for the specific logType (e.g., Performance.Logging), then for General (General.Logging), and then for the no named registration in the IoC
         /// object creation and lifetime is managed by the IoC container. No need to keep a singleton or static object reference here.
         /// </summary>
         /// <param name="LogType"></param>
@@ -54,7 +55,7 @@ namespace Vaiona.Logging
             }
             logEntry.Environemt = logEntry.Environemt.TrimStart(", ".ToCharArray());
 
-            if (logEntry.ExtraInfo!=null && AppConfiguration.HttpContext!=null)
+            if (logEntry.ExtraInfo != null && AppConfiguration.HttpContext != null)
                 logEntry.ExtraInfo = string.Join(", ", logEntry.ExtraInfo, string.Format("SessionID={0}", AppConfiguration.HttpContext.Session.SessionID))
                                        .TrimStart(", ".ToCharArray());
             return logEntry;
@@ -86,7 +87,8 @@ namespace Vaiona.Logging
             return logEntry;
         }
 
-        delegate void CustomLogDelegate(CustomLogEntry logEntry);
+        private delegate void CustomLogDelegate(CustomLogEntry logEntry);
+
         public static void LogCustom(CustomLogEntry logEntry)
         {
             //if (!AppConfiguration.IsLoggingEnable || !AppConfiguration.IsCustomLoggingEnable)
@@ -109,7 +111,8 @@ namespace Vaiona.Logging
             LogCustom(logEntry);
         }
 
-        delegate void MethodLogDelegate(MethodLogEntry logEntry);
+        private delegate void MethodLogDelegate(MethodLogEntry logEntry);
+
         public static void LogMethod(MethodLogEntry logEntry)
         {
             ILogger logger = create(logEntry.LogType);
@@ -118,7 +121,8 @@ namespace Vaiona.Logging
             IAsyncResult ar = dlgt.BeginInvoke(logEntry, null, null);
         }
 
-        delegate void DataLogDelegate(DataLogEntry logEntry);
+        private delegate void DataLogDelegate(DataLogEntry logEntry);
+
         public static void LogData(DataLogEntry logEntry) // subject to remove
         {
             ILogger logger = create(logEntry.LogType);
@@ -141,7 +145,8 @@ namespace Vaiona.Logging
             LogData(logEntry);
         }
 
-        delegate void RelationLogDelegate(RelationLogEntry logEntry);
+        private delegate void RelationLogDelegate(RelationLogEntry logEntry);
+
         public static void LogDataRelation(RelationLogEntry logEntry)
         {
             ILogger logger = create(logEntry.LogType);

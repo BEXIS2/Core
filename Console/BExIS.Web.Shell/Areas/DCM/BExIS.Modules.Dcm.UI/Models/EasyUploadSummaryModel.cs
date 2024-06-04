@@ -60,8 +60,6 @@ namespace BExIS.Modules.Dcm.UI.Models
         public StepInfo StepInfo { get; set; }
         public List<Error> ErrorList = new List<Error>();
 
-
-
         public EasyUploadSummaryModel()
         {
             DatasetId = 0;

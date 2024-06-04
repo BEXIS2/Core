@@ -13,7 +13,6 @@ using System.Globalization;
 using System.Linq;
 using System.Web.Mvc;
 using System.Web.Routing;
-using Vaiona.Logging.Aspects;
 using Vaiona.Web.Extensions;
 using Vaiona.Web.Mvc;
 using Vaiona.Web.Mvc.Models;
@@ -54,8 +53,6 @@ namespace BExIS.Modules.Sam.UI.Controllers
             {
                 try
                 {
-
-
                     var userName = GetUsernameOrDefault();
                     var user = userManager.Users.Where(u => u.Name.Equals(userName)).FirstOrDefault();
 
@@ -269,8 +266,6 @@ namespace BExIS.Modules.Sam.UI.Controllers
             {
                 try
                 {
-
-
                     var userName = GetUsernameOrDefault();
                     var user = userManager.Users.Where(u => u.Name.Equals(userName)).FirstOrDefault();
 

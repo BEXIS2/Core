@@ -8,9 +8,7 @@ using BExIS.UI.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Web;
 using System.Web.Mvc;
-
 
 namespace BExIS.Modules.Rpm.UI.Controllers
 {
@@ -32,17 +30,16 @@ namespace BExIS.Modules.Rpm.UI.Controllers
         public JsonResult GetVariableTemplates()
         {
             List<VariableTemplateModel> tmp = new List<VariableTemplateModel>();
-            VariableHelper  helper = new VariableHelper();
+            VariableHelper helper = new VariableHelper();
             using (var variableManager = new VariableManager())
             {
                 var variableTemplates = variableManager.VariableTemplateRepo.Get();
-              
+
                 variableTemplates.ToList().ForEach(vt => tmp.Add(helper.ConvertTo(vt)));
 
                 // set templates in use
                 List<long> inUse = variableManager.VariableInstanceRepo.Query(v => v.VariableTemplate != null).Select(v => v.VariableTemplate.Id).ToList();
                 tmp.ToList().ForEach(vt => vt.InUse = inUse.Contains(vt.Id));
-
             }
 
             return Json(tmp.ToArray(), JsonRequestBehavior.AllowGet);
@@ -52,8 +49,8 @@ namespace BExIS.Modules.Rpm.UI.Controllers
         [HttpPost]
         public JsonResult Update(VariableTemplateModel model)
         {
-            if(model == null) throw new ArgumentNullException("model");
-  
+            if (model == null) throw new ArgumentNullException("model");
+
             VariableHelper helper = new VariableHelper();
             var variableTemplate = helper.ConvertTo(model);
 
@@ -61,10 +58,9 @@ namespace BExIS.Modules.Rpm.UI.Controllers
             using (var missingValueManager = new MissingValueManager())
             using (var meaningManager = new MeaningManager())
             {
-
                 if (variableTemplate.Id == 0)
                 {
-                    variableTemplate =  variableManager.CreateVariableTemplate(
+                    variableTemplate = variableManager.CreateVariableTemplate(
                             variableTemplate.Label,
                             variableTemplate.DataType,
                             variableTemplate.Unit,
@@ -92,7 +88,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                 //    }
                 //}
             }
-            
+
             return Json(true);
         }
 
@@ -109,7 +105,6 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                 {
                     variableManager.DeleteVariableTemplate(id);
                 }
-
             }
 
             // get default missing values
@@ -130,8 +125,8 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                     foreach (var unit in units)
                     {
                         list.Add(new UnitItem(
-                            unit.Id, 
-                            unit.Abbreviation, 
+                            unit.Id,
+                            unit.Abbreviation,
                             unit.AssociatedDataTypes.Select(x => x.Name).ToList(),
                             "other"
                             ));
@@ -151,7 +146,6 @@ namespace BExIS.Modules.Rpm.UI.Controllers
 
             // get default missing values
             return Json(list.OrderBy(i => i.Group), JsonRequestBehavior.AllowGet);
-
         }
 
         [JsonNetFilter]
@@ -161,7 +155,6 @@ namespace BExIS.Modules.Rpm.UI.Controllers
             List<ListItem> list = helper.GetConstraints();
 
             return Json(list.OrderBy(i => i.Group), JsonRequestBehavior.AllowGet);
-
         }
     }
 }

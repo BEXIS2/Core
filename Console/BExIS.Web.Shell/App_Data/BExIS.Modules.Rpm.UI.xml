@@ -50,170 +50,147 @@
         </member>
         <member name="T:BExIS.Modules.Rpm.UI.Models.VariableStruct">
              <summary>
-            
              </summary>
              <remarks></remarks>
         </member>
         <member name="M:BExIS.Modules.Rpm.UI.Models.DatasetListElement.#ctor(System.Int64,System.String)">
             <summary>
-            
             </summary>
             <remarks></remarks>
-            <seealso cref="!:"/>
+            <seealso cref="!:" />
             <param name="Id"></param>
             <param name="Title"></param>
         </member>
         <member name="M:BExIS.Modules.Rpm.UI.Models.DatasetListElement.#ctor">
              <summary>
-            
              </summary>
              <remarks></remarks>
-             <seealso cref="!:"/>        
+             <seealso cref="!:" />
         </member>
         <member name="T:BExIS.Modules.Rpm.UI.Models.DataStructureDesignerModel">
              <summary>
-            
              </summary>
-             <remarks></remarks>        
+             <remarks></remarks>
         </member>
         <member name="P:BExIS.Modules.Rpm.UI.Models.DataStructureDesignerModel.dataStructure">
              <summary>
-            
              </summary>
              <remarks></remarks>
-             <seealso cref="!:"/>        
+             <seealso cref="!:" />
         </member>
         <member name="P:BExIS.Modules.Rpm.UI.Models.DataStructureDesignerModel.dataStructureTable">
              <summary>
-            
              </summary>
              <remarks></remarks>
-             <seealso cref="!:"/>        
+             <seealso cref="!:" />
         </member>
         <member name="P:BExIS.Modules.Rpm.UI.Models.DataStructureDesignerModel.dataAttributeList">
              <summary>
-            
              </summary>
              <remarks></remarks>
-             <seealso cref="!:"/>        
+             <seealso cref="!:" />
         </member>
         <member name="P:BExIS.Modules.Rpm.UI.Models.DataStructureDesignerModel.variableStructs">
              <summary>
-            
              </summary>
              <remarks></remarks>
-             <seealso cref="!:"/>
+             <seealso cref="!:" />
         </member>
         <member name="P:BExIS.Modules.Rpm.UI.Models.DataStructureDesignerModel.datasets">
              <summary>
-            
              </summary>
              <remarks></remarks>
-             <seealso cref="!:"/>        
+             <seealso cref="!:" />
         </member>
         <member name="P:BExIS.Modules.Rpm.UI.Models.DataStructureDesignerModel.dataStructureTree">
              <summary>
-            
              </summary>
              <remarks></remarks>
-             <seealso cref="!:"/>        
+             <seealso cref="!:" />
         </member>
         <member name="M:BExIS.Modules.Rpm.UI.Models.DataStructureDesignerModel.#ctor">
             <summary>
-            
             </summary>
             <remarks></remarks>
-            <seealso cref="!:"/>
+            <seealso cref="!:" />
         </member>
         <member name="M:BExIS.Modules.Rpm.UI.Models.DataStructureDesignerModel.getDataStructureTree">
              <summary>
-            
              </summary>
              <remarks></remarks>
-             <seealso cref="!:"/>
-             <param>NA</param>       
+             <seealso cref="!:" />
+             <param>NA</param>
              <returns></returns>
         </member>
         <member name="M:BExIS.Modules.Rpm.UI.Models.DataStructureDesignerModel.GetDataStructureByID(System.Int64,System.Boolean)">
             <summary>
-            
             </summary>
             <remarks></remarks>
-            <seealso cref="!:"/>
+            <seealso cref="!:" />
             <param name="ID"></param>
             <param name="structured"></param>
             <returns></returns>
         </member>
         <member name="M:BExIS.Modules.Rpm.UI.Models.DataStructureDesignerModel.BuildDataTable">
             <summary>
-            
             </summary>
             <remarks></remarks>
-            <seealso cref="!:"/>
+            <seealso cref="!:" />
         </member>
         <member name="M:BExIS.Modules.Rpm.UI.Models.DataStructureDesignerModel.GetDataAttributeList">
              <summary>
-            
              </summary>
              <remarks></remarks>
-             <seealso cref="!:"/>        
+             <seealso cref="!:" />
         </member>
         <member name="T:BExIS.Modules.Rpm.UI.Models.DataStructureTreeElement">
              <summary>
-            
              </summary>
-             <remarks></remarks>        
+             <remarks></remarks>
         </member>
         <member name="M:BExIS.Modules.Rpm.UI.Models.DataStructureTreeElement.#ctor">
              <summary>
-            
              </summary>
              <remarks></remarks>
-             <seealso cref="!:"/>        
+             <seealso cref="!:" />
         </member>
         <member name="T:BExIS.Modules.Rpm.UI.Models.DataStructureTreeList">
              <summary>
-            
              </summary>
-             <remarks></remarks>        
+             <remarks></remarks>
         </member>
         <member name="M:BExIS.Modules.Rpm.UI.Models.DataStructureTreeList.#ctor">
              <summary>
-            
              </summary>
              <remarks></remarks>
-             <seealso cref="!:"/>        
+             <seealso cref="!:" />
         </member>
         <member name="M:BExIS.Modules.Rpm.UI.Models.DataStructureTreeList.#ctor(System.Collections.Generic.IList{BExIS.Dlm.Entities.DataStructure.StructuredDataStructure})">
             <summary>
-            
             </summary>
             <remarks></remarks>
-            <seealso cref="!:"/>
+            <seealso cref="!:" />
             <param name="structuredDatastructureList"></param>
             <return></return>
         </member>
         <member name="M:BExIS.Modules.Rpm.UI.Models.DataStructureTreeList.#ctor(System.Collections.Generic.IList{BExIS.Dlm.Entities.DataStructure.UnStructuredDataStructure})">
             <summary>
-            
             </summary>
             <remarks></remarks>
-            <seealso cref="!:"/>
+            <seealso cref="!:" />
             <param name="unStructuredDatastructureList"></param>
             <return></return>
         </member>
         <member name="T:BExIS.Modules.Rpm.UI.Models.DataStructureTree">
              <summary>
-            
              </summary>
-             <remarks></remarks>        
+             <remarks></remarks>
         </member>
         <member name="M:BExIS.Modules.Rpm.UI.Models.DataStructureTree.#ctor">
              <summary>
-            
              </summary>
              <remarks></remarks>
-             <seealso cref="!:"/>        
+             <seealso cref="!:" />
         </member>
     </members>
 </doc>

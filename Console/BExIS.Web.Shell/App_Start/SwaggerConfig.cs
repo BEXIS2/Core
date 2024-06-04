@@ -29,10 +29,10 @@ namespace BExIS.Web.Shell
                 c.BasicAuth("basic").Description("Basic HTTP Authentication");
 
                 addXmlDocumentations(c);
-                
+
                 c.IgnoreObsoleteProperties();
                 c.ResolveConflictingActions(apiDescriptions => apiDescriptions.First());
-                        //c.ApiKey("Authorization", "header", "Filling bearer token here");
+                //c.ApiKey("Authorization", "header", "Filling bearer token here");
                 c.Schemes(new[] { "https" });
 
                 if (!string.IsNullOrEmpty(rootUrl)) c.RootUrl(r => rootUrl);

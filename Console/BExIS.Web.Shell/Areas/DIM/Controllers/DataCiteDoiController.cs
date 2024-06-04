@@ -1,13 +1,13 @@
 ﻿using BExIS.Dim.Entities.Mapping;
 using BExIS.Dim.Entities.Publications;
 using BExIS.Dim.Helpers;
+using BExIS.Dim.Helpers.Configurations;
 using BExIS.Dim.Helpers.Mapping;
 using BExIS.Dim.Services;
 using BExIS.Dlm.Entities.Data;
 using BExIS.Dlm.Services.Data;
 using BExIS.Modules.Dim.UI.Helpers;
 using BExIS.Modules.Dim.UI.Models;
-using BExIS.Security.Entities.Authorization;
 using BExIS.Security.Services.Authorization;
 using BExIS.Security.Services.Objects;
 using BExIS.Security.Services.Utilities;
@@ -17,25 +17,15 @@ using RestSharp;
 using RestSharp.Authenticators;
 using System;
 using System.Collections.Generic;
-using System.Configuration;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Web.Mvc;
-using System.Web.Routing;
+using System.Web.UI.WebControls;
 using System.Xml;
 using System.Xml.Serialization;
-using Vaiona.Web.Mvc;
-using Vaiona.Web.Mvc.Modularity;
-using BExIS.Dim.Helpers.Extensions;
-using System.IO;
-using System.Runtime.Remoting.Messaging;
-using System.Web.UI.WebControls;
-using System.Runtime.Remoting.Contexts;
-using Vaelastrasz.Library.Services;
-using System.Threading.Tasks;
 using Vaelastrasz.Library.Models;
-using Vaiona.Logging;
-using Vaelastrasz.Library.Configurations;
-using BExIS.Dim.Helpers.Configurations;
+using Vaelastrasz.Library.Services;
+using Vaiona.Web.Mvc;
 
 namespace BExIS.Modules.Dim.UI.Controllers
 {

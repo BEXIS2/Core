@@ -6,13 +6,13 @@ using System.Text;
 
 /// <summary>
 ///
-/// </summary>        
+/// </summary>
 namespace BExIS.Utils.Upload
 {
     /// <summary>
     ///
     /// </summary>
-    /// <remarks></remarks>        
+    /// <remarks></remarks>
     public class Utility
     {
         /// <summary>

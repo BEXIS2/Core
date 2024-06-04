@@ -1,6 +1,4 @@
-﻿using BExIS.App.Bootstrap.Attributes;
-using BExIS.App.Bootstrap.Helpers;
-using BExIS.Security.Entities.Subjects;
+﻿using BExIS.App.Bootstrap.Helpers;
 using BExIS.Security.Services.Subjects;
 using BExIS.Utils.Config;
 using BExIS.Web.Shell.Models;
@@ -10,15 +8,10 @@ using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
-using System.Linq;
-using System.Net;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
-using System.Web;
-using System.Web.Http.Results;
 using System.Web.Mvc;
-using Vaiona.Web.Mvc.Modularity;
 
 namespace BExIS.Web.Shell.Controllers
 {
@@ -114,7 +107,6 @@ namespace BExIS.Web.Shell.Controllers
 
                         ExceptionlessClient.Default.SubmitLog("Get Token", $"{user.Name} requested a JWT.", Exceptionless.Logging.LogLevel.Info);
 
-
                         return View("GetToken", model: new ReadJwtModel() { Jwt = jwt_token });
                     }
 
@@ -163,7 +155,6 @@ namespace BExIS.Web.Shell.Controllers
                         ExceptionlessClient.Default.SubmitLog("Get Token", $"{user.Name} requested a JWT.", Exceptionless.Logging.LogLevel.Info);
 
                         return Json(jwt_token, JsonRequestBehavior.AllowGet);
-
                     }
 
                     return Json("NotAuthorized", JsonRequestBehavior.AllowGet);
@@ -174,7 +165,6 @@ namespace BExIS.Web.Shell.Controllers
                 return Json("NotAuthorized", JsonRequestBehavior.AllowGet);
             }
         }
-        
 
         // GET: Tokens
         public ActionResult Index()

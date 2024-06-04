@@ -2,7 +2,6 @@
 using BExIS.Modules.Dcm.UI.Models.Edit;
 using BExIS.UI.Hooks;
 using BExIS.UI.Hooks.Caches;
-using BExIS.UI.Hooks.Logs;
 using System;
 using System.IO;
 using Vaiona.Utils.Cfg;
@@ -62,7 +61,8 @@ namespace BExIS.Modules.Dcm.UI.Helpers
                         // set flag to know if every file is readable or not
                         model.AllFilesReadable = cache.Files.Count == countReadableFile;
                     }
-                    #endregion
+
+                    #endregion file informations
 
                     model.IsDataValid = cache.IsDataValid;
                 }

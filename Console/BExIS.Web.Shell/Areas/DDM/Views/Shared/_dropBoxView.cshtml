@@ -6,8 +6,7 @@
 
         <p class="PropertyHeader">@Model.DisplayName</p>
 
-
-        @{ 
+        @{
             string value = "";
             int i = 0;
 
@@ -15,7 +14,6 @@
             {
                 i = Model.Values.ToList().IndexOf(Model.SelectedValue)+1;
             }
-
 
             string controller = Session["Controller"].ToString();
         }
@@ -42,12 +40,10 @@
                         .OnChange("onChange"))
             )
         }
-
-
     </div>
 <script type="text/javascript">
     function onChange(e) {
-      
+
         var value = e.value;
         var node = e.currentTarget.name;
 
@@ -65,7 +61,6 @@
                 console.log(response);
                 $("#searchProperties").html(response);
             })
-        
 
         });
 
@@ -75,10 +70,6 @@
             $("#searchTreeView").html(response);
         })
 
-
-        
-
         refreshGrid();
     }
-
 </script>

@@ -140,6 +140,7 @@ namespace BExIS.Utils.Models
         #endregion Facets
 
         #region General
+
         public IEnumerable<General> Generals { get; set; }
 
         public bool ContainsGeneral(string name)
@@ -151,7 +152,8 @@ namespace BExIS.Utils.Models
         {
             return (Generals.Where(p => p.Name.Equals(name, StringComparison.InvariantCultureIgnoreCase)).FirstOrDefault());
         }
-        #endregion
+
+        #endregion General
 
         #region Category
 

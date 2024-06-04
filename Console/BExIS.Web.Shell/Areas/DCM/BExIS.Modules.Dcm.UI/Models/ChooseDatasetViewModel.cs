@@ -22,7 +22,6 @@ namespace BExIS.Modules.Dcm.UI.Models
             ErrorList = new List<Error>();
             DatasetsViewList = new List<ListViewItem>();
             DatasetTitle = "";
-
         }
     }
 }

@@ -4,6 +4,7 @@ using System.Web.Mvc;
 namespace Vaiona.Web.Mvc.Filters
 {
     public delegate void IsAuthorizedDelegate(string areaName, string controllerName, string actionName, string userName, bool isAuthenticated);
+
     /// <summary>
     /// intercept calls to all the actions, creates a context object based on the Area, Controller and Action and passes them
     /// to all registered events

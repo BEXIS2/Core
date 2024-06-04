@@ -6,13 +6,10 @@
     string searchId = "le-root-search-filter-" + Model.Position;
     string id = "le-root-" + Model.Position.ToString().ToLower();
 
-
     List<LinkElementRootListItem> list = (List<LinkElementRootListItem>)Session["SelectionList"];
-    }
+}
 
 <div id="@id" class="le-root @Model.Position dim-Container">
-
-
 
     <div class="le-root-info" style="display: none">
         <div id="Id">@Model.Id</div>
@@ -23,12 +20,10 @@
         <div id="Url">@Model.Url</div>
     </div>
 
-
-
-            @if (Model.Position == LinkElementPostion.Target && list != null)
+    @if (Model.Position == LinkElementPostion.Target && list != null)
             {
 
-                @(Html.Telerik().DropDownList()
+    @(Html.Telerik().DropDownList()
                                         .Name("SelectTarget")
                                         .Placeholder("Select")
                                         .HtmlAttributes(new { @class = "bx-dropdown", style = "width:100%;" })
@@ -37,65 +32,53 @@
             }
             else
             {
-                <div class="le-root-header">
-                    <b> @Model.Name</b>
-                </div>
+    <div class="le-root-header">
+        <b> @Model.Name</b>
+    </div>
             }
-       
+
     <div class="le-root-description">
         @Model.Description
     </div>
 
-
     <div class="le-root-search">
 
         @Html.TextBox(searchId, "", new { @class = "bx-input le-search", style = "width:100%" })
-
     </div>
     <div class="le-root-prefilter">
 
         @if (Model.Name.Equals("System"))
         {
-            <span>@Html.CheckBox("Key", true, new { @class = "prefilter" }) Key </span>
-            <span>@Html.CheckBox("Party", true, new { @class = "prefilter" }) Party </span>
-            <span>@Html.CheckBox("Entity", true, new { @class = "prefilter" }) Entity </span>
+        <span>@Html.CheckBox("Key", true, new { @class = "prefilter" }) Key </span>
+        <span>@Html.CheckBox("Party", true, new { @class = "prefilter" }) Party </span>
+        <span>@Html.CheckBox("Entity", true, new { @class = "prefilter" }) Entity </span>
         }
 
         @if (Model.Type.ToString().Contains("Metadata"))
         {
-            @*<span>@Html.CheckBox("Type", true, new { @class = "prefilter"}) Type </span>*@
-            <span>@Html.CheckBox("Usage", true, new { @class = "prefilter" }) Usage </span>
-            <span>@Html.CheckBox("Default", true, new { @class = "prefilter" }) Default </span>
+        @*<span>@Html.CheckBox("Type", true, new { @class = "prefilter"}) Type </span>*@
+        <span>@Html.CheckBox("Usage", true, new { @class = "prefilter" }) Usage </span>
+        <span>@Html.CheckBox("Default", true, new { @class = "prefilter" }) Default </span>
         }
-
     </div>
 
     <div class="le-root-content">
 
         @foreach (var child in Model.LinkElementContainers)
         {
-            @Html.Partial("LinkElementContainer", child)
+        @Html.Partial("LinkElementContainer", child)
         }
-
-
     </div>
 </div>
-    <script type="text/javascript">
-
+<script type="text/javascript">
 
     var position = '@Model.Position';
     var identifer = ".le-container-content-" + position;
     var identiferSimple = ".le-simple-" + position;
 
-
     $(document)
         .ready(function () {
             initIsotope(identiferSimple);
 
-            
-
         });
-
-
-
-    </script>
+</script>

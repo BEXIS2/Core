@@ -3,10 +3,10 @@
 
 @using (Html.BeginForm("Create", "Tenants", FormMethod.Post, new { enctype = "multipart/form-data" } ))
 {
-    @(Html.Telerik().Upload()
+@(Html.Telerik().Upload()
         .Name("Files")
         .Multiple(false)
         .ShowFileList(true))
 
-    <input type="submit" value="Upload" />
+<input type="submit" value="Upload" />
 }

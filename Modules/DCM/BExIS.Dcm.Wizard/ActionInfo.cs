@@ -3,41 +3,41 @@ using System.Collections.Generic;
 
 /// <summary>
 ///
-/// </summary>        
+/// </summary>
 namespace BExIS.Dcm.Wizard
 {
     /// <summary>
     ///
     /// </summary>
-    /// <remarks></remarks>        
+    /// <remarks></remarks>
     public class ActionInfo
     {
         /// <summary>
         ///
         /// </summary>
         /// <remarks></remarks>
-        /// <seealso cref=""/>        
+        /// <seealso cref=""/>
         public string AreaName { get; set; }
 
         /// <summary>
         ///
         /// </summary>
         /// <remarks></remarks>
-        /// <seealso cref=""/>        
+        /// <seealso cref=""/>
         public string ControllerName { get; set; }
 
         /// <summary>
         ///
         /// </summary>
         /// <remarks></remarks>
-        /// <seealso cref=""/>        
+        /// <seealso cref=""/>
         public string ActionName { get; set; }
 
         /// <summary>
         ///
         /// </summary>
         /// <remarks></remarks>
-        /// <seealso cref=""/>        
+        /// <seealso cref=""/>
         public Dictionary<String, object> Parameters { get; set; }
 
         /// <summary>
@@ -45,7 +45,7 @@ namespace BExIS.Dcm.Wizard
         /// </summary>
         /// <remarks></remarks>
         /// <seealso cref=""/>
-        /// <param>NA</param>       
+        /// <param>NA</param>
         public ActionInfo()
         {
             AreaName = "";
@@ -71,6 +71,5 @@ namespace BExIS.Dcm.Wizard
 
             return true;
         }
-
     }
 }

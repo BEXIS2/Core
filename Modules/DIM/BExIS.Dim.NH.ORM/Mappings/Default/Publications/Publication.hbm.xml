@@ -59,7 +59,5 @@
 
 		<many-to-one class="Repository" name="Repository" column="RepositoryRef">
 		</many-to-one>
-
-
 	</class>
 </hibernate-mapping>

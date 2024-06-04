@@ -1,36 +1,28 @@
 ﻿using BExIS.Dlm.Entities.DataStructure;
 using NUnit.Framework;
+
 namespace BExIS.Dlm.Tests.Entities.DataStructure
 {
     [TestFixture()]
     public class RangeConstraintTests
     {
         [OneTimeSetUp]
-        /// It is called once prior to executing any of the tests in a fixture.
-        /// Multiple methods can be marked. Order is not preserved. 
-        /// Inheritance is supported, call sequence form the parents
         public void OneTimeSetUp()
         {
             // because these tests are working on in-memory objects (datasets) only, there is no need to do the test app setup
         }
 
         [SetUp]
-        /// performs the initial setup for the tests. This runs once per test, NOT per class!
         protected void SetUp()
         {
         }
 
         [TearDown]
-        /// performs the cleanup after each test
         public void TearDown()
         {
         }
 
         [OneTimeTearDown]
-        /// It is called once after executing all the tests in a fixture.
-        /// Multiple methods can be marked. Order is not preserved. 
-        /// Inheritance is supported, call sequence form the children
-        /// Executes only if: counterpart OneTimeSetUp exists and executed successfully.
         public void OneTimeTearDown()
         { }
 
@@ -40,7 +32,6 @@ namespace BExIS.Dlm.Tests.Entities.DataStructure
         [TestCase(0.1, 0, 1, false, true, true, "en-US")]
         [TestCase(0.4, 0, 1, false, true, true, "en-US")]
         [TestCase(1, 0, 1, false, true, true, "en-US")]
-        //[TestCase(2,0,1,false,true,true,"en-US", false)]
         public void IsSatisfied_ValueIsInRangeWithBounds_ReturnTrue(object value, double min, double max, bool negated, bool lowerBoundIncluded, bool upperBoundIncluded, string culture)
         {
             //Arrange
@@ -97,7 +88,6 @@ namespace BExIS.Dlm.Tests.Entities.DataStructure
             //Assert
             Assert.AreEqual(result, false);
         }
-
 
         //double min, double max, bool negated, bool lowerBoundIncluded, bool upperBoundIncluded, culture
         [TestCase("0.1", 0, 1, false, true, true, "en-US")]

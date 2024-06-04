@@ -32,11 +32,9 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             ViewData["id"] = id;
             ViewData["version"] = version;
 
-
             ViewData["LayoutScript"] = SvelteHelper.GetLayoutScript(module);
             ViewData["LayoutCss"] = SvelteHelper.GetLayoutCss(module);
             ViewData["LayoutSvelteScript"] = SvelteHelper.GetLayoutSvelteScript(module);
-
 
             return View();
         }
@@ -72,7 +70,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                     datasetVersion = datasetManager.GetDatasetVersion(model.VersionId); // load datasetversion by id
                 }
 
-                // get title 
+                // get title
                 model.Title = datasetVersion.Title;
 
                 // load all hooks for the edit view
@@ -152,11 +150,9 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             return RedirectToAction("ShowPreviewDataStructure", "Data", new { area = "DDM", datasetID = id });
         }
 
-
         public ActionResult Test()
         {
             return PartialView("_test");
         }
-
     }
 }

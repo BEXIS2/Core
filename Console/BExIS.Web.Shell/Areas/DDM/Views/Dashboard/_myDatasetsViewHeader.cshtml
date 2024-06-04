@@ -1,6 +1,5 @@
 ﻿@using BExIS.Modules.Ddm.UI.Models
 
-
 @model List<MyDatasetsModel>
 
 @section Information
@@ -26,15 +25,10 @@ else
     </ul>
 }
 
-
 <script type="text/javascript">
-
-
-
 
         var cache = [];
      $('document').ready(function () {
-
 
         $('#own').click(function () {
             $('.nav-tabs li.active').removeClass('active');
@@ -75,7 +69,6 @@ else
             }
         });
 
-
         function loadContent(entityname, rightType){
 
             $("#table_content").preloader("..loading datasets");
@@ -92,14 +85,10 @@ else
             );
          }
 
-
-
-
         function onclickDataset(e) {
 
             // checked
             var id = e.getAttribute("id");
-
 
             var data = {
                 id: id
@@ -126,7 +115,6 @@ else
             });
         }
     });
-
 </script>
 
 <style type="text/css">
@@ -142,7 +130,6 @@ else
         display: none;
     }
 </style>
-
 
 <div id="table_content">
     @Html.Partial("_myDatasetsView", Model)

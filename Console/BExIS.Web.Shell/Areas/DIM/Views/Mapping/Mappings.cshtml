@@ -4,20 +4,17 @@
 
 <div id="dim-mapping-middle" class="middle">
 
-
     <div id="newMapContainer">
         @Html.Partial("Mapping", new ComplexMappingModel())
     </div>
 
     @foreach (var map in @Model.OrderByDescending(m=>m.Id))
     {
-        @Html.Partial("Mapping", map)
+    @Html.Partial("Mapping", map)
     }
-
 </div>
 
 <script type="text/javascript">
-
 
     $(document)
         .ready(function () {
@@ -28,7 +25,4 @@
             }, 500);
 
         });
-
-
-
 </script>

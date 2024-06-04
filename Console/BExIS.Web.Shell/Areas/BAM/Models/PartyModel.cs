@@ -15,6 +15,7 @@ namespace BExIS.Modules.Bam.UI.Models
             PartyRelationships = new List<PartyRelationshipModel>();
             Errors = new List<Error>();
         }
+
         public long Id { get; set; }
         public string Description { get; set; }
         public DateTime? StartDate { get; set; }
@@ -24,11 +25,12 @@ namespace BExIS.Modules.Bam.UI.Models
         public List<Error> Errors { get; set; }
 
         public bool ViewMode { get; set; }
+
         [Display(Name = "Metadata Structure")]
         [Required(ErrorMessage = "Please select a party type.")]
         public List<PartyType> PartyTypeList { get; set; }
-        public List<PartyRelationshipModel> PartyRelationships { get; set; }
 
+        public List<PartyRelationshipModel> PartyRelationships { get; set; }
     }
 
     public class PartyRelationshipModel
@@ -43,6 +45,4 @@ namespace BExIS.Modules.Bam.UI.Models
         public DateTime EndDate { get; set; }
         public string Type { get; set; }
     }
-
-
 }

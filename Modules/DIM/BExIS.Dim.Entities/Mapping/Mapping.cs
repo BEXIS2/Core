@@ -11,8 +11,8 @@ namespace BExIS.Dim.Entities.Mapping
 
         public virtual Mapping Parent { get; set; }
 
-        public Mapping() { 
-            
+        public Mapping()
+        {
             Level = 0;
             Source = new LinkElement();
             Target = new LinkElement();

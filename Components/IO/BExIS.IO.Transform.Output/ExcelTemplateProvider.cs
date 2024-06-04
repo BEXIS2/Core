@@ -3,13 +3,10 @@ using BExIS.Dlm.Services.DataStructure;
 using DocumentFormat.OpenXml;
 using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Spreadsheet;
-using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using System.Xml;
 using Vaiona.Persistence.Api;
 using Vaiona.Utils.Cfg;
@@ -18,12 +15,12 @@ namespace BExIS.IO.Transform.Output
 {
     public class ExcelTemplateProvider
     {
-        string _fileName = null;
+        private string _fileName = null;
 
         private char[] alphabet = { ' ', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z' };
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <remarks></remarks>
         /// <seealso cref=""/>
@@ -37,7 +34,7 @@ namespace BExIS.IO.Transform.Output
         ///
         /// </summary>
         /// <remarks></remarks>
-        /// <seealso cref=""/>        
+        /// <seealso cref=""/>
         public ExcelTemplateProvider()
         {
             _fileName = "BExISppTemplate_Clean.xlsx";
@@ -53,7 +50,7 @@ namespace BExIS.IO.Transform.Output
         //}
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <remarks></remarks>
         /// <seealso cref=""/>
@@ -98,7 +95,7 @@ namespace BExIS.IO.Transform.Output
 
                 string path = Path.Combine("DataStructures", dataStructure.Id.ToString());
 
-                // create excel template based on structure 
+                // create excel template based on structure
 
                 CreateTemplate(dataStructure.Variables.Select(p => p.Id).ToList(), path, filename);
 
@@ -118,7 +115,7 @@ namespace BExIS.IO.Transform.Output
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <remarks></remarks>
         /// <seealso cref=""/>
@@ -150,11 +147,10 @@ namespace BExIS.IO.Transform.Output
             {
                 dataStructureManager.Dispose();
             }
-
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <remarks></remarks>
         /// <seealso cref=""/>
@@ -192,7 +188,6 @@ namespace BExIS.IO.Transform.Output
 
             var workbookPart = dataStructureFile.WorkbookPart;
 
-
             // go throw each varaible and add a cell
             foreach (VariableInstance var in variables)
             {
@@ -206,7 +201,7 @@ namespace BExIS.IO.Transform.Output
 
                     string cellRef = columnIndex + 1;
 
-                    rows.ElementAt(0).AppendChild(generateCell(cellRef, var.Label, workbookPart, "ff9700", true,false,true));
+                    rows.ElementAt(0).AppendChild(generateCell(cellRef, var.Label, workbookPart, "ff9700", true, false, true));
 
                     //unit
                     string unit = var.Unit != null ? var.Unit.Name : "";
@@ -225,8 +220,6 @@ namespace BExIS.IO.Transform.Output
                     // is key
                     cellRef = columnIndex + 5;
                     rows.ElementAt(4).AppendChild(generateCell(cellRef, var.IsKey ? "key" : "", workbookPart, "ffd599", false, true));
-
-
                 }
                 finally
                 {
@@ -241,7 +234,7 @@ namespace BExIS.IO.Transform.Output
             return dataStructureFile;
         }
 
-        private Cell generateCell(string cellRef, string value, WorkbookPart workbookPart,string rgb, bool first = false, bool last = false, bool bold = false)
+        private Cell generateCell(string cellRef, string value, WorkbookPart workbookPart, string rgb, bool first = false, bool last = false, bool bold = false)
         {
             Cell cell = new Cell()
             {
@@ -254,15 +247,15 @@ namespace BExIS.IO.Transform.Output
             // sett cellformat
             CellFormat cellFormat = cell.StyleIndex != null ? GetCellFormat(workbookPart, cell.StyleIndex).CloneNode(true) as CellFormat : new CellFormat();
             cellFormat.FillId = InsertFill(workbookPart, GenerateFill(rgb));
-            if(first || last) cellFormat.BorderId = InsertBorder(workbookPart, GenerateBottomBorder());
-            if(bold) cellFormat.FontId = InsertFont(workbookPart, GenerateFont());
+            if (first || last) cellFormat.BorderId = InsertBorder(workbookPart, GenerateBottomBorder());
+            if (bold) cellFormat.FontId = InsertFont(workbookPart, GenerateFont());
             cell.StyleIndex = InsertCellFormat(workbookPart, cellFormat);
 
             return cell;
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <remarks></remarks>
         /// <seealso cref=""/>
@@ -281,10 +274,8 @@ namespace BExIS.IO.Transform.Output
             return CellValues.SharedString;
         }
 
-
-
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <remarks></remarks>
         /// <seealso cref=""/>
@@ -305,7 +296,7 @@ namespace BExIS.IO.Transform.Output
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <remarks></remarks>
         /// <seealso cref=""/>
@@ -314,7 +305,6 @@ namespace BExIS.IO.Transform.Output
         /// <returns></returns>
         private string GetClomunIndex(int index, int offset = 1)
         {
-
             //if (index <= 25) return alphabet[index].ToString();
             int residual = 0;
             string column = "";
@@ -334,13 +324,12 @@ namespace BExIS.IO.Transform.Output
                     column = alphabet[residual - 1].ToString() + column;
                     index = (index / 26);
                 }
-
             } while (index > 0);
             return column;
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <remarks></remarks>
         /// <seealso cref=""/>
@@ -373,7 +362,6 @@ namespace BExIS.IO.Transform.Output
                 }
                 catch
                 {
-
                 }
             }
             finally
@@ -381,7 +369,6 @@ namespace BExIS.IO.Transform.Output
                 DSM.Dispose();
             }
         }
-
 
         #region styles
 
@@ -401,7 +388,6 @@ namespace BExIS.IO.Transform.Output
         public Font GenerateFont()
         {
             Font font = new Font(new Bold());
-
 
             return font;
         }
@@ -461,6 +447,6 @@ namespace BExIS.IO.Transform.Output
             return (uint)fonts.Count++;
         }
 
-        #endregion
+        #endregion styles
     }
 }

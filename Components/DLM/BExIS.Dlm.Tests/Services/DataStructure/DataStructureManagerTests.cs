@@ -34,8 +34,6 @@ namespace BExIS.Dlm.Tests.Services.DataStructure
                 //Assert
                 Assert.IsNotNull(dataStructure);
             }
-
         }
-
     }
 }

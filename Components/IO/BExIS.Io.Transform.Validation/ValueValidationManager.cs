@@ -56,8 +56,9 @@ namespace BExIS.IO.Transform.Validation
 
         public ICollection<Constraint> Constraints { get; set; }
 
-        List<Error> errors = new List<Error>();
-        Error e;
+        private List<Error> errors = new List<Error>();
+        private Error e;
+
         /// <summary>
         ///
         /// </summary>
@@ -138,7 +139,6 @@ namespace BExIS.IO.Transform.Validation
         /// <returns></returns>
         public List<Error> ValidateValue(object value, int row)
         {
-
             foreach (IValueValidation vv in ValidationList)
             {
                 e = vv.Execute(value, row);

@@ -7,5 +7,4 @@ namespace BExIS.Dim.Entities.Publications
         public virtual long MetadataStructureId { get; set; }
         public virtual long RepositoryId { get; set; }
     }
-
 }

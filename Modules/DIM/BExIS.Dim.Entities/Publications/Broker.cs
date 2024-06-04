@@ -13,6 +13,5 @@ namespace BExIS.Dim.Entities.Publications
         public virtual string PrimaryDataFormat { get; set; }
         public virtual string Link { get; set; }
         public virtual Repository Repository { get; set; }
-
     }
 }

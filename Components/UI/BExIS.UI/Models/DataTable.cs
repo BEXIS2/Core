@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Web.Mvc;
 
 namespace BExIS.UI.Models
 {
@@ -15,11 +14,11 @@ namespace BExIS.UI.Models
         public List<DataTableFilter> Filter { get; set; }
         public List<DataTableOrderBy> Order { get; set; }
 
-
-        public DataTableSendModel() {
+        public DataTableSendModel()
+        {
             Id = 0;
-            Version=0;
-            Offset = 0; 
+            Version = 0;
+            Offset = 0;
             Limit = 100;
             Filter = new List<DataTableFilter>();
             Order = new List<DataTableOrderBy>();
@@ -32,7 +31,7 @@ namespace BExIS.UI.Models
         public long Count { get; set; }
         public DataTable Data { get; set; }
 
-        public List<DataTableColumn> Columns  { get; set; }
+        public List<DataTableColumn> Columns { get; set; }
 
         public DataTableSendModel Send { get; set; }
 
@@ -44,8 +43,6 @@ namespace BExIS.UI.Models
             Columns = new List<DataTableColumn>();
         }
     }
-
-
 
     public class DataTableColumn
     {
@@ -67,8 +64,8 @@ namespace BExIS.UI.Models
 
     public class DataTableInstruction
     {
-        public Dictionary<object,string> MissingValues { get; set; }
-        public string  DisplayPattern { get; set; }
+        public Dictionary<object, string> MissingValues { get; set; }
+        public string DisplayPattern { get; set; }
 
         public DataTableInstruction()
         {
@@ -92,23 +89,22 @@ namespace BExIS.UI.Models
 
     public enum DataTableFilterType
     {
-	    e, // Is equal to
-	    ne, // Is not equal to
-	    gt, // Greater than
-	    lt, // Less than
-	    gte, // Greater than or equal to
-	    lte, // Less than or equal to
-	    c, // Contains
-	    nc, // Does not contain
-	    sw, // Starts with
-	    ew, // Ends with
+        e, // Is equal to
+        ne, // Is not equal to
+        gt, // Greater than
+        lt, // Less than
+        gte, // Greater than or equal to
+        lte, // Less than or equal to
+        c, // Contains
+        nc, // Does not contain
+        sw, // Starts with
+        ew, // Ends with
         o, // on (date)
         sf, // starting with (date)
         a, // after (date)
         u, // unitl  (date)
         b, // before  (date)
         no // not on  (date)
-
     }
 
     public enum DataTableOrderType

@@ -3,7 +3,6 @@
 @*@using BExIS.Modules.Ddm.UI.Helpers;*@
 @using BExIS.Utils.Extensions
 
-
 @{
     int tabIndex = 0;
 
@@ -115,7 +114,6 @@
         debugPath = "BExIS.Modules.Dcm.UI/";
     }
 
-
 }
 
 @section Information
@@ -132,7 +130,6 @@
 }
 
 @*load sctipts from dcm for the metadata. *@
-
 
 @section scripts
 {
@@ -163,8 +160,6 @@
             <span class="datasetview_header-toggle-text">switch to edit</span>
            }
         </div>
-
-
 
         @if (ViewData["Message"].ToString() != "")
         {
@@ -277,7 +272,6 @@
                             }
                         }
                     }
-
                 </div>
             </div>
         }
@@ -328,7 +322,6 @@
                         }
                     }
                 </ul>
-
 
                 <!--load hooks in tab content-->
                 <!--dataset hooks-->
@@ -523,11 +516,10 @@
         }
 
    function toogleToEdit() {
-        
+
        window.location.href = "/dcm/edit?id=@Model.Id";
 
     }
-
     </script>
 
 }

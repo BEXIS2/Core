@@ -493,7 +493,7 @@
         </member>
         <member name="M:BExIS.Web.Shell.Helpers.MenuHelper.MenuBar(System.String)">
             <summary>
-            defaul menubar load with bar name like 
+            defaul menubar load with bar name like
             menubarRoot
             Accountbar
             </summary>

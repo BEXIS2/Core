@@ -10,11 +10,8 @@ namespace Vaiona.Core.Serialization
 
         private ObjGraphXmlSerializer serializer = null;
         private ObjGraphXmlDeserializer deSerializer = null;
-        #endregion
 
-        #region Associations
-
-        #endregion
+        #endregion Attributes
 
         public object ExportTo(Type sourceType, object source, string instanceName, string rootElementName = "Root", int version = 1, bool resetExportInfo = false)
         {
@@ -63,12 +60,5 @@ namespace Vaiona.Core.Serialization
         {
             return (((T)ImportFrom(typeof(T), source, typeResolver, version, resetImportInfo)));
         }
-
-        #region Mathods
-
-        #endregion
-
     }
-
-
 }

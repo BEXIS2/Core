@@ -1,26 +1,21 @@
-﻿using BExIS.Dlm.Entities.DataStructure;
-using BExIS.IO;
-using BExIS.IO.Transform.Input;
+﻿using BExIS.IO.Transform.Input;
 using BExIS.UI.Models;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Web;
 
 namespace BExIS.Modules.Rpm.UI.Models.DataStructure
 {
     public class DataStructureCreationModel
     {
-
         /// <summary>
         ///  entity id
         /// </summary>
         public long EntityId { get; set; }
+
         /// <summary>
         /// title of the data structure
         /// </summary>
         public string Title { get; set; }
+
         /// <summary>
         /// description of the data structure
         /// </summary>
@@ -30,6 +25,7 @@ namespace BExIS.Modules.Rpm.UI.Models.DataStructure
         /// file that come in
         /// </summary>
         public string File { get; set; }
+
         public int Delimeter { get; set; }
         public int Decimal { get; set; }
         public int TextMarker { get; set; }
@@ -51,6 +47,7 @@ namespace BExIS.Modules.Rpm.UI.Models.DataStructure
         /// skipped rows
         /// </summary>
         public int Skipped { get; set; }
+
         public List<Marker> Markers { get; set; }
 
         public List<VariableInstanceModel> Variables { get; set; }
@@ -84,6 +81,7 @@ namespace BExIS.Modules.Rpm.UI.Models.DataStructure
         /// title of the data structure
         /// </summary>
         public string Title { get; set; }
+
         /// <summary>
         /// description of the data structure
         /// </summary>
@@ -131,5 +129,4 @@ namespace BExIS.Modules.Rpm.UI.Models.DataStructure
             Cells = new List<bool>();
         }
     }
-
 }

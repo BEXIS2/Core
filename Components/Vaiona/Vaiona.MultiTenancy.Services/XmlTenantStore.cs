@@ -11,9 +11,9 @@ namespace Vaiona.MultiTenancy.Services
 {
     /// <summary>
     /// Performs the persisting operations on an XML store
-    /// 
+    ///
     /// </summary>
-    /// <remarks>It would be better that this class is part of the domain specific applications that utilize Vaiona, 
+    /// <remarks>It would be better that this class is part of the domain specific applications that utilize Vaiona,
     /// So that it is injected into the resolver/registrar at runtime using the IoC.</remarks>
     public class XmlTenantStore
     {
@@ -29,11 +29,14 @@ namespace Vaiona.MultiTenancy.Services
         {
             this.pathProvider = pathProvider;
         }
+
         private ITenantPathProvider pathProvider;
+
         // consider using function call caching
         private static List<Tenant> tenants = new List<Tenant>(); // for caching purposes. Needs more work!
 
-        public List<Tenant> Tenants { get { return tenants; } }
+        public List<Tenant> Tenants
+        { get { return tenants; } }
 
         [MethodImpl(MethodImplOptions.Synchronized)]
         public List<Tenant> Load()
@@ -103,7 +106,7 @@ namespace Vaiona.MultiTenancy.Services
             // each tenant has its own folder. Inside the folder there is a manifest file containg the textual information of the tenent.
             // Its named manifest.xml
             //empty manifest attributes will be taken from the fallback tenant, if requested by the manifest
-            //by default bexis is the fallback tenant. 
+            //by default bexis is the fallback tenant.
             // When loading check if logo, gavicon, privacy policty, etc are provided be the tenant. If not load them from the default
             //if (tenant.Status != TenantStatus.Active)
             //    return tenant;
@@ -416,7 +419,6 @@ namespace Vaiona.MultiTenancy.Services
             // create an entry in the catalog for the unzipped tenant package.
             AddTenantToCatlog(tenant);
             Load(); //Reload to reflect latest updates
-
         }
 
         public void AddTenantToCatlog(Tenant tenant)
@@ -433,6 +435,7 @@ namespace Vaiona.MultiTenancy.Services
             xTenants.Last().AddAfterSelf(xTenant);
             manifest.Save(CatalogFilePath);
         }
+
         /// <summary>
         /// Updates the registry entries. Used in activate, inactivate scenarios
         /// </summary>
@@ -484,7 +487,6 @@ namespace Vaiona.MultiTenancy.Services
             {
                 throw new Exception(string.Format("Tenant {0} was not found.", tenant.Id));
             }
-
         }
 
         public void Remove(Tenant tenant)
@@ -527,6 +529,5 @@ namespace Vaiona.MultiTenancy.Services
         {
             return Path.Combine(AppConfiguration.WorkspaceTenantsRoot, id, "manifest.xml");
         }
-
     }
 }

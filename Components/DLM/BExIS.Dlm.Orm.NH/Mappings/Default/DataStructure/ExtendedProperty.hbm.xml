@@ -1,7 +1,7 @@
 <hibernate-mapping xmlns="urn:nhibernate-mapping-2.2" assembly="BExIS.Dlm.Entities" namespace="BExIS.Dlm.Entities.DataStructure">
   <class xmlns="urn:nhibernate-mapping-2.2" name="ExtendedProperty" table="ExtendedProperties" dynamic-update="true">
     <!-- Mapping BaseEntity properties -->
-    
+
     <id name="Id" type="Int64">
       <column name="Id" index="idx_ExtendedProperties_id" />
       <generator class="native" />
@@ -16,7 +16,7 @@
     </property>
 
     <!-- Mapping DataTuple properties -->
-    
+
     <property name="Name" type="String">
       <column name="Name" index="idx_ExtendedProperties_name" />
     </property>
@@ -25,13 +25,11 @@
       <column name="Description" />
     </property>
 
-    <many-to-one name="DataContainer" class="DataContainer" not-null="true" column="DataContainerRef"/>
+    <many-to-one name="DataContainer" class="DataContainer" not-null="true" column="DataContainerRef" />
 
     <!--<set name="Constraints" cascade="all" inverse="true">
-      <key column="ExtendedPropertyRef" not-null="false"/>
-      <one-to-many class="Constraint"/>
+      <key column="ExtendedPropertyRef" not-null="false" />
+      <one-to-many class="Constraint" />
     </set>-->
-
   </class>
-
 </hibernate-mapping>

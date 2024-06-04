@@ -22,6 +22,7 @@ namespace BExIS.Dim.Services
         }
 
         private bool isDisposed = false;
+
         ~PublicationManager()
         {
             Dispose(true);
@@ -67,7 +68,7 @@ namespace BExIS.Dim.Services
         /// </summary>
         public IReadOnlyRepository<MetadataStructureToRepository> MetadataStructureToRepositoryRepo { get; private set; }
 
-        #endregion
+        #endregion Data Readers
 
         #region publication
 
@@ -199,7 +200,7 @@ namespace BExIS.Dim.Services
             return (true);
         }
 
-        #endregion
+        #endregion publication
 
         #region broker
 
@@ -268,7 +269,6 @@ namespace BExIS.Dim.Services
             Contract.Requires(!string.IsNullOrWhiteSpace(broker.UserName));
             Contract.Requires(!string.IsNullOrWhiteSpace(broker.Password));
 
-
             using (IUnitOfWork uow = this.GetUnitOfWork())
             {
                 IRepository<Broker> repo = uow.GetRepository<Broker>();
@@ -318,7 +318,7 @@ namespace BExIS.Dim.Services
             return true;
         }
 
-        #endregion
+        #endregion broker
 
         #region repository
 
@@ -406,7 +406,7 @@ namespace BExIS.Dim.Services
             return true;
         }
 
-        #endregion
+        #endregion repository
 
         #region MetadataStructureToRepository
 
@@ -432,7 +432,6 @@ namespace BExIS.Dim.Services
         {
             Contract.Requires(metadataStrutcureId > 0);
             Contract.Requires(repositoryId > 0);
-
 
             MetadataStructureToRepository e = new MetadataStructureToRepository()
             {
@@ -466,7 +465,6 @@ namespace BExIS.Dim.Services
             return (true);
         }
 
-        #endregion
-
+        #endregion MetadataStructureToRepository
     }
 }

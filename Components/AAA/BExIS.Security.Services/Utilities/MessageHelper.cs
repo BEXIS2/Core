@@ -209,7 +209,7 @@ namespace BExIS.Security.Services.Utilities
         public static string GetFilesUploaddMessage(long userId, string userName, string[] filenames)
         {
             var fnames = string.Join(",", filenames);
-            return $"User <b>\"{userName}\"</b>(Id: {userId}) has uploaded this files: <b>{ fnames }</b>.";
+            return $"User <b>\"{userName}\"</b>(Id: {userId}) has uploaded this files: <b>{fnames}</b>.";
         }
 
         public static string GetFileDownloadHeader(long datasetid, long version)
@@ -299,7 +299,6 @@ namespace BExIS.Security.Services.Utilities
         {
             return $"The {newRole} role has been {changeType} your account.<br/><br/>{additionalInformation}";
         }
-
 
         public static string GetSetPublicHeader(long datasetid, string entityname)
         {

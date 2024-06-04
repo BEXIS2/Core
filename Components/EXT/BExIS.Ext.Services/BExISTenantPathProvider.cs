@@ -33,6 +33,5 @@ namespace BExIS.Ext.Services
                 return basePath;
             return Path.Combine(AppConfiguration.AppRoot, "Content", "Static", contentFileName);
         }
-
     }
 }

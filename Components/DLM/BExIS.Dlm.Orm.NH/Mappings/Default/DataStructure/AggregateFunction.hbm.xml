@@ -1,7 +1,7 @@
 <hibernate-mapping xmlns="urn:nhibernate-mapping-2.2" assembly="BExIS.Dlm.Entities" namespace="BExIS.Dlm.Entities.DataStructure">
   <class xmlns="urn:nhibernate-mapping-2.2" name="AggregateFunction" table="AggregateFunctions" dynamic-update="true">
     <!-- Mapping BaseEntity properties -->
-    
+
     <id name="Id" type="Int64">
       <column name="Id" index="idx_AggregateFunctions_id" />
       <generator class="native" />
@@ -16,9 +16,9 @@
     </property>
 
     <!-- Mapping entity properties -->
-    
+
     <property name="Name" type="String">
-      <column name="Name"  index="idx_AggregateFunctions_name"/>
+      <column name="Name"  index="idx_AggregateFunctions_name" />
     </property>
 
     <property name="Description" type="String">
@@ -26,10 +26,8 @@
     </property>
 
     <set name="DataContainers" table="DataContainers_AggregateFunctions" lazy="true">
-      <key column="AggregateFunctionRef"/>
-      <many-to-many column="DataContainerRef" class="DataContainer"/>
+      <key column="AggregateFunctionRef" />
+      <many-to-many column="DataContainerRef" class="DataContainer" />
     </set>
-
   </class>
-
 </hibernate-mapping>

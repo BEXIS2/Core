@@ -1,23 +1,20 @@
 ﻿using BExIS.App.Bootstrap.Attributes;
+using BExIS.Dlm.Entities.Data;
+using BExIS.Dlm.Entities.DataStructure;
+using BExIS.Dlm.Services.Data;
 using BExIS.Dlm.Services.DataStructure;
+using BExIS.Modules.Rpm.UI.Models;
+using BExIS.Security.Entities.Subjects;
+using BExIS.Security.Services.Authorization;
+using BExIS.Security.Services.Subjects;
 using BExIS.UI.Helpers;
 using System;
 using System.Collections.Generic;
-using System.Web.Mvc;
-using BExIS.Dlm.Entities.DataStructure;
-using System.Linq;
-using BExIS.Modules.Rpm.UI.Models;
-using Telerik.Web.Mvc.Extensions;
-using BExIS.Dlm.Entities.Data;
-using BExIS.Dlm.Services.Data;
-using BExIS.Security.Services.Authorization;
-using BExIS.Security.Entities.Subjects;
-using BExIS.Security.Services.Subjects;
-using System.Web.UI.WebControls;
 using System.Data;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement.StartPanel;
-using BExIS.Utils.Models;
-using System.Linq.Expressions;
+using System.Linq;
+using System.Web.Mvc;
+using System.Web.UI.WebControls;
+using Telerik.Web.Mvc.Extensions;
 
 namespace BExIS.Modules.Rpm.UI.Controllers
 {
@@ -172,13 +169,12 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                     Dlm.Entities.DataStructure.Constraint constraint = constraintManager.Constraints.Where(c => c.Id == Id).FirstOrDefault();
                     constraint.Materialize();
                     List<long> variableIds = constraint.VariableConstraints.Select(v => v.Id).ToList();
-               
 
                     if (variableIds != null && variableIds.Count > 0)
                     {
                         using (DataStructureManager dataStructureManager = new DataStructureManager())
                         {
-                            List<StructuredDataStructure>  structuredDataStructures = dataStructureManager.StructuredDataStructureRepo.Query(s=>s.Variables.Any(v => variableIds.Contains(v.Id))).ToList();
+                            List<StructuredDataStructure> structuredDataStructures = dataStructureManager.StructuredDataStructureRepo.Query(s => s.Variables.Any(v => variableIds.Contains(v.Id))).ToList();
 
                             if (structuredDataStructures != null && structuredDataStructures.Count > 0)
                             {
@@ -195,10 +191,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                                     }
                                     break;
                                 }
-                      
                             }
-                            
-
                         }
                     }
                 }
@@ -298,7 +291,6 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                             SelectionPredicate = dc.ConstraintSelectionPredicate != null ? selectionPredicate.Materialise(dc.ConstraintSelectionPredicate) : null,
                             InUse = false
                         };
-
                     }
                     result = new
                     {
@@ -399,7 +391,6 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                             UpperboundIncluded = rc.UpperboundIncluded,
                             InUse = false
                         };
-
                     }
                     result = new
                     {
@@ -410,7 +401,6 @@ namespace BExIS.Modules.Rpm.UI.Controllers
             }
             return Json(result, JsonRequestBehavior.AllowGet);
         }
-
 
         [JsonNetFilter]
         [HttpPost]
@@ -493,7 +483,6 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                             pattern = pc.MatchingPhrase,
                             InUse = false
                         };
-
                     }
                     result = new
                     {
@@ -540,7 +529,6 @@ namespace BExIS.Modules.Rpm.UI.Controllers
 
         private ValidationResult ConstraintValidation(List<Dlm.Entities.DataStructure.Constraint> constraints, EditDomainConstraintModel constaint)
         {
-
             ValidationResult result = ConstraintValidation(constraints.Cast<Dlm.Entities.DataStructure.Constraint>().ToList(), (EditConstraintModel)constaint);
             if (String.IsNullOrEmpty(constaint.Domain))
             {
@@ -552,7 +540,6 @@ namespace BExIS.Modules.Rpm.UI.Controllers
 
         private ValidationResult ConstraintValidation(List<Dlm.Entities.DataStructure.Constraint> constraints, EditRangeConstraintModel constaint)
         {
-
             ValidationResult result = ConstraintValidation(constraints.Cast<Dlm.Entities.DataStructure.Constraint>().ToList(), (EditConstraintModel)constaint);
             if (constaint.Lowerbound > constaint.Upperbound)
             {
@@ -593,34 +580,32 @@ namespace BExIS.Modules.Rpm.UI.Controllers
 
             if (user != null)
             {
+                using (DatasetManager datasetManager = new DatasetManager())
+                {
+                    datasets = datasetManager.DatasetRepo.Get().Where(ds => ds.DataStructure != null).ToList();
 
-                    using (DatasetManager datasetManager = new DatasetManager())
+                    using (EntityPermissionManager entityPermissionManager = new EntityPermissionManager())
                     {
-                        datasets = datasetManager.DatasetRepo.Get().Where(ds => ds.DataStructure != null).ToList();
-
-                        using (EntityPermissionManager entityPermissionManager = new EntityPermissionManager())
+                        foreach (Dataset ds in datasets)
                         {
-                            foreach (Dataset ds in datasets)
-                            {
-                                rights = entityPermissionManager.GetEffectiveRights(user?.Id, ds.EntityTemplate.EntityType.Id, ds.Id);
+                            rights = entityPermissionManager.GetEffectiveRights(user?.Id, ds.EntityTemplate.EntityType.Id, ds.Id);
 
-                                if (rights > 0)
+                            if (rights > 0)
+                            {
+                                DatasetInfo dsi = new DatasetInfo()
                                 {
-                                    DatasetInfo dsi = new DatasetInfo()
-                                    {
-                                        Id = ds.Id,
-                                        Name = String.IsNullOrEmpty(ds.Versions.OrderBy(dv => dv.Id).Last().Title) ? "no Title" : ds.Versions.OrderBy(dv => dv.Id).Last().Title,
-                                        Description = String.IsNullOrEmpty(ds.Versions.OrderBy(dv => dv.Id).Last().Description) ? "no Description" : ds.Versions.OrderBy(dv => dv.Id).Last().Description,
-                                        DatasetVersionId = ds.Versions.OrderBy(dv => dv.Id).Last().Id,
-                                        DatasetVersionNumber = ds.Versions.OrderBy(dv => dv.Id).Last().VersionNo,
-                                        DatastructureId = ds.DataStructure.Id,
-                                    };
-                                    datasetInfos.Add(dsi);
-                                }
+                                    Id = ds.Id,
+                                    Name = String.IsNullOrEmpty(ds.Versions.OrderBy(dv => dv.Id).Last().Title) ? "no Title" : ds.Versions.OrderBy(dv => dv.Id).Last().Title,
+                                    Description = String.IsNullOrEmpty(ds.Versions.OrderBy(dv => dv.Id).Last().Description) ? "no Description" : ds.Versions.OrderBy(dv => dv.Id).Last().Description,
+                                    DatasetVersionId = ds.Versions.OrderBy(dv => dv.Id).Last().Id,
+                                    DatasetVersionNumber = ds.Versions.OrderBy(dv => dv.Id).Last().VersionNo,
+                                    DatastructureId = ds.DataStructure.Id,
+                                };
+                                datasetInfos.Add(dsi);
                             }
                         }
-
                     }
+                }
             }
             return Json(datasetInfos, JsonRequestBehavior.AllowGet);
         }
@@ -668,7 +653,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
 
         [JsonNetFilter]
         [HttpPost]
-        public JsonResult GetData(long Id, int pageSize = 0, long variableId = 0 )
+        public JsonResult GetData(long Id, int pageSize = 0, long variableId = 0)
         {
             string username = null;
             User user = null;
@@ -703,7 +688,6 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                         using (DataStructureManager dataStructureManager = new DataStructureManager())
                         {
                             dataStructure = dataStructureManager.StructuredDataStructureRepo.Get(dataset.DataStructure.Id);
-
 
                             rights = entityPermissionManager.GetEffectiveRights(user?.Id, dataset.EntityTemplate.EntityType.Id, dataset.Id);
                             if (rights > 0 && dataStructure != null && dataStructure.Id != 0)
@@ -741,18 +725,17 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                                             {
                                                 if (tempDt.Rows[j].ItemArray[i].ToString() == missingValue.Placeholder)
                                                 {
-                                                    tempDt.Rows[j].SetField(i,missingValue.DisplayName);
+                                                    tempDt.Rows[j].SetField(i, missingValue.DisplayName);
                                                     break;
                                                 }
                                             }
                                         }
                                     }
                                     dt = tempDt.Copy();
-
                                 }
                                 else if (variableId > 0 && pageSize == 0)
                                 {
-                                     try
+                                    try
                                     {
                                         dt = datasetManager.GetLatestDatasetVersionTuples(dataset.Id, 0, pageSize);
                                     }
@@ -773,15 +756,14 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                                             dt.Columns.RemoveAt(dt.Columns.Count - 1);
                                     }
 
-                                    VariableInstance variable = new VariableInstance();                                    
-                                    
+                                    VariableInstance variable = new VariableInstance();
+
                                     variable = dataStructure.Variables.Where(v => ("var" + v.Id).Equals(dt.Columns[0].ColumnName)).FirstOrDefault();
 
                                     int i = 0;
 
                                     do
                                     {
-
                                         foreach (MissingValue missingValue in variable.MissingValues)
                                         {
                                             if (dt.Rows[i].ItemArray[0].ToString() == missingValue.Placeholder)
@@ -792,7 +774,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                                             }
                                         }
                                         i++;
-                                    } while (dt.Rows[i] != dt.Rows[dt.Rows.Count - 1]);                                    
+                                    } while (dt.Rows[i] != dt.Rows[dt.Rows.Count - 1]);
                                 }
                             }
                         }

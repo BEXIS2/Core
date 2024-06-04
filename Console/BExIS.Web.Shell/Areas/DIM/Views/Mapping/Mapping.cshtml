@@ -10,8 +10,6 @@
 
 }
 
-
-
 <div id="@id" parent="@Model.ParentId" class="mapping-container">
 
     <div class="mapping-container-expand">
@@ -21,26 +19,26 @@
 
                 @if (Model.Source != null)
                 {
-                    @Html.Partial("MappingLinkElement", Model.Source)
+                @Html.Partial("MappingLinkElement", Model.Source)
                 }
                 else
                 {
-                    <div id="emptySourceContainer">
-                        <b>SOURCE</b>
-                    </div>
+                <div id="emptySourceContainer">
+                    <b>SOURCE</b>
+                </div>
                 }
             </div>
 
             <div class="mapping_container_child mapping_container_target col-md-offset-4  col-md-4">
                 @if (Model.Target != null)
                 {
-                    @Html.Partial("MappingLinkElement", Model.Target)
+                @Html.Partial("MappingLinkElement", Model.Target)
                 }
                 else
                 {
-                    <div id="emptyTargetContainer">
-                        <b>TARGET</b>
-                    </div>
+                <div id="emptyTargetContainer">
+                    <b>TARGET</b>
+                </div>
                 }
             </div>
         </div>
@@ -52,9 +50,8 @@
                 string sourceId = simpleMappingModel.Source.Type + "_" + simpleMappingModel.Source.ElementId + "_" + @simpleMappingModel.Source.Position + "_" + @simpleMappingModel.Source.Name.Replace(' ','-') + "_MappingSimpleLinkElement";
                 string targetId = simpleMappingModel.Target.Type + "_" + simpleMappingModel.Target.ElementId + "_" + @simpleMappingModel.Target.Position + "_" + @simpleMappingModel.Target.Name.Replace(' ','-') + "_MappingSimpleLinkElement";
 
-                <span id="@simpleMappingModel.Id" class="mapping-container-simple-hidden-mapping" targetId="@targetId" sourceId="@sourceId"></span>
+            <span id="@simpleMappingModel.Id" class="mapping-container-simple-hidden-mapping" targetId="@targetId" sourceId="@sourceId"></span>
             }
-
         </div>
 
         <div class="mapping-settings">
@@ -63,9 +60,8 @@
 
                     @foreach (SimpleMappingModel simpleMappingModel in Model.SimpleMappings)
                     {
-                        @Html.Partial("TransformationRule", simpleMappingModel)
+                    @Html.Partial("TransformationRule", simpleMappingModel)
                     }
-
                 </div>
             </div>
             <div class="row">
@@ -73,20 +69,19 @@
                     @if (created == false)
                     {
                     <span><input class="both-directions" name="both directions" type="checkbox" /> create this mapping in both directions </span>
-                        <button class="createButton bx-button action" onclick="saveMapping(this, true)">Create</button>
+                    <button class="createButton bx-button action" onclick="saveMapping(this, true)">Create</button>
                     }
                     else
                     {
-                        <button class="saveButton bx-button action bx-disabled" disabled="disabled" onclick="saveMapping(this, false)">Save</button>
-                        <button class="deleteButton bx-button action" onclick="deleteMapping(this)">Delete</button>
+                    <button class="saveButton bx-button action bx-disabled" disabled="disabled" onclick="saveMapping(this, false)">Save</button>
+                    <button class="deleteButton bx-button action" onclick="deleteMapping(this)">Delete</button>
                     }
                 </div>
             </div>
         </div>
-
     </div>
     <div class="mapping-container-collapse" style="display: none">
-        
+
         <div class="row">
             <div class="mapping_container_child mapping_container_source col-md-4">
 
@@ -96,13 +91,11 @@
                         <div class="le-mapping-container-header-label col-md-8">
                             @if (Model.Source != null)
                             {
-                                @Model.Source.Name
+                            @Model.Source.Name
                             }
-          
                         </div>
                     </div>
                 </div>
-
             </div>
 
             <div class="mapping_container_child mapping_container_target col-md-offset-4  col-md-4">
@@ -111,13 +104,11 @@
                     <div class="le-mapping-container-header-label col-md-8">
                         @if (Model.Target != null)
                         {
-                            @Model.Target.Name
+                        @Model.Target.Name
                         }
-                 
                     </div>
                 </div>
             </div>
         </div>
-
     </div>
 </div>

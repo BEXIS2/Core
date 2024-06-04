@@ -3,18 +3,20 @@ using System.Collections.Generic;
 
 /// <summary>
 ///
-/// </summary>        
+/// </summary>
 namespace BExIS.Dlm.Entities.MetadataStructure
 {
     /// <summary>
     ///
     /// </summary>
-    /// <remarks></remarks>        
+    /// <remarks></remarks>
     public class MetadataAttribute : DataContainer
     {
         #region Attributes
+
         // all the required attributes are inherited!
-        #endregion
+
+        #endregion Attributes
 
         #region Associations
 
@@ -22,13 +24,12 @@ namespace BExIS.Dlm.Entities.MetadataStructure
         ///
         /// </summary>
         /// <remarks></remarks>
-        /// <seealso cref=""/>        
+        /// <seealso cref=""/>
         public virtual ICollection<MetadataAttributeUsage> UsedIn { get; set; }
 
         public virtual ICollection<MetadataParameterUsage> MetadataParameterUsages { get; set; }
 
-
-        #endregion
+        #endregion Associations
 
         #region Mathods
 
@@ -37,14 +38,13 @@ namespace BExIS.Dlm.Entities.MetadataStructure
         /// </summary>
         /// <remarks></remarks>
         /// <seealso cref=""/>
-        /// <param></param>       
+        /// <param></param>
         public MetadataAttribute()
         {
             UsedIn = new List<MetadataAttributeUsage>();
             MetadataParameterUsages = new List<MetadataParameterUsage>();
         }
 
-        #endregion
-
+        #endregion Mathods
     }
 }

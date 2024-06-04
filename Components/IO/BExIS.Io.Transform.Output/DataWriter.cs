@@ -137,7 +137,6 @@ namespace BExIS.IO.Transform.Output
                 return null;
         }
 
-
         public string CreateFile(string path, string filename)
         {
             createDirectoriesIfNotExist(path);
@@ -214,7 +213,7 @@ namespace BExIS.IO.Transform.Output
                 createDirectoriesIfNotExist(storePath);
             }
 
-             // replace special chars to avoid invaild path names
+            // replace special chars to avoid invaild path names
             string pathSaveTitle = string.Join("_", title.Split(Path.GetInvalidFileNameChars()));
 
             return Path.Combine(storePath, pathSaveTitle + extension);
@@ -387,7 +386,6 @@ namespace BExIS.IO.Transform.Output
                         var d = v.DataType.Description;
                         var m = v.MissingValues.ToList().Select(mis => mis.Id);
                     }
-
                 }
             }
 
@@ -545,7 +543,7 @@ namespace BExIS.IO.Transform.Output
         // add a single row to the output file
         protected abstract bool AddRow(AbstractTuple tuple, long rowIndex);
 
-        protected abstract bool AddRow(DataRow row, long rowIndex, bool internalId=false);
+        protected abstract bool AddRow(DataRow row, long rowIndex, bool internalId = false);
 
         protected abstract bool AddRow(string[] row, long rowIndex);
 

@@ -10,12 +10,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
+using System.Xml;
 using System.Xml.Linq;
 using Vaiona.Persistence.Api;
-using BExIS.Dim.Entities.Mapping;
-using BExIS.Security.Services.Objects;
-using BExIS.Security.Services.Authorization;
-using System.Xml;
 
 namespace BExIS.Dim.Helpers.Mapping
 {
@@ -76,7 +73,7 @@ namespace BExIS.Dim.Helpers.Mapping
             {
                 IList<Entities.Mapping.Mapping> mapping = CachedMappings();
                 var mapping_result = mapping.Where(m =>
-                            m.Parent!=null && 
+                            m.Parent != null &&
                             m.Parent.Id.Equals(parentMappingId)
                         ).ToList();
 
@@ -1081,7 +1078,6 @@ namespace BExIS.Dim.Helpers.Mapping
             }
         }
 
-
         private static IEnumerable<XElement> getXElementsFromAMapping(Entities.Mapping.Mapping m, XDocument metadata)
         {
             Dictionary<string, string> AttrDic = new Dictionary<string, string>();
@@ -1151,11 +1147,11 @@ namespace BExIS.Dim.Helpers.Mapping
             using (MappingManager mappingManager = new MappingManager())
             using (var metadataAttributeManager = new MetadataAttributeManager())
             {
-                // get link elements for mapping source and target 
+                // get link elements for mapping source and target
                 var systemLink = mappingManager.GetLinkElement(0, LinkElementType.System);
                 var metadataLink = mappingManager.GetLinkElement(metadataStrutcureId, LinkElementType.MetadataStructure);
-                
-                if(systemLink == null || metadataLink == null) return false;
+
+                if (systemLink == null || metadataLink == null) return false;
 
                 // get mapping based on source and target link elements
                 var rootMapping = mappingManager.GetMapping(systemLink, metadataLink);
@@ -1212,16 +1208,15 @@ namespace BExIS.Dim.Helpers.Mapping
                 }
 
                 return datatype;
-
             }
 
             return string.Empty;
-
         }
 
-        #endregion
+        #endregion Targets DataTypes
 
         #region concept
+
         /// <summary>
         /// Get Metadata of a dataset in a select concept structure
         /// </summary>
@@ -1230,7 +1225,7 @@ namespace BExIS.Dim.Helpers.Mapping
         /// <param name="metadata"></param>
         /// <returns></returns>
         public static XmlDocument GetConcept(long metadataStructureId, long conceptId, XmlDocument metadata)
-        { 
+        {
             XmlDocument concept = new XmlDocument();
             concept.AppendChild(XmlUtility.CreateNode("concept", concept));
 
@@ -1240,7 +1235,6 @@ namespace BExIS.Dim.Helpers.Mapping
 
             foreach (var complexMapping in complexMappings)
             {
-
                 // get list of source elements for metadata
                 LinkElement cSource = complexMapping.Source;
                 LinkElement cTarget = complexMapping.Target;
@@ -1250,7 +1244,7 @@ namespace BExIS.Dim.Helpers.Mapping
                 foreach (XmlNode xSource in xSourceList)
                 {
                     //create target complex element
-                    XmlNode xTarget = concept.CreateElement(cTarget.Name); //XmlUtility.GenerateNodeFromXPath(concept, concept.DocumentElement, cTarget.XPath); 
+                    XmlNode xTarget = concept.CreateElement(cTarget.Name); //XmlUtility.GenerateNodeFromXPath(concept, concept.DocumentElement, cTarget.XPath);
 
                     // get childrens of complex mapping
                     var simpleMappings = GetMappings(complexMapping.Id);
@@ -1261,7 +1255,6 @@ namespace BExIS.Dim.Helpers.Mapping
 
                     foreach (var simpleMapping in simpleMappings)
                     {
-    
                         LinkElement sSource = simpleMapping.Source;
                         LinkElement sTarget = simpleMapping.Target;
 
@@ -1274,7 +1267,6 @@ namespace BExIS.Dim.Helpers.Mapping
                         else
                             xSimpleSource = XmlUtility.GetXmlNodeByName(xSource, sSource.Name);
 
-
                         // result is the set value, based on previews runs it must becheck wheter
                         // the xmlnode allready exist and have some value inside
                         // by the mapping thete is a complex to simple mapping possible
@@ -1284,9 +1276,9 @@ namespace BExIS.Dim.Helpers.Mapping
                             result = String.Empty;
                         else if (xTarget.Value != null) result = xTarget.Value; // xTarget allready simple target, so check value
                         else // xTarget is complex, get simple node by name and get value
-                        { 
+                        {
                             XmlNode simpleXTarget = XmlUtility.GetXmlNodeByName(xTarget, sTarget.Name);
-                            if(simpleXTarget != null) result = simpleXTarget.InnerText;
+                            if (simpleXTarget != null) result = simpleXTarget.InnerText;
                         }
 
                         // transformation
@@ -1294,14 +1286,13 @@ namespace BExIS.Dim.Helpers.Mapping
                         if (string.IsNullOrEmpty(result)) result = simpleMapping.TransformationRule.Mask;
 
                         //tranform the value against the tarsnformation rules
-                        string value = xSimpleSource.InnerText!=null? xSimpleSource.InnerText : String.Empty;
+                        string value = xSimpleSource.InnerText != null ? xSimpleSource.InnerText : String.Empty;
                         List<string> regExResultList = transform(value, simpleMapping.TransformationRule);
-                  
-                        if(string.IsNullOrEmpty(simpleMapping.TransformationRule.Mask))
-                            result = result+ string.Join(", ", regExResultList.ToArray());
+
+                        if (string.IsNullOrEmpty(simpleMapping.TransformationRule.Mask))
+                            result = result + string.Join(", ", regExResultList.ToArray());
                         else
                             result = setOrReplace(result, regExResultList, simpleMapping.Source.Name, simpleMapping.TransformationRule.DefaultValue);
-
 
                         // complex to simple mapping
                         if (cTarget.ElementId.Equals(sTarget.ElementId) && cTarget.Type.Equals(sTarget.Type))
@@ -1314,8 +1305,6 @@ namespace BExIS.Dim.Helpers.Mapping
                             xSimpleTarget.InnerText = result;
                             xTarget.AppendChild(xSimpleTarget);
                         }
-
-
                     }
 
                     concept.DocumentElement.AppendChild(xTarget);
@@ -1326,7 +1315,7 @@ namespace BExIS.Dim.Helpers.Mapping
         }
 
         /// <summary>
-        /// Get Metadata of a dataset in a select concept and use the strutcure of the existing xpath 
+        /// Get Metadata of a dataset in a select concept and use the strutcure of the existing xpath
         /// </summary>
         /// <param name="metadataStructureId"></param>
         /// <param name="conceptId"></param>
@@ -1340,10 +1329,8 @@ namespace BExIS.Dim.Helpers.Mapping
             // get all complex mappings for the root
             var root = GetMappings(metadataStructureId, LinkElementType.MetadataStructure, conceptId, LinkElementType.MappingConcept).FirstOrDefault();
             if (root == null) return concept; // no mapping exist
-            
-            var complexMappings = GetMappings(root.Id)?.OrderBy(m=>m.Target.ElementId);
 
-
+            var complexMappings = GetMappings(root.Id)?.OrderBy(m => m.Target.ElementId);
 
             foreach (var complexMapping in complexMappings)
             {
@@ -1370,7 +1357,7 @@ namespace BExIS.Dim.Helpers.Mapping
                     xSourceList.Add(defaultNode);
                 }
                 else // cSource is not a default type, oso get all nodes from xpath and add them to a list
-                    foreach(XmlNode xSource in metadata.SelectNodes(cSource.XPath))
+                    foreach (XmlNode xSource in metadata.SelectNodes(cSource.XPath))
                         xSourceList.Add(xSource);
 
                 List<string> tmp = new List<string>();
@@ -1390,7 +1377,6 @@ namespace BExIS.Dim.Helpers.Mapping
                         last.ParentNode.InsertAfter(xTarget, last);
                     }
 
-
                     // get childrens of complex mapping
                     var simpleMappings = GetMappings(complexMapping.Id)?.OrderBy(m => m.Target.Id);
 
@@ -1400,7 +1386,6 @@ namespace BExIS.Dim.Helpers.Mapping
 
                     foreach (var simpleMapping in simpleMappings)
                     {
-
                         LinkElement sSource = simpleMapping.Source;
                         LinkElement sTarget = simpleMapping.Target;
 
@@ -1412,7 +1397,6 @@ namespace BExIS.Dim.Helpers.Mapping
                             xSimpleSource = xSource;
                         else
                             xSimpleSource = XmlUtility.GetXmlNodeByName(xSource, sSource.Name);
-
 
                         // result is the set value, based on previews runs it must becheck wheter
                         // the xmlnode allready exist and have some value inside
@@ -1444,7 +1428,6 @@ namespace BExIS.Dim.Helpers.Mapping
                         // if the result is empty but a default value exist, then set the default value
                         if (string.IsNullOrEmpty(result) && !string.IsNullOrEmpty(simpleMapping.TransformationRule.DefaultValue)) result = simpleMapping.TransformationRule.DefaultValue;
 
-
                         // complex to simple mapping
                         if (cTarget.ElementId.Equals(sTarget.ElementId) && cTarget.Type.Equals(sTarget.Type))
                         {
@@ -1456,12 +1439,8 @@ namespace BExIS.Dim.Helpers.Mapping
                             var xSimpleTarget = XmlUtility.GenerateNodeFromXPath(concept, xTarget, subsetXpath);
                             xSimpleTarget.InnerText = result;
                         }
-
-
                     }
-                    
                 }
-
             }
 
             return concept;
@@ -1469,8 +1448,8 @@ namespace BExIS.Dim.Helpers.Mapping
 
         public static bool IsMapped(long source, LinkElementType sourceType, long target, LinkElementType targetType, out List<string> errors)
         {
-            if(source<=0) throw new ArgumentNullException("source");
-            if(target<=0) throw new ArgumentNullException("target");
+            if (source <= 0) throw new ArgumentNullException("source");
+            if (target <= 0) throw new ArgumentNullException("target");
 
             // if its not metadata strutcure against concept, its not impelmented
             if (sourceType != LinkElementType.MetadataStructure || targetType != LinkElementType.MappingConcept)
@@ -1487,15 +1466,12 @@ namespace BExIS.Dim.Helpers.Mapping
                 errors.Add(String.Format("no root mapping exist between {0} and {1}", sourceType.ToString(), targetType.ToString()));
                 return false;
             }
-            
 
             var complexMappings = GetMappings(root.Id);
 
             // get all simple mappings
             List<Entities.Mapping.Mapping> simpleMappings = new List<Entities.Mapping.Mapping>();
             complexMappings.ForEach(c => simpleMappings.AddRange(GetMappings(c.Id)));
-
-            
 
             using (var conceptManager = new ConceptManager())
             {
@@ -1536,18 +1512,16 @@ namespace BExIS.Dim.Helpers.Mapping
                                         }
                                     }
                                 }
-
                             }
                         }
                     }
                 }
             }
 
-
             return isValid;
         }
 
-        #endregion
+        #endregion concept
 
         #region Helpers
 
@@ -1613,13 +1587,12 @@ namespace BExIS.Dim.Helpers.Mapping
 
                         if (mask.Contains(completePlaceHolderName))
                             mask = mask.Replace(completePlaceHolderName, r);
- 
                     }
 
                     return mask;
                 }
                 else
-                { 
+                {
                     mask = string.Join(", ", replacers.ToArray());
                 }
 
@@ -1629,7 +1602,7 @@ namespace BExIS.Dim.Helpers.Mapping
             }
 
             // if not values exist, check if a default is set
-            return string.IsNullOrEmpty(defaultValue)?"":defaultValue;
+            return string.IsNullOrEmpty(defaultValue) ? "" : defaultValue;
         }
 
         #endregion Helpers

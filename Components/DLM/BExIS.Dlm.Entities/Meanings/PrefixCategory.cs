@@ -1,6 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System;
-using System.Security.Policy;
+﻿using System;
+using System.ComponentModel.DataAnnotations;
 using Vaiona.Entities.Common;
 
 namespace BExIS.Dlm.Entities.Meanings
@@ -11,6 +10,7 @@ namespace BExIS.Dlm.Entities.Meanings
 
         [Required(ErrorMessage = "Must not be Empty"), Key]
         public virtual String Name { get; set; }
+
         [Required(ErrorMessage = "Must not be Empty")]
         public virtual String Description { get; set; }
 
@@ -26,8 +26,8 @@ namespace BExIS.Dlm.Entities.Meanings
             this.Description = ExternalLink.Description;
         }
 
-        public PrefixCategory() { }
-
+        public PrefixCategory()
+        { }
 
         protected virtual void Dispose(bool disposing)
         {

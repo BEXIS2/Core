@@ -13,7 +13,6 @@ using System.Linq.Expressions;
 using System.Text;
 using System.Xml;
 using Vaiona.Logging;
-using Vaiona.Logging.Aspects;
 using Vaiona.Persistence.Api;
 using MDS = BExIS.Dlm.Entities.MetadataStructure;
 
@@ -21,9 +20,9 @@ namespace System.Data
 {
     public static class DataTableExtensionsForDataset
     {
-        public static void Strip(this DataTable table, bool keepId=false)
+        public static void Strip(this DataTable table, bool keepId = false)
         {
-            if (table.Columns.Contains("id") && keepId==false) { table.Columns.Remove("id"); }
+            if (table.Columns.Contains("id") && keepId == false) { table.Columns.Remove("id"); }
             if (table.Columns.Contains("orderno")) { table.Columns.Remove("orderno"); }
             if (table.Columns.Contains("timestamp")) { table.Columns.Remove("timestamp"); }
             if (table.Columns.Contains("versionid")) { table.Columns.Remove("versionid"); }
@@ -186,8 +185,6 @@ namespace BExIS.Dlm.Services.Data
                 return (datasetRepo.Query(p => p.Status == DatasetStatus.Deleted && p.Id == datasetId).Count() == 1);
             }
         }
-
-
 
         /// <summary>
         /// Retrieves the dataset object having identifier <paramref name="datasetId"/> from the database.
@@ -978,7 +975,7 @@ namespace BExIS.Dlm.Services.Data
             return null;
         }
 
-        public DataTable GetLatestDatasetVersionTuples(long datasetId, FilterExpression filter, OrderByExpression orderBy, ProjectionExpression projection,string searchquery, int pageNumber = 0, int pageSize = 0)
+        public DataTable GetLatestDatasetVersionTuples(long datasetId, FilterExpression filter, OrderByExpression orderBy, ProjectionExpression projection, string searchquery, int pageNumber = 0, int pageSize = 0)
         {
             return queryMaterializedView(datasetId, filter, orderBy, projection, searchquery, pageNumber, pageSize);
         }
@@ -1157,7 +1154,6 @@ namespace BExIS.Dlm.Services.Data
             return getDatasetLatestVersionId(datasetId, datasetStatus);
         }
 
-
         /// <summary>
         /// Returns the latest version of the dataset <paramref name="dataset"/> if the dataset is in checked-in state,
         /// otherwise it throws an exception.
@@ -1301,7 +1297,7 @@ namespace BExIS.Dlm.Services.Data
         }
 
         /// <summary>
-        /// Returns a list of allowed versions of a dataset. Explicit "public access" has the highest priority, 
+        /// Returns a list of allowed versions of a dataset. Explicit "public access" has the highest priority,
         /// 2nd the versions type major/minor. If no version is tagged with a version type or as public access, all versions are returned.
         /// </summary>
         /// <param name="datasetId">The identifier of the dataset</param>
@@ -1673,8 +1669,6 @@ namespace BExIS.Dlm.Services.Data
         {
             using (IUnitOfWork uow = this.GetUnitOfWork())
             {
-
-
                 var datasetVersionRepo = uow.GetReadOnlyRepository<DatasetVersion>();
                 var datasetVersions = datasetVersionRepo.Query().Where(dsv => dsv.Dataset.Id.Equals(id)).OrderBy(dsv => dsv.Timestamp);
 
@@ -1901,7 +1895,6 @@ namespace BExIS.Dlm.Services.Data
         {
             using (IUnitOfWork uow = this.GetUnitOfWork())
             {
-
                 //StateInfo
 
                 var datasetRepo = uow.GetReadOnlyRepository<Dataset>();
@@ -2879,7 +2872,7 @@ namespace BExIS.Dlm.Services.Data
                     dsv.Status = DatasetVersionStatus.CheckedIn;
 
                     ds.Status = DatasetStatus.CheckedIn;
-                    ds.LastCheckIOTimestamp = DateTime.UtcNow; 
+                    ds.LastCheckIOTimestamp = DateTime.UtcNow;
                     ds.CheckOutUser = string.Empty;
                     if (ds.StateInfo == null)
                         ds.StateInfo = new Vaiona.Entities.Common.EntityStateInfo();
@@ -3017,7 +3010,6 @@ namespace BExIS.Dlm.Services.Data
             MaterializedViewHelper mvHelper = new MaterializedViewHelper();
 
             return mvHelper.Any(datasetId);
-
         }
 
         public bool RowAny(long datasetId, IUnitOfWork uow)
@@ -3025,7 +3017,6 @@ namespace BExIS.Dlm.Services.Data
             MaterializedViewHelper mvHelper = new MaterializedViewHelper();
 
             return mvHelper.Any(datasetId, uow);
-
         }
 
         public bool RowAny(long datasetId, FilterExpression filter)
@@ -3082,7 +3073,7 @@ namespace BExIS.Dlm.Services.Data
             }
         }
 
-        private DataTable queryMaterializedView(long datasetId,FilterExpression filter, OrderByExpression orderBy, ProjectionExpression projection,string searchquery,  int pageNumber = 0, int pageSize = 0)
+        private DataTable queryMaterializedView(long datasetId, FilterExpression filter, OrderByExpression orderBy, ProjectionExpression projection, string searchquery, int pageNumber = 0, int pageSize = 0)
         {
             MaterializedViewHelper mvHelper = new MaterializedViewHelper();
             return mvHelper.Retrieve(datasetId, searchquery, filter, orderBy, projection, pageNumber, pageSize);

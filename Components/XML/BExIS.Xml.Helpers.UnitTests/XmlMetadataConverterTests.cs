@@ -1,6 +1,5 @@
 ﻿using BExIS.App.Testing;
 using BExIS.Utils.Config;
-using BExIS.Xml.Helpers.Mapping;
 using BEXIS.JSON.Helpers;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -23,11 +22,7 @@ namespace BExIS.Xml.Helpers.UnitTests
         private XDocument _document;
         private TestSetupHelper helper = null;
 
-
         [OneTimeSetUp]
-        /// It is called once prior to executing any of the tests in a fixture.
-        /// Multiple methods can be marked. Order is not preserved.
-        /// Inheritance is supported, call sequence form the parents
         public void OneTimeSetUp()
         {
             // because these tests are working on in-memory objects (datasets) only, there is no need to do the test app setup
@@ -35,23 +30,16 @@ namespace BExIS.Xml.Helpers.UnitTests
         }
 
         [SetUp]
-        /// performs the initial setup for the tests. This runs once per test, NOT per class!
         protected void SetUp()
         {
-
         }
 
         [TearDown]
-        /// performs the cleanup after each test
         public void TearDown()
         {
         }
 
         [OneTimeTearDown]
-        /// It is called once after executing all the tests in a fixture.
-        /// Multiple methods can be marked. Order is not preserved.
-        /// Inheritance is supported, call sequence form the children
-        /// Executes only if: counterpart OneTimeSetUp exists and executed successfully.
         public void OneTimeTearDown()
         {
         }
@@ -72,17 +60,14 @@ namespace BExIS.Xml.Helpers.UnitTests
             var metadataStructureConverter = new MetadataStructureConverter();
             var schema = metadataStructureConverter.ConvertToJsonSchema(1);
 
-
             //Act
             JObject result = xmlMetadataHelper.ConvertTo(xmlDocument);
             JObject result2 = xmlMetadataHelper.ConvertTo(xmlDocument, true);
 
             bool isvalid = result.IsValid(schema);
 
-
             var json = JsonConvert.SerializeObject(result);
             var json2 = JsonConvert.SerializeObject(result2);
-
 
             //Assert
             Assert.IsNotNull(json);
@@ -113,7 +98,6 @@ namespace BExIS.Xml.Helpers.UnitTests
 
                 // Act
                 XmlDocument metadataOut = metadataConverter.ConvertTo(metadataInputJson);
-
 
                 //Assert
                 Assert.IsNotNull(metadataOut);
@@ -154,7 +138,6 @@ namespace BExIS.Xml.Helpers.UnitTests
 
                                 Assert.That(aAttr.Name, Is.EqualTo(bAttr.Name), string.Format("child attr {0} is not equal to {1}", aChild.Name, bChild.Name));
                                 Assert.That(aAttr.Value, Is.EqualTo(bAttr.Value), string.Format("value of the attr {0} - {1} is not equal to {2} - {3}", aChild.Name, aChild.Value, bChild.Name, bChild.Value));
-
                             }
                         }
                     }
@@ -167,7 +150,6 @@ namespace BExIS.Xml.Helpers.UnitTests
         {
             //Arrange
             XmlMetadataConverter xmlMetadataHelper = new XmlMetadataConverter();
-
 
             var metadataOriginalXMl = "ConvertTo_XmlToJson.xml";
             string path = AppDomain.CurrentDomain.BaseDirectory;
@@ -198,7 +180,6 @@ namespace BExIS.Xml.Helpers.UnitTests
             var aElements = XmlUtility.GetAllChildren(a.Root);
             var bElements = XmlUtility.GetAllChildren(b.Root);
 
-
             Assert.That(aElements.Count, Is.EqualTo(bElements.Count()), string.Format("number of elements a {0} is different then b {1}", aElements.Count(), bElements.Count()));
 
             if (aElements.Count() == bElements.Count())
@@ -222,7 +203,6 @@ namespace BExIS.Xml.Helpers.UnitTests
 
                             Assert.That(aAttr.Name, Is.EqualTo(bAttr.Name), string.Format("child attr {0} is not equal to {1}", aChild.Name, bChild.Name));
                             Assert.That(aAttr.Value, Is.EqualTo(bAttr.Value), string.Format("value of the attr {0} - {1} is not equal to {2} - {3}", aChild.Name, aChild.Value, bChild.Name, bChild.Value));
-
                         }
                     }
                 }
@@ -260,7 +240,6 @@ namespace BExIS.Xml.Helpers.UnitTests
                 Assert.IsTrue(valid, "The result of the function should be true, but is false");
                 Assert.That(errors.Count, Is.EqualTo(0), "The number of errors should be 0");
             }
-
         }
 
         [Test()]
@@ -304,7 +283,6 @@ namespace BExIS.Xml.Helpers.UnitTests
             // Assert
             Assert.IsFalse(valid, "The result of the function should be false, but is true");
             Assert.That(errors.Count, Is.EqualTo(4), "The number of errors should be 4");
-
         }
 
         //[Test()]
@@ -317,7 +295,7 @@ namespace BExIS.Xml.Helpers.UnitTests
         //    string outputPath = Path.Combine(path, dic, "metadata.xml");
 
         //    // arrange
-            
+
         //    XmlDocument internalXml = new XmlDocument();
         //    internalXml.Load(internalXmlPath);
 
@@ -326,13 +304,8 @@ namespace BExIS.Xml.Helpers.UnitTests
         //    // act
         //    var output = converter.ConvertTo(internalXml, xsdPath);
 
-
         //    // assert
 
-
-
         //}
-
-
     }
 }

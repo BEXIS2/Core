@@ -1,13 +1,4 @@
-﻿using BExIS.Dlm.Entities.Data;
-using BExIS.Dlm.Services.Administration;
-using BExIS.Dlm.Services.Data;
-using BExIS.Dlm.Services.DataStructure;
-using BExIS.Dlm.Services.MetadataStructure;
-using BExIS.Security.Services.Objects;
-using BExIS.UI.Helpers;
-using BExIS.Xml.Helpers;
-using System;
-using System.Diagnostics;
+﻿using BExIS.UI.Helpers;
 using System.Web.Mvc;
 
 namespace BExIS.Modules.Dcm.UI.Controllers
@@ -26,7 +17,5 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
             return View();
         }
-
-
     }
 }

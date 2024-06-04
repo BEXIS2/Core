@@ -43,9 +43,7 @@ namespace BExIS.Modules.Dcm.UI.Hooks
                 else Status = HookStatus.Open;
 
                 if (dataset.Status != Dlm.Entities.Data.DatasetStatus.CheckedIn) Status = HookStatus.Disabled;
-
             }
         }
-
     }
 }

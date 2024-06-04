@@ -4,30 +4,29 @@ using System.Xml;
 
 /// <summary>
 ///
-/// </summary>        
+/// </summary>
 namespace BExIS.Dlm.Entities.DataStructure
 {
     /// <summary>
     ///
     /// </summary>
-    /// <remarks></remarks>        
+    /// <remarks></remarks>
     public class StructuredDataStructure : DataStructure
     {
-
         #region Attributes
 
         /// <summary>
         ///
         /// </summary>
         /// <remarks></remarks>
-        /// <seealso cref=""/>        
+        /// <seealso cref=""/>
         public virtual DataStructureCategory IndexerType { get; set; }
 
         /// <summary>
         ///
         /// </summary>
         /// <remarks> StructuredDataStructure is the controller of this association </remarks>
-        /// <seealso cref=""/>        
+        /// <seealso cref=""/>
         public virtual ICollection<VariableInstance> Variables { get; set; }
 
         /*
@@ -40,7 +39,7 @@ namespace BExIS.Dlm.Entities.DataStructure
         ///
         /// </summary>
         /// <remarks></remarks>
-        /// <seealso cref=""/>        
+        /// <seealso cref=""/>
         public virtual Variable Indexer { get; set; } // 0..1,  the data type of the target data attribute must be compatible with indexer type, see CM Structured Data and its associated relevant classes.
 
         /// <summary>
@@ -48,13 +47,14 @@ namespace BExIS.Dlm.Entities.DataStructure
         /// It contains a collection of Resource elements each follow this pattern: <Resources><Reource Type="Excel, CSV, ..." Edition="2010, 2, ..." Path="full path/ url to the file"></Resource> </Resources>
         /// </summary>
         /// <remarks></remarks>
-        /// <seealso cref=""/>        
+        /// <seealso cref=""/>
         public virtual XmlNode TemplatePaths { get; set; }
 
         // relationship to Metadata Structure
         // Relationship to View
         // Relationship to Workflow?
-        #endregion
+
+        #endregion Attributes
 
         #region Methods
 
@@ -63,7 +63,7 @@ namespace BExIS.Dlm.Entities.DataStructure
         /// </summary>
         /// <remarks></remarks>
         /// <seealso cref=""/>
-        /// <param>NA</param>       
+        /// <param>NA</param>
         public StructuredDataStructure() : this(DataStructureCategory.Generic)
         {
         }
@@ -87,6 +87,6 @@ namespace BExIS.Dlm.Entities.DataStructure
         //    //throw new NotImplementedException();
         //}
 
-        #endregion
+        #endregion Methods
     }
 }

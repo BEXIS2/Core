@@ -8,7 +8,6 @@ namespace BExIS.Web.Shell.Controllers
         // GET: Help
         public ActionResult FAQ()
         {
-
             string helpurl = GeneralSettings.FAQ.ToString();
 
             return Redirect(helpurl);

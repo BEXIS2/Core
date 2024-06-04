@@ -1,5 +1,4 @@
-﻿
-namespace BExIS.Modules.Dcm.UI.Models
+﻿namespace BExIS.Modules.Dcm.UI.Models
 {
     public class ListViewItem
     {

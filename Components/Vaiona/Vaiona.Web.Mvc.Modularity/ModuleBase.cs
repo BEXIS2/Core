@@ -17,9 +17,13 @@ namespace Vaiona.Web.Mvc.Modularity
     {
         protected AreaRegistrationContext context = null;
         private Dictionary<string, Route> moduleRoutes = new Dictionary<string, Route>();
-        public Dictionary<string, Route> ModuleRoutes { get { return moduleRoutes; } }
+
+        public Dictionary<string, Route> ModuleRoutes
+        { get { return moduleRoutes; } }
+
         public ModuleInfo Metadata { get; set; }
         private string moduleId = "";
+
         public ModuleBase(string moduleId)
         {
             this.moduleId = moduleId;
@@ -63,6 +67,7 @@ namespace Vaiona.Web.Mvc.Modularity
         //}
 
         public ModuleSettings Settings { get; set; }
+
         public string Name
         {
             get { return Metadata.Manifest.Name; }
@@ -72,6 +77,7 @@ namespace Vaiona.Web.Mvc.Modularity
         {
             get { return AreaName + "_default"; }
         }
+
         public override string AreaName
         {
             get
@@ -97,7 +103,7 @@ namespace Vaiona.Web.Mvc.Modularity
 
         /// <summary>
         /// AreaName is set in the code and acts as the identifier of the module.
-        /// It is used to create the url space, identify the module among the others, and to link the module to its manifest.        
+        /// It is used to create the url space, identify the module among the others, and to link the module to its manifest.
         /// </summary>
         /// <remarks>It would be good to weaken or remove this dependency and load everything from the manifest.
         /// In that case the AreaName could be a used as the module identifier, but the url space could come from the manifest.
@@ -131,7 +137,6 @@ namespace Vaiona.Web.Mvc.Modularity
                 LoggerFactory.GetFileLogger().LogCustom(message);
                 throw new Exception(message);
             }
-
         }
 
         public Route DefaultRoute
@@ -150,28 +155,33 @@ namespace Vaiona.Web.Mvc.Modularity
                     );
             }
         }
+
         /// <summary>
         /// An optional custom code that is executed each time the module is loaded, usauly once per application start
         /// , but also upon Plugin Manager's request.
         /// </summary>
-        public virtual void Start() { }
+        public virtual void Start()
+        { }
 
         /// <summary>
-        /// An optional custom code that is executed when the application ends 
+        /// An optional custom code that is executed when the application ends
         /// or when the Plugin Manager asks the module to shutdown.
         /// </summary>
-        public virtual void Shutdown() { }
+        public virtual void Shutdown()
+        { }
 
         /// <summary>
         /// The method is called by the Plugin Manager when the module is just installed.
         /// Its a good place to create the workspace or set the seed data
         /// </summary>
-        public virtual void Install() { }
+        public virtual void Install()
+        { }
 
         /// <summary>
         /// The method is called by the Plugin Manager when the module is going to be un-installed.
         /// The actual un-installation happens after calling this method.
         /// </summary>
-        public virtual void Uninstall() { }
+        public virtual void Uninstall()
+        { }
     }
 }

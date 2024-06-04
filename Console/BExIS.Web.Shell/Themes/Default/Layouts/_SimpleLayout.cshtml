@@ -64,12 +64,12 @@
 
                 @if (IsSectionDefined("LeftPane"))
                 {
-                    <td style="border-top: #9B9B9B solid thin; border-bottom: #9B9B9B solid thin; padding: 12pt 0 12pt 0; width: 250px; max-width: 350px; vertical-align: top;">
-                        <div>
-                            @RenderSection("LeftPane", false)
-                        </div>
-                    </td>
-                    <td style="width: 20pt; border: none" />
+                <td style="border-top: #9B9B9B solid thin; border-bottom: #9B9B9B solid thin; padding: 12pt 0 12pt 0; width: 250px; max-width: 350px; vertical-align: top;">
+                    <div>
+                        @RenderSection("LeftPane", false)
+                    </div>
+                </td>
+                <td style="width: 20pt; border: none" />
                 }
 
                 <td style="border-top: #9B9B9B solid thin; border-bottom: #9B9B9B solid thin; padding: 12pt 0 12pt 0; vertical-align: top;">
@@ -80,13 +80,13 @@
 
                 @if (IsSectionDefined("RightPane"))
                 {
-                    <td style="width: 20pt; border: none" />
+                <td style="width: 20pt; border: none" />
 
-                    <td style="border-top: #9B9B9B solid thin; border-bottom: #9B9B9B solid thin; padding: 12pt 0 12pt 0; width: 250px; max-width: 350px; vertical-align: top;">
-                        <div>
-                            @RenderSection("RightPane", false)
-                        </div>
-                    </td>
+                <td style="border-top: #9B9B9B solid thin; border-bottom: #9B9B9B solid thin; padding: 12pt 0 12pt 0; width: 250px; max-width: 350px; vertical-align: top;">
+                    <div>
+                        @RenderSection("RightPane", false)
+                    </div>
+                </td>
                 }
             </tr>
         </table>
@@ -98,7 +98,6 @@
             )
             .jQuery(false)
     )
-
     @*@Html.RenderAuto("Footer")*@
 
     <script type="text/javascript">

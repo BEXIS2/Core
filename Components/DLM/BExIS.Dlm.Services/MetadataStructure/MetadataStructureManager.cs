@@ -7,14 +7,15 @@ using System.Linq;
 using System.Xml;
 using Vaiona.Persistence.Api;
 using Vaiona.Utils.Cfg;
+
 using MDS = BExIS.Dlm.Entities.MetadataStructure;
 
 namespace BExIS.Dlm.Services.MetadataStructure
 {
     public class MetadataStructureManager : IDisposable
     {
-
         private IUnitOfWork guow = null;
+
         public MetadataStructureManager()
         {
             guow = this.GetIsolatedUnitOfWork();
@@ -23,6 +24,7 @@ namespace BExIS.Dlm.Services.MetadataStructure
         }
 
         private bool isDisposed = false;
+
         ~MetadataStructureManager()
         {
             Dispose(true);
@@ -46,14 +48,14 @@ namespace BExIS.Dlm.Services.MetadataStructure
             }
         }
 
-
         #region Data Readers
 
         // provide read only repos for the whole aggregate area
         public IReadOnlyRepository<MDS.MetadataStructure> Repo { get; private set; }
+
         public IReadOnlyRepository<MDS.MetadataPackageUsage> PackageUsageRepo { get; private set; }
 
-        #endregion
+        #endregion Data Readers
 
         #region MetadataStructure
 
@@ -121,7 +123,6 @@ namespace BExIS.Dlm.Services.MetadataStructure
 
                 return list;
             }
-
         }
 
         public MDS.MetadataStructure Create(string name, string description, string xsdFileName, string xslFileName, MDS.MetadataStructure parent)
@@ -209,7 +210,7 @@ namespace BExIS.Dlm.Services.MetadataStructure
             return (entity);
         }
 
-        #endregion
+        #endregion MetadataStructure
 
         #region Associations
 
@@ -332,7 +333,6 @@ namespace BExIS.Dlm.Services.MetadataStructure
             }
         }
 
-        #endregion
-
+        #endregion Associations
     }
 }

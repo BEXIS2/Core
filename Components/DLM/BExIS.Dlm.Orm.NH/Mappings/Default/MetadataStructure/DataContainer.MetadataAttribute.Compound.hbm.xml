@@ -7,10 +7,7 @@
       <key>
         <column name="MetadataCompoundAttributeRef" />
       </key>
-      <one-to-many class="MetadataNestedAttributeUsage"/>
+      <one-to-many class="MetadataNestedAttributeUsage" />
     </set>
-
-
   </subclass>
-  
 </hibernate-mapping>

@@ -4,34 +4,34 @@ using System.Linq;
 
 /// <summary>
 ///
-/// </summary>        
+/// </summary>
 namespace BExIS.IO.Transform.Validation.DSValidation
 {
     /// <summary>
     ///
     /// </summary>
-    /// <remarks></remarks>        
+    /// <remarks></remarks>
     public class DatastructureMatchCheck : IDataStructureValidation
     {
         /// <summary>
         ///
         /// </summary>
         /// <remarks></remarks>
-        /// <seealso cref=""/>        
+        /// <seealso cref=""/>
         private DataEntityType appliedTo = new DataEntityType();
 
         /// <summary>
         ///
         /// </summary>
         /// <remarks></remarks>
-        /// <seealso cref=""/>        
+        /// <seealso cref=""/>
         public DataEntityType AppliedTo
         {
             get { return appliedTo; }
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <remarks></remarks>
         /// <seealso cref=""/>
@@ -82,7 +82,7 @@ namespace BExIS.IO.Transform.Validation.DSValidation
         /// </summary>
         /// <remarks></remarks>
         /// <seealso cref=""/>
-        /// <param>NA</param>       
+        /// <param>NA</param>
         public DatastructureMatchCheck()
         {
             appliedTo = DataEntityType.Datastructure;

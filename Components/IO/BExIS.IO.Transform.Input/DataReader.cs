@@ -215,7 +215,7 @@ namespace BExIS.IO.Transform.Input
 
                         if (dataType != null && dataType.Extra != null)
                         {
-                            DataTypeDisplayPattern dp = variable.DisplayPatternId>0?DataTypeDisplayPattern.Get(variable.DisplayPatternId):null;
+                            DataTypeDisplayPattern dp = variable.DisplayPatternId > 0 ? DataTypeDisplayPattern.Get(variable.DisplayPatternId) : null;
                             if (dp != null && !string.IsNullOrEmpty(dp.StringPattern)) value = IOUtility.ConvertToDateUS(row[i], dp.StringPattern);
                             else value = IOUtility.ConvertDateToCulture(row[i]);
                         }
@@ -269,7 +269,6 @@ namespace BExIS.IO.Transform.Input
                                         break;
                                     }
                             }
-
                         }
                         else
                         {
@@ -341,17 +340,17 @@ namespace BExIS.IO.Transform.Input
 
         private void setValidationInformation()
         {
-
         }
 
-        VariableIdentifier hv = new VariableIdentifier();
-        ValueValidationManager validationManager;
-        List<Error> temp = new List<Error>();
-        List<Error> temp2 = new List<Error>();
-        List<Error> errors = new List<Error>();
-        Variable var = null;
-        string v;
-        object value;
+        private VariableIdentifier hv = new VariableIdentifier();
+        private ValueValidationManager validationManager;
+        private List<Error> temp = new List<Error>();
+        private List<Error> temp2 = new List<Error>();
+        private List<Error> errors = new List<Error>();
+        private Variable var = null;
+        private string v;
+        private object value;
+
         /// <summary>
         /// Validate a row
         /// </summary>
@@ -362,7 +361,6 @@ namespace BExIS.IO.Transform.Input
         public List<Error> ValidateRow(List<string> row, int indexOfRow)
         {
             errors = new List<Error>();
-
 
             // number of variables in datastructure
             int numOfVariables = this.StructuredDataStructure.Variables.Count();
@@ -416,7 +414,6 @@ namespace BExIS.IO.Transform.Input
 
             NumberOfRows++;
 
-
             return errors;
         }
 
@@ -432,7 +429,6 @@ namespace BExIS.IO.Transform.Input
             List<Error> matchErrors = new List<Error>();
             List<Error> orderErrors = new List<Error>();
             List<Error> errors = new List<Error>();
-
 
             try
             {
@@ -454,9 +450,6 @@ namespace BExIS.IO.Transform.Input
 
                     if (orderErrors != null) errors.AddRange(orderErrors);
                 }
-
-                
-
             }
             catch
             {
@@ -515,7 +508,6 @@ namespace BExIS.IO.Transform.Input
             {
                 varName = variable.Label;
             }
-
 
             DataTypeDisplayPattern displayPattern = DataTypeDisplayPattern.Pattern.Where(p => p.Id.Equals(variable.DisplayPatternId)).FirstOrDefault(); //HH:mm:ss
             if (displayPattern != null) pattern = displayPattern.StringPattern;

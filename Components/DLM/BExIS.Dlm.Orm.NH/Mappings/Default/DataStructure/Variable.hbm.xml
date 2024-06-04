@@ -2,13 +2,12 @@
   <class xmlns="urn:nhibernate-mapping-2.2" name="Variable" table="Variables" dynamic-update="true">
     <!-- Mapping BaseEntity properties -->
 
-	  
     <id name="Id" type="Int64">
       <column name="Id" index="idx_Variables_id" />
       <generator class="native" />
     </id>
 
-	<discriminator column="VariablesType" type="String"/>
+	<discriminator column="VariablesType" type="String" />
 
 	  <version name="VersionNo" type="Int32">
       <column name="VersionNo" />
@@ -40,18 +39,17 @@
       <column name="DefaultValue" />
     </property>
 
-    <many-to-one name="Unit" class="Unit" not-null="false" column="UnitRef" lazy="false"/>
-    <many-to-one name="DataType" class="DataType" not-null="true" column="DataTypeRef"/>
+    <many-to-one name="Unit" class="Unit" not-null="false" column="UnitRef" lazy="false" />
+    <many-to-one name="DataType" class="DataType" not-null="true" column="DataTypeRef" />
 
 	<set name="VariableConstraints" table="Variable_Constraints" lazy="false">
-      <key column="VariableRef"/>
-      <many-to-many column="ConstraintRef" class="Constraint"/>
+      <key column="VariableRef" />
+      <many-to-many column="ConstraintRef" class="Constraint" />
     </set>
 
-	<set name="Meanings" table="rpm_meanings_variables"  lazy="false" fetch="select"   >
-		<key column="VariableRef"/>
-		<many-to-many class="BExIS.Dlm.Entities.Meanings.Meaning" column="MeaningRef"/>
+	<set name="Meanings" table="rpm_meanings_variables"  lazy="false" fetch="select">
+		<key column="VariableRef" />
+		<many-to-many class="BExIS.Dlm.Entities.Meanings.Meaning" column="MeaningRef" />
 	</set>
-
   </class>
 </hibernate-mapping>

@@ -3,13 +3,13 @@ using System.Collections.Generic;
 
 /// <summary>
 ///
-/// </summary>        
+/// </summary>
 namespace BExIS.IO.Transform.Validation.ValueValidation
 {
     /// <summary>
     ///
     /// </summary>
-    /// <remarks></remarks>        
+    /// <remarks></remarks>
     public class DomainValidation : IValueValidation
     {
         private ValueType appliedTo = new ValueType();
@@ -21,7 +21,7 @@ namespace BExIS.IO.Transform.Validation.ValueValidation
         ///
         /// </summary>
         /// <remarks></remarks>
-        /// <seealso cref=""/>        
+        /// <seealso cref=""/>
         public ValueType AppliedTo
         {
             get { return appliedTo; }
@@ -31,7 +31,7 @@ namespace BExIS.IO.Transform.Validation.ValueValidation
         ///
         /// </summary>
         /// <remarks></remarks>
-        /// <seealso cref=""/>        
+        /// <seealso cref=""/>
         public string Name
         {
             get { return name; }
@@ -41,7 +41,7 @@ namespace BExIS.IO.Transform.Validation.ValueValidation
         ///
         /// </summary>
         /// <remarks></remarks>
-        /// <seealso cref=""/>        
+        /// <seealso cref=""/>
         public string DataType
         {
             get { return dataType; }
@@ -51,14 +51,14 @@ namespace BExIS.IO.Transform.Validation.ValueValidation
         ///
         /// </summary>
         /// <remarks></remarks>
-        /// <seealso cref=""/>        
+        /// <seealso cref=""/>
         public List<string> CheckList
         {
             get { return checkList; }
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <remarks></remarks>
         /// <seealso cref=""/>
@@ -67,7 +67,6 @@ namespace BExIS.IO.Transform.Validation.ValueValidation
         /// <returns></returns>
         public Error Execute(object value, int row)
         {
-
             if (value != null)
             {
                 if (CheckList.Contains(value.ToString())) return null;
@@ -78,7 +77,7 @@ namespace BExIS.IO.Transform.Validation.ValueValidation
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <remarks></remarks>
         /// <seealso cref=""/>

@@ -69,16 +69,26 @@
     background-color: #ebebeb;
 }
 */
-    .alert .ui-widget-header {
-        background-color: #f24c24;
-        border-color: #f24c24;
-        color: white;
-    }
+.alert .ui-widget-header {
+    background-color: #f24c24;
+    border-color: #f24c24;
+    color: white;
+}
 
 /*.alert{border-color:#f24c24;background-color:#ebebeb;}*/
-.alert .ui-widget-header{background-color:#f24c24;border-color:#f24c24;color:white;}
-.alert .ui-widget-header .ui-dialog-titlebar-close{background-color:#f24c24;}
-.alert-info {border-color: #bce8f1;}
+.alert .ui-widget-header {
+    background-color: #f24c24;
+    border-color: #f24c24;
+    color: white;
+}
+
+    .alert .ui-widget-header .ui-dialog-titlebar-close {
+        background-color: #f24c24;
+    }
+
+.alert-info {
+    border-color: #bce8f1;
+}
 
 .alert-info {
     border-color: #bce8f1;

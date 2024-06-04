@@ -30,8 +30,10 @@ namespace Vaiona.PersistenceProviders.NH
 
         public object Factory
         { get { return sessionFactory; } }
+
         public object Configuration
         { get { return cfg; } }
+
         public bool ShowQueries
         { get { return showQueries; } }
 

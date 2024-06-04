@@ -221,7 +221,6 @@ namespace BExIS.Utils.WebHelpers
 
             try
             {
-
                 //currently the action are not check, so we use a wildcard
                 string action = "*";//operation.Attribute("action").Value.ToLower();
 

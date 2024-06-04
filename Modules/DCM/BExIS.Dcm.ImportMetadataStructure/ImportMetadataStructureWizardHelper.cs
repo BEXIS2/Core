@@ -5,7 +5,7 @@ namespace BExIS.Dcm.ImportMetadataStructureWizard
     public class ImportMetadataStructureWizardHelper
     {
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <remarks></remarks>
         /// <seealso cref=""/>
@@ -16,7 +16,6 @@ namespace BExIS.Dcm.ImportMetadataStructureWizard
             return new List<string>()
             {
                 ".xsd"
-
             };
         }
     }

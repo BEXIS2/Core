@@ -1,11 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Vaiona.Entities.Common;
-
-namespace BExIS.Dim.Entities.Mapping
+﻿namespace BExIS.Dim.Entities.Mapping
 {
     public class MappingConcept
     {
@@ -16,7 +9,6 @@ namespace BExIS.Dim.Entities.Mapping
         public virtual string Url { get; set; }
         public virtual string XSD { get; set; }
 
-
         public MappingConcept()
         {
             Name = string.Empty;
@@ -24,5 +16,5 @@ namespace BExIS.Dim.Entities.Mapping
             Url = string.Empty;
             XSD = string.Empty;
         }
-    } 
+    }
 }

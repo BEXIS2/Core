@@ -17,7 +17,6 @@ using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Linq;
 
 //using System.Linq.Dynamic;
 using System.Net;
@@ -29,10 +28,8 @@ using Vaiona.Persistence.Api;
 
 namespace BExIS.Modules.Dim.UI.Controllers
 {
-
     public class DataQualityOutController : ApiController
     {
-
         // GET: api/data
         /// <summary>
         /// Get a list of all dataset ids
@@ -55,7 +52,6 @@ namespace BExIS.Modules.Dim.UI.Controllers
                     {
                         structuredIds.Add(id);
                     }
-
                 }
                 return structuredIds;
             }
@@ -77,7 +73,6 @@ namespace BExIS.Modules.Dim.UI.Controllers
             return getData(id, -1, token);
         }
 
-
         private HttpResponseMessage getData(long id, int variableId, string token)
         {
             DatasetManager datasetManager = new DatasetManager();
@@ -92,6 +87,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
                 // if a dataset is public, then the api should also return data if there is no token for a user
 
                 #region is public
+
                 dataStructureManager = new DataStructureManager();
 
                 long? entityTypeId = entityManager.FindByName(typeof(Dataset).Name)?.Id;
@@ -141,14 +137,11 @@ namespace BExIS.Modules.Dim.UI.Controllers
                                     varIds.Add("var" + vs.Id);
                                 }
                                 dt = GetDuplicates(id, varIds);
-
                             }
                             else
                             {
-
                             }
                             //dt.Strip();
-
 
                             dt.TableName = id + "_data";
 
@@ -162,7 +155,6 @@ namespace BExIS.Modules.Dim.UI.Controllers
                             response.Content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
 
                             return response;
-
                         }
                         else
                         {
@@ -199,7 +191,6 @@ namespace BExIS.Modules.Dim.UI.Controllers
             }
         }
 
-
         private DataTable GetDuplicates(long datasetId, List<string> variables)
         {
             StringBuilder mvBuilder = new StringBuilder();
@@ -224,7 +215,5 @@ namespace BExIS.Modules.Dim.UI.Controllers
         {
             return "mvDataset" + datasetId;
         }
-
     }
-
 }

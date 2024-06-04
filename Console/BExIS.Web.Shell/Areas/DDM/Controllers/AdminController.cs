@@ -21,7 +21,6 @@ namespace BExIS.Modules.Ddm.UI.Controllers
 
         public ActionResult Index()
         {
-
             return View();
         }
 
@@ -44,7 +43,6 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                 ViewData["windowVisible"] = false;
                 Session["IncludePrimaryData"] = sd.IsPrimaryDataIncluded();
                 //}
-
             }
             catch (Exception e)
             {
@@ -59,7 +57,6 @@ namespace BExIS.Modules.Ddm.UI.Controllers
         {
             try
             {
-
                 if (Session["searchAttributeList"] == null)
                 {
                     ISearchDesigner sd = GetSearchDesigner();
@@ -122,9 +119,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
 
         public ActionResult Save(SearchAttributeViewModel model)
         {
-
             //setluceneName
-
 
             if (ModelState.IsValid)
             {
@@ -164,7 +159,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
             //return View("SearchDesigner", (List<SearchAttributeViewModel>)Session["searchAttributeList"]);
         }
 
-        #endregion
+        #endregion Search Attribute
 
         public ActionResult ChangeIncludePrimaryData(bool includePrimaryData)
         {
@@ -176,16 +171,13 @@ namespace BExIS.Modules.Ddm.UI.Controllers
 
         public ActionResult CloseWindow()
         {
-
             ViewData["windowVisible"] = false;
 
             return Content("");
         }
 
-
         public void SaveConfig()
         {
-
             if (Session["searchAttributeList"] != null)
             {
                 List<SearchAttributeViewModel> searchAttributeList = (List<SearchAttributeViewModel>)Session["searchAttributeList"];
@@ -199,7 +191,6 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                 }
                 catch (Exception e)
                 {
-
                 }
 
                 //sd.Reload();
@@ -301,9 +292,9 @@ namespace BExIS.Modules.Ddm.UI.Controllers
         //    }
         //}
 
-        #endregion
+        #endregion Validation
 
-        #endregion
+        #endregion SearchDesigner
 
         #region ReIndex
 
@@ -336,16 +327,14 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                 return RedirectToAction("Index", "Home", new RouteValueDictionary { { "area", "ddm" } });
             else
                 return View("SearchDesigner", (List<SearchAttributeViewModel>)Session["searchAttributeList"]);
-
         }
 
-        #endregion
+        #endregion ReIndex
 
         #region
 
         private ISearchDesigner GetSearchDesigner()
         {
-
             if (Session["SearchDesigner"] != null)
             {
                 return (ISearchDesigner)Session["SearchDesigner"];
@@ -365,7 +354,5 @@ namespace BExIS.Modules.Ddm.UI.Controllers
         }
 
         #endregion
-
-
     }
 }

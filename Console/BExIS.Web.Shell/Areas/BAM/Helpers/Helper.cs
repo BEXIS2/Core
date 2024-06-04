@@ -68,7 +68,6 @@ namespace BExIS.Modules.Bam.UI.Helpers
             using (PartyRelationshipTypeManager partyRelationshipTypeManager = new PartyRelationshipTypeManager())
             using (PartyManager partyManager = new PartyManager())
             {
-
                 DataTable table = new DataTable();
                 table.Columns.Add("PartyId");
                 table.Columns.Add("PartyName");
@@ -114,7 +113,6 @@ namespace BExIS.Modules.Bam.UI.Helpers
                 }
                 return table;
             }
-
         }
 
         public static string GetDisplayName(Dlm.Entities.Party.PartyRelationshipType partyRelatinshipType)

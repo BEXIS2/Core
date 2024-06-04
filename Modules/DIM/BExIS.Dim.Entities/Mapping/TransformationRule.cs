@@ -15,14 +15,12 @@ namespace BExIS.Dim.Entities.Mapping
             DefaultValue = "";
         }
 
-        public TransformationRule(string regex, string mask, string defaultValue="")
+        public TransformationRule(string regex, string mask, string defaultValue = "")
         {
             RegEx = regex;
             Mask = mask;
             DefaultValue = defaultValue;
         }
-
-
 
         public TransformationRule(long id, string regex, string mask, string defaultValue = "")
         {

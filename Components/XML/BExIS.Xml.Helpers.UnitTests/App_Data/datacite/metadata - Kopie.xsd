@@ -8,10 +8,10 @@
   2013-07-24 v3.0: namespace: kernel-3.0; delete LastMetadataUpdate & MetadateVersionNumber; additions to controlled lists "contributorType", "dateType", "descriptionType", "relationType", "relatedIdentifierType" & "resourceType"; deletion of "StartDate" & "EndDate" from list "dateType" and "Film" from "resourceType";  allow arbitrary order of elements; allow optional wrapper elements to be empty; include xml:lang attribute for title, subject & description; include attribute schemeURI for nameIdentifier of creator, contributor & subject; added new attributes "relatedMetadataScheme", "schemeURI" & "schemeType" to relatedIdentifier; included new property "geoLocation"
   2014-08-20 v3.1: additions to controlled lists "relationType", contributorType" and "relatedIdentifierType"; introduction of new child element "affiliation" to "creator" and "contributor"
   2016-09-19 v4.0: namespace: kernel-4.0; makes "resourceType" required field, added optional "givenName" and "familyName" to creator and contributor, added "funderReference", added "valueURI" for subject, added "geoLocationPolygon"
-  2017-10-23 v4.1: Addition of dateType value "Other", relationType values "Describes", "IsDescribedBy", "HasVersion", "IsVersionOf", "Requires", "IsRequiredBy", resourceType value "DataPaper", new subproperties "dateInformation", "inPolygonPoint", new attribute "nameType", optional attribute "resourceTypeGeneral" for relatedIdentifier 
+  2017-10-23 v4.1: Addition of dateType value "Other", relationType values "Describes", "IsDescribedBy", "HasVersion", "IsVersionOf", "Requires", "IsRequiredBy", resourceType value "DataPaper", new subproperties "dateInformation", "inPolygonPoint", new attribute "nameType", optional attribute "resourceTypeGeneral" for relatedIdentifier
   2018-09-08 v4.1.1 Make schema 4.1 backwards compatible to 4.0 by allowing geolocation elements in any order
   2019-02-14 v4.2: Addition of dateType value "Withdrawn", relationType values "Obsoletes", "isObsoletedBy", addition of new subproperties for Rights: rightsIdentifier, rightsIdentifierScheme, schemeURI, addition of the XML language attribute to the properties Creator, Contributor and Publisher for organizational names, don't check format of DOI
-  2019-07-13 v4.3: Addition of new subproperties for Affiliation: "affiliationIdentifier", "affiliationIdentifierScheme", "schemeURI", addition of new sub-property for funderIdentifier: "schemeURI", addition of new funderIdentifierScheme: "ROR", added documentation for nameIdentifier 
+  2019-07-13 v4.3: Addition of new subproperties for Affiliation: "affiliationIdentifier", "affiliationIdentifierScheme", "schemeURI", addition of new sub-property for funderIdentifier: "schemeURI", addition of new funderIdentifierScheme: "ROR", added documentation for nameIdentifier
   2021-03-08 v4.4: Addition of new property relatedItem, relationType value "isPublishedIn", subject subproperty "classificationCode", controlled list "numberType", additional 13 properties for controlled list "resourceType" -->
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://datacite.org/schema/kernel-4" targetNamespace="http://datacite.org/schema/kernel-4" elementFormDefault="qualified" xml:lang="EN">
 	<xs:import namespace="http://www.w3.org/XML/1998/namespace" schemaLocation="include/xml.xsd" />
@@ -45,7 +45,7 @@
 					<xs:complexType>
 						<xs:simpleContent>
 							<xs:extension base="nonemptycontentStringType">
-								<xs:attribute name="identifierType" use="required"/>
+								<xs:attribute name="identifierType" use="required" />
 							</xs:extension>
 						</xs:simpleContent>
 					</xs:complexType>
@@ -53,7 +53,7 @@
 				<xs:element name="creators">
 					<xs:complexType>
 						<xs:sequence>
-							<xs:element name="creator" maxOccurs="unbounded" >
+							<xs:element name="creator" maxOccurs="unbounded">
 								<xs:annotation>
 									<xs:documentation>Format: Family, Given.</xs:documentation>
 									<xs:documentation>The main researchers involved working on the data, or the authors of the publication in priority order. May be a corporate/institutional or personal name.</xs:documentation>
@@ -66,11 +66,11 @@
 												<xs:simpleContent>
 													<xs:extension base="xs:string">
 														<xs:attribute name="nameType" type="nameType" use="optional" />
-														<xs:attribute name="lang" type="xs:string"  use="required"/>
+														<xs:attribute name="lang" type="xs:string"  use="required" />
 														<xs:attribute name="int" type="xs:integer" default="1" />
 														<xs:attribute name="integer" type="xs:int" default="4" />
 														<xs:attribute name="decimal" type="xs:decimal" default="1.0" />
-														<xs:attribute name="date" type="xs:date"  />
+														<xs:attribute name="date" type="xs:date" />
 													</xs:extension>
 												</xs:simpleContent>
 											</xs:complexType>
@@ -645,27 +645,27 @@
 			<!-- pattern for iso8601 dateTime -->
 			<xs:pattern value="(-)?[0-9]{4}(-[0-9]{2})?(-[0-9]{2})?(T([0-9]{2}:){2}[0-9]{2}Z)?" />
 
-			<!--  
-      The following pattern is for year (yyyy) or year-month (yyyy-mm)              
+			<!--
+      The following pattern is for year (yyyy) or year-month (yyyy-mm)
       The last or last two digits of year may be '?'  meaning "one year in that range but not sure which year", for example 19?? means some year from 1990 to 1999.  Similarly month may be '??' so that 2004-?? "means some month in 2004".  And the entire string may end with '?' or '~' for "uncertain" or "approximate".
       Hyphen must separate year and month.
       -->
 			<xs:pattern value="\d{2}(\d{2}|\?\?|\d(\d|\?))(-(\d{2}|\?\?))?~?\??" />
-			<!--  
-      The following pattern is for  yearMonthDay - yyyymmdd,  where 'dd' may be '??'  so '200412??' means "some day during the month of 12/2004". 
-      The whole  string may be followed by '?' or '~'  to mean "questionable" or "approximate".     Hypens are  not allowed for this pattern. 
+			<!--
+      The following pattern is for  yearMonthDay - yyyymmdd,  where 'dd' may be '??'  so '200412??' means "some day during the month of 12/2004".
+      The whole  string may be followed by '?' or '~'  to mean "questionable" or "approximate".     Hypens are  not allowed for this pattern.
       -->
 			<xs:pattern value="\d{6}(\d{2}|\?\?)~?\??" />
-			<!--  
+			<!--
 
-      The following pattern is for date and time with T separator:'yyyymmddThhmmss'. 
-      Hypens in date and colons in time not allowed for this pattern.   
+      The following pattern is for date and time with T separator:'yyyymmddThhmmss'.
+      Hypens in date and colons in time not allowed for this pattern.
       -->
 			<xs:pattern value="\d{8}T\d{6}" />
-			<!--  
+			<!--
 
       The following pattern is for a date range. in years: 'yyyy/yyyy'; or year/month: yyyy-mm/yyyy-mm, or year/month/day: yyyy-mm-dd/yyyy-mm-dd. Beginning or end of range value may be 'unknown'. End of range value may be 'open'.
-      Hypens mandatory when month is present. 
+      Hypens mandatory when month is present.
       -->
 			<xs:pattern value="((-)?(\d{4}(-\d{2})?(-\d{2})?)|unknown)/((-)?(\d{4}(-\d{2})?(-\d{2})?)|unknown|open)" />
 		</xs:restriction>

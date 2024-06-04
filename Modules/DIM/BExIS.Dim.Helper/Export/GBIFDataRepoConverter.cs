@@ -4,18 +4,13 @@ using BExIS.Dim.Helpers.GBIF;
 using BExIS.Dim.Helpers.Mapping;
 using BExIS.Dim.Helpers.Models;
 using BExIS.Dim.Services;
-using BExIS.Dlm.Entities.Data;
 using BExIS.Dlm.Services.Data;
 using BExIS.IO;
 using Ionic.Zip;
-using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
-using System.Xml;
 using Vaiona.Utils.Cfg;
 using Vaiona.Web.Mvc.Modularity;
 
@@ -38,16 +33,15 @@ namespace BExIS.Dim.Helpers.Export
             {
                 string dwcStorePath = ModuleManager.GetModuleSettings("DIM").GetValueByKey("gbifCollectionArea").ToString();
 
-
                 var datasetversion = datasetManager.GetDatasetVersion(datasetVersionId);
                 var dataset = datasetversion.Dataset;
                 var versionNumber = datasetManager.GetDatasetVersionNr(datasetVersionId);
 
                 // setup folder to store the dwc zip
                 // if starts with / it means it should store under {DATA}/ dwcStorePath
-                // if starts with Char then it means the full Folepath is defined 
+                // if starts with Char then it means the full Folepath is defined
 
-                string folder = Regex.Match(dwcStorePath, "^([A-Z]:\\|/)").Success ? dwcStorePath :Path.Combine(AppConfiguration.DataPath, dwcStorePath);
+                string folder = Regex.Match(dwcStorePath, "^([A-Z]:\\|/)").Success ? dwcStorePath : Path.Combine(AppConfiguration.DataPath, dwcStorePath);
 
                 FileHelper.CreateDicrectoriesIfNotExist(folder);
 
@@ -59,20 +53,19 @@ namespace BExIS.Dim.Helpers.Export
 
                 if (!Directory.Exists(folder)) Directory.CreateDirectory(folder);
 
-
                 // get metadata
                 var concept = conceptManager.MappingConceptRepo.Get().FirstOrDefault(c => c.Name.ToLower().Equals(_dataRepo.Name.ToLower()));
                 if (concept != null)
                 {
                     long metadatastructureId = dataset.MetadataStructure.Id;
                     long id = dataset.Id;
-                    long versionId = datasetversion.Id; 
+                    long versionId = datasetversion.Id;
                     string xsdPath = Path.Combine(AppConfiguration.WorkspaceRootPath, concept.XSD);
 
                     // generate metadata
                     string metadataFilePath = helper.GenerateResourceMetadata(concept.Id, metadatastructureId, datasetversion.Metadata, folder, xsdPath);
-                    if(File.Exists(metadataFilePath)) zip.AddFile(metadataFilePath, "");
-                
+                    if (File.Exists(metadataFilePath)) zip.AddFile(metadataFilePath, "");
+
                     // get data
                     string datapath = helper.GenerateData(id, versionId);
                     if (File.Exists(datapath)) zip.AddFile(datapath, "");
@@ -83,10 +76,7 @@ namespace BExIS.Dim.Helpers.Export
 
                     zip.Save(zipfilepath);
 
-                    
-
                     return zipfilepath;
-
                 }
             }
 
@@ -95,8 +85,6 @@ namespace BExIS.Dim.Helpers.Export
 
         public bool Validate(long datasetVersionId, out List<string> errors)
         {
-           
-
             long metadataStructureId = 0;
             long dataStructureId = 0;
             bool valid = true;
@@ -110,7 +98,6 @@ namespace BExIS.Dim.Helpers.Export
 
                 if (datasetversion.Dataset.DataStructure == null) errors.Add("no data structure exist for this entity.");
 
-
                 dataStructureId = datasetversion.Dataset.DataStructure.Id;
                 metadataStructureId = datasetversion.Dataset.MetadataStructure.Id;
 
@@ -120,7 +107,6 @@ namespace BExIS.Dim.Helpers.Export
 
                 FileHelper.CreateDicrectoriesIfNotExist(folder);
                 GbifHelper helper = new GbifHelper();
-
 
                 var concept = conceptManager.MappingConceptRepo.Get().Where(c => c.Name.Equals(_dataRepo.Name)).FirstOrDefault();
 
@@ -141,7 +127,6 @@ namespace BExIS.Dim.Helpers.Export
                     // if concept is linked to a xsd, generate metadata and validaed it against the schema
                     if (!string.IsNullOrEmpty(concept.XSD))
                     {
-                        
                         string xsdPath = Path.Combine(AppConfiguration.WorkspaceRootPath, concept.XSD);
 
                         string metadataPath = helper.GenerateResourceMetadata(concept.Id, metadataStructureId, datasetversion.Metadata, folder, xsdPath);
@@ -151,7 +136,6 @@ namespace BExIS.Dim.Helpers.Export
 
                         errors.AddRange(metadataErrors);
                     }
-
                 }
 
                 //// in V2 file for structure exist
@@ -162,20 +146,18 @@ namespace BExIS.Dim.Helpers.Export
                 //    errors.Add("dw_terms.json file not exist.");
 
                 //// check all needed dw terms mapped for the type
-       
+
                 // in V3 read from structre
                 helper.ValidateDWCTerms(dataStructureId, _type, out errors);
 
                 //check if data exist
-                if (datasetManager.GetDataTuplesCount(datasetVersionId)<=0)
+                if (datasetManager.GetDataTuplesCount(datasetVersionId) <= 0)
                     errors.Add("no data available.");
-
             }
 
             if (errors.Any()) valid = false;
 
             return valid;
-
         }
 
         public GBIFDataRepoConverter(Broker _broker, GbifDataType type)

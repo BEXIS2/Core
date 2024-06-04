@@ -183,8 +183,6 @@ namespace IDIV.Modules.Mmm.UI.Controllers
                         var es = new EmailService();
                         if (send_mail == "true")
                         {
-
-
                             es.Send(MessageHelper.GetFileDownloadHeader(datasetID, versionNr),
                                                     MessageHelper.GetFileDownloadMessage(GetUsernameOrDefault(), datasetID, fileInfo.Name),
                                                     GeneralSettings.SystemEmail
@@ -974,7 +972,7 @@ namespace IDIV.Modules.Mmm.UI.Controllers
             return new Measurement();
         }
 
-        private XmlDocument setSystemValuesToMetadata(long version,long datasetId, long metadataStructureId, XmlDocument metadata)
+        private XmlDocument setSystemValuesToMetadata(long version, long datasetId, long metadataStructureId, XmlDocument metadata)
         {
             SystemMetadataHelper SystemMetadataHelper = new SystemMetadataHelper();
 

@@ -11,9 +11,6 @@ namespace BExIS.Dlm.Services.DataStructure
         {
         }
 
-        #region Data Readers
-        #endregion
-
         #region Methodology
 
         public Methodology Create(string appliedStandards, string tools, string tolerance, string procedure)
@@ -95,7 +92,6 @@ namespace BExIS.Dlm.Services.DataStructure
             return (entity);
         }
 
-        #endregion
-
+        #endregion Methodology
     }
 }

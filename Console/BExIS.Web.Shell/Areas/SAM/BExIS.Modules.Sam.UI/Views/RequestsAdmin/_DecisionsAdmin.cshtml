@@ -1,20 +1,18 @@
 ﻿@using BExIS.Modules.Sam.UI.Models
 @using Telerik.Web.Mvc.UI
 
-
-    <ul class="nav nav-tabs">
-        @if (ViewData["status"] == "Open")
+<ul class="nav nav-tabs">
+    @if (ViewData["status"] == "Open")
         {
-            <li class="active"><a href="#" id="open">Open</a></li>
-            <li><a href="#" id="all">All</a></li>
+    <li class="active"><a href="#" id="open">Open</a></li>
+    <li><a href="#" id="all">All</a></li>
         }
         else
         {
-            <li><a href="#" id="open">Open</a></li>
-            <li class="active"><a href="#" id="all">All</a></li>
+    <li><a href="#" id="open">Open</a></li>
+    <li class="active"><a href="#" id="all">All</a></li>
         }
-
-    </ul>
+</ul>
 
 <table id="resources_table" class="display" style="width:100%">
     <thead>
@@ -29,8 +27,6 @@
             <th title="Request Date">Request date</th>
             <th title="Status">Status</th>
             <th></th>
-
-
         </tr>
     </thead>
     <tbody>
@@ -40,33 +36,32 @@
 
             foreach (var m in Model)
             {
-                <tr>
-                    <td>@m.Id</td>
-                    <td>@m.InstanceId</td>
-                    <td>@m.Title</td>
-                    <td>@m.Applicant</td>
-                    <td>@m.DecisionMaker</td>
-                    <td>@m.Intention</td>
-                    <!--  <td>@m.Rights</td>-->
-                    <td>@m.RequestDate.ToString("dd.MM.yyyy")</td>
-                    <td>@m.StatusAsText</td>
-                    <td>
-                        @if (m.Status == 0)
+        <tr>
+            <td>@m.Id</td>
+            <td>@m.InstanceId</td>
+            <td>@m.Title</td>
+            <td>@m.Applicant</td>
+            <td>@m.DecisionMaker</td>
+            <td>@m.Intention</td>
+            <!--  <td>@m.Rights</td>-->
+            <td>@m.RequestDate.ToString("dd.MM.yyyy")</td>
+            <td>@m.StatusAsText</td>
+            <td>
+                @if (m.Status == 0)
                         {
                             if (m.EntityExist == true)
                             {
-                                <button type="button" class="bx bx-grid-function bx-check" value="@m.Id"></button>
-                                <button type="button" class="bx bx-grid-function bx-delete" value="@m.Id"></button>
+                <button type="button" class="bx bx-grid-function bx-check" value="@m.Id"></button>
+                <button type="button" class="bx bx-grid-function bx-delete" value="@m.Id"></button>
                             }
-                            <button type="button" class="bx bx-grid-function bx-withdraw bx-trash" value="@m.RequestId"></button>
+                <button type="button" class="bx bx-grid-function bx-withdraw bx-trash" value="@m.RequestId"></button>
                         }
-                    </td>
-                </tr>
+            </td>
+        </tr>
             }
         }
     </tbody>
 </table>
-
 
 <script type="text/javascript">
 
@@ -76,7 +71,7 @@
                 return t
                     .replace(/&/g, '&amp;')
                     .replace(/</g, '&lt;')
-                    .replace(/>/g, '&gt;')
+                    .replace( />/g, '&gt;')
                     .replace(/"/g, '&quot;');
             };
 
@@ -128,7 +123,6 @@
                 }
             },
 
-
             columnDefs: [
                 {
                     targets: 1,
@@ -159,7 +153,6 @@
                     truncateTitle();
                 });
         });
-
 
         $('.bx-check').click(function () {
             var result = confirm('Are you sure you want to accept this request (Id:' + $(this).attr("value") + ')?');
@@ -192,5 +185,4 @@
 
         });
     });
-
 </script>

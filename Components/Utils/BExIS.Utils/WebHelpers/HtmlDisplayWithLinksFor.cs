@@ -37,8 +37,6 @@ namespace BExIS.Utils.WebHelpers
                     url = match.ToString();
                     return String.Format("<a href=\"{0}\" target=\"_blank\" >{0}</a>", url);
                 }
-
-
             });
             return result;
         }

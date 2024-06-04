@@ -6,40 +6,40 @@
     UpdateTargetId = "content_updateUser",
     OnSuccess = "updateUser_onSuccess"}))
 {
-    @Html.ValidationSummary(true)
+@Html.ValidationSummary(true)
 
-    <table class="bx-table-form">
-        <tr>
-            <td>
-                @Html.LabelFor(m => m.Id)
-            </td>
-            <td>
-                @Html.DisplayFor(m => m.Id, new { @class = "t-input bx-input" })
-                @Html.HiddenFor(m => m.Id)
-            </td>
-        </tr>
-        <tr>
-            <td>
-                @Html.LabelFor(m => m.UserName)
-            </td>
-            <td>
-                @Html.DisplayFor(m => m.UserName, new { @class = "t-input bx-input" })
-                @Html.HiddenFor(m => m.UserName)
-            </td>
-        </tr>
-        <tr>
-            <td>
-                @Html.LabelFor(m => m.Email)
-            </td>
-            <td>
-                @Html.TextBoxFor(m => m.Email, new { @class = "t-input bx-input" })
-                @Html.ValidationMessageFor(m => m.Email)
-            </td>
-        </tr>
-    </table>
+<table class="bx-table-form">
+    <tr>
+        <td>
+            @Html.LabelFor(m => m.Id)
+        </td>
+        <td>
+            @Html.DisplayFor(m => m.Id, new { @class = "t-input bx-input" })
+            @Html.HiddenFor(m => m.Id)
+        </td>
+    </tr>
+    <tr>
+        <td>
+            @Html.LabelFor(m => m.UserName)
+        </td>
+        <td>
+            @Html.DisplayFor(m => m.UserName, new { @class = "t-input bx-input" })
+            @Html.HiddenFor(m => m.UserName)
+        </td>
+    </tr>
+    <tr>
+        <td>
+            @Html.LabelFor(m => m.Email)
+        </td>
+        <td>
+            @Html.TextBoxFor(m => m.Email, new { @class = "t-input bx-input" })
+            @Html.ValidationMessageFor(m => m.Email)
+        </td>
+    </tr>
+</table>
 
-    <div class="bx-footer right">
-        <button style="margin-right: 1px" type="submit" class="bx-button action">Save</button>
-        <button style="margin-left: 1px" type="button" id="button_updateUser_cancel" class="bx-button action">Cancel</button>
-    </div>
+<div class="bx-footer right">
+    <button style="margin-right: 1px" type="submit" class="bx-button action">Save</button>
+    <button style="margin-left: 1px" type="button" id="button_updateUser_cancel" class="bx-button action">Cancel</button>
+</div>
 }

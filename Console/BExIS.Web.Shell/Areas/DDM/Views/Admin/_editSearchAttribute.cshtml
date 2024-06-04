@@ -4,17 +4,16 @@
 @using BExIS.Modules.Ddm.UI.Models;
 
 @{
-    
+
     string Title="New Search Attribute";
 
     if (Model.displayName != null)
     {
         Title = Model.displayName;
     }
-        
 
     // enums to list
-    // metadatanodes to list  
+    // metadatanodes to list
 
     List<string> SearchComponentBaseType = new List<string>();
     foreach (SearchComponentBaseType ms in Enum.GetValues(typeof(SearchComponentBaseType)))
@@ -26,8 +25,8 @@
     foreach (TypeCode ms in Enum.GetValues(typeof(TypeCode)))
     {
         DataType.Add(ms.ToString());
-    } 
-    
+    }
+
     //for properties
 
     List<string> Directions = new List<string>();
@@ -53,7 +52,6 @@
     {
         metadataNodes = (List<SearchMetadataNode>)Session["metadatNodes"];
     }
-    
 
  }
 
@@ -66,7 +64,7 @@
     OnFailure = "OnFailure"
 }))
 {
-    
+
     <div id="searchAttributeForm" class="bx-content" style="height:410px; overflow:auto">
     @{
             <table>
@@ -74,7 +72,7 @@
                     <td style="width:250px;"><h3>General</h3></td>
                 </tr>
                 <tr>
-                    <td >
+                    <td>
                         <label>Id</label>
                          @(Html.HiddenFor(m => m.id))
                     </td>
@@ -106,7 +104,7 @@
                         @(Html.LabelFor(m => m.metadataNames))<span class="bx bx-required" title="Required">
                     </td>
                     <td class="listOfNodes">
-                        
+
                             <div id="metadataNodes">
 
                                 @if (Model.metadataNames != null && Model.metadataNames.Count > 0)
@@ -116,10 +114,7 @@
                                         Html.RenderPartial("_metadataNode", xpath);
                                     }
                                 }
-
                             </div>
-
-                            
                     </td>
                     <td style="vertical-align:bottom;">
                         <div class="vcenter" style="width:55px;">
@@ -251,21 +246,16 @@
     }
     </div>
 
-
     <div class="bx-footer right">
         <button type="submit" value="Save" name="submit" class="bx-button action">Save</button>
         <button value="c" name="cancel" class="bx-button action" onclick="OnCancel()">Cancel</button>
     </div>
 }
 
-
-
 <script type="text/javascript">
-
 
     var run = false;
     $("#addNode").unbind().click(function () {
-
 
             $.ajax({
                 url: this.href,
@@ -287,7 +277,7 @@
     }
 
     function OnSuccess() {
-        
+
         var window = $('#EditSearchAttribute').data('tWindow');
         window.close();
 
@@ -299,7 +289,6 @@
     function OnFailure(response) {
         alert("failed");
     }
-
 </script>
 
 <style type="text/css">
@@ -325,5 +314,4 @@
     {
         border:none;
     }
-
 </style>

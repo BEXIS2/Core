@@ -17,10 +17,7 @@ namespace BExIS.Modules.Dcm.UI.Hooks
             checkPermissionStatus(id, username);
 
             // if status is open then check if data is available
-            if(Status == HookStatus.Open) checkDataStatus(id, username);
-
-
-
+            if (Status == HookStatus.Open) checkDataStatus(id, username);
         }
 
         private void checkPermissionStatus(long id, string username)
@@ -46,7 +43,6 @@ namespace BExIS.Modules.Dcm.UI.Hooks
                 var template = entityTemplateManager.Repo.Get(dataset.EntityTemplate.Id);
                 if (dataset == null || template == null || template.HasDatastructure == false) { Status = HookStatus.Disabled; return; }
                 else Status = HookStatus.Open;
-
             }
         }
     }

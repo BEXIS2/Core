@@ -48,7 +48,6 @@ function sessKeyPressed(ed, e) {
         if (getLastActivityTime == true) {
             sess_lastActivity = new Date();
         }
-
     }, 0);
 }
 function sessLogOut() {
@@ -72,7 +71,7 @@ function sessInterval() {
         //wran before expiring
         //stop the timer
         sessClearInterval();
-        //promt for attention        
+        //promt for attention
         countDownStartesFrom = global_sess_warningSeconds;
         var msg = '<div id="divTimeout"><div class="popup-block">Your session will expire in <div id="divCountDown">' + countDownStartesFrom + '  Sec</div>, click "Continue" to keep working or "Logout" if you are finished. <input type="button" class="btn btn-active" value="Continue" onclick="CancelLogout();"> <input type="button" class="btn btn-active" value="Logout" onclick="sessLogOut();"> </div></div><div class="backdrop"></div>'
         $("body").prepend(msg);
@@ -88,7 +87,6 @@ function sessInterval() {
         //reset server session here
         ResetServerSession();
         clearInterval(actualsess_intervalID);
-
     }
 }
 
@@ -107,7 +105,7 @@ function CancelLogout() {
         sessLogOut();
     }
     else {
-        //reset inactivity timer        
+        //reset inactivity timer
         sessSetInterval();
         sess_lastActivity = new Date();
         //msg('CancelLogout', sess_lastActivity);
@@ -160,11 +158,10 @@ function CountDown() {
     }
 }
 
-
 //scenario: if a user open a form page and spend a long time to fill the form then from client side session will be active as he is doing something on the page
 //but from server side application session will be timed out
 //prevention: we can start a timer at page load whose tick time will be (session timeout value-60) sec. then before actual session timeout timer can
-//call a function which can call ajax to rejuvenate server side session. Considering 60sec as lag time 
+//call a function which can call ajax to rejuvenate server side session. Considering 60sec as lag time
 
 var actualsess_intervalID;
 //this function will initiate a timer which will execute every (sessionTimeOut-60)*1000 millisec
@@ -181,7 +178,7 @@ function setCookie() {
 }
 
 function getCookie() {
-    //when timed out from other tab and logged out there then force logout 
+    //when timed out from other tab and logged out there then force logout
     if (get_cookie('loggedout') == 'true') {
         sessLogOut();
     }
@@ -198,7 +195,6 @@ function deleteCookie() {
 function deleteSession() {
     set_cookie('loggedout', 'true', 1, window.location.hostname);
 }
-
 
 //Generic cookie access functions
 function set_cookie(cookie_name, cookie_value, lifespan_in_days, valid_domain) {

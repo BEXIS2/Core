@@ -11,7 +11,6 @@ using BExIS.IO;
 using BExIS.IO.Transform.Output;
 using BExIS.Modules.Dim.UI.Models;
 using BExIS.Security.Entities.Authorization;
-using BExIS.Security.Entities.Versions;
 using BExIS.Security.Services.Authorization;
 using BExIS.Xml.Helpers;
 using System;
@@ -22,7 +21,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Web.Mvc;
 using System.Web.Script.Serialization;
-using Vaiona.Persistence.Api;
 using Vaiona.Utils.Cfg;
 using Vaiona.Web.Mvc;
 
@@ -74,7 +72,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
 
                 List<Broker> Brokers = GetBrokers(dataset.MetadataStructure.Id, publicationManager);
 
-                Brokers.ForEach(b => model.Brokers.Add(new BExIS.UI.Models.ListItem(b.Id,b.Name+" ("+b.Type+")")));
+                Brokers.ForEach(b => model.Brokers.Add(new BExIS.UI.Models.ListItem(b.Id, b.Name + " (" + b.Type + ")")));
                 model.DatasetId = datasetId;
 
                 //Todo Download Rigths -> currently set read rigths for this case
@@ -109,7 +107,6 @@ namespace BExIS.Modules.Dim.UI.Controllers
                     if (pub.Repository != null)
                     {
                         repo = publicationManager.RepositoryRepo.Get(pub.Repository.Id);
-
                     }
 
                     string dataRepoName = repo == null ? "" : repo.Name;
@@ -153,13 +150,12 @@ namespace BExIS.Modules.Dim.UI.Controllers
             using (DatasetManager dm = new DatasetManager())
             using (PublicationManager publicationManager = new PublicationManager())
             {
-
                 long version = dm.GetDatasetLatestVersionId(datasetId);
                 model.DatasetVersionId = version;
 
                 var broker = publicationManager.BrokerRepo.Get(brokerId);
 
-                if (broker!=null)
+                if (broker != null)
                 {
                     Publication publication =
                         publicationManager.PublicationRepo.Get()
@@ -196,24 +192,19 @@ namespace BExIS.Modules.Dim.UI.Controllers
                         #region validation from converter
 
                         model.IsValid = isEntityValidAgainstBroker(broker, version, out errors);
-                        #endregion
-                    }
 
+                        #endregion validation from converter
+                    }
                 }
-         
-                
             }
 
             model.Errors = errors;
 
             return PartialView("_dataRepositoryRequirementsView", model);
-
         }
 
         public JsonResult CheckExportPossibility(long brokerId, long datasetId)
         {
-  
-
             bool isDataConvertable = false;
             bool isMetadataConvertable = false;
             bool isValid = false;
@@ -224,11 +215,10 @@ namespace BExIS.Modules.Dim.UI.Controllers
             using (PublicationManager publicationManager = new PublicationManager())
             using (DatasetManager dm = new DatasetManager())
             {
-
                 Broker broker = publicationManager.BrokerRepo.Get(brokerId);
 
                 if (broker == null) throw new NullReferenceException("Broker is null");
-                
+
                 // datasetversion
                 Dataset dataset = dm.GetDataset(datasetId);
                 long version = dm.GetDatasetLatestVersion(datasetId).Id;
@@ -238,54 +228,51 @@ namespace BExIS.Modules.Dim.UI.Controllers
                         .Where(p => p.Broker != null && p.Broker.Id.Equals(broker.Id) && p.DatasetVersion != null && p.DatasetVersion.Id.Equals(version))
                         .FirstOrDefault();
 
-                    if (publication != null && !String.IsNullOrEmpty(publication.FilePath)
-                        && FileHelper.FileExist(Path.Combine(AppConfiguration.DataPath, publication.FilePath)))
+                if (publication != null && !String.IsNullOrEmpty(publication.FilePath)
+                    && FileHelper.FileExist(Path.Combine(AppConfiguration.DataPath, publication.FilePath)))
+                {
+                    //model.Exist = true;
+                    exist = true;
+                }
+                else
+                {
+                    #region metadata
+
+                    // if no conversion is needed
+                    if (String.IsNullOrEmpty(broker.MetadataFormat))
                     {
-                        //model.Exist = true;
-                        exist = true;
+                        //model.IsMetadataConvertable = true;
+                        isMetadataConvertable = true;
+
+                        // get metadata structure name
+                        string metadataStructureName = dataset.MetadataStructure.Name;
+
+                        // Validate
+                        metadataValidMessage = OutputMetadataManager.IsValideAgainstSchema(datasetId, TransmissionType.mappingFileExport, metadataStructureName);
                     }
-                    else
+
+                    #endregion metadata
+
+                    #region primary Data
+
+                    //todo need a check if the primary data is structured or not, if its unstructured also export should be possible
+
+                    if (broker.PrimaryDataFormat.ToLower().Contains("text/plain") ||
+                        broker.PrimaryDataFormat.ToLower().Contains("text/csv") ||
+                        broker.PrimaryDataFormat.ToLower().Contains("application/excel") ||
+                        String.IsNullOrEmpty(broker.PrimaryDataFormat))
                     {
-                        #region metadata
-
-                        // if no conversion is needed
-                        if (String.IsNullOrEmpty(broker.MetadataFormat))
-                        {
-                            //model.IsMetadataConvertable = true;
-                            isMetadataConvertable = true;
-
-                            // get metadata structure name
-                            string metadataStructureName = dataset.MetadataStructure.Name;
-
-                            // Validate
-                            metadataValidMessage = OutputMetadataManager.IsValideAgainstSchema(datasetId, TransmissionType.mappingFileExport, metadataStructureName);
-                        }
-
-                        #endregion metadata
-
-                        #region primary Data
-
-                        //todo need a check if the primary data is structured or not, if its unstructured also export should be possible
-
-                        if (broker.PrimaryDataFormat.ToLower().Contains("text/plain") ||
-                            broker.PrimaryDataFormat.ToLower().Contains("text/csv") ||
-                            broker.PrimaryDataFormat.ToLower().Contains("application/excel") ||
-                            String.IsNullOrEmpty(broker.PrimaryDataFormat))
-                        {
-                            isDataConvertable = true;
-                        }
+                        isDataConvertable = true;
+                    }
 
                     #endregion primary Data
 
                     #region validation from converter
 
-
                     isValid = isEntityValidAgainstBroker(broker, version, out errors);
 
-                    #endregion
-
-                    }
-                
+                    #endregion validation from converter
+                }
             }
 
             return Json(new { isMetadataConvertable = isMetadataConvertable, isDataConvertable = isDataConvertable, metadataValidMessage = metadataValidMessage, Exist = exist, isValid = isValid, errors = errors });
@@ -293,7 +280,6 @@ namespace BExIS.Modules.Dim.UI.Controllers
 
         public ActionResult DownloadZip(long datasetVersionId, long brokerId)
         {
-    
             Tuple<string, string> tmp = PrepareData(datasetVersionId, brokerId);
 
             string filepath = tmp.Item1;
@@ -315,7 +301,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
         /// <returns></returns>
         private Tuple<string, string> PrepareData(long datasetVersionId, long brokerId)
         {
-            Tuple<string, string> tmp = null ;
+            Tuple<string, string> tmp = null;
             try
             {
                 using (PublicationManager publicPublicationManager = new PublicationManager())
@@ -364,7 +350,6 @@ namespace BExIS.Modules.Dim.UI.Controllers
                                 GBIFDataRepoConverter dataRepoConverter = new GBIFDataRepoConverter(_broker, gbifDataType);
                                 tmp = new Tuple<string, string>(dataRepoConverter.Convert(datasetVersionId), "application/zip");
                                 return tmp; ;
-                                        
                             }
                         default:
                             {
@@ -392,7 +377,6 @@ namespace BExIS.Modules.Dim.UI.Controllers
             {
                 try
                 {
-
                     string zipfilepath = "";
                     if (Session["ZipFilePath"] != null)
                         zipfilepath = Session["ZipFilePath"].ToString();
@@ -440,6 +424,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
                         if (broker.Name.ToLower().Equals("generic"))
                         {
                             #region GENERIC
+
                             publicationManager.CreatePublication(datasetVersion, broker, datasetVersion.Title, 0, zipfilepath, "", "created");
 
                             #endregion GENERIC
@@ -451,7 +436,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
 
                             publicationManager.CreatePublication(datasetVersion, broker, datasetVersion.Title, 0, zipfilepath, "", "created");
 
-                            #endregion GENERIC
+                            #endregion gbif
                         }
 
                         if (broker.Name.ToLower().Equals("doi"))
@@ -472,7 +457,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
                                 publicationManager.CreatePublication(datasetVersion, broker, repository, title, 0, zipfilepath, datasetUrl, "under review");
                             }
 
-                            #endregion
+                            #endregion datacite
                         }
 
                         if (broker.Name.ToLower().Equals("externallink"))
@@ -492,9 +477,9 @@ namespace BExIS.Modules.Dim.UI.Controllers
                                 string title = xmlDatasetHelper.GetInformationFromVersion(datasetVersion.Id, NameAttributeValues.title);
                                 publicationManager.CreatePublication(datasetVersion, broker, repository, title, 0, zipfilepath, datasetUrl, "under review");
                             }
+
                             #endregion datacite
                         }
-
                     }
                     else
                     {
@@ -505,8 +490,6 @@ namespace BExIS.Modules.Dim.UI.Controllers
                 {
                     return Json(ex.Message);
                 }
-
-
             }
 
             return Json(true);
@@ -531,7 +514,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
                     var mToR = publicationManager.MetadataStructureToRepositoryRepo.Get(m =>
                         m.RepositoryId.Equals(repo.Id) && m.MetadataStructureId.Equals(metadataStrutcureId)).FirstOrDefault();
 
-                    add = mToR != null? true:false;
+                    add = mToR != null ? true : false;
                 }
 
                 if (add)
@@ -539,7 +522,6 @@ namespace BExIS.Modules.Dim.UI.Controllers
                     var brokerItems = brokers.Where(b => b.Repository.Id.Equals(repo.Id));
                     if (brokerItems.Any()) brokerItems.ToList().ForEach(b => tmp.Add(b));
                 }
-
             }
 
             return tmp.Distinct().ToList();
@@ -549,10 +531,9 @@ namespace BExIS.Modules.Dim.UI.Controllers
         {
             var broker = publicationManager.GetBroker(brokerId);
             var repo = broker.Repository;
-     
+
             List<Repository> tmp = new List<Repository>();
 
-     
             // if repo is in table, means, that there is a restriction
             // only when dataset has a specific metada structure, the repo should be available in th ui
             if (publicationManager.MetadataStructureToRepositoryRepo.Get().Any(m => m.RepositoryId.Equals(repo.Id)))
@@ -571,7 +552,6 @@ namespace BExIS.Modules.Dim.UI.Controllers
                 //add repo
                 tmp.Add(repo);
             }
-            
 
             return tmp.Distinct().ToList();
         }

@@ -41,14 +41,11 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
         public ActionResult Reload()
         {
-
             return View("_fileListView", GetServerFileList());
         }
 
         public ActionResult Remove()
         {
-
-
             return Content("");
         }
 
@@ -56,7 +53,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         public ActionResult ProcessSubmit(IEnumerable<HttpPostedFileBase> attachments)
         {
             ViewBag.Title = PresentationModel.GetViewTitleForTenant("Push Big File", this.Session.GetTenant());
-            // The Name of the Upload component is "attachments"                            
+            // The Name of the Upload component is "attachments"
             if (attachments != null)
             {
                 Session["FileInfos"] = attachments;
@@ -87,9 +84,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 Directory.CreateDirectory(userDataPath);
             }
 
-
             var dirInfo = new DirectoryInfo(userDataPath);
-
 
             foreach (var info in dirInfo.GetFiles())
             {
@@ -97,10 +92,10 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             }
 
             return fileList;
-
         }
 
         #region helper
+
         // chekc if user exist
         // if true return usernamem otherwise "DEFAULT"
         private string GetUsernameOrDefault()
@@ -133,13 +128,10 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
                 file.SaveAs(destinationPath);
             }
-
         }
 
         private SendBigFilesToServerModel LoadDefaultModel()
         {
-
-
             var model = new SendBigFilesToServerModel
             {
                 ServerFileList = GetServerFileList(),
@@ -149,7 +141,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
             return model;
         }
-        #endregion
 
+        #endregion helper
     }
 }

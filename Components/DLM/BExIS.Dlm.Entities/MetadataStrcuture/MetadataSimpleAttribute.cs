@@ -4,8 +4,9 @@
     {
         #region Methods
 
-        public virtual MetadataSimpleAttribute Self { get { return this; } }
+        public virtual MetadataSimpleAttribute Self
+        { get { return this; } }
 
-        #endregion
+        #endregion Methods
     }
 }

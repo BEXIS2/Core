@@ -1,13 +1,13 @@
 <!--
-<?xml version="1.0" encoding="utf-8" ? >
+<?xml version="1.0" encoding="utf-8" ?>
 <!DOCTYPE hibernate-mapping [ <!ENTITY BaseEntityProperties SYSTEM "..\BaseEntityProperties.xml"> ]>
 -->
-  
+
 <hibernate-mapping xmlns="urn:nhibernate-mapping-2.2" assembly="BExIS.Dlm.Entities" namespace="BExIS.Dlm.Entities.Data">
   <class xmlns="urn:nhibernate-mapping-2.2" name="DatasetVersion" table="DatasetVersions">
     <!-- Mapping BaseEntity properties -->
     <id name="Id" type="Int64">
-      <column name="Id" index="idx_DatasetVersions_id"/>
+      <column name="Id" index="idx_DatasetVersions_id" />
       <generator class="native" />
     </id>
 
@@ -16,7 +16,7 @@
     <version name="VersionNo" type="Int32">
       <column name="VersionNo" />
     </version>
-    
+
     <property name="Extra" type="System.Xml.XmlDocument, System.Xml, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
       <column name="Extra" not-null="false" sql-type="xml" />
     </property>
@@ -28,14 +28,14 @@
         <column name="State" />
       </property>
       <property name="Timestamp" type="DateTime">
-        <column name="StateTimestamp" not-null="false"/>
+        <column name="StateTimestamp" not-null="false" />
       </property>
       <property name="Comment" type="string">
         <column name="StateComment" />
       </property>
     </component>
 
-    <component name="CreationInfo" >
+    <component name="CreationInfo">
       <property name="ActionType" type="Vaiona.Entities.Common.AuditActionType, Vaiona.Entities">
         <column name="C_ActionType" />
       </property>
@@ -46,11 +46,11 @@
         <column name="C_Comment" />
       </property>
       <property name="Timestamp" type="DateTime">
-        <column name="C_Timestamp" not-null="false"/>
+        <column name="C_Timestamp" not-null="false" />
       </property>
     </component>
 
-    <component name="ModificationInfo" >
+    <component name="ModificationInfo">
       <property name="ActionType" type="Vaiona.Entities.Common.AuditActionType, Vaiona.Entities">
         <column name="M_ActionType" />
       </property>
@@ -61,26 +61,26 @@
         <column name="M_Comment" />
       </property>
       <property name="Timestamp" type="DateTime">
-        <column name="M_Timestamp" not-null="false"/>
+        <column name="M_Timestamp" not-null="false" />
       </property>
     </component>
-    
+
     <!-- Mapping Dataset properties -->
 
     <property name="Title" type="string">
-      <column name="Title"  />
+      <column name="Title" />
     </property>
 
     <property name="Description" type="string">
-      <column name="Description" sql-type="varchar"/>
+      <column name="Description" sql-type="varchar" />
     </property>
-    
+
     <property name="ChangeDescription" type="StringClob">
       <column name="ChangeDescription"  sql-type="text" />
     </property>
 
     <property name="Timestamp" type="Timestamp">
-      <column name="Timestamp"  index="idx_DatasetVersions_timestamp"/>
+      <column name="Timestamp"  index="idx_DatasetVersions_timestamp" />
     </property>
 
     <property name="Status" type="BExIS.Dlm.Entities.Data.DatasetVersionStatus, BExIS.Dlm.Entities">
@@ -90,7 +90,7 @@
     <property name="Metadata" type="System.Xml.XmlDocument, System.Xml, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
       <column name="Metadata" not-null="false" sql-type="xml" />
     </property>
-    
+
     <property name="XmlExtendedPropertyValues" type="System.Xml.XmlDocument, System.Xml, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
       <column name="XmlExtendedPropertyValues" not-null="false" sql-type="xml" />
     </property>
@@ -98,13 +98,13 @@
 	<property name="VersionType" type="string">
 	  <column name="VersionType" />
 	</property>
-	
+
     <property name="VersionName" type="string">
 	  <column name="VersionName" />
-	</property>	  
-	
+	</property>
+
 	  <property name="VersionDescription" type="StringClob">
-      <column name="VersionDescription" sql-type="text" /> 
+      <column name="VersionDescription" sql-type="text" />
 	</property>
 
 	<property name="PublicAccess" type="Boolean">
@@ -115,10 +115,9 @@
 	  <column name="PublicAccessDate" />
 	</property>
 
-
 	  <!-- Mapping entity associations -->
-    <many-to-one name="Dataset" class="BExIS.Dlm.Entities.Data.Dataset" not-null="true" column="DatasetRef" index="idx_DatasetVersions_DatasetRef"/>
-    
+    <many-to-one name="Dataset" class="BExIS.Dlm.Entities.Data.Dataset" not-null="true" column="DatasetRef" index="idx_DatasetVersions_DatasetRef" />
+
     <set cascade="all-delete-orphan" name="PriliminaryTuples" inverse="true" lazy="true" order-by="OrderNo">
       <key>
         <column name="DatasetVersionRef" />
@@ -132,7 +131,5 @@
       </key>
       <one-to-many class="ContentDescriptor" />
     </set>
-
   </class>
-
 </hibernate-mapping>

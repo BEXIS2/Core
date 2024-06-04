@@ -85,29 +85,42 @@
         MetadataParameterUsage = 18
     }
 
-    public class LinkElementMetadataStructure : LinkElement { }
+    public class LinkElementMetadataStructure : LinkElement
+    { }
 
-    public class LinkElementXsd : LinkElement { }
+    public class LinkElementXsd : LinkElement
+    { }
 
-    public class LinkElementSystem : LinkElement { }
+    public class LinkElementSystem : LinkElement
+    { }
 
-    public class LinkElementSimpleMetadataAttribute : LinkElement { }
+    public class LinkElementSimpleMetadataAttribute : LinkElement
+    { }
 
-    public class LinkElementComplexMetadatAttribute : LinkElement { }
+    public class LinkElementComplexMetadatAttribute : LinkElement
+    { }
 
-    public class LinkElementMetadatAttributeUsage : LinkElement { }
+    public class LinkElementMetadatAttributeUsage : LinkElement
+    { }
 
-    public class LinkElementMetadataNestedAttributeUsage : LinkElement { }
+    public class LinkElementMetadataNestedAttributeUsage : LinkElement
+    { }
 
-    public class LinkElementMetadataPackage : LinkElement { }
+    public class LinkElementMetadataPackage : LinkElement
+    { }
 
-    public class LinkElementMetadataPackageUsage : LinkElement { }
+    public class LinkElementMetadataPackageUsage : LinkElement
+    { }
 
-    public class LinkElementPartyType : LinkElement { }
+    public class LinkElementPartyType : LinkElement
+    { }
 
-    public class LinkElementParty : LinkElement { }
+    public class LinkElementParty : LinkElement
+    { }
 
-    public class LinkElementKey : LinkElement { }
+    public class LinkElementKey : LinkElement
+    { }
 
-    public class LinkElementRole : LinkElement { }
+    public class LinkElementRole : LinkElement
+    { }
 }
