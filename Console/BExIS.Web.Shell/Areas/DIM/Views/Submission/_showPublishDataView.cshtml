@@ -235,41 +235,41 @@
         @if (Model.EditRights && Model.MetadataIsValid)
         {
 
-        <table>
-            <tr>
-                <td style="width: 100px;">
-                    @(Html.Telerik().DropDownList()
+            <table>
+                <tr>
+                    <td style="width: 100px;">
+                        @(Html.Telerik().DropDownList()
                       .Placeholder("Select")
                       .Name("SelectDataRepository")
                       .HtmlAttributes(new { title = "Select a repository for publishing this dataset" })
                       .ClientEvents(events => events.OnChange("onSelectDataRepositoryDropDownChange"))
                       .BindTo(new SelectList(datarepolist,"Id","Text")))
-                </td>
+                    </td>
 
-                <td style="width: 100px;">
-                    <button id="submitPublishBt" class="bx-button small function bx-disabled" onClick="onSubmitPublishBtClick(this)" disabled="disabled" title="Prepare Publication Package (NOTE: there is currently no direct submission in place)">Publish</button>
-                </td>
+                    <td style="width: 100px;">
+                        <button id="submitPublishBt" class="bx-button small function bx-disabled" onClick="onSubmitPublishBtClick(this)" disabled="disabled" title="Prepare Publication Package (NOTE: there is currently no direct submission in place)">Publish</button>
+                    </td>
 
-                <td style="text-align: right">
-                    <span id="requirementsContainer" style="color:#f24c24">
-                    </span>
-                    <div id="preloader">
-                    </div>
-                </td>
-            </tr>
-        </table>
+                    <td style="text-align: right">
+                        <span id="requirementsContainer" style="color:#f24c24">
+                        </span>
+                        <div id="preloader">
+                        </div>
+                    </td>
+                </tr>
+            </table>
         }
         else
         {
             if (Model.MetadataIsValid == false)
             {
-        <table>
-            <tr>
-                <td style="width: 100px;">
-                    It is not possible to publish the current version because the metadata is not valid. Only when the metadata is valid, publishing options are available.
-                </td>
-            </tr>
-        </table>
+                <table>
+                    <tr>
+                        <td style="width: 100px;">
+                            It is not possible to publish the current version because the metadata is not valid. Only when the metadata is valid, publishing options are available.
+                        </td>
+                    </tr>
+                </table>
             }
 
         }
@@ -290,33 +290,33 @@
             {
                 foreach (var publication in Model.Publications)
                 {
-            <tr>
-                <td>@publication.DatasetVersionNr</td>
-                <td>@publication.Broker.Name</td>
-                <td>@publication.DataRepo</td>
-                <td>@publication.CreationDate.ToLocalTime()</td>
-                <td>@publication.Status</td>
-                <td><a href="@publication.Broker.Link" target="_blank">Website</a></td>
+                    <tr>
+                        <td>@publication.DatasetVersionNr</td>
+                        <td>@publication.Broker.Name</td>
+                        <td>@publication.DataRepo</td>
+                        <td>@publication.CreationDate.ToLocalTime()</td>
+                        <td>@publication.Status</td>
+                        <td><a href="@publication.Broker.Link" target="_blank">Website</a></td>
 
-                <td>
-                    @foreach (var datarepo in publication.Broker.DataRepos)
+                        <td>
+                            @foreach (var datarepo in publication.Broker.DataRepos)
                             {
                                 if (Model.DownloadRights)
-                                 {
-                    @Html.ActionLink(" ", "DownloadZip", "Submission", new {broker = publication.Broker.Name, datarepo, datasetversionid = publication.DatasetVersionId}, new {@class = "bx bx-grid-function bx-download", title = "Download for "+datarepo})
-                                 }
-                                 else
-                                 {
-                    <a class="bx bx-grid-function bx-download bx-disabled" disabled="disabled" title="You do not have permission to download this dataset."></a>
-                                 }
+                                {
+                                    @Html.ActionLink(" ", "DownloadZip", "Submission", new { brokerId = publication.Broker.Id, datasetVersionId = publication.DatasetVersionId }, new { @class = "bx bx-grid-function bx-download", title = "Download for " + datarepo })
+                                }
+                                else
+                                {
+                                    <a class="bx bx-grid-function bx-download bx-disabled" disabled="disabled" title="You do not have permission to download this dataset."></a>
+                                }
                             }
-                </td>
-            </tr>
+                        </td>
+                    </tr>
                 }
             }
             else
             {
-            <tr><td>empty</td></tr>
+                <tr><td>empty</td></tr>
             }
         </table>
     </div>

@@ -71,7 +71,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
 
                 return PartialView("_requestRow", new PublicationModel()
                 {
-                    Broker = new BrokerModel(publication.Broker.Name, new List<string>() { publication.Repository.Name }, publication.Broker.Link),
+                    Broker = new BrokerModel(publication.Broker.Id, publication.Broker.Name, new List<string>() { publication.Repository.Name }, publication.Broker.Link),
                     DataRepo = publication.Repository.Name,
                     DatasetVersionId = publication.DatasetVersion.Id,
                     CreationDate = publication.Timestamp,
@@ -198,7 +198,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
 
                 return PartialView("_requestRow", new PublicationModel()
                 {
-                    Broker = new BrokerModel(publication.Broker.Name, new List<string>() { publication.Repository.Name }, publication.Broker.Link),
+                    Broker = new BrokerModel(publication.Broker.Id, publication.Broker.Name, new List<string>() { publication.Repository.Name }, publication.Broker.Link),
                     DataRepo = publication.Repository.Name,
                     DatasetVersionId = publication.DatasetVersion.Id,
                     CreationDate = publication.Timestamp,
@@ -315,7 +315,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
                 {
                     model.Add(new PublicationModel()
                     {
-                        Broker = new BrokerModel(broker.Name, new List<string>() { p.Repository.Name }, broker.Link),
+                        Broker = new BrokerModel(broker.Id, broker.Name, new List<string>() { p.Repository.Name }, broker.Link),
                         DataRepo = p.Repository.Name,
                         DatasetVersionId = p.DatasetVersion.Id,
                         CreationDate = p.Timestamp,

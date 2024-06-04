@@ -141,6 +141,8 @@
 
 <link href="@Url.Content("~/Areas/DDM/Content/ddm.css")" rel="stylesheet" type="text/css" />
 
+
+
 @if (Model != null && ((Model.IsPublic == true || User.Identity.Name != "") || check_public_metadata == "false"))
 {
     <div id="showData">
@@ -206,7 +208,7 @@
                     </div>
                 </div>
                 <div class="col-xs-2 col-md-2 col-lg-2">
-                    <div id="preloaderContainer"></div>
+                    @*<div id="preloaderContainer"></div>*@
                 </div>
 
                 <div id="view-header-dataset-options" class="col-xs-4 col-md-4 col-lg-4 pull-right text-right">
@@ -531,6 +533,8 @@ else
 {
     @Html.ValidationSummary(true);
 }
+
+
 
 <style>
     a:hover, a {
