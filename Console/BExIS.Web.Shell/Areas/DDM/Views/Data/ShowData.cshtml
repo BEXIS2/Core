@@ -135,6 +135,12 @@
 {
     <script src="@Url.Content("~/Areas/DCM/" + debugPath + "Scripts/Form.js")" type="text/javascript"></script>
     <script src="@Url.Content("~/Areas/DCM/" + debugPath + "Scripts/minimap/minimap.js")" type="text/javascript"></script>
+    <script>
+
+        $(document).ready(function () {
+            $("#initLoad").preloader(20, "Loading...");
+        });
+    </script>
 
 }
 <link href="@Url.Content("~/Areas/DCM/" + debugPath + "Content/bexis-metadata.css")" rel="stylesheet" type="text/css" />
@@ -145,22 +151,24 @@
 
 @if (Model != null && ((Model.IsPublic == true || User.Identity.Name != "") || check_public_metadata == "false"))
 {
+
     <div id="showData">
+
         <div class="datasetview_header">
             <div class="datasetview_header-title">
                 <h1>@Model.Title </h1>
             </div>
 
-           @if (Model.HasEditRight && ViewData["state"].ToString() != "hidden")
-           {
-            <div class="datasetview_header-toggle" onclick="toogleToEdit()">
-                <div class="switch">
-                    <input id="bx2-toggle" class="bx2-toggle bx2-toggle-round-flat" type="checkbox">
-                    <label for="bx2-toggle"></label>
+            @if (Model.HasEditRight && ViewData["state"].ToString() != "hidden")
+            {
+                <div class="datasetview_header-toggle" onclick="toogleToEdit()">
+                    <div class="switch">
+                        <input id="bx2-toggle" class="bx2-toggle bx2-toggle-round-flat" type="checkbox">
+                        <label for="bx2-toggle"></label>
+                    </div>
                 </div>
-            </div>
-            <span class="datasetview_header-toggle-text">switch to edit</span>
-           }
+                <span class="datasetview_header-toggle-text">switch to edit</span>
+            }
         </div>
 
         @if (ViewData["Message"].ToString() != "")
@@ -279,81 +287,82 @@
         }
         @if (@Model != null)
         {
+            <div id="initLoad" style="padding-bottom:20px;"></div>
             <div id="tab-container" style="display:none">
                 @if (ViewData.ModelState.IsValid)
                 {
-                <ul class="nav nav-tabs">
-                    <!--load hooks in tab header-->
-                    <!--dataset hooks-->
-                    @foreach (var hook in datasetHooks)
-                    {
-                        if (hook.Status != BExIS.UI.Hooks.HookStatus.AccessDenied &&
-                        hook.Status != BExIS.UI.Hooks.HookStatus.Disabled)
+                    <ul class="nav nav-tabs">
+                        <!--load hooks in tab header-->
+                        <!--dataset hooks-->
+                        @foreach (var hook in datasetHooks)
                         {
-
-                            var baseid = @hook.Name.ToLower();
-                            <!--set first element to active-->
-                            var active = hook.Name.Equals(activeHook.Name) ? "active" : "";
-                            var disabled = hook.Status.Equals(BExIS.UI.Hooks.HookStatus.Disabled) ? "disabled" : "";
-
-                            <li role="presentation" class="@active @disabled">
-                                <a href="#@baseid" aria-controls="@baseid" role="tab" data-toggle="tab" onclick="selectTab('@hook.Name.ToLower()')" onmouseover="prefetch('@hook.Name.ToLower()', '@hook.Start', @Model.Id, @Model.Version)">@hook.DisplayName.ToUpper()</a>
-                            </li>
-
-                        }
-                    }
-
-                    <!--additional hooks-->
-
-                    @foreach (var hook in additionalHooks)
-                    {
-                        if (hook.Status != BExIS.UI.Hooks.HookStatus.AccessDenied &&
+                            if (hook.Status != BExIS.UI.Hooks.HookStatus.AccessDenied &&
                             hook.Status != BExIS.UI.Hooks.HookStatus.Disabled)
-                        {
+                            {
 
+                                var baseid = @hook.Name.ToLower();
+                                <!--set first element to active-->
+                                var active = hook.Name.Equals(activeHook.Name) ? "active" : "";
+                                var disabled = hook.Status.Equals(BExIS.UI.Hooks.HookStatus.Disabled) ? "disabled" : "";
+
+                                <li role="presentation" class="@active @disabled">
+                                    <a href="#@baseid" aria-controls="@baseid" role="tab" data-toggle="tab" onclick="selectTab('@hook.Name.ToLower()')" onmouseover="prefetch('@hook.Name.ToLower()', '@hook.Start', @Model.Id, @Model.Version)">@hook.DisplayName.ToUpper()</a>
+                                </li>
+
+                            }
+                        }
+
+                        <!--additional hooks-->
+
+                        @foreach (var hook in additionalHooks)
+                        {
+                            if (hook.Status != BExIS.UI.Hooks.HookStatus.AccessDenied &&
+                                hook.Status != BExIS.UI.Hooks.HookStatus.Disabled)
+                            {
+
+                                var baseid = @hook.Name.ToLower();
+                                var active = hook.Name.Equals(activeHook.Name) ? "active" : "";
+
+                                <!--set first element to active-->
+                                var disabled = hook.Status.Equals(BExIS.UI.Hooks.HookStatus.Disabled) ? "disabled" : "";
+
+                                <li role="presentation" class="@active @disabled">
+                                    <a href="#@baseid" aria-controls="@baseid" role="tab" data-toggle="tab" onclick="selectTab('@hook.Name.ToLower()')" onmouseover="prefetch('@hook.Name.ToLower()', '@hook.Start', @Model.Id, @Model.Version)">@hook.DisplayName.ToUpper()</a>
+                                </li>
+
+                            }
+                        }
+                    </ul>
+
+                    <!--load hooks in tab content-->
+                    <!--dataset hooks-->
+
+                    <div class="tab-content">
+
+                        @foreach (var hook in datasetHooks)
+                        {
                             var baseid = @hook.Name.ToLower();
+                            <!--set first element to active-->
                             var active = hook.Name.Equals(activeHook.Name) ? "active" : "";
 
-                            <!--set first element to active-->
-                            var disabled = hook.Status.Equals(BExIS.UI.Hooks.HookStatus.Disabled) ? "disabled" : "";
-
-                            <li role="presentation" class="@active @disabled">
-                                <a href="#@baseid" aria-controls="@baseid" role="tab" data-toggle="tab" onclick="selectTab('@hook.Name.ToLower()')" onmouseover="prefetch('@hook.Name.ToLower()', '@hook.Start', @Model.Id, @Model.Version)">@hook.DisplayName.ToUpper()</a>
-                            </li>
-
+                            <div role="tabpanel" class="tab-pane @active" id="@baseid"></div>
                         }
-                    }
-                </ul>
 
-                <!--load hooks in tab content-->
-                <!--dataset hooks-->
+                        <!--additional hooks-->
+                        @foreach (var hook in additionalHooks)
+                        {
+                            var baseid = @hook.Name.ToLower();
+                            <!--set first element to active-->
+                            var active = hook.Name.Equals(activeHook.Name) ? "active" : "";
 
-                <div class="tab-content">
-
-                    @foreach (var hook in datasetHooks)
-                    {
-                        var baseid = @hook.Name.ToLower();
-                        <!--set first element to active-->
-                        var active = hook.Name.Equals(activeHook.Name) ? "active" : "";
-
-                        <div role="tabpanel" class="tab-pane @active" id="@baseid"></div>
-                    }
-
-                    <!--additional hooks-->
-                    @foreach (var hook in additionalHooks)
-                    {
-                        var baseid = @hook.Name.ToLower();
-                        <!--set first element to active-->
-                        var active = hook.Name.Equals(activeHook.Name) ? "active" : "";
-
-                        <div role="tabpanel" class="tab-pane @active" id="@baseid"></div>
-                    }
-                </div>
+                            <div role="tabpanel" class="tab-pane @active" id="@baseid"></div>
+                        }
+                    </div>
 
                 }
                 else
                 {
-                @Html.ValidationSummary(true);
+                    @Html.ValidationSummary(true);
                 }
             </div>
         }
@@ -379,8 +388,9 @@
 					});
 			}
 		});
-	}
+        }
 
+ 
 	$(document).ready(function () {
 
 		$("#preloaderContainer").preloader(20, "Loading...");
@@ -389,7 +399,8 @@
         initfetch('@activeHook.Name', '@activeHook.Start',@Model.Id,@Model.Version)
         console.log("document ready end prefetch")
 
-		$("#preloaderContainer").removePreloader();
+        $("#preloaderContainer").removePreloader();
+        
 
 	});
 
@@ -421,6 +432,7 @@
                 $("#" + hook).html(data)
                 // remove preloader
                 $("#" + hook).attr("loaded", "true");
+                $("#initLoad").remove();
 
             });
         }
@@ -536,6 +548,10 @@ else
 
 
 
+
+
+
+
 <style>
     a:hover, a {
         text-decoration: none;
@@ -550,14 +566,16 @@ else
         float: left;
     }
 
-    .datasetview_header-title h1 {
-        margin-top: 2px;
-    }
+        .datasetview_header-title h1 {
+            margin-top: 2px;
+        }
+
     .datasetview_header-toggle-text {
         padding: 5px;
         float: right;
         color: rgb(98, 98, 98);
     }
+
     .datasetview_header-toggle {
         padding: 2px;
         float: right;
