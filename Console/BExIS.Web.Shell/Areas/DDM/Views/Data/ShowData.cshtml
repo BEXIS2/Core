@@ -147,8 +147,6 @@
 
 <link href="@Url.Content("~/Areas/DDM/Content/ddm.css")" rel="stylesheet" type="text/css" />
 
-
-
 @if (Model != null && ((Model.IsPublic == true || User.Identity.Name != "") || check_public_metadata == "false"))
 {
 
@@ -390,7 +388,6 @@
 		});
         }
 
- 
 	$(document).ready(function () {
 
 		$("#preloaderContainer").preloader(20, "Loading...");
@@ -400,7 +397,6 @@
         console.log("document ready end prefetch")
 
         $("#preloaderContainer").removePreloader();
-        
 
 	});
 
@@ -545,12 +541,6 @@ else
 {
     @Html.ValidationSummary(true);
 }
-
-
-
-
-
-
 
 <style>
     a:hover, a {

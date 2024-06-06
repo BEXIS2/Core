@@ -144,7 +144,7 @@
 
 		<Hook
 			name="datadescription"
-			displayName="Data Strutcure"
+			displayName="Data Structure"
 			mode="edit"
 			entity="dataset"
 			place="details"

@@ -449,6 +449,134 @@ namespace BExIS.Dlm.Services.Data
         }
 
         /// <summary>
+        /// Marks the dataset as deleted but does not physically remove it from the database.
+        /// If the dataset is checked out and the <paramref name="rollbackCheckout"/> is
+        /// True, the dataset's changes will be roll-backed and then the delete operation takes place, but if the <paramref name="rollbackCheckout"/> is false,
+        /// The changes will be checked in as a new version and then the deletion operation is executed.
+        /// </summary>
+        /// <param name="datasetId">The identifier of the dataset to be checked-in.</param>
+        /// <param name="username">The username that performs the check-in, which should be the same as the check-out username.</param>
+        /// <param name="rollbackCheckout">Determines whether latest uncommitted changes should be rolled back or checked in before marking the dataset as deleted.</param>
+        /// <returns>True if the dataset is deleted, False otherwise.</returns>
+        public bool UndoDeleteDataset(Int64 datasetId, string username, bool rollbackCheckout)
+        {
+            string deleteReason = "Undo Delete of entity " + datasetId; // @ToDO replace by variable from UI
+            Contract.Requires(datasetId >= 0);
+
+            using (IUnitOfWork uow = this.GetUnitOfWork())
+            {
+                IRepository<Dataset> datasetRepo = uow.GetRepository<Dataset>();
+                IRepository<DatasetVersion> datasetVersionRepo = uow.GetRepository<DatasetVersion>();
+                IRepository<DataTuple> tupleRepo = uow.GetRepository<DataTuple>();
+                IRepository<DataTupleVersion> tupleVersionRepo = uow.GetRepository<DataTupleVersion>();
+
+                //this.DatasetRepo.Evict();
+                //this.DatasetVersionRepo.Evict();
+                //this.DataTupleRepo.Evict();
+                //this.DataTupleVerionRepo.Evict();
+
+                Dataset entity = datasetRepo.Get(datasetId);
+                if (entity.Status != DatasetStatus.Deleted)
+                    return false;
+                /// the dataset must be in CheckedIn state to be deleted
+                /// so if it is checked out, the checkout version (working copy) is removed first
+                if (entity.Status == DatasetStatus.CheckedOut)
+                {
+                    if (rollbackCheckout == true)
+                    {
+                        this.undoCheckout(entity.Id, username, false); // commit and behavior: create|refresh
+                    }
+                    else
+                    {
+                        throw new Exception(string.Format("Dataset {0} is in check out state, which prevents it from being deleted. Rollback the changes or check them in and try again", entity.Id));
+                    }
+                }
+
+                try
+                {
+              
+                    // get the latest dataset with data (a)
+                    var dataset = DatasetRepo.Get(entity.Id);
+                    var versions = dataset.Versions.OrderBy(v => v.Id);
+                    var deletedDatasetVersion = versions.ElementAt(dataset.Versions.Count - 1);
+                    var lastDatasetVersion = versions.ElementAt(dataset.Versions.Count - 2);
+
+                    // get all datatuples belong to a
+                    var deletedTupleVersions = DataTupleVersionRepo.Query().Where(t =>
+                        t.DatasetVersion.Id.Equals(lastDatasetVersion.Id) &&
+                        t.ActingDatasetVersion.Id.Equals(deletedDatasetVersion.Id)
+                        ).ToList();
+
+                    // copy datatuplversions -> datatuples table
+                    List<DataTuple> datatuples = new List<DataTuple>();
+                    foreach (var deletedTupleVersion in deletedTupleVersions)
+                    {
+                        DataTuple tuple = new DataTuple()
+                        {
+                            TupleAction = TupleAction.Edited,
+                            Extra = deletedTupleVersion.Extra,
+                            //Id = orginalTuple.Id,
+                            OrderNo = deletedTupleVersion.OrderNo,
+                            Timestamp = deletedTupleVersion.Timestamp,
+                            XmlAmendments = deletedTupleVersion.XmlAmendments,
+                            JsonVariableValues = deletedTupleVersion.JsonVariableValues,
+                            DatasetVersion = deletedTupleVersion.DatasetVersion, //latestCheckedInVersion,
+                            Values = deletedTupleVersion.Values
+                        };
+
+                        datatuples.Add(tuple);
+                    }
+
+                    if (datatuples != null && datatuples.Count > 0)
+                    {
+                        int batchSize = uow.PersistenceManager.PreferredPushSize;
+                        List<DataTuple> processedTuples = null;
+                        long iterations = datatuples.Count / batchSize;
+                        if (iterations * batchSize < datatuples.Count)
+                            iterations++;
+                        for (int round = 0; round < iterations; round++)
+                        {
+                            processedTuples = datatuples.Skip(round * batchSize).Take(batchSize).ToList();
+                            tupleRepo.Put(processedTuples);
+                            uow.ClearCache(true); //flushes one batch of tuples
+                            processedTuples.Clear();
+                            GC.Collect();
+                        }
+                    }
+
+                    tupleVersionRepo.Delete(deletedTupleVersions.Select(v=>v.Id).ToList());
+
+                   
+
+                    lastDatasetVersion.Status = DatasetVersionStatus.CheckedIn;
+                    datasetVersionRepo.Put(lastDatasetVersion);
+                    dataset.Status = DatasetStatus.CheckedIn;
+                    dataset.Versions.Remove(deletedDatasetVersion);
+
+                    datasetVersionRepo.Delete(deletedDatasetVersion.Id);
+                    datasetRepo.Put(dataset);
+                    uow.Commit();
+
+                    // if any problem was detected during the commit, an exception will be thrown!
+                    if ((entity.DataStructure is StructuredDataStructure))
+                        updateMaterializedView(datasetId, ViewCreationBehavior.Create, false);
+
+                    LoggerFactory.LogCustom("dataset " + datasetId + " returns from delete status");
+
+                    return (true);
+                }
+                catch (Exception ex)
+                {
+                    if (entity.Status == DatasetStatus.CheckedOut)
+                    {
+                        checkInDataset(entity.Id, "Checked-in after failed delete try!", username, false, ViewCreationBehavior.Create | ViewCreationBehavior.Refresh, "");
+                    }
+                    return false;
+                }
+            }
+        }
+
+        /// <summary>
         /// Physically deletes the whole dataset, including its versions and data tuples, from the database.
         /// </summary>
         /// <param name="datasetId">The identifier of the dataset to be checked-in.</param>
@@ -1200,6 +1328,25 @@ namespace BExIS.Dlm.Services.Data
                         );
                     return (q1.ToList());
                 }
+            }
+        }
+
+        /// <summary>
+        /// Returns a  deleted latest version of the provided <paramref name="datasetId"/> including/ excluding the checked out versions.
+        /// </summary>
+        /// <param name="datasetId">The  identifiers of the dataset whose their latest versions is requested</param>
+        /// <returns>The list of the latest versions of the deleted datasets</returns>
+        private DatasetVersion getDeletedDatasetLatestVersion(long datasetId)
+        {
+            using (IUnitOfWork uow = this.GetUnitOfWork())
+            {
+                var datasetVersionRepo = uow.GetReadOnlyRepository<DatasetVersion>();
+                var q1 = datasetVersionRepo.Query(p =>
+                        datasetId.Equals(p.Dataset.Id)
+                        && (p.Dataset.Status == DatasetStatus.Deleted)
+                        && (p.Status == DatasetVersionStatus.CheckedIn)
+                    );
+                return (q1.ToList().FirstOrDefault());
             }
         }
 
