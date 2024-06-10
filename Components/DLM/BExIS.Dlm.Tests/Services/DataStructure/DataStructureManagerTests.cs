@@ -1,6 +1,7 @@
 ﻿using BExIS.App.Testing;
 using BExIS.Dlm.Entities.DataStructure;
 using BExIS.Dlm.Services.DataStructure;
+using BExIS.Dlm.Tests.Helpers;
 using BExIS.Utils.Config;
 using NUnit.Framework;
 
@@ -14,6 +15,11 @@ namespace BExIS.Dlm.Tests.Services.DataStructure
         public void OneTimeSetUp()
         {
             helper = new TestSetupHelper(WebApiConfig.Register, false);
+
+            var dsHelper = new DatasetHelper();
+            dsHelper.PurgeAllDatasets();
+            dsHelper.PurgeAllDataStructures();
+            dsHelper.PurgeAllResearchPlans();
         }
 
         [OneTimeTearDown]

@@ -233,6 +233,10 @@ namespace BExIS.Dlm.Entities.Meanings.Tests
             {
                 _meaningManager.deleteExternalLink(el);
             }
+            foreach (PrefixCategory pc in _meaningManager.getPrefixCategory())
+            {
+                _meaningManager.deletePrefixCategory(pc);
+            }
         }
     }
 }

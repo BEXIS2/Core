@@ -50,7 +50,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Microsoft.AspNet.Identity.Core, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\..\..\..\..\packages\Microsoft.AspNet.Identity.Core.2.2.3\lib\net45\Microsoft.AspNet.Identity.Core.dll</HintPath>
+      <HintPath>..\..\..\..\..\packages\Microsoft.AspNet.Identity.Core.2.2.4\lib\net45\Microsoft.AspNet.Identity.Core.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="Microsoft.Web.Helpers, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
@@ -59,9 +59,8 @@
     <Reference Include="Microsoft.Web.Infrastructure, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\..\..\..\..\packages\Microsoft.Web.Infrastructure.2.0.0\lib\net40\Microsoft.Web.Infrastructure.dll</HintPath>
     </Reference>
-    <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\packages\Newtonsoft.Json.13.0.1\lib\netstandard2.0\Newtonsoft.Json.dll</HintPath>
+    <Reference Include="Newtonsoft.Json, Version=13.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\..\..\..\..\packages\Newtonsoft.Json.13.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="Sylvan.Data.Csv, Version=1.3.5.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\..\..\..\packages\Sylvan.Data.Csv.1.3.5\lib\netstandard2.0\Sylvan.Data.Csv.dll</HintPath>
@@ -175,6 +174,73 @@
     <None Include="Properties\PublishProfiles\BexisServer_test.pubxml" />
     <None Include="Properties\PublishProfiles\BexisServer_train.pubxml" />
     <None Include="Properties\PublishProfiles\FolderProfile.pubxml" />
+    <None Include="Scripts\jquery.validate-vsdoc.js" />
+    <Content Include="Scripts\jquery.validate.js" />
+    <Content Include="Scripts\jquery.validate.min.js" />
+    <Content Include="Scripts\jquery.validate.unobtrusive.js" />
+    <Content Include="Scripts\jquery.validate.unobtrusive.min.js" />
+    <Content Include="Scripts\svelte\app.css" />
+    <Content Include="Scripts\svelte\constraints\index.html" />
+    <Content Include="Scripts\svelte\datastructure\create\index.html" />
+    <Content Include="Scripts\svelte\datastructure\edit\index.html" />
+    <Content Include="Scripts\svelte\datastructure\index.html" />
+    <Content Include="Scripts\svelte\datatype\index.html" />
+    <Content Include="Scripts\svelte\dimension\index.html" />
+    <Content Include="Scripts\svelte\externallink\index.html" />
+    <Content Include="Scripts\svelte\externallink\prefixcategory\index.html" />
+    <Content Include="Scripts\svelte\favicon.png" />
+    <Content Include="Scripts\svelte\index.html" />
+    <Content Include="Scripts\svelte\meaning\index.html" />
+    <Content Include="Scripts\svelte\unit\index.html" />
+    <Content Include="Scripts\svelte\variabletemplate\index.html" />
+    <Content Include="Scripts\svelte\_app\env.js" />
+    <Content Include="Scripts\svelte\_app\immutable\assets\0.NATdHqh-.css" />
+    <Content Include="Scripts\svelte\_app\immutable\assets\CodeMirror.DMKri8do.css" />
+    <Content Include="Scripts\svelte\_app\immutable\assets\eslint4b.bRh5xSvE.css" />
+    <Content Include="Scripts\svelte\_app\immutable\assets\MissingValues.C5ZGgZNs.css" />
+    <Content Include="Scripts\svelte\_app\immutable\assets\ProgressBar.Cirlo5Z8.css" />
+    <Content Include="Scripts\svelte\_app\immutable\assets\_layout.BzmaqYvP.css" />
+    <Content Include="Scripts\svelte\_app\immutable\chunks\BaseCaller.DKaNiEEY.js" />
+    <Content Include="Scripts\svelte\_app\immutable\chunks\ConstraintsDescription.CJ3deqyz.js" />
+    <Content Include="Scripts\svelte\_app\immutable\chunks\DropdownKvP.DCD9qsR8.js" />
+    <Content Include="Scripts\svelte\_app\immutable\chunks\entry.Bz1iF1cS.js" />
+    <Content Include="Scripts\svelte\_app\immutable\chunks\ErrorMessage.zD3AipS3.js" />
+    <Content Include="Scripts\svelte\_app\immutable\chunks\eslint4b.es.Bsf3VjZw.js" />
+    <Content Include="Scripts\svelte\_app\immutable\chunks\help.D-s8FFLz.js" />
+    <Content Include="Scripts\svelte\_app\immutable\chunks\index.9OvqG8Gi.js" />
+    <Content Include="Scripts\svelte\_app\immutable\chunks\index.CJwPE-AO.js" />
+    <Content Include="Scripts\svelte\_app\immutable\chunks\index.DWlViqnX.js" />
+    <Content Include="Scripts\svelte\_app\immutable\chunks\MissingValues.DcVRA6Ax.js" />
+    <Content Include="Scripts\svelte\_app\immutable\chunks\MultiSelect.ChCMpl6M.js" />
+    <Content Include="Scripts\svelte\_app\immutable\chunks\ProgressBar.svelte_svelte_type_style_lang.5nEx3X7q.js" />
+    <Content Include="Scripts\svelte\_app\immutable\chunks\RadioItem.CZ6sNqpi.js" />
+    <Content Include="Scripts\svelte\_app\immutable\chunks\scheduler.DXasKYkc.js" />
+    <Content Include="Scripts\svelte\_app\immutable\chunks\services.65Kgv6y3.js" />
+    <Content Include="Scripts\svelte\_app\immutable\chunks\stores.Bwf2EJzN.js" />
+    <Content Include="Scripts\svelte\_app\immutable\chunks\stores.CsOm6McJ.js" />
+    <Content Include="Scripts\svelte\_app\immutable\chunks\stores.DoJTykP1.js" />
+    <Content Include="Scripts\svelte\_app\immutable\chunks\tableOptions.CECmoGjQ.js" />
+    <Content Include="Scripts\svelte\_app\immutable\chunks\TablePlaceholder.C1VOyUyf.js" />
+    <Content Include="Scripts\svelte\_app\immutable\chunks\TextArea.DyjpZlA8.js" />
+    <Content Include="Scripts\svelte\_app\immutable\chunks\types.eQO6CGud.js" />
+    <Content Include="Scripts\svelte\_app\immutable\chunks\types.w0DiU5pq.js" />
+    <Content Include="Scripts\svelte\_app\immutable\chunks\vest.production.Dzjo8v_D.js" />
+    <Content Include="Scripts\svelte\_app\immutable\entry\app.B2PHbe5z.js" />
+    <Content Include="Scripts\svelte\_app\immutable\entry\start.Dln8P0jc.js" />
+    <Content Include="Scripts\svelte\_app\immutable\nodes\0.C5jrQEa_.js" />
+    <Content Include="Scripts\svelte\_app\immutable\nodes\1.BHgdbnPI.js" />
+    <Content Include="Scripts\svelte\_app\immutable\nodes\10._HZfsOT0.js" />
+    <Content Include="Scripts\svelte\_app\immutable\nodes\11.D9EIDueF.js" />
+    <Content Include="Scripts\svelte\_app\immutable\nodes\12.Bia4Sxy4.js" />
+    <Content Include="Scripts\svelte\_app\immutable\nodes\13.BqYpzUDH.js" />
+    <Content Include="Scripts\svelte\_app\immutable\nodes\2.c25t5gzE.js" />
+    <Content Include="Scripts\svelte\_app\immutable\nodes\3.BdePCs2_.js" />
+    <Content Include="Scripts\svelte\_app\immutable\nodes\4.D3iFLae2.js" />
+    <Content Include="Scripts\svelte\_app\immutable\nodes\5.DiSlB1NU.js" />
+    <Content Include="Scripts\svelte\_app\immutable\nodes\6.CPDmrZpW.js" />
+    <Content Include="Scripts\svelte\_app\immutable\nodes\7.Co8c44Q7.js" />
+    <Content Include="Scripts\svelte\_app\immutable\nodes\8.IbHspsOt.js" />
+    <Content Include="Scripts\svelte\_app\immutable\nodes\9.BElbSsEz.js" />
     <Content Include="web.config" />
     <Content Include="Views\Unit\Index.cshtml" />
     <Content Include="Views\Index.cshtml" />
@@ -191,6 +257,134 @@
     <Content Include="Views\DataStructure\Edit.cshtml" />
     <Content Include="Views\ExternalLink\PrefixCategory.cshtml" />
     <Content Include="Views\Constraints\Index.cshtml" />
+    <Content Include="Scripts\svelte\.vite\manifest.json" />
+    <Content Include="Scripts\svelte\.vite\manifest.json.br" />
+    <Content Include="Scripts\svelte\.vite\manifest.json.gz" />
+    <Content Include="Scripts\svelte\app.css.br" />
+    <Content Include="Scripts\svelte\app.css.gz" />
+    <Content Include="Scripts\svelte\constraints\index.html.br" />
+    <Content Include="Scripts\svelte\constraints\index.html.gz" />
+    <Content Include="Scripts\svelte\datastructure\create\index.html.br" />
+    <Content Include="Scripts\svelte\datastructure\create\index.html.gz" />
+    <Content Include="Scripts\svelte\datastructure\edit\index.html.br" />
+    <Content Include="Scripts\svelte\datastructure\edit\index.html.gz" />
+    <Content Include="Scripts\svelte\datastructure\index.html.br" />
+    <Content Include="Scripts\svelte\datastructure\index.html.gz" />
+    <Content Include="Scripts\svelte\datatype\index.html.br" />
+    <Content Include="Scripts\svelte\datatype\index.html.gz" />
+    <Content Include="Scripts\svelte\dimension\index.html.br" />
+    <Content Include="Scripts\svelte\dimension\index.html.gz" />
+    <Content Include="Scripts\svelte\externallink\index.html.br" />
+    <Content Include="Scripts\svelte\externallink\index.html.gz" />
+    <Content Include="Scripts\svelte\externallink\prefixcategory\index.html.br" />
+    <Content Include="Scripts\svelte\externallink\prefixcategory\index.html.gz" />
+    <Content Include="Scripts\svelte\index.html.br" />
+    <Content Include="Scripts\svelte\index.html.gz" />
+    <Content Include="Scripts\svelte\meaning\index.html.br" />
+    <Content Include="Scripts\svelte\meaning\index.html.gz" />
+    <Content Include="Scripts\svelte\unit\index.html.br" />
+    <Content Include="Scripts\svelte\unit\index.html.gz" />
+    <Content Include="Scripts\svelte\variabletemplate\index.html.br" />
+    <Content Include="Scripts\svelte\variabletemplate\index.html.gz" />
+    <Content Include="Scripts\svelte\_app\env.js.br" />
+    <Content Include="Scripts\svelte\_app\env.js.gz" />
+    <Content Include="Scripts\svelte\_app\immutable\assets\0.NATdHqh-.css.br" />
+    <Content Include="Scripts\svelte\_app\immutable\assets\0.NATdHqh-.css.gz" />
+    <Content Include="Scripts\svelte\_app\immutable\assets\CodeMirror.DMKri8do.css.br" />
+    <Content Include="Scripts\svelte\_app\immutable\assets\CodeMirror.DMKri8do.css.gz" />
+    <Content Include="Scripts\svelte\_app\immutable\assets\eslint4b.bRh5xSvE.css.br" />
+    <Content Include="Scripts\svelte\_app\immutable\assets\eslint4b.bRh5xSvE.css.gz" />
+    <Content Include="Scripts\svelte\_app\immutable\assets\MissingValues.C5ZGgZNs.css.br" />
+    <Content Include="Scripts\svelte\_app\immutable\assets\MissingValues.C5ZGgZNs.css.gz" />
+    <Content Include="Scripts\svelte\_app\immutable\assets\ProgressBar.Cirlo5Z8.css.br" />
+    <Content Include="Scripts\svelte\_app\immutable\assets\ProgressBar.Cirlo5Z8.css.gz" />
+    <Content Include="Scripts\svelte\_app\immutable\assets\_layout.BzmaqYvP.css.br" />
+    <Content Include="Scripts\svelte\_app\immutable\assets\_layout.BzmaqYvP.css.gz" />
+    <Content Include="Scripts\svelte\_app\immutable\chunks\BaseCaller.DKaNiEEY.js.br" />
+    <Content Include="Scripts\svelte\_app\immutable\chunks\BaseCaller.DKaNiEEY.js.gz" />
+    <Content Include="Scripts\svelte\_app\immutable\chunks\ConstraintsDescription.CJ3deqyz.js.br" />
+    <Content Include="Scripts\svelte\_app\immutable\chunks\ConstraintsDescription.CJ3deqyz.js.gz" />
+    <Content Include="Scripts\svelte\_app\immutable\chunks\DropdownKvP.DCD9qsR8.js.br" />
+    <Content Include="Scripts\svelte\_app\immutable\chunks\DropdownKvP.DCD9qsR8.js.gz" />
+    <Content Include="Scripts\svelte\_app\immutable\chunks\entry.Bz1iF1cS.js.br" />
+    <Content Include="Scripts\svelte\_app\immutable\chunks\entry.Bz1iF1cS.js.gz" />
+    <Content Include="Scripts\svelte\_app\immutable\chunks\ErrorMessage.zD3AipS3.js.br" />
+    <Content Include="Scripts\svelte\_app\immutable\chunks\ErrorMessage.zD3AipS3.js.gz" />
+    <Content Include="Scripts\svelte\_app\immutable\chunks\eslint4b.es.Bsf3VjZw.js.br" />
+    <Content Include="Scripts\svelte\_app\immutable\chunks\eslint4b.es.Bsf3VjZw.js.gz" />
+    <Content Include="Scripts\svelte\_app\immutable\chunks\help.D-s8FFLz.js.br" />
+    <Content Include="Scripts\svelte\_app\immutable\chunks\help.D-s8FFLz.js.gz" />
+    <Content Include="Scripts\svelte\_app\immutable\chunks\index.9OvqG8Gi.js.br" />
+    <Content Include="Scripts\svelte\_app\immutable\chunks\index.9OvqG8Gi.js.gz" />
+    <Content Include="Scripts\svelte\_app\immutable\chunks\index.CJwPE-AO.js.br" />
+    <Content Include="Scripts\svelte\_app\immutable\chunks\index.CJwPE-AO.js.gz" />
+    <Content Include="Scripts\svelte\_app\immutable\chunks\index.DWlViqnX.js.br" />
+    <Content Include="Scripts\svelte\_app\immutable\chunks\index.DWlViqnX.js.gz" />
+    <Content Include="Scripts\svelte\_app\immutable\chunks\MissingValues.DcVRA6Ax.js.br" />
+    <Content Include="Scripts\svelte\_app\immutable\chunks\MissingValues.DcVRA6Ax.js.gz" />
+    <Content Include="Scripts\svelte\_app\immutable\chunks\MultiSelect.ChCMpl6M.js.br" />
+    <Content Include="Scripts\svelte\_app\immutable\chunks\MultiSelect.ChCMpl6M.js.gz" />
+    <Content Include="Scripts\svelte\_app\immutable\chunks\ProgressBar.svelte_svelte_type_style_lang.5nEx3X7q.js.br" />
+    <Content Include="Scripts\svelte\_app\immutable\chunks\ProgressBar.svelte_svelte_type_style_lang.5nEx3X7q.js.gz" />
+    <Content Include="Scripts\svelte\_app\immutable\chunks\RadioItem.CZ6sNqpi.js.br" />
+    <Content Include="Scripts\svelte\_app\immutable\chunks\RadioItem.CZ6sNqpi.js.gz" />
+    <Content Include="Scripts\svelte\_app\immutable\chunks\scheduler.DXasKYkc.js.br" />
+    <Content Include="Scripts\svelte\_app\immutable\chunks\scheduler.DXasKYkc.js.gz" />
+    <Content Include="Scripts\svelte\_app\immutable\chunks\services.65Kgv6y3.js.br" />
+    <Content Include="Scripts\svelte\_app\immutable\chunks\services.65Kgv6y3.js.gz" />
+    <Content Include="Scripts\svelte\_app\immutable\chunks\stores.Bwf2EJzN.js.br" />
+    <Content Include="Scripts\svelte\_app\immutable\chunks\stores.Bwf2EJzN.js.gz" />
+    <Content Include="Scripts\svelte\_app\immutable\chunks\stores.CsOm6McJ.js.br" />
+    <Content Include="Scripts\svelte\_app\immutable\chunks\stores.CsOm6McJ.js.gz" />
+    <Content Include="Scripts\svelte\_app\immutable\chunks\stores.DoJTykP1.js.br" />
+    <Content Include="Scripts\svelte\_app\immutable\chunks\stores.DoJTykP1.js.gz" />
+    <Content Include="Scripts\svelte\_app\immutable\chunks\tableOptions.CECmoGjQ.js.br" />
+    <Content Include="Scripts\svelte\_app\immutable\chunks\tableOptions.CECmoGjQ.js.gz" />
+    <Content Include="Scripts\svelte\_app\immutable\chunks\TablePlaceholder.C1VOyUyf.js.br" />
+    <Content Include="Scripts\svelte\_app\immutable\chunks\TablePlaceholder.C1VOyUyf.js.gz" />
+    <Content Include="Scripts\svelte\_app\immutable\chunks\TextArea.DyjpZlA8.js.br" />
+    <Content Include="Scripts\svelte\_app\immutable\chunks\TextArea.DyjpZlA8.js.gz" />
+    <Content Include="Scripts\svelte\_app\immutable\chunks\types.eQO6CGud.js.br" />
+    <Content Include="Scripts\svelte\_app\immutable\chunks\types.eQO6CGud.js.gz" />
+    <Content Include="Scripts\svelte\_app\immutable\chunks\types.w0DiU5pq.js.br" />
+    <Content Include="Scripts\svelte\_app\immutable\chunks\types.w0DiU5pq.js.gz" />
+    <Content Include="Scripts\svelte\_app\immutable\chunks\vest.production.Dzjo8v_D.js.br" />
+    <Content Include="Scripts\svelte\_app\immutable\chunks\vest.production.Dzjo8v_D.js.gz" />
+    <Content Include="Scripts\svelte\_app\immutable\entry\app.B2PHbe5z.js.br" />
+    <Content Include="Scripts\svelte\_app\immutable\entry\app.B2PHbe5z.js.gz" />
+    <Content Include="Scripts\svelte\_app\immutable\entry\start.Dln8P0jc.js.br" />
+    <Content Include="Scripts\svelte\_app\immutable\entry\start.Dln8P0jc.js.gz" />
+    <Content Include="Scripts\svelte\_app\immutable\nodes\0.C5jrQEa_.js.br" />
+    <Content Include="Scripts\svelte\_app\immutable\nodes\0.C5jrQEa_.js.gz" />
+    <Content Include="Scripts\svelte\_app\immutable\nodes\1.BHgdbnPI.js.br" />
+    <Content Include="Scripts\svelte\_app\immutable\nodes\1.BHgdbnPI.js.gz" />
+    <Content Include="Scripts\svelte\_app\immutable\nodes\10._HZfsOT0.js.br" />
+    <Content Include="Scripts\svelte\_app\immutable\nodes\10._HZfsOT0.js.gz" />
+    <Content Include="Scripts\svelte\_app\immutable\nodes\11.D9EIDueF.js.br" />
+    <Content Include="Scripts\svelte\_app\immutable\nodes\11.D9EIDueF.js.gz" />
+    <Content Include="Scripts\svelte\_app\immutable\nodes\12.Bia4Sxy4.js.br" />
+    <Content Include="Scripts\svelte\_app\immutable\nodes\12.Bia4Sxy4.js.gz" />
+    <Content Include="Scripts\svelte\_app\immutable\nodes\13.BqYpzUDH.js.br" />
+    <Content Include="Scripts\svelte\_app\immutable\nodes\13.BqYpzUDH.js.gz" />
+    <Content Include="Scripts\svelte\_app\immutable\nodes\2.c25t5gzE.js.br" />
+    <Content Include="Scripts\svelte\_app\immutable\nodes\2.c25t5gzE.js.gz" />
+    <Content Include="Scripts\svelte\_app\immutable\nodes\3.BdePCs2_.js.br" />
+    <Content Include="Scripts\svelte\_app\immutable\nodes\3.BdePCs2_.js.gz" />
+    <Content Include="Scripts\svelte\_app\immutable\nodes\4.D3iFLae2.js.br" />
+    <Content Include="Scripts\svelte\_app\immutable\nodes\4.D3iFLae2.js.gz" />
+    <Content Include="Scripts\svelte\_app\immutable\nodes\5.DiSlB1NU.js.br" />
+    <Content Include="Scripts\svelte\_app\immutable\nodes\5.DiSlB1NU.js.gz" />
+    <Content Include="Scripts\svelte\_app\immutable\nodes\6.CPDmrZpW.js.br" />
+    <Content Include="Scripts\svelte\_app\immutable\nodes\6.CPDmrZpW.js.gz" />
+    <Content Include="Scripts\svelte\_app\immutable\nodes\7.Co8c44Q7.js.br" />
+    <Content Include="Scripts\svelte\_app\immutable\nodes\7.Co8c44Q7.js.gz" />
+    <Content Include="Scripts\svelte\_app\immutable\nodes\8.IbHspsOt.js.br" />
+    <Content Include="Scripts\svelte\_app\immutable\nodes\8.IbHspsOt.js.gz" />
+    <Content Include="Scripts\svelte\_app\immutable\nodes\9.BElbSsEz.js.br" />
+    <Content Include="Scripts\svelte\_app\immutable\nodes\9.BElbSsEz.js.gz" />
+    <Content Include="Scripts\svelte\_app\version.json" />
+    <Content Include="Scripts\svelte\_app\version.json.br" />
+    <Content Include="Scripts\svelte\_app\version.json.gz" />
     <None Include="web.Debug.config">
       <DependentUpon>web.config</DependentUpon>
     </None>

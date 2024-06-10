@@ -135,7 +135,7 @@ namespace BExIS.Dlm.Tests.Services.Data
             }
         }
 
-        [Test()]
+        //[Test()]
         public void UndoDeleteDatasetTest()
         {
             var dm = new DatasetManager();

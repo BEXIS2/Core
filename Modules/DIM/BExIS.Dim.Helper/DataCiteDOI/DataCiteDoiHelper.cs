@@ -16,6 +16,7 @@ using System.Web;
 using System.Xml;
 using System.Xml.Linq;
 using Vaelastrasz.Library.Models;
+using Vaelastrasz.Library.Types;
 
 namespace BExIS.Dim.Helpers
 {
