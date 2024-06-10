@@ -15,11 +15,11 @@ namespace BExIS.Dim.Helpers.Vaelastrasz
 {
     public class VaelastraszConverter : IDataRepoConverter
     {
-        private List<VaelastraszConfigurationItem> _mappings;
+        private Dictionary<string, string> _mappings;
         private Dictionary<string, string> _placeholders;
         private Broker _broker;
 
-        public VaelastraszConverter(Broker broker, List<VaelastraszConfigurationItem> mappings, Dictionary<string, string> placeholders)
+        public VaelastraszConverter(Broker broker, Dictionary<string, string> mappings, Dictionary<string, string> placeholders)
         {
             _broker = broker;
             _mappings = mappings;
@@ -71,5 +71,7 @@ namespace BExIS.Dim.Helpers.Vaelastrasz
                 return false;
             }
         }
+    
+        
     }
 }

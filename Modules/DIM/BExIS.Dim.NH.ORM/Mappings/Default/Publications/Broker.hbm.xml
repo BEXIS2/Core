@@ -48,6 +48,10 @@
 		<property name="Link" type="string">
 			<column name="Link" />
 		</property>
+
+		<property name="Host" type="string">
+			<column name="Host" />
+		</property>
 		<!-- Associations -->
 
 		<many-to-one class="Repository" name="Repository" column="RepositoryRef" />

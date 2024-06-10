@@ -459,6 +459,23 @@ namespace BExIS.Modules.Dim.UI.Helpers
                 if (!keys.Any(k => k.XPath.Equals("data/attributes/creators/nameType")))
                     conceptManager.CreateMappingKey("NameType", "", "", false, false, "data/attributes/creators/nameType", concept, creators);
 
+                // creator(s)
+                MappingKey contributors = null;
+                if (!keys.Any(k => k.XPath.Equals("data/attributes/contributors")))
+                    creators = conceptManager.CreateMappingKey("Contributors", "", "www.google.de", false, true, "data/attributes/contributors", concept);
+
+                if (!keys.Any(k => k.XPath.Equals("data/attributes/contributors/name")))
+                    conceptManager.CreateMappingKey("Name", "", "", false, false, "data/attributes/contributors/name", concept, contributors);
+
+                if (!keys.Any(k => k.XPath.Equals("data/attributes/contributors/givenName")))
+                    conceptManager.CreateMappingKey("GivenName", "", "", false, false, "data/attributes/contributors/givenName", concept, contributors);
+
+                if (!keys.Any(k => k.XPath.Equals("data/attributes/contributors/familyName")))
+                    conceptManager.CreateMappingKey("FamilyName", "", "", false, false, "data/attributes/contributors/familyName", concept, contributors);
+
+                if (!keys.Any(k => k.XPath.Equals("data/attributes/contributors/nameType")))
+                    conceptManager.CreateMappingKey("NameType", "", "", false, false, "data/attributes/contributors/nameType", concept, contributors);
+
                 // subject(s)
                 MappingKey subjects = null;
                 if (!keys.Any(k => k.XPath.Equals("data/attributes/subjects")))

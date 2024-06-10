@@ -23,32 +23,32 @@
       "description": "This are the credentials."
     },
     {
-      "key": "dataCiteDOIPlaceholders",
+      "key": "vaelastraszPlaceholders",
       "title": "DataCite DOI Placeholders",
       "options": [],
       "type": "JSON",
       "value": [
         {
-          "key": "DatasetId",
+          "key": "{DatasetId}",
           "Value": "{DatasetId}"
         },
         {
-          "key": "VersionId",
+          "key": "{VersionId}",
           "Value": "{VersionId}"
         },
         {
-          "key": "VersionNumber",
+          "key": "{VersionNumber}",
           "Value": "{VersionNumber}"
         },
         {
-          "key": "VersionName",
+          "key": "{VersionName}",
           "Value": "{VersionName}"
         }
       ],
       "description": "These placeholders will be replaced automatically."
     },
     {
-      "key": "dataCiteDOIMappings",
+      "key": "vaelastraszMappings",
       "title": "DataCite DOI Mappings",
       "options": [],
       "type": "JSON",

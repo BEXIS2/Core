@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Vaiona.Persistence.Api;
+using Vaiona.Utils.Cfg;
 
 namespace BExIS.Dim.Services.Publications
 {
@@ -107,32 +108,32 @@ namespace BExIS.Dim.Services.Publications
             return PublicationRepository.Get(publicationId);
         }
 
-        public async Task<(byte[] FileContents, string ContentType, string FileName)> GetFileByIdAsync(long publicationId)
-        {
-            var publication = FindById(publicationId);
+        //public async Task<(byte[] FileContents, string ContentType, string FileName)> GetFileByIdAsync(long publicationId)
+        //{
+        //    var publication = FindById(publicationId);
 
-            if (publication == null)
-                throw new ArgumentException("Publication does not exist", nameof(publicationId));
+        //    if (publication == null)
+        //        throw new ArgumentException("Publication does not exist", nameof(publicationId));
 
-            switch (publication.Broker.Name.ToLower())
-            {
-                case "pangaea":
-                    {
-                        PangaeaDataRepoConverter dataRepoConverter = new PangaeaDataRepoConverter(_broker);
+        //    switch (publication.Broker.Name.ToLower())
+        //    {
+        //        case "pangaea":
+        //            {
+        //                PangaeaDataRepoConverter dataRepoConverter = new PangaeaDataRepoConverter(_broker);
 
-                        tmp = new Tuple<string, string>(dataRepoConverter.Convert(datasetVersionId), "text/txt");
-                        return tmp;
-                    }
+        //                tmp = new Tuple<string, string>(dataRepoConverter.Convert(datasetVersionId), "text/txt");
+        //                return tmp;
+        //            }
 
-                default:
-                    break;
-            }
+        //        default:
+        //            break;
+        //    }
 
-            if (!File.Exists(filePath))
-            {
-                throw new FileNotFoundException("File not found.", filePath);
-            }
-        }
+        //    if (!File.Exists(filePath))
+        //    {
+        //        throw new FileNotFoundException("File not found.", filePath);
+        //    }
+        //}
 
         public bool Update(Publication publication)
         {
@@ -152,6 +153,40 @@ namespace BExIS.Dim.Services.Publications
             catch (Exception ex)
             {
                 return false;
+            }
+        }
+
+        public string GetFilePathById(long publicationId, string extension = "zip")
+        {
+            try
+            {
+                var publication = FindById(publicationId);
+
+                if (publication == null)
+                    throw new ArgumentException("Publication does not exist", nameof(publicationId));
+
+                return Path.Combine(AppConfiguration.DataPath, "datasets", publication.DatasetVersion.Dataset.Id.ToString(), "publish", publication.Repository.Name.ToLower(), $"{publication.DatasetVersion.Dataset.Id}_{publication.DatasetVersion.VersionNo}_dataset_{publication.Repository.Name.ToLower()}.{extension}");
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
+        }
+
+        public string GetFileNameById(long publicationId, string extension = "zip")
+        {
+            try
+            {
+                var publication = FindById(publicationId);
+
+                if (publication == null)
+                    throw new ArgumentException("Publication does not exist", nameof(publicationId));
+
+                return $"{publication.DatasetVersion.Dataset.Id}_{publication.DatasetVersion.VersionNo}_dataset_{publication.Repository.Name.ToLower()}.{extension}";
+            }
+            catch (Exception ex)
+            {
+                return null;
             }
         }
     }

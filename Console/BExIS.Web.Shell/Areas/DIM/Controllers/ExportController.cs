@@ -247,7 +247,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
                     string zipPath = publishingManager.GetDirectoryPath(id, brokerName);
                     string dynamicZipPath = publishingManager.GetDynamicDirectoryPath(id, brokerName);
                     string zipFilePath = Path.Combine(zipPath, zipName);
-                    string dynamicFilePath = Path.Combine(dynamicZipPath, zipName);
+                    //string dynamicFilePath = Path.Combine(dynamicZipPath, zipName);
 
                     FileHelper.CreateDicrectoriesIfNotExist(Path.GetDirectoryName(zipFilePath));
 

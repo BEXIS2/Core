@@ -13,20 +13,19 @@
                 resetAllTelerikIconTitles();
             });
 
-
         function onSelectDataRepositoryDropDownChange(e) {
 
             console.log(e.value)
 
             var id = '@Model.DatasetId';
-   
+
             if(e.value !="")
             {
                 $.post('@Url.Action("LoadRequirementView", "Submission")',
                     { brokerId: e.value, datasetid: id },
                     function(response) {
                         //$("#requirementsContainer").html(response);
-                    
+
                         $("#preloader").preloader(14, "Please wait...");
 
                         var jsonObject = {
@@ -106,7 +105,6 @@
 
                                         if (!isConverterValid) {
 
-
                                             $("#requirementsContainer").text("");
 
                                             var parent = document.querySelector("#requirementsContainer");
@@ -145,8 +143,6 @@
                 $("#submitPublishBt").attr("disabled", "disabled");
                 $("#submitPublishBt").addClass("bx-disabled");
             }
-
-            
 
         }
 
@@ -197,7 +193,7 @@
                     //alert(response);
                     //var obj = jQuery.parseJSON(response);
                     var message = $("#requirementsContainer").text();
-                    var htmltext = "<p>" + message + "</p><p><br/>" + response + "</p>";
+                    var htmltext = "<p>" + message + "</p><p><br />" + response + "</p>";
 
                     //alert(response);
 
@@ -210,7 +206,7 @@
                     hasSuccessed = true;
                     $("#requirementsContainer").html("");
                 }
-               
+
                 //reload site
                 $.post('@Url.Action("getPublishDataPartialView", "Submission", new RouteValueDictionary {{"area", "dim"}})',
                     { datasetid: id },
@@ -256,10 +252,8 @@
 
                     <td style="text-align: right">
                         <span id="requirementsContainer" style="color:#f24c24">
-
                         </span>
                         <div id="preloader">
-
                         </div>
                     </td>
                 </tr>
@@ -308,13 +302,13 @@
                             @foreach (var datarepo in publication.Broker.DataRepos)
                             {
                                 if (Model.DownloadRights)
-                                 {
-                                     @Html.ActionLink(" ", "DownloadZip", "Submission", new {broker = publication.Broker.Name, datarepo, datasetversionid = publication.DatasetVersionId}, new {@class = "bx bx-grid-function bx-download", title = "Download for "+datarepo})
-                                 }
-                                 else
-                                 {
-                                     <a class="bx bx-grid-function bx-download bx-disabled" disabled="disabled" title="You do not have permission to download this dataset."></a>
-                                 }
+                                {
+                                    @Html.ActionLink(" ", "DownloadZip", "Submission", new { broker = publication.Broker.Name, datarepo, datasetversionid = publication.DatasetVersionId }, new { @class = "bx bx-grid-function bx-download", title = "Download for " + datarepo })
+                                }
+                                else
+                                {
+                                    <a class="bx bx-grid-function bx-download bx-disabled" disabled="disabled" title="You do not have permission to download this dataset."></a>
+                                }
                             }
                         </td>
                     </tr>
@@ -327,18 +321,14 @@
         </table>
     </div>
 
-
-
-    
     <style type="text/css">
-        
+
         .t-content {
-            text-align:left
+            text-align: left
         }
 
         .t-state-active {
-            line-height:14pt
+            line-height: 14pt
         }
-
     </style>
 </div>

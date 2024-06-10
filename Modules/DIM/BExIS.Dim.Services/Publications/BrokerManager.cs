@@ -1,5 +1,6 @@
 ﻿using BExIS.Dim.Entities.Publications;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Vaiona.Persistence.Api;
@@ -96,6 +97,11 @@ namespace BExIS.Dim.Services.Publications
         public Broker FindById(long brokerId)
         {
             return BrokerRepository.Get(brokerId);
+        }
+
+        public List<Broker> FindByName(string name)
+        {
+            return BrokerRepository.Query(b => string.Equals(b.Name, name, StringComparison.InvariantCultureIgnoreCase)).ToList();
         }
 
         public bool Update(Broker broker)

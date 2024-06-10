@@ -15,11 +15,11 @@ namespace BExIS.Modules.Dim.UI.Helpers
             _settings = ModuleManager.GetModuleSettings("dim");
         }
 
-        public List<VaelastraszMapping> GetVaelastraszMappings()
+        public Dictionary<string, string> GetVaelastraszMappings()
         {
             try
             {
-                return _settings.GetValueByKey<List<VaelastraszMapping>>("vaelastraszMappings");
+                return _settings.GetValueByKey< Dictionary<string, string>> ("vaelastraszMappings");
             }
             catch (Exception ex)
             {
@@ -27,15 +27,15 @@ namespace BExIS.Modules.Dim.UI.Helpers
             }
         }
 
-        public List<VaelastraszPlaceholder> GetVaelastraszPlaceholders()
+        public Dictionary<string, string> GetVaelastraszPlaceholders()
         {
             try
             {
-                return _settings.GetValueByKey<List<VaelastraszPlaceholder>>("vaelastraszPlaceholders");
+                return _settings.GetValueByKey<Dictionary<string, string>>("vaelastraszPlaceholders");
             }
             catch (Exception ex)
             {
-                return null;
+                return new Dictionary<string, string>();
             }
         }
     }
