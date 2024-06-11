@@ -75,6 +75,7 @@
 		// if id > 0 then run validation
 		if (id > 0) {
 			res = suite(entityTemplate);
+			console.log("validate", res)
 		}
 	}
 

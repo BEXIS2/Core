@@ -56,7 +56,6 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         [HttpPost]
         public ActionResult SelectAFile(object[] data)
         {
-
             SelectFileViewModel model = new SelectFileViewModel();
 
             TaskManager = (ImportMetadataStructureTaskManager)Session["TaskManager"];
@@ -87,13 +86,11 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                             {
                                 model.ErrorList.Add(new Error(ErrorType.Other, "Cannot access FileStream on server."));
                             }
-
                         }
                         catch
                         {
                             model.ErrorList.Add(new Error(ErrorType.Other, "Cannot access FileStream on server."));
                         }
-
 
                         try
                         {
@@ -106,8 +103,6 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                             TaskManager.Current().SetValid(false);
                         }
 
-
-
                         if (TaskManager.Current().IsValid())
                         {
                             TaskManager.AddExecutedStep(TaskManager.Current());
@@ -116,21 +111,16 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                             ActionInfo actionInfo = TaskManager.Current().GetActionInfo;
                             return RedirectToAction(actionInfo.ActionName, actionInfo.ControllerName, new RouteValueDictionary { { "area", actionInfo.AreaName }, { "index", TaskManager.GetCurrentStepInfoIndex() } });
                         }
-
                     }
                     else
                     {
                         model.ErrorList.Add(new Error(ErrorType.Other, "File is not supported."));
                     }
-
-
-
                 }
                 else
                 {
                     model.ErrorList.Add(new Error(ErrorType.Other, "No FileStream selected or submitted."));
                 }
-
             }
 
             model.serverFileList = GetServerFileList();
@@ -218,14 +208,12 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             return Content("");
         }
 
-
         /// <summary>
         /// read filenames from datapath/Temp/UserName
         /// </summary>
         /// <returns>return a list with all names from FileStream in the folder</returns>
         private List<String> GetServerFileList()
         {
-
             string userDataPath = Path.Combine(AppConfiguration.DataPath, "Temp", GetUsernameOrDefault());
 
             // if folder not exist
@@ -234,10 +222,8 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 Directory.CreateDirectory(userDataPath);
             }
 
-
             DirectoryInfo dirInfo = new DirectoryInfo(userDataPath);
             return dirInfo.GetFiles().Select(i => i.Name).ToList();
-
         }
 
         // chekc if user exist
@@ -270,6 +256,6 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             return false;
         }
 
-        #endregion
+        #endregion private methods
     }
 }

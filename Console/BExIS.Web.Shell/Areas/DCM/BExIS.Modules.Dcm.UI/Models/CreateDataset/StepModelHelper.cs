@@ -10,8 +10,10 @@ namespace BExIS.Modules.Dcm.UI.Models.CreateDataset
     public class StepModelHelper
     {
         public int StepId { get; set; }
+
         //public BaseUsage Usage { get; set; }
         public long UsageId { get; set; }
+
         public Type UsageType { get; set; }
         public string UsageName { get; set; }
         public string UsageAttrName { get; set; }
@@ -105,7 +107,6 @@ namespace BExIS.Modules.Dcm.UI.Models.CreateDataset
             }
 
             return true;
-
         }
 
         public string DisplayName()
@@ -161,7 +162,6 @@ namespace BExIS.Modules.Dcm.UI.Models.CreateDataset
                 return Parent.IsParentActive();
 
             return false;
-
         }
 
         private bool IsChoice(XmlNode xmlNode)
@@ -172,7 +172,6 @@ namespace BExIS.Modules.Dcm.UI.Models.CreateDataset
                 if (element != null) return true;
             }
             return false;
-
         }
 
         private long GetChoiceMax(XmlNode xmlNode)
@@ -191,11 +190,8 @@ namespace BExIS.Modules.Dcm.UI.Models.CreateDataset
                         }
                     }
                 }
-
             }
             return 0;
-
         }
-
     }
 }

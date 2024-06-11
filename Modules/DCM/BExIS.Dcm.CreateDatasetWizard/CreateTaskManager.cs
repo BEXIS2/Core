@@ -6,13 +6,13 @@ using System.Xml;
 
 /// <summary>
 ///
-/// </summary>        
+/// </summary>
 namespace BExIS.Dcm.CreateDatasetWizard
 {
     /// <summary>
     ///
     /// </summary>
-    /// <remarks></remarks>        
+    /// <remarks></remarks>
     public class CreateTaskmanager : AbstractTaskManager
     {
         public static string ENTITY_ID = "ENTITY_ID";
@@ -26,12 +26,16 @@ namespace BExIS.Dcm.CreateDatasetWizard
         public static string METADATA_STEP_MODEL_HELPER = "METADATA_STEP_MODEL_HELPER";
         public static string METADATA_XML = "METADATA_XML";
         public static string METADATA_IMPORT_XML_FILEPATH = "METADATA_IMPORT_XML_FILEPATH";
+
         // Datastructure
         public static string DATASTRUCTURE_ID = "DataStructureId";
+
         public static string DATASTRUCTURE_TITLE = "DataStructureTitle";
         public static string DATASTRUCTURE_TYPE = "DataStructureType";
+
         //ResearchPlan
         public static string RESEARCHPLAN_ID = "ResearchPlanId";
+
         public static string RESEARCHPLAN_TITLE = "ResearchPlanTitle";
 
         public static string METADATASTRUCTURE_ID = "MetadataStructureId";
@@ -39,25 +43,28 @@ namespace BExIS.Dcm.CreateDatasetWizard
 
         // technical parameters
         public static string SETUP_LOADED = "SETUP_LOADED";
+
         public static string EDIT_MODE = "EDIT_MODE";
         public static string FORM_STEPS_LOADED = "FORM_STEPS_LOADED";
 
         // addtionally actionKeys
         public static string CANCEL_ACTION = "CANCEL_ACTION";
+
         public static string RESET_ACTION = "RESET_ACTION";
         public static string COPY_ACTION = "COPY_ACTION";
         public static string SUBMIT_ACTION = "SUBMIT_ACTION";
-
 
         public static string ERROR_DIC = "Error_Dic";
         public static string SAVE_WITH_ERRORS = "SAVE_WITH_ERRORS";
 
         //Action in Form
         public static string NO_IMPORT_ACTION = "NO_IMPORT_ACTION";
+
         public static string LOCKED = "LOCKED";
 
         //Alternativ info text and title on top
         public static string INFO_ON_TOP_TITLE = "INFO_ON_TOP_TITLE";
+
         public static string INFO_ON_TOP_DESCRIPTION = "INFO_ON_TOP_DESCRIPTION";
 
         private int MaxStepId;
@@ -75,7 +82,7 @@ namespace BExIS.Dcm.CreateDatasetWizard
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <remarks></remarks>
         /// <seealso cref=""/>
@@ -120,18 +127,16 @@ namespace BExIS.Dcm.CreateDatasetWizard
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <returns></returns>
         public int GetCurrentStepInfoIndex()
         {
-
-
             return Current().Id;
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <remarks></remarks>
         /// <seealso cref=""/>
@@ -170,7 +175,6 @@ namespace BExIS.Dcm.CreateDatasetWizard
 
         public bool IsChildExpand(StepInfo stepInfo)
         {
-
             if (stepInfo.Children.Count > 0)
             {
                 foreach (StepInfo child in stepInfo.Children)
@@ -206,7 +210,7 @@ namespace BExIS.Dcm.CreateDatasetWizard
         /// </summary>
         /// <remarks></remarks>
         /// <seealso cref=""/>
-        /// <param>NA</param>       
+        /// <param>NA</param>
         /// <returns></returns>
         public StepInfo Next()
         {
@@ -228,9 +232,8 @@ namespace BExIS.Dcm.CreateDatasetWizard
             return newStep;
         }
 
-
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <remarks></remarks>
         /// <seealso cref=""/>
@@ -268,7 +271,6 @@ namespace BExIS.Dcm.CreateDatasetWizard
             }
             else
             {
-
                 if (index > 0)
                 {
                     StepInfo pStep = parent.Children.ElementAt(index - 1);
@@ -280,7 +282,6 @@ namespace BExIS.Dcm.CreateDatasetWizard
                 else
                     return parent;
             }
-
         }
 
         private StepInfo findPrevInstanze(StepInfo child)
@@ -307,7 +308,6 @@ namespace BExIS.Dcm.CreateDatasetWizard
             }
         }
 
-
         private StepInfo findNext(StepInfo child)
         {
             StepInfo parent = child.Parent;
@@ -324,7 +324,6 @@ namespace BExIS.Dcm.CreateDatasetWizard
                 if (IsRoot(parent)) return new StepInfo("");
                 else
                 {
-
                     return findNext(parent);
                 }
             }
@@ -348,7 +347,6 @@ namespace BExIS.Dcm.CreateDatasetWizard
                 if (IsRoot(parent)) return new StepInfo("");
                 else
                 {
-
                     return findNextInstanze(parent);
                 }
             }
@@ -391,7 +389,7 @@ namespace BExIS.Dcm.CreateDatasetWizard
         /// </summary>
         /// <remarks></remarks>
         /// <seealso cref=""/>
-        /// <param>NA</param>       
+        /// <param>NA</param>
         public void GoToNext()
         {
             //this.currentStepInfo.SetStatus(StepStatus.success);
@@ -400,7 +398,7 @@ namespace BExIS.Dcm.CreateDatasetWizard
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <remarks></remarks>
         /// <seealso cref=""/>
@@ -424,7 +422,6 @@ namespace BExIS.Dcm.CreateDatasetWizard
             //        if (StepInfos[i].stepStatus != StepStatus.success) StepInfos[i].SetStatus(StepStatus.error);
             //    }
             //}
-
         }
 
         public int GenerateStepId()
@@ -522,11 +519,9 @@ namespace BExIS.Dcm.CreateDatasetWizard
             return position;
         }
 
-
-
         /// <summary>
         /// Remove stepInfo from parent stepInfo
-        /// 
+        ///
         /// </summary>
         /// <param name="parent">parent step</param>
         /// <param name="index">position of the stepinfo in children</param>
@@ -542,19 +537,16 @@ namespace BExIS.Dcm.CreateDatasetWizard
                     int position = i + 1;
                     parent.Children.ElementAt(i).title = position.ToString();
                 }
-
-
             }
             catch (Exception ex)
             {
-
             }
 
             return parent;
         }
 
         /// <summary>
-        /// XXX 
+        /// XXX
         /// this funktion needs to be replaced
         /// its only to know if a usage schould bee a metadataAttributeUsage or
         /// MetadataNestedAttributeUsage
@@ -573,9 +565,6 @@ namespace BExIS.Dcm.CreateDatasetWizard
             {
                 return false;
             }
-
         }
-
-
     }
 }

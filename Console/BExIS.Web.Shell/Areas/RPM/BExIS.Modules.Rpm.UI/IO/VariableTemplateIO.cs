@@ -1,9 +1,9 @@
 ﻿using BExIS.Dlm.Entities.DataStructure;
 using BExIS.Dlm.Services.DataStructure;
+using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web.UI.WebControls;
-using Newtonsoft.Json;
 
 namespace BExIS.Modules.Rpm.UI.Classes
 {
@@ -26,6 +26,7 @@ namespace BExIS.Modules.Rpm.UI.Classes
             }
             return null;
         }
+
         public static List<VariableTemplate> getVariableTemplates()
         {
             VariableManager variableManager = null;
@@ -39,6 +40,7 @@ namespace BExIS.Modules.Rpm.UI.Classes
                 variableManager.Dispose();
             }
         }
+
         public static VariableTemplate createVariableTemplate(VariableTemplate variableTemplate)
         {
             if (variableTemplate != null && variableTemplate.Id == 0)
@@ -56,6 +58,7 @@ namespace BExIS.Modules.Rpm.UI.Classes
             }
             return null;
         }
+
         public static bool deleteVariableTemplate(VariableTemplate variableTemplate)
         {
             if (variableTemplate != null)
@@ -73,6 +76,7 @@ namespace BExIS.Modules.Rpm.UI.Classes
             }
             return false;
         }
+
         public static VariableTemplate editVariableTemplate(VariableTemplate variableTemplate)
         {
             if (variableTemplate != null && variableTemplate.Id != 0)
@@ -90,6 +94,7 @@ namespace BExIS.Modules.Rpm.UI.Classes
             }
             return null;
         }
+
         public static string variableTemplateToJson(VariableTemplate variableTemplate)
         {
             if (variableTemplate != null)
@@ -98,6 +103,7 @@ namespace BExIS.Modules.Rpm.UI.Classes
             }
             return null;
         }
+
         public static VariableTemplate variableTemplateToJson(string json)
         {
             if (json != null && json.Length > 0)
@@ -106,6 +112,7 @@ namespace BExIS.Modules.Rpm.UI.Classes
             }
             return null;
         }
+
         public static string variableTemplatesToJson(List<VariableTemplate> variableTemplates)
         {
             if (variableTemplates != null && variableTemplates.Count() > 0)
@@ -114,6 +121,5 @@ namespace BExIS.Modules.Rpm.UI.Classes
             }
             return null;
         }
-
     }
 }

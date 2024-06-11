@@ -14,7 +14,6 @@ namespace Vaiona.Persistence.Api
             return (name);
         }
 
-
         // subject to more tests
         public static string CreateSchemaTableName(Type entity, string baseName = "")
         {

@@ -6,14 +6,14 @@ using System.Collections.Generic;
 
 /// <summary>
 ///
-/// </summary>        
+/// </summary>
 namespace BExIS.Ddm.Providers.LuceneProvider.Indexer
 {
     /// <summary>
     ///
     /// </summary>
-    /// <remarks></remarks>        
-    class BexisAnalyzer : Analyzer
+    /// <remarks></remarks>
+    internal class BexisAnalyzer : Analyzer
     {
         private String[] GERMAN_STOP_WORDS =
         {
@@ -34,12 +34,12 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Indexer
         public ISynonymEngine SynonymEngine { get; private set; }
 
         /// <summary>
-        /// Contains the stopwords used with the StopFilter. 
+        /// Contains the stopwords used with the StopFilter.
         /// </summary>
         private ISet<string> stoptable;
 
         /// <summary>
-        /// Contains words that should be indexed but not stemmed. 
+        /// Contains words that should be indexed but not stemmed.
         /// </summary>
         private ISet<string> excltable;
 
@@ -47,7 +47,7 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Indexer
         ///
         /// </summary>
         /// <remarks></remarks>
-        /// <seealso cref=""/>        
+        /// <seealso cref=""/>
         public BexisAnalyzer()
         {
             stoptable = StopFilter.MakeStopSet(GERMAN_STOP_WORDS);
@@ -55,7 +55,7 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Indexer
         }
 
         /// <summary>
-        /// Builds an exclusionlist from an array of Strings. 
+        /// Builds an exclusionlist from an array of Strings.
         /// </summary>
         /// <remarks></remarks>
         /// <seealso cref=""/>
@@ -66,7 +66,7 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Indexer
         }
 
         /// <summary>
-        /// Builds an exclusionlist from a Hashtable. 
+        /// Builds an exclusionlist from a Hashtable.
         /// </summary>
         /// <remarks></remarks>
         /// <seealso cref=""/>
@@ -81,16 +81,15 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Indexer
         /// </summary>
         /// <remarks></remarks>
         /// <seealso cref=""/>
-        /// <param></param>  
+        /// <param></param>
         /// <returns></returns>
         public int getPositionIncrementGap(String fieldName)
         {
-
             return 100;
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <remarks></remarks>
         /// <seealso cref=""/>
@@ -115,6 +114,5 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Indexer
         //{
         //return 100;
         //}
-
     }
 }

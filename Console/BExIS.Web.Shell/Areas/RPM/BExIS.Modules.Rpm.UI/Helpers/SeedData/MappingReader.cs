@@ -80,7 +80,6 @@ namespace BExIS.Modules.Rpm.UI.Helpers.SeedData
             return mappedVariables;
         }
 
-
         // read variables from XLSX mapping file for only one dataset
         //public System.Data.DataTable readVariables(string filePath, string dataSetID, System.Data.DataTable mappedAttributes, System.Data.DataTable mappedUnits)
         //{
@@ -141,7 +140,6 @@ namespace BExIS.Modules.Rpm.UI.Helpers.SeedData
         //    return mappedVariables;
         //}
 
-
         // read variables from XLSX mapping file
         //public System.Data.DataTable readVariables(string filePath, System.Data.DataTable mappedAttributes, System.Data.DataTable mappedUnits)
         //{
@@ -197,7 +195,6 @@ namespace BExIS.Modules.Rpm.UI.Helpers.SeedData
 
         //    return mappedVariables;
         //}
-
 
         /// <summary>
         /// read attributes from csv file
@@ -292,7 +289,6 @@ namespace BExIS.Modules.Rpm.UI.Helpers.SeedData
             return mappedAttributes;
         }
 
-
         /// <summary>
         /// read units from csv file
         /// </summary>
@@ -315,7 +311,7 @@ namespace BExIS.Modules.Rpm.UI.Helpers.SeedData
 
             if (File.Exists(filePath + "\\units.csv") && File.Exists(filePath + "\\dimensions.csv"))
             {
-                using (StreamReader reader = new StreamReader(filePath + "\\units.csv",Encoding.UTF8, true))
+                using (StreamReader reader = new StreamReader(filePath + "\\units.csv", Encoding.UTF8, true))
                 {
                     UnitManager unitmanager = null;
                     try
@@ -355,7 +351,6 @@ namespace BExIS.Modules.Rpm.UI.Helpers.SeedData
             }
             return mappedUnits;
         }
-
 
         /// <summary>
         /// read dimensions from csv file
@@ -399,7 +394,6 @@ namespace BExIS.Modules.Rpm.UI.Helpers.SeedData
             return mappedDimensions;
         }
 
-
         /// <summary>
         /// Read data types from csv file
         /// </summary>
@@ -418,7 +412,6 @@ namespace BExIS.Modules.Rpm.UI.Helpers.SeedData
 
             if (File.Exists(filePath + "\\datatypes.csv"))
             {
-
                 using (StreamReader reader = new StreamReader(filePath + "\\datatypes.csv", Encoding.UTF8, true))
                 {
                     string line = "";
@@ -440,9 +433,8 @@ namespace BExIS.Modules.Rpm.UI.Helpers.SeedData
                 }
             }
 
-             return mappedDataTypes;
+            return mappedDataTypes;
         }
-
 
         //////////////////////////////////////////////////////////////////////////////////////////////////
         // helper methods

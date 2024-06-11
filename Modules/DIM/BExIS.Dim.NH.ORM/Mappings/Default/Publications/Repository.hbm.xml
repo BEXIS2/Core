@@ -20,11 +20,9 @@
     <property name="Name" type="string">
       <column name="Name" />
     </property>
-    
+
     <property name="Url" type="string">
       <column name="Url" />
     </property>
-    
-    
   </class>
 </hibernate-mapping>

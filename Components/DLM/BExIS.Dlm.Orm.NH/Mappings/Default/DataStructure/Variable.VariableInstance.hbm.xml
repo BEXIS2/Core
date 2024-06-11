@@ -13,13 +13,12 @@
 		  <column name="IsKey" />
 	  </property>
 
-	  <many-to-one name="DataStructure" class="StructuredDataStructure" not-null="false" column="DataStructureRef" /> 
-	  <many-to-one name="VariableTemplate" class="VariableTemplate" not-null="false" column="VarTemplateRef"/>
+	  <many-to-one name="DataStructure" class="StructuredDataStructure" not-null="false" column="DataStructureRef" />
+	  <many-to-one name="VariableTemplate" class="VariableTemplate" not-null="false" column="VarTemplateRef" />
 
 	  <set name="MissingValues" cascade="all-delete-orphan">
 		  <key column="VariableRef" not-null="true" />
 		  <one-to-many class="MissingValue" />
 	  </set>
-	  
   </subclass>
 </hibernate-mapping>

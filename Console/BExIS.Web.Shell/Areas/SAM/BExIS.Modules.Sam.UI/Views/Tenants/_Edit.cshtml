@@ -3,70 +3,70 @@
 @model TenantEditModel
 @using (Ajax.BeginForm("Edit", "Tenants", new AjaxOptions { HttpMethod = "POST", UpdateTargetId = "contentEdit", OnSuccess = "tenantEdit_onSuccess" }))
 {
-    @Html.ValidationSummary(true)
+@Html.ValidationSummary(true)
 
-    <table class="bx-table-form">
-        <tr>
-            <td>
-                @Html.LabelFor(m => m.Id)
-            </td>
-            <td>
-                @Html.DisplayFor(m => m.Id, new { @class = "t-input bx-input" })
-                @Html.HiddenFor(m => m.Id)
-            </td>
-        </tr>
+<table class="bx-table-form">
+    <tr>
+        <td>
+            @Html.LabelFor(m => m.Id)
+        </td>
+        <td>
+            @Html.DisplayFor(m => m.Id, new { @class = "t-input bx-input" })
+            @Html.HiddenFor(m => m.Id)
+        </td>
+    </tr>
 
-        <tr>
-            <td>
-                @Html.LabelFor(m => m.ShortName)
-            </td>
-            <td>
-                @Html.DisplayFor(m => m.ShortName, new { @class = "t-input bx-input" })
-                @Html.HiddenFor(m => m.ShortName)
-            </td>
-        </tr>
+    <tr>
+        <td>
+            @Html.LabelFor(m => m.ShortName)
+        </td>
+        <td>
+            @Html.DisplayFor(m => m.ShortName, new { @class = "t-input bx-input" })
+            @Html.HiddenFor(m => m.ShortName)
+        </td>
+    </tr>
 
-        <tr>
-            <td>
-                @Html.LabelFor(m => m.Description)
-            </td>
-            <td>
-                @Html.DisplayFor(m => m.Description, new { @class = "t-input bx-input" })
-                @Html.HiddenFor(m => m.Description)
-            </td>
-        </tr>
+    <tr>
+        <td>
+            @Html.LabelFor(m => m.Description)
+        </td>
+        <td>
+            @Html.DisplayFor(m => m.Description, new { @class = "t-input bx-input" })
+            @Html.HiddenFor(m => m.Description)
+        </td>
+    </tr>
 
-        <tr>
-            <td>
-                @Html.LabelFor(m => m.IsDefault)
-            </td>
-            <td>
-                @if (Model.IsDefault)
+    <tr>
+        <td>
+            @Html.LabelFor(m => m.IsDefault)
+        </td>
+        <td>
+            @if (Model.IsDefault)
                 {
-                    <input type="checkbox" value="" disabled="disabled" checked="checked" class="js-switch" />
-                    @Html.HiddenFor(m => m.IsDefault)
+            <input type="checkbox" value="" disabled="disabled" checked="checked" class="js-switch" />
+            @Html.HiddenFor(m => m.IsDefault)
                 }
                 else
                 {
-                    @Html.CheckBoxFor(m => m.IsDefault, new {@class = "js-switch"})
+            @Html.CheckBoxFor(m => m.IsDefault, new {@class = "js-switch"})
                 }
-            </td>
-        </tr>
+        </td>
+    </tr>
 
-        <tr>
-            <td>
-                @Html.LabelFor(m => m.Status)
-            </td>
-            <td>
-                @Html.CheckBoxFor(m => m.Status, new { @class = "js-switch" })
-            </td>
-        </tr>
-    </table>
+    <tr>
+        <td>
+            @Html.LabelFor(m => m.Status)
+        </td>
+        <td>
+            @Html.CheckBoxFor(m => m.Status, new { @class = "js-switch" })
+        </td>
+    </tr>
+</table>
 
-    <div class="bx-footer right">
-        <button style="margin-right: 1px" type="submit" onclick="windowEdit_onSubmit()" class="bx-button action">Save</button>
-        <button style="margin-left: 1px" type="button" onclick="windowEdit_onCancel()" class="bx-button action">Cancel</button>
-    </div>
+<div class="bx-footer right">
+    <button style="margin-right: 1px" type="submit" onclick="windowEdit_onSubmit()" class="bx-button action">Save</button>
+    <button style="margin-left: 1px" type="button" onclick="windowEdit_onCancel()" class="bx-button action">Cancel</button>
+</div>
 
 }
 

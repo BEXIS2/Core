@@ -2,13 +2,13 @@
 
 /// <summary>
 ///
-/// </summary>        
+/// </summary>
 namespace BExIS.IO.Transform.Validation.Exceptions
 {
     /// <summary>
     ///
     /// </summary>
-    /// <remarks></remarks>        
+    /// <remarks></remarks>
     public class Error
     {
         private string _name = "";
@@ -17,8 +17,10 @@ namespace BExIS.IO.Transform.Validation.Exceptions
 
         //MetadataAttributeNumber
         private int _number = 0;
+
         //MetadataPAckageNumber
         private string _package = "";
+
         //MetadataPAckageLabel
         private string _packageLabel = "";
 
@@ -28,18 +30,35 @@ namespace BExIS.IO.Transform.Validation.Exceptions
         private ErrorType _errorType;
 
         // getter
-        public string Name { get { return _name; } set { _name = value; } }
-        public string Value { get { return _value; } set { _value = value; } } 
-        public int Row { get { return _row; } set { _row = value; } }
-        public int Number { get { return _number; } set { _number = value; }  }
-        public string Package { get { return _package; } set { _package = value; } }
-        public string PackageLabel { get { return _packageLabel; } set { _packageLabel = value; } }
-        public ErrorType ErrorType { get { return _errorType; } set { _errorType = value; } }
-        public string DataType { get { return _dataType; } set { _dataType = value; } }
-        public string DatePattern { get { return _datePattern; } set { _datePattern = value; } }
+        public string Name
+        { get { return _name; } set { _name = value; } }
 
-        public string Issue { get { return _issue; } set { _issue = value; } }
+        public string Value
+        { get { return _value; } set { _value = value; } }
 
+        public int Row
+        { get { return _row; } set { _row = value; } }
+
+        public int Number
+        { get { return _number; } set { _number = value; } }
+
+        public string Package
+        { get { return _package; } set { _package = value; } }
+
+        public string PackageLabel
+        { get { return _packageLabel; } set { _packageLabel = value; } }
+
+        public ErrorType ErrorType
+        { get { return _errorType; } set { _errorType = value; } }
+
+        public string DataType
+        { get { return _dataType; } set { _dataType = value; } }
+
+        public string DatePattern
+        { get { return _datePattern; } set { _datePattern = value; } }
+
+        public string Issue
+        { get { return _issue; } set { _issue = value; } }
 
         public String getName()
         {
@@ -68,7 +87,7 @@ namespace BExIS.IO.Transform.Validation.Exceptions
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <remarks></remarks>
         /// <seealso cref=""/>
@@ -81,7 +100,7 @@ namespace BExIS.IO.Transform.Validation.Exceptions
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <remarks></remarks>
         /// <seealso cref=""/>
@@ -131,7 +150,7 @@ namespace BExIS.IO.Transform.Validation.Exceptions
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <remarks></remarks>
         /// <seealso cref=""/>
@@ -143,7 +162,7 @@ namespace BExIS.IO.Transform.Validation.Exceptions
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <remarks></remarks>
         /// <seealso cref=""/>
@@ -155,7 +174,7 @@ namespace BExIS.IO.Transform.Validation.Exceptions
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <remarks></remarks>
         /// <seealso cref=""/>
@@ -178,7 +197,7 @@ namespace BExIS.IO.Transform.Validation.Exceptions
         /// </summary>
         /// <remarks></remarks>
         /// <seealso cref=""/>
-        /// <param>NA</param>       
+        /// <param>NA</param>
         public string ToHtmlString()
         {
             switch (_errorType)
@@ -188,21 +207,18 @@ namespace BExIS.IO.Transform.Validation.Exceptions
                 case ErrorType.Datastructure: return String.Format("{0} : {1}", _issue, _name);
                 case ErrorType.MetadataAttribute:
                     {
-
                         if (String.IsNullOrEmpty(_value))
                             return String.Format("in Package : <b>{5} ({4})</b><br> Attribute : <b>{0} ({3})</b> <br> with value = <b>{1}</b><br>{2} <br>  <hr>", _name, _value, _issue, _number, _package, _packageLabel);
                         else
                             return String.Format("in Package : <b>{5} ({4})</b><br> Attribute : <b>{0} ({3})</b> <br>{2} <br>  <hr>", _name, _value, _issue, _number, _package, _packageLabel);
-
                     }
                 default: return String.Format("{0}", _issue);
             }
         }
-
     }
 
     /// <summary>
-    /// 
+    ///
     /// </summary>
     public enum ErrorType
     {

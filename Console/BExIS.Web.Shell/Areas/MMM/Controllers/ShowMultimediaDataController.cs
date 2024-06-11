@@ -7,7 +7,6 @@ using BExIS.Security.Entities.Authorization;
 using BExIS.Security.Services.Authorization;
 using BExIS.Security.Services.Utilities;
 using BExIS.Utils.Config;
-using ICSharpCode.SharpZipLib.Zip;
 using IDIV.Modules.Mmm.UI.Models;
 using MediaInfoLib;
 using MetadataExtractor;
@@ -107,42 +106,7 @@ namespace IDIV.Modules.Mmm.UI.Controllers
                 case "audio":
                     return PartialView("_audioPreview", path);
 
-                case "bundle":
-                    FileInformation fileInfo = getFileInfo(Server.UrlDecode(path));
-                    if (fileInfo.MimeType == "application/x-zip-compressed")
-                    {
-                        using (ZipFile zipFile = new ZipFile(getFileStream(Server.UrlDecode(path))))
-                        {
-                            foreach (ZipEntry zipEntry in zipFile)
-                            {
-                                if (zipEntry.IsFile)
-                                {
-                                    if (zipEntry.Name.Length > 0 && zipEntry.Name.ToLower() == ("Manifest.xml").ToLower())
-                                    {
-                                        List<KeyValuePair<string, string>> tmp = new List<KeyValuePair<string, string>>();
-                                        Stream zipStream = zipFile.GetInputStream(zipEntry);
-                                        XmlDocument doc = new XmlDocument();
-                                        doc.Load(zipStream);
-                                        XmlDocument tmpXml = new XmlDocument();
-                                        XmlNode imgs = doc.GetElementsByTagName("Images")[0];
-                                        for (int i = 0; i < imgs.ChildNodes.Count && i < 5; i++)
-                                        {
-                                            foreach (XmlNode xn in imgs.ChildNodes[i])
-                                            {
-                                                if (xn.Name == "Thumbnail")
-                                                {
-                                                    tmpXml.LoadXml(xn.OuterXml);
-                                                    tmp.Add(new KeyValuePair<string, string>(path, tmpXml.GetElementsByTagName("File")[0].InnerText));
-                                                }
-                                            }
-                                        }
-                                        return PartialView("_bundlePreview", tmp);
-                                    }
-                                }
-                            }
-                        }
-                    }
-                    return PartialView("_defaultPreview", path);
+               
 
                 default:
                     return PartialView("_defaultPreview", path);
@@ -183,8 +147,6 @@ namespace IDIV.Modules.Mmm.UI.Controllers
                         var es = new EmailService();
                         if (send_mail == "true")
                         {
-
-
                             es.Send(MessageHelper.GetFileDownloadHeader(datasetID, versionNr),
                                                     MessageHelper.GetFileDownloadMessage(GetUsernameOrDefault(), datasetID, fileInfo.Name),
                                                     GeneralSettings.SystemEmail
@@ -303,23 +265,6 @@ namespace IDIV.Modules.Mmm.UI.Controllers
                     }
                 }
             }
-        }
-
-        public FileResult getFileFromZip(string path, string file)
-        {
-            using (ZipFile zipFile = new ZipFile(getFileStream(Server.UrlDecode(path))))
-            {
-                foreach (ZipEntry zipEntry in zipFile)
-                {
-                    if (zipEntry.IsFile)
-                    {
-                        if (zipEntry.Name == Server.UrlDecode(file))
-                            return File(zipFile.GetInputStream(zipEntry), MimeMapping.GetMimeMapping(zipEntry.Name), zipEntry.Name);
-                    }
-                }
-            }
-
-            return null;
         }
 
         public FileResult getFileStreamResult(string path)
@@ -466,41 +411,6 @@ namespace IDIV.Modules.Mmm.UI.Controllers
             }
         }
 
-        public Dictionary<string, Dictionary<string, string>> getBundleInfo(Stream fileStream)
-        {
-            Dictionary<string, Dictionary<string, string>> exif = new Dictionary<string, Dictionary<string, string>>();
-            try
-            {
-                using (ZipFile zipFile = new ZipFile(fileStream))
-                {
-                    foreach (ZipEntry zipEntry in zipFile)
-                    {
-                        if (zipEntry.IsFile)
-                        {
-                            if (zipEntry.Name.Length > 0 && zipEntry.Name.ToLower() == ("Manifest.xml").ToLower())
-                            {
-                                Dictionary<string, string> tmp = new Dictionary<string, string>();
-                                Stream zipStream = zipFile.GetInputStream(zipEntry);
-                                XmlDocument doc = new XmlDocument();
-                                doc.Load(zipStream);
-
-                                tmp.Add("Name", doc.GetElementsByTagName("Name")[0].InnerText.ToString());
-                                tmp.Add("Description", doc.GetElementsByTagName("Description")[0].InnerText.ToString());
-                                exif.Add("Bundle", tmp);
-
-                                return exif;
-                            }
-                        }
-                    }
-                    return exif;
-                }
-            }
-            catch
-            {
-                return exif;
-            }
-        }
-
         public FileInformation getFileInfo(ContentDescriptor contentDescriptor)
         {
             try
@@ -615,12 +525,6 @@ namespace IDIV.Modules.Mmm.UI.Controllers
                         fileInfo.EXIF = getVideoInfo(fileStream);
                         break;
 
-                    case "application":
-                        if (fileInfo.MimeType == "application/x-zip-compressed")
-                        {
-                            fileInfo.EXIF = getBundleInfo(fileStream);
-                        }
-                        break;
 
                     default:
                         break;
@@ -713,254 +617,7 @@ namespace IDIV.Modules.Mmm.UI.Controllers
             path = Server.UrlDecode(path);
             return PartialView("_documentView", getFileInfo(path));
         }
-
-        public ActionResult BundleView(string path)
-        {
-            path = Server.UrlDecode(path);
-            BundleInformation bundleInfo = new BundleInformation();
-            try
-            {
-                using (ZipFile zipFile = new ZipFile(getFileStream(path)))
-                {
-                    foreach (ZipEntry zipEntry in zipFile)
-                    {
-                        if (zipEntry.IsFile)
-                        {
-                            if (zipEntry.Name.Length > 0 && zipEntry.Name.ToLower() == ("Manifest.xml").ToLower())
-                            {
-                                bundleInfo.BundlePath = path;
-                                Stream zipStream = zipFile.GetInputStream(zipEntry);
-                                XmlDocument doc = new XmlDocument();
-                                doc.Load(zipStream);
-                                XmlDocument tmpXml = new XmlDocument();
-                                XmlNode imgs = doc.GetElementsByTagName("Images")[0];
-                                for (int i = 0; i < imgs.ChildNodes.Count; i++)
-                                {
-                                    ImageInformation imageInfo = new ImageInformation();
-                                    imageInfo.BundlePath = bundleInfo.BundlePath;
-                                    foreach (XmlNode xn in imgs.ChildNodes[i])
-                                    {
-                                        if (xn.Name == "Name")
-                                            imageInfo.Name = xn.InnerText;
-                                        if (xn.Name == "Original")
-                                        {
-                                            tmpXml.LoadXml(xn.OuterXml);
-                                            imageInfo.Original = tmpXml.GetElementsByTagName("File")[0].InnerText;
-                                        }
-                                        if (xn.Name == "Thumbnail")
-                                        {
-                                            tmpXml.LoadXml(xn.OuterXml);
-                                            imageInfo.Thumbnail = tmpXml.GetElementsByTagName("File")[0].InnerText;
-                                        }
-                                    }
-                                    imageInfo.Measurements = getMeasurements(path, imageInfo.Name);
-                                    bundleInfo.Images.Add(imageInfo);
-                                }
-                            }
-                        }
-                    }
-                }
-                return PartialView("_bundleView", bundleInfo);
-            }
-            catch
-            {
-                return null;
-            }
-        }
-
-        public ActionResult overlayBinding(string path, string Name)
-        {
-            return PartialView("_bundleViewOverlay", getShapes(path, Name));
-        }
-
-        public List<Shape> getShapes(string path, string imgName)
-        {
-            List<Shape> shapes = new List<Shape>();
-            double x = 0;
-            double y = 0;
-            using (ZipFile zipFile = new ZipFile(getFileStream(path)))
-            {
-                string file = "";
-
-                foreach (ZipEntry zipEntry in zipFile)
-                {
-                    if (zipEntry.IsFile)
-                    {
-                        if (zipEntry.Name.Length > 0 && zipEntry.Name.ToLower() == ("Manifest.xml").ToLower())
-                        {
-                            Stream zipStream = zipFile.GetInputStream(zipEntry);
-                            XmlDocument doc = new XmlDocument();
-                            doc.Load(zipStream);
-
-                            XmlNode imgs = doc.GetElementsByTagName("Images")[0];
-                            XmlDocument tmp = new XmlDocument();
-                            for (int i = 0; i < imgs.ChildNodes.Count; i++)
-                            {
-                                tmp.LoadXml(imgs.ChildNodes[i].OuterXml);
-                                if (tmp.GetElementsByTagName("Name")[0].InnerText.ToLower() == imgName.ToLower())
-                                {
-                                    tmp.LoadXml(tmp.GetElementsByTagName("Shape")[0].OuterXml);
-                                    file = tmp.GetElementsByTagName("File")[0].InnerText;
-                                    Double.TryParse(tmp.GetElementsByTagName("Resolution")[0].InnerText.Split(',')[0], out x);
-                                    Double.TryParse(tmp.GetElementsByTagName("Resolution")[0].InnerText.Split(',')[1], out y);
-                                }
-                            }
-                        }
-                    }
-                }
-
-                if (!String.IsNullOrEmpty(file))
-                {
-                    foreach (ZipEntry zipEntry in zipFile)
-                    {
-                        if (zipEntry.IsFile)
-                        {
-                            if (zipEntry.Name.Length > 0 && zipEntry.Name.ToLower() == (file).ToLower())
-                            {
-                                Stream zipStream = zipFile.GetInputStream(zipEntry);
-                                using (TextFieldParser parser = new TextFieldParser(zipStream))
-                                {
-                                    parser.TextFieldType = Microsoft.VisualBasic.FileIO.FieldType.Delimited;
-                                    parser.SetDelimiters(";");
-                                    List<string> columns = parser.ReadFields().ToList();
-                                    long nameIndex = columns.IndexOf("imgName");
-                                    long polygonId = 0;
-                                    Point point = new Point();
-                                    Shape shape = new Shape();
-
-                                    while (!parser.EndOfData)
-                                    {
-                                        string[] fields = parser.ReadFields();
-                                        if (nameIndex >= 0 && fields[nameIndex].ToLower() == imgName.ToLower() && Convert.ToInt64(fields[columns.IndexOf("polygonId")]) != polygonId)
-                                        {
-                                            if (shape.Id > 0)
-                                                shapes.Add(shape);
-                                            Int64.TryParse(fields[columns.IndexOf("polygonId")], out polygonId);
-                                            shape = new Shape();
-                                            shape.x = x;
-                                            shape.y = y;
-                                            Int64.TryParse(fields[columns.IndexOf("polygonId")], out shape.Id);
-                                            Int64.TryParse(fields[columns.IndexOf("objReference")], out shape.objRef);
-                                        }
-                                        if (Int64.TryParse(fields[columns.IndexOf("polygonId")], out polygonId) && Convert.ToInt64(fields[columns.IndexOf("polygonId")]) == polygonId)
-                                        {
-                                            point = new Point();
-                                            Int64.TryParse(fields[columns.IndexOf("pointId")], out point.Id);
-                                            Double.TryParse(fields[columns.IndexOf("x")], out point.x);
-                                            Double.TryParse(fields[columns.IndexOf("y")], out point.y);
-                                            shape.Points.Add(point);
-                                        }
-                                    }
-                                    if (shape.Id > 0)
-                                        shapes.Add(shape);
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-            return shapes;
-        }
-
-        public List<Measurement> getMeasurements(string path, string imgName)
-        {
-            string file = "";
-            List<Measurement> measurements = new List<Measurement>();
-            using (ZipFile zipFile = new ZipFile(getFileStream(path)))
-            {
-                foreach (ZipEntry zipEntry in zipFile)
-                {
-                    if (zipEntry.IsFile)
-                    {
-                        if (zipEntry.Name.Length > 0 && zipEntry.Name.ToLower() == ("Manifest.xml").ToLower())
-                        {
-                            Stream zipStream = zipFile.GetInputStream(zipEntry);
-                            XmlDocument doc = new XmlDocument();
-                            doc.Load(zipStream);
-
-                            XmlNode imgs = doc.GetElementsByTagName("Images")[0];
-                            XmlDocument tmp = new XmlDocument();
-                            for (int i = 0; i < imgs.ChildNodes.Count; i++)
-                            {
-                                tmp.LoadXml(imgs.ChildNodes[i].OuterXml);
-                                if (tmp.GetElementsByTagName("Name")[0].InnerText.ToLower() == imgName.ToLower())
-                                {
-                                    tmp.LoadXml(tmp.GetElementsByTagName("Data")[0].OuterXml);
-                                    file = tmp.GetElementsByTagName("File")[0].InnerText;
-                                }
-                            }
-                        }
-                    }
-                }
-
-                if (!String.IsNullOrEmpty(file))
-                {
-                    foreach (ZipEntry zipEntry in zipFile)
-                    {
-                        if (zipEntry.IsFile)
-                        {
-                            if (zipEntry.Name.Length > 0 && zipEntry.Name.ToLower() == (file).ToLower())
-                            {
-                                Stream zipStream = zipFile.GetInputStream(zipEntry);
-                                using (TextFieldParser parser = new TextFieldParser(zipStream))
-                                {
-                                    parser.TextFieldType = Microsoft.VisualBasic.FileIO.FieldType.Delimited;
-                                    parser.SetDelimiters(",");
-                                    List<string> columns = parser.ReadFields().ToList();
-                                    Measurement measurement = new Measurement();
-
-                                    while (!parser.EndOfData)
-                                    {
-                                        string[] fields = parser.ReadFields();
-
-                                        measurement = new Measurement();
-                                        Int64.TryParse(fields[columns.IndexOf("obj")], out measurement.Id);
-                                        measurement.Type = fields[columns.IndexOf("type")];
-                                        if (columns.IndexOf("length") >= 0 && !String.IsNullOrEmpty(fields[columns.IndexOf("length")]))
-                                        {
-                                            Double.TryParse(fields[columns.IndexOf("length")], out measurement.Length);
-                                            measurement.Length = Math.Round(measurement.Length, 2);
-                                        }
-
-                                        if (columns.IndexOf("width") >= 0 && !String.IsNullOrEmpty(fields[columns.IndexOf("width")]))
-                                        {
-                                            Double.TryParse(fields[columns.IndexOf("width")], out measurement.Width);
-                                            measurement.Width = Math.Round(measurement.Width, 2);
-                                        }
-                                        if (columns.IndexOf("area") >= 0 && !String.IsNullOrEmpty(fields[columns.IndexOf("area")]))
-                                        {
-                                            Double.TryParse(fields[columns.IndexOf("area")], out measurement.Area);
-                                            measurement.Area = Math.Round(measurement.Area, 2);
-                                        }
-                                        if (columns.IndexOf("perimeter") >= 0 && !String.IsNullOrEmpty(fields[columns.IndexOf("perimeter")]))
-                                        {
-                                            Double.TryParse(fields[columns.IndexOf("perimeter")], out measurement.Perimeter);
-                                            measurement.Perimeter = Math.Round(measurement.Perimeter, 2);
-                                        }
-                                        if (columns.IndexOf("circularity") >= 0 && !String.IsNullOrEmpty(fields[columns.IndexOf("circularity")]))
-                                        {
-                                            Double.TryParse(fields[columns.IndexOf("circularity")], out measurement.Circularity);
-                                            measurement.Circularity = Math.Round(measurement.Circularity, 2);
-                                        }
-
-                                        if (columns.IndexOf("parent") >= 0 && !String.IsNullOrEmpty(fields[columns.IndexOf("parent")]))
-                                        {
-                                            Measurement parent = getParent(measurements, Convert.ToInt64(fields[columns.IndexOf("parent")]));
-                                            parent.Children.Add(measurement);
-                                        }
-                                        else
-                                        {
-                                            measurements.Add(measurement);
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-                return measurements;
-            }
-        }
+       
 
         private Measurement getParent(List<Measurement> measurements, long parentId)
         {
@@ -974,7 +631,7 @@ namespace IDIV.Modules.Mmm.UI.Controllers
             return new Measurement();
         }
 
-        private XmlDocument setSystemValuesToMetadata(long version,long datasetId, long metadataStructureId, XmlDocument metadata)
+        private XmlDocument setSystemValuesToMetadata(long version, long datasetId, long metadataStructureId, XmlDocument metadata)
         {
             SystemMetadataHelper SystemMetadataHelper = new SystemMetadataHelper();
 

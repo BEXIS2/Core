@@ -1,13 +1,12 @@
 ﻿using BExIS.App.Bootstrap.Attributes;
-using BExIS.Dlm.Services.DataStructure;
-using BExIS.UI.Helpers;
-using System;
-using System.Collections.Generic;
-using System.Web.Mvc;
-using BExIS.Modules.Rpm.UI.Models.Dimensions;
 using BExIS.Dlm.Entities.DataStructure;
-using System.Linq;
+using BExIS.Dlm.Services.DataStructure;
 using BExIS.Modules.Rpm.UI.Models;
+using BExIS.Modules.Rpm.UI.Models.Dimensions;
+using BExIS.UI.Helpers;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web.Mvc;
 
 namespace BExIS.Modules.Rpm.UI.Controllers
 {
@@ -60,7 +59,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
 
                         if (dimensionListItem.Id == 0)
                         {
-                            dimension = unitManager.Create(dimensionListItem.Name, dimensionListItem.Description, dimensionListItem.Specification);  
+                            dimension = unitManager.Create(dimensionListItem.Name, dimensionListItem.Description, dimensionListItem.Specification);
                         }
                         else
                         {
@@ -68,11 +67,9 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                             dimension.Name = dimensionListItem.Name;
                             dimension.Description = dimensionListItem.Description;
                             dimension.Specification = dimensionListItem.Specification;
-
                         }
                         dimension = unitManager.Update(dimension);
                         dimensionListItem = convertToDimensionListItem(dimension);
-
                     }
                     result = new
                     {
@@ -113,10 +110,11 @@ namespace BExIS.Modules.Rpm.UI.Controllers
             }
             return dimensionListItems;
         }
+
         private DimensionListItem convertToDimensionListItem(Dimension dimension)
         {
             bool inuse = false;
-            if(dimension.Units.Any())
+            if (dimension.Units.Any())
                 inuse = true;
             else
                 inuse = false;
@@ -138,9 +136,8 @@ namespace BExIS.Modules.Rpm.UI.Controllers
             {
                 ValidationResult validationResult = new ValidationResult { IsValid = true };
                 List<Dimension> dimensions = unitManager.DimensionRepo.Get().ToList();
-               
 
-                if(dimensionListItem.Id != 0)
+                if (dimensionListItem.Id != 0)
                 {
                     Dimension dimension = unitManager.DimensionRepo.Get(dimensionListItem.Id);
                     if (dimension.Units.Any())

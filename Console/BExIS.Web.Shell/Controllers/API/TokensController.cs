@@ -1,16 +1,14 @@
-﻿using BExIS.App.Bootstrap.Attributes;
+﻿using BExIS.App.Bootstrap;
+using BExIS.App.Bootstrap.Attributes;
 using BExIS.Security.Entities.Subjects;
 using BExIS.Security.Services.Subjects;
 using BExIS.Utils.Config;
-using BExIS.Utils.Config.Configurations;
 using BExIS.Utils.Route;
 using BExIS.Web.Shell.Models;
 using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Collections.Generic;
-using System.Configuration;
 using System.IdentityModel.Tokens.Jwt;
-using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Security.Claims;
@@ -40,26 +38,7 @@ namespace BExIS.Web.Shell.Controllers.API
 
                     if (user != null)
                     {
-                        var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtConfiguration.IssuerSigningKey));
-                        var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
-
-                        //Create a List of Claims, Keep claims name short
-                        var permClaims = new List<Claim>
-                        {
-                            new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-                            new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
-                            new Claim(ClaimTypes.Name, user.UserName)
-                        };
-
-                        //Create Security Token object by giving required parameters
-                        var token = new JwtSecurityToken(jwtConfiguration.ValidIssuer,
-                            jwtConfiguration.ValidAudience,
-                            permClaims,
-                            notBefore: DateTime.Now,
-                            expires: jwtConfiguration.ValidLifetime > 0 ? DateTime.Now.AddHours(jwtConfiguration.ValidLifetime) : DateTime.MaxValue,
-                            signingCredentials: credentials);
-
-                        var jwt_token = new JwtSecurityTokenHandler().WriteToken(token);
+                        var jwt_token = JwtHelper.Get(user);
 
                         return Request.CreateResponse(HttpStatusCode.OK, new ReadJwtModel() { Jwt = jwt_token });
                     }
@@ -101,7 +80,6 @@ namespace BExIS.Web.Shell.Controllers.API
                 }
 
                 return Request.CreateResponse(HttpStatusCode.BadRequest);
-
             }
             catch (Exception ex)
             {

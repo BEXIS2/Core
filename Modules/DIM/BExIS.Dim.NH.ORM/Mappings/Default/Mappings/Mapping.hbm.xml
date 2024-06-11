@@ -31,6 +31,5 @@
 
     <many-to-one class="BExIS.Dim.Entities.Mappings.Mapping" name="Parent" column="ParentRef">
     </many-to-one>
-    
   </class>
 </hibernate-mapping>

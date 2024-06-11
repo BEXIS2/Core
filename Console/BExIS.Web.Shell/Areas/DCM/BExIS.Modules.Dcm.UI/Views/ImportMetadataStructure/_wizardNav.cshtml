@@ -4,37 +4,36 @@
 @{
 
     int currentPage = @Model.GetCurrentStepInfoIndex() + 1;
-    
+
 }
 <div id="NavDiv">
 
     @if (!(Model.Current() == null))
-    { 
+    {
     <table id="NavigationTable">
         <tr>
             <td id="Nav_Left">
                 @if (!Model.Prev().IsEmpty() && !Model.Current().Equals(Model.Finish()))
                 {
-                    <button id="prevBt" onclick"PrevButton_OnClick()"  class="bx-button action" title="@Model.Prev().title" >Prev</button>
+                <button id="prevBt" onclick"PrevButton_OnClick()" class="bx-button action" title="@Model.Prev().title">Prev</button>
                 }
             </td>
             <td id="Nav_Pages">
-                 ( @currentPage  of   @Model.StepInfos.Count )
+                ( @currentPage  of   @Model.StepInfos.Count )
             </td>
             <td id="Nav_Options">
-               @Html.ActionLink("Cancel", "CancelUpload", "ImportMetadataStructure", new RouteValueDictionary { { "area", Model.Current().GetActionInfo.AreaName.ToString() } }, new { @class = "bx-button action",  @style="float:right" })
+                @Html.ActionLink("Cancel", "CancelUpload", "ImportMetadataStructure", new RouteValueDictionary { { "area", Model.Current().GetActionInfo.AreaName.ToString() } }, new { @class = "bx-button action",  @style="float:right" })
             </td>
             <td id="Nav_Right">
-                 @if (!Model.Next().IsEmpty())
-                 { 
-                    <button id="nextBt" class="bx-button action" style="float:right" title="@Model.Next().title">Next</button>
+                @if (!Model.Next().IsEmpty())
+                 {
+                <button id="nextBt" class="bx-button action" style="float:right" title="@Model.Next().title">Next</button>
                  }
 
                 @if (Model.Current().Equals(Model.Finish()))
-                { 
-                    <button id="finishBt"  class="bx-button action" style="float:right" title="Finish">Finish</button>
+                {
+                <button id="finishBt" class="bx-button action" style="float:right" title="Finish">Finish</button>
                 }
-
             </td>
         </tr>
     </table>
@@ -48,7 +47,6 @@
             $('.wizardStep').preloader(16, "Previous step is loading.");
             var index = '@Model.StepInfos.IndexOf(@Model.Prev())';
 
-
             if (index < 0) index = 0;
 
             $.get('@Url.Action(@Model.Prev().GetActionInfo.ActionName, @Model.Prev().GetActionInfo.ControllerName, new RouteValueDictionary { { "area", @Model.Prev().GetActionInfo.AreaName  } })',
@@ -58,7 +56,6 @@
                         NavigationRefresh();
                         TaskListRefresh();
                     });
-
 
         });
 

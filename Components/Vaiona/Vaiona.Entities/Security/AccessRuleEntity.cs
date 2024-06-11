@@ -13,6 +13,7 @@ namespace Vaiona.Entities.Security
     {
         MaximumRight = 0, MinimumRight = 1, Normal = 2
     }
+
     public class AccessRuleEntity
     {
         public virtual Int64 Id { get; set; }
@@ -39,8 +40,6 @@ namespace Vaiona.Entities.Security
             {
                 RuleBody = String.Join(" | ", value);
             }
-
         }
-
     }
 }

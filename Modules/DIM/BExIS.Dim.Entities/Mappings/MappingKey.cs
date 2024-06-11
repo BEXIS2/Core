@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Vaiona.Entities.Common;
+﻿using System.Collections.Generic;
 
 namespace BExIS.Dim.Entities.Mappings
 {
@@ -21,7 +16,6 @@ namespace BExIS.Dim.Entities.Mappings
 
         public virtual string XPath { get; set; }
 
-
         public MappingKey()
         {
             Name = string.Empty;
@@ -32,6 +26,5 @@ namespace BExIS.Dim.Entities.Mappings
             Children = new List<MappingKey>();
             XPath = string.Empty;
         }
-
-    } 
+    }
 }

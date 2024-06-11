@@ -19,7 +19,6 @@ namespace BExIS.Modules.Dcm.UI.Hooks
             // check if subject is checked in
             // only check if status is open
             checkAvailablity(id);
-
         }
 
         private void checkStatus(long id, string username)
@@ -43,6 +42,5 @@ namespace BExIS.Modules.Dcm.UI.Hooks
                 using (var datasetManager = new DatasetManager())
                     Status = datasetManager.IsDatasetCheckedIn(id) == true ? HookStatus.Open : HookStatus.Waiting;
         }
-
     }
 }

@@ -6,9 +6,7 @@ using Microsoft.Owin.Security;
 using Microsoft.Owin.Security.Cookies;
 using Microsoft.Owin.Security.DataProtection;
 using Microsoft.Owin.Security.Jwt;
-using Microsoft.Owin.Security.OAuth;
 using Owin;
-using System.Configuration;
 using System.Text;
 
 namespace BExIS.Security.Services.Utilities

@@ -1,23 +1,23 @@
-﻿@model BExIS.Modules.Dcm.UI.Models.CreateDataset.StepModelHelper 
+﻿@model BExIS.Modules.Dcm.UI.Models.CreateDataset.StepModelHelper
 @{
     string stepId = @Model.Model.StepInfo.Id.ToString(); //@Model.Model.Source.Id.ToString(); // XXX METADATSTRUCTURE+ "_"+Model.MetadataStructure.Id;
     string contentId = stepId + "_Content";
 }
 
 <div id="@stepId" name="@Model.UsageName Container" class="createWizardStep">
-   
-   @if(Model.Model.StepInfo.IsInstanze == false)
+
+    @if(Model.Model.StepInfo.IsInstanze == false)
    {
     <!-- CONTENT -->
     <div id="@contentId" class="content">
-            @if (Model.Childrens.Any())
+        @if (Model.Childrens.Any())
             {
                 for (int i = 1; i <= Model.Childrens.Count; i++)
                 {
                     var item = Model.Childrens.ElementAt(i-1);
-                    @Html.Partial("_metadataCompoundAttributeUsageViewOffline", item)
+        @Html.Partial("_metadataCompoundAttributeUsageViewOffline", item)
                 }
             }
-    </div>  
+    </div>
    }
 </div>

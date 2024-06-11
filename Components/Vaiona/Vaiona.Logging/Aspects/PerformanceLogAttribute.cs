@@ -10,7 +10,7 @@ namespace Vaiona.Logging.Aspects
     [AttributeUsage(AttributeTargets.Method, AllowMultiple = false)]
     public class MeasurePerformanceAttribute : OnMethodBoundaryAspect
     {
-        public sealed override void OnEntry(MethodExecutionArgs args)
+        public override sealed void OnEntry(MethodExecutionArgs args)
         {
             if (!AppConfiguration.IsLoggingEnable || !AppConfiguration.IsPerformanceLoggingEnable)
                 return;
@@ -20,7 +20,7 @@ namespace Vaiona.Logging.Aspects
             args.MethodExecutionTag = sw;
         }
 
-        public sealed override void OnExit(MethodExecutionArgs args)
+        public override sealed void OnExit(MethodExecutionArgs args)
         {
             if (!AppConfiguration.IsLoggingEnable || !AppConfiguration.IsPerformanceLoggingEnable)
                 return;
@@ -53,7 +53,6 @@ namespace Vaiona.Logging.Aspects
 #if DEBUG
             Debug.WriteLine(string.Format("Diagnose is called on {0}.{1} at {2}", mLog.ClassName, mLog.MethodName, mLog.UTCDate));
 #endif
-
         }
     }
 }

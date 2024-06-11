@@ -14,6 +14,7 @@ namespace Vaiona.Persistence.NH
         private bool allowMultipleCommit = true;
 
         public IPersistenceManager PersistenceManager { get; internal set; }
+
         internal NHibernateUnitOfWork(NHibernatePersistenceManager persistenceManager, ISession session, bool autoCommit = false, bool throwExceptionOnError = true, bool allowMultipleCommit = false)
         {
             this.PersistenceManager = persistenceManager;
@@ -79,7 +80,6 @@ namespace Vaiona.Persistence.NH
                     Session.Transaction.Rollback();
                     if (AfterIgnore != null)
                         AfterIgnore(this, EventArgs.Empty);
-
                 }
             }
             catch (Exception ex)
@@ -100,6 +100,7 @@ namespace Vaiona.Persistence.NH
         //}
 
         private bool isDisposed = false;
+
         ~NHibernateUnitOfWork()
         {
             Dispose(false);
@@ -107,8 +108,8 @@ namespace Vaiona.Persistence.NH
 
         protected virtual void Dispose(bool disposing)
         {
-            // If you need thread safety, use a lock around these  
-            // operations, as well as in your methods that use the resource. 
+            // If you need thread safety, use a lock around these
+            // operations, as well as in your methods that use the resource.
             if (!isDisposed)
             {
                 if (disposing)

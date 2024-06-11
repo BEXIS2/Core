@@ -4,7 +4,6 @@ using BExIS.Dlm.Entities.DataStructure;
 using BExIS.Dlm.Services.Data;
 using BExIS.IO.DataType.DisplayPattern;
 using BExIS.IO.Transform.Output;
-using BExIS.Modules.Ddm.UI.Helpers;
 using BExIS.Security.Entities.Authorization;
 using BExIS.Security.Entities.Subjects;
 using BExIS.Security.Services.Authorization;
@@ -13,24 +12,18 @@ using BExIS.Security.Services.Subjects;
 using BExIS.UI.Helpers;
 using BExIS.UI.Models;
 using BExIS.Utils.NH.Querying;
-using BExIS.Utils.Route;
 using BExIS.Xml.Helpers;
-using Microsoft.AspNet.Identity;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Serialization;
 using System;
 using System.Collections.Generic;
 using System.Data;
-using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Web.Http;
 using System.Web.Http.Description;
-using System.Web.Http.ModelBinding;
 using System.Web.UI.WebControls;
-using Telerik.Web.Mvc;
 using Telerik.Web.Mvc.Extensions;
 
 namespace BExIS.Modules.Ddm.UI.Controllers
@@ -49,14 +42,11 @@ namespace BExIS.Modules.Ddm.UI.Controllers
     /// </remarks>
     public class DataTableController : ApiController
     {
-
-
-
         /// <summary>
-        /// this api is used to process server side table functions. 
+        /// this api is used to process server side table functions.
         /// </summary>
         /// <returns></returns>
-        /// <remarks> 
+        /// <remarks>
         /// </remarks>
         [BExISApiAuthorize]
         //[Route("api/Data")]
@@ -84,12 +74,10 @@ namespace BExIS.Modules.Ddm.UI.Controllers
             if (id <= 0)
                 return Request.CreateErrorResponse(HttpStatusCode.PreconditionFailed, "Id should be greater then 0");
 
-
             DatasetManager datasetManager = new DatasetManager();
             UserManager userManager = new UserManager();
             EntityPermissionManager entityPermissionManager = new EntityPermissionManager();
             EntityManager entityManager = new EntityManager();
-
 
             bool isPublic = false;
             try
@@ -106,7 +94,6 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                 #endregion is public
 
                 User user = ControllerContext.RouteData.Values["user"] as User;
-
 
                 if (!isPublic && user == null)
                 {
@@ -157,7 +144,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                             {
                                 // apply selection and projection
                                 long count = datasetManager.GetDataTuplesCount(datasetVersion.Id);
-                                if(count==0) return Request.CreateErrorResponse(HttpStatusCode.BadRequest, "There is no data for the dataset.");
+                                if (count == 0) return Request.CreateErrorResponse(HttpStatusCode.BadRequest, "There is no data for the dataset.");
 
                                 dt = datasetManager.GetLatestDatasetVersionTuples(id, filter, orderBy, null, command.Q, pageNumber, pageSize);
                                 dt.Strip();
@@ -172,7 +159,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                                 }
                             }
                             else
-                            {  
+                            {
                                 int count = datasetManager.GetDatasetVersionEffectiveTuples(datasetVersion).Count;
                                 recieveModel.Count = count;
 
@@ -180,15 +167,12 @@ namespace BExIS.Modules.Ddm.UI.Controllers
 
                                 dt = datasetManager.GetDatasetVersionTuples(datasetVersion.Id, pageNumber, pageSize);
                                 dt.Strip();
-
                             }
                         }
                         else
                         {
                             return Request.CreateErrorResponse(HttpStatusCode.BadRequest, "The data of this dataset is not structured.");
-
                         }
-
 
                         if (dt != null)
                         {
@@ -199,16 +183,14 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                             var response = Request.CreateResponse();
 
                             string json = JsonConvert.SerializeObject(recieveModel);
-                                //new JsonSerializerSettings
-                                //{
-                                //    ContractResolver = new CamelCasePropertyNamesContractResolver()
-                                //});
-
+                            //new JsonSerializerSettings
+                            //{
+                            //    ContractResolver = new CamelCasePropertyNamesContractResolver()
+                            //});
 
                             response.Content = new StringContent(json, System.Text.Encoding.UTF8, "application/json");
                             //response.Content = new ObjectContent(typeof(DatasetModel), model, new DatasetModelCsvFormatter(model.DataTable.TableName));
                             response.Content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
-                            
 
                             //set headers on the "response"
                             return response;
@@ -217,12 +199,9 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                         {
                             return Request.CreateErrorResponse(HttpStatusCode.BadRequest, "The data could not be loaded.");
                         }
-
-
                     }
                     else // has rights?
                     {
-
                         return Request.CreateErrorResponse(HttpStatusCode.Forbidden, "User has no read right.");
                     }
                 }
@@ -276,9 +255,8 @@ namespace BExIS.Modules.Ddm.UI.Controllers
 
                 tmp.Add(column);
             }
-                
+
             return tmp;
         }
-
     }
 }

@@ -3,10 +3,6 @@ using BExIS.UI.Models;
 using BExIS.Utils.NH.Querying;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Telerik.Web.Mvc;
 using DataType = BExIS.Utils.NH.Querying.DataType;
 
 namespace BExIS.UI.Helpers
@@ -53,7 +49,6 @@ namespace BExIS.UI.Helpers
         {
             var fd = filterDescriptor;
 
-
             switch (fd.FilterBy)
             {
                 case DataTableFilterType.c:
@@ -99,7 +94,7 @@ namespace BExIS.UI.Helpers
                         int convertedInt;
                         double convertedDouble;
                         DateTime convertedDateTime;
-                        if (int.TryParse(fd.Value,out convertedInt))
+                        if (int.TryParse(fd.Value, out convertedInt))
                         {
                             return new FilterNumberItemExpression()
                             {
@@ -119,7 +114,7 @@ namespace BExIS.UI.Helpers
                             };
                         }
                         else
-                        if (DateTime.TryParse(fd.Value,out convertedDateTime))
+                        if (DateTime.TryParse(fd.Value, out convertedDateTime))
                         {
                             return new FilterDateTimeItemExpression()
                             {
@@ -134,7 +129,6 @@ namespace BExIS.UI.Helpers
                             Field = new Field() { DataType = DataType.String, Name = label },
                             Operator = StringOperator.Operation.Equals,
                             Value = fd.Value
-
                         };
                     }
                 case DataTableFilterType.ne:
@@ -217,7 +211,6 @@ namespace BExIS.UI.Helpers
                     }
                 case DataTableFilterType.o:
                     {
-
                         return new FilterDateTimeItemExpression()
                         {
                             Field = new Field() { DataType = DataType.DateTime, Name = label },
@@ -274,7 +267,8 @@ namespace BExIS.UI.Helpers
 
             return null;
         }
-        #endregion
+
+        #endregion filter
 
         #region orderby
 
@@ -301,7 +295,7 @@ namespace BExIS.UI.Helpers
             return new OrderByExpression(oieList);
         }
 
-        #endregion
+        #endregion orderby
 
         public static Dictionary<string, string> variablesAsKVP(ICollection<VariableInstance> variables)
         {
@@ -309,11 +303,10 @@ namespace BExIS.UI.Helpers
 
             foreach (var item in variables)
             {
-                tmp.Add(item.Label, "var"+item.Id);
+                tmp.Add(item.Label, "var" + item.Id);
             }
 
             return tmp;
         }
-
     }
 }

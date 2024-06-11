@@ -10,15 +10,17 @@ namespace BExIS.Dlm.Services.DataStructure
     public class DataTypeManager : IDisposable
     {
         private IUnitOfWork guow = null;
+
         public DataTypeManager()
         {
             //// define aggregate paths
-            ////AggregatePaths.Add((Unit u) => u.ConversionsIamTheSource);            
+            ////AggregatePaths.Add((Unit u) => u.ConversionsIamTheSource);
             guow = this.GetIsolatedUnitOfWork();
             this.Repo = guow.GetReadOnlyRepository<DataType>();
         }
 
         private bool isDisposed = false;
+
         ~DataTypeManager()
         {
             Dispose(true);
@@ -47,7 +49,7 @@ namespace BExIS.Dlm.Services.DataStructure
         // provide read only repos for the whole aggregate area
         public IReadOnlyRepository<DataType> Repo { get; private set; }
 
-        #endregion
+        #endregion Data Readers
 
         #region DataType
 
@@ -139,7 +141,6 @@ namespace BExIS.Dlm.Services.DataStructure
             return (entity);
         }
 
-        #endregion
-
+        #endregion DataType
     }
 }

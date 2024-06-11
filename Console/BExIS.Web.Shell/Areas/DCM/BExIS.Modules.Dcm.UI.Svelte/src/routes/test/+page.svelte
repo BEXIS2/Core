@@ -5,7 +5,7 @@
 	import { writable } from 'svelte/store';
 	import { getToken } from '$services/BaseCaller';
 	import { createEventDispatcher} from 'svelte'
-	import Child from './Child.svelte';
+
 	// load attributes from div
 	let container;
 	let id:number|undefined = undefined;
@@ -45,20 +45,10 @@
 		}
 
 
-	
-		function testFn()
-		{
-			console.log("testfn");
-		}
-
 
 </script>
-
-
-
-
-	 {#if serverTableConfig}
+<Page>
+		{#if serverTableConfig}
 			<Table config={serverTableConfig} />
 		{/if}
-
-
+</Page>

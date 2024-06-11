@@ -34,15 +34,15 @@
     </property>
 
 	<property name="DefaultValue" type="String">
-		<column name="DefaultValue"  />
+		<column name="DefaultValue" />
 	</property>
 
 	<property name="FixedValue" type="String">
-		<column name="FixedValue"  />
+		<column name="FixedValue" />
 	</property>
 
 	<many-to-one name="Master" class="MetadataCompoundAttribute" not-null="true" column="MetadataCompoundAttributeRef" />
 
-    <many-to-one name="Member"   class="MetadataAttribute"   not-null="true" column="MetadataAttributeRef" lazy="false"/>
+    <many-to-one name="Member"   class="MetadataAttribute"   not-null="true" column="MetadataAttributeRef" lazy="false" />
   </class>
 </hibernate-mapping>

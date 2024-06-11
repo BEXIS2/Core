@@ -1,13 +1,6 @@
 ﻿using BExIS.App.Testing;
-using BExIS.Dim.Helpers;
-using BExIS.Dlm.Entities.Data;
 using BExIS.Modules.Dim.UI.Helpers;
-using BExIS.Utils.Config;
-using Lucifron.ReST.Library.Models;
-using Newtonsoft.Json;
 using NUnit.Framework;
-using RestSharp;
-using RestSharp.Authenticators;
 using Vaiona.Utils.Cfg;
 
 namespace BExIS.Modules.Dim.UI.Tests.Helpers

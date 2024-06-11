@@ -15,50 +15,47 @@
         <tr>
             @foreach (DataColumn dc in Model.Data.Columns)
             {
-                <th> @dc.ColumnName </th>
+            <th> @dc.ColumnName </th>
             }
         </tr>
     </thead>
 
     @foreach (DataRow row in Model.Data.Rows)
     {
-        <tr>
-            @foreach (var item in row.ItemArray)
+    <tr>
+        @foreach (var item in row.ItemArray)
             {
 
-                <td>
-                    @item
-                </td>
+        <td>
+            @item
+        </td>
             }
-        </tr>
+    </tr>
     }
-
 </table>
 
-    
 }
-
 
 <style>
     /*----------------------------------------------------------
-Color Overview
+    Color Overview
 
-White    #000000    brigth
-Gray 01  #f5f5f5
-Gray 02  #ebebeb
-Gray 03  #afb0b1
-Gray 04  #009cdf    // new 323232 dark
-Black    #ffffff
-Yellow   #ffbb52
-Orange   #ff9700
-Red      #f24c24
-Green 01  #388670 dark
-Green 02  #72b1a0
-Green 03  #bee1da
-Green 04  #d2e8e3
-Green 05  #eff7f6 brigth
+    White    #000000    brigth
+    Gray 01  #f5f5f5
+    Gray 02  #ebebeb
+    Gray 03  #afb0b1
+    Gray 04  #009cdf    // new 323232 dark
+    Black    #ffffff
+    Yellow   #ffbb52
+    Orange   #ff9700
+    Red      #f24c24
+    Green 01  #388670 dark
+    Green 02  #72b1a0
+    Green 03  #bee1da
+    Green 04  #d2e8e3
+    Green 05  #eff7f6 brigth
 
-----------------------------------------------------------*/
+    ----------------------------------------------------------*/
     body {
         background-color: #ffffff;
         font-size: 11pt;
@@ -67,10 +64,8 @@ Green 05  #eff7f6 brigth
         color: #000000;
     }
 
-
-
-    /* HEADINGS   
-----------------------------------------------------------*/
+    /* HEADINGS
+    ----------------------------------------------------------*/
     h1, h2, h3, h4, h5, h6 {
         font-size: 1.5em;
         color: #000;
@@ -106,9 +101,8 @@ Green 05  #eff7f6 brigth
         line-height: 1.6;
     }
 
-
     /* TABLE
-----------------------------------------------------------*/
+    ----------------------------------------------------------*/
 
     table {
         width: 100%;
@@ -123,7 +117,6 @@ Green 05  #eff7f6 brigth
             text-align: left;
             float: none;
         }
-
 
         table th {
             color: black;
@@ -149,15 +142,14 @@ Green 05  #eff7f6 brigth
             font-weight: bold;
             margin-right: 5px;
         }
- 
 
-    table.bx-table-form tr td {
-        padding: 5px;
-        border: 0 none;
-        vertical-align: middle;
-        line-height: 14pt;
-        /*overflow:hidden;*/
-    }
+        table.bx-table-form tr td {
+            padding: 5px;
+            border: 0 none;
+            vertical-align: middle;
+            line-height: 14pt;
+            /*overflow:hidden;*/
+        }
 
     #Content_Data > .t-grid > table > tbody > tr:hover {
         background-color: #eff7f6;
@@ -179,6 +171,4 @@ Green 05  #eff7f6 brigth
         white-space: nowrap;
         text-overflow: ellipsis;
     }
-
-
 </style>

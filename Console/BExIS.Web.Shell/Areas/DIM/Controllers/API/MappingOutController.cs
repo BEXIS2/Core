@@ -21,7 +21,6 @@ namespace BExIS.Modules.Dim.UI.Controllers
     {
         private XmlDatasetHelper xmlDatasetHelper = new XmlDatasetHelper();
 
-
         [BExISApiAuthorize]
         [GetRoute("api/Mapping")]
         public IEnumerable<Mapping> Get()
@@ -33,22 +32,20 @@ namespace BExIS.Modules.Dim.UI.Controllers
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="sourceElementId"></param>
         /// <param name="sourceElementType"></param>
         /// <param name="targetElementId"></param>
         /// <param name="targetElementType"></param>
         /// <returns></returns>
-        /// <remarks> 
+        /// <remarks>
         /// </remarks>
         [BExISApiAuthorize]
-
         [GetRoute("api/Mapping/{sourceElementId}/{sourceElementType}/{targetElementId}/{targetElementType}")]
         [HttpGet]
         public HttpResponseMessage Get(long sourceElementId, int sourceElementType, long targetElementId, int targetElementType)
         {
-
             using (var mappingManager = new MappingManager())
             {
                 var sourceLE = mappingManager.GetLinkElement(sourceElementId, (LinkElementType)sourceElementType);
@@ -63,15 +60,13 @@ namespace BExIS.Modules.Dim.UI.Controllers
                 tmp.AddRange(complexMappings);
 
                 var response = Request.CreateResponse(HttpStatusCode.OK);
-                string resp = JsonConvert.SerializeObject(tmp.OrderBy(m=>m.Id));
-
+                string resp = JsonConvert.SerializeObject(tmp.OrderBy(m => m.Id));
 
                 response.Content = new StringContent(resp, System.Text.Encoding.UTF8, "application/json");
                 response.Content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
 
                 //set headers on the "response"
                 return response;
-
             }
         }
     }

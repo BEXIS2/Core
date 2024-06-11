@@ -1,7 +1,6 @@
 <hibernate-mapping xmlns="urn:nhibernate-mapping-2.2" assembly="BExIS.Dlm.Entities" namespace="BExIS.Dlm.Entities.DataStructure">
   <subclass name="RangeConstraint" extends="Constraint" discriminator-value="RNG" dynamic-update="true">
     <!-- Mapping BaseEntity properties -->
-    
 
     <!-- Mapping Entity properties -->
     <property name="Lowerbound" type="Double">
@@ -19,8 +18,5 @@
     <property name="UpperboundIncluded" type="yes_no">
       <column name="UpperboundIncluded" />
     </property>
-
-
   </subclass>
-
 </hibernate-mapping>

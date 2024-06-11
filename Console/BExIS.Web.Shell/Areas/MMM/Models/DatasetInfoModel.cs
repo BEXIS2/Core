@@ -25,7 +25,5 @@
             this.Downloadable = downloadable;
             this.Deleteable = deleteable;
         }
-
     }
 }
-

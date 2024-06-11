@@ -7,10 +7,9 @@ using Vaiona.IoC;
 
 namespace BExIS.Modules.Ddm.UI.Controllers
 {
-
     /// <summary>
     /// This Search Index API is only for internal comminication
-    /// 
+    ///
     /// </summary>
     public class SearchIndexController : Controller
     {
@@ -44,11 +43,9 @@ namespace BExIS.Modules.Ddm.UI.Controllers
             {
                 var enumAction = (IndexingAction)Enum.Parse(typeof(IndexingAction), actionType);
                 provider?.UpdateSingleDatasetIndex(id, enumAction);
-
             }
             return null;
         }
-
 
         /// <summary>
         /// free text search over the index
@@ -61,5 +58,4 @@ namespace BExIS.Modules.Ddm.UI.Controllers
             return provider?.GetTextBoxSearchValues(value, "", "new", 10);
         }
     }
-
 }

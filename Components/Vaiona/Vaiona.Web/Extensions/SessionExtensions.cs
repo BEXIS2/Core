@@ -33,6 +33,7 @@ namespace Vaiona.Web.Extensions
         {
             session["CurrentTenant"] = tenant;
         }
+
         public static Tenant GetTenant(this HttpSessionState session)
         {
             object tenantObj = session["CurrentTenant"];

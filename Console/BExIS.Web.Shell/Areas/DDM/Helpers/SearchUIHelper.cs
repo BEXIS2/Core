@@ -14,13 +14,12 @@ using System.Xml.Xsl;
 using Vaiona.Persistence.Api;
 using Vaiona.Utils.Cfg;
 
-// Javad: 18.07.2017 This class has a remarkable overlap with BExIS.IO.Transform.Output.OutputDatmanager and BExIS.Dlm.Services.Helpers.DatasetConvertor. 
+// Javad: 18.07.2017 This class has a remarkable overlap with BExIS.IO.Transform.Output.OutputDatmanager and BExIS.Dlm.Services.Helpers.DatasetConvertor.
 // All the dataset related functions of the two classes must be moved to the DatasetConvertor
 namespace BExIS.Modules.Ddm.UI.Helpers
 {
     public class SearchUIHelper
     {
-
         public static string ConvertXmlToHtml(string m, string xslPath = "")
         {
             string url = "";
@@ -29,7 +28,6 @@ namespace BExIS.Modules.Ddm.UI.Helpers
 
             if (m != null)
             {
-
                 using (StringReader stringReader = new StringReader(m))
                 using (XmlReader xmlReader = XmlReader.Create(stringReader))
                 using (StringWriter stringWriter = new StringWriter())
@@ -46,7 +44,6 @@ namespace BExIS.Modules.Ddm.UI.Helpers
             }
 
             return "";
-
         }
 
         public DataTable ConvertPrimaryDataToDatatable(DatasetVersion dsv, IEnumerable<long> dsVersionTupleIds)
@@ -117,9 +114,7 @@ namespace BExIS.Modules.Ddm.UI.Helpers
                                     break;
                                 }
                         }
-
                     }
-
 
                     foreach (var id in dsVersionTupleIds)
                     {
@@ -146,8 +141,6 @@ namespace BExIS.Modules.Ddm.UI.Helpers
 
             XmlDocument doc = new XmlDocument();
             doc = (XmlDocument)sds.Extra;
-
-
 
             if (dsVersionTuples != null && sds != null && doc != null)
             {
@@ -211,8 +204,6 @@ namespace BExIS.Modules.Ddm.UI.Helpers
                                 break;
                             }
                     }
-
-
                 }
 
                 foreach (var tuple in dsVersionTuples)
@@ -222,7 +213,6 @@ namespace BExIS.Modules.Ddm.UI.Helpers
             }
 
             return dt;
-
         }
 
         /// <summary>
@@ -236,7 +226,6 @@ namespace BExIS.Modules.Ddm.UI.Helpers
         /// <returns></returns>
         private static DataRow ConvertTupleIntoDataRow(DataTable dt, AbstractTuple t, StructuredDataStructure sts)
         {
-
             DataRow dr = dt.NewRow();
 
             foreach (var vv in t.VariableValues)
@@ -343,8 +332,6 @@ namespace BExIS.Modules.Ddm.UI.Helpers
                         }
                     }
 
-
-
                     /*if (vv.ParameterValues.Count > 0)
                     {
                         foreach (var pu in vv.ParameterValues)
@@ -366,7 +353,7 @@ namespace BExIS.Modules.Ddm.UI.Helpers
             dt.Columns.Add("VariableName");
             dt.Columns.Add("Description");
             dt.Columns.Add("Unit");
-            //dt.Columns.Add("Parameters");      
+            //dt.Columns.Add("Parameters");
             dt.Columns.Add("DataType");
             dt.Columns.Add("Category");
             dt.Columns.Add("MissingValues");
@@ -422,7 +409,7 @@ namespace BExIS.Modules.Ddm.UI.Helpers
                             dr["DataType"] = "n/a";
 
                         if (sdvu.MissingValues != null)
-                            dr["MissingValues"] = String.Join(", ", sdvu.MissingValues.Select(m=> m.DisplayName).ToArray());
+                            dr["MissingValues"] = String.Join(", ", sdvu.MissingValues.Select(m => m.DisplayName).ToArray());
                         else
                             dr["MissingValues"] = "n/a";
 
@@ -464,11 +451,9 @@ namespace BExIS.Modules.Ddm.UI.Helpers
             return fileList;
         }
 
-
         private static List<VariableInstance> SortVariablesOnDatastructure(List<VariableInstance> variables, DataStructure datastructure)
         {
             return variables.OrderBy(v => v.OrderNo).ToList();
         }
-
     }
 }

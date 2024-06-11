@@ -93,7 +93,6 @@ namespace BExIS.IO.Tests.Transform.Input
             Assert.That(incoming, Is.EquivalentTo(lines));
         }
 
-
         [Test]
         public void encoding_detectEcodingByEveryRow_EncodingIsWindowsFormat()
         {
@@ -123,9 +122,6 @@ namespace BExIS.IO.Tests.Transform.Input
 
             Assert.That(incoming, Is.EquivalentTo(lines));
         }
-
-
-        
 
         [Test]
         public void encoding_detectEcodingByReadFileFirst_EncodingIsUTF8Format()

@@ -136,7 +136,6 @@ namespace Vaiona.Persistence.NH
             throw new NotImplementedException();
         }
 
-
         public IQueryable<TEntity> Query()
         {
             return (UoW.Session.Query<TEntity>());
@@ -156,7 +155,6 @@ namespace Vaiona.Persistence.NH
         {
             throw new NotImplementedException();
         }
-
 
         public bool IsPropertyLoaded(object proxy, string propertyName)
         {

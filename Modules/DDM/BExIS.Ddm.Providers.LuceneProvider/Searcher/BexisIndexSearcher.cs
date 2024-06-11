@@ -77,7 +77,8 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Searcher
         /// <seealso cref=""/>
         /// <param></param>
         /// <returns></returns>
-        public static string[] getCategoryFields() { init(); return categoryFields; }
+        public static string[] getCategoryFields()
+        { init(); return categoryFields; }
 
         /// <summary>
         ///
@@ -86,7 +87,8 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Searcher
         /// <seealso cref=""/>
         /// <param></param>
         /// <returns></returns>
-        public static string[] getStoredFields() { init(); return storedFields; }
+        public static string[] getStoredFields()
+        { init(); return storedFields; }
 
         /// <summary>
         ///
@@ -229,7 +231,6 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Searcher
             string valueLastEntity = ""; // var to store last entity value
             bool moreThanOneEntityFound = false; // var to set, if more than one entity name was found
 
-
             foreach (ScoreDoc sd in docs.ScoreDocs)
             {
                 Document doc = searcher.Doc(sd.Doc);
@@ -292,11 +293,9 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Searcher
         /// <returns></returns>
         public static IEnumerable<TextValue> doTextSearch(Query origQuery, String queryFilter, String searchtext)
         {
-
             using (Analyzer analyzer = new NGramAnalyzer())
             using (KeywordAnalyzer ka = new KeywordAnalyzer())
             {
-
                 String filter = queryFilter;
                 BooleanQuery query = new BooleanQuery();
                 query.Add(origQuery, Occur.MUST);
@@ -427,7 +426,6 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Searcher
 
                     p.Values = tmp;
                 }
-
             }
             return properties;
         }

@@ -14,8 +14,6 @@
                 <th title="Status">Status</th>
                 <th title="View">View</th>
                 <th></th>
-
-
             </tr>
         </thead>
         <tbody>
@@ -49,14 +47,12 @@
         </tbody>
     </table>
 
-
     <script type="text/javascript">
 
         function onclickDataset(e) {
 
             // checked
             var id = e.getAttribute("id");
-
 
             var data = {
                 id: id
@@ -83,15 +79,13 @@
             });
         }
 
-
-
         $('document').ready(function () {
             jQuery.fn.dataTable.render.ellipsis = function (cutoff, wordbreak, escapeHtml) {
                 var esc = function (t) {
                     return t
                         .replace(/&/g, '&amp;')
                         .replace(/</g, '&lt;')
-                        .replace(/>/g, '&gt;')
+                        .replace( />/g, '&gt;')
                         .replace(/"/g, '&quot;');
                 };
 
@@ -143,7 +137,6 @@
                     }
                 },
 
-
                 columnDefs: [
                     {
                         targets: 1,
@@ -174,5 +167,4 @@
             });
 
         })
-
     </script>

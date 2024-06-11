@@ -4,37 +4,35 @@
     bool IsActive = (Model.IsMetadataConvertable && Model.IsDataConvertable);
 }
 
-
 @if (Model.Exist)
 {
-    <span>Dataset with Id @Model.DatasetId and Version @Model.DatasetVersionId is prepared for ...</span>
+<span>Dataset with Id @Model.DatasetId and Version @Model.DatasetVersionId is prepared for ...</span>
 }
 else
 {
     if (!Model.IsMetadataConvertable)
     {
-        <b>It is not possible to convert the metadata into the required standard. </b>
+<b>It is not possible to convert the metadata into the required standard. </b>
     }
 
     if (!Model.IsDataConvertable)
     {
-        <b>It is not possible to convert the primary data in the required format.</b>
+<b>It is not possible to convert the primary data in the required format.</b>
     }
 
     if (Model.metadataValidMessage !="")
     {
-        <b>@Model.metadataValidMessage</b>
+<b>@Model.metadataValidMessage</b>
     }
 
     if (!Model.IsValid)
     {
-        <ul>
-            @foreach (string e in Model.Errors)
+<ul>
+    @foreach (string e in Model.Errors)
             {
-                <li>e</li>
+    <li>e</li>
             }
-        </ul>
+</ul>
     }
 
 }
-

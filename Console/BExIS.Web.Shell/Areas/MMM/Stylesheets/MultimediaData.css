@@ -1,8 +1,7 @@
 ﻿body {
-
 }
 
-.mmm-Container{
+.mmm-Container {
     width: 100%;
 }
 
@@ -42,6 +41,7 @@
     .mmm-mediaContainer:hover {
         background-color: #d2e8e3;
     }
+
     .mmm-mediaContainer table {
         width: 100%;
     }
@@ -92,11 +92,12 @@
             border-bottom: solid 1px #ebebeb;
         }
 
-.thumbnail{
+.thumbnail {
     margin: 0 15px 5px 15px;
 }
+
 .bundleThumbnailView,
-.bundleThumbnailView div{
+.bundleThumbnailView div {
     overflow-y: auto;
     max-width: 200px;
     text-align: center;
@@ -110,7 +111,7 @@
 .mmm-filterbutton {
     display: block !important;
     margin: 0 !important;
-    float:left;
+    float: left;
 }
 
     .mmm-filterbutton.left {
@@ -138,6 +139,7 @@
     padding: 0 !important;
     z-index: 1700;
 }
+
     .modal .modal-body {
         position: fixed;
         top: 50%;
@@ -152,18 +154,17 @@
     }
 
         .modal .modal-body #content {
-
         }
-            .modal .modal-body #header {
-            
-            }
 
-                .modal .modal-body #header .close {
-                    color: #ffffff;
-                    opacity: 1;
-                    padding-right: 5px;
-                    text-shadow: none;
-                }
+        .modal .modal-body #header {
+        }
+
+            .modal .modal-body #header .close {
+                color: #ffffff;
+                opacity: 1;
+                padding-right: 5px;
+                text-shadow: none;
+            }
 
 .mmm-image-window {
     background-color: rgba(50, 50, 50, 0.8);
@@ -194,8 +195,8 @@
         text-align: center;
         vertical-align: middle;
         padding-left: 1px;
-        overflow:hidden;
-        max-height:600px;
+        overflow: hidden;
+        max-height: 600px;
     }
 
         .mmm-image-content .mmm-image #overlay {
@@ -208,11 +209,11 @@
                 stroke-width: 3;
             }
 
-            .mmm-image-content .mmm-image #overlay svg polygon:hover{
-                fill-opacity: 0.2;
-                stroke: green;
-                stroke-width: 3;
-            }
+                .mmm-image-content .mmm-image #overlay svg polygon:hover {
+                    fill-opacity: 0.2;
+                    stroke: green;
+                    stroke-width: 3;
+                }
 
         .mmm-image-content .mmm-image #prevImg,
         .mmm-image-content .mmm-image #nextImg {
@@ -227,7 +228,7 @@
             border: none;
             background-color: #000000;
             opacity: 0;
-            vertical-align:middle;
+            vertical-align: middle;
         }
 
             .mmm-image-content .mmm-image #prevImg:hover,
@@ -238,7 +239,7 @@
             .mmm-image-content .mmm-image #prevImg span,
             .mmm-image-content .mmm-image #nextImg span {
                 vertical-align: middle;
-                font-size:100px;
+                font-size: 100px;
                 margin-top: 50px;
             }
 
@@ -254,8 +255,8 @@
             border-top-left-radius: 10px;
         }
 
-        .mmm-image-content .mmm-image video, 
-        .mmm-image-content .mmm-image audio, 
+        .mmm-image-content .mmm-image video,
+        .mmm-image-content .mmm-image audio,
         .mmm-image-content .mmm-image img {
             max-width: 100% !important;
         }
@@ -266,34 +267,35 @@
         padding-right: 1px;
     }
 
-    .mmm-image-content .mmm-exif{
+    .mmm-image-content .mmm-exif {
         padding-bottom: 0;
     }
 
     .mmm-image-content .mmm-map {
-        padding-top:0;
+        padding-top: 0;
     }
+
         .mmm-image-content .mmm-map #map {
             padding: 0;
             margin: 0;
         }
 
-        .mmm-image-content .mmm-exif td {
-            border-bottom: 1px solid #f5f5f5;
-            border-spacing: 0px;
-            padding-left: 0px;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
+    .mmm-image-content .mmm-exif td {
+        border-bottom: 1px solid #f5f5f5;
+        border-spacing: 0px;
+        padding-left: 0px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
 
-        .mmm-image-content .mmm-exif div {
-            overflow-y: auto;
-            padding-right: 10px;
-            width:100%;
-        }
+    .mmm-image-content .mmm-exif div {
+        overflow-y: auto;
+        padding-right: 10px;
+        width: 100%;
+    }
 
 .mmm-filter-table,
-.mmm-filter-table tr{
+.mmm-filter-table tr {
     text-align: left;
     background-color: none;
 }

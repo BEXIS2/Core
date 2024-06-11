@@ -4,7 +4,6 @@
 @using BExIS.Dlm.Entities.DataStructure;
 @using Telerik.Web.Mvc.UI;
 
-
 @{
 
     int PageSize = Convert.ToInt16(ViewData["PageSize"]);
@@ -12,10 +11,8 @@
     List<HeaderItem> DefaultHeaderList = (List<HeaderItem>)ViewData["DefaultHeaderList"];
     HeaderItem Id = (HeaderItem)ViewData["Id"];
 
-
     StructuredDataStructure sds = new StructuredDataStructure();
     Tuple<StructuredDataStructure, long> defaultModel = new Tuple<StructuredDataStructure, long>(sds, 0);
-
 
     GridPagerStyles pagerStyles = GridPagerStyles.PageSizeDropDown;
     pagerStyles |= GridPagerStyles.NextPreviousAndNumeric;
@@ -23,9 +20,7 @@
 
     string controller = Session["Controller"].ToString();
 
-
 }
-
 
 @(Html.Telerik().Grid<System.Data.DataRow>()
         .Name("resultGrid")
@@ -123,7 +118,6 @@
 
 )
 
-
 <script type="text/javascript">
 
 	$('document')
@@ -136,9 +130,8 @@
 	function resultGrid_OnColumnChanged(e)
 	{
 		//alert("changed");
-	
-	}
 
+	}
 
 	function resultGrid_OnRowDataBound(e) {
 
@@ -163,7 +156,6 @@
 		// checked
 		var id = e.getAttribute("id");
 
-
 		var data = {
 			id: id
 		}
@@ -182,21 +174,18 @@
 				if (result) {
 					window.open("/ddm/Data/Show/" + id, "_blank");
 				} else {
-					
+
 					alert("Dataset is locked. Please try again later.");
 				}
 			}
 		});
 	}
 
-
 	function onDataBound()
 	{
 		resetAllTelerikIconTitles();
 		addTooltips();
 	}
-
-
 </script>
 
 <style type="text/css">
@@ -209,11 +198,9 @@
 		/*overflow:auto;*/
 	}
 
-	
 	#resultGrid .searchResultFunctionDiv
 	{
 
 		text-align:right;
 	}
-
 </style>

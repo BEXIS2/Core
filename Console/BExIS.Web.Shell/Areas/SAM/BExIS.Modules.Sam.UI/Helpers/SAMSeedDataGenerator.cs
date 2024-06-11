@@ -30,7 +30,6 @@ namespace BExIS.Modules.Sam.UI.Helpers
             using (FeatureManager featureManager = new FeatureManager())
             using (var featurePermissionManager = new FeaturePermissionManager())
             {
-
                 // find root
                 var root = featureManager.FindRoots().FirstOrDefault();
 
@@ -79,11 +78,9 @@ namespace BExIS.Modules.Sam.UI.Helpers
                 if (formerMemberFeature == null) formerMemberFeature = featureManager.Create("Former Member Management", "Former Member Management", administrationFeature);
                 operationManager.Create("SAM", "FormerMember", "*", formerMemberFeature);
 
-
                 if (!featurePermissionManager.Exists(null, featurePermissionFeature.Id, PermissionType.Grant))
                     featurePermissionManager.Create(null, featurePermissionFeature.Id, PermissionType.Grant);
             }
-
         }
     }
 }

@@ -67,8 +67,8 @@
 	  <Export tag="settings" id="formerMember" order="15"
         title="Manage Former Member" description="" icon=""
         controller="FormerMember" action="Index"
-        extends="./settingsRoot" /> 
-	 
+        extends="./settingsRoot" />
+
     <!-- internal api -->
 
 		<Export tag="internalApi" id="userPermissions_subjects"

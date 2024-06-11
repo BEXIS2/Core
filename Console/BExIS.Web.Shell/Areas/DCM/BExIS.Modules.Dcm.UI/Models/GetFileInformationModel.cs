@@ -19,6 +19,5 @@ namespace BExIS.Modules.Dcm.UI.Models
             ErrorList = new List<Error>();
             IsSaved = false;
         }
-
     }
 }

@@ -32,6 +32,5 @@ namespace BExIS.Modules.Ddm.UI.Models
         public bool IsPublic { get; set; }
 
         public List<Hook> Hooks { get; set; }
-
     }
 }

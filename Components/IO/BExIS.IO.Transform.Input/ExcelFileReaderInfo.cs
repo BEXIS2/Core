@@ -1,13 +1,12 @@
 ﻿/// <summary>
 ///
-/// </summary>        
+/// </summary>
 namespace BExIS.IO.Transform.Input
 {
-
     /// <summary>
     ///
     /// </summary>
-    /// <remarks></remarks>            
+    /// <remarks></remarks>
     public class ExcelFileReaderInfo : FileReaderInfo
     {
         public int VariablesStartRow { get; set; }

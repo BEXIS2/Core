@@ -1,15 +1,15 @@
-﻿
-/// <summary>
+﻿/// <summary>
 ///
-/// </summary>        
+/// </summary>
 using BExIS.Dlm.Entities.Data;
 using System.Collections.Generic;
+
 namespace BExIS.Dlm.Entities.DataStructure
 {
     /// <summary>
     ///
     /// </summary>
-    /// <remarks></remarks>        
+    /// <remarks></remarks>
     public class UnStructuredDataStructure : DataStructure
     {
         public UnStructuredDataStructure()

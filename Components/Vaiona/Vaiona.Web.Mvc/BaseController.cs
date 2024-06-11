@@ -6,7 +6,6 @@ namespace Vaiona.Web.Mvc
 {
     public abstract class BaseController : Controller
     {
-
         private IList<IDisposable> disposables;
 
         protected BaseController()
@@ -25,6 +24,7 @@ namespace Vaiona.Web.Mvc
         }
 
         [Obsolete("Use Try Finally pattern to dispose the disposables in the finally block.", true)]
-        public IList<IDisposable> Disposables { get { return this.disposables; } }
+        public IList<IDisposable> Disposables
+        { get { return this.disposables; } }
     }
 }

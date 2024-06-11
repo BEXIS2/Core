@@ -19,7 +19,6 @@ using BExIS.Utils.Extensions;
 using BExIS.Xml.Helpers;
 using Ionic.Zip;
 using System;
-using System.Data;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -215,7 +214,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
                     LoggerFactory.LogCustom("Primary Data Start");
 
                     // check the data sturcture type ...
-                    if (format != null && datasetVersion.Dataset.DataStructure.Self is StructuredDataStructure && dm.GetDataTuplesCount(datasetVersion.Id) >0)
+                    if (format != null && datasetVersion.Dataset.DataStructure.Self is StructuredDataStructure && dm.GetDataTuplesCount(datasetVersion.Id) > 0)
                     {
                         OutputDataManager odm = new OutputDataManager();
                         // apply selection and projection
@@ -314,7 +313,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
 
                                 if (FileHelper.FileExist(path))
                                 {
-                                    if(!zip.Any(entry => entry.FileName.EndsWith(name)))
+                                    if (!zip.Any(entry => entry.FileName.EndsWith(name)))
                                         zip.AddFile(path, "");
                                 }
                             }

@@ -13,8 +13,9 @@ namespace BExIS.Dlm.Entities.MetadataStructure
             MetadataNestedAttributeUsages = new List<MetadataNestedAttributeUsage>();
         }
 
-        public virtual MetadataCompoundAttribute Self { get { return this; } }
+        public virtual MetadataCompoundAttribute Self
+        { get { return this; } }
 
-        #endregion
+        #endregion Methods
     }
 }

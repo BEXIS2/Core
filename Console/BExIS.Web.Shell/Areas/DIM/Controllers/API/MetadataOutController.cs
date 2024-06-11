@@ -44,9 +44,6 @@ namespace BExIS.Modules.Dim.UI.Controllers
         [GetRoute("api/Metadata")]
         public IEnumerable<MetadataViewObject> Get()
         {
-
-            
-
             List<MetadataViewObject> tmp = new List<MetadataViewObject>();
             using (var dm = new DatasetManager())
             {
@@ -63,7 +60,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
                         MetadataViewObject mvo = new MetadataViewObject();
                         mvo.DatasetId = id;
 
-                        // load all metadata export options 
+                        // load all metadata export options
                         // in the metadata extra field there are stored the import and export mapping files
                         // this funktion loads all transformations based on one direction
                         // AttributeNames.name means the destination metadata name
@@ -78,7 +75,6 @@ namespace BExIS.Modules.Dim.UI.Controllers
             }
 
             return tmp;
-    
         }
 
         // GET:api/MetadataBySchema/GBIF
@@ -151,13 +147,13 @@ namespace BExIS.Modules.Dim.UI.Controllers
         ///
         /// ## format
         /// Based on the existing transformation options, the converted metadata can be obtained via format.
-        /// 
+        ///
         /// ## simplfiedJson
         /// if you set the accept of the request to return a json, you can manipulate the json with this parameter. <br/>
         /// 0 = returns the metadata with full internal structure <br/>
         /// 1 = returns a simplified form of the structure with all fields and attributes <br/>
-        /// 2 = returns the metadata in a simplified structure and does not add all fields and attributes that are empty. 
-        /// 
+        /// 2 = returns the metadata in a simplified structure and does not add all fields and attributes that are empty.
+        ///
         /// </remarks>
         /// <param name="id">Dataset Id</param>
         /// <param name="format">Internal,External,Subset</param>
@@ -166,11 +162,10 @@ namespace BExIS.Modules.Dim.UI.Controllers
         /// <returns>metadata as xml or json</returns>
         [BExISApiAuthorize]
         [GetRoute("api/Metadata/{id}")]
-        public HttpResponseMessage Get(int id, [FromUri] Format format = Format.Internal, [FromUri] string subsetType = null, [FromUri] int simplifiedJson = 0) {
-
+        public HttpResponseMessage Get(int id, [FromUri] Format format = Format.Internal, [FromUri] string subsetType = null, [FromUri] int simplifiedJson = 0)
+        {
             return GetMetadata(id, -1, format, subsetType, simplifiedJson);
         }
-
 
         /// <summary>
         /// Get metadata for a dataset as XML (default) or JSON (internal, complete or simplified structure)
@@ -179,13 +174,13 @@ namespace BExIS.Modules.Dim.UI.Controllers
         ///
         /// ## format
         /// Based on the existing transformation options, the converted metadata can be obtained via format.
-        /// 
+        ///
         /// ## simplfiedJson
         /// if you set the accept of the request to return a json, you can manipulate the json with this parameter. <br/>
         /// 0 = returns the metadata with full internal structure <br/>
         /// 1 = returns a simplified form of the structure with all fields and attributes <br/>
-        /// 2 = returns the metadata in a simplified structure and does not add all fields and attributes that are empty. 
-        /// 
+        /// 2 = returns the metadata in a simplified structure and does not add all fields and attributes that are empty.
+        ///
         /// </remarks>
         /// <param name="id">Dataset Id</param>
         /// <param name="versionId">Version Id</param>
@@ -203,7 +198,6 @@ namespace BExIS.Modules.Dim.UI.Controllers
             return GetMetadata(id, vId, format, subsetType, simplifiedJson);
         }
 
-
         /// <summary>
         /// Get metadata for a dataset as XML (default) or JSON (internal, complete or simplified structure)
         /// </summary>
@@ -211,13 +205,13 @@ namespace BExIS.Modules.Dim.UI.Controllers
         ///
         /// ## format
         /// Based on the existing transformation options, the converted metadata can be obtained via format.
-        /// 
+        ///
         /// ## simplfiedJson
         /// if you set the accept of the request to return a json, you can manipulate the json with this parameter. <br/>
         /// 0 = returns the metadata with full internal structure <br/>
         /// 1 = returns a simplified form of the structure with all fields and attributes <br/>
-        /// 2 = returns the metadata in a simplified structure and does not add all fields and attributes that are empty. 
-        /// 
+        /// 2 = returns the metadata in a simplified structure and does not add all fields and attributes that are empty.
+        ///
         /// </remarks>
         /// <param name="id">Dataset Id</param>
         /// <param name="version_number">Version number</param>
@@ -232,7 +226,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
             if (id <= 0)
                 return Request.CreateErrorResponse(HttpStatusCode.PreconditionFailed, "Id should be greater then 0");
 
-            if(version_number <= 0)
+            if (version_number <= 0)
                 return Request.CreateErrorResponse(HttpStatusCode.PreconditionFailed, "Version should be greater then 0");
 
             using (DatasetManager dm = new DatasetManager())
@@ -242,12 +236,10 @@ namespace BExIS.Modules.Dim.UI.Controllers
 
                 int versions = dataset.Versions.Count;
 
-                if(versions< version_number)
+                if (versions < version_number)
                     return Request.CreateErrorResponse(HttpStatusCode.PreconditionFailed, "This version number does not exist for this dataset");
 
                 var datasetVersion = dataset.Versions.OrderBy(d => d.Timestamp).ElementAt(index);
-
-
 
                 return GetMetadata(id, datasetVersion.Id, format, subsetType, simplifiedJson);
             }
@@ -260,13 +252,13 @@ namespace BExIS.Modules.Dim.UI.Controllers
         ///
         /// ## format
         /// Based on the existing transformation options, the converted metadata can be obtained via format.
-        /// 
+        ///
         /// ## simplfiedJson
         /// if you set the accept of the request to return a json, you can manipulate the json with this parameter. <br/>
         /// 0 = returns the metadata with full internal structure <br/>
         /// 1 = returns a simplified form of the structure with all fields and attributes <br/>
-        /// 2 = returns the metadata in a simplified structure and does not add all fields and attributes that are empty. 
-        /// 
+        /// 2 = returns the metadata in a simplified structure and does not add all fields and attributes that are empty.
+        ///
         /// </remarks>
         /// <param name="id">Dataset Id</param>
         /// <param name="version_name">Version name</param>
@@ -284,13 +276,11 @@ namespace BExIS.Modules.Dim.UI.Controllers
             if (string.IsNullOrEmpty(version_name))
                 return Request.CreateErrorResponse(HttpStatusCode.PreconditionFailed, "Version name not exist");
 
-
             using (DatasetManager dm = new DatasetManager())
             {
-                
                 var versionId = dm.GetDatasetVersions(id).Where(d => d.VersionName == version_name).Select(d => d.Id).FirstOrDefault();
 
-                if(versionId<=0)
+                if (versionId <= 0)
                     return Request.CreateErrorResponse(HttpStatusCode.PreconditionFailed, "This version name does not exist for this dataset");
 
                 return GetMetadata(id, versionId, format, subsetType, simplifiedJson);
@@ -299,7 +289,6 @@ namespace BExIS.Modules.Dim.UI.Controllers
 
         private HttpResponseMessage GetMetadata(long id, long versionId, Format format, string subsetType, int simplifiedJson)
         {
-            
             DatasetVersion datasetVersion = null;
 
             string returnType = "";
@@ -307,9 +296,8 @@ namespace BExIS.Modules.Dim.UI.Controllers
             if (Request.Headers.Accept.Any())
                 returnType = Request.Headers.Accept.First().MediaType;
 
-            if(format == Format.Subset && simplifiedJson > 0 )
+            if (format == Format.Subset && simplifiedJson > 0)
                 return Request.CreateErrorResponse(HttpStatusCode.PreconditionFailed, "The output with format.subset 2 only works with simplifiedJson = 0");
-
 
             using (DatasetManager dm = new DatasetManager())
             using (EntityManager entityManager = new EntityManager())
@@ -318,7 +306,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
             {
                 if (id == 0) return Request.CreateErrorResponse(HttpStatusCode.PreconditionFailed, "Dataset id should be greater then 0.");
 
-                // try to get latest dataset version 
+                // try to get latest dataset version
                 if (versionId == -1)
                 {
                     datasetVersion = dm.GetDatasetLatestVersion(id);
@@ -334,8 +322,6 @@ namespace BExIS.Modules.Dim.UI.Controllers
                         if (!dataset.Versions.Select(v => v.Id).Contains(versionId)) return Request.CreateResponse(HttpStatusCode.PreconditionFailed, "this version id is not part of the dataset " + id);
 
                         datasetVersion = dm.GetDatasetVersion(versionId);
-
-
                     }
                     catch (Exception ex)
                     {
@@ -343,8 +329,6 @@ namespace BExIS.Modules.Dim.UI.Controllers
                 }
                 // Check if a dataset version was set
                 if (datasetVersion == null) return Request.CreateResponse(HttpStatusCode.InternalServerError, "It is not possible to load the latest or given version.");
-
-
 
                 //entity permissions
                 if (id > 0)
@@ -378,10 +362,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
                         return Request.CreateErrorResponse(HttpStatusCode.PreconditionFailed, "The dataset with the id (" + id + ") does not exist.");
                 }
 
-
-                
                 XmlDocument xmlDoc = datasetVersion.Metadata;
-  
 
                 //format = intern
                 // do not transformation
@@ -394,7 +375,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
                     xmlDoc = OutputMetadataManager.GetConvertedMetadata(id, TransmissionType.mappingFileExport, convertTo);
                 }
 
-                //format subset && subsetType 
+                //format subset && subsetType
                 if (format == Format.Subset)
                 {
                     if (string.IsNullOrEmpty(subsetType))
@@ -403,21 +384,18 @@ namespace BExIS.Modules.Dim.UI.Controllers
                     using (var conceptManager = new ConceptManager())
                     {
                         var concept = conceptManager.MappingConceptRepo.Get().Where(c => c.Name.Equals(subsetType)).FirstOrDefault();
-                        
-                        if(concept == null )
+
+                        if (concept == null)
                             return Request.CreateErrorResponse(HttpStatusCode.PreconditionFailed, "In combination with the format subset - subsettype must not be empty");
 
                         long mdId = datasetVersion.Dataset.MetadataStructure.Id;
 
                         xmlDoc = MappingUtils.GetConceptOutput(mdId, concept.Id, xmlDoc);
                     }
-
                 }
-
 
                 try
                 {
-
                     if (xmlDoc == null) return Request.CreateErrorResponse(HttpStatusCode.InternalServerError, string.Format("No mapping found for this format : {0} .", format));
 
                     switch (returnType)
@@ -459,7 +437,6 @@ namespace BExIS.Modules.Dim.UI.Controllers
                             }
                         default:
                             {
-
                                 HttpResponseMessage response = new HttpResponseMessage { Content = new StringContent(xmlDoc.InnerXml, Encoding.UTF8, "application/xml") };
                                 return response;
                             }
@@ -478,13 +455,12 @@ namespace BExIS.Modules.Dim.UI.Controllers
             using (var mappingManager = new MappingManager())
             {
                 string[] concepts = { };
-                // get all root mappings to mds with id wich mapped to a mapping concept 
+                // get all root mappings to mds with id wich mapped to a mapping concept
                 var allMappings = mappingManager.GetMappings()
                     .Where(m =>
                     m.Source.ElementId.Equals(id) &&
                     m.Source.Type.Equals(LinkElementType.MetadataStructure) &&
                     m.Target.Type.Equals(LinkElementType.MappingConcept));
-
 
                 if (allMappings.Any())
                 {
@@ -496,19 +472,18 @@ namespace BExIS.Modules.Dim.UI.Controllers
         }
     }
 
-
-
-    public class MetadataViewObject 
+    public class MetadataViewObject
     {
         public long DatasetId { get; set; }
+
         //public Format Format { get; set; }
         public string[] SubsetType { get; set; }
     }
 
     public enum Format
     {
-         Internal,
-         External,
-         Subset
+        Internal,
+        External,
+        Subset
     }
 }

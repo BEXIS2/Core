@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 
@@ -32,7 +31,7 @@ namespace BExIS.Modules.Dim.UI.Helpers
             string htmlFieldPrefix = $"{collectionName}[{itemIndex}]";
             html.ViewData["ContainerPrefix"] = htmlFieldPrefix;
 
-            /* 
+            /*
              * html.Name(); has been removed
              * because of incorrect naming of collection items
              * e.g.
@@ -46,7 +45,6 @@ namespace BExIS.Modules.Dim.UI.Helpers
             // whereby it reuses old values after the user clicks "Back", which causes the
             // xyz.index and xyz[...] values to get out of sync.
             writer.WriteLine($@"<input type=""hidden"" name=""{indexInputName}"" autocomplete=""off"" value=""{html.Encode(itemIndex)}"" />");
-
 
             return BeginHtmlFieldPrefixScope(html, htmlFieldPrefix);
         }
@@ -79,7 +77,7 @@ namespace BExIS.Modules.Dim.UI.Helpers
 
         private static Queue<string> GetIdsToReuse(HttpContextBase httpContext, string collectionName)
         {
-            // We need to use the same sequence of IDs following a server-side validation failure,  
+            // We need to use the same sequence of IDs following a server-side validation failure,
             // otherwise the framework won't render the validation error messages next to each item.
             string key = IdsToReuseKey + collectionName;
             var queue = (Queue<string>)httpContext.Items[key];
@@ -142,7 +140,7 @@ namespace BExIS.Modules.Dim.UI.Helpers
 
     //    private static Queue<string> GetIdsToReuse(HttpContextBase httpContext, string collectionName)
     //    {
-    //        // We need to use the same sequence of IDs following a server-side validation failure,  
+    //        // We need to use the same sequence of IDs following a server-side validation failure,
     //        // otherwise the framework won't render the validation error messages next to each item.
     //        string key = idsToReuseKey + collectionName;
     //        var queue = (Queue<string>)httpContext.Items[key];

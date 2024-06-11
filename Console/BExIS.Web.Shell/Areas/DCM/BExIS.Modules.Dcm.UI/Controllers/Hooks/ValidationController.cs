@@ -31,7 +31,6 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         private FileStream Stream;
         private UploadHelper uploadWizardHelper = new UploadHelper();
 
-
         // GET: Validation
         public ActionResult Index()
         {
@@ -62,9 +61,9 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             bool enforcePrimaryKey = (bool)ModuleManager.GetModuleSettings("RPM").GetValueByKey("enforcePrimaryKey");
 
             // load cache to get informations about the current upload workflow
-            EditDatasetDetailsCache cache = hookManager.LoadCache<EditDatasetDetailsCache>("dataset", "details", HookMode.edit, id );
+            EditDatasetDetailsCache cache = hookManager.LoadCache<EditDatasetDetailsCache>("dataset", "details", HookMode.edit, id);
             EditDatasetDetailsLog log = hookManager.LoadLog<EditDatasetDetailsLog>("dataset", "details", HookMode.edit, id);
-            if(log==null) log = new EditDatasetDetailsLog();
+            if (log == null) log = new EditDatasetDetailsLog();
 
             var username = BExISAuthorizeHelper.GetAuthorizedUserName(HttpContext);
             Hashtable primaryKeyHashTable = new Hashtable();
@@ -86,16 +85,16 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                     var dataset = datasetManager.GetDataset(id); ;
                     if (dataset == null)
                     {
-                        errors.Add(new Error(ErrorType.Dataset, "The validation cannot be executed because a dataset with id " + id + " not exist.","Dataset"));
+                        errors.Add(new Error(ErrorType.Dataset, "The validation cannot be executed because a dataset with id " + id + " not exist.", "Dataset"));
                     }
                     else // dataset exist
                     {
-
                         #region file error
+
                         // if datastructue is null
                         if (dataset.DataStructure == null)
                         {
-                            errors.Add(new Error(ErrorType.Datastructure, "The validation cannot be executed because a dataset has no structure.","Datastructure"));
+                            errors.Add(new Error(ErrorType.Datastructure, "The validation cannot be executed because a dataset has no structure.", "Datastructure"));
                         }
                         else // datastrutcure exist
                         {
@@ -117,30 +116,26 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                             bool hasData = false;
                             bool hasPrimaryKey = false;
 
-
-                            hasData = datasetManager.RowCount(id) > 0?true:false;
+                            hasData = datasetManager.RowCount(id) > 0 ? true : false;
                             hasPrimaryKey = sds.Variables.Where(v => v.IsKey.Equals(true)).Any();
 
                             if (enforcePrimaryKey && !hasPrimaryKey)
                                 errors.Add(new Error(ErrorType.Datastructure, "Primary key is not yet set in the data structure.", "Datastructure"));
 
                             if (hasData && !hasPrimaryKey)
-                            errors.Add(new Error(ErrorType.Datastructure, "Updating data is only possible with a primary key. Please set the primary in the data structure.", "Datastructure"));
+                                errors.Add(new Error(ErrorType.Datastructure, "Updating data is only possible with a primary key. Please set the primary in the data structure.", "Datastructure"));
 
                             // in file:
                             // 3. exist data & pk but not unique -> info : change data or structure pk - is checked by uploadWizardHelper.IsUnique fn
-
 
                             // generate string vor validation has based on primary keys
                             var pks = sds.Variables.Where(v => v.IsKey.Equals(true))?.Select(v => v.Id);
                             string varIdsAsString = pks == null ? "" : string.Join(",", pks.ToArray());
 
-
                             // check against primary key in db
                             // this check happens outside of the files,
                             var unique = false;
-                            if(cache.Files.Any()) uploadWizardHelper.IsUnique(id, ref primaryKeyHashTable);
-
+                            if (cache.Files.Any()) uploadWizardHelper.IsUnique(id, ref primaryKeyHashTable);
 
                             // read all files
                             foreach (var file in cache.Files)
@@ -149,30 +144,34 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                                 var ext = Path.GetExtension(file.Name);
                                 var fileName = Path.GetFileName(file.Name);
                                 var filePath = Path.Combine(AppConfiguration.DataPath, "Datasets", id.ToString(), "Temp", file.Name);
-                                List<Error> fileErrors = new List<Error>(); // collection of errors 
+                                List<Error> fileErrors = new List<Error>(); // collection of errors
 
                                 try
                                 {
-                                    
-                                        //check file reader info
-                                        bool existReaderInfo = true;
-                                        if (cache.AsciiFileReaderInfo == null)
+                                    //check file reader info
+                                    bool existReaderInfo = true;
+                                    if (cache.AsciiFileReaderInfo == null)
+                                    {
+                                        existReaderInfo = false;
+                                        fileErrors.Add(new Error(ErrorType.FileReader, "File reader informations missing.", "FileReader"));
+                                    }
+                                    else
+                                    {
+                                        if (System.IO.File.Exists(filePath))
                                         {
-                                            existReaderInfo = false;
-                                            fileErrors.Add(new Error(ErrorType.FileReader, "File reader informations missing.", "FileReader"));
-                                        }
-                                        else
-                                        {
-
-                                            if (System.IO.File.Exists(filePath))
-                                            {
-
-                                                // check if hash of file has changed or not exist
-                                                // if so, then valdiate and overide hash if not set results to model
-                                                // the hash value need to be abot: name, lenght, structure id, ascci reader info;
-                                                // if something has changed also validation need to repeat
-                                                string readerInfo = cache.AsciiFileReaderInfo != null ? cache.AsciiFileReaderInfo.ToJson() : "";
-                                                string incomingHash = HashHelper.CreateMD5Hash(file.Name, file.Lenght.ToString(), datastructureId.ToString(), readerInfo, cache.Files.Count.ToString(), varIdsAsString);
+                                            // check if hash of file has changed or not exist
+                                            // if so, then valdiate and overide hash if not set results to model
+                                            // the hash value need to be abot: name, lenght, structure id, ascci reader info;
+                                            // if something has changed also validation need to repeat
+                                            string readerInfo = cache.AsciiFileReaderInfo != null ? cache.AsciiFileReaderInfo.ToJson() : "";
+                                            string incomingHash = HashHelper.CreateMD5Hash(
+                                                file.Name,
+                                                file.Lenght.ToString(),
+                                                datastructureId.ToString(),
+                                                readerInfo,
+                                                cache.Files.Count.ToString(),
+                                                varIdsAsString,
+                                                sds.VersionNo.ToString());
 
                                             // if a validation is allready run and the file has not changed, skip validation
                                             if (file.ValidationHash != incomingHash)
@@ -218,12 +217,11 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
                                                     if (fileErrors == null || fileErrors.Count == 0)
                                                     {
-                                                        
                                                         //check against primary key local file
                                                         unique = uploadWizardHelper.IsUnique(id, ext, fileName, filePath, (AsciiFileReaderInfo)cache.AsciiFileReaderInfo, datastructureId, ref primaryKeyHashTable);
                                                         if (!unique)
                                                         {
-                                                            if(hasPrimaryKey)
+                                                            if (hasPrimaryKey)
                                                                 fileErrors.Add(new Error(ErrorType.PrimaryKey, "The data in the file violate the primary key set.", "Primary Key"));
                                                             else
                                                                 fileErrors.Add(new Error(ErrorType.PrimaryKey, "Duplicate lines were found in the data, therefore it is not possible to save the data in the system", "Primary Key"));
@@ -238,19 +236,15 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                                                 var cacheFile = cache.Files.Where(f => f.Name.Equals(file.Name)).FirstOrDefault();
                                                 if (cacheFile != null && cacheFile.Errors.Any())
                                                 {
-                                                    fileErrors.AddRange(cacheFile.Errors); 
+                                                    fileErrors.AddRange(cacheFile.Errors);
                                                 }
                                             }
-                                                
-
-                                            }
-                                            else
-                                            {
-                                                fileErrors.Add(new Error(ErrorType.File, "File is missing.", "File"));
-                                            }
-                                            
                                         }
-                                    
+                                        else
+                                        {
+                                            fileErrors.Add(new Error(ErrorType.File, "File is missing.", "File"));
+                                        }
+                                    }
                                 }
                                 catch (Exception ex)
                                 {
@@ -258,14 +252,13 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                                 }
                                 finally
                                 {
-
-                                    if (fileErrors!=null) file.Errors = fileErrors;
+                                    if (fileErrors != null) file.Errors = fileErrors;
 
                                     FileValidationResult result = new FileValidationResult();
                                     result.File = file.Name;
 
                                     if (file.Errors.Any())
-                                    { 
+                                    {
                                         file.Errors.ForEach(e => result.Errors.Add(e.ToHtmlString()));
                                         result.SortedErrors = EditHelper.SortFileErrors(file.Errors);
                                         errors.AddRange(file.Errors); // set to global error list
@@ -273,16 +266,14 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
                                     model.FileResults.Add(result);
                                 }
-                                
-
                             }
                         }
 
-                        #endregion
+                        #endregion file error
                     }
 
-                    // if the validation is done, prepare the model 
-                    if (cache.Files.Any()) //if any file exits update model 
+                    // if the validation is done, prepare the model
+                    if (cache.Files.Any()) //if any file exits update model
                     {
                         // set this flags as default, if a error exist it will change
                         cache.IsDataValid = true;
@@ -292,19 +283,17 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
                         foreach (var result in model.FileResults)
                         {
-
                             // if there are errors
                             if (result.Errors.Any())
                             {
                                 cache.IsDataValid = false;
                                 model.IsValid = cache.IsDataValid;
-                                result.Errors.ForEach(error=> e.Add(result.File+" : "+error)); // add file name to each message
+                                result.Errors.ForEach(error => e.Add(result.File + " : " + error)); // add file name to each message
                             }
                         }
 
-                        if(e.Any())
+                        if (e.Any())
                             log.Messages.Add(new LogMessage(DateTime.Now, e, username, "Validation", "validate")); // add message for the history
-
                     }
                     else
                     {
@@ -314,15 +303,14 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 }
             }
 
-            // if model is valid , add a message 
+            // if model is valid , add a message
             if (model.IsValid)
             {
                 log.Messages.Add(new LogMessage(DateTime.Now, new List<string>() { "The validation was successful." }, username, "Validation", "validate")); // add message for the history
             }
 
-
             // save cache
-            hookManager.Save(cache,log, "dataset", "details", HookMode.edit, id);
+            hookManager.Save(cache, log, "dataset", "details", HookMode.edit, id);
 
             return Json(model, JsonRequestBehavior.AllowGet);
         }

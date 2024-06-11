@@ -53,7 +53,6 @@ namespace BExIS.Xml.Models.Mapping
 
             return false;
         }
-
     }
 
     public enum XmlMapperTags
@@ -85,5 +84,4 @@ namespace BExIS.Xml.Models.Mapping
         value,
         xPath
     }
-
 }

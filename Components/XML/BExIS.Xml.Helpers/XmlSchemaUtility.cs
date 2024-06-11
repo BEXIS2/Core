@@ -58,7 +58,6 @@ namespace BExIS.Xml.Helpers
             return attributes;
         }
 
-
         /// <summary>
         /// Get all elements from the schema.
         /// </summary>
@@ -112,6 +111,7 @@ namespace BExIS.Xml.Helpers
                 if (complexType != null)
                 {
                     #region sequence  as XmlSchemaSequence
+
                     /// Get the sequence particle of the complex type.
                     XmlSchemaSequence sequence = complexType.ContentTypeParticle as XmlSchemaSequence;
                     if (sequence != null)
@@ -123,9 +123,10 @@ namespace BExIS.Xml.Helpers
                         }
                     }
 
-                    #endregion
+                    #endregion sequence  as XmlSchemaSequence
 
                     #region sequence as XmlSchemaAll
+
                     /// Get the sequence particle of the complex type.
                     XmlSchemaAll all = complexType.ContentTypeParticle as XmlSchemaAll;
                     if (all != null)
@@ -137,7 +138,7 @@ namespace BExIS.Xml.Helpers
                         }
                     }
 
-                    #endregion
+                    #endregion sequence as XmlSchemaAll
 
                     //#region sequence as XmlSchemaAll
                     ///// Get the sequence particle of the complex type.
@@ -154,6 +155,7 @@ namespace BExIS.Xml.Helpers
                     //#endregion
 
                     #region choice
+
                     // check if it is e choice
                     XmlSchemaChoice choice = complexType.ContentTypeParticle as XmlSchemaChoice;
                     if (choice != null)
@@ -164,7 +166,8 @@ namespace BExIS.Xml.Helpers
                             elements = GetElements(childElement, elements, recursive, allElements);
                         }
                     }
-                    #endregion
+
+                    #endregion choice
                 }
             }
 
@@ -175,6 +178,7 @@ namespace BExIS.Xml.Helpers
                 if (complexType != null)
                 {
                     #region sequence
+
                     /// Get the sequence particle of the complex type.
                     XmlSchemaSequence sequence = complexType.ContentTypeParticle as XmlSchemaSequence;
                     if (sequence != null)
@@ -186,9 +190,10 @@ namespace BExIS.Xml.Helpers
                         }
                     }
 
-                    #endregion
+                    #endregion sequence
 
                     #region choice
+
                     // check if it is e choice
                     XmlSchemaChoice choice = complexType.ContentTypeParticle as XmlSchemaChoice;
                     if (choice != null)
@@ -199,7 +204,8 @@ namespace BExIS.Xml.Helpers
                             elements = GetElements(childElement, elements, recursive, allElements);
                         }
                     }
-                    #endregion
+
+                    #endregion choice
                 }
             }
 
@@ -208,6 +214,7 @@ namespace BExIS.Xml.Helpers
                 XmlSchemaGroup group = obj as XmlSchemaGroup;
 
                 #region sequence
+
                 /// Get the sequence particle of the complex type.
                 XmlSchemaSequence sequence = group.Particle as XmlSchemaSequence;
                 if (sequence != null)
@@ -219,9 +226,10 @@ namespace BExIS.Xml.Helpers
                     }
                 }
 
-                #endregion
+                #endregion sequence
 
                 #region choice
+
                 // check if it is e choice
                 XmlSchemaChoice choice = group.Particle as XmlSchemaChoice;
                 if (choice != null)
@@ -232,8 +240,8 @@ namespace BExIS.Xml.Helpers
                         elements = GetElements(childElement, elements, recursive, allElements);
                     }
                 }
-                #endregion
 
+                #endregion choice
             }
 
             //if (obj is XmlSchemaSequence)
@@ -254,9 +262,7 @@ namespace BExIS.Xml.Helpers
             //    }
             //}
 
-
             return elements;
-
         }
 
         private static List<XmlSchemaElement> GetElements(XmlSchemaObject element, List<XmlSchemaElement> list, bool recursive, List<XmlSchemaElement> allElements)
@@ -272,12 +278,10 @@ namespace BExIS.Xml.Helpers
                     {
                         //if (!child.SchemaTypeName.Name.Equals(parentTypeName))
                         //{
-
                         list.Add(child);
 
                         if (recursive)
                         {
-
                             Debug.WriteLine("--<" + child.Name);
 
                             XmlSchemaComplexType complexType = child.ElementSchemaType as XmlSchemaComplexType;
@@ -296,7 +300,7 @@ namespace BExIS.Xml.Helpers
                                     }
                                 }
 
-                                #endregion
+                                #endregion sequence
 
                                 #region choice
 
@@ -311,7 +315,7 @@ namespace BExIS.Xml.Helpers
                                     }
                                 }
 
-                                #endregion
+                                #endregion choice
                             }
                         }
 
@@ -333,13 +337,13 @@ namespace BExIS.Xml.Helpers
 
                             if (recursive)
                             {
-
                                 Debug.WriteLine("--<" + refElement.Name);
 
                                 XmlSchemaComplexType complexType = refElement.ElementSchemaType as XmlSchemaComplexType;
                                 if (complexType != null)
                                 {
                                     #region sequence
+
                                     /// Get the sequence particle of the complex type.
                                     XmlSchemaSequence sequence = complexType.ContentTypeParticle as XmlSchemaSequence;
                                     if (sequence != null)
@@ -351,9 +355,10 @@ namespace BExIS.Xml.Helpers
                                         }
                                     }
 
-                                    #endregion
+                                    #endregion sequence
 
                                     #region choice
+
                                     // check if it is e choice
                                     XmlSchemaChoice choice = complexType.ContentTypeParticle as XmlSchemaChoice;
                                     if (choice != null)
@@ -364,7 +369,8 @@ namespace BExIS.Xml.Helpers
                                             list = GetElements(childElement, list, recursive, allElements);
                                         }
                                     }
-                                    #endregion
+
+                                    #endregion choice
                                 }
                             }
                         }
@@ -437,8 +443,6 @@ namespace BExIS.Xml.Helpers
                    complexType.ContentType is XmlSchemaContentType.Mixed ||
                    complexType.ContentType is XmlSchemaContentType.Empty)
                     return true;
-
-
             }
 
             return false;
@@ -458,13 +462,15 @@ namespace BExIS.Xml.Helpers
                 if (ct != null)
                 {
                     #region choice
+
                     // check if it is e choice
                     XmlSchemaChoice choice = ct.ContentTypeParticle as XmlSchemaChoice;
                     if (choice != null)
                     {
                         return true;
                     }
-                    #endregion
+
+                    #endregion choice
                 }
             }
 
@@ -478,17 +484,18 @@ namespace BExIS.Xml.Helpers
         /// <returns></returns>
         public static bool IsChoiceType(XmlSchemaComplexType complexType)
         {
-
             if (complexType != null)
             {
                 #region choice
+
                 // check if it is e choice
                 XmlSchemaChoice choice = complexType.ContentTypeParticle as XmlSchemaChoice;
                 if (choice != null)
                 {
                     return true;
                 }
-                #endregion
+
+                #endregion choice
             }
 
             return false;
@@ -516,7 +523,6 @@ namespace BExIS.Xml.Helpers
 
             return null;
         }
-
 
         public static List<XmlSchemaElement> GetAllSimpleElements(List<XmlSchemaElement> elements)
         {

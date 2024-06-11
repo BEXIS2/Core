@@ -57,11 +57,9 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             {
                 // create Entity based on entity template
 
-
                 var datasetToCopy = dm.GetDataset(id);
                 var datasetVersionToCopy = dm.GetDatasetLatestVersion(datasetToCopy.Id);
                 var entityTemplate = datasetToCopy.EntityTemplate;
-
 
                 if (datasetToCopy == null) throw new ArgumentException("dataset not exist.");
                 if (datasetToCopy.EntityTemplate == null) throw new ArgumentException("enitytemplate not exist.");
@@ -69,8 +67,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 // check if something missing
                 var ds = dm.CreateEmptyDataset(datasetToCopy.DataStructure, datasetToCopy.ResearchPlan, datasetToCopy.MetadataStructure, datasetToCopy.EntityTemplate);
 
-
-                #region  update version
+                #region update version
 
                 if (dm.IsDatasetCheckedOutFor(ds.Id, GetUsernameOrDefault()) || dm.CheckOutDataset(ds.Id, GetUsernameOrDefault()))
                 {
@@ -94,10 +91,9 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                     dm.CheckInDataset(ds.Id, "", GetUsernameOrDefault(), ViewCreationBehavior.None);
                 }
 
-                #endregion
+                #endregion update version
 
-                #region  add permissions
-
+                #region add permissions
 
                 if (entityTemplate.PermissionGroups != null)
                 {
@@ -107,7 +103,6 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                         var group = gm.Groups.Where(g => g.Id.Equals(groupId)).FirstOrDefault();
                         entityPermissionManager.Create<Group>(group.Name, entityTemplate.EntityType.Name, typeof(Dataset), ds.Id, Enum.GetValues(typeof(RightType)).Cast<RightType>().ToList());
                     }
-
 
                     // ViewEditGrant
                     foreach (var groupId in entityTemplate.PermissionGroups.ViewEditGrant)
@@ -140,10 +135,9 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                     entityPermissionManager.Create<User>(GetUsernameOrDefault(), entityTemplate.EntityType.Name, typeof(Dataset), ds.Id, Enum.GetValues(typeof(RightType)).Cast<RightType>().ToList());
                 }
 
+                #endregion add permissions
 
-                #endregion
-
-                #region  send notifications
+                #region send notifications
 
                 List<string> destinations = new List<string>();
                 // add system email
@@ -167,18 +161,16 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                     destinations
                     );
 
-
                 //   #endregion
 
                 return Redirect("/dcm/edit?id=" + ds.Id);
 
-
-                #endregion
+                #endregion send notifications
             }
         }
 
         /// <summary>
-        /// Get data based on a EntityTemplate 
+        /// Get data based on a EntityTemplate
         /// System keys and datatypes
         /// list of datastructures if exist
         /// List of file types
@@ -197,7 +189,6 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             using (var metadataAttributeManager = new MetadataAttributeManager())
             using (var mappingManager = new MappingManager())
             {
-
                 var entityTemplate = entityTemplateManager.Repo.Get(id);
 
                 if (entityTemplate == null) throw new ArgumentNullException("The entitytemplate with id (" + id + ") does not exist.");
@@ -289,9 +280,9 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 ResearchPlan rp = rpm.Repo.Get(1); // not used but needed
 
                 // check if something missing
-                if(rp == null) throw new ArgumentNullException(nameof(rp));
-                if(metadataStructure == null) throw new ArgumentNullException(nameof(metadataStructure));
-                if(entityTemplate == null) throw new ArgumentNullException(nameof(entityTemplate));
+                if (rp == null) throw new ArgumentNullException(nameof(rp));
+                if (metadataStructure == null) throw new ArgumentNullException(nameof(metadataStructure));
+                if (entityTemplate == null) throw new ArgumentNullException(nameof(entityTemplate));
 
                 var ds = dm.CreateEmptyDataset(dataStructure, rp, metadataStructure, entityTemplate);
                 datasetId = ds.Id;
@@ -327,16 +318,16 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                             if (targetXElement.Descendants().First() == null) targetXElement.Value = item.Value;
                             else
                                 // if the mappings go thow a usage, the value shoudl set on the type and this element is the child of the usage
-                                // e.g. mappingt to title is usage, set value to title/titleType = "title of the dataset" 
+                                // e.g. mappingt to title is usage, set value to title/titleType = "title of the dataset"
                                 // set value
                                 targetXElement.Descendants().First().Value = item.Value;
                         }
                     }
                 }
 
-                #endregion
+                #endregion prepare metadata
 
-                #region  update version
+                #region update version
 
                 if (dm.IsDatasetCheckedOutFor(datasetId, GetUsernameOrDefault()) || dm.CheckOutDataset(datasetId, GetUsernameOrDefault()))
                 {
@@ -360,10 +351,9 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                     dm.CheckInDataset(datasetId, "", GetUsernameOrDefault(), ViewCreationBehavior.None);
                 }
 
+                #endregion update version
 
-                #endregion
-
-                #region  add permissions
+                #region add permissions
 
                 if (entityTemplate.PermissionGroups != null)
                 {
@@ -373,7 +363,6 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                         var group = gm.Groups.Where(g => g.Id.Equals(groupId)).FirstOrDefault();
                         entityPermissionManager.Create<Group>(group.Name, entityTemplate.EntityType.Name, typeof(Dataset), ds.Id, Enum.GetValues(typeof(RightType)).Cast<RightType>().ToList());
                     }
-
 
                     // ViewEditGrant
                     foreach (var groupId in entityTemplate.PermissionGroups.ViewEditGrant)
@@ -389,15 +378,15 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                     {
                         var group = gm.Groups.Where(g => g.Id.Equals(groupId)).FirstOrDefault();
                         var l = new List<RightType>() { RightType.Read, RightType.Write };
-                        entityPermissionManager.Create<Group>(group.Name, entityTemplate.EntityType.Name, typeof(Dataset), ds.Id,l);
+                        entityPermissionManager.Create<Group>(group.Name, entityTemplate.EntityType.Name, typeof(Dataset), ds.Id, l);
                     }
 
                     // View
                     foreach (var groupId in entityTemplate.PermissionGroups.View)
                     {
                         var group = gm.Groups.Where(g => g.Id.Equals(groupId)).FirstOrDefault();
-                        var l = new List<RightType>() { RightType.Read};
-                        entityPermissionManager.Create<Group>(group.Name, entityTemplate.EntityType.Name, typeof(Dataset), ds.Id,l);
+                        var l = new List<RightType>() { RightType.Read };
+                        entityPermissionManager.Create<Group>(group.Name, entityTemplate.EntityType.Name, typeof(Dataset), ds.Id, l);
                     }
                 }
 
@@ -406,10 +395,9 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                     entityPermissionManager.Create<User>(GetUsernameOrDefault(), entityTemplate.EntityType.Name, typeof(Dataset), ds.Id, Enum.GetValues(typeof(RightType)).Cast<RightType>().ToList());
                 }
 
+                #endregion add permissions
 
-                #endregion
-
-                #region  send notifications
+                #region send notifications
 
                 List<string> destinations = new List<string>();
                 // add system email
@@ -433,9 +421,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                     destinations
                     );
 
-
-                #endregion
-
+                #endregion send notifications
             }
 
             return Json(new { success = true, id = datasetId });
@@ -505,6 +491,6 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             return workingCopy;
         }
 
-        #endregion 
+        #endregion helper
     }
 }

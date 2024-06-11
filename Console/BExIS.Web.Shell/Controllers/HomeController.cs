@@ -9,7 +9,6 @@ using System;
 using System.Configuration;
 using System.IO;
 using System.Web;
-using System.Web.Http.Results;
 using System.Web.Mvc;
 using Vaiona.Web.Extensions;
 using Vaiona.Web.Mvc.Data;
@@ -78,7 +77,7 @@ namespace BExIS.Web.Shell.Controllers
             // use defined landing page without login
             else
             {
-                // load langding page from tenants (custom ) if settings 
+                // load langding page from tenants (custom ) if settings
                 if (string.IsNullOrEmpty(GeneralSettings.LandingPage))
                     return RedirectToAction("Start");
 

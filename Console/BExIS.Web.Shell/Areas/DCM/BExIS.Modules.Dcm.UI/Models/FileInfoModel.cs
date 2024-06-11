@@ -7,26 +7,32 @@ namespace BExIS.Modules.Dcm.UI.Models
     public class FileInfoModel
     {
         public string Extention { get; set; }
+
         /// <summary>
-        /// representation of decimal 
+        /// representation of decimal
         /// </summary>
         public DecimalCharacter Decimal { get; set; }
+
         /// <summary>
-        /// 
+        ///
         /// </summary>
         public Orientation Orientation { get; set; }
+
         /// <summary>
         /// Number of empty columns (columnwise) or rows (rowwise) before the variables are specified.
         /// </summary>
         public int Offset { get; set; }
+
         /// <summary>
         /// Row/Column in which the variables are.
         /// </summary>
         public int Variables { get; set; }
+
         /// <summary>
         /// Row/Column in which the Data are.
         /// </summary>
         public int Data { get; set; }
+
         /// <summary>
         /// Format of the Date
         /// </summary>
@@ -38,6 +44,7 @@ namespace BExIS.Modules.Dcm.UI.Models
 
         //select area for excel
         public List<string> DataArea { get; set; }
+
         public string HeaderArea { get; set; }
         public Dictionary<Uri, String> SheetUriDictionary { get; set; }
         public string activeSheetUri { get; set; }
@@ -57,6 +64,5 @@ namespace BExIS.Modules.Dcm.UI.Models
             SheetUriDictionary = new Dictionary<Uri, string>();
             activeSheetUri = "";
         }
-
     }
 }

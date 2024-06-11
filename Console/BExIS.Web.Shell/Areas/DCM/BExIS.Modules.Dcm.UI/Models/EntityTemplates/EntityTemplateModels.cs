@@ -6,7 +6,6 @@ namespace BExIS.Modules.Dcm.UI.Models.EntityTemplate
 {
     public class EntityTemplateModel
     {
-
         /// <summary>
         /// Name of the Entity Template
         /// </summary>
@@ -27,12 +26,10 @@ namespace BExIS.Modules.Dcm.UI.Models.EntityTemplate
         /// </summary>
         public ListItem EntityType { get; set; }
 
-
         /// <summary>
         ///Metadata Structure
         /// </summary>
         public virtual ListItem MetadataStructure { get; set; }
-
 
         public virtual List<int> MetadataFields { get; set; }
 
@@ -66,7 +63,6 @@ namespace BExIS.Modules.Dcm.UI.Models.EntityTemplate
         /// when a email is sended to the owner or admin send also to this groups
         /// </summary>
         public virtual List<long> NotificationGroups { get; set; }
-
 
         /// <summary>
         /// add this groups to the permissions

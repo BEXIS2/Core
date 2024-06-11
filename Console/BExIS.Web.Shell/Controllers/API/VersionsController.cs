@@ -1,5 +1,4 @@
-﻿using BExIS.App.Bootstrap.Attributes;
-using BExIS.Security.Services.Versions;
+﻿using BExIS.Security.Services.Versions;
 using BExIS.Utils.Route;
 using BExIS.Web.Shell.Models;
 using BExIS.Xml.Helpers;

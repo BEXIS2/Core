@@ -16,7 +16,6 @@ namespace BExIS.Modules.Bam.UI.Controllers
 {
     public class PartyController : Controller
     {
-
         public ActionResult Index()
         {
             using (var partyTypeManager = new PartyTypeManager())
@@ -27,7 +26,6 @@ namespace BExIS.Modules.Bam.UI.Controllers
             }
         }
 
-
         public ActionResult LoadCustomGridColumns(string partyTypeTitle)
         {
             using (PartyManager partyManager = new PartyManager())
@@ -35,7 +33,7 @@ namespace BExIS.Modules.Bam.UI.Controllers
             {
                 var partyType = partyTypeManager.PartyTypeRepository.Get(cc => cc.Title.Equals(partyTypeTitle)).FirstOrDefault();
                 var partyCustomGridColumns = partyManager.GetPartyCustomGridColumns(partyType.Id, all: true);
-                //To avoid NHibernate.LazyInitializationException in view 
+                //To avoid NHibernate.LazyInitializationException in view
                 //Todo: Finding a good soloution
                 foreach (var partyCustomGridColumn in partyCustomGridColumns)
                     if (partyCustomGridColumn.CustomAttribute != null)
@@ -56,7 +54,6 @@ namespace BExIS.Modules.Bam.UI.Controllers
                 partyManager.UpdatePartyGridCustomColumns(partyCustomGridColumns);
 
                 partytypeTitle = partyManager.PartyCustomGridColumnsRepository.Get(partyCustomGridColumns.First().Id).CustomAttribute.PartyType.Title;
-
             }
             finally
             {
@@ -81,7 +78,6 @@ namespace BExIS.Modules.Bam.UI.Controllers
                     ViewBag.partyTypeId = partyType.First().Id;
 
                     return PartialView("_partiesDynamicGridPartial");
-
                 }
                 else
                 {
@@ -90,7 +86,6 @@ namespace BExIS.Modules.Bam.UI.Controllers
                         partiesForGrid.Add(new partyGridModel() { Id = party.Id, Name = party.Name, PartyTypeTitle = party.PartyType.DisplayName, StartDate = (party.StartDate != null && party.StartDate < new DateTime(1000, 1, 1) ? "" : party.StartDate.ToString("yyyy-MM-dd")), EndDate = (party.EndDate != null && party.EndDate > new DateTime(3000, 1, 1) ? "" : party.EndDate.ToString("yyyy-MM-dd")), IsTemp = party.IsTemp });
                     return PartialView("_partiesPartial", partiesForGrid.OrderByDescending(cc => cc.IsTemp).ThenByDescending(cc => cc.StartDate).ThenBy(cc => cc.Name).ToList());
                 }
-
             }
         }
 
@@ -181,7 +176,7 @@ namespace BExIS.Modules.Bam.UI.Controllers
                             // get value from custom attribute
                             var entity = party.CustomAttributeValues.FirstOrDefault(item => item.CustomAttribute.Id == nameProp.Id);
 
-                            // get user based on party 
+                            // get user based on party
                             var userid = partyManager.GetUserIdByParty(party.Id);
                             var userTask = userManager.FindByIdAsync(userid);
                             userTask.Wait();
@@ -190,10 +185,6 @@ namespace BExIS.Modules.Bam.UI.Controllers
                             // compare user and party email
                             if (user.Email != entity.Value)
                             {
-
-
-
-
                                 var es = new EmailService();
                                 es.Send(MessageHelper.GetUpdateEmailHeader(),
                                     MessageHelper.GetUpdaterEmailMessage(user.DisplayName, user.Email, entity.Value),
@@ -215,15 +206,16 @@ namespace BExIS.Modules.Bam.UI.Controllers
             }
         }
 
-
         public JsonResult ValidateRelationships(int partyId)
         {
             return Json(Helpers.Helper.ValidateRelationships(partyId));
         }
+
         public ActionResult View1()
         {
             return View();
         }
+
         public ActionResult View(int id)
         {
             PartyManager partyManager = null;
@@ -314,7 +306,7 @@ namespace BExIS.Modules.Bam.UI.Controllers
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="partyRelationshipsDic">should be filled like PartyRelationship[FiledName_@TargetPartyId]=Value in view </param>
         /// <returns></returns>
@@ -375,7 +367,7 @@ namespace BExIS.Modules.Bam.UI.Controllers
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="id">party id</param>
         /// <returns></returns>
@@ -399,6 +391,7 @@ namespace BExIS.Modules.Bam.UI.Controllers
             }
             finally { partyManager?.Dispose(); }
         }
+
         public ActionResult LoadSystemRelationships(int id)
         {
             using (PartyManager partyManager = new PartyManager())
@@ -409,8 +402,9 @@ namespace BExIS.Modules.Bam.UI.Controllers
                 return PartialView("~/Areas/BAM/Views/Party/_editSystemPartyTypes.cshtml", partyRelationships);
             }
         }
+
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="id">party type id</param>
         /// <returns></returns>
@@ -441,8 +435,9 @@ namespace BExIS.Modules.Bam.UI.Controllers
                 return PartialView("_addPartyRelationshipPartial", addRelationshipModel);
             }
         }
+
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="id">party relationship id</param>
         /// <returns></returns>
@@ -485,7 +480,6 @@ namespace BExIS.Modules.Bam.UI.Controllers
             var partyRelationships = new List<PartyRelationship>();
             foreach (var partyRelationshipDic in partyRelationshipsDic)
             {
-
                 var key = partyRelationshipDic.Key.Split('_');
                 if (key.Length != 3)
                     continue;
@@ -509,18 +503,23 @@ namespace BExIS.Modules.Bam.UI.Controllers
                         case "title":
                             partyRelationship.Title = partyRelationshipDic.Value;
                             break;
+
                         case "description":
                             partyRelationship.Description = partyRelationshipDic.Value;
                             break;
+
                         case "startdate":
                             partyRelationship.StartDate = Convert.ToDateTime(partyRelationshipDic.Value);
                             break;
+
                         case "enddate":
                             partyRelationship.EndDate = Convert.ToDateTime(partyRelationshipDic.Value);
                             break;
+
                         case "scope":
                             partyRelationship.Scope = partyRelationshipDic.Value;
                             break;
+
                         case "partyrelationshiptypeid":
                             partyRelationship.PartyRelationshipType.Id = int.Parse(partyRelationshipDic.Value);
                             break;

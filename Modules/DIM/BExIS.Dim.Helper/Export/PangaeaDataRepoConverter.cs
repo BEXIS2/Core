@@ -191,6 +191,4 @@ namespace BExIS.Dim.Helpers.Export
             _broker = broker;
         }
     }
-
-    
 }

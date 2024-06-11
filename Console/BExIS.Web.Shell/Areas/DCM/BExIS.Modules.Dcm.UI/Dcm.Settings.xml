@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <settings>
-  <entry key="help" value="" type="String"/>
-  <!-- This number determines the selection whether an upload of structured data should be executed directly or async. 
+  <entry key="help" value="" type="String" />
+  <!-- This number determines the selection whether an upload of structured data should be executed directly or async.
       - c < direct
-      - c > async 
+      - c > async
       -->
   <entry key="celllimit" value="100000" type="Int32" />
   <entry key="key3" value="21" type="Int16" />

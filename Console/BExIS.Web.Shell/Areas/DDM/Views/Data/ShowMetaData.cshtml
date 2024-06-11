@@ -2,7 +2,7 @@
 
 <br />
 @if (ViewData.ModelState.IsValid)
-{ 
+{
     <br />
     <div class ="description">
         @Model.Description
@@ -22,7 +22,7 @@
             <td class="childrens">
                 <table class="noBorder">
                 @foreach (var child in packageUsage.Attributes)
-                { 
+                {
                     <tr class="noBorder">
                         @Html.Partial("_showItem", child)
                     </tr>
@@ -30,22 +30,20 @@
                 </table>
             </td>
         </tr>
-        
-    }
 
-</table>  
-                                       
+    }
+</table>
+
 }
 else
-{ 
+{
     @Html.ValidationSummary(true)
 }
 <br />
 
-
 <style type="text/css">
 
-    .tableInformation {  
+    .tableInformation {
         padding:0px;
         vertical-align:text-top;
         border-style:none;
@@ -53,7 +51,7 @@ else
         text-align:left;
     }
 
-    .childrens {  
+    .childrens {
         border-style:none;
         padding:0px;
         margin:0px;
@@ -65,7 +63,7 @@ else
     }
 
     .packageName {
-        vertical-align:text-top; 
+        vertical-align:text-top;
         font-size:130%;
         width:200px;
         color:#666;
@@ -96,7 +94,7 @@ else
     .highlight
     {
         border:none;
-        border-bottom:solid 1px; 
+        border-bottom:solid 1px;
         border-color:#eee;
     }
 
@@ -137,9 +135,8 @@ else
     }
 
     .PackageAttributeUsageValue {
-        
+
         padding:0px;
         border-style:none;
     }*/
-
 </style>

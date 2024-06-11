@@ -6,16 +6,15 @@ using System.IO;
 
 /// <summary>
 ///
-/// </summary>        
+/// </summary>
 namespace BExIS.IO.Transform.Input
 {
     /// <summary>
     ///
     /// </summary>
-    /// <remarks></remarks>        
+    /// <remarks></remarks>
     public interface IDataReader
     {
-
         /// <summary>
         ///
         /// </summary>
@@ -49,6 +48,5 @@ namespace BExIS.IO.Transform.Input
         /// <seealso cref=""/>
         /// <param name="row"></param>
         List<Error> ValidateComparisonWithDatatsructure(List<VariableIdentifier> row);
-
     }
 }

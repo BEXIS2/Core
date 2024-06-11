@@ -1,15 +1,15 @@
 <hibernate-mapping xmlns="urn:nhibernate-mapping-2.2" assembly="BExIS.Dlm.Entities" namespace="BExIS.Dlm.Entities.DataStructure">
   <class xmlns="urn:nhibernate-mapping-2.2" name="Constraint" table="Constraints" abstract="true" dynamic-update="true">
     <!-- Mapping BaseEntity properties -->
-    
+
     <id name="Id" type="Int64">
-      <column name="Id" index="idx_Constraints_id"/>
+      <column name="Id" index="idx_Constraints_id" />
       <generator class="native" />
     </id>
 
     <!--This is the master mapping for a Table per hierarchy mapping. children are DefaultValueConstraint, ValidatorConstraint and DomainValueConstraint-->
-    <discriminator column="Discriminator" type="String" length="3"/>
-    
+    <discriminator column="Discriminator" type="String" length="3" />
+
     <version name="VersionNo" type="Int32">
       <column name="VersionNo" />
     </version>
@@ -19,7 +19,7 @@
     </property>
 
     <!-- Mapping DataTuple properties -->
-    
+
     <property name="ConstraintSelectionPredicate" type="String">
       <column name="ConstraintSelectionPredicate" />
     </property>
@@ -55,29 +55,26 @@
     <property name="NegatedMessageTemplate" type="String">
       <column name="NegatedMessageTemplate" />
     </property>
-	  
+
 	<property name="CreationDate" type="DateTime">
       <column name="CreationDate" />
     </property>
-	  
+
 	<property name="LastModified" type="DateTime">
       <column name="LastModified" />
     </property>
-	  
+
 	<property name="LastModifiedUserRef" type="Int64">
       <column name="LastModifiedUserRef" />
     </property>
-	
-    <many-to-one name="DataContainer" class="DataContainer" not-null="false" column="DataContainerRef" lazy="false"/>
+
+    <many-to-one name="DataContainer" class="DataContainer" not-null="false" column="DataContainerRef" lazy="false" />
     <!--Intentionally commented; Two FK to two different entities that make them null-able! also I am not sure whether they are really needed. 22.02.12 Javad-->
-    <!--<many-to-one name="ExtendedPropery" class="ExtendedPropery" not-null="false" column="ExtendedProperyRef"/>-->
+    <!--<many-to-one name="ExtendedPropery" class="ExtendedPropery" not-null="false" column="ExtendedProperyRef" />-->
 
   <set name="VariableConstraints" inverse="true" table="Variable_Constraints" lazy="true" cascade="save-update">
-      <key column="ConstraintRef"/>
-      <many-to-many column="VariableRef" class="Variable"/>
+      <key column="ConstraintRef" />
+      <many-to-many column="VariableRef" class="Variable" />
     </set>
-    
-    
   </class>
-
 </hibernate-mapping>

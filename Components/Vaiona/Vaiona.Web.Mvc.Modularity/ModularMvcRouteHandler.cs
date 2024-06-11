@@ -8,6 +8,7 @@ namespace Vaiona.Web.Mvc.Modularity
     public class ModularMvcRouteHandler : MvcRouteHandler
     {
         private string moduleId = string.Empty;
+
         public ModularMvcRouteHandler(string moduleId)
         {
             this.moduleId = moduleId;
@@ -42,5 +43,4 @@ namespace Vaiona.Web.Mvc.Modularity
             return base.BeginProcessRequest(httpContext, callback, state);
         }
     }
-
 }

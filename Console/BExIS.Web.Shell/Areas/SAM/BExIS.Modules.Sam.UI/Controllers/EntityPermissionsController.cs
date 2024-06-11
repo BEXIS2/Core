@@ -1,27 +1,27 @@
-﻿using BExIS.Dlm.Services.Party;
+﻿using BExIS.Dlm.Entities.Data;
+using BExIS.Dlm.Services.Party;
 using BExIS.Modules.Sam.UI.Models;
 using BExIS.Security.Entities.Authorization;
 using BExIS.Security.Entities.Subjects;
 using BExIS.Security.Services.Authorization;
 using BExIS.Security.Services.Objects;
 using BExIS.Security.Services.Subjects;
+using BExIS.Security.Services.Utilities;
 using BExIS.UI.Helpers;
 using BExIS.Utils.NH.Querying;
 using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Linq;
 using System.Web.Mvc;
 using System.Web.Routing;
 using Telerik.Web.Mvc;
 using Telerik.Web.Mvc.Extensions;
+using Vaiona.Persistence.Api;
 using Vaiona.Web.Extensions;
 using Vaiona.Web.Mvc;
 using Vaiona.Web.Mvc.Models;
 using Vaiona.Web.Mvc.Modularity;
-using BExIS.Security.Services.Utilities;
-using System.Configuration;
-using Vaiona.Persistence.Api;
-using BExIS.Dlm.Entities.Data;
 
 namespace BExIS.Modules.Sam.UI.Controllers
 {
@@ -49,7 +49,6 @@ namespace BExIS.Modules.Sam.UI.Controllers
                         MessageHelper.GetSetPublicMessage(getPartyNameOrDefault(), instanceId, typeof(Dataset).Name),
                         ConfigurationManager.AppSettings["SystemEmail"]
                         );
-
                 }
             }
             finally
@@ -144,7 +143,6 @@ namespace BExIS.Modules.Sam.UI.Controllers
             using (var partyManager = new PartyManager())
             using (var entityManager = new EntityManager())
             {
-
                 var subject = subjectManager.SubjectRepository.Get(subjectId);
 
                 var entityPermissions = new List<ReferredEntityPermissionGridRowModel>();
@@ -188,7 +186,6 @@ namespace BExIS.Modules.Sam.UI.Controllers
 
                 return View(new GridModel<ReferredEntityPermissionGridRowModel> { Data = entityPermissions });
             }
-
         }
 
         public void RemoveInstanceFromPublic(long entityId, long instanceId)
@@ -295,7 +292,6 @@ namespace BExIS.Modules.Sam.UI.Controllers
                     var effectiveRights = effectiveRightsDic[item.Key];
 
                     subjects.Add(EntityPermissionGridRowModel.Convert(subject, rights, effectiveRights));
-
                 }
 
                 return View(new GridModel<EntityPermissionGridRowModel> { Data = subjects, Total = count });

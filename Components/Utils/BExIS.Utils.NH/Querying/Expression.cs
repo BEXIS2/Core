@@ -173,7 +173,8 @@ namespace BExIS.Utils.NH.Querying
 
     public class OrderByExpression : ModelExpression
     {
-        public OrderItemExpression this[int index] { get { return this.Items[index]; } }
+        public OrderItemExpression this[int index]
+        { get { return this.Items[index]; } }
 
         public List<OrderItemExpression> Items { get; set; }
 
@@ -217,7 +218,8 @@ namespace BExIS.Utils.NH.Querying
 
     public class ProjectionExpression : ModelExpression
     {
-        public ProjectionItemExpression this[int index] { get { return this.Items[index]; } }
+        public ProjectionItemExpression this[int index]
+        { get { return this.Items[index]; } }
 
         public List<ProjectionItemExpression> Items { get; set; }
 

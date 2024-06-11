@@ -1,7 +1,5 @@
 <hibernate-mapping xmlns="urn:nhibernate-mapping-2.2" assembly="BExIS.Dlm.Entities" namespace="BExIS.Dlm.Entities.MetadataStructure">
-  
+
   <subclass name="MetadataSimpleAttribute" extends="MetadataAttribute" discriminator-value="SMA" dynamic-update="true">
-    
   </subclass>
-  
 </hibernate-mapping>

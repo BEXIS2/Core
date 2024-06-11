@@ -3,13 +3,13 @@ using System.Text.RegularExpressions;
 
 /// <summary>
 ///
-/// </summary>        
+/// </summary>
 namespace BExIS.IO.Transform.Validation.ValueValidation
 {
     /// <summary>
     ///
     /// </summary>
-    /// <remarks></remarks>        
+    /// <remarks></remarks>
     public class PatternValidation : IValueValidation
     {
         private ValueType appliedTo = new ValueType();
@@ -21,7 +21,7 @@ namespace BExIS.IO.Transform.Validation.ValueValidation
         ///
         /// </summary>
         /// <remarks></remarks>
-        /// <seealso cref=""/>             
+        /// <seealso cref=""/>
         public ValueType AppliedTo
         {
             get { return appliedTo; }
@@ -31,7 +31,7 @@ namespace BExIS.IO.Transform.Validation.ValueValidation
         ///
         /// </summary>
         /// <remarks></remarks>
-        /// <seealso cref=""/>        
+        /// <seealso cref=""/>
         public string Name
         {
             get { return name; }
@@ -41,7 +41,7 @@ namespace BExIS.IO.Transform.Validation.ValueValidation
         ///
         /// </summary>
         /// <remarks></remarks>
-        /// <seealso cref=""/>        
+        /// <seealso cref=""/>
         public string DataType
         {
             get { return dataType; }
@@ -51,14 +51,14 @@ namespace BExIS.IO.Transform.Validation.ValueValidation
         ///
         /// </summary>
         /// <remarks></remarks>
-        /// <seealso cref=""/>        
+        /// <seealso cref=""/>
         public string Pattern
         {
             get { return pattern; }
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <remarks></remarks>
         /// <seealso cref=""/>
@@ -81,7 +81,7 @@ namespace BExIS.IO.Transform.Validation.ValueValidation
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <remarks></remarks>
         /// <seealso cref=""/>
@@ -95,6 +95,5 @@ namespace BExIS.IO.Transform.Validation.ValueValidation
             this.dataType = dataType;
             this.pattern = pattern;
         }
-
     }
 }

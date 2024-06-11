@@ -11,24 +11,20 @@ namespace BExIS.Xml.Helpers
 {
     public class XmlMetadataImportHelper
     {
-
         public static string GetMappingFileName(long id, TransmissionType transmissionType, string name)
         {
             using (MetadataStructureManager msm = new MetadataStructureManager())
             {
                 MetadataStructure metadataStructure = msm.Repo.Get(id);
 
-                // get MetadataStructure 
+                // get MetadataStructure
                 XDocument xDoc = XmlUtility.ToXDocument((XmlDocument)metadataStructure.Extra);
-
-
 
                 List<XElement> tmpList =
                     XmlUtility.GetXElementsByAttribute(nodeNames.convertRef.ToString(), new Dictionary<string, string>()
                     {
                     {AttributeNames.name.ToString(), name},
                     {AttributeNames.type.ToString(), transmissionType.ToString()}
-
                     }, xDoc).ToList();
 
                 if (tmpList.Count >= 1)
@@ -79,7 +75,6 @@ namespace BExIS.Xml.Helpers
                     {
                         setValues(node, doc); // next level recursively
                     }
-
                 }
                 else
                 {
@@ -182,10 +177,10 @@ namespace BExIS.Xml.Helpers
             return doc;
         }
 
-        #endregion
+        #endregion update new xml metadata with a base template
     }
 
-    class xpathProp
+    internal class xpathProp
     {
         public string nodeName { get; set; }
         public long nodeIndex { get; set; }

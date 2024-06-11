@@ -179,8 +179,6 @@ namespace BExIS.Modules.Sam.UI.Controllers
             using (var partyManager = new PartyManager())
             using (var partyTypeManager = new PartyTypeManager())
             {
-
-
                 // check wheter model is valid or not
                 if (!ModelState.IsValid) return PartialView("_Update", model);
 

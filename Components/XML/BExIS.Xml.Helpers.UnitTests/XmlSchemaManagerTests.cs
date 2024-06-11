@@ -1,14 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Xml;
-using System.Xml.Linq;
-using BExIS.App.Testing;
+﻿using BExIS.App.Testing;
 using BExIS.Dlm.Services.MetadataStructure;
 using BExIS.Utils.Config;
 using BExIS.Xml.Helpers.Mapping;
 using NUnit.Framework;
+using System;
+using System.Collections.Generic;
+using System.IO;
 using Vaiona.Utils.Cfg;
 
 namespace BExIS.Xml.Helpers.UnitTests
@@ -25,9 +22,6 @@ namespace BExIS.Xml.Helpers.UnitTests
         private TestSetupHelper helper = null;
 
         [OneTimeSetUp]
-        /// It is called once prior to executing any of the tests in a fixture.
-        /// Multiple methods can be marked. Order is not preserved.
-        /// Inheritance is supported, call sequence form the parents
         public void OneTimeSetUp()
         {
             helper = new TestSetupHelper(WebApiConfig.Register, false);
@@ -51,28 +45,24 @@ namespace BExIS.Xml.Helpers.UnitTests
             {
                 string file = filename.ToString();
 
-                //Do your job with "file"  
-                string str = Path.Combine(_temp, file.ToString().Replace(dic,""));
+                //Do your job with "file"
+                string str = Path.Combine(_temp, file.ToString().Replace(dic, ""));
                 if (!File.Exists(str))
                 {
                     string d = Path.GetDirectoryName(str);
-                    if(!Directory.Exists(d)) Directory.CreateDirectory(d);
+                    if (!Directory.Exists(d)) Directory.CreateDirectory(d);
 
                     File.Copy(file, str);
                 }
             }
-
         }
 
         [SetUp]
-        /// performs the initial setup for the tests. This runs once per test, NOT per class!
         protected void SetUp()
         {
-            
         }
 
         [TearDown]
-        /// performs the cleanup after each test
         public void TearDown()
         {
             DirectoryInfo di = new DirectoryInfo(_temp);
@@ -103,16 +93,12 @@ namespace BExIS.Xml.Helpers.UnitTests
             foreach (var file in Directory.GetFiles(sourceDir))
             {
                 var targetFilePath = Path.Combine(targetDir, Path.GetFileName(file));
-                if(!File.Exists(targetFilePath))
+                if (!File.Exists(targetFilePath))
                     File.Copy(file, targetFilePath);
             }
         }
 
         [OneTimeTearDown]
-        /// It is called once after executing all the tests in a fixture.
-        /// Multiple methods can be marked. Order is not preserved.
-        /// Inheritance is supported, call sequence form the children
-        /// Executes only if: counterpart OneTimeSetUp exists and executed successfully.
         public void OneTimeTearDown()
         {
         }
@@ -138,7 +124,6 @@ namespace BExIS.Xml.Helpers.UnitTests
 
             //Assert
             Assert.Throws<FileNotFoundException>(() => xmlSchemaManager.Load("C:/test/notexist.xsd", _username));
-
         }
 
         [Test()]
@@ -149,7 +134,6 @@ namespace BExIS.Xml.Helpers.UnitTests
             //Act
             //Assert
             Assert.That(() => xmlSchemaManager.Load("", _username), Throws.ArgumentNullException);
-
         }
 
         [Test()]
@@ -159,8 +143,7 @@ namespace BExIS.Xml.Helpers.UnitTests
             XmlSchemaManager xmlSchemaManager = new XmlSchemaManager();
             //Act
             //Assert
-            Assert.That(() => xmlSchemaManager.Load(_schemaPath,""), Throws.ArgumentNullException);
-
+            Assert.That(() => xmlSchemaManager.Load(_schemaPath, ""), Throws.ArgumentNullException);
         }
 
         [Test()]
@@ -171,7 +154,7 @@ namespace BExIS.Xml.Helpers.UnitTests
             xmlSchemaManager.Load(_schemaPath, _username);
 
             //act
-            var id =  xmlSchemaManager.GenerateMetadataStructure("", "test");
+            var id = xmlSchemaManager.GenerateMetadataStructure("", "test");
 
             Assert.That(id > 0);
 
@@ -181,13 +164,9 @@ namespace BExIS.Xml.Helpers.UnitTests
                 var metadataStructure = metadataStructureManager.Repo.Get(id);
 
                 //15 package usages
-
             }
 
             deleteMDS.Add(id);
-
         }
-
-
     }
 }

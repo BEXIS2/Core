@@ -11,7 +11,6 @@ namespace BExIS.Modules.Dim.UI.Controllers
     /// </summary>
     public class ConceptOutController : ApiController
     {
-
         [BExISApiAuthorize]
         [GetRoute("api/Concept")]
         public IEnumerable<Concept> Get()
@@ -20,7 +19,6 @@ namespace BExIS.Modules.Dim.UI.Controllers
 
             using (var conceptManager = new ConceptManager())
             {
-
                 foreach (var c in conceptManager.MappingConceptRepo.Get())
                 {
                     tmp.Add(new Concept()
@@ -32,7 +30,6 @@ namespace BExIS.Modules.Dim.UI.Controllers
             }
 
             return tmp;
-
         }
 
         public class Concept
@@ -40,6 +37,5 @@ namespace BExIS.Modules.Dim.UI.Controllers
             public long Id { get; set; }
             public string Name { get; set; }
         }
-
     }
 }

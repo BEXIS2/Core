@@ -591,16 +591,16 @@
             </summary>
         </member>
         <member name="M:BExIS.Modules.Dim.UI.Controllers.MappingOutController.Get(System.Int64,System.Int32,System.Int64,System.Int32)">
-            <summary>
+             <summary>
             
-            </summary>
-            <param name="sourceElementId"></param>
-            <param name="sourceElementType"></param>
-            <param name="targetElementId"></param>
-            <param name="targetElementType"></param>
-            <returns></returns>
-            <remarks> 
-            </remarks>
+             </summary>
+             <param name="sourceElementId"></param>
+             <param name="sourceElementType"></param>
+             <param name="targetElementId"></param>
+             <param name="targetElementType"></param>
+             <returns></returns>
+             <remarks>
+             </remarks>
         </member>
         <member name="M:BExIS.Modules.Dim.UI.Controllers.MetadataStatisticOutController.Post(BExIS.Modules.Dim.UI.Models.Api.PostApiMetadataStatisticModel)">
             <summary>
@@ -627,7 +627,7 @@
             </summary>
             <remarks>
             the API returns the selected metadata structure in json schema.
-            each object contains a @ref attribute of type string, simple types contain a #text where the value is entered. 
+            each object contains a @ref attribute of type string, simple types contain a #text where the value is entered.
             even a simple value therefore consists of @ref and #text.
             @ref will beused fpor internal or external references, #text is used to store input values
             </remarks>
@@ -764,13 +764,13 @@
             
              ## format
              Based on the existing transformation options, the converted metadata can be obtained via format.
-             
+            
              ## simplfiedJson
              if you set the accept of the request to return a json, you can manipulate the json with this parameter. <br/>
              0 = returns the metadata with full internal structure <br/>
              1 = returns a simplified form of the structure with all fields and attributes <br/>
-             2 = returns the metadata in a simplified structure and does not add all fields and attributes that are empty. 
-             
+             2 = returns the metadata in a simplified structure and does not add all fields and attributes that are empty.
+            
              </remarks>
              <param name="id">Dataset Id</param>
              <param name="format">Internal,External,Subset</param>
@@ -786,13 +786,13 @@
             
              ## format
              Based on the existing transformation options, the converted metadata can be obtained via format.
-             
+            
              ## simplfiedJson
              if you set the accept of the request to return a json, you can manipulate the json with this parameter. <br/>
              0 = returns the metadata with full internal structure <br/>
              1 = returns a simplified form of the structure with all fields and attributes <br/>
-             2 = returns the metadata in a simplified structure and does not add all fields and attributes that are empty. 
-             
+             2 = returns the metadata in a simplified structure and does not add all fields and attributes that are empty.
+            
              </remarks>
              <param name="id">Dataset Id</param>
              <param name="versionId">Version Id</param>
@@ -809,13 +809,13 @@
             
              ## format
              Based on the existing transformation options, the converted metadata can be obtained via format.
-             
+            
              ## simplfiedJson
              if you set the accept of the request to return a json, you can manipulate the json with this parameter. <br/>
              0 = returns the metadata with full internal structure <br/>
              1 = returns a simplified form of the structure with all fields and attributes <br/>
-             2 = returns the metadata in a simplified structure and does not add all fields and attributes that are empty. 
-             
+             2 = returns the metadata in a simplified structure and does not add all fields and attributes that are empty.
+            
              </remarks>
              <param name="id">Dataset Id</param>
              <param name="version_number">Version number</param>
@@ -832,13 +832,13 @@
             
              ## format
              Based on the existing transformation options, the converted metadata can be obtained via format.
-             
+            
              ## simplfiedJson
              if you set the accept of the request to return a json, you can manipulate the json with this parameter. <br/>
              0 = returns the metadata with full internal structure <br/>
              1 = returns a simplified form of the structure with all fields and attributes <br/>
-             2 = returns the metadata in a simplified structure and does not add all fields and attributes that are empty. 
-             
+             2 = returns the metadata in a simplified structure and does not add all fields and attributes that are empty.
+            
              </remarks>
              <param name="id">Dataset Id</param>
              <param name="version_name">Version name</param>
@@ -936,17 +936,17 @@
         </member>
         <member name="P:BExIS.Modules.Dim.UI.Models.Api.PostApiMetadataStatisticModel.DatasetIdsInclude">
             <summary>
-            List of Dataset IDs to include 
+            List of Dataset IDs to include
             </summary>
         </member>
         <member name="P:BExIS.Modules.Dim.UI.Models.Api.PostApiMetadataStatisticModel.DatasetIdsExclude">
             <summary>
-            List of Dataset IDs to exclude 
+            List of Dataset IDs to exclude
             </summary>
         </member>
         <member name="P:BExIS.Modules.Dim.UI.Models.Api.PostApiMetadataStatisticModel.MetadatastructureIdsInclude">
             <summary>
-            List of Metdata structure IDs to include 
+            List of Metdata structure IDs to include
             </summary>
         </member>
         <member name="P:BExIS.Modules.Dim.UI.Models.Api.PostApiMetadataStatisticModel.MetadatastructureIdsExclude">

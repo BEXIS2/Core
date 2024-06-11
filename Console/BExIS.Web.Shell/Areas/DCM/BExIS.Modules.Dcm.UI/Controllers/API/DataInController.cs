@@ -52,7 +52,6 @@ namespace BExIS.Modules.Dcm.UI.Controllers
     {
         private XmlDatasetHelper xmlDatasetHelper = new XmlDatasetHelper();
 
-        
         // PUT: api/data/5
         /// <summary>
         /// append and update data to an existing dataset
@@ -167,7 +166,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
                         // prepare pk index list from data
                         int[] primaryKeyIndexes = new int[pkVariables.Count];
-                        for (int i = 0; i <= dataStructure.Variables.Count-1; i++)
+                        for (int i = 0; i <= dataStructure.Variables.Count - 1; i++)
                         {
                             var variable = dataStructure.Variables.ElementAt(i);
                             if (variable.IsKey)
@@ -259,7 +258,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
                             if (datatuples.Count > 0)
                             {
-                                var splittedDatatuples = uploadHelper.GetSplitDatatuples(datatuples, pkVariables.Select(v=>v.Id).ToList(), workingCopy, ref datatupleFromDatabaseIds);
+                                var splittedDatatuples = uploadHelper.GetSplitDatatuples(datatuples, pkVariables.Select(v => v.Id).ToList(), workingCopy, ref datatupleFromDatabaseIds);
                                 datasetManager.EditDatasetVersion(workingCopy, splittedDatatuples["new"], splittedDatatuples["edit"], null);
                             }
 
@@ -333,7 +332,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
             Key[] myObjArray = { };
 
-            if(updateData)myObjArray = new Key[] { Key.Id, Key.Version, Key.DateOfVersion, Key.DataLastModified };
+            if (updateData) myObjArray = new Key[] { Key.Id, Key.Version, Key.DateOfVersion, Key.DataLastModified };
             else myObjArray = new Key[] { Key.Id, Key.Version, Key.DataCreationDate, Key.DataLastModified };
 
             metadata = SystemMetadataHelper.SetSystemValuesToMetadata(datasetid, version, metadataStructureId, metadata, myObjArray);

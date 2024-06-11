@@ -10,6 +10,7 @@ namespace BExIS.Dlm.Services.DataStructure
     public class UnitManager : IDisposable
     {
         private IUnitOfWork guow = null;
+
         public UnitManager() //: base(false, true, true)
         {
             //// define aggregate paths
@@ -21,6 +22,7 @@ namespace BExIS.Dlm.Services.DataStructure
         }
 
         private bool isDisposed = false;
+
         ~UnitManager()
         {
             Dispose(true);
@@ -45,11 +47,14 @@ namespace BExIS.Dlm.Services.DataStructure
         }
 
         #region Data Readers
+
         // provide read only repos for the whole aggregate area
         public IReadOnlyRepository<Unit> Repo { get; private set; }
+
         //public IReadOnlyRepository<ConversionMethod> ConversionMethodRepo { get; private set; }
         public IReadOnlyRepository<Dimension> DimensionRepo { get; private set; }
-        #endregion
+
+        #endregion Data Readers
 
         #region Unit
 
@@ -60,7 +65,6 @@ namespace BExIS.Dlm.Services.DataStructure
             Contract.Requires(dimension != null);
 
             Contract.Ensures(Contract.Result<Unit>() != null && Contract.Result<Unit>().Id >= 0);
-
 
             using (IUnitOfWork uow = this.GetUnitOfWork())
             {
@@ -171,7 +175,7 @@ namespace BExIS.Dlm.Services.DataStructure
             return (entity);
         }
 
-        #endregion
+        #endregion Unit
 
         #region Dimension
 
@@ -252,7 +256,7 @@ namespace BExIS.Dlm.Services.DataStructure
             return (entity);
         }
 
-        #endregion
+        #endregion Dimension
 
         #region Conversion Method
 
@@ -373,7 +377,7 @@ namespace BExIS.Dlm.Services.DataStructure
             return (entity);
         }
 
-        #endregion
+        #endregion Conversion Method
 
         #region Associations
 
@@ -485,7 +489,7 @@ namespace BExIS.Dlm.Services.DataStructure
             }
             return (result);
         }
-        #endregion
 
+        #endregion Associations
     }
 }

@@ -2,13 +2,13 @@
 
 /// <summary>
 ///
-/// </summary>        
+/// </summary>
 namespace BExIS.Dlm.Entities.DataStructure
 {
     /// <summary>
     ///
     /// </summary>
-    /// <remarks></remarks>        
+    /// <remarks></remarks>
     public class ConversionMethod : BaseEntity
     {
         #region Attributes
@@ -17,17 +17,17 @@ namespace BExIS.Dlm.Entities.DataStructure
         ///
         /// </summary>
         /// <remarks></remarks>
-        /// <seealso cref=""/>        
+        /// <seealso cref=""/>
         public virtual string Description { get; set; }
 
         /// <summary>
         ///
         /// </summary>
         /// <remarks> 100*x => Target = 100*Source </remarks>
-        /// <seealso cref=""/>        
+        /// <seealso cref=""/>
         public virtual string Formula { get; set; }
 
-        #endregion
+        #endregion Attributes
 
         #region Associations
 
@@ -35,21 +35,16 @@ namespace BExIS.Dlm.Entities.DataStructure
         ///
         /// </summary>
         /// <remarks></remarks>
-        /// <seealso cref=""/>        
+        /// <seealso cref=""/>
         public virtual Unit Source { get; set; }
 
         /// <summary>
         ///
         /// </summary>
         /// <remarks></remarks>
-        /// <seealso cref=""/>        
+        /// <seealso cref=""/>
         public virtual Unit Target { get; set; }
 
-        #endregion
-
-        #region Mathods
-
-        #endregion
-
+        #endregion Associations
     }
 }

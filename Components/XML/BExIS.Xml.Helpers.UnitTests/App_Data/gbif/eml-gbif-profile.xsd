@@ -14,35 +14,33 @@
       <xs:documentation>This is the only identifier issued by the IPT for the metadata document; it is a UUID</xs:documentation>
     </xs:annotation>
   </xs:element>
-<xs:element ref="title" maxOccurs="unbounded"/>
+<xs:element ref="title" maxOccurs="unbounded" />
 <!-- Original creator of the dataset/resource, not necessarily the agent authoring the eml file nor the primary contact -->
-<xs:element ref="creator"/>
+<xs:element ref="creator" />
 <!-- "Metadata author" the agent authoring the eml file -->
 <xs:element name="metadataProvider" type="agentType">
 <xs:annotation>
 <xs:documentation>The party responsible for the creation of the metadata document</xs:documentation>
 </xs:annotation>
 </xs:element>
-<xs:element ref="associatedParty" minOccurs="0" maxOccurs="unbounded"/>
-<xs:element ref="pubDate"/>
-<xs:element ref="language" minOccurs="0"/>
-<xs:element ref="abstract"/>
-<xs:element ref="keywordSet" minOccurs="0" maxOccurs="unbounded"/>
-<xs:element ref="additionalInfo" minOccurs="0"/>
-<xs:element ref="intellectualRights" minOccurs="0"/>
-<xs:element ref="distribution" minOccurs="0"/>
-<xs:element ref="coverage" minOccurs="0"/>
-<xs:element ref="purpose" minOccurs="0"/>
+<xs:element ref="associatedParty" minOccurs="0" maxOccurs="unbounded" />
+<xs:element ref="pubDate" />
+<xs:element ref="language" minOccurs="0" />
+<xs:element ref="abstract" />
+<xs:element ref="keywordSet" minOccurs="0" maxOccurs="unbounded" />
+<xs:element ref="additionalInfo" minOccurs="0" />
+<xs:element ref="intellectualRights" minOccurs="0" />
+<xs:element ref="distribution" minOccurs="0" />
+<xs:element ref="coverage" minOccurs="0" />
+<xs:element ref="purpose" minOccurs="0" />
 <!-- Current primary contact for the dataset. The creator of the resource might be dead, left the organisation or doesnt want to be bothered. -->
-<xs:element name="contact" type="agentType"/>
-<xs:element ref="methods" minOccurs="0"/>
-<xs:element ref="project" minOccurs="0"/>
+<xs:element name="contact" type="agentType" />
+<xs:element ref="methods" minOccurs="0" />
+<xs:element ref="project" minOccurs="0" />
 </xs:sequence>
 </xs:complexType>
 </xs:element>
-  
 
-  
 <xs:element name="creator" type="agentType">
 <xs:annotation>
 <xs:documentation>The creator is the person who created the resource (not necessarily the author of this metadata about the resource).
@@ -65,17 +63,17 @@ This is the person or institution to contact with questions about the use, inter
 </xs:annotation>
 </xs:element>
 </xs:choice>
-<xs:element ref="address" minOccurs="0"/>
-<xs:element ref="phone" minOccurs="0"/>
-<xs:element ref="electronicMailAddress" minOccurs="0"/>
-<xs:element ref="onlineUrl" minOccurs="0"/>
+<xs:element ref="address" minOccurs="0" />
+<xs:element ref="phone" minOccurs="0" />
+<xs:element ref="electronicMailAddress" minOccurs="0" />
+<xs:element ref="onlineUrl" minOccurs="0" />
 </xs:sequence>
 </xs:complexType>
 <xs:complexType name="agentWithRoleType">
 <xs:complexContent>
 <xs:extension base="agentType">
 <xs:sequence>
-<xs:element ref="role"/>
+<xs:element ref="role" />
 </xs:sequence>
 </xs:extension>
 </xs:complexContent>
@@ -101,7 +99,7 @@ This is the person or institution to contact with questions about the use, inter
 </xs:annotation>
 <xs:complexType>
 <xs:sequence>
-<xs:element ref="para"/>
+<xs:element ref="para" />
 </xs:sequence>
 </xs:complexType>
 </xs:element>
@@ -130,7 +128,7 @@ This is the person or institution to contact with questions about the use, inter
 </xs:annotation>
 <xs:complexType>
 <xs:sequence>
-<xs:element ref="para"/>
+<xs:element ref="para" />
 </xs:sequence>
 </xs:complexType>
 </xs:element>
@@ -140,7 +138,7 @@ This is the person or institution to contact with questions about the use, inter
 </xs:annotation>
 <xs:complexType>
 <xs:sequence>
-<xs:element ref="para"/>
+<xs:element ref="para" />
 </xs:sequence>
 </xs:complexType>
 </xs:element>
@@ -268,15 +266,13 @@ This is the person or institution to contact with questions about the use, inter
 </xs:complexType>
 </xs:element>
 
-
-
 <xs:element name="purpose">
 <xs:annotation>
 <xs:documentation>A description of the purpose of the resource/dataset</xs:documentation>
 </xs:annotation>
 <xs:complexType>
 <xs:sequence>
-<xs:element ref="para"/>
+<xs:element ref="para" />
 </xs:sequence>
 </xs:complexType>
 </xs:element>
@@ -313,7 +309,7 @@ This is the person or institution to contact with questions about the use, inter
 </xs:annotation>
 <xs:complexType>
 <xs:sequence>
-<xs:element ref="para"/>
+<xs:element ref="para" />
 </xs:sequence>
 </xs:complexType>
 </xs:element>
@@ -329,7 +325,7 @@ This is the person or institution to contact with questions about the use, inter
 </xs:annotation>
 <xs:complexType>
 <xs:sequence>
-<xs:element ref="title"/>
+<xs:element ref="title" />
 <xs:element name="personnel" type="agentWithRoleType">
 <xs:annotation>
 <xs:documentation>The Personnel field extends ResponsibleParty with role information and is used to document people involved in a research project by providing contact information and their role in the project. </xs:documentation>
@@ -341,7 +337,7 @@ This is the person or institution to contact with questions about the use, inter
 </xs:annotation>
 <xs:complexType>
 <xs:sequence>
-<xs:element ref="para"/>
+<xs:element ref="para" />
 </xs:sequence>
 </xs:complexType>
 </xs:element>
@@ -351,7 +347,7 @@ This is the person or institution to contact with questions about the use, inter
 </xs:annotation>
 <xs:complexType>
 <xs:sequence>
-<xs:element ref="descriptor"/>
+<xs:element ref="descriptor" />
 </xs:sequence>
 </xs:complexType>
 </xs:element>
@@ -369,17 +365,17 @@ This is the person or institution to contact with questions about the use, inter
 </xs:annotation>
 <xs:complexType>
 <xs:sequence>
-<xs:element ref="descriptorValue"/>
+<xs:element ref="descriptorValue" />
 </xs:sequence>
-<xs:attribute name="citableClassificationSystem" use="optional" type="xs:boolean"/>
-<xs:attribute name="name" use="optional" type="descriptorEnum"/>
+<xs:attribute name="citableClassificationSystem" use="optional" type="xs:boolean" />
+<xs:attribute name="name" use="optional" type="descriptorEnum" />
 </xs:complexType>
 </xs:element>
 <xs:simpleType name="descriptorEnum">
 <xs:restriction base="xs:string">
-<xs:enumeration value="thematic"/>
-<xs:enumeration value="geographic"/>
-<xs:enumeration value="generic"/>
+<xs:enumeration value="thematic" />
+<xs:enumeration value="geographic" />
+<xs:enumeration value="generic" />
 </xs:restriction>
 </xs:simpleType>
 <xs:element name="descriptorValue" type="xs:string">
@@ -413,7 +409,7 @@ This is the person or institution to contact with questions about the use, inter
 </xs:element>
 <xs:element name="hierarchyLevel" type="NonEmptyStringType" minOccurs="0">
 <xs:annotation>
-<xs:documentation/>
+<xs:documentation />
 </xs:annotation>
 </xs:element>
 <xs:element name="citation" type="citationType" minOccurs="0">
@@ -427,7 +423,7 @@ This is the person or institution to contact with questions about the use, inter
 </xs:annotation>
 <xs:complexType>
 <xs:sequence>
-<xs:element name="citation" type="citationType" maxOccurs="unbounded"/>
+<xs:element name="citation" type="citationType" maxOccurs="unbounded" />
 </xs:sequence>
 </xs:complexType>
 </xs:element>
@@ -437,10 +433,10 @@ This is the person or institution to contact with questions about the use, inter
 </xs:annotation>
 <xs:complexType>
 <xs:sequence>
-<xs:element ref="objectName"/>
-<xs:element ref="characterEncoding"/>
-<xs:element ref="dataFormat"/>
-<xs:element ref="distribution"/>
+<xs:element ref="objectName" />
+<xs:element ref="characterEncoding" />
+<xs:element ref="dataFormat" />
+<xs:element ref="distribution" />
 </xs:sequence>
 </xs:complexType>
 </xs:element>
@@ -489,7 +485,7 @@ This is the person or institution to contact with questions about the use, inter
 <xs:documentation>Time period during which biological material was alive. (for palaeontological collections)</xs:documentation>
 </xs:annotation>
 </xs:element>
-<xs:element ref="jgtiCuratorialUnit" maxOccurs="unbounded" minOccurs="0"/>
+<xs:element ref="jgtiCuratorialUnit" maxOccurs="unbounded" minOccurs="0" />
 <xs:element ref="dc:replaces" minOccurs="0">
 <xs:annotation>
 <xs:documentation>Pointer to previous version of the document</xs:documentation>
@@ -696,9 +692,9 @@ This is the person or institution to contact with questions about the use, inter
 </xs:annotation>
 <xs:complexType>
 <xs:sequence>
-<xs:element ref="online"/>
+<xs:element ref="online" />
 </xs:sequence>
-<xs:attribute name="scope" type="xs:string"/>
+<xs:attribute name="scope" type="xs:string" />
 </xs:complexType>
 </xs:element>
 <xs:element name="online">
@@ -707,7 +703,7 @@ This is the person or institution to contact with questions about the use, inter
 </xs:annotation>
 <xs:complexType>
 <xs:sequence>
-<xs:element ref="url"/>
+<xs:element ref="url" />
 </xs:sequence>
 </xs:complexType>
 </xs:element>
@@ -718,14 +714,14 @@ This is the person or institution to contact with questions about the use, inter
 <xs:complexType>
 <xs:simpleContent>
 <xs:extension base="xs:anyURI">
-<xs:attribute name="function" use="required" type="xs:string"/>
+<xs:attribute name="function" use="required" type="xs:string" />
 </xs:extension>
 </xs:simpleContent>
 </xs:complexType>
 </xs:element>
 <xs:complexType name="calendarDate">
 <xs:sequence>
-<xs:element ref="calendarDate2"/>
+<xs:element ref="calendarDate2" />
 </xs:sequence>
 </xs:complexType>
 <xs:element name="calendarDate2" type="yearDate">
@@ -735,7 +731,7 @@ This is the person or institution to contact with questions about the use, inter
 </xs:element>
 <xs:complexType name="description">
 <xs:sequence>
-<xs:element ref="description"/>
+<xs:element ref="description" />
 </xs:sequence>
 </xs:complexType>
 <xs:element name="description">
@@ -744,7 +740,7 @@ This is the person or institution to contact with questions about the use, inter
 </xs:annotation>
 <xs:complexType mixed="true">
 <xs:sequence>
-<xs:element ref="para" minOccurs="0" maxOccurs="unbounded"/>
+<xs:element ref="para" minOccurs="0" maxOccurs="unbounded" />
 </xs:sequence>
 </xs:complexType>
 </xs:element>
@@ -757,7 +753,7 @@ This type is the union of the built-in types for year and date.
 Example: 1999, or 2001-03-15
 </xs:documentation>
 </xs:annotation>
-<!--<xs:union memberTypes="xs:gYear xs:date"/>-->
+<!--<xs:union memberTypes="xs:gYear xs:date" />-->
   <xs:restriction base="xs:date">
   </xs:restriction>
 </xs:simpleType>
@@ -775,14 +771,14 @@ may include carriage returns and newlines.
 </xs:documentation>
 </xs:annotation>
 <xs:restriction base="xs:string">
-<xs:minLength value="1"/>
-<xs:pattern value="[\s]*[\S][\s\S]*"/>
+<xs:minLength value="1" />
+<xs:pattern value="[\s]*[\S][\s\S]*" />
 </xs:restriction>
 </xs:simpleType>
 <xs:complexType name="i18nString">
 <xs:simpleContent>
 <xs:extension base="NonEmptyStringType">
-<xs:attribute ref="xml:lang" use="optional"/>
+<xs:attribute ref="xml:lang" use="optional" />
 </xs:extension>
 </xs:simpleContent>
 </xs:complexType>

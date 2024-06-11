@@ -1,14 +1,13 @@
 ﻿@model BExIS.Utils.Models.Property
-@using BExIS.Utils.Models;   
-@using System.Globalization; 
+@using BExIS.Utils.Models;
+@using System.Globalization;
 @using Telerik.Web.Mvc.UI;
 @using BExIS.UI.Helpers;
-   
+
 <div>
 <p class="PropertyHeader">@Model.DisplayTitle</p>
 @{
     List<int> dtList = new List<int>();
-
 
     int Value = new int();
 
@@ -16,7 +15,7 @@
     {
         foreach (var item in Model.Values)
         {
-            // format check inside 
+            // format check inside
             // M/d/yyyy
             DateTime dt = DateTime.Parse(item, new CultureInfo("en-US", false)); //Convert.ToDateTime(item);
             dtList.Add(dt.Year);
@@ -28,14 +27,11 @@
     int first = 0;
     int last = 0;
 
-
-
     if (dtList.Count > 0)
     {
         dtList.Sort();
         first = dtList[0];
         last = dtList[dtList.Count - 1];
-
 
         if (Model.Direction.Equals(Direction.increase)){ Value = first; }
 
@@ -67,14 +63,11 @@
                             .Value(Value)
                             .Render())
 
-
             //Html.Telerik().Slider<int>()
             //    .Name(Model.Name)
             //    .Min(min)
             //    .Max(max)
             //    .Value(Value);
-
-
 
         }
         else
@@ -83,23 +76,18 @@
                 }
     }
     else
-    { 
+    {
         <b>Slider currently not work with @Model.DataType.ToString() .</b>
     }
-
 
     string controller = Session["Controller"].ToString();
 
 }
-
-
-
 </div>
  <script type="text/javascript">
      function onChangeSlider(e) {
          var value = e.value.newValue;
          var id = e.target.name;
-
 
          $.post('@Url.Action("FilterBySlider", @controller)', { value: value, parent: id }, function (response) {
              // alert(response);
@@ -123,6 +111,4 @@
 
          refreshGrid();
      }
-
 </script>
- 

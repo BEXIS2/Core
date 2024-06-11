@@ -63,7 +63,7 @@ namespace BExIS.Dlm.Services.DataStructure
                     case TypeCode.Int16:
                         try
                         {
-                            List<short> placeholders = variable.MissingValues.Select(mv=> Convert.ToInt16(mv.Placeholder)).ToList();
+                            List<short> placeholders = variable.MissingValues.Select(mv => Convert.ToInt16(mv.Placeholder)).ToList();
                             short temp = short.MaxValue - 1;
                             while (placeholders.Contains(temp) && temp > short.MinValue + 1)
                             {
@@ -254,7 +254,7 @@ namespace BExIS.Dlm.Services.DataStructure
                 IRepository<VariableInstance> varRepo = uow.GetRepository<VariableInstance>();
                 var variable = varRepo.Get(variableId);
 
-                List<MissingValue> missingValues = variable.MissingValues!=null? variable.MissingValues.ToList(): new List<MissingValue>();
+                List<MissingValue> missingValues = variable.MissingValues != null ? variable.MissingValues.ToList() : new List<MissingValue>();
 
                 switch (typeCode)
                 {
@@ -549,12 +549,10 @@ namespace BExIS.Dlm.Services.DataStructure
 
             Contract.Ensures(Contract.Result<MissingValue>() != null && Contract.Result<MissingValue>().Id >= 0, "No entity is persisted!");
 
-            
-
             using (IUnitOfWork uow = this.GetUnitOfWork())
             {
                 IRepository<VariableInstance> varRepo = uow.GetRepository<VariableInstance>();
-                var variable = varRepo.Query(v=>v.MissingValues.Contains(entity)).FirstOrDefault();
+                var variable = varRepo.Query(v => v.MissingValues.Contains(entity)).FirstOrDefault();
 
                 TypeCode typecode = new TypeCode();
 

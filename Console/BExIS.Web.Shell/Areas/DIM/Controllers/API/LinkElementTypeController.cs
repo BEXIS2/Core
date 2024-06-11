@@ -12,7 +12,6 @@ namespace BExIS.Modules.Dim.UI.Controllers
     /// </summary>
     public class LinkElementTypeController : ApiController
     {
-
         [BExISApiAuthorize]
         [GetRoute("api/LinkElementType")]
         public IEnumerable<LEType> Get()
@@ -36,6 +35,5 @@ namespace BExIS.Modules.Dim.UI.Controllers
             public long Id { get; set; }
             public string Name { get; set; }
         }
-
     }
 }

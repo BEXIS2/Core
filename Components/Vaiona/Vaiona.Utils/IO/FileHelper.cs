@@ -7,8 +7,8 @@ namespace Vaiona.Utils.IO
 {
     public class FileHelper
     {
-        const int ERROR_SHARING_VIOLATION = 32;
-        const int ERROR_LOCK_VIOLATION = 33;
+        private const int ERROR_SHARING_VIOLATION = 32;
+        private const int ERROR_LOCK_VIOLATION = 33;
 
         private static bool IsFileLocked(Exception exception)
         {
@@ -21,13 +21,14 @@ namespace Vaiona.Utils.IO
         {
             while (!CanReadFile(filePath)) ;
         }
+
         public static bool CanReadFile(string filePath)
         {
             //Try-Catch so we dont crash the program and can check the exception
             try
             {
                 //The "using" is important because FileStream implements IDisposable and
-                //"using" will avoid a heap exhaustion situation when too many handles  
+                //"using" will avoid a heap exhaustion situation when too many handles
                 //are left undisposed.
                 using (FileStream fileStream = File.Open(filePath, FileMode.Open, FileAccess.ReadWrite, FileShare.None))
                 {
@@ -68,6 +69,5 @@ namespace Vaiona.Utils.IO
             }
             Directory.Delete(sourceDirectoty, true);
         }
-
     }
 }

@@ -5,9 +5,7 @@ using BExIS.Dlm.Services.Meanings;
 using BExIS.Modules.Rpm.UI.Models;
 using BExIS.UI.Models;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Web;
 
 namespace BExIS.Modules.Rpm.UI.Helpers
 {
@@ -19,7 +17,7 @@ namespace BExIS.Modules.Rpm.UI.Helpers
             MeaningModel model = new MeaningModel();
             model.Id = meaning.Id;
             model.Name = meaning.Name;
-            if(meaning.Description!=null) model.Description = meaning.Description;
+            if (meaning.Description != null) model.Description = meaning.Description;
             model.Approved = meaning.Approved;
             model.Selectable = meaning.Selectable;
 
@@ -38,12 +36,11 @@ namespace BExIS.Modules.Rpm.UI.Helpers
                 meaning.Constraints.ToList().ForEach(x => model.Constraints.Add(ConvertTo(x)));
             }
 
-
             return model;
         }
 
         public static Meaning ConvertTo(MeaningModel model)
-        { 
+        {
             Meaning meaning = new Meaning();
             meaning.Id = model.Id;
             meaning.Name = model.Name;
@@ -57,7 +54,7 @@ namespace BExIS.Modules.Rpm.UI.Helpers
                 {
                     var ids = model.Related_meaning.Select(m => m.Id);
 
-                    meaning.Related_meaning = meaningManager.getMeanings().Where(m=> ids.Contains(m.Id)).ToList();
+                    meaning.Related_meaning = meaningManager.getMeanings().Where(m => ids.Contains(m.Id)).ToList();
                 }
             }
 
@@ -85,8 +82,8 @@ namespace BExIS.Modules.Rpm.UI.Helpers
 
             using (var meaningManager = new MeaningManager())
             {
-                if(model.MappingRelation!=null)
-                 entry.MappingRelation = meaningManager.getExternalLink(model.MappingRelation.Id);
+                if (model.MappingRelation != null)
+                    entry.MappingRelation = meaningManager.getExternalLink(model.MappingRelation.Id);
 
                 if (model.MappedLinks.Any())
                 {
@@ -98,7 +95,6 @@ namespace BExIS.Modules.Rpm.UI.Helpers
             return entry;
         }
 
-
         public static MeaningEntryModel ConvertTo(MeaningEntry entry)
         {
             MeaningEntryModel model = new MeaningEntryModel();
@@ -106,7 +102,7 @@ namespace BExIS.Modules.Rpm.UI.Helpers
 
             if (entry.MappedLinks.Any())
             {
-                entry.MappedLinks.ToList().ForEach(m=> model.MappedLinks.Add(ConvertToListItem(m)));
+                entry.MappedLinks.ToList().ForEach(m => model.MappedLinks.Add(ConvertToListItem(m)));
             }
 
             return model;
@@ -123,12 +119,12 @@ namespace BExIS.Modules.Rpm.UI.Helpers
         }
 
         public static PrefixCategoryListItem ConvertTo(PrefixCategory prefixCategory)
-        { 
+        {
             if (prefixCategory == null)
                 return null;
             if (prefixCategory.Name == null)
                 throw new ArgumentNullException(nameof(prefixCategory));
-            
+
             PrefixCategoryListItem prefixCategoryListItem = new PrefixCategoryListItem();
             prefixCategoryListItem.Name = prefixCategory.Name;
             prefixCategoryListItem.Description = prefixCategory.Description;
@@ -157,9 +153,9 @@ namespace BExIS.Modules.Rpm.UI.Helpers
             PrefixListItem prefix = null;
             PrefixCategoryListItem prefixCategoryListItem = null;
 
-            if (link.Type!=ExternalLinkType.prefix && link.Prefix != null)
+            if (link.Type != ExternalLinkType.prefix && link.Prefix != null)
             {
-                prefix = new PrefixListItem(link.Prefix.Id, link.Prefix.Name, link.Prefix.prefixCategory?.Name, link.Prefix.URI);           
+                prefix = new PrefixListItem(link.Prefix.Id, link.Prefix.Name, link.Prefix.prefixCategory?.Name, link.Prefix.URI);
             }
 
             if (link.prefixCategory != null && link.Type == ExternalLinkType.prefix) prefixCategoryListItem = ConvertTo(link.prefixCategory);
@@ -178,8 +174,8 @@ namespace BExIS.Modules.Rpm.UI.Helpers
 
         public static ExternalLink ConvertTo(ExternalLinkModel model)
         {
-            if(model == null ) throw new ArgumentNullException(nameof(model));
-            if(model.Type.Id.Equals(ExternalLinkType.prefix) && model.PrefixCategory == null ) throw new ArgumentNullException(nameof(model.PrefixCategory));
+            if (model == null) throw new ArgumentNullException(nameof(model));
+            if (model.Type.Id.Equals(ExternalLinkType.prefix) && model.PrefixCategory == null) throw new ArgumentNullException(nameof(model.PrefixCategory));
 
             ExternalLink link = new ExternalLink();
             using (var meaningManager = new MeaningManager())
@@ -197,7 +193,6 @@ namespace BExIS.Modules.Rpm.UI.Helpers
                     prefix = meaningManager.getExternalLink(model.Prefix.Id);
                 }
 
-              
                 link.Id = model.Id;
                 link.Name = model.Name;
                 link.URI = model.Uri;

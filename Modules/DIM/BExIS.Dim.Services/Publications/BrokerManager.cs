@@ -76,11 +76,10 @@ namespace BExIS.Dim.Services.Publications
 
                 return true;
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 return false;
             }
-
         }
 
         public bool DeleteById(long brokerId)
