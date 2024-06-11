@@ -25,6 +25,8 @@ using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Web.Mvc;
+using System.Xml.Linq;
+using System.Xml;
 using System.Xml.XPath;
 using Vaiona.Entities.Common;
 
@@ -345,6 +347,9 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                     //set modification - create
                     workingCopy = setModificationInfo(workingCopy, true, GetUsernameOrDefault(), "Metadata");
 
+                    //setSystemVariables
+                    setSystemValuesToMetadata(datasetId, 1, workingCopy.Dataset.MetadataStructure.Id, workingCopy.Metadata);
+
                     // save version in database
                     dm.EditDatasetVersion(workingCopy, null, null, null);
                     // close check out
@@ -489,6 +494,19 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             workingCopy.ModificationInfo.Timestamp = DateTime.Now;
 
             return workingCopy;
+        }
+
+        private XDocument setSystemValuesToMetadata(long datasetid, long version, long metadataStructureId, XmlDocument metadata)
+        {
+            SystemMetadataHelper SystemMetadataHelper = new SystemMetadataHelper();
+
+            Key[] myObjArray = { };
+
+            myObjArray = new Key[] { Key.Id, Key.Version, Key.DateOfVersion, Key.MetadataCreationDate, Key.MetadataLastModfied };
+
+            metadata = SystemMetadataHelper.SetSystemValuesToMetadata(datasetid, version, metadataStructureId, metadata, myObjArray);
+
+            return XmlUtility.ToXDocument(metadata);
         }
 
         #endregion helper

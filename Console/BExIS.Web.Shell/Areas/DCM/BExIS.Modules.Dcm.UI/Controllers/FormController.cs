@@ -3807,7 +3807,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                         TaskManager.UpdateBus(CreateTaskmanager.METADATA_XML, XmlUtility.ToXDocument(metadata));
                     }
 
-                    return RedirectToAction("ImportMetadata", "Form", new { area = "Dcm", metadataStructureId = metadataStructureid, edit = false, created = false, locked = true });
+                    return RedirectToAction("Show", "Data", new { area = "Ddm", id = datasetid });
                 }
             }
 
