@@ -335,8 +335,8 @@ namespace BExIS.Modules.Dim.UI.Controllers
 
         private List<Broker> GetBrokers(long metadataStrutcureId, PublicationManager publicationManager)
         {
-            IEnumerable<Repository> repos = publicationManager.GetRepository();
-            IEnumerable<Broker> brokers = publicationManager.GetBroker();
+            List<Repository> repos = publicationManager.GetRepository();
+            List<Broker> brokers = publicationManager.GetBroker();
             List<Broker> tmp = new List<Broker>();
             bool add = true;
 
