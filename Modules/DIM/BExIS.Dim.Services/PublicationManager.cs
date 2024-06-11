@@ -91,9 +91,9 @@ namespace BExIS.Dim.Services
         /// <param name="Id">The identifier of the publication.</param>
         /// <returns>The semi-populated publication entity if exists, or null.</returns>
         /// <remarks>The object based attributes of the entity that are persisted as XML are not populated by default. In order to fully populate the entity, call the <see cref="Materialize"/> method.</remarks>
-        public IEnumerable<Publication> GetPublication()
+        public List<Publication> GetPublication()
         {
-            return PublicationRepo.Get();
+            return PublicationRepo.Query().ToList();
         }
 
         /// <summary>
@@ -204,9 +204,9 @@ namespace BExIS.Dim.Services
 
         #region broker
 
-        public IEnumerable<Broker> GetBroker()
+        public List<Broker> GetBroker()
         {
-            return BrokerRepo.Get();
+            return BrokerRepo.Query().ToList();
         }
 
         /// <summary>
@@ -322,9 +322,9 @@ namespace BExIS.Dim.Services
 
         #region repository
 
-        public IEnumerable<Repository> GetRepository()
+        public List<Repository> GetRepository()
         {
-            return RepositoryRepo.Get();
+            return RepositoryRepo.Query().ToList();
         }
 
         /// <summary>
