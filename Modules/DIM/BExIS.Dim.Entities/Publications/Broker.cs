@@ -17,7 +17,11 @@ namespace BExIS.Dim.Entities.Publications
         public virtual string Host { get; set; }
         public virtual Repository Repository { get; set; }
 
-        public virtual List<Publication> Publications { get; set; }
+        public virtual ICollection<Publication> Publications { get; set; }
 
+        public Broker()
+        {
+            Publications = new List<Publication>();
+        }
     }
 }
