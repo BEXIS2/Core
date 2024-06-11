@@ -175,7 +175,7 @@
                 <td id="form_message_container_Column" style="text-align: right">
                     <span id="form_message"></span>
                     <div id="preloader_cotainer">
-                        <script type="text/javascript">$("#preloader_cotainer").preloader(20, "Loading metadata...")</script>
+                        @*<script type="text/javascript">$("#preloader_cotainer").preloader(20, "Loading metadata...")</script>*@
                     </div>
                     <div id="show_help_all"><button type="button" title="Show all help information." class="bx-function bx-disabled fa  fa-info " onclick="showHelpAll();"></button></div>
                     <div id="hide_help_all"><button type="button" title="Hide all help information." class="bx-function bx-disabled" onclick="hideHelpAll();"><i class="fa bx-info" id="help_container"></i><i class="fa fa-ban" id="help_nested"></i></button></div>
@@ -379,6 +379,7 @@
             //} else {
             //    loadExternalXml();
             //}
+            //}
         });
         }
 
@@ -450,13 +451,9 @@
     function cancel() {
 
         if (confirm('Are you sure you want to leave the form? All changes will be lost.')) {
-            $
-                .get('@Url.Action(@cancel.ActionName, @cancel.ControllerName, new RouteValueDictionary {{"area", @cancel.AreaName}})',
-                    function(response) {
-                        $('#MetadataEditor').replaceWith(response);
-                        bindMinimap(true);
-                        $('html, body').animate({ scrollTop: 0 }, 'slow');
-                    });
+
+            window.open(document.referrer)
+
         } else {
             return false;
         }
@@ -465,6 +462,7 @@
     function reset() {
 
         if (confirm('Are you sure? All changes will be lost.')) {
+
             $
                 .get('@Url.Action(@reset.ActionName, @reset.ControllerName, new RouteValueDictionary {{"area", @reset.AreaName}})',
                     function(response) {
