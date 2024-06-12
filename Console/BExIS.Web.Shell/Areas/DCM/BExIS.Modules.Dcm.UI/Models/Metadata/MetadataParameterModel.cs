@@ -69,6 +69,8 @@ namespace BExIS.Modules.Dcm.UI.Models.Metadata
             {
                 Id = this.Id,
                 AttributeNumber = number,
+                MetadataParameterName = this.MetadataParameterName,
+                MetadataParameterId = this.Id,
                 ParentModelNumber = this.ParentModelNumber,
                 MetadataStructureId = this.MetadataStructureId,
                 Parent = this.Parent,
