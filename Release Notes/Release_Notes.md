@@ -1,15 +1,37 @@
-# BEXIS2 3.2.1 Release Notes
+# BEXIS2 3.3.0 Release Notes
 
->in this release 2 bugs were fixed for the mapping and delete dataset landingpage.
+>..Darwin Core Export .....
+
+### Note:
+Webconfig needs to be updated!
 
 ### Workspace changes:
-- Workspace changes: [3.1.0..3.2.0](https://github.com/BEXIS2/Workspace/compare/3.1.0..3.2.0)
+- Workspace changes: [3.2.1..3.3.0](https://github.com/BEXIS2/Workspace/compare/3.2.1..3.3.0)
 
 ### Database Update(s):
-- Update script version 3.2.0 to 3.2.1:
-- [Update_Script_3.2.0_3.2.1.sql](https://github.com/BEXIS2/Core/blob/rc/database%20update%20scripts/Update_Script_3.2.0_3.2.1.sql)
+- Update script version 3.2.1 to 3.3.9:
+- [Update_Script_3.2.1_3.3.0.sql](https://github.com/BEXIS2/Core/blob/rc/database%20update%20scripts/Update_Script_3.2.1_3.3.0.sql)
 
 ## Changes
+
+### Enhancements
+- Improve authorization for internal API calls ([#1730](https://github.com/BEXIS2/Core/issues/1730))
+- Handling of JWT: Store JWT in the page component in bexis2-core-ui - sveltekit ([#1694](https://github.com/BEXIS2/Core/issues/1694))
+- Security improvements: prevent web applications potentially vulnerable to clickjacking (443/tcp) & Add missing secure cookie attribute (HTTP) (443/tcp) ([#1708](https://github.com/BEXIS2/Core/issues/1708))([#1707](https://github.com/BEXIS2/Core/issues/1707))
+- Add the possibility to use an external metadata form instead of the existing one #1715 ([#1715](https://github.com/BEXIS2/Core/issues/1715))
+- Instead of Application Name, The breadcrumb from the old layout shows Home at first element #1720 ([#1720](https://github.com/BEXIS2/Core/issues/1720))
+- Add Page Content to edit content pages in frontend #1693 ([#1693](https://github.com/BEXIS2/Core/issues/1693))
+- RPM: handle missing value in domain constraints - import from dataset([#1692](https://github.com/BEXIS2/Core/issues/1692))
+- Use the new “meaning” object to store linkage to the needed Darwin Core concepts for variables ([#1574](https://github.com/BEXIS2/Core/issues/1574))
+  
 ### Bugfixes
-- Fix metadata Mapping: update transformation rule throw a error ([#1695](https://github.com/BEXIS2/Core/issues/1695))
-- Fix landing page of a deleted dataset showed incorrect information ([#1696](https://github.com/BEXIS2/Core/issues/1696))
+- Fix after changing the data structure, the validation should be triggered again ([#1729](https://github.com/BEXIS2/Core/issues/1729))
+- Fix performance problems with several svelte pages ([#1717](https://github.com/BEXIS2/Core/issues/1717))
+- Fix edit data structure allows edit display pattern but can't store the changes ([#1709](https://github.com/BEXIS2/Core/issues/1709))
+- Fix Telerik data table not working ([#1727](https://github.com/BEXIS2/Core/issues/1727))
+- Fix edit variable template: save does not get activated ([#1711](https://github.com/BEXIS2/Core/issues/1711))
+- Fix create new meaning not working ([#1714](https://github.com/BEXIS2/Core/issues/1714))
+- Fix return to dataset after editing data structure not working ([#1728](https://github.com/BEXIS2/Core/issues/1728))
+- Fix destroyed metadata form appears when show data or other tabs in show dataset view ([#1710](https://github.com/BEXIS2/Core/issues/1710))
+
+
