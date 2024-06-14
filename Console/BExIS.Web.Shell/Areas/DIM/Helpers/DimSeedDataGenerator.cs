@@ -393,12 +393,12 @@ namespace BExIS.Modules.Dim.UI.Helpers
             {
                 // concept
                 // check if concept exist
-                var concept = conceptManager.MappingConceptRepo.Query(c => c.Name.Equals("DataCiteDoi")).FirstOrDefault();
+                var concept = conceptManager.MappingConceptRepo.Query(c => c.Name.Equals("DataCite")).FirstOrDefault();
 
                 var keys = new List<MappingKey>();
 
                 if (concept == null) //if not create
-                    concept = conceptManager.CreateMappingConcept("DataCiteDoi", "The concept is needed to create a DIO via DataCite.", "https://schema.datacite.org/meta/kernel-4.4/", "");
+                    concept = conceptManager.CreateMappingConcept("DataCite", "The concept is needed to create a DIO via DataCite.", "https://schema.datacite.org/meta/kernel-4.4/", "");
                 else // if exist load available keys
                 {
                     keys = conceptManager.MappingKeyRepo.Query(k => k.Concept.Id.Equals(concept.Id)).ToList();
@@ -417,8 +417,25 @@ namespace BExIS.Modules.Dim.UI.Helpers
                     conceptManager.CreateMappingKey("PublicationYear", "", "", false, false, "data/attributes/publicationYear", concept);
 
                 // publisher
+                MappingKey publisher = null;
                 if (!keys.Any(k => k.XPath.Equals("data/attributes/publisher")))
-                    conceptManager.CreateMappingKey("Publisher", "", "", false, false, "data/attributes/publisher", concept);
+                    publisher = conceptManager.CreateMappingKey("Publisher", "", "", false, true, "data/attributes/publisher", concept);
+
+                if (!keys.Any(k => k.XPath.Equals("data/attributes/publisher/name")))
+                    conceptManager.CreateMappingKey("Name", "", "", false, false, "data/attributes/publisher/name", concept, publisher);
+
+                if (!keys.Any(k => k.XPath.Equals("data/attributes/publisher/publisherIdentifier")))
+                    conceptManager.CreateMappingKey("PublisherIdentifier", "", "", false, false, "data/attributes/publisher/publisherIdentifier", concept, publisher);
+
+                if (!keys.Any(k => k.XPath.Equals("data/attributes/publisher/publisherIdentifierScheme")))
+                    conceptManager.CreateMappingKey("PublisherIdentifierScheme", "", "", false, false, "data/attributes/publisher/publisherIdentifierScheme", concept, publisher);
+
+                if (!keys.Any(k => k.XPath.Equals("data/attributes/publisher/schemeUri")))
+                    conceptManager.CreateMappingKey("SchemeUri", "", "", false, false, "data/attributes/publisher/schemeUri", concept, publisher);
+
+                if (!keys.Any(k => k.XPath.Equals("data/attributes/publisher/lang")))
+                    conceptManager.CreateMappingKey("Language", "", "", false, false, "data/attributes/publisher/lang", concept, publisher);
+
 
                 // title(s)
                 MappingKey titles = null;
@@ -451,10 +468,10 @@ namespace BExIS.Modules.Dim.UI.Helpers
                 if (!keys.Any(k => k.XPath.Equals("data/attributes/creators/nameType")))
                     conceptManager.CreateMappingKey("NameType", "", "", false, false, "data/attributes/creators/nameType", concept, creators);
 
-                // creator(s)
+                // contributor(s)
                 MappingKey contributors = null;
                 if (!keys.Any(k => k.XPath.Equals("data/attributes/contributors")))
-                    creators = conceptManager.CreateMappingKey("Contributors", "", "www.google.de", false, true, "data/attributes/contributors", concept);
+                    contributors = conceptManager.CreateMappingKey("Contributors", "", "www.google.de", false, true, "data/attributes/contributors", concept);
 
                 if (!keys.Any(k => k.XPath.Equals("data/attributes/contributors/name")))
                     conceptManager.CreateMappingKey("Name", "", "", false, false, "data/attributes/contributors/name", concept, contributors);
