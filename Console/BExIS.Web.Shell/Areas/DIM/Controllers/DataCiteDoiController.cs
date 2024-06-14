@@ -27,6 +27,12 @@ using Vaelastrasz.Library.Services;
 using Vaiona.Web.Mvc;
 using Vaelastrasz.Library.Configurations;
 using Vaelastrasz.Library.Extensions;
+using System.IO;
+using System.Xml.Linq;
+using System.Web.Helpers;
+using System.Runtime.Remoting.Messaging;
+using RestSharp.Serialization.Json;
+using Newtonsoft.Json.Linq;
 
 namespace BExIS.Modules.Dim.UI.Controllers
 {
@@ -210,6 +216,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
 
                 return PartialView("_requestRow", new PublicationModel()
                 {
+                    Id = publication.Id,
                     Broker = new BrokerModel(publication.Broker.Id, publication.Broker.Name, new List<string>() { publication.Repository.Name }, publication.Broker.Link),
                     DataRepo = publication.Repository.Name,
                     DatasetVersionId = publication.DatasetVersion.Id,
@@ -238,14 +245,18 @@ namespace BExIS.Modules.Dim.UI.Controllers
 
                     // Preparation
                     var settingsHelper = new SettingsHelper();
-                    var placeholders = settingsHelper.GetVaelastraszPlaceholders();
-                    var mappings = settingsHelper.GetVaelastraszMappings();
+                    var placeholders = settingsHelper.GetDataCitePlaceholders();
+                    var mappings = settingsHelper.GetDataCiteMappings();
 
                     // Placeholders for DOI
-                    foreach (var placeholder in placeholders)
+                    for (int i = 0; i < placeholders.Count; i++)
                     {
-                        switch(placeholder.Value)
+                        var placeholder = placeholders.ElementAt(i);
+
+
+                        switch (placeholder.Value)
                         {
+
                             case "{DatasetId}":
                                 placeholders[placeholder.Key] = publication.DatasetVersion.Dataset.Id.ToString();
                                 break;
@@ -259,7 +270,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
                                 break;
 
                             case "{VersionName}":
-                                placeholders[placeholder.Key] = publication.DatasetVersion.VersionName.ToString();
+                                placeholders[placeholder.Key] = publication.DatasetVersion.VersionName?.ToString();
                                 break;
 
                             default:
@@ -267,36 +278,74 @@ namespace BExIS.Modules.Dim.UI.Controllers
                         }
                     }
 
+                    var model = new CreateDataCiteModel();
+
                     var configuration = new Configuration(publication.Broker.UserName, publication.Broker.Password, publication.Broker.Host);
-
                     var doiService = new DOIService(configuration);
-
                     var createSuffixModel = new CreateSuffixModel()
                     {
                         Placeholders = placeholders
                     };
                     var doi = await doiService.GenerateAsync(createSuffixModel);
 
-                    // Mappings for Metadata
-                    var concept = conceptManager.MappingConceptRepo.Query(c => c.Name.ToLower() == "datacite").FirstOrDefault();
+                    model.SetDoi(doi);
 
-                    var model = new CreateDataCiteModel();
+                    var json_model = JsonConvert.SerializeObject(model);
+
+
+
+                    var concept = conceptManager.MappingConceptRepo.Query(c => c.Name.ToLower() == "datacite").FirstOrDefault();
+                    //var metadataStructureId = publication.DatasetVersion.Dataset.MetadataStructure.Id;
 
                     if (concept == null)
                         return View("Create", model);
 
                     var xml = MappingUtils.GetConceptOutput(publication.DatasetVersion.Dataset.MetadataStructure.Id, concept.Id, publication.DatasetVersion.Metadata);
+                    var json = JsonConvert.SerializeObject(xml);
 
-                    CreateDataCiteModel response = new CreateDataCiteModel();
+                    JObject jsonObject = JObject.Parse(json);
+                    var titles = jsonObject["data"]["attributes"]["titles"];
 
-                    XmlSerializer serializer = new XmlSerializer(typeof(CreateDataCiteDataModel));
-                    using (XmlReader reader = new XmlNodeReader(xml))
-                    {
-                        model = (CreateDataCiteModel)serializer.Deserialize(reader);
-                    }
+                    if(titles.Type != JTokenType.Array)
+                        jsonObject["data"]["attributes"]["titles"] = new JArray(titles);
 
-                    // DOI
-                    model.SetDoi(doi);
+                    json = JsonConvert.SerializeObject(jsonObject, Newtonsoft.Json.Formatting.Indented);
+
+                    //model = JsonConvert.DeserializeObject<CreateDataCiteModel>(json);
+
+                    //// get root
+                    //var k = conceptManager.MappingKeyRepo.Query().Where(k => k.Name.Equals("") && k.Concept.Id.Equals(concept.Id)).ToList().FirstOrDefault() ;
+
+                    //var values = MappingUtils.GetValuesFromMetadata(k.Id,LinkElementType.MappingKey,metadataStructureId,)
+                    //var values = MappingUtils.GetXElementFromMetadata(k.Id,LinkElementType.MappingKey,metadataStructureId,)
+
+
+
+                    model.SetPublisher("test", "sddsf", "sdfksjd", "dsklsjf", "dsjksfk");
+                    model.SetEvent(Vaelastrasz.Library.Types.DataCiteEventType.Hide);
+                    model.SetType(Vaelastrasz.Library.Types.DataCiteType.DOIs);
+                    model.AddCreator("Sven Thiel", Vaelastrasz.Library.Types.DataCiteNameType.Personal);
+                    model.AddCreator("David Schöne", Vaelastrasz.Library.Types.DataCiteNameType.Personal);
+                    model.AddContributor("Franziska Zander", Vaelastrasz.Library.Types.DataCiteNameType.Personal, Vaelastrasz.Library.Types.DataCiteContributorType.DataManager);
+                    model.AddTitle("Super der Test hier!", null, Vaelastrasz.Library.Types.DataCiteTitleType.Other);
+                    //model.SetUrl("https://fusion.cs.uni-jena.de");
+
+
+
+                    // Mappings for Metadata
+                    
+
+
+                    //if (concept == null)
+                    //    return View("Create", model);
+
+                    //var xml = MappingUtils.GetConceptOutput(publication.DatasetVersion.Dataset.MetadataStructure.Id, concept.Id, publication.DatasetVersion.Metadata);
+                    //var json = JsonConvert.SerializeObject(xml);
+
+                    //model = JsonConvert.DeserializeObject<CreateDataCiteModel>(json);
+
+                    //// DOI
+                    //model.SetDoi(doi);
 
                     // Specific Mappings
                     foreach (var mapping in mappings)
@@ -443,13 +492,14 @@ namespace BExIS.Modules.Dim.UI.Controllers
             using (PublicationManager publicationManager = new PublicationManager())
             using (var brokerManager = new BrokerManager())
             {
-                Broker broker = brokerManager.FindByName("vaelastrasz").FirstOrDefault();
+                Broker broker = brokerManager.FindByName("datacite").FirstOrDefault();
                 List<Publication> publications = publicationManager.Publications.Where(p => p.Broker.Name.ToLower().Equals(broker.Name.ToLower())).ToList();
 
                 foreach (Publication p in publications)
                 {
                     model.Add(new PublicationModel()
                     {
+                        Id = p.Id,
                         Broker = new BrokerModel(broker.Id, broker.Name, new List<string>() { p.Repository.Name }, broker.Link),
                         DataRepo = p.Repository.Name,
                         DatasetVersionId = p.DatasetVersion.Id,
