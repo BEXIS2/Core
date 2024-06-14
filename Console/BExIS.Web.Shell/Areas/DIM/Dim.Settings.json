@@ -11,57 +11,28 @@
       "description": "URL to the manual. If empty, it links to the latest manual from BEXIS2"
     },
     {
-      "key": "dataCiteDOICredentials",
-      "title": "DataCite DOI Credentials",
-      "options": [],
-      "type": "JSON",
-      "value": {
-        "username": "test",
-        "password": "admin",
-        "host": "https://"
-      },
-      "description": "This are the credentials."
-    },
-    {
-      "key": "vaelastraszPlaceholders",
+      "key": "datacitePlaceholders",
       "title": "DataCite DOI Placeholders",
       "options": [],
       "type": "JSON",
-      "value": [
-        {
-          "key": "{DatasetId}",
-          "Value": "{DatasetId}"
-        },
-        {
-          "key": "{VersionId}",
-          "Value": "{VersionId}"
-        },
-        {
-          "key": "{VersionNumber}",
-          "Value": "{VersionNumber}"
-        },
-        {
-          "key": "{VersionName}",
-          "Value": "{VersionName}"
-        }
-      ],
+      "value": {
+        "{DatasetId}": "{DatasetId}",
+        "{VersionId}": "{VersionId}",
+        "{VersionNumber}": "{VersionNumber}",
+        "{VersionName}": "{VersionName}"
+      },
       "description": "These placeholders will be replaced automatically."
     },
     {
-      "key": "vaelastraszMappings",
+      "key": "dataciteMappings",
       "title": "DataCite DOI Mappings",
       "options": [],
       "type": "JSON",
-      "value": [
+      "value":
         {
-          "key": "URL",
-          "Value": "{DatasetId}?version={VersionNumber}"
+          "URL": "{DatasetId}?version={VersionNumber}",
+          "Version": "{VersionName}"
         },
-        {
-          "key": "Version",
-          "Value": "{VersionName}"
-        }
-      ],
       "description": "There are additional mappings for DOI DataCite."
     },
     {
