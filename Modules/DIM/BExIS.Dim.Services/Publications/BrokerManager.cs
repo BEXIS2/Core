@@ -100,7 +100,7 @@ namespace BExIS.Dim.Services.Publications
 
         public List<Broker> FindByName(string name)
         {
-            return BrokerRepository.Query(b => string.Equals(b.Name, name, StringComparison.InvariantCultureIgnoreCase)).ToList();
+            return BrokerRepository.Query(b => b.Name.ToLower() == name.ToLower()).ToList();
         }
 
         public bool Update(Broker broker)
