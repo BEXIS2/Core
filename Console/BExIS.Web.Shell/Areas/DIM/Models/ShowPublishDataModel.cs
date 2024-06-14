@@ -27,6 +27,7 @@ namespace BExIS.Modules.Dim.UI.Models
 
     public class PublicationModel
     {
+        public long Id { get; set; }
         public long DatasetVersionId { get; set; }
         public int DatasetVersionNr { get; set; }
         public BrokerModel Broker { get; set; }
