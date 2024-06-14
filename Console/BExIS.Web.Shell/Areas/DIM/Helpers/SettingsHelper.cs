@@ -15,23 +15,23 @@ namespace BExIS.Modules.Dim.UI.Helpers
             _settings = ModuleManager.GetModuleSettings("dim");
         }
 
-        public Dictionary<string, string> GetVaelastraszMappings()
+        public Dictionary<string, string> GetDataCiteMappings()
         {
             try
             {
-                return _settings.GetValueByKey< Dictionary<string, string>> ("vaelastraszMappings");
+                return _settings.GetValueByKey<Dictionary<string, string>> ("dataciteMappings");
             }
             catch (Exception ex)
             {
-                return null;
+                return new Dictionary<string, string>(); ;
             }
         }
 
-        public Dictionary<string, string> GetVaelastraszPlaceholders()
+        public Dictionary<string, string> GetDataCitePlaceholders()
         {
             try
             {
-                return _settings.GetValueByKey<Dictionary<string, string>>("vaelastraszPlaceholders");
+                return _settings.GetValueByKey<Dictionary<string, string>>("datacitePlaceholders");
             }
             catch (Exception ex)
             {
