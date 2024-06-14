@@ -733,7 +733,7 @@
       <SubType>Designer</SubType>
     </Content>
     <Content Include="Dim.Settings.xml">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+     <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
     <Content Include="Scripts\2013.2.611\jquery-1.7.1.min.js" />

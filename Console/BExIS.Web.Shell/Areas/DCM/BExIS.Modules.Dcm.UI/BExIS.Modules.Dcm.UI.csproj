@@ -367,7 +367,7 @@
       <SubType>Designer</SubType>
     </Content>
     <None Include="Dcm.Settings.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+     <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <Content Include="Dcm.Settings.xml" />
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
