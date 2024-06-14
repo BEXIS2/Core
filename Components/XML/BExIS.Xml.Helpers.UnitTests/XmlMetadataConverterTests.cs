@@ -50,7 +50,7 @@ namespace BExIS.Xml.Helpers.UnitTests
             //Arrange
             XmlMetadataConverter xmlMetadataHelper = new XmlMetadataConverter();
 
-            var metadata = "ConvertTo_XmlToJson.xml";
+            var metadata = "ConvertTo_XmlToJson2.xml";
             XmlDocument xmlDocument = new XmlDocument();
             string path = AppDomain.CurrentDomain.BaseDirectory;
             string metadataPath = Path.Combine(path, metadata);
