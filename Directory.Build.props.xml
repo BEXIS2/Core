@@ -1,0 +1,8 @@
+﻿<Project>
+	<PropertyGroup>
+		<TargetFramework>net4.8</TargetFramework>
+	</PropertyGroup>
+	<PropertyGroup>
+		<AccelerateBuildsInVisualStudio>true</AccelerateBuildsInVisualStudio>
+	</PropertyGroup>
+</Project>
