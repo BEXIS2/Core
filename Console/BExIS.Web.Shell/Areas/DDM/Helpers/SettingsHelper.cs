@@ -7,7 +7,7 @@ namespace BExIS.Modules.Ddm.UI.Helpers
 {
     public class SettingsHelper
     {
-        string filePath = "";
+        private string filePath = "";
 
         public SettingsHelper()
         {
@@ -35,6 +35,5 @@ namespace BExIS.Modules.Ddm.UI.Helpers
 
             return value;
         }
-
     }
 }

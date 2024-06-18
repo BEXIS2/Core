@@ -1,0 +1,101 @@
+﻿@model BExIS.Modules.Dcm.UI.Models.Metadata.MetadataParameterModel
+@using BExIS.Modules.Dcm.UI.Models
+@using BExIS.Utils.WebHelpers
+@using System.Text.RegularExpressions
+@using BExIS.Modules.Dcm.UI.Models.Metadata
+@{
+    string id = Model.Id + "_" + Model.Parent.Id + "_" + Model.AttributeNumber + "_" + Model.ParentModelNumber + "_" + Model.NumberOfSourceInPackage + "_" + Model.ParentStepId;
+    string idInput = id + "_Input";
+
+    string displayName = "";
+    bool hasErrors = false;
+    string errorMessage = "";
+    string errorClass = "";
+
+    // Add before every uppercase word empty space (e.g. LastNameTEST -> Last Name TEST)
+    displayName = Regex.Replace(Model.DisplayName, "((?<=[a-z])[A-Z])", " $1");
+
+    // split at " "
+    string[] wordList = displayName.Split(new char[0]);
+
+    // lowercase all words, except of uppercase abbreviations (e.g. URL)
+    for (int i = 0; i < wordList.Length; i++)
+    {
+        if (wordList[i].ToUpper() != wordList[i])
+        {
+            wordList[i] = wordList[i].ToLower();
+        }
+    }
+
+    displayName = String.Join(" ", wordList);
+
+    // Make first char uppercase
+    displayName = char.ToUpper(displayName[0]) + displayName.Substring(1).Replace("_", " ");
+    bool locked = false;
+
+    if (ViewData.Keys.Contains("Locked") || Model.Locked)
+    {
+        // check global locked
+        if (ViewData.Keys.Contains("Locked")) { locked = (bool)ViewData["Locked"]; }
+        // check attr locked
+        if (!locked && Model.Locked)
+        {
+            locked = Model.Locked;
+            //ViewData["locked"] = Model.Locked;
+
+        }
+
+        //lockedClass = "bx-disabled";
+    }
+
+    if (Model.Errors != null && Model.Errors.Count() > 0)
+    {
+        hasErrors = true;
+    }
+
+    if (hasErrors == true)
+    {
+        errorClass = "bx-input-error";
+        foreach (var item in Model.Errors)
+        {
+            if (Model.Errors.First().Equals(item))
+            {
+                errorMessage = item.GetMessage();
+            }
+            else
+            {
+                errorMessage += ", " + item.GetMessage();
+            }
+        }
+    }
+}
+
+<div id="@id" onload="metadataAttributeOnLoad(this, @hasErrors)">
+    <div class="bx-parameter-label">
+
+        @if (Model.MinCardinality > 0)
+        {
+        <b title="@Model.Discription">@displayName</b>
+        <b title="This field is required" style="color:red">*</b>
+
+        }
+        else
+        {
+        <span title="@Model.Discription">@displayName</span>
+        }
+    </div>
+    <div class="bx-paremeter-input">
+
+        @if (Model.Value != null)
+        {
+        @Html.DisplayWithLinksFor(m => m.Value)
+        }
+    </div>
+
+    <div>
+        @if (!string.IsNullOrEmpty(Model.Discription))
+        {
+        <button type="button" title="@Html.Raw(Regex.Replace(Model.Discription, "<(.|\\n)*?>", string.Empty))" class="bx-function bx-disabled bx-info fa fa-info" onclick="showHelp('help_@idInput');"></button>
+        }
+    </div>
+</div>

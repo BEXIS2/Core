@@ -11,15 +11,17 @@ namespace BExIS.Dim.Services
     public class MappingManager : IDisposable
     {
         private IUnitOfWork guow = null;
+
         public MappingManager()
         {
             guow = this.GetIsolatedUnitOfWork();
             this.LinkElementRepo = guow.GetReadOnlyRepository<LinkElement>();
             this.MappingRepo = guow.GetReadOnlyRepository<Mapping>();
             this.TransformationRuleRepo = guow.GetReadOnlyRepository<TransformationRule>();
-
         }
+
         private bool isDisposed = false;
+
         ~MappingManager()
         {
             Dispose(true);
@@ -47,10 +49,11 @@ namespace BExIS.Dim.Services
 
         // provide read only repos for the whole aggregate area
         public IReadOnlyRepository<LinkElement> LinkElementRepo { get; private set; }
+
         public IReadOnlyRepository<Mapping> MappingRepo { get; private set; }
         public IReadOnlyRepository<TransformationRule> TransformationRuleRepo { get; private set; }
 
-        #endregion
+        #endregion Data Readers
 
         #region LINK ELEMENT
 
@@ -58,7 +61,6 @@ namespace BExIS.Dim.Services
         {
             return this.GetUnitOfWork().GetReadOnlyRepository<LinkElement>().Get();
         }
-
 
         public LinkElement GetLinkElement(long elementid, LinkElementType type)
         {
@@ -94,7 +96,6 @@ namespace BExIS.Dim.Services
                 IRepository<LinkElement> repo = uow.GetRepository<LinkElement>();
                 repo.Put(linkElement);
                 uow.Commit();
-
             }
 
             return (linkElement);
@@ -120,7 +121,7 @@ namespace BExIS.Dim.Services
         public LinkElement UpdateLinkElement(LinkElement entity)
         {
             using (var uow = this.GetUnitOfWork())
-            { 
+            {
                 var repo = uow.GetRepository<LinkElement>();
                 repo.Merge(entity);
                 var merged = repo.Get(entity.Id);
@@ -131,10 +132,7 @@ namespace BExIS.Dim.Services
             }
         }
 
-
-        #endregion
-
-
+        #endregion LINK ELEMENT
 
         #region Mapping
 
@@ -183,7 +181,6 @@ namespace BExIS.Dim.Services
             return this.GetUnitOfWork().GetReadOnlyRepository<Mapping>().Query().Where(m => m.Parent != null &&
             m.Parent.Id.Equals(id) &&
             m.Level.Equals(level));
-
         }
 
         public IEnumerable<Mapping> GetChildMappingFromRoot(long id, long level)
@@ -216,8 +213,6 @@ namespace BExIS.Dim.Services
         {
             return this.GetUnitOfWork().GetReadOnlyRepository<Mapping>().Get().FirstOrDefault(m => m.Id.Equals(id));
         }
-
-
 
         public Mapping CreateMapping(
 
@@ -267,7 +262,6 @@ namespace BExIS.Dim.Services
                 mapping.Parent = this.GetUnitOfWork().GetReadOnlyRepository<Mapping>().Get(parentMappingId);
             }
 
-
             using (IUnitOfWork uow = this.GetUnitOfWork())
             {
                 IRepository<Mapping> repo = uow.GetRepository<Mapping>();
@@ -276,7 +270,6 @@ namespace BExIS.Dim.Services
             }
 
             return (mapping);
-
         }
 
         public Mapping CreateMapping(LinkElement source, LinkElement target, long level, TransformationRule rule, Mapping parent)
@@ -295,7 +288,6 @@ namespace BExIS.Dim.Services
             if (rule != null) Debug.WriteLine(rule.Id); else Debug.WriteLine("null");
             if (parent != null) Debug.WriteLine(parent.Id); else Debug.WriteLine("null");
 
-
             using (IUnitOfWork uow = this.GetUnitOfWork())
             {
                 IRepository<Mapping> repo = uow.GetRepository<Mapping>();
@@ -305,7 +297,6 @@ namespace BExIS.Dim.Services
             }
 
             return (mapping);
-
         }
 
         public Mapping UpdateMapping(Mapping mapping)
@@ -322,7 +313,6 @@ namespace BExIS.Dim.Services
             }
 
             return (mapping);
-
         }
 
         //TODO add more complexity to the deleting function, also source and target need to delete if no mapping is using that link elements
@@ -346,7 +336,7 @@ namespace BExIS.Dim.Services
             return (true);
         }
 
-        #endregion
+        #endregion Mapping
 
         #region Transformation Rule
 
@@ -371,7 +361,6 @@ namespace BExIS.Dim.Services
 
         public TransformationRule UpdateTransformationRule(long id, string regex, string mask, string defaultValue = "")
         {
-
             using (IUnitOfWork uow = this.GetUnitOfWork())
             {
                 var transformationRule = uow.GetRepository<TransformationRule>().Get(id);
@@ -385,7 +374,6 @@ namespace BExIS.Dim.Services
                     transformationRule.DefaultValue = defaultValue;
                 }
 
-
                 IRepository<TransformationRule> repo = uow.GetRepository<TransformationRule>();
                 repo.Put(transformationRule);
                 uow.Commit();
@@ -394,6 +382,6 @@ namespace BExIS.Dim.Services
             }
         }
 
-        #endregion
+        #endregion Transformation Rule
     }
 }

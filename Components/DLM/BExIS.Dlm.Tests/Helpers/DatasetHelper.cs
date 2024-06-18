@@ -80,9 +80,9 @@ namespace BExIS.Dlm.Tests.Helpers
 
                 var varTemplate1 = variableManager.CreateVariableTemplate("att1UT", intType, unit, "Attribute for Unit testing");
                 var varTemplate2 = variableManager.CreateVariableTemplate("att2UT", strType, unit, "Attribute for Unit testing");
-                var varTemplate3 = variableManager.CreateVariableTemplate("att3UT", doubleType, unit,  "Attribute for Unit testing");
-                var varTemplate4 = variableManager.CreateVariableTemplate("att4UT", boolType, unit,  "Attribute for Unit testing");
-                var varTemplate5 = variableManager.CreateVariableTemplate("att5UT", dateTimeType, unit,  "Attribute for Unit testing");
+                var varTemplate3 = variableManager.CreateVariableTemplate("att3UT", doubleType, unit, "Attribute for Unit testing");
+                var varTemplate4 = variableManager.CreateVariableTemplate("att4UT", boolType, unit, "Attribute for Unit testing");
+                var varTemplate5 = variableManager.CreateVariableTemplate("att5UT", dateTimeType, unit, "Attribute for Unit testing");
 
                 StructuredDataStructure dataStructure = dsManager.CreateStructuredDataStructure("dsForTesting", "DS for unit testing", "", "", Dlm.Entities.DataStructure.DataStructureCategory.Generic);
 
@@ -178,8 +178,6 @@ namespace BExIS.Dlm.Tests.Helpers
 
                     DatasetVersion workingCopy = dm.GetDatasetWorkingCopy(dataset.Id);
 
-
-
                     List<DataTuple> tuples = new List<DataTuple>();
 
                     for (int i = 0; i < numberOfTuples; i++)
@@ -246,7 +244,6 @@ namespace BExIS.Dlm.Tests.Helpers
 
                     List<DataTuple> tuples = new List<DataTuple>();
 
-
                     DataTuple newDt = new DataTuple();
                     newDt.Id = id;
                     newDt.XmlAmendments = dt.XmlAmendments;
@@ -264,7 +261,6 @@ namespace BExIS.Dlm.Tests.Helpers
             {
                 return null;
             }
-
         }
 
         public Dataset UpdateAnyTupleForDataset(Dataset dataset, StructuredDataStructure dataStructure, DatasetManager datasetManager)
@@ -276,7 +272,6 @@ namespace BExIS.Dlm.Tests.Helpers
             {
                 DatasetVersion dsv = datasetManager.GetDatasetLatestVersion(dataset.Id);
                 var datatuples = datasetManager.GetDataTuples(dsv.Id);
-
 
                 if (datasetManager.IsDatasetCheckedOutFor(dataset.Id, "David") || datasetManager.CheckOutDataset(dataset.Id, "David"))
                 {
@@ -309,7 +304,6 @@ namespace BExIS.Dlm.Tests.Helpers
             {
                 return null;
             }
-
         }
 
         public List<DataTuple> GetUpdatedDatatuples(DatasetVersion datasetVersion, StructuredDataStructure dataStructure, DatasetManager datasetManager)
@@ -323,7 +317,6 @@ namespace BExIS.Dlm.Tests.Helpers
             {
                 var datatuples = datasetManager.GetDataTuples(datasetVersion.Id);
                 List<DataTuple> editedTuples = new List<DataTuple>();
-
 
                 foreach (var dataTuple in datatuples)
                 {
@@ -339,15 +332,12 @@ namespace BExIS.Dlm.Tests.Helpers
                     editedTuples.Add((DataTuple)dataTuple);
                 }
 
-
-
                 return editedTuples;
             }
             catch (Exception ex)
             {
                 return null;
             }
-
         }
 
         /// <summary>
@@ -357,7 +347,7 @@ namespace BExIS.Dlm.Tests.Helpers
         /// 0 = int
         /// 1 = text
         /// 2 = double
-        /// 3 = bool 
+        /// 3 = bool
         /// 4 = datetime
         /// </summary>
         /// <param name="source"></param>
@@ -366,7 +356,6 @@ namespace BExIS.Dlm.Tests.Helpers
         /// <returns></returns>
         public DataTuple GetUpdatedDatatuple(DataTuple source, int updateVarIndex)
         {
-
             if (source == null) return null;
 
             source.Materialize();
@@ -376,7 +365,6 @@ namespace BExIS.Dlm.Tests.Helpers
             {
                 switch (updateVarIndex)
                 {
-
                     case 0://int
                         {
                             vv.Value = new Random().Next();
@@ -419,16 +407,12 @@ namespace BExIS.Dlm.Tests.Helpers
 
                         //default:
                 }
-
-
             }
             source.Dematerialize();
             source.Should().NotBeNull();
 
             return source;
         }
-
-
 
         public ResearchPlan CreateResearchPlan()
         {
@@ -442,6 +426,5 @@ namespace BExIS.Dlm.Tests.Helpers
                 researchPlanManager.Dispose();
             }
         }
-
     }
 }

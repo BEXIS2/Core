@@ -4,12 +4,10 @@ namespace BExIS.Xml.Models.Mapping
 {
     public class Source : XmlMappingPath
     {
-
         public Source(string xPath)
         {
             this.XPath = xPath;
         }
-
 
         public static Source Convert(XmlNode xmlNode)
         {
@@ -17,7 +15,6 @@ namespace BExIS.Xml.Models.Mapping
 
             return new Source(xPath);
         }
-
     }
 
     public enum SourceType

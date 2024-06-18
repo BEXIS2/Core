@@ -1,7 +1,6 @@
 ﻿using BExIS.Security.Entities.Authorization;
 using BExIS.Security.Entities.Objects;
 using BExIS.Security.Entities.Subjects;
-using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -110,9 +109,9 @@ namespace BExIS.Security.Services.Authorization
                     return false;
 
                 if (subject == null)
-                    return featurePermissionRepository.Get(p => p.Subject == null && p.Feature.Id == feature.Id && p.PermissionType == permissionType).Count == 1;
+                    return featurePermissionRepository.Query(p => p.Subject == null && p.Feature.Id == feature.Id && p.PermissionType == permissionType).Count() == 1;
 
-                return featurePermissionRepository.Get(p => p.Subject.Id == subject.Id && p.Feature.Id == feature.Id && p.PermissionType == permissionType).Count == 1;
+                return featurePermissionRepository.Query(p => p.Subject.Id == subject.Id && p.Feature.Id == feature.Id && p.PermissionType == permissionType).Count() == 1;
             }
         }
 
@@ -123,8 +122,8 @@ namespace BExIS.Security.Services.Authorization
                 var featurePermissionRepository = uow.GetReadOnlyRepository<FeaturePermission>();
 
                 if (subjectId == null)
-                    return featurePermissionRepository.Get(p => p.Subject == null && p.Feature.Id == featureId && p.PermissionType == permissionType).Count == 1;
-                return featurePermissionRepository.Get(p => p.Subject.Id == subjectId && p.Feature.Id == featureId && p.PermissionType == permissionType).Count == 1;
+                    return featurePermissionRepository.Query(p => p.Subject == null && p.Feature.Id == featureId && p.PermissionType == permissionType).Count() == 1;
+                return featurePermissionRepository.Query(p => p.Subject.Id == subjectId && p.Feature.Id == featureId && p.PermissionType == permissionType).Count() == 1;
             }
         }
 
@@ -135,9 +134,9 @@ namespace BExIS.Security.Services.Authorization
                 var featurePermissionRepository = uow.GetReadOnlyRepository<FeaturePermission>();
 
                 if (subjectId == null)
-                    return featurePermissionRepository.Get(p => p.Subject == null && p.Feature.Id == featureId).Count == 1;
+                    return featurePermissionRepository.Query(p => p.Subject == null && p.Feature.Id == featureId).Count() == 1;
 
-                return featurePermissionRepository.Get(p => p.Subject.Id == subjectId && p.Feature.Id == featureId).Count == 1;
+                return featurePermissionRepository.Query(p => p.Subject.Id == subjectId && p.Feature.Id == featureId).Count() == 1;
             }
         }
 

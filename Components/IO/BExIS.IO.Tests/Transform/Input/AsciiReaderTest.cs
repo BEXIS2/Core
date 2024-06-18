@@ -1,7 +1,7 @@
 ﻿using BExIS.App.Testing;
 using BExIS.Dlm.Entities.DataStructure;
-using BExIS.IO.Tests.Helpers;
 using BExIS.IO.Tests.Helper;
+using BExIS.IO.Tests.Helpers;
 using BExIS.IO.Transform.Input;
 using BExIS.IO.Transform.Validation.Exceptions;
 using BExIS.Utils.Config;
@@ -131,7 +131,7 @@ namespace BExIS.IO.Tests.Transform.Input
             var testData = dgh.GenerateRowsWithRandomValuesBasedOnDatastructureWithErrors(dataStructure, ",", 1000000, true);
             IEnumerable<string> vairableNames = dataStructure.Variables.Select(v => v.Label);
             //generate file to read
-            Encoding encoding = Encoding.Default;
+            Encoding encoding = Encoding.UTF8;
             string path = Path.Combine(AppConfiguration.DataPath, "testdataforvalidation.txt");
             if (File.Exists(path))
             {
@@ -190,7 +190,7 @@ namespace BExIS.IO.Tests.Transform.Input
             IEnumerable<string> vairableNames = dataStructure.Variables.Select(v => v.Label);
 
             //generate file to read
-            Encoding encoding = Encoding.Default;
+            Encoding encoding = Encoding.UTF8;
             string path = Path.Combine(AppConfiguration.DataPath, "testdataforvalidation.txt");
             if (File.Exists(path))
             {
@@ -214,7 +214,6 @@ namespace BExIS.IO.Tests.Transform.Input
 
             // Assert
             Assert.AreEqual(numberOfRows, count, "Number of rows is not correct");
-
         }
 
         [Test]
@@ -250,7 +249,7 @@ namespace BExIS.IO.Tests.Transform.Input
             rows.Add("abcd2");
 
             //generate file to read
-            Encoding encoding = Encoding.Default;
+            Encoding encoding = Encoding.UTF8;
             string path = Path.Combine(AppConfiguration.DataPath, "test_skipped.txt");
             if (File.Exists(path))
             {
@@ -303,7 +302,7 @@ namespace BExIS.IO.Tests.Transform.Input
             var testData = dgh.GenerateRowsWithRandomValuesBasedOnDatastructure(dataStructure, ",", total, true);
             IEnumerable<string> vairableNames = dataStructure.Variables.Select(v => v.Label);
             //generate file to read
-            Encoding encoding = Encoding.Default;
+            Encoding encoding = Encoding.UTF8;
             string path = Path.Combine(AppConfiguration.DataPath, "testdataforvalidation.txt");
             if (File.Exists(path))
             {
@@ -326,7 +325,6 @@ namespace BExIS.IO.Tests.Transform.Input
 
             // Assert
             Assert.AreEqual(result.Count, selection, "Number of rows is not correct");
-
         }
 
         [Test()]
@@ -338,10 +336,9 @@ namespace BExIS.IO.Tests.Transform.Input
             string unit = "kg,cm,none";
             string description = "a,b,c,d";
             var data = new List<string>() { "0,01,02", "1,11,12", "2,21,22", "3,31,32" };
-  
 
             //generate file to read
-            Encoding encoding = Encoding.Default;
+            Encoding encoding = Encoding.UTF8;
             string path = Path.Combine(AppConfiguration.DataPath, "test_getrows_indexlistempty.txt");
             if (File.Exists(path))
             {
@@ -364,17 +361,16 @@ namespace BExIS.IO.Tests.Transform.Input
             var skipped = AsciiReader.Skipped(path);//3
             var dataCount = total - skipped - startdata + 1; // 4
 
-            Assert.AreEqual(total,10);
-            Assert.AreEqual(skipped,3);
-            Assert.AreEqual(dataCount,4);
+            Assert.AreEqual(total, 10);
+            Assert.AreEqual(skipped, 3);
+            Assert.AreEqual(dataCount, 4);
 
             // Act
-            var result = AsciiReader.GetRandowRows(path,total, dataCount, startdata);
+            var result = AsciiReader.GetRandowRows(path, total, dataCount, startdata);
 
             // Assert
             Assert.NotNull(result);
             Assert.AreEqual(result.Count, 4, "more or less rows then expected");
-
         }
 
         [Test()]
@@ -385,11 +381,10 @@ namespace BExIS.IO.Tests.Transform.Input
             string header = "v1,v2,v3";
             string unit = "kg,cm,none";
             string description = "a,b,c,d";
-            var data = new List<string>() { "0,01,02", "1,11,12","", "2,21,22", "3,31,32" };
-
+            var data = new List<string>() { "0,01,02", "1,11,12", "", "2,21,22", "3,31,32" };
 
             //generate file to read
-            Encoding encoding = Encoding.Default;
+            Encoding encoding = Encoding.UTF8;
             string path = Path.Combine(AppConfiguration.DataPath, "test_getrows_indexlistempty.txt");
             if (File.Exists(path))
             {
@@ -407,24 +402,21 @@ namespace BExIS.IO.Tests.Transform.Input
                 data.ForEach(x => sw.WriteLine(x));
             }
 
-            
             var total = AsciiReader.Count(path); //11
             var skipped = AsciiReader.Skipped(path);//3
             int startdata = 4; // get from user selection
             var dataCount = total - startdata - skipped + 1; // 4
-            
 
             Assert.AreEqual(total, 11);
             Assert.AreEqual(skipped, 3);
             Assert.AreEqual(dataCount, 5);
 
             // Act
-            var result = AsciiReader.GetRandowRows(path, total, dataCount, startdata+skipped);
+            var result = AsciiReader.GetRandowRows(path, total, dataCount, startdata + skipped);
 
             // Assert
             Assert.NotNull(result);
             Assert.AreEqual(result.Count, 4, "more or less rows then expected");
-
         }
 
         [Test()]
@@ -447,7 +439,6 @@ namespace BExIS.IO.Tests.Transform.Input
 
             // Assert
             Assert.AreEqual(result.ParamName, "fileName");
-            
         }
 
         [Test()]
@@ -458,8 +449,6 @@ namespace BExIS.IO.Tests.Transform.Input
 
             // Assert
             Assert.AreEqual(result.Message, "total can not be 0");
-
-
         }
 
         [Test()]
@@ -486,44 +475,40 @@ namespace BExIS.IO.Tests.Transform.Input
         public void GetRows__FileNameEmpty_ArgumentNullException()
         {
             // Act
-            var result = Assert.Throws<ArgumentNullException>(() => AsciiReader.GetRows(""));
+            var result = Assert.Throws<ArgumentNullException>(() => AsciiReader.GetRows("", Encoding.UTF8));
 
             // Assert
             Assert.AreEqual(result.ParamName, "fileName");
-
         }
 
         [Test()]
         public void GetRows__FileNotExist_FileNotFoundException()
         {
             // Act
-            var result = Assert.Throws<FileNotFoundException>(() => AsciiReader.GetRows("c:/data/notexist.txt"));
+            var result = Assert.Throws<FileNotFoundException>(() => AsciiReader.GetRows("c:/data/notexist.txt", Encoding.UTF8));
 
             // Assert
             Assert.AreEqual(result.Message, "file not found");
-
         }
 
         [Test()]
         public void GetRows_FileNameEmpty_ArgumentNullException()
         {
             // Act
-            var result = Assert.Throws<ArgumentNullException>(() => AsciiReader.GetRows("",null,null));
+            var result = Assert.Throws<ArgumentNullException>(() => AsciiReader.GetRows("", Encoding.UTF8));
 
             // Assert
             Assert.AreEqual(result.ParamName, "fileName");
-
         }
 
         [Test()]
         public void GetRows_FileNotExist_FileNotFoundException()
         {
             // Act
-            var result = Assert.Throws<FileNotFoundException>(() => AsciiReader.GetRows("c:/data/notexist.txt", new List<int>() {0}, null));
+            var result = Assert.Throws<FileNotFoundException>(() => AsciiReader.GetRows("c:/data/notexist.txt", Encoding.UTF8, new List<int>() { 0 }, null));
 
             // Assert
             Assert.AreEqual(result.Message, "file not found");
-
         }
 
         [Test()]
@@ -531,7 +516,7 @@ namespace BExIS.IO.Tests.Transform.Input
         {
             //Arrange
             //generate file to read
-            Encoding encoding = Encoding.Default;
+            Encoding encoding = Encoding.UTF8;
             string path = Path.Combine(AppConfiguration.DataPath, "test_getrows_indexlistempty.txt");
             if (File.Exists(path))
             {
@@ -543,24 +528,22 @@ namespace BExIS.IO.Tests.Transform.Input
                 sw.WriteLine("test");
             }
 
-
             // Act
             var result = Assert.Throws<ArgumentNullException>(() => AsciiReader.GetRows(path, null, null));
 
             // Assert
             Assert.AreEqual(result.ParamName, "fileName");
-
         }
 
         [Test()]
         public void GetRows_GetRowsFromIndexList_ListOfRows()
         {
             //Arrange
-            var data = new List<string>(){ "0", "1", "2", "3" };
-            var wantedRows = new List<int>(){1,3};
+            var data = new List<string>() { "0", "1", "2", "3" };
+            var wantedRows = new List<int>() { 1, 3 };
 
             //generate file to read
-            Encoding encoding = Encoding.Default;
+            Encoding encoding = Encoding.UTF8;
             string path = Path.Combine(AppConfiguration.DataPath, "test_getrows_indexlistempty.txt");
             if (File.Exists(path))
             {
@@ -569,19 +552,17 @@ namespace BExIS.IO.Tests.Transform.Input
 
             using (StreamWriter sw = new StreamWriter(path))
             {
-                 data.ForEach(x => sw.WriteLine(x));
+                data.ForEach(x => sw.WriteLine(x));
             }
 
-
             // Act
-            var result =  AsciiReader.GetRows(path, wantedRows);
+            var result = AsciiReader.GetRows(path, Encoding.UTF8, wantedRows);
 
             // Assert
             Assert.NotNull(result);
-            Assert.AreEqual(result.Count, wantedRows.Count,"more or less rows then expected");
+            Assert.AreEqual(result.Count, wantedRows.Count, "more or less rows then expected");
             Assert.That(result[0], Is.EqualTo("1"));
             Assert.That(result[1], Is.EqualTo("3"));
-
         }
 
         [Test()]
@@ -590,10 +571,10 @@ namespace BExIS.IO.Tests.Transform.Input
             //Arrange
             var data = new List<string>() { "0,01,02", "1,10,11", "2,20,21", "3,30,31" };
             var wantedRows = new List<int>() { 1, 3 };
-            var activeCells = new List<bool>() { false,true,false  };
+            var activeCells = new List<bool>() { false, true, false };
 
             //generate file to read
-            Encoding encoding = Encoding.Default;
+            Encoding encoding = Encoding.UTF8;
             string path = Path.Combine(AppConfiguration.DataPath, "test_getsubsetrows_indexlistempty.txt");
             if (File.Exists(path))
             {
@@ -605,16 +586,14 @@ namespace BExIS.IO.Tests.Transform.Input
                 data.ForEach(x => sw.WriteLine(x));
             }
 
-
             // Act
-            var result = AsciiReader.GetRows(path, wantedRows,activeCells,TextSeperator.comma);
+            var result = AsciiReader.GetRows(path, Encoding.UTF8, wantedRows, activeCells, TextSeperator.comma);
 
             // Assert
             Assert.NotNull(result);
             Assert.AreEqual(result.Count, wantedRows.Count, "more or less rows then expected");
             Assert.That(result[0], Is.EqualTo("10"));
             Assert.That(result[1], Is.EqualTo("30"));
-
         }
     }
 }

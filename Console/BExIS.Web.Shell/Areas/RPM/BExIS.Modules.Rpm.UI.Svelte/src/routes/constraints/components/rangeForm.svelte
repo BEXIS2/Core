@@ -24,24 +24,19 @@
 		// otherwise the values are old
 		setTimeout(async () => {
 			// check changed field
-			res = suite(rangeConstraint , e);
+			res = suite(rangeConstraint, e);
 		}, 10);
 	}
 
 	onMount(async () => {
 		if (rangeConstraint.id == 0) {
 			suite.reset();
-		}
-		else{
-			setTimeout(async () => {	
-				res = suite(rangeConstraint, "");
+		} else {
+			setTimeout(async () => {
+				res = suite(rangeConstraint, '');
 			}, 10);
 		}
-		
-
 	});
-
-	
 </script>
 
 {#if rangeConstraint}
@@ -51,11 +46,14 @@
 				<!-- svelte-ignore a11y-label-has-associated-control -->
 				<label>Negated</label>
 				<!-- svelte-ignore a11y-mouse-events-have-key-events -->
-				<input id="negated" type="checkbox" 
-				bind:checked={rangeConstraint.negated} 
-				on:mouseover={() => {
-					helpStore.show('negated');
-				}}/>
+				<input
+					id="negated"
+					type="checkbox"
+					bind:checked={rangeConstraint.negated}
+					on:mouseover={() => {
+						helpStore.show('negated');
+					}}
+				/>
 			</div>
 		</div>
 		<div class="pb-5">

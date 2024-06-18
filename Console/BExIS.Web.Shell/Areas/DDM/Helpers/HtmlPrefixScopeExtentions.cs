@@ -27,7 +27,7 @@ namespace BExIS.Modules.Ddm.UI.Helpers
 
         private static Queue<string> GetIdsToReuse(HttpContextBase httpContext, string collectionName)
         {
-            // We need to use the same sequence of IDs following a server-side validation failure,  
+            // We need to use the same sequence of IDs following a server-side validation failure,
             // otherwise the framework won't render the validation error messages next to each item.
             string key = idsToReuseKey + collectionName;
             var queue = (Queue<string>)httpContext.Items[key];

@@ -92,7 +92,7 @@
       "title": "Landing Page",
       "value": "ddm, publicsearch, index",
       "type": "String",
-      "description": "user is not logging in -> app goes to"
+      "description": "user is not logging in -> app goes to e.g. (ddm, publicsearch, index). if no destination is entered, the landingpage.htm is loaded from the tenant/content/landingpage.htm"
     },
     {
       "key": "landingPageForUsers",

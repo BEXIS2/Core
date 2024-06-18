@@ -12,22 +12,21 @@
 @switch (type)
 {
     case "pdf":
-        <div id="pdfView">
-            <iframe src="@pathStream#view=fit&zoom=100" type="application/pdf" width="80%" height="500"></iframe>
-        </div>
+<div id="pdfView">
+    <iframe src="@pathStream#view=fit&zoom=100" type="application/pdf" width="80%" height="500"></iframe>
+</div>
         break;
     case "plain":
-        <object data="@pathStream" width="500" height="500" style="background-color:white;">
-            Not supported
-        </object>
+<object data="@pathStream" width="500" height="500" style="background-color:white;">
+    Not supported
+</object>
         break;
     case "zip":
     case "x-zip-compressed":
         break;
     case "octet-stream":
-        <div id="fileContainer" filePath="@path">
-
-        </div>
+<div id="fileContainer" filePath="@path">
+</div>
         break;
 
     default:

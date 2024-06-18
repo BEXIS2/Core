@@ -1,0 +1,86 @@
+[
+  {
+    "name": "GFBIO",
+    "type": "Collections",
+    "metadatastandard": "",
+    "primarydataformat": "text/csv",
+    "server": "",
+    "user": "",
+    "password": "",
+    "link": "https://www.gfbio.org/data/submit",
+    "repository": {
+      "name": "Collections",
+      "url": ""
+    }
+  },
+  {
+    "name": "GFBIO",
+    "type": "Obervations",
+    "metadatastandard": "",
+    "primarydataformat": "text/csv",
+    "server": "",
+    "user": "",
+    "password": "",
+    "link": "https://www.gfbio.org/data/submit",
+    "repository": {
+      "name": "Pangaea",
+      "url": ""
+    }
+  },
+  {
+    "name": "Pensoft",
+    "type": "",
+    "metadatastandard": "",
+    "primarydataformat": "text/csv",
+    "server": "",
+    "user": "",
+    "password": "",
+    "link": "https://arpha.pensoft.net/import_manuscript.php",
+    "repository": {
+      "name": "Pensoft",
+      "url": ""
+    }
+  },
+  {
+    "name": "DataCiteDOI",
+    "type": "",
+    "metadatastandard": "",
+    "primarydataformat": "",
+    "server": "",
+    "user": "",
+    "password": "",
+    "link": "",
+    "repository": {
+      "name": "DataCite",
+      "url": ""
+    }
+  },
+  {
+    "name": "GBIF",
+    "type": "Occurrence",
+    "metadatastandard": "",
+    "primarydataformat": "text/csv",
+    "server": "",
+    "user": "",
+    "password": "",
+    "link": "",
+    "repository": {
+      "name": "GBIF",
+      "url": "https://www.gbif.org/"
+    }
+  },
+  {
+    "name": "GBIF",
+    "type": "SamplingEvent",
+    "metadatastandard": "",
+    "primarydataformat": "text/csv",
+    "server": "",
+    "user": "",
+    "password": "",
+    "link": "",
+    "repository": {
+      "name": "GBIF",
+      "url": "https://www.gbif.org/"
+    }
+  }
+]

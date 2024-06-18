@@ -76,7 +76,6 @@ namespace BExIS.Xml.Helpers
                 root.SetAttributeValue("id", metadataStructure.Id.ToString());
                 doc.Add(root);
 
-
                 IList<MetadataPackageUsage> packages = uow.GetReadOnlyRepository<MetadataPackageUsage>().Get(p => packageIds.Contains(p.Id));
                 List<MetadataAttributeUsage> attributes;
                 foreach (MetadataPackageUsage mpu in packages)
@@ -160,8 +159,6 @@ namespace BExIS.Xml.Helpers
 
                             typeList = addAndReturnAttribute(element, nestedUsage, 1, 1);
                         }
-
-                        
 
                         foreach (var type in typeList)
                         {
@@ -422,7 +419,6 @@ namespace BExIS.Xml.Helpers
             List<MetadataNestedAttributeUsage> children = new List<MetadataNestedAttributeUsage>();
             ICollection<MetadataParameterUsage> parameters = new List<MetadataParameterUsage>();
 
-
             if (attributeUsage is MetadataAttributeUsage)
             {
                 MetadataAttributeUsage metadataAttributeUsage = (MetadataAttributeUsage)attributeUsage;
@@ -487,8 +483,6 @@ namespace BExIS.Xml.Helpers
                     }
                 }
 
-
-
                 role.Add(element);
                 current.Add(role);
             }
@@ -520,8 +514,9 @@ namespace BExIS.Xml.Helpers
             string id = "";
             string roleId = "";
             long metadataAttrId = 0;
-            string defaultValue = attributeUsage.DefaultValue==null?"": attributeUsage.DefaultValue;
-            ICollection<MetadataParameterUsage> parameters =  new List<MetadataParameterUsage>();
+            string defaultValue = attributeUsage.DefaultValue == null ? "" : attributeUsage.DefaultValue;
+            string fixedValue = attributeUsage.FixedValue == null ? "" : attributeUsage.FixedValue;
+            ICollection<MetadataParameterUsage> parameters = new List<MetadataParameterUsage>();
 
             if (attributeUsage is MetadataAttributeUsage)
             {
@@ -530,7 +525,6 @@ namespace BExIS.Xml.Helpers
                 metadataAttrId = metadataAttributeUsage.MetadataAttribute.Id;
                 id = metadataAttrId.ToString();
                 roleId = metadataAttributeUsage.Id.ToString();
-                
             }
             else
             {
@@ -542,11 +536,10 @@ namespace BExIS.Xml.Helpers
             }
 
             // set parameters
-            // reload type from db 
+            // reload type from db
             _metadataAttribute = _metadataAttrManager.MetadataAttributeRepo.Get(metadataAttrId);
-            if (_metadataAttribute!=null && _metadataAttribute.MetadataParameterUsages.Any())
+            if (_metadataAttribute != null && _metadataAttribute.MetadataParameterUsages.Any())
                 parameters = _metadataAttribute.MetadataParameterUsages;
-
 
             if (!Exist(typeName, number, current))
             {
@@ -568,6 +561,8 @@ namespace BExIS.Xml.Helpers
                     element.SetAttributeValue("number", i + 1);
                     element.SetValue(defaultValue);
 
+                    if (!string.IsNullOrEmpty(fixedValue)) element.SetValue(fixedValue);
+
                     // add parameters
                     addParameters(element, parameters);
 
@@ -579,7 +574,6 @@ namespace BExIS.Xml.Helpers
                 current.Add(role);
                 //Debug.WriteLine("Element:            " + element.Name);
 
-    
                 return tmp;
             }
             else
@@ -605,7 +599,6 @@ namespace BExIS.Xml.Helpers
             string roleId = "";
 
             ICollection<MetadataParameterUsage> parameters = new List<MetadataParameterUsage>();
-
 
             if (attributeUsage is MetadataAttributeUsage)
             {
@@ -665,13 +658,14 @@ namespace BExIS.Xml.Helpers
         {
             foreach (var parameterUsage in parameterUsages)
             {
-                current.SetAttributeValue(parameterUsage.Label, parameterUsage.DefaultValue);
+                if (!string.IsNullOrEmpty(parameterUsage.FixedValue))
+                    current.SetAttributeValue(parameterUsage.Label, parameterUsage.FixedValue);
+                else
+                    current.SetAttributeValue(parameterUsage.Label, parameterUsage.DefaultValue);
             }
 
             return current;
         }
-
-
 
         //Add Attribute to a package return a apackage
         /// <summary>
@@ -797,7 +791,6 @@ namespace BExIS.Xml.Helpers
 
                 XmlNode parent = first.ParentNode;
 
-
                 int firstI = getIndexOfChild(parent.ChildNodes, first);
                 int nextI = getIndexOfChild(parent.ChildNodes, next);
 
@@ -817,7 +810,6 @@ namespace BExIS.Xml.Helpers
                 // reset attribute number
                 resetNumberAttr(parent.ChildNodes);
 
-
                 metadataXml = XmlUtility.ToXDocument(xmlDocument);
             }
 
@@ -828,7 +820,8 @@ namespace BExIS.Xml.Helpers
         {
             for (int i = 0; i < list.Count; i++)
             {
-                if (element == list[i]) { 
+                if (element == list[i])
+                {
                     return i;
                 }
             }
@@ -875,7 +868,7 @@ namespace BExIS.Xml.Helpers
                     if (attributeRole != null)
                     {
                         XElement attribute = Get(attributeTypeName, number, attributeRole);
-                        if(value!=null) attribute.SetValue(value.ToString());
+                        if (value != null) attribute.SetValue(value.ToString());
                         else attribute.SetValue(string.Empty);
                     }
                 }
@@ -915,9 +908,7 @@ namespace BExIS.Xml.Helpers
                         if (value != null) attribute.SetValue(value.ToString());
 
                         destination = attribute;
-
                     }
-
                 }
             }
 
@@ -944,7 +935,6 @@ namespace BExIS.Xml.Helpers
                     }
                 }
             }
-        
 
             return _tempXDoc;
         }

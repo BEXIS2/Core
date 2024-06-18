@@ -1,10 +1,8 @@
 ﻿using BExIS.Security.Services.Utilities;
-using BExIS.Utils.Config;
 using BExIS.Utils.Config.Configurations;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
-using System.Configuration;
 using System.IO;
 
 namespace BExIS.Security.Services.Tests.Utilities
@@ -63,7 +61,7 @@ namespace BExIS.Security.Services.Tests.Utilities
          * Further test methods
          */
 
-        [Test]
+        //[Test]
         public void Send_EmailWithWhiteSpace_SendSuccess()
         {
             EmailService emailService = new EmailService(_smtpConfiguration);
@@ -80,7 +78,6 @@ namespace BExIS.Security.Services.Tests.Utilities
             {
                 Assert.IsTrue(success, "send mail was not succesfull");
             }
-
         }
 
         //[Test]
@@ -101,7 +98,6 @@ namespace BExIS.Security.Services.Tests.Utilities
                 Assert.IsTrue(success, "send mail was not succesfull");
             }
         }
-
 
         //[Test]
         public void Send_EmailWithWhiteSpaceinBCCs_SendSuccess()

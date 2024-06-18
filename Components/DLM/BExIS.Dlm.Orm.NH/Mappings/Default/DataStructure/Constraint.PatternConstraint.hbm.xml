@@ -1,17 +1,14 @@
 <hibernate-mapping xmlns="urn:nhibernate-mapping-2.2" assembly="BExIS.Dlm.Entities" namespace="BExIS.Dlm.Entities.DataStructure">
   <subclass name="PatternConstraint" extends="Constraint" discriminator-value="PTN" dynamic-update="true">
     <!-- Mapping BaseEntity properties -->
-    
 
     <!-- Mapping Entity properties -->
     <property name="MatchingPhrase" type="String">
-      <column name="MatchingPhrase" sql-type="text"/>
+      <column name="MatchingPhrase" sql-type="text" />
     </property>
 
     <property name="CaseSensitive" type="yes_no">
       <column name="CaseSensitive" />
     </property>
-
   </subclass>
-
 </hibernate-mapping>

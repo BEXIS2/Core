@@ -7,7 +7,6 @@ namespace BExIS.IO.Transform.Input
 {
     public class ExcelHelper
     {
-
         public static Dictionary<uint, string> FormatCodesDic = new Dictionary<uint, string>()
         {
             {0, ""},
@@ -42,22 +41,19 @@ namespace BExIS.IO.Transform.Input
 
         public ExcelHelper()
         {
-
-
         }
-
 
         public static double FromExcelSerialDate(double SerialDate)
         {
             try
             {
-                if (SerialDate > 59) SerialDate -= 1; //Excel/Lotus 2/29/1900 bug   
+                if (SerialDate > 59) SerialDate -= 1; //Excel/Lotus 2/29/1900 bug
                 return new DateTime(1899, 12, 31).AddDays(SerialDate).ToOADate();
-            }catch(Exception e)
+            }
+            catch (Exception e)
             {
                 return 0.0;
             }
-
         }
 
         /// <summary>
@@ -73,12 +69,10 @@ namespace BExIS.IO.Transform.Input
 
             if (string.IsNullOrEmpty(cellValue)) return 0;
 
-
             if (double.TryParse(cellValue, out output))
             {
                 return output;
             }
-
 
             return output;
         }
@@ -100,7 +94,7 @@ namespace BExIS.IO.Transform.Input
 
         /// <summary>
         /// return a value that is converted by the formatcode from excel
-        /// when the formatode is empty the max lenght of 11 chars change the value maybe 
+        /// when the formatode is empty the max lenght of 11 chars change the value maybe
         /// </summary>
         /// <param name="cellValue"></param>
         /// <param name="formatCode"></param>
@@ -114,11 +108,10 @@ namespace BExIS.IO.Transform.Input
             if (string.IsNullOrEmpty(cellValue)) return "0";
 
             //get culture information
-            // because we take the cell values from excel, 
+            // because we take the cell values from excel,
             // there will be no 1000 place chars, so you can check directly for the decimal char
             if (cellValue.Contains('.')) ci = new CultureInfo("en-US");
             else if (cellValue.Contains(',')) ci = new CultureInfo("de-DE");
-
 
             if (double.TryParse(cellValue, NumberStyles.Any, ci, out output))
             {
@@ -181,6 +174,7 @@ namespace BExIS.IO.Transform.Input
         48  ##0.0E+0
         49  @
          */
+
         public static string GetFormatCode(uint id)
         {
             if (FormatCodesDic.ContainsKey(id))
@@ -190,6 +184,5 @@ namespace BExIS.IO.Transform.Input
 
             return "";
         }
-
     }
 }

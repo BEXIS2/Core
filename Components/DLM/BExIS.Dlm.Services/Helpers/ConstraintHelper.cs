@@ -17,7 +17,7 @@ namespace BExIS.Dlm.Services.Helpers
         //public IReadOnlyRepository<DomainValueConstraint> DomainValueRepo { get; private set; }
         //public IReadOnlyRepository<ValidatorConstraint> ValidatorRepo { get; private set; }
 
-        #endregion
+        #endregion Data Readers
 
         #region DomainConstraint
 
@@ -98,7 +98,7 @@ namespace BExIS.Dlm.Services.Helpers
             return (entity);
         }
 
-        #endregion
+        #endregion DomainConstraint
 
         #region PatternConstraint
 
@@ -179,7 +179,7 @@ namespace BExIS.Dlm.Services.Helpers
             return (entity);
         }
 
-        #endregion
+        #endregion PatternConstraint
 
         #region RangeConstraint
 
@@ -259,7 +259,7 @@ namespace BExIS.Dlm.Services.Helpers
             return (entity);
         }
 
-        #endregion
+        #endregion RangeConstraint
 
         #region ComparisonConstraint
 
@@ -339,7 +339,6 @@ namespace BExIS.Dlm.Services.Helpers
             return (entity);
         }
 
-        #endregion
-
+        #endregion ComparisonConstraint
     }
 }

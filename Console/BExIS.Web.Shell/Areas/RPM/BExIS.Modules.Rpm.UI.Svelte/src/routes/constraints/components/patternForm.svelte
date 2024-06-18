@@ -9,6 +9,10 @@
 
 	export let patternConstraint: PatternConstraintListItem;
 
+	let example: string = '';
+
+	$: result = createRegex(patternConstraint.pattern, example);
+
 	// load form result object
 	let res = suite.get();
 
@@ -24,27 +28,22 @@
 		// otherwise the values are old
 		setTimeout(async () => {
 			// check changed field
-			res = suite(patternConstraint , e);
+			res = suite(patternConstraint, e);
 		}, 10);
 	}
 
 	onMount(async () => {
 		if (patternConstraint.id == 0) {
 			suite.reset();
-		}
-		else{
-			setTimeout(async () => {	
-				res = suite(patternConstraint, "");
+		} else {
+			setTimeout(async () => {
+				res = suite(patternConstraint, '');
 			}, 10);
 		}
-		
-
 	});
 
-	let example: string = '';
-	$: result = createRegex(patternConstraint.pattern, example);
-
 	function createRegex(p: string, e: string): string {
+		disabled = false;
 		try {
 			let regex = new RegExp(p, 'g');
 			let r = e.match(regex)?.toString();
@@ -59,10 +58,13 @@
 {#if patternConstraint}
 	<div class="grid grid-cols-3 gap-5" in:slide out:slide>
 		<!-- svelte-ignore a11y-mouse-events-have-key-events -->
-		<div class="pb-3" 
-		on:mouseover={() => {
-			helpStore.show('pattern');
-		}}>
+		<!-- svelte-ignore a11y-no-static-element-interactions -->
+		<div
+			class="pb-3"
+			on:mouseover={() => {
+				helpStore.show('pattern');
+			}}
+		>
 			<!-- svelte-ignore a11y-label-has-associated-control -->
 			<label>Regex Expression</label>
 			<CodeEditor
@@ -78,10 +80,13 @@
 			<TextInput id="example" label="Example" help={true} bind:value={example} />
 		</div>
 		<!-- svelte-ignore a11y-mouse-events-have-key-events -->
-		<div class="pb-3"
-		on:mouseover={() => {
-			helpStore.show('result');
-		}}>
+		<!-- svelte-ignore a11y-no-static-element-interactions -->
+		<div
+			class="pb-3"
+			on:mouseover={() => {
+				helpStore.show('result');
+			}}
+		>
 			<!-- svelte-ignore a11y-label-has-associated-control -->
 			<label>Result</label>
 			{result}

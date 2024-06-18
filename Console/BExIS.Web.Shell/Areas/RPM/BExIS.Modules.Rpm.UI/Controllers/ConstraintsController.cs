@@ -1,26 +1,20 @@
 ﻿using BExIS.App.Bootstrap.Attributes;
+using BExIS.Dlm.Entities.Data;
+using BExIS.Dlm.Entities.DataStructure;
+using BExIS.Dlm.Services.Data;
 using BExIS.Dlm.Services.DataStructure;
+using BExIS.Modules.Rpm.UI.Models;
+using BExIS.Security.Entities.Subjects;
+using BExIS.Security.Services.Authorization;
+using BExIS.Security.Services.Subjects;
 using BExIS.UI.Helpers;
 using System;
 using System.Collections.Generic;
-using System.Web.Mvc;
-using BExIS.Modules.Rpm.UI.Models.Dimensions;
-using BExIS.Dlm.Entities.DataStructure;
+using System.Data;
 using System.Linq;
-using BExIS.Modules.Rpm.UI.Models.Units;
-using BExIS.Modules.Rpm.UI.Models;
-using System.Runtime.CompilerServices;
-using BExIS.Utils.Route;
-using System.Net.Http;
-using System.Net;
-using System.Threading.Tasks;
-using BExIS.Modules.Rpm.UI.Models.DataTypes;
-using BExIS.Utils.NH.Querying;
-using System.Xml;
+using System.Web.Mvc;
+using System.Web.UI.WebControls;
 using Telerik.Web.Mvc.Extensions;
-using BExIS.Dlm.Entities.Data;
-using BExIS.Dlm.Services.Data;
-using System.Web.Http.Results;
 
 namespace BExIS.Modules.Rpm.UI.Controllers
 {
@@ -74,7 +68,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                 {
                     List<DomainConstraint> domainConstraints = new List<DomainConstraint>();
                     List<DomainConstraint> dcs = constraintManager.DomainConstraints.Where(c => c.DataContainer == null).ToList();
-                    foreach (DomainConstraint dc in dcs) 
+                    foreach (DomainConstraint dc in dcs)
                     {
                         dc.Materialize();
                         domainConstraints.Add(dc);
@@ -172,41 +166,32 @@ namespace BExIS.Modules.Rpm.UI.Controllers
             {
                 using (ConstraintManager constraintManager = new ConstraintManager())
                 {
-                    Constraint constraint = constraintManager.Constraints.Where(c => c.Id == Id).FirstOrDefault();
+                    Dlm.Entities.DataStructure.Constraint constraint = constraintManager.Constraints.Where(c => c.Id == Id).FirstOrDefault();
                     constraint.Materialize();
-                    List<Variable> variables = constraint.VariableConstraints.ToList();
+                    List<long> variableIds = constraint.VariableConstraints.Select(v => v.Id).ToList();
 
-                    if (variables != null && variables.Count > 0)
+                    if (variableIds != null && variableIds.Count > 0)
                     {
                         using (DataStructureManager dataStructureManager = new DataStructureManager())
                         {
-                            List<StructuredDataStructure> structuredDataStructures = dataStructureManager.StructuredDataStructureRepo.Get().ToList();
-                            foreach (Variable constraintVariable in variables)
+                            List<StructuredDataStructure> structuredDataStructures = dataStructureManager.StructuredDataStructureRepo.Query(s => s.Variables.Any(v => variableIds.Contains(v.Id))).ToList();
+
+                            if (structuredDataStructures != null && structuredDataStructures.Count > 0)
                             {
-                                if (structuredDataStructures != null && structuredDataStructures.Count > 0)
+                                foreach (StructuredDataStructure structuredDataStructure in structuredDataStructures)
                                 {
-                                    foreach(StructuredDataStructure structuredDataStructure in structuredDataStructures)
+                                    if (structuredDataStructure.Datasets != null && structuredDataStructure.Datasets.Count > 0)
                                     {
-                                        foreach(Variable structureVariable in structuredDataStructure.Variables)
+                                        foreach (Dataset dataset in structuredDataStructure.Datasets)
                                         {
-                                            if (structureVariable.Id == constraintVariable.Id)
-                                            {
-                                                if (structuredDataStructure.Datasets != null && structuredDataStructure.Datasets.Count > 0)
-                                                {
-                                                    foreach (Dataset dataset in structuredDataStructure.Datasets)
-                                                    {
-                                                        string Name = String.IsNullOrEmpty(dataset.Versions.OrderBy(dv => dv.Id).Last().Title) ? "no Title" : dataset.Versions.OrderBy(dv => dv.Id).Last().Title;
-                                                        datasetInfos.Add(new DatasetInfo() { Id = dataset.Id, Name = Name });
-                                                    }
-                                                    datasetInfos = datasetInfos.Distinct().ToList();
-                                                }
-                                                break;
-                                            }
+                                            string Name = String.IsNullOrEmpty(dataset.Versions.OrderBy(dv => dv.Id).Last().Title) ? "no Title" : dataset.Versions.OrderBy(dv => dv.Id).Last().Title;
+                                            datasetInfos.Add(new DatasetInfo() { Id = dataset.Id, Name = Name });
                                         }
+                                        datasetInfos = datasetInfos.Distinct().ToList();
                                     }
+                                    break;
                                 }
                             }
-                            
                         }
                     }
                 }
@@ -218,6 +203,22 @@ namespace BExIS.Modules.Rpm.UI.Controllers
         [HttpPost]
         public JsonResult EditDomainConstraint(EditDomainConstraintModel constraintListItem)
         {
+            string username = null;
+            User user = null;
+
+            using (UserManager userManager = new UserManager())
+            {
+                try
+                {
+                    username = HttpContext.User.Identity.Name;
+                    user = userManager.FindByNameAsync(username).Result;
+                }
+                catch
+                {
+                    user = null;
+                }
+            }
+
             ValidationResult validationResult = new ValidationResult
             {
                 IsValid = false,
@@ -233,7 +234,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
             {
                 using (ConstraintManager constraintManager = new ConstraintManager())
                 {
-                    List<Constraint> constraints = constraintManager.Constraints.Where(c => c.DataContainer == null).ToList();
+                    List<Dlm.Entities.DataStructure.Constraint> constraints = constraintManager.Constraints.Where(c => c.DataContainer == null).ToList();
                     validationResult = ConstraintValidation(constraints, constraintListItem);
 
                     if (validationResult.IsValid)
@@ -249,7 +250,15 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                                 Description = constraintListItem.Description,
                                 Negated = constraintListItem.Negated,
                                 Items = DomainConverter.convertDomainToDomainItems(constraintListItem.Domain),
-                        };
+                                ConstraintSelectionPredicate = constraintListItem.SelectionPredicate != null ? constraintListItem.SelectionPredicate.GetJson() : null,
+                            };
+
+                            if (!String.IsNullOrEmpty(constraintListItem.Provider))
+                                dc.Provider = (ConstraintProviderSource)Enum.Parse(typeof(ConstraintProviderSource), constraintListItem.Provider);
+
+                            if (user != null)
+                                dc.LastModifiedUserRef = user.Id;
+
                             dc = constraintManager.Create(dc);
                         }
                         else
@@ -259,9 +268,17 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                             dc.Description = constraintListItem.Description;
                             dc.Negated = constraintListItem.Negated;
                             dc.Items = DomainConverter.convertDomainToDomainItems(constraintListItem.Domain);
-    
+                            dc.ConstraintSelectionPredicate = constraintListItem.SelectionPredicate != null ? constraintListItem.SelectionPredicate.GetJson() : null;
+
+                            if (!String.IsNullOrEmpty(constraintListItem.Provider))
+                                dc.Provider = (ConstraintProviderSource)Enum.Parse(typeof(ConstraintProviderSource), constraintListItem.Provider);
+
+                            if (user != null)
+                                dc.LastModifiedUserRef = user.Id;
+
                             dc = constraintManager.Update(dc);
                         }
+                        ConstraintSelectionPredicate selectionPredicate = new ConstraintSelectionPredicate();
                         constraintListItem = new EditDomainConstraintModel()
                         {
                             Id = dc.Id,
@@ -270,9 +287,10 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                             Description = dc.Description,
                             Negated = dc.Negated,
                             Domain = DomainConverter.convertDomainItemsToDomain(dc.Items),
+                            Provider = dc.Provider != null ? dc.Provider.ToString() : null,
+                            SelectionPredicate = dc.ConstraintSelectionPredicate != null ? selectionPredicate.Materialise(dc.ConstraintSelectionPredicate) : null,
                             InUse = false
                         };
-
                     }
                     result = new
                     {
@@ -288,6 +306,22 @@ namespace BExIS.Modules.Rpm.UI.Controllers
         [HttpPost]
         public JsonResult EditRangeConstraint(EditRangeConstraintModel constraintListItem)
         {
+            string username = null;
+            User user = null;
+
+            using (UserManager userManager = new UserManager())
+            {
+                try
+                {
+                    username = HttpContext.User.Identity.Name;
+                    user = userManager.FindByNameAsync(username).Result;
+                }
+                catch
+                {
+                    user = null;
+                }
+            }
+
             ValidationResult validationResult = new ValidationResult
             {
                 IsValid = false,
@@ -303,7 +337,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
             {
                 using (ConstraintManager constraintManager = new ConstraintManager())
                 {
-                    List<Constraint> constraints = constraintManager.Constraints.Where(c => c.DataContainer == null).ToList();
+                    List<Dlm.Entities.DataStructure.Constraint> constraints = constraintManager.Constraints.Where(c => c.DataContainer == null).ToList();
                     validationResult = ConstraintValidation(constraints, constraintListItem);
 
                     if (validationResult.IsValid)
@@ -323,6 +357,10 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                                 LowerboundIncluded = constraintListItem.LowerboundIncluded,
                                 UpperboundIncluded = constraintListItem.UpperboundIncluded
                             };
+
+                            if (user != null)
+                                rc.LastModifiedUserRef = user.Id;
+
                             rc = constraintManager.Create(rc);
                         }
                         else
@@ -336,11 +374,14 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                             rc.LowerboundIncluded = constraintListItem.LowerboundIncluded;
                             rc.UpperboundIncluded = constraintListItem.UpperboundIncluded;
 
+                            if (user != null)
+                                rc.LastModifiedUserRef = user.Id;
+
                             rc = constraintManager.Update(rc);
                         }
 
-                        constraintListItem = new EditRangeConstraintModel() 
-                        { 
+                        constraintListItem = new EditRangeConstraintModel()
+                        {
                             Name = rc.Name,
                             Description = rc.Description,
                             Negated = rc.Negated,
@@ -350,7 +391,6 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                             UpperboundIncluded = rc.UpperboundIncluded,
                             InUse = false
                         };
-
                     }
                     result = new
                     {
@@ -362,11 +402,26 @@ namespace BExIS.Modules.Rpm.UI.Controllers
             return Json(result, JsonRequestBehavior.AllowGet);
         }
 
-
         [JsonNetFilter]
         [HttpPost]
         public JsonResult EditPatternConstraint(EditPatternConstraintModel constraintListItem)
         {
+            string username = null;
+            User user = null;
+
+            using (UserManager userManager = new UserManager())
+            {
+                try
+                {
+                    username = HttpContext.User.Identity.Name;
+                    user = userManager.FindByNameAsync(username).Result;
+                }
+                catch
+                {
+                    user = null;
+                }
+            }
+
             ValidationResult validationResult = new ValidationResult
             {
                 IsValid = false,
@@ -382,7 +437,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
             {
                 using (ConstraintManager constraintManager = new ConstraintManager())
                 {
-                    List<Constraint> constraints = constraintManager.Constraints.Where(c => c.DataContainer == null).ToList();
+                    List<Dlm.Entities.DataStructure.Constraint> constraints = constraintManager.Constraints.Where(c => c.DataContainer == null).ToList();
                     validationResult = ConstraintValidation(constraints, constraintListItem);
 
                     if (validationResult.IsValid)
@@ -399,6 +454,10 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                                 Negated = constraintListItem.Negated,
                                 MatchingPhrase = constraintListItem.pattern
                             };
+
+                            if (user != null)
+                                pc.LastModifiedUserRef = user.Id;
+
                             pc = constraintManager.Create(pc);
                         }
                         else
@@ -408,6 +467,9 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                             pc.Description = constraintListItem.Description;
                             pc.Negated = constraintListItem.Negated;
                             pc.MatchingPhrase = constraintListItem.pattern;
+
+                            if (user != null)
+                                pc.LastModifiedUserRef = user.Id;
 
                             pc = constraintManager.Update(pc);
                         }
@@ -421,7 +483,6 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                             pattern = pc.MatchingPhrase,
                             InUse = false
                         };
-
                     }
                     result = new
                     {
@@ -440,7 +501,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
             return Json(Enum.GetNames(typeof(ConstraintType)), JsonRequestBehavior.AllowGet);
         }
 
-        private ValidationResult ConstraintValidation(List<Constraint> constraints, EditConstraintModel constaint)
+        private ValidationResult ConstraintValidation(List<Dlm.Entities.DataStructure.Constraint> constraints, EditConstraintModel constaint)
         {
             ValidationResult result = new ValidationResult();
 
@@ -462,14 +523,13 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                         }
                     }
                 }
-            }                
+            }
             return result;
         }
 
-        private ValidationResult ConstraintValidation( List<Constraint> constraints, EditDomainConstraintModel constaint)
+        private ValidationResult ConstraintValidation(List<Dlm.Entities.DataStructure.Constraint> constraints, EditDomainConstraintModel constaint)
         {
-
-            ValidationResult result = ConstraintValidation(constraints.Cast<Constraint>().ToList(), (EditConstraintModel)constaint);
+            ValidationResult result = ConstraintValidation(constraints.Cast<Dlm.Entities.DataStructure.Constraint>().ToList(), (EditConstraintModel)constaint);
             if (String.IsNullOrEmpty(constaint.Domain))
             {
                 result.IsValid = false;
@@ -478,10 +538,9 @@ namespace BExIS.Modules.Rpm.UI.Controllers
             return result;
         }
 
-        private ValidationResult ConstraintValidation(List<Constraint> constraints, EditRangeConstraintModel constaint)
+        private ValidationResult ConstraintValidation(List<Dlm.Entities.DataStructure.Constraint> constraints, EditRangeConstraintModel constaint)
         {
-
-            ValidationResult result = ConstraintValidation(constraints.Cast<Constraint>().ToList(), (EditConstraintModel)constaint);
+            ValidationResult result = ConstraintValidation(constraints.Cast<Dlm.Entities.DataStructure.Constraint>().ToList(), (EditConstraintModel)constaint);
             if (constaint.Lowerbound > constaint.Upperbound)
             {
                 result.IsValid = false;
@@ -490,11 +549,246 @@ namespace BExIS.Modules.Rpm.UI.Controllers
             return result;
         }
 
-        private ValidationResult ConstraintValidation(List<Constraint> constraints, EditPatternConstraintModel constaint)
+        private ValidationResult ConstraintValidation(List<Dlm.Entities.DataStructure.Constraint> constraints, EditPatternConstraintModel constaint)
         {
-
-            ValidationResult result = ConstraintValidation(constraints.Cast<Constraint>().ToList(), (EditConstraintModel)constaint);
+            ValidationResult result = ConstraintValidation(constraints.Cast<Dlm.Entities.DataStructure.Constraint>().ToList(), (EditConstraintModel)constaint);
             return result;
+        }
+
+        [JsonNetFilter]
+        [HttpGet]
+        public JsonResult GetStruturedDatasetsByUserPermission()
+        {
+            string username = null;
+            User user = null;
+            int rights = 0;
+            List<DatasetInfo> datasetInfos = new List<DatasetInfo>();
+            List<Dataset> datasets = new List<Dataset>();
+
+            using (UserManager userManager = new UserManager())
+            {
+                try
+                {
+                    username = HttpContext.User.Identity.Name;
+                    user = userManager.FindByNameAsync(username).Result;
+                }
+                catch
+                {
+                    user = null;
+                }
+            }
+
+            if (user != null)
+            {
+                using (DatasetManager datasetManager = new DatasetManager())
+                {
+                    datasets = datasetManager.DatasetRepo.Get().Where(ds => ds.DataStructure != null).ToList();
+
+                    using (EntityPermissionManager entityPermissionManager = new EntityPermissionManager())
+                    {
+                        foreach (Dataset ds in datasets)
+                        {
+                            rights = entityPermissionManager.GetEffectiveRights(user?.Id, ds.EntityTemplate.EntityType.Id, ds.Id);
+
+                            if (rights > 0)
+                            {
+                                DatasetInfo dsi = new DatasetInfo()
+                                {
+                                    Id = ds.Id,
+                                    Name = String.IsNullOrEmpty(ds.Versions.OrderBy(dv => dv.Id).Last().Title) ? "no Title" : ds.Versions.OrderBy(dv => dv.Id).Last().Title,
+                                    Description = String.IsNullOrEmpty(ds.Versions.OrderBy(dv => dv.Id).Last().Description) ? "no Description" : ds.Versions.OrderBy(dv => dv.Id).Last().Description,
+                                    DatasetVersionId = ds.Versions.OrderBy(dv => dv.Id).Last().Id,
+                                    DatasetVersionNumber = ds.Versions.OrderBy(dv => dv.Id).Last().VersionNo,
+                                    DatastructureId = ds.DataStructure.Id,
+                                };
+                                datasetInfos.Add(dsi);
+                            }
+                        }
+                    }
+                }
+            }
+            return Json(datasetInfos, JsonRequestBehavior.AllowGet);
+        }
+
+        [JsonNetFilter]
+        [HttpPost]
+        public JsonResult GetDatastructure(long Id)
+        {
+            DatastructureInfo datastructureInfo = null;
+
+            using (DataStructureManager dataStructureManager = new DataStructureManager())
+            {
+                StructuredDataStructure dataStructure = dataStructureManager.StructuredDataStructureRepo.Get(Id);
+                if (dataStructure != null)
+                {
+                    datastructureInfo = new DatastructureInfo()
+                    {
+                        Id = dataStructure.Id,
+                        Name = dataStructure.Name,
+                        Description = dataStructure.Description,
+                    };
+                    if (dataStructure.Variables.Any())
+                    {
+                        ColumnInfo columnInfo = null;
+
+                        foreach (var variable in dataStructure.Variables)
+                        {
+                            columnInfo = new ColumnInfo()
+                            {
+                                Id = variable.Id,
+                                Name = variable.Label,
+                                Description = variable.Description,
+                                OrderNo = variable.OrderNo,
+                                Unit = variable.Unit.Name,
+                                DataType = variable.DataType.Name,
+                            };
+                            datastructureInfo.ColumnInfos.Add(columnInfo);
+                            datastructureInfo.ColumnInfos = datastructureInfo.ColumnInfos.OrderBy(ci => ci.OrderNo).ToList();
+                        }
+                    }
+                }
+            }
+            return Json(datastructureInfo, JsonRequestBehavior.AllowGet);
+        }
+
+        [JsonNetFilter]
+        [HttpPost]
+        public JsonResult GetData(long Id, int pageSize = 0, long variableId = 0)
+        {
+            string username = null;
+            User user = null;
+            int rights = 0;
+
+            DataTable dt = new DataTable();
+            DataTable tempDt = new DataTable();
+
+            using (UserManager userManager = new UserManager())
+            {
+                try
+                {
+                    username = HttpContext.User.Identity.Name;
+                    user = userManager.FindByNameAsync(username).Result;
+                }
+                catch
+                {
+                    user = null;
+                }
+            }
+
+            if (user != null)
+            {
+                using (EntityPermissionManager entityPermissionManager = new EntityPermissionManager())
+                {
+                    using (DatasetManager datasetManager = new DatasetManager())
+                    {
+                        Dataset dataset = datasetManager.DatasetRepo.Get(Id);
+
+                        StructuredDataStructure dataStructure = new StructuredDataStructure();
+
+                        using (DataStructureManager dataStructureManager = new DataStructureManager())
+                        {
+                            dataStructure = dataStructureManager.StructuredDataStructureRepo.Get(dataset.DataStructure.Id);
+
+                            rights = entityPermissionManager.GetEffectiveRights(user?.Id, dataset.EntityTemplate.EntityType.Id, dataset.Id);
+                            if (rights > 0 && dataStructure != null && dataStructure.Id != 0)
+                            {
+                                if (pageSize > 0)
+                                {
+                                    try
+                                    {
+                                        dt = datasetManager.GetLatestDatasetVersionTuples(dataset.Id, 0, pageSize);
+                                    }
+                                    catch
+                                    {
+                                        return Json(dt, JsonRequestBehavior.AllowGet);
+                                    }
+                                    dt.Strip();
+
+                                    tempDt = dt.Clone();
+                                    foreach (DataColumn column in tempDt.Columns)
+                                    {
+                                        column.DataType = typeof(string);
+                                    }
+
+                                    foreach (DataRow row in dt.Rows)
+                                    {
+                                        tempDt.ImportRow(row);
+                                    }
+
+                                    VariableInstance variable = new VariableInstance();
+                                    for (int i = 0; i < tempDt.Columns.Count; i++)
+                                    {
+                                        variable = dataStructure.Variables.Where(v => ("var" + v.Id).Equals(tempDt.Columns[i].ColumnName)).FirstOrDefault();
+                                        for (int j = 0; j < tempDt.Rows.Count; j++)
+                                        {
+                                            foreach (MissingValue missingValue in variable.MissingValues)
+                                            {
+                                                if (tempDt.Rows[j].ItemArray[i].ToString() == missingValue.Placeholder)
+                                                {
+                                                    tempDt.Rows[j].SetField(i, missingValue.DisplayName);
+                                                    break;
+                                                }
+                                            }
+                                        }
+                                    }
+                                    dt = tempDt.Copy();
+                                }
+                                else if (variableId > 0 && pageSize == 0)
+                                {
+                                    try
+                                    {
+                                        dt = datasetManager.GetLatestDatasetVersionTuples(dataset.Id, 0, pageSize);
+                                    }
+                                    catch
+                                    {
+                                        return Json(dt, JsonRequestBehavior.AllowGet);
+                                    }
+                                    dt.Strip();
+
+                                    string columnName = "var" + variableId;
+
+                                    while (dt.Columns[0] != dt.Columns[dt.Columns.Count - 1])
+                                    {
+                                        if (dt.Columns[0].ColumnName != columnName)
+                                            dt.Columns.RemoveAt(0);
+
+                                        if (dt.Columns[dt.Columns.Count - 1].ColumnName != columnName)
+                                            dt.Columns.RemoveAt(dt.Columns.Count - 1);
+                                    }
+
+                                    VariableInstance variable = new VariableInstance();
+
+                                    variable = dataStructure.Variables.Where(v => ("var" + v.Id).Equals(dt.Columns[0].ColumnName)).FirstOrDefault();
+
+                                    int i = 0;
+
+                                    do
+                                    {
+                                        foreach (MissingValue missingValue in variable.MissingValues)
+                                        {
+                                            if (dt.Rows[i].ItemArray[0].ToString() == missingValue.Placeholder)
+                                            {
+                                                dt.Rows.Remove(dt.Rows[i]);
+                                                i--;
+                                                break;
+                                            }
+                                        }
+                                        i++;
+                                    } while (dt.Rows[i] != dt.Rows[dt.Rows.Count - 1]);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            return Json(dt, JsonRequestBehavior.AllowGet);
+        }
+
+        [JsonNetFilter]
+        [HttpGet]
+        public JsonResult GetProvider()
+        {
+            return Json(Enum.GetNames(typeof(ConstraintProviderSource)).ToList(), JsonRequestBehavior.AllowGet);
         }
     }
 }

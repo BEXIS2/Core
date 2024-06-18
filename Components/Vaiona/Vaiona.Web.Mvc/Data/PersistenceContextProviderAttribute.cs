@@ -5,7 +5,7 @@ namespace Vaiona.Web.Mvc.Data
 {
     /// <summary>
     /// Using this class is recommended just in MVC applications. in case the usage of SessionPerRequestModule should be avoided
-    /// by removing/ commenting it in the web.config 
+    /// by removing/ commenting it in the web.config
     /// Enabling this class can happen at the global.asax application start method by RegisterGlobalFilters
     /// issue: the pManager object should be kept between OnActionExecuted and OnResultExecuted or OnException
     /// <example>
@@ -19,7 +19,7 @@ namespace Vaiona.Web.Mvc.Data
     /// </summary>
     public class PersistenceContextProviderFilterAttribute : ActionFilterAttribute, IExceptionFilter//, IActionFilter, IResultFilter
     {
-        IPersistenceManager pManager = null;
+        private IPersistenceManager pManager = null;
 
         public PersistenceContextProviderFilterAttribute()
         {

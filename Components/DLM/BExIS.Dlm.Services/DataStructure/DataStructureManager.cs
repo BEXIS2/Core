@@ -1,24 +1,24 @@
 ﻿using BExIS.Dlm.Entities.Data;
 using BExIS.Dlm.Entities.DataStructure;
-using BExIS.Dlm.Entities.Meanings;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.Contracts;
 using System.Linq;
 using Vaiona.Persistence.Api;
+
 using DS = BExIS.Dlm.Entities.DataStructure;
 
 namespace BExIS.Dlm.Services.DataStructure
 {
     /// <summary>
     /// DataStructureManager class is responsible for CRUD (Create, Read, Update, Delete) operations on the aggregate area of the data structure.
-    /// The data structure aggregate area is a set of entities like <see cref="DataStructure"/>, <see cref="VariableUsage"/>, and <see cref="ParameterUsage"/> that in 
+    /// The data structure aggregate area is a set of entities like <see cref="DataStructure"/>, <see cref="VariableUsage"/>, and <see cref="ParameterUsage"/> that in
     /// cooperation together can materialize the formal specification of the structure of group of datasets.
     /// </summary>
     public class DataStructureManager : IDisposable
     {
-
         private IUnitOfWork guow = null;
+
         public DataStructureManager()
         {
             guow = this.GetIsolatedUnitOfWork();
@@ -29,6 +29,7 @@ namespace BExIS.Dlm.Services.DataStructure
         }
 
         private bool isDisposed = false;
+
         ~DataStructureManager()
         {
             Dispose(true);
@@ -74,9 +75,18 @@ namespace BExIS.Dlm.Services.DataStructure
         /// </summary>
         public IReadOnlyRepository<Variable> VariableRepo { get; private set; }
 
-        #endregion
+        #endregion Data Readers
 
         #region StructuredDataStructure
+
+        /// <summary>
+        /// Return a KeyValuePair of all structured data structures
+        /// </summary>
+        /// <returns></returns>
+        public List<KeyValuePair<long, string>> GetStructuredDataStructuresAsKVP()
+        {
+            return StructuredDataStructureRepo.Query().Select(s => new KeyValuePair<long, string>(s.Id, s.Name)).ToList();
+        }
 
         /// <summary>
         /// Creates a structured data structure <seealso cref="StructuredDataStructure"/> and persists the entity in the database.
@@ -155,7 +165,7 @@ namespace BExIS.Dlm.Services.DataStructure
                 // delete associated variables and thier parameters
                 foreach (var usage in entity.Variables)
                 {
-                    var localVar = variableRepo.Reload(usage);           
+                    var localVar = variableRepo.Reload(usage);
                     variableRepo.Delete(localVar);
                 }
 
@@ -238,7 +248,7 @@ namespace BExIS.Dlm.Services.DataStructure
             return (entity);
         }
 
-        #endregion
+        #endregion StructuredDataStructure
 
         #region UnStructuredDataStructure
 
@@ -251,7 +261,6 @@ namespace BExIS.Dlm.Services.DataStructure
         {
             Contract.Requires(!string.IsNullOrWhiteSpace(name));
             Contract.Ensures(Contract.Result<UnStructuredDataStructure>() != null && Contract.Result<UnStructuredDataStructure>().Id >= 0);
-
 
             using (IUnitOfWork uow = this.GetUnitOfWork())
             {
@@ -348,7 +357,7 @@ namespace BExIS.Dlm.Services.DataStructure
             return (entity);
         }
 
-        #endregion
+        #endregion UnStructuredDataStructure
 
         #region Associations
 
@@ -375,7 +384,6 @@ namespace BExIS.Dlm.Services.DataStructure
                 structuredDataStructureRepo.LoadIfNot(dataStructure.Variables);
 
                 dataStructure.Variables.Add(variableInstance);
-
 
                 variableInstanceRepo.Put(variableInstance);
                 uow.Commit();
@@ -412,7 +420,6 @@ namespace BExIS.Dlm.Services.DataStructure
                 structuredDataStructureRepo.LoadIfNot(dataStructure.Variables);
 
                 dataStructure.Variables.ToList().AddRange(variableInstances);
-
 
                 variableInstanceRepo.Put(variableInstances);
                 uow.Commit();
@@ -462,7 +469,6 @@ namespace BExIS.Dlm.Services.DataStructure
             Contract.Requires(view != null && view.Id >= 0);
             Contract.Requires(view.Dataset == null);
             //Contract.Ensures(Contract.Result<StructuredDataStructure>() != null && Contract.Result<StructuredDataStructure>().Id >= 0);
-
 
             using (IUnitOfWork uow = this.GetUnitOfWork())
             {
@@ -592,7 +598,6 @@ namespace BExIS.Dlm.Services.DataStructure
             //throw new NotImplementedException();
         }
 
-        #endregion
-
+        #endregion Associations
     }
 }

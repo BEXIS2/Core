@@ -7,7 +7,8 @@
 	import MissingValues from './MissingValues.svelte';
 
 	//services
-	import { store } from './services';
+	import { store, load } from './services';
+	
 
 	import Fa from 'svelte-fa';
 	import { faSave, faChevronRight, faArrowRotateLeft } from '@fortawesome/free-solid-svg-icons';
@@ -345,6 +346,15 @@
 			clean();
 		}
 	};
+
+	async function onChangeEncodingHandler(e)
+	{
+			const encoding = e;
+			console.log("🚀 ~ e.detail:", e)
+			const m = await load(model.file, model.entityId,encoding,0);
+			model.preview = m.preview;
+	}
+
 </script>
 
 {#if !model || state.length == 0 || generate == false}
@@ -400,6 +410,16 @@
 							source={model.textMarkers}
 							complexTarget={false}
 							help={true}
+						/>
+
+						<DropdownKVP
+							id="encoding"
+							title="Encoding"
+							bind:target={model.fileEncoding}
+							source={model.encodings}
+							complexTarget={false}
+							help={true}
+							on:change={onChangeEncodingHandler(model.fileEncoding)}
 						/>
 					</div>
 
@@ -475,7 +495,7 @@
 				<div class="controls"><Controls /></div>
 			</div>
 
-			<div id="preview data" class="flex-col py-5">
+			<div id="preview data" class="flex-col py-5 ">
 				<div id="data infos" class="flex flex-auto gap-5 pb-2">
 					<label><b>Total:</b> {model.total}</label>
 					<label><b>Found:</b> {model.total - model.skipped}</label>
@@ -483,6 +503,7 @@
 					<label class="grow text-right"><i>you see only the first 10 rows of the data</i> </label>
 				</div>
 
+				<div class="overflow-x-auto">
 				<table class="table table-compact" on:contextmenu={(e) => e.preventDefault()}>
 					<tbody>
 						{#each model.preview as row, r}
@@ -526,6 +547,7 @@
 						{/each}
 					</tbody>
 				</table>
+			</div>
 			</div>
 		</div>
 	</form>

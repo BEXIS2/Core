@@ -1,5 +1,5 @@
 <script>
-	import { Fa } from 'svelte-fa/src/index.js';
+	import { Fa } from 'svelte-fa';
 
 	import { FileInfo, Spinner, TextInput } from '@bexis2/bexis2-core-ui';
 	import { faTrash } from '@fortawesome/free-solid-svg-icons';
@@ -43,8 +43,9 @@
 	}
 
 	async function handleSaveFileDescription() {
+
 		const res = await saveFileDescription(save, id, file, description);
-		if (true) {
+		if (res) {
 			let message = 'Description of ' + file + ' is updated.';
 			dispatch('saved', { text: message });
 		}
@@ -61,7 +62,7 @@
 
 		{#if withDescription}
 			<div class="{fileNameSpan} self-center grow">
-				<TextInput bind:value={description} on:change={(e) => handleSaveFileDescription()} />
+				<TextInput bind:value={description} on:change={handleSaveFileDescription} />
 			</div>
 		{:else}
 			<div />

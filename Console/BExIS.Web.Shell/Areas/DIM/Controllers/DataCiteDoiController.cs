@@ -1,13 +1,13 @@
 ﻿using BExIS.Dim.Entities.Mapping;
-using BExIS.Dim.Entities.Publication;
+using BExIS.Dim.Entities.Publications;
 using BExIS.Dim.Helpers;
+using BExIS.Dim.Helpers.Configurations;
 using BExIS.Dim.Helpers.Mapping;
 using BExIS.Dim.Services;
 using BExIS.Dlm.Entities.Data;
 using BExIS.Dlm.Services.Data;
 using BExIS.Modules.Dim.UI.Helpers;
 using BExIS.Modules.Dim.UI.Models;
-using BExIS.Security.Entities.Authorization;
 using BExIS.Security.Services.Authorization;
 using BExIS.Security.Services.Objects;
 using BExIS.Security.Services.Utilities;
@@ -17,25 +17,15 @@ using RestSharp;
 using RestSharp.Authenticators;
 using System;
 using System.Collections.Generic;
-using System.Configuration;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Web.Mvc;
-using System.Web.Routing;
+using System.Web.UI.WebControls;
 using System.Xml;
 using System.Xml.Serialization;
-using Vaiona.Web.Mvc;
-using Vaiona.Web.Mvc.Modularity;
-using BExIS.Dim.Helpers.Extensions;
-using System.IO;
-using System.Runtime.Remoting.Messaging;
-using System.Web.UI.WebControls;
-using System.Runtime.Remoting.Contexts;
-using Vaelastrasz.Library.Services;
-using System.Threading.Tasks;
 using Vaelastrasz.Library.Models;
-using Vaiona.Logging;
-using Vaelastrasz.Library.Configurations;
-using BExIS.Dim.Helpers.Configurations;
+using Vaelastrasz.Library.Services;
+using Vaiona.Web.Mvc;
 
 namespace BExIS.Modules.Dim.UI.Controllers
 {
@@ -81,7 +71,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
 
                 return PartialView("_requestRow", new PublicationModel()
                 {
-                    Broker = new BrokerModel(publication.Broker.Name, new List<string>() { publication.Repository.Name }, publication.Broker.Link),
+                    Broker = new BrokerModel(publication.Broker.Id, publication.Broker.Name, new List<string>() { publication.Repository.Name }, publication.Broker.Link),
                     DataRepo = publication.Repository.Name,
                     DatasetVersionId = publication.DatasetVersion.Id,
                     CreationDate = publication.Timestamp,
@@ -208,7 +198,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
 
                 return PartialView("_requestRow", new PublicationModel()
                 {
-                    Broker = new BrokerModel(publication.Broker.Name, new List<string>() { publication.Repository.Name }, publication.Broker.Link),
+                    Broker = new BrokerModel(publication.Broker.Id, publication.Broker.Name, new List<string>() { publication.Repository.Name }, publication.Broker.Link),
                     DataRepo = publication.Repository.Name,
                     DatasetVersionId = publication.DatasetVersion.Id,
                     CreationDate = publication.Timestamp,
@@ -318,14 +308,14 @@ namespace BExIS.Modules.Dim.UI.Controllers
             using (DatasetManager datasetManager = new DatasetManager())
             using (PublicationManager publicationManager = new PublicationManager())
             {
-                Broker broker = publicationManager.RepositoryRepo.Get().Where(b => b.Name.ToLower() == "datacitedoi").FirstOrDefault().Broker;
+                Broker broker = publicationManager.BrokerRepo.Get().Where(b => b.Name.ToLower() == "datacitedoi").FirstOrDefault();
                 List<Publication> publications = publicationManager.GetPublication().Where(p => p.Broker.Name.ToLower().Equals(broker.Name.ToLower())).ToList();
 
                 foreach (Publication p in publications)
                 {
                     model.Add(new PublicationModel()
                     {
-                        Broker = new BrokerModel(broker.Name, new List<string>() { p.Repository.Name }, broker.Link),
+                        Broker = new BrokerModel(broker.Id, broker.Name, new List<string>() { p.Repository.Name }, broker.Link),
                         DataRepo = p.Repository.Name,
                         DatasetVersionId = p.DatasetVersion.Id,
                         CreationDate = p.Timestamp,

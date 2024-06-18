@@ -11,12 +11,10 @@ namespace BExIS.Modules.Mmm.UI.Helpers
     {
         public void GenerateSeedData()
         {
-
             using (FeatureManager featureManager = new FeatureManager())
             using (FeaturePermissionManager featurePermissionManager = new FeaturePermissionManager())
             using (OperationManager operationManager = new OperationManager())
             {
-
                 List<Feature> features = featureManager.FeatureRepository.Get().ToList();
 
                 Feature Search = features.FirstOrDefault(f => f.Name.Equals("Search"));
@@ -26,7 +24,6 @@ namespace BExIS.Modules.Mmm.UI.Helpers
                 if (!operationManager.Exists("MMM", "ShowMultimediaData", "*"))
                     operationManager.Create("MMM", "ShowMultimediaData", "*");
             }
-
         }
 
         public void Dispose()

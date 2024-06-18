@@ -74,5 +74,3 @@ namespace BExIS.UI.Models
         }
     }
 }
-
-

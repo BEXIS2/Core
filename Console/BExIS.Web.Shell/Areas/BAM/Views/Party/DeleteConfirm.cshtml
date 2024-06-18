@@ -1,5 +1,4 @@
-﻿
-@section Information
+﻿@section Information
 {
     The party and all its attributes and relationshps will be deleted.
 }
@@ -12,10 +11,8 @@
 }
 <script type="text/javascript">
 
-  
     @if (((int)ViewBag.partyId)!=0)
     {
        @Html.Raw("$('#divPartyDetail').load('/BAM/Party/ViewPartyDetail/" + ViewBag.partyId + "');");
     }
-
 </script>

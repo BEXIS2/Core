@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { Modal, getModalStore, type ModalSettings } from '@skeletonlabs/skeleton';
 	const modalStore = getModalStore();
-	
+
 	import { getPrefixCategories, remove } from './services';
 	import type { prefixCategoryType } from '$lib/components/meaning/types';
 
@@ -19,8 +19,7 @@
 	import { prefixCategoryStore } from '$lib/components/meaning/stores';
 
 	let prefixCategories: prefixCategoryType[] = [];
-	let prefixCategory: prefixCategoryType = { id: 0, name: '', description: ''};
-
+	let prefixCategory: prefixCategoryType = { id: 0, name: '', description: '' };
 
 	import TableOptions from './table/tableOptions.svelte';
 
@@ -29,7 +28,6 @@
 	import { fade, slide } from 'svelte/transition';
 	import PrefixCategoryForm from './PrefixCategory.svelte';
 
-
 	let showForm = false;
 
 	async function reload() {
@@ -37,8 +35,8 @@
 
 		// get external links
 		prefixCategories = await getPrefixCategories();
-  console.log("🚀 ~ file: +page.svelte:39 ~ reload ~ prefixCategories:", prefixCategories)
-  prefixCategory = { id: 0, name: '', description: ''};
+		console.log('🚀 ~ file: +page.svelte:39 ~ reload ~ prefixCategories:', prefixCategories);
+		prefixCategory = { id: 0, name: '', description: '' };
 		prefixCategoryStore.set(prefixCategories);
 
 		console.log('store', $prefixCategoryStore);
@@ -48,7 +46,7 @@
 		id: 'ExternalLinks',
 		data: prefixCategoryStore,
 		optionsComponent: TableOptions,
-		columns:{
+		columns: {
 			id: {
 				fixedWidth: 100
 			},
@@ -65,9 +63,7 @@
 			optionsColumn: {
 				fixedWidth: 100
 			}
-
 		}
-
 	};
 
 	function toggleForm() {
@@ -137,7 +133,7 @@
 		});
 
 		showForm = false;
-		
+
 		setTimeout(async () => {
 			reload();
 		}, 10);

@@ -8,7 +8,7 @@ namespace BExIS.App.Testing
 {
     public class TestDBSetupHelper : IDisposable
     {
-        IPersistenceManager pManager = null;
+        private IPersistenceManager pManager = null;
 
         public TestDBSetupHelper(bool configureModules = false)
         {
@@ -20,7 +20,6 @@ namespace BExIS.App.Testing
 
             Console.WriteLine("db connection");
             Console.WriteLine(AppConfiguration.DefaultApplicationConnection.ConnectionString);
-
         }
 
         public void Start()

@@ -1,11 +1,11 @@
-﻿using BExIS.UI.Models;
+﻿using BExIS.Dlm.Entities.Data;
+using BExIS.UI.Models;
 using System.Collections.Generic;
 
 namespace BExIS.Modules.Dcm.UI.Models.EntityTemplate
 {
     public class EntityTemplateModel
     {
-
         /// <summary>
         /// Name of the Entity Template
         /// </summary>
@@ -26,12 +26,10 @@ namespace BExIS.Modules.Dcm.UI.Models.EntityTemplate
         /// </summary>
         public ListItem EntityType { get; set; }
 
-
         /// <summary>
         ///Metadata Structure
         /// </summary>
         public virtual ListItem MetadataStructure { get; set; }
-
 
         public virtual List<int> MetadataFields { get; set; }
 
@@ -66,17 +64,18 @@ namespace BExIS.Modules.Dcm.UI.Models.EntityTemplate
         /// </summary>
         public virtual List<long> NotificationGroups { get; set; }
 
-
         /// <summary>
         /// add this groups to the permissions
         /// when a email is sended to the owner or admin send also to this groups
         /// </summary>
-        public virtual List<long> PermissionGroups { get; set; }
+        public virtual PermissionsType PermissionGroups { get; set; }
 
         /// <summary>
         /// list of all suject that are created withthis template
         /// </summary>
         public virtual List<ListItem> LinkedSubjects { get; set; }
+
+        public bool InUse { get; set; }
 
         public EntityTemplateModel()
         {
@@ -89,12 +88,13 @@ namespace BExIS.Modules.Dcm.UI.Models.EntityTemplate
             DisabledHooks = new List<string>();
             DatastructureList = new List<long>();
             MetadataFields = new List<int>();
-            PermissionGroups = new List<long>();
+            PermissionGroups = new PermissionsType();
             NotificationGroups = new List<long>();
-            MetadataInvalidSaveMode = false;
+            MetadataInvalidSaveMode = true;
             HasDatastructure = false;
 
             LinkedSubjects = new List<ListItem>();
+            InUse = false;
         }
 
         public class KvP

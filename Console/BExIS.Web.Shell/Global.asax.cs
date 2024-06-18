@@ -26,6 +26,14 @@ namespace BExIS.Web.Shell
 
         protected void Application_Start()
         {
+            // Json Settings
+            JsonConvert.DefaultSettings = () => new JsonSerializerSettings
+            {
+                Formatting = Formatting.Indented,
+                ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
+                ContractResolver = new CamelCasePropertyNamesContractResolver()
+            };
+
             // Extension of the view search engine by the case that the UI project with view can be found one directory lower.
             // This extension allows to store a complete module with libraries and Ui project in a parent directory.
             var tmp = new CustomViewEngine();
@@ -79,8 +87,8 @@ namespace BExIS.Web.Shell
 
             // if the tenant has no landing page, set the application's default landing page for it.
 
-            var landingPage = GeneralSettings.LandingPage;
-            tenant.LandingPage = landingPage; // checks and sets
+            //var landingPage = GeneralSettings.LandingPage;
+            //tenant.LandingPage = landingPage; // checks and sets
 
             this.Session.SetTenant(tenant);
         }
@@ -129,9 +137,6 @@ namespace BExIS.Web.Shell
 
         protected void Application_Error(object sender, EventArgs e)
         {
-
-
-
             bool sendExceptions = GeneralSettings.SendExceptions;
 
             var error = Server.GetLastError();

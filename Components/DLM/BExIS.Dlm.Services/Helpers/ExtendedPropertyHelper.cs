@@ -1,7 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using BExIS.Dlm.Entities.DataStructure;
+using System;
 using System.Diagnostics.Contracts;
-using BExIS.Dlm.Entities.DataStructure;
 using Vaiona.Persistence.Api;
 
 namespace BExIS.Dlm.Services.Helpers
@@ -12,15 +11,13 @@ namespace BExIS.Dlm.Services.Helpers
     /// <remarks>Should not be used directly or by any function outside of the service layer.</remarks>
     public class ExtendedPropertyHelper
     {
-
         #region ExtendedProperty
 
         public ExtendedProperty Create(ExtendedProperty property, DataContainer container)
         {
-            if(property == null)  throw new ArgumentNullException(nameof(property), "property should not be null");
-            if(container == null)  throw new ArgumentNullException(nameof(container), "container should not be null");
+            if (property == null) throw new ArgumentNullException(nameof(property), "property should not be null");
+            if (container == null) throw new ArgumentNullException(nameof(container), "container should not be null");
 
- 
             property.DataContainer = container;
             using (IUnitOfWork uow = this.GetUnitOfWork())
             {
@@ -50,8 +47,6 @@ namespace BExIS.Dlm.Services.Helpers
             return (true);
         }
 
-        #endregion
-
-    
+        #endregion ExtendedProperty
     }
 }

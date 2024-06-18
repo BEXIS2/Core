@@ -59,11 +59,11 @@
   <ItemGroup>
     <Content Include="Mappings\Default\Mapping\MappingKey.hbm.xml">
       <SubType>Designer</SubType>
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+     <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Mappings\Default\Mapping\MappingConcept.hbm.xml">
       <SubType>Designer</SubType>
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+     <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Mappings\Default\Mapping\LinkElement.hbm.xml">
       <SubType>Designer</SubType>
@@ -71,18 +71,10 @@
     <Content Include="Mappings\Default\Mapping\LinkElementTypes.hbm.xml" />
     <Content Include="Mappings\Default\Mapping\Mapping.hbm.xml" />
     <Content Include="Mappings\Default\Mapping\TransformationRule.hbm.xml" />
-    <Content Include="Mappings\Default\Publication\MetadataStructureToRepository.hbm.xml">
-      <SubType>Designer</SubType>
-    </Content>
-    <Content Include="Mappings\Default\Publication\Broker.hbm.xml">
-      <SubType>Designer</SubType>
-    </Content>
-    <Content Include="Mappings\Default\Publication\Publication.hbm.xml">
-      <SubType>Designer</SubType>
-    </Content>
-    <Content Include="Mappings\Default\Publication\Repository.hbm.xml">
-      <SubType>Designer</SubType>
-    </Content>
+    <Content Include="Mappings\Default\Publications\Broker.hbm.xml" />
+    <Content Include="Mappings\Default\Publications\MetadataStructureToRepository.hbm.xml" />
+    <Content Include="Mappings\Default\Publications\Publication.hbm.xml" />
+    <Content Include="Mappings\Default\Publications\Repository.hbm.xml" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

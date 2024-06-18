@@ -15,14 +15,16 @@ namespace Vaiona.PersistenceProviders.NH
     public class NHibernateReadonlyRepository<TEntity> : IReadOnlyRepository<TEntity> where TEntity : class
     {
         protected IUnitOfWork UoW = null;
-        NHibernate.CacheMode cacheMode = NHibernate.CacheMode.Ignore;
+        private NHibernate.CacheMode cacheMode = NHibernate.CacheMode.Ignore;
+
         internal NHibernateReadonlyRepository(IUnitOfWork uow, Vaiona.Persistence.Api.CacheMode cacheMode)
         {
             this.UoW = uow;
             this.cacheMode = (NHibernate.CacheMode)Enum.Parse(typeof(NHibernate.CacheMode), Enum.GetName(typeof(Vaiona.Persistence.Api.CacheMode), cacheMode));
         }
 
-        public IUnitOfWork UnitOfWork { get { return (UoW); } }
+        public IUnitOfWork UnitOfWork
+        { get { return (UoW); } }
 
         public void Evict()
         {
@@ -57,7 +59,6 @@ namespace Vaiona.PersistenceProviders.NH
 
         public bool IsTransient(object proxy)
         {
-
             ISessionImplementor isim = null;
             if (UoW is NHibernateUnitOfWork)
                 isim = (this.UnitOfWork as NHibernateUnitOfWork).Session.GetSessionImplementation();
@@ -65,7 +66,6 @@ namespace Vaiona.PersistenceProviders.NH
                 isim = (this.UnitOfWork as NHibernateBulkUnitOfWork).Session.GetSessionImplementation();
             bool? result = NHibernate.Engine.ForeignKeys.IsTransientSlow(proxy.GetType().FullName, proxy, isim);
             return (result == null ? false : (bool)result);
-
         }
 
         public TEntity Reload(TEntity entity)

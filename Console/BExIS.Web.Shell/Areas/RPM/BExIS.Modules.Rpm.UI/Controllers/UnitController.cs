@@ -1,15 +1,14 @@
 ﻿using BExIS.App.Bootstrap.Attributes;
+using BExIS.Dlm.Entities.DataStructure;
 using BExIS.Dlm.Services.DataStructure;
+using BExIS.Modules.Rpm.UI.Models;
+using BExIS.Modules.Rpm.UI.Models.Dimensions;
+using BExIS.Modules.Rpm.UI.Models.Units;
 using BExIS.UI.Helpers;
 using System;
 using System.Collections.Generic;
-using System.Web.Mvc;
-using BExIS.Modules.Rpm.UI.Models.Units;
-using BExIS.Modules.Rpm.UI.Models.Dimensions;
-using BExIS.Dlm.Entities.DataStructure;
 using System.Linq;
-using Telerik.Web.Mvc.UI.Html;
-using BExIS.Modules.Rpm.UI.Models;
+using System.Web.Mvc;
 
 namespace BExIS.Modules.Rpm.UI.Controllers
 {
@@ -29,7 +28,6 @@ namespace BExIS.Modules.Rpm.UI.Controllers
         [HttpGet]
         public JsonResult GetUnits()
         {
-
             using (UnitManager unitManager = new UnitManager())
             {
                 return Json(convertToUnitListItem(unitManager.Repo.Get().OrderBy(u => u.Id).ToList()), JsonRequestBehavior.AllowGet);
@@ -53,7 +51,6 @@ namespace BExIS.Modules.Rpm.UI.Controllers
             }
         }
 
-
         [JsonNetFilter]
         [HttpGet]
         public JsonResult GetDimensions()
@@ -68,7 +65,8 @@ namespace BExIS.Modules.Rpm.UI.Controllers
         [HttpPost]
         public JsonResult EditUnit(UnitListItem unitListItem)
         {
-            ValidationResult validationResult = new ValidationResult {
+            ValidationResult validationResult = new ValidationResult
+            {
                 IsValid = false,
                 ValidationItems = new List<ValidationItem>(),
             };
@@ -88,11 +86,11 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                     if (validationResult.IsValid)
                     {
                         Unit unit = new Unit();
-                        
+
                         if (unitListItem.Id == 0)
                         {
-                            unit = unitManager.Create(unitListItem.Name, unitListItem.Abbreviation, unitListItem.Description,unitManager.DimensionRepo.Get(unitListItem.Dimension.Id), (MeasurementSystem)Enum.Parse(typeof(MeasurementSystem), unitListItem.MeasurementSystem));
-                            // The element have to be reloaded after ceate  
+                            unit = unitManager.Create(unitListItem.Name, unitListItem.Abbreviation, unitListItem.Description, unitManager.DimensionRepo.Get(unitListItem.Dimension.Id), (MeasurementSystem)Enum.Parse(typeof(MeasurementSystem), unitListItem.MeasurementSystem));
+                            // The element have to be reloaded after ceate
                             unit = unitManager.Repo.Get(unit.Id);
                         }
                         else
@@ -103,7 +101,6 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                             unit.Description = unitListItem.Description;
                             unit.Dimension = unitManager.DimensionRepo.Get(unitListItem.Dimension.Id);
                             unit.MeasurementSystem = (MeasurementSystem)Enum.Parse(typeof(MeasurementSystem), unitListItem.MeasurementSystem);
-                            
                         }
                         if (unitListItem.Datatypes.Count > 0)
                         {
@@ -111,7 +108,6 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                         }
                         unit = unitManager.Update(unit);
                         unitListItem = convertToUnitListItem(unit);
-
                     }
                     result = new
                     {
@@ -152,6 +148,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
             }
             return dimensionListItems;
         }
+
         private DimensionListItem convertToDimensionListItem(Dimension dimension)
         {
             DimensionListItem dimensionListItem = new DimensionListItem
@@ -174,6 +171,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
             }
             return dataTypeListItems;
         }
+
         private DataTypeListItem convertToDataTypeListItem(DataType dataType)
         {
             DataTypeListItem dataTypeListItem = new DataTypeListItem
@@ -196,6 +194,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
             }
             return unitListItems;
         }
+
         private UnitListItem convertToUnitListItem(Unit unit)
         {
             bool inuse = false;
@@ -258,10 +257,9 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                             validationResult.ValidationItems.Add(new ValidationItem { Name = "Abbreviation", Message = "Abbreviation already exist" });
                         }
                     }
-
                 }
                 if (unitListItem.Datatypes == null || unitListItem.Datatypes.Count() == 0)
-                { 
+                {
                     validationResult.IsValid = false;
                     validationResult.ValidationItems.Add(new ValidationItem { Name = "Datatypes", Message = "Choose at least one Data Type" });
                 }
@@ -269,6 +267,16 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                 {
                     validationResult.IsValid = false;
                     validationResult.ValidationItems.Add(new ValidationItem { Name = "Dimension", Message = "Select an Dimension" });
+                }
+                if (String.IsNullOrEmpty(unitListItem.MeasurementSystem))
+                {
+                    validationResult.IsValid = false;
+                    validationResult.ValidationItems.Add(new ValidationItem { Name = "Measurement System", Message = "Select an Measurement System" });
+                }
+                else if (!Enum.IsDefined(typeof(MeasurementSystem), unitListItem.MeasurementSystem))
+                {
+                    validationResult.IsValid = false;
+                    validationResult.ValidationItems.Add(new ValidationItem { Name = "Measurement System", Message = "Wrong Measurement System" });
                 }
                 return validationResult;
             }

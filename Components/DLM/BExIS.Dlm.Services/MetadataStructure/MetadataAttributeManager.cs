@@ -11,9 +11,10 @@ namespace BExIS.Dlm.Services.MetadataStructure
 {
     public class MetadataAttributeManager : IDisposable
     {
-        ConstraintHelper helper = new ConstraintHelper();
+        private ConstraintHelper helper = new ConstraintHelper();
 
         private IUnitOfWork guow = null;
+
         public MetadataAttributeManager()
         {
             guow = this.GetIsolatedUnitOfWork();
@@ -29,6 +30,7 @@ namespace BExIS.Dlm.Services.MetadataStructure
         }
 
         private bool isDisposed = false;
+
         ~MetadataAttributeManager()
         {
             Dispose(true);
@@ -56,6 +58,7 @@ namespace BExIS.Dlm.Services.MetadataStructure
 
         // provide read only repos for the whole aggregate area
         public IReadOnlyRepository<MetadataAttribute> MetadataAttributeRepo { get; private set; }
+
         public IReadOnlyRepository<MetadataParameter> MetadataParameterRepo { get; private set; }
         public IReadOnlyRepository<MetadataSimpleAttribute> MetadataSimpleAttributeRepo { get; private set; }
         public IReadOnlyRepository<MetadataCompoundAttribute> MetadataCompoundAttributeRepo { get; private set; }
@@ -63,7 +66,7 @@ namespace BExIS.Dlm.Services.MetadataStructure
         public IReadOnlyRepository<MetadataAttributeUsage> MetadataAttributeUsageRepo { get; private set; }
         public IReadOnlyRepository<MetadataParameterUsage> MetadataParameterUsageRepo { get; private set; }
 
-        #endregion
+        #endregion Data Readers
 
         #region MetadataAttribute
 
@@ -110,7 +113,7 @@ namespace BExIS.Dlm.Services.MetadataStructure
         /// <returns></returns>
         public MetadataSimpleAttribute Create(string shortName, string name, string description, bool isMultiValue, bool isBuiltIn, string scope, MeasurementScale measurementScale, DataContainerType containerType, string entitySelectionPredicate,
             DataType dataType, Unit unit, Methodology methodology,
-            //Classifier classifier, 
+            //Classifier classifier,
             ICollection<AggregateFunction> functions, ICollection<GlobalizationInfo> globalizationInfos, ICollection<Constraint> constraints
             )
         {
@@ -154,7 +157,7 @@ namespace BExIS.Dlm.Services.MetadataStructure
         /// </summary>
         /// <param name="entity">is an unsaved compound metadata data attribute</param>
         /// <returns>The saved compound metadata attribute</returns>
-        /// <remarks>The attribute should have at least two other attributes as its member to be considered a compound! Also it should have at least a non empty short name.</remarks>     
+        /// <remarks>The attribute should have at least two other attributes as its member to be considered a compound! Also it should have at least a non empty short name.</remarks>
         public MetadataCompoundAttribute Create(MetadataCompoundAttribute entity)
         {
             Contract.Requires(!string.IsNullOrWhiteSpace(entity.ShortName));
@@ -177,12 +180,12 @@ namespace BExIS.Dlm.Services.MetadataStructure
         /// </summary>
         /// <param name="entity">is an unsaved metadata parameter</param>
         /// <returns>The saved metadata parameter</returns>
-        /// <remarks>It should have at least a non empty short name.</remarks>     
+        /// <remarks>It should have at least a non empty short name.</remarks>
         public MetadataParameter Create(MetadataParameter entity)
         {
             if (entity == null) throw new ArgumentNullException(nameof(entity), "parameter not exist.");
-            if(string.IsNullOrWhiteSpace(entity.ShortName)) throw new ArgumentNullException(nameof(entity.ShortName), "shortname of parameter is empty.");
-            if(entity.DataType == null) throw new ArgumentNullException(nameof(entity.DataType), "data type of parameter is null.");
+            if (string.IsNullOrWhiteSpace(entity.ShortName)) throw new ArgumentNullException(nameof(entity.ShortName), "shortname of parameter is empty.");
+            if (entity.DataType == null) throw new ArgumentNullException(nameof(entity.DataType), "data type of parameter is null.");
             Contract.Ensures(Contract.Result<MetadataCompoundAttribute>() != null && Contract.Result<MetadataCompoundAttribute>().Id >= 0);
 
             using (IUnitOfWork uow = this.GetUnitOfWork())
@@ -291,10 +294,9 @@ namespace BExIS.Dlm.Services.MetadataStructure
 
                 return (merged);
             }
-
         }
 
-        #endregion
+        #endregion MetadataAttribute
 
         #region Associations
 
@@ -306,10 +308,10 @@ namespace BExIS.Dlm.Services.MetadataStructure
         /// <param name="label"></param>
         /// <param name="description"></param>
         /// <returns></returns>
-        public MetadataParameterUsage AddParameterUsage(MetadataAttribute attribute, MetadataParameter parameter, bool required, string defaultValue)
+        public MetadataParameterUsage AddParameterUsage(MetadataAttribute attribute, MetadataParameter parameter, bool required, string defaultValue, string fixedValue)
         {
-            if(parameter == null || parameter.Id <= 0) throw new ArgumentNullException("parameter","parameter should not be null.") ;
-            if(attribute == null || attribute.Id <= 0) throw new ArgumentNullException("attribute", "attribute should not be null.");
+            if (parameter == null || parameter.Id <= 0) throw new ArgumentNullException("parameter", "parameter should not be null.");
+            if (attribute == null || attribute.Id <= 0) throw new ArgumentNullException("attribute", "attribute should not be null.");
 
             string label = parameter.Name;
             string description = parameter.Description;
@@ -333,10 +335,11 @@ namespace BExIS.Dlm.Services.MetadataStructure
                     Label = parameter.Name,
                     Description = description,
                     MinCardinality = min,
-                    DefaultValue = defaultValue
+                    DefaultValue = defaultValue,
+                    FixedValue = fixedValue
                 };
 
-               //attribute.MetadataParameterUsages.Add(usage);
+                //attribute.MetadataParameterUsages.Add(usage);
 
                 IRepository<MetadataParameterUsage> repo = uow.GetRepository<MetadataParameterUsage>();
                 repo.Put(usage);
@@ -400,8 +403,6 @@ namespace BExIS.Dlm.Services.MetadataStructure
             helper.Delete(constraint);
         }
 
-
-        #endregion
-
+        #endregion Associations
     }
 }

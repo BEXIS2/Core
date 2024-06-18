@@ -250,19 +250,7 @@ namespace BExIS.IO.Transform.Output
 
                     if (vv != null && vv.Value != null)
                     {
-                        // checking for display pattern
-                        string format = GetStringFormat(variable.DisplayPatternId);
-                        if (!string.IsNullOrEmpty(format))
-                        {
-                            value = GetFormatedValue(vv.Value, dataType, format);
-                        }
-                        else value = vv.Value.ToString();
-
-                        // check if the value is a missing value and should be replaced
-                        if (variable.MissingValues.Any(mv => mv.Placeholder.Equals(value)))
-                        {
-                            value = variable.MissingValues.FirstOrDefault(mv => mv.Placeholder.Equals(value)).DisplayName;
-                        }
+                        value = formatValue(vv.Value, variable.DataType, variable.DisplayPatternId, GetStringFormat(variable.DisplayPatternId), variable.MissingValues);
 
                         // Add value to row
                         line[i] = escapeValue(value);
@@ -291,40 +279,24 @@ namespace BExIS.IO.Transform.Output
                 long varId = 0;
                 var column = row.Table.Columns[i]; // get column
                 string cName = column?.ColumnName; // get column name
-                if (!string.IsNullOrEmpty(cName) && cName.StartsWith("var")) {
+                if (!string.IsNullOrEmpty(cName) && cName.StartsWith("var"))
+                {
                     string replacedCName = cName.Replace("var", "");
                     Int64.TryParse(replacedCName, out varId); // convert string to id
-                 }
-
+                }
 
                 // get value as string
                 string value = row[i].ToString();
 
                 // check if the value is a missing value and should be replaced
-                int j = internalId ? i-1:i;
+                int j = internalId ? i - 1 : i;
                 if (j >= 0)
                 {
-
-                    VariableInstance variable = varId==0? dataStructure.Variables.Where(v => v.Label.Equals(cName)).FirstOrDefault() : dataStructure.Variables.Where(v=>v.Id.Equals(varId)).FirstOrDefault();
+                    VariableInstance variable = varId == 0 ? dataStructure.Variables.Where(v => v.Label.Equals(cName)).FirstOrDefault() : dataStructure.Variables.Where(v => v.Id.Equals(varId)).FirstOrDefault();
 
                     if (variable != null)
                     {
-                        //checking for display pattern
-                        Dlm.Entities.DataStructure.DataType dataType = variable.DataType;
-                        string format = GetStringFormat(variable.DisplayPatternId);
-                        if (!string.IsNullOrEmpty(format))
-                        {
-                            value = GetFormatedValue(value, dataType, format);
-                        }
-                        else value = value.ToString();
-
-                        // checking for missing values
-                        if (variable.MissingValues.Any(mv => mv.Placeholder.Equals(value)))
-                        {
-
-                            value = variable.MissingValues.FirstOrDefault(mv => mv.Placeholder.Equals(value)).DisplayName;
-                        }
-
+                        value = formatValue(value, variable.DataType, variable.DisplayPatternId, GetStringFormat(variable.DisplayPatternId), variable.MissingValues);
                     }
                     // add value to row
                     line[j] = escapeValue(value);
@@ -351,19 +323,7 @@ namespace BExIS.IO.Transform.Output
 
                 if (variable != null)
                 {
-                    //checking for display pattern
-                    Dlm.Entities.DataStructure.DataType dataType = variable.DataType;
-                    string format = GetStringFormat(variable.DisplayPatternId);
-                    if (!string.IsNullOrEmpty(format))
-                    {
-                        value = GetFormatedValue(value, dataType, format);
-                    }
-                    else value = value.ToString();
-
-                    if (variable.MissingValues.Any(mv => mv.Placeholder.Equals(value)))
-                    {
-                        value = variable.MissingValues.FirstOrDefault(mv => mv.Placeholder.Equals(value)).DisplayName;
-                    }
+                    value = formatValue(value, variable.DataType, variable.DisplayPatternId, GetStringFormat(variable.DisplayPatternId), variable.MissingValues);
                 }
                 newRow.Add(value);
             }
@@ -407,6 +367,34 @@ namespace BExIS.IO.Transform.Output
             return value;
         }
 
+        /// <summary>
+        /// convert value to format or replace as missing value
+        /// </summary>
+        /// <param name="v"></param>
+        /// <param name="dataType"></param>
+        /// <param name="displayPatternId"></param>
+        /// <param name="format"></param>
+        /// <param name="missingValues"></param>
+        /// <returns></returns>
+        private string formatValue(object v, Dlm.Entities.DataStructure.DataType dataType, long displayPatternId, string format, ICollection<MissingValue> missingValues)
+        {
+            string originalValue = v.ToString(); //prepare to check against the missing values
+                                                 //checking for display pattern
+            if (!string.IsNullOrEmpty(format))
+            {
+                v = GetFormatedValue(v, dataType, format);
+            }
+            else v = v.ToString();
+
+            // checking for missing values against the original value
+            if (missingValues.Any(mv => mv.Placeholder.Equals(originalValue)))
+            {
+                v = missingValues.FirstOrDefault(mv => mv.Placeholder.Equals(originalValue)).DisplayName;
+            }
+
+            return v.ToString();
+        }
+
         #endregion helper
 
         #region bexis internal usage
@@ -416,7 +404,7 @@ namespace BExIS.IO.Transform.Output
         /// </summary>
         /// <param name="filepath"></param>
         /// <returns></returns>
-        public static new string CreateFile(string filepath)
+        public new static string CreateFile(string filepath)
         {
             // method is needed as C# does not support static method inheritance
 

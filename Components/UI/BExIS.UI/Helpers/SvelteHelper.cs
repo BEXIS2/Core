@@ -2,9 +2,6 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace BExIS.UI.Helpers
 {
@@ -90,7 +87,7 @@ namespace BExIS.UI.Helpers
 
         public static string GetStart(string module)
         {
-            return getScript(module, "node_modules/@sveltejs/kit/src/runtime/client/start.js");
+            return getScript(module, "node_modules/@sveltejs/kit/src/runtime/client/entry.js");
         }
 
         private static string getCss(string module, string key)

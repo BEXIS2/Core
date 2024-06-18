@@ -552,8 +552,10 @@ BEGIN TRANSACTION;
 /*Settings*/
 INSERT INTO public.features(
 versionno, extra, description, name, parentref)
-SELECT 1, null, '', 'Settings', null
+SELECT 1, null, '', 'Settings', 1
 WHERE NOT EXISTS (SELECT * FROM public.features WHERE name='Settings');
+
+
 /*Entity Template Management*/
 INSERT INTO public.features(
 versionno, extra, description, name, parentref)
@@ -567,7 +569,7 @@ INSERT INTO public.features(
 versionno, extra, description, name, parentref)
 SELECT 1, null, '', 'Dimension Management', 
 (
-    Select id from features where name = 'Data Planing'
+    Select id from features where name = 'Data Planning'
 )
 WHERE NOT EXISTS (SELECT * FROM public.features WHERE name='Dimension Management');
 
@@ -576,7 +578,7 @@ INSERT INTO public.features(
 versionno, extra, description, name, parentref)
 SELECT 1, null, '', 'Constraint Management', 
 (
-    Select id from features where name = 'Data Planing'
+    Select id from features where name = 'Data Planning'
 )
 WHERE NOT EXISTS (SELECT * FROM public.features WHERE name='Constraint Management');
 
@@ -585,7 +587,7 @@ INSERT INTO public.features(
 versionno, extra, description, name, parentref)
 SELECT 1, null, '', 'Data Type Management', 
 (
-    Select id from features where name = 'Data Planing'
+    Select id from features where name = 'Data Planning'
 )
 WHERE NOT EXISTS (SELECT * FROM public.features WHERE name='Data Type Management');
 
@@ -594,7 +596,7 @@ INSERT INTO public.features(
 versionno, extra, description, name, parentref)
 SELECT 1, null, '', 'Meaning', 
 (
-    Select id from features where name = 'Data Planing'
+    Select id from features where name = 'Data Planning'
 )
 WHERE NOT EXISTS (SELECT * FROM public.features WHERE name='Meaning');
 /*Meaning API*/
@@ -603,9 +605,12 @@ INSERT INTO public.features(
 versionno, extra, description, name, parentref)
 SELECT 1, null, '', 'Meaning API', 
 (
-    Select id from features where name = 'Data Planing'
+    Select id from features where name = 'Data Planning'
 )
 WHERE NOT EXISTS (SELECT * FROM public.features WHERE name='Meaning API');
+
+/* reset dataset uplpad to data upload*/
+Update features set name = 'Data Upload'  where name = 'Dataset Upload'; 
 
 /* Update Operations */
 /*  ADD **/
@@ -694,7 +699,7 @@ Select id from features where name = 'Data Planning'))
 WHERE NOT EXISTS (SELECT * FROM public.operations WHERE module='RPM' AND controller='DataStructure');
 /* RPM	VariableTemplate **/
 INSERT INTO public.operations (versionno, extra, module, controller, action, featureref)
-SELECT 1, NULL, 'RPM', 'VariableTemplate', '*', (Select id from features where name = 'Variables Template Management' AND parentref = (
+SELECT 1, NULL, 'RPM', 'VariableTemplate', '*', (Select id from features where name = 'Variable Template Management' AND parentref = (
 Select id from features where name = 'Data Planning'))
 WHERE NOT EXISTS (SELECT * FROM public.operations WHERE module='RPM' AND controller='VariableTemplate');
 /* RPM	Dimension **/
@@ -704,12 +709,7 @@ Select id from features where name = 'Data Planning'))
 WHERE NOT EXISTS (SELECT * FROM public.operations WHERE module='RPM' AND controller='Dimension');
 /* RPM	Constraints **/
 INSERT INTO public.operations (versionno, extra, module, controller, action, featureref)
-SELECT 1, NULL, 'RPM', 'Constraints', '*', (Select id from features where name = 'Constraints Management' AND parentref = (
-Select id from features where name = 'Data Planning'))
-WHERE NOT EXISTS (SELECT * FROM public.operations WHERE module='RPM' AND controller='Constraints');
-/* RPM	Constraints **/
-INSERT INTO public.operations (versionno, extra, module, controller, action, featureref)
-SELECT 1, NULL, 'RPM', 'Constraints', '*', (Select id from features where name = 'Constraints Management' AND parentref = (
+SELECT 1, NULL, 'RPM', 'Constraints', '*', (Select id from features where name = 'Constraint Management' AND parentref = (
 Select id from features where name = 'Data Planning'))
 WHERE NOT EXISTS (SELECT * FROM public.operations WHERE module='RPM' AND controller='Constraints');
 /* RPM	Data Type **/
@@ -805,17 +805,19 @@ INSERT INTO public.variables(
 Select	versionno, extra, name, description, id, unitref, datatyperef, 'VAR_TEMPL', true
 From public.datacontainers Where discriminator like 'DA';
 	
+/*  set all templates to variables */
+update variables as x
+SET vartemplateref = b.id
+from  variables b
+where x.dataattributeref = b.dataattributeref and b.variablestype = 'VAR_TEMPL';
+
+
 /* set VAR_INST Datatype based on VAR_TEMPL*/
 update variables as x
 SET datatyperef = b.datatyperef
 from  variables as b
 where x.vartemplateref = b.id ;
 
-/*  set all templates to variables */
-update variables as x
-SET vartemplateref = b.id
-from  variables b
-where x.dataattributeref = b.dataattributeref and b.variablestype = 'VAR_TEMPL';
 
 
 /** update Constraints **/
@@ -873,6 +875,5 @@ ALTER
 INSERT INTO public.versions(
 	versionno, extra, module, value, date)
 	VALUES (1, null, 'Shell', '3.0.0-beta',NOW());
-
 
 commit;

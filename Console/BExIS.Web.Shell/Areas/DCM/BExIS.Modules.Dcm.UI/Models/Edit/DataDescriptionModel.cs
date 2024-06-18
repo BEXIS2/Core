@@ -1,8 +1,6 @@
 ﻿using BExIS.UI.Hooks.Caches;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Web;
 
 namespace BExIS.Modules.Dcm.UI.Models.Edit
 {
@@ -15,7 +13,6 @@ namespace BExIS.Modules.Dcm.UI.Models.Edit
         public DateTime? LastModification { get; set; }
 
         public List<VariableModel> Variables { get; set; }
-
 
         // this value is a flag to check wheter all files from upload is readable or not
         // if not the ui should hide data description at all
@@ -46,7 +43,6 @@ namespace BExIS.Modules.Dcm.UI.Models.Edit
         /// </summary>
         public bool EnableEdit { get; set; }
 
-
         public DataDescriptionModel()
         {
             Title = "";
@@ -60,9 +56,7 @@ namespace BExIS.Modules.Dcm.UI.Models.Edit
             IsRestricted = false;
             HasData = false;
             EnableEdit = false;
-
         }
-
     }
 
     public class VariableModel
@@ -71,6 +65,6 @@ namespace BExIS.Modules.Dcm.UI.Models.Edit
         public string Name { get; set; }
         public string Unit { get; set; }
         public string DataType { get; set; }
-
+        public bool IsKeys { get; set; }
     }
 }

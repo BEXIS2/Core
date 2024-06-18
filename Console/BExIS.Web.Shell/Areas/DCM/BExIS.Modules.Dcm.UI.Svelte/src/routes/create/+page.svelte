@@ -1,14 +1,13 @@
 <script lang="ts">
 	import List from './List.svelte';
 	import Form from './Form.svelte';
-	import { Page, pageContentLayoutType } from '@bexis2/bexis2-core-ui';
+	import { Api, ErrorMessage, Page, host, pageContentLayoutType } from '@bexis2/bexis2-core-ui';
 
 	import type { linkType } from '@bexis2/bexis2-core-ui';
 
-	import { onMount } from 'svelte';
 	import { fade } from 'svelte/transition';
 
-	import { Spinner } from '@bexis2/bexis2-core-ui';
+	import { Spinner,positionType } from '@bexis2/bexis2-core-ui';
 	import { getEntityTemplateList } from './services';
 	import { goTo } from '$services/BaseCaller';
 
@@ -20,12 +19,12 @@
 	// $:systemkeys= [];
 	$: selected = entitytemplate;
 
-	onMount(async () => {
-		entitytemplates = await getEntityTemplateList();
-	});
-
 	$: isOpen = false;
 
+	async function load() {
+		entitytemplates = await getEntityTemplateList();
+		
+	}
 	function handleSelect(e) {
 		console.log('on select');
 		//remove form from dom
@@ -64,7 +63,13 @@
 	contentLayoutType={pageContentLayoutType.full}
 >
 	<div in:fade={{ delay: 500 }} out:fade={{ delay: 500 }}>
-		{#if entitytemplates}
+
+		{#await load()}
+			<div class="text-surface-800">
+				<Spinner position={positionType.center} label="loading entity templates" />
+			</div>
+		{:then result}
+
 			<div class="grid grid-cols-1 lg:grid-cols-2 gap-3">
 				<List items={entitytemplates} on:select={handleSelect} />
 
@@ -76,8 +81,9 @@
 					/>
 				{/if}
 			</div>
-		{:else}
-			<Spinner />
-		{/if}
+
+		{:catch error}
+			<ErrorMessage {error} />
+		{/await}
 	</div>
 </Page>

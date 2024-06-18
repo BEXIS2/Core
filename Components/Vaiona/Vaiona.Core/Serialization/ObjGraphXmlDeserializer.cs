@@ -11,10 +11,10 @@ namespace Vaiona.Core.Serialization
 {
     public class ObjGraphXmlDeserializer : ObjGraphXmlSerializationBase
     {
-        CultureInfo cult;
-        Dictionary<int, Type> deserializationTypeCache = null;
-        Dictionary<int, object> deserializationObjCache = new Dictionary<int, object>();
-        ITypeResolver typeResolver;
+        private CultureInfo cult;
+        private Dictionary<int, Type> deserializationTypeCache = null;
+        private Dictionary<int, object> deserializationObjCache = new Dictionary<int, object>();
+        private ITypeResolver typeResolver;
 
         public object Deserialize(XmlDocument xml, int maxSupportedVer, ITypeResolver typeResolver)
         {
@@ -32,10 +32,10 @@ namespace Vaiona.Core.Serialization
             return DeserializeCore(doc.DocumentElement);
         }
 
-        void DeserializeComplexType(object obj, Type objType, XmlNode firstChild)
+        private void DeserializeComplexType(object obj, Type objType, XmlNode firstChild)
         {
             // complex type
-            // get the class's fields                                
+            // get the class's fields
             IDictionary<string, MemberInfo> dictMembers = GetTypeMembersInfo(objType);
             // set values for fields that are found
             for (XmlNode node = firstChild; node != null; node = node.NextSibling)
@@ -55,7 +55,7 @@ namespace Vaiona.Core.Serialization
             }
         }
 
-        void LoadTypeCache(XmlElement element)
+        private void LoadTypeCache(XmlElement element)
         {
             XmlNodeList children = element.GetElementsByTagName("TypeInfo");
             deserializationTypeCache = new Dictionary<int, Type>(children.Count);
@@ -67,7 +67,7 @@ namespace Vaiona.Core.Serialization
             }
         }
 
-        object DeserializeCore(XmlElement element)
+        private object DeserializeCore(XmlElement element)
         {
             // check if this is a reference to another object
             int objId;
@@ -94,14 +94,14 @@ namespace Vaiona.Core.Serialization
             int subItems = element.ChildNodes.Count;
             XmlNode firstChild = element.FirstChild;
 
-            // load type cache if available            
+            // load type cache if available
             if (element.GetAttribute("hasTypeCache") == "true")
             {
                 LoadTypeCache((XmlElement)firstChild); // this should change so that gets the "Types" node by name!
                 subItems--;
                 firstChild = firstChild.NextSibling;
             }
-            // get type            
+            // get type
             Type objType;
             string typeId = element.GetAttribute("typeid");
             if (string.IsNullOrEmpty(typeId))
@@ -199,7 +199,6 @@ namespace Vaiona.Core.Serialization
                 deserializationObjCache.Add(objId, obj);
             }
 
-
             IXmlSerializable xmlSer = obj as IXmlSerializable;
             if (xmlSer == null)
             {
@@ -231,7 +230,7 @@ namespace Vaiona.Core.Serialization
                         // it's a dictionary
                         foreach (object val in ValuesFromNode(firstChild))
                         {
-                            // should be a Dictionary                                    
+                            // should be a Dictionary
                             Dictionary<string, object> dictVal = (Dictionary<string, object>)val;
                             if (dictVal.ContainsKey("key"))
                             {
@@ -267,7 +266,7 @@ namespace Vaiona.Core.Serialization
             return obj;
         }
 
-        IEnumerable ValuesFromNode(XmlNode firstChild)
+        private IEnumerable ValuesFromNode(XmlNode firstChild)
         {
             for (XmlNode node = firstChild; node != null; node = node.NextSibling)
             {
@@ -275,7 +274,7 @@ namespace Vaiona.Core.Serialization
             }
         }
 
-        object GetObjFromCache(int objId)
+        private object GetObjFromCache(int objId)
         {
             object obj;
             if (deserializationObjCache.TryGetValue(objId, out obj))
@@ -285,7 +284,7 @@ namespace Vaiona.Core.Serialization
             return null;
         }
 
-        Type InferTypeFromElement(XmlElement element)
+        private Type InferTypeFromElement(XmlElement element)
         {
             Type objType;
             string typeFullName = element.GetAttribute("type");
@@ -314,6 +313,5 @@ namespace Vaiona.Core.Serialization
             }
             return objType;
         }
-
     }
 }

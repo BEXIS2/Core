@@ -1,4 +1,4 @@
-{
+Ôªø{
   "@id": "1",
   "Basic": {
     "@ref": "",
@@ -15,7 +15,7 @@
         "@partyid": "1",
         "Name": {
           "@ref": "",
-          "#text": "David Schˆne"
+          "#text": "David Sch√∂ne"
         },
         "Email": {
           "@ref": "",
@@ -27,7 +27,7 @@
         },
         "Address": {
           "@ref": "",
-          "#text": "Von der Gabelentz Straﬂe 9 erfurt 99089 Deutschland"
+          "#text": "Von der Gabelentz Stra√üe 9 erfurt 99089 Deutschland"
         }
       },
       {
@@ -78,7 +78,7 @@
         "@partyid": "1",
         "Name": {
           "@ref": "",
-          "#text": "David Schˆne"
+          "#text": "David Sch√∂ne"
         },
         "Email": {
           "@ref": "",
@@ -90,7 +90,7 @@
         },
         "Address": {
           "@ref": "",
-          "#text": "Von der Gabelentz Straﬂe 9 erfurt 99089 Deutschland"
+          "#text": "Von der Gabelentz Stra√üe 9 erfurt 99089 Deutschland"
         }
       }
     ]

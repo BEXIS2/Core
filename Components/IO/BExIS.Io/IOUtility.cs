@@ -6,8 +6,6 @@ namespace BExIS.IO
 {
     public class IOUtility
     {
-
-
         public bool IsDate(string value)
         {
             DateTime dateTime;
@@ -37,7 +35,6 @@ namespace BExIS.IO
 
         public bool IsDate(string value, out DateTime dateTime)
         {
-
             if (DateTime.TryParse(value, out dateTime))
             {
                 return true;
@@ -94,7 +91,6 @@ namespace BExIS.IO
             return false;
         }
 
-
         /// <summary>
         /// Convert a Datetime as string to a datetime as string from a other culture.
         /// </summary>
@@ -140,7 +136,7 @@ namespace BExIS.IO
                 }
             }
 
-            return null;
+            return "";
         }
 
         /// <summary>
@@ -150,8 +146,6 @@ namespace BExIS.IO
         /// <returns></returns>
         public virtual bool TryConvertDate(string dateAsString, out DateTime dateTime)
         {
-
-
             if (DateTime.TryParse(dateAsString, out dateTime))
             {
                 //return dateTime.ToString(CultureInfo.InvariantCulture);
@@ -189,7 +183,6 @@ namespace BExIS.IO
 
             return false;
         }
-
 
         /// <summary>
         /// try to convert a string with a pattern to a datetime
@@ -235,13 +228,11 @@ namespace BExIS.IO
                 }
             }
 
-
             return false;
         }
 
         public string ExportDateTimeString(string dateAsString, string pattern, out DateTime dateTime, CultureInfo cultureInfo = null)
         {
-
             if (DateTime.TryParse(dateAsString, new CultureInfo("en-US", false), DateTimeStyles.NoCurrentDateDefault, out dateTime))
             {
                 return dateTime.ToString(pattern);
@@ -266,7 +257,7 @@ namespace BExIS.IO
         }
 
         /// <summary>
-        /// returns true if the file is supported 
+        /// returns true if the file is supported
         /// "e.g. .csv"
         /// </summary>
         /// <param name="extention"></param>
@@ -284,7 +275,7 @@ namespace BExIS.IO
         }
 
         /// <summary>
-        /// returns true if the file is supported 
+        /// returns true if the file is supported
         /// "e.g. .csv"
         /// </summary>
         /// <param name="extention"></param>
@@ -307,6 +298,5 @@ namespace BExIS.IO
 
             return false;
         }
-
     }
 }

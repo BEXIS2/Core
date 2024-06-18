@@ -2,19 +2,18 @@
 
 @model List<Measurement>
 
-
 @foreach (Measurement m in Model)
 {
-    <tr class="mmm-values">
-        <td>@m.Id</td>
-        <td>@m.Type</td>
-        <td>@m.Length</td>
-        <td>@m.Width</td>
-        <td>@m.Area</td>
-        <td>@m.Perimeter</td>
-    </tr>
+<tr class="mmm-values">
+    <td>@m.Id</td>
+    <td>@m.Type</td>
+    <td>@m.Length</td>
+    <td>@m.Width</td>
+    <td>@m.Area</td>
+    <td>@m.Perimeter</td>
+</tr>
     if (m.Children != null && m.Children.Count > 0)
-    {   
-        @Html.Partial("_measurementView", m.Children)
+    {
+@Html.Partial("_measurementView", m.Children)
     }
 }

@@ -1,9 +1,9 @@
 <hibernate-mapping xmlns="urn:nhibernate-mapping-2.2" assembly="BExIS.Dlm.Entities" namespace="BExIS.Dlm.Entities.DataStructure">
   <class xmlns="urn:nhibernate-mapping-2.2" name="Unit" table="Units" dynamic-update="true" select-before-update="true">
     <!-- Mapping BaseEntity properties -->
-    
+
     <id name="Id" type="Int64">
-      <column name="Id" index="idx_Units_id"/>
+      <column name="Id" index="idx_Units_id" />
       <generator class="native" />
     </id>
 
@@ -16,9 +16,9 @@
     </property>
 
     <!-- Mapping Entity properties -->
-    
+
     <property name="Name" type="String">
-      <column name="Name" index="idx_Units_name"/>
+      <column name="Name" index="idx_Units_name" />
     </property>
 
     <property name="Abbreviation" type="String">
@@ -34,8 +34,8 @@
     </property>
 
     <set name="ConversionsIamTheSource" cascade="none" inverse="true" lazy="false">
-      <key column="SourceUnitRef" not-null="true"/>
-      <one-to-many class="ConversionMethod"/>
+      <key column="SourceUnitRef" not-null="true" />
+      <one-to-many class="ConversionMethod" />
     </set>
 
     <!--
@@ -43,26 +43,24 @@
     so when I try to delete a unit, it tries to delete the conversion method that it acts a the source, and the conversion method tries to update the unit, ...
     one solution is to stay with current, second: I am looking for :-( 25.06.12, Javad
     -->
-    <set name="ConversionsIamTheTarget" cascade="none" inverse="true" lazy="false">      
-      <key column="TargetUnitRef" not-null="true"/>
-      <one-to-many class="ConversionMethod"/>
+    <set name="ConversionsIamTheTarget" cascade="none" inverse="true" lazy="false">
+      <key column="TargetUnitRef" not-null="true" />
+      <one-to-many class="ConversionMethod" />
     </set>
 
     <!-- Cascade only update. in case of delete set the FK in the data container to null-->
-    <set name="DataContainers" inverse="true" cascade="save-update"> 
-      <key column="UnitRef" not-null="false"/>
-      <one-to-many class="DataContainer"/>
+    <set name="DataContainers" inverse="true" cascade="save-update">
+      <key column="UnitRef" not-null="false" />
+      <one-to-many class="DataContainer" />
     </set>
-          
+
     <set name="AssociatedDataTypes" table="Units_DataTypes" cascade="save-update" lazy="false">
-      <key column="UnitRef"/>
-      <many-to-many column="DataTypeRef" class="DataType"/>
+      <key column="UnitRef" />
+      <many-to-many column="DataTypeRef" class="DataType" />
     </set>
 
-    <many-to-one name="Dimension" class="BExIS.Dlm.Entities.DataStructure.Dimension" not-null="true" column="DimensionRef"/>
+    <many-to-one name="Dimension" class="BExIS.Dlm.Entities.DataStructure.Dimension" not-null="true" column="DimensionRef" />
 
-	<many-to-one name="ExternalLink" class="BExIS.Dlm.Entities.Meanings.ExternalLink" not-null="false" column="ExternalLinkRef"/>
-
+	<many-to-one name="ExternalLink" class="BExIS.Dlm.Entities.Meanings.ExternalLink" not-null="false" column="ExternalLinkRef" />
   </class>
-
 </hibernate-mapping>

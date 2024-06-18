@@ -1,6 +1,6 @@
 <hibernate-mapping xmlns="urn:nhibernate-mapping-2.2" assembly="Vaiona.Entities" namespace="Vaiona.Entities.Logging">
   <subclass name="DataLogEntry" extends="LogEntry" discriminator-value="Data" dynamic-update="true">
-    
+
     <property name="ObjectId" type="String">
       <column name="ObjectId" />
     </property>
@@ -16,7 +16,5 @@
     <property name="State" type="Vaiona.Entities.Logging.CrudState, Vaiona.Entities">
       <column name="EntityState" />
     </property>
-
   </subclass>
-
 </hibernate-mapping>

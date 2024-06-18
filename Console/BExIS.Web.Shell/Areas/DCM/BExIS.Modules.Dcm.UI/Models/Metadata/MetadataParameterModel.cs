@@ -3,8 +3,6 @@ using BExIS.Dlm.Entities.MetadataStructure;
 using BExIS.IO.Transform.Validation.Exceptions;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Web;
 using Vaiona.Persistence.Api;
 
 namespace BExIS.Modules.Dcm.UI.Models.Metadata
@@ -15,6 +13,7 @@ namespace BExIS.Modules.Dcm.UI.Models.Metadata
         /// Parameter Usage Id
         /// </summary>
         public long Id { get; set; }
+
         public long AttributeNumber { get; set; }
         public long ParentModelNumber { get; set; }
         public long ParentStepId { get; set; }
@@ -31,6 +30,7 @@ namespace BExIS.Modules.Dcm.UI.Models.Metadata
         public String DataType { get; set; }
         public String SystemType { get; set; }
         public String DefaultValue { get; set; }
+        public String FixedValue { get; set; }
         public string DisplayPattern { get; set; }
         public int NumberOfSourceInPackage { get; set; }
         public List<object> DomainList { get; set; }
@@ -43,6 +43,8 @@ namespace BExIS.Modules.Dcm.UI.Models.Metadata
         public string ConstraintDescription { get; set; }
 
         public bool IsEmpty = true;
+
+        public bool Locked = false;
 
         private object _value;
 
@@ -67,6 +69,8 @@ namespace BExIS.Modules.Dcm.UI.Models.Metadata
             {
                 Id = this.Id,
                 AttributeNumber = number,
+                MetadataParameterName = this.MetadataParameterName,
+                MetadataParameterId = this.Id,
                 ParentModelNumber = this.ParentModelNumber,
                 MetadataStructureId = this.MetadataStructureId,
                 Parent = this.Parent,
@@ -84,9 +88,7 @@ namespace BExIS.Modules.Dcm.UI.Models.Metadata
                 ParentStepId = this.ParentStepId,
                 UpperBoundary = this.UpperBoundary,
                 LowerBoundary = this.LowerBoundary,
-
             };
         }
-    
     }
 }

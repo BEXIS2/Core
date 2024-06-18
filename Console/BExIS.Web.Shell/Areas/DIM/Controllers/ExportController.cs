@@ -1,4 +1,4 @@
-﻿using BExIS.Dim.Entities.Publication;
+﻿using BExIS.Dim.Entities.Publications;
 using BExIS.Dim.Helpers;
 using BExIS.Dim.Helpers.Export;
 using BExIS.Dim.Services;
@@ -54,9 +54,9 @@ namespace BExIS.Modules.Dim.UI.Controllers
 
                 Repository dataRepo = new Repository();
                 dataRepo.Name = "generic";
-                dataRepo.Broker = broker;
+                broker.Repository = dataRepo;
 
-                GenericDataRepoConverter dataRepoConverter = new GenericDataRepoConverter(dataRepo);
+                GenericDataRepoConverter dataRepoConverter = new GenericDataRepoConverter(broker);
                 Tuple<string, string> tmp = new Tuple<string, string>(dataRepoConverter.Convert(datasetVersionId), "application/zip");
 
                 return File(tmp.Item1, tmp.Item2, Path.GetFileName(tmp.Item1));
@@ -214,7 +214,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
                     LoggerFactory.LogCustom("Primary Data Start");
 
                     // check the data sturcture type ...
-                    if (format != null && datasetVersion.Dataset.DataStructure.Self is StructuredDataStructure && dm.GetDataTuplesCount(datasetVersion.Id) >0)
+                    if (format != null && datasetVersion.Dataset.DataStructure.Self is StructuredDataStructure && dm.GetDataTuplesCount(datasetVersion.Id) > 0)
                     {
                         OutputDataManager odm = new OutputDataManager();
                         // apply selection and projection
@@ -277,7 +277,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
                                 "datastructure", ".txt");
                             string datastructureFilePath = AsciiWriter.CreateFile(dynamicPathOfDS);
 
-                            string json = OutputDataStructureManager.GetVariableListAsJson(dataStructureId);
+                            string json = OutputDataStructureManager.GetDataStructureAsJson(dataStructureId);
 
                             AsciiWriter.AllTextToFile(datastructureFilePath, json);
 
@@ -313,7 +313,8 @@ namespace BExIS.Modules.Dim.UI.Controllers
 
                                 if (FileHelper.FileExist(path))
                                 {
-                                    zip.AddFile(path, "");
+                                    if (!zip.Any(entry => entry.FileName.EndsWith(name)))
+                                        zip.AddFile(path, "");
                                 }
                             }
                         }
@@ -410,12 +411,12 @@ namespace BExIS.Modules.Dim.UI.Controllers
                 //    DatasetVersion = datasetVersion,
                 //};
 
-                if (datasetVersion.ContentDescriptors.Count(p => p.Name.Equals(name)) > 0)
+                if (datasetVersion.ContentDescriptors.Count(p => p.Name.Equals(name) && p.MimeType.Equals(mimeType)) > 0)
                 {
                     // remove the one contentdesciptor
                     foreach (ContentDescriptor cd in datasetVersion.ContentDescriptors)
                     {
-                        if (cd.Name == name)
+                        if (cd.Name.Equals(name) && cd.MimeType.Equals(mimeType))
                         {
                             cd.URI = dynamicPath;
                             dm.UpdateContentDescriptor(cd);

@@ -1,9 +1,10 @@
 ﻿/*	* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
- * Contributed by and used with permission from Nick Muhonen of 
+ * Contributed by and used with permission from Nick Muhonen of
  * Useable Concepts Inc. (http://www.useableconcepts.com/).
  * Copyright of this code is incorporated under the license terms
  * indicated in the AssemblyInfo.cs file of this project.
  *	* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -74,7 +75,6 @@ namespace Vaiona.Web.Security.Az.Parser
                                   rule[currentPos - 1],
                                   currentPos == rule.Length ? "" : rule.Substring(currentPos)));
 
-
             StringBuilder wordBuffer = new StringBuilder();
             Stack<string> stack = new Stack<string>();
 
@@ -86,7 +86,6 @@ namespace Vaiona.Web.Security.Az.Parser
                 {
                     case State.BeginRule:
                         {
-
                             while (current.HasValue && Char.IsWhiteSpace(current.Value))
                                 nextChar();
 
@@ -97,7 +96,6 @@ namespace Vaiona.Web.Security.Az.Parser
                                 while (current.HasValue && Char.IsWhiteSpace(current.Value))
                                     nextChar();
                             }
-
 
                             if (current.HasValue)
                             {
@@ -178,7 +176,6 @@ namespace Vaiona.Web.Security.Az.Parser
                             continue;
                         }
                 }
-
             }
 
             return dumpStack(stack);
@@ -227,8 +224,6 @@ namespace Vaiona.Web.Security.Az.Parser
                             And andRule = rValue as And;
                             if (rValue != null)
                             {
-
-
                             }
 
                             rules.Push(new Or { RValue = rValue });
@@ -267,9 +262,7 @@ namespace Vaiona.Web.Security.Az.Parser
                             break;
                         }
                 }
-
             }
-
 
             if (rules.Count > 1)
                 throw new ArgumentException("Missing an opening paren.");
@@ -277,7 +270,6 @@ namespace Vaiona.Web.Security.Az.Parser
             IAccessRule finalRule = WeighAndOr(rules.Pop());
 
             return finalRule;
-
         }
 
         private IAccessRule WeighAndOr(IAccessRule parentRule)
@@ -329,12 +321,11 @@ namespace Vaiona.Web.Security.Az.Parser
 
         //}
 
-        enum State
+        private enum State
         {
             BeginRule,
             Word,
             AfterRule,
         }
     }
-
 }

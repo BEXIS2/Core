@@ -33,8 +33,16 @@
       <column name="Description" sql-type="text" />
     </property>
 
-    <many-to-one name="Master" class="MetadataCompoundAttribute" not-null="true" column="MetadataCompoundAttributeRef" />
+	<property name="DefaultValue" type="String">
+		<column name="DefaultValue" />
+	</property>
 
-    <many-to-one name="Member"   class="MetadataAttribute"   not-null="true" column="MetadataAttributeRef" lazy="false"/>
+	<property name="FixedValue" type="String">
+		<column name="FixedValue" />
+	</property>
+
+	<many-to-one name="Master" class="MetadataCompoundAttribute" not-null="true" column="MetadataCompoundAttributeRef" />
+
+    <many-to-one name="Member"   class="MetadataAttribute"   not-null="true" column="MetadataAttributeRef" lazy="false" />
   </class>
 </hibernate-mapping>

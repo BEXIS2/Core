@@ -1,7 +1,4 @@
 ﻿@model BExIS.Modules.Dcm.UI.Models.FinishUploadModel
 
-
 <p>File <b>@Model.Filename</b> successfully uploaded to data set <b>@Model.DatasetTitle</b></p>
 <p>Or see your dataset here <b>@Html.ActionLink(@Model.DatasetTitle, "ShowData", "Submit", new  {id = @Model.DatasetId }, new { title = "Link to your dataset." })</b><br /></p>
-                    
-             

@@ -1,9 +1,6 @@
 ﻿@using BExIS.Modules.Ddm.UI.Models
 
-
 @model List<MyDatasetsModel>
-
-
 
 <table id="resources_table" class="display" style="width:100%">
     <thead>
@@ -14,12 +11,9 @@
             <th title="is valid">Metadata <br />complete</th>
             <th title="Tabular">Tabular</th>
             <th title="d"></th>
-
-
         </tr>
     </thead>
     <tbody>
-
 
         @foreach (var m in Model)
         {
@@ -35,17 +29,25 @@
                     <span class="bx fa-check"></span>
                 }            </td>
             <td class="dt-body-center">
-                <a class="bx bx-grid-function bx-show" href="/ddm/Data/Show/@m.Id" target="_blank" title="View details"> </a>
-            </td>
+                <a class="bx bx-grid-function bx-show" href="/ddm/Data/Show/@m.Id" target="_blank" title="View details" style="text-decoration: none;"> </a>
+                @if (m.IsOwn)
+                {
+                    <a class="bx bx-grid-function bx-copy" href="/dcm/create/copy?id=@m.Id" target="_blank" title="Copy " style="text-decoration: none;"> </a>
+
+                    <a class="bx bx-grid-function bx-edit" href="/dcm/edit/?id=@m.Id" target="_blank" title="Edit " style="text-decoration: none;"> </a>
+
+                    if (m.Type == "tabular")
+                    {
+                        <a class="bx bx-grid-function fa-bars" href="/dcm/test/?id=@m.Id" target="_blank" title="Show data (BETA)" style="text-decoration: none;"> </a>
+                    }
+                }
+                </td>
         </tr>
         }
     </tbody>
 </table>
 
-
     <script type="text/javascript">
-
-
 
         $('document').ready(function () {
             jQuery.fn.dataTable.render.ellipsis = function (cutoff, wordbreak, escapeHtml) {
@@ -53,7 +55,7 @@
                     return t
                         .replace(/&/g, '&amp;')
                         .replace(/</g, '&lt;')
-                        .replace(/>/g, '&gt;')
+                        .replace( />/g, '&gt;')
                         .replace(/"/g, '&quot;');
                 };
 
@@ -102,7 +104,6 @@
                     }
                 },
 
-
               /*  columnDefs: [
                     {
                         targets: 1,
@@ -114,7 +115,6 @@
 ;
         })
 
-      
         function resultGrid_OnRowDataBound(e) {
 
             //alert(e.item);
@@ -143,7 +143,6 @@
             // checked
             var id = e.getAttribute("id");
 
-
             var data = {
                 id: id
             }
@@ -168,8 +167,6 @@
                 }
             });
         }
-
-
     </script>
 
     <style type="text/css">

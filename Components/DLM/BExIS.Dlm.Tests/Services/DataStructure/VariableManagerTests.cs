@@ -4,7 +4,6 @@ using BExIS.Dlm.Entities.Meanings;
 using BExIS.Dlm.Services.DataStructure;
 using BExIS.Dlm.Services.Meanings;
 using BExIS.Utils.Config;
-using FluentAssertions;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
@@ -24,14 +23,11 @@ namespace BExIS.Dlm.Tests.Services.DataStructure
         }
 
         [SetUp]
-        /// performs the initial setup for the tests. This runs once per test, NOT per class!
         protected void SetUp()
         {
-
         }
 
         [TearDown]
-        /// performs the cleanup after each test
         public void TearDown()
         {
             using (IUnitOfWork uow = this.GetUnitOfWork())
@@ -41,7 +37,6 @@ namespace BExIS.Dlm.Tests.Services.DataStructure
                 IRepository<VariableInstance> repoVI = uow.GetRepository<VariableInstance>();
                 IRepository<StructuredDataStructure> repoSDS = uow.GetRepository<StructuredDataStructure>();
 
-
                 repoM.Get().ToList().ForEach(m => repoM.Delete(m));
                 repoVT.Get().ToList().ForEach(v => repoVT.Delete(v));
                 repoVI.Get().ToList().ForEach(v => repoVI.Delete(v));
@@ -50,13 +45,12 @@ namespace BExIS.Dlm.Tests.Services.DataStructure
 
                 uow.Commit();
             }
-
         }
 
         [OneTimeTearDown]
         public void OneTimeTearDown()
         {
-            helper.Dispose(); 
+            helper.Dispose();
         }
 
         [Test()]
@@ -68,7 +62,7 @@ namespace BExIS.Dlm.Tests.Services.DataStructure
             {
                 //Arrange
                 var dataType = dataTypeManager.Repo.Get().FirstOrDefault();
-                Assert.IsNotNull(dataType,"datatype not exist");
+                Assert.IsNotNull(dataType, "datatype not exist");
 
                 var unit = unitManager.Repo.Get().FirstOrDefault();
                 Assert.IsNotNull(unit, "unit not exist");
@@ -82,16 +76,14 @@ namespace BExIS.Dlm.Tests.Services.DataStructure
                     "xyz"
                     );
 
-
                 //Assert
 
                 Assert.IsNotNull(variableTemplate);
-                Assert.That(variableTemplate.Id>0);
+                Assert.That(variableTemplate.Id > 0);
 
                 var variableTemplateFromDB = variableManager.GetVariableTemplate(variableTemplate.Id);
 
                 Assert.AreSame(variableTemplate, variableTemplateFromDB);
-
             }
         }
 
@@ -169,30 +161,26 @@ namespace BExIS.Dlm.Tests.Services.DataStructure
                 var dataType = dataTypeManager.Repo.Get().FirstOrDefault();
                 Assert.IsNotNull(dataType, "datatype not exist");
 
-
                 var meaning = new Meaning();
                 meaning.Name = "Test";
                 meaning.Description = "Test";
                 meaning.Selectable = true;
                 meaning = meaningManager.addMeaning(meaning);
 
-
-                var result =  variableManager.CreateVariableTemplate(
+                var result = variableManager.CreateVariableTemplate(
                     "TestVariableTemplate",
                     dataType,
                     unit,
                     "TestVariableTemplate Description",
                     "xyz",
+                    "",
                     new List<Meaning>() { meaning }
-                    );
-               
+                    ); ;
 
                 //Assert
-                Assert.NotNull(result);
+                Assert.That(result, Is.Not.Null);
             }
         }
-
-        
 
         [Test()]
         public void UpdateVariableTemplate_ValidParameters_UpdatedVariableTemplate()
@@ -208,7 +196,7 @@ namespace BExIS.Dlm.Tests.Services.DataStructure
                 var unit = unitManager.Repo.Get().FirstOrDefault();
                 Assert.IsNotNull(unit, "unit not exist");
 
-               // create a variableTemplate
+                // create a variableTemplate
                 var changedVariableTemplate = variableManager.CreateVariableTemplate(
                     "TestVariableTemplate",
                     dataType,
@@ -223,7 +211,6 @@ namespace BExIS.Dlm.Tests.Services.DataStructure
                 //Act
                 var updatedVariableTemplate = variableManager.UpdateVariableTemplate(changedVariableTemplate);
 
-
                 //Assert
 
                 Assert.IsNotNull(changedVariableTemplate);
@@ -231,11 +218,9 @@ namespace BExIS.Dlm.Tests.Services.DataStructure
                 Assert.IsNotNull(updatedVariableTemplate);
                 Assert.That(updatedVariableTemplate.Id > 0);
 
-
                 var variableTemplateFromDB = variableManager.GetVariableTemplate(updatedVariableTemplate.Id);
 
                 Assert.AreEqual(changedVariableTemplate.Label, variableTemplateFromDB.Label);
-
             }
         }
 
@@ -296,7 +281,6 @@ namespace BExIS.Dlm.Tests.Services.DataStructure
                 //Act
                 var result = variableManager.DeleteVariableTemplate(changedVariableTemplate.Id);
 
-
                 //Assert
 
                 Assert.IsTrue(result);
@@ -324,17 +308,17 @@ namespace BExIS.Dlm.Tests.Services.DataStructure
                 meaning.Selectable = true;
                 meaning = meaningManager.addMeaning(meaning);
 
-
                 var varTemp = variableManager.CreateVariableTemplate(
                     "TestVariableTemplate",
                     dataType,
                     unit,
                     "TestVariableTemplate Description",
                     "xyz",
+                    "",
                     new List<Meaning>() { meaning }
                     );
 
-                // act        
+                // act
                 var result = variableManager.DeleteVariableTemplate(varTemp.Id);
 
                 //Assert
@@ -390,7 +374,6 @@ namespace BExIS.Dlm.Tests.Services.DataStructure
                 var variableFromDB = variableManager.GetVariable(variable.Id);
 
                 Assert.AreSame(variable, variableFromDB);
-
             }
         }
 
@@ -442,7 +425,6 @@ namespace BExIS.Dlm.Tests.Services.DataStructure
                 var variableFromDB = variableManager.GetVariable(variable.Id);
 
                 Assert.AreSame(variable, variableFromDB);
-
             }
         }
 
@@ -481,7 +463,7 @@ namespace BExIS.Dlm.Tests.Services.DataStructure
                     );
 
                 //Act
-                var ex = Assert.Throws<ArgumentNullException> (() => variableManager.CreateVariable(
+                var ex = Assert.Throws<ArgumentNullException>(() => variableManager.CreateVariable(
                     "",
                     variableTemplate.DataType,
                     variableTemplate.Unit,
@@ -495,9 +477,9 @@ namespace BExIS.Dlm.Tests.Services.DataStructure
                 //Assert
                 Assert.That(ex.ParamName, Is.EqualTo("name"));
                 Assert.That(ex is ArgumentNullException);
-
             }
         }
+
         [Test()]
         public void CreateVariable_DataTypeIsNull_ArgumentNullException()
         {
@@ -547,7 +529,6 @@ namespace BExIS.Dlm.Tests.Services.DataStructure
                 //Assert
                 Assert.That(ex.ParamName, Is.EqualTo("dataType"));
                 Assert.That(ex is ArgumentNullException);
-
             }
         }
 
@@ -575,7 +556,6 @@ namespace BExIS.Dlm.Tests.Services.DataStructure
                     "xyz"
                     );
 
-
                 //Act
                 var ex = Assert.Throws<ArgumentNullException>(() => variableManager.CreateVariable(
                    "Test Variable",
@@ -591,7 +571,6 @@ namespace BExIS.Dlm.Tests.Services.DataStructure
                 //Assert
                 Assert.That(ex.ParamName, Is.EqualTo("dataStructureId"));
                 Assert.That(ex is ArgumentNullException);
-
             }
         }
 
@@ -632,7 +611,8 @@ namespace BExIS.Dlm.Tests.Services.DataStructure
 
                 // generate list of missing values
                 List<MissingValue> missingValues = new List<MissingValue>();
-                var ms = new MissingValue() {
+                var ms = new MissingValue()
+                {
                     DisplayName = "test",
                     Description = "test",
                     Placeholder = "test"
@@ -652,6 +632,7 @@ namespace BExIS.Dlm.Tests.Services.DataStructure
                     0,
                     "",
                     "",
+                    "",
                     0,
                     missingValues
                     );
@@ -668,8 +649,7 @@ namespace BExIS.Dlm.Tests.Services.DataStructure
                 Assert.IsNotNull(msl);
 
                 Assert.AreSame(variable, variableFromDB);
-                Assert.That(variableFromDB.MissingValues.Count>0);
-
+                Assert.That(variableFromDB.MissingValues.Count > 0);
             }
         }
 
@@ -714,7 +694,7 @@ namespace BExIS.Dlm.Tests.Services.DataStructure
                 var c = new DomainConstraint();
                 c.Name = "test";
                 c.Description = "test description";
-                c.Items.Add(new DomainItem() { Key="a", Value="a" });
+                c.Items.Add(new DomainItem() { Key = "a", Value = "a" });
 
                 c = constraintManager.Create(c);
                 constraints.Add(c);
@@ -729,6 +709,7 @@ namespace BExIS.Dlm.Tests.Services.DataStructure
                     true,
                     1,
                     0,
+                    "",
                     "",
                     "",
                     0,
@@ -749,7 +730,6 @@ namespace BExIS.Dlm.Tests.Services.DataStructure
 
                 Assert.AreSame(variable, variableFromDB);
                 Assert.That(variableFromDB.VariableConstraints.Count > 0);
-
             }
         }
 
@@ -811,13 +791,13 @@ namespace BExIS.Dlm.Tests.Services.DataStructure
                     0,
                     "",
                     "",
+                    "",
                     0,
                     null,
                     constraints.Select(co => co.Id).ToList()
                     );
 
                 dataStructure = datastructureManager.AddVariable(dataStructure.Id, variable.Id);
-
 
                 var variable2 = variableManager.CreateVariable(
                    "TestVariable",
@@ -830,13 +810,12 @@ namespace BExIS.Dlm.Tests.Services.DataStructure
                    0,
                    "",
                    "",
-                   0,
+                   "", 0,
                    null,
                    constraints.Select(co => co.Id).ToList()
                    );
 
                 dataStructure = datastructureManager.AddVariable(dataStructure.Id, variable2.Id);
-
 
                 //Assert
                 Assert.IsNotNull(variable);
@@ -851,7 +830,6 @@ namespace BExIS.Dlm.Tests.Services.DataStructure
 
                 Assert.AreSame(variable, variableFromDB);
                 Assert.That(variableFromDB.VariableConstraints.Count > 0);
-
             }
         }
 
@@ -893,8 +871,6 @@ namespace BExIS.Dlm.Tests.Services.DataStructure
 
                 //Assert
                 Assert.NotNull(result);
-                
-
             }
         }
 
@@ -932,7 +908,6 @@ namespace BExIS.Dlm.Tests.Services.DataStructure
                     null
                     );
 
-                
                 var created = variableManager.CreateVariable(
                     "TestVariable",
                     variableTemplate.DataType,
@@ -959,7 +934,6 @@ namespace BExIS.Dlm.Tests.Services.DataStructure
                 var variableFromDB = variableManager.GetVariable(created.Id);
 
                 Assert.AreEqual(updated.Label, variableFromDB.Label);
-
             }
         }
 
@@ -997,7 +971,6 @@ namespace BExIS.Dlm.Tests.Services.DataStructure
                     null
                     );
 
-
                 var variable = variableManager.CreateVariable(
                     "TestVariable",
                     variableTemplate.DataType,
@@ -1012,12 +985,11 @@ namespace BExIS.Dlm.Tests.Services.DataStructure
                 //Act
                 var result = variableManager.DeleteVariable(variable.Id);
 
-
                 //Assert
                 Assert.IsTrue(result);
-
             }
         }
+
         [Test]
         public void DeleteVariable_WithMeaningAndConstraints_ReturnTrue()
         {
@@ -1089,6 +1061,7 @@ namespace BExIS.Dlm.Tests.Services.DataStructure
                     variableTemplate.Id,
                     "",
                     "",
+                    "",
                     0,
                     null,
                     constraintIds,
@@ -1097,10 +1070,8 @@ namespace BExIS.Dlm.Tests.Services.DataStructure
                 //Act
                 var result = variableManager.DeleteVariable(variable.Id);
 
-
                 //Assert
                 Assert.IsTrue(result);
-
             }
         }
 
@@ -1175,7 +1146,7 @@ namespace BExIS.Dlm.Tests.Services.DataStructure
                     variableTemplate.Id,
                     "",
                     "",
-                    0,
+                    "", 0,
                     null,
                     constraintIds,
                     meaningIds
@@ -1192,6 +1163,7 @@ namespace BExIS.Dlm.Tests.Services.DataStructure
                     variableTemplate.Id,
                     "",
                     "",
+                    "",
                     0,
                     null,
                     constraintIds,
@@ -1202,7 +1174,6 @@ namespace BExIS.Dlm.Tests.Services.DataStructure
 
                 //Assert
                 Assert.IsTrue(result);
-
             }
         }
 
@@ -1236,6 +1207,5 @@ namespace BExIS.Dlm.Tests.Services.DataStructure
                 Assert.That(ex is ArgumentException);
             }
         }
-
     }
 }

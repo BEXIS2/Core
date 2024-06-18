@@ -6,11 +6,11 @@ using System.Xml.XPath;
 
 /// <summary>
 ///
-/// </summary>        
+/// </summary>
 namespace BExIS.Xml.Helpers
 {
     /// <summary>
-    /// 
+    ///
     /// </summary>
     public enum XmlNodeMode
     {
@@ -19,16 +19,16 @@ namespace BExIS.Xml.Helpers
     }
 
     /// <summary>
-    /// 
+    ///
     /// </summary>
-    /// <remarks></remarks>        
+    /// <remarks></remarks>
     public class XmlWriter
     {
         protected XmlNodeMode _mode;
         protected XDocument _tempXDoc;
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <remarks></remarks>
         /// <seealso cref=""/>
@@ -58,7 +58,7 @@ namespace BExIS.Xml.Helpers
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <remarks></remarks>
         /// <seealso cref=""/>
@@ -84,11 +84,10 @@ namespace BExIS.Xml.Helpers
             }
 
             return false;
-
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <remarks></remarks>
         /// <seealso cref=""/>
@@ -103,7 +102,7 @@ namespace BExIS.Xml.Helpers
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <remarks></remarks>
         /// <seealso cref=""/>
@@ -134,7 +133,7 @@ namespace BExIS.Xml.Helpers
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <remarks></remarks>
         /// <seealso cref=""/>
@@ -163,7 +162,7 @@ namespace BExIS.Xml.Helpers
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <remarks></remarks>
         /// <seealso cref=""/>
@@ -194,7 +193,7 @@ namespace BExIS.Xml.Helpers
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <remarks></remarks>
         /// <seealso cref=""/>
@@ -206,7 +205,6 @@ namespace BExIS.Xml.Helpers
             {
                 return _tempXDoc.Root.Descendants().Where(p => p.Attribute("name").Equals(name)
                                                        && p.Attribute("id").Equals(id.ToString())).FirstOrDefault();
-
             }
 
             if (_mode.Equals(XmlNodeMode.xPath))
@@ -219,7 +217,7 @@ namespace BExIS.Xml.Helpers
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <remarks></remarks>
         /// <seealso cref=""/>
@@ -230,9 +228,8 @@ namespace BExIS.Xml.Helpers
             return _tempXDoc.XPathSelectElement(xpath);
         }
 
-
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <remarks></remarks>
         /// <seealso cref=""/>
@@ -243,7 +240,7 @@ namespace BExIS.Xml.Helpers
         {
             //if (_mode.Equals(XmlNodeMode.type))
             //{
-            //    return _tempXDoc.Root.Elements().Where(p => p.Attribute("name").Value.Equals(name) && 
+            //    return _tempXDoc.Root.Elements().Where(p => p.Attribute("name").Value.Equals(name) &&
             //                                           p.Attribute("number").Value.Equals(number.ToString()) &&
             //                                           p.Attribute("id").Value.Equals(id.ToString())).FirstOrDefault();
 
@@ -252,8 +249,8 @@ namespace BExIS.Xml.Helpers
             //if (_mode.Equals(XmlNodeMode.xPath))
             //{
             //    return _tempXDoc.Root.Elements(name.Replace(" ", "")).Where(p => p.Attribute("number") != null
-            //                                                             && p.Attribute("number").Value.Equals(number.ToString()) 
-            //                                                             && p.Attribute("id") != null 
+            //                                                             && p.Attribute("number").Value.Equals(number.ToString())
+            //                                                             && p.Attribute("id") != null
             //                                                             && p.Attribute("id").Value.Equals(id.ToString())).FirstOrDefault();
             //}
 
@@ -263,7 +260,6 @@ namespace BExIS.Xml.Helpers
             {
                 return _tempXDoc.Root.Descendants().Where(p => p.Attribute("name").Equals(name)
                                                        && p.Attribute("id").Equals(id.ToString())).FirstOrDefault();
-
             }
 
             if (_mode.Equals(XmlNodeMode.xPath))
@@ -276,7 +272,7 @@ namespace BExIS.Xml.Helpers
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <remarks></remarks>
         /// <seealso cref=""/>
@@ -288,7 +284,6 @@ namespace BExIS.Xml.Helpers
             if (_mode.Equals(XmlNodeMode.type))
             {
                 return source.Elements().Where(p => p.Attribute("name").Equals(name)).FirstOrDefault();
-
             }
 
             if (_mode.Equals(XmlNodeMode.xPath))
@@ -300,7 +295,7 @@ namespace BExIS.Xml.Helpers
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <remarks></remarks>
         /// <seealso cref=""/>
@@ -313,7 +308,6 @@ namespace BExIS.Xml.Helpers
             if (_mode.Equals(XmlNodeMode.type))
             {
                 return source.Elements().Where(p => p.Attribute("name").Equals(name) && p.Attribute("number").Equals(number.ToString())).FirstOrDefault();
-
             }
 
             if (_mode.Equals(XmlNodeMode.xPath))
@@ -327,7 +321,7 @@ namespace BExIS.Xml.Helpers
         #region get list of xelement
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <remarks></remarks>
         /// <seealso cref=""/>
@@ -339,7 +333,6 @@ namespace BExIS.Xml.Helpers
             if (_mode.Equals(XmlNodeMode.type))
             {
                 return source.Elements().Where(p => p.Attribute("name").Equals(name)).ToList();
-
             }
 
             if (_mode.Equals(XmlNodeMode.xPath))
@@ -349,12 +342,13 @@ namespace BExIS.Xml.Helpers
 
             return null;
         }
-        #endregion
+
+        #endregion get list of xelement
 
         #region static
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <remarks></remarks>
         /// <seealso cref=""/>
@@ -371,7 +365,7 @@ namespace BExIS.Xml.Helpers
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <remarks></remarks>
         /// <seealso cref=""/>
@@ -385,8 +379,7 @@ namespace BExIS.Xml.Helpers
                 return XDocument.Load(nodeReader);
             }
         }
-        #endregion
 
+        #endregion static
     }
-
 }

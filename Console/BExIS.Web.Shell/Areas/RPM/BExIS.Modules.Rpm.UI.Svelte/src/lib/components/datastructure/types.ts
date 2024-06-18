@@ -15,9 +15,11 @@ export interface DataStructureCreationModel {
 	delimeter: number;
 	decimal: number;
 	textMarker: number;
+	fileEncoding: number;
 	delimeters: listItemType[];
 	decimals: listItemType[];
 	textMarkers: listItemType[];
+	encodings: listItemType[];
 	preview: string[];
 	total: number;
 	skipped: number;
@@ -27,7 +29,7 @@ export interface DataStructureCreationModel {
 }
 
 export interface DataStructureEditModel {
-	id:number
+	id: number;
 	title: string;
 	description: string;
 	preview: string[];
@@ -52,8 +54,8 @@ class VariableModel {
 	name: string;
 	description: string;
 	systemType: string;
-	dataType: listItemType | undefined;
-	unit: unitListItemType | undefined;
+	dataType: listItemType | undefined | "";
+	unit: unitListItemType | undefined | "";
 	missingValues: missingValueType[];
 	meanings: listItemType[];
 	constraints: listItemType[];
@@ -76,7 +78,6 @@ class VariableModel {
 }
 
 export class VariableTemplateModel extends VariableModel {
-
 	public constructor() {
 		super();
 		this.meanings = [];
@@ -98,7 +99,7 @@ export class VariableInstanceModel extends VariableModel {
 		super();
 		this.meanings = [];
 		this.constraints = [];
-		this.missingValues = []
+		this.missingValues = [];
 		this.isOptional = false;
 		this.template = undefined;
 		this.isKey = false;
@@ -114,6 +115,7 @@ export interface unitListItemType extends listItemType {
 }
 
 export interface templateListItemType extends listItemType {
+	description:string;
 	dataTypes: string[];
 	units: string[];
 	meanings: string[];

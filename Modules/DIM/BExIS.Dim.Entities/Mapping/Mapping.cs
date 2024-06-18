@@ -10,5 +10,13 @@ namespace BExIS.Dim.Entities.Mapping
         public virtual TransformationRule TransformationRule { get; set; }
 
         public virtual Mapping Parent { get; set; }
+
+        public Mapping()
+        {
+            Level = 0;
+            Source = new LinkElement();
+            Target = new LinkElement();
+            TransformationRule = new TransformationRule();
+        }
     }
 }

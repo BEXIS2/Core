@@ -379,7 +379,7 @@ namespace BExIS.Modules.Ddm.UI.Helpers
                     {
                         return new FilterStringItemExpression()
                         {
-                            Field = new Field() { DataType = DataType.String, Name = fd.Member }
+                            Field = new Field() { DataType = Utils.NH.Querying.DataType.String, Name = fd.Member }
                            ,
                             Operator = StringOperator.Operation.Contains
                            ,
@@ -391,7 +391,7 @@ namespace BExIS.Modules.Ddm.UI.Helpers
                     {
                         return new FilterStringItemExpression()
                         {
-                            Field = new Field() { DataType = DataType.String, Name = fd.Member }
+                            Field = new Field() { DataType = Utils.NH.Querying.DataType.String, Name = fd.Member }
                            ,
                             Operator = StringOperator.Operation.Contains
                            ,
@@ -408,7 +408,7 @@ namespace BExIS.Modules.Ddm.UI.Helpers
                     {
                         return new FilterStringItemExpression()
                         {
-                            Field = new Field() { DataType = DataType.String, Name = fd.Member }
+                            Field = new Field() { DataType = Utils.NH.Querying.DataType.String, Name = fd.Member }
                             ,
                             Operator = StringOperator.Operation.EndsWith
                             ,
@@ -419,7 +419,7 @@ namespace BExIS.Modules.Ddm.UI.Helpers
                     {
                         return new FilterStringItemExpression()
                         {
-                            Field = new Field() { DataType = DataType.String, Name = fd.Member }
+                            Field = new Field() { DataType = Utils.NH.Querying.DataType.String, Name = fd.Member }
                             ,
                             Operator = StringOperator.Operation.StartsWith
                             ,
@@ -430,7 +430,7 @@ namespace BExIS.Modules.Ddm.UI.Helpers
                     {
                         return new FilterStringItemExpression()
                         {
-                            Field = new Field() { DataType = DataType.String, Name = fd.Member }
+                            Field = new Field() { DataType = Utils.NH.Querying.DataType.String, Name = fd.Member }
                             ,
                             Operator = StringOperator.Operation.Equals
                             ,
@@ -447,7 +447,7 @@ namespace BExIS.Modules.Ddm.UI.Helpers
                         {
                             return new FilterNumberItemExpression()
                             {
-                                Field = new Field() { DataType = DataType.Ineteger, Name = fd.Member }
+                                Field = new Field() { DataType = Utils.NH.Querying.DataType.Ineteger, Name = fd.Member }
                                 ,
                                 Operator = NumberOperator.Operation.GreaterThan
                                 ,
@@ -466,7 +466,7 @@ namespace BExIS.Modules.Ddm.UI.Helpers
                         {
                             return new FilterNumberItemExpression()
                             {
-                                Field = new Field() { DataType = DataType.Ineteger, Name = fd.Member }
+                                Field = new Field() { DataType = Utils.NH.Querying.DataType.Ineteger, Name = fd.Member }
                                 ,
                                 Operator = NumberOperator.Operation.GreaterThanOrEqual
                                 ,
@@ -484,7 +484,7 @@ namespace BExIS.Modules.Ddm.UI.Helpers
                         {
                             return new FilterNumberItemExpression()
                             {
-                                Field = new Field() { DataType = DataType.Ineteger, Name = fd.Member }
+                                Field = new Field() { DataType = Utils.NH.Querying.DataType.Ineteger, Name = fd.Member }
                                 ,
                                 Operator = NumberOperator.Operation.LessThan
                                 ,
@@ -503,7 +503,7 @@ namespace BExIS.Modules.Ddm.UI.Helpers
                         {
                             return new FilterNumberItemExpression()
                             {
-                                Field = new Field() { DataType = DataType.Ineteger, Name = fd.Member }
+                                Field = new Field() { DataType = Utils.NH.Querying.DataType.Ineteger, Name = fd.Member }
                                 ,
                                 Operator = NumberOperator.Operation.LessThanOrEqual
                                 ,

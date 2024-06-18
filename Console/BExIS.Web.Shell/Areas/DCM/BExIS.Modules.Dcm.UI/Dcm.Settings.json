@@ -59,27 +59,19 @@
       "options": []
     },
     {
-      "key": "minToAnalyse",
-      "title": "File Analyze: Minimum row number",
-      "value": 100,
-      "description": "Min number of rows to analyze structure.",
-      "type": "Int32",
+      "key": "useExternalMetadataForm",
+      "title": "Use external metadata form",
+      "value": false,
+      "description": "...",
+      "type": "Boolean",
       "options": []
     },
     {
-      "key": "maxToAnalyse",
-      "title": "File Analyze: Maximum row number",
-      "value": 10000,
-      "description": "Max number of rows to analyze structure.",
-      "type": "Int32",
-      "options": []
-    },
-    {
-      "key": "precentageToAnalyse",
-      "title": "File Analyze: Percentage of rows",
-      "value": 50,
-      "description": "Percentage of rows to analyze structure.",
-      "type": "Int32",
+      "key": "externalMetadataFormUrl",
+      "title": "External metadata form destination url",
+      "value": "",
+      "description": "...",
+      "type": "String",
       "options": []
     }
   ]

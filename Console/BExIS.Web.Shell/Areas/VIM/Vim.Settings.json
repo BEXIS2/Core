@@ -9,6 +9,6 @@
       "value": "",
       "type": "String",
       "description": "URL to the manual. If empty, it links to the latest manual from BEXIS2"
-  }
+    }
   ]
 }

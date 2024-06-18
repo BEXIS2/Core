@@ -3,22 +3,22 @@
 
 @section Scripts{
 
-     <link href="@Url.Content(Themes.GetResourcePath("Styles","wizard.css"))" rel="stylesheet" type="text/css" />
+    <link href="@Url.Content(Themes.GetResourcePath("Styles","wizard.css"))" rel="stylesheet" type="text/css" />
 }
 
 @section Information
 {
     This wizard will assist you in adding a new metadata structure (i.e. schema) to the system. A metadata structure must be defined in XSD schema files.
     Since XSD files can be defined in various ways this wizard is build on a few assumptions (e.g. with dependencies). Please consult the Help for more details.
-<p>
-    <a href="/DCM/Help/Index/#_Toc434570855" class="bx-informationLink" title="go to help" target="_blank">More</a>
-</p>
+    <p>
+        <a href="/DCM/Help/Index/#_Toc434570855" class="bx-informationLink" title="go to help" target="_blank">More</a>
+    </p>
 }
 
-@section LeftPane 
+@section LeftPane
 {   @if (ViewData.ModelState.IsValid)
-    { 
-        @Html.Partial("_taskListView", Model.GetStatusOfStepInfos())
+    {
+    @Html.Partial("_taskListView", Model.GetStatusOfStepInfos())
     }
 }
 
@@ -27,11 +27,11 @@
 </div>
 
 @if (ViewData.ModelState.IsValid)
-{ 
-    @Html.Partial("_wizardNav", Model)
+{
+@Html.Partial("_wizardNav", Model)
 
-<script type="text/javascript">              
-      
+<script type="text/javascript">
+
     var Parameters = new Array();
 
     $(document).ready(function () {
@@ -41,7 +41,6 @@
         //$.validator.unobtrusive.parse("#DefineMetadataStructure");
         //$.validator.unobtrusive.parse("createDatasetFormular");
         //alert(index);
- 
 
         $.get('@Url.Action(@Model.Current().GetActionInfo.ActionName, @Model.Current().GetActionInfo.ControllerName, new RouteValueDictionary { { "area", @Model.Current().GetActionInfo.AreaName } })', { index: index }, function (response) {
 
@@ -53,17 +52,13 @@
             TaskListRefresh();
         })
     })
-
-
 </script>
 
 <style type="text/css">
 
-    .uploadWizardStep
-    {
-        height:300px;
+    .uploadWizardStep {
+        height: 300px;
     }
-
 </style>
-    
+
 }

@@ -53,15 +53,12 @@ namespace BExIS.Ddm.Providers.LuceneProvider
                     if (fieldProperty.Attributes.GetNamedItem("metadata_name") != null)
                         sa.metadataName = fieldProperty.Attributes.GetNamedItem("metadata_name").Value;
 
-
                     //types
                     if (fieldProperty.Attributes.GetNamedItem("type") != null)
                         sa.searchType = SearchAttribute.GetSearchType(fieldProperty.Attributes.GetNamedItem("type").Value);
 
                     if (fieldProperty.Attributes.GetNamedItem("primitive_type") != null)
                         sa.dataType = SearchAttribute.GetDataType(fieldProperty.Attributes.GetNamedItem("primitive_type").Value);
-
-
 
                     //// parameter for index
                     if (fieldProperty.Attributes.GetNamedItem("store") != null)
@@ -78,7 +75,6 @@ namespace BExIS.Ddm.Providers.LuceneProvider
 
                     if (fieldProperty.Attributes.GetNamedItem("boost") != null)
                         sa.boost = Convert.ToDouble(fieldProperty.Attributes.GetNamedItem("boost").Value);
-
 
                     // Resultview
                     if (fieldProperty.Attributes.GetNamedItem("header_item") != null)
@@ -107,7 +103,6 @@ namespace BExIS.Ddm.Providers.LuceneProvider
                     this._includePrimaryData = true;
                 }
             }
-
         }
 
         public bool IsPrimaryDataIncluded()
@@ -121,7 +116,6 @@ namespace BExIS.Ddm.Providers.LuceneProvider
                 return _metadataNodes;
             else
             {
-
                 using (MetadataStructureManager metadataStructureManager = new MetadataStructureManager())
                 {
                     List<long> ids = new List<long>();
@@ -138,7 +132,6 @@ namespace BExIS.Ddm.Providers.LuceneProvider
                     return _metadataNodes;
                 }
             }
-
         }
 
         public List<SearchMetadataNode> GetAllXPathsOfSimpleAttributes(long id)
@@ -159,7 +152,6 @@ namespace BExIS.Ddm.Providers.LuceneProvider
             Save();
         }
 
-
         // write xml config file
         private void Save()
         {
@@ -168,13 +160,11 @@ namespace BExIS.Ddm.Providers.LuceneProvider
 
             try
             {
-
                 this._configXML = new XmlDocument();
                 if (String.IsNullOrEmpty(FileHelper.ConfigFilePath))
                 {
                     root = this._configXML.CreateElement("luceneConfig");
                     this._configXML.AppendChild(root);
-
                 }
                 else
                 {
@@ -185,7 +175,6 @@ namespace BExIS.Ddm.Providers.LuceneProvider
 
                     fileStream.Close();
                 }
-
 
                 //add primary data node
                 if (this._includePrimaryData)
@@ -214,10 +203,7 @@ namespace BExIS.Ddm.Providers.LuceneProvider
             }
             catch (Exception ex)
             {
-
             }
-
-
         }
 
         public void Reset()
@@ -251,7 +237,6 @@ namespace BExIS.Ddm.Providers.LuceneProvider
 
         private XmlElement SetAttributesToNode(XmlElement xmlElement, SearchAttribute sa)
         {
-
             // names
             XmlAttribute xa = this._configXML.CreateAttribute("display_name");
             xa.Value = sa.displayName;
@@ -291,12 +276,10 @@ namespace BExIS.Ddm.Providers.LuceneProvider
             xa.Value = SearchAttribute.GetBooleanAsString(sa.norm);
             xmlElement.Attributes.Append(xa);
 
-
             //boost
             xa = this._configXML.CreateAttribute("boost");
             xa.Value = sa.boost.ToString();
             xmlElement.Attributes.Append(xa);
-
 
             // ResultView
             xa = this._configXML.CreateAttribute("header_item");
@@ -306,7 +289,6 @@ namespace BExIS.Ddm.Providers.LuceneProvider
             xa = this._configXML.CreateAttribute("default_visible_item");
             xa.Value = SearchAttribute.GetBooleanAsString(sa.defaultHeaderItem);
             xmlElement.Attributes.Append(xa);
-
 
             // properties
             if (sa.searchType.Equals(SearchComponentBaseType.Property))
@@ -326,7 +308,6 @@ namespace BExIS.Ddm.Providers.LuceneProvider
                 xa = this._configXML.CreateAttribute("date_format");
                 xa.Value = sa.dateFormat;
                 xmlElement.Attributes.Append(xa);
-
             }
 
             return xmlElement;
@@ -334,7 +315,6 @@ namespace BExIS.Ddm.Providers.LuceneProvider
 
         private XmlElement SetPrimaryDataAttributeToNode(XmlElement xmlElement)
         {
-
             // names
             XmlAttribute xa = this._configXML.CreateAttribute("display_name");
             xa.Value = "Primary Data";
@@ -366,7 +346,6 @@ namespace BExIS.Ddm.Providers.LuceneProvider
             xa.Value = "yes";
             xmlElement.Attributes.Append(xa);
 
-
             //boost
             xa = this._configXML.CreateAttribute("boost");
             xa.Value = "3";
@@ -374,7 +353,5 @@ namespace BExIS.Ddm.Providers.LuceneProvider
 
             return xmlElement;
         }
-
-
     }
 }

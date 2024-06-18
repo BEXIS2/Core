@@ -40,7 +40,7 @@
                         </td>
                         <td style="min-width:300px;">
                             <table>
-                                @{ 
+                                @{
                                     List<Party> parties = new List<Party>();
 
                                     if (Model.isAsSource)
@@ -52,9 +52,8 @@
                                     }
 
                                     parties = parties.OrderBy(p => p.Name).ToList();
-                                    
-                                }
 
+                                }
 
                                 @foreach (var party in parties)
                                 {
@@ -70,7 +69,7 @@
                                     else
                                     {
                                         <tr class="PartyRelationTypeDetails_@partyRelationType.Id" style="display:none">
-                                           
+
                                             <td style="min-width:300px;">
                                                 <label style="color:red;">
                                                     Some conditions are required to have this relationship type!<br />

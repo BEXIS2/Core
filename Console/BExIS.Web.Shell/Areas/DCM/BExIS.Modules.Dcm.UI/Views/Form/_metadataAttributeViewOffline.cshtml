@@ -74,20 +74,17 @@
             <td class="metadataAttributeLabel">
                 @if (Model.MinCardinality > 0)
                 {
-                    <b title="This field is required" style="color:red">*</b>
+                <b title="This field is required" style="color:red">*</b>
                 }
 
                 <b title="@Model.Discription">@displayName</b>
-
             </td>
             <td class="metadataAttributeInput">
 
                 @if (Model.Value != null)
                 {
-                    @Html.DisplayWithLinksFor(m => m.Value)
+                @Html.DisplayWithLinksFor(m => m.Value)
                 }
-
-
             </td>
             <td class="metadataAttributeOption">
 
@@ -96,13 +93,24 @@
                         <td>
                             @if (!string.IsNullOrEmpty(Model.Discription))
                             {
-                                <button type="button" title="@Model.Discription" class="bx-function bx-disabled">?</button>
+                            <button type="button" title="@Model.Discription" class="bx-function bx-disabled">?</button>
                             }
-
                         </td>
                     </tr>
                 </table>
             </td>
         </tr>
+        @foreach (var parameter in Model.Parameters)
+        {
+        <tr>
+            <td>
+                <!--offset-->
+            </td>
+            <td class="metadataAttributeInput">
+                @Html.Partial("_metadataParameterViewOffline", parameter)
+            </td>
+            <td></td>
+        </tr>
+        }
     </table>
 </div>

@@ -1,8 +1,6 @@
 <script lang="ts">
 	import Structure from '$lib/components/datastructure/structure/CreateStructure.svelte';
 	import Selection from '$lib/components/datastructure/Selection.svelte';
-
-	import { onMount } from 'svelte';
 	import { fade } from 'svelte/transition';
 
 	import { Spinner, Page, ErrorMessage, type helpItemType, helpStore } from '@bexis2/bexis2-core-ui';
@@ -21,7 +19,10 @@
 		displayPatternStore,
 		structureStore,
 		isTemplateRequiredStore,
-		isMeaningRequiredStore
+		isMeaningRequiredStore,
+		setByTemplateStore,
+		enforcePrimaryKeyStore,
+		changeablePrimaryKeyStore
 	} from '$lib/components/datastructure/store';
 	import { pageContentLayoutType } from '@bexis2/bexis2-core-ui';
 
@@ -68,13 +69,25 @@
 		const isTemplateRequired = container?.getAttribute('isTemplateRequired')?.toLocaleLowerCase()=="true"?true:false;
 		isTemplateRequiredStore.set(isTemplateRequired);
 
-		// get isTemplateRequired from settings and add it to store
+		// get isMeaningRequired from settings and add it to store
 		// is used by validation
 		const isMeaningRequired = container?.getAttribute('isMeaningRequired')?.toLocaleLowerCase()=="true"?true:false;
-		console.log("🚀 ~ file: +page.svelte:57 ~ start ~ isMeaningRequired:", isMeaningRequired)
 		isMeaningRequiredStore.set(isMeaningRequired);
+		
+		// get setByTemplate from settings and add it to store
+		// is used by createion of variables
+		const setByTemplate = container?.getAttribute('setByTemplate')?.toLocaleLowerCase()=="true"?true:false;
+		setByTemplateStore.set(setByTemplate);
 
-		console.log('start structure suggestion', entityId, version, file, datastructureId);
+		// get enforcePrimaryKey from settings and add it to store
+		// save structure only if pk is set
+		const enforcePrimaryKey = container?.getAttribute('enforcePrimaryKey')?.toLocaleLowerCase()=="true"?true:false;
+		enforcePrimaryKeyStore.set(enforcePrimaryKey);
+
+	// get changeablePrimaryKey from settings and add it to store
+	// save structure only if pk is set
+	const changeablePrimaryKey = container?.getAttribute('changeablePrimaryKey')?.toLocaleLowerCase()=="true"?true:false;
+	changeablePrimaryKeyStore.set(changeablePrimaryKey);
 
 		// 2 Usecases,
 		// 1. generate from file, selection needed -> load file
@@ -86,7 +99,9 @@
 		if (file != '') {
 			console.log('file exist', file, entityId, 0);
 
-			model = await load(file, entityId, 0);
+			model = await load(file, entityId, 65001, 0);
+			console.log("🚀 ~ start ~ model:", model)
+			
 		} else if (datastructureId > 0) {
 			console.log('copy structure');
 			// copy structure
@@ -105,8 +120,6 @@
 		// load display pattern onces for all edit types
 		const displayPattern = await getDisplayPattern();
 		displayPatternStore.set(displayPattern);
-
-
 	}
 
 	async function update(e) {
@@ -148,5 +161,5 @@
 		{/if}
 	{:catch error}
 		<ErrorMessage {error} />
-	{/await} 
+	{/await}
 </Page>

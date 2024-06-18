@@ -20,9 +20,10 @@ namespace Vaiona.MultiTenancy.Api
         List<Tenant> Manifest { get; }
 
         Tenant DefaultTenant { get; }
+
         /// <summary>
         /// Resolves the tenant using the incoming http request and the tenants' matching rules.
-        /// If no match found, the default one is returned, provided that it is active. 
+        /// If no match found, the default one is returned, provided that it is active.
         /// If no default is set, an exception is thrown
         /// </summary>
         /// <param name="request">http request that contains url and port number to be used for matching</param>
@@ -35,6 +36,7 @@ namespace Vaiona.MultiTenancy.Api
         /// <param name="id">tenant's ID</param>
         /// <returns></returns>
         Tenant Resolve(string id);
+
         /// <summary>
         /// Resolves the tenant using the incoming URI and the tenants' matching rules
         /// </summary>

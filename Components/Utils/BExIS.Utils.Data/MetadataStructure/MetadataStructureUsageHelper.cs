@@ -12,7 +12,6 @@ namespace BExIS.Utils.Data.MetadataStructure
     {
         public BaseUsage GetMetadataAttributeUsageById(long Id)
         {
-
             using (MetadataPackageManager mpm = new MetadataPackageManager())
             {
                 var q = from p in mpm.MetadataPackageRepo.Get()
@@ -28,7 +27,6 @@ namespace BExIS.Utils.Data.MetadataStructure
         {
             using (IUnitOfWork unitOfWork = this.GetUnitOfWork())
             {
-
                 List<BaseUsage> temp = new List<BaseUsage>();
 
                 if (type.Equals(typeof(MetadataPackageUsage)))
@@ -81,7 +79,6 @@ namespace BExIS.Utils.Data.MetadataStructure
         {
             using (IUnitOfWork unitOfWork = this.GetUnitOfWork())
             {
-
                 if (type.Equals(typeof(MetadataPackageUsage)))
                 {
                     MetadataPackageUsage mpu = unitOfWork.GetReadOnlyRepository<MetadataPackageUsage>().Get(usageId);
@@ -91,14 +88,12 @@ namespace BExIS.Utils.Data.MetadataStructure
                 {
                     MetadataAttributeUsage mau = unitOfWork.GetReadOnlyRepository<MetadataAttributeUsage>().Get(usageId);
                     return mau.MetadataAttribute.MetadataParameterUsages;
-                    
                 }
 
                 if (type.Equals(typeof(MetadataNestedAttributeUsage)))
                 {
                     MetadataNestedAttributeUsage mnau = unitOfWork.GetReadOnlyRepository<MetadataNestedAttributeUsage>().Get(usageId);
                     return mnau.Member.MetadataParameterUsages;
-
                 }
 
                 return null;
@@ -202,7 +197,6 @@ namespace BExIS.Utils.Data.MetadataStructure
                             {
                                 mnauRepo.LoadIfNot(childUsage.Member);
                                 temp.Add(childUsage);
-
                             }
                         }
                     }
@@ -234,23 +228,23 @@ namespace BExIS.Utils.Data.MetadataStructure
         {
             //using (IUnitOfWork unitOfWork = this.GetUnitOfWork())
             //{
-                MetadataAttribute ma = null;
+            MetadataAttribute ma = null;
 
-                if (usage is MetadataAttributeUsage)
-                {
-                    MetadataAttributeUsage mau = (MetadataAttributeUsage)usage;
-                    ma = mau.MetadataAttribute;//unitOfWork.GetReadOnlyRepository<MetadataAttribute>().Get(mau.MetadataAttribute.Id);
-                }
+            if (usage is MetadataAttributeUsage)
+            {
+                MetadataAttributeUsage mau = (MetadataAttributeUsage)usage;
+                ma = mau.MetadataAttribute;//unitOfWork.GetReadOnlyRepository<MetadataAttribute>().Get(mau.MetadataAttribute.Id);
+            }
 
-                if (usage is MetadataNestedAttributeUsage)
-                {
-                    MetadataNestedAttributeUsage mnau = (MetadataNestedAttributeUsage)usage;
+            if (usage is MetadataNestedAttributeUsage)
+            {
+                MetadataNestedAttributeUsage mnau = (MetadataNestedAttributeUsage)usage;
                 ma = mnau.Member; //unitOfWork.GetReadOnlyRepository<MetadataAttribute>().Get(mnau.Member.Id);
-                }
+            }
 
-                if (ma != null && ma.Self is MetadataCompoundAttribute) return true;
+            if (ma != null && ma.Self is MetadataCompoundAttribute) return true;
 
-                return false;
+            return false;
             //}
         }
 
@@ -258,29 +252,28 @@ namespace BExIS.Utils.Data.MetadataStructure
         {
             //using (IUnitOfWork unitOfWork = this.GetUnitOfWork())
             //{
-                MetadataAttribute ma = null;
+            MetadataAttribute ma = null;
 
-                if (usage is MetadataAttributeUsage)
-                {
-                    MetadataAttributeUsage mau = (MetadataAttributeUsage)usage;
-                    ma = mau.MetadataAttribute; //unitOfWork.GetReadOnlyRepository<MetadataAttribute>().Get(mau.MetadataAttribute.Id);
-                }
+            if (usage is MetadataAttributeUsage)
+            {
+                MetadataAttributeUsage mau = (MetadataAttributeUsage)usage;
+                ma = mau.MetadataAttribute; //unitOfWork.GetReadOnlyRepository<MetadataAttribute>().Get(mau.MetadataAttribute.Id);
+            }
 
-                if (usage is MetadataNestedAttributeUsage)
-                {
-                    MetadataNestedAttributeUsage mnau = (MetadataNestedAttributeUsage)usage;
-                    ma = mnau.Member;//unitOfWork.GetReadOnlyRepository<MetadataAttribute>().Get(mnau.Member.Id);
-                }
+            if (usage is MetadataNestedAttributeUsage)
+            {
+                MetadataNestedAttributeUsage mnau = (MetadataNestedAttributeUsage)usage;
+                ma = mnau.Member;//unitOfWork.GetReadOnlyRepository<MetadataAttribute>().Get(mnau.Member.Id);
+            }
 
-                if (ma != null && ma.Self is MetadataSimpleAttribute) return true;
+            if (ma != null && ma.Self is MetadataSimpleAttribute) return true;
 
-                return false;
+            return false;
             //}
         }
 
         public string GetNameOfType(BaseUsage usage)
         {
-
             if (usage is MetadataPackageUsage)
             {
                 MetadataPackageUsage mpu = (MetadataPackageUsage)usage;
@@ -304,7 +297,6 @@ namespace BExIS.Utils.Data.MetadataStructure
 
         public long GetIdOfType(BaseUsage usage)
         {
-
             if (usage is MetadataPackageUsage)
             {
                 MetadataPackageUsage mpu = (MetadataPackageUsage)usage;
@@ -332,7 +324,6 @@ namespace BExIS.Utils.Data.MetadataStructure
 
             if (type.Equals(typeof(MetadataPackageUsage)))
             {
-
                 MetadataPackageUsage mpu = this.GetUnitOfWork().GetReadOnlyRepository<MetadataPackageUsage>().Get(usageId);
 
                 foreach (BaseUsage childUsage in mpu.MetadataPackage.MetadataAttributeUsages)

@@ -88,8 +88,8 @@ namespace BExIS.Ddm.Providers.LuceneProvider
         {
             if (forceReset == true)
                 SearchConfig.Reset();
-            SearchConfig.LoadConfig();
 
+            SearchConfig.LoadConfig();
             this.DefaultSearchModel = initDefault();
             this.WorkingSearchModel = initWorking(); //init(WorkingSearchModel); // its better to make a clone form DefualtSearchModel than calling the function twice
             //this.DefaultSearchModel = Get(this.WorkingSearchModel.CriteriaComponent);
@@ -411,7 +411,6 @@ namespace BExIS.Ddm.Providers.LuceneProvider
                                         bexisSearchingFacet.Add(query, Occur.MUST);
                                     else bexisSearchingFacet.Add(query, Occur.SHOULD);
                                 }
-
                             }
                             ((BooleanQuery)bexisSearching).Add(bexisSearchingFacet, Occur.MUST);
                         }

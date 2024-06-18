@@ -2,7 +2,6 @@
   <subclass name="MethodLogEntry" extends="LogEntry" discriminator-value="Method" dynamic-update="true">
     <!-- Mapping BaseEntity properties -->
 
-
     <!-- Mapping Entity properties -->
     <property name="Parameters" type="String">
       <column name="Parameters" />
@@ -23,7 +22,5 @@
     <property name="ProcessingTime" type="Int64">
       <column name="ProcessingTime" />
     </property>
-
   </subclass>
-
 </hibernate-mapping>

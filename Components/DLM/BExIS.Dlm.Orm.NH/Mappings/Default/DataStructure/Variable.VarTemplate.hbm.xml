@@ -4,6 +4,5 @@
 	  <property name="Approved" type="Boolean">
 		  <column name="Approved" />
 	  </property>
-	  
   </subclass>
 </hibernate-mapping>

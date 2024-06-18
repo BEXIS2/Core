@@ -1,4 +1,4 @@
-﻿using BExIS.Dim.Entities.Publication;
+﻿using BExIS.Dim.Entities.Publications;
 using BExIS.Dlm.Entities.Data;
 using System;
 using System.Collections.Generic;
@@ -22,6 +22,7 @@ namespace BExIS.Dim.Services
         }
 
         private bool isDisposed = false;
+
         ~PublicationManager()
         {
             Dispose(true);
@@ -67,7 +68,7 @@ namespace BExIS.Dim.Services
         /// </summary>
         public IReadOnlyRepository<MetadataStructureToRepository> MetadataStructureToRepositoryRepo { get; private set; }
 
-        #endregion
+        #endregion Data Readers
 
         #region publication
 
@@ -114,7 +115,7 @@ namespace BExIS.Dim.Services
             publication.ResearchObjectId = researchObjectId;
             publication.Broker = broker;
             publication.DatasetVersion = datasetVersion;
-            publication.Repository = null;
+            publication.Repository = broker.Repository;
             publication.Timestamp = DateTime.Now;
             publication.Status = status;
             publication.FilePath = filePath;
@@ -199,7 +200,7 @@ namespace BExIS.Dim.Services
             return (true);
         }
 
-        #endregion
+        #endregion publication
 
         #region broker
 
@@ -268,7 +269,6 @@ namespace BExIS.Dim.Services
             Contract.Requires(!string.IsNullOrWhiteSpace(broker.UserName));
             Contract.Requires(!string.IsNullOrWhiteSpace(broker.Password));
 
-
             using (IUnitOfWork uow = this.GetUnitOfWork())
             {
                 IRepository<Broker> repo = uow.GetRepository<Broker>();
@@ -318,7 +318,7 @@ namespace BExIS.Dim.Services
             return true;
         }
 
-        #endregion
+        #endregion broker
 
         #region repository
 
@@ -347,16 +347,14 @@ namespace BExIS.Dim.Services
         /// <param name="url">A free text describing the purpose, usage, and/or the domain of the data structure usage.</param>
         /// <param name="broker"></param>
         ///
-        public Repository CreateRepository(string name, string url, Broker broker)
+        public Repository CreateRepository(string name, string url)
         {
             Contract.Requires(!string.IsNullOrWhiteSpace(name));
-            Contract.Requires(broker != null);
 
             Repository e = new Repository()
             {
                 Name = name,
-                Url = url,
-                Broker = broker
+                Url = url
             };
 
             using (IUnitOfWork uow = this.GetUnitOfWork())
@@ -408,7 +406,7 @@ namespace BExIS.Dim.Services
             return true;
         }
 
-        #endregion
+        #endregion repository
 
         #region MetadataStructureToRepository
 
@@ -434,7 +432,6 @@ namespace BExIS.Dim.Services
         {
             Contract.Requires(metadataStrutcureId > 0);
             Contract.Requires(repositoryId > 0);
-
 
             MetadataStructureToRepository e = new MetadataStructureToRepository()
             {
@@ -468,7 +465,6 @@ namespace BExIS.Dim.Services
             return (true);
         }
 
-        #endregion
-
+        #endregion MetadataStructureToRepository
     }
 }

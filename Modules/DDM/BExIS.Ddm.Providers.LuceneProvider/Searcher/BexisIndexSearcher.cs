@@ -77,7 +77,8 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Searcher
         /// <seealso cref=""/>
         /// <param></param>
         /// <returns></returns>
-        public static string[] getCategoryFields() { init(); return categoryFields; }
+        public static string[] getCategoryFields()
+        { init(); return categoryFields; }
 
         /// <summary>
         ///
@@ -86,7 +87,8 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Searcher
         /// <seealso cref=""/>
         /// <param></param>
         /// <returns></returns>
-        public static string[] getStoredFields() { init(); return storedFields; }
+        public static string[] getStoredFields()
+        { init(); return storedFields; }
 
         /// <summary>
         ///

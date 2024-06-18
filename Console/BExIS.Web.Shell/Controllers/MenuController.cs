@@ -3,8 +3,6 @@ using BExIS.Security.Entities.Subjects;
 using BExIS.UI.Models;
 using BExIS.Web.Shell.Helpers;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using Vaiona.Web.Extensions;
@@ -39,15 +37,15 @@ namespace BExIS.Web.Shell.Controllers
             Menu menu = new Menu();
 
             // load logo
-            if (Session.GetTenant() != null)
-            { 
+            if (Session.GetTenant() != null && !string.IsNullOrEmpty(Session.GetTenant().Brand))
+            {
                 string name = Session.GetTenant().ShortName;
                 string mime = MimeMapping.GetMimeMapping(Session.GetTenant().Brand);
                 byte[] image = System.IO.File.ReadAllBytes(Session.GetTenant().BrandPath);
                 string data = Convert.ToBase64String(image);
                 menu.Logo = new Logo(name, mime, data, 40);
             }
-            
+
             //load bars
             menu.LaunchBar = MenuHelper.MenuBar("lunchbarRoot");
             menu.MenuBar = MenuHelper.MenuBarSecured("menubarRoot", userName);
@@ -60,6 +58,5 @@ namespace BExIS.Web.Shell.Controllers
 
             return Json(menu, JsonRequestBehavior.AllowGet);
         }
-
     }
 }

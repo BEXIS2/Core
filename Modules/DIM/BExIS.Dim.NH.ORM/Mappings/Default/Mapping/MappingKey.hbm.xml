@@ -3,7 +3,7 @@
     <!-- Mapping BaseEntity properties -->
 
 	  <id name="Id" type="Int64">
-		  <column name="Id" index="idx_MappingKeys_id"/>
+		  <column name="Id" index="idx_MappingKeys_id" />
 		  <generator class="native" />
 	  </id>
 
@@ -11,8 +11,8 @@
 		  <column name="Name" index="idx_Keys_name" />
 	  </property>
 
-	  <property name="Description" type="StringClob" >
-		  <column name="Description" sql-type="text"/>
+	  <property name="Description" type="StringClob">
+		  <column name="Description" sql-type="text" />
 	  </property>
 
 	  <property name="Url" type="string">
@@ -32,14 +32,12 @@
 	  </property>
 
 	  <many-to-one name="Concept" class="BExIS.Dim.Entities.Mapping.MappingConcept, BExIS.Dim.Entities" not-null="true" column="Concept" index="idx_Concept_MappingKeys" />
-	  
+
 	  <set name="Children" cascade="save-update" inverse="true">
-		  <key column="ParentRef" not-null="false"/>
-		  <one-to-many class="BExIS.Dim.Entities.Mapping.MappingKey, BExIS.Dim.Entities"/>
+		  <key column="ParentRef" not-null="false" />
+		  <one-to-many class="BExIS.Dim.Entities.Mapping.MappingKey, BExIS.Dim.Entities" />
 	  </set>
 
 	  <many-to-one name="Parent" column="ParentRef" class="BExIS.Dim.Entities.Mapping.MappingKey, BExIS.Security.Entities" />
-	  
   </class>
-
 </hibernate-mapping>

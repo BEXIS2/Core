@@ -55,8 +55,6 @@ namespace BExIS.Modules.Dcm.UI.Helpers
 
                 #endregion create none structure
 
-
-
                 #region create none unit
 
                 Dimension dimension = null;
@@ -106,7 +104,7 @@ namespace BExIS.Modules.Dcm.UI.Helpers
                     XmlDocument xmlDoc = new XmlDocument();
 
                     if (entity.Extra != null)
-                        if(entity.Extra is XmlDocument) xmlDoc = entity.Extra as XmlDocument ;
+                        if (entity.Extra is XmlDocument) xmlDoc = entity.Extra as XmlDocument;
                         else xmlDoc.AppendChild(entity.Extra);
 
                     //update to Extra
@@ -145,7 +143,6 @@ namespace BExIS.Modules.Dcm.UI.Helpers
                 Feature EntityTemplateManagementFeature = featureManager.FeatureRepository.Get().FirstOrDefault(f => f.Name.Equals("Entity Template Management"));
                 if (EntityTemplateManagementFeature == null) EntityTemplateManagementFeature = featureManager.Create("Entity Template Management", "Entity Template Management", DataCollectionFeature);
 
-
                 #region Help Workflow
 
                 operationManager.Create("DCM", "Help", "*");
@@ -166,7 +163,6 @@ namespace BExIS.Modules.Dcm.UI.Helpers
                 operationManager.Create("DCM", "Edit", "*");
                 operationManager.Create("DCM", "View", "*");
                 operationManager.Create("DCM", "Metadata", "*", DatasetCreationFeature);
-
 
                 #endregion Create Dataset Workflow
 
@@ -196,7 +192,7 @@ namespace BExIS.Modules.Dcm.UI.Helpers
                 operationManager.Create("DCM", "Metadata", "*", DatasetUploadFeature);
                 operationManager.Create("DCM", "Messages", "*", DatasetUploadFeature);
                 operationManager.Create("DCM", "DataDescription", "*", DatasetUploadFeature);
-
+                operationManager.Create("DCM", "Test", "*", DatasetUploadFeature);
 
                 #endregion Update Dataset Workflow
 
@@ -225,9 +221,10 @@ namespace BExIS.Modules.Dcm.UI.Helpers
                 #endregion Metadata Managment Workflow
 
                 #region entity template
+
                 operationManager.Create("DCM", "EntityTemplates", "*", EntityTemplateManagementFeature);
 
-                #endregion
+                #endregion entity template
 
                 #region public available
 
@@ -237,6 +234,7 @@ namespace BExIS.Modules.Dcm.UI.Helpers
                 operationManager.Create("DCM", "EntityReference", "*");
                 //Attachments
                 operationManager.Create("DCM", "Attachments", "*");
+                operationManager.Create("DCM", "Test", "*");
 
                 #endregion public available
 
@@ -299,7 +297,6 @@ namespace BExIS.Modules.Dcm.UI.Helpers
                     entityTemplate.EntityType = entity;
 
                     entityTemplateManager.Create(entityTemplate);
-
                 }
 
                 if (!entityTemplateManager.Repo.Get().Any(d => d.Name.Equals("Tabular data")))
@@ -322,7 +319,6 @@ namespace BExIS.Modules.Dcm.UI.Helpers
                     entityTemplate.EntityType = entity;
 
                     entityTemplateManager.Create(entityTemplate);
-
                 }
 
                 #endregion create default entitytemplate

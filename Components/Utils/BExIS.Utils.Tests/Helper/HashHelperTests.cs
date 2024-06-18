@@ -1,24 +1,19 @@
-﻿
-using BExIS.Utils.Helpers;
+﻿using BExIS.Utils.Helpers;
 using NUnit.Framework;
-
 
 namespace BExIS.Utils.Tests
 {
     [TestFixture()]
     public class HashHelperTests
     {
-
         [OneTimeSetUp]
         public void OneTimeSetUp()
         {
-           
         }
 
         [OneTimeTearDown]
         public void OneTimeTearDown()
         {
-
         }
 
         [Test]
@@ -32,13 +27,11 @@ namespace BExIS.Utils.Tests
             string output = "bf9fbd11199cfb7e79d5ed3538cb967a";
 
             //Act
-            string result = HashHelper.CreateMD5Hash(file,size,date);
+            string result = HashHelper.CreateMD5Hash(file, size, date);
 
-           //Assert
-           Assert.NotNull(result); 
-           Assert.AreEqual(result.ToLower(), output);
-
-
+            //Assert
+            Assert.NotNull(result);
+            Assert.AreEqual(result.ToLower(), output);
         }
 
         [Test]
@@ -53,8 +46,6 @@ namespace BExIS.Utils.Tests
 
             Assert.NotNull(result);
             Assert.AreEqual(result.ToLower(), output);
-
-
         }
 
         [Test]
@@ -84,6 +75,5 @@ namespace BExIS.Utils.Tests
             Assert.NotNull(result);
             Assert.AreEqual(result.ToLower(), output);
         }
-
     }
 }

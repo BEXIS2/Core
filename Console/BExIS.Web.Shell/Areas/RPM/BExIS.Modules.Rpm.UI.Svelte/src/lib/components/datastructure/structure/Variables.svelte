@@ -56,6 +56,11 @@
 
 		ready = true;
 
+		if(variables.length >100)
+		{
+			expandAll = false;
+		}
+
 	});
 
 	function fillVariableValdationStates(vars:[]) {
@@ -294,6 +299,9 @@
 						on:click={()=>upFn(i)}><Fa icon="{faAngleUp}"></Fa></button>
 						{/if}
 
+						<button id="copy-{i}" title="copy" class="chip variant-filled-primary" 
+						on:mouseover={() => helpStore.show('copy-var')} 
+						on:click={()=>copyFn(i)}><Fa icon="{faCopy}"></Fa></button>
 	
 						{#if variables.length > 0 && i < variables.length - 1}
 							<button id="down-{i}" title="down" class="chip variant-filled-surface" 

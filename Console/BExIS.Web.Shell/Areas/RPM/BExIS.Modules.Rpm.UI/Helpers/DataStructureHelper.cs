@@ -5,11 +5,8 @@ using BExIS.Dlm.Services.DataStructure;
 using BExIS.Modules.Rpm.UI.Models.DataStructure;
 using Sylvan.Data.Csv;
 using Sylvan.Data.Excel;
-using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Web;
 using Vaiona.Utils.Cfg;
 
 namespace BExIS.Modules.Rpm.UI.Helpers
@@ -26,7 +23,7 @@ namespace BExIS.Modules.Rpm.UI.Helpers
 
                 foreach (Dataset d in dataStructure.Datasets)
                 {
-                    if (datasetManager.RowCount(d.Id, null) > 0)
+                    if (datasetManager.RowAny(d.Id) && datasetManager.RowCount(d.Id, null) > 0)
                     {
                         return true;
                     }

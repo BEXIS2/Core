@@ -1,5 +1,5 @@
 ﻿using BExIS.Dim.Entities.Mapping;
-using BExIS.Dim.Entities.Publication;
+using BExIS.Dim.Entities.Publications;
 using BExIS.Dim.Helpers;
 using BExIS.Dim.Services;
 using BExIS.Dlm.Entities.Meanings;
@@ -11,7 +11,6 @@ using BExIS.Modules.Dim.UI.Helper;
 using BExIS.Security.Entities.Objects;
 using BExIS.Security.Services.Authorization;
 using BExIS.Security.Services.Objects;
-using BExIS.Utils.Config;
 using BExIS.Xml.Helpers;
 using System;
 using System.Collections.Generic;
@@ -165,11 +164,13 @@ namespace BExIS.Modules.Dim.UI.Helpers
 
                 #endregion MAPPING
 
-                #region meanings for GBIFDWC 
+                #region meanings for GBIFDWC
 
                 createMeaningsForGBIFDWC();
 
-                #endregion
+                createReleationships();
+
+                #endregion meanings for GBIFDWC
             }
             catch (Exception ex)
             {
@@ -187,12 +188,10 @@ namespace BExIS.Modules.Dim.UI.Helpers
 
         private void createMeaningsForGBIFDWC()
         {
-
             using (var meaningManager = new MeaningManager())
             {
                 ExternalLink prefix = new ExternalLink();
                 ExternalLink releation = new ExternalLink();
-
 
                 // prefix
                 if (!meaningManager.getPrefixes().Any(p => p.Name.Equals("dwc")))
@@ -205,7 +204,8 @@ namespace BExIS.Modules.Dim.UI.Helpers
 
                     prefix = meaningManager.addExternalLink(prefix);
                 }
-                else {
+                else
+                {
                     prefix = meaningManager.getPrefixes().FirstOrDefault(p => p.Name.Equals("dwc"));
                 }
 
@@ -224,7 +224,6 @@ namespace BExIS.Modules.Dim.UI.Helpers
                 {
                     releation = meaningManager.getPrefixes().FirstOrDefault(p => p.Name.Equals("hasDwcTerm"));
                 }
-
 
                 // links & meanings
                 List<string> links = new List<string>();
@@ -264,7 +263,7 @@ namespace BExIS.Modules.Dim.UI.Helpers
                     {
                         link.Name = l;
                         link.URI = l;
-                        link.Type = ExternalLinkType.link;
+                        link.Type = ExternalLinkType.vocabulary;
                         link.Prefix = prefix;
                         link.prefixCategory = null;
 
@@ -276,13 +275,12 @@ namespace BExIS.Modules.Dim.UI.Helpers
                             var linkList = new List<ExternalLink>();
                             linkList.Add(link);
 
-
                             Meaning meaning = new Meaning();
                             if (meaningManager.getMeanings().Any(m => m.Name.Equals(l)))
                             {
                                 meaning = meaningManager.getMeanings().FirstOrDefault(m => m.Name.Equals(l));
                             }
-                            
+
                             meaning.Name = l;
                             meaning.Selectable = true;
                             meaning.Approved = true;
@@ -290,6 +288,53 @@ namespace BExIS.Modules.Dim.UI.Helpers
 
                             meaningManager.addMeaning(meaning);
                         }
+                    }
+                }
+            }
+        }
+
+        private void createReleationships()
+        {
+            using (var meaningManager = new MeaningManager())
+            {
+                ExternalLink prefix = new ExternalLink();
+                ExternalLink releation = new ExternalLink();
+
+                // prefix
+                string n = "i-adopt";
+                if (!meaningManager.getPrefixes().Any(p => p.Name.Equals(n)))
+                {
+                    prefix.Name = n;
+                    prefix.URI = "https://i-adopt.github.io/#/";
+                    prefix.Type = ExternalLinkType.prefix;
+                    prefix.Prefix = null;
+                    prefix.prefixCategory = null;
+
+                    prefix = meaningManager.addExternalLink(prefix);
+                }
+                else
+                {
+                    prefix = meaningManager.getPrefixes().FirstOrDefault(p => p.Name.Equals(n));
+                }
+
+                List<string> releationshiptypes = new List<string>();
+                releationshiptypes.Add("hasContextObject");
+                releationshiptypes.Add("hasMatrix");
+                releationshiptypes.Add("hasObjectOfInterest");
+                releationshiptypes.Add("hasProperty");
+
+                foreach (var c in releationshiptypes)
+                {
+                    if (!meaningManager.getExternalLinks().Any(p => p.Name.Equals(c)))
+                    {
+                        releation = new ExternalLink();
+                        releation.Name = c;
+                        releation.URI = c;
+                        releation.Type = ExternalLinkType.relationship;
+                        releation.Prefix = prefix;
+                        releation.prefixCategory = null;
+
+                        releation = meaningManager.addExternalLink(releation);
                     }
                 }
             }

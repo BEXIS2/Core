@@ -5,7 +5,6 @@ namespace BExIS.IO
 {
     public class IoHelper
     {
-
         public static string GetDynamicStorePath(long datasetId, long datasetVersionOrderNr, string title, string extention)
         {
             if (datasetId < 1) throw new Exception("Dataset id can not be less then 1.");
@@ -18,7 +17,6 @@ namespace BExIS.IO
 
             return Path.Combine(storePath, datasetId + "_" + datasetVersionOrderNr + "_" + title + extention);
         }
-
     }
 
     public enum DecimalCharacter
@@ -36,7 +34,7 @@ namespace BExIS.IO
     /// <summary>
     /// TextSeperator is a list of different characters which used as seperator in ascii files
     /// </summary>
-    /// <remarks></remarks>        
+    /// <remarks></remarks>
     public enum TextSeperator
     {
         tab = 9,
@@ -54,5 +52,4 @@ namespace BExIS.IO
         quotes,
         doubleQuotes
     }
-
 }

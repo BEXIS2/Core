@@ -5,10 +5,8 @@ using Vaiona.Entities.Common;
 
 namespace BExIS.Dlm.Entities.Data
 {
-
     public class EntityTemplate : BaseEntity
     {
-
         /// <summary>
         /// Name of the Entity Template
         /// </summary>
@@ -64,6 +62,7 @@ namespace BExIS.Dlm.Entities.Data
         /// List of available Datatructures
         /// </summary>
         public virtual string JsonDatastructureList { get; set; }
+
         public virtual List<long> DatastructureList
         {
             get
@@ -80,7 +79,8 @@ namespace BExIS.Dlm.Entities.Data
         ///
         /// </summary>
         public virtual string JsonAllowedFileTypes { get; set; }
-        /// 
+
+        ///
         public virtual List<string> AllowedFileTypes
         {
             get
@@ -97,6 +97,7 @@ namespace BExIS.Dlm.Entities.Data
         /// list of hidden hooks from ui
         /// </summary>
         public virtual string JsonDisabledHooks { get; set; }
+
         public virtual List<string> DisabledHooks
         {
             get
@@ -114,6 +115,7 @@ namespace BExIS.Dlm.Entities.Data
         /// when a email is sended to the owner or admin send also to this groups
         /// </summary>
         public virtual string JsonNotificationGroups { get; set; }
+
         public virtual List<long> NotificationGroups
         {
             get
@@ -131,11 +133,19 @@ namespace BExIS.Dlm.Entities.Data
         /// when a email is sended to the owner or admin send also to this groups
         /// </summary>
         public virtual string JsonPermissionGroups { get; set; }
-        public virtual List<long> PermissionGroups
+
+        public virtual PermissionsType PermissionGroups
         {
             get
             {
-                return JsonConvert.DeserializeObject<List<long>>(JsonPermissionGroups);
+                try
+                {
+                    return JsonConvert.DeserializeObject<PermissionsType>(JsonPermissionGroups);
+                }
+                catch
+                {
+                    return new PermissionsType();
+                }
             }
             set
             {
@@ -151,9 +161,8 @@ namespace BExIS.Dlm.Entities.Data
             DisabledHooks = new List<string>();
             DatastructureList = new List<long>();
             MetadataFields = new List<int>();
-            PermissionGroups = new List<long>();
+            PermissionGroups = new PermissionsType();
             NotificationGroups = new List<long>();
-
 
             JsonAllowedFileTypes = "";
             JsonDatastructureList = "";
@@ -173,7 +182,7 @@ namespace BExIS.Dlm.Entities.Data
             DisabledHooks = new List<string>();
             DatastructureList = new List<long>();
             MetadataFields = new List<int>();
-            PermissionGroups = new List<long>();
+            PermissionGroups = new PermissionsType();
             NotificationGroups = new List<long>();
 
             JsonAllowedFileTypes = "";
@@ -183,6 +192,21 @@ namespace BExIS.Dlm.Entities.Data
             JsonPermissionGroups = "";
             JsonNotificationGroups = "";
         }
+    }
 
+    public class PermissionsType
+    {
+        public List<long> Full { get; set; }
+        public List<long> ViewEditGrant { get; set; }
+        public List<long> ViewEdit { get; set; }
+        public List<long> View { get; set; }
+
+        public PermissionsType()
+        {
+            Full = new List<long>();
+            ViewEditGrant = new List<long>();
+            View = new List<long>();
+            ViewEdit = new List<long>();
+        }
     }
 }

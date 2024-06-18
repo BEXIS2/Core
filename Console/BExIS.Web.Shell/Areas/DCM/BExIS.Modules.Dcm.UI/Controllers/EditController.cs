@@ -39,14 +39,12 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         [JsonNetFilter]
         public JsonResult Load(long id, int version = 0)
         {
-
             EditModel model = new EditModel();
             model.Id = id;
             model.Version = version;
 
             using (var datasetManager = new DatasetManager())
             {
-
                 if (datasetManager.IsDatasetCheckedIn(id) == false) throw new Exception("Dataset is in process, try again later");
 
                 // load dataset version
@@ -56,8 +54,6 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 {
                     datasetVersion = datasetManager.GetDatasetLatestVersion(id);
                     model.Version = datasetManager.GetDatasetVersionCount(id); // get number of the latest version
-
-                    
                 }
                 else // get specific
                 {
@@ -91,7 +87,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         }
 
         /// <summary>
-        /// return hooks with new status, check was running again 
+        /// return hooks with new status, check was running again
         /// </summary>
         /// <param name="id">subject id</param>
         /// <param name="versionId">specific subject version based on version id</param>
@@ -108,7 +104,6 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 // load all hooks for the edit view
                 HookManager hooksManager = new HookManager();
                 Hooks = hooksManager.GetHooksFor("dataset", "details", HookMode.edit);
-           
 
                 // run all checks
                 string userName = BExISAuthorizeHelper.GetAuthorizedUserName(HttpContext);

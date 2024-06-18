@@ -9,8 +9,6 @@ namespace Vaiona.IoC.Unity
     {
         private static readonly string IoCPerRequestKey = "IoCRerRequestKey_";
 
-
-
         /// <summary>
         /// Initializes a module and prepares it to handle requests.
         /// </summary>
@@ -61,7 +59,6 @@ namespace Vaiona.IoC.Unity
             IoCFactory.Container.StartRequestLevelContainer();
         }
 
-
         private void onEndRequest(object sender, EventArgs e)
         {
             var app = (HttpApplication)sender;
@@ -82,7 +79,6 @@ namespace Vaiona.IoC.Unity
             }
             IoCFactory.Container.ShutdownRequestLevelContainer();
         }
-
 
         public static object GetValue(object key)
         {

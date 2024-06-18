@@ -1,20 +1,15 @@
-﻿
-using BExIS.Dim.Helpers.Mapping;
+﻿using BExIS.Dim.Helpers.Mapping;
 using BExIS.Dim.Helpers.Models;
-using BExIS.Dlm.Services.Data;
+using BExIS.Dlm.Entities.Meanings;
 using BExIS.Dlm.Services.DataStructure;
 using BExIS.IO.Transform.Output;
 using BExIS.Xml.Helpers.Mapping;
-using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Data;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Xml;
-using System.Xml.Schema;
 using System.Xml.Serialization;
 using Vaiona.Utils.Cfg;
 
@@ -24,30 +19,95 @@ namespace BExIS.Dim.Helpers.GBIF
     {
         public string[] OccurrencesRequiredDWTerms = { "occurrenceID", "basisOfRecord", "scientificName", "eventDate" };
         public string[] SamplingEventRequiredDWTerms = { "eventID", "eventDate", "samplingProtocol", "sampleSizeValue", "sampleSizeUnit" };
+        private string releation = "hasDwcTerm";
 
         /// <summary>
-        /// this function checks wheter there is in v2 a file for a datastructure 
+        /// this function checks wheter there is in v2 a file for a datastructure
         /// that maps varaibles to darwin core terms
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
         /// <exception cref="NotImplementedException"></exception>
         public bool DarwinCoreTermsMappingExist(long datastructureId)
-        { 
-            throw new NotImplementedException();
-        }
-
-        public void GetDarwinCoreTermsFromDatastructure(long datastructureId)
         {
             throw new NotImplementedException();
         }
 
-        private bool ExistRequiredDWTerms(long datastructureId)
+        private List<Field> getDarwinCoreTermsFromDatastructure(long datastructureId)
         {
-            throw new NotImplementedException();
+            List<Field> dwcterms = new List<Field>();
+
+            if (datastructureId <= 0) throw new ArgumentNullException("datastructureId");
+            using (var datastructureManager = new DataStructureManager())
+            {
+                var structure = datastructureManager.StructuredDataStructureRepo.Get(datastructureId);
+                if (structure == null) throw new NullReferenceException("structure not exist");
+
+                for (int i = 0; i < structure.Variables.Count(); i++) // go throw each varaible
+                {
+                    var variable = structure.Variables.ElementAt(i);
+                    if (variable.Meanings.Any()) // check if meanings exist
+                    {
+                        //check if meanings belong to darwincore
+                        foreach (var meaning in variable.Meanings)
+                        {
+                            var meaningEntries = meaning.ExternalLinks.Where(e => e.MappingRelation.Type == ExternalLinkType.relationship && e.MappingRelation.Name.Equals(releation));
+
+                            if (meaningEntries.Any() == false) break; // no meanings in this context exist, please skip the for each loop
+                            if (meaningEntries.Any() && meaningEntries.Count() > 1) throw new Exception("to many dwc terms mapped to one variable"); // Tomany meaning entries exist
+
+                            var meaningEntry = meaningEntries.First();
+                            var links = meaningEntry.MappedLinks;
+
+                            if (links.Any()) // some mapping exist to dcw
+                            {
+                                if (links.Count() > 1) throw new Exception("to many dwc terms mapped to one variable");
+
+                                var term = links.FirstOrDefault();
+                                var url = term.Prefix.URI + term.URI;
+                                // if only one exist
+                                Field field = new Field()
+                                {
+                                    Index = i,
+                                    Term = url
+                                };
+                                dwcterms.Add(field);
+                            }
+                        }
+                    }
+                }
+            }
+
+            return dwcterms;
         }
 
-        // generate the metafile 
+        private bool ExistRequiredDWTerms(List<Field> fields, GbifDataType type, out List<string> errors)
+        {
+            List<string> el = new List<string>();
+
+            if (fields == null || fields.Count == 0) el.Add("no dwc terms linked to variable"); // check if fields has entries
+
+            List<string> fieldNames = fields.Select(f => f.Term.Split('/').Last()).ToList(); // get all names of teh urls
+
+            // compare the list of existing terms with the rwuired onces
+            List<string> required = new List<string>();
+            switch (type)
+            {
+                case GbifDataType.samplingEvent: required = SamplingEventRequiredDWTerms.ToList(); break;
+                case GbifDataType.occurrence: required = OccurrencesRequiredDWTerms.ToList(); break;
+                default: required = OccurrencesRequiredDWTerms.ToList(); break;
+            }
+
+            var missingFromList1 = required.Where(item => !fieldNames.Any(x => x == item)).ToList();
+
+            missingFromList1.ForEach(item => el.Add("dwc term " + item + " is missing."));
+
+            errors = el;
+
+            return missingFromList1.Any() ? false : true;
+        }
+
+        // generate the metafile
         public string GenerateMeta(GbifDataType type, long structureId, string directory, string dataFile)
         {
             if (structureId <= 0) throw new ArgumentNullException("structureId");
@@ -61,14 +121,13 @@ namespace BExIS.Dim.Helpers.GBIF
 
                 string structurePath = Path.Combine(AppConfiguration.DataPath, "DataStructures", structure.Id.ToString());
                 string dwtermsFilePath = Path.Combine(structurePath, "dw_terms.json");
-                DWTerms dwterms = new DWTerms(); ;
 
-                // load dc terms
-                using (StreamReader r = new StreamReader(dwtermsFilePath))
-                {
-                    string json = r.ReadToEnd();
-                    dwterms = JsonConvert.DeserializeObject<DWTerms>(json);
-                }
+                GbifHelper helper = new GbifHelper();
+
+                // set dwc terms in meta
+                DWTerms dwterms = new DWTerms();
+                dwterms.Type = type;
+                dwterms.Field = getDarwinCoreTermsFromDatastructure(structureId);
 
                 Archive archive = new Archive();
 
@@ -108,13 +167,13 @@ namespace BExIS.Dim.Helpers.GBIF
             }
         }
 
-        // generate the metafile 
+        // generate the metafile
         public string GenerateResourceMetadata(long conceptId, long metadataStrutcureId, XmlDocument metadata, string directory, string xsdPath)
         {
             if (!File.Exists(xsdPath)) throw new FileNotFoundException("xsd");
             if (metadata == null) throw new NullReferenceException("metadata");
             if (string.IsNullOrEmpty(directory)) throw new ArgumentNullException("directory");
-            if (conceptId<=0) throw new ArgumentNullException("conceptId");
+            if (conceptId <= 0) throw new ArgumentNullException("conceptId");
             if (metadataStrutcureId <= 0) throw new ArgumentNullException("metadataStrutcureId");
 
             string metadataFilePath = Path.Combine(directory, "metadata.xml");
@@ -141,9 +200,7 @@ namespace BExIS.Dim.Helpers.GBIF
             root.SetAttribute("xml:lang", "en");
             root.SetAttribute("packageId", "na");
 
-            
             conceptOutput.ReplaceChild(root, conceptOutput.DocumentElement);
-          
 
             if (conceptOutput != null) conceptOutput.Save(metadataFilePath);
 
@@ -155,7 +212,7 @@ namespace BExIS.Dim.Helpers.GBIF
         // validate metadata Gaianst XSD
         public bool ValidateResourceMetadata(string metadataFilePath, string xsdPath, out List<string> errors)
         {
-            List<string>  el = new List<string>();
+            List<string> el = new List<string>();
 
             if (!File.Exists(metadataFilePath)) throw new FileNotFoundException("metadata");
             if (!File.Exists(xsdPath)) throw new FileNotFoundException("xsd");
@@ -163,13 +220,13 @@ namespace BExIS.Dim.Helpers.GBIF
             XmlSchemaManager xmlSchemaManager = new XmlSchemaManager();
             xmlSchemaManager.Load(xsdPath, "system");
 
-
             XmlDocument metadata = new XmlDocument();
             metadata.Load(metadataFilePath);
             metadata.Schemas = xmlSchemaManager.SchemaSet;
 
             string msg = "";
-            metadata.Validate((o, e) => {
+            metadata.Validate((o, e) =>
+            {
                 el.Add(e.Message);
             });
 
@@ -180,18 +237,27 @@ namespace BExIS.Dim.Helpers.GBIF
             return true;
         }
 
+        public bool ValidateDWCTerms(long datastructureId, GbifDataType type, out List<string> errors)
+        {
+            List<string> el = new List<string>();
+
+            List<Field> fields = getDarwinCoreTermsFromDatastructure(datastructureId);
+
+            bool existAllRequiredTerms = ExistRequiredDWTerms(fields, type, out el);
+
+            errors = el;
+
+            return existAllRequiredTerms;
+        }
 
         public string GenerateData(long id, long versionId)
         {
             string datapath = string.Empty;
 
             var outputDataManager = new OutputDataManager();
-            datapath = outputDataManager.GenerateAsciiFile(id, versionId,  "text/csv", false,true);
+            datapath = outputDataManager.GenerateAsciiFile(id, versionId, "text/csv", false, true);
 
             return datapath;
         }
     }
-
- 
-    
 }

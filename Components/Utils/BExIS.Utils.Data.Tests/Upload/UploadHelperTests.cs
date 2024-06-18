@@ -30,18 +30,13 @@ namespace BExIS.Utils.Data.Tests
         public void OneTimeSetUp()
         {
             helper = new TestSetupHelper(WebApiConfig.Register, false);
-            var dm = new DatasetManager();
-            var rsm = new ResearchPlanManager();
-            var mdm = new MetadataStructureManager();
-            var etm = new EntityTemplateManager();
             dsHelper = new DatasetHelper();
 
-            try
+            using (var dm = new DatasetManager())
+            using (var rsm = new ResearchPlanManager())
+            using (var mdm = new MetadataStructureManager())
+            using (var etm = new EntityTemplateManager())
             {
-                //dsHelper.PurgeAllDatasets();
-                //dsHelper.PurgeAllDataStructures();
-                //dsHelper.PurgeAllResearchPlans();
-
                 // generate Data
                 StructuredDataStructure dataStructure = dsHelper.CreateADataStructure();
                 dataStructure.Should().NotBeNull("Failed to meet a precondition: a data strcuture is required.");
@@ -63,10 +58,7 @@ namespace BExIS.Utils.Data.Tests
                 dm.CheckInDataset(dataset.Id, "for testing  datatuples with versions", username, ViewCreationBehavior.None);
 
                 dm.SyncView(dataset.Id, ViewCreationBehavior.Create | ViewCreationBehavior.Refresh);
-            }
-            finally
-            {
-                etm.Dispose(); ;
+
                 dm.CheckInDataset(datasetId, "for testing  datatuples with versions", username, ViewCreationBehavior.None);
             }
         }

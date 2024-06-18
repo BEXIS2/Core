@@ -288,10 +288,16 @@
                         var kvpString = currentMVSArray[i];
                         var displayname = kvpString.split("|")[0]
                         var placeholder = kvpString.split("|")[1]
-                        //console.log("c" + i + "-" + displayname + " - " + placeholder + " " + this.innerHTML);
-                        
+                        console.log("pdatatest","c" + i + "-" + displayname + " - " + placeholder + " " + this.innerHTML);
+
                         //check if the value is a missing value and replace it
                         if (this.innerHTML.toUpperCase() == placeholder) {
+                            this.innerHTML = displayname;
+                        }
+
+                        // check for dates
+                        let v = this.innerHTML.toUpperCase();
+                        if ((v.includes("9999") || v.includes("9998") || v.includes("9997")) && v.includes("31") && v.includes("12")) {
                             this.innerHTML = displayname;
                         }
 

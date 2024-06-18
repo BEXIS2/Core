@@ -279,3 +279,4 @@ paket-files/
 _backup_dcm
 svelte
 /Console/BExIS.Web.Shell/Areas/RPM/BExIS.Modules.Rpm.UI/Scripts/svelte
+/_output

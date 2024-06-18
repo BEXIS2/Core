@@ -1,13 +1,9 @@
 ﻿using BExIS.Dim.Helpers.Models;
-using BExIS.Dlm.Entities.Data;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Web;
 using Vaelastrasz.Library.Models;
-using Vaelastrasz.Library.Services;
 
 namespace BExIS.Dim.Helpers.Extensions
 {
@@ -22,22 +18,25 @@ namespace BExIS.Dim.Helpers.Extensions
                 switch (mapping.Name)
                 {
                     #region URL
+
                     case "URL":
 
                         model.Data.Attributes.URL = $"{HttpContext.Current.Request.Url.GetLeftPart(UriPartial.Authority)}/ddm/Data/ShowData/{replacement}";
                         break;
-                    #endregion
+
+                    #endregion URL
 
                     #region Version
+
                     case "Version":
 
                         model.Data.Attributes.Version = replacement;
                         break;
-                    #endregion
+
+                    #endregion Version
 
                     default:
                         break;
-
                 }
             }
 

@@ -23,6 +23,7 @@ using Vaiona.Entities.Common;
 using Vaiona.Utils.Cfg;
 using Vaiona.Web.Extensions;
 using Vaiona.Web.Mvc.Modularity;
+
 using Cache = BExIS.UI.Hooks.Caches;
 
 namespace BExIS.Modules.Dcm.UI.Controllers
@@ -81,7 +82,6 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             // set modification date
             model.LastModification = cache.GetLastModificarion(typeof(AttachmentEditHook));
 
-
             return Json(model, JsonRequestBehavior.AllowGet);
         }
 
@@ -92,7 +92,6 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             HookManager hookManager = new HookManager();
             EditDatasetDetailsCache cache = hookManager.LoadCache<EditDatasetDetailsCache>("dataset", "details", HookMode.edit, id);
             EditDatasetDetailsLog logs = hookManager.LoadLog<EditDatasetDetailsLog>("dataset", "details", HookMode.edit, id);
-
 
             List<string> filesNames = new List<string>();
             var username = BExISAuthorizeHelper.GetAuthorizedUserName(HttpContext);
@@ -147,9 +146,8 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                     List<string> messages = new List<string> { "Files uploaded" };
                     messages.AddRange(filesNames);
 
-                    logs.Messages.Add(new LogMessage(DateTime.Now, messages, username, "Attachment upload","upload"));
-                    hookManager.Save(cache,logs, "dataset", "details", HookMode.edit, id);
-
+                    logs.Messages.Add(new LogMessage(DateTime.Now, messages, username, "Attachment upload", "upload"));
+                    hookManager.Save(cache, logs, "dataset", "details", HookMode.edit, id);
                 }
             }
             else
@@ -203,8 +201,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 // update last modification time
                 cache.UpdateLastModificarion(typeof(AttachmentEditHook));
 
-                hookManager.Save(cache,log, "dataset", "details", HookMode.edit, id);
-
+                hookManager.Save(cache, log, "dataset", "details", HookMode.edit, id);
             }
 
             return Json(true);
@@ -219,7 +216,6 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
             using (var dm = new DatasetManager())
             {
-
                 var filePath = Path.Combine(AppConfiguration.DataPath, "Datasets", id.ToString(), "Attachments", file);
                 var dataset = dm.GetDataset(id);
                 var datasetVersion = dm.GetDatasetLatestVersion(dataset);
@@ -230,20 +226,16 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 contentDescriptor.Description = description;
 
                 dm.UpdateContentDescriptor(contentDescriptor);
-
             }
 
             var username = BExISAuthorizeHelper.GetAuthorizedUserName(HttpContext);
             //new LogMessage(DateTime.Now, new List<string>() { file + " removed" }, username, "Attachment", "remove")
-            log.Messages.Add(new LogMessage(DateTime.Now, new List<string>() { file + " description updated" } , username, "Attachment upload", "save description" ));
+            log.Messages.Add(new LogMessage(DateTime.Now, new List<string>() { file + " description updated" }, username, "Attachment upload", "save description"));
             // update last modification time
             cache.UpdateLastModificarion(typeof(AttachmentEditHook));
 
-
             // save cache and logs
             hookManager.Save(cache, log, "dataset", "details", HookMode.edit, id);
-
-
 
             return Json(true);
         }
@@ -355,8 +347,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 Name = fileName,
                 MimeType = MimeMapping.GetMimeMapping(fileName),
                 URI = Path.Combine("Datasets", datasetVersion.Dataset.Id.ToString(), "Attachments", fileName),
-                DatasetVersion = datasetVersion,
-                Description = ""
+                DatasetVersion = datasetVersion
             };
             // replace the URI and description in case they have a same name
             if (datasetVersion.ContentDescriptors.Count(p => p.Name.Equals(originalDescriptor.Name)) > 0)

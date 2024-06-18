@@ -8,13 +8,13 @@
     @if (!String.IsNullOrEmpty(Model.ExternalLink))
     {
         string doiLink = "https://doi.org/" + Model.ExternalLink;
-        <td>
-            <a href="@doiLink">@Model.ExternalLink</a>
-        </td>
+    <td>
+        <a href="@doiLink">@Model.ExternalLink</a>
+    </td>
     }
     else
     {
-        <td></td>
+    <td></td>
     }
     <td>
 
@@ -26,13 +26,13 @@
     <td>
         @if (Model.Status.ToLower().Contains("registered") || Model.Status.ToLower().Contains("denied"))
         {
-            <a class="fa bx-grid-function fa-check bx-disabled"></a>
-            <a class="fa bx-grid-function fa-times bx-disabled"></a>
+        <a class="fa bx-grid-function fa-check bx-disabled"></a>
+        <a class="fa bx-grid-function fa-times bx-disabled"></a>
         }
         else
         {
-            <a class="doi-grant fa bx-grid-function fa-check"></a>
-            <a class="doi-deny fa bx-grid-function fa-times"></a>
+        <a class="doi-grant fa bx-grid-function fa-check"></a>
+        <a class="doi-deny fa bx-grid-function fa-times"></a>
         }
     </td>
 </tr>

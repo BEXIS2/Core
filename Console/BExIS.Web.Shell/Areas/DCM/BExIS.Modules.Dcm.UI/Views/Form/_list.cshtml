@@ -3,20 +3,18 @@
 
 @using Telerik.Web.Mvc.UI
 
-
 @{
     string action = "OnChangeDropDown";
     if (Model.Type.Equals(MetadataAttrType.Parameter)) { action = "OnChangeParameterDropDown"; }
 }
 
-
 @if (!Model.Locked)
-{ 
+{
 
     if (Model.DomainList.Count > 0)
     {
 
-        @(Html.Telerik().DropDownList()
+@(Html.Telerik().DropDownList()
         .Placeholder("Please select")
         .Name(@Model.IdInput)
         .HtmlAttributes(new { idbyxpath = @Model.IdByXpath, PackageId = @Model.ParentId, Title = @Model.ErrorMessage, @class = "bx-dropdown " + @Model.ErrorClass })
@@ -27,5 +25,5 @@
 }
 else
 {
-    @Html.Partial("_displayonly", Model)
+@Html.Partial("_displayonly", Model)
 }

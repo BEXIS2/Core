@@ -1,5 +1,5 @@
 ﻿using BExIS.Dim.Entities.Mapping;
-using BExIS.Dim.Entities.Publication;
+using BExIS.Dim.Entities.Publications;
 using BExIS.Dim.Helpers.GFBIO;
 using BExIS.Dim.Helpers.Mapping;
 using BExIS.Dim.Services;
@@ -76,7 +76,6 @@ namespace BExIS.Modules.Dim.UI.Controllers
         {
             using (PublicationManager publicationManager = new PublicationManager())
             {
-
                 Broker broker = publicationManager.GetBroker()
                                                .Where(b => b.Name.ToLower().Equals("gfbio dev1"))
                                                .FirstOrDefault();
@@ -107,7 +106,6 @@ namespace BExIS.Modules.Dim.UI.Controllers
             using (PartyManager partyManager = new PartyManager())
             using (PartyTypeManager partyTypeManager = new PartyTypeManager())
             {
-
                 PartyType partyType = partyTypeManager.PartyTypeRepository.Get().Where(p => p.Title.Equals("Person")).FirstOrDefault();
 
                 if (partyType != null)

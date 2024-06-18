@@ -2,11 +2,13 @@
 using BExIS.Ddm.Providers.LuceneProvider.Searcher;
 using BExIS.Utils.Models;
 using Lucene.Net.Analysis.Standard;
+using Lucene.Net.Documents;
 using Lucene.Net.Index;
 using Lucene.Net.QueryParsers;
 using Lucene.Net.Search;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Xml;
@@ -22,8 +24,8 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Config
     /// <remarks></remarks>        
     public static class SearchConfig
     {
-        static XmlDocument configXML;
-        static IndexReader _Reader = BexisIndexSearcher.getIndexReader();
+        private static XmlDocument configXML;
+        private static IndexReader _Reader = BexisIndexSearcher.getIndexReader();
 
         private static searchInitObjects sIO = new searchInitObjects();
 
@@ -88,6 +90,9 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Config
         /// <seealso cref=""/>        
         private static void Load()
         {
+            // check if directory exist
+            string dicPath = Path.GetDirectoryName(FileHelper.ConfigFilePath);
+            if (!Directory.Exists(dicPath)) Directory.CreateDirectory(dicPath); // create if not exist
 
 
             configXML = new XmlDocument();
@@ -271,7 +276,8 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Config
         /// <seealso cref=""/>
         /// <param>NA</param>       
         /// <returns></returns>
-        public static HashSet<string> getNumericProperties() { return numericProperties; }
+        public static HashSet<string> getNumericProperties()
+        { return numericProperties; }
 
         /// <summary>
         ///
@@ -280,7 +286,8 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Config
         /// <seealso cref=""/>
         /// <param>NA</param>       
         /// <returns></returns>
-        public static IEnumerable<Facet> getFacets() { return AllFacetsDefault; }
+        public static IEnumerable<Facet> getFacets()
+        { return AllFacetsDefault; }
 
         /// <summary>
         ///
@@ -289,7 +296,8 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Config
         /// <seealso cref=""/>
         /// <param>NA</param>       
         /// <returns></returns>
-        public static IEnumerable<Property> getProperties() { return AllPropertiesDefault; }
+        public static IEnumerable<Property> getProperties()
+        { return AllPropertiesDefault; }
 
         /// <summary>
         ///
@@ -298,7 +306,8 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Config
         /// <seealso cref=""/>
         /// <param>NA</param>       
         /// <returns></returns>
-        public static IEnumerable<Category> getCategories() { return AllCategoriesDefault; }
+        public static IEnumerable<Category> getCategories()
+        { return AllCategoriesDefault; }
 
         /// <summary>
         ///
@@ -362,7 +371,7 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Config
         /// <param name="obj"></param>
         /// <param name="circular"></param>
         /// <returns></returns>
-        static object Process(object obj, Dictionary<object, object> circular)
+        private static object Process(object obj, Dictionary<object, object> circular)
         {
             if (obj == null)
                 return null;

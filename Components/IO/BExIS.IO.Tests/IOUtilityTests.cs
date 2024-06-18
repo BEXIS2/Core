@@ -11,41 +11,27 @@ namespace BExIS.IO.Tests
     [TestFixture()]
     public class IOUtilityTests
     {
-
-        List<DateTimeHelperUTObject> DateTimeCases = new List<DateTimeHelperUTObject>();
-
+        private List<DateTimeHelperUTObject> DateTimeCases = new List<DateTimeHelperUTObject>();
 
         [OneTimeSetUp]
-        /// It is called once prior to executing any of the tests in a fixture.
-        /// Multiple methods can be marked. Order is not preserved. 
-        /// Inheritance is supported, call sequence form the parents
         public void OneTimeSetUp()
         {
             DateTimeCases = generateDateTimeCases();
         }
 
         [SetUp]
-        /// performs the initial setup for the tests. This runs once per test, NOT per class!
         protected void SetUp()
         {
-
         }
 
         [TearDown]
-        /// performs the cleanup after each test
         public void TearDown()
         {
-
         }
 
         [OneTimeTearDown]
-        /// It is called once after executing all the tests in a fixture.
-        /// Multiple methods can be marked. Order is not preserved. 
-        /// Inheritance is supported, call sequence form the children
-        /// Executes only if: counterpart OneTimeSetUp exists and executed successfully.
         public void OneTimeTearDown()
         {
-
         }
 
         [Test()]
@@ -124,45 +110,39 @@ namespace BExIS.IO.Tests
         {
             List<DateTimeHelperUTObject> cases = new List<DateTimeHelperUTObject>();
 
+            cases.Add(new DateTimeHelperUTObject("2017-10-24 11:00:00", "yyyy-MM-dd hh:mm:ss", "10/24/2017 11:00:00 AM", true));
+            cases.Add(new DateTimeHelperUTObject("24.10.2017 11:00:00", "dd.MM.yyyy hh:mm:ss", "10/24/2017 11:00:00 AM", true));
+            cases.Add(new DateTimeHelperUTObject("5/10/2014 12:00:00 AM", "d/M/yyyy hh:mm:ss tt", "10/5/2014 12:00:00 AM", true));
+            cases.Add(new DateTimeHelperUTObject("7/1/2023 2:00:00 AM", "d/M/yyyy h:mm:ss tt", "1/7/2023 2:00:00 AM", true));
             cases.Add(new DateTimeHelperUTObject("3/2/2019 7:31", "M/d/yyyy h:m", "3/2/2019 7:31:00 AM", true));
             cases.Add(new DateTimeHelperUTObject("03/02/2019 7:31", "MM/dd/yyyy h:m", "3/2/2019 7:31:00 AM", true));
-
             cases.Add(new DateTimeHelperUTObject("2017-10-24T11:00:00", "yyyy-MM-ddThh:mm:ss", "10/24/2017 11:00:00 AM", true));
             cases.Add(new DateTimeHelperUTObject("2017-10-24T13:00:00", "yyyy-MM-ddTHH:mm:ss", "10/24/2017 1:00:00 PM", true));
             cases.Add(new DateTimeHelperUTObject("2017-10-24T1:00:00", "yyyy-MM-ddTHH:mm:ss", "10/24/2017 1:00:00 PM", false));
             cases.Add(new DateTimeHelperUTObject("5/10/2014", "yyyy-MM-ddTHH:mm:ss", "10/24/2017 1:00:00 PM", false));
             cases.Add(new DateTimeHelperUTObject("2014/12/20", "yyyy-MM-ddTHH:mm:ss", "10/24/2017 1:00:00 PM", false));
-
             cases.Add(new DateTimeHelperUTObject("2017-10-24", "yyyy-MM-dd", "10/24/2017 12:00:00 AM", true));
-
             cases.Add(new DateTimeHelperUTObject("10/24/2017", "MM/dd/yyyy", "10/24/2017 12:00:00 AM", true));
             cases.Add(new DateTimeHelperUTObject("24/24/2017", "MM/dd/yyyy", "10/24/2017 12:00:00 AM", false));
             cases.Add(new DateTimeHelperUTObject("10/24/17", "MM/dd/yy", "10/24/2017 12:00:00 AM", true));
             cases.Add(new DateTimeHelperUTObject("24/24/17", "MM/dd/yy", "10/24/2017 12:00:00 AM", false));
-
             cases.Add(new DateTimeHelperUTObject("24/10/2017", "dd/MM/yyyy", "10/24/2017 12:00:00 AM", true));
             cases.Add(new DateTimeHelperUTObject("10/24/2017", "dd/MM/yyyy", "10/24/2017 12:00:00 AM", false));
             cases.Add(new DateTimeHelperUTObject("24/10/17", "dd/MM/yy", "10/24/2017 12:00:00 AM", true));
             cases.Add(new DateTimeHelperUTObject("10/24/17", "dd/MM/yy", "10/24/2017 12:00:00 AM", false));
-
             cases.Add(new DateTimeHelperUTObject("24.10.2017", "dd.MM.yyyy", "10/24/2017 12:00:00 AM", true));
             cases.Add(new DateTimeHelperUTObject("10.24.2017", "dd.MM.yyyy", "10/24/2017 12:00:00 AM", false));
             cases.Add(new DateTimeHelperUTObject("24.10.17", "dd.MM.yy", "10/24/2017 12:00:00 AM", true));
             cases.Add(new DateTimeHelperUTObject("10.24.17", "dd.MM.yy", "10/24/2017 12:00:00 AM", false));
-
             cases.Add(new DateTimeHelperUTObject("23:00:00", "HH:mm:ss", "1/1/0001 11:00:00 PM", true));
             cases.Add(new DateTimeHelperUTObject("11:00:00", "HH:mm:ss", "1/1/0001 11:00:00 PM", false));
-
             cases.Add(new DateTimeHelperUTObject("23:00", "HH:mm", "1/1/0001 11:00:00 PM", true));
             cases.Add(new DateTimeHelperUTObject("11:00", "HH:mm", "1/1/0001 11:00:00 PM", false));
             cases.Add(new DateTimeHelperUTObject("11:00:11", "HH:mm", "1/1/0001 11:00:00 PM", false));
-
             cases.Add(new DateTimeHelperUTObject("11:00:00 PM", "hh:mm:ss tt", "1/1/0001 11:00:00 PM", true));
             cases.Add(new DateTimeHelperUTObject("13:00:00 AM", "hh:mm:ss tt", "1/1/0001 11:00:00 PM", false));
-
             cases.Add(new DateTimeHelperUTObject("11:00 PM", "hh:mm tt", "1/1/0001 11:00:00 PM", true));
             cases.Add(new DateTimeHelperUTObject("13:00 AM", "hh:mm tt", "1/1/0001 11:00:00 PM", false));
-
             cases.Add(new DateTimeHelperUTObject("2017", "yyyy", "1/1/2017 12:00:00 AM", true));
             //cases.Add(new DateTimeHelperUTObject("1", "MM", "1/1/"+DateTime.Now.Year+" 12:00:00 AM", true));
             cases.Add(new DateTimeHelperUTObject("jan", "MMM", "1/1/" + DateTime.Now.Year + " 12:00:00 AM", true));
@@ -170,19 +150,16 @@ namespace BExIS.IO.Tests
             cases.Add(new DateTimeHelperUTObject("january", "MMMM", "1/1/" + DateTime.Now.Year + " 12:00:00 AM", true));
             cases.Add(new DateTimeHelperUTObject("Januar", "MMMM", "1/1/" + DateTime.Now.Year + " 12:00:00 AM", true, new CultureInfo("de-de")));
             //cases.Add(new DateTimeHelperUTObject("24/10/2017", "MM/dd/yyyy", "10/24/2017 12:00:00 AM", true));
-
             cases.Add(new DateTimeHelperUTObject("2006-2-2", "yyyy-M-d", "2/2/2006 12:00:00 AM", true));
             cases.Add(new DateTimeHelperUTObject("2006-02-02", "yyyy-MM-dd", "2/2/2006 12:00:00 AM", true));
-
             cases.Add(new DateTimeHelperUTObject("2006-2-2", "yyyy-d-M", "2/2/2006 12:00:00 AM", true));
             cases.Add(new DateTimeHelperUTObject("2006-02-02", "yyyy-dd-MM", "2/2/2006 12:00:00 AM", true));
-            cases.Add(new DateTimeHelperUTObject("5/10/2014 12:00:00 AM", "d/M/yyyy hh:mm:ss tt", "10/5/2014 12:00:00 AM", true));
             cases.Add(new DateTimeHelperUTObject("5/10/2014 12:00:00 AM", "M/d/yyyy hh:mm:ss tt", "5/10/2014 12:00:00 AM", true));
 
             return cases;
         }
 
-        #endregion
+        #endregion Helper
     }
 
     public class DateTimeHelperUTObject
@@ -202,7 +179,6 @@ namespace BExIS.IO.Tests
 
             if (cultureInfo == null) CultureInfo = CultureInfo.InvariantCulture;
             else CultureInfo = cultureInfo;
-
         }
     }
 }

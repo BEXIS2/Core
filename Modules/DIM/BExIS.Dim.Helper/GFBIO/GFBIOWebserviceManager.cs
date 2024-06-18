@@ -1,10 +1,9 @@
-﻿using BExIS.Dim.Entities.Publication;
+﻿using BExIS.Dim.Entities.Publications;
 using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Xml;
-
 
 namespace BExIS.Dim.Helpers.GFBIO
 {
@@ -15,7 +14,6 @@ namespace BExIS.Dim.Helpers.GFBIO
         private string pathToApi = @"api/jsonws/GFBioProject-portlet.";
         private string addtionalPath = @"request-json";
 
-
         public GFBIOWebserviceManager(Broker broker)
         {
             Broker = broker;
@@ -25,7 +23,7 @@ namespace BExIS.Dim.Helpers.GFBIO
 
         //getUser
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="email"></param>
         /// <returns></returns>
@@ -44,7 +42,7 @@ namespace BExIS.Dim.Helpers.GFBIO
 
         //get project
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
@@ -77,7 +75,7 @@ namespace BExIS.Dim.Helpers.GFBIO
 
         //get researchObject
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
@@ -107,12 +105,12 @@ namespace BExIS.Dim.Helpers.GFBIO
             return await BasicWebService.Call(url, Broker.UserName, Broker.Password, encodedParameters);
         }
 
-        #endregion
+        #endregion Get
 
         #region Set
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="userid"></param>
         /// <param name="name"></param>
@@ -134,7 +132,7 @@ namespace BExIS.Dim.Helpers.GFBIO
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="submitterid"></param>
         /// <param name="name"></param>
@@ -189,8 +187,7 @@ namespace BExIS.Dim.Helpers.GFBIO
             return await BasicWebService.Call(url, Broker.UserName, Broker.Password, "", json);
         }
 
-        #endregion
-
+        #endregion Set
     }
 
     ///// <summary>
@@ -205,9 +202,7 @@ namespace BExIS.Dim.Helpers.GFBIO
     //    public string extendeddata { get; set; }
     //    public long researchobjecttype { get; set; }
 
-
     //}
-
 
     public class GFBIOResearchObjectMiniJSON
     {
@@ -215,8 +210,10 @@ namespace BExIS.Dim.Helpers.GFBIO
 
         // length 200
         public string name { get; set; }
+
         // length 15000
         public string description { get; set; }
+
         public string researchobjecttype { get; set; }
     }
 
@@ -232,13 +229,18 @@ namespace BExIS.Dim.Helpers.GFBIO
 
         // length 200
         public string name { get; set; }
+
         // length 15000
         public string description { get; set; }
+
         public string researchobjecttype { get; set; }
+
         // length 1500
         public List<string> authornames { get; set; }
+
         // length 1500
         public XmlDocument extendeddata { get; set; }
+
         public string metadatalabel { get; set; }
 
         public GFBIOResearchObjectJSON()
@@ -260,10 +262,13 @@ namespace BExIS.Dim.Helpers.GFBIO
 
         // length 200
         public string name { get; set; }
+
         // length 15000
         public string description { get; set; }
+
         // length 1500
         public List<string> authornames { get; set; }
+
         // length 1500
         public XmlDocument extendeddata { get; set; }
 

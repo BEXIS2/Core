@@ -1,16 +1,18 @@
 ﻿/*	* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
- * Contributed by and used with permission from Nick Muhonen of 
+ * Contributed by and used with permission from Nick Muhonen of
  * Useable Concepts Inc. (http://www.useableconcepts.com/).
  * Copyright of this code is incorporated under the license terms
  * indicated in the AssemblyInfo.cs file of this project.
  *	* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
 using System;
 
 namespace Vaiona.Web.Security.Az.Parser
 {
-    class Not : IAccessRule
+    internal class Not : IAccessRule
     {
         public IAccessRule InnerRule;
+
         public bool Evaluate(Func<string, bool> roleMatcher, Func<string, bool> userMatcher)
         {
             return !InnerRule.Evaluate(roleMatcher, userMatcher);

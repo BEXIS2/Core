@@ -1,11 +1,7 @@
-﻿using System.Collections.Generic;
-using BExIS.Modules.Rpm.UI.Models.Dimensions;
-
-namespace BExIS.Modules.Rpm.UI.Models.DataTypes
+﻿namespace BExIS.Modules.Rpm.UI.Models.DataTypes
 {
     public class DataTypeListItem
     {
-
         /// <summary>
         /// Name of the Entity Template
         /// </summary>

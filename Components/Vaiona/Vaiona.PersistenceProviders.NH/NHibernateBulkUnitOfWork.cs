@@ -19,6 +19,7 @@ namespace Vaiona.PersistenceProviders.NH
         private bool throwExceptionOnError = true;
 
         public IPersistenceManager PersistenceManager { get; internal set; }
+
         internal NHibernateBulkUnitOfWork(NHibernatePersistenceManager persistenceManager, Conversation conversation, bool autoCommit = false, bool throwExceptionOnError = true)
         {
             this.PersistenceManager = persistenceManager;
@@ -61,7 +62,7 @@ namespace Vaiona.PersistenceProviders.NH
                 {
                     if (BeforeCommit != null)
                         BeforeCommit(this, EventArgs.Empty);
-                    // try detect what is going to be committed, adds, deletes, changes, and log some information about them after commit is done!                
+                    // try detect what is going to be committed, adds, deletes, changes, and log some information about them after commit is done!
                     this.Conversation.Commit(this);
 
                     if (Session.Transaction.WasCommitted)
@@ -146,6 +147,7 @@ namespace Vaiona.PersistenceProviders.NH
             }
             return result;
         }
+
         public List<T> ExecuteList<T>(string queryName, Dictionary<string, object> parameters = null)
         {
             if (parameters != null && parameters.Any(p => p.Value == null))
@@ -323,6 +325,7 @@ namespace Vaiona.PersistenceProviders.NH
         }
 
         private bool isDisposed = false;
+
         ~NHibernateBulkUnitOfWork()
         {
             Dispose(false);
@@ -330,8 +333,8 @@ namespace Vaiona.PersistenceProviders.NH
 
         protected virtual void Dispose(bool disposing)
         {
-            // If you need thread safety, use a lock around these  
-            // operations, as well as in your methods that use the resource. 
+            // If you need thread safety, use a lock around these
+            // operations, as well as in your methods that use the resource.
             if (!isDisposed)
             {
                 if (disposing)

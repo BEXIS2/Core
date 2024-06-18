@@ -1,17 +1,14 @@
 ﻿using BExIS.IO;
 using BExIS.IO.Transform.Validation.Exceptions;
 using BExIS.Modules.Dcm.UI.Models.Edit;
-using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Web;
 
 namespace BExIS.Modules.Dcm.UI.Helpers
 {
     public class EditHelper
     {
-
         public static bool IsReadable(BExIS.UI.Hooks.Caches.FileInfo file)
         {
             IOUtility iou = new IOUtility();
@@ -37,7 +34,6 @@ namespace BExIS.Modules.Dcm.UI.Helpers
                     foreach (string i in varIssues)
                     {
                         int c = errors.Where(e => e.getName().Equals(vn) && e.GetMessage().Equals(i)).Count();
-
 
                         if (c > 0)
                         {
@@ -68,7 +64,6 @@ namespace BExIS.Modules.Dcm.UI.Helpers
                         }
                     }
                 }
-
 
                 if (sortedErrors.Count > 0)
                 {

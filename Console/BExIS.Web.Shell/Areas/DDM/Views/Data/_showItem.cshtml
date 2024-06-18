@@ -4,17 +4,17 @@
 @{
     var cModel = new CompundAttributeModel();
     var sModel = new SimpleAttributeModel();
-    
+
     if (Model is CompundAttributeModel)
     {
         cModel = (CompundAttributeModel)Model;
-    }  
-    
+    }
+
     if (Model is SimpleAttributeModel)
     {
         sModel = (SimpleAttributeModel)Model;
-    }    
-    
+    }
+
 }
 
 @* SimpleAttributeModel *@
@@ -32,7 +32,7 @@
 
     @if (cModel.Type != BExIS.Xml.Helpers.XmlNodeType.MetadataAttributeUsage &&
         cModel.Type != BExIS.Xml.Helpers.XmlNodeType.MetadataPackage)
-    { 
+    {
         <b class="lableType">@cModel.DisplayName </b>
     }
     <table class="noBorder">
@@ -44,5 +44,5 @@
 
     }
     </table>
-    </td>    
+    </td>
 }

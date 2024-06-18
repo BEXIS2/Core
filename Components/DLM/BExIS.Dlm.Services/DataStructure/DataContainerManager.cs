@@ -9,9 +9,10 @@ namespace BExIS.Dlm.Services.DataStructure
 {
     public class DataContainerManager : IDisposable
     {
-        ConstraintHelper helper = new ConstraintHelper();
+        private ConstraintHelper helper = new ConstraintHelper();
 
         private IUnitOfWork guow = null;
+
         public DataContainerManager()
         {
             guow = this.GetIsolatedUnitOfWork();
@@ -20,6 +21,7 @@ namespace BExIS.Dlm.Services.DataStructure
         }
 
         private bool isDisposed = false;
+
         ~DataContainerManager()
         {
             Dispose(true);
@@ -43,14 +45,14 @@ namespace BExIS.Dlm.Services.DataStructure
             }
         }
 
-
         #region Data Readers
 
         // provide read only repos for the whole aggregate area
         public IReadOnlyRepository<ExtendedProperty> ExtendedPropertyRepo { get; private set; }
+
         public IReadOnlyRepository<Parameter> UsageRepo { get; private set; }
 
-        #endregion
+        #endregion Data Readers
 
         #region Extended Property
 
@@ -135,7 +137,7 @@ namespace BExIS.Dlm.Services.DataStructure
             return (entity);
         }
 
-        #endregion
+        #endregion Extended Property
 
         #region Associations
 
@@ -183,8 +185,6 @@ namespace BExIS.Dlm.Services.DataStructure
             helper.Delete(constraint);
         }
 
-
-        #endregion
-
+        #endregion Associations
     }
 }

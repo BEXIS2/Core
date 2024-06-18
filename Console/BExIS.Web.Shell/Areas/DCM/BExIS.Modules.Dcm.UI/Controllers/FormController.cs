@@ -63,6 +63,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
             TaskManager = (CreateTaskmanager)Session["CreateDatasetTaskmanager"];
 
+            FormHelper.ClearCache();
             //var newMetadata = TaskManager.Bus[CreateTaskmanager.METADATA_XML];
 
             var stepInfoModelHelpers = new List<StepModelHelper>();
@@ -146,6 +147,8 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
             TaskManager = (CreateTaskmanager)Session["CreateDatasetTaskmanager"];
 
+            FormHelper.ClearCache();
+
             // if dataset exist load metadata and metadata sturtcure id
             if (entityId > -1)
             {
@@ -164,10 +167,17 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                         setDefaultAdditionalFunctions(TaskManager);
                     }
 
+                    if (dataset.EntityTemplate != null)
+                    {
+                        TaskManager.AddToBus(CreateTaskmanager.SAVE_WITH_ERRORS, dataset.EntityTemplate.MetadataInvalidSaveMode);
+                    }
+
                     //load taskmanager based onb metadata structure and maybe existing metadata
                     TaskManager = loadTaskManager(metadataStructureId, dataStructureId, -1, metadata, "", TaskManager, ref Model);
 
                     TaskManager.AddToBus(CreateTaskmanager.ENTITY_ID, entityId);
+
+                    Session["ViewDatasetTaskmanager"] = TaskManager;
                 }
             }
 
@@ -253,6 +263,8 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         {
             var loadFromExternal = true;
             long metadataStructureId = -1;
+
+            FormHelper.ClearCache();
 
             //load metadata from session if exist
             var metadata = Session[sessionKeyForMetadata] != null
@@ -515,10 +527,12 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             ViewData["ShowOptional"] = show;
             ViewData["EntityId"] = entityId;
 
+            FormHelper.ClearCache();
+
             ViewBag.Title = PresentationModel.GetViewTitleForTenant("Create Dataset", this.Session.GetTenant());
             TaskManager = (CreateTaskmanager)Session["CreateDatasetTaskmanager"];
 
-            TaskManager?.AddToBus(CreateTaskmanager.SAVE_WITH_ERRORS, true);
+            //TaskManager?.AddToBus(CreateTaskmanager.SAVE_WITH_ERRORS, true);
 
             var stepInfoModelHelpers = new List<StepModelHelper>();
 
@@ -1403,8 +1417,6 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                     {
                         attrModel.Locked = true;
                     }
-
-                   
                 }
                 else
                 {
@@ -1419,13 +1431,13 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                     attrModel.ParentPartyId = 0;
                 }
 
-                 UpdateAttribute(
-                    usage,
-                    number,
-                    metadataAttributeUsage,
-                    Convert.ToInt32(attrModel.Number),
-                    attrModel.Value,
-                    stepModelHelper.XPath);
+                UpdateAttribute(
+                   usage,
+                   number,
+                   metadataAttributeUsage,
+                   Convert.ToInt32(attrModel.Number),
+                   attrModel.Value,
+                   stepModelHelper.XPath);
 
                 AddXmlAttribute(stepModelHelper.XPath, "partyid", partyId.ToString());
             }
@@ -2359,8 +2371,8 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         private BaseUsage loadUsage(long Id, Type type)
         {
             if (type.Equals(typeof(MetadataAttributeUsage)))
-                return FormHelper.CachedMetadataAttributeUsages().Where(m=>m.Id.Equals(Id)).FirstOrDefault();
-            
+                return FormHelper.CachedMetadataAttributeUsages().Where(m => m.Id.Equals(Id)).FirstOrDefault();
+
             if (type.Equals(typeof(MetadataNestedAttributeUsage)))
                 return FormHelper.CachedMetadataNestedAttributeUsages().Where(m => m.Id.Equals(Id)).FirstOrDefault();
 
@@ -2786,14 +2798,14 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             metadataXml.Save(path);
         }
 
-        private void UpdateParameter(BaseUsage attribute,int attrNumber, object value, string parentXpath, KeyValuePair<string,string> parameter)
+        private void UpdateParameter(BaseUsage attribute, int attrNumber, object value, string parentXpath, KeyValuePair<string, string> parameter)
         {
             TaskManager = (CreateTaskmanager)Session["CreateDatasetTaskmanager"];
             var metadataXml = getMetadata(TaskManager);
             var xmlMetadataWriter = new XmlMetadataWriter(XmlNodeMode.xPath);
 
             Dictionary<string, string> parameters = new Dictionary<string, string>();
-            parameters.Add(parameter.Key,parameter.Value);
+            parameters.Add(parameter.Key, parameter.Value);
 
             metadataXml = xmlMetadataWriter.Update(metadataXml, attribute, attrNumber, null, metadataStructureUsageHelper.GetNameOfType(attribute), parentXpath, parameters);
 
@@ -2970,11 +2982,11 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             model.Number = number;
 
             UpdateAttribute(parentUsage, parentModelNumber, metadataAttributeUsage, number, value, stepModelHelper.XPath);
-            // update model 
+            // update model
 
             ViewData["Xpath"] = stepModelHelper.XPath; // set Xpath for idbyxapth
                                                        // read temp metadata XML
-            
+
             var metadata = getMetadata(TaskManager); // new getMetadata(TaskManager)
 
             if (stepModelHelper.Model.MetadataAttributeModels.Where(a => a.Id.Equals(id) && a.Number.Equals(number)).Count() > 0)
@@ -3041,12 +3053,11 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             Type type = metadataAttributeUsage == null ? parentUsage.GetType() : metadataAttributeUsage.GetType();
             var destinationUsage = metadataAttributeUsage == null ? parentUsage : metadataAttributeUsage;
 
-            var metadataParameterUsage = metadataStructureUsageHelper.GetParameters(attrUsageId, type).FirstOrDefault(p=>p.Id.Equals(id));
+            var metadataParameterUsage = metadataStructureUsageHelper.GetParameters(attrUsageId, type).FirstOrDefault(p => p.Id.Equals(id));
 
             //UpdateXml
             var metadataStructureId = Convert.ToInt64(TaskManager.Bus[CreateTaskmanager.METADATASTRUCTURE_ID]);
             var model = FormHelper.CreateMetadataParameterModel(metadataParameterUsage as BaseUsage, destinationUsage, metadataStructureId, parentModelNumber, parentStepId);
- 
 
             //check if datatype is a datetime then check display pattern and manipulate the incoming string
             if (model.SystemType.Equals(typeof(DateTime).Name))
@@ -3060,7 +3071,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
             model.Value = value;
             model.AttributeNumber = number;
-            //model.Errors = validateParameter(model);
+            model.Errors = validateParameter(model);
 
             //create para
             KeyValuePair<string, string> parameter = new KeyValuePair<string, string>(metadataParameterUsage.Label, value);
@@ -3099,7 +3110,6 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                         storedParameterModel.Value = model.Value;
                         storedParameterModel.Errors = validateParameter(model);
                     }
-                    
                 }
             }
 
@@ -3139,6 +3149,15 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 }
             }
 
+            // check parameters
+            if (aModel.Parameters.Any())
+            {
+                foreach (var p in aModel.Parameters)
+                {
+                    p.Errors = validateParameter(p);
+                }
+            }
+
             if (errors.Count == 0)
                 return null;
             else
@@ -3148,40 +3167,40 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         private List<Error> validateParameter(MetadataParameterModel aModel)
         {
             var errors = new List<Error>();
-            //optional check
-            if (aModel.MinCardinality > 0 && (aModel.Value == null || String.IsNullOrEmpty(aModel.Value.ToString())))
-                errors.Add(new Error(ErrorType.MetadataAttribute, "is required", new object[] { aModel.DisplayName, aModel.Value, aModel.AttributeNumber, aModel.ParentModelNumber, aModel.Parent.Label }));
-            else
-                if (aModel.MinCardinality > 0 && String.IsNullOrEmpty(aModel.Value.ToString()))
-                errors.Add(new Error(ErrorType.MetadataAttribute, "is required", new object[] { aModel.DisplayName, aModel.Value, aModel.AttributeNumber, aModel.ParentModelNumber, aModel.Parent.Label }));
-
-            //check datatype
-            if (aModel.Value != null && !String.IsNullOrEmpty(aModel.Value.ToString()))
+            if (aModel != null)
             {
-                if (!DataTypeUtility.IsTypeOf(aModel.Value, aModel.SystemType))
-                {
-                    errors.Add(new Error(ErrorType.MetadataAttribute, "Value can´t convert to the type: " + aModel.SystemType + ".", new object[] { aModel.DisplayName, aModel.Value, aModel.AttributeNumber, aModel.ParentModelNumber, aModel.Parent.Label }));
-                }
+                //optional check
+                if (aModel.MinCardinality > 0 && (aModel.Value == null || String.IsNullOrEmpty(aModel.Value.ToString())))
+                    errors.Add(new Error(ErrorType.MetadataAttribute, "is required", new object[] { aModel.DisplayName, aModel.Value, aModel.AttributeNumber, aModel.ParentModelNumber, aModel.Parent.Label }));
                 else
-                {
-                    var type = Type.GetType("System." + aModel.SystemType);
-                    var value = Convert.ChangeType(aModel.Value, type);
+                    if (aModel.MinCardinality > 0 && String.IsNullOrEmpty(aModel.Value.ToString()))
+                    errors.Add(new Error(ErrorType.MetadataAttribute, "is required", new object[] { aModel.DisplayName, aModel.Value, aModel.AttributeNumber, aModel.ParentModelNumber, aModel.Parent.Label }));
 
-                    // check Constraints
-                    foreach (var constraint in aModel.GetMetadataParameter().Constraints)
+                //check datatype
+                if (aModel.Value != null && !String.IsNullOrEmpty(aModel.Value.ToString()))
+                {
+                    if (!DataTypeUtility.IsTypeOf(aModel.Value, aModel.SystemType))
                     {
-                        if (value != null && !constraint.IsSatisfied(value))
+                        errors.Add(new Error(ErrorType.MetadataAttribute, "Value can´t convert to the type: " + aModel.SystemType + ".", new object[] { aModel.DisplayName, aModel.Value, aModel.AttributeNumber, aModel.ParentModelNumber, aModel.Parent.Label }));
+                    }
+                    else
+                    {
+                        var type = Type.GetType("System." + aModel.SystemType);
+                        var value = Convert.ChangeType(aModel.Value, type);
+
+                        // check Constraints
+                        foreach (var constraint in aModel.GetMetadataParameter().Constraints)
                         {
-                            errors.Add(new Error(ErrorType.MetadataAttribute, constraint.ErrorMessage, new object[] { aModel.DisplayName, aModel.Value, aModel.AttributeNumber, aModel.ParentModelNumber, aModel.Parent.Label }));
+                            if (value != null && !constraint.IsSatisfied(value))
+                            {
+                                errors.Add(new Error(ErrorType.MetadataAttribute, constraint.ErrorMessage, new object[] { aModel.DisplayName, aModel.Value, aModel.AttributeNumber, aModel.ParentModelNumber, aModel.Parent.Label }));
+                            }
                         }
                     }
                 }
             }
 
-            if (errors.Count == 0)
-                return null;
-            else
-                return errors;
+            return errors;
         }
 
         private void ValidateModels(List<StepModelHelper> stepModelHelpers)
@@ -3208,10 +3227,12 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
                         foreach (var metadataParameterModel in stepModelHelper.Model.MetadataParameterModels)
                         {
-                            metadataParameterModel.Errors = validateParameter(metadataParameterModel);
+                            if (metadataParameterModel != null)
+                            {
+                                metadataParameterModel.Errors = validateParameter(metadataParameterModel);
 
-                            if (metadataParameterModel.Errors != null) tmp.AddRange(metadataParameterModel.Errors);
-
+                                if (metadataParameterModel.Errors != null) tmp.AddRange(metadataParameterModel.Errors);
+                            }
                             //if (metadataAttrModel.Errors.Count > 0)
                             //    step.stepStatus = StepStatus.error;
                         }
@@ -3527,7 +3548,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                             #endregion entity & Party mapping
 
                             // if at least on item has a value, the parent should be activated
-                           if(!string.IsNullOrEmpty(simpleMetadataAttributeModel.Value.ToString())) setStepModelActive(stepModelHelper);
+                            if (!string.IsNullOrEmpty(simpleMetadataAttributeModel.Value.ToString())) setStepModelActive(stepModelHelper);
                         }
                     }
                     else
@@ -3556,12 +3577,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                         if (i == numberOfSMM) newMetadataAttributeModel.last = true;
                         additionalyMetadataAttributeModel.Add(newMetadataAttributeModel);
                     }
-
-
                 }
-
-
-
             }
 
             foreach (var item in additionalyMetadataAttributeModel)
@@ -3575,12 +3591,11 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             // add parameters
             foreach (var item in stepModelHelper.Model.MetadataParameterModels)
             {
-                if (item!=null && complexElement != null && complexElement.HasAttributes)
+                if (item != null && complexElement != null && complexElement.HasAttributes)
                 {
                     item.Value = complexElement.Attribute(item.DisplayName).Value.ToString();
                 }
             }
-
 
             return stepModelHelper.Model;
         }
@@ -3792,7 +3807,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                         TaskManager.UpdateBus(CreateTaskmanager.METADATA_XML, XmlUtility.ToXDocument(metadata));
                     }
 
-                    return RedirectToAction("ImportMetadata", "Form", new { area = "Dcm", metadataStructureId = metadataStructureid, edit = false, created = false, locked = true });
+                    return RedirectToAction("Show", "Data", new { area = "Ddm", id = datasetid });
                 }
             }
 

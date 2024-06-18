@@ -54,23 +54,29 @@
 	$: measurementSystems = ms;
 	$: dimensions = ds.map(({ id, name }) => ({ id: id, text: name }));
 	$: unit.dimension = listItem === undefined ? undefined : ds.find((d) => d.id === listItem?.id);
+	$: measurementSystems, setValidation();
 
 	onMount(async () => {
-		if (unit.id == 0) {
-			suite.reset();
-		}
-		else{
-			setTimeout(async () => {	
-				res = suite({ unit: unit, units: units }, "");
-			}, 10);
-		}
-
+		setValidation();
 	});
 
 	async function load() {
-		dt = await apiCalls.GetDataTypes();
 		ms = await apiCalls.GetMeasurementSystems();
+		dt = await apiCalls.GetDataTypes();
 		ds = await apiCalls.GetDimensions();
+	}
+
+	function setValidation()
+	{
+		if (measurementSystems!= undefined && measurementSystems.length > 0){
+			if (unit.id == 0) {
+				suite.reset();
+			} else{
+				setTimeout(async () => {
+					res = suite({ unit: unit, units: units, measurementSystems: measurementSystems }, '');
+				}, 10);
+			}
+		}
 	}
 
 	//change event: if input change check also validation only on the field
@@ -81,7 +87,10 @@
 		// otherwise the values are old
 		setTimeout(async () => {
 			// check changed field
-			res = suite({ unit: unit, units: units }, e.target.id);
+			res = suite(
+				{ unit: unit, units: units, measurementSystems: measurementSystems },
+				e.target.id
+			);
 		}, 10);
 	}
 
@@ -222,6 +231,7 @@
 									<div class="text-right">
 										<!-- svelte-ignore a11y-click-events-have-key-events -->
 										<!-- svelte-ignore a11y-mouse-events-have-key-events -->
+										<!-- svelte-ignore a11y-no-static-element-interactions -->
 										<div
 											transition:fade
 											class="badge variant-filled-tertiary rounded-xl shadow-md w-7 h-7"
@@ -241,17 +251,17 @@
 							{/if}
 							{#if showDatatypes || unit.datatypes.length === 1}
 								<div class="table-container my-2 w-full" transition:slide>
-									<table class="table table-compact bg-tertiary-200">
+									<table class="table table-compact bg-tertiary-500/30">
 										<tr class="bg-primary-300">
-											<th class="text-left">Name</th>
-											<th class="text-left">System Type</th>
-											<th class="text-left">Description</th>
+											<th class="text-left px-1">Name</th>
+											<th class="text-left px-1">System Type</th>
+											<th class="text-left px-1">Description</th>
 										</tr>
 										{#each unit.datatypes as datatype}
 											<tr>
-												<td>{datatype.systemType}</td>
-												<td>{datatype.name}</td>
-												<td>{datatype.description}</td>
+												<td class="text-left px-1">{datatype.systemType}</td>
+												<td class="text-left px-1">{datatype.name}</td>
+												<td class="text-left px-1">{datatype.description}</td>
 											</tr>
 										{/each}
 									</table>
@@ -272,16 +282,16 @@
 					/>
 					{#if unit.dimension != undefined && unit.dimension != null}
 						<div class="card p-2 my-1 shadow-md" transition:slide>
-							<table class="table table-compact bg-tertiary-200">
+							<table class="table table-compact bg-tertiary-500/30">
 								<tr class="bg-primary-300">
-									<th class="text-left">Name</th>
-									<th class="text-left">Specification</th>
-									<th class="text-left">Description</th>
+									<th class="text-left px-1">Name</th>
+									<th class="text-left px-1">Specification</th>
+									<th class="text-left px-1">Description</th>
 								</tr>
 								<tr>
-									<td>{unit.dimension.name}</td>
-									<td>{unit.dimension.specification}</td>
-									<td>{unit.dimension.description}</td>
+									<td class="text-left px-1">{unit.dimension.name}</td>
+									<td class="text-left px-1">{unit.dimension.specification}</td>
+									<td class="text-left px-1">{unit.dimension.description}</td>
 								</tr>
 							</table>
 						</div>
@@ -289,6 +299,7 @@
 				</div>
 
 				<!-- svelte-ignore a11y-mouse-events-have-key-events -->
+				<!-- svelte-ignore a11y-no-static-element-interactions -->
 				<div
 					class="pb-3"
 					title="Measurement System"
@@ -297,12 +308,20 @@
 					}}
 				>
 					<label for={unit.measurementSystem} class="text-sm">Measurement System</label>
-					<RadioGroup help={true}>
+					<RadioGroup help={true} id="measurementSystems">
 						{#each measurementSystems as item}
 							<RadioItem
+								on:change={() => {
+									setTimeout(async () => {
+										res = suite(
+											{ unit: unit, units: units, measurementSystems: measurementSystems },
+											measurementSystems
+										);
+									}, 10);
+								}}
 								bind:group={unit.measurementSystem}
-								name="measurementSystem"
-								id="measurementSystem"
+								name={item}
+								id={item}
 								value={item}>{item}</RadioItem
 							>
 						{/each}

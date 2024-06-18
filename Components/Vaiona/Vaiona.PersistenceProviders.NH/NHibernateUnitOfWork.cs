@@ -12,12 +12,15 @@ namespace Vaiona.PersistenceProviders.NH
     public class NHibernateUnitOfWork : IUnitOfWork
     {
         private const int LongQueryTimeOut = 3600; //seconds
+
         //internal ISession Session = null;
         private bool autoCommit = false;
+
         private bool throwExceptionOnError = true;
         internal Conversation Conversation = null;
 
         public IPersistenceManager PersistenceManager { get; internal set; }
+
         internal NHibernateUnitOfWork(NHibernatePersistenceManager persistenceManager, Conversation conversation, bool autoCommit = false, bool throwExceptionOnError = true)
         {
             this.PersistenceManager = persistenceManager;
@@ -28,6 +31,7 @@ namespace Vaiona.PersistenceProviders.NH
         }
 
 #if DEBUG
+
         public ISession Session
         {
             get
@@ -35,6 +39,7 @@ namespace Vaiona.PersistenceProviders.NH
                 return this.Conversation.GetSession();
             }
         }
+
 #else
         internal ISession Session
         {
@@ -70,7 +75,7 @@ namespace Vaiona.PersistenceProviders.NH
                 {
                     if (BeforeCommit != null)
                         BeforeCommit(this, EventArgs.Empty);
-                    // try detect what is going to be committed, adds, deletes, changes, and log some information about them after commit is done!                
+                    // try detect what is going to be committed, adds, deletes, changes, and log some information about them after commit is done!
                     this.Conversation.Commit(this);
 
                     // log the changes detected in previous steps
@@ -369,6 +374,7 @@ namespace Vaiona.PersistenceProviders.NH
         }
 
         private bool isDisposed = false;
+
         ~NHibernateUnitOfWork()
         {
             Dispose(false);
@@ -379,10 +385,11 @@ namespace Vaiona.PersistenceProviders.NH
             Dispose(true);
             GC.SuppressFinalize(this);
         }
+
         protected virtual void Dispose(bool disposing)
         {
-            // If you need thread safety, use a lock around these  
-            // operations, as well as in your methods that use the resource. 
+            // If you need thread safety, use a lock around these
+            // operations, as well as in your methods that use the resource.
             try
             {
                 if (!isDisposed)
@@ -398,6 +405,7 @@ namespace Vaiona.PersistenceProviders.NH
             { // do nothing
             }
         }
+
         private void disposeResources()
         {
             if (Session == null)

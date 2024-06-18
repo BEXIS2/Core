@@ -8,7 +8,6 @@ namespace BExIS.Modules.Dcm.UI.Models.Metadata
 {
     public class MetadataCompoundAttributeModel : AbstractMetadataStepModel
     {
-
         public int NumberOfSourceInPackage { get; set; }
 
         public bool last = false;
@@ -29,7 +28,6 @@ namespace BExIS.Modules.Dcm.UI.Models.Metadata
 
             if (Source is MetadataAttributeUsage)
             {
-
                 MetadataAttributeUsage mau = (MetadataAttributeUsage)Source;
 
                 if (mau.MetadataAttribute.Self is MetadataCompoundAttribute)
@@ -65,7 +63,6 @@ namespace BExIS.Modules.Dcm.UI.Models.Metadata
                             {
                                 var metadataAtrributeModel = FormHelper.CreateMetadataAttributeModel(usage, mnau, metadataStructureId, Number, stepId);
                                 MetadataAttributeModels.Add(metadataAtrributeModel);
-
                             }
                         }
                     }
@@ -79,7 +76,6 @@ namespace BExIS.Modules.Dcm.UI.Models.Metadata
 
             if (Source is MetadataAttributeUsage)
             {
-
                 MetadataAttributeUsage mau = (MetadataAttributeUsage)Source;
 
                 if (mau.MetadataAttribute.Self is MetadataCompoundAttribute)
@@ -90,10 +86,8 @@ namespace BExIS.Modules.Dcm.UI.Models.Metadata
                     {
                         foreach (MetadataParameterUsage usage in mca.MetadataParameterUsages)
                         {
-
                             var metadataParameterModel = FormHelper.CreateMetadataParameterModel(usage, mau, metadataStructureId, Number, stepId);
                             MetadataParameterModels.Add(metadataParameterModel);
-                            
                         }
                     }
                 }
@@ -114,13 +108,11 @@ namespace BExIS.Modules.Dcm.UI.Models.Metadata
                             {
                                 var metadataParameterModel = FormHelper.CreateMetadataParameterModel(usage, mnau, metadataStructureId, Number, stepId);
                                 MetadataParameterModels.Add(metadataParameterModel);
-
                             }
                         }
                     }
                 }
             }
         }
-
     }
 }

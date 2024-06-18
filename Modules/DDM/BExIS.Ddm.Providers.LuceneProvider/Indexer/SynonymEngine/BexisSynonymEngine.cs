@@ -9,24 +9,24 @@ using System.IO;
 
 /// <summary>
 ///
-/// </summary>        
+/// </summary>
 namespace Lucene.Net.SynonymEngine
 {
     /// <summary>
     ///
     /// </summary>
-    /// <remarks></remarks>        
-    class BexisSynonymEngine : ISynonymEngine
+    /// <remarks></remarks>
+    internal class BexisSynonymEngine : ISynonymEngine
     {
-        IndexSearcher searcherTranslator;
-        IndexSearcher searcherWordnet;
-        Lucene.Net.Store.Directory fsDir;
+        private IndexSearcher searcherTranslator;
+        private IndexSearcher searcherWordnet;
+        private Lucene.Net.Store.Directory fsDir;
 
         /// <summary>
         ///
         /// </summary>
         /// <remarks></remarks>
-        /// <seealso cref=""/>        
+        /// <seealso cref=""/>
         public BexisSynonymEngine()
         {
             string wordNetIndexPath = Path.Combine(FileHelper.IndexFolderPath, "WordnetIndex");
@@ -39,7 +39,7 @@ namespace Lucene.Net.SynonymEngine
         ///
         /// </summary>
         /// <remarks></remarks>
-        /// <seealso cref=""/>        
+        /// <seealso cref=""/>
         public void close()
         {
             searcherWordnet.Dispose();
@@ -47,7 +47,7 @@ namespace Lucene.Net.SynonymEngine
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <remarks></remarks>
         /// <seealso cref=""/>
@@ -79,6 +79,5 @@ namespace Lucene.Net.SynonymEngine
             }
             return synList.ToArray();
         }
-
     }
 }

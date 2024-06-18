@@ -17,7 +17,7 @@
 
 	<MapItem ContentKey="Header">
 		<ContentProviders>
-			<ContentProvider View="_Header" Type="View" Enabled="true">
+			<ContentProvider  Area="" Controller="Header" Action="Index" Type="Action" Enabled="true">
 				<Parameters>
 				</Parameters>
 			</ContentProvider>
@@ -63,7 +63,7 @@
 
 	<MapItem ContentKey="Footer">
 		<ContentProviders>
-			<ContentProvider View="_Footer" Type="View" Enabled="true">
+			<ContentProvider  Area="" Controller="Footer" Action="Index" Type="Action" Enabled="true">
 				<Parameters>
 				</Parameters>
 			</ContentProvider>

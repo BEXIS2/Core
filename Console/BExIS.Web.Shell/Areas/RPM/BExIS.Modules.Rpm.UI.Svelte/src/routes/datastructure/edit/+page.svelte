@@ -11,7 +11,7 @@
 	} from '$lib/components/datastructure/services';
 
 	import type { DataStructureEditModel } from '$lib/components/datastructure/types';
-	import { displayPatternStore, structureStore,isTemplateRequiredStore,isMeaningRequiredStore  } from '$lib/components/datastructure/store';
+	import { displayPatternStore, structureStore,isTemplateRequiredStore,isMeaningRequiredStore, setByTemplateStore, enforcePrimaryKeyStore, changeablePrimaryKeyStore  } from '$lib/components/datastructure/store';
 	import { pageContentLayoutType } from '@bexis2/bexis2-core-ui';
 
 	//help
@@ -50,6 +50,22 @@
 		const isMeaningRequired = container?.getAttribute('isMeaningRequired')?.toLocaleLowerCase()=="true"?true:false;
 		console.log("🚀 ~ file: +page.svelte:57 ~ start ~ isMeaningRequired:", isMeaningRequired)
 		isMeaningRequiredStore.set(isMeaningRequired);
+
+		// get setByTemplate from settings and add it to store
+		// is used by createion of variables
+		const setByTemplate = container?.getAttribute('setByTemplate')?.toLocaleLowerCase()=="true"?true:false;
+		setByTemplateStore.set(setByTemplate);
+
+// get enforcePrimaryKey from settings and add it to store
+		// save structure only if pk is set
+		const enforcePrimaryKey = container?.getAttribute('enforcePrimaryKey')?.toLocaleLowerCase()=="true"?true:false;
+		enforcePrimaryKeyStore.set(enforcePrimaryKey);
+
+	// get changeablePrimaryKey from settings and add it to store
+	// save structure only if pk is set
+	const changeablePrimaryKey = container?.getAttribute('changeablePrimaryKey')?.toLocaleLowerCase()=="true"?true:false;
+	changeablePrimaryKeyStore.set(changeablePrimaryKey);
+
 
 		console.log('edit structure',datastructureId);
 

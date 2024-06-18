@@ -22,7 +22,6 @@ namespace BExIS.Modules.Rpm.UI
                 {
                     generator.GenerateSeedData();
                 }
-
             }
             catch (Exception e)
             {
@@ -31,8 +30,6 @@ namespace BExIS.Modules.Rpm.UI
             }
 
             LoggerFactory.GetFileLogger().LogCustom("...end install of rpm...");
-
-
         }
 
         /// <summary>

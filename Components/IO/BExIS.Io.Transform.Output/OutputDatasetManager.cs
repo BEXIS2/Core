@@ -43,11 +43,9 @@ namespace BExIS.IO.Transform.Output
 
                 gfbioDataCenterFormularObject.DatasetCollectionTime = datasetVersion.Dataset.LastCheckIOTimestamp;
 
-
                 MetadataStructure metadataStructure = metadataStructureManager.Repo.Get(dataset.MetadataStructure.Id);
 
                 gfbioDataCenterFormularObject.MetadataSchemaName = metadataStructure.Name;
-
 
                 return gfbioDataCenterFormularObject;
             }
@@ -58,8 +56,6 @@ namespace BExIS.IO.Transform.Output
             using (DatasetManager datasetManager = new DatasetManager())
             using (MetadataStructureManager metadataStructureManager = new MetadataStructureManager())
             {
-
-
                 Dataset dataset = datasetManager.GetDataset(datasetId);
                 DatasetVersion datasetVersion = datasetManager.GetDatasetLatestVersion(datasetId);
 
@@ -74,7 +70,6 @@ namespace BExIS.IO.Transform.Output
 
                 return gfbioPangaeaFormularObject;
             }
-
         }
 
         public static string GetDynamicDatasetStorePath(long datasetId, long datasetVersionOrderNr, string title, string extention)
@@ -105,7 +100,6 @@ namespace BExIS.IO.Transform.Output
 
     public class OutputFormularObject
     {
-
     }
 
     #region GFBIO
@@ -113,7 +107,6 @@ namespace BExIS.IO.Transform.Output
     public class GFBIODataCenterFormularObject : OutputFormularObject
     {
         //ToDo Id´s of entities are not the id´s from gfbio.
-
 
         //project
         //public long ProjectId { get; set; }
@@ -129,9 +122,9 @@ namespace BExIS.IO.Transform.Output
         //public string UserEmail { get; set; }
         //public string DatasetAuthor { get; set; }
 
-
         //Dataset
         public long DatasetId { get; set; }
+
         public long DatasetVersion { get; set; }
         public string DatasetTitle { get; set; }
         public string DatasetLabel { get; set; }
@@ -141,6 +134,7 @@ namespace BExIS.IO.Transform.Output
 
         //MetadataSchema
         public string MetadataSchemaName { get; set; }
+
         public IEnumerable<string> Keywords { get; set; }
 
         //Publications
@@ -148,14 +142,11 @@ namespace BExIS.IO.Transform.Output
 
         //Embargos
         public string Embargos { get; set; }
-
     }
 
     public class GFBIOPangaeaFormularObject : OutputFormularObject
     {
-
     }
 
-    #endregion
-
+    #endregion GFBIO
 }

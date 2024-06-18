@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace BExIS.UI.Models
+﻿namespace BExIS.UI.Models
 {
     public class ListItem
     {
@@ -21,7 +15,7 @@ namespace BExIS.UI.Models
             Description = "";
         }
 
-        public ListItem(long key, string value, string group="", string description="")
+        public ListItem(long key, string value, string group = "", string description = "")
         {
             Id = key;
             Text = value;
@@ -36,6 +30,5 @@ namespace BExIS.UI.Models
             Group = group;
             Description = "";
         }
-
     }
 }

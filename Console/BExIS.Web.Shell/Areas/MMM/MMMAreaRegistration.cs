@@ -1,6 +1,4 @@
-﻿using System.Configuration;
-using System.Web.Mvc;
-using Vaiona.Utils.Cfg;
+﻿using System.Web.Mvc;
 
 namespace BExIS.Web.Shell.Areas.RPM
 {
@@ -22,7 +20,5 @@ namespace BExIS.Web.Shell.Areas.RPM
                 new { action = "Index", id = UrlParameter.Optional }
             );
         }
-
     }
-    
 }

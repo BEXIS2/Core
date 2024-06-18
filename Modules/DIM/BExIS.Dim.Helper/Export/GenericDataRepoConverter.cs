@@ -1,4 +1,4 @@
-﻿using BExIS.Dim.Entities.Publication;
+﻿using BExIS.Dim.Entities.Publications;
 using BExIS.Dim.Services;
 using BExIS.Dlm.Entities.Data;
 using BExIS.Dlm.Entities.DataStructure;
@@ -101,7 +101,7 @@ namespace BExIS.Dim.Helpers.Export
                                     "datastructure", ".txt");
                                 string datastructureFilePath = AsciiWriter.CreateFile(dynamicPathOfDS);
 
-                                string json = OutputDataStructureManager.GetVariableListAsJson(dataStructureId);
+                                string json = OutputDataStructureManager.GetDataStructureAsJson(dataStructureId);
 
                                 AsciiWriter.AllTextToFile(datastructureFilePath, json);
                             }
@@ -155,7 +155,6 @@ namespace BExIS.Dim.Helpers.Export
 
                 return "";
             }
-
         }
 
         public bool Validate(long datasetVersionId, out List<string> errors)
@@ -171,8 +170,6 @@ namespace BExIS.Dim.Helpers.Export
             string mimeType = "";
             using (DatasetManager dm = new DatasetManager())
             {
-
-
                 if (ext.Contains("csv"))
                 {
                     name = "datastructure";
@@ -218,10 +215,10 @@ namespace BExIS.Dim.Helpers.Export
             }
         }
 
-        public GenericDataRepoConverter(Repository datarepo)
+        public GenericDataRepoConverter(Broker broker)
         {
-            _dataRepo = datarepo;
-            _broker = datarepo.Broker;
+            _dataRepo = broker.Repository;
+            _broker = broker;
         }
     }
 }

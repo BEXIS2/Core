@@ -79,7 +79,6 @@ namespace BExIS.Modules.Dcm.UI.Helpers
                 MetadataNestedAttributeUsage mnau = (MetadataNestedAttributeUsage)current;
                 metadataAttribute = mnau.Member;
                 type = LinkElementType.MetadataNestedAttributeUsage;
-
             }
             else
             {
@@ -120,9 +119,11 @@ namespace BExIS.Modules.Dcm.UI.Helpers
             //check if its linked with a system field
             locked = MappingUtils.ExistSystemFieldMappings(current.Id, type);
 
+            // check if a fixed value should block the attribute for changing
+            if (locked == false && !string.IsNullOrEmpty(current.FixedValue)) locked = true;
+
             // check if a mapping for parties exits
             partyMappingExist = MappingUtils.ExistMappingWithParty(current.Id, type);
-
 
             // check if mapping to this metadata attribute is simple or complex.
             // complex means, that the attribute is defined in the context of the parent
@@ -134,11 +135,11 @@ namespace BExIS.Modules.Dcm.UI.Helpers
 
             // set the flag tru if the attribute is one where the complex object will be fill from
             // e.g. User: name -> name is a main attribute, so its possible so select user by name
-            if(partySimpleMappingExist || partyComplexMappingExist)
+            if (partySimpleMappingExist || partyComplexMappingExist)
                 mappingSelectionField = MappingUtils.PartyAttrIsMain(current.Id, type);
 
-            // in case the parent was mapped as a complex object, 
-            // you have to check which of the simple fields is the selection field. 
+            // in case the parent was mapped as a complex object,
+            // you have to check which of the simple fields is the selection field.
             // If it is not and there is a mapping for the field, it must be blocked.
             // OR if its allready locked because of a system mapping then let it locked.
             if (locked == false && (!mappingSelectionField && partyComplexMappingExist && !partySimpleMappingExist))
@@ -200,7 +201,7 @@ namespace BExIS.Modules.Dcm.UI.Helpers
                 string constraintsDescription = "";
                 double lowerBoundary = 0;
                 double upperBoundary = 0;
-
+                bool locked = false;
 
                 if (parameter is MetadataParameterUsage)
                 {
@@ -232,7 +233,8 @@ namespace BExIS.Modules.Dcm.UI.Helpers
                     string displayPattern = "";
                     if (dtdp != null) displayPattern = dtdp.StringPattern;
 
-
+                    // check if a fixed value should block the attribute for changing
+                    if (locked == false && !string.IsNullOrEmpty(parameter.FixedValue)) locked = true;
 
                     return new MetadataParameterModel
                     {
@@ -257,7 +259,9 @@ namespace BExIS.Modules.Dcm.UI.Helpers
                         ParentStepId = parentStepId,
                         LowerBoundary = lowerBoundary,
                         UpperBoundary = upperBoundary,
-                        DefaultValue = parameter.DefaultValue
+                        DefaultValue = parameter.DefaultValue,
+                        FixedValue = parameter.FixedValue,
+                        Locked = locked
                     };
                 }
 
@@ -314,7 +318,7 @@ namespace BExIS.Modules.Dcm.UI.Helpers
         public static IList<MetadataAttributeUsage> CachedMetadataAttributeUsages()
         {
             string key = "MetadataAttributeUsages";
-            // System.Web.HttpContext may not existing during the async upload, so check wheter the context exist 
+            // System.Web.HttpContext may not existing during the async upload, so check wheter the context exist
             if (System.Web.HttpContext.Current != null)
             {
                 if (System.Web.HttpContext.Current.Session[key] != null)
@@ -343,7 +347,7 @@ namespace BExIS.Modules.Dcm.UI.Helpers
         public static IList<MetadataNestedAttributeUsage> CachedMetadataNestedAttributeUsages()
         {
             string key = "MetadataNestedAttributeUsages";
-            // System.Web.HttpContext may not existing during the async upload, so check wheter the context exist 
+            // System.Web.HttpContext may not existing during the async upload, so check wheter the context exist
             if (System.Web.HttpContext.Current != null)
             {
                 if (System.Web.HttpContext.Current.Session[key] != null)
@@ -372,7 +376,7 @@ namespace BExIS.Modules.Dcm.UI.Helpers
         public static IList<MetadataPackageUsage> CachedMetadataPackageUsages()
         {
             string key = "MetadataPackageUsages";
-            // System.Web.HttpContext may not existing during the async upload, so check wheter the context exist 
+            // System.Web.HttpContext may not existing during the async upload, so check wheter the context exist
             if (System.Web.HttpContext.Current != null)
             {
                 if (System.Web.HttpContext.Current.Session[key] != null)

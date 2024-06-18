@@ -9,53 +9,52 @@
 
     <version name = "VersionNo" type="Int32">
       <column name = "VersionNo" />
-    </version >
+    </version>
 
     <property name="Extra" type="System.Xml.XmlDocument, System.Xml, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
       <column name = "Extra" not-null="false" sql-type="xml" />
     </property>
 
     <!-- Mapping DataTuple properties -->
-    <property name="Title" type="String" >
-      <column name="Title"  />
+    <property name="Title" type="String">
+      <column name="Title" />
     </property>
 
-    <property name="Description" type="StringClob" >
-      <column name="Description" sql-type="text"/>
+    <property name="Description" type="StringClob">
+      <column name="Description" sql-type="text" />
     </property>
 
-    <property name="DisplayName" type="String" >
-      <column name="DisplayName"  />
+    <property name="DisplayName" type="String">
+      <column name="DisplayName" />
     </property>
-    
-    <set name="Parties" table="Parties" lazy="false" >
-      <key column="PartyTypeRef"/>
-      <one-to-many class="Party"/>
+
+    <set name="Parties" table="Parties" lazy="false">
+      <key column="PartyTypeRef" />
+      <one-to-many class="Party" />
     </set>
-    
-    <property name="SystemType" type="yes_no" >
-      <column name="SystemType"  />
+
+    <property name="SystemType" type="yes_no">
+      <column name="SystemType" />
     </property>
-    
+
     <set name="CustomAttributes" table="PartyCustomAttributes" lazy="true">
-      <key column="PartyTypeRef"/>
-      <one-to-many class="PartyCustomAttribute"/>
+      <key column="PartyTypeRef" />
+      <one-to-many class="PartyCustomAttribute" />
     </set>
 
     <set name="StatusTypes" table="PartyStatusTypes" lazy="true"  cascade="all" inverse="true">
-      <key column="PartyTypeRef"/>
-      <one-to-many class="PartyStatusType"/>
+      <key column="PartyTypeRef" />
+      <one-to-many class="PartyStatusType" />
     </set>
 
     <set name="PartyTypePairSources" table="PartyTypePairs" lazy="true">
-      <key column="AlowedSourceRef"/>
-      <one-to-many class="PartyTypePair"/>
+      <key column="AlowedSourceRef" />
+      <one-to-many class="PartyTypePair" />
     </set>
 
     <set name="PartyTypePairTargets" table="PartyTypePairs" lazy="true">
-      <key column="AlowedTargetRef"/>
-      <one-to-many class="PartyTypePair"/>
+      <key column="AlowedTargetRef" />
+      <one-to-many class="PartyTypePair" />
     </set>
-    
   </class>
 </hibernate-mapping>

@@ -5,7 +5,7 @@
     --bg-color-level-3: #bee1da;
     --bg-color-level-4: #d2e8e3;
     --bg-color-level-5: #eff7f6;
-    --border-width-field: 2px;
+    --border-width-field: 1px;
     --border-color-field: #000000;
     --button-function: var(--highlight-color);
     --button-action: #00876F;

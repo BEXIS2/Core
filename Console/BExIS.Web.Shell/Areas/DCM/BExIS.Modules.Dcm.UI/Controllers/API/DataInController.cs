@@ -1,4 +1,5 @@
 ﻿using BExIS.App.Bootstrap.Attributes;
+using BExIS.Dim.Entities.Mapping;
 using BExIS.Dlm.Entities.Data;
 using BExIS.Dlm.Entities.DataStructure;
 using BExIS.Dlm.Services.Data;
@@ -7,6 +8,7 @@ using BExIS.IO.Transform.Input;
 using BExIS.IO.Transform.Validation.DSValidation;
 using BExIS.IO.Transform.Validation.Exceptions;
 using BExIS.Modules.Dcm.UI.Helper.API;
+using BExIS.Modules.Dcm.UI.Helpers;
 using BExIS.Modules.Dcm.UI.Models.API;
 using BExIS.Security.Entities.Authorization;
 using BExIS.Security.Entities.Subjects;
@@ -28,11 +30,9 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Web.Http;
 using System.Web.Http.Description;
+using System.Xml;
 using Vaiona.Entities.Common;
 using Vaiona.Web.Mvc.Modularity;
-using BExIS.Modules.Dcm.UI.Helpers;
-using System.Xml;
-using BExIS.Dim.Entities.Mapping;
 
 namespace BExIS.Modules.Dcm.UI.Controllers
 {
@@ -52,7 +52,6 @@ namespace BExIS.Modules.Dcm.UI.Controllers
     {
         private XmlDatasetHelper xmlDatasetHelper = new XmlDatasetHelper();
 
-        
         // PUT: api/data/5
         /// <summary>
         /// append and update data to an existing dataset
@@ -167,7 +166,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
                         // prepare pk index list from data
                         int[] primaryKeyIndexes = new int[pkVariables.Count];
-                        for (int i = 0; i <= dataStructure.Variables.Count-1; i++)
+                        for (int i = 0; i <= dataStructure.Variables.Count - 1; i++)
                         {
                             var variable = dataStructure.Variables.ElementAt(i);
                             if (variable.IsKey)
@@ -259,7 +258,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
                             if (datatuples.Count > 0)
                             {
-                                var splittedDatatuples = uploadHelper.GetSplitDatatuples(datatuples, pkVariables.Select(v=>v.Id).ToList(), workingCopy, ref datatupleFromDatabaseIds);
+                                var splittedDatatuples = uploadHelper.GetSplitDatatuples(datatuples, pkVariables.Select(v => v.Id).ToList(), workingCopy, ref datatupleFromDatabaseIds);
                                 datasetManager.EditDatasetVersion(workingCopy, splittedDatatuples["new"], splittedDatatuples["edit"], null);
                             }
 
@@ -333,7 +332,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
             Key[] myObjArray = { };
 
-            if(updateData)myObjArray = new Key[] { Key.Id, Key.Version, Key.DateOfVersion, Key.DataLastModified };
+            if (updateData) myObjArray = new Key[] { Key.Id, Key.Version, Key.DateOfVersion, Key.DataLastModified };
             else myObjArray = new Key[] { Key.Id, Key.Version, Key.DataCreationDate, Key.DataLastModified };
 
             metadata = SystemMetadataHelper.SetSystemValuesToMetadata(datasetid, version, metadataStructureId, metadata, myObjArray);

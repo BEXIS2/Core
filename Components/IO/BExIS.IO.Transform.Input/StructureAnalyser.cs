@@ -1,21 +1,21 @@
-﻿using BExIS.IO.Transform.Validation.Exceptions;
+﻿using BExIS.Dlm.Entities.DataStructure;
+using BExIS.Dlm.Services.DataStructure;
+using BExIS.IO.DataType.DisplayPattern;
+using BExIS.IO.Transform.Validation.Exceptions;
 using BExIS.IO.Transform.Validation.ValueCheck;
-using Entites = BExIS.Dlm.Entities.DataStructure;
 using BExIS.Utils.Helpers;
+using F23.StringSimilarity;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
-using BExIS.Dlm.Services.DataStructure;
-using BExIS.Dlm.Entities.DataStructure;
-using F23.StringSimilarity;
-using BExIS.IO.DataType.DisplayPattern;
+
+using Entites = BExIS.Dlm.Entities.DataStructure;
 
 namespace BExIS.IO.Transform.Input
 {
     public class StructureAnalyser
     {
-
         private List<DataTypeCheck> checks = null;
 
         /// <summary>
@@ -25,7 +25,7 @@ namespace BExIS.IO.Transform.Input
         /// <param name="rowB"></param>
         /// <param name="textMarker"></param>
         /// <returns>TextSeperator</returns>
-        public TextSeperator SuggestDelimeter(string rowA, string rowB, TextMarker textMarker=TextMarker.doubleQuotes)
+        public TextSeperator SuggestDelimeter(string rowA, string rowB, TextMarker textMarker = TextMarker.doubleQuotes)
         {
             if (string.IsNullOrEmpty(rowA)) throw new ArgumentNullException(nameof(rowA), "row has no content to suggest.");
             if (string.IsNullOrEmpty(rowB)) throw new ArgumentNullException(nameof(rowB), "row has no content to suggest."); ;
@@ -33,7 +33,7 @@ namespace BExIS.IO.Transform.Input
             Dictionary<TextSeperator, int> delimeterCounter = new Dictionary<TextSeperator, int>();
 
             // if textmarker exist, use this regex expression to detect the content an d replace it with abcd
-            // so it remove all seperator in a text 
+            // so it remove all seperator in a text
             // (["'])(?:(?=(\\?))\2.)*?\1
             string pattern = RegExHelper.BETWEEN_QUOTES;
 
@@ -43,7 +43,6 @@ namespace BExIS.IO.Transform.Input
             // read row for all textseperators and count them
             foreach (TextSeperator textSeperator in Enum.GetValues(typeof(TextSeperator)))
             {
-
                 char seperator = AsciiFileReaderInfo.GetSeperator(textSeperator);
                 char textmarker = AsciiFileReaderInfo.GetTextMarker(textMarker);
 
@@ -58,7 +57,6 @@ namespace BExIS.IO.Transform.Input
             }
 
             if (delimeterCounter.Count == 0) throw new Exception("the guessing of the operator came to no result.");
-
 
             // only one exist, return textseperator
             if (delimeterCounter.Count == 1) return delimeterCounter.First().Key;
@@ -104,7 +102,7 @@ namespace BExIS.IO.Transform.Input
                 // 1.00 - 2,00
 
                 // if textmarker exist, use this regex expression to detect the content an d replace it with replaced
-                // so it remove all seperator in a text 
+                // so it remove all seperator in a text
                 // (["'])(?:(?=(\\?))\2.)*?\1
                 string pattern = RegExHelper.BETWEEN_QUOTES;
 
@@ -130,7 +128,7 @@ namespace BExIS.IO.Transform.Input
                         {
                             // get position of char , get rest of teh string and check if only numbers are tehre
                             int position = v.IndexOf(decimalChar);
-                            string rest = v.Substring(position+1);
+                            string rest = v.Substring(position + 1);
                             // check if rest are only numbers
                             string converted = Regex.Match(rest, @"\d+").Value;
 
@@ -144,8 +142,7 @@ namespace BExIS.IO.Transform.Input
                     }
                 }
 
-                if(countTotal>0)decimalCounter.Add(decimalCharacter, countTotal);
-
+                if (countTotal > 0) decimalCounter.Add(decimalCharacter, countTotal);
             }
 
             // if no decimalCounter is detected, then select point as default
@@ -180,7 +177,7 @@ namespace BExIS.IO.Transform.Input
             foreach (TextMarker marker in Enum.GetValues(typeof(TextMarker)))
             {
                 // "hallo \" gsfahgdafhg"
-                // with this pattern detect all backslash marked quotes and remove them  
+                // with this pattern detect all backslash marked quotes and remove them
                 char m = AsciiFileReaderInfo.GetTextMarker(marker);
                 string pattern = @"\\" + m;
 
@@ -192,7 +189,7 @@ namespace BExIS.IO.Transform.Input
                 int total = countA + countB;
 
                 // only chars with same count and more then zero go to dictionary
-                if (total>0 && (total % 2 == 0))
+                if (total > 0 && (total % 2 == 0))
                 {
                     markerCounter.Add(marker, countA);
                 }
@@ -207,8 +204,7 @@ namespace BExIS.IO.Transform.Input
             // if more then one exist, return the more expected
             // double quotes, quotes
             if (markerCounter.ContainsKey(TextMarker.doubleQuotes)) return TextMarker.doubleQuotes;
-            else if(markerCounter.ContainsKey(TextMarker.quotes)) return TextMarker.quotes;
-
+            else if (markerCounter.ContainsKey(TextMarker.quotes)) return TextMarker.quotes;
 
             throw new Exception("the guessing of the operator came to no result.");
         }
@@ -241,14 +237,13 @@ namespace BExIS.IO.Transform.Input
         /// <param name="similarity"></param>
         /// <returns></returns>
         /// <exception cref="ArgumentNullException"></exception>
-        public List<Entites.Unit> SuggestUnit(string input, string variable, string dataType, double similarity = 0.8)
+        public List<Entites.Unit> SuggestUnit(string input, string variable, string dataType, double similarity = 0.7)
         {
             if (string.IsNullOrEmpty(input) && string.IsNullOrEmpty(dataType)) throw new ArgumentNullException("input and data type should not be empty.");
-           
+
             using (var dataTypeManager = new DataTypeManager())
             using (var unitManager = new UnitManager())
             {
-
                 List<Unit> units = new List<Unit>();
 
                 if (string.IsNullOrEmpty(dataType)) // no datatype exist
@@ -272,7 +267,7 @@ namespace BExIS.IO.Transform.Input
                     var abbrSimularity = ro.Similarity(input, unit.Abbreviation);
 
                     // compare highest for var
-                    var highestVariable = Math.Max(nameSimularity, abbrSimularity);
+                    var highestVariable = Math.Max(varSimularity, varAbbrSimularity);
 
                     // compare highest for var
                     var highestInput = Math.Max(nameSimularity, abbrSimularity);
@@ -290,14 +285,20 @@ namespace BExIS.IO.Transform.Input
             }
         }
 
-        public List<Entites.VariableTemplate> SuggestTemplate(string input, long unitId, long dataTypeId, double similarity = 0.5)
+        public List<Entites.VariableTemplate> SuggestTemplate(string input, long unitId, long dataTypeId, double similarity = 0.7)
         {
             if (string.IsNullOrEmpty(input)) throw new ArgumentNullException(nameof(input), "input should not be empty.");
 
             Dictionary<VariableTemplate, double> matches = new Dictionary<VariableTemplate, double>();
             /*
-             * in the suggestion of the templates, there are 3 factors that must be considered. 
+             * in the suggestion of the templates, there are 5 factors that must be considered.
              * all three are checked independently of each other and the results are sorted so that the most matches are at the top.
+             *
+             * name
+             * meaning
+             * unit
+             * dimension
+             * datatype
              */
 
             using (var variableManager = new VariableManager())
@@ -308,6 +309,7 @@ namespace BExIS.IO.Transform.Input
                 // var template matches by name
                 var byNames = new List<VariableTemplate>();
 
+                // name
                 foreach (var template in allTemplates)
                 {
                     var ro = new RatcliffObershelp();
@@ -319,41 +321,62 @@ namespace BExIS.IO.Transform.Input
                     }
                 }
 
-                // var template matches with units
-                var byUnit = allTemplates.Where(t => t.Unit.Id.Equals(unitId)).ToList();
-
-                var unit = unitManager.Repo.Get(unitId);
-                List<VariableTemplate> byDimension = new List<VariableTemplate>();
-                if (unit != null && unit.Dimension!=null)
-                    byDimension = allTemplates.Where(t => t.Unit.Dimension.Id.Equals(unit.Dimension.Id)).ToList();
-
-                // var template matches with datatype
-                var byDatype = allTemplates.Where(t => t.DataType.Id.Equals(unitId)).ToList();
-
-                //add units results to matches
-                foreach (var item in byUnit)
+                // meaning
+                foreach (var template in allTemplates)
                 {
-                    // if variableTemplate allready exist in the matches increase the value by 1
-                    if (matches.ContainsKey(item)) matches[item] += 1;
-                    else matches.Add(item, 1);
+                    if (template.Meanings.Any())
+                    {
+                        foreach (var meaning in template.Meanings)
+                        {
+                            var ro = new RatcliffObershelp();
+                            var nameSimularity = ro.Similarity(input.ToLower(), meaning.Name.ToLower());
+
+                            if (string.IsNullOrEmpty(input) || nameSimularity >= similarity)
+                            {
+                                if (matches.ContainsKey(template)) matches[template] += nameSimularity;
+                                else matches.Add(template, nameSimularity);
+                            }
+                        }
+                    }
                 }
 
-                //add dimenions results to matches
-                foreach (var item in byDimension)
+                if (unitId > 0)
                 {
-                    // if variableTemplate allready exist in the matches increase the value by 1
-                    if (matches.ContainsKey(item)) matches[item] += 1;
-                    else matches.Add(item, 0.9);
-                }
+                    // var template matches with units
+                    var byUnit = allTemplates.Where(t => t.Unit.Id.Equals(unitId)).ToList();
 
-                //add datatypes results to matches
-                foreach (var item in byDatype)
-                {
-                    // if variableTemplate allready exist in the matches increase the value by 0.5
-                    if (matches.ContainsKey(item)) matches[item] += 1;
-                    else matches.Add(item, 0.5);
-                }
+                    var unit = unitManager.Repo.Get(unitId);
+                    List<VariableTemplate> byDimension = new List<VariableTemplate>();
+                    if (unit != null && unit.Dimension != null)
+                        byDimension = allTemplates.Where(t => t.Unit.Dimension.Id.Equals(unit.Dimension.Id)).ToList();
 
+                    //add units results to matches
+                    foreach (var item in byUnit)
+                    {
+                        // if variableTemplate allready exist in the matches increase the value by 1
+                        if (matches.ContainsKey(item)) matches[item] += 1;
+                        else matches.Add(item, 1);
+                    }
+
+                    //add dimenions results to matches
+                    foreach (var item in byDimension)
+                    {
+                        // if variableTemplate allready exist in the matches increase the value by 1
+                        if (matches.ContainsKey(item)) matches[item] += 0.9;
+                        else matches.Add(item, 0.9);
+                    }
+
+                    // var template matches with datatype
+                    var byDatype = allTemplates.Where(t => t.DataType.Id.Equals(dataTypeId)).ToList();
+
+                    //add datatypes results to matches
+                    foreach (var item in byDatype)
+                    {
+                        // if variableTemplate allready exist in the matches increase the value by 0.5
+                        if (matches.ContainsKey(item)) matches[item] += 0.5;
+                        else matches.Add(item, 0.5);
+                    }
+                }
             }
 
             return matches.OrderByDescending(x => x.Value).Select(u => u.Key).ToList();
@@ -368,7 +391,6 @@ namespace BExIS.IO.Transform.Input
         {
             Dictionary<int, List<Type>> source = new Dictionary<int, List<Type>>();
             Dictionary<int, Type> result = new Dictionary<int, Type>();
-
 
             // get type checks
             checks = getDataTypeChecks(decimalCharacter);
@@ -391,10 +413,9 @@ namespace BExIS.IO.Transform.Input
                     //update possible list of types by check the value against the existing list
                     source[cell.Index] = checkValue(cell.Value, source[cell.Index], missingValues);
                 }
-
             }
 
-            // result preparation - 
+            // result preparation -
             foreach (var kvp in source)
             {
                 result.Add(kvp.Key, getMostRestructiveType(kvp.Value));
@@ -405,11 +426,9 @@ namespace BExIS.IO.Transform.Input
 
         private List<Type> checkValue(string value, List<Type> types, List<string> missingValues)
         {
-
             value = value.Trim();
             // if list has no entries - skip
             if (types.Count == 0) return types;
-
 
             // check missing values
             if (missingValues.Contains(value)) return types;
@@ -455,7 +474,7 @@ namespace BExIS.IO.Transform.Input
                 // add default datatype check without displaypattern
                 typeChecks.Add(new DataTypeCheck("", type.Name, decimalCharacter));
 
-                // if display pattern exist then also add a typecheck per type * displaypattern 
+                // if display pattern exist then also add a typecheck per type * displaypattern
                 var displayPatterns = DataTypeDisplayPattern.Pattern.Where(p => p.Systemtype.ToString().Equals(Type.GetTypeCode(type).ToString()));
                 foreach (var dp in displayPatterns)
                 {
@@ -493,7 +512,6 @@ namespace BExIS.IO.Transform.Input
         {
             if (types.Any())
             {
-
                 if (types.Contains(typeof(UInt32))) return typeof(UInt32);
                 if (types.Contains(typeof(Int64))) return typeof(Int64);
                 if (types.Contains(typeof(Double))) return typeof(Double);
@@ -514,11 +532,6 @@ namespace BExIS.IO.Transform.Input
         /// <exception cref="ArgumentNullException"></exception>
         public long GetNumberOfRowsToAnalyse(int min, int max, int percentage, long totaldata)
         {
-            //var settings = ModuleManager.GetModuleSettings("Dcm");
-            //int min = Convert.ToInt32(settings.GetEntryValue("minToAnalyse"));
-            //int max = Convert.ToInt32(settings.GetEntryValue("maxToAnalyse"));
-            //int percentage = Convert.ToInt32(settings.GetEntryValue("precentageToAnalyse"));
-
             if (min == 0) throw new ArgumentNullException(nameof(min), "min should be greater then 0");
             if (max == 0) throw new ArgumentNullException(nameof(max), "max should be greater then 0");
             if (percentage == 0) throw new ArgumentNullException(nameof(percentage), "min should be greater then 0");
@@ -535,8 +548,5 @@ namespace BExIS.IO.Transform.Input
 
             return totaldata;
         }
-
     }
-
-
 }

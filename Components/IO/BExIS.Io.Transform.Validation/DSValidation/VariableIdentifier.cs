@@ -1,13 +1,12 @@
-﻿
-/// <summary>
+﻿/// <summary>
 ///
-/// </summary>        
+/// </summary>
 namespace BExIS.IO.Transform.Validation.DSValidation
 {
     /// <summary>
     ///
     /// </summary>
-    /// <remarks></remarks>        
+    /// <remarks></remarks>
     public class VariableIdentifier
     {
         public string name = "";
@@ -15,7 +14,7 @@ namespace BExIS.IO.Transform.Validation.DSValidation
         public string systemType = "";
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <remarks></remarks>
         /// <seealso cref=""/>
@@ -52,7 +51,6 @@ namespace BExIS.IO.Transform.Validation.DSValidation
                 }
             }
             else return false;
-
         }
     }
 }

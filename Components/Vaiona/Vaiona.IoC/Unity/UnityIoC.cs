@@ -70,6 +70,7 @@ namespace Vaiona.IoC.Unity
         }
 
         private static readonly string IoCContainerPerRequestKey = "IoCRerRequestKey_Container";
+
         public void StartRequestLevelContainer()
         {
             string key = IoCContainerPerRequestKey;
@@ -118,7 +119,6 @@ namespace Vaiona.IoC.Unity
             }
             return null;
         }
-
 
         public void StartSessionLevelContainer()
         {
@@ -177,6 +177,5 @@ namespace Vaiona.IoC.Unity
         {
             container.Teardown(obj);
         }
-
     }
 }

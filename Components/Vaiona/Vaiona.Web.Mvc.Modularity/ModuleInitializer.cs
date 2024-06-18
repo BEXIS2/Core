@@ -14,15 +14,15 @@ namespace Vaiona.Web.Mvc.Modularity
 {
     /// <summary>
     /// This class is responsible for loading the plugin assemblies before the application is started.
-    /// Its Initialize method automatically fires at app_pre_init, because it is registered in the AssemblyInfo.cs 
-    /// The method should read the assembly names from the modules catalog, select the active ones and 
+    /// Its Initialize method automatically fires at app_pre_init, because it is registered in the AssemblyInfo.cs
+    /// The method should read the assembly names from the modules catalog, select the active ones and
     /// load their associated assemblies from the modules folder into the plugins folder.
-    /// The plugins folder is resgisted as a probling folder in the web.config, 
+    /// The plugins folder is resgisted as a probling folder in the web.config,
     /// so that the AppDomain knows to search there for loading assemblies.
     /// This project must be referenced from the Shell to get activated.
     /// </summary>
     /// <remarks>
-    /// The main issue with this method is that it needs the application to be restarted 
+    /// The main issue with this method is that it needs the application to be restarted
     /// if a new module is registered or its status has been changed!! No hot plugability yet!!!!
     /// </remarks>
     public class ModuleInitializer
@@ -34,6 +34,7 @@ namespace Vaiona.Web.Mvc.Modularity
         /// This folder conatins one folder per module, so that each folder conatins all the resources of the respective module
         /// </remarks>
         private static readonly DirectoryInfo areasFolder;
+
         static ModuleInitializer()
         {
             // this code is called by aspnet_compiler at compile time!!
@@ -108,7 +109,6 @@ namespace Vaiona.Web.Mvc.Modularity
 
                 try
                 {
-
                     string dirPath = (string.IsNullOrEmpty(moduleUIPath)) ? moduleId : Path.Combine(moduleId, moduleUIPath);
 
                     moduleDir = areasFolder.GetDirectories(dirPath, SearchOption.TopDirectoryOnly).FirstOrDefault();

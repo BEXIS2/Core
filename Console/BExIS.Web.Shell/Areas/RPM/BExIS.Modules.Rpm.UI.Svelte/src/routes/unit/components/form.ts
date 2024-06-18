@@ -1,9 +1,10 @@
-import { create, test, enforce, only } from 'vest';
+import { create, test, enforce, only, each } from 'vest';
 import type { UnitListItem } from '../models';
 
 type dataType = {
 	unit: UnitListItem;
 	units: UnitListItem[];
+	measurementSystems: string[];
 };
 
 const suite = create((data: dataType, fieldName) => {
@@ -15,8 +16,13 @@ const suite = create((data: dataType, fieldName) => {
 
 	test('name', 'name is not unique', () => {
 		return (
-			data.units.find((u) => u.name.toLowerCase().trim() === data.unit.name.toLowerCase().trim()) == null ||
-			data.units.filter((u) => u.name.toLowerCase().trim() === data.unit.name.toLowerCase().trim() && u.id != data.unit.id).length == 0
+			data.units.find((u) => u.name.toLowerCase().trim() === data.unit.name.toLowerCase().trim()) ==
+				null ||
+			data.units.filter(
+				(u) =>
+					u.name.toLowerCase().trim() === data.unit.name.toLowerCase().trim() &&
+					u.id != data.unit.id
+			).length == 0
 		);
 	});
 
@@ -27,12 +33,25 @@ const suite = create((data: dataType, fieldName) => {
 	test('abbreviation', 'abbreviation is not unique', () => {
 		return (
 			data.units.find((u) => u.abbreviation.trim() === data.unit.abbreviation.trim()) == null ||
-			data.units.filter((u) => u.abbreviation.toLowerCase().trim() === data.unit.abbreviation.toLowerCase().trim() && u.id != data.unit.id).length == 0
+			data.units.filter(
+				(u) =>
+					u.abbreviation.toLowerCase().trim() === data.unit.abbreviation.toLowerCase().trim() &&
+					u.id != data.unit.id
+			).length == 0
 		);
 	});
 
 	test('description', 'description is required', () => {
 		enforce(data.unit.description).isNotBlank();
+	});
+
+	each(data.measurementSystems, (measurementSystem) => {
+		test(measurementSystem, 'measurementSystem is required', () => {
+			return (
+				data.measurementSystems.find((ms) => ms.trim() === data.unit.measurementSystem.trim()) !=
+				null
+			);
+		});
 	});
 
 	// test('description', 'description is to short, it must be larger then 10 chars', () => {

@@ -39,7 +39,6 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
         private XmlDatasetHelper xmlDatasetHelper = new XmlDatasetHelper();
 
-
         public ActionResult Index()
         {
             ViewBag.Title = PresentationModel.GetViewTitleForTenant("Upload Data", Session.GetTenant());
@@ -86,7 +85,6 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
                         try
                         {
-
                             return RedirectToAction(action.Item3, action.Item2, new { area = action.Item1, type, entityId });
                         }
                         catch
@@ -184,7 +182,6 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             Session["TaskManager"] = null;
 
             return ShowData(datasetId);
-
         }
 
         #endregion Finish
@@ -271,7 +268,6 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 {
                     return tempUnStructured.OrderBy(p => p.Title).ToList();
                 }
-
             }
             finally
             {
@@ -289,11 +285,11 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             {
                 List<ListViewItem> temp = new List<ListViewItem>();
 
-                foreach (DataStructure datasStructure in dsm.StructuredDataStructureRepo.Get())
+                foreach (var datasStructure in dsm.GetStructuredDataStructuresAsKVP())
                 {
-                    string title = datasStructure.Name;
+                    string title = datasStructure.Value;
 
-                    temp.Add(new ListViewItem(datasStructure.Id, title));
+                    temp.Add(new ListViewItem(datasStructure.Key, title));
                 }
 
                 return temp.OrderBy(p => p.Title).ToList();

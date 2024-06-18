@@ -8,28 +8,28 @@ namespace BExIS.Dlm.Entities.Common
         ///
         /// </summary>
         /// <remarks> Min cardinality 0 is interpreted as optional usage, Min can not be negative. not supported in NH </remarks>
-        /// <seealso cref=""/>        
+        /// <seealso cref=""/>
         public virtual int MinCardinality { get; set; }
 
         /// <summary>
         ///
         /// </summary>
         /// <remarks></remarks>
-        /// <seealso cref=""/>        
+        /// <seealso cref=""/>
         public virtual int MaxCardinality { get; set; }
 
         /// <summary>
         ///
         /// </summary>
         /// <remarks></remarks>
-        /// <seealso cref=""/>        
+        /// <seealso cref=""/>
         public virtual string Label { get; set; }
 
         /// <summary>
         ///
         /// </summary>
         /// <remarks></remarks>
-        /// <seealso cref=""/>        
+        /// <seealso cref=""/>
         public virtual string Description { get; set; }
 
         /// <summary>
@@ -37,21 +37,26 @@ namespace BExIS.Dlm.Entities.Common
         /// So developer should take care and convert this value to proper type before assigning it to parameter values
         /// </summary>
         /// <remarks></remarks>
-        /// <seealso cref=""/>        
+        /// <seealso cref=""/>
         public virtual string DefaultValue { get; set; }
 
         /// <summary>
-        ///
         /// </summary>
         /// <remarks></remarks>
-        /// <seealso cref=""/>        
+        /// <seealso cref=""/>
+        public virtual string FixedValue { get; set; }
+
+        /// <summary>
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>
         public virtual string MissingValue { get; set; }
 
         /// <summary>
         /// Indicates whether the value of the variable/parameter is optional.
         /// </summary>
         /// <remarks>Setting this propery affects the minimum cardinality.</remarks>
-        /// <seealso cref=""/>        
+        /// <seealso cref=""/>
         public virtual bool IsValueOptional
         {
             get { return MinCardinality < 1; } //if MinCardinality cardinality is zero (less than 1), the parameter value is optional
@@ -62,7 +67,7 @@ namespace BExIS.Dlm.Entities.Common
         /// Indicates the order of the usage in its context, e.g., variable order in a data structure.
         /// </summary>
         /// <remarks></remarks>
-        /// <seealso cref=""/>        
+        /// <seealso cref=""/>
         public virtual int OrderNo { get; set; }
     }
 }

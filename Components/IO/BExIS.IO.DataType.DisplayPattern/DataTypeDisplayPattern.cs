@@ -28,11 +28,15 @@ namespace BExIS.IO.DataType.DisplayPattern
             new DataTypeDisplayPattern() {Id=14,Systemtype = DataTypeCode.DateTime,   Name = "Time 12h hh:mm",    ExcelPattern=@"hh:mm AM/PM",        DisplayPattern="hh:mm tt",                  StringPattern = "hh:mm tt",                 RegexPattern = null},
             new DataTypeDisplayPattern() {Id=15,Systemtype = DataTypeCode.DateTime,   Name = "yyyy-M-d",          ExcelPattern="yyyy-M-d",        DisplayPattern="yyyy-M-d",                  StringPattern = "yyyy-M-d",                 RegexPattern = null},
             new DataTypeDisplayPattern() {Id=16,Systemtype = DataTypeCode.DateTime,   Name = "yyyy-d-M",          ExcelPattern="yyyy-d-M",        DisplayPattern="yyyy-d-M",                  StringPattern = "yyyy-d-M",                 RegexPattern = null},
-            new DataTypeDisplayPattern() {Id=17,Systemtype = DataTypeCode.DateTime,   Name = "yyyy-MM-dd",          ExcelPattern="yyyy-MM-dd",        DisplayPattern="yyyy-MM-dd",                  StringPattern = "yyyy-MM-dd",                 RegexPattern = null},
+            new DataTypeDisplayPattern() {Id=17,Systemtype = DataTypeCode.DateTime,   Name = "yy-MM-dd",          ExcelPattern="yy-MM-dd",        DisplayPattern="yy-MM-dd",                  StringPattern = "yy-MM-dd",                 RegexPattern = null},
             new DataTypeDisplayPattern() {Id=18,Systemtype = DataTypeCode.DateTime,   Name = "yyyy-dd-MM",          ExcelPattern="yyyy-dd-MM",        DisplayPattern="yyyy-dd-MM",                  StringPattern = "yyyy-dd-MM",                 RegexPattern = null},
             new DataTypeDisplayPattern() {Id=19,Systemtype = DataTypeCode.DateTime,   Name = "d/M/yyyy hh:mm:ss tt",ExcelPattern=@"d\/M\/yyyy hh:mm:ss tt",        DisplayPattern="d/M/yyyy hh:mm:ss tt",                  StringPattern = "d/M/yyyy hh:mm:ss tt",RegexPattern = null},
             new DataTypeDisplayPattern() {Id=20,Systemtype = DataTypeCode.DateTime,   Name = "Year",              ExcelPattern="yyyy",                DisplayPattern="yyyy",                      StringPattern = "yyyy",                     RegexPattern = null},
-            new DataTypeDisplayPattern() {Id=21, Systemtype = DataTypeCode.DateTime,   Name = "Month",             ExcelPattern="MM",                  DisplayPattern="MM",                        StringPattern = "MM",                       RegexPattern = null}
+            new DataTypeDisplayPattern() {Id=21, Systemtype = DataTypeCode.DateTime,   Name = "Month",             ExcelPattern="MM",                  DisplayPattern="MM",                        StringPattern = "MM",                       RegexPattern = null},
+            new DataTypeDisplayPattern() {Id=22, Systemtype = DataTypeCode.DateTime,   Name = "d/M/yyyy h:mm:ss tt",             ExcelPattern=@"d\/M\/yyyy hh:mm:ss tt",                  DisplayPattern="d/M/yyyy h:mm:ss tt",                        StringPattern = "d/M/yyyy h:mm:ss tt", RegexPattern = null},
+            new DataTypeDisplayPattern() {Id=23, Systemtype = DataTypeCode.DateTime,   Name = "M/d/yyyy h:mm:ss tt",             ExcelPattern=@"M\/d\/yyyy hh:mm:ss tt",                  DisplayPattern="M/d/yyyy h:mm:ss tt",                        StringPattern = "M/d/yyyy h:mm:ss tt", RegexPattern = null},
+            new DataTypeDisplayPattern() {Id=24, Systemtype = DataTypeCode.DateTime,   Name = "DateTimeIso without T",       ExcelPattern=@"yyyy-MM-dd hh:mm:ss", DisplayPattern = "yyyy-MM-dd hh:mm:ss",     StringPattern = "yyyy-MM-dd HH:mm:ss",      RegexPattern = null},
+            new DataTypeDisplayPattern() {Id=25,Systemtype = DataTypeCode.DateTime,   Name = "DateEu with time",            ExcelPattern=@"dd\.MM\.yyyy hh:mm:ss",          DisplayPattern="dd.MM.yyyy hh:mm:ss",                StringPattern = "dd.MM.yyyy hh:mm:ss",              RegexPattern = null},
         };
 
         public DataTypeCode Systemtype { get; set; }
@@ -48,15 +52,15 @@ namespace BExIS.IO.DataType.DisplayPattern
         /// <summary>
         /// use this property in the form of DataTypeInfo.Types to access all the types and filter them using LINQ if required
         /// </summary>
-        public static List<DataTypeDisplayPattern> Pattern { get { return displayPatterns; } }
+        public static List<DataTypeDisplayPattern> Pattern
+        { get { return displayPatterns; } }
+
         public static DataTypeDisplayPattern Get(int id)
         {
-
-            if (id <= 0) return null;
+            if (id < 0) return null;
 
             return displayPatterns.Where(p => p.Id.Equals(id)).FirstOrDefault();
         }
-
 
         public static DataTypeDisplayPattern GetByExcelPattern(string excelPattern)
         {
@@ -75,6 +79,7 @@ namespace BExIS.IO.DataType.DisplayPattern
         }
 
         #region for metadata attributes needed
+
         public static XmlNode Dematerialize(DataTypeDisplayPattern dataTypeDisplayPattern)
         {
             string StringPattern;
@@ -147,6 +152,6 @@ namespace BExIS.IO.DataType.DisplayPattern
             return null;
         }
 
-        #endregion
+        #endregion for metadata attributes needed
     }
 }

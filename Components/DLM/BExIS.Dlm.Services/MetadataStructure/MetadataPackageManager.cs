@@ -9,8 +9,8 @@ namespace BExIS.Dlm.Services.MetadataStructure
 {
     public class MetadataPackageManager : IDisposable
     {
-
         private IUnitOfWork guow = null;
+
         public MetadataPackageManager()
         {
             guow = this.GetIsolatedUnitOfWork();
@@ -18,6 +18,7 @@ namespace BExIS.Dlm.Services.MetadataStructure
         }
 
         private bool isDisposed = false;
+
         ~MetadataPackageManager()
         {
             Dispose(true);
@@ -41,13 +42,12 @@ namespace BExIS.Dlm.Services.MetadataStructure
             }
         }
 
-
         #region Data Readers
 
         // provide read only repos for the whole aggregate area
         public IReadOnlyRepository<MetadataPackage> MetadataPackageRepo { get; private set; }
 
-        #endregion
+        #endregion Data Readers
 
         #region MetadataPackage
 
@@ -124,11 +124,11 @@ namespace BExIS.Dlm.Services.MetadataStructure
             return (entity);
         }
 
-        #endregion
+        #endregion MetadataPackage
 
         #region Associations
 
-        public MetadataAttributeUsage AddMetadataAtributeUsage(MetadataPackage package, MetadataAttribute attribute, string label, string description, int minCardinality, int maxCardinality, string defaultValue)
+        public MetadataAttributeUsage AddMetadataAtributeUsage(MetadataPackage package, MetadataAttribute attribute, string label, string description, int minCardinality, int maxCardinality, string defaultValue, string fixedValue)
         {
             Contract.Requires(package != null && package.Id >= 0);
             Contract.Requires(attribute != null && attribute.Id >= 0);
@@ -163,11 +163,11 @@ namespace BExIS.Dlm.Services.MetadataStructure
                     Description = description,
                     MinCardinality = minCardinality,
                     MaxCardinality = maxCardinality,
-                    DefaultValue = defaultValue
+                    DefaultValue = defaultValue,
+                    FixedValue = fixedValue
                 };
                 package.MetadataAttributeUsages.Add(usage);
                 attribute.UsedIn.Add(usage);
-
 
                 IRepository<MetadataAttributeUsage> repo = uow.GetRepository<MetadataAttributeUsage>();
                 repo.Put(usage);
@@ -189,7 +189,6 @@ namespace BExIS.Dlm.Services.MetadataStructure
             }
         }
 
-        #endregion
-
+        #endregion Associations
     }
 }

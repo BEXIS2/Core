@@ -1,8 +1,5 @@
 ﻿using BExIS.Dlm.Entities.Party;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Web;
 
 namespace BExIS.Modules.Bam.UI.Models
 {
@@ -13,11 +10,10 @@ namespace BExIS.Modules.Bam.UI.Models
         public long PartyTypeId { get; set; }
         public Dictionary<string, string> PartyCustomAttributes { get; set; }
 
-        public ReadPartyModel() 
+        public ReadPartyModel()
         {
             PartyCustomAttributes = new Dictionary<string, string>();
         }
-
 
         public static ReadPartyModel Convert(Party party)
         {

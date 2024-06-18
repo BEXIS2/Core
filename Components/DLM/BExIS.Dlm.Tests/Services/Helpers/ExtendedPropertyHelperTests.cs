@@ -1,19 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using NUnit.Framework;
-using BExIS.App.Testing;
-using BExIS.Utils.Config;
+﻿using BExIS.App.Testing;
 using BExIS.Dlm.Entities.DataStructure;
 using BExIS.Dlm.Services.Helpers;
-using BExIS.Dlm.Services.DataStructure;
 using BExIS.Dlm.Services.MetadataStructure;
+using BExIS.Utils.Config;
+using NUnit.Framework;
+using System;
+using System.Linq;
 
 namespace BExIS.Dlm.Tests.Services.Helpers
 {
-
     public class ExtendedPropertyHelperTests
     {
         private TestSetupHelper helper = null;
@@ -22,7 +17,6 @@ namespace BExIS.Dlm.Tests.Services.Helpers
         public void OneTimeSetUp()
         {
             helper = new TestSetupHelper(WebApiConfig.Register, false);
-
         }
 
         [OneTimeTearDown]
@@ -50,17 +44,14 @@ namespace BExIS.Dlm.Tests.Services.Helpers
                 var createdProperty = extendedPropertyHelper.Create(property, metadataAttr);
 
                 //Assert
-                Assert.That(createdProperty.Id>0);
+                Assert.That(createdProperty.Id > 0);
             }
-
-           
         }
 
         [Test()]
         public void Create_DataContainerIsNull_ArgumentNullException()
         {
             //Arrange
-
 
             ExtendedProperty property = new ExtendedProperty();
             property.Name = "Name";
@@ -71,14 +62,12 @@ namespace BExIS.Dlm.Tests.Services.Helpers
             //Act
             //Assert
             Assert.Throws<ArgumentNullException>(() => extendedPropertyHelper.Create(property, null));
-  
         }
 
         [Test()]
         public void Create_PropertyIsNull_ArgumentNullException()
         {
             //Arrange
-
 
             ExtendedProperty property = new ExtendedProperty();
             property.Name = "Name";
@@ -89,7 +78,6 @@ namespace BExIS.Dlm.Tests.Services.Helpers
             //Act
             //Assert
             Assert.Throws<ArgumentNullException>(() => extendedPropertyHelper.Create(null, null));
-
         }
 
         [Test()]
@@ -113,7 +101,6 @@ namespace BExIS.Dlm.Tests.Services.Helpers
                 var deleted = extendedPropertyHelper.Delete(createdProperty);
 
                 Assert.True(deleted);
-
             }
         }
     }

@@ -75,7 +75,6 @@ namespace BExIS.Modules.Ddm.UI.Models
             model.LatestVersion = latestVersion;
             model.HasEditRight = hasEditRights;
 
-
             return model;
         }
 
@@ -109,7 +108,6 @@ namespace BExIS.Modules.Ddm.UI.Models
         {
             List<string> cv = new List<string>();
 
-
             if (dataStructure != null)
             {
                 foreach (var variable in dataStructure.Variables)
@@ -117,16 +115,14 @@ namespace BExIS.Modules.Ddm.UI.Models
                     StringBuilder sb = new StringBuilder();
                     foreach (var missingValue in variable.MissingValues)
                     {
-
-                        if (DataTypeUtility.GetTypeCode(variable.DataType.SystemType) == DataTypeCode.DateTime && DataTypeDisplayPattern.Materialize(variable.DataType.Extra) != null)
+                        if (DataTypeUtility.GetTypeCode(variable.DataType.SystemType) == DataTypeCode.DateTime && variable.DisplayPatternId >= 0)
                         {
-                            DataTypeDisplayPattern ddp = DataTypeDisplayPattern.Materialize(variable.DataType.Extra);
+                            DataTypeDisplayPattern ddp = DataTypeDisplayPattern.Get(variable.DisplayPatternId);
                             DateTime dateTime;
                             if (DateTime.TryParse(missingValue.Placeholder, new CultureInfo("en-US", false), DateTimeStyles.NoCurrentDateDefault, out dateTime))
                             {
                                 sb.Append(missingValue.DisplayName + "|" + dateTime.ToString(ddp.StringPattern) + "#%#"); ;
                             }
-
                         }
                         else
                         {
@@ -205,8 +201,6 @@ namespace BExIS.Modules.Ddm.UI.Models
 
             return tmp;
         }
-
-
     }
 
     public enum DataStructureType

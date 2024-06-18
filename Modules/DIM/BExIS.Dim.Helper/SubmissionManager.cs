@@ -1,8 +1,8 @@
-﻿using BExIS.Dim.Entities.Publication;
+﻿using BExIS.Dim.Entities.Publications;
 using BExIS.Dim.Services;
 using BExIS.IO;
 using BExIS.Xml.Helpers;
-using System;
+using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -13,91 +13,64 @@ namespace BExIS.Dim.Helpers
 {
     public class SubmissionManager
     {
-        private const string sourceFile = "submissionConfig.xml";
-        private XmlDocument requirementXmlDocument = null;
+        private const string sourceFile = "submissionConfig.json";
 
         public List<Broker> Brokers;
 
         public SubmissionManager()
         {
-            requirementXmlDocument = new XmlDocument();
             Brokers = new List<Broker>();
         }
 
         public void Load()
         {
-            PublicationManager publicationManager = new PublicationManager();
-
-            try
+            using (PublicationManager publicationManager = new PublicationManager())
             {
                 string filepath = Path.Combine(AppConfiguration.GetModuleWorkspacePath("DIM"), sourceFile);
 
                 if (FileHelper.FileExist(filepath))
                 {
-                    XmlDocument xmlDoc = new XmlDocument();
-                    xmlDoc.Load(filepath);
-                    requirementXmlDocument = xmlDoc;
-                    XmlNodeList brokerNodes = requirementXmlDocument.GetElementsByTagName("broker");
+                    // Read the file contents as a string
+                    string jsonString = File.ReadAllText(filepath);
 
-                    foreach (XmlNode child in brokerNodes)
+                    // Deserialize the JSON into your C# class object
+                    List<Broker> Brokers = JsonConvert.DeserializeObject<List<Broker>>(jsonString); // Deserialize the JSON into a Person object
+
+                    for (int i = 0; i < Brokers.Count(); i++)
                     {
-                        Brokers.Add(createBroker(child, publicationManager));
+                        createBroker(Brokers.ElementAt(i), publicationManager);
                     }
                 }
             }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
-            finally
-            {
-                publicationManager.Dispose();
-            }
         }
 
-        private Broker createBroker(XmlNode node, PublicationManager publicationManager)
+        private Broker createBroker(Broker broker, PublicationManager publicationManager)
         {
-            Broker tmp = new Broker();
+            Repository repo = broker.Repository;
 
-            //create broker in DB
-            string brokerName = XmlUtility.GetXmlNodeByName(node, "name").InnerText;
-
-            if (publicationManager.BrokerRepo.Query().Any(b => b.Name.Equals(brokerName)))
+            if (publicationManager.RepositoryRepo.Query().Any(b => b.Name.Equals(repo.Name)))
             {
-                tmp = publicationManager.BrokerRepo.Query().Where(b => b.Name.Equals(brokerName)).FirstOrDefault();
+                repo = publicationManager.RepositoryRepo.Get().Where(b => b.Name.Equals(repo.Name)).FirstOrDefault();
             }
             else
             {
-                tmp.Name = XmlUtility.GetXmlNodeByName(node, "name").InnerText;
-                tmp.MetadataFormat = XmlUtility.GetXmlNodeByName(node, "metadatastandard").InnerText;
-                tmp.PrimaryDataFormat = XmlUtility.GetXmlNodeByName(node, "primarydataformat").InnerText;
-                tmp.Server = XmlUtility.GetXmlNodeByName(node, "server").InnerText;
-                tmp.UserName = XmlUtility.GetXmlNodeByName(node, "user").InnerText;
-                tmp.Password = XmlUtility.GetXmlNodeByName(node, "password").InnerText;
-                tmp.Link = XmlUtility.GetXmlNodeByName(node, "link").InnerText;
-                tmp = publicationManager.CreateBroker(tmp);
+                if (repo != null) repo = publicationManager.CreateRepository(repo.Name, repo.Url);
             }
 
-            XmlNode dataRepos = XmlUtility.GetXmlNodeByName(node, "dataRepos");
+            //create broker in DB
+            string brokerName = broker.Name;
 
-            foreach (XmlNode dataRepo in dataRepos.ChildNodes)
+            if (publicationManager.BrokerRepo.Query().Any(b => b.Name.Equals(broker.Name) && b.Type.Equals(broker.Type)))
             {
-                Repository repo = null;
-                string repoName = XmlUtility.GetXmlNodeByName(dataRepo, "name").InnerText;
-
-                if (publicationManager.RepositoryRepo.Query().Any(b => b.Name.Equals(repoName)))
-                {
-                    repo = publicationManager.RepositoryRepo.Get().Where(b => b.Name.Equals(repoName)).FirstOrDefault();
-                }
-                else
-                {
-                    repo = createRepository(dataRepo as XmlNode);
-                }
-
-                if (repo != null) publicationManager.CreateRepository(repo.Name, repo.Url, tmp);
+                broker = publicationManager.BrokerRepo.Query().Where(b => b.Name.Equals(brokerName)).FirstOrDefault();
+            }
+            else
+            {
+                broker.Repository = repo;
+                broker = publicationManager.CreateBroker(broker);
             }
 
-            return tmp;
+            return broker;
         }
 
         private Repository createRepository(XmlNode node)

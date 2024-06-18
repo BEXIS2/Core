@@ -11,10 +11,6 @@ namespace BExIS.Dlm.Services.DataStructure
         {
         }
 
-        #region Data Readers
-
-        #endregion
-
         #region ObtainingMethod
 
         public ObtainingMethod Create(string name, string description)
@@ -94,7 +90,6 @@ namespace BExIS.Dlm.Services.DataStructure
             return (entity);
         }
 
-        #endregion
-
+        #endregion ObtainingMethod
     }
 }

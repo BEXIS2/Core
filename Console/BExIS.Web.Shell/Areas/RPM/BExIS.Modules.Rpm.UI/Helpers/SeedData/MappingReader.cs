@@ -35,7 +35,7 @@ namespace BExIS.Modules.Rpm.UI.Helpers.SeedData
             mappedVariables.Columns.Add("UnitId", typeof(long));
             mappedVariables.Columns.Add("VarUnitId", typeof(long));
 
-            System.IO.StreamReader file = new System.IO.StreamReader(mappingFile, System.Text.Encoding.Default);
+            System.IO.StreamReader file = new System.IO.StreamReader(mappingFile, System.Text.Encoding.UTF8);
 
             int l = 1;
             string readLine;
@@ -79,7 +79,6 @@ namespace BExIS.Modules.Rpm.UI.Helpers.SeedData
 
             return mappedVariables;
         }
-
 
         // read variables from XLSX mapping file for only one dataset
         //public System.Data.DataTable readVariables(string filePath, string dataSetID, System.Data.DataTable mappedAttributes, System.Data.DataTable mappedUnits)
@@ -141,7 +140,6 @@ namespace BExIS.Modules.Rpm.UI.Helpers.SeedData
         //    return mappedVariables;
         //}
 
-
         // read variables from XLSX mapping file
         //public System.Data.DataTable readVariables(string filePath, System.Data.DataTable mappedAttributes, System.Data.DataTable mappedUnits)
         //{
@@ -198,7 +196,6 @@ namespace BExIS.Modules.Rpm.UI.Helpers.SeedData
         //    return mappedVariables;
         //}
 
-
         /// <summary>
         /// read attributes from csv file
         /// </summary>
@@ -234,7 +231,7 @@ namespace BExIS.Modules.Rpm.UI.Helpers.SeedData
 
             if (File.Exists(filePath + "\\attributes.csv") && File.Exists(filePath + "\\datatypes.csv") && File.Exists(filePath + "\\units.csv"))
             {
-                using (StreamReader reader = new StreamReader(filePath + "\\attributes.csv"))
+                using (StreamReader reader = new StreamReader(filePath + "\\attributes.csv", Encoding.UTF8, true))
                 {
                     string line = "";
                     //jump over the first row
@@ -292,7 +289,6 @@ namespace BExIS.Modules.Rpm.UI.Helpers.SeedData
             return mappedAttributes;
         }
 
-
         /// <summary>
         /// read units from csv file
         /// </summary>
@@ -315,7 +311,7 @@ namespace BExIS.Modules.Rpm.UI.Helpers.SeedData
 
             if (File.Exists(filePath + "\\units.csv") && File.Exists(filePath + "\\dimensions.csv"))
             {
-                using (StreamReader reader = new StreamReader(filePath + "\\units.csv"))
+                using (StreamReader reader = new StreamReader(filePath + "\\units.csv", Encoding.UTF8, true))
                 {
                     UnitManager unitmanager = null;
                     try
@@ -356,7 +352,6 @@ namespace BExIS.Modules.Rpm.UI.Helpers.SeedData
             return mappedUnits;
         }
 
-
         /// <summary>
         /// read dimensions from csv file
         /// </summary>
@@ -375,7 +370,7 @@ namespace BExIS.Modules.Rpm.UI.Helpers.SeedData
 
             if (File.Exists(filePath + "\\dimensions.csv"))
             {
-                using (StreamReader reader = new StreamReader(filePath + "\\dimensions.csv"))
+                using (StreamReader reader = new StreamReader(filePath + "\\dimensions.csv", Encoding.UTF8, true))
                 {
                     string line = "";
                     //jump over the first row
@@ -399,7 +394,6 @@ namespace BExIS.Modules.Rpm.UI.Helpers.SeedData
             return mappedDimensions;
         }
 
-
         /// <summary>
         /// Read data types from csv file
         /// </summary>
@@ -418,8 +412,7 @@ namespace BExIS.Modules.Rpm.UI.Helpers.SeedData
 
             if (File.Exists(filePath + "\\datatypes.csv"))
             {
-
-                using (StreamReader reader = new StreamReader(filePath + "\\datatypes.csv"))
+                using (StreamReader reader = new StreamReader(filePath + "\\datatypes.csv", Encoding.UTF8, true))
                 {
                     string line = "";
                     //jump over the first row
@@ -440,9 +433,8 @@ namespace BExIS.Modules.Rpm.UI.Helpers.SeedData
                 }
             }
 
-             return mappedDataTypes;
+            return mappedDataTypes;
         }
-
 
         //////////////////////////////////////////////////////////////////////////////////////////////////
         // helper methods

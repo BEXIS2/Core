@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { onMount, afterUpdate, createEventDispatcher } from 'svelte';
+	import { get } from 'svelte/store';
 
 	// UI Components
 	import { TextInput, TextArea, MultiSelect } from '@bexis2/bexis2-core-ui';
@@ -15,7 +16,7 @@
 
 	//stores
 
-	import { unitStore, dataTypeStore, templateStore, meaningsStore, constraintsStore } from '../../store';
+	import { unitStore, dataTypeStore, templateStore, meaningsStore, constraintsStore, setByTemplateStore } from '../../store';
 
 	import {
 		updateDisplayPattern,
@@ -74,6 +75,7 @@
 	$: displayPattern;
 	
 	const dispatch = createEventDispatcher();
+	const setByTemplate = get(setByTemplateStore);
 	
 	let x: listItemType = { id: 0, text: '', group: '', description:'' };
 	
@@ -123,7 +125,7 @@
 
 	//change event: if input change check also validation only on the field
 	// e.target.id is the id of the input component
-	function onChangeHandler(e) {
+	function onChangeHandler(e:any) {
 		// add some delay so the entityTemplate is updated
 		// otherwise the values are old
 		setTimeout(async () => {
@@ -135,7 +137,7 @@
 
 	//change event: if select change check also validation only on the field
 	// *** is the id of the input component
-	function onSelectHandler(e, id) {
+	function onSelectHandler(e:any, id:string) {
 
 		setTimeout(async () => {
 			res = suite(variable, id);
@@ -146,19 +148,39 @@
 				updateDisplayPattern(variable.dataType);
 			}
 
+			console.log(id,e.detail,variable);
 			if (id == 'variableTemplate') {
+
+				if(setByTemplate) // if true, update unit & datatype based on settings
+				{
+						if(variable.dataType == undefined || variable.dataType == "")
+						{
+								variable.dataType = updateDataType(e.detail);
+						}
+
+						if(variable.unit == undefined || variable.unit == "")
+						{
+							variable.unit = updateUnit(e.detail);
+						}
+
+						if(variable.description == undefined || variable.description == "" )
+						{
+							variable.description = e.detail.description
+						}
+				}
+
 				variable.meanings = updateMeanings(variable, e.detail)
 				variable.constraints = updateConstraints(variable,e.detail?.constraints)
-
-
 			}
+		
 
 			if (id == 'meanings') {
 				
 				var last = e.detail[e.detail.length-1]
 				variable.constraints = updateConstraints(variable,last.constraints)
-
+				
 			}
+			// console.log("🚀 ~ update var ~ variable:", variable)
 
 			setValidationState(res);
 
@@ -201,6 +223,36 @@
 
 	}
 
+	function updateUnit( _variableTemplate:templateListItemType):unitListItemType|undefined
+	{
+		console.log("🚀 ~e.details _variableTemplate.units:", _variableTemplate.units)
+			if(_variableTemplate.units)
+			{
+					  var firstUnit = _variableTemplate.units[0];
+						 var us = [...$unitStore.filter(u=>u.text == firstUnit)]
+							if(us != undefined){ 
+								var u = us[0];
+								return u;
+							}
+			}
+
+			return undefined;
+	}
+			
+
+	function updateDataType( _variableTemplate:templateListItemType):listItemType|undefined
+	{
+			if(_variableTemplate.units)
+			{
+						 var ds = [...$dataTypeStore.filter(d=>_variableTemplate.dataTypes.includes(d.text))]
+							if(ds != undefined){ 
+								return ds[0];
+							}
+			}
+
+			return undefined;
+	}
+
 	function updateMeanings(_variable:VariableInstanceModel, _variableTemplate:templateListItemType):listItemType[]
 	{
 			if(_variableTemplate && _variableTemplate.meanings)
@@ -236,13 +288,13 @@
 			return []
 	}
 	
-	function setValidationState(res) {
+	function setValidationState(res:any) {
 		isValid = res.isValid();
 		// dispatch this event to the parent to check the save button
 		dispatch('var-change');
 	}
 
-	function cutData(d) {
+	function cutData(d:any) {
 		for (let index = 0; index < d.length; index++) {
 			let v = d[index];
 

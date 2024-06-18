@@ -993,7 +993,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                     {
                         //check if mappings exist between system/relationships and the metadatastructure/attr
                         // get all party mapped nodes
-                       IEnumerable<XElement> complexElements = XmlUtility.GetXElementsByAttribute("partyid", XmlUtility.ToXDocument(metadata));
+                        IEnumerable<XElement> complexElements = XmlUtility.GetXElementsByAttribute("partyid", XmlUtility.ToXDocument(metadata));
 
                         // get all relationshipTypes where entityname is involved
                         var relationshipTypes = uow.GetReadOnlyRepository<PartyRelationshipType>().Get().Where(

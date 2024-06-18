@@ -52,6 +52,5 @@ namespace Vaiona.IoC
                 return (container);
             }
         }
-
     }
 }
