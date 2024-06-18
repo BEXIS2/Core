@@ -205,7 +205,7 @@ namespace BExIS.Web.Shell.Controllers
                 var userName = HttpContext.User?.Identity?.Name;
                 var operation = operationManager.Find(areaName, controllerName, "*");
 
-                var feature = operation.Feature;
+                var feature = operation?.Feature;
                 if (feature == null) return true;
 
                 var result = userManager.FindByNameAsync(userName);
