@@ -163,6 +163,7 @@ namespace BExIS.Dlm.Entities.Data
             MetadataFields = new List<int>();
             PermissionGroups = new PermissionsType();
             NotificationGroups = new List<long>();
+            MetadataInvalidSaveMode = true;
 
             JsonAllowedFileTypes = "";
             JsonDatastructureList = "";
@@ -184,6 +185,7 @@ namespace BExIS.Dlm.Entities.Data
             MetadataFields = new List<int>();
             PermissionGroups = new PermissionsType();
             NotificationGroups = new List<long>();
+            MetadataInvalidSaveMode = true;
 
             JsonAllowedFileTypes = "";
             JsonDatastructureList = "";

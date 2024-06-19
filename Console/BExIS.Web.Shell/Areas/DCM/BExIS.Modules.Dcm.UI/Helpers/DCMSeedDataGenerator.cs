@@ -295,6 +295,8 @@ namespace BExIS.Modules.Dcm.UI.Helpers
 
                     // set entity
                     entityTemplate.EntityType = entity;
+                    
+                    entityTemplate.MetadataInvalidSaveMode = true;
 
                     entityTemplateManager.Create(entityTemplate);
                 }
