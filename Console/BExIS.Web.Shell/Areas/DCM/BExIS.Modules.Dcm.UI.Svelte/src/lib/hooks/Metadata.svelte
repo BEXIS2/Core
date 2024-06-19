@@ -6,22 +6,19 @@
 	import { faPen, faCopy } from '@fortawesome/free-solid-svg-icons';
 	import MetadataDrawer from '$lib/components/metadata/MetadataDrawer.svelte';
 	import { onMount } from 'svelte';
-	import {type MetadataModel} from '$models/MetadataModel';
-
+	import { type MetadataModel } from '$models/MetadataModel';
 
 	export let id;
 	export let version;
 
 	export let status;
 	export let start;
-	export let isExtern:boolean = true;
+	export let isExtern: boolean = true;
 
-	const defaultFormUrl = host+"/dcm/metadata/loadform" + '?id=' + id + '&version=' + version;
+	const defaultFormUrl = host + '/dcm/metadata/loadform' + '?id=' + id + '&version=' + version;
 
-
-	let open:boolean = false;
-	let model:MetadataModel;
-	
+	let open: boolean = false;
+	let model: MetadataModel;
 
 	let isEnabled = setEnable(status);
 
@@ -29,12 +26,9 @@
 		load();
 	});
 
-
 	async function load() {
-
-		
 		model = await getHookStart(start, id, version);
-		console.log("LOAD METADATA",model);
+		console.log('LOAD METADATA', model);
 	}
 
 	function setEnable(status) {
@@ -47,11 +41,11 @@
 	}
 
 	function editFn() {
-
-		if(model.useExternalMetadataForm)	{	
+		if (model.useExternalMetadataForm) {
 			open = true;
-		}
-		else{	window.open(defaultFormUrl, '_blank')?.focus();} // default form 		
+		} else {
+			window.open(defaultFormUrl, '_blank')?.focus();
+		} // default form
 	}
 
 	// function copyFn() {
@@ -62,17 +56,16 @@
 	function clickEditVisibility() {}
 
 	function clickEditStatus() {}
-
-
 </script>
 
 <div class="flex-col space-y-1">
 	<div class="flex gap-3 justify-left">
 		<button class="chip variant-filled-secondary flex-none" on:click={editFn}
-			><Fa icon={faPen} /></button>
+			><Fa icon={faPen} /></button
+		>
 	</div>
-	
 </div>
 {#if open}
-		<MetadataDrawer {id} url={model.externalMetadataFormUrl} on:close={() => open = false}></MetadataDrawer>
+	<MetadataDrawer {id} url={model.externalMetadataFormUrl} on:close={() => (open = false)}
+	></MetadataDrawer>
 {/if}

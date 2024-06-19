@@ -10,10 +10,15 @@
 </script>
 
 <!-- Header -->
-<div class="relative w-full ">
-
-	 <div class="absolute top-0 right-0 flex text-center gap-4">
-			<span>switch to view</span>
-			<SlideToggle active="bg-secondary-500" name="ViewToggle" size="sm" checked={true} on:click={() => window.open('/ddm/data/Showdata?id=' + id, "_self")} />
-		</div>
+<div class="relative w-full">
+	<div class="absolute top-0 right-0 flex text-center gap-4">
+		<span>switch to view</span>
+		<SlideToggle
+			active="bg-secondary-500"
+			name="ViewToggle"
+			size="sm"
+			checked={true}
+			on:click={() => window.open('/ddm/data/Showdata?id=' + id, '_self')}
+		/>
+	</div>
 </div>

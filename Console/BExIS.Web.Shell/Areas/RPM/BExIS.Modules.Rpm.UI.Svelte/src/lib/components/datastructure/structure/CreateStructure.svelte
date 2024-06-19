@@ -13,7 +13,7 @@
 
 	const dispatch = createEventDispatcher();
 
-	import { create} from '../services';
+	import { create } from '../services';
 	import { goTo } from '$services/BaseCaller';
 	import { get } from 'svelte/store';
 
@@ -22,24 +22,20 @@
 	export let model: DataStructureCreationModel;
 	let enforcePrimaryKey: boolean = get(enforcePrimaryKeyStore);
 
-	$:isPKSet = false;
+	$: isPKSet = false;
 
-	$:model, updatePks();
+	$: model, updatePks();
 
-	function updatePks()
-	{
-			let pktemp = false;
-			model.variables?.forEach(v=> {
-				if(v.isKey == true) 
-				{
-					pktemp = true;
-				}
-			})
+	function updatePks() {
+		let pktemp = false;
+		model.variables?.forEach((v) => {
+			if (v.isKey == true) {
+				pktemp = true;
+			}
+		});
 
-			isPKSet = pktemp;
-
+		isPKSet = pktemp;
 	}
-
 
 	async function onSaveHandler() {
 		const res = await create(model);
@@ -75,34 +71,35 @@
 	function back() {
 		goTo(document.referrer);
 	}
-
-
 </script>
 
 <div>
 	<div transition:fade class="flex">
 		<div class="grow">
-			<button id="back" title="back" class="btn variant-filled-warning" 
-			on:mouseover={() => helpStore.show('back')}
-			on:click={() => back()}
-				><Fa icon={faArrowLeft} /></button
+			<button
+				id="back"
+				title="back"
+				class="btn variant-filled-warning"
+				on:mouseover={() => helpStore.show('back')}
+				on:click={() => back()}><Fa icon={faArrowLeft} /></button
 			>
 		</div>
-			<div class="flex-none text-end">
+		<div class="flex-none text-end">
 			<button
-			 id="save"
+				id="save"
 				title="save"
 				class="btn variant-filled-primary text-xl"
 				on:mouseover={() => helpStore.show('save')}
 				on:click={onSaveHandler}
-				disabled={!areVariablesValid || !areAttributesValid || !((enforcePrimaryKey && isPKSet) ||  !enforcePrimaryKey) }><Fa icon={faSave} /></button
+				disabled={!areVariablesValid ||
+					!areAttributesValid ||
+					!((enforcePrimaryKey && isPKSet) || !enforcePrimaryKey)}><Fa icon={faSave} /></button
 			>
 		</div>
 	</div>
 
-
 	<Attributes {model} bind:valid={areAttributesValid} />
-	{#if enforcePrimaryKey && model.variables.length>0 && !isPKSet}
+	{#if enforcePrimaryKey && model.variables.length > 0 && !isPKSet}
 		<Alert message="please select a primary key" cssClass="variant-filled-warning"></Alert>
 	{/if}
 

@@ -96,17 +96,10 @@
 	}
 
 	const toggle = () => (isOpen = !isOpen);
-
-	
-
 </script>
 
 <Page title="Entity Templates" note="On this page you can edit entity template." help={true}>
-
 	<svelte:fragment>
-
-
-
 		{#await load()}
 			<div class="text-surface-800">
 				<Spinner position={positionType.center} label="loading entity templates" />

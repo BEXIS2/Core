@@ -1,11 +1,11 @@
 import { setApiConfig } from '@bexis2/bexis2-core-ui';
 
 /** @type {import('./$types').PageLoad} */
-export async function load ({fetch}) {
+export async function load({ fetch }) {
 	if (import.meta.env.DEV) {
 		console.log('dev');
 		setApiConfig('https://localhost:44345', 'admin', '123456');
-	 console.log("layout")
+		console.log('layout');
 	}
 
 	return {};

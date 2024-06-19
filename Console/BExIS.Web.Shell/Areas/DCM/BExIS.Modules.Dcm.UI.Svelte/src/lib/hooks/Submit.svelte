@@ -36,24 +36,38 @@
 	let canSubmit: boolean = false;
 	$: canSubmit;
 
-let isSubmiting: boolean = false;
+	let isSubmiting: boolean = false;
 
 	onMount(async () => {
-
-		latestFileUploadDate.subscribe(s=>{if(s>0){reload()}})
-		latestDataDescriptionDate.subscribe(s=>{if(s>0){reload()}})
-		latestFileReaderDate.subscribe(s=>{if(s>0){reload()}})
-		latestValidationDate.subscribe(s=>{if(s>0){reload()}})
-
+		latestFileUploadDate.subscribe((s) => {
+			if (s > 0) {
+				reload();
+			}
+		});
+		latestDataDescriptionDate.subscribe((s) => {
+			if (s > 0) {
+				reload();
+			}
+		});
+		latestFileReaderDate.subscribe((s) => {
+			if (s > 0) {
+				reload();
+			}
+		});
+		latestValidationDate.subscribe((s) => {
+			if (s > 0) {
+				reload();
+			}
+		});
 	});
 
 	async function reload() {
-		console.log('reload submit',start, id, version);
-		
+		console.log('reload submit', start, id, version);
+
 		canSubmit = false;
 		model = await getHookStart(start, id, version);
 		canSubmit = activateSubmit();
-		console.log("reload submit")
+		console.log('reload submit');
 
 		return model;
 	}
@@ -76,7 +90,7 @@ let isSubmiting: boolean = false;
 		type: 'alert',
 		title: 'The import of your data has been started.',
 		body: 'The editing of your dataset will be disabled until completion.  You will be informed via email once completed. Please check the result and your provided metadata.',
-		buttonTextCancel:'ok'
+		buttonTextCancel: 'ok'
 		// TRUE if confirm pressed, FALSE if cancel pressed
 	};
 
@@ -122,10 +136,9 @@ let isSubmiting: boolean = false;
 </script>
 
 {#await reload()}
-	<PlaceHolderHookContent/>
+	<PlaceHolderHookContent />
 {:then m}
 	<div class="flex gap-3 items-center">
-
 		<button
 			type="button"
 			class="btn variant-filled-primary"
@@ -133,9 +146,9 @@ let isSubmiting: boolean = false;
 			on:click={() => modalStore.trigger(confirm)}>Submit</button
 		>
 		{#if isSubmiting}
-		<div class="flex-none">
-			<Spinner/>
-		</div>
+			<div class="flex-none">
+				<Spinner />
+			</div>
 		{/if}
 	</div>
 {:catch error}

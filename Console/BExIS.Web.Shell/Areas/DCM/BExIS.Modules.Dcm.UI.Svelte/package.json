@@ -14,7 +14,7 @@
 		"lint": "prettier --plugin-search-dir . --check . && eslint .",
 		"format": "prettier --plugin-search-dir . --write .",
 		"postinstall": "patch-package",
-		"create patch":"npx patch-package @sveltejs/kit",
+		"create patch": "npx patch-package @sveltejs/kit",
 		"package": "svelte-package",
 		"build package": "svelte-kit sync && svelte-package --watch",
 		"init": "npm init --scope bexis2",
