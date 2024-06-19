@@ -2,6 +2,7 @@
 using BExIS.Ddm.Providers.LuceneProvider.Searcher;
 using BExIS.Utils.Models;
 using Lucene.Net.Analysis.Standard;
+using Lucene.Net.Documents;
 using Lucene.Net.Index;
 using Lucene.Net.QueryParsers;
 using Lucene.Net.Search;
@@ -153,7 +154,18 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Config
                                         ccDefault.Value = hpg.Name.ToString();
                                         ccDefault.Count = (int)hpg.HitCount;
                                         if (ccDefault.Count > 0) cCount++;
-                                        cDefault.Childrens.Add(ccDefault);
+
+                                        foreach (var doc in hpg.Documents)
+                                        {
+                                            IList<IFieldable> numericFields = doc.GetFields("facet_" + fieldName);
+                                            foreach (var field in numericFields)
+                                            {
+                                                ccDefault.Name = field.StringValue;
+                                                ccDefault.Text = field.StringValue;
+                                                ccDefault.Value = field.StringValue;
+                                                if (!cDefault.Childrens.Exists(x => x.Name == ccDefault.Name)) cDefault.Childrens.Add(ccDefault);
+                                            }
+                                        }
                                     }
                                 }
                                 cDefault.Count = cCount;
