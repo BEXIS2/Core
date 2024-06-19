@@ -34,7 +34,7 @@
 	let res = suite.get();
 
 	// use to actived save if form is valid
-	$: disabled = !res.isValid();
+	$: formDisabled = !res.isValid();
 
 	// init unit
 	export let constraint: ConstraintListItem;
@@ -48,6 +48,8 @@
 	$: constraintTypes = ct.map((c) => ({ id: c, text: c }));
 	const modalStore = getModalStore();
 	let warning: string = 'Changing the Contstrait may cause inconsistencies in Datasets.';
+	let subFormDisabled: boolean;
+	$: disabled = !(!formDisabled && !subFormDisabled);
 
 	//change event: if input change check also validation only on the field
 	// e.target.id is the id of the input component
@@ -317,30 +319,30 @@
 						<DomainForm
 							{domainConstraint}
 							on:true={() => {
-								disabled = true;
+								subFormDisabled = true;
 							}}
 							on:false={() => {
-								disabled = false;
+								subFormDisabled = false;
 							}}
 						/>
 					{:else if constraint.type == 'Range'}
 						<RangeForm
 							{rangeConstraint}
 							on:true={() => {
-								disabled = true;
+								subFormDisabled = true;
 							}}
 							on:false={() => {
-								disabled = false;
+								subFormDisabled = false;
 							}}
 						/>
 					{:else if constraint.type == 'Pattern'}
 						<PatternForm
 							{patternConstraint}
 							on:true={() => {
-								disabled = true;
+								subFormDisabled = true;
 							}}
 							on:false={() => {
-								disabled = false;
+								subFormDisabled = false;
 							}}
 						/>
 					{/if}
