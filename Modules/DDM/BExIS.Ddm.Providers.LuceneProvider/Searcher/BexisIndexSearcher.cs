@@ -385,8 +385,30 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Searcher
                             cc.Text = hpg.Name.ToString();
                             cc.Value = hpg.Name.ToString();
                             cc.Count = (int)hpg.HitCount;
-                            if (cc.Count > 0) cCount++;
-                            c.Childrens.Add(cc);
+                            if (cc.Count > 0)
+                            {
+                                cCount++;
+                                foreach (XmlElement item in configXML.GetElementsByTagName("field"))
+                                {
+                                    if ((!item.Attributes["primitive_type"].InnerText.ToLower().Contains("date")) && 
+                                        (!item.Attributes["primitive_type"].InnerText.ToLower().Contains("string")) && 
+                                        (item.Attributes["display_name"].InnerText.ToLower().Contains(c.DisplayName.ToLower())))
+                                    {
+                                        foreach (var doc in hpg.Documents)
+                                        {
+                                            IList<IFieldable> numericFields = doc.GetFields("facet_" + f.Name);
+                                            foreach (var field in numericFields)
+                                            {
+                                                cc.Name = field.StringValue;
+                                                cc.Text = field.StringValue;
+                                                cc.Value = field.StringValue;
+                                                if (!c.Childrens.Exists(x => x.Name == cc.Name)) c.Childrens.Add(cc);
+                                            }
+                                        }
+                                    }
+                                }
+                                c.Childrens.Add(cc);
+                            }
                         }
                     }
                     c.Count = cCount;
