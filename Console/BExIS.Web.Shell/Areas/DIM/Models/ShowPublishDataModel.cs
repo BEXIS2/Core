@@ -38,6 +38,8 @@ namespace BExIS.Modules.Dim.UI.Models
         public List<string> DataRepos { get; set; }
         public DateTime CreationDate { get; set; }
 
+        public string Response { get; set; }
+
         public long DatasetId { get; set; }
     }
 
