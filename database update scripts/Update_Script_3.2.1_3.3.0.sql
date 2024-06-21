@@ -21,7 +21,7 @@ ALTER TABLE IF EXISTS public.dim_repositories DROP CONSTRAINT IF EXISTS fk_579e3
 
 -- Publications
 ALTER TABLE IF EXISTS public.dim_publications
-    ADD COLUMN response character varying(255) COLLATE pg_catalog."default";
+    ADD COLUMN response text COLLATE pg_catalog."default";
 
 -- Parameter
 DROP TABLE IF EXISTS public.parameters CASCADE;
