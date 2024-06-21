@@ -1,5 +1,5 @@
 ﻿using BExIS.App.Bootstrap.Attributes;
-using BExIS.Dim.Services;
+using BExIS.Dim.Services.Mappings;
 using BExIS.Utils.Route;
 using System.Collections.Generic;
 using System.Web.Http;

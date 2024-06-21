@@ -303,7 +303,7 @@
                             {
                                 if (Model.DownloadRights)
                                 {
-                                    @Html.ActionLink(" ", "DownloadZip", "Submission", new { brokerId = publication.Broker.Id, datasetVersionId = publication.DatasetVersionId }, new { @class = "bx bx-grid-function bx-download", title = "Download for " + datarepo })
+                                    @Html.ActionLink(" ", "DownloadZip", "Submission", new { broker = publication.Broker.Name, datarepo, datasetversionid = publication.DatasetVersionId }, new { @class = "bx bx-grid-function bx-download", title = "Download for " + datarepo })
                                 }
                                 else
                                 {

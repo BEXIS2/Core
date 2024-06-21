@@ -1,6 +1,6 @@
-﻿using BExIS.Dim.Entities.Mapping;
-using BExIS.Dim.Helpers.Mapping;
-using BExIS.Dim.Services;
+﻿using BExIS.Dim.Entities.Mappings;
+using BExIS.Dim.Helpers.Mappings;
+using BExIS.Dim.Services.Mappings;
 using BExIS.Modules.Dim.UI.Helper;
 using BExIS.Modules.Dim.UI.Models.Mapping;
 using System;

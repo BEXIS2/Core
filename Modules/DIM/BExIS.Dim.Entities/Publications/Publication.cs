@@ -2,12 +2,13 @@
 using System;
 using Vaiona.Entities.Common;
 
+
 namespace BExIS.Dim.Entities.Publications
 {
     /// <summary>
     ///
     /// </summary>
-    /// <remarks></remarks>
+    /// <remarks></remarks>        
     public class Publication : BaseEntity, IBusinessVersionedEntity
     {
         #region Attributes
@@ -17,7 +18,6 @@ namespace BExIS.Dim.Entities.Publications
         /// DOI of a object from a Repository
         /// </summary>
         public virtual string Doi { get; set; }
-
         /// <summary>
         /// Id of a object from a Broker
         /// </summary>
@@ -53,38 +53,50 @@ namespace BExIS.Dim.Entities.Publications
         /// </summary>
         public virtual string ExternalLink { get; set; }
 
-        #endregion Attributes
+        #endregion
 
-        #region Associations
+        #region Associations        
 
         /// <summary>
         /// inverse map
         /// </summary>
         /// <remarks></remarks>
-        /// <seealso cref=""/>
+        /// <seealso cref=""/>        
         public virtual DatasetVersion DatasetVersion { get; set; }
 
+
         /// <summary>
         /// inverse map
         /// </summary>
         /// <remarks></remarks>
-        /// <seealso cref=""/>
+        /// <seealso cref=""/>        
         public virtual Broker Broker { get; set; }
 
         /// <summary>
         /// inverse map
         /// </summary>
         /// <remarks></remarks>
-        /// <seealso cref=""/>
+        /// <seealso cref=""/>        
         public virtual Repository Repository { get; set; }
 
         /// <summary>
         /// inverse map
         /// </summary>
         /// <remarks></remarks>
-        /// <seealso cref=""/>
+        /// <seealso cref=""/>        
         public virtual string Response { get; set; }
 
-        #endregion Associations
+        #endregion 
+
+        #region Methods
+
+        #endregion
+    }
+
+    public enum PublicationStatus
+    {
+        Open = 0,
+        Accepted = 1,
+        Rejected = 2
     }
 }

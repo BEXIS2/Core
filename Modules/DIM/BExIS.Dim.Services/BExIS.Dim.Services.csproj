@@ -181,16 +181,18 @@
       <Private>True</Private>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Vaelastrasz.Library, Version=2.0.17.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\..\packages\Vaelastrasz.Library.2.0.17\lib\netstandard2.0\Vaelastrasz.Library.dll</HintPath>
+    <Reference Include="Vaelastrasz.Library, Version=2.1.4.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\..\packages\Vaelastrasz.Library.2.1.4\lib\netstandard2.0\Vaelastrasz.Library.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ConceptManager.cs" />
-    <Compile Include="MappingManager.cs" />
+    <Compile Include="Mappings\ConceptManager.cs" />
+    <Compile Include="Mappings\MappingManager.cs" />
     <Compile Include="PublicationManager.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Publications\BrokerManager.cs" />
+    <Compile Include="Publications\PublicationManager.cs" />
+    <Compile Include="Publications\RepositoryManager.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\Components\DLM\BExIS.Dlm.Entities\BExIS.Dlm.Entities.csproj">
@@ -204,6 +206,10 @@
     <ProjectReference Include="..\..\..\Components\Vaiona\Vaiona.Persistence.Api\Vaiona.Persistence.Api.csproj">
       <Project>{640bf81d-354a-4bf0-85fc-f0ad587cf8a2}</Project>
       <Name>Vaiona.Persistence.Api</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\Components\Vaiona\Vaiona.Utils\Vaiona.Utils.csproj">
+      <Project>{63FCACAA-9534-4FDD-A082-78DCC06BAF28}</Project>
+      <Name>Vaiona.Utils</Name>
     </ProjectReference>
     <ProjectReference Include="..\BExIS.Dim.Entities\BExIS.Dim.Entities.csproj">
       <Project>{34cad2a2-6928-458b-b8dc-af71d55f20cc}</Project>

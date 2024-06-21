@@ -1,6 +1,6 @@
 ﻿using BExIS.App.Bootstrap.Attributes;
-using BExIS.Dim.Entities.Mapping;
-using BExIS.Dim.Services;
+using BExIS.Dim.Entities.Mappings;
+using BExIS.Dim.Services.Mappings;
 using BExIS.Utils.Route;
 using BExIS.Xml.Helpers;
 using Newtonsoft.Json;

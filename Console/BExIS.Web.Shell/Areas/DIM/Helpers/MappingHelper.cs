@@ -1,5 +1,6 @@
-﻿using BExIS.Dim.Entities.Mapping;
+﻿using BExIS.Dim.Entities.Mappings;
 using BExIS.Dim.Services;
+using BExIS.Dim.Services.Mappings;
 using BExIS.Dlm.Entities.Common;
 using BExIS.Dlm.Entities.MetadataStructure;
 using BExIS.Dlm.Entities.Party;

@@ -1,4 +1,4 @@
-﻿using BExIS.Dim.Entities.Mapping;
+﻿using BExIS.Dim.Entities.Mappings;
 using System;
 using System.Collections.Generic;
 

@@ -1,6 +1,6 @@
 ﻿using BExIS.App.Bootstrap.Attributes;
-using BExIS.Dim.Entities.Mapping;
-using BExIS.Dim.Helpers.Mapping;
+using BExIS.Dim.Entities.Mappings;
+using BExIS.Dim.Helpers.Mappings;
 using BExIS.Dlm.Entities.Data;
 using BExIS.Dlm.Services.Data;
 using BExIS.Dlm.Services.Party;

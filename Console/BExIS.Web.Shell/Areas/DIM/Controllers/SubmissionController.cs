@@ -11,6 +11,7 @@ using BExIS.IO;
 using BExIS.IO.Transform.Output;
 using BExIS.Modules.Dim.UI.Models;
 using BExIS.Security.Entities.Authorization;
+using BExIS.Security.Entities.Versions;
 using BExIS.Security.Services.Authorization;
 using BExIS.Xml.Helpers;
 using System;
@@ -21,6 +22,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Web.Mvc;
 using System.Web.Script.Serialization;
+using Vaiona.Persistence.Api;
 using Vaiona.Utils.Cfg;
 using Vaiona.Web.Mvc;
 
@@ -40,176 +42,6 @@ namespace BExIS.Modules.Dim.UI.Controllers
         /// If Publication or any other entity is not part of the DLM, it is visible only to its own module.
         /// Other mosules who consume the API results of a module, should only expect .NET types, DLM types, json, xml, CSV, or Html.
         /// </summary>
-
-        [BExISEntityAuthorize(typeof(Dataset), "datasetId", RightType.Write)]
-        public ActionResult publishData(long datasetId, long datasetVersionId = -1)
-        {
-            ShowPublishDataModel model = getShowPublishDataModel(datasetId, datasetVersionId);
-
-            return View("_showPublishDataView", model);
-        }
-
-        [BExISEntityAuthorize(typeof(Dataset), "datasetId", RightType.Read)]
-        public ActionResult getPublishDataPartialView(long datasetId, long datasetVersionId = -1)
-        {
-            ShowPublishDataModel model = getShowPublishDataModel(datasetId, datasetVersionId);
-
-            return PartialView("_showPublishDataView", model);
-        }
-
-        private ShowPublishDataModel getShowPublishDataModel(long datasetId, long datasetVersionId = -1)
-        {
-            PublicationManager publicationManager = new PublicationManager();
-            DatasetManager datasetManager = new DatasetManager();
-            EntityPermissionManager entityPermissionManager = new EntityPermissionManager();
-            ShowPublishDataModel model = new ShowPublishDataModel();
-
-            int versionNr = 1;
-
-            try
-            {
-                Dataset dataset = datasetManager.GetDataset(datasetId);
-
-                List<Broker> Brokers = GetBrokers(dataset.MetadataStructure.Id, publicationManager);
-
-                //Brokers.ForEach(b => model.Brokers.Add(new BExIS.UI.Models.ListItem(b.Id, b.Name + " (" + b.Type + ")")));
-
-                foreach (var broker in Brokers)
-                { 
-                    var name = broker.Name;
-                    if (!string.IsNullOrEmpty(broker.Type)) name += " (" + broker.Type + ")";
-                    model.Brokers.Add(new BExIS.UI.Models.ListItem(broker.Id, name));
-                }
-
-                model.DatasetId = datasetId;
-
-                //Todo Download Rigths -> currently set read rigths for this case
-                model.DownloadRights = entityPermissionManager.HasEffectiveRight(HttpContext.User.Identity.Name,
-                    typeof(Dataset), datasetId, RightType.Read);
-                model.EditRights = entityPermissionManager.HasEffectiveRight(HttpContext.User.Identity.Name,
-                    typeof(Dataset), datasetId, RightType.Write);
-
-                List<long> versions = new List<long>();
-                if (datasetVersionId == -1)
-                {
-                    DatasetVersion datasetVersion = datasetManager.GetDatasetLatestVersion(datasetId);
-                    datasetVersionId = datasetVersion.Id;
-                    versions = datasetManager.GetDatasetVersions(datasetId).Select(d => d.Id).ToList();
-
-                    if (datasetVersion.StateInfo != null)
-                        model.MetadataIsValid = DatasetStateInfo.Valid.ToString().Equals(datasetVersion.StateInfo.State) ? true : false;
-                }
-
-                //todo check if datasetversion id is correct
-                List<Publication> publications =
-                    publicationManager.PublicationRepo.Query().Where(p => versions.Contains(p.DatasetVersion.Id)).ToList();
-
-                ////get versionNr
-                //versionNr = datasetManager.GetDatasetVersionNr(datasetVersionId);
-
-                foreach (var pub in publications)
-                {
-                    Broker broker = publicationManager.BrokerRepo.Get(pub.Broker.Id);
-                    Repository repo = null;
-
-                    if (pub.Repository != null)
-                    {
-                        repo = publicationManager.RepositoryRepo.Get(pub.Repository.Id);
-                    }
-
-                    string dataRepoName = repo == null ? "" : repo.Name;
-
-                    List<string> repos =
-                        GetRepos(dataset.MetadataStructure.Id, broker.Id, publicationManager).Select(r => r.Name).ToList();
-
-                    //get versionNr
-                    versionNr = datasetManager.GetDatasetVersionNr(pub.DatasetVersion.Id);
-
-                    model.Publications.Add(new PublicationModel()
-                    {
-                        Broker = new BrokerModel(broker.Id, broker.Name, repos, broker.Link),
-                        DataRepo = dataRepoName,
-                        DatasetVersionId = pub.DatasetVersion.Id,
-                        CreationDate = pub.Timestamp,
-                        ExternalLink = pub.ExternalLink,
-                        FilePath = pub.FilePath,
-                        Status = pub.Status,
-                        DatasetVersionNr = versionNr
-                    });
-                }
-
-                return model;
-            }
-            finally
-            {
-                publicationManager.Dispose();
-                datasetManager.Dispose();
-                entityPermissionManager.Dispose();
-            }
-        }
-
-        public ActionResult LoadRequirementView(long brokerId, long datasetId)
-        {
-            DataRepoRequirentModel model = new DataRepoRequirentModel();
-            List<string> errors = new List<string>();
-
-            model.DatasetId = datasetId;
-
-            using (DatasetManager dm = new DatasetManager())
-            using (PublicationManager publicationManager = new PublicationManager())
-            {
-                long version = dm.GetDatasetLatestVersionId(datasetId);
-                model.DatasetVersionId = version;
-
-                var broker = publicationManager.BrokerRepo.Get(brokerId);
-
-                if (broker != null)
-                {
-                    Publication publication =
-                        publicationManager.PublicationRepo.Get()
-                            .Where(p => p.Broker.Id.Equals(broker.Id) && p.DatasetVersion.Id.Equals(version))
-                            .FirstOrDefault();
-
-                    if (publication != null && !String.IsNullOrEmpty(publication.FilePath)
-                        && FileHelper.FileExist(Path.Combine(AppConfiguration.DataPath, publication.FilePath)))
-                    {
-                        model.Exist = true;
-                    }
-                    else
-                    {
-                        //if convertion check ist needed
-                        //get all export attr from metadata structure
-                        List<string> exportNames =
-                            xmlDatasetHelper.GetAllTransmissionInformation(datasetId,
-                                TransmissionType.mappingFileExport, AttributeNames.name).ToList();
-
-                        if (string.IsNullOrEmpty(broker.MetadataFormat) || exportNames.Contains(broker.MetadataFormat)) model.IsMetadataConvertable = true;
-
-                        #region primary Data
-
-                        if (broker.PrimaryDataFormat.ToLower().Contains("text/plain") ||
-                            broker.PrimaryDataFormat.ToLower().Contains("text/csv") ||
-                            broker.PrimaryDataFormat.ToLower().Contains("application/excel") ||
-                            String.IsNullOrEmpty(broker.PrimaryDataFormat))
-                        {
-                            model.IsDataConvertable = true;
-                        }
-
-                        #endregion primary Data
-
-                        #region validation from converter
-
-                        model.IsValid = isEntityValidAgainstBroker(broker, version, out errors);
-
-                        #endregion validation from converter
-                    }
-                }
-            }
-
-            model.Errors = errors;
-
-            return PartialView("_dataRepositoryRequirementsView", model);
-        }
 
         public JsonResult CheckExportPossibility(long brokerId, long datasetId)
         {
@@ -296,85 +128,83 @@ namespace BExIS.Modules.Dim.UI.Controllers
             return File(filepath, mimetype, Path.GetFileName(filepath));
         }
 
-        /// <summary>
-        /// prepare data for the broker and repo
-        /// and return a tuple
-        /// tuple.item1 = filepath
-        /// tuple.item2 = mimetype
-        /// </summary>
-        /// <param name="datasetVersionId"></param>
-        /// <param name="datasetId"></param>
-        /// <param name="datarepo"></param>
-        /// <param name="broker"></param>
-        /// <returns></returns>
-        private Tuple<string, string> PrepareData(long datasetVersionId, long brokerId)
+        [BExISEntityAuthorize(typeof(Dataset), "datasetId", RightType.Read)]
+        public ActionResult getPublishDataPartialView(long datasetId, long datasetVersionId = -1)
         {
-            Tuple<string, string> tmp = null;
-            try
+            ShowPublishDataModel model = getShowPublishDataModel(datasetId, datasetVersionId);
+
+            return PartialView("_showPublishDataView", model);
+        }
+
+        public ActionResult LoadRequirementView(long brokerId, long datasetId)
+        {
+            DataRepoRequirentModel model = new DataRepoRequirentModel();
+            List<string> errors = new List<string>();
+
+            model.DatasetId = datasetId;
+
+            using (DatasetManager dm = new DatasetManager())
+            using (PublicationManager publicationManager = new PublicationManager())
             {
-                using (PublicationManager publicPublicationManager = new PublicationManager())
+                long version = dm.GetDatasetLatestVersionId(datasetId);
+                model.DatasetVersionId = version;
+
+                var broker = publicationManager.BrokerRepo.Get(brokerId);
+
+                if (broker != null)
                 {
-                    var _broker = publicPublicationManager.BrokerRepo.Get(brokerId);
+                    Publication publication =
+                        publicationManager.PublicationRepo.Get()
+                            .Where(p => p.Broker.Id.Equals(broker.Id) && p.DatasetVersion.Id.Equals(version))
+                            .FirstOrDefault();
 
-                    switch (_broker.Name.ToLower())
+                    if (publication != null && !String.IsNullOrEmpty(publication.FilePath)
+                        && FileHelper.FileExist(Path.Combine(AppConfiguration.DataPath, publication.FilePath)))
                     {
-                        case "pangaea":
-                            {
-                                PangaeaDataRepoConverter dataRepoConverter = new PangaeaDataRepoConverter(_broker);
+                        model.Exist = true;
+                    }
+                    else
+                    {
+                        //if convertion check ist needed
+                        //get all export attr from metadata structure
+                        List<string> exportNames =
+                            xmlDatasetHelper.GetAllTransmissionInformation(datasetId,
+                                TransmissionType.mappingFileExport, AttributeNames.name).ToList();
 
-                                tmp = new Tuple<string, string>(dataRepoConverter.Convert(datasetVersionId), "text/txt");
-                                return tmp;
-                            }
-                        case "collections":
-                            {
-                                GenericDataRepoConverter dataRepoConverter = new GenericDataRepoConverter(_broker);
-                                tmp = new Tuple<string, string>(dataRepoConverter.Convert(datasetVersionId), "application/zip");
-                                return tmp;
-                            }
-                        case "pensoft":
-                            {
-                                PensoftDataRepoConverter dataRepoConverter = new PensoftDataRepoConverter(_broker);
-                                tmp = new Tuple<string, string>(dataRepoConverter.Convert(datasetVersionId), "text/xml");
-                                return tmp;
-                            }
-                        case "gbif":
-                            {
-                                GbifDataType gbifDataType = GbifDataType.occurrence;
+                        if (string.IsNullOrEmpty(broker.MetadataFormat) || exportNames.Contains(broker.MetadataFormat)) model.IsMetadataConvertable = true;
 
-                                switch (_broker.Type.ToLower())
-                                {
-                                    case "occurrence": //GBIF - Occurrence
-                                        {
-                                            gbifDataType = GbifDataType.occurrence;
-                                            break;
-                                        }
-                                    case "samplingevent"://GBIF - SamplingEvent
-                                        {
-                                            gbifDataType = GbifDataType.samplingEvent;
-                                            break;
-                                        }
-                                }
+                        #region primary Data
 
-                                GBIFDataRepoConverter dataRepoConverter = new GBIFDataRepoConverter(_broker, gbifDataType);
-                                tmp = new Tuple<string, string>(dataRepoConverter.Convert(datasetVersionId), "application/zip");
-                                return tmp; ;
-                            }
-                        default:
-                            {
-                                //default
-                                GenericDataRepoConverter dataRepoConverter = new GenericDataRepoConverter(_broker);
-                                tmp = new Tuple<string, string>(dataRepoConverter.Convert(datasetVersionId), "application/zip");
-                                return tmp;
-                            }
+                        if (broker.PrimaryDataFormat.ToLower().Contains("text/plain") ||
+                            broker.PrimaryDataFormat.ToLower().Contains("text/csv") ||
+                            broker.PrimaryDataFormat.ToLower().Contains("application/excel") ||
+                            String.IsNullOrEmpty(broker.PrimaryDataFormat))
+                        {
+                            model.IsDataConvertable = true;
+                        }
+
+                        #endregion primary Data
+
+                        #region validation from converter
+
+                        model.IsValid = isEntityValidAgainstBroker(broker, version, out errors);
+
+                        #endregion validation from converter
                     }
                 }
             }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
 
-            return null;
+            model.Errors = errors;
+
+            return PartialView("_dataRepositoryRequirementsView", model);
+        }
+
+        [BExISEntityAuthorize(typeof(Dataset), "datasetId", RightType.Write)]
+        public ActionResult publishData(long datasetId, long datasetVersionId = -1)
+        {
+            ShowPublishDataModel model = getShowPublishDataModel(datasetId, datasetVersionId);
+
+            return View("_showPublishDataView", model);
         }
 
         [BExISEntityAuthorize(typeof(Dataset), "datasetId", RightType.Write)]
@@ -447,7 +277,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
                             #endregion gbif
                         }
 
-                        if (broker.Name.ToLower().Equals("doi"))
+                        if (broker.Name.ToLower().Equals("datacite"))
                         {
                             #region datacite
 
@@ -459,10 +289,10 @@ namespace BExIS.Modules.Dim.UI.Controllers
                             if (repository != null && repository.Name.ToLower() == "datacite")
                             {
                                 string datasetUrl = new Uri(new Uri(Request.Url.GetLeftPart(UriPartial.Authority)), Url.Content("~/ddm/Data/ShowData/" + datasetVersion.Dataset.Id).ToString()).ToString();
-                                new DataCiteDOIHelper().sendRequest(datasetVersion, datasetUrl);
+                                //new DataCiteDOIHelper().sendRequest(datasetVersion, datasetUrl);
 
                                 string title = xmlDatasetHelper.GetInformationFromVersion(datasetVersion.Id, NameAttributeValues.title);
-                                publicationManager.CreatePublication(datasetVersion, broker, repository, title, 0, zipfilepath, datasetUrl, "under review");
+                                publicationManager.CreatePublication(datasetVersion, broker, repository, title, 0, zipfilepath, "", "pending");
                             }
 
                             #endregion datacite
@@ -479,11 +309,11 @@ namespace BExIS.Modules.Dim.UI.Controllers
 
                             if (repository != null && repository.Name.ToLower() == "datacite")
                             {
-                                string datasetUrl = new Uri(new Uri(Request.Url.GetLeftPart(UriPartial.Authority)), Url.Content("~/ddm/Data/ShowData/" + datasetVersion.Dataset.Id).ToString()).ToString();
-                                new DataCiteDOIHelper().sendRequest(datasetVersion, datasetUrl);
+                                //string datasetUrl = new Uri(new Uri(Request.Url.GetLeftPart(UriPartial.Authority)), Url.Content("~/ddm/Data/ShowData/" + datasetVersion.Dataset.Id).ToString()).ToString();
+                                //new DataCiteDOIHelper().sendRequest(datasetVersion, datasetUrl);
 
                                 string title = xmlDatasetHelper.GetInformationFromVersion(datasetVersion.Id, NameAttributeValues.title);
-                                publicationManager.CreatePublication(datasetVersion, broker, repository, title, 0, zipfilepath, datasetUrl, "under review");
+                                publicationManager.CreatePublication(datasetVersion, broker, repository, title, 0, zipfilepath, "datasetUrl", "under review");
                             }
 
                             #endregion datacite
@@ -505,8 +335,8 @@ namespace BExIS.Modules.Dim.UI.Controllers
 
         private List<Broker> GetBrokers(long metadataStrutcureId, PublicationManager publicationManager)
         {
-            IEnumerable<Repository> repos = publicationManager.GetRepository();
-            IEnumerable<Broker> brokers = publicationManager.GetBroker();
+            List<Repository> repos = publicationManager.GetRepository();
+            List<Broker> brokers = publicationManager.GetBroker();
             List<Broker> tmp = new List<Broker>();
             bool add = true;
 
@@ -562,6 +392,233 @@ namespace BExIS.Modules.Dim.UI.Controllers
             }
 
             return tmp.Distinct().ToList();
+        }
+
+        private ShowPublishDataModel getShowPublishDataModel(long datasetId, long datasetVersionId = -1)
+        {
+            PublicationManager publicationManager = new PublicationManager();
+            DatasetManager datasetManager = new DatasetManager();
+            EntityPermissionManager entityPermissionManager = new EntityPermissionManager();
+            ShowPublishDataModel model = new ShowPublishDataModel();
+
+            int versionNr = 1;
+
+            try
+            {
+                Dataset dataset = datasetManager.GetDataset(datasetId);
+
+                List<Broker> Brokers = GetBrokers(dataset.MetadataStructure.Id, publicationManager);
+
+                Brokers.ForEach(b => model.Brokers.Add(new BExIS.UI.Models.ListItem(b.Id, b.Name + " (" + b.Type + ")")));
+                model.DatasetId = datasetId;
+
+                //Todo Download Rigths -> currently set read rigths for this case
+                model.DownloadRights = entityPermissionManager.HasEffectiveRight(HttpContext.User.Identity.Name,
+                    typeof(Dataset), datasetId, RightType.Read);
+                model.EditRights = entityPermissionManager.HasEffectiveRight(HttpContext.User.Identity.Name,
+                    typeof(Dataset), datasetId, RightType.Write);
+
+                List<long> versions = new List<long>();
+                if (datasetVersionId == -1)
+                {
+                    DatasetVersion datasetVersion = datasetManager.GetDatasetLatestVersion(datasetId);
+                    datasetVersionId = datasetVersion.Id;
+                    versions = datasetManager.GetDatasetVersions(datasetId).Select(d => d.Id).ToList();
+
+                    if (datasetVersion.StateInfo != null)
+                        model.MetadataIsValid = DatasetStateInfo.Valid.ToString().Equals(datasetVersion.StateInfo.State) ? true : false;
+                }
+
+                //todo check if datasetversion id is correct
+                List<Publication> publications =
+                    publicationManager.PublicationRepo.Query().Where(p => versions.Contains(p.DatasetVersion.Id)).ToList();
+
+                ////get versionNr
+                //versionNr = datasetManager.GetDatasetVersionNr(datasetVersionId);
+
+                foreach (var pub in publications)
+                {
+                    Broker broker = publicationManager.BrokerRepo.Get(pub.Broker.Id);
+                    Repository repo = null;
+
+                    if (pub.Repository != null)
+                    {
+                        repo = publicationManager.RepositoryRepo.Get(pub.Repository.Id);
+                    }
+
+                    string dataRepoName = repo == null ? "" : repo.Name;
+
+                    List<string> repos =
+                        GetRepos(dataset.MetadataStructure.Id, broker.Id, publicationManager).Select(r => r.Name).ToList();
+
+                    //get versionNr
+                    versionNr = datasetManager.GetDatasetVersionNr(pub.DatasetVersion.Id);
+
+                    model.Publications.Add(new PublicationModel()
+                    {
+                        Broker = new BrokerModel(broker.Id, broker.Name, repos, broker.Link),
+                        DataRepo = dataRepoName,
+                        DatasetVersionId = pub.DatasetVersion.Id,
+                        CreationDate = pub.Timestamp,
+                        ExternalLink = pub.ExternalLink,
+                        FilePath = pub.FilePath,
+                        Status = pub.Status,
+                        DatasetVersionNr = versionNr
+                    });
+                }
+
+                return model;
+            }
+            finally
+            {
+                publicationManager.Dispose();
+                datasetManager.Dispose();
+                entityPermissionManager.Dispose();
+            }
+        }
+
+        private bool isEntityValidAgainstBroker(Broker broker, long version, out List<string> errors)
+        {
+            bool isValid = false;
+            List<string> errorsList = new List<string>();
+
+            // [TODO] Add Broker Validation for DataCite
+
+            switch (broker.Name.ToLower())
+            {
+                case "gbif":
+                    {
+                        GbifDataType gbifDataType = GbifDataType.occurrence;
+                        switch (broker.Type.ToLower())
+                        {
+                            case "occurrence": //GBIF - Occurrence
+                                {
+                                    gbifDataType = GbifDataType.occurrence;
+
+                                    break;
+                                }
+                            case "samplingevent"://GBIF - SampleEvent
+                                {
+                                    gbifDataType = GbifDataType.samplingEvent;
+                                    break;
+                                }
+                        }
+
+                        GBIFDataRepoConverter dataRepoConverter = new GBIFDataRepoConverter(broker, gbifDataType);
+                        isValid = dataRepoConverter.Validate(version, out errorsList);
+                        break;
+                    };
+
+                //case "pangaea":
+                //    {
+                //        PangaeaDataRepoConverter dataRepoConverter = new PangaeaDataRepoConverter(repository);
+                //        model.IsValid = dataRepoConverter.Validate(version, out errors);
+                //        break;
+
+                //    }
+                //case "collections":
+                //    {
+                //        GenericDataRepoConverter dataRepoConverter = new GenericDataRepoConverter(repository);
+                //        model.IsValid = dataRepoConverter.Validate(version, out errors);
+                //        break;
+                //    }
+                //case "pensoft":
+                //    {
+                //        PensoftDataRepoConverter dataRepoConverter = new PensoftDataRepoConverter(repository);
+                //        model.IsValid = dataRepoConverter.Validate(version, out errors);
+                //        break;
+                //    }
+                default:
+                    {
+                        //default - no extra validation needed
+                        isValid = true;
+                        break;
+                    }
+            }
+
+            errors = errorsList;
+            return isValid;
+        }
+
+        /// <summary>
+        /// prepare data for the broker and repo
+        /// and return a tuple
+        /// tuple.item1 = filepath
+        /// tuple.item2 = mimetype
+        /// </summary>
+        /// <param name="datasetVersionId"></param>
+        /// <param name="datasetId"></param>
+        /// <param name="datarepo"></param>
+        /// <param name="broker"></param>
+        /// <returns></returns>
+        private Tuple<string, string> PrepareData(long datasetVersionId, long brokerId)
+        {
+            Tuple<string, string> tmp = null;
+            try
+            {
+                using (PublicationManager publicPublicationManager = new PublicationManager())
+                {
+                    var _broker = publicPublicationManager.BrokerRepo.Get(brokerId);
+
+                    switch (_broker.Name.ToLower())
+                    {
+                        case "pangaea":
+                            {
+                                PangaeaDataRepoConverter dataRepoConverter = new PangaeaDataRepoConverter(_broker);
+
+                                tmp = new Tuple<string, string>(dataRepoConverter.Convert(datasetVersionId), "text/txt");
+                                return tmp;
+                            }
+                        case "collections":
+                            {
+                                GenericDataRepoConverter dataRepoConverter = new GenericDataRepoConverter(_broker);
+                                tmp = new Tuple<string, string>(dataRepoConverter.Convert(datasetVersionId), "application/zip");
+                                return tmp;
+                            }
+                        case "pensoft":
+                            {
+                                PensoftDataRepoConverter dataRepoConverter = new PensoftDataRepoConverter(_broker);
+                                tmp = new Tuple<string, string>(dataRepoConverter.Convert(datasetVersionId), "text/xml");
+                                return tmp;
+                            }
+                        case "gbif":
+                            {
+                                GbifDataType gbifDataType = GbifDataType.occurrence;
+
+                                switch (_broker.Type.ToLower())
+                                {
+                                    case "occurrence": //GBIF - Occurrence
+                                        {
+                                            gbifDataType = GbifDataType.occurrence;
+                                            break;
+                                        }
+                                    case "samplingevent"://GBIF - SamplingEvent
+                                        {
+                                            gbifDataType = GbifDataType.samplingEvent;
+                                            break;
+                                        }
+                                }
+
+                                GBIFDataRepoConverter dataRepoConverter = new GBIFDataRepoConverter(_broker, gbifDataType);
+                                tmp = new Tuple<string, string>(dataRepoConverter.Convert(datasetVersionId), "application/zip");
+                                return tmp;
+                            }
+                        default:
+                            {
+                                //default
+                                GenericDataRepoConverter dataRepoConverter = new GenericDataRepoConverter(_broker);
+                                tmp = new Tuple<string, string>(dataRepoConverter.Convert(datasetVersionId), "application/zip");
+                                return tmp;
+                            }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+
+            return null;
         }
 
         #region webservices calls STATUS
@@ -761,69 +818,6 @@ namespace BExIS.Modules.Dim.UI.Controllers
         }
 
         #endregion GFBIO
-
-        private bool isEntityValidAgainstBroker(Broker broker, long version, out List<string> errors)
-        {
-            bool isValid = false;
-            List<string> errorsList = new List<string>();
-
-            // [TODO] Add Broker Validation for DataCite
-
-            switch (broker.Name.ToLower())
-            {
-                case "gbif":
-                    {
-                        GbifDataType gbifDataType = GbifDataType.occurrence;
-                        switch (broker.Type.ToLower())
-                        {
-                            case "occurrence": //GBIF - Occurrence
-                                {
-                                    gbifDataType = GbifDataType.occurrence;
-
-                                    break;
-                                }
-                            case "samplingevent"://GBIF - SampleEvent
-                                {
-                                    gbifDataType = GbifDataType.samplingEvent;
-                                    break;
-                                }
-                        }
-
-                        GBIFDataRepoConverter dataRepoConverter = new GBIFDataRepoConverter(broker, gbifDataType);
-                        isValid = dataRepoConverter.Validate(version, out errorsList);
-                        break;
-                    };
-
-                //case "pangaea":
-                //    {
-                //        PangaeaDataRepoConverter dataRepoConverter = new PangaeaDataRepoConverter(repository);
-                //        model.IsValid = dataRepoConverter.Validate(version, out errors);
-                //        break;
-
-                //    }
-                //case "collections":
-                //    {
-                //        GenericDataRepoConverter dataRepoConverter = new GenericDataRepoConverter(repository);
-                //        model.IsValid = dataRepoConverter.Validate(version, out errors);
-                //        break;
-                //    }
-                //case "pensoft":
-                //    {
-                //        PensoftDataRepoConverter dataRepoConverter = new PensoftDataRepoConverter(repository);
-                //        model.IsValid = dataRepoConverter.Validate(version, out errors);
-                //        break;
-                //    }
-                default:
-                    {
-                        //default - no extra validation needed
-                        isValid = true;
-                        break;
-                    }
-            }
-
-            errors = errorsList;
-            return isValid;
-        }
     }
 
     #endregion submission

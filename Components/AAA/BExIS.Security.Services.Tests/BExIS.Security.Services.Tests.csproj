@@ -187,10 +187,6 @@
       <Project>{a7fbcc13-7e29-4710-82a1-bd6d6f811fda}</Project>
       <Name>BExIS.Utils.Data</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\Utils\BExIS.Utils.NH\BExIS.Utils.NH.csproj">
-      <Project>{0f1ec13e-d685-4f4d-a438-52797b0e53a0}</Project>
-      <Name>BExIS.Utils.NH</Name>
-    </ProjectReference>
     <ProjectReference Include="..\..\Utils\BExIS.Utils\BExIS.Utils.csproj">
       <Project>{782B71C1-707F-4AB1-80E9-90D2880635B4}</Project>
       <Name>BExIS.Utils</Name>

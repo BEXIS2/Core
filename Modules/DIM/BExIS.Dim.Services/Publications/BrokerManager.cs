@@ -1,6 +1,8 @@
 ﻿using BExIS.Dim.Entities.Publications;
 using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Vaiona.Persistence.Api;
 
 namespace BExIS.Dim.Services.Publications
@@ -22,7 +24,7 @@ namespace BExIS.Dim.Services.Publications
         }
 
         public IReadOnlyRepository<Broker> BrokerRepository { get; }
-        public IQueryable<Broker> Requests => BrokerRepository.Query();
+        public IQueryable<Broker> Brokers => BrokerRepository.Query();
 
         public void Dispose()
         {
@@ -85,20 +87,31 @@ namespace BExIS.Dim.Services.Publications
             return Delete(BrokerRepository.Get(brokerId));
         }
 
-        public Broker FindById(long id)
+        public Task<Broker> FindByIdAsync(long brokerId)
         {
-            return BrokerRepository.Get(id);
+            return Task.FromResult(BrokerRepository.Get(brokerId));
+
         }
 
-        public bool Update(Broker entity)
+        public Broker FindById(long brokerId)
+        {
+            return BrokerRepository.Get(brokerId);
+        }
+
+        public List<Broker> FindByName(string name)
+        {
+            return BrokerRepository.Query(b => b.Name.ToLower() == name.ToLower()).ToList();
+        }
+
+        public bool Update(Broker broker)
         {
             try
             {
                 using (var uow = this.GetUnitOfWork())
                 {
                     var repo = uow.GetRepository<Broker>();
-                    repo.Merge(entity);
-                    var merged = repo.Get(entity.Id);
+                    repo.Merge(broker);
+                    var merged = repo.Get(broker.Id);
                     repo.Put(merged);
                     uow.Commit();
                 }

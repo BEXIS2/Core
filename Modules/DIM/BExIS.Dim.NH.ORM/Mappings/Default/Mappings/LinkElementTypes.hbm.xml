@@ -1,0 +1,37 @@
+﻿<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2" assembly="BExIS.Dim.Entities" namespace="BExIS.Dim.Entities.Mappings">
+
+  <!--<subclass name="LinkElementMetadataStructure" extends="LinkElement" discriminator-value="MDS" dynamic-update="true">
+  </subclass>
+
+  <subclass name="LinkElementXsd" extends="LinkElement" discriminator-value="XSD" dynamic-update="true">
+  </subclass>
+
+  <subclass name="LinkElementSystem" extends="LinkElement" discriminator-value="SYS" dynamic-update="true">
+  </subclass>
+
+  <subclass name="LinkElementSimpleMetadataAttribute" extends="LinkElement" discriminator-value="SMA" dynamic-update="true">
+  </subclass>
+
+  <subclass name="LinkElementComplexMetadatAttribute" extends="LinkElement" discriminator-value="CMA" dynamic-update="true">
+  </subclass>
+  <subclass name="LinkElementMetadatAttributeUsage" extends="LinkElement" discriminator-value="MAU" dynamic-update="true">
+  </subclass>
+  <subclass name="LinkElementMetadataNestedAttributeUsage" extends="LinkElement" discriminator-value="MNA" dynamic-update="true">
+  </subclass>
+  <subclass name="LinkElementMetadataPackage" extends="LinkElement" discriminator-value="MPA" dynamic-update="true">
+  </subclass>
+  <subclass name="LinkElementMetadataPackageUsage" extends="LinkElement" discriminator-value="MPU" dynamic-update="true">
+  </subclass>
+
+  <subclass name="LinkElementPartyType" extends="LinkElement" discriminator-value="PTY" dynamic-update="true">
+  </subclass>
+
+  <subclass name="LinkElementParty" extends="LinkElement" discriminator-value="PAR" dynamic-update="true">
+  </subclass>
+
+  <subclass name="LinkElementKey" extends="LinkElement" discriminator-value="KEY" dynamic-update="true">
+  </subclass>
+
+  <subclass name="LinkElementRole" extends="LinkElement" discriminator-value="ROL" dynamic-update="true">
+  </subclass>-->
+</hibernate-mapping>
