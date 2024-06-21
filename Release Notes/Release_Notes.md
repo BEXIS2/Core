@@ -9,8 +9,13 @@ Webconfig needs to be updated!
 - Workspace changes: [3.2.1..3.3.0](https://github.com/BEXIS2/Workspace/compare/3.2.1..3.3.0)
 
 ### Database Update(s):
-- Update script version 3.2.1 to 3.3.9:
+- Update script version 3.2.1 to 3.3.0:
 - [Update_Script_3.2.1_3.3.0.sql](https://github.com/BEXIS2/Core/blob/rc/database%20update%20scripts/Update_Script_3.2.1_3.3.0.sql)
+
+### New/Updated Settings
+- General/Landing Page - (if empty, load landingpage.htm from tenant)
+- Use external metadata form (Enables the loading of an external metadata form when editing entities)
+- External metadata form destination url (Define the origin from where the external metadata form should be loaded)
 
 ## Changes
 
