@@ -367,7 +367,7 @@
       <SubType>Designer</SubType>
     </Content>
     <None Include="Dcm.Settings.json">
-     <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <Content Include="Dcm.Settings.xml" />
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
@@ -901,10 +901,6 @@
     <ProjectReference Include="..\..\..\..\..\Modules\DIM\BExIS.Dim.Services\BExIS.Dim.Services.csproj">
       <Project>{cac933a2-6849-4c61-82b4-cbf4052210cc}</Project>
       <Name>BExIS.Dim.Services</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\DIM\BExIS.Modules.Dim.UI.csproj">
-      <Project>{9BFFFD11-03C6-47DF-9CC9-F458A9A49377}</Project>
-      <Name>BExIS.Modules.Dim.UI</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
