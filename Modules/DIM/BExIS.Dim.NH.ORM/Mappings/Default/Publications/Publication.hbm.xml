@@ -45,8 +45,8 @@
 			<column name="Status" />
 		</property>
 
-		<property name="Response" type="string">
-			<column name="Response" />
+		<property name="Response" type="StringClob">
+			<column name="Response" sql-type="text" />
 		</property>
 
 		<!-- Associations -->
