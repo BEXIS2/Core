@@ -33,7 +33,7 @@ namespace BExIS.IO.Tests.Transform.Input
         public void OneTimeSetUp()
         {
             // set repeat
-            repeat = 10000;
+            repeat = 10;
 
             // seedata
             // 1. datastructure

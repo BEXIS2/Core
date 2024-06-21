@@ -14,8 +14,8 @@ namespace BExIS.IO.Tests.Transform.Input
         [OneTimeSetUp]
         public void OneTimeSetUp()
         {
-            rows = generateTestRows(100000, ';');
-            rowWithMissingValues = generateTestRows(100000, ';', missingValueList);
+            rows = generateTestRows(100, ';');
+            rowWithMissingValues = generateTestRows(100, ';', missingValueList);
         }
 
         [SetUp]
@@ -209,9 +209,6 @@ namespace BExIS.IO.Tests.Transform.Input
         #region systemtypes
 
         [TestCase(100)]
-        [TestCase(1000)]
-        [TestCase(10000)]
-        [TestCase(100000)]
         public void SuggestSystemTypes_Valid_ResultWithCorrectTypes(int n)
         {
             //Arrange

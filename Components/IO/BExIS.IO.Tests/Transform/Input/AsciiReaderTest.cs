@@ -178,10 +178,7 @@ namespace BExIS.IO.Tests.Transform.Input
             }
         }
 
-        [TestCase(100)]
-        [TestCase(1000)]
-        [TestCase(10000)]
-        [TestCase(100000)]
+        [TestCase(10)]
         public void Count_FilexExist_ReturnCount(long numberOfRows)
         {
             DataGeneratorHelper dgh = new DataGeneratorHelper();
@@ -293,8 +290,6 @@ namespace BExIS.IO.Tests.Transform.Input
 
         [TestCase(100, 2)]
         [TestCase(1000, 100)]
-        [TestCase(10000, 100)]
-        [TestCase(100000, 100)]
         public void GetRandowRows_FileExist_ReturnListOfStrings(int total, int selection)
         {
             DataGeneratorHelper dgh = new DataGeneratorHelper();

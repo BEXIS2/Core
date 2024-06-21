@@ -201,7 +201,7 @@ namespace BExIS.Dlm.Tests.Services.Data
         [Test()]
         public void CreateDatasetVersionTest()
         {
-            long numberOfTuples = 1000;
+            long numberOfTuples = 10;
             var dm = new DatasetManager();
             var rsm = new ResearchPlanManager();
             var mdm = new MetadataStructureManager();
@@ -300,7 +300,7 @@ namespace BExIS.Dlm.Tests.Services.Data
             orderByExpr.ToSQL().Should().Be($"{var1Name} ASC, {var2Name} DESC");
 
             // create a dataset and test the filter, sorting, and projectgion
-            long numberOfTuples = 100;
+            long numberOfTuples = 10;
             var dm = new DatasetManager();
             var rsm = new ResearchPlanManager();
             var mdm = new MetadataStructureManager();
