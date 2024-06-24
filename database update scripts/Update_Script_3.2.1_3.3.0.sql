@@ -63,6 +63,60 @@ SET type = '',
 repositoryref = (select id from dim_repositories where name = 'DataCiteDOI')
 where name = 'DataCiteDOI';
 
+-- DataCite Repository Renaming
+UPDATE public.dim_repositories
+	SET name='datacite'
+	WHERE name like 'datacitedoi';
+
+-- DataCite Broker Renaming
+UPDATE public.dim_brokers
+	SET name='datacite'
+	WHERE name like 'datacitedoi';
+
+-- DataCite Mapping Updates
+-- PublicationYear
+UPDATE public.dim_mappingkeys
+	SET url='https://datacite-metadata-schema.readthedocs.io/en/4.5/properties/publicationyear/#id1'
+	WHERE xpath='data/attributes/publicationYear' and concept = (select id from dim_mappingconcepts where name like 'DataCite');
+
+-- Publisher
+UPDATE public.dim_mappingkeys
+	SET url='https://datacite-metadata-schema.readthedocs.io/en/4.5/properties/publisher/#id1'
+	WHERE xpath='data/attributes/publisher' and concept = (select id from dim_mappingconcepts where name like 'DataCite');
+
+UPDATE public.dim_mappingkeys
+	SET optional=true
+	WHERE xpath='data/attributes/publisher/publisherIdentifier' and concept = (select id from dim_mappingconcepts where name like 'DataCite');
+
+UPDATE public.dim_mappingkeys
+	SET optional=true
+	WHERE xpath='data/attributes/publisher/schemeUri' and concept = (select id from dim_mappingconcepts where name like 'DataCite');
+
+UPDATE public.dim_mappingkeys
+	SET optional=true
+	WHERE xpath='data/attributes/publisher/lang' and concept = (select id from dim_mappingconcepts where name like 'DataCite');
+
+-- Title(s)
+UPDATE public.dim_mappingkeys
+	SET url='https://datacite-metadata-schema.readthedocs.io/en/4.5/properties/title/#id1'
+	WHERE xpath='data/attributes/titles' and concept = (select id from dim_mappingconcepts where name like 'DataCite');
+
+UPDATE public.dim_mappingkeys
+	SET optional=true
+	WHERE xpath='data/attributes/titles/lang' and concept = (select id from dim_mappingconcepts where name like 'DataCite');
+
+UPDATE public.dim_mappingkeys
+	SET optional=true
+	WHERE xpath='data/attributes/titles/titleType' and concept = (select id from dim_mappingconcepts where name like 'DataCite');
+
+-- Creator(s)
+UPDATE public.dim_mappingkeys
+	SET url='https://datacite-metadata-schema.readthedocs.io/en/4.5/properties/creator/#id1'
+	WHERE xpath='data/attributes/creators' and concept = (select id from dim_mappingconcepts where name like 'DataCite');
+
+UPDATE public.dim_mappingkeys
+	SET optional=true
+	WHERE xpath='data/attributes/creators/nameType' and concept = (select id from dim_mappingconcepts where name like 'DataCite');
 
 -- ********************************************--
 -- Insert version

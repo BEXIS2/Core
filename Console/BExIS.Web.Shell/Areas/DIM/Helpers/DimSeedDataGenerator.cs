@@ -425,16 +425,16 @@ namespace BExIS.Modules.Dim.UI.Helpers
                     conceptManager.CreateMappingKey("Name", "", "", false, false, "data/attributes/publisher/name", concept, publisher);
 
                 if (!keys.Any(k => k.XPath.Equals("data/attributes/publisher/publisherIdentifier")))
-                    conceptManager.CreateMappingKey("PublisherIdentifier", "", "", false, false, "data/attributes/publisher/publisherIdentifier", concept, publisher);
+                    conceptManager.CreateMappingKey("PublisherIdentifier", "", "", true, false, "data/attributes/publisher/publisherIdentifier", concept, publisher);
 
                 if (!keys.Any(k => k.XPath.Equals("data/attributes/publisher/publisherIdentifierScheme")))
                     conceptManager.CreateMappingKey("PublisherIdentifierScheme", "", "", false, false, "data/attributes/publisher/publisherIdentifierScheme", concept, publisher);
 
                 if (!keys.Any(k => k.XPath.Equals("data/attributes/publisher/schemeUri")))
-                    conceptManager.CreateMappingKey("SchemeUri", "", "", false, false, "data/attributes/publisher/schemeUri", concept, publisher);
+                    conceptManager.CreateMappingKey("SchemeUri", "", "", true, false, "data/attributes/publisher/schemeUri", concept, publisher);
 
                 if (!keys.Any(k => k.XPath.Equals("data/attributes/publisher/lang")))
-                    conceptManager.CreateMappingKey("Language", "", "", false, false, "data/attributes/publisher/lang", concept, publisher);
+                    conceptManager.CreateMappingKey("Language", "", "", true, false, "data/attributes/publisher/lang", concept, publisher);
 
 
                 // title(s)
@@ -446,10 +446,10 @@ namespace BExIS.Modules.Dim.UI.Helpers
                     conceptManager.CreateMappingKey("Title", "", "", false, false, "data/attributes/titles/title", concept, titles);
 
                 if (!keys.Any(k => k.XPath.Equals("data/attributes/titles/lang")))
-                    conceptManager.CreateMappingKey("Lang", "", "", false, false, "data/attributes/titles/lang", concept, titles);
+                    conceptManager.CreateMappingKey("Lang", "", "", true, false, "data/attributes/titles/lang", concept, titles);
 
                 if (!keys.Any(k => k.XPath.Equals("data/attributes/titles/titleType")))
-                    conceptManager.CreateMappingKey("TitleType", "", "", false, false, "data/attributes/titles/titleType", concept, titles);
+                    conceptManager.CreateMappingKey("TitleType", "", "", true, false, "data/attributes/titles/titleType", concept, titles);
 
                 // creator(s)
                 MappingKey creators = null;
@@ -460,13 +460,13 @@ namespace BExIS.Modules.Dim.UI.Helpers
                     conceptManager.CreateMappingKey("Name", "", "", false, false, "data/attributes/creators/name", concept, creators);
 
                 if (!keys.Any(k => k.XPath.Equals("data/attributes/creators/givenName")))
-                    conceptManager.CreateMappingKey("GivenName", "", "", false, false, "data/attributes/creators/givenName", concept, creators);
+                    conceptManager.CreateMappingKey("GivenName", "", "", true, false, "data/attributes/creators/givenName", concept, creators);
 
                 if (!keys.Any(k => k.XPath.Equals("data/attributes/creators/familyName")))
-                    conceptManager.CreateMappingKey("FamilyName", "", "", false, false, "data/attributes/creators/familyName", concept, creators);
+                    conceptManager.CreateMappingKey("FamilyName", "", "", true, false, "data/attributes/creators/familyName", concept, creators);
 
                 if (!keys.Any(k => k.XPath.Equals("data/attributes/creators/nameType")))
-                    conceptManager.CreateMappingKey("NameType", "", "", false, false, "data/attributes/creators/nameType", concept, creators);
+                    conceptManager.CreateMappingKey("NameType", "", "", true, false, "data/attributes/creators/nameType", concept, creators);
 
                 // contributor(s)
                 MappingKey contributors = null;
@@ -532,8 +532,6 @@ namespace BExIS.Modules.Dim.UI.Helpers
 
                 if (!keys.Any(k => k.XPath.Equals("data/attributes/dates/dateInformation")))
                     conceptManager.CreateMappingKey("DateInformation", "", "", true, false, "data/attributes/descriptions/dateInformation", concept, dates);
-            
-                
             }
         }
 
