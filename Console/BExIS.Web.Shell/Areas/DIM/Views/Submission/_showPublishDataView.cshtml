@@ -168,17 +168,12 @@
                 function(response) {
                     //alert("prepare data copmplete");
                     $("#publishContentContainer").replaceWith(response);
-
-                    //sendDataToDataRepo(id, input);
-
                 });
     }
 
     function sendDataToDataRepo(id,input) {
 
         console.log("sendDataToDataRepo", id, input);
-
-        //alert("start send data to repo ");
 
         $.post('@Url.Action("SendDataToDataRepo", "Submission", new RouteValueDictionary {{"area", "dim"}})',
             { brokerId: input, datasetId: id },
