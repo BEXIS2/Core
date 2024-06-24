@@ -228,11 +228,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BExIS.IO.Transform.Output",
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BExIS.Modules.Rpm.UI.Tests", "Modules\RPM\BExIS.Modules.Rpm.UI.Tests\BExIS.Modules.Rpm.UI.Tests.csproj", "{8BEB5F2E-67C0-4584-A24B-B934D13C939D}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Projektmappenelemente", "Projektmappenelemente", "{ABABA7B8-7997-43EC-919D-BE5D8480F5F8}"
-	ProjectSection(SolutionItems) = preProject
-		Directory.Build.props.xml = Directory.Build.props.xml
-	EndProjectSection
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
