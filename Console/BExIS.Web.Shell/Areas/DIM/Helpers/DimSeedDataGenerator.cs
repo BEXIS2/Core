@@ -518,6 +518,22 @@ namespace BExIS.Modules.Dim.UI.Helpers
 
                 if (!keys.Any(k => k.XPath.Equals("data/attributes/descriptions/descriptionType")))
                     conceptManager.CreateMappingKey("DescriptionType", "", "", false, false, "data/attributes/descriptions/descriptionType", concept, descriptions);
+
+                // dates
+                MappingKey dates = null;
+                if (!keys.Any(k => k.XPath.Equals("Dates")))
+                    dates = conceptManager.CreateMappingKey("Dates", "", "https://datacite-metadata-schema.readthedocs.io/en/4.5/properties/date/#id1", true, true, "data/attributes/dates", concept);
+
+                if (!keys.Any(k => k.XPath.Equals("data/attributes/dates/date")))
+                    conceptManager.CreateMappingKey("Date", "", "", false, false, "data/attributes/descriptions/date", concept, dates);
+
+                if (!keys.Any(k => k.XPath.Equals("data/attributes/dates/dateType")))
+                    conceptManager.CreateMappingKey("Date", "", "", false, false, "data/attributes/descriptions/dateType", concept, dates);
+
+                if (!keys.Any(k => k.XPath.Equals("data/attributes/dates/dateInformation")))
+                    conceptManager.CreateMappingKey("DateInformation", "", "", true, false, "data/attributes/descriptions/dateInformation", concept, dates);
+            
+                
             }
         }
 
