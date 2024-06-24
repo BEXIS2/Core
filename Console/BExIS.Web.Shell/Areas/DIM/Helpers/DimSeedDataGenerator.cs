@@ -414,12 +414,12 @@ namespace BExIS.Modules.Dim.UI.Helpers
 
                 // publicationYear
                 if (!keys.Any(k => k.XPath.Equals("data/attributes/publicationYear")))
-                    conceptManager.CreateMappingKey("PublicationYear", "", "", false, false, "data/attributes/publicationYear", concept);
+                    conceptManager.CreateMappingKey("PublicationYear", "", "https://datacite-metadata-schema.readthedocs.io/en/4.5/properties/publicationyear/#id1", false, false, "data/attributes/publicationYear", concept);
 
                 // publisher
                 MappingKey publisher = null;
                 if (!keys.Any(k => k.XPath.Equals("data/attributes/publisher")))
-                    publisher = conceptManager.CreateMappingKey("Publisher", "", "", false, true, "data/attributes/publisher", concept);
+                    publisher = conceptManager.CreateMappingKey("Publisher", "", "https://datacite-metadata-schema.readthedocs.io/en/4.5/properties/publisher/#id1", false, true, "data/attributes/publisher", concept);
 
                 if (!keys.Any(k => k.XPath.Equals("data/attributes/publisher/name")))
                     conceptManager.CreateMappingKey("Name", "", "", false, false, "data/attributes/publisher/name", concept, publisher);
@@ -440,7 +440,7 @@ namespace BExIS.Modules.Dim.UI.Helpers
                 // title(s)
                 MappingKey titles = null;
                 if (!keys.Any(k => k.XPath.Equals("data/attributes/titles")))
-                    titles = conceptManager.CreateMappingKey("Titles", "", "", false, true, "data/attributes/titles", concept);
+                    titles = conceptManager.CreateMappingKey("Titles", "", "https://datacite-metadata-schema.readthedocs.io/en/4.5/properties/title/#id1", false, true, "data/attributes/titles", concept);
 
                 if (!keys.Any(k => k.XPath.Equals("data/attributes/titles/title")))
                     conceptManager.CreateMappingKey("Title", "", "", false, false, "data/attributes/titles/title", concept, titles);
@@ -454,7 +454,7 @@ namespace BExIS.Modules.Dim.UI.Helpers
                 // creator(s)
                 MappingKey creators = null;
                 if (!keys.Any(k => k.XPath.Equals("data/attributes/creators")))
-                    creators = conceptManager.CreateMappingKey("Creators", "", "www.google.de", false, true, "data/attributes/creators", concept);
+                    creators = conceptManager.CreateMappingKey("Creators", "", "https://datacite-metadata-schema.readthedocs.io/en/4.5/properties/creator/#id1", false, true, "data/attributes/creators", concept);
 
                 if (!keys.Any(k => k.XPath.Equals("data/attributes/creators/name")))
                     conceptManager.CreateMappingKey("Name", "", "", false, false, "data/attributes/creators/name", concept, creators);
@@ -471,47 +471,47 @@ namespace BExIS.Modules.Dim.UI.Helpers
                 // contributor(s)
                 MappingKey contributors = null;
                 if (!keys.Any(k => k.XPath.Equals("data/attributes/contributors")))
-                    contributors = conceptManager.CreateMappingKey("Contributors", "", "www.google.de", false, true, "data/attributes/contributors", concept);
+                    contributors = conceptManager.CreateMappingKey("Contributors", "", "https://datacite-metadata-schema.readthedocs.io/en/4.5/properties/contributor/#id1", true, true, "data/attributes/contributors", concept);
 
                 if (!keys.Any(k => k.XPath.Equals("data/attributes/contributors/name")))
                     conceptManager.CreateMappingKey("Name", "", "", false, false, "data/attributes/contributors/name", concept, contributors);
 
                 if (!keys.Any(k => k.XPath.Equals("data/attributes/contributors/givenName")))
-                    conceptManager.CreateMappingKey("GivenName", "", "", false, false, "data/attributes/contributors/givenName", concept, contributors);
+                    conceptManager.CreateMappingKey("GivenName", "", "", true, false, "data/attributes/contributors/givenName", concept, contributors);
 
                 if (!keys.Any(k => k.XPath.Equals("data/attributes/contributors/familyName")))
-                    conceptManager.CreateMappingKey("FamilyName", "", "", false, false, "data/attributes/contributors/familyName", concept, contributors);
+                    conceptManager.CreateMappingKey("FamilyName", "", "", true, false, "data/attributes/contributors/familyName", concept, contributors);
 
                 if (!keys.Any(k => k.XPath.Equals("data/attributes/contributors/nameType")))
-                    conceptManager.CreateMappingKey("NameType", "", "", false, false, "data/attributes/contributors/nameType", concept, contributors);
+                    conceptManager.CreateMappingKey("NameType", "", "", true, false, "data/attributes/contributors/nameType", concept, contributors);
 
                 // subject(s)
                 MappingKey subjects = null;
                 if (!keys.Any(k => k.XPath.Equals("data/attributes/subjects")))
-                    subjects = conceptManager.CreateMappingKey("Subjects", "", "www.google.de", false, true, "data/attributes/subjects", concept);
+                    subjects = conceptManager.CreateMappingKey("Subjects", "", "www.google.de", true, true, "data/attributes/subjects", concept);
 
                 if (!keys.Any(k => k.XPath.Equals("data/attributes/subjects/subject")))
                     conceptManager.CreateMappingKey("Subject", "", "", false, false, "data/attributes/subjects/subject", concept, subjects);
 
                 if (!keys.Any(k => k.XPath.Equals("data/attributes/subjects/subjectScheme")))
-                    conceptManager.CreateMappingKey("SubjectScheme", "", "", false, false, "data/attributes/subjects/subjectScheme", concept, subjects);
+                    conceptManager.CreateMappingKey("SubjectScheme", "", "", true, false, "data/attributes/subjects/subjectScheme", concept, subjects);
 
                 if (!keys.Any(k => k.XPath.Equals("data/attributes/subjects/schemeUri")))
-                    conceptManager.CreateMappingKey("SchemeUri", "", "", false, false, "data/attributes/subjects/schemeUri", concept, subjects);
+                    conceptManager.CreateMappingKey("SchemeUri", "", "", true, false, "data/attributes/subjects/schemeUri", concept, subjects);
 
                 if (!keys.Any(k => k.XPath.Equals("data/attributes/subjects/valueUri")))
-                    conceptManager.CreateMappingKey("ValueUri", "", "", false, false, "data/attributes/subjects/valueUri", concept, subjects);
+                    conceptManager.CreateMappingKey("ValueUri", "", "", true, false, "data/attributes/subjects/valueUri", concept, subjects);
 
                 if (!keys.Any(k => k.XPath.Equals("data/attributes/subjects/lang")))
-                    conceptManager.CreateMappingKey("Lang", "", "", false, false, "data/attributes/subjects/lang", concept, subjects);
+                    conceptManager.CreateMappingKey("Lang", "", "", true, false, "data/attributes/subjects/lang", concept, subjects);
 
                 // description(s)
                 MappingKey descriptions = null;
                 if (!keys.Any(k => k.XPath.Equals("Descriptions")))
-                    descriptions = conceptManager.CreateMappingKey("Descriptions", "", "", false, true, "data/attributes/descriptions", concept);
+                    descriptions = conceptManager.CreateMappingKey("Descriptions", "", "", true, true, "data/attributes/descriptions", concept);
 
                 if (!keys.Any(k => k.XPath.Equals("data/attributes/descriptions/lang")))
-                    conceptManager.CreateMappingKey("Lang", "", "", false, false, "data/attributes/descriptions/lang", concept, descriptions);
+                    conceptManager.CreateMappingKey("Lang", "", "", true, false, "data/attributes/descriptions/lang", concept, descriptions);
 
                 if (!keys.Any(k => k.XPath.Equals("data/attributes/descriptions/description")))
                     conceptManager.CreateMappingKey("Description", "", "", false, false, "data/attributes/descriptions/description", concept, descriptions);
