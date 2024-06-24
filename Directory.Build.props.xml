@@ -3,6 +3,6 @@
 		<TargetFramework>net4.8</TargetFramework>
 	</PropertyGroup>
 	<PropertyGroup>
-		<AccelerateBuildsInVisualStudio>true</AccelerateBuildsInVisualStudio>
+		<AccelerateBuildsInVisualStudio>false</AccelerateBuildsInVisualStudio>
 	</PropertyGroup>
 </Project>
