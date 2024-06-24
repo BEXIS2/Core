@@ -409,7 +409,13 @@ namespace BExIS.Modules.Dim.UI.Controllers
 
                 List<Broker> Brokers = GetBrokers(dataset.MetadataStructure.Id, publicationManager);
 
-                Brokers.ForEach(b => model.Brokers.Add(new BExIS.UI.Models.ListItem(b.Id, b.Name + " (" + b.Type + ")")));
+                foreach (var broker in Brokers)
+                {
+                    string name = broker.Name;
+                    if (!String.IsNullOrEmpty(broker.Type)) name += " (" + broker.Type + ")";
+                    model.Brokers.Add(new BExIS.UI.Models.ListItem(broker.Id, name));
+                }
+
                 model.DatasetId = datasetId;
 
                 //Todo Download Rigths -> currently set read rigths for this case
