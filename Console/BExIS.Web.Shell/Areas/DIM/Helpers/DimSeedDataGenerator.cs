@@ -485,6 +485,9 @@ namespace BExIS.Modules.Dim.UI.Helpers
                 if (!keys.Any(k => k.XPath.Equals("data/attributes/contributors/nameType")))
                     conceptManager.CreateMappingKey("NameType", "", "", true, false, "data/attributes/contributors/nameType", concept, contributors);
 
+                if (!keys.Any(k => k.XPath.Equals("data/attributes/contributors/contributorType")))
+                    conceptManager.CreateMappingKey("ContributorType", "", "", true, false, "data/attributes/contributors/contributorType", concept, contributors);
+
                 // subject(s)
                 MappingKey subjects = null;
                 if (!keys.Any(k => k.XPath.Equals("data/attributes/subjects")))
