@@ -277,6 +277,7 @@ namespace BExIS.Modules.Dcm.UI.Helpers
                                         if (datasetStatus == AuditActionType.Create || Cache.UpdateSetup.UpdateMethod.Equals(UploadMethod.Append) || Cache.UpdateSetup.PrimaryKeys == null)
                                         {
                                             dm.EditDatasetVersion(workingCopy, rows, null, null); // add all datatuples to the datasetversion
+
                                         }
                                         else
                                         if (datasetStatus == AuditActionType.Edit) // datatuples allready exist
@@ -359,24 +360,26 @@ namespace BExIS.Modules.Dcm.UI.Helpers
 
                             dm.CheckInDataset(id, numberOfRows + " rows", User.Name);
 
+                            Cache.UpdateSetup.UpdateMethod = UpdateMethod.Update;
+
                             //send email
                             var es = new EmailService();
                             es.Send(MessageHelper.GetUpdateDatasetHeader(id),
                                 MessageHelper.GetUpdateDatasetMessage(id, title, User.DisplayName, typeof(Dataset).Name),
                                 GeneralSettings.SystemEmail
                                 );
-                        }
-                        catch (Exception e)
-                        {
-                            temp.Add(new Error(ErrorType.Other, "Can not upload. : " + e.Message));
-                            var es = new EmailService();
-                            es.Send(MessageHelper.GetErrorHeader(),
-                                "Dataset: " + title + "(ID: " + id + ", User: " + User.DisplayName + " )" + " Can not upload. : " + e.Message,
-                                ConfigurationManager.AppSettings["SystemEmail"]
-                                );
-                        }
-                        finally
-                        {
+                            }
+                            catch (Exception e)
+                            {
+                                temp.Add(new Error(ErrorType.Other, "Can not upload. : " + e.Message));
+                                var es = new EmailService();
+                                es.Send(MessageHelper.GetErrorHeader(),
+                                    "Dataset: " + title + "(ID: " + id + ", User: " + User.DisplayName + " )" + " Can not upload. : " + e.Message,
+                                    ConfigurationManager.AppSettings["SystemEmail"]
+                                    );
+                            }
+                            finally
+                            {
                         }
                     }
 
