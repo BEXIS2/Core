@@ -266,6 +266,10 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 datasetManager.UpdateDataset(dataset);
 
                 // update cache
+                //Update primary key in update method
+                if (cache.UpdateSetup == null) cache.UpdateSetup = new UpdateSetup();
+                cache.UpdateSetup.PrimaryKeys = structure.Variables.Where(v => v.IsKey)?.Select(v =>v.Id).ToList();
+
                 // update modifikation date
                 cache.UpdateLastModificarion(typeof(DataDescriptionHook));
 

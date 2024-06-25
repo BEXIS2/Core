@@ -17,6 +17,8 @@
 
 	import { positionType } from '@bexis2/bexis2-core-ui';
 	import Controls from './Controls.svelte';
+	import Attributes from './structure/Attributes.svelte';
+	import ConstraintsDescription from './structure/variable/ConstraintsDescription.svelte';
 
 	export let model: DataStructureCreationModel;
 	$: model;
@@ -33,6 +35,8 @@
 	let generate: boolean = true;
 
 	let selectedRowIndex: number = 0;
+	let data = [];
+	$:data;
 
 	let errors: string[] = [];
 	$: errors;
@@ -58,14 +62,33 @@
 		setMarkers(model.markers, init);
 
 		delimeter = model.delimeter;
-
+	 prepareData(model.preview)
 		checkStatus();
+
 	});
+
+
+	function prepareData(rows:string[])
+	{
+		data = [];
+		if(rows)
+		{
+			rows.forEach(r=>{
+					const cv = textMarkerHandling(r);
+					data = [...data,cv]
+			})
+
+			console.log("🚀 ~ onMount ~ model.preview:", model.preview)
+			console.log("🚀 ~ onMount ~ data:", data)
+		}
+	}
 
 	function setTableInfos(rows, delimeter) {
 		console.log('set table infos');
 		//number of columns
-		cLength = rows[0].split(delimeter).length;
+		cLength = textMarkerHandling(rows[0]).length; // 1,2,"3,4",5
+
+		console.log("🚀 ~ setTableInfos ~ cLength:", cLength)
 		//number of rows
 		rLength = rows.length;
 
@@ -327,6 +350,7 @@
 	// if you change the delimeter you need to change/update also the table informations
 	function changeDelimeter() {
 		setTableInfos(model.preview, String.fromCharCode(model.delimeter));
+		prepareData(model.preview)
 	}
 
 	// ROW Selection
@@ -351,6 +375,66 @@
 		console.log('🚀 ~ e.detail:', e);
 		const m = await load(model.file, model.entityId, encoding, 0);
 		model.preview = m.preview;
+	}
+
+ 
+	function textMarkerHandling(row:string):[]
+	{
+		 const d = String.fromCharCode(model.delimeter);
+		 const t = String.fromCharCode(model.textMarker);
+			const values = row.split(d);
+
+			let temp=[]; 
+
+			if(row.includes(t))
+			{
+				 let tempValue:string = "";
+					let startText:boolean = false;
+
+					values.forEach(v => {
+
+							if(v.includes(t))
+							{
+										if(v.startsWith(t) && v.endsWith(t))
+										{
+												temp = [...temp,v]
+										}
+										else
+										{
+													if (v.startsWith(t))
+													{
+																	tempValue = v;
+																	startText = true;
+													}
+
+													if (v.endsWith(t))
+													{
+																	tempValue += d + v;
+																	temp = [...temp,tempValue];
+																	startText = false;
+													}
+										}
+							}
+							else
+							{
+								if (startText){
+									tempValue += d + v;
+								}
+								else{
+									temp = [...temp, v];
+								}
+							}
+						
+							
+					});
+					
+					return temp;
+			}
+			else
+			{
+				return values;
+			}
+
 	}
 </script>
 
@@ -500,7 +584,7 @@
 				<div class="overflow-x-auto">
 					<table class="table table-compact" on:contextmenu={(e) => e.preventDefault()}>
 						<tbody>
-							{#each model.preview as row, r}
+							{#each data as row, r}
 								<tr>
 									<td
 										class="w-8 hover:cursor-pointer select-none text-sm hover:border-surface-400 hover:border-solid hover:border-b-2"
@@ -511,7 +595,7 @@
 										</div>
 									</td>
 
-									{#each row.split(String.fromCharCode(model.delimeter)) as cell, c}
+									{#each row as cell, c}
 										<td
 											class="hover:cursor-pointer select-none hover:border-surface-400 hover:border-solid hover:border-b-2"
 											on:dblclick={dbclickHandler(r)}

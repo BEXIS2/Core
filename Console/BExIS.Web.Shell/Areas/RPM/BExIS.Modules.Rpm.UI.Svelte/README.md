@@ -1,5 +1,8 @@
 # bexis2-rpm-ui
 
+## 0.2.1
+- fix selection with textmarks and delimiters
+
 ## 0.2.0
 
 - update libaries
