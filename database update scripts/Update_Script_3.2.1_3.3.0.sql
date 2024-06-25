@@ -111,6 +111,23 @@ UPDATE public.dim_mappingkeys
 
 -- Creator(s)
 UPDATE public.dim_mappingkeys
+	SET url='https://datacite-metadata-schema.readthedocs.io/en/4.5/properties/creator/#id1'
+	WHERE xpath='data/attributes/creators' and concept = (select id from dim_mappingconcepts where name like 'DataCite');
+
+UPDATE public.dim_mappingkeys
+	SET optional=true
+	WHERE xpath='data/attributes/creators/nameType' and concept = (select id from dim_mappingconcepts where name like 'DataCite');
+
+UPDATE public.dim_mappingkeys
+	SET optional=true
+	WHERE xpath='data/attributes/creators/givenName' and concept = (select id from dim_mappingconcepts where name like 'DataCite');
+
+UPDATE public.dim_mappingkeys
+	SET optional=true
+	WHERE xpath='data/attributes/creators/familyName' and concept = (select id from dim_mappingconcepts where name like 'DataCite');
+
+-- Contributor(s)
+UPDATE public.dim_mappingkeys
 	SET url='https://datacite-metadata-schema.readthedocs.io/en/4.5/properties/contributor/#id1'
 	WHERE xpath='data/attributes/contributors' and concept = (select id from dim_mappingconcepts where name like 'DataCite');
 
@@ -125,10 +142,9 @@ UPDATE public.dim_mappingkeys
 UPDATE public.dim_mappingkeys
 	SET optional=true
 	WHERE xpath='data/attributes/contributors/familyName' and concept = (select id from dim_mappingconcepts where name like 'DataCite');
-
-INSERT INTO public.dim_mappingkeys(
-	name, description, url, optional, xpath, iscomplex, concept, parentref)
-	VALUES ('ContributorType', '', '', true, 'data/attributes/contributors/contributorType', false, (select id from dim_mappingconcepts where name like 'DataCite'), (select id from dim_mappingkeys where xpath='data/attributes/contributors'))
+    
+INSERT INTO public.dim_mappingkeys(name, description, url, optional, xpath, iscomplex, concept, parentref)
+	Select 'ContributorType', '', '', true, 'data/attributes/contributors/contributorType', false, (select id from dim_mappingconcepts where name like 'DataCite'), (select id from dim_mappingkeys where xpath='data/attributes/contributors')
     WHERE NOT EXISTS (
         SELECT xpath FROM public.dim_mappingkeys WHERE xpath='data/attributes/contributors/contributorType'
     );
