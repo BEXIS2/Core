@@ -16,6 +16,7 @@ using BExIS.UI.Hooks;
 using BExIS.UI.Hooks.Caches;
 using BExIS.UI.Hooks.Logs;
 using BExIS.UI.Models;
+using BExIS.Utils.Models;
 using BExIS.Utils.Upload;
 using System;
 using System.Collections.Generic;
@@ -599,7 +600,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
             // generate variables
             // reset list
             model.Variables = new List<VariableInstanceModel>();
-            int cells = markerRows.First().Split((char)model.Delimeter).Count();
+            int cells = AsciiReader.CountCells(model.Preview.FirstOrDefault(), (char)model.Delimeter, (char)model.TextMarker);
 
             var strutcureAnalyzer = new StructureAnalyser();
             VariableHelper helper = new VariableHelper();
@@ -1075,7 +1076,8 @@ namespace BExIS.Modules.Rpm.UI.Controllers
 
             if (markerIndex > -1)
             {
-                var v = rows[markerIndex].Split(delimeter)[position]; // get value
+                var row = rows[markerIndex];
+                var v = AsciiReader.GetCells(row,delimeter,textMarker)[position]; // get value
                 //if text marker char is in the value, remove it
                 if (v.Contains(textMarker)) v = v.Trim(textMarker);
 

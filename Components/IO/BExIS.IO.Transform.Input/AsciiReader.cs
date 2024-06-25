@@ -802,6 +802,74 @@ namespace BExIS.IO.Transform.Input
             return selectedRows;
         }
 
+        public static int CountCells(string row, char separator, char textmarker)
+        {
+            return GetCells(row, separator, textmarker).Count();
+        }
+
+        public static List<string> GetCells(string row, char separator, char textmarker)
+        {
+            if (string.IsNullOrEmpty(row)) return new List<string>();
+            var values = row.Split(separator).ToList();
+            var temp = new List<string>();
+
+            /// <summary>
+            /// check if the row contains a textmarker
+            /// </summary>
+            /// <remarks></remarks>
+            if (row.Contains(textmarker))
+            {
+                string tempValue = "";
+                bool startText = false;
+
+                temp = new List<string>();
+
+                foreach (string v in values)
+                {
+                    /// <summary>
+                    /// check if the value v contains a textmarker
+                    /// and generate a new string which include all values between
+                    /// the first Text marker and the last TextMarker
+                    /// </summar>
+                    /// <remarks></remarks>
+                    if (v.Contains(textmarker))
+                    {
+                        //if the qoutest are in one value - first and last character
+                        if (v.ToCharArray().First().Equals(textmarker) && v.ToCharArray().Last().Equals(textmarker))
+                        {
+                            temp.Add(v.Trim(textmarker));
+                        }
+                        else
+                        {
+                            if (v.ToCharArray().First().Equals(textmarker))
+                            {
+                                tempValue = v;
+                                startText = true;
+                            }
+
+                            if (v.ToCharArray().Last().Equals(textmarker))
+                            {
+                                tempValue += separator + v;
+                                temp.Add(tempValue.Trim(textmarker));
+                                startText = false;
+                            }
+                        }
+                    }
+                    else
+                    {
+                        if (startText)
+                            tempValue += separator + v;
+                        else temp.Add(v);
+                    }
+                }
+
+                return temp;
+            }
+
+            return values;
+
+        }
+
         private static string getSubsetOfLine(string line, List<bool> activeCells, TextSeperator delimeter)
         {
             // if cell list exist and entry are false, means
