@@ -1,6 +1,6 @@
 # BEXIS2 3.3.0 Release Notes
 
->..Darwin Core Export .....
+>..Darwin Core Export / DOI Integration .....
 
 ### Note:
 Webconfig needs to be updated!
@@ -14,12 +14,14 @@ Webconfig needs to be updated!
 
 ### New/Updated Settings
 - General/Landing Page - (if empty, load landingpage.htm from tenant)
-- Use external metadata form (Enables the loading of an external metadata form when editing entities)
-- External metadata form destination url (Define the origin from where the external metadata form should be loaded)
+- Data Colletion/Use external metadata form (Enables the loading of an external metadata form when editing entities)
+- Data Colletion/External metadata form destination url (Define the origin from where the external metadata form should be loaded)
+- Data Dissemination/GBIF Export - Define a destination of all darwin core archives. 
 
 ## Changes
 
 ### Enhancements
+- DOI Integration into BEXIS2 Core System ([#1567](https://github.com/BEXIS2/Core/issues/1567))
 - Improve authorization for internal API calls ([#1730](https://github.com/BEXIS2/Core/issues/1730))
 - Handling of JWT: Store JWT in the page component in bexis2-core-ui - sveltekit ([#1694](https://github.com/BEXIS2/Core/issues/1694))
 - Security improvements: prevent web applications potentially vulnerable to clickjacking (443/tcp) & Add missing secure cookie attribute (HTTP) (443/tcp) ([#1708](https://github.com/BEXIS2/Core/issues/1708))([#1707](https://github.com/BEXIS2/Core/issues/1707))
@@ -38,5 +40,6 @@ Webconfig needs to be updated!
 - Fix create new meaning not working ([#1714](https://github.com/BEXIS2/Core/issues/1714))
 - Fix return to dataset after editing data structure not working ([#1728](https://github.com/BEXIS2/Core/issues/1728))
 - Fix destroyed metadata form appears when show data or other tabs in show dataset view ([#1710](https://github.com/BEXIS2/Core/issues/1710))
+- Fix Read a file with delimiter inside the text quotes is not working ([#1753](https://github.com/BEXIS2/Core/issues/1753))
 
 
