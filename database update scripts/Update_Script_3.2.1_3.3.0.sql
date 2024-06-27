@@ -163,20 +163,20 @@ UPDATE public.dim_mappingkeys
 
 UPDATE public.dim_mappingkeys
 	SET optional=true
-	WHERE xpath='data/attributes/contributors/nameType' and concept = (select id from dim_mappingconcepts where name like 'DataCite');
+	WHERE xpath='data/attributes/contributors/nameType' and concept = (select id from dim_mappingconcepts where name like 'datacite');
 
 UPDATE public.dim_mappingkeys
 	SET optional=true
-	WHERE xpath='data/attributes/contributors/givenName' and concept = (select id from dim_mappingconcepts where name like 'DataCite');
+	WHERE xpath='data/attributes/contributors/givenName' and concept = (select id from dim_mappingconcepts where name like 'datacite');
 
 UPDATE public.dim_mappingkeys
 	SET optional=true
-	WHERE xpath='data/attributes/contributors/familyName' and concept = (select id from dim_mappingconcepts where name like 'DataCite');
+	WHERE xpath='data/attributes/contributors/familyName' and concept = (select id from dim_mappingconcepts where name like 'datacite');
     
 INSERT INTO public.dim_mappingkeys(name, description, url, optional, xpath, iscomplex, concept, parentref)
-	Select 'ContributorType', '', '', true, 'data/attributes/contributors/contributorType', false, (select id from dim_mappingconcepts where name like 'DataCite'), (select id from dim_mappingkeys where xpath='data/attributes/contributors')
+	Select 'ContributorType', '', '', true, 'data/attributes/contributors/contributorType', false, (select id from dim_mappingconcepts where name='datacite'), (select id from dim_mappingkeys where xpath='data/attributes/contributors')
     WHERE NOT EXISTS (
-        SELECT xpath FROM public.dim_mappingkeys WHERE xpath='data/attributes/contributors/contributorType'
+        SELECT xpath FROM public.dim_mappingkeys WHERE concept = (select id from dim_mappingconcepts where name like 'datacite') AND xpath='data/attributes/contributors/contributorType'
     );
 
 -- ********************************************--
