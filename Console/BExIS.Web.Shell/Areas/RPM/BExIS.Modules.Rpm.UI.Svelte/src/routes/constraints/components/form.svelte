@@ -34,7 +34,7 @@
 	let res = suite.get();
 
 	// use to actived save if form is valid
-	$: disabled = !res.isValid();
+	$: formDisabled = !res.isValid();
 
 	// init unit
 	export let constraint: ConstraintListItem;
@@ -48,6 +48,8 @@
 	$: constraintTypes = ct.map((c) => ({ id: c, text: c }));
 	const modalStore = getModalStore();
 	let warning: string = 'Changing the Contstrait may cause inconsistencies in Datasets.';
+	let subFormDisabled: boolean;
+	$: disabled = !(!formDisabled && !subFormDisabled);
 
 	//change event: if input change check also validation only on the field
 	// e.target.id is the id of the input component
@@ -57,18 +59,21 @@
 		// otherwise the values are old
 		setTimeout(async () => {
 			// check changed field
-			res = suite({ constraint: constraint, constraints: constraints }, e);
+			res = suite({ constraint: constraint, constraints: constraints }, e.target.id);
 		}, 10);
 	}
 
+
+	
 	onMount(async () => {
 		ct = await apiCalls.GetConstraintTypes();
+
 		suite.reset();
-		if (constraint.id > 0) 
-		{
+
+		if (constraint.id > 0) {
 			setTimeout(async () => {
-				res = suite({ constraint: constraint, constraints: constraints }, '');
-			}, 10);
+				res = suite({ constraint: constraint, constraints: constraints },undefined);
+			}, 100);
 		}
 	});
 
@@ -87,7 +92,7 @@
 					inUse: constraint.inUse,
 					variableIDs: constraint.variableIDs,
 					provider: '',
-					selectionPredicate: undefined,
+					selectionPredicate: undefined
 				};
 				if (domainConstraint.id != 0) {
 					domainConstraint = await apiCalls.GetDomainConstraint(constraint.id);
@@ -117,7 +122,6 @@
 					negated: constraint.negated,
 					inUse: constraint.inUse,
 					variableIDs: constraint.variableIDs
-					
 				};
 				if (rangeConstraint.id != 0) {
 					rangeConstraint = await apiCalls.GetRangeConstraint(constraint.id);
@@ -276,16 +280,14 @@
 			<div class="pb-3 col-span-2">
 				<!-- svelte-ignore a11y-label-has-associated-control -->
 				<label>Formal Description</label>
-				
-					{#if constraint.formalDescription && constraint.formalDescription != ''}
+
+				{#if constraint.formalDescription && constraint.formalDescription != ''}
 					<p class="ml-2">
 						{constraint.formalDescription}
 					</p>
-					{:else}
-					<p class="ml-2 text-surface-600">
-						Will be generate by the System
-					</p>
-					{/if}
+				{:else}
+					<p class="ml-2 text-surface-600">Will be generate by the System</p>
+				{/if}
 			</div>
 
 			<div class="pb-3" title="Type">
@@ -317,30 +319,30 @@
 						<DomainForm
 							{domainConstraint}
 							on:true={() => {
-								disabled = true;
+								subFormDisabled = true;
 							}}
 							on:false={() => {
-								disabled = false;
+								subFormDisabled = false;
 							}}
 						/>
 					{:else if constraint.type == 'Range'}
 						<RangeForm
 							{rangeConstraint}
 							on:true={() => {
-								disabled = true;
+								subFormDisabled = true;
 							}}
 							on:false={() => {
-								disabled = false;
+								subFormDisabled = false;
 							}}
 						/>
 					{:else if constraint.type == 'Pattern'}
 						<PatternForm
 							{patternConstraint}
 							on:true={() => {
-								disabled = true;
+								subFormDisabled = true;
 							}}
 							on:false={() => {
-								disabled = false;
+								subFormDisabled = false;
 							}}
 						/>
 					{/if}

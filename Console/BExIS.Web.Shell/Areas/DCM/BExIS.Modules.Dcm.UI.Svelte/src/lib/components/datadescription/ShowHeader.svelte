@@ -14,7 +14,6 @@
 	import { createEventDispatcher } from 'svelte';
 	import { goTo } from '$services/BaseCaller';
 
-
 	export let id;
 	export let structureId;
 	export let title;
@@ -66,18 +65,20 @@
 	}
 
 	function goToEditFn() {
-		goTo("/rpm/datastructure/edit?structureId="+structureId)
+		goTo('/rpm/datastructure/edit?structureId=' + structureId);
 	}
 
 	function downloadFn() {
-		goTo("/rpm/datastructure/downloadTemplate?id="+structureId)
+		goTo('/rpm/datastructure/downloadTemplate?id=' + structureId);
 	}
 </script>
 
 <div class="show-datadescription-header-container flex">
 	<div class="flex-col gap-3 grow">
 		<h4 class="h4">{title} ({structureId})</h4>
-		{#if description} <p>{description}</p> {/if}
+		{#if description}
+			<p>{description}</p>
+		{/if}
 		{#if loading}
 			<div>
 				<Spinner textCss="text-surface-500" />
@@ -86,24 +87,22 @@
 	</div>
 	<div>
 		<div class="flex gap-2 text-end flex-auto">
-		<button title="download" class="chip variant-filled-secondary" on:click={downloadFn}
-			><Fa icon={faDownload} /></button
-		>
-		{#if enableEdit}
-			<button title="edit" class="chip variant-filled-secondary" on:click={goToEditFn}
-				><Fa icon={faEdit} /></button
+			<button title="download" class="chip variant-filled-secondary" on:click={downloadFn}
+				><Fa icon={faDownload} /></button
 			>
-		{/if}
-	
-		{#if hasData === false}
-			
+			{#if enableEdit}
+				<button title="edit" class="chip variant-filled-secondary" on:click={goToEditFn}
+					><Fa icon={faEdit} /></button
+				>
+			{/if}
+
+			{#if hasData === false}
 				<button
 					title="remove"
 					class="chip variant-filled-error"
 					on:click={() => modalStore.trigger(modal)}><Fa icon={faTrash} /></button
 				>
-
-		{/if}
+			{/if}
 		</div>
 	</div>
 </div>

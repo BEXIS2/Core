@@ -1,10 +1,7 @@
 ﻿using BExIS.IO.Transform.Input;
-using BExIS.IO.Transform.Validation.Exceptions;
 using BExIS.UI.Hooks.Caches;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Web;
 
 namespace BExIS.Modules.Dcm.UI.Models.Edit
 {
@@ -12,15 +9,14 @@ namespace BExIS.Modules.Dcm.UI.Models.Edit
     {
         // subject
         public long Id { get; set; }
-        public string Title { get; set; }
 
+        public string Title { get; set; }
 
         // infos about data
         /// <summary>
         /// if true validation runs without errors
         /// </summary>
         public bool IsDataValid { get; set; }
-
 
         // infos about files
         public bool AllFilesReadable { get; set; }
@@ -29,15 +25,14 @@ namespace BExIS.Modules.Dcm.UI.Models.Edit
 
         public AsciiFileReaderInfo AsciiFileReaderInfo { get; set; }
 
-
         //infos about structre
         public bool HasStructrue { get; set; }
+
         public long StructureId { get; set; }
         public string StructureTitle { get; set; }
 
         public bool AsyncUpload { get; set; }
         public string AsyncUploadMessage { get; set; }
-
 
         public SubmitModel()
         {
@@ -49,7 +44,6 @@ namespace BExIS.Modules.Dcm.UI.Models.Edit
             AsciiFileReaderInfo = new AsciiFileReaderInfo();
             StructureId = 0;
             StructureTitle = String.Empty;
-
         }
     }
 

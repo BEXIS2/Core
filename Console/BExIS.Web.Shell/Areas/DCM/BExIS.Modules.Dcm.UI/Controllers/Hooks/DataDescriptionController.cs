@@ -1,36 +1,25 @@
 ﻿using BExIS.App.Bootstrap.Attributes;
 using BExIS.App.Bootstrap.Helpers;
-using BExIS.Dlm.Entities.Data;
-using BExIS.Dlm.Entities.DataStructure;
 using BExIS.Dlm.Services.Data;
 using BExIS.Dlm.Services.DataStructure;
 using BExIS.IO;
-using BExIS.IO.Transform.Input;
 using BExIS.Modules.Dcm.UI.Hooks;
 using BExIS.Modules.Dcm.UI.Models.Edit;
-using BExIS.Security.Entities.Authorization;
 using BExIS.Security.Services.Authorization;
 using BExIS.Security.Services.Objects;
-using BExIS.Security.Services.Subjects;
-using BExIS.Security.Services.Utilities;
 using BExIS.UI.Hooks;
 using BExIS.UI.Hooks.Caches;
 using BExIS.UI.Hooks.Logs;
 using BExIS.UI.Models;
-using BExIS.Utils.Config;
-using BExIS.Utils.Data.Upload;
-using BExIS.Utils.Upload;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Net.Http;
 using System.Web;
 using System.Web.Mvc;
-using Vaiona.Entities.Common;
 using Vaiona.Utils.Cfg;
-using Vaiona.Web.Extensions;
 using Vaiona.Web.Mvc.Modularity;
+
 using Cache = BExIS.UI.Hooks.Caches;
 
 namespace BExIS.Modules.Dcm.UI.Controllers
@@ -90,7 +79,6 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                                 Unit = variable.Unit.Name,
                                 IsKeys = variable.IsKey
                             });
-
                         }
 
                         //if data structure is there,  check also if data is there
@@ -117,11 +105,9 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 }
             }
 
-
             HookManager hookManager = new HookManager();
             // load cache to check existing files
             EditDatasetDetailsCache cache = hookManager.LoadCache<EditDatasetDetailsCache>("dataset", "details", HookMode.edit, id);
-
 
             // check if files in list also on server
             string path = Path.Combine(AppConfiguration.DataPath, "datasets", id.ToString(), "Temp");
@@ -143,12 +129,8 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 model.AllFilesReadable = cache.Files.Count == model.ReadableFiles.Count;
             }
 
-
             // set modification date
             model.LastModification = cache.GetLastModificarion(typeof(DataDescriptionHook));
-
-            
-
 
             return Json(model, JsonRequestBehavior.AllowGet);
         }
@@ -190,7 +172,6 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
                     // maybe delete also all variables and missng values
 
-
                     // update cache
                     HookManager hookManager = new HookManager();
 
@@ -205,15 +186,11 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
                     hookManager.SaveCache<EditDatasetDetailsCache>(cache, "dataset", "details", HookMode.edit, id);
                 }
-                catch (Exception ex) {
-
+                catch (Exception ex)
+                {
                     return Json(new { success = false, message = ex.Message });
                 }
-
-
             }
-
-
 
             return Json(new { success = true, message = "the data structure was successfully deleted" });
         }
@@ -242,25 +219,24 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 var template = entityTemplateManager.Repo.Get(dataset.EntityTemplate.Id);
                 if (template == null) return Json(new { success = false, message = "template not exit" });
 
-                var structures = structureManager.StructuredDataStructureRepo.Get();
+                var structures = structureManager.GetStructuredDataStructuresAsKVP();
 
                 // get only subset of the structures restricted by the entity template.DatastructureList
                 if (template.HasDatastructure == true && template.DatastructureList.Any())
                 {
                     foreach (var dsId in template.DatastructureList)
                     {
-                        var ds = structures.Where(d => d.Id == dsId).FirstOrDefault();
-                        tmp.Add(new ListItem() { Id = ds.Id, Text = ds.Name, Group = "structure" });
+                        var ds = structures.Where(d => d.Key == dsId).FirstOrDefault();
+                        tmp.Add(new ListItem() { Id = ds.Key, Text = ds.Value, Group = "structure" });
                     }
                 }
                 else if (template.HasDatastructure == true) // get all structures
                 {
                     foreach (var ds in structures)
                     {
-                        tmp.Add(new ListItem() { Id = ds.Id, Text = ds.Name, Group = "structure" });
+                        tmp.Add(new ListItem() { Id = ds.Key, Text = ds.Value, Group = "structure" });
                     }
                 }
-
             }
 
             return Json(tmp, JsonRequestBehavior.AllowGet);
@@ -280,7 +256,6 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 EditDatasetDetailsLog log = hookManager.LoadLog<EditDatasetDetailsLog>("dataset", "details", HookMode.edit, id);
                 var username = BExISAuthorizeHelper.GetAuthorizedUserName(HttpContext);
 
-
                 var dataset = datasetManager.GetDataset(id);
                 if (dataset == null) throw new ArgumentNullException("dataset");
 
@@ -291,6 +266,10 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 datasetManager.UpdateDataset(dataset);
 
                 // update cache
+                //Update primary key in update method
+                if (cache.UpdateSetup == null) cache.UpdateSetup = new UpdateSetup();
+                cache.UpdateSetup.PrimaryKeys = structure.Variables.Where(v => v.IsKey)?.Select(v =>v.Id).ToList();
+
                 // update modifikation date
                 cache.UpdateLastModificarion(typeof(DataDescriptionHook));
 
@@ -316,7 +295,6 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 EditDatasetDetailsLog log = hookManager.LoadLog<EditDatasetDetailsLog>("dataset", "details", HookMode.edit, id);
                 var username = BExISAuthorizeHelper.GetAuthorizedUserName(HttpContext);
 
-
                 var dataset = datasetManager.GetDataset(id);
                 if (dataset == null) throw new ArgumentNullException("dataset");
 
@@ -338,8 +316,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 // save cache
                 hookManager.Save(cache, log, "dataset", "details", HookMode.edit, id);
 
-
-                return Json(true, JsonRequestBehavior.AllowGet); 
+                return Json(true, JsonRequestBehavior.AllowGet);
             }
         }
 

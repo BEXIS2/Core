@@ -2,5 +2,4 @@
   <subclass name="CustomLogEntry" extends="LogEntry" discriminator-value="Custom" dynamic-update="true">
     <!-- no additional attribute is needed -->
   </subclass>
-
 </hibernate-mapping>

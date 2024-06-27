@@ -5,16 +5,14 @@
     <div class="filecontainer">
         @foreach (BExIS.IO.BasicFileInfo x in Model)
         {
-            <p>@Html.ActionLink(" ", "Delete", "Push", new { area = "Dcm", name = @x.Name, path = @x.Uri }, new { @class = "bx-trash bx-function" })  @x.Name</p>
+        <p>@Html.ActionLink(" ", "Delete", "Push", new { area = "Dcm", name = @x.Name, path = @x.Uri }, new { @class = "bx-trash bx-function" })  @x.Name</p>
         }
     </div>
 </div>
 <style type="text/css">
 
-    .filecontainer
-    {
+    .filecontainer {
         width: 100%;
         overflow-x: hidden;
     }
-
 </style>

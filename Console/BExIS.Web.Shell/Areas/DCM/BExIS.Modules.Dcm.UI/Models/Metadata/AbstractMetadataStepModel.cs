@@ -71,11 +71,9 @@ namespace BExIS.Modules.Dcm.UI.Models.Metadata
 
                                 );
                         }
-
                     }
                 }
             }
-
         }
     }
 }

@@ -16,66 +16,57 @@ Green 05  #eff7f6
 */
 #root table,
 #root td {
-    border:none;
-    background:none;
+    border: none;
+    background: none;
 }
 
-#MetadataEditor
-{
-    background-color:white;
+#MetadataEditor {
+    background-color: white;
 }
 
-.header
-{
-    padding:5px;
+.header {
+    padding: 5px;
     /*border-top:2px solid #afb0b1;*/
-    height:auto;
+    height: auto;
 }
 
-.metadata-first
-{
-    border-top:2px solid #afb0b1;
+.metadata-first {
+    border-top: 2px solid #afb0b1;
 }
 
-.metadata-last
-{
-    border-bottom:2px solid #afb0b1;
+.metadata-last {
+    border-bottom: 2px solid #afb0b1;
 }
 
-.labelContainer
-{
+.labelContainer {
     line-height: 30px;
-    text-align:left;
-    cursor:pointer;
+    text-align: left;
+    cursor: pointer;
 }
 
-.contentContainer
-{
-    padding-bottom:0px;
+.contentContainer {
+    padding-bottom: 0px;
 }
 
-.optionContainer
-{
-    float:right;
-    margin-top:-28px;
-}
-.optionContainer table,
-.optionContainer td
-{
-    border:none;
+.optionContainer {
+    float: right;
+    margin-top: -28px;
 }
 
-.optionContainer td,
-.metadataAttributeOption td,
-#attributeOptionTable td
-{
-    width:30px;
-    padding:0;
-}
+    .optionContainer table,
+    .optionContainer td {
+        border: none;
+    }
 
-#attributeOptionTable
-{
-    width:auto;
+    .optionContainer td,
+    .metadataAttributeOption td,
+    #attributeOptionTable td {
+        width: 30px;
+        padding: 0;
+    }
+
+#attributeOptionTable {
+    width: auto;
 }
 
 .simpleParametersContainer {
@@ -88,18 +79,14 @@ Green 05  #eff7f6
     border-bottom: var(--bg-color-level-2) 1px solid;
 }
 
-
-.simpleAttributesContainer
-{
-    text-align:center;
+.simpleAttributesContainer {
+    text-align: center;
     /*border:ridge 1px blue;*/
     margin-bottom: 0px;
 }
 
-.metadataAttributeLabel
-{
-    text-align:right;
-    
+.metadataAttributeLabel {
+    text-align: right;
 }
 
 .bx-parameter-label, .bx- parameter-description {
@@ -110,13 +97,13 @@ Green 05  #eff7f6
 .bx-metadataFormTextInput {
     width: 100%;
     max-width: 490px;
+    border: var(--border-width-field) solid var(--border-color-field);
 }
 
 .bx-metadata-form-input-small {
-   
-    font-size:smaller;
+    font-size: smaller;
+    border: var(--border-width-field) solid var(--border-color-field);
 }
-
 
 .bx-metadataForm-textArea-display {
     border: var(--border-width-field) solid var(--border-color-field);
@@ -129,8 +116,7 @@ Green 05  #eff7f6
     overflow-wrap: break-word;
 }
 
-.metadataAttributeInput
-{
+.metadataAttributeInput {
     width: 500px;
     /*border:ridge 1px yellow;*/
 }
@@ -145,51 +131,41 @@ Green 05  #eff7f6
 }
 
 input:disabled, .bx-input.bx-disabled-parameter {
-
     padding-top: 5px;
 }
 
-
-.metadataAttributeInput .bx-dropdown
-{
-    width:100%;
+.metadataAttributeInput .bx-dropdown {
+    width: 100%;
 }
 
-.metadataAttributeOption
-{
-     width:30%;
-     text-align:left;
+.metadataAttributeOption {
+    width: 30%;
+    text-align: left;
 }
 
-.metadataCompountAttributeUsage
-{
-    margin:0 0 0px 0px;
+.metadataCompountAttributeUsage {
+    margin: 0 0 0px 0px;
 }
 
-
-.metadataAttributeContent
-{
+.metadataAttributeContent {
     /*border:dotted 1px green;*/
-    margin:0px;
+    margin: 0px;
 }
-
 
 .metadata-activate-checkbox {
-    margin-top: 6px;  margin-left: 10px;
+    margin-top: 6px;
+    margin-left: 10px;
     font-size: 16px;
 }
 
 .metadata-choice-container {
-    margin-top: 6px; 
+    margin-top: 6px;
 }
-
 
 /**DISABLED*/
 input:disabled, textarea:disabled, .bx-input.bx-disabled, .bx-textarea.bx-disabled, .t-autocomplete.bx-disabled {
     border-color: #afb0b1;
 }
-
-
 
 /**Level**/
 .Metadata-Level-1 {
@@ -249,19 +225,15 @@ input:disabled, textarea:disabled, .bx-input.bx-disabled, .bx-textarea.bx-disabl
     background-color: var(--bg-color-metadata-level-9);
 }
 
-
 /***Preloader*/
 #root .preloader {
     text-align: center;
     vertical-align: middle;
 }
 
-
 .bx-info {
-    cursor:help !important;
+    cursor: help !important;
 }
-
-
 
 /****HELP*****/
 #help_container {
@@ -287,6 +259,6 @@ input:disabled, textarea:disabled, .bx-input.bx-disabled, .bx-textarea.bx-disabl
     display: none;
 }
 
-#show_help_all .fa-info, #hide_help_all .fa-ban {
-    cursor: pointer !important;
-}
+    #show_help_all .fa-info, #hide_help_all .fa-ban {
+        cursor: pointer !important;
+    }

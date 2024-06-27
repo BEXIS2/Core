@@ -2,7 +2,7 @@
 
 @model PublicationModel
 
-<tr id="@Model.DatasetVersionId" class="doi-row">
+<tr id="@Model.Id" class="doi-row">
     <td>@Model.Broker.Name</td>
     <td>@Model.DataRepo</td>
     @if (!String.IsNullOrEmpty(Model.ExternalLink))
@@ -23,8 +23,9 @@
     </td>
     <td>@Model.CreationDate</td>
     <td>@Model.Status</td>
+    <td>@Model.Response</td>
     <td>
-        @if (Model.Status.ToLower().Contains("registered") || Model.Status.ToLower().Contains("denied"))
+        @if (Model.Status.ToLower().Contains("accepted") || Model.Status.ToLower().Contains("rejected"))
         {
             <a class="fa bx-grid-function fa-check bx-disabled"></a>
             <a class="fa bx-grid-function fa-times bx-disabled"></a>

@@ -24,7 +24,6 @@ namespace BExIS.Xml.Helpers
                     return "";
                 xPath = GetXPathToNode(attr.OwnerElement);
                 return xPath + "/@" + attr.Name;
-
             }
 
             if (node.NodeType == System.Xml.XmlNodeType.Element)
@@ -53,7 +52,6 @@ namespace BExIS.Xml.Helpers
                     return "";
                 string xPath = GetDirectXPathToNode(attr.OwnerElement);
                 return xPath + "/@" + attr.Name;
-
             }
 
             if (node.NodeType == System.Xml.XmlNodeType.Element)
@@ -224,10 +222,10 @@ namespace BExIS.Xml.Helpers
                     index = Int32.Parse(tmp[1].Remove(tmp[1].IndexOf("]")));
                 }
 
-                XmlNodeList nodes = parent!=null?parent.SelectNodes(nodeName):doc.SelectNodes(nodeName);
+                XmlNodeList nodes = parent != null ? parent.SelectNodes(nodeName) : doc.SelectNodes(nodeName);
 
                 XmlNode node = nodes[index - 1];
-          
+
                 if (node == null)
                 {
                     if (nextNodeInXPath.StartsWith("@"))

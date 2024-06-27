@@ -3,11 +3,11 @@ using Vaiona.Entities.Common;
 
 /// <summary>
 ///
-/// </summary>        
+/// </summary>
 namespace BExIS.Dlm.Entities.DataStructure
 {
     /// <summary>
-    /// 
+    ///
     /// </summary>
     public enum DataContainerType
     {
@@ -15,7 +15,7 @@ namespace BExIS.Dlm.Entities.DataStructure
     }
 
     /// <summary>
-    /// 
+    ///
     /// </summary>
     public enum MeasurementScale
     {
@@ -25,7 +25,7 @@ namespace BExIS.Dlm.Entities.DataStructure
     /// <summary>
     ///
     /// </summary>
-    /// <remarks></remarks>        
+    /// <remarks></remarks>
     public abstract class DataContainer : BusinessEntity
     {
         #region Attributes
@@ -34,37 +34,38 @@ namespace BExIS.Dlm.Entities.DataStructure
         ///
         /// </summary>
         /// <remarks></remarks>
-        /// <seealso cref=""/>        
+        /// <seealso cref=""/>
         public virtual string Name { get; set; }
 
         /// <summary>
         ///
         /// </summary>
         /// <remarks></remarks>
-        /// <seealso cref=""/>        
+        /// <seealso cref=""/>
         public virtual string ShortName { get; set; } // Abbrev.
 
         /// <summary>
         ///
         /// </summary>
         /// <remarks></remarks>
-        /// <seealso cref=""/>        
+        /// <seealso cref=""/>
         public virtual string Description { get; set; }
 
         /// <summary>
         ///
         /// </summary>
         /// <remarks></remarks>
-        /// <seealso cref=""/>        
+        /// <seealso cref=""/>
         public virtual bool IsMultiValue { get; set; }
 
         /// <summary>
         ///
         /// </summary>
         /// <remarks></remarks>
-        /// <seealso cref=""/>        
+        /// <seealso cref=""/>
         public virtual bool IsBuiltIn { get; set; } // the build in containers can not be deleted, except by their scope
-        // Scope of the container is the module who created it 
+
+        // Scope of the container is the module who created it
         // or the RPM (Research Planning Module) if its created via the web interface
         // or DCM (Data Collection Module) if its created during data submission
 
@@ -72,28 +73,28 @@ namespace BExIS.Dlm.Entities.DataStructure
         ///
         /// </summary>
         /// <remarks></remarks>
-        /// <seealso cref=""/>        
+        /// <seealso cref=""/>
         public virtual string Scope { get; set; }
 
         /// <summary>
         ///
         /// </summary>
         /// <remarks></remarks>
-        /// <seealso cref=""/>        
+        /// <seealso cref=""/>
         public virtual DataContainerType ContainerType { get; set; }
 
         /// <summary>
         ///
         /// </summary>
         /// <remarks></remarks>
-        /// <seealso cref=""/>        
+        /// <seealso cref=""/>
         public virtual MeasurementScale MeasurementScale { get; set; }
 
         /// <summary>
         ///
         /// </summary>
         /// <remarks> only if Type == ReferenceType </remarks>
-        /// <seealso cref=""/>        
+        /// <seealso cref=""/>
         public virtual string EntitySelectionPredicate { get; set; }
 
         /// <summary>
@@ -101,10 +102,11 @@ namespace BExIS.Dlm.Entities.DataStructure
         /// It should not be mapped!
         /// </summary>
         /// <remarks></remarks>
-        /// <seealso cref=""/>        
-        public virtual DataContainer Self { get { return this; } }
+        /// <seealso cref=""/>
+        public virtual DataContainer Self
+        { get { return this; } }
 
-        #endregion
+        #endregion Attributes
 
         #region Associations
 
@@ -112,55 +114,55 @@ namespace BExIS.Dlm.Entities.DataStructure
         ///
         /// </summary>
         /// <remarks></remarks>
-        /// <seealso cref=""/>        
+        /// <seealso cref=""/>
         public virtual DataType DataType { get; set; } //1
 
         /// <summary>
         ///
         /// </summary>
         /// <remarks></remarks>
-        /// <seealso cref=""/>        
+        /// <seealso cref=""/>
         public virtual Unit Unit { get; set; } // 0..1
 
         /// <summary>
         ///
         /// </summary>
         /// <remarks></remarks>
-        /// <seealso cref=""/>        
-        public virtual Methodology Methodology { get; set; } //0..1        
+        /// <seealso cref=""/>
+        public virtual Methodology Methodology { get; set; } //0..1
 
         /// <summary>
         ///
         /// </summary>
         /// <remarks></remarks>
-        /// <seealso cref=""/>        
+        /// <seealso cref=""/>
         public virtual ICollection<Constraint> Constraints { get; set; }
 
         /// <summary>
         ///
         /// </summary>
         /// <remarks></remarks>
-        /// <seealso cref=""/>        
+        /// <seealso cref=""/>
         public virtual ICollection<ExtendedProperty> ExtendedProperties { get; set; }
 
         /// <summary>
         ///
         /// </summary>
         /// <remarks></remarks>
-        /// <seealso cref=""/>        
+        /// <seealso cref=""/>
         public virtual ICollection<GlobalizationInfo> GlobalizationInfos { get; set; }
 
         /// <summary>
         ///
         /// </summary>
         /// <remarks></remarks>
-        /// <seealso cref=""/>        
+        /// <seealso cref=""/>
         public virtual ICollection<AggregateFunction> AggregateFunctions { get; set; }
 
         //// not to map
         //public virtual IList<DomainConstraint> DomainConstraints
-        //{ 
-        //    get 
+        //{
+        //    get
         //    {
         //        return (this.Constraints.Distinct()
         //                    .Where(p => p.GetType().Equals(typeof(DomainConstraint)))
@@ -169,8 +171,7 @@ namespace BExIS.Dlm.Entities.DataStructure
         //    }
         //}
 
-
-        #endregion
+        #endregion Associations
 
         #region Methods
 
@@ -179,7 +180,7 @@ namespace BExIS.Dlm.Entities.DataStructure
         /// </summary>
         /// <remarks></remarks>
         /// <seealso cref=""/>
-        /// <param>NA</param>       
+        /// <param>NA</param>
         public DataContainer()
         {
             IsBuiltIn = false;
@@ -231,7 +232,6 @@ namespace BExIS.Dlm.Entities.DataStructure
             return false;
         }
 
-        #endregion
+        #endregion Methods
     }
-
 }

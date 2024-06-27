@@ -10,7 +10,7 @@ namespace Vaiona.Logging.Aspects
     [AttributeUsage(AttributeTargets.Method, AllowMultiple = false)]
     public class LogExceptionsAttribute : OnExceptionAspect
     {
-        public sealed override void OnException(MethodExecutionArgs args)
+        public override sealed void OnException(MethodExecutionArgs args)
         {
             //base.OnException(eventArgs);
 
@@ -40,7 +40,6 @@ namespace Vaiona.Logging.Aspects
 #if DEBUG
             Debug.WriteLine(string.Format("Diagnose is called on {0}.{1} at {2}", mLog.ClassName, mLog.MethodName, mLog.UTCDate));
 #endif
-
         }
     }
 }

@@ -4,7 +4,7 @@
 @model BExIS.Modules.Dim.UI.Models.ShowPublishDataModel
 
 @{
-    List<string> datarepolist = Model.Brokers;
+    List<BExIS.UI.Models.ListItem> datarepolist = Model.Brokers;
 }
 <script type="text/javascript">
 
@@ -13,27 +13,23 @@
                 resetAllTelerikIconTitles();
             });
 
-
         function onSelectDataRepositoryDropDownChange(e) {
 
-            var datarepo = e.value;
+            console.log(e.value)
+
             var id = '@Model.DatasetId';
-            //alert(e.value);
 
             if(e.value !="")
             {
-
-            
-
-                $.post('@Url.Action("LoadDataRepoRequirementView", "Submission")',
-                    { datarepo: e.value, datasetid: id },
+                $.post('@Url.Action("LoadRequirementView", "Submission")',
+                    { brokerId: e.value, datasetid: id },
                     function(response) {
                         //$("#requirementsContainer").html(response);
-                    
+
                         $("#preloader").preloader(14, "Please wait...");
 
                         var jsonObject = {
-                            "datarepo": e.value,
+                            "brokerId": e.value,
                             "datasetid": id
                         };
 
@@ -109,7 +105,6 @@
 
                                         if (!isConverterValid) {
 
-
                                             $("#requirementsContainer").text("");
 
                                             var parent = document.querySelector("#requirementsContainer");
@@ -140,6 +135,8 @@
                             }
                         });
                     })
+
+                $("#selectedBrokerId").attr("brokerid", e.value);
             }
             else
             {
@@ -153,35 +150,33 @@
 
             $("#preloader").preloader(14, "Publishing data...");
 
-            var id = @Model.DatasetId;
+            var id = '@Model.DatasetId';
 
-            //get selected value
-            var input = $(".t-dropdown .t-input").text();
+            var brokerid = document.getElementById("selectedBrokerId").getAttribute("brokerid");
 
             //alert(input);
-            sendDataToDataRepo(id, input);
+            sendDataToDataRepo(id, brokerid);
 
         }
 
     function prepareData(id,input) {
 
+        console.log("prepareData", id, input);
+
         $.post('@Url.Action("PrepareData", "Submission", new RouteValueDictionary {{"area", "dim"}})',
-                { datasetid: id, datarepo: input },
+            { datasetVersionId: id, brokerId: input },
                 function(response) {
                     //alert("prepare data copmplete");
                     $("#publishContentContainer").replaceWith(response);
-
-                    //sendDataToDataRepo(id, input);
-
                 });
     }
 
     function sendDataToDataRepo(id,input) {
 
-        //alert("start send data to repo ");
+        console.log("sendDataToDataRepo", id, input);
 
         $.post('@Url.Action("SendDataToDataRepo", "Submission", new RouteValueDictionary {{"area", "dim"}})',
-            { datasetid: id, datarepo: input },
+            { brokerId: input, datasetId: id },
             function(response) {
 
                // alert("end send data to repo ");
@@ -193,8 +188,7 @@
                     //alert(response);
                     //var obj = jQuery.parseJSON(response);
                     var message = $("#requirementsContainer").text();
-
-                    var htmltext = "<p>" + message + "</p><p><br/>" + response + "</p>";
+                    var htmltext = "<p>" + message + "</p><p><br />" + response + "</p>";
 
                     //alert(response);
 
@@ -207,7 +201,7 @@
                     hasSuccessed = true;
                     $("#requirementsContainer").html("");
                 }
-               
+
                 //reload site
                 $.post('@Url.Action("getPublishDataPartialView", "Submission", new RouteValueDictionary {{"area", "dim"}})',
                     { datasetid: id },
@@ -231,7 +225,7 @@
 
 <div id="publishContentContainer" style="min-height: 200px">
     <div id="publishingOptionsContainer" style="text-align: -webkit-left;">
-
+        <span id="selectedBrokerId" style="display:none"></span>
 
         @if (Model.EditRights && Model.MetadataIsValid)
         {
@@ -244,7 +238,7 @@
                       .Name("SelectDataRepository")
                       .HtmlAttributes(new { title = "Select a repository for publishing this dataset" })
                       .ClientEvents(events => events.OnChange("onSelectDataRepositoryDropDownChange"))
-                      .BindTo(new SelectList(datarepolist)))
+                      .BindTo(new SelectList(datarepolist,"Id","Text")))
                     </td>
 
                     <td style="width: 100px;">
@@ -253,10 +247,8 @@
 
                     <td style="text-align: right">
                         <span id="requirementsContainer" style="color:#f24c24">
-
                         </span>
                         <div id="preloader">
-
                         </div>
                     </td>
                 </tr>
@@ -305,13 +297,13 @@
                             @foreach (var datarepo in publication.Broker.DataRepos)
                             {
                                 if (Model.DownloadRights)
-                                 {
-                                     @Html.ActionLink(" ", "DownloadZip", "Submission", new {broker = publication.Broker.Name, datarepo, datasetversionid = publication.DatasetVersionId}, new {@class = "bx bx-grid-function bx-download", title = "Download for "+datarepo})
-                                 }
-                                 else
-                                 {
-                                     <a class="bx bx-grid-function bx-download bx-disabled" disabled="disabled" title="You do not have permission to download this dataset."></a>
-                                 }
+                                {
+                                    @Html.ActionLink(" ", "DownloadZip", "Submission", new { brokerId = publication.Broker.Id, datasetversionid = publication.DatasetVersionId }, new { @class = "bx bx-grid-function bx-download", title = "Download for " + datarepo })
+                                }
+                                else
+                                {
+                                    <a class="bx bx-grid-function bx-download bx-disabled" disabled="disabled" title="You do not have permission to download this dataset."></a>
+                                }
                             }
                         </td>
                     </tr>
@@ -324,18 +316,14 @@
         </table>
     </div>
 
-
-
-    
     <style type="text/css">
-        
+
         .t-content {
-            text-align:left
+            text-align: left
         }
 
         .t-state-active {
-            line-height:14pt
+            line-height: 14pt
         }
-
     </style>
 </div>

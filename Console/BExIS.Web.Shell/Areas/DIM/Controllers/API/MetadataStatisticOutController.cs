@@ -1,5 +1,4 @@
 ﻿using BExIS.App.Bootstrap.Attributes;
-using BExIS.Dlm.Services.Data;
 using BExIS.Modules.Dim.UI.Models.Api;
 using BExIS.Security.Entities.Subjects;
 using BExIS.Security.Services.Subjects;
@@ -13,15 +12,12 @@ using System.Net.Http.Headers;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Web.Http;
-using System.Web.UI.WebControls;
 using Vaiona.Persistence.Api;
 
 namespace BExIS.Modules.Dim.UI.Controllers
 {
-
     public class MetadataStatisticOutController : ApiController
     {
-
         // GET: "api/MetadataStatistic"
         /// <summary>
         /// Get a list of unique metadata values, count and list of occurrence for a given XPath.
@@ -37,7 +33,6 @@ namespace BExIS.Modules.Dim.UI.Controllers
 
             using (UserManager userManager = new UserManager())
             {
-
                 user = ControllerContext.RouteData.Values["user"] as User;
 
                 // If user is registered, include also non-public datasets
@@ -50,9 +45,8 @@ namespace BExIS.Modules.Dim.UI.Controllers
                 {
                     return Request.CreateErrorResponse(HttpStatusCode.Forbidden, "Token is not valid.");
                 }
-                
 
-                // Check input values to prevent SQL injection 
+                // Check input values to prevent SQL injection
                 string errorMessage = "";
                 if (data.Xpath.Length == 0) errorMessage = "Xpath is empty, but required.";
                 if (!data.Xpath.EndsWith("/")) errorMessage = "Xpath does not end with /.";
@@ -68,9 +62,9 @@ namespace BExIS.Modules.Dim.UI.Controllers
                     return Request.CreateResponse(HttpStatusCode.PreconditionFailed, errorMessage);
                 }
 
-                // Create and execute SQL 
+                // Create and execute SQL
                 var result = UniqueValuesByXPATH(data, publicOnly);
-                
+
                 // Return empty result (204)
                 if (result == null)
                 {
@@ -100,11 +94,10 @@ namespace BExIS.Modules.Dim.UI.Controllers
             {
                 publicOnlySQL1 = "left join entitypermissions as e on b.datasetref=e.key";
                 publicOnlySQL2 = "and subjectref is null";
-          
             }
 
             string datasetVersionIds1 = "b.status = 2";
-            string datasetVersionIds2= "";
+            string datasetVersionIds2 = "";
             if (data.DatasetVersionIdsInclude != null)
             {
                 datasetVersionIds1 = "";
@@ -112,7 +105,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
             }
 
             string datasetIdsInclude = "";
-            if (data.DatasetIdsInclude != null )
+            if (data.DatasetIdsInclude != null)
             {
                 datasetIdsInclude = "and datasetref in(" + String.Join(",", data.DatasetIdsInclude) + ")";
             }
@@ -148,8 +141,8 @@ namespace BExIS.Modules.Dim.UI.Controllers
             }
 
             // example xpath: " /Metadata/contacts/contactsType/contactPerson/contactType/institute/instituteType/"
-            mvBuilder.AppendLine(string.Format("with result as (select  xpath,json_build_object(\'data\', json_agg(to_jsonb(row(b.datasetref, b.id, b.title, (xpath('/Metadata/@id', b.metadata))[1]::text::int))), \'count\', count(b.id)) as json from datasetversions as b {1} left join lateral unnest(xpath('{0}/text()', b.metadata)::text[]) as xpath on true where {9} {10} {2} {3} {4} {5} {6} group by xpath order by xpath asc) select json_object_agg(coalesce(xpath, \'null\'), result.json) from result {7} {8}; ", 
-                data.Xpath,publicOnlySQL1, datasetIdsInclude, datasetIDsExclude, metadatastructureIdsInclude, metadatastructureIdsExclude, publicOnlySQL2, regexInclude, regexExclude, datasetVersionIds1, datasetVersionIds2));
+            mvBuilder.AppendLine(string.Format("with result as (select  xpath,json_build_object(\'data\', json_agg(to_jsonb(row(b.datasetref, b.id, b.title, (xpath('/Metadata/@id', b.metadata))[1]::text::int))), \'count\', count(b.id)) as json from datasetversions as b {1} left join lateral unnest(xpath('{0}/text()', b.metadata)::text[]) as xpath on true where {9} {10} {2} {3} {4} {5} {6} group by xpath order by xpath asc) select json_object_agg(coalesce(xpath, \'null\'), result.json) from result {7} {8}; ",
+                data.Xpath, publicOnlySQL1, datasetIdsInclude, datasetIDsExclude, metadatastructureIdsInclude, metadatastructureIdsExclude, publicOnlySQL2, regexInclude, regexExclude, datasetVersionIds1, datasetVersionIds2));
             // execute the statement
 
             try

@@ -5,14 +5,14 @@
 @using BExIS.Modules.Dcm.UI.Models;
 
 @{
-    
+
     string id = @Model.StepInfo.GetActionInfo.ActionName;
 
 }
 
 <div id="@id" class="wizardStep">
 
-     <div class="wizardStep_Main">
+    <div class="wizardStep_Main">
         <div class="wizardStep_Header stepper">
 
             <h3>@Model.StepInfo.title</h3>
@@ -21,31 +21,30 @@
         <div class="wizardStep_Description stepper">
             <p>Please specify a name for the new metadata structure. You may also enter a root node if only a part of the XSD is to be used (optional).</p>
             <p>Generating the new metadata structure in the system may take a few minutes, depending on the size and complexity of the XSD schema. Please wait for the confirmation message before heading to the next step.</p>
-            
         </div>
-        
+
         <div class="wizardStep_Content stepper">
             <table>
                 <tr>
                     <td>@Html.LabelFor(m => m.SchemaName)</td>
                     @if (!Model.IsGenerated)
                     {
-                        <td>@Html.TextBoxFor(m => m.SchemaName)</td>
+                    <td>@Html.TextBoxFor(m => m.SchemaName)</td>
                     }
                     else
                     {
-                        <td>@Model.SchemaName </td>
+                    <td>@Model.SchemaName </td>
                     }
                 </tr>
                 <tr>
                     <td>@Html.LabelFor(m => m.RootNode)</td>
                     @if (!Model.IsGenerated)
                     {
-                        <td>@Html.TextBoxFor(m => m.RootNode)</td>
+                    <td>@Html.TextBoxFor(m => m.RootNode)</td>
                     }
                     else
                     {
-                        <td>@Model.RootNode </td>
+                    <td>@Model.RootNode </td>
                     }
                 </tr>
 
@@ -53,78 +52,73 @@
                     <td>
                         @if (Model.IsGenerated)
                         {
-                            <button class = "bx-button function bx-disabled" disabled="disabled">Generate</button>
+                        <button class="bx-button function bx-disabled" disabled="disabled">Generate</button>
                         }
                         else
                         {
 
-                            @Ajax.ActionLink("Generate", "GenerateMS", @Model.StepInfo.GetActionInfo.ControllerName, new {area = "Dcm"},
-                                new AjaxOptions
-                                {
-                                    HttpMethod = "GET",
-                                    InsertionMode = InsertionMode.Replace,
-                                    UpdateTargetId = @id,
-                                    OnBegin = "generateOnBegin",
-                                    OnSuccess = "generateOnSuccess"
-                                },
-                                new {@class = "bx-button function"})
+                        @Ajax.ActionLink("Generate", "GenerateMS", @Model.StepInfo.GetActionInfo.ControllerName, new {area = "Dcm"},
+                            new AjaxOptions
+                            {
+                                HttpMethod = "GET",
+                                InsertionMode = InsertionMode.Replace,
+                                UpdateTargetId = @id,
+                                OnBegin = "generateOnBegin",
+                                OnSuccess = "generateOnSuccess"
+                            },
+                            new {@class = "bx-button function"})
                         }
                         <div class="preloader"></div>
                     </td>
                     <td></td>
                 </tr>
-
             </table>
-
         </div>
     </div>
 
-     <div class="wizardStep_Success stepper">
-       @if (Model != null)
+    <div class="wizardStep_Success stepper">
+        @if (Model != null)
        {
            if (Model.ErrorList != null && ViewData.ModelState.IsValid)
            {
                if (Model.ErrorList.Count == 0)
                {
                    if (!Model.StepInfo.notExecuted )
-                   { 
-                      <b>The metadata structure @Model.SchemaName was created successfully</b>
+                   {
+        <b>The metadata structure @Model.SchemaName was created successfully</b>
                    }
                }
            }
        }
-     </div>
-     
-     <div class="wizardStep_Error stepper" style="top:120px">
+    </div>
+
+    <div class="wizardStep_Error stepper" style="top:120px">
 
         @Html.ValidationSummary(true)
 
-         <ul class="error-list">
-             @if (Model != null)
+        <ul class="error-list">
+            @if (Model != null)
              {
                  if (Model.ErrorList != null)
                  {
                      if (Model.ErrorList.Count == 0)
                      {
 
-
                      }
                      else
                      {
-              
+
                         foreach (BExIS.IO.Transform.Validation.Exceptions.Error s in @Model.ErrorList)
                         {
-                            <li>@s.ToString()</li>
+            <li>@s.ToString()</li>
                         }
-         
 
                      }
                  }
 
              }
-         </ul>
-</div>     
-
+        </ul>
+    </div>
 </div>
 
 <script type="text/javascript">
@@ -160,14 +154,11 @@
             $(".error-list").empty();
             if (response != true)
             {
-               
+
                 $(".error-list").append("<li>" + response + "</li>");
             }
 
         })
 
     })
-
-
-
 </script>

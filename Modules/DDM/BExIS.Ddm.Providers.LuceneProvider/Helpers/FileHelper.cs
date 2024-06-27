@@ -3,20 +3,20 @@ using Vaiona.Utils.Cfg;
 
 /// <summary>
 ///
-/// </summary>        
+/// </summary>
 namespace BExIS.Ddm.Providers.LuceneProvider.Helpers
 {
     /// <summary>
     ///
     /// </summary>
-    /// <remarks></remarks>        
+    /// <remarks></remarks>
     public static class FileHelper
     {
         /// <summary>
         ///
         /// </summary>
         /// <remarks></remarks>
-        /// <seealso cref=""/>        
+        /// <seealso cref=""/>
         public static string LuceneRoot
         {
             get { return (Path.Combine(AppConfiguration.GetModuleWorkspacePath("DDM"), "Lucene")); }
@@ -26,7 +26,7 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Helpers
         ///
         /// </summary>
         /// <remarks></remarks>
-        /// <seealso cref=""/>        
+        /// <seealso cref=""/>
         public static string IndexFolderPath
         {
             get { return (Path.Combine(AppConfiguration.GetModuleWorkspacePath("DDM"), "Lucene", "SearchIndex")); }
@@ -36,7 +36,7 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Helpers
         ///
         /// </summary>
         /// <remarks></remarks>
-        /// <seealso cref=""/>        
+        /// <seealso cref=""/>
         public static string DataFolderPath
         {
             get { return (Path.Combine(AppConfiguration.GetModuleWorkspacePath("DDM"), "Lucene", "Data")); }
@@ -46,7 +46,7 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Helpers
         ///
         /// </summary>
         /// <remarks></remarks>
-        /// <seealso cref=""/>        
+        /// <seealso cref=""/>
         public static string ConfigFilePath
         {
             get { return (Path.Combine(AppConfiguration.GetModuleWorkspacePath("DDM"), "Lucene", "Config", "LuceneConfig.xml")); }
@@ -56,7 +56,7 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Helpers
         ///
         /// </summary>
         /// <remarks></remarks>
-        /// <seealso cref=""/>        
+        /// <seealso cref=""/>
         public static string LuceneManagerConfigFilePath
         {
             get { return (Path.Combine(AppConfiguration.GetModuleWorkspacePath("Search"), "Lucene", "Config", "LuceneManagerConfig.xml")); }
@@ -66,7 +66,7 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Helpers
         ///
         /// </summary>
         /// <remarks></remarks>
-        /// <seealso cref=""/>        
+        /// <seealso cref=""/>
         public static string ConfigBackUpFilePath
         {
             get { return (Path.Combine(AppConfiguration.GetModuleWorkspacePath("DDM"), "Lucene", "Config", "BackUp", "LuceneConfig.xml")); }

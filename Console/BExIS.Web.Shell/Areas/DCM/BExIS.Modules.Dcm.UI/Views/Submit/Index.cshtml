@@ -1,16 +1,17 @@
 ﻿@section Information
 {
     This wizard will assist you in uploading data files to the system and adding them to a dataset.
-<p>
-    <a href="/DCM/Help/Index/#_Toc434570845" class="bx-informationLink" title="go to help" target="_blank">More</a>
-</p>
+    <p>
+        <a href="/DCM/Help/Index/#_Toc434570845" class="bx-informationLink" title="go to help" target="_blank">More</a>
+    </p>
 }
 
 @using BExIS.Utils.Data.Upload
 
 <h2>Add Data or Update Dataset</h2>
 
-<p>In order to add to or update data of an existing dataset in the system, please select whether the dataset is structured or unstructured.
+<p>
+    In order to add to or update data of an existing dataset in the system, please select whether the dataset is structured or unstructured.
 </p>
 <br />
 @Html.ActionLink("Tabular", "UploadWizard", "Submit", new { area = "DCM", type= DataStructureType.Structured }, new { @class = "bx-button action", title = "Start Data Upload Wizard" })

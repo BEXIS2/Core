@@ -4,7 +4,6 @@ using BExIS.IO.Transform.Validation.Exceptions;
 using BExIS.Modules.Dcm.UI.Helpers;
 using BExIS.Utils.Data.MetadataStructure;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace BExIS.Modules.Dcm.UI.Models.Metadata
 {
@@ -50,7 +49,6 @@ namespace BExIS.Modules.Dcm.UI.Models.Metadata
 
             if (Source is MetadataAttributeUsage)
             {
-
                 MetadataAttributeUsage mau = (MetadataAttributeUsage)Source;
 
                 if (mau.MetadataAttribute.Self is MetadataCompoundAttribute)
@@ -61,10 +59,8 @@ namespace BExIS.Modules.Dcm.UI.Models.Metadata
                     {
                         foreach (MetadataParameterUsage usage in mca.MetadataParameterUsages)
                         {
-
                             var metadataParameterModel = FormHelper.CreateMetadataParameterModel(usage, mau, metadataStructureId, Number, stepId);
                             MetadataParameterModels.Add(metadataParameterModel);
-
                         }
                     }
                 }
@@ -85,7 +81,6 @@ namespace BExIS.Modules.Dcm.UI.Models.Metadata
                             {
                                 var metadataParameterModel = FormHelper.CreateMetadataParameterModel(usage, mnau, metadataStructureId, Number, stepId);
                                 MetadataParameterModels.Add(metadataParameterModel);
-
                             }
                         }
                     }

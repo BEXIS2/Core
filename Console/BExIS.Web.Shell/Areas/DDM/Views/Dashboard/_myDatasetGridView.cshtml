@@ -4,45 +4,38 @@
 @using BExIS.Dlm.Entities.DataStructure;
 @using Telerik.Web.Mvc.UI;
 
-
-
-
 @section Information
 {
 	<p>This table contains all datasets, created by you as a current logged on user. </p>
 	<p>By right clicking on the header, you can manage the visibility of columns. You can also use filtering or grouping to see the more operative informations.</p>
-	<p>To view more details of a dataset, click the <strong>View details</strong> button available in each row.</p>   
+	<p>To view more details of a dataset, click the <strong>View details</strong> button available in each row.</p>
 }
 
 @{
 	int PageSize = 10;
 	int CurrentPage = 1;
-	
+
 	if (ViewData["PageSize"] != null)
 	{
-		PageSize = Convert.ToInt16(ViewData["PageSize"]);	    
+		PageSize = Convert.ToInt16(ViewData["PageSize"]);
 	}
-	
+
 	if (ViewData["CurrentPage"] != null)
 	{
-		CurrentPage = Convert.ToInt16(ViewData["CurrentPage"]);	    
+		CurrentPage = Convert.ToInt16(ViewData["CurrentPage"]);
 	}
-	
+
 	List<HeaderItem> DefaultHeaderList = (List<HeaderItem>)ViewData["DefaultHeaderList"];
 	HeaderItem Id = (HeaderItem)ViewData["Id"];
 
-
 	StructuredDataStructure sds = new StructuredDataStructure();
 	Tuple<StructuredDataStructure, long> defaultModel = new Tuple<StructuredDataStructure, long>(sds, 0);
-
 
 	GridPagerStyles pagerStyles = GridPagerStyles.PageSizeDropDown;
 	pagerStyles |= GridPagerStyles.NextPreviousAndNumeric;
 	pagerStyles |= GridPagerStyles.Numeric;
 
-  
 }
-
 
 @(Html.Telerik().Grid<System.Data.DataRow>()
 		.Name("resultGrid")
@@ -167,18 +160,17 @@
 			}
 		});
 		// Add color to row based on value (yes / no) in 7. column ToDo: make it not fixed to position in array
-		$('.result-grid tbody tr').each(function() { 
-            		var cellText = $(this).find("td").eq(7).html(); 
+		$('.result-grid tbody tr').each(function() {
+            		var cellText = $(this).find("td").eq(7).html();
             		if (cellText == "no") {
                 		$(this).find("td").eq(7).parent().addClass("error");
             		}
-           
+
         	});
-		
+
 	}
 
 	function onComplete() {
-
 
 	}
 
@@ -186,7 +178,6 @@
 
 		// checked
 		var id = e.getAttribute("id");
-
 
 		var data = {
 			id: id
@@ -213,14 +204,11 @@
 		});
 	}
 
-
 	function refreshGrid() {
 		//$(".t-grid .t-refresh").trigger('click');
 		//$(".t-grid .t-refresh").trigger('click');
 		/*alert("GridRefresh");*/
 	}
-
-
 </script>
 
 <style type="text/css">
@@ -237,5 +225,4 @@
 	{
 	   display:none;
 	}
-
 </style>

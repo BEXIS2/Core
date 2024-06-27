@@ -14,7 +14,6 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 {
     public class ImportMetadataStructureReadSourceController : Controller
     {
-
         private ImportMetadataStructureTaskManager TaskManager;
 
         //
@@ -62,7 +61,6 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 ModelState.AddModelError("", "Please click generate button.");
             }
 
-
             if (TaskManager.Current().IsValid())
             {
                 TaskManager.AddExecutedStep(TaskManager.Current());
@@ -72,10 +70,8 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 return RedirectToAction(actionInfo.ActionName, actionInfo.ControllerName, new RouteValueDictionary { { "area", actionInfo.AreaName }, { "index", TaskManager.GetCurrentStepInfoIndex() } });
             }
 
-
             return PartialView(model);
         }
-
 
         public ActionResult SetRootNode(string name)
         {
@@ -86,13 +82,11 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             else
                 TaskManager.Bus.Add(ImportMetadataStructureTaskManager.ROOT_NODE, name);
 
-
             return Content("");
         }
 
         public JsonResult SetSchemaName(string name)
         {
-
             if (String.IsNullOrEmpty(name))
             {
                 return Json("A Metadata structure must have a name.", JsonRequestBehavior.AllowGet);
@@ -108,7 +102,6 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 return Json("A Metadata structure with this name already exist. Please choose a other name.", JsonRequestBehavior.AllowGet);
             }
 
-
             TaskManager = (ImportMetadataStructureTaskManager)Session["TaskManager"];
 
             if (TaskManager.Bus.ContainsKey(ImportMetadataStructureTaskManager.SCHEMA_NAME))
@@ -116,16 +109,13 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             else
                 TaskManager.Bus.Add(ImportMetadataStructureTaskManager.SCHEMA_NAME, name);
 
-
             return Json(true, JsonRequestBehavior.AllowGet);
         }
 
         public bool SchemaNameExist(string SchemaName)
         {
-
             using (MetadataStructureManager msm = new MetadataStructureManager())
             {
-
                 if (msm.Repo.Get().Where(m => m.Name.ToLower().Equals(SchemaName.ToLower())).Count() > 0)
                 {
                     return true;
@@ -136,7 +126,6 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 }
             }
         }
-
 
         public ActionResult GenerateMS()
         {
@@ -169,8 +158,6 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             }
             else
             {
-
-
                 try
                 {
                     //file.WriteLine("check schema exist");
@@ -191,7 +178,6 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                     {
                         model.ErrorList.Add(new Error(ErrorType.Other, "Root node not exist"));
                     }
-
                 }
                 catch (Exception ex)
                 {
@@ -219,7 +205,6 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 TaskManager.AddToBus(ImportMetadataStructureTaskManager.MAPPING_FILE_NAME_EXPORT,
                     xmlSchemaManager.mappingFileNameExport);
 
-
                 model.StepInfo.notExecuted = false;
 
                 if (model.ErrorList.Count == 0)
@@ -239,7 +224,6 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             }
 
             return PartialView("ReadSource", model);
-
         }
 
         // chekc if user exist

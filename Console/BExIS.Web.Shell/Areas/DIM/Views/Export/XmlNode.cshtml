@@ -6,16 +6,16 @@
 
 @if (Model.HasChildNodes == false)
 {
-    <p>@Model.InnerText</p>
+<p>@Model.InnerText</p>
 }
 else
 {
-    <p>
-        <b>@Model.Name / @Model.NodeType.ToString() </b>
+<p>
+    <b>@Model.Name / @Model.NodeType.ToString() </b>
 
-        @foreach (var item in Model.ChildNodes)
+    @foreach (var item in Model.ChildNodes)
         {
-            @Html.Partial("XmlNode", item);
+    @Html.Partial("XmlNode", item);
         }
-    </p>
+</p>
 }

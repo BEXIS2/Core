@@ -1,42 +1,32 @@
-﻿
-using BExIS.Dlm.Entities.Common;
+﻿using BExIS.Dlm.Entities.Common;
 
 /// <summary>
 ///
-/// </summary>        
+/// </summary>
 namespace BExIS.Dlm.Entities.MetadataStructure
 {
     /// <summary>
     ///
     /// </summary>
-    /// <remarks></remarks>        
+    /// <remarks></remarks>
     public class MetadataAttributeUsage : BaseUsage
     {
-        #region Attributes
-
-        #endregion
-
         #region Associations
 
         /// <summary>
         ///
         /// </summary>
         /// <remarks></remarks>
-        /// <seealso cref=""/>        
+        /// <seealso cref=""/>
         public virtual MetadataPackage MetadataPackage { get; set; }
 
         /// <summary>
         ///
         /// </summary>
         /// <remarks></remarks>
-        /// <seealso cref=""/>        
+        /// <seealso cref=""/>
         public virtual MetadataAttribute MetadataAttribute { get; set; }
 
-        #endregion
-
-        #region Mathods
-
-        #endregion
-
+        #endregion Associations
     }
 }

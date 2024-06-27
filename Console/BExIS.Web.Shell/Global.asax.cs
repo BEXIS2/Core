@@ -6,7 +6,6 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 using System;
 using System.Web;
-using System.Web.Http;
 using System.Web.Mvc;
 using System.Web.Optimization;
 using System.Web.Routing;
@@ -52,8 +51,6 @@ namespace BExIS.Web.Shell
             app = BExIS.App.Bootstrap.Application.GetInstance(RunStage.Production);
             app.Start(WebApiConfig.Register, true);
 
-
-
             BundleConfig.RegisterBundles(BundleTable.Bundles);
         }
 
@@ -90,8 +87,8 @@ namespace BExIS.Web.Shell
 
             // if the tenant has no landing page, set the application's default landing page for it.
 
-            var landingPage = GeneralSettings.LandingPage;
-            tenant.LandingPage = landingPage; // checks and sets
+            //var landingPage = GeneralSettings.LandingPage;
+            //tenant.LandingPage = landingPage; // checks and sets
 
             this.Session.SetTenant(tenant);
         }
@@ -140,9 +137,6 @@ namespace BExIS.Web.Shell
 
         protected void Application_Error(object sender, EventArgs e)
         {
-
-
-
             bool sendExceptions = GeneralSettings.SendExceptions;
 
             var error = Server.GetLastError();

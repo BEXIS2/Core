@@ -1,4 +1,4 @@
-﻿@using BExIS.Dim.Entities.Mapping
+﻿@using BExIS.Dim.Entities.Mappings
 @using BExIS.Modules.Dim.UI.Models.Mapping
 @model LinkElementModel
 @{
@@ -21,41 +21,40 @@
     </div>
 
     <div class="le-mapping-container-header">
-        <div class="le-mapping-container-header-label" style="float: left" title="@Model.XPath" >
+        <div class="le-mapping-container-header-label" style="float: left" title="@Model.XPath">
             @Model.Name
         </div>
-     
+
         <button class="bx bx-trash bx-grid-function"
                 onclick="deleteComplexMappingElement(this)" style="position: absolute; right: 15px; top: 0; display:none">
         </button>
-        
     </div>
 
     <div class="mapping-container-childrens">
 
         @if(Model.Complexity == LinkElementComplexity.Complex)
         {
-        
+
             foreach (var child in Model.Children.Where(x=>x.Complexity.Equals(LinkElementComplexity.Simple)))
             {
                 if (child.Complexity.Equals(LinkElementComplexity.Simple))
                 {
-                    <div class="le-simple le-simple-selector @selectorClass" title="@child.Description">
-                        @Html.Partial("MappingSimpleLinkElement", child)
-                    </div>
+        <div class="le-simple le-simple-selector @selectorClass" title="@child.Description">
+            @Html.Partial("MappingSimpleLinkElement", child)
+        </div>
                 }
                 else
                 {
-                    <div class="le-complex" title="@child.Description">
-                        <div class="le-complex-header">
-                            @child.Name
-                        </div>
-                    </div>
+        <div class="le-complex" title="@child.Description">
+            <div class="le-complex-header">
+                @child.Name
+            </div>
+        </div>
                 }
             }
 
             /*ToDo complex types are not visible because of no good solution at this point.*/
-            @*foreach (var child in Model.Children.Where(x => x.Complexity.Equals(LinkElementComplexity.Complex)))
+        @*foreach (var child in Model.Children.Where(x => x.Complexity.Equals(LinkElementComplexity.Complex)))
             {
                 <div class="le-complex" title="@child.Description">
                     <div class="le-complex-header">
@@ -66,9 +65,9 @@
         }
         else
         {
-            <div class="le-simple le-simple-selector @selectorClass" title="@Model.Description">
-                @Html.Partial("MappingSimpleLinkElement", Model)
-            </div>
+        <div class="le-simple le-simple-selector @selectorClass" title="@Model.Description">
+            @Html.Partial("MappingSimpleLinkElement", Model)
+        </div>
         }
     </div>
 </div>

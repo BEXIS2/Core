@@ -1,6 +1,5 @@
 ﻿using BExIS.App.Bootstrap.Attributes;
 using BExIS.Dlm.Entities.Data;
-using BExIS.Dlm.Services.Data;
 using BExIS.Dlm.Services.MetadataStructure;
 using BExIS.Modules.Dcm.UI.Helpers;
 using BExIS.Modules.Dcm.UI.Models.EntityReference;
@@ -31,7 +30,6 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
         public JsonResult jsontestcall(long id, int type, int version)
         {
-
             ReferencesModel model = new ReferencesModel();
             EntityReferenceHelper helper = new EntityReferenceHelper();
 
@@ -42,7 +40,6 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
             return Json(model, JsonRequestBehavior.AllowGet);
         }
-
 
         [BExISEntityAuthorize(typeof(Dataset), "id", RightType.Write)]
         public ActionResult Start(long id, int version)
@@ -218,8 +215,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             model.SourceReferences = helper.GetSourceReferences(sourceId, sourceTypeId, sourceVersion);
             model.HasEditRights = hasUserRights(sourceId, RightType.Write);
 
-     
-           return PartialView("Show", model);
+            return PartialView("Show", model);
         }
 
         public ActionResult Show2(long sourceId, long sourceTypeId, int sourceVersion)

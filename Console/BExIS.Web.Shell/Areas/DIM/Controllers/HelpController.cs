@@ -1,14 +1,8 @@
-﻿using System.Web.Mvc;
-using Vaiona.Web.Mvc.Modularity;
-using Vaiona.Web.Mvc.Models;
-using Vaiona.Web.Extensions;
-using Vaiona.Utils.Cfg;
-using System.Xml.Linq;
-using System.IO;
-using BExIS.Xml.Helpers;
-using System;
+﻿using BExIS.Utils.Config;
 using BExIS.Utils.Helpers;
-using BExIS.Utils.Config;
+using System;
+using System.Web.Mvc;
+using Vaiona.Web.Mvc.Modularity;
 
 namespace BExIS.Modules.Dim.UI.Controllers
 {
@@ -26,7 +20,6 @@ namespace BExIS.Modules.Dim.UI.Controllers
             {
                 helpurl = ManualHelper.GetUrl(GeneralSettings.ApplicationVersion, "DIM");
             }
-
 
             return Redirect(helpurl);
         }

@@ -12,7 +12,6 @@ namespace BExIS.Modules.Ddm.UI.Models
         {
             Entities = new Dictionary<long, string>();
             MyDatasets = new DataTable();
-
         }
     }
 
@@ -38,6 +37,5 @@ namespace BExIS.Modules.Ddm.UI.Models
             IsValid = isValid;
             Type = type;
         }
-
     }
 }

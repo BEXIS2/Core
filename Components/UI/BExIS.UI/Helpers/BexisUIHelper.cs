@@ -10,8 +10,6 @@ namespace BExIS.UI.Helpers
         {
             return new BexisUI();
         }
-
-
     }
 
     public class BexisUI
@@ -118,10 +116,8 @@ namespace BExIS.UI.Helpers
             _tagBuilder.MergeAttributes(_tagDictionary[BexisUITagType.div]);
             _tagBuilder.InnerHtml += temp;
 
-
             return MvcHtmlString.Create(_tagBuilder.ToString(TagRenderMode.Normal));
         }
-
     }
 
     public class Slider : BexisTag
@@ -211,7 +207,6 @@ namespace BExIS.UI.Helpers
             else
                 return MvcHtmlString.Create("not able to render.");
         }
-
     }
 
     public class List : BexisTag
@@ -255,7 +250,6 @@ namespace BExIS.UI.Helpers
 
         public List Action(string actionName, string controllerName, RouteValueDictionary routeValues, string parameterName)
         {
-
             addAttribute(BexisUITagType.a, "actionName", actionName);
             addAttribute(BexisUITagType.a, "controllerName", controllerName);
             addAttribute(BexisUITagType.a, "routeValues", routeValues);
@@ -298,7 +292,6 @@ namespace BExIS.UI.Helpers
                        kvp.Value,
                        (RouteValueDictionary)TagDictionary[BexisUITagType.a]["routeValues"]
                        );
-
                 }
 
                 if (kvp.Selected)
@@ -325,7 +318,6 @@ namespace BExIS.UI.Helpers
             return urlHelper.Action(actionName, controllername, routeValues);
         }
     }
-
 
     public abstract class BexisTag : IBexistag
     {
@@ -354,7 +346,6 @@ namespace BExIS.UI.Helpers
                 currentHtmlAttributeDic.Add(key, value);
                 TagDictionary.Add(tagType, currentHtmlAttributeDic);
             }
-
         }
 
         protected void addAttributes(BexisUITagType tagType, Dictionary<string, object> htmlAttributes)
@@ -381,7 +372,6 @@ namespace BExIS.UI.Helpers
                 Dictionary<string, object> currentHtmlAttributeDic = new Dictionary<string, object>();
                 TagDictionary.Add(tagType, htmlAttributes);
             }
-
         }
 
         protected void mergeAttribute(BexisUITagType tagType, string key, object value)
@@ -405,7 +395,6 @@ namespace BExIS.UI.Helpers
                 currentHtmlAttributeDic.Add(key, value);
                 TagDictionary.Add(tagType, currentHtmlAttributeDic);
             }
-
         }
 
         protected void mergeAttributes(BexisUITagType tagType, Dictionary<string, object> htmlAttributes)
@@ -432,7 +421,6 @@ namespace BExIS.UI.Helpers
                 Dictionary<string, object> currentHtmlAttributeDic = new Dictionary<string, object>();
                 TagDictionary.Add(tagType, htmlAttributes);
             }
-
         }
 
         public Dictionary<BexisUITagType, Dictionary<string, object>> TagDictionary
@@ -460,7 +448,7 @@ namespace BExIS.UI.Helpers
             return name;
         }
 
-        #endregion
+        #endregion Helper Functions
 
         public MvcHtmlString Render()
         {
@@ -482,10 +470,10 @@ namespace BExIS.UI.Helpers
         ul
     }
 
-
     public interface IBexistag
     {
         Dictionary<BexisUITagType, Dictionary<string, object>> TagDictionary { get; }
+
         MvcHtmlString Render();
     }
 }

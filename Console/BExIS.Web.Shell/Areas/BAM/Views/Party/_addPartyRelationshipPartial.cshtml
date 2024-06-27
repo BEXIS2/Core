@@ -13,7 +13,6 @@
     <form action="/BAM/Party/CreatePartyRelationships" method="post" id="frmRelationship">
         <input type="hidden" name="partyId" id="PartyRelationWindowPartyId" value="" />
         @*Find all the allowed partyRelationType*@
-               
 
         @(Html.Telerik().TabStrip()
                 .Name("ShowDataTabStripPartyTypes").Items(tabs =>
@@ -22,12 +21,10 @@
                     tabs.Add().Text(sourceParty.Name + " as target").Content(@<text>@Html.Partial("_templateRelationshipPartial", Model.Last())</text>);
                 }))
 
-      
         <div class="bx-footer right">
         <button type="submit" value="Save" name="saveDataset" class="bx-button action" style="border:0px;">Save</button>
         <button type="button" value="Cancel" name="cancel" class="bx-button action" style="border:0px;" onclick="$('#PartyRelationWindow').data('tWindow').close();">Cancel</button>
 </div>
-
     </form>
 </div>
 <script type="text/javascript">
@@ -114,7 +111,6 @@
             <td>
                 <div>
                     <input class="partyRelationshipsDate t-input bx-input" id="partyRelationshipsDic[StartDate_{partyId}_{partyTypepairId}]" value="{TargetPartyStartDate}" name="partyRelationshipsDic[StartDate_{partyId}_{partyTypepairId}]" type="text">
-
                 </div>
             </td>
         </tr>

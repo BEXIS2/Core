@@ -15,7 +15,6 @@ export const goTo = async (url, intern = true) => {
 	}
 };
 
-
 import { Api } from '@bexis2/bexis2-core-ui';
 
 export const getToken = async () => {

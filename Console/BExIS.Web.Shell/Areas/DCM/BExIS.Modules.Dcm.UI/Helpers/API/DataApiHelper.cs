@@ -1,4 +1,4 @@
-﻿using BExIS.Dim.Entities.Mapping;
+﻿using BExIS.Dim.Entities.Mappings;
 using BExIS.Dlm.Entities.Data;
 using BExIS.Dlm.Entities.DataStructure;
 using BExIS.Dlm.Services.Data;
@@ -7,6 +7,7 @@ using BExIS.IO;
 using BExIS.IO.Transform.Input;
 using BExIS.IO.Transform.Output;
 using BExIS.IO.Transform.Validation.Exceptions;
+using BExIS.Modules.Dcm.UI.Helpers;
 using BExIS.Modules.Dcm.UI.Models.API;
 using BExIS.Security.Entities.Subjects;
 using BExIS.Security.Services.Authorization;
@@ -24,7 +25,6 @@ using System.Threading.Tasks;
 using System.Xml;
 using Vaiona.Entities.Common;
 using Vaiona.Utils.Cfg;
-using BExIS.Modules.Dcm.UI.Helpers;
 
 namespace BExIS.Modules.Dcm.UI.Helper.API
 {
@@ -116,8 +116,6 @@ namespace BExIS.Modules.Dcm.UI.Helper.API
             Debug.WriteLine("end storing data");
 
             return await PKCheck();
-
-
         }
 
         public async Task<bool> PKCheck()
@@ -212,7 +210,6 @@ namespace BExIS.Modules.Dcm.UI.Helper.API
                 }
                 Debug.WriteLine("end validate data");
             }
-            
 
             return await Upload();
         }
@@ -239,11 +236,10 @@ namespace BExIS.Modules.Dcm.UI.Helper.API
                     workingCopy = datasetManager.GetDatasetWorkingCopy(id);
 
                     bool isUpdatingData = false; // if data exist, set to true
-                    if(datatupleFromDatabaseIds.Count>0)isUpdatingData = true;
+                    if (datatupleFromDatabaseIds.Count > 0) isUpdatingData = true;
 
                     // update metadata based on system keys mappings
                     workingCopy.Metadata = setSystemValuesToMetadata(workingCopy.Id, datasetManager.GetDatasetVersionCount(workingCopy.Id) + 1, workingCopy.Dataset.MetadataStructure.Id, workingCopy.Metadata, isUpdatingData);
-
 
                     ////set modification
                     workingCopy.ModificationInfo = new EntityAuditInfo()
@@ -292,7 +288,6 @@ namespace BExIS.Modules.Dcm.UI.Helper.API
                             datasetManager.EditDatasetVersion(workingCopy, splittedDatatuples["new"], splittedDatatuples["edit"], null);
                             inputWasAltered = true;
                         }
-                        
                     } while (rows.Count() > 0 || inputWasAltered == true);
 
                     datasetManager.CheckInDataset(id, "via API", userName);

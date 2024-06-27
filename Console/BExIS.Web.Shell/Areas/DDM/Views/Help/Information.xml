@@ -7,14 +7,14 @@
       alter the Lucene configuration file on the server. For a detailed description of each parameter please
       refer to the Lucene User Manual provided with the installation package.
     </description>
-    <more text="More" title="go to help" path="/ddm/Help/Index/#_Toc451435017"/>
+    <more text="More" title="go to help" path="/ddm/Help/Index/#_Toc451435017" />
   </Information>
 
   <Information name="CreateDataset">
     <description>
       This wizard will assist you in creating a new dataset. Please select a data structure and a metadata structure below.
     </description>
-    <more text="More" title="go to help" path="/ddm/Help/Index/#_Toc434570841"/>
+    <more text="More" title="go to help" path="/ddm/Help/Index/#_Toc434570841" />
   </Information>
 
   <Information name="MetadataEditor">
@@ -25,7 +25,7 @@
       </p>
       <p>You can add, remove, or re-order elements (e.g. multiple Creators) using the buttons at the right.</p>
     </description>
-    <more text="More" title="go to help" path="/ddm/Help/Index"/>
+    <more text="More" title="go to help" path="/ddm/Help/Index" />
   </Information>
 
   <Information name="structuredData">
@@ -33,22 +33,22 @@
       <p>To download the entire dataset choose one of the following formats.</p>
       <p>Note: If you are the first one to download this dataset it may take a little longer, because the file has to be created.</p>
     </description>
-    <more text="More" title="go to help" path="/DCM/Help/Index/#_Toc451435014"/>
+    <more text="More" title="go to help" path="/DCM/Help/Index/#_Toc451435014" />
   </Information>
-  
+
   <Information name="ShowData">
     <description>
-      This is a detailed Information on all parts of a dataset. Depending on your permissions your are able to Information, edit, or download either the metadata, the primary data or the data structure.<br/>
+      This is a detailed Information on all parts of a dataset. Depending on your permissions your are able to Information, edit, or download either the metadata, the primary data or the data structure.<br />
       You may also set permissions for this particular dataset
     </description>
-    <more text="More" title="go to help" path="/ddm/Help/Index/#_Toc451435014"/>
+    <more text="More" title="go to help" path="/ddm/Help/Index/#_Toc451435014" />
   </Information>
 
   <Information name="Help" fileName="Index.cshtml">
     <description>
       This guide will walk you through the basics of using search UI including how to manage search component.
     </description>
-    <more text="More" title="go to help" path=""/>
+    <more text="More" title="go to help" path="" />
   </Information>
 
   <Information name="myDatasetGrid">
@@ -59,9 +59,9 @@
         To Information more details of a dataset, click the <strong>Information details</strong> button available in each row.
       </p>
     </description>
-    <more text="More" title="go to help" path=""/>
+    <more text="More" title="go to help" path="" />
   </Information>
- 
+
   <Information name="Home">
     <description>
       <p>
@@ -76,6 +76,6 @@
       <p>To tweak the result list, click on the facets in the green area on the left or specify a filter in the header of the list. Clicking on a name in the column header will sort the results.</p>
       <p>To Information more details of a dataset, click the Information Details button available in each row.</p>
     </description>
-    <more text="More" title="go to help" path="/ddm/Help/Index"/>
+    <more text="More" title="go to help" path="/ddm/Help/Index" />
   </Information>
 </Informations>

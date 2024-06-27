@@ -28,6 +28,5 @@ namespace Vaiona.Web.Helpers
         {
             return (Thread.CurrentThread.CurrentCulture);
         }
-
     }
 }

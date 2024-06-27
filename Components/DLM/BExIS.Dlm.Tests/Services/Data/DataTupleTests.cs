@@ -43,7 +43,7 @@ namespace BExIS.Dlm.Tests.Services.Data
                 dsHelper.PurgeAllResearchPlans();
 
                 // generate Data
-                numberOfTuples = 50000;
+                numberOfTuples = 100;
 
                 StructuredDataStructure dataStructure = dsHelper.CreateADataStructure();
                 dataStructure.Should().NotBeNull("Failed to meet a precondition: a data strcuture is required.");

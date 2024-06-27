@@ -1,7 +1,6 @@
 ﻿using BExIS.Dlm.Services.Data;
 using BExIS.Security.Entities.Authorization;
 using BExIS.UI.Hooks;
-using NHibernate.Engine;
 
 namespace BExIS.Modules.Dcm.UI.Hooks
 {
@@ -16,7 +15,6 @@ namespace BExIS.Modules.Dcm.UI.Hooks
         {
             // check status
             checkStatus(id, username);
-
         }
 
         private void checkStatus(long id, string username)
@@ -32,11 +30,10 @@ namespace BExIS.Modules.Dcm.UI.Hooks
             else Status = HookStatus.Open;
 
             using (var datasetManager = new DatasetManager())
-            { 
+            {
                 var dataset = datasetManager.GetDataset(id);
-                if (dataset.Status != Dlm.Entities.Data.DatasetStatus.CheckedIn) Status =  HookStatus.Disabled;
+                if (dataset.Status != Dlm.Entities.Data.DatasetStatus.CheckedIn) Status = HookStatus.Disabled;
             }
         }
-
     }
 }

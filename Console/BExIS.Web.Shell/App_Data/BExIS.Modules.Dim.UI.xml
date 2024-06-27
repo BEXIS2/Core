@@ -591,16 +591,16 @@
             </summary>
         </member>
         <member name="M:BExIS.Modules.Dim.UI.Controllers.MappingOutController.Get(System.Int64,System.Int32,System.Int64,System.Int32)">
-            <summary>
+             <summary>
             
-            </summary>
-            <param name="sourceElementId"></param>
-            <param name="sourceElementType"></param>
-            <param name="targetElementId"></param>
-            <param name="targetElementType"></param>
-            <returns></returns>
-            <remarks> 
-            </remarks>
+             </summary>
+             <param name="sourceElementId"></param>
+             <param name="sourceElementType"></param>
+             <param name="targetElementId"></param>
+             <param name="targetElementType"></param>
+             <returns></returns>
+             <remarks>
+             </remarks>
         </member>
         <member name="M:BExIS.Modules.Dim.UI.Controllers.MetadataStatisticOutController.Post(BExIS.Modules.Dim.UI.Models.Api.PostApiMetadataStatisticModel)">
             <summary>
@@ -627,7 +627,7 @@
             </summary>
             <remarks>
             the API returns the selected metadata structure in json schema.
-            each object contains a @ref attribute of type string, simple types contain a #text where the value is entered. 
+            each object contains a @ref attribute of type string, simple types contain a #text where the value is entered.
             even a simple value therefore consists of @ref and #text.
             @ref will beused fpor internal or external references, #text is used to store input values
             </remarks>
@@ -656,7 +656,6 @@
             <param name="id">dataset id</param>
             <returns>html file</returns>
         </member>
-        <!-- Badly formed XML comment ignored for member "M:BExIS.Modules.Dim.UI.Controllers.PublicationController.Get(System.Int32)" -->
         <member name="T:BExIS.Modules.Dim.UI.Controllers.DataOutController">
             <summary>
             This class is designed as a Web API to allow various client tools request datasets or a view on data sets and get the result in
@@ -765,13 +764,13 @@
             
              ## format
              Based on the existing transformation options, the converted metadata can be obtained via format.
-             
+            
              ## simplfiedJson
              if you set the accept of the request to return a json, you can manipulate the json with this parameter. <br/>
              0 = returns the metadata with full internal structure <br/>
              1 = returns a simplified form of the structure with all fields and attributes <br/>
-             2 = returns the metadata in a simplified structure and does not add all fields and attributes that are empty. 
-             
+             2 = returns the metadata in a simplified structure and does not add all fields and attributes that are empty.
+            
              </remarks>
              <param name="id">Dataset Id</param>
              <param name="format">Internal,External,Subset</param>
@@ -787,13 +786,13 @@
             
              ## format
              Based on the existing transformation options, the converted metadata can be obtained via format.
-             
+            
              ## simplfiedJson
              if you set the accept of the request to return a json, you can manipulate the json with this parameter. <br/>
              0 = returns the metadata with full internal structure <br/>
              1 = returns a simplified form of the structure with all fields and attributes <br/>
-             2 = returns the metadata in a simplified structure and does not add all fields and attributes that are empty. 
-             
+             2 = returns the metadata in a simplified structure and does not add all fields and attributes that are empty.
+            
              </remarks>
              <param name="id">Dataset Id</param>
              <param name="versionId">Version Id</param>
@@ -810,13 +809,13 @@
             
              ## format
              Based on the existing transformation options, the converted metadata can be obtained via format.
-             
+            
              ## simplfiedJson
              if you set the accept of the request to return a json, you can manipulate the json with this parameter. <br/>
              0 = returns the metadata with full internal structure <br/>
              1 = returns a simplified form of the structure with all fields and attributes <br/>
-             2 = returns the metadata in a simplified structure and does not add all fields and attributes that are empty. 
-             
+             2 = returns the metadata in a simplified structure and does not add all fields and attributes that are empty.
+            
              </remarks>
              <param name="id">Dataset Id</param>
              <param name="version_number">Version number</param>
@@ -833,13 +832,13 @@
             
              ## format
              Based on the existing transformation options, the converted metadata can be obtained via format.
-             
+            
              ## simplfiedJson
              if you set the accept of the request to return a json, you can manipulate the json with this parameter. <br/>
              0 = returns the metadata with full internal structure <br/>
              1 = returns a simplified form of the structure with all fields and attributes <br/>
-             2 = returns the metadata in a simplified structure and does not add all fields and attributes that are empty. 
-             
+             2 = returns the metadata in a simplified structure and does not add all fields and attributes that are empty.
+            
              </remarks>
              <param name="id">Dataset Id</param>
              <param name="version_name">Version name</param>
@@ -856,7 +855,7 @@
             <param name="version"></param>
             <returns></returns>
         </member>
-        <member name="M:BExIS.Modules.Dim.UI.Controllers.SubmissionController.publishData(System.Int64,System.Int64)">
+        <member name="M:BExIS.Modules.Dim.UI.Controllers.SubmissionController.CheckExportPossibility(System.Int64,System.Int64)">
             <summary>
             ToDo Refactor submission Commented by Javad due to modularity issues.
             Thes functions should call the APIs of the DIM module and get json objects back.
@@ -864,7 +863,7 @@
             Other mosules who consume the API results of a module, should only expect .NET types, DLM types, json, xml, CSV, or Html.
             </summary>
         </member>
-        <member name="M:BExIS.Modules.Dim.UI.Controllers.SubmissionController.PrepareData(System.Int64,System.Int64,System.String,System.String)">
+        <member name="M:BExIS.Modules.Dim.UI.Controllers.SubmissionController.PrepareData(System.Int64,System.Int64)">
             <summary>
             prepare data for the broker and repo
             and return a tuple
@@ -877,14 +876,14 @@
             <param name="broker"></param>
             <returns></returns>
         </member>
-        <member name="M:BExIS.Modules.Dim.UI.Controllers.SubmissionController.GetStatus(BExIS.Dim.Entities.Publication.Publication)">
+        <member name="M:BExIS.Modules.Dim.UI.Controllers.SubmissionController.GetStatus(BExIS.Dim.Entities.Publications.Publication)">
             <summary>
             Get Status from publiction
             </summary>
             <param name="id"></param>
             <returns></returns>
         </member>
-        <member name="M:BExIS.Modules.Dim.UI.Helpers.DimSeedDataGenerator.createFromKeyMapping(System.String,BExIS.Dim.Entities.Mapping.LinkElementType,System.String,BExIS.Dim.Entities.Mapping.LinkElementType,BExIS.Dim.Entities.Mapping.Key,BExIS.Dim.Entities.Mapping.Mapping,System.Xml.Linq.XDocument,BExIS.Dim.Services.MappingManager)">
+        <member name="M:BExIS.Modules.Dim.UI.Helpers.DimSeedDataGenerator.createFromKeyMapping(System.String,BExIS.Dim.Entities.Mappings.LinkElementType,System.String,BExIS.Dim.Entities.Mappings.LinkElementType,BExIS.Dim.Entities.Mappings.Key,BExIS.Dim.Entities.Mappings.Mapping,System.Xml.Linq.XDocument,BExIS.Dim.Services.Mappings.MappingManager)">
             <summary>
             Map a system key to xml node
             </summary>
@@ -897,7 +896,7 @@
             <param name="metadataRef"></param>
             <param name="mappingManager"></param>
         </member>
-        <member name="M:BExIS.Modules.Dim.UI.Helpers.DimSeedDataGenerator.createToKeyMapping(System.String,BExIS.Dim.Entities.Mapping.LinkElementType,System.String,BExIS.Dim.Entities.Mapping.LinkElementType,BExIS.Dim.Entities.Mapping.Key,BExIS.Dim.Entities.Mapping.Mapping,System.Xml.Linq.XDocument,BExIS.Dim.Services.MappingManager,BExIS.Dim.Entities.Mapping.TransformationRule)">
+        <member name="M:BExIS.Modules.Dim.UI.Helpers.DimSeedDataGenerator.createToKeyMapping(System.String,BExIS.Dim.Entities.Mappings.LinkElementType,System.String,BExIS.Dim.Entities.Mappings.LinkElementType,BExIS.Dim.Entities.Mappings.Key,BExIS.Dim.Entities.Mappings.Mapping,System.Xml.Linq.XDocument,BExIS.Dim.Services.Mappings.MappingManager,BExIS.Dim.Entities.Mappings.TransformationRule)">
             <summary>
             Map a node from xml to system key
             </summary>
@@ -937,17 +936,17 @@
         </member>
         <member name="P:BExIS.Modules.Dim.UI.Models.Api.PostApiMetadataStatisticModel.DatasetIdsInclude">
             <summary>
-            List of Dataset IDs to include 
+            List of Dataset IDs to include
             </summary>
         </member>
         <member name="P:BExIS.Modules.Dim.UI.Models.Api.PostApiMetadataStatisticModel.DatasetIdsExclude">
             <summary>
-            List of Dataset IDs to exclude 
+            List of Dataset IDs to exclude
             </summary>
         </member>
         <member name="P:BExIS.Modules.Dim.UI.Models.Api.PostApiMetadataStatisticModel.MetadatastructureIdsInclude">
             <summary>
-            List of Metdata structure IDs to include 
+            List of Metdata structure IDs to include
             </summary>
         </member>
         <member name="P:BExIS.Modules.Dim.UI.Models.Api.PostApiMetadataStatisticModel.MetadatastructureIdsExclude">

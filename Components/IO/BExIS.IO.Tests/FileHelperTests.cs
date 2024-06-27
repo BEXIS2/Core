@@ -5,7 +5,6 @@ using Vaiona.Utils.Cfg;
 
 namespace BExIS.IO.Tests
 {
-
     public class FileHelperTests
     {
         private string directory { get; set; }
@@ -15,9 +14,6 @@ namespace BExIS.IO.Tests
         private string errorFilePath { get; set; }
 
         [OneTimeSetUp]
-        /// It is called once prior to executing any of the tests in a fixture.
-        /// Multiple methods can be marked. Order is not preserved. 
-        /// Inheritance is supported, call sequence form the parents
         public void OneTimeSetUp()
         {
             // because these tests are working on in-memory objects (datasets) only, there is no need to do the test app setup
@@ -26,18 +22,14 @@ namespace BExIS.IO.Tests
             filePath = Path.Combine(directory, "test.txt");
             fileDestinationPath = Path.Combine(destinationDirectory, "test.txt");
             errorFilePath = Path.Combine(directory, "errortest.txt");
-
         }
 
         [SetUp]
-        /// performs the initial setup for the tests. This runs once per test, NOT per class!
         protected void SetUp()
         {
-
         }
 
         [TearDown]
-        /// performs the cleanup after each test
         public void TearDown()
         {
             if (File.Exists(filePath)) File.Delete(filePath);
@@ -45,17 +37,11 @@ namespace BExIS.IO.Tests
             if (File.Exists(fileDestinationPath)) File.Delete(fileDestinationPath);
 
             if (Directory.Exists(directory)) Directory.Delete(directory, true);
-
         }
 
         [OneTimeTearDown]
-        /// It is called once after executing all the tests in a fixture.
-        /// Multiple methods can be marked. Order is not preserved. 
-        /// Inheritance is supported, call sequence form the children
-        /// Executes only if: counterpart OneTimeSetUp exists and executed successfully.
         public void OneTimeTearDown()
         {
-
         }
 
         [Test()]
@@ -75,7 +61,6 @@ namespace BExIS.IO.Tests
 
             string pathOfNotExistingFile = @"x\y\z\test.txt";
 
-
             bool fileExist = FileHelper.FileExist(filePath);
             fileExist.Should().BeTrue("because file was created before.");
 
@@ -92,13 +77,11 @@ namespace BExIS.IO.Tests
             bool deleted = FileHelper.Delete(filePath);
 
             deleted.Should().BeTrue("because file is not deleted");
-
         }
 
         [Test()]
         public void CreateDicrectoriesIfNotExistTest()
         {
-
             FileHelper.CreateDicrectoriesIfNotExist(directory);
 
             bool exist = Directory.Exists(directory);

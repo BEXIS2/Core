@@ -6,16 +6,15 @@ using System.Collections.Generic;
 
 /// <summary>
 ///
-/// </summary>        
+/// </summary>
 namespace BExIS.Ddm.Providers.LuceneProvider.Indexer
 {
     /// <summary>
     ///
     /// </summary>
-    /// <remarks></remarks>        
-    class NGramAnalyzer : Analyzer
+    /// <remarks></remarks>
+    internal class NGramAnalyzer : Analyzer
     {
-
         private String[] GERMAN_STOP_WORDS =
         {
             "einer", "eine", "eines", "einem", "einen",
@@ -32,14 +31,13 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Indexer
             "durch", "wegen", "den", "im", "fur", "für",  "mit", "zur", "von"
         };
 
-
         /// <summary>
-        /// Contains the stopwords used with the StopFilter. 
+        /// Contains the stopwords used with the StopFilter.
         /// </summary>
         private ICollection<string> stoptable = new List<string>();
 
         /// <summary>
-        /// Contains words that should be indexed but not stemmed. 
+        /// Contains words that should be indexed but not stemmed.
         /// </summary>
         private ICollection<string> excltable = new List<string>();
 
@@ -47,14 +45,14 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Indexer
         ///
         /// </summary>
         /// <remarks></remarks>
-        /// <seealso cref=""/>        
+        /// <seealso cref=""/>
         public NGramAnalyzer()
         {
             stoptable = StopFilter.MakeStopSet(GERMAN_STOP_WORDS);
         }
 
         /// <summary>
-        /// Builds an exclusionlist from an array of Strings. 
+        /// Builds an exclusionlist from an array of Strings.
         /// </summary>
         /// <remarks></remarks>
         /// <seealso cref=""/>
@@ -66,7 +64,7 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Indexer
         }
 
         /// <summary>
-        /// Builds an exclusionlist from a Hashtable. 
+        /// Builds an exclusionlist from a Hashtable.
         /// </summary>
         /// <remarks></remarks>
         /// <seealso cref=""/>
@@ -78,7 +76,7 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Indexer
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <remarks></remarks>
         /// <seealso cref=""/>
@@ -105,6 +103,5 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Indexer
         //{
         //return 100;
         //}
-
     }
 }

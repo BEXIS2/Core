@@ -8,8 +8,8 @@
 	export let description;
 	export let entityType;
 	export let metadataStructure;
-	export let linkedSubjects = [];
 	export let allowedFileTypes = [];
+	export let inUse = false;
 </script>
 
 <!-- svelte-ignore a11y-click-events-have-key-events -->
@@ -28,7 +28,7 @@ hover:bg-primary-100 space-x-100 active:bg-primary-300"
 	</div>
 	<div class="flex-none text-right">
 		<div class="flex gap-2">
-			{#if linkedSubjects.length > 0}
+			{#if inUse}
 				<span class="badge variant-filled-error">in use</span>
 			{/if}
 			<span class="badge variant-filled-surface">{metadataStructure.text}</span>

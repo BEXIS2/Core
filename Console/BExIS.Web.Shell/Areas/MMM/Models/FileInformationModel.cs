@@ -30,7 +30,5 @@ namespace IDIV.Modules.Mmm.UI.Models
             this.Path = path;
             this.EXIF = exif;
         }
-
     }
 }
-

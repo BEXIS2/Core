@@ -57,7 +57,7 @@ namespace BExIS.Dlm.Entities.Data
         public virtual XmlDocument XmlAmendments { get; set; }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         public virtual string JsonVariableValues { get; set; }
 
@@ -102,7 +102,6 @@ namespace BExIS.Dlm.Entities.Data
 
         //public virtual IList<VariableValue> VariableValues2 { get; set; }
 
-
         /// <summary>
         /// Do not map to persistence data directly. Materialize after load
         /// </summary>
@@ -129,8 +128,6 @@ namespace BExIS.Dlm.Entities.Data
                 this.JsonVariableValues = JsonConvert.SerializeObject(VariableValues);
             }
         }
-
-
     }
 
     /// <summary>
@@ -173,7 +170,7 @@ namespace BExIS.Dlm.Entities.Data
         ///
         /// </summary>
         /// <remarks></remarks>
-        /// <seealso cref=""/>        
+        /// <seealso cref=""/>
         public override long Index
         {
             get { return this.Id; }
@@ -207,7 +204,6 @@ namespace BExIS.Dlm.Entities.Data
             //History = new List<DataTupleVersion>();
         }
 
-
         public virtual void Materialize(bool includeChildren = true)
         {
             base.Materialize();
@@ -221,7 +217,6 @@ namespace BExIS.Dlm.Entities.Data
             }
         }
 
-
-        #endregion
+        #endregion Methods
     }
 }

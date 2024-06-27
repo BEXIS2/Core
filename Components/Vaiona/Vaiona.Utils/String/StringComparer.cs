@@ -15,5 +15,4 @@ namespace Vaiona.Utils.String
             return obj.GetHashCode();
         }
     }
-
 }

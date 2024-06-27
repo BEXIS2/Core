@@ -122,6 +122,5 @@ namespace BExIS.Dlm.Services.DataStructure
             }
             return (entity);
         }
-
     }
 }

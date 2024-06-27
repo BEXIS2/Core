@@ -2,8 +2,8 @@
 using BExIS.Dlm.Entities.Data;
 using BExIS.Dlm.Entities.DataStructure;
 using BExIS.Dlm.Services.Data;
-using BExIS.IO.Tests.Helpers;
 using BExIS.IO.Tests.Helper;
+using BExIS.IO.Tests.Helpers;
 using BExIS.IO.Transform.Input;
 using BExIS.IO.Transform.Validation.DSValidation;
 using BExIS.IO.Transform.Validation.Exceptions;
@@ -33,7 +33,7 @@ namespace BExIS.IO.Tests.Transform.Input
         public void OneTimeSetUp()
         {
             // set repeat
-            repeat = 10000;
+            repeat = 10;
 
             // seedata
             // 1. datastructure

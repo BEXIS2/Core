@@ -57,6 +57,22 @@
       "description": "Allow multiple files to be uploaded at the same time.",
       "type": "Boolean",
       "options": []
+    },
+    {
+      "key": "useExternalMetadataForm",
+      "title": "Use external metadata form",
+      "value": false,
+      "description": "Enables the loading of an external metadata form when editing entities",
+      "type": "Boolean",
+      "options": []
+    },
+    {
+      "key": "externalMetadataFormUrl",
+      "title": "External metadata form destination url",
+      "value": "",
+      "description": "Define the origin from where the external metadata form should be loaded",
+      "type": "String",
+      "options": []
     }
   ]
 }

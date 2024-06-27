@@ -1,11 +1,9 @@
 ﻿/***SHOW DATA***/
 #view-header {
-    padding:5px 0 5px 0;
+    padding: 5px 0 5px 0;
 }
 
 #view-header-dataset-details {
-
-
 }
 
 #view-warning {
@@ -15,28 +13,22 @@
 }
 
 #view-warning-icon {
-    padding:0 10px 0 0;
+    padding: 0 10px 0 0;
 }
 
 #view-warning-container {
-  
 }
 
-
-.primaryDataResultGrid .t-grid-content td
-{
-	padding-left:0;
-	text-align:left;
+.primaryDataResultGrid .t-grid-content td {
+    padding-left: 0;
+    text-align: left;
 }
 
-.margin
-{
-	margin-left:2px;
+.margin {
+    margin-left: 2px;
 }
-
 
 .fit_to_screen table {
-
 }
 
 .scroll_in_screen {
@@ -44,17 +36,15 @@
     /*overflow-x: hidden;*/
 }
 
-.scroll_in_screen table {
-    width: 100%;
-    display: block;
-    overflow: auto;
-}
+    .scroll_in_screen table {
+        width: 100%;
+        display: block;
+        overflow: auto;
+    }
 
-.scroll_in_screen table th, .scroll_in_screen table td {
-    max-width: 200px;
-
-}
-
+        .scroll_in_screen table th, .scroll_in_screen table td {
+            max-width: 200px;
+        }
 
 /*show data*/
 
@@ -64,5 +54,5 @@
     border-left: 1px solid #e4e4e4;
     border-right: 1px solid #e4e4e4;
     border-bottom: 1px solid #e4e4e4;
-    border-radius:3px;
+    border-radius: 3px;
 }

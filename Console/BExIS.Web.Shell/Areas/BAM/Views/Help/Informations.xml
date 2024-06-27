@@ -4,13 +4,13 @@
     <description>
       On this page you are able to ...<br />
     </description>
-    <more text="More" title="go to help" path="/BIM/Help/Index"/>
+    <more text="More" title="go to help" path="/BIM/Help/Index" />
   </Information>
 
   <Information name="Help">
     <description>
       This guide will walk you through the ...
     </description>
-    <more text="More" title="go to help" path=""/>
+    <more text="More" title="go to help" path="" />
   </Information>
 </Informations>

@@ -5,7 +5,7 @@
     It allows for exporting data, metadata, and schema.
   </Description>
   <Assemblies>
-    <!--<Assembly fullName="BExIS.Modules.Vim.UI" role="UI"/>-->
+    <!--<Assembly fullName="BExIS.Modules.Vim.UI" role="UI" />-->
   </Assemblies>
   <Dependencies>
     <!--<Dependency moduleId="vim" version="*.*.*" />-->
@@ -14,14 +14,11 @@
     <Export tag="settings" id="visualization" order="1"
             title="Visualization" description="Visualization" icon=""
             controller="visualization" action="index"
-            extends="./settingsRoot"
-            />
-           
+            extends="./settingsRoot" />
+
     <Export tag="lunchbar" id="helpVim" order="8"
             title="Visualization" description="Visualization Help Manual" icon=""
             controller="Help" action="index"
-            extends="./lunchbarRoot/help"
-            />
-
+            extends="./lunchbarRoot/help" />
   </Exports>
 </Manifest>

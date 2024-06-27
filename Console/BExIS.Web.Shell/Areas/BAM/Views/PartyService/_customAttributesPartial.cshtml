@@ -31,7 +31,7 @@
         {
             // <tr condition="@partyCustomAttr.Condition" name="condition" AttributeName="@partyCustomAttr.Name.ToLower()" value="@partyCustomAttributeValueStr">
             <tr condition="@partyCustomAttr.Condition" name="condition" AttributeName="@partyCustomAttr.Name.ToLower()" value="@partyCustomAttributeValueStr">
-            
+
                 <td style="width:40px;">@Html.Raw((!partyCustomAttr.IsValueOptional && !readOnly ? "<b title='Required' style='color: red'>*</b>" : ""))</td>
                 <td style="width:200px;">
                     <label>
@@ -47,7 +47,7 @@
         else
         {
             <tr condition="@partyCustomAttr.Condition" name="condition">
-               
+
                 <td style="width:40px;">@Html.Raw((!partyCustomAttr.IsValueOptional && !readOnly ? "<b title='Required' style='color: red'>*</b>" : ""))</td>
                 <td style="width:200px;">
                     <label>
@@ -74,7 +74,6 @@
                             disabled = "disabled";
                         }
 
-
                     <input type="text" @disabled id="partyCustomAttributeValues[@partyCustomAttr.Id]" class="t-input bx-input" AttributeName="@partyCustomAttr.Name.ToLower()" name="partyCustomAttributeValues[@partyCustomAttr.Id]" value="@email" ) />
 
                     }
@@ -99,7 +98,6 @@
                     }
                     @if (!string.IsNullOrEmpty(@partyCustomAttr.Description))
                     {<img src="~/Content/Images/info.png" data-toggle="tooltip" title="@partyCustomAttr.Description" />}
-                    
                 </td>
             </tr>
         }
@@ -113,7 +111,6 @@
                               checkPartyConditions();
                           });
 
-    
     function checkPartyConditions() {
         $("[name='condition']").each(function (index, element) {
             condition = $(this).attr("condition");
@@ -129,7 +126,7 @@
                 }
             }
         });
-        
+
     }
     function checkUniqeness(notShowAlert) {
         hash = "";

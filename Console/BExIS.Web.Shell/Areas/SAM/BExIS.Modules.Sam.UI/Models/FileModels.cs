@@ -37,6 +37,7 @@ namespace BExIS.Modules.Sam.UI.Models
         [Editable(false)]
         [Required]
         public string Path { get; set; }
+
         public string Type { get; protected set; }
 
         /// <summary>
@@ -48,8 +49,6 @@ namespace BExIS.Modules.Sam.UI.Models
 
         public string XPath
         {
-
-
             get
             {
                 //if (Type == "FILE" && Name.Contains(".") && !string.IsNullOrEmpty(Path))
@@ -72,9 +71,9 @@ namespace BExIS.Modules.Sam.UI.Models
             //path = string.Join(".", anssestorReverseList.ToList().Select(e => e.Name));
             //return path;
         }
+
         public static FileOrFolderModel Convert(XElement element)
         {
-
             string name = element.Attribute("name").Value;
             string displayName = element.Attribute("displayName").Value;
             string description = element.Attribute("description").Value;
@@ -88,6 +87,7 @@ namespace BExIS.Modules.Sam.UI.Models
             };
         }
     }
+
     public class FileModel : FileOrFolderModel
     {
         public FileModel()
@@ -120,8 +120,6 @@ namespace BExIS.Modules.Sam.UI.Models
                 Size = string.IsNullOrWhiteSpace(size) ? 0 : long.Parse(size)
             };
         }
-
-
     }
 
     public class FolderModel : FileOrFolderModel

@@ -21,10 +21,9 @@
 		console.log(response);
 		if (response?.status == 200) {
 			var modules = await response.data;
-			console.log("🚀 ~ file: +page.svelte:24 ~ getSettings ~ modules:", modules)
-			
-			if(modules.length > 0)
-			{
+			console.log('🚀 ~ file: +page.svelte:24 ~ getSettings ~ modules:', modules);
+
+			if (modules.length > 0) {
 				module = modules[0].id;
 			}
 
@@ -39,7 +38,11 @@
 		console.log(response);
 		if (response?.status == 200) {
 			var settings = await response.data;
-			helpStore.setHelpItemList(settings.entries.map((e) => ({id: e.key, name: e.key, description: e.description} as helpItemType)));
+			helpStore.setHelpItemList(
+				settings.entries.map(
+					(e) => ({ id: e.key, name: e.key, description: e.description }) as helpItemType
+				)
+			);
 			return settings;
 		}
 
@@ -65,7 +68,7 @@
 		throw new Error('Something went wrong.');
 	}
 
-	let module: string = "shell";
+	let module: string = 'shell';
 </script>
 
 <Page help={true} fixLeft={false}>
@@ -75,8 +78,7 @@
 		{:then data}
 			<ListBox active="variant-filled-primary">
 				{#each data as m}
-					<ListBoxItem bind:group={module} name="medium" value={m.id}
-						>{m.name}</ListBoxItem>
+					<ListBoxItem bind:group={module} name="medium" value={m.id}>{m.name}</ListBoxItem>
 				{/each}
 			</ListBox>
 		{:catch error}
@@ -86,7 +88,9 @@
 	{#await getSettingsByModuleId(module)}
 		<div id="spinner">... loading ...</div>
 	{:then data}
-		<form on:submit|preventDefault={() => putSettingByModuleId(data.id, new UpdateSettingModel(data))}>
+		<form
+			on:submit|preventDefault={() => putSettingByModuleId(data.id, new UpdateSettingModel(data))}
+		>
 			{#each data.entries as entry}
 				<Entry {entry} />
 			{/each}

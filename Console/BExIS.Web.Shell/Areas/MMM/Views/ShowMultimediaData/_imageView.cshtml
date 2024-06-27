@@ -1,7 +1,6 @@
 ﻿@using IDIV.Modules.Mmm.UI.Converter
 @using IDIV.Modules.Mmm.UI.Models
 
-
 @model FileInformation
 
 @{
@@ -46,15 +45,15 @@
                 @switch (type)
                 {
                     case "video":
-                        @Html.Partial("_videoPreview", @Server.UrlEncode(Model.Path))
+                @Html.Partial("_videoPreview", @Server.UrlEncode(Model.Path))
                         break;
 
                     case "audio":
-                        @Html.Partial("_audioPreview", @Server.UrlEncode(Model.Path))
+                @Html.Partial("_audioPreview", @Server.UrlEncode(Model.Path))
                         break;
 
                     case "image":
-                        @Html.Partial("_imagePreview", @Server.UrlEncode(Model.Path))
+                @Html.Partial("_imagePreview", @Server.UrlEncode(Model.Path))
                         break;
 
                     default:
@@ -85,40 +84,40 @@
                         {
                             if (k.Key == "GPS" || @k.Key == "JPEG")
                             {
-                                <tr>
-                                    <td colspan="2" class="mmm-exif-haed"><h3>@k.Key</h3></td>
-                                </tr>
+                        <tr>
+                            <td colspan="2" class="mmm-exif-haed"><h3>@k.Key</h3></td>
+                        </tr>
 
                                 foreach (KeyValuePair<string, string> v in k.Value)
                                 {
                                     if (v.Key == "GPS Latitude Ref" || v.Key == "GPS Latitude" || v.Key == "GPS Latitude Ref" || v.Key == "GPS Longitude Ref" || v.Key == "GPS Longitude" || v.Key == "Image Width" || v.Key == "Image Height")
                                     {
-                                        <tr class="mmm-exif-@k.Key">
-                                            <td style="min-width:100px;">@v.Key</td>
-                                            <td>@v.Value</td>
-                                        </tr>
+                        <tr class="mmm-exif-@k.Key">
+                            <td style="min-width:100px;">@v.Key</td>
+                            <td>@v.Value</td>
+                        </tr>
                                     }
                                     else
                                     {
-                                        <tr class="mmm-exif-@k.Key extra" style="display:none;">
-                                            <td style="min-width:100px;">@v.Key</td>
-                                            <td>@v.Value</td>
-                                        </tr>
+                        <tr class="mmm-exif-@k.Key extra" style="display:none;">
+                            <td style="min-width:100px;">@v.Key</td>
+                            <td>@v.Value</td>
+                        </tr>
                                     }
                                 }
                             }
                             else
                             {
-                                <tr>
-                                    <td colspan="2" class="mmm-exif-haed extra" style="display:none;"><h3>@k.Key</h3></td>
-                                </tr>
+                        <tr>
+                            <td colspan="2" class="mmm-exif-haed extra" style="display:none;"><h3>@k.Key</h3></td>
+                        </tr>
 
                                 foreach (KeyValuePair<string, string> v in k.Value)
                                 {
-                                    <tr class="mmm-exif-@k.Key extra" style="display:none;">
-                                        <td style="min-width:100px;">@v.Key</td>
-                                        <td>@v.Value</td>
-                                    </tr>
+                        <tr class="mmm-exif-@k.Key extra" style="display:none;">
+                            <td style="min-width:100px;">@v.Key</td>
+                            <td>@v.Value</td>
+                        </tr>
                                 }
                             }
 
@@ -128,11 +127,11 @@
             </td>
         </tr>
         @*<tr>
-            <td class="mmm-map">
-                <div id="map">
-                </div>
-            </td>
-        </tr>*@
+                <td class="mmm-map">
+                    <div id="map">
+                    </div>
+                </td>
+            </tr>*@
     </table>
 </div>
 <script>

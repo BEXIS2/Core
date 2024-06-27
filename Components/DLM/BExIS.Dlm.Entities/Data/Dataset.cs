@@ -6,11 +6,11 @@ using Vaiona.Entities.Common;
 
 /// <summary>
 ///
-/// </summary>        
+/// </summary>
 namespace BExIS.Dlm.Entities.Data
 {
     /// <summary>
-    /// 
+    ///
     /// </summary>
     public enum DatasetStatus
     {
@@ -20,7 +20,7 @@ namespace BExIS.Dlm.Entities.Data
     }
 
     /// <summary>
-    /// 
+    ///
     /// </summary>
     public enum DatasetStateInfo
     {
@@ -29,7 +29,7 @@ namespace BExIS.Dlm.Entities.Data
     }
 
     /// <summary>
-    /// The dataset points to many versions, but those versions do not have the effective complete tuples because of the design of the database. In order to have a complete version of 
+    /// The dataset points to many versions, but those versions do not have the effective complete tuples because of the design of the database. In order to have a complete version of
     /// the dataset, the DatasetManager.GetDatasetLatestVersion or GetDatasetVersion should be called.
     /// </summary>
     /// <remarks></remarks>
@@ -41,23 +41,24 @@ namespace BExIS.Dlm.Entities.Data
         ///
         /// </summary>
         /// <remarks></remarks>
-        /// <seealso cref=""/>        
+        /// <seealso cref=""/>
         public virtual DatasetStatus Status { get; set; }
 
         /// <summary>
         ///
         /// </summary>
         /// <remarks></remarks>
-        /// <seealso cref=""/>        
+        /// <seealso cref=""/>
         public virtual DateTime LastCheckIOTimestamp { get; set; } // the time of last check-in or checkout
 
         /// <summary>
         ///
         /// </summary>
         /// <remarks></remarks>
-        /// <seealso cref=""/>        
+        /// <seealso cref=""/>
         public virtual string CheckOutUser { get; set; }
-        #endregion
+
+        #endregion Attributes
 
         #region Associations
 
@@ -65,45 +66,45 @@ namespace BExIS.Dlm.Entities.Data
         ///
         /// </summary>
         /// <remarks></remarks>
-        /// <seealso cref=""/>        
+        /// <seealso cref=""/>
         public virtual DataStructure.DataStructure DataStructure { get; set; }
 
         /// <summary>
         ///
         /// </summary>
         /// <remarks></remarks>
-        /// <seealso cref=""/>        
+        /// <seealso cref=""/>
         public virtual MetadataStructure.MetadataStructure MetadataStructure { get; set; }
 
         /// <summary>
         ///
         /// </summary>
         /// <remarks></remarks>
-        /// <seealso cref=""/>        
+        /// <seealso cref=""/>
         public virtual ICollection<DatasetVersion> Versions { get; set; }
 
         /// <summary>
         ///
         /// </summary>
         /// <remarks></remarks>
-        /// <seealso cref=""/>        
+        /// <seealso cref=""/>
         public virtual ResearchPlan ResearchPlan { get; set; } // it can be null, but check how hibernate deals with nullables
 
         /// <summary>
         ///
         /// </summary>
         /// <remarks></remarks>
-        /// <seealso cref=""/>        
+        /// <seealso cref=""/>
         public virtual EntityTemplate EntityTemplate { get; set; } // it can be null, but check how hibernate deals with nullables
-
 
         /// <summary>
         ///
         /// </summary>
         /// <remarks></remarks>
-        /// <seealso cref=""/>        
+        /// <seealso cref=""/>
         public virtual ICollection<DatasetView> Views { get; set; }
-        #endregion
+
+        #endregion Associations
 
         #region Methods
 
@@ -112,11 +113,10 @@ namespace BExIS.Dlm.Entities.Data
         /// </summary>
         /// <remarks></remarks>
         /// <seealso cref=""/>
-        /// <param></param>       
+        /// <param></param>
         public Dataset()
             : this(new EntityTemplate(), new StructuredDataStructure())
         {
-
         }
 
         /// <summary>
@@ -138,15 +138,13 @@ namespace BExIS.Dlm.Entities.Data
 
             Versions = new List<DatasetVersion>();
             Status = DatasetStatus.CheckedIn;
-
-
         }
 
         //public override void Validate()
-        //{            
+        //{
         //    // check whether type of data structure is unstructured? if yes, at least one ContentDescriptor must be provided
         //}
 
-        #endregion
+        #endregion Methods
     }
 }

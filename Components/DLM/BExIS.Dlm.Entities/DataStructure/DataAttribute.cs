@@ -1,12 +1,12 @@
 ﻿/// <summary>
 ///
-/// </summary>        
+/// </summary>
 namespace BExIS.Dlm.Entities.DataStructure
 {
     /// <summary>
     ///
     /// </summary>
-    /// <remarks></remarks>        
+    /// <remarks></remarks>
     //public class DataAttribute : DataContainer
     //{
     //    #region Attributes
@@ -16,24 +16,24 @@ namespace BExIS.Dlm.Entities.DataStructure
     //    #region Associations
 
     //    /// <summary>
-    //    /// 
+    //    ///
     //    /// </summary>
     //    /// <remarks> StructuredDataStructure is the controller of this association </remarks>
-    //    /// <seealso cref=""/>        
+    //    /// <seealso cref=""/>
     //    public virtual ICollection<Variable> UsagesAsVariable { get; set; }
 
     //    /// <summary>
     //    ///
     //    /// </summary>
     //    /// <remarks></remarks>
-    //    /// <seealso cref=""/>        
+    //    /// <seealso cref=""/>
     //    public virtual ICollection<Parameter> UsagesAsParameter { get; set; }
 
     //    /// <summary>
     //    ///
     //    /// </summary>
     //    /// <remarks></remarks>
-    //    /// <seealso cref=""/>        
+    //    /// <seealso cref=""/>
     //    public virtual Classifier Classification { get; set; }
 
     //    #endregion
@@ -45,7 +45,7 @@ namespace BExIS.Dlm.Entities.DataStructure
     //    /// </summary>
     //    /// <remarks></remarks>
     //    /// <seealso cref=""/>
-    //    /// <param>NA</param>       
+    //    /// <param>NA</param>
     //    public DataAttribute(): base()
     //    {
     //        UsagesAsParameter = new List<Parameter>();

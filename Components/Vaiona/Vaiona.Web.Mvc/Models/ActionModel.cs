@@ -20,6 +20,5 @@ namespace Vaiona.Web.Mvc.Models
         {
             Parameters = new RouteValueDictionary();
         }
-
     }
 }

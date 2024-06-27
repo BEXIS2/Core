@@ -7,7 +7,7 @@ namespace Vaiona.MultiTenancy.Services
 {
     public class TenantRegistrar : ITenantRegistrar
     {
-        XmlTenantStore store = new XmlTenantStore(null); // think about the path provider
+        private XmlTenantStore store = new XmlTenantStore(null); // think about the path provider
         //public List<Tenant> GetAll()
         //{
         //    List<Tenant> tenants = store.List();

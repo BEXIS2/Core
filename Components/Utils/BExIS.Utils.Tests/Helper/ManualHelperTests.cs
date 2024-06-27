@@ -1,24 +1,19 @@
-﻿
-using BExIS.Utils.Helpers;
+﻿using BExIS.Utils.Helpers;
 using NUnit.Framework;
-
 
 namespace BExIS.Utils.Tests
 {
     [TestFixture()]
     public class ManualHelperTests
     {
-
         [OneTimeSetUp]
         public void OneTimeSetUp()
         {
-           
         }
 
         [OneTimeTearDown]
         public void OneTimeTearDown()
         {
-
         }
 
         [Test]
@@ -27,10 +22,9 @@ namespace BExIS.Utils.Tests
             //Arrange
             //Act
             string url = ManualHelper.GetUrl(string.Empty, "");
-           //Assert
+            //Assert
 
-           Assert.That(url,Is.Empty);
-
+            Assert.That(url, Is.Empty);
         }
 
         [Test]
@@ -42,7 +36,6 @@ namespace BExIS.Utils.Tests
             //Assert
 
             Assert.That(url, Is.Empty);
-
         }
 
         //https://github.com/BEXIS2/Documents/blob/2.15/Manuals/BAM/Manual.md
@@ -57,7 +50,6 @@ namespace BExIS.Utils.Tests
             //Assert
 
             Assert.AreEqual(expected, url);
-
         }
     }
 }

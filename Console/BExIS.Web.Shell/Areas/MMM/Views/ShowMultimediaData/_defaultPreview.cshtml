@@ -1,5 +1,5 @@
 ﻿@model string
-@{ 
+@{
     string path = @Url.Content("~/mmm/ShowMultimediaData/getFile/?path=" + Server.UrlEncode(Model));
 }
 <a href="@path">@Server.UrlDecode(Model).Substring(Server.UrlDecode(Model).LastIndexOf('\\')+1)</a>

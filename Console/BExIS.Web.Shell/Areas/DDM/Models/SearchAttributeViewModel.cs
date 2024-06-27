@@ -11,6 +11,7 @@ namespace BExIS.Modules.Ddm.UI.Models
     {
         [Editable(false)]
         public int id { get; set; }
+
         //names
         [Display(Name = "Display Name")]
         [Required(ErrorMessage = "Please enter a Display Name.")]
@@ -144,8 +145,5 @@ namespace BExIS.Modules.Ddm.UI.Models
 
             return sa;
         }
-
-
-
     }
 }

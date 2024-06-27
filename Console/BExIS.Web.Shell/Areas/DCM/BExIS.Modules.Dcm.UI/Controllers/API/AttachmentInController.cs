@@ -1,6 +1,16 @@
-﻿using System;
+﻿using BExIS.App.Bootstrap.Attributes;
+using BExIS.Dlm.Entities.Data;
+using BExIS.Dlm.Services.Data;
+using BExIS.IO;
+using BExIS.Security.Entities.Authorization;
+using BExIS.Security.Entities.Subjects;
+using BExIS.Security.Services.Authorization;
+using BExIS.Security.Services.Subjects;
+using BExIS.Utils.Route;
+using BExIS.Xml.Helpers;
+using System;
 using System.Collections.Generic;
-
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
@@ -8,24 +18,10 @@ using System.Net.Http.Headers;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using System.Web.Http;
-using System.Web.Http.Description;
-using System.IO;
-using Vaiona.Utils.Cfg;
 using System.Web;
-using System.Xml;
-using System.Text.RegularExpressions;
+using System.Web.Http;
 using Vaiona.Entities.Common;
-using BExIS.Xml.Helpers;
-using BExIS.App.Bootstrap.Attributes;
-using BExIS.Utils.Route;
-using BExIS.Security.Entities.Subjects;
-using BExIS.Dlm.Services.Data;
-using BExIS.Security.Services.Subjects;
-using BExIS.Security.Services.Authorization;
-using BExIS.Dlm.Entities.Data;
-using BExIS.Security.Entities.Authorization;
-using BExIS.IO;
+using Vaiona.Utils.Cfg;
 
 namespace BExIS.Modules.Dcm.UI.Controllers
 {
@@ -198,6 +194,5 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
             return storePath;
         }
-
     }
 }

@@ -33,6 +33,7 @@ using System.Text;
 using System.Web;
 using System.Web.Mvc;
 using System.Web.Routing;
+using System.Web.UI.WebControls;
 using System.Xml;
 using System.Xml.Linq;
 using Telerik.Web.Mvc;
@@ -44,12 +45,6 @@ using Vaiona.Web.Extensions;
 using Vaiona.Web.Mvc;
 using Vaiona.Web.Mvc.Models;
 using Vaiona.Web.Mvc.Modularity;
-using System.Text;
-using BExIS.Security.Entities.Objects;
-using BExIS.Security.Entities.Subjects;
-using BExIS.Dlm.Services.MetadataStructure;
-using System.Web.UI.WebControls;
-using System.Security.Cryptography;
 
 namespace BExIS.Modules.Ddm.UI.Controllers
 
@@ -57,7 +52,6 @@ namespace BExIS.Modules.Ddm.UI.Controllers
     public class DataController : BaseController
     {
         private XmlDatasetHelper xmlDatasetHelper = new XmlDatasetHelper();
-
 
         [BExISEntityAuthorize(typeof(Dataset), "datasetId", RightType.Grant)]
         public ActionResult DatasetPermissions(long datasetId)
@@ -180,7 +174,6 @@ namespace BExIS.Modules.Ddm.UI.Controllers
 
                     XmlDocument metadata = new XmlDocument();
 
-
                     // Retrieve data for active and hidden (marked as deleted) datasets
                     if (dm.IsDatasetCheckedIn(id) || dm.IsDatasetDeleted(id))
                     {
@@ -265,7 +258,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                     }
                     else
                     {
-                            ModelState.AddModelError(string.Empty, "Dataset is just in processing.");
+                        ModelState.AddModelError(string.Empty, "Dataset is just in processing.");
                     }
 
                     model = new ShowDataModel()
@@ -291,7 +284,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                         IsPublic = isPublic
                     };
 
-                   //set metadata in session
+                    //set metadata in session
                     Session["ShowDataMetadata"] = metadata;
                     ViewData["VersionSelect"] = getVersionsSelectList(id, dm);
                     ViewData["isValid"] = isValid;
@@ -723,13 +716,13 @@ namespace BExIS.Modules.Ddm.UI.Controllers
 
             try
             {
-                var dataset  = dm.GetDataset(datasetId);
+                var dataset = dm.GetDataset(datasetId);
                 Boolean latest = true;
+                DataTable table = null;
+                DatasetVersion dsv = null;
 
                 if (dataset.Status != DatasetStatus.CheckedOut)
                 {
-                    DataTable table = null;
-                    DatasetVersion dsv = null;
                     if (dataset.Status == DatasetStatus.CheckedIn) // checi if version is latest
                     {
                         dsv = dm.GetDatasetVersion(versionId);
@@ -747,6 +740,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
 
                         table = dm.GetLatestDatasetVersionTuples(datasetId, filter, orderBy, null, "", command.Page - 1, command.PageSize);
                         ViewData["gridTotal"] = dm.RowCount(datasetId, filter);
+                        model = new GridModel(table);
                     }
                     else
                     {
@@ -755,15 +749,15 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                             table = dm.GetDatasetVersionTuples(versionId, command.Page - 1, command.PageSize);
                             ViewData["gridTotal"] = dm.GetDatasetVersionEffectiveTuples(dsv).Count;
                         }
-
-                        model = new GridModel(table);
-                        model.Total = Convert.ToInt32(ViewData["gridTotal"]); // (int)Session["gridTotal"];
                     }
                 }
                 else
                 {
                     ModelState.AddModelError(String.Empty, "Dataset is just in processing.");
                 }
+
+                model = new GridModel(table);
+                model.Total = Convert.ToInt32(ViewData["gridTotal"]); // (int)Session["gridTotal"];
 
                 return View(model);
             }
@@ -1356,7 +1350,6 @@ namespace BExIS.Modules.Ddm.UI.Controllers
         {
             if (hasUserRights(id, RightType.Read))
             {
-
                 DatasetManager datasetManager = new DatasetManager();
                 string title = "";
                 try
@@ -1498,7 +1491,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                 using (var uow = this.GetUnitOfWork())
                 {
                     Dataset dataset = dm.GetDataset(datasetID);
-       
+
                     DataStructure dataStructure = null;
                     long id = (long)dataset.Id;
                     string DSlink = null;
@@ -1541,7 +1534,6 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                         );
 
                     return PartialView("_previewDatastructure", m);
-                    
                 }
             }
         }
@@ -1638,7 +1630,6 @@ namespace BExIS.Modules.Ddm.UI.Controllers
 
             using (EntityPermissionManager entityPermissionManager = new EntityPermissionManager())
             {
-
                 bool hasEditPermission = false;
 
                 if (GetUsernameOrDefault() != "DEFAULT")
@@ -1845,21 +1836,18 @@ namespace BExIS.Modules.Ddm.UI.Controllers
             return !string.IsNullOrWhiteSpace(userName) ? userName : "DEFAULT";
         }
 
-        private long getVersionId(long datasetId, int version ,string versionName, List<DatasetVersion> datasetVersions, DatasetStatus datasetStatus)
+        private long getVersionId(long datasetId, int version, string versionName, List<DatasetVersion> datasetVersions, DatasetStatus datasetStatus)
         {
             long versionId = 0;
             SettingsHelper helper = new SettingsHelper();
 
-
             using (DatasetManager dm = new DatasetManager())
             {
-
                 List<DatasetVersion> datasetVersionsAllowed = dm.GetDatasetVersionsAllowed(datasetId, true, false, datasetVersions, datasetStatus);
 
                 // User is not logged in
                 if (GetUsernameOrDefault() == "DEFAULT")
                 {
-
                     // No version or version name -> use latest allowed version
                     if (version == 0 && versionName.Length == 0)
                     {
@@ -1905,7 +1893,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                         }
                         else
                         {
-                            versionId = dm.GetDatasetLatestVersionId(datasetId, datasetStatus); 
+                            versionId = dm.GetDatasetLatestVersionId(datasetId, datasetStatus);
                         }
                     }
                     // Get specific version number
@@ -2088,7 +2076,6 @@ namespace BExIS.Modules.Ddm.UI.Controllers
 
             dataset_settings_list.Add("show_tabs_deactivated", "true");
             dataset_settings_list.Add("check_public_metadata", "false");
-
 
             var moduleSettings = ModuleManager.GetModuleSettings("Ddm");
 

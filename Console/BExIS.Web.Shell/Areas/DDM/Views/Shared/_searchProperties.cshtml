@@ -3,7 +3,7 @@
 
 <div id="searchProperties">
 @foreach (var item in Model)
-{ 
+{
 
 @*ListBox
 // UI_COMPONENT = List
@@ -33,8 +33,6 @@
       @Html.Partial("_radioButtonsView", item)
     }
 
-
-
 @* CheckBox
 // AGGREGATION_TYPE  = UNION
 // UI_COMPONENT = item
@@ -44,7 +42,6 @@
       @Html.Partial("_checkboxButtonsView", item)
     }
 
-
 @* RangeSlider
 // AGGREGATION_TYPE  = UNION
 // UI_COMPONENT = range
@@ -53,7 +50,7 @@
     {
       @Html.Partial("_sliderView", item)
     }
-    
+
 @* Slider
 // AGGREGATION_TYPE  = Distinct
 // UI_COMPONENT = range
@@ -63,5 +60,4 @@
       @Html.Partial("_sliderView", item)
     }
 }
-
-</div>   
+</div>

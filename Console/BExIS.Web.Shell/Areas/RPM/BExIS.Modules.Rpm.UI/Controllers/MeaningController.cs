@@ -5,13 +5,9 @@ using BExIS.Modules.Rpm.UI.Helpers;
 using BExIS.Modules.Rpm.UI.Models;
 using BExIS.UI.Helpers;
 using BExIS.UI.Models;
-using BExIS.Utils.Route;
-using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net.Http;
-using System.Web.Helpers;
 using System.Web.Mvc;
 
 namespace BExIS.Modules.Rpm.UI.Controllers
@@ -45,35 +41,31 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                 {
                     res.ForEach(m => resModel.Add(MeaningsHelper.ConvertTo(m)));
                 }
-                
+
                 return Json(resModel, JsonRequestBehavior.AllowGet);
             }
         }
-
 
         [BExISAuthorizeAttribute]
         [JsonNetFilter]
         [System.Web.Http.HttpPost]
         public JsonResult Create(MeaningModel data)
         {
-            try {
-
+            try
+            {
                 using (var _meaningManager = new MeaningManager())
                 {
                     Meaning m = MeaningsHelper.ConvertTo(data);
                     Meaning res = _meaningManager.addMeaning(m);
-                    
+
                     return Json(res);
                 }
-
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 throw new Exception("Meaning was not generated.", ex);
             }
         }
-
-
 
         [BExISAuthorizeAttribute]
         [JsonNetFilter]
@@ -88,7 +80,6 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                     Meaning res = _meaningManager.editMeaning(m);
                     return Json(res);
                 }
-
             }
             catch (Exception ex)
             {
@@ -103,13 +94,11 @@ namespace BExIS.Modules.Rpm.UI.Controllers
         {
             try
             {
-
                 using (var _meaningManager = new MeaningManager())
                 {
                     _meaningManager.deleteMeaning(id);
                     return Json(true);
                 }
-
             }
             catch (Exception ex)
             {
@@ -117,10 +106,9 @@ namespace BExIS.Modules.Rpm.UI.Controllers
             }
         }
 
-        #endregion
+        #endregion meanings
 
         #region External Links
-
 
         [BExISAuthorize]
         [JsonNetFilter]
@@ -143,7 +131,6 @@ namespace BExIS.Modules.Rpm.UI.Controllers
         {
             using (var _meaningManager = new MeaningManager())
             {
-
                 List<ExternalLink> res = _meaningManager.getExternalLinks();
                 List<ListItem> items = new List<ListItem>();
                 res.ForEach(l => items.Add(MeaningsHelper.ConvertToListItem(l)));
@@ -159,11 +146,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
             List<ListItem> list = helper.GetConstraints();
 
             return Json(list.OrderBy(l => l.Text), JsonRequestBehavior.AllowGet);
-
         }
-
-
-
 
         [BExISAuthorizeAttribute]
         [JsonNetFilter]
@@ -178,7 +161,6 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                     ExternalLink res = _meaningManager.addExternalLink(link);
                     return Json(res);
                 }
-
             }
             catch (Exception ex)
             {
@@ -199,15 +181,12 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                     ExternalLink res = _meaningManager.editExternalLink(link);
                     return Json(res);
                 }
-
             }
             catch (Exception ex)
             {
                 throw new Exception("External link was not generated.", ex);
             }
         }
-
-
 
         [BExISAuthorizeAttribute]
         [JsonNetFilter]
@@ -221,7 +200,6 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                     _meaningManager.deleteExternalLink(id);
                     return Json(true);
                 }
-
             }
             catch (Exception ex)
             {
@@ -229,9 +207,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
             }
         }
 
-
-
-        #endregion;
+        #endregion External Links
 
         #region category prefix
 
@@ -305,6 +281,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                 throw new Exception("External link was not generated.", ex);
             }
         }
-        #endregion
+
+        #endregion category prefix
     }
 }

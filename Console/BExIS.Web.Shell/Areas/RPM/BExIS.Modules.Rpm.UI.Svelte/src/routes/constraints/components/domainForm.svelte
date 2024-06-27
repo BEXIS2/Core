@@ -6,7 +6,13 @@
 	import * as apiCalls from '../services/apiCalls';
 	import { createEventDispatcher, onMount } from 'svelte';
 	import suite from './domainForm';
-	import { Drawer, FileButton, getDrawerStore, type DrawerSettings, type DrawerStore } from '@skeletonlabs/skeleton';
+	import {
+		Drawer,
+		FileButton,
+		getDrawerStore,
+		type DrawerSettings,
+		type DrawerStore
+	} from '@skeletonlabs/skeleton';
 	import Fa from 'svelte-fa';
 	import { faArrowUpFromBracket, faFileImport } from '@fortawesome/free-solid-svg-icons';
 	import papa from 'papaparse';
@@ -22,13 +28,15 @@
 	let drawerSettings: DrawerSettings;
 
 	const domainItemsTableStore = writable<string[]>([]);
-	
+
 	drawerStore = $drawerStore ? $drawerStore : getDrawerStore();
-	$drawerStore.meta = $drawerStore.meta ? $drawerStore.meta : { datasets: undefined, dataset: undefined, import: false};
-	
+	$drawerStore.meta = $drawerStore.meta
+		? $drawerStore.meta
+		: { datasets: undefined, dataset: undefined, import: false };
+
 	$: $drawerStore.meta.datasets = ds;
-	$: drawerSettings = {position: 'right', width: 'w-6/12', meta: $drawerStore.meta};
-	$: domainConstraint, $drawerStore.meta.dataset = undefined, $drawerStore.meta.import = false;
+	$: drawerSettings = { position: 'right', width: 'w-6/12', meta: $drawerStore.meta };
+	$: domainConstraint, ($drawerStore.meta.dataset = undefined), ($drawerStore.meta.import = false);
 	$: $drawerStore.meta.import, importDomainItems();
 	$: domainItemsTableStore.set(setDomainItems(domainConstraint.domain));
 	$: dispatch(String(disabled));
@@ -47,7 +55,7 @@
 		// otherwise the values are old
 		setTimeout(async () => {
 			// check changed field
-			res = suite(domainConstraint , e);
+			res = suite(domainConstraint, e);
 		}, 10);
 	}
 
@@ -55,10 +63,9 @@
 		ds = await apiCalls.GetStruturedDatasetsByUserPermission();
 		if (domainConstraint.id == 0) {
 			suite.reset();
-		}
-		else{
-			setTimeout(async () => {	
-				res = suite(domainConstraint, "");
+		} else {
+			setTimeout(async () => {
+				res = suite(domainConstraint, '');
 			}, 10);
 		}
 	});
@@ -67,8 +74,7 @@
 		let dis: string[] = [];
 		let lines = domain.split('\n');
 		lines.forEach(function (line) {
-			if(line != undefined && line != '' && dis.filter((di) => di === line).length == 0)	
-			{
+			if (line != undefined && line != '' && dis.filter((di) => di === line).length == 0) {
 				dis.push(line);
 			}
 		});
@@ -76,25 +82,33 @@
 		return dis;
 	}
 
-	async function importDomainItems()
-	{
-		if($drawerStore.meta.import && $drawerStore.meta.dataset && $drawerStore.meta.dataset.id > 0)
-		{
+	async function importDomainItems() {
+		if ($drawerStore.meta.import && $drawerStore.meta.dataset && $drawerStore.meta.dataset.id > 0) {
 			$drawerStore.meta.import = false;
 			let data: string[] = [];
-			let column = await apiCalls.GetData($drawerStore.meta.dataset.id, 0, $drawerStore.meta.dataset.varId);
+			let column = await apiCalls.GetData(
+				$drawerStore.meta.dataset.id,
+				0,
+				$drawerStore.meta.dataset.varId
+			);
 			let provider: string[] = await apiCalls.GetProvider();
-			
-			domainConstraint.provider = provider[0];
-			domainConstraint.selectionPredicate = { datasetId: $drawerStore.meta.dataset.id, datasetVersionId:  $drawerStore.meta.dataset.datasetVersionId, datasetVersionNumber: $drawerStore.meta.dataset.datasetVersionNumber, tagId: 0, variableId: $drawerStore.meta.dataset.varId, url:'' };
 
-			for(const [rowNr, row] of Object.entries(column)) 
-			{
-				let value: string[][] = (Object.entries(row as object) as string[][])
-				data.push(value[0][1]);
+			domainConstraint.provider = provider[0];
+			domainConstraint.selectionPredicate = {
+				datasetId: $drawerStore.meta.dataset.id,
+				datasetVersionId: $drawerStore.meta.dataset.datasetVersionId,
+				datasetVersionNumber: $drawerStore.meta.dataset.datasetVersionNumber,
+				tagId: 0,
+				variableId: $drawerStore.meta.dataset.varId,
+				url: ''
 			};
+
+			for (const [rowNr, row] of Object.entries(column)) {
+				let value: string[][] = Object.entries(row as object) as string[][];
+				data.push(value[0][1]);
+			}
 			domainConstraint.domain = joinRows(data);
-		} 
+		}
 	}
 
 	function fileParser(event: any) {
@@ -115,7 +129,6 @@
 	function joinRows(data: any): string {
 		return data.join('\n').trim().replaceAll('\t', '');
 	}
-
 </script>
 
 {#if domainConstraint}
@@ -123,9 +136,12 @@
 		<div class="py-1 text-right" title="Upload File">
 			<!-- svelte-ignore a11y-mouse-events-have-key-events -->
 			<!-- svelte-ignore a11y-no-static-element-interactions -->
-			<div class="inline-block" on:mouseover={() => {
-				helpStore.show('uploadCsv');
-			}}>
+			<div
+				class="inline-block"
+				on:mouseover={() => {
+					helpStore.show('uploadCsv');
+				}}
+			>
 				<!-- svelte-ignore a11y-mouse-events-have-key-events -->
 				<FileButton
 					id="uploadCsv"
@@ -133,10 +149,8 @@
 					button="btn variant-filled-secondary h-9 w-16 shadow-md"
 					name="uploadCsv"
 					on:change={fileParser}
-					><Fa
-						icon={faArrowUpFromBracket}
-					/>
-				</FileButton>				
+					><Fa icon={faArrowUpFromBracket} />
+				</FileButton>
 			</div>
 			<div class="inline-block">
 				<!-- svelte-ignore a11y-mouse-events-have-key-events -->
@@ -151,9 +165,7 @@
 						on:mouseover={() => {
 							helpStore.show('importDs');
 						}}
-						><Fa
-							icon={faFileImport}
-						/>
+						><Fa icon={faFileImport} />
 					</button>
 				{:else}
 					<button
@@ -166,9 +178,7 @@
 						on:mouseover={() => {
 							helpStore.show('importDs');
 						}}
-						><Fa
-							icon={faFileImport}
-						/>
+						><Fa icon={faFileImport} />
 					</button>
 				{/if}
 			</div>
@@ -176,9 +186,12 @@
 		<div class="pb-3 row-span-2">
 			<div id="itemstable" class="table-container h-96">
 				<!-- svelte-ignore a11y-mouse-events-have-key-events -->
-				<table class="table w-full table-compact bg-tertiary-500/30 max-h-80" on:mouseover={() => {
-					helpStore.show('domainList');
-				}}>
+				<table
+					class="table w-full table-compact bg-tertiary-500/30 max-h-80"
+					on:mouseover={() => {
+						helpStore.show('domainList');
+					}}
+				>
 					<thead>
 						<tr class="bg-primary-300">
 							<th class="!p-2">Domain List</th>
@@ -196,10 +209,12 @@
 		</div>
 		<!-- svelte-ignore a11y-mouse-events-have-key-events -->
 		<!-- svelte-ignore a11y-no-static-element-interactions -->
-		<div class="pb-3"
-		on:mouseover={() => {
-			helpStore.show('domain');
-		}}>
+		<div
+			class="pb-3"
+			on:mouseover={() => {
+				helpStore.show('domain');
+			}}
+		>
 			<CodeEditor
 				id="domain"
 				initialValue={domainConstraint.domain}
@@ -217,11 +232,11 @@
 					}
 				}}
 			/>
-		</div>		
+		</div>
 	</div>
 {/if}
 {#if ds.length > 0}
 	<Drawer>
-		<DatasetImport {drawerStore}/>
+		<DatasetImport {drawerStore} />
 	</Drawer>
 {/if}

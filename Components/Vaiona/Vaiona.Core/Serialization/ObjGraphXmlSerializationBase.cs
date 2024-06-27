@@ -8,7 +8,7 @@ using System.Xml.Serialization;
 namespace Vaiona.Core.Serialization
 {
     /// <summary>
-    /// In case of assembly name/ version change or type change, programmer can use this interface to implement proper 
+    /// In case of assembly name/ version change or type change, programmer can use this interface to implement proper
     /// type reolver.
     /// The main use case of this approach in to sopprt code change over time
     /// </summary>
@@ -20,9 +20,11 @@ namespace Vaiona.Core.Serialization
     public interface IObjectTransfromer
     {
         object ExportTo<S>(object source, string instanceName, string rootElementName = "Root", int version = 1, bool resetExportInfo = false);
+
         object ExportTo(Type sourceType, object source, string instanceName, string rootElementName = "Root", int version = 1, bool resetExportInfo = false);
 
         T ImportFrom<T>(object source, ITypeResolver typeResolver = null, int version = 1, bool resetImportInfo = false);
+
         object ImportFrom(Type returnType, object source, ITypeResolver typeResolver = null, int version = 1, bool resetImportInfo = false);
     }
 
@@ -33,6 +35,7 @@ namespace Vaiona.Core.Serialization
         /// It is used for de/serialization. ANy other applicatio/logic thta accesses the raw XML should handle this case.
         /// </summary>
         public static readonly string NULL_VALUE = "_null_null";
+
         protected static Dictionary<Type, IDictionary<string, MemberInfo>> memberInfoCache = new Dictionary<Type, IDictionary<string, MemberInfo>>();
 
         protected XmlDocument doc = new XmlDocument();

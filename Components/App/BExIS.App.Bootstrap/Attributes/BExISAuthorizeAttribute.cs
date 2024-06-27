@@ -1,20 +1,13 @@
-﻿using BExIS.App.Bootstrap.Helpers;
+﻿using BExIS.App.Bootstrap.Extensions;
+using BExIS.App.Bootstrap.Helpers;
 using BExIS.Security.Entities.Subjects;
 using BExIS.Security.Services.Authorization;
 using BExIS.Security.Services.Objects;
 using BExIS.Security.Services.Subjects;
-using Newtonsoft.Json;
 using System;
 using System.Linq;
-using System.Net.Http;
 using System.Net;
-using System.Runtime.Remoting.Contexts;
-using System.Security.Principal;
 using System.Web.Mvc;
-using System.Web.Routing;
-using System.Web.Http.Results;
-using System.Threading.Tasks;
-using BExIS.App.Bootstrap.Extensions;
 
 namespace BExIS.App.Bootstrap.Attributes
 {

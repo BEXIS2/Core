@@ -1,0 +1,366 @@
+﻿<Metadata id="1">
+	<Basic type="MetadataPackageUsage" name="Basic" id="1">
+		<BasicType type="MetadataPackage" name="BasicType" roleId="1" id="1" number="1">
+			<DatasetGUID type="MetadataAttributeUsage" name="DatasetGUID" id="1">
+				<DatasetGUIDType type="MetadataAttribute" name="DatasetGUIDType" roleId="1" id="1" number="1">123456</DatasetGUIDType>
+			</DatasetGUID>
+		</BasicType>
+	</Basic>
+	<TechnicalContacts type="MetadataPackageUsage" name="TechnicalContacts" id="2">
+		<TechnicalContactsType type="MetadataPackage" name="TechnicalContactsType" roleId="2" id="2" number="1">
+			<TechnicalContact type="MetadataAttributeUsage" name="TechnicalContact" id="2">
+				<MicroAgentP type="MetadataAttribute" name="MicroAgentP" roleId="2" id="6" number="1" partyid="1">
+					<Name type="MetadataAttributeUsage" name="Name" id="1">
+						<NameType type="MetadataAttribute" name="NameType" roleId="1" id="2" number="1">David Schöne</NameType>
+					</Name>
+					<Email type="MetadataAttributeUsage" name="Email" id="2">
+						<EmailType type="MetadataAttribute" name="EmailType" roleId="2" id="3" number="1" />
+					</Email>
+					<Phone type="MetadataAttributeUsage" name="Phone" id="3">
+						<PhoneType type="MetadataAttribute" name="PhoneType" roleId="3" id="4" number="1">01608037788</PhoneType>
+					</Phone>
+					<Address type="MetadataAttributeUsage" name="Address" id="4">
+						<AddressType type="MetadataAttribute" name="AddressType" roleId="4" id="5" number="1">Von der Gabelentz Straße 9 erfurt 99089 Deutschland</AddressType>
+					</Address>
+				</MicroAgentP>
+			</TechnicalContact>
+		</TechnicalContactsType>
+	</TechnicalContacts>
+	<ContentContacts type="MetadataPackageUsage" name="ContentContacts" id="3">
+		<ContentContactsType type="MetadataPackage" name="ContentContactsType" roleId="3" id="3" number="1">
+			<ContentContact type="MetadataAttributeUsage" name="ContentContact" id="3">
+				<MicroAgentP type="MetadataAttribute" name="MicroAgentP" roleId="3" id="6" number="1" partyid="1">
+					<Name type="MetadataAttributeUsage" name="Name" id="1">
+						<NameType type="MetadataAttribute" name="NameType" roleId="1" id="2" number="1">David Schöne</NameType>
+					</Name>
+					<Email type="MetadataAttributeUsage" name="Email" id="2">
+						<EmailType type="MetadataAttribute" name="EmailType" roleId="2" id="3" number="1" />
+					</Email>
+					<Phone type="MetadataAttributeUsage" name="Phone" id="3">
+						<PhoneType type="MetadataAttribute" name="PhoneType" roleId="3" id="4" number="1">01608037788</PhoneType>
+					</Phone>
+					<Address type="MetadataAttributeUsage" name="Address" id="4">
+						<AddressType type="MetadataAttribute" name="AddressType" roleId="4" id="5" number="1">Von der Gabelentz Straße 9 erfurt 99089 Deutschland</AddressType>
+					</Address>
+				</MicroAgentP>
+			</ContentContact>
+		</ContentContactsType>
+	</ContentContacts>
+	<OtherProviders type="MetadataPackageUsage" name="OtherProviders" id="4">
+		<OtherProvidersType type="MetadataPackage" name="OtherProvidersType" roleId="4" id="4" number="1">
+			<OtherProvider type="MetadataAttributeUsage" name="OtherProvider" id="4">
+				<OtherProviderType type="MetadataAttribute" name="OtherProviderType" roleId="4" id="7" number="1" />
+			</OtherProvider>
+		</OtherProvidersType>
+	</OtherProviders>
+	<Metadata type="MetadataPackageUsage" name="Metadata" id="5">
+		<MetadataType type="MetadataPackage" name="MetadataType" roleId="5" id="5" number="1">
+			<Description type="MetadataAttributeUsage" name="Description" id="5">
+				<DescriptionType type="MetadataAttribute" name="DescriptionType" roleId="5" id="14" number="1">
+					<Representation type="MetadataAttributeUsage" name="Representation" id="9">
+						<MetadataDescriptionRepr type="MetadataAttribute" name="MetadataDescriptionRepr" roleId="9" id="12" number="1" language="">
+							<Title type="MetadataAttributeUsage" name="Title" id="5">
+								<TitleType type="MetadataAttribute" name="TitleType" roleId="5" id="8" number="1">Test</TitleType>
+							</Title>
+							<Details type="MetadataAttributeUsage" name="Details" id="6">
+								<DetailsType type="MetadataAttribute" name="DetailsType" roleId="6" id="9" number="1" />
+							</Details>
+							<Coverage type="MetadataAttributeUsage" name="Coverage" id="7">
+								<CoverageType type="MetadataAttribute" name="CoverageType" roleId="7" id="10" number="1" />
+							</Coverage>
+							<URI type="MetadataAttributeUsage" name="URI" id="8">
+								<URIType type="MetadataAttribute" name="URIType" roleId="8" id="11" number="1" />
+							</URI>
+						</MetadataDescriptionRepr>
+					</Representation>
+				</DescriptionType>
+			</Description>
+			<IconURI type="MetadataAttributeUsage" name="IconURI" id="6">
+				<IconURIType type="MetadataAttribute" name="IconURIType" roleId="6" id="15" number="1" />
+			</IconURI>
+			<Scope type="MetadataAttributeUsage" name="Scope" id="7">
+				<ScopeType type="MetadataAttribute" name="ScopeType" roleId="7" id="20" number="1">
+					<GeoecologicalTerms type="MetadataAttributeUsage" name="GeoecologicalTerms" id="12">
+						<GeoecologicalTermsType type="MetadataAttribute" name="GeoecologicalTermsType" roleId="12" id="17" number="1">
+							<GeoEcologicalTerm type="MetadataAttributeUsage" name="GeoEcologicalTerm" id="10">
+								<GeoEcologicalTermType type="MetadataAttribute" name="GeoEcologicalTermType" roleId="10" id="16" number="1" language="" />
+							</GeoEcologicalTerm>
+						</GeoecologicalTermsType>
+					</GeoecologicalTerms>
+					<TaxonomicTerms type="MetadataAttributeUsage" name="TaxonomicTerms" id="13">
+						<TaxonomicTermsType type="MetadataAttribute" name="TaxonomicTermsType" roleId="13" id="19" number="1">
+							<TaxonomicTerm type="MetadataAttributeUsage" name="TaxonomicTerm" id="11">
+								<TaxonomicTermType type="MetadataAttribute" name="TaxonomicTermType" roleId="11" id="18" number="1" language="" />
+							</TaxonomicTerm>
+						</TaxonomicTermsType>
+					</TaxonomicTerms>
+				</ScopeType>
+			</Scope>
+			<Version type="MetadataAttributeUsage" name="Version" id="8">
+				<VersionType type="MetadataAttribute" name="VersionType" roleId="8" id="25" number="1">
+					<Major type="MetadataAttributeUsage" name="Major" id="14">
+						<MajorType type="MetadataAttribute" name="MajorType" roleId="14" id="21" number="1" />
+					</Major>
+					<Minor type="MetadataAttributeUsage" name="Minor" id="15">
+						<MinorType type="MetadataAttribute" name="MinorType" roleId="15" id="22" number="1" />
+					</Minor>
+					<Modifier type="MetadataAttributeUsage" name="Modifier" id="16">
+						<ModifierType type="MetadataAttribute" name="ModifierType" roleId="16" id="23" number="1" />
+					</Modifier>
+					<DateIssued type="MetadataAttributeUsage" name="DateIssued" id="17">
+						<DateIssuedType type="MetadataAttribute" name="DateIssuedType" roleId="17" id="24" number="1" />
+					</DateIssued>
+				</VersionType>
+			</Version>
+			<RevisionData type="MetadataAttributeUsage" name="RevisionData" id="9">
+				<RevisionData type="MetadataAttribute" name="RevisionData" roleId="9" id="30" number="1">
+					<Creators type="MetadataAttributeUsage" name="Creators" id="18">
+						<CreatorsType type="MetadataAttribute" name="CreatorsType" roleId="18" id="26" number="1" />
+					</Creators>
+					<Contributors type="MetadataAttributeUsage" name="Contributors" id="19">
+						<ContributorsType type="MetadataAttribute" name="ContributorsType" roleId="19" id="27" number="1" />
+					</Contributors>
+					<DateCreated type="MetadataAttributeUsage" name="DateCreated" id="20">
+						<DateCreatedType type="MetadataAttribute" name="DateCreatedType" roleId="20" id="28" number="1" />
+					</DateCreated>
+					<DateModified type="MetadataAttributeUsage" name="DateModified" id="21">
+						<DateModifiedType type="MetadataAttribute" name="DateModifiedType" roleId="21" id="29" number="1">2022-07-06</DateModifiedType>
+					</DateModified>
+				</RevisionData>
+			</RevisionData>
+			<Owners type="MetadataAttributeUsage" name="Owners" id="10">
+				<OwnersType type="MetadataAttribute" name="OwnersType" roleId="10" id="62" number="1">
+					<Owner type="MetadataAttributeUsage" name="Owner" id="52">
+						<Contact type="MetadataAttribute" name="Contact" roleId="52" id="61" number="1">
+							<Organisation type="MetadataAttributeUsage" name="Organisation" id="44">
+								<Organisation type="MetadataAttribute" name="Organisation" roleId="44" id="37" number="1">
+									<Name type="MetadataAttributeUsage" name="Name" id="26">
+										<Label type="MetadataAttribute" name="Label" roleId="26" id="34" number="1">
+											<Representation type="MetadataAttributeUsage" name="Representation" id="24">
+												<RepresentationType type="MetadataAttribute" name="RepresentationType" roleId="24" id="33" number="1">
+													<Text type="MetadataAttributeUsage" name="Text" id="22">
+														<TextType type="MetadataAttribute" name="TextType" roleId="22" id="31" number="1" />
+													</Text>
+													<Abbreviation type="MetadataAttributeUsage" name="Abbreviation" id="23">
+														<AbbreviationType type="MetadataAttribute" name="AbbreviationType" roleId="23" id="32" number="1" />
+													</Abbreviation>
+												</RepresentationType>
+											</Representation>
+										</Label>
+									</Name>
+									<OrgUnits type="MetadataAttributeUsage" name="OrgUnits" id="27">
+										<OrgUnitsType type="MetadataAttribute" name="OrgUnitsType" roleId="27" id="36" number="1">
+											<OrgUnit type="MetadataAttributeUsage" name="OrgUnit" id="25">
+												<OrgUnitType type="MetadataAttribute" name="OrgUnitType" roleId="25" id="35" number="1" language="" />
+											</OrgUnit>
+										</OrgUnitsType>
+									</OrgUnits>
+								</Organisation>
+							</Organisation>
+							<Person type="MetadataAttributeUsage" name="Person" id="45">
+								<PersonName type="MetadataAttribute" name="PersonName" roleId="45" id="46" number="1">
+									<FullName type="MetadataAttributeUsage" name="FullName" id="33">
+										<FullNameType type="MetadataAttribute" name="FullNameType" roleId="33" id="38" number="1" />
+									</FullName>
+									<SortingName type="MetadataAttributeUsage" name="SortingName" id="34">
+										<SortingNameType type="MetadataAttribute" name="SortingNameType" roleId="34" id="39" number="1" />
+									</SortingName>
+									<AtomisedName type="MetadataAttributeUsage" name="AtomisedName" id="35">
+										<AtomisedNameType type="MetadataAttribute" name="AtomisedNameType" roleId="35" id="45" number="1">
+											<InheritedName type="MetadataAttributeUsage" name="InheritedName" id="28">
+												<InheritedNameType type="MetadataAttribute" name="InheritedNameType" roleId="28" id="40" number="1" />
+											</InheritedName>
+											<Prefix type="MetadataAttributeUsage" name="Prefix" id="29">
+												<PrefixType type="MetadataAttribute" name="PrefixType" roleId="29" id="41" number="1" />
+											</Prefix>
+											<Suffix type="MetadataAttributeUsage" name="Suffix" id="30">
+												<SuffixType type="MetadataAttribute" name="SuffixType" roleId="30" id="42" number="1" />
+											</Suffix>
+											<GivenNames type="MetadataAttributeUsage" name="GivenNames" id="31">
+												<GivenNamesType type="MetadataAttribute" name="GivenNamesType" roleId="31" id="43" number="1" />
+											</GivenNames>
+											<PreferredName type="MetadataAttributeUsage" name="PreferredName" id="32">
+												<PreferredNameType type="MetadataAttribute" name="PreferredNameType" roleId="32" id="44" number="1" />
+											</PreferredName>
+										</AtomisedNameType>
+									</AtomisedName>
+								</PersonName>
+							</Person>
+							<Roles type="MetadataAttributeUsage" name="Roles" id="46">
+								<RolesType type="MetadataAttribute" name="RolesType" roleId="46" id="48" number="1">
+									<Role type="MetadataAttributeUsage" name="Role" id="36">
+										<RoleType type="MetadataAttribute" name="RoleType" roleId="36" id="47" number="1" language="" />
+									</Role>
+								</RolesType>
+							</Roles>
+							<Addresses type="MetadataAttributeUsage" name="Addresses" id="47">
+								<AddressesType type="MetadataAttribute" name="AddressesType" roleId="47" id="49" number="1">
+									<Address type="MetadataAttributeUsage" name="Address" id="37">
+										<AddressType type="MetadataAttribute" name="AddressType" roleId="37" id="5" number="1" />
+									</Address>
+								</AddressesType>
+							</Addresses>
+							<TelephoneNumbers type="MetadataAttributeUsage" name="TelephoneNumbers" id="48">
+								<TelephoneNumbersType type="MetadataAttribute" name="TelephoneNumbersType" roleId="48" id="55" number="1">
+									<TelephoneNumber type="MetadataAttributeUsage" name="TelephoneNumber" id="41">
+										<TelephoneNumber type="MetadataAttribute" name="TelephoneNumber" roleId="41" id="53" number="1" preferred="false">
+											<Number type="MetadataAttributeUsage" name="Number" id="38">
+												<NumberType type="MetadataAttribute" name="NumberType" roleId="38" id="50" number="1" />
+											</Number>
+											<Device type="MetadataAttributeUsage" name="Device" id="39">
+												<DeviceType type="MetadataAttribute" name="DeviceType" roleId="39" id="51" number="1" />
+											</Device>
+											<UsageNotes type="MetadataAttributeUsage" name="UsageNotes" id="40">
+												<UsageNotesType type="MetadataAttribute" name="UsageNotesType" roleId="40" id="52" number="1" language="" />
+											</UsageNotes>
+										</TelephoneNumber>
+									</TelephoneNumber>
+								</TelephoneNumbersType>
+							</TelephoneNumbers>
+							<EmailAddresses type="MetadataAttributeUsage" name="EmailAddresses" id="49">
+								<EmailAddressesType type="MetadataAttribute" name="EmailAddressesType" roleId="49" id="57" number="1">
+									<EmailAddress type="MetadataAttributeUsage" name="EmailAddress" id="42">
+										<EmailAddressType type="MetadataAttribute" name="EmailAddressType" roleId="42" id="56" number="1" preferred="" />
+									</EmailAddress>
+								</EmailAddressesType>
+							</EmailAddresses>
+							<URIs type="MetadataAttributeUsage" name="URIs" id="50">
+								<URIsType type="MetadataAttribute" name="URIsType" roleId="50" id="59" number="1">
+									<URL type="MetadataAttributeUsage" name="URL" id="43">
+										<URLType type="MetadataAttribute" name="URLType" roleId="43" id="58" number="1" preferred="" />
+									</URL>
+								</URIsType>
+							</URIs>
+							<LogoURI type="MetadataAttributeUsage" name="LogoURI" id="51">
+								<LogoURIType type="MetadataAttribute" name="LogoURIType" roleId="51" id="60" number="1" />
+							</LogoURI>
+						</Contact>
+					</Owner>
+				</OwnersType>
+			</Owners>
+			<IPRStatements type="MetadataAttributeUsage" name="IPRStatements" id="11">
+				<IPRStatements type="MetadataAttribute" name="IPRStatements" roleId="11" id="71" number="1">
+					<IPRDeclarations type="MetadataAttributeUsage" name="IPRDeclarations" id="63">
+						<IPRDeclarationsType type="MetadataAttribute" name="IPRDeclarationsType" roleId="63" id="64" number="1">
+							<IPRDeclaration type="MetadataAttributeUsage" name="IPRDeclaration" id="56">
+								<Statement type="MetadataAttribute" name="Statement" roleId="56" id="63" number="1" language="">
+									<Text type="MetadataAttributeUsage" name="Text" id="53">
+										<TextType type="MetadataAttribute" name="TextType" roleId="53" id="31" number="1" />
+									</Text>
+									<Details type="MetadataAttributeUsage" name="Details" id="54">
+										<DetailsType type="MetadataAttribute" name="DetailsType" roleId="54" id="9" number="1" />
+									</Details>
+									<URI type="MetadataAttributeUsage" name="URI" id="55">
+										<URIType type="MetadataAttribute" name="URIType" roleId="55" id="11" number="1" />
+									</URI>
+								</Statement>
+							</IPRDeclaration>
+						</IPRDeclarationsType>
+					</IPRDeclarations>
+					<Copyrights type="MetadataAttributeUsage" name="Copyrights" id="64">
+						<CopyrightsType type="MetadataAttribute" name="CopyrightsType" roleId="64" id="65" number="1">
+							<Copyright type="MetadataAttributeUsage" name="Copyright" id="57">
+								<Statement type="MetadataAttribute" name="Statement" roleId="57" id="63" number="1" language="">
+									<Text type="MetadataAttributeUsage" name="Text" id="53">
+										<TextType type="MetadataAttribute" name="TextType" roleId="53" id="31" number="1" />
+									</Text>
+									<Details type="MetadataAttributeUsage" name="Details" id="54">
+										<DetailsType type="MetadataAttribute" name="DetailsType" roleId="54" id="9" number="1" />
+									</Details>
+									<URI type="MetadataAttributeUsage" name="URI" id="55">
+										<URIType type="MetadataAttribute" name="URIType" roleId="55" id="11" number="1" />
+									</URI>
+								</Statement>
+							</Copyright>
+						</CopyrightsType>
+					</Copyrights>
+					<Licenses type="MetadataAttributeUsage" name="Licenses" id="65">
+						<LicensesType type="MetadataAttribute" name="LicensesType" roleId="65" id="66" number="1">
+							<License type="MetadataAttributeUsage" name="License" id="58">
+								<Statement type="MetadataAttribute" name="Statement" roleId="58" id="63" number="1" language="">
+									<Text type="MetadataAttributeUsage" name="Text" id="53">
+										<TextType type="MetadataAttribute" name="TextType" roleId="53" id="31" number="1" />
+									</Text>
+									<Details type="MetadataAttributeUsage" name="Details" id="54">
+										<DetailsType type="MetadataAttribute" name="DetailsType" roleId="54" id="9" number="1" />
+									</Details>
+									<URI type="MetadataAttributeUsage" name="URI" id="55">
+										<URIType type="MetadataAttribute" name="URIType" roleId="55" id="11" number="1" />
+									</URI>
+								</Statement>
+							</License>
+						</LicensesType>
+					</Licenses>
+					<TermsOfUseStatements type="MetadataAttributeUsage" name="TermsOfUseStatements" id="66">
+						<TermsOfUseStatementsType type="MetadataAttribute" name="TermsOfUseStatementsType" roleId="66" id="67" number="1">
+							<TermsOfUse type="MetadataAttributeUsage" name="TermsOfUse" id="59">
+								<Statement type="MetadataAttribute" name="Statement" roleId="59" id="63" number="1" language="">
+									<Text type="MetadataAttributeUsage" name="Text" id="53">
+										<TextType type="MetadataAttribute" name="TextType" roleId="53" id="31" number="1" />
+									</Text>
+									<Details type="MetadataAttributeUsage" name="Details" id="54">
+										<DetailsType type="MetadataAttribute" name="DetailsType" roleId="54" id="9" number="1" />
+									</Details>
+									<URI type="MetadataAttributeUsage" name="URI" id="55">
+										<URIType type="MetadataAttribute" name="URIType" roleId="55" id="11" number="1" />
+									</URI>
+								</Statement>
+							</TermsOfUse>
+						</TermsOfUseStatementsType>
+					</TermsOfUseStatements>
+					<Disclaimers type="MetadataAttributeUsage" name="Disclaimers" id="67">
+						<DisclaimersType type="MetadataAttribute" name="DisclaimersType" roleId="67" id="68" number="1">
+							<Disclaimer type="MetadataAttributeUsage" name="Disclaimer" id="60">
+								<Statement type="MetadataAttribute" name="Statement" roleId="60" id="63" number="1" language="">
+									<Text type="MetadataAttributeUsage" name="Text" id="53">
+										<TextType type="MetadataAttribute" name="TextType" roleId="53" id="31" number="1" />
+									</Text>
+									<Details type="MetadataAttributeUsage" name="Details" id="54">
+										<DetailsType type="MetadataAttribute" name="DetailsType" roleId="54" id="9" number="1" />
+									</Details>
+									<URI type="MetadataAttributeUsage" name="URI" id="55">
+										<URIType type="MetadataAttribute" name="URIType" roleId="55" id="11" number="1" />
+									</URI>
+								</Statement>
+							</Disclaimer>
+						</DisclaimersType>
+					</Disclaimers>
+					<Acknowledgements type="MetadataAttributeUsage" name="Acknowledgements" id="68">
+						<AcknowledgementsType type="MetadataAttribute" name="AcknowledgementsType" roleId="68" id="69" number="1">
+							<Acknowledgement type="MetadataAttributeUsage" name="Acknowledgement" id="61">
+								<Statement type="MetadataAttribute" name="Statement" roleId="61" id="63" number="1" language="">
+									<Text type="MetadataAttributeUsage" name="Text" id="53">
+										<TextType type="MetadataAttribute" name="TextType" roleId="53" id="31" number="1" />
+									</Text>
+									<Details type="MetadataAttributeUsage" name="Details" id="54">
+										<DetailsType type="MetadataAttribute" name="DetailsType" roleId="54" id="9" number="1" />
+									</Details>
+									<URI type="MetadataAttributeUsage" name="URI" id="55">
+										<URIType type="MetadataAttribute" name="URIType" roleId="55" id="11" number="1" />
+									</URI>
+								</Statement>
+							</Acknowledgement>
+						</AcknowledgementsType>
+					</Acknowledgements>
+					<Citations type="MetadataAttributeUsage" name="Citations" id="69">
+						<CitationsType type="MetadataAttribute" name="CitationsType" roleId="69" id="70" number="1">
+							<Citation type="MetadataAttributeUsage" name="Citation" id="62">
+								<Statement type="MetadataAttribute" name="Statement" roleId="62" id="63" number="1" language="">
+									<Text type="MetadataAttributeUsage" name="Text" id="53">
+										<TextType type="MetadataAttribute" name="TextType" roleId="53" id="31" number="1" />
+									</Text>
+									<Details type="MetadataAttributeUsage" name="Details" id="54">
+										<DetailsType type="MetadataAttribute" name="DetailsType" roleId="54" id="9" number="1" />
+									</Details>
+									<URI type="MetadataAttributeUsage" name="URI" id="55">
+										<URIType type="MetadataAttribute" name="URIType" roleId="55" id="11" number="1" />
+									</URI>
+								</Statement>
+							</Citation>
+						</CitationsType>
+					</Citations>
+				</IPRStatements>
+			</IPRStatements>
+		</MetadataType>
+	</Metadata>
+</Metadata>

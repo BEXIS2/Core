@@ -1,20 +1,19 @@
-﻿
-/// <summary>
+﻿/// <summary>
 ///
-/// </summary>        
+/// </summary>
 namespace BExIS.Dlm.Entities.Data
 {
     /// <summary>
     ///
     /// </summary>
-    /// <remarks></remarks>        
+    /// <remarks></remarks>
     public class DataTupleVersion : AbstractTuple //DataTuple
     {
         /// <summary>
         ///
         /// </summary>
         /// <remarks></remarks>
-        /// <seealso cref=""/>        
+        /// <seealso cref=""/>
         public override DataTupleType TupleType
         {
             get { return DataTupleType.History; }
@@ -24,7 +23,7 @@ namespace BExIS.Dlm.Entities.Data
         ///
         /// </summary>
         /// <remarks></remarks>
-        /// <seealso cref=""/>        
+        /// <seealso cref=""/>
         public override long Index
         {
             get { return this.OriginalTuple.Id; }
@@ -34,14 +33,14 @@ namespace BExIS.Dlm.Entities.Data
         ///
         /// </summary>
         /// <remarks></remarks>
-        /// <seealso cref=""/>        
+        /// <seealso cref=""/>
         public virtual DatasetVersion ActingDatasetVersion { get; set; }
 
         /// <summary>
         ///
         /// </summary>
         /// <remarks></remarks>
-        /// <seealso cref=""/>        
+        /// <seealso cref=""/>
         public virtual DataTuple OriginalTuple { get; set; }
 
         //public virtual ICollection<DataTupleVersion> History { get { throw new Exception("DataTuple Version has no history, use DataTuple entity instead");} }
@@ -51,7 +50,7 @@ namespace BExIS.Dlm.Entities.Data
         //public virtual TupleAction TupleAction { get; set; }
 
         //public virtual XmlDocument XmlVariableValues { get; set; }
-        //public virtual XmlDocument XmlAmendments { get; set; } 
+        //public virtual XmlDocument XmlAmendments { get; set; }
 
         ///// <summary>
         ///// to make it easy to find latest version, especially when someone wants to navigate from the tuple to the version(s).

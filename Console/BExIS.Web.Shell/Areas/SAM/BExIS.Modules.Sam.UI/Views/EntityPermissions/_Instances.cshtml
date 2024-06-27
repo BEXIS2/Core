@@ -23,7 +23,6 @@
     }
 </script>
 
-
     @(Html.Telerik().Grid<EntityInstanceGridRowModel>()
         .Name("grid_instances")
       .DataKeys(keys =>
@@ -48,7 +47,7 @@
                 .Ajax()
                 .OperationMode(GridOperationMode.Client)
                 .Select("Instances_Select", "EntityPermissions", new { EntityId = Model })
-                
+
         )
         .ClientEvents(events =>
         {

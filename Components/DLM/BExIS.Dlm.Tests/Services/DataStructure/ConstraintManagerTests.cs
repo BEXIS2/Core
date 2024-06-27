@@ -2,14 +2,9 @@
 using BExIS.Dlm.Entities.DataStructure;
 using BExIS.Dlm.Services.DataStructure;
 using BExIS.Utils.Config;
-using FluentAssertions;
-using NHibernate.Mapping;
 using NUnit.Framework;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text.RegularExpressions;
-using Vaiona.Utils.Cfg;
 
 namespace BExIS.Dlm.Tests.Services.DataStructure
 {

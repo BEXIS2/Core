@@ -11,13 +11,13 @@ namespace Vaiona.Logging.Aspects
     [LinesOfCodeAvoided(1)]
     public class RecordCallAttribute : MethodInterceptionAspect
     {
-        public sealed override void OnInvoke(MethodInterceptionArgs args)
+        public override sealed void OnInvoke(MethodInterceptionArgs args)
 
         {
             if (!AppConfiguration.IsLoggingEnable || !AppConfiguration.IsCallLoggingEnable)
                 return;
             base.OnInvoke(args);
-            /// if invocation of the original method encounters any exception, 
+            /// if invocation of the original method encounters any exception,
             /// the remaining code will not execute, hence no call is recorded.
             /// if needed the method should be tagged with an ExceptionLogAttribute, too.
 
@@ -42,7 +42,6 @@ namespace Vaiona.Logging.Aspects
 #if DEBUG
             Debug.WriteLine(string.Format("Trace is called on {0}.{1} at {2}", mLog.ClassName, mLog.MethodName, mLog.UTCDate));
 #endif
-
         }
     }
 }

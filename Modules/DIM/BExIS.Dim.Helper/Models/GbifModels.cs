@@ -1,8 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Xml.Serialization;
 
 namespace BExIS.Dim.Helpers.Models
@@ -35,7 +32,6 @@ namespace BExIS.Dim.Helpers.Models
             Metadata = String.Empty;
             Core = new Core();
         }
-
     }
 
     public class Core
@@ -78,7 +74,6 @@ namespace BExIS.Dim.Helpers.Models
             files = new List<string>();
             Id = new Id();
             fields = new List<Field>();
-
         }
     }
 
@@ -97,7 +92,7 @@ namespace BExIS.Dim.Helpers.Models
         public int Index { get; set; }
     }
 
-    #endregion
+    #endregion xml
 
     #region json
 
@@ -108,5 +103,5 @@ namespace BExIS.Dim.Helpers.Models
         public List<Field> Field { get; set; }
     }
 
-    #endregion
+    #endregion json
 }

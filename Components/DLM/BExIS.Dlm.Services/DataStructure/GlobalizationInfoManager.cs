@@ -11,10 +11,6 @@ namespace BExIS.Dlm.Services.DataStructure
         {
         }
 
-        #region Data Readers
-
-        #endregion
-
         #region GlobalizationInfo
 
         public GlobalizationInfo Create(string name, string description, string displayName)
@@ -95,7 +91,6 @@ namespace BExIS.Dlm.Services.DataStructure
             return (entity);
         }
 
-        #endregion
-
+        #endregion GlobalizationInfo
     }
 }

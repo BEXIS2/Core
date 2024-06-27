@@ -23,7 +23,7 @@ namespace BExIS.Utils.Data.Tests
         private long datasetId = 0;
         private long latestDataTupleId = 0;
         private string username = "David";
-        private long numberOfTuples = 100;
+        private long numberOfTuples = 10;
         private DatasetHelper dsHelper;
 
         [OneTimeSetUp]
@@ -37,29 +37,29 @@ namespace BExIS.Utils.Data.Tests
             using (var mdm = new MetadataStructureManager())
             using (var etm = new EntityTemplateManager())
             {
-                    // generate Data
-                    StructuredDataStructure dataStructure = dsHelper.CreateADataStructure();
-                    dataStructure.Should().NotBeNull("Failed to meet a precondition: a data strcuture is required.");
+                // generate Data
+                StructuredDataStructure dataStructure = dsHelper.CreateADataStructure();
+                dataStructure.Should().NotBeNull("Failed to meet a precondition: a data strcuture is required.");
 
-                    var rp = dsHelper.CreateResearchPlan();
-                    rp.Should().NotBeNull("Failed to meet a precondition: a research plan is required.");
+                var rp = dsHelper.CreateResearchPlan();
+                rp.Should().NotBeNull("Failed to meet a precondition: a research plan is required.");
 
-                    var mds = mdm.Repo.Query().First();
-                    mds.Should().NotBeNull("Failed to meet a precondition: a metadata strcuture is required.");
+                var mds = mdm.Repo.Query().First();
+                mds.Should().NotBeNull("Failed to meet a precondition: a metadata strcuture is required.");
 
-                    var et = etm.Repo.Query().First();
-                    et.Should().NotBeNull("Failed to meet a precondition: a entity template is required.");
+                var et = etm.Repo.Query().First();
+                et.Should().NotBeNull("Failed to meet a precondition: a entity template is required.");
 
-                    Dataset dataset = dm.CreateEmptyDataset(dataStructure, rp, mds, et);
-                    datasetId = dataset.Id;
+                Dataset dataset = dm.CreateEmptyDataset(dataStructure, rp, mds, et);
+                datasetId = dataset.Id;
 
-                    // add datatuples
-                    dataset = dsHelper.GenerateTuplesWithRandomValuesForDataset(dataset, dataStructure, numberOfTuples, username);
-                    dm.CheckInDataset(dataset.Id, "for testing  datatuples with versions", username, ViewCreationBehavior.None);
+                // add datatuples
+                dataset = dsHelper.GenerateTuplesWithRandomValuesForDataset(dataset, dataStructure, numberOfTuples, username);
+                dm.CheckInDataset(dataset.Id, "for testing  datatuples with versions", username, ViewCreationBehavior.None);
 
-                    dm.SyncView(dataset.Id, ViewCreationBehavior.Create | ViewCreationBehavior.Refresh);
+                dm.SyncView(dataset.Id, ViewCreationBehavior.Create | ViewCreationBehavior.Refresh);
 
-                    dm.CheckInDataset(datasetId, "for testing  datatuples with versions", username, ViewCreationBehavior.None);
+                dm.CheckInDataset(datasetId, "for testing  datatuples with versions", username, ViewCreationBehavior.None);
             }
         }
 

@@ -1,6 +1,6 @@
-﻿using BExIS.Dim.Entities.Mapping;
-using BExIS.Dim.Entities.Publication;
-using BExIS.Dim.Helpers.Mapping;
+﻿using BExIS.Dim.Entities.Mappings;
+using BExIS.Dim.Entities.Publications;
+using BExIS.Dim.Helpers.Mappings;
 using BExIS.Dim.Helpers.Models;
 using BExIS.Dim.Services;
 using BExIS.Dlm.Entities.Data;
@@ -185,12 +185,10 @@ namespace BExIS.Dim.Helpers.Export
             return pangaeaMetadata;
         }
 
-        public PangaeaDataRepoConverter(Repository datarepo)
+        public PangaeaDataRepoConverter(Broker broker)
         {
-            _dataRepo = datarepo;
-            _broker = datarepo.Broker;
+            _dataRepo = broker.Repository;
+            _broker = broker;
         }
     }
-
-    
 }

@@ -11,12 +11,11 @@ namespace Vaiona.Core.Serialization
 {
     public class ObjGraphXmlSerializer : ObjGraphXmlSerializationBase
     {
-        Dictionary<Type, TypeInfo> typeCache = new Dictionary<Type, TypeInfo>();
-        Dictionary<Type, IDictionary<ObjKeyForCache, ObjInfo>> objCache = new Dictionary<Type, IDictionary<ObjKeyForCache, ObjInfo>>();
-        int objCacheNextId = 0;
-        SerializationOptions options;
+        private Dictionary<Type, TypeInfo> typeCache = new Dictionary<Type, TypeInfo>();
+        private Dictionary<Type, IDictionary<ObjKeyForCache, ObjInfo>> objCache = new Dictionary<Type, IDictionary<ObjKeyForCache, ObjInfo>>();
+        private int objCacheNextId = 0;
+        private SerializationOptions options;
         public Type ObjectType { get; protected set; }
-
 
         public ObjGraphXmlSerializer(object obj, Type objectType)
         {
@@ -39,7 +38,7 @@ namespace Vaiona.Core.Serialization
             options = serOptions;
         }
 
-        void SetTypeInfo(Type objType, XmlElement element)
+        private void SetTypeInfo(Type objType, XmlElement element)
         {
             if (!options.UseTypeCache)
             {
@@ -62,7 +61,7 @@ namespace Vaiona.Core.Serialization
                 if (onlyElement != null)
                 {
                     // set the type of the element to be a reference to the type ID
-                    // since the element is no longer the only one of this type                    
+                    // since the element is no longer the only one of this type
                     typeInfo.WriteTypeId(onlyElement);
                     onlyElement.RemoveAttribute("type");
                     onlyElement.RemoveAttribute("assembly");
@@ -83,13 +82,13 @@ namespace Vaiona.Core.Serialization
             }
         }
 
-        void WriteTypeToNode(XmlElement element, Type objType)
+        private void WriteTypeToNode(XmlElement element, Type objType)
         {
             element.SetAttribute("type", objType.FullName);
             element.SetAttribute("assembly", objType.Assembly.FullName);
         }
 
-        XmlElement GetTypeInfoNode()
+        private XmlElement GetTypeInfoNode()
         {
             XmlElement element = doc.CreateElement("Types");
             foreach (KeyValuePair<Type, TypeInfo> kv in typeCache)
@@ -123,13 +122,13 @@ namespace Vaiona.Core.Serialization
             return doc;
         }
 
-        bool AddObjToCache(Type objType, object obj, XmlElement element)
+        private bool AddObjToCache(Type objType, object obj, XmlElement element)
         {
             ObjKeyForCache kfc = new ObjKeyForCache(obj);
             IDictionary<ObjKeyForCache, ObjInfo> entry;
             if (objCache.TryGetValue(objType, out entry))
             {
-                // look for this particular object                
+                // look for this particular object
                 ObjInfo objInfoFound;
                 if (entry.TryGetValue(kfc, out objInfoFound))
                 {
@@ -159,13 +158,13 @@ namespace Vaiona.Core.Serialization
             return true;
         }
 
-        bool CheckForcedSerialization(Type objType)
+        private bool CheckForcedSerialization(Type objType)
         {
             object[] attribs = objType.GetCustomAttributes(typeof(XmlSerializeAsCustomTypeAttribute), false);
             return attribs.Length > 0;
         }
 
-        XmlElement SerializeCore(string name, object obj, Type objType, string elementType)
+        private XmlElement SerializeCore(string name, object obj, Type objType, string elementType)
         {
             XmlElement element = doc.CreateElement(elementType);
             element.SetAttribute("Name", name);
@@ -182,7 +181,7 @@ namespace Vaiona.Core.Serialization
                 {
                     return element;
                 }
-                // the object has just been added                
+                // the object has just been added
                 SetTypeInfo(objType, element);
 
                 if (CheckForcedSerialization(objType))
@@ -232,7 +231,7 @@ namespace Vaiona.Core.Serialization
             }
             else
             {
-                // the object has just been added                
+                // the object has just been added
                 SetTypeInfo(objType, element);
 
                 if (CheckForcedSerialization(objType))
@@ -289,7 +288,7 @@ namespace Vaiona.Core.Serialization
             }
         }
 
-        void SerializeComplexType(object obj, Type objType, XmlElement element)
+        private void SerializeComplexType(object obj, Type objType, XmlElement element)
         {
             //Type objType = obj.GetType();
             // get all instance fields
@@ -316,7 +315,7 @@ namespace Vaiona.Core.Serialization
             }
         }
 
-        class ObjInfo
+        private class ObjInfo
         {
             internal int Id;
             internal XmlElement OnlyElement;
@@ -327,9 +326,9 @@ namespace Vaiona.Core.Serialization
             }
         }
 
-        struct ObjKeyForCache : IEquatable<ObjKeyForCache>
+        private struct ObjKeyForCache : IEquatable<ObjKeyForCache>
         {
-            object m_obj;
+            private object m_obj;
 
             public ObjKeyForCache(object obj)
             {

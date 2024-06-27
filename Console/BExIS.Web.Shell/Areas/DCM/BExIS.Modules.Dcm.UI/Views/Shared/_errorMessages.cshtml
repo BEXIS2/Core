@@ -5,60 +5,55 @@
     int counter = 0;
     string id = "";
     string idBt = "";
-    
- }
+
+}
 
 <table>
     @if (Model != null)
-    { 
+    {
         if (Model.Count() > 0)
         {
             foreach (Error s in Model)
-            { 
+            {
 
             counter++;
 
-            id = "error_"+@counter.ToString(); 
-            idBt = "add_" + @counter;  
-            <tr>
-                <td valign="top">
-                    <span id="@idBt" class="t-icon t-plus" onclick="onClickErrorMessage(this)"></span>
-                </td>
-                <td>
-                    <span>Error @counter</span>
+            id = "error_"+@counter.ToString();
+            idBt = "add_" + @counter;
+    <tr>
+        <td valign="top">
+            <span id="@idBt" class="t-icon t-plus" onclick="onClickErrorMessage(this)"></span>
+        </td>
+        <td>
+            <span>Error @counter</span>
 
-                    <div id="@id" style="display:none; margin-top:10px;">
-                        @Html.Raw(s.ToHtmlString())
-                    </div>
-                </td>
-            </tr>
+            <div id="@id" style="display:none; margin-top:10px;">
+                @Html.Raw(s.ToHtmlString())
+            </div>
+        </td>
+    </tr>
             }
         }
      }
 </table>
-        
-        
-        
-        
+
 <script type="text/javascript">
 
-    function onClickErrorMessage(e)
-    {
+    function onClickErrorMessage(e) {
         var substr = e.id.split('_');
-        var id = "error_"+substr[1];
+        var id = "error_" + substr[1];
         var displayType = $('#' + id).css('display');
 
         if (displayType == "none") {
             $('#' + id).show();
             $('#' + e.id).removeClass("t-plus");
             $('#' + e.id).addClass("t-minus");
-            
+
         }
-        else
-        {
+        else {
             $('#' + id).hide();
             $('#' + e.id).removeClass("t-minus");
             $('#' + e.id).addClass("t-plus");
-        } 
+        }
     }
 </script>

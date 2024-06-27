@@ -1,6 +1,6 @@
 using BExIS.App.Testing;
-using BExIS.Dim.Entities.Mapping;
-using BExIS.Dim.Services;
+using BExIS.Dim.Entities.Mappings;
+using BExIS.Dim.Services.Mappings;
 using BExIS.Utils.Config;
 using NUnit.Framework;
 using System;

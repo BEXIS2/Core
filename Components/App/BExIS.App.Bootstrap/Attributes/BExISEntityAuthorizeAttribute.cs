@@ -14,6 +14,7 @@ namespace BExIS.App.Bootstrap.Attributes
     {
         //private string entityName;
         private Type entityType;
+
         private string keyName;
         private RightType rightType;
 
@@ -43,7 +44,6 @@ namespace BExIS.App.Bootstrap.Attributes
                     User user = null;
                     var res = BExISAuthorizeHelper.GetUserFromAuthorization(authorization, out user);
                     if (user != null) userName = user.Name;
-
                 }
 
                 if (!entityPermissionManager.HasEffectiveRight(userName, entityType, Convert.ToInt64(filterContext.ActionParameters[keyName]), rightType))

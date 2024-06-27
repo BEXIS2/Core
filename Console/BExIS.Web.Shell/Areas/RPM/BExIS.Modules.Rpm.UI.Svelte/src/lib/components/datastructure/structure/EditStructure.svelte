@@ -9,7 +9,6 @@
 	import { notificationType } from '@bexis2/bexis2-core-ui';
 	import { notificationStore } from '@bexis2/bexis2-core-ui';
 
-
 	import { save, checkPrimaryKeySet } from '../services';
 	import { goTo } from '$services/BaseCaller';
 	import { get } from 'svelte/store';
@@ -18,10 +17,8 @@
 	import { enforcePrimaryKeyStore } from '../store';
 	import { Alert, helpStore } from '@bexis2/bexis2-core-ui';
 
-
 	export let model: DataStructureEditModel;
 	export let dataExist: boolean = false;
-
 
 	let areVariablesValid = false;
 	let areAttributesValid = false;
@@ -30,96 +27,87 @@
 
 	$: model, updatePks();
 
-// defalut pk set
-const initPks:number[] = setInitPks();
-let currentPks:number[] = initPks;
-$:pksHasChanged = false;
-$:pksValid = false;
+	// defalut pk set
+	const initPks: number[] = setInitPks();
+	let currentPks: number[] = initPks;
+	$: pksHasChanged = false;
+	$: pksValid = false;
 
-function setInitPks():number[]
-{
-		let ids:number[] = [];
-		model.variables?.forEach(v=>{
-			if(v.isKey == true) 
-			{
-				ids = [...ids,v.id]
+	function setInitPks(): number[] {
+		let ids: number[] = [];
+		model.variables?.forEach((v) => {
+			if (v.isKey == true) {
+				ids = [...ids, v.id];
 			}
-		})
+		});
 
 		return ids;
-}
+	}
 
-
-function updatePks()
-{
+	function updatePks() {
 		currentPks = [];
 		let pktemp = false;
-		model.variables?.forEach(v=> {
-			if(v.isKey == true) 
-			{
+		model.variables?.forEach((v) => {
+			if (v.isKey == true) {
 				pktemp = true;
-				currentPks = [...currentPks,v.id]
+				currentPks = [...currentPks, v.id];
 			}
-		})
+		});
 
 		isPKSet = pktemp;
-		console.log("🚀 ~ isPKSet:", isPKSet)
+		console.log('🚀 ~ isPKSet:', isPKSet);
 
-		pksHasChanged = arraysAreEqual(initPks,currentPks)?false:true;
+		pksHasChanged = arraysAreEqual(initPks, currentPks) ? false : true;
 		pksValid = !pksHasChanged; // reset if pks has changed
 
-
-		console.log("🚀 ~ pksHasChanged:", pksHasChanged, currentPks, initPks)
-}
+		console.log('🚀 ~ pksHasChanged:', pksHasChanged, currentPks, initPks);
+	}
 
 	async function onSaveHandler() {
 		const res = await save(model);
 		console.log('save', res);
-		goTo('/rpm/datastructure');
+		console.log('🚀 ~ back ~ goTo(document.referrer);:', document.referrer);
+
+		goTo(document.referrer);
 	}
 
 	function back() {
 		goTo(document.referrer);
 	}
 
-	async function onCheckPKHandler()
-	{
-		console.log("🚀 ~ currentPks:", currentPks)
+	async function onCheckPKHandler() {
+		console.log('🚀 ~ currentPks:', currentPks);
 		const res = await checkPrimaryKeySet(model.id, currentPks);
-		console.log("🚀 ~ res:", res)
+		console.log('🚀 ~ res:', res);
 		pksValid = res;
 
-		if(pksValid)
-		{
+		if (pksValid) {
 			notificationStore.showNotification({
 				notificationType: notificationType.success,
 				message: 'Primary key set is unique'
-			})
-		}
-		else
-		{
+			});
+		} else {
 			notificationStore.showNotification({
 				notificationType: notificationType.error,
-				message: 'The selected primary key was checked against the existing data of the datasets and is not unique, therefore the structure cannot be saved.'
-			})
+				message:
+					'The selected primary key was checked against the existing data of the datasets and is not unique, therefore the structure cannot be saved.'
+			});
 		}
-
 	}
 
 	function arraysAreEqual(arr1, arr2) {
-  if (arr1.length !== arr2.length) {
-    return false;
-  }
+		if (arr1.length !== arr2.length) {
+			return false;
+		}
 
-  for (let i = 0; i < arr1.length; i++) {
-    if (arr1[i] !== arr2[i]) {
-      return false;
-    }
-  }
+		for (let i = 0; i < arr1.length; i++) {
+			if (arr1[i] !== arr2[i]) {
+				return false;
+			}
+		}
 
-  return true;
-}
-
+		return true;
+	}
 </script>
 
 <div>
@@ -131,30 +119,35 @@ function updatePks()
 		</div>
 		<div class="flex-none text-end">
 			{#if pksHasChanged && !pksValid}
-					<button
+				<button
 					id="check"
 					title="Check changed primary key against datasets that belong to the data structure."
 					class="btn variant-filled-error text-xl"
 					on:mouseover={() => helpStore.show('check')}
-					on:click={onCheckPKHandler}><Fa icon={faBinoculars}/></button>
-				{/if}
+					on:click={onCheckPKHandler}><Fa icon={faBinoculars} /></button
+				>
+			{/if}
 			<button
 				title="save"
 				class="btn variant-filled-primary text-xl"
 				on:click={onSaveHandler}
-				disabled={!areVariablesValid || !areAttributesValid || !((enforcePrimaryKey && isPKSet) ||  !enforcePrimaryKey) || (pksHasChanged && !pksValid)  }><Fa icon={faSave} /></button
+				disabled={!areVariablesValid ||
+					!areAttributesValid ||
+					!((enforcePrimaryKey && isPKSet) || !enforcePrimaryKey) ||
+					(pksHasChanged && !pksValid)}><Fa icon={faSave} /></button
 			>
 		</div>
 	</div>
 
 	<Attributes {model} bind:valid={areAttributesValid} />
-	{#if enforcePrimaryKey && model.variables.length>0 && currentPks.length==0}
-			<Alert message="please select a primary key" cssClass="variant-filled-warning"></Alert>
+	{#if enforcePrimaryKey && model.variables.length > 0 && currentPks.length == 0}
+		<Alert message="please select a primary key" cssClass="variant-filled-warning"></Alert>
 	{/if}
 	{#if model.variables.length == currentPks.length}
 		<Alert cssClass="variant-filled-warning">
-				By selecting all variables as primary key, it is not possible to change lines during an update. At least one column must remain as a value.
-			</Alert>
+			By selecting all variables as primary key, it is not possible to change lines during an
+			update. At least one column must remain as a value.
+		</Alert>
 	{/if}
 
 	<Variables

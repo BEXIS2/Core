@@ -10,7 +10,6 @@ namespace BExIS.Ext.Model.DB
     {
         public DefaultMigrationRunner(object config) // the config can be a connection string, an ORM session, etc
         {
-
         }
 
         public bool Install(string moduleCode, Version version, List<System.Reflection.Assembly> migrationContainers)
@@ -18,7 +17,7 @@ namespace BExIS.Ext.Model.DB
             // compute the diff
             // sort
             // run
-            // update version provider 
+            // update version provider
             // report
             IVersionInfoProvider versionProvider = new DBVersionProvider();
             Version v1 = versionProvider.GetLatestVersion(moduleCode);

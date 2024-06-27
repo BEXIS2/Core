@@ -1,0 +1,123 @@
+@using System.Web.Optimization
+@using BExIS.Utils.WebHelpers
+@using FluentBootstrap
+@using Microsoft.Web.Helpers;
+@using Telerik.Web.Mvc.UI;
+@using Vaiona.Web.Mvc;
+@using Vaiona.Web.Mvc.Modularity;
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>@ViewBag.Title</title>
+
+    @Html.Favicon(Html.GetTenant().FavIconPath)
+
+    <style>
+        .t-window-content {
+            height: auto !important;
+            width: auto !important;
+        }
+    </style>
+
+    @Styles.Render("~/Content/css")
+    @*@Scripts.Render("~/bundles/modernizr")*@
+    @Styles.Render("~/bundles/general_bexis")
+
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/jqueryval")
+    @Scripts.Render("~/bundles/bootstrap")
+    @Scripts.Render("~/bundles/autosize")
+    @Scripts.Render("~/bundles/minimap")
+    @Scripts.Render("~/bundles/switchery")
+
+    @Scripts.Render("~/bundles/dataTables")
+    @Scripts.Render("~/bundles/bexis")
+
+    <link href="~/Content/docs.css" rel="stylesheet" />
+</head>
+
+<body>
+    @*@Html.RenderAuto("Header")*@
+    <div id="informationContainer">
+
+        @*pass the ModuleManger.ExportTree to the layout's menu view, it must be populated by now!*@
+        @*@Html.RenderAuto("Menu")*@
+
+        <div id="information-container" class="container-fluid" style="display:none">
+            @*<a href="#information" data-toggle="collapse" style="color: white">@ViewBag.Title <i class="fa fa-angle-double-down"></i></a>*@
+            <div class="collapse" id="information">
+                <div class="container" style="padding: 0pt; text-align: justify;">
+                    @RenderSection("Information", false)
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container-fluid">
+        @*@Html.RenderAuto("Breadcrumb")*@
+    </div>
+
+    <div class="main-content container-fluid" style=" width: 100%;">
+        <table style="table-layout: fixed;">
+            <tr>
+
+                @if (IsSectionDefined("LeftPane"))
+                {
+                <td style="border-top: #9B9B9B solid thin; border-bottom: #9B9B9B solid thin; padding: 12pt 0 12pt 0; width: 250px; max-width: 350px; vertical-align: top;">
+                    <div>
+                        @RenderSection("LeftPane", false)
+                    </div>
+                </td>
+                <td style="width: 20pt; border: none" />
+                }
+
+                <td style="border-top: #9B9B9B solid thin; border-bottom: #9B9B9B solid thin; padding: 12pt 0 12pt 0; vertical-align: top;">
+                    <div>
+                        @RenderBody()
+                    </div>
+                </td>
+
+                @if (IsSectionDefined("RightPane"))
+                {
+                <td style="width: 20pt; border: none" />
+
+                <td style="border-top: #9B9B9B solid thin; border-bottom: #9B9B9B solid thin; padding: 12pt 0 12pt 0; width: 250px; max-width: 350px; vertical-align: top;">
+                    <div>
+                        @RenderSection("RightPane", false)
+                    </div>
+                </td>
+                }
+            </tr>
+        </table>
+    </div>
+
+    @(Html.Telerik().ScriptRegistrar()
+            .DefaultGroup(group => group.Combined(true).Compress(true)
+            //.DefaultPath("~/Scripts/2013.2.611/")
+            )
+            .jQuery(false)
+    )
+    @*@Html.RenderAuto("Footer")*@
+
+    <script type="text/javascript">
+        var global_sess_expirationSeconds = @Session.Timeout*60;
+        var global_sess_warningSeconds = @System.Configuration.ConfigurationManager.AppSettings["SessionWarningDelaySecond"].ToString();
+        var global_LogoutUrl = '@Url.Action("ClearSession", "Account", new { area = ""})';
+        var global_sess_resetPage = '@Url.Action("Index", "JS", new { area = ""})';
+    </script>
+
+    <script src="~/Scripts/session.warning.js"></script>
+
+    @RenderSection("Scripts", false)
+</body>
+</html>
+
+@*<script type="text/javascript">
+
+        $(document)
+            .ready(function() {
+                resetAllTelerikIconTitles();
+                addTooltips();
+            });
+    </script>*@

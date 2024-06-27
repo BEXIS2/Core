@@ -1,6 +1,6 @@
 ﻿using BExIS.App.Bootstrap.Attributes;
-using BExIS.Dim.Entities.Mapping;
-using BExIS.Dim.Helpers.Mapping;
+using BExIS.Dim.Entities.Mappings;
+using BExIS.Dim.Helpers.Mappings;
 using BExIS.Dlm.Entities.Data;
 using BExIS.Dlm.Services.Data;
 using BExIS.Dlm.Services.Party;
@@ -21,11 +21,6 @@ using System.Net.Http.Headers;
 using System.Web.Http;
 using System.Web.Http.Description;
 using System.Xml.Linq;
-using BExIS.Security.Services.Authorization;
-using BExIS.Security.Services.Objects;
-using System.Globalization;
-using System.Security.Cryptography;
-using BExIS.Dlm.Entities.MetadataStructure;
 
 namespace BExIS.Modules.Dim.UI.Controllers.API
 {
@@ -80,9 +75,9 @@ namespace BExIS.Modules.Dim.UI.Controllers.API
                     }
                     datasetModels.Add(datasetModel);
                 }
-                
+
                 return datasetModels;
-            }  
+            }
         }
 
         // GET api/Dataset/{id}
@@ -171,7 +166,6 @@ namespace BExIS.Modules.Dim.UI.Controllers.API
 
                 var datasetVersion = dataset.Versions.OrderBy(d => d.Timestamp).ElementAt(index);
 
-
                 return get(id, datasetVersion.Id);
             }
         }
@@ -194,16 +188,13 @@ namespace BExIS.Modules.Dim.UI.Controllers.API
             if (string.IsNullOrEmpty(version_name))
                 return Request.CreateErrorResponse(HttpStatusCode.PreconditionFailed, "Version name not exist");
 
-
             using (DatasetManager dm = new DatasetManager())
             {
-
                 var versionId = dm.GetDatasetVersions(id).Where(d => d.VersionName == version_name).Select(d => d.Id).FirstOrDefault();
 
                 if (versionId <= 0)
                     return Request.CreateErrorResponse(HttpStatusCode.PreconditionFailed, "This version name does not exist for this dataset");
 
-                
                 return get(id, versionId);
             }
         }
@@ -215,7 +206,6 @@ namespace BExIS.Modules.Dim.UI.Controllers.API
                 // Check parameter
                 if (id <= 0) return Request.CreateResponse(HttpStatusCode.PreconditionFailed, "No valid dataset id.");
                 if (versionId <= 0) return Request.CreateResponse(HttpStatusCode.PreconditionFailed, "No valid version id.");
-
 
                 using (DatasetManager datasetManager = new DatasetManager())
                 {
@@ -229,12 +219,10 @@ namespace BExIS.Modules.Dim.UI.Controllers.API
                     // check version belongs to dataset
                     if (!dataset.Versions.Select(v => v.Id).Contains(versionId)) return Request.CreateResponse(HttpStatusCode.PreconditionFailed, "this version id is not part of the dataset " + id);
 
-
                     // check version number
                     if (version > dataset.Versions.Count) return Request.CreateResponse(HttpStatusCode.PreconditionFailed, "This version does not exit.");
 
-                    
-                    // try to get dataset version 
+                    // try to get dataset version
                     DatasetVersion datasetVersion = datasetManager.GetDatasetVersion(versionId);//dataset.Versions.OrderBy(d => d.Timestamp).ElementAt(index);
                     if (datasetVersion == null) return Request.CreateResponse(HttpStatusCode.InternalServerError, "It is not possible to load the latest version.");
 
@@ -265,7 +253,7 @@ namespace BExIS.Modules.Dim.UI.Controllers.API
             }
         }
 
-        private ApiDatasetModel getContent(DatasetVersion datasetVersion, long id, long versionNumber, long metadataStructureId, long dataStructureId )
+        private ApiDatasetModel getContent(DatasetVersion datasetVersion, long id, long versionNumber, long metadataStructureId, long dataStructureId)
         {
             ApiDatasetModel datasetModel = new ApiDatasetModel()
             {
@@ -283,7 +271,7 @@ namespace BExIS.Modules.Dim.UI.Controllers.API
             };
 
             Dictionary<string, List<XElement>> elements = new Dictionary<string, List<XElement>>();
-            
+
             // add addtional Informations / mapped system keys
             foreach (Key k in Enum.GetValues(typeof(Key)))
             {
@@ -308,7 +296,7 @@ namespace BExIS.Modules.Dim.UI.Controllers.API
 
             // set up person key list
             var personKeyList = new List<string>();
-            // setup dic with values of the persons 
+            // setup dic with values of the persons
             var personKeyDic = new Dictionary<string, List<XElement>>();
 
             // add keys here
@@ -327,9 +315,9 @@ namespace BExIS.Modules.Dim.UI.Controllers.API
             // check is public
             datasetModel.IsPublic = publicAndDate.Item1;
 
-            // check for publication date 
+            // check for publication date
             datasetModel.PublicationDate = publicAndDate.Item2.ToString(new CultureInfo("en-US"));
-            
+
             return datasetModel;
         }
 
@@ -345,7 +333,6 @@ namespace BExIS.Modules.Dim.UI.Controllers.API
             return 0;
         }
 
-
         private Dictionary<string, Dictionary<string, string>> getPartyIsMainAttributesForParties(Dictionary<string, List<XElement>> elements)
         {
             Dictionary<string, Dictionary<string, string>> dict = new Dictionary<string, Dictionary<string, string>>();
@@ -357,10 +344,9 @@ namespace BExIS.Modules.Dim.UI.Controllers.API
                     {
                         long partyid = getPartyId(element);
                         Dictionary<string, string> dict2 = new Dictionary<string, string>();
-                        // id direct 
+                        // id direct
                         if (partyid > 0)
                         {
-
                             var party = partyManager.GetParty(partyid);
 
                             if (party != null)
@@ -395,7 +381,7 @@ namespace BExIS.Modules.Dim.UI.Controllers.API
                     {
                         long partyid = getPartyId(element);
                         Dictionary<string, string> dict2 = new Dictionary<string, string>();
-                        // id direct 
+                        // id direct
                         Console.WriteLine(partyid);
                         if (partyid > 0) { }
                         else

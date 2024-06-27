@@ -9,9 +9,8 @@ using Vaiona.Entities.Common;
 
 namespace BExIS.Dlm.Entities.DataStructure
 {
-
     /// <summary>
-    /// The base class for all concrete constraint types. It provides various attributes needed for all the constraint sub types. Among them the cultureId is a means 
+    /// The base class for all concrete constraint types. It provides various attributes needed for all the constraint sub types. Among them the cultureId is a means
     /// to define different constraints on a single data attribute based on the culture.
     /// </summary>
     public abstract class Constraint : BaseEntity
@@ -72,7 +71,7 @@ namespace BExIS.Dlm.Entities.DataStructure
 
         public virtual long LastModifiedUserRef { get; set; }
 
-        #endregion
+        #endregion Attributes
 
         #region Associations
 
@@ -83,14 +82,15 @@ namespace BExIS.Dlm.Entities.DataStructure
 
         public virtual ICollection<Variable> VariableConstraints { get; set; }
 
-        #endregion
+        #endregion Associations
 
         #region Methods
+
         /// <summary>
         /// The method checks whether the input <paramref name="data"/> satisfies the constraint. To be implemented by concrete sub-classes.
         /// </summary>
         /// <param name="data">the data to be evaluated</param>
-        /// <param name="auxiliary">An optional data item needed by some of the constraints. In most cases not used, but in comparison</param>     
+        /// <param name="auxiliary">An optional data item needed by some of the constraints. In most cases not used, but in comparison</param>
         public abstract bool IsSatisfied(object data, object auxiliary = null);
 
         /// <summary>
@@ -102,14 +102,14 @@ namespace BExIS.Dlm.Entities.DataStructure
         /// The formal human readable translation of the constraint.
         /// </summary>
         public abstract string FormalDescription { get; }
-        #endregion
 
+        #endregion Methods
     }
 
     /// <summary>
     ///
     /// </summary>
-    /// <remarks></remarks>        
+    /// <remarks></remarks>
     [AutomaticMaterializationInfo("Items", typeof(List<DomainItem>), "XmlDomainItems", typeof(XmlDocument))]
     public class DomainConstraint : Constraint
     {
@@ -119,21 +119,21 @@ namespace BExIS.Dlm.Entities.DataStructure
         ///
         /// </summary>
         /// <remarks></remarks>
-        /// <seealso cref=""/>        
+        /// <seealso cref=""/>
         public virtual XmlDocument XmlDomainItems { get; set; }
 
         /// <summary>
         ///
         /// </summary>
         /// <remarks></remarks>
-        /// <seealso cref=""/>        
+        /// <seealso cref=""/>
         public virtual List<DomainItem> Items { get; set; }
 
         /// <summary>
         ///
         /// </summary>
         /// <remarks></remarks>
-        /// <seealso cref=""/>        
+        /// <seealso cref=""/>
         public override string ErrorMessage
         {
             get
@@ -168,11 +168,7 @@ namespace BExIS.Dlm.Entities.DataStructure
             }
         }
 
-        #endregion
-
-        #region Associations
-
-        #endregion
+        #endregion Attributes
 
         #region Mathods
 
@@ -181,7 +177,7 @@ namespace BExIS.Dlm.Entities.DataStructure
         /// </summary>
         /// <remarks></remarks>
         /// <seealso cref=""/>
-        /// <param>NA</param>       
+        /// <param>NA</param>
         public DomainConstraint()
         {
             defaultMessageTemplate = "Provided value is not a domain item. The value should be one of these items: {0}.";
@@ -225,36 +221,34 @@ namespace BExIS.Dlm.Entities.DataStructure
             return (Negated ^ (Items.Where(p => p.Key.Equals(data.ToString(), StringComparison.InvariantCultureIgnoreCase)).Count() > 0));
         }
 
-        #endregion
-
-
+        #endregion Mathods
     }
 
     /// <summary>
     ///
     /// </summary>
-    /// <remarks></remarks>        
+    /// <remarks></remarks>
     public class DomainItem
     {
         /// <summary>
         ///
         /// </summary>
         /// <remarks></remarks>
-        /// <seealso cref=""/>        
+        /// <seealso cref=""/>
         public string Key { get; set; }
 
         /// <summary>
         ///
         /// </summary>
         /// <remarks></remarks>
-        /// <seealso cref=""/>        
+        /// <seealso cref=""/>
         public string Value { get; set; }
     }
 
     /// <summary>
     ///
     /// </summary>
-    /// <remarks></remarks>        
+    /// <remarks></remarks>
     public class PatternConstraint : Constraint
     {
         #region Attributes
@@ -263,21 +257,21 @@ namespace BExIS.Dlm.Entities.DataStructure
         ///
         /// </summary>
         /// <remarks></remarks>
-        /// <seealso cref=""/>        
+        /// <seealso cref=""/>
         public virtual string MatchingPhrase { get; set; }
 
         /// <summary>
         ///
         /// </summary>
         /// <remarks></remarks>
-        /// <seealso cref=""/>        
+        /// <seealso cref=""/>
         public virtual bool CaseSensitive { get; set; }
 
         /// <summary>
         ///
         /// </summary>
         /// <remarks></remarks>
-        /// <seealso cref=""/>        
+        /// <seealso cref=""/>
         public override string ErrorMessage
         {
             get
@@ -312,11 +306,7 @@ namespace BExIS.Dlm.Entities.DataStructure
             }
         }
 
-        #endregion
-
-        #region Associations
-
-        #endregion
+        #endregion Attributes
 
         #region Mathods
 
@@ -325,7 +315,7 @@ namespace BExIS.Dlm.Entities.DataStructure
         /// </summary>
         /// <remarks></remarks>
         /// <seealso cref=""/>
-        /// <param>NA</param>       
+        /// <param>NA</param>
         public PatternConstraint()
         {
             defaultMessageTemplate = "Provided value does not match the pattern. The value should match {0} {1}.";
@@ -334,7 +324,7 @@ namespace BExIS.Dlm.Entities.DataStructure
         }
 
         public PatternConstraint(ConstraintProviderSource provider, string constraintSelectionPredicate, string cultureId
-            , string description, bool negated, string context, string messageTemplate, string negatedMessageTemplate, string matchingPhrase, bool caseSensitive=true)
+            , string description, bool negated, string context, string messageTemplate, string negatedMessageTemplate, string matchingPhrase, bool caseSensitive = true)
         {
             Contract.Requires(!string.IsNullOrWhiteSpace(matchingPhrase));
 
@@ -365,8 +355,7 @@ namespace BExIS.Dlm.Entities.DataStructure
                 return (Negated ^ (Regex.IsMatch(data.ToString(), MatchingPhrase)));
         }
 
-
-        #endregion
+        #endregion Mathods
     }
 
     /// <summary>
@@ -374,7 +363,7 @@ namespace BExIS.Dlm.Entities.DataStructure
     /// The range constraint usually applies to numeric data types, but in case of string it can be used as string length check. The data type
     /// of the provided value can be determined by the DataContainer.DataType....
     /// </summary>
-    /// <remarks></remarks>   
+    /// <remarks></remarks>
     public class RangeConstraint : Constraint
     {
         #region Attributes
@@ -383,35 +372,35 @@ namespace BExIS.Dlm.Entities.DataStructure
         ///
         /// </summary>
         /// <remarks></remarks>
-        /// <seealso cref=""/>        
+        /// <seealso cref=""/>
         public virtual double Lowerbound { get; set; }
 
         /// <summary>
         ///
         /// </summary>
         /// <remarks></remarks>
-        /// <seealso cref=""/>        
+        /// <seealso cref=""/>
         public virtual double Upperbound { get; set; }
 
         /// <summary>
         ///
         /// </summary>
         /// <remarks></remarks>
-        /// <seealso cref=""/>        
+        /// <seealso cref=""/>
         public virtual bool LowerboundIncluded { get; set; }
 
         /// <summary>
         ///
         /// </summary>
         /// <remarks></remarks>
-        /// <seealso cref=""/>        
+        /// <seealso cref=""/>
         public virtual bool UpperboundIncluded { get; set; }
 
         /// <summary>
         ///
         /// </summary>
         /// <remarks></remarks>
-        /// <seealso cref=""/>        
+        /// <seealso cref=""/>
         public override string ErrorMessage
         {
             get
@@ -450,11 +439,7 @@ namespace BExIS.Dlm.Entities.DataStructure
             }
         }
 
-        #endregion
-
-        #region Associations
-
-        #endregion
+        #endregion Attributes
 
         #region Mathods
 
@@ -463,7 +448,7 @@ namespace BExIS.Dlm.Entities.DataStructure
         /// </summary>
         /// <remarks></remarks>
         /// <seealso cref=""/>
-        /// <param></param>       
+        /// <param></param>
         public RangeConstraint()
         {
             defaultMessageTemplate = "Provided value is out of range. The value should be between {0} {1} and {2} {3}.";
@@ -489,7 +474,6 @@ namespace BExIS.Dlm.Entities.DataStructure
             Upperbound = upperbound;
             UpperboundIncluded = upperboundIncluded;
         }
-
 
         /// <summary>
         ///
@@ -524,14 +508,14 @@ namespace BExIS.Dlm.Entities.DataStructure
             return (Negated ^ true);
         }
 
-        #endregion
+        #endregion Mathods
     }
 
     /// <summary>
-    /// compares the input value to a reference/ target one using a specified comparison operator. 
+    /// compares the input value to a reference/ target one using a specified comparison operator.
     /// The reference object can be an object or the value of a variable/ parameter in the same tuple
     /// </summary>
-    /// <remarks></remarks>  
+    /// <remarks></remarks>
     public class ComparisonConstraint : Constraint
     {
         #region Attributes
@@ -541,14 +525,14 @@ namespace BExIS.Dlm.Entities.DataStructure
         /// valid operators depend on the data type, so the UI should show proper operators based on the data attribute's data type during the constraint definition.
         /// </summary>
         /// <remarks></remarks>
-        /// <seealso cref=""/>        
+        /// <seealso cref=""/>
         public virtual ComparisonOperator Operator { get; set; }
 
         /// <summary>
         ///
         /// </summary>
         /// <remarks></remarks>
-        /// <seealso cref=""/>        
+        /// <seealso cref=""/>
         public virtual ComparisonTargetType TargetType { get; set; }
 
         /// <summary>
@@ -559,7 +543,7 @@ namespace BExIS.Dlm.Entities.DataStructure
         /// Variable: the target shows the Id of the variable in the current type that its value should be used in the comparison
         /// </summary>
         /// <remarks></remarks>
-        /// <seealso cref=""/>        
+        /// <seealso cref=""/>
         public virtual string Target { get; set; }
 
         /// <summary>
@@ -569,21 +553,21 @@ namespace BExIS.Dlm.Entities.DataStructure
         /// Offset type can be absolute or ratio. Absolute offsets are added to the right hand side and ratios are multiplied to the right hand side before the comparison to take place
         /// </summary>
         /// <remarks></remarks>
-        /// <seealso cref=""/>        
+        /// <seealso cref=""/>
         public virtual ComparisonOffsetType OffsetType { get; set; }
 
         /// <summary>
         /// The value of the offset to be taken into account in the comparison according to <seealso cref="ComparisonOffsetTye"/>
         /// </summary>
         /// <remarks></remarks>
-        /// <seealso cref=""/>        
+        /// <seealso cref=""/>
         public virtual double OffsetValue { get; set; }
 
         /// <summary>
         ///
         /// </summary>
         /// <remarks></remarks>
-        /// <seealso cref=""/>        
+        /// <seealso cref=""/>
         public override string ErrorMessage
         {
             get
@@ -613,12 +597,15 @@ namespace BExIS.Dlm.Entities.DataStructure
                     case ComparisonTargetType.Value:
                         target = Target;
                         break;
+
                     case ComparisonTargetType.Parameter:
                         target = "The value of parameter with Id: " + Target;
                         break;
+
                     case ComparisonTargetType.Variable:
                         target = "The value of variable with Id: " + Target;
                         break;
+
                     default:
                         break;
                 }
@@ -627,9 +614,11 @@ namespace BExIS.Dlm.Entities.DataStructure
                     case ComparisonOffsetType.Absolute:
                         offestType = "plus";
                         break;
+
                     case ComparisonOffsetType.Ratio:
                         offestType = "multiply";
                         break;
+
                     default:
                         break;
                 }
@@ -640,21 +629,27 @@ namespace BExIS.Dlm.Entities.DataStructure
                         case ComparisonOperator.Equals:
                             comparer = "not equal to";
                             break;
+
                         case ComparisonOperator.NotEquals:
                             comparer = "equal to";
                             break;
+
                         case ComparisonOperator.GreaerThan:
                             comparer = "less than or equal to";
                             break;
+
                         case ComparisonOperator.GreaterThanOrEqual:
                             comparer = "less than";
                             break;
+
                         case ComparisonOperator.LessThan:
                             comparer = "greater than or equal to";
                             break;
+
                         case ComparisonOperator.LessThanOrEqual:
                             comparer = "greater than";
                             break;
+
                         default:
                             break;
                     }
@@ -667,21 +662,27 @@ namespace BExIS.Dlm.Entities.DataStructure
                         case ComparisonOperator.Equals:
                             comparer = "equal to";
                             break;
+
                         case ComparisonOperator.NotEquals:
                             comparer = "not equal to";
                             break;
+
                         case ComparisonOperator.GreaerThan:
                             comparer = "greater than";
                             break;
+
                         case ComparisonOperator.GreaterThanOrEqual:
                             comparer = "greater than or equal to";
                             break;
+
                         case ComparisonOperator.LessThan:
                             comparer = "less than";
                             break;
+
                         case ComparisonOperator.LessThanOrEqual:
                             comparer = "less than or equal to";
                             break;
+
                         default:
                             break;
                     }
@@ -690,11 +691,7 @@ namespace BExIS.Dlm.Entities.DataStructure
             }
         }
 
-        #endregion
-
-        #region Associations
-
-        #endregion
+        #endregion Attributes
 
         #region Mathods
 
@@ -703,7 +700,7 @@ namespace BExIS.Dlm.Entities.DataStructure
         /// </summary>
         /// <remarks></remarks>
         /// <seealso cref=""/>
-        /// <param></param>       
+        /// <param></param>
         public ComparisonConstraint()
         {
             defaultMessageTemplate = "replace with a proper message {0}.";
@@ -731,9 +728,8 @@ namespace BExIS.Dlm.Entities.DataStructure
             OffsetValue = offset;
         }
 
-
         /// <summary>
-        /// problem: the constraint needs the target value to compare it, if it is a variable or parameter the constraint has no clue / responsibility to access its value 
+        /// problem: the constraint needs the target value to compare it, if it is a variable or parameter the constraint has no clue / responsibility to access its value
         /// solution: the caller must use the TargetType and Target properties to access proper variable/ parameter and obtain their values then pass the value as auxiliary data.
         /// the function just compares data to auxiliary according to the operator
         /// </summary>
@@ -744,10 +740,10 @@ namespace BExIS.Dlm.Entities.DataStructure
         public override bool IsSatisfied(object data, object auxiliary = null)
         {
             /// <summary>
-            /// the data type is defined by the associated data attribute 
+            /// the data type is defined by the associated data attribute
             /// use dynamic link library, Flee or DLR to convert the Body to an executable code, pass data to it and return the result
             /// </summary>
-            /// <remarks></remarks>        
+            /// <remarks></remarks>
             switch (Operator)
             {
                 case ComparisonOperator.Equals:
@@ -841,23 +837,22 @@ namespace BExIS.Dlm.Entities.DataStructure
             return false;
         }
 
-        #endregion
-
+        #endregion Mathods
     }
 
     /// <summary>
     /// Constraints can obtain the definition of their function from their internal attributes or from an external source.
-    /// In case of internal, the definition of the constraint is inside the constraint, but If it is external, the constraint is defined somewhere else like a database, and model just contains its identifier and access method. 
+    /// In case of internal, the definition of the constraint is inside the constraint, but If it is external, the constraint is defined somewhere else like a database, and model just contains its identifier and access method.
     /// This is a good option for integration of variable values with external systems. or variables that their values changes over time
     /// </summary>
     public enum ConstraintProviderSource
     {
-        Internal = 0, 
+        Internal = 0,
         External = 1,
     }
 
     /// <summary>
-    /// 
+    ///
     /// </summary>
     public enum ComparisonOperator
     {
@@ -865,7 +860,7 @@ namespace BExIS.Dlm.Entities.DataStructure
     }
 
     /// <summary>
-    /// 
+    ///
     /// </summary>
     public enum ComparisonTargetType
     {
@@ -873,7 +868,7 @@ namespace BExIS.Dlm.Entities.DataStructure
     }
 
     /// <summary>
-    /// 
+    ///
     /// </summary>
     public enum ComparisonOffsetType
     {
@@ -903,8 +898,8 @@ namespace BExIS.Dlm.Entities.DataStructure
 
                 return this;
             }
-            catch 
-            { 
+            catch
+            {
                 return null;
             }
         }
@@ -915,11 +910,10 @@ namespace BExIS.Dlm.Entities.DataStructure
             {
                 return JsonConvert.SerializeObject(this);
             }
-            catch 
-            { 
+            catch
+            {
                 return null;
             }
         }
     }
-
 }

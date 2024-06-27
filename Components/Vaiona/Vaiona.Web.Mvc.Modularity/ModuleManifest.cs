@@ -23,7 +23,9 @@ namespace Vaiona.Web.Mvc.Modularity
             Description = xManifest.Element("Description").Value;
         }
 
-        public XElement ManifestDoc { get { return xManifest; } }
+        public XElement ManifestDoc
+        { get { return xManifest; } }
+
         public string Version { get; set; }
         public string Description { get; set; }
         public string Name { get; set; }
