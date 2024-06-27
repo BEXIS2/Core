@@ -59,17 +59,21 @@
 		// otherwise the values are old
 		setTimeout(async () => {
 			// check changed field
-			res = suite({ constraint: constraint, constraints: constraints }, e);
+			res = suite({ constraint: constraint, constraints: constraints }, e.target.id);
 		}, 10);
 	}
 
+
+	
 	onMount(async () => {
 		ct = await apiCalls.GetConstraintTypes();
+
 		suite.reset();
+
 		if (constraint.id > 0) {
 			setTimeout(async () => {
-				res = suite({ constraint: constraint, constraints: constraints }, '');
-			}, 10);
+				res = suite({ constraint: constraint, constraints: constraints },undefined);
+			}, 100);
 		}
 	});
 
