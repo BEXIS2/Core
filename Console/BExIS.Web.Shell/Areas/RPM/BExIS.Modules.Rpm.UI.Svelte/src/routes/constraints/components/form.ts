@@ -7,6 +7,7 @@ type dataType = {
 };
 
 const suite = create((data: dataType, fieldName) => {
+
 	only(fieldName);
 
 	test('name', 'name is required', () => {
@@ -30,26 +31,7 @@ const suite = create((data: dataType, fieldName) => {
 		enforce(data.constraint.description).isNotBlank();
 	});
 
-	// test('constraintTypes', 'no Constraint Type is chosen', () => {
-	// 		switch (data.constraint.type) {
-	// 			case 'Domain':
-	// 				return true;
 
-	// 			case 'Range':
-	// 				return true;
-
-	// 			case 'Pattern':
-	// 				return true;
-
-	// 			default:
-	// 				return false;
-	// 			}
-
-	// });
-
-	// test('description', 'description is to short, it must be larger then 10 chars', () => {
-	// 	enforce(data.constraint.description).longerThan(10);
-	// });
 });
 
 export default suite;
