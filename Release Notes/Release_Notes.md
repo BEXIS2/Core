@@ -16,7 +16,7 @@ Webconfig needs to be updated!
 - General/Landing Page - (if empty, load landingpage.htm from tenant)
 - Data Colletion/Use external metadata form (Enables the loading of an external metadata form when editing entities)
 - Data Colletion/External metadata form destination url (Define the origin from where the external metadata form should be loaded)
-- Data Dissemination/GBIF Export - Define a destination of all darwin core archives. 
+- Data Dissemination/gbifCollectionArea - Define a destination of all darwin core archives (Default: {Data}/export/gbif). 
 
 ## Changes
 
