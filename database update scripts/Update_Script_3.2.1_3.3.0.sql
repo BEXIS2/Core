@@ -103,23 +103,21 @@ DELETE
 DELETE 
     FROM public.dim_mappingkeys where name='Publisher' and concept = (select id from dim_mappingconcepts where name='datacite');
 
-INSERT INTO public.dim_mappingkeys
+INSERT INTO public.dim_mappingkeys (name, url, optional, iscomplex, concept, xpath)
+    VALUES ('Publisher', 'https://datacite-metadata-schema.readthedocs.io/en/4.5/properties/publisher/#id1', false, true, (select id from dim_mappingconcepts where name='datacite'), 'data/attributes/publisher')
 
-UPDATE public.dim_mappingkeys
-	SET url='https://datacite-metadata-schema.readthedocs.io/en/4.5/properties/publisher/#id1'
-	WHERE xpath='data/attributes/publisher' and concept = (select id from dim_mappingconcepts where name='datacite');
+INSERT INTO public.dim_mappingkeys (name, optional, iscomplex, concept, parentref, xpath)
+    VALUES ('Name', false, false, (select id from dim_mappingconcepts where name='datacite'), (select id from dim_mappingkeys where name='Publisher' AND xpath='data/attributes/publisher'), 'data/attributes/publisher/name')
 
-UPDATE public.dim_mappingkeys
-	SET optional=true
-	WHERE xpath='data/attributes/publisher/publisherIdentifier' and concept = (select id from dim_mappingconcepts where name='datacite');
 
-UPDATE public.dim_mappingkeys
-	SET optional=true
-	WHERE xpath='data/attributes/publisher/schemeUri' and concept = (select id from dim_mappingconcepts where name='datacite');
+INSERT INTO public.dim_mappingkeys (name, optional, iscomplex, concept, parentref, xpath)
+    VALUES ('PublisherIdentifier', true, false, (select id from dim_mappingconcepts where name='datacite'), (select id from dim_mappingkeys where name='Publisher' AND xpath='data/attributes/publisher'), 'data/attributes/publisher/publisherIdentifier')
 
-UPDATE public.dim_mappingkeys
-	SET optional=true
-	WHERE xpath='data/attributes/publisher/lang' and concept = (select id from dim_mappingconcepts where name='datacite');
+INSERT INTO public.dim_mappingkeys (name, optional, iscomplex, concept, parentref, xpath)
+    VALUES ('SchemeUri', true, false, (select id from dim_mappingconcepts where name='datacite'), (select id from dim_mappingkeys where name='Publisher' AND xpath='data/attributes/publisher'), 'data/attributes/publisher/schemeUri')
+
+INSERT INTO public.dim_mappingkeys (name, optional, iscomplex, concept, parentref, xpath)
+    VALUES ('Lang', true, false, (select id from dim_mappingconcepts where name='datacite'), (select id from dim_mappingkeys where name='Publisher' AND xpath='data/attributes/publisher'), 'data/attributes/publisher/lang')
 
 -- Title(s)
 UPDATE public.dim_mappingkeys
