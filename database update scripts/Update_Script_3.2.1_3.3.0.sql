@@ -104,20 +104,27 @@ DELETE
     FROM public.dim_mappingkeys where name='Publisher' and concept = (select id from dim_mappingconcepts where name='datacite');
 
 INSERT INTO public.dim_mappingkeys (name, url, optional, iscomplex, concept, xpath)
-    VALUES ('Publisher', 'https://datacite-metadata-schema.readthedocs.io/en/4.5/properties/publisher/#id1', false, true, (select id from dim_mappingconcepts where name='datacite'), 'data/attributes/publisher')
+    SELECT 'Publisher', 'https://datacite-metadata-schema.readthedocs.io/en/4.5/properties/publisher/#id1', false, true, (select id from dim_mappingconcepts where name='datacite'), 'data/attributes/publisher'
+    WHERE NOT EXISTS (select * from public.dim_mappingkeys where concept=(select id from dim_mappingconcepts where name='datacite') AND xpath='data/attributes/publisher');
 
 INSERT INTO public.dim_mappingkeys (name, optional, iscomplex, concept, parentref, xpath)
-    VALUES ('Name', false, false, (select id from dim_mappingconcepts where name='datacite'), (select id from dim_mappingkeys where name='Publisher' AND xpath='data/attributes/publisher'), 'data/attributes/publisher/name')
+    SELECT 'Name', false, false, (select id from dim_mappingconcepts where name='datacite'), (select id from dim_mappingkeys where concept=(select id from dim_mappingconcepts where name='datacite') AND xpath='data/attributes/publisher'), 'data/attributes/publisher/name'
+    WHERE NOT EXISTS (select * from public.dim_mappingkeys where concept=(select id from dim_mappingconcepts where name='datacite') AND xpath='data/attributes/publisher/name');
+
+INSERT INTO public.dim_mappingkeys (name, optional, iscomplex, concept, parentref, xpath)
+    SELECT 'PublisherIdentifier', true, false, (select id from dim_mappingconcepts where name='datacite'), (select id from dim_mappingkeys where name='Publisher' AND xpath='data/attributes/publisher'), 'data/attributes/publisher/publisherIdentifier'
+    WHERE NOT EXISTS (select * from public.dim_mappingkeys where concept=(select id from dim_mappingconcepts where name='datacite') AND xpath='data/attributes/publisher/name');
 
 
 INSERT INTO public.dim_mappingkeys (name, optional, iscomplex, concept, parentref, xpath)
-    VALUES ('PublisherIdentifier', true, false, (select id from dim_mappingconcepts where name='datacite'), (select id from dim_mappingkeys where name='Publisher' AND xpath='data/attributes/publisher'), 'data/attributes/publisher/publisherIdentifier')
+    SELECT 'SchemeUri', true, false, (select id from dim_mappingconcepts where name='datacite'), (select id from dim_mappingkeys where name='Publisher' AND xpath='data/attributes/publisher'), 'data/attributes/publisher/schemeUri'
+    WHERE NOT EXISTS (select * from public.dim_mappingkeys where concept=(select id from dim_mappingconcepts where name='datacite') AND xpath='data/attributes/publisher/schemeUri');
+
 
 INSERT INTO public.dim_mappingkeys (name, optional, iscomplex, concept, parentref, xpath)
-    VALUES ('SchemeUri', true, false, (select id from dim_mappingconcepts where name='datacite'), (select id from dim_mappingkeys where name='Publisher' AND xpath='data/attributes/publisher'), 'data/attributes/publisher/schemeUri')
+    SELECT 'Lang', true, false, (select id from dim_mappingconcepts where name='datacite'), (select id from dim_mappingkeys where name='Publisher' AND xpath='data/attributes/publisher'), 'data/attributes/publisher/lang'
+    WHERE NOT EXISTS (select * from public.dim_mappingkeys where concept=(select id from dim_mappingconcepts where name='datacite') AND xpath='data/attributes/publisher/lang');
 
-INSERT INTO public.dim_mappingkeys (name, optional, iscomplex, concept, parentref, xpath)
-    VALUES ('Lang', true, false, (select id from dim_mappingconcepts where name='datacite'), (select id from dim_mappingkeys where name='Publisher' AND xpath='data/attributes/publisher'), 'data/attributes/publisher/lang')
 
 -- Title(s)
 UPDATE public.dim_mappingkeys
