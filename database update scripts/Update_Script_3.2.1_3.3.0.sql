@@ -94,8 +94,8 @@ UPDATE public.dim_mappingkeys
 --- Mappings
 DELETE
 	FROM public.dim_mappings
-	where sourceref = (SELECT id FROM public.dim_linkelements where elementid = (select id from public.mappingkeys where name='Publisher') and type = 16) OR
-	targetref = (SELECT id FROM public.dim_linkelements where elementid = (select id from public.mappingkeys where name='Publisher') and type = 16);
+	where sourceref = (SELECT id FROM public.dim_linkelements where elementid = (select id from public.dim_mappingkeys where name='Publisher') and type = 16) OR
+	targetref = (SELECT id FROM public.dim_linkelements where elementid = (select id from public.dim_mappingkeys where name='Publisher') and type = 16);
 
 DELETE 
     FROM public.dim_linkelements where name='Publisher' and type = 16;
