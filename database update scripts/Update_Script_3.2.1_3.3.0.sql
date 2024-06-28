@@ -171,15 +171,15 @@ UPDATE public.dim_mappingkeys
 
 UPDATE public.dim_mappingkeys
 	SET optional=true
-	WHERE xpath='data/attributes/contributors/schemeURI' and concept = (select id from dim_mappingconcepts where name='datacite');
+	WHERE xpath='data/attributes/subjects/schemeURI' and concept = (select id from dim_mappingconcepts where name='datacite');
 
 UPDATE public.dim_mappingkeys
 	SET optional=true
-	WHERE xpath='data/attributes/contributors/valueURI' and concept = (select id from dim_mappingconcepts where name='datacite');
+	WHERE xpath='data/attributes/subjects/valueURI' and concept = (select id from dim_mappingconcepts where name='datacite');
 
 UPDATE public.dim_mappingkeys
 	SET optional=true
-	WHERE xpath='data/attributes/contributors/classificationCode' and concept = (select id from dim_mappingconcepts where name='datacite');
+	WHERE xpath='data/attributes/subjects/classificationCode' and concept = (select id from dim_mappingconcepts where name='datacite');
 
 -- ********************************************--
 -- Insert version
