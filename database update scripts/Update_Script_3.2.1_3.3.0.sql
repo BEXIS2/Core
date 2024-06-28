@@ -156,28 +156,30 @@ UPDATE public.dim_mappingkeys
 	SET optional=true
 	WHERE xpath='data/attributes/creators/familyName' and concept = (select id from dim_mappingconcepts where name='datacite');
 
--- Contributor(s)
+-- Subjects(s)
 UPDATE public.dim_mappingkeys
-	SET url='https://datacite-metadata-schema.readthedocs.io/en/4.5/properties/contributor/#id1'
-	WHERE xpath='data/attributes/contributors' and concept = (select id from dim_mappingconcepts where name='datacite');
+	SET url='https://datacite-metadata-schema.readthedocs.io/en/4.5/properties/subject/#id1'
+	WHERE xpath='data/attributes/subjects' and concept = (select id from dim_mappingconcepts where name='datacite');
 
 UPDATE public.dim_mappingkeys
 	SET optional=true
-	WHERE xpath='data/attributes/contributors/nameType' and concept = (select id from dim_mappingconcepts where name='datacite');
+	WHERE xpath='data/attributes/subjects' and concept = (select id from dim_mappingconcepts where name='datacite');
 
 UPDATE public.dim_mappingkeys
 	SET optional=true
-	WHERE xpath='data/attributes/contributors/givenName' and concept = (select id from dim_mappingconcepts where name='datacite');
+	WHERE xpath='data/attributes/subjects/subjectScheme' and concept = (select id from dim_mappingconcepts where name='datacite');
 
 UPDATE public.dim_mappingkeys
 	SET optional=true
-	WHERE xpath='data/attributes/contributors/familyName' and concept = (select id from dim_mappingconcepts where name='datacite');
-    
-INSERT INTO public.dim_mappingkeys(name, description, url, optional, xpath, iscomplex, concept, parentref)
-	Select 'ContributorType', '', '', true, 'data/attributes/contributors/contributorType', false, (select id from dim_mappingconcepts where name='datacite'), (select id from dim_mappingkeys where xpath='data/attributes/contributors')
-    WHERE NOT EXISTS (
-        SELECT xpath FROM public.dim_mappingkeys WHERE concept = (select id from dim_mappingconcepts where name='datacite') AND xpath='data/attributes/contributors/contributorType'
-    );
+	WHERE xpath='data/attributes/subjects/schemeURI' and concept = (select id from dim_mappingconcepts where name='datacite');
+
+UPDATE public.dim_mappingkeys
+	SET optional=true
+	WHERE xpath='data/attributes/subjects/valueURI' and concept = (select id from dim_mappingconcepts where name='datacite');
+
+UPDATE public.dim_mappingkeys
+	SET optional=true
+	WHERE xpath='data/attributes/subjects/classificationCode' and concept = (select id from dim_mappingconcepts where name='datacite');
 
 -- ********************************************--
 -- Insert version

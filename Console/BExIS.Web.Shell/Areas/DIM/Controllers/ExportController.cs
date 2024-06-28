@@ -265,11 +265,13 @@ namespace BExIS.Modules.Dim.UI.Controllers
 
                     LoggerFactory.LogCustom("Datastructure Start");
 
-                    long dataStructureId = datasetVersion.Dataset.DataStructure.Id;
-                    DataStructure dataStructure = dataStructureManager.StructuredDataStructureRepo.Get(dataStructureId);
+                   
 
-                    if (dataStructure != null)
+                    if (datasetVersion.Dataset.DataStructure != null)
                     {
+                        long dataStructureId = datasetVersion.Dataset.DataStructure.Id;
+                        DataStructure dataStructure = dataStructureManager.StructuredDataStructureRepo.Get(dataStructureId);
+
                         try
                         {
                             string dynamicPathOfDS = "";
@@ -440,7 +442,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
             XmlDatasetHelper xmlDatasetHelper = new XmlDatasetHelper();
             long datasetId = dsv.Dataset.Id;
             long metadatastructureId = dsv.Dataset.MetadataStructure.Id;
-            long datastructureId = dsv.Dataset.DataStructure.Id;
+            long datastructureId = dsv.Dataset.DataStructure==null?0: dsv.Dataset.DataStructure.Id;
             long researchplanId = dsv.Dataset.ResearchPlan.Id;
 
             string title = dsv.Title;
