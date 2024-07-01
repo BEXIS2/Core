@@ -13,6 +13,7 @@ ALTER TABLE IF EXISTS mappingkeys
 -- brokers
 ALTER TABLE IF EXISTS public.dim_brokers
     ADD COLUMN type character varying(255) COLLATE pg_catalog."default";
+    ADD COLUMN host character varying(255);
 
 ALTER TABLE IF EXISTS public.dim_brokers
     ADD COLUMN repositoryref bigint;
@@ -73,12 +74,12 @@ where name = 'DataCiteDOI';
 -- DataCite Repository Renaming
 UPDATE public.dim_repositories
 	SET name='datacite'
-	WHERE name like 'datacitedoi';
+	WHERE name = 'DataCiteDOI';
 
 -- DataCite Broker Renaming
 UPDATE public.dim_brokers
 	SET name='datacite'
-	WHERE name like 'datacitedoi';
+	WHERE name = 'DataCiteDOI';
 
 UPDATE dim_mappingconcepts
 	SET name='datacite'
