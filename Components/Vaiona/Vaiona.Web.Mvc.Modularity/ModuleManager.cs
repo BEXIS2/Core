@@ -22,21 +22,25 @@ namespace Vaiona.Web.Mvc.Modularity
         private static FileSystemWatcher watcher = new FileSystemWatcher();
 
         private static List<ModuleInfo> moduleInfos { get; set; }
+
         /// <summary>
         /// The readonly list of the plugins.
         /// </summary>
-        public static List<ModuleInfo> ModuleInfos { get { return moduleInfos; } }
+        public static List<ModuleInfo> ModuleInfos
+        { get { return moduleInfos; } }
 
         private static XElement exportTree = null;
-        public static XElement ExportTree { get { return exportTree; } }
+
+        public static XElement ExportTree
+        { get { return exportTree; } }
 
         private static XElement catalog;
+
         public static XElement Catalog // it may need caching, etc
         {
             get
             {
                 return catalog;
-
             }
         }
 
@@ -60,7 +64,6 @@ namespace Vaiona.Web.Mvc.Modularity
 
             // Begin watching.
             watcher.EnableRaisingEvents = true;
-
         }
 
         private static string shellManifestPath;
@@ -77,7 +80,6 @@ namespace Vaiona.Web.Mvc.Modularity
             }
             //AreaRegistration.RegisterAllAreas(state);
         }
-
 
         private static ModuleBase initModule(ModuleInfo module, object state)
         {
@@ -121,10 +123,10 @@ namespace Vaiona.Web.Mvc.Modularity
             LoggerFactory.GetFileLogger().LogCustom(message);
             return null;
             //throw new Exception(message);
-
         }
+
         /// <summary>
-        /// Creates the Shell's export items, Placeholders for other menu items that will be coming from the modules, and 
+        /// Creates the Shell's export items, Placeholders for other menu items that will be coming from the modules, and
         /// provides the tag space for the menu locations.
         /// It then build the export structure of the modules.
         /// The modules must register their exports only to the tag space and the hierarchy exposed by the shell.
@@ -159,7 +161,7 @@ namespace Vaiona.Web.Mvc.Modularity
         {
             if (node.Elements() != null)
             {
-                // check for identical titles, and prefix them with the moduleID if found 
+                // check for identical titles, and prefix them with the moduleID if found
                 foreach (var current in node.Elements("Export"))
                 {
                     resolveNameConflicts(current); // resolve the children of the current node
@@ -265,7 +267,6 @@ namespace Vaiona.Web.Mvc.Modularity
                 {
                     current.Add(export);
                 }
-
             }
         }
 
@@ -353,7 +354,6 @@ namespace Vaiona.Web.Mvc.Modularity
 
             /// 6: Delete the zipped bundle any any temprorary file.folder created during installation
             cleanUpInstallation(moduleName, moduleVersion, installationPath); // expect empty parameters
-
         }
 
         /// <summary>
@@ -384,12 +384,11 @@ namespace Vaiona.Web.Mvc.Modularity
 
         public static void Upgrade(string moduleId)
         {
-
         }
 
         public static void Uninstall(string moduleId)
         {
-            // it is supposed to be a two phase process. 
+            // it is supposed to be a two phase process.
             // call the module's Shutdown, then Uninstall methods
             // mark the module as pendingUninstall and remove whatever possible
             // on the app startup first remove all the files and unregister if from catalog
@@ -532,7 +531,7 @@ namespace Vaiona.Web.Mvc.Modularity
         {
             if (args.RequestingAssembly != null)
                 return args.RequestingAssembly;
-            // At this point, the catalog may be checked to see if the requested assembly belongs to a disabled module, the resolution should fail.                
+            // At this point, the catalog may be checked to see if the requested assembly belongs to a disabled module, the resolution should fail.
             //ModuleBase module = pluginManager.ModuleInfos.
             //    SingleOrDefault(x => (x.EntryType.Assembly.FullName == args.Name) && (x.Manifest.IsEnabled == true)).Plugin;
 
@@ -660,7 +659,6 @@ namespace Vaiona.Web.Mvc.Modularity
             watcher.EnableRaisingEvents = true;
         }
 
-
         private static void copyBundleElements(string moduleName, string moduleVersion, string installationPath, bool installForProduction = true)
         {
             //throw new NotImplementedException();
@@ -706,7 +704,7 @@ namespace Vaiona.Web.Mvc.Modularity
                 {
                     if (Directory.Exists(moduleWorkspace))
                     {
-                        // remove the module's workspace and its content. 
+                        // remove the module's workspace and its content.
                         // It may remove existing module specific settings. So better guard it with a user selected switch (UI)
                         //Directory.Delete(moduleWorkspace, true);
                     }
@@ -743,7 +741,7 @@ namespace Vaiona.Web.Mvc.Modularity
                 {
                     // remove the bin folder's assemblies that are not listed in the manifest
 
-                    // move the reamining 
+                    // move the reamining
                     Directory.Move(tempPath, moduleDepolymentPath); // in case use MoveAndReplace
                 }
                 catch (Exception ex)
@@ -789,7 +787,6 @@ namespace Vaiona.Web.Mvc.Modularity
                 }
             }
             // check if the declaraed dependecies are already available. module/version
-
         }
 
         private static ModuleInfo get(string moduleId)
@@ -812,5 +809,4 @@ namespace Vaiona.Web.Mvc.Modularity
             return manifest;
         }
     }
-
 }

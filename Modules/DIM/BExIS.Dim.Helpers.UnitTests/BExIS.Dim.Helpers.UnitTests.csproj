@@ -44,7 +44,7 @@
       <SubType>Designer</SubType>
     </None>
     <None Update="Data\GetValuesFromMetadata_MultiMappingsOnDifferentKomplexTypes_ListOfValues.xml">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+     <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
 

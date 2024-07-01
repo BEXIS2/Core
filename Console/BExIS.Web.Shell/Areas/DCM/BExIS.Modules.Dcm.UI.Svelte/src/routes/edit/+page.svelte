@@ -13,9 +13,7 @@
 		latestFileReaderDate,
 		latestSubmitDate,
 		hooksStatus,
-
 		latestValidationDate
-
 	} from './stores';
 
 	import type { EditModel, HookModel, ViewModel } from './types';
@@ -62,25 +60,25 @@
 	let messageView: ViewModel;
 	$: messageView;
 
-	 latestFileUploadDate.subscribe((e) => {
-				updateHookStatus();
-			});
+	latestFileUploadDate.subscribe((e) => {
+		updateHookStatus();
+	});
 
-			latestDataDescriptionDate.subscribe((e) => {
-				updateHookStatus();
-			});
+	latestDataDescriptionDate.subscribe((e) => {
+		updateHookStatus();
+	});
 
-			latestFileReaderDate.subscribe((e) => {
-				updateHookStatus();
-			});
+	latestFileReaderDate.subscribe((e) => {
+		updateHookStatus();
+	});
 
-			latestValidationDate.subscribe((e) => {
-				updateHookStatus();
-			});
+	latestValidationDate.subscribe((e) => {
+		updateHookStatus();
+	});
 
-			latestSubmitDate.subscribe((e) => {
-				updateHookStatus();
-			});
+	latestSubmitDate.subscribe((e) => {
+		updateHookStatus();
+	});
 
 	async function load() {
 		console.log('LOAD EDIT', Date.now);
@@ -96,43 +94,37 @@
 		views = model.views;
 		title = model.title;
 		version = model.version;
-		
+
 		// // there is a need for a time delay to update the hook status
 		// // if not exit, the first run faild because the hooks are not
 		// setTimeout(async () => {
-			
-			console.log("🚀 ~ file: +page.svelte:89 ~ load ~ hooks:", hooks)
-			// update store
-			if (model.hooks) {
-				updateStatus(model.hooks);
 
-				// seperate dcm hooks from other hooks
-				seperateHooks(model.hooks);
+		console.log('🚀 ~ file: +page.svelte:89 ~ load ~ hooks:', hooks);
+		// update store
+		if (model.hooks) {
+			updateStatus(model.hooks);
 
-				// get resultView
-				seperateViews(views);
+			// seperate dcm hooks from other hooks
+			seperateHooks(model.hooks);
 
-			}
+			// get resultView
+			seperateViews(views);
+		}
 
-			
 		// }, 1000); /* <--- If this is enough greater than transition, it doesn't happen... */
-
 	}
 
 	async function updateHookStatus() {
 		let wait = false;
 		let time = 1000;
 
-		if(id>0)
-		{
+		if (id > 0) {
 			do {
-
 				// get status of hooks,
 				const r = await getHooks(id);
 
 				model.hooks = r;
 				if (model.hooks) {
-
 					updateStatus(model.hooks);
 
 					if (model.hooks.filter((h) => h.status == 6).length > 0) {
@@ -147,8 +139,7 @@
 				}
 
 				await sleep(time);
-				console.log("test")
-
+				console.log('test');
 			} while (wait);
 		}
 	}

@@ -1,5 +1,4 @@
 ﻿using BExIS.Dlm.Entities.Data;
-using BExIS.Dlm.Entities.DataStructure;
 using BExIS.Utils.NH.Querying;
 using System;
 using System.Collections.Generic;
@@ -569,8 +568,5 @@ namespace BExIS.Modules.Ddm.UI.Helpers
 
             return new ProjectionExpression(pieList);
         }
-
-
- 
     }
 }

@@ -90,7 +90,6 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 string schemaName = TaskManager.Bus[ImportMetadataStructureTaskManager.SCHEMA_NAME].ToString();
                 using (MetadataStructureManager msm = new MetadataStructureManager())
                 {
-
                     if (msm.Repo.Query(m => m.Name.Equals(schemaName)).Any())
                     {
                         MetadataStructure ms = msm.Repo.Query(m => m.Name.Equals(schemaName)).FirstOrDefault();

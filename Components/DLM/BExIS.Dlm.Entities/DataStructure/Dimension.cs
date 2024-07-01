@@ -6,6 +6,7 @@ namespace BExIS.Dlm.Entities.DataStructure
     public class Dimension : BaseEntity
     {
         #region Attributes
+
         public virtual string Name { get; set; }
 
         /// <summary>
@@ -16,20 +17,22 @@ namespace BExIS.Dlm.Entities.DataStructure
 
         public virtual string Description { get; set; }
 
-        #endregion
+        #endregion Attributes
 
         #region Associations
 
         public virtual ICollection<Unit> Units { get; set; }
 
-        #endregion
+        #endregion Associations
 
         #region Mathods
+
         //overide equals and hashcode to use the spec/ axes
         public Dimension()
         {
             Units = new List<Unit>();
         }
-        #endregion
+
+        #endregion Mathods
     }
 }

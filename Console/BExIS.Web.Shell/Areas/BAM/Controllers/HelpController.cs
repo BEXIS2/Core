@@ -1,14 +1,8 @@
-﻿using System.Web.Mvc;
-using Vaiona.Web.Mvc.Modularity;
-using Vaiona.Web.Mvc.Models;
-using System.IO;
-using System.Xml.Linq;
-using BExIS.Xml.Helpers;
-using Vaiona.Utils.Cfg;
-using BExIS.Dlm.Services.Data;
+﻿using BExIS.Utils.Config;
 using BExIS.Utils.Helpers;
 using System;
-using BExIS.Utils.Config;
+using System.Web.Mvc;
+using Vaiona.Web.Mvc.Modularity;
 
 namespace BExIS.Modules.Bam.UI.Controllers
 {

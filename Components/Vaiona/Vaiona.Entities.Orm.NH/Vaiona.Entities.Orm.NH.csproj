@@ -51,22 +51,22 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Mappings\Default\Logging\LogEntryEntity.RelationLog.hbm.xml">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+     <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Mappings\Default\Logging\LogEntryEntity.DataLog.hbm.xml">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+     <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Mappings\Default\Logging\LogEntryEntity.CustomLog.hbm.xml">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+     <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Mappings\Default\Logging\LogEntryEntity.MethodLog.hbm.xml">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+     <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Mappings\Default\Logging\LogEntryEntity.hbm.xml">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+     <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Mappings\Default\Seucrity\AccessRuleEntity.hbm.xml">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+     <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

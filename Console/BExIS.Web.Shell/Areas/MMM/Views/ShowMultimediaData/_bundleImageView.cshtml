@@ -1,6 +1,5 @@
 ﻿@using IDIV.Modules.Mmm.UI.Models
 
-
 @model ImageInformation
 
 @{
@@ -8,47 +7,46 @@
     string path = @Url.Content("~/mmm/ShowMultimediaData/getFileFromZip/?path=" + Server.UrlEncode(Model.BundlePath) + "&file=" + Server.UrlEncode(Model.Thumbnail));
 }
 
-
-    <table>
+<table>
     <tr>
-        <td class="mmm-image" rowspan="2" path="@Model.BundlePath">          
+        <td class="mmm-image" rowspan="2" path="@Model.BundlePath">
             <img id="image" src="@path" />
             <div id="overlay" path="@Model.BundlePath" name="@Model.Name"></div>
 
-                @*<div id="prevImg"><span class="fa fa-angle-left"></span></div>
+            @*<div id="prevImg"><span class="fa fa-angle-left"></span></div>
                 <div id="nextImg"><span class="fa fa-angle-right"></span></div>*@
-            </td>
-                <td class="mmm-exif">
-                    <div class="mmm-data">
-                        @foreach (Measurement m in Model.Measurements)
+        </td>
+        <td class="mmm-exif">
+            <div class="mmm-data">
+                @foreach (Measurement m in Model.Measurements)
                         {
-                        <table id="t_@m.Id">
-                            <tr>
-                                <td>ID</td>
-                                <td>Type</td>
-                                <td>Length</td>
-                                <td>Width</td>
-                                <td>Area</td>
-                                <td>Perimeter</td>
-                            </tr>
-                            <tr class="mmm-values">
-                                <td>@m.Id</td>
-                                <td>@m.Type</td>
-                                <td>@m.Length</td>
-                                <td>@m.Width</td>
-                                <td>@m.Area</td>
-                                <td>@m.Perimeter</td>
-                            </tr>
-                            @Html.Partial("_measurementView", m.Children)
-                        </table>
+                <table id="t_@m.Id">
+                    <tr>
+                        <td>ID</td>
+                        <td>Type</td>
+                        <td>Length</td>
+                        <td>Width</td>
+                        <td>Area</td>
+                        <td>Perimeter</td>
+                    </tr>
+                    <tr class="mmm-values">
+                        <td>@m.Id</td>
+                        <td>@m.Type</td>
+                        <td>@m.Length</td>
+                        <td>@m.Width</td>
+                        <td>@m.Area</td>
+                        <td>@m.Perimeter</td>
+                    </tr>
+                    @Html.Partial("_measurementView", m.Children)
+                </table>
                         }
-                    </div>
-                </td>
-            </tr>
-            @*<tr>
-                <td class="mmm-map">
-                    <div id="map">
-                    </div>
-                </td>
-            </tr>*@
-        </table>
+            </div>
+        </td>
+    </tr>
+    @*<tr>
+            <td class="mmm-map">
+                <div id="map">
+                </div>
+            </td>
+        </tr>*@
+</table>

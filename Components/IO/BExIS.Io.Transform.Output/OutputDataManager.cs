@@ -88,7 +88,7 @@ namespace BExIS.IO.Transform.Output
 
                 //ascii allready exist
                 if (datasetVersion.ContentDescriptors.Count(p => p.Name.Equals(contentDescriptorTitle) &&
-                    p.URI.Contains("_"+versionNr.ToString()+"_")) > 0 &&
+                    p.URI.Contains("_" + versionNr.ToString() + "_")) > 0 &&
                     !withUnits)
                 {
                     #region FileStream exist
@@ -202,8 +202,6 @@ namespace BExIS.IO.Transform.Output
             return path;
         }
 
-
-
         /// <summary>
         /// version id = 0 == latest version
         /// </summary>
@@ -244,7 +242,7 @@ namespace BExIS.IO.Transform.Output
                 string path = "";
 
                 //excel allready exist
-                if (datasetVersion.ContentDescriptors.Count(p => p.Name.Equals(contentDescriptorTitle) && p.URI.Contains("_"+versionNr+"_")) > 0 &&
+                if (datasetVersion.ContentDescriptors.Count(p => p.Name.Equals(contentDescriptorTitle) && p.URI.Contains("_" + versionNr + "_")) > 0 &&
                     data == null)
                 {
                     #region FileStream exist
@@ -501,7 +499,6 @@ namespace BExIS.IO.Transform.Output
         {
             DatasetManager dm = new DatasetManager();
 
-
             try
             {
                 // if versionid = 0 - get latest Version
@@ -509,15 +506,14 @@ namespace BExIS.IO.Transform.Output
                 // check if version is latest version
                 if (id != 0 && (versionId == 0 || dm.GetDatasetLatestVersionId(id).Equals(versionId)))
                 {
-                        DataTable data;
-                    
-                        data = dm.GetLatestDatasetVersionTuples(id);
-                        data.Strip(keepId);
-                        return data;
+                    DataTable data;
+
+                    data = dm.GetLatestDatasetVersionTuples(id);
+                    data.Strip(keepId);
+                    return data;
                 }
 
-
-                // if not 
+                // if not
                 return getHistoryData(versionId);
             }
             finally
@@ -545,8 +541,7 @@ namespace BExIS.IO.Transform.Output
             }
         }
 
-        #endregion 
-
+        #endregion get Data
 
         #endregion export prepare files
 

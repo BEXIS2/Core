@@ -20,7 +20,7 @@
             <td>
                 @if (Model.Party == null)
                 {
-                <select name="PartyTypeId" id="ddl_PartyType" onchange="changePartyType()" class="comboboxBootstrap" style="width: 372px; border: 2px solid black; height: 30px;" >
+                <select name="PartyTypeId" id="ddl_PartyType" onchange="changePartyType()" class="comboboxBootstrap" style="width: 372px; border: 2px solid black; height: 30px;">
                     @foreach (var partyTypeModel in Model.PartyRelationshipsTypes)
                     {
                         <script type="text/javascript">
@@ -47,7 +47,6 @@
                 {
                     <span>@Model.Party.PartyType.Title</span>
                 }
-
             </td>
         </tr>
     </table>
@@ -80,7 +79,7 @@
                 customAttributeValues.push({ Key: parseInt($(this).attr("Id").replace(/[^0-9\.]/g, ''), 10) + '', Value: $(this).val() });
             }
         });
-     
+
         $(".partyTypeRelation").each(function(){
             $(this).attr("Id");
             $(this).find("option:selected").val();
@@ -96,7 +95,7 @@
                     PartyTypePair:{Id:parseInt($(item).attr("partyTypePairId"))},
                     Title:$(this).find("label").text(),
                     Description:'',
-                    
+
                     Scope:''});
             }
         });
@@ -151,7 +150,7 @@
     }
 
     function changePartyType() {
-        
+
         partyTypeId = $("#ddl_PartyType").val();
         showLoading(true);
         //Retrieving custome attribute types
@@ -191,7 +190,7 @@
                 elements +="<option value='-1'>---</option>";
                 $.each(partyTypePair.parties, function(i, Party) {
                     elements +="<option value='"+Party.Id+"'>"+Party.Name+"</option>";
-                  
+
                 });
                 elements += "</select></div><span class='field-validation-valid' data-valmsg-for='typeid" + partyTypePair.Id+"' data-valmsg-replace='true'></span></div>";
             });
@@ -208,8 +207,6 @@
                 $(element).hide();
         });
     }
-
-
 
     $(function () {
         //parsing the unobtrusive attributes when we get content via ajax
@@ -230,8 +227,6 @@
         $(':submit', this).attr('disabled', 'disabled');
     }
     });
-
-
 </script>
 @if (Model.Party == null)
 {

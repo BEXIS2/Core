@@ -1,18 +1,14 @@
-﻿using BExIS.Security.Entities.Subjects;
+﻿using BExIS.App.Bootstrap;
+using BExIS.Security.Entities.Subjects;
 using BExIS.Security.Services.Authentication;
 using BExIS.Security.Services.Subjects;
 using BExIS.Security.Services.Utilities;
 using BExIS.Utils.Config;
-using BExIS.Utils.Config.Configurations;
 using BExIS.Web.Shell.Models;
+using Exceptionless;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
-using Microsoft.IdentityModel.Tokens;
 using Microsoft.Owin.Security;
-using System.Collections.Generic;
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
-using System.Text;
 using System;
 using System.Threading.Tasks;
 using System.Web;
@@ -20,12 +16,6 @@ using System.Web.Mvc;
 using Vaiona.Web.Extensions;
 using Vaiona.Web.Mvc.Models;
 using Vaiona.Web.Mvc.Modularity;
-using Exceptionless;
-using System.Net.Http.Headers;
-using System.Web.Http.Results;
-using BExIS.App.Bootstrap.Helpers;
-using BExIS.Web.Shell.Helpers;
-using BExIS.App.Bootstrap;
 
 namespace BExIS.Web.Shell.Controllers
 {
@@ -230,10 +220,8 @@ namespace BExIS.Web.Shell.Controllers
             ViewBag.Title = PresentationModel.GetViewTitleForTenant("Log In", this.Session.GetTenant());
             ViewBag.ReturnUrl = returnUrl;
 
-
             return View();
         }
-
 
         //
         // POST: /Account/Login
@@ -307,9 +295,6 @@ namespace BExIS.Web.Shell.Controllers
                 }
             }
         }
-
-        
-
 
         //
         // POST: /Account/LogOff

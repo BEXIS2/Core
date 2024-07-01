@@ -21,7 +21,6 @@ namespace BExIS.Modules.Dcm.UI.Models
 
         public List<string> SupportedFileExtentions = new List<string>();
 
-
         public StepInfo StepInfo { get; set; }
     }
 }

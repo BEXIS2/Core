@@ -20,10 +20,8 @@ namespace BExIS.Modules.Rpm.UI.Helpers.SeedData
             using (var dataTypeManager = new DataTypeManager())
             using (var unitManager = new UnitManager())
             {
-
                 foreach (DataRow mapAttributesRow in mappedAttributes.Rows)
                 {
-
                     VariableTemplate template = new VariableTemplate();
 
                     // values of the attribute
@@ -32,7 +30,6 @@ namespace BExIS.Modules.Rpm.UI.Helpers.SeedData
                     template.Description = mapAttributesRow["Description"].ToString();
                     template.DataType = dataTypeManager.Repo.Get(Convert.ToInt64(mapAttributesRow["DataTypeId"]));
                     template.Unit = unitManager.Repo.Get(Convert.ToInt64(mapAttributesRow["UnitId"]));
-
 
                     VariableTemplate variableTemplate = variableManager.VariableTemplateRepo.Get(a =>
                         template.Label.Equals(a.Label) &&
@@ -54,8 +51,6 @@ namespace BExIS.Modules.Rpm.UI.Helpers.SeedData
                             null,
                             true
                             );
-
-     
                     }
 
                     // add attributeId to the mappedAttributes Table
@@ -63,7 +58,6 @@ namespace BExIS.Modules.Rpm.UI.Helpers.SeedData
                 }
             }
         }
-
 
         // create read units in bpp
         public void CreateUnits(ref DataTable mappedUnits)
@@ -173,7 +167,6 @@ namespace BExIS.Modules.Rpm.UI.Helpers.SeedData
                 unitManager.Dispose();
             }
         }
-
 
         // create read data types in bpp
         public void CreateDataTypes(ref DataTable mappedDataTypes)

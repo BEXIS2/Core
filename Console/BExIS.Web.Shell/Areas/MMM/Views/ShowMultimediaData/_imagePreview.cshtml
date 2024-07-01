@@ -1,5 +1,5 @@
 ﻿@model string
-@{ 
+@{
     string path = @Url.Content("~/mmm/ShowMultimediaData/getFile/?send_mail=false&path=" + Server.UrlEncode(Model));
 }
 <img src="@path" />

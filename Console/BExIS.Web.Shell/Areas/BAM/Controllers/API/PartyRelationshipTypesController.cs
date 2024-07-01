@@ -1,7 +1,6 @@
 ﻿using BExIS.Dlm.Services.Party;
 using BExIS.Modules.Bam.UI.Models;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Http;

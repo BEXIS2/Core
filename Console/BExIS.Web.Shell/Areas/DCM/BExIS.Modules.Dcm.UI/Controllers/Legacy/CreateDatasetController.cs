@@ -1,7 +1,7 @@
 ﻿using BExIS.Dcm.CreateDatasetWizard;
 using BExIS.Dcm.Wizard;
-using BExIS.Dim.Entities.Mapping;
-using BExIS.Dim.Helpers.Mapping;
+using BExIS.Dim.Entities.Mappings;
+using BExIS.Dim.Helpers.Mappings;
 using BExIS.Dlm.Entities.Administration;
 using BExIS.Dlm.Entities.Data;
 using BExIS.Dlm.Entities.DataStructure;
@@ -993,7 +993,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                     {
                         //check if mappings exist between system/relationships and the metadatastructure/attr
                         // get all party mapped nodes
-                       IEnumerable<XElement> complexElements = XmlUtility.GetXElementsByAttribute("partyid", XmlUtility.ToXDocument(metadata));
+                        IEnumerable<XElement> complexElements = XmlUtility.GetXElementsByAttribute("partyid", XmlUtility.ToXDocument(metadata));
 
                         // get all relationshipTypes where entityname is involved
                         var relationshipTypes = uow.GetReadOnlyRepository<PartyRelationshipType>().Get().Where(
@@ -1197,7 +1197,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                     // if mapping to entites type exist
                     if (MappingUtils.ExistMappingWithEntityFromRoot(
                         datasetVersion.Dataset.MetadataStructure.Id,
-                        BExIS.Dim.Entities.Mapping.LinkElementType.MetadataStructure,
+                        BExIS.Dim.Entities.Mappings.LinkElementType.MetadataStructure,
                         typeid))
                     {
                         //load metadata and searching for the entity Attrs

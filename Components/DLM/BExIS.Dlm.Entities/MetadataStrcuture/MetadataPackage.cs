@@ -3,13 +3,13 @@ using Vaiona.Entities.Common;
 
 /// <summary>
 ///
-/// </summary>        
+/// </summary>
 namespace BExIS.Dlm.Entities.MetadataStructure
 {
     /// <summary>
     ///
     /// </summary>
-    /// <remarks></remarks>        
+    /// <remarks></remarks>
     public class MetadataPackage : BusinessEntity
     {
         #region Attributes
@@ -18,24 +18,24 @@ namespace BExIS.Dlm.Entities.MetadataStructure
         ///
         /// </summary>
         /// <remarks></remarks>
-        /// <seealso cref=""/>        
+        /// <seealso cref=""/>
         public virtual string Name { get; set; }
 
         /// <summary>
         ///
         /// </summary>
         /// <remarks></remarks>
-        /// <seealso cref=""/>        
+        /// <seealso cref=""/>
         public virtual string Description { get; set; }
 
         /// <summary>
         ///
         /// </summary>
         /// <remarks></remarks>
-        /// <seealso cref=""/>        
+        /// <seealso cref=""/>
         public virtual bool IsEnabled { get; set; }
 
-        #endregion
+        #endregion Attributes
 
         #region Associations
 
@@ -43,17 +43,17 @@ namespace BExIS.Dlm.Entities.MetadataStructure
         ///
         /// </summary>
         /// <remarks></remarks>
-        /// <seealso cref=""/>        
+        /// <seealso cref=""/>
         public virtual ICollection<MetadataPackageUsage> UsedIn { get; set; }
 
         /// <summary>
         ///
         /// </summary>
         /// <remarks> needs to preserve the order </remarks>
-        /// <seealso cref=""/>        
+        /// <seealso cref=""/>
         public virtual ICollection<MetadataAttributeUsage> MetadataAttributeUsages { get; set; }
 
-        #endregion
+        #endregion Associations
 
         #region Mathods
 
@@ -62,14 +62,13 @@ namespace BExIS.Dlm.Entities.MetadataStructure
         /// </summary>
         /// <remarks></remarks>
         /// <seealso cref=""/>
-        /// <param>NA</param>       
+        /// <param>NA</param>
         public MetadataPackage()
         {
             UsedIn = new List<MetadataPackageUsage>();
             MetadataAttributeUsages = new List<MetadataAttributeUsage>();
         }
 
-        #endregion
-
+        #endregion Mathods
     }
 }

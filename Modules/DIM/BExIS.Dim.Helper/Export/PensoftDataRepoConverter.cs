@@ -6,7 +6,6 @@ using BExIS.Dlm.Services.MetadataStructure;
 using BExIS.IO;
 using BExIS.IO.Transform.Output;
 using BExIS.Xml.Helpers;
-using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Xml;

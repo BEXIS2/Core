@@ -66,7 +66,7 @@
 
 		setTimeout(async () => {
 			if (variable.id > 0) {
-				res = suite(variable);
+				res = suite(variable,undefined);
 			} // run validation only if start with an existing
 			filterLists();
 		}, 10);
@@ -132,7 +132,7 @@
 		}
 	}
 
-		// this function change the group in the list based on the selections of other fields
+	// this function change the group in the list based on the selections of other fields
 	function filterLists() {
 		console.log('filter lists');
 

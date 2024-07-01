@@ -1,6 +1,6 @@
 ﻿/// <summary>
 ///
-/// </summary>        
+/// </summary>
 namespace BExIS.Utils.Models
 {
     public class SheetArea
@@ -12,7 +12,7 @@ namespace BExIS.Utils.Models
         public int StartRow { get; private set; }
         public int EndRow { get; private set; }
 
-        #endregion
+        #endregion Attributes
 
         #region Methods
 
@@ -42,6 +42,6 @@ namespace BExIS.Utils.Models
             this.EndRow = EndRow;
         }
 
-        #endregion
+        #endregion Methods
     }
 }

@@ -6,7 +6,6 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 {
     public class ImportMetadataStructureSummaryController : Controller
     {
-
         private ImportMetadataStructureTaskManager TaskManager;
 
         //
@@ -22,14 +21,11 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             SummaryModel model = new SummaryModel(TaskManager.Current());
             model.StepInfo = TaskManager.Current();
 
-
             if (TaskManager.Bus.ContainsKey(ImportMetadataStructureTaskManager.ROOT_NODE))
                 model.RootName = TaskManager.Bus[ImportMetadataStructureTaskManager.ROOT_NODE].ToString();
 
             if (TaskManager.Bus.ContainsKey(ImportMetadataStructureTaskManager.SCHEMA_NAME))
                 model.SchemaName = TaskManager.Bus[ImportMetadataStructureTaskManager.SCHEMA_NAME].ToString();
-
-
 
             return PartialView(model);
         }
@@ -39,11 +35,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         {
             TaskManager = (ImportMetadataStructureTaskManager)Session["TaskManager"];
 
-
-
             return PartialView();
         }
-
-
     }
 }

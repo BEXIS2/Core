@@ -15,11 +15,10 @@
 
     string controller = Session["Controller"].ToString();
 
-
 }
- 
+
 <div id="resultContent">
-    
+
     @*<button type="button" class="t-button" onclick="OnClickResultViewBt()">change result view</button>
     <br />
     <br />*@
@@ -31,13 +30,11 @@
         test2*@
        @if(dt.Columns.Count>0){@Html.Partial("_resultListView", Model)}
         else{
-        
+
             <p>No data found</p>
-            
+
         }
    @* </div>*@
-
-
 
     @(Html.Telerik().Window()
     .Name("AddTo")
@@ -62,7 +59,7 @@
         </dl>
     </div>
     </text>)
-    
+
 )
 </div>
 <script type="text/javascript">
@@ -119,8 +116,6 @@
 
     }
 
-
-
     function grid() {
         return $('#Grid').data('tGrid');
     }
@@ -146,11 +141,9 @@
         }
     }
 
-
     function refreshGrid()
     {
         $(".t-grid .t-refresh").trigger('click');
-        
-    }
 
+    }
 </script>

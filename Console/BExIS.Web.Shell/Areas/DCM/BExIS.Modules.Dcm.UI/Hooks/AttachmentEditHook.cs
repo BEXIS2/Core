@@ -34,7 +34,6 @@ namespace BExIS.Modules.Dcm.UI.Hooks
             else Status = HookStatus.Open;
         }
 
-
         private void checkAvailablity(long id)
         {
             // check if subject is checked in

@@ -1,30 +1,29 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using System.Net.Http;
-using System.Net.Http.Headers;
-using System.Web;
-using System.Web.Http;
-using BExIS.App.Bootstrap.Attributes;
+﻿using BExIS.App.Bootstrap.Attributes;
 using BExIS.Dlm.Entities.DataStructure;
 using BExIS.Dlm.Entities.Meanings;
 using BExIS.Dlm.Services.DataStructure;
 using BExIS.Dlm.Services.Meanings;
 using BExIS.Utils.Route;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
+using System;
+using System.Collections.Generic;
+using System.Net;
+using System.Net.Http;
+using System.Net.Http.Headers;
+using System.Web;
+using System.Web.Http;
 
 namespace BExIS.Modules.Rpm.UI.Api.Controllers
 {
     public class MeaningsAdminController : ApiController
     {
-
         private readonly ImeaningManagr _meaningManager;
+
         public MeaningsAdminController(ImeaningManagr _meaningManager)
         {
             this._meaningManager = _meaningManager;
         }
+
         public MeaningsAdminController()
         {
             if (this._meaningManager == null)
@@ -44,6 +43,7 @@ namespace BExIS.Modules.Rpm.UI.Api.Controllers
             //set headers on the "response"
             return response;
         }
+
         private HttpResponseMessage cretae_response(List<Object> return_object)
         {
             if (return_object == null)
@@ -59,6 +59,7 @@ namespace BExIS.Modules.Rpm.UI.Api.Controllers
         }
 
         #region meanings
+
         [BExISApiAuthorize]
         [JsonNetFilter]
         [HttpPost]
@@ -67,7 +68,6 @@ namespace BExIS.Modules.Rpm.UI.Api.Controllers
         {
             try
             {
-
                 Meaning res = _meaningManager.addMeaning(data);
                 return (cretae_response(res));
             }
@@ -76,7 +76,6 @@ namespace BExIS.Modules.Rpm.UI.Api.Controllers
                 return (cretae_response((Meaning)null));
             }
         }
-
 
         [BExISApiAuthorize]
         [JsonNetFilter]
@@ -97,10 +96,10 @@ namespace BExIS.Modules.Rpm.UI.Api.Controllers
 
         [BExISApiAuthorize]
         [JsonNetFilter]
-        [HttpDelete,HttpPost]
+        [HttpDelete, HttpPost]
         [DeleteRoute("api/MeaningsAdmin/Delete")]
         [PostRoute("api/MeaningsAdmin/Delete")]
-        public HttpResponseMessage Delete( long id)
+        public HttpResponseMessage Delete(long id)
         {
             try
             {
@@ -129,7 +128,7 @@ namespace BExIS.Modules.Rpm.UI.Api.Controllers
         [JsonNetFilter]
         [HttpPost]
         [PostRoute("api/MeaningsAdmin/updateRelatedManings")]
-        public HttpResponseMessage updateRelatedManings (HttpRequestMessage request)
+        public HttpResponseMessage updateRelatedManings(HttpRequestMessage request)
         {
             try
             {
@@ -137,14 +136,16 @@ namespace BExIS.Modules.Rpm.UI.Api.Controllers
                 String childID = Convert.ToString(HttpContext.Current.Request.Form["childID"]);
                 return cretae_response(_meaningManager.updateRelatedManings(parentID, childID));
             }
-            catch(Exception exc)
+            catch (Exception exc)
             {
                 return null;
             }
         }
-        #endregion
+
+        #endregion meanings
 
         #region external links
+
         [BExISApiAuthorize]
         [JsonNetFilter]
         [HttpPost, PostRoute("api/MeaningsAdmin/createExternalLink")]
@@ -169,7 +170,6 @@ namespace BExIS.Modules.Rpm.UI.Api.Controllers
             ExternalLink m = null;
             try
             {
-
                 ExternalLink res = _meaningManager.editExternalLink(data);
                 return (cretae_response(res));
             }
@@ -202,9 +202,11 @@ namespace BExIS.Modules.Rpm.UI.Api.Controllers
         {
             return cretae_response(_meaningManager.updatePreviousLinks());
         }
-        #endregion
+
+        #endregion external links
 
         #region PrefixCategory
+
         // external links endpoints
 
         [BExISApiAuthorize]
@@ -231,7 +233,6 @@ namespace BExIS.Modules.Rpm.UI.Api.Controllers
             ExternalLink m = null;
             try
             {
-
                 PrefixCategory res = _meaningManager.editPrefixCategory(data);
                 return (cretae_response(res));
             }
@@ -255,7 +256,7 @@ namespace BExIS.Modules.Rpm.UI.Api.Controllers
                 return (cretae_response(null));
             }
         }
-        #endregion
 
+        #endregion PrefixCategory
     }
 }

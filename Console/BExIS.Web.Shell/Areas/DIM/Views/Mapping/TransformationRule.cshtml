@@ -9,7 +9,6 @@
 
 }
 
-
 <div id="@id" sourceId="@sourceId" targetId="@targetId" class="mapping-container-transformation-rule">
     <b>Transformation Rule (@Model.Source.Name to @Model.Target.Name)</b>
     <span class="bx bx-angle-double-down toogle-icon" onclick="iconTransformtionRuleClick(this)"></span>
@@ -43,7 +42,6 @@
                 <td>
                     @Html.TextBox("Mask", @Model.TransformationRule.Mask)
                 </td>
-
             </tr>
             <tr>
                 <td>
@@ -54,12 +52,10 @@
                 </td>
                 <td>
                     <div id="resultRegEx" class="col-md-5" style="width: 100%">
-
                     </div>
                 </td>
                 <td>
                     <div id="result" class="col-md-5">
-
                     </div>
                 </td>
             </tr>
@@ -71,14 +67,11 @@
                     @Html.TextBox("Default", @Model.TransformationRule.Default)
                 </td>
                 <td>
-         
                 </td>
                 <td>
-           
                 </td>
             </tr>
         </table>
-       
     </div>
 
     <script type="text/javascript">
@@ -156,8 +149,6 @@
                     console.log("-----");
                     console.log(result);
 
-                    
-
                     for (var i = 0; i < result.length; i++) {
 
                         var maskName = sourceName + "[" + i + "]";
@@ -204,10 +195,8 @@
                     var place = sourceName + "[0]";
                     mask = mask.replace(place, r);
 
-
                 } else {
-                    
-                
+
                     for (var i = 0; i < result.length; i++) {
                         var r = result[i];
                         var place = sourceName + "[" + i + "]";
@@ -223,10 +212,7 @@
                 $("#" + transformationId + " #result").html(mask);
 
             }
-            
+
         }
-
-
     </script>
 </div>
-

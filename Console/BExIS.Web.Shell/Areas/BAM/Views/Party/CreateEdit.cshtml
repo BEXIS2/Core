@@ -72,7 +72,6 @@
                                 <img src="~/Content/Images/info.png" data-toggle="tooltip" title="Party type" />
                                 <img src="@Url.Content(Themes.GetResourcePath("Styles/Default", "loading.gif"))" style="display:none" id="imgPartyCustomeAttrLoading" />
                             }
-
                         </td>
                     </tr>
                     <tr>
@@ -84,7 +83,6 @@
                             @(Html.Telerik().DatePickerFor(m => m.StartDate).Format("yyyy-MM-dd")
                                     .HtmlAttributes(new { @Style = "border:none;display: inline-block;width:398px" })
                             )
-
                         </td>
                     </tr>
                     <tr>
@@ -118,7 +116,6 @@
         </text>);
         @*tabs.Add().Text("SystemRelationship").Enabled((createMode ? false : true)).Content(@<text>
             <div id="systemRelationships"></div>
-
         </text>);*@
         })
     )<span style="color:red" id="errorsMsgSpan">@errorMessage</span>
@@ -299,5 +296,4 @@
             });
         });
     }
-
 </script>

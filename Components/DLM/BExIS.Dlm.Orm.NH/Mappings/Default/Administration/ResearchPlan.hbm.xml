@@ -1,8 +1,8 @@
 <hibernate-mapping xmlns="urn:nhibernate-mapping-2.2" assembly="BExIS.Dlm.Entities" namespace="BExIS.Dlm.Entities.Administration">
   <class xmlns="urn:nhibernate-mapping-2.2" name="ResearchPlan" table="ResearchPlans">
     <!-- Mapping BaseEntity properties -->
-    <id name="Id" type="Int64" >
-      <column name="Id" index="idx_ResearchPlans_id"/>
+    <id name="Id" type="Int64">
+      <column name="Id" index="idx_ResearchPlans_id" />
       <generator class="native" />
     </id>
 
@@ -11,15 +11,15 @@
     <version name="VersionNo" type="Int32">
       <column name="VersionNo" />
     </version>
-    
+
     <property name="Extra" type="System.Xml.XmlDocument, System.Xml, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
       <column name="Extra" not-null="false" sql-type="xml" />
     </property>
 
     <!-- Mapping Dataset properties -->
-    
+
     <property name="Title" type="string">
-      <column name="Title" index="idx_ResearchPlans_title"/>
+      <column name="Title" index="idx_ResearchPlans_title" />
     </property>
 
     <property name="Description" type="string">
@@ -28,15 +28,13 @@
 
     <!-- Mapping entity associations -->
     <set cascade="none" name="Datasets" inverse="true" lazy="true">
-      <key column="ResearchPlanRef" not-null="false" foreign-key="FK_Datasets_ResearchPlans"/>      
+      <key column="ResearchPlanRef" not-null="false" foreign-key="FK_Datasets_ResearchPlans" />
       <one-to-many class="BExIS.Dlm.Entities.Data.Dataset" />
     </set>
 
     <set name="DataStructures" table="ResearchPlans_DataStructures" cascade="all-delete-orphan"  lazy="true">
-      <key column="ResearchPlanRef"/>
-      <many-to-many column="DataStructureRef" class="BExIS.Dlm.Entities.DataStructure.DataStructure"/>
+      <key column="ResearchPlanRef" />
+      <many-to-many column="DataStructureRef" class="BExIS.Dlm.Entities.DataStructure.DataStructure" />
     </set>
-
   </class>
-  
 </hibernate-mapping>

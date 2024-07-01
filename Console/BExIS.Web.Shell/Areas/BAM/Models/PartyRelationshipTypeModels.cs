@@ -1,8 +1,6 @@
 ﻿using BExIS.Dlm.Entities.Party;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Web;
 
 namespace BExIS.Modules.Bam.UI.Models
 {
@@ -15,7 +13,7 @@ namespace BExIS.Modules.Bam.UI.Models
 
         public List<ReadPartyRelationshipTypePairModel> PartyRelationshipTypePairs { get; set; }
 
-        public ReadPartyRelationshipTypeModel() 
+        public ReadPartyRelationshipTypeModel()
         {
             PartyRelationshipTypePairs = new List<ReadPartyRelationshipTypePairModel>();
         }

@@ -1,15 +1,15 @@
 <hibernate-mapping xmlns="urn:nhibernate-mapping-2.2" assembly="BExIS.Dlm.Entities" namespace="BExIS.Dlm.Entities.DataStructure">
   <class xmlns="urn:nhibernate-mapping-2.2" name="DataStructure" table="DataStructures" dynamic-update="true">
     <!-- Mapping BaseEntity properties -->
-    
+
     <id name="Id" type="Int64">
-      <column name="Id" index="idx_DataStructures_id"/>
+      <column name="Id" index="idx_DataStructures_id" />
       <generator class="native" />
     </id>
 
     <!--This is the master mapping for a Table per hierarchy mapping.-->
-    <discriminator column="DataStructureType" type="String" length="3"/>
-    
+    <discriminator column="DataStructureType" type="String" length="3" />
+
     <version name="VersionNo" type="Int32">
       <column name="VersionNo" />
     </version>
@@ -25,14 +25,14 @@
         <column name="State" />
       </property>
       <property name="Timestamp" type="DateTime">
-        <column name="StateTimestamp" not-null="false"/>
+        <column name="StateTimestamp" not-null="false" />
       </property>
       <property name="Comment" type="string">
         <column name="StateComment" />
       </property>
     </component>
 
-    <component name="CreationInfo" >
+    <component name="CreationInfo">
       <property name="ActionType" type="Vaiona.Entities.Common.AuditActionType, Vaiona.Entities">
         <column name="C_ActionType" />
       </property>
@@ -43,11 +43,11 @@
         <column name="C_Comment" />
       </property>
       <property name="Timestamp" type="DateTime">
-        <column name="C_Timestamp" not-null="false"/>
+        <column name="C_Timestamp" not-null="false" />
       </property>
     </component>
 
-    <component name="ModificationInfo" >
+    <component name="ModificationInfo">
       <property name="ActionType" type="Vaiona.Entities.Common.AuditActionType, Vaiona.Entities">
         <column name="M_ActionType" />
       </property>
@@ -58,7 +58,7 @@
         <column name="M_Comment" />
       </property>
       <property name="Timestamp" type="DateTime">
-        <column name="M_Timestamp" not-null="false"/>
+        <column name="M_Timestamp" not-null="false" />
       </property>
     </component>
 
@@ -71,11 +71,11 @@
     <property name="Description" type="string">
       <column name="Description" />
     </property>
-    
+
     <property name="XsdFileName" type="string">
       <column name="XsdFileName" />
     </property>
-    
+
     <property name="XslFileName" type="string">
       <column name="XslFileName" />
     </property>
@@ -85,20 +85,18 @@
     </property>
 
     <set name="Datasets" inverse="true" lazy="true" order-by="Id" cascade="all"> <!--cascade only insert, update, set null in case of delete-->
-      <key column="DataStructureRef" not-null="true" foreign-key="FK_Datasets_DataStructures"/>      
+      <key column="DataStructureRef" not-null="true" foreign-key="FK_Datasets_DataStructures" />
       <one-to-many class="BExIS.Dlm.Entities.Data.Dataset" />
     </set>
 
     <set name="Views" table="DataStructures_Views" lazy="true">
-      <key column="DataStructureRef"/>
-      <many-to-many column="DatasetViewRef" class="DatasetView"/>
+      <key column="DataStructureRef" />
+      <many-to-many column="DatasetViewRef" class="DatasetView" />
     </set>
 
     <set name="ResearchPlans" inverse="true" table="ResearchPlans_DataStructures" lazy="true" cascade="all-delete-orphan">
-      <key column="DataStructureRef"/>
-      <many-to-many column="ResearchPlanRef" class="BExIS.Dlm.Entities.Administration.ResearchPlan"/>
+      <key column="DataStructureRef" />
+      <many-to-many column="ResearchPlanRef" class="BExIS.Dlm.Entities.Administration.ResearchPlan" />
     </set>
-
   </class>
-
 </hibernate-mapping>

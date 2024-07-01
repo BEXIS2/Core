@@ -7,15 +7,13 @@
       <generator class="native" />
     </id>
 
-    <discriminator column="Discriminator" type="String" length="10"/>
+    <discriminator column="Discriminator" type="String" length="10" />
 
     <version name="VersionNo" type="Int32">
       <column name="VersionNo" />
     </version>
 
-
     <!-- Mapping BusinessEntity properties -->
-
 
     <!-- Mapping Entity properties -->
 
@@ -36,7 +34,7 @@
     </property>
 
     <property name="Environemt" type="String" length="1000">
-      <column name="Environemt"  sql-type="varchar(1000)"/>
+      <column name="Environemt"  sql-type="varchar(1000)" />
     </property>
 
     <property name="LogType" type="Vaiona.Entities.Logging.LogType, Vaiona.Entities">
@@ -66,7 +64,5 @@
     <property name="MethodName" type="String">
       <column name="MethodName" />
     </property>
-
   </class>
-
 </hibernate-mapping>

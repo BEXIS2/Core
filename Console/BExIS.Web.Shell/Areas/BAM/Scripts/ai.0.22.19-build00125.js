@@ -541,9 +541,9 @@ var Microsoft;
                     return performance.now();
                 }
                 :
-                    function () {
-                        return new Date().getTime();
-                    };
+                function () {
+                    return new Date().getTime();
+                };
             dateTime.GetDuration = function (start, end) {
                 var result = null;
                 if (start !== 0 && end !== 0 && !extensions.IsNullOrUndefined(start) && !extensions.IsNullOrUndefined(end)) {

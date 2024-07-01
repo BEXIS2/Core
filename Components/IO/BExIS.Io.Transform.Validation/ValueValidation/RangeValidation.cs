@@ -3,13 +3,13 @@ using System;
 
 /// <summary>
 ///
-/// </summary>        
+/// </summary>
 namespace BExIS.IO.Transform.Validation.ValueValidation
 {
     /// <summary>
     ///
     /// </summary>
-    /// <remarks></remarks>        
+    /// <remarks></remarks>
     public class RangeValidation : IValueValidation
     {
         # region private
@@ -21,7 +21,6 @@ namespace BExIS.IO.Transform.Validation.ValueValidation
         private double max = 0;
 
         #region get
-
 
         public ValueType AppliedTo
         {
@@ -41,12 +40,12 @@ namespace BExIS.IO.Transform.Validation.ValueValidation
             get { return dataType; }
         }
 
-        #endregion
+        #endregion get
 
         #endregion
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <remarks></remarks>
         /// <seealso cref=""/>
@@ -84,7 +83,7 @@ namespace BExIS.IO.Transform.Validation.ValueValidation
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <remarks></remarks>
         /// <seealso cref=""/>

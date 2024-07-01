@@ -146,7 +146,6 @@ namespace BExIS.App.Bootstrap
             ModuleManager.StartModules();
 
             // generate settings
-
         }
 
         private void initTenancy()

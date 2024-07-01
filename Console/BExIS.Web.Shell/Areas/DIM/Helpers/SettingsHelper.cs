@@ -1,15 +1,6 @@
-﻿using BExIS.Dim.Helpers.Configurations;
-using BExIS.Dim.Helpers.Models;
-using BExIS.Xml.Helpers;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
+﻿using BExIS.Dim.Helpers.Vaelastrasz;
 using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Web.Helpers;
-using System.Xml.Linq;
-using Vaiona.Utils.Cfg;
 using Vaiona.Web.Mvc.Modularity;
 
 namespace BExIS.Modules.Dim.UI.Helpers
@@ -24,39 +15,27 @@ namespace BExIS.Modules.Dim.UI.Helpers
             _settings = ModuleManager.GetModuleSettings("dim");
         }
 
-        public DataCiteDOICredentials GetDataCiteDOICredentials()
+        public Dictionary<string, string> GetDataCiteMappings()
         {
             try
             {
-                return _settings.GetValueByKey<DataCiteDOICredentials>("dataCiteDOICredentials");
+                return _settings.GetValueByKey<Dictionary<string, string>> ("dataciteMappings");
             }
             catch (Exception ex)
             {
-                return null;
+                return new Dictionary<string, string>(); ;
             }
         }
 
-        public List<DataCiteDOIMapping> GetDataCiteDOIMappings()
+        public Dictionary<string, string> GetDataCitePlaceholders()
         {
             try
             {
-                return _settings.GetValueByKey<List<DataCiteDOIMapping>>("dataCiteDOIMappings");
+                return _settings.GetValueByKey<Dictionary<string, string>>("datacitePlaceholders");
             }
             catch (Exception ex)
             {
-                return null;
-            }
-        }
-
-        public List<DataCiteDOIPlaceholder> GetDataCiteDOIPlaceholders()
-        {
-            try
-            {
-                return _settings.GetValueByKey<List<DataCiteDOIPlaceholder>>("dataCiteDOIPlaceholders");
-            }
-            catch (Exception ex)
-            {
-                return null;
+                return new Dictionary<string, string>();
             }
         }
     }

@@ -1,16 +1,12 @@
-﻿using BExIS.Security.Entities.Requests;
-using BExIS.Security.Entities.Subjects;
+﻿using BExIS.Security.Entities.Subjects;
 using BExIS.Security.Services.Authorization;
 using BExIS.Security.Services.Objects;
 using BExIS.Security.Services.Subjects;
-using Newtonsoft.Json.Linq;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
-using System.Security.Claims;
 using System.Text;
 using System.Web.Http;
 using System.Web.Http.Controllers;
@@ -33,7 +29,6 @@ namespace BExIS.App.Bootstrap.Attributes
                     var actionName = actionContext.ActionDescriptor.ActionName;
                     var operation = operationManager.Find(areaName, controllerName, "*");
 
-               
                     if (operation == null)
                     {
                         actionContext.Response = new HttpResponseMessage(HttpStatusCode.Forbidden);
@@ -45,7 +40,6 @@ namespace BExIS.App.Bootstrap.Attributes
                     // 1. principal
                     var principal = actionContext.ControllerContext.RequestContext.Principal;
 
-    
                     // get jwt from cookie
                     if (principal == null && actionContext.Request?.Headers?.GetCookies("jwt") != null)
                     {
@@ -61,11 +55,8 @@ namespace BExIS.App.Bootstrap.Attributes
                         if (!string.IsNullOrEmpty(jwt))
                         {
                             principal = JwtHelper.Get(jwt);
-
                         }
                     }
-
-                    
 
                     // 1.1. check basic auth in case of principal is empty!
                     if (principal == null || principal.Identity == null || !principal.Identity.IsAuthenticated)
@@ -100,8 +91,6 @@ namespace BExIS.App.Bootstrap.Attributes
                                 return;
                             }
                         }
-
-
                     }
                     else
                     {

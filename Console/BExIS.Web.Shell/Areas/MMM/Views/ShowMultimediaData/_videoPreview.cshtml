@@ -1,11 +1,11 @@
 ﻿@model string
-@{ 
+@{
     string mimeType = MimeMapping.GetMimeMapping(Model);
     string path = @Url.Content("~/mmm/ShowMultimediaData/getFile/?send_mail=false&path=" + Server.UrlEncode(Model));
     string stream = @Url.Content("~/mmm/ShowMultimediaData/getFileStreamResult/?path=" + Server.UrlEncode(Model));
 }
 <video preload="metadata" typeof="@mimeType" controlslist="nodownload" controls>
     <source src="@stream">
-    <source src="@path">  
+    <source src="@path">
     Your browser does not support the video tag.
 </video>

@@ -17,8 +17,5 @@ namespace BExIS.Dlm.Services.TypeSystem
         Decimal = TypeCode.Decimal,
         DateTime = TypeCode.DateTime,
         Single = TypeCode.Single
-
     }
-
-
 }

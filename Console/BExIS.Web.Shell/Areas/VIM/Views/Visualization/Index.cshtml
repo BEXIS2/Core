@@ -18,7 +18,6 @@
     </p>
 }
 
-
 @{
     string activities = String.Join(",", Model.allActivities);
     string allDatasets = String.Join(",", Model.allDatasets);
@@ -132,7 +131,6 @@
 
     });
 
-
     //Function years()
     //return list of all years, which includes data.
     function years() {
@@ -204,9 +202,8 @@
             }
         }
 
-
         var firstY = minY;
-        var lastY = maxY; 
+        var lastY = maxY;
         myData = inYearRange(myData, firstY, lastY);
         return (myData);
     }
@@ -311,7 +308,7 @@
 
     function maxValue() {
         var dataset = '@allDatasets'.split(",");
-        var max = 0; 
+        var max = 0;
         for (var i = 0; i < dataset.length; i= i + 2) {
             var count = parseInt(dataset[i + 1].replace(']', ""));
             if (count > max) { max = count; }
@@ -421,5 +418,4 @@
         chart.draw(data, google.charts.Bar.convertOptions(options));
 
     }
-
 </script>

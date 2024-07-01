@@ -7,17 +7,14 @@ namespace BExIS.IO.Transform.Input
     {
         public APIDataReader(StructuredDataStructure structuredDatastructure, ApiFileReaderInfo fileReaderInfo) : base(structuredDatastructure, fileReaderInfo)
         {
-
         }
 
         public APIDataReader(StructuredDataStructure structuredDatastructure, ApiFileReaderInfo fileReaderInfo, IOUtility iOUtility) : base(structuredDatastructure, fileReaderInfo, iOUtility)
         {
-
         }
 
         public APIDataReader(StructuredDataStructure structuredDatastructure, ApiFileReaderInfo fileReaderInfo, IOUtility iOUtility, DatasetManager datasetManager) : base(structuredDatastructure, fileReaderInfo, iOUtility, datasetManager)
         {
-
         }
     }
 }

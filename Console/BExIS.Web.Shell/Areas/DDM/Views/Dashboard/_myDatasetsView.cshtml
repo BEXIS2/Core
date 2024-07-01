@@ -1,9 +1,6 @@
 ﻿@using BExIS.Modules.Ddm.UI.Models
 
-
 @model List<MyDatasetsModel>
-
-
 
 <table id="resources_table" class="display" style="width:100%">
     <thead>
@@ -14,12 +11,9 @@
             <th title="is valid">Metadata <br />complete</th>
             <th title="Tabular">Tabular</th>
             <th title="d"></th>
-
-
         </tr>
     </thead>
     <tbody>
-
 
         @foreach (var m in Model)
         {
@@ -53,10 +47,7 @@
     </tbody>
 </table>
 
-
     <script type="text/javascript">
-
-
 
         $('document').ready(function () {
             jQuery.fn.dataTable.render.ellipsis = function (cutoff, wordbreak, escapeHtml) {
@@ -64,7 +55,7 @@
                     return t
                         .replace(/&/g, '&amp;')
                         .replace(/</g, '&lt;')
-                        .replace(/>/g, '&gt;')
+                        .replace( />/g, '&gt;')
                         .replace(/"/g, '&quot;');
                 };
 
@@ -113,7 +104,6 @@
                     }
                 },
 
-
               /*  columnDefs: [
                     {
                         targets: 1,
@@ -125,7 +115,6 @@
 ;
         })
 
-      
         function resultGrid_OnRowDataBound(e) {
 
             //alert(e.item);
@@ -154,7 +143,6 @@
             // checked
             var id = e.getAttribute("id");
 
-
             var data = {
                 id: id
             }
@@ -179,8 +167,6 @@
                 }
             });
         }
-
-
     </script>
 
     <style type="text/css">

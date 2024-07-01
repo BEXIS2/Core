@@ -1,5 +1,5 @@
 ﻿
-using BExIS.Dim.Helpers.Mapping;
+using BExIS.Dim.Helpers.Mappings;
 using BExIS.Dim.Helpers.Models;
 using BExIS.Dlm.Entities.Meanings;
 using BExIS.Dlm.Services.Data;

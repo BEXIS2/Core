@@ -5,40 +5,40 @@
 
 @using (Ajax.BeginForm("Update", "Groups", new AjaxOptions { HttpMethod = "POST", UpdateTargetId = "content_updateGroup", OnSuccess = "updateGroup_onSuccess" }))
 {
-    @Html.ValidationSummary(true)
+@Html.ValidationSummary(true)
 
-    <table class="bx-table-form">
-        <tr>
-            <td>
-                @Html.LabelFor(m => m.Id)
-            </td>
-            <td>
-                @Html.DisplayFor(m => m.Id, new { @class = "t-input bx-input" })
-                @Html.HiddenFor(m => m.Id)
-            </td>
-        </tr>
-        <tr>
-            <td>
-                @Html.LabelFor(m => m.Name)
-            </td>
-            <td>
-                @Html.TextBoxFor(m => m.Name, new { @class = "t-input bx-input" })
-                @Html.ValidationMessageFor(m => m.Name)
-            </td>
-        </tr>
-        <tr>
-            <td>
-                @Html.LabelFor(m => m.Description)
-            </td>
-            <td>
-                @Html.TextBoxFor(m => m.Description, new { @class = "t-input bx-input" })
-                @Html.ValidationMessageFor(m => m.Description)
-            </td>
-        </tr>
-    </table>
+<table class="bx-table-form">
+    <tr>
+        <td>
+            @Html.LabelFor(m => m.Id)
+        </td>
+        <td>
+            @Html.DisplayFor(m => m.Id, new { @class = "t-input bx-input" })
+            @Html.HiddenFor(m => m.Id)
+        </td>
+    </tr>
+    <tr>
+        <td>
+            @Html.LabelFor(m => m.Name)
+        </td>
+        <td>
+            @Html.TextBoxFor(m => m.Name, new { @class = "t-input bx-input" })
+            @Html.ValidationMessageFor(m => m.Name)
+        </td>
+    </tr>
+    <tr>
+        <td>
+            @Html.LabelFor(m => m.Description)
+        </td>
+        <td>
+            @Html.TextBoxFor(m => m.Description, new { @class = "t-input bx-input" })
+            @Html.ValidationMessageFor(m => m.Description)
+        </td>
+    </tr>
+</table>
 
-    <div class="bx-footer right">
-        <button style="margin-right: 1px" type="submit" class="bx-button action">Save</button>
-        <button style="margin-left: 1px" type="button" id="button_updateGroup_cancel" class="bx-button action">Cancel</button>
-    </div>
+<div class="bx-footer right">
+    <button style="margin-right: 1px" type="submit" class="bx-button action">Save</button>
+    <button style="margin-left: 1px" type="button" id="button_updateGroup_cancel" class="bx-button action">Cancel</button>
+</div>
 }

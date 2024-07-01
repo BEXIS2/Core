@@ -31,7 +31,6 @@ namespace BExIS.Modules.Dcm.UI.Helpers
             // open excel file
             using (SpreadsheetDocument spreadsheetDocument = SpreadsheetDocument.Open(this.fileStream, false))
             {
-
                 // get workbookpart
                 WorkbookPart workbookPart = spreadsheetDocument.WorkbookPart;
                 _sharedStrings = workbookPart.SharedStringTablePart.SharedStringTable.Elements<SharedStringItem>().ToArray();
@@ -51,7 +50,6 @@ namespace BExIS.Modules.Dcm.UI.Helpers
 
                 using (OpenXmlReader reader = OpenXmlReader.Create(worksheetPart))
                 {
-
                     int expectedRowIndex = 1;
                     while (reader.Read())
                     {

@@ -5,18 +5,15 @@ using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
-using System.Linq;
-using System.Net;
 using System.Security.Claims;
 using System.Text;
-using System.Web;
 
-namespace BExIS.App.Bootstrap 
-{ 
+namespace BExIS.App.Bootstrap
+{
     public class JwtHelper
     {
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="user"></param>
         /// <returns>JwtToken</returns>
@@ -60,22 +57,20 @@ namespace BExIS.App.Bootstrap
 
         public static ClaimsPrincipal Get(string token)
         {
+            var jwtConfiguration = GeneralSettings.JwtConfiguration;
 
-                var jwtConfiguration = GeneralSettings.JwtConfiguration;
-
-                var tokenValidationParameters = new TokenValidationParameters()
-                {
-                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtConfiguration.IssuerSigningKey)),
-                    RequireExpirationTime = jwtConfiguration.RequireExpirationTime,
-                    ValidateLifetime = jwtConfiguration.ValidateLifetime,
-                    ValidateAudience = jwtConfiguration.ValidateAudience,
-                    ValidateIssuer = jwtConfiguration.ValidateAudience,
-                    ValidIssuer = jwtConfiguration.ValidIssuer,
-                    ValidAudience = jwtConfiguration.ValidAudience
-                };
+            var tokenValidationParameters = new TokenValidationParameters()
+            {
+                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtConfiguration.IssuerSigningKey)),
+                RequireExpirationTime = jwtConfiguration.RequireExpirationTime,
+                ValidateLifetime = jwtConfiguration.ValidateLifetime,
+                ValidateAudience = jwtConfiguration.ValidateAudience,
+                ValidateIssuer = jwtConfiguration.ValidateAudience,
+                ValidIssuer = jwtConfiguration.ValidIssuer,
+                ValidAudience = jwtConfiguration.ValidAudience
+            };
 
             return validateToken(token, tokenValidationParameters);
-
         }
 
         private static ClaimsPrincipal validateToken(string token, TokenValidationParameters tokenValidationParameters)
@@ -85,7 +80,6 @@ namespace BExIS.App.Bootstrap
                 var handler = new JwtSecurityTokenHandler();
                 SecurityToken securityToken;
                 return handler.ValidateToken(token, tokenValidationParameters, out securityToken);
-
             }
             catch (Exception ex)
             {
@@ -93,6 +87,5 @@ namespace BExIS.App.Bootstrap
                 return null;
             }
         }
-
     }
 }

@@ -1,14 +1,15 @@
 ﻿/*	* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
- * Contributed by and used with permission from Nick Muhonen of 
+ * Contributed by and used with permission from Nick Muhonen of
  * Useable Concepts Inc. (http://www.useableconcepts.com/).
  * Copyright of this code is incorporated under the license terms
  * indicated in the AssemblyInfo.cs file of this project.
  *	* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
 using System;
 
 namespace Vaiona.Web.Security.Az.Parser
 {
-    class And : IComparisonRule
+    internal class And : IComparisonRule
     {
         public IAccessRule LValue { get; set; }
         public IAccessRule RValue { get; set; }

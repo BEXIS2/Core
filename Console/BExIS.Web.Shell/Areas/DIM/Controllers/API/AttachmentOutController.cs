@@ -97,7 +97,6 @@ namespace BExIS.Modules.Dim.UI.Controllers
 
                     #region security
 
-
                     user = ControllerContext.RouteData.Values["user"] as User;
 
                     if (!isPublic && user == null)
@@ -137,7 +136,6 @@ namespace BExIS.Modules.Dim.UI.Controllers
                 {
                     return Request.CreateErrorResponse(HttpStatusCode.InternalServerError, ex.Message);
                 }
-
             }
         }
 

@@ -34,30 +34,23 @@ namespace BExIS.Xml.Models.Mapping
             {
                 xPath = xmlNode.Attributes[XmlMapperAttributes.xPath.ToString()].Value;
 
-
                 if (xmlNode.Attributes[XmlMapperAttributes.sequence.ToString()] != null)
                 {
                     sequenceName = xmlNode.Attributes[XmlMapperAttributes.sequence.ToString()].Value;
                 }
-
 
                 if (xmlNode.Attributes[XmlMapperAttributes.prefix.ToString()] != null)
                 {
                     prefix = xmlNode.Attributes[XmlMapperAttributes.prefix.ToString()].Value;
                 }
 
-
                 if (xmlNode.Attributes[XmlMapperAttributes.namespaceUri.ToString()] != null)
                 {
                     namespaceUri = xmlNode.Attributes[XmlMapperAttributes.namespaceUri.ToString()].Value;
                 }
-
-
             }
 
             return new Destination(xPath, sequenceName, prefix, namespaceUri);
         }
-
-
     }
 }

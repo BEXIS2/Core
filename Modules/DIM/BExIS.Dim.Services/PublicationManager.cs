@@ -22,6 +22,7 @@ namespace BExIS.Dim.Services
         }
 
         private bool isDisposed = false;
+
         ~PublicationManager()
         {
             Dispose(true);
@@ -67,7 +68,7 @@ namespace BExIS.Dim.Services
         /// </summary>
         public IReadOnlyRepository<MetadataStructureToRepository> MetadataStructureToRepositoryRepo { get; private set; }
 
-        #endregion
+        #endregion Data Readers
 
         #region publication
 
@@ -90,9 +91,9 @@ namespace BExIS.Dim.Services
         /// <param name="Id">The identifier of the publication.</param>
         /// <returns>The semi-populated publication entity if exists, or null.</returns>
         /// <remarks>The object based attributes of the entity that are persisted as XML are not populated by default. In order to fully populate the entity, call the <see cref="Materialize"/> method.</remarks>
-        public IEnumerable<Publication> GetPublication()
+        public List<Publication> GetPublication()
         {
-            return PublicationRepo.Get();
+            return PublicationRepo.Query().ToList();
         }
 
         /// <summary>
@@ -199,13 +200,13 @@ namespace BExIS.Dim.Services
             return (true);
         }
 
-        #endregion
+        #endregion publication
 
         #region broker
 
-        public IEnumerable<Broker> GetBroker()
+        public List<Broker> GetBroker()
         {
-            return BrokerRepo.Get();
+            return BrokerRepo.Query().ToList();
         }
 
         /// <summary>
@@ -268,7 +269,6 @@ namespace BExIS.Dim.Services
             Contract.Requires(!string.IsNullOrWhiteSpace(broker.UserName));
             Contract.Requires(!string.IsNullOrWhiteSpace(broker.Password));
 
-
             using (IUnitOfWork uow = this.GetUnitOfWork())
             {
                 IRepository<Broker> repo = uow.GetRepository<Broker>();
@@ -318,13 +318,13 @@ namespace BExIS.Dim.Services
             return true;
         }
 
-        #endregion
+        #endregion broker
 
         #region repository
 
-        public IEnumerable<Repository> GetRepository()
+        public List<Repository> GetRepository()
         {
-            return RepositoryRepo.Get();
+            return RepositoryRepo.Query().ToList();
         }
 
         /// <summary>
@@ -406,7 +406,7 @@ namespace BExIS.Dim.Services
             return true;
         }
 
-        #endregion
+        #endregion repository
 
         #region MetadataStructureToRepository
 
@@ -432,7 +432,6 @@ namespace BExIS.Dim.Services
         {
             Contract.Requires(metadataStrutcureId > 0);
             Contract.Requires(repositoryId > 0);
-
 
             MetadataStructureToRepository e = new MetadataStructureToRepository()
             {
@@ -466,7 +465,6 @@ namespace BExIS.Dim.Services
             return (true);
         }
 
-        #endregion
-
+        #endregion MetadataStructureToRepository
     }
 }

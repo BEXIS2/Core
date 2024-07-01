@@ -26,7 +26,5 @@ namespace BExIS.Dlm.Tests.Services.Data
             //test
             Assert.That(true);
         }
-
-
     }
 }

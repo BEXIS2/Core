@@ -55,9 +55,6 @@ namespace BExIS.Modules.Dcm.UI.Models
             DatastructuresViewList = new List<ListViewItem>();
             ResearchPlanViewList = new List<ListViewItem>();
             MetadataPackageModel = new List<MetadataPackageModel>();
-
         }
-
-
     }
 }

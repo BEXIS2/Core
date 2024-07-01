@@ -41,6 +41,7 @@ namespace BExIS.Modules.Dcm.UI.Models.Edit
             Type = ErrorType.Other;
             Errors = new List<string>();
         }
+
         public SortedError(string name, int count, string issue, ErrorType type, List<string> errors)
         {
             Name = name;
@@ -49,6 +50,5 @@ namespace BExIS.Modules.Dcm.UI.Models.Edit
             Type = type;
             Errors = errors;
         }
-
     }
 }

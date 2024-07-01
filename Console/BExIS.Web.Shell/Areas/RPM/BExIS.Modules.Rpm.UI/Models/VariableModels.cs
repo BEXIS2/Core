@@ -1,21 +1,17 @@
 ﻿using BExIS.UI.Models;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-using System.Windows.Forms.VisualStyles;
 
 namespace BExIS.Modules.Rpm.UI.Models
 {
     public abstract class VariableModel
-    { 
+    {
         public long Id { get; set; }
         public string Name { get; set; }
         public string Description { get; set; }
         public string SystemType { get; set; }
         public ListItem DataType { get; set; }
         public UnitItem Unit { get; set; }
-
 
         public List<MissingValueItem> MissingValues { get; set; }
         public List<MeaningItem> Meanings { get; set; }
@@ -37,8 +33,9 @@ namespace BExIS.Modules.Rpm.UI.Models
 
     public class VariableInstanceModel : VariableModel
     {
-        // this variable is part of the primary key 
+        // this variable is part of the primary key
         public bool IsKey { get; set; }
+
         public bool IsOptional { get; set; }
 
         public VariableTemplateItem Template { get; set; }
@@ -47,7 +44,6 @@ namespace BExIS.Modules.Rpm.UI.Models
         public List<UnitItem> PossibleUnits { get; set; }
         public List<VariableTemplateItem> PossibleTemplates { get; set; }
         public List<ListItem> PossibleDisplayPattern { get; set; }
-
 
         public VariableInstanceModel()
         {
@@ -59,9 +55,8 @@ namespace BExIS.Modules.Rpm.UI.Models
         }
     }
 
-    public class VariableTemplateModel: VariableModel
+    public class VariableTemplateModel : VariableModel
     {
-
         public Boolean InUse { get; set; }
         public Boolean Approved { get; set; }
 
@@ -95,7 +90,6 @@ namespace BExIS.Modules.Rpm.UI.Models
             Group = group;
             DataTypes = dataTypes;
         }
-
     }
 
     public class VariableTemplateItem
@@ -122,7 +116,7 @@ namespace BExIS.Modules.Rpm.UI.Models
             Constraints = new List<string>();
         }
 
-        public VariableTemplateItem(long key, string value,  List<string> units, List<string> dataTypes,List<string> meanings, List<string> constraints = null, string group = "", string description="")
+        public VariableTemplateItem(long key, string value, List<string> units, List<string> dataTypes, List<string> meanings, List<string> constraints = null, string group = "", string description = "")
         {
             Id = key;
             Text = value;
@@ -133,7 +127,6 @@ namespace BExIS.Modules.Rpm.UI.Models
             Constraints = constraints;
             Description = description;
         }
-
     }
 
     public class MissingValueItem
@@ -149,13 +142,12 @@ namespace BExIS.Modules.Rpm.UI.Models
             Description = "";
         }
 
-        public MissingValueItem(long _id,  string _displayName, string _description)
+        public MissingValueItem(long _id, string _displayName, string _description)
         {
             Id = _id;
             DisplayName = _displayName;
             Description = _description;
         }
-
     }
 
     public class MeaningItem
@@ -174,7 +166,6 @@ namespace BExIS.Modules.Rpm.UI.Models
             Group = "";
             Constraints = new List<string>();
             Links = new List<MeaningEntryItem>();
-
         }
 
         public MeaningItem(long _id, string _name, string _group = "", List<string> _constraints = null, List<MeaningEntryItem> _links = null)
@@ -182,11 +173,9 @@ namespace BExIS.Modules.Rpm.UI.Models
             Id = _id;
             Text = _name;
             Group = _group;
-            Constraints = _constraints==null?new List<string>():_constraints;
-            Links = _links==null?new List<MeaningEntryItem>():_links;
-
+            Constraints = _constraints == null ? new List<string>() : _constraints;
+            Links = _links == null ? new List<MeaningEntryItem>() : _links;
         }
-
     }
 
     public class MeaningEntryItem
@@ -196,5 +185,4 @@ namespace BExIS.Modules.Rpm.UI.Models
         public string releation { get; set; }
         public string link { get; set; }
     }
-
 }

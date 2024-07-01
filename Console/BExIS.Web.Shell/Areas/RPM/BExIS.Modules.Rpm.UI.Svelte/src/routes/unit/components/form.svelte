@@ -66,12 +66,11 @@
 		ds = await apiCalls.GetDimensions();
 	}
 
-	function setValidation()
-	{
-		if (measurementSystems!= undefined && measurementSystems.length > 0){
+	function setValidation() {
+		if (measurementSystems != undefined && measurementSystems.length > 0) {
 			if (unit.id == 0) {
 				suite.reset();
-			} else{
+			} else {
 				setTimeout(async () => {
 					res = suite({ unit: unit, units: units, measurementSystems: measurementSystems }, '');
 				}, 10);

@@ -2,7 +2,7 @@
 {
     Each user has a personal folder on the server where files are stored temporary. This wizard will assist you in pushing your files to server. You can also see the uploaded files, delete each file, or use these files later, when you want to upload data to a dataset.
     <p>
-        More information 
+        More information
         @Html.ActionLink("here", "Index", "Help", new { id = 0 }, new { @class = "bx-informationLink", title="go to help", target="_blank"})
     </p>
 }
@@ -34,26 +34,29 @@
 }
 
 <div id="push">
-<h3></h3>
+    <h3></h3>
 
-<div class="push_Header stepper">
+    <div class="push_Header stepper">
 
-    <h3>Send files to server</h3>
-</div>
+        <h3>Send files to server</h3>
+    </div>
 
-<div class="push_Description stepper">
-    <p>Please select one or more data files to be uploaded to the system.</p>
-    <p>Note:  Large data files may take several minutes or hours to transfer, depending on your network speed.<br />
-       The system is freezed until the file has been transfered completely. Please be patient!</p>
+    <div class="push_Description stepper">
+        <p>Please select one or more data files to be uploaded to the system.</p>
+        <p>
+            Note:  Large data files may take several minutes or hours to transfer, depending on your network speed.<br />
+            The system is freezed until the file has been transfered completely. Please be patient!
+        </p>
 
-    <p>Supported file formats: @{foreach (string s in @Model.SupportedFileExtentions)
-                                 {<b>(*@s) </b>} }</p>
+        <p>
+            Supported file formats: @{foreach (string s in @Model.SupportedFileExtentions)
+                                 {<b>(*@s) </b>} }
+        </p>
 
+        <p>Maximum file size: @mbMax MB</p>
+    </div>
 
-    <p>Maximum file size: @mbMax MB</p>
-</div>
-
-@using (Html.BeginForm("ProcessSubmit", "Push", new { area = "Dcm" },
+    @using (Html.BeginForm("ProcessSubmit", "Push", new { area = "Dcm" },
                          FormMethod.Post, new { id = "uploadForm", enctype = "multipart/form-data" }))
 {
 
@@ -67,24 +70,21 @@
                     .OnRemove("Push_OnRemove")
                 ))
 
-    <br/>
+    <br />
 
-    <button id="push_submitBt" type="submit" value="Push" class="bx-button function bx-disabled" disabled="disabled" >Push</button>
+    <button id="push_submitBt" type="submit" value="Push" class="bx-button function bx-disabled" disabled="disabled">Push</button>
 }
 
-@section LeftPane
+    @section LeftPane
 {
-    @Html.Partial("_fileListView", Model.ServerFileList)
-}
+        @Html.Partial("_fileListView", Model.ServerFileList)
+    }
 </div>
 <script type="text/javascript">
 
     function Push_OnSelect(e) {
 
-
         var maxsize = '@mbMax';
-
-      
 
         for (var i = 0; i < e.files.length; i = i + 1) {
 
@@ -110,7 +110,6 @@
 
                 //alert(file.size);
                 //alert(maxsize);
-
 
                 // file.size is in bytes - maxsize need to convert to bytes
                 if (file.size > (maxsize*1024*1024)) {
@@ -172,5 +171,4 @@
             $('#push_submitBt').removeAttr("disabled");
         }
     }
-
 </script>

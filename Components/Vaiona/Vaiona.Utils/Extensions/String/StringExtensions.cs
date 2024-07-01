@@ -73,7 +73,7 @@ namespace System
             AddUncountable("aircraft");
         }
 
-        #endregion
+        #endregion Default Rules
 
         private class Rule
         {
@@ -229,10 +229,13 @@ namespace System
             {
                 case 1:
                     return numberString + "st";
+
                 case 2:
                     return numberString + "nd";
+
                 case 3:
                     return numberString + "rd";
+
                 default:
                     return numberString + "th";
             }

@@ -12,7 +12,8 @@ export const dataStructureHelp = [
 	{
 		id: 'textMarker',
 		name: 'Text marker',
-		description: 'If text is marked in your file, it will be marked with either single or double quotes, please choose one'
+		description:
+			'If text is marked in your file, it will be marked with either single or double quotes, please choose one'
 	},
 	{
 		id: 'selectVar',
@@ -47,7 +48,8 @@ export const dataStructureHelp = [
 	{
 		id: 'missingvalues',
 		name: 'Missing Values',
-		description: 'The missing values that exist in the data and must be taken into account are defined here.'
+		description:
+			'The missing values that exist in the data and must be taken into account are defined here.'
 	},
 	{
 		id: 'missing-value-name',
@@ -57,7 +59,8 @@ export const dataStructureHelp = [
 	{
 		id: 'missing-value-description',
 		name: 'Missing Value Description',
-		description: 'Please enter the description of what this missing value means. (e.g. na - not available).'
+		description:
+			'Please enter the description of what this missing value means. (e.g. na - not available).'
 	},
 	{
 		id: 'delete-missing-value',
@@ -87,7 +90,8 @@ export const dataStructureHelp = [
 	{
 		id: 'description',
 		name: 'Description',
-		description: 'Please enter a clear description for the date structure. What topic is the structure used for and what should it cover?'
+		description:
+			'Please enter a clear description for the date structure. What topic is the structure used for and what should it cover?'
 	},
 	{
 		id: 'variables-expander',
@@ -124,5 +128,4 @@ export const dataStructureHelp = [
 		name: 'Copy variable',
 		description: 'Copy this variable after this.'
 	}
-
 ];

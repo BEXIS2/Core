@@ -7,7 +7,6 @@ using System.Web.Mvc;
 
 namespace Vaiona.Web.Mvc
 {
-
     public static class ModuleHelper
     {
         public static Assembly ApplicationAssembly = null;
@@ -17,7 +16,7 @@ namespace Vaiona.Web.Mvc
             ApplicationAssembly = applicationAssembly;
         }
 
-        public readonly static List<AreaRegistration> Areas = new List<AreaRegistration>();
+        public static readonly List<AreaRegistration> Areas = new List<AreaRegistration>();
 
         public static void LoadModules()
         {

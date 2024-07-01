@@ -1,11 +1,7 @@
-﻿using BExIS.UI.Models;
-using System.Collections.Generic;
-
-namespace BExIS.Modules.Rpm.UI.Models.Dimensions
+﻿namespace BExIS.Modules.Rpm.UI.Models.Dimensions
 {
     public class DimensionListItem
     {
-
         /// <summary>
         /// Name of the Dimension
         /// </summary>

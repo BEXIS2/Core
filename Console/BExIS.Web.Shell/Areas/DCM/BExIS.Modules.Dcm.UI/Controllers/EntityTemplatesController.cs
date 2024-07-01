@@ -1,6 +1,7 @@
 ﻿using BExIS.App.Bootstrap.Attributes;
-using BExIS.Dim.Entities.Mapping;
+using BExIS.Dim.Entities.Mappings;
 using BExIS.Dim.Services;
+using BExIS.Dim.Services.Mappings;
 using BExIS.Dlm.Entities.Data;
 using BExIS.Dlm.Services.Data;
 using BExIS.Dlm.Services.DataStructure;
@@ -18,7 +19,6 @@ using System.Linq;
 using System.Web.Mvc;
 using Vaiona.Web.Extensions;
 
-
 namespace BExIS.Modules.Dcm.UI.Controllers
 {
     public class EntityTemplatesController : Controller
@@ -34,7 +34,6 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             return View();
         }
 
-
         [JsonNetFilter]
         [HttpGet]
         public JsonResult Load()
@@ -46,7 +45,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 {
                     entityTemplateModels.Add(EntityTemplateHelper.ConvertTo(e));
                 }
-                
+
                 return Json(entityTemplateModels, JsonRequestBehavior.AllowGet);
             }
         }
@@ -57,7 +56,6 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         {
             if (id == 0) return Json(new EntityTemplateModel(), JsonRequestBehavior.AllowGet);
 
-
             using (var entityTemplateManager = new EntityTemplateManager())
             {
                 var entityTemplate = entityTemplateManager.Repo.Get(id);
@@ -65,14 +63,12 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             }
         }
 
-
         [JsonNetFilter]
         [HttpDelete]
         public JsonResult Delete(long id)
         {
             using (var entityTemplateManager = new EntityTemplateManager())
             {
-
                 var result = entityTemplateManager.Delete(id);
                 return Json(result);
             }
@@ -171,8 +167,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 }
             }
 
-            return Json(tmp.OrderBy(i=>i.Group), JsonRequestBehavior.AllowGet);
-            
+            return Json(tmp.OrderBy(i => i.Group), JsonRequestBehavior.AllowGet);
         }
 
         [JsonNetFilter]

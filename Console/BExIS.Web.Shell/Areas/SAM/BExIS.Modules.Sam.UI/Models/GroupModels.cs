@@ -104,7 +104,6 @@ namespace BExIS.Modules.Sam.UI.Models
                 ModificationDate = DateTimeOffset.Now
             };
         }
-
     }
 
     public class UpdateGroupModel

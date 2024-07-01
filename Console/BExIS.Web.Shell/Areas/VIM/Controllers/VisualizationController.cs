@@ -27,7 +27,6 @@ namespace BExIS.Modules.Vim.UI.Controllers
             using (DatasetManager dm = new DatasetManager())
             using (EntityPermissionManager entityPermissionManager = new EntityPermissionManager())
             {
-
                 List<Dataset> datasets = dm.DatasetRepo.Query().OrderBy(p => p.Id).ToList();
                 List<long> datasetIds = datasets.Select(p => p.Id).ToList();
 
@@ -55,9 +54,7 @@ namespace BExIS.Modules.Vim.UI.Controllers
                     {
                         var activityTime = version.Timestamp.Month + "/" + version.Timestamp.Year;
                         helpCountActivity.Add(activityTime);
-
                     }
-
                 }
 
                 ///Create the list of created datasets

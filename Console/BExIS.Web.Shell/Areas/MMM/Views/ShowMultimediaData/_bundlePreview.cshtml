@@ -1,10 +1,10 @@
 ﻿@model List<KeyValuePair<string, string>>
-@{ 
+@{
     string path = "";
 }
 
 @foreach (KeyValuePair<string, string> kvp in Model)
 {
     path = @Url.Content("~/mmm/ShowMultimediaData/getFileFromZip/?path=" + Server.UrlEncode(kvp.Key) + "&file=" + Server.UrlEncode(kvp.Value));
-    <img src="@path"/>
+    <img src="@path" />
 }

@@ -5,16 +5,15 @@ using System.Xml;
 
 /// <summary>
 ///
-/// </summary>        
+/// </summary>
 namespace BExIS.UI.Wizard
 {
     /// <summary>
     ///
     /// </summary>
-    /// <remarks></remarks>        
+    /// <remarks></remarks>
     public class AbstractTaskManager
     {
-
         public List<StepInfo> StepInfos;
         public List<StepInfo> TaskInfos;
         protected StepInfo currentStepInfo;
@@ -24,7 +23,7 @@ namespace BExIS.UI.Wizard
         public Dictionary<string, ActionInfo> Actions = new Dictionary<string, ActionInfo>();
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <remarks></remarks>
         /// <seealso cref=""/>
@@ -32,16 +31,13 @@ namespace BExIS.UI.Wizard
         /// <returns></returns>
         public static AbstractTaskManager Bind(XmlDocument xmlDocument)
         {
-
             XmlNodeList xmlStepInfos = xmlDocument.GetElementsByTagName("stepInfo");
 
             AbstractTaskManager tm = new AbstractTaskManager();
             tm.StepInfos = new List<StepInfo>();
 
-
             foreach (XmlNode xmlStepInfo in xmlStepInfos)
             {
-
                 StepInfo si = new StepInfo(xmlStepInfo.Attributes.GetNamedItem("title").Value)
                 {
                     GetActionInfo = new ActionInfo
@@ -72,7 +68,7 @@ namespace BExIS.UI.Wizard
         /// </summary>
         /// <remarks></remarks>
         /// <seealso cref=""/>
-        /// <param>NA</param>  
+        /// <param>NA</param>
         /// <returns></returns>
         public StepInfo Current()
         {
@@ -80,7 +76,7 @@ namespace BExIS.UI.Wizard
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <remarks></remarks>
         /// <seealso cref=""/>
@@ -92,7 +88,7 @@ namespace BExIS.UI.Wizard
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <remarks></remarks>
         /// <seealso cref=""/>
@@ -106,7 +102,6 @@ namespace BExIS.UI.Wizard
             {
                 StepInfos.ElementAt(i).SetStatus(StepStatus.none);
             }
-
         }
 
         /// <summary>
@@ -114,7 +109,7 @@ namespace BExIS.UI.Wizard
         /// </summary>
         /// <remarks></remarks>
         /// <seealso cref=""/>
-        /// <param>NA</param> 
+        /// <param>NA</param>
         /// <returns></returns>
         public StepInfo Start()
         {
@@ -126,7 +121,7 @@ namespace BExIS.UI.Wizard
         /// </summary>
         /// <remarks></remarks>
         /// <seealso cref=""/>
-        /// <param>NA</param>       
+        /// <param>NA</param>
         /// <returns></returns>
         public StepInfo Finish()
         {
@@ -138,7 +133,7 @@ namespace BExIS.UI.Wizard
         /// </summary>
         /// <remarks></remarks>
         /// <seealso cref=""/>
-        /// <param>NA</param>       
+        /// <param>NA</param>
         /// <returns></returns>
         public StepInfo Next()
         {
@@ -153,7 +148,7 @@ namespace BExIS.UI.Wizard
         /// </summary>
         /// <remarks></remarks>
         /// <seealso cref=""/>
-        /// <param>NA</param>       
+        /// <param>NA</param>
         public void GoToNext()
         {
             this.currentStepInfo.SetStatus(StepStatus.success);
@@ -161,13 +156,12 @@ namespace BExIS.UI.Wizard
             this.currentStepInfo = this.Next();
         }
 
-
         /// <summary>
         ///
         /// </summary>
         /// <remarks></remarks>
         /// <seealso cref=""/>
-        /// <param>NA</param>       
+        /// <param>NA</param>
         /// <returns></returns>
         public StepInfo Prev()
         {
@@ -181,7 +175,7 @@ namespace BExIS.UI.Wizard
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <remarks></remarks>
         /// <seealso cref=""/>
@@ -205,14 +199,13 @@ namespace BExIS.UI.Wizard
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <remarks></remarks>
         /// <seealso cref=""/>
         /// <param name="stepinfo"></param>
         public void RemoveExecutedStep(StepInfo stepinfo)
         {
-
             if (TaskInfos == null)
                 TaskInfos = new List<StepInfo>();
             else
@@ -229,7 +222,7 @@ namespace BExIS.UI.Wizard
         /// </summary>
         /// <remarks></remarks>
         /// <seealso cref=""/>
-        /// <param>NA</param>       
+        /// <param>NA</param>
         public void GoToPrev()
         {
             StepInfo temp = this.currentStepInfo;
@@ -237,7 +230,7 @@ namespace BExIS.UI.Wizard
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <remarks></remarks>
         /// <seealso cref=""/>
@@ -251,7 +244,7 @@ namespace BExIS.UI.Wizard
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <remarks></remarks>
         /// <seealso cref=""/>
@@ -269,7 +262,7 @@ namespace BExIS.UI.Wizard
         /// </summary>
         /// <remarks></remarks>
         /// <seealso cref=""/>
-        /// <param>NA</param>   
+        /// <param>NA</param>
         /// <returns></returns>
         public List<Tuple<string, StepStatus>> GetStatusOfStepInfos()
         {
@@ -284,7 +277,7 @@ namespace BExIS.UI.Wizard
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <remarks></remarks>
         /// <seealso cref=""/>
@@ -300,7 +293,7 @@ namespace BExIS.UI.Wizard
         /// </summary>
         /// <remarks></remarks>
         /// <seealso cref=""/>
-        /// <param>NA</param>       
+        /// <param>NA</param>
         /// <returns></returns>
         public int GetCurrentStepInfoIndex()
         {
@@ -308,7 +301,7 @@ namespace BExIS.UI.Wizard
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <remarks></remarks>
         /// <seealso cref=""/>
@@ -327,7 +320,7 @@ namespace BExIS.UI.Wizard
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <remarks></remarks>
         /// <seealso cref=""/>
@@ -346,7 +339,7 @@ namespace BExIS.UI.Wizard
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <remarks></remarks>
         /// <seealso cref=""/>

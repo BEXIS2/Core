@@ -367,7 +367,6 @@ namespace BExIS.IO.Transform.Output
                 // set cell value type
                 CellValues cellValueType = getExcelType(type);
 
-
                 // missing value
                 // check if the value is a missing value and should be replaced
 
@@ -631,7 +630,6 @@ namespace BExIS.IO.Transform.Output
                 {
                     OpenXmlPart newPart = dataFile.AddPart<OpenXmlPart>(part);
                 }
-
 
                 //uint iExcelIndex = 164;
                 //List<StyleIndexStruct> styleIndex = new List<StyleIndexStruct>();
@@ -972,7 +970,6 @@ namespace BExIS.IO.Transform.Output
                     }
                 }
 
-
                 // convert variable rows to VariableIdentifiers
                 if (VariableIdentifierRows != null)
                 {
@@ -999,12 +996,10 @@ namespace BExIS.IO.Transform.Output
                         }
                     }
                 }
-
             }
 
             if (this.VariableIdentifiers != null) return this.VariableIdentifiers;
             else return null;
-
         }
 
         /// <summary>
@@ -1141,7 +1136,6 @@ namespace BExIS.IO.Transform.Output
         /// <param name="dataStructureId"></param>
         protected override void Init(string filePath, long dataStructureId)
         {
-
             // loading datastructure
             //dataStructure = GetDataStructure(dataStructureId);
 

@@ -27,6 +27,7 @@ namespace BExIS.Modules.Dim.UI.Models
 
     public class PublicationModel
     {
+        public long Id { get; set; }
         public long DatasetVersionId { get; set; }
         public int DatasetVersionNr { get; set; }
         public BrokerModel Broker { get; set; }
@@ -37,24 +38,29 @@ namespace BExIS.Modules.Dim.UI.Models
         public List<string> DataRepos { get; set; }
         public DateTime CreationDate { get; set; }
 
+        public string Response { get; set; }
+
         public long DatasetId { get; set; }
     }
 
     public class BrokerModel
     {
+        public long Id { get; set; }
         public string Name { get; set; }
         public List<string> DataRepos { get; set; }
         public string Link { get; set; }
 
         public BrokerModel()
         {
+            Id = 0;
             Name = "";
             DataRepos = new List<string>();
             Link = "";
         }
 
-        public BrokerModel(string name, List<string> datarepos, string link)
+        public BrokerModel(long id, string name, List<string> datarepos, string link)
         {
+            Id = id;
             Name = name;
             DataRepos = datarepos;
             Link = link;

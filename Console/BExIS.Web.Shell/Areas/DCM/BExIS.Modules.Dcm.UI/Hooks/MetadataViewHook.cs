@@ -13,7 +13,6 @@ namespace BExIS.Modules.Dcm.UI.Hooks
         {
             // check status
             checkStatus(id, username);
-
         }
 
         private void checkStatus(long id, string username)
@@ -21,6 +20,5 @@ namespace BExIS.Modules.Dcm.UI.Hooks
             //Metadata view is always open
             Status = HookStatus.Open;
         }
-
     }
 }

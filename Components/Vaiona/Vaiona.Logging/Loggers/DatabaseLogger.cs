@@ -5,7 +5,8 @@ namespace Vaiona.Logging.Loggers
 {
     public class DatabaseLogger : ILogger
     {
-        IPersistenceManager pManager = PersistenceFactory.GetPersistenceManager();
+        private IPersistenceManager pManager = PersistenceFactory.GetPersistenceManager();
+
         public void LogMethod(MethodLogEntry logEntry)
         {
             using (IUnitOfWork unit = pManager.UnitOfWorkFactory.CreateIsolatedUnitOfWork(false, true, null, null, null, null))

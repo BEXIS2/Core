@@ -19,13 +19,12 @@
 				title="Manage Metadata Structure" description="Edit or Importa new Metadata Structure" icon=""
 				controller="ManageMetadataStructure" action="Index" argument=""
 				extends="./settingsRoot" />
-		
+
 		<Export tag="menubar" id="create" order="1"
 				title="Create" description="Create a new Entity" icon=""
 				controller="create" action=""
 				extends="./menubarRoot" />
-		
-	
+
 		<!--<Export tag="menubar" id="createDataset" order="4"
 				title="Push Big File" description="Push big file to the server to use it later" icon=""
 				controller="Push" action="index"
@@ -142,10 +141,10 @@
 			place="details"
 			module="dcm"
 			type="BExIS.Modules.Dcm.UI.Hooks.FileUploadHook, BExIS.Modules.DCM.UI, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" />
-		
+
 		<Hook
 			name="datadescription"
-			displayName="Data Strutcure"
+			displayName="Data Structure"
 			mode="edit"
 			entity="dataset"
 			place="details"

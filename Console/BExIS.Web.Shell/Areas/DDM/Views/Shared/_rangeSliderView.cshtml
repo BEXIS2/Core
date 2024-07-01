@@ -10,7 +10,7 @@
 <div>
 <br />
 @Model.DisplayTitle
-<br />           
+<br />
 @(Html.Telerik().RangeSlider<double>()
                 .Name(Model.DataSourceKey)
                 .Min(1)//.Min(item.min)
@@ -28,7 +28,6 @@
          var start = e.values[0];
          var end = e.values[1];
          var id = e.currentTarget.id;
-
 
          $.post('@Url.Action("FilterByRangeSlider", @controller, new RouteValueDictionary { { "area", "ddm" } })', { start: start, end: end, parent: id }, function (response) {
              // alert(response);
@@ -49,10 +48,6 @@
              $("#searchTreeView").html(response);
          })
 
-
-         
-
          refreshGrid();
      }
-
 </script>

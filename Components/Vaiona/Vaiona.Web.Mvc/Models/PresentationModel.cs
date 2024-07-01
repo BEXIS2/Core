@@ -25,7 +25,6 @@ namespace Vaiona.Web.Mvc.Models
         {
             Contract.Requires(!string.IsNullOrWhiteSpace(viewTitle));
 
-
             string appInfo = GeneralSettings.ApplicationInfo;
             if (!string.IsNullOrWhiteSpace(appInfo))
             {

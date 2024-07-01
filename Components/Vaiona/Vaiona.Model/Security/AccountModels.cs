@@ -2,7 +2,6 @@
 
 namespace Vaiona.Model.Security
 {
-
     public class ChangePasswordModel
     {
         [Required]

@@ -6,11 +6,11 @@ using Vaiona.Entities.Common;
 
 /// <summary>
 ///
-/// </summary>        
+/// </summary>
 namespace BExIS.Dlm.Entities.Data
 {
     /// <summary>
-    /// 
+    ///
     /// </summary>
     public enum DatasetVersionStatus
     {
@@ -20,90 +20,87 @@ namespace BExIS.Dlm.Entities.Data
     }
 
     [AutomaticMaterializationInfo("ExtendedPropertyValues", typeof(List<ExtendedPropertyValue>), "XmlExtendedPropertyValues", typeof(XmlNode))]
-
-    /// <summary>
-    ///
-    /// </summary>
-    /// <remarks></remarks>        
     public class DatasetVersion : BusinessEntity, IBusinessVersionedEntity
     {
         #region Attributes
 
-        // Mapping metadata and extended properties as component, makes them fields of Dataset table! this is good for performance (no need for joins) and 
+        // Mapping metadata and extended properties as component, makes them fields of Dataset table! this is good for performance (no need for joins) and
         // also helps to reduce the complexity of content versioning, as there are less associations.
         public virtual string Title { get; set; }
+
         public virtual string Description { get; set; } // Description of the dataset not the changes made in this version.
 
         /// <summary>
         ///
         /// </summary>
         /// <remarks></remarks>
-        /// <seealso cref=""/>        
+        /// <seealso cref=""/>
         public virtual string ChangeDescription { get; set; } // the information about the change itself, the reason, etc
 
         /// <summary>
         ///
         /// </summary>
         /// <remarks></remarks>
-        /// <seealso cref=""/>        
+        /// <seealso cref=""/>
         public virtual DateTime Timestamp { get; set; } // to find latest version, ordering the versions, etc.
 
         /// <summary>
         ///
         /// </summary>
         /// <remarks></remarks>
-        /// <seealso cref=""/>        
+        /// <seealso cref=""/>
         public virtual XmlDocument Metadata { get; set; }
 
         /// <summary>
         ///
         /// </summary>
         /// <remarks></remarks>
-        /// <seealso cref=""/>        
+        /// <seealso cref=""/>
         public virtual XmlDocument XmlExtendedPropertyValues { get; set; }
 
         /// <summary>
         ///
         /// </summary>
         /// <remarks></remarks>
-        /// <seealso cref=""/>        
+        /// <seealso cref=""/>
         public virtual DatasetVersionStatus Status { get; set; }
 
         /// <summary>
         ///
         /// </summary>
         /// <remarks></remarks>
-        /// <seealso cref=""/>        
+        /// <seealso cref=""/>
         public virtual string VersionType { get; set; }
 
         /// <summary>
         ///
         /// </summary>
         /// <remarks></remarks>
-        /// <seealso cref=""/>        
+        /// <seealso cref=""/>
         public virtual string VersionName { get; set; }
 
         /// <summary>
         ///
         /// </summary>
         /// <remarks></remarks>
-        /// <seealso cref=""/>        
+        /// <seealso cref=""/>
         public virtual string VersionDescription { get; set; }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <remarks></remarks>
-        /// <seealso cref=""/>        
+        /// <seealso cref=""/>
         public virtual bool PublicAccess { get; set; }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <remarks></remarks>
-        /// <seealso cref=""/>        
+        /// <seealso cref=""/>
         public virtual DateTime PublicAccessDate { get; set; }
-        #endregion
+
+        #endregion Attributes
 
         #region Associations
 
@@ -111,7 +108,7 @@ namespace BExIS.Dlm.Entities.Data
         ///
         /// </summary>
         /// <remarks></remarks>
-        /// <seealso cref=""/>        
+        /// <seealso cref=""/>
         public virtual Dataset Dataset { get; set; }
 
         /// <summary>
@@ -119,7 +116,7 @@ namespace BExIS.Dlm.Entities.Data
         /// 1: reduce the amount of tuple duplication
         /// 2: be able to find out changes among versions e.g., deleted tuples, added tuples, changed ones
         /// 3: be able to find out what had changed in a specific version
-        /// for these reasons, its better to not have the tuples loaded by the data access layer at first.       
+        /// for these reasons, its better to not have the tuples loaded by the data access layer at first.
         /// PriliminaryTuples are those added or edited by this version. they may change over time
         /// </summary>
         /// <remarks></remarks>
@@ -146,10 +143,10 @@ namespace BExIS.Dlm.Entities.Data
         ///
         /// </summary>
         /// <remarks></remarks>
-        /// <seealso cref=""/>        
+        /// <seealso cref=""/>
         public virtual IList<ExtendedPropertyValue> ExtendedPropertyValues { get; set; }
 
-        #endregion
+        #endregion Associations
 
         #region Methods
 
@@ -160,7 +157,7 @@ namespace BExIS.Dlm.Entities.Data
         /// </summary>
         /// <remarks></remarks>
         /// <seealso cref=""/>
-        /// <param></param>       
+        /// <param></param>
         public DatasetVersion()
         {
             ExtendedPropertyValues = new List<ExtendedPropertyValue>();
@@ -185,7 +182,7 @@ namespace BExIS.Dlm.Entities.Data
         }
 
         //public override void Validate()
-        //{            
+        //{
         //    // check whether type of data structure is unstructured? if yes, at least one ContentDescriptor must be provided
         //}
 
@@ -194,7 +191,7 @@ namespace BExIS.Dlm.Entities.Data
         /// </summary>
         /// <remarks></remarks>
         /// <seealso cref=""/>
-        /// <param></param>       
+        /// <param></param>
         public override void Materialize(bool includeChildren = true)
         {
             base.Materialize();
@@ -210,7 +207,7 @@ namespace BExIS.Dlm.Entities.Data
         /// </summary>
         /// <remarks></remarks>
         /// <seealso cref=""/>
-        /// <param></param>      
+        /// <param></param>
         public override void Dematerialize(bool includeChildren = true)
         {
             base.Dematerialize();
@@ -221,8 +218,6 @@ namespace BExIS.Dlm.Entities.Data
             }
         }
 
-        #endregion
+        #endregion Methods
     }
-
-
 }

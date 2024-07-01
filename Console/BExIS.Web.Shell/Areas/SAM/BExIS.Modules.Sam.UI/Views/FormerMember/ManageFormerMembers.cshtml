@@ -7,22 +7,18 @@
     <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.25/js/jquery.dataTables.js"></script>
 }
 
-
-
 @section Information
 {
 }
 
 @if (ViewData.ModelState.IsValid)
 {
-    @section LeftPane
+@section LeftPane
 {
 
-
-        <div class="alumniContent">
-            @Html.Partial("_formerMemberSearch", Model)
-    
-</div>
+    <div class="alumniContent">
+        @Html.Partial("_formerMemberSearch", Model)
+    </div>
 }
 <div>
     <div class="alumniContent">
@@ -50,13 +46,13 @@
             <tbody>
                 @foreach (var item in Model)
                 {
-                    <tr>
-                        <td>@item.UserName</td>
-                        <td>@item.Name</td>
-                        <td>@item.StartDate.ToString("yyyy-MM-dd")</td>
-                        <td>@item.EndDate.ToString("yyyy-MM-dd")</td>
-                        <td>@item.IsFormerMember</td>
-                    </tr>
+                <tr>
+                    <td>@item.UserName</td>
+                    <td>@item.Name</td>
+                    <td>@item.StartDate.ToString("yyyy-MM-dd")</td>
+                    <td>@item.EndDate.ToString("yyyy-MM-dd")</td>
+                    <td>@item.IsFormerMember</td>
+                </tr>
                 }
             </tbody>
         </table>
@@ -68,13 +64,12 @@ else
 {
 <div>
     <ul>
-    @string.Join(" ", ViewData.ModelState.Values
-                       .SelectMany(x => x.Errors)
-                       .Select(x => x.ErrorMessage))
+        @string.Join(" ", ViewData.ModelState.Values
+                           .SelectMany(x => x.Errors)
+                           .Select(x => x.ErrorMessage))
     </ul>
 </div>
 }
-
 
 <style>
     .ui-datepicker .ui-datepicker-title select {
@@ -83,8 +78,6 @@ else
 </style>
 
 <script type="text/javascript">
-
-
 
      $(document).ready(function () {
          var table = $('#formerMemberTable').DataTable({
@@ -104,8 +97,6 @@ else
                 },
        } ]
          });
-
-
 
          $('#formerMemberTable').on('click', 'input[type="checkbox"]', function () {
 
@@ -140,7 +131,6 @@ else
          $('#nonFormerMemberFilterOn').on("click", function (e) {
              table.draw();
          });
-
 
      /*date picker* https://stackoverflow.com/questions/54691908/datatablesdatepicker-filter-table-by-date-range/ */
 
@@ -223,7 +213,4 @@ else
              }
          );
      });
-
 </script>
-
-

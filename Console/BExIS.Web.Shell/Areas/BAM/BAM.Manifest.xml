@@ -4,7 +4,7 @@
     BAM provides the ability to work with objects such as Party Package. All the packages related to the core of system belong to this module.
   </Description>
 	<Assemblies>
-		<Assembly fullName="" role=""/>
+		<Assembly fullName="" role="" />
 	</Assemblies>
 	<Dependencies>
 		<!--<Dependency moduleId="dcm" version="*.*.*" />-->
@@ -30,8 +30,7 @@
 		<Export tag="lunchbar" id="helpBam" order="2"
 						title="Account / Parties" description="Parties Help Manual" icon=""
 						controller="Help" action="index"
-						extends="./lunchbarRoot/help"
-						/>
+						extends="./lunchbarRoot/help" />
 	<!-- Settings Example-->
 		<!--<Export tag="settings" id="manageMetadata" order="1"
 						title="Manage Metadata Structure" description="Edit or Importa new Metadata Structure" icon=""
@@ -43,7 +42,7 @@
 						title="Create Dataset" description="Create new Dataset" icon=""
 						controller="CreateDataset" action="index"
 						extends="./menubarRoot/collect" />-->
-			
+
 		<!-- Api Example-->
 		<!-- <Export tag="api" id="tntList"
 						title="No thing" description="Change me!" icon=""

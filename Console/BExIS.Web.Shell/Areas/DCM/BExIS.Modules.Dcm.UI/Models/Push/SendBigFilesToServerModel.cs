@@ -16,5 +16,4 @@ namespace BExIS.Modules.Dcm.UI.Models.Push
             IsUploading = false;
         }
     }
-
 }

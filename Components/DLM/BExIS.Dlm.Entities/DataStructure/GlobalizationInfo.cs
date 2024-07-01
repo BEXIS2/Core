@@ -2,13 +2,13 @@
 
 /// <summary>
 ///
-/// </summary>        
+/// </summary>
 namespace BExIS.Dlm.Entities.DataStructure
 {
     /// <summary>
     ///
     /// </summary>
-    /// <remarks></remarks>        
+    /// <remarks></remarks>
     public class GlobalizationInfo : BaseEntity
     {
         #region Attributes
@@ -17,24 +17,24 @@ namespace BExIS.Dlm.Entities.DataStructure
         ///
         /// </summary>
         /// <remarks></remarks>
-        /// <seealso cref=""/>        
+        /// <seealso cref=""/>
         public virtual string CultureId { get; set; }
 
         /// <summary>
         ///
         /// </summary>
         /// <remarks></remarks>
-        /// <seealso cref=""/>        
+        /// <seealso cref=""/>
         public virtual string DisplayName { get; set; }
 
         /// <summary>
         ///
         /// </summary>
         /// <remarks></remarks>
-        /// <seealso cref=""/>        
+        /// <seealso cref=""/>
         public virtual string Description { get; set; }
 
-        #endregion
+        #endregion Attributes
 
         #region Associations
 
@@ -42,13 +42,9 @@ namespace BExIS.Dlm.Entities.DataStructure
         ///
         /// </summary>
         /// <remarks></remarks>
-        /// <seealso cref=""/>        
+        /// <seealso cref=""/>
         public virtual DataContainer DataContainer { get; set; }
 
-        #endregion
-
-        #region Mathods
-
-        #endregion
+        #endregion Associations
     }
 }

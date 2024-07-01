@@ -1,14 +1,14 @@
-﻿using System.Collections.Generic;
+﻿using BExIS.Dlm.Entities.Meanings;
+using System.Collections.Generic;
 using Vaiona.Entities.Common;
-using BExIS.Dlm.Entities.Meanings;
 
 /// <summary>
 ///
-/// </summary>        
+/// </summary>
 namespace BExIS.Dlm.Entities.DataStructure
 {
     /// <summary>
-    /// 
+    ///
     /// </summary>
     public enum MeasurementSystem
     {
@@ -18,7 +18,7 @@ namespace BExIS.Dlm.Entities.DataStructure
     /// <summary>
     ///
     /// </summary>
-    /// <remarks></remarks>        
+    /// <remarks></remarks>
     public class Unit : BaseEntity
     {
         #region Attributes
@@ -27,32 +27,31 @@ namespace BExIS.Dlm.Entities.DataStructure
         ///
         /// </summary>
         /// <remarks></remarks>
-        /// <seealso cref=""/>        
+        /// <seealso cref=""/>
         public virtual string Name { get; set; }
 
         /// <summary>
         ///
         /// </summary>
         /// <remarks></remarks>
-        /// <seealso cref=""/>        
+        /// <seealso cref=""/>
         public virtual string Abbreviation { get; set; }
 
         /// <summary>
         ///
         /// </summary>
         /// <remarks></remarks>
-        /// <seealso cref=""/>        
+        /// <seealso cref=""/>
         public virtual string Description { get; set; }
-
 
         /// <summary>
         ///
         /// </summary>
         /// <remarks> Metric, Imperial, etc </remarks>
-        /// <seealso cref=""/>        
+        /// <seealso cref=""/>
         public virtual MeasurementSystem MeasurementSystem { get; set; }
 
-        #endregion
+        #endregion Attributes
 
         #region Associations
 
@@ -60,45 +59,45 @@ namespace BExIS.Dlm.Entities.DataStructure
         ///
         /// </summary>
         /// <remarks> L: Length, M: Mass, A: Area, L(0)T(-1) </remarks>
-        /// <seealso cref=""/>        
+        /// <seealso cref=""/>
         public virtual Dimension Dimension { get; set; }
 
         /// <summary>
         ///
         /// </summary>
         /// <remarks></remarks>
-        /// <seealso cref=""/>        
+        /// <seealso cref=""/>
         public virtual ICollection<DataContainer> DataContainers { get; set; }
 
         /// <summary>
         ///
         /// </summary>
         /// <remarks></remarks>
-        /// <seealso cref=""/>        
+        /// <seealso cref=""/>
         public virtual ICollection<ConversionMethod> ConversionsIamTheSource { get; set; } // ConversionMethod holds the relationship (FK)
 
         /// <summary>
         ///
         /// </summary>
         /// <remarks></remarks>
-        /// <seealso cref=""/>        
+        /// <seealso cref=""/>
         public virtual ICollection<ConversionMethod> ConversionsIamTheTarget { get; set; }
 
         /// <summary>
         ///
         /// </summary>
         /// <remarks></remarks>
-        /// <seealso cref=""/>        
+        /// <seealso cref=""/>
         public virtual ICollection<DataType> AssociatedDataTypes { get; set; } // datatype controls the relationship
 
         /// <summary>
         ///
         /// </summary>
         /// <remarks></remarks>
-        /// <seealso cref=""/>  
+        /// <seealso cref=""/>
         public virtual ExternalLink ExternalLink { get; set; }
 
-        #endregion
+        #endregion Associations
 
         #region Mathods
 
@@ -107,7 +106,7 @@ namespace BExIS.Dlm.Entities.DataStructure
         /// </summary>
         /// <remarks></remarks>
         /// <seealso cref=""/>
-        /// <param>NA</param>       
+        /// <param>NA</param>
         public Unit()
         {
             DataContainers = new List<DataContainer>();
@@ -117,7 +116,6 @@ namespace BExIS.Dlm.Entities.DataStructure
             AssociatedDataTypes = new List<DataType>();
         }
 
-        #endregion
-
+        #endregion Mathods
     }
 }

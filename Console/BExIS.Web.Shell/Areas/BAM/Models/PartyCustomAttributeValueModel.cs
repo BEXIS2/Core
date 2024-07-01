@@ -7,10 +7,12 @@ namespace BExIS.Modules.Bam.UI.Models
     public class PartyCustomAttributeAndValuesModel
     {
         private Party _party = new Party();
+
         public PartyCustomAttributeAndValuesModel(Party party)
         {
             _party = party;
         }
+
         public List<PartyCustomAttribute> PartyCustomAttribute
         {
             get
@@ -21,6 +23,7 @@ namespace BExIS.Modules.Bam.UI.Models
                     return null;
             }
         }
+
         public List<PartyCustomAttributeValue> PartyCustomAttributeValues
         {
             get

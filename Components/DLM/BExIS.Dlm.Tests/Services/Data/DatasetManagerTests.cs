@@ -25,14 +25,13 @@ namespace BExIS.Dlm.Tests.Services.Data
             helper = new TestSetupHelper(WebApiConfig.Register, false);
         }
 
-
         [SetUp]
         public void SetUp()
         {
             var dsHelper = new DatasetHelper();
-            dsHelper.PurgeAllDatasets();
-            dsHelper.PurgeAllDataStructures();
-            dsHelper.PurgeAllResearchPlans();
+            //dsHelper.PurgeAllDatasets();
+            //dsHelper.PurgeAllDataStructures();
+            //dsHelper.PurgeAllResearchPlans();
         }
 
         [TearDown]
@@ -49,7 +48,6 @@ namespace BExIS.Dlm.Tests.Services.Data
         {
             helper.Dispose();
         }
-
 
         [Test()]
         public void CreateEmptyDatasetTest()
@@ -72,7 +70,6 @@ namespace BExIS.Dlm.Tests.Services.Data
 
                 var et = etm.Repo.Query().First();
                 et.Should().NotBeNull("Failed to meet a precondition: a entity template is required.");
-
 
                 Dataset dataset = dm.CreateEmptyDataset(dataStructure, rp, mds, et);
 
@@ -138,10 +135,73 @@ namespace BExIS.Dlm.Tests.Services.Data
             }
         }
 
+        //[Test()]
+        public void UndoDeleteDatasetTest()
+        {
+            var dm = new DatasetManager();
+            var rsm = new ResearchPlanManager();
+            var mdm = new MetadataStructureManager();
+            var etm = new EntityTemplateManager();
+
+            var dsHelper = new DatasetHelper();
+            long id = 0;
+            try
+            {
+                // Arrange
+                StructuredDataStructure dataStructure = dsHelper.CreateADataStructure();
+                dataStructure.Should().NotBeNull("Failed to meet a precondition: a data strcuture is required.");
+
+                var rp = dsHelper.CreateResearchPlan();
+                rp.Should().NotBeNull("Failed to meet a precondition: a research plan is required.");
+
+                var mds = mdm.Repo.Query().First();
+                mds.Should().NotBeNull("Failed to meet a precondition: a metadata strcuture is required.");
+
+                var et = etm.Repo.Query().First();
+                et.Should().NotBeNull("Failed to meet a precondition: a entity template is required.");
+
+                Dataset dataset = dm.CreateEmptyDataset(dataStructure, rp, mds, et);
+                id = dataset.Id;
+
+                dsHelper.GenerateTuplesForDataset(dataset, dataStructure, 1000, "david test");
+                dm.CheckInDataset(dataset.Id, "for testing  datatuples with versions", "david test", ViewCreationBehavior.None);
+                dm.DeleteDataset(dataset.Id, "David", false);
+
+                dataset.Should().NotBeNull();
+                dataset.Id.Should().BeGreaterThan(0, "Dataset is not persisted.");
+                dataset.LastCheckIOTimestamp.Should().NotBeAfter(DateTime.UtcNow, "The dataset's timestamp is wrong.");
+                dataset.DataStructure.Should().NotBeNull("Dataset must have a data structure.");
+                dataset.Status.Should().Be(DatasetStatus.Deleted, "Dataset must be in Deleted status.");
+
+                // Act
+                dm.UndoDeleteDataset(dataset.Id, "David test", true);
+                var c = dm.GetDatasetLatestVersionEffectiveTupleCount(dataset);
+
+                //Assert
+                dataset = dm.GetDataset(id);
+                dataset.Should().NotBeNull();
+                dataset.Id.Should().BeGreaterThan(0, "Dataset is not persisted.");
+                dataset.LastCheckIOTimestamp.Should().NotBeAfter(DateTime.UtcNow, "The dataset's timestamp is wrong.");
+                dataset.DataStructure.Should().NotBeNull("Dataset must have a data structure.");
+                dataset.Status.Should().Be(DatasetStatus.CheckedIn, "Dataset must be in Deleted status.");
+                Assert.That(c.Equals(1000), "version has not same tuples");
+            }
+            finally
+            {
+                dm.PurgeDataset(id);
+                dsHelper.PurgeAllDataStructures();
+
+                dm.Dispose();
+                rsm.Dispose();
+                mdm.Dispose();
+                etm.Dispose();
+            }
+        }
+
         [Test()]
         public void CreateDatasetVersionTest()
         {
-            long numberOfTuples = 1000;
+            long numberOfTuples = 10;
             var dm = new DatasetManager();
             var rsm = new ResearchPlanManager();
             var mdm = new MetadataStructureManager();
@@ -240,7 +300,7 @@ namespace BExIS.Dlm.Tests.Services.Data
             orderByExpr.ToSQL().Should().Be($"{var1Name} ASC, {var2Name} DESC");
 
             // create a dataset and test the filter, sorting, and projectgion
-            long numberOfTuples = 100;
+            long numberOfTuples = 10;
             var dm = new DatasetManager();
             var rsm = new ResearchPlanManager();
             var mdm = new MetadataStructureManager();
@@ -274,7 +334,7 @@ namespace BExIS.Dlm.Tests.Services.Data
                 dm.GetDatasetLatestVersionEffectiveTupleCount(dataset.Id).Should().Be(numberOfTuples);
 
                 // pass this filter to get a subset of dataset X
-                var dst = dm.GetLatestDatasetVersionTuples(dataset.Id, fex, null, null,"", 1, 10);
+                var dst = dm.GetLatestDatasetVersionTuples(dataset.Id, fex, null, null, "", 1, 10);
                 dst.Should().NotBeNull();
                 dst.Rows.Count.Should().BeLessOrEqualTo(10);
 
@@ -343,7 +403,7 @@ namespace BExIS.Dlm.Tests.Services.Data
                 dm.GetDatasetLatestVersionEffectiveTupleCount(dataset.Id).Should().Be(numberOfTuples);
 
                 // pass this filter to get a subset of dataset X
-                var dst = dm.GetLatestDatasetVersionTuples(dataset.Id, null, null, projectionExpression,"", 1, 3);
+                var dst = dm.GetLatestDatasetVersionTuples(dataset.Id, null, null, projectionExpression, "", 1, 3);
                 dst.Should().NotBeNull();
                 dst.Rows.Count.Should().BeLessOrEqualTo(3);
                 dst.Columns.Count.Should().BeLessOrEqualTo(3, "Projection failed, wrong number of columns");

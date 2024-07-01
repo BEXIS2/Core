@@ -73,7 +73,7 @@ namespace BEXIS.Modules.SAM.UI.Controllers
                         //send mail
                         var es = new EmailService();
                         //build email with text blocks from the settings file
-                        string mailTextBody =   helper.GetValue("mailTextTitle").ToString() + " " + user.DisplayName + "," + "<br/><br/>" +
+                        string mailTextBody = helper.GetValue("mailTextTitle").ToString() + " " + user.DisplayName + "," + "<br/><br/>" +
                                                 helper.GetValue("mailTextMainApplied").ToString() + "<br/><br/>" +
                                                 helper.GetValue("mailTextClosing").ToString();
 
@@ -89,11 +89,11 @@ namespace BEXIS.Modules.SAM.UI.Controllers
                                 new List<string>() { user.Email },
                                 new List<string>() { ConfigurationManager.AppSettings["SystemEmail"] }
                                 );
-
                     }
                 }
             }
         }
+
         /// <summary>
         /// Remove status to defined former member role
         /// </summary>

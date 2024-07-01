@@ -4,7 +4,7 @@ using Vaiona.Web.Security.Az.Parser;
 
 namespace Vaiona.Web.Security.Az
 {
-    class RuleBasedAuthorization : IAuthorizationService
+    internal class RuleBasedAuthorization : IAuthorizationService
     {
         //private static MemoryCache actionCache = null;
         static RuleBasedAuthorization()
@@ -30,7 +30,6 @@ namespace Vaiona.Web.Security.Az
             }
             return (result.HasValue ? result.Value : false);
         }
-
 
         public bool IsAuthorized(AuthorizationContext filterContext, object accessRule, string actionKey, string parentActionKey)
         {

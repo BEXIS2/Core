@@ -1,5 +1,5 @@
 <hibernate-mapping xmlns="urn:nhibernate-mapping-2.2" assembly="BExIS.Dim.Entities" namespace="BExIS.Dim.Entities.Publications">
-	<class xmlns="urn:nhibernate-mapping-2.2" name="Publication" table="DIM_Publications">
+	<class xmlns="urn:nhibernate-mapping-2.2" name="Publication" table="dim_publications">
 		<!-- Mapping BaseEntity properties -->
 
 		<id name="Id" type="Int64">
@@ -45,21 +45,16 @@
 			<column name="Status" />
 		</property>
 
-		<property name="Response" type="string">
-			<column name="Response" />
+		<property name="Response" type="StringClob">
+			<column name="Response" sql-type="text" />
 		</property>
 
 		<!-- Associations -->
 
-		<many-to-one class="BExIS.Dlm.Entities.Data.DatasetVersion" name="DatasetVersion" column="DatasetVersionRef">
-		</many-to-one>
+		<many-to-one class="BExIS.Dlm.Entities.Data.DatasetVersion" name="DatasetVersion" column="DatasetVersionRef" />
 
-		<many-to-one class="Broker" name="Broker" column="BrokerRef">
-		</many-to-one>
+		<many-to-one class="Broker" name="Broker" column="BrokerRef" />
 
-		<many-to-one class="Repository" name="Repository" column="RepositoryRef">
-		</many-to-one>
-
-
+		<many-to-one class="Repository" name="Repository" column="RepositoryRef" />
 	</class>
 </hibernate-mapping>
